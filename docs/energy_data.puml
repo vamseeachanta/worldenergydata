@@ -1,0 +1,125 @@
+@startuml data_science_architecture
+skinparam titleBorderRoundCorner 15
+skinparam titleBorderThickness 2
+skinparam titleBorderColor red
+skinparam titleBackgroundColor Tomato
+
+title Energy Data
+
+start
+
+    partition "Library and File Structure" {
+
+        note right
+            Objective: Standardization, automation for rinse & repeat.
+        end note
+
+        :Clone existing repo of choice;
+            note right
+                Delete .git folder and initilize as new repo
+                For more guidance:
+                https://github.com/vamseeachanta/py_package
+            end note
+        :Adapt folder structure as suited;
+            note right
+                For more guidance:
+                https://drivendata.github.io/cookiecutter-data-science/
+            end note
+    }
+
+    partition "Start-up" {
+
+        note right
+            Objective: Flexibility, automation etc.
+        end note
+
+        :Providing inputs;
+            note right
+                Options: json in cmd, yml (or toml) file, csv
+            end note
+
+        :App Configuration;
+            note right
+                Data science runs when parametric expands . Options: 
+                    json string as cmd arguments to run script
+                    ascii (.yaml, .json or .toml) file 
+                    csv for data only
+            end note
+
+        :Environment Configuration 
+        (secrets, internal libraries etc.);
+            note right
+                See below for guidance
+                https://drivendata.github.io/cookiecutter-data-science/
+            end note
+
+    }
+
+    partition "Test Driven Development (TDD)" {
+        note right
+            Objective: TDD advocacy, automation, easy reuse of code.
+        end note
+
+    :Write test;
+        note right
+            For more specific guidance:
+            https://github.com/vamseeachanta/py_package
+        end note
+    }
+
+    partition "Development, Testing and Deployment" {
+        note right
+            Objective: Automation, easy reuse of code.
+        end note
+
+    :Automate all repeat (performed > n=2? times) activities;
+        note right
+            For more specific guidance:
+            https://github.com/vamseeachanta/py_package
+        end note
+    
+
+    :Refactor to clean code;
+        note right
+            Refactor as much as possible:
+                a/ Library Level: Identify common code to group. 
+                Classify into folders:
+                    i. common
+                    ii. app_specific
+                b/ Across Multiple Libraries: 
+                - A utility library to use across libraries
+                - Avoid overengineering
+                - Keep it basic so back-compatibility is easy.
+        end note
+    }
+
+    partition "Output Results" {
+    : Result Location;
+        note right
+            saved to folder in priority order
+                a. output to results folder inside data_folder
+                b. if no data provided, output results folder 
+                   in current working directory (cwd)
+            high-level outputs:
+                {data_folder}/results
+            detailed outputs:
+                {data_folder}/results/detailed
+        end note
+    : Result Type;
+        note right
+            Output data in ascci format
+                a. key-value pairs in .yaml(or .json)
+                b. matrix data in .csv 
+            Output visualizations:
+                2d and 3d charts (.html) in plotly
+        end note
+    }
+
+stop
+
+footer
+%date("yyyy.MM.dd' at 'HH:mm")
+%filename()
+end footer
+
+@enduml
