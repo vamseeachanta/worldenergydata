@@ -1,7 +1,8 @@
-
+from energydata.common.ymlInput import ymlInput
 from energydata.common.data_models_components import DataModelsComponents
 
-cfg = docs\code_superseded\bsee_yearly_production_data.yml
+cfg_yaml = 'C:/GitHub/energydata/src/energydata/tests/legacy/data/bsee_yearly_production_data.yml'
+cfg = ymlInput(cfg_yaml, None)
 
-dm = DataModelsComponents()
+dm = DataModelsComponents(cfg)
 
