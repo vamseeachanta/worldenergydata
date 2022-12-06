@@ -1,0 +1,7 @@
+---
+default_yaml: cfg\ong_field_development\BSEE_analysis_Rep.yml
+
+custom_parameters:
+  field_nickname: &field_nickname Cascade-Chinook
+  ong_app_file_name_key: &ong_app_file_name_key PBR_Cascade_Chinook
+  boem_fields: &boem_fields "'WR205', 'WR206', 'WR469', 'WR470'"
