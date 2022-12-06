@@ -1,0 +1,877 @@
+default:
+  log_level: DEBUG
+  config:
+    overwrite:
+      output: True
+  analysis:
+    run_example: False
+    skip_wells_with_zero_production: True
+
+  data_source: db
+
+  input_data:
+    source: db
+    save_data_to_xlsx: False
+    sets:
+      -
+        label: reserves
+        schema: dbo
+        query:
+          sql: >
+            SELECT [YEAR]
+            ,[DISCYR]
+            ,ROUND((CONVERT(FLOAT,[Orig Oil Reserves])/1000000),1)  as [Recoverable Oil]
+            ,ROUND((CONVERT(FLOAT,[Orig Gas Reserves])/1000000),1) as [Recoverable Gas]
+            ,ROUND((CONVERT(FLOAT,[Orig BOE Reserves])/1000000),1) as [Recoverable BOE]
+            ,ROUND((CONVERT(FLOAT,[CUMOIL])/1000000),1) as [Cum. Oil]
+            ,ROUND((CONVERT(FLOAT,[CUMGAS])/1000000),1) as [Cum. Gas]
+            ,ROUND((CONVERT(FLOAT,[CUMBOE])/1000000),1) as [Cum. BOE]
+            ,ROUND((CONVERT(FLOAT,[Oil Reserves])/1000000),1) as [SEC Oil]
+            ,ROUND((CONVERT(FLOAT,[Gas Reserves])/1000000),1) as [SEC Gas]
+            ,ROUND((CONVERT(FLOAT,[BOE Reserves])/1000000),1) as [SEC BOE]
+            ,[FCLASS]
+            FROM [master].[dbo].[2017_Hist]
+            WHERE FIELD IN (
+            {}
+            )
+          arg_array: [*boem_fields]
+
+      -
+        label: field_summary_df
+        schema: dbo
+        query:
+          sql: >
+            SELECT
+               [Field Nickname]
+              ,[BOEM_FIELDS]
+              ,[wellhead_distances]
+            FROM [master].[dbo].[output_field_summary] WHERE [Field Nickname] IN (
+            '{}'
+            )
+          arg_array: [*field_nickname]
+
+      -
+        label: wellhead_distances_df
+        schema: dbo
+        query:
+          sql: >
+            SELECT
+              [wellhead_distances]
+            FROM [master].[dbo].[output_field_summary] WHERE [Field Nickname] IN (
+            '{}'
+            )
+          arg_array: [*field_nickname]
+
+      -
+        label: well_high_level_df
+        schema: dbo
+        query:
+          sql: >
+            SELECT
+            [Company Name] as [Company]
+            ,[Water Depth] as [Water Depth (ft)]
+            ,[Well Name]
+            ,[Well Purpose]
+            ,[Rig(s)]
+            ,[Side Tracks]
+            ,CONVERT(DATE, [Spud Date] ) as [Spud Date]
+            ,[Wellbore Status]
+            ,[Wellbore Status Date]  as [Last BSEE Date]
+            ,[Drilling Days] as [Well Construction Days]
+            ,[Completion Days] as [Well Completion Days]
+            ,[RIG_LAST_DATE_ON_WELL] as [Rig Last Date on Well]
+            ,[Tree Height Above Mudline] as [Tree Height AML (ft)]
+            ,[Field Name] as [BSEE Field]
+            ,[API10]
+            FROM [master].[dbo].[output_data_well]
+            WHERE [Field Nickname] IN (
+            '{}'
+            )
+            ORDER BY [Well Name]
+          arg_array: [*field_nickname]
+
+      -
+        label: well_location_df
+        schema: dbo
+        query:
+          sql: >
+            SELECT
+             [Well Name]
+            ,[Wellbore Status]
+            ,[Wellbore Status Date] as [Last BSEE Date]
+            ,[Completion Stub Code]
+            ,ROUND([HORZ_DEPARTURE]/0.3048,0) as [Horizontal Departure]
+            ,ROUND([SURF_x_rel]/0.3048,0) as [Wellhead Rel X]
+            ,ROUND([SURF_y_rel]/0.3048,0) as [Wellhead Rel Y]
+            ,ROUND([BOT_x_rel]/0.3048,0) as [Bottom Hole Rel X]
+            ,ROUND([BOT_y_rel]/0.3048,0) as [Bottom Hole Rel Y]
+            ,ROUND([Surface Latitude],6) as [Surface Latitude]
+            ,ROUND([Surface Longitude],6) as [Surface Longitude]
+            ,[Bottom Latitude]
+            ,[Bottom Longitude]
+            FROM [master].[dbo].[output_data_well]
+            WHERE [Field Nickname] IN (
+            '{}'
+            )
+            ORDER BY [Well Name]
+          arg_array: [*field_nickname]
+
+      -
+        label: well_location_chart_df
+        schema: dbo
+        query:
+          sql: >
+            SELECT
+             [Well Name]
+            ,WellData.API12
+            ,[Sidetrack and Bypass]
+            ,[Side Tracks]
+            ,[Relative Wellhead X]
+            ,[Relative Wellhead Y]
+            ,[O_PROD_STATUS]
+            ,[Production to date (MMBBL)]
+            ,[Horizontal Departure (ft)]
+            ,[Wellbore Status]
+            ,[Wellbore Status Date] as [Last BSEE Date]
+            ,[Water Depth (ft)]
+            ,[Tree Height AML (ft)]
+            ,[Relative Bottom X]
+            ,[Relative Bottom Y]
+            ,[Total Measured Depth (ft)]
+            ,[COMP_RSVR_NAME]
+            ,[COMP_INTERVAL_NAME]
+            ,[Production Interval]
+            ,[COMP_STATUS_DESC]
+            ,[COMP_x_rel]
+            ,[COMP_y_rel]
+            FROM
+            (
+            SELECT
+             [Well Name]
+            ,[API12]
+            ,[Sidetrack and Bypass]
+            ,[SURF_x_rel] * 3.281 as [Relative Wellhead X]
+            ,[SURF_y_rel] * 3.281 as [Relative Wellhead Y]
+            ,[O_PROD_STATUS]
+            ,ROUND([O_CUMMULATIVE_PROD_MMBBL], 1) as [Production to date (MMBBL)]
+            ,ROUND([HORZ_DEPARTURE] * 3.281,0) as [Horizontal Departure (ft)]
+            ,[Wellbore Status]
+            ,[Side Tracks]
+            ,[Wellbore Status Date]
+            ,[Water Depth] as [Water Depth (ft)]
+            ,[Tree Height Above Mudline] as [Tree Height AML (ft)]
+
+            ,[BOT_x_rel] * 3.281 as [Relative Bottom X]
+            ,[BOT_y_rel] * 3.281 as [Relative Bottom Y]
+            ,[Total Measured Depth] as [Total Measured Depth (ft)]
+
+            FROM [master].[dbo].[output_data_well]
+            WHERE [Field Nickname] IN (
+            '{}'
+            )
+            )
+            AS WellData
+            FULL OUTER JOIN
+            (
+            SELECT [API12]
+            ,[COMP_RSVR_NAME]
+            ,[COMP_INTERVAL_NAME]
+            ,[Production Interval]
+            ,[COMP_STATUS_DESC]
+            ,[COMP_x_rel]
+            ,[COMP_y_rel]
+            FROM [master].[dbo].[output_completions]
+            WHERE [Field Nickname] IN (
+            '{}'
+            )
+            )
+            AS CompletionData
+            ON WellData.API12 = CompletionData.API12
+          arg_array: [*field_nickname, *field_nickname]
+
+      -
+        label: well_drill_info_df
+        schema: dbo
+        query:
+          sql: >
+            SELECT
+             [Well Name]
+            ,[Rig(s)]
+            ,[Sidetrack and Bypass]
+            ,[Water Depth] as [Water Depth]
+            ,[Total Measured Depth]
+            ,[Total Vertical Depth]
+            ,(Case When Isnumeric([Total Measured Depth])=1 THEN (CONVERT(float, [Total Measured Depth]) - [Water Depth]) ELSE NULL END) as [Drilling Footage]
+            ,[Drilling Days]
+            ,(Case When Isnumeric([Total Measured Depth])=1 THEN ROUND(( [Drilling Days]*10000/(CONVERT(float,[Total Measured Depth]) - [Water Depth]) ),0) ELSE NULL END) as [Drilling Days per 10,000 ft]
+            ,[Completion Days]
+            ,CONVERT(DATE, [Spud Date]) as [Spud Date]
+            ,CONVERT(DATE, [Total Depth Date]) as [Total Depth Date]
+            ,[RIG_LAST_DATE_ON_WELL] as [Rig Last Date on Well]
+            ,[MAX_DRILL_FLUID_WGT] as [Max Mud Weight]
+            FROM [master].[dbo].[output_data_well]
+            WHERE [Field Nickname] IN (
+            '{}'
+            )
+            ORDER BY [Well Name]
+          arg_array: [*field_nickname]
+
+      -
+        label: hydrocarbon_bearing_interval
+        schema: dbo
+        query:
+          arg_array: [*boem_fields]
+          sql: >
+            SELECT WELL_NAME, [Hydrocarbon Interval Name], [TOP_MD], [BOTTOM_MD], [Hydrocarbon Type]
+            FROM
+            (SELECT [API Well Number] as API12
+            FROM [master].[dbo].[bsee_2020_03_20_APIList]
+            WHERE [Field Name] in (
+            {}
+            ) )
+            AS APIListTable
+
+            JOIN
+            (SELECT API_WELL_NUMBER, SN_EOR, WELL_NAME
+            FROM [master].[dbo].[mv_eor_mainquery]
+            )
+            AS EOR_MAIN_QUERY
+            on APIListTable.API12 = EOR_MAIN_QUERY.API_WELL_NUMBER
+
+            JOIN
+            (SELECT [SN_HC_BEARING_INTVL], [SN_EOR_FK],[INTERVAL_NAME] as [Hydrocarbon Interval Name],[TOP_MD],[BOTTOM_MD],[HYDROCARBON_TYPE_CD]
+            FROM [master].[dbo].[mv_hcbearing_intervals]
+            )
+            AS HC_Bearing_QUERY
+            on EOR_MAIN_QUERY.SN_EOR = HC_Bearing_QUERY.SN_EOR_FK
+
+            JOIN
+            (SELECT [VALUE],[VALUE_DESC] AS [Hydrocarbon Type]
+            FROM [master].[dbo].[mv_eor_hydrobarbtypecodes]
+            )
+            AS EOR_hydrobarbtypecodes_QUERY
+            on HC_Bearing_QUERY.HYDROCARBON_TYPE_CD = EOR_hydrobarbtypecodes_QUERY.VALUE
+            ORDER BY TOP_MD
+      -
+        label: geology_markers
+        schema: dbo
+        query:
+          sql: >
+            SELECT WELL_NAME, [GEO_MARKER_NAME],[TOP_MD]
+            FROM
+            (SELECT [API Well Number] as API12
+            FROM [master].[dbo].[bsee_2020_03_20_APIList]
+            WHERE [Field Name] in (
+            {}
+            ) )
+            AS APIListTable
+
+            JOIN
+            (SELECT API_WELL_NUMBER, SN_EOR, WELL_NAME
+            FROM [master].[dbo].[mv_eor_mainquery]
+            )
+            AS EOR_MAIN_QUERY
+            on APIListTable.API12 = EOR_MAIN_QUERY.API_WELL_NUMBER
+
+            JOIN
+            (SELECT [SN_EOR_FK],[GEO_MARKER_NAME],[TOP_MD]
+            FROM [master].[dbo].[mv_eor_geomarkers]
+            )
+            AS Geo_Marker_QUERY
+            on EOR_MAIN_QUERY.SN_EOR = Geo_Marker_QUERY.SN_EOR_FK
+            ORDER BY TOP_MD
+
+          arg_array: [*boem_fields]
+
+      -
+        label: well_completion_info_df
+        schema: dbo
+        query:
+          sql: >
+            SELECT
+             [WELL_NAME] as [Well Name]
+            ,[COMP_LATITUDE] as [Completion Latitude]
+            ,[COMP_LONGITUDE] as [Completion Longitude]
+            ,ROUND([COMP_x_rel],0) as [Relative X]
+            ,ROUND([COMP_y_rel],0) as [Relative Y]
+            ,[COMP_STATUS_DESC] as [Completion Status]
+            ,[COMP_RSVR_NAME] as [Reservoir Name]
+            ,[COMP_INTERVAL_NAME] as [Completion Interval Name]
+            ,[Production Interval]
+            FROM [master].[dbo].[output_completions]
+            WHERE [Field Nickname] IN (
+            '{}'
+            )
+            ORDER BY [Well Name]
+          arg_array: [*field_nickname]
+
+      -
+        label: completion_perforations
+        schema: dbo
+        query:
+          arg_array: [*boem_fields]
+          sql: >
+            SELECT WELL_NAME,(PERF_BASE_MD-PERF_TOP_MD) as [Perf Footage], [PERF_TOP_MD] as [Perf Top MD],[PERF_BASE_MD] as [Perf Bot MD]
+            ,(PERF_BOTM_TVD-PERF_TOP_TVD) as [Perf Vertical Span],[PERF_BOTM_TVD] as [Perf Bot TVD],[PERF_TOP_TVD] as [Perf Top TVD]
+            FROM
+            (SELECT [API Well Number] as API12
+            FROM [master].[dbo].[bsee_2020_03_20_APIList]
+            WHERE [Field Name] in (
+            {}
+            ) )
+            AS APIListTable
+
+            JOIN
+            (SELECT API_WELL_NUMBER, SN_EOR, WELL_NAME
+            FROM [master].[dbo].[mv_eor_mainquery]
+            )
+            AS EOR_MAIN_QUERY
+            on APIListTable.API12 = EOR_MAIN_QUERY.API_WELL_NUMBER
+
+            JOIN
+            (SELECT [SN_EOR_FK],[SN_EOR_WELL_COMP]
+            FROM [master].[dbo].[mv_eor_completionsprop]
+            )
+            AS EOR_COMPLETIONSPROP_QUERY
+            on EOR_MAIN_QUERY.SN_EOR = EOR_COMPLETIONSPROP_QUERY.SN_EOR_FK
+
+            JOIN
+            (SELECT [SN_EOR_WELL_COMP_FK],[PERF_TOP_MD],[PERF_BOTM_TVD],[PERF_TOP_TVD],[PERF_BASE_MD]
+            FROM [master].[dbo].[mv_eor_perf_intervals]
+            )
+            AS EOR_Perf_Intervals_QUERY
+            on EOR_COMPLETIONSPROP_QUERY.SN_EOR_WELL_COMP = EOR_Perf_Intervals_QUERY.SN_EOR_WELL_COMP_FK
+
+            ORDER BY WELL_NAME
+
+      -
+        label: well_production_summary_df
+        schema: dbo
+        query:
+          sql: >
+            SELECT
+             [Well Name]
+            ,[Sidetrack and Bypass]
+            ,ROUND([O_CUMMULATIVE_PROD_MMBBL], 2) as [Cumulative Production to Date]
+            ,ROUND([O_MEAN_PROD_RATE_BOPD], 0) as [Mean Production Rate]
+            FROM [master].[dbo].[output_data_well]
+            WHERE [Field Nickname] IN (
+            '{}'
+            )
+            ORDER BY [Well Name]
+          arg_array: [*field_nickname]
+
+      -
+        label: well_tubulars_df
+        schema: dbo
+        query:
+          sql: >
+
+            SELECT
+            WELL_NAME_UPDATED as [Well Name]
+            ,[CSNG_INTV_TYPE_CD]
+            ,[CSNG_HOLE_SIZE]
+            ,CASE WHEN CSNG_SETTING_TOP_MD=0 then  [Water Depth] else CSNG_SETTING_TOP_MD  end as CSNG_SETTING_TOP_MD
+            ,[CSNG_SETTING_BOTM_MD]
+            ,[CASING_SIZE]
+            ,[CASING_WEIGHT]
+            ,[CASING_GRADE]
+            ,[CSNG_LINER_TEST_PRSS]
+            ,[CSNG_SHOE_TEST_PRSS]
+            ,[CSNG_CEMENT_VOL]
+            FROM
+            (SELECT
+            API12
+            ,[CSNG_INTV_TYPE_CD]
+            ,[CSNG_HOLE_SIZE]
+            ,[CSNG_SETTING_TOP_MD]
+            ,[CSNG_SETTING_BOTM_MD]
+            ,[CASING_SIZE]
+            ,[CASING_WEIGHT]
+            ,[CASING_GRADE]
+            ,[CSNG_LINER_TEST_PRSS]
+            ,[CSNG_SHOE_TEST_PRSS]
+            ,[CSNG_CEMENT_VOL]
+            FROM [master].[dbo].[output_casing_tubulars]
+
+            WHERE [Field Nickname] IN (
+            '{}'
+            ) ) as casing_Query
+
+            JOIN
+            (SELECT [API12], [API10] FROM [master].[dbo].[output_data_api12]
+            )
+            AS Updated_Well_Name_api12
+            on casing_Query.API12= Updated_Well_Name_api12.API12
+
+            JOIN
+            (SELECT [API10], [Water Depth], [WELL NAME] as [WELL_NAME_UPDATED] FROM [master].[dbo].[output_data_well]
+            )
+            AS Updated_Well_Name_QUERY
+            on Updated_Well_Name_api12.API10= Updated_Well_Name_QUERY.API10
+
+            ORDER BY [WELL_NAME_UPDATED], Updated_Well_Name_api12.API12, [CSNG_HOLE_SIZE] DESC, [CSNG_SETTING_TOP_MD]
+
+          arg_array: [*field_nickname]
+
+      -
+        label: well_tubulars_by_hole_df
+        schema: dbo
+        query:
+          sql: >
+            SELECT
+            [Hole Size]
+            ,[data]
+            FROM [master].[dbo].[output_tubular_summary]
+            WHERE [Field Nickname] IN (
+            '{}'
+            )
+            and Well_Type in ('PRODUCERS')
+
+          arg_array: [*field_nickname]
+
+      -
+        label: well_activity_open_hole
+        schema: dbo
+        query:
+          arg_array: [*boem_fields]
+          sql: >
+            SELECT WELL_NAME_UPDATED as WELL_NAME, APIListTable.API12, [BUS_ASC_NAME],[OPERATIONS_COMPLETED_DATE] as [OPERATIONS_DATE], [LOG_TOOL_TYPE_CODE],[TOOL_LOGGING_METHOD_NAME],[LOG_INTV_TOP_MD],[LOG_INTV_BOTM_MD]
+            FROM
+            (SELECT [API Well Number] as API12
+            FROM [master].[dbo].[bsee_2020_03_20_APIList]
+            WHERE [Field Name] in (
+            {}
+            ) )
+            AS APIListTable
+
+            JOIN
+            (SELECT [SN_WAR],[API_WELL_NUMBER], WELL_NAME
+            FROM [master].[dbo].[mv_war_main]
+            )
+            AS WAR_MAIN_QUERY
+            on APIListTable.API12 = WAR_MAIN_QUERY.API_WELL_NUMBER
+
+            JOIN
+            (SELECT [SN_WAR_FK],[BUS_ASC_NAME],[OPERATIONS_COMPLETED_DATE],[TOOL_LOGGING_METHOD_NAME],[LOG_INTV_TOP_MD],[LOG_INTV_BOTM_MD],[SN_OPEN_HOLE]
+            FROM [master].[dbo].[mv_war_open_hole_runs]
+            )
+            AS WAR_open_hole_runs_QUERY
+            on WAR_MAIN_QUERY.SN_WAR= WAR_open_hole_runs_QUERY.SN_WAR_FK
+
+            JOIN
+            (SELECT [SN_OPEN_HOLE_FK],[LOG_TOOL_TYPE_CODE]
+            FROM [master].[dbo].[mv_war_open_hole_tools]
+            )
+            AS WAR_war_tubular_summaries_prop_QUERY
+            on WAR_open_hole_runs_QUERY.SN_OPEN_HOLE = WAR_war_tubular_summaries_prop_QUERY.SN_OPEN_HOLE_FK
+
+            JOIN
+            (SELECT [API12], [API10] FROM [master].[dbo].[output_data_api12]
+            )
+            AS Updated_Well_Name_api12
+            on WAR_MAIN_QUERY.API_WELL_NUMBER= Updated_Well_Name_api12.API12
+
+            JOIN
+            (SELECT [API10], [WELL NAME] as [WELL_NAME_UPDATED] FROM [master].[dbo].[output_data_well]
+            )
+            AS Updated_Well_Name_QUERY
+            on Updated_Well_Name_api12.API10= Updated_Well_Name_QUERY.API10
+
+            ORDER BY WELL_NAME, API12, OPERATIONS_COMPLETED_DATE
+
+      -
+        label: well_activity_summary
+        schema: dbo
+        query:
+          arg_array: [*boem_fields]
+          sql: >
+            SELECT WELL_NAME_UPDATED as WELL_NAME, APIListTable.API12, [RIG_NAME],[WAR_START_DT],[WAR_END_DT],[BOREHOLE_STAT_DESC],[DRILLING_MD],[DRILL_FLUID_WGT]
+            FROM
+            (SELECT [API Well Number] as API12
+            FROM [master].[dbo].[bsee_2020_03_20_APIList]
+            WHERE [Field Name] in (
+            {}
+            ) )
+            AS APIListTable
+
+            JOIN
+            (SELECT [SN_WAR],[API_WELL_NUMBER],[RIG_NAME], CONVERT(DATE, [WAR_START_DT]) as [WAR_START_DT], CONVERT(DATE, [WAR_END_DT]) as [WAR_END_DT], WELL_NAME
+            FROM [master].[dbo].[mv_war_main]
+            )
+            AS WAR_MAIN_QUERY
+            on APIListTable.API12 = WAR_MAIN_QUERY.API_WELL_NUMBER
+
+            JOIN
+            (SELECT [SN_WAR],[WELL_ACTIVITY_CD],[DRILLING_MD],[DRILL_FLUID_WGT]
+            FROM [master].[dbo].[mv_war_main_prop]
+            )
+            AS WAR_PROPERTIES
+            on WAR_PROPERTIES.SN_WAR = WAR_MAIN_QUERY.SN_WAR
+
+            JOIN
+            (SELECT [Value],[Description] as BOREHOLE_STAT_DESC
+            FROM [master].[dbo].[BOREHOLE_STATUS_CDS]
+            )
+            AS BOREHOLE_STATUS_DESC
+            on WAR_PROPERTIES.WELL_ACTIVITY_CD = BOREHOLE_STATUS_DESC.Value
+
+            JOIN
+            (SELECT [API12], [API10] FROM [master].[dbo].[output_data_api12]
+            )
+            AS Updated_Well_Name_api12
+            on WAR_MAIN_QUERY.API_WELL_NUMBER= Updated_Well_Name_api12.API12
+
+            JOIN
+            (SELECT [API10], [WELL NAME] as [WELL_NAME_UPDATED] FROM [master].[dbo].[output_data_well]
+            )
+            AS Updated_Well_Name_QUERY
+            on Updated_Well_Name_api12.API10= Updated_Well_Name_QUERY.API10
+
+            ORDER BY WELL_NAME, API12, WAR_START_DT
+
+      -
+        label: well_activity_remarks
+        schema: dbo
+        query:
+          arg_array: [*boem_fields]
+          sql: >
+            SELECT WELL_NAME_UPDATED as WELL_NAME, APIListTable.API12, [WAR_START_DT], REPLACE(TEXT_REMARK, ',', ';') as [TEXT_REMARK]
+            FROM
+            (SELECT [API Well Number] as API12
+            FROM [master].[dbo].[bsee_2020_03_20_APIList]
+            WHERE [Field Name] in (
+            {}
+            ) )
+            AS APIListTable
+
+            JOIN
+            (SELECT [SN_WAR],[API_WELL_NUMBER], CONVERT(DATE, [WAR_START_DT]) as [WAR_START_DT], WELL_NAME
+            FROM [master].[dbo].[mv_war_main]
+            )
+            AS WAR_MAIN_QUERY
+            on APIListTable.API12 = WAR_MAIN_QUERY.API_WELL_NUMBER
+
+            JOIN
+            (SELECT [SN_WAR],[TEXT_REMARK]
+            FROM [master].[dbo].[mv_war_main_prop_remark]
+            )
+            AS WAR_Text_Remark_QUERY
+            on WAR_MAIN_QUERY.SN_WAR= WAR_Text_Remark_QUERY.SN_WAR
+
+            JOIN
+            (SELECT [API12], [API10] FROM [master].[dbo].[output_data_api12]
+            )
+            AS Updated_Well_Name_api12
+            on WAR_MAIN_QUERY.API_WELL_NUMBER= Updated_Well_Name_api12.API12
+
+            JOIN
+            (SELECT [API10], [WELL NAME] as [WELL_NAME_UPDATED] FROM [master].[dbo].[output_data_well]
+            )
+            AS Updated_Well_Name_QUERY
+            on Updated_Well_Name_api12.API10= Updated_Well_Name_QUERY.API10
+
+            ORDER BY WELL_NAME, API12, WAR_START_DT
+
+
+
+db:
+  server_type: mssql
+  server: localhost\SQLEXPRESS
+  user: NULL
+  password: NULL
+  database: master
+
+transform:
+  dataframe:
+    sets:
+      - label: field_summary_df
+      - label: well_high_level_df
+        transpose:
+          flag: True
+          transposed_df_column_name:
+            column: Well Name
+            drop: True
+        to_html: {}
+      - label: well_location_df
+        transpose:
+          flag: True
+          transposed_df_column_name:
+            column: Well Name
+            drop: True
+          add_column_to_transposed_df :
+            location: 0
+            header: Units
+            values: [-, -, -, ft, ft, ft, ft, ft, deg, deg, deg, deg]
+        to_html: {}
+
+      - label: well_drill_info_df
+        transpose:
+          flag: True
+          transposed_df_column_name:
+            column: Well Name
+            drop: True
+          add_column_to_transposed_df :
+            location: 0
+            header: Units
+            values: [-, -, ft, ft, ft, ft, days, days, days, -, -, -, ppg]
+
+      - label: hydrocarbon_bearing_interval
+        transpose:
+          flag: False
+
+      - label: geology_markers
+        transpose:
+          flag: False
+
+      - label: well_completion_info_df
+        transpose:
+          flag: True
+          transposed_df_column_name:
+            column: Well Name
+            drop: True
+
+      - label: completion_perforations
+        transpose:
+          flag: False
+
+      - label: well_production_summary_df
+        transpose:
+          flag: True
+          transposed_df_column_name:
+            column: Well Name
+            drop: True
+          add_column_to_transposed_df :
+            location: 0
+            header: Units
+            values: [-, MMbbls, BOPD]
+
+      - label: well_tubulars_df
+        transpose:
+          flag: False
+
+      - label: wellhead_distances_df
+        json_transformation:
+          flag: True
+          columns: ['wellhead_distances']
+        transpose:
+          flag: False
+
+      - label: well_tubulars_by_hole_df
+        json_transformation:
+          flag: True
+          columns: ['data']
+        transpose:
+          flag: False
+
+      - label: well_activity_open_hole
+        transpose:
+          flag: False
+
+      - label: well_activity_summary
+        transpose:
+          flag: False
+
+      - label: well_activity_remarks
+        transpose:
+          flag: False
+
+      - label: reserves
+        transpose:
+          flag: False
+
+
+interactive_chart:
+  - label: oilReserves
+    chartType: line
+    options:
+      equalAxes: false
+      title: Oil Reserves
+      XLabel: Year
+      YLabel: Reserves (MMBOE)
+      legend:
+        flag: True
+      dataConversion:
+        flag: False
+    dataSources:
+      - df:
+          label: input_data_reserves
+          orient: records
+        plotSets:
+          - x: YEAR
+            y: Recoverable Oil
+            marker: {shape: circle, size: 3,
+                     mouseover: {flag: true}}
+            dataLabel: {flag: false}
+            legend: Recoverable Oil
+          - x: YEAR
+            y: Cum. Oil
+            marker: {shape: circle, size: 3,
+                     mouseover: {flag: true}}
+            dataLabel: {flag: false}
+            legend: Cum. Oil Produced
+          - x: YEAR
+            y: SEC Oil
+            marker: {shape: circle, size: 3,
+                     mouseover: {flag: true}}
+            dataLabel: {flag: false}
+            legend: SEC Oil
+
+  - label: fieldReserves
+    chartType: line
+    options:
+      equalAxes: false
+      title: Field Oil, Gas and BOE Reserves
+      XLabel: Year
+      YLabel: Reserves (MMBOE)
+      legend:
+        flag: True
+      dataConversion:
+        flag: False
+    dataSources:
+      - df:
+          label: input_data_reserves
+          orient: records
+        plotSets:
+          - x: YEAR
+            y: Recoverable Oil
+            marker: {shape: circle, size: 3,
+                     mouseover: {flag: true, columns: [Recoverable Oil]}}
+            dataLabel: {flag: false}
+            legend: Recoverable Oil
+          - x: YEAR
+            y: Recoverable Gas
+            marker: {shape: circle, size: 3,
+                     mouseover: {flag: true, columns: [Recoverable Gas]}}
+            dataLabel: {flag: false}
+            legend: Recoverable Gas
+          - x: YEAR
+            y: Recoverable BOE
+            marker: {shape: circle, size: 3,
+                     mouseover: {flag: true, columns: [Recoverable BOE]}}
+            dataLabel: {flag: false}
+            legend: Recoverable BOE
+
+  - label: chartProducersWellLocation
+    chartType: scatter
+    options:
+      equalAxes: true
+      title: Producers, Wellhead Locations
+      XLabel: Relative Easting (ft)
+      YLabel: Relative Northing (ft)
+      legend:
+        flag: False
+      dataConversion:
+        flag: False
+    dataSources:
+      - df:
+          label: input_data_well_location_chart_df
+          orient: records
+          filter:
+            - column: O_PROD_STATUS
+              value: 1
+        plotSets:
+          - x: Relative Wellhead X
+            y: Relative Wellhead Y
+            marker: {shape: circle, size: variable, sizeRange: [4, 10], sizeColumn: Production to date (MMBBL),
+                     mouseover: {flag: true, columns: [Well Name, Wellbore Status, Side Tracks, Production to date (MMBBL)]}}
+            dataLabel: {flag: true, column: Well Name}
+            legend: Wellhead
+
+  - label: chartProducersWellheadWithBottom
+    chartType: scatter
+    options:
+      equalAxes: true
+      title: Producers, Wellhead and Bottom Locations
+      XLabel: Relative Easting (ft)
+      YLabel: Relative Northing (ft)
+      legend:
+        flag: True
+      dataConversion:
+        flag: False
+    dataSources:
+      - df:
+          label: input_data_well_location_chart_df
+          orient: records
+          filter:
+            - column: O_PROD_STATUS
+              value: 1
+        plotSets:
+          - x: Relative Wellhead X
+            y: Relative Wellhead Y
+            marker: {shape: circle, size: 5, mouseover: {flag: true, columns: [Well Name, Wellbore Status, Side Tracks]}}
+            dataLabel: {flag: false, column: Well Name}
+            legend: Wellhead
+          - x: Relative Bottom X
+            y: Relative Bottom Y
+            marker: {shape: circle, size: 3,
+                     mouseover: {flag: true, columns: [Well Name, Horizontal Departure (ft)]}}
+            dataLabel: {flag: false, column: Well Name}
+            legend: Total Depth
+
+  - label: chartAllWellheadWithBottom
+    chartType: scatter
+    options:
+      equalAxes: true
+      title: All Wells, Wellhead and Bottom Locations
+      XLabel: Relative Easting (ft)
+      YLabel: Relative Northing (ft)
+      legend:
+        flag: True
+      dataConversion:
+        flag: False
+    dataSources:
+      - df:
+          label: input_data_well_location_chart_df
+          orient: records
+        plotSets:
+          - x: Relative Wellhead X
+            y: Relative Wellhead Y
+            marker: {shape: circle, size: 5, mouseover: {flag: true, columns: [Well Name, Wellbore Status, Side Tracks]}}
+            dataLabel: {flag: false, column: Well Name}
+            legend: Wellheads
+          - x: Relative Bottom X
+            y: Relative Bottom Y
+            marker: {shape: circle, size: 3,
+                     mouseover: {flag: true, columns: [Well Name, Horizontal Departure (ft)]}}
+            dataLabel: {flag: false, column: Well Name}
+            legend: Total Depth
+#          - x: COMP_x_rel
+#            y: COMP_y_rel
+#            marker: {shape: circle, size: 6, mouseover: {flag: true, columns: [Well Name, Production to date (MMBBL), COMP_RSVR_NAME, COMP_INTERVAL_NAME, Production Interval]}}
+#            dataLabel: {flag: false, column: Well Name}
+#            legend: Completions
+
+report:
+  file_prefix: bsee
+  append_run_ID: True
+  sets:
+
+    - jinja: True
+      template: data_manager/jinja2/bsee_field_data.html
+      input_attribute: vars
+      file_suffix: FieldData
+      pdf:
+        flag: False
+
+    - jinja: True
+      template: data_manager/jinja2/bsee_production_data.html
+      input_attribute: vars
+      file_suffix: ProductionData
+      pdf:
+        flag: False
+
+    - jinja: True
+      template: data_manager/jinja2/bsee_well_data.html
+      input_attribute: vars
+      file_suffix: WellData
+      pdf:
+        flag: False
+
+    - jinja: True
+      template: data_manager/jinja2/bsee_reserves_data.html
+      input_attribute: vars
+      file_suffix: Reserves
+      pdf:
+        flag: False
+

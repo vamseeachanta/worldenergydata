@@ -1,0 +1,7 @@
+---
+default_yaml: cfg\ong_field_development\BSEE_analysis.yml
+
+custom_parameters:
+  field_nickname: &field_nickname Gibson
+  boem_fields: &boem_fields "'KC096'"
+  well_type: &well_type "'E','D'"
