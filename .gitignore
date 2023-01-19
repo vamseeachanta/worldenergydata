@@ -129,5 +129,4 @@ dmypy.json
 .pyre/
 
 # Custom folders
-/data/bsee/
-/data/wind/
+#/data/bsee/
