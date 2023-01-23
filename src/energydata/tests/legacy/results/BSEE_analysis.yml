@@ -526,19 +526,7 @@ input_bsee_db:
   password: NULL
   database: bsee
 
-output_bsee_db:
-#  server_type: postgresql
-#  connection_string: postgres://bjfdagvcbgbxpu:81e521d4ab00e2ee7742de18d9c32d306e5bdcd138098a2e5fb81bf1628e1266@ec2-54-145-224-156.compute-1.amazonaws.com:5432/d5dco6g2reb39c
-#  server: postgresql-Heroku
-#  user: NULL
-#  password: NULL
-  server_type: postgresql
-  connection_string: postgres://oalxhdzjaziauc:65f62541af5f9dd68c3b37e5c9d393145863f2c2c1ce5f695b9e840955d43872@ec2-34-200-94-86.compute-1.amazonaws.com:5432/d4o6u5eamn3lpd
-  server: postgresql-Heroku
-  user: NULL
-  password: NULL
-  schema: bsee
-
+output_bsee_db: NULL
 
 save_data:
   sets:
