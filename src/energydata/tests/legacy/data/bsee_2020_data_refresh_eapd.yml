@@ -13,18 +13,9 @@ input_data:
   source: url
   download_to: data_manager/data/bsee
   sets:
-    -
-      label:
+    - label:
       io: https://www.data.bsee.gov/Well/Files/APIRawData.zip
       replace:
       output:
         target: db
-        if_exists: 'replace'
-
-db:
-  server_type: postgresql
-  connection_string: tba
-  server: postgres-Heroku
-  user: NULL
-  password: NULL
-  database: bsee
+        if_exists: "replace"
