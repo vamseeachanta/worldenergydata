@@ -12,11 +12,11 @@ def extract_table_content(url, input_data):
 
     input_box = driver.find_element(By.XPATH, '//input[@name="ASPxFormLayout1$ASPxTextBoxAPI"]')
     submit_button = driver.find_element(By.XPATH, "(//div[@id='ASPxFormLayout1_ASPxButtonSubmitQ_CD'])[1]")
-    
+
     CSV_button = driver.find_element(By.XPATH, "(//span[normalize-space()='CSV'])[1]")
 
     input_box.send_keys(input_data)
-            
+
     # Clicking on the submit button
     submit_button.click()
 
