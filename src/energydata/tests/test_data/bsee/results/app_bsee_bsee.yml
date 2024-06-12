@@ -1,0 +1,38 @@
+&id001 !!python/object/new:assetutilities.common.data.AttributeDict
+dictitems:
+  Analysis:
+    CustomInputFile: c:\Users\vamseea\github\energydata\src\energydata\tests\test_data\bsee\bsee.yml
+    DefaultInputFile: null
+    analysis_root_folder: c:\Users\vamseea\github\energydata\src\energydata\tests\test_data\bsee
+    basename: bsee
+    cfg_array_file_names: null
+    file_name: app_bsee_bsee
+    file_name_for_overwrite: app_bsee_bsee
+    log_folder: c:\Users\vamseea\github\energydata\src\energydata\tests\test_data\bsee\logs
+    result_folder: c:\Users\vamseea\github\energydata\src\energydata\tests\test_data\bsee\results
+    start_time: 2024-06-12 06:47:55.811020
+  basename: bsee
+  default:
+    config:
+      cfg_sensitivities: false
+      overwrite:
+        output: true
+    log_level: DEBUG
+  input:
+  - label: example1
+    save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    well_api12: 608174149400
+  - label: example2
+    save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    well_api12: 608174149401
+  result_method: selenium
+  settings_master:
+    save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+  type:
+    analysis: false
+    data: true
+    results: false
+state: *id001

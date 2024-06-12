@@ -1,0 +1,27 @@
+basename: bsee
+
+type:
+  data: True
+  analysis: False
+  results: False
+
+result_method: selenium
+
+settings_master:
+  save_csv: True
+  url: https://www.data.bsee.gov/Well/APD/Default.aspx
+
+input:
+  - label: example1
+    well_api12: 608174149400
+  - label: example2
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    well_api12: 608174149401
+    save_csv: True
+
+default:
+  log_level: DEBUG
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False
