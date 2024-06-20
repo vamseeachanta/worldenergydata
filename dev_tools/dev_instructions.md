@@ -13,7 +13,7 @@ For more information on library development, see latest in [py_project library](
 - Clone repository
 - Change to relevant branch
 - Pull latest code in relevant branch
-- Go to <repository>/dev_tools directory latest environment.yml
+- Go to {repository}/dev_tools directory latest environment.yml
   - If no virtual environment, create new using below:
     <code>
     conda env create -f environment.yml
@@ -25,11 +25,11 @@ For more information on library development, see latest in [py_project library](
 
 - Activate the environment
     <code>
-    conda activate <virtualenviornment>
+    conda activate {virtualenviornment}
     </code>
 - Using the pyproject.toml file, self-install the library into the environment for development
     <code>
-    cd github\<repository> # Change directory to energy repository
+    cd github\{repository} # Change directory to energy repository
     python -m pip install -e .
     </code>
 
