@@ -1,30 +1,34 @@
+# Standard library imports
 import os
 import sys
 
+# Third party imports
 from assetutilities.common.data import SaveData
-from assetutilities.common.yml_utilities import ymlInput
-from assetutilities.common.update_deep import AttributeDict
-from assetutilities.common.ApplicationManager import ConfigureApplicationInputs
-from assetutilities.common.data import CopyAndPasteFiles
+from assetutilities.common.file_management import FileManagement
 
+# Reader imports
 from energydata.custom.bsee import bsee
 
 save_data = SaveData()
 library_name = "energydata"
 
 
-def engine(inputfile=None):
-    inputfile = validate_arguments_run_methods(inputfile)
-
-    cfg = ymlInput(inputfile, updateYml=None)
-    cfg = AttributeDict(cfg)
+def engine(inputfile: str = None, cfg: dict = None) -> dict:
+    fm = FileManagement()
     if cfg is None:
-        raise ValueError("cfg is None")
+        inputfile = validate_arguments_run_methods(inputfile)
+        cfg = ymlInput(inputfile, updateYml=None)
+        cfg = AttributeDict(cfg)
+        if cfg is None:
+            raise ValueError("cfg is None")
 
     basename = cfg["basename"]
     application_manager = ConfigureApplicationInputs(basename)
     application_manager.configure(cfg, library_name)
     cfg_base = application_manager.cfg
+    cfg_base = fm.router(cfg_base)
+
+    logging.info(f"{basename}, application ... START")
 
 
     if basename in ["bsee"]:
