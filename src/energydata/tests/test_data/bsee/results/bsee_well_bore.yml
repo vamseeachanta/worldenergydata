@@ -1,0 +1,39 @@
+&id001 !!python/object/new:assetutilities.common.data.AttributeDict
+state: *id001
+dictitems:
+  basename: bsee
+  type:
+    data: true
+    analysis: false
+    results: false
+  result_method: selenium
+  settings_master:
+    save_csv: true
+    url: https://www.data.boem.gov/Well/Borehole/Default.aspx/
+  input:
+  - save_csv: true
+    url: https://www.data.boem.gov/Well/Borehole/Default.aspx/
+    label: wellbrore1
+    well_api12: 608174149400
+  - save_csv: true
+    url: https://www.data.boem.gov/Well/Borehole/Default.aspx/
+    label: wellbrore2
+    well_api12: 608174149401
+  default:
+    log_level: DEBUG
+    config:
+      overwrite:
+        output: true
+      cfg_sensitivities: false
+  Analysis:
+    basename: bsee
+    analysis_root_folder: c:\github\energydata\src\energydata\tests\test_data\bsee
+    file_name: bsee_well_bore
+    file_name_for_overwrite: bsee_well_bore
+    result_folder: c:\github\energydata\src\energydata\tests\test_data\bsee\results
+    log_folder: c:\github\energydata\src\energydata\tests\test_data\bsee\logs
+    start_time: 2024-07-18 11:45:20.773692
+    cfg_array_file_names: ~
+    DefaultInputFile: ~
+    CustomInputFile: c:\github\energydata\src\energydata\tests\test_data\bsee\bsee_well_bore.yml
+    fe_folder: c:\github\energydata\src\energydata\tests\test_data\bsee\results
