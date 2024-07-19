@@ -51,12 +51,12 @@ class bseedata:
 
         input_box.send_keys(input_data)
                     
-        # Clicking on the submit button
+        
         submit_button.click()
 
         CSV_button.click()
 
-        # In order to Wait for the page to load
+        # wait for the page to load
         driver.implicitly_wait(250)
         driver.quit()
 
@@ -72,11 +72,9 @@ class bseedata:
 
         download_directory = download_directory.replace("\\","\\")
 
-        # Loop through files in the directory
+        
         for filename in os.listdir(download_directory):
-            # Check if the file ends with .tmp extension
             if filename.endswith('.tmp'):
-                # Rename the file to change the extension to .csv
                 os.rename(os.path.join(download_directory, filename), os.path.join(download_directory, filename[:-4] + '.csv'))
 
 
@@ -93,16 +91,13 @@ class bseedata:
             csv_files = [file_path for file_path in file_paths if file_path.endswith('.csv')]
             return csv_files
 
-        # Specify the directory where files are located
         specified_directory = download_directory
 
-        # Get the paths of all files in the specified directory and its subdirectories
         all_file_paths = get_file_paths(specified_directory)
 
         # Filter out the CSV files from all files
         csv_files = filter_csv_files(all_file_paths)
 
-        # Print the paths of CSV files
         s=str(csv_files[0])
 
 

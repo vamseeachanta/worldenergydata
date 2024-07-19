@@ -27,13 +27,13 @@ dictitems:
       cfg_sensitivities: false
   Analysis:
     basename: bsee
-    analysis_root_folder: c:\github\energydata\src\energydata\tests\test_data\bsee
+    analysis_root_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee
     file_name: bsee_well_data
     file_name_for_overwrite: bsee_well_data
-    result_folder: c:\github\energydata\src\energydata\tests\test_data\bsee\results
-    log_folder: c:\github\energydata\src\energydata\tests\test_data\bsee\logs
-    start_time: 2024-07-18 11:27:26.809900
+    result_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\results
+    log_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\logs
+    start_time: 2024-07-19 09:46:27.542335
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: c:\github\energydata\src\energydata\tests\test_data\bsee\bsee_well_data.yml
-    fe_folder: c:\github\energydata\src\energydata\tests\test_data\bsee\results
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\bsee_well_data.yml
+    fe_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\results
