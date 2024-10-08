@@ -4,47 +4,26 @@ skinparam titleBorderThickness 2
 skinparam titleBorderColor red
 skinparam titleBackgroundColor Tomato
 
-title Python Package Development \n Recommended Practices
+title BSEE Data
 
 start
 
     partition "New Library - Setup" {
 
 
-        :Make a copy/clone of cookiecutter library;
+        :Download API data;
             note right
-                Use library of choice. An exmaple:
-                https://github.com/vamseeachanta/py_package
+                - Use local/supabase data
+                - user well if not found -> download
             end note
 
-        :Map to new repo;
+        :Get other data;
             note right
-                If cloned, delete the .git folder to break dependency from cloned repo
+                yml file data
+                - Production data  
                 Initilize this as new repo using choice tools i.e. IDE, Host etc.
             end note
 
-        :Rename key folders;
-            note right
-                {py_package}, 
-                {py_package}/src/{py_package}
-                etc.
-            end note
-
-        :Rename key filenames;
-            note right
-                {py_package}/src/{py_package}/{calculation}.py
-                {py_package}/src/{py_package}/tests/test_{calculation}.py
-                etc.
-            end note
-
-        :Update pyproject.toml;
-            note right
-                Review entire file line by line.
-                Update key items below:
-                - package name
-                - dependencies
-                - version management
-            end note
     }
 
     partition "Development" {
@@ -64,35 +43,7 @@ start
         end note
     }
 
-    partition "Testing" {
-    :Perform github tests upon push;
-        note right
-            #TODO Figure out testing in GitHub
-            Shall include all possible library versions etc.
-        end note
-    }
 
-
-    partition "Deployment" {
-    : Use bumpver to update version;
-        note right
-            pip install bumpver (optional)
-            bumpver update --patch (or)
-            bumpver update --major (or)
-            bumpver update --minor
-        end note
-    : Build dist files i.e. Wheels (.whl) and .tar.gz files;
-        note right
-            pip install build
-            python -m build
-        end note
-    : Push dist files to pypi;
-        note right
-            conda install twine
-            twine upload dist/*
-            Need to create pypi account if not already done so
-        end note
-    }
 
 stop
 
