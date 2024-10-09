@@ -4,46 +4,45 @@ skinparam titleBorderThickness 2
 skinparam titleBorderColor red
 skinparam titleBackgroundColor Tomato
 
-title BSEE Data
+title BSEE Data Workflow
 
 start
 
-    partition "New Library - Setup" {
+    partition {
 
 
         :Download API data;
             note right
                 - Use local/supabase data
-                - user well if not found -> download
+                - User well if not found -> download
             end note
 
         :Get other data;
             note right
-                yml file data
+                - Yml file data
                 - Production data  
-                Initilize this as new repo using choice tools i.e. IDE, Host etc.
+            end note
+        :Read the API Raw data;
+            note right
+                - Load into in-line program
+                - python database or inline sql
+            end note
+        : User query;
+            note right
+                - Ask for data for a well API 14
+            end note
+        :Query data;
+            note right
+                - Use API 14 to perform other queries online
+                - Program will get other data possible
+            end note
+        :Last resort;
+            note right
+                - Download the data
+                - Break into individual files and run
             end note
 
     }
-
-    partition "Development" {
-    :Write test;
-        note right
-            For Test Driven Development (TDD)
-            Modify template test
-        end note
-    :Install Package locally i.e.
-    an editable install;
-        note right
-            Use .toml file //python -m pip install -e .//
-            (or)
-            Use conda-build //conda develop .//
-            Development in an IDE with breakpoints 
-            on local files etc.
-        end note
-    }
-
-
 
 stop
 
