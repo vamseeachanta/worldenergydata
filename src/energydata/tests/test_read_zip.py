@@ -12,6 +12,7 @@ def test_read_zip_file():
                 if not file_name.endswith('/'):
                     with zip_file.open(file_name) as file:
                         data = file.read()
+                        print(f"Content of {file_name}:\n{data[:1000]}")
 
     except FileNotFoundError:
         print("Error: Zip file path not found.")
