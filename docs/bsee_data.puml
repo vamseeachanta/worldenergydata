@@ -15,18 +15,53 @@ start
             note right
                 - Use local/supabase data
                 - User well if not found -> download
+                - Batchfile mode (Repository or database)
+                - Frequency to be decided.
+                If online queries do not work:
+                - Download the data
+                - Break into individual files and run
             end note
 
-        :Get other data;
-            note right
-                - Yml file data
-                - Production data  
-            end note
         :Read the API Raw data;
             note right
                 - Load into in-line program
                 - python database or inline sql
             end note
+
+        : User query;
+            note right
+                - Ask for data for a well API 12
+                  - API 12 is the unique identifier for a well
+                  - Find related data
+                - Ask for data for a block or lease (multiple wells)
+                  - If block is given, get all API12 wells in block
+                  - read for each API well 
+            end note
+
+        :Well Highlevel data;
+            note right
+                Use online query 
+                where working
+            end note
+
+        :Well Detailed data;
+            note right
+                - borehole data (online)
+                - Get production data
+                - Get completion data
+                - Get drilling data
+                - Get permit data
+                - Get inspection data
+                - Get violation data
+            end note
+
+
+        :Get production data;
+            note right
+                - Yml file data
+                - Production data from downloaded files
+            end note
+
         : User query;
             note right
                 - Ask for data for a well API 14
@@ -35,11 +70,6 @@ start
             note right
                 - Use API 14 to perform other queries online
                 - Program will get other data possible
-            end note
-        :Last resort;
-            note right
-                - Download the data
-                - Break into individual files and run
             end note
 
     }

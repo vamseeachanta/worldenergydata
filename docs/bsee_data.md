@@ -1,17 +1,17 @@
 # Introduction
 
-BSEE Data 
+BSEE Data
 
 # Summary
 
+Key rules:
 
+- Data can be either queried online (data.bsee.com) or downloaded in bulk. First preference is online query.
+- When data is read from disk files, a seperate process should be utilized.
 
 # Usage
 
 To run BSEE data smoothly, clone the below repository.
-
-
-
 
 # Sources
 
@@ -20,24 +20,34 @@ To run BSEE data smoothly, clone the below repository.
 - Example
 - Cascade Chinook
 
-
-
 ## API Number
 
+test - 10 APIs
+<https://www.data.bsee.gov/Well/APD/Default.aspx>
 
+## Borehole data
+
+### Borehole data
+Online query
+<https://www.data.boem.gov/Well/Borehole/Default.aspx/>
+
+### Bottomhole pressure
+
+https://www.data.bsee.gov/Well/BHPS/Default.aspx
 
 ## Production Data
 
+online query:
+<https://www.data.bsee.gov/Production/ProductionData/Default.aspx>
+
+Lease Number: G03237
+Production Month/year : 01/2024 to 02/2024
+
 - Metadata for the files is given below:
-https://www.data.bsee.gov/Main/OGOR-A.aspx
+<https://www.data.bsee.gov/Main/OGOR-A.aspx>
 
 - Download all the files from below location
-https://www.data.bsee.gov/Main/OGOR-A.aspx
-
-- Read the files and save them to Parquet format
-https://mungingdata.com/python/writing-parquet-pandas-pyspark-koalas/
-
-- Read files, combine them to single parquet file 
+<https://www.data.bsee.gov/Main/OGOR-A.aspx>
 
 - Filter the files by API number as necessary
 
@@ -47,4 +57,6 @@ https://mungingdata.com/python/writing-parquet-pandas-pyspark-koalas/
 
 ## References
 
+
+### URLS to download data
 
