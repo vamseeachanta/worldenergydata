@@ -59,13 +59,13 @@ dictitems:
       cfg_sensitivities: false
   Analysis:
     basename: bsee
-    analysis_root_folder: src\energydata\tests\test_data\bsee
+    analysis_root_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee
     file_name: bsee_10_APIs
     file_name_for_overwrite: bsee_10_APIs
-    result_folder: src\energydata\tests\test_data\bsee\results
-    log_folder: src\energydata\tests\test_data\bsee\logs
-    start_time: 2024-10-15 10:07:19.562378
+    result_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\results
+    log_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\logs
+    start_time: 2024-10-15 11:55:44.310651
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: src\energydata\tests\test_data\bsee\bsee_10_APIs.yml
-    fe_folder: src\energydata\tests\test_data\bsee\results
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\bsee_10_APIs.yml
+    fe_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\results

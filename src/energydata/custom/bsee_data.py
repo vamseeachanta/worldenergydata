@@ -105,17 +105,16 @@ class bseedata:
         df=pd.read_csv(s)
 
 
-        print()
+        print() 
         print()
         print()
         print(f"****Details of {input_data}***** \n\n")
-        print(df.to_string())
+        print(df)
         print()
         print()
 
         #For deleting the file immediately after extracting
         os.remove(s)
-        #print(f"File '{s}' has been deleted successfully.")
         
         return df
 
