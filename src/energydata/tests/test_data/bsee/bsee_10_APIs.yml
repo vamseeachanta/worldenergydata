@@ -11,35 +11,35 @@ settings_master:
   url: https://www.data.bsee.gov/Well/APD/Default.aspx
 
 input:
-  - label: well_api_1
-    Api14 : 608164024500
+  - label: API_number_1
+    well_api12 : 608164024500
 
-  - label: well_api_2
-    Api14 : 608164025800
+  - label: API_number_2
+    well_api12 : 608164025800
 
-  - label: well_api_3
-    Api14 : 608164025400
+  - label: API_number_3
+    well_api12 : 608164025400
 
-  - label: well_api_4
-    Api14 : 608164025600
+  - label: API_number_4
+    well_api12 : 608164025600
 
-  - label: well_api_5
-    Api14 : 608174059000
+  - label: API_number_5
+    well_api12 : 608174059000
 
-  - label: well_api_6
-    Api14 : 608164032700
+  - label: API_number_6
+    well_api12 : 608164032700
 
-  - label: well_api_7
-    Api14 : 177054107800
+  - label: API_number_7
+    well_api12 : 177054107800
 
-  - label: well_api_8
-    Api14 : 177094120301
+  - label: API_number_8
+    well_api12 : 177094120301
 
-  - label: well_api_9
-    Api14 : 177244067506
+  - label: API_number_9
+    well_api12 : 177244067506
 
-  - label10: well_api_10
-    Api14 : 177024118904
+  - label: API_number_10
+    well_api12 : 177024118904
 
 default:
   log_level: DEBUG

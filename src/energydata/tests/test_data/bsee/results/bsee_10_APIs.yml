@@ -1,0 +1,71 @@
+&id001 !!python/object/new:assetutilities.common.data.AttributeDict
+state: *id001
+dictitems:
+  basename: bsee
+  type:
+    data: true
+    analysis: false
+    results: false
+  result_method: selenium
+  settings_master:
+    save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+  input:
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_number_1
+    well_api12: 608164024500
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_number_2
+    well_api12: 608164025800
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_number_3
+    well_api12: 608164025400
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_number_4
+    well_api12: 608164025600
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_number_5
+    well_api12: 608174059000
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_number_6
+    well_api12: 608164032700
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_number_7
+    well_api12: 177054107800
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_number_8
+    well_api12: 177094120301
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_number_9
+    well_api12: 177244067506
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_number_10
+    well_api12: 177024118904
+  default:
+    log_level: DEBUG
+    config:
+      overwrite:
+        output: true
+      cfg_sensitivities: false
+  Analysis:
+    basename: bsee
+    analysis_root_folder: src\energydata\tests\test_data\bsee
+    file_name: bsee_10_APIs
+    file_name_for_overwrite: bsee_10_APIs
+    result_folder: src\energydata\tests\test_data\bsee\results
+    log_folder: src\energydata\tests\test_data\bsee\logs
+    start_time: 2024-10-15 10:07:19.562378
+    cfg_array_file_names: ~
+    DefaultInputFile: ~
+    CustomInputFile: src\energydata\tests\test_data\bsee\bsee_10_APIs.yml
+    fe_folder: src\energydata\tests\test_data\bsee\results

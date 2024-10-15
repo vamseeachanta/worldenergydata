@@ -13,11 +13,11 @@ dictitems:
   input:
   - save_csv: true
     url: https://www.data.boem.gov/Well/Borehole/Default.aspx/
-    label: wellbrore1
+    label: wellbore1
     well_api12: 608174149400
   - save_csv: true
     url: https://www.data.boem.gov/Well/Borehole/Default.aspx/
-    label: wellbrore2
+    label: wellbore2
     well_api12: 608174149401
   default:
     log_level: DEBUG
@@ -32,7 +32,7 @@ dictitems:
     file_name_for_overwrite: bsee_well_bore
     result_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\results
     log_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\logs
-    start_time: 2024-07-19 09:48:01.461366
+    start_time: 2024-10-15 10:00:00.202544
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\bsee_well_bore.yml

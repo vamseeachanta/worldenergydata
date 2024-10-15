@@ -12,10 +12,9 @@ settings_master:
   url: https://www.data.boem.gov/Well/Borehole/Default.aspx/
 
 input:
-  - label: wellbrore1
+  - label: wellbore1
     well_api12: 608174149400
-  - label: wellbrore2
-    url: https://www.data.boem.gov/Well/Borehole/Default.aspx/
+  - label: wellbore2
     well_api12: 608174149401
     save_csv: True
 

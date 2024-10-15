@@ -7,10 +7,7 @@ from energydata.engine import engine
 
 
 def run_application(input_file: str, api_config: dict):
-    """
-    Runs the engine with specified input file and additional API config.
-    """
-    # Load YAML if it's the primary configuration file
+
     with open(input_file, 'r') as file:
         cfg = yaml.safe_load(file)
 
@@ -18,7 +15,7 @@ def run_application(input_file: str, api_config: dict):
     cfg.update(api_config)
 
     # Pass both input file path and config dictionary to engine
-    engine(inputfile=input_file)
+    engine(inputfile=input_file, )
    
 
 
@@ -38,7 +35,7 @@ def test_application():
 
     for api_config in config['input']:
 
-        print(f"Running test for API: {api_config['label']} with well_api12: {api_config['Api14']}")
+        print(f"Running test for API: {api_config['label']} with well_api12: {api_config['well_api12']}")
 
         # Run application for the current API configuration
         run_application(input_file, api_config)
