@@ -1,7 +1,10 @@
-from assetutilities.common.update_deep import update_deep_dictionary
+# Third party imports
+from energydata.custom.bsee_data_api import BSEEDataApi
 
-from energydata.custom.bsee_data import bseedata
-bsee_data = bseedata()
+# Reader imports
+from energydata.custom.bsee_data_api import BSEEDataApi
+
+bsee_data = BSEEDataApi()
 
 class bsee:
     

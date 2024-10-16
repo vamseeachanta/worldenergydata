@@ -1,11 +1,14 @@
+# Standard library imports
 import os
+import pandas as pd
+from selenium import webdriver
+from selenium.webdriver.common.by import By
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from bs4 import BeautifulSoup
-import pandas as pd
 
-class bseedata:
+
+class BSEEDataApi:
     
     def __init__(self):
         pass
@@ -61,6 +64,7 @@ class bseedata:
         driver.quit()
 
         # Directory where the downloaded file is located
+        # Standard library imports
         from pathlib import Path
 
         home_dir = Path.home()
