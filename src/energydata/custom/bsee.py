@@ -1,10 +1,7 @@
-# Third party imports
-from energydata.custom.bsee_data_api import BSEEDataApi
-
 # Reader imports
-from energydata.custom.bsee_data_api import BSEEDataApi
+from energydata.custom.bsee_data_api import BSEEDataScrapper
 
-bsee_data = BSEEDataApi()
+bsee_data = BSEEDataScrapper()
 
 class bsee:
     

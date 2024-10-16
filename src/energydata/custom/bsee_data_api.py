@@ -1,14 +1,13 @@
 # Standard library imports
 import os
+
 import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 
 
-class BSEEDataApi:
+class BSEEDataScrapper:
     
     def __init__(self):
         pass
@@ -17,13 +16,15 @@ class BSEEDataApi:
     def router(self, cfg):
 
         data_df_array = self.get_data(cfg)
-        
+
         return cfg
 
     def get_data(self, cfg):
         data_df_array = []
         for input_item in cfg['input']:
             url = input_item['url']
+            # input_item['method'] = 'scrapy_request_post'
+            # input_item['method'] = 'Selenium'
             well_api12 = input_item['well_api12']
             df = self.extract_table_content(url, well_api12)
             self.save_to_csv(df, input_item, cfg)
@@ -49,12 +50,12 @@ class BSEEDataApi:
 
         input_box = driver.find_element(By.XPATH, '//input[@name="ASPxFormLayout1$ASPxTextBoxAPI"]')
         submit_button = driver.find_element(By.XPATH, "(//div[@id='ASPxFormLayout1_ASPxButtonSubmitQ_CD'])[1]")
-            
+
         CSV_button = driver.find_element(By.XPATH, "(//span[normalize-space()='CSV'])[1]")
 
         input_box.send_keys(input_data)
-                    
-        
+
+
         submit_button.click()
 
         CSV_button.click()
