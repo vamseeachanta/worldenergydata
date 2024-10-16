@@ -1,0 +1,28 @@
+basename: bsee
+
+type_of:
+  data: True
+  production: True
+  analysis: False
+  results: False
+
+result_method: selenium
+
+settings_master:
+  save_csv: True
+  url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+
+input:
+  - label: production_data
+  - lease_number: G03237
+  - Duration:
+      from : 01/2024
+      to : 02/2024
+
+
+default:
+  log_level: DEBUG
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False

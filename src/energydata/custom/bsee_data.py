@@ -19,13 +19,21 @@ class BseeData:
 
     def get_data(self, cfg):
         data_df_array = []
-        for input_item in cfg['input']:
-            url = input_item['url']
-            well_api12 = input_item['well_api12']
-            df = self.extract_table_content(url, well_api12)
+        if "type_of" in cfg and cfg['type_of']['production']:
+            url = cfg['settings_master']['url']
+            lease_number = cfg['input'][1]['lease_number']
+            df = self.extract_table_content(cfg,url, lease_number)
+            input_item = cfg['settings_master']
             self.save_to_csv(df, input_item, cfg)
-
             data_df_array.append(df)
+        else:
+            for input_item in cfg['input']:
+                url = input_item['url']
+                well_api12 = input_item['well_api12']
+                df = self.extract_table_content(cfg,url, well_api12)
+                self.save_to_csv(df, input_item, cfg)
+
+                data_df_array.append(df)
 
         return data_df_array
 
@@ -37,12 +45,14 @@ class BseeData:
             df.to_csv(csv_filename, index=False, header=True)
 
 
-    def extract_table_content(self, url,input_data):
+    def extract_table_content(self, cfg, url,input_data):
 
         driver = webdriver.Chrome()
 
         driver.get(url)
-
+        
+        from_date = cfg['input'][2]['Duration']['from']
+        to = cfg['input'][2]['Duration']['to']
 
         input_box = driver.find_element(By.XPATH, '//input[@name="ASPxFormLayout1$ASPxTextBoxAPI"]')
         submit_button = driver.find_element(By.XPATH, "(//div[@id='ASPxFormLayout1_ASPxButtonSubmitQ_CD'])[1]")
