@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 import pandas as pd
 
-class bseedata:
+class BseeData:
     
     def __init__(self):
         pass
@@ -117,9 +117,6 @@ class bseedata:
         os.remove(s)
         
         return df
-
-
-
 
     def get_cfg_with_master_data(self, cfg):
         pass

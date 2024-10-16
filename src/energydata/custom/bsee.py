@@ -1,7 +1,7 @@
 from assetutilities.common.update_deep import update_deep_dictionary
 
-from energydata.custom.bsee_data import bseedata
-bsee_data = bseedata()
+from energydata.custom.bsee_data import BseeData
+bsee_data = BseeData()
 
 class bsee:
     
