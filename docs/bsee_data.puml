@@ -1,4 +1,4 @@
-@startuml package_development
+@startuml bsee_data
 skinparam titleBorderRoundCorner 15
 skinparam titleBorderThickness 2
 skinparam titleBorderColor red
