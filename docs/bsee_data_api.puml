@@ -27,14 +27,18 @@ start
                 - Explore: Does grid have a sub url we can use?
             end note
 
-        : Download CSV;
+        :Download and Process CSV Data;
             note right
-            TBA
+             - Click CSV button
+             - Wait for download
+             - Rename file to .csv if necessary
+             - Read CSV into DataFrame
             end note
 
-        :Read all CSVs;
+        :Extract and Delete CSV Data;
             note right
-            TBA
+            - Extract data for analysis
+            - Remove CSV file after reading
             end note
 
 
