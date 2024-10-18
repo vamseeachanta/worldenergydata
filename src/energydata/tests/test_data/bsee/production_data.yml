@@ -1,10 +1,9 @@
 basename: bsee
 
-type_of:
+type:
   data: True
   production: True
   analysis: False
-  results: False
 
 result_method: selenium
 
@@ -14,8 +13,8 @@ settings_master:
 
 input:
   - label: production_data
-  - lease_number: G03237
-  - Duration:
+    well_api12: G03237 # lease number
+    Duration:
       from : 01/2024
       to : 02/2024
 

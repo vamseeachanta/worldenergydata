@@ -1,3 +1,6 @@
+
+from assetutilities.common.update_deep import update_deep_dictionary
+
 # Reader imports
 from energydata.custom.bsee_data_api import BSEEDataScrapper
 

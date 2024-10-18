@@ -2,6 +2,7 @@ basename: bsee
 
 type:
   data: True
+  well: True
   analysis: False
 
 result_method: selenium

@@ -1,9 +1,10 @@
 # Standard library imports
 import os
+import requests
+from bs4 import BeautifulSoup
 
 import pandas as pd
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 from selenium.webdriver.common.by import By
 
 
@@ -26,9 +27,8 @@ class BSEEDataScrapper:
             # input_item['method'] = 'scrapy_request_post'
             # input_item['method'] = 'Selenium'
             well_api12 = input_item['well_api12']
-            df = self.extract_table_content(url, well_api12)
+            df = self.extract_table_content(url, well_api12, cfg)
             self.save_to_csv(df, input_item, cfg)
-
             data_df_array.append(df)
 
         return data_df_array
@@ -40,13 +40,11 @@ class BSEEDataScrapper:
             csv_filename = os.path.join(cfg['Analysis']['result_folder'], sheetname + '.csv')
             df.to_csv(csv_filename, index=False, header=True)
 
-
-    def extract_table_content(self, url,input_data):
+    def extract_table_content(self, url, input_data, cfg):
 
         driver = webdriver.Chrome()
 
         driver.get(url)
-
 
         input_box = driver.find_element(By.XPATH, '//input[@name="ASPxFormLayout1$ASPxTextBoxAPI"]')
         submit_button = driver.find_element(By.XPATH, "(//div[@id='ASPxFormLayout1_ASPxButtonSubmitQ_CD'])[1]")
@@ -54,7 +52,6 @@ class BSEEDataScrapper:
         CSV_button = driver.find_element(By.XPATH, "(//span[normalize-space()='CSV'])[1]")
 
         input_box.send_keys(input_data)
-
 
         submit_button.click()
 
@@ -72,17 +69,13 @@ class BSEEDataScrapper:
 
         download_directory = home_dir / 'Downloads'
 
-
         download_directory = str(download_directory)
 
-        download_directory = download_directory.replace("\\","\\")
+        download_directory = download_directory.replace("\\", "\\")
 
-        
         for filename in os.listdir(download_directory):
             if filename.endswith('.tmp'):
                 os.rename(os.path.join(download_directory, filename), os.path.join(download_directory, filename[:-4] + '.csv'))
-
-
 
         def get_file_paths(directory):
             file_paths = []
@@ -103,14 +96,12 @@ class BSEEDataScrapper:
         # Filter out the CSV files from all files
         csv_files = filter_csv_files(all_file_paths)
 
-        s=str(csv_files[0])
+        s = str(csv_files[0])
 
+        s = s.replace("\\", "\\")
+        df = pd.read_csv(s)
 
-        s=s.replace("\\","\\")
-        df=pd.read_csv(s)
-
-
-        print() 
+        print()
         print()
         print()
         print(f"****Details of {input_data}***** \n\n")
@@ -118,15 +109,12 @@ class BSEEDataScrapper:
         print()
         print()
 
-        #For deleting the file immediately after extracting
+        # For deleting the file immediately after extracting
         os.remove(s)
-        
+
         return df
-
-
-
 
     def get_cfg_with_master_data(self, cfg):
         pass
-        
+
         return cfg
