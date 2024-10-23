@@ -15,7 +15,6 @@ input:
   - label: example1
     well_api12: 608174149400
   - label: example2
-    url: https://www.data.bsee.gov/Well/APD/Default.aspx
     well_api12: 608174149401
     save_csv: True
 
