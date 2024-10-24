@@ -36,3 +36,4 @@ dependencies:
       - assetutilities
       - pytest
       - deepdiff
+      - requests

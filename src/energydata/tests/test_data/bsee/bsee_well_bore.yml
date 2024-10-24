@@ -6,6 +6,7 @@ type:
   analysis: False
 
 result_method: selenium
+webscraper_enginer: selenium # or scrapy or beautifulsoup
 
 settings_master:
   save_csv: True
