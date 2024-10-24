@@ -38,18 +38,17 @@ class BSEEDataScrapper:
         eventvalidation = soup.find('input', {'name': '__EVENTVALIDATION'})['value']
         viewstate_generator = soup.find('input', {'name': '__VIEWSTATEGENERATOR'})['value']
 
-        # POST request Payload for submitting the API number
         api_submit_payload = {
             '__EVENTTARGET': '',
             '__EVENTARGUMENT': '',
             '__VIEWSTATE': viewstate,
             '__VIEWSTATEGENERATOR': viewstate_generator,
             '__EVENTVALIDATION': eventvalidation,
-            'ASPxFormLayout1$ASPxTextBoxAPI': API_number,  # The API number
-            'ASPxFormLayout1$ASPxButtonSubmitQ': 'Submit Query',  # The submit button
+            'ASPxFormLayout1$ASPxTextBoxAPI': API_number, 
+            'ASPxFormLayout1$ASPxButtonSubmitQ': 'Submit Query'  # The submit button
         }
 
-        # Submit the API form
+        # Submit the API form 
         response = session.post(url, data=api_submit_payload)
         soup = BeautifulSoup(response.content, 'html.parser')
 
@@ -58,7 +57,6 @@ class BSEEDataScrapper:
         else:
             print(f"{Fore.RED}Failed to submit API {API_number}{Style.RESET_ALL}. Status code: {response.status_code}")
 
-        # For CSV export, extract required hidden fields
         viewstate = soup.find('input', {'name': '__VIEWSTATE'})['value']
         eventvalidation = soup.find('input', {'name': '__EVENTVALIDATION'})['value']
         viewstate_generator = soup.find('input', {'name': '__VIEWSTATEGENERATOR'})['value']
@@ -79,7 +77,7 @@ class BSEEDataScrapper:
         if csv_response.status_code == 200:
             with open(csv_path, 'wb') as f:
                 f.write(csv_response.content)
-                df = pd.read_csv(BytesIO(csv_response.content))
+                df = pd.read_csv(BytesIO(csv_response.content)) # class <bytes> to pandas df
                 print()
                 print(f"****The Scraped data of {API_number} ****\n\n")
                 print(df)

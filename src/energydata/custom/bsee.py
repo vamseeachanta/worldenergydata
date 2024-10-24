@@ -2,7 +2,7 @@
 from assetutilities.common.update_deep import update_deep_dictionary
 
 # Reader imports
-from energydata.custom.bsee_data_api import BSEEDataScrapper
+from energydata.custom.bsee_data_api_bs4 import BSEEDataScrapper
 
 bsee_data = BSEEDataScrapper()
 
