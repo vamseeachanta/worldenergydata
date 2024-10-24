@@ -74,7 +74,7 @@ class BSEEDataScrapper:
         csv_response = session.post(url, data=csv_export_payload)
 
         label = input_item['label']
-        csv_path = os.path.join(r'src\energydata\tests\test_data\bsee\results', f'{label}.csv')
+        csv_path = os.path.join(r'src\energydata\tests\test_data\bsee\results\Data', f'{label}.csv')
 
         if csv_response.status_code == 200:
             with open(csv_path, 'wb') as f:
