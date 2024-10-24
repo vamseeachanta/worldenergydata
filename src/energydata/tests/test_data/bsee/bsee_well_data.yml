@@ -12,11 +12,10 @@ settings_master:
   url: https://www.data.bsee.gov/Well/APD/Default.aspx
 
 input:
-  - label: example1
+  - label: well_data_1
     well_api12: 608174149400
-  - label: example2
+  - label: well_data_2
     well_api12: 608174149401
-    save_csv: True
 
 default:
   log_level: DEBUG
