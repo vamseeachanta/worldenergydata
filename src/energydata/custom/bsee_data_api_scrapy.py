@@ -1,8 +1,8 @@
 import scrapy
-from scrapy.utils.response import open_in_browser # useful while program is running
+from scrapy.utils.response import open_in_browser #noqa useful while program is running
 from scrapy.crawler import CrawlerProcess
 from scrapy import FormRequest
-import pandas as pd
+import pandas as pd #noqa
 
 class BSEEDataSpider(scrapy.Spider):
 
