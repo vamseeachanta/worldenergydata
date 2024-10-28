@@ -2,9 +2,9 @@
 from assetutilities.common.update_deep import update_deep_dictionary
 
 # Reader imports
-from energydata.custom.bsee_data_api_bs4 import BSEEDataScrapper
+from energydata.custom.bsee_data_api_scrapy import BSEEDataSpider
 
-bsee_data = BSEEDataScrapper()
+bsee_data = BSEEDataSpider()
 
 class bsee:
     
@@ -25,12 +25,6 @@ class bsee:
         if cfg['type']['results']:
             pass
 
-        return cfg
-
-
-    def get_cfg_with_master_data(self, cfg):
-        pass
-        
         return cfg
 
     def get_cfg_with_master_data(self, cfg):
