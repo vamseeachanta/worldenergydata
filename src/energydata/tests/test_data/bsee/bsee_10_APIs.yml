@@ -2,7 +2,7 @@ basename: bsee
 
 type:
   data: True
-  well: True
+  well_APD: True
   analysis: False
 
 result_method: selenium

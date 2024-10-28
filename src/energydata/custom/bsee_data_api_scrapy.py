@@ -52,7 +52,7 @@ class BSEEDataSpider(scrapy.Spider):
 
         label = self.input_item['label']
         API_number = self.input_item['well_api12'] 
-        file_path = os.path.join(r'src\energydata\tests\test_data\bsee\results\Data', f'{label}_.csv')
+        file_path = os.path.join(r'src\energydata\tests\test_data\bsee\results\Data', f'{label}.csv')
 
         with open(file_path, 'wb') as f:
             f.write(response.body)

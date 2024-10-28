@@ -16,13 +16,13 @@ class bsee:
 
         cfg = self.get_cfg_with_master_data(cfg)
 
-        if cfg['type']['data']:
+        if cfg['type']['data'] and cfg['type']['well_APD']:
             bsee_data.router(cfg)
 
-        if cfg['type']['analysis']:
-            pass
+        if cfg['type']['data'] and cfg['type']['production']:
+            bsee_data.router(cfg)
 
-        if cfg['type']['results']:
+        if cfg['type']['data'] and cfg['type']['borehole']:
             pass
 
         return cfg
