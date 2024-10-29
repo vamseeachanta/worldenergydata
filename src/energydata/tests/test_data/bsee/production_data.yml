@@ -1,8 +1,7 @@
 basename: bsee
 
-type:
-  data: True
-  production: True
+production:
+  flag: True
   analysis: False
 
 result_method: selenium
@@ -13,7 +12,7 @@ settings_master:
 
 input:
   - label: production_data
-    lease_number: G03237 
+    lease_number: G05868 
     Duration:
       from : 01/2024
       to : 02/2024

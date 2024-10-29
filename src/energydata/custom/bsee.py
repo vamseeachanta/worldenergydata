@@ -2,9 +2,11 @@
 from assetutilities.common.update_deep import update_deep_dictionary
 
 # Reader imports
-from energydata.custom.bsee_data_api_scrapy import BSEEDataSpider
+from energydata.custom.scrapy_API_data import BSEEDataSpider
+from energydata.custom.scrapy_production_data import SpiderBsee
 
-bsee_data = BSEEDataSpider()
+bsee_wellAPI = BSEEDataSpider()
+bsee_production = SpiderBsee()
 
 class bsee:
     
@@ -16,13 +18,13 @@ class bsee:
 
         cfg = self.get_cfg_with_master_data(cfg)
 
-        if cfg['type']['data'] and cfg['type']['well_APD']:
-            bsee_data.router(cfg)
+        if 'well_data' in cfg and cfg['well_data']['flag']:
+            bsee_wellAPI.router(cfg)
 
-        if cfg['type']['data'] and cfg['type']['production']:
-            bsee_data.router(cfg)
+        if 'production' in cfg and cfg['production']['flag']:
+            bsee_production.router(cfg)
 
-        if cfg['type']['data'] and cfg['type']['borehole']:
+        if 'borehole' in cfg and cfg['borehole']['flag']:
             pass
 
         return cfg

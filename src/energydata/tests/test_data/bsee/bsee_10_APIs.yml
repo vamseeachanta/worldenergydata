@@ -1,8 +1,7 @@
 basename: bsee
 
-type:
-  data: True
-  well_APD: True
+well_data:
+  flag: True
   analysis: False
 
 result_method: selenium

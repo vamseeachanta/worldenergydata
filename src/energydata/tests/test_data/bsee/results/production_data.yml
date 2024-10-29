@@ -6,7 +6,6 @@ dictitems:
     data: true
     analysis: false
     results: false
-    production: true
   result_method: selenium
   settings_master:
     save_csv: true
@@ -15,7 +14,7 @@ dictitems:
   - save_csv: true
     url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
     label: production_data
-    well_api12: G03237
+    lease_number: G05868
     Duration:
       from: 01/2024
       to: 02/2024
@@ -25,6 +24,9 @@ dictitems:
       overwrite:
         output: true
       cfg_sensitivities: false
+  production:
+    flag: true
+    analysis: false
   Analysis:
     basename: bsee
     analysis_root_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee
@@ -32,7 +34,7 @@ dictitems:
     file_name_for_overwrite: production_data
     result_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\results
     log_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\logs
-    start_time: 2024-10-18 12:10:01.693221
+    start_time: 2024-10-29 11:39:15.872359
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\production_data.yml
