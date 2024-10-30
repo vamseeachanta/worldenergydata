@@ -21,9 +21,10 @@ class SpiderBsee(scrapy.Spider):
 
     def router(self, cfg):
         settings = {
+            'LOG_LEVEL': 'CRITICAL',
             'REQUEST_FINGERPRINTER_IMPLEMENTATION': '2.7'  # to avoid the warning message
         }
-        
+
         process = CrawlerProcess(settings=settings)
 
         master_settings = cfg['settings_master']

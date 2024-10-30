@@ -25,6 +25,9 @@ dictitems:
       overwrite:
         output: true
       cfg_sensitivities: false
+  well_data:
+    flag: true
+    analysis: false
   Analysis:
     basename: bsee
     analysis_root_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee
@@ -32,7 +35,7 @@ dictitems:
     file_name_for_overwrite: bsee_well_data
     result_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\results
     log_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\logs
-    start_time: 2024-10-28 10:56:28.719393
+    start_time: 2024-10-30 10:56:06.610930
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\bsee_well_data.yml

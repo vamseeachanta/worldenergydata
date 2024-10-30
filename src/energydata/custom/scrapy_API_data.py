@@ -6,7 +6,9 @@ from scrapy import FormRequest #noqa
 import pandas as pd #noqa
 import os #noqa
 from io import BytesIO #noqa
+import logging #noqa
 
+logging.getLogger('scrapy').propagate = False
 class BSEEDataSpider(scrapy.Spider):
 
     name = 'API_well_data'
@@ -19,7 +21,11 @@ class BSEEDataSpider(scrapy.Spider):
 
     def router(self, cfg):
 
-        process = CrawlerProcess()
+        settings = {
+            'LOG_LEVEL': 'CRITICAL',
+            'REQUEST_FINGERPRINTER_IMPLEMENTATION': '2.7'
+        }
+        process = CrawlerProcess(settings=settings)
 
         for input_item in cfg['input']:
             process.crawl(BSEEDataSpider, input_item=input_item, cfg=cfg)
