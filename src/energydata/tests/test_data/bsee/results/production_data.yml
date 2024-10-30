@@ -34,7 +34,7 @@ dictitems:
     file_name_for_overwrite: production_data
     result_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\results
     log_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\logs
-    start_time: 2024-10-30 09:24:36.027809
+    start_time: 2024-10-30 10:46:41.384258
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\production_data.yml

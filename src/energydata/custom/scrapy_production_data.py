@@ -6,7 +6,9 @@ from scrapy import FormRequest #noqa
 import pandas as pd #noqa
 import os #noqa
 from io import BytesIO #noqa
+import logging #noqa
 
+logging.getLogger('scrapy').propagate = False # to avoid displaying log outputs in terminal
 class SpiderBsee(scrapy.Spider):
 
     name = 'Production_data'
@@ -16,11 +18,13 @@ class SpiderBsee(scrapy.Spider):
         super(SpiderBsee, self).__init__(*args, **kwargs)
         self.input_item = input_item
         self.cfg = cfg
-        self.scraped_data = None
 
     def router(self, cfg):
-
-        process = CrawlerProcess()
+        settings = {
+            'REQUEST_FINGERPRINTER_IMPLEMENTATION': '2.7'  # to avoid the warning message
+        }
+        
+        process = CrawlerProcess(settings=settings)
 
         master_settings = cfg['settings_master']
         for input_item in cfg['input']:
@@ -61,7 +65,7 @@ class SpiderBsee(scrapy.Spider):
 
         with open(file_path, 'wb') as f:
             f.write(response.body)
-            self.scraped_data = pd.read_csv(BytesIO(response.body))
+            response_csv = pd.read_csv(BytesIO(response.body))
             print()
             print(f"\n****The Scraped data of {lease_number} ****\n")
-            print(self.scraped_data)
+            print(response_csv)
