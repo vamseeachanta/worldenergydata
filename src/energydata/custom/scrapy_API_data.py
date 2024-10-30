@@ -16,7 +16,6 @@ class BSEEDataSpider(scrapy.Spider):
         super(BSEEDataSpider, self).__init__(*args, **kwargs)
         self.input_item = input_item
         self.cfg = cfg
-        self.scraped_data = None
 
     def router(self, cfg):
 
@@ -56,7 +55,7 @@ class BSEEDataSpider(scrapy.Spider):
 
         with open(file_path, 'wb') as f:
             f.write(response.body)
-            self.scraped_data = pd.read_csv(BytesIO(response.body))
+            response_csv = pd.read_csv(BytesIO(response.body)) # For displaying data
             print()
             print(f"\n****The Scraped data of {API_number} ****\n")
-            print(self.scraped_data)
+            print(response_csv)

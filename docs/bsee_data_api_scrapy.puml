@@ -1,0 +1,55 @@
+@startuml bsee_data_api_scrapy
+skinparam titleBorderRoundCorner 15
+skinparam titleBorderThickness 2
+skinparam titleBorderColor red
+skinparam titleBackgroundColor Tomato
+
+title BSEE Data API Scrapy Workflow
+
+start
+
+    partition {
+
+        :Identify the working process of data;
+            note right
+                - Open the website , right click and select inspect
+                - Enter data, click on required fields and observe simultaneously
+                  how many main requests are moving there in Network Tab 
+            end note
+
+        :Define Initial URL;
+            note right
+                - Define the URL using default start_urls (variable)
+                - Identify the working process of data in website
+                - It will decide how many POST requests we need to 
+                  send to the website for getting data
+            end note
+
+
+        :POST request to website;
+            note right
+             - Send post requests one by one using scrapy Formrequest
+             - Initialize the first request using parse function
+              Note: 
+             - the data of formdata should be in string format 
+             - response is default parameter which exists in all methods
+            end note
+
+        :Save and display the data;
+            note right
+            - After submission of all requests ,
+            - Writes the CSV data to the specified file path.
+            - print the scraped data for better readability
+            end note
+
+
+    }
+
+stop
+
+footer
+%date("yyyy.MM.dd' at 'HH:mm")
+%filename()
+end footer
+
+@enduml

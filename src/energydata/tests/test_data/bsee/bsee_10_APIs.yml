@@ -4,8 +4,6 @@ well_data:
   flag: True
   analysis: False
 
-result_method: selenium
-
 settings_master:
   save_csv: True
   url: https://www.data.bsee.gov/Well/APD/Default.aspx

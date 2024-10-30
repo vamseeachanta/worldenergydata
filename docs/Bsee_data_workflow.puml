@@ -17,7 +17,7 @@ start
                 - User well if not found -> download
                 - Batchfile mode (Repository or database)
                 - Frequency to be decided.
-                If online queries do not work:
+                If online queries do not work :
                 - Download the data
                 - Break into individual files and run
             end note

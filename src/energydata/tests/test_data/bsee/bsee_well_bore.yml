@@ -4,7 +4,6 @@ borehole:
   flag: True
   analysis: False
 
-result_method: selenium
 webscraper_engine: selenium # or scrapy or beautifulsoup
 
 settings_master:
