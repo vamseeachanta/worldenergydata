@@ -1,13 +1,20 @@
-#### Objective : 
-* For a given API well or block, get data from BSEE website and perform analysis that we have done back in 2022. 
+#### Objective
 
-* Then progress further to drilling statistics, well plans, risk, safety events etc. 
+* For a given API well or block, get data from BSEE website and perform analysis that we have done back in 2022.
+
+* Then progress further to drilling statistics, well plans, risk, safety events etc.
 
 * Then I believe will allow people to use AI .
 
-a/ data method : 
+a/ data method :
 
-legacy: download , new: hybrid (online primary, download secondary). This data as is not ready to unleash AI as SME (subject matter expert) interpretation is needed. This happens in the analysis portion below.
+legacy: download ,
+EnergyData:
+
+* Online query (Latest data)
+* Read ZIP file directly (Latest data)
+* downloading files, loading in database (chance of stale data)
+hybrid (online primary, download secondary).
 
 b/ data transformation:
 
