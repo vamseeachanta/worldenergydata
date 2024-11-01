@@ -1,4 +1,4 @@
-@startuml bsee_data
+@startuml bsee_data_workflow
 skinparam titleBorderRoundCorner 15
 skinparam titleBorderThickness 2
 skinparam titleBorderColor red

@@ -1,4 +1,4 @@
-@startuml bsee_data_api
+@startuml selenium_workflow
 skinparam titleBorderRoundCorner 15
 skinparam titleBorderThickness 2
 skinparam titleBorderColor red

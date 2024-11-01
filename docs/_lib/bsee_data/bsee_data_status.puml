@@ -12,19 +12,24 @@ start
 
         :Well Data;
             note right
-                by API12
+                by url & API12
             end note
 
         :production data;
             note right
-                by Lease Number
+                by url & Lease Number
                 by API12 (Pending) 
             end note
 
-        : Bore Hole ;
+        : Bore Hole;
             note right
-                All Data
-                by API12 (Pending)
+                by url & API12
+                by zipfile, All Data (Data Verification ONLY)
+            end note
+
+        : Other Zip files ...;
+            note right
+                by zipfile, All Data (Data Verification ONLY)
             end note
 
     }
