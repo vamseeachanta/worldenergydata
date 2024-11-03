@@ -7,6 +7,10 @@ import pandas as pd #noqa
 import os #noqa
 from io import BytesIO #noqa
 import logging #noqa
+from colorama import Fore, Style
+from colorama import init as colorama_init
+
+colorama_init()
 
 logging.getLogger('scrapy').propagate = False
 class BSEEDataSpider(scrapy.Spider):
@@ -43,6 +47,11 @@ class BSEEDataSpider(scrapy.Spider):
         yield FormRequest.from_response(response, formdata=data, callback=self.step2)
     
     def step2(self, response):
+        if response.status == 200:
+            print(f"API {self.input_item['well_api12']}{Fore.GREEN} submission successful!{Style.RESET_ALL}")
+        else:
+            print(f"{Fore.RED}Failed to submit API {Style.RESET_ALL}. Status code: {response.status}")
+
         api_value = self.input_item['well_api12']
         api_value = str(api_value)
 
@@ -59,9 +68,12 @@ class BSEEDataSpider(scrapy.Spider):
         API_number = self.input_item['well_api12'] 
         file_path = os.path.join(r'src\energydata\tests\test_data\bsee\results\Data', f'{label}.csv')
 
-        with open(file_path, 'wb') as f:
-            f.write(response.body)
-            response_csv = pd.read_csv(BytesIO(response.body)) # For displaying data
-            print()
-            print(f"\n****The Scraped data of {API_number} ****\n")
-            print(response_csv)
+        if response.status == 200:
+            with open(file_path, 'wb') as f:
+                f.write(response.body)
+                response_csv = pd.read_csv(BytesIO(response.body)) # For displaying data
+                print()
+                print(f"\n****The Scraped data of {API_number} ****\n")
+                print(response_csv)
+        else:
+            print(f"{Fore.RED}Failed to export CSV.{Style.RESET_ALL} Status code: {response.status}")
