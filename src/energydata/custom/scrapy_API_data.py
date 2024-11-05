@@ -1,4 +1,4 @@
-import scrapy
+import scrapy #noqa
 from scrapy.utils.response import open_in_browser #noqa useful while program is running
 from scrapy.crawler import CrawlerProcess #noqa
 from scrapy import FormRequest #noqa
