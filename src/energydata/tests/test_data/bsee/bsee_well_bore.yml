@@ -8,7 +8,7 @@ webscraper_engine: selenium # or scrapy or beautifulsoup
 
 settings_master:
   save_csv: True
-  url: https://www.data.boem.gov/Well/Borehole/Default.aspx/
+  url: https://www.data.boem.gov/Well/Borehole/Default.aspx
 
 input:
   - label: wellbore1

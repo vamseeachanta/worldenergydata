@@ -6,7 +6,6 @@ dictitems:
     data: true
     analysis: false
     results: false
-    well: true
   result_method: selenium
   settings_master:
     save_csv: true
@@ -58,6 +57,9 @@ dictitems:
       overwrite:
         output: true
       cfg_sensitivities: false
+  well_data:
+    flag: true
+    analysis: false
   Analysis:
     basename: bsee
     analysis_root_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee
@@ -65,7 +67,7 @@ dictitems:
     file_name_for_overwrite: bsee_10_APIs
     result_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\results
     log_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\logs
-    start_time: 2024-10-28 10:59:44.859699
+    start_time: 2024-11-05 20:19:04.611314
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\bsee_10_APIs.yml
