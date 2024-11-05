@@ -13,12 +13,14 @@ start
         :Well Data;
             note right
                 by url & API12
+                by zipfile, All Data (APD , APM)
             end note
 
         :production data;
             note right
                 by url & Lease Number
                 by API12 (Pending) 
+                by zipfile, All Data (Data Verification ONLY)
             end note
 
         : Bore Hole;
@@ -27,10 +29,11 @@ start
                 by zipfile, All Data (Data Verification ONLY)
             end note
 
-        : Other Zip files ...;
+        : Bottomhole Pressure;
             note right
                 by zipfile, All Data (Data Verification ONLY)
             end note
+        : 
 
     }
 

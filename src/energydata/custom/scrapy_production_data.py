@@ -71,7 +71,7 @@ class SpiderBsee(scrapy.Spider):
 
         label = self.input_item['label']
         lease_number = self.input_item['lease_number'] 
-        file_path = os.path.join(r'src\energydata\tests\test_data\bsee\results\Data', f'{label}.csv')
+        file_path = os.path.join(r'src\energydata\tests\test_data\bsee\results\Data\by_API', f'{label}.csv')
 
         if response.status == 200:
             with open(file_path, 'wb') as f:
