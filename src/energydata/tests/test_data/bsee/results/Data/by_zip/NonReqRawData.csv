@@ -1,0 +1,101 @@
+LEASE_NUMBER,AREA,BLOCK,RECEIPT_DATE,MISC_TYPE,REMARKS,BLOCK_LOOKUP
+G23933,ST,  242,6/27/2012,7,"Hunt Oil Company, Hunt Chieftain Development, L.P., Hunt Oil Company of Louisiana, Inc. / Dynamic Offshore Resources, LLC",242
+G24004,SA,    8,6/27/2012,7,"Hunt Oil Company, Hunt Chieftain Development, L.P., Hunt Oil Company of Louisiana, Inc. / Dynamic Offshore Resources, LLC",8
+G25579,HI,  130,6/27/2012,7,"Hunt Oil Company, Hunt Chieftain Development, L.P., Hunt Oil Company of Louisiana, Inc. / Dynamic Offshore Resources, LLC",130
+G26451,MI,  654,6/27/2012,7,"Hunt Oil Company, Hunt Chieftain Development, L.P., Hunt Oil Company of Louisiana, Inc. / Dynamic Offshore Resources, LLC",654
+G27070,VR,  229,6/27/2012,7,"Hunt Oil Company, Hunt Chieftain Development, L.P., Hunt Oil Company of Louisiana, Inc. / Dynamic Offshore Resources, LLC",229
+G27509,HI,  176,6/27/2012,7,"Hunt Oil Company, Hunt Chieftain Development, L.P., Hunt Oil Company of Louisiana, Inc. / Dynamic Offshore Resources, LLC",176
+G27972,SA,    9,6/27/2012,7,"Hunt Oil Company, Hunt Chieftain Development, L.P., Hunt Oil Company of Louisiana, Inc. / Dynamic Offshore Resources, LLC",9
+G31003,MI,  633,6/27/2012,7,"Hunt Oil Company, Hunt Chieftain Development, L.P., Hunt Oil Company of Louisiana, Inc. / Dynamic Offshore Resources, LLC",633
+G31037,HI,   53,6/27/2012,7,"Hunt Oil Company, Hunt Chieftain Development, L.P., Hunt Oil Company of Louisiana, Inc. / Dynamic Offshore Resources, LLC",53
+G31044,HI,  205,6/27/2012,7,"Hunt Oil Company, Hunt Chieftain Development, L.P., Hunt Oil Company of Louisiana, Inc. / Dynamic Offshore Resources, LLC",205
+G31048,HI,A  17,6/27/2012,7,"Hunt Oil Company, Hunt Chieftain Development, L.P., Hunt Oil Company of Louisiana, Inc. / Dynamic Offshore Resources, LLC",17
+G31390,SS,  173,6/27/2012,7,"Hunt Oil Company, Hunt Chieftain Development, L.P., Hunt Oil Company of Louisiana, Inc. / Dynamic Offshore Resources, LLC",173
+G32102,WC,   92,6/27/2012,7,"Hunt Oil Company, Hunt Chieftain Development, L.P., Hunt Oil Company of Louisiana, Inc. / Dynamic Offshore Resources, LLC",92
+G32103,WC,   93,6/27/2012,7,"Hunt Oil Company, Hunt Chieftain Development, L.P., Hunt Oil Company of Louisiana, Inc. / Dynamic Offshore Resources, LLC",93
+G32132,VR,   17,6/27/2012,7,"Hunt Oil Company, Hunt Chieftain Development, L.P., Hunt Oil Company of Louisiana, Inc. / Dynamic Offshore Resources, LLC",17
+G33113,PL,   20,6/27/2012,7,"Hunt Oil Company, Hunt Chieftain Development, L.P., Hunt Oil Company of Louisiana, Inc. / Dynamic Offshore Resources, LLC",20
+G02360,HI,A 447,6/27/2012,98,"Hunt Oil Company, Hunt Chieftain Development, L.P., Hunt Oil Company of Louisiana, Inc. / Dynamic Offshore Resources, LLC",447
+G15078,WC,  300,6/27/2012,98,"Hunt Oil Company, Hunt Chieftain Development, L.P., Hunt Oil Company of Louisiana, Inc. / Dynamic Offshore Resources, LLC",300
+G23860,EI,   80,6/27/2012,98,"Hunt Oil Company, Hunt Chieftain Development, L.P., Hunt Oil Company of Louisiana, Inc. / Dynamic Offshore Resources, LLC",80
+ 00016,WD,   31,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",31
+ 00018,ST,   66,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",66
+ 00019,ST,   54,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",54
+ 00020,ST,   67,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",67
+ 00024,GI,   16,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",16
+ 00025,GI,   17,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",17
+ 00026,WD,   30,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",30
+ 00028,ST,   55,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",55
+ 00031,GI,   22,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",22
+ 00032,GI,   18,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",18
+ 00310,SM,  207,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",207
+ 00310,SM,  241,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",241
+ 00367,WD,   32,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",32
+ 00421,ST,   55,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",55
+ 00422,ST,   54,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",54
+G01082,WD,   72,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",72
+G01083,WD,   73,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",73
+G01084,WD,   74,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",74
+G01090,WD,   91,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",91
+G01091,WD,   92,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",92
+G01092,WD,   93,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",93
+G01210,SM,   78,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",78
+G01445,GI,   21,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",21
+G01445,GI,   30,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",30
+G01447,WD,   21,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",21
+G01619,SP,   93,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",93
+G01620,SP,   94,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",94
+G02045,EC,  270,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",270
+G02062,EC,  334,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",334
+G02113,EI,  322,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",322
+G02115,EI,  330,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",330
+G02176,SP,   48,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",48
+G02177,SP,   49,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",49
+G02184,SP,   77,6/29/2012,1,"Energy XXI GOM, LLC / The Royal Bank of Scotland plc, as Administrative Agent",77
+G09183,EB,  642,9/18/2012,3,Marubeni Oil & Gas (USA) Inc. / The Bank of New York,642
+G09184,EB,  643,9/18/2012,3,Marubeni Oil & Gas (USA) Inc. / The Bank of New York,643
+G21374,EB,  641,9/18/2012,3,Marubeni Oil & Gas (USA) Inc. / The Bank of New York,641
+G09183,EB,  642,9/18/2012,3,Ocean Energy/Boomvang Platform Statutory Trust 2002-1 / The Bank of New York,642
+G09184,EB,  643,9/18/2012,3,Ocean Energy/Boomvang Platform Statutory Trust 2002-1 / The Bank of New York,643
+G21374,EB,  641,9/18/2012,3,Ocean Energy/Boomvang Platform Statutory Trust 2002-1 / The Bank of New York,641
+G09183,EB,  642,9/18/2012,3,"Devon Energy Production Company, L.P. / The Bank of New York",642
+G09184,EB,  643,9/18/2012,3,"Devon Energy Production Company, L.P. / The Bank of New York",643
+G21374,EB,  641,9/18/2012,3,"Devon Energy Production Company, L.P. / The Bank of New York",641
+G09183,EB,  642,9/18/2012,3,"Devon Energy Production Company, L.P. / The Bank of New York",642
+G09184,EB,  643,9/18/2012,3,"Devon Energy Production Company, L.P. / The Bank of New York",643
+G21374,EB,  641,9/18/2012,3,"Devon Energy Production Company, L.P. / The Bank of New York",641
+G09183,EB,  642,9/18/2012,3,Marubeni Oil & Gas (USA) Inc. / The Bank of New York,642
+G09184,EB,  643,9/18/2012,3,Marubeni Oil & Gas (USA) Inc. / The Bank of New York,643
+G21374,EB,  641,9/18/2012,3,Marubeni Oil & Gas (USA) Inc. / The Bank of New York,641
+G09183,EB,  642,9/18/2012,3,Marubeni Oil & Gas (USA) Inc. / The Bank of New York,642
+G09184,EB,  643,9/18/2012,3,Marubeni Oil & Gas (USA) Inc. / The Bank of New York,643
+G21374,EB,  641,9/18/2012,3,Marubeni Oil & Gas (USA) Inc. / The Bank of New York,641
+G09183,EB,  642,9/18/2012,3,Marubeni Oil & Gas (USA) Inc. / The Bank of New York,642
+G09184,EB,  643,9/18/2012,3,Marubeni Oil & Gas (USA) Inc. / The Bank of New York,643
+G21374,EB,  641,9/18/2012,3,Marubeni Oil & Gas (USA) Inc. / The Bank of New York,641
+G09183,EB,  642,9/18/2012,3,Ocean Energy/Boomvang Platform Statutory Trust 2002-2 / The Bank of New York,642
+G09184,EB,  643,9/18/2012,3,Ocean Energy/Boomvang Platform Statutory Trust 2002-2 / The Bank of New York,643
+G21374,EB,  641,9/18/2012,3,Ocean Energy/Boomvang Platform Statutory Trust 2002-2 / The Bank of New York,641
+G09183,EB,  642,9/18/2012,3,"Devon Energy Production Company, L.P. / The Bank of New York",642
+G09184,EB,  643,9/18/2012,3,"Devon Energy Production Company, L.P. / The Bank of New York",643
+G21374,EB,  641,9/18/2012,3,"Devon Energy Production Company, L.P. / The Bank of New York",641
+G09183,EB,  642,9/18/2012,3,"Devon Energy Production Company, L.P. / The Bank of New York",642
+G09184,EB,  643,9/18/2012,3,"Devon Energy Production Company, L.P. / The Bank of New York",643
+G21374,EB,  641,9/18/2012,3,"Devon Energy Production Company, L.P. / The Bank of New York",641
+G09183,EB,  642,9/18/2012,3,Marubeni Oil & Gas (US) Inc. / The Bank of New York,642
+G09184,EB,  643,9/18/2012,3,Marubeni Oil & Gas (US) Inc. / The Bank of New York,643
+G21374,EB,  641,9/18/2012,3,Marubeni Oil & Gas (US) Inc. / The Bank of New York,641
+G09183,EB,  642,9/18/2012,3,Marubeni Oil & Gas (USA) Inc. / The Bank of New York,642
+G09184,EB,  643,9/18/2012,3,Marubeni Oil & Gas (USA) Inc. / The Bank of New York,643
+G21374,EB,  641,9/18/2012,3,Marubeni Oil & Gas (USA) Inc. / The Bank of New York,641
+G16661,MC,  941,9/19/2012,6,"Harvey Gulf International Marine, LLC / ATP Oil & Gas Corporaiton",941
+G24130,MC,  942,9/19/2012,6,"Harvey Gulf International Marine, LLC / ATP Oil & Gas Corporaiton",942
+G14428,VR,  376,9/19/2012,7,"Implicit Oil & Gas (VR 376), LLC / Texas OG Acquisitions, LLC",376
+G14428,VR,  376,9/19/2012,3,"B/K Venture Capital, L.P. / 376 OG Holdings, LLC",376
+G14428,VR,  376,9/19/2012,7,"Implicit Oil & Gas (VR 376), LLC / Texas OG Acquisitions, LLC",376
+G16661,MC,  941,9/20/2012,6,KEN-VAC CORPORATION / ATP OIL & GAS CORPORATION,941
+G22939,GC,  300,9/20/2012,6,KEN-VAC CORPORATION / ATP OIL & GAS CORPORATION,300
+G14428,VR,  376,9/20/2012,3,"Texas OG Acquisitions, LLC / 376 OG Holdings, LLC",376
+G04909,MP,   64,9/20/2012,3,Unicredi Bank AG / Leed Petroleum LLC,64
+G05692,MP,   65,9/20/2012,3,Unicredi Bank AG / Leed Petroleum LLC,65
+G04909,MP,   64,9/20/2012,3,Unicredi Bank AG / Leed Petroleum LLC,64
