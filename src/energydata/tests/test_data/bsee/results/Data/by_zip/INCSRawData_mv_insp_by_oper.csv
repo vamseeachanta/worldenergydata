@@ -1,0 +1,101 @@
+INS_DATE,REGION,BUS_ASC_CODE,BUS_ASC_NAME,FACILITIES_INSPECTED,INSPECTION_RECORDS,INSPECTION_TYPES
+4/2/2020 6:40:00 AM,G,689,Shell Offshore Inc.,1,1,1
+4/23/2020 9:30:00 AM,G,689,Shell Offshore Inc.,1,1,1
+5/26/2020 9:49:00 AM,G,3151,"Cox Operating, L.L.C.",1,1,5
+5/30/2020 7:00:00 AM,G,3295,Fieldwood Energy LLC,1,1,4
+7/16/2020 1:15:00 PM,G,21906,Williams Gas Pipeline,1,1,3
+7/28/2020 12:04:00 PM,G,2747,"Matagorda Island Gas Operations,LLC",1,1,3
+8/5/2020 4:21:00 PM,G,3151,"Cox Operating, L.L.C.",1,1,1
+8/18/2020 11:45:00 AM,G,689,Shell Offshore Inc.,1,1,2
+8/24/2020 2:15:00 PM,G,3151,"Cox Operating, L.L.C.",1,1,4
+8/24/2020 1:30:00 PM,G,3151,"Cox Operating, L.L.C.",1,1,4
+9/4/2020 2:03:00 PM,G,2451,GOM Shelf LLC,1,1,2
+9/18/2020 1:32:00 PM,G,2800,Monforte Exploration L.L.C.,1,1,5
+12/31/2020 12:30:00 AM,G,3035,Fieldwood Energy Offshore LLC,1,1,4
+1/12/2021 11:10:00 AM,G,1376,"Linder Oil Company, A Partnership",1,1,5
+2/24/2021 9:55:00 AM,G,981,Anadarko Petroleum Corporation,1,1,1
+3/10/2021 2:00:00 PM,G,2961,Byron Energy Inc.,1,1,7
+6/21/2021 8:30:00 AM,G,1284,"W & T Offshore, Inc.",1,1,3
+7/12/2021 8:30:00 AM,G,3151,"Cox Operating, L.L.C.",1,1,3
+7/27/2021 10:38:00 AM,G,1834,Talos Petroleum LLC,1,1,2
+12/6/2021 1:04:00 PM,G,3295,Fieldwood Energy LLC,1,1,4
+2/11/2022 9:28:00 AM,G,3295,Fieldwood Energy LLC,1,1,5
+4/19/2022 1:21:00 PM,G,3295,Fieldwood Energy LLC,1,1,2
+4/22/2022 3:40:00 PM,G,2313,Freeport-McMoRan Energy LLC,1,1,5
+6/22/2022 2:10:00 PM,G,3269,Talos Oil and Gas LLC,1,1,1
+7/5/2022 11:00:00 AM,G,2010,Woodside Energy (GOM) Inc.,1,1,3
+7/14/2022 9:12:00 AM,G,3295,Fieldwood Energy LLC,1,1,7
+7/25/2022 2:00:00 PM,G,78,Chevron U.S.A. Inc.,1,1,1
+9/7/2022 1:02:00 PM,G,3481,"Cantium, LLC",1,1,7
+9/27/2022 2:43:00 PM,G,2528,Equinor USA E&P Inc.,1,1,1
+10/19/2022 2:30:00 PM,G,3520,"Sanare Energy Partners, LLC",1,1,2
+11/3/2022 4:00:00 PM,G,2647,Murphy Exploration & Production Company - USA,1,1,3
+11/5/2022 2:18:00 PM,G,2747,"Matagorda Island Gas Operations,LLC",1,1,2
+4/22/2022 6:33:00 AM,G,2528,Equinor USA E&P Inc.,1,1,1
+1/17/2023 2:52:00 PM,G,3026,"Talos Energy Ventures, LLC",1,1,1
+2/16/2023 1:09:00 PM,G,1284,"W & T Offshore, Inc.",1,1,5
+4/3/2023 1:00:00 PM,P,2531,"DCOR, L.L.C.",1,1,3
+5/8/2023 3:00:00 PM,G,3295,Fieldwood Energy LLC,1,1,5
+5/23/2023 6:37:00 AM,G,20704,APACHE CORP.,1,1,5
+7/5/2023 10:29:00 AM,G,2795,"GoMex Energy Offshore, Ltd.",1,1,4
+7/31/2023 2:59:00 PM,G,3521,"Deepwater Abandonment Alternatives, Inc.",1,1,3
+9/7/2023 12:30:00 PM,G,689,Shell Offshore Inc.,1,1,2
+9/19/2023 8:29:00 AM,G,3481,"Cantium, LLC",1,1,5
+10/31/2023 4:17:00 PM,G,3151,"Cox Operating, L.L.C.",1,1,5
+9/24/2023 4:30:00 PM,G,3257,Talos Energy LLC,1,1,2
+12/11/2023 5:00:00 PM,P,2531,"DCOR, L.L.C.",1,1,2
+3/22/2024 12:32:00 PM,G,3678,Fieldwood Energy IV LLC,1,1,2
+6/14/2024 8:50:00 AM,G,3151,"Cox Operating, L.L.C.",1,1,2
+6/25/2024 12:16:00 PM,G,207,"Sea Robin Pipeline Company, LLC",1,1,5
+6/17/2024 8:12:00 AM,G,2375,"Energy XXI GOM, LLC",1,1,5
+7/31/2024 9:37:00 AM,G,3151,"Cox Operating, L.L.C.",1,1,2
+7/29/2024 7:46:00 PM,G,3481,"Cantium, LLC",1,1,5
+8/6/2024 4:30:00 PM,G,3209,"Renaissance Offshore, LLC",1,1,5
+9/13/2024 11:45:00 AM,G,2503,"Contango Operators, LLC",1,1,2
+9/17/2024 2:30:00 PM,G,689,Shell Offshore Inc.,1,1,2
+9/24/2024 1:36:00 PM,G,3026,"Talos Energy Ventures, LLC",1,1,3
+2/11/1998,G,1643,UMC Petroleum Corporation,2,2,2
+6/27/2008,G,2466,Gryphon Exploration Company,1,1,2
+3/13/1998,G,560,Seneca Resources Corporation,1,1,1
+7/19/2001,G,1001,"IP Petroleum Company, Inc.",2,2,2
+10/19/2004,G,2608,Offshore Energy II LLC,1,1,1
+4/29/2014,G,2267,American Midstream Offshore (Seacrest) LP,2,2,2
+1/13/2001,G,282,"Dominion Exploration & Production, Inc.",2,2,4
+5/29/2001,G,2018,"Stone Energy, L.L.C.",1,1,2
+4/23/2009,G,2852,"Rosetta Resources Offshore, LLC",1,1,2
+2/10/2000,G,1364,Newfield Exploration Company,1,1,2
+5/18/2007,G,1764,"Energy Resource Technology, Inc.",3,3,4
+9/4/2013,G,3026,"Talos Energy Ventures, LLC",1,1,2
+6/14/2005,G,2237,"Noble Energy, Inc.",2,2,3
+10/11/2006,G,1046,The Houston Exploration Company,1,1,2
+3/12/2009,G,2589,"Merit Energy Company, LLC",2,2,4
+3/26/2010,G,78,Chevron U.S.A. Inc.,2,2,4
+12/14/1999,G,2256,"Coastal States Trading, Inc.",1,1,1
+11/29/2004,G,78,Chevron U.S.A. Inc.,3,3,5
+3/6/2007,G,1500,"TotalEnergies E&P USA, Inc.",1,1,1
+4/26/2013,G,2375,"Energy XXI GOM, LLC",2,2,6
+5/26/2010,G,2058,"LLOG Exploration Offshore, L.L.C.",1,1,2
+5/7/2014,G,56,ConocoPhillips Company,1,1,1
+9/4/2003,G,2115,"American Coastal Energy, Inc.",1,1,2
+4/1/2004,G,1103,"EOG Resources, Inc.",1,1,2
+8/11/2008,G,818,"Mariner Energy, Inc.",1,1,3
+12/29/2008,G,1364,Newfield Exploration Company,1,1,2
+4/10/2014,G,981,Anadarko Petroleum Corporation,1,1,2
+9/29/2006,G,1704,Remington Oil and Gas Corporation,2,2,4
+9/20/2013,G,2747,"Matagorda Island Gas Operations,LLC",1,1,2
+8/8/2010,G,2409,"Maritech Resources, Inc.",1,1,3
+5/30/2000,G,2367,BP Corporation North America Inc.,2,2,2
+8/7/2013,G,1284,"W & T Offshore, Inc.",2,2,4
+4/6/2013,G,2628,"Arena Offshore, LP",1,1,1
+8/24/1990,G,1334,"LLECO Holdings, Inc.",1,1,1
+11/9/2011,G,21857,Black Elk Energy LLC,2,2,2
+1/11/2010,G,105,Apache Corporation,2,2,2
+3/23/1993,G,105,Apache Corporation,1,1,1
+4/1/1988,G,81,Tenneco Oil Company,1,1,1
+10/11/1988,G,1046,The Houston Exploration Company,1,1,1
+10/14/1987,G,78,Chevron U.S.A. Inc.,1,1,1
+4/3/2001,G,3,Union Oil Company of California,2,2,4
+4/16/2001,G,1513,Callon Petroleum Operating Company,1,1,2
+8/11/2000,G,185,Samedan Oil Corporation,1,1,1
+1/24/2001,G,185,Samedan Oil Corporation,1,1,2
+3/5/1990,G,1023,Adobe Resources Corporation,1,1,1

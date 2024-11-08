@@ -1,0 +1,101 @@
+LEASE_NUMBER,AREA,BLOCK,DATE_RECEIVED,DATE_RETURNED,APPROVED_DATE,ASSIGNMENT_TYPE,ASSIGNOR_NAME,ASSIGNEE_NAME,RETURNED_REMARK
+G17842,EC,82,11/4/2011,,3/20/2012,RT,"Merit Management Partners II, L.P.","Black Elk Energy Offshore Operations, LLC",
+G17842,EC,82,11/4/2011,,3/20/2012,RT,"Merit Management Partners III, L.P.","Black Elk Energy Offshore Operations, LLC",
+G17842,EC,82,11/4/2011,,3/20/2012,RT,"Merit Energy Partners D-III, L.P.","Black Elk Energy Offshore Operations, LLC",
+G17842,EC,82,11/4/2011,,3/20/2012,RT,"Merit Energy Partners E-III, L.P.","Black Elk Energy Offshore Operations, LLC",
+G17842,EC,82,11/4/2011,,3/20/2012,RT,"Merit Energy Partners F-III, L.P.","Black Elk Energy Offshore Operations, LLC",
+G17842,EC,82,11/4/2011,,3/20/2012,RT,"Merit Energy Partners III, L.P.","Black Elk Energy Offshore Operations, LLC",
+G25230,AT,441,11/4/2011,,2/2/2012,RT,Statoil Gulf of Mexico LLC,Chevron U.S.A. Inc.,
+00512,HI,52,11/4/2011,,2/15/2012,RT,Phoenix Exploration Company LP,Apache Corporation,
+00512,HI,52,11/4/2011,,2/15/2012,RT,Phoenix Exploration Company LP,"Castex Offshore, Inc.",
+00512,HI,52,11/4/2011,,2/15/2012,OR,Phoenix Exploration Company LP,Apache Corporation,
+00512,HI,52,11/4/2011,,2/15/2012,OR,Phoenix Exploration Company LP,"Castex Offshore, Inc.",
+G24956,ST,49,11/4/2011,,2/15/2012,OR,Mariner Gulf of Mexico LLC,"Mariner Energy Resources, Inc.",
+G27509,HI,176,11/4/2011,,2/1/2012,RT,Hunt Oil Company,"Castex Offshore, Inc.",
+G27509,HI,176,11/4/2011,,2/1/2012,RT,Hunt Oil Company,Walter Oil & Gas Corporation,
+G27509,HI,176,11/4/2011,,2/1/2012,RT,Hunt Oil Company,"GOM-C EXPLORATION, LLC",
+G02613,EI,332,11/4/2011,,5/17/2012,OR,"Arena Energy, LP",Exxon Mobil Corporation,
+G00997,EI,309,11/7/2011,,2/15/2012,RT,XTO Offshore Inc.,"Dynamic Offshore Resources, LLC",
+G00997,EI,309,11/7/2011,,2/15/2012,OR,XTO Offshore Inc.,"Dynamic Offshore Resources, LLC",
+G33112,PL,18,11/7/2011,3/5/2012,,RT,"Castex Offshore, Inc.","GCER Offshore, LLC",Company name incorrect on DOO.
+G02112,EI,315,11/7/2011,,2/15/2012,OR,"Arena Energy, LP",Exxon Mobil Corporation,
+G27749,KC,699,11/9/2011,,2/1/2012,RT,ConocoPhillips Company,Statoil Gulf of Mexico LLC,
+G33343,KC,698,11/9/2011,,2/2/2012,RT,ConocoPhillips Company,Statoil Gulf of Mexico LLC,
+G32642,KC,654,11/9/2011,,2/2/2012,RT,ConocoPhillips Company,Statoil Gulf of Mexico LLC,
+G32641,KC,610,11/9/2011,,2/2/2012,RT,ConocoPhillips Company,Statoil Gulf of Mexico LLC,
+G22939,GC,300,11/9/2011,3/21/2012,,OR,"Davis Offshore, L.P.",ATP Oil & Gas Corporation,Needs DOO
+G33669,GI,82,11/9/2011,,2/1/2012,RT,"Tri-C Resources, LLC","GCER Offshore, LLC",
+G33669,GI,82,11/9/2011,,2/1/2012,RT,"Tri-C Resources, LLC","Manti Resources, Inc.",
+G27982,EW,834,11/8/2011,3/7/2012,,RT,Walter Oil & Gas Corporation,"Royal Offshore, LLC",Incorrect
+G31655,GB,734,11/8/2011,,12/1/2011,RT,Shell Offshore Inc.,"LLOG Exploration Offshore, L.L.C.",
+G31655,GB,734,11/8/2011,,12/1/2011,RT,Ecopetrol America Inc.,"LLOG Exploration Offshore, L.L.C.",
+G31655,GB,734,11/8/2011,,12/1/2011,RT,Newfield Exploration Company,"LLOG Exploration Offshore, L.L.C.",
+00828,SS,214,11/10/2011,11/28/2011,,OR,Samson Offshore Company,"W & T Offshore, Inc.",Lease # incorrect/needs DOO
+G01998,WC,172,11/14/2011,,1/18/2012,OR,Forest Oil Corporation,"Mariner Energy Resources, Inc.",
+G01998,WC,172,11/14/2011,,1/18/2012,OR,Forest Oil Corporation,"Mariner Energy Resources, Inc.",
+G09546,SM,146,11/14/2011,,12/27/2011,OR,XTO Offshore Inc.,"Dynamic Offshore Resources, LLC",
+G00993,EI,286,11/14/2011,,12/23/2011,RT,XTO Offshore Inc.,"Dynamic Offshore Resources, LLC",
+G00993,EI,286,11/14/2011,12/23/2011,,OR,XTO Offshore Inc.,"Dynamic Offshore Resources, LLC",Incorrect effective date.
+G01524,SS,216,11/14/2011,,12/23/2011,RT,"XH, LLC","Dynamic Offshore Resources, LLC",
+G22792,MP,101,11/14/2011,,12/27/2011,RT,XTO Offshore Inc.,"Dynamic Offshore Resources, LLC",
+G22792,MP,101,11/14/2011,,12/27/2011,RT,HHE Energy Company,"Dynamic Offshore Resources, LLC",
+G22792,MP,101,11/14/2011,,12/27/2011,OR,XTO Offshore Inc.,"Dynamic Offshore Resources, LLC",
+G22792,MP,101,11/14/2011,,12/27/2011,OR,HHE Energy Company,"Dynamic Offshore Resources, LLC",
+G32648,KC,827,11/14/2011,,11/28/2011,RT,Chevron U.S.A. Inc.,Samson Offshore Company,
+G32647,KC,826,11/14/2011,11/22/2011,,RT,Chevron U.S.A. Inc.,Samson Offshore Company,Need DOO
+G27756,KC,780,11/14/2011,11/22/2011,,RT,Chevron U.S.A. Inc.,Samson Offshore Company,Need DOO
+G22367,KC,736,11/14/2011,11/22/2011,,RT,Chevron U.S.A. Inc.,Samson Offshore Company,Need DOO
+G22366,KC,735,11/14/2011,11/22/2011,,RT,Chevron U.S.A. Inc.,Samson Offshore Company,Need DOO
+G31924,KC,693,11/14/2011,11/22/2011,,RT,Chevron U.S.A. Inc.,Samson Offshore Company,Need DOO
+G25801,KC,692,11/14/2011,11/22/2011,,RT,Chevron U.S.A. Inc.,Samson Offshore Company,Need DOO
+G33337,KC,648,11/14/2011,11/22/2011,,RT,Chevron U.S.A. Inc.,Samson Offshore Company,Need DOO
+G16647,MC,772,11/14/2011,,11/23/2011,OR,Shell Offshore Inc.,Plains Exploration & Production Company,
+G24056,MC,210,11/14/2011,,12/1/2011,RT,Statoil USA E&P Inc.,Eni Petroleum US LLC,
+G09546,SM,146,11/15/2011,,12/27/2011,OR,"Piquant, Inc.",McMoRan Oil & Gas LLC,
+00310,SM,241,11/15/2011,,1/9/2012,OR,McMoRan Oil & Gas LLC,"Energy XXI GOM, LLC",
+00310,SM,241,11/15/2011,,1/9/2012,OR,McMoRan Oil & Gas LLC,Moncrief Offshore LLC,
+G01440,EC,9,11/16/2011,,12/28/2011,RT,"XH, LLC","Mariner Energy Resources, Inc.",
+G32306,MC,252,11/17/2011,,12/5/2011,RT,Anadarko Petroleum Corporation,BP Exploration & Production Inc.,
+G32415,GB,383,11/17/2011,12/5/2011,,RT,"Royal Offshore, LLC",Newfield Exploration Company,Need DOO
+G32415,GB,383,11/17/2011,12/5/2011,,RT,"Royal Offshore, LLC",Deep Gulf Energy LP,Need DOO
+G32415,GB,383,11/17/2011,12/5/2011,,RT,"Royal Offshore, LLC","Deep Gulf Energy II, LLC",Need DOO
+G33665,ST,240,11/17/2011,,12/1/2011,RT,"Castex Offshore, Inc.","GCER Offshore, LLC",
+G09514,VR,332,11/17/2011,,2/15/2012,RT,"Gulfsands Petroleum USA, Inc.","Dynamic Offshore Resources, LLC",
+G09514,VR,332,11/17/2011,,2/15/2012,OR,"Gulfsands Petroleum USA, Inc.","Dynamic Offshore Resources, LLC",
+G33079,VR,45,11/18/2011,,12/2/2011,RT,"Houston Energy, L.P.",Walter Oil & Gas Corporation,
+G33079,VR,45,11/18/2011,,12/2/2011,RT,CL&F Resources LP,Walter Oil & Gas Corporation,
+G33080,VR,46,11/18/2011,,12/2/2011,RT,"Houston Energy, L.P.",Walter Oil & Gas Corporation,
+G33080,VR,46,11/18/2011,,12/2/2011,RT,CL&F Resources LP,Walter Oil & Gas Corporation,
+G31802,AT,444,11/21/2011,,2/2/2012,RT,GDF SUEZ Exploration US LLC,Eni Petroleum US LLC,
+G01144,VR,226,11/21/2011,12/29/2011,,OR,"Halliburton Energy Services, Inc.",Hat Creek Energy LLC,Incorrect Lease #/Signatory's title does not match Qual Card.
+G00996,EI,308,11/21/2011,3/5/2012,,OR,"Halliburton Energy Services, Inc.",Hat Creek Energy LLC,Signature need to match Qual Card/needs DOO.
+G01143,VR,225,11/21/2011,12/28/2011,,OR,"Halliburton Energy Services, Inc.",Hat Creek Energy LLC,Incorrect Signature block/Lease number et.al.
+G02955,MP,236,11/21/2011,12/29/2011,,OR,"Arena Energy, LP",Arena Offshore LP,Incorrect
+G33128,MP,206,11/21/2011,,2/15/2012,OR,"Arena Energy, LP",Arena Offshore LP,
+G31481,MC,158,3/27/2012,5/22/2012,,RT,BP Exploration & Production Inc.,"Stone Energy Offshore, L.L.C.",Payment needed for DOO
+G31480,MC,157,3/27/2012,5/22/2012,,RT,BP Exploration & Production Inc.,"Stone Energy Offshore, L.L.C.",Payment needed for DOO
+G32300,MC,156,3/27/2012,5/22/2012,,RT,BP Exploration & Production Inc.,"Stone Energy Offshore, L.L.C.",Payment needed for DOO
+G33713,MC,113,3/27/2012,5/22/2012,,RT,BP Exploration & Production Inc.,"Stone Energy Offshore, L.L.C.",Needs DOO fee payment.
+G33712,MC,112,3/27/2012,5/22/2012,,RT,BP Exploration & Production Inc.,"Stone Energy Offshore, L.L.C.",Payment needed for DOO
+G31478,MC,78,3/27/2012,5/22/2012,,RT,BP Exploration & Production Inc.,"Stone Energy Offshore, L.L.C.",Fee of DOO needs to be paid.
+G32297,MC,69,3/27/2012,5/22/2012,,RT,BP Exploration & Production Inc.,"Stone Energy Offshore, L.L.C.",Fee of DOO needs to be paid.
+G31476,MC,34,3/27/2012,5/22/2012,,RT,BP Exploration & Production Inc.,"Stone Energy Offshore, L.L.C.",Payment needed for DOO
+G04001,ST,173,3/27/2012,4/23/2012,,OR,Exxon Mobil Corporation,McMoRan Oil & Gas LLC,Needs DOO
+G12951,SS,227,3/27/2012,4/23/2012,,RT,"Mariner Energy Resources, Inc.","Hilcorp Energy GOM, LLC",Incorrect
+G21669,ST,168,3/27/2012,4/20/2012,,RT,Eni Petroleum US LLC,McMoRan Oil & Gas LLC,Assignee's Name is not acceptable.
+G21669,ST,168,3/27/2012,4/20/2012,,RT,Eni Petroleum US LLC,"Energy XXI GOM, LLC",Assignee's Name is not acceptable.
+G21668,ST,167,3/27/2012,4/20/2012,,RT,Eni Petroleum US LLC,McMoRan Oil & Gas LLC,Assignee's Name is not acceptable.
+G21668,ST,167,3/27/2012,4/20/2012,,RT,Eni Petroleum US LLC,"Energy XXI GOM, LLC",Assignee's Name is not acceptable.
+G21666,ST,142,3/27/2012,4/20/2012,,RT,Eni Petroleum US LLC,McMoRan Oil & Gas LLC,Assignee's Name is not acceptable.
+G21666,ST,142,3/27/2012,4/20/2012,,RT,Eni Petroleum US LLC,"Energy XXI GOM, LLC",Assignee's Name is not acceptable.
+G21665,ST,141,3/27/2012,4/20/2012,,RT,Eni Petroleum US LLC,McMoRan Oil & Gas LLC,Assignee's Name is not acceptable.
+G21665,ST,141,3/27/2012,4/20/2012,,RT,Eni Petroleum US LLC,"Energy XXI GOM, LLC",Assignee's Name is not acceptable.
+G24791,EC,36,3/28/2012,,5/9/2012,OR,"Petrodome Energy, LLC","Petrodome EC, LLC",
+G33112,PL,18,3/28/2012,,5/23/2012,RT,"Castex Offshore, Inc.","GCER Offshore, LLC",
+G33112,PL,18,3/29/2012,6/8/2012,,RT,"Republic Petroleum, LLC","Castex Offshore, Inc.","Assignor Qual No., Property description, and transmittal letter are incorrect."
+G00996,EI,308,3/29/2012,,6/8/2012,OR,XTO Offshore Inc.,"Dynamic Offshore Resources, LLC",
+G00996,EI,308,3/29/2012,,6/8/2012,OR,XTO Offshore Inc.,"Dynamic Offshore Resources, LLC",
+G00996,EI,308,3/29/2012,,6/8/2012,OR,XTO Offshore Inc.,"Dynamic Offshore Resources, LLC",
+G00996,EI,308,3/29/2012,,6/8/2012,RT,XTO Offshore Inc.,"Dynamic Offshore Resources, LLC",
+G04232,SS,189,3/29/2012,6/8/2012,,OR,Apache Corporation,Walter Oil & Gas Corporation,Need DOO
+G04232,SS,189,3/29/2012,6/8/2012,,OR,Apache Corporation,"Castex Offshore, Inc.",Need DOO
