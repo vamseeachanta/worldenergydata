@@ -1,0 +1,57 @@
+@startuml map_data
+
+' Title
+title Data Collection Structure
+
+' Define groups for the different data sources
+package "Data Sources" {
+    
+    ' Group for API data
+    package "by_API" {
+        class production_data
+        class well_API_data
+    }
+
+    ' Group for ZIP data
+    package "by_ZIP" {
+        class "Application for Permit to Drill"
+        class "API Lookup"
+        class "API Number Changes"
+        class "Approvals"
+        class "Assignments"
+        class "Bottomhole Pressure Survey"
+        class "Borehole"
+        class "Company Detail"
+        class "Decommissioning Cost Estimates"
+        class "Deepwater Natural Gas and Oil Qualified Fields"
+        class "eWell Submissions APD"
+        class "eWell Submissions APM"
+        class "eWell Submissions EOR"
+        class "eWell Submissions WAR"
+        class "Facility/Measurement Points"
+        class "File Request System Well Data"
+        class "FMP/Meters/Tanks"
+        class "Incident Investigations"
+        class "Incidents of Non-Compliance"
+        class "Lease Area Block"
+        class "Lease Owner"
+        class "Non-Required/Required Documents Received"
+        class "Offshore Statistics by Water Depth"
+        class "Oil Spill Financial Responsibility (OSFR)"
+        class "Outer Continental Shelf Oil and Gas Production"
+        class "PASR / Commingling Flow Report"
+        class "Permanent Deepwater Structures"
+        class "Pipeline Locations"
+        class "Pipeline Permits"
+        class "Plans"
+        class "Platform Structures"
+        class "Production by Planning Area"
+        class "Production Data"
+        class "Royalty Relief Applications"
+        class "ROW Descriptions"
+        class "Scanned Documents"
+        class "Serial Register Page"
+    }
+}
+
+@enduml
