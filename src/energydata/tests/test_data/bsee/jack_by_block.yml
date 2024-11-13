@@ -1,0 +1,25 @@
+basename: bsee
+
+well_data:
+  flag: True
+  analysis: False
+
+settings:
+  save_csv: True
+  url: https://www.data.bsee.gov/Well/APD/Default.aspx
+  output_dir: src\energydata\tests\test_data\bsee\results\Data\Jack
+
+input:
+  - label: Jack_1
+    bottom_area: Walker Ridge (WR)
+    bottom_block: 758
+  - label: Jack_2
+    bottom_area: Walker Ridge (WR)
+    bottom_block: 759
+
+default:
+  log_level: DEBUG
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False
