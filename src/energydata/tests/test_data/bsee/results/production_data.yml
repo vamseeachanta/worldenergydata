@@ -7,12 +7,11 @@ dictitems:
     analysis: false
     results: false
   result_method: selenium
-  settings_master:
-    save_csv: true
-    url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+  settings_master: ~
   input:
   - save_csv: true
     url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+    output_dir: src\energydata\tests\test_data\bsee\results\Data\by_zip
     label: production_data
     lease_number: G05868
     Duration:
@@ -27,6 +26,10 @@ dictitems:
   production:
     flag: true
     analysis: false
+  settings:
+    save_csv: true
+    url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+    output_dir: src\energydata\tests\test_data\bsee\results\Data\by_zip
   Analysis:
     basename: bsee
     analysis_root_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee
@@ -34,7 +37,7 @@ dictitems:
     file_name_for_overwrite: production_data
     result_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\results
     log_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\logs
-    start_time: 2024-11-05 20:17:02.494892
+    start_time: 2024-11-13 11:45:35.914855
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\production_data.yml

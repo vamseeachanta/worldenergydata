@@ -31,8 +31,8 @@ class bsee:
 
     def get_cfg_with_master_data(self, cfg):
         items_key = 'input'
-        if 'settings_master' in cfg:
-            settings_master = cfg['settings_master'].copy()
+        if 'settings' in cfg:
+            settings_master = cfg['settings'].copy()
             items = cfg[items_key]
 
             for item_idx in range(0, len(items)):

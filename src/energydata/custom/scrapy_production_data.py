@@ -31,7 +31,7 @@ class SpiderBsee(scrapy.Spider):
 
         process = CrawlerProcess(settings=settings)
 
-        master_settings = cfg['settings_master']
+        master_settings = cfg['settings']
         for input_item in cfg['input']:
             input_item = {**master_settings, **input_item}
             process.crawl(SpiderBsee, input_item=input_item, cfg=cfg)
@@ -71,7 +71,8 @@ class SpiderBsee(scrapy.Spider):
 
         label = self.input_item['label']
         lease_number = self.input_item['lease_number'] 
-        file_path = os.path.join(r'src\energydata\tests\test_data\bsee\results\Data\by_API', f'{label}.csv')
+        output_path = self.input_item['output_dir']
+        file_path = os.path.join(output_path, f"{label}.csv")
 
         if response.status == 200:
             with open(file_path, 'wb') as f:

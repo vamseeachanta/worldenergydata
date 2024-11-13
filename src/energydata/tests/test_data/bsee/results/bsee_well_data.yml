@@ -7,16 +7,16 @@ dictitems:
     analysis: false
     results: false
   result_method: selenium
-  settings_master:
-    save_csv: true
-    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+  settings_master: ~
   input:
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: src\energydata\tests\test_data\bsee\results\Data\by_API
     label: well_data_1
     well_api12: 608174149400
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: src\energydata\tests\test_data\bsee\results\Data\by_API
     label: well_data_2
     well_api12: 608174149401
   default:
@@ -28,6 +28,10 @@ dictitems:
   well_data:
     flag: true
     analysis: false
+  settings:
+    save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: src\energydata\tests\test_data\bsee\results\Data\by_API
   Analysis:
     basename: bsee
     analysis_root_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee
@@ -35,7 +39,7 @@ dictitems:
     file_name_for_overwrite: bsee_well_data
     result_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\results
     log_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\logs
-    start_time: 2024-11-05 20:16:33.398484
+    start_time: 2024-11-13 11:44:41.995633
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\bsee_well_data.yml

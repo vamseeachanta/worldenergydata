@@ -65,8 +65,9 @@ class BSEEDataSpider(scrapy.Spider):
     def parse_csv_data(self, response):
 
         label = self.input_item['label']
-        API_number = self.input_item['well_api12'] 
-        file_path = os.path.join(r'src\energydata\tests\test_data\bsee\results\Data\Stmalo', f'{label}.csv')
+        API_number = self.input_item['well_api12']
+        output_path = self.input_item['output_dir']
+        file_path = os.path.join(output_path, f"{label}.csv")
 
         if response.status == 200:
             with open(file_path, 'wb') as f:
