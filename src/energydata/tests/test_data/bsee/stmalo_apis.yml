@@ -1,0 +1,63 @@
+basename: bsee
+
+well_data:
+  flag: True
+  analysis: False
+
+settings_master:
+  save_csv: True
+  url: https://www.data.bsee.gov/Well/APD/Default.aspx
+
+input:
+  - label: API_1
+    well_api12 : 608124005300
+
+  - label: API_2
+    well_api12 : 608124005400
+
+  - label: API_3
+    well_api12 : 608124005700
+
+  - label: API_4
+    well_api12 : 608124011400
+
+  - label: API_5
+    well_api12 : 608124005600
+
+  - label: API_6
+    well_api12 : 608124005800
+
+  - label: API_7
+    well_api12 : 608124012200
+
+  - label: API_8
+    well_api12 : 608124001800
+
+  - label: API_9
+    well_api12 : 608124002900
+
+  - label: API_10
+    well_api12 : 608124004400
+
+  - label: API_11
+    well_api12 : 608124000402
+  
+  - label: API_2
+    well_api12 : 608124001100
+  
+  - label: API_13
+    well_api12 : 608124003101
+  - label: API_14
+    well_api12 : 608124005500
+  - label: API_15
+    well_api12 : 608124010701
+  - label: API_16
+    well_api12 : 608124011801
+
+
+default:
+  log_level: DEBUG
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False

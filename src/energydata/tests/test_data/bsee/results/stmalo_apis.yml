@@ -1,0 +1,98 @@
+&id001 !!python/object/new:assetutilities.common.data.AttributeDict
+state: *id001
+dictitems:
+  basename: bsee
+  type:
+    data: true
+    analysis: false
+    results: false
+  result_method: selenium
+  settings_master:
+    save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+  input:
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_1
+    well_api12: 608124005300
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_2
+    well_api12: 608124005400
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_3
+    well_api12: 608124005700
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_4
+    well_api12: 608124011400
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_5
+    well_api12: 608124005600
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_6
+    well_api12: 608124005800
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_7
+    well_api12: 608124012200
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_8
+    well_api12: 608124001800
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_9
+    well_api12: 608124002900
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_10
+    well_api12: 608124004400
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_11
+    well_api12: 608124000402
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_2
+    well_api12: 608124001100
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_13
+    well_api12: 608124003101
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_14
+    well_api12: 608124005500
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_15
+    well_api12: 608124010701
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_16
+    well_api12: 608124011801
+  default:
+    log_level: DEBUG
+    config:
+      overwrite:
+        output: true
+      cfg_sensitivities: false
+  well_data:
+    flag: true
+    analysis: false
+  Analysis:
+    basename: bsee
+    analysis_root_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee
+    file_name: stmalo_apis
+    file_name_for_overwrite: stmalo_apis
+    result_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\results
+    log_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\logs
+    start_time: 2024-11-13 11:33:19.254470
+    cfg_array_file_names: ~
+    DefaultInputFile: ~
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\stmalo_apis.yml
+    fe_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\results
