@@ -1,14 +1,18 @@
-import scrapy #noqa
-from scrapy.utils.response import open_in_browser #noqa useful while program is running
-from scrapy.crawler import CrawlerProcess #noqa
-from scrapy import FormRequest #noqa
+# Standard library imports
+import logging  # noqa
+import os  # noqa
+from io import BytesIO  # noqa
 
-import pandas as pd #noqa
-import os #noqa
-from io import BytesIO #noqa
-import logging #noqa
+# Third party imports
+import pandas as pd  # noqa
+import scrapy  # noqa
 from colorama import Fore, Style
 from colorama import init as colorama_init
+from scrapy import FormRequest  # noqa
+from scrapy.crawler import CrawlerProcess  # noqa
+from scrapy.utils.response import (  # noqa useful while program is running
+    open_in_browser,
+)
 
 colorama_init()
 
@@ -36,18 +40,19 @@ class BSEEDataSpider(scrapy.Spider):
 
         process.start()
 
+
     def parse(self, response):
 
         first_request_data = self.cfg['form_data']['first_request']
 
         yield FormRequest.from_response(response, formdata=first_request_data, callback=self.step2)
-    
+
     def step2(self, response):
         if response.status == 200:
             print(f" {Fore.GREEN} submitted given form data successfully!{Style.RESET_ALL}")
         else:
             print(f"{Fore.RED}Failed to submit the form data {Style.RESET_ALL}. Status code: {response.status}")
-        
+
         second_request_data = self.cfg['form_data']['second_request']
 
         yield FormRequest.from_response(response, formdata=second_request_data, callback=self.parse_csv_data)
@@ -63,7 +68,7 @@ class BSEEDataSpider(scrapy.Spider):
                 f.write(response.body)
                 response_csv = pd.read_csv(BytesIO(response.body)) # For displaying data
                 print()
-                print(f"\n****The Scraped data of given parameter ****\n")
+                print("\n****The Scraped data of given parameter ****\n")
                 print(response_csv)
         else:
             print(f"{Fore.RED}Failed to export CSV file.{Style.RESET_ALL} Status code: {response.status}")

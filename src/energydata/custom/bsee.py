@@ -1,12 +1,13 @@
 
+# Third party imports
 from assetutilities.common.update_deep import update_deep_dictionary
-
-# Reader imports
-from energydata.custom.scrapy_API_data import BSEEDataSpider
 from energydata.custom.scrapy_production_data import SpiderBsee
 
-bsee_wellAPI = BSEEDataSpider()
+# Reader imports
+from energydata.modules.bsee.well_data import WellData
+
 bsee_production = SpiderBsee()
+well_data = WellData()
 
 class bsee:
     
@@ -19,7 +20,7 @@ class bsee:
         cfg = self.get_cfg_with_master_data(cfg)
 
         if 'well_data' in cfg and cfg['well_data']['flag']:
-            bsee_wellAPI.router(cfg)
+            data= well_data.get_well_data(cfg)
 
         if 'production' in cfg and cfg['production']['flag']:
             bsee_production.router(cfg)

@@ -50,13 +50,13 @@ dictitems:
       __EVENTARGUMENT: Click
   Analysis:
     basename: bsee
-    analysis_root_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee
+    analysis_root_folder: c:\github\energydata\src\energydata\tests\test_data\bsee
     file_name: jack_by_block
     file_name_for_overwrite: jack_by_block
-    result_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\results
-    log_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\logs
-    start_time: 2024-11-14 11:15:31.309442
+    result_folder: c:\github\energydata\src\energydata\tests\test_data\bsee\results
+    log_folder: c:\github\energydata\src\energydata\tests\test_data\bsee\logs
+    start_time: 2024-11-14 10:15:32.825358
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\jack_by_block.yml
-    fe_folder: c:\Users\Sk Samdan\Desktop\energydata\src\energydata\tests\test_data\bsee\results
+    CustomInputFile: c:\github\energydata\src\energydata\tests\test_data\bsee\jack_by_block.yml
+    fe_folder: c:\github\energydata\src\energydata\tests\test_data\bsee\results
