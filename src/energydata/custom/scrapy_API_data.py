@@ -38,11 +38,9 @@ class BSEEDataSpider(scrapy.Spider):
 
     def parse(self, response):
 
-        cfg_data = self.cfg['form_data']['first_request']
+        first_request_data = self.cfg['form_data']['first_request']
 
-        data = cfg_data
-
-        yield FormRequest.from_response(response, formdata=data, callback=self.step2)
+        yield FormRequest.from_response(response, formdata=first_request_data, callback=self.step2)
     
     def step2(self, response):
         if response.status == 200:
@@ -50,11 +48,9 @@ class BSEEDataSpider(scrapy.Spider):
         else:
             print(f"{Fore.RED}Failed to submit the form data {Style.RESET_ALL}. Status code: {response.status}")
         
-        cfg_data = self.cfg['form_data']['second_request']
+        second_request_data = self.cfg['form_data']['second_request']
 
-        data = cfg_data
-
-        yield FormRequest.from_response(response, formdata=data, callback=self.parse_csv_data)
+        yield FormRequest.from_response(response, formdata=second_request_data, callback=self.parse_csv_data)
 
     def parse_csv_data(self, response):
 

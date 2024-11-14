@@ -39,38 +39,24 @@ class SpiderBsee(scrapy.Spider):
         process.start()
 
     def parse(self, response):
-        lease_number = str(self.input_item['lease_number'])
-        from_date = str(self.input_item['Duration']['from'])
-        to_date = str(self.input_item['Duration']['to'])
+        
+        first_request_data = self.cfg['form_data']['first_request']
 
-        data = {
-            'ASPxFormLayout1$ASPxTextBoxLN': lease_number,
-            'ASPxFormLayout1$ASPxTextBoxDF': from_date,
-            'ASPxFormLayout1$ASPxTextBoxDT': to_date,
-            'ASPxFormLayout1$ASPxButtonSubmitQ': 'Submit Query'
-        }
-        yield FormRequest.from_response(response, formdata=data, callback=self.step2)
+        yield FormRequest.from_response(response, formdata=first_request_data, callback=self.step2)
     
     def step2(self, response):
         if response.status == 200:
-            print(f"Lease number {self.input_item['lease_number']}{Fore.GREEN} submission successful!{Style.RESET_ALL}")
+            print(f"{Fore.GREEN} submitted given form data successfully!{Style.RESET_ALL}")
         else:
-            print(f"{Fore.RED}Failed to submit lease number{Style.RESET_ALL}. Status code: {response.status}")
+            print(f"{Fore.RED}Failed to submit the form data{Style.RESET_ALL}. Status code: {response.status}")
 
-        lease_number = self.input_item['lease_number']
-        lease_number = str(lease_number)
+        second_request_data = self.cfg['form_data']['second_request']
 
-        data = {
-            'ASPxFormLayout1$ASPxTextBoxLN': lease_number,
-            '__EVENTTARGET': 'ASPxFormLayout2$btnCsvExport',
-            '__EVENTARGUMENT': 'Click',
-        }
-        yield FormRequest.from_response(response, formdata=data, callback=self.parse_csv_data)
+        yield FormRequest.from_response(response, formdata=second_request_data, callback=self.parse_csv_data)
 
     def parse_csv_data(self, response):
 
-        label = self.input_item['label']
-        lease_number = self.input_item['lease_number'] 
+        label = self.input_item['label'] 
         output_path = self.input_item['output_dir']
         file_path = os.path.join(output_path, f"{label}.csv")
 
@@ -79,7 +65,7 @@ class SpiderBsee(scrapy.Spider):
                 f.write(response.body)
                 response_csv = pd.read_csv(BytesIO(response.body))
                 print()
-                print(f"\n****The Scraped data of {lease_number} ****\n")
+                print("\n****The Scraped data of given parameter ****\n")
                 print(response_csv)
         else:
-            print(f"{Fore.RED}Failed to export CSV.{Style.RESET_ALL} Status code: {response.status}")
+            print(f"{Fore.RED}Failed to export CSV file.{Style.RESET_ALL} Status code: {response.status}")
