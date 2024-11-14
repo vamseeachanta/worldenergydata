@@ -42,4 +42,3 @@ class bsee:
                 items[item_idx] = group.copy()
 
         return cfg
-    
