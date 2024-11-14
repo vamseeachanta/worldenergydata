@@ -37,35 +37,28 @@ class BSEEDataSpider(scrapy.Spider):
         process.start()
 
     def parse(self, response):
-        api_value = self.input_item['well_api12']
-        api_value = str(api_value) # API number should be string in formdata
 
-        data = {
-            'ASPxFormLayout1$ASPxTextBoxAPI': api_value,
-            'ASPxFormLayout1$ASPxButtonSubmitQ': 'Submit Query'
-        }
+        cfg_data = self.cfg['form_data']['first_request']
+
+        data = cfg_data
+
         yield FormRequest.from_response(response, formdata=data, callback=self.step2)
     
     def step2(self, response):
         if response.status == 200:
-            print(f"API {self.input_item['well_api12']}{Fore.GREEN} submission successful!{Style.RESET_ALL}")
+            print(f" {Fore.GREEN} submitted given form data successfully!{Style.RESET_ALL}")
         else:
-            print(f"{Fore.RED}Failed to submit API {Style.RESET_ALL}. Status code: {response.status}")
+            print(f"{Fore.RED}Failed to submit the form data {Style.RESET_ALL}. Status code: {response.status}")
+        
+        cfg_data = self.cfg['form_data']['second_request']
 
-        api_value = self.input_item['well_api12']
-        api_value = str(api_value)
+        data = cfg_data
 
-        data = {
-            'ASPxFormLayout1$ASPxTextBoxAPI': api_value,
-            '__EVENTTARGET': 'ASPxFormLayout2$btnCsvExport',
-            '__EVENTARGUMENT': 'Click'
-        }
         yield FormRequest.from_response(response, formdata=data, callback=self.parse_csv_data)
 
     def parse_csv_data(self, response):
 
         label = self.input_item['label']
-        API_number = self.input_item['well_api12']
         output_path = self.input_item['output_dir']
         file_path = os.path.join(output_path, f"{label}.csv")
 
@@ -74,7 +67,7 @@ class BSEEDataSpider(scrapy.Spider):
                 f.write(response.body)
                 response_csv = pd.read_csv(BytesIO(response.body)) # For displaying data
                 print()
-                print(f"\n****The Scraped data of {API_number} ****\n")
+                print(f"\n****The Scraped data of given parameter ****\n")
                 print(response_csv)
         else:
-            print(f"{Fore.RED}Failed to export CSV.{Style.RESET_ALL} Status code: {response.status}")
+            print(f"{Fore.RED}Failed to export CSV file.{Style.RESET_ALL} Status code: {response.status}")
