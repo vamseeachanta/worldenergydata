@@ -1,101 +1,101 @@
 SN_APD_FK,SN_ATTACHMENT_BLOB_FK,ATT_NAME,ATT_EXTENSION
--3197,-101322,"Pore pressure (PP), Mud Weight (MW), and Fracture Gradient (FG) Plot",pdf
--3197,-101318,Proposed Wellbore Schematic,pdf
--3197,-101343,Safe Welding Area Drawing,pdf
--3197,-101338,ABS/DNV Certificate,pdf
--3197,-112096,Engineering Calculation,pdf
--3197,-106937,Departure List,pdf
--3197,-101342,U.S. Coast Guard Certificate,pdf
--3197,-101350,MMS 123S Attachment,pdf
--3197,-101352,Shallow Gas Contingency,pdf
--3197,-101365,Station Keeping Text- Moored Rigs,pdf
--3148,-99789,Application for Permit to Drill,PDF
--3043,-101596,Application for Permit to Drill,PDF
--3067,-101625,Application for Permit to Drill,PDF
--3223,-102493,Application for Permit to Drill,PDF
--3200,-102577,Application for Permit to Drill,PDF
--2981,-104910,Application for Permit to Drill,PDF
--3052,-97826,ENSCO 84 - Rig Fitness,pdf
--3105,-97858,Supplemetn to NTL 2006-G09,pdf
--3306,-105915,Application for Permit to Drill,PDF
--3334,-106894,Application for Permit to Drill,PDF
--3340,-107368,Application for Permit to Drill,PDF
--3339,-107371,Application for Permit to Drill,PDF
--3345,-107488,SM 80 A2ST Compliance NTL 2006 G09,pdf
--3352,-107531,Proposed Well Location Plat,pdf
--3352,-107532,"Drilling prognosis and summary of drilling, cementing, and mud processes",pdf
--3352,-107533,Directional Program,pdf
--3352,-107534,"Pore pressure (PP), Mud Weight (MW), and Fracture Gradient (FG) Plot",pdf
--3352,-107535,Proposed Wellbore Schematic,pdf
--3352,-107536,Engineering Calculation,pdf
--3352,-107537,BOP & Diverter Schematics with Operating Procedures,pdf
--3352,-107538,Ensco 86 Rig Fitness,pdf
--3352,-107539,West Delta Block 20 OCS-G25000 Well 001 (Spalding) H2S Plan,pdf
--3352,-107554,Application for Permit to Drill,PDF
--3070,-96590,EC 269 #1 Current WB Schematic 06-20-06,pdf
--2886,-98244,NTL 2006-G09 Checklist for Rowan Alaska,pdf
--3303,-107841,well control issue,pdf
--3105,-97918,Application for Permit to Drill,PDF
--3363,-108037,Pore Pressure Graph,pdf
--3371,-108464,Casing Design Criteria 20060803,pdf
--3372,-108371,Proposed Well Location Plat,pdf
--3372,-108372,"Drilling prognosis and summary of drilling, cementing, and mud processes",pdf
--3372,-108373,Directional Program,pdf
--3372,-108374,"Pore pressure (PP), Mud Weight (MW), and Fracture Gradient (FG) Plot",pdf
--3372,-108375,Proposed Wellbore Schematic,pdf
--3372,-108376,Engineering Calculation,pdf
--3372,-108377,Departure List,pdf
--3372,-108378,BOP & Diverter Schematics with Operating Procedures,pdf
--3372,-108379,Proprietary Plat,pdf
--3372,-108380,Form MMS 123S,pdf
--3372,-108381,API Moored Drilling Rig Fitness Reqmts (NTL No. 2006-G10),pdf
--3343,-108702,Ball Valve Schematic,pdf
--3360,-108784,Extreme Weather Plan,pdf
--4077,-141260,APD Information Sheet,pdf
--4077,-141267,ENSCO 90 Diverter & Procedure,pdf
--4077,-141273,21-1/4 BOP Stack,pdf
--4059,-139979,Proposed Well Location Plat,pdf
--4059,-139976,"Drilling prognosis and summary of drilling, cementing, and mud processes",pdf
--4059,-139980,Directional Program,pdf
--4059,-139981,"Pore pressure (PP), Mud Weight (MW), and Fracture Gradient (FG) Plot",pdf
--4059,-139978,Proposed Wellbore Schematic,pdf
--3635,-121883,Proposed Wellbore Schematic,pdf
--3061,-98992,Application for Permit to Drill,PDF
--2999,-99444,Application for Permit to Drill,PDF
--3147,-99446,Application for Permit to Drill,PDF
--3197,-111699,BOP & Diverter Schematics with Operating Procedures,pdf
--3060,-99733,Application for Permit to Drill,PDF
--3326,-106797,Application for Permit to Drill,PDF
--3063,-96512,Application for Permit to Drill,PDF
--4033,-138963,Proposed Well Location Plat,pdf
--4033,-138965,Directional Program,pdf
--4033,-138970,U.S. Coast Guard Certificate,pdf
--4033,-138974,"Drilling prognosis and summary of drilling, cementing, and mud processes",pdf
--4033,-138977,"Pore pressure (PP), Mud Weight (MW), and Fracture Gradient (FG) Plot",pdf
--4033,-138975,Engineering Calculation,pdf
--4033,-138973,Cross Section,pdf
--4022,-139108,Conductor Liner Justification,pdf
--4033,-138978,BOP & Diverter Schematics with Operating Procedures,pdf
--3629,-121626,Application for Permit to Drill,PDF
--3613,-121656,Application for Permit to Drill,PDF
--3632,-121749,U.S. Coast Guard Certificate,pdf
--3632,-121750,Revised Exhibit 95-F,pdf
--3632,-121751,BOP procedures,pdf
--3632,-121752,Extreme Weather Plan,pdf
--3615,-121863,Application for Permit to Drill,PDF
--3635,-121879,Proposed Well Location Plat,pdf
--3635,-121880,"Drilling prognosis and summary of drilling, cementing, and mud processes",pdf
--3635,-121881,Directional Program,pdf
--3635,-121882,"Pore pressure (PP), Mud Weight (MW), and Fracture Gradient (FG) Plot",pdf
--3635,-121884,Engineering Calculation,pdf
--3635,-121885,Departure List,pdf
--3635,-121886,BOP & Diverter Schematics with Operating Procedures,pdf
--3635,-121887,EPA Coverage,pdf
--3635,-121888,Rig Fitness Requirements,pdf
--3635,-121889,APD Spreadsheet,pdf
--3635,-121890,+10 Ball Valve,pdf
--2886,-98240,Form 123S,pdf
--3138,-98956,Proposed Well Location Plat,pdf
--3138,-98843,"Pore pressure (PP), Mud Weight (MW), and Fracture Gradient (FG) Plot",pdf
--3138,-98836,Proposed Wellbore Schematic,pdf
--3138,-98835,Engineering Calculation,pdf
+-6614,-266723,Proposed Wellbore Schematic,pdf
+-6614,-266722,Engineering Calculation,pdf
+-6614,-266651,BOP & Diverter Schematics with Operating Procedures,pdf
+-6614,-266652,Barite Statement,pdf
+-910,-267576,Henry Goodrich Equipment List,pdf
+-6590,-268191,Application for Permit to Drill,PDF
+-6689,-271222,MMS Statements,pdf
+-6689,-271224,Plus 10 valve drawing,pdf
+-6662,-271264,Structure Maps / X Sections,pdf
+-6697,-271458,"Drilling prognosis and summary of drilling, cementing, and mud processes",pdf
+-6711,-271710,Pay Gov,pdf
+-6552,-270530,OSFR Coverage-MMS Approved,pdf
+-6762,-274785,Application for Permit to Drill,PDF
+-6884,-281167,+10 ball valve schematic,pdf
+-6904,-282073,"Drilling prognosis and summary of drilling, cementing, and mud processes",pdf
+-6904,-282077,Directional Program,pdf
+-6904,-282078,"Pore pressure (PP), Mud Weight (MW), and Fracture Gradient (FG) Plot",pdf
+-6904,-282075,Proposed Wellbore Schematic,pdf
+-6904,-282074,Engineering Calculation,pdf
+-6904,-282080,BOP & Diverter Schematics with Operating Procedures,pdf
+-6904,-282079,Barite Statement,pdf
+-6874,-282081,Application for Permit to Drill,PDF
+-6802,-276514,"Drilling prognosis and summary of drilling, cementing, and mud processes",pdf
+-6756,-276128,response to ntl g13,pdf
+-7839,-327386,"Drilling prognosis and summary of drilling, cementing, and mud processes",pdf
+-7778,-323153,Digital BOP testing,pdf
+-7778,-323154,Logging Program,pdf
+-7292,-302285,Proposed Well Location Plat,pdf
+-7292,-302281,"Drilling prognosis and summary of drilling, cementing, and mud processes",pdf
+-7292,-302286,Directional Program,pdf
+-7292,-302287,"Pore pressure (PP), Mud Weight (MW), and Fracture Gradient (FG) Plot",pdf
+-7292,-302284,Proposed Wellbore Schematic,pdf
+-7292,-302283,Engineering Calculation,pdf
+-7292,-302288,BOP & Diverter Schematics with Operating Procedures,pdf
+-7300,-302662,Proposed Well Location Plat,pdf
+-7300,-304089,"Drilling prognosis and summary of drilling, cementing, and mud processes",pdf
+-7300,-304107,Proposed Wellbore Schematic,pdf
+-7300,-304530,BOP & Diverter Schematics with Operating Procedures,pdf
+-6741,-274086,Proposed Well Location Plat,pdf
+-6741,-275009,"Drilling prognosis and summary of drilling, cementing, and mud processes",pdf
+-6741,-274092,Directional Program,pdf
+-6741,-274127,"Pore pressure (PP), Mud Weight (MW), and Fracture Gradient (FG) Plot",pdf
+-6741,-274525,Proposed Wellbore Schematic,pdf
+-6741,-274098,Engineering Calculation,pdf
+-6741,-274528,BOP & Diverter Schematics with Operating Procedures,pdf
+-6756,-274580,"Pore pressure (PP), Mud Weight (MW), and Fracture Gradient (FG) Plot",pdf
+-6756,-274910,Proposed Wellbore Schematic,pdf
+-6756,-276127,BOP & Diverter Schematics with Operating Procedures,pdf
+-6756,-274625,EPA LETTER FOR EUGENE ISLAND 164,pdf
+-6759,-274680,Eddy-Loop Current Contingency Plans,pdf
+-6759,-274690,Mooring Analysis and Risk Assessment,pdf
+-6759,-274691,Rig Fitness Letter,pdf
+-6759,-274692,Vessel Certificate of Financial Responsibility,pdf
+-6650,-269067,Directional Program,pdf
+-6713,-271868,Proposed Wellbore Schematic,pdf
+-6713,-271869,Engineering Calculation,pdf
+-6713,-271870,BOP & Diverter Schematics with Operating Procedures,pdf
+-6713,-271867,"Pore pressure (PP), Mud Weight (MW), and Fracture Gradient (FG) Plot",pdf
+-6713,-271871,APD Supplemental Information Form,pdf
+-7837,-327421,Engineering Calculation,pdf
+-7837,-327450,Deepwater Cement Practices,pdf
+-7837,-327424,Proposed Well Location Plat,pdf
+-7837,-327426,"Pore pressure (PP), Mud Weight (MW), and Fracture Gradient (FG) Plot",pdf
+-7837,-327420,Proposed Wellbore Schematic,pdf
+-7790,-326833,Application for Permit to Drill,PDF
+-7837,-327375,Departure List,pdf
+-7804,-325376,Proposed Well Location Plat,pdf
+-7804,-325375,Proposed Wellbore Schematic,pdf
+-7804,-325366,"Drilling prognosis and summary of drilling, cementing, and mud processes",pdf
+-7804,-325380,"Pore pressure (PP), Mud Weight (MW), and Fracture Gradient (FG) Plot",pdf
+-7804,-325379,Directional Program,pdf
+-6653,-276257,OSFR Coverage EW 305 Lease OCS-G 04254,pdf
+-6650,-269080,DeepWater Current Monitor,pdf
+-6689,-277580,Engineering Calculation,pdf
+-7835,-327182,Proposed Well Location Plat,pdf
+-7835,-327178,"Drilling prognosis and summary of drilling, cementing, and mud processes",pdf
+-7835,-327179,Engineering Calculation,pdf
+-7835,-326755,Verbal Approval to Deepen,pdf
+-7835,-327183,Directional Program,pdf
+-7835,-327184,"Pore pressure (PP), Mud Weight (MW), and Fracture Gradient (FG) Plot",pdf
+-7778,-327029,Application for Permit to Drill,PDF
+-7835,-327181,Proposed Wellbore Schematic,pdf
+-7835,-327194,Application for Permit to Drill,PDF
+-7837,-327449,Safe Welding Area Drawing,pdf
+-7804,-325385,SM 6 #3 Geological Documentation,pdf
+-7864,-328831,"Drilling prognosis and summary of drilling, cementing, and mud processes",pdf
+-7864,-328836,Engineering Calculation,pdf
+-7864,-328833,"Pore pressure (PP), Mud Weight (MW), and Fracture Gradient (FG) Plot",pdf
+-7864,-328834,Proposed Wellbore Schematic,pdf
+-6933,-307869,Current Plugback Schematic,pdf
+-7755,-321760,Directional Program,pdf
+-7755,-321758,Engineering Calculation,pdf
+-7755,-321761,"Pore pressure (PP), Mud Weight (MW), and Fracture Gradient (FG) Plot",pdf
+-7755,-321762,BOP & Diverter Schematics with Operating Procedures,pdf
+-7755,-321763,30 inch 500 psi Rental Diverter,pdf
+-7755,-321772,NTL No. 2006-G20,pdf
+-7772,-322860,Application for Permit to Drill,PDF
+-6600,-266166,Application for Permit to Drill,PDF
+-6590,-267844,HI37 B2 map and xsection.pdf,pdf
+-6650,-269038,Proposed Well Location Plat,pdf

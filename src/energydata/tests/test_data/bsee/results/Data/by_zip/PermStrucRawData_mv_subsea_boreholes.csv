@@ -1,10 +1,4 @@
 BUS_ASC_NAME,AREA_CODE,BLOCK_NUMBER,WELL_NAME,WATER_DEPTH
-Woodside Energy (GOM) Inc.,GC,654,WI001,4303
-Woodside Energy (GOM) Inc.,GC,654,WI008,4304
-Woodside Energy (GOM) Inc.,GC,654,WI003,4300
-Eni US Operating Co. Inc.,MC,728,SS001,5380
-Shell Offshore Inc.,MC,762,WB003,3147
-Woodside Energy (GOM) Inc.,GC,653,SB203,4234
 Woodside Energy (GOM) Inc.,GC,653,SB103,4235
 Woodside Energy (GOM) Inc.,GC,653,SC104,4353
 "Deepwater Abandonment Alternatives, Inc.",MC,734,SS002,5710
@@ -14,6 +8,7 @@ Anadarko Petroleum Corporation,KC,919,SS008,7393
 Shell Offshore Inc.,WR,508,SN105,9553
 BP Exploration & Production Inc.,GC,738,  001,4475
 "LLOG Exploration Offshore, L.L.C.",MC,503,SS001,3099
+Talos QN Exploration LLC,MC,519,  002,6500
 Union Oil Company of California,WR,634,PN001,6805
 Union Oil Company of California,WR,634,PN002,6804
 Eni US Operating Co. Inc.,MC,546,SS003,2599
@@ -23,6 +18,7 @@ BP Exploration & Production Inc.,MC,562,  001,6435
 "Beacon Growthco Operating Company, L.L.C.",MC,427,SS001,5782
 "LLOG Exploration Offshore, L.L.C.",MC,199,SS003,2528
 Anadarko Petroleum Corporation,GC,903,SS002,5254
+Talos QN Exploration LLC,MC,782,  002,6569
 Murphy Exploration & Production Company - USA,MC,431,SS002,6427
 Murphy Exploration & Production Company - USA,MC,300,  003,5747
 Murphy Exploration & Production Company - USA,MC,300,SS001,5746
@@ -41,7 +37,8 @@ Talos ERT LLC,GC,236,  001,1965
 Shell Offshore Inc.,MC,809, P005,3646
 Shell Offshore Inc.,MC,809, P003,3642
 Talos ERT LLC,GC,237,  002,2025
-QuarterNorth Energy LLC,GC,200,TA002,2670
+Talos QN Exploration LLC,GC,200,TA003,2670
+Talos QN Exploration LLC,GC,200,TA002,2670
 BP Exploration & Production Inc.,MC,778,TA010,6033
 Anadarko Petroleum Corporation,GC,562,SS008,3928
 Shell Offshore Inc.,MC,899,SS007,4389
@@ -81,11 +78,10 @@ BP Exploration & Production Inc.,MC,775,TG003,5671
 Woodside Energy (GOM) Inc.,GC,652,SK101,4320
 Chevron U.S.A. Inc.,WR,758,PS002,6959
 Murphy Exploration & Production Company - USA,MC,79,SS001,3861
+Talos QN Exploration LLC,MC,519,  003,6595
 "LLOG Exploration Offshore, L.L.C.",MC,546,SS004,2570
 "LLOG Exploration Offshore, L.L.C.",MC,546,SS006,2566
 Woodside Energy (GOM) Inc.,GC,609,SN102,4293
-QuarterNorth Energy LLC,MC,948,  004,6094
-QuarterNorth Energy LLC,MC,948,  002,6095
 "Kosmos Energy Gulf of Mexico Operations, LLC",MC,727,SS002,4829
 "Kosmos Energy Gulf of Mexico Operations, LLC",MC,727,SS003,4826
 Shell Offshore Inc.,MC,940,VA009,3994
@@ -94,8 +90,12 @@ Anadarko Petroleum Corporation,GC,859,SS005,5355
 Talos ERT LLC,GC,281,SS002,2760
 Anadarko Petroleum Corporation,KC,875,SS007,6820
 Woodside Energy (GOM) Inc.,GC,555,  001,3751
-QuarterNorth Energy LLC,MC,782,  002,6569
 Shell Offshore Inc.,MC,812, K004,4479
 Murphy Exploration & Production Company - USA,MC,565,SS001,6822
 "Beacon Growthco Operating Company, L.L.C.",MC,794,SS003,1462
 "LLOG Exploration Offshore, L.L.C.",MC,503,SS002,2643
+"LLOG Exploration Offshore, L.L.C.",MC,503,SS003,2648
+BP Exploration & Production Inc.,MC,520,  004,6622
+Shell Offshore Inc.,MC,942,PN004,4224
+Shell Offshore Inc.,GB,427,DC001,2719
+BP Exploration & Production Inc.,MC,383, K003,4727

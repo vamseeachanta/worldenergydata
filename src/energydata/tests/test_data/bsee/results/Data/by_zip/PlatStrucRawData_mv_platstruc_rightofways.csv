@@ -1,101 +1,101 @@
 SN_ROW,ROW_NUMBER,ROW_STATUS_CD,BUS_ASC_NAME
-3383,G25288,EXP,Fieldwood Energy Offshore LLC
-3385,G25290,EXP,Fieldwood Energy Offshore LLC
-3455,G25358,RELQ,Fieldwood Energy Offshore LLC
-3456,G25359,RELQ,Fieldwood Energy Offshore LLC
-3457,G25360,RELQ,Fieldwood Energy Offshore LLC
-3458,G25361,EXP,Fieldwood Energy Offshore LLC
-3479,G25383,RELQ,Fieldwood Energy Offshore LLC
-3480,G25384,EXP,Fieldwood Energy Offshore LLC
-3577,G25478,RELQ,Fieldwood Energy Offshore LLC
-3658,G26837,EXP,Fieldwood Energy Offshore LLC
-3659,G26838,EXP,Fieldwood Energy Offshore LLC
-3661,G26839,EXP,Fieldwood Energy Offshore LLC
-3714,G26891,RELQ,Fieldwood Energy Offshore LLC
-3808,G26977,EXP,Fieldwood Energy Offshore LLC
-3822,G26989,RELQ,Fieldwood Energy Offshore LLC
-3868,G28216,RELQ,Fieldwood Energy Offshore LLC
-3869,G28217,RELQ,Fieldwood Energy Offshore LLC
-3873,G28221,EXP,Fieldwood Energy Offshore LLC
-4034,G28376,RELQ,Fieldwood Energy Offshore LLC
-4062,G28402,RELQ,Fieldwood Energy Offshore LLC
-4221,G28533,RELQ,Fieldwood Energy Offshore LLC
-4406,G29043,CNCL,Fieldwood Energy Offshore LLC
-4461,G29085,EXP,Fieldwood Energy Offshore LLC
-4497,G28626,RELQ,Fieldwood Energy Offshore LLC
-4548,G28136,PEND,Fieldwood Energy Offshore LLC
-4549,G29136,RELQ,Fieldwood Energy Offshore LLC
-4666,G28672,RELQ,Fieldwood Energy Offshore LLC
-4668,G29196,ACT,Fieldwood Energy Offshore LLC
-4696,G29217,CNCL,Fieldwood Energy Offshore LLC
-4780,G29260,RELQ,Fieldwood Energy Offshore LLC
-4793,G29267,RELQ,Fieldwood Energy Offshore LLC
-4803,G28721,RELQ,Fieldwood Energy Offshore LLC
-4845,G29301,RELQ,Fieldwood Energy Offshore LLC
-4863,G29316,EXP,Fieldwood Energy Offshore LLC
-4874,G29321,RELQ,Fieldwood Energy Offshore LLC
-23366899,G29459,PEND,Fieldwood Energy Offshore LLC
-25698251,G29506,PEND,Fieldwood Energy Offshore LLC
-4907,G29343,RELQ,Fieldwood Energy Offshore LLC
-25698257,G29507,PEND,Fieldwood Energy Offshore LLC
-305531160,G29643,PEND,Fieldwood Energy Offshore LLC
-4550,G29137,RELQ,Fieldwood Energy Offshore LLC
-1, 00519,RELQ,"Hilcorp Energy GOM, LLC"
-2781,G21488,RELQ,"Hilcorp Energy GOM, LLC"
-4345,G28990,RELQ,"Hilcorp Energy GOM, LLC"
-4567,G28645,CNCL,"Hilcorp Energy GOM, LLC"
-54, 00888B,RELQ,Talos Resources LLC
-55, 00888C,RELQ,Talos Resources LLC
-254,G01702J,RELQ,Talos Resources LLC
-258,G01702N,RELQ,Talos Resources LLC
-265,G01702U,RELQ,Talos Resources LLC
-815,G04640,RELQ,Talos Resources LLC
-1603,G12728,ACT,Talos Resources LLC
-1604,G12729,ACT,Talos Resources LLC
-1893,G14046,RELQ,Talos Resources LLC
-1894,G14047,RELQ,Talos Resources LLC
-1993,G14680,ACT,Talos Resources LLC
-2094,G14992,RELQ,Talos Resources LLC
-2149,G15638,ACT,Talos Resources LLC
-2177,G15668,EXP,Talos Resources LLC
-2179,G15670,RELQ,Talos Resources LLC
-2484,G18828,RELQ,Talos Resources LLC
-2738,G21291,RELQ,Talos Resources LLC
-2739,G21292,RELQ,Talos Resources LLC
-2784,G21491,EXP,Talos Resources LLC
-2794,G21501,RELQ,Talos Resources LLC
-2837,G21889,RELQ,Talos Resources LLC
-2838,G21890,RELQ,Talos Resources LLC
-3011,G22493,RELQ,Talos Resources LLC
-3069,G23425,EXP,Talos Resources LLC
-3154,G23703,RELQ,Talos Resources LLC
-3155,G23704,RELQ,Talos Resources LLC
-3156,G23705,RELQ,Talos Resources LLC
-3157,G23706,RELQ,Talos Resources LLC
-3161,G23709,RELQ,Talos Resources LLC
-3283,G24646,RELQ,Talos Resources LLC
-3393,G25297,RELQ,Talos Resources LLC
-3523,G25425,RELQ,Talos Resources LLC
-3545,G25447,RELQ,Talos Resources LLC
-3586,G25486,EXP,Talos Resources LLC
-3587,G25487,EXP,Talos Resources LLC
-3588,G25488,EXP,Talos Resources LLC
-3628,G26808,RELQ,Talos Resources LLC
-3797,G26967,RELQ,Talos Resources LLC
-3890,G28238,RELQ,Talos Resources LLC
-3923,G28266,RELQ,Talos Resources LLC
-3929,G28272,RELQ,Talos Resources LLC
-3959,G28301,RELQ,Talos Resources LLC
-4223,G28535,RELQ,Talos Resources LLC
-4284,G28591,RELQ,Talos Resources LLC
-4285,G28592,RELQ,Talos Resources LLC
-4286,G28593,RELQ,Talos Resources LLC
-4293,G28600,RELQ,Talos Resources LLC
-4294,G28601,RELQ,Talos Resources LLC
-4295,G28602,RELQ,Talos Resources LLC
-4296,G28603,RELQ,Talos Resources LLC
-4300,G28607,RELQ,Talos Resources LLC
-4469,G29090,RELQ,Talos Resources LLC
-4471,G29092,RELQ,Talos Resources LLC
-4632,G29181,RELQ,Talos Resources LLC
-1878,G14031,EXP,"Hall-Houston Exploration III, L.P."
+291395043,G29591,PEND,Dauphin Island Gathering Partners
+288758580,G29587,PEND,Dauphin Island Gathering Partners
+290322281,G29588,PEND,Dauphin Island Gathering Partners
+3631,G26811,EXP,"W & T Offshore, L.L.C."
+873,G05129,RELQ,"Vastar Resources, Inc."
+1763,G13501,RELQ,"Vastar Resources, Inc."
+2008,G14695,RELQ,"Vastar Resources, Inc."
+2281,G16049,RELQ,"Vastar Resources, Inc."
+2469,G18813,RELQ,"Vastar Resources, Inc."
+2541,G19690,RELQ,"Vastar Resources, Inc."
+938,G05933,RELQ,Louis Dreyfus Natural Gas Corp.
+2108,G15006,RELQ,Louis Dreyfus Natural Gas Corp.
+1214,G08945,RELQ,Devon Energy Operating Corporation
+2, 00641,ACT,"Gulf South Pipeline Company, LP"
+3, 00642,ACT,"Gulf South Pipeline Company, LP"
+304971843,G29636,PEND,"Gulf South Pipeline Company, LP"
+282,G01709D,RELQ,"Gulf South Pipeline Company, LP"
+482,G03450,RELQ,"Gulf South Pipeline Company, LP"
+488,G03456,RELQ,"Gulf South Pipeline Company, LP"
+492,G03612,RELQ,"Gulf South Pipeline Company, LP"
+538,G03720,RELQ,"Gulf South Pipeline Company, LP"
+541,G03824,RELQ,"Gulf South Pipeline Company, LP"
+543,G03826,RELQ,"Gulf South Pipeline Company, LP"
+549,G03832,EXP,"Gulf South Pipeline Company, LP"
+551,G03834,EXP,"Gulf South Pipeline Company, LP"
+593,G03882,RELQ,"Gulf South Pipeline Company, LP"
+601,G04013,ACT,"Gulf South Pipeline Company, LP"
+621,G04035,RELQ,"Gulf South Pipeline Company, LP"
+622,G04036,RELQ,"Gulf South Pipeline Company, LP"
+673,G04275,RELQ,"Gulf South Pipeline Company, LP"
+683,G04285,RELQ,"Gulf South Pipeline Company, LP"
+684,G04286,RELQ,"Gulf South Pipeline Company, LP"
+700,G04302,EXP,"Gulf South Pipeline Company, LP"
+755,G04358,RELQ,"Gulf South Pipeline Company, LP"
+756,G04359,RELQ,"Gulf South Pipeline Company, LP"
+811,G04636,RELQ,"Gulf South Pipeline Company, LP"
+2210,G15977,RELQ,"Gulf South Pipeline Company, LP"
+3325,G24683,RELQ,"Gulf South Pipeline Company, LP"
+4690,G29213,CNCL,"Gulf South Pipeline Company, LP"
+708,G04311,RELQ,"NCX Company, Inc."
+1319,G10385,RELQ,"NCX Company, Inc."
+1405,G11177,RELQ,"NCX Company, Inc."
+1418,G11190,RELQ,"NCX Company, Inc."
+2324,G16094,RELQ,"NCX Company, Inc."
+2194,G15685,RELQ,Coastal States Gas Transmission Company
+1102,G08278,RELQ,Tri-Union Development Corporation
+1350,G10531,RELQ,Tri-Union Development Corporation
+1409,G11181,RELQ,Tri-Union Development Corporation
+1792,G13530,RELQ,Tri-Union Development Corporation
+1793,G13531,RELQ,Tri-Union Development Corporation
+1884,G14037,RELQ,Tri-Union Development Corporation
+2019,G14706,RELQ,Tri-Union Development Corporation
+2020,G14707,RELQ,Tri-Union Development Corporation
+2557,G20500,CNCL,Tri-Union Development Corporation
+1707,G13443,RELQ,XTO Offshore Inc.
+2188,G15679,RELQ,XTO Offshore Inc.
+2189,G15680,RELQ,XTO Offshore Inc.
+2692,G21039,RELQ,XTO Offshore Inc.
+2980,G22462,RELQ,XTO Offshore Inc.
+3037,G23071,EXP,XTO Offshore Inc.
+3038,G23072,RELQ,XTO Offshore Inc.
+3225,G24271,RELQ,XTO Offshore Inc.
+3226,G24272,EXP,XTO Offshore Inc.
+3228,G24274,RELQ,XTO Offshore Inc.
+3246,G24289,RELQ,XTO Offshore Inc.
+3267,G24630,RELQ,XTO Offshore Inc.
+3309,G24672,RELQ,XTO Offshore Inc.
+3316,G24676,RELQ,XTO Offshore Inc.
+3394,G25298,RELQ,XTO Offshore Inc.
+3471,G25374,RELQ,XTO Offshore Inc.
+3486,G25390,RELQ,XTO Offshore Inc.
+3556,G25458,RELQ,XTO Offshore Inc.
+3626,G26806,RELQ,XTO Offshore Inc.
+3878,G28226,RELQ,XTO Offshore Inc.
+257,G01702M,RELQ,CNOOC Petroleum Offshore U.S.A. Inc.
+681,G04283,RELQ,CNOOC Petroleum Offshore U.S.A. Inc.
+1164,G08538,EXP,CNOOC Petroleum Offshore U.S.A. Inc.
+1171,G08586,RELQ,CNOOC Petroleum Offshore U.S.A. Inc.
+1679,G13413,RELQ,CNOOC Petroleum Offshore U.S.A. Inc.
+2217,G15984,RELQ,CNOOC Petroleum Offshore U.S.A. Inc.
+3242,G24285,RELQ,CNOOC Petroleum Offshore U.S.A. Inc.
+3557,G25459,RELQ,CNOOC Petroleum Offshore U.S.A. Inc.
+3558,G25460,RELQ,CNOOC Petroleum Offshore U.S.A. Inc.
+3777,G26952,RELQ,CNOOC Petroleum Offshore U.S.A. Inc.
+4610,G29176,CNCL,CNOOC Petroleum Offshore U.S.A. Inc.
+1493,G12291,RELQ,Gasdel Pipeline System Incorporated
+3897,G28245,CNCL,Woodside Energy (GOM) Inc.
+3991,G28334,CNCL,Woodside Energy (GOM) Inc.
+3992,G28335,CNCL,Woodside Energy (GOM) Inc.
+4022,G28364,RELQ,Woodside Energy (GOM) Inc.
+4434,G29061,ACT,Woodside Energy (GOM) Inc.
+4453,G29077,ACT,Woodside Energy (GOM) Inc.
+4454,G29078,ACT,Woodside Energy (GOM) Inc.
+268225020,G29562,ACT,Woodside Energy (GOM) Inc.
+309824819,G29651,ACT,Woodside Energy (GOM) Inc.
+1258,G09356,RELQ,Pacific Enterprises Oil Company (USA)
+802,G04627,RELQ,The Houston Exploration Company
+1291,G10087,CNCL,The Houston Exploration Company
+1306,G10102,RELQ,The Houston Exploration Company
+1853,G13742,RELQ,The Houston Exploration Company

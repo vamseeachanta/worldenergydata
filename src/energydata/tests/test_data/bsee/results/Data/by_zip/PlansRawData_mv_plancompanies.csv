@@ -1,101 +1,101 @@
 PLAN_CTRL_CD,PLAN_CTRL_NUM,MMS_COMPANY_NUM,BUS_ASC_NAME,PLAN_TYPE_CODE,PLAN_RECV_DATE,PLAN_COORDINATOR
-R,4572,78,Chevron U.S.A. Inc.,DOCD,2/26/2007,EC
-S,7045,2375,"Energy XXI GOM, LLC",DOCD,2/26/2007,EC
-S,7046,2714,"Century Exploration New Orleans, LLC",DOCD,2/26/2007,MG
-N,8935,1103,"EOG Resources, Inc.",EP,2/26/2007,MG
-S,7047,2714,"Century Exploration New Orleans, LLC",EP,2/27/2007,KD
-R,4573,78,Chevron U.S.A. Inc.,DOCD,2/27/2007,MG
-R,4574,78,Chevron U.S.A. Inc.,DOCD,2/27/2007,RS
-R,4575,78,Chevron U.S.A. Inc.,DOCD,2/27/2007,KD
-R,4576,78,Chevron U.S.A. Inc.,DOCD,2/27/2007,EC
-R,4577,78,Chevron U.S.A. Inc.,DOCD,2/27/2007,MG
-S,7048,2025,"EP Energy E&P Company, L.P.",DOCD,2/27/2007,RS
-N,8936,1704,Remington Oil and Gas Corporation,EP,2/28/2007,EC
-N,8937,282,"Dominion Exploration & Production, Inc.",EP,2/28/2007,MG
-N,8938,2421,"Devon Energy Production Company, L.P.",EP,3/1/2007,MG
-R,4578,105,Apache Corporation,DOCD,3/1/2007,RS
-R,4579,105,Apache Corporation,DOCD,3/1/2007,KD
-R,4580,105,Apache Corporation,DOCD,3/1/2007,EC
-R,4581,105,Apache Corporation,DOCD,3/1/2007,MG
-R,4582,105,Apache Corporation,DOCD,3/1/2007,RS
-N,8939,2268,Bois d'Arc Offshore Ltd.,EP,3/2/2007,RS
-N,8940,2813,"Royal Production Company, Inc.",DOCD,3/2/2007,EC
-N,8941,2058,"LLOG Exploration Offshore, L.L.C.",EP,3/2/2007,RS
-R,4583,105,Apache Corporation,DOCD,3/5/2007,KD
-R,4584,105,Apache Corporation,DOCD,3/5/2007,EC
-R,4585,105,Apache Corporation,DOCD,3/5/2007,MG
-R,4586,105,Apache Corporation,DOCD,3/5/2007,RS
-R,4587,105,Apache Corporation,DOCD,3/5/2007,KD
-R,4588,78,Chevron U.S.A. Inc.,DOCD,3/5/2007,EC
-R,4589,78,Chevron U.S.A. Inc.,DOCD,3/5/2007,MG
-R,4590,78,Chevron U.S.A. Inc.,DOCD,3/5/2007,RS
-R,4591,78,Chevron U.S.A. Inc.,DOCD,3/5/2007,KD
-R,4592,78,Chevron U.S.A. Inc.,DOCD,3/5/2007,EC
-R,4593,78,Chevron U.S.A. Inc.,DOCD,3/5/2007,MG
-N,8942,2349,"Magnum Hunter Production, Inc.",EP,3/5/2007,EC
-N,8943,2268,Bois d'Arc Offshore Ltd.,EP,3/5/2007,MG
-N,8944,2237,"Noble Energy, Inc.",DOCD,3/5/2007,RS
-S,7049,1364,Newfield Exploration Company,DOCD,3/6/2007,EC
-N,8945,2349,"Magnum Hunter Production, Inc.",EP,3/6/2007,KD
-N,8946,2222,"PetroQuest Energy, L.L.C.",EP,3/6/2007,EC
-N,8947,2481,BP Exploration & Production Inc.,EP,3/6/2007,MG
-N,8948,2579,Tana Exploration Company LLC,EP,3/7/2007,RS
-N,8949,2813,"Royal Production Company, Inc.",DOCD,3/7/2007,KD
-R,4594,78,Chevron U.S.A. Inc.,DOCD,3/7/2007,RS
-R,4595,78,Chevron U.S.A. Inc.,DOCD,3/7/2007,KD
-R,4596,78,Chevron U.S.A. Inc.,DOCD,3/7/2007,EC
-R,4597,78,Chevron U.S.A. Inc.,DOCD,3/7/2007,MG
-R,4598,78,Chevron U.S.A. Inc.,DOCD,3/7/2007,RS
-R,4599,78,Chevron U.S.A. Inc.,DOCD,3/7/2007,KD
-R,4600,78,Chevron U.S.A. Inc.,DOCD,3/7/2007,EC
-N,8950,2859,Offshore Shelf LLC,DOCD,3/8/2007,EC
-N,8951,1978,"Helis Oil & Gas Company, L.L.C.",EP,3/8/2007,MG
-S,7050,2010,Woodside Energy (GOM) Inc.,EP,3/8/2007,KD
-R,4601,105,Apache Corporation,DOCD,3/12/2007,MG
-R,4602,105,Apache Corporation,DOCD,3/12/2007,RS
-R,4603,105,Apache Corporation,DOCD,3/12/2007,KD
-R,4604,105,Apache Corporation,DOCD,3/12/2007,EC
-R,4605,105,Apache Corporation,DOCD,3/12/2007,MG
-R,4606,2375,"Energy XXI GOM, LLC",DOCD,3/12/2007,RS
-N,8952,2605,Badger Oil Corporation,DOCD,3/12/2007,RS
-N,8953,560,Seneca Resources Corporation,EP,3/12/2007,KD
-N,8954,2268,Bois d'Arc Offshore Ltd.,DOCD,3/12/2007,EC
-N,8955,2579,Tana Exploration Company LLC,EP,3/12/2007,MG
-R,4607,689,Shell Offshore Inc.,DOCD,3/12/2007,KD
-N,8956,2481,BP Exploration & Production Inc.,EP,3/13/2007,RS
-R,4608,78,Chevron U.S.A. Inc.,DOCD,3/13/2007,EC
-R,4609,78,Chevron U.S.A. Inc.,DOCD,3/13/2007,MG
-R,4610,78,Chevron U.S.A. Inc.,DOCD,3/13/2007,RS
-R,4611,78,Chevron U.S.A. Inc.,DOCD,3/13/2007,KD
-R,4612,78,Chevron U.S.A. Inc.,DOCD,3/13/2007,EC
-S,7051,2237,"Noble Energy, Inc.",DOCD,3/13/2007,RS
-N,8957,78,Chevron U.S.A. Inc.,EP,3/13/2007,KD
-N,8958,2481,BP Exploration & Production Inc.,EP,3/13/2007,MG
-R,4613,105,Apache Corporation,DOCD,3/15/2007,MG
-R,4614,105,Apache Corporation,DOCD,3/15/2007,KD
-R,4615,105,Apache Corporation,DOCD,3/15/2007,RS
-R,4616,105,Apache Corporation,DOCD,3/15/2007,EC
-R,4617,105,Apache Corporation,DOCD,3/15/2007,MG
-N,8959,2714,"Century Exploration New Orleans, LLC",EP,3/15/2007,EC
-R,4618,1819,ATP Oil & Gas Corporation,EP,3/16/2007,KD
-S,7052,2266,"EPL Oil & Gas, LLC",DOCD,3/16/2007,EC
-S,7053,2266,"EPL Oil & Gas, LLC",DOCD,3/16/2007,MG
-N,8960,2222,"PetroQuest Energy, L.L.C.",DOCD,3/16/2007,RS
-N,8961,2813,"Royal Production Company, Inc.",DOCD,3/16/2007,KD
-S,7054,2266,"EPL Oil & Gas, LLC",DOCD,3/19/2007,KD
-R,4619,78,Chevron U.S.A. Inc.,DOCD,3/19/2007,RS
-R,4620,78,Chevron U.S.A. Inc.,DOCD,3/19/2007,EC
-R,4621,78,Chevron U.S.A. Inc.,DOCD,3/19/2007,MG
-R,4622,78,Chevron U.S.A. Inc.,DOCD,3/19/2007,RS
-R,4623,78,Chevron U.S.A. Inc.,DOCD,3/19/2007,KD
-R,4624,78,Chevron U.S.A. Inc.,DOCD,3/19/2007,EC
-N,8962,2777,"Peregrine Oil & Gas, LP",DOCD,3/20/2007,EC
-N,8963,1207,Petrobras America Inc.,EP,3/20/2007,MG
-R,4625,689,Shell Offshore Inc.,EP,3/20/2007,MG
-R,4626,2219,Anadarko US Offshore LLC,EP,3/20/2007,RS
-R,4627,105,Apache Corporation,DOCD,3/21/2007,KD
-R,4628,105,Apache Corporation,DOCD,3/21/2007,EC
-R,4629,105,Apache Corporation,DOCD,3/21/2007,MG
-R,4630,105,Apache Corporation,DOCD,3/21/2007,RS
-R,4631,105,Apache Corporation,DOCD,3/21/2007,KD
-S,7055,1978,"Helis Oil & Gas Company, L.L.C.",EP,3/23/2007,RS
+N,8004,2268,Bois d'Arc Offshore Ltd.,DOCD,1/16/2004,KD
+N,8005,2058,"LLOG Exploration Offshore, L.L.C.",EP,1/20/2004,EC
+S,6340,2605,Badger Oil Corporation,DOCD,1/20/2004,MG
+N,1550,59,Hess Corporation,POE,2/10/1984,MJ
+R,1230,59,Hess Corporation,POE,10/3/1984,MJ
+R,1272,59,Hess Corporation,POE,11/19/1984,MJ
+R,1310,59,Hess Corporation,POE,12/31/1984,MJ
+R,1176,59,Hess Corporation,POE,8/17/1984,MJ
+N,8006,1355,Cabot Oil & Gas Corporation,EP,1/21/2004,MG
+N,8007,1364,Newfield Exploration Company,DOCD,1/22/2004,MG
+R,3996,689,Shell Offshore Inc.,DOCD,1/22/2004,RS
+N,8008,2481,BP Exploration & Production Inc.,EP,1/22/2004,MG
+S,6341,2561,"NCX Company, L.L.C.",DOCD,1/23/2004,RS
+S,6342,2268,Bois d'Arc Offshore Ltd.,EP,1/23/2004,KD
+N,8009,1207,Petrobras America Inc.,EP,1/23/2004,RS
+N,8010,2349,"Magnum Hunter Production, Inc.",EP,1/23/2004,KD
+N,8011,1207,Petrobras America Inc.,EP,1/23/2004,EC
+N,8012,2566,Prime Offshore L.L.C.,DOCD,1/23/2004,MG
+N,8013,689,Shell Offshore Inc.,EP,1/26/2004,RS
+N,8014,818,"Mariner Energy, Inc.",EP,1/26/2004,KD
+N,8015,236,El Paso Production Company,EP,1/26/2004,EC
+N,8016,236,El Paso Production Company,EP,1/27/2004,MG
+S,6343,687,CNOOC Petroleum U.S.A. Inc.,EP,1/27/2004,EC
+S,6344,3,Union Oil Company of California,DOCD,1/27/2004,MG
+N,8017,689,Shell Offshore Inc.,EP,1/28/2004,RS
+S,6345,78,Chevron U.S.A. Inc.,DOCD,1/28/2004,RS
+S,6346,78,Chevron U.S.A. Inc.,EP,1/28/2004,KD
+N,8018,687,CNOOC Petroleum U.S.A. Inc.,EP,1/28/2004,KD
+S,6347,1364,Newfield Exploration Company,DOCD,1/28/2004,EC
+S,6348,1834,Talos Petroleum LLC,DOCD,1/28/2004,MG
+S,6349,114,BP America Production Company,DOCD,1/29/2004,RS
+N,8019,1704,Remington Oil and Gas Corporation,EP,1/29/2004,EC
+N,8020,2349,"Magnum Hunter Production, Inc.",EP,1/29/2004,MG
+R,3997,282,"Dominion Exploration & Production, Inc.",EP,1/30/2004,KD
+N,8021,730,Walter Oil & Gas Corporation,EP,1/30/2004,RS
+S,6350,2111,"Legacy Resources Co., L.P.",DOCD,1/30/2004,KD
+R,3998,2268,Bois d'Arc Offshore Ltd.,EP,1/30/2004,MG
+S,6351,231,Pogo Producing Company,DOCD,2/2/2004,EC
+N,8022,2266,"EPL Oil & Gas, LLC",DOCD,2/2/2004,KD
+S,6352,1500,"TotalEnergies E&P USA, Inc.",DOCD,2/3/2004,MG
+N,8023,2058,"LLOG Exploration Offshore, L.L.C.",DOCD,2/3/2004,EC
+N,8024,2349,"Magnum Hunter Production, Inc.",EP,2/3/2004,MG
+S,6353,2579,Tana Exploration Company LLC,DOCD,2/4/2004,RS
+R,3999,2268,Bois d'Arc Offshore Ltd.,DOCD,2/4/2004,MG
+N,8025,1704,Remington Oil and Gas Corporation,DOCD,2/5/2004,RS
+N,8026,687,CNOOC Petroleum U.S.A. Inc.,EP,2/5/2004,KD
+S,6354,2058,"LLOG Exploration Offshore, L.L.C.",DOCD,2/5/2004,KD
+S,6355,2268,Bois d'Arc Offshore Ltd.,DOCD,2/5/2004,MG
+N,8027,1834,Talos Petroleum LLC,EP,2/5/2004,EC
+N,8028,282,"Dominion Exploration & Production, Inc.",EP,2/9/2004,MG
+R,4001,1834,Talos Petroleum LLC,DOCD,2/10/2004,EC
+N,8029,2401,Westport Resources Corporation,EP,2/9/2004,RS
+N,8030,231,Pogo Producing Company,DOCD,2/9/2004,KD
+N,8031,2349,"Magnum Hunter Production, Inc.",DOCD,2/9/2004,EC
+R,4000,2481,BP Exploration & Production Inc.,DOCD,2/9/2004,MT
+S,6356,114,BP America Production Company,DOCD,2/10/2004,EC
+S,6357,185,Samedan Oil Corporation,EP,2/10/2004,RS
+N,8032,818,"Mariner Energy, Inc.",EP,2/10/2004,MG
+N,8033,2266,"EPL Oil & Gas, LLC",DOCD,2/10/2004,RS
+S,6358,2219,Anadarko US Offshore LLC,DOCD,2/11/2004,KD
+R,4002,1364,Newfield Exploration Company,EP,2/11/2004,MT
+N,8034,1364,Newfield Exploration Company,EP,2/11/2004,KD
+N,8035,2066,"Ridgelake Energy, Inc.",DOCD,2/11/2004,EC
+R,4003,689,Shell Offshore Inc.,EP,2/12/2004,RS
+S,6359,981,Anadarko Petroleum Corporation,DOCD,2/13/2004,EC
+N,8036,1704,Remington Oil and Gas Corporation,DOCD,2/13/2004,MG
+N,8037,1963,"Apex Oil & Gas, Inc.",EP,2/13/2004,RS
+R,4004,689,Shell Offshore Inc.,DOCD,2/17/2004,KD
+R,4005,689,Shell Offshore Inc.,EP,2/17/2004,EC
+N,8038,2606,Palace Operating Company,EP,2/17/2004,KD
+S,6360,2608,Offshore Energy II LLC,DOCD,2/17/2004,MG
+R,4006,78,Chevron U.S.A. Inc.,EP,2/17/2004,MG
+R,4007,39,ExxonMobil Oil Corporation,EP,2/17/2004,RS
+S,6361,730,Walter Oil & Gas Corporation,EP,2/17/2004,RS
+S,6362,2672,Medco Energi US LLC,DOCD,2/18/2004,KD
+R,4008,2058,"LLOG Exploration Offshore, L.L.C.",EP,2/18/2004,KD
+S,6363,1834,Talos Petroleum LLC,DOCD,2/18/2004,EC
+R,4009,2266,"EPL Oil & Gas, LLC",EP,2/19/2004,EC
+S,6364,282,"Dominion Exploration & Production, Inc.",DOCD,2/19/2004,MG
+R,4010,282,"Dominion Exploration & Production, Inc.",EP,2/19/2004,MG
+S,6365,689,Shell Offshore Inc.,EP,2/20/2004,RS
+S,6366,2312,McMoRan Oil & Gas LLC,DOCD,2/23/2004,KD
+R,4011,2481,BP Exploration & Production Inc.,DOCD,2/23/2004,RS
+S,6367,105,Apache Corporation,DOCD,2/23/2004,EC
+S,6368,730,Walter Oil & Gas Corporation,DOCD,2/23/2004,MG
+R,4012,818,"Mariner Energy, Inc.",DOCD,2/25/2004,KD
+R,4013,981,Anadarko Petroleum Corporation,EP,2/26/2004,MT
+N,8039,1978,"Helis Oil & Gas Company, L.L.C.",DOCD,2/26/2004,EC
+R,4014,2513,"Petro Ventures, Inc.",DOCD,3/1/2004,KD
+S,6369,2421,"Devon Energy Production Company, L.P.",DOCD,2/26/2004,RS
+S,6370,1364,Newfield Exploration Company,EP,2/27/2004,KD
+S,6371,2266,"EPL Oil & Gas, LLC",DOCD,2/27/2004,EC
+S,6372,1777,Devon Louisiana Corporation,DOCD,2/27/2004,MG
+S,6373,2608,Offshore Energy II LLC,DOCD,2/27/2004,RS
+N,8040,2421,"Devon Energy Production Company, L.P.",EP,3/1/2004,MG
+S,6374,105,Apache Corporation,DOCD,3/1/2004,KD
+S,6375,105,Apache Corporation,DOCD,3/1/2004,EC
+R,4015,2349,"Magnum Hunter Production, Inc.",EP,3/2/2004,EC
+N,8041,2219,Anadarko US Offshore LLC,EP,3/2/2004,RS
+S,6376,774,Taylor Energy Company,DOCD,3/2/2004,MG

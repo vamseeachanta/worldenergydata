@@ -1,9 +1,13 @@
-import requests
-import zipfile
+# Standard library imports
 import io
-import pandas as pd
 import os
+import zipfile
 from urllib.parse import urlparse
+
+# Third party imports
+import pandas as pd
+import requests
+
 
 def download_and_process_zip(url, output_dir):
     # Extract the name from the URL 
@@ -19,6 +23,7 @@ def download_and_process_zip(url, output_dir):
         if file.endswith('/'):
             continue
         csv_name = f"{base_name}_{os.path.splitext(os.path.basename(file))[0]}"+'.csv'
+        csv_name_columns = f"{base_name}_{os.path.splitext(os.path.basename(file))[0]}_columns"+'.csv'
         with z.open(file) as file:   
             try:
                 df = pd.read_csv(file, sep=',', encoding='ISO-8859-1', low_memory=False, nrows=100)
@@ -27,8 +32,11 @@ def download_and_process_zip(url, output_dir):
                 continue
 
             df.to_csv(os.path.join(output_dir, csv_name), index=False)
-
-
+            with open(os.path.join(output_dir, csv_name_columns), 'a') as f:
+            # write df columns as rows to csv file
+                for column in df.columns:
+                    f.write(f"{column}\n")
+            print(f"Saved {csv_name} to {output_dir}")
 urls = [
     # 'https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip',
     # 'https://www.data.bsee.gov/Well/Files/BHPSRawData.zip',

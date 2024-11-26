@@ -1,101 +1,101 @@
 LEASE_NUMBER,AREA,BLOCK,RECEIPT_DATE,MISC_TYPE,REMARKS,BLOCK_LOOKUP
-G01572,ST,  189,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,189
-G02006,WC,  504,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,504
-G02638,MC,  194,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,194
-G02639,MC,  195,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,195
-G02643,MC,  151,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,151
-G03061,MU,A  85,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,85
-G03171,PL,   13,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,13
-G03283,WC,  560,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,560
-G03587,PL,    8,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,8
-G04064,MU,  739,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,739
-G04800,VR,  271,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,271
-G04858,EI,   42,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,42
-G05980,MU,  740,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,740
-G06921,EW,  958,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,958
-G07155,PN,A  59,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,59
-G07921,EW,  996,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,996
-G08640,EC,   82,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,82
-G08641,EC,   83,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,83
-G10942,VK,  823,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,823
-G11390,HI,A 523,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,523
-G12951,SS,  227,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,227
-G13091,EW, 1003,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,1003
-G13557,WC,   91,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,91
-G14586,MP,  277,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,277
-G15282,SS,  151,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,151
-G15740,GA,  151,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,151
-G16201,WC,  513,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,513
-G16432,ST,  204,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,204
-G16455,ST,  291,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,291
-G16469,WD,   39,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,39
-G16473,WD,   59,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,59
-G16542,VK,  385,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,385
-G16549,VK,  822,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,822
-G17842,EC,   82,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,82
-G17888,VR,   56,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,56
-G19863,MP,  265,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,265
-G21152,VK,  429,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,429
-G33088,SM,  166,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,166
-G33119,WD,   40,4/29/2010,1,Pisces Energy LLC / Macquarie Bank Limited,40
- 00479,EI,   53,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,53
-G01477,EC,   81,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,81
-G01572,ST,  189,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,189
-G02006,WC,  504,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,504
-G02638,MC,  194,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,194
-G02639,MC,  195,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,195
-G02643,MC,  151,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,151
-G03061,MU,A  85,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,85
-G03171,PL,   13,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,13
-G03283,WC,  560,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,560
-G03587,PL,    8,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,8
-G04064,MU,  739,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,739
-G04800,VR,  271,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,271
-G04858,EI,   42,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,42
-G05980,MU,  740,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,740
-G06921,EW,  958,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,958
-G07155,PN,A  59,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,59
-G07921,EW,  996,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,996
-G08640,EC,   82,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,82
-G08641,EC,   83,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,83
-G10942,VK,  823,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,823
-G11390,HI,A 523,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,523
-G12951,SS,  227,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,227
-G13091,EW, 1003,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,1003
-G13557,WC,   91,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,91
-G14586,MP,  277,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,277
-G15282,SS,  151,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,151
-G15740,GA,  151,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,151
-G16201,WC,  513,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,513
-G16432,ST,  204,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,204
-G16455,ST,  291,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,291
-G16469,WD,   39,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,39
-G16473,WD,   59,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,59
-G16542,VK,  385,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,385
-G16549,VK,  822,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,822
-G17842,EC,   82,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,82
-G17888,VR,   56,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,56
-G19863,MP,  265,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,265
-G21152,VK,  429,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,429
-G33088,SM,  166,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,166
-G33119,WD,   40,4/29/2010,5,Macquarie Americas Corp. / Pisces Energy LLC,40
- 00479,EI,   53,4/29/2010,3,Pisces Energy LLC / Macquarie Bank Limited,53
-G01477,EC,   81,4/29/2010,3,Pisces Energy LLC / Macquarie Bank Limited,81
-G01572,ST,  189,4/29/2010,3,Pisces Energy LLC / Macquarie Bank Limited,189
-G02006,WC,  504,4/29/2010,3,Pisces Energy LLC / Macquarie Bank Limited,504
-G02638,MC,  194,4/29/2010,3,Pisces Energy LLC / Macquarie Bank Limited,194
-G02639,MC,  195,4/29/2010,3,Pisces Energy LLC / Macquarie Bank Limited,195
-G02643,MC,  151,4/29/2010,3,Pisces Energy LLC / Macquarie Bank Limited,151
-G02024,WC,  594,7/12/2010,1,"Dynamic Offshore Resources NS, LLC / The Royal Bank of Scotland plc",594
-G02050,EC,  281,7/12/2010,1,"Dynamic Offshore Resources NS, LLC / The Royal Bank of Scotland plc",281
-G02105,EI,  296,7/12/2010,1,"Dynamic Offshore Resources NS, LLC / The Royal Bank of Scotland plc",296
-G02109,EI,  306,7/12/2010,1,"Dynamic Offshore Resources NS, LLC / The Royal Bank of Scotland plc",306
-G02110,EI,  307,7/12/2010,1,"Dynamic Offshore Resources NS, LLC / The Royal Bank of Scotland plc",307
-G02176,SP,   48,7/12/2010,1,"Dynamic Offshore Resources NS, LLC / The Royal Bank of Scotland plc",48
-G02177,SP,   49,7/12/2010,1,"Dynamic Offshore Resources NS, LLC / The Royal Bank of Scotland plc",49
-G02300,SM,  234,7/12/2010,1,"Dynamic Offshore Resources NS, LLC / The Royal Bank of Scotland plc",234
-G02300,SM,  235,7/12/2010,1,"Dynamic Offshore Resources NS, LLC / The Royal Bank of Scotland plc",235
-G02359,HI,A 446,7/12/2010,1,"Dynamic Offshore Resources NS, LLC / The Royal Bank of Scotland plc",446
-G02360,HI,A 447,7/12/2010,1,"Dynamic Offshore Resources NS, LLC / The Royal Bank of Scotland plc",447
-G02361,HI,A 448,7/12/2010,1,"Dynamic Offshore Resources NS, LLC / The Royal Bank of Scotland plc",448
-G02423,HI,A 334,7/12/2010,1,"Dynamic Offshore Resources NS, LLC / The Royal Bank of Scotland plc",334
+G13964,MP,122,1/20/2010,5,"Wells Fargo Energy Capital, Inc. / Petro Ventures, Inc.",122
+G23969,MP,121,1/20/2010,5,"Wells Fargo Energy Capital, Inc. / Petro Ventures, Inc.",121
+G02955,MP,236,1/20/2010,5,"WFC Holdings Corporation / Petro Ventures, Inc.",236
+G03197,MP,120,1/20/2010,5,"WFC Holdings Corporation / Petro Ventures, Inc.",120
+G13964,MP,122,1/20/2010,5,"WFC Holdings Corporation / Petro Ventures, Inc.",122
+G23969,MP,121,1/20/2010,5,"WFC Holdings Corporation / Petro Ventures, Inc.",121
+G33128,MP,206,1/20/2010,5,"Arena Energy, LP / Wells Fargo Energy Capital, Inc.",206
+G23969,MP,121,1/20/2010,5,"Arena Energy, LP / Wells Fargo Energy Capital, Inc.",121
+G15441,VK,917,1/20/2010,1,"Mariner Energy, Inc. / Noble Energy, Inc.",917
+G15444,VK,961,1/20/2010,1,"Mariner Energy, Inc. / Noble Energy, Inc.",961
+G15445,VK,962,1/20/2010,1,"Mariner Energy, Inc. / Noble Energy, Inc.",962
+G15879,GB,341,1/22/2010,1,"Callon Petroleum Operating Company / Wallace Duke, as Trustee for the benefit of Regions Bank",341
+G16614,MC,538,1/22/2010,1,"Callon Petroleum Operating Company / Wallace Duke, as Trustee for the benefit of Regions Bank",538
+G16623,MC,582,1/22/2010,1,"Callon Petroleum Operating Company / Wallace Duke, as Trustee for the benefit of Regions Bank",582
+G21065,EC,109,1/22/2010,1,"Callon Petroleum Operating Company / Wallace Duke, as Trustee for the benefit of Regions Bank",109
+G21580,EC,257,1/22/2010,1,"Callon Petroleum Operating Company / Wallace Duke, as Trustee for the benefit of Regions Bank",257
+G22246,HI,119,1/22/2010,1,"Callon Petroleum Operating Company / Wallace Duke, as Trustee for the benefit of Regions Bank",119
+G24730,WC,295,1/22/2010,1,"Callon Petroleum Operating Company / Wallace Duke, as Trustee for the benefit of Regions Bank",295
+G25579,HI,130,1/22/2010,1,"Callon Petroleum Operating Company / Wallace Duke, as Trustee for the benefit of Regions Bank",130
+G25967,EC,268,1/22/2010,1,"Callon Petroleum Operating Company / Wallace Duke, as Trustee for the benefit of Regions Bank",268
+G15879,GB,341,1/22/2010,3,Callon Petroleum Operating Company / Regions Bank,341
+G16614,MC,538,1/22/2010,3,Callon Petroleum Operating Company / Regions Bank,538
+G16623,MC,582,1/22/2010,3,Callon Petroleum Operating Company / Regions Bank,582
+G21065,EC,109,1/22/2010,3,Callon Petroleum Operating Company / Regions Bank,109
+G21580,EC,257,1/22/2010,3,Callon Petroleum Operating Company / Regions Bank,257
+G22246,HI,119,1/22/2010,3,Callon Petroleum Operating Company / Regions Bank,119
+G24730,WC,295,1/22/2010,3,Callon Petroleum Operating Company / Regions Bank,295
+G25579,HI,130,1/22/2010,3,Callon Petroleum Operating Company / Regions Bank,130
+G25967,EC,268,1/22/2010,3,Callon Petroleum Operating Company / Regions Bank,268
+G15879,GB,341,1/22/2010,1,Callon Petroleum Operating Company / Regions Bank,341
+G16614,MC,538,1/22/2010,1,Callon Petroleum Operating Company / Regions Bank,538
+G16623,MC,582,1/22/2010,1,Callon Petroleum Operating Company / Regions Bank,582
+G21065,EC,109,1/22/2010,1,Callon Petroleum Operating Company / Regions Bank,109
+G21580,EC,257,1/22/2010,1,Callon Petroleum Operating Company / Regions Bank,257
+G22246,HI,119,1/22/2010,1,Callon Petroleum Operating Company / Regions Bank,119
+G24730,WC,295,1/22/2010,1,Callon Petroleum Operating Company / Regions Bank,295
+G25579,HI,130,1/22/2010,1,Callon Petroleum Operating Company / Regions Bank,130
+G25967,EC,268,1/22/2010,1,Callon Petroleum Operating Company / Regions Bank,268
+G02955,MP,236,1/25/2010,3,"Wells Fargo Energy Capital, Inc. / Petro Ventures, Inc.",236
+G03197,MP,120,1/25/2010,3,"Wells Fargo Energy Capital, Inc. / Petro Ventures, Inc.",120
+G23969,MP,121,1/25/2010,3,"Wells Fargo Energy Capital, Inc. / Petro Ventures, Inc.",121
+G23969,MP,121,1/25/2010,3,"Wells Fargo Energy Capital, Inc. / Petro Ventures, Inc.",121
+ 00386,ST,23,1/25/2010,3,Chevron U.S.A. Inc. / W&T Offshore Inc.,23
+G01025,SS,239,1/25/2010,7,"NCX Company, L.L.C. / W&T Offshore, Inc.",239
+G01528,SS,233,1/25/2010,7,"NCX Company, L.L.C. / W&T Offshore, Inc.",233
+G03169,SS,238,1/25/2010,7,"NCX Company, L.L.C. / W&T Offshore, Inc.",238
+G15293,SS,232,1/25/2010,7,"NCX Company, L.L.C. / W&T Offshore, Inc.",232
+G27199,MP,97,1/25/2010,7,"NCX Company, L.L.C. / W&T Offshore, Inc.",97
+G27965,MP,98,1/25/2010,7,"NCX Company, L.L.C. / W&T Offshore, Inc.",98
+G27966,MP,180,1/25/2010,7,"NCX Company, L.L.C. / W&T Offshore, Inc.",180
+G27199,MP,97,1/25/2010,5,"W&T Offshore, Inc. / NCX Company, L.L.C.",97
+G27965,MP,98,1/25/2010,5,"W&T Offshore, Inc. / NCX Company, L.L.C.",98
+G27966,MP,180,1/25/2010,5,"W&T Offshore, Inc. / NCX Company, L.L.C.",180
+G27199,MP,97,1/25/2010,5,"NCX Company, L.L.C. / W&T Offshore, Inc.",97
+G27965,MP,98,1/25/2010,5,"NCX Company, L.L.C. / W&T Offshore, Inc.",98
+G27966,MP,180,1/25/2010,5,"NCX Company, L.L.C. / W&T Offshore, Inc.",180
+G14016,MC,711,1/26/2010,1,ATP Oil & Gas Corporation / Royalty Owners described in said Mortgage,711
+G24104,MC,754,1/26/2010,1,ATP Oil & Gas Corporation / Royalty Owners described in said Mortgage,754
+G24105,MC,755,1/26/2010,1,ATP Oil & Gas Corporation / Royalty Owners described in said Mortgage,755
+G14016,MC,711,1/26/2010,7,"ATP Oil & Gas Corporation, Citicorp North America, Inc. et al",711
+G24104,MC,754,1/26/2010,7,"ATP Oil & Gas Corporation, Citicorp North America, Inc. et al",754
+G24105,MC,755,1/26/2010,7,"ATP Oil & Gas Corporation, Citicorp North America, Inc. et al",755
+G14016,MC,711,1/26/2010,5,"ATP Oil & Gas Corporation / Gerald W. Schlief and Candace R. Schlief 2006 Charitable Remainder Trust, et al",711
+G24104,MC,754,1/26/2010,5,"ATP Oil & Gas Corporation / Gerald W. Schlief and Candace R. Schlief 2006 Charitable Remainder Trust, et al",754
+G24105,MC,755,1/26/2010,5,"ATP Oil & Gas Corporation / Gerald W. Schlief and Candace R. Schlief 2006 Charitable Remainder Trust, et al",755
+G14016,MC,711,1/26/2010,5,"ATP Oil & Gas Corporation / Citicorp North America, Inc., et al",711
+G24104,MC,754,1/26/2010,5,"ATP Oil & Gas Corporation / Citicorp North America, Inc., et al",754
+G24105,MC,755,1/26/2010,5,"ATP Oil & Gas Corporation / Citicorp North America, Inc., et al",755
+G14016,MC,711,1/26/2010,6,Credit Suisse AG / ATP Oil & Gas Corporation,711
+G24104,MC,754,1/26/2010,6,Credit Suisse AG / ATP Oil & Gas Corporation,754
+G24105,MC,755,1/26/2010,6,Credit Suisse AG / ATP Oil & Gas Corporation,755
+G14016,MC,711,1/26/2010,6,Credit Suisse AG / ATP Oil & Gas Corporation,711
+G24104,MC,754,1/26/2010,6,Credit Suisse AG / ATP Oil & Gas Corporation,754
+G24105,MC,755,1/26/2010,6,Credit Suisse AG / ATP Oil & Gas Corporation,755
+G14016,MC,711,1/26/2010,2,Credit Suisse AG / ATP Oil & Gas Corporation,711
+G08658,EC,331,5/14/2009,3,"Credit Suisse, Cayman Islands Branch, as Agent / Wilmington Trust FSB, as Agent",331
+G08690,SM,253,5/14/2009,3,"Credit Suisse, Cayman Islands Branch, as Agent / Wilmington Trust FSB, as Agent",253
+G09478,EC,332,5/14/2009,3,"Credit Suisse, Cayman Islands Branch, as Agent / Wilmington Trust FSB, as Agent",332
+G09522,VR,363,5/14/2009,3,"Credit Suisse, Cayman Islands Branch, as Agent / Wilmington Trust FSB, as Agent",363
+G09524,VR,371,5/14/2009,3,"Credit Suisse, Cayman Islands Branch, as Agent / Wilmington Trust FSB, as Agent",371
+G09631,SS,315,5/14/2009,3,"Credit Suisse, Cayman Islands Branch, as Agent / Wilmington Trust FSB, as Agent",315
+G10636,EC,320,5/14/2009,3,"Credit Suisse, Cayman Islands Branch, as Agent / Wilmington Trust FSB, as Agent",320
+G10687,VR,362,5/14/2009,3,"Credit Suisse, Cayman Islands Branch, as Agent / Wilmington Trust FSB, as Agent",362
+G10741,EI,253,5/14/2009,3,"Credit Suisse, Cayman Islands Branch, as Agent / Wilmington Trust FSB, as Agent",253
+G10792,SS,291,5/14/2009,3,"Credit Suisse, Cayman Islands Branch, as Agent / Wilmington Trust FSB, as Agent",291
+G10878,WD,57,5/14/2009,3,"Credit Suisse, Cayman Islands Branch, as Agent / Wilmington Trust FSB, as Agent",57
+G10926,VK,206,5/14/2009,3,"Credit Suisse, Cayman Islands Branch, as Agent / Wilmington Trust FSB, as Agent",206
+G10930,VK,251,5/14/2009,3,"Credit Suisse, Cayman Islands Branch, as Agent / Wilmington Trust FSB, as Agent",251
+G10931,VK,295,5/14/2009,3,"Credit Suisse, Cayman Islands Branch, as Agent / Wilmington Trust FSB, as Agent",295
+G10932,VK,296,5/14/2009,3,"Credit Suisse, Cayman Islands Branch, as Agent / Wilmington Trust FSB, as Agent",296
+G10933,VK,340,5/14/2009,3,"Credit Suisse, Cayman Islands Branch, as Agent / Wilmington Trust FSB, as Agent",340
+G11881,VR,279,5/14/2009,3,"Credit Suisse, Cayman Islands Branch, as Agent / Wilmington Trust FSB, as Agent",279
+G12019,ST,178,5/14/2009,3,"Credit Suisse, Cayman Islands Branch, as Agent / Wilmington Trust FSB, as Agent",178
+G12020,ST,179,5/14/2009,3,"Credit Suisse, Cayman Islands Branch, as Agent / Wilmington Trust FSB, as Agent",179
+G13980,VK,207,5/14/2009,3,"Credit Suisse, Cayman Islands Branch, as Agent / Wilmington Trust FSB, as Agent",207
+G13982,VK,252,5/14/2009,3,"Credit Suisse, Cayman Islands Branch, as Agent / Wilmington Trust FSB, as Agent",252
+G14348,WC,599,5/14/2009,3,"Credit Suisse, Cayman Islands Branch, as Agent / Wilmington Trust FSB, as Agent",599
+G15104,WC,518,5/14/2009,3,"Credit Suisse, Cayman Islands Branch, as Agent / Wilmington Trust FSB, as Agent",518
+G15161,EC,381,5/14/2009,3,"Credit Suisse, Cayman Islands Branch, as Agent / Wilmington Trust FSB, as Agent",381
+G15323,ST,186,5/14/2009,3,"Credit Suisse, Cayman Islands Branch, as Agent / Wilmington Trust FSB, as Agent",186
