@@ -7,7 +7,17 @@ well_data:
 settings:
   save_csv: True
   url: https://www.data.bsee.gov/Well/APD/Default.aspx
-  output_dir: src\energydata\tests\test_data\bsee\results\Data\Stmalo
+  output_dir: tests\modules\bsee\results\Data\Stmalo
+
+form_data:
+  first_request:
+    'ASPxFormLayout1$ASPxTextBoxAPI' :  
+    'ASPxFormLayout1$ASPxButtonSubmitQ': 'Submit Query'
+
+  second_request:
+    'ASPxFormLayout1$ASPxTextBoxAPI': 
+    '__EVENTTARGET': 'ASPxFormLayout2$btnCsvExport'
+    '__EVENTARGUMENT': 'Click'
 
 input:
   - label: API_1

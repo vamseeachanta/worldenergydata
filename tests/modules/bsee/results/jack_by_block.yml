@@ -11,13 +11,13 @@ dictitems:
   input:
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: src\energydata\tests\test_data\bsee\results\Data\jack_by_block
+    output_dir: tests\modules\bsee\results\Data\jack_by_block
     label: Jack_1
     bottom_area: Walker Ridge (WR)
     bottom_block: 758
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: src\energydata\tests\test_data\bsee\results\Data\jack_by_block
+    output_dir: tests\modules\bsee\results\Data\jack_by_block
     label: Jack_2
     bottom_area: Walker Ridge (WR)
     bottom_block: 759
@@ -27,36 +27,36 @@ dictitems:
       overwrite:
         output: true
       cfg_sensitivities: false
-  well_data:
+  block_data:
     flag: true
     analysis: false
   settings:
     save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: src\energydata\tests\test_data\bsee\results\Data\jack_by_block
+    output_dir: tests\modules\bsee\results\Data\jack_by_block
   form_data:
     first_request:
       ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
       ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
-      ASPxFormLayout1_ASPxComboBoxBBN_VI: '678'
-      ASPxFormLayout1$ASPxComboBoxBBN: '678'
+      ASPxFormLayout1_ASPxComboBoxBBN_VI: ~
+      ASPxFormLayout1$ASPxComboBoxBBN: ~
       ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
     second_request:
       ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
       ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
-      ASPxFormLayout1_ASPxComboBoxBBN_VI: '678'
-      ASPxFormLayout1$ASPxComboBoxBBN: '678'
+      ASPxFormLayout1_ASPxComboBoxBBN_VI: ~
+      ASPxFormLayout1$ASPxComboBoxBBN: ~
       __EVENTTARGET: ASPxFormLayout2$btnCsvExport
       __EVENTARGUMENT: Click
   Analysis:
     basename: bsee
-    analysis_root_folder: c:\github\energydata\src\energydata\tests\test_data\bsee
+    analysis_root_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\bsee
     file_name: jack_by_block
     file_name_for_overwrite: jack_by_block
-    result_folder: c:\github\energydata\src\energydata\tests\test_data\bsee\results
-    log_folder: c:\github\energydata\src\energydata\tests\test_data\bsee\logs
-    start_time: 2024-11-14 10:15:32.825358
+    result_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\bsee\results
+    log_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\bsee\logs
+    start_time: 2024-12-06 12:34:16.460718
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: c:\github\energydata\src\energydata\tests\test_data\bsee\jack_by_block.yml
-    fe_folder: c:\github\energydata\src\energydata\tests\test_data\bsee\results
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\bsee\jack_by_block.yml
+    fe_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\bsee\results
