@@ -26,7 +26,8 @@ def search_target_columns(directories, target_columns):
                 except Exception as e:
                     print(f"Error processing file {filename} in {input_directory}: {e}")
 
-    summary_file = os.path.join(directories[0], "target_column_search_summary.txt")
+    txt_file_path = r'tests\modules\bsee'
+    summary_file = os.path.join(txt_file_path, 'find_column_results.txt')
     with open(summary_file, 'w') as f:
         for entry in summary:
             f.write(f"Directory: {entry['directory']}\n")
