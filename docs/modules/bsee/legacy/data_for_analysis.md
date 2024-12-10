@@ -109,10 +109,10 @@ SELECT API12, WELL_NM_ST_SFIX, WELL_NM_BP_SFIX, SUBSEA_TREE_HEIGHT_AML, SN_EOR
 - mv_war_open_hole_tools
 - mv_war_open_hole_runs
 
-### url
+### by_API
 
-??
+<https://github.com/vamseeachanta/energydata/tree/bseedata/tests/modules/bsee/results/Data/by_API>
 
-### by_zip
+### by_zip_url
 
-<https://github.com/vamseeachanta/energydata/blob/1aba33f15290fa91ba98fd2ad4af54c3d256ca3b/src/energydata/tests/test_data/bsee/results/Data/by_zip>
+<https://github.com/vamseeachanta/energydata/tree/bseedata/tests/modules/bsee/results/Data/by_zip>

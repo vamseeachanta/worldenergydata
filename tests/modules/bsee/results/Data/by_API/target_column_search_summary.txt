@@ -1,0 +1,860 @@
+Directory: tests\modules\bsee\results\Data\by_API
+File: API_number_10_all_columns.csv
+  Found Columns: Company Name, Well Name
+  Missing Columns: Well Purpose, Spud Date, Total Measured Depth, Sidetrack KOP, Casing Cut Code, Surface Latitude, Sidetrack and Bypass, Total Vertical Depth, Total Depth Date, Wellbore Status Date, Surface Longitude, API12, Completion Stub Code, Bottom Longitude, Bottom Latitude, Water Depth, Wellbore Status, Field Name
+
+Directory: tests\modules\bsee\results\Data\by_API
+File: API_number_1_all_columns.csv
+  Found Columns: Company Name, Well Name
+  Missing Columns: Well Purpose, Spud Date, Total Measured Depth, Sidetrack KOP, Casing Cut Code, Surface Latitude, Sidetrack and Bypass, Total Vertical Depth, Total Depth Date, Wellbore Status Date, Surface Longitude, API12, Completion Stub Code, Bottom Longitude, Bottom Latitude, Water Depth, Wellbore Status, Field Name
+
+Directory: tests\modules\bsee\results\Data\by_API
+File: API_number_2_all_columns.csv
+  Found Columns: Company Name, Well Name
+  Missing Columns: Well Purpose, Spud Date, Total Measured Depth, Sidetrack KOP, Casing Cut Code, Surface Latitude, Sidetrack and Bypass, Total Vertical Depth, Total Depth Date, Wellbore Status Date, Surface Longitude, API12, Completion Stub Code, Bottom Longitude, Bottom Latitude, Water Depth, Wellbore Status, Field Name
+
+Directory: tests\modules\bsee\results\Data\by_API
+File: API_number_3_all_columns.csv
+  Found Columns: Company Name, Well Name
+  Missing Columns: Well Purpose, Spud Date, Total Measured Depth, Sidetrack KOP, Casing Cut Code, Surface Latitude, Sidetrack and Bypass, Total Vertical Depth, Total Depth Date, Wellbore Status Date, Surface Longitude, API12, Completion Stub Code, Bottom Longitude, Bottom Latitude, Water Depth, Wellbore Status, Field Name
+
+Directory: tests\modules\bsee\results\Data\by_API
+File: API_number_4_all_columns.csv
+  Found Columns: Company Name, Well Name
+  Missing Columns: Well Purpose, Spud Date, Total Measured Depth, Sidetrack KOP, Casing Cut Code, Surface Latitude, Sidetrack and Bypass, Total Vertical Depth, Total Depth Date, Wellbore Status Date, Surface Longitude, API12, Completion Stub Code, Bottom Longitude, Bottom Latitude, Water Depth, Wellbore Status, Field Name
+
+Directory: tests\modules\bsee\results\Data\by_API
+File: API_number_5_all_columns.csv
+  Found Columns: Company Name, Well Name
+  Missing Columns: Well Purpose, Spud Date, Total Measured Depth, Sidetrack KOP, Casing Cut Code, Surface Latitude, Sidetrack and Bypass, Total Vertical Depth, Total Depth Date, Wellbore Status Date, Surface Longitude, API12, Completion Stub Code, Bottom Longitude, Bottom Latitude, Water Depth, Wellbore Status, Field Name
+
+Directory: tests\modules\bsee\results\Data\by_API
+File: API_number_6_all_columns.csv
+  Found Columns: Company Name, Well Name
+  Missing Columns: Well Purpose, Spud Date, Total Measured Depth, Sidetrack KOP, Casing Cut Code, Surface Latitude, Sidetrack and Bypass, Total Vertical Depth, Total Depth Date, Wellbore Status Date, Surface Longitude, API12, Completion Stub Code, Bottom Longitude, Bottom Latitude, Water Depth, Wellbore Status, Field Name
+
+Directory: tests\modules\bsee\results\Data\by_API
+File: API_number_7_all_columns.csv
+  Found Columns: Company Name, Well Name
+  Missing Columns: Well Purpose, Spud Date, Total Measured Depth, Sidetrack KOP, Casing Cut Code, Surface Latitude, Sidetrack and Bypass, Total Vertical Depth, Total Depth Date, Wellbore Status Date, Surface Longitude, API12, Completion Stub Code, Bottom Longitude, Bottom Latitude, Water Depth, Wellbore Status, Field Name
+
+Directory: tests\modules\bsee\results\Data\by_API
+File: API_number_8_all_columns.csv
+  Found Columns: Company Name, Well Name
+  Missing Columns: Well Purpose, Spud Date, Total Measured Depth, Sidetrack KOP, Casing Cut Code, Surface Latitude, Sidetrack and Bypass, Total Vertical Depth, Total Depth Date, Wellbore Status Date, Surface Longitude, API12, Completion Stub Code, Bottom Longitude, Bottom Latitude, Water Depth, Wellbore Status, Field Name
+
+Directory: tests\modules\bsee\results\Data\by_API
+File: API_number_9_all_columns.csv
+  Found Columns: Company Name, Well Name
+  Missing Columns: Well Purpose, Spud Date, Total Measured Depth, Sidetrack KOP, Casing Cut Code, Surface Latitude, Sidetrack and Bypass, Total Vertical Depth, Total Depth Date, Wellbore Status Date, Surface Longitude, API12, Completion Stub Code, Bottom Longitude, Bottom Latitude, Water Depth, Wellbore Status, Field Name
+
+Directory: tests\modules\bsee\results\Data\by_API
+File: production_data_all_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_API
+File: well_data_1_all_columns.csv
+  Found Columns: Company Name, Well Name
+  Missing Columns: Well Purpose, Spud Date, Total Measured Depth, Sidetrack KOP, Casing Cut Code, Surface Latitude, Sidetrack and Bypass, Total Vertical Depth, Total Depth Date, Wellbore Status Date, Surface Longitude, API12, Completion Stub Code, Bottom Longitude, Bottom Latitude, Water Depth, Wellbore Status, Field Name
+
+Directory: tests\modules\bsee\results\Data\by_API
+File: well_data_2_all_columns.csv
+  Found Columns: Company Name, Well Name
+  Missing Columns: Well Purpose, Spud Date, Total Measured Depth, Sidetrack KOP, Casing Cut Code, Surface Latitude, Sidetrack and Bypass, Total Vertical Depth, Total Depth Date, Wellbore Status Date, Surface Longitude, API12, Completion Stub Code, Bottom Longitude, Bottom Latitude, Water Depth, Wellbore Status, Field Name
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: APDRawData_mv_apddata_all_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: APDRawData_mv_apd_main_all_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: APIChangesRawData_mv_apichanges_all_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: APIRawData_mv_api_list_all_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: APIRawData_mv_api_wellcomps_all_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: ApprovalsRawData_mv_approval_info_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: AssignmentsRawData_mv_assignments_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: BHPSRawData_mv_bhpsurvey_all_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: BoreholeRawData_mv_boreholes_all_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: CompanyRawData_mv_companies_active_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: CompanyRawData_mv_companies_all_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: DecomCostEstRawData_mv_decom_cost_estimates_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: DecomCostEstRawData_mv_decom_cost_inst_pipe_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: DecomCostEstRawData_mv_decom_cost_inst_plat_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: DecomCostEstRawData_mv_decom_cost_prop_pipe_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: DecomCostEstRawData_mv_decom_cost_prop_plat_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: DecomCostEstRawData_mv_decom_cost_prop_well_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: DecomCostEstRawData_mv_decom_cost_spud_well_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: DecomCostEstRawData_mv_decom_cost_totals_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: DeepQualRawData_mv_deep_water_field_leases_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellAPDRawData_mv_apd_attachments_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellAPDRawData_mv_apd_casing_intervals_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellAPDRawData_mv_apd_casing_sectons_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellAPDRawData_mv_apd_geologic_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellAPDRawData_mv_apd_main_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellAPDRawData_mv_apd_main_prop_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellAPDRawData_mv_apd_questions_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellAPDRawData_mv_apd_question_responses_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellAPMRawData_mv_apm_attachments_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellAPMRawData_mv_apm_borehole_stat_codes_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellAPMRawData_mv_apm_main_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellAPMRawData_mv_apm_main_prop_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellAPMRawData_mv_apm_main_prop_narrative_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellAPMRawData_mv_apm_preventers_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellAPMRawData_mv_apm_primary_op_codes_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellAPMRawData_mv_apm_questions_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellAPMRawData_mv_apm_question_responses_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellAPMRawData_mv_apm_resubmittals_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellAPMRawData_mv_apm_rig_view_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellAPMRawData_mv_apm_suboperations_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellAPMRawData_mv_apm_suboperation_codes_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellAPMRawData_mv_apm_verbals_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellAPMRawData_mv_apm_well_type_codes_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellEORRawData_mv_eor_casingcutcodes_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellEORRawData_mv_eor_completionsprop_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellEORRawData_mv_eor_completions_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellEORRawData_mv_eor_compstatcodes_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellEORRawData_mv_eor_cut_casings_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellEORRawData_mv_eor_geomarkers_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellEORRawData_mv_eor_hcbearing_intvl_comps_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellEORRawData_mv_eor_hydrobarbtypecodes_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellEORRawData_mv_eor_mainquery_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellEORRawData_mv_eor_mainquery_prop_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellEORRawData_mv_eor_operationcodes_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellEORRawData_mv_eor_perf_intervals_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellEORRawData_mv_hcbearing_intervals_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellWARRawData_mv_war_boreholes_view_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellWARRawData_mv_war_main_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellWARRawData_mv_war_main_prop_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellWARRawData_mv_war_main_prop_remark_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellWARRawData_mv_war_open_hole_runs_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellWARRawData_mv_war_open_hole_tools_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellWARRawData_mv_war_tubular_summaries_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: eWellWARRawData_mv_war_tubular_summaries_prop_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: FMPMetersRawData_mv_fmpmeterslist_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: FMPRawData_mv_fmplist_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: FMPRawData_mv_fmp_meas_locations_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: FRSWellDataRawData_mv_frs_file_inventory_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: IncInvRawData_mv_acc_investigations_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: INCSRawData_mv_incs_by_oper_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: INCSRawData_mv_incs_fac_shutins_alaska_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: INCSRawData_mv_incs_fac_shutins_gulf_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: INCSRawData_mv_incs_fac_shutins_pacific_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: INCSRawData_mv_incs_inspections_alaska_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: INCSRawData_mv_incs_inspections_gulf_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: INCSRawData_mv_incs_inspections_pacific_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: INCSRawData_mv_incs_shutins_alaska_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: INCSRawData_mv_incs_shutins_gulf_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: INCSRawData_mv_incs_shutins_pacific_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: INCSRawData_mv_incs_warnings_alaska_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: INCSRawData_mv_incs_warnings_gulf_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: INCSRawData_mv_incs_warnings_pacific_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: INCSRawData_mv_insp_by_oper_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: LABRawData_mv_lease_area_block_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: LeaseOwnerRawData_mv_lease_owners_main_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: MCPFlowRawData_mv_mcpflowareablock_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: MCPFlowRawData_mv_mcpflowleaseunits_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: MCPFlowRawData_mv_mcpflowluoper_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: MCPFlowRawData_mv_mcpflowmeaslocations_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: MCPFlowRawData_mv_mcpflowsubops_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: MCPFlowRawData_mv_mcpflowsystems_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: MCPFlowRawData_mv_mcpflowunits_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: NonReqRawData_mv_nonrequired_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: OCSProdRawData_ocsprod_gasmonth_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: OCSProdRawData_ocsprod_gasyear_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: OCSProdRawData_ocsprod_oilmonth_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: OCSProdRawData_ocsprod_oilyear_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: OffshoreStatsRawData_mv_sbwd_apds_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: OffshoreStatsRawData_mv_sbwd_leases_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: OffshoreStatsRawData_mv_sbwd_platforms_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: OffshoreStatsRawData_mv_sbwd_wells2_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: OffshoreStatsRawData_mv_sbwd_wells_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: OSFRRawData_mv_osfr_companies_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: OSFRRawData_mv_osfr_information_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: OSFRRawData_mv_osfr_segments_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: PermStrucRawData_mv_perm_platforms_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: PermStrucRawData_mv_subsea_boreholes_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: PipeLocRawData_mv_pipelinelocation_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: PipePermRawData_mv_pipeperm_pipelines_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: PipePermRawData_mv_pipeperm_segments_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: PipePermRawData_mv_pipeperm_submittals_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: PlansRawData_mv_planblocks_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: PlansRawData_mv_plancompanies_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: PlansRawData_mv_planssites_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: PlansRawData_mv_plansubmittalsdate_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: PlansRawData_mv_plansubmittals_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: PlatStrucRawData_mv_platstruc_authorityhist_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: PlatStrucRawData_mv_platstruc_cgrefcodes_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: PlatStrucRawData_mv_platstruc_inccount_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: PlatStrucRawData_mv_platstruc_leases_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: PlatStrucRawData_mv_platstruc_platformincs_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: PlatStrucRawData_mv_platstruc_removaldisp_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: PlatStrucRawData_mv_platstruc_rightofways_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: PlatStrucRawData_mv_platstruc_ruers_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: PlatStrucRawData_mv_platstruc_structures_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: ProdPlanAreaRawData_mv_pbpadata_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: ProductionRawData_mv_productiondata_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: ProductionRawData_mv_productionsumwd_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: ProductionRawData_mv_productionsum_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: ProductionRawData_mv_production_waterdepth_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: RowDescRawData_mv_rowdescriptions_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: RoyaltyRefRawData_mv_preact_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: ScannedDocsRawData_scan_active_inactive_leases_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: ScannedDocsRawData_scan_adjudication_files_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: ScannedDocsRawData_scan_collateral_files_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: ScannedDocsRawData_scan_company_files_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: ScannedDocsRawData_scan_dir_surveys_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: ScannedDocsRawData_scan_expired_leases_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: ScannedDocsRawData_scan_gg_permits_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: ScannedDocsRawData_scan_pipeline_maps_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: ScannedDocsRawData_scan_plans_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: ScannedDocsRawData_scan_renleases_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: ScannedDocsRawData_scan_row_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: ScannedDocsRawData_scan_sop_soo_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: ScannedDocsRawData_scan_units_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: ScannedDocsRawData_scan_well_files_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: ScannedDocsRawData_scan_well_potential_tests_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: SerialRegRawData_mv_serreg_companies_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: SerialRegRawData_mv_serreg_descriptions_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: SerialRegRawData_mv_serreg_high_bids_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: SerialRegRawData_mv_serreg_leases_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: SerialRegRawData_mv_serreg_lease_owners_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: SerialRegRawData_mv_serreg_lease_owner_assigns_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: SerialRegRawData_mv_serreg_lease_owner_groups_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: SerialRegRawData_mv_serreg_lease_owner_remarks_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: SerialRegRawData_mv_serreg_portion_aliquots_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: SerialRegRawData_mv_serreg_rates_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: SerialRegRawData_mv_serreg_remarks_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Total Depth Date, Sidetrack KOP, Surface Longitude, Well Name, Water Depth, Wellbore Status, Field Name, Bottom Longitude, Company Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, Wellbore Status Date, API12, Completion Stub Code, Total Measured Depth, Bottom Latitude
+
+Directory: tests\modules\bsee\results\Data\by_zip
+File: SerialRegRawData_mv_serreg_xys_columns.csv
+  Found Columns: 
+  Missing Columns: Well Purpose, Sidetrack and Bypass, Sidetrack KOP, Well Name, Spud Date, Casing Cut Code, Surface Latitude, Total Vertical Depth, API12, Completion Stub Code, Total Measured Depth, Total Depth Date, Surface Longitude, Water Depth, Wellbore Status, Bottom Longitude, Field Name, Company Name, Wellbore Status Date, Bottom Latitude
+
