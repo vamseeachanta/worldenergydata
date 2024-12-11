@@ -6,6 +6,28 @@
 
 <https://github.com/vamseeachanta/energydata/blob/8bc9bd788008fc116f57057c7bca28fb0c8eab52/src/energydata/tests/legacy/data>
 
+
+- From URLs, download files
+  - [TBA (Vamsee)](https://github.com/vamseeachanta/energydata/blob/7cdc1e006e90967d809d16a0831af7492c34f1f6/src/energydata/common/bsee_data_refresh.py)
+
+
+- Read files -> Columns
+    cfg\data_models\bsee*.yml
+    Example 1:
+   - APIRawData.zip
+   - TableName: APIRawData
+   - Columns: API12, [Company Name], [Field Name], [Well Name], [Sidetrack and Bypass] ??
+
+    Example 2:
+    BHPSRawData.zip
+    TableName: BHPSRawData
+    Columns: ??
+
+- Batch file to refresh data
+ - cfg\data_models\bsee_data_models_data_refresh_py.bat
+- Batch file to download data
+ - cfg\data_models\bsee_data_models_data_download_py.bat
+
 ## Required for Analysis
 
 ### Documentation
