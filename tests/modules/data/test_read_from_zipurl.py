@@ -94,6 +94,6 @@ urls = [
     # 'https://factpages.sodir.no/downloads/csv/subArea.zip'
 
 ]
-output_dir = r'src\energydata\tests\test_data\bsee\results\Data\by_zip'
+output_dir = r'tests\modules\data\results\Data\by_zip'
 for url in urls:
     download_and_process_zip(url, output_dir)

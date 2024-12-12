@@ -7,21 +7,21 @@ block_data:
 settings:
   save_csv: True
   url: https://www.data.bsee.gov/Well/APD/Default.aspx
-  output_dir: tests\modules\bsee\results\Data\stmalo_by_block
+  output_dir: tests\modules\analysis\results\Data\stmalo_by_block
 
 form_data:
   first_request:
     ASPxFormLayout1$ASPxComboBoxBA: "Walker Ridge (WR)"
     ASPxFormLayout1$ASPxComboBoxBA$DDD$L: "WR"
-    ASPxFormLayout1_ASPxComboBoxBBN_VI: 
-    ASPxFormLayout1$ASPxComboBoxBBN: 
+    ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+    ASPxFormLayout1$ASPxComboBoxBBN: None
     ASPxFormLayout1$ASPxButtonSubmitQ: "Submit Query"
 
   second_request:
     ASPxFormLayout1$ASPxComboBoxBA: "Walker Ridge (WR)"
     ASPxFormLayout1$ASPxComboBoxBA$DDD$L: "WR"
-    ASPxFormLayout1_ASPxComboBoxBBN_VI: 
-    ASPxFormLayout1$ASPxComboBoxBBN: 
+    ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+    ASPxFormLayout1$ASPxComboBoxBBN: None
     __EVENTTARGET: "ASPxFormLayout2$btnCsvExport"
     __EVENTARGUMENT: "Click"
 

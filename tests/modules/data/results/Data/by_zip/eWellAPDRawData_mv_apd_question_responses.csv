@@ -1,0 +1,101 @@
+SN_APD_QA,QA_RESPONSE_CD,QA_RESPONSE_TXT
+-191698,Y,
+-191699,N,"Synthetic based mud will be used.  If ROC doesn't pass, the rig can go to zero discharge."
+-191700,,
+-191701,,
+-191702,Y,GMG 29006
+-191703,,Subsea Well
+-191704,N,
+-166442,Y,
+-166443,N,The subject rig is not outfitted for zero discharge. Shell will not discharge SBM except as authorized and monitored under the US EPA General Permit GMG290000
+-166444,Y,
+-166445,,
+-166446,Y,GMG 290103
+-166447,,
+-166448,N,
+-166449,Y,SureTec v3.1
+-166482,Y,
+-166483,Y,
+-166484,,
+-166485,,
+-166486,Y,GMG290351
+-165702,Y,
+-165703,Y,"Yes, the rig is outfitted for zero discharge operations. Per the NPDES permit on file any SBM cutting with fluid retention above 6.9% will be discharged overboard per 40 CFR 435."
+-165238,Y,
+-165239,,
+-165240,,
+-165241,,
+-165242,Y,290541
+-165243,Y,
+-165244,N,
+-165245,,
+-165609,Y,Anatomize version 3.30.4
+-165704,Y,
+-165705,,
+-165706,Y,GMG290573
+-165707,,
+-165708,N,
+-165709,Y,SureTec Version 2.4
+-166066,Y,GMG 290103
+-166067,,
+-166068,N,
+-166069,Y,Suretec v3.1
+-166130,Y,
+-166131,Y,
+-166132,Y,
+-166133,,
+-165974,Y,
+-165975,,
+-165976,,
+-165977,,
+-165978,Y,GMG290269
+-165979,Y,
+-165980,N,
+-165981,N,
+-166062,Y,
+-166063,Y,SBM will be transported to shore for disposal
+-166064,Y,
+-166065,,
+-160090,Y,
+-160091,Y,
+-160092,N,
+-160093,N,
+-160094,Y,GMG#290208
+-160095,Y,
+-160096,N,
+-160097,,
+-160459,Y,SBM cuttings will be processed with cuttings dryer to reduce SBM retention to 6% or less.  Dischargeable SBM cuttings will be discharged through a shunt line at 20' below the water line.
+-160460,,
+-160461,,
+-160462,Y,GMG 290351
+-160463,Y,
+-160464,N,
+-160465,N,
+-160482,Y,
+-160483,N,
+-160484,,
+-160485,,
+-160486,Y,GMG # 290090
+-160487,Y,
+-160488,N,
+-160489,N,
+-160490,Y,
+-160458,Y,"A minimum of 500 sx of barite will be kept on board which meets worse case theoretical requirements to weight up active mud system .5 ppg.  During WBM operations 100 sx of gel will be kept on board or at location on standby boat.  During SBM operations 100 sx of ""VG Plus"" or ""VG Supreme"" SBM organophilic clay will be kept on board or at standby boat."
+-165375,,
+-165376,N,
+-165377,Y,SureTec Version 3.1
+-165416,N,
+-165417,Y,SureTec Version 2.4
+-165418,Y,
+-165419,,
+-165420,,
+-165421,,
+-165422,Y,GMG290269
+-165423,Y,
+-165424,N,
+-165425,N,
+-165482,Y,
+-165483,Y,
+-165484,Y,
+-165485,,
+-165486,Y,GMG 290132
