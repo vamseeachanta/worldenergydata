@@ -1,12 +1,21 @@
 ## Data Definitions
 
-## Summary
+## Data Summary
 
 - Investigate what data exists where with the new processess (by url, by zip, worstcase by manual download)
 - Investigate what data is required for the analysis
 - Load the required data from files as raw DFs (synonymous to sql tables in BSEE_analysis.yml i.e. Likely Filenames)
 - Join the required data to create the final DFs for analysis (synonymous to sql queries in BSEE_analysis.yml)
 - Provide these final DFs to the analysis module.
+
+## Analysis Data Summary
+
+Preparation for analysis:
+Rules:
+- Minimum (to No) data column editing from raw data obtained from website/files
+  - do not change any column names
+  - We will change them in bsee analysis module/python files
+
 
 ## BSEE Data | Tables and DataFrames
 
@@ -26,13 +35,16 @@ Target : API12, [Company Name], [Field Name], [Well Name], [Sidetrack and Bypass
             , [Wellbore Status], [Wellbore Status Date], [Completion Stub Code], [Casing Cut Code]
 
 Found Till Now : API Well Number , Company name , Field_name or Field_name_code , Well name , REQ_SPUD_DATE or WELL_SPUD_DATE , 
-        Total depth date , water depth (feet) , [Surface latitude OR SURF_LATITUDE], [Surface longitude or SURF_LONGITUDE] , BOTM_LATITUDE , BOTM_LONGITUDE , [APD_STATUS_DT or COMP_STATUS_CD orSTATUS_CODE] , STATUS_DATE , CASING CUT CODE
+        Total depth date , water depth (feet) , BH_TOTAL_MD, [Surface latitude OR SURF_LATITUDE], [Surface longitude or SURF_LONGITUDE] , BOTM_LATITUDE , BOTM_LONGITUDE , [APD_STATUS_DT or COMP_STATUS_CD orSTATUS_CODE] , STATUS_DATE , CASING CUT CODE
+
 **Likely Filenames:**
 
 - mv_api_list
 - mv_boreholes
 
 **Data Sources:**
+
+??
 
 https://github.com/vamseeachanta/energydata/blob/d9f30ee2583290a29045329a3b644c13e57b8f5c/tests/modules/bsee/results/Data/by_zip/APIRawData_mv_api_list_all_columns.csv
 

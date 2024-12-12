@@ -7,15 +7,12 @@ block_data:
 settings:
   save_csv: True
   url: https://www.data.bsee.gov/Well/APD/Default.aspx
-  output_dir: tests\modules\analysis\results\Data\jack_by_block
+  output_dir: tests\modules\analysis\results\Data\by_block\{block_label}
 
 input:
-  - label: WR758
+  - label: WR627
     bottom_area: Walker Ridge (WR)
-    bottom_block: 758
-  - label: WR759
-    bottom_area: Walker Ridge (WR)
-    bottom_block: 759
+    bottom_block: 627
 
 form_data:
   first_request:
@@ -32,7 +29,6 @@ form_data:
     ASPxFormLayout1$ASPxComboBoxBBN: None
     __EVENTTARGET: "ASPxFormLayout2$btnCsvExport"
     __EVENTARGUMENT: "Click"
-
 
 default:
   log_level: DEBUG
