@@ -27,7 +27,7 @@ class BSEEDataSpider(scrapy.Spider):
         self.input_item = input_item
         self.cfg = cfg
 
-    def router(self, cfg):
+    def router(self, cfg, input_item):
 
         settings = {
             'LOG_LEVEL': 'CRITICAL',
@@ -35,8 +35,8 @@ class BSEEDataSpider(scrapy.Spider):
         }
         process = CrawlerProcess(settings=settings)
 
-        for input_item in cfg['input']:
-            process.crawl(BSEEDataSpider, input_item=input_item, cfg=cfg)
+        # for input_item in cfg['input']:
+        process.crawl(BSEEDataSpider, input_item=input_item, cfg=cfg)
 
         process.start()
 

@@ -39,8 +39,8 @@ def search_target_columns(directories, target_columns):
     print(f"Search summary saved to {summary_file}")
 
 directories = [
-    r'tests\modules\bsee\results\Data\by_API',
-    r'tests\modules\bsee\results\Data\by_zip'
+    r'tests\modules\data\results\Data\by_API',
+    r'tests\modules\data\results\Data\by_zip'
 ]
 
 target_columns = {

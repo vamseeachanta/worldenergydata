@@ -1,286 +1,401 @@
 SN_APM,PROCEDURAL_NARRATIVE
--4228,"ST 170 F8 Abandonment - Summary Procedure
+-243936,"RPM is being submitted for verbal approval that was granted on 10/04/2022, to nipple down the DSA from the casing head, recover the 9-7/8"" slip segment from the wellhead, re-install the DSA and POOH laying down the remaining 9-7/8"" casing."
+-129974,"Current Status: The GA 209 A-1D was drilled and completed in 1990 as a dual cased-
+                hole gravel pack to the MM-20 reservoir. The short string SCSSV 
+                was tested on 08/16/2010, and would not test closed. Attempts 
+                were made to get the valve working again, including using acid 
+                and an exercise tool to manipulate the flow tube. These efforts 
+                proved unsuccessful.
 
-Notify MMS 24 hrs in advance of job mobilization.  ST 170 is within the Houma District.  The contact for this work is Leslie Peterson at (985) 853-5889 or leslie.m.peterson@mms.gov .  The Houma District 24 hr pager is (985) 580-5367.  Notification needs to be made and approvals gained prior to any major deviation from the procedure.
+                On 09/04/2010, an attempt was made to install a surface- 
+                controlled insert valve. While attempting to perform the 
+                installation, it was discovered flow couplings, which have a 
+                restricted inner diameter, were installed below the SCSSV. This
+                prevents the installation of the insert valve which isolates 
+                across the original SCSSV flapper and has the surface-controlled
+                insert valve hanging below. The valve manufacturer (Baker Hughes)
+                informed Exxon Mobil their existing system will not work and they 
+                cannot provide an insert valve.
 
-1.	Mobilize P&A equipment spread including pump, tank, blenders, slickline, wireline and hydraulic jacks.  Hold initial job safety meeting and process APC?s Permit to Work.
-2.	Check & record pressures on all annuli.  Test 16? x 20? annulus to 250 psi for 30 min charted.  Test 10-3/4? x 16? annulus to 500 psi for 30 min charted. 
-3.	Fill hole and perform bubble test for 1 hr.  Remove dry hole tree.  
-4.	RU false rotary on beams.  RIH w/ slickline and 2.0? gauge ring.  Tag and record depth of surface plug.  MU mechanical cutter on 3-1/2? IF work string w/ power swivel.  TIH & cut 7? csg at 50? BML. Use crane to pull & LD 7? csg.
-5.	MU mechanical cutter on 3-1/2? IF work string w/ power swivel.  TIH & cut the 10-3/4?, 16? & 20? csgs 15? BML.  RU hydraulic jacks.  Jack csgs free.  POOH LD all csg.  Move equipment to next well.
-END
+                The well has been shut in since discovery of the failed TRSCSSV 
+                test. We are requesting permission to install a PB valve to allow
+                this well to flow once again. The latest well tests and the 
+                proposed wellbore diagram are attached.
+
+CURRENT PERFORATIONS: MM-20    8,702'-8,769'MD/8,181'-8,249'TVD
+
+FORWARD PLAN:  Plan to lock open SCSSV and install PB valve in landing nipple at
+               ±993 ft MD in order to bring the well back on production. 
+
+PROPOSED PROCEDURES: 
+
+1.   MIRU equipment.
+
+2.   RU w/l equipment, test lubricator to 250/1500 psi. 
+
+3.   Pull DXX plug from SCSSV profile at ±927 ft MD.
+
+4.   RIH and lock open TRSCSSV.
+ 
+5.   RIH and set PB valve in HWS landing nipple at ±993 ft WLM. 
+
+6.   RDMO equipment turn over to production.
 "
--188074,"Permission is requested to commence final abandonment operations on Well A-18 in South Timbalier, Block 300, OCS-G 4240. The final phase P&A operations will be removing all casing strings from > 15' BML using the Blake 651 Rig."
--81808,"Overall Proposed Objective:  Conduct coil tubing washout to remove sand and mud, isolate the D sand by placing a Thru-Tubing Bridge Plug (TTBP) 13,100? md, spotting 50? of cement on top from 13,050? to 13,100? md, and perforating the ?A? sand isolation via electric line tubing punch from 12,608? to 12,618? md.  This work will begin 19 April 08 and will last approximately seven days.   
+-136933,"CURRENT STATUS:
+The GA 209 A-001D was drilled and completed in 1990 as a dual-cased hole gravel pack to the MM-20 reservoir.  The short string SCSSV was tested in August of 2010 and would not test closed.  Attempts were made to get the valve working again, including using acid and an exercise tool to manipulate the flow tube.  These efforts proved unsuccessful.
 
-See attached prog for details."
--144736,"8/13/12
+On 09/04/2010, an attempt was made to install a surface-controlled insert valve. While attempting to perform the installation, it was discovered flow couplings, which have a restricted inner diameter, were installed below the SCSSV.  This
+prevents the installation of the insert valve which isolates across the original SCSSV flapper and has the surface-controlled insert valve hanging below.  The valve manufacturer (Baker Hughes)informed ExxonMobil that their existing system will not work and they cannot provide an insert valve.  A DXX plug was set in the landing nipple at 882' while investigating options to install a subsurface-controlled subsurface safety valve and return the well to production.
 
-The Cougar A-20 well is currently shut-in and is uneconomical to produce.  The ST300 lease expired in February 2012 with the plan to start the P&A (Phase 1 & 2) work in August. EL and SL will be mobilized to the Cougar platform (ST300) to perform the zonal isolation of the BRNJ-sand in the A-20 well. This work is the first stage of a zonal isolation program. 
+The BOEM was contacted to request a departure to install the SSCSV and we were told to submit an APM for the departure, which we did, and the BOEM approved it.  Afterward, based on a review and analysis of the flow characteristics of the well, it was concluded that flowing the well with the PB valve would be problematic so we opted to not act on that permit/departure and left the pump-through plug in place.  The well has been shut-in since discovery of the failed tubing retrievable SCSSV test, the failed attempts to repair the valve, and the wireline insert of the pump-through tubing plug.  The short string is currently shut-in with the DX plug in place. 
+
+Assuming it would be important to inform the BOEM that we did not act on the permit which was also a departure approval, we contacted the BOEM to inform them of such and that we had set a pump-through tubing plug instead.  The ensuing conversation resulted in Mr. Kassim informing us that 30 CFR 250.601(b) is intended to mean ""like"" and ""in kind"" replacements of pump-through plugs and SSVs via wireline and does not pertain to 'in addition' or to 'change' actions.
+
+ExxonMobil's interpretation of 30 CFR 250.601(b) had been that removing and setting pump-through type tubing plugs and subsurface safety valves performed via wireline operations was considered routine. Mr. Kassim informed us that we were mistaken and requested we submit an RPM to the existing APM requesting that APM/departure to be cancelled.  He also requested that we submit an ""after the fact"" APM to reflect the pump-through tubing plug being installed in the short string.  This APM is intended to meet that request.
+
+An operational summary of the procedure followed in September of 2010 (which we felt was a routine operation) for installing the DXX plug is as follows:
+
+1. Rig up lubricator on short string and test to 250 psi low and 1500 psi high.
+
+2. Set DXX plug in landing nipple at 882'.  Test plug.
+
+3. Rig down lubricator from short string."
+-181724,Attached is the proposed work procedure for TA of the subject well. 
+-182948,Attached is the proposed work procedure for TA of the subject well. 
+-182469,Attached is the proposed work procedure for TA of the subject well. 
+-204400,"Operations will be conducted from either a liftboat or a heavy lift vessel/barge.
+
+Please see attached procedure & wellbore schematics."
+-84450,Use slickline for gas lift orifice valve installation; return well to production.
+-110917,Please see attached procedure.
+-110971,Please see attached procedure.
+-120905,Please see attached.
+-124665,Change out production tree per the attached procedure.
+-178950,"Request approval to pull PB valve and replace with a pump through plug.  
+
+Please see attached procedure, schematics and email correspondence."
+-181716,"Request approval to TA well.  Please see attached procedure, schematics and PE Certification."
+-112056,Please see attached procedure.
+-152406,Please see attached proposed procedure and schematics.
+-159923,Please see attached revised proposed procedure and schematics.
+-205613,"Operations will be conducted from either a liftboat or a heavy lift vessel/barge.
+
+Please see attached procedure & wellbore schematics."
+-204397,"Operations will be conducted from either a liftboat or a heavy lift vessel/barge.
+
+Please see attached procedure & wellbore schematics."
+-87837,"Abandon the Lower ""Tex 4"" Sand & Lower ""Tex 5/6"" Sand; Recomplete as a dual completion in the SS: ""Big 1"" Sand and LS: ""Big 2"" Sand."
+-100099,"Abandon the Lower ""Tex 4"" Sand & Lower ""Tex 5/6"" Sand; Recomplete as a dual completion in the SS: ""Big 1"" Sand and LS: ""Big 2"" Sand."
+-99601,"Abandon the Lower ""Tex 4"" Sand & Lower ""Tex 5/6"" Sand; Recomplete as a dual completion in the SS: ""Big 1"" Sand and LS: ""Big 2"" Sand."
+-182668,Attached is the proposed work procedure for TA of the subject well.
+-182922,Attached is the proposed work procedure for TA of the subject well.
+-181723,Attached is the proposed work procedure for TA of the subject well.
+-182787,Attached is the proposed work procedure for TA of the subject well.
+-182940,Attached is the proposed work procedure for TA of the subject well.
+-182497,Attached is the proposed work procedure for TA of the subject well.
+-204399,"Operations will be conducted from either a liftboat or a heavy lift vessel/barge.
+
+Please see attached procedure & wellbore schematics."
+-89580,"RU CT unit to acidize the current ""B-1"" Sand."
+-97385,"Jet in ""AMP"" Sand in the short string; follow up with acid treatment as a contingency. If deemed necessary, will install a packoff gas lift valve. "
+-129239,"Arena has determined the field is no longer economic, therefore Arena is requesting approval to temporarily abandon well.
+
+Please note that all casing strings will be cut and removed down to 15' BML during the removal operations of the platform jacket that will be performed at a later date.
+
+A separate APM will be submitted requesting approval to permanently abandon well."
+-133773,
+-19684,"Well SI 10/31/99.  Last Production Rates: 1417 MCFPD, 76 BOPD, 17 BWPD, 320 FTP, PSIG, 64/64 choke.  3/13/06 - 160 SITP, PSIG.  Current Zone/MASP: MF1A sand, 2500 PSIG. Reason SI: T&A well."
+-24135,"Well SI 10/31/99.  Last production rates: 10/31/99 - 1417 MCFPD, 76 BOPD, 17 BWPD, 320 FTP, PSIG, 64/64 choke. 3/13/06 160 SITP, PSIG. Current Zone/MASP: MF1A sand, 2500 psi. Reason: T&A well.  
+
+NOTE:  This is the second APM to TA the well."
+-102469,"Current Zone: N/A, well is currently T&A'ed.
+
+Last well test: 11/3/98, 2011 MCFPD, 3 BOPD, 6 BWPD. 
+
+SI date: 11/1/99
+
+Need to P&A well so platform can be removed."
+-121828,"Noble proposes to cut and pull all remaining casings at a minimum of 15' below mudline using explosives.  Attached is a copy of the approval to use explosives granted by the Regional MMS OSTS Group by letter dated 4/20/2009.
+
+Lease OCS-G 6086 is currently held by unit production.
+"
+-102486,"Current Zone: MF-1A
+
+Last well test: 5/4/96, 2500 MCFPD, 0 BOPD, 0 BWPD
+
+SI date: 10/1/96, well depleted, no future utility
+
+Need to P&A well so platform can be removed.
+"
+-117615,"Current Zone: MF-1A
+
+Last well test: 5/4/96, 2500 MCFPD, 0 BOPD, 0 BWPD
+
+SI date: 10/1/96, well depleted, no future utility
+
+Need to P&A well so platform can be removed.
+"
+-121779,"Noble Energy, Inc. proposes to cut and pull all remaining casings at a minimum of 15' below mudline using explosives.  Attached is a copy of the approval to use explosives granted by the Regional MMS OSTS Group by letter dated 4/20/2009. 
+
+Lease OCS-G 6086 is currently held by unit production."
+-129760,"Site clearance has been performed on the Brazos Block A53 D location and was completed on September 28, 2010.  
+
+This concludes the removal of the platform and clearance of the area.  "
+-102485,"Current Zone: MF-1
+
+Last well test: 11/28/98, 61 MCFPD, 0 BOPD, 0 BWPD
+
+SI date: 7/1/99, well depleted, no future utility
+
+Need to P&A well so platform can be removed.
+"
+-117614,"Current Zone: MF-1
+
+Last well test: 11/28/98, 61 MCFPD, 0 BOPD, 0 BWPD
+
+SI date: 7/1/99, well depleted, no future utility
+
+Need to P&A well so platform can be removed.
+"
+-121773,"Noble Energy, Inc. proposes to cut and pull all remaining casings at a minimum of 15' below mudline using explosives.  Attached is a copy of the approval to use explosives granted by the Regional MMS OSTS Group by letter dated 4/20/2009.
+
+Lease OCS-G 6086 is currently held by unit production."
+-124689,Request temporarily abandon well as per the attached procedure. All casing strings will be cut and removed a minimum of 15'BML as apart of the platform removal.
+-138567,"Current & Proposed Perf Depth:   MM-50 Sand
+                                 9682' - 9710' MD
+                                 9059' - 9079' TVD
+  		        		
+Latest well test in zone:  Feb. 5, 2010
+                           3 BOPD	
+                           207 BWPD
+                           99% BSW
+                           2.331 Mcf/d Formation Gas
+
+Current zone SBHP:  2967 psi
+Highest expected SITP:  2060 psig
+Proposed zone SBHP (RCP):  N/A
+
+Kill Weight Fluid:	  11.3 ppg
+
+Plan:  Initial 12/64 button orifice was installed at 4500' MD with a tubing packoff GLV on 8-24-11.  This work was unsuccessful in restoring gas production. Tubing fluid level is at 4500' MD. Current plan is to install another tubing punch with tubing GLV packoff at 6200' MD and packoff button orifice at 4500' MD. Will return the well to production by using gaslift to unload fluid.
+
+ 		
+Proposed Procedure:
+
+1.  Test wireline lubricator/BOP to 250/2560 psi and document on daily wireline 
+    tickets and wireline check list.  Indicate if test is a good test.
+
+2.  RU WLU. Make gauge run to top of tubing GLV packoff at 4500'. POOH
+
+3.  RIH with pulling tool and remove tubing GLV packoff at 4500' MD. POOH
+
+4.  RIH with gauge ring to 6300' MD to make sure tubing is clear. POOH
+
+5.  RU wireline tools for McKinly tubing punch and RIH and punch hole in tubing 
+    at 6200' MD. POOH
+
+6.  RIH and set tubing GLV packoff with 12/64 orifice across tubing punch at 
+    6200' MD. POOH
+
+7.  RIH and set tubing packoff with solid spacer across button orifice at 4500' 
+    MD. POOH
+
+8.  Rig down wireline.
+
+9.  Return well to production using gaslift to unload fluid.
+"
+-97568,"Change zone in the long string to the ""A-1"" Sand (8076'-8086'MD).
+
+The A-2 long string has not produced since June/2/2008 since it apparently loaded up after an acid stimulation.  An APM to jet in and acidize the well was approved and coil tubing was used last week to attempt jetting in the well. No flow was established.  Mechanical damage is being evaluated under that APM.  If the zone cannot be brought back on production Peregrine would like to plug the B-1 sand and move up the hole in the long string to the A-1 zone.
+
+This well has been shut in since July 2008. 
+
+June Production: 500 MCFD, 4 BWPD, 0 Oil.  
 
 "
--188520,"20160823:  The A-20 well is currently shut-in and has already gone through abandonment phase 1 and 2. There is a CBP set at 12,533' MD with 100' of cement on top (TOC ~12,433' MD).
+-125778,Please see attached.
+-126872,Please see attached.
+-127999,Please see attached.
+-128575,Please see attached.
+-181718,"Request approval to TA well.  Please see attached procedure, schematics and PE Certification."
+-152407,Please see attached proposed procedure and schematics.
+-159507,Please see attached revised proposed procedure and schematics.
+-159531,Please see attached revised proposed procedure and schematics.
+-84663,Use a slickline for gas lift orifice installation; return well to production.
+-89519,Retrieve wireline fish @ ~3000' MD. Install internal tubing packoff w/ gas lift valve. 
+-125621,Please see attached.
+-126953,Please see attached.
+-127010,Please see attached.
+-127842,Please see attached.
+-90393,"Acidize ""B-1"" Sand. Turn well over to production."
+-112098,"Please see attached procedure.
 
-Permission is requested to complete permanent abandonment operations on Well A-20 in South Timbalier, Block 300, OCS-G 4240. The well has depleted its reserves and the wellbore has no future utility. After retrieval of tubing/casing and setting of required cement plugs, all casings strings will be cut and pulled from below the mud line."
--188936,"20160823:  The A-20 well is currently shut-in and has already gone through abandonment phase 1 and 2. There is a CBP set at 12,533' MD with 100' of cement on top (TOC ~12,433' MD).
-
-Permission is requested to complete permanent abandonment operations on Well A-20 in South Timbalier, Block 300, OCS-G 4240. The well has depleted its reserves and the wellbore has no future utility. After retrieval of tubing/casing and setting of required cement plugs, all casings strings will be cut and pulled from below the mud line."
--121020,"Current: Well is Shut in; Last well test was on 1/16/1999 (see last well test data on procedure.)
-
-Objective: Temporary Abandon well as per the attached procedure.  All remaining casings and drive pipe will be removed using mechanical cutters a minimum of 15? below the mudline at a later date when the Platform is removed (if explosives are to be used a seperate permit will be filed with the structure group.)
-
-The District Supervisor will be notified at least 48 hours prior to conducting the clearance survey.  Site clearance will be performed within 60 days after the well is plugged or the platform is removed.  The site clearance verification will be submitted to the District office no later than 30 days with Form MMS-124.
-
-Proposed Procedure, Current and Proposed Wellbore Schematics attached
-
-*Note: SPN met with the New Orleans district regarding idle iron and our plan to plug wells in our West Delta Field. These meetings were held because the West Delta Field was close proximity to the mudslide area.  We informed those who attended the meeting (B.J. Kruse, Troy Trosclair, Kevin Karl, Mike Saucier, Lynard Carter and others) that we identified 22 wells SPN would TA within a 2 year period.  This is one of the  wells that SPN has agreed to abandon.
+The well is currently producing at a mimimal rate.  The last test on 6/3/09 was 67 MCFD, 0 BO, 0 BW at 135 FTP on a fully open choke.  
 "
--245477,
--35505,
--33906,
--37542,"Water Depth: 194'
-RKB to WL: 104'"
--66533,
--99314,"Last well test 10/12/08: 1.3 MMCFD, 0 BOPD, 1238 BWPD, 600 psig FTP.
+-119603,"Please see attached procedure.
 
-1.  MIRU Slickline Unit and test lubricator to 2500 psig.
-2.  RIH and close sliding sleeve at 5,654' MD.
-3.  RIH and set PX plug and prong in ""X"" profile at 5,654' MD.
-4.  Test plug to 1000 psig.
-5.  RIH and open sliding sleeve over L-1 gravel pack at 5,447'.
-6.  Flow test well.
-7.  RDMO Slickline Unit.
-
-Note: The reason Arena is not able to squeeze the L-2 Sand before coming uphole to the L-1 Sand is due the platform is not large enough to support a coil tubing unit and the water depth is too deep to utilize a liftboat for the squeeze work.
-
-Additional Note:  Arena will pull the PX plug and the L-2 Sand will be squeezed upon depletion of the L-1 Sand.
-
-The APM request has also been submitted to the attention of Stephen Dessauer(MMS Regional) via e-mail on 12/11/08 to comply with NTL 2003-G02."
--155360,Permanently abandon the wellbore per the attachements.
--31547,
--33724,
--33466,"Water Depth: 194'
-RKB to WL: 104'"
--124770,"The current Tex X-8 completion has been shut-in since September 2009 due to its inability to produce. It is proposed by Arena Offshore to permanently abandon the existing completion and shift the upper zone gravel pack in the ""Tex X-6"" interval to the open position.
-
-Pay.gov Receipt, Log Section, Last Well Test, Proposed Procedure, Current and Proposed Wellbore Schematics attached"
--84325,"Current Status:  Well is S/I, perforations currently isolated from surface with 
-                 one or more plug(s) in tubing.
-
-Current Perforations:  12,215' - 12,320' MD
-
-                       No well test data available for this zone
-
-Intended Procedure:
-
-    1.   RU slickline and test to 5000-psi.  RIH and pull all plugs to enable 
-         P&A. 
-
-    2.   RU pumps and fill well with 8.6-ppg KCL/SW. Test lines to 5000-psi.  
-         Fill tubing and annuli with SW.
-
-    3.   Punch circulating holes in tubing at 10,200'MD. Squeeze perforations 
-         w/ 15 sacks (2.8 BBL, 15.7 CUFT) 16.2 ppg Class H cement; fill
-         tubing from 12,200? ? 10,320? w/ 64 sacks (12.3 BBL, 69 CUFT) of CMT;
-         Spot 300' (105 sacks, 20 BBL, 113.4 CUFT CMT) balanced plug across
-         7"" X 2-7/8"" and 9-5/8"" X 2-7/8"" annuli and 2-7/8"" tubing, from 
-         9,900'-10,200' MD. WOC and test to 1000-psi for 15-minutes on chart.
-
-    4.   ND tree and NU BOPE. Test to 250/1000-psi.
-
-    5.   Cut and pull 2-7/8"" tubing from ~6,825'MD.
-
-    6.   Cut 9-5/8"" casing at +/- 6,788' MD.
-
-    7.   Set cement retainer in 9-5/8"" casing at ~6,625' MD. Pump a 300' (156
-         sacks, 30 BBL, 168.5 CUFT) CMT horsecollar in the 9-5/8' x 13-3/8"" 
-         annulus from 6,488? ? 6,788? AND 163? inside the 9 5/8? csg below the
-         retainer, from 6625? ? 6788?.  Spot 154' (60 sacks, 11.5 BBL, 64.63 
-         CUFT) of CMT on top of the retainer from 6,470? ? 6,625?.  WOC and test
-         to 500-psi for 15 minutes.
-
-    8.   Cut and pull 9-5/8"" casing from 225' below the mud line (BML)
-
-    9.   Set CIBP in 13-3/8"" casing at 200' BLM. 
-
-   10.   Spot 150' (120 sacks, 23 BBL, 129.6 CUFT) CMT surface plug from 50? ? 
-         200? BML. 
-
-   11.   RDMO all equipment.
+The well is currently producing at a mimimal rate.  The last test on 6/3/09 was 67 MCFD, 0 BO, 0 BW at 135 FTP on a fully open choke.  
 "
--188923,"20160823:  The A-20 well is currently shut-in and has already gone through abandonment phase 1 and 2. There is a CBP set at 12,533' MD with 100' of cement on top (TOC ~12,433' MD).
+-119530,"Please see attached procedure.
 
-Permission is requested to complete permanent abandonment operations on Well A-20 in South Timbalier, Block 300, OCS-G 4240. The well has depleted its reserves and the wellbore has no future utility. After retrieval of tubing/casing and setting of required cement plugs, all casings strings will be cut and pulled from below the mud line."
--188970,"20160823:  The A-20 well is currently shut-in and has already gone through abandonment phase 1 and 2. There is a CBP set at 12,533' MD with 100' of cement on top (TOC ~12,433' MD).
-
-Permission is requested to complete permanent abandonment operations on Well A-20 in South Timbalier, Block 300, OCS-G 4240. The well has depleted its reserves and the wellbore has no future utility. After retrieval of tubing/casing and setting of required cement plugs, all casings strings will be cut and pulled from below the mud line."
--189007,"20160823:  The A-20 well is currently shut-in and has already gone through abandonment phase 1 and 2. There is a CBP set at 12,533' MD with 100' of cement on top (TOC ~12,433' MD).
-
-Permission is requested to complete permanent abandonment operations on Well A-20 in South Timbalier, Block 300, OCS-G 4240. The well has depleted its reserves and the wellbore has no future utility. After retrieval of tubing/casing and setting of required cement plugs, all casings strings will be cut and pulled from below the mud line."
--189077,"20160823:  The A-20 well is currently shut-in and has already gone through abandonment phase 1 and 2. There is a CBP set at 12,533' MD with 100' of cement on top (TOC ~12,433' MD).
-
-Permission is requested to complete permanent abandonment operations on Well A-20 in South Timbalier, Block 300, OCS-G 4240. The well has depleted its reserves and the wellbore has no future utility. After retrieval of tubing/casing and setting of required cement plugs, all casings strings will be cut and pulled from below the mud line."
--189584,"20160823:  The A-20 well is currently shut-in and has already gone through abandonment phase 1 and 2. There is a CBP set at 12,533' MD with 100' of cement on top (TOC ~12,433' MD).
-
-Permission is requested to complete permanent abandonment operations on Well A-20 in South Timbalier, Block 300, OCS-G 4240. The well has depleted its reserves and the wellbore has no future utility. After retrieval of tubing/casing and setting of required cement plugs, all casings strings will be cut and pulled from below the mud line."
--189567,"20160823:  The A-20 well is currently shut-in and has already gone through abandonment phase 1 and 2. There is a CBP set at 12,533' MD with 100' of cement on top (TOC ~12,433' MD).
-
-Permission is requested to complete permanent abandonment operations on Well A-20 in South Timbalier, Block 300, OCS-G 4240. The well has depleted its reserves and the wellbore has no future utility. After retrieval of tubing/casing and setting of required cement plugs, all casings strings will be cut and pulled from below the mud line."
--186317,"Cut and pull 20"" and 26"" casing strings <15' BML"
--137015,"Proposed Operation: Recomplete to the Tex X-5 Sand via closing the sliding sleeve providing access to the Tex X-6, setting a retrievable plug above the same, and opening the sliding sleeve providing access to the Tex X-5.
-
-Justification: Well is ompleted in the Tex X-6 Sand was SI on 09/01/11 in preparation for Tropical Storm Lee. Eff0l1s to reestablish production (rocking well in, dropping soap-sticks) from the Tex X-6 have been unsuccessful (see attached well history). A SBHP survey run on 09/09/11 shows the Tex X-6 to have a BHP of 2733 psi (6.5 ppge) @ 9398' MD (8091' TVD). The Tex X-6 had been online since 04/18/10 and has produced 1.25 BCF I 32.8 MBC / 7.6 MBW.
-
-Log Section, Proposed Procedure, Current and Proposed Wellbore Schematics attached"
--157445,Permanently abandon the Tex X-5 & Tex X-6 Sands and change zones to the Bul 4D Upper Sand.
--160940,Permanently abandon the Tex X-5 & Tex X-6 Sands and change zones to the Bul 4D Upper Sand.
--160607,Permanently abandon the Tex X-5 & Tex X-6 Sands and change zones to the Bul 4D Upper Sand.
--199011,Isolate the BUL-4D Upper sand with a CIBP and 50' of cement and open the BUL-4 to production.
--249143,
--250613,
--9266,Please see attached.
--10797,Please see attached.
--249192,
--250885,
--250709,
--250740,
--250826,
--27675,
--22526,
--31335,
--249141,
--250904,
--250694,
--250807,
--250619,
--250714,
--251839,
--12643,Please see attached.
--11095,Please see attached.
--9578,Please see attached.
--10490,Please see attached.
--10393,Please see attached.
--245482,
--246837,
--247052,
--247002,
--246755,
--247060,
--31991,"Water Depth: 194'
-RKB to WL: 104'
-RKB to ML: 298'"
--30234,
--34732,
--124762,"Perform a sliding sleeve thru-tubing downhole recompletion from the ""Bul 4D-L"" Sand to the ""Bul 45"" Sand. The current completion is not producing in sustained economic quantities. The ""Bul 45"" Sand will be accessed by closing the sliding sleeve over the ""Bul 4D-L"" Sand and opening the sliding sleeve over the ""Bul 45"" Sand. Gas lift valves will also be installed to help unload the well.
-
-The APM is being submitting under SPN Resources for timing purposes, the actual work of the proposed operations will be performed by Arena Offshore, LLC once the designation of operator forms are approved.
-
-Pay.gov Receipt, 3 Months Daily Production History, Last Well Test (on procedure), Log Section, Proposed Procedure, Current and Proposed Wellbore Schematics attached."
--90843,"Current Status:  Well is S/I, perforations currently isolated from surface with 
-                 one or more plug(s) in tubing.
-
-Current Perforations:  12,215' - 12,320' MD
-
-                       No well test data available for this zone
-
-PLEASE SEE ATTACHMENT ""REVISED INTENDED PROCEDURE AS OF 07 AUGUST""
-
-
-Intended Procedure Approved 30 MAY 2008:
-
-    1.   RU slickline and test to 5000-psi.  RIH and pull all plugs to enable 
-         P&A. 
-
-    2.   RU pumps and fill well with 8.6-ppg KCL/SW. Test lines to 5000-psi.  
-         Fill tubing and annuli with SW.
-
-    3.   Punch circulating holes in tubing at 10,200'MD. Squeeze perforations 
-         w/ 15 sacks (2.8 BBL, 15.7 CUFT) 16.2 ppg Class H cement; fill
-         tubing from 12,200? ? 10,320? w/ 64 sacks (12.3 BBL, 69 CUFT) of CMT;
-         Spot 300' (105 sacks, 20 BBL, 113.4 CUFT CMT) balanced plug across
-         7"" X 2-7/8"" and 9-5/8"" X 2-7/8"" annuli and 2-7/8"" tubing, from 
-         9,900'-10,200' MD. WOC and test to 1000-psi for 15-minutes on chart.
-
-    4.   ND tree and NU BOPE. Test to 250/1000-psi.
-
-    5.   Cut and pull 2-7/8"" tubing from ~6,825'MD.
-
-    6.   Cut 9-5/8"" casing at +/- 6,788' MD.
-
-    7.   Set cement retainer in 9-5/8"" casing at ~6,625' MD. Pump a 300' (156
-         sacks, 30 BBL, 168.5 CUFT) CMT horsecollar in the 9-5/8' x 13-3/8"" 
-         annulus from 6,488? ? 6,788? AND 163? inside the 9 5/8? csg below the
-         retainer, from 6625? ? 6788?.  Spot 154' (60 sacks, 11.5 BBL, 64.63 
-         CUFT) of CMT on top of the retainer from 6,470? ? 6,625?.  WOC and test
-         to 500-psi for 15 minutes.
-
-    8.   Cut and pull 9-5/8"" casing from 225' below the mud line (BML)
-
-    9.   Set CIBP in 13-3/8"" casing at 200' BLM. 
-
-   10.   Spot 150' (120 sacks, 23 BBL, 129.6 CUFT) CMT surface plug from 50? ? 
-         200? BML. 
-
-   11.   RDMO all equipment.
+The well is currently producing at a mimimal rate.  The last test on 6/3/09 was 67 MCFD, 0 BO, 0 BW at 135 FTP on a fully open choke.  
 "
--188356,"Permission is requested to commence final abandonment operations on Well A-23 in South Timbalier, Block 300, OCS-G 4240. The final phase P&A operations will be to set a surface cement plug and pull all removable casing strings from > 15' BML using the Blake 651 Rig."
--190138,"Permission is requested to commence final abandonment operations on Well A-23 in South Timbalier, Block 300, OCS-G 4240. The final phase P&A operations will be to set a surface cement plug and pull all removable casing strings from > 15' BML using the Blake 651 Rig."
--188302,"Permission is requested to complete permanent abandonment operations on Well A-24 in South Timbalier, Block 300, OCS-G 4240. It has been proven through monitoring and diagnostics of the well, that all pressure sources are isolated. After the 2-7/8"" string is cut above the packer and the required cement plug is set, all casing strings will be cut and pulled from below the mud line except the 24"" curved conductor. It will be cut and secured to the jacket for future removal with the platform."
--187273,"Permission is requested to complete permanent abandonment operations on Well A-24 in South Timbalier, Block 300, OCS-G 4240. It has been proven through monitoring and diagnostics of the well, that all pressure sources are isolated. After the 2-7/8"" string is cut above the packer and the required cement plug is set, all casing strings will be cut and pulled from below the mud line except the 24"" curved conductor. It will be cut and secured to the jacket for future removal with the platform."
--177845,Permission is requested to commence Phase V plug and abandonment operations on the A-25 well on the Cougar platform in South Timbalier Block 300.
--178442,Permission is requested to commence Phase V plug and abandonment operations on the A-26 well on the Cougar platform in South Timbalier Block 300.
--144726,"8/09/12
+-111996,Please see attached procedure.
+-152405,Please see attached proposed procedure and schematics.
+-204361,"Operations will be conducted from either a liftboat or a heavy lift vessel/barge.
 
-The Cougar A-28 well is currently shut-in and is uneconomical to produce.  The ST300 lease expired in February 2012 with the plan to start the P&A (Phase 1 & 2) work in August. EL and SL will be mobilized to the Cougar platform (ST300) to perform the zonal isolation of the B-sand in the A-28 well. This work is the first stage of a zonal isolation program."
--183286,"The well is currently shut in after Phase I - II abandonment. There is a CIBP in the tubing at 10,850' with 74' of cement on top of the CIBP (TOC ~10,776').
+Please see attached procedure & wellbore schematics."
+-125782,Please see attached.
+-127230,Please see attached.
+-128243,Please see attached.
+-127312,Please see attached.
+-127359,Please see attached.
+-126760,Please see attached.
+-126382,"1. Mobilize derrick barge on location.
 
-Permission is requested to commence Phase III - V abandonment operations on Well A-28 in South Timbalier, Block 300, OCS-G 4240. The well has depleted its reserves and the wellbore has no future utility. After retrieval of tubing/casing and setting of required cement plugs, all casings strings will be cut and pulled from below the mud line.
+2. RU explosives, sever all remaining casings (7-5/8"", 10-3/4"", 16"" & 30"") at a minimum of 15' BML.
 
-All casing strings will be pulled except the 26"". The 26"" is a curved conductor. It will be cut and secured to the jacket for future removal with the platform."
--125253,"Perform a sliding sleeve thru-tubing downhole recompletion from the ""Bul 4D-L"" Sand to the ""Bul 45"" Sand. The current completion is not producing in sustained economic quantities. The ""Bul 45"" Sand will be accessed by closing the sliding sleeve over the ""Bul 4D-L"" Sand and opening the sliding sleeve over the ""Bul 45"" Sand. Gas lift valves will also be installed to help unload the well.
+3. Recover all severed casings to surface.
 
-The APM is being submitting under SPN Resources for timing purposes, the actual work of the proposed operations will be performed by Arena Offshore, LLC once the designation of operator forms are approved.
+4. RD equipment and demobilize.
 
-Pay.gov Receipt, 3 Months Daily Production History, Last Well Test (on procedure), Log Section, Proposed Procedure, Current and Proposed Wellbore Schematics attached."
--183845,
--186290,"See attached procedure, WBS & SCP Denial Ltr."
--187775,
--189400,
--249193,
--250612,
--23375,"Please see the attached proposed procedure. 
+5. Perform site clearance as part of the platform removal process."
+-125088,Request temporarily abandon well as per the attached procedure. All casing strings will be cut and removed a minimum of 15'BML as apart of the platform removal.
+-132019,"The permanent abandonment operations were completed on Platform E for the following wells:
 
-Last well test: No well test, water injection well."
--74408,"This well is classified as a no flow well & the BHP is below seawater gradient.  We request a departure from CFR 250.615 (c) (2) & (3) stating that workover operations require a type of Flow / No Flow indicator on the trip tanks & Pit level devices with both visual & audible warnings.  
+A001
+A002 (ST01)
 
-See attached Procedure."
--131544,"The well is currently shut in.
+Attached, please find a cover letter addressing each well with corresponding API number and Actual Site Clearance Survey Report for your records."
+-6171,
+-73207,
+-124696,Request approval to temporarily abandon well as per the attached procedure. All casing strings will be cut and removed a minimum of 15'BML as apart of the platform removal operations.
+-126387,"1. Mobilize derrick barge on location.
 
-Please see the attached procedure, wellbore schematics, BOP data, platform rig checksheet and platform analysis."
--209284,SCP Remediation. Set DS plug in S-1 nipple at 5376'
--253227,"Please see attached proposed procedure.
+2. RU explosives, sever all remaining casings (7-5/8"", 10-3/4"", 24"") at a minimum of 15' BML.
 
-The worst case oil-spill discharge volume for the proposed operations is less than or equal to GOM Shelf's COF demonstration.
+3. Recover all severed casings to surface.
+
+4. RD equipment and demobilize.
+
+5. Perform site clearance as part of the platform removal process."
+-142574,"Displacement volume to perfs:	~40 bbl 
+GP Packer:  BAKER GP Packer AT 11,267'
+
+Reservoir Sand - OO-10
+Reservoir Type - Gas
+BHP - 2920/5.97ppg
+
+Will Mobilize a stimulation vessel to the GA209-A Platform/location.  After conducting a pre-job safety review and operations meeting, the requirements for working with acid and pressrues will be discussed as will the treatment procedures, including tubing movement pressure limitations.
+
+PROPOSED PROCEDURES:
+1.   Test all lines to an operating pressure of 2,500-psi.
+
+2.   Open wellhead valve, closing off the wing valve to production.
+ 
+3.   Pump the treatment acid at 0.5?1.0 bbl/min fluid rate.
+ 
+4.   Displace stimulation fluids into formation with 34,575scf Nitrogen.
+
+5.   Shut down all pumps and rig down the flow line from the wellhead.
+
+6.   Slowly recover the treatment through the separation system.
 "
--253942,"Please see attached proposed procedure.
+-141590,"RPM submitted April 11, 2012 CANCELS ALL OF THE BELOW.  THIS WORK WILL NOT BE DONE.
+*******************************************************************
+Current & Proposed Perf Depth:   MM-50 Sand
+                                 9682' - 9710' MD
+                                 9059' - 9079' TVD
+  		        		
+Latest well test in zone:  Feb. 5, 2010
+                           3 BOPD	
+                           207 BWPD
+                           99% BSW
+                           2.331 Mcf/d Formation Gas
 
-The worst case oil-spill discharge volume for the proposed operations is less than or equal to GOM Shelf's COF demonstration.
+Current zone SBHP:  2967 psi
+Highest expected SITP:  2060 psig
+Proposed zone SBHP (RCP):  N/A
+
+Kill Weight Fluid:	  11.3 ppg
+
+Plan:  Initial 12/64 button orifice was installed at 4500' MD with a tubing packoff GLV on 8-24-11.  This work was unsuccessful in restoring gas production. Tubing fluid level is at 4500' MD. Current plan is to install another tubing punch with tubing GLV packoff at 6200' MD and packoff button orifice at 4500' MD. Will return the well to production by using gaslift to unload fluid.
+
+ 		
+Proposed Procedure:
+
+1.  Test wireline lubricator/BOP to 250/2560 psi and document on daily wireline 
+    tickets and wireline check list.  Indicate if test is a good test.
+
+2.  RU WLU. Make gauge run to top of tubing GLV packoff at 4500'. POOH
+
+3.  RIH with pulling tool and remove tubing GLV packoff at 4500' MD. POOH
+
+4.  RIH with gauge ring to 6300' MD to make sure tubing is clear. POOH
+
+5.  RU wireline tools for McKinly tubing punch and RIH and punch hole in tubing 
+    at 6200' MD. POOH
+
+6.  RIH and set tubing GLV packoff with 12/64 orifice across tubing punch at 
+    6200' MD. POOH
+
+7.  RIH and set tubing packoff with solid spacer across button orifice at 4500' 
+    MD. POOH
+
+8.  Rig down wireline.
+
+9.  Return well to production using gaslift to unload fluid.
 "
--23405,"Please see the attached proposed procedure.
+-151141,"Install Halliburton XRXX Plug (2.313"" OD)
 
-Last well test: No well test; water injection well."
--39652,See Attached Procedure.
--37482,See Attached Procedure.
--68659,See proposed procedure.
--71225,See proposed procedure.
--171682,
--202576,
--202162,
--202556,
--201684,
--202478,
--122960,"Water Depth = 248'
-RKB = 100'
+See Attached Procedures"
+-162833,"Proposed work is to isolate existing lower zone (MM-50) with CIBP and cement plug. Then, perforate new zone (MM-30) and flow test same to determine future utility of wellbore. 
 
-Please see the attached final surface location plat."
--122912,See attached procedure.
+See attached proposed procedure, current and proposed wellbore sketch."
+-163613,"Proposed work is to isolate existing lower zone (MM-50) with CIBP and cement plug. Then, perforate new zone (MM-30) and flow test same to determine future utility of wellbore. 
+
+See attached proposed procedure, current and proposed wellbore sketch.
+
+03-07-2014:
+Changes to procedure are highlighted in red in the intended procedure. They include our request to decrease a cement plug to 30' instead of the required 50', a slight modification to our perf depths, and a sentence highlighted in red describing what has already been completed and one about negative testing the plug, as requested in Kassim Kassim's email last week."
+-164022,"On 03/20/14, received verbal approval from Kassim Kassim to Bryan Chapman for the following:
+
+""Due to corkscrewed tubing at 7655' WLM (7707' MD) found while running a dummy run prior to set the previously approved CIBP for zone isolation, your request to isolate the existing MM-50 zone using the bullhead squeezing cement method instead of the CIBP and continue with re-completion procedure into the MM-30 Zone is approved."" 
+
+Verbal approval email is attached.
+
+"
+-128362,"Peregrine has been attempting to jet-in the long string completion in this well with coiled tubing and nitrogen.  The LS is completed in the B-2 Sand, with perforations at 8607' - 8616' MD.  (A wellbore schematic is attached for reference.)  These attempts have not been successful and we would like to acidize the formation, with acid already on location for another well.
+ 
+1. RU coiled tubing BOP's on LS; test to 250/5000 psi. 
+ 
+2. Pickle reel with 200 gal of 10% HCL
+ 
+3. MU wash nozzle and RIH to 8500' MD; jet coil and tubing dry with nitrogen.
+ 
+4. Close off coil annulus; establish inject rates with nitrogen.
+ 
+5. Pump 750 gals of 10% HCL with additives in B-2 perfs and displace with 110,000 scf nitrogen (two tubing volumes).
+ 
+6. Once pressure has stabilized after displacement, open backside of coil to manifold and gas buster.  If well does not flow jet-in well with nitrogen.
+ 
+7. Once flow is established, POH with coil and continue unloading to surface flow-back spread.
+"
+-128634,Please see attached.
+-181719,"Request approval to TA well.  Please see attached procedure, schematics and PE Certification."
+-183682,"Request approval to TA well.  Please see attached procedure, schematics and PE Certification."
+-68883,"Initial Recompletion.  Please see attached procedure.  Same rig used to drill well will be used to complete the well.  Will test BOP's every 14 days.
+
+On September 28, 2007, received verbal approval from Lee Fowler to test 5"" liner and commence displacement."
+-65763,"Initial Recompletion.  Please see attached procedure.  Same rig used to drill well will be used to complete the well.  Will test BOP's every 14 days.
+
+On September 28, 2007, received verbal approval from Lee Fowler to test 5"" liner and commence displacement."
+-67131,"Initial Recompletion.  Please see attached procedure.  Same rig used to drill well will be used to complete the well.  Will test BOP's every 14 days.
+
+On September 28, 2007, received verbal approval from Lee Fowler to test 5"" liner and commence displacement."
+-95415,
+-120565,
+-149864,Pisces hereby requests approval to permanently abandon well.
+-140169,Pisces hereby requests approval to permanently abandon well.
+-146789,Pisces hereby requests approval to permanently abandon well.
+-150746,Pisces hereby requests approval to cut and pull remaining casings during platform removal operations.

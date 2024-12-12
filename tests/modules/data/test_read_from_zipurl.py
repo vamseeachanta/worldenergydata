@@ -38,7 +38,7 @@ def download_and_process_zip(url, output_dir):
                     f.write(f"{column}\n")
             print(f"Saved {csv_name} to {output_dir}")
 urls = [
-    # 'https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip',
+     'https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip',
     # 'https://www.data.bsee.gov/Well/Files/BHPSRawData.zip',
     # 'https://www.data.bsee.gov/Well/Files/eWellAPDRawData.zip',
     # 'https://www.data.bsee.gov/Well/Files/eWellAPMRawData.zip',
@@ -74,7 +74,7 @@ urls = [
     # 'https://www.data.bsee.gov/Other/Files/RoyaltyRefRawData.zip',
     # 'https://www.data.bsee.gov/Pipeline/Files/RowDescRawData.zip',
     # 'https://www.data.bsee.gov/Other/Files/ScannedDocsRawData.zip',
-    'https://www.data.bsee.gov/Leasing/Files/SerialRegRawData.zip'
+    # 'https://www.data.bsee.gov/Leasing/Files/SerialRegRawData.zip'
     # 'https://factpages.sodir.no/downloads/csv/afxAreaCurrent.zip',
     # 'https://factpages.sodir.no/downloads/csv/afxAreaSplitByBlock.zip',
     # 'https://factpages.sodir.no/downloads/csv/prlAreaCurrent.zip',

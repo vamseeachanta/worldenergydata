@@ -1,101 +1,101 @@
 SN_APD_QA,QA_RESPONSE_CD,QA_RESPONSE_TXT
--191698,Y,
--191699,N,"Synthetic based mud will be used.  If ROC doesn't pass, the rig can go to zero discharge."
--191700,,
--191701,,
--191702,Y,GMG 29006
--191703,,Subsea Well
--191704,N,
--166442,Y,
--166443,N,The subject rig is not outfitted for zero discharge. Shell will not discharge SBM except as authorized and monitored under the US EPA General Permit GMG290000
--166444,Y,
--166445,,
--166446,Y,GMG 290103
--166447,,
--166448,N,
--166449,Y,SureTec v3.1
--166482,Y,
--166483,Y,
--166484,,
--166485,,
--166486,Y,GMG290351
--165702,Y,
--165703,Y,"Yes, the rig is outfitted for zero discharge operations. Per the NPDES permit on file any SBM cutting with fluid retention above 6.9% will be discharged overboard per 40 CFR 435."
--165238,Y,
--165239,,
--165240,,
--165241,,
--165242,Y,290541
--165243,Y,
--165244,N,
--165245,,
--165609,Y,Anatomize version 3.30.4
--165704,Y,
--165705,,
--165706,Y,GMG290573
--165707,,
--165708,N,
--165709,Y,SureTec Version 2.4
--166066,Y,GMG 290103
--166067,,
--166068,N,
--166069,Y,Suretec v3.1
--166130,Y,
--166131,Y,
--166132,Y,
--166133,,
--165974,Y,
--165975,,
--165976,,
--165977,,
--165978,Y,GMG290269
--165979,Y,
--165980,N,
--165981,N,
--166062,Y,
--166063,Y,SBM will be transported to shore for disposal
--166064,Y,
--166065,,
--160090,Y,
--160091,Y,
--160092,N,
--160093,N,
--160094,Y,GMG#290208
--160095,Y,
--160096,N,
--160097,,
--160459,Y,SBM cuttings will be processed with cuttings dryer to reduce SBM retention to 6% or less.  Dischargeable SBM cuttings will be discharged through a shunt line at 20' below the water line.
--160460,,
--160461,,
--160462,Y,GMG 290351
--160463,Y,
--160464,N,
--160465,N,
--160482,Y,
--160483,N,
--160484,,
--160485,,
--160486,Y,GMG # 290090
--160487,Y,
--160488,N,
--160489,N,
--160490,Y,
--160458,Y,"A minimum of 500 sx of barite will be kept on board which meets worse case theoretical requirements to weight up active mud system .5 ppg.  During WBM operations 100 sx of gel will be kept on board or at location on standby boat.  During SBM operations 100 sx of ""VG Plus"" or ""VG Supreme"" SBM organophilic clay will be kept on board or at standby boat."
--165375,,
--165376,N,
--165377,Y,SureTec Version 3.1
--165416,N,
--165417,Y,SureTec Version 2.4
--165418,Y,
--165419,,
--165420,,
--165421,,
--165422,Y,GMG290269
--165423,Y,
--165424,N,
--165425,N,
--165482,Y,
--165483,Y,
--165484,Y,
--165485,,
--165486,Y,GMG 290132
+-187118,Y,GMG290129
+-187119,Y,
+-187120,N,
+-187121,Y,OTC Green Light Version No. 1.1 or higher.
+-187138,Y,
+-187341,,
+-187342,Y,GMG 290180
+-187343,,Open Water
+-187344,N,
+-187345,Y,IPT Suretec Version 3.1
+-187363,Y,
+-187364,Y,
+-187365,N,
+-187366,Y,GMG 290103
+-187367,Y,see DWOP
+-187368,N,
+-187369,Y,will use SureTec software version 3.1
+-187370,Y,
+-187371,Y,
+-187372,Y,
+-187373,,
+-187374,Y,GMG 290180
+-187375,,Open Water
+-187376,N,
+-187377,Y,IPT Suretec Version 3.1
+-187398,Y,
+-187399,N,"Synthetic based mud will be used. If ROC doesn't pass, the rig can go to zero discharge."
+-187400,Y,
+-187401,,
+-187402,Y,GMG 290006
+-187403,,Subsea Well
+-187404,N,
+-187405,Y,OTC Greenlight 1.1
+-187550,Y,
+-187551,Y,
+-187552,,
+-187553,,
+-187554,Y,GMG290129
+-187555,Y,
+-187556,N,
+-187557,Y,OTC Green Light Version No. 1.1 or higher.
+-187437,,
+-187438,Y,GMG 290103
+-187439,N,See attached waiver
+-187440,N,
+-187441,N,
+-187442,Y,
+-187443,Y,Synthetic based mud will be used; zero discharge procedures will only be used if ROC does not pass.
+-187444,Y,
+-187445,,
+-187446,Y,GMG 290006
+-187447,,subsea well
+-187448,N,
+-187449,Y,OTC Greenlight Version 1.1
+-188195,,
+-188196,,
+-188197,,
+-188218,Y,GMG290269
+-188219,Y,
+-188220,N,
+-188221,Y,"OTC Greenlight, Version 1.1, or IPT SureTec 3.1 or greater"
+-188222,Y,
+-187530,Y,GMG 290180
+-187531,,Open Water
+-187532,N,
+-187533,Y,IPT Suretec Version 3.1
+-188194,Y,
+-188223,N,The subject rig is not fitted for zero discharge. Shell will not discharge SBM except as authorized and monitored under the US EPA General Permit GMG290000
+-188224,Y,
+-188225,,
+-188226,Y,GMG290103
+-188227,,Subsea well
+-188228,N,
+-188229,Y,"Suretec v3.1 is approved- However, we will not be using digital BOP testing."
+-188230,Y,
+-188231,Y,Synthetic based mud will be used; however zero discharge will only be used if ROC does not pass.
+-187279,Y,
+-187280,Y,
+-187281,,
+-187282,Y,NPDES Permit GMG 290132
+-187283,,
+-187284,N,
+-187285,Y,IPT Suretec Digital BOP Test Method Version 3.1
+-189127,,
+-189128,N,
+-189129,Y,OCT Green Light Version No. 1.1 or higher
+-189130,,
+-189131,,
+-189132,,
+-189133,,
+-189134,,GMG # 290006 Outfall A/T/S
+-188666,Y,
+-188667,Y,
+-188668,,
+-188669,,
+-188670,Y,GMG 290103
+-188671,N,Please see approved departure
+-188672,N,
+-188673,Y,Sure Tec 3.1 or newer
+-189113,Y,IPT Suretec Digital BOP Test Method Version 3.1
