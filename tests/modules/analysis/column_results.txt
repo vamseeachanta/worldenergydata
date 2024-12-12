@@ -1,0 +1,100 @@
+Directory: tests\modules\data\results\Data\by_API
+File: API_number_10_all_columns.csv
+  Matched Terms: Longitude, Depth, Latitude, Name, Surface, Date, Water, Company, Well, Bottom, Code
+  Unmatched Terms: Total, Status, and, KOP, Vertical, Sidetrack, Cut, Measured, API12, Wellbore, Stub, Spud, Field, Completion, Purpose, Casing, Bypass
+
+Directory: tests\modules\data\results\Data\by_API
+File: API_number_1_all_columns.csv
+  Matched Terms: Longitude, Depth, Latitude, Name, Surface, Date, Water, Company, Well, Bottom, Code
+  Unmatched Terms: Total, Status, and, KOP, Vertical, Sidetrack, Cut, Measured, API12, Wellbore, Stub, Spud, Field, Completion, Purpose, Casing, Bypass
+
+Directory: tests\modules\data\results\Data\by_API
+File: API_number_2_all_columns.csv
+  Matched Terms: Longitude, Depth, Latitude, Name, Surface, Date, Water, Company, Well, Bottom, Code
+  Unmatched Terms: Total, Status, and, KOP, Vertical, Sidetrack, Cut, Measured, API12, Wellbore, Stub, Spud, Field, Completion, Purpose, Casing, Bypass
+
+Directory: tests\modules\data\results\Data\by_API
+File: API_number_3_all_columns.csv
+  Matched Terms: Longitude, Depth, Latitude, Name, Surface, Date, Water, Company, Well, Bottom, Code
+  Unmatched Terms: Total, Status, and, KOP, Vertical, Sidetrack, Cut, Measured, API12, Wellbore, Stub, Spud, Field, Completion, Purpose, Casing, Bypass
+
+Directory: tests\modules\data\results\Data\by_API
+File: API_number_4_all_columns.csv
+  Matched Terms: Longitude, Depth, Latitude, Name, Surface, Date, Water, Company, Well, Bottom, Code
+  Unmatched Terms: Total, Status, and, KOP, Vertical, Sidetrack, Cut, Measured, API12, Wellbore, Stub, Spud, Field, Completion, Purpose, Casing, Bypass
+
+Directory: tests\modules\data\results\Data\by_API
+File: API_number_5_all_columns.csv
+  Matched Terms: Longitude, Depth, Latitude, Name, Surface, Date, Water, Company, Well, Bottom, Code
+  Unmatched Terms: Total, Status, and, KOP, Vertical, Sidetrack, Cut, Measured, API12, Wellbore, Stub, Spud, Field, Completion, Purpose, Casing, Bypass
+
+Directory: tests\modules\data\results\Data\by_API
+File: API_number_6_all_columns.csv
+  Matched Terms: Longitude, Depth, Latitude, Name, Surface, Date, Water, Company, Well, Bottom, Code
+  Unmatched Terms: Total, Status, and, KOP, Vertical, Sidetrack, Cut, Measured, API12, Wellbore, Stub, Spud, Field, Completion, Purpose, Casing, Bypass
+
+Directory: tests\modules\data\results\Data\by_API
+File: API_number_7_all_columns.csv
+  Matched Terms: Longitude, Depth, Latitude, Name, Surface, Date, Water, Company, Well, Bottom, Code
+  Unmatched Terms: Total, Status, and, KOP, Vertical, Sidetrack, Cut, Measured, API12, Wellbore, Stub, Spud, Field, Completion, Purpose, Casing, Bypass
+
+Directory: tests\modules\data\results\Data\by_API
+File: API_number_8_all_columns.csv
+  Matched Terms: Longitude, Depth, Latitude, Name, Surface, Date, Water, Company, Well, Bottom, Code
+  Unmatched Terms: Total, Status, and, KOP, Vertical, Sidetrack, Cut, Measured, API12, Wellbore, Stub, Spud, Field, Completion, Purpose, Casing, Bypass
+
+Directory: tests\modules\data\results\Data\by_API
+File: API_number_9_all_columns.csv
+  Matched Terms: Longitude, Depth, Latitude, Name, Surface, Date, Water, Company, Well, Bottom, Code
+  Unmatched Terms: Total, Status, and, KOP, Vertical, Sidetrack, Cut, Measured, API12, Wellbore, Stub, Spud, Field, Completion, Purpose, Casing, Bypass
+
+Directory: tests\modules\data\results\Data\by_API
+File: well_data_1_all_columns.csv
+  Matched Terms: Longitude, Depth, Latitude, Name, Surface, Date, Water, Company, Well, Bottom, Code
+  Unmatched Terms: Total, Status, and, KOP, Vertical, Sidetrack, Cut, Measured, API12, Wellbore, Stub, Spud, Field, Completion, Purpose, Casing, Bypass
+
+Directory: tests\modules\data\results\Data\by_API
+File: well_data_2_all_columns.csv
+  Matched Terms: Longitude, Depth, Latitude, Name, Surface, Date, Water, Company, Well, Bottom, Code
+  Unmatched Terms: Total, Status, and, KOP, Vertical, Sidetrack, Cut, Measured, API12, Wellbore, Stub, Spud, Field, Completion, Purpose, Casing, Bypass
+
+Directory: tests\modules\data\results\Data\by_zip
+File: APDRawData_mv_apddata_all_columns.csv
+  Matched Terms: 
+  Unmatched Terms: Depth, Status, and, Latitude, Vertical, KOP, Cut, Name, Measured, Wellbore, Field, Company, Water, Completion, Well, Bottom, Code, Longitude, Total, Sidetrack, Surface, API12, Stub, Date, Spud, Purpose, Casing, Bypass
+
+Directory: tests\modules\data\results\Data\by_zip
+File: APDRawData_mv_apd_main_all_columns.csv
+  Matched Terms: 
+  Unmatched Terms: Depth, Status, and, Latitude, Vertical, KOP, Cut, Name, Measured, Wellbore, Field, Company, Water, Completion, Well, Bottom, Code, Longitude, Total, Sidetrack, Surface, API12, Stub, Date, Spud, Purpose, Casing, Bypass
+
+Directory: tests\modules\data\results\Data\by_zip
+File: APIChangesRawData_mv_apichanges_all_columns.csv
+  Matched Terms: 
+  Unmatched Terms: Depth, Status, and, Latitude, Vertical, KOP, Cut, Name, Measured, Wellbore, Field, Company, Water, Completion, Well, Bottom, Code, Longitude, Total, Sidetrack, Surface, API12, Stub, Date, Spud, Purpose, Casing, Bypass
+
+Directory: tests\modules\data\results\Data\by_zip
+File: APIRawData_mv_api_list_all_columns.csv
+  Matched Terms: 
+  Unmatched Terms: Depth, Status, and, Latitude, Vertical, KOP, Cut, Name, Measured, Wellbore, Field, Company, Water, Completion, Well, Bottom, Code, Longitude, Total, Sidetrack, Surface, API12, Stub, Date, Spud, Purpose, Casing, Bypass
+
+Directory: tests\modules\data\results\Data\by_zip
+File: APIRawData_mv_api_wellcomps_all_columns.csv
+  Matched Terms: 
+  Unmatched Terms: Depth, Status, and, Latitude, Vertical, KOP, Cut, Name, Measured, Wellbore, Field, Company, Water, Completion, Well, Bottom, Code, Longitude, Total, Sidetrack, Surface, API12, Stub, Date, Spud, Purpose, Casing, Bypass
+
+Directory: tests\modules\data\results\Data\by_zip
+File: BHPSRawData_mv_bhpsurvey_all_columns.csv
+  Matched Terms: 
+  Unmatched Terms: Depth, Status, and, Latitude, Vertical, KOP, Cut, Name, Measured, Wellbore, Field, Company, Water, Completion, Well, Bottom, Code, Longitude, Total, Sidetrack, Surface, API12, Stub, Date, Spud, Purpose, Casing, Bypass
+
+Directory: tests\modules\data\results\Data\by_zip
+File: BoreholeRawData_mv_boreholes_all_columns.csv
+  Matched Terms: 
+  Unmatched Terms: Depth, Status, and, Latitude, Vertical, KOP, Cut, Name, Measured, Wellbore, Field, Company, Water, Completion, Well, Bottom, Code, Longitude, Total, Sidetrack, Surface, API12, Stub, Date, Spud, Purpose, Casing, Bypass
+
+Directory: tests\modules\data\results\Data\by_zip
+File: CompanyRawData_mv_companies_all_columns.csv
+  Matched Terms: 
+  Unmatched Terms: Depth, Status, and, Latitude, Vertical, KOP, Cut, Name, Measured, Wellbore, Field, Company, Water, Completion, Well, Bottom, Code, Longitude, Total, Sidetrack, Surface, API12, Stub, Date, Spud, Purpose, Casing, Bypass
+

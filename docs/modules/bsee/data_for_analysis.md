@@ -19,12 +19,14 @@ The BSEE data tables and dataframes are given in the following sections.
 #### Well Data
 
 **Columns:**
-API12, [Company Name], [Field Name], [Well Name], [Sidetrack and Bypass]
+Target : API12, [Company Name], [Field Name], [Well Name], [Sidetrack and Bypass]
             , [Spud Date], [Total Depth Date], [Well Purpose]
             , [Water Depth], [Total Measured Depth], [Total Vertical Depth], [Sidetrack KOP]
             , [Surface Latitude], [Surface Longitude], [Bottom Latitude], [Bottom Longitude]
             , [Wellbore Status], [Wellbore Status Date], [Completion Stub Code], [Casing Cut Code]
 
+Found Till Now : API Well Number , Company name , Field_name or Field_name_code , Well name , REQ_SPUD_DATE or WELL_SPUD_DATE , 
+        Total depth date , water depth (feet) , [Surface latitude OR SURF_LATITUDE], [Surface longitude or SURF_LONGITUDE] , BOTM_LATITUDE , BOTM_LONGITUDE , [APD_STATUS_DT or COMP_STATUS_CD orSTATUS_CODE] , STATUS_DATE , CASING CUT CODE
 **Likely Filenames:**
 
 - mv_api_list
@@ -111,8 +113,6 @@ BHTST_PRESSURE
 REMARK
 REGION_CODE
 
-
-
 #### wellbore_survey
 
 - mv_api_list
@@ -189,8 +189,8 @@ Lease Max Water Depth (meters)
 
 ### by_API
 
-<https://github.com/vamseeachanta/energydata/tree/bseedata/tests/modules/bsee/results/Data/by_API>
+<https://github.com/vamseeachanta/energydata/tree/bseedata/tests/modules/data/results/Data/by_API>
 
 ### by_zip_url
 
-<https://github.com/vamseeachanta/energydata/tree/bseedata/tests/modules/bsee/results/Data/by_zip>
+<https://github.com/vamseeachanta/energydata/tree/bseedata/tests/modules/data/results/Data/by_zip>
