@@ -93,7 +93,7 @@ default:
           arg_array: [*boem_fields]
 
       -
-        label: completion_summary
+        label: completion_summary 
         schema: dbo
         query:
           arg_array: [*boem_fields]

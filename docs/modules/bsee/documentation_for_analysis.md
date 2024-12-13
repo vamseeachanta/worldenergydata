@@ -21,7 +21,7 @@ Rules:
 
 The BSEE data tables and dataframes are given in the following sections.
 
-### DF Columns Required
+### DF Tables and dataframes 
 
 <https://github.com/vamseeachanta/energydata/blob/bseedata/docs/modules/bsee/legacy/code/ong_field_development/BSEE_analysis.yml>
 
