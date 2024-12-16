@@ -40,7 +40,7 @@ BOTM_FLD_NAME_CD -  APIRawData_mv_api_list_all.csv
 
  ### 4. completion_summary
 
- | Column Name                   | File Name                              |
+| Column Name                   | File Name                              |
 |-------------------------------|----------------------------------------|
 | WELL_NAME               | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges , APIRawData_mv_api_list_all |
 | API_WELL_NUMBER              | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges |
@@ -49,3 +49,68 @@ BOTM_FLD_NAME_CD -  APIRawData_mv_api_list_all.csv
 | COMP_BLOCK_NUMBER                       |  eWellEORRawData_mv_eor_completions |
 | COMP_STATUS_CD | eWellEORRawData_mv_eor_completions |
 | VALUE , VALUE_DESC | eWellEORRawData_mv_eor_compstatcodes , eWellEORRawData_mv_eor_hydrobarbtypecodes |
+
+### 5. hydrocarbon_bearing_interval
+
+| Column Name                   | File Name                              |
+|-------------------------------|----------------------------------------|
+| WELL_NAME                     | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges , APIRawData_mv_api_list_all |
+| API_WELL_NUMBER               | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges |
+| SN_HC_BEARING_INTVL           | eWellEORRawData_mv_eor_hcbearing_intvl_comps , eWellEORRawData_mv_eor_hcbearing_intervals |
+| SN_EOR_FK                     | eWellEORRawData_mv_eor_completion ,eWellEORRawData_mv_eor_hcbearing_intervals  |
+| INTERVAL_NAME                 | eWellEORRawData_mv_eor_hcbearing_intervals |
+| TOP_MD                        | eWellEORRawData_mv_eor_geomarkers , eWellEORRawData_mv_eor_hcbearing_intervals  |
+| BOTTOM_MD                     | eWellEORRawData_mv_eor_hcbearing_intervals|
+| HYDROCARBON_TYPE_CD           | eWellEORRawData_mv_eor_hcbearing_intervals |
+
+### 6. geology_markers
+
+| Column Name                   | File Name                              |
+|-------------------------------|----------------------------------------|
+| API_WELL_NUMBER               | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges |
+| WELL_NAME                     | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges, APIRawData_mv_api_list_all |
+| GEO_MARKER_NAME               | eWellAPDRawData_mv_apd_geologic , eWellEORRawData_mv_eor_geomarkers|
+| TOP_MD                        | eWellAPDRawData_mv_apd_geologic , eWellEORRawData_mv_eor_geomarkers , eWellEORRawData_mv_eor_hcbearing_intervals  |
+
+### 7. cut_casings
+
+| Column Name                   | File Name                              |
+|-------------------------------|----------------------------------------|
+| API_WELL_NUMBER               | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges  |
+| WELL_NAME                     | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges, APIRawData_mv_api_list_all |
+| CASING_SIZE                   | eWellAPDRawData_mv_apd_casing_sections , eWellEORRawData_mv_eor_cut_casings |
+| CASING_CUT_DATE               | eWellEORRawData_mv_eor_cut_casings |
+| CASING_CUT_METHOD_CD          | eWellEORRawData_mv_eor_cut_casings |
+| CASING_CUT_DEPTH              | eWellEORRawData_mv_eor_cut_casings |
+| CASING_CUT_MDL_IND            | eWellEORRawData_mv_eor_cut_casings |
+
+### 8. completion_properties
+
+| Column Name                   | File Name                              |
+|-------------------------------|----------------------------------------|
+| API_WELL_NUMBER               | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges  |
+| COMP_LATITUDE                 | eWellEORRawData_mv_eor_completionsprop |
+| COMP_LONGITUDE                | eWellEORRawData_mv_eor_completionsprop|
+| COMP_RSVR_NAME                | eWellEORRawData_mv_eor_completionsprop |
+| COMP_INTERVAL_NAME            | eWellEORRawData_mv_eor_completionsprop |
+
+### 9. completion_perforations
+
+| Column Name                   | File Name                              |
+|-------------------------------|----------------------------------------|
+| WELL_NAME                     | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges, APIRawData_mv_api_list_all |
+| API_WELL_NUMBER               | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges  |
+| PERF_TOP_MD                   | eWellEORRawData_mv_eor_perf_intervals |
+| PERF_BOTM_TVD                 | eWellEORRawData_mv_eor_perf_intervals |
+| PERF_TOP_TVD                  | eWellEORRawData_mv_eor_perf_intervals |
+| PERF_BASE_MD                  | eWellEORRawData_mv_eor_perf_intervals |
+
+### 10. production
+
+| Column Name                   | File Name                              |
+|-------------------------------|----------------------------------------|
+| API_WELL_NUMBER               | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges  |
+| COMPLETION_NAME               | BHPSRawData_mv_bhpsurvey_all |
+| PRODUCTION_DATE               | ProdPlanAreaRawData_mv_pbpadata |
+|  |  |
+|   |   |
