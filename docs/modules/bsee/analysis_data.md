@@ -1,4 +1,5 @@
 ## Filenames and columns 
+### Columns required for preparing dataframes
 
 ### 1.  Well data 
    
@@ -112,5 +113,77 @@ BOTM_FLD_NAME_CD -  APIRawData_mv_api_list_all.csv
 | API_WELL_NUMBER               | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges  |
 | COMPLETION_NAME               | BHPSRawData_mv_bhpsurvey_all |
 | PRODUCTION_DATE               | ProdPlanAreaRawData_mv_pbpadata |
-|  |  |
+
 |   |   |
+|   |   | - MISSING COLUMNS
+
+### 11. well_activity_summary
+
+| Column Name                   | File Name                              |
+|-------------------------------|----------------------------------------|
+| API_WELL_NUMBER               | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges  |
+| WELL_NAME                     | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges, APIRawData_mv_api_list_all |
+| RIG_NAME                      | APDRawData_mv_apd_main_all , eWellAPDRawData_mv_apd_main , eWellAPMRawData_mv_rig_view , eWellWARRawData_mv_war_main |
+| WAR_START_DT                  | eWellWARRawData_mv_war_main |
+| WAR_END_DT                    | eWellWARRawData_mv_war_main |
+| WELL_ACTIVITY_CD              | eWellEORRawData_mv_war_main_prop |
+| DRILLING_MD                   | eWellEORRawData_mv_war_main_prop |
+| DRILL_FLUID_WG                | eWellEORRawData_mv_war_main_prop |
+
+### 12. well_activity_bop_tests
+
+| Column Name                   | File Name                              |
+|-------------------------------|----------------------------------------|
+| API_WELL_NUMBER               | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges  |
+| BOP_TEST_DATE                 | eWellWARRawData_mv_war_main |
+| RAM_TST_PRSS                  | eWellWARRawData_mv_war_main |
+| ANNULAR_TST_PRSS              | eWellWARRawData_mv_war_main |
+| BUS_ASC_NAME                  | APDRawData_mv_apd_main_all , eWellAPDRawData_mv_apd_main , eWellEORRawData_mv_war_main_prop |
+
+### 13. well_tubulars
+
+| Column Name                   | File Name                              |
+|-------------------------------|----------------------------------------|
+| API_WELL_NUMBER               | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges  |
+| WELL_NAME                     | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges, APIRawData_mv_api_list_all |
+| WAR_START_DT                  | eWellWARRawData_mv_war_main |
+| WAR_END_DT                    | eWellWARRawData_mv_war_main |
+| CSNG_INTV_TYPE_CD             | eWellAPDRawData_mv_apd_casing_intervals , eWellWARRawData_mv_war_tabular_summaries |
+| CSNG_HOLE_SIZE                | eWellWARRawData_mv_war_tabular_summaries |
+| CSNG_SETTING_BOTM_MD          | eWellWARRawData_mv_war_tabular_summaries |
+| CSNG_SETTING_TOP_MD           | eWellWARRawData_mv_war_tabular_summaries |
+| CASING_SIZE                   | eWellAPDRawData_mv_apd_casing_sections , eWellEORRawData_mv_eor_cut_casings, eWellWARRawData_mv_war_tabular_summaries| 
+| CASING_WEIGHT                 | eWellAPDRawData_mv_apd_casing_sections , eWellWARRawData_mv_war_tabular_summaries |
+| CASING_GRADE                  | eWellAPDRawData_mv_apd_casing_sections , eWellWARRawData_mv_war_tabular_summaries |
+| CSNG_LINER_TEST_PRSS          | eWellWARRawData_mv_war_tabular_summaries |
+| CSNG_SHOE_TEST_PRSS           | eWellWARRawData_mv_war_tabular_summaries |
+| CSNG_CEMENT_VOL               | eWellAPDRawData_mv_apd_casing_sections , , eWellWARRawData_mv_war_tabular_summaries|
+| SN_WAR_CSNG_INTV              | eWellWARRawData_mv_war_tabular_summaries |
+
+### 14. well_activity_open_hole
+
+| Column Name                   | File Name                              |
+|-------------------------------|----------------------------------------|
+| API_WELL_NUMBER               | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges  |
+| WELL_NAME                     | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges, APIRawData_mv_api_list_all |
+| BUS_ASC_NAME                  | APDRawData_mv_apd_main_all , eWellAPDRawData_mv_apd_main , eWellEORRawData_mv_war_main_prop|
+| OPERATIONS_COMPLETED_DATE     | eWellWARRawData_mv_war_open_hole_runs |
+| LOG_TOOL_TYPE_CODE            | eWellWARRawData_mv_war_open_hole_tools|
+| TOOL_LOGGING_METHOD_NAME      | eWellWARRawData_mv_war_open_hole_runs |
+| LOG_INTV_TOP_MD               | eWellWARRawData_mv_war_open_hole_runs |
+| LOG_INTV_BOTM_MD              | eWellWARRawData_mv_war_open_hole_runs |
+| SN_OPEN_HOLE                  | eWellWARRawData_mv_war_open_hole_runs , eWellWARRawData_mv_war_open_hole_tools| 
+
+### 15. well_activity_remarks
+
+| Column Name                   | File Name                              |
+|-------------------------------|----------------------------------------|
+| API_WELL_NUMBER               | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges  |
+| WELL_NAME                     | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges, APIRawData_mv_api_list_all |
+| WAR_START_DT                  | eWellWARRawData_mv_war_main |
+| SN_WAR                        | eWellWARRawData_mv_war_main_prop_remark  |
+| TEXT_REMARK                   | eWellWARRawData_mv_war_main_prop_remark |
+
+### 16. well_directional_surveys
+
+NO COLUMNS FOUND

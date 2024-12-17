@@ -27,45 +27,11 @@ The BSEE data tables and dataframes are given in the following sections.
 
 #### Well Data
 
-**Columns:**
-Target : API12, [Company Name], [Field Name], [Well Name], [Sidetrack and Bypass]
-            , [Spud Date], [Total Depth Date], [Well Purpose]
-            , [Water Depth], [Total Measured Depth], [Total Vertical Depth], [Sidetrack KOP]
-            , [Surface Latitude], [Surface Longitude], [Bottom Latitude], [Bottom Longitude]
-            , [Wellbore Status], [Wellbore Status Date], [Completion Stub Code], [Casing Cut Code]
-
-Found Till Now : API Well Number , Company name , Field_name or Field_name_code , Well name , REQ_SPUD_DATE or WELL_SPUD_DATE , 
-        Total depth date , water depth (feet) , BH_TOTAL_MD, [Surface latitude OR SURF_LATITUDE], [Surface longitude or SURF_LONGITUDE] , BOTM_LATITUDE , BOTM_LONGITUDE , [APD_STATUS_DT or COMP_STATUS_CD orSTATUS_CODE] , STATUS_DATE , CASING CUT CODE
-
 **Likely Filenames:**
 
 - mv_api_list
 - mv_boreholes
 
-**Data Sources:**
-
-??
-
-https://github.com/vamseeachanta/energydata/blob/d9f30ee2583290a29045329a3b644c13e57b8f5c/tests/modules/bsee/results/Data/by_zip/APIRawData_mv_api_list_all_columns.csv
-
-API_WELL_NUMBER
-WELL_TYPE_CODE
-WELL_NAME
-WELL_NAME_SUFFIX
-COMPANY_NAME
-BOREHOLE_STAT_DT
-BOREHOLE_STAT_CD
-BOTM_FLD_NAME_CD
-SURF_AREA_CODE
-SURF_BLOCK_NUMBER
-SURF_LEASE_NUMBER
-BOTM_AREA_CODE
-BOTM_BLOCK_NUMBER
-BOTM_LEASE_NUMBER
-WELL_SPUD_DATE
-TOTAL_DEPTH_DATE
-BH_TOTAL_MD
-REGION_CODE
 
 #### all_bsee_blocks
 
@@ -76,9 +42,6 @@ BOTM_FLD_NAME_CD
 **Likely Filenames:**
 
 - mv_api_list
-
-**Data Sources:**
-
 
 #### ST_BP_and_tree_height
 
