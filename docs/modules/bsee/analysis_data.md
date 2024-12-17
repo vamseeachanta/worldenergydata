@@ -12,7 +12,7 @@
 | WELL_NAME                     | APDRawdata_mv_apd_main_all             |
 | WELL_NAME_SUFFIX (Sidetrack or bypass) | APDRawdata_mv_apd_main_all    |
 | WELL_SPUD_DATE                | APIChangesRawData_mv_apichanges        |
-| TOTAL_DEPTH_DATE              | APIRawdata, BoreholeRawdata, eWellWARRdata |
+| TOTAL_DEPTH_DATE              | APIRawdata, BoreholeRawData_mv_boreholes_all, eWellWARRdata |
 | BH_TOTAL_MD ( feet )          | APIChangesRawData_mv_apichanges, APIRawData_mv_api_list |
 | WELL_BORE_TVD                 | BoreholeRawData_mv_boreholes_all , eWellEORRawData_mv_eor |
 | WELL_BP_ST_KICKOFF_MD         | BoreholeRawData_mv_boreholes_all , eWellEORRawData_mv_eor |
@@ -20,9 +20,18 @@
 | BOREHOLE_STAT_DT              | APIRawData_mv_api_list_all , BoreholeRawData_mv_boreholes_all |
 | UNDWTR_COMP_STUB              | BoreholeRawData_mv_boreholes_all       | 
 | Water depth (feet)            | APDRawdata ,  API_8                      |
-| SURF_LATITUDE, SURF_LONGITUDE | API_number_1, num_2, APDRawdata, BoreholeRawdata |
-| BOTM_LATITUDE, BOTM_LONGITUDE | BoreholeRawdata, eWELLEORRData         |
+| SURF_LATITUDE, SURF_LONGITUDE | API_number_1, num_2, APDRawdata, BoreholeRawData_mv_boreholes_all |
+| BOTM_LATITUDE, BOTM_LONGITUDE | BoreholeRawData_mv_boreholes_all, eWELLEORRData         |
 | CASING CUT CODE               | BoreholeRawData_mv_boreholes_all       |
+
+**Way Forward:**
+DF = 
+APDRawData_mv_apd_main_all 
+where API_WELL_NUMBER = 'Well_Number'
+Merge/Joint with BoreHOLERAwData 
+where API_WELL_NUMBER = 'Well_Number'
+
+Minimum column renames. Anything broken in analysis code, we will refactor the code.
 
 
 ### 2. all_bsee_blocks
@@ -187,3 +196,4 @@ BOTM_FLD_NAME_CD -  APIRawData_mv_api_list_all.csv
 ### 16. well_directional_surveys
 
 NO COLUMNS FOUND
+look to read the file "dsptsdelimit.ZIP"
