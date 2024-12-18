@@ -9,7 +9,7 @@ from energydata.base_configs.modules.bsee.well_data import WellData
 
 bsee_production = SpiderBsee()
 well_data = WellData()
-prepare_bsee_data = PrepareBseeData()
+prep_bsee_data = PrepareBseeData()
 
 class bsee:
     
@@ -26,7 +26,7 @@ class bsee:
         elif "block_data" in cfg and cfg["block_data"]["flag"]:
             data = well_data.get_well_data(cfg)
         elif "data_prep" in cfg and cfg["data_prep"]["flag"]:
-            data = prepare_bsee_data.router(cfg)
+            data = prep_bsee_data.router(cfg)
 
         if 'production' in cfg and cfg['production']['flag']:
             bsee_production.router(cfg)

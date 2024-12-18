@@ -1,11 +1,12 @@
 basename: bsee
 
-type:
-  data: False
-  analysis: True
-
 data_prep: 
   flag: True
+
+dir_paths:
+  data_dir: tests/data/input
+  file_path: tests/data/output
+  output_path : tests\modules\analysis\data_for_analysis
 
 files:
   - name: "APDRawData_mv_apd_main_all.csv"
