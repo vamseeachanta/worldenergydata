@@ -6,22 +6,22 @@
 
 | Column Name                   | File Name                              |
 |-------------------------------|----------------------------------------|
-| API_WELL_NUMBER               | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges |
+| API_WELL_NUMBER               | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges_all |
 | COMPANY_NAME                  | APIRawData_mv_api_list_all             |
 | BOTM_FLD_NAME_CD              | APIRawData_mv_api_list_all             |
-| WELL_NAME                     | APDRawdata_mv_apd_main_all             |
-| WELL_NAME_SUFFIX (Sidetrack or bypass) | APDRawdata_mv_apd_main_all    |
-| WELL_SPUD_DATE                | APIChangesRawData_mv_apichanges        |
-| TOTAL_DEPTH_DATE              | APIRawdata, BoreholeRawData_mv_boreholes_all, eWellWARRdata |
-| BH_TOTAL_MD ( feet )          | APIChangesRawData_mv_apichanges, APIRawData_mv_api_list |
-| WELL_BORE_TVD                 | BoreholeRawData_mv_boreholes_all , eWellEORRawData_mv_eor |
-| WELL_BP_ST_KICKOFF_MD         | BoreholeRawData_mv_boreholes_all , eWellEORRawData_mv_eor |
+| WELL_NAME                     | APDRawData_mv_apd_main_all             |
+| WELL_NAME_SUFFIX (Sidetrack or bypass) | APDRawData_mv_apd_main_all    |
+| WELL_SPUD_DATE                | APIChangesRawData_mv_apichanges_all        |
+| TOTAL_DEPTH_DATE              | APIRawData_mv_api_list_all , BoreholeRawData_mv_boreholes_all, eWellWARRdata_mv_war_boreholes_view |
+| BH_TOTAL_MD ( feet )          | APIChangesRawData_mv_apichanges_all, APIRawData_mv_api_list_all |
+| WELL_BORE_TVD                 | BoreholeRawData_mv_boreholes_all , eWellEORRawData_mv_eor_mainquery_prop |
+| WELL_BP_ST_KICKOFF_MD         | BoreholeRawData_mv_boreholes_all , eWellEORRawData_mv_eor_mainquery_prop |
 | BOREHOLE_STAT_CD              | APIRawData_mv_api_list_all , BoreholeRawData_mv_boreholes_all |
 | BOREHOLE_STAT_DT              | APIRawData_mv_api_list_all , BoreholeRawData_mv_boreholes_all |
 | UNDWTR_COMP_STUB              | BoreholeRawData_mv_boreholes_all       | 
-| Water depth (feet)            | APDRawdata ,  API_8                      |
-| SURF_LATITUDE, SURF_LONGITUDE | API_number_1, num_2, APDRawdata, BoreholeRawData_mv_boreholes_all |
-| BOTM_LATITUDE, BOTM_LONGITUDE | BoreholeRawData_mv_boreholes_all, eWELLEORRData         |
+| WATER_DEPTH                   | APDRawData_mv_apd_main_all             |
+| SURF_LATITUDE, SURF_LONGITUDE | APDRawData_mv_apd_main_all, BoreholeRawData_mv_boreholes_all |
+| BOTM_LATITUDE, BOTM_LONGITUDE | BoreholeRawData_mv_boreholes_all, eWellEORRawData_mv_eor_mainquery_prop    |
 | CASING CUT CODE               | BoreholeRawData_mv_boreholes_all       |
 
 **Way Forward:**

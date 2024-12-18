@@ -1,7 +1,7 @@
 basename: bsee
 
 type:
-  data: True
+  data: False
   analysis: False
   results: False
 

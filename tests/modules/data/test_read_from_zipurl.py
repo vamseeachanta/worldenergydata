@@ -38,7 +38,8 @@ def download_and_process_zip(url, output_dir):
                     f.write(f"{column}\n")
             print(f"Saved {csv_name} to {output_dir}")
 urls = [
-     'https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip',
+     #'https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip',
+     'https://www.data.bsee.gov/Well/Files/dsptsdelimit.ZIP',
     # 'https://www.data.bsee.gov/Well/Files/BHPSRawData.zip',
     # 'https://www.data.bsee.gov/Well/Files/eWellAPDRawData.zip',
     # 'https://www.data.bsee.gov/Well/Files/eWellAPMRawData.zip',
