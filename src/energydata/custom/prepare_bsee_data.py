@@ -9,9 +9,9 @@ class PrepareBseeData:
         categories = cfg.get("categories", [])
 
         for category in categories:
+            
             label = category["label"]
             files = category["files"]
-            
             output_dfs[label] = self.merge_columns_from_files(cfg, files, label)
         
         return output_dfs
@@ -39,7 +39,6 @@ class PrepareBseeData:
         merged_df.to_csv(output_path, index=False)
 
         return merged_df
-
 
 if __name__ == "__main__": 
     prepare_bsee_data = PrepareBseeData()
