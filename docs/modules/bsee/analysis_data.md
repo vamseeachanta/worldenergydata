@@ -43,8 +43,8 @@ BOTM_FLD_NAME_CD -  APIRawData_mv_api_list_all.csv
 | Column Name                   | File Name                              |
 |-------------------------------|----------------------------------------|
 | API_WELL_NUMBER               | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges |
-| WELL_NM_ST_SFIX               | APDRawdata_mv_apd_main_all , eWellAPDRawData_mv_apd_main |
-| WELL_NM_BP_SFIX               | APDRawdata_mv_apd_main_all , eWellAPDRawData_mv_apd_main |
+| WELL_NM_ST_SFIX               | APDRawData_mv_apd_main_all , eWellAPDRawData_mv_apd_main |
+| WELL_NM_BP_SFIX               | APDRawData_mv_apd_main_all , eWellAPDRawData_mv_apd_main |
 | SUBSEA_TREE_HEIGHT_AML        | eWellEORRawData_mv_eor_mainquery       |
 | SN_EOR                        | eWellEORRawData_mv_eor_mainquery , eWellEORRawData_mv_eor_mainquery_prop |
 
@@ -130,9 +130,9 @@ BOTM_FLD_NAME_CD -  APIRawData_mv_api_list_all.csv
 
 | Column Name                   | File Name                              |
 |-------------------------------|----------------------------------------|
-| API_WELL_NUMBER               | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges  |
-| WELL_NAME                     | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges, APIRawData_mv_api_list_all |
-| RIG_NAME                      | APDRawData_mv_apd_main_all , eWellAPDRawData_mv_apd_main , eWellAPMRawData_mv_rig_view , eWellWARRawData_mv_war_main |
+| API_WELL_NUMBER               | eWellWARRawData_mv_war_main|
+| WELL_NAME                     | eWellWARRawData_mv_war_main |
+| RIG_NAME                      | eWellWARRawData_mv_war_main|
 | WAR_START_DT                  | eWellWARRawData_mv_war_main |
 | WAR_END_DT                    | eWellWARRawData_mv_war_main |
 | WELL_ACTIVITY_CD              | eWellEORRawData_mv_war_main_prop |
@@ -143,25 +143,25 @@ BOTM_FLD_NAME_CD -  APIRawData_mv_api_list_all.csv
 
 | Column Name                   | File Name                              |
 |-------------------------------|----------------------------------------|
-| API_WELL_NUMBER               | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges  |
+| API_WELL_NUMBER               | eWellWARRawData_mv_war_main  |
 | BOP_TEST_DATE                 | eWellWARRawData_mv_war_main |
 | RAM_TST_PRSS                  | eWellWARRawData_mv_war_main |
 | ANNULAR_TST_PRSS              | eWellWARRawData_mv_war_main |
-| BUS_ASC_NAME                  | APDRawData_mv_apd_main_all , eWellAPDRawData_mv_apd_main , eWellEORRawData_mv_war_main_prop |
+| BUS_ASC_NAME                  | eWellWARRawData_mv_war_main |
 
 ### 13. well_tubulars
 
 | Column Name                   | File Name                              |
 |-------------------------------|----------------------------------------|
-| API_WELL_NUMBER               | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges  |
-| WELL_NAME                     | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges, APIRawData_mv_api_list_all |
+| API_WELL_NUMBER               | APDRawData_mv_apd_main_all  |
+| WELL_NAME                     | APDRawData_mv_apd_main_all  |
 | WAR_START_DT                  | eWellWARRawData_mv_war_main |
 | WAR_END_DT                    | eWellWARRawData_mv_war_main |
-| CSNG_INTV_TYPE_CD             | eWellAPDRawData_mv_apd_casing_intervals , eWellWARRawData_mv_war_tabular_summaries |
+| CSNG_INTV_TYPE_CD             | eWellWARRawData_mv_war_tabular_summaries |
 | CSNG_HOLE_SIZE                | eWellWARRawData_mv_war_tabular_summaries |
-| CSNG_SETTING_BOTM_MD          | eWellWARRawData_mv_war_tabular_summaries |
-| CSNG_SETTING_TOP_MD           | eWellWARRawData_mv_war_tabular_summaries |
-| CASING_SIZE                   | eWellAPDRawData_mv_apd_casing_sections , eWellEORRawData_mv_eor_cut_casings, eWellWARRawData_mv_war_tabular_summaries| 
+| CSNG_SETTING_BOTM_MD          | eWellWARRawData_mv_war_tabular_summaries_prop |
+| CSNG_SETTING_TOP_MD           | eWellWARRawData_mv_war_tabular_summaries_prop |
+| CASING_SIZE                   | eWellWARRawData_mv_war_tabular_summaries| 
 | CASING_WEIGHT                 | eWellAPDRawData_mv_apd_casing_sections , eWellWARRawData_mv_war_tabular_summaries |
 | CASING_GRADE                  | eWellAPDRawData_mv_apd_casing_sections , eWellWARRawData_mv_war_tabular_summaries |
 | CSNG_LINER_TEST_PRSS          | eWellWARRawData_mv_war_tabular_summaries |
@@ -173,9 +173,9 @@ BOTM_FLD_NAME_CD -  APIRawData_mv_api_list_all.csv
 
 | Column Name                   | File Name                              |
 |-------------------------------|----------------------------------------|
-| API_WELL_NUMBER               | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges  |
-| WELL_NAME                     | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges, APIRawData_mv_api_list_all |
-| BUS_ASC_NAME                  | APDRawData_mv_apd_main_all , eWellAPDRawData_mv_apd_main , eWellEORRawData_mv_war_main_prop|
+| API_WELL_NUMBER               | APDRawData_mv_apd_main_all   |
+| WELL_NAME                     | APDRawData_mv_apd_main_all  |
+| BUS_ASC_NAME                  | eWellWARRawData_mv_war_open_hole_runs|
 | OPERATIONS_COMPLETED_DATE     | eWellWARRawData_mv_war_open_hole_runs |
 | LOG_TOOL_TYPE_CODE            | eWellWARRawData_mv_war_open_hole_tools|
 | TOOL_LOGGING_METHOD_NAME      | eWellWARRawData_mv_war_open_hole_runs |
@@ -187,8 +187,8 @@ BOTM_FLD_NAME_CD -  APIRawData_mv_api_list_all.csv
 
 | Column Name                   | File Name                              |
 |-------------------------------|----------------------------------------|
-| API_WELL_NUMBER               | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges  |
-| WELL_NAME                     | APDRawData_mv_apd_main_all , APIChangesRawData_mv_apichanges, APIRawData_mv_api_list_all |
+| API_WELL_NUMBER               | APDRawData_mv_apd_main_all  |
+| WELL_NAME                     | APDRawData_mv_apd_main_all  |
 | WAR_START_DT                  | eWellWARRawData_mv_war_main |
 | SN_WAR                        | eWellWARRawData_mv_war_main_prop_remark  |
 | TEXT_REMARK                   | eWellWARRawData_mv_war_main_prop_remark |
