@@ -87,7 +87,7 @@ dictitems:
       columns:
       - WELL_NAME
       - API_WELL_NUMBER
-    - name: eWellEORRawData_mv_eor_hcbearing_intervals.csv
+    - name: eWellEORRawData_mv_hcbearing_intervals.csv
       columns:
       - SN_HC_BEARING_INTVL
       - SN_EOR_FK
@@ -158,11 +158,11 @@ dictitems:
       - RIG_NAME
       - WAR_START_DT
       - WAR_END_DT
-    - name: eWellEORRawData_mv_war_main_prop.csv
+    - name: eWellWARRawData_mv_war_main_prop.csv
       columns:
-      - 'WELL_ACTIVITY_CD '
+      - WELL_ACTIVITY_CD
       - DRILLING_MD
-      - DRILL_FLUID_WG
+      - DRILL_FLUID_WGT
   - label: well_activity_bop_tests
     files:
     - name: eWellWARRawData_mv_war_main.csv
@@ -182,7 +182,7 @@ dictitems:
       columns:
       - WAR_START_DT
       - WAR_END_DT
-    - name: eWellWARRawData_mv_war_tabular_summaries.csv
+    - name: eWellWARRawData_mv_war_tubular_summaries.csv
       columns:
       - CSNG_INTV_TYPE_CD
       - CSNG_HOLE_SIZE
@@ -193,7 +193,7 @@ dictitems:
       - CSNG_SHOE_TEST_PRSS
       - CSNG_CEMENT_VOL
       - SN_WAR_CSNG_INTV
-    - name: eWellWARRawData_mv_war_tabular_summaries_prop.csv
+    - name: eWellWARRawData_mv_war_tubular_summaries_prop.csv
       columns:
       - CSNG_SETTING_BOTM_MD
       - CSNG_SETTING_TOP_MD
@@ -233,7 +233,7 @@ dictitems:
     file_name_for_overwrite: prepare_bsee_data
     result_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\analysis\results
     log_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\analysis\logs
-    start_time: 2024-12-19 20:11:36.410985
+    start_time: 2024-12-19 20:21:10.611176
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\analysis\prepare_bsee_data.yml

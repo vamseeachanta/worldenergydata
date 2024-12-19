@@ -39,7 +39,7 @@ categories:
     files:
       - name: "APDRawData_mv_apd_main_all.csv"
         columns: ["WELL_NAME" ,"API_WELL_NUMBER"]
-      - name: "eWellEORRawData_mv_eor_hcbearing_intervals.csv"
+      - name: "eWellEORRawData_mv_hcbearing_intervals.csv"
         columns: ["SN_HC_BEARING_INTVL","SN_EOR_FK","INTERVAL_NAME","TOP_MD","BOTTOM_MD" ,"HYDROCARBON_TYPE_CD"]
   
   - label: 'geology_markers'
@@ -81,8 +81,8 @@ categories:
     files:
       - name: "eWellWARRawData_mv_war_main.csv"
         columns: ["API_WELL_NUMBER","WELL_NAME","RIG_NAME","WAR_START_DT","WAR_END_DT"]
-      - name: "eWellEORRawData_mv_war_main_prop.csv"
-        columns: ["WELL_ACTIVITY_CD ","DRILLING_MD","DRILL_FLUID_WG"]
+      - name: "eWellWARRawData_mv_war_main_prop.csv"
+        columns: ["WELL_ACTIVITY_CD","DRILLING_MD","DRILL_FLUID_WGT"]
 
   - label: well_activity_bop_tests
     files:
@@ -95,9 +95,9 @@ categories:
         columns: ["API_WELL_NUMBER","WELL_NAME"]
       - name: "eWellWARRawData_mv_war_main.csv"
         columns: ["WAR_START_DT","WAR_END_DT"]
-      - name: "eWellWARRawData_mv_war_tabular_summaries.csv"
+      - name: "eWellWARRawData_mv_war_tubular_summaries.csv"
         columns: ["CSNG_INTV_TYPE_CD","CSNG_HOLE_SIZE","CASING_SIZE","CASING_WEIGHT","CASING_GRADE","CSNG_LINER_TEST_PRSS","CSNG_SHOE_TEST_PRSS","CSNG_CEMENT_VOL","SN_WAR_CSNG_INTV"]
-      - name: "eWellWARRawData_mv_war_tabular_summaries_prop.csv"
+      - name: "eWellWARRawData_mv_war_tubular_summaries_prop.csv"
         columns: ["CSNG_SETTING_BOTM_MD","CSNG_SETTING_TOP_MD"]
 
   - label: well_activity_open_hole
