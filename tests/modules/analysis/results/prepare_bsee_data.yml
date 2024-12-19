@@ -1,0 +1,70 @@
+&id001 !!python/object/new:assetutilities.common.data.AttributeDict
+state: *id001
+dictitems:
+  basename: bsee
+  type:
+    data: false
+    analysis: false
+    results: false
+  result_method: selenium
+  settings_master: ~
+  input:
+  - name: example1
+    well_api12: 608174149400
+  - name: example2
+    well_api12: 608174149401
+  default:
+    log_level: DEBUG
+    config:
+      overwrite:
+        output: true
+      cfg_sensitivities: false
+  data_prep:
+    flag: true
+  input_path:
+    data_dir: tests\modules\data\results\Data\by_zip
+  categories:
+  - label: well_data
+    files:
+    - name: APDRawData_mv_apd_main_all.csv
+      columns:
+      - API_WELL_NUMBER
+      - WELL_NAME
+      - WATER_DEPTH
+      - SURF_LATITUDE
+    - name: APIRawData_mv_api_list_all.csv
+      columns:
+      - COMPANY_NAME
+      - WELL_NAME_SUFFIX
+      - BOTM_FLD_NAME_CD
+      - TOTAL_DEPTH_DATE
+      - WELL_SPUD_DATE
+      - BH_TOTAL_MD
+    - name: BoreholeRawData_mv_boreholes_all.csv
+      columns:
+      - WELL_BORE_TVD
+      - WELL_BP_ST_KICKOFF_MD
+      - BOREHOLE_STAT_CD
+      - BOREHOLE_STAT_DT
+      - UNDWTR_COMP_STUB
+      - SURF_LONGITUDE
+      - BOTM_LATITUDE
+      - BOTM_LONGITUDE
+      - CASING_CUT_CODE
+  - label: all_bsee_blocks
+    files:
+    - name: APIRawData_mv_api_list_all.csv
+      columns:
+      - BOTM_FLD_NAME_CD
+  Analysis:
+    basename: bsee
+    analysis_root_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\analysis
+    file_name: prepare_bsee_data
+    file_name_for_overwrite: prepare_bsee_data
+    result_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\analysis\results
+    log_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\analysis\logs
+    start_time: 2024-12-19 11:19:10.128902
+    cfg_array_file_names: ~
+    DefaultInputFile: ~
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\analysis\prepare_bsee_data.yml
+    fe_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\analysis\results

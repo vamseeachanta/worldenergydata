@@ -3,19 +3,23 @@ basename: bsee
 data_prep: 
   flag: True
 
-dir_paths:
-  data_dir: tests/data/input
-  file_path: tests/data/output
-  output_path : tests\modules\analysis\data_for_analysis
+input_path:
+  data_dir: tests\modules\data\results\Data\by_zip
 
-files:
-  - name: "APDRawData_mv_apd_main_all.csv"
-    columns: ["API_WELL_NUMBER", "WELL_NAME", "WELL_NAME_SUFFIX", "WATER_DEPTH", "SURF_LATITUDE"]
-  - name: "APIRawData_mv_api_list_all.csv"
-    columns: ["COMPANY_NAME", "BOTM_FLD_NAME_CD", "TOTAL_DEPTH_DATE", "WELL_SPUD_DATE", "BH_TOTAL_MD"]
-  - name: "BoreholeRawData_mv_boreholes_all.csv"
-    columns: ["WELL_BORE_TVD", "WELL_BP_ST_KICKOFF_MD", "BOREHOLE_STAT_CD", "BOREHOLE_STAT_DT", "UNDWTR_COMP_STUB", "SURF_LONGITUDE", "BOTM_LATITUDE", "BOTM_LONGITUDE", "CASING CUT CODE"]
-
+categories:
+  - label: 'well_data'
+    files:
+      - name: "APDRawData_mv_apd_main_all.csv"
+        columns: ["API_WELL_NUMBER", "WELL_NAME",  "WATER_DEPTH", "SURF_LATITUDE"]
+      - name: "APIRawData_mv_api_list_all.csv"
+        columns: ["COMPANY_NAME", "WELL_NAME_SUFFIX", "BOTM_FLD_NAME_CD", "TOTAL_DEPTH_DATE", "WELL_SPUD_DATE", "BH_TOTAL_MD"]
+      - name: "BoreholeRawData_mv_boreholes_all.csv"
+        columns: ["WELL_BORE_TVD", "WELL_BP_ST_KICKOFF_MD", "BOREHOLE_STAT_CD", "BOREHOLE_STAT_DT", "UNDWTR_COMP_STUB", "SURF_LONGITUDE", "BOTM_LATITUDE", "BOTM_LONGITUDE", "CASING_CUT_CODE"]
+  
+  - label: 'all_bsee_blocks'
+    files:
+      - name: "APIRawData_mv_api_list_all.csv"
+        columns: [ "BOTM_FLD_NAME_CD"]
 
 default:
   log_level: DEBUG
