@@ -23,7 +23,7 @@ dictitems:
     flag: true
   input_path:
     data_dir: tests\modules\data\results\Data\by_zip
-  categories:
+  config_data_map:
   - label: well_data
     files:
     - name: APDRawData_mv_apd_main_all.csv
@@ -233,7 +233,7 @@ dictitems:
     file_name_for_overwrite: prepare_bsee_data
     result_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\analysis\results
     log_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\analysis\logs
-    start_time: 2024-12-19 20:21:10.611176
+    start_time: 2024-12-23 21:01:57.681886
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\analysis\prepare_bsee_data.yml

@@ -45,6 +45,7 @@ def engine(inputfile: str = None, cfg: dict = None) -> dict:
     else:
         raise (Exception(f"Analysis for basename: {basename} not found. ... FAIL"))
 
+    logging.info(f"{basename}, application ... END")
     save_cfg(cfg_base=cfg_base)
 
     return cfg_base

@@ -6,12 +6,12 @@ class PrepareBseeData:
     def router(self, cfg):
 
         output_dfs = {}
-        categories = cfg.get("categories", [])
+        config_data = cfg.get("config_data_map", [])
 
-        for category in categories:
+        for config in config_data:
             
-            label = category["label"]
-            files = category["files"]
+            label = config["label"]
+            files = config["files"]
             output_dfs[label] = self.merge_columns_from_files(cfg, files, label)
         
         return output_dfs

@@ -6,7 +6,7 @@ data_prep:
 input_path:
   data_dir: tests\modules\data\results\Data\by_zip
 
-categories:
+config_data_map:
   - label: 'well_data'
     files:
       - name: "APDRawData_mv_apd_main_all.csv"
