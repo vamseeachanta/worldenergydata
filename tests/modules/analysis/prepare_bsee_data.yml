@@ -117,8 +117,6 @@ config_data_map:
         columns: ["WAR_START_DT"]
       - name: "eWellWARRawData_mv_war_main_prop_remark.csv"
         columns: ["SN_WAR", "TEXT_REMARK"]
-  
-  
      
 
 default:
