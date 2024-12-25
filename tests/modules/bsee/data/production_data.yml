@@ -7,7 +7,7 @@ production:
 settings:
   save_csv: True
   url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
-  output_dir: tests\modules\data\results\Data\by_zip
+  output_dir: tests\modules\bsee\data\results\Data\by_zip
 
 input:
   - label: production_data

@@ -7,7 +7,7 @@ well_data:
 settings:
   save_csv: True
   url: https://www.data.bsee.gov/Well/APD/Default.aspx
-  output_dir: tests\modules\data\results\Data\by_API
+  output_dir: tests\modules\bsee\data\results\Data\by_API
 
 form_data:
   first_request:

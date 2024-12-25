@@ -4,7 +4,7 @@ data_prep:
   flag: True
 
 input_path:
-  data_dir: tests\modules\data\results\Data\by_zip
+  data_dir: tests\modules\bsee\data\results\Data\by_zip
 
 config_data_map:
   - label: 'well_data'

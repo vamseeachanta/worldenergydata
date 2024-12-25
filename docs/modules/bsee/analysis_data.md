@@ -195,5 +195,6 @@ BOTM_FLD_NAME_CD -  APIRawData_mv_api_list_all.csv
 
 ### 16. well_directional_surveys
 
-NO COLUMNS FOUND
-look to read the file "dsptsdelimit.ZIP"
+[API_WELL_NUMBER],[INCL_ANG_DEG_VAL] ,[INCL_ANG_MIN_VAL],[SURVEY_POINT_MD],[WELL_N_S_CODE],[DIR_DEG_VAL],[DIR_MINS_VAL],[WELL_E_W_CODE],[SURVEY_POINT_TVD],[DELTA_X],[DELTA_Y],[SURF_LONGITUDE],[SURF_LATITUDE]
+
+dsptsdelimit

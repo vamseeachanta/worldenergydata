@@ -7,7 +7,7 @@ block_data:
 settings:
   save_csv: True
   url: https://www.data.bsee.gov/Well/APD/Default.aspx
-  output_dir: tests\modules\analysis\results\Data\jack_by_block
+  output_dir: tests\modules\bsee\analysis\results\Data\jack_by_block
 
 input:
   - label: WR758
