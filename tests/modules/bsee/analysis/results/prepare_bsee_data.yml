@@ -22,7 +22,7 @@ dictitems:
   data_prep:
     flag: true
   input_path:
-    data_dir: tests\modules\data\results\Data\by_zip
+    data_dir: tests\modules\bsee\data\results\Data\by_zip
   config_data_map:
   - label: well_data
     files:
@@ -226,15 +226,32 @@ dictitems:
       columns:
       - SN_WAR
       - TEXT_REMARK
+  - label: well_directional_surveys
+    files:
+    - name: dsptsdelimit.csv
+      columns:
+      - API_WELL_NUMBER
+      - INCL_ANG_DEG_VAL
+      - INCL_ANG_MIN_VAL
+      - SURVEY_POINT_MD
+      - WELL_N_S_CODE
+      - DIR_DEG_VAL
+      - DIR_MINS_VAL
+      - WELL_E_W_CODE
+      - SURVEY_POINT_TVD
+      - DELTA_X
+      - DELTA_Y
+      - SURF_LONGITUDE
+      - SURF_LATITUDE
   Analysis:
     basename: bsee
-    analysis_root_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\analysis
+    analysis_root_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\bsee\analysis
     file_name: prepare_bsee_data
     file_name_for_overwrite: prepare_bsee_data
-    result_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\analysis\results
-    log_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\analysis\logs
-    start_time: 2024-12-23 21:01:57.681886
+    result_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\bsee\analysis\results
+    log_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\bsee\analysis\logs
+    start_time: 2024-12-25 10:38:24.033638
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\analysis\prepare_bsee_data.yml
-    fe_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\analysis\results
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\bsee\analysis\prepare_bsee_data.yml
+    fe_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\bsee\analysis\results
