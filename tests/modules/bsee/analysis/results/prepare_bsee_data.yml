@@ -250,7 +250,7 @@ dictitems:
     file_name_for_overwrite: prepare_bsee_data
     result_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\bsee\analysis\results
     log_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\bsee\analysis\logs
-    start_time: 2024-12-25 10:38:24.033638
+    start_time: 2025-01-01 12:32:04.554599
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\bsee\analysis\prepare_bsee_data.yml
