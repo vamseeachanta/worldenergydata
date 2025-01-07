@@ -1,0 +1,47 @@
+@startuml bsee_data_status
+skinparam titleBorderRoundCorner 15
+skinparam titleBorderThickness 2
+skinparam titleBorderColor red
+skinparam titleBackgroundColor Tomato
+
+title BSEE Data Status 
+
+start
+
+    partition {
+
+        :Well Data;
+            note right
+                by url & API12
+                by url & block area and block number
+                by zipfile, All Data (APD , APM)
+            end note
+
+        :production data;
+            note right
+                by url & Lease Number
+                by API12 (Pending) 
+                by zipfile, All Data (Data Verification ONLY)
+            end note
+
+        : Bore Hole;
+            note right
+                by url & API12
+                by zipfile, All Data (Data Verification ONLY)
+            end note
+
+        : Bottomhole Pressure;
+            note right
+                by zipfile, All Data (Data Verification ONLY)
+            end note
+
+    }
+
+stop
+
+footer
+%date("yyyy.MM.dd' at 'HH:mm")
+%filename()
+end footer
+
+@enduml

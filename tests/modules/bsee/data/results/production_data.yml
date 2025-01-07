@@ -1,0 +1,54 @@
+&id001 !!python/object/new:assetutilities.common.data.AttributeDict
+state: *id001
+dictitems:
+  basename: bsee
+  type:
+    data: true
+    analysis: false
+    results: false
+  result_method: selenium
+  settings_master: ~
+  input:
+  - save_csv: true
+    url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+    output_dir: tests\modules\data\results\Data\by_zip
+    label: production_data
+    lease_number: G05868
+    Duration:
+      from: 01/2024
+      to: 02/2024
+  default:
+    log_level: DEBUG
+    config:
+      overwrite:
+        output: true
+      cfg_sensitivities: false
+  production:
+    flag: true
+    analysis: false
+  settings:
+    save_csv: true
+    url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+    output_dir: tests\modules\data\results\Data\by_zip
+  form_data:
+    first_request:
+      ASPxFormLayout1$ASPxTextBoxLN: G05868
+      ASPxFormLayout1$ASPxTextBoxDF: 01/2024
+      ASPxFormLayout1$ASPxTextBoxDT: 02/2024
+      ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+    second_request:
+      ASPxFormLayout1$ASPxTextBoxLN: G05868
+      __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+      __EVENTARGUMENT: Click
+  Analysis:
+    basename: bsee
+    analysis_root_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\data
+    file_name: production_data
+    file_name_for_overwrite: production_data
+    result_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\data\results
+    log_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\data\logs
+    start_time: 2024-12-12 16:30:22.530595
+    cfg_array_file_names: ~
+    DefaultInputFile: ~
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\data\production_data.yml
+    fe_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\data\results

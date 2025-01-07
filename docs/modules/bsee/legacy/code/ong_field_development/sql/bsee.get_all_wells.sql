@@ -1,0 +1,2 @@
+SELECT LEFT(API_WELL_NUMBER, 10) as API10
+FROM dbo.mv_api_list
