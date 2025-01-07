@@ -1,0 +1,36 @@
+@startuml bsee_data_by_block
+skinparam titleBorderRoundCorner 15
+skinparam titleBorderThickness 2
+skinparam titleBorderColor red
+skinparam titleBackgroundColor Tomato
+
+title BSEE Data By Block
+
+start
+
+    partition {
+
+        :Get Well APIs;
+            note right
+                url: https://www.data.bsee.gov/Well/APD/Default.aspx
+                bottom_area: Walker Ridge (WR)
+                bottom_block: 758
+                by get all APIs for a block
+            end note
+
+        :Get data for each API;
+            note right
+                Well data
+                Production data
+                etc.
+            end note
+    }
+
+stop
+
+footer
+%date("yyyy.MM.dd' at 'HH:mm")
+%filename()
+end footer
+
+@enduml
