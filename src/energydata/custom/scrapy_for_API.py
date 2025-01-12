@@ -9,7 +9,9 @@ import scrapy  # noqa
 from colorama import Fore, Style
 from colorama import init as colorama_init
 from scrapy import FormRequest  # noqa
-from scrapy.crawler import CrawlerProcess  # noqa
+from scrapy.crawler import CrawlerRunner
+from twisted.internet import reactor, defer
+#from scrapy.crawler import CrawlerProcess  # noqa
 from scrapy.utils.response import (  # noqa useful while program is running
     open_in_browser,
 )
@@ -26,20 +28,6 @@ class BSEEDataSpider(scrapy.Spider):
         super(BSEEDataSpider, self).__init__(*args, **kwargs)
         self.input_item = input_item
         self.cfg = cfg
-
-    def router(self, cfg, input_item):
-
-        settings = {
-            'LOG_LEVEL': 'CRITICAL',
-            'REQUEST_FINGERPRINTER_IMPLEMENTATION': '2.7'
-        }
-        process = CrawlerProcess(settings=settings)
-
-        # for input_item in cfg['input']:
-        process.crawl(BSEEDataSpider, input_item=input_item, cfg=cfg)
-
-        process.start()
-
 
     def parse(self, response):
 
@@ -78,3 +66,18 @@ class BSEEDataSpider(scrapy.Spider):
                 print(response_csv)
         else:
             print(f"{Fore.RED}Failed to export CSV file.{Style.RESET_ALL} Status code: {response.status}")
+
+def run_spiders(cfg, input_items):
+    runner = CrawlerRunner({
+        'LOG_LEVEL': 'CRITICAL',
+        'REQUEST_FINGERPRINTER_IMPLEMENTATION': '2.7'
+    })
+
+    @defer.inlineCallbacks
+    def crawl():
+        for input_item in input_items:
+            yield runner.crawl(BSEEDataSpider, input_item=input_item, cfg=cfg)
+        reactor.stop()
+
+    crawl()
+    reactor.run()

@@ -1,6 +1,8 @@
 import os
 import pandas as pd
 from energydata.custom.scrapy_for_API import BSEEDataSpider
+from energydata.custom.scrapy_for_API import run_spiders
+from energydata.custom.scrapy_for_block import run_spider
 from energydata.custom.scrapy_for_block import BSEESpider
 
 bsee_wellAPI = BSEEDataSpider()
@@ -13,16 +15,12 @@ class WellData:
     
     def get_well_data(self, cfg):
         if "well_data" in cfg and cfg['well_data']['flag']:
-            for input_item in cfg['input']:
-                continue 
-            well_data = bsee_wellAPI.router(cfg, input_item)
+             input_items = cfg['input']
+             run_spiders(cfg, input_items)
         elif "block_data" in cfg and cfg['block_data']['flag']:
-            for input_item in cfg['input']:
-                continue
-            block_data = bsee_block.router(cfg, input_item)
+             input_items = cfg['input']
+             run_spider(cfg, input_items)
 
-        # for input_item in cfg['input']:
-        #     pass
-            
+        
 
 
