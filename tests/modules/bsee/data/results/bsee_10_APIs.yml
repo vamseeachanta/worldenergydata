@@ -3,7 +3,7 @@ state: *id001
 dictitems:
   basename: bsee
   type:
-    data: true
+    data: false
     analysis: false
     results: false
   result_method: selenium
@@ -11,52 +11,52 @@ dictitems:
   input:
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\data\results\Data\by_API
+    output_dir: tests\modules\bsee\data\results\Data\by_API
     label: API_number_1
     well_api12: 608164024500
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\data\results\Data\by_API
+    output_dir: tests\modules\bsee\data\results\Data\by_API
     label: API_number_2
     well_api12: 608164025800
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\data\results\Data\by_API
+    output_dir: tests\modules\bsee\data\results\Data\by_API
     label: API_number_3
     well_api12: 608164025400
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\data\results\Data\by_API
+    output_dir: tests\modules\bsee\data\results\Data\by_API
     label: API_number_4
     well_api12: 608164025600
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\data\results\Data\by_API
+    output_dir: tests\modules\bsee\data\results\Data\by_API
     label: API_number_5
     well_api12: 608174059000
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\data\results\Data\by_API
+    output_dir: tests\modules\bsee\data\results\Data\by_API
     label: API_number_6
     well_api12: 608164032700
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\data\results\Data\by_API
+    output_dir: tests\modules\bsee\data\results\Data\by_API
     label: API_number_7
     well_api12: 177054107800
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\data\results\Data\by_API
+    output_dir: tests\modules\bsee\data\results\Data\by_API
     label: API_number_8
     well_api12: 177094120301
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\data\results\Data\by_API
+    output_dir: tests\modules\bsee\data\results\Data\by_API
     label: API_number_9
     well_api12: 177244067506
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\data\results\Data\by_API
+    output_dir: tests\modules\bsee\data\results\Data\by_API
     label: API_number_10
     well_api12: 177024118904
   default:
@@ -71,7 +71,7 @@ dictitems:
   settings:
     save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\data\results\Data\by_API
+    output_dir: tests\modules\bsee\data\results\Data\by_API
   form_data:
     first_request:
       ASPxFormLayout1$ASPxTextBoxAPI: ~
@@ -82,13 +82,13 @@ dictitems:
       __EVENTARGUMENT: Click
   Analysis:
     basename: bsee
-    analysis_root_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\data
+    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
     file_name: bsee_10_APIs
     file_name_for_overwrite: bsee_10_APIs
-    result_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\data\results
-    log_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\data\logs
-    start_time: 2024-12-12 11:23:03.429066
+    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
+    start_time: 2025-01-12 11:32:26.095807
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\data\bsee_10_APIs.yml
-    fe_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\data\results
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\bsee_10_APIs.yml
+    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
