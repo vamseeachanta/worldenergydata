@@ -69,17 +69,25 @@ class BSEESpider(scrapy.Spider):
         else:
             print(f"{Fore.RED}Failed to export CSV file.{Style.RESET_ALL} Status code: {response.status}")
 
-def run_spider(cfg, input_items):
-    runner = CrawlerRunner({
-        'LOG_LEVEL': 'CRITICAL',
-        'REQUEST_FINGERPRINTER_IMPLEMENTATION': '2.7'
-    })
+class ScrapyRunner:
+    def __init__(self):
+        self.runner = CrawlerRunner({
+            'LOG_LEVEL': 'CRITICAL',
+            'REQUEST_FINGERPRINTER_IMPLEMENTATION': '2.7'
+        })
+
+        self.task_count = 0
 
     @defer.inlineCallbacks
-    def crawl():
-        for input_item in input_items:
-            yield runner.crawl(BSEESpider, input_item=input_item, cfg=cfg)
-        reactor.stop()
+    def run_spider(self, cfg, input_item):
 
-    crawl()
-    reactor.run()
+        self.task_count += 1
+        yield self.runner.crawl(BSEESpider, input_item=input_item, cfg=cfg)
+        self.task_count -= 1
+
+        if self.task_count == 0:
+            print("All tasks completed, stopping reactor.")
+            reactor.stop()
+
+    def start(self):
+        reactor.run()
