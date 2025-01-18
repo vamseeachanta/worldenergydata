@@ -3,7 +3,7 @@ state: *id001
 dictitems:
   basename: bsee
   type:
-    data: true
+    data: false
     analysis: false
     results: false
   result_method: selenium
@@ -11,12 +11,12 @@ dictitems:
   input:
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\data\results\Data\by_API
+    output_dir: tests\modules\bsee\data\results\Data\by_API
     label: well_data_1
     well_api12: 608174149400
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\data\results\Data\by_API
+    output_dir: tests\modules\bsee\data\results\Data\by_API
     label: well_data_2
     well_api12: 608174149401
   default:
@@ -31,7 +31,7 @@ dictitems:
   settings:
     save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\data\results\Data\by_API
+    output_dir: tests\modules\bsee\data\results\Data\by_API
   form_data:
     first_request:
       ASPxFormLayout1$ASPxTextBoxAPI: ~
@@ -42,13 +42,13 @@ dictitems:
       __EVENTARGUMENT: Click
   Analysis:
     basename: bsee
-    analysis_root_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\data
+    analysis_root_folder: tests\modules\bsee\data
     file_name: bsee_well_data
     file_name_for_overwrite: bsee_well_data
-    result_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\data\results
-    log_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\data\logs
-    start_time: 2024-12-12 11:27:11.228847
+    result_folder: tests\modules\bsee\data\results
+    log_folder: tests\modules\bsee\data\logs
+    start_time: 2025-01-18 10:37:13.998965
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\data\bsee_well_data.yml
-    fe_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\data\results
+    CustomInputFile: tests\modules\bsee\data\bsee_well_data.yml
+    fe_folder: tests\modules\bsee\data\results

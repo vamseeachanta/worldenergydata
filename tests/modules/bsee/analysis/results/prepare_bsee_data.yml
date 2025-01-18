@@ -245,13 +245,13 @@ dictitems:
       - SURF_LATITUDE
   Analysis:
     basename: bsee
-    analysis_root_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\bsee\analysis
+    analysis_root_folder: tests\modules\bsee\analysis
     file_name: prepare_bsee_data
     file_name_for_overwrite: prepare_bsee_data
-    result_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\bsee\analysis\results
-    log_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\bsee\analysis\logs
-    start_time: 2025-01-01 12:32:04.554599
+    result_folder: tests\modules\bsee\analysis\results
+    log_folder: tests\modules\bsee\analysis\logs
+    start_time: 2025-01-18 10:35:37.294391
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\bsee\analysis\prepare_bsee_data.yml
-    fe_folder: c:\Users\Sk Samdan\Desktop\energydata\tests\modules\bsee\analysis\results
+    CustomInputFile: tests\modules\bsee\analysis\prepare_bsee_data.yml
+    fe_folder: tests\modules\bsee\analysis\results
