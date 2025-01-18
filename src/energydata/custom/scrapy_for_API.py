@@ -101,7 +101,7 @@ class ScrapyRunnerAPI:
         self.task_count -= 1
 
         if self.task_count == 0:
-            print("All tasks completed, stopping reactor.")
+            #print("All tasks completed, stopping reactor.")
             reactor.stop()
 
     # Start the reactor to run the spider
