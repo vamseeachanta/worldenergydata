@@ -23,6 +23,9 @@ jobs:
         with:
           path: "dev_tools/requirements.txt"
 
+      - name: Verify installed packages
+        run: pip list    
+        
       - name: Display Python version
         run: python -c "import sys; print(sys.version)"
 
