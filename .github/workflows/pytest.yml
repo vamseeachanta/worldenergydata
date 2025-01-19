@@ -18,18 +18,11 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Show requirements file
-        run: cat dev_tools/requirements.txt
-
-      - name: Upgrade setuptools and wheel
-        run: |
-          python -m pip install --upgrade setuptools wheel
-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install --no-cache-dir --force-reinstall -r dev_tools/requirements.txt
-
+          pip install --force-reinstall -r dev_tools/requirements.txt
+        
       - name: Verify installed packages
         run: pip list
 
