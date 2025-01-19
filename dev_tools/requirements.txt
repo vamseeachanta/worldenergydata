@@ -1,8 +1,8 @@
-python
+- python=3.11
 pandas
 pip
 
-beautifulsoup4
+bs4
 attrs
 bs4
 certifi
