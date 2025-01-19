@@ -1,4 +1,5 @@
-- python=3.11
+energydata
+
 pandas
 pip
 
