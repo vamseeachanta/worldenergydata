@@ -1,5 +1,6 @@
 # Standard library imports
-import logging
+#import logging
+from loguru import logger 
 import os
 import sys
 
@@ -35,7 +36,7 @@ def engine(inputfile: str = None, cfg: dict = None) -> dict:
     cfg_base = application_manager.cfg
     cfg_base = fm.router(cfg_base)
 
-    logging.info(f"{basename}, application ... START")
+    logger.info(f"{basename}, application ... START")
 
 
     if basename in ["bsee"]:
@@ -45,7 +46,7 @@ def engine(inputfile: str = None, cfg: dict = None) -> dict:
     else:
         raise (Exception(f"Analysis for basename: {basename} not found. ... FAIL"))
 
-    logging.info(f"{basename}, application ... END")
+    logger.info(f"{basename}, application ... END")
     save_cfg(cfg_base=cfg_base)
 
     return cfg_base
