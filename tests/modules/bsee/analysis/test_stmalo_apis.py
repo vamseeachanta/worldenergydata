@@ -20,7 +20,7 @@ def get_valid_pytest_output_file(pytest_output_file):
 
 
 def test_application():
-    input_file = 'stmalo_apis.yml'
+    input_file = 'apd_stmalo_apis.yml'
     pytest_output_file = None
     # pytest_output_file = get_valid_pytest_output_file(pytest_output_file)
     # expected_result = ymlInput(pytest_output_file, updateYml=None)

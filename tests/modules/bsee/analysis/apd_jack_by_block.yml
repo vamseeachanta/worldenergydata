@@ -1,3 +1,6 @@
+meta:
+  library: energydata
+  basename: bsee
 basename: bsee
 
 block_data:

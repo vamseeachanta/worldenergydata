@@ -1,3 +1,6 @@
+meta:
+  library: energydata
+  basename: bsee
 basename: bsee
 
 block_data:
@@ -7,7 +10,12 @@ block_data:
 settings:
   save_csv: True
   url: https://www.data.bsee.gov/Well/APD/Default.aspx
-  output_dir: tests\modules\bsee\analysis\results\Data\stmalo_by_block
+  output_dir: tests\modules\analysis\results\Data\by_block\{block_label}
+
+input:
+  - label: WR627
+    bottom_area: Walker Ridge (WR)
+    bottom_block: 627
 
 form_data:
   first_request:
@@ -24,11 +32,6 @@ form_data:
     ASPxFormLayout1$ASPxComboBoxBBN: None
     __EVENTTARGET: "ASPxFormLayout2$btnCsvExport"
     __EVENTARGUMENT: "Click"
-
-input:
-  - label: StMalo
-    bottom_area: Walker Ridge (WR)
-    bottom_block: 678
 
 default:
   log_level: DEBUG

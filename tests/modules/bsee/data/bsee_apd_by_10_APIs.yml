@@ -1,3 +1,6 @@
+meta:
+  library: energydata
+  basename: bsee
 basename: bsee
 
 well_data:
@@ -9,47 +12,46 @@ settings:
   url: https://www.data.bsee.gov/Well/APD/Default.aspx
   output_dir: tests\modules\bsee\data\results\Data\by_API
 
-
 form_data:
   first_request:
-    'ASPxFormLayout1$ASPxTextBoxAPI' :  
-    'ASPxFormLayout1$ASPxButtonSubmitQ': 'Submit Query'
+    "ASPxFormLayout1$ASPxTextBoxAPI":
+    "ASPxFormLayout1$ASPxButtonSubmitQ": "Submit Query"
 
   second_request:
-    'ASPxFormLayout1$ASPxTextBoxAPI': 
-    '__EVENTTARGET': 'ASPxFormLayout2$btnCsvExport'
-    '__EVENTARGUMENT': 'Click'
+    "ASPxFormLayout1$ASPxTextBoxAPI":
+    "__EVENTTARGET": "ASPxFormLayout2$btnCsvExport"
+    "__EVENTARGUMENT": "Click"
 
 input:
   - label: API_number_1
-    well_api12 : 608164024500
+    well_api12: 608164024500
 
   - label: API_number_2
-    well_api12 : 608164025800
+    well_api12: 608164025800
 
   - label: API_number_3
-    well_api12 : 608164025400
+    well_api12: 608164025400
 
   - label: API_number_4
-    well_api12 : 608164025600
+    well_api12: 608164025600
 
   - label: API_number_5
-    well_api12 : 608174059000
+    well_api12: 608174059000
 
   - label: API_number_6
-    well_api12 : 608164032700
+    well_api12: 608164032700
 
   - label: API_number_7
-    well_api12 : 177054107800
+    well_api12: 177054107800
 
   - label: API_number_8
-    well_api12 : 177094120301
+    well_api12: 177094120301
 
   - label: API_number_9
-    well_api12 : 177244067506
+    well_api12: 177244067506
 
   - label: API_number_10
-    well_api12 : 177024118904
+    well_api12: 177024118904
 
 default:
   log_level: DEBUG
