@@ -1,3 +1,6 @@
+meta:
+  library: energydata
+  basename: bsee
 basename: bsee
 
 well_data:
@@ -11,13 +14,13 @@ settings:
 
 form_data:
   first_request:
-    'ASPxFormLayout1$ASPxTextBoxAPI': 
-    'ASPxFormLayout1$ASPxButtonSubmitQ': 'Submit Query'
+    "ASPxFormLayout1$ASPxTextBoxAPI":
+    "ASPxFormLayout1$ASPxButtonSubmitQ": "Submit Query"
 
   second_request:
-    'ASPxFormLayout1$ASPxTextBoxAPI': 
-    '__EVENTTARGET': 'ASPxFormLayout2$btnCsvExport'
-    '__EVENTARGUMENT': 'Click'
+    "ASPxFormLayout1$ASPxTextBoxAPI":
+    "__EVENTTARGET": "ASPxFormLayout2$btnCsvExport"
+    "__EVENTARGUMENT": "Click"
 
 input:
   - label: well_data_1
