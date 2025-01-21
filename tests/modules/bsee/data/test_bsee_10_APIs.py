@@ -20,7 +20,7 @@ def get_valid_pytest_output_file(pytest_output_file):
 
 
 def test_application():
-    input_file = 'bsee_10_APIs.yml'
+    input_file = 'bsee_apd_by_10_APIs.yml'
     pytest_output_file = None
     # pytest_output_file = get_valid_pytest_output_file(pytest_output_file)
     # expected_result = ymlInput(pytest_output_file, updateYml=None)
