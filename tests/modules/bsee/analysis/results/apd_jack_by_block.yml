@@ -11,23 +11,32 @@ dictitems:
   input:
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\analysis\results\Data\by_block\{block_label}
-    label: WR627
+    output_dir: tests\modules\bsee\analysis\results\Data\jack_by_block
+    label: WR758
     bottom_area: Walker Ridge (WR)
-    bottom_block: 627
+    bottom_block: 758
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\jack_by_block
+    label: WR759
+    bottom_area: Walker Ridge (WR)
+    bottom_block: 759
   default:
     log_level: DEBUG
     config:
       overwrite:
         output: true
       cfg_sensitivities: false
+  meta:
+    library: energydata
+    basename: bsee
   block_data:
     flag: true
     analysis: false
   settings:
     save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\analysis\results\Data\by_block\{block_label}
+    output_dir: tests\modules\bsee\analysis\results\Data\jack_by_block
   form_data:
     first_request:
       ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
@@ -44,13 +53,13 @@ dictitems:
       __EVENTARGUMENT: Click
   Analysis:
     basename: bsee
-    analysis_root_folder: tests\modules\bsee\analysis
-    file_name: julia_by_block
-    file_name_for_overwrite: julia_by_block
-    result_folder: tests\modules\bsee\analysis\results
-    log_folder: tests\modules\bsee\analysis\logs
-    start_time: 2025-01-18 10:35:22.021333
+    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis
+    file_name: apd_jack_by_block
+    file_name_for_overwrite: apd_jack_by_block
+    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
+    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\logs
+    start_time: 2025-01-22 12:06:14.029967
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: tests\modules\bsee\analysis\julia_by_block.yml
-    fe_folder: tests\modules\bsee\analysis\results
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\apd_jack_by_block.yml
+    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
