@@ -95,6 +95,9 @@ dictitems:
       overwrite:
         output: true
       cfg_sensitivities: false
+  meta:
+    library: energydata
+    basename: bsee
   well_data:
     flag: true
     analysis: false
@@ -112,13 +115,13 @@ dictitems:
       __EVENTARGUMENT: Click
   Analysis:
     basename: bsee
-    analysis_root_folder: tests\modules\bsee\analysis
-    file_name: stmalo_apis
-    file_name_for_overwrite: stmalo_apis
-    result_folder: tests\modules\bsee\analysis\results
-    log_folder: tests\modules\bsee\analysis\logs
-    start_time: 2025-01-18 10:35:39.884893
+    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis
+    file_name: apd_stmalo_apis
+    file_name_for_overwrite: apd_stmalo_apis
+    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
+    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\logs
+    start_time: 2025-01-22 12:05:23.694133
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: tests\modules\bsee\analysis\stmalo_apis.yml
-    fe_folder: tests\modules\bsee\analysis\results
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\apd_stmalo_apis.yml
+    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
