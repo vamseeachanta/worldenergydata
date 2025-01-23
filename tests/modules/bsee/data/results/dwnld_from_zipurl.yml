@@ -1,7 +1,7 @@
 &id001 !!python/object/new:assetutilities.common.data.AttributeDict
 state: *id001
 dictitems:
-  basename: zip_utilities
+  basename: zip_utils
   type:
     data:
       flag: true
@@ -19,13 +19,13 @@ dictitems:
     urls:
     - https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip
   Analysis:
-    basename: zip_utilities
+    basename: zip_utils
     analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
     file_name: dwnld_from_zipurl
     file_name_for_overwrite: dwnld_from_zipurl
     result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
     log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-01-23 11:37:29.606906
+    start_time: 2025-01-23 12:17:07.925812
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\dwnld_from_zipurl.yml

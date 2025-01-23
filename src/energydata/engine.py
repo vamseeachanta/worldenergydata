@@ -44,7 +44,7 @@ def engine(inputfile: str = None, cfg: dict = None) -> dict:
         bsee_app = bsee()
         cfg_base = bsee_app.router(cfg_base)
     
-    elif basename in ["zip_utilities"]:
+    elif basename in ["zip_utils"]:
         zip_utilities = zip_router()
         cfg_base = zip_utilities.router(cfg_base)
 
