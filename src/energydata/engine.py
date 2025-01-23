@@ -16,6 +16,7 @@ from assetutilities.common.ApplicationManager import ConfigureApplicationInputs
 
 # Reader imports
 from energydata.custom.bsee import bsee
+from energydata.modules.zip_utilities.zip_router import zip_router
 
 save_data = SaveData()
 library_name = "energydata"
@@ -42,6 +43,10 @@ def engine(inputfile: str = None, cfg: dict = None) -> dict:
     if basename in ["bsee"]:
         bsee_app = bsee()
         cfg_base = bsee_app.router(cfg_base)
+    
+    elif basename in ["zip_utilities"]:
+        zip_utilities = zip_router()
+        cfg_base = zip_utilities.router(cfg_base)
 
     else:
         raise (Exception(f"Analysis for basename: {basename} not found. ... FAIL"))
