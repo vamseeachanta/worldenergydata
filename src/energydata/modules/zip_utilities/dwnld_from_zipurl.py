@@ -17,7 +17,7 @@ class DownloadFromZipUrl:
         
         urls = cfg['input']['urls']
         
-        for url in range(urls):
+        for url in urls:
             self.download_and_process_zip(url ,cfg)
 
         return cfg
@@ -34,7 +34,7 @@ class DownloadFromZipUrl:
 
         extracted_files = z.namelist()
 
-        output_dir = cfg['input_data']['out_directory']
+        output_dir = cfg['input']['out_directory']
 
         for file in extracted_files:
             if file.endswith('/'):
