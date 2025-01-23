@@ -27,10 +27,17 @@ class DownloadFromZipUrl:
         # Extract the name from the URL
         base_name = os.path.basename(urlparse(url).path).replace('.zip', '')
 
-        r = requests.get(url)
-        r.raise_for_status()  # Check if the download was successful
+        try:
+            r = requests.get(url)
+            r.raise_for_status()  # Check if the download was successful
 
-        z = zipfile.ZipFile(io.BytesIO(r.content)) 
+            z = zipfile.ZipFile(io.BytesIO(r.content))
+        except requests.exceptions.RequestException as e:
+            print(f"Request failed: {e}")
+            return
+        except zipfile.BadZipFile as e:
+            print(f"Failed to unzip file: {e}")
+            return
 
         extracted_files = z.namelist()
 
