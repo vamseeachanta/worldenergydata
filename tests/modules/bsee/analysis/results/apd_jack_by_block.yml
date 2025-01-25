@@ -58,7 +58,7 @@ dictitems:
     file_name_for_overwrite: apd_jack_by_block
     result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
     log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\logs
-    start_time: 2025-01-22 12:06:14.029967
+    start_time: 2025-01-25 11:37:05.307433
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\apd_jack_by_block.yml
