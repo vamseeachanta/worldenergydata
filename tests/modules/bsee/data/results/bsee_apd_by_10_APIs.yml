@@ -65,6 +65,9 @@ dictitems:
       overwrite:
         output: true
       cfg_sensitivities: false
+  meta:
+    library: energydata
+    basename: bsee
   well_data:
     flag: true
     analysis: false
@@ -82,13 +85,13 @@ dictitems:
       __EVENTARGUMENT: Click
   Analysis:
     basename: bsee
-    analysis_root_folder: tests\modules\bsee\data
-    file_name: bsee_10_APIs
-    file_name_for_overwrite: bsee_10_APIs
-    result_folder: tests\modules\bsee\data\results
-    log_folder: tests\modules\bsee\data\logs
-    start_time: 2025-01-18 10:36:35.082975
+    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
+    file_name: bsee_apd_by_10_APIs
+    file_name_for_overwrite: bsee_apd_by_10_APIs
+    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
+    start_time: 2025-01-22 12:02:35.485335
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: tests\modules\bsee\data\bsee_10_APIs.yml
-    fe_folder: tests\modules\bsee\data\results
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\bsee_apd_by_10_APIs.yml
+    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
