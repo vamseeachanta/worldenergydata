@@ -1,7 +1,7 @@
 # Import necessary modules and classes
 from assetutilities.common.update_deep import update_deep_dictionary
-from energydata.custom.scrapy_production_data import SpiderBsee
-from energydata.custom.prepare_bsee_data import PrepareBseeData
+from energydata.modules.bsee.data.scrapy_production_data import SpiderBsee
+from energydata.modules.bsee.analysis.prepare_bsee_data_for_analysis import PrepareBseeData
 from energydata.base_configs.modules.bsee.well_data import WellData
 
 # Initialize instances of imported classes
@@ -9,7 +9,7 @@ bsee_production = SpiderBsee()
 well_data = WellData()
 prep_bsee_data = PrepareBseeData()
 
-class bsee:
+class bsee_router:
     def __init__(self):
         pass
 
