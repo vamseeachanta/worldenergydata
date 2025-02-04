@@ -12,17 +12,16 @@ start
 
         :Get Well APIs;
             note right
-                url: https://www.data.bsee.gov/Well/APD/Default.aspx
-                bottom_area: Walker Ridge (WR)
-                bottom_block: 758
-                by get all APIs for a block
+                get APIs from Excel file
+                file path : docs\modules\bsee\legacy\results\bseedata\data
             end note
 
         :Get data for each API;
             note right
-                Well data
-                Production data
-                etc.
+                get Well data 
+                get Production data
+                tests location: tests/modules/bsee/data
+                
             end note
     }
 
