@@ -1,0 +1,65 @@
+&id001 !!python/object/new:assetutilities.common.data.AttributeDict
+state: *id001
+dictitems:
+  basename: bsee
+  type:
+    data: false
+    analysis: false
+    results: false
+  result_method: selenium
+  settings_master: ~
+  input:
+  - save_csv: true
+    url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\Julia
+    label: LNG15110
+    lease_number: G15110
+    Duration: &id002
+      from: 01/2020
+      to: 12/2024
+  - save_csv: true
+    url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\Julia
+    label: LNG25251
+    lease_number: G25251
+    Duration: *id002
+  default:
+    log_level: DEBUG
+    config:
+      overwrite:
+        output: true
+      cfg_sensitivities: false
+  meta:
+    library: energydata
+    basename: bsee
+  production:
+    flag: true
+    analysis: false
+  settings:
+    save_csv: true
+    url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\Julia
+  form_data:
+    first_request:
+      ASPxFormLayout1$ASPxTextBoxLN: G15110
+      ASPxFormLayout1$ASPxTextBoxDF: 01/2020
+      ASPxFormLayout1$ASPxTextBoxDT: 12/2024
+      ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+    second_request:
+      ASPxFormLayout1$ASPxTextBoxLN: G15110
+      ASPxFormLayout1$ASPxTextBoxDF: 01/2020
+      ASPxFormLayout1$ASPxTextBoxDT: 12/2024
+      __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+      __EVENTARGUMENT: Click
+  Analysis:
+    basename: bsee
+    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
+    file_name: bsee_production_data_julia
+    file_name_for_overwrite: bsee_production_data_julia
+    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
+    start_time: 2025-02-04 12:33:39.310479
+    cfg_array_file_names: ~
+    DefaultInputFile: ~
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\bsee_production_data_julia.yml
+    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
