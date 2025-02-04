@@ -1,4 +1,4 @@
-@startuml bsee_data_by_block
+@startuml bsee_production_data_for_fields
 skinparam titleBorderRoundCorner 15
 skinparam titleBorderThickness 2
 skinparam titleBorderColor red
@@ -10,16 +10,17 @@ start
 
     partition {
 
-        :Get Well APIs;
+        :Get lease_number;
             note right
                 get APIs from Excel file
                 file path : docs\modules\bsee\legacy\results\bseedata\data
+                get block number or get API12 from completions in excel file
+                get lease_number from acquired data
             end note
 
-        :Get data for each API;
+        :Get production data;
             note right
-                get Well data 
-                get Production data
+                get Production data 
                 tests location: tests/modules/bsee/data
                 
             end note
@@ -32,4 +33,4 @@ footer
 %filename()
 end footer
 
-@enduml
+@enduml++
