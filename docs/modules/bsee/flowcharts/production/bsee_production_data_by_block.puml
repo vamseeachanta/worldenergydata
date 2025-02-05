@@ -1,4 +1,4 @@
-@startuml bsee_production_data_for_fields
+@startuml bsee_production_data_by_block
 skinparam titleBorderRoundCorner 15
 skinparam titleBorderThickness 2
 skinparam titleBorderColor red
@@ -10,9 +10,14 @@ start
 
     partition {
 
+        :Get APIs for Block;
+            note right
+                get APIs from Excel file (Manual)
+                #TODO - automate this process
+            end note
+
         :Get lease_number;
             note right
-                get APIs from Excel file
                 file path : docs\modules\bsee\legacy\results\bseedata\data
                 get block number or get API12 from completions in excel file
                 get lease_number from acquired data
