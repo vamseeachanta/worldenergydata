@@ -31,9 +31,8 @@ class SpiderBsee(scrapy.Spider):
 
         process = CrawlerProcess(settings=settings)
 
-        master_settings = cfg['settings']
         for input_item in cfg['input']:
-            input_item = {**master_settings, **input_item}
+           
             process.crawl(SpiderBsee, input_item=input_item, cfg=cfg)
 
         process.start()
