@@ -21,7 +21,7 @@ input:
   - label: LNG25251
     lease_number: G25251
     Duration:
-      from : 01/2020
+      from : 01/1998
       to : 12/2024
 
 form_data:
