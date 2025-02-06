@@ -1,16 +1,18 @@
 # Import necessary modules and classes
 from assetutilities.common.update_deep import update_deep_dictionary #noqa
 # Reader imports
-from energydata.base_configs.modules.bsee.well_data import WellData
+from energydata.modules.bsee.data.well_data import WellData
 from energydata.modules.bsee.analysis.prepare_bsee_data_for_analysis import (
     PrepareBseeData,
 )
 from energydata.modules.bsee.data.scrapy_production_data import SpiderBsee
+from energydata.modules.bsee.analysis.bsee_analysis import BSEEAnalysis
 
 # Initialize instances of imported classes
 bsee_production = SpiderBsee()
 well_data = WellData()
 prep_bsee_data = PrepareBseeData()
+bsee_analysis = BSEEAnalysis()
 
 class bsee_router:
     def __init__(self):
@@ -25,6 +27,9 @@ class bsee_router:
             cfg = well_data.get_well_data(cfg)
         elif "data_prep" in cfg and cfg["data_prep"]["flag"]:
             data = prep_bsee_data.router(cfg)
+
+        if 'analysis' in cfg and cfg['analysis']['flag']:
+            bsee_analysis.router(cfg)
 
         if 'production' in cfg and cfg['production']['flag']:
             bsee_production.router(cfg)

@@ -1,18 +1,59 @@
-import os
-import pandas as pd
-import datetime
-import logging
+# Standard library imports
 import json
-from energydata.common.bsee_data_manager import BSEEData
+import logging
 
-from energydata.common.data import AttributeDict, transform_df_datetime_to_str
 
-class BseeAnalysis():
+# Third party imports
+import pandas as pd
 
-    def __init__(self, cfg):
-        import pandas as pd
+# from energydata.common.bsee_data_manager import BSEEData
 
-        self.bsee_data = BSEEData(self.cfg)
+# from energydata.common.data import AttributeDict, transform_df_datetime_to_str
+
+class BSEEAnalysis():
+
+    def __init__(self):
+        pass
+        # self.bsee_data = BSEEData(self.cfg)
+
+    def router(self, cfg):
+        if cfg['analysis']['api12']:
+            cfg = self.get_api12_data(cfg)
+        if cfg['analysis']['production']:
+            cfg = self.get_production_data(cfg)
+
+    def get_api12_data(self, cfg):
+        if cfg['data']['by'] == 'block':
+            api12_array = self.get_api12_data_by_block(cfg)
+        
+        cfg[cfg['basename']].update({'api12': api12_array})
+        
+        return cfg
+
+    def get_api12_data_by_block(self, cfg):
+        api12_array = []
+        if cfg[cfg['basename']]['well_data']['type'] == 'csv':
+            csv_groups = cfg[cfg['basename']]['well_data']['groups']
+            for csv_group in csv_groups:
+                df = pd.read_csv(csv_group['file_name'])
+                api12_csv_group = df['API Well Number'].unique().tolist()
+                api12_array = api12_array + api12_csv_group
+
+        return api12_array
+
+    def get_production_data(self, cfg):
+        if cfg['data']['by'] == 'block':
+            production_data = self.get_production_data_by_block(cfg)
+        
+        cfg[cfg['basename']].update({'production': production_data})
+        
+        return cfg
+    
+    def get_production_data_by_block(self, cfg):
+        pass
+    
+    def get_production_data_by_api12(self, api12):
+        pass
 
     def assign_cfg(self, cfg):
         self.cfg = cfg
@@ -75,8 +116,8 @@ class BseeAnalysis():
         print("Production data is prepared")
 
     def prepare_casing_data(self, well_data, well_tubulars_data):
-        import logging
 
+        # Third party imports
         import pandas as pd
         self.casing_tubulars = pd.DataFrame()
         if len(well_tubulars_data) > 0:
@@ -99,6 +140,7 @@ class BseeAnalysis():
             logging.info("Tubing data is not available")
     
     def prepare_completion_data(self, completion_data):
+        # Third party imports
         from common.data import Transform
         transform = Transform()
         self.output_completions = completion_data.merge(completion_data,
@@ -211,6 +253,7 @@ class BseeAnalysis():
         self.output_data_well_df.drop(drop_index_array, inplace=True)
         self.output_data_well_df['BSEE Well Name'] = self.output_data_well_df['Well Name']
         if len(self.output_data_well_df['Well Name'].unique()) < len(self.output_data_well_df):
+            # Third party imports
             from common.data import Transform
             trans = Transform()
             old_list = list(self.output_data_well_df['Well Name'])
@@ -221,6 +264,7 @@ class BseeAnalysis():
             self.output_data_well_df['Well Name'] = new_list
 
     def add_production_from_all_wells(self):
+        # Third party imports
         import pandas as pd
         columns = self.output_data_field_production_rate_df.columns.tolist()
         columns.remove('PRODUCTION_DATETIME')
