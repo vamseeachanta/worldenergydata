@@ -10,7 +10,7 @@ well_data:
 settings:
   save_csv: True
   url: https://www.data.bsee.gov/Well/APD/Default.aspx
-  output_dir: tests\modules\bsee\analysis\results\Data\Stmalo
+  output_dir: tests\modules\bsee\analysis\results\Data\stmalo_well_data
 
 form_data:
   first_request:
