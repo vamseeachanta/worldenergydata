@@ -40,8 +40,8 @@ class SpiderBsee(scrapy.Spider):
     def parse(self, response):
         
         lease_num = str(self.input_item['lease_number'])
-        start = str(self.input_item['Duration']['from'])
-        end = str(self.input_item['Duration']['to'])
+        # start = str(self.input_item['Duration']['from'])
+        # end = str(self.input_item['Duration']['to'])
 
         first_request_data = self.cfg['form_data']['first_request']
         first_request_data['ASPxFormLayout1$ASPxTextBoxLN'] = lease_num

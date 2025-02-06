@@ -11,18 +11,19 @@ dictitems:
   input:
   - save_csv: true
     url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
-    output_dir: tests\modules\bsee\analysis\results\Data\Julia
+    output_dir: tests\modules\bsee\analysis\results\Data\Julia_prod_data
     label: LNG15110
     lease_number: G15110
-    Duration: &id002
-      from: 01/1998
-      to: 12/2024
   - save_csv: true
     url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
-    output_dir: tests\modules\bsee\analysis\results\Data\Julia
+    output_dir: tests\modules\bsee\analysis\results\Data\Julia_prod_data
     label: LNG25251
     lease_number: G25251
-    Duration: *id002
+  - save_csv: true
+    url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\Julia_prod_data
+    label: G26265
+    lease_number: G26265
   default:
     log_level: DEBUG
     config:
@@ -38,17 +39,17 @@ dictitems:
   settings:
     save_csv: true
     url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
-    output_dir: tests\modules\bsee\analysis\results\Data\Julia
+    output_dir: tests\modules\bsee\analysis\results\Data\Julia_prod_data
   form_data:
     first_request:
-      ASPxFormLayout1$ASPxTextBoxLN: G15110
-      ASPxFormLayout1$ASPxTextBoxDF: 01/1998
-      ASPxFormLayout1$ASPxTextBoxDT: 12/2024
+      ASPxFormLayout1$ASPxTextBoxLN: G25251
+      ASPxFormLayout1$ASPxTextBoxDF: ~
+      ASPxFormLayout1$ASPxTextBoxDT: ~
       ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
     second_request:
-      ASPxFormLayout1$ASPxTextBoxLN: G15110
-      ASPxFormLayout1$ASPxTextBoxDF: 01/1998
-      ASPxFormLayout1$ASPxTextBoxDT: 12/2024
+      ASPxFormLayout1$ASPxTextBoxLN: G25251
+      ASPxFormLayout1$ASPxTextBoxDF: ~
+      ASPxFormLayout1$ASPxTextBoxDT: ~
       __EVENTTARGET: ASPxFormLayout2$btnCsvExport
       __EVENTARGUMENT: Click
   Analysis:
@@ -58,7 +59,7 @@ dictitems:
     file_name_for_overwrite: bsee_production_data_julia
     result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
     log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-02-05 10:39:56.148440
+    start_time: 2025-02-06 09:57:23.497855
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\bsee_production_data_julia.yml

@@ -24,6 +24,8 @@ class DownloadFromZipUrl:
     
     def download_and_process_zip(self, url ,cfg):
 
+        nrows = None
+
         # Extract the name from the URL
         base_name = os.path.basename(urlparse(url).path).replace('.zip', '')
 
@@ -49,7 +51,11 @@ class DownloadFromZipUrl:
             csv_filename = f"{base_name}_{os.path.splitext(os.path.basename(file))[0]}"+'.csv'
             with z.open(file) as file:   
                 try:
-                    df = pd.read_csv(file, sep=',', encoding='ISO-8859-1', low_memory=False, nrows=100)
+                    if nrows is None:
+                        df = pd.read_csv(file, sep=',', encoding='ISO-8859-1', low_memory=False)
+                    else:
+                        df = pd.read_csv(file, sep=',', encoding='ISO-8859-1', low_memory=False, nrows=100)
+                        
                 except Exception as e:
                     print(f"Could not read {file} as CSV: {e}")
                     continue

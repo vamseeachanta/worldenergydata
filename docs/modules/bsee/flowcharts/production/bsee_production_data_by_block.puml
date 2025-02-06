@@ -10,16 +10,15 @@ start
 
     partition {
 
-        :Get APIs for Block;
+        :Get API or Block for lease;
             note right
-                get APIs from Excel file (Manual)
+                get block number or get API12 from completions in excel file (Manual)
+                file path : docs\modules\bsee\legacy\results\bseedata\data
                 #TODO - automate this process
             end note
 
         :Get lease_number;
             note right
-                file path : docs\modules\bsee\legacy\results\bseedata\data
-                get block number or get API12 from completions in excel file
                 get lease_number from acquired data
             end note
 
