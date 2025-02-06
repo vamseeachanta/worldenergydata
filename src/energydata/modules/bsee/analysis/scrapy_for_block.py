@@ -9,12 +9,13 @@ import scrapy  # noqa
 from colorama import Fore, Style
 from colorama import init as colorama_init
 from scrapy import FormRequest  # noqa
-from scrapy.crawler import CrawlerRunner # noqa
-from twisted.internet import reactor, defer # noqa
+from scrapy.crawler import CrawlerRunner  # noqa
+
 #from scrapy.crawler import CrawlerProcess  # noqa
 from scrapy.utils.response import (  # noqa useful while program is running
     open_in_browser,
 )
+from twisted.internet import defer, reactor  # noqa
 
 colorama_init()
 
@@ -63,9 +64,8 @@ class BSEESpider(scrapy.Spider):
             with open(file_path, 'wb') as f:
                 f.write(response.body)
                 response_csv = pd.read_csv(BytesIO(response.body)) # For displaying data
-                print()
-                print("\n****The Scraped data of given value ****\n")
-                print(response_csv)
+                logging.debug("\n****The Scraped data of given value ****\n")
+                logging.debug(response_csv)
         else:
             print(f"{Fore.RED}Failed to export CSV file.{Style.RESET_ALL} Status code: {response.status}")
 
