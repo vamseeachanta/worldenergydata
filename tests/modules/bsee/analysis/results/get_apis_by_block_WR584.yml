@@ -1,0 +1,65 @@
+&id001 !!python/object/new:assetutilities.common.data.AttributeDict
+state: *id001
+dictitems:
+  basename: bsee
+  type:
+    data: false
+    analysis: false
+    results: false
+  result_method: selenium
+  settings_master: ~
+  input:
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+    label: WR540
+    bottom_area: Walker Ridge (WR)
+    bottom_block: 540
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+    label: WR584
+    bottom_area: Walker Ridge (WR)
+    bottom_block: 584
+  default:
+    log_level: DEBUG
+    config:
+      overwrite:
+        output: true
+      cfg_sensitivities: false
+  meta:
+    library: energydata
+    basename: bsee
+  block_data:
+    flag: true
+    analysis: false
+  settings:
+    save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+  form_data:
+    first_request:
+      ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
+      ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
+      ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+      ASPxFormLayout1$ASPxComboBoxBBN: None
+      ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+    second_request:
+      ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
+      ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
+      ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+      ASPxFormLayout1$ASPxComboBoxBBN: None
+      __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+      __EVENTARGUMENT: Click
+  Analysis:
+    basename: bsee
+    analysis_root_folder: k:\github\energydata\tests\modules\bsee\analysis
+    file_name: get_apis_by_block_WR584
+    file_name_for_overwrite: get_apis_by_block_WR584
+    result_folder: k:\github\energydata\tests\modules\bsee\analysis\results
+    log_folder: k:\github\energydata\tests\modules\bsee\analysis\logs
+    start_time: 2025-02-06 07:05:10.800808
+    cfg_array_file_names: ~
+    DefaultInputFile: ~
+    CustomInputFile: k:\github\energydata\tests\modules\bsee\analysis\get_apis_by_block_WR584.yml
+    fe_folder: k:\github\energydata\tests\modules\bsee\analysis\results
