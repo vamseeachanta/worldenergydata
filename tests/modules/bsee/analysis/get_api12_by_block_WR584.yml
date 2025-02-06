@@ -3,9 +3,26 @@ meta:
   basename: bsee
 basename: bsee
 
+data:
+  by: block # API12, ?
+  groups:
+    - label: WR540
+      bottom_area: Walker Ridge (WR)
+      bottom_block: 540
+    - label: WR584
+      bottom_area: Walker Ridge (WR)
+      bottom_block: 584
+
 block_data:
   flag: True
   analysis: False
+
+analysis:
+  flag: True
+  api12: True
+  production:
+    block: True
+    api12: True
 
 settings:
   save_csv: True
@@ -35,7 +52,6 @@ form_data:
     ASPxFormLayout1$ASPxComboBoxBBN: None
     __EVENTTARGET: "ASPxFormLayout2$btnCsvExport"
     __EVENTARGUMENT: "Click"
-
 
 default:
   log_level: DEBUG
