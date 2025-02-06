@@ -45,8 +45,8 @@ class SpiderBsee(scrapy.Spider):
 
         first_request_data = self.cfg['form_data']['first_request']
         first_request_data['ASPxFormLayout1$ASPxTextBoxLN'] = lease_num
-        first_request_data['ASPxFormLayout1$ASPxTextBoxDF'] = start
-        first_request_data['ASPxFormLayout1$ASPxTextBoxDT'] = end
+        # first_request_data['ASPxFormLayout1$ASPxTextBoxDF'] = start
+        # first_request_data['ASPxFormLayout1$ASPxTextBoxDT'] = end
 
         yield FormRequest.from_response(response, formdata=first_request_data, callback=self.step2)
     
@@ -57,13 +57,13 @@ class SpiderBsee(scrapy.Spider):
             print(f"{Fore.RED}Failed to submit the form data{Style.RESET_ALL}. Status code: {response.status}")
 
         lease_num = str(self.input_item['lease_number'])
-        start = str(self.input_item['Duration']['from'])
-        end = str(self.input_item['Duration']['to'])
+        # start = str(self.input_item['Duration']['from'])
+        # end = str(self.input_item['Duration']['to'])
         
         second_request_data = self.cfg['form_data']['second_request']
         second_request_data['ASPxFormLayout1$ASPxTextBoxLN'] = lease_num
-        second_request_data['ASPxFormLayout1$ASPxTextBoxDF'] = start
-        second_request_data['ASPxFormLayout1$ASPxTextBoxDT'] = end
+        # second_request_data['ASPxFormLayout1$ASPxTextBoxDF'] = start
+        # second_request_data['ASPxFormLayout1$ASPxTextBoxDT'] = end
 
         yield FormRequest.from_response(response, formdata=second_request_data, callback=self.parse_csv_data)
 

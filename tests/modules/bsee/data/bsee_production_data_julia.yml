@@ -10,19 +10,19 @@ production:
 settings:
   save_csv: True
   url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
-  output_dir: tests\modules\bsee\analysis\results\Data\Julia
+  output_dir: tests\modules\bsee\analysis\results\Data\Julia_prod_data
 
 input:
   - label: LNG15110
     lease_number: G15110
-    Duration:
-      from : 01/1998
-      to : 12/1999
+    # Duration:
+    #   from : 01/1998
+    #   to : 12/1999
   - label: LNG25251
     lease_number: G25251
-    Duration:
-      from : 01/1998
-      to : 12/2024
+    # Duration:
+    #   from : 01/1998
+    #   to : 12/2024
 
 form_data:
   first_request:
