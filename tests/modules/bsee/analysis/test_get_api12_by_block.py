@@ -22,7 +22,7 @@ def get_valid_pytest_output_file(pytest_output_file):
 
 
 def test_application():
-    input_file = 'get_apis_by_block_WR584.yml'
+    input_file = 'get_api12_by_block_WR584.yml'
     pytest_output_file = None
     # pytest_output_file = get_valid_pytest_output_file(pytest_output_file)
     # expected_result = ymlInput(pytest_output_file, updateYml=None)
