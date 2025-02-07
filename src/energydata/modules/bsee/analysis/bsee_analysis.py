@@ -58,7 +58,7 @@ class BSEEAnalysis():
             csv_groups = cfg[cfg['basename']]['well_data']['groups']
             for csv_group in csv_groups:
                 df = pd.read_csv(csv_group['file_name'])
-                bottom_lease_csv_group = df['Lease Number'].unique().tolist()
+                bottom_lease_csv_group = df['Bottom Lease Number'].unique().tolist()
                 bottom_lease_array = bottom_lease_array + bottom_lease_csv_group
 
         return bottom_lease_array    
