@@ -18,7 +18,7 @@ class BSEEAnalysis():
     def router(self, cfg):
         if cfg['analysis']['api12']:
             cfg = self.get_api12_data(cfg)
-        if cfg['analysis']['production']:
+        if cfg['analysis']['prod_data']:
             cfg = self.get_production_data(cfg)
 
     def get_api12_data(self, cfg):
@@ -52,8 +52,16 @@ class BSEEAnalysis():
         return cfg
     
     def get_production_data_by_block_array(self, cfg):
-        for block_cfg in cfg['data']['groups']:
-            block_production_data = self.bsee_data.get_production_data_by_block(block_cfg)
+        
+        bottom_lease_array = []
+        if cfg[cfg['basename']]['well_data']['type'] == 'csv':
+            csv_groups = cfg[cfg['basename']]['well_data']['groups']
+            for csv_group in csv_groups:
+                df = pd.read_csv(csv_group['file_name'])
+                bottom_lease_csv_group = df['Lease Number'].unique().tolist()
+                bottom_lease_array = bottom_lease_array + bottom_lease_csv_group
+
+        return bottom_lease_array    
             # wire up scrapy_production_data.py?
             # Output files are: LNG15110.csv & LNG25251.csv
             # Add these output csv files path to cfg[cfg'basename']['production']['block']
