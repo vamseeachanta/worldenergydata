@@ -55,14 +55,16 @@ class BSEEAnalysis():
         for block_cfg in cfg['data']['groups']:
             block_production_data = self.bsee_data.get_production_data_by_block(block_cfg)
             # wire up scrapy_production_data.py?
+            # Output files are: LNG15110.csv & LNG25251.csv
+            # Add these output csv files path to cfg[cfg'basename']['production']['block']
     
     def get_production_data_for_api12_array(self, api12):
         api12_array = cfg[cfg['basename']]['api12']
         for api12 in api12_array:
             production_data = self.bsee_data.get_production_data_by_api12(api12)
             self.prepare_production_data(production_data)
-            
-    
+            # Add these output csv files path to cfg[cfg'basename']['production']['api12']
+
 
     def assign_cfg(self, cfg):
         self.cfg = cfg
