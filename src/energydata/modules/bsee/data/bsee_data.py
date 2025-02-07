@@ -71,6 +71,7 @@ class BSEEData:
         # Load each yearly zip file
         # For each zip file, filter the API12 (or) API12array data needed.
         # Need column names.
+        [LEASE_NUMBER, COMPLETION_NAME , PRODUCTION_DATE, DAYS_ON_PROD, PRODUCT_CODE , MON_O_PROD_VOL, MON_G_PROD_VOL, MON_WTR_PROD_VOL, API_WELL_NUMBER, WELL_STAT_CD, AREA_CODE_BLOCK_NUM, OPERATOR_NUM, SORT_NAME , BOEM_FIELD, INJECTION_VOLUME , PROD_INTERVAL_CD, FIRST_PROD_DATE, UNIT_AGT_NUMBER, UNIT_ALOC_SUFFIX]
         pass        
 
 
