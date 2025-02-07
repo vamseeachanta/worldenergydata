@@ -1,0 +1,18 @@
+meta:
+  library: energydata
+  basename: bsee
+basename: bsee
+
+data:
+  well_production: True
+
+input : 
+  out_dir: tests\modules\bsee\data\well_production_data
+
+
+default:
+  log_level: DEBUG
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False

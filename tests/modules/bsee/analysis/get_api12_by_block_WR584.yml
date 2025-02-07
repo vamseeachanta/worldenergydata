@@ -21,8 +21,8 @@ analysis:
   flag: True
   api12: True
   production:
-    block: True
-    api12: True
+    block: False
+    api12: False
 
 settings:
   save_csv: True
