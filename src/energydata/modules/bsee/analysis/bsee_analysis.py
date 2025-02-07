@@ -2,7 +2,6 @@
 import json
 import logging
 
-
 # Third party imports
 import pandas as pd
 
@@ -42,18 +41,28 @@ class BSEEAnalysis():
         return api12_array
 
     def get_production_data(self, cfg):
-        if cfg['data']['by'] == 'block':
-            production_data = self.get_production_data_by_block(cfg)
+        if cfg['analysis']['production']['block']:
+            production_data = self.get_production_data_by_block_array(cfg)
+            cfg[cfg['basename']].update({'production': {'block':production_data}})
         
-        cfg[cfg['basename']].update({'production': production_data})
+        if cfg['analysis']['production']['api12']:
+            production_data = self.get_production_data_for_api12_array(cfg)
+            cfg[cfg['basename']].update({'production': {'api12':production_data}})
         
         return cfg
     
-    def get_production_data_by_block(self, cfg):
-        pass
+    def get_production_data_by_block_array(self, cfg):
+        for block_cfg in cfg['data']['groups']:
+            block_production_data = self.bsee_data.get_production_data_by_block(block_cfg)
+            # wire up scrapy_production_data.py?
     
-    def get_production_data_by_api12(self, api12):
-        pass
+    def get_production_data_for_api12_array(self, api12):
+        api12_array = cfg[cfg['basename']]['api12']
+        for api12 in api12_array:
+            production_data = self.bsee_data.get_production_data_by_api12(api12)
+            self.prepare_production_data(production_data)
+            
+    
 
     def assign_cfg(self, cfg):
         self.cfg = cfg
