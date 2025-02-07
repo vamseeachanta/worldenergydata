@@ -3,8 +3,8 @@ meta:
   basename: bsee
 basename: bsee
 
-data:
-  well_production: True
+well_prod_data:
+  flag: True
 
 input : 
   out_dir: tests\modules\bsee\data\well_production_data

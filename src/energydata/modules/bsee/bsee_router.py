@@ -36,7 +36,7 @@ class bsee_router:
         if 'production' in cfg and cfg['production']['flag']:
             bsee_production.router(cfg)
 
-        if 'data' in cfg and cfg['data']['well_production']:
+        if 'well_prod_data' in cfg and cfg['well_prod_data']['flag']:
             gwp.router(cfg)
 
         return cfg
