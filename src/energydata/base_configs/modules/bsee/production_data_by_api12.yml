@@ -1,0 +1,18 @@
+meta:
+  library: energydata
+  basename: bsee
+basename: bsee
+
+production:
+  flag: True
+  analysis: False
+
+settings:
+  save_csv: True
+  url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+  output_dir: tests\modules\bsee\data\results\Data\by_zip
+
+input:
+  - a12
+source:
+  - ogor-A zip files
