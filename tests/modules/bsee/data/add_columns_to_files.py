@@ -1,29 +1,32 @@
 import os
-import re
-import csv
+import pandas as pd
 
-def convert_text_to_csv(input_folder, output_folder):
-    # Create output directory if it doesn't exist
-    os.makedirs(output_folder, exist_ok=True)
+# Define the path to the CSV files
+directory = "tests/modules/bsee/data/well_production_yearly"
 
-    # Process each text file in the input directory
-    for filename in os.listdir(input_folder):
-        if filename.endswith('.txt'):
-            input_path = os.path.join(input_folder, filename)
-            output_path = os.path.join(output_folder, f"{os.path.splitext(filename)[0]}.csv")
+# Define the column names
+column_names = [
+    "LEASE_NUMBER", "COMPLETION_NAME", "PRODUCTION_DATE", "DAYS_ON_PROD", "PRODUCT_CODE", 
+    "MON_O_PROD_VOL", "MON_G_PROD_VOL", "MON_WTR_PROD_VOL", "API_WELL_NUMBER", 
+    "WELL_STAT_CD", "AREA_CODE_BLOCK_NUM", "OPERATOR_NUM", "SORT_NAME", "BOEM_FIELD", 
+    "INJECTION_VOLUME", "PROD_INTERVAL_CD", "FIRST_PROD_DATE", "UNIT_AGT_NUMBER", 
+    "UNIT_ALOC_SUFFIX"
+]
 
-            with open(input_path, 'r') as infile, open(output_path, 'w', newline='') as outfile:
-                csv_writer = csv.writer(outfile)
-                
-                for line in infile:
-                    # Extract values between quotes and clean whitespace
-                    fields = re.findall(r'"\s*(.*?)\s*"', line.strip())
-                    if fields:  # Only write rows with valid data
-                        csv_writer.writerow(fields)
+# Iterate over all CSV files in the specified directory
+for filename in os.listdir(directory):
+    if filename.endswith(".csv"):
+        file_path = os.path.join(directory, filename)
+        
+        # Read the CSV file
+        df = pd.read_csv(file_path, header=None)  # Assume the files may have no header
+        
+        # Add column names to the DataFrame
+        df.columns = column_names
+        
+        # Save the updated CSV file (overwrite the original file)
+        df.to_csv(file_path, index=False)
+        
+        print(f"Updated columns for: {filename}")
 
-if __name__ == "__main__":
-    text_folder = os.path.join('tests', 'modules', 'bsee', 'data', 'temp_delete')
-    csv_folder = os.path.join('tests', 'modules', 'bsee', 'data', 'well_production_yearly')
-    
-    convert_text_to_csv(text_folder, csv_folder)
-    print("Conversion completed successfully!")
+print("Column names added to all CSV files successfully.")
