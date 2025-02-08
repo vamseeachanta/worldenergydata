@@ -1,8 +1,6 @@
 # Standard library imports
 import os
 import sys
-
-
 # Reader imports
 from energydata.engine import engine
 
@@ -22,7 +20,7 @@ def get_valid_pytest_output_file(pytest_output_file):
 
 
 def test_application():
-    input_file = 'prepare_bsee_data_for_analysis.yml'
+    input_file = 'apd_by_10_APIs.yml'
     pytest_output_file = None
     # pytest_output_file = get_valid_pytest_output_file(pytest_output_file)
     # expected_result = ymlInput(pytest_output_file, updateYml=None)

@@ -10,15 +10,13 @@ dictitems:
   settings_master: ~
   input:
   - save_csv: true
-    url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\data\results\Data\by_API
-    label: well_data_1
-    well_api12: 608174149400
-  - save_csv: true
-    url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\data\results\Data\by_API
-    label: well_data_2
-    well_api12: 608174149401
+    url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+    output_dir: tests\modules\bsee\data\results\Data\by_zip
+    label: production_data
+    lease_number: G05868
+    Duration:
+      from: 01/2024
+      to: 02/2024
   default:
     log_level: DEBUG
     config:
@@ -28,30 +26,33 @@ dictitems:
   meta:
     library: energydata
     basename: bsee
-  well_data:
+  production:
     flag: true
     analysis: false
   settings:
     save_csv: true
-    url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\data\results\Data\by_API
+    url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+    output_dir: tests\modules\bsee\data\results\Data\by_zip
   form_data:
     first_request:
-      ASPxFormLayout1$ASPxTextBoxAPI: ~
+      ASPxFormLayout1$ASPxTextBoxLN: G05868
+      ASPxFormLayout1$ASPxTextBoxDF: 01/2024
+      ASPxFormLayout1$ASPxTextBoxDT: 02/2024
       ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
     second_request:
-      ASPxFormLayout1$ASPxTextBoxAPI: ~
+      ASPxFormLayout1$ASPxTextBoxLN: G05868
       __EVENTTARGET: ASPxFormLayout2$btnCsvExport
       __EVENTARGUMENT: Click
   Analysis:
     basename: bsee
     analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
-    file_name: bsee_apd_by_02_APIS
-    file_name_for_overwrite: bsee_apd_by_02_APIS
+    file_name: production_data_by_lease
+    file_name_for_overwrite: production_data_by_lease
     result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
     log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-01-24 11:22:35.933869
+    start_time: 2025-02-08 09:49:34.869600
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\bsee_apd_by_02_APIS.yml
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\production_data_by_lease.yml
     fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+  bsee: {}

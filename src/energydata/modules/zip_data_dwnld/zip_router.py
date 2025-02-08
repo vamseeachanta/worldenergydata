@@ -1,5 +1,5 @@
 
-from energydata.modules.zip_utilities.dwnld_from_zipurl import DownloadFromZipUrl
+from energydata.modules.zip_data_dwnld.dwnld_from_zipurl import DownloadFromZipUrl
 
 # Initialize instances of imported classes
 d_f_zu = DownloadFromZipUrl()

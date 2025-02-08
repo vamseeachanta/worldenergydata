@@ -86,12 +86,76 @@ dictitems:
   Analysis:
     basename: bsee
     analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
-    file_name: bsee_apd_by_10_APIs
-    file_name_for_overwrite: bsee_apd_by_10_APIs
+    file_name: apd_by_10_APIs
+    file_name_for_overwrite: apd_by_10_APIs
     result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
     log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-01-22 12:02:35.485335
+    start_time: 2025-02-08 09:50:30.312892
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\bsee_apd_by_10_APIs.yml
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\apd_by_10_APIs.yml
     fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+  bsee:
+    well_data:
+      type: csv
+      groups:
+      - save_csv: true
+        url: https://www.data.bsee.gov/Well/APD/Default.aspx
+        output_dir: tests\modules\bsee\data\results\Data\by_API
+        label: API_number_1
+        well_api12: 608164024500
+        file_name: tests\modules\bsee\data\results\Data\by_API\API_number_1.csv
+      - save_csv: true
+        url: https://www.data.bsee.gov/Well/APD/Default.aspx
+        output_dir: tests\modules\bsee\data\results\Data\by_API
+        label: API_number_2
+        well_api12: 608164025800
+        file_name: tests\modules\bsee\data\results\Data\by_API\API_number_2.csv
+      - save_csv: true
+        url: https://www.data.bsee.gov/Well/APD/Default.aspx
+        output_dir: tests\modules\bsee\data\results\Data\by_API
+        label: API_number_3
+        well_api12: 608164025400
+        file_name: tests\modules\bsee\data\results\Data\by_API\API_number_3.csv
+      - save_csv: true
+        url: https://www.data.bsee.gov/Well/APD/Default.aspx
+        output_dir: tests\modules\bsee\data\results\Data\by_API
+        label: API_number_4
+        well_api12: 608164025600
+        file_name: tests\modules\bsee\data\results\Data\by_API\API_number_4.csv
+      - save_csv: true
+        url: https://www.data.bsee.gov/Well/APD/Default.aspx
+        output_dir: tests\modules\bsee\data\results\Data\by_API
+        label: API_number_5
+        well_api12: 608174059000
+        file_name: tests\modules\bsee\data\results\Data\by_API\API_number_5.csv
+      - save_csv: true
+        url: https://www.data.bsee.gov/Well/APD/Default.aspx
+        output_dir: tests\modules\bsee\data\results\Data\by_API
+        label: API_number_6
+        well_api12: 608164032700
+        file_name: tests\modules\bsee\data\results\Data\by_API\API_number_6.csv
+      - save_csv: true
+        url: https://www.data.bsee.gov/Well/APD/Default.aspx
+        output_dir: tests\modules\bsee\data\results\Data\by_API
+        label: API_number_7
+        well_api12: 177054107800
+        file_name: tests\modules\bsee\data\results\Data\by_API\API_number_7.csv
+      - save_csv: true
+        url: https://www.data.bsee.gov/Well/APD/Default.aspx
+        output_dir: tests\modules\bsee\data\results\Data\by_API
+        label: API_number_8
+        well_api12: 177094120301
+        file_name: tests\modules\bsee\data\results\Data\by_API\API_number_8.csv
+      - save_csv: true
+        url: https://www.data.bsee.gov/Well/APD/Default.aspx
+        output_dir: tests\modules\bsee\data\results\Data\by_API
+        label: API_number_9
+        well_api12: 177244067506
+        file_name: tests\modules\bsee\data\results\Data\by_API\API_number_9.csv
+      - save_csv: true
+        url: https://www.data.bsee.gov/Well/APD/Default.aspx
+        output_dir: tests\modules\bsee\data\results\Data\by_API
+        label: API_number_10
+        well_api12: 177024118904
+        file_name: tests\modules\bsee\data\results\Data\by_API\API_number_10.csv
