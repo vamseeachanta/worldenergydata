@@ -249,12 +249,13 @@ dictitems:
   Analysis:
     basename: bsee
     analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis
-    file_name: prepare_bsee_data_for_analysis
-    file_name_for_overwrite: prepare_bsee_data_for_analysis
+    file_name: prepare_data_for_analysis
+    file_name_for_overwrite: prepare_data_for_analysis
     result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
     log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\logs
-    start_time: 2025-01-25 11:36:31.344484
+    start_time: 2025-02-08 09:53:17.912969
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\prepare_bsee_data_for_analysis.yml
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\prepare_data_for_analysis.yml
     fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
+  bsee: {}
