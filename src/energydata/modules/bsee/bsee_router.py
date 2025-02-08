@@ -3,7 +3,7 @@ from assetutilities.common.update_deep import update_deep_dictionary #noqa
 # Reader imports
 from energydata.modules.bsee.data.get_well_prod_data import GetWellProdData
 from energydata.modules.bsee.data.well_data import WellData
-from energydata.modules.bsee.analysis.prepare_bsee_data_for_analysis import (
+from energydata.modules.bsee.analysis.prepare_data_for_analysis import (
     PrepareBseeData,
 )
 from energydata.modules.bsee.data.scrapy_production_data import SpiderBsee
