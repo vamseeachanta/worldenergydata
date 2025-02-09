@@ -16,7 +16,8 @@ well_data = WellData()
 prep_bsee_data = PrepareBseeData()
 bsee_analysis = BSEEAnalysis()
 
-class bsee_router:
+class bsee:
+
     def __init__(self):
         pass
 
