@@ -1,6 +1,5 @@
 # Standard library imports
-from dataclasses import dataclass
-from typing import List, Optional
+
 
 # Third party imports
 import pandas as pd
@@ -9,30 +8,9 @@ import datetime
 
 @dataclass
 class BSEEData:
-    """Class for handling BSEE (Bureau of Safety and Environmental Enforcement) data"""
+    """Class for handling BSEE data"""
     
     def __init__(self):
-        self.data = None
-        self.last_updated: Optional[datetime] = None
-        
-    def load_data(self, source_path: str) -> None:
-        """Load BSEE data from source
-        
-        Args:
-            source_path (str): Path to data source
-        """
-        pass
-    
-    def get_data(self) -> Optional[List]:
-        """Retrieve loaded BSEE data
-        
-        Returns:
-            Optional[List]: The loaded data or None if no data is loaded
-        """
-        return self.data
-    
-    def update(self) -> None:
-        """Update the BSEE data from source"""
         pass
     
     def get_api12_data_by_block(self, cfg):
@@ -71,8 +49,6 @@ class BSEEData:
     def get_production_data_for_api12(self, cfg):
         # Load each yearly zip file
         # For each zip file, filter the API12 (or) API12array data needed.
-        # Need column names.
-        [LEASE_NUMBER, COMPLETION_NAME , PRODUCTION_DATE, DAYS_ON_PROD, PRODUCT_CODE , MON_O_PROD_VOL, MON_G_PROD_VOL, MON_WTR_PROD_VOL, API_WELL_NUMBER, WELL_STAT_CD, AREA_CODE_BLOCK_NUM, OPERATOR_NUM, SORT_NAME , BOEM_FIELD, INJECTION_VOLUME , PROD_INTERVAL_CD, FIRST_PROD_DATE, UNIT_AGT_NUMBER, UNIT_ALOC_SUFFIX]
         pass        
 
 
@@ -105,7 +81,7 @@ class BSEEData:
         return cfg
 
     def get_block_bottom_leases(self, cfg):
-        #TODO refactor to BSEEDATA class
+        
         bottom_lease_array = []
         if cfg[cfg['basename']]['well_data']['type'] == 'csv':
             csv_groups = cfg[cfg['basename']]['well_data']['groups']
