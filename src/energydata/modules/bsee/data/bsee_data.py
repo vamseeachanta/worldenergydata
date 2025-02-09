@@ -6,15 +6,34 @@ import pandas as pd
 import datetime
 
 
-@dataclass
 class BSEEData:
     """Class for handling BSEE data"""
     
     def __init__(self):
         pass
+
+    def get_api12_data(self, cfg):
+        if cfg['data']['by'] == 'block':
+            api12_array = self.bsee_data.get_api12_data_by_block(cfg)
+
+        cfg[cfg['basename']].update({'api12': api12_array})
+
+        return cfg
+
+    def get_production_data(self, cfg):
+        if cfg['analysis']['production']['block']:
+            cfg = self.get_block_bottom_leases(cfg)
+            production_data = self.get_production_data_by_block_array(cfg)
+            cfg[cfg['basename']].update({'production': {'block':production_data}})
+
+        if cfg['analysis']['production']['api12']:
+            production_data = self.get_production_data_for_api12_array(cfg)
+            cfg[cfg['basename']].update({'production': {'api12':production_data}})
+
+        return cfg
     
     def get_api12_data_by_block(self, cfg):
-        #TODO refactor to BSEEDATA class
+    
         api12_array = []
         if cfg[cfg['basename']]['well_data']['type'] == 'csv':
             csv_groups = cfg[cfg['basename']]['well_data']['groups']
@@ -26,7 +45,7 @@ class BSEEData:
         return api12_array
 
     def get_production_data_by_bottom_lease(self, bottom_lease):
-        #TODO refactor to BSEEDATA class
+   
         # wire up scrapy_production_data.py?
         # Output files are: LNG15110.csv & LNG25251.csv
         # Add these output csv files path to cfg[cfg'basename']['production']['block']
@@ -60,25 +79,6 @@ class BSEEData:
             self.prepare_production_data(production_data)
             # Add these output csv files path to cfg[cfg'basename']['production']['block']  
 
-    def get_api12_data(self, cfg):
-        if cfg['data']['by'] == 'block':
-            api12_array = self.bsee_data.get_api12_data_by_block(cfg)
-
-        cfg[cfg['basename']].update({'api12': api12_array})
-
-        return cfg
-
-    def get_production_data(self, cfg):
-        if cfg['analysis']['production']['block']:
-            cfg = self.get_block_bottom_leases(cfg)
-            production_data = self.get_production_data_by_block_array(cfg)
-            cfg[cfg['basename']].update({'production': {'block':production_data}})
-
-        if cfg['analysis']['production']['api12']:
-            production_data = self.get_production_data_for_api12_array(cfg)
-            cfg[cfg['basename']].update({'production': {'api12':production_data}})
-
-        return cfg
 
     def get_block_bottom_leases(self, cfg):
         
