@@ -10,27 +10,26 @@ production:
 settings:
   save_csv: True
   url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
-  output_dir: tests\modules\bsee\data\results\Data\by_zip
+  output_dir: None
+
+  form_data:
+    first_request:
+      ASPxFormLayout1$ASPxTextBoxLN: 
+      ASPxFormLayout1$ASPxTextBoxDF: 
+      ASPxFormLayout1$ASPxTextBoxDT: 
+      ASPxFormLayout1$ASPxButtonSubmitQ: "Submit Query"
+
+    second_request:
+      ASPxFormLayout1$ASPxTextBoxLN: 
+      __EVENTTARGET: "ASPxFormLayout2$btnCsvExport"
+      __EVENTARGUMENT: "Click"
 
 input:
   - label: production_data
-    lease_number: G05868 
+    lease_number: 
     Duration:
       from : 01/2024
       to : 02/2024
-
-form_data:
-  first_request:
-    ASPxFormLayout1$ASPxTextBoxLN: "G05868"
-    ASPxFormLayout1$ASPxTextBoxDF: "01/2024"
-    ASPxFormLayout1$ASPxTextBoxDT: "02/2024"
-    ASPxFormLayout1$ASPxButtonSubmitQ: "Submit Query"
-
-  second_request:
-    ASPxFormLayout1$ASPxTextBoxLN: "G05868"
-    __EVENTTARGET: "ASPxFormLayout2$btnCsvExport"
-    __EVENTARGUMENT: "Click"
-
 
 default:
   log_level: DEBUG
