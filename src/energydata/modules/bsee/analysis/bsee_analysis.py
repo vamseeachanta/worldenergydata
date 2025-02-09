@@ -19,11 +19,11 @@ class BSEEAnalysis():
         # self.bsee_data = BSEEData(self.cfg)
 
     def router(self, cfg):
+        
         if cfg['analysis']['api12']:
             cfg = bsee_data.get_api12_data(cfg)
         if cfg['analysis']['prod_data']:
             cfg = bsee_data.get_production_data(cfg)
-
 
 
     def assign_cfg(self, cfg):
