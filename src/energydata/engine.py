@@ -15,8 +15,8 @@ from assetutilities.common.yml_utilities import ymlInput  #noqa
 from assetutilities.common.ApplicationManager import ConfigureApplicationInputs
 
 # Reader imports
-from energydata.modules.bsee.bsee_router import bsee_router
-from energydata.modules.zip_utilities.zip_router import zip_router
+from energydata.modules.bsee.bsee import bsee
+from energydata.modules.zip_data_dwnld.zip_utils import zip_utils
 
 save_data = SaveData()
 library_name = "energydata"
@@ -41,11 +41,11 @@ def engine(inputfile: str = None, cfg: dict = None) -> dict:
 
 
     if basename in ["bsee"]:
-        bsee_app = bsee_router()
+        bsee_app = bsee()
         cfg_base = bsee_app.router(cfg_base)
     
     elif basename in ["zip_utils"]:
-        zip_utilities = zip_router()
+        zip_utilities = zip_utils()
         cfg_base = zip_utilities.router(cfg_base)
 
     else:

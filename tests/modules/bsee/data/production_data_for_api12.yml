@@ -1,0 +1,45 @@
+meta:
+  library: energydata
+  basename: bsee
+basename: bsee
+
+data:
+  by: block # API12, ?
+  groups:
+    - label: WR540
+      bottom_area: Walker Ridge (WR)
+      bottom_block: 540
+    - label: WR584
+      bottom_area: Walker Ridge (WR)
+      bottom_block: 584
+
+well_data:
+  flag: True
+
+settings:
+  save_csv: True
+  url: https://www.data.bsee.gov/Well/APD/Default.aspx
+  output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+
+input:
+  - label: WR540
+    bottom_area: Walker Ridge (WR)
+    bottom_block: 540
+  - label: WR584
+    bottom_area: Walker Ridge (WR)
+    bottom_block: 584
+
+analysis:
+  flag: True
+  api12: True
+  prod_data: True
+  production:
+    api12: True
+    
+
+default:
+  log_level: DEBUG
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False
