@@ -7,27 +7,26 @@ import datetime
 
 
 class BSEEData:
-    """Class for handling BSEE data"""
     
     def __init__(self):
         pass
 
     def get_api12_data(self, cfg):
         if cfg['data']['by'] == 'block':
-            api12_array = self.bsee_data.get_api12_data_by_block(cfg)
+            api12_array = self.get_api12_data_by_block(cfg)
 
         cfg[cfg['basename']].update({'api12': api12_array})
 
         return cfg
 
     def get_production_data(self, cfg):
-        if cfg['analysis']['production']['block']:
-            cfg = self.get_block_bottom_leases(cfg)
-            production_data = self.get_production_data_by_block_array(cfg)
-            cfg[cfg['basename']].update({'production': {'block':production_data}})
+        # if cfg['analysis']['production']['block']:
+        #     cfg = self.get_block_bottom_leases(cfg)
+        #     production_data = self.get_production_data_by_block_array(cfg)
+        #     cfg[cfg['basename']].update({'production': {'block':production_data}})
 
         if cfg['analysis']['production']['api12']:
-            production_data = self.get_production_data_for_api12_array(cfg)
+            production_data = self.get_api12_array_for_production_data(cfg)
             cfg[cfg['basename']].update({'production': {'api12':production_data}})
 
         return cfg
@@ -58,11 +57,10 @@ class BSEEData:
         
         pass
     
-    def get_production_data_for_api12_array(self, api12):
+    def get_api12_array_for_production_data(self, cfg):
         api12_array = cfg[cfg['basename']]['api12']
         for api12 in api12_array:
-            production_data = self.bsee_data.get_production_data_by_api12(api12)
-            self.prepare_production_data(production_data)
+            production_data = self.get_production_data_for_api12(api12)
             # Add these output csv files path to cfg[cfg'basename']['production']['api12']
 
     def get_production_data_for_api12(self, cfg):

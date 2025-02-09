@@ -26,6 +26,8 @@ class BSEEAnalysis():
             cfg = bsee_data.get_production_data(cfg)
 
 
+
+
     def assign_cfg(self, cfg):
         self.cfg = cfg
 
