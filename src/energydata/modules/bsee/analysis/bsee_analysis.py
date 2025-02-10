@@ -2,7 +2,7 @@
 import json
 import logging
 
-# Third party imports
+# # # Third party imports
 import pandas as pd
 from energydata.modules.bsee.data.bsee_data import BSEEData
 
@@ -33,7 +33,7 @@ class BSEEAnalysis():
 
     def run_analysis_for_all_wells(self):
         for api10 in self.api10_list[0:20]:
-            self.get_bsee_data_and_prepare_data_for_api10(api10)
+            # self.get_bsee_data_and_prepare_data_for_api10(api10)
     
     def get_bsee_data_and_prepare_data_for_api10(self, api10):
         well_data = self.bsee_data.get_well_data_by_api10(api10)
