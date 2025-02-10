@@ -7,8 +7,10 @@ existing_data:
   flag: True
   analysis: False
 
-
-input:
+data_from_files:
+  production: True
+  
+settings:
   files_folder: None
   output_dir: None 
   

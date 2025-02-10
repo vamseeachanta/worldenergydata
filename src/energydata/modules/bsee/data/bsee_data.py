@@ -1,7 +1,7 @@
 # Standard library imports
 from energydata.common.bsee.fetch_data_templates import FetchDataTemplates
 
-from energydata.engine import engine as energy_engine
+#from energydata.engine import engine as aus_engine
 
 # Third party imports
 import pandas as pd
@@ -63,6 +63,7 @@ class BSEEData:
         pass
     
     def get_api12_array_for_production_data(self, cfg):
+
         api12_array = cfg[cfg['basename']]['api12']
         for api12 in api12_array:
             production_data = self.get_production_data_for_api12(api12, cfg)
@@ -71,9 +72,15 @@ class BSEEData:
     
     def get_production_data_for_api12(self, api12, cfg):
 
+        from energydata.engine import engine as energy_engine
         production_yml = f_d_templates.get_data_from_existing_files(cfg['Analysis'].copy())
 
-        energy_engine(inputfile=None, cfg=production_yml, config_flag=False)
+        settings = { 'api12': api12,
+                    'files_folder': 'tests/modules/bsee/data/well_production_yearly/csv',
+                    'output_dir': 'tests/modules/bsee/data/results/Data/well_production_data\production_data_for_wellAPI.csv'
+                    }
+        production_yml['settings'].update(settings)
+        production_data = energy_engine(inputfile=None, cfg=production_yml, config_flag=False)
 
         return production_data
         
