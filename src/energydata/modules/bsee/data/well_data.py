@@ -26,7 +26,8 @@ class WellData:
                 output_data = self.generate_output_item(output_data, input_item)
 
             scrapy_runner.start()
-        elif "block_data" in cfg and cfg['block_data']['flag']:
+
+        elif "block_data" in cfg and cfg['block_data']['flag'] or "well_production" in cfg and cfg['well_production']['flag']:
             input_items = cfg['input']
             scrapy_runner = ScrapyRunner()
 
