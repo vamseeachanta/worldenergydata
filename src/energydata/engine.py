@@ -13,20 +13,26 @@ from assetutilities.common.file_management import FileManagement
 from assetutilities.common.yml_utilities import ymlInput  #noqa
 
 from assetutilities.common.ApplicationManager import ConfigureApplicationInputs
+from assetutilities.common.yml_utilities import WorkingWithYAML
 
 # Reader imports
 from energydata.modules.bsee.bsee import bsee
+#from energydata.modules.bsee.data.bsee_data import BSEEData
 from energydata.modules.zip_data_dwnld.zip_utils import zip_utils
 
 save_data = SaveData()
+wwy = WorkingWithYAML()
+
+#bsee_data = BSEEData()
+
 library_name = "energydata"
 
 
-def engine(inputfile: str = None, cfg: dict = None) -> dict:
-    fm = FileManagement()
+def engine(inputfile: str = None, cfg: dict = None, config_flag: bool = True) -> dict:
+    
     if cfg is None:
         inputfile = validate_arguments_run_methods(inputfile)
-        cfg = ymlInput(inputfile, updateYml=None)
+        cfg = wwy.ymlInput(inputfile, updateYml=None)
         cfg = AttributeDict(cfg)
         if cfg is None:
             raise ValueError("cfg is None")
@@ -34,8 +40,13 @@ def engine(inputfile: str = None, cfg: dict = None) -> dict:
     basename = cfg["basename"]
     application_manager = ConfigureApplicationInputs(basename)
     application_manager.configure(cfg, library_name)
-    cfg_base = application_manager.cfg
-    cfg_base = fm.router(cfg_base)
+
+    if config_flag:
+        fm = FileManagement()
+        cfg_base = application_manager.cfg
+        cfg_base = fm.router(cfg_base)
+    else:
+        cfg_base = cfg
 
     logger.info(f"{basename}, application ... START")
 
@@ -82,6 +93,7 @@ def validate_arguments_run_methods(inputfile):
             raise (FileNotFoundError(f"Input file {inputfile} not found ... FAIL"))
         else:
             sys.argv.append(inputfile)
+
     return inputfile
 
 

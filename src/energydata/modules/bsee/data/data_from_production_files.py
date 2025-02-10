@@ -16,9 +16,9 @@ class DataFromFiles:
     
     def get_production_data_by_api12(self, cfg):
 
-        folder_path = cfg['input']['files_folder']  
-        output_file = cfg['input']['output_dir']
-        api12 = cfg['input']['api12']
+        folder_path = cfg['settings']['files_folder']  
+        output_file = cfg['settings']['output_dir']
+        api12 = cfg['settings']['api12']
         file_exists = os.path.exists(output_file)
 
         for file_name in os.listdir(folder_path):

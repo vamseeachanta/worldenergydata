@@ -25,7 +25,10 @@ class bsee:
 
     def router(self, cfg):
         # Update configuration with master data
-        cfg = self.get_cfg_with_master_data(cfg)
+        if 'input' in cfg and 'settings' in cfg:
+            cfg = self.get_cfg_with_master_data(cfg)
+        
+
         cfg[cfg['basename']] = {}
         # Route to appropriate data processing based on configuration flags
         if 'well_data' in cfg and cfg['well_data']['flag']:
