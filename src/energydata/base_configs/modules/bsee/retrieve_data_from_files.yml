@@ -3,12 +3,15 @@ meta:
   basename: bsee
 basename: bsee
 
-well_prod_data:
+existing_data:
   flag: True
+  analysis: False
 
-input : 
-  out_dir: tests\modules\bsee\data\well_production_yearly\zip
 
+input:
+  files_folder: None
+  output_dir: None 
+  
 
 default:
   log_level: DEBUG

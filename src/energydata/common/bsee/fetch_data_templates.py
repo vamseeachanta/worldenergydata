@@ -34,6 +34,19 @@ class FetchDataTemplates:
         data_template = AttributeDict(data_template)
 
         return data_template
+    
+    def get_data_from_existing_files(self, custom_analysis_dict={}):
+
+        library_name = "energydata"
+        library_yaml_cfg = {
+            'filename': 'base_configs/modules/bsee/retrieve_data_from_files.yml',
+            'library_name': library_name
+        }
+        data_template = wwy.get_library_yaml_file(library_yaml_cfg)
+        data_template['Analysis'] = custom_analysis_dict
+        data_template = AttributeDict(data_template)
+
+        return data_template
 
         
     
