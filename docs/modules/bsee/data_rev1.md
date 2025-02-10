@@ -16,6 +16,7 @@ BoreholeRawData: https://github.com/vamseeachanta/energydata/blob/1691a05e908c4a
 dsptsdelimit: https://github.com/vamseeachanta/energydata/blob/2084250f6055a4f0dae7cafc3844f797bc8b624d/tests/modules/bsee/data/results/Data/by_zip/dsptsdelimit.csv
 
 | Data | Description | Method
+| --- | --- | --- |
 Well Name |  | Well Name, by_block_well_data
 Water Depth | | Water Depth (feet), by_block_well_data
 Spud Date | | WELL_SPUD_DATE, APIRawData_mv_api_list_all

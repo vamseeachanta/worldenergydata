@@ -1,6 +1,11 @@
-# Reader imports
+# Standard library imports
 import os
+
 import pandas as pd
+
+# Third party imports
+import pandas as pd
+
 
 class DataFromFiles:
     
@@ -10,7 +15,7 @@ class DataFromFiles:
     def router(self, cfg):
 
         if cfg['data_from_files']['production']:
-            cfg = self.get_production_data_by_api12(cfg)
+            self.get_production_data_by_api12(cfg)
 
         return cfg
     
