@@ -26,7 +26,9 @@ class bsee:
         cfg = self.get_cfg_with_master_data(cfg)
         cfg[cfg['basename']] = {}
         # Route to appropriate data processing based on configuration flags
-        if 'well_data' in cfg and cfg['well_data']['flag'] or 'block_data' in cfg and cfg['block_data']['flag']:
+        if 'well_data' in cfg and cfg['well_data']['flag']:
+            cfg = well_data.get_well_data(cfg)
+        if 'block_data' in cfg and cfg['block_data']['flag'] or 'well_production' in cfg and cfg['well_production']['flag']:
             cfg = well_data.get_well_data(cfg)
         elif "data_prep" in cfg and cfg["data_prep"]["flag"]:
             data = prep_bsee_data.router(cfg)

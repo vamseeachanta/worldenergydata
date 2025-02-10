@@ -22,7 +22,7 @@ class BSEEAnalysis():
         
         if cfg['analysis']['api12']:
             cfg = bsee_data.get_api12_data(cfg)
-        if cfg['analysis']['prod_data']:
+        if cfg['analysis']['production_data']:
             cfg = bsee_data.get_production_data(cfg)
 
 

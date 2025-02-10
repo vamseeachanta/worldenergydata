@@ -13,9 +13,17 @@ data:
       bottom_area: Walker Ridge (WR)
       bottom_block: 584
 
-well_data:
+well_production:
   flag: True
 
+analysis:
+  flag: True
+  api12: True
+  production_data: True
+  production:
+    flag: True
+    api12: True
+    
 settings:
   save_csv: True
   url: https://www.data.bsee.gov/Well/APD/Default.aspx
@@ -29,12 +37,21 @@ input:
     bottom_area: Walker Ridge (WR)
     bottom_block: 584
 
-analysis:
-  flag: True
-  api12: True
-  prod_data: True
-  production:
-    api12: True
+form_data:
+  first_request:
+    ASPxFormLayout1$ASPxComboBoxBA: "Walker Ridge (WR)"
+    ASPxFormLayout1$ASPxComboBoxBA$DDD$L: "WR"
+    ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+    ASPxFormLayout1$ASPxComboBoxBBN: None
+    ASPxFormLayout1$ASPxButtonSubmitQ: "Submit Query"
+
+  second_request:
+    ASPxFormLayout1$ASPxComboBoxBA: "Walker Ridge (WR)"
+    ASPxFormLayout1$ASPxComboBoxBA$DDD$L: "WR"
+    ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+    ASPxFormLayout1$ASPxComboBoxBBN: None
+    __EVENTTARGET: "ASPxFormLayout2$btnCsvExport"
+    __EVENTARGUMENT: "Click"
     
 
 default:
