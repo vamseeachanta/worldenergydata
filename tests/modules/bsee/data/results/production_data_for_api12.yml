@@ -1,80 +1,35 @@
 &id001 !!python/object/new:assetutilities.common.data.AttributeDict
 state: *id001
 dictitems:
+  meta:
+    library: energydata
+    basename: bsee
   basename: bsee
-  type:
-    data: false
+  existing_data:
+    flag: true
     analysis: false
-    results: false
-  result_method: selenium
-  settings_master: ~
-  input:
-  - save_csv: true
-    url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
-    label: WR540
-    bottom_area: Walker Ridge (WR)
-    bottom_block: 540
-  - save_csv: true
-    url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
-    label: WR584
-    bottom_area: Walker Ridge (WR)
-    bottom_block: 584
+  data_from_files:
+    production: true
+  settings:
+    files_folder: tests/modules/bsee/data/well_production_yearly/csv
+    output_dir: tests/modules/bsee/data/results/Data/well_production_data\production_data_for_wellAPI.csv
+    api12: 177024120700
   default:
     log_level: DEBUG
     config:
       overwrite:
         output: true
       cfg_sensitivities: false
-  meta:
-    library: energydata
-    basename: bsee
-  data:
-    by: block
-    groups:
-    - label: WR540
-      bottom_area: Walker Ridge (WR)
-      bottom_block: 540
-    - label: WR584
-      bottom_area: Walker Ridge (WR)
-      bottom_block: 584
-  well_production:
-    flag: true
-  analysis:
-    flag: true
-    api12: true
-    production_data: true
-    production:
-      flag: true
-      api12: true
-  settings:
-    save_csv: true
-    url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
-  form_data:
-    first_request:
-      ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
-      ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
-      ASPxFormLayout1_ASPxComboBoxBBN_VI: None
-      ASPxFormLayout1$ASPxComboBoxBBN: None
-      ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
-    second_request:
-      ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
-      ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
-      ASPxFormLayout1_ASPxComboBoxBBN_VI: None
-      ASPxFormLayout1$ASPxComboBoxBBN: None
-      __EVENTTARGET: ASPxFormLayout2$btnCsvExport
-      __EVENTARGUMENT: Click
   Analysis:
     basename: bsee
-    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
+    analysis_root_folder: k:\github\energydata\tests\modules\bsee\data
     file_name: production_data_for_api12
     file_name_for_overwrite: production_data_for_api12
-    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
-    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-02-10 15:59:38.828216
+    result_folder: k:\github\energydata\tests\modules\bsee\data\results
+    log_folder: k:\github\energydata\tests\modules\bsee\data\logs
+    start_time: 2025-02-10 10:43:11.486806
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\production_data_for_api12.yml
-    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    CustomInputFile: k:\github\energydata\tests\modules\bsee\data\production_data_for_api12.yml
+    fe_folder: k:\github\energydata\tests\modules\bsee\data\results
+  bsee: {}
