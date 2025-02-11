@@ -26,14 +26,13 @@ class BSEEAnalysis():
             cfg = bsee_data.get_production_data(cfg)
 
 
-
-
     def assign_cfg(self, cfg):
         self.cfg = cfg
 
     def run_analysis_for_all_wells(self):
         for api10 in self.api10_list[0:20]:
-            # self.get_bsee_data_and_prepare_data_for_api10(api10)
+            pass# self.get_bsee_data_and_prepare_data_for_api10(api10)
+        
     
     def get_bsee_data_and_prepare_data_for_api10(self, api10):
         well_data = self.bsee_data.get_well_data_by_api10(api10)
