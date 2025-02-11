@@ -77,7 +77,7 @@ class BSEEData:
 
         settings = { 'api12': api12,
                     'files_folder': 'tests/modules/bsee/data/well_production_yearly/csv',
-                    'output_dir': 'tests/modules/bsee/data/results/Data/well_production_data\production_data_for_wellAPI.csv'
+                    'output_dir': 'tests/modules/bsee/data/results/Data/well_production_data/production_data_for_wellAPI.csv'
                     }
         production_yml['settings'].update(settings)
         production_data = energy_engine(inputfile=None, cfg=production_yml, config_flag=False)
