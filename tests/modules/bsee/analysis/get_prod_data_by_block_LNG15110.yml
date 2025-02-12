@@ -20,10 +20,13 @@ block_data:
 analysis:
   flag: True
   api12: False
-  prod_data: True
+  production_data: True
   production:
     block: True
     api12: False
+
+block:
+  flag: True
 
 settings:
   save_csv: True

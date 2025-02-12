@@ -3,34 +3,62 @@ meta:
   basename: bsee
 basename: bsee
 
+data:
+  by: block # API12, ?
+  groups:
+    - label: WR540
+      bottom_area: Walker Ridge (WR)
+      bottom_block: 540
+    - label: WR584
+      bottom_area: Walker Ridge (WR)
+      bottom_block: 584
+
+block_data:
+  flag: True
+  analysis: False
+
+analysis:
+  flag: True
+  api12: False
+  production_data: True
+  production:
+    block: True
+    api12: False
+
+block:
+  flag: True
+
 production:
   flag: True
   analysis: False
 
+prod_by_lease:
+  flag: True
+
 settings:
   save_csv: True
-  url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
-  output_dir: tests\modules\bsee\data\results\Data\by_zip
+  url: https://www.data.bsee.gov/Well/APD/Default.aspx
+  output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
 
 input:
-  - label: production_data
-    lease_number: G05868 
-    Duration:
-      from : 01/2024
-      to : 02/2024
-
+  - label: WR540
+    bottom_area: Walker Ridge (WR)
+    bottom_block: 540
+  - label: WR584
+    bottom_area: Walker Ridge (WR)
+    bottom_block: 584
+    
 form_data:
   first_request:
-    ASPxFormLayout1$ASPxTextBoxLN: "G05868"
-    ASPxFormLayout1$ASPxTextBoxDF: "01/2024"
-    ASPxFormLayout1$ASPxTextBoxDT: "02/2024"
+    ASPxFormLayout1$ASPxTextBoxLN: 
+    ASPxFormLayout1$ASPxTextBoxDF: 
+    ASPxFormLayout1$ASPxTextBoxDT: 
     ASPxFormLayout1$ASPxButtonSubmitQ: "Submit Query"
 
   second_request:
-    ASPxFormLayout1$ASPxTextBoxLN: "G05868"
+    ASPxFormLayout1$ASPxTextBoxLN: 
     __EVENTTARGET: "ASPxFormLayout2$btnCsvExport"
     __EVENTARGUMENT: "Click"
-
 
 default:
   log_level: DEBUG

@@ -23,7 +23,10 @@ analysis:
   production:
     flag: True
     api12: True
-    
+
+api12:
+  flag: True
+  
 settings:
   save_csv: True
   url: https://www.data.bsee.gov/Well/APD/Default.aspx

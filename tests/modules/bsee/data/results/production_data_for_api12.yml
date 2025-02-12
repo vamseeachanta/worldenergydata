@@ -48,6 +48,8 @@ dictitems:
     production:
       flag: true
       api12: true
+  api12:
+    flag: true
   settings:
     save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
@@ -73,7 +75,7 @@ dictitems:
     file_name_for_overwrite: production_data_for_api12
     result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
     log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: &id003 2025-02-11 19:33:23.317361
+    start_time: &id003 2025-02-12 09:50:55.485376
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\production_data_for_api12.yml

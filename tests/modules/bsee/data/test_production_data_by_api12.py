@@ -23,7 +23,7 @@ def get_valid_pytest_output_file(pytest_output_file):
 
 
 def test_application():
-    input_file = 'data_from_production_files.yml'
+    input_file = 'production_data_by_api12.yml'
     pytest_output_file = None
     # pytest_output_file = get_valid_pytest_output_file(pytest_output_file)
     # expected_result = ymlInput(pytest_output_file, updateYml=None)

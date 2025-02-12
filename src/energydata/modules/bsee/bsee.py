@@ -25,7 +25,7 @@ class bsee:
 
     def router(self, cfg):
         # Update configuration with master data
-        if 'input' in cfg and 'settings' in cfg:
+        if 'input' in cfg and 'settings' in cfg or 'settings' in cfg and 'master_settings' in cfg:
             cfg = self.get_cfg_with_master_data(cfg)
         
 
@@ -54,9 +54,9 @@ class bsee:
 
     # Function to update configuration 
     def get_cfg_with_master_data(self, cfg):
-        items_key = 'input'
-        if 'settings' in cfg:
-            settings_master = cfg['settings'].copy()
+        items_key = 'settings'
+        if 'master_settings' in cfg:
+            settings_master = cfg['master_settings'].copy()
             items = cfg[items_key]
 
             # combine settings with items

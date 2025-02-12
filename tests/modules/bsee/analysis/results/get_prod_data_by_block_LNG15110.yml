@@ -45,10 +45,12 @@ dictitems:
   analysis:
     flag: true
     api12: false
-    prod_data: true
+    production_data: true
     production:
       block: true
       api12: false
+  block:
+    flag: true
   settings:
     save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
@@ -74,7 +76,7 @@ dictitems:
     file_name_for_overwrite: get_prod_data_by_block_LNG15110
     result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
     log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\logs
-    start_time: 2025-02-07 11:41:51.903475
+    start_time: 2025-02-12 11:07:06.670391
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\get_prod_data_by_block_LNG15110.yml
@@ -98,7 +100,7 @@ dictitems:
         bottom_block: 584
         file_name: tests\modules\bsee\analysis\results\Data\julia_by_block\WR584.csv
     production:
-      block:
+      bottom_leases:
       - G15110
       - G26265
       - G25251
