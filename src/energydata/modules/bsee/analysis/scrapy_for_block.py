@@ -17,6 +17,9 @@ from scrapy.utils.response import (  # noqa useful while program is running
 )
 from twisted.internet import defer, reactor  # noqa
 
+from assetutilities.common.utilities import is_dir_valid_func
+
+
 colorama_init()
 
 logging.getLogger('scrapy').propagate = False
@@ -58,6 +61,9 @@ class BSEESpider(scrapy.Spider):
 
         label = self.input_item['label']
         output_path = self.input_item['output_dir']
+        analysis_root_folder = self.cfg['Analysis']['analysis_root_folder']
+        is_dir_valid, output_path = is_dir_valid_func(output_path, analysis_root_folder)
+        
         file_path = os.path.join(output_path, f"{label}.csv")
 
         if response.status == 200:
