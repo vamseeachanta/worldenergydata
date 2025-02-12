@@ -79,14 +79,17 @@ dsptsdelimit: https://github.com/vamseeachanta/energydata/blob/2084250f6055a4f0d
 
 #### 2025-02-12
 
-For Julia wells, we sent the data for Roy's review. As mentioned, BSEE data download is not straightforward and need some hand-holding. AI for analysis will also need some handholding when you get your hands on the fields we provide.
+Attached are the well data for Julia and Jack & St. Malo. Stones is pending. Production data for these are pending.
 
-FYI, In all our coding, we leveraging AI even for everything but convert them to codes where possible for repeatability and reusability and traceability.
+As mentioned, BSEE data download is not straightforward and need some hand-holding. AI for analysis will also need some handholding when you get your hands on the fields we provide. 
+FYI, In all our coding, we leveraging AI even for everything but convert them to codes where possible for repeatability and reusability and traceability. Of courese, feel free to use your own independent judgement on how to use AI.
 
-For Jack & St. Malo wells, we got the following data.
+For Jack & St. Malo wells, we got the data directly from BSEE. The blocks for jack are WR 758, WR 759. THe blocks for St. Malo are WR 678. The well data is attached and the number of API12 wells are given below. Status of these wells is to be determined.:
+- Jack, WR758: 40
+- Jack, WR759: 8
+- St. Malo, WR678: 20 
 
-
-From production data from blocks WR540 and 584, we got production API12s as follows:
+From production data from blocks WR540 and 584, we got API12s from notes and articles as follows:
 
 | Stage | Field | Purpose | Well Count | Total Wells | First Oil Year |
 | --- | --- | --- | --- | --- | --- |
@@ -105,6 +108,8 @@ References:
 https://jpt.spe.org/chevron-sanctions-waterflood-project-st-malo
 https://www.offshore-technology.com/projects/jackstmalodeepwaterp/?cf-view
 
+Thank you,
+Vamsee
 
 #### 2025-02-11
 
