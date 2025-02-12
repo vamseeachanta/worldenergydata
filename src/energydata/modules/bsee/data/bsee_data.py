@@ -17,6 +17,7 @@ class BSEEData:
         pass
 
     def get_api12_data(self, cfg):
+
         if cfg['data']['by'] == 'block':
             api12_array = self.get_api12_data_by_block(cfg)
 
@@ -25,13 +26,16 @@ class BSEEData:
         return cfg
 
     def get_production_data(self, cfg):
-        # if cfg['analysis']['production']['block']:
-        #     cfg = self.get_block_bottom_leases(cfg)
-        #     production_data = self.get_production_data_by_block_array(cfg)
-        #     cfg[cfg['basename']].update({'production': {'block':production_data}})
 
-        if cfg['analysis']['production']['api12']:
-            production_data = self.get_api12_array_for_production_data(cfg)
+        if "block" in cfg and cfg['analysis']['production']['block']:
+            bottom_lease_array = self.get_bottom_leases_by_block(cfg)
+
+            if "prod_by_lease" in cfg and cfg['prod_by_lease']['flag']:
+                production_data = self.get_production_data_for_each_lease(cfg)
+                cfg[cfg['basename']].update({'production': {'block':production_data}})
+
+        if "api12" in cfg and cfg['analysis']['production']['api12']:
+            production_data = self.get_production_data_for_each_api12(cfg)
             cfg[cfg['basename']].update({'production': {'api12':production_data}})
 
         return cfg
@@ -47,54 +51,30 @@ class BSEEData:
                 api12_array = api12_array + api12_csv_group
 
         return api12_array
-
-    def get_production_data_by_bottom_lease(self, bottom_lease):
-   
-        # wire up scrapy_production_data.py?
-        # Output files are: LNG15110.csv & LNG25251.csv
-        # Add these output csv files path to cfg[cfg'basename']['production']['block']
-        
-        # Detailed workflow
-        # 1. Load production_data_by_lease.yml template
-        # 2. Update with input settings (e.g. bottom_lease, output folder)
-        # 3. Run the application as individual process to save the data
-        # 4. Add output csv files to cfg[cfg'basename']['production']['block']
-        
-        pass
     
-    def get_api12_array_for_production_data(self, cfg):
+    def get_production_data_for_each_api12(self, cfg):
 
         api12_array = cfg[cfg['basename']]['api12']
         for api12 in api12_array:
-            production_data = self.get_production_data_for_api12(api12, cfg)
-            # Add these output csv files path to cfg[cfg'basename']['production']['api12']
+            production_data = self.get_production_data_by_api12(api12, cfg)
+            
         return production_data
     
-    def get_production_data_for_api12(self, api12, cfg):
+    def get_production_data_by_api12(self, api12, cfg):
 
         from energydata.engine import engine as energy_engine
         production_yml = f_d_templates.get_data_from_existing_files(cfg['Analysis'].copy())
 
         settings = { 'api12': api12,
                     'files_folder': 'tests/modules/bsee/data/well_production_yearly/csv',
-                    'output_dir': 'tests/modules/bsee/data/results/Data/well_production_data/production_data_for_wellAPI.csv'
+                    'output_dir': 'tests/modules/bsee/data/results/Data/well_production_data/production_data_by_wellAPI.csv'
                     }
         production_yml['settings'].update(settings)
         production_data = energy_engine(inputfile=None, cfg=production_yml, config_flag=False)
 
         return production_data
-        
 
-    def get_production_data_by_block_array(self, cfg):
-        
-        bottom_lease_array = cfg[cfg['basename']]['production']['bottom_lease']
-        for bottom_lease in bottom_lease_array:
-            production_data = self.get_production_data_by_bottom_lease(bottom_lease)
-            self.prepare_production_data(production_data)
-            # Add these output csv files path to cfg[cfg'basename']['production']['block']  
-
-
-    def get_block_bottom_leases(self, cfg):
+    def get_bottom_leases_by_block(self, cfg):
         
         bottom_lease_array = []
         if cfg[cfg['basename']]['well_data']['type'] == 'csv':
@@ -104,7 +84,28 @@ class BSEEData:
                 bottom_lease_csv_group = df['Bottom Lease Number'].unique().tolist()
                 bottom_lease_array = bottom_lease_array + bottom_lease_csv_group
 
-        cfg[cfg['basename']].update({'production': {'bottom_lease': bottom_lease_array}})
+        cfg[cfg['basename']].update({'production': {'bottom_leases': bottom_lease_array}})
 
-        return cfg
+        return bottom_lease_array
+    
+    def get_production_data_for_each_lease(self, cfg):
+        
+        bottom_lease_array = cfg[cfg['basename']]['production']['bottom_leases']
+        for bottom_lease in bottom_lease_array:
+            production_data = self.get_production_data_by_bottom_lease(bottom_lease, cfg)
+
+        return production_data
+
+    def get_production_data_by_bottom_lease(self, bottom_lease, cfg):
+        
+        from energydata.engine import engine as energy_engine
+        production_yml = f_d_templates.get_production_data_by_lease(cfg['Analysis'].copy())
+
+        settings = { 'bottom_lease': bottom_lease,
+                    'output_dir': 'tests/modules/bsee/data/results/Data/well_production_data/production_data_by_Bottom_lease.csv'
+                    }
+        production_yml['settings'].update(settings)
+        production_data = energy_engine(inputfile=None, cfg=production_yml, config_flag=False)
+
+        return production_data
 

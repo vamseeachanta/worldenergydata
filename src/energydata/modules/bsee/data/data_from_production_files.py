@@ -59,7 +59,7 @@ class DataFromFiles:
             final_df.to_csv(output_file, index=False)
             print(f"All matched rows written to {output_file}.")
         else:
-            print("No matching rows found for any API12.")
+            print(f"No matching rows found for {api12}.")
 
         return output_file
 
