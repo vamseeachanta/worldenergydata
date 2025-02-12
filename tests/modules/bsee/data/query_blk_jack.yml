@@ -1,0 +1,65 @@
+meta:
+  library: energydata
+  basename: bsee
+basename: bsee
+
+data:
+  by: block # API12, ?
+  groups:
+    - label: WR758
+      bottom_area: Walker Ridge (WR)
+      bottom_block: 758
+    - label: WR759
+      bottom_area: Walker Ridge (WR)
+      bottom_block: 759
+
+well_production:
+  flag: True
+
+analysis:
+  flag: True
+  api12: True
+  production_data: True
+  production:
+    flag: True
+    api12: True
+
+api12:
+  flag: True
+  
+settings:
+  save_csv: True
+  url: https://www.data.bsee.gov/Well/APD/Default.aspx
+  output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+
+input:
+    - label: WR758
+      bottom_area: Walker Ridge (WR)
+      bottom_block: 758
+    - label: WR759
+      bottom_area: Walker Ridge (WR)
+      bottom_block: 759
+
+form_data:
+  first_request:
+    ASPxFormLayout1$ASPxComboBoxBA: "Walker Ridge (WR)"
+    ASPxFormLayout1$ASPxComboBoxBA$DDD$L: "WR"
+    ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+    ASPxFormLayout1$ASPxComboBoxBBN: None
+    ASPxFormLayout1$ASPxButtonSubmitQ: "Submit Query"
+
+  second_request:
+    ASPxFormLayout1$ASPxComboBoxBA: "Walker Ridge (WR)"
+    ASPxFormLayout1$ASPxComboBoxBA$DDD$L: "WR"
+    ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+    ASPxFormLayout1$ASPxComboBoxBBN: None
+    __EVENTTARGET: "ASPxFormLayout2$btnCsvExport"
+    __EVENTARGUMENT: "Click"
+    
+
+default:
+  log_level: DEBUG
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False
