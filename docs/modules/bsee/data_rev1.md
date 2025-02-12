@@ -1,7 +1,19 @@
 ## Objective
 
 
+## SME, Chuck
 
+Vamsee, it would really be great to know what’s really been happening at / for JSM. The attached 2019 news article about “Stage 4” indicates that the big FPS acts as the hub for 43 (FORTY-THREE!) wells. The initial big brochure by CVX and O&GJ (published in 2016???) indicated that “Phase 1” had 9 wells (4@ Jack & 5@ St. Malo)… and, says that “Stage 2” adds just 2 wells at Jack and 2 at St. Malo with 1st oil from Stage 2 expected in 2017.
+
+The 2019 article about the $2B waterflood says that Stage 4 adds just 2 producers and 3 injectors (plus topside facilities). The “D&C+tieback, etc” for Stage 4 project averages out to about $400M/well tied back… which lines up reasonably well with the cost per tied back well for the 20 wells cited in the 2015 EIA/HIS report data on JSM. Therein, 20 wells were reported to be D&C’d+tied back for $9.7B.
+
+How does one get from 13 wells to 43 tied back?
+
+Also, the big CVX brochure on JSM says that the 2 fields provide an estimated oil-equivalent recoverable resource exceeding 500Mboe. The 2019 article might be saying that Stage 4 adds 175Mbbls to the project… or that JSM’s total recoverable is now estimated to be just 175Mbbls. That would be a huge drop if CVX really spent $12B for initial stages and $20B to bring the total well count to FORTY-THREE!  
+
+https://github.com/vamseeachanta/energydata/blob/202501/docs/modules/bsee/JStM-CVX-sanctions-$2B-waterflood-20190919.pdf
+
+https://github.com/vamseeachanta/energydata/blob/202501/docs/modules/bsee/JStM-key-info-EIA-Cost-Study-2016_IHS.pdf
 
 
 ## SME, Roy
