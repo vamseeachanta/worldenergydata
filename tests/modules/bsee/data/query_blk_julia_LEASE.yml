@@ -28,10 +28,6 @@ analysis:
 block:
   flag: True
 
-production:
-  flag: True
-  analysis: False
-
 prod_by_lease:
   flag: True
 
