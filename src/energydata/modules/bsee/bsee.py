@@ -42,7 +42,7 @@ class bsee:
             bsee_analysis.router(cfg)
 
         if 'production' in cfg and cfg['production']['flag']:
-            bsee_production.router(cfg)
+            cfg = well_data.get_well_data(cfg)
 
         if 'well_prod_data' in cfg and cfg['well_prod_data']['flag']:
             gwp.router(cfg)

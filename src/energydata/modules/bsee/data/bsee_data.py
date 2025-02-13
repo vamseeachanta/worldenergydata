@@ -101,10 +101,13 @@ class BSEEData:
         from energydata.engine import engine as energy_engine
         production_yml = f_d_templates.get_production_data_by_lease(cfg['Analysis'].copy())
 
-        settings = { 'bottom_lease': bottom_lease,
-                    'output_dir': 'tests/modules/bsee/data/results/Data/well_production_data/production_data_by_Bottom_lease.csv'
+        settings = { 'lease_number': bottom_lease,
+                    'label': 'LN' + str(bottom_lease),
                     }
-        production_yml['settings'].update(settings)
+        master_settings = { 'output_dir': 'tests/modules/bsee/data/results/Data/well_production_data/production_data_by_bottom_lease.csv'
+                    }
+        production_yml['settings'][0].update(settings)
+        production_yml['master_settings'].update(master_settings)
         production_data = energy_engine(inputfile=None, cfg=production_yml, config_flag=False)
 
         return production_data

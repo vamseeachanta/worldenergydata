@@ -1,6 +1,8 @@
 import scrapy
 from scrapy.utils.response import open_in_browser #noqa useful while program is running
-from scrapy.crawler import CrawlerProcess #noqa
+#from scrapy.crawler import CrawlerProcess #noqa
+from scrapy.crawler import CrawlerRunner #noqa
+from twisted.internet import reactor, defer #noqa
 from scrapy import FormRequest #noqa
 
 import pandas as pd #noqa
@@ -9,6 +11,8 @@ from io import BytesIO #noqa
 import logging #noqa
 from colorama import Fore, Style
 from colorama import init as colorama_init
+
+from subprocess import Popen, PIPE
 
 colorama_init()
 
@@ -22,20 +26,6 @@ class SpiderBsee(scrapy.Spider):
         super(SpiderBsee, self).__init__(*args, **kwargs)
         self.input_item = input_item
         self.cfg = cfg
-
-    def router(self, cfg):
-        settings = {
-            'LOG_LEVEL': 'CRITICAL',
-            'REQUEST_FINGERPRINTER_IMPLEMENTATION': '2.7'  # to avoid the warning message
-        }
-
-        process = CrawlerProcess(settings=settings)
-
-        for input_item in cfg['settings']:
-           
-            process.crawl(SpiderBsee, input_item=input_item, cfg=cfg)
-
-        process.start()
 
     def parse(self, response):
         
@@ -82,3 +72,31 @@ class SpiderBsee(scrapy.Spider):
                 print(response_csv)
         else:
             print(f"{Fore.RED}Failed to export CSV file.{Style.RESET_ALL} Status code: {response.status}")
+
+
+# Define a class to run the Scrapy spider
+class ScrapyRunnerProduction:
+    def __init__(self):
+        # Initialize the CrawlerRunner with specific settings
+        self.runner = CrawlerRunner({
+            'LOG_LEVEL': 'CRITICAL',
+            'REQUEST_FINGERPRINTER_IMPLEMENTATION': '2.7'
+        })
+
+        self.task_count = 0
+
+    # Run the spider with the given configuration and input item
+    @defer.inlineCallbacks
+    def run_spider(self, cfg, input_item):
+
+        self.task_count += 1
+        yield self.runner.crawl(SpiderBsee, input_item=input_item, cfg=cfg)
+        self.task_count -= 1
+
+        if self.task_count == 0:
+            #print("All tasks completed, stopping reactor.")
+            reactor.stop()
+
+    # Start the reactor to run the spider
+    def start(self):
+       reactor.run()

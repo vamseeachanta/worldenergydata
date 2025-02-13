@@ -75,7 +75,7 @@ class BSEESpider(scrapy.Spider):
         else:
             print(f"{Fore.RED}Failed to export CSV file.{Style.RESET_ALL} Status code: {response.status}")
 
-class ScrapyRunner:
+class ScrapyRunnerBlock:
     def __init__(self):
         self.runner = CrawlerRunner({
             'LOG_LEVEL': 'CRITICAL',
