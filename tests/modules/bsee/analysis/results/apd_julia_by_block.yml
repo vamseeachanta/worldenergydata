@@ -9,18 +9,10 @@ dictitems:
   result_method: selenium
   settings_master: ~
   input:
-  - save_csv: true
-    url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
-    label: WR540
-    bottom_area: Walker Ridge (WR)
-    bottom_block: 540
-  - save_csv: true
-    url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
-    label: WR584
-    bottom_area: Walker Ridge (WR)
-    bottom_block: 584
+  - name: example1
+    well_api12: 608174149400
+  - name: example2
+    well_api12: 608174149401
   default:
     log_level: DEBUG
     config:
@@ -33,10 +25,23 @@ dictitems:
   block_data:
     flag: true
     analysis: false
-  settings:
+  master_settings:
     save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
     output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+  settings:
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+    label: WR540
+    bottom_area: Walker Ridge (WR)
+    bottom_block: 540
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+    label: WR584
+    bottom_area: Walker Ridge (WR)
+    bottom_block: 584
   form_data:
     first_request:
       ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
@@ -58,8 +63,26 @@ dictitems:
     file_name_for_overwrite: apd_julia_by_block
     result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
     log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\logs
-    start_time: 2025-02-04 11:26:49.998797
+    start_time: 2025-02-13 11:09:16.571429
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\apd_julia_by_block.yml
     fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
+  bsee:
+    well_data:
+      type: csv
+      groups:
+      - save_csv: true
+        url: https://www.data.bsee.gov/Well/APD/Default.aspx
+        output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+        label: WR540
+        bottom_area: Walker Ridge (WR)
+        bottom_block: 540
+        file_name: tests\modules\bsee\analysis\results\Data\julia_by_block\WR540.csv
+      - save_csv: true
+        url: https://www.data.bsee.gov/Well/APD/Default.aspx
+        output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+        label: WR584
+        bottom_area: Walker Ridge (WR)
+        bottom_block: 584
+        file_name: tests\modules\bsee\analysis\results\Data\julia_by_block\WR584.csv

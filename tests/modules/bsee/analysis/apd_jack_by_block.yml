@@ -7,12 +7,12 @@ block_data:
   flag: True
   analysis: False
 
-settings:
+master_settings:
   save_csv: True
   url: https://www.data.bsee.gov/Well/APD/Default.aspx
   output_dir: tests\modules\bsee\analysis\results\Data\jack_by_block
 
-input:
+settings:
   - label: WR758
     bottom_area: Walker Ridge (WR)
     bottom_block: 758

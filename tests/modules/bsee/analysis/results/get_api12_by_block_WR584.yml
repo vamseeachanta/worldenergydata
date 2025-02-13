@@ -9,18 +9,10 @@ dictitems:
   result_method: selenium
   settings_master: ~
   input:
-  - save_csv: true
-    url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
-    label: WR540
-    bottom_area: Walker Ridge (WR)
-    bottom_block: 540
-  - save_csv: true
-    url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
-    label: WR584
-    bottom_area: Walker Ridge (WR)
-    bottom_block: 584
+  - name: example1
+    well_api12: 608174149400
+  - name: example2
+    well_api12: 608174149401
   default:
     log_level: DEBUG
     config:
@@ -45,13 +37,27 @@ dictitems:
   analysis:
     flag: true
     api12: true
+    production_data: true
     production:
-      block: true
-      api12: true
-  settings:
+      block: false
+      api12: false
+  master_settings:
     save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
     output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+  settings:
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+    label: WR540
+    bottom_area: Walker Ridge (WR)
+    bottom_block: 540
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+    label: WR584
+    bottom_area: Walker Ridge (WR)
+    bottom_block: 584
   form_data:
     first_request:
       ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
@@ -68,16 +74,16 @@ dictitems:
       __EVENTARGUMENT: Click
   Analysis:
     basename: bsee
-    analysis_root_folder: k:\github\energydata\tests\modules\bsee\analysis
+    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis
     file_name: get_api12_by_block_WR584
     file_name_for_overwrite: get_api12_by_block_WR584
-    result_folder: k:\github\energydata\tests\modules\bsee\analysis\results
-    log_folder: k:\github\energydata\tests\modules\bsee\analysis\logs
-    start_time: 2025-02-06 21:13:46.075152
+    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
+    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\logs
+    start_time: 2025-02-13 11:14:13.213670
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: k:\github\energydata\tests\modules\bsee\analysis\get_api12_by_block_WR584.yml
-    fe_folder: k:\github\energydata\tests\modules\bsee\analysis\results
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\get_api12_by_block_WR584.yml
+    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
   bsee:
     well_data:
       type: csv
@@ -113,4 +119,3 @@ dictitems:
     - 608124012701
     - 608114078600
     - 608114078601
-    production: ~
