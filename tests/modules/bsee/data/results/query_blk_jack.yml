@@ -1,35 +1,190 @@
 &id001 !!python/object/new:assetutilities.common.data.AttributeDict
 state: *id001
 dictitems:
-  meta:
-    library: energydata
-    basename: bsee
   basename: bsee
-  existing_data:
-    flag: true
+  type:
+    data: false
     analysis: false
-  data_from_files:
-    production: true
-  settings:
-    files_folder: tests/modules/bsee/data/well_production_yearly/csv
-    output_dir: tests/modules/bsee/data/results/Data/well_production_data/production_data_by_wellAPI.csv
-    api12: 608124001300
+    results: false
+  result_method: selenium
+  settings_master: ~
+  input:
+  - name: example1
+    well_api12: 608174149400
+  - name: example2
+    well_api12: 608174149401
   default:
     log_level: DEBUG
     config:
       overwrite:
         output: true
       cfg_sensitivities: false
+  meta:
+    library: energydata
+    basename: bsee
+  data:
+    by: block
+    groups:
+    - label: WR758
+      bottom_area: Walker Ridge (WR)
+      bottom_block: 758
+    - label: WR759
+      bottom_area: Walker Ridge (WR)
+      bottom_block: 759
+  well_production:
+    flag: true
+  analysis:
+    flag: true
+    api12: true
+    production_data: true
+    production:
+      flag: true
+      api12: true
+  api12:
+    flag: true
+  master_settings:
+    save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+  settings:
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+    label: WR758
+    bottom_area: Walker Ridge (WR)
+    bottom_block: 758
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+    label: WR759
+    bottom_area: Walker Ridge (WR)
+    bottom_block: 759
+  form_data:
+    first_request:
+      ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
+      ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
+      ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+      ASPxFormLayout1$ASPxComboBoxBBN: None
+      ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+    second_request:
+      ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
+      ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
+      ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+      ASPxFormLayout1$ASPxComboBoxBBN: None
+      __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+      __EVENTARGUMENT: Click
   Analysis:
     basename: bsee
-    analysis_root_folder: k:\github\energydata\tests\modules\bsee\data
+    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
     file_name: query_blk_jack
     file_name_for_overwrite: query_blk_jack
-    result_folder: k:\github\energydata\tests\modules\bsee\data\results
-    log_folder: k:\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-02-12 11:41:47.874496
+    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
+    start_time: &id003 2025-02-13 09:58:04.617273
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: k:\github\energydata\tests\modules\bsee\data\query_blk_jack.yml
-    fe_folder: k:\github\energydata\tests\modules\bsee\data\results
-  bsee: {}
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\query_blk_jack.yml
+    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+  bsee:
+    well_data:
+      type: csv
+      groups:
+      - save_csv: true
+        url: https://www.data.bsee.gov/Well/APD/Default.aspx
+        output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+        label: WR758
+        bottom_area: Walker Ridge (WR)
+        bottom_block: 758
+        file_name: tests\modules\bsee\analysis\results\Data\julia_by_block\WR758.csv
+      - save_csv: true
+        url: https://www.data.bsee.gov/Well/APD/Default.aspx
+        output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+        label: WR759
+        bottom_area: Walker Ridge (WR)
+        bottom_block: 759
+        file_name: tests\modules\bsee\analysis\results\Data\julia_by_block\WR759.csv
+    api12:
+    - 427024026700
+    - 608124001700
+    - 427024029500
+    - 427024029501
+    - 427024029700
+    - 608124002700
+    - 608124002701
+    - 608124002702
+    - 608124002703
+    - 608124005200
+    - 608124005100
+    - 608124005000
+    - 608124005101
+    - 608124005102
+    - 608124005103
+    - 608124001701
+    - 608124005201
+    - 608124005202
+    - 608124011500
+    - 608124011600
+    - 608124005203
+    - 608124011501
+    - 608124011502
+    - 608124011503
+    - 608124011504
+    - 608124011601
+    - 608124011602
+    - 608124011603
+    - 608124011604
+    - 608124011605
+    - 608124011606
+    - 608124012600
+    - 608124012601
+    - 608124014600
+    - 608124012602
+    - 608124015500
+    - 608124015501
+    - 608124015502
+    - 608124015503
+    - 608124015504
+    - 608044022300
+    - 608124001300
+    - 608124001301
+    - 608044022301
+    - 608124012500
+    - 608174147300
+    - 608124015300
+    - 608124015400
+    production:
+      api12: &id002 !!python/object/new:assetutilities.common.data.AttributeDict
+        state: *id002
+        dictitems:
+          meta:
+            library: energydata
+            basename: bsee
+          basename: bsee
+          existing_data:
+            flag: true
+            analysis: false
+          data_from_files:
+            production: true
+          settings:
+            files_folder: tests/modules/bsee/data/well_production_yearly/csv
+            output_dir: tests/modules/bsee/data/results/Data/well_production_data/production_data_by_wellAPI.csv
+            api12: 608124015400
+          default:
+            log_level: DEBUG
+            config:
+              overwrite:
+                output: true
+              cfg_sensitivities: false
+          Analysis:
+            basename: bsee
+            analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
+            file_name: query_blk_jack
+            file_name_for_overwrite: query_blk_jack
+            result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+            log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
+            start_time: *id003
+            cfg_array_file_names: ~
+            DefaultInputFile: ~
+            CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\query_blk_jack.yml
+            fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+          bsee: {}

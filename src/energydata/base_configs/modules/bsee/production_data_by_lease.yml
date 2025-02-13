@@ -12,11 +12,11 @@ settings:
   save_csv: True
   url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
   output_dir: None
-  label: production_data
-  lease_number: 
+  label: None
+  lease_number: None
   Duration:
-    from : 01/2024
-    to : 02/2024
+    from : 01/1999
+    to : 12/2024
   form_data:
     first_request:
       ASPxFormLayout1$ASPxTextBoxLN: 

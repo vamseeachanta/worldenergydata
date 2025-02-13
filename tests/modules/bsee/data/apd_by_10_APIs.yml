@@ -7,22 +7,12 @@ well_data:
   flag: True
   analysis: False
 
-settings:
+master_settings:
   save_csv: True
   url: https://www.data.bsee.gov/Well/APD/Default.aspx
   output_dir: tests\modules\bsee\data\results\Data\by_API
 
-form_data:
-  first_request:
-    "ASPxFormLayout1$ASPxTextBoxAPI":
-    "ASPxFormLayout1$ASPxButtonSubmitQ": "Submit Query"
-
-  second_request:
-    "ASPxFormLayout1$ASPxTextBoxAPI":
-    "__EVENTTARGET": "ASPxFormLayout2$btnCsvExport"
-    "__EVENTARGUMENT": "Click"
-
-input:
+settings:
   - label: API_number_1
     well_api12: 608164024500
 
@@ -53,6 +43,16 @@ input:
   - label: API_number_10
     well_api12: 177024118904
 
+form_data:
+  first_request:
+    "ASPxFormLayout1$ASPxTextBoxAPI":
+    "ASPxFormLayout1$ASPxButtonSubmitQ": "Submit Query"
+
+  second_request:
+    "ASPxFormLayout1$ASPxTextBoxAPI":
+    "__EVENTTARGET": "ASPxFormLayout2$btnCsvExport"
+    "__EVENTARGUMENT": "Click"
+    
 default:
   log_level: DEBUG
   config:
