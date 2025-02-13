@@ -6,7 +6,7 @@ basename: bsee
 well_prod_data:
   flag: True
 
-input : 
+settings : 
   out_dir: tests\modules\bsee\data\well_production_yearly\zip
 
 

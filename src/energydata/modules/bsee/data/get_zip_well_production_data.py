@@ -17,7 +17,7 @@ class GetWellProdData:
         
             url = "https://www.data.bsee.gov/Main/OGOR-A.aspx"
 
-            save_dir = cfg['input']['out_dir']
+            save_dir = cfg['settings']['out_dir']
             os.makedirs(save_dir, exist_ok=True)
 
             headers = {

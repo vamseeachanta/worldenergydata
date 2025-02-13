@@ -2,7 +2,7 @@
 from assetutilities.common.update_deep import update_deep_dictionary #noqa
 # Reader imports
 from energydata.modules.bsee.data.data_from_production_files import DataFromFiles
-from energydata.modules.bsee.data.get_well_production_data import GetWellProdData
+from energydata.modules.bsee.data.get_zip_well_production_data import GetWellProdData
 from energydata.modules.bsee.data.well_data import WellData
 from energydata.modules.bsee.analysis.prepare_data_for_analysis import (
     PrepareBseeData,
@@ -25,8 +25,8 @@ class bsee:
 
     def router(self, cfg):
         # Update configuration with master data
-        if 'input' in cfg and 'settings' in cfg or 'settings' in cfg and 'master_settings' in cfg:
-            cfg = self.get_cfg_with_master_data(cfg)
+        # if 'input' in cfg and 'settings' in cfg or 'settings' in cfg and 'master_settings' in cfg:
+        cfg = self.get_cfg_with_master_data(cfg)
         
 
         cfg[cfg['basename']] = {}
@@ -55,6 +55,10 @@ class bsee:
     # Function to update configuration 
     def get_cfg_with_master_data(self, cfg):
         items_key = 'settings'
+        # Check if 'settings' key is present in the cfg dictionary
+        if items_key not in cfg:
+            raise KeyError(f"The key '{items_key}' is not present in the configuration file.")
+        
         if 'master_settings' in cfg:
             settings_master = cfg['master_settings'].copy()
             items = cfg[items_key]

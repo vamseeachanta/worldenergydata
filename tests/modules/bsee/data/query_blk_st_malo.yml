@@ -25,15 +25,15 @@ analysis:
 api12:
   flag: True
 
-settings:
+master_settings:
   save_csv: True
   url: https://www.data.bsee.gov/Well/APD/Default.aspx
   output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
 
-input:
-    - label: WR678
-      bottom_area: Walker Ridge (WR)
-      bottom_block: 678
+settings:
+  - label: WR678
+    bottom_area: Walker Ridge (WR)
+    bottom_block: 678
 
 form_data:
   first_request:
