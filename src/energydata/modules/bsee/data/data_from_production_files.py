@@ -24,9 +24,9 @@ class DataFromFiles:
 
 
     def get_production_data_by_api12(self, cfg):
-       
+
         folder_path = cfg['settings']['files_folder']
-        
+
         library_name = 'energydata'
         library_file_cfg = {
             'filepath': folder_path,
