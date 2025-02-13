@@ -6,7 +6,7 @@ basename: bsee
 data_prep:
   flag: True
 
-input_path:
+settings:
   data_dir: tests\modules\bsee\data\results\Data\by_zip
 
 config_data_map:
