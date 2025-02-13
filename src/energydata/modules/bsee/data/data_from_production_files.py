@@ -1,9 +1,14 @@
 # Standard library imports
 import os
+import logging
 
 # Third party imports
 import pandas as pd
 
+from assetutilities.common.utilities import is_dir_valid_func
+from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
+
+wwy = WorkingWithYAML()
 
 class DataFromFiles:
     
@@ -21,6 +26,16 @@ class DataFromFiles:
     def get_production_data_by_api12(self, cfg):
        
         folder_path = cfg['settings']['files_folder']
+        
+        library_name = 'energydata'
+        library_file_cfg = {
+            'filepath': folder_path,
+            'library_name': library_name
+        }
+
+        folder_path = wwy.get_library_filepath(library_file_cfg)
+
+
         output_file = cfg['settings']['output_dir']
         api12 = cfg['settings']['api12']
 
