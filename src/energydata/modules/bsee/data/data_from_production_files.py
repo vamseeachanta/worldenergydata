@@ -33,11 +33,12 @@ class DataFromFiles:
             'library_name': library_name
         }
 
-        folder_path = wwy.get_library_filepath(library_file_cfg)
+        folder_path = wwy.get_library_filepath(library_file_cfg, src_relative_location_flag=False)
 
 
-        output_file = cfg['settings']['output_dir']
         api12 = cfg['settings']['api12']
+        logging.info(f"Getting production data for API12: {api12}" ... START)
+        output_file = os.path.join(cfg['Analysis']['result_folder'], 'Data', 'production_data_' + str(api12) + '.csv')
 
         if not hasattr(self, 'all_matching_rows'):
             self.all_matching_rows = []
@@ -75,6 +76,8 @@ class DataFromFiles:
             print(f"All matched rows written to {output_file}.")
         else:
             print(f"No matching rows found for {api12}.")
+
+        logging.info(f"Getting production data for API12: {api12} ... COMPLETE")
 
         return output_file
 
