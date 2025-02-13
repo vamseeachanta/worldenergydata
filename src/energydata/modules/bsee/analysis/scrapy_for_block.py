@@ -61,9 +61,13 @@ class BSEESpider(scrapy.Spider):
 
         label = self.input_item['label']
         output_path = self.input_item['output_dir']
+        if output_path is None:
+            result_folder = self.cfg['Analysis']['result_folder']
+            output_path = os.path.join(result_folder, 'Data')
+
         analysis_root_folder = self.cfg['Analysis']['analysis_root_folder']
         is_dir_valid, output_path = is_dir_valid_func(output_path, analysis_root_folder)
-        
+
         file_path = os.path.join(output_path, f"{label}.csv")
 
         if response.status == 200:
