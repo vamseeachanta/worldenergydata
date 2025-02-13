@@ -18,7 +18,7 @@ class PrepareBseeData:
     
     def merge_columns_from_files(self, cfg, files, label):
         
-        data_dir = cfg['input_path']['data_dir']
+        data_dir = cfg['settings']['data_dir']
         dataframes = []
         
         for file_info in files:

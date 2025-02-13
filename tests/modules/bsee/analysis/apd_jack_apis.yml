@@ -7,7 +7,7 @@ well_data:
   flag: True
   analysis: False
 
-settings:
+master_settings:
   save_csv: True
   url: https://www.data.bsee.gov/Well/APD/Default.aspx
   output_dir: tests\modules\bsee\analysis\results\Data\Jack_well_data
@@ -22,7 +22,7 @@ form_data:
     '__EVENTTARGET': 'ASPxFormLayout2$btnCsvExport'
     '__EVENTARGUMENT': 'Click'
 
-input:
+settings:
   - label: API_1
     well_api12 : 608124005000
 
