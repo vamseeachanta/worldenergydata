@@ -37,7 +37,7 @@ class DataFromFiles:
 
 
         api12 = cfg['settings']['api12']
-        logging.info(f"Getting production data for API12: {api12}" ... START)
+        logging.info(f"Getting production data for API12: {api12} ... START")
         output_file = os.path.join(cfg['Analysis']['result_folder'], 'Data', 'production_data_' + str(api12) + '.csv')
 
         if not hasattr(self, 'all_matching_rows'):

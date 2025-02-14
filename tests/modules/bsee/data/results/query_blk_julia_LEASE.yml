@@ -1,0 +1,64 @@
+&id001 !!python/object/new:assetutilities.common.data.AttributeDict
+state: *id001
+dictitems:
+  meta:
+    library: energydata
+    basename: bsee
+  basename: bsee
+  production:
+    flag: true
+    analysis: false
+  master_settings:
+    save_csv: true
+    url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+    output_dir: tests/modules/bsee/data/results/Data/well_production_data/production_data_by_bottom_lease.csv
+  settings:
+  - save_csv: true
+    url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+    output_dir: tests/modules/bsee/data/results/Data/well_production_data/production_data_by_bottom_lease.csv
+    label: LNG20351
+    lease_number: G20351
+    Duration:
+      from: None
+      to: None
+  form_data:
+    first_request:
+      ASPxFormLayout1$ASPxTextBoxLN: ~
+      ASPxFormLayout1$ASPxTextBoxDF: ~
+      ASPxFormLayout1$ASPxTextBoxDT: ~
+      ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+    second_request:
+      ASPxFormLayout1$ASPxTextBoxLN: ~
+      __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+      __EVENTARGUMENT: Click
+  default:
+    log_level: DEBUG
+    config:
+      overwrite:
+        output: true
+      cfg_sensitivities: false
+  Analysis:
+    basename: bsee
+    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
+    file_name: query_blk_julia_LEASE
+    file_name_for_overwrite: query_blk_julia_LEASE
+    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
+    start_time: 2025-02-14 10:42:48.549814
+    cfg_array_file_names: ~
+    DefaultInputFile: ~
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\query_blk_julia_LEASE.yml
+    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+  bsee:
+    well_data:
+      type: csv
+      groups:
+      - save_csv: true
+        url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+        output_dir: tests/modules/bsee/data/results/Data/well_production_data/production_data_by_bottom_lease.csv
+        label: LNG20351
+        lease_number: G20351
+        Duration:
+          from: None
+          to: None
+        file_name: tests/modules/bsee/data/results/Data/well_production_data/production_data_by_bottom_lease.csv\LNG20351.csv
