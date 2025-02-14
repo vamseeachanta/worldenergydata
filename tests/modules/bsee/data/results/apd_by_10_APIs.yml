@@ -29,14 +29,6 @@ dictitems:
     save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
     output_dir: tests\modules\bsee\data\results\Data\by_API
-  form_data:
-    first_request:
-      ASPxFormLayout1$ASPxTextBoxAPI: ~
-      ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
-    second_request:
-      ASPxFormLayout1$ASPxTextBoxAPI: ~
-      __EVENTTARGET: ASPxFormLayout2$btnCsvExport
-      __EVENTARGUMENT: Click
   settings:
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
@@ -88,18 +80,26 @@ dictitems:
     output_dir: tests\modules\bsee\data\results\Data\by_API
     label: API_number_10
     well_api12: 177024118904
+  form_data:
+    first_request:
+      ASPxFormLayout1$ASPxTextBoxAPI: ~
+      ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+    second_request:
+      ASPxFormLayout1$ASPxTextBoxAPI: ~
+      __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+      __EVENTARGUMENT: Click
   Analysis:
     basename: bsee
-    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
+    analysis_root_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
     file_name: apd_by_10_APIs
     file_name_for_overwrite: apd_by_10_APIs
-    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
-    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-02-13 09:24:30.704790
+    result_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    log_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
+    start_time: 2025-02-13 22:26:06.569596
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\apd_by_10_APIs.yml
-    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    CustomInputFile: apd_by_10_APIs.yml
+    fe_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
   bsee:
     well_data:
       type: csv
