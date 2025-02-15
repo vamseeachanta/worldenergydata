@@ -1,5 +1,5 @@
 # Standard library imports
-from energydata.common.bsee.fetch_data_templates import FetchDataTemplates
+from energydata.common.bsee.retrieve_data_templates import RetrieveDataTemplates
 
 # Third party imports
 import pandas as pd
@@ -7,7 +7,7 @@ import datetime
 
 import os
 
-f_d_templates = FetchDataTemplates()
+f_d_templates = RetrieveDataTemplates()
 
 class BSEEData:
     

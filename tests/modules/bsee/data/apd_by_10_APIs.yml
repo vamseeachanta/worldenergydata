@@ -10,7 +10,7 @@ well_data:
 master_settings:
   save_csv: True
   url: https://www.data.bsee.gov/Well/APD/Default.aspx
-  output_dir: tests\modules\bsee\data\results\Data\by_API
+  output_dir: data\modules\bsee\well\scrapy_output
 
 settings:
   - label: API_number_1

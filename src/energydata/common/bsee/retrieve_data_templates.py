@@ -4,7 +4,7 @@ from assetutilities.common.yml_utilities import WorkingWithYAML
 
 wwy = WorkingWithYAML()
 
-class FetchDataTemplates:
+class RetrieveDataTemplates:
     
     def __init__(self):
         pass

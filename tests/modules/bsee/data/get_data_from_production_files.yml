@@ -13,8 +13,7 @@ data_from_files:
 
 settings:
   api12: 608124012700
-  files_folder: tests\modules\bsee\data\well_production_yearly\csv
-  output_dir: tests\modules\bsee\data\results\Data\well_production_data\trial_production_data_by_wellAPI.csv
+  files_folder: data\modules\bsee\production\csv
   
 
 default:

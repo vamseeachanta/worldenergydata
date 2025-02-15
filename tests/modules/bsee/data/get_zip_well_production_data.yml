@@ -7,7 +7,7 @@ well_prod_data:
   flag: True
 
 settings : 
-  out_dir: tests\modules\bsee\data\well_production_yearly\zip
+  out_dir: data\modules\bsee\production\zip
 
 
 default:

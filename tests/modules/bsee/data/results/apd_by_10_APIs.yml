@@ -28,56 +28,56 @@ dictitems:
   master_settings:
     save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\data\results\Data\by_API
+    output_dir: data\modules\bsee\well\scrapy_output
   settings:
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\data\results\Data\by_API
+    output_dir: data\modules\bsee\well\scrapy_output
     label: API_number_1
     well_api12: 608164024500
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\data\results\Data\by_API
+    output_dir: data\modules\bsee\well\scrapy_output
     label: API_number_2
     well_api12: 608164025800
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\data\results\Data\by_API
+    output_dir: data\modules\bsee\well\scrapy_output
     label: API_number_3
     well_api12: 608164025400
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\data\results\Data\by_API
+    output_dir: data\modules\bsee\well\scrapy_output
     label: API_number_4
     well_api12: 608164025600
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\data\results\Data\by_API
+    output_dir: data\modules\bsee\well\scrapy_output
     label: API_number_5
     well_api12: 608174059000
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\data\results\Data\by_API
+    output_dir: data\modules\bsee\well\scrapy_output
     label: API_number_6
     well_api12: 608164032700
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\data\results\Data\by_API
+    output_dir: data\modules\bsee\well\scrapy_output
     label: API_number_7
     well_api12: 177054107800
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\data\results\Data\by_API
+    output_dir: data\modules\bsee\well\scrapy_output
     label: API_number_8
     well_api12: 177094120301
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\data\results\Data\by_API
+    output_dir: data\modules\bsee\well\scrapy_output
     label: API_number_9
     well_api12: 177244067506
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\data\results\Data\by_API
+    output_dir: data\modules\bsee\well\scrapy_output
     label: API_number_10
     well_api12: 177024118904
   form_data:
@@ -90,16 +90,16 @@ dictitems:
       __EVENTARGUMENT: Click
   Analysis:
     basename: bsee
-    analysis_root_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
+    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
     file_name: apd_by_10_APIs
     file_name_for_overwrite: apd_by_10_APIs
-    result_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
-    log_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-02-13 22:26:06.569596
+    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
+    start_time: 2025-02-15 10:28:49.353034
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: apd_by_10_APIs.yml
-    fe_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\apd_by_10_APIs.yml
+    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
   bsee:
     well_data:
       type: csv

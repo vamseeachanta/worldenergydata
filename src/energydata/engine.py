@@ -18,7 +18,7 @@ from assetutilities.common.yml_utilities import WorkingWithYAML
 # Reader imports
 from energydata.modules.bsee.bsee import bsee
 #from energydata.modules.bsee.data.bsee_data import BSEEData
-from energydata.modules.zip_data_dwnld.zip_utils import zip_utils
+from energydata.modules.zip_data_dwnld.zip import zip
 
 save_data = SaveData()
 wwy = WorkingWithYAML()
@@ -56,8 +56,8 @@ def engine(inputfile: str = None, cfg: dict = None, config_flag: bool = True) ->
         cfg_base = bsee_app.router(cfg_base)
     
     elif basename in ["zip_utils"]:
-        zip_utilities = zip_utils()
-        cfg_base = zip_utilities.router(cfg_base)
+        zip_utils = zip()
+        cfg_base = zip_utils.router(cfg_base)
 
     else:
         raise (Exception(f"Analysis for basename: {basename} not found. ... FAIL"))
