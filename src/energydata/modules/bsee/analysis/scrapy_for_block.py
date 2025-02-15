@@ -18,6 +18,7 @@ from scrapy.utils.response import (  # noqa useful while program is running
 from twisted.internet import defer, reactor  # noqa
 
 from assetutilities.common.utilities import is_dir_valid_func
+from crochet import setup, wait_for
 
 
 colorama_init()
@@ -81,23 +82,19 @@ class BSEESpider(scrapy.Spider):
 
 class ScrapyRunnerBlock:
     def __init__(self):
+        # Initialize the CrawlerRunner with specific settings
         self.runner = CrawlerRunner({
             'LOG_LEVEL': 'CRITICAL',
             'REQUEST_FINGERPRINTER_IMPLEMENTATION': '2.7'
         })
 
-        self.task_count = 0
-
-    @defer.inlineCallbacks
+    # Run the spider with the given configuration and input item
+    @wait_for(timeout=120)  # Adjust timeout as needed
     def run_spider(self, cfg, input_item):
+        deferred = self.runner.crawl(BSEESpider, input_item=input_item, cfg=cfg)
+        return deferred
 
-        self.task_count += 1
-        yield self.runner.crawl(BSEESpider, input_item=input_item, cfg=cfg)
-        self.task_count -= 1
-
-        if self.task_count == 0:
-            #print("All tasks completed, stopping reactor.")
-            reactor.stop()
-
-    def start(self):
-        reactor.run()
+if __name__ == "__main__":
+    runner = ScrapyRunnerBlock()
+    bsee_spider = BSEESpider()
+     

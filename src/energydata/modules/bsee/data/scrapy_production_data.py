@@ -1,24 +1,27 @@
 import scrapy
-from scrapy.utils.response import open_in_browser #noqa useful while program is running
-#from scrapy.crawler import CrawlerProcess #noqa
-from scrapy.crawler import CrawlerRunner #noqa
-from twisted.internet import reactor, defer #noqa
-from scrapy import FormRequest #noqa
+from scrapy.utils.response import open_in_browser  # noqa useful while program is running
+from scrapy.crawler import CrawlerRunner  # noqa
+from twisted.internet import reactor, defer  # noqa
+from scrapy import FormRequest  # noqa
 
-import pandas as pd #noqa
-import os #noqa
-from io import BytesIO #noqa
-import logging #noqa
+import pandas as pd  # noqa
+import os  # noqa
+from io import BytesIO  # noqa
+import logging  # noqa
 from colorama import Fore, Style
 from colorama import init as colorama_init
 
-from subprocess import Popen, PIPE
+from crochet import setup, wait_for
 
 colorama_init()
 
-logging.getLogger('scrapy').propagate = False # to avoid displaying log outputs in terminal
-class SpiderBsee(scrapy.Spider):
+# Initialize Crochet
+setup()
 
+logging.getLogger('scrapy').propagate = False  # to avoid displaying log outputs in terminal
+
+
+class SpiderBsee(scrapy.Spider):
     name = 'Production_data'
     start_urls = ['https://www.data.bsee.gov/Production/ProductionData/Default.aspx']
 
@@ -28,7 +31,6 @@ class SpiderBsee(scrapy.Spider):
         self.cfg = cfg
 
     def parse(self, response):
-        
         lease_num = str(self.input_item['lease_number'])
         start = str(self.input_item['Duration']['from'])
         end = str(self.input_item['Duration']['to'])
@@ -39,7 +41,7 @@ class SpiderBsee(scrapy.Spider):
         first_request_data['ASPxFormLayout1$ASPxTextBoxDT'] = end
 
         yield FormRequest.from_response(response, formdata=first_request_data, callback=self.step2)
-    
+
     def step2(self, response):
         if response.status == 200:
             print(f"{Fore.GREEN} submitted given form data successfully!{Style.RESET_ALL}")
@@ -49,7 +51,7 @@ class SpiderBsee(scrapy.Spider):
         lease_num = str(self.input_item['lease_number'])
         start = str(self.input_item['Duration']['from'])
         end = str(self.input_item['Duration']['to'])
-        
+
         second_request_data = self.cfg['form_data']['second_request']
         second_request_data['ASPxFormLayout1$ASPxTextBoxLN'] = lease_num
         second_request_data['ASPxFormLayout1$ASPxTextBoxDF'] = start
@@ -58,8 +60,7 @@ class SpiderBsee(scrapy.Spider):
         yield FormRequest.from_response(response, formdata=second_request_data, callback=self.parse_csv_data)
 
     def parse_csv_data(self, response):
-
-        label = self.input_item['label'] 
+        label = self.input_item['label']
         output_path = self.input_item['output_dir']
         file_path = os.path.join(output_path, f"{label}.csv")
 
@@ -74,7 +75,7 @@ class SpiderBsee(scrapy.Spider):
             print(f"{Fore.RED}Failed to export CSV file.{Style.RESET_ALL} Status code: {response.status}")
 
 
-# Define a class to run the Scrapy spider
+# Class to run the Scrapy spider
 class ScrapyRunnerProduction:
     def __init__(self):
         # Initialize the CrawlerRunner with specific settings
@@ -83,20 +84,14 @@ class ScrapyRunnerProduction:
             'REQUEST_FINGERPRINTER_IMPLEMENTATION': '2.7'
         })
 
-        self.task_count = 0
-
     # Run the spider with the given configuration and input item
-    @defer.inlineCallbacks
+    @wait_for(timeout=60.0)  # Adjust timeout as needed
     def run_spider(self, cfg, input_item):
+        deferred = self.runner.crawl(SpiderBsee, input_item=input_item, cfg=cfg)
+        return deferred
 
-        self.task_count += 1
-        yield self.runner.crawl(SpiderBsee, input_item=input_item, cfg=cfg)
-        self.task_count -= 1
+if __name__ == "__main__":
+    runner = ScrapyRunnerProduction()
+    spider_bsee = SpiderBsee()
 
-        if self.task_count == 0:
-            #print("All tasks completed, stopping reactor.")
-            reactor.stop()
-
-    # Start the reactor to run the spider
-    def start(self):
-       reactor.run()
+    

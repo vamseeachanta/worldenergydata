@@ -75,16 +75,16 @@ dictitems:
       __EVENTARGUMENT: Click
   Analysis:
     basename: bsee
-    analysis_root_folder: .
+    analysis_root_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
     file_name: query_blk_julia_API
     file_name_for_overwrite: query_blk_julia_API
-    result_folder: .\results
-    log_folder: .\logs
-    start_time: &id003 2025-02-14 10:20:28.789470
+    result_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    log_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
+    start_time: &id003 2025-02-15 11:23:39.433394
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: .\query_blk_julia_API.yml
-    fe_folder: .\results
+    CustomInputFile: query_blk_julia_API.yml
+    fe_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
   bsee:
     well_data:
       type: csv
@@ -95,14 +95,14 @@ dictitems:
         label: WR540
         bottom_area: Walker Ridge (WR)
         bottom_block: 540
-        file_name: .\results\Data\WR540.csv
+        file_name: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\WR540.csv
       - save_csv: true
         url: https://www.data.bsee.gov/Well/APD/Default.aspx
         output_dir: ~
         label: WR584
         bottom_area: Walker Ridge (WR)
         bottom_block: 584
-        file_name: .\results\Data\WR584.csv
+        file_name: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\WR584.csv
     api12:
     - 177024120700
     - 177024134000
@@ -145,14 +145,14 @@ dictitems:
               cfg_sensitivities: false
           Analysis:
             basename: bsee
-            analysis_root_folder: .
+            analysis_root_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
             file_name: query_blk_julia_API
             file_name_for_overwrite: query_blk_julia_API
-            result_folder: .\results
-            log_folder: .\logs
+            result_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+            log_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
             start_time: *id003
             cfg_array_file_names: ~
             DefaultInputFile: ~
-            CustomInputFile: .\query_blk_julia_API.yml
-            fe_folder: .\results
+            CustomInputFile: query_blk_julia_API.yml
+            fe_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
           bsee: {}
