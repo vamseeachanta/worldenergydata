@@ -4,7 +4,7 @@ from energydata.modules.zip_data_dwnld.dwnld_from_zipurl import DownloadFromZipU
 # Initialize instances of imported classes
 d_f_zu = DownloadFromZipUrl()
 
-class zip_utils:
+class zip:
 
     def __init__(self):
         pass
