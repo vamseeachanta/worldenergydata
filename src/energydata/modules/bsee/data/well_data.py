@@ -37,8 +37,6 @@ class WellData:
             for input_item in input_items:
                 scrapy_runner_production.run_spider(cfg, input_item)
                 output_data = self.generate_output_item(cfg, output_data, input_item)
-                
-            scrapy_runner_production.start()
 
         elif "block_data" in cfg and cfg['block_data']['flag'] or "well_production" in cfg and cfg['well_production']['flag']:
             input_items = cfg['settings']
@@ -49,8 +47,7 @@ class WellData:
                 # well_data_scrapper_cfg.update({'output_dir': output_path})
                 scrapy_runner_block.run_spider(cfg, input_item)
                 output_data = self.generate_output_item(cfg, output_data, input_item)
-                
-            scrapy_runner_block.start()
+        
 
         well_data = {'type': 'csv', 'groups': output_data}
         cfg[cfg['basename']].update({'well_data': well_data})
