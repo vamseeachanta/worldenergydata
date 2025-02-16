@@ -100,8 +100,12 @@ class BSEEData:
 
         settings = { 'lease_number': bottom_lease,
                     'label': 'LN' + str(bottom_lease),
+                    'Duration': {
+                        'from': '01/1999',
+                        'to': '01/2024'
                     }
-        master_settings = { 'output_dir': 'tests/modules/bsee/data/results/Data/well_production_data/production_data_by_bottom_lease.csv'
+                    }
+        master_settings = { 'output_dir': 'tests/modules/bsee/data/results/Data/well_production_data'
                     }
         production_yml['settings'][0].update(settings)
         production_yml['master_settings'].update(master_settings)

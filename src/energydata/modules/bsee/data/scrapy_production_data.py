@@ -60,17 +60,21 @@ class SpiderBsee(scrapy.Spider):
         yield FormRequest.from_response(response, formdata=second_request_data, callback=self.parse_csv_data)
 
     def parse_csv_data(self, response):
-        label = self.input_item['label']
+        lease_num = self.input_item['lease_number']
         output_path = self.input_item['output_dir']
-        file_path = os.path.join(output_path, f"{label}.csv")
+        file_path = os.path.join(output_path, 'production_data_' + str(lease_num) + '.csv')
 
         if response.status == 200:
-            with open(file_path, 'wb') as f:
-                f.write(response.body)
-                response_csv = pd.read_csv(BytesIO(response.body))
-                print()
-                print("\n****The Scraped data of given parameter ****\n")
-                print(response_csv)
+            response_csv = pd.read_csv(BytesIO(response.body))
+            
+            if response_csv.empty:
+                print(f"{Fore.RED}No data found for lease {lease_num}. Skipping CSV file.{Style.RESET_ALL}")
+            else:
+                with open(file_path, 'wb') as f:
+                    f.write(response.body)
+                    print()
+                    print(f"\n****The Scraped data of given lease {lease_num} ****\n")
+                    print(response_csv)
         else:
             print(f"{Fore.RED}Failed to export CSV file.{Style.RESET_ALL} Status code: {response.status}")
 
@@ -78,14 +82,12 @@ class SpiderBsee(scrapy.Spider):
 # Class to run the Scrapy spider
 class ScrapyRunnerProduction:
     def __init__(self):
-        # Initialize the CrawlerRunner with specific settings
         self.runner = CrawlerRunner({
             'LOG_LEVEL': 'CRITICAL',
             'REQUEST_FINGERPRINTER_IMPLEMENTATION': '2.7'
         })
 
-    # Run the spider with the given configuration and input item
-    @wait_for(timeout=60.0)  # Adjust timeout as needed
+    @wait_for(timeout=60.0) 
     def run_spider(self, cfg, input_item):
         deferred = self.runner.crawl(SpiderBsee, input_item=input_item, cfg=cfg)
         return deferred
