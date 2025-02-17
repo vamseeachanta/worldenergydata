@@ -1,0 +1,23 @@
+meta:
+  library: energydata
+  basename: bsee
+basename: bsee
+
+existing_data:
+  flag: True
+  analysis: False
+
+data_from_files:
+  production: True
+  
+settings:
+  files_folder: None
+  output_dir: None 
+  
+
+default:
+  log_level: DEBUG
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False

@@ -1,0 +1,40 @@
+meta:
+  library: energydata
+  basename: bsee
+basename: bsee
+
+production:
+  flag: True
+  analysis: False
+
+master_settings:
+  save_csv: True
+  url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+  output_dir: None
+
+settings:
+  - label: None
+    lease_number: None
+    Duration:
+      from : None
+      to : None
+    
+form_data:
+  first_request:
+    ASPxFormLayout1$ASPxTextBoxLN: 
+    ASPxFormLayout1$ASPxTextBoxDF: 
+    ASPxFormLayout1$ASPxTextBoxDT: 
+    ASPxFormLayout1$ASPxButtonSubmitQ: "Submit Query"
+
+  second_request:
+    ASPxFormLayout1$ASPxTextBoxLN: 
+    __EVENTTARGET: "ASPxFormLayout2$btnCsvExport"
+    __EVENTARGUMENT: "Click"
+
+
+default:
+  log_level: DEBUG
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False
