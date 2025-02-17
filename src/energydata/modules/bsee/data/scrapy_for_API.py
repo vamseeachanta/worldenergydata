@@ -70,18 +70,22 @@ class BSEEDataSpider(scrapy.Spider):
     # Parse the CSV data from the response
     def parse_csv_data(self, response):
         # Extract label and output directory from input item
+        API = self.input_item['well_api12']
         label = self.input_item['label']
         output_path = self.input_item['output_dir']
         file_path = os.path.join(output_path, f"{label}.csv")
 
         if response.status == 200:
-            # Write the response body to a CSV file
-            with open(file_path, 'wb') as f:
-                f.write(response.body)
-                response_csv = pd.read_csv(BytesIO(response.body))
-                print()
-                print("\n****The Scraped data of given value ****\n")
-                print(response_csv)
+            response_csv = pd.read_csv(BytesIO(response.body))
+
+            if response_csv.empty:
+                print(f"{Fore.RED}Empty DataFrame for lease {API}. Skipping CSV file.{Style.RESET_ALL}")
+            else:
+                with open(file_path, 'wb') as f:
+                    f.write(response.body)
+                    print()
+                    print("\n****The Scraped data of given value ****\n")
+                    print(response_csv)
         else:
             print(f"{Fore.RED}Failed to export CSV file.{Style.RESET_ALL} Status code: {response.status}")
 

@@ -68,7 +68,7 @@ class SpiderBsee(scrapy.Spider):
             response_csv = pd.read_csv(BytesIO(response.body))
             
             if response_csv.empty:
-                print(f"{Fore.RED}No data found for lease {lease_num}. Skipping CSV file.{Style.RESET_ALL}")
+                print(f"{Fore.RED}Empty DataFrame for lease {lease_num}. Skipping CSV file.{Style.RESET_ALL}")
             else:
                 with open(file_path, 'wb') as f:
                     f.write(response.body)
