@@ -1,7 +1,7 @@
 # Import necessary modules and classes
 from assetutilities.common.update_deep import update_deep_dictionary #noqa
 # Reader imports
-from energydata.modules.bsee.data.data_from_production_files import DataFromFiles
+from energydata.modules.bsee.data.get_data_from_production_files import GetDataFromFiles
 from energydata.modules.bsee.data.get_zip_well_production_data import GetWellProdData
 from energydata.modules.bsee.data.well_data import WellData
 from energydata.modules.bsee.analysis.prepare_data_for_analysis import (
@@ -16,7 +16,7 @@ bsee_production = SpiderBsee()
 well_data = WellData()
 prep_bsee_data = PrepareBseeData()
 bsee_analysis = BSEEAnalysis()
-dff = DataFromFiles()
+gdff = GetDataFromFiles()
 
 class bsee:
 
@@ -48,7 +48,7 @@ class bsee:
             gwp.router(cfg)
 
         if 'existing_data' in cfg and cfg['existing_data']['flag']:
-            cfg = dff.router(cfg)
+            cfg = gdff.router(cfg)
 
         return cfg
 

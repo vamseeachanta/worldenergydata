@@ -15,11 +15,12 @@ from scrapy.crawler import CrawlerRunner  # noqa
 from scrapy.utils.response import (  # noqa useful while program is running
     open_in_browser,
 )
-from twisted.internet import defer, reactor  # noqa
+#from twisted.internet import defer, reactor  # noqa
 
 from assetutilities.common.utilities import is_dir_valid_func
 from crochet import setup, wait_for
 
+setup()
 
 colorama_init()
 
