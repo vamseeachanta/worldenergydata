@@ -10,7 +10,7 @@ from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
 
 wwy = WorkingWithYAML()
 
-class DataFromFiles:
+class GetDataFromFiles:
     
     def __init__(self):
         pass
@@ -63,7 +63,7 @@ class DataFromFiles:
                         else:
                             api12_dataframes[api12] = pd.concat([api12_dataframes[api12], matching_rows], ignore_index=True)
                     else:
-                        print(f"No matching rows found for API {api12} in {file_name}.")
+                        print(f"No matching rows found for API {api12} in file {file_name}.")
 
                 except FileNotFoundError:
                     print(f"File not found: {file_path}")
@@ -76,7 +76,7 @@ class DataFromFiles:
         for api12, df in api12_dataframes.items():
             output_file = os.path.join(output_file)
             df.to_csv(output_file, index=False)
-            print(f"Matched rows for {api12} written to {output_file} .")
+            print(f"API {api12} Matched rows from certain files written to {output_file} .")
 
         logging.info(f"Getting production data for API12: {api12} ... COMPLETE")
 

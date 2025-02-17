@@ -80,7 +80,7 @@ dictitems:
     file_name_for_overwrite: query_blk_julia_API
     result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
     log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: &id003 2025-02-16 10:17:17.013218
+    start_time: &id003 2025-02-17 11:13:12.785602
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\query_blk_julia_API.yml
