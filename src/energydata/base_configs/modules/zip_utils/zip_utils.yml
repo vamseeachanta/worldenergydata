@@ -1,0 +1,13 @@
+basename: zip_utilities
+
+type: 
+  data: 
+    flag: True
+    analysis: False
+
+
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: True

@@ -1,0 +1,75 @@
+&id001 !!python/object/new:assetutilities.common.data.AttributeDict
+state: *id001
+dictitems:
+  basename: bsee
+  type:
+    data: false
+    analysis: false
+    results: false
+  result_method: selenium
+  settings_master: ~
+  input:
+  - name: example1
+    well_api12: 608174149400
+  - name: example2
+    well_api12: 608174149401
+  default:
+    log_level: DEBUG
+    config:
+      overwrite:
+        output: true
+      cfg_sensitivities: false
+  meta:
+    library: energydata
+    basename: bsee
+  block_data:
+    flag: true
+    analysis: false
+  master_settings:
+    save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\stmalo_by_block
+  form_data:
+    first_request:
+      ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
+      ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
+      ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+      ASPxFormLayout1$ASPxComboBoxBBN: None
+      ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+    second_request:
+      ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
+      ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
+      ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+      ASPxFormLayout1$ASPxComboBoxBBN: None
+      __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+      __EVENTARGUMENT: Click
+  settings:
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\stmalo_by_block
+    label: WR678
+    bottom_area: Walker Ridge (WR)
+    bottom_block: 678
+  Analysis:
+    basename: bsee
+    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis
+    file_name: apd_stmalo_by_block
+    file_name_for_overwrite: apd_stmalo_by_block
+    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
+    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\logs
+    start_time: 2025-02-13 11:12:48.765092
+    cfg_array_file_names: ~
+    DefaultInputFile: ~
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\apd_stmalo_by_block.yml
+    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
+  bsee:
+    well_data:
+      type: csv
+      groups:
+      - save_csv: true
+        url: https://www.data.bsee.gov/Well/APD/Default.aspx
+        output_dir: tests\modules\bsee\analysis\results\Data\stmalo_by_block
+        label: WR678
+        bottom_area: Walker Ridge (WR)
+        bottom_block: 678
+        file_name: tests\modules\bsee\analysis\results\Data\stmalo_by_block\WR678.csv

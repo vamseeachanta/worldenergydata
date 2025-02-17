@@ -1,0 +1,171 @@
+&id001 !!python/object/new:assetutilities.common.data.AttributeDict
+state: *id001
+dictitems:
+  basename: bsee
+  type:
+    data: false
+    analysis: false
+    results: false
+  result_method: selenium
+  settings_master: ~
+  input:
+  - name: example1
+    well_api12: 608174149400
+  - name: example2
+    well_api12: 608174149401
+  default:
+    log_level: DEBUG
+    config:
+      overwrite:
+        output: true
+      cfg_sensitivities: false
+  meta:
+    library: energydata
+    basename: bsee
+  data:
+    by: block
+    groups:
+    - label: WR540
+      bottom_area: Walker Ridge (WR)
+      bottom_block: 540
+    - label: WR584
+      bottom_area: Walker Ridge (WR)
+      bottom_block: 584
+  block_data:
+    flag: true
+    analysis: false
+  analysis:
+    flag: true
+    api12: false
+    production_data: true
+    production:
+      block: true
+      api12: false
+  block:
+    flag: true
+  prod_by_lease:
+    flag: true
+  master_settings:
+    save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+  settings:
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+    label: WR540
+    bottom_area: Walker Ridge (WR)
+    bottom_block: 540
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+    label: WR584
+    bottom_area: Walker Ridge (WR)
+    bottom_block: 584
+  form_data:
+    first_request:
+      ASPxFormLayout1$ASPxTextBoxLN: ~
+      ASPxFormLayout1$ASPxTextBoxDF: ~
+      ASPxFormLayout1$ASPxTextBoxDT: ~
+      ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+    second_request:
+      ASPxFormLayout1$ASPxTextBoxLN: ~
+      __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+      __EVENTARGUMENT: Click
+  Analysis:
+    basename: bsee
+    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
+    file_name: query_blk_julia_LEASE
+    file_name_for_overwrite: query_blk_julia_LEASE
+    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
+    start_time: &id003 2025-02-16 11:32:44.152857
+    cfg_array_file_names: ~
+    DefaultInputFile: ~
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\query_blk_julia_LEASE.yml
+    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+  bsee:
+    well_data:
+      type: csv
+      groups:
+      - save_csv: true
+        url: https://www.data.bsee.gov/Well/APD/Default.aspx
+        output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+        label: WR540
+        bottom_area: Walker Ridge (WR)
+        bottom_block: 540
+        file_name: tests\modules\bsee\analysis\results\Data\julia_by_block\WR540.csv
+      - save_csv: true
+        url: https://www.data.bsee.gov/Well/APD/Default.aspx
+        output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+        label: WR584
+        bottom_area: Walker Ridge (WR)
+        bottom_block: 584
+        file_name: tests\modules\bsee\analysis\results\Data\julia_by_block\WR584.csv
+    production:
+      block: &id002 !!python/object/new:assetutilities.common.data.AttributeDict
+        state: *id002
+        dictitems:
+          meta:
+            library: energydata
+            basename: bsee
+          basename: bsee
+          production:
+            flag: true
+            analysis: false
+          master_settings:
+            save_csv: true
+            url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+            output_dir: tests/modules/bsee/data/results/Data/well_production_data
+          settings:
+          - save_csv: true
+            url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+            output_dir: tests/modules/bsee/data/results/Data/well_production_data
+            label: LNG36297
+            lease_number: G36297
+            Duration:
+              from: 01/1999
+              to: 01/2024
+          form_data:
+            first_request:
+              ASPxFormLayout1$ASPxTextBoxLN: G36297
+              ASPxFormLayout1$ASPxTextBoxDF: 01/1999
+              ASPxFormLayout1$ASPxTextBoxDT: 01/2024
+              ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+            second_request:
+              ASPxFormLayout1$ASPxTextBoxLN: G36297
+              __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+              __EVENTARGUMENT: Click
+              ASPxFormLayout1$ASPxTextBoxDF: 01/1999
+              ASPxFormLayout1$ASPxTextBoxDT: 01/2024
+          default:
+            log_level: DEBUG
+            config:
+              overwrite:
+                output: true
+              cfg_sensitivities: false
+          Analysis:
+            basename: bsee
+            analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
+            file_name: query_blk_julia_LEASE
+            file_name_for_overwrite: query_blk_julia_LEASE
+            result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+            log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
+            start_time: *id003
+            cfg_array_file_names: ~
+            DefaultInputFile: ~
+            CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\query_blk_julia_LEASE.yml
+            fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+          bsee:
+            well_data:
+              type: csv
+              groups:
+              - save_csv: true
+                url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+                output_dir: tests/modules/bsee/data/results/Data/well_production_data
+                label: LNG36297
+                lease_number: G36297
+                Duration:
+                  from: 01/1999
+                  to: 01/2024
+                file_name: tests/modules/bsee/data/results/Data/well_production_data\LNG36297.csv

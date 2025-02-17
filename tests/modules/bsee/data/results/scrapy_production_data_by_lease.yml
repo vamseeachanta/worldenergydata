@@ -1,0 +1,65 @@
+&id001 !!python/object/new:assetutilities.common.data.AttributeDict
+state: *id001
+dictitems:
+  basename: bsee
+  type:
+    data: false
+    analysis: false
+    results: false
+  result_method: selenium
+  settings_master: ~
+  input:
+  - name: example1
+    well_api12: 608174149400
+  - name: example2
+    well_api12: 608174149401
+  default:
+    log_level: DEBUG
+    config:
+      overwrite:
+        output: true
+      cfg_sensitivities: false
+  meta:
+    library: energydata
+    basename: bsee
+  master_settings:
+    save_csv: true
+    url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+    output_dir: tests\modules\bsee\data\results\Data\by_zip
+  production:
+    flag: true
+    analysis: false
+  settings:
+  - save_csv: true
+    url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+    output_dir: tests\modules\bsee\data\results\Data\by_zip
+    label: lease_G05868
+    lease_number: G05868
+    Duration:
+      from: 01/1999
+      to: 12/2024
+  form_data:
+    first_request:
+      ASPxFormLayout1$ASPxTextBoxLN: G05868
+      ASPxFormLayout1$ASPxTextBoxDF: 01/1999
+      ASPxFormLayout1$ASPxTextBoxDT: 12/2024
+      ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+    second_request:
+      ASPxFormLayout1$ASPxTextBoxLN: G05868
+      __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+      __EVENTARGUMENT: Click
+      ASPxFormLayout1$ASPxTextBoxDF: 01/1999
+      ASPxFormLayout1$ASPxTextBoxDT: 12/2024
+  Analysis:
+    basename: bsee
+    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
+    file_name: scrapy_production_data_by_lease
+    file_name_for_overwrite: scrapy_production_data_by_lease
+    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
+    start_time: 2025-02-12 11:44:15.568624
+    cfg_array_file_names: ~
+    DefaultInputFile: ~
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\scrapy_production_data_by_lease.yml
+    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+  bsee: {}

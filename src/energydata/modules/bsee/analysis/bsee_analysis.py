@@ -1,25 +1,38 @@
-import os
-import pandas as pd
-import datetime
-import logging
+# Standard library imports
 import json
-from energydata.common.bsee_data_manager import BSEEData
+import logging
 
-from energydata.common.data import AttributeDict, transform_df_datetime_to_str
+# # # Third party imports
+import pandas as pd
+from energydata.modules.bsee.data.bsee_data import BSEEData
 
-class BseeAnalysis():
+# from energydata.common.bsee_data_manager import BSEEData
 
-    def __init__(self, cfg):
-        import pandas as pd
+# from energydata.common.data import AttributeDict, transform_df_datetime_to_str
 
-        self.bsee_data = BSEEData(self.cfg)
+bsee_data = BSEEData()
+
+class BSEEAnalysis():
+
+    def __init__(self):
+        pass
+        # self.bsee_data = BSEEData(self.cfg)
+
+    def router(self, cfg):
+        
+        if cfg['analysis']['api12']:
+            cfg = bsee_data.get_api12_data(cfg)
+        if cfg['analysis']['production_data']:
+            cfg = bsee_data.get_production_data(cfg)
+
 
     def assign_cfg(self, cfg):
         self.cfg = cfg
 
     def run_analysis_for_all_wells(self):
         for api10 in self.api10_list[0:20]:
-            self.get_bsee_data_and_prepare_data_for_api10(api10)
+            pass# self.get_bsee_data_and_prepare_data_for_api10(api10)
+        
     
     def get_bsee_data_and_prepare_data_for_api10(self, api10):
         well_data = self.bsee_data.get_well_data_by_api10(api10)
@@ -75,8 +88,8 @@ class BseeAnalysis():
         print("Production data is prepared")
 
     def prepare_casing_data(self, well_data, well_tubulars_data):
-        import logging
 
+        # Third party imports
         import pandas as pd
         self.casing_tubulars = pd.DataFrame()
         if len(well_tubulars_data) > 0:
@@ -99,6 +112,7 @@ class BseeAnalysis():
             logging.info("Tubing data is not available")
     
     def prepare_completion_data(self, completion_data):
+        # Third party imports
         from common.data import Transform
         transform = Transform()
         self.output_completions = completion_data.merge(completion_data,
@@ -211,6 +225,7 @@ class BseeAnalysis():
         self.output_data_well_df.drop(drop_index_array, inplace=True)
         self.output_data_well_df['BSEE Well Name'] = self.output_data_well_df['Well Name']
         if len(self.output_data_well_df['Well Name'].unique()) < len(self.output_data_well_df):
+            # Third party imports
             from common.data import Transform
             trans = Transform()
             old_list = list(self.output_data_well_df['Well Name'])
@@ -221,6 +236,7 @@ class BseeAnalysis():
             self.output_data_well_df['Well Name'] = new_list
 
     def add_production_from_all_wells(self):
+        # Third party imports
         import pandas as pd
         columns = self.output_data_field_production_rate_df.columns.tolist()
         columns.remove('PRODUCTION_DATETIME')
