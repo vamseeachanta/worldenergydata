@@ -10,11 +10,14 @@ from colorama import Fore, Style
 from colorama import init as colorama_init
 from scrapy import FormRequest  # noqa
 from scrapy.crawler import CrawlerRunner
-from twisted.internet import reactor, defer
+#from twisted.internet import reactor, defer
+from crochet import setup, wait_for
 #from scrapy.crawler import CrawlerProcess  # noqa
 from scrapy.utils.response import (  # noqa useful while program is running
     open_in_browser,
 )
+
+setup()
 
 # Initialize colorama for colored terminal output
 colorama_init()
@@ -85,25 +88,16 @@ class BSEEDataSpider(scrapy.Spider):
 # Define a class to run the Scrapy spider
 class ScrapyRunnerAPI:
     def __init__(self):
-        # Initialize the CrawlerRunner with specific settings
         self.runner = CrawlerRunner({
             'LOG_LEVEL': 'CRITICAL',
             'REQUEST_FINGERPRINTER_IMPLEMENTATION': '2.7'
         })
 
-        self.task_count = 0
-
-    # Run the spider with the given configuration and input item
-    @defer.inlineCallbacks
+    @wait_for(timeout=60.0) 
     def run_spider(self, cfg, input_item):
-        self.task_count += 1
-        yield self.runner.crawl(BSEEDataSpider, input_item=input_item, cfg=cfg)
-        self.task_count -= 1
+        deferred = self.runner.crawl(BSEEDataSpider, input_item=input_item, cfg=cfg)
+        return deferred
 
-        if self.task_count == 0:
-            #print("All tasks completed, stopping reactor.")
-            reactor.stop()
-
-    # Start the reactor to run the spider
-    def start(self):
-        reactor.run()
+if __name__ == "__main__":
+    runner = ScrapyRunnerAPI()
+    spider_bsee = BSEEDataSpider()
