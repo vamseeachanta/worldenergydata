@@ -62,6 +62,7 @@ class BSEESpider(scrapy.Spider):
     def parse_csv_data(self, response):
 
         label = self.input_item['label']
+        bottom_block = self.input_item['bottom_block']
         output_path = self.input_item['output_dir']
         if output_path is None:
             result_folder = self.cfg['Analysis']['result_folder']
@@ -73,11 +74,15 @@ class BSEESpider(scrapy.Spider):
         file_path = os.path.join(output_path, f"{label}.csv")
 
         if response.status == 200:
-            with open(file_path, 'wb') as f:
-                f.write(response.body)
-                response_csv = pd.read_csv(BytesIO(response.body)) # For displaying data
-                logging.debug("\n****The Scraped data of given value ****\n")
-                logging.debug(response_csv)
+            response_csv = pd.read_csv(BytesIO(response.body))
+            
+            if response_csv.empty:
+                print(f"{Fore.RED}Empty DataFrame for BLOCK {bottom_block}. Skipping CSV file.{Style.RESET_ALL}")
+            else:
+                with open(file_path, 'wb') as f:
+                    f.write(response.body)
+                    logging.debug("\n****The Scraped data of given value ****\n")
+                    logging.debug(response_csv)
         else:
             print(f"{Fore.RED}Failed to export CSV file.{Style.RESET_ALL} Status code: {response.status}")
 
