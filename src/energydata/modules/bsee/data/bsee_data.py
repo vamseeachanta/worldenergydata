@@ -14,6 +14,23 @@ class BSEEData:
     def __init__(self):
         pass
 
+
+    def router(self):
+
+        if cfg['analysis']['api12']:
+            cfg = bsee_data.get_api12_data(cfg)
+        if cfg['analysis']['production_data']:
+            cfg = bsee_data.get_production_data(cfg)
+
+        #TODO
+        # WAR_summary = self.bsee_data.get_WAR_summary_by_api10(api10)
+        # directional_surveys = self.bsee_data.get_directional_surveys_by_api10(api10)
+        # ST_BP_and_tree_height = self.bsee_data.get_ST_BP_and_tree_height_by_api10(api10)
+        # well_tubulars_data = self.bsee_data.get_well_tubulars_data_by_api10(api10)
+        # completion_data = self.bsee_data.get_completion_data_by_api10(api10)
+
+        return cfg
+
     def get_api12_data(self, cfg):
 
         if cfg['data']['by'] == 'block':
