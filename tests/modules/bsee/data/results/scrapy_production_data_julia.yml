@@ -63,9 +63,30 @@ dictitems:
     file_name_for_overwrite: scrapy_production_data_julia
     result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
     log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-02-13 10:51:36.465789
+    start_time: 2025-02-18 09:28:40.627392
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\scrapy_production_data_julia.yml
     fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
-  bsee: {}
+  bsee:
+    well_data:
+      type: csv
+      groups:
+      - save_csv: true
+        url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+        output_dir: tests\modules\bsee\analysis\results\Data\Julia_prod_data
+        label: LNG15110
+        lease_number: G15110
+        Duration:
+          from: 01/2020
+          to: 12/2024
+        file_name: tests\modules\bsee\analysis\results\Data\Julia_prod_data\LNG15110.csv
+      - save_csv: true
+        url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+        output_dir: tests\modules\bsee\analysis\results\Data\Julia_prod_data
+        label: LNG25251
+        lease_number: G25251
+        Duration:
+          from: 01/2020
+          to: 12/2024
+        file_name: tests\modules\bsee\analysis\results\Data\Julia_prod_data\LNG25251.csv
