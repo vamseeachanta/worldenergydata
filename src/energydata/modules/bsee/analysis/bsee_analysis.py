@@ -32,5 +32,3 @@ class BSEEAnalysis():
         for api10 in self.api10_list[0:20]:
             well_data_analysis.router(cfg)
     
-    def prepare_data_for_api10(self, api10):
-
