@@ -15,12 +15,14 @@ class BSEEData:
         pass
 
 
-    def router(self):
+    def router(self, cfg):
 
         if cfg['analysis']['api12']:
-            cfg = bsee_data.get_api12_data(cfg)
+            cfg = self.get_api12_data(cfg)
         if cfg['analysis']['production_data']:
-            cfg = bsee_data.get_production_data(cfg)
+            cfg = self.get_production_data(cfg)
+
+        return cfg
 
         #TODO
         # WAR_summary = self.bsee_data.get_WAR_summary_by_api10(api10)
