@@ -43,6 +43,8 @@ class BSEESpider(scrapy.Spider):
         first_request_data['ASPxFormLayout1_ASPxComboBoxBBN_VI'] = bottom_block_num
         first_request_data['ASPxFormLayout1$ASPxComboBoxBBN'] = bottom_block_num
 
+        logging.info(f"Getting data for BLOCK {bottom_block_num} ... START")
+
         yield FormRequest.from_response(response, formdata=first_request_data, callback=self.step2)
 
     def step2(self, response):
@@ -63,7 +65,7 @@ class BSEESpider(scrapy.Spider):
 
         label = self.input_item['label']
         bottom_block = self.input_item['bottom_block']
-        output_path = self.input_item['output_dir']
+        output_path = os.path.join(self.cfg['Analysis']['result_folder'], 'Data')
         if output_path is None:
             result_folder = self.cfg['Analysis']['result_folder']
             output_path = os.path.join(result_folder, 'Data')
@@ -71,7 +73,7 @@ class BSEESpider(scrapy.Spider):
         analysis_root_folder = self.cfg['Analysis']['analysis_root_folder']
         is_dir_valid, output_path = is_dir_valid_func(output_path, analysis_root_folder)
 
-        file_path = os.path.join(output_path, f"{label}.csv")
+        output_file = os.path.join(output_path, str(label) + '.csv')
 
         if response.status == 200:
             response_csv = pd.read_csv(BytesIO(response.body))
@@ -79,10 +81,11 @@ class BSEESpider(scrapy.Spider):
             if response_csv.empty:
                 print(f"{Fore.RED}Empty DataFrame for BLOCK {bottom_block}. Skipping CSV file.{Style.RESET_ALL}")
             else:
-                with open(file_path, 'wb') as f:
+                with open(output_file, 'wb') as f:
                     f.write(response.body)
                     logging.debug("\n****The Scraped data of given value ****\n")
                     logging.debug(response_csv)
+                    logging.info(f"Getting data for BLOCK {bottom_block} ... COMPLETE")
         else:
             print(f"{Fore.RED}Failed to export CSV file.{Style.RESET_ALL} Status code: {response.status}")
 

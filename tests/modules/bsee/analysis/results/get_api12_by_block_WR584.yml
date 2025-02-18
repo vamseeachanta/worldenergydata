@@ -25,10 +25,10 @@ dictitems:
   data:
     by: block
     groups:
-    - label: WR540
+    - label: block_WR540
       bottom_area: Walker Ridge (WR)
       bottom_block: 540
-    - label: WR584
+    - label: block_WR584
       bottom_area: Walker Ridge (WR)
       bottom_block: 584
   block_data:
@@ -44,18 +44,18 @@ dictitems:
   master_settings:
     save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+    output_dir: tests\modules\bsee\analysis\results\Data
   settings:
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
-    label: WR540
+    output_dir: tests\modules\bsee\analysis\results\Data
+    label: block_WR540
     bottom_area: Walker Ridge (WR)
     bottom_block: 540
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
-    label: WR584
+    output_dir: tests\modules\bsee\analysis\results\Data
+    label: block_WR584
     bottom_area: Walker Ridge (WR)
     bottom_block: 584
   form_data:
@@ -74,34 +74,34 @@ dictitems:
       __EVENTARGUMENT: Click
   Analysis:
     basename: bsee
-    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis
+    analysis_root_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis
     file_name: get_api12_by_block_WR584
     file_name_for_overwrite: get_api12_by_block_WR584
-    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
-    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\logs
-    start_time: 2025-02-13 11:14:13.213670
+    result_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
+    log_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\logs
+    start_time: 2025-02-18 11:20:47.175927
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\get_api12_by_block_WR584.yml
-    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
+    CustomInputFile: get_api12_by_block_WR584.yml
+    fe_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
   bsee:
     well_data:
       type: csv
       groups:
       - save_csv: true
         url: https://www.data.bsee.gov/Well/APD/Default.aspx
-        output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
-        label: WR540
+        output_dir: tests\modules\bsee\analysis\results\Data
+        label: block_WR540
         bottom_area: Walker Ridge (WR)
         bottom_block: 540
-        file_name: tests\modules\bsee\analysis\results\Data\julia_by_block\WR540.csv
+        file_name: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\block_WR540.csv
       - save_csv: true
         url: https://www.data.bsee.gov/Well/APD/Default.aspx
-        output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
-        label: WR584
+        output_dir: tests\modules\bsee\analysis\results\Data
+        label: block_WR584
         bottom_area: Walker Ridge (WR)
         bottom_block: 584
-        file_name: tests\modules\bsee\analysis\results\Data\julia_by_block\WR584.csv
+        file_name: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\block_WR584.csv
     api12:
     - 177024120700
     - 177024134000

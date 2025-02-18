@@ -72,9 +72,9 @@ class SpiderBsee(scrapy.Spider):
             else:
                 with open(file_path, 'wb') as f:
                     f.write(response.body)
-                    print()
-                    print(f"\n****The Scraped data of given lease {lease_num} ****\n")
-                    print(response_csv)
+                    logging.debug("\n****The Scraped data of given value ****\n")
+                    logging.debug(response_csv)
+                    logging.info(f"Getting data for LEASE {lease_num} ... COMPLETE")
         else:
             print(f"{Fore.RED}Failed to export CSV file.{Style.RESET_ALL} Status code: {response.status}")
 
