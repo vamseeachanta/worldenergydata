@@ -22,18 +22,18 @@ class RetrieveDataTemplates:
 
         return data_template
     
-    def get_production_data_by_wellAPI(self, custom_analysis_dict={}):
+    # def get_production_data_by_wellAPI(self, custom_analysis_dict={}):
 
-        library_name = "energydata"
-        library_yaml_cfg = {
-            'filename': 'base_configs/modules/bsee/production_data_by_wellAPI.yml',
-            'library_name': library_name
-        }
-        data_template = wwy.get_library_yaml_file(library_yaml_cfg)
-        data_template['Analysis'] = custom_analysis_dict
-        data_template = AttributeDict(data_template)
+    #     library_name = "energydata"
+    #     library_yaml_cfg = {
+    #         'filename': 'base_configs/modules/bsee/production_data_by_wellAPI.yml',
+    #         'library_name': library_name
+    #     }
+    #     data_template = wwy.get_library_yaml_file(library_yaml_cfg)
+    #     data_template['Analysis'] = custom_analysis_dict
+    #     data_template = AttributeDict(data_template)
 
-        return data_template
+    #     return data_template
     
     def get_data_from_existing_files(self, custom_analysis_dict={}):
 
