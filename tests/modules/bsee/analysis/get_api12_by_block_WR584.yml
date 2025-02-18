@@ -6,10 +6,10 @@ basename: bsee
 data:
   by: block # API12, ?
   groups:
-    - label: WR540
+    - label: block_WR540
       bottom_area: Walker Ridge (WR)
       bottom_block: 540
-    - label: WR584
+    - label: block_WR584
       bottom_area: Walker Ridge (WR)
       bottom_block: 584
 
@@ -28,13 +28,13 @@ analysis:
 master_settings:
   save_csv: True
   url: https://www.data.bsee.gov/Well/APD/Default.aspx
-  output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+  output_dir: tests\modules\bsee\analysis\results\Data
 
 settings:
-  - label: WR540
+  - label: block_WR540
     bottom_area: Walker Ridge (WR)
     bottom_block: 540
-  - label: WR584
+  - label: block_WR584
     bottom_area: Walker Ridge (WR)
     bottom_block: 584
 

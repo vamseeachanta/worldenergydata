@@ -54,8 +54,9 @@ class WellData:
         return cfg
 
     def generate_output_item(self, cfg, output_data, input_item):
+
         label = input_item['label']
-        output_path = input_item['output_dir']
+        output_path = os.path.join(cfg['Analysis']['result_folder'], 'Data')
         if output_path is None:
             result_folder = cfg['Analysis']['result_folder']
             output_path = os.path.join(result_folder, 'Data')
@@ -63,9 +64,10 @@ class WellData:
         analysis_root_folder = cfg['Analysis']['analysis_root_folder']
         is_dir_valid, output_path = is_dir_valid_func(output_path, analysis_root_folder)
 
-        file_path = os.path.join(output_path, f"{label}.csv")
+        output_file = os.path.join(output_path, str(label) + '.csv')
+
         input_item_csv_cfg = deepcopy(input_item)
-        input_item_csv_cfg.update({'label': label, 'file_name': file_path})
+        input_item_csv_cfg.update({'label': label, 'file_name': output_file})
         output_data.append(input_item_csv_cfg)
         
         return output_data
