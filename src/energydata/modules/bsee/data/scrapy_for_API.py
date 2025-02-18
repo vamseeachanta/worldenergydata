@@ -47,6 +47,8 @@ class BSEEDataSpider(scrapy.Spider):
         first_request_data = self.cfg['form_data']['first_request'].copy()
         first_request_data['ASPxFormLayout1$ASPxTextBoxAPI'] = api_num
 
+        logging.info(f"Getting data for API {api_num} ... START")
+
         # Submit the form and proceed to step2
         yield FormRequest.from_response(response, formdata=first_request_data, callback=self.step2)
 
@@ -79,13 +81,13 @@ class BSEEDataSpider(scrapy.Spider):
             response_csv = pd.read_csv(BytesIO(response.body))
 
             if response_csv.empty:
-                print(f"{Fore.RED}Empty DataFrame for lease {API}. Skipping CSV file.{Style.RESET_ALL}")
+                print(f"{Fore.RED}Empty DataFrame for API {API}. Skipping CSV file.{Style.RESET_ALL}")
             else:
                 with open(file_path, 'wb') as f:
                     f.write(response.body)
-                    print()
-                    print("\n****The Scraped data of given value ****\n")
-                    print(response_csv)
+                    logging.debug("\n****The Scraped data of given value ****\n")
+                    logging.debug(response_csv)
+                    logging.info(f"Getting data for API {API} ... COMPLETE")
         else:
             print(f"{Fore.RED}Failed to export CSV file.{Style.RESET_ALL} Status code: {response.status}")
 
