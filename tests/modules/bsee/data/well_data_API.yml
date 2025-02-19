@@ -1,0 +1,34 @@
+meta:
+  library: energydata
+  basename: bsee
+basename: bsee
+
+well_data:
+  flag: True
+  analysis: False
+
+master_settings:
+  save_csv: True
+  url: https://www.data.bsee.gov/Well/APD/Default.aspx
+  output_dir: data\modules\bsee\well\scrapy_output
+
+settings:
+  - label: API_number_1
+    well_api12: 608164024500
+
+form_data:
+  first_request:
+    "ASPxFormLayout1$ASPxTextBoxAPI":
+    "ASPxFormLayout1$ASPxButtonSubmitQ": "Submit Query"
+
+  second_request:
+    "ASPxFormLayout1$ASPxTextBoxAPI":
+    "__EVENTTARGET": "ASPxFormLayout2$btnCsvExport"
+    "__EVENTARGUMENT": "Click"
+    
+default:
+  log_level: DEBUG
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False
