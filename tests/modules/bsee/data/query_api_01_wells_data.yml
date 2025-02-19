@@ -12,7 +12,7 @@ master_settings:
   url: https://www.data.bsee.gov/Well/APD/Default.aspx
 
 settings:
-  - label: API Number_1
+  - label: API_Number_1
     well_api12: 608164024500
 
 form_data:
