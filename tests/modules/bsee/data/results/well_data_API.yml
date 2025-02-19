@@ -43,16 +43,16 @@ dictitems:
       __EVENTARGUMENT: Click
   Analysis:
     basename: bsee
-    analysis_root_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
+    analysis_root_folder: k:\github\energydata\tests\modules\bsee\data
     file_name: well_data_API
     file_name_for_overwrite: well_data_API
-    result_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
-    log_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-02-19 16:37:51.080133
+    result_folder: k:\github\energydata\tests\modules\bsee\data\results
+    log_folder: k:\github\energydata\tests\modules\bsee\data\logs
+    start_time: 2025-02-19 09:43:28.560923
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: well_data_API.yml
-    fe_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    CustomInputFile: k:\github\energydata\tests\modules\bsee\data\well_data_API.yml
+    fe_folder: k:\github\energydata\tests\modules\bsee\data\results
   bsee:
     well_data:
       type: csv
@@ -61,5 +61,4 @@ dictitems:
         url: https://www.data.bsee.gov/Well/APD/Default.aspx
         label: API Number_1
         well_api12: 608164024500
-        file_name: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\API
-          Number_1.csv
+        file_name: k:\github\energydata\tests\modules\bsee\data\results\Data\API Number_1.csv
