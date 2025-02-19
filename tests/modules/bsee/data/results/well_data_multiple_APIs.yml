@@ -60,16 +60,16 @@ dictitems:
       __EVENTARGUMENT: Click
   Analysis:
     basename: bsee
-    analysis_root_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
+    analysis_root_folder: k:\github\energydata\tests\modules\bsee\data
     file_name: well_data_multiple_APIs
     file_name_for_overwrite: well_data_multiple_APIs
-    result_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
-    log_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-02-19 16:38:32.151179
+    result_folder: k:\github\energydata\tests\modules\bsee\data\results
+    log_folder: k:\github\energydata\tests\modules\bsee\data\logs
+    start_time: 2025-02-19 09:42:37.782760
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: well_data_multiple_APIs.yml
-    fe_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    CustomInputFile: k:\github\energydata\tests\modules\bsee\data\well_data_multiple_APIs.yml
+    fe_folder: k:\github\energydata\tests\modules\bsee\data\results
   bsee:
     well_data:
       type: csv
@@ -79,22 +79,22 @@ dictitems:
         output_dir: data\modules\bsee\well\scrapy_output
         label: API_number_1
         well_api12: 608164024500
-        file_name: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\API_number_1.csv
+        file_name: k:\github\energydata\tests\modules\bsee\data\results\Data\API_number_1.csv
       - save_csv: true
         url: https://www.data.bsee.gov/Well/APD/Default.aspx
         output_dir: data\modules\bsee\well\scrapy_output
         label: API_number_2
         well_api12: 608164025800
-        file_name: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\API_number_2.csv
+        file_name: k:\github\energydata\tests\modules\bsee\data\results\Data\API_number_2.csv
       - save_csv: true
         url: https://www.data.bsee.gov/Well/APD/Default.aspx
         output_dir: data\modules\bsee\well\scrapy_output
         label: API_number_3
         well_api12: 608164025400
-        file_name: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\API_number_3.csv
+        file_name: k:\github\energydata\tests\modules\bsee\data\results\Data\API_number_3.csv
       - save_csv: true
         url: https://www.data.bsee.gov/Well/APD/Default.aspx
         output_dir: data\modules\bsee\well\scrapy_output
         label: API_number_4
         well_api12: 608164025600
-        file_name: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\API_number_4.csv
+        file_name: k:\github\energydata\tests\modules\bsee\data\results\Data\API_number_4.csv

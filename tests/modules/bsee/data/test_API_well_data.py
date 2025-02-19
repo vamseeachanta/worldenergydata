@@ -24,7 +24,8 @@ def get_valid_pytest_output_file(pytest_output_file):
 
 def test_application():
     
-    input_file = 'well_data_multiple_APIs.yml'
+    input_file = 'query_api_01_well_data.yml'
+    # input_file = 'query_api_10_well_data.yml'
     
     pytest_output_file = None
     # pytest_output_file = get_valid_pytest_output_file(pytest_output_file)
