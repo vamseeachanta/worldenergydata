@@ -22,8 +22,6 @@ class BSEEData:
         if cfg['analysis']['production_data']:
             cfg = self.get_production_data(cfg)
 
-        return cfg
-
         #TODO
         # WAR_summary = self.bsee_data.get_WAR_summary_by_api10(api10)
         # directional_surveys = self.bsee_data.get_directional_surveys_by_api10(api10)
