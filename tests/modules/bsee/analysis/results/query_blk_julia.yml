@@ -1,0 +1,35 @@
+&id001 !!python/object/new:assetutilities.common.data.AttributeDict
+state: *id001
+dictitems:
+  meta:
+    library: energydata
+    basename: bsee
+  basename: bsee
+  existing_data:
+    flag: true
+    analysis: false
+  data_from_files:
+    production: true
+  settings:
+    files_folder: data/modules/bsee/production/csv
+    output_dir: None
+    api12: 177024134002
+  default:
+    log_level: DEBUG
+    config:
+      overwrite:
+        output: true
+      cfg_sensitivities: false
+  Analysis:
+    basename: bsee
+    analysis_root_folder: k:\github\energydata\tests\modules\bsee\analysis
+    file_name: query_blk_julia
+    file_name_for_overwrite: query_blk_julia
+    result_folder: k:\github\energydata\tests\modules\bsee\analysis\results
+    log_folder: k:\github\energydata\tests\modules\bsee\analysis\logs
+    start_time: 2025-02-19 11:05:58.529501
+    cfg_array_file_names: ~
+    DefaultInputFile: ~
+    CustomInputFile: k:\github\energydata\tests\modules\bsee\analysis\query_blk_julia.yml
+    fe_folder: k:\github\energydata\tests\modules\bsee\analysis\results
+  bsee: {}

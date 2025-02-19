@@ -33,13 +33,37 @@ class BSEEData:
 
     def get_api12_data(self, cfg):
 
-        if cfg['data']['by'] == 'block':
-            api12_array = self.get_api12_data_by_block(cfg)
+        if cfg['data']['by'] == 'API12':
+            api12_array = self.get_api12_array_by_api12(cfg)
+        elif cfg['data']['by'] == 'block':
+            api12_array = self.get_api12_array_by_block(cfg)
 
         cfg[cfg['basename']].update({'api12': api12_array})
 
         return cfg
 
+    def get_api12_array_by_api12(self, cfg):
+        
+        api12_array = []
+        groups = cfg['data']['groups']
+        for group in groups:
+            api12 = [group['api12']]
+            api12_array = api12_array + api12
+
+        return api12_array
+
+    def get_api12_array_by_block(self, cfg):
+    
+        api12_array = []
+        if cfg[cfg['basename']]['well_data']['type'] == 'csv':
+            csv_groups = cfg[cfg['basename']]['well_data']['groups']
+            for csv_group in csv_groups:
+                df = pd.read_csv(csv_group['file_name'])
+                api12_csv_group = df['API Well Number'].unique().tolist()
+                api12_array = api12_array + api12_csv_group
+
+        return api12_array
+    
     def get_production_data(self, cfg):
 
         if "block" in cfg and cfg['analysis']['production']['block']:
@@ -54,18 +78,6 @@ class BSEEData:
             cfg[cfg['basename']].update({'production': {'api12':production_data}})
 
         return cfg
-    
-    def get_api12_data_by_block(self, cfg):
-    
-        api12_array = []
-        if cfg[cfg['basename']]['well_data']['type'] == 'csv':
-            csv_groups = cfg[cfg['basename']]['well_data']['groups']
-            for csv_group in csv_groups:
-                df = pd.read_csv(csv_group['file_name'])
-                api12_csv_group = df['API Well Number'].unique().tolist()
-                api12_array = api12_array + api12_csv_group
-
-        return api12_array
     
     def get_production_data_for_each_api12(self, cfg):
 

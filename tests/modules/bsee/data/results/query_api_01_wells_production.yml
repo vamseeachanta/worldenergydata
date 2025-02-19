@@ -14,7 +14,7 @@ dictitems:
   - name: example2
     well_api12: 608174149401
   default:
-    log_level: DEBUG
+    log_level: INFO
     config:
       overwrite:
         output: true
@@ -27,7 +27,7 @@ dictitems:
   data_from_files:
     production: true
   settings:
-    api12: 608124012700
+    api12: 177024120700
     files_folder: data\modules\bsee\production\csv
   Analysis:
     basename: bsee
@@ -36,7 +36,7 @@ dictitems:
     file_name_for_overwrite: query_api_01_wells_production
     result_folder: K:\github\energydata\tests\modules\bsee\data\results
     log_folder: K:\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-02-19 10:12:04.312200
+    start_time: 2025-02-19 10:24:59.305066
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: query_api_01_wells_production.yml
