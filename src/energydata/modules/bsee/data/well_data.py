@@ -27,7 +27,7 @@ class WellData:
             for input_item in input_items:
                 scrapy_runner_api.run_spider(cfg, input_item)
 
-                #output_data = self.generate_output_item(cfg, output_data, input_item)
+                output_data = self.generate_output_item(cfg, output_data, input_item)
         
         elif "production" in cfg and cfg['production']['flag']:
             input_items = cfg['settings']
