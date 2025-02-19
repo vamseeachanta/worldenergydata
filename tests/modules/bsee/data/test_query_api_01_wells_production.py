@@ -23,7 +23,7 @@ def get_valid_pytest_output_file(pytest_output_file):
 
 
 def test_application():
-    input_file = 'scrapy_production_data_by_lease.yml'
+    input_file = 'query_api_01_wells_production.yml'
     pytest_output_file = None
     # pytest_output_file = get_valid_pytest_output_file(pytest_output_file)
     # expected_result = ymlInput(pytest_output_file, updateYml=None)

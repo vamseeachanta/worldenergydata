@@ -1,0 +1,44 @@
+&id001 !!python/object/new:assetutilities.common.data.AttributeDict
+state: *id001
+dictitems:
+  basename: bsee
+  type:
+    data: false
+    analysis: false
+    results: false
+  result_method: selenium
+  settings_master: ~
+  input:
+  - name: example1
+    well_api12: 608174149400
+  - name: example2
+    well_api12: 608174149401
+  default:
+    log_level: DEBUG
+    config:
+      overwrite:
+        output: true
+      cfg_sensitivities: false
+  meta:
+    library: energydata
+    basename: bsee
+  existing_data:
+    flag: true
+  data_from_files:
+    production: true
+  settings:
+    api12: 608124012700
+    files_folder: data\modules\bsee\production\csv
+  Analysis:
+    basename: bsee
+    analysis_root_folder: K:\github\energydata\tests\modules\bsee\data
+    file_name: query_api_01_wells_production
+    file_name_for_overwrite: query_api_01_wells_production
+    result_folder: K:\github\energydata\tests\modules\bsee\data\results
+    log_folder: K:\github\energydata\tests\modules\bsee\data\logs
+    start_time: 2025-02-19 10:12:04.312200
+    cfg_array_file_names: ~
+    DefaultInputFile: ~
+    CustomInputFile: query_api_01_wells_production.yml
+    fe_folder: K:\github\energydata\tests\modules\bsee\data\results
+  bsee: {}
