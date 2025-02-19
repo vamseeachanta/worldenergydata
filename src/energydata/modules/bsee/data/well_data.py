@@ -15,9 +15,9 @@ class WellData:
 
     def get_well_data(self, cfg):
         cfg = self.get_well_data_csv(cfg)
-        
+
         return cfg
-        
+
     def get_well_data_csv(self, cfg):
         output_data = [] 
         if "well_data" in cfg and cfg['well_data']['flag']:
@@ -25,10 +25,14 @@ class WellData:
             scrapy_runner_api = ScrapyRunnerAPI()
 
             for input_item in input_items:
+
                 scrapy_runner_api.run_spider(cfg, input_item)
 
+                # output_path = os.path.join(self.cfg['Analysis']['result_folder'], 'Data')
+                # output_file = os.path.join(output_path, 'well_'+ str(API) + '.csv')
                 output_data = self.generate_output_item(cfg, output_data, input_item)
-        
+
+
         elif "production" in cfg and cfg['production']['flag']:
             input_items = cfg['settings']
             scrapy_runner_production = ScrapyRunnerProduction()
@@ -50,7 +54,7 @@ class WellData:
 
         well_data = {'type': 'csv', 'groups': output_data}
         cfg[cfg['basename']].update({'well_data': well_data})
-        
+
         return cfg
 
     def generate_output_item(self, cfg, output_data, input_item):
