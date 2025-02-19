@@ -1,0 +1,64 @@
+&id001 !!python/object/new:assetutilities.common.data.AttributeDict
+state: *id001
+dictitems:
+  basename: bsee
+  type:
+    data: false
+    analysis: false
+    results: false
+  result_method: selenium
+  settings_master: ~
+  input:
+  - name: example1
+    well_api12: 608174149400
+  - name: example2
+    well_api12: 608174149401
+  default:
+    log_level: DEBUG
+    config:
+      overwrite:
+        output: true
+      cfg_sensitivities: false
+  meta:
+    library: energydata
+    basename: bsee
+  well_data:
+    flag: true
+    analysis: false
+  master_settings:
+    save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+  settings:
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    label: API_Number_1
+    well_api12: 608164024500
+  form_data:
+    first_request:
+      ASPxFormLayout1$ASPxTextBoxAPI: ~
+      ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+    second_request:
+      ASPxFormLayout1$ASPxTextBoxAPI: ~
+      __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+      __EVENTARGUMENT: Click
+  Analysis:
+    basename: bsee
+    analysis_root_folder: k:\github\energydata\tests\modules\bsee\data
+    file_name: query_api_01_wells_basic
+    file_name_for_overwrite: query_api_01_wells_basic
+    result_folder: k:\github\energydata\tests\modules\bsee\data\results
+    log_folder: k:\github\energydata\tests\modules\bsee\data\logs
+    start_time: 2025-02-19 11:15:10.273355
+    cfg_array_file_names: ~
+    DefaultInputFile: ~
+    CustomInputFile: k:\github\energydata\tests\modules\bsee\data\query_api_01_wells_basic.yml
+    fe_folder: k:\github\energydata\tests\modules\bsee\data\results
+  bsee:
+    well_data:
+      type: csv
+      groups:
+      - save_csv: true
+        url: https://www.data.bsee.gov/Well/APD/Default.aspx
+        label: API_Number_1
+        well_api12: 608164024500
+        file_name: k:\github\energydata\tests\modules\bsee\data\results\Data\API_Number_1.csv

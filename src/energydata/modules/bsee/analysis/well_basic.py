@@ -18,7 +18,7 @@ class WellAnalysis():
         pass
         # self.bsee_data = BSEEData(self.cfg)
 
-    def router(self, cfg):
+    def router(self, cfg, api12):
         self.prepare_api12_data(well_data_by_api)
         self.add_sidetracklabel_rig_rigdays(WAR_summary, ST_BP_and_tree_height)
         # self.evaluate_well_distances()

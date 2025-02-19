@@ -1,6 +1,7 @@
 # Standard library imports
 import os
 import logging
+from loguru import logger
 
 # Third party imports
 import pandas as pd
@@ -62,8 +63,9 @@ class GetDataFromFiles:
                             api12_dataframes[api12] = matching_rows
                         else:
                             api12_dataframes[api12] = pd.concat([api12_dataframes[api12], matching_rows], ignore_index=True)
+                        logger.info(f"Production data found for API {api12} in file {file_name}.")
                     else:
-                        print(f"No matching rows found for API {api12} in file {file_name}.")
+                        logger.debug(f"Production data NOT found for API {api12} in file {file_name}.")
 
                 except FileNotFoundError:
                     print(f"File not found: {file_path}")
