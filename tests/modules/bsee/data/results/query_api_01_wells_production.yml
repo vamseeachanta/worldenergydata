@@ -31,14 +31,14 @@ dictitems:
     files_folder: data\modules\bsee\production\csv
   Analysis:
     basename: bsee
-    analysis_root_folder: K:\github\energydata\tests\modules\bsee\data
+    analysis_root_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
     file_name: query_api_01_wells_production
     file_name_for_overwrite: query_api_01_wells_production
-    result_folder: K:\github\energydata\tests\modules\bsee\data\results
-    log_folder: K:\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-02-19 10:24:59.305066
+    result_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    log_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
+    start_time: 2025-02-20 12:10:12.442023
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: query_api_01_wells_production.yml
-    fe_folder: K:\github\energydata\tests\modules\bsee\data\results
+    fe_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
   bsee: {}

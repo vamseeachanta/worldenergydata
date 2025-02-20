@@ -33,22 +33,22 @@ dictitems:
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
     output_dir: data\modules\bsee\well\scrapy_output
-    label: API_number_1
+    label: well_608164024500
     api12: 608164024500
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
     output_dir: data\modules\bsee\well\scrapy_output
-    label: API_number_2
+    label: well_608164025800
     api12: 608164025800
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
     output_dir: data\modules\bsee\well\scrapy_output
-    label: API_number_3
+    label: well_608164025400
     api12: 608164025400
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
     output_dir: data\modules\bsee\well\scrapy_output
-    label: API_number_4
+    label: well_608164025600
     api12: 608164025600
   form_data:
     first_request:
@@ -60,16 +60,16 @@ dictitems:
       __EVENTARGUMENT: Click
   Analysis:
     basename: bsee
-    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
+    analysis_root_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
     file_name: query_api_04_wells_basic
     file_name_for_overwrite: query_api_04_wells_basic
-    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
-    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-02-20 11:49:00.915312
+    result_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    log_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
+    start_time: 2025-02-20 12:10:31.935951
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\query_api_04_wells_basic.yml
-    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    CustomInputFile: query_api_04_wells_basic.yml
+    fe_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
   bsee:
     well_data:
       type: csv
@@ -77,24 +77,24 @@ dictitems:
       - save_csv: true
         url: https://www.data.bsee.gov/Well/APD/Default.aspx
         output_dir: data\modules\bsee\well\scrapy_output
-        label: API_number_1
+        label: well_608164024500
         api12: 608164024500
-        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\API_number_1.csv
+        file_name: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\well_608164024500.csv
       - save_csv: true
         url: https://www.data.bsee.gov/Well/APD/Default.aspx
         output_dir: data\modules\bsee\well\scrapy_output
-        label: API_number_2
+        label: well_608164025800
         api12: 608164025800
-        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\API_number_2.csv
+        file_name: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\well_608164025800.csv
       - save_csv: true
         url: https://www.data.bsee.gov/Well/APD/Default.aspx
         output_dir: data\modules\bsee\well\scrapy_output
-        label: API_number_3
+        label: well_608164025400
         api12: 608164025400
-        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\API_number_3.csv
+        file_name: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\well_608164025400.csv
       - save_csv: true
         url: https://www.data.bsee.gov/Well/APD/Default.aspx
         output_dir: data\modules\bsee\well\scrapy_output
-        label: API_number_4
+        label: well_608164025600
         api12: 608164025600
-        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\API_number_4.csv
+        file_name: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\well_608164025600.csv

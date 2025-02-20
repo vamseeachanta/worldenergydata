@@ -128,7 +128,7 @@ class BSEEData:
         production_yml = f_d_templates.get_production_data_by_lease(cfg['Analysis'].copy())
 
         settings = { 'lease_number': bottom_lease,
-                    'label': 'LN' + str(bottom_lease),
+                    'label': 'production_data_' + str(bottom_lease),
                     'Duration': {
                         'from': '01/1999',
                         'to': '01/2024'

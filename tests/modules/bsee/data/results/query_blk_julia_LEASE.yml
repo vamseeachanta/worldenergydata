@@ -74,16 +74,16 @@ dictitems:
       __EVENTARGUMENT: Click
   Analysis:
     basename: bsee
-    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
+    analysis_root_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
     file_name: query_blk_julia_LEASE
     file_name_for_overwrite: query_blk_julia_LEASE
-    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
-    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: &id003 2025-02-16 11:32:44.152857
+    result_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    log_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
+    start_time: &id003 2025-02-20 12:32:52.961337
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\query_blk_julia_LEASE.yml
-    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    CustomInputFile: query_blk_julia_LEASE.yml
+    fe_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
   bsee:
     well_data:
       type: csv
@@ -94,14 +94,14 @@ dictitems:
         label: WR540
         bottom_area: Walker Ridge (WR)
         bottom_block: 540
-        file_name: tests\modules\bsee\analysis\results\Data\julia_by_block\WR540.csv
+        file_name: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\WR540.csv
       - save_csv: true
         url: https://www.data.bsee.gov/Well/APD/Default.aspx
         output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
         label: WR584
         bottom_area: Walker Ridge (WR)
         bottom_block: 584
-        file_name: tests\modules\bsee\analysis\results\Data\julia_by_block\WR584.csv
+        file_name: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\WR584.csv
     production:
       block: &id002 !!python/object/new:assetutilities.common.data.AttributeDict
         state: *id002
@@ -121,7 +121,7 @@ dictitems:
           - save_csv: true
             url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
             output_dir: tests/modules/bsee/data/results/Data/well_production_data
-            label: LNG36297
+            label: production_data_G36297
             lease_number: G36297
             Duration:
               from: 01/1999
@@ -146,16 +146,16 @@ dictitems:
               cfg_sensitivities: false
           Analysis:
             basename: bsee
-            analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
+            analysis_root_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
             file_name: query_blk_julia_LEASE
             file_name_for_overwrite: query_blk_julia_LEASE
-            result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
-            log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
+            result_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+            log_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
             start_time: *id003
             cfg_array_file_names: ~
             DefaultInputFile: ~
-            CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\query_blk_julia_LEASE.yml
-            fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+            CustomInputFile: query_blk_julia_LEASE.yml
+            fe_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
           bsee:
             well_data:
               type: csv
@@ -163,9 +163,9 @@ dictitems:
               - save_csv: true
                 url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
                 output_dir: tests/modules/bsee/data/results/Data/well_production_data
-                label: LNG36297
+                label: production_data_G36297
                 lease_number: G36297
                 Duration:
                   from: 01/1999
                   to: 01/2024
-                file_name: tests/modules/bsee/data/results/Data/well_production_data\LNG36297.csv
+                file_name: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\production_data_G36297.csv

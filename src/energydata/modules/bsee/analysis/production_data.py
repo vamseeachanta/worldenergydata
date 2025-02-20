@@ -12,12 +12,12 @@ class ProductionData:
     def __init__(self):
         pass
 
-    def get_production_data(self, cfg):
-        cfg = self.get_production_data_csv(cfg)
+    def get_well_data(self, cfg):
+        cfg = self.get_well_data_csv(cfg)
 
         return cfg
 
-    def get_production_data_csv(self, cfg):
+    def get_well_data_csv(self, cfg):
         output_data = []
 
         if "production" in cfg and cfg['production']['flag']:

@@ -31,7 +31,7 @@ dictitems:
   settings:
   - save_csv: true
     url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    label: API_Number_1
+    label: well_608164024500
     api12: 608164024500
   form_data:
     first_request:
@@ -48,7 +48,7 @@ dictitems:
     file_name_for_overwrite: query_api_01_wells_basic
     result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
     log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-02-20 11:48:22.413513
+    start_time: 2025-02-20 12:09:38.538732
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\query_api_01_wells_basic.yml
@@ -59,6 +59,6 @@ dictitems:
       groups:
       - save_csv: true
         url: https://www.data.bsee.gov/Well/APD/Default.aspx
-        label: API_Number_1
+        label: well_608164024500
         api12: 608164024500
-        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\API_Number_1.csv
+        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\well_608164024500.csv
