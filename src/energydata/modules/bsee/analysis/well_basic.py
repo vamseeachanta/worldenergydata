@@ -1,15 +1,19 @@
 # Standard library imports
 import json
 import logging
+import datetime
 
 # # # Third party imports
 import pandas as pd
+
+from assetutilities.common.data import Transform
 from energydata.modules.bsee.data.bsee_data import BSEEData
 
 # from energydata.common.bsee_data_manager import BSEEData
 
 # from energydata.common.data import AttributeDict, transform_df_datetime_to_str
 
+transform = Transform()
 bsee_data = BSEEData()
 
 class WellAnalysis():
@@ -18,7 +22,9 @@ class WellAnalysis():
         pass
         # self.bsee_data = BSEEData(self.cfg)
 
-    def router(self, cfg, api12):
+    def router(self, cfg, well_data_by_api):
+        well_data_by_api['Total Depth Date'] = None
+        well_data_by_api['Total Depth Date'] = datetime.datetime.now()
         self.prepare_api12_data(well_data_by_api)
         self.add_sidetracklabel_rig_rigdays(WAR_summary, ST_BP_and_tree_height)
         # self.evaluate_well_distances()
@@ -46,8 +52,6 @@ class WellAnalysis():
 
 
     def add_gis_info_to_well_data(self):
-        from common.data import Transform
-        transform = Transform()
         gis_cfg = {'Longitude': 'Bottom Longitude', 'Latitude': 'Bottom Latitude', 'label': 'BOT'}
         self.output_data_api12_df = transform.gis_deg_to_distance(self.output_data_api12_df, gis_cfg)
         gis_cfg = {'Longitude': 'Surface Longitude', 'Latitude': 'Surface Latitude', 'label': 'SURF'}
