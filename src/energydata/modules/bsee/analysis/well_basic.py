@@ -34,8 +34,6 @@ class WellAnalysis():
         self.prepare_formation_data()
         self.prepare_field_well_data()
 
-
-
     def prepare_api12_data(self, well_data):
 
         self.output_data_api12_df = well_data.copy()
@@ -49,7 +47,6 @@ class WellAnalysis():
         self.output_data_api12_df['COMPLETION_NAME'] = ""
         self.output_data_api12_df['monthly_production'] = None
         self.output_data_api12_df['xyz'] = None
-
 
     def add_gis_info_to_well_data(self):
         gis_cfg = {'Longitude': 'Bottom Longitude', 'Latitude': 'Bottom Latitude', 'label': 'BOT'}
