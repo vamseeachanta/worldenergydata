@@ -37,6 +37,6 @@ class BSEEAnalysis():
         
         groups = cfg[cfg['basename']]['well_data']['groups']
         for group in groups:
-            well_data = pd.read_csv(group['file_name'])
-            well_data_analysis.router(cfg, well_data)
+            well_data_by_api = pd.read_csv(group['file_name'])
+            well_data_analysis.router(cfg, well_data_by_api)
 
