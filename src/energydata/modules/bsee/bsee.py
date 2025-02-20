@@ -4,6 +4,7 @@ from assetutilities.common.update_deep import update_deep_dictionary #noqa
 from energydata.modules.bsee.data.get_data_from_production_files import GetDataFromFiles
 from energydata.modules.bsee.data.get_zip_well_production_data import GetWellProdData
 from energydata.modules.bsee.data.well_data import WellData
+from energydata.modules.bsee.analysis.production_data import ProductionData
 from energydata.modules.bsee.analysis.prepare_data_for_analysis import (
     PrepareBseeData,
 )
@@ -14,6 +15,7 @@ from energydata.modules.bsee.analysis.bsee_analysis import BSEEAnalysis
 gwp = GetWellProdData()
 bsee_production = SpiderBsee()
 well_data = WellData()
+production_data = ProductionData()
 prep_bsee_data = PrepareBseeData()
 bsee_analysis = BSEEAnalysis()
 gdff = GetDataFromFiles()
@@ -29,11 +31,11 @@ class bsee:
         
         cfg[cfg['basename']] = {}
         # Route to appropriate data processing based on configuration flags
-        if 'well_data' in cfg and cfg['well_data']['flag'] or 'production' in cfg and cfg['production']['flag']:
+        if 'well_data' in cfg and cfg['well_data']['flag'] or 'block_data' in cfg and cfg['block_data']['flag']:
             cfg = well_data.get_well_data(cfg)
-
-        if 'block_data' in cfg and cfg['block_data']['flag'] or 'well_production' in cfg and cfg['well_production']['flag']:
-            cfg = well_data.get_well_data(cfg)
+        
+        if 'production' in cfg and cfg['production']['flag'] or 'well_production' in cfg and cfg['well_production']['flag']:
+            cfg = production_data.get_production_data(cfg)
 
         if 'well_prod_data' in cfg and cfg['well_prod_data']['flag']:
             gwp.router(cfg)

@@ -2,39 +2,33 @@ import os
 from copy import deepcopy
 
 from energydata.modules.bsee.analysis.scrapy_for_block import ScrapyRunnerBlock
-from energydata.modules.bsee.data.scrapy_for_API import  ScrapyRunnerAPI
-
+from energydata.modules.bsee.data.scrapy_production_data import ScrapyRunnerProduction
 
 from assetutilities.common.utilities import is_dir_valid_func
 
 
-class WellData:
+class ProductionData:
     
     def __init__(self):
         pass
 
-    def get_well_data(self, cfg):
+    def get_production_data(self, cfg):
         cfg = self.get_well_data_csv(cfg)
 
         return cfg
 
-    def get_well_data_csv(self, cfg):
-        output_data = [] 
-        if "well_data" in cfg and cfg['well_data']['flag']:
+    def get_production_data_csv(self, cfg):
+        output_data = []
+
+        if "production" in cfg and cfg['production']['flag']:
             input_items = cfg['settings']
-            scrapy_runner_api = ScrapyRunnerAPI()
+            scrapy_runner_production = ScrapyRunnerProduction()
 
             for input_item in input_items:
-
-                scrapy_runner_api.run_spider(cfg, input_item)
-
-                # output_path = os.path.join(self.cfg['Analysis']['result_folder'], 'Data')
-                # output_file = os.path.join(output_path, 'well_'+ str(API) + '.csv')
+                scrapy_runner_production.run_spider(cfg, input_item)
                 output_data = self.generate_output_item(cfg, output_data, input_item)
 
-
-
-        elif "block_data" in cfg and cfg['block_data']['flag']:
+        elif "well_production" in cfg and cfg['well_production']['flag']:
             input_items = cfg['settings']
             scrapy_runner_block = ScrapyRunnerBlock()
 
@@ -45,8 +39,8 @@ class WellData:
                 output_data = self.generate_output_item(cfg, output_data, input_item)
         
 
-        well_data = {'type': 'csv', 'groups': output_data}
-        cfg[cfg['basename']].update({'well_data': well_data})
+        production_data = {'type': 'csv', 'groups': output_data}
+        cfg[cfg['basename']].update({'production_data': production_data})
 
         return cfg
 
