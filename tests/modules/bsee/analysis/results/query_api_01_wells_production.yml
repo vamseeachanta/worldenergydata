@@ -31,14 +31,14 @@ dictitems:
     files_folder: data\modules\bsee\production\csv
   Analysis:
     basename: bsee
-    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis
+    analysis_root_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis
     file_name: query_api_01_wells_production
     file_name_for_overwrite: query_api_01_wells_production
-    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
-    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\logs
-    start_time: 2025-02-20 11:39:38.829084
+    result_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
+    log_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\logs
+    start_time: 2025-02-20 12:06:49.722035
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\query_api_01_wells_production.yml
-    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
+    CustomInputFile: query_api_01_wells_production.yml
+    fe_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
   bsee: {}

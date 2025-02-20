@@ -24,7 +24,10 @@ class BSEEAnalysis():
 
         #TODO Reroute to data via bsee_data.router
         cfg = bsee_data.router(cfg)
-        cfg = self.run_analysis_for_all_wells(cfg)
+        if cfg['data']['by'] == 'API12':
+            cfg = self.run_analysis_for_all_wells(cfg)
+
+        return cfg
 
     def assign_cfg(self, cfg):
         self.cfg = cfg
