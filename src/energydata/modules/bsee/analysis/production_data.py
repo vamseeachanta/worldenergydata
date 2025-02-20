@@ -13,7 +13,7 @@ class ProductionData:
         pass
 
     def get_production_data(self, cfg):
-        cfg = self.get_well_data_csv(cfg)
+        cfg = self.get_production_data_csv(cfg)
 
         return cfg
 
@@ -39,8 +39,8 @@ class ProductionData:
                 output_data = self.generate_output_item(cfg, output_data, input_item)
         
 
-        production_data = {'type': 'csv', 'groups': output_data}
-        cfg[cfg['basename']].update({'production_data': production_data})
+        well_data = {'type': 'csv', 'groups': output_data}
+        cfg[cfg['basename']].update({'well_data': well_data})
 
         return cfg
 
