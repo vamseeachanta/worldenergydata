@@ -13,7 +13,7 @@ production:
   analysis: False
 
 settings:
-  - label: LNG05868 
+  - label: production_data_G05868 
     lease_number: G05868 
     Duration:
       from : 01/1999

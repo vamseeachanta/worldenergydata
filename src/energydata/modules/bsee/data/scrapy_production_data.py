@@ -61,8 +61,9 @@ class SpiderBsee(scrapy.Spider):
 
     def parse_csv_data(self, response):
         lease_num = self.input_item['lease_number']
-        output_path = self.input_item['output_dir']
-        file_path = os.path.join(output_path, 'production_data_' + str(lease_num) + '.csv')
+        label = self.input_item['label']
+        output_path = output_path = os.path.join(self.cfg['Analysis']['result_folder'], 'Data')
+        output_file = os.path.join(output_path, str(label) + '.csv')
 
         if response.status == 200:
             response_csv = pd.read_csv(BytesIO(response.body))
@@ -70,7 +71,7 @@ class SpiderBsee(scrapy.Spider):
             if response_csv.empty:
                 print(f"{Fore.RED}Empty DataFrame for lease {lease_num}. Skipping CSV file.{Style.RESET_ALL}")
             else:
-                with open(file_path, 'wb') as f:
+                with open(output_file, 'wb') as f:
                     f.write(response.body)
                     logging.debug("\n****The Scraped data of given value ****\n")
                     logging.debug(response_csv)
