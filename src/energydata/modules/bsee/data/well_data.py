@@ -28,8 +28,6 @@ class WellData:
 
                 scrapy_runner_api.run_spider(cfg, input_item)
 
-                # output_path = os.path.join(self.cfg['Analysis']['result_folder'], 'Data')
-                # output_file = os.path.join(output_path, 'well_'+ str(API) + '.csv')
                 output_data = self.generate_output_item(cfg, output_data, input_item)
 
 
@@ -39,11 +37,8 @@ class WellData:
             scrapy_runner_block = ScrapyRunnerBlock()
 
             for input_item in input_items:
-                # well_data_scrapper_cfg = deepcopy(input_item.copy())
-                # well_data_scrapper_cfg.update({'output_dir': output_path})
                 scrapy_runner_block.run_spider(cfg, input_item)
                 output_data = self.generate_output_item(cfg, output_data, input_item)
-        
 
         well_data = {'type': 'csv', 'groups': output_data}
         cfg[cfg['basename']].update({'well_data': well_data})
