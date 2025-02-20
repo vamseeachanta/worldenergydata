@@ -41,7 +41,7 @@ class BSEEDataSpider(scrapy.Spider):
     # Parse the initial response
     def parse(self, response):
         # Extract API number from input item
-        api_num = str(self.input_item['well_api12'])
+        api_num = str(self.input_item['api12'])
 
         # Prepare form data for the first request
         first_request_data = self.cfg['form_data']['first_request'].copy()
@@ -60,7 +60,7 @@ class BSEEDataSpider(scrapy.Spider):
             print(f"{Fore.RED}Failed to submit the form data {Style.RESET_ALL}. Status code: {response.status}")
 
         # Extract API number from input item
-        api_num = str(self.input_item['well_api12'])
+        api_num = str(self.input_item['api12'])
 
         # Prepare form data for the second request
         second_request_data = self.cfg['form_data']['second_request'].copy()
@@ -72,9 +72,9 @@ class BSEEDataSpider(scrapy.Spider):
     # Parse the CSV data from the response
     def parse_csv_data(self, response):
         # Extract label and output directory from input item
-        API = self.input_item['well_api12']
+        API = self.input_item['label']
         output_path = os.path.join(self.cfg['Analysis']['result_folder'], 'Data')
-        output_file = os.path.join(output_path, 'well_'+ str(API) + '.csv')
+        output_file = os.path.join(output_path, str(API) + '.csv')
 
         if response.status == 200:
             response_csv = pd.read_csv(BytesIO(response.body))

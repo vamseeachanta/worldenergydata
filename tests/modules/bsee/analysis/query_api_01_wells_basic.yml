@@ -4,10 +4,9 @@ meta:
 basename: bsee
 
 data:
-  flag: True
   by: API12
   groups:
-    - label: API_Number_1
+    - label: well_608164024500
       api12: 608164024500
 
 analysis:
@@ -27,7 +26,7 @@ master_settings:
   url: https://www.data.bsee.gov/Well/APD/Default.aspx
 
 settings:
-  - label: API_Number_1
+  - label: well_608164024500
     api12: 608164024500
 
 form_data:
