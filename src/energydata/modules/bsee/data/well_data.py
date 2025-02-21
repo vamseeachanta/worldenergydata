@@ -1,4 +1,5 @@
 import os
+import pandas as pd
 from copy import deepcopy
 
 from energydata.modules.bsee.analysis.scrapy_for_block import ScrapyRunnerBlock
@@ -14,11 +15,17 @@ class WellData:
         pass
 
     def get_well_data(self, cfg):
-        cfg = self.get_well_data_csv(cfg)
-
+        cfg = self.get_well_data_from_website(cfg)
+        BoreholeRawData_df = self.get_BoreholeRawData_from_csv(cfg)
+        eWellAPDRawData_df = self.get_eWellAPDRawData_from_csv(cfg)
+        Borehole_apd_df = self.get_merged_data(BoreholeRawData_df, eWellAPDRawData_df)
+        
         return cfg
 
-    def get_well_data_csv(self, cfg):
+    def get_well_data_with_borehole_apd(self, cfg, Borehole_apd_df):
+        pass
+
+    def get_well_data_from_website(self, cfg):
         output_data = [] 
         if "well_data" in cfg and cfg['well_data']['flag']:
             input_items = cfg['settings']
@@ -63,3 +70,40 @@ class WellData:
         output_data.append(input_item_csv_cfg)
         
         return output_data
+    
+    def get_BoreholeRawData_from_csv(self, cfg):
+
+        # Load CSV files
+        file1 = r'data\modules\bsee\full_data\BoreholeRawData_mv_boreholes_all.csv'
+
+        df = pd.read_csv(file1)
+
+        return df
+
+
+    def get_eWellAPDRawData_from_csv(self, cfg):
+
+        # Load CSV files
+        file = r'data\modules\bsee\full_data\eWellAPDRawData_mv_apd_main.csv'
+
+        df = pd.read_csv(file)
+
+        return df
+
+
+    def get_merged_data(self, df1, df2):
+
+        # Identify the join key (first column)
+        join_key = df1.columns[0]
+
+        # Merge on the first column (inner join to keep only matching rows)
+        merged_df = pd.merge(df1, df2, on=join_key, how="right")
+
+        merged_df = merged_df.loc[:, ~merged_df.columns.str.endswith('_y')]
+        merged_df.columns = merged_df.columns.str.replace('_x', '', regex=True)
+
+        output_path = r'data\modules\bsee\well'
+        # Save to a new CSV file
+        merged_df.to_csv(os.path.join(output_path, 'Join_Borehole_APD.csv'), index=False)
+
+        return merged_df

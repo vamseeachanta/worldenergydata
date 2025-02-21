@@ -21,3 +21,31 @@ default:
     overwrite:
       output: True
     cfg_sensitivities: False
+
+data_retrieval:
+  well:
+    website:
+      url: https://www.data.bsee.gov/Well/APD/Default.aspx
+      form_data:
+        first_request:
+          "ASPxFormLayout1$ASPxTextBoxAPI":
+          "ASPxFormLayout1$ASPxButtonSubmitQ": "Submit Query"
+
+        second_request:
+          "ASPxFormLayout1$ASPxTextBoxAPI":
+          "__EVENTTARGET": "ASPxFormLayout2$btnCsvExport"
+          "__EVENTARGUMENT": "Click"
+    csv:
+      BoreholeRawData_mv_boreholes_all: data/modules/bsee/full_data/BoreholeRawData_mv_boreholes_all.csv
+      eWellAPDRawData_mv_apd_main: data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main.csv
+      eWellAPDRawData_mv_apd_main_2: data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main_2.csv
+    zip:
+      BoreholeRawData_mv_boreholes_all: data/modules/bsee/full_data/BoreholeRawData_mv_boreholes_all.zip
+      eWellAPDRawData_mv_apd_main: data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main.zip
+      eWellAPDRawData_mv_apd_main_2: data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main_2.zip
+  production:
+    website:
+      url: https://www.data.bsee.gov/Well/APD/Default.aspx
+      form_data: NULL
+    csv: data\modules\bsee\production\csv
+    zip: data\modules\bsee\production\zip
