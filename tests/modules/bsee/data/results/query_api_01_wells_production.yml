@@ -28,17 +28,17 @@ dictitems:
     production: true
   settings:
     api12: 177024120700
-    files_folder: data\modules\bsee\production\csv
+    files_folder: data\modules\bsee\production\zip\ogora1996delimit.zip
   Analysis:
     basename: bsee
-    analysis_root_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
+    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
     file_name: query_api_01_wells_production
     file_name_for_overwrite: query_api_01_wells_production
-    result_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
-    log_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-02-20 12:10:12.442023
+    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
+    start_time: 2025-02-21 15:56:07.471454
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: query_api_01_wells_production.yml
-    fe_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\query_api_01_wells_production.yml
+    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
   bsee: {}
