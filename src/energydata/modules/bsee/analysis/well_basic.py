@@ -23,8 +23,8 @@ class WellAnalysis():
         # self.bsee_data = BSEEData(self.cfg)
 
     def router(self, cfg, well_data_by_api):
-        well_data_by_api['Total Depth Date'] = None
-        well_data_by_api['Total Depth Date'] = datetime.datetime.now()
+        # well_data_by_api['Total Depth Date'] = None
+        # well_data_by_api['Total Depth Date'] = datetime.datetime.now()
         self.prepare_api12_data(well_data_by_api)
         self.add_sidetracklabel_rig_rigdays(WAR_summary, ST_BP_and_tree_height)
         # self.evaluate_well_distances()
@@ -42,7 +42,7 @@ class WellAnalysis():
         self.output_data_api12_df['O_CUMMULATIVE_PROD_MMBBL'] = 0
         self.output_data_api12_df['DAYS_ON_PROD'] = 0
         self.output_data_api12_df['O_MEAN_PROD_RATE_BOPD'] = 0
-        self.output_data_api12_df['Total Depth Date'] = pd.to_datetime(self.output_data_api12_df['Total Depth Date'])
+        self.output_data_api12_df['TOTA_DEPTH_DATE'] = pd.to_datetime(self.output_data_api12_df['Total Depth Date'])
         self.output_data_api12_df['Spud Date'] = pd.to_datetime(self.output_data_api12_df['Spud Date'])
         self.output_data_api12_df['COMPLETION_NAME'] = ""
         self.output_data_api12_df['monthly_production'] = None
