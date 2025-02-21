@@ -5,12 +5,12 @@ data:
   analysis: False
 
 input:
-  out_directory: tests\modules\bsee\data\results\Data\by_zip
+  out_directory: data\modules\bsee\full_data
   urls:
     - 'https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip'
+    - 'https://www.data.bsee.gov/Well/Files/eWellAPDRawData.zip'
     # - 'https://www.data.bsee.gov/Well/Files/dsptsdelimit.ZIP'
     # - 'https://www.data.bsee.gov/Well/Files/BHPSRawData.zip'
-    # - 'https://www.data.bsee.gov/Well/Files/eWellAPDRawData.zip'
     # - 'https://www.data.bsee.gov/Well/Files/eWellAPMRawData.zip'
     # - 'https://www.data.bsee.gov/Well/Files/eWellEORRawData.zip'
     # - 'https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip'
