@@ -38,14 +38,16 @@ dictitems:
         url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
         form_data:
           first_request:
-            ASPxFormLayout1$ASPxTextBoxLN: ~
-            ASPxFormLayout1$ASPxTextBoxDF: ~
-            ASPxFormLayout1$ASPxTextBoxDT: ~
+            ASPxFormLayout1$ASPxTextBoxLN: G05868
+            ASPxFormLayout1$ASPxTextBoxDF: 01/1999
+            ASPxFormLayout1$ASPxTextBoxDT: 12/2024
             ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
           second_request:
-            ASPxFormLayout1$ASPxTextBoxLN: ~
+            ASPxFormLayout1$ASPxTextBoxLN: G05868
             __EVENTTARGET: ASPxFormLayout2$btnCsvExport
             __EVENTARGUMENT: Click
+            ASPxFormLayout1$ASPxTextBoxDF: 01/1999
+            ASPxFormLayout1$ASPxTextBoxDT: 12/2024
       csv: data\modules\bsee\production\csv
       zip: data\modules\bsee\production\zip
     block:
@@ -68,35 +70,41 @@ dictitems:
   meta:
     library: energydata
     basename: bsee
-  well_data:
-    flag: true
-    analysis: false
   master_settings:
     save_csv: true
-    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+  production:
+    flag: true
+    analysis: false
   settings:
   - save_csv: true
-    url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    label: well_608164024500
-    api12: 608164024500
+    url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+    label: production_data_G05868
+    lease_number: G05868
+    Duration:
+      from: 01/1999
+      to: 12/2024
   Analysis:
     basename: bsee
     analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
-    file_name: query_api_01_wells_basic
-    file_name_for_overwrite: query_api_01_wells_basic
+    file_name: query_lease_production_data
+    file_name_for_overwrite: query_lease_production_data
     result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
     log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-02-22 10:57:15.891478
+    start_time: 2025-02-22 10:59:38.193540
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\query_api_01_wells_basic.yml
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\query_lease_production_data.yml
     fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
   bsee:
     well_data:
       type: csv
       groups:
       - save_csv: true
-        url: https://www.data.bsee.gov/Well/APD/Default.aspx
-        label: well_608164024500
-        api12: 608164024500
-        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\well_608164024500.csv
+        url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+        label: production_data_G05868
+        lease_number: G05868
+        Duration:
+          from: 01/1999
+          to: 12/2024
+        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\production_data_G05868.csv

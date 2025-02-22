@@ -44,7 +44,7 @@ class BSEEDataSpider(scrapy.Spider):
         api_num = str(self.input_item['api12'])
 
         # Prepare form data for the first request
-        first_request_data = self.cfg['form_data']['first_request'].copy()
+        first_request_data = self.cfg['data_retrieval']['well']['website']['form_data']['first_request'].copy()
         first_request_data['ASPxFormLayout1$ASPxTextBoxAPI'] = api_num
 
         logging.info(f"Getting data for API {api_num} ... START")
@@ -63,7 +63,7 @@ class BSEEDataSpider(scrapy.Spider):
         api_num = str(self.input_item['api12'])
 
         # Prepare form data for the second request
-        second_request_data = self.cfg['form_data']['second_request'].copy()
+        second_request_data = self.cfg['data_retrieval']['well']['website']['form_data']['second_request'].copy()
         second_request_data['ASPxFormLayout1$ASPxTextBoxAPI'] = api_num
 
         # Submit the form and proceed to parse CSV data
