@@ -22,10 +22,10 @@ class WellAnalysis():
         pass
         # self.bsee_data = BSEEData(self.cfg)
 
-    def router(self, cfg, well_data_by_api):
+    def router(self, cfg, well_data_by_api,bore_hole_apd_df):
         # well_data_by_api['Total Depth Date'] = None
         # well_data_by_api['Total Depth Date'] = datetime.datetime.now()
-        self.prepare_api12_data(well_data_by_api)
+        self.prepare_api12_data(well_data_by_api, bore_hole_apd_df)
         self.add_sidetracklabel_rig_rigdays(WAR_summary, ST_BP_and_tree_height)
         # self.evaluate_well_distances()
         self.prepare_casing_data(well_data, well_tubulars_data)
@@ -34,16 +34,16 @@ class WellAnalysis():
         self.prepare_formation_data()
         self.prepare_field_well_data()
 
-    def prepare_api12_data(self, well_data):
+    def prepare_api12_data(self, well_data,merged_data):
 
-        self.output_data_api12_df = well_data.copy()
+        self.output_data_api12_df = merged_data.copy()
         self.add_gis_info_to_well_data()
         self.output_data_api12_df['O_PROD_STATUS'] = 0
         self.output_data_api12_df['O_CUMMULATIVE_PROD_MMBBL'] = 0
         self.output_data_api12_df['DAYS_ON_PROD'] = 0
         self.output_data_api12_df['O_MEAN_PROD_RATE_BOPD'] = 0
-        self.output_data_api12_df['TOTA_DEPTH_DATE'] = pd.to_datetime(self.output_data_api12_df['Total Depth Date'])
-        self.output_data_api12_df['Spud Date'] = pd.to_datetime(self.output_data_api12_df['Spud Date'])
+        self.output_data_api12_df['TOTAL_DEPTH_DATE'] = pd.to_datetime(self.output_data_api12_df['TOTAL_DEPTH_DATE'])
+        self.output_data_api12_df['WELL_SPUD_DATE'] = pd.to_datetime(self.output_data_api12_df['WELL_SPUD_DATE'])
         self.output_data_api12_df['COMPLETION_NAME'] = ""
         self.output_data_api12_df['monthly_production'] = None
         self.output_data_api12_df['xyz'] = None

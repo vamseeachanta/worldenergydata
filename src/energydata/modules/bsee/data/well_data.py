@@ -20,6 +20,8 @@ class WellData:
         eWellAPDRawData_df = self.get_eWellAPDRawData_from_csv(cfg)
         Borehole_apd_df = self.get_merged_data(BoreholeRawData_df, eWellAPDRawData_df)
         
+        cfg[cfg['basename']].update({'Borehole_apd_df': Borehole_apd_df})
+
         return cfg
 
     def get_well_data_with_borehole_apd(self, cfg, Borehole_apd_df):
@@ -36,8 +38,6 @@ class WellData:
                 scrapy_runner_api.run_spider(cfg, input_item)
 
                 output_data = self.generate_output_item(cfg, output_data, input_item)
-
-
 
         elif "block_data" in cfg and cfg['block_data']['flag']:
             input_items = cfg['data']['groups']
