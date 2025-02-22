@@ -11,7 +11,7 @@ data_from_files:
   production: True
   
 data:
-  by: block # API12, ?
+  by: #block # API12, lease ?
   groups:
     - api12: 177024120700
       # api12: 608124012700

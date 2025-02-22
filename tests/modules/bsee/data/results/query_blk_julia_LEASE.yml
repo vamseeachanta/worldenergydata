@@ -6,13 +6,57 @@ dictitems:
     data: false
     analysis: false
     results: false
-  result_method: selenium
   settings_master: ~
-  input:
-  - name: example1
-    well_api12: 608174149400
-  - name: example2
-    well_api12: 608174149401
+  data_retrieval:
+    well:
+      website:
+        url: https://www.data.bsee.gov/Well/APD/Default.aspx
+        form_data:
+          first_request:
+            ASPxFormLayout1$ASPxTextBoxAPI: ~
+            ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+          second_request:
+            ASPxFormLayout1$ASPxTextBoxAPI: ~
+            __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+            __EVENTARGUMENT: Click
+      csv:
+        BoreholeRawData_mv_boreholes_all: data/modules/bsee/full_data/BoreholeRawData_mv_boreholes_all.csv
+        eWellAPDRawData_mv_apd_main: data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main.csv
+      zip:
+        BoreholeRawData_mv_boreholes_all: data/modules/bsee/full_data/BoreholeRawData_mv_boreholes_all.zip
+        eWellAPDRawData_mv_apd_main: data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main.zip
+    production:
+      website:
+        url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+        form_data:
+          first_request:
+            ASPxFormLayout1$ASPxTextBoxLN: ~
+            ASPxFormLayout1$ASPxTextBoxDF: ~
+            ASPxFormLayout1$ASPxTextBoxDT: ~
+            ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+          second_request:
+            ASPxFormLayout1$ASPxTextBoxLN: ~
+            __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+            __EVENTARGUMENT: Click
+      csv: data\modules\bsee\production\csv
+      zip: data\modules\bsee\production\zip
+    block:
+      website:
+        url: https://www.data.bsee.gov/Well/APD/Default.aspx
+        form_data:
+          first_request:
+            ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
+            ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
+            ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+            ASPxFormLayout1$ASPxComboBoxBBN: None
+            ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+          second_request:
+            ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
+            ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
+            ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+            ASPxFormLayout1$ASPxComboBoxBBN: None
+            __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+            __EVENTARGUMENT: Click
   default:
     log_level: DEBUG
     config:
@@ -47,61 +91,31 @@ dictitems:
     flag: true
   master_settings:
     save_csv: true
-    url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
-  settings:
-  - save_csv: true
-    url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
-    label: WR540
-    bottom_area: Walker Ridge (WR)
-    bottom_block: 540
-  - save_csv: true
-    url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
-    label: WR584
-    bottom_area: Walker Ridge (WR)
-    bottom_block: 584
-  form_data:
-    first_request:
-      ASPxFormLayout1$ASPxTextBoxLN: ~
-      ASPxFormLayout1$ASPxTextBoxDF: ~
-      ASPxFormLayout1$ASPxTextBoxDT: ~
-      ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
-    second_request:
-      ASPxFormLayout1$ASPxTextBoxLN: ~
-      __EVENTTARGET: ASPxFormLayout2$btnCsvExport
-      __EVENTARGUMENT: Click
+    output_dir: ~
   Analysis:
     basename: bsee
-    analysis_root_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
+    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
     file_name: query_blk_julia_LEASE
     file_name_for_overwrite: query_blk_julia_LEASE
-    result_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
-    log_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: &id003 2025-02-20 12:32:52.961337
+    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
+    start_time: &id003 2025-02-22 11:57:53.196299
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: query_blk_julia_LEASE.yml
-    fe_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\query_blk_julia_LEASE.yml
+    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
   bsee:
     well_data:
       type: csv
       groups:
-      - save_csv: true
-        url: https://www.data.bsee.gov/Well/APD/Default.aspx
-        output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
-        label: WR540
+      - label: WR540
         bottom_area: Walker Ridge (WR)
         bottom_block: 540
-        file_name: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\WR540.csv
-      - save_csv: true
-        url: https://www.data.bsee.gov/Well/APD/Default.aspx
-        output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
-        label: WR584
+        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\WR540.csv
+      - label: WR584
         bottom_area: Walker Ridge (WR)
         bottom_block: 584
-        file_name: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\WR584.csv
+        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\WR584.csv
     production:
       block: &id002 !!python/object/new:assetutilities.common.data.AttributeDict
         state: *id002
@@ -117,27 +131,32 @@ dictitems:
             save_csv: true
             url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
             output_dir: tests/modules/bsee/data/results/Data/well_production_data
-          settings:
-          - save_csv: true
-            url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
-            output_dir: tests/modules/bsee/data/results/Data/well_production_data
-            label: production_data_G36297
-            lease_number: G36297
-            Duration:
-              from: 01/1999
-              to: 01/2024
-          form_data:
-            first_request:
-              ASPxFormLayout1$ASPxTextBoxLN: G36297
-              ASPxFormLayout1$ASPxTextBoxDF: 01/1999
-              ASPxFormLayout1$ASPxTextBoxDT: 01/2024
-              ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
-            second_request:
-              ASPxFormLayout1$ASPxTextBoxLN: G36297
-              __EVENTTARGET: ASPxFormLayout2$btnCsvExport
-              __EVENTARGUMENT: Click
-              ASPxFormLayout1$ASPxTextBoxDF: 01/1999
-              ASPxFormLayout1$ASPxTextBoxDT: 01/2024
+          data:
+            by: ~
+            groups:
+            - label: production_data_G36297
+              lease_number: G36297
+              Duration:
+                from: 01/1999
+                to: 01/2024
+          data_retrieval:
+            production:
+              website:
+                url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+                form_data:
+                  first_request:
+                    ASPxFormLayout1$ASPxTextBoxLN: G36297
+                    ASPxFormLayout1$ASPxTextBoxDF: 01/1999
+                    ASPxFormLayout1$ASPxTextBoxDT: 01/2024
+                    ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+                  second_request:
+                    ASPxFormLayout1$ASPxTextBoxLN: G36297
+                    __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+                    __EVENTARGUMENT: Click
+                    ASPxFormLayout1$ASPxTextBoxDF: 01/1999
+                    ASPxFormLayout1$ASPxTextBoxDT: 01/2024
+              csv: data\modules\bsee\production\csv
+              zip: data\modules\bsee\production\zip
           default:
             log_level: DEBUG
             config:
@@ -146,26 +165,23 @@ dictitems:
               cfg_sensitivities: false
           Analysis:
             basename: bsee
-            analysis_root_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
+            analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
             file_name: query_blk_julia_LEASE
             file_name_for_overwrite: query_blk_julia_LEASE
-            result_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
-            log_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
+            result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+            log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
             start_time: *id003
             cfg_array_file_names: ~
             DefaultInputFile: ~
-            CustomInputFile: query_blk_julia_LEASE.yml
-            fe_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+            CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\query_blk_julia_LEASE.yml
+            fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
           bsee:
             well_data:
               type: csv
               groups:
-              - save_csv: true
-                url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
-                output_dir: tests/modules/bsee/data/results/Data/well_production_data
-                label: production_data_G36297
+              - label: production_data_G36297
                 lease_number: G36297
                 Duration:
                   from: 01/1999
                   to: 01/2024
-                file_name: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\production_data_G36297.csv
+                file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\production_data_G36297.csv

@@ -25,7 +25,7 @@ class GetDataFromFiles:
 
     def get_production_data_by_api12(self, cfg):
 
-        folder_path = cfg['settings']['files_folder']
+        folder_path = cfg['data_retrieval']['production']['csv']
 
         library_name = 'energydata'
         library_file_cfg = {
@@ -35,7 +35,7 @@ class GetDataFromFiles:
 
         folder_path = wwy.get_library_filepath(library_file_cfg, src_relative_location_flag=False)
 
-        api12 = cfg['settings']['api12']
+        api12 = cfg['data']['groups'][0]['api12']
         logging.info(f"Getting production data for API12: {api12} ... START")
         output_file = os.path.join(cfg['Analysis']['result_folder'], 'Data', 'production_data_' + str(api12) + '.csv')
 
