@@ -76,7 +76,7 @@ class WellData:
         # Load CSV files
         file1 = r'data\modules\bsee\full_data\BoreholeRawData_mv_boreholes_all.csv'
 
-        df = pd.read_csv(file1)
+        df = pd.read_csv(file1, low_memory=False)
 
         return df
 
@@ -86,7 +86,7 @@ class WellData:
         # Load CSV files
         file = r'data\modules\bsee\full_data\eWellAPDRawData_mv_apd_main.csv'
 
-        df = pd.read_csv(file)
+        df = pd.read_csv(file, low_memory=False)
 
         return df
 
