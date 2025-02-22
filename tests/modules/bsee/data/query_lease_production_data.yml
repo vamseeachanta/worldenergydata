@@ -4,7 +4,7 @@ meta:
 basename: bsee
 
 data:
-  by: block # API12, ?
+  by: #block # API12, leaese ?
   groups:
     - label: production_data_G05868 
       lease_number: G05868 
