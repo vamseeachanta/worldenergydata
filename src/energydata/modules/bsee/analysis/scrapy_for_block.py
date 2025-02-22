@@ -27,7 +27,7 @@ colorama_init()
 logging.getLogger('scrapy').propagate = False
 class BSEESpider(scrapy.Spider):
 
-    name = 'API_well_data'
+    name = 'well_data_by_block'
     start_urls = ['https://www.data.bsee.gov/Well/APD/Default.aspx']
 
     def __init__(self, input_item=None, cfg=None, *args, **kwargs):
@@ -36,10 +36,9 @@ class BSEESpider(scrapy.Spider):
         self.cfg = cfg
 
     def parse(self, response):
-
         bottom_block_num = str(self.input_item['bottom_block'])
 
-        first_request_data = self.cfg['form_data']['first_request'].copy()
+        first_request_data = self.cfg['data_retrieval']['block']['website']['form_data']['first_request'].copy()
         first_request_data['ASPxFormLayout1_ASPxComboBoxBBN_VI'] = bottom_block_num
         first_request_data['ASPxFormLayout1$ASPxComboBoxBBN'] = bottom_block_num
 
@@ -55,7 +54,7 @@ class BSEESpider(scrapy.Spider):
 
         bottom_block_num = str(self.input_item['bottom_block'])
 
-        second_request_data = self.cfg['form_data']['second_request'].copy()
+        second_request_data = self.cfg['data_retrieval']['block']['website']['form_data']['second_request'].copy()
         second_request_data['ASPxFormLayout1_ASPxComboBoxBBN_VI'] = bottom_block_num
         second_request_data['ASPxFormLayout1$ASPxComboBoxBBN'] = bottom_block_num
 

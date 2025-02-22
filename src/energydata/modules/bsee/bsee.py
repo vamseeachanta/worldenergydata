@@ -25,7 +25,7 @@ class bsee:
 
     def router(self, cfg):
         # Update configuration with master data
-        cfg = self.get_cfg_with_master_data(cfg)
+        # cfg = self.get_cfg_with_master_data(cfg)
         
         cfg[cfg['basename']] = {}
         # Route to appropriate data processing based on configuration flags
@@ -51,19 +51,20 @@ class bsee:
 
     # Function to update configuration 
     def get_cfg_with_master_data(self, cfg):
-        items_key = 'settings'
+        # items_key = 'settings'
         # Check if 'settings' key is present in the cfg dictionary
-        if items_key not in cfg:
-            raise KeyError(f"The key {items_key} is not present in the configuration file.")
+        # if items_key not in cfg:
+        #     raise KeyError(f"The key {items_key} is not present in the configuration file.")
         
-        if 'master_settings' in cfg:
-            settings_master = cfg['master_settings'].copy()
-            items = cfg[items_key]
+        # if 'master_settings' in cfg:
+        #     settings_master = cfg['master_settings'].copy()
+        #     items = cfg[items_key]
 
-            # combine settings with items
-            for item_idx in range(0, len(items)):
-                group = items[item_idx].copy()
-                group = update_deep_dictionary(settings_master, group)
-                items[item_idx] = group.copy()
+        #     # combine settings with items
+        #     for item_idx in range(0, len(items)):
+        #         group = items[item_idx].copy()
+        #         group = update_deep_dictionary(settings_master, group)
+        #         items[item_idx] = group.copy()
 
-        return cfg
+        # return cfg
+        pass

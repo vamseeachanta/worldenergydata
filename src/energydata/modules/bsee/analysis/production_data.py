@@ -21,7 +21,7 @@ class ProductionData:
         output_data = []
 
         if "production" in cfg and cfg['production']['flag']:
-            input_items = cfg['settings']
+            input_items = cfg['data']['groups']
             scrapy_runner_production = ScrapyRunnerProduction()
 
             for input_item in input_items:
@@ -29,7 +29,7 @@ class ProductionData:
                 output_data = self.generate_output_item(cfg, output_data, input_item)
 
         elif "well_production" in cfg and cfg['well_production']['flag']:
-            input_items = cfg['settings']
+            input_items = cfg['data']['groups']
             scrapy_runner_block = ScrapyRunnerBlock()
 
             for input_item in input_items:

@@ -7,24 +7,24 @@ well_data:
   flag: True
   analysis: False
 
+data:
+  by: block # API12, ?
+  groups:
+    - label: well_608164024500
+      api12: 608164024500
+    - label: well_608164025800
+      api12: 608164025800
+    - label: well_608164025400
+      api12: 608164025400
+    - label: well_608164025600
+      api12: 608164025600
+
 master_settings:
   save_csv: True
-  url: https://www.data.bsee.gov/Well/APD/Default.aspx
+  #url: https://www.data.bsee.gov/Well/APD/Default.aspx
   output_dir: data\modules\bsee\well\scrapy_output
 
-settings:
-  - label: well_608164024500
-    api12: 608164024500
 
-  - label: well_608164025800
-    api12: 608164025800
-
-  - label: well_608164025400
-    api12: 608164025400
-
-  - label: well_608164025600
-    api12: 608164025600
-    
 default:
   log_level: DEBUG
   config:

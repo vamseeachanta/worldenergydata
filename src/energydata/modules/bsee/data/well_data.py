@@ -28,7 +28,7 @@ class WellData:
     def get_well_data_from_website(self, cfg):
         output_data = [] 
         if "well_data" in cfg and cfg['well_data']['flag']:
-            input_items = cfg['settings']
+            input_items = cfg['data']['groups']
             scrapy_runner_api = ScrapyRunnerAPI()
 
             for input_item in input_items:
@@ -40,7 +40,7 @@ class WellData:
 
 
         elif "block_data" in cfg and cfg['block_data']['flag']:
-            input_items = cfg['settings']
+            input_items = cfg['data']['groups']
             scrapy_runner_block = ScrapyRunnerBlock()
 
             for input_item in input_items:

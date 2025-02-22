@@ -9,11 +9,14 @@ well_data:
 
 master_settings:
   save_csv: True
-  url: https://www.data.bsee.gov/Well/APD/Default.aspx
+  #url: https://www.data.bsee.gov/Well/APD/Default.aspx
+  output_dir: NULL
 
-settings:
-  - label: well_608164024500
-    api12: 608164024500
+data:
+  by: block # API12, ?
+  groups:
+    - label: well_608164024500
+      api12: 608164024500
     
 default:
   log_level: DEBUG

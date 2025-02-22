@@ -27,16 +27,10 @@ analysis:
 
 master_settings:
   save_csv: True
-  url: https://www.data.bsee.gov/Well/APD/Default.aspx
-  output_dir: tests\modules\bsee\analysis\results\Data
+  #url: https://www.data.bsee.gov/Well/APD/Default.aspx
+  output_dir: NULL
 
-settings:
-  - label: block_WR540
-    bottom_area: Walker Ridge (WR)
-    bottom_block: 540
-  - label: block_WR584
-    bottom_area: Walker Ridge (WR)
-    bottom_block: 584
+
 default:
   log_level: DEBUG
   config:
