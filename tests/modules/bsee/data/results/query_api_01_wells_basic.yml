@@ -28,11 +28,9 @@ dictitems:
       csv:
         BoreholeRawData_mv_boreholes_all: data/modules/bsee/full_data/BoreholeRawData_mv_boreholes_all.csv
         eWellAPDRawData_mv_apd_main: data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main.csv
-        eWellAPDRawData_mv_apd_main_2: data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main_2.csv
       zip:
         BoreholeRawData_mv_boreholes_all: data/modules/bsee/full_data/BoreholeRawData_mv_boreholes_all.zip
         eWellAPDRawData_mv_apd_main: data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main.zip
-        eWellAPDRawData_mv_apd_main_2: data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main_2.zip
     production:
       website:
         url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
@@ -50,7 +48,7 @@ dictitems:
       zip: data\modules\bsee\production\zip
     block:
       website:
-        url: ~
+        url: https://www.data.bsee.gov/Well/APD/Default.aspx
         form_data:
           first_request:
             ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
@@ -73,10 +71,10 @@ dictitems:
     analysis: false
   master_settings:
     save_csv: true
-    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: ~
   settings:
   - save_csv: true
-    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: ~
     label: well_608164024500
     api12: 608164024500
   Analysis:
@@ -86,7 +84,7 @@ dictitems:
     file_name_for_overwrite: query_api_01_wells_basic
     result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
     log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-02-22 10:57:15.891478
+    start_time: 2025-02-22 11:15:09.787569
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\query_api_01_wells_basic.yml
@@ -96,7 +94,7 @@ dictitems:
       type: csv
       groups:
       - save_csv: true
-        url: https://www.data.bsee.gov/Well/APD/Default.aspx
+        output_dir: ~
         label: well_608164024500
         api12: 608164024500
         file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\well_608164024500.csv

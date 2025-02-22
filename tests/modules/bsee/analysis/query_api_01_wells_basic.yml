@@ -23,7 +23,7 @@ well_data:
 
 master_settings:
   save_csv: True
-  url: https://www.data.bsee.gov/Well/APD/Default.aspx
+  #url: https://www.data.bsee.gov/Well/APD/Default.aspx
 
 settings:
   - label: well_608164024500

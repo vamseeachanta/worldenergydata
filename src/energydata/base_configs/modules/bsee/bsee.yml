@@ -30,12 +30,10 @@ data_retrieval:
     csv:
       BoreholeRawData_mv_boreholes_all: data/modules/bsee/full_data/BoreholeRawData_mv_boreholes_all.csv
       eWellAPDRawData_mv_apd_main: data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main.csv
-      eWellAPDRawData_mv_apd_main_2: data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main_2.csv
     zip:
       BoreholeRawData_mv_boreholes_all: data/modules/bsee/full_data/BoreholeRawData_mv_boreholes_all.zip
       eWellAPDRawData_mv_apd_main: data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main.zip
-      eWellAPDRawData_mv_apd_main_2: data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main_2.zip
-      
+
   production:
     website:
       url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
@@ -55,7 +53,7 @@ data_retrieval:
 
   block:
     website:
-      url: NULL
+      url: https://www.data.bsee.gov/Well/APD/Default.aspx
       form_data:
         first_request:
           ASPxFormLayout1$ASPxComboBoxBA: "Walker Ridge (WR)"
