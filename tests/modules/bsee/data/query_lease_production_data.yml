@@ -3,22 +3,23 @@ meta:
   basename: bsee
 basename: bsee
 
+data:
+  by: block # API12, ?
+  groups:
+    - label: production_data_G05868 
+      lease_number: G05868 
+      Duration:
+        from : 01/1999
+        to : 12/2024
+
 master_settings:
   save_csv: True
-  url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+  #url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
 
 
 production:
   flag: True
   analysis: False
-
-settings:
-  - label: production_data_G05868 
-    lease_number: G05868 
-    Duration:
-      from : 01/1999
-      to : 12/2024
-
 
 default:
   log_level: DEBUG

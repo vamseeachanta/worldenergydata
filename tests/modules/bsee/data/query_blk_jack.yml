@@ -29,17 +29,9 @@ api12:
   
 master_settings:
   save_csv: True
-  url: https://www.data.bsee.gov/Well/APD/Default.aspx
-  # output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+  #url: https://www.data.bsee.gov/Well/APD/Default.aspx
+  output_dir: NULL
 
-settings:
-    - label: WR758
-      bottom_area: Walker Ridge (WR)
-      bottom_block: 758
-    - label: WR759
-      bottom_area: Walker Ridge (WR)
-      bottom_block: 759
-    
 
 default:
   log_level: DEBUG

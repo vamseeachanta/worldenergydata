@@ -33,16 +33,8 @@ prod_by_lease:
 
 master_settings:
   save_csv: True
-  url: https://www.data.bsee.gov/Well/APD/Default.aspx
-  #output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
-
-settings:
-  - label: WR540
-    bottom_area: Walker Ridge (WR)
-    bottom_block: 540
-  - label: WR584
-    bottom_area: Walker Ridge (WR)
-    bottom_block: 584
+  #url: https://www.data.bsee.gov/Well/APD/Default.aspx
+  output_dir: NULL
   
 default:
   log_level: DEBUG

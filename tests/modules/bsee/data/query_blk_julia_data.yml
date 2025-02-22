@@ -29,17 +29,10 @@ api12:
 
 master_settings:
   save_csv: True
-  url: https://www.data.bsee.gov/Well/APD/Default.aspx
+  #url: https://www.data.bsee.gov/Well/APD/Default.aspx
   output_dir: NULL
 
-settings:
-  - label: WR540
-    bottom_area: Walker Ridge (WR)
-    bottom_block: 540
-  - label: WR584
-    bottom_area: Walker Ridge (WR)
-    bottom_block: 584    
-
+  
 default:
   log_level: INFO
   config:
