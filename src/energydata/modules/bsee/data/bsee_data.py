@@ -136,7 +136,7 @@ class BSEEData:
                     }
         master_settings = { 'output_dir': 'tests/modules/bsee/data/results/Data/well_production_data'
                     }
-        production_yml['settings'][0].update(settings)
+        production_yml['data']['groups'][0].update(settings)
         production_yml['master_settings'].update(master_settings)
         production_data = energy_engine(inputfile=None, cfg=production_yml, config_flag=False)
 

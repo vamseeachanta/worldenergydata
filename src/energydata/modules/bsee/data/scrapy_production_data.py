@@ -32,7 +32,6 @@ class SpiderBsee(scrapy.Spider):
 
     def parse(self, response):
 
-        start_urls = self.cfg['data_retrieval']['production']['website']['url']
         lease_num = str(self.input_item['lease_number'])
         start = str(self.input_item['Duration']['from'])
         end = str(self.input_item['Duration']['to'])

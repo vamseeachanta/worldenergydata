@@ -13,7 +13,6 @@ data_from_files:
 settings:
   files_folder: None
   output_dir: None 
-  
 
 default:
   log_level: DEBUG

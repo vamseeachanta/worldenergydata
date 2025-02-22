@@ -13,7 +13,7 @@ master_settings:
   output_dir: NULL
 
 data:
-  by: block # API12, ?
+  by: #block # API12,lease ?
   groups:
     - label: well_608164024500
       api12: 608164024500

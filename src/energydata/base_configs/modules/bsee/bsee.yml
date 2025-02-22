@@ -7,13 +7,6 @@ type:
 
 settings_master: NULL
 
-default:
-  log_level: DEBUG
-  config:
-    overwrite:
-      output: True
-    cfg_sensitivities: False
-
 data_retrieval:
   well:
     website:
@@ -71,3 +64,9 @@ data_retrieval:
           __EVENTARGUMENT: "Click"
 
 
+default:
+  log_level: DEBUG
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False

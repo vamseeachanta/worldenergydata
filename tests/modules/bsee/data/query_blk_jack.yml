@@ -4,7 +4,7 @@ meta:
 basename: bsee
 
 data:
-  by: block # API12, ?
+  by: block # API12,lease ?
   groups:
     - label: WR758
       bottom_area: Walker Ridge (WR)
