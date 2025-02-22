@@ -35,7 +35,7 @@ class SpiderBsee(scrapy.Spider):
         start = str(self.input_item['Duration']['from'])
         end = str(self.input_item['Duration']['to'])
 
-        first_request_data = self.cfg['form_data']['first_request']
+        first_request_data = self.cfg['data_retrieval']['production']['website']['form_data']['first_request']
         first_request_data['ASPxFormLayout1$ASPxTextBoxLN'] = lease_num
         first_request_data['ASPxFormLayout1$ASPxTextBoxDF'] = start
         first_request_data['ASPxFormLayout1$ASPxTextBoxDT'] = end
@@ -52,7 +52,7 @@ class SpiderBsee(scrapy.Spider):
         start = str(self.input_item['Duration']['from'])
         end = str(self.input_item['Duration']['to'])
 
-        second_request_data = self.cfg['form_data']['second_request']
+        second_request_data = self.cfg['data_retrieval']['production']['website']['form_data']['second_request']
         second_request_data['ASPxFormLayout1$ASPxTextBoxLN'] = lease_num
         second_request_data['ASPxFormLayout1$ASPxTextBoxDF'] = start
         second_request_data['ASPxFormLayout1$ASPxTextBoxDT'] = end

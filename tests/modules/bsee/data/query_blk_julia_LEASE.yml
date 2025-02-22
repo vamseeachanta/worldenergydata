@@ -34,7 +34,7 @@ prod_by_lease:
 master_settings:
   save_csv: True
   url: https://www.data.bsee.gov/Well/APD/Default.aspx
-  output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
+  #output_dir: tests\modules\bsee\analysis\results\Data\julia_by_block
 
 settings:
   - label: WR540
@@ -43,19 +43,7 @@ settings:
   - label: WR584
     bottom_area: Walker Ridge (WR)
     bottom_block: 584
-    
-form_data:
-  first_request:
-    ASPxFormLayout1$ASPxTextBoxLN: 
-    ASPxFormLayout1$ASPxTextBoxDF: 
-    ASPxFormLayout1$ASPxTextBoxDT: 
-    ASPxFormLayout1$ASPxButtonSubmitQ: "Submit Query"
-
-  second_request:
-    ASPxFormLayout1$ASPxTextBoxLN: 
-    __EVENTTARGET: "ASPxFormLayout2$btnCsvExport"
-    __EVENTARGUMENT: "Click"
-
+  
 default:
   log_level: DEBUG
   config:

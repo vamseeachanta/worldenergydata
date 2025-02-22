@@ -24,16 +24,6 @@ settings:
 
   - label: well_608164025600
     api12: 608164025600
-
-form_data:
-  first_request:
-    "ASPxFormLayout1$ASPxTextBoxAPI":
-    "ASPxFormLayout1$ASPxButtonSubmitQ": "Submit Query"
-
-  second_request:
-    "ASPxFormLayout1$ASPxTextBoxAPI":
-    "__EVENTTARGET": "ASPxFormLayout2$btnCsvExport"
-    "__EVENTARGUMENT": "Click"
     
 default:
   log_level: DEBUG

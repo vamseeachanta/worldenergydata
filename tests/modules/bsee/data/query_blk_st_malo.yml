@@ -34,22 +34,6 @@ settings:
   - label: WR678
     bottom_area: Walker Ridge (WR)
     bottom_block: 678
-
-form_data:
-  first_request:
-    ASPxFormLayout1$ASPxComboBoxBA: "Walker Ridge (WR)"
-    ASPxFormLayout1$ASPxComboBoxBA$DDD$L: "WR"
-    ASPxFormLayout1_ASPxComboBoxBBN_VI: None
-    ASPxFormLayout1$ASPxComboBoxBBN: None
-    ASPxFormLayout1$ASPxButtonSubmitQ: "Submit Query"
-
-  second_request:
-    ASPxFormLayout1$ASPxComboBoxBA: "Walker Ridge (WR)"
-    ASPxFormLayout1$ASPxComboBoxBA$DDD$L: "WR"
-    ASPxFormLayout1_ASPxComboBoxBBN_VI: None
-    ASPxFormLayout1$ASPxComboBoxBBN: None
-    __EVENTTARGET: "ASPxFormLayout2$btnCsvExport"
-    __EVENTARGUMENT: "Click"
     
 
 default:

@@ -1,0 +1,110 @@
+&id001 !!python/object/new:assetutilities.common.data.AttributeDict
+state: *id001
+dictitems:
+  basename: bsee
+  type:
+    data: false
+    analysis: false
+    results: false
+  settings_master: ~
+  default:
+    log_level: DEBUG
+    config:
+      overwrite:
+        output: true
+      cfg_sensitivities: false
+  data_retrieval:
+    well:
+      website:
+        url: https://www.data.bsee.gov/Well/APD/Default.aspx
+        form_data:
+          first_request:
+            ASPxFormLayout1$ASPxTextBoxAPI: ~
+            ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+          second_request:
+            ASPxFormLayout1$ASPxTextBoxAPI: ~
+            __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+            __EVENTARGUMENT: Click
+      csv:
+        BoreholeRawData_mv_boreholes_all: data/modules/bsee/full_data/BoreholeRawData_mv_boreholes_all.csv
+        eWellAPDRawData_mv_apd_main: data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main.csv
+        eWellAPDRawData_mv_apd_main_2: data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main_2.csv
+      zip:
+        BoreholeRawData_mv_boreholes_all: data/modules/bsee/full_data/BoreholeRawData_mv_boreholes_all.zip
+        eWellAPDRawData_mv_apd_main: data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main.zip
+        eWellAPDRawData_mv_apd_main_2: data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main_2.zip
+    production:
+      website:
+        url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+        form_data:
+          first_request:
+            ASPxFormLayout1$ASPxTextBoxLN: G05868
+            ASPxFormLayout1$ASPxTextBoxDF: 01/1999
+            ASPxFormLayout1$ASPxTextBoxDT: 12/2024
+            ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+          second_request:
+            ASPxFormLayout1$ASPxTextBoxLN: G05868
+            __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+            __EVENTARGUMENT: Click
+            ASPxFormLayout1$ASPxTextBoxDF: 01/1999
+            ASPxFormLayout1$ASPxTextBoxDT: 12/2024
+      csv: data\modules\bsee\production\csv
+      zip: data\modules\bsee\production\zip
+    block:
+      website:
+        url: ~
+        form_data:
+          first_request:
+            ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
+            ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
+            ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+            ASPxFormLayout1$ASPxComboBoxBBN: None
+            ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+          second_request:
+            ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
+            ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
+            ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+            ASPxFormLayout1$ASPxComboBoxBBN: None
+            __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+            __EVENTARGUMENT: Click
+  meta:
+    library: energydata
+    basename: bsee
+  master_settings:
+    save_csv: true
+    url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+  production:
+    flag: true
+    analysis: false
+  settings:
+  - save_csv: true
+    url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+    label: production_data_G05868
+    lease_number: G05868
+    Duration:
+      from: 01/1999
+      to: 12/2024
+  Analysis:
+    basename: bsee
+    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
+    file_name: query_lease_production_data
+    file_name_for_overwrite: query_lease_production_data
+    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
+    start_time: 2025-02-22 10:59:38.193540
+    cfg_array_file_names: ~
+    DefaultInputFile: ~
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\query_lease_production_data.yml
+    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+  bsee:
+    well_data:
+      type: csv
+      groups:
+      - save_csv: true
+        url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+        label: production_data_G05868
+        lease_number: G05868
+        Duration:
+          from: 01/1999
+          to: 12/2024
+        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\production_data_G05868.csv
