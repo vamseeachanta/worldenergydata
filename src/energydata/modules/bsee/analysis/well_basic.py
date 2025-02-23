@@ -48,6 +48,77 @@ class WellAnalysis():
         self.output_data_api12_df['monthly_production'] = None
         self.output_data_api12_df['xyz'] = None
 
+    def add_sidetracklabel_rig_rigdays(self, WAR_summary, ST_BP_and_tree_height):
+        import json
+        API10_list = list(self.output_data_api12_df.API10)
+        self.output_data_api12_df['Field NickName'] = self.cfg['custom_parameters']['field_nickname']
+        self.output_data_api12_df['BOEM_FIELDS'] = self.cfg['custom_parameters']['boem_fields']
+        self.output_data_api12_df['Side Tracks'] = 0
+        self.output_data_api12_df['Sidetrack No'] = None
+        self.output_data_api12_df['Bypass No'] = None
+        self.output_data_api12_df['Tree Height Above Mudline'] = None
+        self.output_data_api12_df['WELL_LABEL'] = self.output_data_api12_df['Well Name']
+        self.output_data_api12_df['BSEE Well Name'] = self.output_data_api12_df['Well Name']
+        self.output_data_api12_df['Rigs'] = ""
+        self.output_data_api12_df['rigdays_dict'] = ""
+        self.output_data_api12_df['Drilling Days'] = 0
+        self.output_data_api12_df['Completion Days'] = 0
+        self.output_data_api12_df['MAX_DRILL_FLUID_WGT'] = 0
+        self.output_data_api12_df['drilling_footage_ft'] = 0
+        self.output_data_api12_df['drilling_days_per_10000_ft'] = 0
+        self.output_data_api12_df['RIG_LAST_DATE_ON_WELL'] = None
+
+        for df_row in range(0, len(self.output_data_api12_df)):
+            well_api12 = self.output_data_api12_df.API12.iloc[df_row]
+            well_api10 = self.output_data_api12_df.API10.iloc[df_row]
+
+            api12_count = API10_list.count(well_api10)
+            self.output_data_api12_df['Side Tracks'].iloc[df_row] = api12_count - 1
+            if api12_count >= 2:
+                self.output_data_api12_df['WELL_LABEL'] = self.output_data_api12_df[
+                    'Well Name'] + '-' + self.output_data_api12_df['Sidetrack and Bypass']
+
+            sidetrack_no, bypass_no, tree_elevation_aml = self.assign_st_bp_tree_info(
+                ST_BP_and_tree_height, well_api12)
+            self.output_data_api12_df['Sidetrack No'].iloc[df_row] = sidetrack_no
+            self.output_data_api12_df['Bypass No'].iloc[df_row] = bypass_no
+            self.output_data_api12_df['Tree Height Above Mudline'].iloc[df_row] = tree_elevation_aml
+
+            rig_str, MAX_DRILL_FLUID_WGT, well_days_dict = self.get_rig_days_and_drilling_wt_worked_on_api12(
+                WAR_summary, well_api12)
+            self.get_rig_days_by_well_activity(well_api12)
+            self.output_data_api12_df['Rigs'].iloc[df_row] = rig_str
+            self.output_data_api12_df['rigdays_dict'].iloc[df_row] = json.dumps(well_days_dict['rigdays_dict'])
+            try:
+                self.output_data_api12_df['RIG_LAST_DATE_ON_WELL'].iloc[
+                    df_row] = self.dbe.input_data_well_activity_summary[self.dbe.input_data_well_activity_summary.API12
+                                                                        == well_api12].WAR_END_DT.max()
+            except:
+                self.output_data_api12_df['RIG_LAST_DATE_ON_WELL'].iloc[df_row] = None
+            self.output_data_api12_df['Drilling Days'].iloc[df_row] = well_days_dict['drilling_days']
+            self.output_data_api12_df['Completion Days'].iloc[df_row] = well_days_dict['completion_days']
+
+            try:
+                drilling_footage_ft = float(self.output_data_api12_df['Total Measured Depth'].iloc[df_row]
+                                           ) - self.output_data_api12_df['Water Depth'].iloc[df_row]
+            except:
+                drilling_footage_ft = None
+            self.output_data_api12_df['drilling_footage_ft'].iloc[df_row] = drilling_footage_ft
+
+            if drilling_footage_ft is not None:
+                drilling_days_per_10000_ft = round(
+                    self.output_data_api12_df['Drilling Days'].iloc[df_row] / drilling_footage_ft * 10000, 1)
+            else:
+                drilling_days_per_10000_ft = None
+            self.output_data_api12_df['drilling_days_per_10000_ft'].iloc[df_row] = drilling_days_per_10000_ft
+
+            self.output_data_api12_df['MAX_DRILL_FLUID_WGT'].iloc[df_row] = MAX_DRILL_FLUID_WGT
+
+        self.output_data_api12_df.sort_values(by=['O_PROD_STATUS', 'WELL_LABEL'],
+                                              ascending=[False, True],
+                                              inplace=True)
+        self.output_data_api12_df.reset_index(inplace=True, drop=True)
+
     def add_gis_info_to_well_data(self):
         gis_cfg = {'Longitude': 'Bottom Longitude', 'Latitude': 'Bottom Latitude', 'label': 'BOT'}
         self.output_data_api12_df = transform.gis_deg_to_distance(self.output_data_api12_df, gis_cfg)
