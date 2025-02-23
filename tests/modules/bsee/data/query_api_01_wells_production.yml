@@ -13,9 +13,10 @@ data_from_files:
 data:
   by: #block # API12, lease ?
   groups:
-    - api12: 177024120700
+     - api12: 177024120700
+     
       # api12: 608124012700
-      files_folder: data\modules\bsee\production\csv
+      #files_folder: data\modules\bsee\production\zip
   
 
 default:
