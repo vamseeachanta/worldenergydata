@@ -30,7 +30,7 @@ class bsee:
         cfg[cfg['basename']] = {}
         # Route to appropriate data processing based on configuration flags
         if 'well_data' in cfg and cfg['well_data']['flag'] or 'block_data' in cfg and cfg['block_data']['flag']:
-            cfg = well_data.get_well_data(cfg)
+            cfg  = well_data.get_well_data_all_wells(cfg)
         
         if 'production' in cfg and cfg['production']['flag'] or 'well_production' in cfg and cfg['well_production']['flag']:
             cfg = production_data.get_well_data(cfg)
