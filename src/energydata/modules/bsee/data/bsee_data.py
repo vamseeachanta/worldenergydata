@@ -23,9 +23,9 @@ class BSEEData:
             cfg = self.get_production_data(cfg)
 
         #TODO
-        # WAR_summary = self.bsee_data.get_WAR_summary_by_api10(api10)
+        WAR_summary = self.get_WAR_summary_by_api10(api10)
         # directional_surveys = self.bsee_data.get_directional_surveys_by_api10(api10)
-        # ST_BP_and_tree_height = self.bsee_data.get_ST_BP_and_tree_height_by_api10(api10)
+        ST_BP_and_tree_height = self.get_ST_BP_and_tree_height_by_api10(api10)
         # well_tubulars_data = self.bsee_data.get_well_tubulars_data_by_api10(api10)
         # completion_data = self.bsee_data.get_completion_data_by_api10(api10)
 
@@ -93,7 +93,7 @@ class BSEEData:
         production_yml = f_d_templates.get_data_from_existing_files(cfg['Analysis'].copy())
 
         settings = { 'api12': api12,
-                    'files_folder': 'data/modules/bsee/production/csv',
+                    'files_folder': 'data/modules/bsee/production/zip',
                     }
         production_yml['settings'].update(settings)
         production_data = energy_engine(inputfile=None, cfg=production_yml, config_flag=False)
@@ -141,4 +141,13 @@ class BSEEData:
         production_data = energy_engine(inputfile=None, cfg=production_yml, config_flag=False)
 
         return production_data
+    
+    def get_WAR_summary_by_api10(self, api10):
+        filename = os.path.join('sql', 'bsee.WAR_summary_data_by_api10.sql')
+        df = self.get_data_by_api12(api10, filename)
+        return df
+    def get_ST_BP_and_tree_height_by_api10(self, api10):
+        filename = os.path.join('data_manager\sql', 'bsee.ST_BP_and_tree_height_data_by_api10.sql')
+        df = self.get_data_by_api12(api10, filename)
+        return df
 
