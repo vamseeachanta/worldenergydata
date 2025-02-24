@@ -4,6 +4,9 @@ from copy import deepcopy
 
 from energydata.modules.bsee.analysis.scrapy_for_block import ScrapyRunnerBlock
 from energydata.modules.bsee.data.scrapy_for_API import  ScrapyRunnerAPI
+from energydata.modules.bsee.data.bsee_data import BSEEData
+
+bsee_data = BSEEData()
 
 
 from assetutilities.common.utilities import is_dir_valid_func
@@ -14,43 +17,75 @@ class WellData:
     def __init__(self):
         pass
 
-    def get_well_data(self, cfg):
+    def get_well_data_all_wells(self, cfg):
         cfg = self.get_well_data_from_website(cfg)
+        Borehole_apd_df = self.get_Borehole_apd_for_all_wells(cfg)
+
+        well_data_groups = []
+        for group in cfg[cfg['basename']]['well_data']['groups']:
+            well_data_group = group.copy()
+            api12_array = group['api12']
+            well_data_api12_array = []
+            # for api12 in api12_array:
+            #     pass
+            api12 = api12_array
+            api12_website = pd.read_csv(group['file_name'])
+            api12_Borehole_apd = self.get_Borehole_apd_for_api12(cfg, Borehole_apd_df, api12)
+
+                # WAR_summary = bsee_data.get_WAR_summary_by_api10(api10)
+                # ST_BP_and_tree_height = bsee_data.get_ST_BP_and_tree_height_by_api10(api10)
+
+            well_data_dict = {'api12': api12, 'api12_website': api12_website, 'api12_Borehole_apd': api12_Borehole_apd}
+            well_data_api12_array.append(well_data_dict)
+
+        well_data_groups.append(well_data_group)
+        well_data_dict = {'groups': well_data_groups}
+
+        return cfg, well_data_dict
+
+    def get_Borehole_apd_for_all_wells(self, cfg):
         BoreholeRawData_df = self.get_BoreholeRawData_from_csv(cfg)
         eWellAPDRawData_df = self.get_eWellAPDRawData_from_csv(cfg)
-        Borehole_apd_df = self.get_merged_data(BoreholeRawData_df, eWellAPDRawData_df)
+
+        self.Borehole_apd_df = self.get_merged_data(BoreholeRawData_df, eWellAPDRawData_df)
         
-        cfg[cfg['basename']].update({'Borehole_apd_df': Borehole_apd_df})
+        return self.Borehole_apd_df
 
-        return cfg
+    def get_Borehole_apd_for_api12(self, cfg, Borehole_apd_df, api12):
+        api12_Borehole_apd = Borehole_apd_df[Borehole_apd_df['API_WELL_NUMBER'] == api12].copy()
 
-    def get_well_data_with_borehole_apd(self, cfg, Borehole_apd_df):
-        pass
-
+        return api12_Borehole_apd
     def get_well_data_from_website(self, cfg):
-        output_data = [] 
+        output_data = []
         if "well_data" in cfg and cfg['well_data']['flag']:
-            input_items = cfg['data']['groups']
-            scrapy_runner_api = ScrapyRunnerAPI()
-
-            for input_item in input_items:
-
-                scrapy_runner_api.run_spider(cfg, input_item)
-
-                output_data = self.generate_output_item(cfg, output_data, input_item)
+            output_data = self.get_well_data_by_api12(cfg, output_data)
 
         elif "block_data" in cfg and cfg['block_data']['flag']:
-            input_items = cfg['data']['groups']
-            scrapy_runner_block = ScrapyRunnerBlock()
-
-            for input_item in input_items:
-                scrapy_runner_block.run_spider(cfg, input_item)
-                output_data = self.generate_output_item(cfg, output_data, input_item)
+            output_data = self.get_well_data_by_block(cfg, output_data)
 
         well_data = {'type': 'csv', 'groups': output_data}
         cfg[cfg['basename']].update({'well_data': well_data})
 
         return cfg
+
+    def get_well_data_by_block(self, cfg, output_data):
+        input_items = cfg['data']['groups']
+        scrapy_runner_block = ScrapyRunnerBlock()
+
+        for input_item in input_items:
+            scrapy_runner_block.run_spider(cfg, input_item)
+            output_data = self.generate_output_item(cfg, output_data, input_item)
+        return output_data
+
+    def get_well_data_by_api12(self, cfg, output_data):
+        input_items = cfg['data']['groups']
+        scrapy_runner_api = ScrapyRunnerAPI()
+
+        for input_item in input_items:
+            scrapy_runner_api.run_spider(cfg, input_item)
+
+            output_data = self.generate_output_item(cfg, output_data, input_item)
+        return output_data
 
     def generate_output_item(self, cfg, output_data, input_item):
 

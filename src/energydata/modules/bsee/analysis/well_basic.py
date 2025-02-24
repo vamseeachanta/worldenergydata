@@ -7,14 +7,9 @@ import datetime
 import pandas as pd
 
 from assetutilities.common.data import Transform
-from energydata.modules.bsee.data.bsee_data import BSEEData
-
-# from energydata.common.bsee_data_manager import BSEEData
-
 # from energydata.common.data import AttributeDict, transform_df_datetime_to_str
 
 transform = Transform()
-bsee_data = BSEEData()
 
 class WellAnalysis():
 
@@ -22,11 +17,9 @@ class WellAnalysis():
         pass
         # self.bsee_data = BSEEData(self.cfg)
 
-    def router(self, cfg, well_data_by_api,bore_hole_apd_df):
+    def router(self, cfg, well_data_dict):
         # well_data_by_api['Total Depth Date'] = None
         # well_data_by_api['Total Depth Date'] = datetime.datetime.now()
-        WAR_summary = bsee_data.get_WAR_summary_by_api10(api10)
-        ST_BP_and_tree_height = bsee_data.get_ST_BP_and_tree_height_by_api10(api10)
         self.prepare_api12_data(well_data_by_api, bore_hole_apd_df)
         self.add_sidetracklabel_rig_rigdays(WAR_summary, ST_BP_and_tree_height)
         # self.evaluate_well_distances()

@@ -1,3 +1,13 @@
+## 2025-02-21 Charles White
+
+
+Guys, this item on a webpage by Oil and Gas World, 07Sep’20  appears to define Stage/Phase 3 as being comprised of adding THREE producers(?) [Note that it is not clear whether Jack got 1, 2, or all 3 wells… but, probably 1 for Jack & 2 for St. Malo]:
+
+Steve Thurston, vice president of Exploration and Projects at Chevron, explains that we elected for a joint development to “reduce cost and capture scale” and had field development occur in two stages for “learning and risk reduction.” Stage 1 was put in production in 2014 – on time and under budget. Stage 2 was completed in 2018. In 2019, Stage 3 development drilling continued with one well in the Jack Field starting production and another reaching total depth. A final well is expected to be completed in the first half of 2020. A final investment decision was reached on the St. Malo Stage 4 waterflood project in August 2019. That project includes two new production wells, three injector wells, and topsides water injection equipment. First injection is expected in 2023.
+While 1st injection was supposed to start in 2023, it did not happen until Q3’24.
+Vamsee’s deep-dive into BOEM database should clarify which reservoir got each of the THREE WELLS in Phase 3.
+
+https://www.oilandgas.world/viewtopic.php?t=211
 
 
 ## 2025-02-20 Charles White
