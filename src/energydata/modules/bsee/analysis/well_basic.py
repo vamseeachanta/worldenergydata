@@ -15,7 +15,6 @@ class WellAnalysis():
 
     def __init__(self):
         pass
-        # self.bsee_data = BSEEData(self.cfg)
 
     def router(self, cfg, well_data_dict):
         # well_data_by_api['Total Depth Date'] = None
