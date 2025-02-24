@@ -41,7 +41,7 @@ class BSEEDataSpider(scrapy.Spider):
     # Parse the initial response
     def parse(self, response):
         # Extract API number from input item
-        api_num = str(self.input_item['api12'])
+        api_num = str([self.input_item['api12']])
 
         # Prepare form data for the first request
         first_request_data = self.cfg['data_retrieval']['well']['website']['form_data']['first_request'].copy()
@@ -60,7 +60,7 @@ class BSEEDataSpider(scrapy.Spider):
             print(f"{Fore.RED}Failed to submit the form data {Style.RESET_ALL}. Status code: {response.status}")
 
         # Extract API number from input item
-        api_num = str(self.input_item['api12'])
+        api_num = str(self.input_item['api12'][0])
 
         # Prepare form data for the second request
         second_request_data = self.cfg['data_retrieval']['well']['website']['form_data']['second_request'].copy()
@@ -72,21 +72,25 @@ class BSEEDataSpider(scrapy.Spider):
     # Parse the CSV data from the response
     def parse_csv_data(self, response):
         # Extract label and output directory from input item
-        API = self.input_item['label']
+        api_label = self.input_item['label'][0]
+        if api_label is None:
+            api_label = self.input_item['api12'][0]
+            api_label = str(api_label)
+        
         output_path = os.path.join(self.cfg['Analysis']['result_folder'], 'Data')
-        output_file = os.path.join(output_path, str(API) + '.csv')
+        output_file = os.path.join(output_path, api_label + '.csv')
 
         if response.status == 200:
             response_csv = pd.read_csv(BytesIO(response.body))
 
             if response_csv.empty:
-                print(f"{Fore.RED}Empty DataFrame for API {API}. Skipping CSV file.{Style.RESET_ALL}")
+                print(f"{Fore.RED}Empty DataFrame for API {api_label}. Skipping CSV file.{Style.RESET_ALL}")
             else:
                 with open(output_file, 'wb') as f:
                     f.write(response.body)
                     logging.debug("\n****The Scraped data of given value ****\n")
                     logging.debug(response_csv)
-                    logging.info(f"Getting data for API {API} ... COMPLETE")
+                    logging.info(f"Getting data for API {api_label} ... COMPLETE")
         else:
             print(f"{Fore.RED}Failed to export CSV file.{Style.RESET_ALL} Status code: {response.status}")
 
