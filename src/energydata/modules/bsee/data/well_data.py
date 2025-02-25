@@ -19,6 +19,7 @@ class WellData:
 
     def get_well_data_all_wells(self, cfg):
         Borehole_apd_df = self.get_Borehole_apd_for_all_wells(cfg)
+        cfg = self.get_well_data_from_website(cfg)
 
         well_data_groups = []
         for group in cfg[cfg['basename']]['well_data']['groups']:
@@ -26,20 +27,21 @@ class WellData:
             api12_array = group['api12']
             well_data_api12_array = []
             for api12 in api12_array:
-                cfg = self.get_well_data_from_website(cfg)
-                api12_website = pd.read_csv(group['file_name'])
+                #cfg = self.get_well_data_from_website(cfg)
+                api12_well_data = pd.read_csv(group['file_name'])
                 api12_Borehole_apd = self.get_Borehole_apd_for_api12(cfg, Borehole_apd_df, api12)
 
                 # WAR_summary = bsee_data.get_WAR_summary_by_api10(api10)
                 # ST_BP_and_tree_height = bsee_data.get_ST_BP_and_tree_height_by_api10(api10)
 
-            well_data_dict = {'api12': api12, 'api12_website': api12_website, 'api12_Borehole_apd': api12_Borehole_apd}
+            well_data_dict = {'api12': api12, 'api12_well_data': api12_well_data, 'api12_Borehole_apd': api12_Borehole_apd}
             well_data_api12_array.append(well_data_dict)
 
         well_data_groups.append(well_data_group)
-        well_data_dict = {'groups': well_data_groups}
+        #well_data_dict = {'groups': well_data_groups}
+        cfg[cfg['basename']]['well_data'].update({'well_data_dict': well_data_dict})
 
-        return cfg, well_data_dict
+        return cfg
 
     def get_Borehole_apd_for_all_wells(self, cfg):
         BoreholeRawData_df = self.get_BoreholeRawData_from_csv(cfg)
@@ -56,38 +58,41 @@ class WellData:
     def get_well_data_from_website(self, cfg):
         output_data = []
         if "well_data" in cfg and cfg['well_data']['flag']:
-            output_data = self.get_well_data_by_api12(cfg, output_data)
+            website_data = self.get_well_data_by_api12(cfg, output_data)
 
         elif "block_data" in cfg and cfg['block_data']['flag']:
-            output_data = self.get_well_data_by_block(cfg, output_data)
+            website_data = self.get_well_data_by_block(cfg, output_data)
 
         well_data = {'type': 'csv', 'groups': output_data}
         cfg[cfg['basename']].update({'well_data': well_data})
 
         return cfg
+    
+    def get_well_data_by_api12(self, cfg, output_data):
+        input_items = cfg['data']['groups']
+        scrapy_runner_api = ScrapyRunnerAPI()
+
+        for input_item in input_items:
+
+            api12_data = scrapy_runner_api.run_spider(cfg, input_item)
+            output_data = self.generate_output_item(cfg, output_data, input_item)
+
+        return output_data, api12_data
 
     def get_well_data_by_block(self, cfg, output_data):
         input_items = cfg['data']['groups']
         scrapy_runner_block = ScrapyRunnerBlock()
 
         for input_item in input_items:
-            scrapy_runner_block.run_spider(cfg, input_item)
+
+            block_data = scrapy_runner_block.run_spider(cfg, input_item)
             output_data = self.generate_output_item(cfg, output_data, input_item)
-        return output_data
 
-    def get_well_data_by_api12(self, cfg, output_data):
-        input_items = cfg['data']['groups']
-        scrapy_runner_api = ScrapyRunnerAPI()
-
-        for input_item in input_items:
-            scrapy_runner_api.run_spider(cfg, input_item)
-
-            output_data = self.generate_output_item(cfg, output_data, input_item)
-        return output_data
+        return output_data, block_data
 
     def generate_output_item(self, cfg, output_data, input_item):
 
-        label = input_item['label']
+        label = input_item['label'][0]
         output_path = os.path.join(cfg['Analysis']['result_folder'], 'Data')
         if output_path is None:
             result_folder = cfg['Analysis']['result_folder']
