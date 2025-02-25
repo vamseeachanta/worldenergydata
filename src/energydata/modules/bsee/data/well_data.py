@@ -18,7 +18,6 @@ class WellData:
         pass
 
     def get_well_data_all_wells(self, cfg):
-        cfg = self.get_well_data_from_website(cfg)
         Borehole_apd_df = self.get_Borehole_apd_for_all_wells(cfg)
 
         well_data_groups = []
@@ -26,11 +25,10 @@ class WellData:
             well_data_group = group.copy()
             api12_array = group['api12']
             well_data_api12_array = []
-            # for api12 in api12_array:
-            #     pass
-            api12 = api12_array
-            api12_website = pd.read_csv(group['file_name'])
-            api12_Borehole_apd = self.get_Borehole_apd_for_api12(cfg, Borehole_apd_df, api12)
+            for api12 in api12_array:
+                cfg = self.get_well_data_from_website(cfg)
+                api12_website = pd.read_csv(group['file_name'])
+                api12_Borehole_apd = self.get_Borehole_apd_for_api12(cfg, Borehole_apd_df, api12)
 
                 # WAR_summary = bsee_data.get_WAR_summary_by_api10(api10)
                 # ST_BP_and_tree_height = bsee_data.get_ST_BP_and_tree_height_by_api10(api10)
