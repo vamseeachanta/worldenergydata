@@ -23,7 +23,7 @@ class BSEEAnalysis():
     def router(self, cfg):
 
         #TODO Reroute to data via bsee_data.router
-        cfg = bsee_data.router(cfg)
+        #cfg = bsee_data.router(cfg)
         if cfg['data']['by'] == 'API12':
             cfg = self.run_analysis_for_all_wells(cfg)
 
@@ -33,11 +33,15 @@ class BSEEAnalysis():
         self.cfg = cfg
 
     def run_analysis_for_all_wells(self, cfg):
-        api12_list = cfg[cfg['basename']]['api12']
+        all_well_data = cfg[cfg['basename']]['well_data']
         
-        groups = cfg[cfg['basename']]['well_data']['groups']
-        for group in groups:
-            well_data_by_api = pd.read_csv(group['file_name'])
-            bore_hole_apd_df = cfg[cfg['basename']]['Borehole_apd_df']
-            well_data_analysis.router(cfg, well_data_by_api, bore_hole_apd_df)
+        well_data_analysis.router(cfg, all_well_data)
+        
+        # groups = cfg[cfg['basename']]['well_data']['groups']
+        # for group in groups:
+        #     well_data_by_api = pd.read_csv(group['file_name'])
+        #     bore_hole_apd_df = cfg[cfg['basename']]['Borehole_apd_df']
+        #     well_data_analysis.router(cfg, well_data_by_api, bore_hole_apd_df)
+
+        return cfg
 

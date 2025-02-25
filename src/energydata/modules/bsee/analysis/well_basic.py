@@ -16,10 +16,12 @@ class WellAnalysis():
     def __init__(self):
         pass
 
-    def router(self, cfg, well_data_dict):
+    def router(self, cfg, all_well_data):
         # well_data_by_api['Total Depth Date'] = None
         # well_data_by_api['Total Depth Date'] = datetime.datetime.now()
-        self.prepare_api12_data(well_data_by_api, bore_hole_apd_df)
+        borehole_apd_df = all_well_data['well_data_dict']['api12_Borehole_apd']
+        api12_well_data = all_well_data['well_data_dict']['api12_well_data']
+        self.prepare_api12_data(api12_well_data, borehole_apd_df)
         self.add_sidetracklabel_rig_rigdays(WAR_summary, ST_BP_and_tree_height)
         # self.evaluate_well_distances()
         self.prepare_casing_data(well_data, well_tubulars_data)
@@ -27,6 +29,8 @@ class WellAnalysis():
         self.prepare_well_paths(directional_surveys)
         self.prepare_formation_data()
         self.prepare_field_well_data()
+
+        #return cfg
 
     def prepare_api12_data(self, well_data,merged_data):
 
