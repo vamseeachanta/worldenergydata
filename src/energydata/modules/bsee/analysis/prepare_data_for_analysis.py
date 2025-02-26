@@ -34,7 +34,7 @@ class PrepareBseeData:
         
         merged_df = pd.concat(dataframes, axis=1)
         
-        output_path = os.path.join("tests", "modules", "bsee","analysis", "data_for_analysis", f"{label}.csv")
+        output_path = os.path.join("data", "modules", "bsee","survey", f"{label}.csv")
         os.makedirs(os.path.dirname(output_path), exist_ok=True)  
         merged_df.to_csv(output_path, index=False)
 

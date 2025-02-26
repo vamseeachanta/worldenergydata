@@ -24,7 +24,7 @@ class WellAnalysis():
         self.prepare_api12_data(api12_well_data, borehole_apd_df)
         self.add_sidetracklabel_rig_rigdays(WAR_summary, ST_BP_and_tree_height)
         # self.evaluate_well_distances()
-        self.prepare_casing_data(well_data, well_tubulars_data)
+        self.prepare_casing_data(api12_well_data, well_tubulars_data)
         self.prepare_completion_data(completion_data)
         self.prepare_well_paths(directional_surveys)
         self.prepare_formation_data()

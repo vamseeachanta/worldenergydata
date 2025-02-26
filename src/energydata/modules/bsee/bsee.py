@@ -5,7 +5,7 @@ from energydata.modules.bsee.data.get_data_from_production_files import GetDataF
 from energydata.modules.bsee.data.get_zip_well_production_data import GetWellProdData
 from energydata.modules.bsee.data.well_data import WellData
 from energydata.modules.bsee.analysis.production_data import ProductionData
-#from energydata.modules.bsee.analysis.prepare_data_for_analysis import #PrepareBseeData
+from energydata.modules.bsee.analysis.prepare_data_for_analysis import PrepareBseeData
 from energydata.modules.bsee.data.scrapy_production_data import SpiderBsee
 from energydata.modules.bsee.analysis.bsee_analysis import BSEEAnalysis
 
@@ -14,7 +14,7 @@ gwp = GetWellProdData()
 bsee_production = SpiderBsee()
 well_data = WellData()
 production_data = ProductionData()
-#prep_bsee_data = PrepareBseeData()
+prep_bsee_data = PrepareBseeData()
 bsee_analysis = BSEEAnalysis()
 gdff = GetDataFromFiles()
 
@@ -44,8 +44,8 @@ class bsee:
         if 'analysis' in cfg and cfg['analysis']['flag']:
             bsee_analysis.router(cfg)
         
-        # elif "data_prep" in cfg and cfg["data_prep"]["flag"]:
-        #     data = prep_bsee_data.router(cfg)
+        elif "data_prep" in cfg and cfg["data_prep"]["flag"]:
+            data = prep_bsee_data.router(cfg)
 
         return cfg
 
