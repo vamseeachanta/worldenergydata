@@ -71,14 +71,10 @@ class BSEEDataSpider(scrapy.Spider):
 
     # Parse the CSV data from the response
     def parse_csv_data(self, response):
-        # Extract label and output directory from input item
-        api_label = self.input_item['label'][0]
-        if api_label is None:
-            api_label = self.input_item['api12'][0]
-            api_label = str(api_label)
-        
+
+        api_label = self.input_item['label']
         output_path = os.path.join(self.cfg['Analysis']['result_folder'], 'Data')
-        output_file = os.path.join(output_path, api_label + '.csv')
+        output_file_name = os.path.join(output_path, api_label + '.csv')
 
         if response.status == 200:
             response_csv = pd.read_csv(BytesIO(response.body))
@@ -86,7 +82,7 @@ class BSEEDataSpider(scrapy.Spider):
             if response_csv.empty:
                 print(f"{Fore.RED}Empty DataFrame for API {api_label}. Skipping CSV file.{Style.RESET_ALL}")
             else:
-                with open(output_file, 'wb') as f:
+                with open(output_file_name, 'wb') as f:
                     f.write(response.body)
                     logging.debug("\n****The Scraped data of given value ****\n")
                     logging.debug(response_csv)

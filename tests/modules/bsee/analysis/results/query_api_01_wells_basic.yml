@@ -6,13 +6,57 @@ dictitems:
     data: false
     analysis: false
     results: false
-  result_method: selenium
   settings_master: ~
-  input:
-  - name: example1
-    well_api12: 608174149400
-  - name: example2
-    well_api12: 608174149401
+  data_retrieval:
+    well:
+      website:
+        url: https://www.data.bsee.gov/Well/APD/Default.aspx
+        form_data:
+          first_request:
+            ASPxFormLayout1$ASPxTextBoxAPI: ~
+            ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+          second_request:
+            ASPxFormLayout1$ASPxTextBoxAPI: ~
+            __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+            __EVENTARGUMENT: Click
+      csv:
+        BoreholeRawData_mv_boreholes_all: data/modules/bsee/full_data/BoreholeRawData_mv_boreholes_all.csv
+        eWellAPDRawData_mv_apd_main: data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main.csv
+      zip:
+        BoreholeRawData_mv_boreholes_all: data/modules/bsee/full_data/BoreholeRawData_mv_boreholes_all.zip
+        eWellAPDRawData_mv_apd_main: data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main.zip
+    production:
+      website:
+        url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+        form_data:
+          first_request:
+            ASPxFormLayout1$ASPxTextBoxLN: ~
+            ASPxFormLayout1$ASPxTextBoxDF: ~
+            ASPxFormLayout1$ASPxTextBoxDT: ~
+            ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+          second_request:
+            ASPxFormLayout1$ASPxTextBoxLN: ~
+            __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+            __EVENTARGUMENT: Click
+      csv: data\modules\bsee\production\csv
+      zip: data\modules\bsee\production\zip
+    block:
+      website:
+        url: https://www.data.bsee.gov/Well/APD/Default.aspx
+        form_data:
+          first_request:
+            ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
+            ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
+            ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+            ASPxFormLayout1$ASPxComboBoxBBN: None
+            ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+          second_request:
+            ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
+            ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
+            ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+            ASPxFormLayout1$ASPxComboBoxBBN: None
+            __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+            __EVENTARGUMENT: Click
   default:
     log_level: DEBUG
     config:
@@ -23,37 +67,19 @@ dictitems:
     library: energydata
     basename: bsee
   data:
-    flag: true
     by: API12
     groups:
-    - label: API_Number_1
-      api12: 608164024500
+    - api12:
+      - 608164024500
+      label: '608164024500'
   analysis:
     flag: true
     api12: true
-    production_data: true
-    production:
-      flag: true
-      api12: true
   well_data:
     flag: true
     analysis: true
   master_settings:
     save_csv: true
-    url: https://www.data.bsee.gov/Well/APD/Default.aspx
-  settings:
-  - save_csv: true
-    url: https://www.data.bsee.gov/Well/APD/Default.aspx
-    label: API_Number_1
-    api12: 608164024500
-  form_data:
-    first_request:
-      ASPxFormLayout1$ASPxTextBoxAPI: ~
-      ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
-    second_request:
-      ASPxFormLayout1$ASPxTextBoxAPI: ~
-      __EVENTTARGET: ASPxFormLayout2$btnCsvExport
-      __EVENTARGUMENT: Click
   Analysis:
     basename: bsee
     analysis_root_folder: k:\github\energydata\tests\modules\bsee\analysis
@@ -61,7 +87,7 @@ dictitems:
     file_name_for_overwrite: query_api_01_wells_basic
     result_folder: k:\github\energydata\tests\modules\bsee\analysis\results
     log_folder: k:\github\energydata\tests\modules\bsee\analysis\logs
-    start_time: 2025-02-19 10:51:46.066033
+    start_time: 2025-02-26 13:11:36.606839
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: k:\github\energydata\tests\modules\bsee\analysis\query_api_01_wells_basic.yml
@@ -70,10 +96,7 @@ dictitems:
     well_data:
       type: csv
       groups:
-      - save_csv: true
-        url: https://www.data.bsee.gov/Well/APD/Default.aspx
-        label: API_Number_1
-        api12: 608164024500
-        file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\API_Number_1.csv
-    api12:
-    - 608164024500
+      - api12:
+        - 608164024500
+        label: '608164024500'
+        file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608164024500.csv

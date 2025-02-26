@@ -5,14 +5,14 @@ import logging
 # # # Third party imports
 import pandas as pd
 from energydata.modules.bsee.data.bsee_data import BSEEData
-from energydata.modules.bsee.analysis.well_basic import WellAnalysis
+from energydata.modules.bsee.analysis.well_api12 import WellAPI12
 
 # from energydata.common.bsee_data_manager import BSEEData
 
 # from energydata.common.data import AttributeDict, transform_df_datetime_to_str
 
 bsee_data = BSEEData()
-well_data_analysis = WellAnalysis()
+well_data_analysis = WellAPI12()
 
 class BSEEAnalysis():
 
@@ -20,28 +20,23 @@ class BSEEAnalysis():
         pass
         # self.bsee_data = BSEEData(self.cfg)
 
-    def router(self, cfg):
+    def router(self, cfg, well_data_groups):
 
         #TODO Reroute to data via bsee_data.router
         #cfg = bsee_data.router(cfg)
         if cfg['data']['by'] == 'API12':
-            cfg = self.run_analysis_for_all_wells(cfg)
+            cfg = self.run_analysis_for_all_wells(cfg, well_data_groups)
 
         return cfg
 
     def assign_cfg(self, cfg):
         self.cfg = cfg
 
-    def run_analysis_for_all_wells(self, cfg):
-        all_well_data = cfg[cfg['basename']]['well_data']
-        
-        well_data_analysis.router(cfg, all_well_data)
-        
-        # groups = cfg[cfg['basename']]['well_data']['groups']
-        # for group in groups:
-        #     well_data_by_api = pd.read_csv(group['file_name'])
-        #     bore_hole_apd_df = cfg[cfg['basename']]['Borehole_apd_df']
-        #     well_data_analysis.router(cfg, well_data_by_api, bore_hole_apd_df)
+    def run_analysis_for_all_wells(self, cfg, well_data_groups):
+
+        for group in well_data_groups:
+            api12_df = group[0]['api12_df']
+            cfg = well_data_analysis.router(cfg, api12_df)
 
         return cfg
 
