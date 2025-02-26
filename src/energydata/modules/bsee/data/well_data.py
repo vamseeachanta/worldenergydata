@@ -4,10 +4,6 @@ from copy import deepcopy
 
 from energydata.modules.bsee.analysis.scrapy_for_block import ScrapyRunnerBlock
 from energydata.modules.bsee.data.scrapy_for_API import  ScrapyRunnerAPI
-from energydata.modules.bsee.data.bsee_data import BSEEData
-
-bsee_data = BSEEData()
-
 
 from assetutilities.common.utilities import is_dir_valid_func
 
@@ -25,23 +21,25 @@ class WellData:
         for group in cfg[cfg['basename']]['well_data']['groups']:
             well_data_group = group.copy()
             api12_array = group['api12']
-            well_data_api12_array = []
+            api12_array_well_data = []
             for api12 in api12_array:
-                #cfg = self.get_well_data_from_website(cfg)
-                api12_well_data = pd.read_csv(group['file_name'])
-                api12_Borehole_apd = self.get_Borehole_apd_for_api12(cfg, Borehole_apd_df, api12)
+                api12_df = self.get_api12_data_from_all_sources(cfg, Borehole_apd_df, group, api12)
 
-                # WAR_summary = bsee_data.get_WAR_summary_by_api10(api10)
-                # ST_BP_and_tree_height = bsee_data.get_ST_BP_and_tree_height_by_api10(api10)
+            well_data_group.update({'api12_df': api12_df})
 
-            well_data_dict = {'api12': api12, 'api12_well_data': api12_well_data, 'api12_Borehole_apd': api12_Borehole_apd}
-            well_data_api12_array.append(well_data_dict)
+            api12_array_well_data.append(well_data_group)
 
-        well_data_groups.append(well_data_group)
-        #well_data_dict = {'groups': well_data_groups}
-        cfg[cfg['basename']]['well_data'].update({'well_data_dict': well_data_dict})
+        well_data_groups.append(api12_array_well_data)
 
-        return cfg
+        return cfg, well_data_groups
+
+    def get_api12_data_from_all_sources(self, cfg, Borehole_apd_df, group, api12):
+        api12_well_data = pd.read_csv(group['file_name'])
+        api12_Borehole_apd = self.get_Borehole_apd_for_api12(cfg, Borehole_apd_df, api12)
+        api12_df = pd.merge(api12_Borehole_apd, api12_well_data, how='inner' ,
+                                    left_on=['API_WELL_NUMBER'], right_on=['API Well Number'])
+
+        return api12_df
 
     def get_Borehole_apd_for_all_wells(self, cfg):
         BoreholeRawData_df = self.get_BoreholeRawData_from_csv(cfg)
@@ -73,6 +71,11 @@ class WellData:
         scrapy_runner_api = ScrapyRunnerAPI()
 
         for input_item in input_items:
+            api_num = str(input_item['api12'][0])
+            api_label = api_num
+            if 'label' in input_item and input_item['label'][0] is not None:
+                api_label = input_item['label'][0]
+            input_item.update({'label': api_label})
 
             api12_data = scrapy_runner_api.run_spider(cfg, input_item)
             output_data = self.generate_output_item(cfg, output_data, input_item)
@@ -92,7 +95,7 @@ class WellData:
 
     def generate_output_item(self, cfg, output_data, input_item):
 
-        label = input_item['label'][0]
+        label = input_item['label']
         output_path = os.path.join(cfg['Analysis']['result_folder'], 'Data')
         if output_path is None:
             result_folder = cfg['Analysis']['result_folder']

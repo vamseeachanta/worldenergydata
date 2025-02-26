@@ -23,9 +23,9 @@ class BSEEData:
             cfg = self.get_production_data(cfg)
 
         #TODO
-        WAR_summary = self.get_WAR_summary_by_api10(api10)
+        # WAR_summary = self.get_WAR_summary_by_api10(api10)
         # directional_surveys = self.bsee_data.get_directional_surveys_by_api10(api10)
-        ST_BP_and_tree_height = self.get_ST_BP_and_tree_height_by_api10(api10)
+        # ST_BP_and_tree_height = self.get_ST_BP_and_tree_height_by_api10(api10)
         # well_tubulars_data = self.bsee_data.get_well_tubulars_data_by_api10(api10)
         # completion_data = self.bsee_data.get_completion_data_by_api10(api10)
 
@@ -142,12 +142,3 @@ class BSEEData:
 
         return production_data
     
-    def get_WAR_summary_by_api10(self, api10):
-        filename = os.path.join('sql', 'bsee.WAR_summary_data_by_api10.sql')
-        df = self.get_data_by_api12(api10, filename)
-        return df
-    def get_ST_BP_and_tree_height_by_api10(self, api10):
-        filename = os.path.join('data_manager\sql', 'bsee.ST_BP_and_tree_height_data_by_api10.sql')
-        df = self.get_data_by_api12(api10, filename)
-        return df
-
