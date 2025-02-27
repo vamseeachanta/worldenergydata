@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import os
 
 
-class GetWellProdData:
+class GetWellProdDataFromWebsite:
             
         def __init__(self):
             pass

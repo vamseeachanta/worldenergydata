@@ -7,17 +7,17 @@ from energydata.modules.bsee.data.scrapy_production_data import ScrapyRunnerProd
 from assetutilities.common.utilities import is_dir_valid_func
 
 
-class ProductionData:
+class ProductionDataWebsite:
     
     def __init__(self):
         pass
 
-    def get_well_data(self, cfg):
-        cfg = self.get_well_data_csv(cfg)
+    def get_data(self, cfg):
+        cfg = self.get_csv_data(cfg)
 
         return cfg
 
-    def get_well_data_csv(self, cfg):
+    def get_csv_data(self, cfg):
         output_data = []
 
         if "production" in cfg and cfg['production']['flag']:

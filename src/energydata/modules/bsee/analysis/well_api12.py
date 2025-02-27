@@ -20,14 +20,19 @@ class WellAPI12():
 
         api12_df = self.well_basic_analysis(api12_df)
 
-        # TODO Relocate as needed.
-        api12_df = self.get_sidetracklabel_and_rig_rigdays(api12_df)
-        # self.evaluate_well_distances()
-        self.prepare_casing_data(api12_well_data, well_tubulars_data)
-        self.prepare_completion_data(completion_data)
-        self.prepare_well_paths(directional_surveys)
-        self.prepare_formation_data()
-        self.field_analysis()
+        try:
+            # TODO fix and Relocate as needed.
+            api12_df = self.get_sidetracklabel_and_rig_rigdays(api12_df)
+            # self.evaluate_well_distances()
+            self.prepare_casing_data(api12_well_data, well_tubulars_data)
+            self.prepare_completion_data(completion_data)
+            self.prepare_well_paths(directional_surveys)
+            self.prepare_formation_data()
+            self.field_analysis()
+        except Exception as e:
+            logging.error(e)
+
+        logging.info("API12 data analysis ... COMPLETE")
 
         return cfg
 

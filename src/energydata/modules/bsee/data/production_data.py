@@ -13,12 +13,12 @@ from assetutilities.modules.zip_utilities.read_zip_to_df import ReadZiptoDf
 wwy = WorkingWithYAML()
 rziptodf = ReadZiptoDf()
 
-class GetDataFromFiles:
+class ProductionDataFromZip:
     
     def __init__(self):
         pass
 
-    def router(self, cfg):
+    def get_data_from_zip(self, cfg):
 
         if cfg['data_from_files']['production']:
             self.get_production_data_by_api12(cfg)
