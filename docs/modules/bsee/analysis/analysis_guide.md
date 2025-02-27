@@ -1,25 +1,12 @@
-### Well data 
+### Well , Production and block data
 
-Well basic analysis for single and multiple well apis:
-
-Gathering_data:
-
-  Initially gets the well data from website
-
-  Create groups in cfg and store required data ( api12 file_name , borehole_apd dataframes, api12 df) for analysis in cfg 
-
-Analysis:
-   Pass all data to analysis class and play with it.
-
-### Production data
-
-Well basic analysis for single and multiple well apis:
+basic analysis for single and multiple well apis:
 
 Gathering_data:
 
-  Initially gets the production data from zip files
+  Initially gets the data from respective website
 
-  Create groups in cfg and store required data ( api12 file_name , api12 df) for analysis in cfg 
+  Create groups in cfg and store required data ( files , dfs) for analysis in cfg 
 
 Analysis:
    Pass all data to analysis class and play with it.

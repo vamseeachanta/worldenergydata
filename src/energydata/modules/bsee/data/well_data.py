@@ -2,8 +2,7 @@ import os
 import pandas as pd
 from copy import deepcopy
 
-from energydata.modules.bsee.analysis.scrapy_for_block import ScrapyRunnerBlock
-from energydata.modules.bsee.data.scrapy_for_API import  ScrapyRunnerAPI
+from energydata.modules.bsee.data.scrapy_well_data import  ScrapyRunnerAPI
 
 from assetutilities.common.utilities import is_dir_valid_func
 
@@ -81,17 +80,6 @@ class WellData:
             output_data = self.generate_output_item(cfg, output_data, input_item)
 
         return output_data, api12_data
-
-    def get_well_data_by_block(self, cfg, output_data):
-        input_items = cfg['data']['groups']
-        scrapy_runner_block = ScrapyRunnerBlock()
-
-        for input_item in input_items:
-
-            block_data = scrapy_runner_block.run_spider(cfg, input_item)
-            output_data = self.generate_output_item(cfg, output_data, input_item)
-
-        return output_data, block_data
 
     def generate_output_item(self, cfg, output_data, input_item):
 

@@ -12,13 +12,14 @@ start
 
         :Data;
             note right
-                Well basic
+                Well 
                 Production 
+                block
             end note
 
         :Analysis;
             note right
-                well basic - single , multiple APIs 
+                well basic - single API 
                 Production data
                 block 
             end note
