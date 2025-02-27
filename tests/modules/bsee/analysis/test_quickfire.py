@@ -25,15 +25,15 @@ def get_valid_pytest_output_file(pytest_output_file):
 def test_application():
 
     # Well Data Tests
-    #input_file = 'query_api_01_wells_basic.yml'
+    # input_file = 'query_api_01_wells_basic.yml'
     # input_file = 'query_api_04_well_data.yml'
 
     # Well Production Tests
     # input_file = 'query_api_01_wells_production.yml'
     
-    #input_file = 'query_api_01_production_basic.yml'
+    input_file = 'query_api_01_production_basic.yml'
 
-    input_file = 'query_api_01_block_basic.yml'
+    # input_file = 'query_api_01_block_basic.yml'
 
 
     # All well data

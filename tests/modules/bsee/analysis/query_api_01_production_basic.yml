@@ -10,9 +10,13 @@ data:
     # Groups typically are list of dictionaries to run through multiple API numbers or multiple API sets
     - api12: [177024134002]
 
-well_production:
+analysis:
   flag: True
-  
+  api12: True
+  production:
+    flag: False
+    api12: True
+
 production_from_zip:
   flag: True
 

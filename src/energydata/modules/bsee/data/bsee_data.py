@@ -1,3 +1,20 @@
+from energydata.modules.bsee.data.production_data_from_zip import GetWellProdDataFromZip
+#from energydata.modules.bsee.data.production_data_from_website import GetWellProdDataFromWebsite
+from energydata.modules.bsee.data.well_data import WellData
+from energydata.modules.bsee.data.production_data import ProductionDataWebsite
+from energydata.modules.bsee.data.block_data import BlockDataWebsite
+from energydata.modules.bsee.analysis.prepare_data_for_analysis import PrepareBseeData
+from energydata.modules.bsee.data.scrapy_production_data import SpiderBsee
+
+# Initialize instances of imported classes
+production_from_website = ProductionDataWebsite()
+block_data_website = BlockDataWebsite()
+bsee_production = SpiderBsee()
+well_data = WellData()
+#production_data = GetWellProdDataFromWebsite()
+prep_bsee_data = PrepareBseeData()
+
+production_from_zip = GetWellProdDataFromZip()
 # Standard library imports
 from energydata.common.bsee.retrieve_data_templates import RetrieveDataTemplates
 
@@ -17,10 +34,21 @@ class BSEEData:
 
     def router(self, cfg):
 
-        if cfg['analysis']['api12']:
-            cfg = self.get_api12_data(cfg)
-        if cfg['analysis']['production_data']:
-            cfg = self.get_production_data(cfg)
+        well_data_flag = cfg['data'].get('well_data', True)
+        if well_data_flag:
+            cfg, well_data_groups  = well_data.get_well_data_all_wells(cfg)
+
+        # elif 'block_data' in cfg and cfg['block_data']['flag']:
+        #     cfg, well_data_groups = block_data_website.get_data(cfg)
+
+        production_data_flag = cfg['data'].get('production', True)
+        if production_data_flag:
+            cfg, production_data_groups = production_from_website.get_data(cfg)
+
+        # if cfg['analysis']['api12']:
+        #     cfg = self.get_api12_data(cfg)
+        # if cfg['analysis']['production_data']:
+        #     cfg = self.get_production_data(cfg)
 
         #TODO
         # WAR_summary = self.get_WAR_summary_by_api10(api10)
@@ -29,7 +57,9 @@ class BSEEData:
         # well_tubulars_data = self.bsee_data.get_well_tubulars_data_by_api10(api10)
         # completion_data = self.bsee_data.get_completion_data_by_api10(api10)
 
-        return cfg
+        data = {'well_data': well_data_groups, 'production_data': production_data_groups}
+
+        return cfg, data
 
     def get_api12_data(self, cfg):
 

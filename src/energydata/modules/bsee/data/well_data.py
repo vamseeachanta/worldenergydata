@@ -54,10 +54,10 @@ class WellData:
         return api12_Borehole_apd
     def get_well_data_from_website(self, cfg):
         output_data = []
-        if "well_data" in cfg and cfg['well_data']['flag']:
+        if cfg['data']['by'] == 'API12':
             website_data = self.get_well_data_by_api12(cfg, output_data)
 
-        elif "block_data" in cfg and cfg['block_data']['flag']:
+        elif cfg['data']['by'] == 'block':
             website_data = self.get_well_data_by_block(cfg, output_data)
 
         well_data = {'type': 'csv', 'groups': output_data}
