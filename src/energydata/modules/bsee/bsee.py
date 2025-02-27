@@ -1,10 +1,10 @@
 # Import necessary modules and classes
 from assetutilities.common.update_deep import update_deep_dictionary #noqa
 # Reader imports
-from energydata.modules.bsee.data.production_data import ProductionDataFromZip
-from energydata.modules.bsee.data.production_data_from_website import GetWellProdDataFromWebsite
+from energydata.modules.bsee.data.production_data_from_zip import GetWellProdDataFromZip
+#from energydata.modules.bsee.data.production_data_from_website import GetWellProdDataFromWebsite
 from energydata.modules.bsee.data.well_data import WellData
-from energydata.modules.bsee.analysis.production_data import ProductionDataFromZip
+from energydata.modules.bsee.analysis.production_data import ProductionDataWebsite
 from energydata.modules.bsee.analysis.prepare_data_for_analysis import PrepareBseeData
 from energydata.modules.bsee.data.scrapy_production_data import SpiderBsee
 from energydata.modules.bsee.analysis.bsee_analysis import BSEEAnalysis
@@ -13,10 +13,10 @@ from energydata.modules.bsee.analysis.bsee_analysis import BSEEAnalysis
 production_from_website = ProductionDataWebsite()
 bsee_production = SpiderBsee()
 well_data = WellData()
-production_data = GetWellProdDataFromWebsite()
+#production_data = GetWellProdDataFromWebsite()
 prep_bsee_data = PrepareBseeData()
 bsee_analysis = BSEEAnalysis()
-production_from_zip = ProductionDataFromZip()
+production_from_zip = GetWellProdDataFromZip()
 
 class bsee:
 
@@ -32,9 +32,8 @@ class bsee:
             cfg, well_data_groups  = well_data.get_well_data_all_wells(cfg)
         
         if 'production' in cfg and cfg['production']['flag'] or \
-          'well_production' in cfg and cfg['well_production']['flag'] or \
-             cfg['analysis']['production']['flag']:
-            cfg = production_data.get_data(cfg)
+          'well_production' in cfg and cfg['well_production']['flag']:
+            cfg, well_data_groups = production_from_website.get_data(cfg)
 
         if 'analysis' in cfg and cfg['analysis']['flag']:
             cfg = bsee_analysis.router(cfg, well_data_groups)

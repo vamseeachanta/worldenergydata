@@ -5,7 +5,7 @@ from loguru import logger
 
 # Third party imports
 import pandas as pd
-
+ 
 from assetutilities.common.utilities import is_dir_valid_func
 from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
 from assetutilities.modules.zip_utilities.read_zip_to_df import ReadZiptoDf
@@ -13,19 +13,19 @@ from assetutilities.modules.zip_utilities.read_zip_to_df import ReadZiptoDf
 wwy = WorkingWithYAML()
 rziptodf = ReadZiptoDf()
 
-class ProductionDataFromZip:
+class GetWellProdDataFromZip:
     
     def __init__(self):
         pass
 
-    def get_data_from_zip(self, cfg):
+    def router(self, cfg):
 
-        if cfg['data_from_files']['production']:
-            self.get_production_data_by_api12(cfg)
+        if cfg['production_from_zip']['flag']:
+            self.get_production_data_by_wellapi12(cfg)
 
         return cfg
 
-    def get_production_data_by_api12(self, cfg):
+    def get_production_data_by_wellapi12(self, cfg):
         try:
             folder_path = cfg['data_retrieval']['production']['zip']
 
@@ -40,9 +40,9 @@ class ProductionDataFromZip:
 
             folder_path = wwy.get_library_filepath(library_file_cfg, src_relative_location_flag=False)
 
-            api12 = cfg['data']['groups'][0]['api12']
+            api12 = cfg['data']['groups'][0]['api12'][0]
             logging.info(f"Getting production data for API12: {api12} ... START")
-            output_file = os.path.join(cfg['Analysis']['result_folder'], 'Data', 'production_data_' + str(api12) + '.csv')
+            output_file = os.path.join(cfg['Analysis']['result_folder'], 'Data', str(api12) + '.csv')
 
             api12_dataframes = {}
             for file_name in os.listdir(folder_path):
@@ -65,7 +65,7 @@ class ProductionDataFromZip:
                             continue
 
                         # Find matching rows for the current api12
-                        matching_rows = df[df['API_WELL_NUMBER'] == api12]
+                        matching_rows = df[df['API_WELL_NUMBER'] == api12] 
 
                         if not matching_rows.empty:
                             # Move 'API_WELL_NUMBER' column to the first position
@@ -97,7 +97,13 @@ class ProductionDataFromZip:
 
             logging.info(f"Getting production data for API12: {api12} ... COMPLETE")
 
-            return api12_dataframes
+
+            if len(api12_dataframes) == 1:
+                # Extract the single dataframe from the dictionary
+                dataframe = next(iter(api12_dataframes.values()))
+                return dataframe
+            else:
+                return api12_dataframes
 
         except KeyError as ke:
             logger.error(f"Missing key in configuration: {ke}")

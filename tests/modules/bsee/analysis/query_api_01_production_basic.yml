@@ -3,19 +3,22 @@ meta:
   basename: bsee
   
 basename: bsee
-  
+
+data:
+  by: API12
+  groups:
+    # Groups typically are list of dictionaries to run through multiple API numbers or multiple API sets
+    - api12: [177024134002]
+
 well_production:
   flag: True
-
+  
 production_from_zip:
   flag: True
-  
-data:
-  by: #block # API12, lease?
-  groups:
-    - api12: 177024120700
-      # api12: 608124012700
-      #files_folder: data\modules\bsee\production\csv
+
+# analysis:
+#   flag: True
+#   api12: True
   
 
 default:
