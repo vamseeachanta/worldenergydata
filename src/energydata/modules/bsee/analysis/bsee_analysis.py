@@ -20,21 +20,24 @@ class BSEEAnalysis():
         pass
         # self.bsee_data = BSEEData(self.cfg)
 
-    def router(self, cfg, well_data_groups):
+    def router(self, cfg, data):
 
-        #TODO Reroute to data via bsee_data.router
-        #cfg = bsee_data.router(cfg)
+        # if 'analysis' in cfg and cfg['analysis']['flag']:
         if cfg['data']['by'] == 'API12':
-            cfg = self.run_analysis_for_all_wells(cfg, well_data_groups)
+            cfg = self.run_analysis_for_all_wells(cfg, data)
 
         return cfg
 
     def assign_cfg(self, cfg):
         self.cfg = cfg
 
-    def run_analysis_for_all_wells(self, cfg, well_data_groups):
+    def run_analysis_for_all_wells(self, cfg, data):
 
+        well_data_groups = data['well_data']
+        production_data_groups = data['production_data']
+        
         for group in well_data_groups:
+
             api12_df = group[0]['api12_df']
             cfg = well_data_analysis.router(cfg, api12_df)
 

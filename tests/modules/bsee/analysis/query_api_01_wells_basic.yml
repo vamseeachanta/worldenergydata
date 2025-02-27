@@ -16,10 +16,6 @@ analysis:
     flag: False
     api12: True
 
-well_data:
-  flag: True
-  analysis: True
-
 master_settings:
   save_csv: True
   #url: https://www.data.bsee.gov/Well/APD/Default.aspx
