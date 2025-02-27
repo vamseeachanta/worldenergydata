@@ -1,7 +1,8 @@
 # Standard library imports
-import logging  # noqa
+from loguru import logger # noqa
 import os  # noqa
 from io import BytesIO  # noqa
+import logging # noqa
 
 # Third party imports
 import pandas as pd  # noqa
@@ -36,13 +37,13 @@ class BSEESpider(scrapy.Spider):
         self.cfg = cfg
 
     def parse(self, response):
-        bottom_block_num = str(self.input_item['bottom_block'])
+        bottom_block_num = str(self.input_item['bottom_block'][0])
 
         first_request_data = self.cfg['data_retrieval']['block']['website']['form_data']['first_request'].copy()
         first_request_data['ASPxFormLayout1_ASPxComboBoxBBN_VI'] = bottom_block_num
         first_request_data['ASPxFormLayout1$ASPxComboBoxBBN'] = bottom_block_num
 
-        logging.info(f"Getting data for BLOCK {bottom_block_num} ... START")
+        logger.info(f"Getting data for BLOCK {bottom_block_num} ... START")
 
         yield FormRequest.from_response(response, formdata=first_request_data, callback=self.step2)
 
@@ -52,7 +53,7 @@ class BSEESpider(scrapy.Spider):
         else:
             print(f"{Fore.RED}Failed to submit the form data {Style.RESET_ALL}. Status code: {response.status}")
 
-        bottom_block_num = str(self.input_item['bottom_block'])
+        bottom_block_num = str(self.input_item['bottom_block'][0])
 
         second_request_data = self.cfg['data_retrieval']['block']['website']['form_data']['second_request'].copy()
         second_request_data['ASPxFormLayout1_ASPxComboBoxBBN_VI'] = bottom_block_num
@@ -62,7 +63,7 @@ class BSEESpider(scrapy.Spider):
 
     def parse_csv_data(self, response):
 
-        label = self.input_item['label']
+        label = self.input_item['bottom_block'][0]
         bottom_block = self.input_item['bottom_block']
         output_path = os.path.join(self.cfg['Analysis']['result_folder'], 'Data')
         if output_path is None:
@@ -82,9 +83,9 @@ class BSEESpider(scrapy.Spider):
             else:
                 with open(output_file, 'wb') as f:
                     f.write(response.body)
-                    logging.debug("\n****The Scraped data of given value ****\n")
-                    logging.debug(response_csv)
-                    logging.info(f"Getting data for BLOCK {bottom_block} ... COMPLETE")
+                    logger.debug("\n****The Scraped data of given value ****\n")
+                    logger.debug(response_csv)
+                    logger.info(f"Getting data for BLOCK {bottom_block} ... COMPLETE")
         else:
             print(f"{Fore.RED}Failed to export CSV file.{Style.RESET_ALL} Status code: {response.status}")
 
