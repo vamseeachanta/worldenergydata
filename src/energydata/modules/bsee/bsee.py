@@ -9,6 +9,7 @@ from energydata.modules.bsee.data.block_data import BlockDataWebsite
 from energydata.modules.bsee.analysis.prepare_data_for_analysis import PrepareBseeData
 from energydata.modules.bsee.data.scrapy_production_data import SpiderBsee
 from energydata.modules.bsee.analysis.bsee_analysis import BSEEAnalysis
+from energydata.modules.bsee.data.bsee_data import BSEEData
 
 # Initialize instances of imported classes
 production_from_website = ProductionDataWebsite()
@@ -19,6 +20,7 @@ well_data = WellData()
 prep_bsee_data = PrepareBseeData()
 bsee_analysis = BSEEAnalysis()
 production_from_zip = GetWellProdDataFromZip()
+bsee_data = BSEEData()
 
 class bsee:
 
@@ -28,20 +30,12 @@ class bsee:
     def router(self, cfg):
         # Update configuration with master data
         cfg = self.get_cfg_with_master_data(cfg)
-        
-        cfg[cfg['basename']] = {}
-        if 'well_data' in cfg and cfg['well_data']['flag'] :
-            cfg, well_data_groups  = well_data.get_well_data_all_wells(cfg)
-        
-        if 'production' in cfg and cfg['production']['flag'] or \
-          'well_production' in cfg and cfg['well_production']['flag']:
-            cfg, well_data_groups = production_from_website.get_data(cfg)
-        
-        elif 'block_data' in cfg and cfg['block_data']['flag']:
-            cfg, well_data_groups = block_data_website.get_data(cfg)
 
-        if 'analysis' in cfg and cfg['analysis']['flag']:
-            cfg = bsee_analysis.router(cfg, well_data_groups)
+        cfg[cfg['basename']] = {}
+
+        cfg, data = bsee_data.router(cfg)
+
+        cfg = bsee_analysis.router(cfg, data)
 
         return cfg
 
