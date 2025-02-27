@@ -75,6 +75,9 @@ dictitems:
   analysis:
     flag: true
     api12: true
+    production:
+      flag: true
+      api12: true
   well_data:
     flag: true
     analysis: true
@@ -87,7 +90,7 @@ dictitems:
     file_name_for_overwrite: query_api_01_wells_basic
     result_folder: k:\github\energydata\tests\modules\bsee\analysis\results
     log_folder: k:\github\energydata\tests\modules\bsee\analysis\logs
-    start_time: 2025-02-26 13:11:36.606839
+    start_time: 2025-02-26 15:51:42.424849
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: k:\github\energydata\tests\modules\bsee\analysis\query_api_01_wells_basic.yml
@@ -95,8 +98,4 @@ dictitems:
   bsee:
     well_data:
       type: csv
-      groups:
-      - api12:
-        - 608164024500
-        label: '608164024500'
-        file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608164024500.csv
+      groups: []

@@ -9,7 +9,7 @@ from assetutilities.common.utilities import is_dir_valid_func
 
 
 class WellData:
-    
+
     def __init__(self):
         pass
 
