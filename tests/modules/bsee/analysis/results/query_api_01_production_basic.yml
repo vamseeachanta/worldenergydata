@@ -66,27 +66,32 @@ dictitems:
   meta:
     library: energydata
     basename: bsee
+  data:
+    by: API12
+    groups:
+    - api12:
+      - 177024134002
   well_production:
     flag: true
   production_from_zip:
     flag: true
-  data:
-    by: ~
-    groups:
-    - api12: 177024120700
   Analysis:
     basename: bsee
     analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis
-    file_name: query_api_01_wells_production
-    file_name_for_overwrite: query_api_01_wells_production
+    file_name: query_api_01_production_basic
+    file_name_for_overwrite: query_api_01_production_basic
     result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
     log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\logs
-    start_time: 2025-02-27 14:55:12.717167
+    start_time: 2025-02-27 16:42:28.391443
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\query_api_01_wells_production.yml
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\query_api_01_production_basic.yml
     fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
   bsee:
-    well_data:
+    production_data:
       type: csv
-      groups: []
+      groups:
+      - api12:
+        - 177024134002
+        label: 177024134002
+        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\177024134002.csv

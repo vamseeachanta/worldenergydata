@@ -13,7 +13,7 @@ analysis:
   flag: True
   api12: True
   production:
-    flag: True
+    flag: False
     api12: True
 
 well_data:

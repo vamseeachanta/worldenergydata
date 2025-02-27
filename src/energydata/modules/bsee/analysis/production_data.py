@@ -3,9 +3,11 @@ from copy import deepcopy
 
 from energydata.modules.bsee.analysis.scrapy_for_block import ScrapyRunnerBlock
 from energydata.modules.bsee.data.scrapy_production_data import ScrapyRunnerProduction
+from energydata.modules.bsee.data.production_data_from_zip import GetWellProdDataFromZip
 
 from assetutilities.common.utilities import is_dir_valid_func
 
+production_from_zip = GetWellProdDataFromZip()
 
 class ProductionDataWebsite:
     
@@ -13,40 +15,65 @@ class ProductionDataWebsite:
         pass
 
     def get_data(self, cfg):
-        cfg = self.get_csv_data(cfg)
 
-        return cfg
+        cfg = self.get_all_data(cfg)
+        production_data_groups = []
+        for group in cfg[cfg['basename']]['production_data']['groups']:
+            production_data_group = group.copy()
+            api12_array = group['api12']
+            api12_array_well_data = []
+            for api12 in api12_array:
+                api12_df =  production_from_zip.get_production_data_by_wellapi12(cfg)
 
-    def get_csv_data(self, cfg):
+            production_data_group.update({'api12_df': api12_df})
+
+            api12_array_well_data.append(production_data_group)
+
+        production_data_groups.append(api12_array_well_data)
+
+        return cfg, production_data_groups
+
+
+    def get_all_data(self, cfg):
+
         output_data = []
-
         if "production" in cfg and cfg['production']['flag']:
-            input_items = cfg['data']['groups']
-            scrapy_runner_production = ScrapyRunnerProduction()
+            output_data = self.get_production_from_website(cfg, output_data)
 
+        elif "block_data" in cfg and cfg['block_data']['flag']:
+            output_data = self.get_block_data_from_website(cfg, output_data)
+
+        elif "production_from_zip" in cfg and cfg['production_from_zip']['flag']:
+            input_items = cfg['data']['groups']
             for input_item in input_items:
-                scrapy_runner_production.run_spider(cfg, input_item)
                 output_data = self.generate_output_item(cfg, output_data, input_item)
 
-        elif "well_production" in cfg and cfg['well_production']['flag']:
-            input_items = cfg['data']['groups']
-            scrapy_runner_block = ScrapyRunnerBlock()
-
-            for input_item in input_items:
-                # well_data_scrapper_cfg = deepcopy(input_item.copy())
-                # well_data_scrapper_cfg.update({'output_dir': output_path})
-                scrapy_runner_block.run_spider(cfg, input_item)
-                output_data = self.generate_output_item(cfg, output_data, input_item)
-        
-
-        well_data = {'type': 'csv', 'groups': output_data}
-        cfg[cfg['basename']].update({'well_data': well_data})
+        production_data = {'type': 'csv', 'groups': output_data}
+        cfg[cfg['basename']].update({'production_data': production_data})
 
         return cfg
+
+    def get_block_data_from_website(self, cfg, output_data):
+        input_items = cfg['data']['groups']
+        scrapy_runner_block = ScrapyRunnerBlock()
+
+        for input_item in input_items:
+            block_data_from_website = scrapy_runner_block.run_spider(cfg, input_item)
+            output_data = self.generate_output_item(cfg, output_data, input_item)
+        return output_data
+
+    def get_production_from_website(self, cfg, output_data):
+        input_items = cfg['data']['groups']
+        scrapy_runner_production = ScrapyRunnerProduction()
+
+        for input_item in input_items:
+            production_from_website = scrapy_runner_production.run_spider(cfg, input_item)
+            output_data = self.generate_output_item(cfg, output_data, input_item)
+        return output_data
 
     def generate_output_item(self, cfg, output_data, input_item):
 
-        label = input_item['label']
+        label = input_item['api12'][0]
         output_path = os.path.join(cfg['Analysis']['result_folder'], 'Data')
         if output_path is None:
             result_folder = cfg['Analysis']['result_folder']

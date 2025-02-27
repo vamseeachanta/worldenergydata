@@ -1,0 +1,36 @@
+@startuml high_level_architecture
+skinparam titleBorderRoundCorner 15
+skinparam titleBorderThickness 2
+skinparam titleBorderColor red
+skinparam titleBackgroundColor Tomato
+
+title High Level Architecture
+
+start
+
+    partition {
+
+        :Data;
+            note right
+                Well basic
+                Production 
+            end note
+
+        :Analysis;
+            note right
+                well basic - single , multiple APIs 
+                Production data
+                block 
+            end note
+
+        
+    }
+
+stop
+
+footer
+%date("yyyy.MM.dd' at 'HH:mm")
+%filename()
+end footer
+
+@enduml++
