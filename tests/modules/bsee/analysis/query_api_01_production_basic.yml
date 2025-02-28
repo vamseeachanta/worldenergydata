@@ -6,6 +6,7 @@ basename: bsee
 
 data:
   by: API12
+  production_data: True
   groups:
     # Groups typically are list of dictionaries to run through multiple API numbers or multiple API sets
     - api12: [177024134002]

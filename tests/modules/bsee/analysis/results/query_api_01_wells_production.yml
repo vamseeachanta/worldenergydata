@@ -71,9 +71,10 @@ dictitems:
   production_from_zip:
     flag: true
   data:
-    by: ~
+    by: production_from_zip
     groups:
-    - api12: 177024120700
+    - api12:
+      - 177024120700
   Analysis:
     basename: bsee
     analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis
@@ -81,7 +82,7 @@ dictitems:
     file_name_for_overwrite: query_api_01_wells_production
     result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
     log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\logs
-    start_time: 2025-02-27 14:55:12.717167
+    start_time: 2025-02-28 16:51:26.500089
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\query_api_01_wells_production.yml
@@ -89,4 +90,8 @@ dictitems:
   bsee:
     well_data:
       type: csv
-      groups: []
+      groups:
+      - api12:
+        - 177024120700
+        label: 177024120700
+        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\177024120700.csv

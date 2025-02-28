@@ -16,21 +16,21 @@ class BlockDataWebsite:
     def get_data(self, cfg):
 
         cfg = self.get_all_data(cfg)
-        well_data_groups = []
+        block_data_groups = []
         for group in cfg[cfg['basename']]['well_data']['groups']:
-            well_data_group = group.copy()
+            block_data_group = group.copy()
             block_array = group['bottom_block']
             block_array_well_data = []
             for block in block_array:
                 block_df = self.get_block_df(group)
 
-            well_data_group.update({'block_df': block_df})
+            block_data_group.update({'block_df': block_df})
 
-            block_array_well_data.append(well_data_group)
+            block_array_well_data.append(block_data_group)
 
-        well_data_groups.append(block_array_well_data)
+        block_data_groups.append(block_array_well_data)
 
-        return cfg, well_data_groups
+        return cfg, block_data_groups
     
     def get_block_df(self, group):
 
