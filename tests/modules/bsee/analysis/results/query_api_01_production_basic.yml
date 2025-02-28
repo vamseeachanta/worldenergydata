@@ -71,8 +71,13 @@ dictitems:
     groups:
     - api12:
       - 177024134002
-  well_production:
+      label: '177024134002'
+  analysis:
     flag: true
+    api12: true
+    production:
+      flag: false
+      api12: true
   production_from_zip:
     flag: true
   Analysis:
@@ -82,7 +87,7 @@ dictitems:
     file_name_for_overwrite: query_api_01_production_basic
     result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
     log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\logs
-    start_time: 2025-02-27 18:53:45.623812
+    start_time: 2025-02-28 16:16:34.545164
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\query_api_01_production_basic.yml

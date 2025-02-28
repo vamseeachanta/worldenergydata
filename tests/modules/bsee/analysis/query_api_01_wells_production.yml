@@ -11,9 +11,9 @@ production_from_zip:
   flag: True
   
 data:
-  by: #block # API12, lease?
+  by: production_from_zip
   groups:
-    - api12: 177024120700
+    - api12: [177024120700]
       # api12: 608124012700
       #files_folder: data\modules\bsee\production\csv
   

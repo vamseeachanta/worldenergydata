@@ -20,7 +20,7 @@ class GetWellProdDataFromZip:
 
     def router(self, cfg):
 
-        if cfg['production_from_zip']['flag']:
+        if cfg['data']['by']['production_from_zip']:
             self.get_production_data_by_wellapi12(cfg)
 
         return cfg
