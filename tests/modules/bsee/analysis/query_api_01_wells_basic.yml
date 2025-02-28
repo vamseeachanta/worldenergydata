@@ -5,9 +5,11 @@ basename: bsee
 
 data:
   by: API12
+  well_data: True
   groups:
     # Groups typically are list of dictionaries to run through multiple API numbers or multiple API sets
     - api12: [608164024500]
+  
 
 analysis:
   flag: True

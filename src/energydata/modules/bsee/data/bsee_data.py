@@ -34,16 +34,21 @@ class BSEEData:
 
     def router(self, cfg):
 
-        well_data_flag = cfg['data'].get('well_data', True)
+        well_data_flag = cfg['data'].get('well_data', False)
+        well_data_groups = None
         if well_data_flag:
             cfg, well_data_groups  = well_data.get_well_data_all_wells(cfg)
 
         # elif 'block_data' in cfg and cfg['block_data']['flag']:
         #     cfg, well_data_groups = block_data_website.get_data(cfg)
 
-        production_data_flag = cfg['data'].get('production', True)
-        if production_data_flag:
+        production_data_flag = cfg['data'].get('production', False)
+        production_from_zip_flag = cfg['production_from_zip'].get('flag', False)
+        production_data_groups = None
+        if production_data_flag or production_from_zip_flag:
             cfg, production_data_groups = production_from_website.get_data(cfg)
+        
+
 
         # if cfg['analysis']['api12']:
         #     cfg = self.get_api12_data(cfg)
