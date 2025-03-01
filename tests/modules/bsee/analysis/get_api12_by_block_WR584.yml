@@ -28,12 +28,6 @@ analysis:
     block: False
     api12: False
 
-master_settings:
-  save_csv: True
-  #url: https://www.data.bsee.gov/Well/APD/Default.aspx
-  output_dir: NULL
-
-
 default:
   log_level: DEBUG
   config:

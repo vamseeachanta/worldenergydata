@@ -1,3 +1,5 @@
+# Standard library imports
+from energydata.common.bsee.retrieve_data_templates import RetrieveDataTemplates
 from energydata.modules.bsee.data.production_data_from_zip import GetWellProdDataFromZip
 #from energydata.modules.bsee.data.production_data_from_website import GetWellProdDataFromWebsite
 from energydata.modules.bsee.data.well_data import WellData
@@ -5,6 +7,12 @@ from energydata.modules.bsee.data.production_data import ProductionDataWebsite
 from energydata.modules.bsee.data.block_data import BlockDataWebsite
 from energydata.modules.bsee.analysis.prepare_data_for_analysis import PrepareBseeData
 from energydata.modules.bsee.data.scrapy_production_data import SpiderBsee
+
+# Third party imports
+import pandas as pd
+import datetime
+
+import os
 
 # Initialize instances of imported classes
 production_from_website = ProductionDataWebsite()
@@ -15,14 +23,6 @@ well_data = WellData()
 prep_bsee_data = PrepareBseeData()
 
 production_from_zip = GetWellProdDataFromZip()
-# Standard library imports
-from energydata.common.bsee.retrieve_data_templates import RetrieveDataTemplates
-
-# Third party imports
-import pandas as pd
-import datetime
-
-import os
 
 f_d_templates = RetrieveDataTemplates()
 

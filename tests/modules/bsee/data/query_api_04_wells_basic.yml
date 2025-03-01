@@ -19,12 +19,6 @@ data:
     - label: well_608164025600
       api12: 608164025600
 
-master_settings:
-  save_csv: True
-  #url: https://www.data.bsee.gov/Well/APD/Default.aspx
-  output_dir: data\modules\bsee\well\scrapy_output
-
-
 default:
   log_level: DEBUG
   config:
