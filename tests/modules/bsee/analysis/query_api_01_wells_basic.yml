@@ -18,14 +18,6 @@ analysis:
     flag: False
     api12: True
 
-master_settings:
-  save_csv: True
-  #url: https://www.data.bsee.gov/Well/APD/Default.aspx
-
-# settings:
-#   - label: well_608164024500
-#     api12: 608164024500
-
 default:
   log_level: DEBUG
   config:
