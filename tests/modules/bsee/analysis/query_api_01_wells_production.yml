@@ -6,16 +6,12 @@ basename: bsee
   
 well_production:
   flag: True
-
-production_from_zip:
-  flag: True
   
 data:
-  by: production_from_zip
+  by: zip
   groups:
     - api12: [177024120700]
-      # api12: 608124012700
-      #files_folder: data\modules\bsee\production\csv
+      # files_folder: data\modules\bsee\production\csv 
   
 
 default:

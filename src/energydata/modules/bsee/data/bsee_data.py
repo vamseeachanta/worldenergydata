@@ -43,7 +43,7 @@ class BSEEData:
         #     cfg, well_data_groups = block_data_website.get_data(cfg)
 
         production_data_flag = cfg['data'].get('production', False)
-        production_from_zip_flag = cfg['production_from_zip'].get('flag', False)
+        production_from_zip_flag = cfg['well_production'].get('flag', False)
         production_data_groups = None
         if production_data_flag or production_from_zip_flag:
             cfg, production_data_groups = production_from_website.get_data(cfg)
