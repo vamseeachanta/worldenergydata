@@ -19,7 +19,7 @@ class ProductionDataWebsite:
 
         cfg = self.get_all_data(cfg)
         production_data_groups = []
-        for group in cfg[cfg['basename']]['well_data']['groups']:
+        for group in cfg[cfg['basename']]['production_data']['groups']:
             production_data_group = group.copy()
             api12_array = group['api12']
             api12_array_production_data = []
@@ -41,16 +41,16 @@ class ProductionDataWebsite:
         if "production" in cfg and cfg['production']['flag']:
             output_data = self.get_production_from_website(cfg, output_data)
 
-        elif "block_data" in cfg and cfg['block_data']['flag']:
-            output_data = self.get_block_data_from_website(cfg, output_data)
+        # elif "block_data" in cfg and cfg['block_data']['flag']:
+        #     output_data = self.get_block_data_from_website(cfg, output_data)
 
-        elif "well_production" in cfg and cfg['well_production']['flag']:
+        elif cfg['data']['by'] == 'zip':
             input_items = cfg['data']['groups']
             for input_item in input_items:
                 output_data = self.generate_output_item(cfg, output_data, input_item)
 
-        well_data = {'type': 'csv', 'groups': output_data}
-        cfg[cfg['basename']].update({'well_data': well_data})
+        production_data = {'type': 'csv', 'groups': output_data}
+        cfg[cfg['basename']].update({'production_data': production_data})
 
         return cfg
 

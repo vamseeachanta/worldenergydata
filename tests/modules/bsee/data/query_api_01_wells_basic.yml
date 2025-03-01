@@ -7,13 +7,8 @@ well_data:
   flag: True
   analysis: False
 
-master_settings:
-  save_csv: True
-  #url: https://www.data.bsee.gov/Well/APD/Default.aspx
-  output_dir: NULL
-
 data:
-  by: #block # API12,lease ?
+  by: API12 #lease ?
   groups:
     - label: well_608164024500
       api12: 608164024500
