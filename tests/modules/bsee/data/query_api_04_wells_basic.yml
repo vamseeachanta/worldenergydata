@@ -3,21 +3,13 @@ meta:
   basename: bsee
 basename: bsee
 
-well_data:
-  flag: True
-  analysis: False
 
 data:
-  by: #block # API12,lease ?
+  by: API12
+  well_data: True
   groups:
-    - label: well_608164024500
-      api12: 608164024500
-    - label: well_608164025800
-      api12: 608164025800
-    - label: well_608164025400
-      api12: 608164025400
-    - label: well_608164025600
-      api12: 608164025600
+    - api12: [608164024500, 608164025800, 608164025400, 608164025600]
+    
 
 default:
   log_level: DEBUG

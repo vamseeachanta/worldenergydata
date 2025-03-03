@@ -7,12 +7,6 @@ dictitems:
     analysis: false
     results: false
   settings_master: ~
-  default:
-    log_level: DEBUG
-    config:
-      overwrite:
-        output: true
-      cfg_sensitivities: false
   data_retrieval:
     well:
       website:
@@ -63,20 +57,22 @@ dictitems:
             ASPxFormLayout1$ASPxComboBoxBBN: None
             __EVENTTARGET: ASPxFormLayout2$btnCsvExport
             __EVENTARGUMENT: Click
+  default:
+    log_level: DEBUG
+    config:
+      overwrite:
+        output: true
+      cfg_sensitivities: false
   meta:
     library: energydata
     basename: bsee
-  well_data:
-    flag: true
-    analysis: false
-  master_settings:
-    save_csv: true
-    output_dir: ~
   data:
-    by: block
+    by: API12
+    well_data: true
     groups:
-    - label: well_608164024500
-      api12: 608164024500
+    - label: w
+      api12:
+      - 608164024500
   Analysis:
     basename: bsee
     analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
@@ -84,7 +80,7 @@ dictitems:
     file_name_for_overwrite: query_api_01_wells_basic
     result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
     log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-02-22 11:33:46.700224
+    start_time: 2025-03-03 11:28:27.069963
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\query_api_01_wells_basic.yml
@@ -93,6 +89,7 @@ dictitems:
     well_data:
       type: csv
       groups:
-      - label: well_608164024500
-        api12: 608164024500
-        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\well_608164024500.csv
+      - label: w
+        api12:
+        - 608164024500
+        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\w.csv
