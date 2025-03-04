@@ -72,7 +72,6 @@ dictitems:
     groups:
     - api12:
       - 608164024500
-      label: '608164024500'
   analysis:
     flag: true
     api12: true
@@ -86,7 +85,7 @@ dictitems:
     file_name_for_overwrite: query_api_01_wells_basic
     result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
     log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\logs
-    start_time: 2025-03-03 11:15:27.571147
+    start_time: 2025-03-04 09:47:32.703718
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\query_api_01_wells_basic.yml
