@@ -75,7 +75,6 @@ dictitems:
       - 608164025800
       - 608164025400
       - 608164025600
-      label: '608164024500'
   Analysis:
     basename: bsee
     analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
@@ -83,7 +82,7 @@ dictitems:
     file_name_for_overwrite: query_api_04_wells_basic
     result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
     log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-03-03 11:34:16.599536
+    start_time: 2025-03-04 09:43:08.737706
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\query_api_04_wells_basic.yml
@@ -94,8 +93,17 @@ dictitems:
       groups:
       - api12:
         - 608164024500
-        - 608164025800
-        - 608164025400
-        - 608164025600
         label: '608164024500'
         file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\608164024500.csv
+      - api12:
+        - 608164025800
+        label: '608164025800'
+        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\608164025800.csv
+      - api12:
+        - 608164025400
+        label: '608164025400'
+        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\608164025400.csv
+      - api12:
+        - 608164025600
+        label: '608164025600'
+        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\608164025600.csv

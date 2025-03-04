@@ -69,15 +69,15 @@ class WellData:
         input_items = cfg['data']['groups']
         scrapy_runner_api = ScrapyRunnerAPI()
 
-        for input_item in input_items:
-            api_num = str(input_item['api12'][0])
-            api_label = api_num
-            if 'label' in input_item and input_item['label'][0] is not None:
-                api_label = input_item['label'][0]
-            input_item.update({'label': api_label})
+        for input in input_items:
+            
+            api12_array = input.get('api12', [])  # Get API numbers list
 
-            api12_data = scrapy_runner_api.run_spider(cfg, input_item)
-            output_data = self.generate_output_item(cfg, output_data, input_item)
+            for api12 in api12_array:
+                input_item = {'api12': [api12], 'label': str(api12)}
+                
+                api12_data = scrapy_runner_api.run_spider(cfg, input_item)
+                output_data = self.generate_output_item(cfg, output_data, input_item)
 
         return output_data, api12_data
 
