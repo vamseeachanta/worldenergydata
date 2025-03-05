@@ -6,6 +6,7 @@ import logging
 import pandas as pd
 from energydata.modules.bsee.data.bsee_data import BSEEData
 from energydata.modules.bsee.analysis.well_api12 import WellAPI12
+from energydata.modules.bsee.analysis.production import ProductionAnalysis
 
 # from energydata.common.bsee_data_manager import BSEEData
 
@@ -13,6 +14,7 @@ from energydata.modules.bsee.analysis.well_api12 import WellAPI12
 
 bsee_data = BSEEData()
 well_data_analysis = WellAPI12()
+prod_analysis = ProductionAnalysis()
 
 class BSEEAnalysis():
 
@@ -35,11 +37,16 @@ class BSEEAnalysis():
 
         well_data_groups = data['well_data']
         production_data_groups = data['production_data']
-        
+
         for group in well_data_groups:
 
             api12_df = group[0]['api12_df']
             cfg = well_data_analysis.router(cfg, api12_df)
+
+        for group in production_data_groups:
+
+            api12_df = group[0]['api12_df']
+            cfg = prod_analysis.router(cfg, api12_df)
 
         return cfg
 
