@@ -38,15 +38,17 @@ class BSEEAnalysis():
         well_data_groups = data['well_data']
         production_data_groups = data['production_data']
 
-        for group in well_data_groups:
+        if well_data_groups is not None:
+            for group in well_data_groups:
 
-            api12_df = group[0]['api12_df']
-            cfg = well_data_analysis.router(cfg, api12_df)
+                api12_df = group[0]['api12_df']
+                cfg = well_data_analysis.router(cfg, api12_df)
 
-        for group in production_data_groups:
+        if production_data_groups is not None:
+            for group in production_data_groups:
 
-            api12_df = group[0]['api12_df']
-            cfg = prod_analysis.router(cfg, api12_df)
+                api12_df = group[0]['api12_df']
+                cfg = prod_analysis.router(cfg, api12_df)
 
         return cfg
 
