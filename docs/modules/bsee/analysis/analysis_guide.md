@@ -6,12 +6,12 @@ Gathering_data:
 
   Initially gets the data from respective website
 
-  Create groups in cfg and store required data ( fileames , dfs) for analysis in cfg 
+  Create groups in cfg and store required data ( fileames , dataframes) for analysis in cfg 
 
 Analysis:
    Pass all data to analysis class and play with it.
 
-### Code for future purposes on how to store data in cfg and use it
+### Code guide for future purposes on how to store data in cfg and use it for analysis
 
 ```
 from energydata.modules.bsee.data.bsee_data import BSEEData
@@ -45,10 +45,8 @@ class BSEEDATA:
         if production_data_flag or production_from_zip_flag:
             cfg, production_data_groups = production_from_website.get_data(cfg)
 
-        data = {
-            'well_data': well_data_groups,
-            'production_data': production_data_groups
-        }
+        data = { 'well_data': well_data_groups ,'production_data': production_data_groups }
+
         return cfg, data
 
 

@@ -7,12 +7,6 @@ dictitems:
     analysis: false
     results: false
   settings_master: ~
-  default:
-    log_level: DEBUG
-    config:
-      overwrite:
-        output: true
-      cfg_sensitivities: false
   data_retrieval:
     well:
       website:
@@ -36,16 +30,14 @@ dictitems:
         url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
         form_data:
           first_request:
-            ASPxFormLayout1$ASPxTextBoxLN: G05868
-            ASPxFormLayout1$ASPxTextBoxDF: 01/1999
-            ASPxFormLayout1$ASPxTextBoxDT: 12/2024
+            ASPxFormLayout1$ASPxTextBoxLN: ~
+            ASPxFormLayout1$ASPxTextBoxDF: ~
+            ASPxFormLayout1$ASPxTextBoxDT: ~
             ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
           second_request:
-            ASPxFormLayout1$ASPxTextBoxLN: G05868
+            ASPxFormLayout1$ASPxTextBoxLN: ~
             __EVENTTARGET: ASPxFormLayout2$btnCsvExport
             __EVENTARGUMENT: Click
-            ASPxFormLayout1$ASPxTextBoxDF: 01/1999
-            ASPxFormLayout1$ASPxTextBoxDT: 12/2024
       csv: data\modules\bsee\production\csv
       zip: data\modules\bsee\production\zip
     block:
@@ -65,11 +57,17 @@ dictitems:
             ASPxFormLayout1$ASPxComboBoxBBN: None
             __EVENTTARGET: ASPxFormLayout2$btnCsvExport
             __EVENTARGUMENT: Click
+  default:
+    log_level: DEBUG
+    config:
+      overwrite:
+        output: true
+      cfg_sensitivities: false
   meta:
     library: energydata
     basename: bsee
   data:
-    by: block
+    by: lease
     groups:
     - label: production_data_G05868
       lease_number: G05868
@@ -88,18 +86,9 @@ dictitems:
     file_name_for_overwrite: query_lease_production_data
     result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
     log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-02-22 11:45:29.506471
+    start_time: 2025-03-05 09:56:49.478457
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\query_lease_production_data.yml
     fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
-  bsee:
-    well_data:
-      type: csv
-      groups:
-      - label: production_data_G05868
-        lease_number: G05868
-        Duration:
-          from: 01/1999
-          to: 12/2024
-        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\production_data_G05868.csv
+  bsee: {}
