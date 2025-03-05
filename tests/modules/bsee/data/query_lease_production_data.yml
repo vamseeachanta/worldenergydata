@@ -5,6 +5,7 @@ basename: bsee
 
 data:
   by: lease
+  production: True
   groups:
     - label: production_data_G05868 
       lease_number: G05868 
