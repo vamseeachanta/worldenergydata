@@ -80,16 +80,16 @@ dictitems:
       api12: true
   Analysis:
     basename: bsee
-    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis
+    analysis_root_folder: k:\github\energydata\tests\modules\bsee\analysis
     file_name: query_api_01_wells_basic
     file_name_for_overwrite: query_api_01_wells_basic
-    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
-    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\logs
-    start_time: 2025-03-04 09:47:32.703718
+    result_folder: k:\github\energydata\tests\modules\bsee\analysis\results
+    log_folder: k:\github\energydata\tests\modules\bsee\analysis\logs
+    start_time: 2025-03-05 10:49:35.798626
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\query_api_01_wells_basic.yml
-    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
+    CustomInputFile: k:\github\energydata\tests\modules\bsee\analysis\query_api_01_wells_basic.yml
+    fe_folder: k:\github\energydata\tests\modules\bsee\analysis\results
   bsee:
     well_data:
       type: csv
@@ -97,4 +97,4 @@ dictitems:
       - api12:
         - 608164024500
         label: '608164024500'
-        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\608164024500.csv
+        file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608164024500.csv
