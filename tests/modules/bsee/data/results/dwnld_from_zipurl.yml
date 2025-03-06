@@ -17,17 +17,16 @@ dictitems:
   input:
     out_directory: data\modules\bsee\full_data
     urls:
-    - https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip
-    - https://www.data.bsee.gov/Well/Files/eWellAPDRawData.zip
+    - https://www.data.bsee.gov/Well/Files/eWellEORRawData.zip
   Analysis:
     basename: zip_utils
-    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
+    analysis_root_folder: k:\github\energydata\tests\modules\bsee\data
     file_name: dwnld_from_zipurl
     file_name_for_overwrite: dwnld_from_zipurl
-    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
-    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-02-21 11:04:26.190813
+    result_folder: k:\github\energydata\tests\modules\bsee\data\results
+    log_folder: k:\github\energydata\tests\modules\bsee\data\logs
+    start_time: 2025-03-06 10:21:18.434261
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\dwnld_from_zipurl.yml
-    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    CustomInputFile: k:\github\energydata\tests\modules\bsee\data\dwnld_from_zipurl.yml
+    fe_folder: k:\github\energydata\tests\modules\bsee\data\results

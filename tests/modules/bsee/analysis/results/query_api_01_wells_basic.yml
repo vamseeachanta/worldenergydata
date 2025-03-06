@@ -85,7 +85,7 @@ dictitems:
     file_name_for_overwrite: query_api_01_wells_basic
     result_folder: k:\github\energydata\tests\modules\bsee\analysis\results
     log_folder: k:\github\energydata\tests\modules\bsee\analysis\logs
-    start_time: 2025-03-05 10:49:35.798626
+    start_time: 2025-03-06 10:55:46.317685
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: k:\github\energydata\tests\modules\bsee\analysis\query_api_01_wells_basic.yml
