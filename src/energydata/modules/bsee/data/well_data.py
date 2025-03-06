@@ -14,6 +14,9 @@ class WellData:
 
     def get_well_data_all_wells(self, cfg):
         Borehole_apd_df = self.get_Borehole_apd_for_all_wells(cfg)
+        eWellEORRawData_df = self.get_eWellEORRawData_from_csv(cfg)
+        
+        bsee_csv_data = {'Borehole_apd_df': Borehole_apd_df, 'eWellEORRawData_df': eWellEORRawData_df}
         cfg = self.get_well_data_from_website(cfg)
 
         well_data_groups = []
@@ -22,7 +25,7 @@ class WellData:
             api12_array = group['api12']
             api12_array_well_data = []
             for api12 in api12_array:
-                api12_df = self.get_api12_data_from_all_sources(cfg, Borehole_apd_df, group, api12)
+                api12_df = self.get_api12_data_from_all_sources(cfg, bsee_csv_data, group, api12)
 
             well_data_group.update({'api12_df': api12_df})
 
@@ -32,11 +35,31 @@ class WellData:
 
         return cfg, well_data_groups
 
-    def get_api12_data_from_all_sources(self, cfg, Borehole_apd_df, group, api12):
+    def get_data_source_file(self, cfg, group):
+        #TODO SS
+        library = 'digitalmodel'
+        filename = cfg['filename']
+        file_path = os.path.join(cfg['Analysis']['analysis_root_folder'], library, filename)
+        
+
+    def get_api12_data_from_all_sources(self, cfg, bsee_csv_data, group, api12):
+        Borehole_apd_df = bsee_csv_data['Borehole_apd_df']
+        eWellEORRawData_df = bsee_csv_data['eWellEORRawData_df']
+                                           
         api12_well_data = pd.read_csv(group['file_name'])
         api12_Borehole_apd = self.get_Borehole_apd_for_api12(cfg, Borehole_apd_df, api12)
+        api12_eWellEORRawData = eWellEORRawData_df[eWellEORRawData_df['API_WELL_NUMBER'] == api12].copy()
+        
+        
         api12_df = pd.merge(api12_Borehole_apd, api12_well_data, how='inner' ,
                                     left_on=['API_WELL_NUMBER'], right_on=['API Well Number'])
+        api12_df = pd.merge(api12_eWellEORRawData, api12_df, how='outer' ,
+                                    left_on=['API_WELL_NUMBER'], right_on=['API Well Number'])
+
+        #TODO Fix this merge for multiple api12_eWellEORRawData rows
+        # api12_df = pd.merge(api12_df, api12_eWellEORRawData, how='right' ,
+        #                             left_on=['API_WELL_NUMBER'], right_on=['API_WELL_NUMBER'])
+
 
         return api12_df
 
@@ -51,7 +74,9 @@ class WellData:
     def get_Borehole_apd_for_api12(self, cfg, Borehole_apd_df, api12):
         api12_Borehole_apd = Borehole_apd_df[Borehole_apd_df['API_WELL_NUMBER'] == api12].copy()
 
+
         return api12_Borehole_apd
+
     def get_well_data_from_website(self, cfg):
         output_data = []
         if cfg['data']['by'] == 'API12':
@@ -104,6 +129,15 @@ class WellData:
 
         # Load CSV files
         file1 = r'data\modules\bsee\full_data\BoreholeRawData_mv_boreholes_all.csv'
+
+        df = pd.read_csv(file1, low_memory=False)
+
+        return df
+
+    def get_eWellEORRawData_from_csv(self, cfg):
+
+        # Load CSV files
+        file1 = r'data\modules\bsee\full_data\eWellEORRawData_mv_eor_mainquery.csv'
 
         df = pd.read_csv(file1, low_memory=False)
 

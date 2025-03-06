@@ -49,7 +49,7 @@ class BSEEData:
         production_data_groups = None
         if production_data_flag or production_from_zip_flag:
             cfg, production_data_groups = production_from_website.get_data(cfg)
-        
+
 
 
         # if cfg['analysis']['api12']:
