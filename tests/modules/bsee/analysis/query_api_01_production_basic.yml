@@ -10,7 +10,6 @@ data:
   groups:
     # Groups typically are list of dictionaries to run through multiple API numbers or multiple API sets
     - api12: [177024134002]
-    # - api12: [608124003300]
 
 analysis:
   flag: True
