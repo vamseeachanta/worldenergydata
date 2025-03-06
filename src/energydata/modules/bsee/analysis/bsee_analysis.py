@@ -24,9 +24,9 @@ class BSEEAnalysis():
 
     def router(self, cfg, data):
 
-        # if 'analysis' in cfg and cfg['analysis']['flag']:
-        if cfg['data']['by'] == 'API12':
-            cfg = self.run_analysis_for_all_wells(cfg, data)
+        if 'analysis' in cfg and cfg['analysis']['flag']:
+            if cfg['data']['by'] == 'API12':
+                cfg = self.run_analysis_for_all_wells(cfg, data)
 
         return cfg
 

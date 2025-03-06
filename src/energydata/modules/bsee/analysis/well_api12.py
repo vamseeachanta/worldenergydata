@@ -56,6 +56,7 @@ class WellAPI12():
         return api12_df
 
     def get_sidetracklabel_and_rig_rigdays(self, api12_df):
+        api12 = api12_df.API_WELL_NUMBER.iloc[0]
         API10_list = list(api12_df.API10)
         api12_df['Field NickName'] = None
         api12_df['BOEM_FIELDS'] = None
@@ -84,8 +85,7 @@ class WellAPI12():
                 api12_df['WELL_LABEL'] = api12_df[
                     'Well Name'] + '-' + api12_df['Sidetrack and Bypass']
 
-            sidetrack_no, bypass_no, tree_elevation_aml = self.assign_st_bp_tree_info(
-                ST_BP_and_tree_height, well_api12)
+            sidetrack_no, bypass_no, tree_elevation_aml = self.get_st_bp_tree_info(api12_df, api12)
             api12_df['Sidetrack No'].iloc[df_row] = sidetrack_no
             api12_df['Bypass No'].iloc[df_row] = bypass_no
             api12_df['Tree Height Above Mudline'].iloc[df_row] = tree_elevation_aml
@@ -200,11 +200,11 @@ class WellAPI12():
                 df_row_index = temp_df.index[0]
                 api12_df['xyz'].iloc[df_row_index] = json.dumps(output_well_path_for_db)
 
-    def assign_st_bp_tree_info(self, ST_BP_and_tree_height, well_api12):
+    def get_st_bp_tree_info(self, api12_df, api12):
         sidetrack_no = 0
         bypass_no = 0
         tree_elevation_aml = None
-        bp_st_tree_info = ST_BP_and_tree_height[ST_BP_and_tree_height.API12 == well_api12].copy()
+        bp_st_tree_info = api12_df['SUBSEA_TREE_HEIGHT_AML'].copy()
         if len(bp_st_tree_info) > 0:
             bp_st_tree_info.sort_values(by=['SN_EOR'])
             sidetrack_no = float(bp_st_tree_info.WELL_NM_ST_SFIX.iloc[0])
