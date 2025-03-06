@@ -18,7 +18,7 @@ class ProductionAnalysis():
         pass
         # self.bsee_data = BSEEData(self.cfg)
 
-    def router(self, cfg, data):
+    def router(self, cfg, api12_production_data):
         self.prepare_production_data(cfg)
 
     

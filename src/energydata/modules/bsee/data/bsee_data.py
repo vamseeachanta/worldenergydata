@@ -42,7 +42,7 @@ class BSEEData:
         # elif 'block_data' in cfg and cfg['block_data']['flag']:
         #     cfg, well_data_groups = block_data_website.get_data(cfg)
 
-        production_data_flag = cfg['data'].get('production', False)
+        production_data_flag = cfg['data'].get('production_data', False)
         production_from_zip_flag = None
         if 'well_production' in cfg :
             production_from_zip_flag = cfg['well_production'].get('flag', False)

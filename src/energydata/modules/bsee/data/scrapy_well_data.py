@@ -98,7 +98,7 @@ class ScrapyRunnerAPI:
             'REQUEST_FINGERPRINTER_IMPLEMENTATION': '2.7'
         })
 
-    @wait_for(timeout=60.0) 
+    @wait_for(timeout=180.0) 
     def run_spider(self, cfg, input_item):
         deferred = self.runner.crawl(BSEEDataSpider, input_item=input_item, cfg=cfg)
         return deferred

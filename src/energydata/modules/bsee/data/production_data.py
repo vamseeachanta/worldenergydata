@@ -44,7 +44,7 @@ class ProductionDataWebsite:
         # elif "block_data" in cfg and cfg['block_data']['flag']:
         #     output_data = self.get_block_data_from_website(cfg, output_data)
 
-        elif cfg['data']['by'] == 'zip':
+        elif "production_from_zip" in cfg and cfg['production_from_zip']['flag']:
             input_items = cfg['data']['groups']
             for input_item in input_items:
                 output_data = self.generate_output_item(cfg, output_data, input_item)
