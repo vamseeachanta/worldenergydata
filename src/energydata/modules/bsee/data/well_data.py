@@ -55,6 +55,7 @@ class WellData:
                                     left_on=['API_WELL_NUMBER'], right_on=['API Well Number'])
         api12_df = pd.merge(api12_eWellEORRawData, api12_df, how='outer' ,
                                     left_on=['API_WELL_NUMBER'], right_on=['API Well Number'])
+        api12_df = self.refine_merged_data(api12_df)
 
         #TODO Fix this merge for multiple api12_eWellEORRawData rows
         # api12_df = pd.merge(api12_df, api12_eWellEORRawData, how='right' ,
@@ -162,11 +163,15 @@ class WellData:
         # Merge on the first column (inner join to keep only matching rows)
         merged_df = pd.merge(df1, df2, on=join_key, how="right")
 
-        merged_df = merged_df.loc[:, ~merged_df.columns.str.endswith('_y')]
-        merged_df.columns = merged_df.columns.str.replace('_x', '', regex=True)
+        merged_df = self.refine_merged_data(merged_df)
 
         output_path = r'data\modules\bsee\well'
         # Save to a new CSV file
         merged_df.to_csv(os.path.join(output_path, 'Join_Borehole_APD.csv'), index=False)
 
+        return merged_df
+
+    def refine_merged_data(self, merged_df):
+        merged_df = merged_df.loc[:, ~merged_df.columns.str.endswith('_y')]
+        merged_df.columns = merged_df.columns.str.replace('_x', '', regex=True)
         return merged_df
