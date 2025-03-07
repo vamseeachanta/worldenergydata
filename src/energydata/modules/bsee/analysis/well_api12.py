@@ -74,13 +74,14 @@ class WellAPI12():
         api12_df['drilling_footage_ft'] = 0
         api12_df['drilling_days_per_10000_ft'] = 0
         api12_df['RIG_LAST_DATE_ON_WELL'] = None
+        api12_df['Sidetrack and Bypass'] = api12_df['WELL_NAME_SUFFIX']
 
         for df_row in range(0, len(api12_df)):
             well_api12 = api12_df.API12.iloc[df_row]
             well_api10 = api12_df.API10.iloc[df_row]
 
             api12_count = API10_list.count(well_api10)
-            api12_df['Side Tracks'].iloc[df_row] = api12_count - 1
+            api12_df.loc[df_row, "Side Tracks"] = api12_count - 1
             if api12_count >= 2:
                 api12_df['WELL_LABEL'] = api12_df[
                     'Well Name'] + '-' + api12_df['Sidetrack and Bypass']
