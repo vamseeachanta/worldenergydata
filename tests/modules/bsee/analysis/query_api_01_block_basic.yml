@@ -5,6 +5,7 @@ meta:
 basename: bsee
 
 data:
+  obtain: True
   by: block
   groups:
     # Groups typically are list of entities to run through multiple API numbers or multiple API sets

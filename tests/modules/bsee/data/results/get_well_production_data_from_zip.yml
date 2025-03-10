@@ -1,0 +1,90 @@
+&id001 !!python/object/new:assetutilities.common.data.AttributeDict
+state: *id001
+dictitems:
+  basename: bsee
+  type:
+    data: false
+    analysis: false
+    results: false
+  settings_master: ~
+  data_retrieval:
+    well:
+      website:
+        url: https://www.data.bsee.gov/Well/APD/Default.aspx
+        form_data:
+          first_request:
+            ASPxFormLayout1$ASPxTextBoxAPI: ~
+            ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+          second_request:
+            ASPxFormLayout1$ASPxTextBoxAPI: ~
+            __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+            __EVENTARGUMENT: Click
+      csv:
+        BoreholeRawData_mv_boreholes_all: data/modules/bsee/full_data/BoreholeRawData_mv_boreholes_all.csv
+        eWellAPDRawData_mv_apd_main: data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main.csv
+      zip:
+        BoreholeRawData_mv_boreholes_all: data/modules/bsee/full_data/BoreholeRawData_mv_boreholes_all.zip
+        eWellAPDRawData_mv_apd_main: data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main.zip
+    production:
+      website:
+        url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+        form_data:
+          first_request:
+            ASPxFormLayout1$ASPxTextBoxLN: ~
+            ASPxFormLayout1$ASPxTextBoxDF: ~
+            ASPxFormLayout1$ASPxTextBoxDT: ~
+            ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+          second_request:
+            ASPxFormLayout1$ASPxTextBoxLN: ~
+            __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+            __EVENTARGUMENT: Click
+      csv: data\modules\bsee\production\csv
+      zip: data\modules\bsee\production\zip
+    block:
+      website:
+        url: https://www.data.bsee.gov/Well/APD/Default.aspx
+        form_data:
+          first_request:
+            ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
+            ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
+            ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+            ASPxFormLayout1$ASPxComboBoxBBN: None
+            ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+          second_request:
+            ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
+            ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
+            ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+            ASPxFormLayout1$ASPxComboBoxBBN: None
+            __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+            __EVENTARGUMENT: Click
+  default:
+    log_level: INFO
+    config:
+      overwrite:
+        output: true
+      cfg_sensitivities: false
+  meta:
+    library: energydata
+    basename: bsee
+  existing_data:
+    flag: true
+  data_from_files:
+    production: true
+  data:
+    by: wellapi
+    groups:
+    - api12:
+      - 177024120700
+  Analysis:
+    basename: bsee
+    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
+    file_name: get_well_production_data_from_zip
+    file_name_for_overwrite: get_well_production_data_from_zip
+    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
+    start_time: 2025-03-10 10:22:46.378613
+    cfg_array_file_names: ~
+    DefaultInputFile: ~
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\get_well_production_data_from_zip.yml
+    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+  bsee: {}
