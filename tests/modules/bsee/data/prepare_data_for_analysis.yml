@@ -3,8 +3,8 @@ meta:
   basename: bsee
 basename: bsee
 
-data_prep:
-  flag: True
+data:
+  obtain: True
 
 settings:
   data_dir: data\modules\bsee\full_data

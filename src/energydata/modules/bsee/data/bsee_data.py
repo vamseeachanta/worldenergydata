@@ -39,9 +39,6 @@ class BSEEData:
         if well_data_flag:
             cfg, well_data_groups  = well_data.get_well_data_all_wells(cfg)
 
-        # elif 'block_data' in cfg and cfg['block_data']['flag']:
-        #     cfg, well_data_groups = block_data_website.get_data(cfg)
-
         production_data_flag = cfg['data'].get('production_data', False)
         production_from_zip_flag = None
         if 'well_production' in cfg :
@@ -50,12 +47,9 @@ class BSEEData:
         if production_data_flag or production_from_zip_flag:
             cfg, production_data_groups = production_from_website.get_data(cfg)
 
+        #TODO
+        # add conditions checks for other data also
 
-
-        # if cfg['analysis']['api12']:
-        #     cfg = self.get_api12_data(cfg)
-        # if cfg['analysis']['production_data']:
-        #     cfg = self.get_production_data(cfg)
 
         #TODO
         # WAR_summary = self.get_WAR_summary_by_api10(api10)
@@ -67,6 +61,16 @@ class BSEEData:
         data = {'well_data': well_data_groups, 'production_data': production_data_groups}
 
         return cfg, data
+    
+    def legacy_router(self, cfg):
+
+        # refernce router to the old code
+
+         # if cfg['analysis']['api12']:
+        #     cfg = self.get_api12_data(cfg)
+        # if cfg['analysis']['production_data']:
+        #     cfg = self.get_production_data(cfg)
+        pass
 
     def get_api12_data(self, cfg):
 

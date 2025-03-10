@@ -4,6 +4,7 @@ meta:
 basename: bsee
 
 data:
+  obtain: True
   by: block # API12, ?
   groups:
     - label: WR540

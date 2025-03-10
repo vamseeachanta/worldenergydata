@@ -26,7 +26,7 @@ def test_application():
 
     # Well Analysis Tests
     input_file = 'query_api_01_wells_basic.yml'
-    # input_file = 'query_api_02_wells_basic.yml'
+    #input_file = 'query_api_02_wells_basic.yml'
 
     # Well Data Tests
     # input_file = 'query_api_01_wells_basic.yml'

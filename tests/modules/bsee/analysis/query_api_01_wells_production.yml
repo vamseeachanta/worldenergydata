@@ -8,6 +8,7 @@ well_production:
   flag: True
   
 data:
+  obtain: True
   by: zip
   groups:
     - api12: [177024120700]

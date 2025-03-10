@@ -1,8 +1,10 @@
 basename: zip_utils
 
 data:
-  flag: True
-  analysis: False
+  obtain: True
+
+online_query:
+  raw_data: True
 
 input:
   out_directory: data\modules\bsee\full_data

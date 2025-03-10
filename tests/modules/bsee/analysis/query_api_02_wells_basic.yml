@@ -4,6 +4,7 @@ meta:
 basename: bsee
 
 data:
+  obtain: True
   by: API12
   well_data: True
   groups:
