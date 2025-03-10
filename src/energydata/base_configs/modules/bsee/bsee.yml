@@ -5,6 +5,10 @@ type:
   analysis: False
   results: False
 
+parameters:
+  max_allowable_npt: 90
+
+
 settings_master: NULL
 
 data_retrieval:
