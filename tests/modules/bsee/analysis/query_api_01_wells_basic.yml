@@ -4,6 +4,7 @@ meta:
 basename: bsee
 
 data:
+  obtain: True
   by: API12
   well_data: True
   groups:
@@ -15,9 +16,6 @@ data:
 analysis:
   flag: True
   api12: True
-  production:
-    flag: False
-    api12: True
 
 default:
   log_level: DEBUG

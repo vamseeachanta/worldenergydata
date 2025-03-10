@@ -5,6 +5,7 @@ meta:
 basename: bsee
 
 data:
+  obtain: True
   by: API12
   production_data: True
   groups:

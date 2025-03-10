@@ -5,6 +5,7 @@ basename: bsee
 
 
 data:
+  obtain: True
   by: API12 #lease ?
   well_data: True
   groups:
