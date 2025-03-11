@@ -11,7 +11,7 @@ headers_default = {
     'User-Agent': 'Vamsee Achanta support@aceengineer.com',
     'Accept-Encoding': 'gzip, deflate',
     'Host': 'www.sec.gov'
-}
+} 
 
 
 class ReadDataFromSystemFiles():
@@ -21,7 +21,7 @@ class ReadDataFromSystemFiles():
 
         import glob
         import os
-        file_list = []
+        file_list = [] 
         for file in glob.glob(folder_with_file_type):
             file_list.append(file)
         if with_path:
@@ -354,3 +354,14 @@ def transform_df_None_to_NULL(df):
                 df[column].iloc[row_num] = "NULL"
 
     return df
+
+class DateTimeUtility:
+
+    def last_day_of_month(self, any_day):
+        # Standard library imports
+        import datetime
+
+        next_month = any_day.replace(day=28) + datetime.timedelta(
+            days=4
+        )  # this will never fail
+        return next_month - datetime.timedelta(days=next_month.day)
