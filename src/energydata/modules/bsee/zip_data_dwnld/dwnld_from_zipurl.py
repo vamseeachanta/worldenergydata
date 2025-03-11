@@ -18,14 +18,13 @@ class DownloadFromZipUrl:
         urls = cfg['input']['urls']
         
         for url in urls:
-            self.download_and_process_zip(url ,cfg)
+            self.download_and_process_zip_url_data(url ,cfg)
 
         return cfg
     
-    def download_and_process_zip(self, url ,cfg):
+    def download_and_process_zip_url_data(self, url ,cfg):
 
         nrows = None
-
         # Extract the name from the URL
         base_name = os.path.basename(urlparse(url).path).replace('.zip', '')
 
