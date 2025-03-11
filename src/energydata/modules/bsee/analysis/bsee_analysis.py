@@ -41,14 +41,14 @@ class BSEEAnalysis():
         if well_data_groups is not None:
             for group in well_data_groups:
 
-                api12_df = group[0]['api12_df']
-                cfg = well_data_analysis.router(cfg, api12_df)
+                well_api12_df = group[0]['api12_df']
+                cfg = well_data_analysis.router(cfg, well_api12_df)
 
         if production_data_groups is not None:
             for group in production_data_groups:
 
-                api12_df = group[0]['api12_df']
-                cfg = prod_analysis.router(cfg, api12_df)
+                prod_api12_df = group[0]['api12_df']
+                cfg = prod_analysis.router(cfg,prod_api12_df)
 
         return cfg
 

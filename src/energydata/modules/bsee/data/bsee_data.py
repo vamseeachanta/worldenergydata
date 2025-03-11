@@ -3,10 +3,11 @@ from energydata.common.bsee.retrieve_data_templates import RetrieveDataTemplates
 from energydata.modules.bsee.data.production_data_from_zip import GetWellProdDataFromZip
 #from energydata.modules.bsee.data.production_data_from_website import GetWellProdDataFromWebsite
 from energydata.modules.bsee.data.well_data import WellData
-from energydata.modules.bsee.data.production_data import ProductionDataWebsite
+from energydata.modules.bsee.data.production_data import ProductionDataFromSources
 from energydata.modules.bsee.data.block_data import BlockDataWebsite
 from energydata.modules.bsee.analysis.prepare_data_for_analysis import PrepareBseeData
 from energydata.modules.bsee.data.scrapy_production_data import SpiderBsee
+from energydata.modules.bsee.zip_data_dwnld.dwnld_from_zipurl import DownloadFromZipUrl
 
 # Third party imports
 import pandas as pd
@@ -15,7 +16,7 @@ import datetime
 import os
 
 # Initialize instances of imported classes
-production_from_website = ProductionDataWebsite()
+production_data = ProductionDataFromSources()
 block_data_website = BlockDataWebsite()
 bsee_production = SpiderBsee()
 well_data = WellData()
@@ -25,6 +26,7 @@ prep_bsee_data = PrepareBseeData()
 production_from_zip = GetWellProdDataFromZip()
 
 f_d_templates = RetrieveDataTemplates()
+download_from_zip = DownloadFromZipUrl()
 
 class BSEEData:
     
@@ -40,12 +42,15 @@ class BSEEData:
             cfg, well_data_groups  = well_data.get_well_data_all_wells(cfg)
 
         production_data_flag = cfg['data'].get('production_data', False)
-        production_from_zip_flag = None
-        if 'well_production' in cfg :
-            production_from_zip_flag = cfg['well_production'].get('flag', False)
         production_data_groups = None
-        if production_data_flag or production_from_zip_flag:
-            cfg, production_data_groups = production_from_website.get_data(cfg)
+        if production_data_flag:
+            cfg, production_data_groups = production_data.get_data(cfg)
+        
+        elif "production_from_website" in cfg and cfg['production_from_website']['flag']:
+           production_data.get_production_from_website(cfg)
+        
+        elif "production_from_zip" in cfg and cfg['production_from_zip']['flag']:
+            production_data.get_all_data(cfg)
 
         
 
