@@ -47,9 +47,7 @@ class BSEEData:
         if production_data_flag or production_from_zip_flag:
             cfg, production_data_groups = production_from_website.get_data(cfg)
 
-        #TODO
-        # add conditions checks for other data also
-
+        
 
         #TODO
         # WAR_summary = self.get_WAR_summary_by_api10(api10)
