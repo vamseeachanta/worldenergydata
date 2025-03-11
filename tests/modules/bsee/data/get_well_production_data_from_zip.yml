@@ -3,12 +3,9 @@ meta:
   basename: bsee
   
 basename: bsee
-
-existing_data:
-  flag: True
   
-data_from_files:
-  production: True
+production_from_zip:
+  flag: True
   
 data:
   obtain: True

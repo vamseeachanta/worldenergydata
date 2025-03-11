@@ -1,8 +1,5 @@
 basename: zip_utils
 
-data:
-  obtain: True
-
 online_query:
   raw_data: True
 

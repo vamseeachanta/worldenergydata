@@ -13,12 +13,10 @@ class bsee:
     
         cfg[cfg['basename']] = {}
 
-        data_flag = cfg['data'].get('obtain', False)
-        if data_flag:
+        if "data" in cfg and cfg['data'].get('obtain', False):
             cfg, data = bsee_data.router(cfg)
 
-        analysis_flag = cfg['analysis'].get('flag', False)
-        if analysis_flag:
+        if "analysis" in cfg and cfg['analysis'].get('flag', False):
             cfg = bsee_analysis.router(cfg, data)
 
         return cfg

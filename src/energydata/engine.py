@@ -18,7 +18,7 @@ from assetutilities.common.yml_utilities import WorkingWithYAML
 # Reader imports
 from energydata.modules.bsee.bsee import bsee
 #from energydata.modules.bsee.data.bsee_data import BSEEData
-from energydata.modules.zip_data_dwnld.zip import zip
+from energydata.modules.bsee.zip_data_dwnld.zip import zip
 
 save_data = SaveData()
 wwy = WorkingWithYAML()

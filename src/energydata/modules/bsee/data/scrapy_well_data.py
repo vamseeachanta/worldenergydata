@@ -33,10 +33,11 @@ class BSEEDataSpider(scrapy.Spider):
     start_urls = ['https://www.data.bsee.gov/Well/APD/Default.aspx']
 
     # Initialize the spider with input item and configuration
-    def __init__(self, input_item=None, cfg=None, *args, **kwargs):
+    def __init__(self, input_item=None, cfg=None, data_store=None,*args, **kwargs):
         super(BSEEDataSpider, self).__init__(*args, **kwargs)
         self.input_item = input_item
         self.cfg = cfg
+        self.data_store = data_store
 
     # Parse the initial response
     def parse(self, response):
@@ -87,8 +88,12 @@ class BSEEDataSpider(scrapy.Spider):
                     logging.debug("\n****The Scraped data of given value ****\n")
                     logging.debug(response_csv)
                     logging.info(f"Getting data for API {api_label} ... COMPLETE")
+
+                self.data_store['data'] = response_csv  # Store DataFrame in data_store
+
         else:
             print(f"{Fore.RED}Failed to export CSV file.{Style.RESET_ALL} Status code: {response.status}")
+            self.data_store['data'] = pd.DataFrame()
 
 # Define a class to run the Scrapy spider
 class ScrapyRunnerAPI:
@@ -100,7 +105,9 @@ class ScrapyRunnerAPI:
 
     @wait_for(timeout=180.0) 
     def run_spider(self, cfg, input_item):
-        deferred = self.runner.crawl(BSEEDataSpider, input_item=input_item, cfg=cfg)
+        data_store = {}
+        deferred = self.runner.crawl(BSEEDataSpider, input_item=input_item, cfg=cfg, data_store=data_store)
+        deferred.addCallback(lambda _: data_store.get('data', pd.DataFrame()))  # Return DataFrame from data_store
         return deferred
 
 if __name__ == "__main__":

@@ -6,6 +6,8 @@ dictitems:
     data: false
     analysis: false
     results: false
+  parameters:
+    max_allowable_npt: 90
   settings_master: ~
   data_retrieval:
     well:
@@ -67,6 +69,7 @@ dictitems:
     library: energydata
     basename: bsee
   data:
+    obtain: true
     by: API12
     well_data: true
     groups:
@@ -82,7 +85,7 @@ dictitems:
     file_name_for_overwrite: query_api_04_wells_basic
     result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
     log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-03-04 09:43:08.737706
+    start_time: 2025-03-11 15:25:22.063467
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\query_api_04_wells_basic.yml

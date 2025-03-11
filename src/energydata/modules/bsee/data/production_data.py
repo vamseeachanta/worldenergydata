@@ -10,7 +10,7 @@ from assetutilities.common.utilities import is_dir_valid_func
 
 production_from_zip = GetWellProdDataFromZip()
 
-class ProductionDataWebsite:
+class ProductionDataFromSources:
     
     def __init__(self):
         pass
@@ -38,7 +38,7 @@ class ProductionDataWebsite:
     def get_all_data(self, cfg):
 
         output_data = []
-        if "production" in cfg and cfg['production']['flag']:
+        if "production_from_website" in cfg and cfg['production_from_website']['flag']:
             output_data = self.get_production_from_website(cfg, output_data)
 
         # elif "block_data" in cfg and cfg['block_data']['flag']:
@@ -47,21 +47,22 @@ class ProductionDataWebsite:
         elif "production_from_zip" in cfg and cfg['production_from_zip']['flag']:
             input_items = cfg['data']['groups']
             for input_item in input_items:
+                production_data_from_zip = production_from_zip.get_production_data_by_wellapi12(cfg)
                 output_data = self.generate_output_item(cfg, output_data, input_item)
 
-        production_data = {'type': 'csv', 'groups': output_data}
+        production_data = {'type': 'csv', 'groups': output_data ,'production_data_from_zip': production_data_from_zip}
         cfg[cfg['basename']].update({'production_data': production_data})
 
         return cfg
 
-    def get_production_from_website(self, cfg, output_data):
+    def get_production_from_website(self, cfg):
         input_items = cfg['data']['groups']
         scrapy_runner_production = ScrapyRunnerProduction()
 
         for input_item in input_items:
-            production_from_website = scrapy_runner_production.run_spider(cfg, input_item)
-            output_data = self.generate_output_item(cfg, output_data, input_item)
-        return output_data
+            production_data = scrapy_runner_production.run_spider(cfg, input_item)
+            #output_data = self.generate_output_item(cfg, output_data, input_item)
+        return production_data
 
     def generate_output_item(self, cfg, output_data, input_item):
 

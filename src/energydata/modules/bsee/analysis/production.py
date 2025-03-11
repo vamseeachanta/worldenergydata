@@ -17,12 +17,13 @@ dtu = DateTimeUtility()
 class ProductionAnalysis():
 
     def __init__(self):
+        
         self.output_data_field_production_rate_df = None
         self.output_data_field_production_df = None
         self.output_data_api12_df = None
-
-
-    def router(self, cfg, api12_production_data):
+        
+    def router(self, cfg,api12_production_data):
+        #self.prepare_api12_data(api12_well_data)
         self.prepare_production_data(cfg,api12_production_data)
 
     

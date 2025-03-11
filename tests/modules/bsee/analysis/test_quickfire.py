@@ -35,7 +35,7 @@ def test_application():
     # Well Production Tests
     # input_file = 'query_api_01_wells_production.yml'
     
-    input_file = 'query_api_01_production_basic.yml'
+    #input_file = 'query_api_01_production_basic.yml'
 
     # input_file = 'query_api_01_block_basic.yml'
 

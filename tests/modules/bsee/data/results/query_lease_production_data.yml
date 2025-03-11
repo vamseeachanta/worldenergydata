@@ -6,6 +6,8 @@ dictitems:
     data: false
     analysis: false
     results: false
+  parameters:
+    max_allowable_npt: 90
   settings_master: ~
   data_retrieval:
     well:
@@ -30,14 +32,16 @@ dictitems:
         url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
         form_data:
           first_request:
-            ASPxFormLayout1$ASPxTextBoxLN: ~
-            ASPxFormLayout1$ASPxTextBoxDF: ~
-            ASPxFormLayout1$ASPxTextBoxDT: ~
+            ASPxFormLayout1$ASPxTextBoxLN: G05868
+            ASPxFormLayout1$ASPxTextBoxDF: 01/1999
+            ASPxFormLayout1$ASPxTextBoxDT: 12/2024
             ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
           second_request:
-            ASPxFormLayout1$ASPxTextBoxLN: ~
+            ASPxFormLayout1$ASPxTextBoxLN: G05868
             __EVENTTARGET: ASPxFormLayout2$btnCsvExport
             __EVENTARGUMENT: Click
+            ASPxFormLayout1$ASPxTextBoxDF: 01/1999
+            ASPxFormLayout1$ASPxTextBoxDT: 12/2024
       csv: data\modules\bsee\production\csv
       zip: data\modules\bsee\production\zip
     block:
@@ -67,18 +71,15 @@ dictitems:
     library: energydata
     basename: bsee
   data:
-    by: lease
+    obtain: true
+    by: ~
+    production_from_website: true
     groups:
     - label: production_data_G05868
       lease_number: G05868
       Duration:
         from: 01/1999
         to: 12/2024
-  master_settings:
-    save_csv: true
-  production:
-    flag: true
-    analysis: false
   Analysis:
     basename: bsee
     analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
@@ -86,7 +87,7 @@ dictitems:
     file_name_for_overwrite: query_lease_production_data
     result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
     log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-03-05 09:56:49.478457
+    start_time: 2025-03-11 15:20:39.056081
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\query_lease_production_data.yml
