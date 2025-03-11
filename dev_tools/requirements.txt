@@ -38,4 +38,6 @@ pytest
 deepdiff
 requests
 
+xmltodict
+
 loguru
