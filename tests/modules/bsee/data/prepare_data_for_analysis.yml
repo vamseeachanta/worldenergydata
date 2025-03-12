@@ -7,7 +7,7 @@ data:
   obtain: True
 
 settings:
-  data_dir: data\modules\bsee\full_data
+  data_dir: data\modules\bsee\data\csv\online_query_raw_data
 
 config_data_map:
   # - label: "well_data"

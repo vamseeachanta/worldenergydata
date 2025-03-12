@@ -90,14 +90,14 @@ class WellAPI12():
                     'Well Name'] + '-' + api12_df['Sidetrack and Bypass']
 
             sidetrack_no, bypass_no, tree_elevation_aml = self.get_st_bp_tree_info(api12_df, api12)
-            api12_df['Sidetrack No'].iloc[df_row] = sidetrack_no
-            api12_df['Bypass No'].iloc[df_row] = bypass_no
+            api12_df.loc[df_row, 'Sidetrack No'] = sidetrack_no
+            api12_df.loc[df_row, 'Bypass No'] = bypass_no
             api12_df[df_row, 'Tree Height Above Mudline'] = tree_elevation_aml
 
             rig_str, MAX_DRILL_FLUID_WGT, well_days_dict = well_rig_days.get_rig_days_and_drilling_wt_worked_on_api12(cfg, api12_df, well_api12)
             self.get_rig_days_by_well_activity(well_api12)
-            api12_df['Rigs'].iloc[df_row] = rig_str
-            api12_df['rigdays_dict'].iloc[df_row] = json.dumps(well_days_dict['rigdays_dict'])
+            api12_df.loc[df_row, 'Rigs'] = rig_str
+            api12_df.loc[df_row, 'rigdays_dict'] = json.dumps(well_days_dict['rigdays_dict'])
             try:
                 api12_df['RIG_LAST_DATE_ON_WELL'].iloc[
                     df_row] = self.dbe.input_data_well_activity_summary[self.dbe.input_data_well_activity_summary.API12

@@ -71,11 +71,11 @@ data_retrieval:
           "__EVENTTARGET": "ASPxFormLayout2$btnCsvExport"
           "__EVENTARGUMENT": "Click"
     csv:
-      BoreholeRawData_mv_boreholes_all: data/modules/bsee/full_data/BoreholeRawData_mv_boreholes_all.csv
-      eWellAPDRawData_mv_apd_main: data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main.csv
+      BoreholeRawData_mv_boreholes_all: data/modules/bsee/data/csv/online_query_raw_data/BoreholeRawData_mv_boreholes_all.csv
+      eWellAPDRawData_mv_apd_main: data/modules/bsee/data/csv/online_query_raw_data/eWellAPDRawData_mv_apd_main.csv
     zip:
-      BoreholeRawData_mv_boreholes_all: data/modules/bsee/full_data/BoreholeRawData_mv_boreholes_all.zip
-      eWellAPDRawData_mv_apd_main: data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main.zip
+      BoreholeRawData_mv_boreholes_all: data/modules/bsee/data/zip/BoreholeRawData_mv_boreholes_all.zip
+      eWellAPDRawData_mv_apd_main: data/modules/bsee/data/zip/eWellAPDRawData_mv_apd_main.zip
 
   production:
     website:
