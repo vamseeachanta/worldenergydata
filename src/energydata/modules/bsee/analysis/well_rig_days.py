@@ -11,8 +11,22 @@ class WellRigDays:
         pass
 
     def get_rig_days_and_drilling_wt_worked_on_api12(self, cfg, api12_df , api12):
+        self.well_activity_rig_days = pd.DataFrame()
 
         max_allowed_npt = cfg['parameters']['max_allowed_npt']
+        borehole_codes = cfg['parameters']['borehole_codes']
+        BOREHOLE_STAT_CD = api12_df['BOREHOLE_STAT_CD']
+
+        api12_df['BOREHOLE_STAT_DESC'] = None
+        BOREHOLE_STAT_DESC = [None]*len(BOREHOLE_STAT_CD)
+        for idx in range(0, len(BOREHOLE_STAT_CD)):
+            code = BOREHOLE_STAT_CD.iloc[idx]
+            for item in borehole_codes:
+                if code == item['BOREHOLE_STAT_CD']:
+                    BOREHOLE_STAT_DESC[idx] = item['BOREHOLE_STAT_DESC']
+
+        api12_df['BOREHOLE_STAT_DESC'] = BOREHOLE_STAT_DESC
+
         well_war = api12_df[api12_df.API12 == api12].copy()
         well_info_df = api12_df[api12_df.API12 == api12].copy()
         spud_date = well_info_df['WELL_SPUD_DATE'].iloc[0]
@@ -26,9 +40,9 @@ class WellRigDays:
         for df_row in range(0, len(well_war)):
             war_days = (parse(well_war['WAR_END_DT'].iloc[df_row]) - parse(well_war['WAR_START_DT'].iloc[df_row])).days
             if war_days > 0:
-                well_war['Rig_days'].iloc[df_row] = war_days + 1
+                well_war[df_row,'Rig_days'] = war_days + 1
             else:
-                well_war['Rig_days'].iloc[df_row] = war_days
+                well_war[df_row,'Rig_days'] = war_days
             if df_row > 0:
                 start_date = parse(well_war['WAR_START_DT'].iloc[df_row])
                 end_date = parse(well_war['WAR_END_DT'].iloc[df_row - 1])
