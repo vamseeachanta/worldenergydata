@@ -210,7 +210,7 @@ class WellData:
 
         merged_df = self.pd_merge_clean_column_names(merged_df)
 
-        output_path = r'data\modules\bsee\well'
+        output_path = 'data/modules/bsee/data/csv/well'
         # Save to a new CSV file
         merged_df.to_csv(os.path.join(output_path, 'Join_Borehole_APD.csv'), index=False)
 
