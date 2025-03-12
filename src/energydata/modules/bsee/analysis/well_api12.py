@@ -7,9 +7,12 @@ import datetime
 import pandas as pd
 
 from assetutilities.common.data import Transform
+from energydata.modules.bsee.analysis.well_rig_days import WellRigDays
 # from energydata.common.data import AttributeDict, transform_df_datetime_to_str
 
+
 transform = Transform()
+well_rig_days = WellRigDays()
 
 class WellAPI12():
 
@@ -19,10 +22,10 @@ class WellAPI12():
     def router(self, cfg, api12_df):
 
         api12_df = self.well_basic_analysis(api12_df)
+        api12_df = self.get_sidetracklabel_and_rig_rigdays(cfg, api12_df)
 
         try:
             # TODO fix and Relocate as needed.
-            api12_df = self.get_sidetracklabel_and_rig_rigdays(api12_df)
             # self.evaluate_well_distances()
             self.prepare_casing_data(api12_well_data, well_tubulars_data)
             self.prepare_completion_data(completion_data)
@@ -55,7 +58,7 @@ class WellAPI12():
 
         return api12_df
 
-    def get_sidetracklabel_and_rig_rigdays(self, api12_df):
+    def get_sidetracklabel_and_rig_rigdays(self, cfg, api12_df):
         api12 = api12_df.API_WELL_NUMBER.iloc[0]
         API10_list = list(api12_df.API10)
         api12_df['Field NickName'] = None
@@ -89,10 +92,9 @@ class WellAPI12():
             sidetrack_no, bypass_no, tree_elevation_aml = self.get_st_bp_tree_info(api12_df, api12)
             api12_df['Sidetrack No'].iloc[df_row] = sidetrack_no
             api12_df['Bypass No'].iloc[df_row] = bypass_no
-            api12_df['Tree Height Above Mudline'].iloc[df_row] = tree_elevation_aml
+            api12_df[df_row, 'Tree Height Above Mudline'] = tree_elevation_aml
 
-            rig_str, MAX_DRILL_FLUID_WGT, well_days_dict = self.get_rig_days_and_drilling_wt_worked_on_api12(
-                WAR_summary, well_api12)
+            rig_str, MAX_DRILL_FLUID_WGT, well_days_dict = well_rig_days.get_rig_days_and_drilling_wt_worked_on_api12(cfg, api12_df, well_api12)
             self.get_rig_days_by_well_activity(well_api12)
             api12_df['Rigs'].iloc[df_row] = rig_str
             api12_df['rigdays_dict'].iloc[df_row] = json.dumps(well_days_dict['rigdays_dict'])
@@ -205,7 +207,7 @@ class WellAPI12():
         sidetrack_no = 0
         bypass_no = 0
         tree_elevation_aml = None
-        bp_st_tree_info = api12_df['SUBSEA_TREE_HEIGHT_AML'].copy()
+        bp_st_tree_info = api12_df[['SN_EOR', 'WELL_NM_ST_SFIX', 'WELL_NM_BP_SFIX', 'SUBSEA_TREE_HEIGHT_AML']].copy()
         if len(bp_st_tree_info) > 0:
             bp_st_tree_info.sort_values(by=['SN_EOR'])
             sidetrack_no = float(bp_st_tree_info.WELL_NM_ST_SFIX.iloc[0])
@@ -425,3 +427,5 @@ class WellAPI12():
     def prepare_formation_data(self):
         pass
 
+    def get_rig_days_by_well_activity(self, well_api12):
+        pass

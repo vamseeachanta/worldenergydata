@@ -6,8 +6,54 @@ type:
   results: False
 
 parameters:
-  max_allowable_npt: 90
-
+  max_allowed_npt: 90
+  borehole_codes:
+    [
+        {
+            "BOREHOLE_STAT_CD": "APD",
+            "BOREHOLE_STAT_DESC": "APPLICATION FOR PERMIT TO DRILL"
+        },
+        {
+            "BOREHOLE_STAT_CD": "AST",
+            "BOREHOLE_STAT_DESC": "APPROVED SIDETRACK"
+        },
+        {
+            "BOREHOLE_STAT_CD": "CNL",
+            "BOREHOLE_STAT_DESC": "BOREHOLE IS CANCELLED. THE REQUEST TO DRILL THE WELL IS CANCELLED AFTER THE APD OR SUNDRY HAS BEEN APPROVED. THE STATUS DATE IS THE DATE THE BOREHOLE WAS CANCELLED."
+        },
+        {
+            "BOREHOLE_STAT_CD": "COM",
+            "BOREHOLE_STAT_DESC": "BOREHOLE COMPLETED"
+        },
+        {
+            "BOREHOLE_STAT_CD": "CT",
+            "BOREHOLE_STAT_DESC": "CORE TEST WELL"
+        },
+        {
+            "BOREHOLE_STAT_CD": "DRL",
+            "BOREHOLE_STAT_DESC": "DRILLING ACTIVE"
+        },
+        {
+            "BOREHOLE_STAT_CD": "DSI",
+            "BOREHOLE_STAT_DESC": "DRILLING SUSPENDED"
+        },
+        {
+            "BOREHOLE_STAT_CD": "PA",
+            "BOREHOLE_STAT_DESC": "PERMANENTLY ABANDONED"
+        },
+        {
+            "BOREHOLE_STAT_CD": "ST",
+            "BOREHOLE_STAT_DESC": "BOREHOLE SIDETRACKED"
+        },
+        {
+            "BOREHOLE_STAT_CD": "TA",
+            "BOREHOLE_STAT_DESC": "TEMPORARILY ABANDONED"
+        },
+        {
+            "BOREHOLE_STAT_CD": "VCW",
+            "BOREHOLE_STAT_DESC": "VOLUME CHAMBER WELL"
+        }
+    ]
 
 settings_master: NULL
 

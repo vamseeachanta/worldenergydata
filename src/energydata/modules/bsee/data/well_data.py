@@ -5,7 +5,7 @@ from copy import deepcopy
 from energydata.modules.bsee.data.scrapy_well_data import  ScrapyRunnerAPI
 
 from assetutilities.common.utilities import is_dir_valid_func
-
+from assetutilities.common.utilities import is_file_valid_func
 
 class WellData:
 
@@ -15,8 +15,11 @@ class WellData:
     def get_well_data_all_wells(self, cfg):
         Borehole_apd_df = self.get_Borehole_apd_for_all_wells(cfg)
         eWellEORRawData_df = self.get_eWellEORRawData_from_csv(cfg)
+        eWellWARRawData_mv_war_main_df = self.get_eWellWARRawData_mv_war_main_from_csv(cfg)
+        eWellWARRawData_mv_war_main_prop_df = self.get_eWellWARRawData_mv_war_main_prop_from_csv(cfg)
         
-        bsee_csv_data = {'Borehole_apd_df': Borehole_apd_df, 'eWellEORRawData_df': eWellEORRawData_df}
+        bsee_csv_data = {'Borehole_apd_df': Borehole_apd_df, 'eWellEORRawData_df': eWellEORRawData_df, 'eWellWARRawData_mv_war_main_df': eWellWARRawData_mv_war_main_df, 'eWellWARRawData_mv_war_main_prop_df': eWellWARRawData_mv_war_main_prop_df}
+        
         cfg = self.get_well_data_from_website(cfg)
 
         well_data_groups = []
@@ -45,23 +48,29 @@ class WellData:
     def get_api12_data_from_all_sources(self, cfg, bsee_csv_data, group, api12):
         Borehole_apd_df = bsee_csv_data['Borehole_apd_df']
         eWellEORRawData_df = bsee_csv_data['eWellEORRawData_df']
-                                           
+        eWellWARRawData_mv_war_main_df = bsee_csv_data['eWellWARRawData_mv_war_main_df']
+        eWellWARRawData_mv_war_main_prop_df = bsee_csv_data['eWellWARRawData_mv_war_main_prop_df']
+
         api12_well_data = pd.read_csv(group['file_name'])
         api12_Borehole_apd = self.get_Borehole_apd_for_api12(cfg, Borehole_apd_df, api12)
         api12_eWellEORRawData = eWellEORRawData_df[eWellEORRawData_df['API_WELL_NUMBER'] == api12].copy()
-        
+        api12_eWellWARRawData_mv_war_main = eWellWARRawData_mv_war_main_df[eWellWARRawData_mv_war_main_df['API_WELL_NUMBER'] == api12].copy()
+        # api12_eWellWARRawData_mv_war_main_prop = eWellWARRawData_mv_war_main_prop_df[eWellWARRawData_mv_war_main_prop_df['API_WELL_NUMBER'] == api12].copy()
         
         api12_df = pd.merge(api12_Borehole_apd, api12_well_data, how='inner' ,
                                     left_on=['API_WELL_NUMBER'], right_on=['API Well Number'])
         api12_df = pd.merge(api12_eWellEORRawData, api12_df, how='outer' ,
                                     left_on=['API_WELL_NUMBER'], right_on=['API Well Number'])
-        api12_df = self.refine_merged_data(api12_df)
+        api12_df = self.pd_merge_clean_column_names(api12_df)
 
-        #TODO Fix this merge for multiple api12_eWellEORRawData rows
-        # api12_df = pd.merge(api12_df, api12_eWellEORRawData, how='right' ,
-        #                             left_on=['API_WELL_NUMBER'], right_on=['API_WELL_NUMBER'])
+        api12_df = pd.merge(api12_eWellWARRawData_mv_war_main, api12_df, how='outer' ,
+                                    left_on=['API_WELL_NUMBER'], right_on=['API Well Number'])
+        api12_df = self.pd_merge_clean_column_names(api12_df)
 
-
+        api12_df = pd.merge(api12_df, eWellWARRawData_mv_war_main_prop_df, how='left' ,
+                                    left_on=['SN_WAR'], right_on=['SN_WAR'])
+        api12_df = self.pd_merge_clean_column_names(api12_df)
+        
         return api12_df
 
     def get_Borehole_apd_for_all_wells(self, cfg):
@@ -96,12 +105,12 @@ class WellData:
         scrapy_runner_api = ScrapyRunnerAPI()
 
         for input in input_items:
-            
+
             api12_array = input.get('api12', [])  # Get API numbers list
 
             for api12 in api12_array:
                 input_item = {'api12': [api12], 'label': str(api12)}
-                
+
                 api12_data = scrapy_runner_api.run_spider(cfg, input_item)
                 output_data = self.generate_output_item(cfg, output_data, input_item)
 
@@ -128,19 +137,25 @@ class WellData:
     
     def get_BoreholeRawData_from_csv(self, cfg):
 
-        # Load CSV files
-        file1 = r'data\modules\bsee\full_data\BoreholeRawData_mv_boreholes_all.csv'
+        file_name = 'data/modules/bsee/full_data/BoreholeRawData_mv_boreholes_all.csv'
 
-        df = pd.read_csv(file1, low_memory=False)
+        file_is_valid, file_name = is_file_valid_func(file_name)
+        if file_is_valid:
+            df = pd.read_csv(file_name, low_memory=False)
+        else:
+            raise Exception(f"File not found: {file_name}")
 
         return df
 
     def get_eWellEORRawData_from_csv(self, cfg):
 
-        # Load CSV files
-        file1 = r'data\modules\bsee\full_data\eWellEORRawData_mv_eor_mainquery.csv'
+        file_name = 'data/modules/bsee/full_data/eWellEORRawData_mv_eor_mainquery.csv'
 
-        df = pd.read_csv(file1, low_memory=False)
+        file_is_valid, file_name = is_file_valid_func(file_name)
+        if file_is_valid:
+            df = pd.read_csv(file_name, low_memory=False)
+        else:
+            raise Exception(f"File not found: {file_name}")
 
         return df
 
@@ -148,9 +163,39 @@ class WellData:
     def get_eWellAPDRawData_from_csv(self, cfg):
 
         # Load CSV files
-        file = r'data\modules\bsee\full_data\eWellAPDRawData_mv_apd_main.csv'
+        file_name = 'data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main.csv'
 
-        df = pd.read_csv(file, low_memory=False)
+        file_is_valid, file_name = is_file_valid_func(file_name)
+        if file_is_valid:
+            df = pd.read_csv(file_name, low_memory=False)
+        else:
+            raise Exception(f"File not found: {file_name}")
+
+        return df
+
+    def get_eWellWARRawData_mv_war_main_from_csv(self, cfg):
+        
+        # Load CSV files
+        file_name = 'data/modules/bsee/full_data/eWellWARRawData_mv_war_main.csv'
+
+        file_is_valid, file_name = is_file_valid_func(file_name)
+        if file_is_valid:
+            df = pd.read_csv(file_name, low_memory=False)
+        else:
+            raise Exception(f"File not found: {file_name}")
+
+        return df
+
+    def get_eWellWARRawData_mv_war_main_prop_from_csv(self, cfg):
+        
+        # Load CSV files
+        file_name = 'data/modules/bsee/full_data/eWellWARRawData_mv_war_main_prop.csv'
+
+        file_is_valid, file_name = is_file_valid_func(file_name)
+        if file_is_valid:
+            df = pd.read_csv(file_name, low_memory=False)
+        else:
+            raise Exception(f"File not found: {file_name}")
 
         return df
 
@@ -163,7 +208,7 @@ class WellData:
         # Merge on the first column (inner join to keep only matching rows)
         merged_df = pd.merge(df1, df2, on=join_key, how="right")
 
-        merged_df = self.refine_merged_data(merged_df)
+        merged_df = self.pd_merge_clean_column_names(merged_df)
 
         output_path = r'data\modules\bsee\well'
         # Save to a new CSV file
@@ -171,7 +216,7 @@ class WellData:
 
         return merged_df
 
-    def refine_merged_data(self, merged_df):
+    def pd_merge_clean_column_names(self, merged_df):
         merged_df = merged_df.loc[:, ~merged_df.columns.str.endswith('_y')]
         merged_df.columns = merged_df.columns.str.replace('_x', '', regex=True)
         return merged_df
