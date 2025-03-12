@@ -100,8 +100,7 @@ class WellAPI12():
             api12_df.loc[df_row, 'rigdays_dict'] = json.dumps(well_days_dict['rigdays_dict'])
             try:
                 api12_df['RIG_LAST_DATE_ON_WELL'].iloc[
-                    df_row] = self.dbe.input_data_well_activity_summary[self.dbe.input_data_well_activity_summary.API12
-                                                                        == well_api12].WAR_END_DT.max()
+                    df_row] = api12_df[api12_df.API12== well_api12].WAR_END_DT.max()
             except:
                 api12_df['RIG_LAST_DATE_ON_WELL'].iloc[df_row] = None
             api12_df['Drilling Days'].iloc[df_row] = well_days_dict['drilling_days']

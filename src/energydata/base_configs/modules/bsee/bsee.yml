@@ -6,6 +6,12 @@ type:
   results: False
 
 parameters:
+  filepath:
+    data: data/modules/bsee/data
+    production: data/modules/bsee/production
+    block: data/modules/bsee/block
+    APD: data/modules/bsee/data/csv/online_query_raw_data
+    
   max_allowed_npt: 90
   borehole_codes:
     [
