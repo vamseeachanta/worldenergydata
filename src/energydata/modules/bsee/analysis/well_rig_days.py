@@ -39,17 +39,16 @@ class WellRigDays:
         war_drilling_days_flag = False
         for df_row in range(0, len(well_war)):
             war_days = (parse(well_war['WAR_END_DT'].iloc[df_row]) - parse(well_war['WAR_START_DT'].iloc[df_row])).days
-            if war_days > 0:
-                well_war[df_row,'Rig_days'] = war_days + 1
-            else:
-                well_war[df_row,'Rig_days'] = war_days
+            
+            well_war.loc[df_row, 'Rig_days'] = war_days + 1 if war_days > 0 else war_days
+            
             if df_row > 0:
                 start_date = parse(well_war['WAR_START_DT'].iloc[df_row])
                 end_date = parse(well_war['WAR_END_DT'].iloc[df_row - 1])
                 npt_raw = (start_date - end_date).days - 1
                 if (npt_raw <= max_allowed_npt):
                     if (npt_raw > 0):
-                        well_war['npt_raw'].iloc[df_row] = npt_raw
+                        well_war.loc[df_row, 'npt_raw'] = npt_raw
                 elif (td_date > start_date):
                     war_drilling_days_flag = True
                 if (end_date <= td_date) and (start_date > td_date):
@@ -57,7 +56,7 @@ class WellRigDays:
                 npt = (start_date - end_date).days - 1
                 if (start_date > td_date) and (npt <= max_allowed_npt):
                     if (npt > 0):
-                        well_war['npt'].iloc[df_row] = npt
+                        well_war.loc[df_row, 'npt'] = npt
 
         rigs = list(well_war.RIG_NAME.unique())
 
