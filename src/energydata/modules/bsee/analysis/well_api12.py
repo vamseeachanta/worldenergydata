@@ -90,37 +90,37 @@ class WellAPI12():
                     'Well Name'] + '-' + api12_df['Sidetrack and Bypass']
 
             sidetrack_no, bypass_no, tree_elevation_aml = self.get_st_bp_tree_info(api12_df, api12)
-            api12_df.loc[df_row, 'Sidetrack No'] = sidetrack_no
-            api12_df.loc[df_row, 'Bypass No'] = bypass_no
-            api12_df[df_row, 'Tree Height Above Mudline'] = tree_elevation_aml
+            # Update columns at once 
+            api12_df.loc[df_row, ['Sidetrack No', 'Bypass No', 'Tree Height Above Mudline']] = [sidetrack_no, bypass_no, tree_elevation_aml]
 
             rig_str, MAX_DRILL_FLUID_WGT, well_days_dict = well_rig_days.get_rig_days_and_drilling_wt_worked_on_api12(cfg, api12_df, well_api12)
             self.get_rig_days_by_well_activity(well_api12)
             api12_df.loc[df_row, 'Rigs'] = rig_str
             api12_df.loc[df_row, 'rigdays_dict'] = json.dumps(well_days_dict['rigdays_dict'])
             try:
-                api12_df['RIG_LAST_DATE_ON_WELL'].iloc[
-                    df_row] = api12_df[api12_df.API12== well_api12].WAR_END_DT.max()
+                api12_df.loc[df_row, 'RIG_LAST_DATE_ON_WELL'] = api12_df[api12_df.API12== well_api12].WAR_END_DT.max()
             except:
-                api12_df['RIG_LAST_DATE_ON_WELL'].iloc[df_row] = None
-            api12_df['Drilling Days'].iloc[df_row] = well_days_dict['drilling_days']
-            api12_df['Completion Days'].iloc[df_row] = well_days_dict['completion_days']
+                api12_df.loc[df_row, 'RIG_LAST_DATE_ON_WELL'] = None
+            api12_df.loc[df_row, 'Drilling Days'] = well_days_dict['drilling_days']
+            api12_df.loc[df_row, 'Completion Days'] = well_days_dict['completion_days']
 
             try:
-                drilling_footage_ft = float(api12_df['Total Measured Depth'].iloc[df_row]
-                                           ) - api12_df['Water Depth'].iloc[df_row]
+                drilling_footage_ft = float(api12_df['BH_TOTAL_MD'].iloc[df_row]
+                                           ) - api12_df['Water Depth (feet)'].iloc[df_row]
             except:
                 drilling_footage_ft = None
-            api12_df['drilling_footage_ft'].iloc[df_row] = drilling_footage_ft
+            api12_df.loc[df_row, 'drilling_footage_ft'] = drilling_footage_ft
 
             if drilling_footage_ft is not None:
                 drilling_days_per_10000_ft = round(
                     api12_df['Drilling Days'].iloc[df_row] / drilling_footage_ft * 10000, 1)
             else:
                 drilling_days_per_10000_ft = None
-            api12_df['drilling_days_per_10000_ft'].iloc[df_row] = drilling_days_per_10000_ft
 
-            api12_df['MAX_DRILL_FLUID_WGT'].iloc[df_row] = MAX_DRILL_FLUID_WGT
+            api12_df['drilling_days_per_10000_ft'] = api12_df['drilling_days_per_10000_ft'].astype(float)
+            api12_df.loc[df_row, 'drilling_days_per_10000_ft'] = drilling_days_per_10000_ft
+
+            api12_df.loc[df_row, 'MAX_DRILL_FLUID_WGT'] = MAX_DRILL_FLUID_WGT
 
         api12_df.sort_values(by=['O_PROD_STATUS', 'WELL_LABEL'],
                                               ascending=[False, True],
