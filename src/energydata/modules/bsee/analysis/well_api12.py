@@ -1,6 +1,6 @@
 # Standard library imports
 import json
-from loguru import logger as logging
+from loguru import logger 
 import datetime
 
 # # # Third party imports
@@ -33,9 +33,9 @@ class WellAPI12():
             self.prepare_formation_data()
             self.field_analysis()
         except Exception as e:
-            logging.error(e)
+            logger.error(e)
 
-        logging.info("API12 data analysis ... COMPLETE")
+        logger.info("API12 data analysis ... COMPLETE")
 
         return cfg
 
@@ -80,6 +80,7 @@ class WellAPI12():
         api12_df['Sidetrack and Bypass'] = api12_df['WELL_NAME_SUFFIX']
 
         for df_row in range(0, len(api12_df)):
+            logger.info("Processing well {} of {}".format(df_row, len(api12_df)))
             well_api12 = api12_df.API12.iloc[df_row]
             well_api10 = api12_df.API10.iloc[df_row]
 
@@ -143,7 +144,7 @@ class WellAPI12():
         api12_df['BOT_x_rel'] = api12_df['BOTM_x'] - x_ref
         api12_df['BOT_y_rel'] = api12_df['BOTM_y'] - y_ref
 
-        logging.debug("GIS data is formatted")
+        logger.debug("GIS data is formatted")
 
         return api12_df
 
@@ -153,6 +154,7 @@ class WellAPI12():
         API12_list = list(directional_surveys.API12.unique())
         count = 0
         for api12 in API12_list:
+            logger.info("Processing Survey for api12 {} of {}".format(count, len(API12_list)))
             count = count + 1
             api12_dir_survey_df = directional_surveys[directional_surveys.API12 == api12].copy()
             api12_dir_survey_df['az'] = 0
@@ -160,6 +162,7 @@ class WellAPI12():
             api12_dir_survey_df['md'] = api12_dir_survey_df['SURVEY_POINT_MD']
 
             for df_row in range(0, len(api12_dir_survey_df)):
+                logger.info("Processing Survey for api12 {} of {}".format(count, len(API12_list)))
                 WELL_N_S_CODE = api12_dir_survey_df.iloc[df_row]['WELL_N_S_CODE']
                 WELL_E_W_CODE = api12_dir_survey_df.iloc[df_row]['WELL_E_W_CODE']
                 Azimuth_quadrant_angle = api12_dir_survey_df.iloc[df_row][
@@ -223,6 +226,7 @@ class WellAPI12():
         self.output_data_well_df = api12_df.copy()
         drop_index_array = []
         for well_api10 in API10_list:
+            logger.info("Processing well {} of {}".format(well_api10, len(API10_list)))
             temp_df = api12_df[(api12_df.API10 == well_api10)].copy()
             if len(temp_df) > 1:
                 # Clean output_data_well_df
@@ -395,6 +399,7 @@ class WellAPI12():
             well_tubulars_data.sort_values(
                 by=['API12', 'WAR_START_DT', 'CSNG_HOLE_SIZE', 'CASING_SIZE', 'CSNG_SETTING_BOTM_MD'], inplace=True)
             for df_row in range(0, len(api12_df)):
+                logger.info("Processing well {} of {}".format(df_row, len(api12_df)))
                 well_api12 = api12_df.API12.iloc[df_row]
                 temp_df = well_tubulars_data[(well_tubulars_data.API12 == well_api12)].copy()
                 max_date = temp_df.WAR_START_DT.max()
@@ -404,10 +409,10 @@ class WellAPI12():
                 self.casing_tubulars = pd.concat([self.casing_tubulars, latest_tubulars_df], ignore_index=True)
 
             self.casing_tubulars['Field NickName'] = self.cfg['custom_parameters']['field_nickname']
-            logging.info("Tubing data is prepared")
+            logger.info("Tubing data is prepared")
             self.prepare_casing_tubular_summary_all_wells(well_data)
         else:
-            logging.info("Tubing data is not available")
+            logger.info("Tubing data is not available")
 
     def prepare_completion_data(self, completion_data):
         # Third party imports

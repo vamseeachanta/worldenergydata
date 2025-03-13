@@ -1,6 +1,6 @@
 # Standard library imports
 import json
-from loguru import logger as logging
+from loguru import logger 
 import datetime
 
 # # # Third party imports
@@ -69,6 +69,7 @@ class WellAPI10():
         api12_df['RIG_LAST_DATE_ON_WELL'] = None
 
         for df_row in range(0, len(api12_df)):
+            logger.info(f"Processing row: {df_row} of {len(api12_df)}")
             well_api12 = api12_df.API12.iloc[df_row]
             well_api10 = api12_df.API10.iloc[df_row]
 
@@ -145,6 +146,7 @@ class WellAPI10():
         self.output_data_well_df = api12_df.copy()
         drop_index_array = []
         for well_api10 in API10_list:
+            logger.info(f"Processing well: {well_api10} of {len(API10_list)}")
             temp_df = api12_df[(api12_df.API10 == well_api10)].copy()
             if len(temp_df) > 1:
                 # Clean output_data_well_df
@@ -197,6 +199,7 @@ class WellAPI10():
         API12_list = list(directional_surveys.API12.unique())
         count = 0
         for api12 in API12_list:
+            logger.info(f"Processing Survey for api12 {count} of {len(API12_list)}")
             count = count + 1
             api12_dir_survey_df = directional_surveys[directional_surveys.API12 == api12].copy()
             api12_dir_survey_df['az'] = 0
@@ -204,6 +207,7 @@ class WellAPI10():
             api12_dir_survey_df['md'] = api12_dir_survey_df['SURVEY_POINT_MD']
 
             for df_row in range(0, len(api12_dir_survey_df)):
+                logger.info(f"Processing row: {df_row} of {len(api12_dir_survey_df)}")
                 WELL_N_S_CODE = api12_dir_survey_df.iloc[df_row]['WELL_N_S_CODE']
                 WELL_E_W_CODE = api12_dir_survey_df.iloc[df_row]['WELL_E_W_CODE']
                 Azimuth_quadrant_angle = api12_dir_survey_df.iloc[df_row][
@@ -387,6 +391,7 @@ class WellAPI10():
             well_tubulars_data.sort_values(
                 by=['API12', 'WAR_START_DT', 'CSNG_HOLE_SIZE', 'CASING_SIZE', 'CSNG_SETTING_BOTM_MD'], inplace=True)
             for df_row in range(0, len(api12_df)):
+                logger.info(f"Processing row: {df_row} of {len(api12_df)}") 
                 well_api12 = api12_df.API12.iloc[df_row]
                 temp_df = well_tubulars_data[(well_tubulars_data.API12 == well_api12)].copy()
                 max_date = temp_df.WAR_START_DT.max()

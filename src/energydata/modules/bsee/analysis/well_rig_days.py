@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from dateutil.parser import parse
+from loguru import logger
 
 class WellRigDays:
     """
@@ -20,6 +21,7 @@ class WellRigDays:
         api12_df['BOREHOLE_STAT_DESC'] = None
         BOREHOLE_STAT_DESC = [None]*len(BOREHOLE_STAT_CD)
         for idx in range(0, len(BOREHOLE_STAT_CD)):
+            logger.info(f"Processing BOREHOLE_STAT_CD: {BOREHOLE_STAT_CD.iloc[idx]}")
             code = BOREHOLE_STAT_CD.iloc[idx]
             for item in borehole_codes:
                 if code == item['BOREHOLE_STAT_CD']:
@@ -38,6 +40,7 @@ class WellRigDays:
 
         war_drilling_days_flag = False
         for df_row in range(0, len(well_war)):
+            logger.info(f"Processing row: {df_row}")
             war_days = (parse(well_war['WAR_END_DT'].iloc[df_row]) - parse(well_war['WAR_START_DT'].iloc[df_row])).days
             
             well_war.loc[df_row, 'Rig_days'] = war_days + 1 if war_days > 0 else war_days
@@ -65,6 +68,7 @@ class WellRigDays:
         rigdays_str_array = []
         total_rigdays = 0
         for rig in rigs:
+            logger.info(f"Processing rig: {rig}")
             rig_days = well_war[well_war.RIG_NAME == rig].Rig_days.sum()
             rigdays_list.append(rig_days)
             total_rigdays = total_rigdays + rig_days
