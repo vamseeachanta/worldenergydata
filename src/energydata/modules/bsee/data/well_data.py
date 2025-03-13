@@ -137,7 +137,7 @@ class WellData:
     
     def get_BoreholeRawData_from_csv(self, cfg):
 
-        file_name = 'data/modules/bsee/data/csv/online_query_raw_data/BoreholeRawData_mv_boreholes_all.csv'
+        file_name = 'data/modules/bsee/csv/online_query_raw_data/BoreholeRawData_mv_boreholes_all.csv'
 
         file_is_valid, file_name = is_file_valid_func(file_name)
         if file_is_valid:
@@ -149,7 +149,7 @@ class WellData:
 
     def get_eWellEORRawData_from_csv(self, cfg):
 
-        file_name = 'data/modules/bsee/data/csv/online_query_raw_data/eWellEORRawData_mv_eor_mainquery.csv'
+        file_name = 'data/modules/bsee/csv/online_query_raw_data/eWellEORRawData_mv_eor_mainquery.csv'
 
         file_is_valid, file_name = is_file_valid_func(file_name)
         if file_is_valid:
@@ -163,7 +163,7 @@ class WellData:
     def get_eWellAPDRawData_from_csv(self, cfg):
 
         # Load CSV files
-        file_name = 'data/modules/bsee/data/csv/online_query_raw_data/eWellAPDRawData_mv_apd_main.csv'
+        file_name = 'data/modules/bsee/csv/online_query_raw_data/eWellAPDRawData_mv_apd_main.csv'
 
         file_is_valid, file_name = is_file_valid_func(file_name)
         if file_is_valid:
@@ -176,7 +176,7 @@ class WellData:
     def get_eWellWARRawData_mv_war_main_from_csv(self, cfg):
         
         # Load CSV files
-        file_name = 'data/modules/bsee/data/csv/online_query_raw_data/eWellWARRawData_mv_war_main.csv'
+        file_name = 'data/modules/bsee/csv/online_query_raw_data/eWellWARRawData_mv_war_main.csv'
 
         file_is_valid, file_name = is_file_valid_func(file_name)
         if file_is_valid:
@@ -189,7 +189,7 @@ class WellData:
     def get_eWellWARRawData_mv_war_main_prop_from_csv(self, cfg):
         
         # Load CSV files
-        file_name = 'data/modules/bsee/data/csv/online_query_raw_data/eWellWARRawData_mv_war_main_prop.csv'
+        file_name = 'data/modules/bsee/csv/online_query_raw_data/eWellWARRawData_mv_war_main_prop.csv'
 
         file_is_valid, file_name = is_file_valid_func(file_name)
         if file_is_valid:
@@ -210,7 +210,7 @@ class WellData:
 
         merged_df = self.pd_merge_clean_column_names(merged_df)
 
-        output_path = 'data/modules/bsee/data/csv/well'
+        output_path = 'data/modules/bsee/csv/well'
         # Save to a new CSV file
         merged_df.to_csv(os.path.join(output_path, 'Join_Borehole_APD.csv'), index=False)
 

@@ -16,6 +16,7 @@ from crochet import setup, wait_for
 from scrapy.utils.response import (  # noqa useful while program is running
     open_in_browser,
 )
+from loguru import logger  # noqa
 
 setup()
 
@@ -48,7 +49,7 @@ class BSEEDataSpider(scrapy.Spider):
         first_request_data = self.cfg['data_retrieval']['well']['website']['form_data']['first_request'].copy()
         first_request_data['ASPxFormLayout1$ASPxTextBoxAPI'] = api_num
 
-        logging.info(f"Getting data for API {api_num} ... START")
+        logger.info(f"Getting data for API {api_num} ... START")
 
         # Submit the form and proceed to step2
         yield FormRequest.from_response(response, formdata=first_request_data, callback=self.step2)
@@ -85,9 +86,9 @@ class BSEEDataSpider(scrapy.Spider):
             else:
                 with open(output_file_name, 'wb') as f:
                     f.write(response.body)
-                    logging.debug("\n****The Scraped data of given value ****\n")
-                    logging.debug(response_csv)
-                    logging.info(f"Getting data for API {api_label} ... COMPLETE")
+                    logger.info("\n****The Scraped data of given value ****\n")
+                    logger.debug(response_csv)
+                    logger.info(f"Getting data for API {api_label} ... COMPLETE")
 
                 self.data_store['data'] = response_csv  # Store DataFrame in data_store
 

@@ -42,7 +42,7 @@ class DownloadFromZipUrl:
 
         extracted_files = z.namelist()
 
-        output_dir = cfg['input']['out_directory']
+        result_folder = cfg['Analysis']['result_folder'] , 'Data' , 'online_query_raw_data'
 
         for file in extracted_files:
             if file.endswith('/'):
@@ -59,7 +59,7 @@ class DownloadFromZipUrl:
                     print(f"Could not read {file} as CSV: {e}")
                     continue
 
-                df.to_csv(os.path.join(output_dir, csv_filename), index=False)
+                df.to_csv(os.path.join(result_folder, csv_filename), index=False)
     
         
 

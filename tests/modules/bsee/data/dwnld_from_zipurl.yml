@@ -4,7 +4,6 @@ online_query:
   raw_data: True
 
 input:
-  out_directory: data\modules\bsee\data\csv\online_query_raw_data
   urls:
     # - 'https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip'
     # - 'https://www.data.bsee.gov/Well/Files/eWellAPDRawData.zip'

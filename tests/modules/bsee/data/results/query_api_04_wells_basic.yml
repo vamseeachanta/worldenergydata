@@ -7,7 +7,37 @@ dictitems:
     analysis: false
     results: false
   parameters:
-    max_allowable_npt: 90
+    filepath:
+      data: data/modules/bsee/data
+      production: data/modules/bsee/production
+      block: data/modules/bsee/block
+      APD: data/modules/bsee/data/csv/online_query_raw_data
+    max_allowed_npt: 90
+    borehole_codes:
+    - BOREHOLE_STAT_CD: APD
+      BOREHOLE_STAT_DESC: APPLICATION FOR PERMIT TO DRILL
+    - BOREHOLE_STAT_CD: AST
+      BOREHOLE_STAT_DESC: APPROVED SIDETRACK
+    - BOREHOLE_STAT_CD: CNL
+      BOREHOLE_STAT_DESC: BOREHOLE IS CANCELLED. THE REQUEST TO DRILL THE WELL IS
+        CANCELLED AFTER THE APD OR SUNDRY HAS BEEN APPROVED. THE STATUS DATE IS THE
+        DATE THE BOREHOLE WAS CANCELLED.
+    - BOREHOLE_STAT_CD: COM
+      BOREHOLE_STAT_DESC: BOREHOLE COMPLETED
+    - BOREHOLE_STAT_CD: CT
+      BOREHOLE_STAT_DESC: CORE TEST WELL
+    - BOREHOLE_STAT_CD: DRL
+      BOREHOLE_STAT_DESC: DRILLING ACTIVE
+    - BOREHOLE_STAT_CD: DSI
+      BOREHOLE_STAT_DESC: DRILLING SUSPENDED
+    - BOREHOLE_STAT_CD: PA
+      BOREHOLE_STAT_DESC: PERMANENTLY ABANDONED
+    - BOREHOLE_STAT_CD: ST
+      BOREHOLE_STAT_DESC: BOREHOLE SIDETRACKED
+    - BOREHOLE_STAT_CD: TA
+      BOREHOLE_STAT_DESC: TEMPORARILY ABANDONED
+    - BOREHOLE_STAT_CD: VCW
+      BOREHOLE_STAT_DESC: VOLUME CHAMBER WELL
   settings_master: ~
   data_retrieval:
     well:
@@ -22,11 +52,11 @@ dictitems:
             __EVENTTARGET: ASPxFormLayout2$btnCsvExport
             __EVENTARGUMENT: Click
       csv:
-        BoreholeRawData_mv_boreholes_all: data/modules/bsee/full_data/BoreholeRawData_mv_boreholes_all.csv
-        eWellAPDRawData_mv_apd_main: data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main.csv
+        BoreholeRawData_mv_boreholes_all: data/modules/bsee/data/csv/online_query_raw_data/BoreholeRawData_mv_boreholes_all.csv
+        eWellAPDRawData_mv_apd_main: data/modules/bsee/data/csv/online_query_raw_data/eWellAPDRawData_mv_apd_main.csv
       zip:
-        BoreholeRawData_mv_boreholes_all: data/modules/bsee/full_data/BoreholeRawData_mv_boreholes_all.zip
-        eWellAPDRawData_mv_apd_main: data/modules/bsee/full_data/eWellAPDRawData_mv_apd_main.zip
+        BoreholeRawData_mv_boreholes_all: data/modules/bsee/data/zip/BoreholeRawData_mv_boreholes_all.zip
+        eWellAPDRawData_mv_apd_main: data/modules/bsee/data/zip/eWellAPDRawData_mv_apd_main.zip
     production:
       website:
         url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
@@ -85,7 +115,7 @@ dictitems:
     file_name_for_overwrite: query_api_04_wells_basic
     result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
     log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-03-11 15:25:22.063467
+    start_time: 2025-03-13 12:33:59.423349
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\query_api_04_wells_basic.yml
