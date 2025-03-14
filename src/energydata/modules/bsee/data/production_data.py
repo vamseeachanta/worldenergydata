@@ -38,19 +38,18 @@ class ProductionDataFromSources:
     def get_all_data(self, cfg):
 
         output_data = []
-        if "production_from_website" in cfg and cfg['production_from_website']['flag']:
-            output_data = self.get_production_from_website(cfg, output_data)
 
         # elif "block_data" in cfg and cfg['block_data']['flag']:
         #     output_data = self.get_block_data_from_website(cfg, output_data)
 
-        elif "production_from_zip" in cfg and cfg['production_from_zip']['flag']:
+        production_data_flag = cfg['data'].get('production_data', False)
+        if "production_from_zip" in cfg and cfg['production_from_zip']['flag'] or production_data_flag:
             input_items = cfg['data']['groups']
             for input_item in input_items:
                 production_data_from_zip = production_from_zip.get_production_data_by_wellapi12(cfg)
                 output_data = self.generate_output_item(cfg, output_data, input_item)
 
-        production_data = {'type': 'csv', 'groups': output_data ,'production_data_from_zip': production_data_from_zip}
+        production_data = {'type': 'csv', 'groups': output_data }
         cfg[cfg['basename']].update({'production_data': production_data})
 
         return cfg
