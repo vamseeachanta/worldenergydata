@@ -80,7 +80,7 @@ class WellAPI12():
         api12_df['Sidetrack and Bypass'] = api12_df['WELL_NAME_SUFFIX']
 
         for df_row in range(0, len(api12_df)):
-            logger.info("Processing well {} of {}".format(df_row, len(api12_df)))
+            logger.debug("Processing well {} of {}".format(df_row, len(api12_df)))
             well_api12 = api12_df.API12.iloc[df_row]
             well_api10 = api12_df.API10.iloc[df_row]
 
@@ -177,8 +177,8 @@ class WellAPI12():
                         Azimuth = 180 - Azimuth_quadrant_angle
                     else:
                         Azimuth = 180 + Azimuth_quadrant_angle
-                api12_dir_survey_df['az'].iloc[df_row] = Azimuth
-                api12_dir_survey_df['inc'].iloc[df_row] = Inclination
+                api12_dir_survey_df.loc[df_row, 'az'] = Azimuth
+                api12_dir_survey_df.loc[df_row, 'inc'] = Inclination
 
             print('Processing Survey for api12 {} of {}'.format(count, len(API12_list)))
             survey_xyz = self.process_survey_xyz(api12_dir_survey_df)

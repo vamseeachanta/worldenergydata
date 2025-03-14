@@ -14,11 +14,7 @@ data:
 
 analysis:
   flag: True
-  api12: True
-  production:
-    flag: True
-    api12: True
-
+  
 production_from_zip:
   flag: True
 
