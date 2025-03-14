@@ -9,7 +9,7 @@ production_from_zip:
   
 data:
   obtain: True
-  by: wellapi #block # API12, lease ?
+  by: wellAPI #block # API12, lease ?
   groups:
      - api12: [177024120700]
      

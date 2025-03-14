@@ -103,7 +103,7 @@ class ProductionAnalysis():
 
     def add_production_and_completion_name_to_well_data(self, well_api10, completion_name, df_temp):
         if self.output_data_api12_df is None:
-            raise ValueError("output_data_api12_df is not set. Call 'prepare_api12_data' first.")
+            raise ValueError("output_data_api12_df is not set. Call 'prepare_api12_data' method first.")
 
         total_well_production = df_temp.MON_O_PROD_VOL.sum() / 1000 / 1000
         api12_production = df_temp[['PRODUCTION_DATETIME', 'O_PROD_RATE_BOPD']].copy()

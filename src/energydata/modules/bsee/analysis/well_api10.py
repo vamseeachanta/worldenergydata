@@ -73,46 +73,46 @@ class WellAPI10():
             well_api10 = api12_df.API10.iloc[df_row]
 
             api12_count = API10_list.count(well_api10)
-            api12_df['Side Tracks'].iloc[df_row] = api12_count - 1
+            api12_df.loc[df_row, 'Side Tracks'] = api12_count - 1
             if api12_count >= 2:
                 api12_df['WELL_LABEL'] = api12_df[
                     'Well Name'] + '-' + api12_df['Sidetrack and Bypass']
 
             sidetrack_no, bypass_no, tree_elevation_aml = self.assign_st_bp_tree_info(
                 ST_BP_and_tree_height, well_api12)
-            api12_df['Sidetrack No'].iloc[df_row] = sidetrack_no
-            api12_df['Bypass No'].iloc[df_row] = bypass_no
-            api12_df['Tree Height Above Mudline'].iloc[df_row] = tree_elevation_aml
+            api12_df.loc[df_row, 'Sidetrack No'] = sidetrack_no
+            api12_df.loc[df_row, 'Bypass No'] = bypass_no
+            api12_df.loc[df_row, 'Tree Height Above Mudline'] = tree_elevation_aml
 
             rig_str, MAX_DRILL_FLUID_WGT, well_days_dict = self.get_rig_days_and_drilling_wt_worked_on_api12(
                 WAR_summary, well_api12)
             self.get_rig_days_by_well_activity(well_api12)
-            api12_df['Rigs'].iloc[df_row] = rig_str
-            api12_df['rigdays_dict'].iloc[df_row] = json.dumps(well_days_dict['rigdays_dict'])
+            api12_df.loc[df_row, 'Rigs'] = rig_str
+            api12_df.loc[df_row, 'rigdays_dict'] = json.dumps(well_days_dict['rigdays_dict'])
             try:
-                api12_df['RIG_LAST_DATE_ON_WELL'].iloc[
-                    df_row] = self.dbe.input_data_well_activity_summary[self.dbe.input_data_well_activity_summary.API12
+                api12_df.loc[
+                    df_row, 'RIG_LAST_DATE_ON_WELL'] = self.dbe.input_data_well_activity_summary[self.dbe.input_data_well_activity_summary.API12
                                                                         == well_api12].WAR_END_DT.max()
             except:
-                api12_df['RIG_LAST_DATE_ON_WELL'].iloc[df_row] = None
-            api12_df['Drilling Days'].iloc[df_row] = well_days_dict['drilling_days']
-            api12_df['Completion Days'].iloc[df_row] = well_days_dict['completion_days']
+                api12_df.loc[df_row, 'RIG_LAST_DATE_ON_WELL'] = None
+            api12_df.loc[df_row, 'Drilling Days'] = well_days_dict['drilling_days']
+            api12_df.loc[df_row, 'Completion Days'] = well_days_dict['completion_days']
 
             try:
-                drilling_footage_ft = float(api12_df['Total Measured Depth'].iloc[df_row]
-                                           ) - api12_df['Water Depth'].iloc[df_row]
+                drilling_footage_ft = float(api12_df.loc[df_row, 'Total Measured Depth']
+                                           ) - api12_df.loc[df_row, 'Water Depth']
             except:
                 drilling_footage_ft = None
-            api12_df['drilling_footage_ft'].iloc[df_row] = drilling_footage_ft
+            api12_df.loc[df_row, 'drilling_footage_ft'] = drilling_footage_ft
 
             if drilling_footage_ft is not None:
                 drilling_days_per_10000_ft = round(
-                    api12_df['Drilling Days'].iloc[df_row] / drilling_footage_ft * 10000, 1)
+                    api12_df.loc[df_row, 'Drilling Days'] / drilling_footage_ft * 10000, 1)
             else:
                 drilling_days_per_10000_ft = None
-            api12_df['drilling_days_per_10000_ft'].iloc[df_row] = drilling_days_per_10000_ft
+            api12_df.loc[df_row, 'drilling_days_per_10000_ft'] = drilling_days_per_10000_ft
 
-            api12_df['MAX_DRILL_FLUID_WGT'].iloc[df_row] = MAX_DRILL_FLUID_WGT
+            api12_df.loc[df_row, 'MAX_DRILL_FLUID_WGT'] = MAX_DRILL_FLUID_WGT
 
         api12_df.sort_values(by=['O_PROD_STATUS', 'WELL_LABEL'],
                                               ascending=[False, True],
@@ -220,8 +220,8 @@ class WellAPI10():
                         Azimuth = 180 - Azimuth_quadrant_angle
                     else:
                         Azimuth = 180 + Azimuth_quadrant_angle
-                api12_dir_survey_df['az'].iloc[df_row] = Azimuth
-                api12_dir_survey_df['inc'].iloc[df_row] = Inclination
+                api12_dir_survey_df.loc[df_row, 'az'] = Azimuth
+                api12_dir_survey_df.loc[df_row, 'inc'] = Inclination
 
             print('Processing Survey for api12 {} of {}'.format(count, len(API12_list)))
             survey_xyz = self.process_survey_xyz(api12_dir_survey_df)

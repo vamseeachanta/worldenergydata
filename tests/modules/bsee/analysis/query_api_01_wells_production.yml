@@ -3,10 +3,7 @@ meta:
   basename: bsee
   
 basename: bsee
-  
-well_production:
-  flag: True
-  
+    
 data:
   obtain: True
   by: zip
@@ -14,6 +11,8 @@ data:
     - api12: [177024120700]
       # files_folder: data\modules\bsee\production\csv 
   
+well_production:
+  flag: True
 
 default:
   log_level: INFO
