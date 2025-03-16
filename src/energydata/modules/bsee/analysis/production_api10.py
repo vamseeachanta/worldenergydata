@@ -15,7 +15,7 @@ from energydata.common.legacy.data import DateTimeUtility
 bsee_data = BSEEData()
 dtu = DateTimeUtility()
 
-class ProductionAnalysis():
+class ProductionAPI10Analysis():
 
     def __init__(self):
         pass

@@ -39,7 +39,6 @@ class BSEEAnalysis():
         cfg = self.run_well_data_analysis(cfg, data)
         cfg = self.run_production_data_analysis(cfg, data)
 
-
         return cfg
 
     def run_production_data_analysis(self, cfg, data):

@@ -30,8 +30,14 @@ class WellRigDays:
 
         well_war = api12_df.copy()
         well_info_df = api12_df.copy()
-        spud_date = parse(well_info_df['WELL_SPUD_DATE'].iloc[0])
-        td_date = parse(well_info_df['TOTAL_DEPTH_DATE'].iloc[0])
+
+        spud_date = None
+        if well_info_df['WELL_SPUD_DATE'].iloc[0] is not np.nan:
+            spud_date = parse(well_info_df['WELL_SPUD_DATE'].iloc[0])
+        
+        td_date = None
+        if well_info_df['TOTAL_DEPTH_DATE'].iloc[0] is not np.nan:
+            td_date = parse(well_info_df['TOTAL_DEPTH_DATE'].iloc[0])
 
         well_war['Rig_days'] = 0
         well_war['npt_raw'] = 0
