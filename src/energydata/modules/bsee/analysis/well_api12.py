@@ -23,7 +23,7 @@ class WellAPI12():
 
         api12_analysis = None
         api12_analysis = self.well_basic_analysis(api12_df, api12_analysis)
-        api12_df = self.get_sidetracklabel_and_rig_rigdays(cfg, api12_df, api12_analysis)
+        api12_analysis = self.get_sidetracklabel_and_rig_rigdays(cfg, api12_df, api12_analysis)
 
         try:
             # TODO fix and Relocate as needed.
@@ -35,7 +35,7 @@ class WellAPI12():
 
         logger.info("API12 data analysis ... COMPLETE")
 
-        return cfg
+        return cfg, api12_analysis
 
     def well_basic_analysis(self, api12_df, api12_analysis):
 
@@ -70,8 +70,7 @@ class WellAPI12():
         return api12_analysis
 
     def get_sidetracklabel_and_rig_rigdays(self, cfg, api12_df, api12_analysis):
-        api12 = api12_df.API_WELL_NUMBER.iloc[0]
-        API10_list = list(api12_df.API10)
+
         api12_analysis['Field NickName'] = None
         api12_analysis['BOEM_FIELDS'] = None
         api12_analysis['Side Tracks'] = 0
@@ -90,56 +89,49 @@ class WellAPI12():
         api12_analysis['RIG_LAST_DATE_ON_WELL'] = None
         api12_analysis['Sidetrack and Bypass'] = api12_df['WELL_NAME_SUFFIX']
 
-        for df_row in range(0, len(api12_df)):
-            logger.debug("Processing well {} of {}".format(df_row, len(api12_df)))
-            well_api12 = api12_df.API12.iloc[df_row]
-            well_api10 = api12_df.API10.iloc[df_row]
+        df_row = 0
+        well_api12 = api12_analysis.API12.iloc[df_row]
+        well_api10 = api12_analysis.API10.iloc[df_row]
+        logger.debug(f"Processing well: {well_api12}")
 
-            api12_count = API10_list.count(well_api10)
-            api12_df.loc[df_row, "Side Tracks"] = api12_count - 1
-            if api12_count >= 2:
-                api12_df['WELL_LABEL'] = api12_df[
-                    'Well Name'] + '-' + api12_df['Sidetrack and Bypass']
+        sidetrack_no, bypass_no, tree_elevation_aml = self.get_st_bp_tree_info(api12_df, well_api12)
+        api12_analysis.loc[df_row, ['Sidetrack No', 'Bypass No', 'Tree Height Above Mudline']] = [sidetrack_no, bypass_no, tree_elevation_aml]
 
-            sidetrack_no, bypass_no, tree_elevation_aml = self.get_st_bp_tree_info(api12_df, api12)
-            # Update columns at once 
-            api12_df.loc[df_row, ['Sidetrack No', 'Bypass No', 'Tree Height Above Mudline']] = [sidetrack_no, bypass_no, tree_elevation_aml]
+        rig_str, MAX_DRILL_FLUID_WGT, well_days_dict = well_rig_days.get_rig_days_and_drilling_wt_worked_on_api12(cfg, api12_df, well_api12)
+        self.get_rig_days_by_well_activity(well_api12)
+        api12_analysis.loc[df_row, 'Rigs'] = rig_str
+        api12_analysis.loc[df_row, 'rigdays_dict'] = json.dumps(well_days_dict['rigdays_dict'])
+        try:
+            api12_analysis.loc[df_row, 'RIG_LAST_DATE_ON_WELL'] = api12_df.WAR_END_DT.max()
+        except:
+            api12_analysis.loc[df_row, 'RIG_LAST_DATE_ON_WELL'] = None
+        api12_analysis.loc[df_row, 'Drilling Days'] = well_days_dict['drilling_days']
+        api12_analysis.loc[df_row, 'Completion Days'] = well_days_dict['completion_days']
 
-            rig_str, MAX_DRILL_FLUID_WGT, well_days_dict = well_rig_days.get_rig_days_and_drilling_wt_worked_on_api12(cfg, api12_df, well_api12)
-            self.get_rig_days_by_well_activity(well_api12)
-            api12_df.loc[df_row, 'Rigs'] = rig_str
-            api12_df.loc[df_row, 'rigdays_dict'] = json.dumps(well_days_dict['rigdays_dict'])
-            try:
-                api12_df.loc[df_row, 'RIG_LAST_DATE_ON_WELL'] = api12_df[api12_df.API12== well_api12].WAR_END_DT.max()
-            except:
-                api12_df.loc[df_row, 'RIG_LAST_DATE_ON_WELL'] = None
-            api12_df.loc[df_row, 'Drilling Days'] = well_days_dict['drilling_days']
-            api12_df.loc[df_row, 'Completion Days'] = well_days_dict['completion_days']
+        try:
+            drilling_footage_ft = float(api12_analysis['BH_TOTAL_MD'].iloc[df_row]
+                                        ) - api12_analysis['Water Depth (feet)'].iloc[df_row]
+        except:
+            drilling_footage_ft = None
+        api12_analysis.loc[df_row, 'drilling_footage_ft'] = drilling_footage_ft
 
-            try:
-                drilling_footage_ft = float(api12_df['BH_TOTAL_MD'].iloc[df_row]
-                                           ) - api12_df['Water Depth (feet)'].iloc[df_row]
-            except:
-                drilling_footage_ft = None
-            api12_df.loc[df_row, 'drilling_footage_ft'] = drilling_footage_ft
+        if drilling_footage_ft is not None:
+            drilling_days_per_10000_ft = round(
+                api12_analysis['Drilling Days'].iloc[df_row] / drilling_footage_ft * 10000, 1)
+        else:
+            drilling_days_per_10000_ft = None
 
-            if drilling_footage_ft is not None:
-                drilling_days_per_10000_ft = round(
-                    api12_df['Drilling Days'].iloc[df_row] / drilling_footage_ft * 10000, 1)
-            else:
-                drilling_days_per_10000_ft = None
+        api12_analysis['drilling_days_per_10000_ft'] = api12_analysis['drilling_days_per_10000_ft'].astype(float)
+        api12_analysis.loc[df_row, 'drilling_days_per_10000_ft'] = drilling_days_per_10000_ft
 
-            api12_df['drilling_days_per_10000_ft'] = api12_df['drilling_days_per_10000_ft'].astype(float)
-            api12_df.loc[df_row, 'drilling_days_per_10000_ft'] = drilling_days_per_10000_ft
+        api12_analysis.loc[df_row, 'MAX_DRILL_FLUID_WGT'] = MAX_DRILL_FLUID_WGT
 
-            api12_df.loc[df_row, 'MAX_DRILL_FLUID_WGT'] = MAX_DRILL_FLUID_WGT
-
-        api12_df.sort_values(by=['O_PROD_STATUS', 'WELL_LABEL'],
+        api12_analysis.sort_values(by=['O_PROD_STATUS', 'WELL_LABEL'],
                                               ascending=[False, True],
                                               inplace=True)
-        api12_df.reset_index(inplace=True, drop=True)
+        api12_analysis.reset_index(inplace=True, drop=True)
 
-        return api12_df
+        return api12_analysis
 
     def get_st_bp_tree_info(self, api12_df, api12):
         sidetrack_no = 0

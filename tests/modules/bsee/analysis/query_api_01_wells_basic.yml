@@ -7,7 +7,7 @@ data:
   obtain: True
   by: API12
   well_data: True
-  production_data: False
+  production_data: True
   groups:
     # Groups typically are list of dictionaries to run through multiple API numbers or multiple API sets
     - api12: [608124009400]
@@ -15,6 +15,10 @@ data:
 
 analysis:
   flag: True
+
+well_production:
+  flag: True
+
 
 default:
   log_level: INFO

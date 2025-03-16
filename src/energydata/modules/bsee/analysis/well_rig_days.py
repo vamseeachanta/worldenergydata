@@ -28,10 +28,10 @@ class WellRigDays:
 
         api12_df['BOREHOLE_STAT_DESC'] = BOREHOLE_STAT_DESC
 
-        well_war = api12_df[api12_df.API12 == api12].copy()
-        well_info_df = api12_df[api12_df.API12 == api12].copy()
-        spud_date = well_info_df['WELL_SPUD_DATE'].iloc[0]
-        td_date = well_info_df['TOTAL_DEPTH_DATE'].iloc[0]
+        well_war = api12_df.copy()
+        well_info_df = api12_df.copy()
+        spud_date = parse(well_info_df['WELL_SPUD_DATE'].iloc[0])
+        td_date = parse(well_info_df['TOTAL_DEPTH_DATE'].iloc[0])
 
         well_war['Rig_days'] = 0
         well_war['npt_raw'] = 0
@@ -80,7 +80,7 @@ class WellRigDays:
         rigs_for_string = [rig if rig not in [None or np.nan] else 'unknown rig' for rig in rigs]
         rig_str = ', '.join(rigs_for_string)
 
-        api12_war_days = well_war.groupby(['API12', 'BOREHOLE_STAT_DESC'])['Rig_days'].sum().reset_index()
+        api12_war_days = well_war.groupby(['API_WELL_NUMBER', 'BOREHOLE_STAT_DESC'])['Rig_days'].sum().reset_index()
         self.well_activity_rig_days = pd.concat([self.well_activity_rig_days, api12_war_days], ignore_index=True)
 
         well_war_npt_days = well_war['npt'].sum()
