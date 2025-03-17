@@ -97,16 +97,30 @@ class WellAPI12():
         sidetrack_no, bypass_no, tree_elevation_aml = self.get_st_bp_tree_info(api12_df, well_api12)
         api12_analysis.loc[df_row, ['Sidetrack No', 'Bypass No', 'Tree Height Above Mudline']] = [sidetrack_no, bypass_no, tree_elevation_aml]
 
-        rig_str, MAX_DRILL_FLUID_WGT, well_days_dict = well_rig_days.get_rig_days_and_drilling_wt_worked_on_api12(cfg, api12_df, well_api12)
+        try:
+            rig_str, MAX_DRILL_FLUID_WGT, well_days_dict = well_rig_days.get_rig_days_and_drilling_wt_worked_on_api12(cfg, api12_df, well_api12)
+        except Exception as e:
+            logger.error(e)
+            rig_str = None
+            MAX_DRILL_FLUID_WGT = None
+            well_days_dict = None
+
         self.get_rig_days_by_well_activity(well_api12)
         api12_analysis.loc[df_row, 'Rigs'] = rig_str
-        api12_analysis.loc[df_row, 'rigdays_dict'] = json.dumps(well_days_dict['rigdays_dict'])
+        
+        if well_days_dict is not None:
+            api12_analysis.loc[df_row, 'rigdays_dict'] = json.dumps(well_days_dict['rigdays_dict'])
+            api12_analysis.loc[df_row, 'Drilling Days'] = well_days_dict['drilling_days']
+            api12_analysis.loc[df_row, 'Completion Days'] = well_days_dict['completion_days']
+        else:
+            api12_analysis.loc[df_row, 'rigdays_dict'] = None
+            api12_analysis.loc[df_row, 'Drilling Days'] = None
+            api12_analysis.loc[df_row, 'Completion Days'] = None
         try:
             api12_analysis.loc[df_row, 'RIG_LAST_DATE_ON_WELL'] = api12_df.WAR_END_DT.max()
         except:
             api12_analysis.loc[df_row, 'RIG_LAST_DATE_ON_WELL'] = None
-        api12_analysis.loc[df_row, 'Drilling Days'] = well_days_dict['drilling_days']
-        api12_analysis.loc[df_row, 'Completion Days'] = well_days_dict['completion_days']
+
 
         try:
             drilling_footage_ft = float(api12_analysis['BH_TOTAL_MD'].iloc[df_row]

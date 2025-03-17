@@ -58,12 +58,15 @@ class WellRigDays:
                         well_war.loc[df_row, 'npt_raw'] = npt_raw
                 elif (td_date > start_date):
                     war_drilling_days_flag = True
-                if (end_date <= td_date) and (start_date > td_date):
-                    end_date = td_date
-                npt = (start_date - end_date).days - 1
-                if (start_date > td_date) and (npt <= max_allowed_npt):
-                    if (npt > 0):
-                        well_war.loc[df_row, 'npt'] = npt
+
+                if td_date is not None:
+                    if (end_date <= td_date) and (start_date > td_date):
+                        end_date = td_date
+                    npt = (start_date - end_date).days - 1
+
+                    if (start_date > td_date) and (npt <= max_allowed_npt):
+                        if (npt > 0):
+                            well_war.loc[df_row, 'npt'] = npt
 
         rigs = list(well_war.RIG_NAME.unique())
 
