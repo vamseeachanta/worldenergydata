@@ -22,7 +22,7 @@ class WellAPI12():
     def router(self, cfg, well_data):
 
         api12_analysis = None
-        api12_analysis = self.well_basic_analysis(well_data, api12_analysis)
+        api12_analysis = self.get_well_borehole_data(well_data, api12_analysis)
         api12_analysis = self.get_sidetracklabel_and_rig_rigdays(cfg, well_data, api12_analysis)
 
         try:
@@ -37,35 +37,24 @@ class WellAPI12():
 
         return cfg, api12_analysis
 
-    def well_basic_analysis(self, well_data, api12_analysis):
+    def get_well_borehole_data(self, well_data, api12_analysis):
 
+        # api12_df = well_data['api12_df']
+        api12_eWellAPDRawData = well_data['api12_eWellAPDRawData']
+        api12_BoreholeRawData = well_data['api12_BoreholeRawData']
         
-        api12_df = well_data['api12_df']
-
-        API12 = str(api12_df['API_WELL_NUMBER'].iloc[0])
-        API10 = str(api12_df['API_WELL_NUMBER'].iloc[0])[0:10]
-        O_PROD_STATUS = 0
-        O_CUMMULATIVE_PROD_MMBBL = 0
-        DAYS_ON_PROD = 0
-        O_MEAN_PROD_RATE_BOPD = 0
-        TOTAL_DEPTH_DATE = pd.to_datetime(api12_df['TOTAL_DEPTH_DATE'].max())
-        WELL_SPUD_DATE = pd.to_datetime(api12_df['WELL_SPUD_DATE'].max())
+        API12 = str(api12_BoreholeRawData['API_WELL_NUMBER'].iloc[0])
+        API10 = API12[0:10]
+        TOTAL_DEPTH_DATE = pd.to_datetime(api12_BoreholeRawData['TOTAL_DEPTH_DATE'].max())
+        WELL_SPUD_DATE = pd.to_datetime(api12_BoreholeRawData['WELL_SPUD_DATE'].max())
         COMPLETION_NAME = ""
-        monthly_production = None
-        xyz = None
 
         api12_analysis_dict = {
             'API12': API12,
             'API10': API10,
-            'O_PROD_STATUS': O_PROD_STATUS,
-            'O_CUMMULATIVE_PROD_MMBBL': O_CUMMULATIVE_PROD_MMBBL,
-            'DAYS_ON_PROD': DAYS_ON_PROD,
-            'O_MEAN_PROD_RATE_BOPD': O_MEAN_PROD_RATE_BOPD,
             'TOTAL_DEPTH_DATE': TOTAL_DEPTH_DATE,
             'WELL_SPUD_DATE': WELL_SPUD_DATE,
             'COMPLETION_NAME': COMPLETION_NAME,
-            'monthly_production': monthly_production,
-            'xyz': xyz
         }
 
         api12_analysis = pd.DataFrame([api12_analysis_dict])
@@ -74,15 +63,14 @@ class WellAPI12():
 
     def get_sidetracklabel_and_rig_rigdays(self, cfg, well_data, api12_analysis):
 
-        api12_df = well_data['api12_df']
-        api12_analysis['Field NickName'] = None
-        api12_analysis['BOEM_FIELDS'] = None
-        api12_analysis['Side Tracks'] = 0
-        api12_analysis['Sidetrack No'] = None
-        api12_analysis['Bypass No'] = None
+        api12_eWellAPDRawData = well_data['api12_eWellAPDRawData']
+        api12_BoreholeRawData = well_data['api12_BoreholeRawData']
+        
+        api12_analysis['WELL_NM_ST_SFIX'] = api12_eWellAPDRawData['WELL_NM_ST_SFIX']
+        api12_analysis['WELL_NM_BP_SFIX'] = api12_eWellAPDRawData['WELL_NM_BP_SFIX']
         api12_analysis['Tree Height Above Mudline'] = None
-        api12_analysis['WELL_LABEL'] = api12_df['Well Name']
-        api12_analysis['BSEE Well Name'] = api12_df['Well Name']
+        api12_analysis['WELL_LABEL'] = api12_eWellAPDRawData['WELL_NAME']
+        api12_analysis['WELL_NAME'] = api12_eWellAPDRawData['WELL_NAME']
         api12_analysis['Rigs'] = ""
         api12_analysis['rigdays_dict'] = ""
         api12_analysis['Drilling Days'] = 0
@@ -91,7 +79,7 @@ class WellAPI12():
         api12_analysis['drilling_footage_ft'] = 0
         api12_analysis['drilling_days_per_10000_ft'] = 0
         api12_analysis['RIG_LAST_DATE_ON_WELL'] = None
-        api12_analysis['Sidetrack and Bypass'] = api12_df['WELL_NAME_SUFFIX']
+        api12_analysis['SIDETRACT_BYPASS'] = api12_eWellAPDRawData['WELL_NAME_SUFFIX']
 
         df_row = 0
         well_api12 = api12_analysis.API12.iloc[df_row]
