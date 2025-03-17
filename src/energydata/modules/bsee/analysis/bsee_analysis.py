@@ -24,7 +24,6 @@ class BSEEAnalysis():
 
     def __init__(self):
         pass
-        # self.bsee_data = BSEEData(self.cfg)
 
     def router(self, cfg, data):
 
@@ -57,11 +56,8 @@ class BSEEAnalysis():
 
         if well_data_groups is not None:
             for group in well_data_groups:
-                for well in group:
-                    api12_df = well['api12_df']
-                    eWellWARRawData_mv_war_main_df = well['eWellWARRawData_mv_war_main_df']
-                    eWellWARRawData_mv_war_main_prop_df = well['eWellWARRawData_mv_war_main_prop_df']
-                    cfg, api12_summary = well_api12_analysis.router(cfg, api12_df)
+                for well_data in group:
+                    cfg, api12_summary = well_api12_analysis.router(cfg, well_data)
                     well_group_api12_summary_df = pd.concat([well_group_api12_summary_df, api12_summary], ignore_index=True)
 
             cfg, well_group_api10_summary_df = well_api10_analysis.router(cfg, well_group_api12_summary_df)
