@@ -19,11 +19,11 @@ class WellAPI12():
     def __init__(self):
         pass
 
-    def router(self, cfg, api12_df):
+    def router(self, cfg, well_data):
 
         api12_analysis = None
-        api12_analysis = self.well_basic_analysis(api12_df, api12_analysis)
-        api12_analysis = self.get_sidetracklabel_and_rig_rigdays(cfg, api12_df, api12_analysis)
+        api12_analysis = self.well_basic_analysis(well_data, api12_analysis)
+        api12_analysis = self.get_sidetracklabel_and_rig_rigdays(cfg, well_data, api12_analysis)
 
         try:
             # TODO fix and Relocate as needed.
@@ -37,7 +37,10 @@ class WellAPI12():
 
         return cfg, api12_analysis
 
-    def well_basic_analysis(self, api12_df, api12_analysis):
+    def well_basic_analysis(self, well_data, api12_analysis):
+
+        
+        api12_df = well_data['api12_df']
 
         API12 = str(api12_df['API_WELL_NUMBER'].iloc[0])
         API10 = str(api12_df['API_WELL_NUMBER'].iloc[0])[0:10]
@@ -69,8 +72,9 @@ class WellAPI12():
 
         return api12_analysis
 
-    def get_sidetracklabel_and_rig_rigdays(self, cfg, api12_df, api12_analysis):
+    def get_sidetracklabel_and_rig_rigdays(self, cfg, well_data, api12_analysis):
 
+        api12_df = well_data['api12_df']
         api12_analysis['Field NickName'] = None
         api12_analysis['BOEM_FIELDS'] = None
         api12_analysis['Side Tracks'] = 0

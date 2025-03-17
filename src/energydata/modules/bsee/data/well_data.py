@@ -13,12 +13,17 @@ class WellData:
         pass
 
     def get_well_data_all_wells(self, cfg):
-        Borehole_apd_df = self.get_Borehole_apd_for_all_wells(cfg)
+        BoreholeRawData_df = self.get_BoreholeRawData_from_csv(cfg)
+        eWellAPDRawData_df = self.get_eWellAPDRawData_from_csv(cfg)
         eWellEORRawData_df = self.get_eWellEORRawData_from_csv(cfg)
         eWellWARRawData_mv_war_main_df = self.get_eWellWARRawData_mv_war_main_from_csv(cfg)
         eWellWARRawData_mv_war_main_prop_df = self.get_eWellWARRawData_mv_war_main_prop_from_csv(cfg)
         
-        bsee_csv_data = {'Borehole_apd_df': Borehole_apd_df, 'eWellEORRawData_df': eWellEORRawData_df, 'eWellWARRawData_mv_war_main_df': eWellWARRawData_mv_war_main_df, 'eWellWARRawData_mv_war_main_prop_df': eWellWARRawData_mv_war_main_prop_df}
+        bsee_csv_data = {'BoreholeRawData_df': BoreholeRawData_df, 
+                         'eWellAPDRawData_df': eWellAPDRawData_df, 
+                         'eWellEORRawData_df': eWellEORRawData_df, 
+                         'eWellWARRawData_mv_war_main_df': eWellWARRawData_mv_war_main_df, 
+                         'eWellWARRawData_mv_war_main_prop_df': eWellWARRawData_mv_war_main_prop_df}
         
         cfg = self.get_well_data_from_website(cfg)
 
@@ -28,9 +33,11 @@ class WellData:
             api12_array = group['api12']
             api12_array_well_data = []
             for api12 in api12_array:
-                api12_df = self.get_api12_data_from_all_sources(cfg, bsee_csv_data, group, api12)
+                merged_api12_df = self.get_api12_merged_df_from_all_sources(cfg, bsee_csv_data, group, api12)
+                individual_df_data = self.get_api12_data_from_all_sources(cfg, bsee_csv_data, group, api12)
 
-            well_data_group.update({'api12_df': api12_df, 'Borehole_apd_df': Borehole_apd_df, 'eWellEORRawData_df': eWellEORRawData_df, 'eWellWARRawData_mv_war_main_df': eWellWARRawData_mv_war_main_df, 'eWellWARRawData_mv_war_main_prop_df': eWellWARRawData_mv_war_main_prop_df})
+            well_data_group.update({'merged_api12_df': merged_api12_df})
+            well_data_group.update(individual_df_data)
 
             api12_array_well_data.append(well_data_group)
 
@@ -45,21 +52,21 @@ class WellData:
         file_path = os.path.join(cfg['Analysis']['analysis_root_folder'], library, filename)
         
 
-    def get_api12_data_from_all_sources(self, cfg, bsee_csv_data, group, api12):
-        Borehole_df = bsee_csv_data['Borehole_df']
-        apd_df = bsee_csv_data['apd_df']
-        
-        Borehole_apd_df = bsee_csv_data['Borehole_apd_df']
+    def get_api12_merged_df_from_all_sources(self, cfg, bsee_csv_data, group, api12):
+        BoreholeRawData_df = bsee_csv_data['BoreholeRawData_df']
+        eWellAPDRawData_df = bsee_csv_data['eWellAPDRawData_df']
         eWellEORRawData_df = bsee_csv_data['eWellEORRawData_df']
         eWellWARRawData_mv_war_main_df = bsee_csv_data['eWellWARRawData_mv_war_main_df']
         eWellWARRawData_mv_war_main_prop_df = bsee_csv_data['eWellWARRawData_mv_war_main_prop_df']
 
         api12_well_data = pd.read_csv(group['file_name'])
-        api12_Borehole_apd = self.get_Borehole_apd_for_api12(cfg, Borehole_apd_df, api12)
         api12_eWellEORRawData = eWellEORRawData_df[eWellEORRawData_df['API_WELL_NUMBER'] == api12].copy()
         api12_eWellWARRawData_mv_war_main = eWellWARRawData_mv_war_main_df[eWellWARRawData_mv_war_main_df['API_WELL_NUMBER'] == api12].copy()
         # api12_eWellWARRawData_mv_war_main_prop = eWellWARRawData_mv_war_main_prop_df[eWellWARRawData_mv_war_main_prop_df['API_WELL_NUMBER'] == api12].copy()
         
+        Borehole_apd_df = self.get_Borehole_apd_for_all_wells(BoreholeRawData_df, eWellAPDRawData_df)
+        api12_Borehole_apd = self.get_Borehole_apd_for_api12(cfg, Borehole_apd_df, api12)
+
         api12_df = pd.merge(api12_Borehole_apd, api12_well_data, how='inner' ,
                                     left_on=['API_WELL_NUMBER'], right_on=['API Well Number'])
         api12_df = pd.merge(api12_eWellEORRawData, api12_df, how='outer' ,
@@ -76,9 +83,33 @@ class WellData:
         
         return api12_df
 
-    def get_Borehole_apd_for_all_wells(self, cfg):
-        BoreholeRawData_df = self.get_BoreholeRawData_from_csv(cfg)
-        eWellAPDRawData_df = self.get_eWellAPDRawData_from_csv(cfg)
+    def get_api12_data_from_all_sources(self, cfg, bsee_csv_data, group, api12):
+        api12_df = pd.read_csv(group['file_name'])
+
+        BoreholeRawData_df = bsee_csv_data['BoreholeRawData_df']
+        eWellAPDRawData_df = bsee_csv_data['eWellAPDRawData_df']
+        eWellEORRawData_df = bsee_csv_data['eWellEORRawData_df']
+        eWellWARRawData_mv_war_main_df = bsee_csv_data['eWellWARRawData_mv_war_main_df']
+        eWellWARRawData_mv_war_main_prop_df = bsee_csv_data['eWellWARRawData_mv_war_main_prop_df']
+
+        api12_BoreholeRawData = BoreholeRawData_df[BoreholeRawData_df['API_WELL_NUMBER'] == api12].copy()
+        api12_eWellAPDRawData = eWellAPDRawData_df[eWellAPDRawData_df['API_WELL_NUMBER'] == api12].copy()
+        api12_eWellEORRawData = eWellEORRawData_df[eWellEORRawData_df['API_WELL_NUMBER'] == api12].copy()
+        api12_eWellWARRawData_mv_war_main = eWellWARRawData_mv_war_main_df[eWellWARRawData_mv_war_main_df['API_WELL_NUMBER'] == api12].copy()
+
+        api12_eWellWARRawData_mv_war_main_prop = eWellWARRawData_mv_war_main_prop_df[eWellWARRawData_mv_war_main_prop_df['SN_WAR'].isin(api12_eWellWARRawData_mv_war_main['SN_WAR'])]
+
+        data = {'api12_df': api12_df,
+                'api12_BoreholeRawData': api12_BoreholeRawData,
+                'api12_eWellAPDRawData': api12_eWellAPDRawData,
+                'api12_eWellEORRawData': api12_eWellEORRawData,
+                'api12_eWellWARRawData_mv_war_main': api12_eWellWARRawData_mv_war_main,
+                'api12_eWellWARRawData_mv_war_main_prop': api12_eWellWARRawData_mv_war_main_prop}
+
+        return data
+
+
+    def get_Borehole_apd_for_all_wells(self, BoreholeRawData_df, eWellAPDRawData_df):
 
         self.Borehole_apd_df = self.get_merged_data(BoreholeRawData_df, eWellAPDRawData_df)
         
