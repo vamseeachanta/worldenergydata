@@ -59,6 +59,8 @@ class BSEEAnalysis():
             for group in well_data_groups:
                 for well in group:
                     api12_df = well['api12_df']
+                    eWellWARRawData_mv_war_main_df = well['eWellWARRawData_mv_war_main_df']
+                    eWellWARRawData_mv_war_main_prop_df = well['eWellWARRawData_mv_war_main_prop_df']
                     cfg, api12_summary = well_api12_analysis.router(cfg, api12_df)
                     well_group_api12_summary_df = pd.concat([well_group_api12_summary_df, api12_summary], ignore_index=True)
 

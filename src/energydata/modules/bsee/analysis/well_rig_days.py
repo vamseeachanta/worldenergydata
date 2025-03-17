@@ -74,6 +74,7 @@ class WellRigDays:
         rigdays_dict = []
         rigdays_str_array = []
         total_rigdays = 0
+
         for rig in rigs:
             rig_days = well_war[well_war.RIG_NAME == rig].Rig_days.sum()
             rigdays_list.append(rig_days)
