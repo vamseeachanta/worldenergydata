@@ -65,21 +65,27 @@ class WellAPI12():
 
         api12_eWellAPDRawData = well_data['api12_eWellAPDRawData']
         api12_BoreholeRawData = well_data['api12_BoreholeRawData']
+        api12_eWellEORRawData = well_data['api12_eWellEORRawData']
+        api12_eWellWARRawData_mv_war_main = well_data['api12_eWellWARRawData_mv_war_main']
+        api12_eWellWARRawData_mv_war_main_prop = well_data['api12_eWellWARRawData_mv_war_main_prop']
         
-        api12_analysis['WELL_NM_ST_SFIX'] = api12_eWellAPDRawData['WELL_NM_ST_SFIX']
-        api12_analysis['WELL_NM_BP_SFIX'] = api12_eWellAPDRawData['WELL_NM_BP_SFIX']
-        api12_analysis['Tree Height Above Mudline'] = None
-        api12_analysis['WELL_LABEL'] = api12_eWellAPDRawData['WELL_NAME']
-        api12_analysis['WELL_NAME'] = api12_eWellAPDRawData['WELL_NAME']
+        
+        api12_analysis['WELL_NM_ST_SFIX'] = api12_eWellAPDRawData['WELL_NM_ST_SFIX'].iloc[0]
+        api12_analysis['WELL_NM_BP_SFIX'] = api12_eWellAPDRawData['WELL_NM_BP_SFIX'].iloc[0]
+        api12_analysis['WELL_NAME_SUFFIX'] = api12_BoreholeRawData['WELL_NAME_SUFFIX'].iloc[0]
+        api12_analysis['SUBSEA_TREE_HEIGHT_AML'] = api12_eWellEORRawData['SUBSEA_TREE_HEIGHT_AML'].max()
+        api12_analysis['WELL_LABEL'] = api12_eWellAPDRawData['WELL_NAME'].iloc[0]
+        api12_analysis['WELL_NAME'] = api12_eWellAPDRawData['WELL_NAME'].iloc[0]
+        api12_analysis['MAX_DRILL_FLUID_WGT'] = 0
+        api12_analysis['drilling_footage_ft'] = 0
+        api12_analysis['drilling_days_per_10000_ft'] = 0
+        api12_analysis['RIG_LAST_DATE_ON_WELL'] = api12_df.WAR_END_DT.max()
+
         api12_analysis['Rigs'] = ""
         api12_analysis['rigdays_dict'] = ""
         api12_analysis['Drilling Days'] = 0
         api12_analysis['Completion Days'] = 0
-        api12_analysis['MAX_DRILL_FLUID_WGT'] = 0
-        api12_analysis['drilling_footage_ft'] = 0
-        api12_analysis['drilling_days_per_10000_ft'] = 0
-        api12_analysis['RIG_LAST_DATE_ON_WELL'] = None
-        api12_analysis['SIDETRACT_BYPASS'] = api12_eWellAPDRawData['WELL_NAME_SUFFIX']
+
 
         df_row = 0
         well_api12 = api12_analysis.API12.iloc[df_row]
@@ -108,10 +114,6 @@ class WellAPI12():
             api12_analysis.loc[df_row, 'rigdays_dict'] = None
             api12_analysis.loc[df_row, 'Drilling Days'] = None
             api12_analysis.loc[df_row, 'Completion Days'] = None
-        try:
-            api12_analysis.loc[df_row, 'RIG_LAST_DATE_ON_WELL'] = api12_df.WAR_END_DT.max()
-        except:
-            api12_analysis.loc[df_row, 'RIG_LAST_DATE_ON_WELL'] = None
 
 
         try:
