@@ -30,7 +30,7 @@ class WellData:
             for api12 in api12_array:
                 api12_df = self.get_api12_data_from_all_sources(cfg, bsee_csv_data, group, api12)
 
-            well_data_group.update({'api12_df': api12_df})
+            well_data_group.update({'api12_df': api12_df, 'Borehole_apd_df': Borehole_apd_df, 'eWellEORRawData_df': eWellEORRawData_df, 'eWellWARRawData_mv_war_main_df': eWellWARRawData_mv_war_main_df, 'eWellWARRawData_mv_war_main_prop_df': eWellWARRawData_mv_war_main_prop_df})
 
             api12_array_well_data.append(well_data_group)
 
@@ -46,6 +46,9 @@ class WellData:
         
 
     def get_api12_data_from_all_sources(self, cfg, bsee_csv_data, group, api12):
+        Borehole_df = bsee_csv_data['Borehole_df']
+        apd_df = bsee_csv_data['apd_df']
+        
         Borehole_apd_df = bsee_csv_data['Borehole_apd_df']
         eWellEORRawData_df = bsee_csv_data['eWellEORRawData_df']
         eWellWARRawData_mv_war_main_df = bsee_csv_data['eWellWARRawData_mv_war_main_df']

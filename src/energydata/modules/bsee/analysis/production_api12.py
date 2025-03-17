@@ -22,6 +22,8 @@ class ProductionAPI12Analysis():
 
     def router(self, cfg, api12_production_data):
         self.prepare_production_data(cfg, api12_production_data)
+        
+        return cfg
 
     def prepare_production_data(self,cfg, production_data):
         self.output_data_production_df_array = {}
