@@ -3,11 +3,12 @@ from energydata.modules.bsee.data.block_data import BlockData
 import os
 import pandas as pd
 from copy import deepcopy
+import logging
 
 from energydata.modules.bsee.data.scrapy_well_data import  ScrapyRunnerAPI
 
 from assetutilities.common.utilities import is_dir_valid_func
-from assetutilities.common.utilities import is_file_valid_func
+from assetutilities.common.utilities import get_repository_filename, get_repository_filepath
 
 block_data = BlockData()
 
@@ -197,9 +198,18 @@ class WellData:
     
     def get_BoreholeRawData_from_csv(self, cfg):
 
-        file_name = 'data/modules/bsee/csv/online_query_raw_data/BoreholeRawData_mv_boreholes_all.csv'
+        file_name = 'BoreholeRawData_mv_boreholes_all.csv'
 
-        file_is_valid, file_name = is_file_valid_func(file_name)
+        library_name = 'energydata'
+        library_file_cfg = {
+            'filename': f"data/modules/bsee/csv/online_query_raw_data/{file_name}",
+            'library_name': library_name,
+            'repository_path': None
+        }
+
+        file_is_valid, file_name = get_repository_filename(library_file_cfg)
+        logging.debug(f"file_name: {file_name}")
+
         if file_is_valid:
             df = pd.read_csv(file_name, low_memory=False)
             borehole_codes = cfg['parameters']['borehole_codes']
@@ -225,9 +235,18 @@ class WellData:
 
     def get_eWellEORRawData_from_csv(self, cfg):
 
-        file_name = 'data/modules/bsee/csv/online_query_raw_data/eWellEORRawData_mv_eor_mainquery.csv'
+        file_name = 'eWellEORRawData_mv_eor_mainquery.csv'
 
-        file_is_valid, file_name = is_file_valid_func(file_name)
+        library_name = 'energydata'
+        library_file_cfg = {
+            'filename': f"data/modules/bsee/csv/online_query_raw_data/{file_name}",
+            'library_name': library_name,
+            'repository_path': None
+        }
+
+        file_is_valid, file_name = get_repository_filename(library_file_cfg)
+        logging.debug(f"file_name: {file_name}")
+
         if file_is_valid:
             df = pd.read_csv(file_name, low_memory=False)
         else:
@@ -239,9 +258,18 @@ class WellData:
     def get_eWellAPDRawData_from_csv(self, cfg):
 
         # Load CSV files
-        file_name = 'data/modules/bsee/csv/online_query_raw_data/eWellAPDRawData_mv_apd_main.csv'
+        file_name = 'eWellAPDRawData_mv_apd_main.csv'
 
-        file_is_valid, file_name = is_file_valid_func(file_name)
+        library_name = 'energydata'
+        library_file_cfg = {
+            'filename': f"data/modules/bsee/csv/online_query_raw_data/{file_name}",
+            'library_name': library_name,
+            'repository_path': None
+        }
+
+        file_is_valid, file_name = get_repository_filename(library_file_cfg)
+        logging.debug(f"file_name: {file_name}")
+
         if file_is_valid:
             df = pd.read_csv(file_name, low_memory=False)
         else:
@@ -252,9 +280,18 @@ class WellData:
     def get_eWellWARRawData_mv_war_main_from_csv(self, cfg):
         
         # Load CSV files
-        file_name = 'data/modules/bsee/csv/online_query_raw_data/eWellWARRawData_mv_war_main.csv'
+        file_name = 'eWellWARRawData_mv_war_main.csv'
 
-        file_is_valid, file_name = is_file_valid_func(file_name)
+        library_name = 'energydata'
+        library_file_cfg = {
+            'filename': f"data/modules/bsee/csv/online_query_raw_data/{file_name}",
+            'library_name': library_name,
+            'repository_path': None
+        }
+
+        file_is_valid, file_name = get_repository_filename(library_file_cfg)
+        logging.debug(f"file_name: {file_name}")
+
         if file_is_valid:
             df = pd.read_csv(file_name, low_memory=False)
         else:
@@ -265,9 +302,18 @@ class WellData:
     def get_eWellWARRawData_mv_war_main_prop_from_csv(self, cfg):
         
         # Load CSV files
-        file_name = 'data/modules/bsee/csv/online_query_raw_data/eWellWARRawData_mv_war_main_prop.csv'
+        file_name = 'eWellWARRawData_mv_war_main_prop.csv'
 
-        file_is_valid, file_name = is_file_valid_func(file_name)
+        library_name = 'energydata'
+        library_file_cfg = {
+            'filename': f"data/modules/bsee/csv/online_query_raw_data/{file_name}",
+            'library_name': library_name,
+            'repository_path': None
+        }
+
+        file_is_valid, file_name = get_repository_filename(library_file_cfg)
+        logging.debug(f"file_name: {file_name}")
+
         if file_is_valid:
             df = pd.read_csv(file_name, low_memory=False)
         else:
@@ -286,9 +332,18 @@ class WellData:
 
         merged_df = self.pd_merge_clean_column_names(merged_df)
 
-        output_path = 'data/modules/bsee/csv/well'
+        filepath = 'data/modules/bsee/csv/well'
+
+        library_name = 'energydata'
+        library_file_cfg = {
+            'filepath': filepath,
+            'library_name': library_name,
+            'repository_path': None
+        }
+
+        dir_is_valid, repo_filepath = get_repository_filepath(library_file_cfg)
         # Save to a new CSV file
-        merged_df.to_csv(os.path.join(output_path, 'Join_Borehole_APD.csv'), index=False)
+        merged_df.to_csv(os.path.join(repo_filepath, 'Join_Borehole_APD.csv'), index=False)
 
         return merged_df
 

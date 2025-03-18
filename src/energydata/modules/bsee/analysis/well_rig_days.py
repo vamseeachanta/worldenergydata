@@ -30,12 +30,12 @@ class WellRigDays:
 
         war_summary = self.get_war_days(cfg, war_data, td_date)
 
-        rig_str, well_days_dict = self.get_rig_info_and_rig_days(war_data, spud_date, td_date, war_summary)
+        rig_str, well_days_dict = self.get_rig_info_and_rig_days(spud_date, td_date, war_summary)
 
 
         return rig_str, well_days_dict
 
-    def get_rig_info_and_rig_days(self, war_summary, spud_date, td_date, war_summary):
+    def get_rig_info_and_rig_days(self, spud_date, td_date, war_summary):
         try:
             rigs = list(war_summary.RIG_NAME.unique())
 
