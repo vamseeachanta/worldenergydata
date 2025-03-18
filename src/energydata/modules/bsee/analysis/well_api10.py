@@ -25,12 +25,13 @@ class WellAPI10():
 
     def field_analysis(self, cfg, well_group_api10_summary_df):
         
-        api12_analysis['Field NickName'] = None
-        api12_analysis['BOEM_FIELDS'] = None
-        api12_analysis['SIDETRACK_COUNT'] = 0
+        well_group_api10_summary_df['Field NickName'] = None
+        well_group_api10_summary_df['BOEM_FIELDS'] = None
+        well_group_api10_summary_df['SIDETRACK_COUNT'] = 0
 
         if len(well_group_api10_summary_df) > 1:
             for idx in range(0, len(well_group_api10_summary_df)):
-                well_group_api10_summary_df.loc[idx, 'WELL_LABEL'] = well_group_api10_summary_df[idx, 'Well Name'] + '-' + well_group_api10_summary_df[idx, 'Sidetrack and Bypass']
+                well_group_api10_summary_df.loc[idx, 'WELL_LABEL'] = ( well_group_api10_summary_df.loc[idx, 'WELL_NAME'] + '-' + 
+            well_group_api10_summary_df.loc[idx, 'Sidetrack and Bypass'])
 
         return cfg, well_group_api10_summary_df

@@ -106,20 +106,24 @@ dictitems:
     groups:
     - api12:
       - 608124009400
+      - 608124010200
+      - 608124011101
   analysis:
     flag: true
+  well_production:
+    flag: false
   Analysis:
     basename: bsee
-    analysis_root_folder: k:\github\energydata\tests\modules\bsee\analysis
+    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis
     file_name: query_api_01_wells_basic
     file_name_for_overwrite: query_api_01_wells_basic
-    result_folder: k:\github\energydata\tests\modules\bsee\analysis\results
-    log_folder: k:\github\energydata\tests\modules\bsee\analysis\logs
-    start_time: 2025-03-16 09:23:36.968162
+    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
+    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\logs
+    start_time: 2025-03-18 12:36:11.110232
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: k:\github\energydata\tests\modules\bsee\analysis\query_api_01_wells_basic.yml
-    fe_folder: k:\github\energydata\tests\modules\bsee\analysis\results
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\query_api_01_wells_basic.yml
+    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
   bsee:
     well_data:
       type: csv
@@ -127,4 +131,12 @@ dictitems:
       - api12:
         - 608124009400
         label: '608124009400'
-        file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124009400.csv
+        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\608124009400.csv
+      - api12:
+        - 608124010200
+        label: '608124010200'
+        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\608124010200.csv
+      - api12:
+        - 608124011101
+        label: '608124011101'
+        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\608124011101.csv
