@@ -22,13 +22,12 @@ class WellData:
                 cfg, block_data_groups, api12_array = self.get_api12_array_by_block(cfg)
             elif cfg['data']['by'] == 'API12':
                 api12_array = self.get_api12_array_by_api12(cfg)
-            cfg[cfg['basename']].update({'api12': api12_array})
+            cfg[cfg['basename']].update({'groups': [{'api12': api12_array}]})
 
         well_data_flag = cfg['data'].get('well_data', False)
         well_data_groups = None
         if well_data_flag:
             cfg, well_data_groups  = self.get_well_data_all_wells(cfg)
-
 
         #TODO
         # WAR_summary = self.get_WAR_summary_by_api10(api10)
@@ -36,8 +35,6 @@ class WellData:
         # ST_BP_and_tree_height = self.get_ST_BP_and_tree_height_by_api10(api10)
         # well_tubulars_data = self.bsee_data.get_well_tubulars_data_by_api10(api10)
         # completion_data = self.bsee_data.get_completion_data_by_api10(api10)
-
-
 
         return cfg, well_data_groups
 
