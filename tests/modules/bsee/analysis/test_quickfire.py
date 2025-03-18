@@ -25,8 +25,8 @@ def get_valid_pytest_output_file(pytest_output_file):
 def test_application():
 
     # Well Analysis Tests
-    input_file = 'query_api_01_wells_basic.yml'
-    #input_file = 'query_api_03_wells_basic.yml'
+    # input_file = 'query_api_01_wells_api12.yml'
+    # input_file = 'query_api_03_wells_api12.yml'
 
     # Well Data Tests
     # input_file = 'query_api_01_wells_basic.yml'
@@ -34,8 +34,8 @@ def test_application():
 
     # Well Production Tests
     # input_file = 'query_api_01_wells_production.yml'
-    
-    #input_file = 'query_api_01_production_basic.yml'
+    # input_file = 'query_api_01_production.yml'
+    input_file = 'query_api_03_production.yml'
 
     # input_file = 'query_api_01_block_basic.yml'
 
