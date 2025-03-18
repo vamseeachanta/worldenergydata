@@ -12,6 +12,19 @@ class WellData:
     def __init__(self):
         pass
 
+    def router(self, cfg):
+        if "data" in cfg:
+            if cfg['data']['by'] == 'block':
+                cfg, block_data_groups, api12_array = self.get_api12_array_by_block(cfg)
+            elif cfg['data']['by'] == 'API12':
+                api12_array = self.get_api12_array_by_api12(cfg)
+            cfg[cfg['basename']].update({'api12': api12_array})
+
+        well_data_flag = cfg['data'].get('well_data', False)
+        well_data_groups = None
+        if well_data_flag:
+            cfg, well_data_groups  = self.get_well_data_all_wells(cfg)
+
     def get_well_data_all_wells(self, cfg):
         BoreholeRawData_df = self.get_BoreholeRawData_from_csv(cfg)
         eWellAPDRawData_df = self.get_eWellAPDRawData_from_csv(cfg)

@@ -7,17 +7,21 @@ basename: bsee
 data:
   obtain: True
   by: block
+  production_data: True
   groups:
     # Groups typically are list of entities to run through multiple API numbers or multiple API sets
     - bottom_block: [540]
+
+production_from_zip:
+  flag: True
 
 block_data:
   flag: True
   
 #TODO - implement analysis for block data
-# analysis:
-#   flag: True
-#   api12: True
+analysis:
+  flag: True
+  api12: True
 
   
 

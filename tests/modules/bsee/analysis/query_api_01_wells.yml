@@ -1,0 +1,29 @@
+meta:
+  library: energydata
+  basename: bsee
+  
+basename: bsee
+
+data:
+  obtain: True
+  by: API12
+  production_data: True
+  groups:
+    # Groups typically are list of dictionaries to run through multiple API numbers or multiple API sets
+    - api12: [177024134002]
+
+production_from_zip:
+  flag: True
+
+#TODO - implement analysis for production data
+analysis:
+  flag: True
+  api12: True
+  production: True  
+
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False
