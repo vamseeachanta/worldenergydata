@@ -21,3 +21,5 @@ class Production:
         
         elif "production_from_zip" in cfg and cfg['production_from_zip']['flag']:
             production_data.get_all_data(cfg)
+
+        return cfg, production_data_groups

@@ -1,3 +1,5 @@
+from energydata.modules.bsee.data.block_data import BlockData
+
 import os
 import pandas as pd
 from copy import deepcopy
@@ -6,6 +8,8 @@ from energydata.modules.bsee.data.scrapy_well_data import  ScrapyRunnerAPI
 
 from assetutilities.common.utilities import is_dir_valid_func
 from assetutilities.common.utilities import is_file_valid_func
+
+block_data = BlockData()
 
 class WellData:
 
@@ -24,6 +28,18 @@ class WellData:
         well_data_groups = None
         if well_data_flag:
             cfg, well_data_groups  = self.get_well_data_all_wells(cfg)
+
+
+        #TODO
+        # WAR_summary = self.get_WAR_summary_by_api10(api10)
+        # directional_surveys = self.bsee_data.get_directional_surveys_by_api10(api10)
+        # ST_BP_and_tree_height = self.get_ST_BP_and_tree_height_by_api10(api10)
+        # well_tubulars_data = self.bsee_data.get_well_tubulars_data_by_api10(api10)
+        # completion_data = self.bsee_data.get_completion_data_by_api10(api10)
+
+
+
+        return cfg, well_data_groups
 
     def get_well_data_all_wells(self, cfg):
         BoreholeRawData_df = self.get_BoreholeRawData_from_csv(cfg)
@@ -63,7 +79,7 @@ class WellData:
         library = 'digitalmodel'
         filename = cfg['filename']
         file_path = os.path.join(cfg['Analysis']['analysis_root_folder'], library, filename)
-        
+
 
     def get_api12_merged_df_from_all_sources(self, cfg, bsee_csv_data, group, api12):
         BoreholeRawData_df = bsee_csv_data['BoreholeRawData_df']
@@ -267,3 +283,38 @@ class WellData:
         merged_df = merged_df.loc[:, ~merged_df.columns.str.endswith('_y')]
         merged_df.columns = merged_df.columns.str.replace('_x', '', regex=True)
         return merged_df
+    
+    def get_api12_data(self, cfg):
+
+        if cfg['data']['by'] == 'API12':
+            api12_array = self.get_api12_array_by_api12(cfg)
+        elif cfg['data']['by'] == 'block':
+            api12_array = self.get_api12_array_by_block(cfg)
+
+        cfg[cfg['basename']].update({'api12': api12_array})
+
+        return cfg
+
+    def get_api12_array_by_api12(self, cfg):
+        
+        api12_array = []
+        groups = cfg['data']['groups']
+        for group in groups:
+            api12 = [group['api12']]
+            api12_array = api12_array + api12
+
+        return api12_array
+
+    def get_api12_array_by_block(self, cfg):
+        cfg, block_data_groups = block_data.router(cfg)
+        
+        api12_array = []
+        if cfg[cfg['basename']]['well_data']['type'] == 'csv':
+            csv_groups = cfg[cfg['basename']]['well_data']['groups']
+            for csv_group in csv_groups:
+                df = pd.read_csv(csv_group['file_name'])
+                api12_csv_group = df['API Well Number'].unique().tolist()
+                api12_array = api12_array + api12_csv_group
+
+        return cfg, block_data_groups, api12_array
+    
