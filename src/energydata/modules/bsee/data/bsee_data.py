@@ -18,7 +18,7 @@ import os
 # Initialize instances of imported classes
 block_data_website = BlockData()
 bsee_production = SpiderBsee()
-well_data = WellData()
+well = WellData()
 #production_data = GetWellProdDataFromWebsite()
 prep_bsee_data = PrepareBseeData()
 block_data = BlockData()
@@ -36,12 +36,8 @@ class BSEEData:
 
     def router(self, cfg):
 
-        well_data.router(cfg)
-
+        well.router(cfg)
         production.router(cfg)
-
-
-        
 
         #TODO
         # WAR_summary = self.get_WAR_summary_by_api10(api10)
