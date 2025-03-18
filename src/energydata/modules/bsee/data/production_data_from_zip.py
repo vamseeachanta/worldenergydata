@@ -25,7 +25,7 @@ class GetWellProdDataFromZip:
 
         return cfg
 
-    def get_production_data_by_wellapi12(self, cfg):
+    def get_production_data_by_wellapi12(self, cfg, api12):
         try:
             folder_path = cfg['data_retrieval']['production']['zip']
 
@@ -40,7 +40,6 @@ class GetWellProdDataFromZip:
 
             folder_path = wwy.get_library_filepath(library_file_cfg, src_relative_location_flag=False)
 
-            api12 = cfg['data']['groups'][0]['api12'][0]
             logging.info(f"Getting production data for API12: {api12} ... START")
             output_file = os.path.join(cfg['Analysis']['result_folder'], 'Data', str(api12) + '.csv')
 

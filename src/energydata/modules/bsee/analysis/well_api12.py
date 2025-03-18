@@ -69,8 +69,8 @@ class WellAPI12():
         api12_df = well_data['merged_api12_df']
         api12_eWellWARRawData_mv_war_main = well_data['api12_eWellWARRawData_mv_war_main']
         api12_eWellWARRawData_mv_war_main_prop = well_data['api12_eWellWARRawData_mv_war_main_prop']
-        
-        
+
+
         api12_analysis['WELL_NM_ST_SFIX'] = api12_eWellAPDRawData['WELL_NM_ST_SFIX'].iloc[0]
         api12_analysis['WELL_NM_BP_SFIX'] = api12_eWellAPDRawData['WELL_NM_BP_SFIX'].iloc[0]
         api12_analysis['WELL_NAME_SUFFIX'] = api12_BoreholeRawData['WELL_NAME_SUFFIX'].iloc[0]
