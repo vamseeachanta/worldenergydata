@@ -1,13 +1,13 @@
 # Standard library imports
 from energydata.common.bsee.retrieve_data_templates import RetrieveDataTemplates
-from energydata.modules.bsee.data.production_data_from_zip import GetWellProdDataFromZip
-#from energydata.modules.bsee.data.production_data_from_website import GetWellProdDataFromWebsite
 from energydata.modules.bsee.data.well_data import WellData
-from energydata.modules.bsee.data.production_data import ProductionDataFromSources
-from energydata.modules.bsee.data.block_data import BlockDataWebsite
+from energydata.modules.bsee.data.block_data import BlockData
 from energydata.modules.bsee.analysis.prepare_data_for_analysis import PrepareBseeData
 from energydata.modules.bsee.data.scrapy_production_data import SpiderBsee
 from energydata.modules.bsee.zip_data_dwnld.dwnld_from_zipurl import DownloadFromZipUrl
+from energydata.modules.bsee.data.production import Production
+
+from energydata.modules.bsee.data.block_data import BlockData
 
 # Third party imports
 import pandas as pd
@@ -16,14 +16,14 @@ import datetime
 import os
 
 # Initialize instances of imported classes
-production_data = ProductionDataFromSources()
-block_data_website = BlockDataWebsite()
+block_data_website = BlockData()
 bsee_production = SpiderBsee()
 well_data = WellData()
 #production_data = GetWellProdDataFromWebsite()
 prep_bsee_data = PrepareBseeData()
+block_data = BlockData()
 
-production_from_zip = GetWellProdDataFromZip()
+production = Production()
 
 f_d_templates = RetrieveDataTemplates()
 download_from_zip = DownloadFromZipUrl()
@@ -36,21 +36,10 @@ class BSEEData:
 
     def router(self, cfg):
 
-        well_data_flag = cfg['data'].get('well_data', False)
-        well_data_groups = None
-        if well_data_flag:
-            cfg, well_data_groups  = well_data.get_well_data_all_wells(cfg)
+        well_data.router(cfg)
 
-        production_data_flag = cfg['data'].get('production_data', False)
-        production_data_groups = None
-        if production_data_flag:
-            cfg, production_data_groups = production_data.get_data(cfg)
-        
-        elif "production_from_website" in cfg and cfg['production_from_website']['flag']:
-           production_data.get_production_from_website(cfg)
-        
-        elif "production_from_zip" in cfg and cfg['production_from_zip']['flag']:
-            production_data.get_all_data(cfg)
+        production.router(cfg)
+
 
         
 
@@ -97,7 +86,8 @@ class BSEEData:
         return api12_array
 
     def get_api12_array_by_block(self, cfg):
-    
+        cfg, block_data_groups = block_data.router(cfg)
+        
         api12_array = []
         if cfg[cfg['basename']]['well_data']['type'] == 'csv':
             csv_groups = cfg[cfg['basename']]['well_data']['groups']
@@ -106,7 +96,7 @@ class BSEEData:
                 api12_csv_group = df['API Well Number'].unique().tolist()
                 api12_array = api12_array + api12_csv_group
 
-        return api12_array
+        return cfg, block_data_groups, api12_array
     
     def get_production_data(self, cfg):
 
