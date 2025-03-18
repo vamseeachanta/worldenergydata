@@ -25,13 +25,13 @@ class WellAPI12():
         api12_analysis = self.get_well_borehole_data(well_data, api12_analysis)
         api12_analysis = self.get_sidetracklabel_and_rig_rigdays(cfg, well_data, api12_analysis)
 
-        try:
-            # TODO fix and Relocate as needed.
-            self.prepare_casing_data(api12_well_data, well_tubulars_data)
-            self.prepare_completion_data(completion_data)
-            self.prepare_formation_data()
-        except Exception as e:
-            logger.error(e)
+        # try:
+        #     # TODO fix and Relocate as needed.
+        #     self.prepare_casing_data(api12_well_data, well_tubulars_data)
+        #     self.prepare_completion_data(completion_data)
+        #     self.prepare_formation_data()
+        # except Exception as e:
+        #     logger.error(e)
 
         logger.info("API12 data analysis ... COMPLETE")
 
@@ -66,6 +66,7 @@ class WellAPI12():
         api12_eWellAPDRawData = well_data['api12_eWellAPDRawData']
         api12_BoreholeRawData = well_data['api12_BoreholeRawData']
         api12_eWellEORRawData = well_data['api12_eWellEORRawData']
+        api12_df = well_data['merged_api12_df']
         api12_eWellWARRawData_mv_war_main = well_data['api12_eWellWARRawData_mv_war_main']
         api12_eWellWARRawData_mv_war_main_prop = well_data['api12_eWellWARRawData_mv_war_main_prop']
         
@@ -80,6 +81,10 @@ class WellAPI12():
         api12_analysis['drilling_footage_ft'] = 0
         api12_analysis['drilling_days_per_10000_ft'] = 0
         api12_analysis['RIG_LAST_DATE_ON_WELL'] = api12_df.WAR_END_DT.max()
+        api12_analysis['Water Depth (feet)'] = api12_df['Water Depth (feet)'].iloc[0]
+        api12_analysis['Total Measured Depth'] = api12_df['BH_TOTAL_MD'].iloc[0]
+        api12_analysis['O_PROD_STATUS'] = 0
+        api12_analysis['Sidetrack and Bypass'] = api12_df['WELL_NAME_SUFFIX']
 
         api12_analysis['Rigs'] = ""
         api12_analysis['rigdays_dict'] = ""
@@ -117,7 +122,7 @@ class WellAPI12():
 
 
         try:
-            drilling_footage_ft = float(api12_analysis['BH_TOTAL_MD'].iloc[df_row]
+            drilling_footage_ft = float(api12_analysis['Total Measured Depth'].iloc[df_row]
                                         ) - api12_analysis['Water Depth (feet)'].iloc[df_row]
         except:
             drilling_footage_ft = None
