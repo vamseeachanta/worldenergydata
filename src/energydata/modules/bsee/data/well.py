@@ -202,8 +202,24 @@ class WellData:
         file_is_valid, file_name = is_file_valid_func(file_name)
         if file_is_valid:
             df = pd.read_csv(file_name, low_memory=False)
+            borehole_codes = cfg['parameters']['borehole_codes']
+
+            BOREHOLE_STAT_CD = df['BOREHOLE_STAT_CD']
+
+            df['BOREHOLE_STAT_DESC'] = None
+            BOREHOLE_STAT_DESC = [None]*len(BOREHOLE_STAT_CD)
+            for idx in range(0, len(BOREHOLE_STAT_CD)):
+                code = BOREHOLE_STAT_CD.iloc[idx]
+                for item in borehole_codes:
+                    if code == item['BOREHOLE_STAT_CD']:
+                        BOREHOLE_STAT_DESC[idx] = item['BOREHOLE_STAT_DESC']
+
+            df['BOREHOLE_STAT_DESC'] = BOREHOLE_STAT_DESC
         else:
             raise Exception(f"File not found: {file_name}")
+
+
+
 
         return df
 

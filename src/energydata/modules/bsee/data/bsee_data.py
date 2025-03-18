@@ -9,7 +9,6 @@ class BSEEData:
     def __init__(self):
         pass
 
-
     def router(self, cfg):
 
         cfg, well_data_groups = well.router(cfg)
