@@ -24,7 +24,8 @@ class ProductionDataFromSources:
             api12_array = group['api12']
             api12_array_production_data = []
             for api12 in api12_array:
-                api12_df =  production_from_zip.get_production_data_by_wellapi12(cfg)
+
+                api12_df =  production_from_zip.get_production_data_by_wellapi12(cfg, api12)
 
             production_data_group.update({'api12_df': api12_df})
 
@@ -43,11 +44,16 @@ class ProductionDataFromSources:
         #     output_data = self.get_block_data_from_website(cfg, output_data)
 
         production_data_flag = cfg['data'].get('production_data', False)
-        if "production_from_zip" in cfg and cfg['production_from_zip']['flag'] or production_data_flag:
+        if "production_from_zip" in cfg and cfg['production_from_zip']['flag']:
+            production_data_flag = True
+
+        if production_data_flag:
             input_items = cfg['data']['groups']
             for input_item in input_items:
-                production_data_from_zip = production_from_zip.get_production_data_by_wellapi12(cfg)
-                output_data = self.generate_output_item(cfg, output_data, input_item)
+                api12_array = input_item['api12']
+                for api12 in api12_array:
+                    production_data_from_zip = production_from_zip.get_production_data_by_wellapi12(cfg, api12)
+                    output_data = self.generate_output_item(cfg, output_data, input_item)
 
         production_data = {'type': 'csv', 'groups': output_data }
         cfg[cfg['basename']].update({'production_data': production_data})
