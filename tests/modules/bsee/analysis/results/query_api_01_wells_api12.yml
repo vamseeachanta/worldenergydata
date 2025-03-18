@@ -90,7 +90,7 @@ dictitems:
             __EVENTTARGET: ASPxFormLayout2$btnCsvExport
             __EVENTARGUMENT: Click
   default:
-    log_level: INFO
+    log_level: DEBUG
     config:
       overwrite:
         output: true
@@ -110,16 +110,16 @@ dictitems:
     flag: true
   Analysis:
     basename: bsee
-    analysis_root_folder: k:\github\energydata\tests\modules\bsee\analysis
+    analysis_root_folder: K:\github\energydata\tests\modules\bsee\analysis
     file_name: query_api_01_wells_api12
     file_name_for_overwrite: query_api_01_wells_api12
-    result_folder: k:\github\energydata\tests\modules\bsee\analysis\results
-    log_folder: k:\github\energydata\tests\modules\bsee\analysis\logs
-    start_time: 2025-03-18 16:01:43.450232
+    result_folder: K:\github\energydata\tests\modules\bsee\analysis\results
+    log_folder: K:\github\energydata\tests\modules\bsee\analysis\logs
+    start_time: 2025-03-18 17:10:41.654347
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: k:\github\energydata\tests\modules\bsee\analysis\query_api_01_wells_api12.yml
-    fe_folder: k:\github\energydata\tests\modules\bsee\analysis\results
+    CustomInputFile: query_api_01_wells_api12.yml
+    fe_folder: K:\github\energydata\tests\modules\bsee\analysis\results
   bsee:
     groups:
     - api12:
@@ -130,4 +130,4 @@ dictitems:
       - api12:
         - 608124009400
         label: '608124009400'
-        file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124009400.csv
+        file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124009400.csv

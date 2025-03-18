@@ -17,7 +17,7 @@ analysis:
   flag: True
 
 default:
-  log_level: INFO
+  log_level: DEBUG
   config:
     overwrite:
       output: True
