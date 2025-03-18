@@ -29,19 +29,19 @@ class WellData:
 
         well_data_groups = []
         for group in cfg[cfg['basename']]['well_data']['groups']:
-            well_data_group = group.copy()
             api12_array = group['api12']
             api12_array_well_data = []
             for api12 in api12_array:
+                well_data_group = group.copy()
                 merged_api12_df = self.get_api12_merged_df_from_all_sources(cfg, bsee_csv_data, group, api12)
                 individual_df_data = self.get_api12_data_from_all_sources(cfg, bsee_csv_data, group, api12)
 
-            well_data_group.update({'merged_api12_df': merged_api12_df})
-            well_data_group.update(individual_df_data)
+                well_data_group.update({'merged_api12_df': merged_api12_df})
+                well_data_group.update(individual_df_data)
 
-            api12_array_well_data.append(well_data_group)
+                api12_array_well_data.append(well_data_group)
 
-        well_data_groups.append(api12_array_well_data)
+            well_data_groups.append(api12_array_well_data)
 
         return cfg, well_data_groups
 
