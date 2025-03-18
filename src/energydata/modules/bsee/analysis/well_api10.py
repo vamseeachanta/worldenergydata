@@ -17,14 +17,14 @@ class WellAPI10():
         pass
 
     def router(self, cfg, well_group_api12_summary_df):
-        
+
         well_group_api10_summary_df = well_group_api12_summary_df.copy()
         cfg, well_group_api10_summary_df = self.field_analysis(cfg, well_group_api10_summary_df)
 
         return cfg, well_group_api10_summary_df
 
     def field_analysis(self, cfg, well_group_api10_summary_df):
-        
+
         well_group_api10_summary_df['Field NickName'] = None
         well_group_api10_summary_df['BOEM_FIELDS'] = None
         well_group_api10_summary_df['SIDETRACK_COUNT'] = 0
