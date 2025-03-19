@@ -10,16 +10,17 @@ from assetutilities.common.utilities import is_dir_valid_func
 
 production_from_zip = GetProdDataFromZip()
 
-
-
 class ProductionDataFromSources:
     
     def __init__(self):
         pass
+    def router(self, cfg):
+
+       pass
 
     def get_data(self, cfg):
 
-        cfg = self.get_all_data(cfg)
+        cfg = self.get_groups_data(cfg)
         production_data_groups = []
         for group in cfg[cfg['basename']]['production_data']['groups']:
             production_data_group = group.copy()
@@ -29,32 +30,26 @@ class ProductionDataFromSources:
 
                 api12_df =  production_from_zip.get_production_data_by_wellapi12(cfg, api12)
 
-            production_data_group.update({'api12_df': api12_df})
+                production_data_group.update({'api12_df': api12_df})
 
-            api12_array_production_data.append(production_data_group)
+                api12_array_production_data.append(production_data_group)
 
-        production_data_groups.append(api12_array_production_data)
+            production_data_groups.append(api12_array_production_data)
 
         return cfg, production_data_groups
 
     
-    def get_all_data(self, cfg):
-
-        output_data = []
-
-        # elif "block_data" in cfg and cfg['block_data']['flag']:
-        #     output_data = self.get_block_data_from_website(cfg, output_data)
+    def get_groups_data(self, cfg):
 
         production_data_flag = cfg['data'].get('production_data', False)
-        if "production_from_zip" in cfg and cfg['production_from_zip']['flag']:
-            production_data_flag = True
-
-        if production_data_flag:
+        
+        output_data = []
+        if production_data_flag: 
             input_items = cfg['data']['groups']
-            for input_item in input_items:
-                api12_array = input_item['api12']
+            for input in input_items:
+                api12_array = input.get('api12', []) 
                 for api12 in api12_array:
-                    production_data_from_zip = production_from_zip.get_production_data_by_wellapi12(cfg, api12)
+                    input_item = {'api12': [api12], 'label': str(api12)}
                     output_data = self.generate_output_item(cfg, output_data, input_item)
 
         production_data = {'type': 'csv', 'groups': output_data }

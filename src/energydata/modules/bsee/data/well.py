@@ -19,6 +19,7 @@ class WellData:
 
     def router(self, cfg):
         if "data" in cfg:
+            api12_array = []
             if cfg['data']['by'] == 'block':
                 cfg, block_data_groups, api12_array = self.get_api12_array_by_block(cfg)
             elif cfg['data']['by'] == 'API12':
@@ -52,7 +53,7 @@ class WellData:
                          'eWellWARRawData_mv_war_main_df': eWellWARRawData_mv_war_main_df, 
                          'eWellWARRawData_mv_war_main_prop_df': eWellWARRawData_mv_war_main_prop_df}
         
-        cfg = self.get_well_data_from_website(cfg)
+        cfg = self.get_data_from_websites(cfg)
 
         well_data_groups = []
         for group in cfg[cfg['basename']]['well_data']['groups']:
@@ -148,20 +149,20 @@ class WellData:
 
         return api12_Borehole_apd
 
-    def get_well_data_from_website(self, cfg):
+    def get_data_from_websites(self, cfg):
         output_data = []
         if cfg['data']['by'] == 'API12':
-            website_data = self.get_well_data_by_api12(cfg, output_data)
+            website_data = self.get_well_data_from_website(cfg, output_data)
 
         elif cfg['data']['by'] == 'block':
-            website_data = self.get_well_data_by_block(cfg, output_data)
+            website_data = block_data.get_block_data_from_website(cfg, output_data)
 
         well_data = {'type': 'csv', 'groups': output_data}
         cfg[cfg['basename']].update({'well_data': well_data})
 
         return cfg
     
-    def get_well_data_by_api12(self, cfg, output_data):
+    def get_well_data_from_website(self, cfg, output_data):
         input_items = cfg['data']['groups']
         scrapy_runner_api = ScrapyRunnerAPI()
 

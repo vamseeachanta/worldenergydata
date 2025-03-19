@@ -15,10 +15,6 @@ data:
 analysis:
   flag: True
   
-production_from_zip:
-  flag: True
-  
-
 default:
   log_level: INFO
   config:
