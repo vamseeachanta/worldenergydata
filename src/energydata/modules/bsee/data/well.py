@@ -21,7 +21,7 @@ class WellData:
         if "data" in cfg:
             api12_array = []
             if cfg['data']['by'] == 'block':
-                cfg, block_data_groups, api12_array = self.get_api12_array_by_block(cfg)
+                cfg, api12_array = self.get_api12_array_by_block(cfg)
             elif cfg['data']['by'] == 'API12':
                 api12_array = self.get_api12_array_by_api12(cfg)
             cfg[cfg['basename']].update({'groups': [{'api12': api12_array}]})
@@ -385,5 +385,5 @@ class WellData:
                 api12_csv_group = df['API Well Number'].unique().tolist()
                 api12_array = api12_array + api12_csv_group
 
-        return cfg, block_data_groups, api12_array
+        return cfg, api12_array
     

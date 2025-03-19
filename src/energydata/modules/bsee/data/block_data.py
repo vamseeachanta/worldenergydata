@@ -45,8 +45,8 @@ class BlockData:
     def get_all_data(self, cfg):
 
         output_data = []
-
-        if "block_data" in cfg and cfg['block_data']['flag']:
+       
+        if cfg['data']['by'] == 'block':
             output_data = self.get_block_data_from_website(cfg, output_data)
 
         well_data = {'type': 'csv', 'groups': output_data}

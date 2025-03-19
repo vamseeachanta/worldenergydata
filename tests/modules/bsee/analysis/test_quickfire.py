@@ -33,9 +33,9 @@ def test_application():
 
     # Production Analysis
     #input_file = 'query_api_01_production.yml'  # SUCCESS
-    input_file = 'query_api_03_wells_production.yml' #TODO
+    #input_file = 'query_api_03_wells_production.yml' # SUCCESS
 
-    # input_file = 'query_api_01_block_api12.yml'  #TODO
+    input_file = 'query_api_01_block_api12.yml'  #TODO
  
 
     # All well data
