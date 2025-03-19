@@ -43,17 +43,20 @@ class BSEEAnalysis():
     def run_production_data_analysis(self, cfg, data):
         production_data_groups = data['production_data']
         if production_data_groups is not None:
+            production_group_api12_summary_df = pd.DataFrame()
             for group in production_data_groups:
-                for well in group:
-                    api12_df = well['api12_df']
-                    cfg = prod_api12_analysis.router(cfg, api12_df)
+                for production_data in group:
+                    cfg, api12_summary = prod_api12_analysis.router(cfg, production_data)
+                    production_group_api12_summary_df = pd.concat([production_group_api12_summary_df, api12_summary], ignore_index=True)
+
+            file_name = os.path.join(cfg['Analysis']['result_folder'], cfg['Analysis']['file_name_for_overwrite'] + '_api12_summary.csv')
+            production_group_api12_summary_df.to_csv(file_name)
 
         return cfg
 
     def run_well_data_analysis(self, cfg, data):
         well_data_groups = data['well_data']
 
-        
         if well_data_groups is not None:
             well_group_api12_summary_df = pd.DataFrame()
             for group in well_data_groups:
