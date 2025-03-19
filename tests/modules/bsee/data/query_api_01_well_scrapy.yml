@@ -9,8 +9,7 @@ data:
   by: API12 #lease ?
   well_data: True
   groups:
-    - label: well_608164024500
-      api12: [608164024500]
+    - api12: [608124009400]
     
 default:
   log_level: DEBUG

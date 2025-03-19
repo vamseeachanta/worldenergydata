@@ -151,7 +151,7 @@ class WellRigDays:
                             npt = 0
 
             values = [rig_days, war_gap_days, npt, war_drilling_days_flag]
-            war_summary.iloc[df_row] = values
+            war_summary.loc[df_row, columns] = values
 
         return war_summary
 
