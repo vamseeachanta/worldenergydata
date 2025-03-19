@@ -13,7 +13,7 @@ from assetutilities.modules.zip_utilities.read_zip_to_df import ReadZiptoDf
 wwy = WorkingWithYAML()
 rziptodf = ReadZiptoDf()
 
-class GetWellProdDataFromZip:
+class GetProdDataFromZip:
     
     def __init__(self):
         pass

@@ -13,16 +13,7 @@ data:
     - api12: [608124009400, 608124010200, 608124011101]
 
 analysis:
-  flag: True
-  
-production_from_zip:
-  flag: True
-
-#TODO - implement analysis for production data
-# analysis:
-#   flag: True
-#   api12: True
-  
+  flag: True  
 
 default:
   log_level: INFO

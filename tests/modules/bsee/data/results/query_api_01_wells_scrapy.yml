@@ -52,8 +52,8 @@ dictitems:
             __EVENTTARGET: ASPxFormLayout2$btnCsvExport
             __EVENTARGUMENT: Click
       csv:
-        BoreholeRawData_mv_boreholes_all: data/modules/bsee/data/csv/online_query_raw_data/BoreholeRawData_mv_boreholes_all.csv
-        eWellAPDRawData_mv_apd_main: data/modules/bsee/data/csv/online_query_raw_data/eWellAPDRawData_mv_apd_main.csv
+        BoreholeRawData_mv_boreholes_all: data/modules/bsee/csv/online_query_raw_data/BoreholeRawData_mv_boreholes_all.csv
+        eWellAPDRawData_mv_apd_main: data/modules/bseecsv/online_query_raw_data/eWellAPDRawData_mv_apd_main.csv
       zip:
         BoreholeRawData_mv_boreholes_all: data/modules/bsee/data/zip/BoreholeRawData_mv_boreholes_all.zip
         eWellAPDRawData_mv_apd_main: data/modules/bsee/data/zip/eWellAPDRawData_mv_apd_main.zip
@@ -70,8 +70,8 @@ dictitems:
             ASPxFormLayout1$ASPxTextBoxLN: ~
             __EVENTTARGET: ASPxFormLayout2$btnCsvExport
             __EVENTARGUMENT: Click
-      csv: data\modules\bsee\production\csv
-      zip: data\modules\bsee\production\zip
+      csv: data\modules\bsee\csv\production
+      zip: data\modules\bsee\zip\production
     block:
       website:
         url: https://www.data.bsee.gov/Well/APD/Default.aspx
@@ -103,24 +103,25 @@ dictitems:
     by: API12
     well_data: true
     groups:
-    - api12:
+    - label: well_608164024500
+      api12: &id002
       - 608164024500
-      - 608164025800
-      - 608164025400
-      - 608164025600
   Analysis:
     basename: bsee
     analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
-    file_name: query_api_04_wells_basic
-    file_name_for_overwrite: query_api_04_wells_basic
+    file_name: query_api_01_wells_scrapy
+    file_name_for_overwrite: query_api_01_wells_scrapy
     result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
     log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-03-13 12:33:59.423349
+    start_time: 2025-03-19 10:50:04.208995
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\query_api_04_wells_basic.yml
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\query_api_01_wells_scrapy.yml
     fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
   bsee:
+    groups:
+    - api12:
+      - *id002
     well_data:
       type: csv
       groups:
@@ -128,15 +129,3 @@ dictitems:
         - 608164024500
         label: '608164024500'
         file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\608164024500.csv
-      - api12:
-        - 608164025800
-        label: '608164025800'
-        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\608164025800.csv
-      - api12:
-        - 608164025400
-        label: '608164025400'
-        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\608164025400.csv
-      - api12:
-        - 608164025600
-        label: '608164025600'
-        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\608164025600.csv

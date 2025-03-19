@@ -1,8 +1,9 @@
 from energydata.modules.bsee.data.production_data_sources import ProductionDataFromSources
-from energydata.modules.bsee.data.production_data_from_zip import GetWellProdDataFromZip
-#from energydata.modules.bsee.data.production_data_from_website import GetWellProdDataFromWebsite
+from energydata.modules.bsee.data.production_data_from_zip import GetProdDataFromZip
+
+
 production_data = ProductionDataFromSources()
-production_from_zip = GetWellProdDataFromZip()
+production_from_zip = GetProdDataFromZip()
 
 class Production:
     

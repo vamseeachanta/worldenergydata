@@ -1,22 +1,20 @@
 meta:
   library: energydata
   basename: bsee
-  
 basename: bsee
+
 
 data:
   obtain: True
   by: block
   groups:
     # Groups typically are list of entities to run through multiple API numbers or multiple API sets
-    - bottom_block: [540]
+    - bottom_block: [540,543,584,678]
   
-analysis:
-  flag: True
-  api12: True
+    
 
 default:
-  log_level: INFO
+  log_level: DEBUG
   config:
     overwrite:
       output: True

@@ -25,14 +25,13 @@ def get_valid_pytest_output_file(pytest_output_file):
 def test_application():
 
     # Comprehensive analysis
-    input_file = 'query_api_01_wells.yml' # SUCCESS
+    #input_file = 'query_api_01_wells.yml' # SUCCESS
 
     # API12 analysis
-    input_file = 'query_api_01_wells_api12.yml'  # SUCCESS
-    # input_file = 'query_api_03_wells_api12.yml'  # CHECK
+    #input_file = 'query_api_01_wells_api12.yml'  # SUCCESS
+    #input_file = 'query_api_03_wells_api12.yml'  # CHECK
 
     # Production Analysis
-    # input_file = 'query_api_01_wells_production.yml'
     # input_file = 'query_api_01_production.yml'  # SUCCESS
     # input_file = 'query_api_03_production.yml' 
 

@@ -25,13 +25,13 @@ class WellAPI12():
         api12_analysis = self.get_well_borehole_data(well_data, api12_analysis)
         api12_analysis = self.get_sidetracklabel_and_rig_rigdays(cfg, well_data, api12_analysis)
 
-        # try:
-        #     # TODO fix and Relocate as needed.
-        #     self.prepare_casing_data(api12_well_data, well_tubulars_data)
-        #     self.prepare_completion_data(completion_data)
-        #     self.prepare_formation_data()
-        # except Exception as e:
-        #     logger.error(e)
+        try:
+            # TODO fix and Relocate as needed.
+            #self.prepare_casing_data(api12_well_data, well_tubulars_data)
+            #self.prepare_completion_data(completion_data)
+            self.prepare_formation_data()
+        except Exception as e:
+            logger.error(e)
 
         logger.info("API12 data analysis ... COMPLETE")
 
