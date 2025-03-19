@@ -17,11 +17,6 @@ analysis:
   
 production_from_zip:
   flag: True
-
-#TODO - implement analysis for production data
-# analysis:
-#   flag: True
-#   api12: True
   
 
 default:
