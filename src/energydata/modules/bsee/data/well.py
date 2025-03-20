@@ -21,8 +21,9 @@ class WellData:
             api12_array = []
             if cfg['data']['by'] == 'block':
                 cfg, api12_array = self.get_api12_array_by_block(cfg)
-            elif cfg['data']['by'] == 'API12':
-                api12_array = self.get_api12_array_by_api12(cfg)
+
+            # elif cfg['data']['by'] == 'API12':
+            #     api12_array = self.get_api12_array_by_api12(cfg)
 
         well_data_flag = cfg['data'].get('well_data', False)
         well_data_groups = None
