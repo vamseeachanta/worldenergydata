@@ -9,6 +9,7 @@ from energydata.modules.bsee.data.bsee_data import BSEEData
 from energydata.modules.bsee.analysis.well_api12 import WellAPI12
 from energydata.modules.bsee.analysis.well_api10 import WellAPI10
 from energydata.modules.bsee.analysis.production_api12 import ProductionAPI12Analysis
+from energydata.modules.bsee.analysis.production_api10 import ProductionAPI10Analysis
 
 # from energydata.common.bsee_data_manager import BSEEData
 
@@ -19,6 +20,7 @@ well_api12_analysis = WellAPI12()
 well_api10_analysis = WellAPI10()
 
 prod_api12_analysis = ProductionAPI12Analysis()
+prod_api10_analysis = ProductionAPI10Analysis()
 
 class BSEEAnalysis():
 
@@ -49,8 +51,13 @@ class BSEEAnalysis():
                     cfg, api12_summary = prod_api12_analysis.router(cfg, production_data)
                     production_group_api12_summary_df = pd.concat([production_group_api12_summary_df, api12_summary], ignore_index=True)
 
+            cfg, production_group_api10_summary_df = prod_api10_analysis.router(cfg, production_group_api12_summary_df)
+
             file_name = os.path.join(cfg['Analysis']['result_folder'], cfg['Analysis']['file_name_for_overwrite'] + '_api12_summary.csv')
             production_group_api12_summary_df.to_csv(file_name)
+
+            file_name = os.path.join(cfg['Analysis']['result_folder'], cfg['Analysis']['file_name_for_overwrite'] + '_api10_summary.csv')
+            production_group_api10_summary_df.to_csv(file_name)
 
         return cfg
 
