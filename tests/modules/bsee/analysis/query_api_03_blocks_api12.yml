@@ -6,20 +6,15 @@ basename: bsee
 
 data:
   obtain: True
-  by: API12
+  by: block
   well_data: True
-  production_data: True
   groups:
-    # Groups typically are list of dictionaries to run through multiple API numbers or multiple API sets
-    - api12: [177024134002]
-
-production_from_zip:
-  flag: True
-
+    # Groups typically are list of entities to run through multiple API numbers or multiple API sets
+    - bottom_block: [540]
+  
 analysis:
   flag: True
   api12: True
-  production: True  
 
 default:
   log_level: INFO

@@ -1,11 +1,10 @@
-from energydata.modules.bsee.data.block_data import BlockData
-
 import os
 import pandas as pd
 from copy import deepcopy
 import logging
 
-from energydata.modules.bsee.data.scrapy_well_data import  ScrapyRunnerAPI
+from energydata.modules.bsee.data.scrapy_well_data import ScrapyRunnerAPI
+from energydata.modules.bsee.data.block_data import BlockData
 
 from assetutilities.common.utilities import is_dir_valid_func
 from assetutilities.common.utilities import get_repository_filename, get_repository_filepath
@@ -24,12 +23,11 @@ class WellData:
                 cfg, api12_array = self.get_api12_array_by_block(cfg)
             elif cfg['data']['by'] == 'API12':
                 api12_array = self.get_api12_array_by_api12(cfg)
-            cfg[cfg['basename']].update({'groups': [{'api12': api12_array}]})
 
         well_data_flag = cfg['data'].get('well_data', False)
         well_data_groups = None
         if well_data_flag:
-            cfg, well_data_groups  = self.get_well_data_all_wells(cfg)
+            cfg, well_data_groups  = self.get_well_data_all_wells(cfg, api12_array)
 
         #TODO
         # WAR_summary = self.get_WAR_summary_by_api10(api10)
@@ -40,7 +38,7 @@ class WellData:
 
         return cfg, well_data_groups
 
-    def get_well_data_all_wells(self, cfg):
+    def get_well_data_all_wells(self, cfg, api12_array):
         BoreholeRawData_df = self.get_BoreholeRawData_from_csv(cfg)
         eWellAPDRawData_df = self.get_eWellAPDRawData_from_csv(cfg)
         eWellEORRawData_df = self.get_eWellEORRawData_from_csv(cfg)
@@ -53,10 +51,13 @@ class WellData:
                          'eWellWARRawData_mv_war_main_df': eWellWARRawData_mv_war_main_df, 
                          'eWellWARRawData_mv_war_main_prop_df': eWellWARRawData_mv_war_main_prop_df}
         
-        cfg = self.get_data_from_websites(cfg)
+        if not cfg[cfg['basename']]:
+            cfg = self.get_data_from_websites(cfg)
 
         well_data_groups = []
         for group in cfg[cfg['basename']]['well_data']['groups']:
+            if 'api12' not in group:
+                group.update({'api12': api12_array})
             api12_array = group['api12']
             api12_array_well_data = []
             for api12 in api12_array:

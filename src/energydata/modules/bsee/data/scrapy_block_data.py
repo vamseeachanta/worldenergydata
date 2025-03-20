@@ -37,7 +37,7 @@ class BSEESpider(scrapy.Spider):
         self.cfg = cfg
 
     def parse(self, response):
-        bottom_block_num = str(self.input_item['bottom_block'][0])
+        bottom_block_num = str(self.input_item['bottom_block'])
 
         first_request_data = self.cfg['data_retrieval']['block']['website']['form_data']['first_request'].copy()
         first_request_data['ASPxFormLayout1_ASPxComboBoxBBN_VI'] = bottom_block_num
