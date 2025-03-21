@@ -109,16 +109,16 @@ class WellAPI12():
             well_days_dict = None
 
         self.get_rig_days_by_well_activity(well_api12)
-        api12_analysis.loc[df_row, 'Rigs'] = rig_str
+        api12_analysis['Rigs'] = rig_str
         
         if well_days_dict is not None:
-            api12_analysis.loc[df_row, 'rigdays_dict'] = json.dumps(well_days_dict['rigdays_dict'])
-            api12_analysis.loc[df_row, 'Drilling Days'] = well_days_dict['drilling_days']
-            api12_analysis.loc[df_row, 'Completion Days'] = well_days_dict['completion_days']
+            api12_analysis['rigdays_dict'] = json.dumps(well_days_dict['rigdays_dict'])
+            api12_analysis['Drilling Days'] = well_days_dict['drilling_days']
+            api12_analysis['Completion Days'] = well_days_dict['completion_days']
         else:
-            api12_analysis.loc[df_row, 'rigdays_dict'] = None
-            api12_analysis.loc[df_row, 'Drilling Days'] = None
-            api12_analysis.loc[df_row, 'Completion Days'] = None
+            api12_analysis['rigdays_dict'] = None
+            api12_analysis['Drilling Days'] = None
+            api12_analysis['Completion Days'] = None
 
 
         try:
