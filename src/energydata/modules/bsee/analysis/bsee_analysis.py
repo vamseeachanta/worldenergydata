@@ -37,6 +37,7 @@ class BSEEAnalysis():
 
     def run_analysis_for_all_wells(self, cfg, data):
 
+
         cfg = self.run_well_data_analysis(cfg, data)
         cfg = self.run_production_data_analysis(cfg, data)
 
@@ -66,8 +67,9 @@ class BSEEAnalysis():
 
         if well_data_groups is not None:
             well_group_api12_summary_df = pd.DataFrame()
-            for group in well_data_groups:
-                for well_data in group:
+            for group_idx in range(0, len(well_data_groups)):
+                for well_idx in range(0, len(group)):
+                    analysis_cfg, well_data = self.get_analysis_cfg(cfg, well_data_groups, group_idx, well_idx)# if by block, get cfg
                     cfg, api12_summary = well_api12_analysis.router(cfg, well_data)
                     well_group_api12_summary_df = pd.concat([well_group_api12_summary_df, api12_summary], ignore_index=True)
 
@@ -82,3 +84,10 @@ class BSEEAnalysis():
         return cfg
 
 
+
+    def get_analysis_cfg(self, cfg, well_data_groups, group_idx, well_idx):
+        well_data = well_data_groups[group_idx][well_data_idx]
+        production_data = None
+        analysis_cfg = cfg
+            analysis_cfg = self.get_block_analysis_cfg(cfg, well_data, group_idx, well_data_idx)
+        return analysis_cfg
