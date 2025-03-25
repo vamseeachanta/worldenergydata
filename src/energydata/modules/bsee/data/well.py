@@ -44,20 +44,21 @@ class WellData:
         cfg = self.fetch_well_data_from_websites(cfg)
 
         well_data_groups = []
-        for group in cfg[cfg['basename']]['well_data']['groups']:
+        for group in cfg[cfg['basename']]['data']['groups']:
             if 'api12' not in group:
                 logger.error(f"API12 not found in group: {group}")
             api12_array = group['api12']
             api12_array_well_data = []
-            for api12 in api12_array:
-                well_data_group = group.copy()
-                merged_api12_df = self.get_api12_merged_df_from_all_sources(cfg, bsee_csv_data, group, api12)
-                individual_df_data = self.get_api12_data_from_all_sources(cfg, bsee_csv_data, group, api12)
+            for api12_idx in range(0, len(api12_array)):
+                api12_metadata = group['well_data'][api12_idx]
 
-                well_data_group.update({'merged_api12_df': merged_api12_df})
-                well_data_group.update(individual_df_data)
+                merged_api12_df = self.get_api12_merged_df_from_all_sources(cfg, bsee_csv_data, api12_metadata)
+                individual_df_data = self.get_api12_data_from_all_sources(cfg, bsee_csv_data, api12_metadata)
 
-                api12_array_well_data.append(well_data_group)
+                api12_metadata.update({'merged_api12_df': merged_api12_df})
+                api12_metadata.update(individual_df_data)
+
+                api12_array_well_data.append(api12_metadata)
 
             well_data_groups.append(api12_array_well_data)
 
@@ -70,14 +71,15 @@ class WellData:
         file_path = os.path.join(cfg['Analysis']['analysis_root_folder'], library, filename)
 
 
-    def get_api12_merged_df_from_all_sources(self, cfg, bsee_csv_data, group, api12):
+    def get_api12_merged_df_from_all_sources(self, cfg, bsee_csv_data, api12_metadata):
+        api12 = api12_metadata['api12'][0]
         BoreholeRawData_df = bsee_csv_data['BoreholeRawData_df']
         eWellAPDRawData_df = bsee_csv_data['eWellAPDRawData_df']
         eWellEORRawData_df = bsee_csv_data['eWellEORRawData_df']
         eWellWARRawData_mv_war_main_df = bsee_csv_data['eWellWARRawData_mv_war_main_df']
         eWellWARRawData_mv_war_main_prop_df = bsee_csv_data['eWellWARRawData_mv_war_main_prop_df']
 
-        api12_well_data = pd.read_csv(group['file_name'])
+        api12_well_data = pd.read_csv(api12_metadata['file_name'])
         api12_eWellEORRawData = eWellEORRawData_df[eWellEORRawData_df['API_WELL_NUMBER'] == api12].copy()
         api12_eWellWARRawData_mv_war_main = eWellWARRawData_mv_war_main_df[eWellWARRawData_mv_war_main_df['API_WELL_NUMBER'] == api12].copy()
         # api12_eWellWARRawData_mv_war_main_prop = eWellWARRawData_mv_war_main_prop_df[eWellWARRawData_mv_war_main_prop_df['API_WELL_NUMBER'] == api12].copy()
@@ -101,8 +103,9 @@ class WellData:
         
         return api12_df
 
-    def get_api12_data_from_all_sources(self, cfg, bsee_csv_data, group, api12):
-        api12_df = pd.read_csv(group['file_name'])
+    def get_api12_data_from_all_sources(self, cfg, bsee_csv_data, api12_metadata):
+        api12 = api12_metadata['api12'][0]
+        api12_df = pd.read_csv(api12_metadata['file_name'])
 
         BoreholeRawData_df = bsee_csv_data['BoreholeRawData_df']
         eWellAPDRawData_df = bsee_csv_data['eWellAPDRawData_df']
@@ -145,34 +148,35 @@ class WellData:
         return api12_Borehole_apd
 
     def fetch_well_data_from_websites(self, cfg):
-        output_data = []
-        website_data = self.get_well_data_from_website(cfg, output_data)
+        cfg[cfg['basename']]['data'].update({'type': 'csv'})
+        cfg = self.get_well_data_from_website(cfg)
 
         # website_data = block_data.get_block_data_from_website(cfg, output_data)
 
-        
-        well_data = {'type': 'csv', 'groups': output_data}
-        cfg[cfg['basename']].update({'well_data': well_data})
-
         return cfg
     
-    def get_well_data_from_website(self, cfg, output_data):
-        input_items = cfg['data']['groups']
+    def get_well_data_from_website(self, cfg):
+        groups = cfg[cfg['basename']]['data']['groups']
         scrapy_runner_api = ScrapyRunnerAPI()
 
-        for input in input_items:
+        for group_idx in range(0, len(groups)):
+            group = groups[group_idx]
+            api12_array = group.get('api12', [])  # Get API numbers list
 
-            api12_array = input.get('api12', [])  # Get API numbers list
+            api12_group_output = []
+            for api12_idx in range(0, len(api12_array)):
+                api12 = api12_array[api12_idx]
+                api12_meta_data = {'api12': [api12], 'label': str(api12)}
 
-            for api12 in api12_array:
-                input_item = {'api12': [api12], 'label': str(api12)}
+                api12_data = scrapy_runner_api.run_spider(cfg, api12_meta_data)
+                api12_output_cfg = self.generate_output_item(cfg, api12_meta_data)
+                api12_group_output.append(api12_output_cfg)
 
-                api12_data = scrapy_runner_api.run_spider(cfg, input_item)
-                output_data = self.generate_output_item(cfg, output_data, input_item)
+            cfg[cfg['basename']]['data']['groups'][group_idx].update({'well_data': api12_group_output})
 
-        return output_data, api12_data
+        return cfg
 
-    def generate_output_item(self, cfg, output_data, input_item):
+    def generate_output_item(self, cfg, input_item):
 
         label = input_item['label']
         output_path = os.path.join(cfg['Analysis']['result_folder'], 'Data')
@@ -187,7 +191,7 @@ class WellData:
 
         input_item_csv_cfg = deepcopy(input_item)
         input_item_csv_cfg.update({'label': label, 'file_name': output_file})
-        output_data.append(input_item_csv_cfg)
+        output_data = input_item_csv_cfg
         
         return output_data
     
