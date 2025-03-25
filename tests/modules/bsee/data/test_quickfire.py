@@ -30,7 +30,11 @@ def test_application():
 
     # Well Production Tests
     #input_file = 'query_api_production_from_zip_01_well.yml'
-    input_file = 'query_api_production_from_zip_04_wells.yml'
+    #input_file = 'query_api_production_from_zip_04_wells.yml'
+
+    # block tests
+    input_file = 'query_api_01_block_scrapy.yml'
+    #input_file = 'query_api_04_blocks_scrapy.yml'
 
     pytest_output_file = None
     # pytest_output_file = get_valid_pytest_output_file(pytest_output_file)
