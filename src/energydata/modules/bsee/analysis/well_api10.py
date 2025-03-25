@@ -33,6 +33,10 @@ class WellAPI10():
             for idx in range(0, len(well_group_api10_summary_df)):
                 well_name = well_group_api10_summary_df.loc[idx, 'WELL_NAME']
                 side_track_by_pass = well_group_api10_summary_df.loc[idx, 'Sidetrack and Bypass']
-                well_group_api10_summary_df.loc[idx, 'WELL_LABEL'] = well_name + '_' + side_track_by_pass
+                try:
+                    well_group_api10_summary_df.loc[idx, 'WELL_LABEL'] = well_name + '_' + side_track_by_pass
+                except Exception as e:
+                    logger.error(e)
+                    well_group_api10_summary_df.loc[idx, 'WELL_LABEL'] = None
 
         return cfg, well_group_api10_summary_df
