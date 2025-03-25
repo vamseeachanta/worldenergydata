@@ -19,9 +19,10 @@ class BlockData:
 
     def get_data(self, cfg):
 
-        cfg = self.get_all_data(cfg)
+        cfg = self.get_block_data_from_website(cfg)
+
         block_data_groups = []
-        for group in cfg[cfg['basename']]['well_data']['groups']:
+        for group in cfg[cfg['basename']]['data']['groups']:
             block_data_group = group.copy()
             block_array = group['bottom_block']
             block_array_well_data = []
@@ -41,28 +42,28 @@ class BlockData:
         block_data = pd.read_csv(group['file_name'])
         return block_data
 
-    def get_all_data(self, cfg):
+    def get_block_data_from_website(self, cfg):
 
-        output_data = []
-       
-        if cfg['data']['by'] == 'block':
-            output_data = self.get_block_data_from_website(cfg, output_data)
+        groups = cfg[cfg['basename']]['data']['groups']
+        scrapy_runner_block = ScrapyRunnerBlock()
 
-        well_data = {'type': 'csv', 'groups': output_data}
-        cfg[cfg['basename']].update({'well_data': well_data})
+        block_group_data = []
+        for group_idx in range(len(groups)):
+            group = groups[group_idx]
+            block_data_from_website = scrapy_runner_block.run_spider(cfg, group)
+            block_metadata = self.generate_output_item(cfg, group)
+
+            block_group_data.append(block_metadata)
+            block_df = pd.read_csv(block_metadata['file_name'])
+            api12_list = block_df['API Well Number'].unique().tolist()
+            block_metadata['api12'] = api12_list
+
+            cfg[cfg['basename']]['data']['groups'][group_idx] = block_metadata
 
         return cfg
 
-    def get_block_data_from_website(self, cfg, output_data):
-        input_items = cfg['data']['groups']
-        scrapy_runner_block = ScrapyRunnerBlock()
-
-        for input_item in input_items:
-            block_data_from_website = scrapy_runner_block.run_spider(cfg, input_item)
-            output_data = self.generate_output_item(cfg, output_data, input_item)
-        return output_data
     
-    def generate_output_item(self, cfg, output_data, input_item):
+    def generate_output_item(self, cfg, input_item):
 
         label = input_item['bottom_block'][0]
         output_path = os.path.join(cfg['Analysis']['result_folder'], 'Data')
@@ -77,6 +78,5 @@ class BlockData:
 
         input_item_csv_cfg = deepcopy(input_item)
         input_item_csv_cfg.update({'label': label, 'file_name': output_file})
-        output_data.append(input_item_csv_cfg)
         
-        return output_data
+        return input_item_csv_cfg
