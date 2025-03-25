@@ -1,7 +1,6 @@
 from energydata.modules.bsee.data.bsee_data import BSEEData
 from energydata.modules.bsee.analysis.bsee_analysis import BSEEAnalysis
 
-
 bsee_data = BSEEData()
 bsee_analysis = BSEEAnalysis()
 

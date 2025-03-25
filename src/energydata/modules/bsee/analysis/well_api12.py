@@ -40,9 +40,11 @@ class WellAPI12():
     def get_well_borehole_data(self, well_data, api12_analysis):
 
         # api12_df = well_data['api12_df']
-        api12_eWellAPDRawData = well_data['api12_eWellAPDRawData']
-        api12_BoreholeRawData = well_data['api12_BoreholeRawData']
-        
+        #api12_eWellAPDRawData = well_data['api12_eWellAPDRawData']
+        borehole_raw_data = well_data['api12_BoreholeRawData']
+        if not borehole_raw_data.empty:
+            api12_BoreholeRawData = well_data['api12_BoreholeRawData']
+            
         API12 = str(api12_BoreholeRawData['API_WELL_NUMBER'].iloc[0])
         API10 = API12[0:10]
         TOTAL_DEPTH_DATE = pd.to_datetime(api12_BoreholeRawData['TOTAL_DEPTH_DATE'].max())
@@ -63,23 +65,35 @@ class WellAPI12():
 
     def get_sidetracklabel_and_rig_rigdays(self, cfg, well_data, api12_analysis):
 
-        api12_eWellAPDRawData = well_data['api12_eWellAPDRawData']
-        api12_BoreholeRawData = well_data['api12_BoreholeRawData']
-        api12_eWellEORRawData = well_data['api12_eWellEORRawData']
-        api12_df = well_data['merged_api12_df']
-        api12_eWellWARRawData_mv_war_main = well_data['api12_eWellWARRawData_mv_war_main']
-        api12_eWellWARRawData_mv_war_main_prop = well_data['api12_eWellWARRawData_mv_war_main_prop']
+        apd_raw_data = well_data['api12_eWellAPDRawData']
+        if not apd_raw_data.empty: 
+            api12_eWellAPDRawData = apd_raw_data
+        borehole_raw_data = well_data['api12_BoreholeRawData']
+        if not borehole_raw_data.empty:
+            api12_BoreholeRawData = borehole_raw_data
+        ewell_eor_raw_data = well_data['api12_eWellEORRawData']
+        if not ewell_eor_raw_data.empty:
+            api12_eWellEORRawData = ewell_eor_raw_data
+        merged_api12_df = well_data['merged_api12_df']
+        if not merged_api12_df.empty:
+            api12_df = merged_api12_df
+        ewell_warraw_data_mv_war_main = well_data['api12_eWellWARRawData_mv_war_main']
+        if not ewell_warraw_data_mv_war_main.empty:
+            api12_eWellWARRawData_mv_war_main = ewell_warraw_data_mv_war_main
+        ewell_warraw_data_mv_war_main_prop = well_data['api12_eWellWARRawData_mv_war_main_prop']
+        if not ewell_warraw_data_mv_war_main_prop.empty:
+            api12_eWellWARRawData_mv_war_main_prop = ewell_warraw_data_mv_war_main_prop
 
-
-        api12_analysis['WELL_NM_ST_SFIX'] = api12_eWellAPDRawData['WELL_NM_ST_SFIX'].iloc[0]
-        api12_analysis['WELL_NM_BP_SFIX'] = api12_eWellAPDRawData['WELL_NM_BP_SFIX'].iloc[0]
-        api12_analysis['WELL_NAME_SUFFIX'] = api12_BoreholeRawData['WELL_NAME_SUFFIX'].iloc[0]
-        api12_analysis['SUBSEA_TREE_HEIGHT_AML'] = api12_eWellEORRawData['SUBSEA_TREE_HEIGHT_AML'].max()
-        api12_analysis['WELL_LABEL'] = api12_eWellAPDRawData['WELL_NAME'].iloc[0]
-        api12_analysis['WELL_NAME'] = api12_eWellAPDRawData['WELL_NAME'].iloc[0]
-        api12_analysis['MAX_DRILL_FLUID_WGT'] = 0
-        api12_analysis['drilling_footage_ft'] = 0
-        api12_analysis['drilling_days_per_10000_ft'] = 0
+            api12_analysis['WELL_NM_ST_SFIX'] = api12_eWellAPDRawData['WELL_NM_ST_SFIX'].iloc[0]
+            api12_analysis['WELL_NM_BP_SFIX'] = api12_eWellAPDRawData['WELL_NM_BP_SFIX'].iloc[0]
+            api12_analysis['WELL_NAME_SUFFIX'] = api12_BoreholeRawData['WELL_NAME_SUFFIX'].iloc[0]
+            api12_analysis['SUBSEA_TREE_HEIGHT_AML'] = api12_eWellEORRawData['SUBSEA_TREE_HEIGHT_AML'].max()
+            api12_analysis['WELL_LABEL'] = api12_eWellAPDRawData['WELL_NAME'].iloc[0]
+            api12_analysis['WELL_NAME'] = api12_eWellAPDRawData['WELL_NAME'].iloc[0]
+            api12_analysis['MAX_DRILL_FLUID_WGT'] = 0
+            api12_analysis['drilling_footage_ft'] = 0
+            api12_analysis['drilling_days_per_10000_ft'] = 0
+            
         api12_analysis['RIG_LAST_DATE_ON_WELL'] = api12_df.WAR_END_DT.max()
         api12_analysis['Water Depth (feet)'] = api12_df['Water Depth (feet)'].iloc[0]
         api12_analysis['Total Measured Depth'] = api12_df['BH_TOTAL_MD'].iloc[0]

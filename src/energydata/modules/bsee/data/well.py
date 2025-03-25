@@ -2,6 +2,7 @@ import os
 import pandas as pd
 from copy import deepcopy
 import logging
+from loguru import logger
 
 from energydata.modules.bsee.data.scrapy_well_data import ScrapyRunnerAPI
 from energydata.modules.bsee.data.block_data import BlockData
@@ -17,18 +18,14 @@ class WellData:
         pass
 
     def router(self, cfg):
-        if "data" in cfg:
-            api12_array = []
-            if cfg['data']['by'] == 'block':
-                cfg, api12_array = self.get_api12_array_by_block(cfg)
-
-            # elif cfg['data']['by'] == 'API12':
-            #     api12_array = self.get_api12_array_by_api12(cfg)
+        
+        # if cfg['data']['by'] == 'API12':
+            #api12_array = self.get_api12_array_by_api12(cfg) - For now not needed
 
         well_data_flag = cfg['data'].get('well_data', False)
         well_data_groups = None
         if well_data_flag:
-            cfg, well_data_groups  = self.get_well_data_all_wells(cfg, api12_array)
+            cfg, well_data_groups  = self.get_well_data_all_wells(cfg)
 
         #TODO
         # WAR_summary = self.get_WAR_summary_by_api10(api10)
@@ -39,7 +36,7 @@ class WellData:
 
         return cfg, well_data_groups
 
-    def get_well_data_all_wells(self, cfg, api12_array):
+    def get_well_data_all_wells(self, cfg):
         BoreholeRawData_df = self.get_BoreholeRawData_from_csv(cfg)
         eWellAPDRawData_df = self.get_eWellAPDRawData_from_csv(cfg)
         eWellEORRawData_df = self.get_eWellEORRawData_from_csv(cfg)
@@ -58,7 +55,7 @@ class WellData:
         well_data_groups = []
         for group in cfg[cfg['basename']]['well_data']['groups']:
             if 'api12' not in group:
-                group.update({'api12': api12_array})
+                logger.error(f"API12 not found in group: {group}")
             api12_array = group['api12']
             api12_array_well_data = []
             for api12 in api12_array:
@@ -122,22 +119,27 @@ class WellData:
         eWellWARRawData_mv_war_main_df = bsee_csv_data['eWellWARRawData_mv_war_main_df']
         eWellWARRawData_mv_war_main_prop_df = bsee_csv_data['eWellWARRawData_mv_war_main_prop_df']
 
-        api12_BoreholeRawData = BoreholeRawData_df[BoreholeRawData_df['API_WELL_NUMBER'] == api12].copy()
-        api12_eWellAPDRawData = eWellAPDRawData_df[eWellAPDRawData_df['API_WELL_NUMBER'] == api12].copy()
-        api12_eWellEORRawData = eWellEORRawData_df[eWellEORRawData_df['API_WELL_NUMBER'] == api12].copy()
-        api12_eWellWARRawData_mv_war_main = eWellWARRawData_mv_war_main_df[eWellWARRawData_mv_war_main_df['API_WELL_NUMBER'] == api12].copy()
+        datasets = {
+            'api12_BoreholeRawData': BoreholeRawData_df,
+            'api12_eWellAPDRawData': eWellAPDRawData_df,
+            'api12_eWellEORRawData': eWellEORRawData_df,
+            'api12_eWellWARRawData_mv_war_main': eWellWARRawData_mv_war_main_df
+        }
+        data = {'api12_df': api12_df}
 
-        api12_eWellWARRawData_mv_war_main_prop = eWellWARRawData_mv_war_main_prop_df[eWellWARRawData_mv_war_main_prop_df['SN_WAR'].isin(api12_eWellWARRawData_mv_war_main['SN_WAR'])]
-
-        data = {'api12_df': api12_df,
-                'api12_BoreholeRawData': api12_BoreholeRawData,
-                'api12_eWellAPDRawData': api12_eWellAPDRawData,
-                'api12_eWellEORRawData': api12_eWellEORRawData,
-                'api12_eWellWARRawData_mv_war_main': api12_eWellWARRawData_mv_war_main,
-                'api12_eWellWARRawData_mv_war_main_prop': api12_eWellWARRawData_mv_war_main_prop}
+        # Filter dataframes by API12 which are not empty 
+        for key, df in datasets.items():
+            filtered_df = df[df['API_WELL_NUMBER'] == api12].copy()           
+            data[key] = filtered_df
+        
+        # Handling api12_eWellWARRawData_mv_war_main_prop separately since it depends on another dataset
+        if 'api12_eWellWARRawData_mv_war_main' in data:
+            api12_eWellWARRawData_mv_war_main_prop = eWellWARRawData_mv_war_main_prop_df[
+                eWellWARRawData_mv_war_main_prop_df['SN_WAR'].isin(data['api12_eWellWARRawData_mv_war_main']['SN_WAR'])
+            ]           
+            data['api12_eWellWARRawData_mv_war_main_prop'] = api12_eWellWARRawData_mv_war_main_prop
 
         return data
-
 
     def get_Borehole_apd_for_all_wells(self, BoreholeRawData_df, eWellAPDRawData_df):
 
@@ -389,3 +391,21 @@ class WellData:
 
         return cfg, api12_array
     
+    def update_cfg_to_wells_api12(self, cfg, api12_array):
+        '''
+        function which transforms cfg into desired cfg
+        '''
+
+        updated_cfg = cfg.copy()
+    
+        # Update 'data' section
+        updated_cfg['data']['by'] = 'API12'
+        updated_cfg['data']['well_data'] = True
+        updated_cfg['data']['production_data'] = False
+        
+        # Replace 'groups' with 'api12' array
+        updated_cfg['data']['groups'] = [{'api12': api12_array}]
+        
+        return updated_cfg
+        
+           
