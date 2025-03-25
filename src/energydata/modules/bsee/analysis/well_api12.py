@@ -84,15 +84,15 @@ class WellAPI12():
         if not ewell_warraw_data_mv_war_main_prop.empty:
             api12_eWellWARRawData_mv_war_main_prop = ewell_warraw_data_mv_war_main_prop
 
-            api12_analysis['WELL_NM_ST_SFIX'] = api12_eWellAPDRawData['WELL_NM_ST_SFIX'].iloc[0]
-            api12_analysis['WELL_NM_BP_SFIX'] = api12_eWellAPDRawData['WELL_NM_BP_SFIX'].iloc[0]
-            api12_analysis['WELL_NAME_SUFFIX'] = api12_BoreholeRawData['WELL_NAME_SUFFIX'].iloc[0]
-            api12_analysis['SUBSEA_TREE_HEIGHT_AML'] = api12_eWellEORRawData['SUBSEA_TREE_HEIGHT_AML'].max()
-            api12_analysis['WELL_LABEL'] = api12_eWellAPDRawData['WELL_NAME'].iloc[0]
-            api12_analysis['WELL_NAME'] = api12_eWellAPDRawData['WELL_NAME'].iloc[0]
-            api12_analysis['MAX_DRILL_FLUID_WGT'] = 0
-            api12_analysis['drilling_footage_ft'] = 0
-            api12_analysis['drilling_days_per_10000_ft'] = 0
+        api12_analysis['WELL_NM_ST_SFIX'] = api12_eWellAPDRawData['WELL_NM_ST_SFIX'].iloc[0]
+        api12_analysis['WELL_NM_BP_SFIX'] = api12_eWellAPDRawData['WELL_NM_BP_SFIX'].iloc[0]
+        api12_analysis['WELL_NAME_SUFFIX'] = api12_BoreholeRawData['WELL_NAME_SUFFIX'].iloc[0]
+        api12_analysis['SUBSEA_TREE_HEIGHT_AML'] = api12_eWellEORRawData['SUBSEA_TREE_HEIGHT_AML'].max()
+        api12_analysis['WELL_LABEL'] = api12_eWellAPDRawData['WELL_NAME'].iloc[0]
+        api12_analysis['WELL_NAME'] = api12_eWellAPDRawData['WELL_NAME'].iloc[0]
+        api12_analysis['MAX_DRILL_FLUID_WGT'] = float(api12_eWellWARRawData_mv_war_main_prop['DRILL_FLUID_WGT'].max())
+        api12_analysis['drilling_footage_ft'] = 0
+        api12_analysis['drilling_days_per_10000_ft'] = 0
             
         api12_analysis['RIG_LAST_DATE_ON_WELL'] = api12_df.WAR_END_DT.max()
         api12_analysis['Water Depth (feet)'] = api12_df['Water Depth (feet)'].iloc[0]
@@ -114,21 +114,15 @@ class WellAPI12():
         sidetrack_no, bypass_no, tree_elevation_aml = self.get_st_bp_tree_info(api12_df, well_api12)
         api12_analysis.loc[df_row, ['Sidetrack No', 'Bypass No', 'Tree Height Above Mudline']] = [sidetrack_no, bypass_no, tree_elevation_aml]
 
-        try:
-            rig_str, well_days_dict = well_rig_days.rig_analysis(cfg, api12_df, api12_eWellWARRawData_mv_war_main, api12_eWellWARRawData_mv_war_main_prop)
-        except Exception as e:
-            logger.error(e)
-            rig_str = None
-            MAX_DRILL_FLUID_WGT = None
-            well_days_dict = None
+        rig_str, api12_war_days = well_rig_days.rig_analysis(cfg, api12_df, api12_eWellWARRawData_mv_war_main, api12_eWellWARRawData_mv_war_main_prop)
 
         self.get_rig_days_by_well_activity(well_api12)
         api12_analysis['Rigs'] = rig_str
         
-        if well_days_dict is not None:
-            api12_analysis['rigdays_dict'] = json.dumps(well_days_dict['rigdays_dict'])
-            api12_analysis['Drilling Days'] = well_days_dict['drilling_days']
-            api12_analysis['Completion Days'] = well_days_dict['completion_days']
+        if api12_war_days is not None:
+            api12_analysis['rigdays_dict'] = json.dumps(api12_war_days)
+            api12_analysis['Drilling Days'] = api12_war_days['DRL']
+            api12_analysis['Completion Days'] = api12_war_days['COM']
         else:
             api12_analysis['rigdays_dict'] = None
             api12_analysis['Drilling Days'] = None
@@ -150,13 +144,6 @@ class WellAPI12():
 
         api12_analysis['drilling_days_per_10000_ft'] = api12_analysis['drilling_days_per_10000_ft'].astype(float)
         api12_analysis.loc[df_row, 'drilling_days_per_10000_ft'] = drilling_days_per_10000_ft
-
-        api12_analysis.loc[df_row, 'MAX_DRILL_FLUID_WGT'] = MAX_DRILL_FLUID_WGT
-
-        api12_analysis.sort_values(by=['O_PROD_STATUS', 'WELL_LABEL'],
-                                              ascending=[False, True],
-                                              inplace=True)
-        api12_analysis.reset_index(inplace=True, drop=True)
 
         return api12_analysis
 
