@@ -121,8 +121,8 @@ class WellAPI12():
         
         if api12_war_days is not None:
             api12_analysis['rigdays_dict'] = json.dumps(api12_war_days)
-            api12_analysis['Drilling Days'] = api12_war_days['DRL']
-            api12_analysis['Completion Days'] = api12_war_days['COM']
+            api12_analysis['Drilling Days'] = api12_war_days.get('DRL', 0)
+            api12_analysis['Completion Days'] = api12_war_days.get('COM', 0)
         else:
             api12_analysis['rigdays_dict'] = None
             api12_analysis['Drilling Days'] = None
