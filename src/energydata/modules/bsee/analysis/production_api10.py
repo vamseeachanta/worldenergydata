@@ -26,6 +26,11 @@ class ProductionAPI10Analysis():
         self.prepare_field_production_rate(df_temp, completion_name)
         self.prepare_field_production(df_temp, completion_name)
 
+        # api12_analysis.sort_values(by=['O_PROD_STATUS', 'WELL_LABEL'],
+        #                                     ascending=[False, True],
+        #                                     inplace=True)
+        # api12_analysis.reset_index(inplace=True, drop=True)
+
 
     def add_production_from_all_wells(self):
         # Third party imports
