@@ -154,8 +154,10 @@ class WellRigDays:
                 war_gap_days = (gap_start_date - gap_end_date).days - 1
                 if (war_gap_days > max_allowed_npt):
                     war_gap_days = 0
-                elif (td_date > gap_start_date):
+                elif td_date is not None and td_date > gap_start_date:
                     war_drilling_days_flag = True
+                else:
+                    war_drilling_days_flag = None
 
                 if td_date is not None:
                     if (gap_end_date <= td_date) and (gap_start_date > td_date):
