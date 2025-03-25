@@ -1,3 +1,4 @@
+import logging
 from energydata.modules.bsee.data.well import WellData
 from energydata.modules.bsee.data.production import Production
 from energydata.modules.bsee.data.block import Block
@@ -13,13 +14,11 @@ class BSEEData:
 
     def router(self, cfg):
         
-        if cfg['data']['by'] == 'block':
-            block.router(cfg)
+        cfg = block.router(cfg)
    
-        else:
-            cfg, well_data_groups = well.router(cfg)
-            cfg, production_data_groups = production.router(cfg)
+        cfg, well_data = well.router(cfg)
+        cfg, production_data = production.router(cfg)
 
-        data = {'well_data': well_data_groups, 'production_data': production_data_groups}
+        data = {'well_data': well_data, 'production_data': production_data}
 
         return cfg, data

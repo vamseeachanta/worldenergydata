@@ -1,3 +1,4 @@
+import logging
 import pandas as pd
 from energydata.modules.bsee.data.block_data import BlockData
 
@@ -9,12 +10,21 @@ class Block:
             pass
     
     def router(self, cfg):
-       
-        api12_array = self.get_api12_array_by_block(cfg)
-        cfg = self.update_cfg_to_wells_api12(cfg, api12_array)
-        from energydata.engine import engine 
-        engine(inputfile=None, cfg=cfg, config_flag=False)
-        return cfg           
+
+        groups = cfg['data']['groups']
+        for group in groups:
+            if 'bottom_block' in group and group['bottom_block'] is not None:
+                group_block = group['bottom_block']
+                group_api12 = group['api12']
+                if group_api12 is not None:
+                    logging.warning('Application running by Block data. API12 input NOT used')
+
+                api12_array = self.get_api12_array_by_block(cfg)
+                cfg = self.update_cfg_to_wells_api12(cfg, api12_array)
+                from energydata.engine import engine 
+                engine(inputfile=None, cfg=cfg, config_flag=False)
+
+        return cfg
     
     def get_api12_array_by_block(self, cfg):
         cfg, block_data_groups = block_data.router(cfg)

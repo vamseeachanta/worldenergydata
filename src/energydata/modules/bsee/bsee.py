@@ -12,11 +12,11 @@ class bsee:
     def router(self, cfg):
     
         cfg[cfg['basename']] = {}
+        cfg[cfg['basename']].update({'data': cfg['data']})
+        cfg[cfg['basename']].update({'analysis': cfg['analysis']})
 
-        if "data" in cfg and cfg['data'].get('obtain', False):
-            cfg, data = bsee_data.router(cfg)
+        cfg, data = bsee_data.router(cfg)
 
-        if "analysis" in cfg and cfg['analysis'].get('flag', False):
-            cfg = bsee_analysis.router(cfg, data)
+        cfg = bsee_analysis.router(cfg, data)
 
         return cfg

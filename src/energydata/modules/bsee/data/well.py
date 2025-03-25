@@ -19,22 +19,14 @@ class WellData:
 
     def router(self, cfg):
         
-        # if cfg['data']['by'] == 'API12':
-            #api12_array = self.get_api12_array_by_api12(cfg) - For now not needed
+        cfg, well_data  = self.get_well_data_all_wells(cfg)
 
-        well_data_flag = cfg['data'].get('well_data', False)
-        well_data_groups = None
-        if well_data_flag:
-            cfg, well_data_groups  = self.get_well_data_all_wells(cfg)
-
-        #TODO
-        # WAR_summary = self.get_WAR_summary_by_api10(api10)
+        #TODO Other data sources
         # directional_surveys = self.bsee_data.get_directional_surveys_by_api10(api10)
-        # ST_BP_and_tree_height = self.get_ST_BP_and_tree_height_by_api10(api10)
         # well_tubulars_data = self.bsee_data.get_well_tubulars_data_by_api10(api10)
         # completion_data = self.bsee_data.get_completion_data_by_api10(api10)
 
-        return cfg, well_data_groups
+        return cfg, well_data
 
     def get_well_data_all_wells(self, cfg):
         BoreholeRawData_df = self.get_BoreholeRawData_from_csv(cfg)
@@ -49,8 +41,7 @@ class WellData:
                          'eWellWARRawData_mv_war_main_df': eWellWARRawData_mv_war_main_df, 
                          'eWellWARRawData_mv_war_main_prop_df': eWellWARRawData_mv_war_main_prop_df}
         
-        if not cfg[cfg['basename']]:
-            cfg = self.get_data_from_websites(cfg)
+        cfg = self.fetch_well_data_from_websites(cfg)
 
         well_data_groups = []
         for group in cfg[cfg['basename']]['well_data']['groups']:
@@ -153,14 +144,13 @@ class WellData:
 
         return api12_Borehole_apd
 
-    def get_data_from_websites(self, cfg):
+    def fetch_well_data_from_websites(self, cfg):
         output_data = []
-        if cfg['data']['by'] == 'API12':
-            website_data = self.get_well_data_from_website(cfg, output_data)
+        website_data = self.get_well_data_from_website(cfg, output_data)
 
-        elif cfg['data']['by'] == 'block':
-            website_data = block_data.get_block_data_from_website(cfg, output_data)
+        # website_data = block_data.get_block_data_from_website(cfg, output_data)
 
+        
         well_data = {'type': 'csv', 'groups': output_data}
         cfg[cfg['basename']].update({'well_data': well_data})
 
