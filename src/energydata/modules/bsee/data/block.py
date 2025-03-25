@@ -11,33 +11,37 @@ class Block:
     
     def router(self, cfg):
 
-        groups = cfg['data']['groups']
-        for group in groups:
-            if 'bottom_block' in group and group['bottom_block'] is not None:
-                group_block = group['bottom_block']
-                group_api12 = group['api12']
-                if group_api12 is not None:
-                    logging.warning('Application running by Block data. API12 input NOT used')
+        #TODO relocate as necessary
+        # groups = cfg['data']['groups']
+        # for group in groups:
+        #     if 'bottom_block' in group and group['bottom_block'] is not None:
+        #         group_block = group['bottom_block']
+        #         group_api12 = group['api12']
+        #         if group_api12 is not None:
+        #             logging.warning('group item running by Block data. API12 input NOT used')
 
-                api12_array = self.get_api12_array_by_block(cfg)
-                cfg = self.update_cfg_to_wells_api12(cfg, api12_array)
-                from energydata.engine import engine 
-                engine(inputfile=None, cfg=cfg, config_flag=False)
+        cfg = self.add_api12_array_by_block_to_cfg(cfg)
+
+
+        #TODO DELETE
+        # cfg = self.update_cfg_to_wells_api12(cfg, api12_array)
+        # from energydata.engine import engine 
+        # engine(inputfile=None, cfg=cfg, config_flag=False)
 
         return cfg
     
-    def get_api12_array_by_block(self, cfg):
+    def add_api12_array_by_block_to_cfg(self, cfg):
         cfg, block_data_groups = block_data.router(cfg)
         
-        api12_array = []
-        if cfg[cfg['basename']]['well_data']['type'] == 'csv':
-            csv_groups = cfg[cfg['basename']]['well_data']['groups']
-            for csv_group in csv_groups:
-                df = pd.read_csv(csv_group['file_name'])
-                api12_csv_group = df['API Well Number'].unique().tolist()
-                api12_array = api12_array + api12_csv_group
+        # api12_array = []
+        # if cfg[cfg['basename']]['well_data']['type'] == 'csv':
+        #     csv_groups = cfg[cfg['basename']]['well_data']['groups']
+        #     for csv_group in csv_groups:
+        #         df = pd.read_csv(csv_group['file_name'])
+        #         api12_csv_group = df['API Well Number'].unique().tolist()
+        #         api12_array = api12_array + api12_csv_group
 
-        return api12_array
+        return cfg
     
     def update_cfg_to_wells_api12(self, cfg, api12_array):
         '''
