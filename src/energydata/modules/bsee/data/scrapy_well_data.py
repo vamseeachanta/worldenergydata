@@ -49,7 +49,7 @@ class BSEEDataSpider(scrapy.Spider):
         first_request_data = self.cfg['data_retrieval']['well']['website']['form_data']['first_request'].copy()
         first_request_data['ASPxFormLayout1$ASPxTextBoxAPI'] = api_num
 
-        logger.info(f"Getting data for API {api_num} ... START")
+        logger.info(f"Data for API12 {api_num} ... START")
 
         # Submit the form and proceed to step2
         yield FormRequest.from_response(response, formdata=first_request_data, callback=self.step2)
