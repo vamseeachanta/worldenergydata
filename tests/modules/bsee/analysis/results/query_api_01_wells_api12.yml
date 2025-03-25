@@ -108,7 +108,7 @@ dictitems:
       - api12:
         - 608124009400
         label: '608124009400'
-        file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124009400.csv
+        file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124009400.csv
         merged_api12_df: !!python/object:pandas.core.frame.DataFrame
           _mgr: !!python/object/apply:pandas.core.internals.managers.BlockManager
           - !!python/tuple
@@ -429422,16 +429422,16 @@ dictitems:
     api12: true
   Analysis:
     basename: bsee
-    analysis_root_folder: k:\github\energydata\tests\modules\bsee\analysis
+    analysis_root_folder: K:\github\energydata\tests\modules\bsee\analysis
     file_name: query_api_01_wells_api12
     file_name_for_overwrite: query_api_01_wells_api12
-    result_folder: k:\github\energydata\tests\modules\bsee\analysis\results
-    log_folder: k:\github\energydata\tests\modules\bsee\analysis\logs
-    start_time: 2025-03-25 06:25:02.531006
+    result_folder: K:\github\energydata\tests\modules\bsee\analysis\results
+    log_folder: K:\github\energydata\tests\modules\bsee\analysis\logs
+    start_time: 2025-03-25 06:29:25.889786
     cfg_array_file_names: ~
     DefaultInputFile: ~
-    CustomInputFile: k:\github\energydata\tests\modules\bsee\analysis\query_api_01_wells_api12.yml
-    fe_folder: k:\github\energydata\tests\modules\bsee\analysis\results
+    CustomInputFile: query_api_01_wells_api12.yml
+    fe_folder: K:\github\energydata\tests\modules\bsee\analysis\results
   bsee:
     data: *id009
     analysis: *id010
