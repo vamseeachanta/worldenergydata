@@ -1,4 +1,4 @@
-basename: zip_utils
+basename: dwnld_from_zipurl
 
 online_query:
   raw_data: True
