@@ -43,7 +43,7 @@ class BSEEAnalysis():
         return cfg
 
     def run_production_data_analysis(self, cfg, data):
-        production_data_groups = data['production_data']
+        production_data_groups = data.get('production_data', None)
         if production_data_groups is not None:
             production_group_api12_summary_df = pd.DataFrame()
             for group in production_data_groups:
