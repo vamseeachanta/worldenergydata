@@ -57,10 +57,9 @@ def engine(inputfile: str = None, cfg: dict = None, config_flag: bool = True) ->
         bsee_app = bsee()
         cfg_base = bsee_app.router(cfg_base)
     
-    # TODO relocate to Assetutilities
-    elif basename in ["zip_utils"]:
-        zip_utils = zip()
-        cfg_base = zip_utils.router(cfg_base)
+    elif basename in ["dwnld_from_zipurl"]:
+        dwnld_from_zipurl = zip()
+        cfg_base = dwnld_from_zipurl.router(cfg_base)
 
     else:
         raise (Exception(f"Analysis for basename: {basename} not found. ... FAIL"))
