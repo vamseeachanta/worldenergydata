@@ -26,7 +26,7 @@ def test_application():
 
     # Comprehensive analysis
     # input_file = 'query_api_01_wells.yml' # SUCCESS
-    input_file = 'query_api_01_block_julia.yml' # SUCCESS
+    # input_file = 'query_api_01_block_julia.yml' # SUCCESS
     
 
     # API12 analysis
@@ -34,7 +34,7 @@ def test_application():
     # input_file = 'query_api_03_wells_api12.yml'  # SUCCESS
 
     # Production Analysis
-    # input_file = 'query_api_01_production.yml'  # SUCCESS
+    input_file = 'query_api_01_production.yml'  # SUCCESS
     #input_file = 'query_api_03_wells_production.yml' # CHECK
 
     # input_file = 'query_api_01_block_api12.yml'  #TODO

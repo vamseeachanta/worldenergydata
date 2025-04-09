@@ -50,7 +50,7 @@ class WellData:
             api12_array = group['api12']
             api12_array_well_data = []
             for api12_idx in range(0, len(api12_array)):
-                api12_metadata = group['well_data'][api12_idx]
+                api12_metadata = group['well_data'][api12_idx].copy()
 
                 merged_api12_df = self.get_api12_merged_df_from_all_sources(cfg, bsee_csv_data, api12_metadata)
                 individual_df_data = self.get_api12_data_from_all_sources(cfg, bsee_csv_data, api12_metadata)
