@@ -65,7 +65,12 @@ class BlockData:
     
     def generate_output_item(self, cfg, input_item):
 
-        label = input_item['bottom_block'][0]
+        if 'bottom_block' in input_item and input_item['bottom_block'] is not None:
+            label = input_item['bottom_block'][0]
+        elif 'api12' in input_item:
+            label = input_item['api12'][0]
+        else:
+            label = input_item['label']
         output_path = os.path.join(cfg['Analysis']['result_folder'], 'Data')
         if output_path is None:
             result_folder = cfg['Analysis']['result_folder']

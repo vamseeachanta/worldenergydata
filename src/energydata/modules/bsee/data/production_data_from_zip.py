@@ -8,10 +8,10 @@ import pandas as pd
  
 from assetutilities.common.utilities import is_dir_valid_func
 from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
-from assetutilities.modules.zip_utilities.read_zip_to_df import ReadZiptoDf
+from assetutilities.modules.zip_utilities.zip_files_to_dataframe import ZipFilestoDf
 
 wwy = WorkingWithYAML()
-rziptodf = ReadZiptoDf()
+rziptodf = ZipFilestoDf()
 
 class GetProdDataFromZip:
     

@@ -26,10 +26,11 @@ class ProductionAPI12Analysis():
         return cfg
 
     def prepare_production_data(self,cfg, production_data):
+        api12_df = production_data['api12_df']
         self.output_data_production_df_array = {}
-        completion_name_list = production_data.COMPLETION_NAME.unique()
+        completion_name_list = api12_df.COMPLETION_NAME.unique()
         for completion_name in completion_name_list:
-            df_temp = production_data[production_data.COMPLETION_NAME == completion_name].copy()
+            df_temp = api12_df[api12_df.COMPLETION_NAME == completion_name].copy()
             df_temp = self.add_production_rate_and_date_to_df(df_temp)
             df_temp.sort_values(by=['PRODUCTION_DATETIME'], inplace=True)
             df_temp.reset_index(inplace=True)
