@@ -65,23 +65,27 @@ class ProductionAPI12Analysis():
             df_row_index = df_temp.index[0]
 
             current_value = production_summary_df.O_CUMMULATIVE_PROD_MMBBL.iloc[0]
-            production_summary_df.O_CUMMULATIVE_PROD_MMBBL.iloc[
-                df_row_index] = current_value + total_well_production
+            production_summary_df.loc[df_row_index, "O_CUMMULATIVE_PROD_MMBBL"] = current_value + total_well_production
+
             DAYS_ON_PROD = df_temp.DAYS_ON_PROD.sum()
-            production_summary_df.DAYS_ON_PROD.iloc[df_row_index] = DAYS_ON_PROD
-            production_summary_df.O_MEAN_PROD_RATE_BOPD.iloc[df_row_index] = df_temp.MON_O_PROD_VOL.sum(
-            ) / DAYS_ON_PROD
-            production_summary_df.O_PROD_STATUS.iloc[df_row_index] = 1
-            current_completion_name = production_summary_df.COMPLETION_NAME.iloc[df_row_index]
+            production_summary_df.loc[df_row_index, "DAYS_ON_PROD"] = DAYS_ON_PROD
+
+            production_summary_df.loc[df_row_index, "O_MEAN_PROD_RATE_BOPD"] = df_temp.MON_O_PROD_VOL.sum() / DAYS_ON_PROD
+
+            production_summary_df.loc[df_row_index, "O_PROD_STATUS"] = 1
+
+            current_completion_name = production_summary_df.loc[df_row_index, "COMPLETION_NAME"]
+
 
             if current_completion_name == "":
-                production_summary_df.COMPLETION_NAME.iloc[df_row_index] = completion_name
+                production_summary_df.loc[df_row_index, "COMPLETION_NAME"] = completion_name
             else:
                 completion_name = current_completion_name + ',' + completion_name
-                production_summary_df.COMPLETION_NAME.iloc[df_row_index] = completion_name
+                production_summary_df.loc[df_row_index, "COMPLETION_NAME"] = completion_name
 
-            production_summary_df['monthly_production'].iloc[df_row_index] = json.dumps(
+            production_summary_df.loc[df_row_index, "monthly_production"] = json.dumps(
                 api12_production.to_dict(orient='records'))
+
 
         return production_summary_df
 
