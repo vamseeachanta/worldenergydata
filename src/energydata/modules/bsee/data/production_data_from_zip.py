@@ -11,7 +11,7 @@ from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
 from assetutilities.modules.zip_utilities.zip_files_to_dataframe import ZipFilestoDf
 
 wwy = WorkingWithYAML()
-rziptodf = ZipFilestoDf()
+zip_files_to_df = ZipFilestoDf()
 
 class GetProdDataFromZip:
     
@@ -20,8 +20,9 @@ class GetProdDataFromZip:
 
     def router(self, cfg):
 
-        if cfg['data']['by']['zip']:
-            self.get_production_data_by_wellapi12(cfg)
+        if cfg['data']['by']== 'zip':
+            api12 = cfg['data']['groups'][0]['api12'][0]
+            self.get_production_data_by_wellapi12(cfg,api12)
 
         return cfg
 
@@ -45,45 +46,39 @@ class GetProdDataFromZip:
 
             api12_dataframes = {}
             for file_name in os.listdir(folder_path):
-                if file_name.endswith(".zip"):
-                    zip_filepath = os.path.join(folder_path, file_name)
 
-                    try:
-                        # Load the ZIP file into memory
-                        with open(zip_filepath, "rb") as f:
-                            zip_bytes = f.read()
+                column_names = ['LEASE_NUMBER', 'COMPLETION_NAME', 'PRODUCTION_DATE', 'DAYS_ON_PROD', 'PRODUCT_CODE', 'MON_O_PROD_VOL', 'MON_G_PROD_VOL', 'MON_WTR_PROD_VOL', 'API_WELL_NUMBER', 'WELL_STAT_CD', 'AREA_CODE_BLOCK_NUM', 'OPERATOR_NUM', 'SORT_NAME', 'BOEM_FIELD', 'INJECTION_VOLUME', 'PROD_INTERVAL_CD', 'FIRST_PROD_DATE', 'UNIT_AGT_NUMBER', 'UNIT_ALOC_SUFFIX']
+                cfg['zip_utilities'] = {
+                    'technique': 'zip_files_to_df',
+                    'input_directory': folder_path,
+                    'column_names': column_names
+                }
+                
+                df = zip_files_to_df.router(cfg)
+                
+                df_name = file_name.split('.')[0]
 
-                        column_names = ['LEASE_NUMBER', 'COMPLETION_NAME', 'PRODUCTION_DATE', 'DAYS_ON_PROD', 'PRODUCT_CODE', 'MON_O_PROD_VOL', 'MON_G_PROD_VOL', 'MON_WTR_PROD_VOL', 'API_WELL_NUMBER', 'WELL_STAT_CD', 'AREA_CODE_BLOCK_NUM', 'OPERATOR_NUM', 'SORT_NAME', 'BOEM_FIELD', 'INJECTION_VOLUME', 'PROD_INTERVAL_CD', 'FIRST_PROD_DATE', 'UNIT_AGT_NUMBER', 'UNIT_ALOC_SUFFIX']
-                        
-                        df = rziptodf.zip_to_dataframes(zip_bytes, column_names)
-                        
-                        df_name = file_name.split('.')[0]
+                if 'API_WELL_NUMBER' not in df.columns:
+                    logger.warning(f"Skipping {df_name}: 'API_WELL_NUMBER' column not found.")
+                    continue
 
-                        if 'API_WELL_NUMBER' not in df.columns:
-                            logger.warning(f"Skipping {df_name}: 'API_WELL_NUMBER' column not found.")
-                            continue
+                # Find matching rows for the current api12
+                matching_rows = df[df['API_WELL_NUMBER'] == api12] 
 
-                        # Find matching rows for the current api12
-                        matching_rows = df[df['API_WELL_NUMBER'] == api12] 
+                if not matching_rows.empty:
+                    # Move 'API_WELL_NUMBER' column to the first position
+                    columns = ['API_WELL_NUMBER'] + [col for col in matching_rows.columns if col != 'API_WELL_NUMBER']
+                    matching_rows = matching_rows[columns]
 
-                        if not matching_rows.empty:
-                            # Move 'API_WELL_NUMBER' column to the first position
-                            columns = ['API_WELL_NUMBER'] + [col for col in matching_rows.columns if col != 'API_WELL_NUMBER']
-                            matching_rows = matching_rows[columns]
+                    # Append matching rows to the corresponding api12 DataFrame
+                    if api12 not in api12_dataframes:
+                        api12_dataframes[api12] = matching_rows
+                    else:
+                        api12_dataframes[api12] = pd.concat([api12_dataframes[api12], matching_rows], ignore_index=True)
 
-                            # Append matching rows to the corresponding api12 DataFrame
-                            if api12 not in api12_dataframes:
-                                api12_dataframes[api12] = matching_rows
-                            else:
-                                api12_dataframes[api12] = pd.concat([api12_dataframes[api12], matching_rows], ignore_index=True)
-
-                            logger.info(f"Production data found for API {api12} in file {df_name}.")
-                        else:
-                            logger.debug(f"Production data NOT found for API {api12} in file {df_name}.")
-
-                    except Exception as e:
-                        logger.error(f"Error processing file {file_name}: {e}")
-                        continue
+                    logger.info(f"Production data found for API {api12} in file {df_name}.")
+                else:
+                    logger.debug(f"Production data NOT found for API {api12} in file {df_name}.")
 
             # Write each api12 DataFrame to a separate output file
             for api12, df in api12_dataframes.items():
