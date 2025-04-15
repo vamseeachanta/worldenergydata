@@ -96,7 +96,7 @@ meta:
   library: energydata
   basename: bsee
 data:
-  production_data: false
+  production_data: true
   groups:
   - bottom_block:
     - 633
@@ -123,7 +123,7 @@ Analysis:
   file_name: query_api_01_block_stmalo
   file_name_for_overwrite: query_api_01_block_stmalo
   log_folder: k:\github\energydata\tests\modules\bsee\analysis\logs
-  start_time: 2025-04-15 11:57:06.550837
+  start_time: 2025-04-15 17:15:56.723086
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: k:\github\energydata\tests\modules\bsee\analysis\query_api_01_block_stmalo.yml
@@ -133,7 +133,7 @@ Analysis:
   fe_folder: k:\github\energydata\tests\modules\bsee\analysis\results
 bsee:
   data:
-    production_data: false
+    production_data: true
     groups:
     - bottom_block:
       - 633
@@ -155,3 +155,26 @@ bsee:
   analysis:
     flag: true
     api12: true
+zip_utilities:
+  technique: zip_files_to_df
+  input_directory: K:\github\energydata\data\modules\bsee\zip\production
+  column_names:
+  - LEASE_NUMBER
+  - COMPLETION_NAME
+  - PRODUCTION_DATE
+  - DAYS_ON_PROD
+  - PRODUCT_CODE
+  - MON_O_PROD_VOL
+  - MON_G_PROD_VOL
+  - MON_WTR_PROD_VOL
+  - API_WELL_NUMBER
+  - WELL_STAT_CD
+  - AREA_CODE_BLOCK_NUM
+  - OPERATOR_NUM
+  - SORT_NAME
+  - BOEM_FIELD
+  - INJECTION_VOLUME
+  - PROD_INTERVAL_CD
+  - FIRST_PROD_DATE
+  - UNIT_AGT_NUMBER
+  - UNIT_ALOC_SUFFIX
