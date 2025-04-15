@@ -13,7 +13,7 @@ Analysis:
 
 ### Code guide for future purposes on how to store data in cfg and use it for analysis
 
-```
+```python
 from energydata.modules.bsee.data.bsee_data import BSEEData
 from energydata.modules.bsee.analysis.bsee_analysis import BSEEAnalysis
 
