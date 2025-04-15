@@ -30,7 +30,9 @@ class ProductionDataFromSources:
 
                 api12_df =  production_from_zip.get_production_data_by_wellapi12(cfg, api12)
 
-                production_data_group.update({'api12_df': api12_df})
+                if (isinstance(api12_df, pd.DataFrame) and not api12_df.empty) or (isinstance(api12_df, dict) and api12_df):
+                    production_data_group.update({'api12_df': api12_df})
+
 
                 api12_array_production_data.append(production_data_group)
 

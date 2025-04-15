@@ -44,12 +44,13 @@ class BSEEDataSpider(scrapy.Spider):
     def parse(self, response):
         # Extract API number from input item
         api_num = str([self.input_item['api12']])
+        api_label = self.input_item['label']
 
         # Prepare form data for the first request
         first_request_data = self.cfg['data_retrieval']['well']['website']['form_data']['first_request'].copy()
         first_request_data['ASPxFormLayout1$ASPxTextBoxAPI'] = api_num
 
-        logger.info(f"Data for API12 {api_num} ... START")
+        logger.info(f"Data for API12 {api_label} ... START")
 
         # Submit the form and proceed to step2
         yield FormRequest.from_response(response, formdata=first_request_data, callback=self.step2)
@@ -88,7 +89,7 @@ class BSEEDataSpider(scrapy.Spider):
                     f.write(response.body)
                     logger.info("\n****The Scraped data of given value ****\n")
                     logger.debug(response_csv)
-                    logger.info(f"Getting data for API {api_label} ... COMPLETE")
+                    logger.info(f"Data for API {api_label} ... COMPLETE")
 
                 self.data_store['data'] = response_csv  # Store DataFrame in data_store
 
