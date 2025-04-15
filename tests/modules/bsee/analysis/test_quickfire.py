@@ -35,7 +35,7 @@ def test_application():
     #input_file = 'query_api_03_wells_api12.yml' 
 
     # Production Analysis
-    input_file = 'query_api_01_production.yml'  # SUCCESS
+    # input_file = 'query_api_01_production.yml'  # SUCCESS
     #input_file = 'query_api_03_wells_production.yml' # CHECK
 
     # block Analysis
