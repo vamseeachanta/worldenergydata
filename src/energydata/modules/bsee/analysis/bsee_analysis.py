@@ -45,21 +45,22 @@ class BSEEAnalysis():
         production_data_groups = data.get('production_data', None)
         if production_data_groups is not None:
             production_group_api12_summary_df = pd.DataFrame()
-            for group in production_data_groups:
+            for group_idx in range(0, len(production_data_groups)):
+                group = production_data_groups[group_idx]
                 for production_data in group:
-                    cfg, api12_summary = prod_api12_analysis.router(cfg, production_data)
-                    production_group_api12_summary_df = pd.concat([production_group_api12_summary_df, api12_summary], ignore_index=True)
+                    cfg, api12_production = prod_api12_analysis.router(cfg, production_data)
+                    production_group_api12_summary_df = pd.concat([production_group_api12_summary_df, api12_production], ignore_index=True)
 
-            cfg, production_group_api10_summary_df = prod_api10_analysis.router(cfg, production_group_api12_summary_df)
+            # cfg, production_group_api10_summary_df = prod_api10_analysis.router(cfg, production_group_api12_summary_df)
 
-            block_number = cfg['data']['groups'][group_idx].get('bottom_block', [None])[0]
-            if block_number is None:
-                label = str(group_idx)
-            else:
-                label = str(block_number)
-            file_label = 'block_' + label + '_api12'
-            file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
-            production_group_api12_summary_df.to_csv(file_name, index=False)
+                block_number = cfg['data']['groups'][group_idx].get('bottom_block', [None])[0]
+                if block_number is None:
+                    label = str(group_idx)
+                else:
+                    label = str(block_number)
+                file_label = 'block_' + label + '_api12'
+                file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
+                production_group_api12_summary_df.to_csv(file_name, index=False)
 
             # file_name = os.path.join(cfg['Analysis']['result_folder'], 'api10_summary_' + cfg['Analysis']['file_name_for_overwrite'] + '.csv')
             # production_group_api10_summary_df.to_csv(file_name)

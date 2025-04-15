@@ -21,13 +21,13 @@ class ProductionAPI12Analysis():
         pass
 
     def router(self, cfg, api12_production_data):
-        self.prepare_production_data(cfg, api12_production_data)
+        production_data = self.prepare_production_data(cfg, api12_production_data)
         
-        return cfg
+        return cfg, production_data
 
     def prepare_production_data(self,cfg, production_data):
         api12_df = []
-        if 'api12_df' in production_data and production_data['api12_df']:
+        if 'api12_df' in production_data:
             api12_df = production_data['api12_df']
         if api12_df:
             self.output_data_production_df_array = {}
@@ -48,7 +48,10 @@ class ProductionAPI12Analysis():
                     df_temp.to_csv(file_name, index=False)
                     logging.info("Production data is prepared for well: " + str(well_api12) + " completion: " + completion_name)
 
-        print("Production data is prepared")
+        else:
+            logging.warning("No production data found in the input file")
+
+            print("Production data is prepared")
 
 
     def add_production_and_completion_name_to_well_data(self, well_api12, well_api10, completion_name, df_temp):
