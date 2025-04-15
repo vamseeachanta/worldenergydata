@@ -34,13 +34,13 @@ class WellData:
         eWellEORRawData_df = self.get_eWellEORRawData_from_csv(cfg)
         eWellWARRawData_mv_war_main_df = self.get_eWellWARRawData_mv_war_main_from_csv(cfg)
         eWellWARRawData_mv_war_main_prop_df = self.get_eWellWARRawData_mv_war_main_prop_from_csv(cfg)
-        
+
         bsee_csv_data = {'BoreholeRawData_df': BoreholeRawData_df, 
                          'eWellAPDRawData_df': eWellAPDRawData_df, 
                          'eWellEORRawData_df': eWellEORRawData_df, 
                          'eWellWARRawData_mv_war_main_df': eWellWARRawData_mv_war_main_df, 
                          'eWellWARRawData_mv_war_main_prop_df': eWellWARRawData_mv_war_main_prop_df}
-        
+
         cfg = self.fetch_well_data_from_websites(cfg)
 
         well_data_groups = []

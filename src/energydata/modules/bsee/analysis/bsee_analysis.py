@@ -72,10 +72,17 @@ class BSEEAnalysis():
                     well_data = group[well_idx]
                     cfg, api12_analysis = well_api12_analysis.router(cfg, well_data)
                     well_group_api12_summary_df = pd.concat([well_group_api12_summary_df, api12_analysis], ignore_index=True)
+                    well_api12 = well_group_api12_summary_df.API12.iloc[0]
+                    api12_label = str(well_api12)
+                    file_name = 'api12_' + api12_label + '_data.csv'
+                    file_name = os.path.join(cfg['Analysis']['result_folder'], file_name)
+                    well_group_api12_summary_df.to_csv(file_name, index=False)
+                    logging.info("Well data is prepared for well: " + str(well_api12))
 
                 cfg, well_group_api10_summary_df = well_api10_analysis.router(cfg, well_group_api12_summary_df)
 
                 label = str(group_idx)
+
                 file_name = os.path.join(cfg['Analysis']['result_folder'], cfg['Analysis']['file_name_for_overwrite'] + '_' + label + '_api12.csv')
                 well_group_api12_summary_df.to_csv(file_name)
 

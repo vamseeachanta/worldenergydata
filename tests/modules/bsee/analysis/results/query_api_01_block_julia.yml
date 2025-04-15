@@ -517,7 +517,7 @@ Analysis:
   file_name: query_api_01_block_julia
   file_name_for_overwrite: query_api_01_block_julia
   log_folder: k:\github\energydata\tests\modules\bsee\analysis\logs
-  start_time: 2025-04-09 14:57:03.308082
+  start_time: 2025-04-14 18:27:11.088509
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: k:\github\energydata\tests\modules\bsee\analysis\query_api_01_block_julia.yml
