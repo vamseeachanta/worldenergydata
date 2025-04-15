@@ -83,10 +83,3 @@ class BSEEAnalysis():
                 well_group_api10_summary_df.to_csv(file_name)
 
         return cfg
-
-    # def get_analysis_cfg_and_welldata(self, cfg, well_data_groups, group_idx, well_idx):
-    #     well_data = well_data_groups[group_idx][well_idx]
-    #     production_data = None
-    #     analysis_cfg = cfg
-    #     analysis_cfg = self.get_block_analysis_cfg(cfg, well_data, group_idx, well_idx)
-    #     return analysis_cfg, well_data
