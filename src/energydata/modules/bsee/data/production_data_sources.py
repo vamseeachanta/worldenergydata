@@ -20,19 +20,19 @@ class ProductionDataFromSources:
 
     def get_data(self, cfg):
 
-        cfg = self.get_groups_data(cfg)
+        # cfg = self.get_groups_data(cfg)
         production_data_groups = []
-        for group in cfg[cfg['basename']]['production_data']['groups']:
-            production_data_group = group.copy()
-            api12_array = group['api12']
+        for group_idx in range(0, len(cfg['data']['groups'])):
+            production_data_group = cfg['data']['groups'][group_idx].copy()
+            api12_array = production_data_group['api12']
             api12_array_production_data = []
             for api12 in api12_array:
 
-                api12_df =  production_from_zip.get_production_data_by_wellapi12(cfg, api12)
+                api12_df = production_from_zip.get_production_data_by_wellapi12(cfg, api12)
                 if not api12_df:
                     api12_df = pd.DataFrame()
-                production_data_group.update({'api12_df': api12_df})
-                api12_array_production_data.append(production_data_group)
+
+                api12_array_production_data.append(api12_df)
 
             production_data_groups.append(api12_array_production_data)
 

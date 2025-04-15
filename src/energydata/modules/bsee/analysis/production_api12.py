@@ -29,7 +29,7 @@ class ProductionAPI12Analysis():
         api12_df = []
         if 'api12_df' in production_data:
             api12_df = production_data['api12_df']
-        if api12_df:
+        if not api12_df.empty:
             self.output_data_production_df_array = {}
             completion_name_list = api12_df.COMPLETION_NAME.unique()
             for completion_name in completion_name_list:

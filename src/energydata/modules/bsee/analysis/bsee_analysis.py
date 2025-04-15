@@ -58,7 +58,7 @@ class BSEEAnalysis():
                     label = str(group_idx)
                 else:
                     label = str(block_number)
-                file_label = 'block_' + label + '_api12'
+                file_label = 'block_prod_' + label
                 file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
                 production_group_api12_summary_df.to_csv(file_name, index=False)
 
@@ -90,7 +90,7 @@ class BSEEAnalysis():
                     label = str(group_idx)
                 else:
                     label = str(block_number)
-                file_label = 'block_' + label + '_api12'
+                file_label = 'block_api12_' + label
                 file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
                 well_group_api12_summary_df.to_csv(file_name, index=False)
 
