@@ -27,6 +27,7 @@ def test_application():
     # Comprehensive analysis
     #input_file = 'query_api_01_wells.yml' 
     #input_file = 'query_api_01_block_julia.yml' 
+    input_file = 'query_api_01_block_stmalo.yml'
     
 
     # API12 analysis
@@ -39,7 +40,7 @@ def test_application():
 
     # block Analysis
     #input_file = 'query_api_01_block_api12.yml' 
-    input_file = 'query_api_03_blocks_api12.yml'  
+    #input_file = 'query_api_03_blocks_api12.yml'  
  
 
     # All well data

@@ -1,9 +1,9 @@
 analysis:
-    # Comprehensive analysis
+    # Comprehensive Analysis
     #input_file = 'query_api_01_wells.yml' 
     #input_file = 'query_api_01_block_julia.yml' 
 
-     # Production Analysi
+     # Production Analysis
     query_api_01_production.yml
     query_api_03_wells_production.yml
 
