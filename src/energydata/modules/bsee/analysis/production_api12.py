@@ -38,8 +38,9 @@ class ProductionAPI12Analysis():
                 well_api12 = df_temp.API_WELL_NUMBER.iloc[0]
                 well_api10 = str(well_api12)[0:10]
                 self.add_production_and_completion_name_to_well_data(well_api12, well_api10, completion_name, df_temp)
-                self.output_data_production_df_array.update({completion_name: df_temp})
-                file_name = str(well_api12) + '_' + completion_name + '_production_data.csv'
+                api12_label = str(well_api12) + '_' + completion_name.strip()
+                self.output_data_production_df_array.update({api12_label: df_temp})
+                file_name = 'api12_' + api12_label + '_production_data.csv'
                 file_name = os.path.join(cfg['Analysis']['result_folder'], file_name)
                 df_temp.to_csv(file_name, index=False)
                 logging.info("Production data is prepared for well: " + str(well_api12) + " completion: " + completion_name)
