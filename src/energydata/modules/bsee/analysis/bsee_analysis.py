@@ -36,7 +36,6 @@ class BSEEAnalysis():
 
     def run_analysis_for_all_wells(self, cfg, data):
 
-
         cfg = self.run_well_data_analysis(cfg, data)
         cfg = self.run_production_data_analysis(cfg, data)
 
@@ -53,11 +52,17 @@ class BSEEAnalysis():
 
             cfg, production_group_api10_summary_df = prod_api10_analysis.router(cfg, production_group_api12_summary_df)
 
-            file_name = os.path.join(cfg['Analysis']['result_folder'], cfg['Analysis']['file_name_for_overwrite'] + '_api12_summary.csv')
-            production_group_api12_summary_df.to_csv(file_name)
+            block_number = cfg['data']['groups'][group_idx].get('bottom_block', [None])[0]
+            if block_number is None:
+                label = str(group_idx)
+            else:
+                label = str(block_number)
+            file_label = 'block_' + label + '_api12'
+            file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
+            production_group_api12_summary_df.to_csv(file_name, index=False)
 
-            file_name = os.path.join(cfg['Analysis']['result_folder'], cfg['Analysis']['file_name_for_overwrite'] + '_api10_summary.csv')
-            production_group_api10_summary_df.to_csv(file_name)
+            # file_name = os.path.join(cfg['Analysis']['result_folder'], 'api10_summary_' + cfg['Analysis']['file_name_for_overwrite'] + '.csv')
+            # production_group_api10_summary_df.to_csv(file_name)
 
         return cfg
 
@@ -73,20 +78,24 @@ class BSEEAnalysis():
                     cfg, api12_analysis = well_api12_analysis.router(cfg, well_data)
                     well_group_api12_summary_df = pd.concat([well_group_api12_summary_df, api12_analysis], ignore_index=True)
                     well_api12 = well_group_api12_summary_df.API12.iloc[0]
-                    api12_label = str(well_api12)
-                    file_name = 'api12_' + api12_label + '_data.csv'
-                    file_name = os.path.join(cfg['Analysis']['result_folder'], file_name)
-                    well_group_api12_summary_df.to_csv(file_name, index=False)
+                    # api12_label = str(well_api12)
+                    # file_name = 'api12_' + api12_label + '_data.csv'
+                    # file_name = os.path.join(cfg['Analysis']['result_folder'], file_name)
+                    # well_group_api12_summary_df.to_csv(file_name, index=False)
                     logging.info("Well data is prepared for well: " + str(well_api12))
 
-                cfg, well_group_api10_summary_df = well_api10_analysis.router(cfg, well_group_api12_summary_df)
+                block_number = cfg['data']['groups'][group_idx].get('bottom_block', [None])[0]
+                if block_number is None:
+                    label = str(group_idx)
+                else:
+                    label = str(block_number)
+                file_label = 'block_' + label + '_api12'
+                file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
+                well_group_api12_summary_df.to_csv(file_name, index=False)
 
-                label = str(group_idx)
-
-                file_name = os.path.join(cfg['Analysis']['result_folder'], cfg['Analysis']['file_name_for_overwrite'] + '_' + label + '_api12.csv')
-                well_group_api12_summary_df.to_csv(file_name)
-
-                file_name = os.path.join(cfg['Analysis']['result_folder'], cfg['Analysis']['file_name_for_overwrite'] + '_' + label + '_api10.csv')
-                well_group_api10_summary_df.to_csv(file_name)
+                # cfg, well_group_api10_summary_df = well_api10_analysis.router(cfg, well_group_api12_summary_df)
+                # file_label = 'api10_' + cfg['Analysis']['file_name_for_overwrite'] + '_' + label
+                # file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
+                # well_group_api10_summary_df.to_csv(file_name)
 
         return cfg

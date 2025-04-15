@@ -12,8 +12,8 @@ class bsee:
     def router(self, cfg):
     
         cfg[cfg['basename']] = {}
-        cfg[cfg['basename']].update({'data': cfg['data']})
-        cfg[cfg['basename']].update({'analysis': cfg['analysis']})
+        cfg[cfg['basename']].update({'data': cfg['data'].copy()})
+        cfg[cfg['basename']].update({'analysis': cfg['analysis'].copy()})
 
         cfg, data = bsee_data.router(cfg)
 
