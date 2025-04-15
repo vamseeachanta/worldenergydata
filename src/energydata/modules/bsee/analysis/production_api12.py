@@ -26,24 +26,27 @@ class ProductionAPI12Analysis():
         return cfg
 
     def prepare_production_data(self,cfg, production_data):
-        api12_df = production_data['api12_df']
-        self.output_data_production_df_array = {}
-        completion_name_list = api12_df.COMPLETION_NAME.unique()
-        for completion_name in completion_name_list:
-            df_temp = api12_df[api12_df.COMPLETION_NAME == completion_name].copy()
-            df_temp = self.add_production_rate_and_date_to_df(df_temp)
-            df_temp.sort_values(by=['PRODUCTION_DATETIME'], inplace=True)
-            df_temp.reset_index(inplace=True)
-            if df_temp.O_PROD_RATE_BOPD.max() > 0:
-                well_api12 = df_temp.API_WELL_NUMBER.iloc[0]
-                well_api10 = str(well_api12)[0:10]
-                self.add_production_and_completion_name_to_well_data(well_api12, well_api10, completion_name, df_temp)
-                api12_label = str(well_api12) + '_' + completion_name.strip()
-                self.output_data_production_df_array.update({api12_label: df_temp})
-                file_name = 'api12_' + api12_label + '_production_data.csv'
-                file_name = os.path.join(cfg['Analysis']['result_folder'], file_name)
-                df_temp.to_csv(file_name, index=False)
-                logging.info("Production data is prepared for well: " + str(well_api12) + " completion: " + completion_name)
+        api12_df = []
+        if 'api12_df' in production_data and production_data['api12_df']:
+            api12_df = production_data['api12_df']
+        if api12_df:
+            self.output_data_production_df_array = {}
+            completion_name_list = api12_df.COMPLETION_NAME.unique()
+            for completion_name in completion_name_list:
+                df_temp = api12_df[api12_df.COMPLETION_NAME == completion_name].copy()
+                df_temp = self.add_production_rate_and_date_to_df(df_temp)
+                df_temp.sort_values(by=['PRODUCTION_DATETIME'], inplace=True)
+                df_temp.reset_index(inplace=True)
+                if df_temp.O_PROD_RATE_BOPD.max() > 0:
+                    well_api12 = df_temp.API_WELL_NUMBER.iloc[0]
+                    well_api10 = str(well_api12)[0:10]
+                    self.add_production_and_completion_name_to_well_data(well_api12, well_api10, completion_name, df_temp)
+                    api12_label = str(well_api12) + '_' + completion_name.strip()
+                    self.output_data_production_df_array.update({api12_label: df_temp})
+                    file_name = 'api12_' + api12_label + '_production_data.csv'
+                    file_name = os.path.join(cfg['Analysis']['result_folder'], file_name)
+                    df_temp.to_csv(file_name, index=False)
+                    logging.info("Production data is prepared for well: " + str(well_api12) + " completion: " + completion_name)
 
         print("Production data is prepared")
 
