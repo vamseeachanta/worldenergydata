@@ -4,6 +4,7 @@ import json
 import logging
 
 # # # Third party imports
+import numpy as np
 import pandas as pd
 from energydata.modules.bsee.data.bsee_data import BSEEData
 from energydata.common.legacy.data import DateTimeUtility
@@ -29,7 +30,7 @@ class ProductionAPI12Analysis():
         production_groups = data.get('production_data', None)
         if production_groups is not None:
             production_group_api12_summary_df = pd.DataFrame()
-            production_group_data = pd.DataFrame()
+            production_group_data_df = pd.DataFrame()
             production_api12_array = []
             for group_idx in range(0, len(production_groups)):
                 production_group = production_groups[group_idx]
@@ -45,6 +46,12 @@ class ProductionAPI12Analysis():
                     prod_anal_api12_df = prod_anal_api12_dict['api12_df']
                     production_api12_array.append(prod_anal_api12_df)
                     production_group_api12_summary_df = pd.concat([production_group_api12_summary_df, summary_df], ignore_index=True)
+                    if len(prod_anal_api12_df) == 0:
+                        prod_anal_api12_df = pd.DataFrame(columns=['PRODUCTION_DATETIME', 'O_PROD_RATE_BOPD'])
+                    prod_anal_api12_df_PROD_RATE = prod_anal_api12_df[['PRODUCTION_DATETIME', 'O_PROD_RATE_BOPD']]
+                    prod_anal_api12_df_PROD_RATE = prod_anal_api12_df_PROD_RATE.rename(columns={'O_PROD_RATE_BOPD': api12})
+                    production_group_data_df = pd.concat([production_group_data_df, prod_anal_api12_df_PROD_RATE], ignore_index=True)
+                    production_group_data_df = production_group_data_df.replace({np.nan: None})
 
                 block_number = cfg['data']['groups'][group_idx].get('bottom_block', [None])[0]
                 if block_number is None:
@@ -56,8 +63,11 @@ class ProductionAPI12Analysis():
                 file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
                 production_group_api12_summary_df.to_csv(file_name, index=False)
 
+                file_label = 'block_prod_all_' + label
+                file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
+                production_group_data_df.to_csv(file_name, index=False)
+
                 file_label = 'block_prod_raw_' + label
-                
                 SheetNames = [str(item) for item in api12_array]
                 file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.xlsx')
                 cfg_temp = {'FileName': file_name,
@@ -83,15 +93,15 @@ class ProductionAPI12Analysis():
                     summary_df = self.add_production_and_completion_name_to_well_data(api12, api10, completion_name, df_temp)
                     api12_label = str(api12)
 
-                    prod_anal_api12_dict = {api12: df_temp}
+                    prod_anal_api12_dict = {'api12_df': df_temp, 'api12': api12, 'summary_df': summary_df}
 
-                    file_name = 'prod_anal_api12_' + api12_label + '.csv'
-                    file_name = os.path.join(cfg['Analysis']['result_folder'], file_name)
-                    df_temp.to_csv(file_name, index=False)
-                    logging.debug(f"Production data is prepared for well: {api12} Completion: {completion_name}")
+                    # file_name = 'prod_anal_api12_' + api12_label + '.csv'
+                    # file_name = os.path.join(cfg['Analysis']['result_folder'], file_name)
+                    # df_temp.to_csv(file_name, index=False)
+                    # logging.debug(f"Production data is prepared for well: {api12} Completion: {completion_name}")
 
         else:
-            prod_anal_api12_dict = {'api12_df': api12_df, 'api12': api12, 'summary_df': summary_df}
+            prod_anal_api12_dict = {'api12_df': api12_df, 'api12': api12, 'summary_df': pd.DataFrame()}
             logging.debug("No production data found in the input file")
 
         return cfg, prod_anal_api12_dict
