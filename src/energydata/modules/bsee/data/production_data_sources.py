@@ -29,10 +29,10 @@ class ProductionDataFromSources:
             for api12 in api12_array:
 
                 api12_df = production_from_zip.get_production_data_by_wellapi12(cfg, api12)
-                if not api12_df:
+                if api12_df.empty:
                     api12_df = pd.DataFrame()
 
-                api12_array_production_data.append(api12_df)
+                api12_array_production_data.append({api12: api12_df})
 
             production_data_groups.append(api12_array_production_data)
 

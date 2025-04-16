@@ -42,7 +42,8 @@ class GetProdDataFromZip:
                 raise FileNotFoundError(f"The folder '{folder_path}' does not exist.")
 
             logging.info(f"Getting production data for API12: {api12} ... START")
-            output_file = os.path.join(cfg['Analysis']['result_folder'], 'Data', str(api12) + '.csv')
+            output_file_label = 'prod_raw_api12_' + str(api12)
+            output_file = os.path.join(cfg['Analysis']['result_folder'], 'Data', output_file_label + '.csv')
 
             api12_dataframes = {}
             for file_name in os.listdir(folder_path):
@@ -53,9 +54,9 @@ class GetProdDataFromZip:
                     'input_directory': folder_path,
                     'column_names': column_names
                 }
-                
+
                 df = zip_files_to_df.router(cfg)
-                
+
                 df_name = file_name.split('.')[0]
 
                 if 'API_WELL_NUMBER' not in df.columns:
@@ -76,7 +77,7 @@ class GetProdDataFromZip:
                     else:
                         api12_dataframes[api12] = pd.concat([api12_dataframes[api12], matching_rows], ignore_index=True)
 
-                    logger.info(f"Production data found for API {api12} in file {df_name}.")
+                    logger.debug(f"Production data found for API {api12} in file {df_name}.")
                 else:
                     logger.debug(f"Production data NOT found for API {api12} in file {df_name}.")
 
@@ -91,13 +92,10 @@ class GetProdDataFromZip:
 
             logging.info(f"Getting production data for API12: {api12} ... COMPLETE")
 
-
+            dataframe = pd.DataFrame()
             if len(api12_dataframes) == 1:
                 # Extract the single dataframe from the dictionary
                 dataframe = next(iter(api12_dataframes.values()))
-                return dataframe
-            else:
-                return api12_dataframes
 
         except KeyError as ke:
             logger.error(f"Missing key in configuration: {ke}")
@@ -108,3 +106,5 @@ class GetProdDataFromZip:
         except Exception as e:
             logger.error(f"An unexpected error occurred: {e}")
             raise
+        
+        return dataframe

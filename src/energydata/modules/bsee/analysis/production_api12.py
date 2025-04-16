@@ -8,51 +8,93 @@ import pandas as pd
 from energydata.modules.bsee.data.bsee_data import BSEEData
 from energydata.common.legacy.data import DateTimeUtility
 
+from assetutilities.common.data import SaveData
 # from energydata.common.bsee_data_manager import BSEEData
 
 # from energydata.common.data import AttributeDict, transform_df_datetime_to_str
 
 bsee_data = BSEEData()
 dtu = DateTimeUtility()
+save_data = SaveData()
 
 class ProductionAPI12Analysis():
 
     def __init__(self):
         pass
 
-    def router(self, cfg, api12_production_data):
-        production_data = self.prepare_production_data(cfg, api12_production_data)
-        
-        return cfg, production_data
+    def router(self, cfg):
+        pass
 
-    def prepare_production_data(self,cfg, production_data):
-        api12_df = []
-        if 'api12_df' in production_data:
-            api12_df = production_data['api12_df']
+    def run_production_data_analysis(self, cfg, data):
+        production_groups = data.get('production_data', None)
+        if production_groups is not None:
+            production_group_api12_summary_df = pd.DataFrame()
+            production_group_data = pd.DataFrame()
+            production_api12_array = []
+            for group_idx in range(0, len(production_groups)):
+                production_group = production_groups[group_idx]
+                api12_array = cfg['data']['groups'][group_idx]['api12']
+                for api12_idx in range(0, len(production_group)):
+                    production_data = production_group[api12_idx]
+
+                    api12 = api12_array[api12_idx]
+                    api12_df = production_data[api12]
+
+                    cfg, prod_anal_api12_dict= self.analyze_data_for_api12(cfg, api12, api12_df)
+                    summary_df = prod_anal_api12_dict['summary_df']
+                    prod_anal_api12_df = prod_anal_api12_dict['api12_df']
+                    production_api12_array.append(prod_anal_api12_df)
+                    production_group_api12_summary_df = pd.concat([production_group_api12_summary_df, summary_df], ignore_index=True)
+
+                block_number = cfg['data']['groups'][group_idx].get('bottom_block', [None])[0]
+                if block_number is None:
+                    label = str(group_idx)
+                else:
+                    label = str(block_number)
+
+                file_label = 'block_prod_summ_' + label
+                file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
+                production_group_api12_summary_df.to_csv(file_name, index=False)
+
+                file_label = 'block_prod_raw_' + label
+                
+                SheetNames = [str(item) for item in api12_array]
+                file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.xlsx')
+                cfg_temp = {'FileName': file_name,
+                        'SheetNames': SheetNames,
+                        "thin_border": True}
+                save_data.DataFrameArray_To_xlsx_openpyxl(production_api12_array, cfg_temp)
+                
+                
+        return cfg
+
+    def analyze_data_for_api12(self, cfg, api12, api12_df):
         if not api12_df.empty:
-            self.output_data_production_df_array = {}
             completion_name_list = api12_df.COMPLETION_NAME.unique()
+            if len(completion_name_list) > 1:
+                raise ValueError("Multiple completions found for single API12. SME to assess the data.")
             for completion_name in completion_name_list:
                 df_temp = api12_df[api12_df.COMPLETION_NAME == completion_name].copy()
                 df_temp = self.add_production_rate_and_date_to_df(df_temp)
                 df_temp.sort_values(by=['PRODUCTION_DATETIME'], inplace=True)
                 df_temp.reset_index(inplace=True)
                 if df_temp.O_PROD_RATE_BOPD.max() > 0:
-                    well_api12 = df_temp.API_WELL_NUMBER.iloc[0]
-                    well_api10 = str(well_api12)[0:10]
-                    self.add_production_and_completion_name_to_well_data(well_api12, well_api10, completion_name, df_temp)
-                    api12_label = str(well_api12) + '_' + completion_name.strip()
-                    self.output_data_production_df_array.update({api12_label: df_temp})
-                    file_name = 'api12_' + api12_label + '_production_data.csv'
+                    api10 = str(api12)[0:10]
+                    summary_df = self.add_production_and_completion_name_to_well_data(api12, api10, completion_name, df_temp)
+                    api12_label = str(api12)
+
+                    prod_anal_api12_dict = {api12: df_temp}
+
+                    file_name = 'prod_anal_api12_' + api12_label + '.csv'
                     file_name = os.path.join(cfg['Analysis']['result_folder'], file_name)
                     df_temp.to_csv(file_name, index=False)
-                    logging.info("Production data is prepared for well: " + str(well_api12) + " completion: " + completion_name)
+                    logging.debug(f"Production data is prepared for well: {api12} Completion: {completion_name}")
 
         else:
-            logging.warning("No production data found in the input file")
+            prod_anal_api12_dict = {'api12_df': api12_df, 'api12': api12, 'summary_df': summary_df}
+            logging.debug("No production data found in the input file")
 
-            print("Production data is prepared")
-
+        return cfg, prod_anal_api12_dict
 
     def add_production_and_completion_name_to_well_data(self, well_api12, well_api10, completion_name, df_temp):
 
