@@ -92,13 +92,15 @@ class ProductionAPI12Analysis():
                     api10 = str(api12)[0:10]
                     summary_df = self.add_production_and_completion_name_to_well_data(api12, api10, completion_name, df_temp)
                     api12_label = str(api12)
+                else:
+                    summary_df = pd.DataFrame()
 
-                    prod_anal_api12_dict = {'api12_df': df_temp, 'api12': api12, 'summary_df': summary_df}
+                prod_anal_api12_dict = {'api12_df': df_temp, 'api12': api12, 'summary_df': summary_df}
 
-                    # file_name = 'prod_anal_api12_' + api12_label + '.csv'
-                    # file_name = os.path.join(cfg['Analysis']['result_folder'], file_name)
-                    # df_temp.to_csv(file_name, index=False)
-                    # logging.debug(f"Production data is prepared for well: {api12} Completion: {completion_name}")
+                # file_name = 'prod_anal_api12_' + api12_label + '.csv'
+                # file_name = os.path.join(cfg['Analysis']['result_folder'], file_name)
+                # df_temp.to_csv(file_name, index=False)
+                # logging.debug(f"Production data is prepared for well: {api12} Completion: {completion_name}")
 
         else:
             prod_anal_api12_dict = {'api12_df': api12_df, 'api12': api12, 'summary_df': pd.DataFrame()}
