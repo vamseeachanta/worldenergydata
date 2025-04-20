@@ -13,7 +13,7 @@ class bsee:
     
         cfg[cfg['basename']] = {}
         cfg[cfg['basename']].update({'data': cfg['data'].copy()})
-        cfg[cfg['basename']].update({'analysis': cfg['analysis'].copy()})
+        cfg[cfg['basename']].update({'analysis': cfg.get('analysis', {}).copy()})
 
         cfg, data = bsee_data.router(cfg)
 
