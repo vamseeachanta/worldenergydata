@@ -1,0 +1,10 @@
+meta:
+  library: energydata
+  basename: bsee
+
+data:
+  refresh: True
+ 
+
+default:
+  log_level: INFO

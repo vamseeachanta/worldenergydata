@@ -28,7 +28,7 @@ class ProductionDataFromSources:
             api12_array_production_data = []
             for api12 in api12_array:
 
-                api12_df = production_from_zip.get_production_data_by_wellapi12(cfg, api12)
+                api12_df = production_from_zip.get_production_data_by_wellapi12_array(cfg, api12)
                 if api12_df.empty:
                     api12_df = pd.DataFrame()
 
