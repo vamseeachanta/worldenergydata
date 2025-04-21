@@ -24,6 +24,9 @@ logging.getLogger('scrapy').propagate = False  # to avoid displaying log outputs
 class SpiderBsee(scrapy.Spider):
     name = 'Production_data'
     start_urls = ['https://www.data.bsee.gov/Production/ProductionData/Default.aspx']
+    custom_settings = {
+            "REQUEST_FINGERPRINTER_IMPLEMENTATION": "2.7"
+        }
 
     def __init__(self, input_item=None, cfg=None, data_store=None,*args, **kwargs):
         super(SpiderBsee, self).__init__(*args, **kwargs)

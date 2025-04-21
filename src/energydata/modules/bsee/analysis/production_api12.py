@@ -100,8 +100,9 @@ class ProductionAPI12Analysis():
 
         columns = ['API12', 'API10', 'O_PROD_STATUS', 'O_CUMMULATIVE_PROD_MMBBL', 'DAYS_ON_PROD', 'O_MEAN_PROD_RATE_BOPD', 'COMPLETION_NAME', 'monthly_production']
         production_summary_df = pd.DataFrame(columns=columns)
+        production_summary_df = production_summary_df.astype({'API12': str, 'API10': str, 'O_PROD_STATUS': int, 'O_CUMMULATIVE_PROD_MMBBL': float, 'DAYS_ON_PROD': int, 'O_MEAN_PROD_RATE_BOPD': float, 'COMPLETION_NAME': str, 'monthly_production': float})
 
-        values = [well_api12, well_api10, 0, 0, 0, 0, completion_name, None]
+        values = [well_api12, well_api10, 0.0, 0.0, 0.0, 0.0, completion_name, None]
         production_summary_df.loc[0] = values
 
         total_well_production = df_temp.MON_O_PROD_VOL.sum() / 1000 / 1000
@@ -114,12 +115,14 @@ class ProductionAPI12Analysis():
             df_row_index = df_temp.index[0]
 
             current_value = production_summary_df.O_CUMMULATIVE_PROD_MMBBL.iloc[0]
-            production_summary_df.loc[df_row_index, "O_CUMMULATIVE_PROD_MMBBL"] = current_value + total_well_production
+            O_CUMMULATIVE_PROD_MMBBL = current_value + total_well_production
+            production_summary_df.loc[df_row_index, "O_CUMMULATIVE_PROD_MMBBL"] = float(O_CUMMULATIVE_PROD_MMBBL)
 
             DAYS_ON_PROD = df_temp.DAYS_ON_PROD.sum()
             production_summary_df.loc[df_row_index, "DAYS_ON_PROD"] = DAYS_ON_PROD
 
-            production_summary_df.loc[df_row_index, "O_MEAN_PROD_RATE_BOPD"] = df_temp.MON_O_PROD_VOL.sum() / DAYS_ON_PROD
+            O_MEAN_PROD_RATE_BOPD = df_temp.MON_O_PROD_VOL.sum() / DAYS_ON_PROD
+            production_summary_df.loc[df_row_index, "O_MEAN_PROD_RATE_BOPD"] = float(O_MEAN_PROD_RATE_BOPD)
 
             production_summary_df.loc[df_row_index, "O_PROD_STATUS"] = 1
 
