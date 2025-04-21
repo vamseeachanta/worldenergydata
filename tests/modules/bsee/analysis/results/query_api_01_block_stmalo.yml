@@ -6,7 +6,10 @@ type:
 parameters:
   filepath:
     data: data/modules/bsee/data
-    production: data/modules/bsee/production
+    production:
+      csv: data\modules\bsee\csv\production
+      zip: data\modules\bsee\zip\production
+      bin: data\modules\bsee\bin\production
     block: data/modules/bsee/block
     APD: data/modules/bsee/data/csv/online_query_raw_data
   max_allowed_npt: 90
@@ -67,8 +70,6 @@ data_retrieval:
           ASPxFormLayout1$ASPxTextBoxLN: ~
           __EVENTTARGET: ASPxFormLayout2$btnCsvExport
           __EVENTARGUMENT: Click
-    csv: data\modules\bsee\csv\production
-    zip: data\modules\bsee\zip\production
   block:
     website:
       url: https://www.data.bsee.gov/Well/APD/Default.aspx
@@ -99,56 +100,21 @@ data:
   production_data: true
   groups:
   - bottom_block:
-    - 634
+    - 633
     api12:
-    - 427034051601
-    - 427034038702
-    - 608124004400
-    - 608124005400
+    - 427034057700
     - 608124005500
-    - 608124005300
-    - 608124010700
-    - 608124010701
-    - 608174143100
-    label: 634
-    file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\634.csv
+    label: 633
+    file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\633.csv
     well_data:
     - api12:
-      - 427034051601
-      label: '427034051601'
-      file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\427034051601.csv
-    - api12:
-      - 427034038702
-      label: '427034038702'
-      file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\427034038702.csv
-    - api12:
-      - 608124004400
-      label: '608124004400'
-      file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124004400.csv
-    - api12:
-      - 608124005400
-      label: '608124005400'
-      file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005400.csv
+      - 427034057700
+      label: '427034057700'
+      file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\427034057700.csv
     - api12:
       - 608124005500
       label: '608124005500'
       file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005500.csv
-    - api12:
-      - 608124005300
-      label: '608124005300'
-      file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005300.csv
-    - api12:
-      - 608124010700
-      label: '608124010700'
-      file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124010700.csv
-    - api12:
-      - 608124010701
-      label: '608124010701'
-      file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124010701.csv
-    - api12:
-      - 608174143100
-      label: '608174143100'
-      file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608174143100.csv
 analysis:
   flag: true
   api12: true
@@ -158,7 +124,7 @@ Analysis:
   file_name: query_api_01_block_stmalo
   file_name_for_overwrite: query_api_01_block_stmalo
   log_folder: k:\github\energydata\tests\modules\bsee\analysis\logs
-  start_time: 2025-04-16 16:02:11.645316
+  start_time: 2025-04-20 08:08:59.878796
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: k:\github\energydata\tests\modules\bsee\analysis\query_api_01_block_stmalo.yml
@@ -171,80 +137,22 @@ bsee:
     production_data: true
     groups:
     - bottom_block:
-      - 634
+      - 633
       api12:
-      - 427034051601
-      - 427034038702
-      - 608124004400
-      - 608124005400
+      - 427034057700
       - 608124005500
-      - 608124005300
-      - 608124010700
-      - 608124010701
-      - 608174143100
-      label: 634
-      file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\634.csv
+      label: 633
+      file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\633.csv
       well_data:
       - api12:
-        - 427034051601
-        label: '427034051601'
-        file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\427034051601.csv
-      - api12:
-        - 427034038702
-        label: '427034038702'
-        file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\427034038702.csv
-      - api12:
-        - 608124004400
-        label: '608124004400'
-        file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124004400.csv
-      - api12:
-        - 608124005400
-        label: '608124005400'
-        file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005400.csv
+        - 427034057700
+        label: '427034057700'
+        file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\427034057700.csv
       - api12:
         - 608124005500
         label: '608124005500'
         file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005500.csv
-      - api12:
-        - 608124005300
-        label: '608124005300'
-        file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005300.csv
-      - api12:
-        - 608124010700
-        label: '608124010700'
-        file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124010700.csv
-      - api12:
-        - 608124010701
-        label: '608124010701'
-        file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124010701.csv
-      - api12:
-        - 608174143100
-        label: '608174143100'
-        file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608174143100.csv
     type: csv
   analysis:
     flag: true
     api12: true
-zip_utilities:
-  technique: zip_files_to_df
-  input_directory: K:\github\energydata\data\modules\bsee\zip\production
-  column_names:
-  - LEASE_NUMBER
-  - COMPLETION_NAME
-  - PRODUCTION_DATE
-  - DAYS_ON_PROD
-  - PRODUCT_CODE
-  - MON_O_PROD_VOL
-  - MON_G_PROD_VOL
-  - MON_WTR_PROD_VOL
-  - API_WELL_NUMBER
-  - WELL_STAT_CD
-  - AREA_CODE_BLOCK_NUM
-  - OPERATOR_NUM
-  - SORT_NAME
-  - BOEM_FIELD
-  - INJECTION_VOLUME
-  - PROD_INTERVAL_CD
-  - FIRST_PROD_DATE
-  - UNIT_AGT_NUMBER
-  - UNIT_ALOC_SUFFIX

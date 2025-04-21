@@ -25,16 +25,9 @@ class ProductionDataFromSources:
         for group_idx in range(0, len(cfg['data']['groups'])):
             production_data_group = cfg['data']['groups'][group_idx].copy()
             api12_array = production_data_group['api12']
-            api12_array_production_data = []
-            for api12 in api12_array:
 
-                api12_df = production_from_zip.get_production_data_by_wellapi12_array(cfg, api12)
-                if api12_df.empty:
-                    api12_df = pd.DataFrame()
-
-                api12_array_production_data.append({api12: api12_df})
-
-            production_data_groups.append(api12_array_production_data)
+            df_api12_array = production_from_zip.get_data_by_api12_array(cfg, api12_array)
+            production_data_groups.append(df_api12_array)
 
         return cfg, production_data_groups
 

@@ -35,11 +35,9 @@ class ProductionAPI12Analysis():
             for group_idx in range(0, len(production_groups)):
                 production_group = production_groups[group_idx]
                 api12_array = cfg['data']['groups'][group_idx]['api12']
-                for api12_idx in range(0, len(production_group)):
-                    production_data = production_group[api12_idx]
-
+                for api12_idx in range(0, len(api12_array)):
                     api12 = api12_array[api12_idx]
-                    api12_df = production_data[api12]
+                    api12_df = production_group[api12]
 
                     cfg, prod_anal_api12_dict= self.analyze_data_for_api12(cfg, api12, api12_df)
                     summary_df = prod_anal_api12_dict['summary_df']
@@ -79,32 +77,22 @@ class ProductionAPI12Analysis():
         return cfg
 
     def analyze_data_for_api12(self, cfg, api12, api12_df):
+        api12_df_analyzed = api12_df.copy()
+        summary_df = pd.DataFrame()
+        completion_names = []
         if not api12_df.empty:
-            completion_name_list = api12_df.COMPLETION_NAME.unique()
-            if len(completion_name_list) > 1:
-                raise ValueError("Multiple completions found for single API12. SME to assess the data.")
-            for completion_name in completion_name_list:
-                df_temp = api12_df[api12_df.COMPLETION_NAME == completion_name].copy()
-                df_temp = self.add_production_rate_and_date_to_df(df_temp)
-                df_temp.sort_values(by=['PRODUCTION_DATETIME'], inplace=True)
-                df_temp.reset_index(inplace=True)
-                if df_temp.O_PROD_RATE_BOPD.max() > 0:
+            completion_names = api12_df.COMPLETION_NAME.unique()
+
+            for completion_name in completion_names:
+                api12_df_analyzed = api12_df[api12_df.COMPLETION_NAME == completion_name].copy()
+                api12_df_analyzed = self.add_production_rate_and_date_to_df(api12_df_analyzed)
+                api12_df_analyzed.sort_values(by=['PRODUCTION_DATETIME'], inplace=True)
+                api12_df_analyzed.reset_index(inplace=True)
+                if api12_df_analyzed.O_PROD_RATE_BOPD.max() > 0:
                     api10 = str(api12)[0:10]
-                    summary_df = self.add_production_and_completion_name_to_well_data(api12, api10, completion_name, df_temp)
-                    api12_label = str(api12)
-                else:
-                    summary_df = pd.DataFrame()
+                    summary_df = self.add_production_and_completion_name_to_well_data(api12, api10, completion_name, api12_df_analyzed)
 
-                prod_anal_api12_dict = {'api12_df': df_temp, 'api12': api12, 'summary_df': summary_df}
-
-                # file_name = 'prod_anal_api12_' + api12_label + '.csv'
-                # file_name = os.path.join(cfg['Analysis']['result_folder'], file_name)
-                # df_temp.to_csv(file_name, index=False)
-                # logging.debug(f"Production data is prepared for well: {api12} Completion: {completion_name}")
-
-        else:
-            prod_anal_api12_dict = {'api12_df': api12_df, 'api12': api12, 'summary_df': pd.DataFrame()}
-            logging.debug("No production data found in the input file")
+        prod_anal_api12_dict = {'api12_df': api12_df_analyzed, 'api12': api12, 'summary_df': summary_df, 'completion_names': completion_names}
 
         return cfg, prod_anal_api12_dict
 
