@@ -30,6 +30,9 @@ class BSEESpider(scrapy.Spider):
 
     name = 'well_data_by_block'
     start_urls = ['https://www.data.bsee.gov/Well/APD/Default.aspx']
+    custom_settings = {
+            "REQUEST_FINGERPRINTER_IMPLEMENTATION": "2.7"
+        }
 
     def __init__(self, input_item=None, cfg=None, *args, **kwargs):
         super(BSEESpider, self).__init__(*args, **kwargs)

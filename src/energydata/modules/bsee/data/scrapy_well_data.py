@@ -32,7 +32,9 @@ class BSEEDataSpider(scrapy.Spider):
     name = 'API_well_data'
     # Starting URL for the spider
     start_urls = ['https://www.data.bsee.gov/Well/APD/Default.aspx']
-
+    custom_settings = {
+            "REQUEST_FINGERPRINTER_IMPLEMENTATION": "2.7"
+        }
     # Initialize the spider with input item and configuration
     def __init__(self, input_item=None, cfg=None, data_store=None,*args, **kwargs):
         super(BSEEDataSpider, self).__init__(*args, **kwargs)
@@ -50,7 +52,7 @@ class BSEEDataSpider(scrapy.Spider):
         first_request_data = self.cfg['data_retrieval']['well']['website']['form_data']['first_request'].copy()
         first_request_data['ASPxFormLayout1$ASPxTextBoxAPI'] = api_num
 
-        logger.info(f"Data for API12 {api_label} ... START")
+        logger.debug(f"Data for API12 {api_label} ... START")
 
         # Submit the form and proceed to step2
         yield FormRequest.from_response(response, formdata=first_request_data, callback=self.step2)
@@ -87,9 +89,7 @@ class BSEEDataSpider(scrapy.Spider):
             else:
                 with open(output_file_name, 'wb') as f:
                     f.write(response.body)
-                    logger.info("\n****The Scraped data of given value ****\n")
-                    logger.debug(response_csv)
-                    logger.info(f"Data for API {api_label} ... COMPLETE")
+                    logger.debug(f"\n****The Scraped data of given value ****\n {response_csv} \nData for API {api_label} ... COMPLETE")
 
                 self.data_store['data'] = response_csv  # Store DataFrame in data_store
 
@@ -104,6 +104,7 @@ class ScrapyRunnerAPI:
             'LOG_LEVEL': 'CRITICAL',
             'REQUEST_FINGERPRINTER_IMPLEMENTATION': '2.7'
         })
+
 
     @wait_for(timeout=180.0) 
     def run_spider(self, cfg, input_item):
