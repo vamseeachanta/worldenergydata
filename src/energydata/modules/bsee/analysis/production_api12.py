@@ -30,9 +30,11 @@ class ProductionAPI12Analysis():
         production_groups = data.get('production_data', None)
         if production_groups is not None:
             production_group_api12_summary_df = pd.DataFrame()
-            production_group_data_df = pd.DataFrame()
             production_api12_array = []
+            production_group_data_df_array = []
             for group_idx in range(0, len(production_groups)):
+                production_group_data_df = pd.DataFrame(columns=['PRODUCTION_DATETIME'])
+                production_all_group_df = pd.DataFrame(columns=['PRODUCTION_DATETIME'])
                 production_group = production_groups[group_idx]
                 api12_array = cfg['data']['groups'][group_idx]['api12']
                 for api12_idx in range(0, len(api12_array)):
@@ -48,9 +50,15 @@ class ProductionAPI12Analysis():
                         prod_anal_api12_df = pd.DataFrame(columns=['PRODUCTION_DATETIME', 'O_PROD_RATE_BOPD'])
                     prod_anal_api12_df_PROD_RATE = prod_anal_api12_df[['PRODUCTION_DATETIME', 'O_PROD_RATE_BOPD']]
                     prod_anal_api12_df_PROD_RATE = prod_anal_api12_df_PROD_RATE.rename(columns={'O_PROD_RATE_BOPD': api12})
-                    production_group_data_df = pd.concat([production_group_data_df, prod_anal_api12_df_PROD_RATE], ignore_index=True)
-                    production_group_data_df = production_group_data_df.replace({np.nan: None})
+                    if len(prod_anal_api12_df) > 0:
+                        production_group_data_df = pd.merge(production_group_data_df, prod_anal_api12_df_PROD_RATE, on=['PRODUCTION_DATETIME'], how='outer')
+                        production_group_data_df = production_group_data_df.replace({np.nan: None})
+                        production_group_data_df.sort_values(by=['PRODUCTION_DATETIME'], inplace=True)
+                        production_group_data_df.reset_index(inplace=True, drop=True)
 
+                production_group_data_df_array.append(production_group_data_df)
+                production_all_group_df = pd.merge(production_all_group_df, production_group_data_df, on=['PRODUCTION_DATETIME'], how='outer')
+                
                 block_number = cfg['data']['groups'][group_idx].get('bottom_block', [None])[0]
                 if block_number is None:
                     label = str(group_idx)
@@ -68,12 +76,16 @@ class ProductionAPI12Analysis():
                 file_label = 'block_prod_raw_' + label
                 SheetNames = [str(item) for item in api12_array]
                 file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.xlsx')
-                cfg_temp = {'FileName': file_name,
-                        'SheetNames': SheetNames,
-                        "thin_border": True}
+                cfg_temp = {"FileName": file_name,
+                            "SheetNames": SheetNames,
+                            "thin_border": True}
                 save_data.DataFrameArray_To_xlsx_openpyxl(production_api12_array, cfg_temp)
-                
-                
+
+            production_data_analysis = {}
+            production_data_analysis['production_group_api12_summary_df'] = production_group_api12_summary_df
+            production_data_analysis['production_group_data_df'] = production_group_data_df
+            production_data_analysis['production_api12_array'] = production_api12_array
+
         return cfg
 
     def analyze_data_for_api12(self, cfg, api12, api12_df):
@@ -128,16 +140,11 @@ class ProductionAPI12Analysis():
 
             current_completion_name = production_summary_df.loc[df_row_index, "COMPLETION_NAME"]
 
-
             if current_completion_name == "":
                 production_summary_df.loc[df_row_index, "COMPLETION_NAME"] = completion_name
             else:
                 completion_name = current_completion_name + ',' + completion_name
                 production_summary_df.loc[df_row_index, "COMPLETION_NAME"] = completion_name
-
-            production_summary_df.loc[df_row_index, "monthly_production"] = json.dumps(
-                api12_production.to_dict(orient='records'))
-
 
         return production_summary_df
 
