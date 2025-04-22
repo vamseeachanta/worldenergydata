@@ -1,6 +1,7 @@
 meta:
   library: energydata
   basename: bsee
+  label: goa_stmalo
   
 basename: bsee
 

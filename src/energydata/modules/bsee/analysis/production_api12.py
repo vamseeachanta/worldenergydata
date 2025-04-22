@@ -28,50 +28,81 @@ class ProductionAPI12Analysis():
 
     def run_production_data_analysis(self, cfg, data):
         production_groups = data.get('production_data', None)
-        production_data_analysis_groups = {}
+        groups_dict = {}
         if production_groups is None:
             raise ValueError("No production data found in the provided data.")
 
         production_summary_df_groups = pd.DataFrame()
         production_df_api12s = []  # Reset for each group to avoid unintended data accumulation
         production_analysis_df_groups = pd.DataFrame(columns=['PRODUCTION_DATETIME'])
-        for group_idx in range(0, len(production_groups)):
+        api12_array_groups = []
+        for group_idx, production_group in enumerate(production_groups):
             production_analysis_df_group = pd.DataFrame(columns=['PRODUCTION_DATETIME'])
-            production_group = production_groups[group_idx]
-            api12_array = cfg['data']['groups'][group_idx]['api12']
-            for api12_idx in range(0, len(api12_array)):
-                api12 = api12_array[api12_idx]
+            api12_array_group = cfg['data']['groups'][group_idx]['api12']
+            api12_array_groups = api12_array_groups + api12_array_group
+
+            for api12_idx, api12 in enumerate(api12_array_group):
                 production_df_api12 = production_group[api12]
 
-                cfg, production_analysis_dict_api12= self.analyze_data_for_api12(cfg, api12, production_df_api12)
-                summary_df_api12 = production_analysis_dict_api12['summary_df']
+                _, production_analysis_dict_api12 = self.analyze_data_for_api12(
+                    cfg, api12, production_df_api12)
+                summary_df_api12 = production_analysis_dict_api12['summary_df_api12']
                 production_analysis_df_api12 = production_analysis_dict_api12['api12_df']
 
                 production_df_api12s.append(production_analysis_df_api12)
-                production_summary_df_groups = pd.concat([production_summary_df_groups, summary_df_api12], ignore_index=True)
-                if len(production_analysis_df_api12) == 0:
-                    production_analysis_df_api12 = pd.DataFrame(columns=['PRODUCTION_DATETIME', 'O_PROD_RATE_BOPD'])
-                prod_anal_api12_df_PROD_RATE = production_analysis_df_api12[['PRODUCTION_DATETIME', 'O_PROD_RATE_BOPD']]
-                prod_anal_api12_df_PROD_RATE = prod_anal_api12_df_PROD_RATE.rename(columns={'O_PROD_RATE_BOPD': api12})
-                if len(production_analysis_df_api12) > 0:
-                    production_analysis_df_group = pd.merge(production_analysis_df_group, prod_anal_api12_df_PROD_RATE, on=['PRODUCTION_DATETIME'], how='outer')
-                    production_analysis_df_group = production_analysis_df_group.replace({np.nan: None})
-                    production_analysis_df_group.sort_values(by=['PRODUCTION_DATETIME'], inplace=True)
-                    production_analysis_df_group.reset_index(inplace=True, drop=True)
+                production_summary_df_groups = pd.concat(
+                    [production_summary_df_groups, summary_df_api12], 
+                    ignore_index=True
+                )
 
-            production_analysis_df_groups = pd.merge(production_analysis_df_groups, production_analysis_df_group, on=['PRODUCTION_DATETIME'], how='outer')
+                if not len(production_analysis_df_api12):
+                    production_analysis_df_api12 = pd.DataFrame(
+                    columns=['PRODUCTION_DATETIME', 'O_PROD_RATE_BOPD']
+                    )
 
-            self.group_save_result(cfg, group_idx, production_analysis_df_group)
+                prod_anal_api12_df_rate = production_analysis_df_api12[
+                    ['PRODUCTION_DATETIME', 'O_PROD_RATE_BOPD']
+                ].rename(columns={'O_PROD_RATE_BOPD': api12})
 
-        self.groups_save_result(cfg, production_summary_df_groups, production_df_api12s, production_analysis_df_groups, api12_array)
+                production_analysis_df_group = pd.merge(
+                production_analysis_df_group, 
+                prod_anal_api12_df_rate, 
+                on=['PRODUCTION_DATETIME'], 
+                how='outer'
+                )
+                
+            production_analysis_df_group = production_analysis_df_group.replace({np.nan: None})
+            production_analysis_df_group.sort_values(
+            by=['PRODUCTION_DATETIME'], 
+            inplace=True
+            )
+            production_analysis_df_group.reset_index(inplace=True, drop=True)
 
-        production_data_analysis_groups['production_df_api12s'] = production_df_api12s
-        production_data_analysis_groups['production_analysis_df_groups'] = production_analysis_df_groups
-        production_data_analysis_groups['production_summary_df_groups'] = production_summary_df_groups
+            self.save_result_group(cfg, group_idx, production_analysis_df_group)
 
-        return cfg, production_data_analysis_groups
+            production_analysis_df_groups = pd.merge(
+            production_analysis_df_groups,
+            production_analysis_df_group,
+            on=['PRODUCTION_DATETIME'],
+            how='outer'
+            )
 
-    def group_save_result(self, cfg, group_idx, production_analysis_df_group):
+        production_analysis_df_groups = production_analysis_df_groups.replace({np.nan: None})
+        production_analysis_df_groups.sort_values(
+        by=['PRODUCTION_DATETIME'], 
+        inplace=True
+        )
+        production_analysis_df_groups.reset_index(inplace=True, drop=True)
+
+        self.save_result_groups(cfg, production_summary_df_groups, production_df_api12s, production_analysis_df_groups, api12_array_groups)
+
+        groups_dict['production_df_api12s'] = production_df_api12s
+        groups_dict['production_analysis_df_groups'] = production_analysis_df_groups
+        groups_dict['production_summary_df_groups'] = production_summary_df_groups
+
+        return cfg, groups_dict
+
+    def save_result_group(self, cfg, group_idx, production_analysis_df_group):
         block_number = cfg['data']['groups'][group_idx].get('bottom_block', [None])[0]
         if block_number is None:
             group_label = str(group_idx)
@@ -82,12 +113,12 @@ class ProductionAPI12Analysis():
         file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
         production_analysis_df_group.to_csv(file_name, index=False)
 
-    def groups_save_result(self, cfg, production_summary_df_groups, production_df_api12s, production_analysis_df_groups, api12_array, group_label):
+    def save_result_groups(self, cfg, production_summary_df_groups, production_df_api12s, production_analysis_df_groups, api12_array):
         groups_label = cfg['meta'].get('label', None)
         if groups_label is None:
             groups_label = cfg['Analysis']['file_name_for_overwrite']
 
-        file_label = 'prod_raw_block_' + group_label
+        file_label = 'prod_raw_' + groups_label
         SheetNames = [str(item) for item in api12_array]
         file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.xlsx')
         cfg_temp = {"FileName": file_name,
@@ -97,38 +128,51 @@ class ProductionAPI12Analysis():
                 production_df_api12s, cfg_temp
             )
 
-        file_label = 'prod_summ_block_' + group_label
+        file_label = 'prod_summ_' + groups_label
         file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
         production_summary_df_groups.to_csv(file_name, index=False)
 
-
     def analyze_data_for_api12(self, cfg, api12, api12_df):
         api12_df_analyzed = api12_df.copy()
-        summary_df = pd.DataFrame()
+        summary_df_api12 = pd.DataFrame()
         completion_names = []
         if not api12_df.empty:
             completion_names = api12_df.COMPLETION_NAME.unique()
 
-            for completion_name in completion_names:
-                api12_df_analyzed = api12_df[api12_df.COMPLETION_NAME == completion_name].copy()
-                api12_df_analyzed = self.add_production_rate_and_date_to_df(api12_df_analyzed)
-                api12_df_analyzed.sort_values(by=['PRODUCTION_DATETIME'], inplace=True)
-                api12_df_analyzed.reset_index(inplace=True)
-                if api12_df_analyzed.O_PROD_RATE_BOPD.max() > 0:
-                    api10 = str(api12)[0:10]
-                    summary_df = self.add_production_and_completion_name_to_well_data(api12, api10, completion_name, api12_df_analyzed)
+        for completion_name in completion_names:
+            api12_df_analyzed = api12_df[api12_df.COMPLETION_NAME == completion_name].copy()
+            api12_df_analyzed = self.add_production_rate_and_date_to_df(api12_df_analyzed)
+            api12_df_analyzed.sort_values(by=['PRODUCTION_DATETIME'], inplace=True)
+            api12_df_analyzed.reset_index(inplace=True)
+            if api12_df_analyzed.O_PROD_RATE_BOPD.max() > 0:
+                api10 = str(api12)[0:10]
+                summary_df_api12_by_completion_name = self.get_summary_df_api12(
+                    api12,
+                    api10,
+                    completion_name,
+                    api12_df_analyzed
+                )
+                summary_df_api12 = pd.concat(
+                    [summary_df_api12, summary_df_api12_by_completion_name],
+                    ignore_index=True
+                )
 
-        prod_anal_api12_dict = {'api12_df': api12_df_analyzed, 'api12': api12, 'summary_df': summary_df, 'completion_names': completion_names}
+        prod_anal_api12_dict = {
+            'api12_df': api12_df_analyzed,
+            'api12': api12,
+            'summary_df_api12': summary_df_api12,
+            'completion_names': completion_names
+        }
 
         return cfg, prod_anal_api12_dict
 
-    def add_production_and_completion_name_to_well_data(self, well_api12, well_api10, completion_name, df_temp):
+    def get_summary_df_api12(self, well_api12, well_api10, completion_name, df_temp):
 
-        columns = ['API12', 'API10', 'O_PROD_STATUS', 'O_CUMMULATIVE_PROD_MMBBL', 'DAYS_ON_PROD', 'O_MEAN_PROD_RATE_BOPD', 'COMPLETION_NAME', 'monthly_production']
+        columns = ['API12', 'API10', 'O_PROD_STATUS', 'O_CUMMULATIVE_PROD_MMBBL', 'DAYS_ON_PROD', 'O_MEAN_PROD_RATE_BOPD', 'COMPLETION_NAME']
         production_summary_df = pd.DataFrame(columns=columns)
-        production_summary_df = production_summary_df.astype({'API12': str, 'API10': str, 'O_PROD_STATUS': int, 'O_CUMMULATIVE_PROD_MMBBL': float, 'DAYS_ON_PROD': int, 'O_MEAN_PROD_RATE_BOPD': float, 'COMPLETION_NAME': str, 'monthly_production': float})
+        production_summary_df = production_summary_df.astype({'API12': str, 'API10': str, 'O_PROD_STATUS': int, 'O_CUMMULATIVE_PROD_MMBBL': float, 'DAYS_ON_PROD': int, 'O_MEAN_PROD_RATE_BOPD': float, 'COMPLETION_NAME': str})
 
-        values = [well_api12, well_api10, 0.0, 0.0, 0.0, 0.0, completion_name, None]
+        values = [well_api12, well_api10, 0.0, 0.0, 0.0, 0.0, completion_name]
         production_summary_df.loc[0] = values
 
         total_well_production = df_temp.MON_O_PROD_VOL.sum() / 1000 / 1000
@@ -151,14 +195,6 @@ class ProductionAPI12Analysis():
             production_summary_df.loc[df_row_index, "O_MEAN_PROD_RATE_BOPD"] = float(O_MEAN_PROD_RATE_BOPD)
 
             production_summary_df.loc[df_row_index, "O_PROD_STATUS"] = 1
-
-            current_completion_name = production_summary_df.loc[df_row_index, "COMPLETION_NAME"]
-
-            if current_completion_name == "":
-                production_summary_df.loc[df_row_index, "COMPLETION_NAME"] = completion_name
-            else:
-                completion_name = current_completion_name + ',' + completion_name
-                production_summary_df.loc[df_row_index, "COMPLETION_NAME"] = completion_name
 
         return production_summary_df
 
