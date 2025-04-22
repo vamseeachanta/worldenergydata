@@ -149,7 +149,7 @@ Analysis:
   file_name: query_api_01_block_stmalo
   file_name_for_overwrite: query_api_01_block_stmalo
   log_folder: K:\github\energydata\tests\modules\bsee\analysis\logs
-  start_time: 2025-04-21 16:38:20.493887
+  start_time: 2025-04-22 04:47:27.045457
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: query_api_01_block_stmalo.yml
