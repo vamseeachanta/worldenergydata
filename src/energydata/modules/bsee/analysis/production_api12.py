@@ -94,7 +94,7 @@ class ProductionAPI12Analysis():
         )
         production_analysis_df_groups.reset_index(inplace=True, drop=True)
 
-        self.save_result_groups(cfg, production_summary_df_groups, production_df_api12s, production_analysis_df_groups, api12_array_groups)
+        self.save_result_groups(cfg, production_df_api12s, production_summary_df_groups, production_analysis_df_groups, api12_array_groups)
 
         groups_dict['production_df_api12s'] = production_df_api12s
         groups_dict['production_analysis_df_groups'] = production_analysis_df_groups
@@ -113,24 +113,38 @@ class ProductionAPI12Analysis():
         file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
         production_analysis_df_group.to_csv(file_name, index=False)
 
-    def save_result_groups(self, cfg, production_summary_df_groups, production_df_api12s, production_analysis_df_groups, api12_array):
+    def save_result_groups(self, cfg, production_df_api12s, production_summary_df_groups, production_analysis_df_groups, api12_array_groups):
         groups_label = cfg['meta'].get('label', None)
         if groups_label is None:
             groups_label = cfg['Analysis']['file_name_for_overwrite']
 
         file_label = 'prod_raw_' + groups_label
-        SheetNames = [str(item) for item in api12_array]
-        file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.xlsx')
-        cfg_temp = {"FileName": file_name,
-                        "SheetNames": SheetNames,
-                        "thin_border": True}
+        sheet_names = [str(item) for item in api12_array_groups]
+        result_folder = cfg['Analysis']['result_folder']
+        file_name = os.path.join(result_folder, file_label + '.xlsx')
+        cfg_xlsx = {
+            "FileName": file_name,
+            "SheetNames": sheet_names,
+            "thin_border": True
+        }
         save_data.DataFrameArray_To_xlsx_openpyxl(
-                production_df_api12s, cfg_temp
-            )
+            production_df_api12s, cfg_xlsx
+        )
 
         file_label = 'prod_summ_' + groups_label
-        file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
+        file_name = os.path.join(
+            result_folder,
+            file_label + '.csv'
+        )
         production_summary_df_groups.to_csv(file_name, index=False)
+
+        file_label = 'prod_rate_' + groups_label
+        file_name = os.path.join(
+            result_folder,
+            file_label + '.csv'
+        )
+        production_analysis_df_groups.to_csv(file_name, index=False)
+
 
     def analyze_data_for_api12(self, cfg, api12, api12_df):
         api12_df_analyzed = api12_df.copy()
