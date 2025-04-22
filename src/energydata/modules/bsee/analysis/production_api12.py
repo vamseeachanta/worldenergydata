@@ -28,65 +28,79 @@ class ProductionAPI12Analysis():
 
     def run_production_data_analysis(self, cfg, data):
         production_groups = data.get('production_data', None)
-        if production_groups is not None:
-            production_group_api12_summary_df = pd.DataFrame()
-            production_api12_array = []
-            production_group_data_df_array = []
-            for group_idx in range(0, len(production_groups)):
-                production_group_data_df = pd.DataFrame(columns=['PRODUCTION_DATETIME'])
-                production_all_group_df = pd.DataFrame(columns=['PRODUCTION_DATETIME'])
-                production_group = production_groups[group_idx]
-                api12_array = cfg['data']['groups'][group_idx]['api12']
-                for api12_idx in range(0, len(api12_array)):
-                    api12 = api12_array[api12_idx]
-                    api12_df = production_group[api12]
+        production_data_analysis_groups = {}
+        if production_groups is None:
+            raise ValueError("No production data found in the provided data.")
 
-                    cfg, prod_anal_api12_dict= self.analyze_data_for_api12(cfg, api12, api12_df)
-                    summary_df = prod_anal_api12_dict['summary_df']
-                    prod_anal_api12_df = prod_anal_api12_dict['api12_df']
-                    production_api12_array.append(prod_anal_api12_df)
-                    production_group_api12_summary_df = pd.concat([production_group_api12_summary_df, summary_df], ignore_index=True)
-                    if len(prod_anal_api12_df) == 0:
-                        prod_anal_api12_df = pd.DataFrame(columns=['PRODUCTION_DATETIME', 'O_PROD_RATE_BOPD'])
-                    prod_anal_api12_df_PROD_RATE = prod_anal_api12_df[['PRODUCTION_DATETIME', 'O_PROD_RATE_BOPD']]
-                    prod_anal_api12_df_PROD_RATE = prod_anal_api12_df_PROD_RATE.rename(columns={'O_PROD_RATE_BOPD': api12})
-                    if len(prod_anal_api12_df) > 0:
-                        production_group_data_df = pd.merge(production_group_data_df, prod_anal_api12_df_PROD_RATE, on=['PRODUCTION_DATETIME'], how='outer')
-                        production_group_data_df = production_group_data_df.replace({np.nan: None})
-                        production_group_data_df.sort_values(by=['PRODUCTION_DATETIME'], inplace=True)
-                        production_group_data_df.reset_index(inplace=True, drop=True)
+        production_summary_df_groups = pd.DataFrame()
+        production_df_api12s = []  # Reset for each group to avoid unintended data accumulation
+        production_analysis_df_groups = pd.DataFrame(columns=['PRODUCTION_DATETIME'])
+        for group_idx in range(0, len(production_groups)):
+            production_analysis_df_group = pd.DataFrame(columns=['PRODUCTION_DATETIME'])
+            production_group = production_groups[group_idx]
+            api12_array = cfg['data']['groups'][group_idx]['api12']
+            for api12_idx in range(0, len(api12_array)):
+                api12 = api12_array[api12_idx]
+                production_df_api12 = production_group[api12]
 
-                production_group_data_df_array.append(production_group_data_df)
-                production_all_group_df = pd.merge(production_all_group_df, production_group_data_df, on=['PRODUCTION_DATETIME'], how='outer')
-                
-                block_number = cfg['data']['groups'][group_idx].get('bottom_block', [None])[0]
-                if block_number is None:
-                    label = str(group_idx)
-                else:
-                    label = str(block_number)
+                cfg, production_analysis_dict_api12= self.analyze_data_for_api12(cfg, api12, production_df_api12)
+                summary_df_api12 = production_analysis_dict_api12['summary_df']
+                production_analysis_df_api12 = production_analysis_dict_api12['api12_df']
 
-                file_label = 'block_prod_summ_' + label
-                file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
-                production_group_api12_summary_df.to_csv(file_name, index=False)
+                production_df_api12s.append(production_analysis_df_api12)
+                production_summary_df_groups = pd.concat([production_summary_df_groups, summary_df_api12], ignore_index=True)
+                if len(production_analysis_df_api12) == 0:
+                    production_analysis_df_api12 = pd.DataFrame(columns=['PRODUCTION_DATETIME', 'O_PROD_RATE_BOPD'])
+                prod_anal_api12_df_PROD_RATE = production_analysis_df_api12[['PRODUCTION_DATETIME', 'O_PROD_RATE_BOPD']]
+                prod_anal_api12_df_PROD_RATE = prod_anal_api12_df_PROD_RATE.rename(columns={'O_PROD_RATE_BOPD': api12})
+                if len(production_analysis_df_api12) > 0:
+                    production_analysis_df_group = pd.merge(production_analysis_df_group, prod_anal_api12_df_PROD_RATE, on=['PRODUCTION_DATETIME'], how='outer')
+                    production_analysis_df_group = production_analysis_df_group.replace({np.nan: None})
+                    production_analysis_df_group.sort_values(by=['PRODUCTION_DATETIME'], inplace=True)
+                    production_analysis_df_group.reset_index(inplace=True, drop=True)
 
-                file_label = 'block_prod_all_' + label
-                file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
-                production_group_data_df.to_csv(file_name, index=False)
+            production_analysis_df_groups = pd.merge(production_analysis_df_groups, production_analysis_df_group, on=['PRODUCTION_DATETIME'], how='outer')
 
-                file_label = 'block_prod_raw_' + label
-                SheetNames = [str(item) for item in api12_array]
-                file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.xlsx')
-                cfg_temp = {"FileName": file_name,
-                            "SheetNames": SheetNames,
-                            "thin_border": True}
-                save_data.DataFrameArray_To_xlsx_openpyxl(production_api12_array, cfg_temp)
+            self.group_save_result(cfg, group_idx, production_analysis_df_group)
 
-            production_data_analysis = {}
-            production_data_analysis['production_group_api12_summary_df'] = production_group_api12_summary_df
-            production_data_analysis['production_group_data_df'] = production_group_data_df
-            production_data_analysis['production_api12_array'] = production_api12_array
+        self.groups_save_result(cfg, production_summary_df_groups, production_df_api12s, production_analysis_df_groups, api12_array)
 
-        return cfg
+        production_data_analysis_groups['production_df_api12s'] = production_df_api12s
+        production_data_analysis_groups['production_analysis_df_groups'] = production_analysis_df_groups
+        production_data_analysis_groups['production_summary_df_groups'] = production_summary_df_groups
+
+        return cfg, production_data_analysis_groups
+
+    def group_save_result(self, cfg, group_idx, production_analysis_df_group):
+        block_number = cfg['data']['groups'][group_idx].get('bottom_block', [None])[0]
+        if block_number is None:
+            group_label = str(group_idx)
+        else:
+            group_label = str(block_number)
+
+        file_label = 'prod_all_block_' + group_label
+        file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
+        production_analysis_df_group.to_csv(file_name, index=False)
+
+    def groups_save_result(self, cfg, production_summary_df_groups, production_df_api12s, production_analysis_df_groups, api12_array, group_label):
+        groups_label = cfg['meta'].get('label', None)
+        if groups_label is None:
+            groups_label = cfg['Analysis']['file_name_for_overwrite']
+
+        file_label = 'prod_raw_block_' + group_label
+        SheetNames = [str(item) for item in api12_array]
+        file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.xlsx')
+        cfg_temp = {"FileName": file_name,
+                        "SheetNames": SheetNames,
+                        "thin_border": True}
+        save_data.DataFrameArray_To_xlsx_openpyxl(
+                production_df_api12s, cfg_temp
+            )
+
+        file_label = 'prod_summ_block_' + group_label
+        file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
+        production_summary_df_groups.to_csv(file_name, index=False)
+
 
     def analyze_data_for_api12(self, cfg, api12, api12_df):
         api12_df_analyzed = api12_df.copy()
