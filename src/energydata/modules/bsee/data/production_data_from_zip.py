@@ -59,7 +59,7 @@ class GetProdDataFromZip:
                 'file_name': file_name_with_path
             }
 
-            df = zip_files_to_df.zip_to_dataframe_by_filename(cfg_zip_utilities)
+            df = zip_files_to_df.router(cfg_zip_utilities)
 
             file_label = file_name.split('.')[0]
             file_name = file_label + '.bin'
