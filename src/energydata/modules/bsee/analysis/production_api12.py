@@ -28,14 +28,14 @@ class ProductionAPI12Analysis():
     def router(self, cfg):
         pass
 
-    def run_production_data_analysis(self, cfg, data):
+    def run_production_analysis(self, cfg, data):
         production_groups = data.get('production_data', None)
         groups_dict = {}
         if production_groups is None:
             raise ValueError("No production data found in the provided data.")
 
         production_summary_df_groups = pd.DataFrame()
-        production_df_api12s = []  # Reset for each group to avoid unintended data accumulation
+        production_df_api12s = []
         prod_rate_bopd_groups = pd.DataFrame(columns=['PRODUCTION_DATETIME'])
         prod_cumulative_mmbbl_groups = pd.DataFrame(columns=['PRODUCTION_DATETIME'])
         api12_array_groups = []
@@ -61,7 +61,7 @@ class ProductionAPI12Analysis():
 
                 if not len(production_analysis_df_api12):
                     production_analysis_df_api12 = pd.DataFrame(
-                    columns=['PRODUCTION_DATETIME', 'O_PROD_RATE_BOPD']
+                    columns=['PRODUCTION_DATETIME', 'O_PROD_RATE_BOPD', 'O_CUMMULATIVE_PROD_MMBBL']
                     )
 
                 prod_rate_bopd_api12 = production_analysis_df_api12[
@@ -92,8 +92,21 @@ class ProductionAPI12Analysis():
             )
             prod_rate_bopd_group.reset_index(inplace=True, drop=True)
 
+            prod_cumulative_mmbbl_group = prod_cumulative_mmbbl_group.replace({np.nan: None})
+            prod_cumulative_mmbbl_group.sort_values(
+            by=['PRODUCTION_DATETIME'],
+            inplace=True
+            )
+            prod_cumulative_mmbbl_group.reset_index(inplace=True, drop=True)
+
             self.save_result_group(cfg, group_idx, prod_rate_bopd_group)
 
+        prod_rate_bopd_groups = pd.merge(
+            prod_rate_bopd_groups,
+            prod_rate_bopd_group,
+            on=['PRODUCTION_DATETIME'],
+            how='outer'
+        )
         prod_rate_bopd_groups = prod_rate_bopd_groups.replace({np.nan: None})
         prod_rate_bopd_groups.sort_values(
         by=['PRODUCTION_DATETIME'],
@@ -101,16 +114,25 @@ class ProductionAPI12Analysis():
         )
         prod_rate_bopd_groups.reset_index(inplace=True, drop=True)
 
+        prod_cumulative_mmbbl_groups = pd.merge(
+            prod_cumulative_mmbbl_groups,
+            prod_cumulative_mmbbl_group,
+            on=['PRODUCTION_DATETIME'],
+            how='outer'
+        )
         prod_cumulative_mmbbl_groups = prod_cumulative_mmbbl_groups.replace({np.nan: None})
         prod_cumulative_mmbbl_groups.sort_values(
         by=['PRODUCTION_DATETIME'],
         inplace=True
         )
 
+        prod_cumulative_mmbbl_groups.reset_index(inplace=True, drop=True)
+
         self.save_result_groups(cfg, api12_array_groups, production_df_api12s, production_summary_df_groups, prod_rate_bopd_groups, prod_cumulative_mmbbl_groups)
 
         groups_dict['production_df_api12s'] = production_df_api12s
-        groups_dict['production_analysis_df_groups'] = prod_rate_bopd_groups
+        groups_dict['prod_rate_bopd_groups'] = prod_rate_bopd_groups
+        groups_dict['prod_cumulative_mmbbl_groups'] = prod_cumulative_mmbbl_groups
         groups_dict['production_summary_df_groups'] = production_summary_df_groups
 
         return cfg, groups_dict
@@ -165,7 +187,7 @@ class ProductionAPI12Analysis():
         )
         prod_cumulative_mmbbl_groups.to_csv(file_name, index=False)
         
-        self.plot_prod_cumulative_mmbbl_groups(cfg, prod_cumulative_mmbbl_groups)
+        # self.plot_prod_cumulative_mmbbl_groups(cfg, prod_cumulative_mmbbl_groups)
 
     def analyze_data_for_api12(self, cfg, api12, api12_df):
         api12_df_analyzed = api12_df.copy()
@@ -180,10 +202,8 @@ class ProductionAPI12Analysis():
             api12_df_analyzed.sort_values(by=['PRODUCTION_DATETIME'], inplace=True)
             api12_df_analyzed.reset_index(inplace=True)
             if api12_df_analyzed.O_PROD_RATE_BOPD.max() > 0:
-                api10 = str(api12)[0:10]
                 summary_df_api12_by_completion_name = self.get_summary_df_api12(
                     api12,
-                    api10,
                     completion_name,
                     api12_df_analyzed
                 )
@@ -201,57 +221,66 @@ class ProductionAPI12Analysis():
 
         return cfg, prod_anal_api12_dict
 
-    def get_summary_df_api12(self, well_api12, well_api10, completion_name, df_temp):
+    def get_summary_df_api12(self, well_api12, completion_name, api12_df):
 
         columns = ['API12', 'API10', 'O_PROD_STATUS', 'O_CUMMULATIVE_PROD_MMBBL', 'DAYS_ON_PROD', 'O_MEAN_PROD_RATE_BOPD', 'COMPLETION_NAME']
         production_summary_df = pd.DataFrame(columns=columns)
         production_summary_df = production_summary_df.astype({'API12': str, 'API10': str, 'O_PROD_STATUS': int, 'O_CUMMULATIVE_PROD_MMBBL': float, 'DAYS_ON_PROD': int, 'O_MEAN_PROD_RATE_BOPD': float, 'COMPLETION_NAME': str})
 
+        well_api10 = str(well_api12)[0:10]
         values = [well_api12, well_api10, 0.0, 0.0, 0.0, 0.0, completion_name]
         production_summary_df.loc[0] = values
 
-        total_well_production = df_temp.MON_O_PROD_VOL.sum() / 1000 / 1000
-        api12_production = df_temp[['PRODUCTION_DATETIME', 'O_PROD_RATE_BOPD']].copy()
+        total_well_production = api12_df.MON_O_PROD_VOL.sum() / 1000 / 1000
+        api12_production = api12_df[['PRODUCTION_DATETIME', 'O_PROD_RATE_BOPD']].copy()
         api12_production.rename(columns={'PRODUCTION_DATETIME': 'date_time'}, inplace=True)
         api12_production = api12_production.round(decimals=3)
         api12_production['date_time'] = [item.strftime('%Y-%m-%d') for item in api12_production['date_time'].to_list()]
 
-        if len(df_temp) > 0 and total_well_production > 0:
-            df_row_index = df_temp.index[0]
+        if len(api12_df) > 0 and total_well_production > 0:
+            df_row_index = api12_df.index[0]
 
             current_value = production_summary_df.O_CUMMULATIVE_PROD_MMBBL.iloc[0]
             O_CUMMULATIVE_PROD_MMBBL = current_value + total_well_production
             production_summary_df.loc[df_row_index, "O_CUMMULATIVE_PROD_MMBBL"] = float(O_CUMMULATIVE_PROD_MMBBL)
 
-            DAYS_ON_PROD = df_temp.DAYS_ON_PROD.sum()
+            DAYS_ON_PROD = api12_df.DAYS_ON_PROD.sum()
             production_summary_df.loc[df_row_index, "DAYS_ON_PROD"] = DAYS_ON_PROD
 
-            O_MEAN_PROD_RATE_BOPD = df_temp.MON_O_PROD_VOL.sum() / DAYS_ON_PROD
+            O_MEAN_PROD_RATE_BOPD = api12_df.MON_O_PROD_VOL.sum() / DAYS_ON_PROD
             production_summary_df.loc[df_row_index, "O_MEAN_PROD_RATE_BOPD"] = float(O_MEAN_PROD_RATE_BOPD)
 
             production_summary_df.loc[df_row_index, "O_PROD_STATUS"] = 1
 
         return production_summary_df
 
-    def add_production_rate_and_date_to_df(self, df):
+    def add_production_rate_and_date_to_df(self, api12_df):
         import datetime
         production_date = []
         production_rate = []
-        for df_row in range(0, len(df)):
-            year = int(df.PRODUCTION_DATE.iloc[df_row] / 100)
-            month = df.PRODUCTION_DATE.iloc[df_row] % year
+        O_CUMMULATIVE_PROD_MMBBL_array = []
+        for df_row in range(0, len(api12_df)):
+            year = int(api12_df.PRODUCTION_DATE.iloc[df_row] / 100)
+            month = api12_df.PRODUCTION_DATE.iloc[df_row] % year
             date_time = datetime.datetime(year, month, 1)
             date_time = dtu.last_day_of_month(date_time.date())
-            if df.DAYS_ON_PROD.iloc[df_row] != 0:
-                rate = df.MON_O_PROD_VOL.iloc[df_row] / df.DAYS_ON_PROD.iloc[df_row]
+            if api12_df.DAYS_ON_PROD.iloc[df_row] != 0:
+                rate = api12_df.MON_O_PROD_VOL.iloc[df_row] / api12_df.DAYS_ON_PROD.iloc[df_row]
             else:
                 rate = 0
             production_date.append(date_time)
             production_rate.append(rate)
+            O_CUMMULATIVE_PROD_MMBBL_previous_df_row = 0
+            if len(O_CUMMULATIVE_PROD_MMBBL_array) > 0:
+                O_CUMMULATIVE_PROD_MMBBL_previous_df_row = O_CUMMULATIVE_PROD_MMBBL_array[-1]
+            O_CUMMULATIVE_PROD_MMBBL = api12_df.MON_O_PROD_VOL.iloc[df_row] / 1000 / 1000 + O_CUMMULATIVE_PROD_MMBBL_previous_df_row
+            O_CUMMULATIVE_PROD_MMBBL_array.append(O_CUMMULATIVE_PROD_MMBBL)
 
-        df['PRODUCTION_DATETIME'] = production_date
-        df['O_PROD_RATE_BOPD'] = production_rate
-        return df
+        api12_df['PRODUCTION_DATETIME'] = production_date
+        api12_df['O_PROD_RATE_BOPD'] = production_rate
+        api12_df['O_CUMMULATIVE_PROD_MMBBL'] = O_CUMMULATIVE_PROD_MMBBL_array
+
+        return api12_df
 
     def plot_prod_cumulative_mmbbl_groups(self, cfg, prod_cumulative_mmbbl_groups):
 
