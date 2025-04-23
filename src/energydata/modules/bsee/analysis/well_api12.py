@@ -6,6 +6,7 @@ import datetime
 
 # # # Third party imports
 import pandas as pd
+import numpy as np
 
 from assetutilities.common.data import Transform
 from energydata.modules.bsee.analysis.well_rig_days import WellRigDays
@@ -23,23 +24,20 @@ class WellAPI12():
     def run_well_analysis(self, cfg, data):
         well_groups = data['well_data']
 
-        well_data_analysis_groups = []
+        groups_dict = {}
         if well_groups is None:
             raise ValueError("No well data found in the input data.")
 
-        well_group_api12_summary_df = pd.DataFrame()
+        well_summary_df_groups = pd.DataFrame()
         for group_idx in range(0, len(well_groups)):
             group = well_groups[group_idx]
+            well_summary_df_group = pd.DataFrame()
             for well_idx in range(0, len(group)):
                 well_data = group[well_idx]
-                cfg, api12_analysis = self.router(cfg, well_data)
-                well_group_api12_summary_df = pd.concat([well_group_api12_summary_df, api12_analysis], ignore_index=True)
-                well_api12 = well_group_api12_summary_df.API12.iloc[0]
-                # api12_label = str(well_api12)
-                # file_name = 'api12_' + api12_label + '_data.csv'
-                # file_name = os.path.join(cfg['Analysis']['result_folder'], file_name)
-                # well_group_api12_summary_df.to_csv(file_name, index=False)
-                logger.info("Well data is prepared for well: " + str(well_api12))
+                cfg, api12_analysis = self.get_api12_analysis(cfg, well_data)
+                well_summary_df_group = pd.concat([well_summary_df_group, api12_analysis], ignore_index=True)
+                well_api12 = well_summary_df_group.API12.iloc[0]
+                logger.debug("Well data is prepared for well: " + str(well_api12))
 
             block_number = cfg['data']['groups'][group_idx].get('bottom_block', [None])[0]
             if block_number is None:
@@ -48,19 +46,79 @@ class WellAPI12():
                 label = str(block_number)
             file_label = 'block_api12_' + label
             file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
-            well_group_api12_summary_df.to_csv(file_name, index=False)
+            well_summary_df_group.to_csv(file_name, index=False)
 
-            # cfg, well_group_api10_summary_df = well_api10_analysis.router(cfg, well_group_api12_summary_df)
-            # file_label = 'api10_' + cfg['Analysis']['file_name_for_overwrite'] + '_' + label
-            # file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
-            # well_group_api10_summary_df.to_csv(file_name)
+            well_summary_df_groups = pd.concat([well_summary_df_groups, well_summary_df_group], ignore_index=True)
+        
+        well_timeline_df = self.well_timeline_analysis(cfg, well_summary_df_groups)
 
-        groups_dict['production_df_api12s'] = production_df_api12s
+        groups_dict['well_summary_df_groups'] = well_summary_df_groups
+        groups_dict['well_timeline_df'] = well_timeline_df
 
-        return cfg, groups_dicts
+        self.save_result_groups(groups_dict)
 
+        return cfg, groups_dict
 
-    def router(self, cfg, well_data):
+    def well_timeline_analysis(self, cfg, well_summary_df_groups):
+
+        well_timeline_df = pd.DataFrame(columns=['date_time'])
+
+        column_keyword = 'WELL_SPUD'
+        well_timeline_df = self.get_well_count_by_column_keyword(well_timeline_df, well_summary_df_groups, column_keyword)
+        column_keyword = 'TOTAL_DEPTH'
+        well_timeline_df = self.get_well_count_by_column_keyword(well_timeline_df, well_summary_df_groups, column_keyword)
+        column_keyword = 'RIG_LAST_DATE_ON'
+        well_timeline_df = self.get_well_count_by_column_keyword(well_timeline_df, well_summary_df_groups, column_keyword)
+
+        return well_timeline_df
+
+    def get_well_count_by_column_keyword(self, well_timeline_df, well_summary_df_groups, column_keyword):
+        df_temp = well_summary_df_groups[[column_keyword + '_DATE']].copy()
+        df_temp.sort_values(by=[column_keyword + '_DATE'], inplace=True, ignore_index=True)
+        df_temp[column_keyword + '_COUNT'] = df_temp.index + 1
+        df_temp.rename(columns={column_keyword + '_COUNT': 'date_time'}, inplace=True)
+
+        well_timeline_df = pd.merge(
+            well_timeline_df,
+            df_temp,
+            on=['date_time'],
+            how='outer'
+        )
+        well_timeline_df = well_timeline_df.replace({np.nan: None})
+        well_timeline_df.sort_values(
+        by=['PRODUCTION_DATETIME'],
+        inplace=True
+        )
+        well_timeline_df.reset_index(drop=True, inplace=True)
+
+        return well_timeline_df
+
+    def save_result_groups(self, cfg, groups_dict):
+
+        well_summary_df_groups = groups_dict['well_summary_df_groups']
+        well_timeline_df = groups_dict['well_timeline_df']
+
+        groups_label = cfg['meta'].get('label', None)
+        if groups_label is None:
+            groups_label = cfg['Analysis']['file_name_for_overwrite']
+
+        file_label = 'well_summ_' + groups_label
+        result_folder = cfg['Analysis']['result_folder']
+        file_name = os.path.join(
+            result_folder,
+            file_label + '.csv'
+        )
+        well_summary_df_groups.to_csv(file_name, index=False)
+
+        file_label = 'well_timeline_' + groups_label
+        result_folder = cfg['Analysis']['result_folder']
+        file_name = os.path.join(
+            result_folder,
+            file_label + '.csv'
+        )
+        well_timeline_df.to_csv(file_name, index=False)
+
+    def get_api12_analysis(self, cfg, well_data):
 
         api12_analysis = None
         api12_analysis = self.get_well_borehole_data(well_data, api12_analysis)
@@ -155,7 +213,6 @@ class WellAPI12():
 
         rig_str, api12_war_days = well_rig_days.rig_analysis(cfg, api12_df, api12_eWellWARRawData_mv_war_main, api12_eWellWARRawData_mv_war_main_prop)
 
-        self.get_rig_days_by_well_activity(well_api12)
         api12_analysis['Rigs'] = rig_str
         
         if api12_war_days is not None:
@@ -240,7 +297,4 @@ class WellAPI12():
         self.output_completions['Field NickName'] = self.cfg['custom_parameters']['field_nickname']
 
     def prepare_formation_data(self):
-        pass
-
-    def get_rig_days_by_well_activity(self, well_api12):
         pass

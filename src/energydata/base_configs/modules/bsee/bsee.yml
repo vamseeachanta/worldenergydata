@@ -63,7 +63,12 @@ parameters:
         {
             "BOREHOLE_STAT_CD": "VCW",
             "BOREHOLE_STAT_DESC": "VOLUME CHAMBER WELL"
+        },
+        {
+            "BOREHOLE_STAT_CD": "PND",
+            "BOREHOLE_STAT_DESC": "PENDING"
         }
+
     ]
 
 settings_master: NULL
