@@ -20,39 +20,44 @@ class WellAPI12():
     def __init__(self):
         pass
 
-    def run_well_data_analysis(self, cfg, data):
-        well_data_groups = data['well_data']
+    def run_well_analysis(self, cfg, data):
+        well_groups = data['well_data']
 
-        if well_data_groups is not None:
-            well_group_api12_summary_df = pd.DataFrame()
-            for group_idx in range(0, len(well_data_groups)):
-                group = well_data_groups[group_idx]
-                for well_idx in range(0, len(group)):
-                    well_data = group[well_idx]
-                    cfg, api12_analysis = self.router(cfg, well_data)
-                    well_group_api12_summary_df = pd.concat([well_group_api12_summary_df, api12_analysis], ignore_index=True)
-                    well_api12 = well_group_api12_summary_df.API12.iloc[0]
-                    # api12_label = str(well_api12)
-                    # file_name = 'api12_' + api12_label + '_data.csv'
-                    # file_name = os.path.join(cfg['Analysis']['result_folder'], file_name)
-                    # well_group_api12_summary_df.to_csv(file_name, index=False)
-                    logger.info("Well data is prepared for well: " + str(well_api12))
+        well_data_analysis_groups = []
+        if well_groups is None:
+            raise ValueError("No well data found in the input data.")
 
-                block_number = cfg['data']['groups'][group_idx].get('bottom_block', [None])[0]
-                if block_number is None:
-                    label = str(group_idx)
-                else:
-                    label = str(block_number)
-                file_label = 'block_api12_' + label
-                file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
-                well_group_api12_summary_df.to_csv(file_name, index=False)
+        well_group_api12_summary_df = pd.DataFrame()
+        for group_idx in range(0, len(well_groups)):
+            group = well_groups[group_idx]
+            for well_idx in range(0, len(group)):
+                well_data = group[well_idx]
+                cfg, api12_analysis = self.router(cfg, well_data)
+                well_group_api12_summary_df = pd.concat([well_group_api12_summary_df, api12_analysis], ignore_index=True)
+                well_api12 = well_group_api12_summary_df.API12.iloc[0]
+                # api12_label = str(well_api12)
+                # file_name = 'api12_' + api12_label + '_data.csv'
+                # file_name = os.path.join(cfg['Analysis']['result_folder'], file_name)
+                # well_group_api12_summary_df.to_csv(file_name, index=False)
+                logger.info("Well data is prepared for well: " + str(well_api12))
 
-                # cfg, well_group_api10_summary_df = well_api10_analysis.router(cfg, well_group_api12_summary_df)
-                # file_label = 'api10_' + cfg['Analysis']['file_name_for_overwrite'] + '_' + label
-                # file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
-                # well_group_api10_summary_df.to_csv(file_name)
+            block_number = cfg['data']['groups'][group_idx].get('bottom_block', [None])[0]
+            if block_number is None:
+                label = str(group_idx)
+            else:
+                label = str(block_number)
+            file_label = 'block_api12_' + label
+            file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
+            well_group_api12_summary_df.to_csv(file_name, index=False)
 
-        return cfg
+            # cfg, well_group_api10_summary_df = well_api10_analysis.router(cfg, well_group_api12_summary_df)
+            # file_label = 'api10_' + cfg['Analysis']['file_name_for_overwrite'] + '_' + label
+            # file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
+            # well_group_api10_summary_df.to_csv(file_name)
+
+        groups_dict['production_df_api12s'] = production_df_api12s
+
+        return cfg, groups_dicts
 
 
     def router(self, cfg, well_data):
