@@ -55,7 +55,7 @@ class WellAPI12():
         groups_dict['well_summary_df_groups'] = well_summary_df_groups
         groups_dict['well_timeline_df'] = well_timeline_df
 
-        self.save_result_groups(groups_dict)
+        self.save_result_groups(cfg, groups_dict)
 
         return cfg, groups_dict
 
@@ -63,20 +63,27 @@ class WellAPI12():
 
         well_timeline_df = pd.DataFrame(columns=['date_time'])
 
-        column_keyword = 'WELL_SPUD'
-        well_timeline_df = self.get_well_count_by_column_keyword(well_timeline_df, well_summary_df_groups, column_keyword)
-        column_keyword = 'TOTAL_DEPTH'
-        well_timeline_df = self.get_well_count_by_column_keyword(well_timeline_df, well_summary_df_groups, column_keyword)
-        column_keyword = 'RIG_LAST_DATE_ON'
-        well_timeline_df = self.get_well_count_by_column_keyword(well_timeline_df, well_summary_df_groups, column_keyword)
+        column_keyword_cfg = {'date_column': 'WELL_SPUD_DATE', 'well_count_column': 'WELL_SPUD_COUNT' }
+        well_timeline_df = self.get_well_count_by_custom_cfg(well_timeline_df, well_summary_df_groups, column_keyword_cfg)
+        column_keyword_cfg = {'date_column': 'TOTAL_DEPTH_DATE', 'well_count_column': 'TOTAL_DEPTH_COUNT' }
+        well_timeline_df = self.get_well_count_by_custom_cfg(well_timeline_df, well_summary_df_groups, column_keyword_cfg)
+        column_keyword_cfg = {'date_column': 'RIG_LAST_DATE_ON_WELL', 'well_count_column': 'RIG_LAST_DATE_COUNT' }
+        well_timeline_df = self.get_well_count_by_custom_cfg(well_timeline_df, well_summary_df_groups, column_keyword_cfg)
+
+        well_timeline_df.sort_values(by=['date_time'], inplace=True, ignore_index=True)
+        well_timeline_df.reset_index(drop=True, inplace=True)
 
         return well_timeline_df
 
-    def get_well_count_by_column_keyword(self, well_timeline_df, well_summary_df_groups, column_keyword):
-        df_temp = well_summary_df_groups[[column_keyword + '_DATE']].copy()
-        df_temp.sort_values(by=[column_keyword + '_DATE'], inplace=True, ignore_index=True)
-        df_temp[column_keyword + '_COUNT'] = df_temp.index + 1
-        df_temp.rename(columns={column_keyword + '_COUNT': 'date_time'}, inplace=True)
+    def get_well_count_by_custom_cfg(self, well_timeline_df, well_summary_df_groups, column_keyword_cfg):
+        date_column = column_keyword_cfg['date_column']
+        df_temp = well_summary_df_groups[[date_column]].copy()
+        df_temp[date_column] = pd.to_datetime(df_temp[date_column])
+        df_temp.sort_values(by=[date_column], inplace=True, ignore_index=True)
+        df_temp.reset_index(drop=True, inplace=True)
+        well_count_column = column_keyword_cfg['well_count_column']
+        df_temp[well_count_column] = df_temp.index + 1
+        df_temp.rename(columns={date_column: 'date_time'}, inplace=True)
 
         well_timeline_df = pd.merge(
             well_timeline_df,
@@ -86,7 +93,7 @@ class WellAPI12():
         )
         well_timeline_df = well_timeline_df.replace({np.nan: None})
         well_timeline_df.sort_values(
-        by=['PRODUCTION_DATETIME'],
+        by=['date_time'],
         inplace=True
         )
         well_timeline_df.reset_index(drop=True, inplace=True)
