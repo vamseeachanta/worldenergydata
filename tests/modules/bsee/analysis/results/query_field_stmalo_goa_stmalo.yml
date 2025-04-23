@@ -38,6 +38,8 @@ parameters:
     BOREHOLE_STAT_DESC: TEMPORARILY ABANDONED
   - BOREHOLE_STAT_CD: VCW
     BOREHOLE_STAT_DESC: VOLUME CHAMBER WELL
+  - BOREHOLE_STAT_CD: PND
+    BOREHOLE_STAT_DESC: PENDING
 settings_master: ~
 data_retrieval:
   well:
@@ -125,7 +127,7 @@ Analysis:
   file_name: query_field_stmalo_goa_stmalo
   file_name_for_overwrite: query_field_stmalo_goa_stmalo
   log_folder: K:\github\energydata\tests\modules\bsee\analysis\logs
-  start_time: 2025-04-23 09:56:15.339799
+  start_time: 2025-04-23 17:09:19.532100
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: query_field_stmalo.yml
