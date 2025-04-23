@@ -2,6 +2,8 @@
 import os
 import json
 import logging
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # # # Third party imports
 import numpy as np
@@ -34,10 +36,12 @@ class ProductionAPI12Analysis():
 
         production_summary_df_groups = pd.DataFrame()
         production_df_api12s = []  # Reset for each group to avoid unintended data accumulation
-        production_analysis_df_groups = pd.DataFrame(columns=['PRODUCTION_DATETIME'])
+        prod_rate_bopd_groups = pd.DataFrame(columns=['PRODUCTION_DATETIME'])
+        prod_cumulative_mmbbl_groups = pd.DataFrame(columns=['PRODUCTION_DATETIME'])
         api12_array_groups = []
         for group_idx, production_group in enumerate(production_groups):
-            production_analysis_df_group = pd.DataFrame(columns=['PRODUCTION_DATETIME'])
+            prod_rate_bopd_group = pd.DataFrame(columns=['PRODUCTION_DATETIME'])
+            prod_cumulative_mmbbl_group = pd.DataFrame(columns=['PRODUCTION_DATETIME'])
             api12_array_group = cfg['data']['groups'][group_idx]['api12']
             api12_array_groups = api12_array_groups + api12_array_group
 
@@ -60,44 +64,53 @@ class ProductionAPI12Analysis():
                     columns=['PRODUCTION_DATETIME', 'O_PROD_RATE_BOPD']
                     )
 
-                prod_anal_api12_df_rate = production_analysis_df_api12[
+                prod_rate_bopd_api12 = production_analysis_df_api12[
                     ['PRODUCTION_DATETIME', 'O_PROD_RATE_BOPD']
                 ].rename(columns={'O_PROD_RATE_BOPD': api12})
 
-                production_analysis_df_group = pd.merge(
-                production_analysis_df_group, 
-                prod_anal_api12_df_rate, 
-                on=['PRODUCTION_DATETIME'], 
+                prod_rate_bopd_group = pd.merge(
+                prod_rate_bopd_group,
+                prod_rate_bopd_api12,
+                on=['PRODUCTION_DATETIME'],
                 how='outer'
                 )
-                
-            production_analysis_df_group = production_analysis_df_group.replace({np.nan: None})
-            production_analysis_df_group.sort_values(
+
+                prod_cumulative_mmbbl_api12 = production_analysis_df_api12[
+                    ['PRODUCTION_DATETIME', 'O_CUMMULATIVE_PROD_MMBBL']
+                ].rename(columns={'O_CUMMULATIVE_PROD_MMBBL': api12})
+                prod_cumulative_mmbbl_group = pd.merge(
+                prod_cumulative_mmbbl_group,
+                prod_cumulative_mmbbl_api12,
+                on=['PRODUCTION_DATETIME'],
+                how='outer'
+                )
+
+            prod_rate_bopd_group = prod_rate_bopd_group.replace({np.nan: None})
+            prod_rate_bopd_group.sort_values(
             by=['PRODUCTION_DATETIME'], 
             inplace=True
             )
-            production_analysis_df_group.reset_index(inplace=True, drop=True)
+            prod_rate_bopd_group.reset_index(inplace=True, drop=True)
 
-            self.save_result_group(cfg, group_idx, production_analysis_df_group)
+            self.save_result_group(cfg, group_idx, prod_rate_bopd_group)
 
-            production_analysis_df_groups = pd.merge(
-            production_analysis_df_groups,
-            production_analysis_df_group,
-            on=['PRODUCTION_DATETIME'],
-            how='outer'
-            )
-
-        production_analysis_df_groups = production_analysis_df_groups.replace({np.nan: None})
-        production_analysis_df_groups.sort_values(
-        by=['PRODUCTION_DATETIME'], 
+        prod_rate_bopd_groups = prod_rate_bopd_groups.replace({np.nan: None})
+        prod_rate_bopd_groups.sort_values(
+        by=['PRODUCTION_DATETIME'],
         inplace=True
         )
-        production_analysis_df_groups.reset_index(inplace=True, drop=True)
+        prod_rate_bopd_groups.reset_index(inplace=True, drop=True)
 
-        self.save_result_groups(cfg, production_df_api12s, production_summary_df_groups, production_analysis_df_groups, api12_array_groups)
+        prod_cumulative_mmbbl_groups = prod_cumulative_mmbbl_groups.replace({np.nan: None})
+        prod_cumulative_mmbbl_groups.sort_values(
+        by=['PRODUCTION_DATETIME'],
+        inplace=True
+        )
+
+        self.save_result_groups(cfg, api12_array_groups, production_df_api12s, production_summary_df_groups, prod_rate_bopd_groups, prod_cumulative_mmbbl_groups)
 
         groups_dict['production_df_api12s'] = production_df_api12s
-        groups_dict['production_analysis_df_groups'] = production_analysis_df_groups
+        groups_dict['production_analysis_df_groups'] = prod_rate_bopd_groups
         groups_dict['production_summary_df_groups'] = production_summary_df_groups
 
         return cfg, groups_dict
@@ -113,7 +126,7 @@ class ProductionAPI12Analysis():
         file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
         production_analysis_df_group.to_csv(file_name, index=False)
 
-    def save_result_groups(self, cfg, production_df_api12s, production_summary_df_groups, production_analysis_df_groups, api12_array_groups):
+    def save_result_groups(self, cfg, api12_array_groups, production_df_api12s, production_summary_df_groups, prod_rate_bopd_groups, prod_cumulative_mmbbl_groups):
         groups_label = cfg['meta'].get('label', None)
         if groups_label is None:
             groups_label = cfg['Analysis']['file_name_for_overwrite']
@@ -138,13 +151,21 @@ class ProductionAPI12Analysis():
         )
         production_summary_df_groups.to_csv(file_name, index=False)
 
-        file_label = 'prod_rate_' + groups_label
+        file_label = 'prod_rate_bopd_' + groups_label
         file_name = os.path.join(
             result_folder,
             file_label + '.csv'
         )
-        production_analysis_df_groups.to_csv(file_name, index=False)
+        prod_rate_bopd_groups.to_csv(file_name, index=False)
 
+        file_label = 'prod_cumulative_mmbbl_' + groups_label
+        file_name = os.path.join(
+            result_folder,
+            file_label + '.csv'
+        )
+        prod_cumulative_mmbbl_groups.to_csv(file_name, index=False)
+        
+        self.plot_prod_cumulative_mmbbl_groups(cfg, prod_cumulative_mmbbl_groups)
 
     def analyze_data_for_api12(self, cfg, api12, api12_df):
         api12_df_analyzed = api12_df.copy()
@@ -231,3 +252,24 @@ class ProductionAPI12Analysis():
         df['PRODUCTION_DATETIME'] = production_date
         df['O_PROD_RATE_BOPD'] = production_rate
         return df
+
+    def plot_prod_cumulative_mmbbl_groups(self, cfg, prod_cumulative_mmbbl_groups):
+
+        plt.figure(figsize=(10, 6))
+        sns.lineplot(data=prod_cumulative_mmbbl_groups, x='PRODUCTION_DATETIME', y='O_CUMMULATIVE_PROD_MMBBL')
+        plt.title('Cumulative Production Over Time')
+        plt.xlabel('Production Date')
+        plt.ylabel('Cumulative Production (MMBBL)')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
+        
+        groups_label = cfg['meta'].get('label', None)
+        if groups_label is None:
+            groups_label = cfg['Analysis']['file_name_for_overwrite']
+
+        file_label = 'prod_cumulative_mmbbl_plot_' + groups_label
+        result_folder = cfg['Analysis']['result_folder']
+        file_name = os.path.join(result_folder, file_label + '.png')
+        plt.savefig(file_name)
+        plt.close()
