@@ -36,8 +36,8 @@ class BSEEAnalysis():
 
     def run_analysis_for_all_wells(self, cfg, data):
 
-        cfg = well_api12_analysis.run_well_data_analysis(cfg, data)
-        cfg, production_data_analysis_groups = prod_api12_analysis.run_production_data_analysis(cfg, data)
+        cfg, well_data_analysis_groups = well_api12_analysis.run_well_analysis(cfg, data)
+        cfg, production_data_analysis_groups = prod_api12_analysis.run_production_analysis(cfg, data)
 
         return cfg
 
