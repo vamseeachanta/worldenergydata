@@ -27,6 +27,9 @@ class GetProdDataFromZip:
 
         return cfg
 
+    def download_zip_data(self, cfg):
+        pass
+
     def save_zip_data_to_binary(self, cfg):
         folder_path_zip = cfg['parameters']['filepath']['production']['zip']
         library_name = 'energydata'
