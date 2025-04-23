@@ -256,10 +256,11 @@ class ProductionAPI12Analysis():
 
     def add_production_rate_and_date_to_df(self, api12_df):
         import datetime
-        production_date = []
+        production_date_time = []
         production_rate = []
         O_CUMMULATIVE_PROD_MMBBL_array = []
         for df_row in range(0, len(api12_df)):
+
             year = int(api12_df.PRODUCTION_DATE.iloc[df_row] / 100)
             month = api12_df.PRODUCTION_DATE.iloc[df_row] % year
             date_time = datetime.datetime(year, month, 1)
@@ -268,7 +269,7 @@ class ProductionAPI12Analysis():
                 rate = api12_df.MON_O_PROD_VOL.iloc[df_row] / api12_df.DAYS_ON_PROD.iloc[df_row]
             else:
                 rate = 0
-            production_date.append(date_time)
+            production_date_time.append(date_time)
             production_rate.append(rate)
             O_CUMMULATIVE_PROD_MMBBL_previous_df_row = 0
             if len(O_CUMMULATIVE_PROD_MMBBL_array) > 0:
@@ -276,7 +277,7 @@ class ProductionAPI12Analysis():
             O_CUMMULATIVE_PROD_MMBBL = api12_df.MON_O_PROD_VOL.iloc[df_row] / 1000 / 1000 + O_CUMMULATIVE_PROD_MMBBL_previous_df_row
             O_CUMMULATIVE_PROD_MMBBL_array.append(O_CUMMULATIVE_PROD_MMBBL)
 
-        api12_df['PRODUCTION_DATETIME'] = production_date
+        api12_df['PRODUCTION_DATETIME'] = production_date_time
         api12_df['O_PROD_RATE_BOPD'] = production_rate
         api12_df['O_CUMMULATIVE_PROD_MMBBL'] = O_CUMMULATIVE_PROD_MMBBL_array
 
