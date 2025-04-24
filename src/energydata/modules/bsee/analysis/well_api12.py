@@ -78,7 +78,7 @@ class WellAPI12():
     def get_well_count_by_custom_cfg(self, well_timeline_df, well_summary_df_groups, column_keyword_cfg):
         date_column = column_keyword_cfg['date_column']
         df_temp = well_summary_df_groups[[date_column]].copy()
-        df_temp[date_column] = pd.to_datetime(df_temp[date_column])
+        df_temp[date_column] = pd.to_datetime(df_temp[date_column], format='mixed')
         df_temp.sort_values(by=[date_column], inplace=True, ignore_index=True)
         df_temp.reset_index(drop=True, inplace=True)
         well_count_column = column_keyword_cfg['well_count_column']
@@ -97,6 +97,7 @@ class WellAPI12():
         inplace=True
         )
         well_timeline_df.reset_index(drop=True, inplace=True)
+        well_timeline_df['date_time'] = pd.to_datetime(well_timeline_df['date_time'])
 
         return well_timeline_df
 
