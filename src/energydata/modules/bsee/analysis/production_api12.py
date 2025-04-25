@@ -307,3 +307,21 @@ class ProductionAPI12Analysis():
         plt.close()
         
         
+    def perform_decline_analysis_api12(self, cfg, api12_df):
+        #TODO
+
+        pass
+        peakvalue = max(
+            `   api12_df.O_PROD_RATE_BOPD`
+        )
+        tdatetime_peak = api12_df.loc[
+            
+        lastest date, last ValueError
+        
+        no of years = 9
+        annual decline = (peak/latest)^(1 + no of years) - 1
+        laetst = peak *(1 + annual decline)^(1/no of years)
+        annual decline = -16
+        
+        
+        

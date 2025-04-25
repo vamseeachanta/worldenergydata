@@ -58,36 +58,6 @@ dsptsdelimit: https://github.com/vamseeachanta/energydata/blob/2084250f6055a4f0d
 ### Communications
 
 
-#### 2025-02-11
-
-Roy, 
-
-Short answer: We are already using AI to download data. AI still needs immense human intelligence especially for BSEE Data download.
-
-Will respond this morning with details in our dedicated thread limited audience thread. 
-
-Vamsee
-
-
-On Wed, Feb 12, 2025 at 6:59 AM <roy.shilling@frontierdeepwater.com> wrote:
-Vamsee is it possible to just download all the data associated with Julia into multiple files.  We may be able to feed those into ai and get faster processing rather than trying to generate more complicated python scripts?
-
-
-r
-
-
-From: Vamsee Achanta <vamsee.achanta@aceengineer.com>
-Sent: Tuesday, February 11, 2025 9:00 PM
-To: roy.shilling@frontierdeepwater.com
-Cc: chuck.white@frontierdeepwater.com; terrance.ivers@gmail.com; Howard Day <howardday7777@gmail.com>; paul.hyatt@tdsolutions.com.au
-Subject: Re: Average DAILY OIL PRODUCTION data for WILCOX fields
-
-
-Yes, I (and my assistant programmer, Samdan) are working on Julia first. 
-
-
-Will get some preliminary answers on well count tomorrow.
-
 #### 2025-04-24
 
 Looking good Vamsee.  Here are some plots and tables I created so far for St Malo.  I will get you some more feedback tomorrow.
@@ -173,4 +143,35 @@ Ok now we got it straighted out!
 | 2024 | 38,264,343         | $75.83               | $2,901,585,153         |
 | 2025 | 5,316,123          | $69.97               | $371,969,145           |
 |      | **424,792,380**    | **$65.33**           | **$26,849,764,217**    |
+
+
+#### 2025-02-11
+
+Roy, 
+
+Short answer: We are already using AI to download data. AI still needs immense human intelligence especially for BSEE Data download.
+
+Will respond this morning with details in our dedicated thread limited audience thread. 
+
+Vamsee
+
+
+On Wed, Feb 12, 2025 at 6:59 AM <roy.shilling@frontierdeepwater.com> wrote:
+Vamsee is it possible to just download all the data associated with Julia into multiple files.  We may be able to feed those into ai and get faster processing rather than trying to generate more complicated python scripts?
+
+
+r
+
+
+From: Vamsee Achanta <vamsee.achanta@aceengineer.com>
+Sent: Tuesday, February 11, 2025 9:00 PM
+To: roy.shilling@frontierdeepwater.com
+Cc: chuck.white@frontierdeepwater.com; terrance.ivers@gmail.com; Howard Day <howardday7777@gmail.com>; paul.hyatt@tdsolutions.com.au
+Subject: Re: Average DAILY OIL PRODUCTION data for WILCOX fields
+
+
+Yes, I (and my assistant programmer, Samdan) are working on Julia first. 
+
+
+Will get some preliminary answers on well count tomorrow.
 
