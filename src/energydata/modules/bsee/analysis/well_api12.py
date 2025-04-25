@@ -125,6 +125,9 @@ class WellAPI12():
             file_label + '.csv'
         )
         well_timeline_df.to_csv(file_name, index=False)
+        
+        
+        
 
     def get_api12_analysis(self, cfg, well_data):
 
@@ -306,3 +309,18 @@ class WellAPI12():
 
     def prepare_formation_data(self):
         pass
+
+    def plot_well_timeline_df(self, cfg, groups_dict):
+        #TODO 
+        groups_label = cfg['meta'].get('label', None)
+        if groups_label is None:
+            groups_label = cfg['Analysis']['file_name_for_overwrite']
+
+        well_timeline_df = groups_dict['well_timeline_df']
+
+        file_label = 'well_timeline_' + groups_label
+        result_folder = cfg['Analysis']['result_folder']
+        file_name = os.path.join(
+            result_folder,
+            file_label + 'plot.png'
+        )

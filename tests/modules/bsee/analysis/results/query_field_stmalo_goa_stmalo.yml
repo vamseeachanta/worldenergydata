@@ -219,7 +219,7 @@ Analysis:
   file_name: query_field_stmalo_goa_stmalo
   file_name_for_overwrite: query_field_stmalo_goa_stmalo
   log_folder: K:\github\energydata\tests\modules\bsee\analysis\logs
-  start_time: 2025-04-23 21:31:52.420864
+  start_time: 2025-04-24 11:58:59.462869
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: query_field_stmalo.yml
