@@ -520,7 +520,7 @@ Analysis:
   file_name: query_field_julia_goa_julia
   file_name_for_overwrite: query_field_julia_goa_julia
   log_folder: K:\github\energydata\tests\modules\bsee\analysis\logs
-  start_time: 2025-04-24 11:48:59.759402
+  start_time: 2025-04-25 12:25:32.354597
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: query_field_julia.yml
