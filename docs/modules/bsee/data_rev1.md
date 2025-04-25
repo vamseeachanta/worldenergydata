@@ -55,6 +55,10 @@ dsptsdelimit: https://github.com/vamseeachanta/energydata/blob/2084250f6055a4f0d
 - [ ] TBA
 
 
+## Economics
+
+https://www.linkedin.com/company/analytics-energy/posts/
+
 ### Communications
 
 
