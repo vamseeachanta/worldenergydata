@@ -101,32 +101,32 @@ class ProductionAPI12Analysis():
 
             self.save_result_group(cfg, group_idx, prod_rate_bopd_group)
 
-        prod_rate_bopd_groups = pd.merge(
-            prod_rate_bopd_groups,
-            prod_rate_bopd_group,
-            on=['PRODUCTION_DATETIME'],
-            how='outer'
-        )
-        prod_rate_bopd_groups = prod_rate_bopd_groups.replace({np.nan: None})
-        prod_rate_bopd_groups.sort_values(
-        by=['PRODUCTION_DATETIME'],
-        inplace=True
-        )
-        prod_rate_bopd_groups.reset_index(inplace=True, drop=True)
+            prod_rate_bopd_groups = pd.merge(
+                prod_rate_bopd_groups,
+                prod_rate_bopd_group,
+                on=['PRODUCTION_DATETIME'],
+                how='outer'
+            )
+            prod_rate_bopd_groups = prod_rate_bopd_groups.replace({np.nan: None})
+            prod_rate_bopd_groups.sort_values(
+            by=['PRODUCTION_DATETIME'],
+            inplace=True
+            )
+            prod_rate_bopd_groups.reset_index(inplace=True, drop=True)
 
-        prod_cumulative_mmbbl_groups = pd.merge(
-            prod_cumulative_mmbbl_groups,
-            prod_cumulative_mmbbl_group,
-            on=['PRODUCTION_DATETIME'],
-            how='outer'
-        )
-        prod_cumulative_mmbbl_groups = prod_cumulative_mmbbl_groups.replace({np.nan: None})
-        prod_cumulative_mmbbl_groups.sort_values(
-        by=['PRODUCTION_DATETIME'],
-        inplace=True
-        )
+            prod_cumulative_mmbbl_groups = pd.merge(
+                prod_cumulative_mmbbl_groups,
+                prod_cumulative_mmbbl_group,
+                on=['PRODUCTION_DATETIME'],
+                how='outer'
+            )
+            prod_cumulative_mmbbl_groups = prod_cumulative_mmbbl_groups.replace({np.nan: None})
+            prod_cumulative_mmbbl_groups.sort_values(
+            by=['PRODUCTION_DATETIME'],
+            inplace=True
+            )
 
-        prod_cumulative_mmbbl_groups.reset_index(inplace=True, drop=True)
+            prod_cumulative_mmbbl_groups.reset_index(inplace=True, drop=True)
 
         self.save_result_groups(cfg, api12_array_groups, production_df_api12s, production_summary_df_groups, prod_rate_bopd_groups, prod_cumulative_mmbbl_groups)
 
@@ -285,6 +285,8 @@ class ProductionAPI12Analysis():
 
     def plot_prod_cumulative_mmbbl_groups(self, cfg, prod_cumulative_mmbbl_groups):
 
+        #TODO prod_cumulative_mmbbl_groups, prod_rate_bopd_groups
+
         plt.figure(figsize=(10, 6))
         sns.lineplot(data=prod_cumulative_mmbbl_groups, x='PRODUCTION_DATETIME', y='O_CUMMULATIVE_PROD_MMBBL')
         plt.title('Cumulative Production Over Time')
@@ -303,3 +305,5 @@ class ProductionAPI12Analysis():
         file_name = os.path.join(result_folder, file_label + '.png')
         plt.savefig(file_name)
         plt.close()
+        
+        
