@@ -62,7 +62,7 @@ https://www.linkedin.com/company/analytics-energy/posts/
 ### Communications
 
 
-#### 2025-04-24
+#### 2025-04-24 Roy
 
 Looking good Vamsee.  Here are some plots and tables I created so far for St Malo.  I will get you some more feedback tomorrow.
 
@@ -148,6 +148,36 @@ Ok now we got it straighted out!
 | 2025 | 5,316,123          | $69.97               | $371,969,145           |
 |      | **424,792,380**    | **$65.33**           | **$26,849,764,217**    |
 
+
+### 2025-03-25 Chuck's NPV Calculations
+
+Guys, I’ve gone back to the data we (Roy & Vamsee) gathered for our WORLD OIL articles in 2020-21 to see if JSM might actually be a commercially viable project since it has produced so much oil compared to the other HPHT Wilcox discoveries. It is clearly the closest any HPHT WILCOX field has come to being a star performer.
+
+ 
+
+So, see the attached… and, let me know if you think that with Phase IV, JSM will ever actually become a net positive investment for CVX and their partners. Of course, if one has completely written of the lengthy/expensive E&A program, perhaps it can come close.
+
+ 
+
+Here’s a summary of things I’ve highlighted in the attached:
+
+As of the end of this record mid-2019, JSM had produced ~174Mbbls
+CVX website claims that JSM had produced ~400MBOE by Sept. 2024!
+So, they were able to add over 200MBOE in the next 5yrs (2019-24)… so, several new wells and more CAPEX were involved as the older wells depleted (or failed).
+Press release in Sept. 2019 reported that Ph. 4 would add 175Mbbls
+I think it was expected to cost $2B, but I don’t remember where I saw that???
+There are 15 wells listed, but I’ve highlighted production starts for 19 completions
+Four of the 19 are either simple recompletion re-starts or full sidetracks on JACK which has only 6 wells listed but 10 “completions”
+One JACK well (WR759 PS001) started production in 2014 and failed within 1 month… it was “recompleted”(?) in 2017 but never produced much oil.
+9 producers drilled in St. Malo (which lies in <2,200ft WD)… AND, none of them seem to have had any production problems through 2019.
+Well WR678 PS002 was the last one completed on St. Malo (in Ph. 3) and has been a great producer – averaging 16,559bopd for the time it was producing with at peak of 19,000bopd!
+If we make assumptions about facility, infrastructure, and well/completion costs per the table I’ve inserted in the first 2 columns (starting on row 36 and copy pasted just below), we estimate a CAPEX investment of $10B through PH. III with a negative NPV(8%) of -$9.723.
+The 2015 EIA report on deepwater field development cites JSM investment plan at $12B.
+The NPV of oil sales from JSM for this period is ~$6B.
+So, net NPV(8%) is negative at ~$3.7B and close to -$6B if CAPEX was actually $12B! (slightly worse for 10% discount factor)
+Of course, ~$2B cost of E&A is ignored as already written off.
+
+https://github.com/vamseeachanta/energydata/blob/202502/docs/modules/bsee/JStM-WELL-Production-Data-thru-2019.xlsx
 
 #### 2025-02-11
 
