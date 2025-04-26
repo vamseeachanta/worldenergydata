@@ -1,0 +1,453 @@
+basename: bsee
+type:
+  data: false
+  analysis: false
+  results: false
+parameters:
+  filepath:
+    data: data/modules/bsee/data
+    production:
+      csv: data\modules\bsee\csv\production
+      zip: data\modules\bsee\zip\production
+      bin: data\modules\bsee\bin\production
+    block: data/modules/bsee/block
+    APD: data/modules/bsee/data/csv/online_query_raw_data
+  max_allowed_npt: 90
+  borehole_codes:
+  - BOREHOLE_STAT_CD: APD
+    BOREHOLE_STAT_DESC: APPLICATION FOR PERMIT TO DRILL
+  - BOREHOLE_STAT_CD: AST
+    BOREHOLE_STAT_DESC: APPROVED SIDETRACK
+  - BOREHOLE_STAT_CD: CNL
+    BOREHOLE_STAT_DESC: BOREHOLE IS CANCELLED. THE REQUEST TO DRILL THE WELL IS CANCELLED
+      AFTER THE APD OR SUNDRY HAS BEEN APPROVED. THE STATUS DATE IS THE DATE THE BOREHOLE
+      WAS CANCELLED.
+  - BOREHOLE_STAT_CD: COM
+    BOREHOLE_STAT_DESC: BOREHOLE COMPLETED
+  - BOREHOLE_STAT_CD: CT
+    BOREHOLE_STAT_DESC: CORE TEST WELL
+  - BOREHOLE_STAT_CD: DRL
+    BOREHOLE_STAT_DESC: DRILLING ACTIVE
+  - BOREHOLE_STAT_CD: DSI
+    BOREHOLE_STAT_DESC: DRILLING SUSPENDED
+  - BOREHOLE_STAT_CD: PA
+    BOREHOLE_STAT_DESC: PERMANENTLY ABANDONED
+  - BOREHOLE_STAT_CD: ST
+    BOREHOLE_STAT_DESC: BOREHOLE SIDETRACKED
+  - BOREHOLE_STAT_CD: TA
+    BOREHOLE_STAT_DESC: TEMPORARILY ABANDONED
+  - BOREHOLE_STAT_CD: VCW
+    BOREHOLE_STAT_DESC: VOLUME CHAMBER WELL
+  - BOREHOLE_STAT_CD: PND
+    BOREHOLE_STAT_DESC: PENDING
+settings_master: ~
+data_retrieval:
+  well:
+    website:
+      url: https://www.data.bsee.gov/Well/APD/Default.aspx
+      form_data:
+        first_request:
+          ASPxFormLayout1$ASPxTextBoxAPI: ~
+          ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+        second_request:
+          ASPxFormLayout1$ASPxTextBoxAPI: ~
+          __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+          __EVENTARGUMENT: Click
+    csv:
+      BoreholeRawData_mv_boreholes_all: data/modules/bsee/csv/online_query_raw_data/BoreholeRawData_mv_boreholes_all.csv
+      eWellAPDRawData_mv_apd_main: data/modules/bseecsv/online_query_raw_data/eWellAPDRawData_mv_apd_main.csv
+    zip:
+      BoreholeRawData_mv_boreholes_all: data/modules/bsee/data/zip/BoreholeRawData_mv_boreholes_all.zip
+      eWellAPDRawData_mv_apd_main: data/modules/bsee/data/zip/eWellAPDRawData_mv_apd_main.zip
+  production:
+    website:
+      url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+      form_data:
+        first_request:
+          ASPxFormLayout1$ASPxTextBoxLN: ~
+          ASPxFormLayout1$ASPxTextBoxDF: ~
+          ASPxFormLayout1$ASPxTextBoxDT: ~
+          ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+        second_request:
+          ASPxFormLayout1$ASPxTextBoxLN: ~
+          __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+          __EVENTARGUMENT: Click
+  block:
+    website:
+      url: https://www.data.bsee.gov/Well/APD/Default.aspx
+      form_data:
+        first_request:
+          ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
+          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
+          ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+          ASPxFormLayout1$ASPxComboBoxBBN: None
+          ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+        second_request:
+          ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
+          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
+          ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+          ASPxFormLayout1$ASPxComboBoxBBN: None
+          __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+          __EVENTARGUMENT: Click
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: true
+    cfg_sensitivities: false
+meta:
+  library: energydata
+  basename: bsee
+  label: goa_stones
+data:
+  production_data: true
+  groups:
+  - bottom_block:
+    - 508
+    api12:
+    - 177024120801
+    - 608174102300
+    - 608124001500
+    - 608124002200
+    - 608124003200
+    - 608124003201
+    - 608124003202
+    - 608124008700
+    - 608124009200
+    - 608124009201
+    - 608124009500
+    - 608124009900
+    - 608124010500
+    - 608124010300
+    - 608124010400
+    - 608124011000
+    - 608124011200
+    - 608124011001
+    - 608124011700
+    - 608124012300
+    - 608124012900
+    - 608124013400
+    - 608124013700
+    - 608124013701
+    - 608124014300
+    - 608124014301
+    label: 508
+    file_name: .\results\Data\508.csv
+    well_data:
+    - api12:
+      - 177024120801
+      label: '177024120801'
+      file_name: .\results\Data\177024120801.csv
+    - api12:
+      - 608174102300
+      label: '608174102300'
+      file_name: .\results\Data\608174102300.csv
+    - api12:
+      - 608124001500
+      label: '608124001500'
+      file_name: .\results\Data\608124001500.csv
+    - api12:
+      - 608124002200
+      label: '608124002200'
+      file_name: .\results\Data\608124002200.csv
+    - api12:
+      - 608124003200
+      label: '608124003200'
+      file_name: .\results\Data\608124003200.csv
+    - api12:
+      - 608124003201
+      label: '608124003201'
+      file_name: .\results\Data\608124003201.csv
+    - api12:
+      - 608124003202
+      label: '608124003202'
+      file_name: .\results\Data\608124003202.csv
+    - api12:
+      - 608124008700
+      label: '608124008700'
+      file_name: .\results\Data\608124008700.csv
+    - api12:
+      - 608124009200
+      label: '608124009200'
+      file_name: .\results\Data\608124009200.csv
+    - api12:
+      - 608124009201
+      label: '608124009201'
+      file_name: .\results\Data\608124009201.csv
+    - api12:
+      - 608124009500
+      label: '608124009500'
+      file_name: .\results\Data\608124009500.csv
+    - api12:
+      - 608124009900
+      label: '608124009900'
+      file_name: .\results\Data\608124009900.csv
+    - api12:
+      - 608124010500
+      label: '608124010500'
+      file_name: .\results\Data\608124010500.csv
+    - api12:
+      - 608124010300
+      label: '608124010300'
+      file_name: .\results\Data\608124010300.csv
+    - api12:
+      - 608124010400
+      label: '608124010400'
+      file_name: .\results\Data\608124010400.csv
+    - api12:
+      - 608124011000
+      label: '608124011000'
+      file_name: .\results\Data\608124011000.csv
+    - api12:
+      - 608124011200
+      label: '608124011200'
+      file_name: .\results\Data\608124011200.csv
+    - api12:
+      - 608124011001
+      label: '608124011001'
+      file_name: .\results\Data\608124011001.csv
+    - api12:
+      - 608124011700
+      label: '608124011700'
+      file_name: .\results\Data\608124011700.csv
+    - api12:
+      - 608124012300
+      label: '608124012300'
+      file_name: .\results\Data\608124012300.csv
+    - api12:
+      - 608124012900
+      label: '608124012900'
+      file_name: .\results\Data\608124012900.csv
+    - api12:
+      - 608124013400
+      label: '608124013400'
+      file_name: .\results\Data\608124013400.csv
+    - api12:
+      - 608124013700
+      label: '608124013700'
+      file_name: .\results\Data\608124013700.csv
+    - api12:
+      - 608124013701
+      label: '608124013701'
+      file_name: .\results\Data\608124013701.csv
+    - api12:
+      - 608124014300
+      label: '608124014300'
+      file_name: .\results\Data\608124014300.csv
+    - api12:
+      - 608124014301
+      label: '608124014301'
+      file_name: .\results\Data\608124014301.csv
+  - bottom_block:
+    - 464
+    api12:
+    - 608044020900
+    - 177024128200
+    - 608044020901
+    - 608124011200
+    label: 464
+    file_name: .\results\Data\464.csv
+    well_data:
+    - api12:
+      - 608044020900
+      label: '608044020900'
+      file_name: .\results\Data\608044020900.csv
+    - api12:
+      - 177024128200
+      label: '177024128200'
+      file_name: .\results\Data\177024128200.csv
+    - api12:
+      - 608044020901
+      label: '608044020901'
+      file_name: .\results\Data\608044020901.csv
+    - api12:
+      - 608124011200
+      label: '608124011200'
+      file_name: .\results\Data\608124011200.csv
+analysis:
+  flag: true
+  api12: true
+Analysis:
+  basename: bsee
+  analysis_root_folder: .
+  file_name: query_field_stones_goa_stones
+  file_name_for_overwrite: query_field_stones_goa_stones
+  log_folder: .\logs
+  start_time: 2025-04-26 08:32:52.958278
+  cfg_array_file_names: ~
+  DefaultInputFile: ~
+  CustomInputFile: .\query_field_stones.yml
+  result_folder: .\results
+  result_data_folder: .\results\Data
+  result_plot_folder: .\results\Plot
+  fe_folder: .\results
+bsee:
+  data:
+    production_data: true
+    groups:
+    - bottom_block:
+      - 508
+      api12:
+      - 177024120801
+      - 608174102300
+      - 608124001500
+      - 608124002200
+      - 608124003200
+      - 608124003201
+      - 608124003202
+      - 608124008700
+      - 608124009200
+      - 608124009201
+      - 608124009500
+      - 608124009900
+      - 608124010500
+      - 608124010300
+      - 608124010400
+      - 608124011000
+      - 608124011200
+      - 608124011001
+      - 608124011700
+      - 608124012300
+      - 608124012900
+      - 608124013400
+      - 608124013700
+      - 608124013701
+      - 608124014300
+      - 608124014301
+      label: 508
+      file_name: .\results\Data\508.csv
+      well_data:
+      - api12:
+        - 177024120801
+        label: '177024120801'
+        file_name: .\results\Data\177024120801.csv
+      - api12:
+        - 608174102300
+        label: '608174102300'
+        file_name: .\results\Data\608174102300.csv
+      - api12:
+        - 608124001500
+        label: '608124001500'
+        file_name: .\results\Data\608124001500.csv
+      - api12:
+        - 608124002200
+        label: '608124002200'
+        file_name: .\results\Data\608124002200.csv
+      - api12:
+        - 608124003200
+        label: '608124003200'
+        file_name: .\results\Data\608124003200.csv
+      - api12:
+        - 608124003201
+        label: '608124003201'
+        file_name: .\results\Data\608124003201.csv
+      - api12:
+        - 608124003202
+        label: '608124003202'
+        file_name: .\results\Data\608124003202.csv
+      - api12:
+        - 608124008700
+        label: '608124008700'
+        file_name: .\results\Data\608124008700.csv
+      - api12:
+        - 608124009200
+        label: '608124009200'
+        file_name: .\results\Data\608124009200.csv
+      - api12:
+        - 608124009201
+        label: '608124009201'
+        file_name: .\results\Data\608124009201.csv
+      - api12:
+        - 608124009500
+        label: '608124009500'
+        file_name: .\results\Data\608124009500.csv
+      - api12:
+        - 608124009900
+        label: '608124009900'
+        file_name: .\results\Data\608124009900.csv
+      - api12:
+        - 608124010500
+        label: '608124010500'
+        file_name: .\results\Data\608124010500.csv
+      - api12:
+        - 608124010300
+        label: '608124010300'
+        file_name: .\results\Data\608124010300.csv
+      - api12:
+        - 608124010400
+        label: '608124010400'
+        file_name: .\results\Data\608124010400.csv
+      - api12:
+        - 608124011000
+        label: '608124011000'
+        file_name: .\results\Data\608124011000.csv
+      - api12:
+        - 608124011200
+        label: '608124011200'
+        file_name: .\results\Data\608124011200.csv
+      - api12:
+        - 608124011001
+        label: '608124011001'
+        file_name: .\results\Data\608124011001.csv
+      - api12:
+        - 608124011700
+        label: '608124011700'
+        file_name: .\results\Data\608124011700.csv
+      - api12:
+        - 608124012300
+        label: '608124012300'
+        file_name: .\results\Data\608124012300.csv
+      - api12:
+        - 608124012900
+        label: '608124012900'
+        file_name: .\results\Data\608124012900.csv
+      - api12:
+        - 608124013400
+        label: '608124013400'
+        file_name: .\results\Data\608124013400.csv
+      - api12:
+        - 608124013700
+        label: '608124013700'
+        file_name: .\results\Data\608124013700.csv
+      - api12:
+        - 608124013701
+        label: '608124013701'
+        file_name: .\results\Data\608124013701.csv
+      - api12:
+        - 608124014300
+        label: '608124014300'
+        file_name: .\results\Data\608124014300.csv
+      - api12:
+        - 608124014301
+        label: '608124014301'
+        file_name: .\results\Data\608124014301.csv
+    - bottom_block:
+      - 464
+      api12:
+      - 608044020900
+      - 177024128200
+      - 608044020901
+      - 608124011200
+      label: 464
+      file_name: .\results\Data\464.csv
+      well_data:
+      - api12:
+        - 608044020900
+        label: '608044020900'
+        file_name: .\results\Data\608044020900.csv
+      - api12:
+        - 177024128200
+        label: '177024128200'
+        file_name: .\results\Data\177024128200.csv
+      - api12:
+        - 608044020901
+        label: '608044020901'
+        file_name: .\results\Data\608044020901.csv
+      - api12:
+        - 608124011200
+        label: '608124011200'
+        file_name: .\results\Data\608124011200.csv
+    type: csv
+  analysis:
+    flag: true
+    api12: true
