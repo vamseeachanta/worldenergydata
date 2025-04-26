@@ -62,6 +62,26 @@ https://www.linkedin.com/company/analytics-energy/posts/
 ### Communications
 
 
+#### 2025-04-25 Roy - Shell APIs
+
+Great stuff guys!  We are cooking with oil and gas now!! 😊  Let me work through some of this this weekend and I will get back to you.
+
+Shell’s Stones ultra-deepwater development consists of eight subsea production wells in total—two first-phase wells tied back in September 2016, followed by six more in late 2017 Home. As of the end of 2017, all eight wells were onstream and producing.
+
+Shell’s Stones ultra-deepwater development comprises eight subsea production wells in total (all of which are onstream) WVDEP. From the OGOR-A data you provided for Lease G17001, we have production records for six of those wells, with these APIs:
+
+608124009500
+608124009900
+608124010400
+608124011001
+608124011700
+608124010800
+
+The remaining two development wells (completing the eight-well program) aren’t represented in your G17001 extract, likely because they lie on a different bottom lease. If you need to pull their APIs you’ll want the OGOR-A export for that lease (WR 551 – OCS-G 21861), or lease-level production data from BSEE.
+
+I would say that Stones subsea is an abysmal failure.  Can you believe these people can’t figure out they need direct vertical access to the completion!  8 producers completed, 5 still producing.
+![alt text](image.png)
+
 #### 2025-04-24 Roy
 
 Looking good Vamsee.  Here are some plots and tables I created so far for St Malo.  I will get you some more feedback tomorrow.
@@ -153,11 +173,11 @@ Ok now we got it straighted out!
 
 Guys, I’ve gone back to the data we (Roy & Vamsee) gathered for our WORLD OIL articles in 2020-21 to see if JSM might actually be a commercially viable project since it has produced so much oil compared to the other HPHT Wilcox discoveries. It is clearly the closest any HPHT WILCOX field has come to being a star performer.
 
- 
+
 
 So, see the attached… and, let me know if you think that with Phase IV, JSM will ever actually become a net positive investment for CVX and their partners. Of course, if one has completely written of the lengthy/expensive E&A program, perhaps it can come close.
 
- 
+
 
 Here’s a summary of things I’ve highlighted in the attached:
 
