@@ -62,6 +62,28 @@ https://www.linkedin.com/company/analytics-energy/posts/
 ### Communications
 
 
+#### 2025-04-27 Samdan 
+
+Revenue Table Calculation using AI .
+- utilized average oil prices downloaded from UIA(.gov)
+
+| Year | Total Oil (STB) | Avg Price (USD) | Revenue (USD)    |
+|------|-----------------|-----------------|------------------|
+| 2014 | 15,184           | $87.39           | $1,326,370.76     |
+| 2015 | 446,720          | $44.39           | $19,817,300.80    |
+| 2016 | 663,495          | $38.29           | $25,397,013.55    |
+| 2017 | 842,863          | $48.05           | $40,487,451.15    |
+| 2018 | 801,457          | $61.40           | $49,215,139.80    |
+| 2019 | 724,099          | $55.59           | $40,261,343.41    |
+| 2020 | 572,747          | $36.86           | $21,110,156.42    |
+| 2021 | 471,324          | $65.84           | $31,038,672.16    |
+| 2022 | 425,214          | $93.97           | $39,954,879.58    |
+| 2023 | 369,337          | $76.10           | $28,104,515.70    |
+| 2024 | 440,424          | $74.46           | $32,774,671.04    |
+|      |                  |                  | **$329,487,514.37** |
+
+
+
 #### 2025-04-25 Roy - Shell APIs
 
 Great stuff guys!  We are cooking with oil and gas now!! 😊  Let me work through some of this this weekend and I will get back to you.
@@ -148,7 +170,6 @@ Using the average‐daily rates multiplied by the exact days in each month (2014
 |      |                  |                      | **$350,274,201**   |
 
 
-
 Ok now we got it straighted out! 
 
 
@@ -228,4 +249,3 @@ Yes, I (and my assistant programmer, Samdan) are working on Julia first.
 
 
 Will get some preliminary answers on well count tomorrow.
-
