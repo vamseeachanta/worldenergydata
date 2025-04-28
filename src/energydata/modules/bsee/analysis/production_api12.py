@@ -30,7 +30,6 @@ class ProductionAPI12Analysis():
         pass
 
     def run_production_analysis(self, cfg, data):
-        self.generate_revenue_table(cfg)
         production_groups = data.get('production_data', None)
         groups_dict = {}
         if production_groups is None:
@@ -131,11 +130,14 @@ class ProductionAPI12Analysis():
             )
 
             prod_cumulative_mmbbl_groups.reset_index(inplace=True, drop=True)
+        
+        api12_df = production_analysis_dict_api12['api12_df']
 
         self.save_result_groups(cfg, api12_array_groups, production_df_api12s, production_summary_df_groups, prod_rate_bopd_groups, prod_cumulative_mmbbl_groups)
 
         self.plot_production_rate_monthly(cfg, prod_rate_bopd_groups)
         self.plot_prod_cumulative_mmbbl_groups(cfg, prod_cumulative_mmbbl_groups)
+        self.generate_revenue_table(cfg,api12_df)
 
         groups_dict['production_df_api12s'] = production_df_api12s
         groups_dict['prod_rate_bopd_groups'] = prod_rate_bopd_groups
@@ -350,18 +352,20 @@ class ProductionAPI12Analysis():
         file_name = os.path.join(result_folder,'Plot', file_label + '.html')
         fig.write_html(file_name, include_plotlyjs="cdn")
 
-    def generate_revenue_table(self,cfg):
+    def generate_revenue_table(self,cfg, api12_df):
 
-        years = list(range(2014, 2025))
-        total_oil = [15184, 446720, 663495, 842863, 801457, 724099, 572747, 471324, 425214, 369337, 440424]
-        avg_price = [87.39, 44.39, 38.29, 48.05, 61.40, 55.59, 36.86, 65.84, 93.97, 76.10, 74.46]
+        months = api12_df['PRODUCTION_DATE']
+        MON_O_PROD_VOL = api12_df['MON_O_PROD_VOL']
+        oil_prices = pd.read_excel('data\modules\oil_price\F000000__3m.xls', engine='xlrd')
+        avg_price = oil_prices['Oil Purchase Price'].tail(14)
         
+        # TODO - Some Key error here, need to check the data
         # Calculate revenue for each year
-        revenue = [total_oil[i] * avg_price[i] for i in range(len(total_oil))]
+        revenue = [MON_O_PROD_VOL[i] * avg_price[i] for i in range(len(MON_O_PROD_VOL))]
 
         df = pd.DataFrame({
-            'Year': years,
-            'Total Oil (STB)': total_oil,
+            'Month': months,
+            'Monthly Oil Production': MON_O_PROD_VOL,
             'Avg Price (USD/bbl)': [f"${price:,.2f}" for price in avg_price],
             'Revenue (USD)': [f"${rev:,.2f}" for rev in revenue]
         })
