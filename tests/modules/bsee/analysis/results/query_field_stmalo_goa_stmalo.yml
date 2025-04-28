@@ -108,16 +108,7 @@ data:
     - 427034057700
     - 608124005500
     label: 633
-    file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\633.csv
-    well_data:
-    - api12:
-      - 427034057700
-      label: '427034057700'
-      file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\427034057700.csv
-    - api12:
-      - 608124005500
-      label: '608124005500'
-      file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005500.csv
+    file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\633.csv
   - bottom_block:
     - 634
     api12:
@@ -131,44 +122,7 @@ data:
     - 608124010701
     - 608174143100
     label: 634
-    file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\634.csv
-    well_data:
-    - api12:
-      - 427034051601
-      label: '427034051601'
-      file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\427034051601.csv
-    - api12:
-      - 427034038702
-      label: '427034038702'
-      file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\427034038702.csv
-    - api12:
-      - 608124004400
-      label: '608124004400'
-      file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124004400.csv
-    - api12:
-      - 608124005400
-      label: '608124005400'
-      file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005400.csv
-    - api12:
-      - 608124005500
-      label: '608124005500'
-      file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005500.csv
-    - api12:
-      - 608124005300
-      label: '608124005300'
-      file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005300.csv
-    - api12:
-      - 608124010700
-      label: '608124010700'
-      file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124010700.csv
-    - api12:
-      - 608124010701
-      label: '608124010701'
-      file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124010701.csv
-    - api12:
-      - 608174143100
-      label: '608174143100'
-      file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608174143100.csv
+    file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\634.csv
   - bottom_block:
     - 677
     api12:
@@ -180,53 +134,24 @@ data:
     - 608124005300
     - 608124015100
     label: 677
-    file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\677.csv
-    well_data:
-    - api12:
-      - 608124001800
-      label: '608124001800'
-      file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124001800.csv
-    - api12:
-      - 608124002900
-      label: '608124002900'
-      file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124002900.csv
-    - api12:
-      - 608124005700
-      label: '608124005700'
-      file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005700.csv
-    - api12:
-      - 608124005600
-      label: '608124005600'
-      file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005600.csv
-    - api12:
-      - 608124005800
-      label: '608124005800'
-      file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005800.csv
-    - api12:
-      - 608124005300
-      label: '608124005300'
-      file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005300.csv
-    - api12:
-      - 608124015100
-      label: '608124015100'
-      file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124015100.csv
+    file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\677.csv
 analysis:
   flag: true
   api12: true
 Analysis:
   basename: bsee
-  analysis_root_folder: K:\github\energydata\tests\modules\bsee\analysis
+  analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis
   file_name: query_field_stmalo_goa_stmalo
   file_name_for_overwrite: query_field_stmalo_goa_stmalo
-  log_folder: K:\github\energydata\tests\modules\bsee\analysis\logs
-  start_time: 2025-04-25 12:52:46.036486
+  log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\logs
+  start_time: 2025-04-28 17:06:23.698299
   cfg_array_file_names: ~
   DefaultInputFile: ~
-  CustomInputFile: query_field_stmalo.yml
-  result_folder: K:\github\energydata\tests\modules\bsee\analysis\results
-  result_data_folder: K:\github\energydata\tests\modules\bsee\analysis\results\Data
-  result_plot_folder: K:\github\energydata\tests\modules\bsee\analysis\results\Plot
-  fe_folder: K:\github\energydata\tests\modules\bsee\analysis\results
+  CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\query_field_stmalo.yml
+  result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
+  result_data_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data
+  result_plot_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Plot
+  fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
 bsee:
   data:
     production_data: true
@@ -237,16 +162,7 @@ bsee:
       - 427034057700
       - 608124005500
       label: 633
-      file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\633.csv
-      well_data:
-      - api12:
-        - 427034057700
-        label: '427034057700'
-        file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\427034057700.csv
-      - api12:
-        - 608124005500
-        label: '608124005500'
-        file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005500.csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\633.csv
     - bottom_block:
       - 634
       api12:
@@ -260,44 +176,7 @@ bsee:
       - 608124010701
       - 608174143100
       label: 634
-      file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\634.csv
-      well_data:
-      - api12:
-        - 427034051601
-        label: '427034051601'
-        file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\427034051601.csv
-      - api12:
-        - 427034038702
-        label: '427034038702'
-        file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\427034038702.csv
-      - api12:
-        - 608124004400
-        label: '608124004400'
-        file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124004400.csv
-      - api12:
-        - 608124005400
-        label: '608124005400'
-        file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005400.csv
-      - api12:
-        - 608124005500
-        label: '608124005500'
-        file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005500.csv
-      - api12:
-        - 608124005300
-        label: '608124005300'
-        file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005300.csv
-      - api12:
-        - 608124010700
-        label: '608124010700'
-        file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124010700.csv
-      - api12:
-        - 608124010701
-        label: '608124010701'
-        file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124010701.csv
-      - api12:
-        - 608174143100
-        label: '608174143100'
-        file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608174143100.csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\634.csv
     - bottom_block:
       - 677
       api12:
@@ -309,37 +188,7 @@ bsee:
       - 608124005300
       - 608124015100
       label: 677
-      file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\677.csv
-      well_data:
-      - api12:
-        - 608124001800
-        label: '608124001800'
-        file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124001800.csv
-      - api12:
-        - 608124002900
-        label: '608124002900'
-        file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124002900.csv
-      - api12:
-        - 608124005700
-        label: '608124005700'
-        file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005700.csv
-      - api12:
-        - 608124005600
-        label: '608124005600'
-        file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005600.csv
-      - api12:
-        - 608124005800
-        label: '608124005800'
-        file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005800.csv
-      - api12:
-        - 608124005300
-        label: '608124005300'
-        file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005300.csv
-      - api12:
-        - 608124015100
-        label: '608124015100'
-        file_name: K:\github\energydata\tests\modules\bsee\analysis\results\Data\608124015100.csv
-    type: csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\677.csv
   analysis:
     flag: true
     api12: true
