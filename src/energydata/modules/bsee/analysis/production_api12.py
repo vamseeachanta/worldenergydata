@@ -153,6 +153,7 @@ class ProductionAPI12Analysis():
         return merged_df
 
     def save_result_group(self, cfg, group_idx, production_analysis_df_group):
+        
         block_number = cfg['data']['groups'][group_idx].get('bottom_block', [None])[0]
         if block_number is None:
             group_label = str(group_idx)
@@ -340,7 +341,7 @@ class ProductionAPI12Analysis():
             markers=True,
             title="Cumulative Production for Each API"
         )
-        
+
         groups_label = cfg['meta'].get('label', None)
         if groups_label is None:
             groups_label = cfg['Analysis']['file_name_for_overwrite']
@@ -350,10 +351,12 @@ class ProductionAPI12Analysis():
         file_name = os.path.join(result_folder,'Plot', file_label + '.html')
         fig.write_html(file_name, include_plotlyjs="cdn")
 
-    def generate_revenue_table(self,cfg):
+    def generate_revenue_table(self,cfg, prod_cumulative_mmbbl_groups):
 
+        # MOnthly revenue table
         years = list(range(2014, 2025))
-        total_oil = [15184, 446720, 663495, 842863, 801457, 724099, 572747, 471324, 425214, 369337, 440424]
+        MON_O_PROD_VOL = [15184, 446720, 663495, 842863, 801457, 724099, 572747, 471324, 425214, 369337, 440424]
+
         avg_price = [87.39, 44.39, 38.29, 48.05, 61.40, 55.59, 36.86, 65.84, 93.97, 76.10, 74.46]
         
         # Calculate revenue for each year
@@ -373,6 +376,11 @@ class ProductionAPI12Analysis():
             'Avg Price (USD/bbl)': '',
             'Revenue (USD)': f"${total_revenue:,.2f}"
         }
+
+
+        # Cummulative revenue table
+        prod_cumulative_mmbbl_groups
+        
         
         df = pd.concat([df, pd.DataFrame([total_row])], ignore_index=True)
 
@@ -380,9 +388,9 @@ class ProductionAPI12Analysis():
         file_label = 'revenue_table'
         file_name = os.path.join(result_folder, file_label + '.csv')
         df.to_csv(file_name, index=False)
-        
+
         return df
-        
+
     def perform_decline_analysis_api12(self, cfg, api12_df):
         #TODO
 
