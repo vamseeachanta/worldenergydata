@@ -311,7 +311,7 @@ class WellAPI12():
         pass
 
     def plot_well_timeline_df(self, cfg, groups_dict):
-        #TODO 
+        #TODO         
         groups_label = cfg['meta'].get('label', None)
         if groups_label is None:
             groups_label = cfg['Analysis']['file_name_for_overwrite']

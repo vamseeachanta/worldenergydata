@@ -1,9 +1,10 @@
 # Standard library imports
 import os
 import json
-import logging
-import matplotlib.pyplot as plt
-import seaborn as sns
+from loguru import logger
+# import matplotlib.pyplot as plt
+# import seaborn as sns
+import plotly.express as px
 
 # # # Third party imports
 import numpy as np
@@ -29,6 +30,7 @@ class ProductionAPI12Analysis():
         pass
 
     def run_production_analysis(self, cfg, data):
+        self.generate_revenue_table(cfg)
         production_groups = data.get('production_data', None)
         groups_dict = {}
         if production_groups is None:
@@ -107,6 +109,7 @@ class ProductionAPI12Analysis():
                 on=['PRODUCTION_DATETIME'],
                 how='outer'
             )
+            self.pd_merge_clean_column_names(prod_rate_bopd_groups)
             prod_rate_bopd_groups = prod_rate_bopd_groups.replace({np.nan: None})
             prod_rate_bopd_groups.sort_values(
             by=['PRODUCTION_DATETIME'],
@@ -120,6 +123,7 @@ class ProductionAPI12Analysis():
                 on=['PRODUCTION_DATETIME'],
                 how='outer'
             )
+            self.pd_merge_clean_column_names(prod_cumulative_mmbbl_groups)
             prod_cumulative_mmbbl_groups = prod_cumulative_mmbbl_groups.replace({np.nan: None})
             prod_cumulative_mmbbl_groups.sort_values(
             by=['PRODUCTION_DATETIME'],
@@ -130,12 +134,23 @@ class ProductionAPI12Analysis():
 
         self.save_result_groups(cfg, api12_array_groups, production_df_api12s, production_summary_df_groups, prod_rate_bopd_groups, prod_cumulative_mmbbl_groups)
 
+        self.plot_production_rate_monthly(cfg, prod_rate_bopd_groups)
+        self.plot_prod_cumulative_mmbbl_groups(cfg, prod_cumulative_mmbbl_groups)
+
         groups_dict['production_df_api12s'] = production_df_api12s
         groups_dict['prod_rate_bopd_groups'] = prod_rate_bopd_groups
         groups_dict['prod_cumulative_mmbbl_groups'] = prod_cumulative_mmbbl_groups
         groups_dict['production_summary_df_groups'] = production_summary_df_groups
 
         return cfg, groups_dict
+    
+    def pd_merge_clean_column_names(self, merged_df):
+    
+        merged_df.columns = merged_df.columns.map(str)
+        merged_df = merged_df.loc[:, ~merged_df.columns.str.endswith('_y')]
+        merged_df.columns = merged_df.columns.str.replace('_x', '', regex=True)
+        
+        return merged_df
 
     def save_result_group(self, cfg, group_idx, production_analysis_df_group):
         block_number = cfg['data']['groups'][group_idx].get('bottom_block', [None])[0]
@@ -186,8 +201,6 @@ class ProductionAPI12Analysis():
             file_label + '.csv'
         )
         prod_cumulative_mmbbl_groups.to_csv(file_name, index=False)
-        
-        # self.plot_prod_cumulative_mmbbl_groups(cfg, prod_cumulative_mmbbl_groups)
 
     def analyze_data_for_api12(self, cfg, api12, api12_df):
         api12_df_analyzed = api12_df.copy()
@@ -198,7 +211,7 @@ class ProductionAPI12Analysis():
 
         for completion_name in completion_names:
             api12_df_analyzed = api12_df[api12_df.COMPLETION_NAME == completion_name].copy()
-            api12_df_analyzed = self.add_production_rate_and_date_to_df(api12_df_analyzed)
+            api12_df_analyzed = self.add_production_rate_and_date_to_df(cfg,api12_df_analyzed)
             api12_df_analyzed.sort_values(by=['PRODUCTION_DATETIME'], inplace=True)
             api12_df_analyzed.reset_index(inplace=True)
             if api12_df_analyzed.O_PROD_RATE_BOPD.max() > 0:
@@ -254,7 +267,7 @@ class ProductionAPI12Analysis():
 
         return production_summary_df
 
-    def add_production_rate_and_date_to_df(self, api12_df):
+    def add_production_rate_and_date_to_df(self, cfg,api12_df):
         import datetime
         production_date_time = []
         production_rate = []
@@ -282,19 +295,51 @@ class ProductionAPI12Analysis():
         api12_df['O_CUMMULATIVE_PROD_MMBBL'] = O_CUMMULATIVE_PROD_MMBBL_array
 
         return api12_df
+    
+    def plot_production_rate_monthly(self, cfg, prod_rates_df):
+
+        # reshape the DataFrame: make API numbers into rows for plotting
+        df_melted = prod_rates_df.melt(id_vars=['PRODUCTION_DATETIME'], 
+                            var_name='api12', 
+                            value_name='production')
+        
+        # Rename columns if you want simple names
+        df_melted = df_melted.rename(columns={'PRODUCTION_DATETIME': 'Date'})
+
+        fig = px.line(
+            df_melted,
+            x='Date',
+            y='production',
+            color='api12',  
+            markers=True,
+            title="Production Data for API12"
+        )
+        groups_label = cfg['meta'].get('label', None)
+        if groups_label is None:
+            groups_label = cfg['Analysis']['file_name_for_overwrite']
+
+        file_label = 'prod_rates_plot_' + groups_label
+        result_folder = cfg['Analysis']['result_folder']
+        file_name = os.path.join(result_folder, 'Plot',file_label + '.html')
+        fig.write_html(file_name, include_plotlyjs="cdn")
 
     def plot_prod_cumulative_mmbbl_groups(self, cfg, prod_cumulative_mmbbl_groups):
 
-        #TODO prod_cumulative_mmbbl_groups, prod_rate_bopd_groups
+        df_melted = prod_cumulative_mmbbl_groups.melt(id_vars=['PRODUCTION_DATETIME'], 
+                            var_name='api12', 
+                            value_name='cumulative_production')
+        
+        # Rename columns if you want simple names
+        df_melted = df_melted.rename(columns={'PRODUCTION_DATETIME': 'Date'})
 
-        plt.figure(figsize=(10, 6))
-        sns.lineplot(data=prod_cumulative_mmbbl_groups, x='PRODUCTION_DATETIME', y='O_CUMMULATIVE_PROD_MMBBL')
-        plt.title('Cumulative Production Over Time')
-        plt.xlabel('Production Date')
-        plt.ylabel('Cumulative Production (MMBBL)')
-        plt.xticks(rotation=45)
-        plt.tight_layout()
-        plt.show()
+        fig = px.line(
+            df_melted,
+            x='Date',
+            y='cumulative_production',
+            color='api12',  
+            markers=True,
+            title="Cumulative Production for Each API"
+        )
         
         groups_label = cfg['meta'].get('label', None)
         if groups_label is None:
@@ -302,9 +347,41 @@ class ProductionAPI12Analysis():
 
         file_label = 'prod_cumulative_mmbbl_plot_' + groups_label
         result_folder = cfg['Analysis']['result_folder']
-        file_name = os.path.join(result_folder, file_label + '.png')
-        plt.savefig(file_name)
-        plt.close()
+        file_name = os.path.join(result_folder,'Plot', file_label + '.html')
+        fig.write_html(file_name, include_plotlyjs="cdn")
+
+    def generate_revenue_table(self,cfg):
+
+        years = list(range(2014, 2025))
+        total_oil = [15184, 446720, 663495, 842863, 801457, 724099, 572747, 471324, 425214, 369337, 440424]
+        avg_price = [87.39, 44.39, 38.29, 48.05, 61.40, 55.59, 36.86, 65.84, 93.97, 76.10, 74.46]
+        
+        # Calculate revenue for each year
+        revenue = [total_oil[i] * avg_price[i] for i in range(len(total_oil))]
+
+        df = pd.DataFrame({
+            'Year': years,
+            'Total Oil (STB)': total_oil,
+            'Avg Price (USD/bbl)': [f"${price:,.2f}" for price in avg_price],
+            'Revenue (USD)': [f"${rev:,.2f}" for rev in revenue]
+        })
+
+        total_revenue = sum(revenue)
+        total_row = {
+            'Year': '',
+            'Total Oil (STB)': '',
+            'Avg Price (USD/bbl)': '',
+            'Revenue (USD)': f"${total_revenue:,.2f}"
+        }
+        
+        df = pd.concat([df, pd.DataFrame([total_row])], ignore_index=True)
+
+        result_folder = cfg['Analysis']['result_folder']
+        file_label = 'revenue_table'
+        file_name = os.path.join(result_folder, file_label + '.csv')
+        df.to_csv(file_name, index=False)
+        
+        return df
         
     def perform_decline_analysis_api12(self, cfg, api12_df):
         #TODO
