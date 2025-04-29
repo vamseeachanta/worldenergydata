@@ -108,7 +108,7 @@ data:
     - 427034057700
     - 608124005500
     label: 633
-    file_name: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\633.csv
+    file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\633.csv
   - bottom_block:
     - 634
     api12:
@@ -122,7 +122,7 @@ data:
     - 608124010701
     - 608174143100
     label: 634
-    file_name: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\634.csv
+    file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\634.csv
   - bottom_block:
     - 677
     api12:
@@ -134,25 +134,25 @@ data:
     - 608124005300
     - 608124015100
     label: 677
-    file_name: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\677.csv
+    file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\677.csv
 analysis:
   flag: true
   api12: true
   bottom_blocks: true
 Analysis:
   basename: bsee
-  analysis_root_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis
+  analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis
   file_name: query_field_stmalo_goa_stmalo
   file_name_for_overwrite: query_field_stmalo_goa_stmalo
-  log_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\logs
-  start_time: 2025-04-29 11:38:21.818854
+  log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\logs
+  start_time: 2025-04-29 12:27:31.376342
   cfg_array_file_names: ~
   DefaultInputFile: ~
-  CustomInputFile: query_field_stmalo.yml
-  result_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
-  result_data_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data
-  result_plot_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Plot
-  fe_folder: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
+  CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\query_field_stmalo.yml
+  result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
+  result_data_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data
+  result_plot_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Plot
+  fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
 bsee:
   data:
     production_data: true
@@ -163,7 +163,7 @@ bsee:
       - 427034057700
       - 608124005500
       label: 633
-      file_name: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\633.csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\633.csv
     - bottom_block:
       - 634
       api12:
@@ -177,7 +177,7 @@ bsee:
       - 608124010701
       - 608174143100
       label: 634
-      file_name: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\634.csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\634.csv
     - bottom_block:
       - 677
       api12:
@@ -189,7 +189,7 @@ bsee:
       - 608124005300
       - 608124015100
       label: 677
-      file_name: C:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\677.csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\677.csv
   analysis:
     flag: true
     api12: true
