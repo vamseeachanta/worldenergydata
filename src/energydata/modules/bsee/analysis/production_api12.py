@@ -10,6 +10,7 @@ import plotly.express as px
 # # # Third party imports
 import numpy as np
 import pandas as pd
+from typing import Dict, List
 from energydata.modules.bsee.data.bsee_data import BSEEData
 from energydata.common.legacy.data import DateTimeUtility
 
@@ -141,6 +142,13 @@ class ProductionAPI12Analysis():
 
         self.plot_production_rate_by_well(cfg, prod_rate_bopd_groups)
         self.plot_prod_cumulative_mmbbl_by_well(cfg, prod_cumulative_mmbbl_groups)
+
+        prod_cumulative_mmbbl_groups_by_block = self.convert_well_df_to_block_df(cfg,prod_cumulative_mmbbl_groups)
+        self.plot_prod_cumulative_mmbbl_by_block(cfg, prod_cumulative_mmbbl_groups_by_block)
+
+        prod_cumulative_mmbbl_groups_by_field = self.convert_block_to_field(prod_cumulative_mmbbl_groups_by_block)
+        self.plot_prod_cumulative_mmbbl_by_field(cfg, prod_cumulative_mmbbl_groups_by_field)
+
         self.generate_revenue_table(cfg,api12_df)
 
         groups_dict['production_df_api12s'] = production_df_api12s
@@ -303,14 +311,64 @@ class ProductionAPI12Analysis():
 
         return api12_df
 
+    def convert_well_df_to_block_df(self,cfg,df_api12: pd.DataFrame) -> pd.DataFrame:
+        """
+        Convert production DataFrame by well into production DataFrame by block.
+        Args:
+            df_api12 (pd.DataFrame): Input DataFrame with datetime and API12 columns.
+            block_to_api12s (Dict[str, List[str]]): Mapping from block number to list of API12s.
+        Returns:
+            pd.DataFrame: New DataFrame with prod datetime and block production data.
+        """
+        datetime_col = df_api12.columns[0]
+        block_to_api12s = self.extract_block_mapping(cfg)
+        df_block = pd.DataFrame()
+        df_block[datetime_col] = df_api12[datetime_col]
+
+        for block, api12s_list in block_to_api12s.items():
+            block_col_name = f"block_{block}"
+            existing_api12s = [api12 for api12 in api12s_list if api12 in df_api12.columns]
+            if not existing_api12s:
+                df_block[block_col_name] = 0
+            else:
+                df_block[block_col_name] = df_api12[existing_api12s].sum(axis=1)
+
+        return df_block
+    
+    def extract_block_mapping(self, cfg):
+        mapping = {}
+        for group in cfg.get("data", {}).get("groups", []):
+            block_ids = group.get("bottom_block", [])
+            api12s = group.get("api12", [])
+            for block in block_ids:
+                block_str = str(block)
+                api12_strs = [str(api12) for api12 in api12s]
+                mapping[block_str] = api12_strs
+        return mapping
+    
+    def convert_block_to_field(self,df_block: pd.DataFrame) -> pd.DataFrame:
+        """
+        Convert block-level DataFrame to field-level DataFrame.
+        Args:
+            df_block (pd.DataFrame): DataFrame with datetime and block columns.
+        Returns:
+            pd.DataFrame: New DataFrame with datetime and 'st_malo' column.
+        """
+        datetime_col = df_block.columns[0]
+        field_df = pd.DataFrame()
+        field_df[datetime_col] = df_block[datetime_col]
+
+        block_columns = [col for col in df_block.columns if col.startswith("block_")]
+        field_df["St Malo"] = df_block[block_columns].sum(axis=1)
+
+        return field_df
+
     def plot_production_rate_by_well(self, cfg, prod_rates_df):
 
-        # reshape the DataFrame: make API numbers into rows for plotting
         df_melted = prod_rates_df.melt(id_vars=['PRODUCTION_DATETIME'], 
                             var_name='api12', 
                             value_name='production')
 
-        # Rename columns if you want simple names
         df_melted = df_melted.rename(columns={'PRODUCTION_DATETIME': 'Date'})
 
         df_melted = df_melted.dropna(subset=['production'])
@@ -345,7 +403,6 @@ class ProductionAPI12Analysis():
                             var_name='api12', 
                             value_name='cumulative_production')
 
-        # Rename columns if you want simple names
         df_melted = df_melted.rename(columns={'PRODUCTION_DATETIME': 'Date'})
 
         df_melted = df_melted.dropna(subset=['cumulative_production'])
@@ -364,7 +421,7 @@ class ProductionAPI12Analysis():
             y='cumulative_production',
             color='api12',
             markers=True,
-            title="Cumulative Production for Each API"
+            title="Cumulative Production by well"
         )
 
         groups_label = cfg['meta'].get('label', None)
@@ -376,33 +433,75 @@ class ProductionAPI12Analysis():
         file_name = os.path.join(result_folder,'Plot', file_label + '.html')
         fig.write_html(file_name, include_plotlyjs="cdn")
     
-    def plot_cumulative_by_block(self, cfg, prod_cumulative_mmbbl_groups):
-        pass
-        # # Reshape the DataFrame: make API numbers into rows for plotting
-        # df_melted = prod_cumulative_mmbbl_groups.melt(id_vars=['PRODUCTION_DATETIME'], 
-        #                     var_name='api12', 
-        #                     value_name='cumulative_production')
+    def plot_prod_cumulative_mmbbl_by_block(self, cfg, prod_cumulative_mmbbl_groups_by_block):
 
-        # # Rename columns if you want simple names
-        # df_melted = df_melted.rename(columns={'PRODUCTION_DATETIME': 'Date'})
+        df_melted = prod_cumulative_mmbbl_groups_by_block.melt(id_vars=['PRODUCTION_DATETIME'], 
+                            var_name='block', 
+                            value_name='cumulative_production')
 
-        # fig = px.line(
-        #     df_melted,
-        #     x='Date',
-        #     y='cumulative_production',
-        #     color='api12',
-        #     markers=True,
-        #     title="Cumulative Production for Each API"
-        # )
+        df_melted = df_melted.rename(columns={'PRODUCTION_DATETIME': 'Date'})
+        df_melted = df_melted.dropna(subset=['cumulative_production'])
+        df_melted['Date'] = pd.to_datetime(df_melted['Date'])
+        
+        df_filtered = df_melted[
+                (df_melted['Date'] >= '2014-01-01') &
+                (df_melted['Date'] <= '2025-04-03') &
+                (df_melted['cumulative_production'] >= 1) &
+                (df_melted['cumulative_production'] <= 200) 
+            ]
 
-        # groups_label = cfg['meta'].get('label', None)
-        # if groups_label is None:
-        #     groups_label = cfg['Analysis']['file_name_for_overwrite']
+        fig = px.line(
+            df_filtered,
+            x='Date',
+            y='cumulative_production',
+            color='block',
+            markers=True,
+            title="Cumulative Production by block"
+        )
 
-        # file_label = 'prod_cumulative_mmbbl_by_block' + groups_label
-        # result_folder = cfg['Analysis']['result_folder']
-        # file_name = os.path.join(result_folder,'Plot', file_label + '.html')
-        # fig.write_html(file_name, include_plotlyjs="cdn")
+        groups_label = cfg['meta'].get('label', None)
+        if groups_label is None:
+            groups_label = cfg['Analysis']['file_name_for_overwrite']
+
+        file_label = 'prod_cumulative_mmbbl_by_block_' + groups_label
+        result_folder = cfg['Analysis']['result_folder']
+        file_name = os.path.join(result_folder,'Plot', file_label + '.html')
+        fig.write_html(file_name, include_plotlyjs="cdn")
+    
+    def plot_prod_cumulative_mmbbl_by_field(self, cfg, prod_cumulative_mmbbl_groups_by_field):
+            
+        df_melted = prod_cumulative_mmbbl_groups_by_field.melt(id_vars=['PRODUCTION_DATETIME'], 
+                            var_name='field', 
+                            value_name='cumulative_production')
+
+        df_melted = df_melted.rename(columns={'PRODUCTION_DATETIME': 'Date'})
+        df_melted = df_melted.dropna(subset=['cumulative_production'])
+        df_melted['Date'] = pd.to_datetime(df_melted['Date'])
+        
+        df_filtered = df_melted[
+                (df_melted['Date'] >= '2013-01-01') &
+                (df_melted['Date'] <= '2025-04-03') &
+                (df_melted['cumulative_production'] >= 1) &
+                (df_melted['cumulative_production'] <= 200) 
+            ]
+
+        fig = px.line(
+            df_filtered,
+            x='Date',
+            y='cumulative_production',
+            color='field',
+            markers=True,
+            title="Cumulative Production by field"
+        )
+
+        groups_label = cfg['meta'].get('label', None)
+        if groups_label is None:
+            groups_label = cfg['Analysis']['file_name_for_overwrite']
+
+        file_label = 'prod_cumulative_mmbbl_by_field_' + groups_label
+        result_folder = cfg['Analysis']['result_folder']
+        file_name = os.path.join(result_folder,'Plot', file_label + '.html')
+        fig.write_html(file_name, include_plotlyjs="cdn")
 
     def generate_revenue_table(self,cfg, api12_df):
 
