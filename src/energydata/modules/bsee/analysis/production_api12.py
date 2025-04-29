@@ -145,17 +145,17 @@ class ProductionAPI12Analysis():
         groups_dict['production_summary_df_groups'] = production_summary_df_groups
 
         return cfg, groups_dict
-    
+
     def pd_merge_clean_column_names(self, merged_df):
-    
+
         merged_df.columns = merged_df.columns.map(str)
         merged_df = merged_df.loc[:, ~merged_df.columns.str.endswith('_y')]
         merged_df.columns = merged_df.columns.str.replace('_x', '', regex=True)
-        
+
         return merged_df
 
     def save_result_group(self, cfg, group_idx, production_analysis_df_group):
-        
+
         block_number = cfg['data']['groups'][group_idx].get('bottom_block', [None])[0]
         if block_number is None:
             group_label = str(group_idx)
@@ -298,14 +298,14 @@ class ProductionAPI12Analysis():
         api12_df['O_CUMMULATIVE_PROD_MMBBL'] = O_CUMMULATIVE_PROD_MMBBL_array
 
         return api12_df
-    
+
     def plot_production_rate_monthly(self, cfg, prod_rates_df):
 
         # reshape the DataFrame: make API numbers into rows for plotting
         df_melted = prod_rates_df.melt(id_vars=['PRODUCTION_DATETIME'], 
                             var_name='api12', 
                             value_name='production')
-        
+
         # Rename columns if you want simple names
         df_melted = df_melted.rename(columns={'PRODUCTION_DATETIME': 'Date'})
 
@@ -313,7 +313,7 @@ class ProductionAPI12Analysis():
             df_melted,
             x='Date',
             y='production',
-            color='api12',  
+            color='api12',
             markers=True,
             title="Production Data for API12"
         )
@@ -331,7 +331,7 @@ class ProductionAPI12Analysis():
         df_melted = prod_cumulative_mmbbl_groups.melt(id_vars=['PRODUCTION_DATETIME'], 
                             var_name='api12', 
                             value_name='cumulative_production')
-        
+
         # Rename columns if you want simple names
         df_melted = df_melted.rename(columns={'PRODUCTION_DATETIME': 'Date'})
 
@@ -339,7 +339,7 @@ class ProductionAPI12Analysis():
             df_melted,
             x='Date',
             y='cumulative_production',
-            color='api12',  
+            color='api12',
             markers=True,
             title="Cumulative Production for Each API"
         )
@@ -362,7 +362,7 @@ class ProductionAPI12Analysis():
         
         # TODO - Some Key error here, need to check the data
         # Calculate revenue for each year
-        revenue = [MON_O_PROD_VOL[i] * avg_price[i] for i in range(len(MON_O_PROD_VOL))]
+        revenue = [MON_O_PROD_VOL[i] * avg_price[i] for i in range(0, len(MON_O_PROD_VOL))]
 
         df = pd.DataFrame({
             'Month': months,

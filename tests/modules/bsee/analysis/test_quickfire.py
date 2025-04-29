@@ -30,7 +30,7 @@ def test_application():
     input_file = 'query_field_stmalo.yml'
 
     # API12 analysis
-    #input_file = 'query_api_01_wells_api12.yml'  
+    #input_file = 'query_api_01_wells_api12.yml' 
     #input_file = 'query_api_03_wells_api12.yml' 
 
     # Production Analysis
