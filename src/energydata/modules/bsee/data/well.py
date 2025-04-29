@@ -151,8 +151,6 @@ class WellData:
         cfg[cfg['basename']]['data'].update({'type': 'csv'})
         cfg = self.get_well_data_from_website(cfg)
 
-        # website_data = block_data.get_block_data_from_website(cfg, output_data)
-
         return cfg
     
     def get_well_data_from_website(self, cfg):
