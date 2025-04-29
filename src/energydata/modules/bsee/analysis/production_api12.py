@@ -13,6 +13,9 @@ from energydata.modules.bsee.data.bsee_data import BSEEData
 from energydata.common.legacy.data import DateTimeUtility
 
 from assetutilities.common.data import SaveData
+from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
+
+wwy = WorkingWithYAML()
 # from energydata.common.bsee_data_manager import BSEEData
 
 # from energydata.common.data import AttributeDict, transform_df_datetime_to_str
@@ -355,12 +358,21 @@ class ProductionAPI12Analysis():
 
     def generate_revenue_table(self,cfg, api12_df):
 
-        months = api12_df['PRODUCTION_DATE']
-        MON_O_PROD_VOL = api12_df['MON_O_PROD_VOL']
-        oil_prices = pd.read_excel('data\modules\oil_price\F000000__3m.xls', engine='xlrd')
-        avg_price = oil_prices['Oil Purchase Price'].tail(14)
+        folder_path = r'data\modules\oil_price'
+        library_name = 'energydata'
+        library_file_cfg = {
+            'filepath': folder_path,
+            'library_name': library_name
+        }
+        folder_path= wwy.get_library_filepath(library_file_cfg, src_relative_location_flag=False)
+        file = os.path.join(folder_path, 'F000000__3m.xls')
+        oil_prices = pd.read_excel(file, engine='xlrd')
+
+        avg_price = oil_prices['Oil Purchase Price'].tail(13).tolist()
+        target_len = len(avg_price)
+        months = api12_df['PRODUCTION_DATE'].tolist()[-target_len:]
+        MON_O_PROD_VOL = api12_df['MON_O_PROD_VOL'].tolist()[-target_len:]
         
-        # TODO - Some Key error here, need to check the data
         # Calculate revenue for each year
         revenue = [MON_O_PROD_VOL[i] * avg_price[i] for i in range(0, len(MON_O_PROD_VOL))]
 
@@ -373,21 +385,16 @@ class ProductionAPI12Analysis():
 
         total_revenue = sum(revenue)
         total_row = {
-            'Year': '',
-            'Total Oil (STB)': '',
+            'Month': '',
+            'Monthly Oil Production': '',
             'Avg Price (USD/bbl)': '',
             'Revenue (USD)': f"${total_revenue:,.2f}"
         }
 
-
-        # Cummulative revenue table
-        prod_cumulative_mmbbl_groups
-        
-        
         df = pd.concat([df, pd.DataFrame([total_row])], ignore_index=True)
 
         result_folder = cfg['Analysis']['result_folder']
-        file_label = 'revenue_table'
+        file_label = 'revenues_table'
         file_name = os.path.join(result_folder, file_label + '.csv')
         df.to_csv(file_name, index=False)
 

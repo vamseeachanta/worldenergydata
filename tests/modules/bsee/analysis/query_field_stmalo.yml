@@ -2,6 +2,7 @@ meta:
   library: energydata
   basename: bsee
   label: goa_stmalo
+
   
 basename: bsee
 
@@ -12,16 +13,18 @@ data:
     -
       bottom_block: [633]
       api12: NULL
-    # -
-    #   bottom_block: [634]
-    #   api12: NULL
-    # -
-    #   bottom_block: [677]
-    #   api12: NULL
+    -
+      bottom_block: [634]
+      api12: NULL
+    -
+      bottom_block: [677]
+      api12: NULL
 
 analysis:
   flag: True
   api12: True
+  bottom_blocks: True
+
 
 default:
   log_level: INFO
