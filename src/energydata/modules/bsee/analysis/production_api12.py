@@ -151,7 +151,7 @@ class ProductionAPI12Analysis():
         self.plot_prod_cumulative_mmbbl_by_field(cfg, prod_cumulative_mmbbl_groups_by_field)
 
         revenue_df = self.generate_revenue_table(cfg,api12_df)
-        self.plot_revenues(cfg, revenue_df)
+        # self.plot_revenues(cfg, revenue_df)
 
         groups_dict['production_df_api12s'] = production_df_api12s
         groups_dict['prod_rate_bopd_groups'] = prod_rate_bopd_groups

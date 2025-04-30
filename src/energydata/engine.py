@@ -53,21 +53,21 @@ def engine(inputfile: str = None, cfg: dict = None, config_flag: bool = True) ->
 
     logger.info(f"{basename}, application ... START")
 
-    try:
-        if basename in ["bsee"]:
-            bsee_app = bsee()
-            cfg_base = bsee_app.router(cfg_base)
+    # try:
+    if basename in ["bsee"]:
+        bsee_app = bsee()
+        cfg_base = bsee_app.router(cfg_base)
 
-        elif basename in ["dwnld_from_zipurl"]:
-            dwnld_from_zipurl = zip()
-            cfg_base = dwnld_from_zipurl.router(cfg_base)
+    elif basename in ["dwnld_from_zipurl"]:
+        dwnld_from_zipurl = zip()
+        cfg_base = dwnld_from_zipurl.router(cfg_base)
 
-        else:
-            raise (Exception(f"Analysis for basename: {basename} not found. ... FAIL"))
+    else:
+        raise (Exception(f"Analysis for basename: {basename} not found. ... FAIL"))
 
-    except Exception as e:
-        logger.error(f"Error in {basename} application: {e}")
-        raise
+    # except Exception as e:
+    #     logger.error(f"Error in {basename} application: {e}")
+    #     raise
 
     logger.info(f"{basename}, application ... END")
     app_manager.save_cfg(cfg_base=cfg_base)

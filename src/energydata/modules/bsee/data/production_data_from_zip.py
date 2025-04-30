@@ -62,7 +62,7 @@ class GetProdDataFromZip:
                 'file_name': file_name_with_path
             }
 
-            df = zip_files_to_df.router(cfg_zip_utilities)
+            df = zip_files_to_df.zip_file_to_dataframe(cfg_zip_utilities)
 
             file_label = file_name.split('.')[0]
             file_name = file_label + '.bin'
@@ -177,7 +177,7 @@ class GetProdDataFromZip:
         # Filter the DataFrame based on the API12 value
         api12_dataframes = {}
         for api12 in api12_array:
-            df_api12 = df_api12_array[df_api12_array['API_WELL_NUMBER'] == api12]
+            df_api12 = df_api12_array[df_api12_array['API_WELL_NUMBER'] == api12].copy()
             api12_dataframes[api12] = df_api12
 
         return api12_dataframes
