@@ -12,6 +12,25 @@ parameters:
       bin: data\modules\bsee\bin\production
     block: data/modules/bsee/block
     APD: data/modules/bsee/data/csv/online_query_raw_data
+    apm:
+      zip: data/modules/bsee/zip/apm
+      bin: data/modules/bsee/bin/apm
+      columns:
+      - - MMS_COMPANY_NUM
+        - API_WELL_NUMBER
+        - WATER_DEPTH
+        - WELL_NM_BP_SFIX
+        - WELL_NM_ST_SFIX
+        - SURF_AREA_CODE
+        - SURF_BLOCK_NUM
+        - SURF_LEASE_NUM
+        - BOTM_AREA_CODE
+        - BOTM_BLOCK_NUM
+        - BOTM_LEASE_NUM
+        - RIG_ID_NUM
+        - BOREHOLE_STAT_CD
+        - WELL_TYPE_CODE
+        - BUS_ASC_NAME
   max_allowed_npt: 90
   borehole_codes:
   - BOREHOLE_STAT_CD: APD
@@ -38,6 +57,8 @@ parameters:
     BOREHOLE_STAT_DESC: TEMPORARILY ABANDONED
   - BOREHOLE_STAT_CD: VCW
     BOREHOLE_STAT_DESC: VOLUME CHAMBER WELL
+  - BOREHOLE_STAT_CD: PND
+    BOREHOLE_STAT_DESC: PENDING
 settings_master: ~
 data_retrieval:
   well:
@@ -100,18 +121,18 @@ data:
   refresh: true
 Analysis:
   basename: bsee
-  analysis_root_folder: .
+  analysis_root_folder: k:\github\energydata\tests\modules\bsee\data
   file_name: data_refresh
   file_name_for_overwrite: data_refresh
-  log_folder: .\logs
-  start_time: 2025-04-20 07:15:51.244720
+  log_folder: k:\github\energydata\tests\modules\bsee\data\logs
+  start_time: 2025-04-29 22:07:30.234319
   cfg_array_file_names: ~
   DefaultInputFile: ~
-  CustomInputFile: .\data_refresh.yml
-  result_folder: .\results
-  result_data_folder: .\results\Data
-  result_plot_folder: .\results\Plot
-  fe_folder: .\results
+  CustomInputFile: k:\github\energydata\tests\modules\bsee\data\data_refresh.yml
+  result_folder: k:\github\energydata\tests\modules\bsee\data\results
+  result_data_folder: k:\github\energydata\tests\modules\bsee\data\results\Data
+  result_plot_folder: k:\github\energydata\tests\modules\bsee\data\results\Plot
+  fe_folder: k:\github\energydata\tests\modules\bsee\data\results
 bsee:
   data:
     refresh: true
