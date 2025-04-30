@@ -125,7 +125,7 @@ Analysis:
   file_name: data_refresh
   file_name_for_overwrite: data_refresh
   log_folder: k:\github\energydata\tests\modules\bsee\data\logs
-  start_time: 2025-04-29 22:07:30.234319
+  start_time: 2025-04-29 22:21:12.252748
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: k:\github\energydata\tests\modules\bsee\data\data_refresh.yml
