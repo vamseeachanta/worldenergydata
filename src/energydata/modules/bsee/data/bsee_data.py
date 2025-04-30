@@ -14,7 +14,7 @@ class BSEEData:
         pass
 
     def router(self, cfg):
-        
+
         data_refresh_flag = cfg['data'].get('refresh', False)
         if data_refresh_flag:
             cfg = data_refresh.router(cfg)
@@ -22,10 +22,10 @@ class BSEEData:
             return cfg, None
         else:
             cfg = block.router(cfg)
-    
-            #cfg, well_data = well.router(cfg)
+
+            cfg, well_data = well.router(cfg)
             cfg, production_data = production.router(cfg)
 
-            data = {'production_data': production_data}
+            data = {'well_data': well_data, 'production_data': production_data}
 
             return cfg, data
