@@ -10,15 +10,27 @@ data:
   groups:
     # Groups typically are list of entities to run through multiple API numbers or multiple API sets
     - 
+      block:
+        area: WR
+        block: 584
       bottom_block: [584]
       api12: NULL
     - 
+      block:
+        area: WR
+        block: 678
       bottom_block: [678]
       api12: NULL
     - 
+      block:
+        area: WR
+        block: 758
       bottom_block: [758]
       api12: NULL
     - 
+      block:
+        area: WR
+        block: 758
       bottom_block: [759]
       api12: NULL
 
