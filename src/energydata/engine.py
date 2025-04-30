@@ -67,6 +67,7 @@ def engine(inputfile: str = None, cfg: dict = None, config_flag: bool = True) ->
 
     except Exception as e:
         logger.error(f"Error in {basename} application: {e}")
+        raise
 
     logger.info(f"{basename}, application ... END")
     app_manager.save_cfg(cfg_base=cfg_base)
