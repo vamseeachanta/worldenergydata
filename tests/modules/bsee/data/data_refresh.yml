@@ -4,7 +4,8 @@ meta:
 
 data:
   refresh: True
- 
+  apm: True
+  production: False
 
 default:
   log_level: INFO

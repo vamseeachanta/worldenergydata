@@ -86,7 +86,7 @@ class WellDataFromZip:
                 'file_name': file_name_with_path
             }
 
-            dfs = zip_files_to_df.router(cfg_zip_utilities)
+            dfs = zip_files_to_df.zip_file_to_dataframe(cfg_zip_utilities)
 
             for key, df in dfs.items():
                 if len(df) > 0:

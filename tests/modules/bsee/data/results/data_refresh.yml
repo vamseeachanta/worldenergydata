@@ -97,13 +97,13 @@ data_retrieval:
       form_data:
         first_request:
           ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
-          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
+          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: ~
           ASPxFormLayout1_ASPxComboBoxBBN_VI: None
           ASPxFormLayout1$ASPxComboBoxBBN: None
           ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
         second_request:
           ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
-          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
+          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: ~
           ASPxFormLayout1_ASPxComboBoxBBN_VI: None
           ASPxFormLayout1$ASPxComboBoxBBN: None
           __EVENTTARGET: ASPxFormLayout2$btnCsvExport
@@ -125,7 +125,7 @@ Analysis:
   file_name: data_refresh
   file_name_for_overwrite: data_refresh
   log_folder: k:\github\energydata\tests\modules\bsee\data\logs
-  start_time: 2025-04-29 22:21:12.252748
+  start_time: 2025-04-30 17:57:49.444941
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: k:\github\energydata\tests\modules\bsee\data\data_refresh.yml
