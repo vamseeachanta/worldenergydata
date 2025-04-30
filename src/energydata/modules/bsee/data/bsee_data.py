@@ -15,17 +15,13 @@ class BSEEData:
 
     def router(self, cfg):
 
-        data_refresh_flag = cfg['data'].get('refresh', False)
-        if data_refresh_flag:
-            cfg = data_refresh.router(cfg)
-            logging.info('Data refresh completed.')
-            return cfg, None
-        else:
-            cfg = block.router(cfg)
+        cfg, _ = data_refresh.router(cfg)
 
-            cfg, well_data = well.router(cfg)
-            cfg, production_data = production.router(cfg)
+        cfg = block.router(cfg)
 
-            data = {'well_data': well_data, 'production_data': production_data}
+        cfg, well_data = well.router(cfg)
+        cfg, production_data = production.router(cfg)
 
-            return cfg, data
+        data = {'well_data': well_data, 'production_data': production_data}
+
+        return cfg, data
