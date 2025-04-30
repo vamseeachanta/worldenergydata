@@ -1,0 +1,33 @@
+meta:
+  library: energydata
+  basename: bsee
+  label: goa_stones
+
+basename: bsee
+
+data:
+  production_data: True
+  groups:
+    # Groups typically are list of entities to run through multiple API numbers or multiple API sets
+    - 
+      bottom:
+        area: KC
+        block: 785
+      api12: NULL
+    # - 
+    #   block:
+    #     area: ''
+    #     block: ,'KC828','KC829','KC830','KC871','KC872
+    #   bottom_block: [464]
+    #   api12: NULL
+
+analysis:
+  flag: True
+  api12: True
+
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False

@@ -533,7 +533,7 @@ class ProductionAPI12Analysis():
         file_name = os.path.join(result_folder,'Plot', file_label + '.html')
         fig.write_html(file_name, include_plotlyjs="cdn")
 
-    def generate_revenue_table(self,cfg, api12_df):
+    def generate_revenue_table(self, cfg, api12_df):
 
         folder_path = r'data\modules\oil_price'
         library_name = 'energydata'

@@ -11,35 +11,34 @@ title BSEE Architecture
 
 * BSEE Architecture
 
+** data_refresh
+*** production
+*** drilling (#TODO)
+*** maintenance
+**** zip raw links
+***** dwnld_from_zipurl
+
+
 ** Analysis:
-
 ***  field
-**** Get data
-***** data_refresh_flag
-****** True
-******* data refresh is done
-****** False
-******* Get block data
-******* Get Well data
-******* Get Production data
-
 **** analysis
 ***** True
 ****** run_analysis_for_all_wells
 ******* Well data groups
 ******* Production data groups
 
-
-
 ** Data:
+*** Get data
+**** block
+**** Well
+**** Production
 
+** Data Process
 *** online query
 **** scrapy
-***** well data
-***** production data
-***** block data
-**** zip raw links
-***** dwnld_from_zipurl
+***** well
+***** production
+***** block
 
 *** Through zip
 *** utilize zip data instead of csv files
