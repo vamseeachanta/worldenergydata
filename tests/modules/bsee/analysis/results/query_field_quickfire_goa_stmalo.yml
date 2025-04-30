@@ -97,13 +97,13 @@ data_retrieval:
       form_data:
         first_request:
           ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
-          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: ~
+          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
           ASPxFormLayout1_ASPxComboBoxBBN_VI: None
           ASPxFormLayout1$ASPxComboBoxBBN: None
           ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
         second_request:
           ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
-          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: ~
+          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
           ASPxFormLayout1_ASPxComboBoxBBN_VI: None
           ASPxFormLayout1$ASPxComboBoxBBN: None
           __EVENTTARGET: ASPxFormLayout2$btnCsvExport
@@ -131,16 +131,16 @@ data:
     - 427034057700
     - 608124005500
     label: 633
-    file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\633.csv
+    file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\633.csv
     well_data:
     - api12:
       - 427034057700
       label: '427034057700'
-      file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\427034057700.csv
+      file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\427034057700.csv
     - api12:
       - 608124005500
       label: '608124005500'
-      file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\608124005500.csv
+      file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005500.csv
 analysis:
   flag: true
   api12: true
@@ -148,13 +148,13 @@ analysis:
 Analysis:
   basename: bsee
   analysis_root_folder: k:\github\energydata\tests\modules\bsee\analysis
-  file_name: query_field_stmalo_goa_stmalo
-  file_name_for_overwrite: query_field_stmalo_goa_stmalo
-  log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\logs
-  start_time: 2025-04-30 11:44:26.879604
+  file_name: query_field_quickfire_goa_stmalo
+  file_name_for_overwrite: query_field_quickfire_goa_stmalo
+  log_folder: k:\github\energydata\tests\modules\bsee\analysis\logs
+  start_time: 2025-04-29 23:27:11.363170
   cfg_array_file_names: ~
   DefaultInputFile: ~
-  CustomInputFile: k:\github\energydata\tests\modules\bsee\analysis\query_field_stmalo.yml
+  CustomInputFile: k:\github\energydata\tests\modules\bsee\analysis\query_field_quickfire.yml
   result_folder: k:\github\energydata\tests\modules\bsee\analysis\results
   result_data_folder: k:\github\energydata\tests\modules\bsee\analysis\results\Data
   result_plot_folder: k:\github\energydata\tests\modules\bsee\analysis\results\Plot
@@ -173,16 +173,16 @@ bsee:
       - 427034057700
       - 608124005500
       label: 633
-      file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\633.csv
+      file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\633.csv
       well_data:
       - api12:
         - 427034057700
         label: '427034057700'
-        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\427034057700.csv
+        file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\427034057700.csv
       - api12:
         - 608124005500
         label: '608124005500'
-        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\608124005500.csv
+        file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005500.csv
     type: csv
   analysis:
     flag: true

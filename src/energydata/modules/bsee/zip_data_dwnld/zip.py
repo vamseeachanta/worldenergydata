@@ -11,7 +11,7 @@ class zip:
 
     def router(self, cfg):
 
-        if "online_query" in cfg and cfg['online_query']['raw_data']:
+        if "online_query" in cfg and cfg['online_query']['raw_data']['delimit']:
             download_from_zip.router(cfg)
 
         return cfg

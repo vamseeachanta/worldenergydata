@@ -6,6 +6,7 @@ from loguru import logger
 # import matplotlib.pyplot as plt
 # import seaborn as sns
 import plotly.express as px
+import plotly.graph_objects as go
 
 # # # Third party imports
 import numpy as np
@@ -149,7 +150,8 @@ class ProductionAPI12Analysis():
         prod_cumulative_mmbbl_groups_by_field = self.convert_block_to_field(prod_cumulative_mmbbl_groups_by_block)
         self.plot_prod_cumulative_mmbbl_by_field(cfg, prod_cumulative_mmbbl_groups_by_field)
 
-        self.generate_revenue_table(cfg,api12_df)
+        revenue_df = self.generate_revenue_table(cfg,api12_df)
+        self.plot_revenues(cfg, revenue_df)
 
         groups_dict['production_df_api12s'] = production_df_api12s
         groups_dict['prod_rate_bopd_groups'] = prod_rate_bopd_groups
@@ -502,6 +504,34 @@ class ProductionAPI12Analysis():
         result_folder = cfg['Analysis']['result_folder']
         file_name = os.path.join(result_folder,'Plot', file_label + '.html')
         fig.write_html(file_name, include_plotlyjs="cdn")
+    
+    def plot_revenues(self, cfg, revenue_df):
+        
+        revenue_df['Revenue (USD)'] = revenue_df['Revenue_USD'].replace('[\$,]', '', regex=True).astype(float)
+        months = revenue_df['Month'].tolist()
+        revenue_usd = revenue_df['Revenue (USD)'].tolist()
+
+        fig = go.Figure(data=[
+            go.Bar(name='Revenue (USD)', x=months, y=revenue_usd)
+        ])
+
+        fig.update_layout(
+            title='Monthly Revenue from Oil Production',
+            xaxis_title='Month',
+            yaxis_title='Revenue (USD)',
+            yaxis_tickprefix='$',
+            yaxis_tickformat=',',
+            template='plotly_white'
+        )
+
+        groups_label = cfg['meta'].get('label', None)
+        if groups_label is None:
+            groups_label = cfg['Analysis']['file_name_for_overwrite']
+
+        file_label = 'monthly_revenues_' + groups_label
+        result_folder = cfg['Analysis']['result_folder']
+        file_name = os.path.join(result_folder,'Plot', file_label + '.html')
+        fig.write_html(file_name, include_plotlyjs="cdn")
 
     def generate_revenue_table(self,cfg, api12_df):
 
@@ -516,13 +546,26 @@ class ProductionAPI12Analysis():
         oil_prices = pd.read_excel(file, engine='xlrd')
 
         avg_price = oil_prices['Oil Purchase Price'].tail(13).tolist()
-        target_len = len(avg_price)
-        months = api12_df['PRODUCTION_DATE'].tolist()[-target_len:]
-        MON_O_PROD_VOL = api12_df['MON_O_PROD_VOL'].tolist()[-target_len:]
+
+        months = []
+        if not api12_df['PRODUCTION_DATE'].empty:
+            months = api12_df['PRODUCTION_DATE'].tolist()
+        MON_O_PROD_VOL = []
+        if not api12_df['MON_O_PROD_VOL'].empty:
+            MON_O_PROD_VOL = api12_df['MON_O_PROD_VOL'].tolist()
+
+        min_len = min(len(months), len(MON_O_PROD_VOL), len(avg_price))
+        if min_len == 0:
+            return pd.DataFrame()
+        
+        months = months[-min_len:]
+        MON_O_PROD_VOL = MON_O_PROD_VOL[-min_len:]
+        avg_price = avg_price[-min_len:]
         
         # Calculate revenue for each year
         revenue = [MON_O_PROD_VOL[i] * avg_price[i] for i in range(0, len(MON_O_PROD_VOL))]
 
+       
         df = pd.DataFrame({
             'Month': months,
             'Monthly Oil Production': MON_O_PROD_VOL,
