@@ -26,7 +26,8 @@ def test_application():
     # Comprehensive analysis
     #input_file = 'query_api_01_wells.yml' 
     # input_file = 'query_field_julia.yml' 
-    input_file = 'query_field_stmalo.yml'
+    # input_file = 'query_field_stmalo.yml'
+    input_file = 'query_field_quickfire.yml'
 
     # API12 analysis
     #input_file = 'query_api_01_wells_api12.yml' 

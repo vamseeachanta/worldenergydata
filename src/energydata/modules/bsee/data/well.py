@@ -6,6 +6,7 @@ from loguru import logger
 
 from energydata.modules.bsee.data.scrapy_well_data import ScrapyRunnerAPI
 from energydata.modules.bsee.data.block_data import BlockData
+from energydata.modules.bsee.data.apm_data import APMData
 
 from assetutilities.common.utilities import is_dir_valid_func
 from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
@@ -23,15 +24,10 @@ class WellData:
         pass
 
     def router(self, cfg):
-        
-        cfg, well_data  = self.get_well_data_all_wells(cfg)
+        self.apm_data = APMData(cfg)
+        cfg, well_data_groups  = self.get_well_data_all_wells(cfg)
 
-        #TODO Other data sources
-        # directional_surveys = self.bsee_data.get_directional_surveys_by_api10(api10)
-        # well_tubulars_data = self.bsee_data.get_well_tubulars_data_by_api10(api10)
-        # completion_data = self.bsee_data.get_completion_data_by_api10(api10)
-
-        return cfg, well_data
+        return cfg, well_data_groups
 
     def get_well_data_all_wells(self, cfg):
         BoreholeRawData_df = self.get_BoreholeRawData_from_csv(cfg)
@@ -46,14 +42,14 @@ class WellData:
                          'eWellWARRawData_mv_war_main_df': eWellWARRawData_mv_war_main_df, 
                          'eWellWARRawData_mv_war_main_prop_df': eWellWARRawData_mv_war_main_prop_df}
 
+        #TODO assess the need for this data
         cfg = self.fetch_well_data_from_websites(cfg)
-
         well_data_groups = []
         for group in cfg[cfg['basename']]['data']['groups']:
             if 'api12' not in group:
                 logger.error(f"API12 not found in group: {group}")
             api12_array = group['api12']
-            api12_array_well_data = []
+            well_data_group = []
             for api12_idx in range(0, len(api12_array)):
                 api12_metadata = group['well_data'][api12_idx].copy()
 
@@ -63,9 +59,17 @@ class WellData:
                 api12_metadata.update({'merged_api12_df': merged_api12_df})
                 api12_metadata.update(individual_df_data)
 
-                api12_array_well_data.append(api12_metadata)
+                #TODO Other data sources
+                # directional_surveys = self.bsee_data.get_directional_surveys_by_api10(api10)
+                # well_tubulars_data = self.bsee_data.get_well_tubulars_data_by_api10(api10)
+                # completion_data = self.bsee_data.get_completion_data_by_api10(api10)
+                # Maintenance data
+                apm = self.apm_data.get_apm_data(cfg, api12_metadata)
+                api12_metadata.update({'apm': apm})
 
-            well_data_groups.append(api12_array_well_data)
+                well_data_group.append(api12_metadata)
+
+            well_data_groups.append(well_data_group)
 
         return cfg, well_data_groups
 
@@ -256,7 +260,6 @@ class WellData:
 
         return df
 
-
     def get_eWellAPDRawData_from_csv(self, cfg):
 
         # Load CSV files
@@ -322,7 +325,6 @@ class WellData:
             raise Exception(f"File not found: {file_name}")
 
         return df
-
 
     def get_merged_data(self, df1, df2):
 
@@ -404,11 +406,9 @@ class WellData:
         updated_cfg['data']['groups'] = [{'api12': api12_array}]
         
         return updated_cfg
-        
 
-        
     def get_eWellAPMRawData_from_zip(self, cfg):
-        
+
         columns = [MMS_COMPANY_NUM,
                     API_WELL_NUMBER,
                     WATER_DEPTH,

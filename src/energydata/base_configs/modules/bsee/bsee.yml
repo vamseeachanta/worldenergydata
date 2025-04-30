@@ -132,14 +132,14 @@ data_retrieval:
       form_data:
         first_request:
           ASPxFormLayout1$ASPxComboBoxBA: "Walker Ridge (WR)"
-          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: "WR"
+          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: 
           ASPxFormLayout1_ASPxComboBoxBBN_VI: None
           ASPxFormLayout1$ASPxComboBoxBBN: None
           ASPxFormLayout1$ASPxButtonSubmitQ: "Submit Query"
 
         second_request:
           ASPxFormLayout1$ASPxComboBoxBA: "Walker Ridge (WR)"
-          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: "WR"
+          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: 
           ASPxFormLayout1_ASPxComboBoxBBN_VI: None
           ASPxFormLayout1$ASPxComboBoxBBN: None
           __EVENTTARGET: "ASPxFormLayout2$btnCsvExport"

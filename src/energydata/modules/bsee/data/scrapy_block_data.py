@@ -41,10 +41,12 @@ class BSEESpider(scrapy.Spider):
 
     def parse(self, response):
         bottom_block_num = str(self.input_item['bottom_block'])
+        area = str(self.input_item['block']['area'])
 
         first_request_data = self.cfg['data_retrieval']['block']['website']['form_data']['first_request'].copy()
         first_request_data['ASPxFormLayout1_ASPxComboBoxBBN_VI'] = bottom_block_num
         first_request_data['ASPxFormLayout1$ASPxComboBoxBBN'] = bottom_block_num
+        first_request_data['ASPxFormLayout1$ASPxComboBoxBA$DDD$L'] = area
 
         logger.info(f"Getting data for BLOCK {bottom_block_num} ... START")
 
@@ -57,10 +59,12 @@ class BSEESpider(scrapy.Spider):
             print(f"{Fore.RED}Failed to submit the form data {Style.RESET_ALL}. Status code: {response.status}")
 
         bottom_block_num = str(self.input_item['bottom_block'][0])
+        area = str(self.input_item['block']['area'])
 
         second_request_data = self.cfg['data_retrieval']['block']['website']['form_data']['second_request'].copy()
         second_request_data['ASPxFormLayout1_ASPxComboBoxBBN_VI'] = bottom_block_num
         second_request_data['ASPxFormLayout1$ASPxComboBoxBBN'] = bottom_block_num
+        second_request_data['ASPxFormLayout1$ASPxComboBoxBA$DDD$L'] = area
 
         yield FormRequest.from_response(response, formdata=second_request_data, callback=self.parse_csv_data)
 
