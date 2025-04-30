@@ -21,7 +21,6 @@ def get_valid_pytest_output_file(pytest_output_file):
                                           pytest_output_file)
     return pytest_output_file
 
-
 def test_application():
 
     # Comprehensive analysis
@@ -40,11 +39,9 @@ def test_application():
     # block Analysis
     #input_file = 'query_api_01_block_api12.yml' 
     #input_file = 'query_api_03_blocks_api12.yml'  
- 
 
     # All well data
     # input_file = 'query_blk_julia.yml'
-
 
     pytest_output_file = None
     # pytest_output_file = get_valid_pytest_output_file(pytest_output_file)

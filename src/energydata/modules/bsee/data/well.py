@@ -8,7 +8,12 @@ from energydata.modules.bsee.data.scrapy_well_data import ScrapyRunnerAPI
 from energydata.modules.bsee.data.block_data import BlockData
 
 from assetutilities.common.utilities import is_dir_valid_func
+from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
 from assetutilities.common.utilities import get_repository_filename, get_repository_filepath
+from assetutilities.modules.zip_utilities.zip_files_to_dataframe import ZipFilestoDf
+
+wwy = WorkingWithYAML()
+zip_files_to_df = ZipFilestoDf()
 
 block_data = BlockData()
 
@@ -400,4 +405,26 @@ class WellData:
         
         return updated_cfg
         
-           
+
+        
+    def get_eWellAPMRawData_from_zip(self, cfg):
+        
+        columns = [MMS_COMPANY_NUM,
+                    API_WELL_NUMBER,
+                    WATER_DEPTH,
+                    WELL_NM_BP_SFIX,
+                    WELL_NM_ST_SFIX,
+                    SURF_AREA_CODE,
+                    SURF_BLOCK_NUM,
+                    SURF_LEASE_NUM,
+                    BOTM_AREA_CODE,
+                    BOTM_BLOCK_NUM,
+                    BOTM_LEASE_NUM,
+                    RIG_ID_NUM,
+                    BOREHOLE_STAT_CD,
+                    WELL_TYPE_CODE,
+                    BUS_ASC_NAME]
+
+        #TODO 
+        
+    
