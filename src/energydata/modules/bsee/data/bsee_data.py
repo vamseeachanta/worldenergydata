@@ -23,9 +23,10 @@ class BSEEData:
         else:
             cfg = block.router(cfg)
     
-            #cfg, well_data = well.router(cfg)
+            cfg, well_data = well.router(cfg)
             cfg, production_data = production.router(cfg)
 
-            data = {'production_data': production_data}
+            data = {'well_data': well_data ,'production_data': production_data}
+            #data = {'production_data': production_data}
 
             return cfg, data

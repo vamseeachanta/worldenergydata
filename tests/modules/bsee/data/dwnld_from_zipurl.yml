@@ -1,9 +1,11 @@
 basename: dwnld_from_zipurl
 
 online_query:
-  raw_data: True
+  raw_data: 
+    delimit: True
 
 input:
+  source : https://www.data.bsee.gov/Main/RawData.aspx
   urls:
     # - 'https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip'
     # - 'https://www.data.bsee.gov/Well/Files/eWellAPDRawData.zip'

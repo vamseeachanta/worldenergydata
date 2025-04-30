@@ -12,6 +12,25 @@ parameters:
       bin: data\modules\bsee\bin\production
     block: data/modules/bsee/block
     APD: data/modules/bsee/data/csv/online_query_raw_data
+    apm:
+      zip: data/modules/bsee/zip/apm
+      bin: data/modules/bsee/bin/apm
+      columns:
+      - - MMS_COMPANY_NUM
+        - API_WELL_NUMBER
+        - WATER_DEPTH
+        - WELL_NM_BP_SFIX
+        - WELL_NM_ST_SFIX
+        - SURF_AREA_CODE
+        - SURF_BLOCK_NUM
+        - SURF_LEASE_NUM
+        - BOTM_AREA_CODE
+        - BOTM_BLOCK_NUM
+        - BOTM_LEASE_NUM
+        - RIG_ID_NUM
+        - BOREHOLE_STAT_CD
+        - WELL_TYPE_CODE
+        - BUS_ASC_NAME
   max_allowed_npt: 90
   borehole_codes:
   - BOREHOLE_STAT_CD: APD
@@ -78,13 +97,13 @@ data_retrieval:
       form_data:
         first_request:
           ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
-          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
+          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: ~
           ASPxFormLayout1_ASPxComboBoxBBN_VI: None
           ASPxFormLayout1$ASPxComboBoxBBN: None
           ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
         second_request:
           ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
-          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
+          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: ~
           ASPxFormLayout1_ASPxComboBoxBBN_VI: None
           ASPxFormLayout1$ASPxComboBoxBBN: None
           __EVENTTARGET: ASPxFormLayout2$btnCsvExport
@@ -100,41 +119,28 @@ meta:
   basename: bsee
   label: goa_stmalo
 data:
+  apm: true
   production_data: true
   groups:
-  - bottom_block:
+  - block:
+      area: WR
+      block: 633
+    bottom_block:
     - 633
     api12:
     - 427034057700
     - 608124005500
     label: 633
     file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\633.csv
-  - bottom_block:
-    - 634
-    api12:
-    - 427034051601
-    - 427034038702
-    - 608124004400
-    - 608124005400
-    - 608124005500
-    - 608124005300
-    - 608124010700
-    - 608124010701
-    - 608174143100
-    label: 634
-    file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\634.csv
-  - bottom_block:
-    - 677
-    api12:
-    - 608124001800
-    - 608124002900
-    - 608124005700
-    - 608124005600
-    - 608124005800
-    - 608124005300
-    - 608124015100
-    label: 677
-    file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\677.csv
+    well_data:
+    - api12:
+      - 427034057700
+      label: '427034057700'
+      file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\427034057700.csv
+    - api12:
+      - 608124005500
+      label: '608124005500'
+      file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\608124005500.csv
 analysis:
   flag: true
   api12: true
@@ -145,7 +151,7 @@ Analysis:
   file_name: query_field_stmalo_goa_stmalo
   file_name_for_overwrite: query_field_stmalo_goa_stmalo
   log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\logs
-  start_time: 2025-04-29 17:54:10.153177
+  start_time: 2025-04-30 11:44:26.879604
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\query_field_stmalo.yml
@@ -155,41 +161,29 @@ Analysis:
   fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
 bsee:
   data:
+    apm: true
     production_data: true
     groups:
-    - bottom_block:
+    - block:
+        area: WR
+        block: 633
+      bottom_block:
       - 633
       api12:
       - 427034057700
       - 608124005500
       label: 633
       file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\633.csv
-    - bottom_block:
-      - 634
-      api12:
-      - 427034051601
-      - 427034038702
-      - 608124004400
-      - 608124005400
-      - 608124005500
-      - 608124005300
-      - 608124010700
-      - 608124010701
-      - 608174143100
-      label: 634
-      file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\634.csv
-    - bottom_block:
-      - 677
-      api12:
-      - 608124001800
-      - 608124002900
-      - 608124005700
-      - 608124005600
-      - 608124005800
-      - 608124005300
-      - 608124015100
-      label: 677
-      file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\677.csv
+      well_data:
+      - api12:
+        - 427034057700
+        label: '427034057700'
+        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\427034057700.csv
+      - api12:
+        - 608124005500
+        label: '608124005500'
+        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results\Data\608124005500.csv
+    type: csv
   analysis:
     flag: true
     api12: true
