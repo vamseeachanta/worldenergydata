@@ -6,27 +6,24 @@ meta:
 basename: bsee
 
 data:
-  apm: True
+  apm: False
   production_data: True
   groups:
     # Groups typically are list of entities to run through multiple API numbers or multiple API sets
     -
-      block:
+      bottom_block:
         area: WR
-        block: 633
-      bottom_block: [633]
+        number: 633
       api12: NULL
     -
-      block:
+      bottom_block:
         area: WR
-        block: 634
-      bottom_block: [634]
+        number: 634
       api12: NULL
     -
-      block:
+      bottom_block:
         area: WR
-        block: 677
-      bottom_block: [677]
+        number: 677
       api12: NULL
 
 analysis:
