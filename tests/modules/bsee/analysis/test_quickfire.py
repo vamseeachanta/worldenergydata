@@ -23,27 +23,12 @@ def get_valid_pytest_output_file(pytest_output_file):
 
 def test_application():
 
-    # Comprehensive analysis
-    #input_file = 'query_api_01_wells.yml' 
+    # Comprehensive analysis 
     # input_file = 'query_field_julia.yml' 
-    # input_file = 'query_field_stmalo.yml'
-    input_file = 'query_field_buckskin.yml'
+    input_file = 'query_field_stmalo.yml'
+    # input_file = 'query_field_buckskin.yml'
     # input_file = 'query_field_quickfire.yml'
-
-    # API12 analysis
-    #input_file = 'query_api_01_wells_api12.yml' 
-    #input_file = 'query_api_03_wells_api12.yml' 
-
-    # Production Analysis
-    # input_file = 'query_api_01_production.yml'  # SUCCESS
-    #input_file = 'query_api_03_wells_production.yml' # CHECK
-
-    # block Analysis
-    #input_file = 'query_api_01_block_api12.yml' 
-    #input_file = 'query_api_03_blocks_api12.yml'  
-
-    # All well data
-    # input_file = 'query_blk_julia.yml'
+  
 
     pytest_output_file = None
     # pytest_output_file = get_valid_pytest_output_file(pytest_output_file)

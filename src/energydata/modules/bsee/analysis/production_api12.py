@@ -345,7 +345,10 @@ class ProductionAPI12Analysis():
     def extract_block_mapping(self, cfg):
         mapping = {}
         for group in cfg.get("data", {}).get("groups", []):
-            block_ids = group.get("bottom_block", [])
+            block_ids = []
+            block_id = group['bottom_block'].get("number")
+            if block_id is not None:
+                block_ids.append(block_id)
             api12s = group.get("api12", [])
             for block in block_ids:
                 block_str = str(block)
@@ -512,7 +515,8 @@ class ProductionAPI12Analysis():
     
     def plot_revenues(self, cfg, revenue_df):
         
-        revenue_df['Revenue (USD)'] = revenue_df['Revenue_USD'].replace('[\$,]', '', regex=True).astype(float)
+        revenue_df['Revenue (USD)'] = revenue_df['Revenue (USD)'].replace('[\$,]', '', regex=True).astype(float)
+        revenue_df['Month'] = pd.to_datetime(revenue_df['Month'], format='%Y%m', errors='coerce')
         months = revenue_df['Month'].tolist()
         revenue_usd = revenue_df['Revenue (USD)'].tolist()
 
@@ -522,10 +526,16 @@ class ProductionAPI12Analysis():
 
         fig.update_layout(
             title='Monthly Revenue from Oil Production',
-            xaxis_title='Month',
-            yaxis_title='Revenue (USD)',
-            yaxis_tickprefix='$',
-            yaxis_tickformat=',',
+            xaxis=dict(
+                title='Month',
+                dtick='M3'  # Set the interval to 1 month
+            ),
+            yaxis=dict(
+                title='Revenue (USD)',
+                tickprefix='$',
+                tickformat=',',
+                range=[0, 40000000]  # Customize Y-axis range
+            ),
             template='plotly_white'
         )
 
