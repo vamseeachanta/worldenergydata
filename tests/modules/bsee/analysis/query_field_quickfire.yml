@@ -23,10 +23,9 @@ data:
     #   bottom_block: [634]
     #   api12: NULL
     -
-      block:
+      bottom_block:
         area: WR
-        block: 677
-      bottom_block: [677]
+        number: 677
       api12: NULL
 
 analysis:

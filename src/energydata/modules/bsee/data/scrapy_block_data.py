@@ -40,8 +40,8 @@ class BSEESpider(scrapy.Spider):
         self.cfg = cfg
 
     def parse(self, response):
-        bottom_block_num = str(self.input_item['bottom_block'])
-        area = str(self.input_item['block']['area'])
+        bottom_block_num = str(self.input_item['bottom_block']['number'])
+        area = str(self.input_item['bottom_block']['area'])
 
         first_request_data = self.cfg['data_retrieval']['block']['website']['form_data']['first_request'].copy()
         first_request_data['ASPxFormLayout1_ASPxComboBoxBBN_VI'] = bottom_block_num
@@ -58,8 +58,8 @@ class BSEESpider(scrapy.Spider):
         else:
             print(f"{Fore.RED}Failed to submit the form data {Style.RESET_ALL}. Status code: {response.status}")
 
-        bottom_block_num = str(self.input_item['bottom_block'][0])
-        area = str(self.input_item['block']['area'])
+        bottom_block_num = str(self.input_item['bottom_block']['number'])
+        area = str(self.input_item['bottom_block']['area'])
 
         second_request_data = self.cfg['data_retrieval']['block']['website']['form_data']['second_request'].copy()
         second_request_data['ASPxFormLayout1_ASPxComboBoxBBN_VI'] = bottom_block_num
@@ -70,7 +70,9 @@ class BSEESpider(scrapy.Spider):
 
     def parse_csv_data(self, response):
 
-        label = self.input_item['bottom_block'][0]
+        bottom_block_num = str(self.input_item['bottom_block']['number'])
+        area = str(self.input_item['bottom_block']['area'])
+        label = area + '_' + bottom_block_num
         bottom_block = self.input_item['bottom_block']
         output_path = os.path.join(self.cfg['Analysis']['result_folder'], 'Data')
         if output_path is None:

@@ -170,12 +170,17 @@ class ProductionAPI12Analysis():
 
     def save_result_group(self, cfg, group_idx, production_analysis_df_group):
 
-        block_number = cfg['data']['groups'][group_idx].get('bottom_block', [None])[0]
+        cfg_group = cfg['data']['groups'][group_idx]
+        block_number = None
+        block_area = None
+        bottom_block = cfg_group.get('bottom_block', None)
+        if bottom_block is not None:
+            block_number = bottom_block.get('number', None)
+            block_area = bottom_block.get('area', None)
         if block_number is None:
             group_label = str(group_idx)
         else:
-            group_label = str(block_number)
-
+            group_label = block_area + '_' + str(block_number)
         file_label = 'prod_all_block_' + group_label
         file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
         production_analysis_df_group.to_csv(file_name, index=False)

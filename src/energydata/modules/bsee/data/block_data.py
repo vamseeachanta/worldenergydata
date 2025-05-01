@@ -62,11 +62,12 @@ class BlockData:
 
         return cfg
 
-    
     def generate_output_item(self, cfg, input_item):
 
         if 'bottom_block' in input_item and input_item['bottom_block'] is not None:
-            label = input_item['bottom_block'][0]
+            bottom_block_num = str(input_item['bottom_block']['number'])
+            area = str(input_item['bottom_block']['area'])
+            label = area + '_' + bottom_block_num
         elif 'api12' in input_item:
             label = input_item['api12'][0]
         else:

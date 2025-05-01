@@ -119,13 +119,15 @@ meta:
   basename: bsee
 data:
   refresh: true
+  apm: true
+  production: true
 Analysis:
   basename: bsee
   analysis_root_folder: k:\github\energydata\tests\modules\bsee\data
   file_name: data_refresh
   file_name_for_overwrite: data_refresh
   log_folder: k:\github\energydata\tests\modules\bsee\data\logs
-  start_time: 2025-04-30 17:57:49.444941
+  start_time: 2025-04-30 20:21:27.503493
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: k:\github\energydata\tests\modules\bsee\data\data_refresh.yml
@@ -136,4 +138,6 @@ Analysis:
 bsee:
   data:
     refresh: true
+    apm: true
+    production: true
   analysis: {}
