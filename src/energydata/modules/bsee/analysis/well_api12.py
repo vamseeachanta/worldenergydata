@@ -38,13 +38,18 @@ class WellAPI12():
                 well_summary_df_group = pd.concat([well_summary_df_group, api12_analysis], ignore_index=True)
                 well_api12 = well_summary_df_group.API12.iloc[0]
                 logger.debug("Well data is prepared for well: " + str(well_api12))
-
-            block_number = cfg['data']['groups'][group_idx].get('bottom_block', [None])[0]
+            cfg_group = cfg['data']['groups'][group_idx]
+            block_number = None
+            block_area = None
+            bottom_block = cfg_group.get('bottom_block', None)
+            if bottom_block is not None:
+                block_number = bottom_block.get('number', None)
+                block_area = bottom_block.get('area', None)
             if block_number is None:
-                label = str(group_idx)
+                group_label = str(group_idx)
             else:
-                label = str(block_number)
-            file_label = 'block_api12_' + label
+                group_label = block_area + '_' + str(block_number)
+            file_label = 'block_api12_' + group_label
             file_name = os.path.join(cfg['Analysis']['result_folder'], file_label + '.csv')
             well_summary_df_group.to_csv(file_name, index=False)
 

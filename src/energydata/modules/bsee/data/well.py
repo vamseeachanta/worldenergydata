@@ -24,8 +24,10 @@ class WellData:
         pass
 
     def router(self, cfg):
-        self.apm_data = APMData(cfg)
-        cfg, well_data_groups  = self.get_well_data_all_wells(cfg)
+        well_data_groups = None
+        if 'groups' in cfg['data']:
+            self.apm_data = APMData(cfg)
+            cfg, well_data_groups  = self.get_well_data_all_wells(cfg)
 
         return cfg, well_data_groups
 
