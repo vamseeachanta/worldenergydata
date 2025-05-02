@@ -25,7 +25,7 @@ class Block:
 
         #TODO DELETE
         # cfg = self.update_cfg_to_wells_api12(cfg, api12_array)
-        # from energydata.engine import engine 
+        # from worldenergydata.engine import engine 
         # engine(inputfile=None, cfg=cfg, config_flag=False)
 
         return cfg

@@ -1,4 +1,4 @@
-energydata
+worldenergydata
 
 pandas
 pip

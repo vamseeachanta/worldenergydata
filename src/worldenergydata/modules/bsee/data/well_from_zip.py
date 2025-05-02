@@ -56,7 +56,7 @@ class WellDataFromZip:
 
     def save_eWellAPMRawData_to_binary(self, cfg):
         folder_path_zip = cfg['parameters']['filepath']['apm']['zip']
-        library_name = 'energydata'
+        library_name = 'worldenergydata'
         library_file_cfg = {
             'filepath': folder_path_zip,
             'library_name': library_name

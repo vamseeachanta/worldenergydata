@@ -9,7 +9,7 @@ Need the following well data:
 ### Summary
 
 - [ ] Identify and combine data sources, see data sources below
-- [ ] Utilize the well data function "prepare_field_well_data", etc., in src\energydata\modules\bsee\analysis\bsee_analysis.py
+- [ ] Utilize the well data function "prepare_field_well_data", etc., in src\worldenergydata\modules\bsee\analysis\bsee_analysis.py
 
 
 | Data | Description | Source/Method

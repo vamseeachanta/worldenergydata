@@ -7,7 +7,7 @@ Need the following well data
 ### Summary
 
 - [ ] Identify and combine data sources, see data sources below
-- [ ] Utilize the well data function "prepare_field_well_data", etc., in src\energydata\modules\bsee\analysis\bsee_analysis.py
+- [ ] Utilize the well data function "prepare_field_well_data", etc., in src\worldenergydata\modules\bsee\analysis\bsee_analysis.py
 
 
 | Data | Description | Source/Method
@@ -27,20 +27,20 @@ Mud Weight at TD (max) | |
 Drilling Days | | calculated
 Completion Days | | calculated
 First oil date  | | calculated from production data
-Production rate by month | by API | from yearly zip files, [#23](https://github.com/vamseeachanta/energydata/issues/23)
+Production rate by month | by API | from yearly zip files, [#23](https://github.com/vamseeachanta/worldenergydata/issues/23)
 
 
 ### Data Sources
 
 by_block_well_data :  tests\modules\bsee\analysis\results\Data\julia_by_block\WR540.csv
 
-BHPS: https://github.com/vamseeachanta/energydata/blob/2084250f6055a4f0dae7cafc3844f797bc8b624d/tests/modules/bsee/data/results/Data/by_zip/BHPSRawData_mv_bhpsurvey_all.csv
+BHPS: https://github.com/vamseeachanta/worldenergydata/blob/2084250f6055a4f0dae7cafc3844f797bc8b624d/tests/modules/bsee/data/results/Data/by_zip/BHPSRawData_mv_bhpsurvey_all.csv
 
-APIRawData_mv_api_list_all : https://github.com/vamseeachanta/energydata/blob/2084250f6055a4f0dae7cafc3844f797bc8b624d/tests/modules/bsee/data/results/Data/by_zip/APIRawData_mv_api_list_all.csv
+APIRawData_mv_api_list_all : https://github.com/vamseeachanta/worldenergydata/blob/2084250f6055a4f0dae7cafc3844f797bc8b624d/tests/modules/bsee/data/results/Data/by_zip/APIRawData_mv_api_list_all.csv
 
-BoreholeRawData: https://github.com/vamseeachanta/energydata/blob/1691a05e908c4a69876d821296e63e5e65277a73/tests/modules/bsee/data/results/Data/by_zip/BoreholeRawData_mv_boreholes_all.csv
+BoreholeRawData: https://github.com/vamseeachanta/worldenergydata/blob/1691a05e908c4a69876d821296e63e5e65277a73/tests/modules/bsee/data/results/Data/by_zip/BoreholeRawData_mv_boreholes_all.csv
 
-dsptsdelimit: https://github.com/vamseeachanta/energydata/blob/2084250f6055a4f0dae7cafc3844f797bc8b624d/tests/modules/bsee/data/results/Data/by_zip/dsptsdelimit.csv
+dsptsdelimit: https://github.com/vamseeachanta/worldenergydata/blob/2084250f6055a4f0dae7cafc3844f797bc8b624d/tests/modules/bsee/data/results/Data/by_zip/dsptsdelimit.csv
 
 
 
@@ -198,7 +198,7 @@ The NPV of oil sales from JSM for this period is ~$6B.
 So, net NPV(8%) is negative at ~$3.7B and close to -$6B if CAPEX was actually $12B! (slightly worse for 10% discount factor)
 Of course, ~$2B cost of E&A is ignored as already written off.
 
-https://github.com/vamseeachanta/energydata/blob/202502/docs/modules/bsee/JStM-WELL-Production-Data-thru-2019.xlsx
+https://github.com/vamseeachanta/worldenergydata/blob/202502/docs/modules/bsee/JStM-WELL-Production-Data-thru-2019.xlsx
 
 #### 2025-02-11
 

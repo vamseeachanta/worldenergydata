@@ -8,9 +8,6 @@ import pandas as pd
 from worldenergydata.modules.bsee.data.bsee_data import BSEEData
 from worldenergydata.common.legacy.data import DateTimeUtility
 
-# from energydata.common.bsee_data_manager import BSEEData
-
-# from energydata.common.data import AttributeDict, transform_df_datetime_to_str
 
 bsee_data = BSEEData()
 dtu = DateTimeUtility()

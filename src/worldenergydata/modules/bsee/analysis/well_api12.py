@@ -10,7 +10,6 @@ import numpy as np
 
 from assetutilities.common.data import Transform
 from worldenergydata.modules.bsee.analysis.well_rig_days import WellRigDays
-# from energydata.common.data import AttributeDict, transform_df_datetime_to_str
 
 
 transform = Transform()

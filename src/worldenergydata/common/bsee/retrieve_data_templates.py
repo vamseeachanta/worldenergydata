@@ -11,7 +11,7 @@ class RetrieveDataTemplates:
 
     def get_production_data_by_lease(self, custom_analysis_dict={}):
 
-        library_name = "energydata"
+        library_name = "worldenergydata"
         library_yaml_cfg = {
             'filename': 'base_configs/modules/bsee/production_data_by_lease.yml',
             'library_name': library_name
@@ -24,7 +24,7 @@ class RetrieveDataTemplates:
     
     # def get_production_data_by_wellAPI(self, custom_analysis_dict={}):
 
-    #     library_name = "energydata"
+    #     library_name = "worldenergydata"
     #     library_yaml_cfg = {
     #         'filename': 'base_configs/modules/bsee/production_data_by_wellAPI.yml',
     #         'library_name': library_name
@@ -37,7 +37,7 @@ class RetrieveDataTemplates:
     
     def get_data_from_existing_files(self, custom_analysis_dict={}):
 
-        library_name = "energydata"
+        library_name = "worldenergydata"
         library_yaml_cfg = {
             'filename': 'base_configs/modules/bsee/retrieve_data_from_files.yml',
             'library_name': library_name

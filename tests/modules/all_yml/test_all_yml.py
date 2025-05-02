@@ -77,6 +77,6 @@ def run_yaml_files(root_directory):
 
 
 if __name__ == '__main__':
-    library = 'energydata'
+    library = 'worldenergydata'
     root_directory = 'tests' 
     run_yaml_files(root_directory)

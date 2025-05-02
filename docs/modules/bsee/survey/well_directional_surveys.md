@@ -23,7 +23,7 @@ Once the configuration is updated, execute the test to download the ZIP file.
 ### 3. Load the ZIP File
 Modify and run the script:  
 ```
-src/energydata/modules/zip_data_dwnld/dwnld_from_zipurl.py
+src/worldenergydata/modules/zip_data_dwnld/dwnld_from_zipurl.py
 ```
 
 - Ensure the ZIP file is loaded correctly.  
