@@ -3,7 +3,7 @@ from copy import deepcopy
 
 import pandas as pd
 
-from energydata.modules.bsee.data.scrapy_block_data import ScrapyRunnerBlock
+from worldenergydata.modules.bsee.data.scrapy_block_data import ScrapyRunnerBlock
 
 from assetutilities.common.utilities import is_dir_valid_func
 

@@ -3,8 +3,8 @@ from copy import deepcopy
 
 import pandas as pd
 
-from energydata.modules.bsee.data.scrapy_production_data import ScrapyRunnerProduction
-from energydata.modules.bsee.data.production_data_from_zip import GetProdDataFromZip
+from worldenergydata.modules.bsee.data.scrapy_production_data import ScrapyRunnerProduction
+from worldenergydata.modules.bsee.data.production_data_from_zip import GetProdDataFromZip
 
 from assetutilities.common.utilities import is_dir_valid_func
 

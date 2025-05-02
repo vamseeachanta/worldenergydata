@@ -5,7 +5,7 @@ import sys
 
 from assetutilities.common.yml_utilities import ymlInput
 
-from energydata.engine import engine
+from worldenergydata.engine import engine
 
 
 def run_application(input_file, expected_result={}):

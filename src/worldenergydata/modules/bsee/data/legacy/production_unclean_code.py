@@ -1,11 +1,11 @@
 # Standard library imports
-from energydata.common.bsee.retrieve_data_templates import RetrieveDataTemplates
-from energydata.modules.bsee.data.well import WellData
-from energydata.modules.bsee.data.block_data import BlockData
-from energydata.modules.bsee.analysis.legacy.prepare_data_for_analysis import PrepareBseeData
-from energydata.modules.bsee.data.scrapy_production_data import SpiderBsee
-from energydata.modules.bsee.zip_data_dwnld.dwnld_from_zipurl import DownloadFromZipUrl
-from energydata.modules.bsee.data.production import Production
+from worldenergydata.common.bsee.retrieve_data_templates import RetrieveDataTemplates
+from worldenergydata.modules.bsee.data.well import WellData
+from worldenergydata.modules.bsee.data.block_data import BlockData
+from worldenergydata.modules.bsee.analysis.legacy.prepare_data_for_analysis import PrepareBseeData
+from worldenergydata.modules.bsee.data.scrapy_production_data import SpiderBsee
+from worldenergydata.modules.bsee.zip_data_dwnld.dwnld_from_zipurl import DownloadFromZipUrl
+from worldenergydata.modules.bsee.data.production import Production
 
 
 # Third party imports
@@ -57,7 +57,7 @@ class ProductionUncleanCode:
     
     def get_production_data_by_api12(self, api12, cfg):
 
-        from energydata.engine import engine as energy_engine
+        from worldenergydata.engine import engine as energy_engine
         production_yml = f_d_templates.get_data_from_existing_files(cfg['Analysis'].copy())
 
         settings = { 'api12': api12,
@@ -92,7 +92,7 @@ class ProductionUncleanCode:
 
     def get_production_data_by_bottom_lease(self, bottom_lease, cfg):
         
-        from energydata.engine import engine as energy_engine
+        from worldenergydata.engine import engine as energy_engine
         production_yml = f_d_templates.get_production_data_by_lease(cfg['Analysis'].copy())
 
         settings = { 'lease_number': bottom_lease,
