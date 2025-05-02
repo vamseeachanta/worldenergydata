@@ -11,9 +11,6 @@ from worldenergydata.modules.bsee.analysis.well_api10 import WellAPI10
 from worldenergydata.modules.bsee.analysis.production_api12 import ProductionAPI12Analysis
 from worldenergydata.modules.bsee.analysis.production_api10 import ProductionAPI10Analysis
 
-# from energydata.common.bsee_data_manager import BSEEData
-
-# from energydata.common.data import AttributeDict, transform_df_datetime_to_str
 
 bsee_data = BSEEData()
 well_api12_analysis = WellAPI12()

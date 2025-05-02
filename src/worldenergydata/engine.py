@@ -16,14 +16,13 @@ from assetutilities.common.yml_utilities import WorkingWithYAML
 
 # Reader imports
 from worldenergydata.modules.bsee.bsee import bsee
-#from energydata.modules.bsee.data.bsee_data import BSEEData
 from worldenergydata.modules.bsee.zip_data_dwnld.zip import zip
 
 app_manager = ConfigureApplicationInputs()
 save_data = SaveData()
 wwyaml = WorkingWithYAML()
 
-library_name = "energydata"
+library_name = "worldenergydata"
 
 
 def engine(inputfile: str = None, cfg: dict = None, config_flag: bool = True) -> dict:

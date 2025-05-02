@@ -19,9 +19,6 @@ from assetutilities.common.data import SaveData
 from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
 
 wwy = WorkingWithYAML()
-# from energydata.common.bsee_data_manager import BSEEData
-
-# from energydata.common.data import AttributeDict, transform_df_datetime_to_str
 
 bsee_data = BSEEData()
 dtu = DateTimeUtility()
@@ -551,7 +548,7 @@ class ProductionAPI12Analysis():
     def generate_revenue_table(self, cfg, api12_df):
 
         folder_path = r'data\modules\oil_price'
-        library_name = 'energydata'
+        library_name = 'worldenergydata'
         library_file_cfg = {
             'filepath': folder_path,
             'library_name': library_name

@@ -1,5 +1,5 @@
 meta:
-  library: energydata
+  library: worldenergydata
   basename: bsee
 
 data:

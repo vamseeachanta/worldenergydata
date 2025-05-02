@@ -9,7 +9,7 @@
 a/ data method :
 
 legacy: download ,
-EnergyData:
+worldenergydata:
 
 * Online query (Latest data)
 * Read ZIP file directly (Latest data)

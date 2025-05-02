@@ -1,6 +1,6 @@
 """
 
-See https://github.com/vamseeachanta/energydata/ for more information.
+See https://github.com/vamseeachanta/worldenergydata/ for more information.
 """
 
 # Version of package
