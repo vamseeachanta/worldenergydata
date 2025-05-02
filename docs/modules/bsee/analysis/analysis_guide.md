@@ -4,7 +4,7 @@ basic analysis for single and multiple well apis:
 
 Gathering_data:
 
-  Initially gets the data from respective website
+  Initially gets the data from the respective website
 
   Create groups in cfg and store required data ( fileames , dataframes) for analysis in cfg 
 
