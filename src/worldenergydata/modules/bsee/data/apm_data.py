@@ -25,7 +25,7 @@ class APMData:
 
     def load_bin_data(self, cfg):
         folder_path_bin = cfg['parameters']['filepath']['apm']['bin']
-        library_name = 'energydata'
+        library_name = 'worldenergydata'
         library_file_cfg = {
             'filepath': folder_path_bin,
             'library_name': library_name

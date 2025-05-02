@@ -208,7 +208,7 @@ class WellData:
 
         file_name = 'BoreholeRawData_mv_boreholes_all.csv'
 
-        library_name = 'energydata'
+        library_name = 'worldenergydata'
         library_file_cfg = {
             'filename': f"data/modules/bsee/csv/online_query_raw_data/{file_name}",
             'library_name': library_name,
@@ -245,7 +245,7 @@ class WellData:
 
         file_name = 'eWellEORRawData_mv_eor_mainquery.csv'
 
-        library_name = 'energydata'
+        library_name = 'worldenergydata'
         library_file_cfg = {
             'filename': f"data/modules/bsee/csv/online_query_raw_data/{file_name}",
             'library_name': library_name,
@@ -267,7 +267,7 @@ class WellData:
         # Load CSV files
         file_name = 'eWellAPDRawData_mv_apd_main.csv'
 
-        library_name = 'energydata'
+        library_name = 'worldenergydata'
         library_file_cfg = {
             'filename': f"data/modules/bsee/csv/online_query_raw_data/{file_name}",
             'library_name': library_name,
@@ -289,7 +289,7 @@ class WellData:
         # Load CSV files
         file_name = 'eWellWARRawData_mv_war_main.csv'
 
-        library_name = 'energydata'
+        library_name = 'worldenergydata'
         library_file_cfg = {
             'filename': f"data/modules/bsee/csv/online_query_raw_data/{file_name}",
             'library_name': library_name,
@@ -311,7 +311,7 @@ class WellData:
         # Load CSV files
         file_name = 'eWellWARRawData_mv_war_main_prop.csv'
 
-        library_name = 'energydata'
+        library_name = 'worldenergydata'
         library_file_cfg = {
             'filename': f"data/modules/bsee/csv/online_query_raw_data/{file_name}",
             'library_name': library_name,
@@ -340,7 +340,7 @@ class WellData:
 
         filepath = 'data/modules/bsee/csv/well'
 
-        library_name = 'energydata'
+        library_name = 'worldenergydata'
         library_file_cfg = {
             'filepath': filepath,
             'library_name': library_name,

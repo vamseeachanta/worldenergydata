@@ -32,7 +32,7 @@ class GetProdDataFromZip:
 
     def save_zip_data_to_binary(self, cfg):
         folder_path_zip = cfg['parameters']['filepath']['production']['zip']
-        library_name = 'energydata'
+        library_name = 'worldenergydata'
         library_file_cfg = {
             'filepath': folder_path_zip,
             'library_name': library_name
@@ -77,7 +77,7 @@ class GetProdDataFromZip:
         try:
             folder_path = cfg['parameters']['filepath']['production']['zip']
 
-            library_name = 'energydata'
+            library_name = 'worldenergydata'
             library_file_cfg = {
                 'filepath': folder_path,
                 'library_name': library_name
@@ -158,7 +158,7 @@ class GetProdDataFromZip:
 
     def get_data_by_api12_array(self, cfg, api12_array):
         folder_path_bin = cfg['parameters']['filepath']['production']['bin']
-        library_name = 'energydata'
+        library_name = 'worldenergydata'
         library_file_cfg = {
             'filepath': folder_path_bin,
             'library_name': library_name

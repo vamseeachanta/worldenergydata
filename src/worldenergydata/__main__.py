@@ -10,14 +10,14 @@ Contact:
 
 More information is available at:
 
-- https://pypi.org/project/energydata/
-- https://github.com/vamseeachanta/energydata
+- https://pypi.org/project/worldenergydata/
+- https://github.com/vamseeachanta/worldenergydata
 
 
 Version:
 --------
 
-- energydata v0.0.1
+- worldenergydata v0.0.1
 """
 
 from worldenergydata.engine import engine
