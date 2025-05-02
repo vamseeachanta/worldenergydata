@@ -3,7 +3,7 @@ import os
 import sys
 
 # Reader imports
-from energydata.engine import engine
+from worldenergydata.engine import engine
 
 
 def run_process(input_file, expected_result={}):

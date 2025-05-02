@@ -1,7 +1,7 @@
 import logging
 
-from energydata.modules.bsee.data.production_data_from_zip import GetProdDataFromZip
-from energydata.modules.bsee.data.well_from_zip import WellDataFromZip
+from worldenergydata.modules.bsee.data.production_data_from_zip import GetProdDataFromZip
+from worldenergydata.modules.bsee.data.well_from_zip import WellDataFromZip
 
 from assetutilities.common.utilities import is_dir_valid_func
 

@@ -5,8 +5,8 @@ from copy import deepcopy
 import logging
 from loguru import logger
 
-from energydata.modules.bsee.data.scrapy_well_data import ScrapyRunnerAPI
-from energydata.modules.bsee.data.block_data import BlockData
+from worldenergydata.modules.bsee.data.scrapy_well_data import ScrapyRunnerAPI
+from worldenergydata.modules.bsee.data.block_data import BlockData
 
 from assetutilities.common.utilities import is_dir_valid_func
 from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
