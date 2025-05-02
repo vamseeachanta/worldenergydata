@@ -1,6 +1,6 @@
 import logging
 import pandas as pd
-from energydata.modules.bsee.data.block_data import BlockData
+from worldenergydata.modules.bsee.data.block_data import BlockData
 
 block_data = BlockData()
 

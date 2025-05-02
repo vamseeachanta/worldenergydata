@@ -5,11 +5,11 @@ import logging
 
 # # # Third party imports
 import pandas as pd
-from energydata.modules.bsee.data.bsee_data import BSEEData
-from energydata.modules.bsee.analysis.well_api12 import WellAPI12
-from energydata.modules.bsee.analysis.well_api10 import WellAPI10
-from energydata.modules.bsee.analysis.production_api12 import ProductionAPI12Analysis
-from energydata.modules.bsee.analysis.production_api10 import ProductionAPI10Analysis
+from worldenergydata.modules.bsee.data.bsee_data import BSEEData
+from worldenergydata.modules.bsee.analysis.well_api12 import WellAPI12
+from worldenergydata.modules.bsee.analysis.well_api10 import WellAPI10
+from worldenergydata.modules.bsee.analysis.production_api12 import ProductionAPI12Analysis
+from worldenergydata.modules.bsee.analysis.production_api10 import ProductionAPI10Analysis
 
 # from energydata.common.bsee_data_manager import BSEEData
 

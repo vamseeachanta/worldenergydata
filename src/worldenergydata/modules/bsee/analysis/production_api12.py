@@ -12,8 +12,8 @@ import plotly.graph_objects as go
 import numpy as np
 import pandas as pd
 from typing import Dict, List
-from energydata.modules.bsee.data.bsee_data import BSEEData
-from energydata.common.legacy.data import DateTimeUtility
+from worldenergydata.modules.bsee.data.bsee_data import BSEEData
+from worldenergydata.common.legacy.data import DateTimeUtility
 
 from assetutilities.common.data import SaveData
 from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa

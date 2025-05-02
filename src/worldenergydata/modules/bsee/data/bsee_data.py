@@ -1,8 +1,8 @@
 import logging
-from energydata.modules.bsee.data.well import WellData
-from energydata.modules.bsee.data.production import Production
-from energydata.modules.bsee.data.block import Block
-from energydata.modules.bsee.data.data_refresh import DataRefresh
+from worldenergydata.modules.bsee.data.well import WellData
+from worldenergydata.modules.bsee.data.production import Production
+from worldenergydata.modules.bsee.data.block import Block
+from worldenergydata.modules.bsee.data.data_refresh import DataRefresh
 
 well = WellData()
 production = Production()

@@ -1,5 +1,5 @@
 
-from energydata.modules.bsee.zip_data_dwnld.dwnld_from_zipurl import DownloadFromZipUrl
+from worldenergydata.modules.bsee.zip_data_dwnld.dwnld_from_zipurl import DownloadFromZipUrl
 
 # Initialize instances of imported classes
 download_from_zip = DownloadFromZipUrl()

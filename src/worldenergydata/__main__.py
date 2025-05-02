@@ -20,6 +20,6 @@ Version:
 - energydata v0.0.1
 """
 
-from energydata.engine import engine
+from worldenergydata.engine import engine
 
 engine()
