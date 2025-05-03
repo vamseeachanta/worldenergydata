@@ -1,2 +1,2 @@
-conda activate energydata
-python -m energydata .\query_blk_julia_API.yml
+conda activate worldenergydata
+python -m worldenergydata .\query_blk_julia_API.yml
