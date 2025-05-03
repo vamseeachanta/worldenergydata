@@ -1,13 +1,11 @@
 # Introduction
 
-Energy Data Library to get data from public sources. The energy includes the following:
+World Energy Data Library to get data from public sources. The energy includes the following:
 - Oil and Gas facilities
 - Wind
 - Other Source (TBA)
 
 ## Summary
-
-
 
 ## Usage
 
