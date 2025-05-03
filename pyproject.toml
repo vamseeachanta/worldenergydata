@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "worldenergydata"
 version = "0.0.1"
-description = "Energy Data from Public Sources"
+description = "World Energy Data from Public Sources"
 readme = "README.md"
 authors = [{ name = "Vamsee Achanta", email = "vamsee.achanta@aceengineer.com" }]
 license = { file = "LICENSE" }
