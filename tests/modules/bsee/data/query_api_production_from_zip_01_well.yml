@@ -5,11 +5,9 @@ meta:
 basename: bsee
 
 data:
-  obtain: True
   by: zip
   groups:
     - api12: [177024120700]
-      # files_folder: data\modules\bsee\production\csv 
 
 production_from_zip:
    flag: True

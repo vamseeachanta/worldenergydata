@@ -95,14 +95,16 @@ class GetProdDataFromZip:
             api12_dataframes = {}
             for file_name in os.listdir(folder_path):
 
+                file_name_with_path = os.path.join(folder_path, file_name)
                 column_names = ['LEASE_NUMBER', 'COMPLETION_NAME', 'PRODUCTION_DATE', 'DAYS_ON_PROD', 'PRODUCT_CODE', 'MON_O_PROD_VOL', 'MON_G_PROD_VOL', 'MON_WTR_PROD_VOL', 'API_WELL_NUMBER', 'WELL_STAT_CD', 'AREA_CODE_BLOCK_NUM', 'OPERATOR_NUM', 'SORT_NAME', 'BOEM_FIELD', 'INJECTION_VOLUME', 'PROD_INTERVAL_CD', 'FIRST_PROD_DATE', 'UNIT_AGT_NUMBER', 'UNIT_ALOC_SUFFIX']
-                cfg['zip_utilities'] = {
+                cfg_zip_utilities = {'zip_utilities': {}}
+                cfg_zip_utilities['zip_utilities'] = {
                     'technique': 'zip_files_to_df',
-                    'input_directory': folder_path,
+                    'file_name': file_name_with_path,
                     'column_names': column_names
                 }
 
-                df = zip_files_to_df.router(cfg)
+                df = zip_files_to_df.zip_file_to_dataframe(cfg_zip_utilities)
 
                 df_name = file_name.split('.')[0]
 

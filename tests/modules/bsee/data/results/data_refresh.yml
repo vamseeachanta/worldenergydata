@@ -115,7 +115,7 @@ default:
       output: true
     cfg_sensitivities: false
 meta:
-  library: energydata
+  library: worldenergydata
   basename: bsee
 data:
   refresh: true
@@ -123,18 +123,18 @@ data:
   production: true
 Analysis:
   basename: bsee
-  analysis_root_folder: k:\github\energydata\tests\modules\bsee\data
+  analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data
   file_name: data_refresh
   file_name_for_overwrite: data_refresh
-  log_folder: k:\github\energydata\tests\modules\bsee\data\logs
-  start_time: 2025-04-30 20:21:27.503493
+  log_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\logs
+  start_time: 2025-05-05 10:53:06.824981
   cfg_array_file_names: ~
   DefaultInputFile: ~
-  CustomInputFile: k:\github\energydata\tests\modules\bsee\data\data_refresh.yml
-  result_folder: k:\github\energydata\tests\modules\bsee\data\results
-  result_data_folder: k:\github\energydata\tests\modules\bsee\data\results\Data
-  result_plot_folder: k:\github\energydata\tests\modules\bsee\data\results\Plot
-  fe_folder: k:\github\energydata\tests\modules\bsee\data\results
+  CustomInputFile: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\data_refresh.yml
+  result_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\results
+  result_data_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\results\Data
+  result_plot_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\results\Plot
+  fe_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\results
 bsee:
   data:
     refresh: true

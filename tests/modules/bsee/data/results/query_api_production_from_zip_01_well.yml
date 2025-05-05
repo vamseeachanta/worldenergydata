@@ -1,130 +1,158 @@
-&id001 !!python/object/new:assetutilities.common.data.AttributeDict
-state: *id001
-dictitems:
-  basename: bsee
-  type:
-    data: false
-    analysis: false
-    results: false
-  parameters:
-    filepath:
-      data: data/modules/bsee/data
-      production: data/modules/bsee/production
-      block: data/modules/bsee/block
-      APD: data/modules/bsee/data/csv/online_query_raw_data
-    max_allowed_npt: 90
-    borehole_codes:
-    - BOREHOLE_STAT_CD: APD
-      BOREHOLE_STAT_DESC: APPLICATION FOR PERMIT TO DRILL
-    - BOREHOLE_STAT_CD: AST
-      BOREHOLE_STAT_DESC: APPROVED SIDETRACK
-    - BOREHOLE_STAT_CD: CNL
-      BOREHOLE_STAT_DESC: BOREHOLE IS CANCELLED. THE REQUEST TO DRILL THE WELL IS
-        CANCELLED AFTER THE APD OR SUNDRY HAS BEEN APPROVED. THE STATUS DATE IS THE
-        DATE THE BOREHOLE WAS CANCELLED.
-    - BOREHOLE_STAT_CD: COM
-      BOREHOLE_STAT_DESC: BOREHOLE COMPLETED
-    - BOREHOLE_STAT_CD: CT
-      BOREHOLE_STAT_DESC: CORE TEST WELL
-    - BOREHOLE_STAT_CD: DRL
-      BOREHOLE_STAT_DESC: DRILLING ACTIVE
-    - BOREHOLE_STAT_CD: DSI
-      BOREHOLE_STAT_DESC: DRILLING SUSPENDED
-    - BOREHOLE_STAT_CD: PA
-      BOREHOLE_STAT_DESC: PERMANENTLY ABANDONED
-    - BOREHOLE_STAT_CD: ST
-      BOREHOLE_STAT_DESC: BOREHOLE SIDETRACKED
-    - BOREHOLE_STAT_CD: TA
-      BOREHOLE_STAT_DESC: TEMPORARILY ABANDONED
-    - BOREHOLE_STAT_CD: VCW
-      BOREHOLE_STAT_DESC: VOLUME CHAMBER WELL
-  settings_master: ~
-  data_retrieval:
-    well:
-      website:
-        url: https://www.data.bsee.gov/Well/APD/Default.aspx
-        form_data:
-          first_request:
-            ASPxFormLayout1$ASPxTextBoxAPI: ~
-            ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
-          second_request:
-            ASPxFormLayout1$ASPxTextBoxAPI: ~
-            __EVENTTARGET: ASPxFormLayout2$btnCsvExport
-            __EVENTARGUMENT: Click
-      csv:
-        BoreholeRawData_mv_boreholes_all: data/modules/bsee/csv/online_query_raw_data/BoreholeRawData_mv_boreholes_all.csv
-        eWellAPDRawData_mv_apd_main: data/modules/bseecsv/online_query_raw_data/eWellAPDRawData_mv_apd_main.csv
-      zip:
-        BoreholeRawData_mv_boreholes_all: data/modules/bsee/data/zip/BoreholeRawData_mv_boreholes_all.zip
-        eWellAPDRawData_mv_apd_main: data/modules/bsee/data/zip/eWellAPDRawData_mv_apd_main.zip
+basename: bsee
+type:
+  data: false
+  analysis: false
+  results: false
+parameters:
+  filepath:
+    data: data/modules/bsee/data
     production:
-      website:
-        url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
-        form_data:
-          first_request:
-            ASPxFormLayout1$ASPxTextBoxLN: ~
-            ASPxFormLayout1$ASPxTextBoxDF: ~
-            ASPxFormLayout1$ASPxTextBoxDT: ~
-            ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
-          second_request:
-            ASPxFormLayout1$ASPxTextBoxLN: ~
-            __EVENTTARGET: ASPxFormLayout2$btnCsvExport
-            __EVENTARGUMENT: Click
       csv: data\modules\bsee\csv\production
       zip: data\modules\bsee\zip\production
-    block:
-      website:
-        url: https://www.data.bsee.gov/Well/APD/Default.aspx
-        form_data:
-          first_request:
-            ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
-            ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
-            ASPxFormLayout1_ASPxComboBoxBBN_VI: None
-            ASPxFormLayout1$ASPxComboBoxBBN: None
-            ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
-          second_request:
-            ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
-            ASPxFormLayout1$ASPxComboBoxBA$DDD$L: WR
-            ASPxFormLayout1_ASPxComboBoxBBN_VI: None
-            ASPxFormLayout1$ASPxComboBoxBBN: None
-            __EVENTTARGET: ASPxFormLayout2$btnCsvExport
-            __EVENTARGUMENT: Click
-  default:
-    log_level: INFO
-    config:
-      overwrite:
-        output: true
-      cfg_sensitivities: false
-  meta:
-    library: energydata
-    basename: bsee
+      bin: data\modules\bsee\bin\production
+    block: data/modules/bsee/block
+    APD: data/modules/bsee/data/csv/online_query_raw_data
+    apm:
+      zip: data/modules/bsee/zip/apm
+      bin: data/modules/bsee/bin/apm
+      columns:
+      - - MMS_COMPANY_NUM
+        - API_WELL_NUMBER
+        - WATER_DEPTH
+        - WELL_NM_BP_SFIX
+        - WELL_NM_ST_SFIX
+        - SURF_AREA_CODE
+        - SURF_BLOCK_NUM
+        - SURF_LEASE_NUM
+        - BOTM_AREA_CODE
+        - BOTM_BLOCK_NUM
+        - BOTM_LEASE_NUM
+        - RIG_ID_NUM
+        - BOREHOLE_STAT_CD
+        - WELL_TYPE_CODE
+        - BUS_ASC_NAME
+  max_allowed_npt: 90
+  borehole_codes:
+  - BOREHOLE_STAT_CD: APD
+    BOREHOLE_STAT_DESC: APPLICATION FOR PERMIT TO DRILL
+  - BOREHOLE_STAT_CD: AST
+    BOREHOLE_STAT_DESC: APPROVED SIDETRACK
+  - BOREHOLE_STAT_CD: CNL
+    BOREHOLE_STAT_DESC: BOREHOLE IS CANCELLED. THE REQUEST TO DRILL THE WELL IS CANCELLED
+      AFTER THE APD OR SUNDRY HAS BEEN APPROVED. THE STATUS DATE IS THE DATE THE BOREHOLE
+      WAS CANCELLED.
+  - BOREHOLE_STAT_CD: COM
+    BOREHOLE_STAT_DESC: BOREHOLE COMPLETED
+  - BOREHOLE_STAT_CD: CT
+    BOREHOLE_STAT_DESC: CORE TEST WELL
+  - BOREHOLE_STAT_CD: DRL
+    BOREHOLE_STAT_DESC: DRILLING ACTIVE
+  - BOREHOLE_STAT_CD: DSI
+    BOREHOLE_STAT_DESC: DRILLING SUSPENDED
+  - BOREHOLE_STAT_CD: PA
+    BOREHOLE_STAT_DESC: PERMANENTLY ABANDONED
+  - BOREHOLE_STAT_CD: ST
+    BOREHOLE_STAT_DESC: BOREHOLE SIDETRACKED
+  - BOREHOLE_STAT_CD: TA
+    BOREHOLE_STAT_DESC: TEMPORARILY ABANDONED
+  - BOREHOLE_STAT_CD: VCW
+    BOREHOLE_STAT_DESC: VOLUME CHAMBER WELL
+  - BOREHOLE_STAT_CD: PND
+    BOREHOLE_STAT_DESC: PENDING
+settings_master: ~
+data_retrieval:
+  well:
+    website:
+      url: https://www.data.bsee.gov/Well/APD/Default.aspx
+      form_data:
+        first_request:
+          ASPxFormLayout1$ASPxTextBoxAPI: ~
+          ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+        second_request:
+          ASPxFormLayout1$ASPxTextBoxAPI: ~
+          __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+          __EVENTARGUMENT: Click
+    csv:
+      BoreholeRawData_mv_boreholes_all: data/modules/bsee/csv/online_query_raw_data/BoreholeRawData_mv_boreholes_all.csv
+      eWellAPDRawData_mv_apd_main: data/modules/bseecsv/online_query_raw_data/eWellAPDRawData_mv_apd_main.csv
+    zip:
+      BoreholeRawData_mv_boreholes_all: data/modules/bsee/data/zip/BoreholeRawData_mv_boreholes_all.zip
+      eWellAPDRawData_mv_apd_main: data/modules/bsee/data/zip/eWellAPDRawData_mv_apd_main.zip
+  production:
+    website:
+      url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+      form_data:
+        first_request:
+          ASPxFormLayout1$ASPxTextBoxLN: ~
+          ASPxFormLayout1$ASPxTextBoxDF: ~
+          ASPxFormLayout1$ASPxTextBoxDT: ~
+          ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+        second_request:
+          ASPxFormLayout1$ASPxTextBoxLN: ~
+          __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+          __EVENTARGUMENT: Click
+  block:
+    website:
+      url: https://www.data.bsee.gov/Well/APD/Default.aspx
+      form_data:
+        first_request:
+          ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
+          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: ~
+          ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+          ASPxFormLayout1$ASPxComboBoxBBN: None
+          ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+        second_request:
+          ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
+          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: ~
+          ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+          ASPxFormLayout1$ASPxComboBoxBBN: None
+          __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+          __EVENTARGUMENT: Click
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: true
+    cfg_sensitivities: false
+meta:
+  library: worldenergydata
+  basename: bsee
+data:
+  by: zip
+  groups:
+  - api12:
+    - 177024120700
+    well_data:
+    - api12:
+      - 177024120700
+      label: '177024120700'
+      file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\results\Data\177024120700.csv
+production_from_zip:
+  flag: true
+Analysis:
+  basename: bsee
+  analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data
+  file_name: query_api_production_from_zip_01_well
+  file_name_for_overwrite: query_api_production_from_zip_01_well
+  log_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\logs
+  start_time: 2025-05-05 11:15:10.590420
+  cfg_array_file_names: ~
+  DefaultInputFile: ~
+  CustomInputFile: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\query_api_production_from_zip_01_well.yml
+  result_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\results
+  result_data_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\results\Data
+  result_plot_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\results\Plot
+  fe_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\results
+bsee:
   data:
-    obtain: true
     by: zip
     groups:
     - api12:
       - 177024120700
-  production_from_zip:
-    flag: true
-  Analysis:
-    basename: bsee
-    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
-    file_name: query_api_production_from_zip_01_well
-    file_name_for_overwrite: query_api_production_from_zip_01_well
-    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
-    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
-    start_time: 2025-03-19 11:40:58.793788
-    cfg_array_file_names: ~
-    DefaultInputFile: ~
-    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\query_api_production_from_zip_01_well.yml
-    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
-  bsee:
-    groups:
-    - api12: []
-    production_data:
-      type: csv
-      groups:
+      well_data:
       - api12:
         - 177024120700
-        label: 177024120700
-        file_name: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results\Data\177024120700.csv
+        label: '177024120700'
+        file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\results\Data\177024120700.csv
+    type: csv
+  analysis: {}
