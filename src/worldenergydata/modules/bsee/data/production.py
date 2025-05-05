@@ -19,7 +19,7 @@ class Production:
         # elif "production_from_website" in cfg and cfg['production_from_website']['flag']:
         #     production_data_sources.get_production_from_website(cfg)
         
-        # elif "production_from_zip" in cfg and cfg['production_from_zip']['flag']:
-        #     production_from_zip.router(cfg)
+        elif "production_from_zip" in cfg and cfg['production_from_zip']['flag']:
+            production_from_zip.router(cfg)
 
         return cfg, production_data_groups
