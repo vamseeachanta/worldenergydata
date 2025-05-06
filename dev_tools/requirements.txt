@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 energydata
+=======
+# worldenergydata
+>>>>>>> 202502
 
 pandas
 pip
@@ -38,4 +42,9 @@ pytest
 deepdiff
 requests
 
+<<<<<<< HEAD
+=======
+xmltodict
+
+>>>>>>> 202502
 loguru

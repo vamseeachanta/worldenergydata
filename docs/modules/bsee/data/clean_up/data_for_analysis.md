@@ -23,7 +23,7 @@ The BSEE data tables and dataframes are given in the following sections.
 
 ### DF Tables and dataframes 
 
-<https://github.com/vamseeachanta/energydata/blob/bseedata/docs/modules/bsee/legacy/code/ong_field_development/BSEE_analysis.yml>
+<https://github.com/vamseeachanta/worldenergydata/blob/bseedata/docs/modules/bsee/legacy/code/ong_field_development/BSEE_analysis.yml>
 
 #### Well Data
 
@@ -71,7 +71,7 @@ SELECT API12, WELL_NM_ST_SFIX, WELL_NM_BP_SFIX, SUBSEA_TREE_HEIGHT_AML, SN_EOR
 
 
 **Data Sources:**
-https://github.com/vamseeachanta/energydata/blob/d9f30ee2583290a29045329a3b644c13e57b8f5c/tests/modules/bsee/results/Data/by_zip/BHPSRawData_mv_bhpsurvey_all_columns.csv
+https://github.com/vamseeachanta/worldenergydata/blob/d9f30ee2583290a29045329a3b644c13e57b8f5c/tests/modules/bsee/results/Data/by_zip/BHPSRawData_mv_bhpsurvey_all_columns.csv
 
 FIELD_NAME_CODE
 LEASE_NUMBER
@@ -164,8 +164,8 @@ Lease Max Water Depth (meters)
 
 ### by_API
 
-<https://github.com/vamseeachanta/energydata/tree/bseedata/tests/modules/data/results/Data/by_API>
+<https://github.com/vamseeachanta/worldenergydata/tree/bseedata/tests/modules/data/results/Data/by_API>
 
 ### by_zip_url
 
-<https://github.com/vamseeachanta/energydata/tree/bseedata/tests/modules/data/results/Data/by_zip>
+<https://github.com/vamseeachanta/worldenergydata/tree/bseedata/tests/modules/data/results/Data/by_zip>

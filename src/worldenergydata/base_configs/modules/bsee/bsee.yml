@@ -1,0 +1,154 @@
+basename: bsee
+
+type:
+  data: False
+  analysis: False
+  results: False
+
+parameters:
+  filepath:
+    data: data/modules/bsee/data
+
+    production: 
+      csv: data\modules\bsee\csv\production
+      zip: data\modules\bsee\zip\production
+      bin: data\modules\bsee\bin\production
+
+    block: data/modules/bsee/block
+    APD: data/modules/bsee/csv/online_query_raw_data
+    apm: 
+      zip: data/modules/bsee/zip/fmp
+      bin: data/modules/bsee/bin/fmp
+      columns: [[MMS_COMPANY_NUM,
+                    API_WELL_NUMBER,
+                    WATER_DEPTH,
+                    WELL_NM_BP_SFIX,
+                    WELL_NM_ST_SFIX,
+                    SURF_AREA_CODE,
+                    SURF_BLOCK_NUM,
+                    SURF_LEASE_NUM,
+                    BOTM_AREA_CODE,
+                    BOTM_BLOCK_NUM,
+                    BOTM_LEASE_NUM,
+                    RIG_ID_NUM,
+                    BOREHOLE_STAT_CD,
+                    WELL_TYPE_CODE,
+                    BUS_ASC_NAME]]
+    
+  max_allowed_npt: 90
+  borehole_codes:
+    [
+        {
+            "BOREHOLE_STAT_CD": "APD",
+            "BOREHOLE_STAT_DESC": "APPLICATION FOR PERMIT TO DRILL"
+        },
+        {
+            "BOREHOLE_STAT_CD": "AST",
+            "BOREHOLE_STAT_DESC": "APPROVED SIDETRACK"
+        },
+        {
+            "BOREHOLE_STAT_CD": "CNL",
+            "BOREHOLE_STAT_DESC": "BOREHOLE IS CANCELLED. THE REQUEST TO DRILL THE WELL IS CANCELLED AFTER THE APD OR SUNDRY HAS BEEN APPROVED. THE STATUS DATE IS THE DATE THE BOREHOLE WAS CANCELLED."
+        },
+        {
+            "BOREHOLE_STAT_CD": "COM",
+            "BOREHOLE_STAT_DESC": "BOREHOLE COMPLETED"
+        },
+        {
+            "BOREHOLE_STAT_CD": "CT",
+            "BOREHOLE_STAT_DESC": "CORE TEST WELL"
+        },
+        {
+            "BOREHOLE_STAT_CD": "DRL",
+            "BOREHOLE_STAT_DESC": "DRILLING ACTIVE"
+        },
+        {
+            "BOREHOLE_STAT_CD": "DSI",
+            "BOREHOLE_STAT_DESC": "DRILLING SUSPENDED"
+        },
+        {
+            "BOREHOLE_STAT_CD": "PA",
+            "BOREHOLE_STAT_DESC": "PERMANENTLY ABANDONED"
+        },
+        {
+            "BOREHOLE_STAT_CD": "ST",
+            "BOREHOLE_STAT_DESC": "BOREHOLE SIDETRACKED"
+        },
+        {
+            "BOREHOLE_STAT_CD": "TA",
+            "BOREHOLE_STAT_DESC": "TEMPORARILY ABANDONED"
+        },
+        {
+            "BOREHOLE_STAT_CD": "VCW",
+            "BOREHOLE_STAT_DESC": "VOLUME CHAMBER WELL"
+        },
+        {
+            "BOREHOLE_STAT_CD": "PND",
+            "BOREHOLE_STAT_DESC": "PENDING"
+        }
+
+    ]
+
+settings_master: NULL
+
+data_retrieval:
+  well:
+    website:
+      url: https://www.data.bsee.gov/Well/APD/Default.aspx
+      form_data:
+        first_request:
+          "ASPxFormLayout1$ASPxTextBoxAPI":
+          "ASPxFormLayout1$ASPxButtonSubmitQ": "Submit Query"
+
+        second_request:
+          "ASPxFormLayout1$ASPxTextBoxAPI":
+          "__EVENTTARGET": "ASPxFormLayout2$btnCsvExport"
+          "__EVENTARGUMENT": "Click"
+    csv:
+      BoreholeRawData_mv_boreholes_all: data/modules/bsee/csv/online_query_raw_data/BoreholeRawData_mv_boreholes_all.csv
+      eWellAPDRawData_mv_apd_main: data/modules/bseecsv/online_query_raw_data/eWellAPDRawData_mv_apd_main.csv
+    zip:
+      BoreholeRawData_mv_boreholes_all: data/modules/bsee/data/zip/BoreholeRawData_mv_boreholes_all.zip
+      eWellAPDRawData_mv_apd_main: data/modules/bsee/data/zip/eWellAPDRawData_mv_apd_main.zip
+
+  production:
+    website:
+      url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+      form_data:
+        first_request:
+          ASPxFormLayout1$ASPxTextBoxLN: 
+          ASPxFormLayout1$ASPxTextBoxDF: 
+          ASPxFormLayout1$ASPxTextBoxDT: 
+          ASPxFormLayout1$ASPxButtonSubmitQ: "Submit Query"
+
+        second_request:
+          ASPxFormLayout1$ASPxTextBoxLN: 
+          __EVENTTARGET: "ASPxFormLayout2$btnCsvExport"
+          __EVENTARGUMENT: "Click"
+
+  block:
+    website:
+      url: https://www.data.bsee.gov/Well/APD/Default.aspx
+      form_data:
+        first_request:
+          ASPxFormLayout1$ASPxComboBoxBA: "Walker Ridge (WR)"
+          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: 
+          ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+          ASPxFormLayout1$ASPxComboBoxBBN: None
+          ASPxFormLayout1$ASPxButtonSubmitQ: "Submit Query"
+
+        second_request:
+          ASPxFormLayout1$ASPxComboBoxBA: "Walker Ridge (WR)"
+          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: 
+          ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+          ASPxFormLayout1$ASPxComboBoxBBN: None
+          __EVENTTARGET: "ASPxFormLayout2$btnCsvExport"
+          __EVENTARGUMENT: "Click"
+
+
+default:
+  log_level: DEBUG
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False
