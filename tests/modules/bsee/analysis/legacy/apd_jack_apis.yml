@@ -1,0 +1,69 @@
+meta:
+<<<<<<< HEAD:tests/modules/bsee/analysis/legacy_2025_02_21/apd_jack_apis.yml
+  library: energydata
+=======
+  library: worldenergydata
+>>>>>>> 202502:tests/modules/bsee/analysis/legacy/apd_jack_apis.yml
+  basename: bsee
+basename: bsee
+
+well_data:
+  flag: True
+  analysis: False
+
+master_settings:
+  save_csv: True
+  url: https://www.data.bsee.gov/Well/APD/Default.aspx
+  output_dir: tests\modules\bsee\analysis\results\Data\Jack_well_data
+
+form_data:
+  first_request:
+    'ASPxFormLayout1$ASPxTextBoxAPI': None
+    'ASPxFormLayout1$ASPxButtonSubmitQ': 'Submit Query'
+
+  second_request:
+    'ASPxFormLayout1$ASPxTextBoxAPI': None
+    '__EVENTTARGET': 'ASPxFormLayout2$btnCsvExport'
+    '__EVENTARGUMENT': 'Click'
+
+settings:
+  - label: API_1
+    well_api12 : 608124005000
+
+  - label: API_2
+    well_api12 : 608124001301
+
+  - label: API_3
+    well_api12 : 608124012804
+
+  - label: API_4
+    well_api12 : 608124002703
+
+  - label: API_5
+    well_api12 : 608124005203
+
+  - label: API_6
+    well_api12 : 608124001701
+
+  - label: API_7
+    well_api12 : 608124012601
+
+  - label: API_8
+    well_api12 : 608124005103
+
+  - label: API_9
+    well_api12 : 608124012500
+
+  - label: API_10
+    well_api12 : 608124011504
+
+  - label: API_11
+    well_api12 : 608124011606
+
+
+default:
+  log_level: DEBUG
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False

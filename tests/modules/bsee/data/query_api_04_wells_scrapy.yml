@@ -1,0 +1,20 @@
+meta:
+  library: worldenergydata
+  basename: bsee
+basename: bsee
+
+
+data:
+  obtain: True
+  by: API12
+  well_data: True
+  groups:
+    - api12: [608164024500, 608164025800, 608164025400, 608164025600]
+    
+
+default:
+  log_level: DEBUG
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False

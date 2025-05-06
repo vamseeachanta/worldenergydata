@@ -1,0 +1,18 @@
+meta:
+  library: energydata
+  basename: bsee
+basename: bsee
+
+well_prod_data:
+  flag: True
+
+settings : 
+  out_dir: data\modules\bsee\production\zip
+
+
+default:
+  log_level: DEBUG
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False

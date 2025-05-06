@@ -1,0 +1,71 @@
+[build-system]
+requires      = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "worldenergydata"
+version = "0.0.1"
+description = "World Energy Data from Public Sources"
+readme = "README.md"
+authors = [{ name = "Vamsee Achanta", email = "vamsee.achanta@aceengineer.com" }]
+license = { file = "LICENSE" }
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+keywords=['package', 'library', 'module']
+dependencies = ["pyyaml", 'tomli; python_version < "3.11"']
+requires-python = ">=3.7"
+
+    [project.optional-dependencies]
+    build = ["build", "twine"]
+    dev   = ["black", "bumpver", "isort", "pytest"]
+
+    [project.scripts]
+    energy_data = "worldenergydata:__main__"
+
+    [project.urls]
+    repository    = "https://github.com/vamseeachanta/worldenergydata"
+    documentation = "https://github.com/vamseeachanta/worldenergydata/blob/main/README.md"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["dev_tools/requirements.txt"]}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+[tool.setuptools.package-data]
+"*" = ["*.yml", "*.csv", "*.xlsx", "*.html", "*.txt"]
+
+
+[tool.bumpver]
+current_version = "0.0.1"
+version_pattern = "MAJOR.MINOR.PATCH"
+commit_message  = "bump version {old_version} -> {new_version}"
+commit          = true
+tag             = true
+push            = false
+
+    [tool.bumpver.file_patterns]
+    "pyproject.toml" = [
+        'current_version = "{version}"',
+        'version = "{version}"',
+    ]
+    "src/worldenergydata/__init__.py" = ["{version}"]
+    "src/worldenergydata/__main__.py" = ["- worldenergydata v{version}"]
+
+[tool.isort]
+profile                   = "black"
+import_heading_stdlib     = "Standard library imports"
+import_heading_thirdparty = "Third party imports"
+import_heading_firstparty = "Reader imports"
+
+[tool.mypy]
+strict = true
+
+    [[tool.mypy.overrides]]
+    module                 = "feedparser"
+    ignore_missing_imports = true
