@@ -1,0 +1,53 @@
+&id001 !!python/object/new:assetutilities.common.data.AttributeDict
+state: *id001
+dictitems:
+  basename: zip_utils
+  type:
+    data:
+      flag: true
+      analysis: false
+  default:
+    log_level: INFO
+    config:
+      overwrite:
+        output: true
+<<<<<<< HEAD
+  data:
+    flag: true
+    analysis: false
+  input:
+    out_directory: tests\modules\bsee\data\results\Data\by_zip
+    urls:
+    - https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip
+  Analysis:
+    basename: zip_utils
+    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data
+    file_name: dwnld_from_zipurl
+    file_name_for_overwrite: dwnld_from_zipurl
+    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
+    start_time: 2025-02-13 10:05:27.775462
+    cfg_array_file_names: ~
+    DefaultInputFile: ~
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\dwnld_from_zipurl.yml
+    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+=======
+  online_query:
+    raw_data: true
+  input:
+    out_directory: data\modules\bsee\full_data
+    urls:
+    - https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip
+  Analysis:
+    basename: zip_utils
+    analysis_root_folder: k:\github\energydata\tests\modules\bsee\data
+    file_name: dwnld_from_zipurl
+    file_name_for_overwrite: dwnld_from_zipurl
+    result_folder: k:\github\energydata\tests\modules\bsee\data\results
+    log_folder: k:\github\energydata\tests\modules\bsee\data\logs
+    start_time: 2025-03-11 12:07:52.174637
+    cfg_array_file_names: ~
+    DefaultInputFile: ~
+    CustomInputFile: k:\github\energydata\tests\modules\bsee\data\dwnld_from_zipurl.yml
+    fe_folder: k:\github\energydata\tests\modules\bsee\data\results
+>>>>>>> 202502

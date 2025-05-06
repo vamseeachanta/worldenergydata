@@ -1,0 +1,39 @@
+meta:
+  library: worldenergydata
+  basename: bsee
+basename: bsee
+
+data:
+  by: block # API12,lease ?
+  groups:
+    - label: WR540
+      bottom_area: Walker Ridge (WR)
+      bottom_block: 540
+    - label: WR584
+      bottom_area: Walker Ridge (WR)
+      bottom_block: 584
+
+block_data:
+  flag: True
+  analysis: False
+
+analysis:
+  flag: True
+  api12: False
+  production_data: True
+  production:
+    block: True
+    api12: False
+
+block:
+  flag: True
+
+prod_by_lease:
+  flag: True
+
+default:
+  log_level: DEBUG
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False

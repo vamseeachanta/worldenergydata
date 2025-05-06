@@ -1,0 +1,50 @@
+<<<<<<< HEAD
+energydata
+=======
+# worldenergydata
+>>>>>>> 202502
+
+pandas
+pip
+
+bs4
+attrs
+certifi
+cffi
+h11
+idna
+numpy
+outcome
+pandas
+
+pycparser
+PySocks
+python-dateutil
+pytz
+
+selenium
+six
+sniffio
+sortedcontainers
+soupsieve
+
+trio
+trio-websocket
+typing_extensions
+tzdata
+urllib3
+wsproto
+pyyaml
+
+assetutilities
+
+pytest
+deepdiff
+requests
+
+<<<<<<< HEAD
+=======
+xmltodict
+
+>>>>>>> 202502
+loguru

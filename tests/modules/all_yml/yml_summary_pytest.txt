@@ -1,0 +1,13 @@
+Detailed output:                   Folder               Filename   Status
+0  modules\bsee\analysis          jack_apis.yml  Success
+1  modules\bsee\analysis      jack_by_block.yml  Success
+2  modules\bsee\analysis     julia_by_block.yml  Success
+3  modules\bsee\analysis  prepare_bsee_data.yml  Success
+4  modules\bsee\analysis        stmalo_apis.yml  Success
+5  modules\bsee\analysis    stmalo_by_block.yml  Success
+6      modules\bsee\data       bsee_10_APIs.yml  Success
+7      modules\bsee\data     bsee_well_data.yml  Success
+8      modules\bsee\data    production_data.yml  Success
+No. of files processed: 9
+Tests passed: 9
+Tests Failed: 0

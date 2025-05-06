@@ -1,0 +1,22 @@
+meta:
+  library: worldenergydata
+  basename: bsee
+  
+basename: bsee
+
+data:
+  apm: False
+  production_data: False
+  groups:
+    - 
+      bottom_block:
+        area: WR
+        number: 508
+      api12: NULL
+
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False

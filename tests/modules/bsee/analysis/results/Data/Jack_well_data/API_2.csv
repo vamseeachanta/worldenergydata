@@ -1,0 +1,6 @@
+API Well Number,Permit Type,APD Received Date,APD Approved Date,Region,Company Number,Company Name,Bottom Area Code,Bottom Block Number,Bottom Lease Number,Surface Area Code,Surface Block Number,Surface Lease Number,Surface NS Dist,Surface NS Code,Surface EW Dist,Surface EW Code,Well Type,Well Name,Well Name Suffix,Water Depth (feet),Rig ID Number,Rig Name,Surf X Coord Loc*,Surf Y Coord Loc*,Surface Latitude*,Surface Longitude*
+<<<<<<< HEAD:tests/modules/bsee/analysis/results/Data/Jack_well_data/API_2.csv
+608124001301,,4/24/2004,4/24/2004,Gulf of America,00078,Chevron U.S.A. Inc.,WR,759,G17016,WR,759,G17016,5323,N,1908,W,,  001,ST00BP01,6968,46105,T.O. DISCOVERER DEEP SEAS,2156148,9514517,26.21271169,-91.42657303
+=======
+608104012000,,9/24/2002,10/23/2002,Gulf of America,02525,Westport Resources Corporation,EW,828,G24028,EW,784,G24023,460,S,5530,W,,  001,ST00BP00,460,91308,ROWAN MIDLAND,2524090,10233100,28.17133322,-90.25689131
+>>>>>>> 202502:tests/modules/bsee/analysis/results/Data/608104012000.csv

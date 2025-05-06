@@ -1,0 +1,67 @@
+@startuml selenium_workflow
+skinparam titleBorderRoundCorner 15
+skinparam titleBorderThickness 2
+skinparam titleBorderColor red
+skinparam titleBackgroundColor Tomato
+
+title BSEE Data \n API Details
+
+start
+
+
+    partition "User Input" {
+
+
+        :Give Well API;
+            note right
+                step-1 : Given url will be opened in chrome webdriver using driver.get() method.
+                step-2 : Given API ID will be given to text box that is accessed uniquely using by.XPATH method.
+            end note
+
+    }
+
+    partition "Program - Automation" {
+
+
+        :Opens Chrome;
+            note right
+                webdriver is used to open and run chrome automatically.
+                By is used for accessing specific HTML elements by their names or id or any other unique identities.
+                get(url) is used to open specific url in our chrome webdriver.
+                driver.find_element(By.XPATH) is used to acceess specific element by their x_path.
+                send_keys(input_data) is used to send out input values.
+                button.click() is used to click automatically.
+                driver.implicitly_wait(250) In order to Wait for the page to load.
+                Process :
+
+                step-1 : Given url will be opened in chrome webdriver using driver.get() method.
+                step-2 : Given API ID will be given to text box that is accessed uniquely using by.XPATH method.
+                step-3 : submit query buttons are clicked using Element.click() method, then content will be shown.
+                step-4 : CSV_Button.click() is clicked
+                step-5 : Now, Temporary files are downloaded.
+                step-6 : Temporary files extensions are changed to CSV.
+                step-7 : CSV files of a specified directory are filtered using OS module.
+                step-8 : Path of newly created CSV file will be copied.
+                step-9 : That path is used to read CSV file as Dataframe.
+            end note
+
+
+
+    }
+
+
+stop
+
+footer
+%date("yyyy.MM.dd' at 'HH:mm")
+%filename()
+end footer
+
+@enduml
+
+' Make a dashed line, alternative syntax for ..>
+(*) -[dashed]-> "Give APIID"
+
+' Make line bold and use color name
+
+@enduml

@@ -1,0 +1,6 @@
+API Well Number,Permit Type,APD Received Date,APD Approved Date,Region,Company Number,Company Name,Bottom Area Code,Bottom Block Number,Bottom Lease Number,Surface Area Code,Surface Block Number,Surface Lease Number,Surface NS Dist,Surface NS Code,Surface EW Dist,Surface EW Code,Well Type,Well Name,Well Name Suffix,Water Depth (feet),Rig ID Number,Rig Name,Surf X Coord Loc*,Surf Y Coord Loc*,Surface Latitude*,Surface Longitude*
+<<<<<<< HEAD:data/modules/bsee/well/scrapy_output/API_number_9.csv
+177244067506,,4/3/1998,,Gulf of America,02313,Freeport-McMoRan Energy LLC,MP,299,G09372,MP,299,G09372,6772,N,3907,E,,SW227,ST06BP00,210,,,2821083,227058,29.26567776,-88.758128
+=======
+427034051601,,4/21/1998,,Gulf of America,02451,GOM Shelf LLC,MI,634,G07202,MI,633,G06042,5278,S,576,E,, C002,ST01BP00,82,,,2809939.81,92398,28.06352528,-96.48883423
+>>>>>>> 202502:tests/modules/bsee/analysis/results/Data/427034051601.csv

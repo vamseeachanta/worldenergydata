@@ -1,0 +1,6 @@
+API Well Number,Permit Type,APD Received Date,APD Approved Date,Region,Company Number,Company Name,Bottom Area Code,Bottom Block Number,Bottom Lease Number,Surface Area Code,Surface Block Number,Surface Lease Number,Surface NS Dist,Surface NS Code,Surface EW Dist,Surface EW Code,Well Type,Well Name,Well Name Suffix,Water Depth (feet),Rig ID Number,Rig Name,Surf X Coord Loc*,Surf Y Coord Loc*,Surface Latitude*,Surface Longitude*
+<<<<<<< HEAD:data/modules/bsee/well/scrapy_output/API_number_8.csv
+177094120301,,4/3/1998,,Gulf of America,01777,Devon Louisiana Corporation,EI,119, 00049,EI,119, 00049,6533,N,1045,E,,  035,ST00BP00,40,,,1953888.52,118373.78,28.99209409,-91.47755036
+=======
+177024120801,,7/5/1998,,Gulf of America,01138,El Paso Production GOM Inc.,WC,508,G17806,WC,508,G17806,4008,N,7016,E,,  001,ST00BP00,158,,,1458225.9520,-67717.2480,28.46950982,-93.01908777
+>>>>>>> 202502:tests/modules/bsee/analysis/results/Data/177024120801.csv

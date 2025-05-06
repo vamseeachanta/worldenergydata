@@ -1,0 +1,11 @@
+meta:
+  library: worldenergydata
+  basename: bsee
+
+data:
+  refresh: True
+  apm: True
+  production: True
+
+default:
+  log_level: INFO

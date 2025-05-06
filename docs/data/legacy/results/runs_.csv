@@ -1,0 +1,4 @@
+ProjectId,RunName,DefaultInputFile,CustomInputs,RunStatus
+2,Cascade-Chinook,tests\cfg\ong_field_development\BSEE_analysis.yml,"---\ncustom_parameters:\n  field_nickname: &field_nickname Cascade-Chinook\n  boem_fields: &boem_fields ""\'WR205\', \'WR206\', \'WR469\', \'WR470\'""\n  well_type: &well_type ""\'E\',\'D\'""",0
+2,Stones,tests\cfg\ong_field_development\BSEE_analysis.yml,"---\ncustom_parameters:\n  field_nickname: &field_nickname Cascade-Chinook\n  boem_fields: &boem_fields ""\'WR205\', \'WR206\', \'WR469\', \'WR470\'""\n  well_type: &well_type ""\'E\',\'D\'""",0
+3,Anchor,tests\cfg\ong_field_development\BSEE_analysis.yml,"---\ncustom_parameters:\n  field_nickname: &field_nickname Cascade-Chinook\n  boem_fields: &boem_fields ""\'WR205\', \'WR206\', \'WR469\', \'WR470\'""\n  well_type: &well_type ""\'E\',\'D\'""",0

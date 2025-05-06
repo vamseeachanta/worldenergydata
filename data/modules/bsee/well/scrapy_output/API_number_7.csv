@@ -1,0 +1,6 @@
+API Well Number,Permit Type,APD Received Date,APD Approved Date,Region,Company Number,Company Name,Bottom Area Code,Bottom Block Number,Bottom Lease Number,Surface Area Code,Surface Block Number,Surface Lease Number,Surface NS Dist,Surface NS Code,Surface EW Dist,Surface EW Code,Well Type,Well Name,Well Name Suffix,Water Depth (feet),Rig ID Number,Rig Name,Surf X Coord Loc*,Surf Y Coord Loc*,Surface Latitude*,Surface Longitude*
+<<<<<<< HEAD:data/modules/bsee/well/scrapy_output/API_number_7.csv
+177054107800,,4/3/1998,4/9/1998,Gulf of America,02148,"Westport Oil and Gas Company, L.P.",VR,220,G17910,VR,220,G17910,8756,S,92,W,,  001,,112,,,1603200.0280,16419.8090,28.70592503,-92.57086299
+=======
+427024026700,,5/7/1998,5/8/1998,Gulf of America,01385,Chieftain International (U.S.) Inc.,MU,758,G03020,MU,758,G03020,2405,S,1804,W,,  009,,148,,,2618979.32,747794.75,27.7110605,-96.5869131
+>>>>>>> 202502:tests/modules/bsee/analysis/results/Data/427024026700.csv

@@ -1,0 +1,8 @@
+---
+default_yaml: cfg\ong_field_development\BSEE_analysis_REP.yml
+
+custom_parameters:
+  field_nickname: &field_nickname Buckskin
+  ong_app_file_name_key: &ong_app_file_name_key Buckskin
+  boem_fields: &boem_fields "'KC785','KC828','KC829','KC830','KC871','KC872'"
+

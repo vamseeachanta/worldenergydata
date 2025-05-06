@@ -1,0 +1,24 @@
+name: ong_field_development
+channels:
+  - defaults
+  - anaconda
+dependencies:
+  - python=3.6
+  - pyyaml=3.13
+  - openpyxl
+  - yaml
+  - matplotlib
+  - pandas
+  - psycopg2
+  - scipy
+  - pymssql
+  - sqlalchemy
+  - pyodbc
+  - pip
+  - pip:
+    - utm
+    - oyaml
+    - pyparsing
+    - pdfkit
+    - jinja2
+    - html2text

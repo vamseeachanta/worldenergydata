@@ -1,0 +1,620 @@
+﻿<metadata>
+  <idinfo>
+    <citation>
+      <citeinfo>
+        <origin>Bureau of Ocean Energy Management (BOEM)</origin>
+        <pubdate>20190801</pubdate>
+        <title>GulfOfMexicoGasAndOilSands</title>
+        <geoform>atlas</geoform>
+      </citeinfo>
+    </citation>
+    <descript>
+      <abstract>The Reserves inventory component of the Resource Evaluation (RE) Program assigns new producible leases to fields and establishes field limits. The RE Program also develops independent estimates of natural gas and oil in previously discovered OCS fields by conducting field reserve studies and reviews of fields, sands, and reservoirs. The Program periodically revises the estimates of natural gas and oil volumes to reflect new discoveries, development, and annual production.</abstract>
+      <purpose>This dataset represents the bottomhole location of a discovery well for each sand zone.</purpose>
+    </descript>
+    <timeperd>
+      <timeinfo>
+        <rngdates>
+          <begdate>19471101</begdate>
+          <enddate>20190801</enddate>
+        </rngdates>
+      </timeinfo>
+      <current>Data collection: 1947-2019</current>
+    </timeperd>
+    <status>
+      <progress>Complete</progress>
+      <update>As needed</update>
+    </status>
+    <spdom>
+      <bounding>
+        <westbc>-97.118262</westbc>
+        <eastbc>-87.662640</eastbc>
+        <northbc>30.189509</northbc>
+        <southbc>26.024625</southbc>
+      </bounding>
+    </spdom>
+    <keywords>
+      <theme>
+        <themekt>ISO 19115 Topic Categories</themekt>
+        <themekey>geoscientificInformation</themekey>
+      </theme>
+      <place>
+        <placekt>None</placekt>
+        <placekey>Gulf of Mexico Outer Continental Shelf (OCS) Region</placekey>
+      </place>
+    </keywords>
+    <accconst>None</accconst>
+    <useconst>The Bureau of Ocean Energy Management (BOEM) provides the data for use "as is." BOEM provides this information with the understanding that it is not guaranteed to be accurate, correct or complete and conclusions drawn from such information are the responsibility of the user. While every effort has been made to ensure the accuracy, correctness and timeliness of materials presented within the limits of the current state, BOEM assumes no responsibility for errors or omissions, nor as a result of the failure of the data to function on a particular system. This data was developed by the U.S. Government; no other proprietary rights may be attached to them nor may they be sold to the U.S. Government as part of any procurement of products or services. Public domain data from the U.S. Government are freely redistributable with proper metadata and source attribution. Please recognize the Bureau of Ocean Energy Management (BOEM) as the source of this information. Please mail to: GulfPublicInfo@boem.govto report discrepancies.</useconst>
+    <ptcontac>
+      <cntinfo>
+        <cntorgp>
+          <cntorg>Bureau of Ocean Energy Management (BOEM)</cntorg>
+        </cntorgp>
+      </cntinfo>
+    </ptcontac>
+    <datacred>Bureau of Ocean Energy Management (BOEM) - Office of Resource Evaluation</datacred>
+    <native>Version 6.2 (Build 9200) ; Esri ArcGIS 10.6.0.8321</native>
+  </idinfo>
+  <spdoinfo>
+    <direct>Vector</direct>
+    <ptvctinf>
+      <sdtsterm>
+        <sdtstype>Entity point</sdtstype>
+        <ptvctcnt>13394</ptvctcnt>
+      </sdtsterm>
+    </ptvctinf>
+  </spdoinfo>
+  <spref>
+    <horizsys>
+      <geograph>
+        <latres>8.9830550972891565e-009</latres>
+        <longres>8.9830550972891565e-009</longres>
+        <geogunit>Decimal Degrees</geogunit>
+      </geograph>
+      <geodetic>
+        <horizdn>D North American 1927</horizdn>
+        <ellips>Clarke 1866</ellips>
+        <semiaxis>6378206.4</semiaxis>
+        <denflat>294.9786982</denflat>
+      </geodetic>
+    </horizsys>
+  </spref>
+  <eainfo>
+    <detailed>
+      <enttyp>
+        <enttypl>GulfOfMexicoGasAndOilSands</enttypl>
+        <enttypd>Number of features in data set</enttypd>
+        <enttypds>BOEM</enttypds>
+      </enttyp>
+      <attr>
+        <attrlabl>OBJECTID</attrlabl>
+        <attrdef>Internal feature number.</attrdef>
+        <attrdefs>Esri</attrdefs>
+        <attrdomv>
+          <udom>Sequential unique whole numbers that are automatically generated.</udom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>FCLASS</attrlabl>
+        <attrdef>BOEM field classification: Refer to Estimated Oil and Gas Report: https://www.boem.gov/BOEM-2018-034/</attrdef>
+        <attrdefs>BOEM</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>RJD</edomv>
+            <edomvd>Reserves Justified for Development</edomvd>
+            <edomvds>BOEM</edomvds>
+          </edom>
+          <edom>
+            <edomv>PDP</edomv>
+            <edomvd>Developed Producing</edomvd>
+            <edomvds>BOEM</edomvds>
+          </edom>
+          <edom>
+            <edomv>PDN</edomv>
+            <edomvd>Developed Non-producing</edomvd>
+            <edomvds>BOEM</edomvds>
+          </edom>
+          <edom>
+            <edomv>PU</edomv>
+            <edomvd>Undeveloped</edomvd>
+            <edomvds>BOEM</edomvds>
+          </edom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>EIAID</attrlabl>
+        <attrdef>Energy Information Administration field identification number</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>RECG_AF</attrlabl>
+        <attrdef>Sum of recoverable gas per acre-foot (Mcf/acre-foot)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>LAT</attrlabl>
+        <attrdef>Latitude of the bottom hole location of the discovery well for the sand</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>SPGR</attrlabl>
+        <attrdef>Weighted average of gas specific gravity (decimal at 60 degrees F and 14.73 psia)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>CHRONOZONE</attrlabl>
+        <attrdef>Current Chronozone name</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>GRECG</attrlabl>
+        <attrdef>Sum of gas reservoirs' recoverable gas (Mcf)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>SDYEAR</attrlabl>
+        <attrdef>Sand discovery year (YYYY): The year total depth was reached in the first well that penetrated hydrocarbons in the initial reservoir.</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>SD_TYPE</attrlabl>
+        <attrdef>Indicates the type of hydrocarbons encountered in the formation</attrdef>
+        <attrdefs>BOEM</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>G</edomv>
+            <edomvd>Gas</edomvd>
+            <edomvds>BOEM</edomvds>
+          </edom>
+          <edom>
+            <edomv>B</edomv>
+            <edomvd>Combination</edomvd>
+            <edomvds>BOEM</edomvds>
+          </edom>
+          <edom>
+            <edomv>O</edomv>
+            <edomvd>Oil</edomvd>
+            <edomvds>BOEM</edomvds>
+          </edom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>RESTYP</attrlabl>
+        <attrdef>Dominant reservoir type: Determined by reservoir with largest bulk volume</attrdef>
+        <attrdefs>BOEM</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>S</edomv>
+            <edomvd>Saturated oil</edomvd>
+            <edomvds>BOEM</edomvds>
+          </edom>
+          <edom>
+            <edomv>N</edomv>
+            <edomvd>Nonassociated gas</edomvd>
+            <edomvds>BOEM</edomvds>
+          </edom>
+          <edom>
+            <edomv>U</edomv>
+            <edomvd>Undersaturated oil</edomvd>
+            <edomvds>BOEM</edomvds>
+          </edom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>GRP</attrlabl>
+        <attrdef>Recoverable GOR for gas reservoirs (Mcf/stb)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>SW</attrlabl>
+        <attrdef>Weighted average water saturation</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>BHCOMP</attrlabl>
+        <attrdef>Count of wells, completed in the sand. Sums the number of wells that have completions in each sand. If a sand has zero in the BHCOMP column, this indicates a well(s) penetrated the sand but as of 12/31/2016, the well had not been completed; or it indicates that a sand has been commingled with another sand(s) and the well summary is associated with the other sand.</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>ORECG</attrlabl>
+        <attrdef>Sum of oil reservoirs' recoverable gas (Mcf)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>API</attrlabl>
+        <attrdef>Weighted average of oil API gravity (API units)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>WDEP</attrlabl>
+        <attrdef>Water depth (feet): The water depth (ft) for a specific field is the average water depth for all wells drilled in that field</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>RSI</attrlabl>
+        <attrdef>Weighted average of initial solution gas-oil ratio (scf/stb)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>OVOL</attrlabl>
+        <attrdef>Oil total volume (acre-feet): The sum of total volume for all oil reservoirs in the sand</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>OAREA</attrlabl>
+        <attrdef>Oil total area (acres): The sum of total area for all oil reservoirs in the sand</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>GVOL</attrlabl>
+        <attrdef>Gas total volume (acre-feet): The sum of total volume for all gas reservoirs in the sand</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>Original_Oil</attrlabl>
+        <attrdef>Original oil (bbl): Original oil reserves are the total of the oil cumulative production and oil reserves, as of a specified date.</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>DRIVE</attrlabl>
+        <attrdef>Dominant reservoir drive type: Determined by reservoir with largest bulk volume (See Description File for Drive Type)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>SS</attrlabl>
+        <attrdef>True Vertical Depth Subsea (feet): weighted average of the subsea depths across all reservoirs in the sand</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>GAREA</attrlabl>
+        <attrdef>Gas total area (acres): The sum of total area for all gas reservoirs in the sand</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>FDYEAR</attrlabl>
+        <attrdef>Field discovery year (YYYY): The year that total depth was reached in the first well that penetrated hydrocarbons in a field</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>PLAREA</attrlabl>
+        <attrdef>Planning area</attrdef>
+        <attrdefs>BOEM</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>EGM</edomv>
+            <edomvd>Eastern Gulf of Mexico</edomvd>
+            <edomvds>BOEM</edomvds>
+          </edom>
+          <edom>
+            <edomv>WGM</edomv>
+            <edomvd>Western Gulf of Mexico</edomvd>
+            <edomvds>BOEM</edomvds>
+          </edom>
+          <edom>
+            <edomv>CGM</edomv>
+            <edomvd>Central Gulf of Mexico</edomvd>
+            <edomvds>BOEM</edomvds>
+          </edom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>FSTRUC</attrlabl>
+        <attrdef>An indicator of the geologic structural style for a field (see Description File for Field Structure and Trap Code)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>Pi</attrlabl>
+        <attrdef>Weighted average of initial pressure (psi)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>ASSESSED</attrlabl>
+        <attrdef>The sand was assessed Yes (Y) or No (N)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>Y</edomv>
+            <edomvd>Yes</edomvd>
+            <edomvds>BOEM</edomvds>
+          </edom>
+          <edom>
+            <edomv>N</edomv>
+            <edomvd>No</edomvd>
+            <edomvds>BOEM</edomvds>
+          </edom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>SAND</attrlabl>
+        <attrdef>Sand name (not unique)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>ORP</attrlabl>
+        <attrdef>Recoverable GOR for oil reservoirs (Mcf/stb)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>UCNT</attrlabl>
+        <attrdef>Count of undersaturated oil reservoirs in the sand</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>TCNT</attrlabl>
+        <attrdef>Count of total reservoirs in the sand</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>Original_Gas</attrlabl>
+        <attrdef>Original gas (Mcf): Original gas reserves are the total of the gas cumulative production and gas reserves, as of a specified date.</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>PROP</attrlabl>
+        <attrdef>Proportion oil (decimal): 0 is gas and 1 is oil</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>Shape</attrlabl>
+        <attrdef>Feature geometry.</attrdef>
+        <attrdefs>Esri</attrdefs>
+        <attrdomv>
+          <udom>Coordinates defining the features.</udom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>NCNT</attrlabl>
+        <attrdef>Count of nonassociated gas reservoirs in the sand</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>TAREA</attrlabl>
+        <attrdef>Total area (acres): The sum of total area for all reservoirs in the sand</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>Oil_Reserves</attrlabl>
+        <attrdef>Oil Reserves (bbl): Oil reserves are those remaining quantities of petroleum anticipated to be commercially recoverable by application of development projects to known accumulations.</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>SDDATE</attrlabl>
+        <attrdef>Sand discovery date (MM/DD/YYYY): The month, day and year total depth was reached in the first well that penetrated hydrocarbons in the initial reservoir.</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>ORECO</attrlabl>
+        <attrdef>Sum of oil reservoirs' recoverable oil (bbl)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>SDTG</attrlabl>
+        <attrdef>Sand temperature gradient (degrees F per 100 feet)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>ORF</attrlabl>
+        <attrdef>Weighted average of oil recovery factor (decimal)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>PLAY_NAME</attrlabl>
+        <attrdef>Play name: Indicates the name of the chronozone and play type associated with the sand.</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>GOR</attrlabl>
+        <attrdef>Gas-oil ratio (Mcf/bbl)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>POOL_NAME</attrlabl>
+        <attrdef>Current Pool name: combined PLAY_NUM and BOEM_FIELD</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>Cum_BOE</attrlabl>
+        <attrdef>Cumulative BOE produced (bbl)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>GRF</attrlabl>
+        <attrdef>Weighted average of gas recovery factor (decimal)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>Original_BOE</attrlabl>
+        <attrdef>Original BOE (bbl): The sum of recoverable BOE for all reservoirs</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>PLAY_TYPE</attrlabl>
+        <attrdef>Current Type of play: Type of play determined by one or more of the following: - depositional style | - depositional facies | - sediment type | - structure type</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>FSTAT</attrlabl>
+        <attrdef>Field status</attrdef>
+        <attrdefs>BOEM</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>E</edomv>
+            <edomvd>Expired</edomvd>
+            <edomvds>BOEM</edomvds>
+          </edom>
+          <edom>
+            <edomv>A</edomv>
+            <edomvd>Active</edomvd>
+            <edomvds>BOEM</edomvds>
+          </edom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>FDDATE</attrlabl>
+        <attrdef>Field discovery date (MM/DD/YYYY): The date that total depth was reached in the first well that penetrated hydrocarbons in a specific field</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>SN_FORMSAND</attrlabl>
+        <attrdef>Sand sequence number - unique identifier assigned to each assessed sand in order to enable the user to track a sand from year to year regardless of changes (such as sand name, field, play, etc.) made to the sand.</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>TI</attrlabl>
+        <attrdef>Weighted average of initial temperature (degrees F)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>SCNT</attrlabl>
+        <attrdef>Count of saturated oil reservoirs in the sand</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>POROSITY</attrlabl>
+        <attrdef>Weighted average porosity</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>TVOL</attrlabl>
+        <attrdef>Total volume (acre-feet): The sum of total volume for all reservoirs in the sand</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>THK</attrlabl>
+        <attrdef>Total net thickness (feet): weighted average of the thickness across all reservoirs in the sand</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>SDYEARH</attrlabl>
+        <attrdef>Discovery year of last reservoir discovered in sand (YYYY): The year total depth was reached in the first well that penetrated hydrocarbons in the most recent reservoir.</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>FTRAP1</attrlabl>
+        <attrdef>Field primary trap code: An indicator of the major geologic trapping mechanism of a field (see Description File for Field Structure and Trap Code)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>BOI</attrlabl>
+        <attrdef>Weighted average of initial oil formation volume factor (bbl/stb)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>PERMEABILITY</attrlabl>
+        <attrdef>Weighted average permeability (mD)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>PLAY_NUM</attrlabl>
+        <attrdef>Current Play number</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>GRECO</attrlabl>
+        <attrdef>Sum of gas reservoirs' recoverable oil (bbl)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>SDDATEH</attrlabl>
+        <attrdef>Discovery date of last reservoir discovered in sand (MM/DD/YYYY): The month, day and year total depth was reached in the first well that penetrated hydrocarbons in the most recent reservoir.</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>SDPG</attrlabl>
+        <attrdef>Sand temperature gradient (degrees F per 100 feet)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>GTHK</attrlabl>
+        <attrdef>Gas net thickness (feet): weighted average of the thickness across all gas reservoirs in the sand</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>BOE_Reserves</attrlabl>
+        <attrdef>Remaining reserves BOE (bbl)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>OIP</attrlabl>
+        <attrdef>Sum of oil in place (bbl)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>Cum_Gas</attrlabl>
+        <attrdef>Cumulative gas produced (Mcf)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>Cum_Oil</attrlabl>
+        <attrdef>Cumulative oil produced (bbl)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>Gas_Reserves</attrlabl>
+        <attrdef>Gas Reserves (Mcf): Gas reserves are those remaining quantities of petroleum anticipated to be commercially recoverable by application of development projects to known accumulations</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>RECO_AF</attrlabl>
+        <attrdef>Sum of recoverable oil per acre-foot (bbl/acre-foot)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>GIP</attrlabl>
+        <attrdef>Sum of gas in place (Mcf)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>WELLAPI</attrlabl>
+        <attrdef>Discovery well API number: API for the first well that penetrated hydrocarbons in the initial reservoir.</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>BGI</attrlabl>
+        <attrdef>Weighted average of initial gas formation volume factor (scf/cf)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>OTHK</attrlabl>
+        <attrdef>Oil net thickness (feet): weighted average of the thickness across all oil reservoirs in the sand</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>YIELD</attrlabl>
+        <attrdef>Yield (stb/MMcf) - gas reservoirs' recoverable condensate divided by recoverable gas</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>BOEM_FIELD</attrlabl>
+        <attrdef>BOEM field name: Refer to Field Name Directory: https://www.boem.gov/OCS-Operations-Field-Directory/</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>FTRAP2</attrlabl>
+        <attrdef>Field secondary trap code: An indicator of the second most important trapping mechanism for a field (see Description File for Field Structure and Trap Code)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+      <attr>
+        <attrlabl>LONG_</attrlabl>
+      </attr>
+      <attr>
+        <attrlabl>SAND_NAME</attrlabl>
+        <attrdef>Current combined PLAY_NUM, BOEM_FIELD, and SAND (unique)</attrdef>
+        <attrdefs>BOEM</attrdefs>
+      </attr>
+    </detailed>
+  </eainfo>
+  <metainfo>
+    <metd>20200730</metd>
+    <metc>
+      <cntinfo>
+        <cntorgp>
+          <cntorg>Bureau of Ocean Energy Management (BOEM)</cntorg>
+        </cntorgp>
+      </cntinfo>
+    </metc>
+    <metstdn>FGDC Content Standard for Digital Geospatial Metadata</metstdn>
+    <metstdv>FGDC-STD-001-1998</metstdv>
+    <mettc>local time</mettc>
+  </metainfo>
+</metadata>

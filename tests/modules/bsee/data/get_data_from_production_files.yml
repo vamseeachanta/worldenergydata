@@ -1,0 +1,24 @@
+meta:
+  library: energydata
+  basename: bsee
+  
+basename: bsee
+
+existing_data:
+  flag: True
+  
+data_from_files:
+  production: True
+  
+
+settings:
+  api12: 608124012700
+  files_folder: data\modules\bsee\production\csv
+  
+
+default:
+  log_level: DEBUG
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False

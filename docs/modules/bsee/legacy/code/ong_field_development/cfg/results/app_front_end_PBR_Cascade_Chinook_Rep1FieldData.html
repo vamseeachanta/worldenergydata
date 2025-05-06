@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>BSEE Wells | Cascade-Chinook </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="https://d3js.org/d3.v5.js"></script>
+    <!-- <script src="https://d3js.org/d3.v5.min.js"></script> -->
+    <script src="lib/d3_reusables.js"></script>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="lib/d3.css">
+    <link href="https://getbootstrap.com/docs/4.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style type="text/css">
+      .pagepadding {
+        padding-top: 50px;
+        padding-left: 100px;
+        padding-right: 100px;
+
+      }
+    </style>
+  </head>
+
+<body>
+  <header>
+      <!-- Fixed navbar -->
+      <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+          <a class="navbar-brand" href="#">BSEE Data Analysis : Cascade-Chinook</a>
+      </nav>
+  </header>
+  <!-- Begin page content -->
+  <div class="pagepadding">
+
+    <h3>BSEE Data Analysis</h3>
+    <br>
+    Select the field:
+
+    <br>
+      <div class="col-xs-2">
+          <select class="form-control">
+            <option value="1">Julia</option>
+            <option value="2">North Platte</option>
+            <option value="3">Three</option>
+            <option value="4">Four</option>
+            <option value="5">Five</option>
+          </select>
+        </div>
+
+        <h4>BOEM Field Codes: 'WR205', 'WR206', 'WR469', 'WR470'</h4>
+  <br>
+
+    
+
+  <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link active" href="app_front_end_PBR_Cascade_Chinook_Rep1FieldData.html">Field Data</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="app_front_end_PBR_Cascade_Chinook_Rep1ProductionData.html">Production Data</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="app_front_end_PBR_Cascade_Chinook_Rep1WellData.html">Well Data</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="app_front_end_PBR_Cascade_Chinook_Rep1Reserves.html">Reserves</a>
+      </li>
+  </ul>
+
+  <div id="#fieldWellsData" class="in">
+    <h4>Field Wells Data</h4>
+    <table border="1" class="dataframe table table-bordered table-responsive-sm table-sm table-striped table-condensed">
+  <thead class="thead-light">
+    <tr style="text-align: center;">
+      <th></th>
+      <th>001</th>
+      <th>001</th>
+      <th>001</th>
+      <th>001</th>
+      <th>002</th>
+      <th>002</th>
+      <th>005</th>
+      <th>CA003</th>
+      <th>CA004</th>
+      <th>CA006</th>
+      <th>CH002</th>
+      <th>CH003</th>
+      <th>CH004</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Company</th>
+      <td>Murphy Exploration &amp; Production Company - USA</td>
+      <td>Murphy Exploration &amp; Production Company - USA</td>
+      <td>Petrobras America Inc.</td>
+      <td>Murphy Exploration &amp; Production Company - USA</td>
+      <td>Murphy Exploration &amp; Production Company - USA</td>
+      <td>Murphy Exploration &amp; Production Company - USA</td>
+      <td>Petrobras America Inc.</td>
+      <td>Murphy Exploration &amp; Production Company - USA</td>
+      <td>Murphy Exploration &amp; Production Company - USA</td>
+      <td>Murphy Exploration &amp; Production Company - USA</td>
+      <td>Murphy Exploration &amp; Production Company - USA</td>
+      <td>Murphy Exploration &amp; Production Company - USA</td>
+      <td>Murphy Exploration &amp; Production Company - USA</td>
+    </tr>
+    <tr>
+      <th>Water Depth (ft)</th>
+      <td>8845</td>
+      <td>8831</td>
+      <td>8152</td>
+      <td>8143</td>
+      <td>8835</td>
+      <td>8160</td>
+      <td>8149</td>
+      <td>8142</td>
+      <td>8143</td>
+      <td>8147</td>
+      <td>8850</td>
+      <td>8843</td>
+      <td>8839</td>
+    </tr>
+    <tr>
+      <th>Well Purpose</th>
+      <td>E</td>
+      <td>D</td>
+      <td>E</td>
+      <td>E</td>
+      <td>E</td>
+      <td>E</td>
+      <td>D</td>
+      <td>E</td>
+      <td>E</td>
+      <td>D</td>
+      <td>D</td>
+      <td>D</td>
+      <td>D</td>
+    </tr>
+    <tr>
+      <th>Rig(s)</th>
+      <td>C.R. LUIGS</td>
+      <td>unknown rig, CR LUIGS, VANTAGE TITANIUM EXPLORER</td>
+      <td></td>
+      <td>C.R. LUIGIS</td>
+      <td>C.R. LUIGS</td>
+      <td>GSF C.R. LUIGS</td>
+      <td>ENSCO DS-5</td>
+      <td>SEADRILL WEST SIRIUS, DIAMOND OCEAN ENDEAVOR</td>
+      <td>PRIDE DEEP OCEAN MENDOCINO, ENSCO DS-5</td>
+      <td>ENSCO DS-5</td>
+      <td>T.O. DISCOVERER DEEP SEAS</td>
+      <td>VANTAGE TITANIUM EXPLORER</td>
+      <td>VANTAGE TITANIUM EXPLORER, PETROBRAS 10000</td>
+    </tr>
+    <tr>
+      <th>Side Tracks</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>2</td>
+      <td>2</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>Spud Date</th>
+      <td>2000-10-17 00:00:00</td>
+      <td>2003-01-13 00:00:00</td>
+      <td>NaT</td>
+      <td>2002-04-23 00:00:00</td>
+      <td>2000-10-22 00:00:00</td>
+      <td>2005-10-09 00:00:00</td>
+      <td>2012-12-18 00:00:00</td>
+      <td>2008-11-06 00:00:00</td>
+      <td>2012-04-13 00:00:00</td>
+      <td>2013-01-01 00:00:00</td>
+      <td>2010-02-11 00:00:00</td>
+      <td>2013-06-01 00:00:00</td>
+      <td>2014-12-07 00:00:00</td>
+    </tr>
+    <tr>
+      <th>Wellbore Status</th>
+      <td>PA</td>
+      <td>PA</td>
+      <td>CNL</td>
+      <td>PA</td>
+      <td>PA</td>
+      <td>TA</td>
+      <td>PA</td>
+      <td>COM</td>
+      <td>COM</td>
+      <td>COM</td>
+      <td>COM</td>
+      <td>COM</td>
+      <td>COM</td>
+    </tr>
+    <tr>
+      <th>Wellbore Status Date</th>
+      <td>10/19/2000</td>
+      <td>1/5/2014</td>
+      <td>3/29/2006</td>
+      <td>6/4/2002</td>
+      <td>1/6/2001</td>
+      <td>1/1/2006</td>
+      <td>12/27/2012</td>
+      <td>5/3/2010</td>
+      <td>12/4/2012</td>
+      <td>12/16/2013</td>
+      <td>5/21/2010</td>
+      <td>5/26/2013</td>
+      <td>7/15/2018</td>
+    </tr>
+    <tr>
+      <th>Tree Height AML (ft)</th>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>18</td>
+      <td>14</td>
+      <td>18</td>
+      <td>18</td>
+      <td>18</td>
+      <td>17</td>
+    </tr>
+    <tr>
+      <th>BSEE Field</th>
+      <td>WR469</td>
+      <td>WR469</td>
+      <td>WR206</td>
+      <td>WR206</td>
+      <td>WR469</td>
+      <td>WR206</td>
+      <td>WR206</td>
+      <td>WR206</td>
+      <td>WR206</td>
+      <td>WR206</td>
+      <td>WR469</td>
+      <td>WR469</td>
+      <td>WR469</td>
+    </tr>
+    <tr>
+      <th>API10</th>
+      <td>6081240002</td>
+      <td>6081240010</td>
+      <td>6081240012</td>
+      <td>6081240008</td>
+      <td>6081240005</td>
+      <td>6081240016</td>
+      <td>6081240082</td>
+      <td>6081240038</td>
+      <td>6081240047</td>
+      <td>6081240083</td>
+      <td>6081240046</td>
+      <td>6081240081</td>
+      <td>6081240097</td>
+    </tr>
+  </tbody>
+</table>
+  </div>
+
+  <div id="#chartProducersWellLocation"> 
+    <h4>Well Locations</h4>
+    <h5>Producing Well (Relative) Locations and Summary</h5> 
+    <p>Bubble size proportional to production (MMBbl) to date. Hover on bubble for further well information</p> 
+  </div>
+  <div id="#wellLocationStatistics">
+    <h5>Well Location Statistics</h5>
+    <p>All Wellheads, Max Distance (ft): 84594.9</p>
+    <p>All Wells, Max Horizontal Departure (ft): 5166.1</p>
+    <p>Producing Wellheads, Max Distance (ft): 80509.6</p>
+    <p>Producing Wellheads, Min Distance (ft): 100.6</p>
+    <p>Producing Wellheads, Max Horizontal Departure (ft): 2654.5</p>
+  </div>
+  <div id="#chartProducersWellheadWithBottom">
+  </div>
+  <div id="#chartAllWellheadWithBottom">
+  </div>
+
+
+  <script type="text/javascript">
+
+    var chartData = {"label": "chartProducersWellLocation", "chartType": "scatter", "options": {"equalAxes": true, "title": "Producers, Wellhead Locations", "XLabel": "Relative Easting (ft)", "YLabel": "Relative Northing (ft)", "legend": {"flag": false}, "dataConversion": {"flag": false}}, "dataSources": [{"df": {"label": "input_data_well_location_chart_df", "orient": "records", "filter": [{"column": "O_PROD_STATUS", "value": 1}]}, "plotSets": [{"x": "Relative Wellhead X", "y": "Relative Wellhead Y", "marker": {"shape": "circle", "size": "variable", "sizeRange": [4, 10], "sizeColumn": "Production to date (MMBBL)", "mouseover": {"flag": true, "columns": ["Well Name", "Wellbore Status", "Side Tracks", "Production to date (MMBBL)"]}}, "dataLabel": {"flag": true, "column": "Well Name"}, "legend": "Wellhead"}], "data": "[{\"Well Name\":\"CA003\",\"API12\":608124003800.0,\"Sidetrack and Bypass\":\"ST00BP00\",\"Side Tracks\":0.0,\"Relative Wellhead X\":14809.6708451848,\"Relative Wellhead Y\":81156.4500039114,\"O_PROD_STATUS\":1.0,\"Production to date (MMBBL)\":4.7,\"Horizontal Departure (ft)\":1558.0,\"Wellbore Status\":\"COM\",\"Wellbore Status Date\":\"5\\/3\\/2010\",\"Water Depth (ft)\":8142.0,\"Tree Height AML (ft)\":18.0,\"Relative Bottom X\":15397.3706860632,\"Relative Bottom Y\":79713.9580788496,\"Total Measured Depth (ft)\":\"27019\",\"COMP_RSVR_NAME\":null,\"COMP_INTERVAL_NAME\":null,\"Production Interval\":null,\"COMP_STATUS_DESC\":null,\"COMP_x_rel\":null,\"COMP_y_rel\":null},{\"Well Name\":\"CA006\",\"API12\":608124008300.0,\"Sidetrack and Bypass\":\"ST00BP00\",\"Side Tracks\":0.0,\"Relative Wellhead X\":14955.9823161504,\"Relative Wellhead Y\":81290.8866378152,\"O_PROD_STATUS\":1.0,\"Production to date (MMBBL)\":7.1,\"Horizontal Departure (ft)\":2655.0,\"Wellbore Status\":\"COM\",\"Wellbore Status Date\":\"12\\/16\\/2013\",\"Water Depth (ft)\":8147.0,\"Tree Height AML (ft)\":18.0,\"Relative Bottom X\":16866.1019901747,\"Relative Bottom Y\":83134.3653331197,\"Total Measured Depth (ft)\":\"27460\",\"COMP_RSVR_NAME\":null,\"COMP_INTERVAL_NAME\":null,\"Production Interval\":null,\"COMP_STATUS_DESC\":null,\"COMP_x_rel\":null,\"COMP_y_rel\":null},{\"Well Name\":\"CH004\",\"API12\":608124009700.0,\"Sidetrack and Bypass\":\"ST00BP00\",\"Side Tracks\":0.0,\"Relative Wellhead X\":3816.0807397193,\"Relative Wellhead Y\":1551.7400970863,\"O_PROD_STATUS\":1.0,\"Production to date (MMBBL)\":8.7,\"Horizontal Departure (ft)\":558.0,\"Wellbore Status\":\"COM\",\"Wellbore Status Date\":\"7\\/15\\/2018\",\"Water Depth (ft)\":8839.0,\"Tree Height AML (ft)\":17.0,\"Relative Bottom X\":4215.3900901679,\"Relative Bottom Y\":1161.5996990586,\"Total Measured Depth (ft)\":\"26480\",\"COMP_RSVR_NAME\":null,\"COMP_INTERVAL_NAME\":null,\"Production Interval\":null,\"COMP_STATUS_DESC\":null,\"COMP_x_rel\":null,\"COMP_y_rel\":null}]"}]}
+    addChartToDOM(chartData);
+
+    var chartData = {"label": "chartProducersWellheadWithBottom", "chartType": "scatter", "options": {"equalAxes": true, "title": "Producers, Wellhead and Bottom Locations", "XLabel": "Relative Easting (ft)", "YLabel": "Relative Northing (ft)", "legend": {"flag": true}, "dataConversion": {"flag": false}}, "dataSources": [{"df": {"label": "input_data_well_location_chart_df", "orient": "records", "filter": [{"column": "O_PROD_STATUS", "value": 1}]}, "plotSets": [{"x": "Relative Wellhead X", "y": "Relative Wellhead Y", "marker": {"shape": "circle", "size": 4, "mouseover": {"flag": true, "columns": ["Well Name", "Wellbore Status", "Side Tracks"]}}, "dataLabel": {"flag": false, "column": "Well Name"}, "legend": "Wellhead"}, {"x": "Relative Bottom X", "y": "Relative Bottom Y", "marker": {"shape": "circle", "size": 5, "mouseover": {"flag": true, "columns": ["Well Name", "Horizontal Departure (ft)"]}}, "dataLabel": {"flag": false, "column": "Well Name"}, "legend": "Total Depth"}], "data": "[{\"Well Name\":\"CA003\",\"API12\":608124003800.0,\"Sidetrack and Bypass\":\"ST00BP00\",\"Side Tracks\":0.0,\"Relative Wellhead X\":14809.6708451848,\"Relative Wellhead Y\":81156.4500039114,\"O_PROD_STATUS\":1.0,\"Production to date (MMBBL)\":4.7,\"Horizontal Departure (ft)\":1558.0,\"Wellbore Status\":\"COM\",\"Wellbore Status Date\":\"5\\/3\\/2010\",\"Water Depth (ft)\":8142.0,\"Tree Height AML (ft)\":18.0,\"Relative Bottom X\":15397.3706860632,\"Relative Bottom Y\":79713.9580788496,\"Total Measured Depth (ft)\":\"27019\",\"COMP_RSVR_NAME\":null,\"COMP_INTERVAL_NAME\":null,\"Production Interval\":null,\"COMP_STATUS_DESC\":null,\"COMP_x_rel\":null,\"COMP_y_rel\":null},{\"Well Name\":\"CA006\",\"API12\":608124008300.0,\"Sidetrack and Bypass\":\"ST00BP00\",\"Side Tracks\":0.0,\"Relative Wellhead X\":14955.9823161504,\"Relative Wellhead Y\":81290.8866378152,\"O_PROD_STATUS\":1.0,\"Production to date (MMBBL)\":7.1,\"Horizontal Departure (ft)\":2655.0,\"Wellbore Status\":\"COM\",\"Wellbore Status Date\":\"12\\/16\\/2013\",\"Water Depth (ft)\":8147.0,\"Tree Height AML (ft)\":18.0,\"Relative Bottom X\":16866.1019901747,\"Relative Bottom Y\":83134.3653331197,\"Total Measured Depth (ft)\":\"27460\",\"COMP_RSVR_NAME\":null,\"COMP_INTERVAL_NAME\":null,\"Production Interval\":null,\"COMP_STATUS_DESC\":null,\"COMP_x_rel\":null,\"COMP_y_rel\":null},{\"Well Name\":\"CH004\",\"API12\":608124009700.0,\"Sidetrack and Bypass\":\"ST00BP00\",\"Side Tracks\":0.0,\"Relative Wellhead X\":3816.0807397193,\"Relative Wellhead Y\":1551.7400970863,\"O_PROD_STATUS\":1.0,\"Production to date (MMBBL)\":8.7,\"Horizontal Departure (ft)\":558.0,\"Wellbore Status\":\"COM\",\"Wellbore Status Date\":\"7\\/15\\/2018\",\"Water Depth (ft)\":8839.0,\"Tree Height AML (ft)\":17.0,\"Relative Bottom X\":4215.3900901679,\"Relative Bottom Y\":1161.5996990586,\"Total Measured Depth (ft)\":\"26480\",\"COMP_RSVR_NAME\":null,\"COMP_INTERVAL_NAME\":null,\"Production Interval\":null,\"COMP_STATUS_DESC\":null,\"COMP_x_rel\":null,\"COMP_y_rel\":null}]"}]}
+    addChartToDOM(chartData);
+
+    var chartData = {"label": "chartAllWellheadWithBottom", "chartType": "scatter", "options": {"equalAxes": true, "title": "All Wells, Wellhead and Bottom Locations", "XLabel": "Relative Easting (ft)", "YLabel": "Relative Northing (ft)", "legend": {"flag": true}, "dataConversion": {"flag": false}}, "dataSources": [{"df": {"label": "input_data_well_location_chart_df", "orient": "records"}, "plotSets": [{"x": "Relative Wellhead X", "y": "Relative Wellhead Y", "marker": {"shape": "circle", "size": 4, "mouseover": {"flag": true, "columns": ["Well Name", "Wellbore Status", "Side Tracks"]}}, "dataLabel": {"flag": false, "column": "Well Name"}, "legend": "Wellheads"}, {"x": "Relative Bottom X", "y": "Relative Bottom Y", "marker": {"shape": "circle", "size": 5, "mouseover": {"flag": true, "columns": ["Well Name", "Horizontal Departure (ft)"]}}, "dataLabel": {"flag": false, "column": "Well Name"}, "legend": "Total Depth"}, {"x": "COMP_x_rel", "y": "COMP_y_rel", "marker": {"shape": "circle", "size": 6, "mouseover": {"flag": true, "columns": ["Well Name", "Production to date (MMBBL)", "COMP_RSVR_NAME", "COMP_INTERVAL_NAME", "Production Interval"]}}, "dataLabel": {"flag": false, "column": "Well Name"}, "legend": "Completions"}], "data": "[{\"Well Name\":\"CA003\",\"API12\":608124003800.0,\"Sidetrack and Bypass\":\"ST00BP00\",\"Side Tracks\":0.0,\"Relative Wellhead X\":14809.6708451848,\"Relative Wellhead Y\":81156.4500039114,\"O_PROD_STATUS\":1.0,\"Production to date (MMBBL)\":4.7,\"Horizontal Departure (ft)\":1558.0,\"Wellbore Status\":\"COM\",\"Wellbore Status Date\":\"5\\/3\\/2010\",\"Water Depth (ft)\":8142.0,\"Tree Height AML (ft)\":18.0,\"Relative Bottom X\":15397.3706860632,\"Relative Bottom Y\":79713.9580788496,\"Total Measured Depth (ft)\":\"27019\",\"COMP_RSVR_NAME\":null,\"COMP_INTERVAL_NAME\":null,\"Production Interval\":null,\"COMP_STATUS_DESC\":null,\"COMP_x_rel\":null,\"COMP_y_rel\":null},{\"Well Name\":\"CA006\",\"API12\":608124008300.0,\"Sidetrack and Bypass\":\"ST00BP00\",\"Side Tracks\":0.0,\"Relative Wellhead X\":14955.9823161504,\"Relative Wellhead Y\":81290.8866378152,\"O_PROD_STATUS\":1.0,\"Production to date (MMBBL)\":7.1,\"Horizontal Departure (ft)\":2655.0,\"Wellbore Status\":\"COM\",\"Wellbore Status Date\":\"12\\/16\\/2013\",\"Water Depth (ft)\":8147.0,\"Tree Height AML (ft)\":18.0,\"Relative Bottom X\":16866.1019901747,\"Relative Bottom Y\":83134.3653331197,\"Total Measured Depth (ft)\":\"27460\",\"COMP_RSVR_NAME\":null,\"COMP_INTERVAL_NAME\":null,\"Production Interval\":null,\"COMP_STATUS_DESC\":null,\"COMP_x_rel\":null,\"COMP_y_rel\":null},{\"Well Name\":\"CH004\",\"API12\":608124009700.0,\"Sidetrack and Bypass\":\"ST00BP00\",\"Side Tracks\":0.0,\"Relative Wellhead X\":3816.0807397193,\"Relative Wellhead Y\":1551.7400970863,\"O_PROD_STATUS\":1.0,\"Production to date (MMBBL)\":8.7,\"Horizontal Departure (ft)\":558.0,\"Wellbore Status\":\"COM\",\"Wellbore Status Date\":\"7\\/15\\/2018\",\"Water Depth (ft)\":8839.0,\"Tree Height AML (ft)\":17.0,\"Relative Bottom X\":4215.3900901679,\"Relative Bottom Y\":1161.5996990586,\"Total Measured Depth (ft)\":\"26480\",\"COMP_RSVR_NAME\":null,\"COMP_INTERVAL_NAME\":null,\"Production Interval\":null,\"COMP_STATUS_DESC\":null,\"COMP_x_rel\":null,\"COMP_y_rel\":null},{\"Well Name\":\"  001\",\"API12\":608124000200.0,\"Sidetrack and Bypass\":\"ST00BP00\",\"Side Tracks\":0.0,\"Relative Wellhead X\":8441.8369649469,\"Relative Wellhead Y\":7093.013910347,\"O_PROD_STATUS\":0.0,\"Production to date (MMBBL)\":0.0,\"Horizontal Departure (ft)\":27.0,\"Wellbore Status\":\"PA\",\"Wellbore Status Date\":\"10\\/19\\/2000\",\"Water Depth (ft)\":8845.0,\"Tree Height AML (ft)\":null,\"Relative Bottom X\":8454.6588700748,\"Relative Bottom Y\":7116.7951311096,\"Total Measured Depth (ft)\":\"11755\",\"COMP_RSVR_NAME\":null,\"COMP_INTERVAL_NAME\":null,\"Production Interval\":null,\"COMP_STATUS_DESC\":null,\"COMP_x_rel\":null,\"COMP_y_rel\":null},{\"Well Name\":\"  001\",\"API12\":608124001000.0,\"Sidetrack and Bypass\":\"ST00BP00\",\"Side Tracks\":0.0,\"Relative Wellhead X\":0.0,\"Relative Wellhead Y\":0.0,\"O_PROD_STATUS\":0.0,\"Production to date (MMBBL)\":0.0,\"Horizontal Departure (ft)\":466.0,\"Wellbore Status\":\"PA\",\"Wellbore Status Date\":\"1\\/5\\/2014\",\"Water Depth (ft)\":8831.0,\"Tree Height AML (ft)\":null,\"Relative Bottom X\":418.1346640047,\"Relative Bottom Y\":205.2202222352,\"Total Measured Depth (ft)\":\"27652\",\"COMP_RSVR_NAME\":null,\"COMP_INTERVAL_NAME\":null,\"Production Interval\":null,\"COMP_STATUS_DESC\":null,\"COMP_x_rel\":null,\"COMP_y_rel\":null},{\"Well Name\":\"  001\",\"API12\":608124001200.0,\"Sidetrack and Bypass\":\"ST00BP00\",\"Side Tracks\":0.0,\"Relative Wellhead X\":11708.8658493208,\"Relative Wellhead Y\":72999.0849222978,\"O_PROD_STATUS\":0.0,\"Production to date (MMBBL)\":0.0,\"Horizontal Departure (ft)\":null,\"Wellbore Status\":\"CNL\",\"Wellbore Status Date\":\"3\\/29\\/2006\",\"Water Depth (ft)\":8152.0,\"Tree Height AML (ft)\":null,\"Relative Bottom X\":null,\"Relative Bottom Y\":null,\"Total Measured Depth (ft)\":\"*****\",\"COMP_RSVR_NAME\":null,\"COMP_INTERVAL_NAME\":null,\"Production Interval\":null,\"COMP_STATUS_DESC\":null,\"COMP_x_rel\":null,\"COMP_y_rel\":null},{\"Well Name\":\"  001\",\"API12\":608124000801.0,\"Sidetrack and Bypass\":\"ST00BP01\",\"Side Tracks\":1.0,\"Relative Wellhead X\":17181.0309071552,\"Relative Wellhead Y\":82835.9871144812,\"O_PROD_STATUS\":0.0,\"Production to date (MMBBL)\":0.0,\"Horizontal Departure (ft)\":364.0,\"Wellbore Status\":\"PA\",\"Wellbore Status Date\":\"6\\/4\\/2002\",\"Water Depth (ft)\":8143.0,\"Tree Height AML (ft)\":null,\"Relative Bottom X\":16975.1446697217,\"Relative Bottom Y\":82535.7608904801,\"Total Measured Depth (ft)\":\"27929\",\"COMP_RSVR_NAME\":null,\"COMP_INTERVAL_NAME\":null,\"Production Interval\":null,\"COMP_STATUS_DESC\":null,\"COMP_x_rel\":null,\"COMP_y_rel\":null},{\"Well Name\":\"  002\",\"API12\":608124000500.0,\"Sidetrack and Bypass\":\"ST00BP00\",\"Side Tracks\":0.0,\"Relative Wellhead X\":8488.8401454335,\"Relative Wellhead Y\":6998.0045995312,\"O_PROD_STATUS\":0.0,\"Production to date (MMBBL)\":0.0,\"Horizontal Departure (ft)\":105.0,\"Wellbore Status\":\"PA\",\"Wellbore Status Date\":\"1\\/6\\/2001\",\"Water Depth (ft)\":8835.0,\"Tree Height AML (ft)\":null,\"Relative Bottom X\":8402.2047755047,\"Relative Bottom Y\":6939.0395186659,\"Total Measured Depth (ft)\":\"25109\",\"COMP_RSVR_NAME\":null,\"COMP_INTERVAL_NAME\":null,\"Production Interval\":null,\"COMP_STATUS_DESC\":null,\"COMP_x_rel\":null,\"COMP_y_rel\":null},{\"Well Name\":\"  002\",\"API12\":608124001601.0,\"Sidetrack and Bypass\":\"ST01BP00\",\"Side Tracks\":1.0,\"Relative Wellhead X\":14411.9612879542,\"Relative Wellhead Y\":83279.0557004531,\"O_PROD_STATUS\":0.0,\"Production to date (MMBBL)\":0.0,\"Horizontal Departure (ft)\":4822.0,\"Wellbore Status\":\"TA\",\"Wellbore Status Date\":\"1\\/1\\/2006\",\"Water Depth (ft)\":8160.0,\"Tree Height AML (ft)\":null,\"Relative Bottom X\":15456.5418126569,\"Relative Bottom Y\":78571.202773458,\"Total Measured Depth (ft)\":\"28565\",\"COMP_RSVR_NAME\":null,\"COMP_INTERVAL_NAME\":null,\"Production Interval\":null,\"COMP_STATUS_DESC\":null,\"COMP_x_rel\":null,\"COMP_y_rel\":null},{\"Well Name\":\"  005\",\"API12\":608124008200.0,\"Sidetrack and Bypass\":\"ST00BP00\",\"Side Tracks\":0.0,\"Relative Wellhead X\":14905.3731248838,\"Relative Wellhead Y\":81368.8055849172,\"O_PROD_STATUS\":0.0,\"Production to date (MMBBL)\":0.0,\"Horizontal Departure (ft)\":23.0,\"Wellbore Status\":\"PA\",\"Wellbore Status Date\":\"12\\/27\\/2012\",\"Water Depth (ft)\":8149.0,\"Tree Height AML (ft)\":null,\"Relative Bottom X\":14917.755821043,\"Relative Bottom Y\":81388.4368624379,\"Total Measured Depth (ft)\":\"11967\",\"COMP_RSVR_NAME\":null,\"COMP_INTERVAL_NAME\":null,\"Production Interval\":null,\"COMP_STATUS_DESC\":null,\"COMP_x_rel\":null,\"COMP_y_rel\":null},{\"Well Name\":\"CA004\",\"API12\":608124004701.0,\"Sidetrack and Bypass\":\"ST00BP01\",\"Side Tracks\":1.0,\"Relative Wellhead X\":14729.0971544144,\"Relative Wellhead Y\":81235.6955274214,\"O_PROD_STATUS\":0.0,\"Production to date (MMBBL)\":2.9,\"Horizontal Departure (ft)\":3513.0,\"Wellbore Status\":\"COM\",\"Wellbore Status Date\":\"12\\/4\\/2012\",\"Water Depth (ft)\":8143.0,\"Tree Height AML (ft)\":14.0,\"Relative Bottom X\":15775.4706663337,\"Relative Bottom Y\":77882.5494904085,\"Total Measured Depth (ft)\":\"27243\",\"COMP_RSVR_NAME\":null,\"COMP_INTERVAL_NAME\":null,\"Production Interval\":null,\"COMP_STATUS_DESC\":null,\"COMP_x_rel\":null,\"COMP_y_rel\":null},{\"Well Name\":\"CH002\",\"API12\":608124004602.0,\"Sidetrack and Bypass\":\"ST00BP02\",\"Side Tracks\":2.0,\"Relative Wellhead X\":3567.4071721782,\"Relative Wellhead Y\":1599.4904072738,\"O_PROD_STATUS\":0.0,\"Production to date (MMBBL)\":5.0,\"Horizontal Departure (ft)\":1343.0,\"Wellbore Status\":\"COM\",\"Wellbore Status Date\":\"5\\/21\\/2010\",\"Water Depth (ft)\":8850.0,\"Tree Height AML (ft)\":18.0,\"Relative Bottom X\":2307.9333123553,\"Relative Bottom Y\":1131.9658963691,\"Total Measured Depth (ft)\":\"26378\",\"COMP_RSVR_NAME\":null,\"COMP_INTERVAL_NAME\":null,\"Production Interval\":null,\"COMP_STATUS_DESC\":null,\"COMP_x_rel\":null,\"COMP_y_rel\":null},{\"Well Name\":\"CH003\",\"API12\":608124008102.0,\"Sidetrack and Bypass\":\"ST00BP02\",\"Side Tracks\":2.0,\"Relative Wellhead X\":3600.3890400286,\"Relative Wellhead Y\":1694.4913849646,\"O_PROD_STATUS\":0.0,\"Production to date (MMBBL)\":17.8,\"Horizontal Departure (ft)\":4067.0,\"Wellbore Status\":\"COM\",\"Wellbore Status Date\":\"5\\/26\\/2013\",\"Water Depth (ft)\":8843.0,\"Tree Height AML (ft)\":18.0,\"Relative Bottom X\":-86.422481926,\"Relative Bottom Y\":3411.4243526448,\"Total Measured Depth (ft)\":\"27200\",\"COMP_RSVR_NAME\":null,\"COMP_INTERVAL_NAME\":null,\"Production Interval\":null,\"COMP_STATUS_DESC\":null,\"COMP_x_rel\":null,\"COMP_y_rel\":null},{\"Well Name\":null,\"API12\":null,\"Sidetrack and Bypass\":null,\"Side Tracks\":null,\"Relative Wellhead X\":null,\"Relative Wellhead Y\":null,\"O_PROD_STATUS\":null,\"Production to date (MMBBL)\":null,\"Horizontal Departure (ft)\":null,\"Wellbore Status\":null,\"Wellbore Status Date\":null,\"Water Depth (ft)\":null,\"Tree Height AML (ft)\":null,\"Relative Bottom X\":null,\"Relative Bottom Y\":null,\"Total Measured Depth (ft)\":null,\"COMP_RSVR_NAME\":\"Wilcox\",\"COMP_INTERVAL_NAME\":\"Middle Wilcox \\/ Upper Wilcox\",\"Production Interval\":\"S1\",\"COMP_STATUS_DESC\":\"OIL SHUT IN\",\"COMP_x_rel\":-81182.5174799194,\"COMP_y_rel\":-13632.1168996603},{\"Well Name\":null,\"API12\":null,\"Sidetrack and Bypass\":null,\"Side Tracks\":null,\"Relative Wellhead X\":null,\"Relative Wellhead Y\":null,\"O_PROD_STATUS\":null,\"Production to date (MMBBL)\":null,\"Horizontal Departure (ft)\":null,\"Wellbore Status\":null,\"Wellbore Status Date\":null,\"Water Depth (ft)\":null,\"Tree Height AML (ft)\":null,\"Relative Bottom X\":null,\"Relative Bottom Y\":null,\"Total Measured Depth (ft)\":null,\"COMP_RSVR_NAME\":\"Wilcox\",\"COMP_INTERVAL_NAME\":\"Middle Wilcox \\/ Top Wilcox\",\"Production Interval\":\"S1\",\"COMP_STATUS_DESC\":\"OIL SHUT IN\",\"COMP_x_rel\":-81264.8642638823,\"COMP_y_rel\":-14586.8084739018},{\"Well Name\":null,\"API12\":null,\"Sidetrack and Bypass\":null,\"Side Tracks\":null,\"Relative Wellhead X\":null,\"Relative Wellhead Y\":null,\"O_PROD_STATUS\":null,\"Production to date (MMBBL)\":null,\"Horizontal Departure (ft)\":null,\"Wellbore Status\":null,\"Wellbore Status Date\":null,\"Water Depth (ft)\":null,\"Tree Height AML (ft)\":null,\"Relative Bottom X\":null,\"Relative Bottom Y\":null,\"Total Measured Depth (ft)\":null,\"COMP_RSVR_NAME\":\"Wilcox\",\"COMP_INTERVAL_NAME\":\"Wilcox\",\"Production Interval\":\"S1\",\"COMP_STATUS_DESC\":\"PRODUCING OIL WELL\",\"COMP_x_rel\":-82032.7413861164,\"COMP_y_rel\":-15977.3155028047},{\"Well Name\":null,\"API12\":null,\"Sidetrack and Bypass\":null,\"Side Tracks\":null,\"Relative Wellhead X\":null,\"Relative Wellhead Y\":null,\"O_PROD_STATUS\":null,\"Production to date (MMBBL)\":null,\"Horizontal Departure (ft)\":null,\"Wellbore Status\":null,\"Wellbore Status Date\":null,\"Water Depth (ft)\":null,\"Tree Height AML (ft)\":null,\"Relative Bottom X\":null,\"Relative Bottom Y\":null,\"Total Measured Depth (ft)\":null,\"COMP_RSVR_NAME\":\"Wilcox 1\\/Wilcox 2\",\"COMP_INTERVAL_NAME\":\"Middle Wilcox \\/ Top Wilcox\",\"Production Interval\":\"S1\",\"COMP_STATUS_DESC\":\"OIL SHUT IN\",\"COMP_x_rel\":-81659.6063046678,\"COMP_y_rel\":-15368.1337227346}]"}]}
+    addChartToDOM(chartData);
+
+  </script>
+
+
+    <br>
+
+  <!-- End page content -->
+  </div>
+  <footer class="footer bg-dark">
+      <span class="text-muted">-- End of Document --</span>
+  </footer>
+
+</body>
+</html>

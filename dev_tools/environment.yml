@@ -1,0 +1,11 @@
+name: worldenergydata
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pandas
+  - pip
+  - pip:
+      - -r requirements.txt  # source pip specific requirements 
+    #- -r dev_tools/requirements.txt  # source pip specific requirements 
