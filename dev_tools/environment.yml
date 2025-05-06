@@ -1,4 +1,4 @@
-name: energydata
+name: worldenergydata
 channels:
   - defaults
   - conda-forge

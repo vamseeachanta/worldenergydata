@@ -4,11 +4,11 @@
 
 ### Data Downloaded
 
-<https://github.com/vamseeachanta/energydata/blob/8bc9bd788008fc116f57057c7bca28fb0c8eab52/src/energydata/tests/legacy/data>
+<https://github.com/vamseeachanta/worldenergydata/blob/8bc9bd788008fc116f57057c7bca28fb0c8eab52/src/worldenergydata/tests/legacy/data>
 
 
 - From URLs, download files
-  - [TBA (Vamsee)](https://github.com/vamseeachanta/energydata/blob/7cdc1e006e90967d809d16a0831af7492c34f1f6/src/energydata/common/bsee_data_refresh.py)
+  - [TBA (Vamsee)](https://github.com/vamseeachanta/worldenergydata/blob/7cdc1e006e90967d809d16a0831af7492c34f1f6/src/worldenergydata/common/bsee_data_refresh.py)
 
 
 - Read files -> Columns
