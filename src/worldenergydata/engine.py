@@ -1,6 +1,5 @@
 # Standard library imports
-#import logging
-from loguru import logger 
+import logging
 import os
 import sys
 
@@ -50,7 +49,7 @@ def engine(inputfile: str = None, cfg: dict = None, config_flag: bool = True) ->
     else:
         cfg_base = cfg
 
-    logger.info(f"{basename}, application ... START")
+    logging.info(f"{basename}, application ... START")
 
     # try:
     if basename in ["bsee"]:
@@ -68,7 +67,7 @@ def engine(inputfile: str = None, cfg: dict = None, config_flag: bool = True) ->
     #     logger.error(f"Error in {basename} application: {e}")
     #     raise
 
-    logger.info(f"{basename}, application ... END")
+    logging.info(f"{basename}, application ... END")
     app_manager.save_cfg(cfg_base=cfg_base)
 
     return cfg_base
