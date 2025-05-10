@@ -1,3 +1,4 @@
 eWellWARRawData.zip filter=lfs diff=lfs merge=lfs -text
 mv_war_main_prop_remark.bin filter=lfs diff=lfs merge=lfs -text
 mv_war_main.bin filter=lfs diff=lfs merge=lfs -text
+FRSWellDataRawData.zip filter=lfs diff=lfs merge=lfs -text
