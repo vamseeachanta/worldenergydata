@@ -1,5 +1,5 @@
 meta:
-  library: worldenergydata
+  library: energydata
   basename: bsee
 basename: bsee
 
@@ -13,6 +13,7 @@ data_from_files:
 settings:
   files_folder: None
   output_dir: None 
+  
 
 default:
   log_level: DEBUG

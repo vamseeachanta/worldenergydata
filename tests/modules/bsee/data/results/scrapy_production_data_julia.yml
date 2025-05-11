@@ -63,11 +63,18 @@ dictitems:
     file_name_for_overwrite: scrapy_production_data_julia
     result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
     log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\logs
+<<<<<<< HEAD
+    start_time: 2025-02-13 10:51:36.465789
+=======
     start_time: 2025-02-18 09:28:40.627392
+>>>>>>> 202502
     cfg_array_file_names: ~
     DefaultInputFile: ~
     CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\scrapy_production_data_julia.yml
     fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\data\results
+<<<<<<< HEAD
+  bsee: {}
+=======
   bsee:
     well_data:
       type: csv
@@ -90,3 +97,4 @@ dictitems:
           from: 01/2020
           to: 12/2024
         file_name: tests\modules\bsee\analysis\results\Data\Julia_prod_data\LNG25251.csv
+>>>>>>> 202502
