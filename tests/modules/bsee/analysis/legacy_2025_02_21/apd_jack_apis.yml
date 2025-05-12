@@ -1,9 +1,5 @@
 meta:
-<<<<<<< HEAD:tests/modules/bsee/analysis/legacy_2025_02_21/apd_jack_apis.yml
-  library: energydata
-=======
   library: worldenergydata
->>>>>>> 202502:tests/modules/bsee/analysis/legacy/apd_jack_apis.yml
   basename: bsee
 basename: bsee
 

@@ -6,15 +6,6 @@ dictitems:
     data: false
     analysis: false
     results: false
-<<<<<<< HEAD
-  result_method: selenium
-  settings_master: ~
-  input:
-  - name: example1
-    well_api12: 608174149400
-  - name: example2
-    well_api12: 608174149401
-=======
   settings_master: ~
   data_retrieval:
     well:
@@ -66,7 +57,6 @@ dictitems:
             ASPxFormLayout1$ASPxComboBoxBBN: None
             __EVENTTARGET: ASPxFormLayout2$btnCsvExport
             __EVENTARGUMENT: Click
->>>>>>> 202502
   default:
     log_level: DEBUG
     config:
