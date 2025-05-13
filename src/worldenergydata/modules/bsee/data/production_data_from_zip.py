@@ -104,7 +104,8 @@ class GetProdDataFromZip:
                     'column_names': column_names
                 }
 
-                df = zip_files_to_df.zip_file_to_dataframe(cfg_zip_utilities)
+                df_dict = zip_files_to_df.zip_file_to_dataframe(cfg_zip_utilities)
+                _, df = list(df_dict.items())[0]
 
                 df_name = file_name.split('.')[0]
 
