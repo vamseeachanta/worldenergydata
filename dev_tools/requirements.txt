@@ -1,4 +1,4 @@
-worldenergydata
+# worldenergydata
 
 pandas
 pip
@@ -37,6 +37,13 @@ assetutilities
 pytest
 deepdiff
 requests
+<<<<<<< HEAD
 xmltodict
 
 loguru
+=======
+
+xmltodict
+
+loguru
+>>>>>>> c9dde8d (check tests run)

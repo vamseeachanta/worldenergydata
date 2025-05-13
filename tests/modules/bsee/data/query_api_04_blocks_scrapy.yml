@@ -7,6 +7,7 @@ basename: bsee
 data:
   obtain: True
   by: block
+  bottom_blocks: True
   groups:
     -
       bottom_block:
