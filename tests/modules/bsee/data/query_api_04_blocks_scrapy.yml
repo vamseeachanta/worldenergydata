@@ -5,9 +5,9 @@ basename: bsee
 
 
 data:
-  obtain: True
-  by: block
-  bottom_blocks: True
+  by : block
+  bottom_blocks: 
+    flag: True
   groups:
     -
       bottom_block:
