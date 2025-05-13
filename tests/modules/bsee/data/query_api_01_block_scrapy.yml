@@ -5,9 +5,9 @@ meta:
 basename: bsee
 
 data:
-  apm: False
-  production_data: False
-  bottom_blocks: True
+  by : block
+  bottom_blocks:
+    flag: True
   groups:
     - 
       bottom_block:
