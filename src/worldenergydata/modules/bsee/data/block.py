@@ -19,7 +19,7 @@ class Block:
         #         group_api12 = group['api12']
         #         if group_api12 is not None:
         #             logging.warning('group item running by Block data. API12 input NOT used')
-        if 'analysis' in cfg and cfg['analysis']['bottom_blocks']:
+        if 'analysis' in cfg and cfg['analysis']['bottom_blocks'] or 'data' in cfg and cfg['data']['bottom_blocks']:
             cfg = self.add_api12_array_by_block_to_cfg(cfg)
 
 
@@ -43,22 +43,22 @@ class Block:
 
         return cfg
     
-    def update_cfg_to_wells_api12(self, cfg, api12_array):
-        '''
-        function which transforms cfg into desired cfg
-        '''
+    # def update_cfg_to_wells_api12(self, cfg, api12_array):
+    #     '''
+    #     function which transforms cfg into desired cfg
+    #     '''
 
-        updated_cfg = cfg.copy()
+    #     updated_cfg = cfg.copy()
     
-        # Update 'data' section
-        updated_cfg['data']['by'] = 'API12'
-        updated_cfg['data']['well_data'] = True
-        updated_cfg['data']['production_data'] = False
+    #     # Update 'data' section
+    #     updated_cfg['data']['by'] = 'API12'
+    #     updated_cfg['data']['well_data'] = True
+    #     updated_cfg['data']['production_data'] = False
         
-        # Replace 'groups' with 'api12' array
-        updated_cfg['data']['groups'] = [{'api12': api12_array}]
+    #     # Replace 'groups' with 'api12' array
+    #     updated_cfg['data']['groups'] = [{'api12': api12_array}]
         
-        return updated_cfg
+    #     return updated_cfg
 
 
 

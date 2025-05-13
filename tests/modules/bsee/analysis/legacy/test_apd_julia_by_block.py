@@ -20,11 +20,7 @@ def get_valid_pytest_output_file(pytest_output_file):
 
 
 def test_application():
-<<<<<<< HEAD:tests/modules/bsee/analysis/legacy_2025_02_21/test_apd_jack_by_block.py
-    input_file = 'apd_jack_by_block.yml'
-=======
     input_file = 'apd_julia_by_block.yml'
->>>>>>> 202502:tests/modules/bsee/analysis/legacy/test_apd_julia_by_block.py
     pytest_output_file = None
     # pytest_output_file = get_valid_pytest_output_file(pytest_output_file)
     # expected_result = ymlInput(pytest_output_file, updateYml=None)
