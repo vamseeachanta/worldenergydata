@@ -19,7 +19,7 @@ class Block:
         #         group_api12 = group['api12']
         #         if group_api12 is not None:
         #             logging.warning('group item running by Block data. API12 input NOT used')
-        if 'analysis' in cfg and cfg['analysis']['bottom_blocks'] or 'by' in cfg['data'] and cfg['data']['by'] == 'block':
+        if 'analysis' in cfg and cfg['analysis']['bottom_blocks']:
             cfg = self.add_api12_array_by_block_to_cfg(cfg)
 
 
