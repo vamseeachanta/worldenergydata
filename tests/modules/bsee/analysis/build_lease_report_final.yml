@@ -1,0 +1,24 @@
+meta:
+  library: worldenergydata
+  basename: bsee_custom
+  label: goa_julia
+
+basename: bsee_custom
+
+data:
+  groups:
+    # Groups typically are list of entities to run through multiple API numbers or multiple API sets
+    - lease : G20351
+   
+  
+# analysis:
+#   flag: True
+#   api12: True
+#   bottom_blocks: True
+
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False
