@@ -32,9 +32,7 @@ class BSEEDataSpider(scrapy.Spider):
     name = 'API_well_data'
     # Starting URL for the spider
     start_urls = ['https://www.data.bsee.gov/Well/APD/Default.aspx']
-    custom_settings = {
-            "REQUEST_FINGERPRINTER_IMPLEMENTATION": "2.7"
-        }
+ 
     # Initialize the spider with input item and configuration
     def __init__(self, input_item=None, cfg=None, data_store=None,*args, **kwargs):
         super(BSEEDataSpider, self).__init__(*args, **kwargs)
@@ -60,9 +58,9 @@ class BSEEDataSpider(scrapy.Spider):
     # Handle the response of the first form submission
     def step2(self, response):
         if response.status == 200:
-            print(f" {Fore.GREEN} submitted given form data successfully!{Style.RESET_ALL}")
+            print(f" {Fore.GREEN} Webpage's Data request is successful{Style.RESET_ALL}")
         else:
-            print(f"{Fore.RED}Failed to submit the form data {Style.RESET_ALL}. Status code: {response.status}")
+            print(f"{Fore.RED}Data request failed to webpage{Style.RESET_ALL}. Status code: {response.status}")
 
         # Extract API number from input item
         api_num = str(self.input_item['api12'][0])
@@ -82,6 +80,7 @@ class BSEEDataSpider(scrapy.Spider):
         output_file_name = os.path.join(output_path, api_label + '.csv')
 
         if response.status == 200:
+            logger.debug(f"Data for API{api_label} ...COMPLETE")
             response_csv = pd.read_csv(BytesIO(response.body))
 
             if response_csv.empty:
@@ -89,12 +88,11 @@ class BSEEDataSpider(scrapy.Spider):
             else:
                 with open(output_file_name, 'wb') as f:
                     f.write(response.body)
-                    logger.debug(f"\n****The Scraped data of given value ****\n {response_csv} \nData for API {api_label} ... COMPLETE")
-
+                    # logger.debug(f"\n****The Scraped data of given value ****\n {response_csv} \nData for API {api_label} ... COMPLETE")
                 self.data_store['data'] = response_csv  # Store DataFrame in data_store
 
         else:
-            print(f"{Fore.RED}Failed to export CSV file.{Style.RESET_ALL} Status code: {response.status}")
+            print(f"{Fore.RED}Failed to get the data for API .{api_label}. Status code: {response.status} {Style.RESET_ALL}")
             self.data_store['data'] = pd.DataFrame()
 
 # Define a class to run the Scrapy spider
@@ -102,7 +100,6 @@ class ScrapyRunnerAPI:
     def __init__(self):
         self.runner = CrawlerRunner({
             'LOG_LEVEL': 'CRITICAL',
-            'REQUEST_FINGERPRINTER_IMPLEMENTATION': '2.7'
         })
 
 

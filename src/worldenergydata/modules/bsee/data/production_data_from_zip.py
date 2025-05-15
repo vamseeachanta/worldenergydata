@@ -161,6 +161,7 @@ class GetProdDataFromZip:
 
     def get_data_by_api12_array(self, cfg, api12_array):
         folder_path_bin = cfg['parameters']['filepath']['production']['bin']
+        column_names = ['LEASE_NUMBER', 'COMPLETION_NAME', 'PRODUCTION_DATE', 'DAYS_ON_PROD', 'PRODUCT_CODE', 'MON_O_PROD_VOL', 'MON_G_PROD_VOL', 'MON_WTR_PROD_VOL', 'API_WELL_NUMBER', 'WELL_STAT_CD', 'AREA_CODE_BLOCK_NUM', 'OPERATOR_NUM', 'SORT_NAME', 'BOEM_FIELD', 'INJECTION_VOLUME', 'PROD_INTERVAL_CD', 'FIRST_PROD_DATE', 'UNIT_AGT_NUMBER', 'UNIT_ALOC_SUFFIX']
         library_name = 'worldenergydata'
         library_file_cfg = {
             'filepath': folder_path_bin,
@@ -173,8 +174,12 @@ class GetProdDataFromZip:
 
             file_name_with_path = os.path.join(folder_path_bin, file_name)
             with open(file_name_with_path, 'rb') as file:
-                # Load the data from the pickle file
                 df = pickle.load(file)
+
+                # if column_names and not all(col.replace(' ', '').isalpha() for col in df.columns):
+                if column_names:
+                    df.columns = column_names
+
             df_filtered = df[df['API_WELL_NUMBER'].isin(api12_array)]
             df_api12_array = pd.concat([df_api12_array, df_filtered], ignore_index=True)
 

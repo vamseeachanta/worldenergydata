@@ -576,7 +576,6 @@ class ProductionAPI12Analysis():
         
         # Calculate revenue for each year
         revenue = [MON_O_PROD_VOL[i] * avg_price[i] for i in range(0, len(MON_O_PROD_VOL))]
-
        
         df = pd.DataFrame({
             'Month': months,
@@ -599,8 +598,19 @@ class ProductionAPI12Analysis():
         file_label = 'revenues_table'
         file_name = os.path.join(result_folder, file_label + '.csv')
         df.to_csv(file_name, index=False)
+        self.perform_npv_calculation(cfg, df)
 
         return df
+    
+    def perform_npv_calculation(self,cfg,revenue_df):
+
+        #TODO - validate to check if npv is correct
+        discount_rate = 0.1
+        cash_flows = revenue_df['Revenue (USD)'].replace('[\$,]', '', regex=True).astype(float).tolist()
+        npv = np.npv(discount_rate, cash_flows)
+        logger.debug(f"NPV: ${npv:,.2f}")
+
+        return npv
 
     def perform_decline_analysis_api12(self, cfg, api12_df):
         #TODO

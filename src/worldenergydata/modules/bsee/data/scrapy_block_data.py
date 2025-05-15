@@ -30,14 +30,12 @@ class BSEESpider(scrapy.Spider):
 
     name = 'well_data_by_block'
     start_urls = ['https://www.data.bsee.gov/Well/APD/Default.aspx']
-    custom_settings = {
-            "REQUEST_FINGERPRINTER_IMPLEMENTATION": "2.7"
-        }
 
-    def __init__(self, input_item=None, cfg=None, *args, **kwargs):
+    def __init__(self, input_item=None, cfg=None, data_store=None, *args, **kwargs):
         super(BSEESpider, self).__init__(*args, **kwargs)
         self.input_item = input_item
         self.cfg = cfg
+        self.data_store = data_store
 
     def parse(self, response):
         bottom_block_num = str(self.input_item['bottom_block']['number'])
@@ -48,15 +46,15 @@ class BSEESpider(scrapy.Spider):
         first_request_data['ASPxFormLayout1$ASPxComboBoxBBN'] = bottom_block_num
         first_request_data['ASPxFormLayout1$ASPxComboBoxBA$DDD$L'] = area
 
-        logger.info(f"Getting data for BLOCK {bottom_block_num} ... START")
+        logger.debug(f"Getting data for BLOCK {bottom_block_num} ... START")
 
         yield FormRequest.from_response(response, formdata=first_request_data, callback=self.step2)
 
     def step2(self, response):
         if response.status == 200:
-            print(f" {Fore.GREEN} submitted given form data successfully!{Style.RESET_ALL}")
+            print(f" {Fore.GREEN} Webpage's Data request is successful{Style.RESET_ALL}")
         else:
-            print(f"{Fore.RED}Failed to submit the form data {Style.RESET_ALL}. Status code: {response.status}")
+            print(f"{Fore.RED}Data request failed to webpage {Style.RESET_ALL}. Status code: {response.status}")
 
         bottom_block_num = str(self.input_item['bottom_block']['number'])
         area = str(self.input_item['bottom_block']['area'])
@@ -77,38 +75,39 @@ class BSEESpider(scrapy.Spider):
         if output_path is None:
             result_folder = self.cfg['Analysis']['result_folder']
             output_path = os.path.join(result_folder, 'Data')
-
         analysis_root_folder = self.cfg['Analysis']['analysis_root_folder']
         is_dir_valid, output_path = is_dir_valid_func(output_path, analysis_root_folder)
 
         output_file = os.path.join(output_path, str(label) + '.csv')
 
         if response.status == 200:
+            logger.debug(f"Getting data for BLOCK {bottom_block_num} ... COMPLETE")
             response_csv = pd.read_csv(BytesIO(response.body))
             
             if response_csv.empty:
-                print(f"{Fore.RED}No data found for BLOCK {bottom_block_num}. Skipping CSV file.{Style.RESET_ALL}")
+                print(f"{Fore.RED}Empty dataframe for BLOCK {bottom_block_num}. Skipping CSV file.{Style.RESET_ALL}")
             else:
                 with open(output_file, 'wb') as f:
                     f.write(response.body)
-                    logger.debug("\n****The Scraped data of given value ****\n")
-                    logger.debug(response_csv)
-                    logger.info(f"Getting data for BLOCK {bottom_block_num} ... COMPLETE")
+                    # logger.debug("\n****The Scraped data of given value ****\n")
+                    # logger.debug(response_csv)
         else:
-            print(f"{Fore.RED}Failed to export CSV file.{Style.RESET_ALL} Status code: {response.status}")
+            print(f"{Fore.RED}Failed to get the data for block {bottom_block_num}. Status code: {response.status} {Style.RESET_ALL}")
+            self.data_store['data'] = pd.DataFrame()
 
 class ScrapyRunnerBlock:
     def __init__(self):
         # Initialize the CrawlerRunner with specific settings
         self.runner = CrawlerRunner({
             'LOG_LEVEL': 'CRITICAL',
-            'REQUEST_FINGERPRINTER_IMPLEMENTATION': '2.7'
         })
 
     # Run the spider with the given configuration and input item
     @wait_for(timeout=120)  # Adjust timeout as needed
     def run_spider(self, cfg, input_item):
-        deferred = self.runner.crawl(BSEESpider, input_item=input_item, cfg=cfg)
+        data_store = {}
+        deferred = self.runner.crawl(BSEESpider, input_item=input_item, cfg=cfg, data_store=data_store)
+        deferred.addCallback(lambda _: data_store.get('data', pd.DataFrame()))  # Return DataFrame from data_store
         return deferred
 
 if __name__ == "__main__":
