@@ -8,6 +8,7 @@ import pandas as pd  # noqa
 import os  # noqa
 from io import BytesIO  # noqa
 import logging  # noqa
+from loguru import logger
 from colorama import Fore, Style
 from colorama import init as colorama_init
 
@@ -24,9 +25,6 @@ logging.getLogger('scrapy').propagate = False  # to avoid displaying log outputs
 class SpiderBsee(scrapy.Spider):
     name = 'Production_data'
     start_urls = ['https://www.data.bsee.gov/Production/ProductionData/Default.aspx']
-    custom_settings = {
-            "REQUEST_FINGERPRINTER_IMPLEMENTATION": "2.7"
-        }
 
     def __init__(self, input_item=None, cfg=None, data_store=None,*args, **kwargs):
         super(SpiderBsee, self).__init__(*args, **kwargs)
@@ -45,13 +43,15 @@ class SpiderBsee(scrapy.Spider):
         first_request_data['ASPxFormLayout1$ASPxTextBoxDF'] = start
         first_request_data['ASPxFormLayout1$ASPxTextBoxDT'] = end
 
+        logger.debug(f"Getting data for LEASE {lease_num} ... START")
+
         yield FormRequest.from_response(response, formdata=first_request_data, callback=self.step2)
 
     def step2(self, response):
         if response.status == 200:
-            print(f"{Fore.GREEN} submitted given form data successfully!{Style.RESET_ALL}")
+            print(f"{Fore.GREEN} Webpage's Data request is successful{Style.RESET_ALL}")
         else:
-            print(f"{Fore.RED}Failed to submit the form data{Style.RESET_ALL}. Status code: {response.status}")
+            print(f"{Fore.RED}Data request failed to webpage{Style.RESET_ALL}. Status code: {response.status}")
 
         lease_num = str(self.input_item['lease_number'])
         start = str(self.input_item['Duration']['from'])
@@ -71,6 +71,7 @@ class SpiderBsee(scrapy.Spider):
         output_file = os.path.join(output_path, str(label) + '.csv')
 
         if response.status == 200:
+            logger.debug(f"Getting data for LEASE {lease_num} ... COMPLETE")
             response_csv = pd.read_csv(BytesIO(response.body))
             
             if response_csv.empty:
@@ -78,14 +79,13 @@ class SpiderBsee(scrapy.Spider):
             else:
                 with open(output_file, 'wb') as f:
                     f.write(response.body)
-                    logging.debug("\n****The Scraped data of given value ****\n")
-                    logging.debug(response_csv)
-                    logging.info(f"Getting data for LEASE {lease_num} ... COMPLETE")
+                    # logging.debug("\n****The Scraped data of given value ****\n")
+                    # logging.debug(response_csv)
 
                 self.data_store['data'] = response_csv  # Store DataFrame in data_store
                 
         else:
-            print(f"{Fore.RED}Failed to export CSV file.{Style.RESET_ALL} Status code: {response.status}")
+            print(f"{Fore.RED}Failed to get the data for lease.{lease_num}. Status code: {response.status} {Style.RESET_ALL}")
             self.data_store['data'] = pd.DataFrame()
 
 # Class to run the Scrapy spider
@@ -93,7 +93,6 @@ class ScrapyRunnerProduction:
     def __init__(self):
         self.runner = CrawlerRunner({
             'LOG_LEVEL': 'CRITICAL',
-            'REQUEST_FINGERPRINTER_IMPLEMENTATION': '2.7'
         })
 
     @wait_for(timeout=60.0) 
