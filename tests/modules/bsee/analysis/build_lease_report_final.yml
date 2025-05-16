@@ -8,7 +8,7 @@ basename: bsee_custom
 data:
   groups:
     # Groups typically are list of entities to run through multiple API numbers or multiple API sets
-    - lease : G20351
+    - lease : G17001
    
   
 # analysis:

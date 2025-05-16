@@ -5,7 +5,7 @@ meta:
 basename: bsee_custom
 data:
   groups:
-  - lease: G20351
+  - lease: G17001
 default:
   log_level: INFO
   config:
@@ -18,7 +18,7 @@ Analysis:
   file_name: build_lease_report_final_goa_julia
   file_name_for_overwrite: build_lease_report_final_goa_julia
   log_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\logs
-  start_time: 2025-05-15 10:12:18.833699
+  start_time: 2025-05-16 11:09:34.910069
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\build_lease_report_final.yml
