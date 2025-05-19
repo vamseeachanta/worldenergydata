@@ -4,10 +4,12 @@ meta:
 basename: bsee
 
 data:
-  obtain: True
+  refresh: False
+  preapre_for_analysis: True
+
 
 settings:
-  data_dir: data\modules\bsee\data\csv\online_query_raw_data
+  data_dir: data\modules\bsee\data_for_analysis\by_zip
 
 config_data_map:
   # - label: "well_data"
@@ -205,7 +207,7 @@ config_data_map:
 
   - label: well_directional_surveys
     files:
-      - name: "dsptsdelimit.csv"
+      - name: dsptsdelimit.csv
         columns:
           [
             "API_WELL_NUMBER",

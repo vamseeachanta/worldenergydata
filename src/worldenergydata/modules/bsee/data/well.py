@@ -7,6 +7,7 @@ from loguru import logger
 from worldenergydata.modules.bsee.data.scrapy_well_data import ScrapyRunnerAPI
 from worldenergydata.modules.bsee.data.block_data import BlockData
 from worldenergydata.modules.bsee.data.apm_data import APMData
+from worldenergydata.modules.bsee.data.prepare_data_for_analysis import PrepareBseeData
 
 from assetutilities.common.utilities import is_dir_valid_func
 from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
@@ -15,6 +16,7 @@ from assetutilities.modules.zip_utilities.zip_files_to_dataframe import ZipFiles
 
 wwy = WorkingWithYAML()
 zip_files_to_df = ZipFilestoDf()
+prep_bsee_data = PrepareBseeData()
 
 block_data = BlockData()
 
@@ -28,7 +30,10 @@ class WellData:
         if 'groups' in cfg['data']:
             self.apm_data = APMData(cfg)
             cfg, well_data_groups  = self.get_well_data_all_wells(cfg)
-
+        
+        elif 'preapre_for_analysis' in cfg['data'] and cfg['data']['preapre_for_analysis']:
+            prep_bsee_data.router(cfg)
+            
         return cfg, well_data_groups
 
     def get_well_data_all_wells(self, cfg):

@@ -27,14 +27,15 @@ class PrepareBseeData:
             file_path = os.path.join(data_dir, file_name)
 
             if os.path.exists(file_path):
-                df = pd.read_csv(file_path, usecols=columns)
+                df = pd.read_csv(file_path)
+                df.columns = columns
                 dataframes.append(df)
             else:
                 print(f"Warning: File not found - {file_name}")
         
         merged_df = pd.concat(dataframes, axis=1)
         
-        output_path = os.path.join("data", "modules", "bsee","survey", f"{label}.csv")
+        output_path = os.path.join("data", "modules", "bsee","data_for_analysis", f"{label}.csv")
         os.makedirs(os.path.dirname(output_path), exist_ok=True)  
         merged_df.to_csv(output_path, index=False)
 
