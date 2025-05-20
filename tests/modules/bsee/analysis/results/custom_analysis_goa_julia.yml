@@ -5,7 +5,11 @@ meta:
 basename: bsee_custom
 data:
   groups:
-  - lease: G17001
+    lease: G17001
+    war: data/modules/bsee/bin/war/mv_war_main.bin
+    boreholes: data/modules/bsee/bin/war/mv_war_boreholes_view.bin
+    war_prop: data/modules/bsee/bin/war/mv_war_main_prop.bin
+    war_remarks: data/modules/bsee/bin/war/mv_war_main_prop_remark.bin
 default:
   log_level: INFO
   config:
@@ -15,13 +19,13 @@ default:
 Analysis:
   basename: bsee_custom
   analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis
-  file_name: build_lease_report_final_goa_julia
-  file_name_for_overwrite: build_lease_report_final_goa_julia
+  file_name: custom_analysis_goa_julia
+  file_name_for_overwrite: custom_analysis_goa_julia
   log_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\logs
-  start_time: 2025-05-20 10:34:57.460687
+  start_time: 2025-05-20 10:44:28.518495
   cfg_array_file_names: ~
   DefaultInputFile: ~
-  CustomInputFile: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\build_lease_report_final.yml
+  CustomInputFile: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\custom_analysis.yml
   result_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results
   result_data_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data
   result_plot_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Plot

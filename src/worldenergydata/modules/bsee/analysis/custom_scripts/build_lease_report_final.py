@@ -19,13 +19,14 @@ class BseeCustomAnalysis:
         return df
 
     def build_report(self, cfg):
-        lease = cfg['data']['groups'][0]['lease']
+        lease = cfg['data']['groups']['lease']
         lease = lease.strip().upper()
         if not lease.startswith("G"):
             lease = "G" + lease
 
         # 1) main → SN_WAR & API
-        main = self.load_clean("data/modules/bsee/bin/war/mv_war_main.bin")
+        war_path = cfg['data']['groups']['war']
+        main = self.load_clean(war_path)
         sub = main[main["BOTM_LEASE_NUM"] == lease]
         if sub.empty:
             print(f"No records for lease {lease}")
@@ -34,7 +35,8 @@ class BseeCustomAnalysis:
         api_list = sub["API_WELL_NUMBER"].dropna().tolist()
 
         # 2) boreholes by API
-        bore = self.load_clean("data/modules/bsee/bin/war/mv_war_boreholes_view.bin")
+        boreholes_path = cfg['data']['groups']['boreholes']
+        bore = self.load_clean(boreholes_path)
         bore = bore[bore["API_WELL_NUMBER"].isin(api_list)]
         bore = bore[[
             "API_WELL_NUMBER",
@@ -45,7 +47,8 @@ class BseeCustomAnalysis:
         ]]
 
         # 3) prop for mud weight
-        prop = self.load_clean("data/modules/bsee/bin/war/mv_war_main_prop.bin")
+        war_prop = cfg['data']['groups']['war_prop']
+        prop = self.load_clean(war_prop)
         prop = prop[prop["SN_WAR"].isin(sn_list)]
         prop = prop[["SN_WAR", "DRILL_FLUID_WGT"]].rename(
             columns={"DRILL_FLUID_WGT": "Max Mud Weight (ppg)"}
