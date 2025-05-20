@@ -7,6 +7,7 @@ from openpyxl.utils import get_column_letter
 from datetime import datetime
 import os
 import pickle
+from loguru import logger
 
 class ExtractRemarksbyAPI:
 
@@ -22,7 +23,7 @@ class ExtractRemarksbyAPI:
             mapping_df['SN_WAR'] = mapping_df['SN_WAR'].apply(lambda x: str(abs(int(str(x).strip()))) if str(x).strip().lstrip('-').isdigit() else '')
             mapping_df = mapping_df[mapping_df['SN_WAR'] != '']
         except Exception as e:
-            print(f"❌ Failed to read API-SN_WAR mapping: {e}")
+            logger.error(f"❌ Failed to read API-SN_WAR mapping: {e}")
             return
 
         snwar_to_api = mapping_df.set_index('SN_WAR')['API_WELL_NUMBER'].to_dict()
@@ -116,10 +117,10 @@ class ExtractRemarksbyAPI:
             filename = "api_remarks_output.xlsx"
 
             wb.save(os.path.join(result_folder, filename))
-            print(f"✅ Extracted remarks to {filename} with duration rows and spacing")
+            logger.info(f"✅ Extracted remarks to {filename} with duration rows and spacing")
 
         except Exception as e:
-            print(f"❌ Failed to process remark file: {e}")
+            logger.error(f"❌ Failed to process remark file: {e}")
 
     def get_mapping_file(self,cfg):
 
