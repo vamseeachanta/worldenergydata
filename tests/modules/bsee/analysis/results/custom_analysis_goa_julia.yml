@@ -5,7 +5,7 @@ meta:
 basename: bsee_custom
 data:
   groups:
-    lease: G17001
+    lease: G20351
     war: data/modules/bsee/bin/war/mv_war_main.bin
     boreholes: data/modules/bsee/bin/war/mv_war_boreholes_view.bin
     war_prop: data/modules/bsee/bin/war/mv_war_main_prop.bin
@@ -22,7 +22,7 @@ Analysis:
   file_name: custom_analysis_goa_julia
   file_name_for_overwrite: custom_analysis_goa_julia
   log_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\logs
-  start_time: 2025-05-20 10:44:28.518495
+  start_time: 2025-05-20 11:29:07.835791
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\custom_analysis.yml

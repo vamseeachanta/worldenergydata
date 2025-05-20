@@ -5,6 +5,7 @@ import sys
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font
 from datetime import datetime
+from loguru import logger
 
 class BseeCustomAnalysis:
 
@@ -29,7 +30,7 @@ class BseeCustomAnalysis:
         main = self.load_clean(war_path)
         sub = main[main["BOTM_LEASE_NUM"] == lease]
         if sub.empty:
-            print(f"No records for lease {lease}")
+            logger.error(f"No records for lease {lease}")
             return
         sn_list = sub["SN_WAR"].dropna().tolist()
         api_list = sub["API_WELL_NUMBER"].dropna().tolist()
@@ -147,4 +148,4 @@ class BseeCustomAnalysis:
         filename = f"{label}_summary_{lease}.xlsx"
 
         wb.save(os.path.join(result_folder, filename))
-        print(f"✅ Wrote fully formatted summary to {filename}")
+        logger.info(f"✅ Wrote fully formatted summary to {filename}")
