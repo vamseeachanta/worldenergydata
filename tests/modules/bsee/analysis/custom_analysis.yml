@@ -8,7 +8,11 @@ basename: bsee_custom
 data:
   groups:
     # Groups typically are list of entities to run through multiple API numbers or multiple API sets
-    - lease : G17001
+    lease : G17001
+    war: data/modules/bsee/bin/war/mv_war_main.bin
+    boreholes: data/modules/bsee/bin/war/mv_war_boreholes_view.bin
+    war_prop : data/modules/bsee/bin/war/mv_war_main_prop.bin
+    war_remarks: data/modules/bsee/bin/war/mv_war_main_prop_remark.bin
 
 default:
   log_level: INFO

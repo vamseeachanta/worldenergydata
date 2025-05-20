@@ -15,8 +15,8 @@ class ExtractRemarksbyAPI:
         return cfg
 
     def extract_remarks_by_api(self, cfg):
-        mapping_df = self.get_mapping_file()
-        remark_file = "data/modules/bsee/bin/war/mv_war_main_prop_remark.bin"
+        mapping_df = self.get_mapping_file(cfg)
+        remark_file = cfg['data']['groups']['war_remarks']
 
         try:
             mapping_df['SN_WAR'] = mapping_df['SN_WAR'].apply(lambda x: str(abs(int(str(x).strip()))) if str(x).strip().lstrip('-').isdigit() else '')
@@ -81,7 +81,7 @@ class ExtractRemarksbyAPI:
             ws.title = "API Remarks"
 
             # Headers
-            ws.append(["API Well Number", "Date", "Narrative Remark"])
+            ws.append(["API_WELL_NUMBER", "REMARK_DATE", "REMARK_TEXT"])
 
             # Populate data by API
             for api, entries in remarks_by_api.items():
@@ -102,10 +102,10 @@ class ExtractRemarksbyAPI:
                 for date_str, remark in sorted_entries:
                     ws.append([api, date_str, remark])
 
-                # Insert duration row
-                ws.append(["duration", duration, ""])
-                # Insert 2 additional blank rows
-                ws.append(["", "", ""])
+                # # Insert duration row
+                # ws.append(["duration", duration, ""])
+                # # Insert 2 additional blank rows
+                # ws.append(["", "", ""])
 
             # Adjust column widths
             ws.column_dimensions[get_column_letter(1)].width = 16
@@ -121,9 +121,10 @@ class ExtractRemarksbyAPI:
         except Exception as e:
             print(f"❌ Failed to process remark file: {e}")
 
-    def get_mapping_file(self):
+    def get_mapping_file(self,cfg):
 
-        war_df = pd.read_pickle("data/modules/bsee/bin/war/mv_war_main.bin")
+        war_file = cfg['data']['groups']['war']
+        war_df = pd.read_pickle(war_file)
 
         df = war_df[["API_WELL_NUMBER", "SN_WAR"]]
 
