@@ -15,21 +15,21 @@ data:
         area: WR
         number: 584
       api12: NULL
-    - 
-      bottom_block:
-        area: WR
-        number: 678
-      api12: NULL
-    - 
-      bottom_block:
-        area: WR
-        number: 758
-      api12: NULL
-    - 
-      bottom_block:
-        area: WR
-        number: 759
-      api12: NULL
+    # - 
+    #   bottom_block:
+    #     area: WR
+    #     number: 678
+    #   api12: NULL
+    # - 
+    #   bottom_block:
+    #     area: WR
+    #     number: 758
+    #   api12: NULL
+    # - 
+    #   bottom_block:
+    #     area: WR
+    #     number: 759
+    #   api12: NULL
 
 
 analysis:

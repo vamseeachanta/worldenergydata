@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import pandas as pd
 import os
 import sys
@@ -13,10 +12,10 @@ class BseeCustomAnalysis:
         self.build_report(cfg)
         return cfg
 
-    def load_clean(self, path):
-        df = pd.read_pickle(path)
-        for c in df.select_dtypes(include="object"):
-            df[c] = df[c].str.strip().str.strip('"')
+    def read_file(self, filepath):
+        df = pd.read_pickle(filepath)
+        for column in df.select_dtypes(include="object"):
+            df[column] = df[column].str.strip().str.strip('"')
         return df
 
     def build_report(self, cfg):
@@ -26,20 +25,21 @@ class BseeCustomAnalysis:
             lease = "G" + lease
 
         # 1) main → SN_WAR & API
-        war_path = cfg['data']['groups']['war']
-        main = self.load_clean(war_path)
-        sub = main[main["BOTM_LEASE_NUM"] == lease]
-        if sub.empty:
+        war_filepath = cfg['data']['groups']['war']
+        war_df = self.read_file(war_filepath)
+        lease_war_df = war_df[war_df["BOTM_LEASE_NUM"] == lease]
+        if lease_war_df.empty:
             logger.error(f"No records for lease {lease}")
             return
-        sn_list = sub["SN_WAR"].dropna().tolist()
-        api_list = sub["API_WELL_NUMBER"].dropna().tolist()
+
+        war_sn_list = lease_war_df["SN_WAR"].dropna().tolist()
+        api_list = lease_war_df["API_WELL_NUMBER"].dropna().tolist()
 
         # 2) boreholes by API
-        boreholes_path = cfg['data']['groups']['boreholes']
-        bore = self.load_clean(boreholes_path)
-        bore = bore[bore["API_WELL_NUMBER"].isin(api_list)]
-        bore = bore[[
+        borehole_filepath = cfg['data']['groups']['boreholes']
+        borehole_df = self.read_file(borehole_filepath)
+        api12_filtered_borehole_df = borehole_df[borehole_df["API_WELL_NUMBER"].isin(api_list)].copy()
+        api12_filtered_borehole_df = api12_filtered_borehole_df[[
             "API_WELL_NUMBER",
             "WELL_SPUD_DATE",
             "TOTAL_DEPTH_DATE",
@@ -48,29 +48,29 @@ class BseeCustomAnalysis:
         ]]
 
         # 3) prop for mud weight
-        war_prop = cfg['data']['groups']['war_prop']
-        prop = self.load_clean(war_prop)
-        prop = prop[prop["SN_WAR"].isin(sn_list)]
-        prop = prop[["SN_WAR", "DRILL_FLUID_WGT"]].rename(
+        war_prop_filepath = cfg['data']['groups']['war_prop']
+        mud_weight_df = self.read_file(war_prop_filepath)
+        sn_war_mud_weight_df = mud_weight_df[mud_weight_df["SN_WAR"].isin(war_sn_list)]
+        sn_war_mud_weight_df = sn_war_mud_weight_df[["SN_WAR", "DRILL_FLUID_WGT"]].rename(
             columns={"DRILL_FLUID_WGT": "Max Mud Weight (ppg)"}
         )
 
-        # 4) merge & pick max mud weight
-        df = sub[["SN_WAR", "API_WELL_NUMBER"]].drop_duplicates()
-        df = df.merge(bore, on="API_WELL_NUMBER", how="left")
-        df = df.merge(prop, on="SN_WAR", how="left")
-        df["Max Mud Weight (ppg)"] = pd.to_numeric(df["Max Mud Weight (ppg)"], errors="coerce")
-        idx = df.groupby("API_WELL_NUMBER")["Max Mud Weight (ppg)"].idxmax()
-        df = df.loc[idx].reset_index(drop=True)
+        # Merge and select max mud weight per API
+        merged_df = lease_war_df[["SN_WAR", "API_WELL_NUMBER"]].drop_duplicates()
+        merged_df = merged_df.merge(api12_filtered_borehole_df, on="API_WELL_NUMBER", how="left")
+        merged_df = merged_df.merge(sn_war_mud_weight_df, on="SN_WAR", how="left")
+        merged_df["Max Mud Weight (ppg)"] = pd.to_numeric(merged_df["Max Mud Weight (ppg)"], errors="coerce")
+        max_weight_indices = merged_df.groupby("API_WELL_NUMBER")["Max Mud Weight (ppg)"].idxmax()
+        merged_df = merged_df.loc[max_weight_indices].reset_index(drop=True)
 
-        # Convert date columns to datetime format
-        df["WELL_SPUD_DATE"] = pd.to_datetime(df["WELL_SPUD_DATE"], errors='coerce')
-        df["TOTAL_DEPTH_DATE"] = pd.to_datetime(df["TOTAL_DEPTH_DATE"], errors='coerce')
+        # Convert dates to datetime
+        merged_df["WELL_SPUD_DATE"] = pd.to_datetime(merged_df["WELL_SPUD_DATE"], errors='coerce')
+        merged_df["TOTAL_DEPTH_DATE"] = pd.to_datetime(merged_df["TOTAL_DEPTH_DATE"], errors='coerce')
 
-        # 5) build Excel
-        wb = Workbook()
-        ws = wb.active
-        ws.title = lease
+        # build Excel
+        workbook = Workbook()
+        worksheet = workbook.active
+        worksheet.title = lease
 
         headers = [
             "SN_WAR",
@@ -83,69 +83,53 @@ class BseeCustomAnalysis:
             "Max Mud Weight (ppg)",
             "Bottom Hole Pressure"
         ]
-        for i, h in enumerate(headers, 1):
-            cell = ws.cell(1, i, h)
+
+        for col_idx, header in enumerate(headers, 1):
+            cell = worksheet.cell(1, col_idx, header)
             cell.font = Font(bold=True)
             cell.alignment = Alignment(wrap_text=True, horizontal="center")
 
-        # 6) fill rows
-        for r, row in enumerate(df.itertuples(index=False), start=2):
-            sn = row[0]
-            api = row[1]
-            spud = row[2]
-            td = row[3]
-            tmd = row[4]
-            tvd = row[5]
-            mud = row[6]
+        for row_idx, row in enumerate(merged_df.itertuples(index=False), start=2):
+            sn_war, api_num, spud_date, td_date, tmd, tvd, mud_weight = row
 
-            ws.cell(r, 1, sn)
-            ws.cell(r, 2, api)
-            
-            # Handle dates - write as Excel datetime values
-            if pd.notna(spud) and isinstance(spud, pd.Timestamp):
-                ws.cell(r, 3, spud)
-            else:
-                ws.cell(r, 3, "")
-                
-            if pd.notna(td) and isinstance(td, pd.Timestamp):
-                ws.cell(r, 4, td)
-            else:
-                ws.cell(r, 4, "")
-            
-            # Calculate drilling days only if both dates are valid
-            if pd.notna(spud) and pd.notna(td) and isinstance(spud, pd.Timestamp) and isinstance(td, pd.Timestamp):
-                ws.cell(r, 5, (td - spud).days)
-            else:
-                ws.cell(r, 5, "")
-            
-            ws.cell(r, 6, pd.to_numeric(tmd, errors="coerce"))
-            ws.cell(r, 7, pd.to_numeric(tvd, errors="coerce"))
-            ws.cell(r, 8, pd.to_numeric(mud, errors="coerce"))
-            ws.cell(r, 9, f"=H{r}*0.052*G{r}")
+            worksheet.cell(row_idx, 1, sn_war)
+            worksheet.cell(row_idx, 2, api_num)
 
-        # 7) formatting
-        fmt_w = {
+            worksheet.cell(row_idx, 3, spud_date if pd.notna(spud_date) else "")
+            worksheet.cell(row_idx, 4, td_date if pd.notna(td_date) else "")
+
+            if pd.notna(spud_date) and pd.notna(td_date):
+                worksheet.cell(row_idx, 5, (td_date - spud_date).days)
+            else:
+                worksheet.cell(row_idx, 5, "")
+
+            worksheet.cell(row_idx, 6, pd.to_numeric(tmd, errors="coerce"))
+            worksheet.cell(row_idx, 7, pd.to_numeric(tvd, errors="coerce"))
+            worksheet.cell(row_idx, 8, pd.to_numeric(mud_weight, errors="coerce"))
+            worksheet.cell(row_idx, 9, f"=H{row_idx}*0.052*G{row_idx}")
+
+        # Apply formatting
+        column_formatting = {
             1: ("@", 12),
             2: ("0", 14),
             3: ("mm/dd/yyyy", 12),
             4: ("mm/dd/yyyy", 12),
             5: ("0", 10),
-            6: ("#,##0", 12),  # TMD with commas, no decimals
-            7: ("#,##0", 12),  # TVD with commas, no decimals
+            6: ("#,##0", 12),
+            7: ("#,##0", 12),
             8: ("0.0", 15),
-            9: ("#,##0", 12)   # BHP with commas, no decimals
+            9: ("#,##0", 12)
         }
-        for col, (num_fmt, w) in fmt_w.items():
-            letter = ws.cell(1, col).column_letter
-            ws.column_dimensions[letter].width = w
-            for cell in ws[letter]:
+        for col_idx, (format_code, width) in column_formatting.items():
+            column_letter = worksheet.cell(1, col_idx).column_letter
+            worksheet.column_dimensions[column_letter].width = width
+            for cell in worksheet[column_letter]:
                 cell.alignment = Alignment(wrap_text=True)
-                if cell.row > 1 and num_fmt != "@":
-                    cell.number_format = num_fmt
+                if cell.row > 1 and format_code != "@":
+                    cell.number_format = format_code
 
-        result_folder = cfg['Analysis']['result_folder']
+        result_path = cfg['Analysis']['result_folder']
         label = cfg['meta']['label']
-        filename = f"{label}_summary_{lease}.xlsx"
-
-        wb.save(os.path.join(result_folder, filename))
-        logger.info(f"✅ Wrote fully formatted summary to {filename}")
+        output_filename = f"{label}_summary_{lease}.xlsx"
+        workbook.save(os.path.join(result_path, output_filename))
+        logger.info(f"✅ Wrote fully formatted summary to {output_filename}")

@@ -211,7 +211,7 @@ class WellData:
     
     def get_BoreholeRawData_from_csv(self, cfg):
 
-        file_name = 'BoreholeRawData_mv_boreholes_all.csv'
+        file_name = 'eWellWARRawData_mv_war_boreholes_view.csv'
 
         library_name = 'worldenergydata'
         library_file_cfg = {
@@ -240,9 +240,6 @@ class WellData:
             df['BOREHOLE_STAT_DESC'] = BOREHOLE_STAT_DESC
         else:
             raise Exception(f"File not found: {file_name}")
-
-
-
 
         return df
 
