@@ -22,7 +22,7 @@ Analysis:
   file_name: custom_analysis_goa_julia
   file_name_for_overwrite: custom_analysis_goa_julia
   log_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\logs
-  start_time: 2025-05-20 11:29:07.835791
+  start_time: 2025-05-22 11:48:45.698837
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\custom_analysis.yml

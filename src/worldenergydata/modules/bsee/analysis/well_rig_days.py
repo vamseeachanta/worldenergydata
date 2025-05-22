@@ -37,7 +37,6 @@ class WellRigDays:
             rig_str = None
             api12_war_days = None
 
-
         return rig_str, api12_war_days
 
     def get_rig_info_and_rig_days(self, cfg,spud_date, td_date, war_summary):
