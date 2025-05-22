@@ -25,12 +25,12 @@ def test_application():
 
     # Comprehensive analysis 
     # input_file = 'query_field_julia.yml' 
-    # input_file = 'query_field_stmalo.yml'
+    input_file = 'query_field_stmalo.yml'
     # input_file = 'query_field_buckskin.yml'
     # input_file = 'query_field_quickfire.yml'
 
     # custom tests
-    input_file = 'custom_analysis.yml'
+    # input_file = 'custom_analysis.yml'
   
 
     pytest_output_file = None

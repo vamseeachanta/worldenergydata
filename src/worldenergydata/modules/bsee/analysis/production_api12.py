@@ -17,8 +17,11 @@ from worldenergydata.common.legacy.data import DateTimeUtility
 
 from assetutilities.common.data import SaveData
 from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
+from assetutilities.common.visualization.visualization_templates_plotly import VisualizationTemplatesPlotly
+from assetutilities.engine import engine as au_engine
 
 wwy = WorkingWithYAML()
+viz_templates_plotly = VisualizationTemplatesPlotly()
 
 bsee_data = BSEEData()
 dtu = DateTimeUtility()
@@ -372,37 +375,25 @@ class ProductionAPI12Analysis():
 
     def plot_production_rate_by_well(self, cfg, prod_rates_df):
 
-        df_melted = prod_rates_df.melt(id_vars=['PRODUCTION_DATETIME'], 
-                            var_name='api12', 
-                            value_name='production')
+        plot_yml = viz_templates_plotly.get_xy_line_df(cfg['Analysis'].copy())
 
-        df_melted = df_melted.rename(columns={'PRODUCTION_DATETIME': 'Date'})
-
-        df_melted = df_melted.dropna(subset=['production'])
-        df_melted['Date'] = pd.to_datetime(df_melted['Date'])
-        df_filtered = df_melted[
-                (df_melted['Date'] >= '2014-01-01') &
-                (df_melted['Date'] <= '2025-04-03') &
-                (df_melted['production'] >= 10) &
-                (df_melted['production'] <= 50000) 
-            ]
-
-        fig = px.line(
-            df_filtered,
-            x='Date',
-            y='production',
-            color='api12',
-            markers=True,
-            title="Production Data for API12"
-        )
+        plot_yml['data']['groups'][0]['file_name'] = prod_rates_df
         groups_label = cfg['meta'].get('label', None)
         if groups_label is None:
             groups_label = cfg['Analysis']['file_name_for_overwrite']
 
         file_label = 'prod_rate_by_well_' + groups_label
         result_folder = cfg['Analysis']['result_folder']
-        file_name = os.path.join(result_folder, 'Plot',file_label + '.html')
-        fig.write_html(file_name, include_plotlyjs="cdn")
+        file_name = os.path.join(result_folder, 'Plot',file_label)
+    
+        settings = {'file_name': file_name, 
+                    'title': 'Production Data for API12',
+                    'xlabel': 'PRODUCTION_DATETIME',
+                    'ylabel': 'production',
+                    'columns_var_name': 'api12'
+                    }
+        plot_yml['settings'].update(settings)
+        au_engine(inputfile=None, cfg=plot_yml, config_flag=False)
 
     def plot_prod_cumulative_mmbbl_by_well(self, cfg, prod_cumulative_mmbbl_groups):
 
@@ -607,10 +598,10 @@ class ProductionAPI12Analysis():
         #TODO - validate to check if npv is correct
         discount_rate = 0.1
         cash_flows = revenue_df['Revenue (USD)'].replace('[\$,]', '', regex=True).astype(float).tolist()
-        npv = np.npv(discount_rate, cash_flows)
-        logger.debug(f"NPV: ${npv:,.2f}")
+        # npv = np.npv(discount_rate, cash_flows)
+        # logger.debug(f"NPV: ${npv:,.2f}")
 
-        return npv
+        # return npv
 
     def perform_decline_analysis_api12(self, cfg, api12_df):
         #TODO
