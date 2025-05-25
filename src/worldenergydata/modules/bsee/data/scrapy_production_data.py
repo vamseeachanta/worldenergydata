@@ -66,7 +66,7 @@ class SpiderBsee(scrapy.Spider):
 
     def parse_csv_data(self, response):
         lease_num = self.input_item['lease_number']
-        label = self.input_item['label']
+        label = self.cfg['meta']['label']
         output_path = output_path = os.path.join(self.cfg['Analysis']['result_folder'], 'Data')
         output_file = os.path.join(output_path, str(label) + '.csv')
 

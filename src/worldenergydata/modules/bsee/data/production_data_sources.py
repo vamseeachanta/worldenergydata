@@ -54,10 +54,11 @@ class ProductionDataFromSources:
         input_items = cfg['data']['groups']
         scrapy_runner_production = ScrapyRunnerProduction()
 
+        output_data = []
         for input_item in input_items:
             production_data = scrapy_runner_production.run_spider(cfg, input_item)
-            #output_data = self.generate_output_item(cfg, output_data, input_item)
-        return production_data
+            output_data = self.generate_output_item(cfg, output_data,input_item)
+        return output_data
 
     def generate_output_item(self, cfg, output_data, input_item):
 
