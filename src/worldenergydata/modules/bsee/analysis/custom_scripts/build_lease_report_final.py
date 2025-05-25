@@ -130,6 +130,6 @@ class BseeCustomAnalysis:
 
         result_path = cfg['Analysis']['result_folder']
         label = cfg['meta']['label']
-        output_filename = f"{label}_summary_{lease}.xlsx"
+        output_filename = f"julia_summary_{lease}.xlsx"
         workbook.save(os.path.join(result_path, output_filename))
         logger.info(f"✅ Wrote fully formatted summary to {output_filename}")
