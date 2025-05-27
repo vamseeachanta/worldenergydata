@@ -5,7 +5,7 @@ basename: bsee
 
 data:
   refresh: False
-  preapre_for_analysis: True
+  preparation_for_analysis: True
 
 
 settings:

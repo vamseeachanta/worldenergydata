@@ -31,7 +31,7 @@ class WellData:
             self.apm_data = APMData(cfg)
             cfg, well_data_groups  = self.get_well_data_all_wells(cfg)
         
-        elif 'preapre_for_analysis' in cfg['data'] and cfg['data']['preapre_for_analysis']:
+        elif 'preparation_for_analysis' in cfg['data'] and cfg['data']['preparation_for_analysis']:
             prep_bsee_data.router(cfg)
             
         return cfg, well_data_groups
@@ -211,7 +211,7 @@ class WellData:
     
     def get_BoreholeRawData_from_csv(self, cfg):
 
-        file_name = 'eWellWARRawData_mv_war_boreholes_view.csv'
+        file_name = 'BoreholeRawData_mv_boreholes_all.csv'
 
         library_name = 'worldenergydata'
         library_file_cfg = {
@@ -394,22 +394,22 @@ class WellData:
 
         return cfg, api12_array
     
-    def update_cfg_to_wells_api12(self, cfg, api12_array):
-        '''
-        function which transforms cfg into desired cfg
-        '''
+    # def update_cfg_to_wells_api12(self, cfg, api12_array):
+    #     '''
+    #     function which transforms cfg into desired cfg
+    #     '''
 
-        updated_cfg = cfg.copy()
+    #     updated_cfg = cfg.copy()
     
-        # Update 'data' section
-        updated_cfg['data']['by'] = 'API12'
-        updated_cfg['data']['well_data'] = True
-        updated_cfg['data']['production_data'] = False
+    #     # Update 'data' section
+    #     updated_cfg['data']['by'] = 'API12'
+    #     updated_cfg['data']['well_data'] = True
+    #     updated_cfg['data']['production_data'] = False
         
-        # Replace 'groups' with 'api12' array
-        updated_cfg['data']['groups'] = [{'api12': api12_array}]
+    #     # Replace 'groups' with 'api12' array
+    #     updated_cfg['data']['groups'] = [{'api12': api12_array}]
         
-        return updated_cfg
+    #     return updated_cfg
 
     def get_eWellAPMRawData_from_zip(self, cfg):
 
