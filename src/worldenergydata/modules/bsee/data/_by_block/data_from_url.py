@@ -7,7 +7,7 @@ from worldenergydata.modules.bsee.data.scrapy_block_data import ScrapyRunnerBloc
 
 from assetutilities.common.utilities import is_dir_valid_func
 
-class BlockData:
+class DataFromURL:
 
     def __init__(self):
         pass

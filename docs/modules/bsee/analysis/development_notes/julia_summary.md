@@ -44,5 +44,6 @@ The key point to consider from this analysis is ,
   - scrapy query route
 - Test
   - Compare Julia csv vs. scrapy. 
- - proceed with CSV and try to get Roy's results
- 
+ - proceed with CSV/bin and try to get Roy's results
+  - convert to bin (DONE)
+  - Read from bin file
