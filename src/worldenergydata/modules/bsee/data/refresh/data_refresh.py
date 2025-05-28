@@ -13,6 +13,8 @@ class DataRefresh:
     """
     This class is responsible for refreshing data in the BSEE module.
     It handles the logic for updating and reloading data as needed.
+    - Download data from BSEE website (#TODO pending)
+    - Convert data to .bin files for application use (#TODO in-progress)
     """
 
     def __init__(self):
