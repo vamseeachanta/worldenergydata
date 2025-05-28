@@ -8,9 +8,7 @@ from loguru import logger
 from worldenergydata.modules.bsee.data.scrapy_well_data import ScrapyRunnerAPI
 from worldenergydata.modules.bsee.data.block_data import BlockData
 
-from assetutilities.common.utilities import is_dir_valid_func
 from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
-from assetutilities.common.utilities import get_repository_filename, get_repository_filepath
 from assetutilities.modules.zip_utilities.zip_files_to_dataframe import ZipFilestoDf
 
 wwy = WorkingWithYAML()

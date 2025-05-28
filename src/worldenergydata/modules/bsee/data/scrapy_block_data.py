@@ -11,12 +11,15 @@ from colorama import Fore, Style
 from colorama import init as colorama_init
 from scrapy import FormRequest  # noqa
 from scrapy.crawler import CrawlerRunner  # noqa
+import warnings
+warnings.filterwarnings("ignore", category=scrapy.exceptions.ScrapyDeprecationWarning)
 
 #from scrapy.crawler import CrawlerProcess  # noqa
 from scrapy.utils.response import (  # noqa useful while program is running
     open_in_browser,
 )
 #from twisted.internet import defer, reactor  # noqa
+from scrapy.utils.reactor import install_reactor
 
 from assetutilities.common.utilities import is_dir_valid_func
 from crochet import setup, wait_for
@@ -38,6 +41,7 @@ class BSEESpider(scrapy.Spider):
         super(BSEESpider, self).__init__(*args, **kwargs)
         self.input_item = input_item
         self.cfg = cfg
+        install_reactor("twisted.internet.asyncioreactor.AsyncioSelectorReactor")
 
     def parse(self, response):
         bottom_block_num = str(self.input_item['bottom_block']['number'])
