@@ -18,7 +18,6 @@ from worldenergydata.common.legacy.data import DateTimeUtility
 from assetutilities.common.data import SaveData
 from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
 from assetutilities.common.visualization.visualization_templates_plotly import VisualizationTemplatesPlotly
-from assetutilities.engine import engine as au_engine
 
 wwy = WorkingWithYAML()
 viz_templates_plotly = VisualizationTemplatesPlotly()
@@ -374,6 +373,8 @@ class ProductionAPI12Analysis():
         return field_df
 
     def plot_production_rate_by_well(self, cfg, prod_rates_df):
+
+        from assetutilities.engine import engine as au_engine
 
         plot_yml = viz_templates_plotly.get_xy_line_df(cfg['Analysis'].copy())
 
