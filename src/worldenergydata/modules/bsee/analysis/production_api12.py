@@ -140,17 +140,17 @@ class ProductionAPI12Analysis():
 
         self.save_result_groups(cfg, api12_array_groups, production_df_api12s, production_summary_df_groups, prod_rate_bopd_groups, prod_cumulative_mmbbl_groups)
 
-        self.plot_production_rate_by_well(cfg, prod_rate_bopd_groups)
-        self.plot_prod_cumulative_mmbbl_by_well(cfg, prod_cumulative_mmbbl_groups)
+        # self.plot_production_rate_by_well(cfg, prod_rate_bopd_groups)
+        # self.plot_prod_cumulative_mmbbl_by_well(cfg, prod_cumulative_mmbbl_groups)
 
         prod_cumulative_mmbbl_groups_by_block = self.convert_well_df_to_block_df(cfg,prod_cumulative_mmbbl_groups)
-        self.plot_prod_cumulative_mmbbl_by_block(cfg, prod_cumulative_mmbbl_groups_by_block)
+        # self.plot_prod_cumulative_mmbbl_by_block(cfg, prod_cumulative_mmbbl_groups_by_block)
 
         prod_cumulative_mmbbl_groups_by_field = self.convert_block_to_field(prod_cumulative_mmbbl_groups_by_block)
-        self.plot_prod_cumulative_mmbbl_by_field(cfg, prod_cumulative_mmbbl_groups_by_field)
+        # self.plot_prod_cumulative_mmbbl_by_field(cfg, prod_cumulative_mmbbl_groups_by_field)
 
         revenue_df = self.generate_revenue_table(cfg,api12_df)
-        self.plot_revenues(cfg, revenue_df)
+        # self.plot_revenues(cfg, revenue_df)
 
         groups_dict['production_df_api12s'] = production_df_api12s
         groups_dict['prod_rate_bopd_groups'] = prod_rate_bopd_groups

@@ -5,7 +5,7 @@ import logging
 from loguru import logger
 
 from worldenergydata.modules.bsee.data.scrapy_well_data import ScrapyRunnerAPI
-from worldenergydata.modules.bsee.data.block_data import BlockData
+from worldenergydata.modules.bsee.data.by_block.block_data import BlockData
 from worldenergydata.modules.bsee.data.apm_data import APMData
 from worldenergydata.modules.bsee.data.prepare_data_for_analysis import PrepareBseeData
 
