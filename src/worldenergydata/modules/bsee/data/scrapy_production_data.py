@@ -4,6 +4,9 @@ from scrapy.crawler import CrawlerRunner  # noqa
 from twisted.internet import reactor, defer  # noqa
 from scrapy import FormRequest  # noqa
 
+import warnings
+warnings.filterwarnings("ignore", category=scrapy.exceptions.ScrapyDeprecationWarning)
+
 import pandas as pd  # noqa
 import os  # noqa
 from io import BytesIO  # noqa

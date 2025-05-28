@@ -12,6 +12,9 @@ from colorama import init as colorama_init
 from scrapy import FormRequest  # noqa
 from scrapy.crawler import CrawlerRunner  # noqa
 
+import warnings
+warnings.filterwarnings("ignore", category=scrapy.exceptions.ScrapyDeprecationWarning)
+
 #from scrapy.crawler import CrawlerProcess  # noqa
 from scrapy.utils.response import (  # noqa useful while program is running
     open_in_browser,
