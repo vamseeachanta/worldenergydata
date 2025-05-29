@@ -40,4 +40,6 @@ requests
 
 xmltodict
 
+colorama
+
 loguru
