@@ -14,8 +14,6 @@ class Block:
         if 'analysis' in cfg and cfg['analysis']['bottom_blocks'] or 'by' in cfg['data'] and cfg['data']['by'] == 'block':
             cfg = self.add_api12_array_by_block_to_cfg(cfg)
 
-
-
         return cfg
     
     def add_api12_array_by_block_to_cfg(self, cfg):
