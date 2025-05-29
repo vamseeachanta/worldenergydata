@@ -39,11 +39,14 @@ The key point to consider from this analysis is ,
 - To resolve this issue, we may need to go with what roy has doing, which is filtering the analysis data by API12s from the downloaded WAR data instead of the online query.
 
 ## Way forward:
-- Keep legacy and unsed code clean
-  - Csv route (Use this going forward)
+- Keep legacy and unused code clean
+  - Csv/bin route (Use this going forward)
   - scrapy query route
-- Test
-  - Compare Julia csv vs. scrapy. 
+  
+- Test - Success ✔️
+  - Compare Julia csv/bin vs. scrapy. 
+    - csv/bin route has Roy's API12s where scrapy route does not.
  - proceed with CSV/bin and try to get Roy's results
   - convert to bin (DONE)
   - Read from bin file
+- Got the Roy's results with csv/bin route.

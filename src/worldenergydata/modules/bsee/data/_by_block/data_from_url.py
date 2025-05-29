@@ -13,11 +13,11 @@ class DataFromURL:
         pass
 
     def router(self, cfg):
-        cfg, block_data_groups = self.get_data(cfg)
+        cfg, block_data_groups = self.get_block_data_groups(cfg)
         
         return cfg, block_data_groups
 
-    def get_data(self, cfg):
+    def get_block_data_groups(self, cfg):
 
         cfg = self.get_block_data_from_website(cfg)
 
@@ -27,7 +27,7 @@ class DataFromURL:
             block_array = group['bottom_block']
             block_array_well_data = []
             for block in block_array:
-                block_df = self.get_block_df(group)
+                block_df = self.get_cfg_df(group)
 
             block_data_group.update({'block_df': block_df})
 
@@ -37,10 +37,10 @@ class DataFromURL:
 
         return cfg, block_data_groups
     
-    def get_block_df(self, group):
+    def get_cfg_df(self, group):
 
-        block_data = pd.read_csv(group['file_name'])
-        return block_data
+        cfg_block_df = pd.read_csv(group['file_name'])
+        return cfg_block_df
 
     def get_block_data_from_website(self, cfg):
 
