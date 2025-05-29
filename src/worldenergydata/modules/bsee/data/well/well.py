@@ -4,8 +4,8 @@ from copy import deepcopy
 import logging
 from loguru import logger
 
-from worldenergydata.modules.bsee.data.scrapy_well_data import ScrapyRunnerAPI
-from worldenergydata.modules.bsee.data.by_block.block_data import BlockData
+from worldenergydata.modules.bsee.data._from_url.scrapy_well_data import ScrapyRunnerAPI
+from worldenergydata.modules.bsee.data._by_block.data_from_url import DataFromURL
 from worldenergydata.modules.bsee.data.apm_data import APMData
 from worldenergydata.modules.bsee.data.prepare_data_for_analysis import PrepareBseeData
 
@@ -18,7 +18,7 @@ wwy = WorkingWithYAML()
 zip_files_to_df = ZipFilestoDf()
 prep_bsee_data = PrepareBseeData()
 
-block_data = BlockData()
+block_data = DataFromURL()
 
 class WellData:
 
