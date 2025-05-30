@@ -32,12 +32,30 @@ class WellRigDays:
 
         try:
             rig_str, api12_war_days = self.get_rig_info_and_rig_days_from_war(cfg, spud_date, td_date, war_summary)
+            rig_days_from_milestone = self.rig_days_from_milestone(cfg, spud_date, td_date)
         except Exception as e:
             logger.error(e)
             rig_str = None
             api12_war_days = None
 
-        return rig_str, api12_war_days
+        rig_analysis_dict = {
+            'rig_str': rig_str,
+            'api12_war_days': api12_war_days,
+            'rig_days_from_milestone': rig_days_from_milestone
+        }
+
+        return rig_analysis_dict
+
+    def rig_days_from_milestone(self, cfg, spud_date, td_date):
+        drilling_days = (td_date - spud_date).days + 1
+        completion_days = 0
+        
+        rig_days_by_milestone = {
+            'drilling_days': drilling_days,
+            'completion_days': completion_days,
+            'rig_days': drilling_days + completion_days
+        }
+        return rig_days_by_milestone
 
     def get_rig_info_and_rig_days_from_war(self, cfg,spud_date, td_date, war_summary):
         try:

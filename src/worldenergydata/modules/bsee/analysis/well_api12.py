@@ -224,19 +224,22 @@ class WellAPI12():
         sidetrack_no, bypass_no, tree_elevation_aml = self.get_st_bp_tree_info(api12_df, well_api12)
         api12_analysis.loc[df_row, ['Sidetrack No', 'Bypass No', 'Tree Height Above Mudline']] = [sidetrack_no, bypass_no, tree_elevation_aml]
 
-        rig_str, api12_war_days = well_rig_days.rig_analysis(cfg, api12_df, api12_eWellWARRawData_mv_war_main, api12_eWellWARRawData_mv_war_main_prop)
+        rig_analysis = well_rig_days.rig_analysis(cfg, api12_df, api12_eWellWARRawData_mv_war_main, api12_eWellWARRawData_mv_war_main_prop)
+        rig_str = rig_analysis['rig_str']
+        api12_war_days = rig_analysis['api12_war_days']
+        rig_days_from_milestone = rig_analysis['rig_days_from_milestone']
 
         api12_analysis['Rigs'] = rig_str
         
         if api12_war_days is not None:
-            api12_analysis['rigdays_dict'] = json.dumps(api12_war_days)
+            api12_analysis['rigdays_by_war'] = json.dumps(api12_war_days)
+            api12_analysis['rigdays_by_milestone'] = json.dumps(rig_days_from_milestone)
             api12_analysis['Drilling Days'] = api12_war_days.get('DRL', 0)
             api12_analysis['Completion Days'] = api12_war_days.get('COM', 0)
         else:
             api12_analysis['rigdays_dict'] = None
             api12_analysis['Drilling Days'] = None
             api12_analysis['Completion Days'] = None
-
 
         try:
             drilling_footage_ft = float(api12_analysis['Total Measured Depth'].iloc[df_row]
