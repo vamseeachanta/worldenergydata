@@ -43,21 +43,6 @@ BoreholeRawData: https://github.com/vamseeachanta/worldenergydata/blob/1691a05e9
 dsptsdelimit: https://github.com/vamseeachanta/worldenergydata/blob/2084250f6055a4f0dae7cafc3844f797bc8b624d/tests/modules/bsee/data/results/Data/by_zip/dsptsdelimit.csv
 
 
-
-## PRoduction Data
-
-  - [ ] https://www.data.bsee.gov/Main/Production.aspx, See OGOR-A (1996-Current) , OGOR-B (1996-Current), OGOR-C (1996-Current) 
-  - [ ] https://www.data.bsee.gov/Main/OGOR-A.aspx
-  - [ ] https://www.data.bsee.gov/Production/Files/ogoradelimit.zip
-  - [ ] https://www.data.bsee.gov/Production/Files/ogora2023delimit.zip
-  - [ ] https://www.data.bsee.gov/Production/Files/ogora2022delimit.zip
-  - [ ] https://www.data.bsee.gov/Production/Files/ogora2021delimit.zip
-  - [ ] ...
-  - [ ] ...
-  - [ ] https://www.data.bsee.gov/Production/Files/ogora1966delimit.zip
-- [ ] TBA
-
-
 ## Economics
 
 https://www.linkedin.com/company/analytics-energy/posts/
@@ -174,11 +159,7 @@ Ok now we got it straighted out!
 
 Guys, I’ve gone back to the data we (Roy & Vamsee) gathered for our WORLD OIL articles in 2020-21 to see if JSM might actually be a commercially viable project since it has produced so much oil compared to the other HPHT Wilcox discoveries. It is clearly the closest any HPHT WILCOX field has come to being a star performer.
 
-
-
 So, see the attached… and, let me know if you think that with Phase IV, JSM will ever actually become a net positive investment for CVX and their partners. Of course, if one has completely written of the lengthy/expensive E&A program, perhaps it can come close.
-
-
 
 Here’s a summary of things I’ve highlighted in the attached:
 

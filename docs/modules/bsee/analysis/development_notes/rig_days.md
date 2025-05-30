@@ -2,7 +2,7 @@
 
 
 ## Way forward:
-- Add Roy's Calculation
+- Utilize database numbers or add Roy's Calculation
 
 
 ### 2025-05-15

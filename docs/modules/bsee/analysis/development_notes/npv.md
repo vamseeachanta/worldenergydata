@@ -1,6 +1,6 @@
-## Revenue
+## NPV Calculation
 - 
 
 ## Way forward:
-- Add percentage differences and close out
+- Add calculation of NPV to the analysis.
 
