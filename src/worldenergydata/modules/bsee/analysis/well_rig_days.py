@@ -31,7 +31,7 @@ class WellRigDays:
         war_summary = self.get_war_days(cfg, war_data, td_date)
 
         try:
-            rig_str, api12_war_days = self.get_rig_info_and_rig_days(cfg, spud_date, td_date, war_summary)
+            rig_str, api12_war_days = self.get_rig_info_and_rig_days_from_war(cfg, spud_date, td_date, war_summary)
         except Exception as e:
             logger.error(e)
             rig_str = None
@@ -39,7 +39,7 @@ class WellRigDays:
 
         return rig_str, api12_war_days
 
-    def get_rig_info_and_rig_days(self, cfg,spud_date, td_date, war_summary):
+    def get_rig_info_and_rig_days_from_war(self, cfg,spud_date, td_date, war_summary):
         try:
             rigs = list(war_summary.RIG_NAME.unique())
 
