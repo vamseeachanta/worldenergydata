@@ -12,4 +12,6 @@
 | ST               | BOREHOLE SIDETRACKED |
 | TA               | TEMPORARILY ABANDONED |
 | VCW              | VOLUME CHAMBER WELL |
-| PND              | PENDING             |
+| PND              | PENDING/UNKNOWN             |
+
+PND means we guessed it as unknown.
