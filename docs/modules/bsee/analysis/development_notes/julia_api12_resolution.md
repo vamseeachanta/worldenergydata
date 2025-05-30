@@ -1,6 +1,5 @@
-## Julia Summary analysis
+## Julia Missing API12s in online query (Closed)
 
-### Missing API12s in online query
 - Some search_by_lease API12s are missing in search by block API12s. 
 - Find out what is the right way to search these wells. If online search is not consistent, we change to csv route.
 
@@ -33,20 +32,23 @@ The key point to consider from this analysis is ,
 - We are filtering the analysis data by api12 data which comes from by block online query (scrapy) and it does not include the API12 608124011100.
 - Roy is filtering his analysis data by API12s which comes from the downloaded WAR data and it includes the API12 608124011100.
 
-### Conclusion
 
+## Way forward 
 - The API12s missing in search by block is due to the fact that the online query (scrapy) does not include this API12, while the downloaded WAR data does.
+
 - To resolve this issue, we may need to go with what roy has doing, which is filtering the analysis data by API12s from the downloaded WAR data instead of the online query.
 
-## Way forward:
-- Keep legacy and unused code clean
-  - Csv/bin route (Use this going forward)
+- Keep legacy and unsed code clean
+  - Csv route (Use this going forward)
   - scrapy query route
-  
-- Test - Success ✔️
-  - Compare Julia csv/bin vs. scrapy. 
-    - csv/bin route has Roy's API12s where scrapy route does not.
- - proceed with CSV/bin and try to get Roy's results
+- Test
+  - Compare Julia csv vs. scrapy. 
+ - proceed with CSV/bin and try to get Roy's results (done)
   - convert to bin (DONE)
   - Read from bin file
-- Got the Roy's results with csv/bin route.
+
+
+### Conclusion
+
+Going by website scrapy query, an API12 was missing. Inconsistent. Therefore, always use the WAR Bin file for all the application.
+
