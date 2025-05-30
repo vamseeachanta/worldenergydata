@@ -14,7 +14,7 @@ class Block:
     
     def router(self, cfg):
 
-        if 'analysis' in cfg and cfg['analysis']['bottom_blocks'] or 'by' in cfg['data'] and cfg['data']['by'] == 'block':
+        if cfg['data']['groups'][0]['bottom_block'] is not None:
             cfg = self.add_api12_array_to_cfg(cfg)
 
         return cfg
