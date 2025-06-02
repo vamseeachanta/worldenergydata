@@ -20,7 +20,6 @@ data:
 analysis:
   flag: True
   api12: True
-  bottom_blocks: True
 
 default:
   log_level: INFO

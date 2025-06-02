@@ -1,7 +1,5 @@
 ## Objective
 
-
-
 ## SME, Roy
 
 Need the following well data

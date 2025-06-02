@@ -3,7 +3,6 @@ import pandas as pd
 from worldenergydata.modules.bsee.data._by_block.data_from_url import DataFromURL
 from worldenergydata.modules.bsee.data._by_block.data_from_bin import DataFromBin
 
-
 block_data_from_url = DataFromURL()
 block_data_from_bin = DataFromBin()
 
@@ -14,7 +13,7 @@ class Block:
     
     def router(self, cfg):
 
-        if cfg['data']['groups'][0]['bottom_block'] is not None:
+        if 'groups' in cfg['data'] and cfg['data']['groups'][0]['bottom_block'] is not None:
             cfg = self.add_api12_array_to_cfg(cfg)
 
         return cfg

@@ -9,7 +9,6 @@ data:
   apm: True
   production_data: True
   groups:
-    # Groups typically are list of entities to run through multiple API numbers or multiple API sets
     # -
     #   block:
     #     area: WR
@@ -31,7 +30,6 @@ data:
 analysis:
   flag: True
   api12: True
-  bottom_blocks: True
 
 
 default:
