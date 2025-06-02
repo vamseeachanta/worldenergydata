@@ -24,7 +24,7 @@ def get_valid_pytest_output_file(pytest_output_file):
 def test_application():
 
     # Comprehensive analysis 
-    input_file = 'query_field_julia_scrapy.yml' 
+    input_file = 'query_field_julia.yml' 
     # input_file = 'query_field_julia_bin.yml'
     # input_file = 'query_field_stmalo.yml'
     # input_file = 'query_field_buckskin.yml'

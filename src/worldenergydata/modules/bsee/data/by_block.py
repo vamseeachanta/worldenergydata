@@ -3,7 +3,6 @@ import pandas as pd
 from worldenergydata.modules.bsee.data._by_block.data_from_url import DataFromURL
 from worldenergydata.modules.bsee.data._by_block.data_from_bin import DataFromBin
 
-
 block_data_from_url = DataFromURL()
 block_data_from_bin = DataFromBin()
 
