@@ -80,7 +80,7 @@ class BSEEDataSpider(scrapy.Spider):
         output_file_name = os.path.join(output_path, api_label + '.csv')
 
         if response.status == 200:
-            logger.debug(f"Data for API{api_label} ...COMPLETE")
+            logger.debug(f"Data for API12 {api_label} ...COMPLETE")
             response_csv = pd.read_csv(BytesIO(response.body))
 
             if response_csv.empty:
