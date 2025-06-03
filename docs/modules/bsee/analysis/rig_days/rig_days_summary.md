@@ -13,7 +13,6 @@ If you guys have any suggestions let me know.   I am plodding along in between d
 Roy.
 
 
-
 ## Summary and Way Forward
 
 - Rig Days by War

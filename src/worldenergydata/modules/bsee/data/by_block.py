@@ -20,7 +20,7 @@ class Block:
     
     def add_api12_array_to_cfg(self, cfg):
 
-        if 'from_bin' in cfg['data'] and cfg['data']['from_bin']:
+        if 'by_bin' in cfg['data'] and cfg['data']['by_bin']:
             cfg, block_data_groups = block_data_from_bin.router(cfg)
         else:
             cfg, block_data_groups = block_data_from_url.router(cfg)

@@ -4,7 +4,6 @@ meta:
 basename: bsee
 
 data:
-  from_bin: True
   production_data: False
   groups:
     - 
