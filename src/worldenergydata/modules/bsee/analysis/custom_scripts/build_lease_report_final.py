@@ -6,7 +6,7 @@ from openpyxl.styles import Alignment, Font
 from datetime import datetime
 from loguru import logger
 
-class BseeCustomAnalysis:
+class BuildLeaseReportFinal:
 
     def router(self, cfg):
         self.build_report(cfg)
