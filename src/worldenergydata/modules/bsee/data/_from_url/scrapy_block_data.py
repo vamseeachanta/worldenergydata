@@ -55,9 +55,9 @@ class BSEESpider(scrapy.Spider):
 
     def step2(self, response):
         if response.status == 200:
-            print(f" {Fore.GREEN} Webpage's Data request is successful{Style.RESET_ALL}")
+            logger.success(f" {Fore.GREEN} Webpage's Data request is successful{Style.RESET_ALL}")
         else:
-            print(f"{Fore.RED}Data request failed to webpage {Style.RESET_ALL}. Status code: {response.status}")
+            logger.error(f"{Fore.RED}Data request failed to webpage {Style.RESET_ALL}. Status code: {response.status}")
 
         bottom_block_num = str(self.input_item['bottom_block']['number'])
         area = str(self.input_item['bottom_block']['area'])
@@ -88,14 +88,14 @@ class BSEESpider(scrapy.Spider):
             response_csv = pd.read_csv(BytesIO(response.body))
             
             if response_csv.empty:
-                print(f"{Fore.RED}Empty dataframe for BLOCK {bottom_block_num}. Skipping CSV file.{Style.RESET_ALL}")
+                logger.warning(f"{Fore.RED}Empty dataframe for BLOCK {bottom_block_num}. Skipping CSV file.{Style.RESET_ALL}")
             else:
                 with open(output_file, 'wb') as f:
                     f.write(response.body)
                     # logger.debug("\n****The Scraped data of given value ****\n")
                     # logger.debug(response_csv)
         else:
-            print(f"{Fore.RED}Failed to get the data for block {bottom_block_num}. Status code: {response.status} {Style.RESET_ALL}")
+            logger.error(f"{Fore.RED}Failed to get the data for block {bottom_block_num}. Status code: {response.status} {Style.RESET_ALL}")
             self.data_store['data'] = pd.DataFrame()
 
 class ScrapyRunnerBlock:

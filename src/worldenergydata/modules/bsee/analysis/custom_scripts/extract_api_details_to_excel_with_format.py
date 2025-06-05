@@ -9,6 +9,11 @@ from openpyxl.styles import numbers
 from loguru import logger
 
 class ExtractAPIDetails:
+    """
+    Extracts Single API12 data from war data.
+    Gets the API12 from the configuration.
+    Reads the war data file, filters by API_WELL_NUMBER, and create an Excel file with formatted dates. 
+    """
 
     def router(self, cfg):
         self.extract_api_details(cfg)

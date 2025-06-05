@@ -8,6 +8,12 @@ from openpyxl import Workbook
 from openpyxl.styles import numbers
 
 class APIRemarksFromSNWAR:
+    """
+    Extracts the required API12 remarks by SN_WAR from war data.
+    Gets the SN_WAR list from a local file created in previous script.
+    Gets the API12 remarks by filtering the war remarks by SN_WAR.
+    The output Excel file contains the SN_WAR, DATE, and TEXT_REMARK.
+    """
 
     def router(self, cfg):
         self.extract_remarks(cfg)
@@ -22,11 +28,12 @@ class APIRemarksFromSNWAR:
         remark_df = pd.read_pickle(remark_file)
         remark_df.columns = [col.strip() for col in remark_df.columns]
 
-        # Load SN_WAR list from a local file (already filtered)
+        # Load SN_WAR list from a local file created (already filtered)
         result_folder = cfg['Analysis']['result_folder']
-        snwar_file = f"api_{api_number}_results_sorted.xlsx"
-        snwar_file = os.path.join(result_folder, snwar_file)
+        snwar_file_name = f"api_{api_number}_results_sorted.xlsx"
+        snwar_file = os.path.join(result_folder, snwar_file_name)
         snwar_df = pd.read_excel(snwar_file, dtype=str)
+
         snwar_list = snwar_df['SN_WAR'].dropna().unique().tolist()
 
         # Filter remark rows

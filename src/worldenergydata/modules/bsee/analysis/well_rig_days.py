@@ -47,6 +47,13 @@ class WellRigDays:
         return rig_analysis_dict
 
     def rig_days_from_milestone(self, cfg, spud_date, td_date, war_data):
+
+        if not spud_date or not td_date:
+            return {
+                'drilling_days': 0,
+                'completion_days': 0,
+                'rig_days': 0
+            }
         drilling_days = (td_date - spud_date).days + 1
 
         war_end_date = war_data['WAR_END_DT'].max() if not war_data['WAR_END_DT'].empty else None
