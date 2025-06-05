@@ -59,6 +59,9 @@ parameters:
     BOREHOLE_STAT_DESC: VOLUME CHAMBER WELL
   - BOREHOLE_STAT_CD: PND
     BOREHOLE_STAT_DESC: PENDING
+  NPV:
+    discount_rate: 0.1
+    well_cost: 10000000
 settings_master: ~
 data_retrieval:
   well:
@@ -127,7 +130,7 @@ Analysis:
   file_name: data_refresh
   file_name_for_overwrite: data_refresh
   log_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\logs
-  start_time: 2025-05-13 12:02:01.297954
+  start_time: 2025-06-02 10:57:54.933851
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\data_refresh.yml

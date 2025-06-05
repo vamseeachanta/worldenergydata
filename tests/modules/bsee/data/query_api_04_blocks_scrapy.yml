@@ -6,8 +6,6 @@ basename: bsee
 
 data:
   by : block
-  bottom_blocks: 
-    flag: True
   groups:
     -
       bottom_block:

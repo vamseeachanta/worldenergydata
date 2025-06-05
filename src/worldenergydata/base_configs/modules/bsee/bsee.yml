@@ -89,6 +89,11 @@ parameters:
 
     ]
 
+  NPV:
+    discount_rate: 0.1
+    well_cost: 10000000
+
+
 settings_master: NULL
 
 data_retrieval:

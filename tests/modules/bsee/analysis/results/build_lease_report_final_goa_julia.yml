@@ -1,0 +1,28 @@
+meta:
+  library: worldenergydata
+  basename: bsee_custom
+  label: goa_julia
+basename: bsee_custom
+data:
+  groups:
+  - lease: G17001
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: true
+    cfg_sensitivities: false
+Analysis:
+  basename: bsee_custom
+  analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis
+  file_name: build_lease_report_final_goa_julia
+  file_name_for_overwrite: build_lease_report_final_goa_julia
+  log_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\logs
+  start_time: 2025-05-20 10:34:57.460687
+  cfg_array_file_names: ~
+  DefaultInputFile: ~
+  CustomInputFile: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\build_lease_report_final.yml
+  result_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results
+  result_data_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data
+  result_plot_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Plot
+  fe_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results
