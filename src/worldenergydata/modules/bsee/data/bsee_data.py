@@ -1,7 +1,7 @@
-from worldenergydata.modules.bsee.data.well import WellData
-from worldenergydata.modules.bsee.data.production import Production
-from worldenergydata.modules.bsee.data.block import Block
-from worldenergydata.modules.bsee.data.data_refresh import DataRefresh
+from worldenergydata.modules.bsee.data.well.well import WellData
+from worldenergydata.modules.bsee.data.production.production import Production
+from worldenergydata.modules.bsee.data.by_block import Block
+from worldenergydata.modules.bsee.data.refresh.data_refresh import DataRefresh
 
 well = WellData()
 production = Production()
@@ -18,7 +18,6 @@ class BSEEData:
         cfg, _ = data_refresh.router(cfg)
 
         cfg = block.router(cfg)
-
 
         cfg, well_data = well.router(cfg)
         cfg, production_data = production.router(cfg)

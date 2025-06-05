@@ -1,0 +1,25 @@
+meta:
+  library: worldenergydata
+  basename: bsee_custom
+  label: NULL
+
+basename: bsee_custom
+
+data:
+  groups:
+    lease : G20351
+    war: data/modules/bsee/bin/war/mv_war_main.bin
+    boreholes: data/modules/bsee/bin/war/mv_war_boreholes_view.bin
+    war_prop : data/modules/bsee/bin/war/mv_war_main_prop.bin
+    war_remarks: data/modules/bsee/bin/war/mv_war_main_prop_remark.bin
+
+analysis:
+  custom_analysis:
+    flag: True
+
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False

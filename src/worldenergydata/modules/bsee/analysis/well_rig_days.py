@@ -31,16 +31,49 @@ class WellRigDays:
         war_summary = self.get_war_days(cfg, war_data, td_date)
 
         try:
-            rig_str, api12_war_days = self.get_rig_info_and_rig_days(cfg, spud_date, td_date, war_summary)
+            rig_str, api12_war_days = self.get_rig_info_and_rig_days_from_war(cfg, spud_date, td_date, war_summary)
+            rig_days_from_milestone = self.rig_days_from_milestone(cfg, spud_date, td_date, war_data)
         except Exception as e:
             logger.error(e)
             rig_str = None
             api12_war_days = None
 
+        rig_analysis_dict = {
+            'rig_str': rig_str,
+            'api12_war_days': api12_war_days,
+            'rig_days_from_milestone': rig_days_from_milestone
+        }
 
-        return rig_str, api12_war_days
+        return rig_analysis_dict
 
-    def get_rig_info_and_rig_days(self, cfg,spud_date, td_date, war_summary):
+    def rig_days_from_milestone(self, cfg, spud_date, td_date, war_data):
+
+        if not spud_date or not td_date:
+            return {
+                'drilling_days': 0,
+                'completion_days': 0,
+                'rig_days': 0
+            }
+        drilling_days = (td_date - spud_date).days + 1
+
+        war_end_date = war_data['WAR_END_DT'].max() if not war_data['WAR_END_DT'].empty else None
+        if war_end_date is not None and td_date is not None:
+            completion_days = (war_end_date - td_date).days + 1
+        # WAR_data_COM_start_date = war_data[war_data['WELL_ACTIVITY_CD']=='COM']['WAR_END_DT'].min()
+        # WAR_data_COM_end_date = war_data[war_data['WELL_ACTIVITY_CD']=='COM']['WAR_END_DT'].max()
+        # completion_days = (WAR_data_COM_end_date - WAR_data_COM_start_date).days + 1
+
+        else:
+            completion_days = 0
+
+        rig_days_by_milestone = {
+            'drilling_days': drilling_days,
+            'completion_days': completion_days,
+            'rig_days': drilling_days + completion_days
+        }
+        return rig_days_by_milestone
+
+    def get_rig_info_and_rig_days_from_war(self, cfg,spud_date, td_date, war_summary):
         try:
             rigs = list(war_summary.RIG_NAME.unique())
 
@@ -66,68 +99,18 @@ class WellRigDays:
 
             api12_war_days_df = war_summary.groupby(['WELL_ACTIVITY_CD'])['rig_days'].sum().reset_index()
             api12_war_days_df_records = api12_war_days_df.to_dict('records')
-            
+
             api12_war_days_dict = {}
             for item in api12_war_days_df_records:
                 api12_war_days_dict.update({item['WELL_ACTIVITY_CD']: item['rig_days']})
-            
-
-            # well_war_npt_days = war_summary['npt'].sum()
-            # try:
-            #     completion_days = api12_war_days[api12_war_days['WELL_ACTIVITY_CD'] ==
-            #                                     'BOREHOLE COMPLETED'].Rig_days.sum()
-            #     npt_days = war_summary[(war_summary['WELL_ACTIVITY_CD'] == 'BOREHOLE COMPLETED')].npt.sum()
-            #     completion_days = completion_days + npt_days
-            # except Exception as e:
-            #     logger.error(e)
-            #     completion_days = 0
-            # try:
-            #     sidetrack_days = api12_war_days[(
-            #         api12_war_days['WELL_ACTIVITY_CD'] == 'BOREHOLE SIDETRACKED')].Rig_days.sum()
-            #     npt_days = war_summary[(war_summary['WELL_ACTIVITY_CD'] == 'BOREHOLE SIDETRACKED')].npt.sum()
-            #     sidetrack_days = sidetrack_days + npt_days
-            # except Exception as e:
-            #     logger.error(e)
-            #     sidetrack_days = 0
-            # try:
-            #     abandon_days = api12_war_days[(api12_war_days['WELL_ACTIVITY_CD'] == 'PERMANENTLY ABANDONED') | (
-            #         api12_war_days['WELL_ACTIVITY_CD'] == 'TEMPORARILY ABANDONED')].Rig_days.sum()
-            #     npt_days = war_summary[(war_summary['WELL_ACTIVITY_CD'] == 'PERMANENTLY ABANDONED') |
-            #                         (war_summary['WELL_ACTIVITY_CD'] == 'TEMPORARILY ABANDONED')].npt.sum()
-            #     abandon_days = abandon_days + npt_days
-            # except Exception as e:
-            #     logger.error(e)
-            #     abandon_days = 0
-            # try:
-            #     war_drilling_days = api12_war_days[(api12_war_days['WELL_ACTIVITY_CD'] == 'DRILLING ACTIVE') | (
-            #         api12_war_days['WELL_ACTIVITY_CD'] == 'DRILLING SUSPENDED')].Rig_days.sum()
-            #     spud_to_td_days = (td_date - spud_date).days + 1
-            #     npt_days = war_summary[(war_summary['WELL_ACTIVITY_CD'] == 'DRILLING ACTIVE') |
-            #                         (war_summary['WELL_ACTIVITY_CD'] == 'DRILLING SUSPENDED')].npt.sum()
-            #     if war_drilling_days_flag:
-            #         spud_to_td_days = war_drilling_days
-            #         npt_days = war_summary[(war_summary['WELL_ACTIVITY_CD'] == 'DRILLING ACTIVE') |
-            #                             (war_summary['WELL_ACTIVITY_CD'] == 'DRILLING SUSPENDED')].npt_raw.sum()
-            #     drilling_days = spud_to_td_days + abandon_days + sidetrack_days + npt_days
-            # except Exception as e:
-            #     logger.error(e)
-            #     drilling_days = 0
-
-            # well_days_dict = {
-            #     'drilling_days': None,
-            #     'abandon_days': None,
-            #     'completion_days': None,
-            #     'well_war_npt_days': None,
-            #     'rigdays_dict': None,
-            #     'total_rigdays': None,
-            #     'api12_war_days': api12_war_days_dict
-            # }
+            rig_days = sum([item['rig_days'] for item in api12_war_days_df_records])
+            api12_war_days_dict.update({'total_rig_days': rig_days})
 
         except Exception as e:
             logger.error(e)
             rig_str = {}
             api12_war_days_dict = {}
-        
+
         return rig_str, api12_war_days_dict
 
     def get_war_days(self, cfg, war_data, td_date):
