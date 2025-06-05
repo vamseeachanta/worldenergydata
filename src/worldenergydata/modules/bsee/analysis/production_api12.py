@@ -393,7 +393,7 @@ class ProductionAPI12Analysis():
             'xlabel': 'PRODUCTION_DATETIME',
             'ylabel': 'production',
             'columns_var_name': 'api12',
-            'customize_xdate_ticks': {'flag': True, 'start_time': '2014-01-01', 'end_time': '2025-04-03'}, 
+            'customize_xdate_ticks': {'flag': True, 'start_time': '2018-01-01', 'end_time': '2025-04-03'}, 
          }
         plot_yml['settings'].update(settings)
         au_engine(inputfile=None, cfg=plot_yml, config_flag=False)

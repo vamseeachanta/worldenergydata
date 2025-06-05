@@ -58,9 +58,9 @@ class BSEEDataSpider(scrapy.Spider):
     # Handle the response of the first form submission
     def step2(self, response):
         if response.status == 200:
-            print(f" {Fore.GREEN} Webpage's Data request is successful{Style.RESET_ALL}")
+            logger.success(f" {Fore.GREEN} Webpage's Data request is successful{Style.RESET_ALL}")
         else:
-            print(f"{Fore.RED}Data request failed to webpage{Style.RESET_ALL}. Status code: {response.status}")
+            logger.error(f"{Fore.RED}Data request failed to webpage{Style.RESET_ALL}. Status code: {response.status}")
 
         # Extract API number from input item
         api_num = str(self.input_item['api12'][0])
@@ -84,7 +84,7 @@ class BSEEDataSpider(scrapy.Spider):
             response_csv = pd.read_csv(BytesIO(response.body))
 
             if response_csv.empty:
-                print(f"{Fore.RED}Empty DataFrame for API {api_label}. Skipping CSV file.{Style.RESET_ALL}")
+                logger.warning(f"{Fore.RED}Empty DataFrame for API {api_label}. Skipping CSV file.{Style.RESET_ALL}")
             else:
                 with open(output_file_name, 'wb') as f:
                     f.write(response.body)
@@ -92,7 +92,7 @@ class BSEEDataSpider(scrapy.Spider):
                 self.data_store['data'] = response_csv  # Store DataFrame in data_store
 
         else:
-            print(f"{Fore.RED}Failed to get the data for API .{api_label}. Status code: {response.status} {Style.RESET_ALL}")
+            logger.error(f"{Fore.RED}Failed to get the data for API .{api_label}. Status code: {response.status} {Style.RESET_ALL}")
             self.data_store['data'] = pd.DataFrame()
 
 # Define a class to run the Scrapy spider

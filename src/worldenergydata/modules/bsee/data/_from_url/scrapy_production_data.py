@@ -52,9 +52,9 @@ class SpiderBsee(scrapy.Spider):
 
     def step2(self, response):
         if response.status == 200:
-            print(f"{Fore.GREEN} Webpage's Data request is successful{Style.RESET_ALL}")
+            logger.success(f"{Fore.GREEN} Webpage's Data request is successful{Style.RESET_ALL}")
         else:
-            print(f"{Fore.RED}Data request failed to webpage{Style.RESET_ALL}. Status code: {response.status}")
+            logger.error(f"{Fore.RED}Data request failed to webpage{Style.RESET_ALL}. Status code: {response.status}")
 
         lease_num = str(self.input_item['lease_number'])
         start = str(self.input_item['Duration']['from'])
@@ -78,7 +78,7 @@ class SpiderBsee(scrapy.Spider):
             response_csv = pd.read_csv(BytesIO(response.body))
             
             if response_csv.empty:
-                print(f"{Fore.RED}Empty DataFrame for lease {lease_num}. Skipping CSV file.{Style.RESET_ALL}")
+                logger.warning(f"{Fore.RED}Empty DataFrame for lease {lease_num}. Skipping CSV file.{Style.RESET_ALL}")
             else:
                 with open(output_file, 'wb') as f:
                     f.write(response.body)
@@ -88,7 +88,7 @@ class SpiderBsee(scrapy.Spider):
                 self.data_store['data'] = response_csv  # Store DataFrame in data_store
                 
         else:
-            print(f"{Fore.RED}Failed to get the data for lease.{lease_num}. Status code: {response.status} {Style.RESET_ALL}")
+            logger.error(f"{Fore.RED}Failed to get the data for lease.{lease_num}. Status code: {response.status} {Style.RESET_ALL}")
             self.data_store['data'] = pd.DataFrame()
 
 # Class to run the Scrapy spider

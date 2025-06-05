@@ -7,6 +7,11 @@ from datetime import datetime
 from loguru import logger
 
 class BuildLeaseReportFinal:
+    """
+    Create a summary report for a specific lease.
+    This script reads data from various files, filters and processes it,
+    Creates an Excel report by filtering required headers and summarizing the drilling activities and other details.
+    """
 
     def router(self, cfg):
         self.build_report(cfg)

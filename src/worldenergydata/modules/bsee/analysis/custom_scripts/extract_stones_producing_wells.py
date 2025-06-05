@@ -1,11 +1,11 @@
 import pandas as pd
 
 # --- Input and Output Files ---
-input_file = "mv_war_main.txt"
+input_file = "data/modules/bsee/bin/war/mv_war_main.bin"
 output_file = "stones_producing_wells.csv"
 
 # --- Load the WAR file ---
-df = pd.read_csv(input_file, dtype=str, low_memory=False)
+df = pd.read_pickle(input_file)
 
 # --- Normalize column names ---
 df.columns = [col.strip() for col in df.columns]

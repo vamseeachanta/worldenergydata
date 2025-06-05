@@ -10,6 +10,12 @@ import pickle
 from loguru import logger
 
 class ExtractRemarksbyAPI:
+    """
+    Extract all API_WELL_NUMBER remarks from war data.
+    Gets the mapping df from the war file, which contains API_WELL_NUMBER and SN_WAR.
+    Reads the war remarks file, filters by SN_WAR, and maps to API_WELL_NUMBER.
+    The output Excel file contains the API_WELL_NUMBER, REMARK_DATE, and REMARK_TEXT.
+    """
 
     def router(self, cfg):
         self.extract_remarks_by_api(cfg)
