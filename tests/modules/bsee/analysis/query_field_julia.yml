@@ -6,7 +6,7 @@ meta:
 basename: bsee
 
 data:
-  by_bin: False
+  by_bin: True
   apm: False
   production_data: True
   groups: 
