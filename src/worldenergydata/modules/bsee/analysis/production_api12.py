@@ -400,109 +400,79 @@ class ProductionAPI12Analysis():
 
     def plot_prod_cumulative_mmbbl_by_well(self, cfg, prod_cumulative_mmbbl_groups):
 
-        df_melted = prod_cumulative_mmbbl_groups.melt(id_vars=['PRODUCTION_DATETIME'], 
-                            var_name='api12', 
-                            value_name='cumulative_production')
+        from assetutilities.engine import engine as au_engine
 
-        df_melted = df_melted.rename(columns={'PRODUCTION_DATETIME': 'Date'})
+        plot_yml = viz_templates_plotly.get_xy_line_df(cfg['Analysis'].copy())
 
-        df_melted = df_melted.dropna(subset=['cumulative_production'])
-        df_melted['Date'] = pd.to_datetime(df_melted['Date'])
-        
-        df_filtered = df_melted[
-                (df_melted['Date'] >= '2010-01-01') &
-                (df_melted['Date'] <= '2025-04-03') &
-                (df_melted['cumulative_production'] >= 10) &
-                (df_melted['cumulative_production'] <= 50) 
-            ]
-
-        fig = px.line(
-            df_filtered,
-            x='Date',
-            y='cumulative_production',
-            color='api12',
-            markers=True,
-            title="Cumulative Production by well"
-        )
-
+        plot_yml['data']['groups'][0]['file_name'] = prod_cumulative_mmbbl_groups
         groups_label = cfg['meta'].get('label', None)
         if groups_label is None:
             groups_label = cfg['Analysis']['file_name_for_overwrite']
 
         file_label = 'prod_cumulative_mmbbl_by_well_' + groups_label
         result_folder = cfg['Analysis']['result_folder']
-        file_name = os.path.join(result_folder,'Plot', file_label + '.html')
-        fig.write_html(file_name, include_plotlyjs="cdn")
+        file_name = os.path.join(result_folder, 'Plot',file_label)
+    
+        settings = {
+            'file_name': file_name, 
+            'title': 'Cumulative Production by well',
+            'xlabel': 'PRODUCTION_DATETIME',
+            'ylabel': 'cumulative_production',
+            'columns_var_name': 'api12',
+            'customize_xdate_ticks': {'flag': True, 'start_time': '2010-01-01', 'end_time': '2025-06-03'}, 
+         }
+        plot_yml['settings'].update(settings)
+        au_engine(inputfile=None, cfg=plot_yml, config_flag=False)
     
     def plot_prod_cumulative_mmbbl_by_block(self, cfg, prod_cumulative_mmbbl_groups_by_block):
 
-        df_melted = prod_cumulative_mmbbl_groups_by_block.melt(id_vars=['PRODUCTION_DATETIME'], 
-                            var_name='block', 
-                            value_name='cumulative_production')
+        from assetutilities.engine import engine as au_engine
+        plot_yml = viz_templates_plotly.get_xy_line_df(cfg['Analysis'].copy())
 
-        df_melted = df_melted.rename(columns={'PRODUCTION_DATETIME': 'Date'})
-        df_melted = df_melted.dropna(subset=['cumulative_production'])
-        df_melted['Date'] = pd.to_datetime(df_melted['Date'])
-        
-        df_filtered = df_melted[
-                (df_melted['Date'] >= '2014-01-01') &
-                (df_melted['Date'] <= '2025-04-03') &
-                (df_melted['cumulative_production'] >= 1) &
-                (df_melted['cumulative_production'] <= 200) 
-            ]
-
-        fig = px.line(
-            df_filtered,
-            x='Date',
-            y='cumulative_production',
-            color='block',
-            markers=True,
-            title="Cumulative Production by block"
-        )
-
+        plot_yml['data']['groups'][0]['file_name'] = prod_cumulative_mmbbl_groups_by_block
         groups_label = cfg['meta'].get('label', None)
         if groups_label is None:
             groups_label = cfg['Analysis']['file_name_for_overwrite']
-
+        
         file_label = 'prod_cumulative_mmbbl_by_block_' + groups_label
         result_folder = cfg['Analysis']['result_folder']
-        file_name = os.path.join(result_folder,'Plot', file_label + '.html')
-        fig.write_html(file_name, include_plotlyjs="cdn")
-    
-    def plot_prod_cumulative_mmbbl_by_field(self, cfg, prod_cumulative_mmbbl_groups_by_field):
-            
-        df_melted = prod_cumulative_mmbbl_groups_by_field.melt(id_vars=['PRODUCTION_DATETIME'], 
-                            var_name='field', 
-                            value_name='cumulative_production')
-
-        df_melted = df_melted.rename(columns={'PRODUCTION_DATETIME': 'Date'})
-        df_melted = df_melted.dropna(subset=['cumulative_production'])
-        df_melted['Date'] = pd.to_datetime(df_melted['Date'])
+        file_name = os.path.join(result_folder, 'Plot', file_label)
+        settings = {
+            'file_name': file_name, 
+            'title': 'Cumulative Production by block',
+            'xlabel': 'PRODUCTION_DATETIME',
+            'ylabel': 'cumulative_production',
+            'columns_var_name': 'block',
+            'customize_xdate_ticks': {'flag': True, 'start_time': '2015-01-01', 'end_time': '2025-06-03'}, 
+         }
         
-        df_filtered = df_melted[
-                (df_melted['Date'] >= '2013-01-01') &
-                (df_melted['Date'] <= '2025-04-03') &
-                (df_melted['cumulative_production'] >= 1) &
-                (df_melted['cumulative_production'] <= 200) 
-            ]
+        plot_yml['settings'].update(settings)
+        au_engine(inputfile=None, cfg=plot_yml, config_flag=False)
 
-        fig = px.line(
-            df_filtered,
-            x='Date',
-            y='cumulative_production',
-            color='field',
-            markers=True,
-            title="Cumulative Production by field"
-        )
+    def plot_prod_cumulative_mmbbl_by_field(self, cfg, prod_cumulative_mmbbl_groups_by_field):
+        
+        from assetutilities.engine import engine as au_engine
+        plot_yml = viz_templates_plotly.get_xy_line_df(cfg['Analysis'].copy())
 
+        plot_yml['data']['groups'][0]['file_name'] = prod_cumulative_mmbbl_groups_by_field
         groups_label = cfg['meta'].get('label', None)
         if groups_label is None:
             groups_label = cfg['Analysis']['file_name_for_overwrite']
-
+        
         file_label = 'prod_cumulative_mmbbl_by_field_' + groups_label
         result_folder = cfg['Analysis']['result_folder']
-        file_name = os.path.join(result_folder,'Plot', file_label + '.html')
-        fig.write_html(file_name, include_plotlyjs="cdn")
+        file_name = os.path.join(result_folder, 'Plot', file_label)
+        settings = {
+            'file_name': file_name, 
+            'title': 'Cumulative Production by field',
+            'xlabel': 'PRODUCTION_DATETIME',
+            'ylabel': 'cumulative_production',
+            'columns_var_name': 'field',
+            'customize_xdate_ticks': {'flag': True, 'start_time': '2013-01-01', 'end_time': '2025-06-03'}, 
+         }
+        
+        plot_yml['settings'].update(settings)
+        au_engine(inputfile=None, cfg=plot_yml, config_flag=False)
     
     def plot_revenues(self, cfg, revenue_df):
         
