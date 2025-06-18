@@ -9,8 +9,9 @@ data:
   by_bin: True
   apm: False
   production_data: True
+  survey: True
   groups: 
-    - 
+    -
       bottom_block:
         area: WR
         number: 584
@@ -20,6 +21,20 @@ data:
 analysis:
   flag: True
   api12: True
+
+economics:
+  flag: True
+  cost:
+    facilities: [4,300,000,000, 0, 500,000,000]
+    OPEX: 15.00 # Per Barrel/BBL
+    well:
+      - bottom_block:
+        area: WR
+        number: 584
+        cost: 300000000
+        recompletion: 100000000
+
+
 
 default:
   log_level: INFO
