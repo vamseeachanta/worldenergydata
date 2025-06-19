@@ -71,20 +71,19 @@ class WellAPI12():
         Analysis is performed on 1 well and visulaization is also done.
         """
 
+        API12_num = cfg['data']['groups'][0]['api12'][0]
         survey_data_path = r"data\modules\bsee\data_for_analysis\by_zip\dsptsdelimit.csv"
         survey_df = pd.read_csv(survey_data_path, low_memory=False)
 
-        API12 = cfg['data']['groups'][0]['api12']
-
-        api12_survey_df = survey_df[survey_df['API_WELL_NUMBER'] == API12]
+        api12_survey_df = survey_df[survey_df['API_WELL_NUMBER'] == API12_num]
         if survey_df.empty:
-            logger.warning(f"No survey data found for API12: {API12}")
+            logger.warning(f"No survey data found for API12: {API12_num}")
             return 
         
         self.generate_plot(cfg, api12_survey_df) 
 
-    def generate_plot(self, cfg, au_engine, viz_templates_plotly, api12_survey_df):
-        
+    def generate_plot(self, cfg,  api12_survey_df):
+
         from assetutilities.common.visualization.visualization_templates_plotly import VisualizationTemplatesPlotly
         from assetutilities.engine import engine as au_engine
         
@@ -97,17 +96,16 @@ class WellAPI12():
         if groups_label is None:
             groups_label = cfg['Analysis']['file_name_for_overwrite']
 
-        file_label = 'prod_rate_by_well_' + groups_label
+        file_label = 'API12_survey_analysis_' + groups_label
         result_folder = cfg['Analysis']['result_folder']
         file_name = os.path.join(result_folder, 'Plot',file_label)
     
         settings = {
             'file_name': file_name, 
-            'title': 'Production Data for API12',
-            'xlabel': 'PRODUCTION_DATETIME',
-            'ylabel': 'production',
-            'columns_var_name': 'api12',
-            'customize_xdate_ticks': {'flag': True, 'start_time': '2018-01-01', 'end_time': '2025-04-03'}, 
+            'title': 'API12_survey_analysis',
+            'xlabel': 'API_WELL_NUMBER',
+            'ylabel': 'Survey_data',
+            'columns_var_name': 'survey_param',
          }
         plot_yml['settings'].update(settings)
         au_engine(inputfile=None, cfg=plot_yml, config_flag=False)       
