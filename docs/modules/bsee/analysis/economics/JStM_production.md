@@ -17,6 +17,8 @@ Tests :
 
   - JStM production analysis
   - NPV calculation
+    - costs (Wells, facilities)... 
+    - revenue (oil price, production).. monthly
 
 #### AI Journal Summary :
 
@@ -61,10 +63,4 @@ The Excel sheet appears to summarize production data (bopd = barrels of oil per 
 
 - Computes average production per well per month.
 
-
-
-
-
-
-  
 
