@@ -9,3 +9,10 @@
   - Well data in blender
     - Install blender (https://www.blender.org/) - ✔️
 
+code starting point
+
+https://github.com/vamseeachanta/worldenergydata/blob/cbad8d0a83fefe71f16f64a486020e461fac0b3c/src/worldenergydata/common/legacy/ong_fd_components.py
+- prepare_well_paths
+- process_survey_xyz
+- add_relative_WH_positions
+- plot_field_wells
