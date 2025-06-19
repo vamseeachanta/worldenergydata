@@ -11,18 +11,13 @@ from colorama import Fore, Style
 from colorama import init as colorama_init
 from scrapy import FormRequest  # noqa
 from scrapy.crawler import CrawlerRunner  # noqa
-
-import warnings
-warnings.filterwarnings("ignore", category=scrapy.exceptions.ScrapyDeprecationWarning)
-
-#from scrapy.crawler import CrawlerProcess  # noqa
 from scrapy.utils.response import (  # noqa useful while program is running
     open_in_browser,
 )
-#from twisted.internet import defer, reactor  # noqa
-
-from assetutilities.common.utilities import is_dir_valid_func
 from crochet import setup, wait_for
+
+import warnings
+warnings.filterwarnings("ignore", category=scrapy.exceptions.ScrapyDeprecationWarning)
 
 setup()
 
@@ -70,6 +65,7 @@ class BSEESpider(scrapy.Spider):
         yield FormRequest.from_response(response, formdata=second_request_data, callback=self.parse_csv_data)
 
     def parse_csv_data(self, response):
+        from assetutilities.common.utilities import is_dir_valid_func
 
         bottom_block_num = str(self.input_item['bottom_block']['number'])
         area = str(self.input_item['bottom_block']['area'])
@@ -92,8 +88,6 @@ class BSEESpider(scrapy.Spider):
             else:
                 with open(output_file, 'wb') as f:
                     f.write(response.body)
-                    # logger.debug("\n****The Scraped data of given value ****\n")
-                    # logger.debug(response_csv)
         else:
             logger.error(f"{Fore.RED}Failed to get the data for block {bottom_block_num}. Status code: {response.status} {Style.RESET_ALL}")
             self.data_store['data'] = pd.DataFrame()

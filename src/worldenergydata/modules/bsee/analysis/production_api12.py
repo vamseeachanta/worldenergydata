@@ -562,15 +562,25 @@ class ProductionAPI12Analysis():
         file_label = 'revenues_table'
         file_name = os.path.join(result_folder, file_label + '.csv')
         df.to_csv(file_name, index=False)
-        self.perform_npv_calculation(cfg, df)
 
         return df
     
-    def perform_npv_calculation(self,cfg,revenue_df):
+    def analyze_JSM_production_data(self, cfg):
+        """
+        Analyze production data and generate various reports and visualizations.
+        """
+        
 
-        #TODO - validate to check if npv is correct
+
+        self.perform_npv_calculation(cfg)
+
+
+    
+    def perform_npv_calculation(self,cfg):
+
+        #TODO - calculate NPV calculation rate %
         discount_rate = 0.1
-        cash_flows = revenue_df['Revenue (USD)'].replace('[\$,]', '', regex=True).astype(float).tolist()
+        cash_flows = cfg['cash_flows']
         # npv = np.npv(discount_rate, cash_flows)
         # logger.debug(f"NPV: ${npv:,.2f}")
 
