@@ -565,16 +565,21 @@ class ProductionAPI12Analysis():
 
         return df
     
-    def analyze_JSM_production_data(self, cfg):
+    def analyze_JSM_production_data(self, cfg,api12_df):
         """
         Analyze production data and generate various reports and visualizations.
         """
-        
 
+        #TODO - JStM production data analysis
+        monthly_oil_data = api12_df[['PRODUCTION_DATE', 'MON_O_PROD_VOL']].copy()
+        monthly_oil_data.rename(columns={'PRODUCTION_DATE': 'Month', 'MON_O_PROD_VOL': 'Monthly Oil Production'}, inplace=True)
+
+        monthly_oil_data['Month'] = pd.to_datetime(monthly_oil_data['Month'], format='%Y%m', errors='coerce')
+        monthly_oil_data['Monthly Oil Production'] = monthly_oil_data['Monthly Oil Production'].replace({np.nan: 0}).astype(float)
+        monthly_oil_data['Avg Price (USD/bbl)'] = 0.0
+        monthly_oil_data['Revenue (USD)'] = 0.0      
 
         self.perform_npv_calculation(cfg)
-
-
     
     def perform_npv_calculation(self,cfg):
 
