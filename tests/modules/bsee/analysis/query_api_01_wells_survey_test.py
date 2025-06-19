@@ -24,9 +24,7 @@ def get_valid_pytest_output_file(pytest_output_file):
 def test_application():
 
     # Comprehensive analysis 
-    input_file = 'query_field_stmalo.yml'
-    # input_file = 'query_field_buckskin.yml'
-    # input_file = 'query_field_quickfire.yml'
+    input_file = 'query_api_01_wells_survey.yml' 
 
     # custom tests
     # input_file = 'custom_analysis.yml'

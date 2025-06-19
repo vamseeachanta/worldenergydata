@@ -61,8 +61,56 @@ class WellAPI12():
 
         self.save_result_groups(cfg, groups_dict)
         self.plot_well_timeline_df(cfg, groups_dict)
+        self.api12_well_survey_analysis(cfg)
 
         return cfg, groups_dict
+    
+    def api12_well_survey_analysis(self, cfg):
+        """
+        Fetches the survey data (dsptsdelimit) for API12 well 
+        Analysis is performed on 1 well and visulaization is also done.
+        """
+
+        survey_data_path = r"data\modules\bsee\data_for_analysis\by_zip\dsptsdelimit.csv"
+        survey_df = pd.read_csv(survey_data_path, low_memory=False)
+
+        API12 = cfg['data']['groups'][0]['api12']
+
+        api12_survey_df = survey_df[survey_df['API_WELL_NUMBER'] == API12]
+        if survey_df.empty:
+            logger.warning(f"No survey data found for API12: {API12}")
+            return 
+        
+        self.generate_plot(cfg, api12_survey_df) 
+
+    def generate_plot(self, cfg, au_engine, viz_templates_plotly, api12_survey_df):
+        
+        from assetutilities.common.visualization.visualization_templates_plotly import VisualizationTemplatesPlotly
+        from assetutilities.engine import engine as au_engine
+        
+        viz_templates_plotly = VisualizationTemplatesPlotly()
+
+        plot_yml = viz_templates_plotly.get_xy_line_df(cfg['Analysis'].copy())
+
+        plot_yml['data']['groups'][0]['file_name'] = api12_survey_df
+        groups_label = cfg['meta'].get('label', None)
+        if groups_label is None:
+            groups_label = cfg['Analysis']['file_name_for_overwrite']
+
+        file_label = 'prod_rate_by_well_' + groups_label
+        result_folder = cfg['Analysis']['result_folder']
+        file_name = os.path.join(result_folder, 'Plot',file_label)
+    
+        settings = {
+            'file_name': file_name, 
+            'title': 'Production Data for API12',
+            'xlabel': 'PRODUCTION_DATETIME',
+            'ylabel': 'production',
+            'columns_var_name': 'api12',
+            'customize_xdate_ticks': {'flag': True, 'start_time': '2018-01-01', 'end_time': '2025-04-03'}, 
+         }
+        plot_yml['settings'].update(settings)
+        au_engine(inputfile=None, cfg=plot_yml, config_flag=False)       
 
     def well_timeline_analysis(self, cfg, well_summary_df_groups):
 

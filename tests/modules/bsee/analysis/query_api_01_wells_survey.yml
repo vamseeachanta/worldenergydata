@@ -1,17 +1,18 @@
 meta:
   library: worldenergydata
   basename: bsee
-
 basename: bsee
 
 data:
-  obtain: True
-  by: zip
+  production_data: False
   groups:
-    - api12: [608164024500, 608164025800, 608164025400, 608164025600]
-      
-production_from_zip:
-   flag: True
+    - 
+      bottom_block: NULL
+      api12: [608124003301] 
+
+analysis:
+  flag: True
+  api12: True
 
 default:
   log_level: INFO

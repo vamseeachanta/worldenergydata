@@ -19,14 +19,11 @@ from scrapy.utils.response import (  # noqa useful while program is running
 from loguru import logger  # noqa
 
 setup()
-
-# Initialize colorama for colored terminal output
 colorama_init()
 
 # Disable propagation of scrapy logs
 logging.getLogger('scrapy').propagate = False
 
-# Define a Scrapy Spider class 
 class BSEEDataSpider(scrapy.Spider):
 
     name = 'API_well_data'
@@ -42,7 +39,6 @@ class BSEEDataSpider(scrapy.Spider):
 
     # Parse the initial response
     def parse(self, response):
-        # Extract API number from input item
         api_num = str([self.input_item['api12']])
         api_label = self.input_item['label']
 
@@ -88,7 +84,6 @@ class BSEEDataSpider(scrapy.Spider):
             else:
                 with open(output_file_name, 'wb') as f:
                     f.write(response.body)
-                    # logger.debug(f"\n****The Scraped data of given value ****\n {response_csv} \nData for API {api_label} ... COMPLETE")
                 self.data_store['data'] = response_csv  # Store DataFrame in data_store
 
         else:
