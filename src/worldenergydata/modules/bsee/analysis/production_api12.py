@@ -152,6 +152,8 @@ class ProductionAPI12Analysis():
         revenue_df = self.generate_revenue_table(cfg,api12_df)
         # self.plot_revenues(cfg, revenue_df)
 
+        self.analyze_JStM_production_data(cfg, api12_df)
+
         groups_dict['production_df_api12s'] = production_df_api12s
         groups_dict['prod_rate_bopd_groups'] = prod_rate_bopd_groups
         groups_dict['prod_cumulative_mmbbl_groups'] = prod_cumulative_mmbbl_groups
@@ -565,7 +567,7 @@ class ProductionAPI12Analysis():
 
         return df
     
-    def analyze_JSM_production_data(self, cfg,api12_df):
+    def analyze_JStM_production_data(self, cfg,api12_df):
         """
         Analyze production data and generate various reports and visualizations.
         """
@@ -575,9 +577,7 @@ class ProductionAPI12Analysis():
         monthly_oil_data.rename(columns={'PRODUCTION_DATE': 'Month', 'MON_O_PROD_VOL': 'Monthly Oil Production'}, inplace=True)
 
         monthly_oil_data['Month'] = pd.to_datetime(monthly_oil_data['Month'], format='%Y%m', errors='coerce')
-        monthly_oil_data['Monthly Oil Production'] = monthly_oil_data['Monthly Oil Production'].replace({np.nan: 0}).astype(float)
-        monthly_oil_data['Avg Price (USD/bbl)'] = 0.0
-        monthly_oil_data['Revenue (USD)'] = 0.0      
+        monthly_oil_data['Monthly Oil Production'] = monthly_oil_data['Monthly Oil Production'].replace({np.nan: 0}).astype(float)  
 
         self.perform_npv_calculation(cfg)
     
