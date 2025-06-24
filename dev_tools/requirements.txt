@@ -18,6 +18,9 @@ PySocks
 python-dateutil
 pytz
 
+matplotlib
+plotly
+
 selenium
 six
 sniffio
@@ -31,8 +34,11 @@ tzdata
 urllib3
 wsproto
 pyyaml
+crochet
+scrapy
 
 assetutilities
+openpyxl
 
 pytest
 deepdiff
@@ -43,3 +49,4 @@ xmltodict
 colorama
 
 loguru
+numpy-financial

@@ -149,10 +149,8 @@ class ProductionAPI12Analysis():
         prod_cumulative_mmbbl_groups_by_field = self.convert_block_to_field(prod_cumulative_mmbbl_groups_by_block)
         # self.plot_prod_cumulative_mmbbl_by_field(cfg, prod_cumulative_mmbbl_groups_by_field)
 
-        revenue_df = self.generate_revenue_table(cfg,api12_df)
-        # self.plot_revenues(cfg, revenue_df)
-
-        self.analyze_JStM_production_data(cfg, api12_df)
+        if "economics" in cfg and cfg['economics']['flag']:
+            revenue_df = self.generate_revenue_table(cfg,api12_df)
 
         groups_dict['production_df_api12s'] = production_df_api12s
         groups_dict['prod_rate_bopd_groups'] = prod_rate_bopd_groups
@@ -564,32 +562,58 @@ class ProductionAPI12Analysis():
         file_label = 'revenues_table'
         file_name = os.path.join(result_folder, file_label + '.csv')
         df.to_csv(file_name, index=False)
+        self.perform_npv_calculation(cfg,df)
 
         return df
     
-    def analyze_JStM_production_data(self, cfg,api12_df):
+    def perform_npv_calculation(self,cfg,revenue_df):
         """
-        Analyze production data and generate various reports and visualizations.
+        Objective: Net Present Value (NPV) of the production data.
+        Args:
+            cfg (dict): Configuration dictionary containing economic parameters.
+            revenue_df (pd.DataFrame): DataFrame containing revenues and production data.
+        Returns:
+            float: The calculated NPV value.
         """
+        import numpy_financial as npf
+        opex_per_bbl = cfg['economics']['cost']['OPEX']
+        annual_discount_rate = cfg['economics']['cost']['discount_rate_annual']
 
-        #TODO - JStM production data analysis
-        monthly_oil_data = api12_df[['PRODUCTION_DATE', 'MON_O_PROD_VOL']].copy()
-        monthly_oil_data.rename(columns={'PRODUCTION_DATE': 'Month', 'MON_O_PROD_VOL': 'Monthly Oil Production'}, inplace=True)
+        facilities = cfg['economics']['cost']['facilities']
+        well_cost = cfg['economics']['cost']['well'][0]['cost']
+        recompletion_cost = cfg['economics']['cost']['well'][0]['recompletion']
+        capex_breakdown = {
+            'well_cost': well_cost,
+            'recompletion_cost': recompletion_cost
+        }
 
-        monthly_oil_data['Month'] = pd.to_datetime(monthly_oil_data['Month'], format='%Y%m', errors='coerce')
-        monthly_oil_data['Monthly Oil Production'] = monthly_oil_data['Monthly Oil Production'].replace({np.nan: 0}).astype(float)  
+        # ---- Calculate revenue, opex, net cash flow ----
+        revenue_df['Revenue (USD)'] = (
+            revenue_df['Revenue (USD)']
+            .astype(str)
+            .str.replace('$', '', regex=False)
+            .str.replace(',', '', regex=False)
+            .astype(float)
+        )
+        revenue_df['Monthly Oil Production'] = pd.to_numeric(revenue_df['Monthly Oil Production'], errors='coerce')
+        revenue_df['OPEX'] = revenue_df['Monthly Oil Production'] * opex_per_bbl
+        revenue_df['Net Cash Flow'] = revenue_df['Revenue (USD)'] - revenue_df['OPEX']
 
-        self.perform_npv_calculation(cfg)
-    
-    def perform_npv_calculation(self,cfg):
+        # ---- Combine with CAPEX ----
+        total_capex = sum(capex_breakdown.values())
+        if facilities:
+            total_capex += sum(facilities)
+        capex_month_0 = -total_capex
+        cash_flows = [capex_month_0] + revenue_df['Net Cash Flow'].tolist()
 
-        #TODO - calculate NPV calculation rate %
-        discount_rate = 0.1
-        cash_flows = cfg['cash_flows']
-        # npv = np.npv(discount_rate, cash_flows)
-        # logger.debug(f"NPV: ${npv:,.2f}")
+        # ---- Convert annual rate to monthly rate ----
+        monthly_discount_rate = (1 + annual_discount_rate) ** (1 / 12) - 1
 
-        # return npv
+        # ---- Compute NPV ----
+        npv_value = npf.npv(monthly_discount_rate, cash_flows)
+        cfg[cfg['basename']].update({'npv': npv_value})
+
+        return npv_value
 
     def perform_decline_analysis_api12(self, cfg, api12_df):
         #TODO

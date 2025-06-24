@@ -1,0 +1,44 @@
+meta:
+  library: worldenergydata
+  basename: bsee
+  label: goa_stmalo
+
+basename: bsee
+
+data:
+  apm: False
+  production_data: True
+  groups:
+    -
+      bottom_block:
+        area: WR
+        number: 678
+      api12: NULL
+    - 
+      bottom_block:
+        area: WR
+        number: 759
+      api12: NULL
+
+economics:
+  flag: True
+  cost:
+    facilities: [4300000000, 0, 500000000]
+    OPEX: 15.00 # Per Barrel/BBL
+    well:
+      - bottom_block:
+        area: WR
+        number: [678, 759]
+        cost: 300000000
+        recompletion: 100000000
+
+analysis:
+  flag: True
+  api12: True
+
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False

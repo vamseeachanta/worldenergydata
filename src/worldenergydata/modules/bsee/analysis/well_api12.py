@@ -11,7 +11,9 @@ import numpy as np
 from assetutilities.common.data import Transform
 from worldenergydata.modules.bsee.analysis.well_rig_days import WellRigDays
 
+from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
 
+wwy = WorkingWithYAML()
 transform = Transform()
 well_rig_days = WellRigDays()
 
@@ -61,54 +63,8 @@ class WellAPI12():
 
         self.save_result_groups(cfg, groups_dict)
         self.plot_well_timeline_df(cfg, groups_dict)
-        self.api12_well_survey_analysis(cfg)
 
-        return cfg, groups_dict
-    
-    def api12_well_survey_analysis(self, cfg):
-        """
-        Fetches the survey data (dsptsdelimit) for API12 well 
-        Analysis is performed on 1 well and visulaization is also done.
-        """
-
-        API12_num = cfg['data']['groups'][0]['api12'][0]
-        survey_data_path = r"data\modules\bsee\data_for_analysis\by_zip\dsptsdelimit.csv"
-        survey_df = pd.read_csv(survey_data_path, low_memory=False)
-
-        api12_survey_df = survey_df[survey_df['API_WELL_NUMBER'] == API12_num]
-        if survey_df.empty:
-            logger.warning(f"No survey data found for API12: {API12_num}")
-            return 
-        
-        self.generate_plot(cfg, api12_survey_df) 
-
-    def generate_plot(self, cfg,  api12_survey_df):
-
-        from assetutilities.common.visualization.visualization_templates_plotly import VisualizationTemplatesPlotly
-        from assetutilities.engine import engine as au_engine
-        
-        viz_templates_plotly = VisualizationTemplatesPlotly()
-
-        plot_yml = viz_templates_plotly.get_xy_line_df(cfg['Analysis'].copy())
-
-        plot_yml['data']['groups'][0]['file_name'] = api12_survey_df
-        groups_label = cfg['meta'].get('label', None)
-        if groups_label is None:
-            groups_label = cfg['Analysis']['file_name_for_overwrite']
-
-        file_label = 'API12_survey_analysis_' + groups_label
-        result_folder = cfg['Analysis']['result_folder']
-        file_name = os.path.join(result_folder, 'Plot',file_label)
-    
-        settings = {
-            'file_name': file_name, 
-            'title': 'API12_survey_analysis',
-            'xlabel': 'API_WELL_NUMBER',
-            'ylabel': 'Survey_data',
-            'columns_var_name': 'survey_param',
-         }
-        plot_yml['settings'].update(settings)
-        au_engine(inputfile=None, cfg=plot_yml, config_flag=False)       
+        return cfg, groups_dict       
 
     def well_timeline_analysis(self, cfg, well_summary_df_groups):
 
@@ -182,11 +138,13 @@ class WellAPI12():
         api12_analysis = None
         api12_analysis = self.get_well_borehole_data(well_data, api12_analysis)
         api12_analysis = self.get_sidetracklabel_and_rig_rigdays(cfg, well_data, api12_analysis)
+        # api10_directional_surveys = self.get_directional_surveys_by_api10(cfg)
 
         try:
             # TODO fix and Relocate as needed.
             #self.prepare_casing_data(api12_well_data, well_tubulars_data)
             #self.prepare_completion_data(completion_data)
+            # self.prepare_well_paths(api10_directional_surveys)
             self.prepare_formation_data()
         except Exception as e:
             logger.error(e)
@@ -194,19 +152,63 @@ class WellAPI12():
         logger.info("API12 data analysis ... COMPLETE")
 
         return cfg, api12_analysis
+    
+    def get_directional_surveys_by_api10(self, cfg):
+        """
+        Fetches the survey data (dsptsdelimit) for API12 well 
+        Analysis is performed on 1 well and visulaization is also done.
+        """
+
+        API12_num = cfg['data']['groups'][0]['api12'][0]
+        survey_data_path = r"data\modules\bsee\bin\dsptsdelimit"
+        library_name = 'worldenergydata'
+        library_file_cfg = {
+            'filepath': survey_data_path,
+            'library_name': library_name
+        }
+        library_path = wwy.get_library_filepath(library_file_cfg, src_relative_location_flag=False)
+        file = os.path.join(library_path, 'dsptsdelimit.bin')
+        survey_df = pd.read_pickle(file)
+
+        api12_survey_df = survey_df[survey_df['API_WELL_NUMBER'] == API12_num].copy()
+        if api12_survey_df.empty:
+            logger.warning(f"No survey data found for API12: {API12_num}")
+            return 
+        api12_survey_df['API10'] = api12_survey_df['API_WELL_NUMBER'].astype(str).str[:10]
+        api10_survey_df = api12_survey_df.drop(columns=['API_WELL_NUMBER'])
+        
+        return api10_survey_df
 
     def get_well_borehole_data(self, well_data, api12_analysis):
 
         # api12_df = well_data['api12_df']
         #api12_eWellAPDRawData = well_data['api12_eWellAPDRawData']
         borehole_raw_data = well_data['api12_BoreholeRawData']
-        if not borehole_raw_data.empty:
-            api12_BoreholeRawData = well_data['api12_BoreholeRawData']
-            
-        API12 = str(api12_BoreholeRawData['API_WELL_NUMBER'].iloc[0])
-        API10 = API12[0:10]
-        TOTAL_DEPTH_DATE = pd.to_datetime(api12_BoreholeRawData['TOTAL_DEPTH_DATE'].max())
-        WELL_SPUD_DATE = pd.to_datetime(api12_BoreholeRawData['WELL_SPUD_DATE'].max())
+
+        if borehole_raw_data.empty:
+            return pd.DataFrame([{
+                'API12': '',
+                'API10': '',
+                'TOTAL_DEPTH_DATE': pd.NaT,
+                'WELL_SPUD_DATE': pd.NaT,
+                'COMPLETION_NAME': ''
+            }])
+
+        try:
+            API12 = str(borehole_raw_data['API_WELL_NUMBER'].iloc[0])
+        except (IndexError, KeyError):
+            API12 = ''
+
+        API10 = API12[:10] if API12 else ''
+
+        TOTAL_DEPTH_DATE = pd.to_datetime(
+            borehole_raw_data['TOTAL_DEPTH_DATE'].max(), errors='coerce'
+        )
+
+        WELL_SPUD_DATE = pd.to_datetime(
+            borehole_raw_data['WELL_SPUD_DATE'].max(), errors='coerce'
+        )
+
         COMPLETION_NAME = ""
 
         api12_analysis_dict = {
@@ -220,6 +222,7 @@ class WellAPI12():
         api12_analysis = pd.DataFrame([api12_analysis_dict])
 
         return api12_analysis
+
 
     def get_sidetracklabel_and_rig_rigdays(self, cfg, well_data, api12_analysis):
 
@@ -255,19 +258,19 @@ class WellAPI12():
             api12_analysis['Total Measured Depth'] = api12_df['BH_TOTAL_MD'].iloc[0]
             api12_analysis['O_PROD_STATUS'] = 0
             api12_analysis['Sidetrack and Bypass'] = api12_df['WELL_NAME_SUFFIX']
-
+ 
         api12_analysis['Rigs'] = ""
         api12_analysis['rigdays_dict'] = ""
         api12_analysis['Drilling Days'] = 0
         api12_analysis['Completion Days'] = 0
 
-
         df_row = 0
-        well_api12 = api12_analysis.API12.iloc[df_row]
-        well_api10 = api12_analysis.API10.iloc[df_row]
-        logger.debug(f"Processing well: {well_api12}")
+        API12_val = api12_analysis.API12.iloc[0]
+        if pd.notna(API12_val) and str(API12_val).strip() != "":
+            well_api12 = api12_analysis.API12.iloc[df_row]
+            logger.debug(f"Processing well: {well_api12}")
 
-        sidetrack_no, bypass_no, tree_elevation_aml = self.get_st_bp_tree_info(api12_df, well_api12)
+        sidetrack_no, bypass_no, tree_elevation_aml = self.get_st_bp_tree_info(api12_df)
         api12_analysis.loc[df_row, ['Sidetrack No', 'Bypass No', 'Tree Height Above Mudline']] = [sidetrack_no, bypass_no, tree_elevation_aml]
 
         rig_analysis = well_rig_days.rig_analysis(cfg, api12_df, api12_eWellWARRawData_mv_war_main, api12_eWellWARRawData_mv_war_main_prop)
@@ -305,7 +308,7 @@ class WellAPI12():
 
         return api12_analysis
 
-    def get_st_bp_tree_info(self, api12_df, api12):
+    def get_st_bp_tree_info(self, api12_df):
         sidetrack_no = 0
         bypass_no = 0
         tree_elevation_aml = None
@@ -358,6 +361,61 @@ class WellAPI12():
         self.output_completions['COMP_y_rel'] = self.output_completions['COMP_y'] - field_y_ref
         self.output_completions['Field NickName'] = self.cfg['custom_parameters']['field_nickname']
 
+    def prepare_well_paths(self, directional_surveys):
+        self.output_well_path_for_db = {}
+        self.output_data_well_path = {}
+        API12_list = list(directional_surveys.API12.unique())
+        count = 0
+        for api12 in API12_list:
+            count = count + 1
+            api12_dir_survey_df = directional_surveys[directional_surveys.API12 == api12].copy()
+            api12_dir_survey_df['az'] = 0
+            api12_dir_survey_df['inc'] = 0
+            api12_dir_survey_df['md'] = api12_dir_survey_df['SURVEY_POINT_MD']
+
+            for df_row in range(0, len(api12_dir_survey_df)):
+                WELL_N_S_CODE = api12_dir_survey_df.iloc[df_row]['WELL_N_S_CODE']
+                WELL_E_W_CODE = api12_dir_survey_df.iloc[df_row]['WELL_E_W_CODE']
+                Azimuth_quadrant_angle = api12_dir_survey_df.iloc[df_row][
+                    'DIR_DEG_VAL'] + api12_dir_survey_df.iloc[df_row]['DIR_MINS_VAL'] / 60
+                Inclination = api12_dir_survey_df.iloc[df_row][
+                    'INCL_ANG_DEG_VAL'] + api12_dir_survey_df.iloc[df_row]['INCL_ANG_MIN_VAL'] / 60
+                if (WELL_N_S_CODE == 'N'):
+                    if (WELL_E_W_CODE == 'E'):
+                        Azimuth = Azimuth_quadrant_angle
+                    else:
+                        Azimuth = 360 - Azimuth_quadrant_angle
+                else:
+                    if (WELL_E_W_CODE == 'E'):
+                        Azimuth = 180 - Azimuth_quadrant_angle
+                    else:
+                        Azimuth = 180 + Azimuth_quadrant_angle
+                api12_dir_survey_df['az'].iloc[df_row] = Azimuth
+                api12_dir_survey_df['inc'].iloc[df_row] = Inclination
+
+            print('Processing Survey for api12 {} of {}'.format(count, len(API12_list)))
+            survey_xyz = self.process_survey_xyz(api12_dir_survey_df)
+            survey_xyz_wh_adjusted = self.add_relative_WH_positions(api12, survey_xyz)
+            self.output_data_well_path.update({api12: survey_xyz_wh_adjusted})
+            survey_for_db = pd.DataFrame()
+            survey_for_db['x'] = survey_xyz_wh_adjusted['x_coor']
+            survey_for_db['y'] = survey_xyz_wh_adjusted['y_coor']
+            survey_for_db['z'] = survey_xyz_wh_adjusted['z_coor']
+            survey_for_db = survey_for_db.round(decimals=1)
+            try:
+                api10_value = self.get_API10_from_well_API(api12)
+                label = self.output_data_well_df[self.output_data_well_df.API10 == api10_value]['Well Name'].values[
+                    0] + '-' + self.output_data_well_df[self.output_data_well_df.API10 ==
+                                                        api10_value]['Sidetrack and Bypass'].values[0]
+                label = label.strip()
+            except:
+                label = str(api12)
+            output_well_path_for_db = {"data": survey_for_db.to_dict(orient='records'), "label": label}
+            temp_df = self.output_data_api12_df[(self.output_data_api12_df.API12 == api12)].copy()
+            if len(temp_df) > 0 and len(survey_for_db) > 0:
+                df_row_index = temp_df.index[0]
+                self.output_data_api12_df['xyz'].iloc[df_row_index] = json.dumps(output_well_path_for_db)
+    
     def prepare_formation_data(self):
         pass
 
@@ -391,3 +449,143 @@ class WellAPI12():
         result_folder = cfg['Analysis']['result_folder']
         file_name = os.path.join(result_folder, 'Plot',file_label + '.html')
         fig.write_html(file_name, include_plotlyjs="cdn")
+    
+    def process_survey_xyz(self, survey):
+        # calcualted x is northing and y is easting
+        import numpy as np
+        import pandas as pd
+        survey_xyz = survey[['md', 'inc', 'az']]
+        survey_xyz = survey_xyz.sort_values(by=['md'])
+        survey_xyz = survey_xyz.reset_index(drop=True)
+        survey_xyz = survey_xyz.drop_duplicates(subset=['md'], keep='first')
+
+        survey_xyz.loc[:, 'inc_diff'] = survey_xyz['inc'].diff()
+        survey_xyz.loc[:, 'md_diff'] = survey_xyz['md'].diff()
+        survey_xyz.loc[:, 'az_diff'] = survey_xyz['az'].diff()
+        survey_xyz = survey_xyz.fillna(0)
+
+        for i in range(0, np.shape(survey_xyz)[0]):
+            if survey_xyz['az_diff'].iloc[i] > 180:
+                survey_xyz.loc[i, 'az_diff'] = survey_xyz.loc[i, 'az_diff'] - 360
+            elif survey_xyz['az_diff'].iloc[i] < -180:
+                survey_xyz.loc[i, 'az_diff'] = survey_xyz.loc[i, 'az_diff'] + 360
+
+        survey_xyz.loc[:, 'inc_ave'] = survey_xyz['inc'].rolling(window=2).mean()
+        survey_xyz.loc[:, 'build_rate'] = survey_xyz['inc_diff'] / survey_xyz['md_diff']
+        survey_xyz.loc[:, 'turn_rate'] = survey_xyz['az_diff'] / survey_xyz['md_diff']
+
+        md_diff = np.array(survey_xyz['md_diff'][1:])
+        build_rate = np.array(survey_xyz['build_rate'])
+        turn_rate = np.array(survey_xyz['turn_rate'])
+
+        inc_ave = np.array(survey_xyz['inc_ave']) * np.pi / 180
+        inc_start = np.array(survey_xyz['inc'][:-1]) * np.pi / 180
+        inc_end = np.array(survey_xyz['inc'][1:]) * np.pi / 180
+        az_start = np.array(survey_xyz['az'][:-1]) * np.pi / 180
+        az_end = np.array(survey_xyz['az'][1:]) * np.pi / 180
+
+        x_coor = np.array(np.zeros([np.shape(survey_xyz)[0], 1]))
+        y_coor = np.array(np.zeros([np.shape(survey_xyz)[0], 1]))
+        z_coor = np.array(np.zeros([np.shape(survey_xyz)[0], 1]))
+
+        dog_leg_sq = np.sin((inc_end - inc_start) / 2) ** 2 + np.sin(inc_start) * np.sin(inc_end) * \
+                     np.sin((az_end - az_start) / 2) ** 2
+        dog_leg = 2 * np.arcsin(np.sqrt(dog_leg_sq))
+        dog_leg[dog_leg < 10**-6] = 10**-6
+        rf = md_diff / dog_leg * np.tan(dog_leg / 2)
+
+        delta_x = (np.sin(inc_start) * np.cos(az_start) + np.sin(inc_end) * np.cos(az_end)) * rf
+        delta_y = (np.sin(inc_start) * np.sin(az_start) + np.sin(inc_end) * np.sin(az_end)) * rf
+        delta_z = (np.cos(inc_start) + np.cos(inc_end)) * rf
+
+        x_coor[1:, 0] = np.cumsum(delta_x)
+        y_coor[1:, 0] = np.cumsum(delta_y)
+        z_coor[1:, 0] = np.cumsum(delta_z)
+        dz = np.diff(z_coor, axis=0)
+        dz = np.insert(dz, 0, 0, axis=0)
+
+        dls = np.sqrt(build_rate**2 + (np.sin(inc_ave))**2 * turn_rate**2)
+        dls = dls.reshape(dls.shape[0], 1)
+        xyz_table = pd.DataFrame(np.hstack((x_coor, y_coor, z_coor, dz, dls)),
+                                 columns=['x_coor', 'y_coor', 'z_coor', 'dz', 'dls'])
+        survey_xyz = pd.concat([survey_xyz, xyz_table], axis=1)
+        survey_xyz.fillna(0, inplace=True)
+
+        return survey_xyz
+    
+    def add_relative_WH_positions(self, api12, survey_xyz):
+        api12_df = self.output_data_api12_df[self.output_data_api12_df.API12 == api12].copy()
+        survey_xyz_wh_adjusted = survey_xyz.copy()
+        survey_xyz_wh_adjusted['x_coor'] = survey_xyz_wh_adjusted['x_coor'] + api12_df.SURF_x_rel.iloc[0]
+        survey_xyz_wh_adjusted['y_coor'] = survey_xyz_wh_adjusted['y_coor'] + api12_df.SURF_y_rel.iloc[0]
+
+        return survey_xyz_wh_adjusted
+    
+    def plot_field_wells(self):
+        if self.output_data_well_path:
+            import matplotlib.pyplot as plt
+            from mpl_toolkits import mplot3d
+            fig = plt.figure()
+            ax = fig.add_subplot(111, projection='3d')
+            api12_list = list(self.output_data_well_path.keys())
+            labels_plotted = []
+            for api12 in api12_list:
+                api10 = self.get_API10_from_well_API(api12)
+                # stones_custom_list = [6081240095, 6081240099, 6081240117, 6081240104, 6081240123, 6081240112, 6081240110]
+                # custom_list = [6081240095, 6081240099, 6081240117, 6081240104, 6081240123, 6081240112, 6081240110]
+                # if api10 in custom_list:
+                custom_list = []
+                if api10 not in custom_list:
+                    survey_xyz = self.output_data_well_path[api12]
+                    x, y, z = survey_xyz['x_coor'], survey_xyz['y_coor'], survey_xyz['z_coor']
+                    try:
+                        api10_value = self.get_API10_from_well_API(api12)
+                        label = self.output_data_well_df[self.output_data_well_df.API10 == api10_value][
+                            'Well Name'].values[0] + '-' + self.output_data_well_df[
+                                self.output_data_well_df.API10 == api10_value]['Sidetrack and Bypass'].values[0]
+                        label = label.strip()
+                    except:
+                        label = str(api12)
+                    if label not in labels_plotted:
+                        labels_plotted.append(label)
+                        ax.plot3D(x, y, z, label=label, linewidth=1)
+                        ax.xaxis.set_tick_params(labelsize=7)
+                        ax.yaxis.set_tick_params(labelsize=7)
+                        ax.zaxis.set_tick_params(labelsize=7)
+                        ax.set_xlabel('Easting (ft)', fontsize=8)
+                        ax.set_ylabel('Northing (ft)', fontsize=8)
+                        ax.set_zlabel('TVD (ft)', fontsize=8)
+
+            ax.invert_zaxis()
+            xy_equal_flag = True
+            if xy_equal_flag:
+                import math
+                ylim_old = ax.get_ylim()
+                xlim_old = ax.get_xlim()
+                ylim_new = []
+                xlim_new = []
+                yrange = ylim_old[1] - ylim_old[0]
+                xrange = xlim_old[1] - xlim_old[0]
+                if yrange > xrange:
+                    range = round(yrange / 1000) * 1000
+                    ylim_new.append(math.floor(ylim_old[0] / 1000) * 1000)
+                    ylim_new.append(math.ceil(ylim_old[1] / 1000) * 1000)
+                    range = ylim_new[1] - ylim_new[0]
+                    xlim_new.append(math.floor(xlim_old[0] / 1000) * 1000)
+                    xlim_new.append(range + xlim_new[0])
+                else:
+                    xlim_new.append(math.floor(xlim_old[0] / 1000) * 1000)
+                    xlim_new.append(math.ceil(xlim_old[1] / 1000) * 1000)
+                    range = xlim_new[1] - xlim_new[0]
+                    ylim_new.append(math.floor(ylim_old[0] / 1000) * 1000)
+                    ylim_new.append(range + ylim_new[0])
+
+                ax.set_xlim(xlim_new)
+                ax.set_ylim(xlim_new)
+            ax.legend(bbox_to_anchor=(1, 0), loc="lower right", bbox_transform=fig.transFigure, ncol=5, fontsize=6)
+            fig.savefig(self.cfg['Analysis']['result_folder'] + self.cfg['Analysis']['file_name_for_overwrite'] +
+                        '_well_paths.png',
+                        bbox_inches='tight',
+                        dpi=800)
+            plt.close()
+

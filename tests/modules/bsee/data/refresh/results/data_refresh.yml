@@ -13,8 +13,8 @@ parameters:
     block: data/modules/bsee/block
     APD: data/modules/bsee/csv/online_query_raw_data
     apm:
-      zip: data/modules/bsee/zip/apm
-      bin: data/modules/bsee/bin/apm
+      zip: data/modules/bsee/zip/dsptsdelimit
+      bin: data/modules/bsee/bin/dsptsdelimit
       columns:
       - - MMS_COMPANY_NUM
         - API_WELL_NUMBER
@@ -130,7 +130,7 @@ Analysis:
   file_name: data_refresh
   file_name_for_overwrite: data_refresh
   log_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\logs
-  start_time: 2025-06-07 10:53:22.421819
+  start_time: 2025-06-24 21:05:20.561288
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\data_refresh.yml

@@ -37,11 +37,11 @@ class WellData:
         return cfg, well_data_groups
 
     def get_well_data_all_wells(self, cfg):
-        BoreholeRawData_df = self.get_BoreholeRawData_from_csv(cfg)
-        eWellAPDRawData_df = self.get_eWellAPDRawData_from_csv(cfg)
-        eWellEORRawData_df = self.get_eWellEORRawData_from_csv(cfg)
-        eWellWARRawData_mv_war_main_df = self.get_eWellWARRawData_mv_war_main_from_csv(cfg)
-        eWellWARRawData_mv_war_main_prop_df = self.get_eWellWARRawData_mv_war_main_prop_from_csv(cfg)
+        BoreholeRawData_df = self.get_BoreholeRawData_from_bin(cfg)
+        eWellAPDRawData_df = self.get_eWellAPDRawData_from_bin(cfg)
+        eWellEORRawData_df = self.get_eWellEORRawData_from_bin(cfg)
+        eWellWARRawData_mv_war_main_df = self.get_eWellWARRawData_mv_war_main_from_bin(cfg)
+        eWellWARRawData_mv_war_main_prop_df = self.get_eWellWARRawData_mv_war_main_prop_from_bin(cfg)
 
         bsee_csv_data = {'BoreholeRawData_df': BoreholeRawData_df, 
                          'eWellAPDRawData_df': eWellAPDRawData_df, 
@@ -209,13 +209,13 @@ class WellData:
         
         return output_data
     
-    def get_BoreholeRawData_from_csv(self, cfg):
+    def get_BoreholeRawData_from_bin(self, cfg):
 
-        file_name = 'BoreholeRawData_mv_boreholes_all.csv'
+        file_name = 'mv_boreholes_all.bin'
 
         library_name = 'worldenergydata'
         library_file_cfg = {
-            'filename': f"data/modules/bsee/csv/online_query_raw_data/{file_name}",
+            'filename': f"data/modules/bsee/bin/borehole/{file_name}",
             'library_name': library_name,
             'repository_path': None
         }
@@ -224,7 +224,7 @@ class WellData:
         logging.debug(f"file_name: {file_name}")
 
         if file_is_valid:
-            df = pd.read_csv(file_name, low_memory=False)
+            df = pd.read_pickle(file_name)
             borehole_codes = cfg['parameters']['borehole_codes']
 
             BOREHOLE_STAT_CD = df['BOREHOLE_STAT_CD']
@@ -243,13 +243,13 @@ class WellData:
 
         return df
 
-    def get_eWellEORRawData_from_csv(self, cfg):
+    def get_eWellEORRawData_from_bin(self, cfg):
 
-        file_name = 'eWellEORRawData_mv_eor_mainquery.csv'
+        file_name = 'mv_eor_mainquery.bin'
 
         library_name = 'worldenergydata'
         library_file_cfg = {
-            'filename': f"data/modules/bsee/csv/online_query_raw_data/{file_name}",
+            'filename': f"data/modules/bsee/bin/eor/{file_name}",
             'library_name': library_name,
             'repository_path': None
         }
@@ -258,20 +258,20 @@ class WellData:
         logging.debug(f"file_name: {file_name}")
 
         if file_is_valid:
-            df = pd.read_csv(file_name, low_memory=False)
+            df = pd.read_pickle(file_name)
         else:
             raise Exception(f"File not found: {file_name}")
 
         return df
 
-    def get_eWellAPDRawData_from_csv(self, cfg):
+    def get_eWellAPDRawData_from_bin(self, cfg):
 
         # Load CSV files
-        file_name = 'eWellAPDRawData_mv_apd_main.csv'
+        file_name = 'mv_apd_main.bin'
 
         library_name = 'worldenergydata'
         library_file_cfg = {
-            'filename': f"data/modules/bsee/csv/online_query_raw_data/{file_name}",
+            'filename': f"data/modules/bsee/bin/apd/{file_name}",
             'library_name': library_name,
             'repository_path': None
         }
@@ -280,20 +280,20 @@ class WellData:
         logging.debug(f"file_name: {file_name}")
 
         if file_is_valid:
-            df = pd.read_csv(file_name, low_memory=False)
+            df = pd.read_pickle(file_name)
         else:
             raise Exception(f"File not found: {file_name}")
 
         return df
 
-    def get_eWellWARRawData_mv_war_main_from_csv(self, cfg):
+    def get_eWellWARRawData_mv_war_main_from_bin(self, cfg):
         
         # Load CSV files
-        file_name = 'eWellWARRawData_mv_war_main.csv'
+        file_name = 'mv_war_main.bin'
 
         library_name = 'worldenergydata'
         library_file_cfg = {
-            'filename': f"data/modules/bsee/csv/online_query_raw_data/{file_name}",
+            'filename': f"data/modules/bsee/bin/war/{file_name}",
             'library_name': library_name,
             'repository_path': None
         }
@@ -302,20 +302,20 @@ class WellData:
         logging.debug(f"file_name: {file_name}")
 
         if file_is_valid:
-            df = pd.read_csv(file_name, low_memory=False)
+            df = pd.read_pickle(file_name)
         else:
             raise Exception(f"File not found: {file_name}")
 
         return df
 
-    def get_eWellWARRawData_mv_war_main_prop_from_csv(self, cfg):
+    def get_eWellWARRawData_mv_war_main_prop_from_bin(self, cfg):
         
         # Load CSV files
-        file_name = 'eWellWARRawData_mv_war_main_prop.csv'
+        file_name = 'mv_war_main_prop.bin'
 
         library_name = 'worldenergydata'
         library_file_cfg = {
-            'filename': f"data/modules/bsee/csv/online_query_raw_data/{file_name}",
+            'filename': f"data/modules/bsee/bin/war/{file_name}",
             'library_name': library_name,
             'repository_path': None
         }
@@ -324,7 +324,7 @@ class WellData:
         logging.debug(f"file_name: {file_name}")
 
         if file_is_valid:
-            df = pd.read_csv(file_name, low_memory=False)
+            df = pd.read_pickle(file_name)
         else:
             raise Exception(f"File not found: {file_name}")
 
@@ -339,19 +339,6 @@ class WellData:
         merged_df = pd.merge(df1, df2, on=join_key, how="right")
 
         merged_df = self.pd_merge_clean_column_names(merged_df)
-
-        filepath = 'data/modules/bsee/csv/well'
-
-        library_name = 'worldenergydata'
-        library_file_cfg = {
-            'filepath': filepath,
-            'library_name': library_name,
-            'repository_path': None
-        }
-
-        dir_is_valid, repo_filepath = get_repository_filepath(library_file_cfg)
-        # Save to a new CSV file
-        merged_df.to_csv(os.path.join(repo_filepath, 'Join_Borehole_APD.csv'), index=False)
 
         return merged_df
 
