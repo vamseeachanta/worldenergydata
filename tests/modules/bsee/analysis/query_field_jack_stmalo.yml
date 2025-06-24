@@ -12,18 +12,23 @@ data:
     -
       bottom_block:
         area: WR
+        number: 678
+      api12: NULL
+    - 
+      bottom_block:
+        area: WR
         number: 759
       api12: NULL
 
 economics:
   flag: True
   cost:
-    facilities: [4,300,000,000, 0, 500,000,000]
+    facilities: [4300000000, 0, 500000000]
     OPEX: 15.00 # Per Barrel/BBL
     well:
       - bottom_block:
         area: WR
-        number: 678
+        number: [678, 759]
         cost: 300000000
         recompletion: 100000000
 

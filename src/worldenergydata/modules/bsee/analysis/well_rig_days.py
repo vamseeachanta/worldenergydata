@@ -17,11 +17,11 @@ class WellRigDays:
                                     left_on=['SN_WAR'], right_on=['SN_WAR'])
 
         spud_date = None
-        if api12_df['WELL_SPUD_DATE'].iloc[0] is not np.nan:
+        if not api12_df['WELL_SPUD_DATE'].empty and api12_df['WELL_SPUD_DATE'].iloc[0] is not np.nan:
             spud_date = parse(api12_df['WELL_SPUD_DATE'].iloc[0])
-        
+
         td_date = None
-        if api12_df['TOTAL_DEPTH_DATE'].iloc[0] is not np.nan:
+        if not api12_df['TOTAL_DEPTH_DATE'].empty and api12_df['TOTAL_DEPTH_DATE'].iloc[0] is not np.nan:
             td_date = parse(api12_df['TOTAL_DEPTH_DATE'].iloc[0])
 
         war_data['WAR_START_DT'] = [parse(item) for item in war_data['WAR_START_DT']]
