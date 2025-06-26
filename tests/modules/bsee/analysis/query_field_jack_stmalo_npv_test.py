@@ -23,7 +23,7 @@ def get_valid_pytest_output_file(pytest_output_file):
 
 def test_application():
 
-    input_file = 'query_field_jack_stmalo.yml'
+    input_file = 'query_field_jack_stmalo_npv.yml'
 
     pytest_output_file = None
     # pytest_output_file = get_valid_pytest_output_file(pytest_output_file)

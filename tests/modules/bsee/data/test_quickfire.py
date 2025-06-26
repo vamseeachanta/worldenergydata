@@ -27,7 +27,7 @@ def test_application():
     # input_file = 'data_refresh.yml'
     
     # Well Data Tests
-    # input_file = 'query_api_01_well_scrapy.yml'
+    input_file = 'query_api_01_well_scrapy.yml'
     # input_file = 'query_api_04_wells_scrapy.yml'
 
     # Well Production Tests
@@ -35,7 +35,7 @@ def test_application():
     # input_file = 'query_api_production_from_zip_04_wells.yml'
 
     # block tests
-    input_file = 'query_api_01_block_scrapy.yml'
+    # input_file = 'query_api_01_block_scrapy.yml'
     # input_file = 'query_api_04_blocks_scrapy.yml'
 
     pytest_output_file = None
