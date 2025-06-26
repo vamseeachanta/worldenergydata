@@ -151,6 +151,7 @@ class ProductionAPI12Analysis():
 
         if "economics" in cfg and cfg['economics']['flag']:
             revenue_df = self.generate_revenue_table(cfg,api12_df)
+            # self.plot_revenues(cfg, revenue_df)
 
         groups_dict['production_df_api12s'] = production_df_api12s
         groups_dict['prod_rate_bopd_groups'] = prod_rate_bopd_groups
@@ -538,7 +539,7 @@ class ProductionAPI12Analysis():
         MON_O_PROD_VOL = MON_O_PROD_VOL[-min_len:]
         avg_price = avg_price[-min_len:]
         
-        # Calculate revenue for each year
+        # Calculate revenue 
         revenue = [MON_O_PROD_VOL[i] * avg_price[i] for i in range(0, len(MON_O_PROD_VOL))]
        
         df = pd.DataFrame({
@@ -562,7 +563,7 @@ class ProductionAPI12Analysis():
         file_label = 'revenues_table'
         file_name = os.path.join(result_folder, file_label + '.csv')
         df.to_csv(file_name, index=False)
-        self.perform_npv_calculation(cfg,df)
+        self.perform_npv_calculation(cfg, df)
 
         return df
     
@@ -611,7 +612,6 @@ class ProductionAPI12Analysis():
 
         # ---- Compute NPV ----
         npv_value = npf.npv(monthly_discount_rate, cash_flows)
-        cfg[cfg['basename']].update({'npv': npv_value})
 
         return npv_value
 
