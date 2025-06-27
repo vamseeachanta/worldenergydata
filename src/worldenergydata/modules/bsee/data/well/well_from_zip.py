@@ -80,7 +80,7 @@ class WellDataFromZip:
             cfg_zip_utilities = {'zip_utilities': {}}
             cfg_zip_utilities['zip_utilities'] = {
                 'technique': 'zip_files_to_df',
-                'input_directory': folder_path_zip,
+                'folder_path_zip': folder_path_zip,
                 'column_names': column_names,
                 'file_name': file_name_with_path
             }
