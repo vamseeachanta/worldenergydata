@@ -13,7 +13,7 @@ class Block:
     
     def router(self, cfg):
 
-        if 'bottom_block' in cfg['data']['groups'][0] and cfg['data']['groups'][0]['bottom_block'] is not None:
+        if 'groups' in cfg['data'] and cfg['data']['groups'][0]['bottom_block'] is not None:
             cfg = self.add_api12_array_to_cfg(cfg)
 
         return cfg
