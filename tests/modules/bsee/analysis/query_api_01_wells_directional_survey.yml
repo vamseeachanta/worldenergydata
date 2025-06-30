@@ -8,11 +8,10 @@ data:
   groups:
     - 
       bottom_block: NULL
-      api12: [608124003301] 
+      api12: [177000002801] 
 
 analysis:
   flag: True
-  api12: True
 
 default:
   log_level: INFO

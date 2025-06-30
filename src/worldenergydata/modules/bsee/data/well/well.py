@@ -80,13 +80,6 @@ class WellData:
 
         return cfg, well_data_groups
 
-    def get_data_source_file(self, cfg, group):
-        #TODO SS
-        library = 'digitalmodel'
-        filename = cfg['filename']
-        file_path = os.path.join(cfg['Analysis']['analysis_root_folder'], library, filename)
-
-
     def get_api12_merged_df_from_all_sources(self, cfg, bsee_csv_data, api12_metadata):
         api12 = api12_metadata['api12'][0]
         BoreholeRawData_df = bsee_csv_data['BoreholeRawData_df']
@@ -380,23 +373,6 @@ class WellData:
                 api12_array = api12_array + api12_csv_group
 
         return cfg, api12_array
-    
-    # def update_cfg_to_wells_api12(self, cfg, api12_array):
-    #     '''
-    #     function which transforms cfg into desired cfg
-    #     '''
-
-    #     updated_cfg = cfg.copy()
-    
-    #     # Update 'data' section
-    #     updated_cfg['data']['by'] = 'API12'
-    #     updated_cfg['data']['well_data'] = True
-    #     updated_cfg['data']['production_data'] = False
-        
-    #     # Replace 'groups' with 'api12' array
-    #     updated_cfg['data']['groups'] = [{'api12': api12_array}]
-        
-    #     return updated_cfg
 
     def get_eWellAPMRawData_from_zip(self, cfg):
 
