@@ -27,11 +27,11 @@ def test_application():
     # input_file = 'data_refresh.yml'
     
     # Well Data Tests
-    input_file = 'query_api_01_well_scrapy.yml'
+    # input_file = 'query_api_01_well_scrapy.yml'
     # input_file = 'query_api_04_wells_scrapy.yml'
 
     # Well Production Tests
-    # input_file = 'query_api_production_from_zip_01_well.yml'
+    input_file = 'query_api_production_from_zip_01_well.yml'
     # input_file = 'query_api_production_from_zip_04_wells.yml'
 
     # block tests
