@@ -5,10 +5,11 @@ meta:
 basename: bsee
 
 data:
-  obtain: True
+  production_data: True
   by: zip
   groups:
-    - api12: [608164024500, 608164025800, 608164025400, 608164025600]
+    - bottom_block: NULL
+      api12: [608164024500, 608164025800, 608164025400, 608164025600]
       
 production_from_zip:
    flag: True

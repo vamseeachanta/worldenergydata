@@ -59,6 +59,9 @@ parameters:
     BOREHOLE_STAT_DESC: VOLUME CHAMBER WELL
   - BOREHOLE_STAT_CD: PND
     BOREHOLE_STAT_DESC: PENDING
+  NPV:
+    discount_rate: 0.1
+    well_cost: 10000000
 settings_master: ~
 data_retrieval:
   well:
@@ -119,23 +122,23 @@ meta:
   basename: bsee
 data:
   by: zip
+  production_data: true
   groups:
-  - api12:
+  - bottom_block: ~
+    api12:
     - 177024120700
     well_data:
     - api12:
       - 177024120700
       label: '177024120700'
       file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\results\Data\177024120700.csv
-production_from_zip:
-  flag: true
 Analysis:
   basename: bsee
   analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data
   file_name: query_api_production_from_zip_01_well
   file_name_for_overwrite: query_api_production_from_zip_01_well
   log_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\logs
-  start_time: 2025-05-13 11:23:01.847058
+  start_time: 2025-06-30 13:01:10.542172
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\query_api_production_from_zip_01_well.yml
@@ -146,8 +149,10 @@ Analysis:
 bsee:
   data:
     by: zip
+    production_data: true
     groups:
-    - api12:
+    - bottom_block: ~
+      api12:
       - 177024120700
       well_data:
       - api12:

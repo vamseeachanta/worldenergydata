@@ -22,6 +22,10 @@ class ProductionDataFromSources:
 
         # cfg = self.get_groups_data(cfg)
         production_data_groups = []
+        if cfg['data']['by'] == 'zip':
+            api12 = cfg['data']['groups'][0]['api12'][0]
+            cfg = self.get_production_from_zip(cfg, api12)
+
         for group_idx in range(0, len(cfg['data']['groups'])):
             production_data_group = cfg['data']['groups'][group_idx].copy()
             api12_array = production_data_group['api12']
@@ -30,57 +34,57 @@ class ProductionDataFromSources:
             production_data_groups.append(df_api12_array)
 
         return cfg, production_data_groups
-
     
-    def get_groups_data(self, cfg):
-
-        production_data_flag = cfg['data'].get('production_data', False)
-        
-        output_data = []
-        if production_data_flag: 
-            input_items = cfg['data']['groups']
-            for input in input_items:
-                api12_array = input.get('api12', []) 
-                for api12 in api12_array:
-                    input_item = {'api12': [api12], 'label': str(api12)}
-                    output_data = self.generate_output_item(cfg, output_data, input_item)
-
-        production_data = {'type': 'csv', 'groups': output_data }
-        cfg[cfg['basename']].update({'production_data': production_data})
+    def get_production_from_zip(self, cfg,api12):
+        production_from_zip.get_production_data_by_wellapi12(cfg,api12)
 
         return cfg
 
-    def get_production_from_website(self, cfg):
-        input_items = cfg['data']['groups']
-        scrapy_runner_production = ScrapyRunnerProduction()
-
-        output_data = []
-        for input_item in input_items:
-            production_data = scrapy_runner_production.run_spider(cfg, input_item)
-            output_data = self.generate_output_item(cfg, output_data,input_item)
-        return output_data
+       
     
-    def get_production_from_zip(self, cfg):
+    # def get_groups_data(self, cfg):
 
-        #TODO - write for prod_data_from_zip
-        pass
+    #     production_data_flag = cfg['data'].get('production_data', False)
         
+    #     output_data = []
+    #     if production_data_flag: 
+    #         input_items = cfg['data']['groups']
+    #         for input in input_items:
+    #             api12_array = input.get('api12', []) 
+    #             for api12 in api12_array:
+    #                 input_item = {'api12': [api12], 'label': str(api12)}
+    #                 output_data = self.generate_output_item(cfg, output_data, input_item)
 
-    def generate_output_item(self, cfg, output_data, input_item):
+    #     production_data = {'type': 'csv', 'groups': output_data }
+    #     cfg[cfg['basename']].update({'production_data': production_data})
 
-        label = input_item['api12'][0]
-        output_path = os.path.join(cfg['Analysis']['result_folder'], 'Data')
-        if output_path is None:
-            result_folder = cfg['Analysis']['result_folder']
-            output_path = os.path.join(result_folder, 'Data')
+    #     return cfg
 
-        analysis_root_folder = cfg['Analysis']['analysis_root_folder']
-        is_dir_valid, output_path = is_dir_valid_func(output_path, analysis_root_folder)
+    # def get_production_from_website(self, cfg):
+    #     input_items = cfg['data']['groups']
+    #     scrapy_runner_production = ScrapyRunnerProduction()
 
-        output_file = os.path.join(output_path, str(label) + '.csv')
+    #     output_data = []
+    #     for input_item in input_items:
+    #         production_data = scrapy_runner_production.run_spider(cfg, input_item)
+    #         output_data = self.generate_output_item(cfg, output_data,input_item)
+    #     return output_data        
 
-        input_item_csv_cfg = deepcopy(input_item)
-        input_item_csv_cfg.update({'label': label, 'file_name': output_file})
-        output_data.append(input_item_csv_cfg)
+    # def generate_output_item(self, cfg, output_data, input_item):
+
+    #     label = input_item['api12'][0]
+    #     output_path = os.path.join(cfg['Analysis']['result_folder'], 'Data')
+    #     if output_path is None:
+    #         result_folder = cfg['Analysis']['result_folder']
+    #         output_path = os.path.join(result_folder, 'Data')
+
+    #     analysis_root_folder = cfg['Analysis']['analysis_root_folder']
+    #     is_dir_valid, output_path = is_dir_valid_func(output_path, analysis_root_folder)
+
+    #     output_file = os.path.join(output_path, str(label) + '.csv')
+
+    #     input_item_csv_cfg = deepcopy(input_item)
+    #     input_item_csv_cfg.update({'label': label, 'file_name': output_file})
+    #     output_data.append(input_item_csv_cfg)
         
-        return output_data
+    #     return output_data

@@ -6,11 +6,10 @@ basename: bsee
 
 data:
   by: zip
+  production_data: True
   groups:
-    - api12: [177024120700]
-
-production_from_zip:
-   flag: True
+    - bottom_block : NULL
+      api12: [177024120700]
 
 default:
   log_level: INFO

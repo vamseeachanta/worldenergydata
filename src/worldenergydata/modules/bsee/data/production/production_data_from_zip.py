@@ -20,12 +20,7 @@ class GetProdDataFromZip:
         pass
 
     def router(self, cfg):
-
-        if cfg['data']['by']== 'zip':
-            api12 = cfg['data']['groups'][0]['api12'][0]
-            self.get_production_data_by_wellapi12(cfg,api12)
-
-        return cfg
+        pass
 
     def download_zip_data(self, cfg):
         pass
@@ -70,7 +65,6 @@ class GetProdDataFromZip:
             file_name_with_path = os.path.join(folder_path_bin, file_name)
             with open(file_name_with_path, "wb") as f:
                 pickle.dump(df, f)
-
 
 
     def get_production_data_by_wellapi12(self, cfg, api12):
@@ -160,6 +154,7 @@ class GetProdDataFromZip:
         return dataframe
 
     def get_data_by_api12_array(self, cfg, api12_array):
+
         folder_path_bin = cfg['parameters']['filepath']['production']['bin']
         column_names = ['LEASE_NUMBER', 'COMPLETION_NAME', 'PRODUCTION_DATE', 'DAYS_ON_PROD', 'PRODUCT_CODE', 'MON_O_PROD_VOL', 'MON_G_PROD_VOL', 'MON_WTR_PROD_VOL', 'API_WELL_NUMBER', 'WELL_STAT_CD', 'AREA_CODE_BLOCK_NUM', 'OPERATOR_NUM', 'SORT_NAME', 'BOEM_FIELD', 'INJECTION_VOLUME', 'PROD_INTERVAL_CD', 'FIRST_PROD_DATE', 'UNIT_AGT_NUMBER', 'UNIT_ALOC_SUFFIX']
         library_name = 'worldenergydata'
