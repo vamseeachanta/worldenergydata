@@ -59,6 +59,12 @@ class ProductionDataFromSources:
             production_data = scrapy_runner_production.run_spider(cfg, input_item)
             output_data = self.generate_output_item(cfg, output_data,input_item)
         return output_data
+    
+    def get_production_from_zip(self, cfg):
+
+        #TODO - write for prod_data_from_zip
+        pass
+        
 
     def generate_output_item(self, cfg, output_data, input_item):
 

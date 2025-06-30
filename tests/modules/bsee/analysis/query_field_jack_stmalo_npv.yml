@@ -34,7 +34,6 @@ economics:
 
 analysis:
   flag: True
-  api12: True
 
 default:
   log_level: INFO
