@@ -1,7 +1,6 @@
 # Standard library imports
 import pickle
 import os
-import logging
 from loguru import logger
 
 # Third party imports
@@ -65,81 +64,26 @@ class GetProdDataFromZip:
             file_name_with_path = os.path.join(folder_path_bin, file_name)
             with open(file_name_with_path, "wb") as f:
                 pickle.dump(df, f)
-
-
+    
     def get_production_data_by_wellapi12(self, cfg, api12):
         try:
-            folder_path = cfg['parameters']['filepath']['production']['zip']
-
-            library_name = 'worldenergydata'
-            library_file_cfg = {
-                'filepath': folder_path,
-                'library_name': library_name
-            }
-
-            folder_path = wwy.get_library_filepath(library_file_cfg, src_relative_location_flag=False)
-
-            if not os.path.exists(folder_path):
-                raise FileNotFoundError(f"The folder '{folder_path}' does not exist.")
-
-            logging.info(f"Getting production data for API12: {api12} ... START")
-            output_file_label = 'prod_raw_api12_' + str(api12)
-            output_file = os.path.join(cfg['Analysis']['result_folder'], 'Data', output_file_label + '.csv')
-
-            api12_dataframes = {}
-            for file_name in os.listdir(folder_path):
-
-                file_name_with_path = os.path.join(folder_path, file_name)
-                column_names = ['LEASE_NUMBER', 'COMPLETION_NAME', 'PRODUCTION_DATE', 'DAYS_ON_PROD', 'PRODUCT_CODE', 'MON_O_PROD_VOL', 'MON_G_PROD_VOL', 'MON_WTR_PROD_VOL', 'API_WELL_NUMBER', 'WELL_STAT_CD', 'AREA_CODE_BLOCK_NUM', 'OPERATOR_NUM', 'SORT_NAME', 'BOEM_FIELD', 'INJECTION_VOLUME', 'PROD_INTERVAL_CD', 'FIRST_PROD_DATE', 'UNIT_AGT_NUMBER', 'UNIT_ALOC_SUFFIX']
-                cfg_zip_utilities = {'zip_utilities': {}}
-                cfg_zip_utilities['zip_utilities'] = {
-                    'technique': 'zip_files_to_df',
-                    'file_name': file_name_with_path,
-                    'column_names': column_names
-                }
-
-                df_dict = zip_files_to_df.zip_file_to_dataframe(cfg_zip_utilities)
-                _, df = list(df_dict.items())[0]
-
-                df_name = file_name.split('.')[0]
-
-                if 'API_WELL_NUMBER' not in df.columns:
-                    logger.warning(f"Skipping {df_name}: 'API_WELL_NUMBER' column not found.")
-                    continue
-
-                # Find matching rows for the current api12
-                matching_rows = df[df['API_WELL_NUMBER'] == api12] 
-
-                if not matching_rows.empty:
-                    # Move 'API_WELL_NUMBER' column to the first position
-                    columns = ['API_WELL_NUMBER'] + [col for col in matching_rows.columns if col != 'API_WELL_NUMBER']
-                    matching_rows = matching_rows[columns]
-
-                    # Append matching rows to the corresponding api12 DataFrame
-                    if api12 not in api12_dataframes:
-                        api12_dataframes[api12] = matching_rows
-                    else:
-                        api12_dataframes[api12] = pd.concat([api12_dataframes[api12], matching_rows], ignore_index=True)
-
-                    logger.debug(f"Production data found for API {api12} in file {df_name}.")
-                else:
-                    logger.debug(f"Production data NOT found for API {api12} in file {df_name}.")
-
-            # Write each api12 DataFrame to a separate output file
+            folder_path = self._resolve_folder_path(cfg)
+            api12_dataframes = self._process_zip_files(folder_path, api12)
+            
+            output_file = os.path.join(cfg['Analysis']['result_folder'], 'Data', f'prod_raw_api12_{api12}.csv')
             for api12, df in api12_dataframes.items():
                 try:
-                    output_file = os.path.join(output_file)
                     df.to_csv(output_file, index=False)
-                    logger.info(f"API {api12} Matched rows from certain files written to {output_file}.")
+                    logger.info(f"API {api12} Matched rows written to {output_file}.")
                 except Exception as e:
                     logger.error(f"Error writing to output file {output_file}: {e}")
 
-            logging.info(f"Getting production data for API12: {api12} ... COMPLETE")
-
             dataframe = pd.DataFrame()
             if len(api12_dataframes) == 1:
-                # Extract the single dataframe from the dictionary
                 dataframe = next(iter(api12_dataframes.values()))
+            
+            logger.info(f"Getting production data for API12: {api12} ... COMPLETE")
+            return dataframe
 
         except KeyError as ke:
             logger.error(f"Missing key in configuration: {ke}")
@@ -150,8 +94,62 @@ class GetProdDataFromZip:
         except Exception as e:
             logger.error(f"An unexpected error occurred: {e}")
             raise
+    
+    def _resolve_folder_path(self, cfg):
+        folder_path = cfg['parameters']['filepath']['production']['zip']
+        library_name = 'worldenergydata'
+        library_file_cfg = {
+            'filepath': folder_path,
+            'library_name': library_name
+        }
+        folder_path = wwy.get_library_filepath(library_file_cfg, src_relative_location_flag=False)
+        if not os.path.exists(folder_path):
+            raise FileNotFoundError(f"The folder '{folder_path}' does not exist.")
+        return folder_path
+
+    def _process_zip_files(self, folder_path, api12):
+        api12_dataframes = {}
+        column_names = ['LEASE_NUMBER', 'COMPLETION_NAME', 'PRODUCTION_DATE', 'DAYS_ON_PROD', 'PRODUCT_CODE',
+                        'MON_O_PROD_VOL', 'MON_G_PROD_VOL', 'MON_WTR_PROD_VOL', 'API_WELL_NUMBER', 'WELL_STAT_CD',
+                        'AREA_CODE_BLOCK_NUM', 'OPERATOR_NUM', 'SORT_NAME', 'BOEM_FIELD', 'INJECTION_VOLUME',
+                        'PROD_INTERVAL_CD', 'FIRST_PROD_DATE', 'UNIT_AGT_NUMBER', 'UNIT_ALOC_SUFFIX']
         
-        return dataframe
+        for file_name in os.listdir(folder_path):
+            file_path = os.path.join(folder_path, file_name)
+            df = self._load_dataframe_from_zip(file_path, column_names)
+
+            if 'API_WELL_NUMBER' not in df.columns:
+                logger.warning(f"Skipping {file_name}: 'API_WELL_NUMBER' column not found.")
+                continue
+
+            matching_rows = df[df['API_WELL_NUMBER'] == api12]
+            
+            if not matching_rows.empty:
+                columns = ['API_WELL_NUMBER'] + [col for col in matching_rows.columns if col != 'API_WELL_NUMBER']
+                matching_rows = matching_rows[columns]
+
+                if api12 not in api12_dataframes:
+                    api12_dataframes[api12] = matching_rows
+                else:
+                    api12_dataframes[api12] = pd.concat([api12_dataframes[api12], matching_rows], ignore_index=True)
+
+                logger.debug(f"Production data found for API {api12} in file {file_name}.")
+            else:
+                logger.debug(f"Production data NOT found for API {api12} in file {file_name}.")
+
+        return api12_dataframes
+
+    def _load_dataframe_from_zip(self, file_path, column_names):
+        cfg_zip_utilities = {
+            'zip_utilities': {
+                'technique': 'zip_files_to_df',
+                'file_name': file_path,
+                'column_names': column_names
+            }
+        }
+        df_dict = zip_files_to_df.zip_file_to_dataframe(cfg_zip_utilities)
+        _, df = list(df_dict.items())[0]
+        return df
 
     def get_data_by_api12_array(self, cfg, api12_array):
 
