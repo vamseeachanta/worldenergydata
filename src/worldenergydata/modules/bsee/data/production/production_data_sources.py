@@ -36,11 +36,10 @@ class ProductionDataFromSources:
         return cfg, production_data_groups
     
     def get_production_from_zip(self, cfg,api12):
-        production_from_zip.get_production_data_by_wellapi12(cfg,api12)
 
+        production_from_zip.get_production_data_by_wellapi12(cfg,api12)
         return cfg
 
-       
     
     # def get_groups_data(self, cfg):
 
