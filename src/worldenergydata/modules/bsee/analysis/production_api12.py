@@ -568,7 +568,7 @@ class ProductionAPI12Analysis():
 
         return df
     
-    def perform_npv_calculation(self,cfg,revenue_df):
+    def perform_npv_calculation(self, cfg, revenue_df):
         """
         Objective: Net Present Value (NPV) of the production data.
         Args:
