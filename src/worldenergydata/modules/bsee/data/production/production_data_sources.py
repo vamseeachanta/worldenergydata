@@ -22,7 +22,7 @@ class ProductionDataFromSources:
 
         # cfg = self.get_groups_data(cfg)
         production_data_groups = []
-        if cfg['data']['by'] == 'zip':
+        if 'by' in cfg['data'] and cfg['data']['by'] == 'zip':
             api12 = cfg['data']['groups'][0]['api12'][0]
             cfg = self.get_production_from_zip(cfg, api12)
 
