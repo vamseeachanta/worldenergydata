@@ -8,13 +8,13 @@ parameters:
     data: data/modules/bsee/data
     production:
       csv: data\modules\bsee\csv\production
-      zip: data\modules\bsee\zip\production
-      bin: data\modules\bsee\bin\production
+      zip: data\modules\bsee\zip\production_yearly
+      bin: data\modules\bsee\bin\production_yearly
     block: data/modules/bsee/block
     APD: data/modules/bsee/csv/online_query_raw_data
     apm:
-      zip: data/modules/bsee/zip/apm
-      bin: data/modules/bsee/bin/apm
+      zip: data/modules/bsee/zip/production_plan_area
+      bin: data/modules/bsee/bin/production_plan_area
       columns:
       - - MMS_COMPANY_NUM
         - API_WELL_NUMBER
@@ -126,18 +126,18 @@ data:
   production: false
 Analysis:
   basename: bsee
-  analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh
+  analysis_root_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh
   file_name: data_refresh
   file_name_for_overwrite: data_refresh
-  log_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\logs
-  start_time: 2025-06-27 12:52:39.993105
+  log_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\logs
+  start_time: 2025-07-05 11:58:05.308733
   cfg_array_file_names: ~
   DefaultInputFile: ~
-  CustomInputFile: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\data_refresh.yml
-  result_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\results
-  result_data_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\results\Data
-  result_plot_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\results\Plot
-  fe_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\results
+  CustomInputFile: data_refresh.yml
+  result_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\results
+  result_data_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\results\Data
+  result_plot_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\results\Plot
+  fe_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\results
 bsee:
   data:
     refresh: true

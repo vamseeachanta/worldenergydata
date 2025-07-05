@@ -6,7 +6,7 @@ meta:
 basename: bsee
 
 data:
-  by_bin: True
+  by_bin: True # war block data from bin files
   apm: False
   production_data: True
   groups: 

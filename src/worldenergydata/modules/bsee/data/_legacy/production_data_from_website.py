@@ -25,7 +25,7 @@ class GetWellProdDataFromWebsite:
             }
 
             # Fetch the page content
-            response = requests.get(url, headers=headers)
+            response = requests.get(url, headers=headers,timeout=120)
             soup = BeautifulSoup(response.content, "html.parser")
 
             links = soup.find_all("a", string="Delimit")
@@ -35,7 +35,7 @@ class GetWellProdDataFromWebsite:
                 exit()
 
             def download_file(file_url, save_path):
-                response = requests.get(file_url, headers=headers)
+                response = requests.get(file_url, headers=headers,timeout=120)
                 with open(save_path, "wb") as file:
                     file.write(response.content)
                 print(f"Downloaded: {save_path}")

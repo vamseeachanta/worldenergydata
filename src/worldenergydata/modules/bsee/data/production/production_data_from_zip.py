@@ -160,7 +160,7 @@ class GetProdDataFromZip:
             'filepath': folder_path_bin,
             'library_name': library_name
         }
-        folder_path_bin = wwy.get_library_filepath(library_file_cfg, src_relative_location_flag=False)
+        folder_path_bin = wwy.get_library_filepath(library_file_cfg , src_relative_location_flag=False)
 
         df_api12_array = pd.DataFrame()
         for file_name in os.listdir(folder_path_bin):
