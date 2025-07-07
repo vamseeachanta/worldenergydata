@@ -258,12 +258,12 @@ class ProductionAPI12Analysis():
 
     def get_summary_df_api12(self, well_api12, completion_name, api12_df):
 
-        columns = ['API12', 'API10', 'O_PROD_STATUS', 'O_CUMMULATIVE_PROD_MMBBL', 'DAYS_ON_PROD', 'O_MEAN_PROD_RATE_BOPD', 'COMPLETION_NAME']
+        columns = ['API12', 'API10', 'O_PROD_STATUS', 'O_CUMMULATIVE_PROD_MMBBL', 'DAYS_ON_PROD', 'O_MEAN_PROD_RATE_BOPD', 'COMPLETION_NAME', 'PRODUCTION_START_DATE', 'PRODUCTION_LAST_DATE']
         production_summary_df = pd.DataFrame(columns=columns)
         production_summary_df = production_summary_df.astype({'API12': str, 'API10': str, 'O_PROD_STATUS': int, 'O_CUMMULATIVE_PROD_MMBBL': float, 'DAYS_ON_PROD': int, 'O_MEAN_PROD_RATE_BOPD': float, 'COMPLETION_NAME': str})
 
         well_api10 = str(well_api12)[0:10]
-        values = [well_api12, well_api10, 0.0, 0.0, 0.0, 0.0, completion_name]
+        values = [well_api12, well_api10, 0.0, 0.0, 0.0, 0.0, completion_name, pd.NaT, pd.NaT]
         production_summary_df.loc[0] = values
 
         total_well_production = api12_df.MON_O_PROD_VOL.sum() / 1000 / 1000
@@ -286,6 +286,12 @@ class ProductionAPI12Analysis():
             production_summary_df.loc[df_row_index, "O_MEAN_PROD_RATE_BOPD"] = float(O_MEAN_PROD_RATE_BOPD)
 
             production_summary_df.loc[df_row_index, "O_PROD_STATUS"] = 1
+
+            # Calculate start and last production dates
+            production_dates = api12_df['PRODUCTION_DATETIME'].dropna()
+            if not production_dates.empty:
+                production_summary_df.loc[df_row_index, "PRODUCTION_START_DATE"] = production_dates.min()
+                production_summary_df.loc[df_row_index, "PRODUCTION_LAST_DATE"] = production_dates.max()
 
         return production_summary_df
 
@@ -477,7 +483,7 @@ class ProductionAPI12Analysis():
     
     def plot_revenues(self, cfg, revenue_df):
         
-        revenue_df['Revenue (USD)'] = revenue_df['Revenue (USD)'].replace('[\$,]', '', regex=True).astype(float)
+        revenue_df['Revenue (USD)'] = revenue_df['Revenue (USD)'].replace(r'[\$,]', '', regex=True).astype(float)
         revenue_df['Month'] = pd.to_datetime(revenue_df['Month'], format='%Y%m', errors='coerce')
         months = revenue_df['Month'].tolist()
         revenue_usd = revenue_df['Revenue (USD)'].tolist()

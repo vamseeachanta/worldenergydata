@@ -423,7 +423,15 @@ class WellAPI12():
         import plotly.express as px
 
         well_timeline_df = groups_dict['well_timeline_df']
-        df_melted = well_timeline_df.melt(id_vars='date_time', value_vars=['WELL_SPUD_COUNT', 'TOTAL_DEPTH_COUNT','RIG_LAST_DATE_COUNT'],
+        
+        # Include production timeline columns if they exist
+        timeline_columns = ['WELL_SPUD_COUNT', 'TOTAL_DEPTH_COUNT', 'RIG_LAST_DATE_COUNT']
+        if 'PRODUCTION_START_COUNT' in well_timeline_df.columns:
+            timeline_columns.append('PRODUCTION_START_COUNT')
+        if 'PRODUCTION_ACTIVE_COUNT' in well_timeline_df.columns:
+            timeline_columns.append('PRODUCTION_ACTIVE_COUNT')
+            
+        df_melted = well_timeline_df.melt(id_vars='date_time', value_vars=timeline_columns,
                     var_name='type', value_name='count') 
                
         df_melted = df_melted.rename(columns={'date_time': 'Date'})
@@ -439,7 +447,7 @@ class WellAPI12():
             y='count',
             color='type',
             markers=True,
-            title='Well Timeline Analysis'
+            title='Well Timeline Analysis with Production Data'
         )
         groups_label = cfg['meta'].get('label', None)
         if groups_label is None:
