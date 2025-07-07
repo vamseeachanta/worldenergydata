@@ -258,12 +258,12 @@ class ProductionAPI12Analysis():
 
     def get_summary_df_api12(self, well_api12, completion_name, api12_df):
 
-        columns = ['API12', 'API10', 'O_PROD_STATUS', 'O_CUMMULATIVE_PROD_MMBBL', 'DAYS_ON_PROD', 'O_MEAN_PROD_RATE_BOPD', 'COMPLETION_NAME']
+        columns = ['API12', 'API10', 'O_PROD_STATUS', 'O_CUMMULATIVE_PROD_MMBBL', 'DAYS_ON_PROD', 'O_MEAN_PROD_RATE_BOPD', 'COMPLETION_NAME', 'START_PRODUCTION_DATE', 'LAST_PRODUCTION_DATE']
         production_summary_df = pd.DataFrame(columns=columns)
-        production_summary_df = production_summary_df.astype({'API12': str, 'API10': str, 'O_PROD_STATUS': int, 'O_CUMMULATIVE_PROD_MMBBL': float, 'DAYS_ON_PROD': int, 'O_MEAN_PROD_RATE_BOPD': float, 'COMPLETION_NAME': str})
+        production_summary_df = production_summary_df.astype({'API12': str, 'API10': str, 'O_PROD_STATUS': int, 'O_CUMMULATIVE_PROD_MMBBL': float, 'DAYS_ON_PROD': int, 'O_MEAN_PROD_RATE_BOPD': float, 'COMPLETION_NAME': str, 'START_PRODUCTION_DATE': str, 'LAST_PRODUCTION_DATE': str})
 
         well_api10 = str(well_api12)[0:10]
-        values = [well_api12, well_api10, 0.0, 0.0, 0.0, 0.0, completion_name]
+        values = [well_api12, well_api10, 0.0, 0.0, 0.0, 0.0, completion_name, '', '']
         production_summary_df.loc[0] = values
 
         total_well_production = api12_df.MON_O_PROD_VOL.sum() / 1000 / 1000
@@ -284,6 +284,14 @@ class ProductionAPI12Analysis():
 
             O_MEAN_PROD_RATE_BOPD = api12_df.MON_O_PROD_VOL.sum() / DAYS_ON_PROD
             production_summary_df.loc[df_row_index, "O_MEAN_PROD_RATE_BOPD"] = float(O_MEAN_PROD_RATE_BOPD)
+
+            # Calculate start and last production dates
+            production_dates_df = api12_df[api12_df.O_PROD_RATE_BOPD > 0]
+            if len(production_dates_df) > 0:
+                start_production_date = production_dates_df.PRODUCTION_DATETIME.min().strftime('%Y-%m-%d')
+                last_production_date = production_dates_df.PRODUCTION_DATETIME.max().strftime('%Y-%m-%d')
+                production_summary_df.loc[df_row_index, "START_PRODUCTION_DATE"] = start_production_date
+                production_summary_df.loc[df_row_index, "LAST_PRODUCTION_DATE"] = last_production_date
 
             production_summary_df.loc[df_row_index, "O_PROD_STATUS"] = 1
 

@@ -76,6 +76,12 @@ class WellAPI12():
         well_timeline_df = self.get_well_count_by_custom_cfg(well_timeline_df, well_summary_df_groups, column_keyword_cfg)
         column_keyword_cfg = {'date_column': 'RIG_LAST_DATE_ON_WELL', 'well_count_column': 'RIG_LAST_DATE_COUNT' }
         well_timeline_df = self.get_well_count_by_custom_cfg(well_timeline_df, well_summary_df_groups, column_keyword_cfg)
+        
+        # Add production start and end dates to timeline
+        column_keyword_cfg = {'date_column': 'START_PRODUCTION_DATE', 'well_count_column': 'PRODUCTION_START_COUNT' }
+        well_timeline_df = self.get_well_count_by_custom_cfg(well_timeline_df, well_summary_df_groups, column_keyword_cfg)
+        column_keyword_cfg = {'date_column': 'LAST_PRODUCTION_DATE', 'well_count_column': 'PRODUCTION_LAST_COUNT' }
+        well_timeline_df = self.get_well_count_by_custom_cfg(well_timeline_df, well_summary_df_groups, column_keyword_cfg)
 
         well_timeline_df.sort_values(by=['date_time'], inplace=True, ignore_index=True)
         well_timeline_df.reset_index(drop=True, inplace=True)
@@ -84,7 +90,19 @@ class WellAPI12():
 
     def get_well_count_by_custom_cfg(self, well_timeline_df, well_summary_df_groups, column_keyword_cfg):
         date_column = column_keyword_cfg['date_column']
+        
+        # Check if the column exists in the dataframe
+        if date_column not in well_summary_df_groups.columns:
+            return well_timeline_df
+            
         df_temp = well_summary_df_groups[[date_column]].copy()
+        
+        # Filter out empty strings and NaN values before converting to datetime
+        df_temp = df_temp[df_temp[date_column].notna() & (df_temp[date_column] != '')]
+        
+        if df_temp.empty:
+            return well_timeline_df
+            
         df_temp[date_column] = pd.to_datetime(df_temp[date_column], format='mixed')
         df_temp.sort_values(by=[date_column], inplace=True, ignore_index=True)
         df_temp.reset_index(drop=True, inplace=True)
@@ -423,7 +441,7 @@ class WellAPI12():
         import plotly.express as px
 
         well_timeline_df = groups_dict['well_timeline_df']
-        df_melted = well_timeline_df.melt(id_vars='date_time', value_vars=['WELL_SPUD_COUNT', 'TOTAL_DEPTH_COUNT','RIG_LAST_DATE_COUNT'],
+        df_melted = well_timeline_df.melt(id_vars='date_time', value_vars=['WELL_SPUD_COUNT', 'TOTAL_DEPTH_COUNT','RIG_LAST_DATE_COUNT', 'PRODUCTION_START_COUNT', 'PRODUCTION_LAST_COUNT'],
                     var_name='type', value_name='count') 
                
         df_melted = df_melted.rename(columns={'date_time': 'Date'})
