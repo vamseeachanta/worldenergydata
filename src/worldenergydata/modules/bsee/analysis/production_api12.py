@@ -309,6 +309,7 @@ class ProductionAPI12Analysis():
             O_CUMMULATIVE_PROD_MMBBL_previous_df_row = 0
             if len(O_CUMMULATIVE_PROD_MMBBL_array) > 0:
                 O_CUMMULATIVE_PROD_MMBBL_previous_df_row = O_CUMMULATIVE_PROD_MMBBL_array[-1]
+                
             O_CUMMULATIVE_PROD_MMBBL = api12_df.MON_O_PROD_VOL.iloc[df_row] / 1000 / 1000 + O_CUMMULATIVE_PROD_MMBBL_previous_df_row
             O_CUMMULATIVE_PROD_MMBBL_array.append(O_CUMMULATIVE_PROD_MMBBL)
 
@@ -567,7 +568,7 @@ class ProductionAPI12Analysis():
 
         return df
     
-    def perform_npv_calculation(self,cfg,revenue_df):
+    def perform_npv_calculation(self, cfg, revenue_df):
         """
         Objective: Net Present Value (NPV) of the production data.
         Args:

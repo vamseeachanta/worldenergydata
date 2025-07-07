@@ -29,7 +29,7 @@ class DownloadFromZipUrl:
         base_name = os.path.basename(urlparse(url).path).replace('.zip', '')
 
         try:
-            r = requests.get(url)
+            r = requests.get(url,timeout=60)
             r.raise_for_status()  # Check if the download was successful
 
             z = zipfile.ZipFile(io.BytesIO(r.content))

@@ -3,7 +3,7 @@ from copy import deepcopy
 
 import pandas as pd
 
-from worldenergydata.modules.bsee.data._from_url.scrapy_production_data import ScrapyRunnerProduction
+from worldenergydata.modules.bsee.data._legacy.scrapy_production_data import ScrapyRunnerProduction
 from worldenergydata.modules.bsee.data.production.production_data_from_zip import GetProdDataFromZip
 
 from assetutilities.common.utilities import is_dir_valid_func
@@ -22,7 +22,7 @@ class ProductionDataFromSources:
 
         # cfg = self.get_groups_data(cfg)
         production_data_groups = []
-        if cfg['data']['by'] == 'zip':
+        if 'by' in cfg['data'] and cfg['data']['by'] == 'zip':
             api12 = cfg['data']['groups'][0]['api12'][0]
             cfg = self.get_production_from_zip(cfg, api12)
 

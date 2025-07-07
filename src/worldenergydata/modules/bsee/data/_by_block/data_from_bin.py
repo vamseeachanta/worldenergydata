@@ -19,7 +19,7 @@ class DataFromBin:
         return cfg, block_data_groups
     
     def get_block_data_groups(self, cfg):
-        cfg = self.get_block_data_from_bin(cfg)
+        cfg = self.get_war_block_data_from_bin(cfg)
 
         block_data_groups = []
         for group in cfg[cfg['basename']]['data']['groups']:
@@ -32,7 +32,7 @@ class DataFromBin:
 
         return cfg, block_data_groups
     
-    def get_block_data_from_bin(self, cfg):
+    def get_war_block_data_from_bin(self, cfg):
 
         bottom_block = cfg['data']['groups'][0]['bottom_block']['number']
         area = cfg['data']['groups'][0]['bottom_block']['area']
