@@ -17,15 +17,19 @@ class WellRigDays:
                                     left_on=['SN_WAR'], right_on=['SN_WAR'])
 
         spud_date = None
-        if not api12_df['WELL_SPUD_DATE'].empty and api12_df['WELL_SPUD_DATE'].iloc[0] is not np.nan:
-            spud_date = parse(api12_df['WELL_SPUD_DATE'].iloc[0])
+        if not api12_df['WELL_SPUD_DATE'].empty and pd.notna(api12_df['WELL_SPUD_DATE'].iloc[0]):
+            spud_value = str(api12_df['WELL_SPUD_DATE'].iloc[0]).strip()
+            if spud_value and spud_value != 'nan':
+                spud_date = parse(spud_value)
 
         td_date = None
-        if not api12_df['TOTAL_DEPTH_DATE'].empty and api12_df['TOTAL_DEPTH_DATE'].iloc[0] is not np.nan:
-            td_date = parse(api12_df['TOTAL_DEPTH_DATE'].iloc[0])
+        if not api12_df['TOTAL_DEPTH_DATE'].empty and pd.notna(api12_df['TOTAL_DEPTH_DATE'].iloc[0]):
+            td_value = str(api12_df['TOTAL_DEPTH_DATE'].iloc[0]).strip()
+            if td_value and td_value != 'nan':
+                td_date = parse(td_value)
 
-        war_data['WAR_START_DT'] = [parse(item) for item in war_data['WAR_START_DT']]
-        war_data['WAR_END_DT'] = [parse(item) for item in war_data['WAR_END_DT']]
+        war_data['WAR_START_DT'] = [parse(str(item)) if item is not None and pd.notna(item) and str(item).strip() != '' else None for item in war_data['WAR_START_DT']]
+        war_data['WAR_END_DT'] = [parse(str(item)) if item is not None and pd.notna(item) and str(item).strip() != '' else None for item in war_data['WAR_END_DT']]
         war_data.sort_values(by=['WAR_START_DT'], inplace=True)
 
         war_summary = self.get_war_days(cfg, war_data, td_date)

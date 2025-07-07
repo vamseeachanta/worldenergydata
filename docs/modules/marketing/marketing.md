@@ -13,3 +13,11 @@ https://www.linkedin.com/pulse/ad-you-chris-ennen/
 Open Source | Supporters
 
 I am looking for a digital solution to drive business growth in the oil and gas industry. The solution should help with:
+
+
+
+Need to do shale analysis of field and oil data
+https://app.collide.io/posts/480
+
+What public data is most useful?
+https://app.collide.io/posts/any-public-data-provides#comments

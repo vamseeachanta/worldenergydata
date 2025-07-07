@@ -23,5 +23,7 @@ https://app.collide.io/posts/lng-vs-henry-hub
 
 https://www.cmegroup.com/education/courses/introduction-to-energy/introduction-to-natural-gas/understanding-henry-hub.html
 
+https://chatgpt.com/s/dr_6856ca3621608191bc142c6ede2b864a
+
 
 

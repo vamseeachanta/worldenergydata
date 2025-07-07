@@ -264,7 +264,7 @@ class WellData:
 
         library_name = 'worldenergydata'
         library_file_cfg = {
-            'filename': f"data/modules/bsee/bin/apd/{file_name}",
+            'filename': f"data/modules/bsee/bin/ewellapd/{file_name}",
             'library_name': library_name,
             'repository_path': None
         }
