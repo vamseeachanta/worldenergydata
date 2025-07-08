@@ -62,7 +62,7 @@ class WellAPI12():
         groups_dict['well_timeline_df'] = well_timeline_df
 
         self.save_result_groups(cfg, groups_dict)
-        self.plot_well_timeline_df(cfg, groups_dict)
+        # self.plot_well_timeline_df(cfg, groups_dict)
 
         return cfg, groups_dict       
 
@@ -156,7 +156,7 @@ class WellAPI12():
         api12_analysis = None
         api12_analysis = self.get_well_borehole_data(well_data, api12_analysis)
         api12_analysis = self.get_sidetracklabel_and_rig_rigdays(cfg, well_data, api12_analysis)
-        # api10_directional_surveys = self.get_directional_surveys_by_api10(cfg)
+        api10_directional_surveys = self.get_directional_surveys_by_api10(cfg)
 
         try:
             # TODO fix and Relocate as needed.
@@ -193,6 +193,10 @@ class WellAPI12():
             logger.warning(f"No survey data found for API12: {API12_num}")
             return 
         api12_survey_df['API10'] = api12_survey_df['API_WELL_NUMBER'].astype(str).str[:10]
+        # Reorder columns: move API10 to front
+        cols = ['API10'] + [col for col in api12_survey_df.columns if col != 'API10']
+        api12_survey_df = api12_survey_df[cols]
+
         api10_survey_df = api12_survey_df.drop(columns=['API_WELL_NUMBER'])
         
         return api10_survey_df
