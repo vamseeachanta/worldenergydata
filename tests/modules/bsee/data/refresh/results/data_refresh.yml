@@ -11,8 +11,8 @@ parameters:
       bin: data\modules\bsee\bin\production_yearly
     APD: data/modules/bsee/bin/apd
     apm:
-      zip: data/modules/bsee/zip/apm
-      bin: data/modules/bsee/bin/apm
+      zip: data/modules/bsee/zip/war
+      bin: data/modules/bsee/bin/war
       columns:
       - - MMS_COMPANY_NUM
         - API_WELL_NUMBER
@@ -125,7 +125,7 @@ Analysis:
   file_name: data_refresh
   file_name_for_overwrite: data_refresh
   log_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\logs
-  start_time: 2025-07-08 11:29:09.101165
+  start_time: 2025-07-09 12:26:25.691243
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\data_refresh.yml
