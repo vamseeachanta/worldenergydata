@@ -1,0 +1,39 @@
+meta:
+  library: worldenergydata
+  basename: bsee
+  label: goa_anchor
+
+basename: bsee
+
+data:
+  by_bin: True
+  apm: False
+  production_data: False
+  groups: 
+    -
+      bottom_block:
+        area: GC
+        number: 807
+      api12: NULL
+      war_main: data/modules/bsee/bin/war
+
+analysis:
+  flag: False
+  production_data: False
+  
+economics:
+  flag: False
+  cost:
+    OPEX: 15.0
+    discount_rate_annual: 0.08
+    facilities: []
+    well:
+      - cost: 150000000
+        recompletion: 50000000
+
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False
