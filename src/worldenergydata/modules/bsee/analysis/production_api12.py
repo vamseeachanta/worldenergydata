@@ -355,7 +355,7 @@ class ProductionAPI12Analysis():
         mapping = {}
         for group in cfg.get("data", {}).get("groups", []):
             block_ids = []
-            block_id = group['bottom_block'].get("number")
+            block_id = group['bottom_block'].get("number") if group['bottom_block'] is not None else None
             if block_id is not None:
                 block_ids.append(block_id)
             api12s = group.get("api12", [])

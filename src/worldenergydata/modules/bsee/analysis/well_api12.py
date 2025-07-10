@@ -162,7 +162,7 @@ class WellAPI12():
             # TODO fix and Relocate as needed.
             #self.prepare_casing_data(api12_well_data, well_tubulars_data)
             #self.prepare_completion_data(completion_data)
-            # self.prepare_well_paths(api10_directional_surveys)
+            self.prepare_well_paths(api10_directional_surveys)
             self.prepare_formation_data()
         except Exception as e:
             logger.error(e)
@@ -196,10 +196,10 @@ class WellAPI12():
         # Reorder columns: move API10 to front
         cols = ['API10'] + [col for col in api12_survey_df.columns if col != 'API10']
         api12_survey_df = api12_survey_df[cols]
+        # rename column API_WELL_NUMBER to API12
+        api12_survey_df.rename(columns={'API_WELL_NUMBER': 'API12'}, inplace=True)
 
-        api10_survey_df = api12_survey_df.drop(columns=['API_WELL_NUMBER'])
-        
-        return api10_survey_df
+        return api12_survey_df
 
     def get_well_borehole_data(self, well_data, api12_analysis):
 
@@ -386,7 +386,7 @@ class WellAPI12():
     def prepare_well_paths(self, directional_surveys):
         self.output_well_path_for_db = {}
         self.output_data_well_path = {}
-        API12_list = list(directional_surveys.API12.unique())
+        API12_list = list(directional_surveys.API_WELL_NUMBER.unique())
         count = 0
         for api12 in API12_list:
             count = count + 1

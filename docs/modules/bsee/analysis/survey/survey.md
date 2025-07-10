@@ -1,5 +1,5 @@
 
-- Read data dsptsdelimit data - ✔️
+- Read dsptsdelimit data - ✔️
 - 1 well analysis input file. - ✔️ query_api_01_wells_directional_survey.yml
 - filter the data for that well
   - python plot (function) wire up - 
