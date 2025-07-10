@@ -608,6 +608,7 @@ class ProductionAPI12Analysis():
         revenue_df['Monthly Oil Production'] = pd.to_numeric(revenue_df['Monthly Oil Production'], errors='coerce')
         revenue_df['OPEX'] = revenue_df['Monthly Oil Production'] * opex_per_bbl
         revenue_df['Net Cash Flow'] = revenue_df['Revenue (USD)'] - revenue_df['OPEX']
+        revenue_df['Net Cash Flow'] = revenue_df['Net Cash Flow'].fillna(0)
 
         # ---- Combine with CAPEX ----
         total_capex = sum(capex_breakdown.values())
