@@ -8,7 +8,7 @@ basename: bsee
 data:
   by_bin: True
   apm: False
-  production_data: False
+  production_data: True
   groups: 
     -
       bottom_block:
@@ -18,8 +18,8 @@ data:
       war_main: data/modules/bsee/bin/war
 
 analysis:
-  flag: False
-  production_data: False
+  flag: True
+  production_data: True
   
 economics:
   flag: False

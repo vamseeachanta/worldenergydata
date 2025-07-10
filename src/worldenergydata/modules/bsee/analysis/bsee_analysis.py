@@ -25,9 +25,14 @@ class BSEEAnalysis():
         pass
 
     def router(self, cfg, data):
-
+        
+        logging.info(f"Analysis config: {cfg.get('analysis', {})}")
+        
         if "analysis" in cfg and cfg['analysis'].get('flag', False):
+            logging.info("Running analysis for all wells...")
             cfg = self.run_analysis_for_all_wells(cfg, data)
+        else:
+            logging.info("Analysis not enabled or flag is False")
 
         return cfg
 
@@ -50,6 +55,7 @@ class BSEEAnalysis():
         well_summary_df = well_data_analysis_groups.get('well_summary_df_groups', pd.DataFrame())
         
         if production_summary_df.empty or well_summary_df.empty:
+            logging.warning("Production or well summary data is empty - skipping production date integration")
             return
         
         # Add columns for production dates if they don't exist
@@ -60,15 +66,21 @@ class BSEEAnalysis():
         
         # Merge production dates into well summary based on API12
         for idx, row in production_summary_df.iterrows():
-            api12 = row['API12']
+            api12 = str(row['API12'])
             start_date = row.get('START_PRODUCTION_DATE', '')
             last_date = row.get('LAST_PRODUCTION_DATE', '')
             
-            # Update well summary with production dates
-            well_mask = well_summary_df['API12'] == api12
+            # Update well summary with production dates - convert API12 to string for comparison
+            well_mask = well_summary_df['API12'].astype(str) == api12
             if well_mask.any():
-                well_summary_df.loc[well_mask, 'START_PRODUCTION_DATE'] = start_date
-                well_summary_df.loc[well_mask, 'LAST_PRODUCTION_DATE'] = last_date
+                if start_date and start_date != '':
+                    well_summary_df.loc[well_mask, 'START_PRODUCTION_DATE'] = start_date
+                if last_date and last_date != '':
+                    well_summary_df.loc[well_mask, 'LAST_PRODUCTION_DATE'] = last_date
+                logging.info(f"Updated production dates for API12 {api12}: start={start_date}, last={last_date}")
+        
+        # Update the groups dict with the modified well summary dataframe
+        well_data_analysis_groups['well_summary_df_groups'] = well_summary_df
         
         # Save the updated well summary
         well_api12_analysis.save_result_groups(cfg, well_data_analysis_groups)

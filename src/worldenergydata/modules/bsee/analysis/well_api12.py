@@ -213,7 +213,9 @@ class WellAPI12():
                 'API10': '',
                 'TOTAL_DEPTH_DATE': pd.NaT,
                 'WELL_SPUD_DATE': pd.NaT,
-                'COMPLETION_NAME': ''
+                'COMPLETION_NAME': '',
+                'START_PRODUCTION_DATE': '',
+                'LAST_PRODUCTION_DATE': '',
             }])
 
         try:
@@ -239,6 +241,8 @@ class WellAPI12():
             'TOTAL_DEPTH_DATE': TOTAL_DEPTH_DATE,
             'WELL_SPUD_DATE': WELL_SPUD_DATE,
             'COMPLETION_NAME': COMPLETION_NAME,
+            'START_PRODUCTION_DATE': '',
+            'LAST_PRODUCTION_DATE': '',
         }
 
         api12_analysis = pd.DataFrame([api12_analysis_dict])

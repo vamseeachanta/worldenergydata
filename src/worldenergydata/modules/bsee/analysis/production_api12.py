@@ -35,9 +35,12 @@ class ProductionAPI12Analysis():
         pass
 
     def run_production_analysis(self, cfg, data):
+        logger.info("Starting production analysis...")
         production_groups = data.get('production_data', None)
+        logger.info(f"Production groups found: {production_groups is not None}")
         groups_dict = {}
         if production_groups is None:
+            logger.error("No production data found in the provided data.")
             raise ValueError("No production data found in the provided data.")
 
         production_summary_df_groups = pd.DataFrame()
@@ -288,10 +291,20 @@ class ProductionAPI12Analysis():
             # Calculate start and last production dates
             production_dates_df = api12_df[api12_df.O_PROD_RATE_BOPD > 0]
             if len(production_dates_df) > 0:
-                start_production_date = production_dates_df.PRODUCTION_DATETIME.min().strftime('%Y-%m-%d')
-                last_production_date = production_dates_df.PRODUCTION_DATETIME.max().strftime('%Y-%m-%d')
-                production_summary_df.loc[df_row_index, "START_PRODUCTION_DATE"] = start_production_date
-                production_summary_df.loc[df_row_index, "LAST_PRODUCTION_DATE"] = last_production_date
+                try:
+                    start_production_date = production_dates_df.PRODUCTION_DATETIME.min().strftime('%Y-%m-%d')
+                    last_production_date = production_dates_df.PRODUCTION_DATETIME.max().strftime('%Y-%m-%d')
+                    production_summary_df.loc[df_row_index, "START_PRODUCTION_DATE"] = start_production_date
+                    production_summary_df.loc[df_row_index, "LAST_PRODUCTION_DATE"] = last_production_date
+                    logger.info(f"Calculated production dates for API12 {well_api12}: {start_production_date} to {last_production_date}")
+                except Exception as e:
+                    logger.error(f"Error calculating production dates for API12 {well_api12}: {e}")
+                    production_summary_df.loc[df_row_index, "START_PRODUCTION_DATE"] = ''
+                    production_summary_df.loc[df_row_index, "LAST_PRODUCTION_DATE"] = ''
+            else:
+                logger.warning(f"No production data found for API12 {well_api12}")
+                production_summary_df.loc[df_row_index, "START_PRODUCTION_DATE"] = ''
+                production_summary_df.loc[df_row_index, "LAST_PRODUCTION_DATE"] = ''
 
             production_summary_df.loc[df_row_index, "O_PROD_STATUS"] = 1
 
