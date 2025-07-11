@@ -1,8 +1,8 @@
-from worldenergydata.modules.bsee.analysis.custom_scripts.build_lease_report_final import BuildLeaseReportFinal
-from worldenergydata.modules.bsee.analysis.custom_scripts.extract_remarks_by_API import ExtractRemarksbyAPI
+from worldenergydata.modules.bsee.analysis.custom_scripts.Roy.build_lease_report_final import BuildLeaseReportFinal
+from worldenergydata.modules.bsee.analysis.custom_scripts.Roy.extract_remarks_by_API import ExtractRemarksbyAPI
 
-from worldenergydata.modules.bsee.analysis.custom_scripts.extract_api_details_to_excel_with_format import ExtractAPIDetails
-from worldenergydata.modules.bsee.analysis.custom_scripts.extract_api_remark_from_snwar import APIRemarksFromSNWAR
+from worldenergydata.modules.bsee.analysis.custom_scripts.Roy.extract_api_details_to_excel_with_format import ExtractAPIDetails
+from worldenergydata.modules.bsee.analysis.custom_scripts.Roy.extract_api_remark_from_snwar import APIRemarksFromSNWAR
 
 build_report = BuildLeaseReportFinal()
 extract_remarks = ExtractRemarksbyAPI()

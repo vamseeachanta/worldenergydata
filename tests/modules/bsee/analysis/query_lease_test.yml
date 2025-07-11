@@ -1,0 +1,22 @@
+meta:
+  library: worldenergydata
+  basename: bsee
+  label: goa_julia
+
+data:
+  production_data: False
+  groups:
+    - 
+      bottom_block: NULL
+      api12: [] # or NULL
+      lease: [ G20351, G16997, G16970, G16965, G18753, G17001 ]
+
+analysis:
+  flag: True
+
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False

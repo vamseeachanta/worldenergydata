@@ -1,0 +1,281 @@
+basename: bsee
+type:
+  data: false
+  analysis: false
+  results: false
+parameters:
+  filepath:
+    data: data/modules/bsee/data
+    production:
+      zip: data\modules\bsee\zip\production_yearly
+      bin: data\modules\bsee\bin\production_yearly
+    APD: data/modules/bsee/bin/apd
+    apm:
+      zip: data/modules/bsee/zip/apm
+      bin: data/modules/bsee/bin/apm
+      columns:
+      - - MMS_COMPANY_NUM
+        - API_WELL_NUMBER
+        - WATER_DEPTH
+        - WELL_NM_BP_SFIX
+        - WELL_NM_ST_SFIX
+        - SURF_AREA_CODE
+        - SURF_BLOCK_NUM
+        - SURF_LEASE_NUM
+        - BOTM_AREA_CODE
+        - BOTM_BLOCK_NUM
+        - BOTM_LEASE_NUM
+        - RIG_ID_NUM
+        - BOREHOLE_STAT_CD
+        - WELL_TYPE_CODE
+        - BUS_ASC_NAME
+  max_allowed_npt: 90
+  borehole_codes:
+  - BOREHOLE_STAT_CD: APD
+    BOREHOLE_STAT_DESC: APPLICATION FOR PERMIT TO DRILL
+  - BOREHOLE_STAT_CD: AST
+    BOREHOLE_STAT_DESC: APPROVED SIDETRACK
+  - BOREHOLE_STAT_CD: CNL
+    BOREHOLE_STAT_DESC: BOREHOLE IS CANCELLED. THE REQUEST TO DRILL THE WELL IS CANCELLED
+      AFTER THE APD OR SUNDRY HAS BEEN APPROVED. THE STATUS DATE IS THE DATE THE BOREHOLE
+      WAS CANCELLED.
+  - BOREHOLE_STAT_CD: COM
+    BOREHOLE_STAT_DESC: BOREHOLE COMPLETED
+  - BOREHOLE_STAT_CD: CT
+    BOREHOLE_STAT_DESC: CORE TEST WELL
+  - BOREHOLE_STAT_CD: DRL
+    BOREHOLE_STAT_DESC: DRILLING ACTIVE
+  - BOREHOLE_STAT_CD: DSI
+    BOREHOLE_STAT_DESC: DRILLING SUSPENDED
+  - BOREHOLE_STAT_CD: PA
+    BOREHOLE_STAT_DESC: PERMANENTLY ABANDONED
+  - BOREHOLE_STAT_CD: ST
+    BOREHOLE_STAT_DESC: BOREHOLE SIDETRACKED
+  - BOREHOLE_STAT_CD: TA
+    BOREHOLE_STAT_DESC: TEMPORARILY ABANDONED
+  - BOREHOLE_STAT_CD: VCW
+    BOREHOLE_STAT_DESC: VOLUME CHAMBER WELL
+  - BOREHOLE_STAT_CD: PND
+    BOREHOLE_STAT_DESC: PENDING
+  NPV:
+    discount_rate: 0.1
+    well_cost: 10000000
+settings_master: ~
+data_retrieval:
+  well:
+    website:
+      url: https://www.data.bsee.gov/Well/APD/Default.aspx
+      form_data:
+        first_request:
+          ASPxFormLayout1$ASPxTextBoxAPI: ~
+          ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+        second_request:
+          ASPxFormLayout1$ASPxTextBoxAPI: ~
+          __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+          __EVENTARGUMENT: Click
+    zip:
+      BoreholeRawData_mv_boreholes_all: data/modules/bsee/data/zip/BoreholeRawData_mv_boreholes_all.zip
+      eWellAPDRawData_mv_apd_main: data/modules/bsee/data/zip/eWellAPDRawData_mv_apd_main.zip
+  production:
+    website:
+      url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+      form_data:
+        first_request:
+          ASPxFormLayout1$ASPxTextBoxLN: ~
+          ASPxFormLayout1$ASPxTextBoxDF: ~
+          ASPxFormLayout1$ASPxTextBoxDT: ~
+          ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+        second_request:
+          ASPxFormLayout1$ASPxTextBoxLN: ~
+          __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+          __EVENTARGUMENT: Click
+  block:
+    website:
+      url: https://www.data.bsee.gov/Well/APD/Default.aspx
+      form_data:
+        first_request:
+          ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
+          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: ~
+          ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+          ASPxFormLayout1$ASPxComboBoxBBN: None
+          ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+        second_request:
+          ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
+          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: ~
+          ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+          ASPxFormLayout1$ASPxComboBoxBBN: None
+          __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+          __EVENTARGUMENT: Click
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: true
+    cfg_sensitivities: false
+meta:
+  library: worldenergydata
+  basename: bsee
+  label: goa_anchor
+data:
+  by_bin: true
+  apm: false
+  production_data: true
+  groups:
+  - bottom_block:
+      area: GC
+      number: 807
+    api12:
+    - 608114062100
+    - 608114062101
+    - 608114063500
+    - 608114067300
+    - 608114067301
+    - 608114063501
+    - 608114075000
+    - 608114075100
+    - 608114076100
+    - 608114076900
+    - 608114072800
+    war_main: data/modules/bsee/bin/war
+    well_data:
+    - api12:
+      - 608114062100
+      label: '608114062100'
+      file_name: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608114062100.csv
+    - api12:
+      - 608114062101
+      label: '608114062101'
+      file_name: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608114062101.csv
+    - api12:
+      - 608114063500
+      label: '608114063500'
+      file_name: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608114063500.csv
+    - api12:
+      - 608114067300
+      label: '608114067300'
+      file_name: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608114067300.csv
+    - api12:
+      - 608114067301
+      label: '608114067301'
+      file_name: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608114067301.csv
+    - api12:
+      - 608114063501
+      label: '608114063501'
+      file_name: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608114063501.csv
+    - api12:
+      - 608114075000
+      label: '608114075000'
+      file_name: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608114075000.csv
+    - api12:
+      - 608114075100
+      label: '608114075100'
+      file_name: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608114075100.csv
+    - api12:
+      - 608114076100
+      label: '608114076100'
+      file_name: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608114076100.csv
+    - api12:
+      - 608114076900
+      label: '608114076900'
+      file_name: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608114076900.csv
+    - api12:
+      - 608114072800
+      label: '608114072800'
+      file_name: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608114072800.csv
+analysis:
+  flag: true
+  production_data: true
+economics:
+  flag: false
+  cost:
+    OPEX: 15.0
+    discount_rate_annual: 0.08
+    facilities: []
+    well:
+    - cost: 150000000
+      recompletion: 50000000
+Analysis:
+  basename: bsee
+  analysis_root_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis
+  file_name: query_field_anchor_simple_goa_anchor
+  file_name_for_overwrite: query_field_anchor_simple_goa_anchor
+  log_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\logs
+  start_time: 2025-07-11 17:39:25.805949
+  cfg_array_file_names: ~
+  DefaultInputFile: ~
+  CustomInputFile: query_field_anchor_simple.yml
+  result_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results
+  result_data_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data
+  result_plot_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Plot
+  fe_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results
+bsee:
+  data:
+    by_bin: true
+    apm: false
+    production_data: true
+    groups:
+    - bottom_block:
+        area: GC
+        number: 807
+      api12:
+      - 608114062100
+      - 608114062101
+      - 608114063500
+      - 608114067300
+      - 608114067301
+      - 608114063501
+      - 608114075000
+      - 608114075100
+      - 608114076100
+      - 608114076900
+      - 608114072800
+      war_main: data/modules/bsee/bin/war
+      well_data:
+      - api12:
+        - 608114062100
+        label: '608114062100'
+        file_name: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608114062100.csv
+      - api12:
+        - 608114062101
+        label: '608114062101'
+        file_name: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608114062101.csv
+      - api12:
+        - 608114063500
+        label: '608114063500'
+        file_name: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608114063500.csv
+      - api12:
+        - 608114067300
+        label: '608114067300'
+        file_name: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608114067300.csv
+      - api12:
+        - 608114067301
+        label: '608114067301'
+        file_name: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608114067301.csv
+      - api12:
+        - 608114063501
+        label: '608114063501'
+        file_name: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608114063501.csv
+      - api12:
+        - 608114075000
+        label: '608114075000'
+        file_name: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608114075000.csv
+      - api12:
+        - 608114075100
+        label: '608114075100'
+        file_name: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608114075100.csv
+      - api12:
+        - 608114076100
+        label: '608114076100'
+        file_name: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608114076100.csv
+      - api12:
+        - 608114076900
+        label: '608114076900'
+        file_name: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608114076900.csv
+      - api12:
+        - 608114072800
+        label: '608114072800'
+        file_name: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608114072800.csv
+    type: csv
+  analysis:
+    flag: true
+    production_data: true

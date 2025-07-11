@@ -35,9 +35,12 @@ class ProductionAPI12Analysis():
         pass
 
     def run_production_analysis(self, cfg, data):
+        logger.info("Starting production analysis...")
         production_groups = data.get('production_data', None)
+        logger.info(f"Production groups found: {production_groups is not None}")
         groups_dict = {}
         if production_groups is None:
+            logger.error("No production data found in the provided data.")
             raise ValueError("No production data found in the provided data.")
 
         production_summary_df_groups = pd.DataFrame()
@@ -258,12 +261,12 @@ class ProductionAPI12Analysis():
 
     def get_summary_df_api12(self, well_api12, completion_name, api12_df):
 
-        columns = ['API12', 'API10', 'O_PROD_STATUS', 'O_CUMMULATIVE_PROD_MMBBL', 'DAYS_ON_PROD', 'O_MEAN_PROD_RATE_BOPD', 'COMPLETION_NAME']
+        columns = ['API12', 'API10', 'O_PROD_STATUS', 'O_CUMMULATIVE_PROD_MMBBL', 'DAYS_ON_PROD', 'O_MEAN_PROD_RATE_BOPD', 'COMPLETION_NAME', 'START_PRODUCTION_DATE', 'LAST_PRODUCTION_DATE']
         production_summary_df = pd.DataFrame(columns=columns)
-        production_summary_df = production_summary_df.astype({'API12': str, 'API10': str, 'O_PROD_STATUS': int, 'O_CUMMULATIVE_PROD_MMBBL': float, 'DAYS_ON_PROD': int, 'O_MEAN_PROD_RATE_BOPD': float, 'COMPLETION_NAME': str})
+        production_summary_df = production_summary_df.astype({'API12': str, 'API10': str, 'O_PROD_STATUS': int, 'O_CUMMULATIVE_PROD_MMBBL': float, 'DAYS_ON_PROD': int, 'O_MEAN_PROD_RATE_BOPD': float, 'COMPLETION_NAME': str, 'START_PRODUCTION_DATE': str, 'LAST_PRODUCTION_DATE': str})
 
         well_api10 = str(well_api12)[0:10]
-        values = [well_api12, well_api10, 0.0, 0.0, 0.0, 0.0, completion_name]
+        values = [well_api12, well_api10, 0.0, 0.0, 0.0, 0.0, completion_name, '', '']
         production_summary_df.loc[0] = values
 
         total_well_production = api12_df.MON_O_PROD_VOL.sum() / 1000 / 1000
@@ -284,6 +287,24 @@ class ProductionAPI12Analysis():
 
             O_MEAN_PROD_RATE_BOPD = api12_df.MON_O_PROD_VOL.sum() / DAYS_ON_PROD
             production_summary_df.loc[df_row_index, "O_MEAN_PROD_RATE_BOPD"] = float(O_MEAN_PROD_RATE_BOPD)
+
+            # Calculate start and last production dates
+            production_dates_df = api12_df[api12_df.O_PROD_RATE_BOPD > 0]
+            if len(production_dates_df) > 0:
+                try:
+                    start_production_date = production_dates_df.PRODUCTION_DATETIME.min().strftime('%Y-%m-%d')
+                    last_production_date = production_dates_df.PRODUCTION_DATETIME.max().strftime('%Y-%m-%d')
+                    production_summary_df.loc[df_row_index, "START_PRODUCTION_DATE"] = start_production_date
+                    production_summary_df.loc[df_row_index, "LAST_PRODUCTION_DATE"] = last_production_date
+                    logger.info(f"Calculated production dates for API12 {well_api12}: {start_production_date} to {last_production_date}")
+                except Exception as e:
+                    logger.error(f"Error calculating production dates for API12 {well_api12}: {e}")
+                    production_summary_df.loc[df_row_index, "START_PRODUCTION_DATE"] = ''
+                    production_summary_df.loc[df_row_index, "LAST_PRODUCTION_DATE"] = ''
+            else:
+                logger.warning(f"No production data found for API12 {well_api12}")
+                production_summary_df.loc[df_row_index, "START_PRODUCTION_DATE"] = ''
+                production_summary_df.loc[df_row_index, "LAST_PRODUCTION_DATE"] = ''
 
             production_summary_df.loc[df_row_index, "O_PROD_STATUS"] = 1
 
@@ -347,7 +368,7 @@ class ProductionAPI12Analysis():
         mapping = {}
         for group in cfg.get("data", {}).get("groups", []):
             block_ids = []
-            block_id = group['bottom_block'].get("number")
+            block_id = group['bottom_block'].get("number") if group['bottom_block'] is not None else None
             if block_id is not None:
                 block_ids.append(block_id)
             api12s = group.get("api12", [])
@@ -600,6 +621,7 @@ class ProductionAPI12Analysis():
         revenue_df['Monthly Oil Production'] = pd.to_numeric(revenue_df['Monthly Oil Production'], errors='coerce')
         revenue_df['OPEX'] = revenue_df['Monthly Oil Production'] * opex_per_bbl
         revenue_df['Net Cash Flow'] = revenue_df['Revenue (USD)'] - revenue_df['OPEX']
+        revenue_df['Net Cash Flow'] = revenue_df['Net Cash Flow'].fillna(0)
 
         # ---- Combine with CAPEX ----
         total_capex = sum(capex_breakdown.values())
