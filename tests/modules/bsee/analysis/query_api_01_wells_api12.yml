@@ -1,7 +1,6 @@
 meta:
   library: worldenergydata
   basename: bsee
-basename: bsee
 
 data:
   production_data: False
