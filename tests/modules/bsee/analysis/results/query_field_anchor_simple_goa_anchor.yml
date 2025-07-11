@@ -184,7 +184,7 @@ data:
       file_name: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608114072800.csv
 analysis:
   flag: true
-  production_data: false
+  production_data: true
 economics:
   flag: false
   cost:
@@ -200,10 +200,10 @@ Analysis:
   file_name: query_field_anchor_simple_goa_anchor
   file_name_for_overwrite: query_field_anchor_simple_goa_anchor
   log_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\logs
-  start_time: 2025-07-10 22:34:21.740516
+  start_time: 2025-07-11 17:39:25.805949
   cfg_array_file_names: ~
   DefaultInputFile: ~
-  CustomInputFile: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\query_field_anchor_simple.yml
+  CustomInputFile: query_field_anchor_simple.yml
   result_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results
   result_data_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data
   result_plot_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Plot
@@ -278,4 +278,4 @@ bsee:
     type: csv
   analysis:
     flag: true
-    production_data: false
+    production_data: true

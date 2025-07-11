@@ -62,7 +62,7 @@ class WellAPI12():
         groups_dict['well_timeline_df'] = well_timeline_df
 
         self.save_result_groups(cfg, groups_dict)
-        # self.plot_well_timeline_df(cfg, groups_dict)
+        self.plot_well_timeline_df(cfg, groups_dict)
 
         return cfg, groups_dict       
 
@@ -80,8 +80,11 @@ class WellAPI12():
         # Add production start and end dates to timeline
         column_keyword_cfg = {'date_column': 'START_PRODUCTION_DATE', 'well_count_column': 'PRODUCTION_START_COUNT' }
         well_timeline_df = self.get_well_count_by_custom_cfg(well_timeline_df, well_summary_df_groups, column_keyword_cfg)
-        column_keyword_cfg = {'date_column': 'LAST_PRODUCTION_DATE', 'well_count_column': 'PRODUCTION_LAST_COUNT' }
+        column_keyword_cfg = {'date_column': 'LAST_PRODUCTION_DATE', 'well_count_column': 'PRODUCTION_END_COUNT' }
         well_timeline_df = self.get_well_count_by_custom_cfg(well_timeline_df, well_summary_df_groups, column_keyword_cfg)
+
+        # Add currently producing count - calculate for each date
+        well_timeline_df = self.add_currently_producing_count(well_timeline_df, well_summary_df_groups)
 
         well_timeline_df.sort_values(by=['date_time'], inplace=True, ignore_index=True)
         well_timeline_df.reset_index(drop=True, inplace=True)
@@ -349,7 +352,7 @@ class WellAPI12():
 
         return sidetrack_no, bypass_no, tree_elevation_aml
 
-    def prepare_casing_data(self, well_data, well_tubulars_data):
+    def prepare_casing_data(self, well_data, well_tubulars_data,api12_df):
 
         # Third party imports
         import pandas as pd
@@ -377,6 +380,8 @@ class WellAPI12():
         # Third party imports
         from common.data import Transform
         transform = Transform()
+        field_x_ref = self.cfg['custom_parameters']['field_x_ref']
+        field_y_ref = self.cfg['custom_parameters']['field_y_ref']
         self.output_completions = completion_data.merge(completion_data,
                                                         how='outer',
                                                         left_on='API12',
@@ -447,17 +452,51 @@ class WellAPI12():
 
     def plot_well_timeline_df(self, cfg, groups_dict):
         import plotly.express as px
+        import pandas as pd
+        import os
 
         well_timeline_df = groups_dict['well_timeline_df']
-        df_melted = well_timeline_df.melt(id_vars='date_time', value_vars=['WELL_SPUD_COUNT', 'TOTAL_DEPTH_COUNT','RIG_LAST_DATE_COUNT', 'PRODUCTION_START_COUNT', 'PRODUCTION_LAST_COUNT'],
-                    var_name='type', value_name='count') 
+        
+        # Define the columns to plot
+        plot_columns = [
+            'WELL_SPUD_COUNT', 
+            'TOTAL_DEPTH_COUNT',
+            'RIG_LAST_DATE_COUNT', 
+            'PRODUCTION_START_COUNT', 
+            'PRODUCTION_END_COUNT',
+            'PRODUCING_CURRENTLY_COUNT'
+        ]
+        
+        # Only include columns that exist in the dataframe
+        available_columns = [col for col in plot_columns if col in well_timeline_df.columns]
+        
+        df_melted = well_timeline_df.melt(
+            id_vars='date_time', 
+            value_vars=available_columns,
+            var_name='type', 
+            value_name='count'
+        ) 
                
         df_melted = df_melted.rename(columns={'date_time': 'Date'})
         df_melted['Date'] = pd.to_datetime(df_melted['Date'])
-        #custom date range on x axis
+        
+        # Custom date range on x axis
         df_filtered = df_melted[
-                (df_melted['Date'] >= '2007-01-01') &
-                (df_melted['Date'] <= '2025-04-03') ]
+            (df_melted['Date'] >= '2007-01-01') &
+            (df_melted['Date'] <= '2025-04-03')
+        ]
+
+        # Create more readable labels for the legend
+        label_mapping = {
+            'WELL_SPUD_COUNT': 'Wells Spudded',
+            'TOTAL_DEPTH_COUNT': 'Wells Completed (TD)',
+            'RIG_LAST_DATE_COUNT': 'Rig Release',
+            'PRODUCTION_START_COUNT': 'Production Started',
+            'PRODUCTION_END_COUNT': 'Production Ended',
+            'PRODUCING_CURRENTLY_COUNT': 'Currently Producing'
+        }
+        
+        df_filtered['type'] = df_filtered['type'].map(label_mapping).fillna(df_filtered['type'])
 
         fig = px.line(
             df_filtered,
@@ -465,16 +504,30 @@ class WellAPI12():
             y='count',
             color='type',
             markers=True,
-            title='Well Timeline Analysis'
+            title='Well Timeline Analysis - Production Activity'
         )
+        
+        # Update layout for better readability
+        fig.update_layout(
+            xaxis_title="Date",
+            yaxis_title="Count",
+            legend_title="Activity Type",
+            hovermode='x unified'
+        )
+        
         groups_label = cfg['meta'].get('label', None)
         if groups_label is None:
             groups_label = cfg['Analysis']['file_name_for_overwrite']
 
         file_label = 'well_timeline_' + groups_label
         result_folder = cfg['Analysis']['result_folder']
-        file_name = os.path.join(result_folder, 'Plot',file_label + '.html')
+        file_name = os.path.join(result_folder, 'Plot', file_label + '.html')
+        
+        # Create Plot directory if it doesn't exist
+        os.makedirs(os.path.dirname(file_name), exist_ok=True)
+        
         fig.write_html(file_name, include_plotlyjs="cdn")
+        logger.info(f"Well timeline plot saved to: {file_name}")
     
     def process_survey_xyz(self, survey):
         # calcualted x is northing and y is easting
@@ -614,4 +667,49 @@ class WellAPI12():
                         bbox_inches='tight',
                         dpi=800)
             plt.close()
+
+    def add_currently_producing_count(self, well_timeline_df, well_summary_df_groups):
+        """
+        Calculate the number of wells currently producing at each date in the timeline.
+        A well is considered producing if the current date is between START_PRODUCTION_DATE and LAST_PRODUCTION_DATE.
+        """
+        import pandas as pd
+        import numpy as np
+        
+        # If no dates in timeline, return as-is
+        if well_timeline_df.empty:
+            return well_timeline_df
+            
+        # Get production data from wells
+        production_wells = well_summary_df_groups[
+            (well_summary_df_groups['START_PRODUCTION_DATE'].notna()) & 
+            (well_summary_df_groups['START_PRODUCTION_DATE'] != '') &
+            (well_summary_df_groups['LAST_PRODUCTION_DATE'].notna()) &
+            (well_summary_df_groups['LAST_PRODUCTION_DATE'] != '')
+        ].copy()
+        
+        if production_wells.empty:
+            well_timeline_df['PRODUCING_CURRENTLY_COUNT'] = 0
+            return well_timeline_df
+            
+        # Convert date columns to datetime
+        production_wells['START_PRODUCTION_DATE'] = pd.to_datetime(production_wells['START_PRODUCTION_DATE'], errors='coerce')
+        production_wells['LAST_PRODUCTION_DATE'] = pd.to_datetime(production_wells['LAST_PRODUCTION_DATE'], errors='coerce')
+        
+        # Calculate producing count for each date in timeline
+        producing_counts = []
+        for idx, row in well_timeline_df.iterrows():
+            current_date = pd.to_datetime(row['date_time'])
+            
+            # Count wells that are producing at this date
+            producing_count = len(production_wells[
+                (production_wells['START_PRODUCTION_DATE'] <= current_date) &
+                (production_wells['LAST_PRODUCTION_DATE'] >= current_date)
+            ])
+            
+            producing_counts.append(producing_count)
+        
+        well_timeline_df['PRODUCING_CURRENTLY_COUNT'] = producing_counts
+        
+        return well_timeline_df
 
