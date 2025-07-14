@@ -1,4 +1,4 @@
-import logging
+from loguru import logger
 
 from worldenergydata.modules.bsee.data.production.production_data_from_zip import GetProdDataFromZip
 from worldenergydata.modules.bsee.data.well.well_from_zip import WellDataFromZip
@@ -29,7 +29,7 @@ class DataRefresh:
         if data_refresh_flag:
             self.refresh_well_data(cfg)
             self.refresh_production_data(cfg)
-            logging.info('Data refresh completed.')
+            logger.info('Data refresh completed.')
 
         return cfg, None
 

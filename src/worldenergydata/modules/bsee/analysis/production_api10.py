@@ -1,7 +1,7 @@
 # Standard library imports
 import os
 import json
-import logging
+from loguru import logger
 
 # # # Third party imports
 import pandas as pd

@@ -7,11 +7,9 @@ parameters:
   filepath:
     data: data/modules/bsee/data
     production:
-      csv: data\modules\bsee\csv\production
-      zip: data\modules\bsee\zip\production
-      bin: data\modules\bsee\bin\production
-    block: data/modules/bsee/block
-    APD: data/modules/bsee/csv/online_query_raw_data
+      zip: data\modules\bsee\zip\production_yearly
+      bin: data\modules\bsee\bin\production_yearly
+    APD: data/modules/bsee/bin/apd
     apm:
       zip: data/modules/bsee/zip/apm
       bin: data/modules/bsee/bin/apm
@@ -59,6 +57,9 @@ parameters:
     BOREHOLE_STAT_DESC: VOLUME CHAMBER WELL
   - BOREHOLE_STAT_CD: PND
     BOREHOLE_STAT_DESC: PENDING
+  NPV:
+    discount_rate: 0.1
+    well_cost: 10000000
 settings_master: ~
 data_retrieval:
   well:
@@ -72,9 +73,6 @@ data_retrieval:
           ASPxFormLayout1$ASPxTextBoxAPI: ~
           __EVENTTARGET: ASPxFormLayout2$btnCsvExport
           __EVENTARGUMENT: Click
-    csv:
-      BoreholeRawData_mv_boreholes_all: data/modules/bsee/csv/online_query_raw_data/BoreholeRawData_mv_boreholes_all.csv
-      eWellAPDRawData_mv_apd_main: data/modules/bseecsv/online_query_raw_data/eWellAPDRawData_mv_apd_main.csv
     zip:
       BoreholeRawData_mv_boreholes_all: data/modules/bsee/data/zip/BoreholeRawData_mv_boreholes_all.zip
       eWellAPDRawData_mv_apd_main: data/modules/bsee/data/zip/eWellAPDRawData_mv_apd_main.zip
@@ -118,9 +116,7 @@ meta:
   library: worldenergydata
   basename: bsee
 data:
-  apm: false
-  production_data: false
-  bottom_blocks: true
+  by: block
   groups:
   - bottom_block:
       area: WR
@@ -265,7 +261,7 @@ Analysis:
   file_name: query_api_01_block_scrapy
   file_name_for_overwrite: query_api_01_block_scrapy
   log_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\logs
-  start_time: 2025-05-13 11:34:01.258995
+  start_time: 2025-07-14 12:29:34.733404
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\query_api_01_block_scrapy.yml
@@ -275,9 +271,7 @@ Analysis:
   fe_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\results
 bsee:
   data:
-    apm: false
-    production_data: false
-    bottom_blocks: true
+    by: block
     groups:
     - bottom_block:
         area: WR

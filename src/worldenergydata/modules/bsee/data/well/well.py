@@ -1,7 +1,6 @@
 import os
 import pandas as pd
 from copy import deepcopy
-import logging
 from loguru import logger
 
 from worldenergydata.modules.bsee.data._from_url.scrapy_well_data import ScrapyRunnerAPI
@@ -214,7 +213,7 @@ class WellData:
         }
 
         file_is_valid, file_name = get_repository_filename(library_file_cfg)
-        logging.debug(f"file_name: {file_name}")
+        logger.debug(f"file_name: {file_name}")
 
         if file_is_valid:
             df = pd.read_pickle(file_name)
@@ -248,7 +247,7 @@ class WellData:
         }
 
         file_is_valid, file_name = get_repository_filename(library_file_cfg)
-        logging.debug(f"file_name: {file_name}")
+        logger.debug(f"file_name: {file_name}")
 
         if file_is_valid:
             df = pd.read_pickle(file_name)
@@ -270,7 +269,7 @@ class WellData:
         }
 
         file_is_valid, file_name = get_repository_filename(library_file_cfg)
-        logging.debug(f"file_name: {file_name}")
+        logger.debug(f"file_name: {file_name}")
 
         if file_is_valid:
             df = pd.read_pickle(file_name)
@@ -292,7 +291,7 @@ class WellData:
         }
 
         file_is_valid, file_name = get_repository_filename(library_file_cfg)
-        logging.debug(f"file_name: {file_name}")
+        logger.debug(f"file_name: {file_name}")
 
         if file_is_valid:
             df = pd.read_pickle(file_name)
@@ -314,7 +313,7 @@ class WellData:
         }
 
         file_is_valid, file_name = get_repository_filename(library_file_cfg)
-        logging.debug(f"file_name: {file_name}")
+        logger.debug(f"file_name: {file_name}")
 
         if file_is_valid:
             df = pd.read_pickle(file_name)

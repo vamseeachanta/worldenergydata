@@ -1,6 +1,8 @@
+#TODO - fix error in code 
 meta:
   library: worldenergydata
   basename: bsee
+  label: goa-stmalo
 basename: bsee
 
 data:
