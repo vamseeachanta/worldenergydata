@@ -4,7 +4,7 @@ Test script to verify the production timeline functionality
 """
 import os
 import sys
-import logging
+from loguru import logger
 from pathlib import Path
 
 # Add the src directory to the Python path
@@ -17,8 +17,8 @@ from worldenergydata.engine import engine
 def test_production_timeline():
     """Test the production timeline analysis with the anchor field data"""
     
-    logging.basicConfig(level=logging.INFO)
-    logger = logging.getLogger(__name__)
+    logger.basicConfig(level=logger.INFO)
+    logger = logger.getLogger(__name__)
     
     # Use the simple config file
     config_file = current_dir / "query_field_anchor_simple.yml"

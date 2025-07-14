@@ -1,6 +1,6 @@
 import os
 import sys
-import logging
+from loguru import logger
 from typing import Dict, Any, Optional
 
 from assetutilities.common.yml_utilities import ymlInput
@@ -32,7 +32,7 @@ def run_application(input_file: str) -> Dict[str, Any]:
         cfg = engine(input_file)
         return cfg
     except Exception as e:
-        logging.error(
+        logger.error(
             "Failed to execute engine with %s: %s", input_file, str(e)
         )
         raise
@@ -76,7 +76,7 @@ def validate_anchor_field_config(cfg: Dict[str, Any]) -> bool:
     # Validate analysis settings (can be True or False)
     assert 'flag' in cfg['analysis'], "Analysis flag setting missing"
     
-    logging.info("Anchor field configuration validation passed")
+    logger.info("Anchor field configuration validation passed")
     return True
 
 
@@ -100,10 +100,10 @@ def test_application() -> None:
         # Validate the configuration for Anchor field
         validate_anchor_field_config(cfg)
         
-        logging.info("Anchor field test completed successfully")
+        logger.info("Anchor field test completed successfully")
         
     except Exception as e:
-        logging.error("Test failed: %s", str(e))
+        logger.error("Test failed: %s", str(e))
         raise
 
 
@@ -125,7 +125,7 @@ def test_anchor_field_block_validation() -> None:
     assert block_config['area'] == 'GC', "Expected Green Canyon (GC) area"
     assert block_config['number'] == 807, "Expected block number 807"
     
-    logging.info("Anchor field block validation passed")
+    logger.info("Anchor field block validation passed")
 
 
 def test_config_file_loading() -> None:
@@ -147,22 +147,22 @@ def test_config_file_loading() -> None:
             assert cfg_data is not None, f"Failed to load {config_file}"
             assert 'meta' in cfg_data, f"Meta section missing in {config_file}"
             assert 'data' in cfg_data, f"Data section missing in {config_file}"
-            logging.info("Successfully loaded and validated %s", config_file)
+            logger.info("Successfully loaded and validated %s", config_file)
         except Exception as e:
-            logging.error("Failed to load %s: %s", config_file, str(e))
+            logger.error("Failed to load %s: %s", config_file, str(e))
             raise
 
 
 if __name__ == "__main__":
-    # Configure logging
-    logging.basicConfig(level=logging.INFO)
+    # Configure logger
+    logger.basicConfig(level=logger.INFO)
     
     # Run tests
     try:
         test_config_file_loading()
         test_anchor_field_block_validation()
         test_application()
-        logging.info("All tests passed successfully!")
+        logger.info("All tests passed successfully!")
     except Exception as e:
-        logging.error("Test suite failed: %s", str(e))
+        logger.error("Test suite failed: %s", str(e))
         sys.exit(1)

@@ -1,7 +1,7 @@
 # Standard library imports
 import os
 import json
-import logging
+from loguru import logger
 
 # # # Third party imports
 import pandas as pd
@@ -26,13 +26,13 @@ class BSEEAnalysis():
 
     def router(self, cfg, data):
         
-        logging.info(f"Analysis config: {cfg.get('analysis', {})}")
+        logger.info(f"Analysis config: {cfg.get('analysis', {})}")
         
         if "analysis" in cfg and cfg['analysis'].get('flag', False):
-            logging.info("Running analysis for all wells...")
+            logger.info("Running analysis for all wells...")
             cfg = self.run_analysis_for_all_wells(cfg, data)
         else:
-            logging.info("Analysis not enabled or flag is False")
+            logger.info("Analysis not enabled or flag is False")
 
         return cfg
 
@@ -65,12 +65,8 @@ class BSEEAnalysis():
         well_summary_df = well_data_analysis_groups.get('well_summary_df_groups', pd.DataFrame())
         
         if production_summary_df.empty or well_summary_df.empty:
-            logging.warning("Production or well summary data is empty - skipping production date integration")
+            logger.warning("Production or well summary data is empty - skipping production date integration")
             return
-        
-        # Debug: Log the API12 values to see what we're working with
-        logging.info(f"Production API12 values: {production_summary_df['API12'].unique()}")
-        logging.info(f"Well API12 values: {well_summary_df['API12'].unique()}")
         
         # Add columns for production dates if they don't exist
         if 'START_PRODUCTION_DATE' not in well_summary_df.columns:
@@ -92,16 +88,16 @@ class BSEEAnalysis():
                     well_summary_df.loc[well_mask, 'START_PRODUCTION_DATE'] = start_date
                 if last_date and last_date != '':
                     well_summary_df.loc[well_mask, 'LAST_PRODUCTION_DATE'] = last_date
-                logging.info(f"Updated production dates for API12 {api12}: start={start_date}, last={last_date}")
+                logger.info(f"Updated production dates for API12 {api12}: start={start_date}, last={last_date}")
                 matches_found += 1
             else:
-                logging.warning(f"No matching well found for production API12: {api12}")
+                logger.warning(f"No matching well found for production API12: {api12}")
         
-        logging.info(f"Total matches found: {matches_found} out of {len(production_summary_df)} production records")
+        logger.info(f"Total matches found: {matches_found} out of {len(production_summary_df)} production records")
         
         # If no matches were found, add some test production dates to demonstrate the timeline functionality
         if matches_found == 0:
-            logging.info("No API12 matches found. Adding test production dates to first few wells for timeline demonstration...")
+            logger.info("No API12 matches found. Adding test production dates to first few wells for timeline demonstration...")
             
             # Add test production dates to the first few wells
             if len(well_summary_df) > 0:
@@ -119,7 +115,7 @@ class BSEEAnalysis():
                     well_summary_df.loc[2, 'START_PRODUCTION_DATE'] = '2024-06-01'
                     well_summary_df.loc[2, 'LAST_PRODUCTION_DATE'] = '' # Still producing
                 
-                logging.info("Added test production dates for timeline demonstration")
+                logger.info("Added test production dates for timeline demonstration")
         
         # Update the groups dict with the modified well summary dataframe
         well_data_analysis_groups['well_summary_df_groups'] = well_summary_df

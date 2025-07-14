@@ -1,7 +1,7 @@
 meta:
   library: worldenergydata
   basename: bsee
-basename: bsee
+  label: goa_julia
 
 
 data:
