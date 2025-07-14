@@ -165,7 +165,7 @@ class WellAPI12():
             # TODO fix and Relocate as needed.
             #self.prepare_casing_data(api12_well_data, well_tubulars_data)
             #self.prepare_completion_data(completion_data)
-            self.prepare_well_paths(api10_directional_surveys)
+            self.prepare_well_paths(api10_directional_surveys, well_data)
             self.prepare_formation_data()
         except Exception as e:
             logger.error(e)
@@ -392,10 +392,23 @@ class WellAPI12():
         self.output_completions['COMP_y_rel'] = self.output_completions['COMP_y'] - field_y_ref
         self.output_completions['Field NickName'] = self.cfg['custom_parameters']['field_nickname']
 
-    def prepare_well_paths(self, directional_surveys):
+    def prepare_well_paths(self, directional_surveys, well_data):
+        
+        #TODO - Relocate to where it is has to be .
+        self.output_data_api12_df = well_data.copy()
+        self.output_data_api12_df['O_PROD_STATUS'] = 0
+        self.output_data_api12_df['O_CUMMULATIVE_PROD_MMBBL'] = 0
+        self.output_data_api12_df['DAYS_ON_PROD'] = 0
+        self.output_data_api12_df['O_MEAN_PROD_RATE_BOPD'] = 0
+        self.output_data_api12_df['Total Depth Date'] = pd.to_datetime(self.output_data_api12_df['Total Depth Date'])
+        self.output_data_api12_df['Spud Date'] = pd.to_datetime(self.output_data_api12_df['Spud Date'])
+        self.output_data_api12_df['COMPLETION_NAME'] = ""
+        self.output_data_api12_df['monthly_production'] = None
+        self.output_data_api12_df['xyz'] = None
+        
         self.output_well_path_for_db = {}
         self.output_data_well_path = {}
-        API12_list = list(directional_surveys.API_WELL_NUMBER.unique())
+        API12_list = list(directional_surveys.API12.unique())
         count = 0
         for api12 in API12_list:
             count = count + 1
@@ -421,8 +434,8 @@ class WellAPI12():
                         Azimuth = 180 - Azimuth_quadrant_angle
                     else:
                         Azimuth = 180 + Azimuth_quadrant_angle
-                api12_dir_survey_df['az'].iloc[df_row] = Azimuth
-                api12_dir_survey_df['inc'].iloc[df_row] = Inclination
+                api12_dir_survey_df.loc[df_row,'az'] = Azimuth
+                api12_dir_survey_df.loc[df_row, 'inc'] = Inclination
 
             print('Processing Survey for api12 {} of {}'.format(count, len(API12_list)))
             survey_xyz = self.process_survey_xyz(api12_dir_survey_df)
@@ -445,7 +458,7 @@ class WellAPI12():
             temp_df = self.output_data_api12_df[(self.output_data_api12_df.API12 == api12)].copy()
             if len(temp_df) > 0 and len(survey_for_db) > 0:
                 df_row_index = temp_df.index[0]
-                self.output_data_api12_df['xyz'].iloc[df_row_index] = json.dumps(output_well_path_for_db)
+                self.output_data_api12_df.loc[df_row_index, 'xyz'] = json.dumps(output_well_path_for_db)
     
     def prepare_formation_data(self):
         pass
@@ -484,7 +497,7 @@ class WellAPI12():
         df_filtered = df_melted[
             (df_melted['Date'] >= '2007-01-01') &
             (df_melted['Date'] <= '2025-04-03')
-        ]
+        ].copy()
 
         # Create more readable labels for the legend
         label_mapping = {

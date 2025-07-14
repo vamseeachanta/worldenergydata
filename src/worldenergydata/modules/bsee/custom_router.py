@@ -17,11 +17,11 @@ class CustomRouter:
 
     def router(self, cfg):
         
-        if 'custom_analysis' in cfg['analysis'] and cfg['analysis']['custom_analysis']['flag']:
+        if 'custom_analysis' in cfg and cfg['custom_analysis']['flag']:
             build_report.router(cfg)
             extract_remarks.router(cfg)
             
-        elif 'custom_remarks_analysis' in cfg['analysis'] and cfg['analysis']['custom_remarks_analysis']['flag']:
+        elif 'custom_remarks_analysis' in cfg and cfg['custom_remarks_analysis']['flag']:
             api_details.router(cfg)
             extract_remarks_snwar.router(cfg)
 

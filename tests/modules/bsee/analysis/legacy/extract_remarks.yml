@@ -12,9 +12,8 @@ data:
     war_prop : data/modules/bsee/bin/war/mv_war_main_prop.bin
     war_remarks: data/modules/bsee/bin/war/mv_war_main_prop_remark.bin
 
-analysis:
-  custom_remarks_analysis: 
-    flag: True
+custom_remarks_analysis: 
+  flag: True
 
 default:
   log_level: INFO
