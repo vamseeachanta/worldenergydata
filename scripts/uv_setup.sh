@@ -10,7 +10,7 @@ uv venv
 
 echo "Installing dependencies from requirements.txt..."
 if [ -f "scripts/requirements.txt" ]; then
-    uv add -r scripts/requirements.txt
+    uv pip install -r scripts/requirements.txt
 else
     echo "Warning: scripts/requirements.txt not found"
 fi
