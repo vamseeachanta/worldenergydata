@@ -2,7 +2,7 @@
 meta:
   library: worldenergydata
   basename: bsee
-  label: goa-stmalo
+  label: goa_stmalo
 basename: bsee
 
 data:
