@@ -3,7 +3,7 @@ import pandas as pd
 from copy import deepcopy
 from loguru import logger
 
-from worldenergydata.modules.bsee.data._from_url.scrapy_well_data import ScrapyRunnerAPI
+from worldenergydata.modules.bsee.data._from_bin.by_api import APIData
 from worldenergydata.modules.bsee.data._by_block.data_from_url import DataFromURL
 from worldenergydata.modules.bsee.data.apm_data import APMData
 from worldenergydata.modules.bsee.data.prepare_data_for_analysis import PrepareBseeData
@@ -163,7 +163,7 @@ class WellData:
     
     def get_well_data_from_website(self, cfg):
         groups = cfg[cfg['basename']]['data']['groups']
-        scrapy_runner_api = ScrapyRunnerAPI()
+        api_data = APIData()
 
         for group_idx in range(0, len(groups)):
             group = groups[group_idx]
@@ -174,7 +174,7 @@ class WellData:
                 api12 = api12_array[api12_idx]
                 api12_meta_data = {'api12': [api12], 'label': str(api12)}
 
-                api12_data = scrapy_runner_api.run_spider(cfg, api12_meta_data)
+                api12_data = api_data.router(cfg, api12_meta_data)
                 api12_output_cfg = self.generate_output_item(cfg, api12_meta_data)
                 api12_group_output.append(api12_output_cfg)
 
@@ -213,7 +213,7 @@ class WellData:
         }
 
         file_is_valid, file_name = get_repository_filename(library_file_cfg)
-        logger.debug(f"file_name: {file_name}")
+        # logger.debug(f"file_name: {file_name}")
 
         if file_is_valid:
             df = pd.read_pickle(file_name)

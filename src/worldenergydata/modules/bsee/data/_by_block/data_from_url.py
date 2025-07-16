@@ -3,10 +3,11 @@ from copy import deepcopy
 
 import pandas as pd
 
-from worldenergydata.modules.bsee.data._from_url.scrapy_block_data import ScrapyRunnerBlock
+from worldenergydata.modules.bsee.data._from_bin.by_block import BlockData
 
 from assetutilities.common.utilities import is_dir_valid_func
 
+block_data = BlockData()
 class DataFromURL:
 
     def __init__(self):
@@ -19,7 +20,7 @@ class DataFromURL:
 
     def get_block_data_groups(self, cfg):
 
-        cfg = self.get_block_data_from_website(cfg)
+        cfg = self.get_local_block_data(cfg)
 
         block_data_groups = []
         for group in cfg[cfg['basename']]['data']['groups']:
@@ -42,20 +43,19 @@ class DataFromURL:
         cfg_block_df = pd.read_csv(group['file_name'])
         return cfg_block_df
 
-    def get_block_data_from_website(self, cfg):
+    def get_local_block_data(self, cfg):
 
         groups = cfg[cfg['basename']]['data']['groups']
-        scrapy_runner_block = ScrapyRunnerBlock()
 
         block_group_data = []
         for group_idx in range(len(groups)):
             group = groups[group_idx]
-            block_data_from_website = scrapy_runner_block.run_spider(cfg, group)
+            block_data_from_website = block_data.router(cfg, group)
             block_metadata = self.generate_output_item(cfg, group)
 
             block_group_data.append(block_metadata)
             block_df = pd.read_csv(block_metadata['file_name'])
-            api12_list = block_df['API Well Number'].unique().tolist()
+            api12_list = block_df['API_WELL_NUMBER'].unique().tolist()
             block_metadata['api12'] = api12_list
 
             cfg[cfg['basename']]['data']['groups'][group_idx] = block_metadata

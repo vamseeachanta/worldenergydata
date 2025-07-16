@@ -18,16 +18,6 @@ data:
 analysis:
   flag: True
   production_data: True
-  
-economics:
-  flag: False
-  cost:
-    OPEX: 15.0
-    discount_rate_annual: 0.08
-    facilities: []
-    well:
-      - cost: 150000000
-        recompletion: 50000000
 
 default:
   log_level: INFO
