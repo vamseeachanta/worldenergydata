@@ -2,12 +2,8 @@ import os
 import pickle
 import pandas as pd
 from pathlib import Path
-import logging
 from typing import Dict, List, Union
-
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 class APIData:
     """
@@ -64,13 +60,13 @@ class APIData:
         # Ensure bin path is initialized
         self._ensure_bin_path_initialized(cfg)
         
-        api_num = input_group['api12']['number'] if 'number' in input_group['api12'] and input_group['api12']['number'] is not None else None
+        api_num = input_group['api12'] if 'api12' in input_group and input_group['api12'] is not None else None
         bin_path = Path(cfg['parameters']['filepath']['bin_dir'])
         if not bin_path.exists():
             raise FileNotFoundError(f"Bin folder not found: {bin_path}")
         
-        api_numbers = self.parse_input(api_num)
-        results = self.search_api_numbers(api_numbers)
+        # api_numbers = self.parse_input(api_num)
+        results = self.search_api_numbers(api_num)
         if not results:
             logger.warning("No results found.")
         else:
@@ -199,7 +195,7 @@ class APIData:
         if not isinstance(api_numbers, list):
             api_numbers = [api_numbers]
         
-        logger.info(f"Searching for API numbers: {api_numbers}")
+        logger.info(f"Getting data for API {api_numbers} START ...")
         
         results = {}
         bin_files = self.get_all_bin_files()
@@ -231,9 +227,8 @@ class APIData:
         """
         from assetutilities.common.utilities import is_dir_valid_func
 
-        api_num = str(input_group['api12']['number'])
-        area = str(input_group['api12']['area']) if 'area' in input_group['api12'] else 'unknown'
-        label = area + '_' + api_num
+        api_num = str(input_group['api12'][0])
+        label = api_num
         output_path = os.path.join(cfg['Analysis']['result_folder'], 'Data')
         if output_path is None:
             result_folder = self.cfg['Analysis']['result_folder']

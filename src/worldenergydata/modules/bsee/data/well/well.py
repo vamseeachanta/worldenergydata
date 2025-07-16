@@ -95,14 +95,11 @@ class WellData:
         Borehole_apd_df = self.get_Borehole_apd_for_all_wells(BoreholeRawData_df, eWellAPDRawData_df)
         api12_Borehole_apd = self.get_Borehole_apd_for_api12(cfg, Borehole_apd_df, api12)
 
-        api12_df = pd.merge(api12_Borehole_apd, api12_well_data, how='inner' ,
-                                    left_on=['API_WELL_NUMBER'], right_on=['API Well Number'])
-        api12_df = pd.merge(api12_eWellEORRawData, api12_df, how='outer' ,
-                                    left_on=['API_WELL_NUMBER'], right_on=['API Well Number'])
+        api12_df = pd.merge(api12_Borehole_apd, api12_well_data, on='API_WELL_NUMBER', how='outer')
+        api12_df = pd.merge(api12_eWellEORRawData, api12_df, on='API_WELL_NUMBER', how='outer')
         api12_df = self.pd_merge_clean_column_names(api12_df)
 
-        api12_df = pd.merge(api12_eWellWARRawData_mv_war_main, api12_df, how='outer' ,
-                                    left_on=['API_WELL_NUMBER'], right_on=['API Well Number'])
+        api12_df = pd.merge(api12_eWellWARRawData_mv_war_main, api12_df, on='API_WELL_NUMBER', how='outer')
         api12_df = self.pd_merge_clean_column_names(api12_df)
 
         api12_df = pd.merge(api12_df, eWellWARRawData_mv_war_main_prop_df, how='left' ,

@@ -235,8 +235,7 @@ class LeaseData:
         from assetutilities.common.utilities import is_dir_valid_func
 
         lease_num = str(input_group['lease']['number']) if input_group and 'lease' in input_group and 'number' in input_group['lease'] else 'unknown'
-        area = str(input_group['lease']['area']) if input_group and 'lease' in input_group and 'area' in input_group['lease'] else 'unknown'
-        label = area + '_' + lease_num
+        label = 'lease'+ lease_num
         output_path = os.path.join(cfg['Analysis']['result_folder'], 'Data')
         if output_path is None:
             result_folder = self.cfg['Analysis']['result_folder']

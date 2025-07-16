@@ -55,7 +55,7 @@ class DataFromURL:
 
             block_group_data.append(block_metadata)
             block_df = pd.read_csv(block_metadata['file_name'])
-            api12_list = block_df['API_WELL_NUMBER'].unique().tolist()
+            api12_list = block_df['API_WELL_NUMBER'].dropna().astype(int).unique().tolist()
             block_metadata['api12'] = api12_list
 
             cfg[cfg['basename']]['data']['groups'][group_idx] = block_metadata

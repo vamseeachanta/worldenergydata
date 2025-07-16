@@ -2,12 +2,8 @@ import os
 import pickle
 import pandas as pd
 from pathlib import Path
-import logging
 from typing import Dict, List, Union
-
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 class BlockData:
     """
@@ -33,22 +29,14 @@ class BlockData:
             self._initialize_bin_path(cfg)
     
     def _initialize_bin_path(self, cfg):
-        """
-        Initialize the bin folder path from configuration.
-        
-        Args:
-            cfg (dict): Configuration dictionary
+        """Initialize the bin folder path from configuration.
         """
         self.bin_folder_path = Path(cfg['parameters']['filepath']['bin_dir'])
         if not self.bin_folder_path.exists():
             raise FileNotFoundError(f"Bin folder not found: {self.bin_folder_path}")
     
     def _ensure_bin_path_initialized(self, cfg):
-        """
-        Ensure bin folder path is initialized, initialize if not.
-        
-        Args:
-            cfg (dict): Configuration dictionary
+        """Ensure bin folder path is initialized, initialize if not.
         """
         if self.bin_folder_path is None:
             self._initialize_bin_path(cfg)
@@ -56,12 +44,6 @@ class BlockData:
     def router(self, cfg, input_group=None):
         """
         Main router function to handle block data retrieval.
-        
-        Args:
-            cfg (dict): Configuration dictionary
-            
-        Returns:
-            dict: Updated configuration with block data
         """
         # Ensure bin path is initialized
         self._ensure_bin_path_initialized(cfg)
@@ -71,8 +53,8 @@ class BlockData:
         if not bin_path.exists():
             raise FileNotFoundError(f"Bin folder not found: {bin_path}")
         
-        block_numbers = self.parse_input(block_num)
-        results = self.search_block_numbers(block_numbers)
+        block_numbers_array = self.get_block_array(block_num)
+        results = self.search_block_numbers(block_numbers_array)
         if not results:
             logger.warning("No results found.")
         else:
@@ -114,7 +96,6 @@ class BlockData:
                 df = pickle.load(f)
             
             if isinstance(df, pd.DataFrame):
-                logger.debug(f"Successfully loaded {file_path} with shape {df.shape}")
                 return df
             else:
                 logger.warning(f"File {file_path} does not contain a DataFrame")
@@ -162,30 +143,27 @@ class BlockData:
         
         return df[mask]
     
-    def parse_input(self, user_input: str) -> List[Union[str, int]]:
+    def get_block_array(self, user_input) -> List[int]:
         """
-        Parse user input to handle multiple block numbers.
-        
-        Args:
-            user_input (str): Raw user input string
-            
-        Returns:
-            List[Union[str, int]]: List of parsed block numbers
+        Parse user input to handle multiple block numbers or a single block number.
         """
-        import re
-        user_input = str(user_input).strip()
-        values = re.split(r'[,;\n\s]+', user_input.strip())
+        if user_input is None:
+            raise ValueError("User input cannot be None")
         
-        parsed_values = []
-        for value in values:
-            value = value.strip()
-            if value:
-                try:
-                    parsed_values.append(int(value))
-                except ValueError:
-                    parsed_values.append(value)
+        block_numbers = []
         
-        return parsed_values
+        # Handle single integer input
+        if isinstance(user_input, int):
+            block_numbers.append(user_input)
+        # Handle iterable input (list, tuple, etc.)
+        elif hasattr(user_input, '__iter__') and not isinstance(user_input, str):
+            for block in user_input:
+                if isinstance(block, int):
+                    block_numbers.append(block)
+        else:
+            raise TypeError(f"Expected int or iterable of ints, got {type(user_input)}")
+        
+        return block_numbers
     
     def search_block_numbers(self, block_numbers: Union[str, int, List[Union[str, int]]]) -> Dict[str, pd.DataFrame]:
         """
@@ -201,7 +179,7 @@ class BlockData:
         if not isinstance(block_numbers, list):
             block_numbers = [block_numbers]
         
-        logger.info(f"Searching for block numbers: {block_numbers}")
+        logger.info(f"Getting data for block {block_numbers} START ...")
         
         results = {}
         bin_files = self.get_all_bin_files()
@@ -249,7 +227,6 @@ class BlockData:
         combined_df = pd.DataFrame()
         for file_path, df in results.items():
             df_copy = df.copy()
-            df_copy['source_file'] = file_path
             combined_df = pd.concat([combined_df, df_copy], ignore_index=True)
         
         # Save the combined results to CSV
