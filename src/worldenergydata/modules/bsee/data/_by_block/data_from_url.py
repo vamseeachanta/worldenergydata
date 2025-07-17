@@ -50,12 +50,12 @@ class DataFromURL:
         block_group_data = []
         for group_idx in range(len(groups)):
             group = groups[group_idx]
-            block_data_from_website = block_data.router(cfg, group)
+            local_block_data = block_data.router(cfg, group)
             block_metadata = self.generate_output_item(cfg, group)
 
             block_group_data.append(block_metadata)
             block_df = pd.read_csv(block_metadata['file_name'])
-            api12_list = block_df['API_WELL_NUMBER'].dropna().astype(int).unique().tolist()
+            api12_list = block_df['API Well Number'].dropna().unique().tolist()
             block_metadata['api12'] = api12_list
 
             cfg[cfg['basename']]['data']['groups'][group_idx] = block_metadata

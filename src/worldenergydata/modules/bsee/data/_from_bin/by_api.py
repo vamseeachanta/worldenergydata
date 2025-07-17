@@ -19,7 +19,7 @@ class APIData:
         """
         self.cfg = cfg
         self.bin_folder_path = None
-        self.api_columns = ['API_WELL_NUMBER', 'API']
+        self.api_columns = ['API Well Number']
         
         # Initialize bin_folder_path if cfg is provided
         if cfg is not None:
@@ -32,7 +32,7 @@ class APIData:
         Args:
             cfg (dict): Configuration dictionary
         """
-        self.bin_folder_path = Path(cfg['parameters']['filepath']['bin_dir'])
+        self.bin_folder_path = Path(cfg['parameters']['filepath']['Well_APD_Default'])
         if not self.bin_folder_path.exists():
             raise FileNotFoundError(f"Bin folder not found: {self.bin_folder_path}")
     
@@ -48,7 +48,7 @@ class APIData:
     
     def router(self, cfg, input_group=None):
         """
-        Main router function to handle API well number search.
+        Main router function to get API data retrieval.
         
         Args:
             cfg (dict): Configuration dictionary
@@ -60,23 +60,59 @@ class APIData:
         # Ensure bin path is initialized
         self._ensure_bin_path_initialized(cfg)
         
-        api_num = input_group['api12'] if 'api12' in input_group and input_group['api12'] is not None else None
-        bin_path = Path(cfg['parameters']['filepath']['bin_dir'])
-        if not bin_path.exists():
-            raise FileNotFoundError(f"Bin folder not found: {bin_path}")
+        cfg_input_api12 = input_group['api12'] if 'api12' in input_group and input_group['api12'] is not None else None
         
-        # api_numbers = self.parse_input(api_num)
-        results = self.search_api_numbers(api_num)
+        # Use the initialized bin_folder_path instead of re-reading from config
+        if not self.bin_folder_path.exists():
+            raise FileNotFoundError(f"Bin folder not found: {self.bin_folder_path}")
+        
+        results = self.get_api12_data_from_input_bin_files(cfg_input_api12)
         if not results:
             logger.warning("No results found.")
         else:
-            logger.info(f"Found {len(results)} results for API numbers, saving to results directory.")
             self.save_results(cfg, results, input_group)
         
         return cfg
+    
+    def get_api12_data_from_input_bin_files(self, api_numbers: Union[str, int, List[Union[str, int]]]) -> Dict[str, pd.DataFrame]:
+        """
+        Get data across all .bin files from input bin file directory by API numbers.
+        
+        Args:
+            api_numbers: Single API number or an array of API numbers
+            
+        Returns:
+            Dict[str, pd.DataFrame]: Dictionary mapping file paths to matching dataframes
+        """
+        # Convert single value to list
+        if not isinstance(api_numbers, list):
+            api_numbers = [api_numbers]
+        
+        logger.info(f"Getting data for API {api_numbers[0]} START ...")
+        
+        results = {}
+        bin_files = self.get_all_bin_files()
+        
+        if not bin_files:
+            logger.warning(f"No .bin files found in path: {self.bin_folder_path}")
+            return results
+        
+        for file_path in bin_files:
+            logger.info(f"Processing {file_path.name}...")
+            df = self.load_dataframe(file_path)
+            if df.empty:
+                continue
+            
+            matches = self.get_api12_matching_data(df, api_numbers)
+            if not matches.empty:
+                results[str(file_path)] = matches
+                logger.info(f"Found {len(matches)} matches in {file_path.name}")
+        
+        return results
+    
     def get_all_bin_files(self) -> List[Path]:
         """
-        Find all .bin files in the bin folder and its subfolders.
+        Get all .bin files from the bin folder .
         
         Returns:
             List[Path]: List of paths to all .bin files
@@ -85,12 +121,10 @@ class APIData:
             raise ValueError("bin_folder_path not initialized. Call router method first or provide cfg in __init__.")
         
         bin_files = []
-        for root, dirs, files in os.walk(self.bin_folder_path):
-            for file in files:
-                if file.endswith('.bin'):
-                    bin_files.append(Path(root) / file)
-        
-        logger.info(f"Found {len(bin_files)} .bin files")
+        # Look for .bin files directly in the apd folder
+        for file_path in self.bin_folder_path.glob('*.bin'):
+            bin_files.append(file_path)
+    
         return bin_files
     
     def load_dataframe(self, file_path: Path) -> pd.DataFrame:
@@ -108,18 +142,17 @@ class APIData:
                 df = pickle.load(f)
             
             if isinstance(df, pd.DataFrame):
-                logger.debug(f"Successfully loaded {file_path} with shape {df.shape}")
                 return df
             else:
-                logger.warning(f"File {file_path} does not contain a DataFrame")
+                logger.warning(f"File {file_path} does not contain a DataFrame, returning empty DataFrame")
                 return pd.DataFrame()
         except Exception as e:
             logger.error(f"Error loading {file_path}: {e}")
             return pd.DataFrame()
     
-    def search_in_dataframe(self, df: pd.DataFrame, api_numbers: List[Union[str, int]]) -> pd.DataFrame:
+    def get_api12_matching_data(self, df: pd.DataFrame, api_numbers: List[Union[str, int]]) -> pd.DataFrame:
         """
-        Search for API well numbers in a dataframe.
+        Get API12 matching data from a dataframe.
         
         Args:
             df (pd.DataFrame): The dataframe to search in
@@ -129,6 +162,7 @@ class APIData:
             pd.DataFrame: Filtered dataframe containing matching rows
         """
         if df.empty:
+            logger.warning("DataFrame is empty, returning empty DataFrame")
             return pd.DataFrame()
         
         # Find API columns that exist in the dataframe
@@ -181,41 +215,6 @@ class APIData:
         
         return parsed_values
     
-    def search_api_numbers(self, api_numbers: Union[str, int, List[Union[str, int]]]) -> Dict[str, pd.DataFrame]:
-        """
-        Search for API well numbers across all .bin files.
-        
-        Args:
-            api_numbers: Single API number or list of API numbers
-            
-        Returns:
-            Dict[str, pd.DataFrame]: Dictionary mapping file paths to matching dataframes
-        """
-        # Convert single value to list
-        if not isinstance(api_numbers, list):
-            api_numbers = [api_numbers]
-        
-        logger.info(f"Getting data for API {api_numbers} START ...")
-        
-        results = {}
-        bin_files = self.get_all_bin_files()
-        
-        if not bin_files:
-            logger.warning("No .bin files found")
-            return results
-        
-        for file_path in bin_files:
-            df = self.load_dataframe(file_path)
-            if df.empty:
-                continue
-            
-            matches = self.search_in_dataframe(df, api_numbers)
-            if not matches.empty:
-                results[str(file_path)] = matches
-                logger.info(f"Found {len(matches)} matches in {file_path}")
-        
-        return results
-    
     def save_results(self, cfg, results: Dict[str, pd.DataFrame], input_group=None):
         """
         Save search results to CSV files.
@@ -242,13 +241,13 @@ class APIData:
         combined_df = pd.DataFrame()
         for file_path, df in results.items():
             df_copy = df.copy()
-            df_copy['source_file'] = file_path
             combined_df = pd.concat([combined_df, df_copy], ignore_index=True)
         
         # Save the combined results to CSV
         if not combined_df.empty:
             combined_df.to_csv(output_file, index=False)
             logger.info(f"Results saved to {output_file}")
+            logger.info(f"Getting Data for API {api_num} Finished ...")
         else:
             logger.warning("No results to save")
             

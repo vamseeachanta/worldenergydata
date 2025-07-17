@@ -19,10 +19,7 @@ class BlockData:
         """
         self.cfg = cfg
         self.bin_folder_path = None
-        self.block_columns = [
-            'BLOCK', 'BOTM_BLOCK_NUM', 'BOTM_BLOCK_NUMBER', 
-            'SURF_BLOCK_NUM', 'BLOCK_NUMBER', 'COMP_BLOCK_NUMBER'
-        ]
+        self.block_columns = ['Bottom Block Number']
         
         # Initialize bin_folder_path if cfg is provided
         if cfg is not None:
@@ -31,7 +28,7 @@ class BlockData:
     def _initialize_bin_path(self, cfg):
         """Initialize the bin folder path from configuration.
         """
-        self.bin_folder_path = Path(cfg['parameters']['filepath']['bin_dir'])
+        self.bin_folder_path = Path(cfg['parameters']['filepath']['Well_APD_Default'])
         if not self.bin_folder_path.exists():
             raise FileNotFoundError(f"Bin folder not found: {self.bin_folder_path}")
     
@@ -48,23 +45,60 @@ class BlockData:
         # Ensure bin path is initialized
         self._ensure_bin_path_initialized(cfg)
         
-        block_num = input_group['bottom_block']['number'] if 'number' in input_group['bottom_block'] and input_group['bottom_block']['number'] is not None else None
-        bin_path = Path(cfg['parameters']['filepath']['bin_dir'])
-        if not bin_path.exists():
-            raise FileNotFoundError(f"Bin folder not found: {bin_path}")
+        cfg_input_block = input_group['bottom_block']['number'] if 'number' in input_group['bottom_block'] and input_group['bottom_block']['number'] is not None else None
         
-        block_numbers_array = self.get_block_array(block_num)
-        results = self.search_block_numbers(block_numbers_array)
+        # Use the initialized bin_folder_path instead of re-reading from config
+        if not self.bin_folder_path.exists():
+            raise FileNotFoundError(f"Bin folder not found: {self.bin_folder_path}")
+        
+        block_numbers_array = self.get_block_array(cfg_input_block)
+        results = self.get_block_data_from_input_bin_files(block_numbers_array)
         if not results:
             logger.warning("No results found.")
         else:
-            logger.info(f"Found {len(results)} results for block numbers, saving to results directory.")
             self.save_results(cfg, results, input_group)
         
         return cfg
-    def get_all_bin_files(self) -> List[Path]:
+    
+    def get_block_data_from_input_bin_files(self, block_numbers: Union[str, int, List[Union[str, int]]]) -> Dict[str, pd.DataFrame]:
         """
-        Find all .bin files in the bin folder and its subfolders.
+        get block data across all .bin files from the bin folder.
+        
+        Args:
+            block_numbers: Single block number or list of block numbers
+            
+        Returns:
+            Dict[str, pd.DataFrame]: Dictionary mapping file paths to matching dataframes
+        """
+        # Convert single value to list
+        if not isinstance(block_numbers, list):
+            block_numbers = [block_numbers]
+        
+        logger.info(f"Getting data for block {block_numbers[0]} START ...")
+        
+        results = {}
+        bin_files = self.get_all_bin_files_from_path()
+        
+        if not bin_files:
+            logger.warning(f"No .bin files found in {self.bin_folder_path}")
+            return results
+        
+        for file_path in bin_files:
+            logger.info(f"Processing {file_path.name}...")
+            df = self.load_dataframe(file_path)
+            if df.empty:
+                continue
+            
+            matches = self.get_matching_block_data_from_df(df, block_numbers)
+            if not matches.empty:
+                results[str(file_path)] = matches
+                logger.info(f"Found {len(matches)} matches in {file_path.name}")
+        
+        return results
+    
+    def get_all_bin_files_from_path(self) -> List[Path]:
+        """
+        Get all .bin files from the bin folder.
         
         Returns:
             List[Path]: List of paths to all .bin files
@@ -73,12 +107,10 @@ class BlockData:
             raise ValueError("bin_folder_path not initialized. Call router method first or provide cfg in __init__.")
         
         bin_files = []
-        for root, dirs, files in os.walk(self.bin_folder_path):
-            for file in files:
-                if file.endswith('.bin'):
-                    bin_files.append(Path(root) / file)
+        # Look for .bin files directly in the apd folder
+        for file_path in self.bin_folder_path.glob('*.bin'):
+            bin_files.append(file_path)
         
-        logger.info(f"Found {len(bin_files)} .bin files")
         return bin_files
     
     def load_dataframe(self, file_path: Path) -> pd.DataFrame:
@@ -104,9 +136,9 @@ class BlockData:
             logger.error(f"Error loading {file_path}: {e}")
             return pd.DataFrame()
     
-    def search_in_dataframe(self, df: pd.DataFrame, block_numbers: List[Union[str, int]]) -> pd.DataFrame:
+    def get_matching_block_data_from_df(self, df: pd.DataFrame, block_numbers: List[Union[str, int]]) -> pd.DataFrame:
         """
-        Search for block numbers in a dataframe.
+        Get matching block data from a dataframe.
         
         Args:
             df (pd.DataFrame): The dataframe to search in
@@ -165,41 +197,6 @@ class BlockData:
         
         return block_numbers
     
-    def search_block_numbers(self, block_numbers: Union[str, int, List[Union[str, int]]]) -> Dict[str, pd.DataFrame]:
-        """
-        Search for block numbers across all .bin files.
-        
-        Args:
-            block_numbers: Single block number or list of block numbers
-            
-        Returns:
-            Dict[str, pd.DataFrame]: Dictionary mapping file paths to matching dataframes
-        """
-        # Convert single value to list
-        if not isinstance(block_numbers, list):
-            block_numbers = [block_numbers]
-        
-        logger.info(f"Getting data for block {block_numbers} START ...")
-        
-        results = {}
-        bin_files = self.get_all_bin_files()
-        
-        if not bin_files:
-            logger.warning("No .bin files found")
-            return results
-        
-        for file_path in bin_files:
-            df = self.load_dataframe(file_path)
-            if df.empty:
-                continue
-            
-            matches = self.search_in_dataframe(df, block_numbers)
-            if not matches.empty:
-                results[str(file_path)] = matches
-                logger.info(f"Found {len(matches)} matches in {file_path}")
-        
-        return results
-    
     def save_results(self, cfg, results: Dict[str, pd.DataFrame], input_group=None):
         """
         Save search results to CSV files.
@@ -233,6 +230,7 @@ class BlockData:
         if not combined_df.empty:
             combined_df.to_csv(output_file, index=False)
             logger.info(f"Results saved to {output_file}")
+            logger.info(f"Getting Data for Block {bottom_block_num} Finished ...")
         else:
             logger.warning("No results to save")
             

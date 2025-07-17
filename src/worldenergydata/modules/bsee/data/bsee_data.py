@@ -1,6 +1,6 @@
 from worldenergydata.modules.bsee.data.well.well import WellData
 from worldenergydata.modules.bsee.data.production.production import Production
-from worldenergydata.modules.bsee.data.by_block import Block
+from worldenergydata.modules.bsee.data.block import Block
 from worldenergydata.modules.bsee.data.refresh.data_refresh import DataRefresh
 
 well = WellData()
