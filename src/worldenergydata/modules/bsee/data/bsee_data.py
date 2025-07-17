@@ -1,11 +1,12 @@
 from worldenergydata.modules.bsee.data.well.well import WellData
-from worldenergydata.modules.bsee.data.production.production import Production
-from worldenergydata.modules.bsee.data.block import Block
+from worldenergydata.modules.bsee.data.production.router import ProductionRouter
+from worldenergydata.modules.bsee.data._by_block.router import BlockRouter
 from worldenergydata.modules.bsee.data.refresh.data_refresh import DataRefresh
 
+production = ProductionRouter()
+block = BlockRouter()
+
 well = WellData()
-production = Production()
-block = Block()
 data_refresh = DataRefresh()
 
 class BSEEData:

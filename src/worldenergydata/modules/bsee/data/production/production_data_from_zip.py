@@ -144,7 +144,8 @@ class GetProdDataFromZip:
             'zip_utilities': {
                 'technique': 'zip_files_to_df',
                 'file_name': file_path,
-                'column_names': column_names
+                'column_names': column_names,
+                'nrows': None
             }
         }
         df_dict = zip_files_to_df.zip_file_to_dataframe(cfg_zip_utilities)

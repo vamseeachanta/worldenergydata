@@ -4,7 +4,7 @@ from worldenergydata.modules.bsee.data.production.production_data_from_zip impor
 production_data_sources = ProductionDataFromSources()
 production_from_zip = GetProdDataFromZip()
 
-class Production:
+class ProductionRouter:
     
     def __init__(self):
         pass

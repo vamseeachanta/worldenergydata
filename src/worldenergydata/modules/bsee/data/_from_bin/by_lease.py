@@ -4,10 +4,7 @@ import pandas as pd
 from pathlib import Path
 import logging
 from typing import Dict, List, Union
-
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 class LeaseData:
     """
@@ -67,7 +64,7 @@ class LeaseData:
         # Ensure bin path is initialized
         self._ensure_bin_path_initialized(cfg)
         
-        lease_num = input_group['lease']['number'] if input_group and 'lease' in input_group and 'number' in input_group['lease'] and input_group['lease']['number'] is not None else None
+        lease_num = input_group['lease'] if input_group and 'lease' in input_group and 'number' in input_group['lease'] and input_group['lease']['number'] is not None else None
         bin_path = Path(cfg['parameters']['filepath']['bin_dir'])
         if not bin_path.exists():
             raise FileNotFoundError(f"Bin folder not found: {bin_path}")
@@ -249,7 +246,6 @@ class LeaseData:
         combined_df = pd.DataFrame()
         for file_path, df in results.items():
             df_copy = df.copy()
-            df_copy['source_file'] = file_path
             combined_df = pd.concat([combined_df, df_copy], ignore_index=True)
         
         # Save the combined results to CSV

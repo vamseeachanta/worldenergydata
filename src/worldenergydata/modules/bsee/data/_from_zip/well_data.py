@@ -3,7 +3,7 @@ import pickle
 import zipfile
 from loguru import logger
 
-from worldenergydata.modules.bsee.data._by_block.data_from_url import DataFromURL
+from worldenergydata.modules.bsee.data._by_block.data_from_local_files import DataFromURL
 
 from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
 from assetutilities.modules.zip_utilities.zip_files_to_dataframe import ZipFilestoDf

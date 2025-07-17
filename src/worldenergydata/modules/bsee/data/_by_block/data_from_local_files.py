@@ -1,14 +1,13 @@
 import os
 from copy import deepcopy
-
 import pandas as pd
-
-from worldenergydata.modules.bsee.data._from_bin.by_block import BlockData
 
 from assetutilities.common.utilities import is_dir_valid_func
 
+from worldenergydata.modules.bsee.data._from_bin.by_block import BlockData
 block_data = BlockData()
-class DataFromURL:
+
+class DataFromLocalFiles:
 
     def __init__(self):
         pass
@@ -20,7 +19,7 @@ class DataFromURL:
 
     def get_block_data_groups(self, cfg):
 
-        cfg = self.get_local_block_data(cfg)
+        cfg = self.get_block_data_from_local_files(cfg)
 
         block_data_groups = []
         for group in cfg[cfg['basename']]['data']['groups']:
@@ -43,7 +42,7 @@ class DataFromURL:
         cfg_block_df = pd.read_csv(group['file_name'])
         return cfg_block_df
 
-    def get_local_block_data(self, cfg):
+    def get_block_data_from_local_files(self, cfg):
 
         groups = cfg[cfg['basename']]['data']['groups']
 

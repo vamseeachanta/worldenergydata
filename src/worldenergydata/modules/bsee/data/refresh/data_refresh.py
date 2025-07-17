@@ -1,7 +1,7 @@
 from loguru import logger
 
 from worldenergydata.modules.bsee.data.production.production_data_from_zip import GetProdDataFromZip
-from worldenergydata.modules.bsee.data.well.well_from_zip import WellDataFromZip
+from worldenergydata.modules.bsee.data._from_zip.well_data import WellDataFromZip
 
 from assetutilities.common.utilities import is_dir_valid_func
 

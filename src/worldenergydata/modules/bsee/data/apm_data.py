@@ -6,7 +6,7 @@ import logging
 from loguru import logger
 
 
-from worldenergydata.modules.bsee.data._by_block.data_from_url import DataFromURL
+from worldenergydata.modules.bsee.data._by_block.data_from_local_files import DataFromURL
 
 from assetutilities.common.utilities import is_dir_valid_func
 from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa

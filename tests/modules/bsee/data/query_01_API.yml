@@ -5,7 +5,7 @@ meta:
 
 
 data:
-  by: API12 #lease ?
+  by: API12 
   well_data: True
   groups:
     - bottom_block: NULL

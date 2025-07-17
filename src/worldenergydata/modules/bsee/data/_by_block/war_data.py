@@ -8,7 +8,7 @@ from assetutilities.common.yml_utilities import WorkingWithYAML
 
 wwy = WorkingWithYAML()
 
-class DataFromBin:
+class WARDataFromBin:
 
     def __init__(self):
         pass

@@ -4,7 +4,7 @@ from copy import deepcopy
 from loguru import logger
 
 from worldenergydata.modules.bsee.data._from_bin.by_api import APIData
-from worldenergydata.modules.bsee.data._by_block.data_from_url import DataFromURL
+from worldenergydata.modules.bsee.data._by_block.data_from_local_files import DataFromLocalFiles
 from worldenergydata.modules.bsee.data.apm_data import APMData
 from worldenergydata.modules.bsee.data.prepare_data_for_analysis import PrepareBseeData
 
@@ -17,7 +17,7 @@ wwy = WorkingWithYAML()
 zip_files_to_df = ZipFilestoDf()
 prep_bsee_data = PrepareBseeData()
 
-block_data = DataFromURL()
+block_data = DataFromLocalFiles()
 
 class WellData:
 
@@ -26,6 +26,8 @@ class WellData:
 
     def router(self, cfg):
         well_data_groups = None
+        #TODO: do this for better performance 
+        # if 'API12' in cfg['data']['by']:
         if 'groups' in cfg['data']:
             self.apm_data = APMData(cfg)
             cfg, well_data_groups  = self.get_well_data_all_wells(cfg)
@@ -49,7 +51,7 @@ class WellData:
                          'eWellWARRawData_mv_war_main_prop_df': eWellWARRawData_mv_war_main_prop_df}
 
         #TODO assess the need for this data
-        cfg = self.fetch_well_data_from_websites(cfg)
+        cfg = self.fetch_well_data(cfg)
         well_data_groups = []
         for group in cfg[cfg['basename']]['data']['groups']:
             if 'api12' not in group:
@@ -156,13 +158,13 @@ class WellData:
 
         return api12_Borehole_apd
 
-    def fetch_well_data_from_websites(self, cfg):
+    def fetch_well_data(self, cfg):
         cfg[cfg['basename']]['data'].update({'type': 'csv'})
-        cfg = self.get_well_data_from_website(cfg)
+        cfg = self.fetch_well_data_from_local_files(cfg)
 
         return cfg
     
-    def get_well_data_from_website(self, cfg):
+    def fetch_well_data_from_local_files(self, cfg):
         groups = cfg[cfg['basename']]['data']['groups']
         api_data = APIData()
 
@@ -340,39 +342,28 @@ class WellData:
         merged_df.columns = merged_df.columns.str.replace('_x', '', regex=True)
         return merged_df
     
-    def get_api12_data(self, cfg):
+    # Old methods that are not used anymore, but kept for reference
 
-        if cfg['data']['by'] == 'API12':
-            api12_array = self.get_api12_array_by_api12(cfg)
-        elif cfg['data']['by'] == 'block':
-            api12_array = self.get_api12_array_by_block(cfg)
+    # def get_api12_data(self, cfg):
 
-        cfg[cfg['basename']].update({'api12': api12_array})
+    #     if cfg['data']['by'] == 'API12':
+    #         api12_array = self.get_api12_array_by_api12(cfg)
+    #     elif cfg['data']['by'] == 'block':
+    #         api12_array = self.get_api12_array_by_block(cfg)
 
-        return cfg
+    #     cfg[cfg['basename']].update({'api12': api12_array})
 
-    def get_api12_array_by_api12(self, cfg):
+    #     return cfg
+
+    # def get_api12_array_by_api12(self, cfg):
         
-        api12_array = []
-        groups = cfg['data']['groups']
-        for group in groups:
-            api12 = [group['api12']]
-            api12_array = api12_array + api12
+    #     api12_array = []
+    #     groups = cfg['data']['groups']
+    #     for group in groups:
+    #         api12 = [group['api12']]
+    #         api12_array = api12_array + api12
 
-        return api12_array
-
-    def get_api12_array_by_block(self, cfg):
-        cfg, block_data_groups = block_data.router(cfg)
-        
-        api12_array = []
-        if cfg[cfg['basename']]['well_data']['type'] == 'csv':
-            csv_groups = cfg[cfg['basename']]['well_data']['groups']
-            for csv_group in csv_groups:
-                df = pd.read_csv(csv_group['file_name'])
-                api12_csv_group = df['API Well Number'].unique().tolist()
-                api12_array = api12_array + api12_csv_group
-
-        return cfg, api12_array
+    #     return api12_array
 
     def get_eWellAPMRawData_from_zip(self, cfg):
 
