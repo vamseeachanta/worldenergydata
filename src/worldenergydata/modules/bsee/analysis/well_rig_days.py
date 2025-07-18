@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 from dateutil.parser import parse
 from loguru import logger
@@ -98,7 +97,7 @@ class WellRigDays:
                         rigdays_str_array.append('unknown rig' + " (" + str(rig_days) + ")")
 
             # rigdays_str = ', '.join(rigdays_str_array)
-            rigs_for_string = [rig if rig not in [None or np.nan] else 'unknown rig' for rig in rigs]
+            rigs_for_string = [str(rig) if rig is not None and not pd.isna(rig) else 'unknown rig' for rig in rigs]
             rig_str = ', '.join(rigs_for_string)
 
             api12_war_days_df = war_summary.groupby(['WELL_ACTIVITY_CD'])['rig_days'].sum().reset_index()

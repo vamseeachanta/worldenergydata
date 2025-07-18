@@ -6,7 +6,7 @@ from loguru import logger
 from worldenergydata.modules.bsee.data._from_bin.by_api import APIData
 from worldenergydata.modules.bsee.data._by_block.data_from_local_files import DataFromLocalFiles
 from worldenergydata.modules.bsee.data.apm_data import APMData
-from worldenergydata.modules.bsee.data.prepare_data_for_analysis import PrepareBseeData
+# from worldenergydata.modules.bsee.data.prepare_data_for_analysis import PrepareBseeData
 
 from assetutilities.common.utilities import is_dir_valid_func
 from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
@@ -15,7 +15,7 @@ from assetutilities.modules.zip_utilities.zip_files_to_dataframe import ZipFiles
 
 wwy = WorkingWithYAML()
 zip_files_to_df = ZipFilestoDf()
-prep_bsee_data = PrepareBseeData()
+# prep_bsee_data = PrepareBseeData()
 
 block_data = DataFromLocalFiles()
 
@@ -33,7 +33,8 @@ class WellData:
             cfg, well_data_groups  = self.get_well_data_all_wells(cfg)
         
         elif 'preparation_for_analysis' in cfg['data'] and cfg['data']['preparation_for_analysis']:
-            prep_bsee_data.router(cfg)
+            # prep_bsee_data.router(cfg)
+            pass
             
         return cfg, well_data_groups
 
