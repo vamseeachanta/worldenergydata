@@ -5,6 +5,11 @@ from pathlib import Path
 from typing import Dict, List, Union
 from loguru import logger
 
+from colorama import Fore, Style
+from colorama import init as colorama_init
+
+colorama_init()
+
 class APIData:
     """
     A focused class to get data from .bin files by API well number.

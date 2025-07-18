@@ -2,13 +2,17 @@ import os
 import pickle
 import pandas as pd
 from pathlib import Path
-import logging
 from typing import Dict, List, Union
 from loguru import logger
 
+from colorama import Fore, Style
+from colorama import init as colorama_init
+
+colorama_init()
+
 class LeaseData:
     """
-    A focused class to get lease data from .bin files by lease number.
+    A focused class to get lease data from .bin files by lease numbers.
     """
     
     def __init__(self, cfg=None):
@@ -23,6 +27,14 @@ class LeaseData:
         self.lease_columns = [
             'BOTM_LEASE_NUM', 'BOTM_LEASE_NUMBER', 'SURF_LEASE_NUM', 
             'LEASE_NUMBER', 'LEASE', 'COMP_LEASE_NUMBER'
+        ]
+        
+        # Define the target folders containing lease data
+        self.lease_data_folders = [
+            'apd', 'apichanges', 'apiraw', 'apm', 'assignments', 'bhps', 'borehole',
+            'decomcost', 'deepqual', 'eor', 'ewellapd', 'fmp', 'frs', 'incinv', 'lab',
+            'leaseowner', 'mcpflow', 'nonrequired', 'offshorestats', 'osfr', 'plans',
+            'platstruc', 'production_raw', 'scanneddocs', 'serialreg', 'war'
         ]
         
         # Initialize bin_folder_path if cfg is provided
@@ -64,23 +76,57 @@ class LeaseData:
         # Ensure bin path is initialized
         self._ensure_bin_path_initialized(cfg)
         
-        lease_num = input_group['lease'] if input_group and 'lease' in input_group and 'number' in input_group['lease'] and input_group['lease']['number'] is not None else None
+        lease_num = input_group['bottom_lease']['number'] if input_group and 'bottom_lease' in input_group and input_group['bottom_lease']['number'] is not None else None
         bin_path = Path(cfg['parameters']['filepath']['bin_dir'])
         if not bin_path.exists():
             raise FileNotFoundError(f"Bin folder not found: {bin_path}")
         
-        lease_numbers = self.parse_input(lease_num)
-        results = self.search_lease_numbers(lease_numbers)
-        if not results:
-            logger.warning("No results found.")
+        lease_data = self.get_lease_data_from_input_bin_files(lease_num)
+        if not lease_data:
+            logger.warning("No data found for given leases.")
         else:
-            logger.info(f"Found {len(results)} results for lease numbers, saving to results directory.")
-            self.save_results(cfg, results, input_group)
+            self.save_results(cfg, lease_data, input_group)
         
         return cfg
-    def get_all_bin_files(self) -> List[Path]:
+    
+    def get_lease_data_from_input_bin_files(self, lease_numbers: Union[str, int, List[Union[str, int]]]) -> Dict[str, pd.DataFrame]:
         """
-        Find all .bin files in the bin folder and its subfolders.
+        Search for lease numbers across all .bin files in the specified lease data folders.
+        
+        Args:
+            lease_numbers: Single lease number or list of lease numbers
+            
+        Returns:
+            Dict[str, pd.DataFrame]: Dictionary mapping file paths to matching dataframes
+        """
+        # Convert single value to list
+        if not isinstance(lease_numbers, list):
+            lease_numbers = [lease_numbers]
+        
+        logger.info(f"Getting data for lease {lease_numbers} START ...")
+        
+        results = {}
+        bin_files = self.get_all_bin_file_paths()
+        
+        if not bin_files:
+            logger.warning("No .bin files found in the specified lease data folders")
+            return results
+        
+        for file_path in bin_files:
+            df = self.load_dataframe(file_path)
+            if df.empty:
+                continue
+            
+            matches = self.fetch_matching_lease_data_from_df(df, lease_numbers)
+            if not matches.empty:
+                results[str(file_path)] = matches
+                logger.info(f"Found {len(matches)} matches in {file_path}")
+        
+        return results
+    
+    def get_all_bin_file_paths(self) -> List[Path]:
+        """
+        Get all .bin file paths from taget folders within the bin directory.
         
         Returns:
             List[Path]: List of paths to all .bin files
@@ -89,12 +135,22 @@ class LeaseData:
             raise ValueError("bin_folder_path not initialized. Call router method first or provide cfg in __init__.")
         
         bin_files = []
-        for root, dirs, files in os.walk(self.bin_folder_path):
-            for file in files:
-                if file.endswith('.bin'):
-                    bin_files.append(Path(root) / file)
         
-        logger.info(f"Found {len(bin_files)} .bin files")
+        for folder_name in self.lease_data_folders:
+            folder_path = self.bin_folder_path / folder_name
+            
+            if folder_path.exists() and folder_path.is_dir():
+                logger.debug(f"Searching in folder: {folder_path}")
+                
+                # Search for .bin files in this specific folder and its subfolders
+                for root, dirs, files in os.walk(folder_path):
+                    for file in files:
+                        if file.endswith('.bin'):
+                            bin_files.append(Path(root) / file)
+            else:
+                logger.warning(f"Folder {folder_path} does not exist or is not a directory")
+        
+        logger.info(f"Found {len(bin_files)} .bin files across {len(self.lease_data_folders)} lease data folders")
         return bin_files
     
     def load_dataframe(self, file_path: Path) -> pd.DataFrame:
@@ -112,7 +168,6 @@ class LeaseData:
                 df = pickle.load(f)
             
             if isinstance(df, pd.DataFrame):
-                logger.debug(f"Successfully loaded {file_path} with shape {df.shape}")
                 return df
             else:
                 logger.warning(f"File {file_path} does not contain a DataFrame")
@@ -121,7 +176,7 @@ class LeaseData:
             logger.error(f"Error loading {file_path}: {e}")
             return pd.DataFrame()
     
-    def search_in_dataframe(self, df: pd.DataFrame, lease_numbers: List[Union[str, int]]) -> pd.DataFrame:
+    def fetch_matching_lease_data_from_df(self, df: pd.DataFrame, lease_numbers: List[Union[str, int]]) -> pd.DataFrame:
         """
         Search for lease numbers in a dataframe.
         
@@ -160,66 +215,6 @@ class LeaseData:
         
         return df[mask]
     
-    def parse_input(self, user_input: str) -> List[Union[str, int]]:
-        """
-        Parse user input to handle multiple lease numbers.
-        
-        Args:
-            user_input (str): Raw user input string
-            
-        Returns:
-            List[Union[str, int]]: List of parsed lease numbers
-        """
-        import re
-        user_input = str(user_input).strip()
-        values = re.split(r'[,;\n\s]+', user_input.strip())
-        
-        parsed_values = []
-        for value in values:
-            value = value.strip()
-            if value:
-                try:
-                    parsed_values.append(int(value))
-                except ValueError:
-                    parsed_values.append(value)
-        
-        return parsed_values
-    
-    def search_lease_numbers(self, lease_numbers: Union[str, int, List[Union[str, int]]]) -> Dict[str, pd.DataFrame]:
-        """
-        Search for lease numbers across all .bin files.
-        
-        Args:
-            lease_numbers: Single lease number or list of lease numbers
-            
-        Returns:
-            Dict[str, pd.DataFrame]: Dictionary mapping file paths to matching dataframes
-        """
-        # Convert single value to list
-        if not isinstance(lease_numbers, list):
-            lease_numbers = [lease_numbers]
-        
-        logger.info(f"Searching for lease numbers: {lease_numbers}")
-        
-        results = {}
-        bin_files = self.get_all_bin_files()
-        
-        if not bin_files:
-            logger.warning("No .bin files found")
-            return results
-        
-        for file_path in bin_files:
-            df = self.load_dataframe(file_path)
-            if df.empty:
-                continue
-            
-            matches = self.search_in_dataframe(df, lease_numbers)
-            if not matches.empty:
-                results[str(file_path)] = matches
-                logger.info(f"Found {len(matches)} matches in {file_path}")
-        
-        return results
-    
     def save_results(self, cfg, results: Dict[str, pd.DataFrame], input_group=None):
         """
         Save search results to CSV files.
@@ -231,8 +226,8 @@ class LeaseData:
         """
         from assetutilities.common.utilities import is_dir_valid_func
 
-        lease_num = str(input_group['lease']['number']) if input_group and 'lease' in input_group and 'number' in input_group['lease'] else 'unknown'
-        label = 'lease'+ lease_num
+        lease_num = str(input_group['bottom_lease']['number']) if input_group and 'bottom_lease' in input_group and input_group['bottom_lease']['number'] is not None else None
+        label = 'lease_'+ lease_num
         output_path = os.path.join(cfg['Analysis']['result_folder'], 'Data')
         if output_path is None:
             result_folder = self.cfg['Analysis']['result_folder']
@@ -252,6 +247,7 @@ class LeaseData:
         if not combined_df.empty:
             combined_df.to_csv(output_file, index=False)
             logger.info(f"Results saved to {output_file}")
+            logger.info(f"Getting data for lease {lease_num} Finished ...")
         else:
             logger.warning("No results to save")
             

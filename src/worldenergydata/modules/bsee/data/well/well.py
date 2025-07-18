@@ -26,9 +26,7 @@ class WellData:
 
     def router(self, cfg):
         well_data_groups = None
-        #TODO: do this for better performance 
-        # if 'API12' in cfg['data']['by']:
-        if 'groups' in cfg['data']:
+        if 'groups' in cfg['data'] and cfg['data']['groups'][0]['api12'] is not None:
             self.apm_data = APMData(cfg)
             cfg, well_data_groups  = self.get_well_data_all_wells(cfg)
         

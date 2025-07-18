@@ -6,13 +6,13 @@ meta:
 basename: bsee
 
 data:
-  by : block
   groups:
     - 
       bottom_block:
         area: WR
         number: 508
       api12: NULL
+      bottom_lease: NULL
   
 default:
   log_level: INFO

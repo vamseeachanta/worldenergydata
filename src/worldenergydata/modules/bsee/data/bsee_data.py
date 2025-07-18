@@ -1,10 +1,12 @@
 from worldenergydata.modules.bsee.data.well.well import WellData
 from worldenergydata.modules.bsee.data.production.router import ProductionRouter
 from worldenergydata.modules.bsee.data._by_block.router import BlockRouter
+from worldenergydata.modules.bsee.data._by_lease.router import LeaseRouter
 from worldenergydata.modules.bsee.data.refresh.data_refresh import DataRefresh
 
 production = ProductionRouter()
 block = BlockRouter()
+lease = LeaseRouter()
 
 well = WellData()
 data_refresh = DataRefresh()
@@ -22,6 +24,7 @@ class BSEEData:
 
         cfg, well_data = well.router(cfg)
         cfg, production_data = production.router(cfg)
+        cfg = lease.router(cfg)
 
         data = {'well_data': well_data, 'production_data': production_data}
 

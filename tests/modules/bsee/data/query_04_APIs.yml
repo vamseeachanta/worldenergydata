@@ -5,10 +5,9 @@ basename: bsee
 
 
 data:
-  by: API12
-  well_data: True
   groups:
     - bottom_block: NULL
+      bottom_lease: NULL
       api12: [608164024500, 608164025800, 608164025400, 608164025600]
     
 

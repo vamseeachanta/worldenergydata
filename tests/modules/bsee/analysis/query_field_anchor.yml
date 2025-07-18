@@ -14,6 +14,7 @@ data:
         area: GC
         number: 807
       api12: NULL
+      bottom_lease: NULL
 
 analysis:
   flag: True

@@ -6,6 +6,7 @@ type:
 parameters:
   filepath:
     data: data/modules/bsee/data
+    bin_dir: data/modules/bsee/bin
     Well_APD_Default: data/modules/bsee/bin/Well_APD_Default
     production:
       zip: data\modules\bsee\zip\production_yearly
@@ -80,6 +81,7 @@ data:
   production_data: false
   groups:
   - bottom_block: ~
+    bottom_lease: ~
     api12:
     - 608124003301
     well_data:
@@ -95,7 +97,7 @@ Analysis:
   file_name: query_api_01_wells_api12_rig_days_goa_julia
   file_name_for_overwrite: query_api_01_wells_api12_rig_days_goa_julia
   log_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\logs
-  start_time: 2025-07-18 09:52:09.434197
+  start_time: 2025-07-18 12:39:49.708103
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\query_api_01_wells_api12_rig_days.yml
@@ -108,6 +110,7 @@ bsee:
     production_data: false
     groups:
     - bottom_block: ~
+      bottom_lease: ~
       api12:
       - 608124003301
       well_data:

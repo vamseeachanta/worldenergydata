@@ -49,7 +49,7 @@ class DataFromLocalFiles:
         block_group_data = []
         for group_idx in range(len(groups)):
             group = groups[group_idx]
-            local_block_data = block_data.router(cfg, group)
+            block_data.router(cfg, group)
             block_metadata = self.generate_output_item(cfg, group)
 
             block_group_data.append(block_metadata)
@@ -63,14 +63,9 @@ class DataFromLocalFiles:
 
     def generate_output_item(self, cfg, input_item):
 
-        if 'bottom_block' in input_item and input_item['bottom_block'] is not None:
-            bottom_block_num = str(input_item['bottom_block']['number'])
-            area = str(input_item['bottom_block']['area'])
-            label = area + '_' + bottom_block_num
-        elif 'api12' in input_item:
-            label = input_item['api12'][0]
-        else:
-            label = input_item['label']
+        bottom_block_num = str(input_item['bottom_block']['number'])
+        area = str(input_item['bottom_block']['area'])
+        label = area + '_' + bottom_block_num
         output_path = os.path.join(cfg['Analysis']['result_folder'], 'Data')
         if output_path is None:
             result_folder = cfg['Analysis']['result_folder']

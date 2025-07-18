@@ -8,6 +8,7 @@ type:
 parameters:
   filepath:
     data: data/modules/bsee/data
+    bin_dir: data/modules/bsee/bin
     Well_APD_Default: data/modules/bsee/bin/Well_APD_Default
 
     production: 
