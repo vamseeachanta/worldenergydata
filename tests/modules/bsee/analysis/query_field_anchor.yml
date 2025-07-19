@@ -14,11 +14,20 @@ data:
         area: GC
         number: 807
       api12: NULL
-      bottom_lease: NULL
 
 analysis:
   flag: True
   production_data: True
+  
+economics:
+  flag: False
+  cost:
+    OPEX: 15.0
+    discount_rate_annual: 0.08
+    facilities: []
+    well:
+      - cost: 150000000
+        recompletion: 50000000
 
 default:
   log_level: INFO

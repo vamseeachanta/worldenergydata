@@ -9,9 +9,6 @@ import requests
 import pandas as pd
 
 class DownloadFromZipUrl:
-    """
-    A Focused Module for downloading raw data (delimit files) from zip urls.
-    """
     
     def __init__(self):
         pass

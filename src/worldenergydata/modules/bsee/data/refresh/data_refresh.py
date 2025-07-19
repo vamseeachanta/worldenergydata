@@ -1,7 +1,7 @@
 from loguru import logger
 
-from worldenergydata.modules.bsee.data._from_zip.production_data import GetProdDataFromZip
-from worldenergydata.modules.bsee.data._from_zip.well_data import WellDataFromZip
+from worldenergydata.modules.bsee.data.production.production_data_from_zip import GetProdDataFromZip
+from worldenergydata.modules.bsee.data.well.well_from_zip import WellDataFromZip
 
 from assetutilities.common.utilities import is_dir_valid_func
 
@@ -13,6 +13,8 @@ class DataRefresh:
     """
     This class is responsible for refreshing data in the BSEE module.
     It handles the logic for updating and reloading data as needed.
+    - Download data from BSEE website (#TODO pending)
+    - Convert data to .bin files for application use (#TODO in-progress)
     """
 
     def __init__(self):

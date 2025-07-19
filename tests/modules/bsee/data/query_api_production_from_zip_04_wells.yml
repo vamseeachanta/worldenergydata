@@ -1,19 +1,18 @@
-#TODO - fix error in code 
 meta:
   library: worldenergydata
   basename: bsee
-  label: goa_stmalo
+
 basename: bsee
 
 data:
   production_data: True
+  by: zip
   groups:
-    - 
-      bottom_block: NULL
-      api12: [608124000400] 
-
-analysis:
-  flag: True
+    - bottom_block: NULL
+      api12: [608164024500, 608164025800, 608164025400, 608164025600]
+      
+production_from_zip:
+   flag: True
 
 default:
   log_level: INFO

@@ -1,20 +1,19 @@
 meta:
   library: worldenergydata
   basename: bsee
-  label: goa_julia
+  label: goa_stones
+  
 basename: bsee
 
 data:
-  production_data: False
+  by : block
   groups:
     - 
-      bottom_block: NULL
-      # api12: [608124009500] # Julia Well from Roy's analysis
-      api12: [608124003301] 
-
-analysis:
-  flag: True
-
+      bottom_block:
+        area: WR
+        number: 508
+      api12: NULL
+  
 default:
   log_level: INFO
   config:

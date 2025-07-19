@@ -3,18 +3,16 @@ meta:
   basename: bsee
   label: goa_julia
 
+
 data:
-  production_data: False
+  by: API12 #lease ?
+  well_data: True
   groups:
-    - 
-      bottom_block: NULL
+    - bottom_block: NULL
       api12: [608124009400]
-
-analysis:
-  flag: True
-
+    
 default:
-  log_level: INFO
+  log_level: DEBUG
   config:
     overwrite:
       output: True

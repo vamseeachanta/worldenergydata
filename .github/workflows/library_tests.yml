@@ -26,7 +26,7 @@ jobs:
       - name: Install dependencies
         uses: py-actions/py-dependency-install@v4
         with:
-          path: "dev_tools/requirements.txt"
+          path: "scripts/requirements.txt"
 
       - name: Verify installed packages
         run: pip list    
