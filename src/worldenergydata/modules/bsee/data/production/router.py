@@ -1,10 +1,10 @@
 from worldenergydata.modules.bsee.data.production.production_data_sources import ProductionDataFromSources
-from worldenergydata.modules.bsee.data.production.production_data_from_zip import GetProdDataFromZip
+from worldenergydata.modules.bsee.data._from_zip.production_data import GetProdDataFromZip
 
 production_data_sources = ProductionDataFromSources()
 production_from_zip = GetProdDataFromZip()
 
-class Production:
+class ProductionRouter:
     
     def __init__(self):
         pass

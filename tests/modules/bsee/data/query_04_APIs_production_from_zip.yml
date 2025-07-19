@@ -1,17 +1,17 @@
 meta:
   library: worldenergydata
   basename: bsee
-  label: goa_julia
 
 basename: bsee
 
 data:
-  by: zip
   production_data: True
+  by: zip
   groups:
-    - bottom_block : NULL
-      api12: [177024120700]
-
+    - bottom_block: NULL
+      bottom_lease: NULL
+      api12: [608164024500, 608164025800, 608164025400, 608164025600]
+      
 default:
   log_level: INFO
   config:
