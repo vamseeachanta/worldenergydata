@@ -41,7 +41,6 @@ class ProductionAPI12Analysis():
         groups_dict = {}
         if production_groups is None:
             logger.error("No production data found in the provided data.")
-            raise ValueError("No production data found in the provided data.")
 
         production_summary_df_groups = pd.DataFrame()
         production_df_api12s = []

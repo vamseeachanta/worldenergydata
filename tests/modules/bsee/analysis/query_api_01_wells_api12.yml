@@ -8,6 +8,7 @@ data:
   groups:
     - 
       bottom_block: NULL
+      bottom_lease: NULL
       api12: [608124009400]
 
 analysis:
