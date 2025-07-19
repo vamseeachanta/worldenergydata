@@ -97,7 +97,7 @@ class BlockData:
             matches = self.get_matching_block_data_from_df(df, block_numbers)
             if not matches.empty:
                 results[str(file_path)] = matches
-                logger.info(f"Found {len(matches)} matches in {file_path.name}")
+                logger.success(f"Found {len(matches)} matches in {file_path.name}")
         
         return results
     
@@ -175,7 +175,7 @@ class BlockData:
                     # For numeric columns, use isin directly
                     mask |= df[col].isin(block_numbers)
             except Exception as e:
-                logger.warning(f"Error searching in column {col}: {e}")
+                logger.error(f"Error searching in column {col}: {e}")
                 continue
         
         return df[mask]

@@ -4,7 +4,7 @@ import pandas as pd
 
 from assetutilities.common.utilities import is_dir_valid_func
 
-from worldenergydata.modules.bsee.data._from_bin.by_block import BlockData
+from worldenergydata.modules.bsee.data._from_bin.block_data import BlockData
 block_data = BlockData()
 
 class DataFromLocalFiles:

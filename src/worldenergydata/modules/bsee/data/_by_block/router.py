@@ -19,7 +19,7 @@ class BlockRouter:
     
     def get_block_data_groups(self, cfg):
 
-        # condition utilized for temporary data retrieval
+        # utilized for temporary data retrieval
         if 'by_bin' in cfg['data'] and cfg['data']['by_bin']:
             cfg, block_data_groups = WAR_data_from_bin.router(cfg)
         else:

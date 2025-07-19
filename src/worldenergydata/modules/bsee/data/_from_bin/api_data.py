@@ -111,7 +111,7 @@ class APIData:
             matches = self.get_api12_matching_data(df, api_numbers)
             if not matches.empty:
                 results[str(file_path)] = matches
-                logger.info(f"Found {len(matches)} matches in {file_path.name}")
+                logger.success(f"Found {len(matches)} matches in {file_path.name}")
         
         return results
     
@@ -190,7 +190,7 @@ class APIData:
                     # For numeric columns, use isin directly
                     mask |= df[col].isin(api_numbers)
             except Exception as e:
-                logger.warning(f"Error searching in column {col}: {e}")
+                logger.error(f"Error searching in column {col}: {e}")
                 continue
         
         return df[mask]

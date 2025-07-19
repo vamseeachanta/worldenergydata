@@ -4,7 +4,7 @@ import pandas as pd
 
 from assetutilities.common.utilities import is_dir_valid_func
 
-from worldenergydata.modules.bsee.data._from_bin.by_lease import LeaseData
+from worldenergydata.modules.bsee.data._from_bin.lease_data import LeaseData
 lease_data = LeaseData()
 
 class DataFromLocalFiles:

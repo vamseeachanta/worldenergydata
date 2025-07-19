@@ -97,7 +97,7 @@ Analysis:
   file_name: query_api_01_wells_api12_rig_days_goa_julia
   file_name_for_overwrite: query_api_01_wells_api12_rig_days_goa_julia
   log_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\logs
-  start_time: 2025-07-18 12:39:49.708103
+  start_time: 2025-07-19 11:19:48.778516
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\query_api_01_wells_api12_rig_days.yml

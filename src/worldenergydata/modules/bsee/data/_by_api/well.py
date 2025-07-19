@@ -3,21 +3,16 @@ import pandas as pd
 from copy import deepcopy
 from loguru import logger
 
-from worldenergydata.modules.bsee.data._from_bin.by_api import APIData
-from worldenergydata.modules.bsee.data._by_block.data_from_local_files import DataFromLocalFiles
+from worldenergydata.modules.bsee.data._from_bin.api_data import APIData
 from worldenergydata.modules.bsee.data.apm_data import APMData
-# from worldenergydata.modules.bsee.data.prepare_data_for_analysis import PrepareBseeData
 
 from assetutilities.common.utilities import is_dir_valid_func
 from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
-from assetutilities.common.utilities import get_repository_filename, get_repository_filepath
 from assetutilities.modules.zip_utilities.zip_files_to_dataframe import ZipFilestoDf
+from assetutilities.common.utilities import get_repository_filename
 
 wwy = WorkingWithYAML()
 zip_files_to_df = ZipFilestoDf()
-# prep_bsee_data = PrepareBseeData()
-
-block_data = DataFromLocalFiles()
 
 class WellData:
 
@@ -25,14 +20,8 @@ class WellData:
         pass
 
     def router(self, cfg):
-        well_data_groups = None
-        if 'groups' in cfg['data'] and cfg['data']['groups'][0]['api12'] is not None:
-            self.apm_data = APMData(cfg)
-            cfg, well_data_groups  = self.get_well_data_all_wells(cfg)
-        
-        elif 'preparation_for_analysis' in cfg['data'] and cfg['data']['preparation_for_analysis']:
-            # prep_bsee_data.router(cfg)
-            pass
+        self.apm_data = APMData(cfg)
+        cfg, well_data_groups = self.get_well_data_all_wells(cfg)
             
         return cfg, well_data_groups
 
@@ -176,7 +165,7 @@ class WellData:
                 api12 = api12_array[api12_idx]
                 api12_meta_data = {'api12': [api12], 'label': str(api12)}
 
-                api12_data = api_data.router(cfg, api12_meta_data)
+                api_data.router(cfg, api12_meta_data)
                 api12_output_cfg = self.generate_output_item(cfg, api12_meta_data)
                 api12_group_output.append(api12_output_cfg)
 
@@ -367,7 +356,7 @@ class WellData:
     def get_eWellAPMRawData_from_zip(self, cfg):
 
         columns = [MMS_COMPANY_NUM,
-                    API_WELL_NUMBER,
+                    API_WELL_NUMBER, 
                     WATER_DEPTH,
                     WELL_NM_BP_SFIX,
                     WELL_NM_ST_SFIX,

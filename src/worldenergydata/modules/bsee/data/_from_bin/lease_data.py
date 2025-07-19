@@ -76,12 +76,12 @@ class LeaseData:
         # Ensure bin path is initialized
         self._ensure_bin_path_initialized(cfg)
         
-        lease_num = input_group['bottom_lease']['number'] if input_group and 'bottom_lease' in input_group and input_group['bottom_lease']['number'] is not None else None
+        cfg_input_lease = input_group['bottom_lease']['number'] if input_group and 'bottom_lease' in input_group and input_group['bottom_lease']['number'] is not None else None
         bin_path = Path(cfg['parameters']['filepath']['bin_dir'])
         if not bin_path.exists():
             raise FileNotFoundError(f"Bin folder not found: {bin_path}")
         
-        lease_data = self.get_lease_data_from_input_bin_files(lease_num)
+        lease_data = self.get_lease_data_from_input_bin_files(cfg_input_lease)
         if not lease_data:
             logger.warning("No data found for given leases.")
         else:
@@ -120,7 +120,7 @@ class LeaseData:
             matches = self.fetch_matching_lease_data_from_df(df, lease_numbers)
             if not matches.empty:
                 results[str(file_path)] = matches
-                logger.info(f"Found {len(matches)} matches in {file_path}")
+                logger.success(f"Found {len(matches)} matches in {file_path}")
         
         return results
     
@@ -150,7 +150,7 @@ class LeaseData:
             else:
                 logger.warning(f"Folder {folder_path} does not exist or is not a directory")
         
-        logger.info(f"Found {len(bin_files)} .bin files across {len(self.lease_data_folders)} lease data folders")
+        logger.success(f"Found {len(bin_files)} .bin files across {len(self.lease_data_folders)} lease data folders")
         return bin_files
     
     def load_dataframe(self, file_path: Path) -> pd.DataFrame:
@@ -210,7 +210,7 @@ class LeaseData:
                     # For numeric columns, use isin directly
                     mask |= df[col].isin(lease_numbers)
             except Exception as e:
-                logger.warning(f"Error searching in column {col}: {e}")
+                logger.error(f"Error searching in column {col}: {e}")
                 continue
         
         return df[mask]

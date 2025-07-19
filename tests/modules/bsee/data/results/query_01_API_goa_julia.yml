@@ -94,7 +94,7 @@ Analysis:
   file_name: query_01_API_goa_julia
   file_name_for_overwrite: query_01_API_goa_julia
   log_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\logs
-  start_time: 2025-07-18 12:36:33.897141
+  start_time: 2025-07-19 11:18:13.863943
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\query_01_API.yml
