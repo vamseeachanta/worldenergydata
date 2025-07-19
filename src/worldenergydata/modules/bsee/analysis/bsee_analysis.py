@@ -39,9 +39,7 @@ class BSEEAnalysis():
     def run_analysis_for_all_wells(self, cfg, data):
 
         cfg, well_data_analysis_groups = well_api12_analysis.run_well_analysis(cfg, data)
-        production_data_analysis_groups = {}
-        if data['production_data'] is not None:
-            cfg, production_data_analysis_groups = prod_api12_analysis.run_production_analysis(cfg, data)
+        cfg, production_data_analysis_groups = prod_api12_analysis.run_production_analysis(cfg, data)
 
         # Add production dates to well summary
         self.add_production_dates_to_well_summary(cfg, well_data_analysis_groups, production_data_analysis_groups)

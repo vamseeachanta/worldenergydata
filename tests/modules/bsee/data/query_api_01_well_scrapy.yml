@@ -1,0 +1,19 @@
+meta:
+  library: worldenergydata
+  basename: bsee
+  label: goa_julia
+
+
+data:
+  by: API12 #lease ?
+  well_data: True
+  groups:
+    - bottom_block: NULL
+      api12: [608124009400]
+    
+default:
+  log_level: DEBUG
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False

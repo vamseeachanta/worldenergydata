@@ -2,7 +2,7 @@
 meta:
   library: worldenergydata
   basename: bsee
-  label: goa-stmalo
+  label: goa_stmalo
 basename: bsee
 
 data:
@@ -10,7 +10,6 @@ data:
   groups:
     - 
       bottom_block: NULL
-      bottom_lease: NULL
       api12: [608124000400] 
 
 analysis:

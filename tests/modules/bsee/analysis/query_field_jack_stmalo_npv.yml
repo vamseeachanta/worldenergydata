@@ -14,13 +14,11 @@ data:
         area: WR
         number: 678
       api12: NULL
-      bottom_lease: NULL
     # - 
     #   bottom_block:
     #     area: WR
     #     number: 759
     #   api12: NULL
-    #   bottom_lease: NULL
 
 economics:
   flag: True

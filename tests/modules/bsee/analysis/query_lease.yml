@@ -1,41 +1,15 @@
 meta:
   library: worldenergydata
-  basename: bsee
+  basename: bsee_custom
   label: goa_stones_julia_stmalo
 
 data:
-  production_data: False 
+  production_data: False
   groups:
     - 
-      bottom_lease:
-        number: G20351
-      api12: NULL
       bottom_block: NULL
-    -
-      bottom_lease:
-        number: G16997
       api12: NULL
-      bottom_block: NULL
-    -
-      bottom_lease:
-        number: G16970
-      api12: NULL
-      bottom_block: NULL
-    - 
-      bottom_lease:
-        number: G16965
-      api12: NULL
-      bottom_block: NULL
-    - 
-      bottom_lease:
-        number: G18753
-      api12: NULL
-      bottom_block: NULL
-    - 
-      bottom_lease:
-        number: G17001
-      api12: NULL
-      bottom_block: NULL
+      lease: [ G20351, G16997, G16970, G16965, G18753, G17001 ]
       
 default:
   log_level: INFO

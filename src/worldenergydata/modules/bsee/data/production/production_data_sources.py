@@ -4,7 +4,7 @@ from copy import deepcopy
 import pandas as pd
 
 from worldenergydata.modules.bsee.data._legacy.scrapy_production_data import ScrapyRunnerProduction
-from worldenergydata.modules.bsee.data._from_zip.production_data import GetProdDataFromZip
+from worldenergydata.modules.bsee.data.production.production_data_from_zip import GetProdDataFromZip
 
 from assetutilities.common.utilities import is_dir_valid_func
 
@@ -41,8 +41,6 @@ class ProductionDataFromSources:
         return cfg
 
     
-    # Old methods that are not used anymore but kept for reference
-    
     # def get_groups_data(self, cfg):
 
     #     production_data_flag = cfg['data'].get('production_data', False)
@@ -59,7 +57,17 @@ class ProductionDataFromSources:
     #     production_data = {'type': 'csv', 'groups': output_data }
     #     cfg[cfg['basename']].update({'production_data': production_data})
 
-    #     return cfg     
+    #     return cfg
+
+    # def get_production_from_website(self, cfg):
+    #     input_items = cfg['data']['groups']
+    #     scrapy_runner_production = ScrapyRunnerProduction()
+
+    #     output_data = []
+    #     for input_item in input_items:
+    #         production_data = scrapy_runner_production.run_spider(cfg, input_item)
+    #         output_data = self.generate_output_item(cfg, output_data,input_item)
+    #     return output_data        
 
     # def generate_output_item(self, cfg, output_data, input_item):
 
