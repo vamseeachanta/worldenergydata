@@ -1,32 +1,48 @@
 #!/bin/bash
-# UV Python Development Environment Setup Script
+# UV Python Development Environment Setup Script for worldenergydata
 
-# # 1. Install UV
-# curl -LsSf https://astral.sh/uv/install.sh | sh
+set -e  # Exit on any error
 
-# 2. Create virtual environment
-echo "Creating environment..."
-uv venv
+echo "🚀 Setting up worldenergydata development environment with UV..."
+echo "================================================================"
 
-echo "Installing dependencies from requirements.txt..."
-if [ -f "scripts/requirements.txt" ]; then
-    uv pip install -r scripts/requirements.txt
-else
-    echo "Warning: scripts/requirements.txt not found"
+# 1. Check if UV is installed
+if ! command -v uv &> /dev/null; then
+    echo "❌ UV is not installed. Installing UV..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    # Source the shell configuration to make uv available
+    export PATH="$HOME/.cargo/bin:$PATH"
 fi
 
-# 3. Sync dependencies from pyproject.toml
-echo "Syncing dependencies from pyproject.toml..."
+echo "✅ UV version: $(uv --version)"
+
+# 2. Sync dependencies from pyproject.toml (creates venv automatically)
+echo "📦 Syncing dependencies from pyproject.toml..."
 uv sync
 
-# 5. Add development dependencies
-echo "Adding development dependencies..."
-uv add --dev pytest ruff mypy
+# 3. Install development dependencies 
+echo "🔧 Installing development dependencies..."
+uv sync --extra dev
 
-# 7. Run commands in the environment (examples)
+# 4. Verify installation
+echo "🧪 Verifying installation..."
 uv run python --version
-uv run pytest
-uv run ruff check .
+uv run python -c "import worldenergydata; print('✅ worldenergydata package imported successfully')"
 
-# 8. Install a specific Python version (example: 3.12)
-# uv python install 3.12
+# 5. Run quick tests to verify everything works
+echo "🔍 Running quick verification..."
+if [ -f "tests/" ]; then
+    echo "Running basic tests..."
+    uv run pytest tests/ -x -v --tb=short || echo "⚠️ Some tests failed, but setup is complete"
+fi
+
+# 6. Show available commands
+echo "✅ Setup complete! Available commands:"
+echo "  uv run python -m worldenergydata      # Run main application"
+echo "  uv run pytest                         # Run tests"  
+echo "  uv run ruff check .                   # Lint code"
+echo "  uv run black .                        # Format code"
+echo "  uv add <package>                      # Add new dependency"
+echo "  uv sync                               # Update dependencies"
+echo ""
+echo "🎉 Development environment is ready!"

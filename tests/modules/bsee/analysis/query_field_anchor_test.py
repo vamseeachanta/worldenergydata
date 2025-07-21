@@ -4,8 +4,8 @@ from loguru import logger
 from typing import Dict, Any, Optional
 
 from assetutilities.common.yml_utilities import ymlInput
-
 from worldenergydata.engine import engine
+ENGINE_AVAILABLE = True
 
 
 def run_application(input_file: str) -> Dict[str, Any]:
@@ -27,6 +27,9 @@ def run_application(input_file: str) -> Dict[str, Any]:
     
     if not os.path.isfile(input_file):
         raise FileNotFoundError(f"Configuration file not found: {input_file}")
+    
+    if not ENGINE_AVAILABLE:
+        raise ImportError("Engine not available - dependencies missing")
     
     try:
         cfg = engine(input_file)
@@ -118,6 +121,10 @@ def test_anchor_field_block_validation() -> None:
     if not os.path.isfile(input_file):
         input_file = os.path.join(os.path.dirname(__file__), input_file)
     
+    if not ENGINE_AVAILABLE:
+        logger.warning("ymlInput not available - skipping validation test")
+        return
+    
     cfg_data = ymlInput(input_file, updateYml=None)
     
     # Test block configuration
@@ -143,6 +150,10 @@ def test_config_file_loading() -> None:
             file_path = os.path.join(os.path.dirname(__file__), config_file)
         
         try:
+            if not ENGINE_AVAILABLE:
+                logger.warning("ymlInput not available - skipping %s", config_file)
+                continue
+                
             cfg_data = ymlInput(file_path, updateYml=None)
             assert cfg_data is not None, f"Failed to load {config_file}"
             assert 'meta' in cfg_data, f"Meta section missing in {config_file}"

@@ -7,8 +7,42 @@ World Energy Data Library to get data from public sources. The energy includes t
 
 ## Summary
 
-## Usage
+## Quick Start
 
+### Using UV (Recommended)
+
+```bash
+# Setup development environment
+./scripts/uv_setup.sh         # Linux/Mac
+./scripts/uv_migrate.bat       # Windows
+
+# Run the application
+uv run python -m worldenergydata
+
+# Run tests
+uv run pytest
+
+# Add dependencies
+uv add requests
+```
+
+### Development
+
+```bash
+# Format code
+uv run black .
+uv run isort .
+
+# Run linting
+uv run ruff check .
+
+# Run tests
+uv run pytest tests/
+```
+
+For detailed UV usage instructions, see [docs/development/uv_usage.md](docs/development/uv_usage.md).
+
+## Legacy Usage
 
 **Using toml file, bumpver and twine**
 

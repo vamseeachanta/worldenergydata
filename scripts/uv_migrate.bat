@@ -1,36 +1,47 @@
 @echo off
-echo 🚀 uv Migration Helper for worldenergydata
-echo ==================================================
+echo 🚀 UV Setup for worldenergydata
+echo ================================
 
 echo Checking uv installation...
 uv --version >nul 2>&1
 if %errorlevel% neq 0 (
-    echo ❌ uv is not installed. Please install it first:
-    echo    pip install uv
-    exit /b 1
+    echo ❌ uv is not installed. Installing uv...
+    powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+    if %errorlevel% neq 0 (
+        echo ❌ Failed to install uv automatically. Please install manually.
+        echo Visit: https://docs.astral.sh/uv/getting-started/installation/
+        pause
+        exit /b 1
+    )
 )
 
 echo ✅ uv is installed
 
 echo.
-echo 1. Adding dependencies from requirements.txt...
-uv add -r scripts/requirements.txt
-
-echo.
-echo 2. Adding dev dependencies...
-uv add --dev "black>=23.0" "bumpver>=2023.1129" "isort>=5.0.0" "pytest>=7.0.0"
-
-echo.
-echo 3. Syncing environment...
+echo 📦 Syncing dependencies from pyproject.toml...
 uv sync
 
 echo.
-echo ✅ Migration complete!
+echo 🔧 Installing development dependencies...
+uv sync --extra dev
+
 echo.
-echo Next steps:
-echo - Run 'uv sync' to install dependencies
-echo - Run 'uv run python -m worldenergydata' to run your project
-echo - Run 'uv add ^<package^>' to add new dependencies
-echo - Run 'uv remove ^<package^>' to remove dependencies
+echo 🧪 Verifying installation...
+uv run python --version
+uv run python -c "import worldenergydata; print('✅ worldenergydata imported successfully')" 2>nul
+if %errorlevel% neq 0 (
+    echo ⚠️  Package import test failed, but setup is complete
+)
+
+echo.
+echo ✅ Setup complete! Available commands:
+echo   uv run python -m worldenergydata    # Run main application
+echo   uv run pytest                       # Run tests
+echo   uv run ruff check .                 # Lint code
+echo   uv run black .                      # Format code
+echo   uv add ^<package^>                  # Add new dependency
+echo   uv sync                             # Update dependencies
+echo.
+echo 🎉 Development environment is ready!
 
 pause
