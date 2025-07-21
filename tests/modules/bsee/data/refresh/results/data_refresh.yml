@@ -11,8 +11,8 @@ parameters:
       bin: data\modules\bsee\bin\production_yearly
     APD: data/modules/bsee/bin/apd
     apm:
-      zip: data/modules/bsee/zip/serialreg
-      bin: data/modules/bsee/bin/serialreg
+      zip: data/modules/bsee/zip/apm
+      bin: data/modules/bsee/bin/apm
       columns:
       - - MMS_COMPANY_NUM
         - API_WELL_NUMBER
@@ -121,18 +121,18 @@ data:
   production: false
 Analysis:
   basename: bsee
-  analysis_root_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh
+  analysis_root_folder: K:\github\worldenergydata\tests\modules\bsee\data\refresh
   file_name: data_refresh
   file_name_for_overwrite: data_refresh
-  log_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\logs
-  start_time: 2025-07-10 10:13:42.461661
+  log_folder: K:\github\worldenergydata\tests\modules\bsee\data\refresh\logs
+  start_time: 2025-07-21 10:05:22.457089
   cfg_array_file_names: ~
   DefaultInputFile: ~
-  CustomInputFile: data_refresh.yml
-  result_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\results
-  result_data_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\results\Data
-  result_plot_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\results\Plot
-  fe_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\results
+  CustomInputFile: K:\github\worldenergydata\tests\modules\bsee\data\refresh\data_refresh.yml
+  result_folder: K:\github\worldenergydata\tests\modules\bsee\data\refresh\results
+  result_data_folder: K:\github\worldenergydata\tests\modules\bsee\data\refresh\results\Data
+  result_plot_folder: K:\github\worldenergydata\tests\modules\bsee\data\refresh\results\Plot
+  fe_folder: K:\github\worldenergydata\tests\modules\bsee\data\refresh\results
 bsee:
   data:
     refresh: true

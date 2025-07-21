@@ -32,6 +32,42 @@ assetutilities = { path = "../assetutilities", develop = true }
 [tool.poetry.scripts]
 energy_data = "worldenergydata.__main__:main"
 
+[project.optional-dependencies]
+dev = [
+    "black>=23.0",
+    "bumpver>=2023.1129",
+    "isort>=5.0.0",
+    "mypy>=1.4.1",
+    "pytest>=7.0.0",
+    "ruff>=0.12.3",
+    "deepdiff>=6.0.0",
+]
+build = [
+    "build>=1.0.0",
+    "twine>=1.0.0",
+]
+
+[tool.uv]
+# uv-specific configuration
+package = true
+managed = true
+dev-dependencies = [
+    "black>=23.0",
+    "bumpver>=2023.1129", 
+    "isort>=5.0.0",
+    "mypy>=1.4.1",
+    "pytest>=7.0.0",
+    "ruff>=0.12.3",
+    "deepdiff>=6.0.0",
+]
+
+[tool.uv.sources]
+# Optional: specify custom package sources if needed
+
+[tool.uv.workspace]
+# Workspace configuration for monorepo support
+members = []
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
