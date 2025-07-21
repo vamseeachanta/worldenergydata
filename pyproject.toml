@@ -32,11 +32,7 @@ Issues = "https://github.com/vamseeachanta/worldenergydata/issues"
 [project.scripts]
 energy_data = "worldenergydata.__main__:main"
 
-[dependency-groups]
-build = [
-    "build>=1.0.0",
-    "twine>=1.0.0",
-]
+[project.optional-dependencies]
 dev = [
     "black>=23.0",
     "bumpver>=2023.1129",
@@ -44,16 +40,33 @@ dev = [
     "mypy>=1.4.1",
     "pytest>=7.0.0",
     "ruff>=0.12.3",
+    "deepdiff>=6.0.0",
+]
+build = [
+    "build>=1.0.0",
+    "twine>=1.0.0",
 ]
 
 [tool.uv]
 # uv-specific configuration
-dev-dependencies = []
 package = true
 managed = true
+dev-dependencies = [
+    "black>=23.0",
+    "bumpver>=2023.1129", 
+    "isort>=5.0.0",
+    "mypy>=1.4.1",
+    "pytest>=7.0.0",
+    "ruff>=0.12.3",
+    "deepdiff>=6.0.0",
+]
 
-# Additional uv settings for better requirements.txt integration
-default-groups = ["dev"]
+[tool.uv.sources]
+# Optional: specify custom package sources if needed
+
+[tool.uv.workspace]
+# Workspace configuration for monorepo support
+members = []
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
