@@ -1,8 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(mkdir:*)",
-      "WebFetch(domain:github.com)"
+      "Bash(chmod:*)"
     ],
     "deny": []
   },
