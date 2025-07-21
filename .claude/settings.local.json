@@ -1,8 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "WebFetch(domain:github.com)"
     ],
     "deny": []
+  },
+  "memory": {
+    "claudeMd": "CLAUDE.md"
   }
 }
