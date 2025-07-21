@@ -1,7 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(chmod:*)"
+      "Bash(.venv/Scripts/python.exe -m pip install:*)"
     ],
     "deny": []
   },

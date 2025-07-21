@@ -1,4 +1,4 @@
-# User Story: Enhanced NPV Analysis Results and Multi-Field Support
+# User Story: NPV Analysis for BSEE Fields
 
 ## Issue Reference
 - **GitHub Issue**: #46
@@ -8,21 +8,20 @@
 - **Implementation Status**: 85% Complete
 
 ## User Story
-As a **petroleum economist/analyst**, I want to **enhance the existing NPV analysis system with better results output and multi-field support** so that **I can generate comprehensive NPV reports for multiple BSEE fields and save results for further analysis**.
+As a **petroleum economist/analyst**, I want to **implement NPV analysis for BSEE fields** so that **I can generate comprehensive NPV reports for any BSEE field and save results for further analysis**.
 
 ## Description
-Enhance the existing NPV analysis implementation (currently functional for Jack/St Malo) to include comprehensive results output, multi-field support, and advanced reporting capabilities. The core NPV calculation engine is already implemented and tested.
+Implement NPV analysis for BSEE fields with comprehensive results output, multi-field support, and advanced reporting capabilities. The system should be flexible enough to handle any BSEE field configuration.
 
 ## Current Implementation Status
 
-### ✅ Already Implemented
-- [x] NPV calculation function (`perform_npv_calculation()` in `production_api12.py`)
-- [x] Economic parameter configuration (OPEX, CAPEX, discount rates)
-- [x] Jack/St Malo field full implementation (WR678 block, 20 wells)
+### ✅ Base Framework Available
+- [x] NPV calculation function framework (`perform_npv_calculation()` in `production_api12.py`)
+- [x] Economic parameter configuration structure (OPEX, CAPEX, discount rates)
 - [x] Revenue calculation from production data and oil prices
 - [x] Monthly cash flow generation and NPV computation
-- [x] Test framework and validation (306 scenarios tested)
-- [x] Comprehensive documentation and methodology comparison
+- [x] Test framework foundation
+- [x] Basic documentation and methodology structure
 
 ## Acceptance Criteria (Remaining Work)
 
@@ -34,7 +33,7 @@ Enhance the existing NPV analysis implementation (currently functional for Jack/
 - [ ] Integrate NPV metrics into field summary reports
 
 ### 2. Multi-Field NPV Analysis
-- [ ] Enable NPV calculation for Anchor field (GC807 block)
+- [ ] Enable NPV calculation for multiple BSEE fields (configurable)
 - [ ] Implement field-agnostic NPV configuration system
 - [ ] Add support for custom economic parameters per field
 - [ ] Create field comparison NPV analysis capability
@@ -53,10 +52,10 @@ Enhance the existing NPV analysis implementation (currently functional for Jack/
 
 ## Technical Requirements
 
-### Existing Implementation
+### Implementation Framework
 - NPV calculation: `src/worldenergydata/modules/bsee/analysis/production_api12.py`
-- Configuration: `tests/modules/bsee/analysis/query_field_jack_stmalo_npv.yml`
-- Test framework: `tests/modules/bsee/analysis/query_field_jack_stmalo_npv_test.py`
+- Configuration templates: `tests/modules/bsee/analysis/query_field_*_npv.yml`
+- Test framework: `tests/modules/bsee/analysis/query_field_*_npv_test.py`
 - Documentation: `docs/modules/bsee/analysis/economics/NPV/`
 
 ### Enhancement Requirements
@@ -87,17 +86,17 @@ Enhance the existing NPV analysis implementation (currently functional for Jack/
 - [ ] All new features covered by automated tests
 
 ## Dependencies
-- Existing NPV calculation implementation (✅ Available)
-- Current test framework and configuration files (✅ Available)
-- Production and well data (✅ Available)
+- NPV calculation framework (✅ Available)
+- Test framework foundation (✅ Available)
+- BSEE production and well data (✅ Available)
 - Oil price data integration (✅ Available)
 - Result file storage permissions
 - Visualization library dependencies (matplotlib/plotly)
 
 ## Assumptions
-- Existing NPV calculation logic is correct and validated
-- Current economic parameters (OPEX $15/BBL, 10% discount) are appropriate
-- Jack/St Malo field implementation serves as template for other fields
+- NPV calculation logic framework is sound
+- Default economic parameters (OPEX $15/BBL, 10% discount) are reasonable starting points
+- Field-agnostic design will support multiple BSEE fields
 - Monthly cash flow granularity is sufficient for analysis
 - Standard file output formats (CSV, Excel) meet reporting requirements
 
@@ -116,5 +115,5 @@ Enhance the existing NPV analysis implementation (currently functional for Jack/
 
 ## Related Files
 - `docs/modules/bsee/analysis/`
-- `tests/modules/bsee/analysis/query_field_*_npv.yml`
-- `tests/modules/bsee/analysis/query_field_*_npv_test.py`
+- `tests/modules/bsee/analysis/query_field_{field_name}_npv.yml`
+- `tests/modules/bsee/analysis/query_field_{field_name}_npv_test.py`

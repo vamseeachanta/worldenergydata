@@ -50,3 +50,7 @@ numpy-financial
 # Testing
 pytest
 deepdiff
+
+# Asset utilities (for legacy tests)
+assetutilities
+jinja2
