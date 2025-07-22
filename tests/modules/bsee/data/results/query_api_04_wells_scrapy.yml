@@ -6,6 +6,7 @@ type:
 parameters:
   filepath:
     data: data/modules/bsee/data
+    Well_APD_Default: data/modules/bsee/bin/Well_APD_Default
     production:
       zip: data\modules\bsee\zip\production_yearly
       bin: data\modules\bsee\bin\production_yearly
@@ -147,8 +148,8 @@ Analysis:
   analysis_root_folder: K:\github\worldenergydata\tests\modules\bsee\data
   file_name: query_api_04_wells_scrapy
   file_name_for_overwrite: query_api_04_wells_scrapy
-  log_folder: K:\github\worldenergydata\tests\modules\bsee\data\logs
-  start_time: 2025-07-21 10:02:57.990226
+  log_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\logs
+  start_time: 2025-05-13 11:14:58.530835
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: K:\github\worldenergydata\tests\modules\bsee\data\query_api_04_wells_scrapy.yml
