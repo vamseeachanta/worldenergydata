@@ -6,6 +6,8 @@ type:
 parameters:
   filepath:
     data: data/modules/bsee/data
+    bin_dir: data/modules/bsee/bin
+    Well_APD_Default: data/modules/bsee/bin/Well_APD_Default
     production:
       zip: data\modules\bsee\zip\production_yearly
       bin: data\modules\bsee\bin\production_yearly
@@ -57,55 +59,14 @@ parameters:
     BOREHOLE_STAT_DESC: VOLUME CHAMBER WELL
   - BOREHOLE_STAT_CD: PND
     BOREHOLE_STAT_DESC: PENDING
-  NPV:
-    discount_rate: 0.1
-    well_cost: 10000000
 settings_master: ~
 data_retrieval:
   well:
-    website:
-      url: https://www.data.bsee.gov/Well/APD/Default.aspx
-      form_data:
-        first_request:
-          ASPxFormLayout1$ASPxTextBoxAPI: ~
-          ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
-        second_request:
-          ASPxFormLayout1$ASPxTextBoxAPI: ~
-          __EVENTTARGET: ASPxFormLayout2$btnCsvExport
-          __EVENTARGUMENT: Click
     zip:
       BoreholeRawData_mv_boreholes_all: data/modules/bsee/data/zip/BoreholeRawData_mv_boreholes_all.zip
       eWellAPDRawData_mv_apd_main: data/modules/bsee/data/zip/eWellAPDRawData_mv_apd_main.zip
-  production:
-    website:
-      url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
-      form_data:
-        first_request:
-          ASPxFormLayout1$ASPxTextBoxLN: ~
-          ASPxFormLayout1$ASPxTextBoxDF: ~
-          ASPxFormLayout1$ASPxTextBoxDT: ~
-          ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
-        second_request:
-          ASPxFormLayout1$ASPxTextBoxLN: ~
-          __EVENTTARGET: ASPxFormLayout2$btnCsvExport
-          __EVENTARGUMENT: Click
-  block:
-    website:
-      url: https://www.data.bsee.gov/Well/APD/Default.aspx
-      form_data:
-        first_request:
-          ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
-          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: ~
-          ASPxFormLayout1_ASPxComboBoxBBN_VI: None
-          ASPxFormLayout1$ASPxComboBoxBBN: None
-          ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
-        second_request:
-          ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
-          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: ~
-          ASPxFormLayout1_ASPxComboBoxBBN_VI: None
-          ASPxFormLayout1$ASPxComboBoxBBN: None
-          __EVENTTARGET: ASPxFormLayout2$btnCsvExport
-          __EVENTARGUMENT: Click
+  production: ~
+  block: ~
 default:
   log_level: INFO
   config:
@@ -144,89 +105,90 @@ data:
     - 608124013300
     - 608124013500
     - 608124013600
+    bottom_lease: ~
     label: WR_678
-    file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\WR_678.csv
+    file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\WR_678.csv
     well_data:
     - api12:
       - 608124000400
       label: '608124000400'
-      file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124000400.csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124000400.csv
     - api12:
       - 608124000401
       label: '608124000401'
-      file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124000401.csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124000401.csv
     - api12:
       - 608124001100
       label: '608124001100'
-      file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124001100.csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124001100.csv
     - api12:
       - 608124000402
       label: '608124000402'
-      file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124000402.csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124000402.csv
     - api12:
       - 608124003100
       label: '608124003100'
-      file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124003100.csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124003100.csv
     - api12:
       - 608124003101
       label: '608124003101'
-      file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124003101.csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124003101.csv
     - api12:
       - 608124005600
       label: '608124005600'
-      file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124005600.csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124005600.csv
     - api12:
       - 608124005700
       label: '608124005700'
-      file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124005700.csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124005700.csv
     - api12:
       - 608124005400
       label: '608124005400'
-      file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124005400.csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124005400.csv
     - api12:
       - 608124005800
       label: '608124005800'
-      file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124005800.csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124005800.csv
     - api12:
       - 608124011400
       label: '608124011400'
-      file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124011400.csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124011400.csv
     - api12:
       - 608124011800
       label: '608124011800'
-      file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124011800.csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124011800.csv
     - api12:
       - 608124011801
       label: '608124011801'
-      file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124011801.csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124011801.csv
     - api12:
       - 608124012200
       label: '608124012200'
-      file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124012200.csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124012200.csv
     - api12:
       - 608124013200
       label: '608124013200'
-      file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124013200.csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124013200.csv
     - api12:
       - 608124013201
       label: '608124013201'
-      file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124013201.csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124013201.csv
     - api12:
       - 608124013202
       label: '608124013202'
-      file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124013202.csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124013202.csv
     - api12:
       - 608124013300
       label: '608124013300'
-      file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124013300.csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124013300.csv
     - api12:
       - 608124013500
       label: '608124013500'
-      file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124013500.csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124013500.csv
     - api12:
       - 608124013600
       label: '608124013600'
-      file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124013600.csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124013600.csv
 economics:
   flag: true
   cost:
@@ -246,18 +208,18 @@ analysis:
   flag: true
 Analysis:
   basename: bsee
-  analysis_root_folder: k:\github\worldenergydata\tests\modules\bsee\analysis
+  analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis
   file_name: query_field_jack_stmalo_npv_goa_jack_stmalo
   file_name_for_overwrite: query_field_jack_stmalo_npv_goa_jack_stmalo
-  log_folder: k:\github\worldenergydata\tests\modules\bsee\analysis\logs
-  start_time: 2025-07-21 13:24:08.408690
+  log_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\logs
+  start_time: 2025-07-22 11:53:21.797622
   cfg_array_file_names: ~
   DefaultInputFile: ~
-  CustomInputFile: k:\github\worldenergydata\tests\modules\bsee\analysis\query_field_jack_stmalo_npv.yml
-  result_folder: k:\github\worldenergydata\tests\modules\bsee\analysis\results
-  result_data_folder: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data
-  result_plot_folder: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Plot
-  fe_folder: k:\github\worldenergydata\tests\modules\bsee\analysis\results
+  CustomInputFile: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\query_field_jack_stmalo_npv.yml
+  result_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results
+  result_data_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data
+  result_plot_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Plot
+  fe_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results
 bsee:
   data:
     apm: false
@@ -287,89 +249,90 @@ bsee:
       - 608124013300
       - 608124013500
       - 608124013600
+      bottom_lease: ~
       label: WR_678
-      file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\WR_678.csv
+      file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\WR_678.csv
       well_data:
       - api12:
         - 608124000400
         label: '608124000400'
-        file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124000400.csv
+        file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124000400.csv
       - api12:
         - 608124000401
         label: '608124000401'
-        file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124000401.csv
+        file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124000401.csv
       - api12:
         - 608124001100
         label: '608124001100'
-        file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124001100.csv
+        file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124001100.csv
       - api12:
         - 608124000402
         label: '608124000402'
-        file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124000402.csv
+        file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124000402.csv
       - api12:
         - 608124003100
         label: '608124003100'
-        file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124003100.csv
+        file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124003100.csv
       - api12:
         - 608124003101
         label: '608124003101'
-        file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124003101.csv
+        file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124003101.csv
       - api12:
         - 608124005600
         label: '608124005600'
-        file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124005600.csv
+        file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124005600.csv
       - api12:
         - 608124005700
         label: '608124005700'
-        file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124005700.csv
+        file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124005700.csv
       - api12:
         - 608124005400
         label: '608124005400'
-        file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124005400.csv
+        file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124005400.csv
       - api12:
         - 608124005800
         label: '608124005800'
-        file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124005800.csv
+        file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124005800.csv
       - api12:
         - 608124011400
         label: '608124011400'
-        file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124011400.csv
+        file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124011400.csv
       - api12:
         - 608124011800
         label: '608124011800'
-        file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124011800.csv
+        file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124011800.csv
       - api12:
         - 608124011801
         label: '608124011801'
-        file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124011801.csv
+        file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124011801.csv
       - api12:
         - 608124012200
         label: '608124012200'
-        file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124012200.csv
+        file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124012200.csv
       - api12:
         - 608124013200
         label: '608124013200'
-        file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124013200.csv
+        file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124013200.csv
       - api12:
         - 608124013201
         label: '608124013201'
-        file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124013201.csv
+        file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124013201.csv
       - api12:
         - 608124013202
         label: '608124013202'
-        file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124013202.csv
+        file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124013202.csv
       - api12:
         - 608124013300
         label: '608124013300'
-        file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124013300.csv
+        file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124013300.csv
       - api12:
         - 608124013500
         label: '608124013500'
-        file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124013500.csv
+        file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124013500.csv
       - api12:
         - 608124013600
         label: '608124013600'
-        file_name: k:\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124013600.csv
+        file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608124013600.csv
     type: csv
   analysis:
     flag: true

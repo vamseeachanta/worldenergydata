@@ -635,6 +635,37 @@ class ProductionAPI12Analysis():
         # ---- Compute NPV ----
         npv_value = npf.npv(monthly_discount_rate, cash_flows)
 
+        # ---- Save NPV Results to CSV ----
+        npv_summary = {
+            'Field_Name': [cfg['meta'].get('label', 'Unknown_Field')],
+            'NPV_rate': [npv_value],
+            'Discount_Rate_Annual': [annual_discount_rate],
+            'Total_CAPEX_USD': [total_capex],
+            'OPEX_per_BBL_USD': [opex_per_bbl],
+            'Total_Revenue_USD': [revenue_df['Revenue (USD)'].sum()],
+            'Total_OPEX_USD': [revenue_df['OPEX'].sum()],
+            'Total_Net_Cash_Flow_USD': [revenue_df['Net Cash Flow'].sum()],
+            'Analysis_Date': [pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')]
+        }
+        
+        npv_summary_df = pd.DataFrame(npv_summary)
+        
+        result_folder = cfg['Analysis']['result_folder']
+        npv_file_label = 'npv_summary'
+        npv_file_name = os.path.join(result_folder, npv_file_label + '.csv')
+        npv_summary_df.to_csv(npv_file_name, index=False)
+        
+        # ---- Save Monthly Cash Flows ----
+        monthly_cash_flows = pd.DataFrame({
+            'Month': [0] + list(range(1, len(revenue_df) + 1)),
+            'Cash_Flow_USD': cash_flows,
+            'Description': ['Initial CAPEX'] + ['Monthly Net Cash Flow'] * len(revenue_df)
+        })
+        
+        cash_flow_file_label = 'monthly_cashflows'
+        cash_flow_file_name = os.path.join(result_folder, cash_flow_file_label + '.csv')
+        monthly_cash_flows.to_csv(cash_flow_file_name, index=False)
+
         return npv_value
 
     def perform_decline_analysis_api12(self, cfg, api12_df):
