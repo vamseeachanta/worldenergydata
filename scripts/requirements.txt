@@ -1,5 +1,4 @@
-# worldenergydata
-
+# Core dependencies
 pandas
 numpy
 python-dateutil
@@ -25,49 +24,28 @@ plotly
 # Network and async
 urllib3
 certifi
-cffi
 h11
 idna
-numpy
 outcome
-pandas
+trio
+trio-websocket
+wsproto
 
+# Development utilities
+attrs
+cffi
 pycparser
 PySocks
-python-dateutil
-pytz
-
-matplotlib
-plotly
-
-selenium
 six
 sniffio
 sortedcontainers
 soupsieve
-
-trio
-trio-websocket
 typing_extensions
-tzdata
-urllib3
-wsproto
-pyyaml
 crochet
-scrapy==2.12.0
-
-assetutilities
-openpyxl
-
-pytest
-deepdiff
-requests
-
-xmltodict
-
 colorama
-
 loguru
+
+# Financial calculations
 numpy-financial
 
 # Testing

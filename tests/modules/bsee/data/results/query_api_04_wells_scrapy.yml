@@ -148,13 +148,8 @@ Analysis:
   analysis_root_folder: K:\github\worldenergydata\tests\modules\bsee\data
   file_name: query_api_04_wells_scrapy
   file_name_for_overwrite: query_api_04_wells_scrapy
-<<<<<<< HEAD
   log_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\logs
-  start_time: 2025-07-17 14:42:23.403273
-=======
-  log_folder: K:\github\worldenergydata\tests\modules\bsee\data\logs
-  start_time: 2025-07-21 10:02:57.990226
->>>>>>> 767afd0 (Feature/46 npv analysis (#54))
+  start_time: 2025-05-13 11:14:58.530835
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: K:\github\worldenergydata\tests\modules\bsee\data\query_api_04_wells_scrapy.yml
