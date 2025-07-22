@@ -5,28 +5,31 @@ meta:
 
 
 data:
-  by : block
   groups:
     -
       bottom_block:
         area: WR
         number: 540
       api12: NULL
+      bottom_lease: NULL
     -
       bottom_block:
         area: WR
         number: 543
       api12: NULL
+      bottom_lease: NULL
     -
       bottom_block:
         area: WR
         number: 584
       api12: NULL
+      bottom_lease: NULL
     -
       bottom_block:
         area: WR
         number: 678
       api12: NULL
+      bottom_lease: NULL
 
   
 default:

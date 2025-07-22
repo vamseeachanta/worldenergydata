@@ -1,22 +1,12 @@
 import os
 import pickle
-import pandas as pd
-from copy import deepcopy
-import logging
 from loguru import logger
 
-
-from worldenergydata.modules.bsee.data._by_block.data_from_url import DataFromURL
-
-from assetutilities.common.utilities import is_dir_valid_func
 from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
-from assetutilities.common.utilities import get_repository_filename, get_repository_filepath
 from assetutilities.modules.zip_utilities.zip_files_to_dataframe import ZipFilestoDf
 
 wwy = WorkingWithYAML()
 zip_files_to_df = ZipFilestoDf()
-
-block_data = DataFromURL()
 
 class APMData:
 

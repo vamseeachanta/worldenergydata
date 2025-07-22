@@ -1,21 +1,18 @@
 meta:
   library: worldenergydata
   basename: bsee
-  label: goa_stones
-  
 basename: bsee
 
+
 data:
-  by : block
   groups:
-    - 
-      bottom_block:
-        area: WR
-        number: 508
-      api12: NULL
-  
+    - bottom_block: NULL
+      bottom_lease: NULL
+      api12: [608164024500, 608164025800, 608164025400, 608164025600]
+    
+
 default:
-  log_level: INFO
+  log_level: DEBUG
   config:
     overwrite:
       output: True
