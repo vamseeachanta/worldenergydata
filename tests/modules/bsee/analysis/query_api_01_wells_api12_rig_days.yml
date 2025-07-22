@@ -1,0 +1,23 @@
+meta:
+  library: worldenergydata
+  basename: bsee
+  label: goa_julia
+
+data:
+  production_data: False
+  groups:
+    - 
+      bottom_block: NULL
+      bottom_lease: NULL
+      # api12: [608124009500] # Julia Well from Roy's analysis
+      api12: [608124003301] 
+
+analysis:
+  flag: True
+
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False
