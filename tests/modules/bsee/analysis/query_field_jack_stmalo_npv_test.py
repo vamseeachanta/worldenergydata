@@ -50,7 +50,7 @@ def test_npv_output_files():
     
     # Define paths to expected NPV output files
     results_dir = os.path.join(os.path.dirname(__file__), 'results')
-    npv_summary_file = os.path.join(results_dir, 'npv_summary.csv')
+    npv_summary_file = os.path.join(results_dir, 'npv_summary_goa_jack_stmalo.csv')
     monthly_cashflows_file = os.path.join(results_dir, 'monthly_cashflows.csv')
     revenues_table_file = os.path.join(results_dir, 'revenues_table.csv')
     

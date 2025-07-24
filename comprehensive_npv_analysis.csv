@@ -1,6 +1,0 @@
-Analysis_Type,NPV_Count,Avg_NPV,Max_NPV,Min_NPV,Positive_Count,Negative_Count,NPV_at_10pct,CAPEX,Description
-Excel Data Analysis,81.0,413835134.7442478,10000000000.0,-9722880633.678972,79.0,2.0,,,
-Scenario: Conservative Case,,,,,,,-2830963370.722205,-4300000000.0,"Lower production estimates, higher costs"
-Scenario: Base Case,,,,,,,-2114439356.0255625,-4300000000.0,Most likely scenario based on typical well performance
-Scenario: Optimistic Case,,,,,,,-796730566.9971294,-3800000000.0,"Higher production rates, lower development costs"
-Scenario: Excel Data Derived,,,,,,,-2595521294.4967747,-4300000000.0,Based on patterns observed in Excel file
