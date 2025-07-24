@@ -1,0 +1,55 @@
+# Spec Tasks
+
+These are the tasks to be completed for the spec detailed in @.agent-os/specs/2025-07-24-docs-organization/spec.md
+
+> Created: 2025-07-24
+> Status: Ready for Implementation
+
+## Tasks
+
+- [x] 1. Create New Documentation Structure
+  - [x] 1.1 Write tests for docs/ directory structure validation
+  - [x] 1.2 Create main docs/ directory with all sub-modules (user-guide, data-sources, analysis-guides, development, reference, examples)
+  - [x] 1.3 Establish consistent naming conventions and folder hierarchy
+  - [x] 1.4 Create template index.md files for each major section
+  - [x] 1.5 Verify all required directories exist and follow naming conventions
+
+- [ ] 2. Analyze and Categorize Existing Documentation
+  - [ ] 2.1 Write tests for content categorization accuracy
+  - [ ] 2.2 Create comprehensive inventory of all existing documentation files (47+ markdown, 21+ text files)
+  - [ ] 2.3 Categorize each file by content type and target destination in new structure
+  - [ ] 2.4 Identify duplicate or overlapping content across files
+  - [ ] 2.5 Create migration mapping from old locations to new docs/ structure
+  - [ ] 2.6 Verify categorization completeness and accuracy
+
+- [ ] 3. Implement Content Migration System
+  - [ ] 3.1 Write tests for file migration integrity
+  - [ ] 3.2 Develop scripts or procedures for systematic file movement
+  - [ ] 3.3 Migrate BSEE module documentation (largest set) to docs/data-sources/bsee/
+  - [ ] 3.4 Migrate other data source documentation (wind, LNG, equipment) to appropriate locations
+  - [ ] 3.5 Move development documentation to docs/development/
+  - [ ] 3.6 Verify no content loss during migration process
+
+- [ ] 4. Consolidate Duplicate Content
+  - [ ] 4.1 Write tests for duplicate detection and merging accuracy
+  - [ ] 4.2 Identify files with overlapping or duplicate information
+  - [ ] 4.3 Merge complementary content preserving all unique information
+  - [ ] 4.4 Remove obsolete or superseded documentation files
+  - [ ] 4.5 Update merged content for consistency and clarity
+  - [ ] 4.6 Verify consolidated content maintains technical accuracy
+
+- [ ] 5. Update Cross-References and Navigation
+  - [ ] 5.1 Write tests for link validation and navigation paths
+  - [ ] 5.2 Update all internal links to reflect new file locations
+  - [ ] 5.3 Create navigation index files (README.md) for each major section
+  - [ ] 5.4 Add cross-references between related documentation sections
+  - [ ] 5.5 Create main docs/README.md with clear entry points for different user types
+  - [ ] 5.6 Verify all links work correctly and navigation is intuitive
+
+- [ ] 6. Quality Refinement and Standardization
+  - [ ] 6.1 Write tests for documentation quality and consistency standards
+  - [ ] 6.2 Apply consistent markdown formatting across all documentation files
+  - [ ] 6.3 Update file headers with consistent metadata (titles, dates, descriptions)
+  - [ ] 6.4 Review and improve content clarity, especially for energy professional users
+  - [ ] 6.5 Remove or update outdated information throughout documentation
+  - [ ] 6.6 Verify all tests pass and documentation meets quality standards
