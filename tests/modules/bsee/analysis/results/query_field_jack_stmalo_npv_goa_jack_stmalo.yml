@@ -192,18 +192,13 @@ data:
 economics:
   flag: true
   cost:
-    facilities:
-    - 4300000000
-    - 0
-    - 500000000
     OPEX: 15.0
+    CAPEX: 1460000000
     discount_rate_annual: 0.1
     well:
     - bottom_block: ~
       area: WR
       number: 678
-      cost: 300000000
-      recompletion: 100000000
 analysis:
   flag: true
 Analysis:
@@ -212,7 +207,7 @@ Analysis:
   file_name: query_field_jack_stmalo_npv_goa_jack_stmalo
   file_name_for_overwrite: query_field_jack_stmalo_npv_goa_jack_stmalo
   log_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\logs
-  start_time: 2025-07-22 11:53:21.797622
+  start_time: 2025-07-24 12:32:32.288187
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\query_field_jack_stmalo_npv.yml

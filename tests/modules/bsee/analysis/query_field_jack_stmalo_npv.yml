@@ -25,16 +25,14 @@ data:
 economics:
   flag: True
   cost:
-    facilities: [4300000000, 0, 500000000]
     OPEX: 15.00 # Per Barrel/BBL
+    CAPEX: 1460000000 # Excel-aligned CAPEX
     discount_rate_annual: 0.10
     well:
       - bottom_block:
         area: WR
         number: 678
         # number: [678, 759]
-        cost: 300000000
-        recompletion: 100000000
 
 analysis:
   flag: True

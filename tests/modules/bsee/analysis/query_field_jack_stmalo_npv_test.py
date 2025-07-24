@@ -50,7 +50,7 @@ def test_npv_output_files():
     
     # Define paths to expected NPV output files
     results_dir = os.path.join(os.path.dirname(__file__), 'results')
-    npv_summary_file = os.path.join(results_dir, 'npv_summary.csv')
+    npv_summary_file = os.path.join(results_dir, 'npv_summary_goa_jack_stmalo.csv')
     monthly_cashflows_file = os.path.join(results_dir, 'monthly_cashflows.csv')
     revenues_table_file = os.path.join(results_dir, 'revenues_table.csv')
     
@@ -69,7 +69,7 @@ def test_npv_output_files():
     # Assert NPV summary has expected columns
     expected_npv_columns = ['Field_Name', 'NPV_rate', 'Discount_Rate_Annual', 'Total_CAPEX_USD', 
                            'OPEX_per_BBL_USD', 'Total_Revenue_USD', 'Total_OPEX_USD', 
-                           'Total_Net_Cash_Flow_USD', 'Analysis_Date']
+                           'Total_Net_Cash_Flow_USD', 'Analysis_Date', 'Notes']
     assert list(npv_summary_df.columns) == expected_npv_columns, f"NPV summary columns mismatch. Got: {list(npv_summary_df.columns)}"
     
     # Assert NPV summary has exactly one row (one analysis)
@@ -83,14 +83,14 @@ def test_npv_output_files():
     assert pd.notna(npv_value), "NPV value should not be NaN"
     assert isinstance(npv_value, (int, float)), f"NPV value should be numeric, got {type(npv_value)}"
     
-    # Assert discount rate is 0.10 (10%)
+    # Assert discount rate is 0.10 (10% - Excel aligned)
     discount_rate = npv_summary_df['Discount_Rate_Annual'].iloc[0]
     assert discount_rate == 0.10, f"Expected discount rate 0.10, got {discount_rate}"
     
-    # Assert total CAPEX is positive (should be large for this project)
+    # Assert total CAPEX is Excel-aligned (~$1.46B)
     total_capex = npv_summary_df['Total_CAPEX_USD'].iloc[0]
     assert total_capex > 0, f"Total CAPEX should be positive, got {total_capex}"
-    assert total_capex > 1000000000, f"Total CAPEX should be > $1B for this project, got {total_capex}"  # > $1B
+    assert abs(total_capex - 1460000000) < 100000000, f"Total CAPEX should be ~$1.46B for Excel alignment, got {total_capex}"  # ±$100M tolerance
     
     # Assert total revenue is positive
     total_revenue = npv_summary_df['Total_Revenue_USD'].iloc[0]
@@ -107,7 +107,7 @@ def test_npv_output_files():
     first_row = monthly_cashflows_df.iloc[0]
     assert first_row['Month'] == 0, f"First month should be 0, got {first_row['Month']}"
     assert first_row['Cash_Flow_USD'] < 0, f"Initial CAPEX should be negative, got {first_row['Cash_Flow_USD']}"
-    assert first_row['Description'] == 'Initial CAPEX', f"First row description should be 'Initial CAPEX', got {first_row['Description']}"
+    assert first_row['Description'] == 'Initial CAPEX (Excel-aligned)', f"First row description should be 'Initial CAPEX (Excel-aligned)', got {first_row['Description']}"
     
     # Assert subsequent rows are monthly cash flows
     monthly_rows = monthly_cashflows_df[monthly_cashflows_df['Month'] > 0]
