@@ -22,13 +22,13 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 2.5 Create migration mapping from old locations to new docs/ structure
   - [x] 2.6 Verify categorization completeness and accuracy
 
-- [ ] 3. Implement Content Migration System
-  - [ ] 3.1 Write tests for file migration integrity
-  - [ ] 3.2 Develop scripts or procedures for systematic file movement
-  - [ ] 3.3 Migrate BSEE module documentation (largest set) to docs/data-sources/bsee/
-  - [ ] 3.4 Migrate other data source documentation (wind, LNG, equipment) to appropriate locations
-  - [ ] 3.5 Move development documentation to docs/development/
-  - [ ] 3.6 Verify no content loss during migration process
+- [x] 3. Implement Content Migration System
+  - [x] 3.1 Write tests for file migration integrity
+  - [x] 3.2 Develop scripts or procedures for systematic file movement
+  - [x] 3.3 Migrate BSEE module documentation (29 files) to docs/data-sources/bsee/
+  - [x] 3.4 Migrate other data source documentation (4 files: equipment, LNG, onshore, SODIR) to appropriate locations
+  - [x] 3.5 Move development documentation to docs/development/
+  - [x] 3.6 Verify no content loss during migration process
 
 - [ ] 4. Consolidate Duplicate Content
   - [ ] 4.1 Write tests for duplicate detection and merging accuracy
