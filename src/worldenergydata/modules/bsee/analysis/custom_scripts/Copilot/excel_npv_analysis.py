@@ -256,9 +256,12 @@ def save_excel_analysis_results(npv_results, sheets_analysis):
     
     # Save to JSON file
     json_file = "excel_npv_analysis_results.json"
-    with open(json_file, 'w') as f:
+    path = r"tests\modules\bsee\analysis\results"
+    if not os.path.exists(path):
+        os.makedirs(path)
+    json_path = os.path.join(path, json_file)
+    with open(json_path, 'w') as f:
         json.dump(results_summary, f, indent=2)
-    print(f"\nDetailed analysis results saved to: {json_file}")
     
     # Create CSV summary
     if npv_results:
@@ -266,15 +269,16 @@ def save_excel_analysis_results(npv_results, sheets_analysis):
         csv_data = []
         for key, data in npv_results.items():
             csv_data.append({
-                'Result_ID': key,
                 'NPV': data['npv'],
                 'Discount_Rate': data['discount_rate'],
-                'Source_Column': data.get('source_column', 'Unknown'),
-                'Note': data.get('note', 'Calculated')
             })
         
         df = pd.DataFrame(csv_data)
         csv_file = "excel_npv_analysis_results.csv"
+        csv_path = r"tests\modules\bsee\analysis\results"
+        if not os.path.exists(csv_path):
+            os.makedirs(csv_path)
+        csv_file = os.path.join(csv_path, csv_file)
         df.to_csv(csv_file, index=False)
         print(f"Summary data saved to: {csv_file}")
     

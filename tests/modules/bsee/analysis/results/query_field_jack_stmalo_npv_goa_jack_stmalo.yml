@@ -207,7 +207,7 @@ Analysis:
   file_name: query_field_jack_stmalo_npv_goa_jack_stmalo
   file_name_for_overwrite: query_field_jack_stmalo_npv_goa_jack_stmalo
   log_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\logs
-  start_time: 2025-07-24 12:20:23.953497
+  start_time: 2025-07-24 12:32:32.288187
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\query_field_jack_stmalo_npv.yml
