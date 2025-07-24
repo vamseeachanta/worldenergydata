@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-NPV Analysis for JStM WELL Production Data
-Reads the Excel file and calculates NPV from the data within it
+NPV Analysis for JStM WELL Production Data Excel ,
+Reads the file and calculates NPV from the data within it.
 """
 
 import pandas as pd
@@ -195,7 +195,7 @@ def extract_npv_from_sheets(sheets_analysis):
     return npv_results
 
 def main():
-    file_path = r"docs\modules\bsee\data\JStM-WELL-Production-Data-thru-2019.xlsx"
+    file_path = r"docs\modules\bsee\data\NPV_JStM-WELL-Production-Data-thru-2019.xlsx"
     
     print(f"Reading Excel file: {file_path}")
     
@@ -212,6 +212,101 @@ def main():
     
     # Extract NPV data
     npv_results = extract_npv_from_sheets(sheets_analysis)
+    
+    # Save results to file
+    save_excel_analysis_results(npv_results, sheets_analysis)
+
+def save_excel_analysis_results(npv_results, sheets_analysis):
+    """
+    Save the Excel analysis results to files
+    """
+    import json
+    from datetime import datetime
+    
+    # Prepare results summary
+    results_summary = {
+        'analysis_date': datetime.now().isoformat(),
+        'source_file': 'NPV_JStM-WELL-Production-Data-thru-2019.xlsx',
+        'sheets_analyzed': list(sheets_analysis.keys()),
+        'npv_findings': {}
+    }
+    
+    # Process NPV results
+    for result_key, result_data in npv_results.items():
+        results_summary['npv_findings'][result_key] = {
+            'npv': result_data['npv'],
+            'npv_formatted': f"${result_data['npv']:,.2f}",
+            'discount_rate': result_data['discount_rate'],
+            'discount_rate_percent': f"{result_data['discount_rate']:.1%}",
+            'source_column': result_data.get('source_column', 'Unknown'),
+            'note': result_data.get('note', 'Calculated from cash flows')
+        }
+    
+    # Add summary statistics
+    npv_values = [r['npv'] for r in npv_results.values()]
+    if npv_values:
+        results_summary['summary_statistics'] = {
+            'total_npv_entries': len(npv_values),
+            'max_npv': max(npv_values),
+            'min_npv': min(npv_values),
+            'average_npv': sum(npv_values) / len(npv_values),
+            'positive_npv_count': len([v for v in npv_values if v > 0]),
+            'negative_npv_count': len([v for v in npv_values if v < 0])
+        }
+    
+    # Save to JSON file
+    json_file = "excel_npv_analysis_results.json"
+    path = r"tests\modules\bsee\analysis\results"
+    if not os.path.exists(path):
+        os.makedirs(path)
+    json_path = os.path.join(path, json_file)
+    with open(json_path, 'w') as f:
+        json.dump(results_summary, f, indent=2)
+    
+    # Create CSV summary
+    if npv_results:
+        import pandas as pd
+        csv_data = []
+        for key, data in npv_results.items():
+            csv_data.append({
+                'NPV': data['npv'],
+                'Discount_Rate': data['discount_rate'],
+            })
+        
+        df = pd.DataFrame(csv_data)
+        csv_file = "excel_npv_analysis_results.csv"
+        csv_path = r"tests\modules\bsee\analysis\results"
+        if not os.path.exists(csv_path):
+            os.makedirs(csv_path)
+        csv_file = os.path.join(csv_path, csv_file)
+        df.to_csv(csv_file, index=False)
+        print(f"Summary data saved to: {csv_file}")
+    
+    # Print key findings
+    print(f"\n{'='*60}")
+    print("KEY FINDINGS FROM EXCEL ANALYSIS")
+    print(f"{'='*60}")
+    
+    if 'summary_statistics' in results_summary:
+        stats = results_summary['summary_statistics']
+        print(f"Total NPV entries found: {stats['total_npv_entries']}")
+        print(f"Highest NPV: ${stats['max_npv']:,.2f}")
+        print(f"Lowest NPV: ${stats['min_npv']:,.2f}")
+        print(f"Average NPV: ${stats['average_npv']:,.2f}")
+        print(f"Positive NPVs: {stats['positive_npv_count']}")
+        print(f"Negative NPVs: {stats['negative_npv_count']}")
+    
+    # Show top 5 highest and lowest NPVs
+    if npv_results:
+        sorted_results = sorted(npv_results.items(), key=lambda x: x[1]['npv'], reverse=True)
+        
+        print("\nTop 5 Highest NPVs:")
+        for i, (key, data) in enumerate(sorted_results[:5]):
+            print(f"  {i+1}. ${data['npv']:>15,.2f} @ {data['discount_rate']:.1%} ({key})")
+        
+        print("\nTop 5 Lowest NPVs:")
+        for i, (key, data) in enumerate(sorted_results[-5:]):
+            print(f"  {i+1}. ${data['npv']:>15,.2f} @ {data['discount_rate']:.1%} ({key})")
 
 if __name__ == "__main__":
     main()
