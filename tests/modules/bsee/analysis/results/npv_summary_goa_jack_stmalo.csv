@@ -1,0 +1,2 @@
+Field_Name,NPV_rate,Discount_Rate_Annual,Total_CAPEX_USD,OPEX_per_BBL_USD,Total_Revenue_USD,Total_OPEX_USD,Total_Net_Cash_Flow_USD,Analysis_Date,Notes
+goa_jack_stmalo,-1206976526.7584248,0.1,1460000000,15.0,870823453.46,117009195.0,318402531.73,2025-07-24 12:33:07,"Excel-aligned analysis: 10% discount rate, $1.46B CAPEX, BRENT prices"
