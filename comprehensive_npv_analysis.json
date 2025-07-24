@@ -1,0 +1,646 @@
+{
+  "analysis_date": "2025-07-24T11:14:39.744122",
+  "project": "JStM WELL Production Data",
+  "excel_analysis": {
+    "npv_values": [
+      6023132681.805439,
+      -9722880633.678972,
+      -3699747951.8735332,
+      300000000.0,
+      350000000.0,
+      100000000.0,
+      4300000000.0,
+      500000000.0,
+      28065216.091628574,
+      5300000000.0,
+      33149967.28333333,
+      1000000000.0,
+      60259274.36307692,
+      300000000.0,
+      65509243.205217384,
+      83616840.72,
+      100000000.0,
+      96467354.3462069,
+      90849203.75999999,
+      90136887.99061261,
+      100000000.0,
+      72499845.44000001,
+      68833223.48,
+      72415497.69,
+      57489223.82183909,
+      50842803.96,
+      34507956.3,
+      34259768.32551724,
+      52610687.24999999,
+      62903416.02387096,
+      300000000.0,
+      82623476.1224,
+      96805428.36363637,
+      300000000.0,
+      87931942.1,
+      95870942.22857144,
+      300000000.0,
+      97752969.16,
+      110962814.00000001,
+      89353418.1212069,
+      128780175.99,
+      134856353.27466667,
+      100000000.0,
+      119752694.73,
+      125660546.95535716,
+      127445997.77000003,
+      134201564.70157897,
+      300000000.0,
+      116056922.54999998,
+      127898145.19862068,
+      125273894.80586208,
+      136679889.6,
+      140338340.42892855,
+      165692447.49571428,
+      850000000.0,
+      169946844.70000005,
+      188221301.94758618,
+      300000000.0,
+      163875684.71999997,
+      188385074.54,
+      201254093.95071426,
+      100000000.0,
+      251228492.4,
+      248961367.63333333,
+      300000000.0,
+      265016540.24999997,
+      266906580.49,
+      282162709.87,
+      291742990.20000005,
+      212072172.75862068,
+      194949423.1947126,
+      350000000.0,
+      211723209.46999997,
+      207292821.12,
+      234941830.78666666,
+      250512859.57999995,
+      252773617.86434776,
+      217802240.71999997,
+      173893358.34348866,
+      7598124229.843826,
+      10000000000.0
+    ],
+    "npv_count": 81,
+    "positive_npv_count": 79,
+    "negative_npv_count": 2,
+    "max_npv": 10000000000.0,
+    "min_npv": -9722880633.678972,
+    "avg_npv": 413835134.7442478
+  },
+  "scenario_analysis": {
+    "conservative": {
+      "info": {
+        "name": "Conservative Case",
+        "capex": -4300000000,
+        "cash_flows": [
+          300000000,
+          350000000,
+          400000000,
+          450000000,
+          300000000,
+          200000000
+        ],
+        "description": "Lower production estimates, higher costs"
+      },
+      "npv_calculations": [
+        {
+          "discount_rate": 0.01,
+          "discount_rate_pct": "1.0%",
+          "npv": -2365340712.21609,
+          "npv_formatted": "$-2,365,340,712",
+          "irr": -0.1914521416823074,
+          "irr_formatted": "-19.1%"
+        },
+        {
+          "discount_rate": 0.02,
+          "discount_rate_pct": "2.0%",
+          "npv": -2427500384.59092,
+          "npv_formatted": "$-2,427,500,385",
+          "irr": -0.1914521416823074,
+          "irr_formatted": "-19.1%"
+        },
+        {
+          "discount_rate": 0.03,
+          "discount_rate_pct": "3.0%",
+          "npv": -2486673973.9255524,
+          "npv_formatted": "$-2,486,673,974",
+          "irr": -0.1914521416823074,
+          "irr_formatted": "-19.1%"
+        },
+        {
+          "discount_rate": 0.04,
+          "discount_rate_pct": "4.0%",
+          "npv": -2543042320.376672,
+          "npv_formatted": "$-2,543,042,320",
+          "irr": -0.1914521416823074,
+          "irr_formatted": "-19.1%"
+        },
+        {
+          "discount_rate": 0.05,
+          "discount_rate_pct": "5.0%",
+          "npv": -2596773314.4885964,
+          "npv_formatted": "$-2,596,773,314",
+          "irr": -0.1914521416823074,
+          "irr_formatted": "-19.1%"
+        },
+        {
+          "discount_rate": 0.06,
+          "discount_rate_pct": "6.0%",
+          "npv": -2648022956.452706,
+          "npv_formatted": "$-2,648,022,956",
+          "irr": -0.1914521416823074,
+          "irr_formatted": "-19.1%"
+        },
+        {
+          "discount_rate": 0.07,
+          "discount_rate_pct": "7.0%",
+          "npv": -2696936318.5425453,
+          "npv_formatted": "$-2,696,936,319",
+          "irr": -0.1914521416823074,
+          "irr_formatted": "-19.1%"
+        },
+        {
+          "discount_rate": 0.08,
+          "discount_rate_pct": "8.0%",
+          "npv": -2743648420.46338,
+          "npv_formatted": "$-2,743,648,420",
+          "irr": -0.1914521416823074,
+          "irr_formatted": "-19.1%"
+        },
+        {
+          "discount_rate": 0.09,
+          "discount_rate_pct": "9.0%",
+          "npv": -2788285026.289428,
+          "npv_formatted": "$-2,788,285,026",
+          "irr": -0.1914521416823074,
+          "irr_formatted": "-19.1%"
+        },
+        {
+          "discount_rate": 0.1,
+          "discount_rate_pct": "10.0%",
+          "npv": -2830963370.722205,
+          "npv_formatted": "$-2,830,963,371",
+          "irr": -0.1914521416823074,
+          "irr_formatted": "-19.1%"
+        },
+        {
+          "discount_rate": 0.12,
+          "discount_rate_pct": "12.0%",
+          "npv": -2910875484.6414175,
+          "npv_formatted": "$-2,910,875,485",
+          "irr": -0.1914521416823074,
+          "irr_formatted": "-19.1%"
+        },
+        {
+          "discount_rate": 0.15,
+          "discount_rate_pct": "15.0%",
+          "npv": -3018566157.9672747,
+          "npv_formatted": "$-3,018,566,158",
+          "irr": -0.1914521416823074,
+          "irr_formatted": "-19.1%"
+        },
+        {
+          "discount_rate": 0.2,
+          "discount_rate_pct": "20.0%",
+          "npv": -3170906207.133059,
+          "npv_formatted": "$-3,170,906,207",
+          "irr": -0.1914521416823074,
+          "irr_formatted": "-19.1%"
+        }
+      ]
+    },
+    "base": {
+      "info": {
+        "name": "Base Case",
+        "capex": -4300000000,
+        "cash_flows": [
+          400000000,
+          500000000,
+          600000000,
+          700000000,
+          500000000,
+          300000000
+        ],
+        "description": "Most likely scenario based on typical well performance"
+      },
+      "npv_calculations": [
+        {
+          "discount_rate": 0.01,
+          "discount_rate_pct": "1.0%",
+          "npv": -1400425627.0619493,
+          "npv_formatted": "$-1,400,425,627",
+          "irr": -0.09643045745330969,
+          "irr_formatted": "-9.6%"
+        },
+        {
+          "discount_rate": 0.02,
+          "discount_rate_pct": "2.0%",
+          "npv": -1495916728.1183066,
+          "npv_formatted": "$-1,495,916,728",
+          "irr": -0.09643045745330969,
+          "irr_formatted": "-9.6%"
+        },
+        {
+          "discount_rate": 0.03,
+          "discount_rate_pct": "3.0%",
+          "npv": -1586776932.5199602,
+          "npv_formatted": "$-1,586,776,933",
+          "irr": -0.09643045745330969,
+          "irr_formatted": "-9.6%"
+        },
+        {
+          "discount_rate": 0.04,
+          "discount_rate_pct": "4.0%",
+          "npv": -1673287848.853663,
+          "npv_formatted": "$-1,673,287,849",
+          "irr": -0.09643045745330969,
+          "irr_formatted": "-9.6%"
+        },
+        {
+          "discount_rate": 0.05,
+          "discount_rate_pct": "5.0%",
+          "npv": -1755710886.1201737,
+          "npv_formatted": "$-1,755,710,886",
+          "irr": -0.09643045745330969,
+          "irr_formatted": "-9.6%"
+        },
+        {
+          "discount_rate": 0.06,
+          "discount_rate_pct": "6.0%",
+          "npv": -1834288906.7759156,
+          "npv_formatted": "$-1,834,288,907",
+          "irr": -0.09643045745330969,
+          "irr_formatted": "-9.6%"
+        },
+        {
+          "discount_rate": 0.07,
+          "discount_rate_pct": "7.0%",
+          "npv": -1909247728.7078934,
+          "npv_formatted": "$-1,909,247,729",
+          "irr": -0.09643045745330969,
+          "irr_formatted": "-9.6%"
+        },
+        {
+          "discount_rate": 0.08,
+          "discount_rate_pct": "8.0%",
+          "npv": -1980797491.327311,
+          "npv_formatted": "$-1,980,797,491",
+          "irr": -0.09643045745330969,
+          "irr_formatted": "-9.6%"
+        },
+        {
+          "discount_rate": 0.09,
+          "discount_rate_pct": "9.0%",
+          "npv": -2049133899.3072865,
+          "npv_formatted": "$-2,049,133,899",
+          "irr": -0.09643045745330969,
+          "irr_formatted": "-9.6%"
+        },
+        {
+          "discount_rate": 0.1,
+          "discount_rate_pct": "10.0%",
+          "npv": -2114439356.0255625,
+          "npv_formatted": "$-2,114,439,356",
+          "irr": -0.09643045745330969,
+          "irr_formatted": "-9.6%"
+        },
+        {
+          "discount_rate": 0.12,
+          "discount_rate_pct": "12.0%",
+          "npv": -2236626636.2977085,
+          "npv_formatted": "$-2,236,626,636",
+          "irr": -0.09643045745330969,
+          "irr_formatted": "-9.6%"
+        },
+        {
+          "discount_rate": 0.15,
+          "discount_rate_pct": "15.0%",
+          "npv": -2401078421.5981565,
+          "npv_formatted": "$-2,401,078,422",
+          "irr": -0.09643045745330969,
+          "irr_formatted": "-9.6%"
+        },
+        {
+          "discount_rate": 0.2,
+          "discount_rate_pct": "20.0%",
+          "npv": -2633236882.7160487,
+          "npv_formatted": "$-2,633,236,883",
+          "irr": -0.09643045745330969,
+          "irr_formatted": "-9.6%"
+        }
+      ]
+    },
+    "optimistic": {
+      "info": {
+        "name": "Optimistic Case",
+        "capex": -3800000000,
+        "cash_flows": [
+          500000000,
+          700000000,
+          850000000,
+          900000000,
+          700000000,
+          500000000
+        ],
+        "description": "Higher production rates, lower development costs"
+      },
+      "npv_calculations": [
+        {
+          "discount_rate": 0.01,
+          "discount_rate_pct": "1.0%",
+          "npv": 208189274.26019967,
+          "npv_formatted": "$208,189,274",
+          "irr": 0.02567143072088518,
+          "irr_formatted": "2.6%"
+        },
+        {
+          "discount_rate": 0.02,
+          "discount_rate_pct": "2.0%",
+          "npv": 73446351.06085002,
+          "npv_formatted": "$73,446,351",
+          "irr": 0.02567143072088518,
+          "irr_formatted": "2.6%"
+        },
+        {
+          "discount_rate": 0.03,
+          "discount_rate_pct": "3.0%",
+          "npv": -54668939.41744077,
+          "npv_formatted": "$-54,668,939",
+          "irr": 0.02567143072088518,
+          "irr_formatted": "2.6%"
+        },
+        {
+          "discount_rate": 0.04,
+          "discount_rate_pct": "4.0%",
+          "npv": -176564505.72469342,
+          "npv_formatted": "$-176,564,506",
+          "irr": 0.02567143072088518,
+          "irr_formatted": "2.6%"
+        },
+        {
+          "discount_rate": 0.05,
+          "discount_rate_pct": "5.0%",
+          "npv": -292618687.97820556,
+          "npv_formatted": "$-292,618,688",
+          "irr": 0.02567143072088518,
+          "irr_formatted": "2.6%"
+        },
+        {
+          "discount_rate": 0.06,
+          "discount_rate_pct": "6.0%",
+          "npv": -403182700.064732,
+          "npv_formatted": "$-403,182,700",
+          "irr": 0.02567143072088518,
+          "irr_formatted": "2.6%"
+        },
+        {
+          "discount_rate": 0.07,
+          "discount_rate_pct": "7.0%",
+          "npv": -508582846.8357631,
+          "npv_formatted": "$-508,582,847",
+          "irr": 0.02567143072088518,
+          "irr_formatted": "2.6%"
+        },
+        {
+          "discount_rate": 0.08,
+          "discount_rate_pct": "8.0%",
+          "npv": -609122539.076657,
+          "npv_formatted": "$-609,122,539",
+          "irr": 0.02567143072088518,
+          "irr_formatted": "2.6%"
+        },
+        {
+          "discount_rate": 0.09,
+          "discount_rate_pct": "9.0%",
+          "npv": -705084126.524102,
+          "npv_formatted": "$-705,084,127",
+          "irr": 0.02567143072088518,
+          "irr_formatted": "2.6%"
+        },
+        {
+          "discount_rate": 0.1,
+          "discount_rate_pct": "10.0%",
+          "npv": -796730566.9971294,
+          "npv_formatted": "$-796,730,567",
+          "irr": 0.02567143072088518,
+          "irr_formatted": "2.6%"
+        },
+        {
+          "discount_rate": 0.12,
+          "discount_rate_pct": "12.0%",
+          "npv": -968041873.4882877,
+          "npv_formatted": "$-968,041,873",
+          "irr": 0.02567143072088518,
+          "irr_formatted": "2.6%"
+        },
+        {
+          "discount_rate": 0.15,
+          "discount_rate_pct": "15.0%",
+          "npv": -1198262592.931096,
+          "npv_formatted": "$-1,198,262,593",
+          "irr": 0.02567143072088518,
+          "irr_formatted": "2.6%"
+        },
+        {
+          "discount_rate": 0.2,
+          "discount_rate_pct": "20.0%",
+          "npv": -1522533007.544582,
+          "npv_formatted": "$-1,522,533,008",
+          "irr": 0.02567143072088518,
+          "irr_formatted": "2.6%"
+        }
+      ]
+    },
+    "excel_based": {
+      "info": {
+        "name": "Excel Data Derived",
+        "capex": -4300000000,
+        "cash_flows": [
+          300000000,
+          350000000,
+          500000000,
+          850000000,
+          300000000
+        ],
+        "description": "Based on patterns observed in Excel file"
+      },
+      "npv_calculations": [
+        {
+          "discount_rate": 0.01,
+          "discount_rate_pct": "1.0%",
+          "npv": -2072298606.68104,
+          "npv_formatted": "$-2,072,298,607",
+          "irr": -0.1701880561049981,
+          "irr_formatted": "-17.0%"
+        },
+        {
+          "discount_rate": 0.02,
+          "discount_rate_pct": "2.0%",
+          "npv": -2141324257.1628473,
+          "npv_formatted": "$-2,141,324,257",
+          "irr": -0.1701880561049981,
+          "irr_formatted": "-17.0%"
+        },
+        {
+          "discount_rate": 0.03,
+          "discount_rate_pct": "3.0%",
+          "npv": -2207261840.1606917,
+          "npv_formatted": "$-2,207,261,840",
+          "irr": -0.1701880561049981,
+          "irr_formatted": "-17.0%"
+        },
+        {
+          "discount_rate": 0.04,
+          "discount_rate_pct": "4.0%",
+          "npv": -2270283913.243719,
+          "npv_formatted": "$-2,270,283,913",
+          "irr": -0.1701880561049981,
+          "irr_formatted": "-17.0%"
+        },
+        {
+          "discount_rate": 0.05,
+          "discount_rate_pct": "5.0%",
+          "npv": -2330551644.0460215,
+          "npv_formatted": "$-2,330,551,644",
+          "irr": -0.1701880561049981,
+          "irr_formatted": "-17.0%"
+        },
+        {
+          "discount_rate": 0.06,
+          "discount_rate_pct": "6.0%",
+          "npv": -2388215670.9422026,
+          "npv_formatted": "$-2,388,215,671",
+          "irr": -0.1701880561049981,
+          "irr_formatted": "-17.0%"
+        },
+        {
+          "discount_rate": 0.07,
+          "discount_rate_pct": "7.0%",
+          "npv": -2443416890.797752,
+          "npv_formatted": "$-2,443,416,891",
+          "irr": -0.1701880561049981,
+          "irr_formatted": "-17.0%"
+        },
+        {
+          "discount_rate": 0.08,
+          "discount_rate_pct": "8.0%",
+          "npv": -2496287180.6194024,
+          "npv_formatted": "$-2,496,287,181",
+          "irr": -0.1701880561049981,
+          "irr_formatted": "-17.0%"
+        },
+        {
+          "discount_rate": 0.09,
+          "discount_rate_pct": "9.0%",
+          "npv": -2546950059.233086,
+          "npv_formatted": "$-2,546,950,059",
+          "irr": -0.1701880561049981,
+          "irr_formatted": "-17.0%"
+        },
+        {
+          "discount_rate": 0.1,
+          "discount_rate_pct": "10.0%",
+          "npv": -2595521294.4967747,
+          "npv_formatted": "$-2,595,521,294",
+          "irr": -0.1701880561049981,
+          "irr_formatted": "-17.0%"
+        },
+        {
+          "discount_rate": 0.12,
+          "discount_rate_pct": "12.0%",
+          "npv": -2686816452.7336082,
+          "npv_formatted": "$-2,686,816,453",
+          "irr": -0.1701880561049981,
+          "irr_formatted": "-17.0%"
+        },
+        {
+          "discount_rate": 0.15,
+          "discount_rate_pct": "15.0%",
+          "npv": -2810578755.6691737,
+          "npv_formatted": "$-2,810,578,756",
+          "irr": -0.1701880561049981,
+          "irr_formatted": "-17.0%"
+        },
+        {
+          "discount_rate": 0.2,
+          "discount_rate_pct": "20.0%",
+          "npv": -2987114197.5308642,
+          "npv_formatted": "$-2,987,114,198",
+          "irr": -0.1701880561049981,
+          "irr_formatted": "-17.0%"
+        }
+      ]
+    }
+  },
+  "sensitivity_analysis": {
+    "base_npv": -2114439356.0255625,
+    "base_rate": 0.1,
+    "sensitivities": {
+      "revenue_-30%": {
+        "npv": -2770107549.217894,
+        "npv_change_pct": -31.009080081860002,
+        "description": "Revenue -30%"
+      },
+      "revenue_-20%": {
+        "npv": -2551551484.82045,
+        "npv_change_pct": -20.672720054573315,
+        "description": "Revenue -20%"
+      },
+      "revenue_-10%": {
+        "npv": -2332995420.423006,
+        "npv_change_pct": -10.336360027286652,
+        "description": "Revenue -10%"
+      },
+      "revenue_+10%": {
+        "npv": -1895883291.628118,
+        "npv_change_pct": 10.336360027286696,
+        "description": "Revenue +10%"
+      },
+      "revenue_+20%": {
+        "npv": -1677327227.2306738,
+        "npv_change_pct": 20.672720054573382,
+        "description": "Revenue +20%"
+      },
+      "revenue_+30%": {
+        "npv": -1458771162.8332312,
+        "npv_change_pct": 31.00908008185999,
+        "description": "Revenue +30%"
+      },
+      "capex_-30%": {
+        "npv": -824439356.0255622,
+        "npv_change_pct": 61.00908008186001,
+        "description": "CAPEX -30%"
+      },
+      "capex_-20%": {
+        "npv": -1254439356.0255623,
+        "npv_change_pct": 40.67272005457333,
+        "description": "CAPEX -20%"
+      },
+      "capex_-10%": {
+        "npv": -1684439356.0255623,
+        "npv_change_pct": 20.336360027286673,
+        "description": "CAPEX -10%"
+      },
+      "capex_+10%": {
+        "npv": -2544439356.0255613,
+        "npv_change_pct": -20.336360027286602,
+        "description": "CAPEX +10%"
+      },
+      "capex_+20%": {
+        "npv": -2974439356.0255613,
+        "npv_change_pct": -40.67272005457327,
+        "description": "CAPEX +20%"
+      },
+      "capex_+30%": {
+        "npv": -3404439356.0255613,
+        "npv_change_pct": -61.00908008185992,
+        "description": "CAPEX +30%"
+      }
+    }
+  }
+}

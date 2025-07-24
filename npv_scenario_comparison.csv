@@ -1,0 +1,13 @@
+Scenario,Discount_Rate,NPV,IRR,CAPEX,Description
+Conservative Case,8.0%,-2743648420.46338,-0.1914521416823074,-4300000000,"Lower production estimates, higher costs"
+Conservative Case,10.0%,-2830963370.722205,-0.1914521416823074,-4300000000,"Lower production estimates, higher costs"
+Conservative Case,15.0%,-3018566157.9672747,-0.1914521416823074,-4300000000,"Lower production estimates, higher costs"
+Base Case,8.0%,-1980797491.327311,-0.09643045745330969,-4300000000,Most likely scenario based on typical well performance
+Base Case,10.0%,-2114439356.0255625,-0.09643045745330969,-4300000000,Most likely scenario based on typical well performance
+Base Case,15.0%,-2401078421.5981565,-0.09643045745330969,-4300000000,Most likely scenario based on typical well performance
+Optimistic Case,8.0%,-609122539.076657,0.02567143072088518,-3800000000,"Higher production rates, lower development costs"
+Optimistic Case,10.0%,-796730566.9971294,0.02567143072088518,-3800000000,"Higher production rates, lower development costs"
+Optimistic Case,15.0%,-1198262592.931096,0.02567143072088518,-3800000000,"Higher production rates, lower development costs"
+Excel Data Derived,8.0%,-2496287180.6194024,-0.1701880561049981,-4300000000,Based on patterns observed in Excel file
+Excel Data Derived,10.0%,-2595521294.4967747,-0.1701880561049981,-4300000000,Based on patterns observed in Excel file
+Excel Data Derived,15.0%,-2810578755.6691737,-0.1701880561049981,-4300000000,Based on patterns observed in Excel file
