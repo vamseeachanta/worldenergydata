@@ -1,6 +1,7 @@
 ## Revenue
-- 
+
+-
 
 ## Way forward:
-- Add percentage differences and close out
 
+- Add percentage differences and close out

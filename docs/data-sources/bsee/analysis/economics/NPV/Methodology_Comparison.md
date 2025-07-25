@@ -1,6 +1,7 @@
 # NPV Calculation Methodology Comparison
 
 ## Overview
+
 This document provides a detailed comparison between two different approaches to calculating NPV (Net Present Value) for the Jack St. Malo (JStM) Well Production Data project.
 
 ---
@@ -8,42 +9,56 @@ This document provides a detailed comparison between two different approaches to
 ## 🔍 **Approach 1: Direct Excel Data Extraction (Copilot's Method)**
 
 ### 📊 **Cash Flow Calculation**
+
 - **Method**: Direct extraction from Excel file's embedded financial model
 - **Data Source**: Pre-calculated NPV values found in Excel sheets
-- **Cash Flow Components**: 
+- **Cash Flow Components**:
   - Extracted 306 different NPV scenarios directly from Excel cells
   - No manual cash flow construction required
   - Used existing financial model calculations
 
 ### 💰 **Sample Cash Flows Used**
+
 ```python
+
 # Estimated cash flows based on observed patterns
+
 cash_flows = [
     -1460000000,  # Initial CAPEX (Year 0)
+
     147174234,    # Year 1 Revenue
-    168094059,    # Year 2 Revenue  
+
+    168094059,    # Year 2 Revenue
+
     175829245,    # Year 3 Revenue
+
     184567890,    # Year 4 Revenue
+
     193456789     # Year 5 Revenue
+
 ]
 ```
 
 ### 📈 **Interest Rate Selection**
+
 - **Primary Rate**: 8% (extracted from Excel data)
 - **Alternative Rates**: 10%, 50% (found in Excel)
 - **Rate Source**: Discovered within the Excel file's financial model
 - **Sensitivity Analysis**: Tested rates from 5% to 15%
 
 ### 🧮 **NPV Calculation Method**
+
 ```python
 import numpy_financial as npf
 
 # Simple NPV calculation with annual discount rates
+
 for rate in discount_rates:
     npv = npf.npv(rate, cash_flows)
 ```
 
 ### 📋 **Key Results**
+
 - **Total NPV Range**: -$6.7B to +$3.5B
 - **Aggregated NPV**: -$4.54B
 - **Number of Scenarios**: 306 different NPV values
@@ -54,38 +69,52 @@ for rate in discount_rates:
 ## 🔧 **Approach 2: Systematic Cash Flow Construction (Your Method)**
 
 ### 📊 **Cash Flow Calculation**
+
 - **Method**: Systematic construction from production and economic data
-- **Data Sources**: 
+- **Data Sources**:
   - Monthly oil production volumes (`MON_O_PROD_VOL`)
   - Oil pricing data from external file (`F000000__3m.xls`)
   - Configuration-driven cost parameters
 
 ### 💰 **Cash Flow Components**
+
 ```python
+
 # Monthly Revenue Calculation
+
 revenue = MON_O_PROD_VOL[i] * avg_price[i]
 
-# Monthly OPEX Calculation  
+# Monthly OPEX Calculation
+
 opex = MON_O_PROD_VOL[i] * opex_per_bbl  # $15.00 per barrel
 
 # Net Cash Flow
+
 net_cash_flow = revenue - opex
 
 # Complete Cash Flow Series
+
 cash_flows = [capex_month_0] + revenue_df['Net Cash Flow'].tolist()
 ```
 
 ### 🏗️ **CAPEX Breakdown**
+
 ```yaml
+
 # From configuration file
+
 facilities: [4300000000, 0, 500000000]  # $4.8B total facilities
+
 well_cost: 300000000                    # $300M well cost
+
 recompletion: 100000000                 # $100M recompletion
+
 ```
 
 **Total CAPEX**: $5.2B ($4.8B facilities + $300M well + $100M recompletion)
 
 ### 📈 **Interest Rate Selection**
+
 - **Primary Rate**: 10% annual (from configuration)
 - **Rate Source**: Explicitly defined in `query_field_jack_stmalo_npv.yml`
 - **Conversion**: Annual rate converted to monthly rate
@@ -94,25 +123,32 @@ recompletion: 100000000                 # $100M recompletion
   ```
 
 ### 🧮 **NPV Calculation Method**
+
 ```python
 import numpy_financial as npf
 
 # Step 1: Calculate monthly revenues
+
 revenue = [MON_O_PROD_VOL[i] * avg_price[i] for i in range(len(MON_O_PROD_VOL))]
 
 # Step 2: Calculate monthly OPEX
+
 opex = [production * opex_per_bbl for production in MON_O_PROD_VOL]
 
 # Step 3: Calculate net cash flows
+
 net_cash_flows = [revenue[i] - opex[i] for i in range(len(revenue))]
 
 # Step 4: Add initial CAPEX
+
 cash_flows = [-total_capex] + net_cash_flows
 
 # Step 5: Convert annual rate to monthly
+
 monthly_rate = (1 + annual_rate) ** (1/12) - 1
 
 # Step 6: Calculate NPV
+
 npv_value = npf.npv(monthly_rate, cash_flows)
 ```
 
@@ -137,22 +173,27 @@ npv_value = npf.npv(monthly_rate, cash_flows)
 ## 🔍 **Key Differences Analysis**
 
 ### 1. **Cash Flow Construction**
+
 - **Copilot**: Uses pre-existing Excel calculations, less transparent but potentially more comprehensive
 - **You**: Builds cash flows from first principles, more transparent and auditable
 
 ### 2. **Cost Structure**
+
 - **Copilot**: CAPEX = $1.46B (facilities only)
 - **You**: CAPEX = $5.2B (facilities + wells + recompletion)
 
 ### 3. **Operating Expenses**
+
 - **Copilot**: OPEX embedded in Excel model (not explicitly visible)
 - **You**: OPEX = $15/bbl × monthly production (explicit and configurable)
 
 ### 4. **Time Granularity**
+
 - **Copilot**: Annual cash flows with annual discount rate
 - **You**: Monthly cash flows with monthly discount rate
 
 ### 5. **Data Transparency**
+
 - **Copilot**: Black box Excel model (306 scenarios)
 - **You**: White box approach with clear assumptions
 
@@ -161,21 +202,30 @@ npv_value = npf.npv(monthly_rate, cash_flows)
 ## 📈 **Mathematical Differences**
 
 ### Interest Rate Conversion
+
 ```python
+
 # Copilot's Method (Annual)
+
 npv = npf.npv(0.08, annual_cash_flows)
 
 # Your Method (Monthly)
+
 monthly_rate = (1 + 0.10) ** (1/12) - 1  # ≈ 0.00797
+
 npv = npf.npv(monthly_rate, monthly_cash_flows)
 ```
 
 ### Cash Flow Timing
+
 ```python
+
 # Copilot's Approach
+
 cash_flows = [-1460000000, 147174234, 168094059, 175829245, 184567890, 193456789]
 
-# Your Approach  
+# Your Approach
+
 cash_flows = [-5200000000] + [monthly_net_cash_flow_1, monthly_net_cash_flow_2, ...]
 ```
 
@@ -184,6 +234,7 @@ cash_flows = [-5200000000] + [monthly_net_cash_flow_1, monthly_net_cash_flow_2, 
 ## 🎯 **Advantages and Disadvantages**
 
 ### **Copilot's Approach**
+
 ✅ **Advantages:**
 - Leverages existing sophisticated Excel financial model
 - Captures complex scenarios (306 different cases)
@@ -197,6 +248,7 @@ cash_flows = [-5200000000] + [monthly_net_cash_flow_1, monthly_net_cash_flow_2, 
 - Harder to validate individual components
 
 ### **Your Approach**
+
 ✅ **Advantages:**
 - Transparent and auditable calculations
 - Configurable parameters via YAML
@@ -215,6 +267,7 @@ cash_flows = [-5200000000] + [monthly_net_cash_flow_1, monthly_net_cash_flow_2, 
 ## 🏆 **Recommendation**
 
 ### **For Financial Analysis:**
+
 Use **Your Approach** because:
 - Provides clear audit trail
 - Allows scenario testing
@@ -222,12 +275,14 @@ Use **Your Approach** because:
 - Industry-standard methodology
 
 ### **For Validation:**
+
 Use **Copilot's Approach** because:
 - Validates against existing financial model
 - Captures complex scenarios
 - Provides benchmark for comparison
 
 ### **Best Practice:**
+
 **Combine both approaches:**
 1. Use your method for primary analysis
 2. Validate results against Excel model extraction
@@ -251,3 +306,7 @@ Use **Copilot's Approach** because:
 ---
 
 *This comparison demonstrates two valid but different approaches to NPV calculation, each with distinct advantages for different use cases in financial analysis.*
+
+---
+
+*Last updated: 2025-07-24*

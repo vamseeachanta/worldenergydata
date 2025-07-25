@@ -10,6 +10,7 @@ WorldEnergyData integrates multiple public energy data sources to provide unifie
 ## Available Data Sources
 
 ### 🛢️ [BSEE - Bureau of Safety and Environmental Enforcement](bsee/)
+
 The most comprehensive data source in WorldEnergyData, covering US Gulf of Mexico offshore operations.
 
 **Data Types:**
@@ -19,11 +20,12 @@ The most comprehensive data source in WorldEnergyData, covering US Gulf of Mexic
 - Regulatory filings and permits
 - Field development plans
 
-**Coverage:** US Gulf of Mexico offshore wells and platforms  
-**Update Frequency:** Ongoing integration with public BSEE data releases  
+**Coverage:** US Gulf of Mexico offshore wells and platforms
+**Update Frequency:** Ongoing integration with public BSEE data releases
 **Key Use Cases:** Production analysis, economic evaluation, field development studies
 
 ### 🌊 [SODIR - Norwegian Offshore Directorate](sodir/)
+
 Norwegian offshore petroleum data for the North Sea and Norwegian Continental Shelf.
 
 **Data Types:**
@@ -32,11 +34,12 @@ Norwegian offshore petroleum data for the North Sea and Norwegian Continental Sh
 - Drilling and completion activities
 - Environmental and safety data
 
-**Coverage:** Norwegian Continental Shelf  
-**Update Frequency:** Regular updates from SODIR public data  
+**Coverage:** Norwegian Continental Shelf
+**Update Frequency:** Regular updates from SODIR public data
 **Key Use Cases:** International comparisons, North Sea analysis, regulatory compliance
 
 ### 💨 [Wind Energy](wind/)
+
 Wind energy databases and analysis capabilities for renewable energy integration.
 
 **Data Types:**
@@ -45,11 +48,12 @@ Wind energy databases and analysis capabilities for renewable energy integration
 - Offshore wind development data
 - Energy production forecasts
 
-**Coverage:** Global wind energy projects and resources  
-**Update Frequency:** Annual technology updates and project data  
+**Coverage:** Global wind energy projects and resources
+**Update Frequency:** Annual technology updates and project data
 **Key Use Cases:** Renewable energy analysis, technology comparisons, site assessments
 
 ### 🚢 [LNG - Liquefied Natural Gas](lng/)
+
 Market data and analysis tools for the global LNG industry.
 
 **Data Types:**
@@ -58,11 +62,12 @@ Market data and analysis tools for the global LNG industry.
 - Market pricing and contracts
 - Regulatory and policy updates
 
-**Coverage:** Global LNG markets and infrastructure  
-**Update Frequency:** Monthly market updates  
+**Coverage:** Global LNG markets and infrastructure
+**Update Frequency:** Monthly market updates
 **Key Use Cases:** Market analysis, supply chain optimization, price forecasting
 
 ### ⚙️ [Equipment](equipment/)
+
 Technical specifications and performance data for energy industry equipment.
 
 **Data Types:**
@@ -71,11 +76,12 @@ Technical specifications and performance data for energy industry equipment.
 - Subsea systems and components
 - Equipment performance databases
 
-**Coverage:** Major equipment manufacturers and specifications  
-**Update Frequency:** As manufacturer data becomes available  
+**Coverage:** Major equipment manufacturers and specifications
+**Update Frequency:** As manufacturer data becomes available
 **Key Use Cases:** Equipment selection, cost estimation, technical analysis
 
 ### 🏗️ [Onshore](onshore/)
+
 Onshore energy data sources including unconventional resources.
 
 **Data Types:**
@@ -84,13 +90,14 @@ Onshore energy data sources including unconventional resources.
 - Land and mineral rights data
 - Production and completion data
 
-**Coverage:** Major US onshore basins  
-**Update Frequency:** Regular updates from public sources  
+**Coverage:** Major US onshore basins
+**Update Frequency:** Regular updates from public sources
 **Key Use Cases:** Unconventional analysis, land management, completion optimization
 
 ## Data Integration Architecture
 
 ### Standardized Data Formats
+
 All data sources are processed into consistent formats:
 - **Pandas DataFrames** for structured data
 - **Standardized column names** across sources
@@ -98,12 +105,14 @@ All data sources are processed into consistent formats:
 - **Quality validation** and data cleaning
 
 ### Configuration Management
+
 - **YAML configuration files** for data source parameters
 - **Flexible data filtering** and selection options
 - **Custom data transformation** capabilities
 - **Version control** for data processing workflows
 
 ### Data Quality Assurance
+
 - **Automated validation** of data integrity
 - **Duplicate detection** and handling
 - **Missing data** identification and treatment
@@ -112,10 +121,12 @@ All data sources are processed into consistent formats:
 ## Getting Started with Data Sources
 
 ### Basic Usage Pattern
+
 ```python
 import worldenergydata as wed
 
 # Load data from a specific source
+
 bsee_data = wed.bsee.load_production_data(
     start_date='2020-01-01',
     end_date='2023-12-31',
@@ -123,6 +134,7 @@ bsee_data = wed.bsee.load_production_data(
 )
 
 # Process and analyze
+
 analysis_result = wed.analysis.production_trends(bsee_data)
 ```
 
@@ -140,12 +152,14 @@ analysis_result = wed.analysis.production_trends(bsee_data)
 ## Data Access and Usage
 
 ### Supported Output Formats
+
 - **Pandas DataFrames** for Python analysis
 - **Excel files** for spreadsheet applications
 - **CSV files** for database import
 - **JSON files** for web applications
 
 ### Integration with Analysis Tools
+
 - **Direct integration** with WorldEnergyData analysis functions
 - **matplotlib/plotly** visualization support
 - **numpy-financial** economic calculations

@@ -9,7 +9,6 @@ Need the following well data
 - [ ] Identify and combine data sources, see data sources below
 - [ ] Utilize the well data function "prepare_field_well_data", etc., in src\worldenergydata\modules\bsee\analysis\bsee_analysis.py
 
-
 | Data | Description | Source/Method
 | --- | --- | --- |
 Well Name |  | Well Name, by_block_well_data
@@ -23,12 +22,11 @@ TMD | | BH_TOTAL_MD, APIRawData_mv_api_list_all
 TD Date | | TOTAL_DEPTH_DATE, APIRawData_mv_api_list_all
 Number of sidetracks | | caculated
 Well departure (step out) |  | caculated from well bore data, dsptsdelimit
-Mud Weight at TD (max) | | 
+Mud Weight at TD (max) | |
 Drilling Days | | calculated
 Completion Days | | calculated
 First oil date  | | calculated from production data
 Production rate by month | by API | from yearly zip files, [#23](https://github.com/vamseeachanta/worldenergydata/issues/23)
-
 
 ### Data Sources
 
@@ -41,7 +39,6 @@ APIRawData_mv_api_list_all : https://github.com/vamseeachanta/worldenergydata/bl
 BoreholeRawData: https://github.com/vamseeachanta/worldenergydata/blob/1691a05e908c4a69876d821296e63e5e65277a73/tests/modules/bsee/data/results/Data/by_zip/BoreholeRawData_mv_boreholes_all.csv
 
 dsptsdelimit: https://github.com/vamseeachanta/worldenergydata/blob/2084250f6055a4f0dae7cafc3844f797bc8b624d/tests/modules/bsee/data/results/Data/by_zip/dsptsdelimit.csv
-
 
 ## Economics
 
@@ -67,7 +64,8 @@ Shell’s Stones ultra-deepwater development comprises eight subsea production w
 The remaining two development wells (completing the eight-well program) aren’t represented in your G17001 extract, likely because they lie on a different bottom lease. If you need to pull their APIs you’ll want the OGOR-A export for that lease (WR 551 – OCS-G 21861), or lease-level production data from BSEE.
 
 I would say that Stones subsea is an abysmal failure.  Can you believe these people can’t figure out they need direct vertical access to the completion!  8 producers completed, 5 still producing.
-![alt text](image.png)
+![alt text](modulesseenalysis
+ield\image.png)
 
 #### 2025-04-24 Roy
 
@@ -100,9 +98,6 @@ Looking good Vamsee.  Here are some plots and tables I created so far for St Mal
 | 608044022301     | 38352     | 326                  | 38564     | 150                  | 1      | 0.74                 | 74                  |
 | 608124012500     | 44043     | 10162                | 45716     | 3379                 | 5      | 0.21                 | 21                  |
 
-
-
-
 According to Chevron’s publicly-available development profiles:
 
 Number of production wells:
@@ -112,10 +107,8 @@ Number of production wells:
 - — Grand total: 14 production wells on the Jack/St. Malo facility.
 - Cumulative oil (and gas-oil equivalent) produced:
    - Since first-oil in December 2014, Jack and St. Malo together have yielded almost 400 million gross barrels of oil-equivalent  through mid-2024
- 
 
-Using the average‐daily rates multiplied by the exact days in each month (2014 to the latest), the total oil volume produced across all wells is 428,760,422 STB. 
-
+Using the average‐daily rates multiplied by the exact days in each month (2014 to the latest), the total oil volume produced across all wells is 428,760,422 STB.
 
 | Year | Total Oil (STB) | Avg Price (USD/bbl) | Revenue (USD)     |
 |------|------------------|----------------------|--------------------|
@@ -134,9 +127,7 @@ Using the average‐daily rates multiplied by the exact days in each month (2014
 |      |                  |                      |                    |
 |      |                  |                      | **$350,274,201**   |
 
-
-Ok now we got it straighted out! 
-
+Ok now we got it straighted out!
 
 | Year | Total Oil (STB)   | Avg Price (USD/bbl) | Revenue (USD)        |
 |------|--------------------|----------------------|------------------------|
@@ -153,7 +144,6 @@ Ok now we got it straighted out!
 | 2024 | 38,264,343         | $75.83               | $2,901,585,153         |
 | 2025 | 5,316,123          | $69.97               | $371,969,145           |
 |      | **424,792,380**    | **$65.33**           | **$26,849,764,217**    |
-
 
 ### 2025-03-25 Chuck's NPV Calculations
 
@@ -183,21 +173,18 @@ https://github.com/vamseeachanta/worldenergydata/blob/202502/docs/modules/bsee/J
 
 #### 2025-02-11
 
-Roy, 
+Roy,
 
 Short answer: We are already using AI to download data. AI still needs immense human intelligence especially for BSEE Data download.
 
-Will respond this morning with details in our dedicated thread limited audience thread. 
+Will respond this morning with details in our dedicated thread limited audience thread.
 
 Vamsee
-
 
 On Wed, Feb 12, 2025 at 6:59 AM <roy.shilling@frontierdeepwater.com> wrote:
 Vamsee is it possible to just download all the data associated with Julia into multiple files.  We may be able to feed those into ai and get faster processing rather than trying to generate more complicated python scripts?
 
-
 r
-
 
 From: Vamsee Achanta <vamsee.achanta@aceengineer.com>
 Sent: Tuesday, February 11, 2025 9:00 PM
@@ -205,8 +192,10 @@ To: roy.shilling@frontierdeepwater.com
 Cc: chuck.white@frontierdeepwater.com; terrance.ivers@gmail.com; Howard Day <howardday7777@gmail.com>; paul.hyatt@tdsolutions.com.au
 Subject: Re: Average DAILY OIL PRODUCTION data for WILCOX fields
 
-
-Yes, I (and my assistant programmer, Samdan) are working on Julia first. 
-
+Yes, I (and my assistant programmer, Samdan) are working on Julia first.
 
 Will get some preliminary answers on well count tomorrow.
+
+---
+
+*Last updated: 2025-07-24*

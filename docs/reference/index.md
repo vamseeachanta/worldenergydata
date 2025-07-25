@@ -10,6 +10,7 @@ The Reference section provides comprehensive access to academic literature, indu
 ## Reference Categories
 
 ### 📚 [Literature](literature/)
+
 Academic papers, industry publications, and technical reports that form the theoretical foundation for WorldEnergyData methodologies.
 
 **Content Types:**
@@ -33,6 +34,7 @@ Academic papers, industry publications, and technical reports that form the theo
 - Access restrictions noted for copyrighted materials
 
 ### ⚙️ [Equipment Specs](equipment-specs/)
+
 Technical specifications and performance data for energy industry equipment.
 
 **Equipment Categories:**
@@ -57,6 +59,7 @@ Technical specifications and performance data for energy industry equipment.
 - Regulatory compliance verification
 
 ### 📋 [Industry Standards](industry-standards/)
+
 Industry standards, best practices, and regulatory frameworks that guide energy analysis.
 
 **Standards Organizations:**
@@ -82,6 +85,7 @@ Industry standards, best practices, and regulatory frameworks that guide energy 
 ## Integration with WorldEnergyData
 
 ### Methodology Validation
+
 All analysis methods in WorldEnergyData are validated against established literature and industry standards:
 
 - **Peer Review**: Methods compared against published research
@@ -90,22 +94,29 @@ All analysis methods in WorldEnergyData are validated against established litera
 - **Quality Assurance**: Continuous validation against new publications
 
 ### Reference Linking
+
 WorldEnergyData provides direct links between analysis functions and supporting references:
 
 ```python
+
 # Example: NPV analysis with method references
+
 npv_result = wed.economic.npv_analysis(
     production_data=data,
     method='spe_standards',  # Links to SPE economic evaluation guidelines
+
     discount_rate=0.10
 )
 
 # Access methodology references
+
 references = npv_result.get_references()
 print(references['methodology'])  # Lists supporting literature
+
 ```
 
 ### Documentation Standards
+
 - **Citation Format**: Consistent academic citation style
 - **Reference Management**: Automated reference tracking and updates
 - **Access Links**: Direct links to open-access materials
@@ -114,6 +125,7 @@ print(references['methodology'])  # Lists supporting literature
 ## Research and Academic Support
 
 ### Academic Integration
+
 WorldEnergyData supports academic research and education:
 
 - **Reproducible Research**: All methods fully documented and reproducible
@@ -122,6 +134,7 @@ WorldEnergyData supports academic research and education:
 - **Collaboration**: Support for academic-industry collaboration
 
 ### Publication Support
+
 For researchers using WorldEnergyData in publications:
 
 - **Method Citations**: Proper citation format for WorldEnergyData methods
@@ -130,6 +143,7 @@ For researchers using WorldEnergyData in publications:
 - **Validation**: Independent validation of results and methods
 
 ### Literature Updates
+
 The reference collection is continuously updated:
 
 - **New Publications**: Regular addition of recent literature
@@ -140,18 +154,21 @@ The reference collection is continuously updated:
 ## Quality and Access
 
 ### Quality Standards
+
 - **Peer Review**: All reference materials undergo peer review
 - **Accuracy Verification**: Technical accuracy verified by subject matter experts
 - **Currency**: Regular updates to maintain current information
 - **Completeness**: Comprehensive coverage of relevant topics
 
 ### Access and Availability
+
 - **Open Access**: Priority given to open-access materials
 - **Fair Use**: Proper fair use of copyrighted materials
 - **Library Partnerships**: Access through academic and professional libraries
 - **Purchase Options**: Information on obtaining copyrighted materials
 
 ### Search and Discovery
+
 - **Keyword Search**: Full-text search across all reference materials
 - **Topic Organization**: Materials organized by technical topic
 - **Cross-References**: Extensive cross-referencing between related materials

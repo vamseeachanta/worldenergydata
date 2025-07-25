@@ -12,3 +12,6 @@
 
 This is how we can calculate the rig days by WELL_ACTIVITY_CD.
 
+---
+
+*Last updated: 2025-07-24*

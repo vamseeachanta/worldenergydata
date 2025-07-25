@@ -8,10 +8,13 @@ calculate NPV calculation rate %
 Tests :
   - query_field_jack_stmalo.yml
 
-
 ### Analysis Summary:
 
   - JStM production analysis
   - NPV calculation
-    - costs (Wells, facilities)... 
+    - costs (Wells, facilities)...
     - revenue (oil price, production).. monthly
+
+---
+
+*Last updated: 2025-07-24*

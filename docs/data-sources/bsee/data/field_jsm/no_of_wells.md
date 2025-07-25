@@ -1,6 +1,5 @@
 ## 2025-02-21 Charles White
 
-
 Guys, this item on a webpage by Oil and Gas World, 07Sep’20  appears to define Stage/Phase 3 as being comprised of adding THREE producers(?) [Note that it is not clear whether Jack got 1, 2, or all 3 wells… but, probably 1 for Jack & 2 for St. Malo]:
 
 Steve Thurston, vice president of Exploration and Projects at Chevron, explains that we elected for a joint development to “reduce cost and capture scale” and had field development occur in two stages for “learning and risk reduction.” Stage 1 was put in production in 2014 – on time and under budget. Stage 2 was completed in 2018. In 2019, Stage 3 development drilling continued with one well in the Jack Field starting production and another reaching total depth. A final well is expected to be completed in the first half of 2020. A final investment decision was reached on the St. Malo Stage 4 waterflood project in August 2019. That project includes two new production wells, three injector wells, and topsides water injection equipment. First injection is expected in 2023.
@@ -8,7 +7,6 @@ While 1st injection was supposed to start in 2023, it did not happen until Q3’
 Vamsee’s deep-dive into BOEM database should clarify which reservoir got each of the THREE WELLS in Phase 3.
 
 https://www.oilandgas.world/viewtopic.php?t=211
-
 
 ## 2025-02-20 Charles White
 
@@ -55,7 +53,6 @@ CVX website, 03Sep’24 (5yrs later)–
 At the Jack/St. Malo facility, Chevron achieved first water injection at the St. Malo field, the company’s first waterflood project in the deepwater Wilcox trend. The project was delivered under budget, with the addition of water injection facilities, two new production wells, and two new injection wells. It is expected to add approximately 175 million barrels of oil equivalent to the St. Malo field’s gross ultimate recovery.
 Original FID for this Stage 4 project called for TWO producers & THREE injectors… so, they stayed under budget by dropping one of the injectors???
 Since production started in 2014, JSM has cumulatively produced ~ 400 million gross BOE.
- 
 
 So, some questions:
 
@@ -64,7 +61,6 @@ Does the “FORTY-THREE (43) wells” include more fields than just JSM… e.g.,
 Where/how could that number be justified… see below from OE???
 How many rigs are needed develop and operate JSM + JULIA?
 Other q’s???
- 
 
 From good article in OFFSHORE ENGINEER, by Karen Boman, 01JULY2017
 
@@ -73,7 +69,6 @@ And discusses the E-STMZ Completion technology…
 By Chevron and Halliburton teamed up in 2007 to develop an enhanced single trip multi-zonal completion system (EMTSZ) (OE: December 2014). This technology allows an operator to run and fracture five zones in a single trip. The ability to reduce the number of trips to perforate wells save not only time, but drilling rig day rate costs, Flowers said.
 At Jack/St. Malo, Halliburton’s tool allowed Chevron to conduct successful hydraulic fracturing jobs to effectively open up cliff-based inflow wells. Unique production tracers in each zone allowed Chevron to study samples. As a result, the Jack/St. Malo completion team completed 47 fracs in 10 wells without missing the target, Flowers said.
 Besides the first successful demonstration of the completion system, one of the biggest wells that Chevron has ever drilled was at Jack/St. Malo. For that well, Chevron ran a 2.3 million-pound casing string. Chevron also is seeing the highest completion pressure its ever seen, with Jack/St. Malo wells at 9500psi.
- 
 
 Best wishes,
 
@@ -89,21 +84,19 @@ Houston/Spicewood
 
 Mob. +1.832.745.6348
 
-
-
-#### 2025-02-12 Vamsee 
+#### 2025-02-12 Vamsee
 
 Roy and Chuck,
 
 Attached are the well data for Julia and Jack & St. Malo. Stones is pending. Production data for these are pending.
 
-As mentioned, BSEE data download is not straightforward and need some hand-holding. AI for analysis will also need some handholding when you get your hands on the fields we provide. 
+As mentioned, BSEE data download is not straightforward and need some hand-holding. AI for analysis will also need some handholding when you get your hands on the fields we provide.
 FYI, In all our coding, we leveraging AI even for everything but convert them to codes where possible for repeatability and reusability and traceability. Of courese, feel free to use your own independent judgement on how to use AI.
 
 For Jack & St. Malo wells, we got the data directly from BSEE. The blocks for jack are WR 758, WR 759. THe blocks for St. Malo are WR 678. The well data is attached and the number of API12 wells are given below. Status of these wells is to be determined.:
 - Jack, WR758: 40
 - Jack, WR759: 8
-- St. Malo, WR678: 20 
+- St. Malo, WR678: 20
 
 From production data from blocks WR540 and 584, we got API12s from notes and articles as follows:
 
@@ -119,14 +112,12 @@ From production data from blocks WR540 and 584, we got API12s from notes and art
 | 4 | ? | Production | 2 |  15 | 2019 |
 | 4 | ? | Injection | 3 | 18 | 2019 |
 
-
 References:
 https://jpt.spe.org/chevron-sanctions-waterflood-project-st-malo
 https://www.offshore-technology.com/projects/jackstmalodeepwaterp/?cf-view
 
 Thank you,
 Vamsee
-
 
 ## 2025-02-11 SME, Chuck
 
@@ -136,9 +127,12 @@ The 2019 article about the $2B waterflood says that Stage 4 adds just 2 producer
 
 How does one get from 13 wells to 43 tied back?
 
-Also, the big CVX brochure on JSM says that the 2 fields provide an estimated oil-equivalent recoverable resource exceeding 500Mboe. The 2019 article might be saying that Stage 4 adds 175Mbbls to the project… or that JSM’s total recoverable is now estimated to be just 175Mbbls. That would be a huge drop if CVX really spent $12B for initial stages and $20B to bring the total well count to FORTY-THREE!  
+Also, the big CVX brochure on JSM says that the 2 fields provide an estimated oil-equivalent recoverable resource exceeding 500Mboe. The 2019 article might be saying that Stage 4 adds 175Mbbls to the project… or that JSM’s total recoverable is now estimated to be just 175Mbbls. That would be a huge drop if CVX really spent $12B for initial stages and $20B to bring the total well count to FORTY-THREE!
 
 https://github.com/vamseeachanta/worldenergydata/blob/202501/docs/modules/bsee/JStM-CVX-sanctions-$2B-waterflood-20190919.pdf
 
 https://github.com/vamseeachanta/worldenergydata/blob/202501/docs/modules/bsee/JStM-key-info-EIA-Cost-Study-2016_IHS.pdf
 
+---
+
+*Last updated: 2025-07-24*

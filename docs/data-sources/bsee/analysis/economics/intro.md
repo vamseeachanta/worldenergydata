@@ -3,10 +3,8 @@ https://app.collide.io/posts/drilling-costs
 
 https://www.afeleaks.com/
 
-
 Costings
 https://app.collide.io/posts/lng-vs-henry-hub
-
 
 https://pypi.org/project/easyenergy/
 
@@ -18,3 +16,6 @@ CME Price
 https://faroanalytics.com/2019/07/10/a-script-for-pulling-oil-and-gas-prices/
 https://github.com/faroanalytics/Pricing-Post/blob/master/Pricingpost71019.ipynb
 
+---
+
+*Last updated: 2025-07-24*

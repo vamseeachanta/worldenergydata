@@ -31,3 +31,7 @@ https://python.langchain.com/docs/concepts/prompt_templates/
 https://github.com/langchain-ai/langchain
 https://medium.com/@ssmaameri/prompt-templates-in-langchain-efb4da260bd3
 https://github.com/preset-io/promptimize/blob/main/examples/python_examples.py
+
+---
+
+*Last updated: 2025-07-24*

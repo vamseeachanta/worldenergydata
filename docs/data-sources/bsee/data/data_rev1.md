@@ -9,7 +9,6 @@ Need the following well data
 - [ ] Identify and combine data sources, see data sources below
 - [ ] Utilize the well data function "prepare_field_well_data", etc., in src\energydata\modules\bsee\analysis\bsee_analysis.py
 
-
 | Data | Description | Source/Method
 | --- | --- | --- |
 Well Name |  | Well Name, by_block_well_data
@@ -23,12 +22,11 @@ TMD | | BH_TOTAL_MD, APIRawData_mv_api_list_all
 TD Date | | TOTAL_DEPTH_DATE, APIRawData_mv_api_list_all
 Number of sidetracks | | caculated
 Well departure (step out) |  | caculated from well bore data, dsptsdelimit
-Mud Weight at TD (max) | | 
+Mud Weight at TD (max) | |
 Drilling Days | | calculated
 Completion Days | | calculated
 First oil date  | | calculated from production data
 Production rate by month | by API | from yearly zip files, [#23](https://github.com/vamseeachanta/energydata/issues/23)
-
 
 ### Data Sources
 
@@ -39,4 +37,6 @@ BoreholeRawData: https://github.com/vamseeachanta/energydata/blob/1691a05e908c4a
 
 dsptsdelimit: https://github.com/vamseeachanta/energydata/blob/2084250f6055a4f0dae7cafc3844f797bc8b624d/tests/modules/bsee/data/results/Data/by_zip/dsptsdelimit.csv
 
+---
 
+*Last updated: 2025-07-24*

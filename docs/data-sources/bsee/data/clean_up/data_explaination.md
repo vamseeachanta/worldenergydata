@@ -1,19 +1,19 @@
 #### Objective
 
-* For a given API well or block, get data from BSEE website and perform analysis that we have done back in 2022.
+- For a given API well or block, get data from BSEE website and perform analysis that we have done back in 2022.
 
-* Then progress further to drilling statistics, well plans, risk, safety events etc.
+- Then progress further to drilling statistics, well plans, risk, safety events etc.
 
-* Then I believe will allow people to use AI .
+- Then I believe will allow people to use AI .
 
 a/ data method :
 
 legacy: download ,
 worldenergydata:
 
-* Online query (Latest data)
-* Read ZIP file directly (Latest data)
-* downloading files, loading in database (chance of stale data)
+- Online query (Latest data)
+- Read ZIP file directly (Latest data)
+- downloading files, loading in database (chance of stale data)
 hybrid (online primary, download secondary).
 
 b/ data transformation:
@@ -50,6 +50,7 @@ test - 10 APIs
 ## Borehole data
 
 ### Borehole data
+
 Online query
 <https://www.data.boem.gov/Well/Borehole/Default.aspx/>
 
@@ -79,6 +80,8 @@ Production Month/year : 01/2024 to 02/2024
 
 ## References
 
-
 ### URLS to download data
 
+---
+
+*Last updated: 2025-07-24*

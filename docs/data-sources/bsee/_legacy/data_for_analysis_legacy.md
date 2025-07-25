@@ -6,10 +6,8 @@
 
 <https://github.com/vamseeachanta/worldenergydata/blob/8bc9bd788008fc116f57057c7bca28fb0c8eab52/src/worldenergydata/tests/legacy/data>
 
-
 - From URLs, download files
   - [TBA (Vamsee)](https://github.com/vamseeachanta/worldenergydata/blob/7cdc1e006e90967d809d16a0831af7492c34f1f6/src/worldenergydata/common/bsee_data_refresh.py)
-
 
 - Read files -> Columns
     cfg\data_models\bsee*.yml
@@ -29,8 +27,6 @@
  - cfg\data_models\bsee_data_models_data_download_py.bat
 
 ## Required for Analysis
-
-
 
 ### Documentation
 
@@ -68,3 +64,7 @@
 |                              | [OBSTRUCTION_PROTECTION_FLAG], [OBSTRUCTION_TYPE_CD], [OBSTRUCTION_BUOY_FLAG], [OBSTRUCTION_HEIGHT_AML]                |
 | mv_eor_mainquery_prop        | [SN_EOR], [BOTM_LONGITUDE], [BOTM_LATITUDE], [BH_TOTAL_MD], [WELL_BORE_TVD], [WELL_BP_ST_KICKOFF_MD]                    |
 | mv_eor_perf_intervals        |[SN_EOR_WELL_COMP_FK],             [PERF_TOP_MD], [PERF_BOTM_TVD], [PERF_TOP_TVD], [PERF_BASE_MD]                                   |
+
+---
+
+*Last updated: 2025-07-24*

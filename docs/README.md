@@ -1,85 +1,171 @@
 # WorldEnergyData Documentation
 
-> Comprehensive Python data library for energy industry analysis
-> Last Updated: 2025-07-24
+Welcome to the comprehensive documentation for **WorldEnergyData** - a Python library and analysis repository for energy industry professionals, data analysts, researchers, and consultants.
 
-## Welcome to WorldEnergyData
+## Quick Navigation by User Type
 
-WorldEnergyData is a comprehensive Python data library that provides energy industry professionals, data analysts, researchers, and consultants with unified access to public energy data sources and standardized economic evaluation tools.
+### 🛢️ For Energy Professionals
 
-## Documentation Structure
+*Engineers, analysts, and managers in oil & gas, wind, and energy sectors*
 
-### 📚 [User Guide](user-guide/)
-Start here if you're new to WorldEnergyData or want to learn how to use the library effectively.
+**Start Here:**
+- [**User Guide**](user-guide/) - Installation and getting started
+- [**Data Sources**](data-sources/) - BSEE, SODIR, equipment, and onshore data
+- [**Analysis Guides**](analysis-guides/) - Methodologies and best practices
+- [**Examples**](examples/) - Practical analysis examples
 
-- **[Getting Started](user-guide/getting-started/)** - Installation and first steps
-- **[Installation](user-guide/installation/)** - Detailed installation instructions
-- **[Quick Examples](user-guide/quick-examples/)** - Common usage patterns
-- **[API Reference](user-guide/api-reference/)** - Complete API documentation
+### 📊 For Data Analysts & Researchers
 
-### 🗄️ [Data Sources](data-sources/)
-Documentation for all supported energy data sources and their integration.
+*Research scientists and data professionals studying energy trends*
 
-- **[BSEE](data-sources/bsee/)** - Bureau of Safety and Environmental Enforcement data
+**Start Here:**
+- [**Data Sources**](data-sources/) - Comprehensive data documentation
+- [**Analysis Guides**](analysis-guides/) - Statistical and analytical methodologies
+- [**Reference**](reference/) - API documentation and technical specs
+- [**Examples**](examples/) - Code examples and tutorials
+
+### 💻 For Developers
+
+*Software developers and contributors to WorldEnergyData*
+
+**Start Here:**
+- [**Development**](development/) - Setup, standards, and contribution guidelines
+- [**Reference**](reference/) - API specifications and technical documentation
+- [**User Guide**](user-guide/) - Understanding user-facing features
+- [**Examples**](examples/) - Integration examples and code samples
+
+## Documentation Sections
+
+### [📋 User Guide](user-guide/)
+
+Getting started guides, installation instructions, and basic tutorials for all users.
+
+### [🗃️ Data Sources](data-sources/)
+
+Comprehensive documentation for all energy data sources:
+- **[BSEE](data-sources/bsee/)** - US Bureau of Safety and Environmental Enforcement data
 - **[SODIR](data-sources/sodir/)** - Norwegian offshore directorate data
-- **[Wind Energy](data-sources/wind/)** - Wind energy databases and analysis
-- **[LNG](data-sources/lng/)** - Liquefied natural gas data sources
-- **[Equipment](data-sources/equipment/)** - Energy equipment specifications
-- **[Onshore](data-sources/onshore/)** - Onshore energy data sources
+- **[Equipment](data-sources/equipment/)** - Anchor systems, Christmas trees, and equipment data
+- **[Onshore](data-sources/onshore/)** - Wyoming and other onshore energy data
 
-### 📊 [Analysis Guides](analysis-guides/)
-Comprehensive guides for energy data analysis methodologies.
+### [📈 Analysis Guides](analysis-guides/)
 
-- **[Economic Evaluation](analysis-guides/economic-evaluation/)** - NPV analysis and economic modeling
-- **[Production Analysis](analysis-guides/production-analysis/)** - Well and field production analysis
-- **[Field Development](analysis-guides/field-development/)** - Field development analysis techniques
+Methodologies, best practices, and analytical frameworks for energy data analysis.
 
-### 🛠️ [Development](development/)
-Resources for contributors and developers working on WorldEnergyData.
+### [🔧 Development](development/)
 
-- **[UV Usage](development/uv_usage.md)** - Modern Python package management
+Technical documentation for developers, including setup guides, coding standards, and contribution guidelines.
 
-### 📖 [Reference](reference/)
-Reference materials, literature, and industry standards.
+### [📚 Reference](reference/)
 
-- **[Literature](reference/literature/)** - Academic papers and industry publications
-- **[Equipment Specs](reference/equipment-specs/)** - Technical equipment specifications
-- **[Industry Standards](reference/industry-standards/)** - Industry standards and best practices
+API documentation, technical specifications, and comprehensive reference materials.
 
-### 💡 [Examples](examples/)
-Practical examples and use cases for different analysis scenarios.
+### [💡 Examples](examples/)
 
-- **[Basic Usage](examples/basic-usage/)** - Simple examples to get started
-- **[Field Analysis](examples/field-analysis/)** - Complete field analysis workflows
-- **[Economic Modeling](examples/economic-modeling/)** - Economic evaluation examples
+Practical code examples, sample analyses, and step-by-step tutorials.
 
-## Quick Start
+## Features & Capabilities
+
+### 🔄 Data Integration
+
+- **BSEE Integration:** Complete US offshore production, drilling, and economic data
+- **SODIR Integration:** Norwegian offshore regulatory and production data
+- **Equipment Analysis:** Deepwater equipment specifications and performance
+- **Economic Modeling:** NPV analysis with numpy-financial integration
+
+### 📊 Analysis Tools
+
+- **Production Forecasting:** Decline curve analysis and production modeling
+- **Economic Evaluation:** Comprehensive NPV and economic risk analysis
+- **Field Performance:** Multi-field benchmarking and comparison tools
+- **Visualization:** Interactive charts and production curve analysis
+
+### 🛠️ Developer Features
+
+- **Modern Python:** Built with Python 3.9+ and UV package management
+- **Modular Architecture:** Clean separation of data sources and analysis components
+- **Comprehensive Testing:** Pytest-based testing with automated quality checks
+- **AI-Native Development:** Structured specification system with Agent OS integration
+
+## Getting Started
+
+### 1. Quick Installation
+
+```bash
+
+# Install with pip
+
+pip install worldenergydata
+
+# Or with UV (recommended)
+
+uv add worldenergydata
+```
+
+### 2. First Analysis
 
 ```python
 import worldenergydata as wed
 
 # Load BSEE production data
-bsee_data = wed.bsee.load_production_data()
+
+bsee_data = wed.load_bsee_production()
 
 # Perform NPV analysis
-npv_result = wed.analysis.calculate_npv(
-    production_data=bsee_data,
-    oil_price=70.0,
-    discount_rate=0.10
-)
+
+npv_result = wed.analyze_npv(bsee_data, discount_rate=0.10)
+
+# Visualize results
+
+wed.plot_production_forecast(npv_result)
 ```
 
-## Getting Help
+### 3. Explore Documentation
 
-- 📚 Check the [User Guide](user-guide/) for comprehensive documentation
-- 💡 Browse [Examples](examples/) for practical use cases
-- 🐛 Report issues on [GitHub Issues](https://github.com/worldenergydata/worldenergydata/issues)
-- 💬 Join our community discussions
+- **Energy Professionals:** Start with [User Guide](user-guide/) and [BSEE Data](data-sources/bsee/)
+- **Data Analysts:** Explore [Analysis Guides](analysis-guides/) and [Examples](examples/)
+- **Developers:** Check [Development](development/) and [Reference](reference/)
 
-## Contributing
+## Recent Updates
 
-WorldEnergyData is an open-source project. We welcome contributions from the energy community! See our [Development Guide](development/) for information on how to contribute.
+- ✅ **Documentation Reorganization** - Comprehensive restructuring for better navigation
+- ✅ **Link Validation** - All internal links verified and updated
+- ✅ **Navigation Indexes** - Section-specific README files with detailed contents
+- ✅ **Duplicate Cleanup** - Eliminated redundant documentation files
+- ✅ **Cross-References** - Enhanced linking between related sections
+
+## Support & Contributing
+
+### Getting Help
+
+- 📖 **Documentation Issues:** Review the appropriate section above
+- 🐛 **Bug Reports:** Check the [Development](development/) section for issue reporting
+- 💬 **Questions:** See [User Guide](user-guide/) for FAQ and support resources
+
+### Contributing
+
+- 👨‍💻 **Developers:** Start with [Development Setup](development/)
+- 📝 **Documentation:** All documentation improvements welcome
+- 🧪 **Testing:** Help expand our test coverage
+- 🌟 **Features:** Contribute new data sources or analysis methods
+
+## Project Information
+
+**WorldEnergyData** provides comprehensive energy data analysis capabilities for economic evaluation, production forecasting, and strategic decision-making using public data sources.
+
+- **Primary Focus:** Oil & gas, wind, shipping, and energy industry analysis
+- **Target Users:** Energy professionals, data analysts, researchers, consultants
+- **Technical Approach:** Modern Python with AI-assisted development workflows
+- **Data Sources:** BSEE, SODIR, equipment specifications, and public energy databases
 
 ---
 
-*Built for the energy industry by energy professionals*
+*Last updated: 2025-07-24*
+*This documentation is automatically maintained and continuously updated*
+
+### Navigation Tips
+
+- 🔍 Use section-specific README files for detailed contents
+- 🔗 Follow cross-references to explore related topics
+- 📱 All links are validated and regularly updated
+- 🏠 Return here anytime using the main documentation link

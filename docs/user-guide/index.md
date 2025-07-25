@@ -30,6 +30,7 @@ If you're new to WorldEnergyData, we recommend following this learning path:
 ## Key Concepts
 
 ### Data Sources
+
 WorldEnergyData integrates multiple public energy data sources:
 - **BSEE**: Oil and gas production, well data, directional surveys
 - **SODIR**: Norwegian offshore data
@@ -37,11 +38,13 @@ WorldEnergyData integrates multiple public energy data sources:
 - **LNG**: Liquefied natural gas market data
 
 ### Analysis Capabilities
+
 - **Economic Evaluation**: NPV analysis, cash flow modeling
 - **Production Analysis**: Decline curve analysis, forecasting
 - **Field Development**: Well spacing, development optimization
 
 ### Integration Features
+
 - **Modern Python Tools**: UV package management, pytest testing
 - **Visualization**: matplotlib and plotly integration
 - **Export Options**: Excel, CSV, JSON output formats
@@ -49,16 +52,19 @@ WorldEnergyData integrates multiple public energy data sources:
 ## User Types and Workflows
 
 ### Energy Professionals
+
 - **Workflow**: Data → Analysis → Economic Evaluation → Reporting
 - **Focus**: Production forecasting, economic viability, field optimization
 - **Key Tools**: NPV analysis, production decline curves, field comparisons
 
 ### Data Analysts
+
 - **Workflow**: Data Collection → Processing → Statistical Analysis → Visualization
 - **Focus**: Data quality, trend analysis, comparative studies
 - **Key Tools**: Data validation, statistical modeling, chart generation
 
 ### Researchers
+
 - **Workflow**: Literature → Data → Analysis → Publication
 - **Focus**: Reproducible analysis, methodology validation, academic rigor
 - **Key Tools**: Citation management, methodology documentation, result validation
@@ -66,11 +72,13 @@ WorldEnergyData integrates multiple public energy data sources:
 ## Support and Resources
 
 ### Getting Help
+
 - Check the specific section documentation for detailed guidance
 - Review [Examples](../examples/) for practical use cases
 - Browse [Analysis Guides](../analysis-guides/) for methodology details
 
 ### Community
+
 - Contribute to the project on GitHub
 - Share your analysis workflows
 - Report bugs and suggest features

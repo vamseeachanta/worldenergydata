@@ -30,26 +30,26 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 3.5 Move development documentation to docs/development/
   - [x] 3.6 Verify no content loss during migration process
 
-- [ ] 4. Consolidate Duplicate Content
-  - [ ] 4.1 Write tests for duplicate detection and merging accuracy
-  - [ ] 4.2 Identify files with overlapping or duplicate information
-  - [ ] 4.3 Merge complementary content preserving all unique information
-  - [ ] 4.4 Remove obsolete or superseded documentation files
-  - [ ] 4.5 Update merged content for consistency and clarity
-  - [ ] 4.6 Verify consolidated content maintains technical accuracy
+- [x] 4. Consolidate Duplicate Content
+  - [x] 4.1 Write tests for duplicate detection and merging accuracy
+  - [x] 4.2 Identify files with overlapping or duplicate information
+  - [x] 4.3 Merge complementary content preserving all unique information
+  - [x] 4.4 Remove obsolete or superseded documentation files
+  - [x] 4.5 Update merged content for consistency and clarity
+  - [x] 4.6 Verify consolidated content maintains technical accuracy
 
-- [ ] 5. Update Cross-References and Navigation
-  - [ ] 5.1 Write tests for link validation and navigation paths
-  - [ ] 5.2 Update all internal links to reflect new file locations
-  - [ ] 5.3 Create navigation index files (README.md) for each major section
-  - [ ] 5.4 Add cross-references between related documentation sections
-  - [ ] 5.5 Create main docs/README.md with clear entry points for different user types
-  - [ ] 5.6 Verify all links work correctly and navigation is intuitive
+- [x] 5. Update Cross-References and Navigation
+  - [x] 5.1 Write tests for link validation and navigation paths
+  - [x] 5.2 Update all internal links to reflect new file locations
+  - [x] 5.3 Create navigation index files (README.md) for each major section
+  - [x] 5.4 Add cross-references between related documentation sections
+  - [x] 5.5 Create main docs/README.md with clear entry points for different user types
+  - [x] 5.6 Verify all links work correctly and navigation is intuitive
 
-- [ ] 6. Quality Refinement and Standardization
-  - [ ] 6.1 Write tests for documentation quality and consistency standards
-  - [ ] 6.2 Apply consistent markdown formatting across all documentation files
-  - [ ] 6.3 Update file headers with consistent metadata (titles, dates, descriptions)
-  - [ ] 6.4 Review and improve content clarity, especially for energy professional users
-  - [ ] 6.5 Remove or update outdated information throughout documentation
-  - [ ] 6.6 Verify all tests pass and documentation meets quality standards
+- [x] 6. Quality Refinement and Standardization
+  - [x] 6.1 Write tests for documentation quality and consistency standards
+  - [x] 6.2 Apply consistent markdown formatting across all documentation files
+  - [x] 6.3 Update file headers with consistent metadata (titles, dates, descriptions)
+  - [x] 6.4 Review and improve content clarity, especially for energy professional users
+  - [x] 6.5 Remove or update outdated information throughout documentation
+  - [x] 6.6 Verify all tests pass and documentation meets quality standards

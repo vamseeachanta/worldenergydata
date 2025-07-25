@@ -1,8 +1,7 @@
-## Filenames and columns 
+## Filenames and columns
 ### Columns required for preparing dataframes
 
-### 1.  Well data 
-   
+### 1.  Well data
 
 | Column Name                   | File Name                              |
 |-------------------------------|----------------------------------------|
@@ -18,25 +17,24 @@
 | WELL_BP_ST_KICKOFF_MD         | BoreholeRawData_mv_boreholes_all , eWellEORRawData_mv_eor_mainquery_prop |
 | BOREHOLE_STAT_CD              | APIRawData_mv_api_list_all , BoreholeRawData_mv_boreholes_all |
 | BOREHOLE_STAT_DT              | APIRawData_mv_api_list_all , BoreholeRawData_mv_boreholes_all |
-| UNDWTR_COMP_STUB              | BoreholeRawData_mv_boreholes_all       | 
+| UNDWTR_COMP_STUB              | BoreholeRawData_mv_boreholes_all       |
 | WATER_DEPTH                   | APDRawData_mv_apd_main_all             |
 | SURF_LATITUDE, SURF_LONGITUDE | APDRawData_mv_apd_main_all, BoreholeRawData_mv_boreholes_all |
 | BOTM_LATITUDE, BOTM_LONGITUDE | BoreholeRawData_mv_boreholes_all, eWellEORRawData_mv_eor_mainquery_prop    |
 | CASING CUT CODE               | BoreholeRawData_mv_boreholes_all       |
 
 **Way Forward:**
-DF = 
-APDRawData_mv_apd_main_all 
+DF =
+APDRawData_mv_apd_main_all
 where API_WELL_NUMBER = 'Well_Number'
-Merge/Joint with BoreHOLERAwData 
+Merge/Joint with BoreHOLERAwData
 where API_WELL_NUMBER = 'Well_Number'
 
 Minimum column renames. Anything broken in analysis code, we will refactor the code.
 
-
 ### 2. all_bsee_blocks
 
-BOTM_FLD_NAME_CD -  APIRawData_mv_api_list_all.csv 
+BOTM_FLD_NAME_CD -  APIRawData_mv_api_list_all.csv
 
 ### 3. ST_BP_and_tree_height
 
@@ -161,7 +159,7 @@ BOTM_FLD_NAME_CD -  APIRawData_mv_api_list_all.csv
 | CSNG_HOLE_SIZE                | eWellWARRawData_mv_war_tabular_summaries |
 | CSNG_SETTING_BOTM_MD          | eWellWARRawData_mv_war_tabular_summaries_prop |
 | CSNG_SETTING_TOP_MD           | eWellWARRawData_mv_war_tabular_summaries_prop |
-| CASING_SIZE                   | eWellWARRawData_mv_war_tabular_summaries| 
+| CASING_SIZE                   | eWellWARRawData_mv_war_tabular_summaries|
 | CASING_WEIGHT                 | eWellAPDRawData_mv_apd_casing_sections , eWellWARRawData_mv_war_tabular_summaries |
 | CASING_GRADE                  | eWellAPDRawData_mv_apd_casing_sections , eWellWARRawData_mv_war_tabular_summaries |
 | CSNG_LINER_TEST_PRSS          | eWellWARRawData_mv_war_tabular_summaries |
@@ -181,7 +179,7 @@ BOTM_FLD_NAME_CD -  APIRawData_mv_api_list_all.csv
 | TOOL_LOGGING_METHOD_NAME      | eWellWARRawData_mv_war_open_hole_runs |
 | LOG_INTV_TOP_MD               | eWellWARRawData_mv_war_open_hole_runs |
 | LOG_INTV_BOTM_MD              | eWellWARRawData_mv_war_open_hole_runs |
-| SN_OPEN_HOLE                  | eWellWARRawData_mv_war_open_hole_runs , eWellWARRawData_mv_war_open_hole_tools| 
+| SN_OPEN_HOLE                  | eWellWARRawData_mv_war_open_hole_runs , eWellWARRawData_mv_war_open_hole_tools|
 
 ### 15. well_activity_remarks
 
@@ -201,7 +199,6 @@ dsptsdelimit
 
 # BoreHole COdes
 
-
 | BOREHOLE_STAT_CD | BOREHOLE_STAT_DESC |
 |------------------|--------------------|
 | APD              | APPLICATION FOR PERMIT TO DRILL |
@@ -217,13 +214,11 @@ dsptsdelimit
 | VCW              | VOLUME CHAMBER WELL |
 | PND              | PENDING |
 
-
 {APD: APPLICATION FOR PERMIT TO DRILL, AST: APPROVED SIDETRACK, CNL: BOREHOLE IS CANCELLED. THE REQUEST TO DRILL THE WELL IS CANCELLED AFTER THE APD OR SUNDRY HAS BEEN APPROVED. THE STATUS DATE IS THE DATE THE BOREHOLE WAS CANCELLED., COM: BOREHOLE COMPLETED, CT: CORE TEST WELL, DRL: DRILLING ACTIVE, DSI: DRILLING SUSPENDED, PA: PERMANENTLY ABANDONED, ST: BOREHOLE SIDETRACKED, TA: TEMPORARILY ABANDONED, VCW: VOLUME CHAMBER WELL, PND: PENDING}
 
 Roy,
 
 Do you know what these codes mean in terms of operations?
-
 
 "COM": 14, "DRL": 72, "PND": 42, "ST": 7, "TA": 42}
 {"COM": 97, "DRL": 116, "TA": 47}
@@ -233,5 +228,6 @@ Do you know what these codes mean in terms of operations?
 {"DRL": 136, "PND": 35, "ST": 7}
 {"COM": 7, "DRL": 21, "PND": 89}
 
+---
 
-
+*Last updated: 2025-07-24*

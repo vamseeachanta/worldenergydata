@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>BSEE Wells | Cascade-Chinook </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="https://d3js.org/d3.v5.js"></script>
+    <!-- <script src="https://d3js.org/d3.v5.min.js"></script> -->
+    <script src="lib/d3_reusables.js"></script>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="lib/d3.css">
+    <link href="https://getbootstrap.com/docs/4.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style type="text/css">
+      .pagepadding {
+        padding-top: 50px;
+        padding-left: 100px;
+        padding-right: 100px;
+
+      }
+    </style>
+  </head>
+
+<body>
+  <header>
+      <!-- Fixed navbar -->
+      <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+          <a class="navbar-brand" href="#">BSEE Data Analysis : Cascade-Chinook</a>
+      </nav>
+  </header>
+  <!-- Begin page content -->
+  <div class="pagepadding">
+
+    <h3>BSEE Data Analysis</h3>
+    <br>
+    Select the field:
+
+    <br>
+      <div class="col-xs-2">
+          <select class="form-control">
+            <option value="1">Julia</option>
+            <option value="2">North Platte</option>
+            <option value="3">Three</option>
+            <option value="4">Four</option>
+            <option value="5">Five</option>
+          </select>
+        </div>
+
+        <h4>BOEM Field Codes: 'WR205', 'WR206', 'WR469', 'WR470'</h4>
+  <br>
+
+    
+
+  <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link" href="app_front_end_PBR_Cascade_Chinook_Rep1FieldData.html">Field Data</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="app_front_end_PBR_Cascade_Chinook_Rep1ProductionData.html">Production Data</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="app_front_end_PBR_Cascade_Chinook_Rep1WellData.html">Well Data</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active" href="app_front_end_PBR_Cascade_Chinook_Rep1Reserves.html">Reserves</a>
+      </li>
+  </ul>
+
+  <h4>Field Reserves</h4>
+  <div id="#oilReserves">
+  </div>
+  <div id="#fieldReserves">
+  </div>
+
+  <button type="button" class="btn btn-primary btn-lg" data-toggle="collapse" data-target="#reserves">Reserves Data</button>
+  <div> <br> </div>
+  <div id="reserves" class="collapse">
+    <table border="1" class="dataframe table table-bordered table-responsive-sm table-sm table-striped table-condensed">
+  <thead class="thead-light">
+    <tr style="text-align: center;">
+      <th></th>
+      <th>YEAR</th>
+      <th>DISCYR</th>
+      <th>Recoverable Oil</th>
+      <th>Recoverable Gas</th>
+      <th>Recoverable BOE</th>
+      <th>Cum. Oil</th>
+      <th>Cum. Gas</th>
+      <th>Cum. BOE</th>
+      <th>SEC Oil</th>
+      <th>SEC Gas</th>
+      <th>SEC BOE</th>
+      <th>FCLASS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2003</td>
+      <td>2002</td>
+      <td>34.7</td>
+      <td>27.7</td>
+      <td>39.6</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>34.7</td>
+      <td>27.7</td>
+      <td>39.6</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2005</td>
+      <td>2002</td>
+      <td>25.1</td>
+      <td>4.0</td>
+      <td>25.8</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>25.1</td>
+      <td>4.0</td>
+      <td>25.8</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2006</td>
+      <td>2002</td>
+      <td>25.1</td>
+      <td>4.0</td>
+      <td>25.8</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>25.1</td>
+      <td>4.0</td>
+      <td>25.8</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2007</td>
+      <td>2002</td>
+      <td>32.9</td>
+      <td>5.3</td>
+      <td>33.8</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>32.9</td>
+      <td>5.3</td>
+      <td>33.8</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2008</td>
+      <td>2002</td>
+      <td>32.9</td>
+      <td>5.3</td>
+      <td>33.8</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>32.9</td>
+      <td>5.3</td>
+      <td>33.8</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>2009</td>
+      <td>2002</td>
+      <td>17.9</td>
+      <td>3.9</td>
+      <td>18.6</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>17.9</td>
+      <td>3.9</td>
+      <td>18.6</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>2010</td>
+      <td>2002</td>
+      <td>17.9</td>
+      <td>3.9</td>
+      <td>18.6</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>17.9</td>
+      <td>3.9</td>
+      <td>18.6</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>2011</td>
+      <td>2002</td>
+      <td>17.9</td>
+      <td>3.9</td>
+      <td>18.6</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>17.9</td>
+      <td>3.9</td>
+      <td>18.6</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>2012</td>
+      <td>2002</td>
+      <td>15.0</td>
+      <td>2.4</td>
+      <td>15.4</td>
+      <td>1.4</td>
+      <td>0.3</td>
+      <td>1.4</td>
+      <td>13.6</td>
+      <td>2.1</td>
+      <td>14.0</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>2013</td>
+      <td>2002</td>
+      <td>15.0</td>
+      <td>2.4</td>
+      <td>15.4</td>
+      <td>3.3</td>
+      <td>0.6</td>
+      <td>3.4</td>
+      <td>11.7</td>
+      <td>1.8</td>
+      <td>12.0</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>2014</td>
+      <td>2002</td>
+      <td>18.4</td>
+      <td>3.8</td>
+      <td>19.1</td>
+      <td>7.7</td>
+      <td>1.5</td>
+      <td>8.0</td>
+      <td>10.7</td>
+      <td>2.3</td>
+      <td>11.1</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>2015</td>
+      <td>2002</td>
+      <td>18.4</td>
+      <td>3.8</td>
+      <td>19.1</td>
+      <td>10.1</td>
+      <td>2.0</td>
+      <td>10.5</td>
+      <td>8.3</td>
+      <td>1.8</td>
+      <td>8.6</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>2016</td>
+      <td>2002</td>
+      <td>20.7</td>
+      <td>4.3</td>
+      <td>21.5</td>
+      <td>11.8</td>
+      <td>2.4</td>
+      <td>12.2</td>
+      <td>8.9</td>
+      <td>1.9</td>
+      <td>9.2</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>2017</td>
+      <td>2002</td>
+      <td>20.7</td>
+      <td>4.3</td>
+      <td>21.5</td>
+      <td>12.9</td>
+      <td>2.7</td>
+      <td>13.4</td>
+      <td>7.8</td>
+      <td>1.6</td>
+      <td>8.1</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>2017</td>
+      <td>2002</td>
+      <td>20.7</td>
+      <td>4.3</td>
+      <td>21.5</td>
+      <td>12.9</td>
+      <td>2.7</td>
+      <td>13.4</td>
+      <td>7.8</td>
+      <td>1.6</td>
+      <td>8.1</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>2005</td>
+      <td>2003</td>
+      <td>62.4</td>
+      <td>10.0</td>
+      <td>64.2</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>62.4</td>
+      <td>10.0</td>
+      <td>64.2</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>2006</td>
+      <td>2003</td>
+      <td>62.4</td>
+      <td>10.0</td>
+      <td>64.2</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>62.4</td>
+      <td>10.0</td>
+      <td>64.2</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>2007</td>
+      <td>2003</td>
+      <td>62.4</td>
+      <td>10.0</td>
+      <td>64.2</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>62.4</td>
+      <td>10.0</td>
+      <td>64.2</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>2008</td>
+      <td>2003</td>
+      <td>62.4</td>
+      <td>10.0</td>
+      <td>64.2</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>62.4</td>
+      <td>10.0</td>
+      <td>64.2</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>2009</td>
+      <td>2003</td>
+      <td>31.2</td>
+      <td>5.0</td>
+      <td>32.1</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>31.2</td>
+      <td>5.0</td>
+      <td>32.1</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>2010</td>
+      <td>2003</td>
+      <td>31.2</td>
+      <td>5.0</td>
+      <td>32.1</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>31.2</td>
+      <td>5.0</td>
+      <td>32.1</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>2011</td>
+      <td>2003</td>
+      <td>31.2</td>
+      <td>5.0</td>
+      <td>32.1</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>31.2</td>
+      <td>5.0</td>
+      <td>32.1</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>2012</td>
+      <td>2003</td>
+      <td>21.8</td>
+      <td>3.5</td>
+      <td>22.4</td>
+      <td>0.9</td>
+      <td>0.1</td>
+      <td>0.9</td>
+      <td>20.9</td>
+      <td>3.4</td>
+      <td>21.5</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>2013</td>
+      <td>2003</td>
+      <td>21.8</td>
+      <td>3.5</td>
+      <td>22.4</td>
+      <td>3.2</td>
+      <td>0.5</td>
+      <td>3.3</td>
+      <td>18.6</td>
+      <td>3.0</td>
+      <td>19.1</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>2014</td>
+      <td>2003</td>
+      <td>24.2</td>
+      <td>3.9</td>
+      <td>24.9</td>
+      <td>10.2</td>
+      <td>1.6</td>
+      <td>10.5</td>
+      <td>14.0</td>
+      <td>2.3</td>
+      <td>14.4</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>2015</td>
+      <td>2003</td>
+      <td>24.2</td>
+      <td>3.9</td>
+      <td>24.9</td>
+      <td>14.1</td>
+      <td>2.1</td>
+      <td>14.5</td>
+      <td>10.1</td>
+      <td>1.8</td>
+      <td>10.4</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>2016</td>
+      <td>2003</td>
+      <td>27.0</td>
+      <td>3.7</td>
+      <td>27.7</td>
+      <td>16.9</td>
+      <td>2.4</td>
+      <td>17.3</td>
+      <td>10.2</td>
+      <td>1.3</td>
+      <td>10.4</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>2017</td>
+      <td>2003</td>
+      <td>27.0</td>
+      <td>3.7</td>
+      <td>27.7</td>
+      <td>20.0</td>
+      <td>2.8</td>
+      <td>20.5</td>
+      <td>7.0</td>
+      <td>0.9</td>
+      <td>7.2</td>
+      <td>PDP</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>2017</td>
+      <td>2003</td>
+      <td>27.0</td>
+      <td>3.7</td>
+      <td>27.7</td>
+      <td>20.0</td>
+      <td>2.8</td>
+      <td>20.5</td>
+      <td>7.0</td>
+      <td>0.9</td>
+      <td>7.2</td>
+      <td>PDP</td>
+    </tr>
+  </tbody>
+</table>
+  </div>
+
+
+  <script type="text/javascript">
+
+    var chartData = {"label": "oilReserves", "chartType": "line", "options": {"equalAxes": false, "title": "Oil Reserves", "XLabel": "Year", "YLabel": "Reserves (MMBOE)", "legend": {"flag": true}, "dataConversion": {"flag": false}}, "dataSources": [{"df": {"label": "input_data_reserves", "orient": "records"}, "plotSets": [{"x": "YEAR", "y": "Recoverable Oil", "marker": {"shape": "circle", "size": 3, "mouseover": {"flag": true}}, "dataLabel": {"flag": false}, "legend": "Recoverable Oil"}, {"x": "YEAR", "y": "Cum. Oil", "marker": {"shape": "circle", "size": 3, "mouseover": {"flag": true}}, "dataLabel": {"flag": false}, "legend": "Cum. Oil Produced"}, {"x": "YEAR", "y": "SEC Oil", "marker": {"shape": "circle", "size": 3, "mouseover": {"flag": true}}, "dataLabel": {"flag": false}, "legend": "SEC Oil"}], "data": "[{\"YEAR\":2003,\"DISCYR\":2002,\"Recoverable Oil\":34.7,\"Recoverable Gas\":27.7,\"Recoverable BOE\":39.6,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":34.7,\"SEC Gas\":27.7,\"SEC BOE\":39.6,\"FCLASS\":\"PDP\"},{\"YEAR\":2005,\"DISCYR\":2002,\"Recoverable Oil\":25.1,\"Recoverable Gas\":4.0,\"Recoverable BOE\":25.8,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":25.1,\"SEC Gas\":4.0,\"SEC BOE\":25.8,\"FCLASS\":\"PDP\"},{\"YEAR\":2006,\"DISCYR\":2002,\"Recoverable Oil\":25.1,\"Recoverable Gas\":4.0,\"Recoverable BOE\":25.8,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":25.1,\"SEC Gas\":4.0,\"SEC BOE\":25.8,\"FCLASS\":\"PDP\"},{\"YEAR\":2007,\"DISCYR\":2002,\"Recoverable Oil\":32.9,\"Recoverable Gas\":5.3,\"Recoverable BOE\":33.8,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":32.9,\"SEC Gas\":5.3,\"SEC BOE\":33.8,\"FCLASS\":\"PDP\"},{\"YEAR\":2008,\"DISCYR\":2002,\"Recoverable Oil\":32.9,\"Recoverable Gas\":5.3,\"Recoverable BOE\":33.8,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":32.9,\"SEC Gas\":5.3,\"SEC BOE\":33.8,\"FCLASS\":\"PDP\"},{\"YEAR\":2009,\"DISCYR\":2002,\"Recoverable Oil\":17.9,\"Recoverable Gas\":3.9,\"Recoverable BOE\":18.6,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":17.9,\"SEC Gas\":3.9,\"SEC BOE\":18.6,\"FCLASS\":\"PDP\"},{\"YEAR\":2010,\"DISCYR\":2002,\"Recoverable Oil\":17.9,\"Recoverable Gas\":3.9,\"Recoverable BOE\":18.6,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":17.9,\"SEC Gas\":3.9,\"SEC BOE\":18.6,\"FCLASS\":\"PDP\"},{\"YEAR\":2011,\"DISCYR\":2002,\"Recoverable Oil\":17.9,\"Recoverable Gas\":3.9,\"Recoverable BOE\":18.6,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":17.9,\"SEC Gas\":3.9,\"SEC BOE\":18.6,\"FCLASS\":\"PDP\"},{\"YEAR\":2012,\"DISCYR\":2002,\"Recoverable Oil\":15.0,\"Recoverable Gas\":2.4,\"Recoverable BOE\":15.4,\"Cum. Oil\":1.4,\"Cum. Gas\":0.3,\"Cum. BOE\":1.4,\"SEC Oil\":13.6,\"SEC Gas\":2.1,\"SEC BOE\":14.0,\"FCLASS\":\"PDP\"},{\"YEAR\":2013,\"DISCYR\":2002,\"Recoverable Oil\":15.0,\"Recoverable Gas\":2.4,\"Recoverable BOE\":15.4,\"Cum. Oil\":3.3,\"Cum. Gas\":0.6,\"Cum. BOE\":3.4,\"SEC Oil\":11.7,\"SEC Gas\":1.8,\"SEC BOE\":12.0,\"FCLASS\":\"PDP\"},{\"YEAR\":2014,\"DISCYR\":2002,\"Recoverable Oil\":18.4,\"Recoverable Gas\":3.8,\"Recoverable BOE\":19.1,\"Cum. Oil\":7.7,\"Cum. Gas\":1.5,\"Cum. BOE\":8.0,\"SEC Oil\":10.7,\"SEC Gas\":2.3,\"SEC BOE\":11.1,\"FCLASS\":\"PDP\"},{\"YEAR\":2015,\"DISCYR\":2002,\"Recoverable Oil\":18.4,\"Recoverable Gas\":3.8,\"Recoverable BOE\":19.1,\"Cum. Oil\":10.1,\"Cum. Gas\":2.0,\"Cum. BOE\":10.5,\"SEC Oil\":8.3,\"SEC Gas\":1.8,\"SEC BOE\":8.6,\"FCLASS\":\"PDP\"},{\"YEAR\":2016,\"DISCYR\":2002,\"Recoverable Oil\":20.7,\"Recoverable Gas\":4.3,\"Recoverable BOE\":21.5,\"Cum. Oil\":11.8,\"Cum. Gas\":2.4,\"Cum. BOE\":12.2,\"SEC Oil\":8.9,\"SEC Gas\":1.9,\"SEC BOE\":9.2,\"FCLASS\":\"PDP\"},{\"YEAR\":2017,\"DISCYR\":2002,\"Recoverable Oil\":20.7,\"Recoverable Gas\":4.3,\"Recoverable BOE\":21.5,\"Cum. Oil\":12.9,\"Cum. Gas\":2.7,\"Cum. BOE\":13.4,\"SEC Oil\":7.8,\"SEC Gas\":1.6,\"SEC BOE\":8.1,\"FCLASS\":\"PDP\"},{\"YEAR\":2017,\"DISCYR\":2002,\"Recoverable Oil\":20.7,\"Recoverable Gas\":4.3,\"Recoverable BOE\":21.5,\"Cum. Oil\":12.9,\"Cum. Gas\":2.7,\"Cum. BOE\":13.4,\"SEC Oil\":7.8,\"SEC Gas\":1.6,\"SEC BOE\":8.1,\"FCLASS\":\"PDP\"},{\"YEAR\":2005,\"DISCYR\":2003,\"Recoverable Oil\":62.4,\"Recoverable Gas\":10.0,\"Recoverable BOE\":64.2,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":62.4,\"SEC Gas\":10.0,\"SEC BOE\":64.2,\"FCLASS\":\"PDP\"},{\"YEAR\":2006,\"DISCYR\":2003,\"Recoverable Oil\":62.4,\"Recoverable Gas\":10.0,\"Recoverable BOE\":64.2,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":62.4,\"SEC Gas\":10.0,\"SEC BOE\":64.2,\"FCLASS\":\"PDP\"},{\"YEAR\":2007,\"DISCYR\":2003,\"Recoverable Oil\":62.4,\"Recoverable Gas\":10.0,\"Recoverable BOE\":64.2,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":62.4,\"SEC Gas\":10.0,\"SEC BOE\":64.2,\"FCLASS\":\"PDP\"},{\"YEAR\":2008,\"DISCYR\":2003,\"Recoverable Oil\":62.4,\"Recoverable Gas\":10.0,\"Recoverable BOE\":64.2,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":62.4,\"SEC Gas\":10.0,\"SEC BOE\":64.2,\"FCLASS\":\"PDP\"},{\"YEAR\":2009,\"DISCYR\":2003,\"Recoverable Oil\":31.2,\"Recoverable Gas\":5.0,\"Recoverable BOE\":32.1,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":31.2,\"SEC Gas\":5.0,\"SEC BOE\":32.1,\"FCLASS\":\"PDP\"},{\"YEAR\":2010,\"DISCYR\":2003,\"Recoverable Oil\":31.2,\"Recoverable Gas\":5.0,\"Recoverable BOE\":32.1,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":31.2,\"SEC Gas\":5.0,\"SEC BOE\":32.1,\"FCLASS\":\"PDP\"},{\"YEAR\":2011,\"DISCYR\":2003,\"Recoverable Oil\":31.2,\"Recoverable Gas\":5.0,\"Recoverable BOE\":32.1,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":31.2,\"SEC Gas\":5.0,\"SEC BOE\":32.1,\"FCLASS\":\"PDP\"},{\"YEAR\":2012,\"DISCYR\":2003,\"Recoverable Oil\":21.8,\"Recoverable Gas\":3.5,\"Recoverable BOE\":22.4,\"Cum. Oil\":0.9,\"Cum. Gas\":0.1,\"Cum. BOE\":0.9,\"SEC Oil\":20.9,\"SEC Gas\":3.4,\"SEC BOE\":21.5,\"FCLASS\":\"PDP\"},{\"YEAR\":2013,\"DISCYR\":2003,\"Recoverable Oil\":21.8,\"Recoverable Gas\":3.5,\"Recoverable BOE\":22.4,\"Cum. Oil\":3.2,\"Cum. Gas\":0.5,\"Cum. BOE\":3.3,\"SEC Oil\":18.6,\"SEC Gas\":3.0,\"SEC BOE\":19.1,\"FCLASS\":\"PDP\"},{\"YEAR\":2014,\"DISCYR\":2003,\"Recoverable Oil\":24.2,\"Recoverable Gas\":3.9,\"Recoverable BOE\":24.9,\"Cum. Oil\":10.2,\"Cum. Gas\":1.6,\"Cum. BOE\":10.5,\"SEC Oil\":14.0,\"SEC Gas\":2.3,\"SEC BOE\":14.4,\"FCLASS\":\"PDP\"},{\"YEAR\":2015,\"DISCYR\":2003,\"Recoverable Oil\":24.2,\"Recoverable Gas\":3.9,\"Recoverable BOE\":24.9,\"Cum. Oil\":14.1,\"Cum. Gas\":2.1,\"Cum. BOE\":14.5,\"SEC Oil\":10.1,\"SEC Gas\":1.8,\"SEC BOE\":10.4,\"FCLASS\":\"PDP\"},{\"YEAR\":2016,\"DISCYR\":2003,\"Recoverable Oil\":27.0,\"Recoverable Gas\":3.7,\"Recoverable BOE\":27.7,\"Cum. Oil\":16.9,\"Cum. Gas\":2.4,\"Cum. BOE\":17.3,\"SEC Oil\":10.2,\"SEC Gas\":1.3,\"SEC BOE\":10.4,\"FCLASS\":\"PDP\"},{\"YEAR\":2017,\"DISCYR\":2003,\"Recoverable Oil\":27.0,\"Recoverable Gas\":3.7,\"Recoverable BOE\":27.7,\"Cum. Oil\":20.0,\"Cum. Gas\":2.8,\"Cum. BOE\":20.5,\"SEC Oil\":7.0,\"SEC Gas\":0.9,\"SEC BOE\":7.2,\"FCLASS\":\"PDP\"},{\"YEAR\":2017,\"DISCYR\":2003,\"Recoverable Oil\":27.0,\"Recoverable Gas\":3.7,\"Recoverable BOE\":27.7,\"Cum. Oil\":20.0,\"Cum. Gas\":2.8,\"Cum. BOE\":20.5,\"SEC Oil\":7.0,\"SEC Gas\":0.9,\"SEC BOE\":7.2,\"FCLASS\":\"PDP\"}]"}]}
+    addChartToDOM(chartData);
+
+    var chartData = {"label": "fieldReserves", "chartType": "line", "options": {"equalAxes": false, "title": "Field Oil, Gas and BOE Reserves", "XLabel": "Year", "YLabel": "Reserves (MMBOE)", "legend": {"flag": true}, "dataConversion": {"flag": false}}, "dataSources": [{"df": {"label": "input_data_reserves", "orient": "records"}, "plotSets": [{"x": "YEAR", "y": "Recoverable Oil", "marker": {"shape": "circle", "size": 3, "mouseover": {"flag": true, "columns": ["Recoverable Oil"]}}, "dataLabel": {"flag": false}, "legend": "Recoverable Oil"}, {"x": "YEAR", "y": "Recoverable Gas", "marker": {"shape": "circle", "size": 3, "mouseover": {"flag": true, "columns": ["Recoverable Gas"]}}, "dataLabel": {"flag": false}, "legend": "Recoverable Gas"}, {"x": "YEAR", "y": "Recoverable BOE", "marker": {"shape": "circle", "size": 3, "mouseover": {"flag": true, "columns": ["Recoverable BOE"]}}, "dataLabel": {"flag": false}, "legend": "Recoverable BOE"}], "data": "[{\"YEAR\":2003,\"DISCYR\":2002,\"Recoverable Oil\":34.7,\"Recoverable Gas\":27.7,\"Recoverable BOE\":39.6,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":34.7,\"SEC Gas\":27.7,\"SEC BOE\":39.6,\"FCLASS\":\"PDP\"},{\"YEAR\":2005,\"DISCYR\":2002,\"Recoverable Oil\":25.1,\"Recoverable Gas\":4.0,\"Recoverable BOE\":25.8,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":25.1,\"SEC Gas\":4.0,\"SEC BOE\":25.8,\"FCLASS\":\"PDP\"},{\"YEAR\":2006,\"DISCYR\":2002,\"Recoverable Oil\":25.1,\"Recoverable Gas\":4.0,\"Recoverable BOE\":25.8,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":25.1,\"SEC Gas\":4.0,\"SEC BOE\":25.8,\"FCLASS\":\"PDP\"},{\"YEAR\":2007,\"DISCYR\":2002,\"Recoverable Oil\":32.9,\"Recoverable Gas\":5.3,\"Recoverable BOE\":33.8,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":32.9,\"SEC Gas\":5.3,\"SEC BOE\":33.8,\"FCLASS\":\"PDP\"},{\"YEAR\":2008,\"DISCYR\":2002,\"Recoverable Oil\":32.9,\"Recoverable Gas\":5.3,\"Recoverable BOE\":33.8,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":32.9,\"SEC Gas\":5.3,\"SEC BOE\":33.8,\"FCLASS\":\"PDP\"},{\"YEAR\":2009,\"DISCYR\":2002,\"Recoverable Oil\":17.9,\"Recoverable Gas\":3.9,\"Recoverable BOE\":18.6,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":17.9,\"SEC Gas\":3.9,\"SEC BOE\":18.6,\"FCLASS\":\"PDP\"},{\"YEAR\":2010,\"DISCYR\":2002,\"Recoverable Oil\":17.9,\"Recoverable Gas\":3.9,\"Recoverable BOE\":18.6,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":17.9,\"SEC Gas\":3.9,\"SEC BOE\":18.6,\"FCLASS\":\"PDP\"},{\"YEAR\":2011,\"DISCYR\":2002,\"Recoverable Oil\":17.9,\"Recoverable Gas\":3.9,\"Recoverable BOE\":18.6,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":17.9,\"SEC Gas\":3.9,\"SEC BOE\":18.6,\"FCLASS\":\"PDP\"},{\"YEAR\":2012,\"DISCYR\":2002,\"Recoverable Oil\":15.0,\"Recoverable Gas\":2.4,\"Recoverable BOE\":15.4,\"Cum. Oil\":1.4,\"Cum. Gas\":0.3,\"Cum. BOE\":1.4,\"SEC Oil\":13.6,\"SEC Gas\":2.1,\"SEC BOE\":14.0,\"FCLASS\":\"PDP\"},{\"YEAR\":2013,\"DISCYR\":2002,\"Recoverable Oil\":15.0,\"Recoverable Gas\":2.4,\"Recoverable BOE\":15.4,\"Cum. Oil\":3.3,\"Cum. Gas\":0.6,\"Cum. BOE\":3.4,\"SEC Oil\":11.7,\"SEC Gas\":1.8,\"SEC BOE\":12.0,\"FCLASS\":\"PDP\"},{\"YEAR\":2014,\"DISCYR\":2002,\"Recoverable Oil\":18.4,\"Recoverable Gas\":3.8,\"Recoverable BOE\":19.1,\"Cum. Oil\":7.7,\"Cum. Gas\":1.5,\"Cum. BOE\":8.0,\"SEC Oil\":10.7,\"SEC Gas\":2.3,\"SEC BOE\":11.1,\"FCLASS\":\"PDP\"},{\"YEAR\":2015,\"DISCYR\":2002,\"Recoverable Oil\":18.4,\"Recoverable Gas\":3.8,\"Recoverable BOE\":19.1,\"Cum. Oil\":10.1,\"Cum. Gas\":2.0,\"Cum. BOE\":10.5,\"SEC Oil\":8.3,\"SEC Gas\":1.8,\"SEC BOE\":8.6,\"FCLASS\":\"PDP\"},{\"YEAR\":2016,\"DISCYR\":2002,\"Recoverable Oil\":20.7,\"Recoverable Gas\":4.3,\"Recoverable BOE\":21.5,\"Cum. Oil\":11.8,\"Cum. Gas\":2.4,\"Cum. BOE\":12.2,\"SEC Oil\":8.9,\"SEC Gas\":1.9,\"SEC BOE\":9.2,\"FCLASS\":\"PDP\"},{\"YEAR\":2017,\"DISCYR\":2002,\"Recoverable Oil\":20.7,\"Recoverable Gas\":4.3,\"Recoverable BOE\":21.5,\"Cum. Oil\":12.9,\"Cum. Gas\":2.7,\"Cum. BOE\":13.4,\"SEC Oil\":7.8,\"SEC Gas\":1.6,\"SEC BOE\":8.1,\"FCLASS\":\"PDP\"},{\"YEAR\":2017,\"DISCYR\":2002,\"Recoverable Oil\":20.7,\"Recoverable Gas\":4.3,\"Recoverable BOE\":21.5,\"Cum. Oil\":12.9,\"Cum. Gas\":2.7,\"Cum. BOE\":13.4,\"SEC Oil\":7.8,\"SEC Gas\":1.6,\"SEC BOE\":8.1,\"FCLASS\":\"PDP\"},{\"YEAR\":2005,\"DISCYR\":2003,\"Recoverable Oil\":62.4,\"Recoverable Gas\":10.0,\"Recoverable BOE\":64.2,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":62.4,\"SEC Gas\":10.0,\"SEC BOE\":64.2,\"FCLASS\":\"PDP\"},{\"YEAR\":2006,\"DISCYR\":2003,\"Recoverable Oil\":62.4,\"Recoverable Gas\":10.0,\"Recoverable BOE\":64.2,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":62.4,\"SEC Gas\":10.0,\"SEC BOE\":64.2,\"FCLASS\":\"PDP\"},{\"YEAR\":2007,\"DISCYR\":2003,\"Recoverable Oil\":62.4,\"Recoverable Gas\":10.0,\"Recoverable BOE\":64.2,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":62.4,\"SEC Gas\":10.0,\"SEC BOE\":64.2,\"FCLASS\":\"PDP\"},{\"YEAR\":2008,\"DISCYR\":2003,\"Recoverable Oil\":62.4,\"Recoverable Gas\":10.0,\"Recoverable BOE\":64.2,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":62.4,\"SEC Gas\":10.0,\"SEC BOE\":64.2,\"FCLASS\":\"PDP\"},{\"YEAR\":2009,\"DISCYR\":2003,\"Recoverable Oil\":31.2,\"Recoverable Gas\":5.0,\"Recoverable BOE\":32.1,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":31.2,\"SEC Gas\":5.0,\"SEC BOE\":32.1,\"FCLASS\":\"PDP\"},{\"YEAR\":2010,\"DISCYR\":2003,\"Recoverable Oil\":31.2,\"Recoverable Gas\":5.0,\"Recoverable BOE\":32.1,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":31.2,\"SEC Gas\":5.0,\"SEC BOE\":32.1,\"FCLASS\":\"PDP\"},{\"YEAR\":2011,\"DISCYR\":2003,\"Recoverable Oil\":31.2,\"Recoverable Gas\":5.0,\"Recoverable BOE\":32.1,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":31.2,\"SEC Gas\":5.0,\"SEC BOE\":32.1,\"FCLASS\":\"PDP\"},{\"YEAR\":2012,\"DISCYR\":2003,\"Recoverable Oil\":21.8,\"Recoverable Gas\":3.5,\"Recoverable BOE\":22.4,\"Cum. Oil\":0.9,\"Cum. Gas\":0.1,\"Cum. BOE\":0.9,\"SEC Oil\":20.9,\"SEC Gas\":3.4,\"SEC BOE\":21.5,\"FCLASS\":\"PDP\"},{\"YEAR\":2013,\"DISCYR\":2003,\"Recoverable Oil\":21.8,\"Recoverable Gas\":3.5,\"Recoverable BOE\":22.4,\"Cum. Oil\":3.2,\"Cum. Gas\":0.5,\"Cum. BOE\":3.3,\"SEC Oil\":18.6,\"SEC Gas\":3.0,\"SEC BOE\":19.1,\"FCLASS\":\"PDP\"},{\"YEAR\":2014,\"DISCYR\":2003,\"Recoverable Oil\":24.2,\"Recoverable Gas\":3.9,\"Recoverable BOE\":24.9,\"Cum. Oil\":10.2,\"Cum. Gas\":1.6,\"Cum. BOE\":10.5,\"SEC Oil\":14.0,\"SEC Gas\":2.3,\"SEC BOE\":14.4,\"FCLASS\":\"PDP\"},{\"YEAR\":2015,\"DISCYR\":2003,\"Recoverable Oil\":24.2,\"Recoverable Gas\":3.9,\"Recoverable BOE\":24.9,\"Cum. Oil\":14.1,\"Cum. Gas\":2.1,\"Cum. BOE\":14.5,\"SEC Oil\":10.1,\"SEC Gas\":1.8,\"SEC BOE\":10.4,\"FCLASS\":\"PDP\"},{\"YEAR\":2016,\"DISCYR\":2003,\"Recoverable Oil\":27.0,\"Recoverable Gas\":3.7,\"Recoverable BOE\":27.7,\"Cum. Oil\":16.9,\"Cum. Gas\":2.4,\"Cum. BOE\":17.3,\"SEC Oil\":10.2,\"SEC Gas\":1.3,\"SEC BOE\":10.4,\"FCLASS\":\"PDP\"},{\"YEAR\":2017,\"DISCYR\":2003,\"Recoverable Oil\":27.0,\"Recoverable Gas\":3.7,\"Recoverable BOE\":27.7,\"Cum. Oil\":20.0,\"Cum. Gas\":2.8,\"Cum. BOE\":20.5,\"SEC Oil\":7.0,\"SEC Gas\":0.9,\"SEC BOE\":7.2,\"FCLASS\":\"PDP\"},{\"YEAR\":2017,\"DISCYR\":2003,\"Recoverable Oil\":27.0,\"Recoverable Gas\":3.7,\"Recoverable BOE\":27.7,\"Cum. Oil\":20.0,\"Cum. Gas\":2.8,\"Cum. BOE\":20.5,\"SEC Oil\":7.0,\"SEC Gas\":0.9,\"SEC BOE\":7.2,\"FCLASS\":\"PDP\"}]"}]}
+    addChartToDOM(chartData);
+
+  </script>
+
+
+    <br>
+
+  <!-- End page content -->
+  </div>
+  <footer class="footer bg-dark">
+      <span class="text-muted">-- End of Document --</span>
+  </footer>
+
+</body>
+</html>

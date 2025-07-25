@@ -7,7 +7,6 @@ Link to our data https://edx.netl.doe.gov/dataset/u-net-based-usgs-quadrangles-o
 
 Link to the paper with details: https://pubs.acs.org/doi/10.1021/acs.est.4c04413
 
-
 ## Data Exploration
 
 On Mon, Nov 4, 2024 at 5:29 AM Vamsee Achanta <vamsee.achanta@aceengineer.com> wrote:
@@ -23,3 +22,7 @@ I am eagerly looking forward to hearing from you.
 
 Thank you,
 Vamsee
+
+---
+
+*Last updated: 2025-07-24*
