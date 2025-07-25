@@ -1,0 +1,7 @@
+---
+default_yaml: cfg\ong_field_development\BSEE_analysis_Rep.yml
+
+custom_parameters:
+  field_nickname: &field_nickname North-Platte
+  ong_app_file_name_key: &ong_app_file_name_key TOT_North_Platte
+  boem_fields: &boem_fields "'GB915', 'GB916', 'GB958', 'GB959'"
