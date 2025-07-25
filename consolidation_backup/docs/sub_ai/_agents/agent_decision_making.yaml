@@ -1,0 +1,14 @@
+agents:
+  - name: decision_making
+    notes: Based on visionaries such as steve jobs, etc.
+    role: "Makes decisions based on data"
+    tasks:
+      - task_id: 1
+        description: "Analyze data"
+        parameters:
+          data: "data.csv"
+          method: "analyze"
+    references:
+      - steve jobs books
+      - documents
+      - websites

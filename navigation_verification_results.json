@@ -1,0 +1,34 @@
+{
+  "timestamp": "2025-07-24T12:40:25.172412",
+  "verification_passed": true,
+  "issues": [],
+  "summary": {
+    "total_links_checked": 155,
+    "broken_links": 0,
+    "navigation_indexes_present": 6,
+    "user_entry_points_working": 12,
+    "cross_references_found": 1
+  },
+  "link_verification": {
+    "total_links": 155,
+    "broken_links": 0,
+    "broken_link_details": []
+  },
+  "navigation_verification": {
+    "indexes_present": 6,
+    "missing_indexes": 0,
+    "missing_index_details": [],
+    "main_entry_point": true
+  },
+  "entry_point_verification": {
+    "all_entry_points_valid": true,
+    "working_entry_points": 12,
+    "total_entry_points": 12,
+    "broken_entry_points": []
+  },
+  "cross_reference_verification": {
+    "cross_references_count": 1,
+    "valid_cross_references": 1,
+    "broken_cross_references": 0
+  }
+}

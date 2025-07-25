@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>BSEE Wells | Julia </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="https://d3js.org/d3.v5.js"></script>
+    <!-- <script src="https://d3js.org/d3.v5.min.js"></script> -->
+    <script src="lib/d3_reusables.js"></script>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="lib/d3.css">
+    <link href="https://getbootstrap.com/docs/4.0/dist/css/bootstrap.min.css" rel="stylesheet">
+       <style type="text/css">
+      .pagepadding {
+        padding-top: 50px;
+        padding-left: 100px;
+        padding-right: 100px;
+
+      }
+	  </style>
+  </head>
+
+<body>
+  <header>
+      <!-- Fixed navbar -->
+      <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+          <a class="navbar-brand" href="#">BSEE Data Analysis : Julia</a>
+      </nav>
+  </header>
+  <!-- Begin page content -->
+  <div class="pagepadding">
+
+    <h3>BSEE Data Analysis</h3>
+    <br>
+        <h4>BOEM Field Codes: 'WR627'</h4>
+  <br>
+
+      <ul class="nav nav-tabs">
+          <li class="nav-item">
+            <a class="nav-link active" href="app_front_end_XOM_Julia_Rep1FieldData.html">Field Data</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="app_front_end_XOM_Julia_Rep1ProductionData.html">Production Data</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="app_front_end_XOM_Julia_Rep1WellData.html">Well Data</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="app_front_end_XOM_Julia_Rep1Reserves.html">Reserves</a>
+          </li>
+      </ul>
+
+    
+
+  <div id="#fieldWellsData" class="in">
+    <h4>Field Wells Data</h4>
+    <table border="1" class="dataframe table table-bordered table-responsive-sm table-sm table-striped table-condensed">
+  <thead class="thead-light">
+    <tr style="text-align: center;">
+      <th></th>
+      <th>001</th>
+      <th>DC101</th>
+      <th>JU102</th>
+      <th>JU102</th>
+      <th>JU103</th>
+      <th>JU104</th>
+      <th>JU105</th>
+      <th>JU105</th>
+      <th>JU106</th>
+      <th>JU106</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Rig (Days)</th>
+      <td>T.O. DEEPWATER NAUTILUS (99)</td>
+      <td>MAERSK VIKING (254)</td>
+      <td>OCEAN EIRIK RAUDE (84), MAERSK VIKING (42)</td>
+      <td>MAERSK VIKING (140)</td>
+      <td>MAERSK VIKING (111)</td>
+      <td>MAERSK VIKING (136)</td>
+      <td>MAERSK VIKING (136)</td>
+      <td>MAERSK VIKING (210)</td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <th>Company</th>
+      <td>Exxon Mobil Corporation</td>
+      <td>Exxon Mobil Corporation</td>
+      <td>Exxon Mobil Corporation</td>
+      <td>Exxon Mobil Corporation</td>
+      <td>Exxon Mobil Corporation</td>
+      <td>Exxon Mobil Corporation</td>
+      <td>Exxon Mobil Corporation</td>
+      <td>Exxon Mobil Corporation</td>
+      <td>Exxon Mobil Corporation</td>
+      <td>Exxon Mobil Corporation</td>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <td>WR627</td>
+      <td>WR627</td>
+      <td>WR627</td>
+      <td>WR627</td>
+      <td>WR627</td>
+      <td>WR627</td>
+      <td>WR627</td>
+      <td>WR627</td>
+      <td>WR627</td>
+      <td>WR627</td>
+    </tr>
+    <tr>
+      <th>Well Purpose</th>
+      <td>E</td>
+      <td>D</td>
+      <td>E</td>
+      <td>D</td>
+      <td>D</td>
+      <td>D</td>
+      <td>D</td>
+      <td>D</td>
+      <td>D</td>
+      <td>D</td>
+    </tr>
+    <tr>
+      <th>Side Tracks</th>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Sidetrack and Bypass</th>
+      <td>ST00BP00</td>
+      <td>ST00BP00</td>
+      <td>ST00BP00</td>
+      <td>ST01BP00</td>
+      <td>ST00BP00</td>
+      <td>ST00BP00</td>
+      <td>ST00BP00</td>
+      <td>ST01BP00</td>
+      <td>ST00BP00</td>
+      <td>ST00BP01</td>
+    </tr>
+    <tr>
+      <th>Water Depth (ft)</th>
+      <td>7087</td>
+      <td>7138</td>
+      <td>7120</td>
+      <td>7143</td>
+      <td>7138</td>
+      <td>7148</td>
+      <td>7147</td>
+      <td>7147</td>
+      <td>7139</td>
+      <td>7139</td>
+    </tr>
+    <tr>
+      <th>Tree Height AML (ft)</th>
+      <td>NaN</td>
+      <td>15</td>
+      <td>NaN</td>
+      <td>31</td>
+      <td>NaN</td>
+      <td>15</td>
+      <td>NaN</td>
+      <td>15</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>API10</th>
+      <td>6081240024</td>
+      <td>6081240094</td>
+      <td>6081240033</td>
+      <td>6081240033</td>
+      <td>6081240102</td>
+      <td>6081240108</td>
+      <td>6081240111</td>
+      <td>6081240111</td>
+      <td>6081240127</td>
+      <td>6081240127</td>
+    </tr>
+    <tr>
+      <th>API12</th>
+      <td>608124002400</td>
+      <td>608124009400</td>
+      <td>608124003300</td>
+      <td>608124003301</td>
+      <td>608124010200</td>
+      <td>608124010800</td>
+      <td>608124011100</td>
+      <td>608124011101</td>
+      <td>608124012700</td>
+      <td>608124012701</td>
+    </tr>
+  </tbody>
+</table>
+  </div>
+
+  <div id="#chartProducersWellLocation"> 
+    <h4>Well Locations</h4>
+    <h5>Producing Well (Relative) Locations and Summary</h5> 
+    <p>Bubble size proportional to production (MMBbl) to date. Hover on bubble for further well information</p> 
+  </div>
+  <div id="#wellLocationStatistics">
+    <h5>Well Location Statistics</h5>
+    <p>All Wellheads, Max Distance (ft): 22154.0</p>
+    <p>All Wells, Max Horizontal Departure (ft): 8074.7</p>
+    <p>Producing Wellheads, Max Distance (ft): 329.4</p>
+    <p>Producing Wellheads, Min Distance (ft): 94.9</p>
+    <p>Producing Wellheads, Max Horizontal Departure (ft): 4664.9</p>
+  </div>
+  <div id="#chartProducersWellheadWithBottom">
+  </div>
+  <div id="#chartAllWellheadWithBottom">
+  </div>
+
+
+  <script type="text/javascript">
+
+    var chartData = {"label": "oilReserves", "chartType": "line", "options": {"equalAxes": false, "title": "Oil Reserves", "XLabel": "Year", "YLabel": "Reserves (MMBOE)", "legend": {"flag": true}, "dataConversion": {"flag": false}}, "dataSources": [{"df": {"label": "input_data_reserves", "orient": "records"}, "plotSets": [{"x": "YEAR", "y": "Recoverable Oil", "marker": {"shape": "circle", "size": 3, "mouseover": {"flag": true}}, "dataLabel": {"flag": false}, "legend": "Recoverable Oil"}, {"x": "YEAR", "y": "Cum. Oil", "marker": {"shape": "circle", "size": 3, "mouseover": {"flag": true}}, "dataLabel": {"flag": false}, "legend": "Cum. Oil Produced"}, {"x": "YEAR", "y": "SEC Oil", "marker": {"shape": "circle", "size": 3, "mouseover": {"flag": true}}, "dataLabel": {"flag": false}, "legend": "SEC Oil"}], "data": "[{\"YEAR\":2006,\"DISCYR\":2007,\"Recoverable Oil\":11.2,\"Recoverable Gas\":1.3,\"Recoverable BOE\":11.4,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":11.2,\"SEC Gas\":1.3,\"SEC BOE\":11.4,\"FCLASS\":\"PDP\"},{\"YEAR\":2007,\"DISCYR\":2007,\"Recoverable Oil\":81.7,\"Recoverable Gas\":9.8,\"Recoverable BOE\":83.4,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":81.7,\"SEC Gas\":9.8,\"SEC BOE\":83.4,\"FCLASS\":\"PDP\"},{\"YEAR\":2008,\"DISCYR\":2007,\"Recoverable Oil\":81.7,\"Recoverable Gas\":9.8,\"Recoverable BOE\":83.4,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":81.7,\"SEC Gas\":9.8,\"SEC BOE\":83.4,\"FCLASS\":\"PDP\"},{\"YEAR\":2014,\"DISCYR\":2007,\"Recoverable Oil\":30.3,\"Recoverable Gas\":3.6,\"Recoverable BOE\":30.9,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":30.3,\"SEC Gas\":3.6,\"SEC BOE\":30.9,\"FCLASS\":\"PDP\"},{\"YEAR\":2015,\"DISCYR\":2007,\"Recoverable Oil\":39.7,\"Recoverable Gas\":5.4,\"Recoverable BOE\":40.7,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":39.7,\"SEC Gas\":5.4,\"SEC BOE\":40.7,\"FCLASS\":\"PDP\"},{\"YEAR\":2016,\"DISCYR\":2007,\"Recoverable Oil\":46.1,\"Recoverable Gas\":6.2,\"Recoverable BOE\":47.2,\"Cum. Oil\":3.7,\"Cum. Gas\":0.4,\"Cum. BOE\":3.7,\"SEC Oil\":42.4,\"SEC Gas\":5.9,\"SEC BOE\":43.5,\"FCLASS\":\"PDP\"},{\"YEAR\":2017,\"DISCYR\":2007,\"Recoverable Oil\":59.6,\"Recoverable Gas\":8.1,\"Recoverable BOE\":61.1,\"Cum. Oil\":7.7,\"Cum. Gas\":0.7,\"Cum. BOE\":7.8,\"SEC Oil\":52.0,\"SEC Gas\":7.4,\"SEC BOE\":53.3,\"FCLASS\":\"PDP\"},{\"YEAR\":2017,\"DISCYR\":2007,\"Recoverable Oil\":59.6,\"Recoverable Gas\":8.1,\"Recoverable BOE\":61.1,\"Cum. Oil\":7.7,\"Cum. Gas\":0.7,\"Cum. BOE\":7.8,\"SEC Oil\":52.0,\"SEC Gas\":7.4,\"SEC BOE\":53.3,\"FCLASS\":\"PDP\"}]"}]}
+    addChartToDOM(chartData);
+
+    var chartData = {"label": "fieldReserves", "chartType": "line", "options": {"equalAxes": false, "title": "Field Oil, Gas and BOE Reserves", "XLabel": "Year", "YLabel": "Reserves (MMBOE)", "legend": {"flag": true}, "dataConversion": {"flag": false}}, "dataSources": [{"df": {"label": "input_data_reserves", "orient": "records"}, "plotSets": [{"x": "YEAR", "y": "Recoverable Oil", "marker": {"shape": "circle", "size": 3, "mouseover": {"flag": true, "columns": ["Recoverable Oil"]}}, "dataLabel": {"flag": false}, "legend": "Recoverable Oil"}, {"x": "YEAR", "y": "Recoverable Gas", "marker": {"shape": "circle", "size": 3, "mouseover": {"flag": true, "columns": ["Recoverable Gas"]}}, "dataLabel": {"flag": false}, "legend": "Recoverable Gas"}, {"x": "YEAR", "y": "Recoverable BOE", "marker": {"shape": "circle", "size": 3, "mouseover": {"flag": true, "columns": ["Recoverable BOE"]}}, "dataLabel": {"flag": false}, "legend": "Recoverable BOE"}], "data": "[{\"YEAR\":2006,\"DISCYR\":2007,\"Recoverable Oil\":11.2,\"Recoverable Gas\":1.3,\"Recoverable BOE\":11.4,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":11.2,\"SEC Gas\":1.3,\"SEC BOE\":11.4,\"FCLASS\":\"PDP\"},{\"YEAR\":2007,\"DISCYR\":2007,\"Recoverable Oil\":81.7,\"Recoverable Gas\":9.8,\"Recoverable BOE\":83.4,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":81.7,\"SEC Gas\":9.8,\"SEC BOE\":83.4,\"FCLASS\":\"PDP\"},{\"YEAR\":2008,\"DISCYR\":2007,\"Recoverable Oil\":81.7,\"Recoverable Gas\":9.8,\"Recoverable BOE\":83.4,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":81.7,\"SEC Gas\":9.8,\"SEC BOE\":83.4,\"FCLASS\":\"PDP\"},{\"YEAR\":2014,\"DISCYR\":2007,\"Recoverable Oil\":30.3,\"Recoverable Gas\":3.6,\"Recoverable BOE\":30.9,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":30.3,\"SEC Gas\":3.6,\"SEC BOE\":30.9,\"FCLASS\":\"PDP\"},{\"YEAR\":2015,\"DISCYR\":2007,\"Recoverable Oil\":39.7,\"Recoverable Gas\":5.4,\"Recoverable BOE\":40.7,\"Cum. Oil\":0.0,\"Cum. Gas\":0.0,\"Cum. BOE\":0.0,\"SEC Oil\":39.7,\"SEC Gas\":5.4,\"SEC BOE\":40.7,\"FCLASS\":\"PDP\"},{\"YEAR\":2016,\"DISCYR\":2007,\"Recoverable Oil\":46.1,\"Recoverable Gas\":6.2,\"Recoverable BOE\":47.2,\"Cum. Oil\":3.7,\"Cum. Gas\":0.4,\"Cum. BOE\":3.7,\"SEC Oil\":42.4,\"SEC Gas\":5.9,\"SEC BOE\":43.5,\"FCLASS\":\"PDP\"},{\"YEAR\":2017,\"DISCYR\":2007,\"Recoverable Oil\":59.6,\"Recoverable Gas\":8.1,\"Recoverable BOE\":61.1,\"Cum. Oil\":7.7,\"Cum. Gas\":0.7,\"Cum. BOE\":7.8,\"SEC Oil\":52.0,\"SEC Gas\":7.4,\"SEC BOE\":53.3,\"FCLASS\":\"PDP\"},{\"YEAR\":2017,\"DISCYR\":2007,\"Recoverable Oil\":59.6,\"Recoverable Gas\":8.1,\"Recoverable BOE\":61.1,\"Cum. Oil\":7.7,\"Cum. Gas\":0.7,\"Cum. BOE\":7.8,\"SEC Oil\":52.0,\"SEC Gas\":7.4,\"SEC BOE\":53.3,\"FCLASS\":\"PDP\"}]"}]}
+    addChartToDOM(chartData);
+
+  </script>
+
+
+    <br>
+
+  <!-- End page content -->
+  </div>
+  <footer class="footer bg-dark">
+      <span class="text-muted">-- End of Document --</span>
+  </footer>
+
+</body>
+</html>
