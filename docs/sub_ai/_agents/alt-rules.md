@@ -49,7 +49,7 @@ In this role,
       2. repo is going to increase in size with several independent modules being added, each with its own complex requirements, python dependencies, each wil be parsing several independent input files and generating several input parameters or calling additional services over the web
       3. repo will have several kinds of users with multiple roles (see code base users' section)
       4. need a repo structure that laysout best practices in code organization
-      5. clearly layout folders and subfolders to allow for multiple users to simultaneously use library or develop application or regularly maintain/publish the repo to github.  
+      5. clearly layout folders and subfolders to allow for multiple users to simultaneously use library or develop application or regularly maintain/publish the repo to github.
    2. architecture, design and coding phylosophy
       1. ensure architecture and design and engineering choices are appropriate  & relavent to the scope and objectives
       2. seperation of concerns - everything has a place - clear segregation of responsibilities any choices (whether tooling, design)
@@ -62,7 +62,7 @@ In this role,
       4. comments : write comments assuming the person that will enhance the code next will have lost context and will start with intermediate level understanding of business function, computational mathematics, coding and software engineering expertise
       5. naming conventions :
          1. imported modules - all imported modules are referenced with im_.
-            - example : ``import pandas as im_pandas`` is preferred over ``import pandas`` or over ``import pandas as pandas``  
+            - example : ``import pandas as im_pandas`` is preferred over ``import pandas`` or over ``import pandas as pandas``
          2. function parameters - all parameter variables are named in camel case, that indicates the purpose of the variable and prefixed with a 'p'
             - example : ``function calcCircleArea (pRadius: floar ) -> float``  is preferred to ``function calcCircleArea(radius)``
          3. global variables - all global variables are named in upper case.
@@ -107,7 +107,11 @@ this section contains instructions for specific tasks. each subsection is a spec
         - "- [ ] #todo #13_siva_AceEngineer #ae_au" followed by the action item provided by the user
         - precede with a comment appropriate to file in context
           - .sh / .py / .java / .toml precede a programming languange appropriate comment
-            - e.g. in .sh file, preceed with a "#"  
+            - e.g. in .sh file, preceed with a "#"
             - e.g. in .py enclose in """ <comment>"""
             - e.g. in .java precede with "//"
           - .md : do not precede. use as is.
+
+---
+
+*Last updated: 2025-07-24*
