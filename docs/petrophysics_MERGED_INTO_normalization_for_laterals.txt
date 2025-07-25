@@ -1,0 +1,3 @@
+This file was merged into: docs\data-sources\bsee\analysis\production\normalization_for_laterals.md
+Merge date: 2025-07-24T12:21:11.432280
+Original content preserved in backup.

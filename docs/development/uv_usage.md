@@ -3,6 +3,7 @@
 This guide explains how to use UV for package management, development, and deployment in the worldenergydata project.
 
 ## Table of Contents
+
 - [Quick Start](#quick-start)
 - [Installation](#installation)
 - [Development Workflow](#development-workflow)
@@ -15,20 +16,27 @@ This guide explains how to use UV for package management, development, and deplo
 ## Quick Start
 
 ```bash
+
 # Setup development environment
+
 ./scripts/uv_setup.sh         # Linux/Mac
+
 ./scripts/uv_migrate.bat       # Windows
 
 # Install dependencies
+
 uv sync --extra dev
 
 # Run the application
+
 uv run python -m worldenergydata
 
 # Run tests
+
 uv run pytest
 
 # Add a new dependency
+
 uv add requests
 ```
 
@@ -55,19 +63,25 @@ pip install uv
 
 **Automated Setup:**
 ```bash
+
 # Linux/Mac
+
 ./scripts/uv_setup.sh
 
 # Windows
+
 ./scripts/uv_migrate.bat
 ```
 
 **Manual Setup:**
 ```bash
+
 # Initialize UV project (if not done)
+
 uv sync
 
 # Install with development dependencies
+
 uv sync --extra dev
 ```
 
@@ -76,25 +90,33 @@ uv sync --extra dev
 ### Common Commands
 
 ```bash
+
 # Sync dependencies (like pip install -r requirements.txt)
+
 uv sync
 
 # Add new dependency
+
 uv add pandas>=2.0.0
 
 # Add development dependency
+
 uv add --dev pytest
 
 # Remove dependency
+
 uv remove requests
 
 # Update all dependencies
+
 uv sync --upgrade
 
 # Run Python scripts
+
 uv run python script.py
 
 # Run module
+
 uv run python -m worldenergydata
 ```
 
@@ -103,19 +125,25 @@ uv run python -m worldenergydata
 The `scripts/uv_run.sh` script provides common development tasks:
 
 ```bash
+
 # Setup environment
+
 ./scripts/uv_run.sh setup
 
 # Run tests
+
 ./scripts/uv_run.sh test
 
 # Format code
+
 ./scripts/uv_run.sh format
 
 # Run linting
+
 ./scripts/uv_run.sh lint
 
 # Clean cache
+
 ./scripts/uv_run.sh clean
 ```
 
@@ -124,13 +152,17 @@ The `scripts/uv_run.sh` script provides common development tasks:
 UV automatically manages virtual environments:
 
 ```bash
+
 # UV creates and manages .venv automatically
+
 uv sync
 
 # Activate shell (optional, uv run handles this automatically)
+
 uv shell
 
 # Show environment info
+
 uv info
 ```
 
@@ -139,19 +171,25 @@ uv info
 ### Running Tests
 
 ```bash
+
 # Run all tests
+
 uv run pytest
 
 # Run specific test file
+
 uv run pytest tests/test_example.py
 
 # Run with verbose output
+
 uv run pytest -v
 
 # Run with coverage
+
 uv run pytest --cov=worldenergydata
 
 # Using helper script
+
 ./scripts/uv_run.sh test
 ./scripts/uv_run.sh test-verbose
 ```
@@ -175,21 +213,27 @@ addopts = [
 ### Local Building
 
 ```bash
+
 # Build package
+
 uv build
 
 # Test build locally
+
 ./scripts/uv_deploy.sh test-build
 ```
 
 ### Publishing
 
 ```bash
+
 # Publish to TestPyPI (for testing)
+
 export TESTPYPI_TOKEN="your-token"
 ./scripts/uv_deploy.sh publish-test
 
 # Publish to PyPI (production)
+
 export PYPI_TOKEN="your-token"
 ./scripts/uv_deploy.sh publish
 ```
@@ -231,35 +275,47 @@ For CI/CD, set these secrets:
 
 **UV not found after installation:**
 ```bash
+
 # Add to PATH (Linux/Mac)
+
 export PATH="$HOME/.cargo/bin:$PATH"
 
 # Restart shell or source profile
+
 source ~/.bashrc  # or ~/.zshrc
+
 ```
 
 **Dependency conflicts:**
 ```bash
+
 # Clear lock file and resync
+
 rm uv.lock
 uv sync
 ```
 
 **Cache issues:**
 ```bash
+
 # Clear UV cache
+
 uv cache clean
 
 # Or use helper script
+
 ./scripts/uv_run.sh clean
 ```
 
 **Import errors:**
 ```bash
+
 # Ensure package is installed in development mode
+
 uv sync --extra dev
 
 # Verify installation
+
 uv run python -c "import worldenergydata"
 ```
 
@@ -268,12 +324,17 @@ uv run python -c "import worldenergydata"
 UV is designed to be fast, but if you experience slowdowns:
 
 ```bash
+
 # Use UV's faster resolver
+
 uv sync --resolution=highest
 
 # Parallel installation
+
 uv sync --no-dev  # Install only production deps first
+
 uv sync --extra dev  # Then add dev deps
+
 ```
 
 ## Migration from pip/conda
@@ -294,13 +355,16 @@ uv sync --extra dev  # Then add dev deps
 2. **Convert to UV dependencies:**
    ```bash
    # Manual process - add packages to pyproject.toml
+
    # UV handles Python packages; system dependencies may need separate handling
+
    ```
 
 3. **Test the migration:**
    ```bash
    uv sync --extra dev
    uv run pytest  # Ensure everything works
+
    ```
 
 ### Script Updates
@@ -322,20 +386,26 @@ uv add package
 ### Working with Multiple Python Versions
 
 ```bash
+
 # Install specific Python version
+
 uv python install 3.12
 
 # Use specific Python version
+
 uv run --python 3.12 python script.py
 
 # Create environment with specific Python
+
 uv venv --python 3.11 my-env
 ```
 
 ### Custom Package Sources
 
 ```toml
+
 # In pyproject.toml
+
 [tool.uv.sources]
 my-package = { git = "https://github.com/user/repo.git" }
 other-package = { path = "../local-package", editable = true }
@@ -346,7 +416,9 @@ other-package = { path = "../local-package", editable = true }
 For monorepo setups:
 
 ```toml
+
 # In pyproject.toml
+
 [tool.uv.workspace]
 members = ["packages/*", "tools/*"]
 ```
@@ -392,6 +464,7 @@ Add to `.vscode/settings.json`:
 3. **Regular updates:**
    ```bash
    uv sync --upgrade  # Update all dependencies
+
    ```
 
 ### Development Workflow
@@ -418,3 +491,7 @@ Add to `.vscode/settings.json`:
 ---
 
 *This documentation is maintained alongside the codebase. For questions or improvements, please open an issue.*
+
+---
+
+*Last updated: 2025-07-24*

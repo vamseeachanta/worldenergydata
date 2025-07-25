@@ -2,7 +2,6 @@
 
 https://fracfocus.org/data-download
 
-
 ![data scope](image.png)
 
 Analysis:
@@ -12,3 +11,7 @@ https://faroanalytics.com/2019/07/24/pulling-cleaning-and-using-data-from-fracfo
 https://github.com/faroanalytics/FracFocusdbclean/blob/master/FracFocusPostgithub.ipynb
 
 https://github.com/faroanalytics
+
+---
+
+*Last updated: 2025-07-24*

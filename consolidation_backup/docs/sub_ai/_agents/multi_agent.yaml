@@ -1,0 +1,80 @@
+agents:
+  - name: decision_making
+    notes: Based on visionaries such as steve jobs, etc.
+    role: "Makes decisions based on data"
+    tasks:
+      - task_id: 1
+        description: "Analyze data"
+        parameters:
+          data: "data.csv"
+          method: "analyze"
+    references:
+      - steve jobs books
+      - documents
+      - websites
+
+  - name: python_programmer
+    notes: Based on clean code programmer uncle bob
+    role: "Writes code in Python"
+    tasks:
+      - task_id: 1
+        description: "Write Python code"
+        parameters:
+          code: "print('Hello, World!')"
+    references:
+      - folder
+      - documents
+      - websites
+    principles:
+      - clean code
+      - DRY
+      - keep it simple stupid
+      - etc.
+
+  - name: devops_engineer
+    notes: Based on devops ci-cd
+    role: "Manages CI/CD pipelines"
+    tasks:
+      - task_id: 1
+        description: "Deploy code"
+        parameters:
+          code: "code.zip"
+          method: "deploy"
+
+  - name: engineer_physics
+    notes: Based on physics
+    role: "Solves physics problems"
+    tasks:
+      - task_id: 1
+        description: "Solve physics problem"
+        parameters:
+          problem: "F=ma"
+          method: "solve"
+
+  - name: engineer_finance
+    notes: Based on finance
+    role: "Analyzes financial data"
+    tasks:
+      - task_id: 1
+        description: "Analyze financial data"
+        parameters:
+          data: "financial_data.csv"
+          method: "analyze"
+
+  - name: pointing_at_url_example
+    role: "Collects data from various sources"
+    tasks:
+      - task_id: 1
+        description: "Fetch data from API"
+        parameters:
+          endpoint: "https://api.example.com/data"
+          method: "GET"
+
+  - name: pointing_at_url
+    role: "Collects data from various sources"
+    tasks:
+      - task_id: 1
+        description: "Fetch data from API"
+        parameters:
+          endpoint: "https://api.example.com/data"
+          method: "GET"
