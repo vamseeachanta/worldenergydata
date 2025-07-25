@@ -1,0 +1,200 @@
+{
+  "summary": {
+    "total_files_scanned": 58,
+    "duplicate_pairs_found": 5,
+    "consolidation_plans": 5,
+    "estimated_files_to_remove": 1
+  },
+  "categorized_duplicates": {
+    "exact_duplicates": [
+      {
+        "file1": "data-sources\\equipment\\anchor\\calculation.md",
+        "file2": "modules\\equipment\\anchor\\calculation.md",
+        "similarity_score": 1.0,
+        "match_type": "exact",
+        "overlapping_sections_count": 1,
+        "unique_content_file1_count": 0,
+        "unique_content_file2_count": 0
+      },
+      {
+        "file1": "data-sources\\equipment\\x_tree\\x_tree.md",
+        "file2": "modules\\equipment\\x_tree\\x_tree.md",
+        "similarity_score": 1.0,
+        "match_type": "exact",
+        "overlapping_sections_count": 1,
+        "unique_content_file1_count": 0,
+        "unique_content_file2_count": 0
+      },
+      {
+        "file1": "data-sources\\onshore\\wyoming\\data.md",
+        "file2": "modules\\onshore\\wyoming\\data.md",
+        "similarity_score": 1.0,
+        "match_type": "exact",
+        "overlapping_sections_count": 1,
+        "unique_content_file1_count": 0,
+        "unique_content_file2_count": 0
+      },
+      {
+        "file1": "data-sources\\sodir\\sodir.md",
+        "file2": "raw_data\\sodir\\sodir.md",
+        "similarity_score": 1.0,
+        "match_type": "exact",
+        "overlapping_sections_count": 1,
+        "unique_content_file1_count": 0,
+        "unique_content_file2_count": 0
+      }
+    ],
+    "near_duplicates": [
+      {
+        "file1": "petrophysics.md",
+        "file2": "data-sources\\bsee\\analysis\\production\\normalization_for_laterals.md",
+        "similarity_score": 0.75,
+        "match_type": "near_duplicate",
+        "overlapping_sections_count": 0,
+        "unique_content_file1_count": 1,
+        "unique_content_file2_count": 1
+      }
+    ],
+    "partial_overlaps": [],
+    "filename_suspicious": [],
+    "same_directory": [],
+    "cross_module": [
+      {
+        "file1": "petrophysics.md",
+        "file2": "data-sources\\bsee\\analysis\\production\\normalization_for_laterals.md",
+        "similarity_score": 0.75,
+        "match_type": "near_duplicate",
+        "overlapping_sections_count": 0,
+        "unique_content_file1_count": 1,
+        "unique_content_file2_count": 1
+      },
+      {
+        "file1": "data-sources\\equipment\\anchor\\calculation.md",
+        "file2": "modules\\equipment\\anchor\\calculation.md",
+        "similarity_score": 1.0,
+        "match_type": "exact",
+        "overlapping_sections_count": 1,
+        "unique_content_file1_count": 0,
+        "unique_content_file2_count": 0
+      },
+      {
+        "file1": "data-sources\\equipment\\x_tree\\x_tree.md",
+        "file2": "modules\\equipment\\x_tree\\x_tree.md",
+        "similarity_score": 1.0,
+        "match_type": "exact",
+        "overlapping_sections_count": 1,
+        "unique_content_file1_count": 0,
+        "unique_content_file2_count": 0
+      },
+      {
+        "file1": "data-sources\\onshore\\wyoming\\data.md",
+        "file2": "modules\\onshore\\wyoming\\data.md",
+        "similarity_score": 1.0,
+        "match_type": "exact",
+        "overlapping_sections_count": 1,
+        "unique_content_file1_count": 0,
+        "unique_content_file2_count": 0
+      },
+      {
+        "file1": "data-sources\\sodir\\sodir.md",
+        "file2": "raw_data\\sodir\\sodir.md",
+        "similarity_score": 1.0,
+        "match_type": "exact",
+        "overlapping_sections_count": 1,
+        "unique_content_file1_count": 0,
+        "unique_content_file2_count": 0
+      }
+    ]
+  },
+  "consolidation_plans": [
+    {
+      "primary_file": "data-sources\\bsee\\analysis\\production\\normalization_for_laterals.md",
+      "files_to_merge": [
+        "petrophysics.md"
+      ],
+      "files_to_remove": [],
+      "merge_strategy": "append"
+    },
+    {
+      "primary_file": "data-sources\\equipment\\anchor\\calculation.md",
+      "files_to_merge": [
+        "modules\\equipment\\anchor\\calculation.md"
+      ],
+      "files_to_remove": [
+        "modules\\equipment\\anchor\\calculation.md"
+      ],
+      "merge_strategy": "replace_sections"
+    },
+    {
+      "primary_file": "modules\\equipment\\x_tree\\x_tree.md",
+      "files_to_merge": [
+        "data-sources\\equipment\\x_tree\\x_tree.md"
+      ],
+      "files_to_remove": [],
+      "merge_strategy": "replace_sections"
+    },
+    {
+      "primary_file": "modules\\onshore\\wyoming\\data.md",
+      "files_to_merge": [
+        "data-sources\\onshore\\wyoming\\data.md"
+      ],
+      "files_to_remove": [],
+      "merge_strategy": "replace_sections"
+    },
+    {
+      "primary_file": "raw_data\\sodir\\sodir.md",
+      "files_to_merge": [
+        "data-sources\\sodir\\sodir.md"
+      ],
+      "files_to_remove": [],
+      "merge_strategy": "replace_sections"
+    }
+  ],
+  "detailed_matches": [
+    {
+      "file1": "petrophysics.md",
+      "file2": "data-sources\\bsee\\analysis\\production\\normalization_for_laterals.md",
+      "similarity_score": 0.75,
+      "match_type": "near_duplicate",
+      "overlapping_sections_count": 0,
+      "unique_content_file1_count": 1,
+      "unique_content_file2_count": 1
+    },
+    {
+      "file1": "data-sources\\equipment\\anchor\\calculation.md",
+      "file2": "modules\\equipment\\anchor\\calculation.md",
+      "similarity_score": 1.0,
+      "match_type": "exact",
+      "overlapping_sections_count": 1,
+      "unique_content_file1_count": 0,
+      "unique_content_file2_count": 0
+    },
+    {
+      "file1": "data-sources\\equipment\\x_tree\\x_tree.md",
+      "file2": "modules\\equipment\\x_tree\\x_tree.md",
+      "similarity_score": 1.0,
+      "match_type": "exact",
+      "overlapping_sections_count": 1,
+      "unique_content_file1_count": 0,
+      "unique_content_file2_count": 0
+    },
+    {
+      "file1": "data-sources\\onshore\\wyoming\\data.md",
+      "file2": "modules\\onshore\\wyoming\\data.md",
+      "similarity_score": 1.0,
+      "match_type": "exact",
+      "overlapping_sections_count": 1,
+      "unique_content_file1_count": 0,
+      "unique_content_file2_count": 0
+    },
+    {
+      "file1": "data-sources\\sodir\\sodir.md",
+      "file2": "raw_data\\sodir\\sodir.md",
+      "similarity_score": 1.0,
+      "match_type": "exact",
+      "overlapping_sections_count": 1,
+      "unique_content_file1_count": 0,
+      "unique_content_file2_count": 0
+    }
+  ]
+}
