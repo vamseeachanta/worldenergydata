@@ -13,12 +13,12 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 1.3 Document specific calculation differences (period timing, discount rate application, cash flow construction)
   - [x] 1.4 Verify all tests pass for current implementation baseline
 
-- [ ] 2. Implement Excel-Aligned NPV Calculation Engine
-  - [ ] 2.1 Write tests for new Excel-aligned NPV function with known benchmark results
-  - [ ] 2.2 Create custom NPV function that exactly mirrors Excel's NPV formula
-  - [ ] 2.3 Implement proper period timing (Period 0 for CAPEX, Period 1+ for operations)
-  - [ ] 2.4 Add comprehensive logging for cash flow components and discount rate application
-  - [ ] 2.5 Verify all tests pass for new NPV implementation
+- [x] 2. Implement Excel-Aligned NPV Calculation Engine
+  - [x] 2.1 Write tests for new Excel-aligned NPV function with known benchmark results
+  - [x] 2.2 Create custom NPV function that exactly mirrors Excel's NPV formula
+  - [x] 2.3 Implement proper period timing (Period 0 for CAPEX, Period 1+ for operations)
+  - [x] 2.4 Add comprehensive logging for cash flow components and discount rate application
+  - [x] 2.5 Verify all tests pass for new NPV implementation
 
 - [ ] 3. Fix Cash Flow Construction and Data Alignment  
   - [ ] 3.1 Write tests for cash flow component calculation (revenue, OPEX, net cash flow)

@@ -234,7 +234,7 @@ class TestCurrentNPVImplementation:
         elif variance_pct > 20:
             print("! MODERATE: Variance 20-50% (needs improvement)")
         else:
-            print("+ GOOD: Variance <20% (acceptable)")1
+            print("+ GOOD: Variance <20% (acceptable)")
         
         # Store for further analysis
         self.documented_variance_pct = variance_pct
