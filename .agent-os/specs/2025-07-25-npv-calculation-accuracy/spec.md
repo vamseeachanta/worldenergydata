@@ -8,6 +8,10 @@
 
 Improve NPV calculation accuracy to achieve within 10-20% variance from Excel analysis results, eliminating the current ~50% discrepancy between manual analysis and Excel NPV calculations with the same 10% discount rate.
 
+Relevant files:
+[npv test file](../../../tests/modules/bsee/analysis/query_field_jack_stmalo_npv_test.py)
+[example NPV file](../../../docs/modules/bsee/data/NPV_JStM-WELL-Production-Data-thru-2019.xlsx)
+
 ## User Stories
 
 ### Accurate Economic Analysis
@@ -29,6 +33,25 @@ The calculation should handle cash flow timing, discount rate application, and p
 3. **Discount Rate Application** - Implement precise discount rate timing and compounding as used in Excel
 4. **Data Input Validation** - Verify production data, oil prices, and cost parameters match Excel inputs exactly
 5. **Results Validation Framework** - Create automated testing to verify NPV results within 10% of Excel benchmarks
+
+suggested steps: 
+- Create a workflow document which contains the following detailed steps:
+  - additional Input parameters required for NPV calculation (goes to .yml input file)
+  - Identify existing historical production data logic
+  - Map out cash flow construction process
+  - calculate npv
+  - Create a detailed comparison of the current NPV calculation logic with Excel's NPV function
+
+- Create a plan to update the existing calculation following detailed steps above
+  - Should update existing npv calculation logic in src\worldenergydata\modules\bsee\analysis\production_api12.py
+    - Economics Functions
+      - generate_revenue_table(self, cfg, api12_df)
+      - perform_npv_calculation(self, cfg, revenue_df)
+      - perform_excel_aligned_npv_calculation(self, cfg, revenue_df)
+    - Should ensure cash flow construction aligns with Excel methodology
+  - Should implement precise discount rate timing and compounding as used in Excel
+- Implement the new NPV calculation engine with comprehensive tests
+- Create a validation test to compare against Excel output to benchmark
 
 ## Out of Scope
 
