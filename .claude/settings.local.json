@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git pull:*)"
+      "Bash(git pull:*)",
+      "Bash(python -m pytest tests/modules/bsee/analysis/test_oil_price_extraction.py -v)",
+      "Bash(python:*)",
+      "Bash(uv pip install:*)",
+      "Bash(rm:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": []
   }
