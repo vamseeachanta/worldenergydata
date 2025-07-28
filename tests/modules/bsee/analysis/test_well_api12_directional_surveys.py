@@ -357,3 +357,150 @@ class TestWellAPI12DirectionalSurveys:
         assert not np.isinf(result['x_coor']).any(), "x_coor should not have infinite values"
         assert not np.isinf(result['y_coor']).any(), "y_coor should not have infinite values"
         assert not np.isinf(result['z_coor']).any(), "z_coor should not have infinite values"
+
+    def test_add_relative_WH_positions_basic_adjustment(self):
+        """Test that add_relative_WH_positions correctly adjusts coordinates"""
+        # Create mock survey XYZ data
+        survey_xyz = pd.DataFrame({
+            'x_coor': [0, 100, 200],
+            'y_coor': [0, 50, 100],
+            'z_coor': [0, 1000, 2000],
+            'md': [0, 1000, 2000]
+        })
+        
+        # Use the well data from setup which has SURF_x_rel=1000, SURF_y_rel=2000
+        api12 = 608124000400
+        
+        result = self.well_api12.add_relative_WH_positions(api12, survey_xyz)
+        
+        # Verify coordinates were adjusted by the wellhead position
+        expected_x = survey_xyz['x_coor'] + 1000.0  # SURF_x_rel from mock data
+        expected_y = survey_xyz['y_coor'] + 2000.0  # SURF_y_rel from mock data
+        
+        pd.testing.assert_series_equal(result['x_coor'], expected_x, check_names=False)
+        pd.testing.assert_series_equal(result['y_coor'], expected_y, check_names=False)
+        
+        # Z coordinates should remain unchanged
+        pd.testing.assert_series_equal(result['z_coor'], survey_xyz['z_coor'], check_names=False)
+
+    def test_add_relative_WH_positions_preserves_other_columns(self):
+        """Test that add_relative_WH_positions preserves all other columns"""
+        # Create survey XYZ data with additional columns
+        survey_xyz = pd.DataFrame({
+            'x_coor': [0, 100, 200],
+            'y_coor': [0, 50, 100],
+            'z_coor': [0, 1000, 2000],
+            'md': [0, 1000, 2000],
+            'inc': [0, 15, 30],
+            'az': [0, 45, 90],
+            'dls': [0, 0.01, 0.02]
+        })
+        
+        api12 = 608124000400
+        result = self.well_api12.add_relative_WH_positions(api12, survey_xyz)
+        
+        # Verify all original columns are preserved
+        for col in survey_xyz.columns:
+            assert col in result.columns, f"Column {col} should be preserved"
+        
+        # Verify non-coordinate columns are unchanged
+        unchanged_columns = ['z_coor', 'md', 'inc', 'az', 'dls']
+        for col in unchanged_columns:
+            pd.testing.assert_series_equal(
+                result[col], survey_xyz[col], 
+                check_names=False
+            )
+
+    def test_add_relative_WH_positions_zero_offset(self):
+        """Test add_relative_WH_positions with zero wellhead offsets"""
+        # Create a well with zero relative positions
+        zero_offset_well_data = {
+            'merged_api12_df': pd.DataFrame({
+                'API12': [608124000400],
+                'API10': [6081240004],
+                'Well Name': ['Test Well'],
+                'Sidetrack and Bypass': ['ST01'],
+                'SURF_x_rel': [0.0],  # Zero offset
+                'SURF_y_rel': [0.0],  # Zero offset
+                'Water Depth (feet)': [6000],
+                'Total Measured Depth': [15000],
+                'Total Depth Date': ['2023-01-15'],
+                'Spud Date': ['2022-12-01']
+            })
+        }
+        
+        # Update the instance data
+        self.well_api12.output_data_api12_df = zero_offset_well_data['merged_api12_df'].copy()
+        self.well_api12.output_data_api12_df['xyz'] = None
+        
+        survey_xyz = pd.DataFrame({
+            'x_coor': [0.0, 100.0, 200.0],  # Use float to match result dtype
+            'y_coor': [0.0, 50.0, 100.0],   # Use float to match result dtype
+            'z_coor': [0, 1000, 2000]
+        })
+        
+        api12 = 608124000400
+        result = self.well_api12.add_relative_WH_positions(api12, survey_xyz)
+        
+        # With zero offsets, coordinates should remain the same
+        pd.testing.assert_series_equal(result['x_coor'], survey_xyz['x_coor'], check_names=False)
+        pd.testing.assert_series_equal(result['y_coor'], survey_xyz['y_coor'], check_names=False)
+
+    def test_add_relative_WH_positions_negative_offsets(self):
+        """Test add_relative_WH_positions with negative wellhead offsets"""
+        # Create a well with negative relative positions
+        negative_offset_well_data = {
+            'merged_api12_df': pd.DataFrame({
+                'API12': [608124000400],
+                'API10': [6081240004],
+                'Well Name': ['Test Well'],
+                'Sidetrack and Bypass': ['ST01'],
+                'SURF_x_rel': [-500.0],  # Negative offset
+                'SURF_y_rel': [-1000.0], # Negative offset
+                'Water Depth (feet)': [6000],
+                'Total Measured Depth': [15000],
+                'Total Depth Date': ['2023-01-15'],
+                'Spud Date': ['2022-12-01']
+            })
+        }
+        
+        # Update the instance data
+        self.well_api12.output_data_api12_df = negative_offset_well_data['merged_api12_df'].copy()
+        self.well_api12.output_data_api12_df['xyz'] = None
+        
+        survey_xyz = pd.DataFrame({
+            'x_coor': [0, 100, 200],
+            'y_coor': [0, 50, 100],
+            'z_coor': [0, 1000, 2000]
+        })
+        
+        api12 = 608124000400
+        result = self.well_api12.add_relative_WH_positions(api12, survey_xyz)
+        
+        # Verify coordinates were adjusted by negative offsets
+        expected_x = survey_xyz['x_coor'] - 500.0
+        expected_y = survey_xyz['y_coor'] - 1000.0
+        
+        pd.testing.assert_series_equal(result['x_coor'], expected_x, check_names=False)
+        pd.testing.assert_series_equal(result['y_coor'], expected_y, check_names=False)
+
+    def test_add_relative_WH_positions_data_independence(self):
+        """Test that add_relative_WH_positions doesn't modify original data"""
+        survey_xyz = pd.DataFrame({
+            'x_coor': [0, 100, 200],
+            'y_coor': [0, 50, 100],
+            'z_coor': [0, 1000, 2000]
+        })
+        
+        # Keep a copy of original data
+        original_survey = survey_xyz.copy()
+        
+        api12 = 608124000400
+        result = self.well_api12.add_relative_WH_positions(api12, survey_xyz)
+        
+        # Verify original data was not modified
+        pd.testing.assert_frame_equal(survey_xyz, original_survey)
+        
+        # Verify result is different from original
+        assert not result['x_coor'].equals(original_survey['x_coor']), "Result should be different from original"
+        assert not result['y_coor'].equals(original_survey['y_coor']), "Result should be different from original"

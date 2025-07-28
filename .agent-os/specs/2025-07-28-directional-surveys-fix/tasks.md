@@ -21,12 +21,12 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 2.4 Ensure proper handling of survey data edge cases (duplicates, zeros)
   - [x] 2.5 Verify all tests pass for process_survey_xyz method
 
-- [ ] 3. Fix add_relative_WH_positions wellhead adjustment method
-  - [ ] 3.1 Write unit tests for wellhead position calculations
-  - [ ] 3.2 Correct API12 DataFrame filtering to use proper data structure
-  - [ ] 3.3 Fix coordinate adjustment calculations using SURF_x_rel and SURF_y_rel
-  - [ ] 3.4 Test proper survey_xyz_wh_adjusted DataFrame creation
-  - [ ] 3.5 Verify all tests pass for add_relative_WH_positions method
+- [x] 3. Fix add_relative_WH_positions wellhead adjustment method
+  - [x] 3.1 Write unit tests for wellhead position calculations
+  - [x] 3.2 Correct API12 DataFrame filtering to use proper data structure
+  - [x] 3.3 Fix coordinate adjustment calculations using SURF_x_rel and SURF_y_rel
+  - [x] 3.4 Test proper survey_xyz_wh_adjusted DataFrame creation
+  - [x] 3.5 Verify all tests pass for add_relative_WH_positions method
 
 - [ ] 4. Fix plot_field_wells visualization method
   - [ ] 4.1 Write unit tests for plotting functionality 
