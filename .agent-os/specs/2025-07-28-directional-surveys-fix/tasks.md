@@ -28,12 +28,12 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 3.4 Test proper survey_xyz_wh_adjusted DataFrame creation
   - [x] 3.5 Verify all tests pass for add_relative_WH_positions method
 
-- [ ] 4. Fix plot_field_wells visualization method
-  - [ ] 4.1 Write unit tests for plotting functionality 
-  - [ ] 4.2 Correct attribute references for accessing well path data
-  - [ ] 4.3 Fix matplotlib 3D plotting integration with proper data access
-  - [ ] 4.4 Ensure file saving functionality works with proper paths
-  - [ ] 4.5 Verify all tests pass for plot_field_wells method
+- [x] 4. Fix plot_field_wells visualization method
+  - [x] 4.1 Write unit tests for plotting functionality 
+  - [x] 4.2 Correct attribute references for accessing well path data
+  - [x] 4.3 Fix matplotlib 3D plotting integration with proper data access
+  - [x] 4.4 Ensure file saving functionality works with proper paths
+  - [x] 4.5 Verify all tests pass for plot_field_wells method
 
 - [ ] 5. Integration testing and validation
   - [ ] 5.1 Run existing integration test query_api_01_wells_directional_survey_test.py
