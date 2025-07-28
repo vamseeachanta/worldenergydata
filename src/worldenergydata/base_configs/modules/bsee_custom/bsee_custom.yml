@@ -1,14 +1,20 @@
 meta:
   library: worldenergydata
   basename: bsee_custom
-  label: goa_julia
+  label: NULL
 
 basename: bsee_custom
 
 data:
   groups:
-    # Groups typically are list of entities to run through multiple API numbers or multiple API sets
-    - lease : G30692
+
+filepath:
+  war_files:
+    main: data/modules/bsee/bin/war/mv_war_main.bin
+    prop : data/modules/bsee/bin/war/mv_war_main_prop.bin
+    remarks: data/modules/bsee/bin/war/mv_war_main_prop_remark.bin
+    boreholes: data/modules/bsee/bin/war/mv_war_boreholes_view.bin
+
 
 default:
   log_level: INFO
