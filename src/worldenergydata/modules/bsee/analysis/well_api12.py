@@ -392,10 +392,19 @@ class WellAPI12():
         self.output_completions['COMP_y_rel'] = self.output_completions['COMP_y'] - field_y_ref
         self.output_completions['Field NickName'] = self.cfg['custom_parameters']['field_nickname']
 
+    def get_API10_from_well_API(self, well_api):
+        """Extract API10 (first 10 digits) from API12 well identifier"""
+        well_api_str = str(well_api)
+        if len(well_api_str) == 12:
+            api10_value = int(well_api_str[0:10])
+        else:
+            api10_value = well_api_str
+        return api10_value
+
     def prepare_well_paths(self, directional_surveys, well_data):
         
         #TODO - Relocate to where it is has to be .
-        self.output_data_api12_df = well_data.copy()
+        self.output_data_api12_df = well_data['merged_api12_df'].copy()
         self.output_data_api12_df['O_PROD_STATUS'] = 0
         self.output_data_api12_df['O_CUMMULATIVE_PROD_MMBBL'] = 0
         self.output_data_api12_df['DAYS_ON_PROD'] = 0
@@ -408,6 +417,11 @@ class WellAPI12():
         
         self.output_well_path_for_db = {}
         self.output_data_well_path = {}
+        
+        # Handle empty directional surveys DataFrame
+        if directional_surveys.empty or 'API12' not in directional_surveys.columns:
+            return
+            
         API12_list = list(directional_surveys.API12.unique())
         count = 0
         for api12 in API12_list:
@@ -448,8 +462,8 @@ class WellAPI12():
             survey_for_db = survey_for_db.round(decimals=1)
             try:
                 api10_value = self.get_API10_from_well_API(api12)
-                label = self.output_data_well_df[self.output_data_well_df.API10 == api10_value]['Well Name'].values[
-                    0] + '-' + self.output_data_well_df[self.output_data_well_df.API10 ==
+                label = self.output_data_api12_df[self.output_data_api12_df.API10 == api10_value]['Well Name'].values[
+                    0] + '-' + self.output_data_api12_df[self.output_data_api12_df.API10 ==
                                                         api10_value]['Sidetrack and Bypass'].values[0]
                 label = label.strip()
             except:
@@ -632,9 +646,9 @@ class WellAPI12():
                     x, y, z = survey_xyz['x_coor'], survey_xyz['y_coor'], survey_xyz['z_coor']
                     try:
                         api10_value = self.get_API10_from_well_API(api12)
-                        label = self.output_data_well_df[self.output_data_well_df.API10 == api10_value][
-                            'Well Name'].values[0] + '-' + self.output_data_well_df[
-                                self.output_data_well_df.API10 == api10_value]['Sidetrack and Bypass'].values[0]
+                        label = self.output_data_api12_df[self.output_data_api12_df.API10 == api10_value][
+                            'Well Name'].values[0] + '-' + self.output_data_api12_df[
+                                self.output_data_api12_df.API10 == api10_value]['Sidetrack and Bypass'].values[0]
                         label = label.strip()
                     except:
                         label = str(api12)
