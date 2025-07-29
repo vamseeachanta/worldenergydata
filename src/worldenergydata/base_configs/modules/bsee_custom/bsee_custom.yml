@@ -14,6 +14,7 @@ filepath:
     prop : data/modules/bsee/bin/war/mv_war_main_prop.bin
     remarks: data/modules/bsee/bin/war/mv_war_main_prop_remark.bin
     boreholes: data/modules/bsee/bin/war/mv_war_boreholes_view.bin
+  leases: tests/modules/bsee/analysis/example_leases.csv
 
 
 default:
