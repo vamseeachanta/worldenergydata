@@ -93,6 +93,20 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 8.5 Save dataframe as CSV in results folder
   - [x] 8.6 Verify data accuracy and completeness
 
+- [ ] 9. SME Manual Verification and Review #TODO
+  - [ ] 9.1 Review Excel data extraction methodology and accuracy
+  - [ ] 9.2 Validate production data alignment with field knowledge
+  - [ ] 9.3 Verify oil price sources and historical accuracy
+  - [ ] 9.4 Review CAPEX allocation schedule ($2.6B over 60 months)
+  - [ ] 9.5 Validate OPEX calculation ($15/BBL operational costs)
+  - [ ] 9.6 Check NPV calculation methodology and discount rate (10%)
+  - [ ] 9.7 Verify well count progression (20→28 wells) matches field development
+  - [ ] 9.8 Review monthly economics DataFrame for field-specific accuracy
+  - [ ] 9.9 Validate cumulative cash flow and NPV calculations
+  - [ ] 9.10 Cross-check results against known Jack St. Malo field benchmarks
+  - [ ] 9.11 Provide recommendations for data source improvements
+  - [ ] 9.12 Sign off on program accuracy for production use
+
 ## Key Findings Summary
 
 1. **Excel Data Characteristics:**
