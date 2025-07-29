@@ -1,0 +1,5 @@
+Scenario,Total_Revenue_USD,Revenue_Multiple,NPV_Impact
+Excel Daily Data (55 days),"$106,010,674",1.0x (baseline),Baseline NPV
+If Treated as Monthly (55 months),"$3,226,964,904",30.4x,Higher NPV
+Daily Scaled to 5 Years,"$3,517,626,896",33.2x,Much higher NPV
+Monthly for 5 Years,"$3,226,964,904",30.4x,Highest NPV

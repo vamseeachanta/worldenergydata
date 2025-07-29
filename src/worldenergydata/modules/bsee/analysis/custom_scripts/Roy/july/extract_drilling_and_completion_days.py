@@ -12,12 +12,8 @@ class ExtractDrillingAndCompletionDays:
 
     def router(self, cfg):
         # Load lease list
-        leases = cfg['data']['groups'][0]['lease']['numbers']
-        # convert leases to list if it's a single string
-        if isinstance(leases, str):
-            leases = [leases]
-        elif not isinstance(leases, list):
-            raise ValueError("Leases should be a list or a string that can be converted to a list.")
+        leases_path = cfg['filepath']['leases']
+        leases = pd.read_csv(leases_path, header=None, encoding="ISO-8859-1", dtype=str)[0].dropna().str.upper().tolist()
 
         # Load all required files
         war_main_file = cfg['filepath']['war_files']['main']
@@ -94,8 +90,7 @@ class ExtractDrillingAndCompletionDays:
         final = final[['API_WELL_NUMBER', 'WELL_NAME', 'WELL_SPUD_DATE', 'TOTAL_DEPTH_DATE', 'DRILLING_DAYS', 'COMPLETION_DAYS']]
         final = final.sort_values(by='API_WELL_NUMBER')
         result_folder = cfg['Analysis']['result_folder']
-        label = cfg['meta']['label']
-        file_name = f"drilling_and_completion_days_by_api_{label}.xlsx"
+        file_name = "drilling_and_completion_days_by_api.xlsx"
         final.to_excel(os.path.join(result_folder, file_name), index=False)
 
         logger.info("Finished getting drilling and completion days for wells.")        
@@ -154,11 +149,42 @@ class ExtractDrillingAndCompletionDays:
         dates = []
         for tok in tokens:
             try:
-                parsed = pd.to_datetime(tok, errors='raise', dayfirst=False)
+                # Handle 2-digit years by converting them to reasonable 4-digit years
+                parts = tok.split('/')
+                if len(parts) == 3 and len(parts[2]) <= 3:  # 2 or 3-digit year
+                    year = int(parts[2])
+                    if len(parts[2]) == 1:  # single digit year like '9'
+                        parts[2] = str(2000 + year)
+                    elif len(parts[2]) == 2:  # 2-digit year
+                        if year <= 30:  # 00-30 -> 2000-2030
+                            parts[2] = str(2000 + year)
+                        else:  # 31-99 -> 1931-1999
+                            parts[2] = str(1900 + year)
+                    elif len(parts[2]) == 3:  # 3-digit year like '109'
+                        if year <= 130:  # assume it's 20XX or 19XX
+                            if year <= 30:
+                                parts[2] = str(2000 + year)
+                            else:
+                                parts[2] = str(1900 + year)
+                        else:  # keep as is if it looks reasonable
+                            parts[2] = str(year)
+                    tok = '/'.join(parts)
+                
+                # Use errors='coerce' instead of 'raise' to avoid crashes
+                parsed = pd.to_datetime(tok, errors='coerce', dayfirst=False)
+                
+                # Skip if parsing failed
+                if pd.isna(parsed):
+                    continue
+                    
+                # Handle year adjustments
                 if parsed.year > 2099:
                     parsed = parsed.replace(year=parsed.year - 100)
+                elif parsed.year < 1900:  # Handle very old years
+                    continue  # Skip dates that are too old
+                    
                 dates.append(parsed)
-            except:
+            except Exception:
                 continue
         return (min(dates), max(dates)) if dates else (pd.NaT, pd.NaT)
 

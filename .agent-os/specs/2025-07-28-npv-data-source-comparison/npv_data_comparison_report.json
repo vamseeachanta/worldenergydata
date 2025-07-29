@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-07-28T21:35:56.860681",
+  "source": "Excel benchmark",
+  "production_analysis": {
+    "count": 55,
+    "total": 1866597.1292183755,
+    "average": 33938.12962215228,
+    "std_dev": 8661.50245109515,
+    "min": 9897.13,
+    "max": 50031.357142857145,
+    "range": 40134.22714285715,
+    "coefficient_of_variation": 0.2552144902364203
+  },
+  "price_analysis": {
+    "count": 55,
+    "average": 56.60254545454545,
+    "std_dev": 11.71265395252375,
+    "min": 30.7,
+    "max": 81.03,
+    "range": 50.33,
+    "volatility": 0.2069280428727286
+  },
+  "revenue_potential": {
+    "total_revenue": 106010673.59184945,
+    "average_revenue_per_period": 1927466.7925790811
+  }
+}
