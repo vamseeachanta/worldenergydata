@@ -41,3 +41,17 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 5.3 Test complete end-to-end directional surveys workflow
   - [x] 5.4 Validate output data structures match expected format
   - [x] 5.5 Verify all integration tests pass successfully
+
+- [ ] 6. SME Manual Verification and Review #TODO
+  - [ ] 6.1 Review directional survey data processing methodology and accuracy
+  - [ ] 6.2 Validate XYZ coordinate calculation algorithms against industry standards
+  - [ ] 6.3 Verify wellhead position adjustment calculations (SURF_x_rel, SURF_y_rel)
+  - [ ] 6.4 Check coordinate transformation accuracy for API12 well 608124000400
+  - [ ] 6.5 Review survey data edge case handling (duplicates, zeros, invalid measurements)
+  - [ ] 6.6 Validate 3D visualization accuracy and proper well path representation
+  - [ ] 6.7 Cross-check results against known BSEE directional survey benchmarks
+  - [ ] 6.8 Verify mathematical calculations match petroleum engineering standards
+  - [ ] 6.9 Review data structure integrity and proper DataFrame handling
+  - [ ] 6.10 Validate integration with production API12 data processing workflow  
+  - [ ] 6.11 Provide recommendations for directional survey processing improvements
+  - [ ] 6.12 Sign off on directional surveys module accuracy for production use
