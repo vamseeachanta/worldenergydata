@@ -22,15 +22,15 @@ drilling_n_completion_days:
   flag: true
 Analysis:
   basename: bsee_custom
-  analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis
+  analysis_root_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis
   file_name: drilling_n_completion_days
   file_name_for_overwrite: drilling_n_completion_days
-  log_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\logs
-  start_time: 2025-07-29 10:40:55.691213
+  log_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\logs
+  start_time: 2025-07-29 19:39:54.498897
   cfg_array_file_names: ~
   DefaultInputFile: ~
-  CustomInputFile: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\drilling_n_completion_days.yml
-  result_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results
-  result_data_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data
-  result_plot_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Plot
-  fe_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results
+  CustomInputFile: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\drilling_n_completion_days.yml
+  result_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results
+  result_data_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data
+  result_plot_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Plot
+  fe_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results
