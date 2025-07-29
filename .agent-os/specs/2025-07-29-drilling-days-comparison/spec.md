@@ -20,7 +20,7 @@ I need to create a spec for a drilling days test comparison between two methods 
 
 ## Overview
 
-Implement a comprehensive comparison test framework that validates and compares drilling days analysis outputs from two different BSEE data processing methods. This feature will enable quality assurance, method validation, and help identify discrepancies between lease-based and API12-based drilling days calculations.
+Implement a comprehensive comparison test framework that validates and compares drilling days and completion days analysis outputs from two different BSEE data processing methods. This feature will enable quality assurance, method validation, and help identify discrepancies between lease-based and API12-based drilling and completion days calculations, providing detailed statistical analysis of time variance between both approaches.
 
 ## User Stories
 
@@ -51,8 +51,9 @@ As a **Data Quality Engineer**, I want to automate the comparison of different d
 1. **Comparison Test Framework** - Create a comprehensive test that executes both drilling days methods and compares their outputs
 2. **Data Loading and Processing** - Implement robust data loading from both method outputs with appropriate error handling
 3. **Comparison Analysis Engine** - Develop comparison logic to identify differences in API12, drilling days, and completion days
-4. **Markdown Report Generation** - Create formatted markdown tables showing side-by-side comparison of results
-5. **Discrepancy Detection** - Implement logic to flag significant differences and potential data quality issues
+4. **Drilling and Completion Days Comparison** - Implement detailed comparison of drilling and completion days between both methods with statistical analysis
+5. **Markdown Report Generation** - Create formatted markdown tables showing side-by-side comparison of results with drilling/completion days variance analysis
+6. **Discrepancy Detection** - Implement logic to flag significant differences and potential data quality issues in drilling and completion days calculations
 
 ## Out of Scope
 
@@ -65,8 +66,12 @@ As a **Data Quality Engineer**, I want to automate the comparison of different d
 ## Expected Deliverable
 
 1. **Functional Comparison Test** - A pytest-based test that successfully executes both methods and generates comparison output
-2. **Comprehensive Comparison Report** - Markdown-formatted comparison table showing all wells with drilling days and completion days from both methods
-3. **Data Quality Validation** - Automated identification and reporting of discrepancies between the two methods for the same wells
+2. **Comprehensive Drilling and Completion Days Comparison Report** - Markdown-formatted comparison table showing all wells with detailed drilling days and completion days analysis from both methods, including:
+   - Side-by-side drilling days comparison (lease_num vs api12_num methods)
+   - Side-by-side completion days comparison between both approaches
+   - Statistical variance analysis of drilling and completion days differences
+   - Well-by-well discrepancy identification for both drilling and completion phases
+3. **Data Quality Validation** - Automated identification and reporting of discrepancies between the two methods for drilling and completion days calculations
 
 ## Spec Documentation
 
