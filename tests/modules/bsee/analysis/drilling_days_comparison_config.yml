@@ -1,0 +1,128 @@
+# Drilling Days Comparison Test Configuration
+# This configuration file defines parameters for comparing drilling days
+# calculation methods between lease_num and api12_num approaches.
+
+# Test Configuration
+test_config:
+  name: "Drilling Days Comparison Test"
+  version: "1.0.0"
+  description: "Comprehensive comparison between lease_num and api12_num drilling days methods"
+  
+# Method 1 Configuration (lease_num approach)
+method1:
+  name: "Lease Number Method"
+  config_file: "drilling_n_completion_days.yml"
+  test_file: "drilling_n_completion_days_test.py"
+  implementation_path: "src/worldenergydata/modules/bsee/analysis/custom_scripts/Roy/july/extract_drilling_and_completion_days.py"
+  expected_output_file: "results/drilling_and_completion_days_by_api.xlsx"
+  output_format: "excel"
+  key_columns:
+    api12: "API_WELL_NUMBER"
+    well_name: "WELL_NAME"
+    drilling_days: "DRILLING_DAYS"
+    completion_days: "COMPLETION_DAYS"
+    spud_date: "WELL_SPUD_DATE"
+    total_depth_date: "TOTAL_DEPTH_DATE"
+
+# Method 2 Configuration (api12_num approach)
+method2:
+  name: "API12 Number Method"
+  config_file: "query_api_01_wells_api12_rig_days_Tiber.yml"
+  test_file: "query_api_01_wells_api12_rig_days_Tiber_test.py"
+  implementation_path: "src/worldenergydata/modules/bsee/analysis/well_api12.py"
+  expected_output_file: "results/well_summ_goa_tiber.csv"
+  output_format: "csv"
+  key_columns:
+    api12: "API12"
+    well_name: "WELL_NAME"
+    drilling_days: "Drilling Days"
+    completion_days: "Completion Days"
+
+# Comparison Parameters
+comparison:
+  # Columns to compare between methods
+  comparison_columns:
+    - api12
+    - well_name
+    - drilling_days
+    - completion_days
+  
+  # Join key for matching records between methods
+  join_key: "api12"
+  
+  # Thresholds for flagging discrepancies
+  thresholds:
+    drilling_days:
+      absolute_difference: 5    # Days
+      percentage_difference: 10 # Percent
+    completion_days:
+      absolute_difference: 5    # Days
+      percentage_difference: 10 # Percent
+  
+  # Status flags for comparison results
+  status_flags:
+    ok: "OK"           # Values match within thresholds
+    review: "REVIEW"   # Values differ but within review range
+    error: "ERROR"     # Significant differences requiring investigation
+  
+  # Output configuration
+  output:
+    markdown_table: true
+    csv_export: true
+    excel_export: false
+    summary_report: true
+
+# Test Data Configuration
+test_data:
+  # Primary test case - Tiber field
+  tiber_field:
+    api12_example: "608084001500"
+    field_name: "Tiber"
+    expected_wells: 1
+    
+  # Validation thresholds
+  validation:
+    min_records_method1: 1
+    min_records_method2: 1
+    max_records_difference_percent: 50
+
+# File Paths Configuration
+paths:
+  test_directory: "tests/modules/bsee/analysis"
+  results_directory: "tests/modules/bsee/analysis/results"
+  output_directory: "tests/modules/bsee/analysis/output"
+  logs_directory: "tests/modules/bsee/analysis/logs"
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  log_file: "logs/drilling_days_comparison.log"
+  console_output: true
+  detailed_comparison: true
+
+# Error Handling Configuration
+error_handling:
+  skip_on_missing_config: true
+  skip_on_missing_output: false
+  continue_on_method_failure: false
+  max_retries: 2
+
+# Report Generation Configuration
+reports:
+  markdown:
+    filename: "drilling_days_comparison_report.md"
+    include_summary: true
+    include_detailed_table: true
+    include_discrepancies: true
+    table_format:
+      alignment: "center"
+      column_width: 15
+      
+  csv:
+    filename: "drilling_days_comparison_data.csv"
+    include_metadata: true
+    
+  summary:
+    filename: "drilling_days_comparison_summary.json"
+    include_statistics: true
+    include_file_paths: true
