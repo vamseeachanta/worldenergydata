@@ -88,23 +88,23 @@ data:
     - api12:
       - 608084001500
       label: '608084001500'
-      file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608084001500.csv
+      file_name: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608084001500.csv
 analysis:
   flag: true
 Analysis:
   basename: bsee
-  analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis
+  analysis_root_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis
   file_name: query_api_01_wells_api12_rig_days_Tiber_goa_tiber
   file_name_for_overwrite: query_api_01_wells_api12_rig_days_Tiber_goa_tiber
-  log_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\logs
-  start_time: 2025-07-29 18:50:07.701190
+  log_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\logs
+  start_time: 2025-07-29 19:41:48.741341
   cfg_array_file_names: ~
   DefaultInputFile: ~
-  CustomInputFile: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\query_api_01_wells_api12_rig_days_Tiber.yml
-  result_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results
-  result_data_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data
-  result_plot_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Plot
-  fe_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results
+  CustomInputFile: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\query_api_01_wells_api12_rig_days_Tiber.yml
+  result_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results
+  result_data_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data
+  result_plot_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Plot
+  fe_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results
 bsee:
   data:
     production_data: false
@@ -117,7 +117,7 @@ bsee:
       - api12:
         - 608084001500
         label: '608084001500'
-        file_name: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608084001500.csv
+        file_name: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data\608084001500.csv
     type: csv
   analysis:
     flag: true
