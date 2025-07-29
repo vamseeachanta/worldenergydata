@@ -1,7 +1,8 @@
 import pytest
 import pandas as pd
 import numpy as np
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
+
 import os
 import sys
 
