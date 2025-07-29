@@ -53,6 +53,19 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [ ] 6.5 Update NPV accuracy spec (2025-07-25) with findings
   - [ ] 6.6 Verify NPV variance reduced to <20% target
 
+- [x] 7. Create Comparison Table for Field Analysis Methods
+  - [x] 7.1 Write tests for comparison table generation
+  - [x] 7.2 Extract field data for both Excel and WorldEnergyData methods
+  - [x] 7.3 Calculate required parameters for comparison table
+  - [x] 7.4 Generate markdown comparison table with the following parameters:
+    - Number of months of production
+    - Production Start Month
+    - Production End Month
+    - Total production in BBL
+    - Average oil price in USD
+    - Total revenue in USD
+  - [x] 7.5 Verify comparison accuracy and save results
+
 ## Key Findings Summary
 
 1. **Excel Data Characteristics:**
