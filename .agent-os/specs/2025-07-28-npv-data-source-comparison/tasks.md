@@ -64,7 +64,34 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
     - Total production in BBL
     - Average oil price in USD
     - Total revenue in USD
+    - Number of Wells - total
+    - Number of Wells - producing
+    - Total average daily Production by month
   - [x] 7.5 Verify comparison accuracy and save results
+
+- [x] 8. Generate Monthly Field Economics DataFrame
+  - [x] 8.1 Write tests for monthly dataframe generation
+  - [x] 8.2 Create monthly production and economic data extraction
+  - [x] 8.3 Calculate monthly economic metrics (CAPEX, OPEX, Oil sales, Revenue, NPV)
+  - [x] 8.4 Generate dataframe with following columns by month:
+    - Month-Year (production period)
+    - Monthly production in BBL
+    - Oil price in USD
+    - CAPEX (monthly allocation)
+    - OPEX (monthly calculation)  
+    - Oil sales (monthly revenue)
+    - Net revenue (after OPEX)
+    - Cumulative revenue
+    - Cumulative OPEX
+    - Cumulative CAPEX
+    - Cumulative cash flow
+    - Cumulative cash flow after OPEX
+    - Cumulative NPV
+    - Wells total (monthly count)
+    - Wells producing (monthly count)
+    - Daily production rate (BBL/day for that month)
+  - [x] 8.5 Save dataframe as CSV in results folder
+  - [x] 8.6 Verify data accuracy and completeness
 
 ## Key Findings Summary
 
