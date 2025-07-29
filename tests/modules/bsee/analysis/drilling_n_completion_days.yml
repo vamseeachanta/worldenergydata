@@ -1,17 +1,9 @@
 meta:
   library: worldenergydata
   basename: bsee_custom
-  label: goa_tiber
+  label: NULL
 
 basename: bsee_custom
-
-data:
-  groups: 
-    - 
-      lease:
-        numbers: [G25782]
-        area: KC
-
 
 drilling_n_completion_days: 
   flag: True
