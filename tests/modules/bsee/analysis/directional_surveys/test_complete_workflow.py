@@ -16,8 +16,6 @@ import pandas as pd
 import numpy as np
 import os
 import sys
-import tempfile
-import shutil
 from unittest.mock import Mock, patch
 
 # Add src to path to import the module
@@ -33,8 +31,10 @@ class TestDirectionalSurveysWorkflow:
         """Setup test fixtures"""
         self.well_api12 = WellAPI12()
         
-        # Create temporary directory for test outputs
-        self.temp_dir = tempfile.mkdtemp()
+        # Use specific directory for test outputs
+        self.temp_dir = os.path.join(os.path.dirname(__file__), '..', 'results', 'Plot')
+        # Ensure the directory exists
+        os.makedirs(self.temp_dir, exist_ok=True)
         
         # Mock configuration
         self.mock_cfg = {
@@ -84,8 +84,9 @@ class TestDirectionalSurveysWorkflow:
 
     def teardown_method(self):
         """Clean up after tests"""
-        if os.path.exists(self.temp_dir):
-            shutil.rmtree(self.temp_dir)
+        # Note: self.temp_dir now points to a persistent results directory
+        # We don't remove it but could clean up specific test files if needed
+        pass
 
     def test_complete_directional_surveys_workflow(self):
         """Test the complete directional surveys workflow end-to-end"""
@@ -110,7 +111,7 @@ class TestDirectionalSurveysWorkflow:
         assert 'z_coor' in well_path_data.columns, "z_coor column missing"
         
         print(f"   ✓ Well path generated: {len(well_path_data)} survey points")
-        print(f"   ✓ XYZ coordinates calculated successfully")
+        print("   ✓ XYZ coordinates calculated successfully")
         
         # Verify coordinate ranges are realistic
         x_range = well_path_data['x_coor'].max() - well_path_data['x_coor'].min()
@@ -199,7 +200,7 @@ class TestDirectionalSurveysWorkflow:
         
         # Test with mocked matplotlib to avoid file creation issues
         with patch('matplotlib.pyplot.figure') as mock_figure, \
-             patch('matplotlib.pyplot.close') as mock_close:
+             patch('matplotlib.pyplot.close'):
             
             mock_fig = Mock()
             mock_ax = Mock()
