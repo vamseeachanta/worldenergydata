@@ -107,6 +107,31 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [ ] 9.11 Provide recommendations for data source improvements
   - [ ] 9.12 Sign off on program accuracy for production use
 
+- [ ] 10. Prepare Excel-based CSV for Task 8 DataFrame Comparison
+  - [ ] 10.1 Extract all calculation data from NPV_JStM-WELL-Production-Data-thru-2019.xlsx
+  - [ ] 10.2 Identify Excel rows containing monthly economic calculations
+  - [ ] 10.3 Map Excel columns to Task 8 DataFrame structure:
+    - Month-Year periods from Excel timeline
+    - Monthly production from JSM Total AVGMoly (Row 22)
+    - Oil prices from BRENT data (Row 4)
+    - CAPEX allocation from Excel investment schedule
+    - OPEX calculations from Excel operational costs
+    - Revenue calculations from Excel oil sales
+    - NPV calculations from Excel financial model
+  - [ ] 10.4 Process Excel formulas and convert to monthly data points
+  - [ ] 10.5 Generate CSV with identical column structure to Task 8 DataFrame:
+    - Month-Year, Monthly_production_BBL, Oil_price_USD
+    - CAPEX_monthly, OPEX_monthly, Oil_sales
+    - Net_revenue_after_OPEX, Cumulative_revenue
+    - Cumulative_OPEX, Cumulative_CAPEX, Cumulative_cash_flow
+    - Cumulative_cash_flow_after_OPEX, Cumulative_NPV
+    - Wells_total, Wells_producing, Daily_production_rate_BBL_per_day
+  - [ ] 10.6 Save Excel-derived CSV in results folder as comparison baseline
+  - [ ] 10.7 Create side-by-side comparison analysis between Excel CSV and Task 8 DataFrame
+  - [ ] 10.8 Generate variance report highlighting differences between data sources
+  - [ ] 10.9 Validate that both datasets cover same time periods and metrics
+  - [ ] 10.10 Document methodology differences between Excel and programmatic calculations
+
 ## Key Findings Summary
 
 1. **Excel Data Characteristics:**
