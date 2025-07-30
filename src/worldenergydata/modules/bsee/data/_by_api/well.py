@@ -41,7 +41,7 @@ class WellData:
         #TODO assess the need for this data
         cfg = self.fetch_well_data(cfg)
         well_data_groups = []
-        for group in cfg[cfg['basename']]['data']['groups']:
+        for group in cfg[cfg['basename']]['data']['groups'] if 'groups' in cfg[cfg['basename']]['data'] else []:
             if 'api12' not in group:
                 logger.error(f"API12 not found in group: {group}")
             api12_array = group['api12']
@@ -153,7 +153,7 @@ class WellData:
         return cfg
     
     def fetch_well_data_from_local_files(self, cfg):
-        groups = cfg[cfg['basename']]['data']['groups']
+        groups = cfg[cfg['basename']]['data']['groups'] if 'groups' in cfg[cfg['basename']]['data'] else []
         api_data = APIData()
 
         for group_idx in range(0, len(groups)):
