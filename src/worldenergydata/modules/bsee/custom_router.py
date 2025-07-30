@@ -3,12 +3,14 @@
 
 # from worldenergydata.modules.bsee.analysis.custom_scripts.Roy.extract_api_details_to_excel_with_format import ExtractAPIDetails
 # from worldenergydata.modules.bsee.analysis.custom_scripts.Roy.extract_api_remark_from_snwar import APIRemarksFromSNWAR
+from worldenergydata.modules.bsee.analysis.custom_scripts.Roy.july.drilling_and_completion_days import DrillingCompletionDays
 
 # build_report = BuildLeaseReportFinal()
 # extract_remarks = ExtractRemarksbyAPI()
 
 # api_details = ExtractAPIDetails()
 # extract_remarks_snwar = APIRemarksFromSNWAR()
+drilling_analysis = DrillingCompletionDays()
 
 class CustomRouter:
 
@@ -17,7 +19,10 @@ class CustomRouter:
 
     def router(self, cfg):
         
-        if 'custom_analysis' in cfg and cfg['custom_analysis']['flag']:
+        if 'drilling_n_completion_days' in cfg and cfg['drilling_n_completion_days']['flag']:
+            drilling_analysis.router(cfg)
+            
+        elif 'custom_analysis' in cfg and cfg['custom_analysis']['flag']:
             # build_report.router(cfg)
             # extract_remarks.router(cfg)
             pass
