@@ -4,15 +4,11 @@
 # from worldenergydata.modules.bsee.analysis.custom_scripts.Roy.extract_api_details_to_excel_with_format import ExtractAPIDetails
 # from worldenergydata.modules.bsee.analysis.custom_scripts.Roy.extract_api_remark_from_snwar import APIRemarksFromSNWAR
 
-from worldenergydata.modules.bsee.analysis.custom_scripts.Roy.july.extract_drilling_and_completion_days import ExtractDrillingAndCompletionDays
-
 # build_report = BuildLeaseReportFinal()
 # extract_remarks = ExtractRemarksbyAPI()
 
 # api_details = ExtractAPIDetails()
 # extract_remarks_snwar = APIRemarksFromSNWAR()
-
-extract_drilling_and_completion_days = ExtractDrillingAndCompletionDays()
 
 class CustomRouter:
 
@@ -30,7 +26,5 @@ class CustomRouter:
             # api_details.router(cfg)
             # extract_remarks_snwar.router(cfg)
             pass
-        elif 'drilling_n_completion_days' in cfg and cfg['drilling_n_completion_days']['flag']:
-            extract_drilling_and_completion_days.router(cfg)
 
         return cfg

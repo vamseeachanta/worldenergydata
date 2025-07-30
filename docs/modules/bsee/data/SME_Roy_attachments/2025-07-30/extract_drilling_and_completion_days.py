@@ -179,5 +179,5 @@ final = final[['LEASE_NAME', 'SURF_LEASE_NUM', 'WATER_DEPTH', 'API_WELL_NUMBER',
 final = final.dropna(subset=['WELL_SPUD_DATE', 'TOTAL_DEPTH_DATE'])
 final['SPUD_DATE_SORT'] = pd.to_datetime(final['WELL_SPUD_DATE'], errors='coerce')
 final = final.sort_values(by=['LEASE_NAME', 'SPUD_DATE_SORT']).drop(columns=['SPUD_DATE_SORT'])
-final.to_excel("drilling_and_completion_days_by_api_latest.xlsx", index=False)
+final.to_excel("drilling_and_completion_days_by_api.xlsx", index=False)
 print("✅ drilling_and_completion_days_by_api.xlsx written.")
