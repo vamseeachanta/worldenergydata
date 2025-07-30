@@ -1,241 +1,183 @@
-import os
-import sys
+# Filename: extract_drilling_and_completion_days.py (enhanced with depth and mud weight)
 
 import pandas as pd
 import re
-from loguru import logger
+from datetime import datetime
 
-class ExtractDrillingAndCompletionDays:
+# Load lease list: Column A = LEASE_NAME, B = LEASE_NUM, C = WATER_DEPTH
+lease_df = pd.read_csv("leases.csv", header=None, encoding="utf-8-sig", dtype=str)
+lease_df.columns = ['LEASE_NUM', 'LEASE_NAME', 'WATER_DEPTH']
+lease_df['LEASE_NUM'] = lease_df['LEASE_NUM'].str.upper().str.strip()
+lease_df = lease_df.dropna(subset=['LEASE_NUM'])
+leases = lease_df['LEASE_NUM'].str.replace('^G', '', regex=True).tolist()
+print("🔍 Lease Numbers from leases.csv (stripped of 'G'):", leases)
 
-    def __init__(self):
-        self.GAP_THRESHOLD = 300
+# Build lease lookup dictionary
+lease_info = (
+    lease_df.drop_duplicates(subset=['LEASE_NUM'])
+    .assign(LEASE_NUM=lambda df: df['LEASE_NUM'].str.upper().str.replace('^G', '', regex=True).str.strip())
+    .set_index('LEASE_NUM')[['LEASE_NAME', 'WATER_DEPTH']]
+    .to_dict(orient='index')
+)
 
-    def router(self, cfg):
-        # Load lease list
-        leases_path = cfg['filepath']['leases']
-        leases = pd.read_csv(leases_path, header=None, encoding="ISO-8859-1", dtype=str)[0].dropna().str.upper().tolist()
+# Load WAR main
+main_war = pd.read_csv("mv_war_main.txt", encoding="ISO-8859-1", dtype=str)
+print("🔍 Sample SURF_LEASE_NUMs from WAR file:", main_war['SURF_LEASE_NUM'].dropna().unique()[:10])
+main_war['SURF_LEASE_NUM'] = main_war['SURF_LEASE_NUM'].astype(str).str.upper().str.replace('^G', '', regex=True).str.strip()
+main_war['API_WELL_NUMBER'] = main_war['API_WELL_NUMBER'].astype(str).str.zfill(10)
+main_war['SN_WAR'] = main_war['SN_WAR'].astype(str).str.strip()
+main_war['WELL_NAME'] = main_war['WELL_NAME'].fillna("")
+main_war['WAR_START_DT'] = pd.to_datetime(main_war['WAR_START_DT'], errors='coerce')
+main_war['WAR_END_DT'] = pd.to_datetime(main_war['WAR_END_DT'], errors='coerce')
 
-        # Load all required files
-        war_main_file = cfg['filepath']['war_files']['main']
-        war_prop_file = cfg['filepath']['war_files']['prop']
-        war_remarks_file = cfg['filepath']['war_files']['remarks']
-        boreholes_file = cfg['filepath']['war_files']['boreholes']
-        
-        logger.info("Started getting drilling and completion days for wells ...")
-        # Process the data
-        self.extract_drilling_completion_days(
-            cfg, leases, war_main_file, war_prop_file, war_remarks_file, boreholes_file
-        )
+# Filter by lease
+main_war_filtered = main_war[main_war['SURF_LEASE_NUM'].isin(leases)].copy()
+print(f"✅ Filtered WAR records: {len(main_war_filtered)} out of {len(main_war)}")
 
-    def extract_drilling_completion_days(self, cfg, leases, war_main_file, war_prop_file, war_remarks_file, boreholes_file):
-        # Load WAR main
-        main_war = pd.read_pickle(war_main_file)
-        main_war['SURF_LEASE_NUM'] = main_war['SURF_LEASE_NUM'].astype(str).str.upper().str.strip()
-        main_war['API_WELL_NUMBER'] = main_war['API_WELL_NUMBER'].astype(str).str.zfill(10)
-        main_war['SN_WAR'] = main_war['SN_WAR'].astype(str).str.strip()
-        main_war['WELL_NAME'] = main_war['WELL_NAME'].fillna("")
-        main_war['WAR_START_DT'] = pd.to_datetime(main_war['WAR_START_DT'], errors='coerce')
-        main_war['WAR_END_DT'] = pd.to_datetime(main_war['WAR_END_DT'], errors='coerce')
+# Load boreholes
+boreholes = pd.read_csv("mv_war_boreholes_view.txt", encoding="ISO-8859-1", dtype=str)
+boreholes['API_WELL_NUMBER'] = boreholes['API_WELL_NUMBER'].astype(str).str.zfill(10)
+boreholes['WELL_SPUD_DATE'] = pd.to_datetime(boreholes['WELL_SPUD_DATE'], errors='coerce')
+boreholes['TOTAL_DEPTH_DATE'] = pd.to_datetime(boreholes['TOTAL_DEPTH_DATE'], errors='coerce')
+boreholes['BH_TOTAL_MD'] = pd.to_numeric(boreholes['BH_TOTAL_MD'], errors='coerce')
+boreholes['WELL_BORE_TVD'] = pd.to_numeric(boreholes['WELL_BORE_TVD'], errors='coerce')
 
-        # Filter by lease
-        main_war_filtered = main_war[main_war['SURF_LEASE_NUM'].isin(leases)].copy()
+# Extract TD from boreholes
+td_from_boreholes = (
+    boreholes.dropna(subset=['TOTAL_DEPTH_DATE'])
+    .groupby('API_WELL_NUMBER')['TOTAL_DEPTH_DATE']
+    .max()
+    .reset_index()
+)
 
-        # Load boreholes
-        boreholes = pd.read_pickle(boreholes_file)
-        boreholes['API_WELL_NUMBER'] = boreholes['API_WELL_NUMBER'].astype(str).str.zfill(10)
-        boreholes['WELL_SPUD_DATE'] = pd.to_datetime(boreholes['WELL_SPUD_DATE'], errors='coerce')
-        boreholes['TOTAL_DEPTH_DATE'] = pd.to_datetime(boreholes['TOTAL_DEPTH_DATE'], errors='coerce')
+# Add depth info
+depth_summary = boreholes.groupby('API_WELL_NUMBER')[['BH_TOTAL_MD', 'WELL_BORE_TVD']].max().reset_index()
+depth_summary.columns = ['API_WELL_NUMBER', 'MAX_BH_TOTAL_MD', 'MAX_WELL_BORE_TVD']
 
-        # Extract TD from boreholes
-        td_from_boreholes = (
-            boreholes.dropna(subset=['TOTAL_DEPTH_DATE'])
-            .groupby('API_WELL_NUMBER')['TOTAL_DEPTH_DATE']
-            .max()
-            .reset_index()
-        )
+# Add mud weight from mv_war_main_prop.txt (merge via SN_WAR -> API_WELL_NUMBER)
+main_prop = pd.read_csv("mv_war_main_prop.txt", encoding="ISO-8859-1", dtype=str)
+main_prop['SN_WAR'] = main_prop['SN_WAR'].astype(str).str.strip()
+main_prop['DRILL_FLUID_WGT'] = pd.to_numeric(main_prop['DRILL_FLUID_WGT'], errors='coerce')
 
-        # Apply spud adjustment logic
-        war_spuds = main_war_filtered.groupby('API_WELL_NUMBER')['WAR_START_DT'].min().reset_index()
-        spud_td = war_spuds.merge(td_from_boreholes, on='API_WELL_NUMBER', how='left')
+# Merge API_WELL_NUMBER from main_war
+main_merge = main_war[['SN_WAR', 'API_WELL_NUMBER']].dropna().drop_duplicates()
+main_merge['API_WELL_NUMBER'] = main_merge['API_WELL_NUMBER'].astype(str).str.zfill(10)
+main_prop = main_prop.merge(main_merge, on='SN_WAR', how='left')
 
-        adjusted_spuds = []
-        for _, row in spud_td.iterrows():
-            api, td = row['API_WELL_NUMBER'], row['TOTAL_DEPTH_DATE']
-            spud, early_days = self.adjust_spud(cfg, api, td, main_war_filtered, war_remarks_file)
-            adjusted_spuds.append((api, spud, td, early_days))
+# Group to get max mud weight per API
+mud_summary = (
+    main_prop.dropna(subset=['DRILL_FLUID_WGT'])
+    .groupby('API_WELL_NUMBER')['DRILL_FLUID_WGT']
+    .max()
+    .reset_index()
+    .rename(columns={'DRILL_FLUID_WGT': 'MAX_DRILL_FLUID_WGT'})
+)
 
-        spud_td = pd.DataFrame(adjusted_spuds, columns=['API_WELL_NUMBER', 'WELL_SPUD_DATE', 'TOTAL_DEPTH_DATE', 'EARLY_DAYS'])
-        spud_td['DRILLING_DAYS'] = (spud_td['TOTAL_DEPTH_DATE'] - spud_td['WELL_SPUD_DATE']).dt.days + spud_td['EARLY_DAYS']
+# Build drilling timeline
+GAP_THRESHOLD = 300
 
-        # WELL_NAME lookup
-        well_name_lookup = (
-            main_war_filtered[['API_WELL_NUMBER', 'WELL_NAME']]
-            .dropna().drop_duplicates(subset=['API_WELL_NUMBER'])
-            .set_index('API_WELL_NUMBER')['WELL_NAME'].to_dict()
-        )
+def adjust_spud(api, td):
+    war_dates = main_war_filtered[main_war_filtered['API_WELL_NUMBER'] == api][['WAR_START_DT', 'WAR_END_DT']].dropna()
+    war_dates = war_dates[war_dates['WAR_START_DT'] <= td]
+    if war_dates.empty or pd.isna(td):
+        return td, 0
 
-        # Process completion data
-        completion_summary = self.process_completion_data(
-            main_war_filtered, spud_td, war_remarks_file
-        )
+    war_dates = war_dates.sort_values(by='WAR_START_DT').reset_index(drop=True)
+    war_dates['GAP'] = war_dates['WAR_START_DT'].diff().dt.days
 
-        # Final merge and export
-        final = spud_td.merge(completion_summary, on='API_WELL_NUMBER', how='left')
-        final['COMPLETION_DAYS'] = final['COMPLETION_DAYS'].fillna(0).astype(int)
-        final['WELL_NAME'] = final['API_WELL_NUMBER'].map(well_name_lookup)
-
-        # Format and export
-        final['WELL_SPUD_DATE'] = pd.to_datetime(final['WELL_SPUD_DATE']).dt.strftime('%m/%d/%Y')
-        final['TOTAL_DEPTH_DATE'] = pd.to_datetime(final['TOTAL_DEPTH_DATE']).dt.strftime('%m/%d/%Y')
-        final = final[['API_WELL_NUMBER', 'WELL_NAME', 'WELL_SPUD_DATE', 'TOTAL_DEPTH_DATE', 'DRILLING_DAYS', 'COMPLETION_DAYS']]
-        final = final.sort_values(by='API_WELL_NUMBER')
-        result_folder = cfg['Analysis']['result_folder']
-        file_name = "drilling_and_completion_days_by_api.xlsx"
-        final.to_excel(os.path.join(result_folder, file_name), index=False)
-
-        logger.info("Finished getting drilling and completion days for wells.")        
-
-    def detect_resume_from_remarks(self, cfg, api_number, td_date):
-        war_main_file = cfg['filepath']['war_files']['main']
-        war_remarks_file = cfg['filepath']['war_files']['remarks']
-        remarks = pd.read_pickle(war_remarks_file)
-        war_index = pd.read_pickle(war_main_file)
-
-        remarks['SN_WAR'] = remarks['SN_WAR'].astype(str)
-        war_index['SN_WAR'] = war_index['SN_WAR'].astype(str)
-        war_index['API_WELL_NUMBER'] = war_index['API_WELL_NUMBER'].astype(str).str.zfill(10)
-        war_index['WAR_START_DT'] = pd.to_datetime(war_index['WAR_START_DT'], errors='coerce')
-
-        merged = remarks.merge(
-            war_index[['SN_WAR', 'API_WELL_NUMBER', 'WAR_START_DT']],
-            on='SN_WAR', how='left'
-        )
-        merged = merged.dropna(subset=['WAR_START_DT', 'TEXT_REMARK'])
-        subset = merged[(merged['API_WELL_NUMBER'] == api_number)]
-        subset = subset[subset['WAR_START_DT'] <= td_date]
-        subset = subset[subset['TEXT_REMARK'].str.contains('drill', case=False, na=False)]
-
-        if subset.empty:
-            return None
-        return subset.sort_values('WAR_START_DT').iloc[0]['WAR_START_DT']
-
-    def adjust_spud(self, cfg, api, td_date, main_war_filtered, war_remarks_file):
-        war_dates = main_war_filtered[main_war_filtered['API_WELL_NUMBER'] == api][['WAR_START_DT', 'WAR_END_DT']].dropna()
-        war_dates = war_dates[war_dates['WAR_START_DT'] <= td_date]  # Filter WARs before TD
-
-        if war_dates.empty or pd.isna(td_date):
-            resume = self.detect_resume_from_remarks(cfg, api, td_date)
-            return (resume if resume else td_date - pd.Timedelta(days=30)), 0
-
-        war_dates = war_dates.sort_values(by='WAR_START_DT').reset_index(drop=True)
-        war_dates['GAP'] = war_dates['WAR_START_DT'].diff().dt.days
-
-        if (td_date - war_dates.loc[0, 'WAR_START_DT']).days <= self.GAP_THRESHOLD:
-            return war_dates.loc[0, 'WAR_START_DT'], 0
-
-        gap_idx = war_dates.index[war_dates['GAP'] > self.GAP_THRESHOLD].tolist()
-        if gap_idx:
-            last_gap_idx = gap_idx[-1]
-            if last_gap_idx + 1 < len(war_dates):
-                spud_after_gap = war_dates.loc[last_gap_idx + 1, 'WAR_START_DT']
-                early_days = (war_dates.loc[:last_gap_idx, 'WAR_END_DT'] - war_dates.loc[:last_gap_idx, 'WAR_START_DT']).dt.days.sum()
-                return spud_after_gap, int(early_days)
-
+    if (td - war_dates.loc[0, 'WAR_START_DT']).days <= GAP_THRESHOLD:
         return war_dates.loc[0, 'WAR_START_DT'], 0
 
-    def extract_dates(self, text):
-        tokens = re.findall(r'\d{1,2}[/\-\.]\d{1,2}[/\-\.]\d{2,4}', text)
-        tokens = [tok.replace('-', '/').replace('.', '/') for tok in tokens]
-        dates = []
-        for tok in tokens:
-            try:
-                # Handle 2-digit years by converting them to reasonable 4-digit years
-                parts = tok.split('/')
-                if len(parts) == 3 and len(parts[2]) <= 3:  # 2 or 3-digit year
-                    year = int(parts[2])
-                    if len(parts[2]) == 1:  # single digit year like '9'
-                        parts[2] = str(2000 + year)
-                    elif len(parts[2]) == 2:  # 2-digit year
-                        if year <= 30:  # 00-30 -> 2000-2030
-                            parts[2] = str(2000 + year)
-                        else:  # 31-99 -> 1931-1999
-                            parts[2] = str(1900 + year)
-                    elif len(parts[2]) == 3:  # 3-digit year like '109'
-                        if year <= 130:  # assume it's 20XX or 19XX
-                            if year <= 30:
-                                parts[2] = str(2000 + year)
-                            else:
-                                parts[2] = str(1900 + year)
-                        else:  # keep as is if it looks reasonable
-                            parts[2] = str(year)
-                    tok = '/'.join(parts)
-                
-                # Use errors='coerce' instead of 'raise' to avoid crashes
-                parsed = pd.to_datetime(tok, errors='coerce', dayfirst=False)
-                
-                # Skip if parsing failed
-                if pd.isna(parsed):
-                    continue
-                    
-                # Handle year adjustments
-                if parsed.year > 2099:
-                    parsed = parsed.replace(year=parsed.year - 100)
-                elif parsed.year < 1900:  # Handle very old years
-                    continue  # Skip dates that are too old
-                    
-                dates.append(parsed)
-            except Exception:
-                continue
-        return (min(dates), max(dates)) if dates else (pd.NaT, pd.NaT)
+    gap_idx = war_dates.index[war_dates['GAP'] > GAP_THRESHOLD].tolist()
+    if gap_idx:
+        last_gap_idx = gap_idx[-1]
+        if last_gap_idx + 1 < len(war_dates):
+            spud_after_gap = war_dates.loc[last_gap_idx + 1, 'WAR_START_DT']
+            early_days = (war_dates.loc[:last_gap_idx, 'WAR_END_DT'] - war_dates.loc[:last_gap_idx, 'WAR_START_DT']).dt.days.sum()
+            return spud_after_gap, int(early_days)
 
-    def process_completion_data(self, main_war_filtered, spud_td, war_remarks_file):
-        # Load and filter remarks
-        remarks = pd.read_pickle(war_remarks_file)
-        remarks.columns = remarks.columns.str.strip()
-        remarks = remarks[['SN_WAR', 'TEXT_REMARK']]
-        remarks['SN_WAR'] = remarks['SN_WAR'].astype(str).str.strip()
-        remarks['TEXT_REMARK'] = remarks['TEXT_REMARK'].fillna("").astype(str)
+    return war_dates.loc[0, 'WAR_START_DT'], 0
 
-        sn_wars = main_war_filtered['SN_WAR'].unique()
-        remarks = remarks[remarks['SN_WAR'].isin(sn_wars)].copy()
+rows = []
+for _, row in td_from_boreholes.iterrows():
+    api = row['API_WELL_NUMBER']
+    td = row['TOTAL_DEPTH_DATE']
+    spud, early_days = adjust_spud(api, td)
+    if pd.notna(spud) and pd.notna(td) and td > spud:
+        rows.append((api, spud, td, (td - spud).days - early_days))
 
-        # Merge API + TD date
-        remarks = remarks.merge(
-            main_war_filtered[['SN_WAR', 'API_WELL_NUMBER', 'WELL_NAME']],
-            on='SN_WAR', how='left'
-        )
-        remarks = remarks.merge(
-            spud_td[['API_WELL_NUMBER', 'TOTAL_DEPTH_DATE']],
-            on='API_WELL_NUMBER', how='left'
-        )
+spud_td = pd.DataFrame(rows, columns=['API_WELL_NUMBER', 'WELL_SPUD_DATE', 'TOTAL_DEPTH_DATE', 'DRILLING_DAYS'])
 
-        # Extract dates from TEXT_REMARK
-        dates = remarks['TEXT_REMARK'].apply(self.extract_dates)
-        remarks['START_DATE'] = [d[0] for d in dates]
-        remarks['END_DATE'] = [d[1] for d in dates]
-        remarks['START_DATE'] = pd.to_datetime(remarks['START_DATE'], errors='coerce')
-        remarks['END_DATE'] = pd.to_datetime(remarks['END_DATE'], errors='coerce')
+# Completion estimation from WAR timeline after TD
+COMPLETION_GAP_THRESHOLD = 8
 
-        # Clean bad END_DATE
-        remarks.loc[
-            (remarks['START_DATE'].dt.year != remarks['END_DATE'].dt.year) &
-            ~((remarks['START_DATE'].dt.month == 12) & (remarks['END_DATE'].dt.month == 1) &
-              (remarks['END_DATE'].dt.year == remarks['START_DATE'].dt.year + 1)),
-            'END_DATE'
-        ] = remarks['START_DATE']
+completion_segments = []
+for _, row in spud_td.iterrows():
+    api = row['API_WELL_NUMBER']
+    td = row['TOTAL_DEPTH_DATE']
+    completions = main_war_filtered[
+        (main_war_filtered['API_WELL_NUMBER'] == api) &
+        (main_war_filtered['WAR_START_DT'] > td)
+    ][['WAR_START_DT', 'WAR_END_DT']].dropna().sort_values(by='WAR_START_DT')
 
-        remarks = remarks.dropna(subset=['TOTAL_DEPTH_DATE', 'END_DATE'])
+    if completions.empty:
+        completion_segments.append((api, 0))
+        continue
 
-        # Filter completion remarks
-        completion_df = remarks[remarks['START_DATE'] > remarks['TOTAL_DEPTH_DATE']].copy()
-        completion_df['DURATION_DAYS'] = (completion_df['END_DATE'] - completion_df['START_DATE']).dt.days + 1
+    completions = completions.reset_index(drop=True)
+    completions['GAP'] = completions['WAR_START_DT'].diff().dt.days.fillna(0)
 
-        # Completion summary
-        completion_summary = (
-            completion_df.groupby('API_WELL_NUMBER')['DURATION_DAYS']
-            .sum()
-            .reset_index()
-            .rename(columns={'DURATION_DAYS': 'COMPLETION_DAYS'})
-        )
+    segment_days = 0
+    start_idx = 0
+    for i in range(1, len(completions)):
+        if completions.loc[i, 'GAP'] > COMPLETION_GAP_THRESHOLD:
+            segment = completions.loc[start_idx:i-1]
+            segment_days += (segment['WAR_END_DT'] - segment['WAR_START_DT']).dt.days.sum()
+            start_idx = i
+    # Add final segment
+    segment = completions.loc[start_idx:]
+    segment_days += (segment['WAR_END_DT'] - segment['WAR_START_DT']).dt.days.sum()
 
-        return completion_summary
+    completion_segments.append((api, max(segment_days, 0)))
+
+completion_summary = pd.DataFrame(completion_segments, columns=['API_WELL_NUMBER', 'COMPLETION_DAYS'])
+final = spud_td.merge(completion_summary, on='API_WELL_NUMBER', how='left')
+final['COMPLETION_DAYS'] = final['COMPLETION_DAYS'].fillna(0).astype(int)
+
+# Add WELL_NAME, LEASE info
+final['WELL_NAME'] = final['API_WELL_NUMBER'].map(
+    main_war_filtered.dropna(subset=['WELL_NAME']).drop_duplicates('API_WELL_NUMBER').set_index('API_WELL_NUMBER')['WELL_NAME']
+)
+api_to_lease = (
+    main_war_filtered.drop_duplicates('API_WELL_NUMBER')
+    .assign(SURF_LEASE_NUM=lambda df: df['SURF_LEASE_NUM'].str.upper().str.replace('^G', '', regex=True).str.strip())
+    .set_index('API_WELL_NUMBER')['SURF_LEASE_NUM']
+    .to_dict()
+)
+final['SURF_LEASE_NUM'] = final['API_WELL_NUMBER'].map(api_to_lease)
+
+# Debug: print mapping sample
+print("🔎 Sample API to Lease Mapping:")
+for api in list(final['API_WELL_NUMBER'].unique())[:5]:
+    lease_num = api_to_lease.get(api, 'N/A')
+    lease_meta = lease_info.get(lease_num, {})
+    print(f"API: {api} → Lease#: {lease_num} → Name: {lease_meta.get('LEASE_NAME', '')}, Depth: {lease_meta.get('WATER_DEPTH', '')}")
+
+final['LEASE_NAME'] = final['SURF_LEASE_NUM'].map(lambda x: lease_info.get(x, {}).get('LEASE_NAME', ''))
+final['WATER_DEPTH'] = final['SURF_LEASE_NUM'].map(lambda x: lease_info.get(x, {}).get('WATER_DEPTH', ''))
+
+# Merge depths and mud
+final = final.merge(depth_summary, on='API_WELL_NUMBER', how='left')
+final = final.merge(mud_summary, on='API_WELL_NUMBER', how='left')
+
+# Format and export
+final['WELL_SPUD_DATE'] = pd.to_datetime(final['WELL_SPUD_DATE']).dt.strftime('%m/%d/%Y')
+final['TOTAL_DEPTH_DATE'] = pd.to_datetime(final['TOTAL_DEPTH_DATE']).dt.strftime('%m/%d/%Y')
+final = final[['LEASE_NAME', 'SURF_LEASE_NUM', 'WATER_DEPTH', 'API_WELL_NUMBER', 'WELL_NAME', 'WELL_SPUD_DATE',
+               'TOTAL_DEPTH_DATE', 'DRILLING_DAYS', 'COMPLETION_DAYS',
+               'MAX_BH_TOTAL_MD', 'MAX_WELL_BORE_TVD', 'MAX_DRILL_FLUID_WGT']]
+final = final.dropna(subset=['WELL_SPUD_DATE', 'TOTAL_DEPTH_DATE'])
+final['SPUD_DATE_SORT'] = pd.to_datetime(final['WELL_SPUD_DATE'], errors='coerce')
+final = final.sort_values(by=['LEASE_NAME', 'SPUD_DATE_SORT']).drop(columns=['SPUD_DATE_SORT'])
+final.to_excel("drilling_and_completion_days_by_api_latest.xlsx", index=False)
+print("✅ drilling_and_completion_days_by_api.xlsx written.")
