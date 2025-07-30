@@ -93,47 +93,48 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 8.5 Save dataframe as CSV in results folder
   - [x] 8.6 Verify data accuracy and completeness
 
-- [ ] 9. SME Manual Verification and Review #TODO
-  - [ ] 9.1 Review Excel data extraction methodology and accuracy
-  - [ ] 9.2 Validate production data alignment with field knowledge
-  - [ ] 9.3 Verify oil price sources and historical accuracy
-  - [ ] 9.4 Review CAPEX allocation schedule ($2.6B over 60 months)
-  - [ ] 9.5 Validate OPEX calculation ($15/BBL operational costs)
-  - [ ] 9.6 Check NPV calculation methodology and discount rate (10%)
-  - [ ] 9.7 Verify well count progression (20→28 wells) matches field development
-  - [ ] 9.8 Review monthly economics DataFrame for field-specific accuracy
-  - [ ] 9.9 Validate cumulative cash flow and NPV calculations
-  - [ ] 9.10 Cross-check results against known Jack St. Malo field benchmarks
-  - [ ] 9.11 Provide recommendations for data source improvements
-  - [ ] 9.12 Sign off on program accuracy for production use
-
-- [ ] 10. Prepare Excel-based CSV for Task 8 DataFrame Comparison
-  - [ ] 10.1 Extract all calculation data from NPV_JStM-WELL-Production-Data-thru-2019.xlsx
-  - [ ] 10.2 Identify Excel rows containing monthly economic calculations
-  - [ ] 10.3 Map Excel columns to Task 8 DataFrame structure:
+- [x] 9. Prepare Excel-based CSV for Task 8 DataFrame Comparison
+  - [x] 9.1 Extract all calculation data from NPV_JStM-WELL-Production-Data-thru-2019.xlsx
+  - [x] 9.2 Identify Excel rows containing monthly economic calculations
+  - [x] 9.3 Map Excel columns to Task 8 DataFrame structure:
     - Month-Year periods from Excel timeline
     - Monthly production from JSM Total AVGMoly (Row 22)
-    - Oil prices from BRENT data (Row 4)
-    - CAPEX allocation from Excel investment schedule
+    - Oil prices from BRENT data (Row 2 - corrected from Row 4)
+    - CAPEX allocation from Excel investment schedule (Row 32)
     - OPEX calculations from Excel operational costs
-    - Revenue calculations from Excel oil sales
+    - Revenue calculations from Excel oil sales (Row 31)
     - NPV calculations from Excel financial model
-  - [ ] 10.4 Process Excel formulas and convert to monthly data points
-  - [ ] 10.5 Generate CSV with identical column structure to Task 8 DataFrame:
+  - [x] 9.4 Process Excel formulas and convert to monthly data points
+  - [x] 9.5 Generate CSV with identical column structure to Task 8 DataFrame:
     - Month-Year, Monthly_production_BBL, Oil_price_USD
     - CAPEX_monthly, OPEX_monthly, Oil_sales
     - Net_revenue_after_OPEX, Cumulative_revenue
     - Cumulative_OPEX, Cumulative_CAPEX, Cumulative_cash_flow
     - Cumulative_cash_flow_after_OPEX, Cumulative_NPV
     - Wells_total, Wells_producing, Daily_production_rate_BBL_per_day
-  - [ ] 10.6 Save Excel-derived CSV in results folder as comparison baseline
-  - [ ] 10.7 Create side-by-side comparison analysis between Excel CSV and Task 8 DataFrame
-  - [ ] 10.8 Generate variance report highlighting differences between data sources
-  - [ ] 10.9 Validate that both datasets cover same time periods and metrics
-  - [ ] 10.10 Document methodology differences between Excel and programmatic calculations
+  - [x] 9.6 Save Excel-derived CSV in results folder as comparison baseline
+  - [x] 9.7 Create side-by-side comparison analysis between Excel CSV and Task 8 DataFrame
+  - [x] 9.8 Generate variance report highlighting differences between data sources
+  - [x] 9.9 Validate that both datasets cover same time periods and metrics
+  - [x] 9.10 Document methodology differences between Excel and programmatic calculations
+
+- [ ] 10. SME Manual Verification and Review #TODO
+  - [ ] 10.1 Review Excel data extraction methodology and accuracy
+  - [ ] 10.2 Validate production data alignment with field knowledge
+  - [ ] 10.3 Verify oil price sources and historical accuracy
+  - [ ] 10.4 Review CAPEX allocation schedule ($2.6B over 60 months)
+  - [ ] 10.5 Validate OPEX calculation ($15/BBL operational costs)
+  - [ ] 10.6 Check NPV calculation methodology and discount rate (10%)
+  - [ ] 10.7 Verify well count progression (20→28 wells) matches field development
+  - [ ] 10.8 Review monthly economics DataFrame for field-specific accuracy
+  - [ ] 10.9 Validate cumulative cash flow and NPV calculations
+  - [ ] 10.10 Cross-check results against known Jack St. Malo field benchmarks
+  - [ ] 10.11 Provide recommendations for data source improvements
+  - [ ] 10.12 Sign off on program accuracy for production use
 
 ## Key Findings Summary
 
+### Tasks 1-6: Initial Data Analysis
 1. **Excel Data Characteristics:**
    - 55 periods of DAILY production data
    - Average: 33,938 BBL/day
@@ -150,3 +151,29 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
    - Only 55 days of data vs expected 60 months
    - Manual analysis likely using monthly aggregation
    - This explains the significant NPV variance
+
+### Task 9: Excel vs Task 8 Comparison Results
+1. **Data Source Mapping (Corrected):**
+   - Oil Prices: Row 2 (BRENT prices) - NOT Row 4
+   - Production: Row 22 (JSM Total AVGMoly) - Confirmed
+   - Well Count: Row 27
+   - CAPEX: Row 32
+   - Revenue: Row 31
+
+2. **Scale Discrepancy Identified:**
+   - Excel Total Production: 5,720,176 BBL over 55 periods
+   - Task 8 Total Production: 268,330 BBL over 60 periods
+   - Variance: 2031.77% difference
+   - Excel appears to show MONTHLY production data (104,003 BBL/period average)
+   - Task 8 shows much lower values (4,472 BBL/period average)
+
+3. **Time Period Differences:**
+   - Excel: 55 periods (December through June, no year labels)
+   - Task 8: 60 periods (2014-08 through 2019-06)
+   - Different coverage may explain some variance
+
+4. **Key Recommendations:**
+   - Verify the actual scale of Excel production data (monthly vs daily)
+   - Align time periods between data sources
+   - Standardize oil price sources (Excel: $56.60/BBL avg, Task 8: $63.00/BBL avg)
+   - Document all calculation assumptions clearly
