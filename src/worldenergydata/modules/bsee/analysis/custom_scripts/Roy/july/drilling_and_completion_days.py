@@ -133,6 +133,7 @@ class DrillingCompletionDays:
         self.main_war['WAR_END_DT'] = pd.to_datetime(self.main_war['WAR_END_DT'], errors='coerce')
         
         # Filter by lease
+        self.main_war['SURF_LEASE_NUM'] = self.main_war['SURF_LEASE_NUM'].astype(str)
         self.main_war_filtered = self.main_war[self.main_war['SURF_LEASE_NUM'].isin(self.leases)].copy()
         logger.info(f"Filtered WAR records: {len(self.main_war_filtered)} out of {len(self.main_war)}")
         
