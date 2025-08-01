@@ -1,0 +1,37 @@
+{
+  "analysis_date": "2025-07-24T11:33:27.408913",
+  "project": "JStM WELL Production Data",
+  "description": "NPV analysis for different discount rates",
+  "results": [
+    {
+      "discount_rate": 0.08,
+      "discount_rate_percent": "8.0%",
+      "npv": -2496287180.6194024,
+      "npv_formatted": "$-2,496,287,180.62"
+    },
+    {
+      "discount_rate": 0.09,
+      "discount_rate_percent": "9.0%",
+      "npv": -2546950059.233086,
+      "npv_formatted": "$-2,546,950,059.23"
+    },
+    {
+      "discount_rate": 0.1,
+      "discount_rate_percent": "10.0%",
+      "npv": -2595521294.4967747,
+      "npv_formatted": "$-2,595,521,294.50"
+    },
+    {
+      "discount_rate": 0.15,
+      "discount_rate_percent": "15.0%",
+      "npv": -2810578755.6691737,
+      "npv_formatted": "$-2,810,578,755.67"
+    },
+    {
+      "discount_rate": 0.19,
+      "discount_rate_percent": "19.0%",
+      "npv": -2954450315.9960976,
+      "npv_formatted": "$-2,954,450,316.00"
+    }
+  ]
+}

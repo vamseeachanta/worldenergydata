@@ -1,0 +1,290 @@
+---
+parameters:
+  field_nickname: &field_nickname Cascade-Chinook
+  boem_fields: &boem_fields "'WR205', 'WR206', 'WR469', 'WR470'"
+  well_type: &well_type "'E','D'"
+  wellhead_plot_title: &wellhead_plot_suptitle "Cascade-Chinook Subsea Wellhead Locations"
+  wellhead_plot_subtitle: &wellhead_plot_title "BOEM Field WR205,WR206,WR469,WR470, Feb 2020"
+
+  well_production_suptitle: &well_production_suptitle "Well Production Rate (BOPD)"
+  production_plot_suptitle: &production_plot_suptitle "Production Rate and Cumulative Production"
+  production_rate_plot_suptitle: &production_rate_plot_suptitle "Production Rate (BOPD)"
+  cumulative_production_plot_suptitle: &cumulative_production_plot_suptitle "Cumulative Production (MMbbl)"
+
+default:
+  log_level: DEBUG
+  config:
+    overwrite:
+      output: True
+  analysis:
+    run_example: False
+
+  data_source: db
+
+  input_data:
+    source: db
+    save_data_to_xlsx: False
+    sets:
+      -
+        label: well
+        schema: dbo
+        query:
+          sql: >
+            SELECT API12, [Company Name], [Field Name], [Well Name], [Sidetrack and Bypass]
+            , [Spud Date], [Total Depth Date], [Well Purpose]
+            , [Water Depth], [Total Measured Depth], [Total Vertical Depth], [Sidetrack KOP]
+            , [Surface Latitude], [Surface Longitude], [Bottom Latitude], [Bottom Longitude]
+            , [Wellbore Status], [Wellbore Status Date], [Completion Stub Code], [Casing Cut Code]
+            FROM
+
+            (SELECT [API Well Number] as API12, [Field Name], [Company Name]
+            , [Well Name], [Well Name Suffix] as [Sidetrack and Bypass], [Spud Date]
+            , [Total Depth Date], [BH Total MD (feet)]
+            FROM [master].[dbo].[bsee_2020_03_20_APIList]
+            WHERE [Field Name] in (
+            {}
+            ) )
+            AS APIListTable
+
+            JOIN
+            (SELECT [Surface Latitude], [Surface Longitude], [Bottom Latitude], [Bottom Longitude], [API Well Number] as WELLAPI
+            , [TYPE CODE] as [Well Purpose], [Status Code] as [Wellbore Status], [Status Date] as [Wellbore Status Date]
+            , [Water Depth (feet)] as [Water Depth]
+            , [BH Total MD (feet)] as [Total Measured Depth], [True Vertical Depth (feet)] as [Total Vertical Depth]
+            , [KOP] as [Sidetrack KOP]
+            , [Underwater Comp Stub] as [Completion Stub Code], [Casing Cut Code]
+            FROM [master].[dbo].[bsee_2020_03_31_Borehole]
+            WHERE [TYPE CODE] in (
+            {}
+            ) )
+            AS borehole
+            on APIListTable.API12 = borehole.WELLAPI
+
+          arg_array: [*boem_fields, *well_type]
+
+      -
+        label: production
+        schema: dbo
+        query:
+          sql: >
+           SELECT API12, COMPLETION_NAME, PRODUCTION_DATE, PRODUCT_CODE, DAYS_ON_PROD, MON_O_PROD_VOL, TYPE_CODE
+           FROM
+
+           (SELECT API_WELL_NUMBER as API12, COMPLETION_NAME, PRODUCTION_DATE, PRODUCT_CODE, DAYS_ON_PROD, MON_O_PROD_VOL
+           FROM [master].[dbo].[yearly_production_data]
+           WHERE BOEM_FIELD in (
+           {}
+           ) )
+           AS ProductionData
+
+           JOIN
+           (SELECT [API Well Number] as WELLAPI, [TYPE CODE] as TYPE_CODE
+           FROM [master].[dbo].[bsee_2020_03_31_Borehole]
+           )
+           AS BoreHoleData
+           on ProductionData.API12 = BoreHoleData.WELLAPI
+
+          arg_array: [*boem_fields]
+
+db:
+  server_type: mssql
+  server: localhost\SQLEXPRESS
+  user: NULL
+  password: NULL
+  database: master
+
+save_data:
+  sets:
+    - attribute: output_data_well_df
+      table_name: output_data_well
+      if_exists: append
+      index: False
+      pre_conditions:
+        flag: True
+        sets:
+          - sql: >
+              DELETE FROM [master].[dbo].[output_data_well] WHERE [Field Name] in (
+              {}
+              )
+            arg_array: [*boem_fields]
+
+    - attribute: output_field_summary_df
+      table_name: output_field_summary
+      if_exists: append
+      index: False
+      pre_conditions:
+        flag: True
+        sets:
+          - sql: >
+              DELETE FROM [master].[dbo].[output_field_summary] WHERE [Field NickName] in (
+              '{}'
+              )
+            arg_array: [*field_nickname]
+
+    - attribute: production_summary_df
+      table_name: production_summary
+      if_exists: append
+      index: False
+      pre_conditions:
+        flag: True
+        sets:
+          - sql: >
+              DELETE FROM [master].[dbo].[production_summary] WHERE [Field NickName] in (
+              '{}'
+              )
+            arg_array: [*field_nickname]
+
+
+plot_multiple:
+
+  -
+    file_name_extension: relative_east_north
+    suptitle: *wellhead_plot_suptitle
+    sets:
+    -
+      title: *wellhead_plot_title
+      xlabel: Relative Easting, ft
+      ylabel: Relative Northing, ft
+      xticklabels: NULL
+      grid: True
+      legend: True
+      legend_location: best
+      data:
+       -
+          df: output_data_well_df
+          label: [Non-Producers]
+          x: [SURF_x_rel]
+          y: [SURF_y_rel]
+          filter:
+            - column: O_PROD_STATUS
+              value: 0
+          scale:
+            columns: [SURF_x_rel, SURF_y_rel]
+            factors: [3.281, 3.281]
+          plt_kind: scatter
+          marker:
+            type: 'o'
+            size: 8
+            edge_color: None
+          annotate:
+            flag: True
+            column: Well Name
+       -
+          df: output_data_well_df
+          label: [Producers]
+          x: [SURF_x_rel]
+          y: [SURF_y_rel]
+          filter:
+            - column: O_PROD_STATUS
+              value: 1
+          scale:
+            columns: [SURF_x_rel, SURF_y_rel]
+            factors: [3.281, 3.281]
+          plt_kind: scatter
+          marker:
+            type: 'o'
+            size: 12
+            edge_color: None
+          annotate:
+            flag: True
+            column: Well Name
+          legend: True
+          legend_location: best
+
+
+  -
+    file_name_extension: well_production
+    suptitle: *well_production_suptitle
+    sets:
+    -
+      title: *wellhead_plot_title
+      xlabel: Date
+      ylabel: Production Rate (BPOD)
+      xticklabels: NULL
+      autofmt:
+        xdate: True
+      grid: True
+      legend: True
+      legend_location: best
+      df_array:
+        flag: True
+        type: dict
+        variable: output_data_production_df_array
+        df: output_df_temp_from_df_array
+        x: [PRODUCTION_DATETIME]
+        y: [O_PROD_RATE_BOPD]
+        scale:
+          columns: []
+          factors: [1]
+        plt_kind: line
+        legend: True
+        marker:
+          type: 'o'
+          size: 3
+          edge_color: None
+
+  -
+    file_name_extension: production_with_time
+    suptitle: *production_plot_suptitle
+    sets:
+    -
+      title: *production_rate_plot_suptitle
+      xlabel: Date
+      ylabel: Rate (BPOD)
+      xticklabels: NULL
+      autofmt:
+        xdate: True
+      grid: True
+      legend: False
+      legend_location: best
+
+      data:
+       -
+          df: output_data_field_production_rate_df
+          label: [NULL]
+          x: [PRODUCTION_DATETIME]
+          y: [TOTAL_DAILY_PRODUCTION_rate_BOPD]
+          scale:
+            columns: []
+            factors: [1]
+          plt_kind: line
+          marker:
+            type: 'o'
+            size: 3
+            edge_color: None
+
+    -
+      title: *cumulative_production_plot_suptitle
+      xlabel: Date
+      ylabel: Production (MMbbl)
+      xticklabels: NULL
+      autofmt:
+        xdate: True
+      grid: True
+      legend: False
+      legend_location: best
+
+      data:
+       -
+          df: output_data_field_production_df
+          label: [NULL]
+          x: [PRODUCTION_DATETIME]
+          y: [CUMULATIVE_MONTLY_PRODUCTION_MMbbl]
+          scale:
+            columns: []
+            factors: [1]
+          plt_kind: line
+          marker:
+            type: 'o'
+            size: 3
+            edge_color: None
+
+save_output_data_to_local_computer:
+  flag: True
+  sets:
+    - df_attribute: output_data_field_production_df
+      label: cumulative_production
+    - df_attribute: output_data_field_production_rate_df
+      label: production_rate
+    - df_attribute: output_data_well_df
+      label: well_data

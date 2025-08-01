@@ -1,0 +1,39 @@
+meta:
+  library: worldenergydata
+  basename: bsee_custom
+  label: goa_tiber
+basename: bsee_custom
+data:
+  groups:
+  - lease:
+      numbers:
+      - G25782
+      area: KC
+filepath:
+  war_files:
+    main: data/modules/bsee/bin/war/mv_war_main.bin
+    prop: data/modules/bsee/bin/war/mv_war_main_prop.bin
+    remarks: data/modules/bsee/bin/war/mv_war_main_prop_remark.bin
+    boreholes: data/modules/bsee/bin/war/mv_war_boreholes_view.bin
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: true
+    cfg_sensitivities: false
+drilling_n_completion_days:
+  flag: true
+Analysis:
+  basename: bsee_custom
+  analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis
+  file_name: drilling_n_completion_days_goa_tiber
+  file_name_for_overwrite: drilling_n_completion_days_goa_tiber
+  log_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\logs
+  start_time: 2025-07-28 11:20:46.479791
+  cfg_array_file_names: ~
+  DefaultInputFile: ~
+  CustomInputFile: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\drilling_n_completion_days.yml
+  result_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results
+  result_data_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Data
+  result_plot_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results\Plot
+  fe_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\results
