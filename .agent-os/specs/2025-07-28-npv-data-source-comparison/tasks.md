@@ -5,6 +5,17 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
 > Created: 2025-07-28
 > Status: Ready for Implementation
 
+## Output File Organization
+
+All output files from this spec should be saved to:
+```
+tests\modules\bsee\analysis\<spec_folder>\
+├── data\           # CSV and JSON data files
+├── visualizations\ # Charts and graphs (PNG/PDF)
+└── reports\        # Markdown and text reports
+```
+Note: `<spec_folder>` should match the spec folder name (e.g., `npv-data-source-comparison` for this spec)
+
 ## Tasks
 
 - [x] 1. Create Excel Data Extraction Utilities
@@ -27,7 +38,7 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 3.3 Identify 44.2% variance from Excel benchmark
   - [x] 3.4 Test sensitivity to daily vs monthly interpretation
   - [x] 3.5 Generate comprehensive comparison reports
-  - [x] 3.6 Save visualizations and CSV breakdowns
+  - [x] 3.6 Save visualizations and CSV breakdowns to tests\modules\bsee\analysis\<spec_folder>\
 
 - [x] 4. Identify Root Causes of NPV Variance
   - [x] 4.1 Production scale mismatch: Excel data is daily (33,938 BBL/day)
@@ -90,7 +101,7 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
     - Wells total (monthly count)
     - Wells producing (monthly count)
     - Daily production rate (BBL/day for that month)
-  - [x] 8.5 Save dataframe as CSV in results folder
+  - [x] 8.5 Save dataframe as CSV in tests\modules\bsee\analysis\<spec_folder>\data\
   - [x] 8.6 Verify data accuracy and completeness
 
 - [x] 9. Prepare Excel-based CSV for Task 8 DataFrame Comparison
@@ -100,9 +111,10 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
     - Month-Year periods from Excel timeline
     - Monthly production from JSM Total AVGMoly (Row 22)
     - Oil prices from BRENT data (Row 2 - corrected from Row 4)
-    - CAPEX allocation from Excel investment schedule (Row 32)
-    - OPEX calculations from Excel operational costs
-    - Revenue calculations from Excel oil sales (Row 31)
+    - OPEX calculations from Excel operational costs. No explicit row, embedded in Row 22. Evaluate.
+    - CAPEX allocation from Excel investment schedule (Row 34)
+    - Revenue calculations from Excel oil sales. No explicit row, embedded in Row 22. Evaluate.
+    - Revenue - OPEX calculation given in Row 22
     - NPV calculations from Excel financial model
   - [x] 9.4 Process Excel formulas and convert to monthly data points
   - [x] 9.5 Generate CSV with identical column structure to Task 8 DataFrame:
@@ -112,7 +124,7 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
     - Cumulative_OPEX, Cumulative_CAPEX, Cumulative_cash_flow
     - Cumulative_cash_flow_after_OPEX, Cumulative_NPV
     - Wells_total, Wells_producing, Daily_production_rate_BBL_per_day
-  - [x] 9.6 Save Excel-derived CSV in results folder as comparison baseline
+  - [x] 9.6 Save Excel-derived CSV in tests\modules\bsee\analysis\<spec_folder>\data\ as comparison baseline
   - [x] 9.7 Create side-by-side comparison analysis between Excel CSV and Task 8 DataFrame
   - [x] 9.8 Generate variance report highlighting differences between data sources
   - [x] 9.9 Validate that both datasets cover same time periods and metrics
@@ -136,17 +148,18 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
 
 ### Tasks 1-6: Initial Data Analysis
 1. **Excel Data Characteristics:**
+   -  
    - 55 periods of DAILY production data
    - Average: 33,938 BBL/day
    - Oil prices: $56.60/BBL average
    - Total revenue: $106M
 
-2. **NPV Calculation Results:**
+1. **NPV Calculation Results:**
    - Using Excel data: -$1.45B
    - Excel benchmark: ~-$2.6B
    - Variance: 44.2%
 
-3. **Root Cause Analysis:**
+2. **Root Cause Analysis:**
    - Production data is DAILY, not MONTHLY
    - Only 55 days of data vs expected 60 months
    - Manual analysis likely using monthly aggregation
