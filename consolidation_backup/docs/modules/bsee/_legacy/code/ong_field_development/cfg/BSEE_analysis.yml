@@ -1,0 +1,781 @@
+default_parameters:
+  wellhead_plot_title: &wellhead_plot_suptitle "Subsea Wellhead Locations"
+  wellhead_plot_subtitle: &wellhead_plot_title "Field Wells, Feb 2020"
+  well_production_suptitle: &well_production_suptitle "Well Production Rate (BOPD)"
+  production_plot_suptitle: &production_plot_suptitle "Production Rate and Cumulative Production"
+  production_rate_plot_suptitle: &production_rate_plot_suptitle "Production Rate (BOPD)"
+  cumulative_production_plot_suptitle: &cumulative_production_plot_suptitle "Cumulative Production (MMbbl)"
+
+default:
+  log_level: DEBUG
+  config:
+    overwrite:
+      output: True
+    CustomInputFile: NULL
+
+  analysis:
+    run_example: False
+    run_all_wells: True
+    field_analysis: False
+
+  data_source: db
+
+  input_data:
+    source: db
+    save_data_to_xlsx: False
+    sets:
+      -
+        label: well
+        schema: dbo
+        query:
+          sql: >
+            SELECT API12, [Company Name], [Field Name], [Well Name], [Sidetrack and Bypass]
+            , [Spud Date], [Total Depth Date], [Well Purpose]
+            , [Water Depth], [Total Measured Depth], [Total Vertical Depth], [Sidetrack KOP]
+            , [Surface Latitude], [Surface Longitude], [Bottom Latitude], [Bottom Longitude]
+            , [Wellbore Status], [Wellbore Status Date], [Completion Stub Code], [Casing Cut Code]
+            FROM
+
+            (SELECT [API_WELL_NUMBER] as API12, BOTM_FLD_NAME_CD as [Field Name], COMPANY_NAME as [Company Name]
+            , WELL_NAME as [Well Name], WELL_NAME_SUFFIX as [Sidetrack and Bypass], WELL_SPUD_DATE as [Spud Date]
+            , TOTAL_DEPTH_DATE as [Total Depth Date], BH_TOTAL_MD as [BH Total MD (feet)]
+            FROM [dbo].[mv_api_list]
+            WHERE BOTM_FLD_NAME_CD in (
+            '{}'
+            ) )
+            AS APIListTable
+
+            JOIN
+            (SELECT SURF_LATITUDE as [Surface Latitude], SURF_LONGITUDE as [Surface Longitude], BOTM_LATITUDE as [Bottom Latitude], BOTM_LONGITUDE as [Bottom Longitude], API_WELL_NUMBER as WELLAPI
+            , [WELL_TYPE_CODE] as [Well Purpose], BOREHOLE_STAT_CD as [Wellbore Status], BOREHOLE_STAT_DT as [Wellbore Status Date]
+            , WATER_DEPTH as [Water Depth]
+            , BH_TOTAL_MD as [Total Measured Depth], WELL_BORE_TVD as [Total Vertical Depth]
+            , WELL_BP_ST_KICKOFF_MD as [Sidetrack KOP]
+            , UNDWTR_COMP_STUB as [Completion Stub Code], CASING_CUT_CODE as [Casing Cut Code]
+            FROM [dbo].[mv_boreholes]
+            WHERE WELL_TYPE_CODE in (
+            {}
+            ) )
+            AS borehole
+            on APIListTable.API12 = borehole.WELLAPI
+
+          arg_array: [*boem_fields, *well_type]
+
+      -
+        label: all_bsee_blocks
+        schema: dbo
+        query:
+          sql: >
+            SELECT DISTINCT [BOTM_FLD_NAME_CD] FROM [dbo].[mv_api_list]
+          arg_array: []
+      -
+        label: ST_BP_and_tree_height
+        schema: dbo
+        query:
+          sql: >
+            SELECT API12, WELL_NM_ST_SFIX, WELL_NM_BP_SFIX, SUBSEA_TREE_HEIGHT_AML, SN_EOR
+            FROM
+            (SELECT [API_WELL_NUMBER] as API12
+            FROM [dbo].[mv_api_list]
+            WHERE [BOTM_FLD_NAME_CD] in (
+            '{}'
+            ) )
+            AS APIListTable
+
+            JOIN
+            (SELECT API_WELL_NUMBER, SN_EOR, WELL_NM_ST_SFIX, WELL_NM_BP_SFIX, SUBSEA_TREE_HEIGHT_AML
+            FROM [dbo].[mv_eor_mainquery]
+            )
+            AS EOR_MAIN_QUERY
+            on APIListTable.API12 = EOR_MAIN_QUERY.API_WELL_NUMBER
+            ORDER BY API12, SN_EOR
+
+          arg_array: [*boem_fields]
+
+      -
+        label: completion_summary 
+        schema: dbo
+        query:
+          arg_array: [*boem_fields]
+          sql: >
+            SELECT WELL_NAME, API12, [Production Interval],[COMP_AREA_CODE],[COMP_BLOCK_NUMBER], COMP_STATUS_DESC
+            FROM
+            (SELECT [API_WELL_NUMBER] as API12
+            FROM [dbo].[mv_api_list]
+            WHERE [BOTM_FLD_NAME_CD] in (
+            '{}'
+            ) )
+            AS APIListTable
+
+            JOIN
+            (SELECT API_WELL_NUMBER, SN_EOR, WELL_NAME
+            FROM [dbo].[mv_eor_mainquery]
+            )
+            AS EOR_MAIN_QUERY
+            on APIListTable.API12 = EOR_MAIN_QUERY.API_WELL_NUMBER
+
+            JOIN
+            (SELECT [SN_EOR_FK],[SN_EOR_WELL_COMP],[INTERVAL] AS [Production Interval],[COMP_LEASE_NUMBER],[COMP_AREA_CODE],[COMP_BLOCK_NUMBER],[COMP_STATUS_CD]
+            FROM [dbo].[mv_eor_completions]
+            )
+            AS EOR_COMPLETIONS_QUERY
+            on EOR_MAIN_QUERY.SN_EOR = EOR_COMPLETIONS_QUERY.SN_EOR_FK
+
+            JOIN
+            (SELECT [VALUE],[VALUE_DESC] AS COMP_STATUS_DESC
+            FROM [dbo].[mv_eor_compstatcodes]
+            )
+            AS EOR_COMPLETIONSTATCODES_QUERY
+            on EOR_COMPLETIONS_QUERY.COMP_STATUS_CD = EOR_COMPLETIONSTATCODES_QUERY.VALUE
+
+          arg_array: [*boem_fields]
+
+      -
+        label: hydrocarbon_bearing_interval
+        schema: dbo
+        query:
+          arg_array: [*boem_fields]
+          sql: >
+            SELECT WELL_NAME, API12, [SN_HC_BEARING_INTVL], [SN_EOR_FK],[Hydrocarbon Interval Name],[TOP_MD],[BOTTOM_MD],[Hydrocarbon Type]
+            FROM
+            (SELECT [API_WELL_NUMBER] as API12
+            FROM [dbo].[mv_api_list]
+            WHERE [BOTM_FLD_NAME_CD] in (
+            '{}'
+            ) )
+            AS APIListTable
+
+            JOIN
+            (SELECT API_WELL_NUMBER, SN_EOR, WELL_NAME
+            FROM [dbo].[mv_eor_mainquery]
+            )
+            AS EOR_MAIN_QUERY
+            on APIListTable.API12 = EOR_MAIN_QUERY.API_WELL_NUMBER
+
+            JOIN
+            (SELECT [SN_HC_BEARING_INTVL], [SN_EOR_FK],[INTERVAL_NAME] as [Hydrocarbon Interval Name],[TOP_MD],[BOTTOM_MD],[HYDROCARBON_TYPE_CD]
+            FROM [dbo].[mv_hcbearing_intervals]
+            )
+            AS HC_Bearing_QUERY
+            on EOR_MAIN_QUERY.SN_EOR = HC_Bearing_QUERY.SN_EOR_FK
+
+            JOIN
+            (SELECT [VALUE],[VALUE_DESC] AS [Hydrocarbon Type]
+            FROM [dbo].[mv_eor_hydrobarbtypecodes]
+            )
+            AS EOR_hydrobarbtypecodes_QUERY
+            on HC_Bearing_QUERY.HYDROCARBON_TYPE_CD = EOR_hydrobarbtypecodes_QUERY.VALUE
+
+      -
+        label: geology_markers
+        schema: dbo
+        query:
+          arg_array: [*boem_fields]
+          sql: >
+            SELECT API12, WELL_NAME, [GEO_MARKER_NAME],[TOP_MD]
+            FROM
+            (SELECT [API_WELL_NUMBER] as API12
+            FROM [dbo].[mv_api_list]
+            WHERE [BOTM_FLD_NAME_CD] in (
+            '{}'
+            ) )
+            AS APIListTable
+
+            JOIN
+            (SELECT API_WELL_NUMBER, SN_EOR, WELL_NAME
+            FROM [dbo].[mv_eor_mainquery]
+            )
+            AS EOR_MAIN_QUERY
+            on APIListTable.API12 = EOR_MAIN_QUERY.API_WELL_NUMBER
+
+            JOIN
+            (SELECT [SN_EOR_FK],[GEO_MARKER_NAME],[TOP_MD]
+            FROM [dbo].[mv_eor_geomarkers]
+            )
+            AS Geo_Marker_QUERY
+            on EOR_MAIN_QUERY.SN_EOR = Geo_Marker_QUERY.SN_EOR_FK
+
+
+      -
+        label: cut_casings
+        schema: dbo
+        query:
+          arg_array: [*boem_fields]
+          sql: >
+            SELECT API12, WELL_NAME, [CASING_SIZE],[CASING_CUT_DATE],[CASING_CUT_METHOD_CD],[CASING_CUT_DEPTH],[CASING_CUT_MDL_IND]
+            FROM
+            (SELECT [API_WELL_NUMBER] as API12
+            FROM [dbo].[mv_api_list]
+            WHERE [BOTM_FLD_NAME_CD] in (
+            '{}'
+            ) )
+            AS APIListTable
+
+            JOIN
+            (SELECT API_WELL_NUMBER, SN_EOR, WELL_NAME
+            FROM [dbo].[mv_eor_mainquery]
+            )
+            AS EOR_MAIN_QUERY
+            on APIListTable.API12 = EOR_MAIN_QUERY.API_WELL_NUMBER
+
+            JOIN
+            (SELECT [SN_EOR_FK],[CASING_SIZE],[CASING_CUT_DATE],[CASING_CUT_METHOD_CD],[CASING_CUT_DEPTH],[CASING_CUT_MDL_IND]
+            FROM [dbo].[mv_eor_cut_casings]
+            )
+            AS Cut_Casings_QUERY
+            on EOR_MAIN_QUERY.SN_EOR = Cut_Casings_QUERY.SN_EOR_FK
+
+            JOIN
+            (SELECT [VALUE],[VALUE] AS [Cut Casing Method]
+            FROM [dbo].[mv_eor_casingcutcodes]
+            )
+            AS EOR_casingcutcodes_QUERY
+            on Cut_Casings_QUERY.CASING_CUT_METHOD_CD = EOR_casingcutcodes_QUERY.VALUE
+
+          arg_array: [*boem_fields]
+
+      -
+        label: completion_properties
+        schema: dbo
+        query:
+          arg_array: [*boem_fields]
+          sql: >
+            SELECT API12, [COMP_LATITUDE],[COMP_LONGITUDE],[COMP_RSVR_NAME],[COMP_INTERVAL_NAME]
+            FROM
+            (SELECT [API_WELL_NUMBER] as API12
+            FROM [dbo].[mv_api_list]
+            WHERE [BOTM_FLD_NAME_CD] in (
+            '{}'
+            ) )
+            AS APIListTable
+
+            JOIN
+            (SELECT API_WELL_NUMBER, SN_EOR, WELL_NAME
+            FROM [dbo].[mv_eor_mainquery]
+            )
+            AS EOR_MAIN_QUERY
+            on APIListTable.API12 = EOR_MAIN_QUERY.API_WELL_NUMBER
+
+            JOIN
+            (SELECT [SN_EOR_FK],[SN_EOR_WELL_COMP],[COMP_LATITUDE],[COMP_LONGITUDE],[COMP_RSVR_NAME],[COMP_INTERVAL_NAME]
+            FROM [dbo].[mv_eor_completionsprop]
+            )
+            AS EOR_COMPLETIONSPROP_QUERY
+            on EOR_MAIN_QUERY.SN_EOR = EOR_COMPLETIONSPROP_QUERY.SN_EOR_FK
+
+
+      -
+        label: completion_perforations
+        schema: dbo
+        query:
+          arg_array: [*boem_fields]
+          sql: >
+            SELECT WELL_NAME, API12, [PERF_TOP_MD],[PERF_BOTM_TVD],[PERF_TOP_TVD],[PERF_BASE_MD]
+            FROM
+            (SELECT [API_WELL_NUMBER] as API12
+            FROM [dbo].[mv_api_list]
+            WHERE [BOTM_FLD_NAME_CD] in (
+            '{}'
+            ) )
+            AS APIListTable
+
+            JOIN
+            (SELECT API_WELL_NUMBER, SN_EOR, WELL_NAME
+            FROM [dbo].[mv_eor_mainquery]
+            )
+            AS EOR_MAIN_QUERY
+            on APIListTable.API12 = EOR_MAIN_QUERY.API_WELL_NUMBER
+
+            JOIN
+            (SELECT [SN_EOR_FK],[SN_EOR_WELL_COMP]
+            FROM [dbo].[mv_eor_completionsprop]
+            )
+            AS EOR_COMPLETIONSPROP_QUERY
+            on EOR_MAIN_QUERY.SN_EOR = EOR_COMPLETIONSPROP_QUERY.SN_EOR_FK
+
+            JOIN
+            (SELECT [SN_EOR_WELL_COMP_FK],[PERF_TOP_MD],[PERF_BOTM_TVD],[PERF_TOP_TVD],[PERF_BASE_MD]
+            FROM [dbo].[mv_eor_perf_intervals]
+            )
+            AS EOR_Perf_Intervals_QUERY
+            on EOR_COMPLETIONSPROP_QUERY.SN_EOR_WELL_COMP = EOR_Perf_Intervals_QUERY.SN_EOR_WELL_COMP_FK
+
+            ORDER BY WELL_NAME
+
+
+      -
+        label: production
+        schema: dbo
+        query:
+          arg_array: [*boem_fields]
+          sql: >
+           SELECT API12, COMPLETION_NAME, PRODUCTION_DATE, PRODUCT_CODE, DAYS_ON_PROD, MON_O_PROD_VOL, TYPE_CODE
+           FROM
+
+           (SELECT API_WELL_NUMBER as API12, COMPLETION_NAME, PRODUCTION_DATE, PRODUCT_CODE, DAYS_ON_PROD, MON_O_PROD_VOL
+           FROM [dbo].[yearly_production_data]
+           WHERE BOEM_FIELD in (
+           '{}'
+           ) )
+           AS ProductionData
+
+           JOIN
+           (SELECT [API_WELL_NUMBER] as WELLAPI, [WELL_TYPE_CODE] as TYPE_CODE
+           FROM [dbo].[mv_boreholes]
+           )
+           AS BoreHoleData
+           on ProductionData.API12 = BoreHoleData.WELLAPI
+
+      -
+        label: well_activity_summary
+        schema: dbo
+        query:
+          arg_array: [*boem_fields]
+          sql: >
+            SELECT API12, WELL_NAME, [RIG_NAME],[WAR_START_DT],[WAR_END_DT],DATEDIFF(day, WAR_START_DT, WAR_END_DT) AS [ACTIVE_DAYS], WELL_ACTIVITY_CD,[BOREHOLE_STAT_DESC],[DRILLING_MD],[DRILL_FLUID_WGT]
+            FROM
+            (SELECT [API_WELL_NUMBER] as API12
+            FROM [dbo].[mv_api_list]
+            WHERE [BOTM_FLD_NAME_CD] in (
+            '{}'
+            ) )
+            AS APIListTable
+
+            JOIN
+            (SELECT [SN_WAR],[API_WELL_NUMBER],[RIG_NAME], CONVERT(DATE, [WAR_START_DT]) as [WAR_START_DT], CONVERT(DATE, [WAR_END_DT]) as [WAR_END_DT], WELL_NAME
+            FROM [dbo].[mv_war_main]
+            )
+            AS WAR_MAIN_QUERY
+            on APIListTable.API12 = WAR_MAIN_QUERY.API_WELL_NUMBER
+
+            JOIN
+            (SELECT [SN_WAR],[WELL_ACTIVITY_CD],[DRILLING_MD],[DRILL_FLUID_WGT]
+            FROM [dbo].[mv_war_main_prop]
+            )
+            AS WAR_PROPERTIES
+            on WAR_PROPERTIES.SN_WAR = WAR_MAIN_QUERY.SN_WAR
+
+            JOIN
+            (SELECT [Value],[Description] as BOREHOLE_STAT_DESC
+            FROM [dbo].[BOREHOLE_STATUS_CDS]
+            )
+            AS BOREHOLE_STATUS_DESC
+            on WAR_PROPERTIES.WELL_ACTIVITY_CD = BOREHOLE_STATUS_DESC.Value
+
+            ORDER BY WELL_NAME, API12, WAR_START_DT
+
+      -
+        label: well_activity_bop_tests
+        schema: dbo
+        query:
+          arg_array: [*boem_fields]
+          sql: >
+            SELECT API12, [BOP_TEST_DATE],[RAM_TST_PRSS],[ANNULAR_TST_PRSS],[BUS_ASC_NAME]
+            FROM
+            (SELECT [API_WELL_NUMBER] as API12
+            FROM [dbo].[mv_api_list]
+            WHERE [BOTM_FLD_NAME_CD] in (
+            '{}'
+            ) )
+            AS APIListTable
+
+            JOIN
+            (SELECT [SN_WAR],[API_WELL_NUMBER],[BOP_TEST_DATE],[RAM_TST_PRSS],[ANNULAR_TST_PRSS],[BUS_ASC_NAME]
+            FROM [dbo].[mv_war_main]
+            )
+            AS WAR_MAIN_QUERY
+            on APIListTable.API12 = WAR_MAIN_QUERY.API_WELL_NUMBER
+
+      -
+        label: well_tubulars
+        schema: dbo
+        query:
+          arg_array: [*boem_fields]
+          sql: >
+            SELECT API12, WELL_NAME, [WAR_START_DT], [WAR_END_DT], [CSNG_INTV_TYPE_CD],[CSNG_HOLE_SIZE],[CSNG_SETTING_BOTM_MD],[CSNG_SETTING_TOP_MD],[CASING_SIZE],[CASING_WEIGHT],[CASING_GRADE],[CSNG_LINER_TEST_PRSS],[CSNG_SHOE_TEST_PRSS],[CSNG_CEMENT_VOL],[SN_WAR_CSNG_INTV]
+            FROM
+            (SELECT [API_WELL_NUMBER] as API12
+            FROM [dbo].[mv_api_list]
+            WHERE [BOTM_FLD_NAME_CD] in (
+            '{}'
+            ) )
+            AS APIListTable
+
+            JOIN
+            (SELECT [SN_WAR],[API_WELL_NUMBER], [WAR_START_DT], [WAR_END_DT], WELL_NAME
+            FROM [dbo].[mv_war_main]
+            )
+            AS WAR_MAIN_QUERY
+            on APIListTable.API12 = WAR_MAIN_QUERY.API_WELL_NUMBER
+
+            JOIN
+            (SELECT [SN_WAR_FK], [CSNG_INTV_TYPE_CD],[CSNG_HOLE_SIZE],[CASING_SIZE],[CASING_WEIGHT],[CASING_GRADE]
+            ,[CSNG_LINER_TEST_PRSS],[CSNG_SHOE_TEST_PRSS],[CSNG_CEMENT_VOL],[SN_WAR_CSNG_INTV]
+            FROM [dbo].[mv_war_tubular_summaries]
+            )
+            AS WAR_tubular_summaries_QUERY
+            on WAR_MAIN_QUERY.SN_WAR= WAR_tubular_summaries_QUERY.SN_WAR_FK
+
+            JOIN
+            (SELECT [SN_WAR_CSNG_INTV_FK],[SN_WAR_FK],[CSNG_SETTING_BOTM_MD],[CSNG_SETTING_TOP_MD]
+            FROM [dbo].[mv_war_tubular_summaries_prop]
+            )
+            AS WAR_war_tubular_summaries_prop_QUERY
+            on WAR_tubular_summaries_QUERY.SN_WAR_CSNG_INTV = WAR_war_tubular_summaries_prop_QUERY.SN_WAR_CSNG_INTV_FK
+
+      -
+        label: well_activity_open_hole
+        schema: dbo
+        query:
+          arg_array: [*boem_fields]
+          sql: >
+            SELECT API12, WELL_NAME, [BUS_ASC_NAME],[OPERATIONS_COMPLETED_DATE], [LOG_TOOL_TYPE_CODE],[TOOL_LOGGING_METHOD_NAME],[LOG_INTV_TOP_MD],[LOG_INTV_BOTM_MD],[SN_OPEN_HOLE]
+            FROM
+            (SELECT [API_WELL_NUMBER] as API12
+            FROM [dbo].[mv_api_list]
+            WHERE [BOTM_FLD_NAME_CD] in (
+            '{}'
+            ) )
+            AS APIListTable
+
+            JOIN
+            (SELECT [SN_WAR],[API_WELL_NUMBER], WELL_NAME
+            FROM [dbo].[mv_war_main]
+            )
+            AS WAR_MAIN_QUERY
+            on APIListTable.API12 = WAR_MAIN_QUERY.API_WELL_NUMBER
+
+            JOIN
+            (SELECT [SN_WAR_FK],[BUS_ASC_NAME],[OPERATIONS_COMPLETED_DATE],[TOOL_LOGGING_METHOD_NAME],[LOG_INTV_TOP_MD],[LOG_INTV_BOTM_MD],[SN_OPEN_HOLE]
+            FROM [dbo].[mv_war_open_hole_runs]
+            )
+            AS WAR_open_hole_runs_QUERY
+            on WAR_MAIN_QUERY.SN_WAR= WAR_open_hole_runs_QUERY.SN_WAR_FK
+
+            JOIN
+            (SELECT [SN_OPEN_HOLE_FK],[LOG_TOOL_TYPE_CODE]
+            FROM [dbo].[mv_war_open_hole_tools]
+            )
+            AS WAR_war_tubular_summaries_prop_QUERY
+            on WAR_open_hole_runs_QUERY.SN_OPEN_HOLE = WAR_war_tubular_summaries_prop_QUERY.SN_OPEN_HOLE_FK
+
+      -
+        label: well_activity_remarks
+        schema: dbo
+        query:
+          arg_array: [*boem_fields]
+          sql: >
+            SELECT API12, WELL_NAME,[WAR_START_DT], WAR_MAIN_QUERY.SN_WAR, [TEXT_REMARK]
+            FROM
+            (SELECT [API_WELL_NUMBER] as API12
+            FROM [dbo].[mv_api_list]
+            WHERE [BOTM_FLD_NAME_CD] in (
+            '{}'
+            ) )
+            AS APIListTable
+
+            JOIN
+            (SELECT [SN_WAR],[API_WELL_NUMBER], [WAR_START_DT], WELL_NAME
+            FROM [dbo].[mv_war_main]
+            )
+            AS WAR_MAIN_QUERY
+            on APIListTable.API12 = WAR_MAIN_QUERY.API_WELL_NUMBER
+
+            JOIN
+            (SELECT [SN_WAR],[TEXT_REMARK]
+            FROM [dbo].[mv_war_main_prop_remark]
+            )
+            AS WAR_Text_Remark_QUERY
+            on WAR_MAIN_QUERY.SN_WAR= WAR_Text_Remark_QUERY.SN_WAR
+
+      -
+        label: well_directional_surveys
+        schema: dbo
+        query:
+          arg_array: [*boem_fields]
+          sql: >
+            SELECT API12,[INCL_ANG_DEG_VAL] ,[INCL_ANG_MIN_VAL],[SURVEY_POINT_MD],[WELL_N_S_CODE],[DIR_DEG_VAL],[DIR_MINS_VAL],[WELL_E_W_CODE],[SURVEY_POINT_TVD],[DELTA_X],[DELTA_Y],[SURF_LONGITUDE],[SURF_LATITUDE]
+            FROM
+            (SELECT [API_WELL_NUMBER] as API12
+            FROM [dbo].[mv_api_list]
+            WHERE [BOTM_FLD_NAME_CD] in (
+            '{}'
+            ) )
+            AS APIListTable
+
+            JOIN
+            (SELECT [API_WELL_NUMBER],[INCL_ANG_DEG_VAL] ,[INCL_ANG_MIN_VAL],[SURVEY_POINT_MD],[WELL_N_S_CODE],[DIR_DEG_VAL],[DIR_MINS_VAL],[WELL_E_W_CODE],[SURVEY_POINT_TVD],[DELTA_X],[DELTA_Y],[SURF_LONGITUDE],[SURF_LATITUDE]
+            FROM [dbo].[directionalsurveys]
+            )
+            AS DIRECTIONAL_SURVEY_QUERY
+            on APIListTable.API12 = DIRECTIONAL_SURVEY_QUERY.API_WELL_NUMBER
+            ORDER BY API12, SURVEY_POINT_MD
+
+
+db:
+  server_type: mssql
+  server: localhost\SQLEXPRESS
+  user: NULL
+  password: NULL
+  database: bsee
+
+input_bsee_db:
+  server_type: mssql
+  server: localhost\SQLEXPRESS
+  user: NULL
+  password: NULL
+  database: bsee
+
+output_bsee_db:
+#  server_type: postgresql
+#  connection_string: postgres://bjfdagvcbgbxpu:81e521d4ab00e2ee7742de18d9c32d306e5bdcd138098a2e5fb81bf1628e1266@ec2-54-145-224-156.compute-1.amazonaws.com:5432/d5dco6g2reb39c
+#  server: postgresql-Heroku
+#  user: NULL
+#  password: NULL
+  server_type: postgresql
+  connection_string: postgres://oalxhdzjaziauc:65f62541af5f9dd68c3b37e5c9d393145863f2c2c1ce5f695b9e840955d43872@ec2-34-200-94-86.compute-1.amazonaws.com:5432/d4o6u5eamn3lpd
+  server: postgresql-Heroku
+  user: NULL
+  password: NULL
+  schema: bsee
+
+
+save_data:
+  sets:
+    - attribute: output_data_well_df
+      table_name: output_data_well
+      if_exists: append
+      index: False
+      pre_conditions:
+        flag: True
+        sets:
+          - sql: >
+              DELETE FROM bsee.output_data_well WHERE "Field Name" = '{}'
+            arg_array: [*boem_fields]
+
+    - attribute: output_data_api12_df
+      table_name: output_data_api12
+      if_exists: append
+      index: False
+      pre_conditions:
+        flag: True
+        sets:
+          - sql: >
+              DELETE FROM bsee.output_data_api12 WHERE "Field Name" = '{}'
+            arg_array: [*boem_fields]
+
+    - attribute: output_field_summary_df
+      table_name: output_field_summary
+      if_exists: append
+      index: False
+      pre_conditions:
+        flag: True
+        sets:
+          - sql: >
+              DELETE FROM bsee.output_field_summary WHERE "Field NickName" = '{}'
+            arg_array: [*field_nickname]
+
+#    - attribute: production_summary_df
+#      table_name: output_production_summary
+#      if_exists: append
+#      index: False
+#      pre_conditions:
+#        flag: True
+#        sets:
+#          - sql: >
+#              DELETE FROM bsee.output_production_summary WHERE "Field NickName" = '{}'
+#            arg_array: [*field_nickname]
+
+#    - attribute: casing_tubulars
+#      table_name: output_casing_tubulars
+#      if_exists: append
+#      index: False
+#      pre_conditions:
+#        flag: True
+#        sets:
+#          - sql: >
+#              DELETE FROM bsee.output_casing_tubulars WHERE "Field NickName" = '{}'
+#            arg_array: [*field_nickname]
+
+#    - attribute: tubular_summary
+#      table_name: output_tubular_summary
+#      if_exists: append
+#      index: False
+#      pre_conditions:
+#        flag: True
+#        sets:
+#          - sql: >
+#              DELETE FROM bsee.output_tubular_summary WHERE "Field NickName" = '{}'
+#            arg_array: [*field_nickname]
+#
+#    - attribute: output_completions
+#      table_name: output_completions
+#      if_exists: append
+#      index: False
+#      pre_conditions:
+#        flag: True
+#        sets:
+#          - sql: >
+#              DELETE FROM bsee.output_completions WHERE "Field NickName" = '{}'
+#            arg_array: [*field_nickname]
+
+
+plot_multiple:
+
+  -
+    file_name_extension: relative_east_north
+    suptitle: *wellhead_plot_suptitle
+    sets:
+    -
+      title: *wellhead_plot_title
+      xlabel: Relative Easting, ft
+      ylabel: Relative Northing, ft
+      xticklabels: NULL
+#      xlim: [4000, 4500]
+#      ylim: [2000, 2500]
+      grid: True
+      legend: True
+      legend_location: best
+      data:
+       -
+          df: output_data_well_df
+          label: [Non-Producers]
+          x: [SURF_x_rel]
+          y: [SURF_y_rel]
+          filter:
+            - column: O_PROD_STATUS
+              value: 0
+          scale:
+            columns: [SURF_x_rel, SURF_y_rel]
+            factors: [3.281, 3.281]
+          plt_kind: scatter
+          marker:
+            type: 'o'
+            size: 8
+            edge_color: None
+          annotate:
+            flag: True
+            column: Well Name
+       -
+          df: output_data_well_df
+          label: [Producers]
+          x: [SURF_x_rel]
+          y: [SURF_y_rel]
+          filter:
+            - column: O_PROD_STATUS
+              value: 1
+          scale:
+            columns: [SURF_x_rel, SURF_y_rel]
+            factors: [3.281, 3.281]
+          plt_kind: scatter
+          marker:
+            type: 'o'
+            size: 12
+            edge_color: None
+          annotate:
+            flag: True
+            column: Well Name
+          legend: True
+          legend_location: best
+
+
+  -
+    file_name_extension: well_production
+    suptitle: *well_production_suptitle
+    sets:
+    -
+      title: *wellhead_plot_title
+      xlabel: Date
+      ylabel: Production Rate (BPOD)
+      xticklabels: NULL
+      autofmt:
+        xdate: True
+      grid: True
+      legend: True
+      legend_location: best
+      df_array:
+        flag: True
+        type: dict
+        variable: output_data_production_df_array
+        df: output_df_temp_from_df_array
+        x: [PRODUCTION_DATETIME]
+        y: [O_PROD_RATE_BOPD]
+        scale:
+          columns: []
+          factors: [1]
+        plt_kind: line
+        legend: True
+        marker:
+          type: 'o'
+          size: 3
+          edge_color: None
+
+  -
+    file_name_extension: production_with_time
+    suptitle: *production_plot_suptitle
+    sets:
+    -
+      title: *production_rate_plot_suptitle
+      xlabel: Date
+      ylabel: Rate (BPOD)
+      xticklabels: NULL
+      autofmt:
+        xdate: True
+      grid: True
+      legend: False
+      legend_location: best
+
+      data:
+       -
+          df: output_data_field_production_rate_df
+          label: [NULL]
+          x: [PRODUCTION_DATETIME]
+          y: [TOTAL_DAILY_PRODUCTION_rate_BOPD]
+          scale:
+            columns: []
+            factors: [1]
+          plt_kind: line
+          marker:
+            type: 'o'
+            size: 3
+            edge_color: None
+
+    -
+      title: *cumulative_production_plot_suptitle
+      xlabel: Date
+      ylabel: Production (MMbbl)
+      xticklabels: NULL
+      autofmt:
+        xdate: True
+      grid: True
+      legend: False
+      legend_location: best
+
+      data:
+       -
+          df: output_data_field_production_df
+          label: [NULL]
+          x: [PRODUCTION_DATETIME]
+          y: [CUMULATIVE_MONTLY_PRODUCTION_MMbbl]
+          scale:
+            columns: []
+            factors: [1]
+          plt_kind: line
+          marker:
+            type: 'o'
+            size: 3
+            edge_color: None
+
+save_output_data_to_local_computer:
+  flag: True
+  sets:
+    - df_attribute: output_data_field_production_df
+      label: cumulative_production
+    - df_attribute: output_data_field_production_rate_df
+      label: production_rate
+    - df_attribute: output_data_well_df
+      label: well_data
+    - df_attribute: output_completions
+      label: completions
+    - df_attribute: casing_tubulars
+      label: casing_programs

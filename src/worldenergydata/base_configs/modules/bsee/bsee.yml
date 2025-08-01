@@ -1,0 +1,112 @@
+basename: bsee
+
+type:
+  data: False
+  analysis: False
+  results: False
+
+parameters:
+  filepath:
+    data: data/modules/bsee/data
+    bin_dir: data/modules/bsee/bin
+    Well_APD_Default: data/modules/bsee/bin/Well_APD_Default
+
+    production: 
+      zip: data\modules\bsee\zip\production_yearly
+      bin: data\modules\bsee\bin\production_yearly
+
+    APD: data/modules/bsee/bin/apd
+    apm: 
+      zip: data/modules/bsee/zip/war
+      bin: data/modules/bsee/bin/war
+      columns: [[MMS_COMPANY_NUM,
+                    API_WELL_NUMBER,
+                    WATER_DEPTH,
+                    WELL_NM_BP_SFIX,
+                    WELL_NM_ST_SFIX,
+                    SURF_AREA_CODE,
+                    SURF_BLOCK_NUM,
+                    SURF_LEASE_NUM,
+                    BOTM_AREA_CODE,
+                    BOTM_BLOCK_NUM,
+                    BOTM_LEASE_NUM,
+                    RIG_ID_NUM,
+                    BOREHOLE_STAT_CD,
+                    WELL_TYPE_CODE,
+                    BUS_ASC_NAME]]
+    
+  max_allowed_npt: 90
+  borehole_codes:
+    [
+        {
+            "BOREHOLE_STAT_CD": "APD",
+            "BOREHOLE_STAT_DESC": "APPLICATION FOR PERMIT TO DRILL"
+        },
+        {
+            "BOREHOLE_STAT_CD": "AST",
+            "BOREHOLE_STAT_DESC": "APPROVED SIDETRACK"
+        },
+        {
+            "BOREHOLE_STAT_CD": "CNL",
+            "BOREHOLE_STAT_DESC": "BOREHOLE IS CANCELLED. THE REQUEST TO DRILL THE WELL IS CANCELLED AFTER THE APD OR SUNDRY HAS BEEN APPROVED. THE STATUS DATE IS THE DATE THE BOREHOLE WAS CANCELLED."
+        },
+        {
+            "BOREHOLE_STAT_CD": "COM",
+            "BOREHOLE_STAT_DESC": "BOREHOLE COMPLETED"
+        },
+        {
+            "BOREHOLE_STAT_CD": "CT",
+            "BOREHOLE_STAT_DESC": "CORE TEST WELL"
+        },
+        {
+            "BOREHOLE_STAT_CD": "DRL",
+            "BOREHOLE_STAT_DESC": "DRILLING ACTIVE"
+        },
+        {
+            "BOREHOLE_STAT_CD": "DSI",
+            "BOREHOLE_STAT_DESC": "DRILLING SUSPENDED"
+        },
+        {
+            "BOREHOLE_STAT_CD": "PA",
+            "BOREHOLE_STAT_DESC": "PERMANENTLY ABANDONED"
+        },
+        {
+            "BOREHOLE_STAT_CD": "ST",
+            "BOREHOLE_STAT_DESC": "BOREHOLE SIDETRACKED"
+        },
+        {
+            "BOREHOLE_STAT_CD": "TA",
+            "BOREHOLE_STAT_DESC": "TEMPORARILY ABANDONED"
+        },
+        {
+            "BOREHOLE_STAT_CD": "VCW",
+            "BOREHOLE_STAT_DESC": "VOLUME CHAMBER WELL"
+        },
+        {
+            "BOREHOLE_STAT_CD": "PND",
+            "BOREHOLE_STAT_DESC": "PENDING"
+        }
+
+    ]
+
+
+settings_master: NULL
+
+data_retrieval:
+  well:
+    
+    zip:
+      BoreholeRawData_mv_boreholes_all: data/modules/bsee/data/zip/BoreholeRawData_mv_boreholes_all.zip
+      eWellAPDRawData_mv_apd_main: data/modules/bsee/data/zip/eWellAPDRawData_mv_apd_main.zip
+
+  production:
+
+  block:
+
+
+default:
+  log_level: DEBUG
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False

@@ -1,0 +1,28 @@
+VALUE,DESCRIP
+ACIDIZE,Acidize
+CASING,Casing Pressure Repair
+CLEARNCE,Site Clearance
+DESAND,Wash/Desand Well
+FLUIDS,Additional Fluids For Injection
+FRAC,Hydraulic Fracking
+INITCOMP,Initial Completion
+INJECT,Initial Injection Well
+JET,Jet Well
+LIFT,Artifical Lift
+OTHER,Describe Operation(S)
+OTHRABAN,Other Abandonment
+OTHRCOMP,Other Completion
+OTHRENPR,Other Enhance Production
+OTHRINFO,Other Information
+OTHRUTIL,Other Utility
+OTHRWKVR,Other Workover
+PERF,Modify Perforations
+PERMABAN,Permanent Abandonment
+PLUGBACK,Plugback To Sidetrack/Bypass
+REPERF,Reperforation
+SURFPLAT,Surface Location Plat
+TEMPABAN,Temporary Abandonment
+TUBING,Change Tubing
+WELLNAME,Change Well Name
+ZONE,Change Zone
+ZONEISO,Zone Isolation

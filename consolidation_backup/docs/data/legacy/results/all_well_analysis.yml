@@ -1,0 +1,7 @@
+---
+default_yaml: cfg\ong_field_development\BSEE_analysis.yml
+
+custom_parameters:
+  field_nickname: &field_nickname block_placeholder
+  boem_fields: &boem_fields block_placeholder
+  well_type: &well_type "'E','D'"

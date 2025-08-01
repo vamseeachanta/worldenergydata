@@ -1,0 +1,7 @@
+Metric,Excel_Data,Typical_Deepwater_Field,Variance_Flag
+Data Points,55 periods,60 months (5 years),❌ Short period
+Average Production,"33,938 BBL","500,000-2,000,000 BBL/month",✅ Within daily range
+Total Production,"1,866,597 BBL",30-120 million BBL,❌ Low for 5-year project
+Assumed Scale,Daily,Monthly,⚠️ Scale uncertainty
+Project Duration,55 days,60 months,❌ Too short
+Annual Production (Est.),"12,387,417 BBL",6-24 million BBL,❌ Low if monthly

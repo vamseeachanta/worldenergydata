@@ -1,0 +1,741 @@
+{
+  "timestamp": "2025-07-24T12:35:58.518671",
+  "summary": {
+    "total_links_found": 96,
+    "valid_links": 90,
+    "broken_links": 6,
+    "internal_links": 79,
+    "external_links": 9,
+    "anchor_links": 8,
+    "email_links": 0
+  },
+  "categorized_results": {
+    "valid_internal": [
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "User Guide",
+        "link_target": "user-guide/",
+        "line_number": 12,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "Getting Started",
+        "link_target": "user-guide/getting-started/",
+        "line_number": 15,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "Installation",
+        "link_target": "user-guide/installation/",
+        "line_number": 16,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "Quick Examples",
+        "link_target": "user-guide/quick-examples/",
+        "line_number": 17,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "API Reference",
+        "link_target": "user-guide/api-reference/",
+        "line_number": 18,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "Data Sources",
+        "link_target": "data-sources/",
+        "line_number": 20,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "BSEE",
+        "link_target": "data-sources/bsee/",
+        "line_number": 23,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "SODIR",
+        "link_target": "data-sources/sodir/",
+        "line_number": 24,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "Wind Energy",
+        "link_target": "data-sources/wind/",
+        "line_number": 25,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "LNG",
+        "link_target": "data-sources/lng/",
+        "line_number": 26,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "Equipment",
+        "link_target": "data-sources/equipment/",
+        "line_number": 27,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "Onshore",
+        "link_target": "data-sources/onshore/",
+        "line_number": 28,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "Analysis Guides",
+        "link_target": "analysis-guides/",
+        "line_number": 30,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "Economic Evaluation",
+        "link_target": "analysis-guides/economic-evaluation/",
+        "line_number": 33,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "Production Analysis",
+        "link_target": "analysis-guides/production-analysis/",
+        "line_number": 34,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "Field Development",
+        "link_target": "analysis-guides/field-development/",
+        "line_number": 35,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "Development",
+        "link_target": "development/",
+        "line_number": 37,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "UV Usage",
+        "link_target": "development/uv_usage.md",
+        "line_number": 40,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "Reference",
+        "link_target": "reference/",
+        "line_number": 42,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "Literature",
+        "link_target": "reference/literature/",
+        "line_number": 45,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "Equipment Specs",
+        "link_target": "reference/equipment-specs/",
+        "line_number": 46,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "Industry Standards",
+        "link_target": "reference/industry-standards/",
+        "line_number": 47,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "Examples",
+        "link_target": "examples/",
+        "line_number": 49,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "Basic Usage",
+        "link_target": "examples/basic-usage/",
+        "line_number": 52,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "Field Analysis",
+        "link_target": "examples/field-analysis/",
+        "line_number": 53,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "Economic Modeling",
+        "link_target": "examples/economic-modeling/",
+        "line_number": 54,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "User Guide",
+        "link_target": "user-guide/",
+        "line_number": 74,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "Examples",
+        "link_target": "examples/",
+        "line_number": 75,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "Development Guide",
+        "link_target": "development/",
+        "line_number": 81,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\analysis-guides\\index.md",
+        "link_text": "Economic Evaluation",
+        "link_target": "economic-evaluation/",
+        "line_number": 12,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\analysis-guides\\index.md",
+        "link_text": "Production Analysis",
+        "link_target": "production-analysis/",
+        "line_number": 35,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\analysis-guides\\index.md",
+        "link_text": "Field Development",
+        "link_target": "field-development/",
+        "line_number": 58,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\index.md",
+        "link_text": "BSEE - Bureau of Safety and Environmental Enforcement",
+        "link_target": "bsee/",
+        "line_number": 12,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\index.md",
+        "link_text": "SODIR - Norwegian Offshore Directorate",
+        "link_target": "sodir/",
+        "line_number": 26,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\index.md",
+        "link_text": "Wind Energy",
+        "link_target": "wind/",
+        "line_number": 39,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\index.md",
+        "link_text": "LNG - Liquefied Natural Gas",
+        "link_target": "lng/",
+        "line_number": 52,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\index.md",
+        "link_text": "Equipment",
+        "link_target": "equipment/",
+        "line_number": 65,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\index.md",
+        "link_text": "Onshore",
+        "link_target": "onshore/",
+        "line_number": 78,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\index.md",
+        "link_text": "BSEE",
+        "link_target": "bsee/",
+        "line_number": 133,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\index.md",
+        "link_text": "Equipment",
+        "link_target": "equipment/",
+        "line_number": 133,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\index.md",
+        "link_text": "SODIR",
+        "link_target": "sodir/",
+        "line_number": 134,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\index.md",
+        "link_text": "BSEE",
+        "link_target": "bsee/",
+        "line_number": 134,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\index.md",
+        "link_text": "Wind",
+        "link_target": "wind/",
+        "line_number": 135,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\index.md",
+        "link_text": "LNG",
+        "link_target": "lng/",
+        "line_number": 135,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\index.md",
+        "link_text": "LNG",
+        "link_target": "lng/",
+        "line_number": 136,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\index.md",
+        "link_text": "Wind",
+        "link_target": "wind/",
+        "line_number": 136,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\index.md",
+        "link_text": "Equipment",
+        "link_target": "equipment/",
+        "line_number": 137,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\index.md",
+        "link_text": "BSEE",
+        "link_target": "bsee/",
+        "line_number": 137,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\index.md",
+        "link_text": "Onshore",
+        "link_target": "onshore/",
+        "line_number": 138,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\index.md",
+        "link_text": "Equipment",
+        "link_target": "equipment/",
+        "line_number": 138,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\bsee\\analysis\\rig_days\\rig_days_by_WAR.md",
+        "link_text": "cd and description",
+        "link_target": "../../data/WELL_ACTIVITY_CD/well_activity_cd_description.md",
+        "line_number": 9,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\bsee\\analysis\\rig_days\\rig_days_summary.md",
+        "link_text": "by WAR count",
+        "link_target": "rig_days_by_WAR.md",
+        "line_number": 40,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\bsee\\analysis\\rig_days\\rig_days_summary.md",
+        "link_text": "by Milestone",
+        "link_target": "rig_days_by_milestone.md",
+        "line_number": 44,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\development\\index.md",
+        "link_text": "UV Package Manager",
+        "link_target": "uv_usage.md",
+        "line_number": 15,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\development\\index.md",
+        "link_text": "UV Usage",
+        "link_target": "uv_usage.md",
+        "line_number": 194,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\examples\\index.md",
+        "link_text": "Basic Usage",
+        "link_target": "basic-usage/",
+        "line_number": 12,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\examples\\index.md",
+        "link_text": "Field Analysis",
+        "link_target": "field-analysis/",
+        "line_number": 44,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\examples\\index.md",
+        "link_text": "Economic Modeling",
+        "link_target": "economic-modeling/",
+        "line_number": 95,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\modules\\fracfocus\\data.md",
+        "link_text": "data scope",
+        "link_target": "image.png",
+        "line_number": 6,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\reference\\index.md",
+        "link_text": "Literature",
+        "link_target": "literature/",
+        "line_number": 12,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\reference\\index.md",
+        "link_text": "Equipment Specs",
+        "link_target": "equipment-specs/",
+        "line_number": 35,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\reference\\index.md",
+        "link_text": "Industry Standards",
+        "link_target": "industry-standards/",
+        "line_number": 59,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\user-guide\\index.md",
+        "link_text": "Getting Started",
+        "link_target": "getting-started/",
+        "line_number": 16,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\user-guide\\index.md",
+        "link_text": "Installation",
+        "link_target": "installation/",
+        "line_number": 17,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\user-guide\\index.md",
+        "link_text": "Quick Examples",
+        "link_target": "quick-examples/",
+        "line_number": 18,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\user-guide\\index.md",
+        "link_text": "API Reference",
+        "link_target": "api-reference/",
+        "line_number": 19,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\user-guide\\index.md",
+        "link_text": "Getting Started",
+        "link_target": "getting-started/",
+        "line_number": 25,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\user-guide\\index.md",
+        "link_text": "Installation",
+        "link_target": "installation/",
+        "line_number": 26,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\user-guide\\index.md",
+        "link_text": "Quick Examples",
+        "link_target": "quick-examples/",
+        "line_number": 27,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\user-guide\\index.md",
+        "link_text": "API Reference",
+        "link_target": "api-reference/",
+        "line_number": 28,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\user-guide\\index.md",
+        "link_text": "Examples",
+        "link_target": "../examples/",
+        "line_number": 70,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\user-guide\\index.md",
+        "link_text": "Analysis Guides",
+        "link_target": "../analysis-guides/",
+        "line_number": 71,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\user-guide\\index.md",
+        "link_text": "Getting Started",
+        "link_target": "getting-started/",
+        "line_number": 80,
+        "error_message": ""
+      }
+    ],
+    "valid_external": [
+      {
+        "source_file": "docs\\README.md",
+        "link_text": "GitHub Issues",
+        "link_target": "https://github.com/worldenergydata/worldenergydata/issues",
+        "line_number": 76,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\bsee\\data\\data_rev1.md",
+        "link_text": "#23",
+        "link_target": "https://github.com/vamseeachanta/energydata/issues/23",
+        "line_number": 30,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\bsee\\data\\drilling_data_rev1.md",
+        "link_text": "#23",
+        "link_target": "https://github.com/vamseeachanta/worldenergydata/issues/23",
+        "line_number": 30,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\bsee\\_legacy\\data_for_analysis_legacy.md",
+        "link_text": "TBA (Vamsee)",
+        "link_target": "https://github.com/vamseeachanta/worldenergydata/blob/7cdc1e006e90967d809d16a0831af7492c34f1f6/src/worldenergydata/common/bsee_data_refresh.py",
+        "line_number": 11,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\onshore\\wyoming\\data.md",
+        "link_text": "Data sources",
+        "link_target": "https://faroanalytics.com/2019/08/13/free-well-header-and-production-data-for-wyoming/",
+        "line_number": 2,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\development\\uv_usage.md",
+        "link_text": "UV Documentation",
+        "link_target": "https://docs.astral.sh/uv/",
+        "line_number": 413,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\development\\uv_usage.md",
+        "link_text": "UV GitHub Repository",
+        "link_target": "https://github.com/astral-sh/uv",
+        "line_number": 414,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\development\\uv_usage.md",
+        "link_text": "Python Packaging Guide",
+        "link_target": "https://packaging.python.org/",
+        "line_number": 415,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\development\\uv_usage.md",
+        "link_text": "pyproject.toml Specification",
+        "link_target": "https://peps.python.org/pep-0621/",
+        "line_number": 416,
+        "error_message": ""
+      }
+    ],
+    "valid_anchors": [],
+    "valid_email": [],
+    "broken_internal": [
+      {
+        "source_file": "docs\\data-sources\\bsee\\analysis\\field\\field_layout.md",
+        "link_text": "similar_schematic",
+        "link_target": "image-2.png",
+        "line_number": 5,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\bsee\\analysis\\field\\field_layout.md",
+        "link_text": "data_screenshot",
+        "link_target": "image.png",
+        "line_number": 32,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\bsee\\analysis\\field\\field_layout.md",
+        "link_text": "map_layout",
+        "link_target": "image-1.png",
+        "line_number": 36,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\bsee\\data\\drilling_data_rev1.md",
+        "link_text": "alt text",
+        "link_target": "image.png",
+        "line_number": 70,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\equipment\\anchor\\calculation.md",
+        "link_text": "alt text",
+        "link_target": "image.png",
+        "line_number": 13,
+        "error_message": ""
+      },
+      {
+        "source_file": "docs\\data-sources\\equipment\\x_tree\\x_tree.md",
+        "link_text": "Christmas Tree",
+        "link_target": "christmas_tree.png",
+        "line_number": 9,
+        "error_message": ""
+      }
+    ],
+    "broken_external": [],
+    "broken_anchors": [],
+    "broken_email": []
+  },
+  "fixable_links": {
+    "relocations": [],
+    "path_corrections": [
+      {
+        "source_file": "docs\\data-sources\\bsee\\analysis\\field\\field_layout.md",
+        "old_target": "image-2.png",
+        "suggested_target": "modules\\bsee\\analysis\\field\\image-2.png",
+        "line_number": 5
+      },
+      {
+        "source_file": "docs\\data-sources\\bsee\\analysis\\field\\field_layout.md",
+        "old_target": "image.png",
+        "suggested_target": "modules\\bsee\\analysis\\field\\image.png",
+        "line_number": 32
+      },
+      {
+        "source_file": "docs\\data-sources\\bsee\\analysis\\field\\field_layout.md",
+        "old_target": "image-1.png",
+        "suggested_target": "modules\\bsee\\analysis\\field\\image-1.png",
+        "line_number": 36
+      },
+      {
+        "source_file": "docs\\data-sources\\bsee\\data\\drilling_data_rev1.md",
+        "old_target": "image.png",
+        "suggested_target": "modules\\bsee\\analysis\\field\\image.png",
+        "line_number": 70
+      },
+      {
+        "source_file": "docs\\data-sources\\equipment\\anchor\\calculation.md",
+        "old_target": "image.png",
+        "suggested_target": "modules\\bsee\\analysis\\field\\image.png",
+        "line_number": 13
+      },
+      {
+        "source_file": "docs\\data-sources\\equipment\\x_tree\\x_tree.md",
+        "old_target": "christmas_tree.png",
+        "suggested_target": "modules\\equipment\\x_tree\\christmas_tree.png",
+        "line_number": 9
+      }
+    ],
+    "case_corrections": []
+  },
+  "files_with_issues": {
+    "docs\\data-sources\\bsee\\analysis\\field\\field_layout.md": {
+      "broken_links": 3,
+      "issues": [
+        {
+          "link_target": "image-2.png",
+          "link_type": "internal",
+          "line_number": 5,
+          "error": ""
+        },
+        {
+          "link_target": "image.png",
+          "link_type": "internal",
+          "line_number": 32,
+          "error": ""
+        },
+        {
+          "link_target": "image-1.png",
+          "link_type": "internal",
+          "line_number": 36,
+          "error": ""
+        }
+      ]
+    },
+    "docs\\data-sources\\bsee\\data\\drilling_data_rev1.md": {
+      "broken_links": 1,
+      "issues": [
+        {
+          "link_target": "image.png",
+          "link_type": "internal",
+          "line_number": 70,
+          "error": ""
+        }
+      ]
+    },
+    "docs\\data-sources\\equipment\\anchor\\calculation.md": {
+      "broken_links": 1,
+      "issues": [
+        {
+          "link_target": "image.png",
+          "link_type": "internal",
+          "line_number": 13,
+          "error": ""
+        }
+      ]
+    },
+    "docs\\data-sources\\equipment\\x_tree\\x_tree.md": {
+      "broken_links": 1,
+      "issues": [
+        {
+          "link_target": "christmas_tree.png",
+          "link_type": "internal",
+          "line_number": 9,
+          "error": ""
+        }
+      ]
+    }
+  }
+}
