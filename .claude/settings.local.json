@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
     "allow": [
       "Bash(git pull:*)",
@@ -12,7 +13,9 @@
       "Bash(git push:*)",
       "Bash(mkdir:*)",
       "Bash(cp:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(diff:*)",
+      "Bash(ls:*)"
     ],
     "deny": []
   }
