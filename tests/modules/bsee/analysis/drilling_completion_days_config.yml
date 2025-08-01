@@ -10,11 +10,6 @@ drilling_n_completion_days:
 
 filepath:
   leases: "tests/modules/bsee/analysis/leases.csv"
-  war_files:
-    main: "data/modules/bsee/bin/war/mv_war_main.bin"
-    prop: "data/modules/bsee/bin/war/mv_war_main_prop.bin"
-    remarks: "data/modules/bsee/bin/war/mv_war_main_prop_remark.bin"
-    boreholes: "data/modules/bsee/bin/war/mv_war_boreholes_view.bin"
 
 default:
   log_level: INFO
