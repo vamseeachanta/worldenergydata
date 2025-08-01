@@ -1,0 +1,35 @@
+=== COMPREHENSIVE DATA COMPARISON REPORT ===
+Generated: 2025-08-01 15:35:50.970972
+
+FILES COMPARED:
+  Reference: docs\modules\bsee\data\SME_Roy_attachments\2025-08-01\drilling_and_completion_days_by_api.xlsx
+  Test Output: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\2025-08-01-drilling-script-validation\results\drilling_and_completion_days_by_api_comprehensive.xlsx
+
+DATA SUMMARY:
+  Reference rows (original): 122
+  Test rows (original): 122
+  Reference rows (filtered): 118
+  Test rows (filtered): 118
+  Common columns: 12
+
+COMPARISON RESULTS:
+  Total cells compared: 1,416
+  Matching cells: 1,416
+  Different cells: 0
+  Match percentage: 100.00%
+
+VALIDATION STATUS: PASSED
+
+COLUMNS COMPARED:
+  - LEASE_NAME
+  - SURF_LEASE_NUM
+  - WATER_DEPTH
+  - API_WELL_NUMBER
+  - WELL_NAME
+  - WELL_SPUD_DATE
+  - TOTAL_DEPTH_DATE
+  - DRILLING_DAYS
+  - COMPLETION_DAYS
+  - MAX_BH_TOTAL_MD
+  - MAX_WELL_BORE_TVD
+  - MAX_DRILL_FLUID_WGT

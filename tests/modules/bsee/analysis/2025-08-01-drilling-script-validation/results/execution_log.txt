@@ -1,0 +1,21 @@
+Script execution return code: 0
+Standard output length: 807 characters
+Standard error length: 858 characters
+=== STDOUT ===
+🔍 Lease Numbers from leases.csv (stripped of 'G'): ['17001', '16965', '16997', '20351', '31752', '31751', '21245', '18753', '18745', '25792', '19555', '25782', '31938', '25232', '30876', '32460']
+🔍 Sample SURF_LEASE_NUMs from WAR file: ['G01608' 'G24872' 'G02587' 'G03484' 'G03776' 'G01604' ' 00796' 'G17015'
+ 'G24101' 'G14658']
+✅ Filtered WAR records: 2496 out of 358731
+🔎 Sample API to Lease Mapping:
+API: 608074030500 → Lease#: 30876 → Name: North Platte, Depth: 5840
+API: 608074030501 → Lease#: 30876 → Name: North Platte, Depth: 5840
+API: 608074030502 → Lease#: 30876 → Name: North Platte, Depth: 5840
+API: 608074031400 → Lease#: 32460 → Name: North Platte, Depth: 4230
+API: 608074031500 → Lease#: 32460 → Name: North Platte, Depth: 4230
+✅ drilling_and_completion_days_by_api_test_output.xlsx written.
+
+=== STDERR ===
+C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\2025-08-01-drilling-script-validation\extract_drilling_and_completion_days.py:30: UserWarning: Could not infer format, so each element will be parsed individually, falling back to `dateutil`. To ensure parsing is consistent and as-expected, please specify a format.
+  main_war['WAR_START_DT'] = pd.to_datetime(main_war['WAR_START_DT'], errors='coerce')
+C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\2025-08-01-drilling-script-validation\extract_drilling_and_completion_days.py:31: UserWarning: Could not infer format, so each element will be parsed individually, falling back to `dateutil`. To ensure parsing is consistent and as-expected, please specify a format.
+  main_war['WAR_END_DT'] = pd.to_datetime(main_war['WAR_END_DT'], errors='coerce')

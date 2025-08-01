@@ -78,6 +78,21 @@ This is the tests coverage details for the spec detailed in @.agent-os/specs/202
 - Test that comparison logic remains stable
 - Test backward compatibility with existing NPV tests
 
+### Output File Tests
+
+**File Generation**
+- Test CSV file creation in `tests\modules\bsee\analysis\<spec_folder>\data\`
+- Test visualization generation in `tests\modules\bsee\analysis\<spec_folder>\visualizations\`
+- Test report generation in `tests\modules\bsee\analysis\<spec_folder>\reports\`
+- Test proper file naming conventions
+- Test directory creation if not exists
+
+**File Content Validation**
+- Test CSV files contain expected columns and data
+- Test visualization files are valid image formats
+- Test markdown reports have proper formatting
+- Test JSON files have valid structure
+
 ## Mocking Requirements
 
 - **Excel File Access:** Mock for unit tests, use real file for integration tests
