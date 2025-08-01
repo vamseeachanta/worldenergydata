@@ -306,7 +306,7 @@ class DrillingCompletionDays:
         final = final.sort_values(by=['LEASE_NAME', 'SPUD_DATE_SORT']).drop(columns=['SPUD_DATE_SORT'])
         
         # Generate output filename based on configuration or default
-        output_filename = "drilling_and_completion_days_by_api_latest.xlsx"
+        output_filename = "drilling_and_completion_days_by_api_2025-07-31.xlsx"
         result_path = self.cfg['Analysis']['result_folder']
         final.to_excel(os.path.join(result_path, output_filename), index=False)
         logger.info(f"Analysis results written to: {output_filename}")
