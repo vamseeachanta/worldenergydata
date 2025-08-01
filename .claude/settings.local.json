@@ -12,7 +12,9 @@
       "Bash(git push:*)",
       "Bash(mkdir:*)",
       "Bash(cp:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(gh pr create:*)",
+      "Bash(gh pr merge:*)"
     ],
     "deny": []
   }
