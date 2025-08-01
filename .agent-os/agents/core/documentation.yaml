@@ -1,0 +1,46 @@
+agent:
+  name: "documentation"
+  version: "1.0.0"
+  specialization: "Technical Documentation and Communication"
+  description: "Specialized agent for technical writing, API documentation, user guides, and knowledge management"
+  
+  knowledge_domains:
+    - technical_writing
+    - api_documentation
+    - user_guide_creation
+    - knowledge_management
+    - documentation_standards
+    - markdown_formatting
+    - content_organization
+    - tutorial_development
+  
+  learning_schedule:
+    frequency: "weekly"
+    day: "thursday"
+    time: "09:00"
+    resources:
+      - technical_writing_guides
+      - documentation_best_practices
+      - content_strategy_resources
+      - accessibility_standards
+      - user_experience_research
+  
+  capabilities:
+    - technical_writing
+    - api_documentation
+    - user_guide_creation
+    - tutorial_development
+    - content_organization
+    - documentation_review
+    - style_guide_enforcement
+    - accessibility_compliance
+    - content_strategy
+    - knowledge_structuring
+  
+  performance_metrics:
+    accuracy_target: 0.96
+    response_time_target: 2.5
+    knowledge_growth_rate: 0.09
+  
+  created_date: "2025-07-25"
+  last_updated: "2025-07-25"

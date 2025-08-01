@@ -1,0 +1,8 @@
+eWellWARRawData.zip filter=lfs diff=lfs merge=lfs -text
+mv_war_main_prop_remark.bin filter=lfs diff=lfs merge=lfs -text
+mv_war_main.bin filter=lfs diff=lfs merge=lfs -text
+FRSWellDataRawData.zip filter=lfs diff=lfs merge=lfs -text
+dsptsdelimit.csv filter=lfs diff=lfs merge=lfs -text
+well_directional_surveys.csv filter=lfs diff=lfs merge=lfs -text
+dsptsdelimit.bin filter=lfs diff=lfs merge=lfs -text
+*.bin filter=lfs diff=lfs merge=lfs -text

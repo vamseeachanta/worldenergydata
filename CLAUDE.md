@@ -1,7 +1,16 @@
+# CLAUDE.md
+
+This file provides guidance to AI assistants when working with code in this repository.
+
+**For all AI assistant configuration and guidance, refer to the `.ai/` directory.**
+
 ## Agent OS Documentation
 
 ### Product Context
 - **Mission & Vision:** @.agent-os/product/mission.md
+- **Technical Architecture:** @.agent-os/product/tech-stack.md
+- **Development Roadmap:** @.agent-os/product/roadmap.md
+- **Decision History:** @.agent-os/product/decisions.md
 
 ### Development Standards
 - **Code Style:** @~/.agent-os/standards/code-style.md
@@ -26,4 +35,6 @@ When asked to work on this codebase:
 
 - Product-specific files in `.agent-os/product/` override any global standards
 - User's specific instructions override (or amend) instructions found in `.agent-os/specs/...`
-- Always adhere to established patterns, code style, and best practices documented above.
+- Always adhere to established patterns, code style, and best practices documented above
+- Use UV package manager for all dependency operations
+- Run code quality checks before committing changes
