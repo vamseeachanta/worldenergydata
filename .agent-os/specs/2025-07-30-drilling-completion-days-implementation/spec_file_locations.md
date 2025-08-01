@@ -8,54 +8,6 @@ This document lists all files created for this spec to help team members navigat
 
 ## Core Documentation
 
-### Main Spec File
-- **Spec Requirements:** `spec.md`
-  - Contains: User prompt, overview, user stories, scope, and deliverables
-  - Path: `.agent-os/specs/2025-07-30-drilling-completion-days-integration/spec.md`
-
-### Task Management
-- **Implementation Tasks:** `tasks.md`
-  - Contains: Breakdown of implementation tasks with TDD approach
-  - Path: `.agent-os/specs/2025-07-30-drilling-completion-days-integration/tasks.md`
-
-## Sub-Specifications
-
-### Technical Details
-- **Technical Specification:** `sub-specs/technical-spec.md`
-  - Contains: Technical requirements, approach options, dependencies
-  - Path: `.agent-os/specs/2025-07-30-drilling-completion-days-integration/sub-specs/technical-spec.md`
-
-### Testing Strategy
-- **Tests Specification:** `sub-specs/tests.md`
-  - Contains: Test coverage, unit tests, integration tests, mocking requirements
-  - Path: `.agent-os/specs/2025-07-30-drilling-completion-days-integration/sub-specs/tests.md`
-
-## Quick Navigation
-
-```
-.agent-os/specs/2025-07-30-drilling-completion-days-integration/
-├── spec.md                          # Main requirements document
-├── tasks.md                         # Implementation task breakdown
-├── spec_file_locations.md           # This file - navigation guide
-└── sub-specs/
-    ├── technical-spec.md            # Technical implementation details
-    └── tests.md                     # Test coverage specifications
-
-Generated Implementation Files:
-tests/modules/bsee/analysis/
-├── drilling_completion_days_test.py         # Main test file
-├── drilling_completion_days_config.yml      # Test configuration
-└── leases.csv                              # Existing lease data (no changes)
-
-src/worldenergydata/modules/bsee/
-├── analysis/
-│   └── drilling_completion_days.py         # New framework wrapper class
-└── custom_router.py                        # Enhanced with new routing logic
-
-output/drilling_completion_days/
-└── drilling_and_completion_days_by_api.xlsx # Generated Excel analysis
-```
-
 ## Generated Files
 
 ### Test Files
@@ -63,15 +15,16 @@ output/drilling_completion_days/
   - Contains: Primary test implementation for the framework integration
   - Path: `tests/modules/bsee/analysis/drilling_completion_days_test.py`
 
-### Implementation Scripts
-- **Framework Wrapper Class:** `src/worldenergydata/modules/bsee/analysis/drilling_completion_days.py`
-  - Contains: DrillingCompletionDaysFramework wrapper class for engine integration
-  - Path: `src/worldenergydata/modules/bsee/analysis/drilling_completion_days.py`
-
 ### Configuration Files
 - **YAML Configuration:** `tests/modules/bsee/analysis/drilling_completion_days_config.yml`
   - Contains: Configuration for binary file paths, basename settings, and analysis parameters
   - Path: `tests/modules/bsee/analysis/drilling_completion_days_config.yml`
+  
+### Implementation Scripts
+- **Framework Wrapper Class:** `src/worldenergydata/modules/bsee/analysis/custom_scripts/Roy/july/drilling_and_completion_days.py`
+  - Contains: DrillingCompletionDaysFramework wrapper class for engine integration
+  - Path: `src/worldenergydata/modules/bsee/analysis/custom_scripts/Roy/july/drilling_and_completion_days.py`
+
 
 ### Enhanced Files
 - **Custom Router:** `src/worldenergydata/modules/bsee/custom_router.py`
@@ -79,7 +32,7 @@ output/drilling_completion_days/
   - Path: `src/worldenergydata/modules/bsee/custom_router.py`
 
 ### Output Files
-- **Excel Analysis Report:** `tests\modules\bsee\analysis\results\drilling_and_completion_days_by_api.xlsx`
+- **Excel Analysis Report:** `tests\modules\bsee\analysis\results\drilling_and_completion_days_by_api_2025-07-31.xlsx`
   - Contains: Drilling and completion days analysis by API well number
   - Path: Configured output directory with standardized filename
 
