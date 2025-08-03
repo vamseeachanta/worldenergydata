@@ -86,7 +86,7 @@ Analysis:
   file_name: data_refresh
   file_name_for_overwrite: data_refresh
   log_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\logs
-  start_time: 2025-07-31 10:32:57.250225
+  start_time: 2025-08-01 12:15:46.844046
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\data_refresh.yml
