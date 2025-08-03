@@ -8,12 +8,10 @@
       "Bash(uv pip install:*)",
       "Bash(rm:*)",
       "Bash(find:*)",
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(git push:*)",
+
       "Bash(mkdir:*)",
       "Bash(cp:*)",
-      "Bash(git checkout:*)",
+
       "Bash(diff:*)",
       "Bash(ls:*)"
     ],
