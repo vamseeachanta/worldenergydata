@@ -1,6 +1,6 @@
 # Tests Specification
 
-This is the tests coverage details for the spec detailed in @.agent-os/specs/2025-07-29-drilling-days-comparison/spec.md
+This is the tests coverage details for the spec detailed in @.agent-os/specs/2025-08-04-drilling-completion-days-comparison/spec.md
 
 > Created: 2025-07-29
 > Version: 1.0.0
@@ -24,10 +24,9 @@ This is the tests coverage details for the spec detailed in @.agent-os/specs/202
 - Test discrepancy flagging logic (thresholds)
 
 **MarkdownReportGenerator**
-- Test markdown table formatting
-- Test column alignment and spacing
+- Test markdown table formatting with specific columns: API number, drilling days lease method, drilling days api12 method, completion days lease method, completion days api12 method
+- Test column alignment and spacing for the 5-column comparison table
 - Test handling of missing data in reports
-- Test status flag generation (OK/REVIEW/ERROR)
 - Test file output and path handling
 
 ### Integration Tests
@@ -72,7 +71,7 @@ This is the tests coverage details for the spec detailed in @.agent-os/specs/202
 - **Missing Data Scenario**: Wells present in one method but not the other
 
 ### Expected Test Outcomes
-- Comparison test passes when discrepancies are within acceptable thresholds
-- Comparison test flags for review when differences exceed thresholds
-- Comparison test fails when critical data integrity issues are detected
-- Generated markdown report is properly formatted and contains all required columns
+- Comparison test passes when API numbers can be matched between both methods
+- Comparison test generates a markdown table with exactly 5 columns: API number, drilling days lease method, drilling days api12 method, completion days lease method, completion days api12 method
+- Generated markdown report contains one row per API number with corresponding drilling and completion days from both methods
+- Test validates that all required columns are present and properly formatted
