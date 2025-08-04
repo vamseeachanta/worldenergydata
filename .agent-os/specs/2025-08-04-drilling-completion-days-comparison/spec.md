@@ -1,7 +1,7 @@
 # Spec Requirements Document
 
 > Spec: Drilling Days Comparison Test
-> Created: 2025-07-29
+> Created: 2025-08-04
 > Status: Planning
 
 ## User Prompt
@@ -12,8 +12,8 @@
 I need to create a spec for a drilling days test comparison between two methods (lease_num vs api12_num). The spec should compare the outputs of these two different approaches and generate a comparison table in markdown format.
 
 **Details:**
-- Method 1 (lease_num): Uses lease number approach with test in 'tests\modules\bsee\analysis\drilling_n_completion_days_test.py' and implementation in "src\worldenergydata\modules\bsee\analysis\custom_scripts\Roy\july\extract_drilling_and_completion_days.py"
-- Method 2 (api12_num): Uses API12 number approach with test in 'tests\modules\bsee\analysis\query_api_01_wells_api12_rig_days_Tiber_test.py' and implementation in "src\worldenergydata\modules\bsee\analysis\well_api12.py"
+- Method 1 (lease_num): Uses lease number approach with test 'tests\modules\bsee\analysis\drilling_completion_days_test.py' and implementation in "src\worldenergydata\modules\bsee\analysis\custom_scripts\Roy\july\drilling_and_completion_days.py"
+- Method 2 (api12_num): Uses API12 number approach with test 'tests\modules\bsee\analysis\query_api_01_wells_api12_rig_days_Tiber_test.py' and implementation in "src\worldenergydata\modules\bsee\analysis\well_api12.py"
 - Key columns for comparison: api12 number, drilling days, completion days
 - Goal: Write a test that compares both methods' output files and creates comparison table in markdown format
 ```
@@ -66,15 +66,17 @@ As a **Data Quality Engineer**, I want to automate the comparison of different d
 ## Expected Deliverable
 
 1. **Functional Comparison Test** - A pytest-based test that successfully executes both methods and generates comparison output
-2. **Comprehensive Drilling and Completion Days Comparison Report** - Markdown-formatted comparison table showing all wells with detailed drilling days and completion days analysis from both methods, including:
-   - Side-by-side drilling days comparison (lease_num vs api12_num methods)
-   - Side-by-side completion days comparison between both approaches
-   - Statistical variance analysis of drilling and completion days differences
-   - Well-by-well discrepancy identification for both drilling and completion phases
+2. **Comprehensive Drilling and Completion Days Comparison Report** - Markdown-formatted comparison table showing API12 numbers with their corresponding drilling/completion days from both methods:
+   - API number column
+   - Drilling days lease method column
+   - Drilling days api12 method column  
+   - Completion days lease method column
+   - Completion days api12 method column
+   - Each row represents one API number with its corresponding drilling and completion days from both approaches
 3. **Data Quality Validation** - Automated identification and reporting of discrepancies between the two methods for drilling and completion days calculations
 
 ## Spec Documentation
 
-- Tasks: @.agent-os/specs/2025-07-29-drilling-days-comparison/tasks.md
-- Technical Specification: @.agent-os/specs/2025-07-29-drilling-days-comparison/sub-specs/technical-spec.md
-- Tests Specification: @.agent-os/specs/2025-07-29-drilling-days-comparison/sub-specs/tests.md
+- Tasks: @.agent-os/specs/2025-08-04-drilling-completion-days-comparison/tasks.md
+- Technical Specification: @.agent-os/specs/2025-08-04-drilling-completion-days-comparison/sub-specs/technical-spec.md
+- Tests Specification: @.agent-os/specs/2025-08-04-drilling-completion-days-comparison/sub-specs/tests.md
