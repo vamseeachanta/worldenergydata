@@ -14,7 +14,7 @@ refer: main test file for worldenergydata:"tests\modules\bsee\analysis\drilling_
 refer test script:"src\worldenergydata\modules\bsee\analysis\custom_scripts\Roy\july\drilling_and_completion_days.py"
 refer original output:"docs\modules\bsee\data\SME_Roy_attachments\2025-08-01\drilling_and_completion_days_by_api.xlsx"
 follow below instrcutions for output validation:
-1. use different output file name to not override existing files and check any file exists with this new file name.
+1. use different output file name to not override existing files and check any file exists with the new file name.
 2. run the test and check whether output file is generated or not
 3. compare the test output with original output
 4. create summary file of what have achieved in markdown format.

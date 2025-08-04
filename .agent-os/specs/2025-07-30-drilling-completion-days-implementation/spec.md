@@ -83,7 +83,6 @@ The custom router checks for a `drilling_n_completion_days` flag in the configur
 
 ## Spec Documentation
 
-- File Locations Guide: @.agent-os/specs/2025-07-30-drilling-completion-days-integration/spec_file_locations.md
 - Tasks: @.agent-os/specs/2025-07-30-drilling-completion-days-integration/tasks.md
 - Technical Specification: @.agent-os/specs/2025-07-30-drilling-completion-days-integration/sub-specs/technical-spec.md
 - Tests Specification: @.agent-os/specs/2025-07-30-drilling-completion-days-integration/sub-specs/tests.md

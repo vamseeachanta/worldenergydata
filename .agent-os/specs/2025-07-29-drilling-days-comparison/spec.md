@@ -75,7 +75,6 @@ As a **Data Quality Engineer**, I want to automate the comparison of different d
 
 ## Spec Documentation
 
-- File Locations Guide: @.agent-os/specs/2025-07-29-drilling-days-comparison/spec_file_locations.md
 - Tasks: @.agent-os/specs/2025-07-29-drilling-days-comparison/tasks.md
 - Technical Specification: @.agent-os/specs/2025-07-29-drilling-days-comparison/sub-specs/technical-spec.md
 - Tests Specification: @.agent-os/specs/2025-07-29-drilling-days-comparison/sub-specs/tests.md
