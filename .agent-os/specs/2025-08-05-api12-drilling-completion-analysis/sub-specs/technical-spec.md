@@ -22,7 +22,7 @@ This is the technical specification for the spec detailed in @.agent-os/specs/20
 ### Output Format Requirements
 - Generate comprehensive markdown analysis report
 - Include tabular comparisons of selected wells
-- Document calculation methodologies with code references
+- Document calculation methodologies with code references and input data sources
 - Provide root cause analysis with supporting evidence
 
 ## Approach Options

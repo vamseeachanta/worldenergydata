@@ -1,0 +1,27 @@
+{
+  "analysis_date": "2025-08-06",
+  "total_wells_analyzed": 122,
+  "selected_wells": {
+    "high_difference_well": {
+      "api12": 608124010400,
+      "field_name": "Stones",
+      "well_name": "SN208",
+      "total_difference": 509.0,
+      "drilling_difference": 496.0,
+      "completion_difference": 13.0
+    },
+    "low_difference_well": {
+      "api12": 608124004400,
+      "field_name": "St Malo",
+      "well_name": "001",
+      "total_difference": 2.0,
+      "drilling_difference": 2.0,
+      "completion_difference": 0.0
+    }
+  },
+  "analysis_summary": {
+    "mean_drilling_diff": 17.581967213114755,
+    "mean_completion_diff": 23.040983606557376,
+    "mean_total_diff": 48.81967213114754
+  }
+}

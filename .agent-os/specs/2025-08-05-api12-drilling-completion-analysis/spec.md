@@ -27,7 +27,7 @@ follow below points:
 
 ## Overview
 
-Perform a comparative analysis of drilling and completion days calculations between two different BSEE methods (lease-based and API12-based) to identify discrepancies, understand calculation methodologies, and document root causes for differences in the results.
+Perform a comparative analysis of drilling and completion days calculations between two different BSEE methods (lease-based and API12-based) to identify discrepancies, understand calculation methodologies, identifying input data source for both methods and document root causes for differences in the results.
 
 ## User Stories
 
@@ -45,7 +45,7 @@ As a data analyst working with BSEE data, I want comprehensive documentation of 
 
 1. **Comparative Data Analysis** - Analyze drilling and completion days from both lease method output and API12 method output files
 2. **Well Selection and Comparison** - Identify and analyze two specific API12 wells representing high and low difference scenarios
-3. **Methodology Documentation** - Document the calculation strategies used by both drilling_and_completion_days.py and well_api12.py scripts
+3. **Methodology Documentation** - Document the calculation strategies and input data sources used by both drilling_and_completion_days.py and well_api12.py scripts
 4. **Root Cause Analysis** - Identify the fundamental reasons causing differences in drilling and completion day calculations
 5. **Analysis Report Generation** - Create a comprehensive markdown report documenting findings, methodologies, and recommendations
 
