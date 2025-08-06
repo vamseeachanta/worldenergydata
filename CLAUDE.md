@@ -13,13 +13,13 @@ This file provides guidance to AI assistants when working with code in this repo
 - **Decision History:** @.agent-os/product/decisions.md
 
 ### Development Standards
-- **Code Style:** @~/.agent-os/standards/code-style.md
-- **Best Practices:** @~/.agent-os/standards/best-practices.md
+- **Code Style:** @.agent-os/standards/code-style.md
+- **Best Practices:** @.agent-os/standards/best-practices.md
 
 ### Project Management
 - **Active Specs:** @.agent-os/specs/
-- **Spec Planning:** Use `@~/.agent-os/instructions/create-spec.md`
-- **Tasks Execution:** Use `@~/.agent-os/instructions/execute-tasks.md`
+- **Spec Planning:** Use `@.agent-os/instructions/create-spec.md`
+- **Tasks Execution:** Use `@.agent-os/instructions/execute-tasks.md`
 
 ## Workflow Instructions
 
@@ -69,3 +69,21 @@ This project supports enhanced Agent OS workflows including:
 ## Available Commands
 
 - **Create-Module-Agent:** Available via `/create-module-agent` command
+
+
+## Self-Contained Agent OS
+
+This repository includes a complete, self-contained Agent OS framework. All slash commands work immediately after `git clone` with no additional setup required.
+
+### Available Slash Commands
+- `/create-spec <spec-name>` - Create detailed specification documents
+- `/execute-tasks <tasks-file>` - Execute tasks from specification
+- `/create-module-agent <agent-name>` - Create specialized AI agents
+
+### Local Agent OS Structure
+- **Standards**: @.agent-os/standards/ (code style, best practices)
+- **Instructions**: @.agent-os/instructions/ (workflow guidance)
+- **Product Context**: @.agent-os/product/ (mission, roadmap, decisions)
+- **Specifications**: @.agent-os/specs/ (feature specifications and tasks)
+
+All references are local to this repository - no external dependencies required.
