@@ -8,12 +8,12 @@
       "Bash(uv pip install:*)",
       "Bash(rm:*)",
       "Bash(find:*)",
-
       "Bash(mkdir:*)",
       "Bash(cp:*)",
-
       "Bash(diff:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(git stash:*)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }
