@@ -11,18 +11,18 @@
 ```
 to check whether the latest already implemented script with war files generates exact same ouput data by implementing in worldenergydata.
 refer implemented script:"docs\modules\bsee\data\SME_Roy_attachments\2025-08-01\extract_drilling_and_completion_days.py",
-refer output file for comparison:"docs\modules\bsee\data\SME_Roy_attachments\2025-08-01\drilling_and_completion_days_by_api.xlsx" (ignore total values in the bottom of DRILLING_DAYS and COMPLETION_DAYS columns) ,
+refer output file for comparison:"docs\modules\bsee\data\SME_Roy_attachments\2025-08-01\drilling_and_completion_days_by_api.xlsx" ,
 follow below process:
-1. create new script with same content in implemented script with no any code modifications.
+1. create new script with same content of implemented script with no any code modifications.
 2. use input files from folder "docs\modules\bsee\data\SME_Roy_attachments\2025-08-01".
 3. run the script to check whether output file generated.
-4. if generates, compare the generated script with reference output file (ignore total values in output file as i said earlier).
+4. if generates, compare the generated script with executed output file .
 5. if the output matches , create markdown which gives executive summary of what we have achieved.
 ```
 
 ## Overview
 
-Validate that the existing drilling and completion days extraction script produces identical output to the reference file by creating a test implementation that replicates the exact functionality and compares the generated output against the known reference data.
+Validate that the existing drilling and completion days extraction script produces identical output to the executed file by creating a test implementation that replicates the exact functionality and compares the generated output against the known reference data.
 
 ## User Stories
 
