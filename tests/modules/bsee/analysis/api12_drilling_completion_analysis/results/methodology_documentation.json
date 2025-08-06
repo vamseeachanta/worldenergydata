@@ -1,0 +1,428 @@
+{
+  "analysis_date": "2025-08-06",
+  "purpose": "Methodology analysis for API12 drilling completion days comparison",
+  "lease_method": {
+    "method_name": "Lease-based Drilling and Completion Days Analysis",
+    "script_path": "src/worldenergydata/modules/bsee/analysis/custom_scripts/Roy/july/drilling_and_completion_days.py",
+    "class_name": "DrillingCompletionDays",
+    "data_sources": {
+      "primary": [
+        {
+          "name": "WAR Main Data",
+          "source": "mv_war_main.bin (pickled data)",
+          "fields_used": [
+            "SN_WAR",
+            "API_WELL_NUMBER",
+            "SURF_LEASE_NUM",
+            "WELL_NAME",
+            "WAR_START_DT",
+            "WAR_END_DT"
+          ],
+          "purpose": "Well Activity Reports - primary source for drilling timeline"
+        },
+        {
+          "name": "Boreholes Data",
+          "source": "mv_war_boreholes_view.bin (pickled data)",
+          "fields_used": [
+            "API_WELL_NUMBER",
+            "WELL_SPUD_DATE",
+            "TOTAL_DEPTH_DATE",
+            "BH_TOTAL_MD",
+            "WELL_BORE_TVD"
+          ],
+          "purpose": "Borehole information including spud and total depth dates"
+        },
+        {
+          "name": "WAR Properties",
+          "source": "mv_war_main_prop.bin (pickled data)",
+          "fields_used": [
+            "SN_WAR",
+            "DRILL_FLUID_WGT"
+          ],
+          "purpose": "Well properties including drilling fluid weight"
+        },
+        {
+          "name": "Lease Information",
+          "source": "leases.csv",
+          "fields_used": [
+            "LEASE_NUM",
+            "LEASE_NAME",
+            "WATER_DEPTH"
+          ],
+          "purpose": "Lease metadata for grouping and identification"
+        }
+      ]
+    },
+    "calculation_methodology": {
+      "drilling_days_calculation": {
+        "approach": "Timeline-based with gap analysis",
+        "key_steps": [
+          "Extract Total Depth Date from boreholes data",
+          "Identify WAR records for each API before TD date",
+          "Apply gap threshold (300 days) to handle drilling interruptions",
+          "Adjust spud date based on gap analysis",
+          "Calculate drilling days as (TD_DATE - ADJUSTED_SPUD_DATE) - early_days"
+        ],
+        "business_rules": [
+          "GAP_THRESHOLD = 300 days for drilling interruptions",
+          "If gap > 300 days, restart drilling timeline from after gap",
+          "Early drilling days before major gaps are subtracted from total",
+          "Only use WAR records that start before Total Depth Date"
+        ],
+        "data_filtering": [
+          "Filter WAR records by lease numbers",
+          "Remove records with missing WAR_START_DT or WAR_END_DT",
+          "Sort WAR records by start date for timeline analysis"
+        ]
+      },
+      "completion_days_calculation": {
+        "approach": "Post-TD WAR timeline analysis with gap handling",
+        "key_steps": [
+          "Find WAR records after Total Depth Date for each well",
+          "Apply smaller gap threshold (8 days) for completion activities",
+          "Group consecutive WAR activities into completion segments",
+          "Sum duration of all completion segments"
+        ],
+        "business_rules": [
+          "COMPLETION_GAP_THRESHOLD = 8 days between activities",
+          "Only analyze WAR records after Total Depth Date",
+          "Multiple completion segments are summed together",
+          "If no WAR records after TD, completion days = 0"
+        ],
+        "segment_logic": [
+          "Break completion timeline at gaps > 8 days",
+          "Calculate days for each continuous segment",
+          "Sum all segment durations for total completion days"
+        ]
+      }
+    },
+    "key_functions": [
+      {
+        "name": "_load_lease_data",
+        "purpose": "Load and process lease information from CSV",
+        "processing": "Strip 'G' prefix from lease numbers, build lookup dictionary"
+      },
+      {
+        "name": "_load_war_data",
+        "purpose": "Load WAR data from binary files and process dates",
+        "processing": "Convert dates, filter by lease, standardize API numbers"
+      },
+      {
+        "name": "adjust_spud",
+        "purpose": "Adjust spud date based on drilling gaps",
+        "processing": "Analyze WAR timeline gaps, restart after major interruptions"
+      },
+      {
+        "name": "_process_analysis",
+        "purpose": "Main analysis logic for drilling and completion calculation",
+        "processing": "Coordinate all calculations and generate output Excel file"
+      }
+    ],
+    "output_format": {
+      "file_type": "Excel (.xlsx)",
+      "filename_pattern": "drilling_and_completion_days_by_api_validation_[timestamp].xlsx",
+      "columns": [
+        "LEASE_NAME",
+        "SURF_LEASE_NUM",
+        "WATER_DEPTH",
+        "API_WELL_NUMBER",
+        "WELL_NAME",
+        "WELL_SPUD_DATE",
+        "TOTAL_DEPTH_DATE",
+        "DRILLING_DAYS",
+        "COMPLETION_DAYS",
+        "MAX_BH_TOTAL_MD",
+        "MAX_WELL_BORE_TVD",
+        "MAX_DRILL_FLUID_WGT"
+      ],
+      "sorting": "By LEASE_NAME then SPUD_DATE"
+    },
+    "strengths": [
+      "Comprehensive gap analysis for drilling interruptions",
+      "Uses multiple data sources for complete picture",
+      "Handles complex drilling timelines with restarts",
+      "Provides detailed well metadata"
+    ],
+    "limitations": [
+      "Relies on WAR data quality and completeness",
+      "Fixed gap thresholds may not suit all scenarios",
+      "Complex logic may be hard to troubleshoot"
+    ]
+  },
+  "api12_method": {
+    "method_name": "API12-based Well Analysis with Rig Days Integration",
+    "script_path": "src/worldenergydata/modules/bsee/analysis/well_api12.py",
+    "class_name": "WellAPI12",
+    "data_sources": {
+      "primary": [
+        {
+          "name": "Well Data Groups",
+          "source": "Input data structure (well_data)",
+          "fields_used": "Dynamic based on input configuration",
+          "purpose": "Structured well data from external sources"
+        },
+        {
+          "name": "Rig Days Analysis",
+          "source": "WellRigDays class integration",
+          "fields_used": "WAR milestone data, rig timeline",
+          "purpose": "Specialized rig days calculation using milestone approach"
+        },
+        {
+          "name": "Directional Surveys",
+          "source": "get_directional_surveys_by_api10()",
+          "fields_used": "Survey points, well paths",
+          "purpose": "Spatial well data for 3D analysis"
+        },
+        {
+          "name": "Borehole Data",
+          "source": "get_well_borehole_data()",
+          "fields_used": "Depth, trajectory, completion details",
+          "purpose": "Technical well specifications"
+        }
+      ]
+    },
+    "calculation_methodology": {
+      "drilling_days_calculation": {
+        "approach": "Milestone-based rig days analysis",
+        "key_steps": [
+          "Integrate with WellRigDays class for rig timeline analysis",
+          "Use milestone-based approach to identify drilling phases",
+          "Extract drilling days from rigdays_by_milestone JSON",
+          "Calculate drilling efficiency metrics (days per 10,000 ft)"
+        ],
+        "business_rules": [
+          "Uses WellRigDays class for standardized rig analysis",
+          "Milestone approach tracks DRL (drilling) activities",
+          "Incorporates sidetrack and bypass information",
+          "Calculates drilling efficiency based on total depth"
+        ],
+        "data_processing": [
+          "Groups wells by configuration settings",
+          "Processes multiple wells in batch",
+          "Integrates with existing well analysis framework"
+        ]
+      },
+      "completion_days_calculation": {
+        "approach": "Milestone-based completion activity tracking",
+        "key_steps": [
+          "Extract completion days from rigdays_by_milestone data",
+          "Track completion activities separately from drilling",
+          "Integrate with production start dates when available"
+        ],
+        "business_rules": [
+          "Uses milestone data to identify completion phases",
+          "Separates completion from drilling activities",
+          "Links to production timeline when available"
+        ],
+        "integration_points": [
+          "Connects with production data analysis",
+          "Links to well timeline visualization",
+          "Supports multi-well field analysis"
+        ]
+      }
+    },
+    "key_functions": [
+      {
+        "name": "run_well_analysis",
+        "purpose": "Main orchestrator for multi-well analysis",
+        "processing": "Process well groups, coordinate analysis, save results"
+      },
+      {
+        "name": "get_api12_analysis",
+        "purpose": "Core API12 well data analysis",
+        "processing": "Integrate rig days, borehole data, completion info"
+      },
+      {
+        "name": "get_sidetracklabel_and_rig_rigdays",
+        "purpose": "Specialized rig days calculation with sidetrack handling",
+        "processing": "Use WellRigDays class, handle complex well trajectories"
+      },
+      {
+        "name": "well_timeline_analysis",
+        "purpose": "Generate well timeline for visualization",
+        "processing": "Track spud, TD, production dates across wells"
+      }
+    ],
+    "output_format": {
+      "file_type": "CSV",
+      "filename_pattern": "well_summ_[label].csv",
+      "columns": [
+        "API12",
+        "API10",
+        "TOTAL_DEPTH_DATE",
+        "WELL_SPUD_DATE",
+        "COMPLETION_NAME",
+        "START_PRODUCTION_DATE",
+        "LAST_PRODUCTION_DATE",
+        "WELL_NAME",
+        "WELL_NAME_SUFFIX",
+        "drilling_days_per_10000_ft",
+        "RIG_LAST_DATE_ON_WELL",
+        "Water Depth (feet)",
+        "Total Measured Depth",
+        "Drilling Days",
+        "Completion Days",
+        "rigdays_by_milestone"
+      ],
+      "additional_outputs": [
+        "Well timeline CSV for visualization",
+        "Block-specific analysis files",
+        "Timeline plots and charts"
+      ]
+    },
+    "strengths": [
+      "Integrates with specialized rig days analysis framework",
+      "Supports complex multi-well field analysis",
+      "Milestone-based approach provides detailed activity tracking",
+      "Comprehensive output including visualization support"
+    ],
+    "limitations": [
+      "Dependent on WellRigDays class implementation",
+      "More complex data flow and dependencies",
+      "Milestone data quality affects accuracy"
+    ]
+  },
+  "data_source_differences": {
+    "data_source_comparison": {
+      "lease_method": {
+        "primary_data": "WAR (Well Activity Reports) binary files",
+        "data_format": "Pickled pandas DataFrames",
+        "access_method": "Direct file loading with pickle",
+        "data_scope": "Filtered by lease numbers",
+        "key_tables": [
+          "mv_war_main.bin - Main WAR records",
+          "mv_war_boreholes_view.bin - Borehole information",
+          "mv_war_main_prop.bin - Well properties",
+          "leases.csv - Lease metadata"
+        ]
+      },
+      "api12_method": {
+        "primary_data": "Structured well data + WellRigDays integration",
+        "data_format": "Python dictionaries/objects + framework integration",
+        "access_method": "Through WellRigDays class and data structures",
+        "data_scope": "Well-specific with grouping support",
+        "key_sources": [
+          "Input well_data structure",
+          "WellRigDays class (milestone data)",
+          "Directional surveys",
+          "Borehole data integration"
+        ]
+      }
+    },
+    "key_differences": [
+      {
+        "aspect": "Data Access Pattern",
+        "lease_method": "Direct file-based loading of pre-processed WAR data",
+        "api12_method": "Framework-based data access through specialized classes"
+      },
+      {
+        "aspect": "Timeline Construction",
+        "lease_method": "Raw WAR record timeline analysis with custom gap logic",
+        "api12_method": "Milestone-based timeline from WellRigDays analysis"
+      },
+      {
+        "aspect": "Data Granularity",
+        "lease_method": "Individual WAR records with start/end dates",
+        "api12_method": "Aggregated milestone data with phase summaries"
+      },
+      {
+        "aspect": "Preprocessing Requirements",
+        "lease_method": "Requires WAR data to be pickled and processed",
+        "api12_method": "Depends on WellRigDays preprocessing and milestone calculation"
+      }
+    ],
+    "impact_on_results": [
+      {
+        "factor": "Data Completeness",
+        "description": "Lease method may miss activities not recorded in WAR; API12 method depends on milestone accuracy"
+      },
+      {
+        "factor": "Timeline Accuracy",
+        "description": "Lease method uses actual start/end dates; API12 method uses calculated phase durations"
+      },
+      {
+        "factor": "Gap Handling",
+        "description": "Lease method has explicit gap thresholds; API12 method relies on milestone logic"
+      }
+    ]
+  },
+  "processing_differences": {
+    "processing_comparison": {
+      "lease_method": {
+        "architecture": "Monolithic class with sequential processing",
+        "workflow": [
+          "Load lease configuration",
+          "Load WAR binary data files",
+          "Process boreholes for TD dates",
+          "Analyze drilling timeline with gaps",
+          "Calculate completion timeline post-TD",
+          "Generate single Excel output"
+        ],
+        "complexity": "Medium - custom gap analysis logic",
+        "scalability": "Limited to lease-based grouping"
+      },
+      "api12_method": {
+        "architecture": "Framework integration with specialized components",
+        "workflow": [
+          "Process well groups from input data",
+          "Integrate with WellRigDays for each well",
+          "Generate API12 analysis with milestones",
+          "Create timeline analysis across wells",
+          "Output multiple CSV files and visualizations"
+        ],
+        "complexity": "High - multiple class integrations",
+        "scalability": "Supports multi-well field analysis"
+      }
+    },
+    "algorithm_differences": [
+      {
+        "process": "Drilling Days Calculation",
+        "lease_method": "Gap-based timeline analysis with 300-day threshold",
+        "api12_method": "Milestone-based phase duration from WellRigDays"
+      },
+      {
+        "process": "Completion Days Calculation",
+        "lease_method": "Post-TD WAR analysis with 8-day gap threshold",
+        "api12_method": "Milestone completion phase extraction"
+      },
+      {
+        "process": "Data Validation",
+        "lease_method": "Basic null checks and date validation",
+        "api12_method": "Framework-based validation through WellRigDays"
+      },
+      {
+        "process": "Output Generation",
+        "lease_method": "Single Excel file with all wells",
+        "api12_method": "Multiple CSV files with grouping and visualization"
+      }
+    ],
+    "computational_complexity": {
+      "lease_method": {
+        "time_complexity": "O(n*m) where n=wells, m=WAR records per well",
+        "space_complexity": "Loads all WAR data into memory",
+        "bottlenecks": "Gap analysis for wells with many WAR records"
+      },
+      "api12_method": {
+        "time_complexity": "O(n) for well processing + WellRigDays overhead",
+        "space_complexity": "Depends on WellRigDays internal processing",
+        "bottlenecks": "WellRigDays milestone calculation"
+      }
+    }
+  },
+  "summary": {
+    "fundamental_difference": "Lease method uses raw WAR timeline analysis while API12 method uses milestone-based phase calculations",
+    "data_approach": "Lease method is data-driven from WAR records; API12 method is framework-driven through WellRigDays",
+    "accuracy_factors": [
+      "WAR data completeness and quality",
+      "Milestone calculation accuracy in WellRigDays",
+      "Gap threshold appropriateness",
+      "Timeline reconstruction methodology"
+    ],
+    "recommended_analysis": [
+      "Compare gap threshold impacts on specific wells",
+      "Validate milestone calculation logic",
+      "Analyze data source completeness",
+      "Review timeline reconstruction accuracy"
+    ]
+  }
+}
