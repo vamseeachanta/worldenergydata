@@ -1,0 +1,498 @@
+{
+  "analysis_date": "2025-08-06T11:35:25.750207",
+  "dataset_info": {
+    "total_wells": 12,
+    "total_fields": 6,
+    "fields": [
+      "Stones",
+      "St Malo",
+      "Jack",
+      "Cascade",
+      "Anchor",
+      "Chinook"
+    ]
+  },
+  "comparison_data": [
+    {
+      "API12": 608124010400,
+      "field_name": "Stones",
+      "well_name": "SN208",
+      "lease_drilling_days": 565,
+      "api12_drilling_days": 69,
+      "drilling_diff": 496,
+      "lease_completion_days": 93,
+      "api12_completion_days": 80,
+      "completion_diff": 13,
+      "total_diff": 509
+    },
+    {
+      "API12": 608124011200,
+      "field_name": "Stones",
+      "well_name": "SN206",
+      "lease_drilling_days": 259,
+      "api12_drilling_days": 54,
+      "drilling_diff": 205,
+      "lease_completion_days": 51,
+      "api12_completion_days": 61,
+      "completion_diff": -10,
+      "total_diff": 215
+    },
+    {
+      "API12": 608124004400,
+      "field_name": "St Malo",
+      "well_name": "001",
+      "lease_drilling_days": 2,
+      "api12_drilling_days": 0,
+      "drilling_diff": 2,
+      "lease_completion_days": 0,
+      "api12_completion_days": 0,
+      "completion_diff": 0,
+      "total_diff": 2
+    },
+    {
+      "API12": 608124005300,
+      "field_name": "St Malo",
+      "well_name": "PN001",
+      "lease_drilling_days": 331,
+      "api12_drilling_days": 58,
+      "drilling_diff": 273,
+      "lease_completion_days": 94,
+      "api12_completion_days": 69,
+      "completion_diff": 25,
+      "total_diff": 298
+    },
+    {
+      "API12": 608124003100,
+      "field_name": "Jack",
+      "well_name": "003",
+      "lease_drilling_days": 230,
+      "api12_drilling_days": 109,
+      "drilling_diff": 121,
+      "lease_completion_days": 18,
+      "api12_completion_days": 0,
+      "completion_diff": 18,
+      "total_diff": 139
+    },
+    {
+      "API12": 608124000400,
+      "field_name": "Jack",
+      "well_name": "001",
+      "lease_drilling_days": 66,
+      "api12_drilling_days": 111,
+      "drilling_diff": -45,
+      "lease_completion_days": 34,
+      "api12_completion_days": 0,
+      "completion_diff": 34,
+      "total_diff": 79
+    },
+    {
+      "API12": 608124003800,
+      "field_name": "Cascade",
+      "well_name": "CA003",
+      "lease_drilling_days": 210,
+      "api12_drilling_days": 46,
+      "drilling_diff": 164,
+      "lease_completion_days": 204,
+      "api12_completion_days": 136,
+      "completion_diff": 68,
+      "total_diff": 232
+    },
+    {
+      "API12": 608124001600,
+      "field_name": "Cascade",
+      "well_name": "002",
+      "lease_drilling_days": 74,
+      "api12_drilling_days": 137,
+      "drilling_diff": -63,
+      "lease_completion_days": 120,
+      "api12_completion_days": 0,
+      "completion_diff": 120,
+      "total_diff": 183
+    },
+    {
+      "API12": 608114075000,
+      "field_name": "Anchor",
+      "well_name": "AP001",
+      "lease_drilling_days": 105,
+      "api12_drilling_days": 90,
+      "drilling_diff": 15,
+      "lease_completion_days": 216,
+      "api12_completion_days": 133,
+      "completion_diff": 83,
+      "total_diff": 98
+    },
+    {
+      "API12": 608114062101,
+      "field_name": "Anchor",
+      "well_name": "001",
+      "lease_drilling_days": 19,
+      "api12_drilling_days": 46,
+      "drilling_diff": -27,
+      "lease_completion_days": 48,
+      "api12_completion_days": 0,
+      "completion_diff": 48,
+      "total_diff": 75
+    },
+    {
+      "API12": 608124009700,
+      "field_name": "Chinook",
+      "well_name": "CH004",
+      "lease_drilling_days": 94,
+      "api12_drilling_days": 91,
+      "drilling_diff": 3,
+      "lease_completion_days": 261,
+      "api12_completion_days": 297,
+      "completion_diff": -36,
+      "total_diff": 39
+    },
+    {
+      "API12": 608124004600,
+      "field_name": "Chinook",
+      "well_name": "002",
+      "lease_drilling_days": 29,
+      "api12_drilling_days": 41,
+      "drilling_diff": -12,
+      "lease_completion_days": 12,
+      "api12_completion_days": 0,
+      "completion_diff": 12,
+      "total_diff": 24
+    }
+  ],
+  "methodology_data": {
+    "lease_method": {
+      "approach": "Timeline-based with gap analysis",
+      "gap_threshold_drilling": 300,
+      "gap_threshold_completion": 8,
+      "data_sources": [
+        "WAR main binary files (mv_war_main.bin)",
+        "Boreholes data (mv_war_boreholes_view.bin)",
+        "Properties data (mv_war_main_prop.bin)",
+        "Lease CSV data"
+      ],
+      "processing_steps": [
+        "Load pickle files and CSV data",
+        "Match wells by API12",
+        "Extract WAR timeline data",
+        "Apply gap thresholds",
+        "Calculate drilling and completion days",
+        "Export to Excel"
+      ]
+    },
+    "api12_method": {
+      "approach": "Milestone-based phase calculation",
+      "framework": "WellRigDays integration",
+      "data_sources": [
+        "Well data structure",
+        "WellRigDays framework",
+        "Directional surveys",
+        "Borehole integration"
+      ],
+      "processing_steps": [
+        "Access well objects through framework",
+        "Extract milestone data",
+        "Calculate DRL phases",
+        "Extract completion phases",
+        "Generate CSV outputs",
+        "Create visualizations"
+      ]
+    }
+  },
+  "executive_summary": {
+    "total_wells_analyzed": 12,
+    "fields_analyzed": [
+      "Stones",
+      "St Malo",
+      "Jack",
+      "Cascade",
+      "Anchor",
+      "Chinook"
+    ],
+    "average_drilling_difference": 94.33333333333333,
+    "average_completion_difference": 31.25,
+    "maximum_difference": 509.0,
+    "minimum_difference": 2.0,
+    "high_difference_wells_count": 6,
+    "methodology_comparison": {
+      "lease_method": "Timeline-based with gap analysis",
+      "api12_method": "Milestone-based phase calculation"
+    },
+    "key_findings": [
+      "Analyzed 12 wells across 6 fields",
+      "Average drilling days difference: 94.3 days",
+      "Average completion days difference: 31.2 days",
+      "Maximum total difference: 509 days (well SN208)",
+      "Minimum total difference: 2 days (well 001)",
+      "6 wells show differences greater than 100 days"
+    ]
+  },
+  "statistical_analysis": {
+    "drilling_differences": {
+      "mean": 94.33333333333333,
+      "median": 9.0,
+      "std": 166.35850298422233,
+      "min": -63.0,
+      "max": 496.0,
+      "q25": -15.75,
+      "q75": 174.25,
+      "iqr": 190.0,
+      "skewness": 1.4354953632474476,
+      "kurtosis": 1.879196835766182
+    },
+    "completion_differences": {
+      "mean": 31.25,
+      "median": 21.5,
+      "std": 42.97171374076419,
+      "min": -36.0,
+      "max": 120.0,
+      "q25": 9.0,
+      "q75": 53.0,
+      "iqr": 44.0,
+      "skewness": 0.6480226032597367,
+      "kurtosis": 0.38911218765881284
+    },
+    "total_differences": {
+      "mean": 157.75,
+      "median": 118.5,
+      "std": 143.23986557836855,
+      "min": 2.0,
+      "max": 509.0,
+      "q25": 66.0,
+      "q75": 219.25,
+      "iqr": 153.25,
+      "skewness": 1.3952122676236858,
+      "kurtosis": 2.275985621653433
+    }
+  },
+  "field_analysis": {
+    "Stones": {
+      "wells_count": 2,
+      "average_drilling_diff": 350.5,
+      "average_completion_diff": 1.5,
+      "average_total_diff": 362.0,
+      "max_drilling_diff": 496.0,
+      "min_drilling_diff": 205.0,
+      "max_completion_diff": 13.0,
+      "min_completion_diff": -10.0,
+      "wells_details": [
+        {
+          "api12": 608124010400,
+          "well_name": "SN208",
+          "drilling_diff": 496.0,
+          "completion_diff": 13.0,
+          "total_diff": 509.0
+        },
+        {
+          "api12": 608124011200,
+          "well_name": "SN206",
+          "drilling_diff": 205.0,
+          "completion_diff": -10.0,
+          "total_diff": 215.0
+        }
+      ]
+    },
+    "St Malo": {
+      "wells_count": 2,
+      "average_drilling_diff": 137.5,
+      "average_completion_diff": 12.5,
+      "average_total_diff": 150.0,
+      "max_drilling_diff": 273.0,
+      "min_drilling_diff": 2.0,
+      "max_completion_diff": 25.0,
+      "min_completion_diff": 0.0,
+      "wells_details": [
+        {
+          "api12": 608124004400,
+          "well_name": "001",
+          "drilling_diff": 2.0,
+          "completion_diff": 0.0,
+          "total_diff": 2.0
+        },
+        {
+          "api12": 608124005300,
+          "well_name": "PN001",
+          "drilling_diff": 273.0,
+          "completion_diff": 25.0,
+          "total_diff": 298.0
+        }
+      ]
+    },
+    "Jack": {
+      "wells_count": 2,
+      "average_drilling_diff": 38.0,
+      "average_completion_diff": 26.0,
+      "average_total_diff": 109.0,
+      "max_drilling_diff": 121.0,
+      "min_drilling_diff": -45.0,
+      "max_completion_diff": 34.0,
+      "min_completion_diff": 18.0,
+      "wells_details": [
+        {
+          "api12": 608124003100,
+          "well_name": "003",
+          "drilling_diff": 121.0,
+          "completion_diff": 18.0,
+          "total_diff": 139.0
+        },
+        {
+          "api12": 608124000400,
+          "well_name": "001",
+          "drilling_diff": -45.0,
+          "completion_diff": 34.0,
+          "total_diff": 79.0
+        }
+      ]
+    },
+    "Cascade": {
+      "wells_count": 2,
+      "average_drilling_diff": 50.5,
+      "average_completion_diff": 94.0,
+      "average_total_diff": 207.5,
+      "max_drilling_diff": 164.0,
+      "min_drilling_diff": -63.0,
+      "max_completion_diff": 120.0,
+      "min_completion_diff": 68.0,
+      "wells_details": [
+        {
+          "api12": 608124003800,
+          "well_name": "CA003",
+          "drilling_diff": 164.0,
+          "completion_diff": 68.0,
+          "total_diff": 232.0
+        },
+        {
+          "api12": 608124001600,
+          "well_name": "002",
+          "drilling_diff": -63.0,
+          "completion_diff": 120.0,
+          "total_diff": 183.0
+        }
+      ]
+    },
+    "Anchor": {
+      "wells_count": 2,
+      "average_drilling_diff": -6.0,
+      "average_completion_diff": 65.5,
+      "average_total_diff": 86.5,
+      "max_drilling_diff": 15.0,
+      "min_drilling_diff": -27.0,
+      "max_completion_diff": 83.0,
+      "min_completion_diff": 48.0,
+      "wells_details": [
+        {
+          "api12": 608114075000,
+          "well_name": "AP001",
+          "drilling_diff": 15.0,
+          "completion_diff": 83.0,
+          "total_diff": 98.0
+        },
+        {
+          "api12": 608114062101,
+          "well_name": "001",
+          "drilling_diff": -27.0,
+          "completion_diff": 48.0,
+          "total_diff": 75.0
+        }
+      ]
+    },
+    "Chinook": {
+      "wells_count": 2,
+      "average_drilling_diff": -4.5,
+      "average_completion_diff": -12.0,
+      "average_total_diff": 31.5,
+      "max_drilling_diff": 3.0,
+      "min_drilling_diff": -12.0,
+      "max_completion_diff": 12.0,
+      "min_completion_diff": -36.0,
+      "wells_details": [
+        {
+          "api12": 608124009700,
+          "well_name": "CH004",
+          "drilling_diff": 3.0,
+          "completion_diff": -36.0,
+          "total_diff": 39.0
+        },
+        {
+          "api12": 608124004600,
+          "well_name": "002",
+          "drilling_diff": -12.0,
+          "completion_diff": 12.0,
+          "total_diff": 24.0
+        }
+      ]
+    }
+  },
+  "root_cause_analysis": {
+    "primary_factors": [
+      "Timeline Reconstruction Methods: Lease method uses raw WAR start/end dates vs API12 method uses milestone phase durations",
+      "Gap Handling Philosophy: Lease method applies fixed thresholds (300 days drilling, 8 days completion) vs API12 method uses framework-determined logic",
+      "Data Source Granularity: Lease method processes individual WAR records vs API12 method uses aggregated milestone data",
+      "Drilling Interruption Treatment: Lease method explicitly handles gaps and restarts timeline vs API12 method may aggregate interrupted periods"
+    ],
+    "methodology_impacts": [
+      "Gap-based vs Milestone-based: 6 wells show drilling differences >50 days, likely due to different gap handling",
+      "Timeline Reconstruction: Wells with complex drilling histories show larger differences due to timeline calculation methods",
+      "Data Processing: Framework integration in API12 method may smooth out drilling interruptions captured in lease method",
+      "Completion Calculation: 6 wells show completion differences >30 days due to different post-TD analysis methods"
+    ],
+    "data_quality_factors": [
+      "WAR Data Completeness: Missing or incomplete WAR records affect lease method calculations",
+      "Milestone Accuracy: WellRigDays framework accuracy depends on milestone calculation quality",
+      "Date Precision: Different date handling between methods may introduce systematic differences",
+      "Activity Classification: Different categorization of drilling vs completion activities"
+    ],
+    "recommendations": [
+      "Validate gap thresholds against actual drilling histories for representative wells",
+      "Compare milestone calculation logic in WellRigDays against raw WAR timeline analysis",
+      "Analyze data source completeness for both WAR records and milestone data",
+      "Review timeline reconstruction accuracy for wells with extreme differences",
+      "Develop hybrid approach combining WAR granularity with milestone framework benefits",
+      "Implement configurable gap thresholds based on well-specific characteristics"
+    ],
+    "high_difference_analysis": {
+      "drilling_outliers": 6,
+      "completion_outliers": 6,
+      "fields_most_affected": [
+        "Stones",
+        "Cascade",
+        "St Malo"
+      ]
+    }
+  },
+  "accuracy_metrics": {
+    "agreement_statistics": {
+      "drilling_mae": 118.83333333333333,
+      "drilling_rmse": 185.11527939818114,
+      "drilling_correlation": 0.052143719975998426,
+      "completion_mae": 38.916666666666664,
+      "completion_rmse": 51.66478491196881,
+      "completion_correlation": 0.8832500258303281,
+      "mean_absolute_error": 157.75,
+      "root_mean_squared_error": 209.0285068278168,
+      "correlation_coefficient": 0.5488232016728446
+    },
+    "difference_distribution": {
+      "drilling_diff_range": [
+        -63.0,
+        496.0
+      ],
+      "completion_diff_range": [
+        -36.0,
+        120.0
+      ],
+      "total_diff_range": [
+        2.0,
+        509.0
+      ]
+    },
+    "outlier_analysis": {
+      "drilling_outliers": 1,
+      "completion_outliers": 1,
+      "drilling_outlier_wells": [
+        0
+      ],
+      "completion_outlier_wells": [
+        7
+      ]
+    }
+  }
+}
