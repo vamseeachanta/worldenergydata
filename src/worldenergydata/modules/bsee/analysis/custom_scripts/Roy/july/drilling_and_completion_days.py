@@ -4,6 +4,7 @@
 import pandas as pd
 import pickle
 import os
+from datetime import datetime
 from loguru import logger
 
 
@@ -306,8 +307,19 @@ class DrillingCompletionDays:
         final = final.sort_values(by=['LEASE_NAME', 'SPUD_DATE_SORT']).drop(columns=['SPUD_DATE_SORT'])
         
         # Generate output filename based on configuration or default
-        output_filename = "drilling_and_completion_days_by_api_2025-07-31.xlsx"
+        output_filename = "drilling_and_completion_days_by_api_validation.xlsx"
         result_path = self.cfg['Analysis']['result_folder']
-        final.to_excel(os.path.join(result_path, output_filename), index=False)
-        logger.info(f"Analysis results written to: {output_filename}")
+        
+        # Check if file already exists
+        output_path = os.path.join(result_path, output_filename)
+        if os.path.exists(output_path):
+            logger.warning(f"Output file already exists: {output_path}")
+            # Add timestamp to make filename unique
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            output_filename = f"drilling_and_completion_days_by_api_validation_{timestamp}.xlsx"
+            output_path = os.path.join(result_path, output_filename)
+            logger.info(f"Using timestamped filename: {output_filename}")
+        
+        final.to_excel(output_path, index=False)
+        logger.info(f"Analysis results written to: {output_path}")
         logger.info(f"Processed {len(final)} wells with drilling and completion data")
