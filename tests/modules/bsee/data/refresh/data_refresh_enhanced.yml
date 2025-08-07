@@ -1,0 +1,98 @@
+# Enhanced BSEE Data Refresh Configuration
+# This configuration enables the enhanced parallel data refresh system
+# with fresh data access and in-memory processing
+
+meta:
+  library: worldenergydata
+  basename: bsee
+  mode: enhanced  # Indicates enhanced mode is active
+  description: Enhanced data refresh with fresh data access
+
+# Enable enhanced mode
+enhanced_mode: True
+
+# Data refresh flags
+data:
+  refresh: True      # Master refresh flag
+  enhanced: True     # Enable enhanced processing
+  fresh_data: True   # Use fresh data downloads
+  
+  # Data type flags
+  well: True         # Process well (APD) data
+  war: False         # Process WAR data (NEW in enhanced)
+  production: False  # Process production data
+  
+  # Legacy compatibility flag
+  apm: False         # Legacy APM flag (use 'well' instead)
+
+# Data source URLs
+sources:
+  well:
+    url: "https://www.data.bsee.gov/Well/Files/APDRawData.zip"
+    display_name: "Application for Permit to Drill"
+    update_frequency: daily
+    
+  war:
+    url: "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip"
+    display_name: "eWell Submissions WAR"
+    update_frequency: daily
+    
+  production:
+    url: "https://www.data.bsee.gov/Production/Files/ProductionRawData.zip"
+    display_name: "Production Data"
+    update_frequency: bi_monthly
+    
+  portal:
+    url: "https://www.data.bsee.gov/Main/RawData.aspx"
+    display_name: "BSEE Raw Data Portal"
+
+# Processing configuration
+processing:
+  in_memory: True        # Process data in memory
+  save_zip: False        # Don't save zip files to disk
+  chunk_size: 8192       # Download chunk size in bytes
+  timeout: 300           # Download timeout in seconds
+  max_retries: 3         # Maximum retry attempts
+  retry_delay: 5         # Delay between retries in seconds
+
+# Memory management
+memory:
+  max_file_size_mb: 500  # Maximum file size to process in memory
+  warning_threshold_mb: 200  # Warn if file exceeds this size
+  
+# Output configuration (compatible with legacy)
+output:
+  format: pickle         # Use pickle format for compatibility
+  compression: None      # No compression for compatibility
+  
+# File paths (inherited from base config but can be overridden)
+parameters:
+  filepath:
+    bin_dir: data/modules/bsee/bin
+    
+    well:
+      bin: data/modules/bsee/bin/apd
+      
+    war:
+      bin: data/modules/bsee/bin/war  # NEW directory for WAR data
+      
+    production:
+      bin: data/modules/bsee/bin/production_raw
+
+# Logging configuration
+default:
+  log_level: INFO
+  log_enhanced_details: True  # Log additional details in enhanced mode
+
+# Validation settings
+validation:
+  check_data_integrity: True
+  verify_column_names: True
+  validate_date_ranges: True
+
+# Performance monitoring
+monitoring:
+  track_download_time: True
+  track_processing_time: True
+  track_memory_usage: True
+  report_metrics: True
