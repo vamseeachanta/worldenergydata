@@ -7,47 +7,60 @@ This is the technical specification for the spec detailed in @.agent-os/specs/mo
 
 ## Technical Requirements
 
-### Core Functionality
-- **Multi-Source Data Access:** Support web scraping, file downloads, and future API integration
-- **Incremental Updates:** Detect and download only changed data based on timestamps and checksums
-- **Parallel Processing:** Process WAR, production, and well data concurrently with thread pooling
-- **Error Recovery:** Implement retry logic with exponential backoff for network failures
-- **Data Validation:** Verify data integrity before and after processing
-- **Progress Tracking:** Provide real-time progress updates during long-running operations
+### Primary Research Requirement
+- **API Discovery:** Conduct comprehensive research of BSEE data access methods to identify any available web APIs
+- **API Testing:** If APIs exist, create comprehensive test suite demonstrating API access capabilities
+- **Fallback Implementation:** If no APIs exist, implement web scraping solution
+
+### Core Functionality (Based on Existing Architecture)
+- **Direct Data Links Access:** Access the three confirmed BSEE data sources:
+  - WELL_DATA: https://www.data.bsee.gov/Well/Files/APDRawData.zip (daily updates)
+  - PRODUCTION_DATA: https://www.data.bsee.gov/Production/Files/ProductionRawData.zip (bi-monthly updates) 
+  - WAR_DATA: https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip (daily updates)
+- **In-Memory Processing:** Process 100+ MB files without storing zip files in repository due to GitHub limits
+- **Existing Pipeline Integration:** Maintain compatibility with current execution path and binary output format
+- **Config File Compatibility:** Support existing YAML configurations and flag-based processing
 
 ### Performance Requirements
-- Refresh daily updates in <5 minutes (compared to current 15-30 minutes)
-- Support processing of files up to 2GB without memory overflow
-- Handle 10+ concurrent data streams
-- Maintain <100MB memory footprint during normal operations
-
-### UI/UX Requirements
-- Git bash CLI with intuitive command structure
-- Clear progress indicators and error messages
-- Verbose and quiet modes for different use cases
-- JSON output option for programmatic integration
+- Process 100+ MB BSEE files in-memory without storing intermediate files
+- Maintain memory efficiency during large file processing (streaming where possible)
+- Preserve existing binary file generation speed using pickle serialization
+- Support the three data types (well, production, war) with existing flag-based control
 
 ### Integration Requirements
-- Backward compatible with existing binary file formats
-- Integrate with AssetUtilities zip processing
-- Support existing YAML configuration structure
-- Maintain compatibility with downstream analysis modules
+- **Existing Test Entry Point:** Maintain compatibility with `tests/modules/bsee/data/refresh/data_refresh_test.py`
+- **Config File Integration:** Work with existing configurations:
+  - `tests/modules/bsee/data/refresh/data_refresh.yml` (data refresh and apm flags)
+  - `src/worldenergydata/base_configs/modules/bsee/bsee.yml` (file paths)
+- **Execution Path Compatibility:** Integrate with existing flow:
+  - `engine.py` → `bsee.py` → `bsee_data.py` → `data_refresh.py`
+- **Binary Output Compatibility:** Maintain existing pickle-based binary file format in `data/modules/bsee/bin`
+
+### Data Source Specifications
+- **BSEE Main Portal:** https://www.data.bsee.gov/Main/RawData.aspx
+- **Data Location:** Links found in "Raw Data" column under "Delimited" button
+- **Display Names in Portal:**
+  - "Application for Permit to Drill" → WELL_DATA
+  - "Production Data" → PRODUCTION_DATA  
+  - "eWell Submissions WAR" → WAR_DATA
+- **Update Frequencies:** Daily (well & war), Bi-monthly (production)
+- **File Constraints:** Cannot store 100+ MB zip files in GitHub repository
 
 ## Approach Options
 
-**Option A: Pure Web Scraping**
-- Pros: No file downloads, always current data, minimal storage
-- Cons: Slower for large datasets, fragile to website changes, rate limiting concerns
+**Option A: API Integration (Preferred if available)**
+- Pros: Direct data access, no file handling, always current data, efficient
+- Cons: Depends on BSEE offering APIs (requires research to confirm)
 
-**Option B: Hybrid Scraping + Downloads (Selected)**
-- Pros: Optimal performance, fallback options, incremental updates, robust
-- Cons: More complex implementation, requires change detection logic
+**Option B: In-Memory Web Scraping (Selected if no APIs)**
+- Pros: Bypasses zip file storage, accesses latest data, maintains existing binary format
+- Cons: Higher memory usage, depends on website structure stability
 
-**Option C: File Downloads Only**
-- Pros: Simple, reliable, matches current approach
-- Cons: Large downloads, bandwidth waste, storage requirements
+**Option C: Current Zip File Approach (Existing)**
+- Pros: Currently implemented, stable
+- Cons: Stale data causes "big variance" in analysis, large file storage issues
 
-**Rationale:** The hybrid approach provides the best balance of performance, reliability, and efficiency. It allows us to use web scraping for small updates while falling back to file downloads for bulk operations.
+**Rationale:** API integration is preferred to eliminate file handling entirely. If APIs don't exist, in-memory processing solves the core problems: data freshness and repository size constraints, while maintaining compatibility with existing pickle-based processing.
 
 ## External Dependencies
 
@@ -75,29 +88,26 @@ This is the technical specification for the spec detailed in @.agent-os/specs/mo
 
 ## Architecture Design
 
-### Module Structure
+### Module Structure (Integration with Existing)
 ```
-modules/bsee/data/refresh/
-├── __init__.py
-├── controller.py         # Main refresh orchestrator
-├── sources/
-│   ├── __init__.py
-│   ├── base.py          # Abstract base for data sources
-│   ├── web_scraper.py   # Web scraping implementation
-│   ├── file_downloader.py # File download handler
-│   └── api_client.py    # Future API client
-├── processors/
-│   ├── __init__.py
-│   ├── war_processor.py
-│   ├── production_processor.py
-│   └── well_processor.py
-├── validators/
-│   ├── __init__.py
-│   └── data_validator.py
-└── utils/
-    ├── __init__.py
-    ├── progress.py      # Progress tracking
-    └── cache.py         # Metadata caching
+# Existing structure maintained:
+src/worldenergydata/modules/bsee/data/
+├── refresh/
+│   ├── data_refresh.py          # Enhanced with API/scraping logic
+│   ├── api_client.py            # New: API research and implementation
+│   └── web_scraper.py           # New: In-memory scraping if no APIs
+├── _from_zip/
+│   ├── well_data.py             # Existing: Enhanced to use fresh data
+│   └── production_data.py       # Existing: Enhanced to use fresh data
+└── bsee_data.py                 # Existing: Entry point for data processing
+
+# Supporting files:
+tests/modules/bsee/data/refresh/
+├── data_refresh_test.py         # Existing: Test entry point
+└── data_refresh.yml             # Existing: Configuration with refresh/apm flags
+
+src/worldenergydata/base_configs/modules/bsee/
+└── bsee.yml                     # Existing: File paths configuration
 ```
 
 ### Class Hierarchy
@@ -113,53 +123,51 @@ DataSource (ABC)
     └── BSEEAPIClient
 ```
 
-### Data Flow
-1. **Command Parsing** → CLI parses user input and configuration
-2. **Source Selection** → Controller chooses optimal data source
-3. **Data Retrieval** → Parallel fetching with progress tracking
-4. **Validation** → Schema and integrity checks
-5. **Processing** → Type-specific processors handle conversion
-6. **Binary Generation** → Optimized binary files created
-7. **Metadata Update** → Cache and logs updated
+### Data Flow (Enhanced Existing Architecture)
+1. **Test Execution** → `data_refresh_test.py` initiates refresh process
+2. **Engine Flow** → `engine.py` → `bsee.py` → `bsee_data.py` → `data_refresh.py`
+3. **Flag Processing** → Check data refresh flag, apm flag, production flag from YAML configs
+4. **Data Source Selection** → Choose API (if available) or web scraping for fresh data
+5. **In-Memory Processing** → Process 100+ MB files without local zip storage
+6. **Binary Generation** → Use existing `_from_zip/well_data.py` and `production_data.py` with fresh data
+7. **Pickle Serialization** → Output binary files to `data/modules/bsee/bin` as current system
 
 ## Configuration Schema
 
 ```yaml
-bsee:
-  refresh:
-    # Data types to refresh
-    data_types:
-      - war
-      - production
-      - well
-    
-    # Source preferences
-    sources:
-      preferred: web_scraping  # web_scraping | file_download | auto
-      fallback: file_download
-      
-    # Performance settings
-    performance:
-      max_workers: 4
-      chunk_size: 10000
-      timeout: 300
-      
-    # Web scraping config
-    scraping:
-      base_url: "https://www.data.bsee.gov"
-      rate_limit: 10  # requests per second
-      retry_attempts: 3
-      
-    # File download config  
-    downloads:
-      base_path: "data/bsee/downloads"
-      keep_files: false
-      
-    # Output settings
-    output:
-      binary_path: "data/bsee/binary"
-      log_level: "INFO"
-      progress_bar: true
+# Enhanced configuration maintaining existing structure:
+
+# From tests/modules/bsee/data/refresh/data_refresh.yml
+data: 
+  refresh: true     # Existing flag
+  apm: true        # Existing flag for well data processing
+  production: true # Existing flag for production data processing
+
+# Enhanced with new data source configuration
+bsee_data_sources:
+  well_data:
+    url: "https://www.data.bsee.gov/Well/Files/APDRawData.zip"
+    update_frequency: "daily"
+    display_name: "Application for Permit to Drill"
+  production_data:
+    url: "https://www.data.bsee.gov/Production/Files/ProductionRawData.zip" 
+    update_frequency: "bi_monthly"
+    display_name: "Production Data"
+  war_data:
+    url: "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip"
+    update_frequency: "daily"
+    display_name: "eWell Submissions WAR"
+
+# From src/worldenergydata/base_configs/modules/bsee/bsee.yml
+filepaths:
+  zip: "data/modules/bsee/zip"    # Existing (may not be used if in-memory)
+  bin: "data/modules/bsee/bin"    # Existing output directory
+  
+# New API research configuration
+api_research:
+  enabled: true
+  fallback_to_scraping: true
+  main_portal: "https://www.data.bsee.gov/Main/RawData.aspx"
 ```
 
 ## Security Considerations

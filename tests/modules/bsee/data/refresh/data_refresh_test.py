@@ -38,4 +38,5 @@ def test_run_process():
     run_process(input_file, expected_result={})
 
 
-test_run_process()
+if __name__ == "__main__":
+    test_run_process()

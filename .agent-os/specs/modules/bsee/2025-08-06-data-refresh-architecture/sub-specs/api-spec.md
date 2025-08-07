@@ -1,243 +1,234 @@
-# API Specification
+# API Research and Implementation Specification
 
-This is the API specification for the spec detailed in @.agent-os/specs/modules/bsee/2025-08-06-data-refresh-architecture/spec.md
+This is the API research specification for the spec detailed in @.agent-os/specs/modules/bsee/2025-08-06-data-refresh-architecture/spec.md
 
 > Created: 2025-08-06
 > Version: 1.0.0
 
-## Overview
+## Primary Research Objective
 
-While BSEE doesn't provide a formal REST API, this specification documents the web scraping endpoints and future API integration points for the data refresh system.
+**HARD RESEARCH REQUIRED:** Determine if BSEE offers any web APIs that can replace direct zip file downloads to eliminate the stale data problem and GitHub file size constraints.
 
-## Web Scraping Endpoints
+## BSEE Data Sources to Research
 
-### Production Data Query
+### Primary Data Sources (Known)
 
-**URL:** https://www.data.bsee.gov/Production/OCSProduction/Default.aspx
+**WELL_DATA (Application for Permit to Drill)**
+- **Direct Link:** https://www.data.bsee.gov/Well/Files/APDRawData.zip
+- **Update Frequency:** Daily
+- **Size:** 100+ MB
+- **Current Issue:** Stale data causing analysis variance
 
-**Purpose:** Retrieve oil and gas production data by date range, lease, or operator
+**PRODUCTION_DATA (Production Data)**
+- **Direct Link:** https://www.data.bsee.gov/Production/Files/ProductionRawData.zip  
+- **Update Frequency:** Bi-monthly
+- **Size:** 100+ MB
+- **Current Issue:** Stale data causing analysis variance
 
-**Method:** GET (with form submission via POST)
+**WAR_DATA (eWell Submissions WAR)**
+- **Direct Link:** https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip
+- **Update Frequency:** Daily
+- **Size:** 100+ MB  
+- **Current Issue:** Stale data causing analysis variance
 
-**Parameters:**
-- `startDate` - Beginning of date range (MM/DD/YYYY)
-- `endDate` - End of date range (MM/DD/YYYY)
-- `leaseNumber` - Optional lease filter
-- `operatorNumber` - Optional operator filter
-- `productType` - O (oil), G (gas), or both
+### Main Portal Information
+- **Portal:** https://www.data.bsee.gov/Main/RawData.aspx
+- **Location:** Links appear in "Raw Data" column under "Delimited" button
+- **Display Names:** Use specific names listed in "Online Query Name" column
 
-**Response:** HTML table with production records
+## API Research Strategy
 
-**Scraping Strategy:**
+### Step 1: Developer Documentation Search
+1. **Search for API Documentation:**
+   - Check https://www.data.bsee.gov/ for developer/API sections
+   - Look for `/api/`, `/developer/`, `/docs/` endpoints
+   - Search site for terms: "API", "REST", "JSON", "developer", "programmatic access"
+
+2. **Common Government API Patterns:**
+   - Check for `api.bsee.gov` subdomain
+   - Look for `/v1/`, `/v2/` version endpoints
+   - Search for GraphQL endpoints
+   - Check for OpenAPI/Swagger documentation
+
+### Step 2: Web Interface Analysis
+1. **Analyze Web Query Systems:**
+   - Inspect network traffic when using web forms
+   - Look for AJAX/JSON endpoints behind web interfaces
+   - Check if web queries use REST-like endpoints internally
+
+2. **Specific Areas to Investigate:**
+   - Production data query interface: https://www.data.bsee.gov/Production/OCSProduction/Default.aspx
+   - Well data interface: https://www.data.bsee.gov/Well/API/Default.aspx
+   - Platform data interface: https://www.data.bsee.gov/Platform/PlatformStructures/Default.aspx
+
+### Step 3: Government API Standards Check
+1. **Federal API Standards:**
+   - Check compliance with https://api.data.gov standards
+   - Look for Data.gov catalog integration
+   - Search Federal API registry
+
+2. **Bureau Standards:**
+   - Check other DOI (Department of Interior) APIs
+   - Look for consistent API patterns across BSEE systems
+
+## API Test Implementation Requirements
+
+### If APIs Are Found
+Create comprehensive test suite demonstrating:
+
+1. **Authentication Testing:**
 ```python
-# Use selectolax for fast parsing
-# Extract table data with CSS selectors
-# Handle pagination if results > 1000 rows
+def test_bsee_api_authentication():
+    """Test API key/authentication if required"""
+    # Test valid authentication
+    # Test invalid authentication  
+    # Test authentication renewal
 ```
 
-### Well/API Data Query
-
-**URL:** https://www.data.bsee.gov/Well/API/Default.aspx
-
-**Purpose:** Access well information including API numbers and drilling data
-
-**Method:** GET/POST
-
-**Parameters:**
-- `apiNumber` - Specific API well number
-- `blockNumber` - Block area filter
-- `leaseNumber` - Lease filter
-- `wellStatus` - Active/Inactive/All
-
-**Response:** HTML table with well details
-
-**Error Handling:**
-- 404: Invalid parameters or no data
-- 500: Server error, implement retry
-- Rate limiting: 429 responses require backoff
-
-### WAR (Well Activity Report) Data
-
-**URL:** https://www.data.bsee.gov/Other/FileRequestSystem/Default.aspx
-
-**Purpose:** Request well activity reports and documentation
-
-**Method:** Multi-step form submission
-
-**Process:**
-1. GET initial form page
-2. POST search criteria
-3. Parse results page
-4. Submit file request
-5. Poll for download readiness
-
-**Parameters:**
-- `reportType` - WAR
-- `dateRange` - Activity date filter
-- `api` - Well API number(s)
-
-## File Download Endpoints
-
-### Production Raw Data
-
-**URL:** https://www.data.bsee.gov/Main/RawData.aspx
-
-**File:** ProductionRawData.zip
-
-**Purpose:** Bulk download of all production data
-
-**Method:** Direct file download
-
-**Update Frequency:** Weekly (Thursdays)
-
-**File Structure:**
-```
-ProductionRawData.zip
-├── opcprod2024.txt  # Current year data
-├── opcprod2023.txt  # Previous years
-└── layout.txt       # Field definitions
-```
-
-### Platform/Rig Data
-
-**URL:** https://www.data.bsee.gov/Platform/PlatformStructures/Default.aspx
-
-**Purpose:** Platform and rig information including coordinates
-
-**Download Options:**
-- Full dataset (ZIP)
-- Query results (CSV export)
-
-## Internal API Design (CLI Interface)
-
-### Refresh Command
-
-**Endpoint:** `python -m worldenergydata.bsee refresh`
-
-**Parameters:**
-```bash
---data-type [war|production|well|all]    # Data to refresh
---date-range START:END                    # Date filter
---source [auto|web|file]                  # Data source
---config PATH                             # Config file
---output PATH                             # Output directory
---verbose                                 # Detailed logging
---dry-run                                # Preview without download
---force                                  # Ignore cache
-```
-
-**Response Format:**
-```json
-{
-  "status": "success",
-  "data_types": ["production", "well"],
-  "records_processed": 15234,
-  "new_records": 127,
-  "updated_records": 43,
-  "duration_seconds": 45.2,
-  "files_created": [
-    "data/bsee/binary/production_2024.bin",
-    "data/bsee/binary/well_2024.bin"
-  ]
-}
-```
-
-### Status Command
-
-**Endpoint:** `python -m worldenergydata.bsee status`
-
-**Purpose:** Check last refresh status and data availability
-
-**Response:**
-```json
-{
-  "last_refresh": {
-    "production": "2024-03-15T14:30:00Z",
-    "well": "2024-03-15T14:35:00Z",
-    "war": "2024-03-10T09:00:00Z"
-  },
-  "data_coverage": {
-    "production": "2020-01-01 to 2024-03-15",
-    "well": "2015-01-01 to 2024-03-15",
-    "war": "2018-01-01 to 2024-03-10"
-  },
-  "storage_used": "1.2 GB",
-  "binary_files": 15
-}
-```
-
-## Future API Integration
-
-### BSEE REST API (Hypothetical)
-
-When/if BSEE provides a REST API, integrate using this structure:
-
-**Base URL:** `https://api.bsee.gov/v1`
-
-**Authentication:** API key in header
-
-**Endpoints:**
-- `GET /production` - Production data with pagination
-- `GET /wells` - Well information
-- `GET /platforms` - Platform data
-- `GET /activity-reports` - WAR data
-
-**Rate Limiting:** 
-- 1000 requests/hour per API key
-- Implement token bucket algorithm
-
-**Response Format:**
-```json
-{
-  "data": [...],
-  "pagination": {
-    "page": 1,
-    "per_page": 100,
-    "total": 15234
-  },
-  "metadata": {
-    "last_updated": "2024-03-15T14:30:00Z",
-    "version": "1.0"
-  }
-}
-```
-
-## Error Handling
-
-### HTTP Status Codes
-- **200:** Success
-- **400:** Invalid parameters
-- **401:** Authentication required (future)
-- **429:** Rate limit exceeded
-- **500:** Server error
-- **503:** Service unavailable
-
-### Retry Strategy
+2. **Data Retrieval Testing:**
 ```python
-@retry(
-    wait=wait_exponential(multiplier=1, min=4, max=60),
-    stop=stop_after_attempt(5),
-    retry=retry_if_exception_type(requests.RequestException)
-)
-def fetch_data(url, params):
-    # Implementation
+def test_well_data_api():
+    """Test well data API access"""
+    # Test basic data retrieval
+    # Test date range filtering
+    # Test pagination handling
+    # Test response format validation
+
+def test_production_data_api():
+    """Test production data API access"""
+    # Test bi-monthly data access
+    # Test data freshness validation
+    # Test large dataset handling
+
+def test_war_data_api():
+    """Test WAR data API access"""
+    # Test daily data updates
+    # Test data format consistency
 ```
 
-### Error Response Format
-```json
-{
-  "error": {
-    "code": "RATE_LIMIT_EXCEEDED",
-    "message": "Too many requests. Please retry after 60 seconds.",
-    "retry_after": 60,
-    "documentation": "https://docs.worldenergydata.com/errors/rate-limit"
-  }
-}
+3. **Integration Testing:**
+```python
+def test_api_vs_existing_binary_format():
+    """Ensure API data matches existing binary format"""
+    # Compare API data structure to existing pickle format
+    # Test conversion compatibility
+    # Validate data completeness
 ```
 
-## Monitoring and Logging
+4. **Error Handling Testing:**
+```python
+def test_api_error_scenarios():
+    """Test API error conditions and retry logic"""
+    # Test rate limiting
+    # Test network failures
+    # Test malformed requests
+    # Test service unavailability
+```
 
-- Log all API/scraping requests with timestamps
-- Track response times and success rates
-- Monitor data quality metrics
-- Alert on repeated failures
+## Fallback Implementation: Web Scraping
+
+### If No APIs Exist
+Implement web scraping solution with these specifications:
+
+#### Direct File Access Strategy
+```python
+class BSEEDataScraper:
+    """In-memory processing of BSEE data files"""
+    
+    URLS = {
+        'well_data': 'https://www.data.bsee.gov/Well/Files/APDRawData.zip',
+        'production_data': 'https://www.data.bsee.gov/Production/Files/ProductionRawData.zip',
+        'war_data': 'https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip'
+    }
+    
+    def fetch_and_process(self, data_type, memory_limit=500_000_000):
+        """Fetch zip file and process in-memory without local storage"""
+        # Stream download without saving to disk
+        # Extract and process data in memory
+        # Output binary files using existing pickle format
+        # Maintain compatibility with existing _from_zip modules
+```
+
+#### Integration Points with Existing Architecture
+1. **Enhance `data_refresh.py`:**
+   - Add API client fallback logic
+   - Maintain existing flag-based processing (apm, production)
+   - Preserve existing binary output format
+
+2. **Maintain Existing Execution Path:**
+   - Keep `tests/modules/bsee/data/refresh/data_refresh_test.py` as entry point
+   - Preserve `engine.py` → `bsee.py` → `bsee_data.py` → `data_refresh.py` flow
+   - Support existing YAML configurations
+
+3. **Binary File Compatibility:**
+   - Use existing pickle serialization in `_from_zip/well_data.py`
+   - Use existing pickle serialization in `_from_zip/production_data.py`
+   - Output to existing `data/modules/bsee/bin` directory
+
+## Testing Requirements
+
+### Research Documentation Test
+```python
+def test_api_research_documentation():
+    """Document all findings from API research"""
+    # Document what APIs were found (if any)
+    # Document API endpoints, authentication, rate limits
+    # Document why APIs were/weren't suitable
+    # Provide recommendations for implementation
+```
+
+### Integration Test with Existing System
+```python
+def test_integration_with_existing_architecture():
+    """Test new implementation with existing system"""
+    # Test with existing config files
+    # Test with existing test entry points
+    # Validate binary file compatibility
+    # Test flag-based processing (apm, production)
+```
+
+### Performance Comparison Test  
+```python
+def test_performance_vs_stale_data():
+    """Compare new fresh data vs old stale data approach"""
+    # Measure data freshness improvement
+    # Compare analysis result variance
+    # Document repository size impact
+```
+
+## Deliverable Specification
+
+### Primary Deliverable: API Research Report
+```markdown
+# BSEE API Research Results
+
+## Executive Summary
+[Found APIs: Yes/No]
+[Recommendation: API Implementation / Web Scraping Fallback]
+
+## API Discovery Results
+### APIs Found
+- [List any APIs discovered with endpoints, documentation, limitations]
+
+### APIs Not Found
+- [Document areas searched, methods used, government API standards checked]
+
+## Implementation Plan
+[Detailed plan based on research results]
+
+## Test Results
+[Results of API tests if APIs were found]
+```
+
+### Secondary Deliverable: Implementation
+- **If APIs found:** API client with comprehensive tests
+- **If no APIs found:** In-memory web scraper maintaining existing architecture compatibility
+- **Always:** Fresh data access eliminating "big variance" problem from stale zip files
+
+## Quality Criteria
+
+1. **Research Thoroughness:** Documentation of all BSEE web properties searched for APIs
+2. **Test Coverage:** 100% test coverage if APIs are found, comprehensive integration tests
+3. **Architecture Compatibility:** Zero breaking changes to existing execution paths and binary formats  
+4. **Data Freshness:** Elimination of stale data problem causing analysis variance
+5. **Repository Constraints:** No 100+ MB zip files stored in GitHub repository
