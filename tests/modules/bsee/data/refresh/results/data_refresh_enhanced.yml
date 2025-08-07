@@ -10,11 +10,11 @@ parameters:
     Well_APD_Default: data/modules/bsee/bin/Well_APD_Default
     production:
       zip: data\modules\bsee\zip\production_raw
-      bin: data\modules\bsee\bin\production_raw
+      bin: data/modules/bsee/bin/production_raw
     APD: data/modules/bsee/bin/apd
     apm:
-      zip: data/modules/bsee/zip/apd
-      bin: data/modules/bsee/bin/apd
+      zip: data/modules/bsee/zip/apm
+      bin: data/modules/bsee/bin/apm
       columns:
       - - MMS_COMPANY_NUM
         - API_WELL_NUMBER
@@ -31,6 +31,10 @@ parameters:
         - BOREHOLE_STAT_CD
         - WELL_TYPE_CODE
         - BUS_ASC_NAME
+    well:
+      bin: data/modules/bsee/bin/apd
+    war:
+      bin: data/modules/bsee/bin/war
   max_allowed_npt: 90
   borehole_codes:
   - BOREHOLE_STAT_CD: APD
@@ -73,24 +77,69 @@ default:
     overwrite:
       output: true
     cfg_sensitivities: false
+  log_enhanced_details: true
 meta:
   library: worldenergydata
   basename: bsee
+  mode: enhanced
+  description: Enhanced data refresh with fresh data access
+enhanced_mode: true
 data:
   refresh: true
-  apm: true
+  enhanced: true
+  fresh_data: true
   well: true
+  war: false
   production: false
+  apm: false
+sources:
+  well:
+    url: https://www.data.bsee.gov/Well/Files/APDRawData.zip
+    display_name: Application for Permit to Drill
+    update_frequency: daily
+  war:
+    url: https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip
+    display_name: eWell Submissions WAR
+    update_frequency: daily
+  production:
+    url: https://www.data.bsee.gov/Production/Files/ProductionRawData.zip
+    display_name: Production Data
+    update_frequency: bi_monthly
+  portal:
+    url: https://www.data.bsee.gov/Main/RawData.aspx
+    display_name: BSEE Raw Data Portal
+processing:
+  in_memory: true
+  save_zip: false
+  chunk_size: 8192
+  timeout: 300
+  max_retries: 3
+  retry_delay: 5
+memory:
+  max_file_size_mb: 500
+  warning_threshold_mb: 200
+output:
+  format: pickle
+  compression: None
+validation:
+  check_data_integrity: true
+  verify_column_names: true
+  validate_date_ranges: true
+monitoring:
+  track_download_time: true
+  track_processing_time: true
+  track_memory_usage: true
+  report_metrics: true
 Analysis:
   basename: bsee
   analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh
-  file_name: data_refresh
-  file_name_for_overwrite: data_refresh
+  file_name: data_refresh_enhanced
+  file_name_for_overwrite: data_refresh_enhanced
   log_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\logs
-  start_time: 2025-08-07 12:35:30.329662
+  start_time: 2025-08-07 20:00:05.732648
   cfg_array_file_names: ~
   DefaultInputFile: ~
-  CustomInputFile: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\data_refresh.yml
+  CustomInputFile: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\data_refresh_enhanced.yml
   result_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\results
   result_data_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\results\Data
   result_plot_folder: c:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\results\Plot
@@ -98,8 +147,11 @@ Analysis:
 bsee:
   data:
     refresh: true
-    apm: true
+    enhanced: true
+    fresh_data: true
     well: true
+    war: false
     production: false
+    apm: false
     type: csv
   analysis: {}
