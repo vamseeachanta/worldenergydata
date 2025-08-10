@@ -1,171 +1,134 @@
-# WorldEnergyData Documentation
+# Introduction
 
-Welcome to the comprehensive documentation for **WorldEnergyData** - a Python library and analysis repository for energy industry professionals, data analysts, researchers, and consultants.
+World Energy Data Library to get data from public sources. The energy includes the following:
+- Oil and Gas facilities
+- Wind
+- Other Source (TBA)
 
-## Quick Navigation by User Type
+## Summary
 
-### 🛢️ For Energy Professionals
+## Quick Start
 
-*Engineers, analysts, and managers in oil & gas, wind, and energy sectors*
-
-**Start Here:**
-- [**User Guide**](user-guide/) - Installation and getting started
-- [**Data Sources**](data-sources/) - BSEE, SODIR, equipment, and onshore data
-- [**Analysis Guides**](analysis-guides/) - Methodologies and best practices
-- [**Examples**](examples/) - Practical analysis examples
-
-### 📊 For Data Analysts & Researchers
-
-*Research scientists and data professionals studying energy trends*
-
-**Start Here:**
-- [**Data Sources**](data-sources/) - Comprehensive data documentation
-- [**Analysis Guides**](analysis-guides/) - Statistical and analytical methodologies
-- [**Reference**](reference/) - API documentation and technical specs
-- [**Examples**](examples/) - Code examples and tutorials
-
-### 💻 For Developers
-
-*Software developers and contributors to WorldEnergyData*
-
-**Start Here:**
-- [**Development**](development/) - Setup, standards, and contribution guidelines
-- [**Reference**](reference/) - API specifications and technical documentation
-- [**User Guide**](user-guide/) - Understanding user-facing features
-- [**Examples**](examples/) - Integration examples and code samples
-
-## Documentation Sections
-
-### [📋 User Guide](user-guide/)
-
-Getting started guides, installation instructions, and basic tutorials for all users.
-
-### [🗃️ Data Sources](data-sources/)
-
-Comprehensive documentation for all energy data sources:
-- **[BSEE](data-sources/bsee/)** - US Bureau of Safety and Environmental Enforcement data
-- **[SODIR](data-sources/sodir/)** - Norwegian offshore directorate data
-- **[Equipment](data-sources/equipment/)** - Anchor systems, Christmas trees, and equipment data
-- **[Onshore](data-sources/onshore/)** - Wyoming and other onshore energy data
-
-### [📈 Analysis Guides](analysis-guides/)
-
-Methodologies, best practices, and analytical frameworks for energy data analysis.
-
-### [🔧 Development](development/)
-
-Technical documentation for developers, including setup guides, coding standards, and contribution guidelines.
-
-### [📚 Reference](reference/)
-
-API documentation, technical specifications, and comprehensive reference materials.
-
-### [💡 Examples](examples/)
-
-Practical code examples, sample analyses, and step-by-step tutorials.
-
-## Features & Capabilities
-
-### 🔄 Data Integration
-
-- **BSEE Integration:** Complete US offshore production, drilling, and economic data
-- **SODIR Integration:** Norwegian offshore regulatory and production data
-- **Equipment Analysis:** Deepwater equipment specifications and performance
-- **Economic Modeling:** NPV analysis with numpy-financial integration
-
-### 📊 Analysis Tools
-
-- **Production Forecasting:** Decline curve analysis and production modeling
-- **Economic Evaluation:** Comprehensive NPV and economic risk analysis
-- **Field Performance:** Multi-field benchmarking and comparison tools
-- **Visualization:** Interactive charts and production curve analysis
-
-### 🛠️ Developer Features
-
-- **Modern Python:** Built with Python 3.9+ and UV package management
-- **Modular Architecture:** Clean separation of data sources and analysis components
-- **Comprehensive Testing:** Pytest-based testing with automated quality checks
-- **AI-Native Development:** Structured specification system with Agent OS integration
-
-## Getting Started
-
-### 1. Quick Installation
+### Using UV (Recommended)
 
 ```bash
+# Setup development environment
+./scripts/uv_setup.sh         # Linux/Mac
+./scripts/uv_migrate.bat       # Windows
 
-# Install with pip
+# Run the application
+uv run python -m worldenergydata
 
-pip install worldenergydata
+# Run tests
+uv run pytest
 
-# Or with UV (recommended)
-
-uv add worldenergydata
+# Add dependencies
+uv add requests
 ```
 
-### 2. First Analysis
+### Development
 
-```python
-import worldenergydata as wed
+```bash
+# Format code
+uv run black .
+uv run isort .
 
-# Load BSEE production data
+# Run linting
+uv run ruff check .
 
-bsee_data = wed.load_bsee_production()
-
-# Perform NPV analysis
-
-npv_result = wed.analyze_npv(bsee_data, discount_rate=0.10)
-
-# Visualize results
-
-wed.plot_production_forecast(npv_result)
+# Run tests
+uv run pytest tests/
 ```
 
-### 3. Explore Documentation
+For detailed UV usage instructions, see [docs/development/uv_usage.md](docs/development/uv_usage.md).
 
-- **Energy Professionals:** Start with [User Guide](user-guide/) and [BSEE Data](data-sources/bsee/)
-- **Data Analysts:** Explore [Analysis Guides](analysis-guides/) and [Examples](examples/)
-- **Developers:** Check [Development](development/) and [Reference](reference/)
+## Legacy Usage
 
-## Recent Updates
+**Using toml file, bumpver and twine**
 
-- ✅ **Documentation Reorganization** - Comprehensive restructuring for better navigation
-- ✅ **Link Validation** - All internal links verified and updated
-- ✅ **Navigation Indexes** - Section-specific README files with detailed contents
-- ✅ **Duplicate Cleanup** - Eliminated redundant documentation files
-- ✅ **Cross-References** - Enhanced linking between related sections
+| Step |  Description | Commands/Detailed Description | Reference |
+|---|---|---|---|
+| 1 | Create python project with directory structure | Follow pep8 guidelines | [https://www.freecodecamp.org/news/build-your-first-python-package/](https://www.freecodecamp.org/news/build-your-first-python-package/) |
+| 2 | Package compliance | Ensure all directories are package modules using __init__.py  | [https://www.freecodecamp.org/news/build-your-first-python-package/](https://www.freecodecamp.org/news/build-your-first-python-package/) |
+| 3 | Add .toml file and setup.py to build wheels | pip install bumpver <br> bumpver update --patch  <br> pip install build <br> python -m build | https://realpython.com/pypi-publish-python-package/ |
+| 4 | Create account on pypi and upload using twine package | These commands will push the .whl and .tar.gz file into the pypi repository <br> conda install twine <br> twine upload dist/*  | https://realpython.com/pypi-publish-python-package/ |
 
-## Support & Contributing
+To see instructions using setup.py & twine, without Version Bump, see [using setup.py](docs\using_setuppy.md)
 
-### Getting Help
+## CI
 
-- 📖 **Documentation Issues:** Review the appropriate section above
-- 🐛 **Bug Reports:** Check the [Development](development/) section for issue reporting
-- 💬 **Questions:** See [User Guide](user-guide/) for FAQ and support resources
+More CI/CD streamlining for python packages:
+- use cookiecutter to generate a package template
+- set up travis CI for auto deployment of package to pypi
 
-### Contributing
+ #TODO 
+- Convert library to a cookiecutter template. Helps parametrize the library name.
 
-- 👨‍💻 **Developers:** Start with [Development Setup](development/)
-- 📝 **Documentation:** All documentation improvements welcome
-- 🧪 **Testing:** Help expand our test coverage
-- 🌟 **Features:** Contribute new data sources or analysis methods
+https://github.com/audreyfeldroy/cookiecutter-pypackage
+https://cookiecutter-pypackage.readthedocs.io/en/latest/tutorial.html
+https://pypi.org/project/cookiecutter/
 
-## Project Information
+https://github.com/boromir674/cookiecutter-python-package
+https://github.com/boromir674/cookiecutter-python-package/tox.ini
 
-**WorldEnergyData** provides comprehensive energy data analysis capabilities for economic evaluation, production forecasting, and strategic decision-making using public data sources.
+https://youtu.be/ugGu8fHWFog (A data science project example folder)
 
-- **Primary Focus:** Oil & gas, wind, shipping, and energy industry analysis
-- **Target Users:** Energy professionals, data analysts, researchers, consultants
-- **Technical Approach:** Modern Python with AI-assisted development workflows
-- **Data Sources:** BSEE, SODIR, equipment specifications, and public energy databases
+### Github
 
----
+Helps cover testing, test coverage, etc.
+https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+https://hynek.me/articles/python-github-actions/
 
-*Last updated: 2025-07-24*
-*This documentation is automatically maintained and continuously updated*
+### Travis CI, No Free Support?
 
-### Navigation Tips
+https://jacobtomlinson.dev/posts/2021/testing-and-continuous-integration-for-python-packages-with-github-actions/
 
-- 🔍 Use section-specific README files for detailed contents
-- 🔗 Follow cross-references to explore related topics
-- 📱 All links are validated and regularly updated
-- 🏠 Return here anytime using the main documentation link
+https://github.com/ksator/continuous-integration-with-python
+
+https://medium.com/swlh/automate-python-testing-with-github-actions-7926b5d8a865
+
+
+## Testing a Package Locally 
+
+**Using .toml file (Working)**
+
+A package can be imported locally from another code and thoroughly tested as well if required. Editable install is the best way to achieve this.
+The steps to do so are:
+- Change to the current working directory where the pyproject.toml file is located
+- Execute the following command to install the package locally
+	- python -m pip install -e .
+- This installation uses the files in the current working directory
+
+**Using conda-build (Did not work)**
+
+Building A Package Locally
+- Add following package to the base environment
+    -Install conda-buiild
+    -Conda install conda-build
+- Utilize the below to build the package in current path. A specific path can also be specified.
+    - Conda develop . 
+    - https://docs.conda.io/projects/conda-build/en/latest/user-guide/tutorials/build-pkgs.html
+
+
+## Writing Tests
+- Write tests. Preferably utilize pytest. 
+- Example test and file structure
+	- https://github.com/jumptrading/luddite
+	- Utilized test_package.py for all tests 
+	- pytest.ini file for pytest configurations
+	- Utilize github test workflows
+	- https://github.com/jumptrading/luddite/blob/master/.github/workflows/tests.yml
+- https://tox.wiki/en/latest/
+
+### References
+
+[https://www.freecodecamp.org/news/build-your-first-python-package/](https://www.freecodecamp.org/news/build-your-first-python-package/)
+
+[https://python-packaging-tutorial.readthedocs.io/en/latest/setup_py.html](https://python-packaging-tutorial.readthedocs.io/en/latest/setup_py.html)
+
+[https://packaging.python.org/](https://packaging.python.org/)
+
+Guidelines to contribute to libraries:
+[https://pandas.pydata.org/docs/development/contributing.html#contributing](https://pandas.pydata.org/docs/development/contributing.html#contributing)
+
+https://realpython.com/pypi-publish-python-package/
