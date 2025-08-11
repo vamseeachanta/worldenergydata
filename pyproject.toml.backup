@@ -1,0 +1,111 @@
+[project]
+name = "worldenergydata"
+version = "0.0.1"
+description = "World Energy Data from Public Sources"
+authors = [
+    { name = "Vamsee Achanta", email = "vamsee.achanta@aceengineer.com" }
+]
+license = { text = "MIT" }
+readme = "README.md"
+keywords = ["package", "library", "module", "energy", "data"]
+requires-python = ">=3.9"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dynamic = ["dependencies"]
+
+[project.urls]
+Homepage = "https://github.com/vamseeachanta/worldenergydata"
+Repository = "https://github.com/vamseeachanta/worldenergydata"
+Documentation = "https://github.com/vamseeachanta/worldenergydata/blob/main/README.md"
+Issues = "https://github.com/vamseeachanta/worldenergydata/issues"
+
+[project.scripts]
+energy_data = "worldenergydata.__main__:main"
+
+[project.optional-dependencies]
+dev = [
+    "black>=23.0",
+    "bumpver>=2023.1129",
+    "isort>=5.0.0",
+    "mypy>=1.4.1",
+    "pytest>=7.0.0",
+    "ruff>=0.12.3",
+    "deepdiff>=6.0.0",
+]
+build = [
+    "build>=1.0.0",
+    "twine>=1.0.0",
+]
+
+[tool.uv]
+# uv-specific configuration
+package = true
+managed = true
+dev-dependencies = [
+    "black>=23.0",
+    "bumpver>=2023.1129", 
+    "isort>=5.0.0",
+    "mypy>=1.4.1",
+    "pytest>=7.0.0",
+    "ruff>=0.12.3",
+    "deepdiff>=6.0.0",
+]
+
+[tool.uv.sources]
+# Optional: specify custom package sources if needed
+
+[tool.uv.workspace]
+# Workspace configuration for monorepo support
+members = []
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["scripts/requirements.txt"]}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"*" = ["*.yml", "*.csv", "*.xlsx", "*.html", "*.txt"]
+
+[tool.bumpver]
+current_version = "0.0.1"
+version_pattern = "MAJOR.MINOR.PATCH"
+commit_message = "bump version {old_version} -> {new_version}"
+commit = true
+tag = true
+push = false
+
+[tool.bumpver.file_patterns]
+"pyproject.toml" = [
+    'current_version = "{version}"',
+    'version = "{version}"',
+]
+"src/worldenergydata/__init__.py" = ["{version}"]
+"src/worldenergydata/__main__.py" = ["- worldenergydata v{version}"]
+
+[tool.isort]
+profile = "black"
+import_heading_stdlib = "Standard library imports"
+import_heading_thirdparty = "Third party imports"
+import_heading_firstparty = "Reader imports"
+
+[tool.mypy]
+strict = true
+
+[[tool.mypy.overrides]]
+module = "feedparser"
+ignore_missing_imports = true
