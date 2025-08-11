@@ -1,111 +1,129 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "worldenergydata"
-version = "0.0.1"
-description = "World Energy Data from Public Sources"
-authors = [
-    { name = "Vamsee Achanta", email = "vamsee.achanta@aceengineer.com" }
-]
-license = { text = "MIT" }
+version = "0.1.0"
+description = "Standardized project configuration for worldenergydata"
 readme = "README.md"
-keywords = ["package", "library", "module", "energy", "data"]
-requires-python = ">=3.9"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "Development Team", email = "dev@example.com"}
+]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
 ]
-dynamic = ["dependencies"]
 
-[project.urls]
-Homepage = "https://github.com/vamseeachanta/worldenergydata"
-Repository = "https://github.com/vamseeachanta/worldenergydata"
-Documentation = "https://github.com/vamseeachanta/worldenergydata/blob/main/README.md"
-Issues = "https://github.com/vamseeachanta/worldenergydata/issues"
-
-[project.scripts]
-energy_data = "worldenergydata.__main__:main"
+dependencies = [
+]
 
 [project.optional-dependencies]
 dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
     "black>=23.0",
-    "bumpver>=2023.1129",
-    "isort>=5.0.0",
-    "mypy>=1.4.1",
-    "pytest>=7.0.0",
-    "ruff>=0.12.3",
-    "deepdiff>=6.0.0",
+    "flake8>=6.0",
+    "mypy>=1.0",
+    "pre-commit>=3.0",
 ]
-build = [
-    "build>=1.0.0",
-    "twine>=1.0.0",
+test = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "pytest-mock>=3.0",
 ]
-
-[tool.uv]
-# uv-specific configuration
-package = true
-managed = true
-dev-dependencies = [
-    "black>=23.0",
-    "bumpver>=2023.1129", 
-    "isort>=5.0.0",
-    "mypy>=1.4.1",
-    "pytest>=7.0.0",
-    "ruff>=0.12.3",
-    "deepdiff>=6.0.0",
+docs = [
+    "sphinx>=6.0",
+    "sphinx-rtd-theme>=1.0",
 ]
 
-[tool.uv.sources]
-# Optional: specify custom package sources if needed
+[project.urls]
+"Homepage" = "https://github.com/username/worldenergydata"
+"Bug Tracker" = "https://github.com/username/worldenergydata/issues"
+"Documentation" = "https://github.com/username/worldenergydata#readme"
 
-[tool.uv.workspace]
-# Workspace configuration for monorepo support
-members = []
-
-[build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools.dynamic]
-dependencies = {file = ["scripts/requirements.txt"]}
+[tool.setuptools]
+packages = ["src"]
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]
+include = ["*"]
+exclude = ["tests*", "docs*"]
 
-[tool.setuptools.package-data]
-"*" = ["*.yml", "*.csv", "*.xlsx", "*.html", "*.txt"]
-
-[tool.bumpver]
-current_version = "0.0.1"
-version_pattern = "MAJOR.MINOR.PATCH"
-commit_message = "bump version {old_version} -> {new_version}"
-commit = true
-tag = true
-push = false
-
-[tool.bumpver.file_patterns]
-"pyproject.toml" = [
-    'current_version = "{version}"',
-    'version = "{version}"',
-]
-"src/worldenergydata/__init__.py" = ["{version}"]
-"src/worldenergydata/__main__.py" = ["- worldenergydata v{version}"]
+[tool.black]
+line-length = 88
+target-version = ['py38', 'py39', 'py310', 'py311']
+include = '\.pyi?$'
 
 [tool.isort]
 profile = "black"
-import_heading_stdlib = "Standard library imports"
-import_heading_thirdparty = "Third party imports"
-import_heading_firstparty = "Reader imports"
+line_length = 88
 
 [tool.mypy]
-strict = true
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
 
-[[tool.mypy.overrides]]
-module = "feedparser"
-ignore_missing_imports = true
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+addopts = "--cov=src --cov-report=term-missing --cov-report=html"
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["*/tests/*", "*/test_*.py"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if __name__ == .__main__.:",
+    "raise AssertionError",
+    "raise NotImplementedError",
+]
+
+[tool.uv]
+# UV environment configuration
+python = "3.11"
+system = false
+seed = true
+compile = true
+
+[tool.uv.pip]
+index-url = "https://pypi.org/simple"
+extra-index-url = []
+no-cache = false
+pre = false
+
+# MANDATORY: Parallel Processing Configuration
+[tool.parallel]
+enabled = true
+max_workers = 5
+use_threading = false  # Use multiprocessing for CPU-bound tasks
+use_asyncio = true     # Use asyncio for I/O-bound tasks
+batch_size = 10
+
+[tool.parallel.rules]
+# Define when to use parallel processing
+file_operations = "always"      # File reading/writing
+http_requests = "always"        # API calls
+data_processing = "threshold"   # Based on data size
+threshold_size = 1000           # Items before parallel kicks in
+
+[tool.scripts]
+# Common scripts that use parallel processing
+test = "pytest -n auto"
+format = "black . && isort ."
+lint = "flake8 . & mypy . & pylint ."
+install = "uv pip install -e ."
+dev-install = "uv pip install -e .[dev]"
