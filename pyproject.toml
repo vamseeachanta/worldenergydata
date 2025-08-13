@@ -51,9 +51,7 @@ docs = [
 "Bug Tracker" = "https://github.com/username/worldenergydata/issues"
 "Documentation" = "https://github.com/username/worldenergydata#readme"
 
-[tool.setuptools]
-packages = ["src"]
-
+# Use packages.find instead of conflicting with packages array
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["*"]
