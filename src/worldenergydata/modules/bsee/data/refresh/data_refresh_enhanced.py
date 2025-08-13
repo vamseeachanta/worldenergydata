@@ -68,11 +68,11 @@ class DataRefreshEnhanced:
             logger.warning("Enhanced mode not enabled in configuration")
             return cfg, None
         
-        # Get data refresh flags
-        data_refresh_flag = cfg.get('data', {}).get('refresh', False)
+        # Get data refresh flags - using 'enhanced_refresh' to avoid conflicts with legacy system
+        data_refresh_flag = cfg.get('data', {}).get('enhanced_refresh', False)
         
         if data_refresh_flag:
-            logger.info("Data refresh flag is True, processing data sources")
+            logger.info("Enhanced data refresh flag is True, processing data sources")
             
             # Process each data type based on flags
             self.refresh_well_data_enhanced(cfg)
@@ -81,7 +81,7 @@ class DataRefreshEnhanced:
             
             logger.info('Enhanced data refresh completed successfully')
         else:
-            logger.info("Data refresh flag is False, skipping refresh")
+            logger.info("Enhanced data refresh flag is False, skipping refresh")
         
         return cfg, None
     
