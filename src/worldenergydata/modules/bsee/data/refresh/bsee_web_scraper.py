@@ -30,10 +30,17 @@ class BSEEWebScraper:
     }
     
     # Request configuration
-    TIMEOUT = 300  # 5 minutes for large files
-    CHUNK_SIZE = 8192  # 8KB chunks for streaming
-    MAX_RETRIES = 3
-    RETRY_DELAY = 5  # seconds
+    # Dynamic timeouts based on expected file sizes
+    TIMEOUTS = {
+        'well': 600,        # 10 minutes for ~5-10 MB files
+        'production': 1200,  # 20 minutes for ~15-50 MB files  
+        'war': 2400,        # 40 minutes for ~100+ MB files
+        'default': 600      # 10 minutes default
+    }
+    CHUNK_SIZE = 32768  # 32KB chunks for faster streaming
+    MAX_RETRIES = 5      # Increased retries for large files
+    RETRY_DELAY = 10     # Increased delay between retries
+    PROGRESS_INTERVAL = 5 * 1024 * 1024  # Log progress every 5MB
     
     def __init__(self):
         """Initialize the web scraper with session management."""
@@ -43,25 +50,34 @@ class BSEEWebScraper:
             'Accept': 'application/zip, application/octet-stream, */*'
         })
     
-    def download_zip_to_memory(self, url: str, max_retries: int = None) -> Optional[ByteString]:
+    def download_zip_to_memory(self, url: str, max_retries: int = None, data_type: str = 'default') -> Optional[ByteString]:
         """
-        Download a zip file directly into memory.
+        Download a zip file directly into memory with dynamic timeout handling.
         
         Args:
             url: URL of the zip file to download
             max_retries: Maximum number of retry attempts
+            data_type: Type of data being downloaded (well, production, war) for timeout selection
             
         Returns:
             Bytes of the zip file content or None if failed
         """
         max_retries = max_retries or self.MAX_RETRIES
+        timeout = self.TIMEOUTS.get(data_type, self.TIMEOUTS['default'])
+        
+        logger.info(f"Downloading {data_type} data with {timeout}s timeout and {max_retries} max retries")
         
         for attempt in range(max_retries):
             try:
                 logger.info(f"Downloading from {url} (attempt {attempt + 1}/{max_retries})")
+                logger.info(f"Using timeout: {timeout} seconds for {data_type} data")
+                
+                # Use adaptive timeout - increase on retry
+                adaptive_timeout = timeout * (1 + attempt * 0.5)  # Increase timeout by 50% each retry
+                logger.info(f"Adaptive timeout for attempt {attempt + 1}: {adaptive_timeout} seconds")
                 
                 # Stream the download to handle large files efficiently
-                response = self.session.get(url, stream=True, timeout=self.TIMEOUT)
+                response = self.session.get(url, stream=True, timeout=adaptive_timeout)
                 response.raise_for_status()
                 
                 # Check content type
@@ -77,6 +93,7 @@ class BSEEWebScraper:
                 # Download in chunks to memory
                 chunks = []
                 downloaded = 0
+                last_progress_log = 0
                 
                 for chunk in response.iter_content(chunk_size=self.CHUNK_SIZE):
                     if chunk:
@@ -84,9 +101,11 @@ class BSEEWebScraper:
                         downloaded += len(chunk)
                         
                         # Progress logging for large files
-                        if file_size > 0 and downloaded % (10 * 1024 * 1024) == 0:  # Every 10MB
+                        if file_size > 0 and (downloaded - last_progress_log) >= self.PROGRESS_INTERVAL:
                             progress = (downloaded / file_size) * 100
-                            logger.info(f"Download progress: {progress:.1f}%")
+                            speed_mbps = (downloaded - last_progress_log) / (1024 * 1024)  # MB downloaded since last log
+                            logger.info(f"Download progress: {progress:.1f}% ({downloaded/(1024*1024):.1f} MB / {file_size/(1024*1024):.1f} MB)")
+                            last_progress_log = downloaded
                 
                 # Combine all chunks
                 data = b''.join(chunks)
@@ -121,7 +140,7 @@ class BSEEWebScraper:
             Bytes of the zip file or None if failed
         """
         logger.info("Downloading BSEE well data (APD)")
-        return self.download_zip_to_memory(self.URLS['well'])
+        return self.download_zip_to_memory(self.URLS['well'], data_type='well')
     
     def download_production_data(self) -> Optional[ByteString]:
         """
@@ -131,7 +150,7 @@ class BSEEWebScraper:
             Bytes of the zip file or None if failed
         """
         logger.info("Downloading BSEE production data")
-        return self.download_zip_to_memory(self.URLS['production'])
+        return self.download_zip_to_memory(self.URLS['production'], data_type='production')
     
     def download_war_data(self) -> Optional[ByteString]:
         """
@@ -141,7 +160,7 @@ class BSEEWebScraper:
             Bytes of the zip file or None if failed
         """
         logger.info("Downloading BSEE WAR data")
-        return self.download_zip_to_memory(self.URLS['war'])
+        return self.download_zip_to_memory(self.URLS['war'], data_type='war')
     
     def verify_url_accessibility(self, url: str) -> bool:
         """

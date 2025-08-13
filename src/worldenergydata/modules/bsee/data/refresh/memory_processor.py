@@ -13,6 +13,16 @@ from typing import Any, Dict, Optional, ByteString, List
 from loguru import logger
 from pathlib import Path
 import csv
+import gc  # For garbage collection
+import warnings
+
+# Try to import psutil for memory monitoring, but make it optional
+try:
+    import psutil
+    PSUTIL_AVAILABLE = True
+except ImportError:
+    logger.warning("psutil not installed - memory monitoring will be limited")
+    PSUTIL_AVAILABLE = False
 
 
 class MemoryProcessor:
@@ -27,10 +37,12 @@ class MemoryProcessor:
         """Initialize the memory processor."""
         self.processed_data = {}
         self.zip_file_list = []  # Store original filenames from zip
+        self.memory_threshold_mb = 1000  # 1GB threshold for memory warnings
+        self.chunk_size_rows = 100000  # Process CSV in chunks for large files
     
     def process_zip_in_memory(self, zip_data: ByteString) -> Dict[str, pd.DataFrame]:
         """
-        Process a zip file entirely in memory.
+        Process a zip file entirely in memory with memory monitoring.
         
         Args:
             zip_data: Bytes of the zip file
@@ -39,6 +51,15 @@ class MemoryProcessor:
             Dictionary mapping filenames to DataFrames
         """
         data_dict = {}
+        
+        # Check memory before processing
+        mem_start = self.get_memory_usage()
+        logger.info(f"Starting memory usage: {mem_start['rss_mb']:.1f} MB")
+        
+        # Estimate memory requirements
+        estimates = self.estimate_memory_usage(zip_data)
+        if not self.check_memory_availability(estimates['total_mb']):
+            logger.warning("Proceeding despite memory warning - will use chunked processing if needed")
         
         try:
             # Create a BytesIO object from the zip data
@@ -87,6 +108,13 @@ class MemoryProcessor:
                         logger.error(f"Error processing {filename}: {str(e)}")
                         continue
             
+            # Clean up memory after processing each file
+            self.cleanup_memory()
+            
+            # Log final memory usage
+            mem_end = self.get_memory_usage()
+            logger.info(f"Ending memory usage: {mem_end['rss_mb']:.1f} MB (delta: {mem_end['rss_mb'] - mem_start['rss_mb']:.1f} MB)")
+            
             return data_dict
             
         except zipfile.BadZipFile:
@@ -95,6 +123,9 @@ class MemoryProcessor:
         except Exception as e:
             logger.error(f"Error processing zip file: {str(e)}")
             return {}
+        finally:
+            # Always clean up memory
+            self.cleanup_memory()
     
     def process_well_data(self, zip_data: ByteString, cfg: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -283,6 +314,67 @@ class MemoryProcessor:
         except Exception as e:
             logger.error(f"Error saving binary data: {str(e)}")
             raise
+    
+    def get_memory_usage(self) -> Dict[str, float]:
+        """
+        Get current memory usage of the process.
+        
+        Returns:
+            Dictionary with memory usage statistics
+        """
+        if not PSUTIL_AVAILABLE:
+            return {'rss_mb': 0, 'vms_mb': 0, 'percent': 0}
+            
+        try:
+            process = psutil.Process()
+            mem_info = process.memory_info()
+            
+            return {
+                'rss_mb': mem_info.rss / (1024 * 1024),  # Resident Set Size
+                'vms_mb': mem_info.vms / (1024 * 1024),  # Virtual Memory Size
+                'percent': process.memory_percent()
+            }
+        except Exception as e:
+            logger.warning(f"Could not get memory info: {str(e)}")
+            return {'rss_mb': 0, 'vms_mb': 0, 'percent': 0}
+    
+    def check_memory_availability(self, estimated_mb: float) -> bool:
+        """
+        Check if enough memory is available for processing.
+        
+        Args:
+            estimated_mb: Estimated memory requirement in MB
+            
+        Returns:
+            True if enough memory available, False otherwise
+        """
+        if not PSUTIL_AVAILABLE:
+            logger.info("Memory check skipped - psutil not available")
+            return True
+            
+        try:
+            mem = psutil.virtual_memory()
+            available_mb = mem.available / (1024 * 1024)
+            
+            logger.info(f"Memory check - Available: {available_mb:.1f} MB, Required: {estimated_mb:.1f} MB")
+            
+            if estimated_mb > available_mb * 0.8:  # Use max 80% of available memory
+                logger.warning(f"Insufficient memory. Available: {available_mb:.1f} MB, Required: {estimated_mb:.1f} MB")
+                return False
+            
+            return True
+            
+        except Exception as e:
+            logger.warning(f"Could not check memory availability: {str(e)}")
+            return True  # Proceed anyway if check fails
+    
+    def cleanup_memory(self):
+        """Force garbage collection to free up memory."""
+        logger.info("Running garbage collection to free memory")
+        gc.collect()
+        
+        mem_after = self.get_memory_usage()
+        logger.info(f"Memory usage after cleanup: {mem_after['rss_mb']:.1f} MB ({mem_after['percent']:.1f}%)")
     
     def estimate_memory_usage(self, zip_data: ByteString) -> Dict[str, float]:
         """
