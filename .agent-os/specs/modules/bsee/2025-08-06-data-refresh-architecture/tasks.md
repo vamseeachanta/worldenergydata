@@ -139,6 +139,17 @@ Conduct hard research on BSEE API availability and implement a PARALLEL enhanced
         - [x] 9.5.2.2 Do not modify 'src\worldenergydata\modules\bsee\data\bsee_data.py' as it central module, modify the data_refresh.py to handle the new flag
         - [x] 9.5.2.3 Flow continues to bsee_web_scraper.py and memory_processor.py
         - [x] 9.5.2.4 Ensure that the flow is not interrupted and all files are processed correctly
+  - [x] 9.6 For production data, bsee_web_scraper.py utilizing default timeout 600 seconds, which is not right according to Request configuration ('production': 1200 ) - ✅ **FIXED**
+    - [x] 9.6.1 Verify that the 'bsee_web_scraper.py' is utilizing the correct timeout value for each data source
+         well: 600, production: 1200, war: 2400 
+  - [x] 9.7 For production data, an unknown error 'Error refreshing production data: 'total_mb' occurs in 'data_refresh_enhanced.py' : at line 'refresh_production_data_enhanced: 197' - ✅ **FIXED**
+    - [x] 9.7.1 Investigate the cause of the 'total_mb' error in 'data_refresh_enhanced.py'
+    - [x] 9.7.2 Ensure that the production data refresh logic is correctly implemented
+    - [x] 9.7.3 Verify that the error does not occur during the data refresh process 
+  - [x] 9.8 .bin files are not being saved in correct path 'data\modules\bsee\bin' - ✅ **FIXED**
+    - [x] 9.8.1 new directory is being created in 'tests\modules\bsee\data\refresh\data\modules\bsee\bin\production_raw'.
+    - [x] 9.8.2 Ensure that the .bin files are saved in the correct path 'data/modules/bsee/bin/{subdirectory}'
+    
   
 - [x] 10. **Integration Testing and Validation**
   - [x] 10.1 Test NEW enhanced full data refresh from entry point to binary output 

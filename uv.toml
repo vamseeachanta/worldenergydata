@@ -1,24 +1,7 @@
-# UV Configuration - Single Environment Setup
-[project]
-name = "worldenergydata"
-requires-python = ">=3.8"
+# UV Configuration
+python-preference = "managed"
+compile-bytecode = true
 
-[tool.uv]
-python = "3.11"
-system = false
-compile = true
-seed = true
-
-[tool.uv.pip]
+[pip]
 index-url = "https://pypi.org/simple"
-pre = false
-no-cache = false
-
-[tool.uv.venv]
-prompt = "worldenergydata"
-system-site-packages = false
-
-# Parallel processing for package installation
-[tool.uv.parallel]
-enabled = true
-jobs = 4
+prerelease = "if-necessary-or-explicit"
