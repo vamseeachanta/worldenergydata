@@ -18,9 +18,9 @@ data:
   fresh_data: True        # Use fresh data downloads
   
   # Data type flags
-  well: False      # Process well (APD) data
+  well: True        # Process well (APD) data
   war: False        # Process WAR data (NEW in enhanced)
-  production: True  # Process production data
+  production: False  # Process production data
   
   # Legacy compatibility flag
   apm: False         # Legacy APM flag (use 'well' instead)
