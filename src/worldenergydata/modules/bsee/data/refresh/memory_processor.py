@@ -58,7 +58,7 @@ class MemoryProcessor:
         
         # Estimate memory requirements
         estimates = self.estimate_memory_usage(zip_data)
-        if not self.check_memory_availability(estimates['total_mb']):
+        if not self.check_memory_availability(estimates['total_estimate_mb']):
             logger.warning("Proceeding despite memory warning - will use chunked processing if needed")
         
         try:
@@ -259,7 +259,7 @@ class MemoryProcessor:
         try:
             # Ensure output directory exists
             output_path = Path(output_dir)
-            output_path.mkdir(exist_ok=True)
+            output_path.mkdir(parents=True, exist_ok=True)
             
             # Extract base name from original filename (e.g., mv_apd_data_all.txt -> mv_apd_data_all.bin)
             base_name = Path(filename).stem

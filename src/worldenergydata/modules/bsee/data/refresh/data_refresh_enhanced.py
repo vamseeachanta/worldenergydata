@@ -24,8 +24,6 @@ from worldenergydata.modules.bsee.data.refresh.config_router import ConfigRouter
 from worldenergydata.modules.bsee.data._from_zip.production_data import GetProdDataFromZip
 from worldenergydata.modules.bsee.data._from_zip.well_data import WellDataFromZip
 
-from assetutilities.common.utilities import is_dir_valid_func
-
 
 class DataRefreshEnhanced:
     """
@@ -105,7 +103,7 @@ class DataRefreshEnhanced:
                 
                 # Download and process in memory
                 logger.info(f"Downloading well data from {well_url}")
-                zip_data = self.web_scraper.download_zip_to_memory(well_url)
+                zip_data = self.web_scraper.download_zip_to_memory(well_url, data_type='well')
                 
                 if zip_data:
                     # Process the data in memory
@@ -142,7 +140,7 @@ class DataRefreshEnhanced:
                 
                 # Download and process in memory
                 logger.info(f"Downloading WAR data from {war_url}")
-                zip_data = self.web_scraper.download_zip_to_memory(war_url)
+                zip_data = self.web_scraper.download_zip_to_memory(war_url, data_type='war')
                 
                 if zip_data:
                     # Process the data in memory
@@ -178,7 +176,7 @@ class DataRefreshEnhanced:
                 
                 # Download and process in memory
                 logger.info(f"Downloading production data from {prod_url}")
-                zip_data = self.web_scraper.download_zip_to_memory(prod_url)
+                zip_data = self.web_scraper.download_zip_to_memory(prod_url, data_type='production')
                 
                 if zip_data:
                     # Process the data in memory
@@ -211,12 +209,27 @@ class DataRefreshEnhanced:
             bin_path = cfg.get('parameters', {}).get('filepath', {}).get('apm', {}).get('bin', 
                                                                                          'data/modules/bsee/bin/apd')
             
+            # Convert to absolute path relative to project root
+            # Find project root by looking for pyproject.toml
+            current_dir = Path(__file__).parent
+            while current_dir != current_dir.parent:
+                if (current_dir / 'pyproject.toml').exists():
+                    project_root = current_dir
+                    break
+                current_dir = current_dir.parent
+            else:
+                # Fallback to assuming we're in the standard structure
+                project_root = Path(__file__).parent.parent.parent.parent.parent.parent
+            
+            # Resolve path relative to project root
+            abs_bin_path = project_root / bin_path
+            
             # Ensure directory exists
-            Path(bin_path).mkdir(parents=True, exist_ok=True)
+            abs_bin_path.mkdir(parents=True, exist_ok=True)
             
             # Save using compatible format
-            self.memory_processor.save_to_binary(data, bin_path, 'well_data')
-            logger.info(f"Well data saved to {bin_path}")
+            self.memory_processor.save_to_binary(data, str(abs_bin_path), 'well_data')
+            logger.info(f"Well data saved to {abs_bin_path}")
             
         except Exception as e:
             logger.error(f"Error saving well data binary: {str(e)}")
@@ -234,12 +247,27 @@ class DataRefreshEnhanced:
             bin_path = cfg.get('parameters', {}).get('filepath', {}).get('war', {}).get('bin', 
                                                                                          'data/modules/bsee/bin/war')
             
+            # Convert to absolute path relative to project root
+            # Find project root by looking for pyproject.toml
+            current_dir = Path(__file__).parent
+            while current_dir != current_dir.parent:
+                if (current_dir / 'pyproject.toml').exists():
+                    project_root = current_dir
+                    break
+                current_dir = current_dir.parent
+            else:
+                # Fallback to assuming we're in the standard structure
+                project_root = Path(__file__).parent.parent.parent.parent.parent.parent
+            
+            # Resolve path relative to project root
+            abs_bin_path = project_root / bin_path
+            
             # Ensure directory exists
-            Path(bin_path).mkdir(parents=True, exist_ok=True)
+            abs_bin_path.mkdir(parents=True, exist_ok=True)
             
             # Save using compatible format
-            self.memory_processor.save_to_binary(data, bin_path, 'war_data')
-            logger.info(f"WAR data saved to {bin_path}")
+            self.memory_processor.save_to_binary(data, str(abs_bin_path), 'war_data')
+            logger.info(f"WAR data saved to {abs_bin_path}")
             
         except Exception as e:
             logger.error(f"Error saving WAR data binary: {str(e)}")
@@ -257,12 +285,27 @@ class DataRefreshEnhanced:
             bin_path = cfg.get('parameters', {}).get('filepath', {}).get('production', {}).get('bin', 
                                                                                                'data/modules/bsee/bin/production_raw')
             
+            # Convert to absolute path relative to project root
+            # Find project root by looking for pyproject.toml
+            current_dir = Path(__file__).parent
+            while current_dir != current_dir.parent:
+                if (current_dir / 'pyproject.toml').exists():
+                    project_root = current_dir
+                    break
+                current_dir = current_dir.parent
+            else:
+                # Fallback to assuming we're in the standard structure
+                project_root = Path(__file__).parent.parent.parent.parent.parent.parent
+            
+            # Resolve path relative to project root
+            abs_bin_path = project_root / bin_path
+            
             # Ensure directory exists
-            Path(bin_path).mkdir(parents=True, exist_ok=True)
+            abs_bin_path.mkdir(parents=True, exist_ok=True)
             
             # Save using compatible format
-            self.memory_processor.save_to_binary(data, bin_path, 'production_data')
-            logger.info(f"Production data saved to {bin_path}")
+            self.memory_processor.save_to_binary(data, str(abs_bin_path), 'production_data')
+            logger.info(f"Production data saved to {abs_bin_path}")
             
         except Exception as e:
             logger.error(f"Error saving production data binary: {str(e)}")
