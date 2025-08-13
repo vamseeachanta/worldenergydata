@@ -136,7 +136,7 @@ Analysis:
   file_name: data_refresh_enhanced
   file_name_for_overwrite: data_refresh_enhanced
   log_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\logs
-  start_time: 2025-08-13 09:46:02.640410
+  start_time: 2025-08-13 10:06:42.007360
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\data_refresh_enhanced.yml

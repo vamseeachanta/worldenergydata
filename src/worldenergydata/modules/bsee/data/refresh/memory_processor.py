@@ -58,12 +58,30 @@ class MemoryProcessor:
                     logger.info(f"Processing file: {filename}")
                     
                     try:
-                        # Read file content into memory
-                        with zip_file.open(filename) as file:
-                            # Read CSV data
-                            df = pd.read_csv(file, low_memory=False)
+                        # Try different encodings for CSV data
+                        encodings = ['utf-8', 'ISO-8859-1', 'latin-1']
+                        df = None
+                        
+                        for encoding in encodings:
+                            try:
+                                # Re-open file for each encoding attempt
+                                with zip_file.open(filename) as file:
+                                    df = pd.read_csv(file, low_memory=False, encoding=encoding)
+                                    logger.info(f"Successfully read {filename} with {encoding} encoding")
+                                    break
+                            except UnicodeDecodeError:
+                                continue
+                            except Exception as e:
+                                if 'utf-8' in str(e).lower() or 'decode' in str(e).lower():
+                                    continue
+                                else:
+                                    raise
+                        
+                        if df is not None:
                             data_dict[filename] = df
                             logger.info(f"Loaded {filename}: {df.shape[0]} rows, {df.shape[1]} columns")
+                        else:
+                            logger.error(f"Could not decode {filename} with any encoding")
                             
                     except Exception as e:
                         logger.error(f"Error processing {filename}: {str(e)}")
