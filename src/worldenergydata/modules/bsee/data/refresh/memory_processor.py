@@ -26,6 +26,7 @@ class MemoryProcessor:
     def __init__(self):
         """Initialize the memory processor."""
         self.processed_data = {}
+        self.zip_file_list = []  # Store original filenames from zip
     
     def process_zip_in_memory(self, zip_data: ByteString) -> Dict[str, pd.DataFrame]:
         """
@@ -46,11 +47,12 @@ class MemoryProcessor:
             with zipfile.ZipFile(zip_buffer, 'r') as zip_file:
                 # List all files in the zip
                 file_list = zip_file.namelist()
+                self.zip_file_list = file_list  # Store for later reference
                 logger.info(f"Found {len(file_list)} files in zip archive")
                 
                 for filename in file_list:
                     # Skip directories and non-CSV files
-                    if filename.endswith('/') or not filename.lower().endswith('.csv'):
+                    if filename.endswith('/') or not filename.lower().endswith('.txt'):
                         continue
                     
                     logger.info(f"Processing file: {filename}")
@@ -193,25 +195,60 @@ class MemoryProcessor:
         
         return processed
     
-    def save_to_binary(self, data: Dict[str, Any], output_dir: str, prefix: str) -> None:
+    def save_dataframe_to_binary(self, df: pd.DataFrame, output_dir: str, filename: str) -> str:
         """
-        Save processed data to binary format (pickle) compatible with legacy system.
+        Save a single DataFrame to binary format (.bin file) using pickle.
         
         Args:
-            data: Processed data dictionary
+            df: DataFrame to save
             output_dir: Output directory path
-            prefix: Filename prefix
+            filename: Original filename from zip (used to derive output name)
+            
+        Returns:
+            Path to saved file
+        """
+        try:
+            # Ensure output directory exists
+            output_path = Path(output_dir)
+            output_path.mkdir(exist_ok=True)
+            
+            # Extract base name from original filename (e.g., mv_apd_data_all.txt -> mv_apd_data_all.bin)
+            base_name = Path(filename).stem
+            output_file = output_path / f"{base_name}.bin"
+            
+            # Save using pickle with .bin extension
+            with open(output_file, 'wb') as f:
+                pickle.dump(df, f, protocol=pickle.HIGHEST_PROTOCOL)
+            
+            logger.info(f"Saved DataFrame to binary: {output_file}")
+            return str(output_file)
+            
+        except Exception as e:
+            logger.error(f"Error saving DataFrame to binary: {str(e)}")
+            raise
+    
+    def save_to_binary(self, data: Dict[str, Any], output_dir: str, prefix: str) -> None:
+        """
+        Save processed data to binary format (.bin files) using pickle.
+        Preserves original filenames from zip archive.
+        
+        Args:
+            data: Processed data dictionary (keys are original filenames from zip)
+            output_dir: Output directory path
+            prefix: Filename prefix (unused, keeping for compatibility)
         """
         try:
             # Ensure output directory exists
             output_path = Path(output_dir)
             output_path.mkdir(parents=True, exist_ok=True)
             
-            # Save each file's data as a separate pickle file
-            for filename, file_data in data.items():
-                # Clean filename for output
-                clean_name = filename.replace('.csv', '').replace('/', '_')
-                output_file = output_path / f"{prefix}_{clean_name}.pkl"
+            # Save each file's data as a separate .bin file
+            for original_filename, file_data in data.items():
+                # Extract base name from original filename (e.g., mv_apd_data_all.txt -> mv_apd_data_all)
+                base_name = Path(original_filename).stem  # This removes the extension
+                
+                # Create output filename with .bin extension
+                output_file = output_path / f"{base_name}.bin"
                 
                 # Extract just the DataFrame for compatibility
                 if isinstance(file_data, dict) and 'data' in file_data:
@@ -219,25 +256,11 @@ class MemoryProcessor:
                 else:
                     df_to_save = file_data
                 
-                # Save using pickle for compatibility with legacy system
+                # Save using pickle with .bin extension
                 with open(output_file, 'wb') as f:
                     pickle.dump(df_to_save, f, protocol=pickle.HIGHEST_PROTOCOL)
                 
-                logger.info(f"Saved binary file: {output_file}")
-            
-            # Also save a metadata file
-            metadata_file = output_path / f"{prefix}_metadata.pkl"
-            metadata = {
-                'files': list(data.keys()),
-                'shapes': {k: v.get('shape', None) for k, v in data.items() if isinstance(v, dict)},
-                'processing_type': 'enhanced',
-                'source': 'fresh_download'
-            }
-            
-            with open(metadata_file, 'wb') as f:
-                pickle.dump(metadata, f, protocol=pickle.HIGHEST_PROTOCOL)
-            
-            logger.info(f"Saved metadata file: {metadata_file}")
+                logger.info(f"Saved binary file: {output_file} (from {original_filename})")
             
         except Exception as e:
             logger.error(f"Error saving binary data: {str(e)}")

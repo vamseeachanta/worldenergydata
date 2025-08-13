@@ -18,8 +18,8 @@ data:
   fresh_data: True   # Use fresh data downloads
   
   # Data type flags
-  well: True         # Process well (APD) data
-  war: False         # Process WAR data (NEW in enhanced)
+  well: True       # Process well (APD) data
+  war: False        # Process WAR data (NEW in enhanced)
   production: False  # Process production data
   
   # Legacy compatibility flag

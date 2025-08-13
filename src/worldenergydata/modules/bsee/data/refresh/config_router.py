@@ -250,7 +250,7 @@ class ConfigRouter:
         logger.info(f"Config Source: {info['config_source']}")
         logger.info("Features:")
         for feature, enabled in info['features'].items():
-            status = "✓" if enabled else "✗"
+            status = "[ENABLED]" if enabled else "[DISABLED]"
             logger.info(f"  {status} {feature.replace('_', ' ').title()}")
         logger.info("Data Sources:")
         for source, method in info['data_sources'].items():
