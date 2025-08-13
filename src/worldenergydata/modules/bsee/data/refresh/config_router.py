@@ -1,8 +1,8 @@
 """
 Configuration Router Module
 
-This module handles routing between legacy and enhanced data refresh systems,
-allowing both to coexist and run independently based on configuration.
+This module handles routing enhanced data refresh system,
+allowing to run based on configuration.
 """
 
 from typing import Dict, Any, Optional
@@ -108,7 +108,7 @@ class ConfigRouter:
             },
             'enhanced_mode': True,
             'data': {
-                'refresh': True,
+                'enhanced_refresh': True,  # Use enhanced_refresh to avoid conflicts with legacy system
                 'enhanced': True,
                 'fresh_data': True,
                 'well': True,
@@ -186,9 +186,9 @@ class ConfigRouter:
         """
         valid = True
         
-        # Check for required data flags
-        if not cfg.get('data', {}).get('refresh'):
-            logger.warning("Data refresh flag is not set")
+        # Check for required data flags - use enhanced_refresh for enhanced mode
+        if not cfg.get('data', {}).get('enhanced_refresh'):
+            logger.warning("Enhanced data refresh flag is not set")
             valid = False
         
         # Check for at least one data type flag
@@ -250,7 +250,7 @@ class ConfigRouter:
         logger.info(f"Config Source: {info['config_source']}")
         logger.info("Features:")
         for feature, enabled in info['features'].items():
-            status = "✓" if enabled else "✗"
+            status = "[ENABLED]" if enabled else "[DISABLED]"
             logger.info(f"  {status} {feature.replace('_', ' ').title()}")
         logger.info("Data Sources:")
         for source, method in info['data_sources'].items():

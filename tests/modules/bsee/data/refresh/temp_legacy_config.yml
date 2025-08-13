@@ -1,0 +1,7 @@
+data:
+  apm: false
+  production: false
+  refresh: true
+meta:
+  basename: bsee
+  library: worldenergydata

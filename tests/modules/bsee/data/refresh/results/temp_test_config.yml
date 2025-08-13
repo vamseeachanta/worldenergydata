@@ -31,10 +31,10 @@ parameters:
         - BOREHOLE_STAT_CD
         - WELL_TYPE_CODE
         - BUS_ASC_NAME
-    well:
-      bin: data/modules/bsee/bin/apd
     war:
       bin: data/modules/bsee/bin/war
+    well:
+      bin: data/modules/bsee/bin/apd
   max_allowed_npt: 90
   borehole_codes:
   - BOREHOLE_STAT_CD: APD
@@ -78,80 +78,80 @@ default:
       output: true
     cfg_sensitivities: false
   log_enhanced_details: true
-meta:
-  library: worldenergydata
-  basename: bsee
-  mode: enhanced
-  description: Enhanced data refresh with fresh data access
-enhanced_mode: true
 data:
-  enhanced_refresh: true
-  enhanced: true
-  fresh_data: true
-  well: false
-  war: false
-  production: true
   apm: false
-sources:
-  well:
-    url: https://www.data.bsee.gov/Well/Files/APDRawData.zip
-    display_name: Application for Permit to Drill
-    update_frequency: daily
-  war:
-    url: https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip
-    display_name: eWell Submissions WAR
-    update_frequency: daily
-  production:
-    url: https://www.data.bsee.gov/Production/Files/ProductionRawData.zip
-    display_name: Production Data
-    update_frequency: bi_monthly
-  portal:
-    url: https://www.data.bsee.gov/Main/RawData.aspx
-    display_name: BSEE Raw Data Portal
-processing:
-  in_memory: true
-  save_zip: false
-  chunk_size: 8192
-  timeout: 300
-  max_retries: 3
-  retry_delay: 5
+  enhanced: true
+  enhanced_refresh: true
+  fresh_data: true
+  production: false
+  war: false
+  well: false
+enhanced_mode: true
 memory:
   max_file_size_mb: 500
   warning_threshold_mb: 200
+meta:
+  basename: bsee
+  description: Enhanced data refresh with fresh data access
+  library: worldenergydata
+  mode: enhanced
+monitoring:
+  report_metrics: true
+  track_download_time: true
+  track_memory_usage: true
+  track_processing_time: true
 output:
-  format: pickle
   compression: None
+  format: pickle
+processing:
+  chunk_size: 8192
+  in_memory: true
+  max_retries: 3
+  retry_delay: 5
+  save_zip: false
+  timeout: 300
+sources:
+  portal:
+    display_name: BSEE Raw Data Portal
+    url: https://www.data.bsee.gov/Main/RawData.aspx
+  production:
+    display_name: Production Data
+    update_frequency: bi_monthly
+    url: https://www.data.bsee.gov/Production/Files/ProductionRawData.zip
+  war:
+    display_name: eWell Submissions WAR
+    update_frequency: daily
+    url: https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip
+  well:
+    display_name: Application for Permit to Drill
+    update_frequency: daily
+    url: https://www.data.bsee.gov/Well/Files/APDRawData.zip
 validation:
   check_data_integrity: true
-  verify_column_names: true
   validate_date_ranges: true
-monitoring:
-  track_download_time: true
-  track_processing_time: true
-  track_memory_usage: true
-  report_metrics: true
+  verify_column_names: true
 Analysis:
   basename: bsee
   analysis_root_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh
-  file_name: data_refresh_enhanced
-  file_name_for_overwrite: data_refresh_enhanced
+  file_name: temp_test_config
+  file_name_for_overwrite: temp_test_config
   log_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\logs
-  start_time: 2025-08-13 11:40:01.919946
+  start_time: 2025-08-13 11:38:04.049888
   cfg_array_file_names: ~
   DefaultInputFile: ~
-  CustomInputFile: data_refresh_enhanced.yml
+  CustomInputFile: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\temp_test_config.yml
   result_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\results
   result_data_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\results\Data
   result_plot_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\results\Plot
   fe_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\results
 bsee:
   data:
-    enhanced_refresh: true
-    enhanced: true
-    fresh_data: true
-    well: false
-    war: false
-    production: true
     apm: false
+    enhanced: true
+    enhanced_refresh: true
+    fresh_data: true
+    production: false
+    war: false
+    well: false
     type: csv
   analysis: {}

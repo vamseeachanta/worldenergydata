@@ -13,14 +13,14 @@ enhanced_mode: True
 
 # Data refresh flags
 data:
-  refresh: True      # Master refresh flag
-  enhanced: True     # Enable enhanced processing
-  fresh_data: True   # Use fresh data downloads
+  enhanced_refresh: True  # Master refresh flag for enhanced system (replaces 'refresh' to avoid conflicts)
+  enhanced: True          # Enable enhanced processing
+  fresh_data: True        # Use fresh data downloads
   
   # Data type flags
-  well: True         # Process well (APD) data
-  war: False         # Process WAR data (NEW in enhanced)
-  production: False  # Process production data
+  well: False      # Process well (APD) data
+  war: False        # Process WAR data (NEW in enhanced)
+  production: True  # Process production data
   
   # Legacy compatibility flag
   apm: False         # Legacy APM flag (use 'well' instead)
