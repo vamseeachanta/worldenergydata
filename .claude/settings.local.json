@@ -17,6 +17,7 @@
       "Bash(git commit:*)",
       "Bash(git push:*)"
     ],
-    "deny": []
+    "deny": [],
+    "defaultMode": "acceptEdits"
   }
 }
