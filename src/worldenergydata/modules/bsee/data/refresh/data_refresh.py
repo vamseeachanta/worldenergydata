@@ -5,7 +5,7 @@ from worldenergydata.modules.bsee.data._from_zip.well_data import WellDataFromZi
 
 # Import enhanced components for routing
 from worldenergydata.modules.bsee.data.refresh.data_refresh_enhanced import DataRefreshEnhanced
-from worldenergydata.modules.bsee.data.refresh.config_router import ConfigRouter
+from worldenergydata.modules.bsee.data.config import ConfigRouter
 
 prod_zip = GetProdDataFromZip()
 well_zip = WellDataFromZip()
@@ -26,21 +26,19 @@ class DataRefresh:
         """
         Refresh all data. Routes to enhanced or legacy system based on configuration.
         """
-        # Check for enhanced_refresh flag first (new flag for enhanced system)
-        enhanced_refresh_flag = cfg.get('data', {}).get('enhanced_refresh', False)
+        # Check mode in meta section (primary method)
+        mode = cfg.get('meta', {}).get('mode', 'legacy').lower()
         
-        # Also check if enhanced mode is explicitly enabled
-        enhanced_mode = cfg.get('enhanced_mode', False) or cfg.get('data', {}).get('enhanced', False)
-        
-        if enhanced_refresh_flag or enhanced_mode:
-            # Route to enhanced system
-            logger.info("Enhanced refresh flag detected - routing to enhanced data refresh system")
+        if mode == 'enhanced':
+            # Route to enhanced system (no need to check refresh flag)
+            logger.info("Enhanced mode detected - routing to enhanced data refresh system")
             global data_refresh_enhanced
             if data_refresh_enhanced is None:
                 data_refresh_enhanced = DataRefreshEnhanced()
             return data_refresh_enhanced.router(cfg)
         
-        # Fall back to legacy system using the original 'refresh' flag
+        # Legacy mode - check for refresh flag
+        logger.info("Legacy mode - checking for refresh flag")
         data_refresh_flag = cfg['data'].get('refresh', False)
 
         if data_refresh_flag:
@@ -48,6 +46,8 @@ class DataRefresh:
             self.refresh_well_data(cfg)
             self.refresh_production_data(cfg)
             logger.info('Legacy data refresh completed.')
+        else:
+            logger.info("Legacy mode but refresh flag is False - skipping data refresh")
 
         return cfg, None
 

@@ -18,9 +18,9 @@ project_root = Path(__file__).parent.parent.parent.parent.parent.parent
 sys.path.insert(0, str(project_root / 'src'))
 
 from worldenergydata.modules.bsee.data.refresh.data_refresh_enhanced import DataRefreshEnhanced
-from worldenergydata.modules.bsee.data.refresh.config_router import ConfigRouter
-from worldenergydata.modules.bsee.data.refresh.bsee_web_scraper import BSEEWebScraper
-from worldenergydata.modules.bsee.data.refresh.memory_processor import MemoryProcessor
+from worldenergydata.modules.bsee.data.config import ConfigRouter
+from worldenergydata.modules.bsee.data.scrapers import BSEEWebScraper
+from worldenergydata.modules.bsee.data.processors import MemoryProcessor
 
 
 class TestEnhancedExecutionPath(unittest.TestCase):
@@ -36,10 +36,8 @@ class TestEnhancedExecutionPath(unittest.TestCase):
                 'basename': 'bsee',
                 'mode': 'enhanced'
             },
-            'enhanced_mode': True,
             'data': {
-                'refresh': True,
-                'enhanced': True,
+                # No 'refresh' flag in enhanced mode
                 'well': True,
                 'war': True,
                 'production': False

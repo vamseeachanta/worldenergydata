@@ -25,7 +25,7 @@ from loguru import logger
 
 # Import the enhanced data refresh module
 from worldenergydata.modules.bsee.data.refresh.data_refresh_enhanced import DataRefreshEnhanced
-from worldenergydata.modules.bsee.data.refresh.config_router import ConfigRouter
+from worldenergydata.modules.bsee.data.config import ConfigRouter
 
 
 def run_enhanced_process(input_file, expected_result={}):

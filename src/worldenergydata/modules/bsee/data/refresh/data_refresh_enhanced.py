@@ -15,10 +15,10 @@ import os
 import sys
 from pathlib import Path
 
-# Import the new components we'll create
-from worldenergydata.modules.bsee.data.refresh.bsee_web_scraper import BSEEWebScraper
-from worldenergydata.modules.bsee.data.refresh.memory_processor import MemoryProcessor
-from worldenergydata.modules.bsee.data.refresh.config_router import ConfigRouter
+# Import the new components
+from worldenergydata.modules.bsee.data.scrapers import BSEEWebScraper
+from worldenergydata.modules.bsee.data.processors import MemoryProcessor
+from worldenergydata.modules.bsee.data.config import ConfigRouter
 
 # Import existing processors for binary generation compatibility
 from worldenergydata.modules.bsee.data._from_zip.production_data import GetProdDataFromZip
@@ -66,11 +66,14 @@ class DataRefreshEnhanced:
             logger.warning("Enhanced mode not enabled in configuration")
             return cfg, None
         
-        # Get data refresh flags - using 'enhanced_refresh' to avoid conflicts with legacy system
-        data_refresh_flag = cfg.get('data', {}).get('enhanced_refresh', False)
+        # In enhanced mode, check if any data type flags are set
+        # We don't use a 'refresh' flag to avoid confusion with legacy system
+        well_flag = cfg.get('data', {}).get('well', False)
+        war_flag = cfg.get('data', {}).get('war', False)
+        production_flag = cfg.get('data', {}).get('production', False)
         
-        if data_refresh_flag:
-            logger.info("Enhanced data refresh flag is True, processing data sources")
+        if well_flag or war_flag or production_flag:
+            logger.info("Data type flags detected, processing requested data sources")
             
             # Process each data type based on flags
             self.refresh_well_data_enhanced(cfg)
@@ -79,7 +82,7 @@ class DataRefreshEnhanced:
             
             logger.info('Enhanced data refresh completed successfully')
         else:
-            logger.info("Enhanced data refresh flag is False, skipping refresh")
+            logger.info("No data type flags set, skipping refresh")
         
         return cfg, None
     

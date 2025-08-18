@@ -35,6 +35,10 @@ parameters:
                     WELL_TYPE_CODE,
                     BUS_ASC_NAME]]
     
+    war:
+      zip: data/modules/bsee/zip/war
+      bin: data/modules/bsee/bin/war
+    
   max_allowed_npt: 90
   borehole_codes:
     [
@@ -91,6 +95,27 @@ parameters:
 
 
 settings_master: NULL
+
+# Data source URLs for BSEE data
+sources:
+  well:
+    url: "https://www.data.bsee.gov/Well/Files/APDRawData.zip"
+    display_name: "Application for Permit to Drill"
+    update_frequency: daily
+    
+  war:
+    url: "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip"
+    display_name: "eWell Submissions WAR"
+    update_frequency: daily
+    
+  production:
+    url: "https://www.data.bsee.gov/Production/Files/ProductionRawData.zip"
+    display_name: "Production Data"
+    update_frequency: bi_monthly
+    
+  portal:
+    url: "https://www.data.bsee.gov/Main/RawData.aspx"
+    display_name: "BSEE Raw Data Portal"
 
 data_retrieval:
   well:
