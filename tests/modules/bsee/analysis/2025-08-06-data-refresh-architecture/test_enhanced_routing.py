@@ -33,9 +33,8 @@ def test_enhanced_routing():
         
         print("\n2. Checking configuration flags:")
         print(f"   - basename: {test_config.get('meta', {}).get('basename')}")
-        print(f"   - enhanced_mode: {test_config.get('enhanced_mode')}")
-        print(f"   - enhanced_refresh: {test_config.get('data', {}).get('enhanced_refresh')}")
-        print(f"   - enhanced: {test_config.get('data', {}).get('enhanced')}")
+        print(f"   - mode: {test_config.get('meta', {}).get('mode')}")
+        print(f"   - refresh: {test_config.get('data', {}).get('refresh')}")
         
         # Test 2: Test routing through engine
         print("\n3. Testing routing through engine.py -> bsee.py -> bsee_data.py -> data_refresh.py")

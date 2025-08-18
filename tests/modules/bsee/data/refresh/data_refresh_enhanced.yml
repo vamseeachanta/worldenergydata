@@ -1,98 +1,55 @@
-# Enhanced BSEE Data Refresh Configuration
-# This configuration enables the enhanced parallel data refresh system
-# with fresh data access and in-memory processing
+# Enhanced BSEE Data Refresh Configuration - Full Features
+# This configuration enables all three optimization techniques:
+# 1. Chunk-based change detection
+# 2. Parallel zip file processing  
+# 3. Optimized chunked DataFrame processing
 
 meta:
   library: worldenergydata
   basename: bsee
-  mode: enhanced  # Indicates enhanced mode is active
-  description: Enhanced data refresh with fresh data access
+  mode: enhanced  # This enables enhanced mode
 
-# Enable enhanced mode
-enhanced_mode: True
+# Enhanced mode flag (alternative way to enable)
+enhanced_mode: true
 
-# Data refresh flags
+# Enable chunk-based downloads and caching
+chunked_refresh: true
+incremental_update: true
+force_refresh: false  # Set to true to bypass cache
+
+# Data type flags - what to refresh
 data:
-  enhanced_refresh: True  # Master refresh flag for enhanced system (replaces 'refresh' to avoid conflicts)
-  enhanced: True          # Enable enhanced processing
-  fresh_data: True        # Use fresh data downloads
+  # Enhanced mode uses these flags directly (no 'refresh' flag needed)
+  well: false       # Enable well data refresh
+  war: false       # Disable WAR for faster testing (120MB+ file)
+  production: true # Enable production data refresh
   
-  # Data type flags
-  well: True        # Process well (APD) data
-  war: False        # Process WAR data (NEW in enhanced)
-  production: False  # Process production data
-  
-  # Legacy compatibility flag
-  apm: False         # Legacy APM flag (use 'well' instead)
-
-# Data source URLs
-sources:
-  well:
-    url: "https://www.data.bsee.gov/Well/Files/APDRawData.zip"
-    display_name: "Application for Permit to Drill"
-    update_frequency: daily
-    
-  war:
-    url: "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip"
-    display_name: "eWell Submissions WAR"
-    update_frequency: daily
-    
-  production:
-    url: "https://www.data.bsee.gov/Production/Files/ProductionRawData.zip"
-    display_name: "Production Data"
-    update_frequency: bi_monthly
-    
-  portal:
-    url: "https://www.data.bsee.gov/Main/RawData.aspx"
-    display_name: "BSEE Raw Data Portal"
+  # Legacy compatibility flags (also work in enhanced mode)
+  apm: false       # Alternative flag for well data
 
 # Processing configuration
 processing:
-  in_memory: True        # Process data in memory
-  save_zip: False        # Don't save zip files to disk
-  chunk_size: 8192       # Download chunk size in bytes
-  timeout: 300           # Download timeout in seconds
-  max_retries: 3         # Maximum retry attempts
-  retry_delay: 5         # Delay between retries in seconds
+  in_memory: true           # Process in memory without disk storage
+  save_zip: false          # Don't save zip files to disk
+  chunk_size: 8192         # Chunk size for streaming
+  timeout: 600             # Timeout in seconds (10 minutes)
+  optimized: true          # Enable optimized processing
+  parallel: true           # Enable parallel processing
 
-# Memory management
-memory:
-  max_file_size_mb: 500  # Maximum file size to process in memory
-  warning_threshold_mb: 200  # Warn if file exceeds this size
-  
-# Output configuration (compatible with legacy)
-output:
-  format: pickle         # Use pickle format for compatibility
-  compression: None      # No compression for compatibility
-  
-# File paths (inherited from base config but can be overridden)
-parameters:
-  filepath:
-    bin_dir: data/modules/bsee/bin
-    
-    well:
-      bin: data/modules/bsee/bin/apd
-      
-    war:
-      bin: data/modules/bsee/bin/war  # NEW directory for WAR data
-      
-    production:
-      bin: data/modules/bsee/bin/production_raw
+# Cache configuration
+cache:
+  enabled: true
+  directory: ~/.worldenergydata/cache
+  ttl_hours: 24            # Cache time-to-live in hours
+  chunk_size_mb: 10        # Size of each download chunk in MB
+  max_size_gb: 5           # Maximum total cache size in GB
 
 # Logging configuration
 default:
   log_level: INFO
-  log_enhanced_details: True  # Log additional details in enhanced mode
 
-# Validation settings
-validation:
-  check_data_integrity: True
-  verify_column_names: True
-  validate_date_ranges: True
-
-# Performance monitoring
-monitoring:
-  track_download_time: True
-  track_processing_time: True
-  track_memory_usage: True
-  report_metrics: True
+# Performance tuning
+performance:
+  max_workers: 4           # Number of parallel workers
+  memory_limit_mb: 2000    # Memory limit for processing
+  chunk_rows: 50000        # Rows per chunk for DataFrame processing
