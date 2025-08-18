@@ -24,7 +24,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "assetutilities @ git+https://github.com/username/assetutilities.git",
+    "assetutilities @git+https://github.com/username/assetutilities.git"
 ]
 
 [project.optional-dependencies]
