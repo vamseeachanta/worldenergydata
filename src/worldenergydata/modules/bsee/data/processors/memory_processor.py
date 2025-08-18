@@ -3,6 +3,7 @@ Memory Processor Module
 
 This module handles in-memory processing of BSEE zip files,
 extracting and processing data without writing to disk.
+Now includes optimized processing with chunking and parallelization.
 """
 
 import io
@@ -15,6 +16,9 @@ from pathlib import Path
 import csv
 import gc  # For garbage collection
 import warnings
+
+# Import the optimized processor
+from .optimized_processor import OptimizedProcessor
 
 # Try to import psutil for memory monitoring, but make it optional
 try:
@@ -33,12 +37,22 @@ class MemoryProcessor:
     in memory, avoiding disk storage of large files.
     """
     
-    def __init__(self):
-        """Initialize the memory processor."""
+    def __init__(self, use_optimized=True):
+        """Initialize the memory processor.
+        
+        Args:
+            use_optimized: Whether to use optimized processing (default True)
+        """
         self.processed_data = {}
         self.zip_file_list = []  # Store original filenames from zip
         self.memory_threshold_mb = 1000  # 1GB threshold for memory warnings
         self.chunk_size_rows = 100000  # Process CSV in chunks for large files
+        self.use_optimized = use_optimized
+        
+        # Initialize optimized processor if enabled
+        if self.use_optimized:
+            self.optimized_processor = OptimizedProcessor()
+            logger.info("Memory processor initialized with optimized processing enabled")
     
     def process_zip_in_memory(self, zip_data: ByteString) -> Dict[str, pd.DataFrame]:
         """
@@ -127,6 +141,42 @@ class MemoryProcessor:
             # Always clean up memory
             self.cleanup_memory()
     
+    def process_well_data_optimized(self, zip_data: ByteString, cfg: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Process well data using optimized chunked and parallel processing.
+        
+        Args:
+            zip_data: Bytes of the zip file
+            cfg: Configuration dictionary
+            
+        Returns:
+            Processed well data dictionary
+        """
+        logger.info("Processing well data with optimized processor")
+        
+        # Use optimized processor
+        data_dict = self.optimized_processor.process_zip_optimized(zip_data, 'well')
+        
+        if not data_dict:
+            logger.error("No data extracted from well zip file")
+            return {}
+        
+        # Get processing statistics
+        stats = self.optimized_processor.get_processing_summary()
+        logger.info(f"Well data processing stats: {stats}")
+        
+        # Format for compatibility
+        processed = {}
+        for filename, df in data_dict.items():
+            processed[filename] = {
+                'data': df,
+                'shape': df.shape,
+                'columns': df.columns.tolist(),
+                'dtypes': df.dtypes.to_dict()
+            }
+        
+        return processed
+    
     def process_well_data(self, zip_data: ByteString, cfg: Dict[str, Any]) -> Dict[str, Any]:
         """
         Process well (APD) data from zip.
@@ -138,7 +188,12 @@ class MemoryProcessor:
         Returns:
             Processed well data dictionary
         """
-        logger.info("Processing well data in memory")
+        # Use optimized processing if enabled
+        if self.use_optimized:
+            return self.process_well_data_optimized(zip_data, cfg)
+        
+        # Fall back to original processing
+        logger.info("Processing well data in memory (standard mode)")
         
         # Extract data from zip
         data_dict = self.process_zip_in_memory(zip_data)
@@ -204,6 +259,42 @@ class MemoryProcessor:
         
         return processed
     
+    def process_production_data_optimized(self, zip_data: ByteString, cfg: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Process production data using optimized chunked and parallel processing.
+        
+        Args:
+            zip_data: Bytes of the zip file
+            cfg: Configuration dictionary
+            
+        Returns:
+            Processed production data dictionary
+        """
+        logger.info("Processing production data with optimized processor")
+        
+        # Use optimized processor
+        data_dict = self.optimized_processor.process_zip_optimized(zip_data, 'production')
+        
+        if not data_dict:
+            logger.error("No data extracted from production zip file")
+            return {}
+        
+        # Get processing statistics
+        stats = self.optimized_processor.get_processing_summary()
+        logger.info(f"Production data processing stats: {stats}")
+        
+        # Format for compatibility
+        processed = {}
+        for filename, df in data_dict.items():
+            processed[filename] = {
+                'data': df,
+                'shape': df.shape,
+                'columns': df.columns.tolist(),
+                'dtypes': df.dtypes.to_dict()
+            }
+        
+        return processed
+    
     def process_production_data(self, zip_data: ByteString, cfg: Dict[str, Any]) -> Dict[str, Any]:
         """
         Process production data from zip.
@@ -215,7 +306,12 @@ class MemoryProcessor:
         Returns:
             Processed production data dictionary
         """
-        logger.info("Processing production data in memory")
+        # Use optimized processing if enabled
+        if self.use_optimized:
+            return self.process_production_data_optimized(zip_data, cfg)
+        
+        # Fall back to original processing
+        logger.info("Processing production data in memory (standard mode)")
         
         # Extract data from zip
         data_dict = self.process_zip_in_memory(zip_data)
@@ -234,6 +330,88 @@ class MemoryProcessor:
             
             if available_prod_cols:
                 logger.info(f"Found production columns: {available_prod_cols}")
+            
+            processed[filename] = {
+                'data': df,
+                'shape': df.shape,
+                'columns': df.columns.tolist(),
+                'dtypes': df.dtypes.to_dict()
+            }
+        
+        return processed
+    
+    def process_war_data_optimized(self, zip_data: ByteString, cfg: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Process WAR data using optimized chunked and parallel processing.
+        Specifically optimized for large 120MB+ WAR files.
+        
+        Args:
+            zip_data: Bytes of the zip file
+            cfg: Configuration dictionary
+            
+        Returns:
+            Processed WAR data dictionary
+        """
+        logger.info("Processing WAR data with optimized processor (120MB+ file)")
+        
+        # Use optimized processor with WAR-specific settings
+        data_dict = self.optimized_processor.process_zip_optimized(zip_data, 'war')
+        
+        if not data_dict:
+            logger.error("No data extracted from WAR zip file")
+            return {}
+        
+        # Get processing statistics
+        stats = self.optimized_processor.get_processing_summary()
+        logger.info(f"WAR data processing stats: {stats}")
+        
+        # Format for compatibility
+        processed = {}
+        for filename, df in data_dict.items():
+            processed[filename] = {
+                'data': df,
+                'shape': df.shape,
+                'columns': df.columns.tolist(),
+                'dtypes': df.dtypes.to_dict()
+            }
+        
+        return processed
+    
+    def process_war_data(self, zip_data: ByteString, cfg: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Process WAR (Well Activity Report) data from zip.
+        
+        Args:
+            zip_data: Bytes of the zip file
+            cfg: Configuration dictionary
+            
+        Returns:
+            Processed WAR data dictionary
+        """
+        # Always use optimized processing for WAR due to large file size
+        if self.use_optimized:
+            return self.process_war_data_optimized(zip_data, cfg)
+        
+        # For WAR data, we strongly recommend optimized processing
+        logger.warning("Processing large WAR data without optimization - this may be slow!")
+        logger.info("Processing WAR data in memory (standard mode)")
+        
+        # Extract data from zip
+        data_dict = self.process_zip_in_memory(zip_data)
+        
+        if not data_dict:
+            logger.error("No data extracted from WAR zip file")
+            return {}
+        
+        processed = {}
+        
+        for filename, df in data_dict.items():
+            # WAR-specific processing
+            war_columns = ['ACTIVITY_DATE', 'ACTIVITY_TYPE', 'RIG_NAME', 'WATER_DEPTH']
+            available_war_cols = [col for col in war_columns if col in df.columns]
+            
+            if available_war_cols:
+                logger.info(f"Found WAR columns: {available_war_cols}")
             
             processed[filename] = {
                 'data': df,
