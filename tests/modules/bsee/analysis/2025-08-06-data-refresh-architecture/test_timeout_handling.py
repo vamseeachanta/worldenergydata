@@ -16,7 +16,7 @@ project_root = Path(__file__).parent.parent.parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 from loguru import logger
-from worldenergydata.modules.bsee.data.refresh.bsee_web_scraper import BSEEWebScraper
+from worldenergydata.modules.bsee.data.scrapers import BSEEWebScraper
 
 
 def test_timeout_configuration():
