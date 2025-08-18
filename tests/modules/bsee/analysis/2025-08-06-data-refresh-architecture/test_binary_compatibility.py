@@ -21,7 +21,7 @@ import hashlib
 project_root = Path(__file__).parent.parent.parent.parent.parent.parent
 sys.path.insert(0, str(project_root / 'src'))
 
-from worldenergydata.modules.bsee.data.refresh.memory_processor import MemoryProcessor
+from worldenergydata.modules.bsee.data.processors import MemoryProcessor
 from worldenergydata.modules.bsee.data.refresh.data_refresh_enhanced import DataRefreshEnhanced
 
 

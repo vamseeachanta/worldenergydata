@@ -59,7 +59,7 @@ This file provides guidance to AI assistants when working with code in this repo
 - **Best Practices:** @.agent-os/standards/best-practices.md
 
 ### Project Management
-- **Active Specs:** @.agent-os/specs/
+- **Active Specs:** @specs/
 - **Spec Planning:** Use `@.agent-os/instructions/create-spec.md`
 - **Tasks Execution:** Use `@.agent-os/instructions/execute-tasks.md`
 
@@ -103,7 +103,7 @@ This project supports enhanced Agent OS workflows including:
 ## Important Notes
 
 - Product-specific files in `.agent-os/product/` override any global standards
-- User's specific instructions override (or amend) instructions found in `.agent-os/specs/...`
+- User's specific instructions override (or amend) instructions found in `specs/...`
 - Always adhere to established patterns, code style, and best practices documented above
 - Use UV package manager for all dependency operations
 - Run code quality checks before committing changes
@@ -126,7 +126,7 @@ This repository includes a complete, self-contained Agent OS framework. All slas
 - **Standards**: @.agent-os/standards/ (code style, best practices)
 - **Instructions**: @.agent-os/instructions/ (workflow guidance)
 - **Product Context**: @.agent-os/product/ (mission, roadmap, decisions)
-- **Specifications**: @.agent-os/specs/ (feature specifications and tasks)
+- **Specifications**: @specs/ (feature specifications and tasks)
 
 All references are local to this repository - no external dependencies required.
 
