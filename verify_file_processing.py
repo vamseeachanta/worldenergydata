@@ -12,7 +12,7 @@ from io import BytesIO
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from src.worldenergydata.modules.bsee.data.scrapers.bsee_web_scraper import BSEEWebScraper
+from src.worldenergydata.modules.bsee.data.scrapers.web_scraper import BSEEWebScraper
 from src.worldenergydata.modules.bsee.data.processors.memory_processor import MemoryProcessor
 
 def check_well_data():
