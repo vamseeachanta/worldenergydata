@@ -34,21 +34,9 @@ class ConfigRouter:
         Returns:
             True if enhanced mode is enabled, False for legacy mode
         """
-        # Check for explicit enhanced mode flag
-        enhanced = cfg.get('enhanced_mode', False)
-        
-        # Check for enhanced-specific configuration
-        if not enhanced:
-            enhanced = cfg.get('data', {}).get('enhanced', False)
-        
-        # Check for fresh_data flag as alternative
-        if not enhanced:
-            enhanced = cfg.get('data', {}).get('fresh_data', False)
-        
-        # Check if WAR flag is present (new in enhanced system)
-        if not enhanced and cfg.get('data', {}).get('war', False):
-            logger.info("WAR flag detected, enabling enhanced mode")
-            enhanced = True
+        # Check mode in meta section (primary method)
+        mode = cfg.get('meta', {}).get('mode', 'legacy').lower()
+        enhanced = (mode == 'enhanced')
         
         # Store the mode for later reference
         self.enhanced_mode = enhanced
@@ -56,7 +44,7 @@ class ConfigRouter:
         if enhanced:
             logger.info("Enhanced mode ENABLED - Using fresh data access")
         else:
-            logger.info("Enhanced mode DISABLED - Using legacy system")
+            logger.info("Legacy mode ENABLED - Using legacy system")
         
         return enhanced
     
@@ -106,11 +94,9 @@ class ConfigRouter:
                 'basename': 'bsee',
                 'mode': 'enhanced'
             },
-            'enhanced_mode': True,
+            # Mode is set in meta section
             'data': {
-                'enhanced_refresh': True,  # Use enhanced_refresh to avoid conflicts with legacy system
-                'enhanced': True,
-                'fresh_data': True,
+                # No 'refresh' flag in enhanced mode to avoid legacy system activation
                 'well': True,
                 'war': True,
                 'production': True
@@ -168,9 +154,9 @@ class ConfigRouter:
         
         merged = deep_merge(merged, enhanced_cfg)
         
-        # Ensure enhanced mode flag is set
-        if self.enhanced_mode:
-            merged['enhanced_mode'] = True
+        # Ensure mode is preserved in meta
+        if self.enhanced_mode and 'meta' in merged:
+            merged['meta']['mode'] = 'enhanced'
         
         return merged
     
@@ -186,10 +172,15 @@ class ConfigRouter:
         """
         valid = True
         
-        # Check for required data flags - use enhanced_refresh for enhanced mode
-        if not cfg.get('data', {}).get('enhanced_refresh'):
-            logger.warning("Enhanced data refresh flag is not set")
-            valid = False
+        # Check for required data flags based on mode
+        if self.enhanced_mode:
+            # Enhanced mode doesn't use refresh flag
+            pass
+        else:
+            # Legacy mode requires refresh flag
+            if not cfg.get('data', {}).get('refresh'):
+                logger.warning("Data refresh flag is not set for legacy mode")
+                valid = False
         
         # Check for at least one data type flag
         data_flags = ['well', 'war', 'production', 'apm']

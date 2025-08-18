@@ -23,7 +23,7 @@ sys.path.insert(0, str(project_root))
 
 from worldenergydata.engine import engine
 from worldenergydata.modules.bsee.data.refresh.data_refresh_enhanced import DataRefreshEnhanced
-from worldenergydata.modules.bsee.data.refresh.config_router import ConfigRouter
+from worldenergydata.modules.bsee.data.config import ConfigRouter
 
 
 class IntegrationTester:
