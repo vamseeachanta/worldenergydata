@@ -1,6 +1,6 @@
 # Spec Requirements Document
 
-> Spec: SME Financial Analysis Integration
+> Spec: BSEE Financial Analysis V18 Integration
 > Created: 2025-08-19
 > Status: Planning
 > Module: BSEE
@@ -110,8 +110,9 @@ graph TD
 
 ## Spec Documentation
 
-- Tasks: @specs/modules/bsee/2025-08-19-sme-analysis/tasks.md
-- Technical Specification: @specs/modules/bsee/2025-08-19-sme-analysis/sub-specs/technical-spec.md
-- API Specification: @specs/modules/bsee/2025-08-19-sme-analysis/sub-specs/api-spec.md
-- Tests Specification: @specs/modules/bsee/2025-08-19-sme-analysis/sub-specs/tests.md
-- Task Summary: @specs/modules/bsee/2025-08-19-sme-analysis/task_summary.md
+- Prompt Evolution: @specs/modules/bsee/financial-analysis-v18/prompt.md
+- Tasks: @specs/modules/bsee/financial-analysis-v18/tasks.md
+- Technical Specification: @specs/modules/bsee/financial-analysis-v18/sub-specs/technical-spec.md
+- API Specification: @specs/modules/bsee/financial-analysis-v18/sub-specs/api-spec.md
+- Tests Specification: @specs/modules/bsee/financial-analysis-v18/sub-specs/tests.md
+- Task Summary: @specs/modules/bsee/financial-analysis-v18/task_summary.md
