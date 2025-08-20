@@ -1,0 +1,570 @@
+{
+  "module": "wellpath3D",
+  "test_file": "test_wellpath3D.py",
+  "test_classes": [
+    {
+      "name": "Testnewwell",
+      "target_class": "newwell",
+      "test_methods": [
+        {
+          "name": "test___init___basic",
+          "type": "basic",
+          "description": "Test basic functionality of __init__"
+        },
+        {
+          "name": "test___init___parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for __init__"
+        },
+        {
+          "name": "test_create_basic",
+          "type": "basic",
+          "description": "Test basic functionality of create"
+        },
+        {
+          "name": "test_create_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for create"
+        }
+      ]
+    },
+    {
+      "name": "Testwell",
+      "target_class": "well",
+      "test_methods": [
+        {
+          "name": "test___init___basic",
+          "type": "basic",
+          "description": "Test basic functionality of __init__"
+        },
+        {
+          "name": "test___init___parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for __init__"
+        },
+        {
+          "name": "test___str___basic",
+          "type": "basic",
+          "description": "Test basic functionality of __str__"
+        },
+        {
+          "name": "test___str___return_value",
+          "type": "return_value",
+          "description": "Test return value of __str__"
+        },
+        {
+          "name": "test_depthtolist_basic",
+          "type": "basic",
+          "description": "Test basic functionality of depthtolist"
+        },
+        {
+          "name": "test_inctolist_basic",
+          "type": "basic",
+          "description": "Test basic functionality of inctolist"
+        },
+        {
+          "name": "test_azitolist_basic",
+          "type": "basic",
+          "description": "Test basic functionality of azitolist"
+        }
+      ]
+    },
+    {
+      "name": "Testwellmap",
+      "target_class": "wellmap",
+      "test_methods": [
+        {
+          "name": "test___init___basic",
+          "type": "basic",
+          "description": "Test basic functionality of __init__"
+        },
+        {
+          "name": "test___init___parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for __init__"
+        },
+        {
+          "name": "test___str___basic",
+          "type": "basic",
+          "description": "Test basic functionality of __str__"
+        },
+        {
+          "name": "test___str___return_value",
+          "type": "return_value",
+          "description": "Test return value of __str__"
+        },
+        {
+          "name": "test_getName_basic",
+          "type": "basic",
+          "description": "Test basic functionality of getName"
+        },
+        {
+          "name": "test_getName_return_value",
+          "type": "return_value",
+          "description": "Test return value of getName"
+        },
+        {
+          "name": "test_add_coordinates_basic",
+          "type": "basic",
+          "description": "Test basic functionality of add_coordinates"
+        },
+        {
+          "name": "test_add_coordinates_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for add_coordinates"
+        },
+        {
+          "name": "test_writedata_basic",
+          "type": "basic",
+          "description": "Test basic functionality of writedata"
+        },
+        {
+          "name": "test_writedata_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for writedata"
+        },
+        {
+          "name": "test_tvdtolist_basic",
+          "type": "basic",
+          "description": "Test basic functionality of tvdtolist"
+        },
+        {
+          "name": "test_lattolist_basic",
+          "type": "basic",
+          "description": "Test basic functionality of lattolist"
+        },
+        {
+          "name": "test_lontolist_basic",
+          "type": "basic",
+          "description": "Test basic functionality of lontolist"
+        },
+        {
+          "name": "test_strattolist_basic",
+          "type": "basic",
+          "description": "Test basic functionality of strattolist"
+        },
+        {
+          "name": "test_strattolist_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for strattolist"
+        }
+      ]
+    },
+    {
+      "name": "TestmyApplication",
+      "target_class": "myApplication",
+      "test_methods": [
+        {
+          "name": "test___init___basic",
+          "type": "basic",
+          "description": "Test basic functionality of __init__"
+        },
+        {
+          "name": "test_infobox_basic",
+          "type": "basic",
+          "description": "Test basic functionality of infobox"
+        },
+        {
+          "name": "test_init_gui_basic",
+          "type": "basic",
+          "description": "Test basic functionality of init_gui"
+        },
+        {
+          "name": "test_createWindow_basic",
+          "type": "basic",
+          "description": "Test basic functionality of createWindow"
+        },
+        {
+          "name": "test_createWin_basic",
+          "type": "basic",
+          "description": "Test basic functionality of createWin"
+        },
+        {
+          "name": "test_wellsWin_basic",
+          "type": "basic",
+          "description": "Test basic functionality of wellsWin"
+        },
+        {
+          "name": "test_wellsWin_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for wellsWin"
+        },
+        {
+          "name": "test_surveyWin_basic",
+          "type": "basic",
+          "description": "Test basic functionality of surveyWin"
+        },
+        {
+          "name": "test_surveyWin_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for surveyWin"
+        },
+        {
+          "name": "test_surveyWin_return_value",
+          "type": "return_value",
+          "description": "Test return value of surveyWin"
+        },
+        {
+          "name": "test_plotWin_basic",
+          "type": "basic",
+          "description": "Test basic functionality of plotWin"
+        },
+        {
+          "name": "test_plotWin_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for plotWin"
+        },
+        {
+          "name": "test_wellmapWin_basic",
+          "type": "basic",
+          "description": "Test basic functionality of wellmapWin"
+        },
+        {
+          "name": "test_wellmapWin_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for wellmapWin"
+        },
+        {
+          "name": "test_stratWin_basic",
+          "type": "basic",
+          "description": "Test basic functionality of stratWin"
+        },
+        {
+          "name": "test_stratWin_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for stratWin"
+        },
+        {
+          "name": "test_stratWin_return_value",
+          "type": "return_value",
+          "description": "Test return value of stratWin"
+        }
+      ]
+    }
+  ],
+  "test_functions": [
+    {
+      "name": "test_instantTab_basic",
+      "type": "basic",
+      "description": "Test basic functionality of instantTab"
+    },
+    {
+      "name": "test_instantTab_return_value",
+      "type": "return_value",
+      "description": "Test return value of instantTab"
+    },
+    {
+      "name": "test_firstStart_basic",
+      "type": "basic",
+      "description": "Test basic functionality of firstStart"
+    },
+    {
+      "name": "test_firstStart_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for firstStart"
+    },
+    {
+      "name": "test_createWell_basic",
+      "type": "basic",
+      "description": "Test basic functionality of createWell"
+    },
+    {
+      "name": "test_fileload_basic",
+      "type": "basic",
+      "description": "Test basic functionality of fileload"
+    },
+    {
+      "name": "test_selectItem_basic",
+      "type": "basic",
+      "description": "Test basic functionality of selectItem"
+    },
+    {
+      "name": "test_openwell_basic",
+      "type": "basic",
+      "description": "Test basic functionality of openwell"
+    },
+    {
+      "name": "test_delwell_basic",
+      "type": "basic",
+      "description": "Test basic functionality of delwell"
+    },
+    {
+      "name": "test_importCsv_basic",
+      "type": "basic",
+      "description": "Test basic functionality of importCsv"
+    },
+    {
+      "name": "test_importCsv_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for importCsv"
+    },
+    {
+      "name": "test_importCsv_return_value",
+      "type": "return_value",
+      "description": "Test return value of importCsv"
+    },
+    {
+      "name": "test_loadsurvey_basic",
+      "type": "basic",
+      "description": "Test basic functionality of loadsurvey"
+    },
+    {
+      "name": "test_loadsurvey_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for loadsurvey"
+    },
+    {
+      "name": "test_writesurvey_basic",
+      "type": "basic",
+      "description": "Test basic functionality of writesurvey"
+    },
+    {
+      "name": "test_writesurvey_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for writesurvey"
+    },
+    {
+      "name": "test_writesurvey_return_value",
+      "type": "return_value",
+      "description": "Test return value of writesurvey"
+    },
+    {
+      "name": "test_delData_basic",
+      "type": "basic",
+      "description": "Test basic functionality of delData"
+    },
+    {
+      "name": "test_delData_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for delData"
+    },
+    {
+      "name": "test_colorpick_basic",
+      "type": "basic",
+      "description": "Test basic functionality of colorpick"
+    },
+    {
+      "name": "test_colorpick_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for colorpick"
+    },
+    {
+      "name": "test_show_site_basic",
+      "type": "basic",
+      "description": "Test basic functionality of show_site"
+    },
+    {
+      "name": "test_show_strat_basic",
+      "type": "basic",
+      "description": "Test basic functionality of show_strat"
+    },
+    {
+      "name": "test_plot_well_basic",
+      "type": "basic",
+      "description": "Test basic functionality of plot_well"
+    },
+    {
+      "name": "test_plot_well_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for plot_well"
+    },
+    {
+      "name": "test_load_choice_basic",
+      "type": "basic",
+      "description": "Test basic functionality of load_choice"
+    },
+    {
+      "name": "test_show_objects_basic",
+      "type": "basic",
+      "description": "Test basic functionality of show_objects"
+    },
+    {
+      "name": "test_show_objects_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for show_objects"
+    },
+    {
+      "name": "test_fileDialogXYZ_basic",
+      "type": "basic",
+      "description": "Test basic functionality of fileDialogXYZ"
+    },
+    {
+      "name": "test_fileDialogNodes_basic",
+      "type": "basic",
+      "description": "Test basic functionality of fileDialogNodes"
+    },
+    {
+      "name": "test_fileDialogAttributes_basic",
+      "type": "basic",
+      "description": "Test basic functionality of fileDialogAttributes"
+    },
+    {
+      "name": "test_interpolate_basic",
+      "type": "basic",
+      "description": "Test basic functionality of interpolate"
+    },
+    {
+      "name": "test_interpolate_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for interpolate"
+    },
+    {
+      "name": "test_deleteStratigraphy_basic",
+      "type": "basic",
+      "description": "Test basic functionality of deleteStratigraphy"
+    },
+    {
+      "name": "test_deleteStratigraphy_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for deleteStratigraphy"
+    },
+    {
+      "name": "test_addstrat_basic",
+      "type": "basic",
+      "description": "Test basic functionality of addstrat"
+    },
+    {
+      "name": "test_addstrat_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for addstrat"
+    },
+    {
+      "name": "test_addstrat_return_value",
+      "type": "return_value",
+      "description": "Test return value of addstrat"
+    },
+    {
+      "name": "test_viewstrat_basic",
+      "type": "basic",
+      "description": "Test basic functionality of viewstrat"
+    },
+    {
+      "name": "test_update_basic",
+      "type": "basic",
+      "description": "Test basic functionality of update"
+    },
+    {
+      "name": "test_update_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for update"
+    },
+    {
+      "name": "test_north2lat_basic",
+      "type": "basic",
+      "description": "Test basic functionality of north2lat"
+    },
+    {
+      "name": "test_north2lat_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for north2lat"
+    },
+    {
+      "name": "test_north2lat_return_value",
+      "type": "return_value",
+      "description": "Test return value of north2lat"
+    },
+    {
+      "name": "test_east2lon_basic",
+      "type": "basic",
+      "description": "Test basic functionality of east2lon"
+    },
+    {
+      "name": "test_east2lon_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for east2lon"
+    },
+    {
+      "name": "test_east2lon_return_value",
+      "type": "return_value",
+      "description": "Test return value of east2lon"
+    },
+    {
+      "name": "test_east2lon_parameterized",
+      "type": "parameterized",
+      "description": "Parameterized tests for east2lon"
+    },
+    {
+      "name": "test_north2lat_basic",
+      "type": "basic",
+      "description": "Test basic functionality of north2lat"
+    },
+    {
+      "name": "test_north2lat_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for north2lat"
+    },
+    {
+      "name": "test_north2lat_return_value",
+      "type": "return_value",
+      "description": "Test return value of north2lat"
+    },
+    {
+      "name": "test_east2lon_basic",
+      "type": "basic",
+      "description": "Test basic functionality of east2lon"
+    },
+    {
+      "name": "test_east2lon_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for east2lon"
+    },
+    {
+      "name": "test_east2lon_return_value",
+      "type": "return_value",
+      "description": "Test return value of east2lon"
+    },
+    {
+      "name": "test_east2lon_parameterized",
+      "type": "parameterized",
+      "description": "Parameterized tests for east2lon"
+    },
+    {
+      "name": "test_north2lat_basic",
+      "type": "basic",
+      "description": "Test basic functionality of north2lat"
+    },
+    {
+      "name": "test_north2lat_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for north2lat"
+    },
+    {
+      "name": "test_north2lat_return_value",
+      "type": "return_value",
+      "description": "Test return value of north2lat"
+    },
+    {
+      "name": "test_east2lon_basic",
+      "type": "basic",
+      "description": "Test basic functionality of east2lon"
+    },
+    {
+      "name": "test_east2lon_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for east2lon"
+    },
+    {
+      "name": "test_east2lon_return_value",
+      "type": "return_value",
+      "description": "Test return value of east2lon"
+    },
+    {
+      "name": "test_east2lon_parameterized",
+      "type": "parameterized",
+      "description": "Parameterized tests for east2lon"
+    },
+    {
+      "name": "test_del_strat_basic",
+      "type": "basic",
+      "description": "Test basic functionality of del_strat"
+    },
+    {
+      "name": "test_delfm_basic",
+      "type": "basic",
+      "description": "Test basic functionality of delfm"
+    }
+  ],
+  "test_count": 107,
+  "coverage_approach": "focused",
+  "priority": "high"
+}
