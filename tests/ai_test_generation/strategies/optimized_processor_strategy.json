@@ -1,0 +1,171 @@
+{
+  "module": "optimized_processor",
+  "test_file": "test_optimized_processor.py",
+  "test_classes": [
+    {
+      "name": "TestOptimizedProcessor",
+      "target_class": "OptimizedProcessor",
+      "test_methods": [
+        {
+          "name": "test___init___basic",
+          "type": "basic",
+          "description": "Test basic functionality of __init__"
+        },
+        {
+          "name": "test_get_memory_usage_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_memory_usage"
+        },
+        {
+          "name": "test_get_memory_usage_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_memory_usage"
+        },
+        {
+          "name": "test_optimize_dataframe_dtypes_basic",
+          "type": "basic",
+          "description": "Test basic functionality of optimize_dataframe_dtypes"
+        },
+        {
+          "name": "test_optimize_dataframe_dtypes_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for optimize_dataframe_dtypes"
+        },
+        {
+          "name": "test_optimize_dataframe_dtypes_return_value",
+          "type": "return_value",
+          "description": "Test return value of optimize_dataframe_dtypes"
+        },
+        {
+          "name": "test_optimize_dataframe_dtypes_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for optimize_dataframe_dtypes"
+        },
+        {
+          "name": "test_process_csv_chunked_basic",
+          "type": "basic",
+          "description": "Test basic functionality of process_csv_chunked"
+        },
+        {
+          "name": "test_process_csv_chunked_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for process_csv_chunked"
+        },
+        {
+          "name": "test_process_csv_chunked_return_value",
+          "type": "return_value",
+          "description": "Test return value of process_csv_chunked"
+        },
+        {
+          "name": "test_process_csv_chunked_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for process_csv_chunked"
+        },
+        {
+          "name": "test_process_well_chunk_basic",
+          "type": "basic",
+          "description": "Test basic functionality of process_well_chunk"
+        },
+        {
+          "name": "test_process_well_chunk_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for process_well_chunk"
+        },
+        {
+          "name": "test_process_well_chunk_return_value",
+          "type": "return_value",
+          "description": "Test return value of process_well_chunk"
+        },
+        {
+          "name": "test_process_production_chunk_basic",
+          "type": "basic",
+          "description": "Test basic functionality of process_production_chunk"
+        },
+        {
+          "name": "test_process_production_chunk_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for process_production_chunk"
+        },
+        {
+          "name": "test_process_production_chunk_return_value",
+          "type": "return_value",
+          "description": "Test return value of process_production_chunk"
+        },
+        {
+          "name": "test_process_war_chunk_basic",
+          "type": "basic",
+          "description": "Test basic functionality of process_war_chunk"
+        },
+        {
+          "name": "test_process_war_chunk_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for process_war_chunk"
+        },
+        {
+          "name": "test_process_war_chunk_return_value",
+          "type": "return_value",
+          "description": "Test return value of process_war_chunk"
+        },
+        {
+          "name": "test_process_single_file_parallel_basic",
+          "type": "basic",
+          "description": "Test basic functionality of process_single_file_parallel"
+        },
+        {
+          "name": "test_process_single_file_parallel_return_value",
+          "type": "return_value",
+          "description": "Test return value of process_single_file_parallel"
+        },
+        {
+          "name": "test_process_single_file_parallel_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for process_single_file_parallel"
+        },
+        {
+          "name": "test_process_zip_optimized_basic",
+          "type": "basic",
+          "description": "Test basic functionality of process_zip_optimized"
+        },
+        {
+          "name": "test_process_zip_optimized_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for process_zip_optimized"
+        },
+        {
+          "name": "test_process_zip_optimized_return_value",
+          "type": "return_value",
+          "description": "Test return value of process_zip_optimized"
+        },
+        {
+          "name": "test_process_zip_optimized_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for process_zip_optimized"
+        },
+        {
+          "name": "test_save_to_binary_basic",
+          "type": "basic",
+          "description": "Test basic functionality of save_to_binary"
+        },
+        {
+          "name": "test_save_to_binary_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for save_to_binary"
+        },
+        {
+          "name": "test_get_processing_summary_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_processing_summary"
+        },
+        {
+          "name": "test_get_processing_summary_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_processing_summary"
+        }
+      ]
+    }
+  ],
+  "test_functions": [],
+  "test_count": 31,
+  "coverage_approach": "balanced",
+  "priority": "medium"
+}
