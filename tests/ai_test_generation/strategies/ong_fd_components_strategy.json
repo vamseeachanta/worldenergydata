@@ -1,0 +1,391 @@
+{
+  "module": "ong_fd_components",
+  "test_file": "test_ong_fd_components.py",
+  "test_classes": [
+    {
+      "name": "TestONGFDComponents",
+      "target_class": "ONGFDComponents",
+      "test_methods": [
+        {
+          "name": "test___init___basic",
+          "type": "basic",
+          "description": "Test basic functionality of __init__"
+        },
+        {
+          "name": "test_assign_cfg_basic",
+          "type": "basic",
+          "description": "Test basic functionality of assign_cfg"
+        },
+        {
+          "name": "test_get_all_bsee_blocks_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_all_bsee_blocks"
+        },
+        {
+          "name": "test_get_all_bsee_blocks_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_all_bsee_blocks"
+        },
+        {
+          "name": "test_get_raw_data_for_well_analysis_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_raw_data_for_well_analysis"
+        },
+        {
+          "name": "test_run_analysis_for_all_wells_basic",
+          "type": "basic",
+          "description": "Test basic functionality of run_analysis_for_all_wells"
+        },
+        {
+          "name": "test_save_api10_result_basic",
+          "type": "basic",
+          "description": "Test basic functionality of save_api10_result"
+        },
+        {
+          "name": "test_delete_well_data_for_api10_basic",
+          "type": "basic",
+          "description": "Test basic functionality of delete_well_data_for_api10"
+        },
+        {
+          "name": "test_get_bsee_data_and_prepare_data_for_api10_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_bsee_data_and_prepare_data_for_api10"
+        },
+        {
+          "name": "test_get_raw_data_for_field_analysis_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_raw_data_for_field_analysis"
+        },
+        {
+          "name": "test_get_raw_data_for_field_analysis_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for get_raw_data_for_field_analysis"
+        },
+        {
+          "name": "test_prepare_field_api12_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of prepare_field_api12_data"
+        },
+        {
+          "name": "test_prepare_api_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of prepare_api_data"
+        },
+        {
+          "name": "test_get_API10_from_well_API_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_API10_from_well_API"
+        },
+        {
+          "name": "test_get_API10_from_well_API_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_API10_from_well_API"
+        },
+        {
+          "name": "test_prepare_api12_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of prepare_api12_data"
+        },
+        {
+          "name": "test_add_gis_info_to_well_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of add_gis_info_to_well_data"
+        },
+        {
+          "name": "test_prepare_production_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of prepare_production_data"
+        },
+        {
+          "name": "test_prepare_production_data_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for prepare_production_data"
+        },
+        {
+          "name": "test_add_production_rate_and_date_to_df_basic",
+          "type": "basic",
+          "description": "Test basic functionality of add_production_rate_and_date_to_df"
+        },
+        {
+          "name": "test_add_production_rate_and_date_to_df_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for add_production_rate_and_date_to_df"
+        },
+        {
+          "name": "test_add_production_rate_and_date_to_df_return_value",
+          "type": "return_value",
+          "description": "Test return value of add_production_rate_and_date_to_df"
+        },
+        {
+          "name": "test_prepare_field_production_basic",
+          "type": "basic",
+          "description": "Test basic functionality of prepare_field_production"
+        },
+        {
+          "name": "test_prepare_field_production_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for prepare_field_production"
+        },
+        {
+          "name": "test_prepare_field_production_rate_basic",
+          "type": "basic",
+          "description": "Test basic functionality of prepare_field_production_rate"
+        },
+        {
+          "name": "test_prepare_field_production_rate_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for prepare_field_production_rate"
+        },
+        {
+          "name": "test_add_production_from_all_wells_basic",
+          "type": "basic",
+          "description": "Test basic functionality of add_production_from_all_wells"
+        },
+        {
+          "name": "test_add_production_and_completion_name_to_well_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of add_production_and_completion_name_to_well_data"
+        },
+        {
+          "name": "test_add_production_and_completion_name_to_well_data_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for add_production_and_completion_name_to_well_data"
+        },
+        {
+          "name": "test_add_production_and_completion_name_to_well_data_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for add_production_and_completion_name_to_well_data"
+        },
+        {
+          "name": "test_add_sidetracklabel_rig_rigdays_basic",
+          "type": "basic",
+          "description": "Test basic functionality of add_sidetracklabel_rig_rigdays"
+        },
+        {
+          "name": "test_add_sidetracklabel_rig_rigdays_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for add_sidetracklabel_rig_rigdays"
+        },
+        {
+          "name": "test_add_sidetracklabel_rig_rigdays_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for add_sidetracklabel_rig_rigdays"
+        },
+        {
+          "name": "test_get_rig_days_and_drilling_wt_worked_on_api12_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_rig_days_and_drilling_wt_worked_on_api12"
+        },
+        {
+          "name": "test_get_rig_days_and_drilling_wt_worked_on_api12_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for get_rig_days_and_drilling_wt_worked_on_api12"
+        },
+        {
+          "name": "test_get_rig_days_and_drilling_wt_worked_on_api12_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_rig_days_and_drilling_wt_worked_on_api12"
+        },
+        {
+          "name": "test_get_rig_days_and_drilling_wt_worked_on_api12_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for get_rig_days_and_drilling_wt_worked_on_api12"
+        },
+        {
+          "name": "test_get_rig_days_by_well_activity_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_rig_days_by_well_activity"
+        },
+        {
+          "name": "test_assign_st_bp_tree_info_basic",
+          "type": "basic",
+          "description": "Test basic functionality of assign_st_bp_tree_info"
+        },
+        {
+          "name": "test_assign_st_bp_tree_info_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for assign_st_bp_tree_info"
+        },
+        {
+          "name": "test_assign_st_bp_tree_info_return_value",
+          "type": "return_value",
+          "description": "Test return value of assign_st_bp_tree_info"
+        },
+        {
+          "name": "test_assign_st_bp_tree_info_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for assign_st_bp_tree_info"
+        },
+        {
+          "name": "test_evaluate_well_distances_basic",
+          "type": "basic",
+          "description": "Test basic functionality of evaluate_well_distances"
+        },
+        {
+          "name": "test_evaluate_well_distances_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for evaluate_well_distances"
+        },
+        {
+          "name": "test_prepare_casing_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of prepare_casing_data"
+        },
+        {
+          "name": "test_prepare_casing_data_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for prepare_casing_data"
+        },
+        {
+          "name": "test_prepare_casing_data_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for prepare_casing_data"
+        },
+        {
+          "name": "test_clean_tubulars_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of clean_tubulars_data"
+        },
+        {
+          "name": "test_clean_tubulars_data_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for clean_tubulars_data"
+        },
+        {
+          "name": "test_clean_tubulars_data_return_value",
+          "type": "return_value",
+          "description": "Test return value of clean_tubulars_data"
+        },
+        {
+          "name": "test_prepare_casing_tubular_summary_all_wells_basic",
+          "type": "basic",
+          "description": "Test basic functionality of prepare_casing_tubular_summary_all_wells"
+        },
+        {
+          "name": "test_tubular_summary_based_on_api12_and_hole_basic",
+          "type": "basic",
+          "description": "Test basic functionality of tubular_summary_based_on_api12_and_hole"
+        },
+        {
+          "name": "test_tubular_summary_based_on_api12_and_hole_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for tubular_summary_based_on_api12_and_hole"
+        },
+        {
+          "name": "test_tubular_summary_based_on_api12_and_hole_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for tubular_summary_based_on_api12_and_hole"
+        },
+        {
+          "name": "test_prepare_completion_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of prepare_completion_data"
+        },
+        {
+          "name": "test_prepare_formation_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of prepare_formation_data"
+        },
+        {
+          "name": "test_prepare_field_well_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of prepare_field_well_data"
+        },
+        {
+          "name": "test_prepare_field_well_data_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for prepare_field_well_data"
+        },
+        {
+          "name": "test_get_drilling_completion_summary_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_drilling_completion_summary"
+        },
+        {
+          "name": "test_get_drilling_completion_summary_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_drilling_completion_summary"
+        },
+        {
+          "name": "test_prepare_field_summary_basic",
+          "type": "basic",
+          "description": "Test basic functionality of prepare_field_summary"
+        },
+        {
+          "name": "test_prepare_visualizations_basic",
+          "type": "basic",
+          "description": "Test basic functionality of prepare_visualizations"
+        },
+        {
+          "name": "test_save_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of save_data"
+        },
+        {
+          "name": "test_save_output_data_to_local_computer_basic",
+          "type": "basic",
+          "description": "Test basic functionality of save_output_data_to_local_computer"
+        },
+        {
+          "name": "test_save_output_data_to_local_computer_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for save_output_data_to_local_computer"
+        },
+        {
+          "name": "test_prepare_well_paths_basic",
+          "type": "basic",
+          "description": "Test basic functionality of prepare_well_paths"
+        },
+        {
+          "name": "test_prepare_well_paths_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for prepare_well_paths"
+        },
+        {
+          "name": "test_process_survey_xyz_basic",
+          "type": "basic",
+          "description": "Test basic functionality of process_survey_xyz"
+        },
+        {
+          "name": "test_process_survey_xyz_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for process_survey_xyz"
+        },
+        {
+          "name": "test_process_survey_xyz_return_value",
+          "type": "return_value",
+          "description": "Test return value of process_survey_xyz"
+        },
+        {
+          "name": "test_add_relative_WH_positions_basic",
+          "type": "basic",
+          "description": "Test basic functionality of add_relative_WH_positions"
+        },
+        {
+          "name": "test_add_relative_WH_positions_return_value",
+          "type": "return_value",
+          "description": "Test return value of add_relative_WH_positions"
+        },
+        {
+          "name": "test_add_relative_WH_positions_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for add_relative_WH_positions"
+        },
+        {
+          "name": "test_plot_field_wells_basic",
+          "type": "basic",
+          "description": "Test basic functionality of plot_field_wells"
+        },
+        {
+          "name": "test_plot_field_wells_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for plot_field_wells"
+        }
+      ]
+    }
+  ],
+  "test_functions": [],
+  "test_count": 75,
+  "coverage_approach": "focused",
+  "priority": "high"
+}

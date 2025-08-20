@@ -1,0 +1,136 @@
+{
+  "module": "data_refresh_enhanced",
+  "test_file": "test_data_refresh_enhanced.py",
+  "test_classes": [
+    {
+      "name": "TestDataRefreshEnhanced",
+      "target_class": "DataRefreshEnhanced",
+      "test_methods": [
+        {
+          "name": "test___init___basic",
+          "type": "basic",
+          "description": "Test basic functionality of __init__"
+        },
+        {
+          "name": "test___init___edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for __init__"
+        },
+        {
+          "name": "test___init___parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for __init__"
+        },
+        {
+          "name": "test_router_basic",
+          "type": "basic",
+          "description": "Test basic functionality of router"
+        },
+        {
+          "name": "test_router_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for router"
+        },
+        {
+          "name": "test_router_return_value",
+          "type": "return_value",
+          "description": "Test return value of router"
+        },
+        {
+          "name": "test__report_statistics_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _report_statistics"
+        },
+        {
+          "name": "test__report_statistics_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for _report_statistics"
+        },
+        {
+          "name": "test_refresh_well_data_enhanced_basic",
+          "type": "basic",
+          "description": "Test basic functionality of refresh_well_data_enhanced"
+        },
+        {
+          "name": "test_refresh_well_data_enhanced_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for refresh_well_data_enhanced"
+        },
+        {
+          "name": "test_refresh_war_data_enhanced_basic",
+          "type": "basic",
+          "description": "Test basic functionality of refresh_war_data_enhanced"
+        },
+        {
+          "name": "test_refresh_war_data_enhanced_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for refresh_war_data_enhanced"
+        },
+        {
+          "name": "test_refresh_war_data_enhanced_return_value",
+          "type": "return_value",
+          "description": "Test return value of refresh_war_data_enhanced"
+        },
+        {
+          "name": "test_refresh_production_data_enhanced_basic",
+          "type": "basic",
+          "description": "Test basic functionality of refresh_production_data_enhanced"
+        },
+        {
+          "name": "test_refresh_production_data_enhanced_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for refresh_production_data_enhanced"
+        },
+        {
+          "name": "test__save_well_data_binary_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _save_well_data_binary"
+        },
+        {
+          "name": "test__save_well_data_binary_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for _save_well_data_binary"
+        },
+        {
+          "name": "test__save_well_data_binary_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for _save_well_data_binary"
+        },
+        {
+          "name": "test__save_war_data_binary_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _save_war_data_binary"
+        },
+        {
+          "name": "test__save_war_data_binary_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for _save_war_data_binary"
+        },
+        {
+          "name": "test__save_war_data_binary_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for _save_war_data_binary"
+        },
+        {
+          "name": "test__save_production_data_binary_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _save_production_data_binary"
+        },
+        {
+          "name": "test__save_production_data_binary_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for _save_production_data_binary"
+        },
+        {
+          "name": "test__save_production_data_binary_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for _save_production_data_binary"
+        }
+      ]
+    }
+  ],
+  "test_functions": [],
+  "test_count": 24,
+  "coverage_approach": "balanced",
+  "priority": "medium"
+}
