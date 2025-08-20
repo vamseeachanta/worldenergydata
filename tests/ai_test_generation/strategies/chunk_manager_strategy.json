@@ -1,0 +1,297 @@
+{
+  "module": "chunk_manager",
+  "test_file": "test_chunk_manager.py",
+  "test_classes": [
+    {
+      "name": "TestChunkMetadata",
+      "target_class": "ChunkMetadata",
+      "test_methods": [
+        {
+          "name": "test___init___basic",
+          "type": "basic",
+          "description": "Test basic functionality of __init__"
+        },
+        {
+          "name": "test___init___parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for __init__"
+        },
+        {
+          "name": "test_to_dict_basic",
+          "type": "basic",
+          "description": "Test basic functionality of to_dict"
+        },
+        {
+          "name": "test_to_dict_return_value",
+          "type": "return_value",
+          "description": "Test return value of to_dict"
+        },
+        {
+          "name": "test_from_dict_basic",
+          "type": "basic",
+          "description": "Test basic functionality of from_dict"
+        },
+        {
+          "name": "test_from_dict_return_value",
+          "type": "return_value",
+          "description": "Test return value of from_dict"
+        }
+      ]
+    },
+    {
+      "name": "TestChunkManager",
+      "target_class": "ChunkManager",
+      "test_methods": [
+        {
+          "name": "test___init___basic",
+          "type": "basic",
+          "description": "Test basic functionality of __init__"
+        },
+        {
+          "name": "test_check_remote_changes_basic",
+          "type": "basic",
+          "description": "Test basic functionality of check_remote_changes"
+        },
+        {
+          "name": "test_check_remote_changes_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for check_remote_changes"
+        },
+        {
+          "name": "test_check_remote_changes_return_value",
+          "type": "return_value",
+          "description": "Test return value of check_remote_changes"
+        },
+        {
+          "name": "test_check_remote_changes_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for check_remote_changes"
+        },
+        {
+          "name": "test_download_with_chunks_basic",
+          "type": "basic",
+          "description": "Test basic functionality of download_with_chunks"
+        },
+        {
+          "name": "test_download_with_chunks_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for download_with_chunks"
+        },
+        {
+          "name": "test_download_with_chunks_return_value",
+          "type": "return_value",
+          "description": "Test return value of download_with_chunks"
+        },
+        {
+          "name": "test_download_with_chunks_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for download_with_chunks"
+        },
+        {
+          "name": "test__download_full_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _download_full"
+        },
+        {
+          "name": "test__download_full_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for _download_full"
+        },
+        {
+          "name": "test__download_full_return_value",
+          "type": "return_value",
+          "description": "Test return value of _download_full"
+        },
+        {
+          "name": "test__download_full_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for _download_full"
+        },
+        {
+          "name": "test_process_incremental_changes_basic",
+          "type": "basic",
+          "description": "Test basic functionality of process_incremental_changes"
+        },
+        {
+          "name": "test_process_incremental_changes_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for process_incremental_changes"
+        },
+        {
+          "name": "test_process_incremental_changes_return_value",
+          "type": "return_value",
+          "description": "Test return value of process_incremental_changes"
+        },
+        {
+          "name": "test_process_incremental_changes_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for process_incremental_changes"
+        },
+        {
+          "name": "test__extract_zip_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _extract_zip_data"
+        },
+        {
+          "name": "test__extract_zip_data_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for _extract_zip_data"
+        },
+        {
+          "name": "test__extract_zip_data_return_value",
+          "type": "return_value",
+          "description": "Test return value of _extract_zip_data"
+        },
+        {
+          "name": "test__identify_dataframe_changes_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _identify_dataframe_changes"
+        },
+        {
+          "name": "test__identify_dataframe_changes_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for _identify_dataframe_changes"
+        },
+        {
+          "name": "test__identify_dataframe_changes_return_value",
+          "type": "return_value",
+          "description": "Test return value of _identify_dataframe_changes"
+        },
+        {
+          "name": "test__identify_dataframe_changes_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for _identify_dataframe_changes"
+        },
+        {
+          "name": "test__load_metadata_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _load_metadata"
+        },
+        {
+          "name": "test__load_metadata_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for _load_metadata"
+        },
+        {
+          "name": "test__load_metadata_return_value",
+          "type": "return_value",
+          "description": "Test return value of _load_metadata"
+        },
+        {
+          "name": "test__save_metadata_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _save_metadata"
+        },
+        {
+          "name": "test__save_metadata_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for _save_metadata"
+        },
+        {
+          "name": "test__update_metadata_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _update_metadata"
+        },
+        {
+          "name": "test__update_metadata_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for _update_metadata"
+        },
+        {
+          "name": "test__update_file_metadata_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _update_file_metadata"
+        },
+        {
+          "name": "test__update_file_metadata_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for _update_file_metadata"
+        },
+        {
+          "name": "test__cache_chunk_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _cache_chunk"
+        },
+        {
+          "name": "test__cache_chunk_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for _cache_chunk"
+        },
+        {
+          "name": "test__get_cached_chunk_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _get_cached_chunk"
+        },
+        {
+          "name": "test__get_cached_chunk_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for _get_cached_chunk"
+        },
+        {
+          "name": "test__get_cached_chunk_return_value",
+          "type": "return_value",
+          "description": "Test return value of _get_cached_chunk"
+        },
+        {
+          "name": "test__get_cached_chunk_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for _get_cached_chunk"
+        },
+        {
+          "name": "test__cache_complete_file_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _cache_complete_file"
+        },
+        {
+          "name": "test__cache_complete_file_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for _cache_complete_file"
+        },
+        {
+          "name": "test__load_from_cache_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _load_from_cache"
+        },
+        {
+          "name": "test__load_from_cache_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for _load_from_cache"
+        },
+        {
+          "name": "test__load_from_cache_return_value",
+          "type": "return_value",
+          "description": "Test return value of _load_from_cache"
+        },
+        {
+          "name": "test_clear_cache_basic",
+          "type": "basic",
+          "description": "Test basic functionality of clear_cache"
+        },
+        {
+          "name": "test_clear_cache_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for clear_cache"
+        },
+        {
+          "name": "test_get_cache_stats_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_cache_stats"
+        },
+        {
+          "name": "test_get_cache_stats_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for get_cache_stats"
+        },
+        {
+          "name": "test_get_cache_stats_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_cache_stats"
+        }
+      ]
+    }
+  ],
+  "test_functions": [],
+  "test_count": 55,
+  "coverage_approach": "focused",
+  "priority": "high"
+}
