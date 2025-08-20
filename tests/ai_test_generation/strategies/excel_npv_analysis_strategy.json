@@ -1,0 +1,65 @@
+{
+  "module": "excel_npv_analysis",
+  "test_file": "test_excel_npv_analysis.py",
+  "test_classes": [],
+  "test_functions": [
+    {
+      "name": "test_read_excel_with_detailed_analysis_basic",
+      "type": "basic",
+      "description": "Test basic functionality of read_excel_with_detailed_analysis"
+    },
+    {
+      "name": "test_read_excel_with_detailed_analysis_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for read_excel_with_detailed_analysis"
+    },
+    {
+      "name": "test_read_excel_with_detailed_analysis_return_value",
+      "type": "return_value",
+      "description": "Test return value of read_excel_with_detailed_analysis"
+    },
+    {
+      "name": "test_extract_npv_from_sheets_basic",
+      "type": "basic",
+      "description": "Test basic functionality of extract_npv_from_sheets"
+    },
+    {
+      "name": "test_extract_npv_from_sheets_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for extract_npv_from_sheets"
+    },
+    {
+      "name": "test_extract_npv_from_sheets_return_value",
+      "type": "return_value",
+      "description": "Test return value of extract_npv_from_sheets"
+    },
+    {
+      "name": "test_main_basic",
+      "type": "basic",
+      "description": "Test basic functionality of main"
+    },
+    {
+      "name": "test_main_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for main"
+    },
+    {
+      "name": "test_main_return_value",
+      "type": "return_value",
+      "description": "Test return value of main"
+    },
+    {
+      "name": "test_save_excel_analysis_results_basic",
+      "type": "basic",
+      "description": "Test basic functionality of save_excel_analysis_results"
+    },
+    {
+      "name": "test_save_excel_analysis_results_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for save_excel_analysis_results"
+    }
+  ],
+  "test_count": 11,
+  "coverage_approach": "focused",
+  "priority": "high"
+}

@@ -35,7 +35,11 @@ class ConfigRouter:
             True if enhanced mode is enabled, False for legacy mode
         """
         # Check mode in meta section (primary method)
-        mode = cfg.get('meta', {}).get('mode', 'legacy').lower()
+        mode = cfg.get('meta', {}).get('mode', 'legacy')
+        # Handle None values gracefully
+        if mode is None:
+            mode = 'legacy'
+        mode = str(mode).lower()
         enhanced = (mode == 'enhanced')
         
         # Store the mode for later reference
@@ -72,6 +76,11 @@ class ConfigRouter:
         try:
             with open(config_file, 'r') as f:
                 config = yaml.safe_load(f)
+            
+            # Handle empty file, None result, or non-dict result
+            if not isinstance(config, dict):
+                logger.warning(f"Invalid YAML structure (expected dict, got {type(config).__name__}): {config_path}")
+                return self.get_default_enhanced_config()
             
             logger.info(f"Loaded enhanced configuration from {config_path}")
             self.config_source = 'enhanced_file'

@@ -1,0 +1,196 @@
+{
+  "module": "data_refresh_chunked",
+  "test_file": "test_data_refresh_chunked.py",
+  "test_classes": [
+    {
+      "name": "TestDataRefreshChunked",
+      "target_class": "DataRefreshChunked",
+      "test_methods": [
+        {
+          "name": "test___init___basic",
+          "type": "basic",
+          "description": "Test basic functionality of __init__"
+        },
+        {
+          "name": "test_router_basic",
+          "type": "basic",
+          "description": "Test basic functionality of router"
+        },
+        {
+          "name": "test_router_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for router"
+        },
+        {
+          "name": "test_router_return_value",
+          "type": "return_value",
+          "description": "Test return value of router"
+        },
+        {
+          "name": "test__refresh_well_data_chunked_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _refresh_well_data_chunked"
+        },
+        {
+          "name": "test__refresh_well_data_chunked_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for _refresh_well_data_chunked"
+        },
+        {
+          "name": "test__refresh_well_data_chunked_return_value",
+          "type": "return_value",
+          "description": "Test return value of _refresh_well_data_chunked"
+        },
+        {
+          "name": "test__refresh_production_data_chunked_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _refresh_production_data_chunked"
+        },
+        {
+          "name": "test__refresh_production_data_chunked_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for _refresh_production_data_chunked"
+        },
+        {
+          "name": "test__refresh_production_data_chunked_return_value",
+          "type": "return_value",
+          "description": "Test return value of _refresh_production_data_chunked"
+        },
+        {
+          "name": "test__refresh_war_data_chunked_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _refresh_war_data_chunked"
+        },
+        {
+          "name": "test__refresh_war_data_chunked_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for _refresh_war_data_chunked"
+        },
+        {
+          "name": "test__refresh_war_data_chunked_return_value",
+          "type": "return_value",
+          "description": "Test return value of _refresh_war_data_chunked"
+        },
+        {
+          "name": "test__save_well_data_binary_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _save_well_data_binary"
+        },
+        {
+          "name": "test__save_well_data_binary_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for _save_well_data_binary"
+        },
+        {
+          "name": "test__save_production_data_binary_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _save_production_data_binary"
+        },
+        {
+          "name": "test__save_production_data_binary_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for _save_production_data_binary"
+        },
+        {
+          "name": "test__save_war_data_binary_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _save_war_data_binary"
+        },
+        {
+          "name": "test__save_war_data_binary_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for _save_war_data_binary"
+        },
+        {
+          "name": "test__get_binary_path_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _get_binary_path"
+        },
+        {
+          "name": "test__get_binary_path_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for _get_binary_path"
+        },
+        {
+          "name": "test__get_binary_path_return_value",
+          "type": "return_value",
+          "description": "Test return value of _get_binary_path"
+        },
+        {
+          "name": "test__get_binary_path_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for _get_binary_path"
+        },
+        {
+          "name": "test__load_cached_binary_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _load_cached_binary"
+        },
+        {
+          "name": "test__load_cached_binary_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for _load_cached_binary"
+        },
+        {
+          "name": "test__load_cached_binary_return_value",
+          "type": "return_value",
+          "description": "Test return value of _load_cached_binary"
+        },
+        {
+          "name": "test__load_cached_binary_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for _load_cached_binary"
+        },
+        {
+          "name": "test__load_previous_dataframe_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _load_previous_dataframe"
+        },
+        {
+          "name": "test__load_previous_dataframe_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for _load_previous_dataframe"
+        },
+        {
+          "name": "test__load_previous_dataframe_return_value",
+          "type": "return_value",
+          "description": "Test return value of _load_previous_dataframe"
+        },
+        {
+          "name": "test__load_previous_dataframe_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for _load_previous_dataframe"
+        },
+        {
+          "name": "test__report_statistics_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _report_statistics"
+        },
+        {
+          "name": "test__report_statistics_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for _report_statistics"
+        },
+        {
+          "name": "test_clear_cache_basic",
+          "type": "basic",
+          "description": "Test basic functionality of clear_cache"
+        },
+        {
+          "name": "test_validate_remote_sources_basic",
+          "type": "basic",
+          "description": "Test basic functionality of validate_remote_sources"
+        },
+        {
+          "name": "test_validate_remote_sources_return_value",
+          "type": "return_value",
+          "description": "Test return value of validate_remote_sources"
+        }
+      ]
+    }
+  ],
+  "test_functions": [],
+  "test_count": 36,
+  "coverage_approach": "focused",
+  "priority": "high"
+}
