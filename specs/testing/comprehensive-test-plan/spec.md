@@ -75,6 +75,23 @@ The workflow involves:
 3. AI agent integration for intelligent test generation and analysis
 4. CI/CD pipeline configuration with test gates
 5. Comprehensive test documentation and reporting dashboard
+6. Clean test suite with removal of redundant, obsolete, or unnecessary tests
+
+### Legacy Test Handling Guidelines
+
+**Important**: Running legacy tests that don't get executed in regular workflows is counterproductive. When dealing with existing tests:
+- Read and analyze each legacy test to understand its purpose
+- Determine which tests are still relevant and valuable
+- Delete tests that are:
+  - Obsolete (testing deprecated features)
+  - Redundant (covered by other tests)
+  - Never executed in CI/CD or development workflows
+  - Testing non-existent functionality
+- Keep and modernize tests that:
+  - Cover critical business logic
+  - Validate important data transformations
+  - Ensure regression prevention
+  - Test active features
 
 ## Technical Architecture
 

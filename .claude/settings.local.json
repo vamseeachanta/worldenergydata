@@ -17,7 +17,18 @@
       "Bash(git commit:*)",
       "Bash(git push:*)",
       "WebFetch(domain:www.y-yokohama.com)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(cd:*)",
+      "Bash(uv pip:*)",
+      "Bash(pytest:*)",
+      "Bash(\".venv\\Scripts\\python.exe\" -m pytest tests/ --ignore=tests/modules/bsee/analysis/2025-08-05-multiple-wells-comparison-test --ignore=tests/modules/bsee/analysis/2025-08-06-data-refresh-architecture --cov=src --cov-report=term -q --tb=no)",
+      "Bash(\".venv\\Scripts\\python.exe\" -m pytest tests/unit tests/test_*.py tests/integration --ignore=tests/modules --cov=src --cov-report=term)",
+      "Bash(\".venv\\Scripts\\python.exe\" -m pytest tests/test_infrastructure_smoke.py --cov=src --cov-report=term-missing -v)",
+      "Bash(\".venv\\Scripts\\python.exe\" -m pytest tests/unit/core/test_engine.py -v)",
+      "Bash(\".venv\\Scripts\\python.exe\" -m pytest tests/unit/ --cov=src --cov-report=term-missing -q)",
+      "Bash(\".venv\\Scripts\\python.exe\" -m pytest tests/unit/core/test_engine.py --cov=src/worldenergydata --cov-report=term-missing -q)",
+      "Bash(\".venv\\Scripts\\python.exe\" -m pytest tests/unit/core/test_engine.py --cov=src/worldenergydata/engine --cov-report=term -q)",
+      "Bash(\".venv\\Scripts\\python.exe\" -m pytest tests/ --ignore=tests/modules/bsee/analysis --ignore=tests/integration --cov=src --cov-report=json --cov-report=term:skip-covered -q)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"
