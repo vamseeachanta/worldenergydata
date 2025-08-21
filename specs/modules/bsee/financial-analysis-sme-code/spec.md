@@ -110,9 +110,9 @@ graph TD
 
 ## Spec Documentation
 
-- Prompt Evolution: @specs/modules/bsee/financial-analysis-v18/prompt.md
-- Tasks: @specs/modules/bsee/financial-analysis-v18/tasks.md
-- Technical Specification: @specs/modules/bsee/financial-analysis-v18/sub-specs/technical-spec.md
-- API Specification: @specs/modules/bsee/financial-analysis-v18/sub-specs/api-spec.md
-- Tests Specification: @specs/modules/bsee/financial-analysis-v18/sub-specs/tests.md
-- Task Summary: @specs/modules/bsee/financial-analysis-v18/task_summary.md
+- Prompt Evolution: @specs/modules/bsee/financial-analysis-sme-code/prompt.md
+- Tasks: @specs/modules/bsee/financial-analysis-sme-code/tasks.md
+- Technical Specification: @specs/modules/bsee/financial-analysis-sme-code/sub-specs/technical-spec.md
+- API Specification: @specs/modules/bsee/financial-analysis-sme-code/sub-specs/api-spec.md
+- Tests Specification: @specs/modules/bsee/financial-analysis-sme-code/sub-specs/tests.md
+- Task Summary: @specs/modules/bsee/financial-analysis-sme-code/task_summary.md
