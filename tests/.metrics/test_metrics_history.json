@@ -1,0 +1,17 @@
+[
+  {
+    "timestamp": "2025-08-21T15:18:49.818697",
+    "repo": "/mnt/github/github/worldenergydata",
+    "git_commit": "e24ed569",
+    "git_branch": "master",
+    "total_tests": 1,
+    "total_test_files": 1,
+    "tests_errors": 5,
+    "tests_passed": 0,
+    "tests_failed": 0,
+    "coverage_percent": 0.0,
+    "pass_rate": 0.0,
+    "coverage_lines": 50,
+    "coverage_covered": 0
+  }
+]
