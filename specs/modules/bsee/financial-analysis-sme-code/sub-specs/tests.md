@@ -1,6 +1,6 @@
 # Tests Specification
 
-This is the tests coverage details for the spec detailed in @specs/modules/bsee/2025-08-19-sme-analysis/spec.md
+This is the tests coverage details for the spec detailed in @specs/modules/bsee/financial-analysis-sme-code/spec.md
 
 > Created: 2025-08-19
 > Version: 1.0.0
@@ -108,7 +108,7 @@ Target coverage: >90% for all financial calculation modules
 
 ### Sample Data Files
 ```
-tests/modules/bsee/analysis/2025-08-19-sme-analysis/
+tests/modules/bsee/analysis/financial-analysis-sme-code/
 ├── fixtures/
 │   ├── sample_exec_summary.xlsx
 │   ├── sample_cf_debug.xlsx
@@ -140,7 +140,7 @@ tests/modules/bsee/analysis/2025-08-19-sme-analysis/
 
 ### Helper Functions
 ```python
-# tests/modules/bsee/analysis/2025-08-19-sme-analysis/test_utils.py
+# tests/modules/bsee/analysis/financial-analysis-sme-code/test_utils.py
 
 def create_sample_lease_data(num_leases=10, num_months=24):
     """Generate sample lease data for testing."""
@@ -175,15 +175,15 @@ def temp_output_dir():
 ### Test Execution
 ```bash
 # Run all tests for this spec
-pytest tests/modules/bsee/analysis/2025-08-19-sme-analysis/ -v
+pytest tests/modules/bsee/analysis/financial-analysis-sme-code/ -v
 
 # Run with coverage
-pytest tests/modules/bsee/analysis/2025-08-19-sme-analysis/ --cov=worldenergydata.modules.bsee.analysis.sme_financial --cov-report=html
+pytest tests/modules/bsee/analysis/financial-analysis-sme-code/ --cov=worldenergydata.modules.bsee.analysis.sme_financial --cov-report=html
 
 # Run specific test categories
-pytest tests/modules/bsee/analysis/2025-08-19-sme-analysis/ -m "unit"
-pytest tests/modules/bsee/analysis/2025-08-19-sme-analysis/ -m "integration"
-pytest tests/modules/bsee/analysis/2025-08-19-sme-analysis/ -m "not slow"
+pytest tests/modules/bsee/analysis/financial-analysis-sme-code/ -m "unit"
+pytest tests/modules/bsee/analysis/financial-analysis-sme-code/ -m "integration"
+pytest tests/modules/bsee/analysis/financial-analysis-sme-code/ -m "not slow"
 ```
 
 ### Test Markers
