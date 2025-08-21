@@ -17,6 +17,9 @@ import pytest
 import yaml
 
 
+# Configure pytest to ignore archived tests
+collect_ignore_glob = ["*/_archived_tests/*"]
+
 # ==================== Path Fixtures ====================
 
 @pytest.fixture

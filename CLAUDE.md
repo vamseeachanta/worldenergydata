@@ -59,9 +59,10 @@ This file provides guidance to AI assistants when working with code in this repo
 - **Best Practices:** @.agent-os/standards/best-practices.md
 
 ### Project Management
-- **Active Specs:** @specs/
-- **Spec Planning:** Use `@.agent-os/instructions/create-spec.md`
+- **Active Specs:** @specs/modules/ (MODULE-BASED ORGANIZATION - NO DATES IN FOLDER NAMES)
+- **Spec Planning:** Use `@.agent-os/instructions/create-spec.md` with module organization
 - **Tasks Execution:** Use `@.agent-os/instructions/execute-tasks.md`
+- **CRITICAL RULE:** @.agent-os/instructions/IMPORTANT_SPEC_NAMING_RULES.md
 
 ## Workflow Instructions
 
@@ -299,3 +300,5 @@ View all available commands:
 
 ---
 *This is MANDATORY and overrides any local command implementations*
+
+- make it mandatory to note no mock tests or mock data. repository has data use it do not use it.
