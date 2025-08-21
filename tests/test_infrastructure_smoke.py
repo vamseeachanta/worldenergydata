@@ -13,8 +13,17 @@ import pytest
 import pandas as pd
 import numpy as np
 from pathlib import Path
+
+# Import markers
 from tests.test_markers import unit, smoke, integration
-from tests.test_config import TEST_CONFIG, TEST_DATA
+
+# Define test config locally since test_config was archived
+TEST_CONFIG = {
+    'test_data_dir': Path(__file__).parent / 'test_data',
+    'timeout': 30,
+    'parallel': False
+}
+TEST_DATA = Path(__file__).parent / 'test_data'
 
 
 @smoke
