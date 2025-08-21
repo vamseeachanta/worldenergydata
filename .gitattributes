@@ -6,3 +6,4 @@ dsptsdelimit.csv filter=lfs diff=lfs merge=lfs -text
 well_directional_surveys.csv filter=lfs diff=lfs merge=lfs -text
 dsptsdelimit.bin filter=lfs diff=lfs merge=lfs -text
 *.bin filter=lfs diff=lfs merge=lfs -text
+data/modules/bsee/archive/*.tar.gz filter=lfs diff=lfs merge=lfs -text
