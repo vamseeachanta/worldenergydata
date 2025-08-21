@@ -33,7 +33,7 @@ These are the tasks to be completed for the spec detailed in @specs/modules/anal
   - [ ] DC-2.5: Implement error handling
 
 - [ ] **DC-3**: Implement binary file support `[1.5hr]`
-  - [ ] DC-3.1: Replace CSV reading with pickle.load()
+  - [ ] DC-3.1: Replace CSV reading with pickle reading read_pickle
   - [ ] DC-3.2: Update file paths to binary locations
   - [ ] DC-3.3: Maintain data transformation logic
   - [ ] DC-3.4: Add binary file validation
