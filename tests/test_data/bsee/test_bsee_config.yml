@@ -1,0 +1,25 @@
+Analysis:
+  analysis_root_folder: tests\test_data\bsee\results
+basename: bsee
+data_source:
+  completions: tests\test_data\bsee\completion_data.csv
+  leases: tests\test_data\bsee\lease_data.csv
+  production: tests\test_data\bsee\production_data.csv
+  wells: tests\test_data\bsee\well_data.csv
+default:
+  config:
+    overwrite:
+      output: true
+  log_level: INFO
+meta:
+  basename: bsee
+  label: test_run
+  library: worldenergydata
+query:
+  api_list:
+  - '177154051100'
+  - '177154051200'
+  date_range:
+    end: '2023-12-31'
+    start: '2022-01-01'
+  flag: true
