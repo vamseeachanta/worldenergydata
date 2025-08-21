@@ -1,0 +1,104 @@
+SN_OSFR_ITEM,MMS_COMPANY_NUM,BUS_ASC_NAME,MMS_REGION_CODE,POSTAL_STATE_CD,LEASE_NUMBER,AREA_CODE,BLOCK_NUMBER,PERMIT_NUMBER,WORST_CASE_VOL,OSFR_ITM_EFF_DT,OSFR_ITM_EXPR_DT,OPER_PRTN_DESC,REMARK
+23055,21210,Hilcorp Energy Company,,LA,SL 1249,CI,,,1001,5/1/2024,5/1/2025,,CI - Caillou Island
+5953,3,Union Oil Company of California,G,,,MO,916.0,10749,0,5/1/2024,5/1/2025,,Segment
+31901,21210,Hilcorp Energy Company,,LA,LL&E FEE,MV,,,1001,5/1/2024,5/1/2025,,MV - SE Manila Village; Sec 4 & 5; T9S R25E
+19601,78,Chevron U.S.A. Inc.,G,,G16641,MC,696.0,,0,5/1/2024,5/1/2025,,
+30263,2647,Murphy Exploration & Production Company - USA,G,,,MC,734.0,17426,1001,5/1/2024,5/1/2025,,Segment
+30264,2647,Murphy Exploration & Production Company - USA,G,,,MC,734.0,17427,1001,5/1/2024,5/1/2025,,Segment
+7159,2289,Shell Pipeline Company LP,G,,,MP,289.0,G17730,6252,5/1/2024,5/1/2025,,
+41257,2628,"Arena Offshore, LP",G,,G10741,EI,253.0,,85056,5/1/2024,5/1/2025,,
+7200,2289,Shell Pipeline Company LP,,LA,,ST,11.0,1615,9098,5/1/2024,5/1/2025,,"ROW G03303 EIPS 20"" Segment 4006 State Water Portion
+"
+41063,1284,"W & T Offshore, Inc.",G,,,SM,40.0,G28816,400,5/1/2024,5/1/2025,,
+41618,2010,Woodside Energy (GOM) Inc.,G,,,GC,653.0,G29651,0,9/18/2024,4/30/2025,,
+41055,981,Anadarko Petroleum Corporation,G,,,GC,563.0,G29718,0,5/1/2024,5/1/2025,,Area & Block GC 563 to 608
+32393,21210,Hilcorp Energy Company,,LA,LL&E FEE#1,PW,,,1001,5/1/2024,5/1/2025,,PW - Pass Wilson
+32394,21210,Hilcorp Energy Company,,LA,SL 10835,LS,,,3200,5/1/2024,5/1/2025,,LS - Lake Sand
+32403,21210,Hilcorp Energy Company,,LA,SL 18167,BS,,,1001,5/1/2024,5/1/2025,,BS - Bay St. Elaine
+32405,21210,Hilcorp Energy Company,,LA,ST MARY B,HB,,,1001,5/1/2024,5/1/2025,,HB - Horseshoe Bayou
+32406,21210,Hilcorp Energy Company,,LA,SL 340,LP,,,1001,5/1/2024,5/1/2025,,LP - Lighthouse Point
+39506,2481,BP Exploration & Production Inc.,G,,G36781,MC,732.0,,0,5/1/2024,5/1/2025,,
+23356,689,Shell Offshore Inc.,G,,G19409,AC,815.0,,0,5/1/2024,4/30/2025,,
+41288,689,Shell Offshore Inc.,G,,,MC,942.0,G29623,0,5/1/2024,4/30/2025,,Area Name: Mississippi Canyon (MC); Block Numbers: 942 and 943
+32728,2313,Freeport-McMoRan Energy LLC,G,,G12362,MP,299.0,,1001,5/1/2024,5/1/2025,,
+7691,730,Walter Oil & Gas Corporation,G,,G08736,WD,107.0,,8000,6/15/2024,6/15/2025,,
+7731,730,Walter Oil & Gas Corporation,G,,,VK,862.0,G15640,0,6/15/2024,6/15/2025,,
+23505,2481,BP Exploration & Production Inc.,G,,,GC,743.0,G26921,0,5/1/2024,5/1/2025,,
+36723,3361,"Hilcorp Alaska, LLC",,AK,17594,MR,,,14305,5/1/2024,5/1/2025,,MR - McArthur River
+36731,3361,"Hilcorp Alaska, LLC",,AK,18743,GP,,,13550,5/1/2024,5/1/2025,,GP - Granite Point
+36740,3361,"Hilcorp Alaska, LLC",,AK,374045,,,,1001,5/1/2024,5/1/2025,,
+22760,56,ConocoPhillips Company,,AK,25524,K,,,0,5/1/2024,5/1/2025,,K - Kuparuk
+22764,56,ConocoPhillips Company,,AK,355024,K,,,0,5/1/2024,5/1/2025,,K - Kuparuk
+22766,56,ConocoPhillips Company,,AK,355032,K,,,0,5/1/2024,5/1/2025,,K - Kuparuk
+22770,56,ConocoPhillips Company,,AK,365501,K,,,0,5/1/2024,5/1/2025,,K - Kuparuk
+35659,2899,Talos ERT LLC,G,,G05438,VR,314.0,,1001,6/1/2024,6/1/2025,S1/2,
+41045,1284,"W & T Offshore, Inc.",G,,,SS,79.0,G23712,112,5/1/2024,5/1/2025,,
+41046,1284,"W & T Offshore, Inc.",G,,,SS,79.0,G23713,112,5/1/2024,5/1/2025,,
+41048,1284,"W & T Offshore, Inc.",G,,G10794,SS,301.0,,1000,5/1/2024,5/1/2025,,
+41233,2481,BP Exploration & Production Inc.,G,,G35349,DC,133.0,,0,5/1/2024,5/1/2025,,
+41264,59,Hess Corporation,G,,G37835,GC,205.0,,0,5/1/2024,4/30/2025,,
+41266,59,Hess Corporation,G,,G37839,GC,242.0,,0,5/1/2024,4/30/2025,,
+41278,59,Hess Corporation,G,,G37831,GC,187.0,,0,5/1/2024,4/30/2025,,
+41279,59,Hess Corporation,G,,G37832,GC,188.0,,0,5/1/2024,4/30/2025,,
+34845,981,Anadarko Petroleum Corporation,G,,,MC,876.0,G29001,0,5/1/2024,5/1/2025,,
+41467,2899,Talos ERT LLC,G,,,MC,698.0,G29295,1001,6/1/2024,6/1/2025,,
+9225,78,Chevron U.S.A. Inc.,,LA,F TIMOLAT,PP,,,0,5/1/2024,5/1/2025,,"FK Timolat - F.K. Timolat (bk 160pg141, pt rel 7/3/73)
+PP - Plaquemines Parish; Non-unitized acreage Sec 9 All sSec 10; W/2 W/2 Sec 11; All Secs 14,15,22 & 23 T22S-R30E)"
+9235,78,Chevron U.S.A. Inc.,,LA,,WB,,269,0,5/1/2024,5/1/2025,,WB - West Bay
+9245,78,Chevron U.S.A. Inc.,,LA,,WB,,804,0,5/1/2024,5/1/2025,,WB - West Bay
+9288,78,Chevron U.S.A. Inc.,,LA,,T2,,5/27/1949,0,5/1/2024,5/1/2025,,"T2 - T21S R21E
+Permit - Pre Number"
+41149,2451,GOM Shelf LLC,G,, 00181,WD,69.0,,1001,6/9/2024,6/9/2025,,
+41155,2451,GOM Shelf LLC,G,,,GI,43.0,G12304,1001,6/9/2024,6/9/2025,,
+41473,2899,Talos ERT LLC,G,,,MC,736.0,G28349,1001,6/1/2024,6/1/2025,,
+41479,2899,Talos ERT LLC,G,,G17942,SM,122.0,,1222,6/1/2024,6/1/2025,,
+41484,2899,Talos ERT LLC,,LA,SL21102,,,,1002,6/1/2024,6/1/2025,,
+41071,78,Chevron U.S.A. Inc.,G,,G37514,GC,170.0,,0,5/1/2024,5/1/2025,,
+27325,730,Walter Oil & Gas Corporation,G,,G04232,SS,189.0,,1000,6/15/2024,6/15/2025,N1/2;N1/2N1/2SE1/4,Note:  GOM Shelf LLC (02451) covers the SW1/4; S1/2SE1/4; S1/2N1/2SE1/4
+41074,78,Chevron U.S.A. Inc.,G,,G37520,GC,257.0,,0,5/1/2024,5/1/2025,,
+41075,78,Chevron U.S.A. Inc.,G,,G37521,GC,301.0,,0,5/1/2024,5/1/2025,,
+41076,78,Chevron U.S.A. Inc.,G,,G36554,MC,739.0,,0,5/1/2024,5/1/2025,,
+41487,3748,Natural Resources Worldwide LLC,G,,G02323,EI,360.0,,1860,4/18/2024,4/18/2025,,
+41492,3748,Natural Resources Worldwide LLC,G,,G24954,ST,41.0,,1964,4/18/2024,4/18/2025,,
+35893,689,Shell Offshore Inc.,,AK,392178,,,,0,5/1/2024,4/30/2025,,
+35945,689,Shell Offshore Inc.,G,,G35153,AC,772.0,,0,5/1/2024,4/30/2025,,
+10279,2219,Anadarko US Offshore LLC,G,,G17406,GB,667.0,,1001,5/1/2024,5/1/2025,,
+40793,2481,BP Exploration & Production Inc.,G,,G08797,MC,85.0,,0,5/1/2024,5/1/2025,,"depths from 18,000'TVDSS down to 99,999' TVDSS"
+39078,2481,BP Exploration & Production Inc.,G,,G36431,GC,365.0,,0,5/1/2024,5/1/2025,,
+41426,2899,Talos ERT LLC,G,,,GC,18.0,G08526,1543,6/1/2024,6/1/2025,,
+37137,3361,"Hilcorp Alaska, LLC",,AK,47433,MP,,,1001,5/1/2024,5/1/2025,,MP - Milne Point Unit
+37140,3361,"Hilcorp Alaska, LLC",,AK,47438,MP,,,1001,5/1/2024,5/1/2025,,MP - Milne Point Unit
+37144,3361,"Hilcorp Alaska, LLC",,AK,47505,E,,,1001,5/1/2024,5/1/2025,,E - Enddicott SDI
+37148,3361,"Hilcorp Alaska, LLC",,AK,312808,NS,,,1001,5/1/2024,5/1/2025,,NS - North Star Unit
+37152,3361,"Hilcorp Alaska, LLC",,AK,355016,MP,,,1001,5/1/2024,5/1/2025,,MP - Milne Point Unit
+37153,3361,"Hilcorp Alaska, LLC",,AK,355017,MP,,,1001,5/1/2024,5/1/2025,,MP - Milne Point Unit
+37154,3361,"Hilcorp Alaska, LLC",,AK,355018,MP,,,1001,5/1/2024,5/1/2025,,MP - Milne Point Unit
+41435,2899,Talos ERT LLC,G,,G11043,GC,244.0,,1001,6/1/2024,6/1/2025,,
+41441,2899,Talos ERT LLC,G,,G21685,ST,308.0,,1001,6/1/2024,6/1/2025,,
+41447,2899,Talos ERT LLC,G,,G27278,MC,519.0,,1001,6/1/2024,6/1/2025,S1/2; S1/2NW1/4; S1/2SE1/4NE1/4,
+11349,276,Exxon Mobil Corporation,G,,,MC,211.0,G21495,0,5/1/2024,5/1/2025,,
+39746,2640,"LLOG Exploration Company, L.L.C.",G,,G35827,MC,505.0,,0,6/1/2024,6/1/2025,,
+41603,2899,Talos ERT LLC,G,,G17888,VR,56.0,,1001,8/5/2024,6/1/2025,,
+37044,3361,"Hilcorp Alaska, LLC",,AK,,,,ATS 660,1001,5/1/2024,5/1/2025,,
+37099,2647,Murphy Exploration & Production Company - USA,G,,G35361,DC,619.0,,1001,5/1/2024,5/1/2025,,
+40890,2481,BP Exploration & Production Inc.,G,,G37561,AT,1.0,,0,5/1/2024,5/1/2025,,
+40934,78,Chevron U.S.A. Inc.,G,,G37573,AT,469.0,,0,5/1/2024,5/1/2025,,
+40935,78,Chevron U.S.A. Inc.,G,,G37574,AT,470.0,,0,5/1/2024,5/1/2025,,
+40936,78,Chevron U.S.A. Inc.,G,,G37575,AT,508.0,,0,5/1/2024,5/1/2025,,
+40941,78,Chevron U.S.A. Inc.,G,,G37580,AT,595.0,,0,5/1/2024,5/1/2025,,
+40942,78,Chevron U.S.A. Inc.,G,,G37581,AT,596.0,,0,5/1/2024,5/1/2025,,
+40945,78,Chevron U.S.A. Inc.,G,,G37584,AT,678.0,,0,5/1/2024,5/1/2025,,
+40955,78,Chevron U.S.A. Inc.,G,,G37506,GC,73.0,,0,5/1/2024,5/1/2025,,
+40970,78,Chevron U.S.A. Inc.,G,,G37530,GC,539.0,,0,5/1/2024,5/1/2025,,
+19475,2219,Anadarko US Offshore LLC,G,,G21811,GC,679.0,,1001,5/1/2024,5/1/2025,E1/2,Note: QuarterNorth Energy LLC (03672)covers the W1/2
+29578,2782,Eni US Operating Co. Inc.,G,,,MC,365.0,G22458,0,1/1/2024,12/31/2024,,
+38573,2528,Equinor USA E&P Inc.,G,,G16661,MC,941.0,,8502,10/6/2024,10/6/2025,,"Surface down to 18,000'"
+32013,2806,Marubeni Oil & Gas (USA) LLC,G,,,GC,65.0,G20545,3023,1/15/2024,1/15/2025,,
+32021,59,Hess Corporation,G,,G22898,MC,725.0,,0,5/1/2024,4/30/2025,,
+13085,689,Shell Offshore Inc.,G,,G17561,AC,813.0,,0,5/1/2024,4/30/2025,,
+13411,689,Shell Offshore Inc.,G,,G14653,MC,766.0,,0,5/1/2024,4/30/2025,,
+31388,730,Walter Oil & Gas Corporation,G,,,VK,817.0,G28465,6000,6/15/2024,6/15/2025,,
+13477,689,Shell Offshore Inc.,G,,,GB,602.0,G20508,0,5/1/2024,4/30/2025,,
+13488,689,Shell Offshore Inc.,G,,G09896,MC,899.0,,0,5/1/2024,4/30/2025,,
+13511,689,Shell Offshore Inc.,G,,G07498,GB,471.0,,0,5/1/2024,4/30/2025,,
+13522,689,Shell Offshore Inc.,G,,G07963,MC,807.0,,0,5/1/2024,4/30/2025,,

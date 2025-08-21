@@ -1,0 +1,101 @@
+LEASE_NUMBER,AREA,BLOCK,DATE_RECEIVED,DATE_RETURNED,APPROVED_DATE,ASSIGNMENT_TYPE,ASSIGNOR_NAME,ASSIGNEE_NAME,RETURNED_REMARK
+G04232,SS,189,6/6/2011,7/18/2011,,OR,Seneca Resources Corporation,"Castex Offshore, Inc.",Incorrect Interest being transfered.
+G32106,WC,106,6/7/2011,,7/15/2011,RT,Leed Petroleum LLC,"Marlin GOM I, L.L.C.",
+G02600,SM,281,6/3/2011,,7/14/2011,RT,"OPEX Energy, LLC","Trek Resources, Inc.",
+G15675,VR,252,6/8/2011,,6/16/2011,P,Seneca Resources Corporation,"Castex Offshore, Inc.",
+G01332,WD,32,6/8/2011,,6/16/2011,RT,"Maritech Resources, Inc.","Black Elk Energy Offshore Operations, LLC",
+G01067,WD,32,6/8/2011,6/17/2011,,RT,"Maritech Resources, Inc.","Black Elk Energy Offshore Operations, LLC",One original assignment not executed.
+G01332,WD,32,6/8/2011,,6/16/2011,OR,"Maritech Resources, Inc.","Black Elk Energy Offshore Operations, LLC",
+G01067,WD,32,6/8/2011,,6/16/2011,OR,"Maritech Resources, Inc.","Black Elk Energy Offshore Operations, LLC",
+G28607,VR,267,6/8/2011,,6/16/2011,P,Stone Energy Corporation,"Stone Energy Offshore, L.L.C.",
+G04486,MP,301,6/9/2011,7/22/2011,,OR,"Anglo-Suisse Offshore Partners, LLC","Energy Partners, Ltd.",Signatures don't agree with qualification documents
+G02319,EI,342,6/10/2011,6/23/2011,,OR,"Maritech Resources, Inc.",Tana Exploration Company LLC,"Needs DOO, et al."
+G02319,EI,342,6/10/2011,6/23/2011,,OR,"Maritech Resources, Inc.",Tana Exploration Company LLC,"Needs DOO, et al."
+G02319,EI,342,6/10/2011,6/23/2011,,OR,"Maritech Resources, Inc.",Tana Exploration Company LLC,"Needs DOO, et al."
+G02319,EI,342,6/10/2011,6/23/2011,,RT,"Maritech Resources, Inc.",Tana Exploration Company LLC,"Needs DOO, et al."
+G15769,HI,37,6/10/2011,,8/26/2011,OR,Fidelity Exploration & Production Company,"Hilcorp Energy GOM, LLC",
+G15769,HI,37,6/10/2011,,8/26/2011,RT,Fidelity Exploration & Production Company,"Hilcorp Energy GOM, LLC",
+G19939,MC,348,6/10/2011,,8/11/2011,OR,Shell Gulf of Mexico Inc.,Nexen Petroleum Offshore U.S.A. Inc.,
+G33733,MC,437,6/10/2011,,6/27/2011,OR,Shell Offshore Inc.,Nexen Petroleum Offshore U.S.A. Inc.,
+G02274,VR,369,6/13/2011,,7/15/2011,OR,McMoRan Oil & Gas LLC,"Merit Management Partners I, L.P.",
+G02274,VR,369,6/13/2011,,7/15/2011,OR,McMoRan Oil & Gas LLC,"Merit Management Partners II, L.P.",
+G02274,VR,369,6/13/2011,,7/15/2011,OR,McMoRan Oil & Gas LLC,"Merit Management Partners III, L.P.",
+G02274,VR,369,6/13/2011,,7/15/2011,OR,McMoRan Oil & Gas LLC,"Merit Energy Partners III, L.P.",
+G02274,VR,369,6/13/2011,,7/15/2011,OR,McMoRan Oil & Gas LLC,"Merit Energy Partners D-III, L.P.",
+G02274,VR,369,6/13/2011,,7/15/2011,OR,McMoRan Oil & Gas LLC,"Merit Energy Partners E-III, L.P.",
+G02274,VR,369,6/13/2011,,7/15/2011,OR,McMoRan Oil & Gas LLC,"Merit Energy Partners F-III, L.P.",
+G02274,VR,369,6/13/2011,,7/15/2011,OR,"Piquant, Inc.","Merit Energy Partners D-III, L.P.",
+G02274,VR,369,6/13/2011,,7/15/2011,OR,"Piquant, Inc.","Merit Energy Partners E-III, L.P.",
+G02274,VR,369,6/13/2011,,7/15/2011,OR,"Piquant, Inc.","Merit Energy Partners F-III, L.P.",
+G02274,VR,369,6/13/2011,,7/15/2011,OR,"Piquant, Inc.","Merit Management Partners I, L.P.",
+G02274,VR,369,6/13/2011,,7/15/2011,OR,"Piquant, Inc.","Merit Management Partners II, L.P.",
+G02274,VR,369,6/13/2011,,7/15/2011,OR,"Piquant, Inc.","Merit Management Partners III, L.P.",
+G02274,VR,369,6/13/2011,,7/15/2011,OR,"Piquant, Inc.","Merit Energy Partners III, L.P.",
+G21142,BS,41,6/14/2011,,7/14/2011,OR,Gryphon Exploration Company,"Dynamic Offshore Resources, LLC",
+G33079,VR,45,6/15/2011,,6/20/2011,RT,"Helis Oil & Gas Company, L.L.C.","Marlin GOM I, L.L.C.",
+G33080,VR,46,6/15/2011,,6/20/2011,RT,"Helis Oil & Gas Company, L.L.C.","Marlin GOM I, L.L.C.",
+G28279,EI,314,6/15/2011,7/1/2011,,P,Exxon Mobil Corporation,"Arena Energy, LP",ROW has expired.
+G04322,EI,314,6/15/2011,7/1/2011,,P,Exxon Mobil Corporation,"Arena Energy, LP",Assignment withdrawn per customer request.
+G09386,WC,76,6/16/2011,7/22/2011,,RT,"Merit Management Partners I, L.P.","Black Elk Energy Offshore Operations, LLC",Needs DOO
+G09386,WC,76,6/16/2011,7/22/2011,,RT,"Merit Management Partners II, L.P.","Black Elk Energy Offshore Operations, LLC",Needs DOO
+G09386,WC,76,6/16/2011,7/22/2011,,RT,"Merit Management Partners III, L.P.","Black Elk Energy Offshore Operations, LLC",Needs DOO
+G09386,WC,76,6/16/2011,7/22/2011,,RT,"Merit Energy Partners D-III, L.P.","Black Elk Energy Offshore Operations, LLC",Needs DOO
+G09386,WC,76,6/16/2011,7/22/2011,,RT,"Merit Energy Partners E-III, L.P.","Black Elk Energy Offshore Operations, LLC",Needs DOO
+G09386,WC,76,6/16/2011,7/22/2011,,RT,"Merit Energy Partners F-III, L.P.","Black Elk Energy Offshore Operations, LLC",Needs DOO
+G09386,WC,76,6/16/2011,7/22/2011,,RT,"Merit Energy Partners III, L.P.","Black Elk Energy Offshore Operations, LLC",Needs DOO
+G09387,WC,77,6/16/2011,,6/28/2011,RT,"Merit Energy Partners III, L.P.","Black Elk Energy Offshore Operations, LLC",
+G09387,WC,77,6/16/2011,,6/28/2011,RT,"Merit Energy Partners D-III, L.P.","Black Elk Energy Offshore Operations, LLC",
+G09387,WC,77,6/16/2011,,6/28/2011,RT,"Merit Management Partners I, L.P.","Black Elk Energy Offshore Operations, LLC",
+G09387,WC,77,6/16/2011,,6/28/2011,RT,"Merit Management Partners II, L.P.","Black Elk Energy Offshore Operations, LLC",
+G09387,WC,77,6/16/2011,,6/28/2011,RT,"Merit Management Partners III, L.P.","Black Elk Energy Offshore Operations, LLC",
+G09387,WC,77,6/16/2011,,6/28/2011,RT,"Merit Energy Partners E-III, L.P.","Black Elk Energy Offshore Operations, LLC",
+G09387,WC,77,6/16/2011,,6/28/2011,RT,"Merit Energy Partners F-III, L.P.","Black Elk Energy Offshore Operations, LLC",
+G09386,WC,76,6/16/2011,7/22/2011,,OR,"Merit Management Partners I, L.P.","Black Elk Energy Offshore Operations, LLC",Needs DOO
+G09386,WC,76,6/16/2011,7/22/2011,,OR,"Merit Management Partners II, L.P.","Black Elk Energy Offshore Operations, LLC",Needs DOO
+G09386,WC,76,6/16/2011,7/22/2011,,OR,"Merit Management Partners III, L.P.","Black Elk Energy Offshore Operations, LLC",Needs DOO
+G09386,WC,76,6/16/2011,7/22/2011,,OR,"Merit Energy Partners D-III, L.P.","Black Elk Energy Offshore Operations, LLC",Needs DOO
+G09386,WC,76,6/16/2011,7/22/2011,,OR,"Merit Energy Partners E-III, L.P.","Black Elk Energy Offshore Operations, LLC",Needs DOO
+G09386,WC,76,6/16/2011,7/22/2011,,OR,"Merit Energy Partners F-III, L.P.","Black Elk Energy Offshore Operations, LLC",Needs DOO
+G09386,WC,76,6/16/2011,7/22/2011,,OR,"Merit Energy Partners III, L.P.","Black Elk Energy Offshore Operations, LLC",Needs DOO
+G09387,WC,77,6/16/2011,,6/28/2011,OR,"Merit Energy Partners III, L.P.","Black Elk Energy Offshore Operations, LLC",
+G09387,WC,77,6/16/2011,,6/28/2011,OR,"Merit Energy Partners D-III, L.P.","Black Elk Energy Offshore Operations, LLC",
+G09387,WC,77,6/16/2011,,6/28/2011,OR,"Merit Management Partners I, L.P.","Black Elk Energy Offshore Operations, LLC",
+G09387,WC,77,6/16/2011,,6/28/2011,OR,"Merit Management Partners II, L.P.","Black Elk Energy Offshore Operations, LLC",
+G09387,WC,77,6/16/2011,,6/28/2011,OR,"Merit Management Partners III, L.P.","Black Elk Energy Offshore Operations, LLC",
+G09387,WC,77,6/16/2011,,6/28/2011,OR,"Merit Energy Partners E-III, L.P.","Black Elk Energy Offshore Operations, LLC",
+G15158,EC,360,12/24/2009,,1/22/2010,OR,"W & T Offshore, Inc.","Black Elk Energy Offshore Operations, LLC",
+G16661,MC,941,12/28/2009,2/5/2010,,OR,ATP Oil & Gas Corporation,Shell Offshore Inc.,"Would create 3rd level, needs MMS 1017 and DOO."
+G31365,EI,46,12/30/2009,,2/25/2010,RT,"LLOG Exploration Offshore, Inc.","Castex Offshore, Inc.",
+G21096,VR,326,12/30/2009,,2/25/2010,RT,"Houston Energy, L.P.","Mariner Energy Resources, Inc.",
+G21096,VR,326,12/30/2009,,2/25/2010,RT,"HE&D Offshore, L.P.","Mariner Energy Resources, Inc.",
+G27965,MP,98,12/30/2009,,2/23/2010,RT,"NCX Company, L.L.C.","W & T Offshore, Inc.",
+G27965,MP,98,12/30/2009,,2/23/2010,RT,"NCX Company, L.L.C.","W & T Offshore, Inc.",
+G10436,DC,3,12/31/2009,,2/22/2010,RT,Marathon Oil Company,Murphy Exploration & Production Company - USA,
+G21785,GC,141,12/31/2009,,2/23/2010,RT,"LLOG Exploration Offshore, Inc.",Ridgewood Energy Corporation,
+G28077,GC,448,12/31/2009,,2/23/2010,RT,"LLOG Exploration Offshore, Inc.",Ridgewood Energy Corporation,
+G09378,WC,624,1/4/2010,3/5/2010,,P,Columbia Gulf Transmission Company,Tennessee Gas Pipeline Company,Needs Designation of Applicant Form MMS 1017
+G32456,GB,949,1/5/2010,1/12/2010,,RT,"Mariner Energy, Inc.",Apache Corporation,Submitted without DOO.
+G32450,GB,905,1/5/2010,1/13/2010,,RT,"Mariner Energy, Inc.",Apache Corporation,Need DOO
+G18184,EW,966,1/5/2010,1/14/2010,,OR,"W & T Offshore, Inc.","Black Elk Energy Offshore Operations, LLC",Needs DOO
+G18184,EW,966,1/5/2010,,1/14/2010,OR,"W & T Offshore, Inc.","Black Elk Energy Offshore Operations, LLC",
+G12700,VK,22,1/6/2010,3/5/2010,,P,Chevron U.S.A. Inc.,"Hilcorp Energy GOM, LLC",Incorrect legal description.
+G20511,EB,826,1/7/2010,,2/26/2010,P,Pisces Energy LLC,Apache Corporation,
+G05286,WC,178,1/8/2010,,1/26/2010,OR,"W & T Offshore, Inc.","Black Elk Energy Offshore Operations, LLC",
+G05286,WC,178,1/1/2010,,1/26/2010,OR,"W & T Offshore, Inc.","Black Elk Energy Offshore Operations, LLC",
+G01569,ST,185,1/8/2010,2/2/2010,,RT,"W & T Offshore, Inc.","Black Elk Energy Offshore Operations, LLC",Needs DOO
+G01569,ST,185,1/8/2010,2/2/2010,,RT,"W & T Offshore, Inc.","Black Elk Energy Offshore Operations, LLC",Needs DOO
+G01569,ST,185,1/8/2010,2/2/2010,,OR,"W & T Offshore, Inc.","Black Elk Energy Offshore Operations, LLC",Needs DOO
+G01569,ST,185,1/8/2010,2/2/2010,,OR,"W & T Offshore, Inc.","Black Elk Energy Offshore Operations, LLC",DOO has incorrect description.
+G01569,ST,185,1/8/2010,2/2/2010,,OR,"W & T Offshore, Inc.","Black Elk Energy Offshore Operations, LLC",Needs DOO
+G23180,GA,352,1/8/2010,,1/22/2010,RT,"W & T Offshore, Inc.","Black Elk Energy Offshore Operations, LLC",
+G15156,EC,345,1/8/2010,,1/26/2010,RT,"W & T Offshore, Inc.","Black Elk Energy Offshore Operations, LLC",
+G03241,HI,A 443,1/8/2010,,1/28/2010,RT,"W & T Offshore, Inc.","Black Elk Energy Offshore Operations, LLC",
+G03241,HI,A 443,1/8/2010,,1/28/2010,OR,"W & T Offshore, Inc.","Black Elk Energy Offshore Operations, LLC",
+G01568,ST,184,1/8/2010,1/28/2010,,RT,"W & T Offshore, Inc.","Black Elk Energy Offshore Operations, LLC",Needs DOO
+G01568,ST,184,1/8/2010,1/28/2010,,RT,"W & T Offshore, Inc.","Black Elk Energy Offshore Operations, LLC",Needs DOO
+G01568,ST,184,1/8/2010,1/28/2010,,OR,"W & T Offshore, Inc.","Black Elk Energy Offshore Operations, LLC",Needs DOO
+G02391,HI,A 571,1/8/2010,,2/3/2010,RT,"W & T Offshore, Inc.","Black Elk Energy Offshore Operations, LLC",
+G02391,HI,A 571,1/8/2010,,2/3/2010,OR,"W & T Offshore, Inc.","Black Elk Energy Offshore Operations, LLC",
+G33178,MC,816,1/8/2010,1/22/2010,,RT,"Houston Energy, L.P.","LLOG Exploration Offshore, Inc.",Needs DOO
+G02885,SM,141,1/8/2010,,1/27/2010,OR,MitEnergy Upstream LLC,"Energy XXI GOM, LLC",
+G02883,SM,127,1/8/2010,,2/3/2010,OR,MitEnergy Upstream LLC,"Energy XXI GOM, LLC",
