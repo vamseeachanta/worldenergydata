@@ -102,8 +102,8 @@ incremental_update: true
 force_refresh: false
 data:
   well: false
-  war: false
-  production: true
+  war: true
+  production: false
   apm: false
 processing:
   in_memory: true
@@ -128,7 +128,7 @@ Analysis:
   file_name: data_refresh_enhanced
   file_name_for_overwrite: data_refresh_enhanced
   log_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\logs
-  start_time: 2025-08-18 12:34:06.230220
+  start_time: 2025-08-21 16:38:00.316719
   cfg_array_file_names: ~
   DefaultInputFile: ~
   CustomInputFile: data_refresh_enhanced.yml
@@ -139,8 +139,8 @@ Analysis:
 bsee:
   data:
     well: false
-    war: false
-    production: true
+    war: true
+    production: false
     apm: false
     type: csv
   analysis: {}
