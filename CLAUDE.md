@@ -304,3 +304,6 @@ View all available commands:
 - make it mandatory to note no mock tests or mock data. repository has data use it do not use it.
 - Always revsise new enhanced spec modular system while creating specs, like spec followed the pattern or not ,
 for ex: prompt.md ,task_summary.md etc... files are created or not.
+- when you proceed with another approach when user already proposed one, take user approval, do not proceed further.
+- Always use project's virtual environment to run any test or python scripts.
+- Always update task_summary.md time to time until all tasks are completed in Tasks.md
