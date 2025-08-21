@@ -44,40 +44,40 @@ These are the tasks to be completed for the spec detailed in @specs/modules/bsee
 **Estimated Time:** 4-5 hours
 **Priority:** Critical - Validate Scripts Before Integration
 **Dependencies:** Task 0
-**Purpose:** Create enhanced copies of three SME scripts from 2025-08-20 folder, keeping original logic intact except for data source paths
+**Purpose:** Create worldenergydata versions of three SME scripts from 2025-08-20 folder, keeping original logic intact except for data source paths
 
-**IMPORTANT:** When creating enhanced copies, preserve ALL original code logic, calculations, and processing. ONLY modify:
+**IMPORTANT:** When creating worldenergydata versions, preserve ALL original code logic, calculations, and processing. ONLY modify:
 - File reading paths (to use .bin files or zip files from repository)
-- Output filenames (add '_enhanced' suffix)
+- Output filenames (add '_worldenergydata' suffix)
 - NO other code changes allowed
 
-- [x] 1.1 Create enhanced copy of `extract_drilling_and_completion_days.py` to use binary WAR files `1h` 🤖 `Agent: general-purpose`
-  - [x] 1.1.1 Copy script to `tests/modules/bsee/analysis/financial-analysis-sme-code/enhanced_scripts/extract_drilling_and_completion_days_enhanced.py`
+- [x] 1.1 Create worldenergydata version of `extract_drilling_and_completion_days.py` to use binary WAR files `1h` 🤖 `Agent: general-purpose`
+  - [x] 1.1.1 Copy script to `tests/modules/bsee/analysis/financial-analysis-sme-code/worldenergydata_scripts/extract_drilling_and_completion_days_worldenergydata.py`
   - [x] 1.1.2 ONLY change: Replace CSV file reads with .bin file reads from `data/modules/bsee/bin/war/` using pickle
-  - [x] 1.1.3 ONLY change: Update output filename to `drilling_and_completion_days_by_api_enhanced.xlsx`
+  - [x] 1.1.3 ONLY change: Update output filename to `drilling_and_completion_days_by_api_worldenergydata.xlsx`
   - [x] 1.1.4 Keep ALL other code exactly as original (logic, calculations, helper functions)
   - [ ] 1.1.5 Test script execution with binary files
-- [x] 1.2 Run enhanced drilling extraction script and verify output `30m` 🤖 `Agent: test-specialist`
-  - [x] 1.2.1 Execute enhanced script from test location
+- [x] 1.2 Run worldenergydata drilling extraction script and verify output `30m` 🤖 `Agent: test-specialist`
+  - [x] 1.2.1 Execute worldenergydata script from test location
   - [x] 1.2.2 Compare output with original `drilling_and_completion_days_by_api.xlsx`
   - [x] 1.2.3 Verify 100% match in data values (99.4% match - 167/167 common wells match for drilling days, 165/167 for completion days)
-- [x] 1.3 Create enhanced copy of `build_month_matrix_by_lease.py` to use OGORA zip files `1h` 🤖 `Agent: general-purpose`
-  - [x] 1.3.1 Copy script to `tests/modules/bsee/analysis/financial-analysis-sme-code/enhanced_scripts/build_month_matrix_by_lease_enhanced.py`
+- [x] 1.3 Create worldenergydata version of `build_month_matrix_by_lease.py` to use OGORA zip files `1h` 🤖 `Agent: general-purpose`
+  - [x] 1.3.1 Copy script to `tests/modules/bsee/analysis/financial-analysis-sme-code/worldenergydata_scripts/build_month_matrix_by_lease_worldenergydata.py`
   - [x] 1.3.2 ONLY change: Update file paths to use `data/modules/bsee/zip/historical_production_yearly/`
-  - [x] 1.3.3 ONLY change: Add '_enhanced' suffix to output filename
+  - [x] 1.3.3 ONLY change: Add '_worldenergydata' suffix to output filename
   - [x] 1.3.4 Keep ALL other code exactly as original
   - [x] 1.3.5 Test script execution with zip files
-- [x] 1.4 Run enhanced matrix builder script and verify output `30m` 🤖 `Agent: test-specialist`
-  - [x] 1.4.1 Execute enhanced script from test location
+- [x] 1.4 Run worldenergydata matrix builder script and verify output `30m` 🤖 `Agent: test-specialist`
+  - [x] 1.4.1 Execute worldenergydata script from test location
   - [x] 1.4.2 Compare output with original matrix files
   - [x] 1.4.3 Verify 100% match in production data (Enhanced version has MORE data: 266 months vs 137, same structure)
-- [x] 1.5 Create enhanced copy of `Build_Development_Financials_V20.py` with updated output naming `30m` 🤖 `Agent: general-purpose`
-  - [x] 1.5.1 Copy script to `tests/modules/bsee/analysis/financial-analysis-sme-code/enhanced_scripts/Build_Development_Financials_V20_enhanced.py`
-  - [x] 1.5.2 ONLY change: Add '_enhanced' suffix to all output filenames
+- [x] 1.5 Create worldenergydata version of `Build_Development_Financials_V20.py` with updated output naming `30m` 🤖 `Agent: general-purpose`
+  - [x] 1.5.1 Copy script to `tests/modules/bsee/analysis/financial-analysis-sme-code/worldenergydata_scripts/Build_Development_Financials_V20_worldenergydata.py`
+  - [x] 1.5.2 ONLY change: Add '_worldenergydata' suffix to all output filenames
   - [x] 1.5.3 Keep ALL other code exactly as original
   - [x] 1.5.4 Ensure no overwrite of existing files
-- [x] 1.6 Run enhanced financial builder script `30m` 🤖 `Agent: general-purpose`
-  - [x] 1.6.1 Execute enhanced script with enhanced inputs from 1.2 and 1.4
+- [x] 1.6 Run worldenergydata financial builder script `30m` 🤖 `Agent: general-purpose`
+  - [x] 1.6.1 Execute worldenergydata script with worldenergydata inputs from 1.2 and 1.4
   - [x] 1.6.2 Verify successful completion
   - [x] 1.6.3 Compare output files with original V20 files
   - [x] 1.6.4 Verify 100% match in financial data (Production 100%, D&C has expected differences from 5 additional wells)
