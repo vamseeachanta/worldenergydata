@@ -1,6 +1,6 @@
 # API Specification
 
-This is the API specification for the spec detailed in @specs/modules/bsee/2025-08-19-sme-analysis/spec.md
+This is the API specification for the spec detailed in @specs/modules/bsee/financial-analysis-sme-code/spec.md
 
 > Created: 2025-08-19
 > Version: 1.0.0
