@@ -10,7 +10,7 @@
 **User:** Initial spec creation request
 
 ```
-sme_analysis bsee enhanced,
+sme_analysis bsee worldenergydata,
 follow below guidelines:
 1. check whether the code present in 'docs\modules\bsee\data\SME_Roy_attachments\2025-08-15' is implemented in our worldenergydata module. Else implemente with full tests.
 ```
