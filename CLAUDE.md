@@ -302,3 +302,5 @@ View all available commands:
 *This is MANDATORY and overrides any local command implementations*
 
 - make it mandatory to note no mock tests or mock data. repository has data use it do not use it.
+- Always revsise new enhanced spec modular system while creating specs, like spec followed the pattern or not ,
+for ex: prompt.md ,task_summary.md etc... files are created or not.

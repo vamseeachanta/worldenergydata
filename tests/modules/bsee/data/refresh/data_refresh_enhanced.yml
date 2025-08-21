@@ -21,8 +21,8 @@ force_refresh: false  # Set to true to bypass cache
 data:
   # Enhanced mode uses these flags directly (no 'refresh' flag needed)
   well: false       # Enable well data refresh
-  war: false       # Disable WAR for faster testing (120MB+ file)
-  production: true # Enable production data refresh
+  war: true       # Disable WAR for faster testing (120MB+ file)
+  production: false # Enable production data refresh
   
   # Legacy compatibility flags (also work in enhanced mode)
   apm: false       # Alternative flag for well data
