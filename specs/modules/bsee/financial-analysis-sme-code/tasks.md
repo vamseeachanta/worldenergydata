@@ -17,21 +17,27 @@ These are the tasks to be completed for the spec detailed in @specs/modules/bsee
 
 ### Task 0: Analyze Existing SME Code and Consolidate Methodology
 
+**⚠️ CRITICAL NOTE:**
+
+- **LATEST CODE TO IMPLEMENT:** `docs/modules/bsee/data/SME_Roy_attachments/2025-08-20/` - THIS IS THE PRIMARY IMPLEMENTATION TARGET
+- **Previous versions (2025-07-29, 2025-07-30, 2025-08-15):** These are ONLY for reference to ensure no features are missed during migration
+- **MANDATORY:** During analysis, verify ALL features from previous versions are captured in 2025-08-20 implementation
+
 **Estimated Time:** 5-6 hours
 **Priority:** Critical - Must Complete First
 **Dependencies:** None
-**Purpose:** Understand existing implementations, identify patterns, and create consolidated approach
+**Purpose:** Understand existing implementations, identify patterns, and create consolidated approach based on LATEST CODE (2025-08-20)
 
-- [ ] 0.1 Analyze code and documentation in `docs/modules/bsee/data/SME_Roy_attachments/2025-07-29/` `1h` 🤖 `Agent: analysis-specialist`
-- [ ] 0.2 Analyze code and documentation in `docs/modules/bsee/data/SME_Roy_attachments/2025-07-30/` `1h` 🤖 `Agent: analysis-specialist`
-- [ ] 0.3 Analyze code and documentation in `docs/modules/bsee/data/SME_Roy_attachments/2025-08-15/` `1h` 🤖 `Agent: analysis-specialist`
-- [ ] 0.4 Analyze code and documentation in `docs/modules/bsee/data/SME_Roy_attachments/2025-08-20/` `1h` 🤖 `Agent: analysis-specialist`
-- [ ] 0.5 Compare implementations across all four folders and identify commonalities/differences `45m` 🤖 `Agent: analysis-specialist`
-- [ ] 0.6 Create consolidated methodology document at `specs/modules/bsee/financial-analysis-sme-code/consolidated_methodology.md` `45m` 🤖 `Agent: documentation-specialist`
-- [ ] 0.7 Create unified analysis script at `specs/modules/bsee/financial-analysis-sme-code/consolidated_analysis.py` `30m` 🤖 `Agent: general-purpose`
-- [ ] 0.8 Document plan for integrating with BSEE data in `data/modules/bsee/` `30m` 🤖 `Agent: documentation-specialist`
-- [ ] 0.9 Design implementation strategy for main source code integration in `src/` `30m` 🤖 `Agent: architecture-specialist`
-- [ ] 0.10 Verify all analyses are complete and methodology is clear `30m` 🤖 `Agent: review-specialist`
+- [ ] 0.1 Analyze code and documentation in `docs/modules/bsee/data/SME_Roy_attachments/2025-07-29/` (REFERENCE ONLY - for feature comparison) `1h` 🤖 `Agent: analysis-specialist`
+- [ ] 0.2 Analyze code and documentation in `docs/modules/bsee/data/SME_Roy_attachments/2025-07-30/` (REFERENCE ONLY - for feature comparison) `1h` 🤖 `Agent: analysis-specialist`
+- [ ] 0.3 Analyze code and documentation in `docs/modules/bsee/data/SME_Roy_attachments/2025-08-15/` (REFERENCE ONLY - for feature comparison) `1h` 🤖 `Agent: analysis-specialist`
+- [ ] 0.4 **PRIMARY ANALYSIS:** Thoroughly analyze LATEST code in `docs/modules/bsee/data/SME_Roy_attachments/2025-08-20/` - THIS IS THE IMPLEMENTATION TARGET `1.5h` 🤖 `Agent: analysis-specialist`
+- [ ] 0.5 Compare implementations: Ensure ALL features from previous versions (07-29, 07-30, 08-15) are present in 2025-08-20 code `45m` 🤖 `Agent: analysis-specialist`
+- [ ] 0.6 Create consolidated methodology document at `specs/modules/bsee/financial-analysis-sme-code/consolidated_methodology.md` based on 2025-08-20 implementation `45m` 🤖 `Agent: documentation-specialist`
+- [ ] 0.7 Create unified analysis script at `specs/modules/bsee/financial-analysis-sme-code/consolidated_analysis.py` using 2025-08-20 as base `30m` 🤖 `Agent: general-purpose`
+- [ ] 0.8 Document plan for integrating 2025-08-20 implementation with BSEE data in `data/modules/bsee/` `30m` 🤖 `Agent: documentation-specialist`
+- [ ] 0.9 Design implementation strategy for integrating 2025-08-20 code into main source in `src/` `30m` 🤖 `Agent: architecture-specialist`
+- [ ] 0.10 Verify 2025-08-20 implementation is complete and no features from older versions are missing `30m` 🤖 `Agent: review-specialist`
 
 ### Task 1: Review and Refactor Existing Financial Code
 
