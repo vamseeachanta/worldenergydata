@@ -1,0 +1,350 @@
+{
+  "revenue_mapping": {
+    "revenue_components": {
+      "oil_revenue": {
+        "formula": "oil_volume * oil_price * (1 - royalty_rate)",
+        "inputs": {
+          "oil_volume": {
+            "source": "BSEE production data",
+            "field": "OIL_PROD_VOLUME",
+            "unit": "BBL"
+          },
+          "oil_price": {
+            "source": "Price deck or market data",
+            "field": "WTI_PRICE or BRENT_PRICE",
+            "unit": "$/BBL"
+          },
+          "royalty_rate": {
+            "source": "Lease terms",
+            "field": "ROYALTY_RATE",
+            "unit": "fraction",
+            "default": 0.1875
+          }
+        },
+        "aggregation": "sum across time periods"
+      },
+      "gas_revenue": {
+        "formula": "gas_volume * gas_price * (1 - royalty_rate)",
+        "inputs": {
+          "gas_volume": {
+            "source": "BSEE production data",
+            "field": "GAS_PROD_VOLUME",
+            "unit": "MCF"
+          },
+          "gas_price": {
+            "source": "Price deck or market data",
+            "field": "HENRY_HUB_PRICE",
+            "unit": "$/MCF"
+          },
+          "royalty_rate": {
+            "source": "Lease terms",
+            "field": "ROYALTY_RATE",
+            "unit": "fraction",
+            "default": 0.1875
+          }
+        },
+        "aggregation": "sum across time periods"
+      },
+      "ngl_revenue": {
+        "formula": "ngl_volume * ngl_price * (1 - royalty_rate)",
+        "inputs": {
+          "ngl_volume": {
+            "source": "BSEE production data",
+            "field": "NGL_PROD_VOLUME",
+            "unit": "BBL"
+          },
+          "ngl_price": {
+            "source": "Price deck or market data",
+            "field": "NGL_PRICE",
+            "unit": "$/BBL"
+          }
+        },
+        "aggregation": "sum across time periods"
+      },
+      "total_revenue": {
+        "formula": "oil_revenue + gas_revenue + ngl_revenue",
+        "aggregation": "sum of components"
+      }
+    },
+    "cost_components": {
+      "operating_costs": {
+        "lease_operating_expense": {
+          "formula": "production_volume * loe_per_barrel",
+          "typical_range": "$5-15/BBL",
+          "factors": [
+            "water_depth",
+            "well_complexity",
+            "field_maturity"
+          ]
+        },
+        "workover_costs": {
+          "formula": "workover_count * avg_workover_cost",
+          "typical_range": "$1-5M per workover",
+          "frequency": "as needed"
+        },
+        "transportation": {
+          "formula": "production_volume * transport_rate",
+          "typical_range": "$2-8/BBL",
+          "factors": [
+            "distance_to_shore",
+            "pipeline_capacity"
+          ]
+        }
+      },
+      "capital_costs": {
+        "drilling_costs": {
+          "formula": "well_count * avg_drilling_cost",
+          "typical_range": "$50-150M per deepwater well",
+          "factors": [
+            "water_depth",
+            "total_depth",
+            "complexity"
+          ]
+        },
+        "completion_costs": {
+          "formula": "well_count * avg_completion_cost",
+          "typical_range": "$20-50M per well",
+          "factors": [
+            "completion_type",
+            "number_of_zones"
+          ]
+        },
+        "facilities": {
+          "formula": "facility_capex / field_life",
+          "typical_range": "$500M-2B for deepwater",
+          "depreciation": "straight_line or units_of_production"
+        }
+      },
+      "abandonment_costs": {
+        "well_p&a": {
+          "formula": "well_count * p&a_cost_per_well",
+          "typical_range": "$10-30M per well",
+          "timing": "end of field life"
+        },
+        "facility_removal": {
+          "formula": "facility_count * removal_cost",
+          "typical_range": "$100-500M",
+          "timing": "end of field life"
+        }
+      }
+    },
+    "economic_metrics": {
+      "net_revenue": {
+        "formula": "total_revenue - operating_costs",
+        "unit": "$",
+        "aggregation": "period sum"
+      },
+      "ebitda": {
+        "formula": "net_revenue - g&a_costs",
+        "unit": "$",
+        "use": "operational performance"
+      },
+      "free_cash_flow": {
+        "formula": "ebitda - capital_costs - taxes",
+        "unit": "$",
+        "use": "investment analysis"
+      },
+      "npv": {
+        "formula": "sum(free_cash_flow / (1 + discount_rate)^t)",
+        "discount_rate": 0.1,
+        "unit": "$",
+        "use": "project valuation"
+      },
+      "irr": {
+        "formula": "rate where NPV = 0",
+        "target": "> 15%",
+        "use": "return measurement"
+      },
+      "payback_period": {
+        "formula": "time when cumulative_fcf >= 0",
+        "unit": "years",
+        "target": "< 5 years"
+      }
+    }
+  },
+  "calculation_workflow": {
+    "calculation_steps": [
+      {
+        "step": 1,
+        "name": "Production Data Preparation",
+        "tasks": [
+          "Load monthly production volumes",
+          "Convert units to standard (BBL, MCF)",
+          "Handle missing data interpolation",
+          "Apply allocation factors if needed"
+        ],
+        "output": "clean_production_data"
+      },
+      {
+        "step": 2,
+        "name": "Price Deck Application",
+        "tasks": [
+          "Load price assumptions",
+          "Match prices to production periods",
+          "Apply price differentials if applicable",
+          "Handle price escalation"
+        ],
+        "output": "priced_production"
+      },
+      {
+        "step": 3,
+        "name": "Gross Revenue Calculation",
+        "tasks": [
+          "Calculate oil revenue (volume * price)",
+          "Calculate gas revenue (volume * price)",
+          "Calculate NGL revenue if applicable",
+          "Sum to gross revenue"
+        ],
+        "output": "gross_revenue"
+      },
+      {
+        "step": 4,
+        "name": "Royalty and Tax Calculation",
+        "tasks": [
+          "Apply royalty rate to gross revenue",
+          "Calculate severance taxes",
+          "Apply other government takes",
+          "Calculate net revenue after royalties"
+        ],
+        "output": "net_revenue"
+      },
+      {
+        "step": 5,
+        "name": "Operating Cost Allocation",
+        "tasks": [
+          "Apply lease operating expenses",
+          "Add workover costs",
+          "Include transportation costs",
+          "Calculate total operating costs"
+        ],
+        "output": "operating_income"
+      },
+      {
+        "step": 6,
+        "name": "Capital Cost Treatment",
+        "tasks": [
+          "Amortize drilling costs",
+          "Depreciate facilities",
+          "Apply depletion allowance",
+          "Calculate capital charges"
+        ],
+        "output": "ebitda"
+      },
+      {
+        "step": 7,
+        "name": "Cash Flow Generation",
+        "tasks": [
+          "Calculate free cash flow",
+          "Apply working capital changes",
+          "Include abandonment provisions",
+          "Generate cash flow timeline"
+        ],
+        "output": "cash_flow_schedule"
+      },
+      {
+        "step": 8,
+        "name": "NPV and Metrics Calculation",
+        "tasks": [
+          "Apply discount rate",
+          "Calculate NPV",
+          "Calculate IRR",
+          "Determine payback period",
+          "Calculate other metrics"
+        ],
+        "output": "economic_metrics"
+      }
+    ]
+  },
+  "price_deck_template": {
+    "base_prices": {
+      "oil": {
+        "2024": 75.0,
+        "2025": 77.0,
+        "2026": 78.0,
+        "2027": 79.0,
+        "2028_plus": 80.0,
+        "unit": "$/BBL",
+        "benchmark": "WTI"
+      },
+      "gas": {
+        "2024": 3.5,
+        "2025": 3.75,
+        "2026": 4.0,
+        "2027": 4.0,
+        "2028_plus": 4.25,
+        "unit": "$/MCF",
+        "benchmark": "Henry Hub"
+      },
+      "ngl": {
+        "percentage_of_oil": 0.45,
+        "unit": "fraction of oil price"
+      }
+    },
+    "escalation": {
+      "method": "inflation",
+      "rate": 0.02,
+      "apply_to": [
+        "operating_costs",
+        "capital_costs"
+      ]
+    },
+    "differentials": {
+      "oil_quality": {
+        "API_gravity_adjustment": "formula based on API",
+        "sulfur_content_adjustment": "formula based on sulfur %"
+      },
+      "location": {
+        "gulf_coast_differential": -2.0,
+        "unit": "$/BBL"
+      }
+    }
+  },
+  "cost_assumptions": {
+    "operating_costs": {
+      "lease_operating_expense": {
+        "shallow_water": 8.0,
+        "deepwater": 12.0,
+        "ultra_deepwater": 15.0,
+        "unit": "$/BBL"
+      },
+      "workover_frequency": {
+        "years_between": 3,
+        "cost_per_workover": 3000000,
+        "unit": "$"
+      },
+      "transportation": {
+        "pipeline": 3.0,
+        "tanker": 5.0,
+        "unit": "$/BBL"
+      },
+      "g&a": {
+        "percentage_of_revenue": 0.03,
+        "unit": "fraction"
+      }
+    },
+    "capital_costs": {
+      "drilling": {
+        "shallow_water": 30000000,
+        "deepwater": 100000000,
+        "ultra_deepwater": 150000000,
+        "unit": "$/well"
+      },
+      "completion": {
+        "simple": 15000000,
+        "complex": 35000000,
+        "unit": "$/well"
+      }
+    },
+    "tax_assumptions": {
+      "federal_tax_rate": 0.21,
+      "state_tax_rate": 0.05,
+      "royalty_rate": 0.1875,
+      "severance_tax": 0.04
+    }
+  },
+  "metadata": {
+    "created": "2025-08-22T12:33:11.900027",
+    "version": "1.0",
+    "purpose": "Comprehensive report system economic calculations"
+  }
+}
