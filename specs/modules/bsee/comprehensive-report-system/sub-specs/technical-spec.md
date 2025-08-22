@@ -1,9 +1,11 @@
 # Technical Specification
 
-This is the technical specification for the spec detailed in @specs/modules/bsee/comprehensive-reports/spec.md
+This is the technical specification for the spec detailed in @specs/modules/bsee/comprehensive-report-system/spec.md
 
 > Created: 2025-08-06
-> Version: 1.0.0
+> Version: 1.1.0
+> Last Updated: 2025-08-22
+> Status: Enhanced
 
 ## Technical Requirements
 

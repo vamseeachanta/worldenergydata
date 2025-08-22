@@ -1,6 +1,6 @@
 # Tests Specification
 
-This is the tests coverage details for the spec detailed in @specs/modules/bsee/comprehensive-reports/spec.md
+This is the tests coverage details for the spec detailed in @specs/modules/bsee/comprehensive-report-system/spec.md
 
 > Created: 2025-08-06
 > Version: 1.0.0
