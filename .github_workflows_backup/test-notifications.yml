@@ -1,0 +1,198 @@
+name: Test Failure Notifications
+
+on:
+  workflow_run:
+    workflows: ["Test Suite", "Performance Tracking", "Coverage Report"]
+    types: [completed]
+
+jobs:
+  notify-failures:
+    name: Notify Test Failures
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Download workflow artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: test-results
+        path: test-artifacts
+      continue-on-error: true
+    
+    - name: Analyze failure
+      id: failure-analysis
+      run: |
+        echo "workflow_name=${{ github.event.workflow_run.name }}" >> $GITHUB_OUTPUT
+        echo "workflow_url=${{ github.event.workflow_run.html_url }}" >> $GITHUB_OUTPUT
+        echo "commit_sha=${{ github.event.workflow_run.head_sha }}" >> $GITHUB_OUTPUT
+        echo "branch=${{ github.event.workflow_run.head_branch }}" >> $GITHUB_OUTPUT
+        
+        # Try to extract failure details
+        failure_summary="Test execution failed"
+        if [ -d "test-artifacts" ]; then
+          # Look for test reports
+          if [ -f "test-artifacts/test-report.json" ]; then
+            failure_summary=$(python -c "
+        import json
+        with open('test-artifacts/test-report.json') as f:
+            data = json.load(f)
+            stats = data.get('statistics', {})
+            print(f\"Failed: {stats.get('total_failures', 'unknown')} tests\")
+        " 2>/dev/null || echo "Test execution failed")
+          fi
+        fi
+        
+        echo "failure_summary=${failure_summary}" >> $GITHUB_OUTPUT
+    
+    - name: Create GitHub Issue
+      if: github.event.workflow_run.event != 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const workflow_name = '${{ steps.failure-analysis.outputs.workflow_name }}';
+          const workflow_url = '${{ steps.failure-analysis.outputs.workflow_url }}';
+          const commit_sha = '${{ steps.failure-analysis.outputs.commit_sha }}';
+          const branch = '${{ steps.failure-analysis.outputs.branch }}';
+          const failure_summary = '${{ steps.failure-analysis.outputs.failure_summary }}';
+          
+          const title = `🔴 ${workflow_name} Failed - ${new Date().toISOString().split('T')[0]}`;
+          const body = `
+          ## Test Failure Alert
+          
+          The **${workflow_name}** workflow has failed.
+          
+          ### Details
+          - **Branch:** ${branch}
+          - **Commit:** ${commit_sha}
+          - **Summary:** ${failure_summary}
+          - **Workflow Run:** [View Details](${workflow_url})
+          
+          ### Action Required
+          Please investigate and fix the failing tests.
+          
+          ---
+          *This issue was automatically created by the test notification system.*
+          `;
+          
+          await github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: title,
+            body: body,
+            labels: ['test-failure', 'automated', 'bug']
+          });
+    
+    - name: Send Slack Notification
+      if: env.SLACK_WEBHOOK_URL != ''
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      run: |
+        curl -X POST $SLACK_WEBHOOK_URL \
+          -H 'Content-Type: application/json' \
+          -d '{
+            "text": "Test Failure Alert 🔴",
+            "blocks": [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "Test Failure in ${{ github.repository }}"
+                }
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Workflow:*\n${{ steps.failure-analysis.outputs.workflow_name }}"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Branch:*\n${{ steps.failure-analysis.outputs.branch }}"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Summary:*\n${{ steps.failure-analysis.outputs.failure_summary }}"
+                  }
+                ]
+              },
+              {
+                "type": "actions",
+                "elements": [
+                  {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "View Workflow"
+                    },
+                    "url": "${{ steps.failure-analysis.outputs.workflow_url }}"
+                  }
+                ]
+              }
+            ]
+          }'
+      continue-on-error: true
+    
+    - name: Send Email Notification
+      if: env.EMAIL_NOTIFICATIONS_ENABLED == 'true'
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: ${{ secrets.SMTP_SERVER }}
+        server_port: ${{ secrets.SMTP_PORT }}
+        username: ${{ secrets.SMTP_USERNAME }}
+        password: ${{ secrets.SMTP_PASSWORD }}
+        subject: Test Failure - ${{ github.repository }}
+        to: ${{ secrets.NOTIFICATION_EMAIL }}
+        from: GitHub Actions <noreply@github.com>
+        body: |
+          Test failure detected in ${{ github.repository }}
+          
+          Workflow: ${{ steps.failure-analysis.outputs.workflow_name }}
+          Branch: ${{ steps.failure-analysis.outputs.branch }}
+          Summary: ${{ steps.failure-analysis.outputs.failure_summary }}
+          
+          View details: ${{ steps.failure-analysis.outputs.workflow_url }}
+      continue-on-error: true
+
+  track-metrics:
+    name: Track Test Metrics
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Record workflow metrics
+      run: |
+        # Record metrics for dashboard
+        echo "Workflow: ${{ github.event.workflow_run.name }}" >> metrics.txt
+        echo "Status: ${{ github.event.workflow_run.conclusion }}" >> metrics.txt
+        echo "Duration: ${{ github.event.workflow_run.run_duration_ms }}ms" >> metrics.txt
+        echo "Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> metrics.txt
+        
+        # Create JSON metrics
+        cat > workflow_metrics.json << EOF
+        {
+          "workflow": "${{ github.event.workflow_run.name }}",
+          "status": "${{ github.event.workflow_run.conclusion }}",
+          "duration_ms": ${{ github.event.workflow_run.run_duration_ms || 0 }},
+          "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+          "branch": "${{ github.event.workflow_run.head_branch }}",
+          "commit": "${{ github.event.workflow_run.head_sha }}",
+          "run_id": "${{ github.event.workflow_run.id }}",
+          "run_number": "${{ github.event.workflow_run.run_number }}"
+        }
+        EOF
+    
+    - name: Upload metrics
+      uses: actions/upload-artifact@v3
+      with:
+        name: workflow-metrics-${{ github.run_number }}
+        path: |
+          metrics.txt
+          workflow_metrics.json
+        retention-days: 90
