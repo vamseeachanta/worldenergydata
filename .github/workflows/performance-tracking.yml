@@ -1,0 +1,152 @@
+name: Performance Tracking
+
+on:
+  schedule:
+    # Run performance benchmarks weekly on Sunday at 3 AM UTC
+    - cron: '0 3 * * 0'
+  workflow_dispatch:
+    inputs:
+      comparison_branch:
+        description: 'Branch to compare performance against'
+        required: false
+        default: 'main'
+
+jobs:
+  benchmark:
+    name: Performance Benchmarking
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache/pip
+          ~/.cache/uv
+          .venv
+        key: ${{ runner.os }}-benchmark-${{ hashFiles('pyproject.toml') }}
+    
+    - name: Install dependencies
+      run: |
+        pip install uv
+        uv venv
+        uv pip install -e ".[dev]"
+        uv pip install pytest-benchmark pytest-timeout memory-profiler
+    
+    - name: Run performance benchmarks
+      run: |
+        # Run benchmarks
+        uv run pytest tests/ -m benchmark \
+          --benchmark-only \
+          --benchmark-json=benchmark_current.json \
+          --benchmark-autosave \
+          --benchmark-save-data \
+          --benchmark-max-time=5
+    
+    - name: Checkout comparison branch
+      if: github.event.inputs.comparison_branch
+      run: |
+        git checkout ${{ github.event.inputs.comparison_branch }}
+    
+    - name: Run comparison benchmarks
+      if: github.event.inputs.comparison_branch
+      run: |
+        uv run pytest tests/ -m benchmark \
+          --benchmark-only \
+          --benchmark-json=benchmark_base.json \
+          --benchmark-max-time=5
+    
+    - name: Compare benchmarks
+      if: github.event.inputs.comparison_branch
+      run: |
+        uv run pytest-benchmark compare benchmark_current.json benchmark_base.json \
+          --csv=benchmark_comparison.csv \
+          --histogram=benchmark_histogram.svg
+    
+    - name: Generate performance report
+      run: |
+        uv run python -m worldenergydata.testing.performance.cli report \
+          --format html \
+          --output performance_report.html \
+          --days 30
+        
+        uv run python -m worldenergydata.testing.performance.cli dashboard \
+          --output performance_dashboard.html
+    
+    - name: Analyze performance trends
+      run: |
+        uv run python -c "
+        from worldenergydata.testing.performance import PerformanceAnalyzer, PerformanceDatabase
+        
+        db = PerformanceDatabase()
+        analyzer = PerformanceAnalyzer(db)
+        
+        # Get trends
+        trends = analyzer.analyze_trends(days=30)
+        print('Performance Trends:', trends)
+        
+        # Get recommendations
+        recommendations = analyzer.get_optimization_recommendations()
+        for rec in recommendations:
+            print(f\"[{rec['priority']}] {rec['title']}: {rec['description']}\")
+        
+        # Check for regressions
+        regressions = analyzer.detect_regressions(lookback_days=7)
+        if regressions:
+            print('⚠️ Performance Regressions Detected:')
+            for reg in regressions:
+                print(f\"  - {reg['test_name']}: {reg['regression_factor']:.2f}x slower\")
+        "
+    
+    - name: Upload performance artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: performance-artifacts-${{ github.run_number }}
+        path: |
+          benchmark*.json
+          benchmark_comparison.csv
+          benchmark_histogram.svg
+          performance_report.html
+          performance_dashboard.html
+          .test_performance.db
+        retention-days: 90
+    
+    - name: Create performance issue if regression detected
+      if: failure()
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const title = `Performance Regression Detected - ${new Date().toISOString().split('T')[0]}`;
+          const body = `
+          ## Performance Regression Alert 🚨
+          
+          A performance regression has been detected in the latest benchmarks.
+          
+          **Run ID:** ${context.runId}
+          **Workflow:** ${context.workflow}
+          
+          Please review the performance artifacts and take action:
+          - Check the [workflow run](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
+          - Review the performance dashboard
+          - Analyze the regression details
+          
+          cc @${context.repo.owner}
+          `;
+          
+          await github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: title,
+            body: body,
+            labels: ['performance', 'regression', 'automated']
+          });
