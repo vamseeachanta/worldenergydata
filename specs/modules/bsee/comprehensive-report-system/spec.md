@@ -1,6 +1,6 @@
 # Spec Requirements Document
 
-> Spec: Comprehensive Well and Production Reports
+> Spec: Comprehensive Report System
 > Created: 2025-08-06
 > Status: Planning
 > Module: bsee
@@ -51,7 +51,7 @@ The solution involves creating a unified reporting framework that aggregates wel
 
 ## System Overview
 
-The Comprehensive Well and Production Reports system creates a unified reporting framework for offshore energy data analysis. It provides standardized reports across organizational hierarchies with rich visualizations and multiple export formats.
+The Comprehensive Report System creates a unified reporting framework for offshore energy data analysis. It provides standardized reports across organizational hierarchies with rich visualizations and multiple export formats.
 
 ```mermaid
 graph TB
@@ -180,15 +180,185 @@ The analyst executes `python -m worldenergydata.bsee report --type field --compa
 3. Multi-format export capability generating Excel workbooks, PDF documents, and interactive HTML dashboards
 4. Performance capable of processing block-level reports (1000+ wells) in under 10 minutes with comprehensive visualizations
 
+## Data Flow Architecture
+
+```mermaid
+flowchart TD
+    subgraph "Data Collection"
+        A1[Binary WAR Files]
+        A2[OGORA Production]
+        A3[Well Headers]
+        A4[Directional Surveys]
+    end
+    
+    subgraph "Data Processing"
+        B1[Data Parser]
+        B2[Data Validator]
+        B3[Data Normalizer]
+        B4[Hierarchy Builder]
+    end
+    
+    subgraph "Aggregation Engine"
+        C1[Well Aggregator]
+        C2[Lease Aggregator]
+        C3[Field Aggregator]
+        C4[Block Aggregator]
+    end
+    
+    subgraph "Report Generation"
+        D1[Template Selector]
+        D2[Context Builder]
+        D3[Variable Injector]
+        D4[Format Renderer]
+    end
+    
+    subgraph "Output Delivery"
+        E1[Excel Generator]
+        E2[PDF Creator]
+        E3[HTML Builder]
+        E4[JSON Exporter]
+    end
+    
+    A1 --> B1
+    A2 --> B1
+    A3 --> B1
+    A4 --> B1
+    
+    B1 --> B2
+    B2 --> B3
+    B3 --> B4
+    
+    B4 --> C1
+    C1 --> C2
+    C2 --> C3
+    C3 --> C4
+    
+    C4 --> D1
+    D1 --> D2
+    D2 --> D3
+    D3 --> D4
+    
+    D4 --> E1
+    D4 --> E2
+    D4 --> E3
+    D4 --> E4
+    
+    style A1 fill:#e1f5fe
+    style C4 fill:#c8e6c9
+    style E1 fill:#fff9c4
+```
+
+## Report Template Architecture
+
+```mermaid
+classDiagram
+    class BaseReportTemplate {
+        +name: str
+        +version: str
+        +sections: List
+        +render(data: Dict)
+        +validate(data: Dict)
+    }
+    
+    class ComplianceTemplate {
+        +regulatory_sections: List
+        +compliance_metrics: Dict
+        +generate_compliance_summary()
+    }
+    
+    class EconomicTemplate {
+        +financial_sections: List
+        +npv_calculations: Dict
+        +generate_economic_analysis()
+    }
+    
+    class OperationalTemplate {
+        +operational_sections: List
+        +performance_metrics: Dict
+        +generate_operational_report()
+    }
+    
+    class ExecutiveTemplate {
+        +summary_sections: List
+        +key_indicators: Dict
+        +generate_executive_summary()
+    }
+    
+    class TechnicalTemplate {
+        +technical_sections: List
+        +well_details: Dict
+        +generate_technical_report()
+    }
+    
+    BaseReportTemplate <|-- ComplianceTemplate
+    BaseReportTemplate <|-- EconomicTemplate
+    BaseReportTemplate <|-- OperationalTemplate
+    BaseReportTemplate <|-- ExecutiveTemplate
+    BaseReportTemplate <|-- TechnicalTemplate
+```
+
+## Aggregation Hierarchy
+
+```mermaid
+graph BT
+    subgraph "Well Level"
+        W1[Well 001]
+        W2[Well 002]
+        W3[Well 003]
+        W4[Well 004]
+        W5[Well 005]
+        W6[Well 006]
+    end
+    
+    subgraph "Lease Level"
+        L1[Lease G12345]
+        L2[Lease G12346]
+        L3[Lease G12347]
+    end
+    
+    subgraph "Field Level"
+        F1[Field Alpha]
+        F2[Field Beta]
+    end
+    
+    subgraph "Block Level"
+        B1[Block 525]
+    end
+    
+    W1 --> L1
+    W2 --> L1
+    W3 --> L2
+    W4 --> L2
+    W5 --> L3
+    W6 --> L3
+    
+    L1 --> F1
+    L2 --> F1
+    L3 --> F2
+    
+    F1 --> B1
+    F2 --> B1
+    
+    style B1 fill:#ffeb3b
+    style F1 fill:#8bc34a
+    style F2 fill:#8bc34a
+    style L1 fill:#03a9f4
+    style L2 fill:#03a9f4
+    style L3 fill:#03a9f4
+```
+
 ## Spec Documentation
 
 ### Primary Documents
-- Tasks: @specs/modules/bsee/comprehensive-reports/tasks.md
-- Technical Specification: @specs/modules/bsee/comprehensive-reports/sub-specs/technical-spec.md
+- Prompt Evolution: @specs/modules/bsee/comprehensive-report-system/prompt.md
+- Task Summary: @specs/modules/bsee/comprehensive-report-system/task_summary.md
+- Tasks: @specs/modules/bsee/comprehensive-report-system/tasks.md
+- Technical Specification: @specs/modules/bsee/comprehensive-report-system/sub-specs/technical-spec.md
 
 ### Sub-Specifications  
-- Report Templates: @specs/modules/bsee/comprehensive-reports/sub-specs/templates-spec.md
-- Tests Specification: @specs/modules/bsee/comprehensive-reports/sub-specs/tests.md
+- Report Templates: @specs/modules/bsee/comprehensive-report-system/sub-specs/templates-spec.md
+- Tests Specification: @specs/modules/bsee/comprehensive-report-system/sub-specs/tests.md
+- Go-By References: @specs/modules/bsee/comprehensive-report-system/sub-specs/go_by/
 
 ### Related Specifications
 - Existing BSEE Analysis: @src/worldenergydata/modules/bsee/analysis/
