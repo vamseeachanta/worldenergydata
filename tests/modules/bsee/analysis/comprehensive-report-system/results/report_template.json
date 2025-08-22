@@ -1,0 +1,47 @@
+{
+  "field_report": {
+    "metadata": {
+      "field_name": "{{field_name}}",
+      "report_date": "{{report_date}}",
+      "data_source": "BSEE",
+      "report_type": "Field Summary"
+    },
+    "field_summary": {
+      "operator": "{{company}}",
+      "water_depth_ft": "{{water_depth}}",
+      "block_number": "{{block}}",
+      "lease_number": "{{lease}}",
+      "discovery_date": "{{discovery_date}}",
+      "first_production": "{{first_production}}",
+      "status": "{{status}}"
+    },
+    "production_summary": {
+      "total_wells": "{{well_count}}",
+      "producing_wells": "{{producing_count}}",
+      "cumulative_oil_mmbbl": "{{cum_oil}}",
+      "cumulative_gas_bcf": "{{cum_gas}}",
+      "peak_production_bopd": "{{peak_prod}}",
+      "current_production_bopd": "{{current_prod}}"
+    },
+    "well_details": {
+      "headers": [
+        "Well Name",
+        "API Number",
+        "Spud Date",
+        "TD (ft)",
+        "Days to Drill",
+        "Completion Type",
+        "First Production",
+        "Peak Rate (bopd)",
+        "Cumulative (MMbbl)",
+        "Status"
+      ],
+      "data": "{{well_data_table}}"
+    },
+    "economics": {
+      "estimated_reserves_mmbbl": "{{reserves}}",
+      "recovery_factor": "{{recovery_factor}}",
+      "field_life_years": "{{field_life}}"
+    }
+  }
+}
