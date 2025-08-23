@@ -15,7 +15,6 @@ from assetutilities.common.yml_utilities import WorkingWithYAML
 
 # Reader imports
 from worldenergydata.modules.bsee.bsee import bsee
-from worldenergydata.modules.bsee.custom_router import CustomRouter
 from worldenergydata.modules.bsee.zip_data_dwnld.zip import zip
 
 app_manager = ConfigureApplicationInputs()
@@ -60,10 +59,6 @@ def engine(inputfile: str = None, cfg: dict = None, config_flag: bool = True) ->
     elif basename in ["dwnld_from_zipurl"]:
         dwnld_from_zipurl = zip()
         cfg_base = dwnld_from_zipurl.router(cfg_base)
-    
-    elif basename in ["bsee_custom"]:
-        bsee_custom = CustomRouter()
-        cfg_base = bsee_custom.router(cfg_base)
 
     else:
         raise (Exception(f"Analysis for basename: {basename} not found. ... FAIL"))
