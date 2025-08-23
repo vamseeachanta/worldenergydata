@@ -79,7 +79,11 @@ class TestNPVAnalysis:
     @patch('pandas.read_excel')
     def test_load_actual_excel_data_success(self, mock_read_excel, mock_exists):
         """Test loading actual Excel data successfully."""
-        from worldenergydata.modules.bsee.analysis.custom_scripts.Copilot.npv_analysis import load_actual_excel_data
+        # Import from tests location where custom scripts were moved
+        import sys
+        import os
+        sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../../modules/bsee/analysis/custom_scripts'))
+        from Copilot.npv_analysis import load_actual_excel_data
         
         mock_exists.return_value = True
         mock_read_excel.return_value = pd.DataFrame()
@@ -94,7 +98,11 @@ class TestNPVAnalysis:
     @patch('os.path.exists')
     def test_load_actual_excel_data_file_not_found(self, mock_exists):
         """Test loading Excel data when file doesn't exist."""
-        from worldenergydata.modules.bsee.analysis.custom_scripts.Copilot.npv_analysis import load_actual_excel_data
+        # Import from tests location where custom scripts were moved
+        import sys
+        import os
+        sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../../modules/bsee/analysis/custom_scripts'))
+        from Copilot.npv_analysis import load_actual_excel_data
         
         mock_exists.return_value = False
         
@@ -103,10 +111,14 @@ class TestNPVAnalysis:
         assert cash_flows is None
         assert discount_rates is None
     
-    @patch('worldenergydata.modules.bsee.analysis.custom_scripts.Copilot.npv_analysis.load_actual_excel_data')
+    @patch('Copilot.npv_analysis.load_actual_excel_data')
     def test_calculate_custom_npv_scenarios(self, mock_load):
         """Test calculating NPV scenarios."""
-        from worldenergydata.modules.bsee.analysis.custom_scripts.Copilot.npv_analysis import calculate_custom_npv_scenarios
+        # Import from tests location where custom scripts were moved
+        import sys
+        import os
+        sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../../modules/bsee/analysis/custom_scripts'))
+        from Copilot.npv_analysis import calculate_custom_npv_scenarios
         
         mock_load.return_value = (self.sample_cash_flows, self.discount_rates)
         
@@ -119,7 +131,11 @@ class TestNPVAnalysis:
     
     def test_save_results_to_file(self):
         """Test saving NPV results to file."""
-        from worldenergydata.modules.bsee.analysis.custom_scripts.Copilot.npv_analysis import save_results_to_file
+        # Import from tests location where custom scripts were moved
+        import sys
+        import os
+        sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../../modules/bsee/analysis/custom_scripts'))
+        from Copilot.npv_analysis import save_results_to_file
         
         npv_collection = [(0.10, 123456.78), (0.15, -98765.43)]
         
@@ -268,7 +284,11 @@ class TestNPVSmoke:
     
     def test_npv_module_imports(self):
         """Test that NPV analysis modules can be imported."""
-        from worldenergydata.modules.bsee.analysis.custom_scripts.Copilot import npv_analysis
+        # Import from tests location where custom scripts were moved
+        import sys
+        import os
+        sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../../modules/bsee/analysis/custom_scripts'))
+        from Copilot import npv_analysis
         assert hasattr(npv_analysis, 'calculate_custom_npv_scenarios')
         assert hasattr(npv_analysis, 'load_actual_excel_data')
         assert hasattr(npv_analysis, 'save_results_to_file')
