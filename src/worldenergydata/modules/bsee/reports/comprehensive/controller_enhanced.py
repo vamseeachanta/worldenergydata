@@ -296,9 +296,111 @@ class ReportController:
         return {}
     
     def generate_report(self, config: ReportConfiguration, params: ReportParameters) -> Any:
-        """Generate a single report"""
-        # Stub implementation - will be completed in later tasks
-        raise NotImplementedError("Report generation not yet implemented")
+        """Generate comprehensive report using enhanced data fetching
+        
+        Args:
+            config: Report configuration
+            params: Report parameters
+            
+        Returns:
+            Generated report data
+        """
+        try:
+            # Refresh data if needed
+            if self.config.get('refresh_data', False):
+                self.data_loader.refresh_data_if_needed(self.config)
+            
+            # Generate report based on type
+            if config.report_type == ReportType.BLOCK:
+                return self._generate_block_report(config, params)
+            elif config.report_type == ReportType.FIELD:
+                return self._generate_field_report(config, params)
+            elif config.report_type == ReportType.LEASE:
+                return self._generate_lease_report(config, params)
+            else:
+                return self._generate_well_report(config, params)
+                
+        except Exception as e:
+            return {
+                "status": "error",
+                "report_type": config.report_type.value,
+                "entity": config.entity_name,
+                "error": str(e)
+            }
+    
+    def _generate_block_report(self, config: ReportConfiguration, params: ReportParameters) -> Dict[str, Any]:
+        """Generate block-level report"""
+        # Extract block numbers from entity name
+        block_numbers = [config.entity_name] if config.entity_name else []
+        
+        # Fetch and aggregate data
+        aggregated_data = self.block_aggregator.aggregate_with_fresh_data(
+            block_numbers, self.config
+        )
+        
+        return {
+            "status": "success",
+            "report_type": "block",
+            "entity": config.entity_name,
+            "data": aggregated_data,
+            "parameters": params.__dict__,
+            "generated_at": datetime.now().isoformat()
+        }
+    
+    def _generate_field_report(self, config: ReportConfiguration, params: ReportParameters) -> Dict[str, Any]:
+        """Generate field-level report"""
+        # Extract field names from entity name
+        field_names = [config.entity_name] if config.entity_name else []
+        
+        # Fetch and aggregate data
+        aggregated_data = self.field_aggregator.aggregate_with_fresh_data(
+            field_names, self.config
+        )
+        
+        return {
+            "status": "success",
+            "report_type": "field",
+            "entity": config.entity_name,
+            "data": aggregated_data,
+            "parameters": params.__dict__,
+            "generated_at": datetime.now().isoformat()
+        }
+    
+    def _generate_lease_report(self, config: ReportConfiguration, params: ReportParameters) -> Dict[str, Any]:
+        """Generate lease-level report"""
+        # Extract lease numbers from entity name
+        lease_numbers = [config.entity_name] if config.entity_name else []
+        
+        # Fetch and aggregate data
+        aggregated_data = self.lease_aggregator.aggregate_with_fresh_data(
+            lease_numbers, self.config
+        )
+        
+        return {
+            "status": "success",
+            "report_type": "lease",
+            "entity": config.entity_name,
+            "data": aggregated_data,
+            "parameters": params.__dict__,
+            "generated_at": datetime.now().isoformat()
+        }
+    
+    def _generate_well_report(self, config: ReportConfiguration, params: ReportParameters) -> Dict[str, Any]:
+        """Generate well-level report"""
+        # Extract API numbers from entity name
+        api_numbers = [config.entity_name] if config.entity_name else []
+        
+        # Fetch well data
+        well_data = self.data_loader.fetch_wells_by_api_list(api_numbers)
+        
+        return {
+            "status": "success",
+            "report_type": "well",
+            "entity": config.entity_name,
+            "data": well_data.to_dict('records') if not well_data.empty else [],
+            "parameters": params.__dict__,
+            "generated_at": datetime.now().isoformat()
+        }
     
     def batch_generate(self, configs: List[ReportConfiguration], 
                       params: ReportParameters, 
