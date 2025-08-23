@@ -1,11 +1,13 @@
 """
-Block-level data aggregator
-Aggregates field-level data up to block level
+Enhanced Block-level data aggregator with integrated data fetching
+Aggregates field-level data up to block level with direct BSEE data integration
 """
 
 from typing import Dict, Any, List, Optional
-from datetime import date
+from datetime import date, datetime
 import logging
+import pandas as pd
+from pathlib import Path
 
 from .base import DataAggregator
 from ..models import (
@@ -13,17 +15,41 @@ from ..models import (
     Block, Field
 )
 
+# Import enhanced data loader and BSEE data modules
+from ..data_loader_enhanced import HierarchicalDataLoader
+from ....data._from_bin.block_data import BlockData
+from ....data._by_block.data_from_local_files import DataFromLocalFiles as BlockDataFromFiles
+
 
 logger = logging.getLogger(__name__)
 
 
 class BlockAggregator(DataAggregator):
-    """Aggregator for block-level data"""
+    """Enhanced aggregator for block-level data with integrated data fetching
     
-    def __init__(self):
-        """Initialize BlockAggregator"""
+    Features:
+    - Direct block data fetching from BSEE binary files
+    - Enhanced data refresh integration
+    - Multi-source data aggregation
+    """
+    
+    def __init__(self, data_path: Optional[str] = None):
+        """Initialize enhanced BlockAggregator
+        
+        Args:
+            data_path: Path to BSEE data directory
+        """
         super().__init__()
         self.hierarchy_level = HierarchyLevel.BLOCK
+        self.data_path = data_path or Path("data/bsee")
+        
+        # Initialize data fetchers
+        self.block_data_fetcher = BlockData()
+        self.block_files_loader = BlockDataFromFiles()
+        self.enhanced_loader = HierarchicalDataLoader(data_path, use_enhanced_refresh=True)
+        
+        # Cache for block data
+        self._block_data_cache = {}
     
     def get_hierarchy_level(self) -> HierarchyLevel:
         """Get hierarchy level"""
@@ -122,6 +148,110 @@ class BlockAggregator(DataAggregator):
         self.cached_results[cache_key] = result
         
         return result
+    
+    def fetch_block_data(self, block_numbers: List[str], cfg: Optional[Dict[str, Any]] = None) -> pd.DataFrame:
+        """Fetch block data directly from BSEE binary files
+        
+        Args:
+            block_numbers: List of block numbers to fetch
+            cfg: Optional configuration dictionary
+            
+        Returns:
+            DataFrame with block data
+        """
+        cache_key = f"blocks_{','.join(sorted(block_numbers))}"
+        
+        if cache_key in self._block_data_cache:
+            logger.info(f"Using cached data for blocks: {block_numbers}")
+            return self._block_data_cache[cache_key]
+        
+        try:
+            # Fetch from binary files
+            results = self.block_data_fetcher.get_block_data_from_input_bin_files(block_numbers)
+            
+            # Combine results
+            if results:
+                combined_df = pd.concat(results.values(), ignore_index=True)
+                self._block_data_cache[cache_key] = combined_df
+                return combined_df
+            else:
+                logger.warning(f"No data found for blocks: {block_numbers}")
+                return pd.DataFrame()
+                
+        except Exception as e:
+            logger.error(f"Error fetching block data: {e}")
+            return pd.DataFrame()
+    
+    def aggregate_with_fresh_data(self, block_numbers: List[str], 
+                                  cfg: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """Aggregate data with fresh fetch from BSEE sources
+        
+        Args:
+            block_numbers: List of block numbers to aggregate
+            cfg: Optional configuration dictionary
+            
+        Returns:
+            Aggregated block-level metrics
+        """
+        # Refresh data if needed
+        if cfg:
+            self.enhanced_loader.refresh_data_if_needed(cfg)
+        
+        # Fetch fresh block data
+        block_df = self.fetch_block_data(block_numbers, cfg)
+        
+        if block_df.empty:
+            logger.warning("No block data available for aggregation")
+            return {}
+        
+        # Aggregate metrics
+        aggregated = {
+            'total_blocks': len(block_df['Block Number'].unique()) if 'Block Number' in block_df else 0,
+            'total_fields': len(block_df['Field Name'].unique()) if 'Field Name' in block_df else 0,
+            'area_codes': block_df['Area Code'].unique().tolist() if 'Area Code' in block_df else [],
+            'block_numbers': block_numbers,
+            'data_source': 'BSEE Binary Files',
+            'fetch_timestamp': datetime.now().isoformat()
+        }
+        
+        # Add production metrics if available
+        if self.enhanced_loader:
+            production_data = self.enhanced_loader._load_production_data()
+            if production_data:
+                aggregated['has_production_data'] = True
+                aggregated['production_record_count'] = len(production_data)
+        
+        return aggregated
+    
+    def get_regional_summary(self, area_code: str) -> Dict[str, Any]:
+        """Get summary for all blocks in a region
+        
+        Args:
+            area_code: Area code (e.g., 'GC' for Green Canyon)
+            
+        Returns:
+            Regional summary metrics
+        """
+        try:
+            # Use the files loader for regional data
+            regional_data = self.block_files_loader.get_block_data_by_area_code(area_code)
+            
+            if regional_data.empty:
+                return {'area_code': area_code, 'blocks': [], 'error': 'No data found'}
+            
+            summary = {
+                'area_code': area_code,
+                'total_blocks': len(regional_data['Block Number'].unique()),
+                'total_fields': len(regional_data['Field Name'].unique()) if 'Field Name' in regional_data else 0,
+                'blocks': regional_data['Block Number'].unique().tolist(),
+                'data_points': len(regional_data)
+            }
+            
+            return summary
+            
+        except Exception as e:
+            logger.error(f"Error getting regional summary: {e}")
+            return {'area_code': area_code, 'error': str(e)}
     
     def validate(self, data: Dict[str, Any]) -> bool:
         """

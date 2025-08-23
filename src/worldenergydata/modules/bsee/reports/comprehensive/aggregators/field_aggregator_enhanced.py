@@ -129,6 +129,155 @@ class FieldAggregator(DataAggregator):
         
         return result
     
+    def fetch_field_leases(self, field_name: str, cfg: Optional[Dict[str, Any]] = None) -> pd.DataFrame:
+        """Fetch all leases for a specific field
+        
+        Args:
+            field_name: Name of the field
+            cfg: Optional configuration dictionary
+            
+        Returns:
+            DataFrame with lease data for the field
+        """
+        cache_key = f"field_{field_name}_leases"
+        
+        if cache_key in self._field_data_cache:
+            logger.info(f"Using cached lease data for field: {field_name}")
+            return self._field_data_cache[cache_key]
+        
+        try:
+            # Get all lease data and filter by field
+            all_leases = self.lease_files_loader.get_all_lease_data()
+            
+            if not all_leases.empty and 'Field Name' in all_leases.columns:
+                field_leases = all_leases[all_leases['Field Name'] == field_name]
+                self._field_data_cache[cache_key] = field_leases
+                return field_leases
+            else:
+                logger.warning(f"No lease data found for field: {field_name}")
+                return pd.DataFrame()
+                
+        except Exception as e:
+            logger.error(f"Error fetching field lease data: {e}")
+            return pd.DataFrame()
+    
+    def fetch_field_production(self, field_name: str, cfg: Optional[Dict[str, Any]] = None) -> pd.DataFrame:
+        """Fetch production data for a specific field
+        
+        Args:
+            field_name: Name of the field
+            cfg: Optional configuration dictionary
+            
+        Returns:
+            DataFrame with production data for the field
+        """
+        cache_key = f"field_{field_name}_production"
+        
+        if cache_key in self._production_cache:
+            logger.info(f"Using cached production data for field: {field_name}")
+            return self._production_cache[cache_key]
+        
+        try:
+            # Load production data for the field
+            production_data = self.enhanced_loader._load_production_data(field_name=field_name)
+            
+            if production_data:
+                production_df = pd.DataFrame(production_data)
+                self._production_cache[cache_key] = production_df
+                return production_df
+            else:
+                logger.warning(f"No production data found for field: {field_name}")
+                return pd.DataFrame()
+                
+        except Exception as e:
+            logger.error(f"Error fetching field production data: {e}")
+            return pd.DataFrame()
+    
+    def aggregate_with_fresh_data(self, field_names: List[str], 
+                                  cfg: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """Aggregate data with fresh fetch from BSEE sources
+        
+        Args:
+            field_names: List of field names to aggregate
+            cfg: Optional configuration dictionary
+            
+        Returns:
+            Aggregated field-level metrics
+        """
+        # Refresh data if needed
+        if cfg:
+            self.enhanced_loader.refresh_data_if_needed(cfg)
+        
+        aggregated = {
+            'fields': {},
+            'total_fields': len(field_names),
+            'data_source': 'BSEE Binary Files',
+            'fetch_timestamp': datetime.now().isoformat()
+        }
+        
+        for field_name in field_names:
+            # Fetch lease data for the field
+            lease_df = self.fetch_field_leases(field_name, cfg)
+            
+            # Fetch production data
+            production_df = self.fetch_field_production(field_name, cfg)
+            
+            field_metrics = {
+                'lease_count': len(lease_df['Lease Number'].unique()) if 'Lease Number' in lease_df else 0,
+                'has_production': not production_df.empty,
+                'production_records': len(production_df) if not production_df.empty else 0
+            }
+            
+            # Add production metrics if available
+            if not production_df.empty:
+                if 'Oil Volume' in production_df:
+                    field_metrics['total_oil_bbls'] = production_df['Oil Volume'].sum()
+                if 'Gas Volume' in production_df:
+                    field_metrics['total_gas_mcf'] = production_df['Gas Volume'].sum()
+            
+            aggregated['fields'][field_name] = field_metrics
+        
+        return aggregated
+    
+    def get_field_summary(self, field_name: str) -> Dict[str, Any]:
+        """Get comprehensive summary for a specific field
+        
+        Args:
+            field_name: Name of the field
+            
+        Returns:
+            Field summary metrics
+        """
+        try:
+            # Get lease data
+            lease_df = self.fetch_field_leases(field_name)
+            
+            # Get production data
+            production_df = self.fetch_field_production(field_name)
+            
+            summary = {
+                'field_name': field_name,
+                'lease_count': len(lease_df['Lease Number'].unique()) if 'Lease Number' in lease_df and not lease_df.empty else 0,
+                'area_codes': lease_df['Area Code'].unique().tolist() if 'Area Code' in lease_df and not lease_df.empty else [],
+                'block_numbers': lease_df['Block Number'].unique().tolist() if 'Block Number' in lease_df and not lease_df.empty else [],
+                'has_production_data': not production_df.empty,
+                'data_points': len(lease_df) + len(production_df)
+            }
+            
+            # Add production summary if available
+            if not production_df.empty:
+                summary['production'] = {
+                    'record_count': len(production_df),
+                    'total_oil_bbls': production_df['Oil Volume'].sum() if 'Oil Volume' in production_df else 0,
+                    'total_gas_mcf': production_df['Gas Volume'].sum() if 'Gas Volume' in production_df else 0
+                }
+            
+            return summary
+            
+        except Exception as e:
+            logger.error(f"Error getting field summary: {e}")
+            return {'field_name': field_name, 'error': str(e)}
+    
     def validate(self, data: Dict[str, Any]) -> bool:
         """
         Validate input data
