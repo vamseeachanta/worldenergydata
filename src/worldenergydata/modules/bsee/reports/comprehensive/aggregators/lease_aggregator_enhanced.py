@@ -1,11 +1,13 @@
 """
-Lease-level data aggregator
-Aggregates well-level data up to lease level
+Enhanced Lease-level data aggregator with integrated data fetching
+Aggregates well-level data up to lease level with direct BSEE data integration
 """
 
 from typing import Dict, Any, List, Optional
 from datetime import date, datetime
 import logging
+import pandas as pd
+from pathlib import Path
 
 from .base import DataAggregator
 from ..models import (
@@ -13,17 +15,45 @@ from ..models import (
     Lease, Well, WellSummary
 )
 
+# Import enhanced data loader and BSEE data modules  
+from ..data_loader_enhanced import HierarchicalDataLoader
+from ....data._from_bin.lease_data import LeaseData
+from ....data._by_lease.data_from_local_files import DataFromLocalFiles as LeaseDataFromFiles
+from ....data.production.production_data_sources import ProductionDataFromSources
+
 
 logger = logging.getLogger(__name__)
 
 
 class LeaseAggregator(DataAggregator):
-    """Aggregator for lease-level data"""
+    """Enhanced aggregator for lease-level data with integrated data fetching
     
-    def __init__(self):
-        """Initialize LeaseAggregator"""
+    Features:
+    - Direct integration with BSEE lease data modules
+    - Real-time data fetching from binary files
+    - Production data aggregation from multiple sources
+    - Support for both block and lease-level queries
+    """
+    
+    def __init__(self, data_path: Optional[Path] = None):
+        """Initialize Enhanced LeaseAggregator
+        
+        Args:
+            data_path: Path to BSEE data directory
+        """
         super().__init__()
         self.hierarchy_level = HierarchyLevel.LEASE
+        self.data_path = data_path or Path("data/bsee")
+        
+        # Initialize data fetchers
+        self.lease_data_fetcher = LeaseData()
+        self.lease_files_loader = LeaseDataFromFiles()
+        self.production_sources = ProductionDataFromSources()
+        self.enhanced_loader = HierarchicalDataLoader(data_path, use_enhanced_refresh=True)
+        
+        # Cache for lease data
+        self._lease_data_cache = {}
+        self._production_cache = {}
     
     def get_hierarchy_level(self) -> HierarchyLevel:
         """Get hierarchy level"""
@@ -322,3 +352,247 @@ class LeaseAggregator(DataAggregator):
         metrics.calculate_net_income()
         
         return metrics
+    
+    def fetch_lease_data(self, lease_number: str, cfg: Optional[Dict[str, Any]] = None) -> pd.DataFrame:
+        """
+        Fetch lease data directly from BSEE sources
+        
+        Args:
+            lease_number: Lease number to fetch
+            cfg: Configuration dictionary
+            
+        Returns:
+            DataFrame with lease data
+        """
+        # Check cache first
+        if lease_number in self._lease_data_cache:
+            logger.info(f"Using cached data for lease {lease_number}")
+            return self._lease_data_cache[lease_number]
+        
+        logger.info(f"Fetching fresh data for lease {lease_number}")
+        
+        # Use enhanced loader to fetch lease data
+        lease_df = self.enhanced_loader._load_lease_data(lease_number, cfg)
+        
+        if not lease_df.empty:
+            # Cache the result
+            self._lease_data_cache[lease_number] = lease_df
+            logger.info(f"Successfully fetched {len(lease_df)} records for lease {lease_number}")
+        else:
+            logger.warning(f"No data found for lease {lease_number}")
+        
+        return lease_df
+    
+    def fetch_production_data(self, lease_number: str) -> pd.DataFrame:
+        """
+        Fetch production data for a specific lease
+        
+        Args:
+            lease_number: Lease number to fetch production for
+            
+        Returns:
+            DataFrame with production data
+        """
+        # Check cache first
+        if lease_number in self._production_cache:
+            return self._production_cache[lease_number]
+        
+        logger.info(f"Fetching production data for lease {lease_number}")
+        
+        # Try to load from binary
+        binary_path = self.data_path / "binary" / "production.bin"
+        production_df = pd.DataFrame()
+        
+        if binary_path.exists():
+            try:
+                import pickle
+                with open(binary_path, 'rb') as f:
+                    all_production = pickle.load(f)
+                    
+                    # Filter for specific lease
+                    lease_production = [
+                        rec for rec in all_production
+                        if rec.get('lease_number') == lease_number
+                    ]
+                    
+                    if lease_production:
+                        production_df = pd.DataFrame(lease_production)
+                        self._production_cache[lease_number] = production_df
+                        
+            except Exception as e:
+                logger.error(f"Error loading production data: {e}")
+        
+        return production_df
+    
+    def aggregate_with_fresh_data(self, lease_number: str, 
+                                 cfg: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """
+        Aggregate lease data with fresh data fetching
+        
+        Args:
+            lease_number: Lease number to aggregate
+            cfg: Configuration dictionary
+            
+        Returns:
+            Aggregated metrics with fresh data
+        """
+        # Fetch fresh lease data
+        lease_df = self.fetch_lease_data(lease_number, cfg)
+        
+        # Fetch production data
+        production_df = self.fetch_production_data(lease_number)
+        
+        # Initialize aggregation results
+        result = {
+            'lease_number': lease_number,
+            'oil_bbls': 0,
+            'gas_mcf': 0,
+            'water_bbls': 0,
+            'well_count': 0,
+            'active_well_count': 0,
+            'oil_per_well': 0,
+            'gas_per_well': 0,
+            'wells': [],
+            'first_production_date': None,
+            'last_production_date': None,
+            'cumulative_oil': 0,
+            'cumulative_gas': 0,
+            'peak_oil_rate': 0,
+            'peak_gas_rate': 0,
+            'average_water_depth': 0,
+            'total_depth_sum': 0,
+            'field_names': set(),
+            'block_numbers': set()
+        }
+        
+        # Process lease DataFrame
+        if not lease_df.empty:
+            # Count wells
+            if 'API_WELL_NUMBER' in lease_df.columns:
+                result['well_count'] = lease_df['API_WELL_NUMBER'].nunique()
+                
+                # Get well details
+                for _, well_row in lease_df.iterrows():
+                    well_info = {
+                        'api': well_row.get('API_WELL_NUMBER'),
+                        'name': well_row.get('WELL_NAME', 'Unknown'),
+                        'water_depth': well_row.get('WATER_DEPTH', 0),
+                        'total_depth': well_row.get('TOTAL_DEPTH', 0),
+                        'status': well_row.get('STATUS', 'Unknown'),
+                        'spud_date': well_row.get('SPUD_DATE')
+                    }
+                    result['wells'].append(well_info)
+                    
+                    # Track fields and blocks
+                    if 'FIELD_NAME' in well_row:
+                        result['field_names'].add(well_row['FIELD_NAME'])
+                    if 'BLOCK_NUMBER' in well_row:
+                        result['block_numbers'].add(well_row['BLOCK_NUMBER'])
+                    
+                    # Sum depths
+                    result['total_depth_sum'] += well_info['total_depth']
+                    
+                    # Check if active
+                    if well_info['status'].upper() in ['ACTIVE', 'PRODUCING', 'ONLINE']:
+                        result['active_well_count'] += 1
+            
+            # Calculate average water depth
+            if 'WATER_DEPTH' in lease_df.columns:
+                water_depths = lease_df['WATER_DEPTH'].dropna()
+                if len(water_depths) > 0:
+                    result['average_water_depth'] = water_depths.mean()
+        
+        # Process production DataFrame
+        if not production_df.empty:
+            # Sum production volumes
+            if 'oil_bbls' in production_df.columns:
+                result['oil_bbls'] = production_df['oil_bbls'].sum()
+                result['cumulative_oil'] = result['oil_bbls']
+                
+            if 'gas_mcf' in production_df.columns:
+                result['gas_mcf'] = production_df['gas_mcf'].sum()
+                result['cumulative_gas'] = result['gas_mcf']
+                
+            if 'water_bbls' in production_df.columns:
+                result['water_bbls'] = production_df['water_bbls'].sum()
+            
+            # Get production dates
+            if 'production_date' in production_df.columns:
+                prod_dates = pd.to_datetime(production_df['production_date'])
+                result['first_production_date'] = prod_dates.min()
+                result['last_production_date'] = prod_dates.max()
+            
+            # Calculate peak rates
+            if 'oil_rate_bopd' in production_df.columns:
+                result['peak_oil_rate'] = production_df['oil_rate_bopd'].max()
+            if 'gas_rate_mcfd' in production_df.columns:
+                result['peak_gas_rate'] = production_df['gas_rate_mcfd'].max()
+        
+        # Calculate per-well metrics
+        if result['well_count'] > 0:
+            result['oil_per_well'] = result['oil_bbls'] / result['well_count']
+            result['gas_per_well'] = result['gas_mcf'] / result['well_count']
+        
+        # Convert sets to lists for serialization
+        result['field_names'] = list(result['field_names'])
+        result['block_numbers'] = list(result['block_numbers'])
+        
+        return result
+    
+    def get_block_level_summary(self, block_number: str, 
+                               cfg: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """
+        Get summary for all leases in a block
+        
+        Args:
+            block_number: Block number to summarize
+            cfg: Configuration dictionary
+            
+        Returns:
+            Block-level summary dictionary
+        """
+        logger.info(f"Getting block-level summary for block {block_number}")
+        
+        # Use enhanced loader to get block data
+        block_df = self.enhanced_loader._load_block_data(block_number, cfg)
+        
+        if block_df.empty:
+            logger.warning(f"No data found for block {block_number}")
+            return {}
+        
+        # Extract unique leases in the block
+        lease_numbers = []
+        if 'Lease Number' in block_df.columns:
+            lease_numbers = block_df['Lease Number'].dropna().unique().tolist()
+        elif 'LEASE_NUMBER' in block_df.columns:
+            lease_numbers = block_df['LEASE_NUMBER'].dropna().unique().tolist()
+        
+        # Aggregate data for each lease
+        block_summary = {
+            'block_number': block_number,
+            'lease_count': len(lease_numbers),
+            'total_oil_bbls': 0,
+            'total_gas_mcf': 0,
+            'total_water_bbls': 0,
+            'total_well_count': 0,
+            'active_well_count': 0,
+            'leases': []
+        }
+        
+        for lease_num in lease_numbers:
+            lease_data = self.aggregate_with_fresh_data(lease_num, cfg)
+            
+            block_summary['total_oil_bbls'] += lease_data.get('oil_bbls', 0)
+            block_summary['total_gas_mcf'] += lease_data.get('gas_mcf', 0)
+            block_summary['total_water_bbls'] += lease_data.get('water_bbls', 0)
+            block_summary['total_well_count'] += lease_data.get('well_count', 0)
+            block_summary['active_well_count'] += lease_data.get('active_well_count', 0)
+            
+            block_summary['leases'].append({
+                'lease_number': lease_num,
+                'oil_bbls': lease_data.get('oil_bbls', 0),
+                'gas_mcf': lease_data.get('gas_mcf', 0),
+                'well_count': lease_data.get('well_count', 0)
+            })
+        
+        return block_summary
