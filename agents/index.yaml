@@ -1,7 +1,7 @@
 # Agent Index for worldenergydata
 
 agents:
-  total: 0  # Will be populated as agents are added
+  total: 1
   categories:
     security: []
     performance: []
@@ -10,8 +10,14 @@ agents:
     devops: []
     data: []
     code_quality: []
+    financial:
+      - financial-analysis
 
-custom_agents: []  # Repository-specific custom agents
+custom_agents:
+  - name: financial-analysis
+    type: financial-domain-expert
+    path: agents/financial-analysis/
+    description: Financial analysis and energy economics specialist
 
 integration:
   enabled: true

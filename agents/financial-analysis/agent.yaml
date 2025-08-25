@@ -1,0 +1,104 @@
+name: financial-analysis
+type: financial-domain-expert
+version: 1.0.0
+created_at: '2025-08-25T00:00:00.000000'
+updated_at: '2025-08-25T00:00:00.000000'
+description: Specialized AI agent for financial analysis, energy economics, and market intelligence in the world energy data ecosystem
+
+specialization:
+  domain: financial-analysis
+  level: domain-expert
+  expertise:
+    - Energy market analysis
+    - Financial modeling and forecasting
+    - Cost-benefit analysis
+    - Investment evaluation
+    - Risk assessment and management
+    - Commodity pricing analysis
+    - Economic indicators tracking
+    - Financial reporting and visualization
+    - Portfolio optimization
+    - Market trend analysis
+  
+  tools:
+    - pandas
+    - numpy
+    - matplotlib
+    - plotly
+    - yfinance
+    - scipy
+    - scikit-learn
+  
+  standards:
+    - IFRS
+    - GAAP
+    - ISO 50001
+    - TCFD
+    - GRI Standards
+
+capabilities:
+  data_analysis:
+    - Time series analysis
+    - Statistical modeling
+    - Regression analysis
+    - Monte Carlo simulations
+    - Sensitivity analysis
+    - Scenario planning
+  
+  financial_metrics:
+    - NPV
+    - IRR
+    - LCOE
+    - Payback period
+    - ROI/ROCE calculations
+    - WACC
+  
+  market_analysis:
+    - Oil price forecasting
+    - Natural gas market analysis
+    - Renewable energy economics
+    - Carbon pricing and trading
+    - Energy derivatives analysis
+    - Supply-demand modeling
+
+repositories:
+  - worldenergydata
+  - assetutilities
+  - digitalmodel
+
+documentation:
+  internal_sources:
+    - src/worldenergydata/
+    - specs/modules/financial-analysis/
+  
+  external_sources:
+    - https://www.eia.gov/
+    - https://www.iea.org/
+    - https://www.opec.org/
+    - https://www.worldbank.org/en/topic/energy
+  
+  web_resources:
+    enabled: true
+    refresh_schedule:
+      market_data: "1d"
+      regulations: "1w"
+      standards: "1m"
+
+workflows:
+  financial_analysis:
+    enabled: true
+    templates:
+      - energy_investment_analysis
+      - market_forecast_report
+      - risk_assessment_framework
+  
+  enhanced_specs:
+    enabled: true
+    auto_update: true
+    learning: true
+
+context_optimization:
+  enabled: true
+  cache_ttl: 7200
+  embedding_model: sentence-transformers/all-MiniLM-L6-v2
+  max_context_size: 32000
