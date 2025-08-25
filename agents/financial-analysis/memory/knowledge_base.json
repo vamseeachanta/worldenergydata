@@ -1,0 +1,56 @@
+{
+  "knowledge_base": {
+    "version": "1.0.0",
+    "last_updated": "2025-08-25",
+    "categories": {
+      "financial_metrics": {
+        "npv": {
+          "definition": "Net Present Value - present value of cash flows minus initial investment",
+          "formula": "NPV = Σ(CFt / (1+r)^t) - I0",
+          "use_case": "Investment evaluation"
+        },
+        "irr": {
+          "definition": "Internal Rate of Return - discount rate that makes NPV zero",
+          "formula": "0 = Σ(CFt / (1+IRR)^t) - I0",
+          "use_case": "Return comparison"
+        },
+        "lcoe": {
+          "definition": "Levelized Cost of Energy",
+          "formula": "LCOE = (CAPEX + Σ(OPEX/(1+r)^t)) / Σ(Energy/(1+r)^t)",
+          "use_case": "Energy cost comparison"
+        }
+      },
+      "market_indicators": {
+        "wti": {
+          "type": "crude_oil",
+          "region": "US",
+          "benchmark": true
+        },
+        "brent": {
+          "type": "crude_oil",
+          "region": "international",
+          "benchmark": true
+        },
+        "henry_hub": {
+          "type": "natural_gas",
+          "region": "US",
+          "benchmark": true
+        }
+      },
+      "risk_methods": {
+        "monte_carlo": {
+          "description": "Statistical simulation for risk assessment",
+          "iterations": 10000,
+          "confidence_levels": [0.95, 0.99]
+        },
+        "sensitivity": {
+          "description": "Impact analysis of variable changes",
+          "range": [-20, -10, 0, 10, 20],
+          "unit": "percent"
+        }
+      }
+    },
+    "learned_patterns": [],
+    "cached_analyses": []
+  }
+}
