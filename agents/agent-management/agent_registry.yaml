@@ -1,0 +1,12 @@
+agents:
+  oil-and-gas-expert:
+    created: '2025-08-25T12:24:33.633208'
+    path: agents\oil-and-gas-expert
+    specialization: general-purpose
+    status: active
+metrics: {}
+modules:
+  oil-and-gas-expert:
+    agents:
+    - oil-and-gas-expert
+    coverage: 0.0
