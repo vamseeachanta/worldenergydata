@@ -1,13 +1,25 @@
 name: financial-analysis
-type: financial-domain-expert
-version: 1.0.0
-created_at: '2025-08-25T00:00:00.000000'
-updated_at: '2025-08-25T00:00:00.000000'
+type: domain-expert
+version: 3.0.0
+created: '2025-08-25T12:45:00.000000'
+updated_at: '2025-08-25T12:45:00.000000'
 description: Specialized AI agent for financial analysis, energy economics, and market intelligence in the world energy data ecosystem
 
-specialization:
-  domain: financial-analysis
-  level: domain-expert
+specialization: financial-analysis
+
+best_practices:
+  attention_manipulation: true
+  automated_refresh: true
+  context_layers: true
+  incremental_knowledge_building: true
+  modular_agent_management: true
+  phased_document_approach: true
+  rag_optimization: true
+  scratchpad_processing: true
+
+module_config:
+  name: financial-analysis
+  specialization: financial-markets-energy
   expertise:
     - Energy market analysis
     - Financial modeling and forecasting
@@ -37,6 +49,23 @@ specialization:
     - GRI Standards
 
 capabilities:
+  auto_refresh: true
+  chunking_strategies:
+  - semantic
+  - fixed_size
+  - paragraph
+  - section
+  - hybrid
+  - phased
+  context_engineering: true
+  context_pruning: true
+  context_validation: true
+  cross_module_collaboration: true
+  duplicate_detection: true
+  memory_management: true
+  modular_specialization: true
+  phased_processing: true
+  
   data_analysis:
     - Time series analysis
     - Statistical modeling
@@ -97,8 +126,26 @@ workflows:
     auto_update: true
     learning: true
 
+processing_config:
+  module_optimization:
+    context_size: 16000
+    focused_domain: financial-markets
+    refresh_priority: high
+  phased_approach:
+    enabled: true
+    phases:
+    - discovery
+    - quality
+    - extraction
+    - synthesis
+    - validation
+    - integration
+    quality_threshold: 0.8
+    validation_mode: automatic
+
+context_cache: true
 context_optimization:
   enabled: true
   cache_ttl: 7200
   embedding_model: sentence-transformers/all-MiniLM-L6-v2
-  max_context_size: 32000
+  max_context_size: 16000
