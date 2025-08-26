@@ -498,7 +498,7 @@ class ProductionAPI12Analysis():
     
     def plot_revenues(self, cfg, revenue_df):
         
-        revenue_df['Revenue (USD)'] = revenue_df['Revenue (USD)'].replace('[\$,]', '', regex=True).astype(float)
+        # revenue_df['Revenue (USD)'] = revenue_df['Revenue (USD)'].replace('[\$,]', '', regex=True).astype(float)
         revenue_df['Month'] = pd.to_datetime(revenue_df['Month'], format='%Y%m', errors='coerce')
         months = revenue_df['Month'].tolist()
         revenue_usd = revenue_df['Revenue (USD)'].tolist()
