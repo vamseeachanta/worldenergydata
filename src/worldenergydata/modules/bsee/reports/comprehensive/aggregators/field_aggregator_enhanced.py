@@ -6,6 +6,7 @@ Aggregates lease-level data up to field level
 from typing import Dict, Any, List, Optional
 from datetime import date
 import logging
+import pandas as pd
 
 from .base import DataAggregator
 from ..models import (
