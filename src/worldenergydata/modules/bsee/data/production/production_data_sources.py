@@ -1,12 +1,4 @@
-import os
-from copy import deepcopy
-
-import pandas as pd
-
-from worldenergydata.modules.bsee.data._legacy.scrapy_production_data import ScrapyRunnerProduction
 from worldenergydata.modules.bsee.data._from_zip.production_data import GetProdDataFromZip
-
-from assetutilities.common.utilities import is_dir_valid_func
 
 production_from_zip = GetProdDataFromZip()
 
