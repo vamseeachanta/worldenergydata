@@ -27,6 +27,8 @@ __all__ = [
     'LeaseGrouper',
     'DrillingCompletion',
     'CashFlowCalculator',
+    'FinancialParameters',
+    'DevelopmentType',
     'ReportGenerator',
     'SMEFinancialCLI',
     'SMEConfigLoader',
@@ -43,7 +45,8 @@ __all__ = [
 def _lazy_import():
     """Lazy import of module components"""
     global SMEAnalyzer, SMEDataLoader, LeaseGrouper, DrillingCompletion
-    global CashFlowCalculator, ReportGenerator, SMEFinancialCLI, SMEConfigLoader
+    global CashFlowCalculator, FinancialParameters, DevelopmentType
+    global ReportGenerator, SMEFinancialCLI, SMEConfigLoader
     
     try:
         from .sme_analyzer import SMEAnalyzer
@@ -51,7 +54,7 @@ def _lazy_import():
         SMEAnalyzer = None
     
     try:
-        from .sme_data_loader import SMEDataLoader
+        from .data_loader import SMEDataLoader
     except ImportError:
         SMEDataLoader = None
     
@@ -66,9 +69,11 @@ def _lazy_import():
         DrillingCompletion = None
     
     try:
-        from .cash_flow_calculator import CashFlowCalculator
+        from .cash_flow_calculator import CashFlowCalculator, FinancialParameters, DevelopmentType
     except ImportError:
         CashFlowCalculator = None
+        FinancialParameters = None
+        DevelopmentType = None
     
     try:
         from .report_generator import ReportGenerator
