@@ -1,5 +1,5 @@
-# extract_drilling_and_completion_days_enhanced.py
-# Enhanced version that reads from repository binary WAR files
+# extract_drilling_and_completion_days_worldenergydata.py
+# WorldEnergyData version that reads from repository binary WAR files
 # Preserves original D&C logic; reads NEW leases.xlsx format; labels by LEASE_NAME.
 import pandas as pd
 import numpy as np
@@ -169,7 +169,7 @@ drill_df["TOTAL_DEPTH_DATE"] = pd.to_datetime(drill_df["TOTAL_DEPTH_DATE"], erro
 drill_df["DRILLING_DAYS"] = (drill_df["TOTAL_DEPTH_DATE"] - drill_df["WELL_SPUD_DATE"]).dt.days
 # Save to results directory
 os.makedirs("../results", exist_ok=True)
-drill_df.to_excel("../results/drill_segments_debug_enhanced.xlsx", index=False)
+drill_df.to_excel("../results/drill_segments_debug_worldenergydata.xlsx", index=False)
 
 # ---------- mud weights from binary file ----------
 # ONLY CHANGE: Read from binary file instead of CSV
@@ -253,7 +253,7 @@ comp_df = comp_df.dropna(subset=["COMP_START","COMP_END"])
 # your original: completion +1 day
 comp_df["COMPLETION_DAYS"] = (comp_df["COMP_END"] - comp_df["COMP_START"]).dt.days + 1
 # Save to results directory
-comp_df.to_excel("../results/completion_segments_debug_enhanced.xlsx", index=False)
+comp_df.to_excel("../results/completion_segments_debug_worldenergydata.xlsx", index=False)
 
 # ---------- merge summaries ----------
 drill_summary = drill_df.groupby("API_WELL_NUMBER").agg({
@@ -304,5 +304,5 @@ final = final[[
 final = final.dropna(subset=["WELL_SPUD_DATE", "TOTAL_DEPTH_DATE"])
 
 # ONLY CHANGE: Update output filename with _enhanced suffix and save to results directory
-final.to_excel("../results/drilling_and_completion_days_by_api_enhanced.xlsx", index=False)
-print("\nSUCCESS: drilling_and_completion_days_by_api_enhanced.xlsx written to results/ directory with original D&C logic (using binary WAR files).")
+final.to_excel("../results/drilling_and_completion_days_by_api_worldenergydata.xlsx", index=False)
+print("\nSUCCESS: drilling_and_completion_days_by_api_worldenergydata.xlsx written to results/ directory with original D&C logic (using binary WAR files).")
