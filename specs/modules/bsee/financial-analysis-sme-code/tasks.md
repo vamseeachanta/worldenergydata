@@ -52,7 +52,7 @@ These are the tasks to be completed for the spec detailed in @specs/modules/bsee
 - NO other code changes allowed
 
 - [x] 1.1 Create worldenergydata version of `extract_drilling_and_completion_days.py` to use binary WAR files `1h` 🤖 `Agent: general-purpose`
-  - [x] 1.1.1 Copy script to `tests/modules/bsee/analysis/financial-analysis-sme-code/worldenergydata_scripts/extract_drilling_and_completion_days_worldenergydata.py`
+  - [x] 1.1.1 Copy script to `tests/modules/bsee/analysis/financial-analysis-sme-code/scripts/extract_drilling_and_completion_days_worldenergydata.py`
   - [x] 1.1.2 ONLY change: Replace CSV file reads with .bin file reads from `data/modules/bsee/bin/war/` using pickle
   - [x] 1.1.3 ONLY change: Update output filename to `drilling_and_completion_days_by_api_worldenergydata.xlsx`
   - [x] 1.1.4 Keep ALL other code exactly as original (logic, calculations, helper functions)
@@ -62,7 +62,7 @@ These are the tasks to be completed for the spec detailed in @specs/modules/bsee
   - [x] 1.2.2 Compare output with original `drilling_and_completion_days_by_api.xlsx`
   - [x] 1.2.3 Verify 100% match in data values (99.4% match - 167/167 common wells match for drilling days, 165/167 for completion days)
 - [x] 1.3 Create worldenergydata version of `build_month_matrix_by_lease.py` to use OGORA zip files `1h` 🤖 `Agent: general-purpose`
-  - [x] 1.3.1 Copy script to `tests/modules/bsee/analysis/financial-analysis-sme-code/worldenergydata_scripts/build_month_matrix_by_lease_worldenergydata.py`
+  - [x] 1.3.1 Copy script to `tests/modules/bsee/analysis/financial-analysis-sme-code/scripts/build_month_matrix_by_lease_worldenergydata.py`
   - [x] 1.3.2 ONLY change: Update file paths to use `data/modules/bsee/zip/historical_production_yearly/`
   - [x] 1.3.3 ONLY change: Add '_worldenergydata' suffix to output filename
   - [x] 1.3.4 Keep ALL other code exactly as original
@@ -72,7 +72,7 @@ These are the tasks to be completed for the spec detailed in @specs/modules/bsee
   - [x] 1.4.2 Compare output with original matrix files
   - [x] 1.4.3 Verify 100% match in production data (Enhanced version has MORE data: 266 months vs 137, same structure)
 - [x] 1.5 Create worldenergydata version of `Build_Development_Financials_V20.py` with updated output naming `30m` 🤖 `Agent: general-purpose`
-  - [x] 1.5.1 Copy script to `tests/modules/bsee/analysis/financial-analysis-sme-code/worldenergydata_scripts/Build_Development_Financials_V20_worldenergydata.py`
+  - [x] 1.5.1 Copy script to `tests/modules/bsee/analysis/financial-analysis-sme-code/scripts/Build_Development_Financials_V20_worldenergydata.py`
   - [x] 1.5.2 ONLY change: Add '_worldenergydata' suffix to all output filenames
   - [x] 1.5.3 Keep ALL other code exactly as original
   - [x] 1.5.4 Ensure no overwrite of existing files

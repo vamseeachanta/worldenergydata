@@ -21,12 +21,12 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 
 LEASES_FP = "leases.xlsx"
 ASSUMP_FP = "leases_assumptions.xlsx"
-# ONLY CHANGE: Use enhanced input files from previous tasks
-PROD_FP   = "../results/multi_year_lease_matrix_with_charts_enhanced.xlsx"
-DNC_FP    = "../results/drilling_and_completion_days_by_api_enhanced.xlsx"
+# ONLY CHANGE: Use worldenergydata input files from previous tasks
+PROD_FP   = "../results/multi_year_lease_matrix_with_charts_worldenergydata.xlsx"
+DNC_FP    = "../results/drilling_and_completion_days_by_api_worldenergydata.xlsx"
 WTI_FP    = "wti_full_monthly.xlsx"
-# ONLY CHANGE: Add _enhanced suffix to output filename
-OUT_XLSX  = "../results/DEVNAME_Financials_V20_enhanced.xlsx"
+# ONLY CHANGE: Add _worldenergydata suffix to output filename
+OUT_XLSX  = "../results/DEVNAME_Financials_V20_worldenergydata.xlsx"
 
 # -------------------- Utilities --------------------
 

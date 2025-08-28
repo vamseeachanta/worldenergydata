@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# build_multi_year_matrix_by_lease_enhanced.py
-# Enhanced version that reads OGORA files from repository zip directory
+# build_multi_year_matrix_by_lease_worldenergydata.py
+# WorldEnergyData version that reads OGORA files from repository zip directory
 # Scan a directory for OGOR-A zip files (wildcard), merge them, and write one sheet per lease.
 # Rows = (Well Name, API), Columns = YYYY-MM, Values = OIL_PROD / DAYS_ON (BBL/day)
 
@@ -133,14 +133,14 @@ def read_ogor_zip(zip_path: str) -> pd.DataFrame:
     return df
 
 def main():
-    ap = argparse.ArgumentParser(prog="build_month_matrix_by_lease_enhanced.py",
+    ap = argparse.ArgumentParser(prog="build_month_matrix_by_lease_worldenergydata.py",
                               description="Multi-year grouped monthly BBL/day matrix (one sheet per DEV/GROUP_AS).")
     # ONLY CHANGE: Default to repository OGORA directory
     ap.add_argument("--dir",     default="../../../../../../data/modules/bsee/zip/historical_production_yearly", 
                     help="Directory containing OGOR zip files (default: repository OGORA dir)")
     ap.add_argument("--leases",  default="AUTO", help="Leases file (.xlsx/.xls/.csv). If 'AUTO', search in --dir then CWD.")
-    # ONLY CHANGE: Add _enhanced suffix to output
-    ap.add_argument("--out",     default="../results/multi_year_lease_matrix_with_charts_enhanced.xlsx", 
+    # ONLY CHANGE: Add _worldenergydata suffix to output
+    ap.add_argument("--out",     default="../results/multi_year_lease_matrix_with_charts_worldenergydata.xlsx", 
                     help="Output Excel path (default: results directory)")
     ap.add_argument("--pattern", default="ogora20??delimit.zip", help="Glob for OGOR zips (default shown)")
     args = ap.parse_args()
