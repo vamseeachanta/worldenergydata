@@ -238,7 +238,6 @@ class WellData:
         }
 
         file_is_valid, file_name = get_repository_filename(library_file_cfg)
-        logger.debug(f"file_name: {file_name}")
 
         if file_is_valid:
             df = pd.read_pickle(file_name)
@@ -260,7 +259,6 @@ class WellData:
         }
 
         file_is_valid, file_name = get_repository_filename(library_file_cfg)
-        logger.debug(f"file_name: {file_name}")
 
         if file_is_valid:
             df = pd.read_pickle(file_name)
@@ -282,7 +280,6 @@ class WellData:
         }
 
         file_is_valid, file_name = get_repository_filename(library_file_cfg)
-        logger.debug(f"file_name: {file_name}")
 
         if file_is_valid:
             df = pd.read_pickle(file_name)
@@ -304,7 +301,6 @@ class WellData:
         }
 
         file_is_valid, file_name = get_repository_filename(library_file_cfg)
-        logger.debug(f"file_name: {file_name}")
 
         if file_is_valid:
             df = pd.read_pickle(file_name)
