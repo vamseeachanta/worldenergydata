@@ -1,0 +1,32 @@
+# Basic Report Configuration
+# Generate a simple economic report for a single field
+
+report:
+  level: field              # Organization level: block, field, or lease
+  unit: Jack               # Name of the organizational unit
+  template: economic       # Template type: compliance, economic, operational, executive
+  
+  # Date range for the report
+  date_range:
+    start: 2023-01-01
+    end: 2023-12-31
+    
+output:
+  format: excel            # Output format: excel, pdf, html, json
+  directory: reports/      # Output directory
+  filename: jack_field_economic_2023.xlsx  # Optional custom filename
+  
+# Basic settings
+settings:
+  currency: USD
+  decimal_places: 2
+  date_format: "%Y-%m-%d"
+  
+# Enable basic performance features
+performance:
+  cache:
+    enabled: true
+    ttl: 1800  # 30 minutes
+    
+  parallel:
+    enabled: false  # Single report, no need for parallelization
