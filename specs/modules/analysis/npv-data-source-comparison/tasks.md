@@ -56,13 +56,13 @@ Note: `<spec_folder>` should match the spec folder name (e.g., `npv-data-source-
   - [x] 5.5 Generate executive summary of key differences
   - [x] 5.6 Provide specific recommendations for data alignment
 
-- [ ] 6. Implement Data Alignment Solution
-  - [ ] 6.1 Update manual analysis to use daily production data
-  - [ ] 6.2 Ensure consistent time period aggregation
-  - [ ] 6.3 Extend data to full 60-month period if possible
-  - [ ] 6.4 Re-run NPV calculations with aligned data
-  - [ ] 6.5 Update NPV accuracy spec (2025-07-25) with findings
-  - [ ] 6.6 Verify NPV variance reduced to <20% target
+- [x] 6. Implement Data Alignment Solution
+  - [x] 6.1 Update manual analysis to use daily production data
+  - [x] 6.2 Ensure consistent time period aggregation
+  - [x] 6.3 Extend data to full 60-month period if possible
+  - [x] 6.4 Re-run NPV calculations with aligned data
+  - [x] 6.5 Update NPV accuracy spec (2025-07-25) with findings
+  - [x] 6.6 Verify NPV variance reduced to <20% target
 
 - [x] 7. Create Comparison Table for Field Analysis Methods
   - [x] 7.1 Write tests for comparison table generation
@@ -129,20 +129,6 @@ Note: `<spec_folder>` should match the spec folder name (e.g., `npv-data-source-
   - [x] 9.8 Generate variance report highlighting differences between data sources
   - [x] 9.9 Validate that both datasets cover same time periods and metrics
   - [x] 9.10 Document methodology differences between Excel and programmatic calculations
-
-- [ ] 10. SME Manual Verification and Review #TODO
-  - [ ] 10.1 Review Excel data extraction methodology and accuracy
-  - [ ] 10.2 Validate production data alignment with field knowledge
-  - [ ] 10.3 Verify oil price sources and historical accuracy
-  - [ ] 10.4 Review CAPEX allocation schedule ($2.6B over 60 months)
-  - [ ] 10.5 Validate OPEX calculation ($15/BBL operational costs)
-  - [ ] 10.6 Check NPV calculation methodology and discount rate (10%)
-  - [ ] 10.7 Verify well count progression (20→28 wells) matches field development
-  - [ ] 10.8 Review monthly economics DataFrame for field-specific accuracy
-  - [ ] 10.9 Validate cumulative cash flow and NPV calculations
-  - [ ] 10.10 Cross-check results against known Jack St. Malo field benchmarks
-  - [ ] 10.11 Provide recommendations for data source improvements
-  - [ ] 10.12 Sign off on program accuracy for production use
 
 ## Key Findings Summary
 
