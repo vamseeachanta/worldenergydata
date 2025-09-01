@@ -1,0 +1,41 @@
+﻿DEV_SYSTEM,subsea15,subsea20,dry,tieback15,tieback20,Notes
+WTI_base_$/bbl,60,60,60,60,60,Flat fallback if no WTI file present (USD/bbl)
+Discount_rate_annual,0.1,0.1,0.1,0.1,0.1,"Annual discount rate for NPV (decimal, e.g. 0.1=10%)"
+IRR_Basis,monthly,monthly,monthly,monthly,monthly,monthly or annual
+Use_MIRR,TRUE,TRUE,TRUE,TRUE,TRUE,"TRUE/FALSE; if TRUE, MIRR replaces IRR"
+MIRR_Reinvest_Rate_annual,0.08,0.08,0.08,0.08,0.08,Annual reinvest rate for MIRR (if enabled).
+MIRR_Finance_Rate_annual,0.06,0.06,0.06,0.06,0.06,Annual finance rate for MIRR (if enabled).
+MODU_LOADED_DAYRATE_MM,0.8,1.1,0.8,0.8,1.1,Millions USD per day
+DRY_TREE_RIG_RATE_MM,,,0.45,,,Millions USD per day
+Host_CAPEX_MM,800,1000,1250,0,100,Millions USD for host; spread pre-FO over Host_PreFO_Months
+Host_PreFO_Months,24,24,24,24,24,Months before FO over which host CAPEX is spread (dry & subsea).
+SURF_per_well_MM,200,350,0,250,400,Millions USD per well; booked at completion month
+SURF_PreFO_Months,24,24,0,24,24,Months before FO over which host CAPEX is spread (subsea).
+Dry_Well_System_Per_Producer_USD,0,0,90,0,0,Millions USD per dry-tree well system (dry only)
+DRY_Well_Systems_PreFO_Months,0,0,18,0,0,Months before FO over which Dry_Well_Systems_USD CAPEX is spread (dry)
+Pump_pkg_per_7_wells_MM,200,350,0,250,350,Millions USD; packages sized per 5 wells
+Pump_Policy per Producer Capped at a Total of 2,7,7,7,4,4,"e.g., capped_0_1_2 or ceil(well_count/Injector_per_producer)"
+PUMP_Months_Pre_Well,24,24,0,24,24,Months before the producing well trigger over which PUMO CAPEX is spread (subsea).
+Injectors_Per_Producer,0.2,0.2,0.2,0.2,0.2,Number of injectors per producer (always rounded down to the nearest whole number)
+Injector_Pump_Cost_MM,150,250,50,150,250,Millions USD per pump
+Water_Injection_Facility_Cost_MM,100,200,100,100,200,Millions USD per DEV_SYSTEM 
+Variable_OPEX_$/bbl,12,16,8,12,16,USD per bbl for subsea developments (Thunder Horse style).
+Fixed_OPEX_MM_per_year,150,150,120,150,150,Millions USD per year (semisub ops + maintenance).
+Royalty_Rate,0.1875,0.1875,0.1875,0.1875,0.1875,Fraction of gross revenue (e.g. 0.1875 = 18.75%)
+Royalty_Basis,50,50,50,50,50,Royalty applied after MM BBls
+Royalty_Deductible,TRUE,TRUE,TRUE,TRUE,TRUE,"If TRUE, royalty expense reduces taxable income."
+Severance_Tax_Rate,FALSE,FALSE,FALSE,FALSE,FALSE,Fraction of gross revenue for production/severance taxes (0.0 for US OCS federal).
+Severance_Deductible,TRUE,TRUE,TRUE,TRUE,TRUE,"If TRUE, severance tax reduces taxable income."
+Ad_Valorem_Tax_Rate,FALSE,FALSE,FALSE,FALSE,FALSE,Optional ad valorem rate on facilities book value (0.0 default).
+Ad_Valorem_Deductible,TRUE,TRUE,TRUE,TRUE,TRUE,"If TRUE, ad valorem tax reduces taxable income."
+Corporate_Tax_Rate,0.21,0.21,0.21,0.21,0.21,Combined effective tax rate (decimal)
+Depreciation_Method,straight_line,straight_line,straight_line,straight_line,straight_line,Options: 'straight_line' (default).
+Depreciation_Start_Policy,in_service,in_service,in_service,in_service,in_service,Typically 'in_service'
+Depreciation_Years_Host,10,10,10,10,10,Straight-line life in years for Host facilities.
+Depreciation_Years_SURF,7,7,7,7,7,Straight-line life in years for SURF.
+Depreciation_Years_Pumps,7,7,7,7,7,Straight-line life in years for subsea pumps.
+Depreciation_Years_Dry_Well_Systems,7,7,7,7,7,Straight-line life in years for dry well systems.
+DnC_Intangible_Fraction,0.7,0.7,0.7,0.7,0.7,Share of D&C expensed immediately as IDC.
+DnC_Tangible_Depreciation_Years,7,7,7,7,7,Life for the remaining tangible D&C portion (straight-line).
+NOL_Carryforward,TRUE,TRUE,TRUE,TRUE,TRUE,"If TRUE, negative taxable income accumulates and offsets future positives."
+NOL_Interest_Annual,FALSE,FALSE,FALSE,FALSE,FALSE,Optional interest/accretion on NOL balance (usually 0.0).
