@@ -126,6 +126,63 @@ Specs are evaluated based on their reinforcement of:
 
 **Domain Knowledge Required:** LOW - Organizing information, not creating it
 
+## 🌐 CROSS-REPOSITORY OPPORTUNITIES
+*Expand your technical skills with specs from related repositories*
+
+### From DigitalModel Repository
+**Repository:** https://github.com/vamseeachanta/digitalmodel
+
+#### 1. MathCAD to Python PSF Conversion ⭐⭐⭐⭐⭐
+**Module:** `specs/modules/marine-engineering/mathcad-to-python-psf`
+**Why Perfect for You:**
+- Pure Python conversion work
+- Mathematical operations with NumPy/SciPy
+- Code modernization focus
+- Algorithm implementation (formulas provided by experts)
+
+#### 2. Test Suite Automation ⭐⭐⭐⭐⭐
+**Module:** `specs/modules/test-suite-automation/`
+**Why Perfect for You:**
+- pytest infrastructure development
+- CI/CD pipeline automation
+- Coverage reporting systems
+- Pure software engineering
+
+#### 3. AI Workflows Module ⭐⭐⭐⭐
+**Module:** `specs/modules/ai-workflows/`
+**Why Perfect for You:**
+- ML/AI integration patterns
+- Workflow orchestration
+- Agent-based systems
+- Technology focused
+
+### From AssetUtilities Repository
+**Repository:** https://github.com/vamseeachanta/assetutilities
+
+#### 1. Parallel Processing Utilities ⭐⭐⭐⭐⭐
+**Module:** `specs/modules/zip-utilities/parallel-processing/`
+**Why Perfect for You:**
+- Concurrent processing optimization
+- Performance improvements
+- Bulk data operations
+- Pure technical implementation
+
+#### 2. Authentication System ⭐⭐⭐⭐
+**Module:** `specs/modules/authentication/user-auth-system/`
+**Why Perfect for You:**
+- Security implementation (JWT, OAuth)
+- User management systems
+- API security patterns
+- Standard web development
+
+#### 3. Agent OS Infrastructure ⭐⭐⭐⭐
+**Module:** `specs/modules/agent-os/`
+**Why Perfect for You:**
+- System architecture design
+- Agent coordination patterns
+- CLI tool development
+- Pure software architecture
+
 ## 📉 AVOID THESE SPECS (FOR NOW)
 *Require deep petroleum engineering knowledge*
 
@@ -158,12 +215,12 @@ Specs are evaluated based on their reinforcement of:
 ### Phase 3: Data Integration & Processing (Weeks 9-12)
 **Focus: Data Pipelines & APIs**
 1. **WorldEnergyData:** `sodir-integration` - API integration
-2. **DigitalModel:** `signal-analysis` - Data processing
+2. **DigitalModel:** `mathcad-to-python-psf` - Engineering calculations port
 3. **AssetUtilities:** `authentication-system` - Security layer
    - API integration
    - Data pipelines
    - ETL processes
-   - Signal processing
+   - Engineering calculations
 
 ### Phase 4: Dashboards & Validation (Weeks 13-16)
 **Focus: User Interfaces & Data Quality**
@@ -195,74 +252,6 @@ Specs are evaluated based on their reinforcement of:
 - **Parallel processing:** Implement concurrent operations where possible
 - **Clean commits:** Make atomic, well-described commits
 
-## 🌐 CROSS-REPOSITORY SPECS
-*Additional Python/Data Operations specs from related repositories*
-
-### From DigitalModel Repository
-**Repository:** https://github.com/vamseeachanta/digitalmodel
-
-#### High Priority Python/Data Specs:
-
-##### 1. Signal Analysis Module ⭐⭐⭐⭐⭐
-**Module:** `specs/modules/signal-analysis/`
-**Why Perfect for You:**
-- **Pure signal processing** - Mathematical operations on time series
-- **Python DSP libraries** - NumPy, SciPy signal processing
-- **Data visualization** - Frequency domain analysis plots
-- **No domain expertise needed** - Just mathematical transformations
-
-##### 2. Test Suite Automation ⭐⭐⭐⭐⭐
-**Module:** `specs/modules/test-suite-automation/`
-**Why Perfect for You:**
-- **Pure testing infrastructure** - pytest, fixtures, mocks
-- **CI/CD pipeline setup** - GitHub Actions automation
-- **Coverage reporting** - Code quality metrics
-- **Universal software engineering** - No domain knowledge
-
-##### 3. AI Workflows Module ⭐⭐⭐⭐
-**Module:** `specs/modules/ai-workflows/`
-**Why Perfect for You:**
-- **ML/AI integration** - Modern Python libraries
-- **Workflow orchestration** - Pipeline design
-- **Agent-based systems** - Similar to sub-agents work
-- **Technology focused** - Minimal domain requirements
-
-##### 4. Development Tools ⭐⭐⭐⭐
-**Module:** `specs/modules/development-tools/`
-**Why Perfect for You:**
-- **Tool creation** - Developer productivity scripts
-- **Automation utilities** - Build process improvements
-- **Code generation** - Template systems
-- **Pure software engineering** - No domain expertise
-
-### From AssetUtilities Repository
-**Repository:** https://github.com/vamseeachanta/assetutilities
-
-#### High Priority Python/Data Specs:
-
-##### 1. Parallel Processing Utilities ⭐⭐⭐⭐⭐
-**Module:** `specs/modules/zip-utilities/parallel-processing/`
-**Why Perfect for You:**
-- **Concurrent processing** - Python multiprocessing/threading
-- **Performance optimization** - Speed improvements
-- **File operations** - Bulk data processing
-- **Pure technical implementation** - No domain knowledge
-
-##### 2. Authentication System ⭐⭐⭐⭐
-**Module:** `specs/modules/authentication/user-auth-system/`
-**Why Perfect for You:**
-- **Security implementation** - JWT, OAuth, sessions
-- **User management** - CRUD operations
-- **API security** - Rate limiting, authorization
-- **Standard web development** - Universal patterns
-
-##### 3. Agent OS Infrastructure ⭐⭐⭐⭐
-**Module:** `specs/modules/agent-os/`
-**Why Perfect for You:**
-- **System architecture** - Modular design patterns
-- **Agent coordination** - Inter-process communication
-- **Command systems** - CLI tool development
-- **Pure software architecture** - No domain requirements
 
 ## 📚 Additional Resources
 
@@ -284,7 +273,7 @@ Specs are evaluated based on their reinforcement of:
 - **Testing:** pytest, mock, fixtures
 - **DevOps:** Git, GitHub Actions, Docker
 - **Parallel Processing:** multiprocessing, asyncio, concurrent.futures
-- **Signal Processing:** scipy.signal, FFT, filtering
+- **Mathematical Computing:** NumPy, SciPy, SymPy for engineering calculations
 - **Authentication:** JWT, OAuth2, session management
 
 ## 🎯 Revised Skills Matrix (Domain Knowledge Required)
@@ -301,7 +290,7 @@ Specs are evaluated based on their reinforcement of:
 ### DigitalModel Repository
 | Spec | Python Skills | Domain Knowledge | Suitable for You | Collaboration Strategy |
 |------|--------------|------------------|------------------|----------------------|
-| signal-analysis | ⭐⭐⭐⭐⭐ | ⭐ | ✅ PERFECT | Solo work |
+| mathcad-to-python-psf | ⭐⭐⭐⭐⭐ | ⭐⭐ | ✅ PERFECT | Lead provides formulas |
 | test-suite-automation | ⭐⭐⭐⭐ | ⭐ | ✅ PERFECT | Solo work |
 | ai-workflows | ⭐⭐⭐⭐ | ⭐ | ✅ PERFECT | Solo work |
 | development-tools | ⭐⭐⭐ | ⭐ | ✅ PERFECT | Solo work |
@@ -356,7 +345,7 @@ git clone https://github.com/vamseeachanta/assetutilities.git
 
 2. **Next Wave (Minimal Domain Knowledge):**
    - WorldEnergyData: `sodir-integration`
-   - DigitalModel: `signal-analysis`, `ai-workflows`
+   - DigitalModel: `mathcad-to-python-psf`, `ai-workflows`
    - AssetUtilities: `authentication-system`
 
 3. **Advanced (Some Domain Context Helpful):**

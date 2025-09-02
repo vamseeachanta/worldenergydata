@@ -4,6 +4,26 @@
 > Created: 2025-07-25
 > Status: Planning
 
+## User Prompt
+
+> This spec was initiated based on the following user request:
+
+```
+Create a comprehensive sub-agents system for the WorldEnergyData repository that provides specialized AI agents for:
+1. Energy data analysis and economic evaluation
+2. Petroleum engineering and production optimization
+3. Data quality validation and cleaning
+4. Documentation and technical writing
+5. Testing and quality assurance
+
+The system should include:
+- Agent framework architecture in .agent-os
+- Specialized agent definitions with domain expertise
+- Continuous learning mechanisms (weekly updates)
+- Knowledge base integration
+- Performance tracking and improvement metrics
+```
+
 ## Overview
 
 Implement a comprehensive sub-agents system within the WorldEnergyData repository that provides specialized AI agents for energy data analysis, petroleum engineering, and data processing tasks. This system will enable expert-level assistance across different domains while implementing continuous learning and skill improvement capabilities.
@@ -65,6 +85,9 @@ The system automatically schedules weekly learning sessions for each agent, inco
 ## Spec Documentation
 
 - Tasks: @specs/modules/infrastructure/sub-agents-system/tasks.md
+- Prompt History: @specs/modules/infrastructure/sub-agents-system/prompt.md
+- Task Summary: @specs/modules/infrastructure/sub-agents-system/task_summary.md
+- Executive Summary: @specs/modules/infrastructure/sub-agents-system/executive-summary.md
 - Technical Specification: @specs/modules/infrastructure/sub-agents-system/sub-specs/technical-spec.md
 - Database Schema: @specs/modules/infrastructure/sub-agents-system/sub-specs/database-schema.md
 - Tests Specification: @specs/modules/infrastructure/sub-agents-system/sub-specs/tests.md
