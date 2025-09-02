@@ -8,8 +8,8 @@ parameters:
     data: data/modules/bsee/data
     Well_APD_Default: data/modules/bsee/bin/Well_APD_Default
     production:
-      zip: data\modules\bsee\zip\production_yearly
-      bin: data\modules\bsee\bin\production_yearly
+      zip: data\modules\bsee\zip\historical_production_yearly
+      bin: data\modules\bsee\bin\historical_production_yearly
     APD: data/modules/bsee/bin/apd
     apm:
       zip: data/modules/bsee/zip/apm
