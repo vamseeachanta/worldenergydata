@@ -101,7 +101,7 @@ Files grouped by data type showing potential redundancy:
 - `bin/ocsprod/`: 4 files
 - `bin/production_plan_area/`: 1 files
 - `bin/production_raw/`: 4 files
-- `bin/production_yearly/`: 30 files
+- `bin/historical_production_yearly/`: 30 files
 - `legacy/Julia_prod_data/`: 1 files
 - `legacy/data_for_analysis/`: 1 files
 - `legacy/online_raw_well_data/`: 18 files
