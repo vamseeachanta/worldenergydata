@@ -108,48 +108,7 @@ Specs are evaluated based on their reinforcement of:
 ## 🔧 MEDIUM PRIORITY SPECS
 *Good technical work but may need occasional domain input*
 
-### 4. Trunk-Based Development Workflow (`trunk-based-development-workflow`) ⭐⭐⭐⭐
-
-**Status:** 0/35 tasks completed  
-**Module:** `specs/modules/infrastructure/trunk-based-development-workflow/`
-
-**Why This Works For You:**
-- **Pure DevOps** - No domain knowledge needed
-- **Git workflows** - Universal software engineering
-- **CI/CD setup** - Technical infrastructure work
-
-**Skills Reinforced:**
-- Git best practices
-- GitHub Actions automation
-- Testing pipelines
-- Code review processes
-
-**Domain Knowledge Required:** NONE - Pure software engineering
-
----
-
-### 5. DCA Interactive Dashboard (`dca-interactive-dashboard`) ⭐⭐⭐
-
-**Status:** 0/49 tasks completed  
-**Module:** `specs/modules/analysis/dca-interactive-dashboard/`
-
-**Why This Could Work:**
-- **Frontend heavy** - Focus on UI/UX, not equations
-- **Plotly Dash** - Technical framework implementation
-- **Your lead provides formulas** - You just implement them
-- **Interactive controls** - Pure programming work
-
-**Skills Reinforced:**
-- Dashboard development (Plotly Dash)
-- Real-time interactivity
-- Web app development
-- Responsive design
-
-**Domain Knowledge Required:** MEDIUM - Need to understand what users want to see, but not the math behind it
-
----
-
-### 6. Infrastructure Documentation (`docs-organization`) ⭐⭐⭐
+### 4. Infrastructure Documentation (`docs-organization`) ⭐⭐⭐
 
 **Status:** 41/41 tasks completed (but could be enhanced)  
 **Module:** `specs/modules/infrastructure/docs-organization/`
@@ -176,43 +135,49 @@ Specs are evaluated based on their reinforcement of:
 
 **Strategy:** Let your lead handle these or pair-program where they provide domain context and you implement
 
-## 🎯 REVISED Learning Path (Technical Focus)
+## 🎯 EXPANDED Learning Path (Cross-Repository Technical Focus)
 
-### Phase 1: Pure Infrastructure (Weeks 1-4)
-1. **Start with `sub-agents-system`**
+### Phase 1: Pure Infrastructure & Architecture (Weeks 1-4)
+**Focus: System Design & Architecture**
+1. **WorldEnergyData:** `sub-agents-system` - Agent architecture
+2. **AssetUtilities:** `agent-os` - Command systems
+3. **AssetUtilities:** `parallel-processing` - Performance optimization
    - Pure Python architecture
    - No domain knowledge needed
    - Build confidence with system design
 
-### Phase 2: DevOps Foundation (Weeks 5-8)
-2. **Add `trunk-based-development-workflow`**
-   - Git workflows
+### Phase 2: Testing & Automation (Weeks 5-8)
+**Focus: Quality & Automation**
+1. **DigitalModel:** `test-suite-automation` - Testing infrastructure
+2. **DigitalModel:** `development-tools` - Developer productivity
+3. **DigitalModel:** `ai-workflows` - Workflow automation
    - CI/CD pipelines
-   - Team collaboration tools
+   - Testing frameworks
+   - Automation tools
 
-### Phase 3: Data Integration (Weeks 9-12)
-3. **Master `sodir-integration`**
+### Phase 3: Data Integration & Processing (Weeks 9-12)
+**Focus: Data Pipelines & APIs**
+1. **WorldEnergyData:** `sodir-integration` - API integration
+2. **DigitalModel:** `signal-analysis` - Data processing
+3. **AssetUtilities:** `authentication-system` - Security layer
    - API integration
    - Data pipelines
    - ETL processes
+   - Signal processing
 
-### Phase 4: Validation Systems (Weeks 13-16)
-4. **Build `well-data-verification-dashboard`**
+### Phase 4: Dashboards & Validation (Weeks 13-16)
+**Focus: User Interfaces & Data Quality**
+1. **WorldEnergyData:** `well-data-verification-dashboard`
+2. **WorldEnergyData:** `docs-organization` - Documentation systems
    - Data validation (lead provides rules)
    - Dashboard development
    - Quality monitoring
 
-### Phase 5: Collaborative Work (Weeks 17-20)
-5. **Pair on `dca-interactive-dashboard`**
-   - Lead provides equations
-   - You build the UI
-   - Learn domain gradually
-
-### Phase 6: Domain Bridge (Weeks 21-24)
-6. **Gradually take on domain specs**
-   - Start with pair programming
-   - Lead explains concepts
-   - You implement solutions
+### Phase 5: Domain Bridge (Weeks 17-20)
+**Focus: Gradual Domain Integration**
+- Start with pair programming on domain-heavy specs
+- Lead explains concepts, you implement
+- Focus on implementation excellence
 
 ## 💡 Success Tips
 
@@ -230,12 +195,86 @@ Specs are evaluated based on their reinforcement of:
 - **Parallel processing:** Implement concurrent operations where possible
 - **Clean commits:** Make atomic, well-described commits
 
+## 🌐 CROSS-REPOSITORY SPECS
+*Additional Python/Data Operations specs from related repositories*
+
+### From DigitalModel Repository
+**Repository:** https://github.com/vamseeachanta/digitalmodel
+
+#### High Priority Python/Data Specs:
+
+##### 1. Signal Analysis Module ⭐⭐⭐⭐⭐
+**Module:** `specs/modules/signal-analysis/`
+**Why Perfect for You:**
+- **Pure signal processing** - Mathematical operations on time series
+- **Python DSP libraries** - NumPy, SciPy signal processing
+- **Data visualization** - Frequency domain analysis plots
+- **No domain expertise needed** - Just mathematical transformations
+
+##### 2. Test Suite Automation ⭐⭐⭐⭐⭐
+**Module:** `specs/modules/test-suite-automation/`
+**Why Perfect for You:**
+- **Pure testing infrastructure** - pytest, fixtures, mocks
+- **CI/CD pipeline setup** - GitHub Actions automation
+- **Coverage reporting** - Code quality metrics
+- **Universal software engineering** - No domain knowledge
+
+##### 3. AI Workflows Module ⭐⭐⭐⭐
+**Module:** `specs/modules/ai-workflows/`
+**Why Perfect for You:**
+- **ML/AI integration** - Modern Python libraries
+- **Workflow orchestration** - Pipeline design
+- **Agent-based systems** - Similar to sub-agents work
+- **Technology focused** - Minimal domain requirements
+
+##### 4. Development Tools ⭐⭐⭐⭐
+**Module:** `specs/modules/development-tools/`
+**Why Perfect for You:**
+- **Tool creation** - Developer productivity scripts
+- **Automation utilities** - Build process improvements
+- **Code generation** - Template systems
+- **Pure software engineering** - No domain expertise
+
+### From AssetUtilities Repository
+**Repository:** https://github.com/vamseeachanta/assetutilities
+
+#### High Priority Python/Data Specs:
+
+##### 1. Parallel Processing Utilities ⭐⭐⭐⭐⭐
+**Module:** `specs/modules/zip-utilities/parallel-processing/`
+**Why Perfect for You:**
+- **Concurrent processing** - Python multiprocessing/threading
+- **Performance optimization** - Speed improvements
+- **File operations** - Bulk data processing
+- **Pure technical implementation** - No domain knowledge
+
+##### 2. Authentication System ⭐⭐⭐⭐
+**Module:** `specs/modules/authentication/user-auth-system/`
+**Why Perfect for You:**
+- **Security implementation** - JWT, OAuth, sessions
+- **User management** - CRUD operations
+- **API security** - Rate limiting, authorization
+- **Standard web development** - Universal patterns
+
+##### 3. Agent OS Infrastructure ⭐⭐⭐⭐
+**Module:** `specs/modules/agent-os/`
+**Why Perfect for You:**
+- **System architecture** - Modular design patterns
+- **Agent coordination** - Inter-process communication
+- **Command systems** - CLI tool development
+- **Pure software architecture** - No domain requirements
+
 ## 📚 Additional Resources
 
 ### Repository Documentation
 - `.agent-os/standards/` - Coding standards and best practices
 - `.agent-os/product/` - Product context and architecture
 - `specs/modules/` - All available specifications
+
+### Cross-Repository Resources
+- **DigitalModel:** Engineering simulations, signal processing, automation
+- **AssetUtilities:** Utility functions, authentication, parallel processing
+- **WorldEnergyData:** Energy data analysis, dashboards, integrations
 
 ### Key Technologies to Master
 - **Python:** Advanced pandas, NumPy, scipy
@@ -244,18 +283,37 @@ Specs are evaluated based on their reinforcement of:
 - **APIs:** REST, authentication, rate limiting
 - **Testing:** pytest, mock, fixtures
 - **DevOps:** Git, GitHub Actions, Docker
+- **Parallel Processing:** multiprocessing, asyncio, concurrent.futures
+- **Signal Processing:** scipy.signal, FFT, filtering
+- **Authentication:** JWT, OAuth2, session management
 
 ## 🎯 Revised Skills Matrix (Domain Knowledge Required)
 
+### WorldEnergyData Repository
 | Spec | Python Skills | Domain Knowledge | Suitable for You | Collaboration Strategy |
 |------|--------------|------------------|------------------|----------------------|
 | sub-agents-system | ⭐⭐⭐⭐⭐ | ⭐ | ✅ PERFECT | Solo work |
 | sodir-integration | ⭐⭐⭐⭐ | ⭐ | ✅ PERFECT | Solo work |
-| trunk-based-development | ⭐⭐⭐ | None | ✅ PERFECT | Solo work |
 | well-data-verification | ⭐⭐⭐⭐ | ⭐⭐ | ✅ GOOD | Lead defines rules |
-| dca-interactive-dashboard | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⚠️ MAYBE | Lead provides formulas |
 | docs-organization | ⭐⭐⭐ | ⭐ | ✅ GOOD | Solo work |
 | decline-curve-analysis | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ❌ AVOID | Lead handles |
+
+### DigitalModel Repository
+| Spec | Python Skills | Domain Knowledge | Suitable for You | Collaboration Strategy |
+|------|--------------|------------------|------------------|----------------------|
+| signal-analysis | ⭐⭐⭐⭐⭐ | ⭐ | ✅ PERFECT | Solo work |
+| test-suite-automation | ⭐⭐⭐⭐ | ⭐ | ✅ PERFECT | Solo work |
+| ai-workflows | ⭐⭐⭐⭐ | ⭐ | ✅ PERFECT | Solo work |
+| development-tools | ⭐⭐⭐ | ⭐ | ✅ PERFECT | Solo work |
+| orcaflex | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ❌ AVOID | Requires engineering expertise |
+| marine-engineering | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ❌ AVOID | Requires naval architecture knowledge |
+
+### AssetUtilities Repository
+| Spec | Python Skills | Domain Knowledge | Suitable for You | Collaboration Strategy |
+|------|--------------|------------------|------------------|----------------------|
+| parallel-processing | ⭐⭐⭐⭐⭐ | ⭐ | ✅ PERFECT | Solo work |
+| authentication-system | ⭐⭐⭐⭐ | ⭐ | ✅ PERFECT | Solo work |
+| agent-os | ⭐⭐⭐⭐ | ⭐ | ✅ PERFECT | Solo work |
 
 ## 🚀 Getting Started with Minimal Domain Knowledge
 
@@ -280,6 +338,37 @@ I'll handle all the technical implementation."
 - **Lead brings:** Domain knowledge, formulas, business logic
 - **Together:** Complete, well-engineered solutions
 
+## 📋 Quick Reference: Cross-Repository Work
+
+### Repository Cloning Commands
+```bash
+# Clone all repositories for comprehensive work
+git clone https://github.com/vamseeachanta/worldenergydata.git
+git clone https://github.com/vamseeachanta/digitalmodel.git
+git clone https://github.com/vamseeachanta/assetutilities.git
+```
+
+### Priority Order for Python/Data Developers
+1. **Immediate Start (No Domain Knowledge):**
+   - WorldEnergyData: `sub-agents-system`
+   - AssetUtilities: `parallel-processing`
+   - DigitalModel: `test-suite-automation`
+
+2. **Next Wave (Minimal Domain Knowledge):**
+   - WorldEnergyData: `sodir-integration`
+   - DigitalModel: `signal-analysis`, `ai-workflows`
+   - AssetUtilities: `authentication-system`
+
+3. **Advanced (Some Domain Context Helpful):**
+   - WorldEnergyData: `well-data-verification-dashboard`
+   - DigitalModel: `development-tools`
+   - AssetUtilities: `agent-os`
+
+### Specs to AVOID (Heavy Domain Knowledge Required):
+- ❌ DigitalModel: `orcaflex`, `marine-engineering`, `orcawave`
+- ❌ WorldEnergyData: `decline-curve-analysis`, `directional-surveys`
+- ❌ AssetUtilities: `naval-arch-qms-ai-transformation`
+
 ---
 
-*Remember: You don't need to be a petroleum engineer to write great petroleum software. Focus on what you do best - clean, efficient, well-tested code.*
+*Remember: You don't need to be a petroleum/marine engineer to write great engineering software. Focus on what you do best - clean, efficient, well-tested code. The domain experts will provide the formulas and business logic.*
