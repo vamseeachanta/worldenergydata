@@ -2,7 +2,7 @@
 
 > **Purpose:** Guide Python programmers and Data Science practitioners in selecting appropriate specs from the WorldEnergyData repository based on their skill level and learning objectives.
 > 
-> **Last Updated:** 2025-09-01
+> **Last Updated:** 2025-09-02
 > **Target Audience:** Python Developers, Data Scientists, Data Analysts
 > **Note:** This guide prioritizes specs that require strong programming skills but minimal domain expertise
 
@@ -41,29 +41,7 @@ Specs are evaluated based on their reinforcement of:
 ## 📊 REVISED HIGH PRIORITY SPECS
 *Minimal domain knowledge required - Pure technical implementation*
 
-### 1. Sub-Agents System (`sub-agents-system`) ⭐⭐⭐⭐⭐
-
-**Status:** 0/59 tasks completed  
-**Module:** `specs/modules/infrastructure/sub-agents-system/`
-
-**Why This Is Perfect For You:**
-- **Pure Python architecture** - No petroleum knowledge needed
-- **System design focus** - Leverage your programming skills
-- **AI/ML integration** - Modern tech stack you can relate to
-- **Your lead can provide domain context when needed**
-
-**Skills Reinforced:**
-- Object-oriented design patterns
-- Module architecture & interfaces
-- Agent-based systems
-- Performance monitoring
-- Clean code organization
-
-**Domain Knowledge Required:** MINIMAL - It's all about system design
-
----
-
-### 2. SODIR Integration (`sodir-integration`) ⭐⭐⭐⭐⭐
+### 1. SODIR Integration (`sodir-integration`) ⭐⭐⭐⭐⭐
 
 **Status:** 0/37 tasks completed  
 **Module:** `specs/modules/data-sources/sodir-integration/`
@@ -85,7 +63,7 @@ Specs are evaluated based on their reinforcement of:
 
 ---
 
-### 3. Well Data Verification Dashboard (`well-data-verification-dashboard`) ⭐⭐⭐⭐
+### 2. Well Data Verification Dashboard (`well-data-verification-dashboard`) ⭐⭐⭐⭐
 
 **Status:** 0/115 tasks completed  
 **Module:** `specs/modules/analysis/well-data-verification-dashboard/`
@@ -108,7 +86,7 @@ Specs are evaluated based on their reinforcement of:
 ## 🔧 MEDIUM PRIORITY SPECS
 *Good technical work but may need occasional domain input*
 
-### 4. Infrastructure Documentation (`docs-organization`) ⭐⭐⭐
+### 3. Infrastructure Documentation (`docs-organization`) ⭐⭐⭐
 
 **Status:** 41/41 tasks completed (but could be enhanced)  
 **Module:** `specs/modules/infrastructure/docs-organization/`
@@ -196,9 +174,9 @@ Specs are evaluated based on their reinforcement of:
 
 ### Phase 1: Pure Infrastructure & Architecture (Weeks 1-4)
 **Focus: System Design & Architecture**
-1. **WorldEnergyData:** `sub-agents-system` - Agent architecture
-2. **AssetUtilities:** `agent-os` - Command systems
-3. **AssetUtilities:** `parallel-processing` - Performance optimization
+1. **AssetUtilities:** `agent-os` - Command systems
+2. **AssetUtilities:** `parallel-processing` - Performance optimization
+3. **DigitalModel:** `development-tools` - Developer productivity
    - Pure Python architecture
    - No domain knowledge needed
    - Build confidence with system design
@@ -281,7 +259,6 @@ Specs are evaluated based on their reinforcement of:
 ### WorldEnergyData Repository
 | Spec | Python Skills | Domain Knowledge | Suitable for You | Collaboration Strategy |
 |------|--------------|------------------|------------------|----------------------|
-| sub-agents-system | ⭐⭐⭐⭐⭐ | ⭐ | ✅ PERFECT | Solo work |
 | sodir-integration | ⭐⭐⭐⭐ | ⭐ | ✅ PERFECT | Solo work |
 | well-data-verification | ⭐⭐⭐⭐ | ⭐⭐ | ✅ GOOD | Lead defines rules |
 | docs-organization | ⭐⭐⭐ | ⭐ | ✅ GOOD | Solo work |
@@ -307,7 +284,7 @@ Specs are evaluated based on their reinforcement of:
 ## 🚀 Getting Started with Minimal Domain Knowledge
 
 ### Your Action Plan:
-1. **Start with `sub-agents-system`** - Pure technical architecture work
+1. **Start with `sodir-integration`** - Pure API integration work
 2. **Communicate with your lead** about domain requirements upfront
 3. **Focus on implementation excellence** rather than domain understanding
 4. **Ask for domain context** when you hit blockers, not before
@@ -339,17 +316,17 @@ git clone https://github.com/vamseeachanta/assetutilities.git
 
 ### Priority Order for Python/Data Developers
 1. **Immediate Start (No Domain Knowledge):**
-   - WorldEnergyData: `sub-agents-system`
+   - WorldEnergyData: `sodir-integration`
    - AssetUtilities: `parallel-processing`
    - DigitalModel: `test-suite-automation`
 
 2. **Next Wave (Minimal Domain Knowledge):**
-   - WorldEnergyData: `sodir-integration`
+   - WorldEnergyData: `well-data-verification-dashboard`
    - DigitalModel: `mathcad-to-python-psf`, `ai-workflows`
    - AssetUtilities: `authentication-system`
 
 3. **Advanced (Some Domain Context Helpful):**
-   - WorldEnergyData: `well-data-verification-dashboard`
+   - WorldEnergyData: `docs-organization`
    - DigitalModel: `development-tools`
    - AssetUtilities: `agent-os`
 
