@@ -6,7 +6,7 @@ including field-level metrics, portfolio analysis, and temporal trends.
 """
 
 import logging
-from typing import Dict, Any, List, Optional, Tuple
+from typing import Dict, Any, List, Optional, Tuple, Union
 from dataclasses import dataclass, field
 from datetime import datetime
 import pandas as pd
@@ -133,13 +133,28 @@ class SodirDataLoader:
 class SodirAnalysis:
     """Main SODIR analysis orchestrator"""
     
-    def __init__(self, config: AnalysisConfig):
+    def __init__(self, config: Union[AnalysisConfig, Dict[str, Any]]):
         """
         Initialize SODIR analysis component.
         
         Args:
-            config: Analysis configuration
+            config: Analysis configuration (AnalysisConfig object or dict)
         """
+        # Convert dict to AnalysisConfig if necessary
+        if isinstance(config, dict):
+            # Provide defaults for missing required fields
+            config_dict = {
+                'input_path': config.get('input_path', config.get('output_dir', './data')),
+                'output_path': config.get('output_path', config.get('output_dir', './output')),
+                'analysis_type': config.get('analysis_type', 'comprehensive')
+            }
+            # Add optional fields if present
+            if 'start_date' in config:
+                config_dict['start_date'] = config['start_date']
+            if 'end_date' in config:
+                config_dict['end_date'] = config['end_date']
+            config = AnalysisConfig(**config_dict)
+            
         self.config = config
         self.data_loader = SodirDataLoader(config)
         self.data = {}

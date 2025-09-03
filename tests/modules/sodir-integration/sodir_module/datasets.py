@@ -7,7 +7,7 @@ between SODIR and BSEE data.
 
 import pandas as pd
 import numpy as np
-from typing import Dict, List, Optional, Tuple, Any
+from typing import Dict, List, Optional, Tuple, Any, Union
 from datetime import datetime
 import logging
 
@@ -110,6 +110,46 @@ class DatasetGenerator:
         except Exception as e:
             logger.error(f"Failed to create wellbore dataset: {e}")
             raise
+    
+    def generate_wellbore_dataset(self, wellbore_data: Union[pd.DataFrame, List[Dict[str, Any]]],
+                                 field_data: Optional[pd.DataFrame] = None) -> pd.DataFrame:
+        """
+        Generate analysis-ready wellbore dataset (alias for create_wellbore_dataset).
+        
+        Args:
+            wellbore_data: Raw wellbore data (DataFrame or list of dicts)
+            field_data: Optional field data for enrichment
+            
+        Returns:
+            Analysis-ready wellbore DataFrame
+        """
+        # Convert list to DataFrame if necessary
+        if isinstance(wellbore_data, list):
+            wellbore_data = pd.DataFrame(wellbore_data)
+            
+        return self.create_wellbore_dataset(wellbore_data, field_data)
+    
+    def generate_production_dataset(self, production_data: Union[pd.DataFrame, List[Dict[str, Any]]],
+                                   field_data: Optional[pd.DataFrame] = None) -> pd.DataFrame:
+        """
+        Generate analysis-ready production dataset (alias for create_production_dataset).
+        
+        Args:
+            production_data: Raw production data (DataFrame or list of dicts)
+            field_data: Optional field data for enrichment
+            
+        Returns:
+            Analysis-ready production DataFrame
+        """
+        # Convert list to DataFrame if necessary
+        if isinstance(production_data, list):
+            production_data = pd.DataFrame(production_data)
+            
+        # If field_data not provided, create minimal field data
+        if field_data is None:
+            field_data = pd.DataFrame({'field_id': [], 'field_name': []})
+            
+        return self.create_production_dataset(production_data, field_data)
             
     def create_production_dataset(self, production_data: pd.DataFrame,
                                  field_data: pd.DataFrame) -> pd.DataFrame:
