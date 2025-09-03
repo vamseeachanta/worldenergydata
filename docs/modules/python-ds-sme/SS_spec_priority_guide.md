@@ -63,30 +63,50 @@ Specs are evaluated based on their reinforcement of:
 
 ---
 
-### 2. Well Data Verification Dashboard (`well-data-verification-dashboard`) ⭐⭐⭐⭐
+### 2. Well Data Verification (`verification`) ⭐⭐⭐⭐
 
-**Status:** 0/115 tasks completed  
-**Module:** `specs/modules/analysis/well-data-verification-dashboard/`
+**Status:** 0/X tasks completed  
+**Module:** `specs/modules/analysis/verification/`
 
 **Why This Is Perfect For You:**
 - **Data validation** - Universal programming concept
-- **Dashboard building** - Pure UI/UX work
 - **Quality checks** - Your lead defines rules, you implement
 - **Testing patterns** - Standard software engineering
+- **Exception handling** - Core programming skill
 
 **Skills Reinforced:**
 - Data validation frameworks
-- Dashboard development
 - Automated testing
 - Exception handling
-- Monitoring systems
+- Data integrity checks
 
 **Domain Knowledge Required:** LOW - Focus on validation logic, not what data means
+
+---
+
+### 3. Well Data Dashboard (`dashboard`) ⭐⭐⭐⭐
+
+**Status:** 0/X tasks completed  
+**Module:** `specs/modules/analysis/dashboard/`
+
+**Why This Is Perfect For You:**
+- **Dashboard building** - Pure UI/UX work
+- **Data visualization** - Frontend development
+- **User interface** - Standard web development
+- **Monitoring systems** - Technical implementation
+
+**Skills Reinforced:**
+- Dashboard development
+- Frontend frameworks
+- Data visualization
+- User experience design
+
+**Domain Knowledge Required:** LOW - Focus on UI/UX, not domain specifics
 
 ## 🔧 MEDIUM PRIORITY SPECS
 *Good technical work but may need occasional domain input*
 
-### 3. Infrastructure Documentation (`docs-organization`) ⭐⭐⭐
+### 4. Infrastructure Documentation (`docs-organization`) ⭐⭐⭐
 
 **Status:** 41/41 tasks completed (but could be enhanced)  
 **Module:** `specs/modules/infrastructure/docs-organization/`

@@ -106,19 +106,28 @@ class DataStorage:
             logger.error(f"Failed to save raw data: {e}")
             raise
             
-    def save_processed_data(self, df: pd.DataFrame, dataset_type: str, 
-                           format: str = 'parquet') -> str:
+    def save_processed_data(self, data: Union[pd.DataFrame, List[Dict[str, Any]], Dict[str, Any]], 
+                           dataset_type: str, format: str = 'parquet') -> str:
         """
         Save processed data.
         
         Args:
-            df: DataFrame to save
+            data: Data to save (DataFrame, list of dicts, or dict)
             dataset_type: Type of dataset
             format: Output format ('parquet', 'csv', 'json')
             
         Returns:
             Path to saved file
         """
+        # Convert to DataFrame if necessary
+        if isinstance(data, list):
+            df = pd.DataFrame(data) if data else pd.DataFrame()
+        elif isinstance(data, dict) and not isinstance(data, pd.DataFrame):
+            # If it's a single dict, wrap it in a list
+            df = pd.DataFrame([data])
+        else:
+            df = data
+            
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         
         if format == 'parquet':
