@@ -649,3 +649,170 @@ class CrossRegionalAnalyzer:
                     }
         
         return results
+    
+    def normalize_fields(self, fields_data: pd.DataFrame, source: str = 'SODIR') -> pd.DataFrame:
+        """
+        Normalize field data for cross-regional comparison.
+        
+        Args:
+            fields_data: DataFrame containing field data
+            source: Data source ('SODIR' or 'BSEE')
+            
+        Returns:
+            Normalized DataFrame
+        """
+        return self._normalize_fields(fields_data, source, NormalizationStrategy.STANDARD)
+    
+    def normalize_blocks(self, blocks_data: pd.DataFrame, source: str = 'SODIR') -> pd.DataFrame:
+        """
+        Normalize block data for cross-regional comparison.
+        
+        Args:
+            blocks_data: DataFrame containing block data
+            source: Data source ('SODIR' or 'BSEE')
+            
+        Returns:
+            Normalized DataFrame
+        """
+        normalized = blocks_data.copy()
+        
+        # Standardize column names
+        column_mapping = {
+            'block_name': 'block_id',
+            'area_km2': 'area_size',
+            'water_depth_m': 'water_depth',
+            'latitude': 'lat',
+            'longitude': 'lon'
+        }
+        
+        normalized = normalized.rename(columns=column_mapping)
+        
+        # Convert units if needed
+        if source == 'BSEE' and 'water_depth' in normalized.columns:
+            # Convert feet to meters if BSEE data
+            normalized['water_depth'] = normalized['water_depth'] * 0.3048
+            
+        if source == 'BSEE' and 'area_size' in normalized.columns:
+            # Convert square miles to km2 if BSEE data
+            normalized['area_size'] = normalized['area_size'] * 2.58999
+            
+        # Add source identifier
+        normalized['source_region'] = source
+        
+        return normalized
+    
+    def validate_data_quality(self, data: pd.DataFrame, data_type: str = 'fields') -> Dict[str, Any]:
+        """
+        Validate data quality and completeness.
+        
+        Args:
+            data: DataFrame to validate
+            data_type: Type of data ('fields', 'blocks', 'wellbores', etc.)
+            
+        Returns:
+            Dictionary with quality metrics
+        """
+        quality_report = {
+            'total_records': len(data),
+            'completeness': {},
+            'data_types': {},
+            'issues': [],
+            'quality_score': 0.0
+        }
+        
+        # Check completeness for each column
+        for col in data.columns:
+            non_null_count = data[col].notna().sum()
+            completeness = non_null_count / len(data) * 100 if len(data) > 0 else 0
+            quality_report['completeness'][col] = completeness
+            
+            # Check data types
+            quality_report['data_types'][col] = str(data[col].dtype)
+            
+            # Flag columns with low completeness
+            if completeness < 50:
+                quality_report['issues'].append(f"Column '{col}' has low completeness: {completeness:.1f}%")
+                
+        # Check for duplicate records based on key fields
+        key_fields = {
+            'fields': ['field_name'],
+            'blocks': ['block_id', 'block_name'],
+            'wellbores': ['wellbore_name']
+        }
+        
+        if data_type in key_fields:
+            key_cols = [col for col in key_fields[data_type] if col in data.columns]
+            if key_cols:
+                duplicates = data.duplicated(subset=key_cols).sum()
+                if duplicates > 0:
+                    quality_report['issues'].append(f"Found {duplicates} duplicate records")
+                    
+        # Calculate overall quality score
+        avg_completeness = np.mean(list(quality_report['completeness'].values()))
+        duplicate_penalty = 10 if any('duplicate' in issue.lower() for issue in quality_report['issues']) else 0
+        quality_report['quality_score'] = max(0, avg_completeness - duplicate_penalty)
+        
+        return quality_report
+    
+    def aggregate_cross_regional(self, sodir_data: pd.DataFrame, bsee_data: pd.DataFrame,
+                                 aggregation_level: str = 'field') -> pd.DataFrame:
+        """
+        Aggregate data from both regions for unified analysis.
+        
+        Args:
+            sodir_data: SODIR data DataFrame
+            bsee_data: BSEE data DataFrame
+            aggregation_level: Level of aggregation ('field', 'block', 'operator')
+            
+        Returns:
+            Aggregated DataFrame with both regions
+        """
+        # Normalize column names for both datasets
+        sodir_normalized = sodir_data.copy()
+        sodir_normalized['region'] = 'SODIR'
+        
+        bsee_normalized = bsee_data.copy()
+        bsee_normalized['region'] = 'BSEE'
+        
+        # Common column mapping
+        column_mapping = {
+            'field_name': 'name',
+            'operator_name': 'operator',
+            'oil_reserves_mmbbl': 'oil_reserves',
+            'gas_reserves_bcf': 'gas_reserves',
+            'water_depth_m': 'water_depth',
+            'production_start': 'start_date'
+        }
+        
+        # Apply column mapping
+        sodir_normalized = sodir_normalized.rename(columns=column_mapping)
+        bsee_normalized = bsee_normalized.rename(columns=column_mapping)
+        
+        # Select common columns
+        common_columns = list(set(sodir_normalized.columns) & set(bsee_normalized.columns))
+        
+        # Combine datasets
+        aggregated = pd.concat([
+            sodir_normalized[common_columns],
+            bsee_normalized[common_columns]
+        ], ignore_index=True)
+        
+        # Perform aggregation based on level
+        if aggregation_level == 'operator' and 'operator' in aggregated.columns:
+            aggregated = aggregated.groupby(['operator', 'region']).agg({
+                'name': 'count',  # Count of fields
+                'oil_reserves': 'sum',
+                'gas_reserves': 'sum',
+                'water_depth': 'mean'
+            }).reset_index()
+            aggregated = aggregated.rename(columns={'name': 'field_count'})
+            
+        elif aggregation_level == 'block' and 'block_id' in aggregated.columns:
+            aggregated = aggregated.groupby(['block_id', 'region']).agg({
+                'name': 'count',
+                'oil_reserves': 'sum',
+                'gas_reserves': 'sum'
+            }).reset_index()
+            aggregated = aggregated.rename(columns={'name': 'field_count'})
+            
+        return aggregated
