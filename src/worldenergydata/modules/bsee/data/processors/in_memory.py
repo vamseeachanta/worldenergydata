@@ -15,8 +15,8 @@ from loguru import logger
 from pathlib import Path
 import gc  # For garbage collection
 
-# Import the optimized processor
-from .optimized_processor import OptimizedProcessor
+# Import the high-performance processor
+from .high_performance import OptimizedProcessor
 
 # Try to import psutil for memory monitoring, but make it optional
 try:
