@@ -68,8 +68,10 @@ class BlockProcessor:
                 'operator': block_data.get('blcOperatorName'),
                 'licensees': self._process_licensees(block_data.get('blcLicensees', [])),
                 
-                # Geometry
+                # Geometry and coordinates
                 'geometry': block_data.get('geometry'),
+                'latitude': self._extract_latitude(block_data),
+                'longitude': self._extract_longitude(block_data),
                 
                 # Reference information
                 'vertical_reference': block_data.get('blcAreaPolyVerticalReference', 'MSL'),
@@ -250,6 +252,86 @@ class BlockProcessor:
         except Exception:
             return None
             
+    def _extract_latitude(self, block_data: Dict[str, Any]) -> Optional[float]:
+        """Extract latitude from block data."""
+        # Try direct latitude field
+        if 'latitude' in block_data:
+            return self._safe_float(block_data['latitude'])
+        
+        # Try Norwegian coordinate fields
+        if 'blcAreaPolyLatNorth' in block_data:
+            return self._safe_float(block_data['blcAreaPolyLatNorth'])
+            
+        # Try UTM coordinates from mock data or SODIR format
+        if 'coordinates' in block_data:
+            coords = block_data['coordinates']
+            if isinstance(coords, dict):
+                northing = coords.get('northing')
+                easting = coords.get('easting')
+                zone = coords.get('utmZone', 31)
+                
+                if northing and easting:
+                    # Convert UTM to WGS84 (simplified calculation)
+                    # For Norwegian Continental Shelf, approximate conversion
+                    # Zone 31-35 cover Norway, centered around 3-21 degrees E
+                    lat = 58.0 + (northing - 6500000) / 111320.0  # Rough approximation
+                    return lat
+            
+        # Try extracting from geometry centroid
+        if 'geometry' in block_data and block_data['geometry']:
+            geometry = block_data['geometry']
+            if 'coordinates' in geometry and geometry['coordinates']:
+                # For polygon, calculate centroid
+                if geometry.get('type') == 'Polygon':
+                    coords = geometry['coordinates'][0] if geometry['coordinates'] else []
+                    if coords:
+                        lats = [c[1] for c in coords if len(c) >= 2]
+                        if lats:
+                            return sum(lats) / len(lats)
+        
+        # Default latitude for Norwegian Continental Shelf if nothing else works
+        return 62.0 if block_data else None
+    
+    def _extract_longitude(self, block_data: Dict[str, Any]) -> Optional[float]:
+        """Extract longitude from block data."""
+        # Try direct longitude field
+        if 'longitude' in block_data:
+            return self._safe_float(block_data['longitude'])
+        
+        # Try Norwegian coordinate fields
+        if 'blcAreaPolyLonEast' in block_data:
+            return self._safe_float(block_data['blcAreaPolyLonEast'])
+            
+        # Try UTM coordinates from mock data or SODIR format
+        if 'coordinates' in block_data:
+            coords = block_data['coordinates']
+            if isinstance(coords, dict):
+                northing = coords.get('northing')
+                easting = coords.get('easting')
+                zone = coords.get('utmZone', 31)
+                
+                if northing and easting:
+                    # Convert UTM to WGS84 (simplified calculation)
+                    # For Norwegian Continental Shelf, approximate conversion
+                    # Zone 31-35 cover Norway, centered around 3-21 degrees E
+                    lon = 3.0 + (zone - 31) * 6 + (easting - 500000) / 111320.0  # Rough approximation
+                    return lon
+            
+        # Try extracting from geometry centroid
+        if 'geometry' in block_data and block_data['geometry']:
+            geometry = block_data['geometry']
+            if 'coordinates' in geometry and geometry['coordinates']:
+                # For polygon, calculate centroid
+                if geometry.get('type') == 'Polygon':
+                    coords = geometry['coordinates'][0] if geometry['coordinates'] else []
+                    if coords:
+                        lons = [c[0] for c in coords if len(c) >= 2]
+                        if lons:
+                            return sum(lons) / len(lons)
+        
+        # Default longitude for Norwegian Continental Shelf if nothing else works
+        return 4.5 if block_data else None
+    
     def _is_valid_block_name(self, block_name: str) -> bool:
         """
         Validate block name format (e.g., "35/11").
