@@ -1,0 +1,319 @@
+# API Sources Configuration
+# WorldEnergyData API Integration Configuration
+# Created: 2025-01-06
+
+api_sources:
+  # BSEE - Bureau of Safety and Environmental Enforcement
+  bsee:
+    name: "BSEE Data Services"
+    enabled: true
+    base_urls:
+      arcgis: "https://gis.boem.gov/arcgis/rest/services/BOEM_BSEE"
+      data_center: "https://www.data.bsee.gov"
+    
+    endpoints:
+      # ArcGIS MapServer endpoints
+      platforms:
+        url: "${base_urls.arcgis}/MMC_Layers/MapServer/0"
+        method: GET
+        params:
+          f: json
+          outFields: "*"
+          returnGeometry: true
+        cache_ttl: 86400  # 24 hours
+        
+      wells:
+        url: "${base_urls.arcgis}/MMC_Layers/MapServer/1"
+        method: GET
+        params:
+          f: json
+          outFields: "*"
+          where: "1=1"
+        cache_ttl: 86400
+        
+      pipelines:
+        url: "${base_urls.arcgis}/MMC_Layers/MapServer/2"
+        method: GET
+        params:
+          f: json
+          outFields: "*"
+        cache_ttl: 86400
+        
+      leases:
+        url: "${base_urls.arcgis}/MMC_Layers/MapServer/6"
+        method: GET
+        params:
+          f: json
+          outFields: "*"
+        cache_ttl: 3600  # 1 hour
+    
+    # Query endpoints (non-REST, for reference)
+    query_endpoints:
+      production:
+        url: "${base_urls.data_center}/Production/"
+        format: ["csv", "ascii", "pdf"]
+        update_frequency: "monthly"
+        
+      well_data:
+        url: "${base_urls.data_center}/Well/"
+        format: ["csv", "ascii", "pdf"]
+        update_frequency: "as_reported"
+    
+    authentication:
+      required: false
+    
+    rate_limits:
+      requests_per_second: 10
+      burst_size: 20
+    
+    retry_policy:
+      max_attempts: 3
+      backoff_factor: 2
+      max_wait: 30
+
+  # EIA - Energy Information Administration
+  eia:
+    name: "EIA API v2"
+    enabled: true
+    base_url: "https://api.eia.gov/v2"
+    
+    endpoints:
+      petroleum:
+        url: "${base_url}/petroleum"
+        data_endpoint: "${base_url}/petroleum/data"
+        params:
+          api_key: "${EIA_API_KEY}"
+          frequency: "monthly"
+          data: ["value"]
+          sort: [["period", "desc"]]
+          offset: 0
+          length: 5000
+        cache_ttl: 3600
+        
+      natural_gas:
+        url: "${base_url}/natural-gas"
+        data_endpoint: "${base_url}/natural-gas/data"
+        params:
+          api_key: "${EIA_API_KEY}"
+          frequency: "monthly"
+        cache_ttl: 3600
+        
+      electricity:
+        url: "${base_url}/electricity"
+        data_endpoint: "${base_url}/electricity/data"
+        params:
+          api_key: "${EIA_API_KEY}"
+        cache_ttl: 1800  # 30 minutes
+        
+      crude_oil_imports:
+        url: "${base_url}/crude-oil-imports"
+        data_endpoint: "${base_url}/crude-oil-imports/data"
+        params:
+          api_key: "${EIA_API_KEY}"
+        cache_ttl: 86400
+        
+      international:
+        url: "${base_url}/international"
+        data_endpoint: "${base_url}/international/data"
+        params:
+          api_key: "${EIA_API_KEY}"
+          frequency: "annual"
+        cache_ttl: 604800  # 1 week
+    
+    authentication:
+      required: true
+      type: "api_key"
+      key_param: "api_key"
+      key_location: "query"
+      env_variable: "EIA_API_KEY"
+    
+    rate_limits:
+      requests_per_day: 10000
+      requests_per_second: null  # No specified limit
+    
+    retry_policy:
+      max_attempts: 5
+      backoff_factor: 2
+      max_wait: 60
+    
+    response_format: "json"
+    
+  # NOAA - National Oceanic and Atmospheric Administration
+  noaa:
+    name: "NOAA Weather and Climate APIs"
+    enabled: true
+    
+    services:
+      # NCEI Access Data Service (Current/Preferred)
+      ncei:
+        base_url: "https://www.ncei.noaa.gov/access/services/data/v1"
+        params:
+          dataset: "daily-summaries"
+          dataTypes: "TMIN,TMAX,PRCP"
+          format: "json"
+          units: "metric"
+        cache_ttl: 86400
+        authentication:
+          required: false
+          
+      # Weather Service API
+      weather:
+        base_url: "https://api.weather.gov"
+        endpoints:
+          points:
+            url: "${base_url}/points/{lat},{lon}"
+            cache_ttl: 3600
+          forecast:
+            url: "${base_url}/gridpoints/{office}/{gridX},{gridY}/forecast"
+            cache_ttl: 1800
+          observations:
+            url: "${base_url}/stations/{stationId}/observations"
+            cache_ttl: 600  # 10 minutes
+          alerts:
+            url: "${base_url}/alerts/active"
+            cache_ttl: 300  # 5 minutes
+        authentication:
+          required: false
+          
+      # Tides and Currents
+      coops:
+        base_url: "https://api.tidesandcurrents.noaa.gov/api/prod"
+        params:
+          format: "json"
+          units: "metric"
+          time_zone: "gmt"
+        cache_ttl: 3600
+        authentication:
+          required: false
+          
+      # Climate Data Online (Legacy, limited to 2022)
+      cdo:
+        base_url: "https://www.ncei.noaa.gov/cdo-web/api/v2"
+        endpoints:
+          data:
+            url: "${base_url}/data"
+          stations:
+            url: "${base_url}/stations"
+          datatypes:
+            url: "${base_url}/datatypes"
+        authentication:
+          required: true
+          type: "token"
+          header: "token"
+          env_variable: "NOAA_CDO_TOKEN"
+        rate_limits:
+          requests_per_second: 5
+          requests_per_day: 10000
+        cache_ttl: 86400
+    
+    retry_policy:
+      max_attempts: 3
+      backoff_factor: 2
+      max_wait: 30
+
+  # Wind Energy APIs
+  wind:
+    name: "Wind Energy Data APIs"
+    enabled: true
+    
+    services:
+      # US Wind Turbine Database
+      uswtdb:
+        base_url: "https://energy.usgs.gov/api/uswtdb/v1"
+        endpoints:
+          turbines:
+            url: "${base_url}/turbines"
+            cache_ttl: 86400
+          projects:
+            url: "${base_url}/projects"
+            cache_ttl: 86400
+          manufacturers:
+            url: "${base_url}/manufacturers"
+            cache_ttl: 604800
+        authentication:
+          required: false
+        response_format: "json"
+        
+      # NREL Wind Toolkit
+      nrel:
+        base_url: "https://developer.nrel.gov/api"
+        endpoints:
+          offshore_ca:
+            url: "${base_url}/wind-toolkit/v2/wind/offshore-ca-download.json"
+            params:
+              api_key: "${NREL_API_KEY}"
+              interval: "hourly"
+            cache_ttl: 86400
+        authentication:
+          required: true
+          type: "api_key"
+          key_param: "api_key"
+          key_location: "query"
+          env_variable: "NREL_API_KEY"
+        rate_limits:
+          varies_by_tier: true
+    
+    retry_policy:
+      max_attempts: 3
+      backoff_factor: 2
+      max_wait: 30
+
+# Global settings
+global_settings:
+  timeout: 30  # seconds
+  verify_ssl: true
+  user_agent: "WorldEnergyData/1.0"
+  
+  # Default cache settings
+  cache:
+    enabled: true
+    backend: "redis"  # Options: memory, redis, disk
+    default_ttl: 3600
+    max_size: "1GB"
+    
+  # Default retry policy (can be overridden per API)
+  retry:
+    max_attempts: 3
+    backoff_factor: 2
+    max_wait: 60
+    retry_on_status: [429, 500, 502, 503, 504]
+    
+  # Logging
+  logging:
+    level: "INFO"
+    format: "json"
+    log_requests: true
+    log_responses: false  # Set to true for debugging
+    sanitize_credentials: true
+    
+  # Circuit breaker settings
+  circuit_breaker:
+    failure_threshold: 5
+    recovery_timeout: 60
+    expected_exception: "RequestException"
+
+# Environment variables required
+required_env_vars:
+  - EIA_API_KEY
+  - NOAA_CDO_TOKEN  # Optional if only using NCEI
+  - NREL_API_KEY    # Optional if not using NREL
+
+# Data transformation mappings
+field_mappings:
+  bsee:
+    common_fields:
+      api_well_number: "api_number"
+      lease_number: "lease_id"
+      operator_name: "operator"
+      
+  eia:
+    common_fields:
+      period: "date"
+      value: "quantity"
+      units: "unit_of_measure"
+      
+  noaa:
+    common_fields:
+      TMIN: "temperature_min"
+      TMAX: "temperature_max"
+      PRCP: "precipitation"
