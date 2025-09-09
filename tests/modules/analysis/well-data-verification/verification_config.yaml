@@ -1,0 +1,79 @@
+# Well Data Verification Configuration
+# Adapts patterns from BSEE financial module configuration
+
+verification:
+  rules:
+    production_volume:
+      oil:
+        min: 0
+        max: 100000
+        unit: bbl/day
+      gas:
+        min: 0
+        max: 1000000
+        unit: mcf/day
+      water:
+        min: 0
+        max: 50000
+        unit: bbl/day
+    
+    date_range:
+      min_date: '2000-01-01'
+      max_date: '2030-12-31'
+    
+    quality:
+      anomaly_detection:
+        method: statistical
+        threshold: 3.0  # Standard deviations
+        min_samples: 10
+      
+      completeness:
+        required_fields:
+          - WELL_ID
+          - LEASE_NUM
+          - PRODUCTION_DATE
+          - OIL_VOLUME
+          - GAS_VOLUME
+        optional_fields:
+          - WATER_VOLUME
+          - DAYS_ON_PRODUCTION
+    
+    thresholds:
+      error_tolerance: 0.01  # 1% error tolerance
+      warning_threshold: 0.05  # 5% warning threshold
+      critical_fields:
+        - WELL_ID
+        - PRODUCTION_DATE
+  
+  audit:
+    enabled: true
+    storage: file  # 'file' or 'database'
+    retention_days: 365
+    log_level: INFO
+    track_changes: true
+    user_tracking: true
+  
+  reports:
+    formats:
+      - pdf
+      - excel
+    templates_dir: templates/
+    include_charts: true
+    include_summary: true
+    include_details: true
+  
+  workflow:
+    - load_data
+    - validate_structure
+    - check_completeness
+    - validate_ranges
+    - detect_anomalies
+    - cross_reference
+    - generate_report
+  
+  performance:
+    batch_size: 1000
+    parallel_workers: 4
+    cache_enabled: true
+    cache_ttl: 3600  # seconds
+    memory_limit: 2048  # MB
