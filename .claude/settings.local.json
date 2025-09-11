@@ -33,7 +33,8 @@
       "Bash(.venvScriptspython.exe:*)",
       "Bash(/mnt/c/Users/Sk Samdan/Desktop/github/worldenergydata/.venv/Scripts/python.exe -c \"\nimport pandas as pd\nimport os\n\n# Load Jack field data Excel report\njack_path = r''specs/modules/bsee/comprehensive-report-system/sub-specs/go_by/Jack_field_data.xlsx''\n\ntry:\n    # Get Excel file info\n    xl_file = pd.ExcelFile(jack_path)\n    sheet_names = xl_file.sheet_names\n    \n    print(''Jack Field Excel Report Analysis'')\n    print(''='' * 50)\n    print(f''Number of sheets: {len(sheet_names)}'')\n    print(f''Sheet names: {sheet_names}'')\n    \nexcept Exception as e:\n    print(f''Error: {e}'')\n\")",
       "WebFetch(domain:github.com)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(dir:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"
