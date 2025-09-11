@@ -16,7 +16,7 @@ import json
 from difflib import SequenceMatcher
 from loguru import logger
 
-from worldenergydata.modules.analysis.verification.base import VerificationResult
+from worldenergydata.modules.bsee.analysis.well_data_verification.base import VerificationResult
 
 
 @dataclass
