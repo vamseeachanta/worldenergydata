@@ -43,11 +43,25 @@ from worldenergydata.modules.bsee.reports.comprehensive.exporters import (
 from worldenergydata.modules.bsee.reports.comprehensive.exporters.pdf_exporter import PDFExporter
 from worldenergydata.modules.bsee.reports.comprehensive.exporters.excel_exporter import ExcelExporter
 
+# Import export manager for dashboard exports
+from worldenergydata.modules.well_production_dashboard.export_manager import (
+    WellDashboardExportManager,
+    ExportConfiguration,
+    ExportResult,
+    VerificationMetadata
+)
+
 # Import visualization components
 from worldenergydata.modules.bsee.reports.comprehensive.visualizations import (
     ProductionChart,
     EconomicChart
 )
+
+# Import query optimizer for BSEE data loader integration
+from worldenergydata.modules.well_production_dashboard.query_optimizer import QueryOptimizer
+
+# Import cache configuration
+from worldenergydata.modules.well_production_dashboard.cache_config import DashboardCacheManager
 
 logger = logging.getLogger(__name__)
 
@@ -307,6 +321,8 @@ class WellProductionDashboard(DashboardBuilder):
         
         # Components
         self.verification_engine = None
+        self.query_optimizer = QueryOptimizer()  # Initialize query optimizer for BSEE data
+        self.cache_manager = DashboardCacheManager()  # Initialize cache manager
         self.authenticator = None
         self.websocket_handler = None
         self.exporter = None
@@ -370,21 +386,60 @@ class WellProductionDashboard(DashboardBuilder):
         
         return dashboard
     
-    def load_well_data(self, data: pd.DataFrame):
+    def load_well_data(self, data: pd.DataFrame = None, well_ids: List[str] = None, 
+                       start_date: datetime = None, end_date: datetime = None):
         """
-        Load well production data.
+        Load well production data using optimized BSEE data loaders.
         
         Args:
-            data: DataFrame with well production data
+            data: DataFrame with well production data (optional, for backward compatibility)
+            well_ids: List of well IDs to load (uses query optimizer)
+            start_date: Start date for data
+            end_date: End date for data
             
         Raises:
             ValueError: If required columns are missing
         """
-        required_columns = ['well_id', 'date', 'oil_production']
-        missing = [col for col in required_columns if col not in data.columns]
+        # If well_ids provided, use query optimizer with caching
+        if well_ids:
+            # Check cache first
+            cache_params = {'start_date': str(start_date), 'end_date': str(end_date)}
+            cache_key = f"wells:{','.join(well_ids)}"
+            cached_data = self.cache_manager.get_well_data(cache_key, cache_params)
+            
+            if cached_data is not None:
+                logger.info(f"Using cached data for {len(well_ids)} wells")
+                data = cached_data
+                self.cache_hits += 1
+            else:
+                logger.info(f"Loading {len(well_ids)} wells using query optimizer")
+                optimized_data = self.query_optimizer.get_dashboard_data_optimized(
+                    well_ids=well_ids,
+                    start_date=start_date,
+                    end_date=end_date
+                )
+                
+                # Extract well data from optimized result
+                if optimized_data and 'wells' in optimized_data:
+                    combined_data = []
+                    for well_id, well_df in optimized_data['wells'].items():
+                        if isinstance(well_df, pd.DataFrame):
+                            combined_data.append(well_df)
+                    
+                    if combined_data:
+                        data = pd.concat(combined_data, ignore_index=True)
+                        logger.info(f"Loaded {len(data)} records for {len(well_ids)} wells")
+                        
+                        # Cache the result
+                        self.cache_manager.cache_well_data(cache_key, data, cache_params)
         
-        if missing:
-            raise ValueError(f"Missing required columns: {missing}")
+        # Validate data if provided
+        if data is not None:
+            required_columns = ['well_id', 'date', 'oil_production']
+            missing = [col for col in required_columns if col not in data.columns]
+            
+            if missing:
+                raise ValueError(f"Missing required columns: {missing}")
         
         self.well_data = data
         self.total_requests += 1
@@ -790,6 +845,178 @@ class WellProductionDashboard(DashboardBuilder):
         self._cache.clear()
         self._cache_timestamps.clear()
         self.cache_hits = 0
+    
+    # Export functionality methods
+    def export_dashboard(self, 
+                        output_path: str,
+                        export_config: Optional[ExportConfiguration] = None) -> List[ExportResult]:
+        """
+        Export dashboard data to multiple formats.
+        
+        Args:
+            output_path: Base path for export files
+            export_config: Export configuration
+            
+        Returns:
+            List of export results
+        """
+        if export_config is None:
+            export_config = ExportConfiguration(
+                formats=self.export_formats,
+                include_verification=self.enable_verification,
+                include_charts=True,
+                include_raw_data=True
+            )
+        
+        # Initialize export manager if not already done
+        if not hasattr(self, 'export_manager'):
+            self.export_manager = WellDashboardExportManager()
+        
+        # Prepare dashboard data
+        dashboard_data = self.get_dashboard_data()
+        
+        # Add verification metadata if enabled
+        if self.enable_verification and self.verification_workflow:
+            dashboard_data['verification_metadata'] = self._get_verification_metadata()
+        
+        # Export using the export manager
+        results = self.export_manager.export_batch(
+            dashboard_data,
+            output_path,
+            export_config
+        )
+        
+        # Log export results
+        for result in results:
+            if result.success:
+                logger.info(f"Successfully exported to {result.format}: {result.file_path}")
+            else:
+                logger.error(f"Failed to export to {result.format}: {result.error_message}")
+        
+        return results
+    
+    def get_dashboard_data(self) -> Dict[str, Any]:
+        """
+        Get all dashboard data for export.
+        
+        Returns:
+            Dictionary containing all dashboard data
+        """
+        dashboard_data = {
+            'export_timestamp': datetime.now(),
+            'dashboard_config': self.to_dict()
+        }
+        
+        # Get well production data
+        try:
+            well_data = self.get_well_data()
+            dashboard_data['well_data'] = well_data
+        except Exception as e:
+            logger.error(f"Failed to get well data: {e}")
+            dashboard_data['well_data'] = pd.DataFrame()
+        
+        # Get economic metrics
+        try:
+            metrics = self.get_metrics()
+            dashboard_data['economic_metrics'] = metrics
+        except Exception as e:
+            logger.error(f"Failed to get metrics: {e}")
+            dashboard_data['economic_metrics'] = {}
+        
+        # Get charts if available
+        try:
+            charts = self.get_charts()
+            dashboard_data['charts'] = charts
+        except Exception as e:
+            logger.error(f"Failed to get charts: {e}")
+            dashboard_data['charts'] = {}
+        
+        # Get field aggregation data if available
+        if hasattr(self, 'field_aggregator'):
+            try:
+                field_data = self.field_aggregator.get_field_summary()
+                dashboard_data['field_data'] = field_data
+            except Exception as e:
+                logger.error(f"Failed to get field data: {e}")
+        
+        return dashboard_data
+    
+    def _get_verification_metadata(self) -> VerificationMetadata:
+        """
+        Get verification metadata for export.
+        
+        Returns:
+            Verification metadata
+        """
+        # Get latest verification result
+        quality_score = 0.0
+        anomalies = 0
+        completeness = 1.0
+        
+        if self.verification_results:
+            latest_result = list(self.verification_results.values())[0]
+            if isinstance(latest_result, VerificationResult):
+                quality_score = latest_result.quality_score
+                anomalies = len(latest_result.anomalies) if hasattr(latest_result, 'anomalies') else 0
+                completeness = latest_result.completeness if hasattr(latest_result, 'completeness') else 1.0
+        
+        return VerificationMetadata(
+            quality_score=quality_score,
+            verification_date=datetime.now(),
+            audit_trail_id=f"AUDIT-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
+            anomalies_detected=anomalies,
+            data_completeness=completeness,
+            verification_status="Verified" if quality_score >= self.quality_threshold else "Failed",
+            data_sources=['BSEE', 'Internal']
+        )
+    
+    def export_to_pdf(self, output_path: str) -> ExportResult:
+        """
+        Export dashboard to PDF format.
+        
+        Args:
+            output_path: Output file path
+            
+        Returns:
+            Export result
+        """
+        config = ExportConfiguration(formats=['pdf'])
+        results = self.export_dashboard(output_path.replace('.pdf', ''), config)
+        return results[0] if results else ExportResult(success=False, format='pdf')
+    
+    def export_to_excel(self, output_path: str) -> ExportResult:
+        """
+        Export dashboard to Excel format.
+        
+        Args:
+            output_path: Output file path
+            
+        Returns:
+            Export result
+        """
+        config = ExportConfiguration(formats=['excel'])
+        results = self.export_dashboard(output_path.replace('.xlsx', ''), config)
+        return results[0] if results else ExportResult(success=False, format='excel')
+    
+    def export_with_verification(self, output_path: str) -> List[ExportResult]:
+        """
+        Export dashboard with full verification report.
+        
+        Args:
+            output_path: Base output path
+            
+        Returns:
+            List of export results
+        """
+        config = ExportConfiguration(
+            formats=['pdf', 'excel'],
+            include_verification=True,
+            include_charts=True,
+            include_raw_data=True,
+            include_field_aggregation=True
+        )
+        
+        return self.export_dashboard(output_path, config)
 
 
 class MockAuthenticator:
