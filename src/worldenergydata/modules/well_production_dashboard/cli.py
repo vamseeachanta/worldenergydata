@@ -13,6 +13,7 @@ import logging
 from datetime import datetime
 
 from .well_production import WellProductionDashboard, WellDashboardConfig
+from .export_manager import ExportConfiguration, ExportResult
 
 
 def setup_logging(verbose: bool):
@@ -48,18 +49,36 @@ class DashboardCLI:
         self.config = WellDashboardConfig(**config_dict)
         self.dashboard = WellProductionDashboard(self.config)
     
-    def export(self, format: str = 'pdf', output_path: Optional[str] = None):
-        """Export dashboard."""
+    def export(self, format: str = 'pdf', output_path: Optional[str] = None, 
+              config: Optional[ExportConfiguration] = None):
+        """Export dashboard with comprehensive report integration."""
         if not self.dashboard:
             raise ValueError("Dashboard not initialized")
         
-        content = self.dashboard.export_dashboard(format)
+        # Use provided config or create default
+        if config is None:
+            config = ExportConfiguration(formats=[format])
         
-        if output_path:
-            Path(output_path).write_bytes(content)
-            return output_path
+        # Export using new export manager
+        base_path = str(Path(output_path).with_suffix('')) if output_path else 'dashboard_export'
+        results = self.dashboard.export_dashboard(base_path, config)
         
-        return content
+        # Return first result for backward compatibility
+        if results:
+            return results[0]
+        
+        return None
+    
+    def get_export_parameters(self) -> Dict[str, Any]:
+        """Get available export parameters."""
+        return {
+            'format': ['pdf', 'excel', 'json', 'all'],
+            'include_verification': 'Include verification metadata',
+            'include_charts': 'Include charts and visualizations',
+            'include_raw_data': 'Include raw data tables',
+            'include_field_aggregation': 'Include field-level aggregations',
+            'output_path': 'Path to save export files'
+        }
 
 
 @click.group()
@@ -172,15 +191,19 @@ def analyze(ctx, well_ids, start_date, end_date, verify, output):
 
 
 @cli.command()
-@click.argument('format', type=click.Choice(['pdf', 'excel']))
+@click.argument('format', type=click.Choice(['pdf', 'excel', 'json', 'all']))
 @click.option('--output', '-o', type=click.Path(), required=True, help='Output file path')
 @click.option('--wells', '-w', multiple=True, help='Wells to include')
 @click.option('--start-date', '-s', type=click.DateTime(), help='Start date')
 @click.option('--end-date', '-e', type=click.DateTime(), help='End date')
 @click.option('--include-verification', is_flag=True, help='Include verification results')
+@click.option('--include-charts', is_flag=True, default=True, help='Include charts in export')
+@click.option('--include-raw-data', is_flag=True, default=False, help='Include raw data')
+@click.option('--include-field-aggregation', is_flag=True, help='Include field aggregation')
 @click.pass_context
-def export(ctx, format, output, wells, start_date, end_date, include_verification):
-    """Export dashboard to file."""
+def export(ctx, format, output, wells, start_date, end_date, include_verification, 
+          include_charts, include_raw_data, include_field_aggregation):
+    """Export dashboard to file with comprehensive report integration."""
     config_path = ctx.obj.get('config')
     
     # Create dashboard
@@ -189,7 +212,13 @@ def export(ctx, format, output, wells, start_date, end_date, include_verificatio
     else:
         dashboard = WellProductionDashboard()
     
-    click.echo(f"Exporting dashboard to {format.upper()}...")
+    # Determine formats
+    if format == 'all':
+        formats = ['pdf', 'excel', 'json']
+        click.echo("Exporting dashboard to all formats (PDF, Excel, JSON)...")
+    else:
+        formats = [format]
+        click.echo(f"Exporting dashboard to {format.upper()}...")
     
     # Apply filters if specified
     if wells:
@@ -198,16 +227,36 @@ def export(ctx, format, output, wells, start_date, end_date, include_verificatio
         dashboard.add_filter('date_range', [start_date, end_date])
     
     # Configure export options
-    if include_verification:
-        dashboard.config.export_verification = True
+    export_config = ExportConfiguration(
+        formats=formats,
+        include_verification=include_verification,
+        include_charts=include_charts,
+        include_raw_data=include_raw_data,
+        include_field_aggregation=include_field_aggregation,
+        wells_filter=list(wells) if wells else None,
+        date_range=(start_date, end_date) if start_date and end_date else None
+    )
     
     try:
-        # Export dashboard
-        content = dashboard.export_dashboard(format)
+        # Export dashboard using new export manager
+        base_path = str(Path(output).with_suffix(''))
+        results = dashboard.export_dashboard(base_path, export_config)
         
-        # Save to file
-        Path(output).write_bytes(content)
-        click.echo(f"Dashboard exported to: {output}")
+        # Display results
+        click.echo("\nExport Results:")
+        for result in results:
+            if result.success:
+                click.echo(f"  ✓ {result.format.upper()}: {result.file_path}")
+                if result.file_size:
+                    size_mb = result.file_size / (1024 * 1024)
+                    click.echo(f"    Size: {size_mb:.2f} MB")
+            else:
+                click.echo(f"  ✗ {result.format.upper()}: Failed - {result.error_message}")
+        
+        # Summary
+        successful = sum(1 for r in results if r.success)
+        total = len(results)
+        click.echo(f"\nExported {successful}/{total} formats successfully")
         
     except Exception as e:
         click.echo(f"Export failed: {e}", err=True)
@@ -371,6 +420,61 @@ def verify(ctx, well_id):
         click.echo("\nRecent Audit Trail:")
         for _, entry in audit_trail.head(5).iterrows():
             click.echo(f"  {entry.get('timestamp', 'N/A')}: {entry.get('action', 'N/A')}")
+
+
+@cli.command()
+@click.option('--output', '-o', type=click.Path(), required=True, help='Output file path')
+@click.option('--format', '-f', type=click.Choice(['pdf', 'excel', 'json', 'all']), default='pdf', help='Export format')
+@click.option('--wells', '-w', multiple=True, help='Wells to include in report')
+@click.option('--quality-threshold', type=float, help='Minimum quality score to include')
+@click.pass_context
+def verification_report(ctx, output, format, wells, quality_threshold):
+    """Export comprehensive verification report with audit trails."""
+    config_path = ctx.obj.get('config')
+    
+    # Create dashboard
+    if config_path:
+        dashboard = WellProductionDashboard.from_yaml(config_path)
+    else:
+        dashboard = WellProductionDashboard()
+    
+    click.echo("Generating verification report...")
+    
+    # Configure export for verification focus
+    export_config = ExportConfiguration(
+        formats=[format] if format != 'all' else ['pdf', 'excel', 'json'],
+        include_verification=True,
+        include_charts=True,
+        include_raw_data=False,
+        include_field_aggregation=False,
+        wells_filter=list(wells) if wells else None,
+        quality_threshold=quality_threshold
+    )
+    
+    try:
+        # Export with verification focus
+        base_path = str(Path(output).with_suffix(''))
+        results = dashboard.export_with_verification(base_path)
+        
+        # Display results
+        click.echo("\nVerification Report Export Results:")
+        for result in results:
+            if result.success:
+                click.echo(f"  ✓ {result.format.upper()}: {result.file_path}")
+            else:
+                click.echo(f"  ✗ {result.format.upper()}: Failed - {result.error_message}")
+        
+        # Display verification summary
+        metadata = dashboard._get_verification_metadata()
+        click.echo(f"\nVerification Summary:")
+        click.echo(f"  Quality Score: {metadata.quality_score:.2%}")
+        click.echo(f"  Status: {metadata.verification_status}")
+        click.echo(f"  Anomalies: {metadata.anomalies_detected}")
+        click.echo(f"  Completeness: {metadata.data_completeness:.2%}")
+        
+    except Exception as e:
+        click.echo(f"Verification report export failed: {e}", err=True)
+        sys.exit(1)
 
 
 def main():
