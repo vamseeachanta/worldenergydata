@@ -1,0 +1,6 @@
+{
+  "memory": {
+    "retention": "30d",
+    "maxSize": "1GB"
+  }
+}
