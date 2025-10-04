@@ -226,7 +226,7 @@ DEFAULT_ASSUMPTIONS = {
 **Effort:** 3 days
 
 - End-to-end pipeline tests
-- Golden baseline validation (compare against V30 reference)
+- Golden baseline validation (compare against FDAS reference)
 - Performance benchmarking
 - Edge case handling
 
