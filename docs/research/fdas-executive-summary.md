@@ -3,7 +3,7 @@
 
 ## What is FDAS?
 
-FDAS (Field Development Analysis System) V30 is Roy's latest financial analysis codebase for deepwater oil & gas field development. It provides:
+FDAS (Field Development Analysis System) is Roy's financial analysis codebase for deepwater oil & gas field development. It provides:
 
 - **NPV/MIRR Analysis:** Excel-compatible financial metrics
 - **Cashflow Modeling:** Monthly cashflow projections by development
@@ -13,7 +13,7 @@ FDAS (Field Development Analysis System) V30 is Roy's latest financial analysis 
 ## Current State
 
 ### Code Location
-`/home/vamsee/Downloads/FDAS_V30/` (4 Python files, 1,749 total lines)
+`/home/vamsee/Downloads/FDAS_V30/` (source directory - 4 Python files, 1,749 total lines)
 
 ### Key Files
 1. `generate_financial_summary.py` - Main financial engine
@@ -75,7 +75,7 @@ FDAS (Field Development Analysis System) V30 is Roy's latest financial analysis 
 5. **Create Assumptions File**
    - New file: `default_assumptions.xlsx`
    - Development system-specific parameters
-   - Port from FDAS template
+   - Port from FDAS source template
 
 ### Low Priority (Optional)
 
@@ -113,7 +113,7 @@ FDAS (Field Development Analysis System) V30 is Roy's latest financial analysis 
 
 ### Resource Requirements
 - **Developer:** 1 Python engineer (6 weeks full-time)
-- **Testing:** Access to BSEE data and V30 golden baseline
+- **Testing:** Access to BSEE data and FDAS golden baseline
 - **Review:** Technical review at end of Week 2 and Week 4
 
 ## Success Criteria
@@ -122,7 +122,7 @@ FDAS (Field Development Analysis System) V30 is Roy's latest financial analysis 
 - ✅ Process all BSEE production data without errors
 - ✅ NPV/MIRR values match golden baseline (±1%)
 - ✅ Support major fields: Anchor, Julia, Jack, St. Malo
-- ✅ Generate Excel reports matching V30 format
+- ✅ Generate Excel reports in FDAS format
 
 ### Quality Requirements
 - ✅ 90%+ test coverage
@@ -235,11 +235,14 @@ FDAS (Field Development Analysis System) V30 is Roy's latest financial analysis 
 ### Benefits (Annual)
 - **Time savings:** 50 hrs/year × $150/hr = **$7,500**/year
   - Automated analysis vs manual Excel work
-- **Decision quality:** 10% better investment decisions × $100M portfolio = **$10M** potential value
+- **Decision quality:** Improved investment decisions on $100M+ portfolio = **$1M-$10M** potential value
+  - More accurate NPV calculations reduce risk
+  - Faster analysis enables better opportunity capture
+  - Conservative estimate: 1-10% improvement in decision quality
 - **Reproducibility:** Eliminate manual calculation errors
 - **Scalability:** Analyze 100+ fields vs 5-10 manual
 
-**ROI:** > 250x in first year (if decision quality benefit realized)
+**ROI:** 25-250x in first year (conservative to optimistic scenarios)
 
 ### Intangible Benefits
 - Portfolio-wide economic analysis capability
