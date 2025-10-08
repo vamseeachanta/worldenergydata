@@ -138,6 +138,9 @@ class DataSource(str, Enum):
 
     BSEE = "bsee"  # Bureau of Safety and Environmental Enforcement
     USCG = "uscg"  # United States Coast Guard
+    USCG_BARD = "uscg_bard"  # USCG Boating Accident Report Database
+    USCG_MISLE = "uscg_misle"  # USCG Marine Information for Safety and Law Enforcement
+    NOAA_ORR = "noaa_orr"  # NOAA Office of Response and Restoration
     NTSB = "ntsb"  # National Transportation Safety Board
     MAIB = "maib"  # Marine Accident Investigation Branch (UK)
     TSB = "tsb"  # Transportation Safety Board (Canada)
