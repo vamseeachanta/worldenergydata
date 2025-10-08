@@ -1,0 +1,78 @@
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en"><head>
+<title>Data Catalog - Enforcement Data - U.S. Department of Labor </title>
+<meta http-equiv="X-UA-Compatible" content="IE=10; text/html; charset=UTF-8; X-Content-Type-Options=nosniff">
+<!-- JQuery -->
+<script type="text/javascript" src="/views/js/jquery.min.js"></script>
+<script type="text/javascript" src="/views/js/jquery.tools.min.js"></script> 
+<script type="text/javascript" src="/views/js/jquery-ui.js"></script> 
+<script language="javascript" type="text/javascript" src="/views/js/flot/jquery.flot.js"></script>
+<script language="javascript" type="text/javascript" src="/views/js/flot/jquery.flot.symbol.js"></script>
+<script language="javascript" type="text/javascript" src="/views/js/flot/jquery.flot.pie.js"></script>
+<!-- Utilities -->
+<!-- Check Flash, (Flash Detect.installed) returns true -->
+<script type="text/javascript" src="/views/js/flash_detect.js"></script> 
+<script type="text/javascript" src="/views/js/textsizer.js"></script>
+<script type="text/javascript" src="/views/js/marquee.js"></script>
+<script type="text/javascript" src="/views/js/table.js"></script>
+<script type="text/javascript" src="/views/js/BrowserDetect.js"></script>
+<script type="text/javascript" src="/views/js/AjaxHelper.js"></script>
+<script language="javascript" type="text/javascript" src="/views/js/Jit/jit.js"></script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-155395437-1"></script>
+<script>
+   window.dataLayer = window.dataLayer || [];
+   function gtag(){dataLayer.push(arguments);}
+   gtag('js', new Date());
+   gtag('config', 'UA-155395437-1');
+</script>
+<script async language="javascript" id="_fed_an_ua_tag" src=https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=DOL&subagency=ENFORCEMENTDATABASE&yt=true></script>
+<!--11/28/2023 ENFORCEMENTDATA is changed to ENFORCEMENTDATABASE    -->
+
+<!-- D3 
+<script type="text/javascript" src="js/d3.v3.js"></script>-->
+
+<meta name="keywords" content="employment, job training, labor statistics, pension benefits, union, veteran, wages, worker compensation, Labor Department, Department of Labor, DOL, health insurance, retirement benefit, labor department regulations, small business help, regulations, labor laws, small business resources, discrimination, disability, equal employment opportunity, safety, health, family and medical leave, federal government, compliance assistance, workplace, workforce, workers, working, work, employers, employees, e-gov, egovernment, e-government, egov">
+<meta name="description" content="The U.S. Department of Labor is charged with preparing the American workforce for new and better jobs.  DOL is responsible for the administration and enforcement of over 180 federal statutes.">
+
+<link rel="SHORTCUT ICON" href="/views/images/EnforceData.ico"/>
+<link rel="stylesheet"    href="/views/css/main.css" type="text/css">
+<link rel="stylesheet"    href="/views/css/navigation.css" type="text/css" media="all" >
+<!-- <link href="/views/css/dashboard.css" rel="stylesheet" type="text/css" /> -->
+
+</head>
+<style type="text/css">
+   .osha_frequency_table{
+      width: 504px;
+      font-size: 0.810em;
+      border-bottom: 1px solid #e8e8e8;
+      margin-top: 10px;
+   }
+   .osha_frequency_table tr td:nth-of-type(odd){
+      border-right: 1px solid #e8e8e8;
+   }
+   .osha_frequency_table tr td:nth-of-type(even){
+      padding-left: 5px;
+   }
+   .osha_frequency_table tr td{
+      padding: 5px 5px 5px 5px;
+      border-bottom: 1px solid #e8e8e8;
+
+   }
+   .osha_frequency_table th{
+      background-color: #f5f5f5;
+      padding: 5px 5px 5px 5px;
+      border-right: 1px solid #e8e8e8;
+   }
+   .osha_frequency_table th:nth-of-type(even){
+      border-right: 0px;
+   }
+   a[class^='java']{
+      display: none !important;
+   }
+</style>
+
+<body>
+<form name='redirectError' method='post' action='data_catalogs.php'><input type='hidden' name='errorMessage' value=''/><input type='hidden' name='filtersChosen' value='empty'/><a href='javascript:document.redirectError.submit()' ></a></form><script language='JavaScript'> document.redirectError.submit(); 	</script>

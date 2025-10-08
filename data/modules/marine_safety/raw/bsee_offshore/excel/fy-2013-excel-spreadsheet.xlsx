@@ -1,0 +1,1643 @@
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'html' -->
+<!-- FILE NAME SUGGESTIONS:
+   * html--sites--bsee.gov--files--fy-2013-excel-spreadsheet.xlsx.html.twig
+   * html--sites--bsee.gov--files.html.twig
+   * html--sites--bsee.gov.html.twig
+   * html--sites.html.twig
+   x html.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/uswds_bsee/templates/layout/html.html.twig' -->
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"/>
+  <meta charset="utf-8" />
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4RWBDGMF8E"></script>
+<script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments)};gtag("js", new Date());gtag("set", "developer_id.dMDhkMT", true);gtag("config", "G-4RWBDGMF8E", {"groups":"default","allow_ad_personalization_signals":false,"page_location":"/404.html?page=" + document.location.pathname + document.location.search + "&from=" + document.referrer});gtag("config", "G-SWV5K81XZJ", {"groups":"default","allow_ad_personalization_signals":false,"page_location":"/404.html?page=" + document.location.pathname + document.location.search + "&from=" + document.referrer});</script>
+<link rel="shortlink" href="https://www.bsee.gov/" />
+<link rel="canonical" href="https://www.bsee.gov/" />
+<meta name="Generator" content="Drupal 10 (https://www.drupal.org)" />
+<meta name="MobileOptimized" content="width" />
+<meta name="HandheldFriendly" content="true" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="/themes/custom/uswds_bsee/favicon.ico" type="image/vnd.microsoft.icon" />
+
+  <title>Page not found | Bureau of Safety and Environmental Enforcement</title>
+  <link rel="stylesheet" media="all" href="/core/modules/system/css/components/ajax-progress.module.css?t3ctzw" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/align.module.css?t3ctzw" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/autocomplete-loading.module.css?t3ctzw" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/fieldgroup.module.css?t3ctzw" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/container-inline.module.css?t3ctzw" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/clearfix.module.css?t3ctzw" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/details.module.css?t3ctzw" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/hidden.module.css?t3ctzw" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/item-list.module.css?t3ctzw" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/js.module.css?t3ctzw" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/nowrap.module.css?t3ctzw" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/position-container.module.css?t3ctzw" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/progress.module.css?t3ctzw" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/reset-appearance.module.css?t3ctzw" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/resize.module.css?t3ctzw" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/sticky-header.module.css?t3ctzw" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/system-status-counter.css?t3ctzw" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/system-status-report-counters.css?t3ctzw" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/system-status-report-general-info.css?t3ctzw" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/tabledrag.module.css?t3ctzw" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/tablesort.module.css?t3ctzw" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/tree-child.module.css?t3ctzw" />
+<link rel="stylesheet" media="all" href="/modules/contrib/calendar/css/calendar.css?t3ctzw" />
+<link rel="stylesheet" media="all" href="/modules/contrib/calendar/css/calendar_multiday.css?t3ctzw" />
+<link rel="stylesheet" media="all" href="/themes/custom/uswds_bsee/assets/uswds/css/styles.css?t3ctzw" />
+
+  
+  <!-- We participate in the US government's analytics program. See the data at analytics.usa.gov. -->
+  <script async type="text/javascript" src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=BSEE" id="_fed_an_ua_tag"></script>
+</head>
+<body>
+<a href="#main-content" class="usa-sr-only focusable">
+  Skip to main content
+</a>
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'off_canvas_page_wrapper' -->
+<!-- BEGIN OUTPUT from 'core/modules/system/templates/off-canvas-page-wrapper.html.twig' -->
+  <div class="dialog-off-canvas-main-canvas" data-off-canvas-main-canvas>
+    
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'page' -->
+<!-- FILE NAME SUGGESTIONS:
+   * page--404.html.twig
+   * page--4xx.html.twig
+   * page--sites--bsee.gov--files--fy-2013-excel-spreadsheet.xlsx.html.twig
+   * page--sites--bsee.gov--files.html.twig
+   * page--sites--bsee.gov.html.twig
+   * page--sites.html.twig
+   x page.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/uswds_bsee/templates/layout/page.html.twig' -->
+      <section class="usa-banner">
+      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'government_banner' -->
+<!-- BEGIN OUTPUT from 'themes/custom/uswds_bsee/templates/uswds/government-banner.html.twig' -->
+<div class="usa-banner">
+  <header class="usa-banner__header">
+	  <div class="usa-banner__inner">
+      <div class="grid-col-fill tablet:grid-col-auto">
+        <h2 class=""><a href="https://doi.gov/">U.S. DEPARTMENT OF THE INTERIOR</a></p>
+      </div>
+    </div>
+  </header>
+</div>
+
+<!-- END OUTPUT from 'themes/custom/uswds_bsee/templates/uswds/government-banner.html.twig' -->
+
+
+    </section>
+  
+<div class="usa-overlay"></div>
+
+  <header class="usa-header usa-header--extended usa-header--extended-megamenu" id="header" role="banner">
+
+  
+  
+    
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'region' -->
+<!-- FILE NAME SUGGESTIONS:
+   x region--header.html.twig
+   * region.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/uswds_bsee/templates/layout/region--header.html.twig' -->
+<div class="region region-header usa-navbar">
+    
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   * block--uswds-bsee-branding.html.twig
+   x block--system-branding-block.html.twig
+   * block--system.html.twig
+   * block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/uswds_bsee/templates/block/block--system-branding-block.html.twig' -->
+<div class="usa-logo site-logo" id="logo">
+
+  <em class="usa-logo__text">
+      <a class="logo-img" href="/" accesskey="1" title="Home" aria-label="Home">
+      <img src="/sites/bsee.gov/files/BSEE%20logo%202025%20WEB.png" alt="Home" />
+    </a>
+  
+        <a class="logo-text" href="/" accesskey="2" title="Home" aria-label="Home">
+        <span class="logo-sub-name font-ui-xl text-semibold">Bureau of Safety and Environmental Enforcement</span>
+        <span class="logo-sub-tagline font-ui-xs text-normal">Promoting Safety, Protecting the Environment and Conserving Offshore Resources</span>
+      </a>
+  
+    </em>
+
+</div>
+<button class="usa-menu-btn">Menu</button>
+
+<!-- END OUTPUT from 'themes/custom/uswds_bsee/templates/block/block--system-branding-block.html.twig' -->
+
+
+</div>
+
+<!-- END OUTPUT from 'themes/custom/uswds_bsee/templates/layout/region--header.html.twig' -->
+
+
+
+    <nav class="usa-nav" role="navigation">
+            <div class="usa-nav__inner">
+        
+        <button class="usa-nav__close">
+          <img src="/themes/custom/uswds_bsee/assets/uswds/img/usa-icons/close.svg" alt="close"/>
+        </button>
+
+        
+        
+                      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'region' -->
+<!-- FILE NAME SUGGESTIONS:
+   * region--primary-menu.html.twig
+   * region.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/uswds_bsee/templates/layout/region--primary_menu.html.twig' -->
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   * block--system-menu-block--primary-menu.html.twig
+   * block--uswds-bsee-main-menu.html.twig
+   * block--system-menu-block--main.html.twig
+   * block--system-menu-block.html.twig
+   * block--system.html.twig
+   * block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/uswds_bsee/templates/block/block--system-menu-block--primary_menu.html.twig' -->
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'menu__main' -->
+<!-- FILE NAME SUGGESTIONS:
+   * menu--main.html.twig
+   * menu--primary-menu.html.twig
+   * menu.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/uswds_bsee/templates/navigation/menu--primary_menu.html.twig' -->
+  
+        
+        
+  
+  
+          <ul class="usa-nav__primary usa-accordion">
+    
+                        
+                    
+      
+              <li class="usa-nav__primary-item">
+      
+                                              
+        <a href="/who-we-are/about-us" class="link usa-accordion__button usa-nav__link extended-mega-nav-section-1">About BSEE</a>
+      
+                
+        
+        
+  
+  
+          <div id="extended-mega-nav-section-1" class="usa-nav__submenu usa-megamenu" hidden="">
+
+      
+      <div class="grid-row grid-gap-4">
+    
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/about-bsee/our-organization" class="link" data-drupal-link-system-path="node/14559">Our Organization</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/newsroom/outreach/congressional-testimony" class="link" data-drupal-link-system-path="node/14304">Congressional Affairs</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/oil-gas" class="link" data-drupal-link-system-path="node/20691">Oil &amp; Gas</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/about-bsee/renewable-energy" class="link" data-drupal-link-system-path="node/17576">Renewable Energy</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/about-bsee/freedom-of-information-act-foia" class="link" data-drupal-link-system-path="node/14478">Freedom of Information Act</a>
+                  </div>
+              
+              </div>
+      
+    
+          </div>
+      </div>
+    
+  
+
+      
+              </li>
+      
+                        
+                    
+      
+              <li class="usa-nav__primary-item">
+      
+                                              
+        <a href="/collaboration" class="link usa-accordion__button usa-nav__link extended-mega-nav-section-2" data-drupal-link-system-path="node/20791">Collaboration</a>
+      
+                
+        
+        
+  
+  
+          <div id="extended-mega-nav-section-2" class="usa-nav__submenu usa-megamenu" hidden="">
+
+      
+      <div class="grid-row grid-gap-4">
+    
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/about-bsee/interagency" class="link" data-drupal-link-system-path="node/13857">Interagency Collaboration</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/what-we-do/international-engagement" class="link" data-drupal-link-system-path="node/13852">International Engagement</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/about-bsee/tribal-engagement-consultation" class="link" data-drupal-link-system-path="node/18673">Tribal Engagement</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/about-bsee/doing-business-with-bsee" class="link" data-drupal-link-system-path="node/15262">Doing Business with BSEE</a>
+                  </div>
+              
+              </div>
+      
+    
+          </div>
+      </div>
+    
+  
+
+      
+              </li>
+      
+                        
+                    
+      
+              <li class="usa-nav__primary-item">
+      
+                                              
+        <a href="/newsroom" class="link usa-accordion__button usa-nav__link extended-mega-nav-section-3" data-drupal-link-system-path="node/19616">Newsroom</a>
+      
+                
+        
+        
+  
+  
+          <div id="extended-mega-nav-section-3" class="usa-nav__submenu usa-megamenu" hidden="">
+
+      
+      <div class="grid-row grid-gap-4">
+    
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/newsroom/news-items" class="link" data-drupal-link-system-path="node/15366">Press Releases</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/newsroom/feature-stories" class="link" data-drupal-link-system-path="node/15064">Blog</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/newsroom/statements" class="link" data-drupal-link-system-path="node/22391">Notes to Stakeholders</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/newsroom/library" class="link" data-drupal-link-system-path="node/14247">Library</a>
+                  </div>
+              
+              </div>
+      
+    
+          </div>
+      </div>
+    
+  
+
+      
+              </li>
+      
+                        
+                    
+      
+              <li class="usa-nav__primary-item">
+      
+                                              
+        <a href="/environmental-stewardship" class="link usa-accordion__button usa-nav__link extended-mega-nav-section-4" data-drupal-link-system-path="node/18954">Environmental Stewardship</a>
+      
+                
+        
+        
+  
+  
+          <div id="extended-mega-nav-section-4" class="usa-nav__submenu usa-megamenu" hidden="">
+
+      
+      <div class="grid-row grid-gap-4">
+    
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/environmental-stewardship/carbon-sequestration" class="link" data-drupal-link-system-path="node/20746">Carbon Sequestration</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/what-we-do/environmental-compliance" class="link" data-drupal-link-system-path="node/14500">Environmental Compliance</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/decommissioning" class="link" data-drupal-link-system-path="node/14185">Decommissioning</a>
+                  </div>
+              
+              </div>
+      
+    
+          </div>
+      </div>
+    
+  
+
+      
+              </li>
+      
+                        
+                    
+      
+              <li class="usa-nav__primary-item">
+      
+                                              
+        <a href="/protection" class="link usa-accordion__button usa-nav__link extended-mega-nav-section-5" data-drupal-link-system-path="node/17833">Protection</a>
+      
+                
+        
+        
+  
+  
+          <div id="extended-mega-nav-section-5" class="usa-nav__submenu usa-megamenu" hidden="">
+
+      
+      <div class="grid-row grid-gap-4">
+    
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/what-we-do/incident-investigations/offshore-incident-investigations" class="link" data-drupal-link-system-path="node/14051">Offshore Incident Investigations</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/protection/enforcement-program" class="link" data-drupal-link-system-path="node/15318">Enforcement Program</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/what-we-do/offshore-regulatory-programs/offshore-safety-improvement" class="link" data-drupal-link-system-path="node/14229">Offshore Safety Improvement</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/what-we-do/offshore-regulatory-programs/emerging-technologies/BAST" class="link" data-drupal-link-system-path="node/15326">Best Available and Safest Technologies (BAST)</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/protection/notices-and-announcements-to-lessees" class="link" data-drupal-link-system-path="node/22291">Notices and Announcements to Lessees</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/guidance-and-regulations/regulations/regulatory-reform" class="link" data-drupal-link-system-path="node/16831">Regulatory Updates</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/what-we-do/offshore-regulatory-programs/regulations-standards" class="link" data-drupal-link-system-path="node/14541">Regulations &amp; Standards</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/what-we-do/offshore-regulatory-programs/emerging-technologies/systems-reliability-section" class="link" data-drupal-link-system-path="node/15327">Systems Reliability Section</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/what-we-do/offshore-regulatory-programs/safety-performance-enhanced-by-analytical-review-spear" class="link" data-drupal-link-system-path="node/18580">SPEAR</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/aviation" class="link">Aviation</a>
+                  </div>
+              
+              </div>
+      
+    
+          </div>
+      </div>
+    
+  
+
+      
+              </li>
+      
+                        
+                    
+      
+              <li class="usa-nav__primary-item">
+      
+                                              
+        <a href="/preparedness" class="link usa-accordion__button usa-nav__link extended-mega-nav-section-6" data-drupal-link-system-path="node/22711">Preparedness</a>
+      
+                
+        
+        
+  
+  
+          <div id="extended-mega-nav-section-6" class="usa-nav__submenu usa-megamenu" hidden="">
+
+      
+      <div class="grid-row grid-gap-4">
+    
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/what-we-do/oil-spill-preparedness" class="link" data-drupal-link-system-path="node/14564">Oil Spill Preparedness</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/reporting-and-prevention/hurricane" class="link" data-drupal-link-system-path="node/14158">Hurricane Season Information</a>
+                  </div>
+              
+              </div>
+      
+    
+          </div>
+      </div>
+    
+  
+
+      
+              </li>
+      
+                        
+                    
+      
+              <li class="usa-nav__primary-item">
+      
+                                              
+        <a href="/research" class="link usa-accordion__button usa-nav__link extended-mega-nav-section-7" data-drupal-link-system-path="node/19601">Research</a>
+      
+                
+        
+        
+  
+  
+          <div id="extended-mega-nav-section-7" class="usa-nav__submenu usa-megamenu" hidden="">
+
+      
+      <div class="grid-row grid-gap-4">
+    
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/research-record" class="link" data-drupal-link-system-path="node/15967">Research Records</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="https://www.bsee.gov/peer-review" title="The Office of Management and Budget (OMB) directive, Final Information Quality Bulletin for Peer Review (December 16, 2004) requires a &quot;systematic process of peer review planning&quot; and access to a list of information products for official dissemination tha" class="link">Peer Review</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="https://www.bsee.gov/what-we-do/research/scientific-integrity" title="BSEE is committed to an enduring culture of scientific and scholarly integrity. Our mission of safety, environmental protection, and resource conservation requires us to understand the latest advances impacting the offshore energy industry. " class="link">Scientific Integrity</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/unsolicited-research-proposals" title="t is the policy of the Government to encourage the submission of new and innovative ideas in response to Broad Agency Announcements, Small Business Innovation Research topics, Small Business Technology Transfer Research topics, Program Research and Develo" class="link" data-drupal-link-system-path="node/22991">Unsolicited Proposal Submissions</a>
+                  </div>
+              
+              </div>
+      
+    
+          </div>
+      </div>
+    
+  
+
+      
+              </li>
+      
+                        
+                    
+      
+              <li class="usa-nav__primary-item">
+      
+                                              
+        <a href="/offshore-data-tools" class="link usa-accordion__button usa-nav__link extended-mega-nav-section-8" data-drupal-link-system-path="node/19606">Offshore Data &amp; Tools</a>
+      
+                
+        
+        
+  
+  
+          <div id="extended-mega-nav-section-8" class="usa-nav__submenu usa-megamenu" hidden="">
+
+      
+      <div class="grid-row grid-gap-4">
+    
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/stats-facts/bsee-regions-technical-data" class="link" data-drupal-link-system-path="node/14292">BSEE Regions Technical Data</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="https://www.data.bsee.gov/" class="link">Offshore Data Center</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/who-we-are/working-with-us/Fees-for-Services" class="link" data-drupal-link-system-path="node/14481">Fees for Services</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/oid" class="link">Offshore Infrastructure Dashboard</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/stats-facts/offshore-incident-statistics" class="link" data-drupal-link-system-path="node/14053">Offshore Incident Statistics</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/stats-facts/offshore-information/traditional-offshore-energy-approval-process" class="link" data-drupal-link-system-path="node/15396">Conventional Offshore Energy Approval Process</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="https://www.data.bsee.gov/Production/OCSProduction/Default.aspx" class="link">Calendar Year Oil &amp; Gas Production</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/what-we-do/oil-spill-preparedness/response-system-planning-calculators" class="link" data-drupal-link-system-path="node/15605">Response System Planning Calculators</a>
+                  </div>
+              
+              </div>
+      
+    
+          </div>
+      </div>
+    
+  
+
+      
+              </li>
+      
+                        
+                    
+      
+              <li class="usa-nav__primary-item">
+      
+                                              
+        <a href="/reporting-prevention" class="link usa-accordion__button usa-nav__link extended-mega-nav-section-9" data-drupal-link-system-path="node/19611">Reporting &amp; Prevention</a>
+      
+                
+        
+        
+  
+  
+          <div id="extended-mega-nav-section-9" class="usa-nav__submenu usa-megamenu" hidden="">
+
+      
+      <div class="grid-row grid-gap-4">
+    
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/resources-tools/incident-reporting" class="link" data-drupal-link-system-path="node/14052">Incident Reporting</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/reporting-and-prevention/oil-spill-emergency-contact-procedures" class="link" data-drupal-link-system-path="node/18285">Oil Spill Emergency Contact Procedures</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/sems" class="link" data-drupal-link-system-path="node/13796">Safety and Environmental Management Systems</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/guidance-and-regulations/guidance/safety-alerts-program" class="link" data-drupal-link-system-path="node/15284">Safety Alerts Program</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="https://safeocs.gov" class="link">Safe OCS</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/bseesafe" class="link" data-drupal-link-system-path="node/17638">BSEE!Safe</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/lifting" class="link" data-drupal-link-system-path="node/18788">Lifting Our Awareness</a>
+                  </div>
+              
+              </div>
+      
+                        
+                    
+      
+              <div class="desktop:grid-col-3">
+
+              
+      
+                        <div class="usa-nav__submenu-item">
+        
+        
+                <a href="/reporting-and-prevention/renewable-energy-forms" class="link" data-drupal-link-system-path="node/22546">Renewable Energy Forms</a>
+                  </div>
+              
+              </div>
+      
+    
+          </div>
+      </div>
+    
+  
+
+      
+              </li>
+      
+    
+          </ul>
+    
+  
+
+
+
+<!-- END OUTPUT from 'themes/custom/uswds_bsee/templates/navigation/menu--primary_menu.html.twig' -->
+
+
+
+<!-- END OUTPUT from 'themes/custom/uswds_bsee/templates/block/block--system-menu-block--primary_menu.html.twig' -->
+
+
+
+<!-- END OUTPUT from 'themes/custom/uswds_bsee/templates/layout/region--primary_menu.html.twig' -->
+
+
+          
+                      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'region' -->
+<!-- FILE NAME SUGGESTIONS:
+   * region--secondary-menu.html.twig
+   * region.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/uswds_bsee/templates/layout/region--secondary_menu.html.twig' -->
+<div class="usa-nav__secondary">
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   * block--uswds-bsee-search.html.twig
+   x block--search-form-block.html.twig
+   * block--search.html.twig
+   * block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/uswds_bsee/templates/block/block--search-form-block.html.twig' -->
+<form class="usa-search usa-search--small" action="/search/node" method="get" id="search-block-form" accept-charset="UTF-8">
+  <div role="search">
+    
+    <input class="usa-input" id="extended-search-field-small" type="search" name="keys" />
+    <button class="usa-button" type="submit">
+      <img src="/themes/custom/uswds_bsee/assets/uswds/img/usa-icons-bg/search--white.svg" class="usa-search__submit-icon" alt="Search">
+    </button>
+  </div>
+</form>
+
+<!-- END OUTPUT from 'themes/custom/uswds_bsee/templates/block/block--search-form-block.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   * block--system-menu-block--secondary-menu.html.twig
+   * block--secondary.html.twig
+   * block--system-menu-block--menu-secondary.html.twig
+   * block--system-menu-block.html.twig
+   * block--system.html.twig
+   * block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/uswds_bsee/templates/block/block--system-menu-block--secondary_menu.html.twig' -->
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'menu__menu_secondary' -->
+<!-- FILE NAME SUGGESTIONS:
+   * menu--menu-secondary.html.twig
+   * menu--secondary-menu.html.twig
+   * menu.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/uswds_bsee/templates/navigation/menu--secondary_menu.html.twig' -->
+
+    
+    <ul class="usa-nav__secondary-links">
+
+      
+                                
+                          
+        
+                <li class="usa-nav__secondary-item">
+          <a href="/resources-tools/incident-reporting" class="link" data-drupal-link-system-path="node/14052">Report Incidents</a>
+        </li>
+                                
+                          
+        
+                <li class="usa-nav__secondary-item">
+          <a href="/newsroom/connect-with-us" class="link" data-drupal-link-system-path="node/14565">Contact</a>
+        </li>
+                                
+                          
+        
+                <li class="usa-nav__secondary-item">
+          <a href="/careers" class="link" data-drupal-link-system-path="node/14470">Careers</a>
+        </li>
+                                
+                          
+        
+                <li class="usa-nav__secondary-item">
+          <a href="/about-bsee/doing-business-with-bsee#fraud" class="link" data-drupal-link-system-path="node/15262">Suspected Fraud</a>
+        </li>
+                                
+                          
+        
+                <li class="usa-nav__secondary-item">
+          <a href="/saml/login" class="link" data-drupal-link-system-path="saml/login">DOI Log In</a>
+        </li>
+      
+    </ul>
+  
+
+
+
+<!-- END OUTPUT from 'themes/custom/uswds_bsee/templates/navigation/menu--secondary_menu.html.twig' -->
+
+
+<!-- END OUTPUT from 'themes/custom/uswds_bsee/templates/block/block--system-menu-block--secondary_menu.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   * block--followbureauofsafetyandenvironmentalenforcementon.html.twig
+   * block--block-content--b5549e0a-798d-4096-b065-fe03f399801b.html.twig
+   * block--block-content.html.twig
+   * block--block-content.html.twig
+   x block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/uswds_bsee/templates/block/block.html.twig' -->
+<div id="block-followbureauofsafetyandenvironmentalenforcementon" class="block block-block-content block-block-contentb5549e0a-798d-4096-b065-fe03f399801b">
+  
+    
+      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'field' -->
+<!-- FILE NAME SUGGESTIONS:
+   * field--block-content--body--basic.html.twig
+   * field--block-content--body.html.twig
+   * field--block-content--basic.html.twig
+   * field--body.html.twig
+   * field--text-with-summary.html.twig
+   x field.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/uswds_base/templates/field/field.html.twig' -->
+
+
+            <div class="field field--name-body field--type-text-with-summary field--label-hidden field__item"><div style="margin-left: -2rem;" class="follow-links"><span class="follow-link-wrapper follow-link-wrapper-youtube"><a aria-describedby="qtip-0" class="follow-link follow-link-youtube follow-link-site" data-hasqtip="0" href="https://www.youtube.com/user/bseegov" oldtitle="Follow Bureau of Safety and Environmental Enforcement on BSEE YouTube" onclick title>BSEE YouTube</a> </span><span class="follow-link-wrapper follow-link-wrapper-facebook"><a aria-describedby="qtip-1" class="follow-link follow-link-facebook follow-link-site" data-hasqtip="1" href="https://www.facebook.com/BSEEgov/" oldtitle="Follow Bureau of Safety and Environmental Enforcement on BSEE Facebook" onclick title>BSEE Facebook</a> </span><span class="follow-link-wrapper follow-link-wrapper-twitter"><a class="follow-link follow-link-twitter follow-link-site" data-hasqtip="2" href="https://twitter.com/BSEEgov" oldtitle="Follow Bureau of Safety and Environmental Enforcement on BSEE Twitter" onclick title>BSEE Twitter</a> </span><span class="follow-link-wrapper follow-link-wrapper-linkedin"><a class="follow-link follow-link-linkedin follow-link-site" data-hasqtip="3" href="https://www.linkedin.com/company/bureau-of-safety-and-environmental-enforcement" oldtitle="Follow Bureau of Safety and Environmental Enforcement on BSEE LinkedIn" onclick title>BSEE LinkedIn</a> </span><span class="follow-link-wrapper follow-link-wrapper-flickr"><a class="follow-link follow-link-flickr follow-link-site" data-hasqtip="4" href="https://www.flickr.com/photos/bseegov/" oldtitle="Follow Bureau of Safety and Environmental Enforcement on BSEE Flickr" onclick title>BSEE Flickr</a> </span><span class="follow-link-wrapper follow-link-wrapper-this-site"> </span><span class="follow-link-wrapper follow-link-wrapper-this-site"><a aria-describedby="qtip-5" class="follow-link follow-link-this-site follow-link-site" data-hasqtip="5" href="https://www.instagram.com/bseegov/" oldtitle="Follow Bureau of Safety and Environmental Enforcement on BSEE Instagram" onclick title>BSEE Instagram</a> </span></div>
+<div class="opt-status"><a class="facility_status facility_status_open facility_status_0" href="https://www.bsee.gov/Opstat/OperatingStatus" style="display:block;">Operating Status </a> <a class="facility_status facility_status_major facility_status_0" href="https://www.bsee.gov/Opstat/OperatingStatus" style="display:none;"> Operating Status </a> <a class="facility_status facility_status_minor facility_status_0" href="https://www.bsee.gov/Opstat/OperatingStatus" style="display:none;"> Operating Status </a></div>
+</div>
+      
+<!-- END OUTPUT from 'themes/contrib/uswds_base/templates/field/field.html.twig' -->
+
+
+  </div>
+
+<!-- END OUTPUT from 'themes/custom/uswds_bsee/templates/block/block.html.twig' -->
+
+
+</div>
+<!-- END OUTPUT from 'themes/custom/uswds_bsee/templates/layout/region--secondary_menu.html.twig' -->
+
+
+          
+          
+              </div>
+          </nav>
+
+    
+</header>
+
+
+  <main class="main-content usa-layout-docs usa-section " role="main"
+        id="main-content">
+
+    <div class="grid-container">
+
+                        <div class="grid-row">
+            
+          </div>
+        
+                  <div class="">
+            
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'region' -->
+<!-- FILE NAME SUGGESTIONS:
+   x region--highlighted.html.twig
+   * region.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/uswds_bsee/templates/layout/region--highlighted.html.twig' -->
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   * block--uswds-bsee-messages.html.twig
+   x block--system-messages-block.html.twig
+   * block--system.html.twig
+   * block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'core/modules/system/templates/block--system-messages-block.html.twig' -->
+<div data-drupal-messages-fallback class="hidden"></div>
+
+<!-- END OUTPUT from 'core/modules/system/templates/block--system-messages-block.html.twig' -->
+
+
+
+<!-- END OUTPUT from 'themes/custom/uswds_bsee/templates/layout/region--highlighted.html.twig' -->
+
+
+          </div>
+        
+                                      <div class="grid-row ">
+              
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'region' -->
+<!-- FILE NAME SUGGESTIONS:
+   x region--help.html.twig
+   * region.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/uswds_bsee/templates/layout/region--help.html.twig' -->
+
+<!-- END OUTPUT from 'themes/custom/uswds_bsee/templates/layout/region--help.html.twig' -->
+
+
+            </div>
+                        
+      <div class="grid-row grid-gap">
+        
+                  <div class="usa-layout-docs__main desktop:grid-col-fill">
+            
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'region' -->
+<!-- FILE NAME SUGGESTIONS:
+   x region--content.html.twig
+   * region.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/uswds_bsee/templates/layout/region--content.html.twig' -->
+    
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   * block--uswds-bsee-page-title.html.twig
+   x block--page-title-block.html.twig
+   * block--core.html.twig
+   * block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/uswds_bsee/templates/block/block--page-title-block.html.twig' -->
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'page_title' -->
+<!-- BEGIN OUTPUT from 'themes/custom/uswds_bsee/templates/content/page-title.html.twig' -->
+
+  <h1 class="margin-0 bsee-title">Page not found</h1>
+
+
+<!-- END OUTPUT from 'themes/custom/uswds_bsee/templates/content/page-title.html.twig' -->
+
+
+<!-- END OUTPUT from 'themes/custom/uswds_bsee/templates/block/block--page-title-block.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   * block--uswds-bsee-content.html.twig
+   * block--system-main-block.html.twig
+   * block--system.html.twig
+   x block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/uswds_bsee/templates/block/block.html.twig' -->
+<div id="block-uswds-bsee-content" class="block block-system block-system-main-block">
+  
+    
+      The requested page could not be found.
+  </div>
+
+<!-- END OUTPUT from 'themes/custom/uswds_bsee/templates/block/block.html.twig' -->
+
+
+
+<!-- END OUTPUT from 'themes/custom/uswds_bsee/templates/layout/region--content.html.twig' -->
+
+
+          </div>        
+              </div>
+    </div>
+  </main>
+
+  <footer class="usa-footer usa-footer--big" role="contentinfo">
+    <div class="grid-container usa-footer__return-to-top">
+      <a href="#" class="usa-button usa-button--outline">Return to top</a>
+    </div>
+
+          <div class="usa-footer__primary-section">
+
+        <div class="usa-footer__primary-content">
+                    <div class="grid-container">
+            <div class="grid-row grid-gap">
+              
+                              
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'region' -->
+<!-- FILE NAME SUGGESTIONS:
+   * region--footer-menu.html.twig
+   * region.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/uswds_bsee/templates/layout/region--footer_menu.html.twig' -->
+
+
+<!-- END OUTPUT from 'themes/custom/uswds_bsee/templates/layout/region--footer_menu.html.twig' -->
+
+
+              
+              
+                          </div>
+          </div>
+          
+                  </div>
+
+      </div>
+    
+          <div class="usa-footer__secondary-section">
+        <div class="grid-container">
+          <div class="grid-row grid-gap">
+            
+                      <div class="grid-container">
+              <div class="grid-row grid-gap">
+                <div class="grid-col-fill">
+                  
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'region' -->
+<!-- FILE NAME SUGGESTIONS:
+   * region--footer-secondary.html.twig
+   x region.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/uswds_bsee/templates/layout/region.html.twig' -->
+  <div>
+    
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   * block--footerutility.html.twig
+   * block--system-menu-block--menu-footer-utility.html.twig
+   x block--system-menu-block.html.twig
+   * block--system.html.twig
+   * block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/uswds_bsee/templates/block/block--system-menu-block.html.twig' -->
+<nav role="navigation" aria-labelledby="block-footerutility-menu" id="block-footerutility">
+            
+  <h2 class="usa-sr-only" id="block-footerutility-menu">Footer Utility</h2>
+  
+
+        
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'menu__menu_footer_utility' -->
+<!-- FILE NAME SUGGESTIONS:
+   * menu--menu-footer-utility.html.twig
+   x menu.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/uswds_bsee/templates/navigation/menu.html.twig' -->
+
+      <ul class="menu menu--menu-footer-utility nav">
+                              <li class="first">
+                                                  <a href="http://www.doi.gov" class="first">DOI Gov</a>
+                  </li>
+                              <li>
+                                                  <a href="http://www.usa.gov">USA Gov</a>
+                  </li>
+                              <li>
+                                                  <a href="http://www.doioig.gov">Inspector General</a>
+                  </li>
+                              <li>
+                                                  <a href="/who-we-are/working-with-us/Fees-for-Services" data-drupal-link-system-path="node/14481">Fees for Services</a>
+                  </li>
+                              <li>
+                                                  <a href="/about-bsee/freedom-of-information-act-foia" data-drupal-link-system-path="node/14478">FOIA</a>
+                  </li>
+                              <li>
+                                                  <a href="https://www.doi.gov/pmb/eeo/no-fear-act">No Fear Act</a>
+                  </li>
+                              <li>
+                                                  <a href="/accessibility-policy" data-drupal-link-system-path="node/14530">Accessibility</a>
+                  </li>
+                              <li>
+                                                  <a href="/bsee/privacy-policy" data-drupal-link-system-path="node/14531">Privacy</a>
+                  </li>
+                              <li>
+                                                  <a href="/bsee.gov/privacy-disclaimer" data-drupal-link-system-path="node/14532">Disclaimer</a>
+                  </li>
+                              <li>
+                                                  <a href="/equal-employment-opportunity-division" data-drupal-link-system-path="node/20531">Equal Employment Opportunity</a>
+                  </li>
+                              <li class="last">
+                                                  <a href="https://www.doi.gov/vulnerability-disclosure-policy" title="Vulnerability Disclosure" class="last">Vulnerability Disclosure</a>
+                  </li>
+          </ul>
+  
+
+<!-- END OUTPUT from 'themes/custom/uswds_bsee/templates/navigation/menu.html.twig' -->
+
+
+  </nav>
+
+<!-- END OUTPUT from 'themes/custom/uswds_bsee/templates/block/block--system-menu-block.html.twig' -->
+
+
+  </div>
+
+<!-- END OUTPUT from 'themes/custom/uswds_bsee/templates/layout/region.html.twig' -->
+
+
+                </div>
+              </div>
+            </div>
+                  </div>
+      </div>
+    
+  </footer>
+
+<!-- END OUTPUT from 'themes/custom/uswds_bsee/templates/layout/page.html.twig' -->
+
+
+  </div>
+
+<!-- END OUTPUT from 'core/modules/system/templates/off-canvas-page-wrapper.html.twig' -->
+
+
+
+
+<!-- The Modal -->
+<div 	id="imageModal" class="modal">
+
+  <div class="grid-container">
+    <div class="grid-row">
+      <div class="usa-layout desktop:grid-col-fill">
+        <!-- Modal Content (The Image) -->
+        <img class="modal-content" id="imageModalHolder">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script type="application/json" data-drupal-selector="drupal-settings-json">{"path":{"baseUrl":"\/","pathPrefix":"","currentPath":"","currentPathIsAdmin":false,"isFront":false,"currentLanguage":"en"},"pluralDelimiter":"\u0003","suppressDeprecationErrors":true,"google_analytics":{"account":"G-4RWBDGMF8E","trackOutbound":true,"trackMailto":true,"trackTel":true,"trackDownload":true,"trackDownloadExtensions":"7z|aac|arc|arj|asf|asx|avi|bin|csv|doc(x|m)?|dot(x|m)?|exe|flv|gif|gz|gzip|hqx|jar|jpe?g|js|mp(2|3|4|e?g)|mov(ie)?|msi|msp|pdf|phps|png|ppt(x|m)?|pot(x|m)?|pps(x|m)?|ppam|sld(x|m)?|thmx|qtm?|ra(m|r)?|sea|sit|tar|tgz|torrent|txt|wav|wma|wmv|wpd|xls(x|m|b)?|xlt(x|m)|xlam|xml|z|zip"},"user":{"uid":0,"permissionsHash":"0566ba0e937ddf9506ebe3761b5310cd26ae598f32c76cd2795d1ff833d9c3c8"}}</script>
+<script src="/core/assets/vendor/jquery/jquery.min.js?v=3.7.1"></script>
+<script src="/core/assets/vendor/once/once.min.js?v=1.0.1"></script>
+<script src="/core/misc/drupalSettingsLoader.js?v=10.2.7"></script>
+<script src="/core/misc/drupal.js?v=10.2.7"></script>
+<script src="/core/misc/drupal.init.js?v=10.2.7"></script>
+<script src="/modules/contrib/google_analytics/js/google_analytics.js?v=10.2.7"></script>
+<script src="/themes/custom/uswds_bsee/assets/uswds/js/uswds.js?v=10.2.7"></script>
+<script src="/themes/custom/uswds_bsee/assets/uswds/js/imageModal.js?v=10.2.7"></script>
+<script src="/modules/contrib/uswds_ckeditor_integration/js/aftermarket/uswds_accordion.js?t3ctzw"></script>
+
+</body>
+</html>
+
+<!-- END OUTPUT from 'themes/custom/uswds_bsee/templates/layout/html.html.twig' -->
+
