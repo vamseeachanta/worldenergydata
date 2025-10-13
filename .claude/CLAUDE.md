@@ -583,7 +583,7 @@ Message 4: Write "file.js"
 - **Best Practices:** @~/.agent-os/standards/best-practices.md
 
 ### Project Management
-- **Active Specs:** @specs/
+- **Active Specs:** @.agent-os/specs/
 - **Spec Planning:** Use `@~/.agent-os/instructions/create-spec.md`
 - **Tasks Execution:** Use `@~/.agent-os/instructions/execute-tasks.md`
 
@@ -600,7 +600,7 @@ When asked to work on this codebase:
 ## Important Notes
 
 - Product-specific files in `.agent-os/product/` override any global standards
-- User's specific instructions override (or amend) instructions found in `specs/...`
+- User's specific instructions override (or amend) instructions found in `.agent-os/specs/...`
 - Always adhere to established patterns, code style, and best practices documented above
 
 ---
