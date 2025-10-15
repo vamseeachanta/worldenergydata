@@ -1,0 +1,75 @@
+{
+  "collation_date": "2025-10-11T17:36:17.935977",
+  "input_files": 6,
+  "files_processed": 6,
+  "files_failed": 0,
+  "total_records": 13160,
+  "duplicate_records": 0,
+  "unique_references": 13160,
+  "date_range": {
+    "earliest": "1900-01-01T00:00:00",
+    "latest": "2025-06-09T04:30:00"
+  },
+  "columns": [
+    "Reference",
+    "Number of ships involved",
+    "Ships involved",
+    "SOLAS status",
+    "Flag Administrations",
+    "Ship types",
+    "Occurrence date and time",
+    "Casualty event",
+    "Casualty severity",
+    "Coordinates",
+    "Place",
+    "Location",
+    "Number of investigation reports",
+    "Administrations submitting investigation reports",
+    "Year"
+  ],
+  "file_statistics": [
+    {
+      "filename": "GISIS-MCIR-19000101-19691231.csv",
+      "records": 23,
+      "columns": 14,
+      "status": "success"
+    },
+    {
+      "filename": "GISIS-MCIR-19700101-19891231.csv",
+      "records": 610,
+      "columns": 14,
+      "status": "success"
+    },
+    {
+      "filename": "GISIS-MCIR-19900101-19991231.csv",
+      "records": 2603,
+      "columns": 14,
+      "status": "success"
+    },
+    {
+      "filename": "GISIS-MCIR-20001011-20091231.csv",
+      "records": 4427,
+      "columns": 14,
+      "status": "success"
+    },
+    {
+      "filename": "GISIS-MCIR-20101011-20191231.csv",
+      "records": 4257,
+      "columns": 14,
+      "status": "success"
+    },
+    {
+      "filename": "GISIS-MCIR-20200101-20251010.csv",
+      "records": 1240,
+      "columns": 14,
+      "status": "success"
+    }
+  ],
+  "severity_breakdown": {
+    "Very serious marine casualty": 5255,
+    "Marine casualty": 5088,
+    "Marine incident": 2817
+  },
+  "output_file": "/mnt/github/workspace-hub/worldenergydata/data/modules/marine_safety/raw/imo_gisis/imo_gisis_collated.csv",
+  "output_size_mb": 2.38
+}

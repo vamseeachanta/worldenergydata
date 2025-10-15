@@ -1,0 +1,2267 @@
+<!DOCTYPE html>
+<html lang="en-GB" dir="ltr">
+        
+<head>
+    
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        
+
+                <link rel="icon" type="image/x-icon" href="/images/2020/favicon.ico" />
+        
+            
+         <meta charset="utf-8">
+	<meta name="keywords" content="EMSA">
+	<meta name="author" content="webmaster">
+	<meta name="description" content="The European Maritime Safety Agency (EMSA) is a European Union agency charged with reducing the risk of maritime accidents, marine pollution from ships and the loss of human lives at sea by helping to enforce the pertinent EU legislation. It is headquartered in Lisbon.">
+	<meta name="generator" content="Joomla! - Open Source Content Management">
+	<title>Home - EMSA - European Maritime Safety Agency</title>
+	<link href="/favicon.ico" rel="icon" type="image/vnd.microsoft.icon">
+
+    <link href="/plugins/system/screenreader/screenreader/libraries/controller/css/accessible.css?6d6e3d" rel="stylesheet">
+	<link href="/components/com_flexicontent/librairies/jquery/css/ui-lightness/jquery-ui-1.13.1.css" rel="stylesheet">
+	<link href="/components/com_flexicontent/assets/css/flexicontent.css?dc8922be15af1da0352a6e96c5381a48" rel="stylesheet">
+	<link href="/components/com_flexicontent/assets/css/j4x.css?dc8922be15af1da0352a6e96c5381a48" rel="stylesheet">
+	<link href="/components/com_flexicontent/librairies/select2/select2.css?3.5.4" rel="stylesheet">
+	<link href="/components/com_flexicontent/assets/css/fcvote.css?dc8922be15af1da0352a6e96c5381a48" rel="stylesheet">
+	<link href="/components/com_flexicontent/librairies/bootstrap-toggle/css/bootstrap2-toggle.min.css" rel="stylesheet">
+	<link href="/components/com_flexicontent/templates/home/css/item.css" rel="stylesheet">
+	<link href="/media/plg_system_jcepro/site/css/content.min.css?86aa0286b6232c4a5b58f892ce080277" rel="stylesheet">
+	<link href="/media/plg_system_jcemediabox/css/jcemediabox.min.css?2c837ab2c7cadbdc35b5bd7115e9eff1" rel="stylesheet">
+	<link href="/modules/mod_slideshowck/themes/default/css/camera.css" rel="stylesheet">
+	<link href="/modules/mod_flexicontent/tmpl/news/news.css?dc8922be15af1da0352a6e96c5381a48" rel="stylesheet">
+	<link href="/modules/mod_flexicontent/tmpl_common/module.css?dc8922be15af1da0352a6e96c5381a48" rel="stylesheet">
+	<link href="/templates/g5_hydrogen/custom/uikit/css/uikit.min.css" rel="stylesheet">
+	<link href="/media/gantry5/engines/nucleus/css-compiled/nucleus.css" rel="stylesheet">
+	<link href="/templates/g5_hydrogen/custom/css-compiled/hydrogen_25.css" rel="stylesheet">
+	<link href="/media/gantry5/engines/nucleus/css-compiled/bootstrap5.css" rel="stylesheet">
+	<link href="/media/system/css/joomla-fontawesome.min.css" rel="stylesheet">
+	<link href="/media/plg_system_debug/css/debug.css" rel="stylesheet">
+	<link href="/media/gantry5/assets/css/font-awesome6-all.min.css" rel="stylesheet">
+	<link href="/templates/g5_hydrogen/custom/css-compiled/hydrogen-joomla_25.css" rel="stylesheet">
+	<link href="/templates/g5_hydrogen/custom/css-compiled/custom_25.css" rel="stylesheet">
+	<style>#accessibility-links #text_plugin{width:80px;}</style>
+	<style>
+			/* This is via voting field parameter, please edit field configuration to override them */
+			.voting-row div.fcvote.fcvote-box-main {
+				line-height:24px!important;
+			}
+			.voting-row div.fcvote.fcvote-box-main > ul.fcvote_list {
+				height:24px!important;
+				width:120px!important;
+			}
+			.voting-row div.fcvote.fcvote-box-main > ul.fcvote_list > li.voting-links a,
+			.voting-row div.fcvote.fcvote-box-main > ul.fcvote_list > li.current-rating {
+				height:24px!important;
+				line-height:24px!important;
+			}
+			.voting-row div.fcvote.fcvote-box-main > ul.fcvote_list,
+			.voting-row div.fcvote.fcvote-box-main > ul.fcvote_list > li.voting-links a:hover,
+			.voting-row div.fcvote.fcvote-box-main > ul.fcvote_list > li.current-rating {
+				background-image:url(/components/com_flexicontent/assets/images/star-medium.png)!important;
+			}
+			
+			/* This is via voting field parameter, please edit field configuration to override them */
+			.voting-row div.fcvote > ul.fcvote_list {
+				height:24px!important;
+				width:120px!important;
+			}
+			.voting-row div.fcvote > ul.fcvote_list > li.voting-links a,
+			.voting-row div.fcvote > ul.fcvote_list > li.current-rating {
+				height:24px!important;
+				line-height:24px!important;
+			}
+			.voting-row div.fcvote > ul.fcvote_list,
+			.voting-row div.fcvote > ul.fcvote_list > li.voting-links a:hover,
+			.voting-row div.fcvote > ul.fcvote_list > li.current-rating {
+				background-image:url(/components/com_flexicontent/assets/images/star-medium.png)!important;
+			}
+			.voting-row div.fcvote ul.fcvote_list > .voting-links a.star1 { width: 20%!important; z-index: 6; }
+.voting-row div.fcvote ul.fcvote_list > .voting-links a.star2 { width: 40%!important; z-index: 5; }
+.voting-row div.fcvote ul.fcvote_list > .voting-links a.star3 { width: 60%!important; z-index: 4; }
+.voting-row div.fcvote ul.fcvote_list > .voting-links a.star4 { width: 80%!important; z-index: 3; }
+.voting-row div.fcvote ul.fcvote_list > .voting-links a.star5 { width: 100%!important; z-index: 2; }
+</style>
+	<style>#camera_wrap_732 .camera_pag_ul li img, #camera_wrap_732 .camera_thumbs_cont ul li > img {height:75px;}
+@media screen and (max-width: 480px) {
+		#camera_wrap_732 .camera_caption {
+			font-size: 0.6em !important;
+		}
+		
+}#camera_wrap_732  {
+		border-top: #D9D9D9 1px solid;
+	border-bottom: #D9D9D9 1px solid;
+	border-left: #D9D9D9 1px solid;
+	border-right: #D9D9D9 1px solid;
+}
+	
+	#camera_wrap_732 .camera_caption > div {
+		background: #208CCC;
+	background: rgba(32,140,204,0.9);
+	-pie-background: rgba(32,140,204,0.9);
+	font-family: 'Inter';
+}
+	
+	#camera_wrap_732 .camera_caption_title {
+		font-family: 'Inter';
+}
+	
+	#camera_wrap_732 .camera_caption_desc {
+		color: #FFFFFF;
+	font-family: 'Inter';
+}
+	#camera_wrap_732 .camera_pag_ul li img {}
+	#camera_wrap_732 .camera_pag_ul .thumb_arrow {}
+	#camera_wrap_732 .camera_pag .camera_pag_ul {text-align: right;}
+	#camera_wrap_732 .camera_caption {bottom: 0; top: auto;}</style>
+	<style>
+	#mod_fcitems_box_featured_816 {
+	}
+	#mod_fcitems_box_featured_816 div.mod_flexicontent_standard_wrapper {
+	}
+	#mod_fcitems_box_featured_816 div.mod_flexicontent_standard_wrapper_innerbox {
+		
+	}
+	#mod_fcitems_box_standard_816 {
+	}
+	#mod_fcitems_box_standard_816 div.mod_flexicontent_standard_wrapper {
+	}
+	#mod_fcitems_box_standard_816 div.mod_flexicontent_standard_wrapper_innerbox {
+		
+		padding: 0px 0px !important;
+		border-width: 1px!important;
+		margin: 20px 20px !important;
+		
+	}</style>
+
+    <script type="application/json" class="joomla-script-options new">{"joomla.jtext":{"FLEXI_FORM_IS_BEING_SUBMITTED":"Form is being submitted ...","FLEXI_LOADING":"loading","FLEXI_NOT_AN_IMAGE_FILE":"FLEXI_NOT_AN_IMAGE_FILE","FLEXI_IMAGE":"Image","FLEXI_LOADING_IMAGES":"FLEXI_LOADING_IMAGES","FLEXI_THUMBNAILS":"FLEXI_THUMBNAILS","FLEXI_NO_ITEMS_SELECTED":"FLEXI_NO_ITEMS_SELECTED","FLEXI_ARE_YOU_SURE":"FLEXI_ARE_YOU_SURE","FLEXI_APPLYING_FILTERING":"Applying Filtering","FLEXI_TYPE_TO_LIST":"... type to list","FLEXI_TYPE_TO_FILTER":" ... type to filter","FLEXI_UPDATING_CONTENTS":"Updating contents ...","FLEXI_YOUR_BROWSER_DOES_NOT_SUPPORT_AJAX":"Your browser does not support Ajax","FLEXI_ADDED_TO_YOUR_FAVOURITES":"Added to your favourites","FLEXI_YOU_NEED_TO_LOGIN":"You need to login to favour this item. It will be added to your personal Favourites list.","FLEXI_REMOVED_FROM_YOUR_FAVOURITES":"Removed from your favourites","FLEXI_USERS":"users","FLEXI_FAVOURE":"Add to favourites","FLEXI_REMOVE_FAVOURITE":"Remove from your favourites","FLEXI_FAVS_YOU_HAVE_SUBSCRIBED":"You have subscribed","FLEXI_FAVS_CLICK_TO_SUBSCRIBE":"Click to subscribe","FLEXI_TOTAL":"Total","SLIDESHOWCK_PLAY":"Start the slideshow","SLIDESHOWCK_PAUSE":"Pause the slideshow","SLIDESHOWCK_NEXT":"Go to the next slide","SLIDESHOWCK_PREVIOUS":"Go to the previous slide","SLIDESHOWCK_LINK_FOR":"Link for","SLIDESHOWCK_SHOW_SLIDE":"Show slide"},"system.paths":{"root":"","rootFull":"https:\/\/www.emsa.europa.eu\/","base":"","baseFull":"https:\/\/www.emsa.europa.eu\/"},"csrf.token":"985482c31f7d94f1954d457e0109647f"}</script>
+	<script src="/media/system/js/core.min.js?2cb912"></script>
+	<script src="/media/vendor/jquery/js/jquery.min.js?3.7.1"></script>
+	<script src="/media/legacy/js/jquery-noconflict.min.js?504da4"></script>
+	<script src="/media/vendor/bootstrap/js/popover.min.js?5.3.3" type="module"></script>
+	<script src="/plugins/system/screenreader/screenreader/languages/en-GB.js?6d6e3d"></script>
+	<script src="/plugins/system/screenreader/screenreader/libraries/tts/soundmanager/soundmanager2.js?6d6e3d"></script>
+	<script src="/plugins/system/screenreader/screenreader/libraries/tts/responsivevoice.js?6d6e3d" defer></script>
+	<script src="/plugins/system/screenreader/screenreader/libraries/tts/tts.js?6d6e3d" defer></script>
+	<script src="/plugins/system/screenreader/screenreader/libraries/controller/controller.js?6d6e3d" defer></script>
+	<script src="/components/com_flexicontent/librairies/jquery/js/jquery-ui-1.13.1/jquery-ui.min.js"></script>
+	<script src="/components/com_flexicontent/assets/js/flexi-lib.js?dc8922be15af1da0352a6e96c5381a48"></script>
+	<script src="/components/com_flexicontent/librairies/mousewheel/jquery.mousewheel.min.js"></script>
+	<script src="/components/com_flexicontent/librairies/select2/select2.min.js?3.5.4"></script>
+	<script src="/components/com_flexicontent/librairies/select2/select2.sortable.js?3.5.4"></script>
+	<script src="/components/com_flexicontent/assets/js/tmpl-common.js?dc8922be15af1da0352a6e96c5381a48"></script>
+	<script src="/components/com_flexicontent/assets/js/jquery-easing.js?dc8922be15af1da0352a6e96c5381a48"></script>
+	<script src="/components/com_flexicontent/assets/js/fcvote.js?dc8922be15af1da0352a6e96c5381a48"></script>
+	<script src="/components/com_flexicontent/librairies/bootstrap-toggle/js/bootstrap2-toggle.min.js"></script>
+	<script src="/components/com_flexicontent/assets/js/fcfav.js?dc8922be15af1da0352a6e96c5381a48"></script>
+	<script src="/media/plg_system_jcemediabox/js/jcemediabox.min.js?2c837ab2c7cadbdc35b5bd7115e9eff1"></script>
+	<script src="/media/com_slideshowck/assets/jquery.easing.1.3.js"></script>
+	<script src="/media/com_slideshowck/assets/camera.min.js?ver=2.7.2"></script>
+	<script src="/components/com_flexicontent/librairies/masonry/masonry.pkgd.min.js"></script>
+	<script src="/components/com_flexicontent/librairies/imagesLoaded/imagesloaded.pkgd.min.js"></script>
+	<script src="/templates/g5_hydrogen/custom/js/colcount.js"></script>
+	<script>window.soundManager.url = 'https://www.emsa.europa.eu/plugins/system/screenreader/screenreader/libraries/tts/soundmanager/swf/';
+										  window.soundManager.debugMode = false;  
+										  window.soundManager.defaultOptions.volume = 80;
+										  var screenReaderConfigOptions = {	baseURI: 'https://www.emsa.europa.eu/',
+																			token: '014780fd779233b6465552c9abf254bb',
+																			langCode: 'en',
+																			chunkLength: 300,
+																			screenReaderVolume: '80',
+																			screenReaderVoiceSpeed: 'normal',
+																			position: 'bottomright',
+																			scrolling: 'fixed',
+																			targetAppendto: 'html',
+																			targetAppendMode: 'bottom',
+																			enableDarkMode: 0,
+																			enableAccessibilityStatement: 0,
+																			enableAccessibilityStatementText: 'Accessibility statement',
+																			enableAccessibilityStatementLink: 'https://www.emsa.europa.eu/',
+																			preload: 1,
+																			preloadTimeout: 3000,
+																			autoBackgroundColor: 1,
+																			readPage: 1,
+																			readChildNodes: 1,
+																			ieHighContrast: 1,
+																			ieHighContrastAdvanced: 1,
+																			selectedStorage: 'session',
+																			gtranslateIntegration: 0,
+																			readElementsHovering: 0,
+																			elementsHoveringSelector: 'p',
+																			elementsToexcludeCustom: '',
+																			selectMainpageareaText: 0,
+																			excludeScripts: 1,
+																			readImages: 0,
+																			readImagesAttribute: 'alt',
+																			readImagesOrdering: 'before',
+																			readImagesHovering: 0,
+																			mainpageSelector: '*[name*=main], *[class*=main], *[id*=main], *[id*=container], *[class*=container]',
+																			showlabel: 1,
+																			labeltext: 'Accessibility options',
+																			screenreaderIcon: 'audio',
+																			screenreader: 1,
+																			highcontrast: 1,
+																			highcontrastAlternate: 1,
+																			colorHue: 180,
+																			colorBrightness: 6,
+																			rootTarget: 0,
+																			dyslexicFont: 0,
+																			grayHues: 0,
+																			spacingSize: 0,
+																			spacingSizeMin: 0,
+																			spacingSizeMax: 10,
+																			pageZoom: 0,
+																			bigCursor: 0,
+																			readingGuides: 0,
+																			readability: 0,
+																			readabilitySelector: 'div.item-page,#content,div[itemprop=articleBody],div.item-content',
+																			hideImages: 0,
+																			hideAlsoVideosIframes: 0,
+																			customColors: 0,
+																			customColorsCssSelectors: '',
+																			fontsizeMinimizedToolbar: 0,
+																			hoverMinimizedToolbar: 0,
+																			fontsize: 1,
+																			fontsizeDefault: 80,
+																			fontsizeMin: 50,
+																			fontsizeMax: 200,
+																			fontsizeSelector: '',
+																			fontSizeHeadersIncrement: 20,
+																			toolbarBgcolor: '#eeeeee',
+																			template: 'accessible.css',
+																			templateOrientation: 'vertical',
+																			accesskey_play: 'P',
+																			accesskey_pause: 'E',
+																			accesskey_stop: 'S',
+																			accesskey_increase: 'O',
+																			accesskey_decrease: 'U',
+																			accesskey_reset: 'R',
+																			accesskey_highcontrast: 'H',
+																			accesskey_highcontrast2: 'J',
+																			accesskey_highcontrast3: 'K',
+																			accesskey_dyslexic: 'D',
+																			accesskey_grayhues: 'G',
+																			accesskey_spacingsize_increase: 'M',
+																			accesskey_spacingsize_decrease: 'N',
+																			accesskey_pagezoomsize_increase: 'X',
+																			accesskey_pagezoomsize_decrease: 'Y',
+																			accesskey_pagezoomsize_reset: 'Z',
+																			accesskey_bigcursor: 'W',
+																			accesskey_reading_guides: 'V',
+																			accesskey_readability: 'Q',
+																			accesskey_hideimages: 'F',
+																			accesskey_skiptocontents: 'C',
+																			accesskey_minimized: 'L',
+																			volume_accesskeys: 1,
+																			accesskey_increase_volume: '+',
+																			accesskey_decrease_volume: '-',
+																			accesskey_change_text_color: 'I',
+																			accesskey_change_background_color: 'B',
+																			readerEngine: 'proxy_responsive',
+																			useMobileReaderEngine: 0,
+																			mobileReaderEngine: 'proxy_responsive',
+																			proxyResponsiveApikey: 'kWyXm5dC',
+																			proxyResponsiveLanguageGender: 'auto',
+																			proxyResponsiveReadingMode: 'native',
+																			hideOnMobile: 0,
+																			useMinimizedToolbar: 1,
+																			statusMinimizedToolbar: 'closed',
+																			minimizedToolbarOnlyMobile: 0,
+																			generateMissingImagesAlt: 0,
+																			generateMissingImagesAltChatgptApikey: '',
+																			generateMissingImagesAltChatgptModel: 'gpt-3.5-turbo',
+																			fixHeadingsStructure: 0,
+																			fixLowContrastText: 0,
+																			fixMissingAriaRoles: 0,
+																			fixMissingFormLabels: 0,
+																			validateAndFixFocusOrder: 0,
+																			showSkipToContents: 0,
+																			skipToContentsSelector: '',
+																			removeLinksTarget: 0,
+																			resetButtonBehavior: 'fontsize'
+																		};</script>
+	<script>
+				var jbase_url_fc = "https:\/\/www.emsa.europa.eu\/";
+				var jroot_url_fc = "https:\/\/www.emsa.europa.eu\/";
+				var jclient_path_fc = "";
+			</script>
+	<script>
+					var fc_sef_lang = 'en';
+					var fc_root_uri = '';
+					var fc_base_uri = '';
+					var FC_URL_VARS = [];
+				</script>
+	<script>
+					jQuery( document ).ready(function() {
+						jQuery("body").prepend('\
+							<div id="fc_filter_form_blocker" style="display: none;">\
+								<div class="fc_blocker_overlay" style="background-color: rgba(0, 0, 0, 0.3);"></div>\
+								<div class="fc_blocker_content" style="background-color: rgba(255, 255, 255, 1); color: rgba(0, 0, 0, 1);">\
+									\
+									<div class="fc_blocker_mssg" style="" >Applying Filtering</div>\
+									<div class="fc_blocker_bar"><div style="background-color: rgba(0, 153, 255, 1);"></div></div>\
+								</div>\
+							</div>\
+						');
+					});
+				</script>
+	<script>
+				if (typeof jQuery.fn.chosen == 'function') {
+					jQuery.fn.chosen_fc = jQuery.fn.chosen;
+					jQuery.fn.chosen = function(){
+						var args = arguments;
+						var result;
+						jQuery(this).each(function() {
+							if (jQuery(this).hasClass('use_select2_lib') || jQuery(this).hasClass('fc_no_js_attach')) return;
+							result = jQuery(this).chosen_fc(args);
+						});
+						return result;
+					};
+				}
+				
+					jQuery(document).ready(function()
+					{
+						window.skip_select2_js = 0;
+						fc_attachSelect2('body');
+					});
+				</script>
+	<script>
+					jQuery(document).ready(function(){
+						jQuery('input.fc_checkboxtoggle').bootstrapToggle();
+					});
+				</script>
+	<script>
+		var fcfav_toggle_style = 2;
+		var fcfav_status_info = 0;
+		var fcfav_toggle_info = 1;
+	</script>
+	<script>
+		var fc_validateOnSubmitForm = 1;
+	</script>
+	<script>jQuery(document).ready(function(){WfMediabox.init({"base":"\/","theme":"standard","width":"","height":"","lightbox":0,"shadowbox":0,"icons":1,"overlay":1,"overlay_opacity":0.8,"overlay_color":"#000000","transition_speed":500,"close":2,"labels":{"close":"Close","next":"Next","previous":"Previous","cancel":"Cancel","numbers":"{{numbers}}","numbers_count":"{{current}} of {{total}}","download":"Download"},"swipe":true,"expand_on_click":true});});</script>
+	<script>
+		jQuery(document).ready(function(){
+			new Slideshowck('#camera_wrap_732', {
+				height: '43%',
+				minHeight: '150',
+				pauseOnClick: false,
+				hover: 1,
+				fx: 'simpleFade',
+				loader: 'none',
+				pagination: 0,
+				thumbnails: 0,
+				thumbheight: 75,
+				thumbwidth: 100,
+				time: 3000,
+				transPeriod: 1500,
+				alignment: 'center',
+				autoAdvance: 1,
+				mobileAutoAdvance: 1,
+				portrait: 0,
+				barDirection: 'leftToRight',
+				imagePath: '/media/com_slideshowck/images/',
+				lightbox: 'mediaboxck',
+				fullpage: 0,
+				mobileimageresolution: '0',
+				navigationHover: false,
+				mobileNavHover: false,
+				navigation: true,
+				playPause: true,
+				barPosition: 'bottom',
+				responsiveCaption: 0,
+				keyboardNavigation: 0,
+				titleInThumbs: 0,
+				captionTime: 0,
+				captionOutEffect: 'default',
+				captionOutEffectTime: 600,
+				alias: 'slideshow',
+				breakpoints: '{"" : ""}',
+				container: ''
+		});
+}); 
+</script>
+	<script>
+		jQuery(document).ready(function(){
+			var container = document.querySelector('div#mod_fcitems_box_featured_816');
+			var msnry;
+			// initialize Masonry after all images have loaded
+			if (container) {
+				imagesLoaded( container, function() {
+					msnry = new Masonry( container );
+				});
+			}
+		});
+		</script>
+	<script>  var _paq = _paq || [];
+  _paq.push(["trackPageView"]);
+  _paq.push(["enableLinkTracking"]);
+
+  (function() {
+    var u="https://extranet.emsa.europa.eu/analytics/";
+    _paq.push(["setTrackerUrl", u+"piwik.php"]);
+    _paq.push(["setSiteId", "1"]);
+    var d=document, g=d.createElement("script"), s=d.getElementsByTagName("script")[0]; g.type="text/javascript";
+    g.defer=true; g.async=true; g.src=u+"piwik.js"; s.parentNode.insertBefore(g,s);
+  })();</script>
+	<!--[if IE 8]>
+				<link href="/components/com_flexicontent/assets/css/ie8.css?dc8922be15af1da0352a6e96c5381a48" rel="stylesheet" />
+				<![endif]-->
+	<meta property="og:description" content=" Founded in 2003, the European Maritime Safety Agency aims to progressively improve the safety of commercial shipping in EU waters. Based in Lisbon, EMSA provides technical support and advice to the European Commission and Member States regarding safety at sea. The Agency also monitors how ..." />
+	<meta property="og:title" content="European Maritime Safety Agency (EMSA) - Quality Shipping, Safer Seas, Cleaner Oceans" />
+
+    
+                    <!-- X-Frame-Options -->
+<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+<!-- X-Content-Type-Options -->
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<!-- Referrer-Policy -->
+<meta http-equiv="Referrer-Policy" content="no-referrer-when-downgrade">
+<!-- Permissions-Policy -->
+<meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+<!-- X-XSS-Protection -->
+<meta http-equiv="X-XSS-Protection" content="1; mode=block">
+            
+</head>
+
+    <body class="item-id-1 item-catid-154 type-id-1 type-alias-article gantry site com_flexicontent view-item no-layout no-task dir-ltr itemid-451 outline-25 g-offcanvas-left g-home g-style-preset2">
+        
+                    
+
+        <div id="g-offcanvas"  data-g-offcanvas-swipe="1" data-g-offcanvas-css3="1">
+                        <div class="g-grid">                        
+
+        <div class="g-block size-100 align-right">
+             <div id="mobile-menu-7180-particle" class="g-content g-particle">            <div id="g-mobilemenu-container" data-g-menu-breakpoint="48rem"></div>
+            </div>
+        </div>
+            </div>
+    </div>
+        <div id="g-page-surround">
+            <div class="g-offcanvas-hide g-offcanvas-toggle" role="navigation" data-offcanvas-toggle aria-controls="g-offcanvas" aria-expanded="false"><i class="fa fa-fw fa-bars"></i></div>                        
+
+                                
+                <section id="g-navigation" role="navigation">
+                <div class="g-container">                                <div class="g-grid">                        
+
+        <div class="g-block size-17">
+             <div id="logo-6622-particle" class="g-content g-particle">            <a href="/" target="_self" title="EMSA" aria-label="EMSA" rel="home" class="gantry-logo">
+                        <img src="/images/2023/EMSA_logo_full_white_with_letters_500x94.png"  alt="EMSA" />
+            </a>
+            </div>
+        </div>
+                    
+
+        <div class="g-block size-69 align-right equal-height">
+             <div id="menu-7145-particle" class="g-content g-particle">            <nav class="g-main-nav" data-g-hover-expand="true">
+        <ul class="g-toplevel">
+                                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-2 g-parent g-standard g-menu-item-link-parent menuitem23" style="position: relative;">
+                            <a class="g-menu-item-container" href="/about.html">
+                                                                <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">This Is EMSA</span>
+            
+                    </span>
+                    <span class="g-menu-parent-indicator" data-g-menuparent=""></span>                            </a>
+                                                                            <ul class="g-dropdown g-inactive g-fade-in-up g-dropdown-right" style="width:800px;" data-g-item-width="800px">
+            <li class="g-dropdown-column">
+                        <div class="g-grid">
+                        <div class="g-block size-100">
+            <ul class="g-sublevel">
+                <li class="g-level-1 g-go-back">
+                    <a class="g-menu-item-container" href="#" data-g-menuparent=""><span>Back</span></a>
+                </li>
+                                                                                                                    
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-631  ">
+                            <a class="g-menu-item-container" href="/about/agency-structure.html">
+                                                <i class="fa fa-cubes" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Agency structure</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-25  ">
+                            <a class="g-menu-item-container" href="/about/administrative-board.html">
+                                                <i class="fas fa-users" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Administrative Board</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-955  ">
+                            <a class="g-menu-item-container" href="/about/management.html">
+                                                <i class="fa fa-user-circle" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Our Management</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-24  ">
+                            <a class="g-menu-item-container" href="/about/mission-statements.html">
+                                                <i class="fa fa-list" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Mission Statements</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-29  ">
+                            <a class="g-menu-item-container" href="/about/legal-basis.html">
+                                                <i class="fa fa-legal" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Legal Foundation</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-30  ">
+                            <a class="g-menu-item-container" href="/about/financial-regulations.html">
+                                                <i class="fa fa-eur" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Financial Management</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-2570  ">
+                            <a class="g-menu-item-container" href="/about/environmental.html">
+                                                <i class="fab fa-envira" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Environmental Management</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-alias g-menu-item-637  ">
+                            <a class="g-menu-item-container" href="/quality-management-system.html">
+                                                <i class="far fa-check-square" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Quality Management System</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-207  ">
+                            <a class="g-menu-item-container" href="/about/cooperation.html">
+                                                <i class="far fa-handshake" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Partnerships</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-208  ">
+                            <a class="g-menu-item-container" href="/about/personal-data-protection.html">
+                                                <i class="fas fa-shield-alt" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Personal Data Protection</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-alias g-menu-item-116  ">
+                            <a class="g-menu-item-container" href="/jobs.html">
+                                                <i class="fa fa-user-plus" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Work with us</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-alias g-menu-item-3332  ">
+                            <a class="g-menu-item-container" href="/transparency.html">
+                                                <i class="far fa-lightbulb" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Transparency Portal</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+    
+            </ul>
+        </div>
+            </div>
+
+            </li>
+        </ul>
+            </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-2589 g-parent g-standard g-menu-item-link-parent menuitem23" style="position: relative;">
+                            <a class="g-menu-item-container" href="/we-do.html">
+                                                                <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">What we do</span>
+            
+                    </span>
+                    <span class="g-menu-parent-indicator" data-g-menuparent=""></span>                            </a>
+                                                                            <ul class="g-dropdown g-inactive g-fade-in-up g-dropdown-right" style="width:600px;" data-g-item-width="600px">
+            <li class="g-dropdown-column">
+                        <div class="g-grid">
+                        <div class="g-block size-100">
+            <ul class="g-sublevel">
+                <li class="g-level-1 g-go-back">
+                    <a class="g-menu-item-container" href="#" data-g-menuparent=""><span>Back</span></a>
+                </li>
+                                                                                                                    
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-2590  " style="position: relative;">
+                            <a class="g-menu-item-container" href="/we-do/sustainability.html">
+                                                <img src="/images/2020/icons/64x64/5-s-icons-sustainability-64x64.png" alt="Sustainability" />
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Sustainability</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-2595  ">
+                            <a class="g-menu-item-container" href="/we-do/safety.html">
+                                                <img src="/images/2020/icons/64x64/5-s-icons-safety-64x64.png" alt="Safety &amp; Security" />
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Safety &amp; Security</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-2605  ">
+                            <a class="g-menu-item-container" href="/we-do/digitalisation.html">
+                                                <img src="/images/2020/icons/64x64/5-s-icons-security-64x64.png" alt="Digitalisation" />
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Digitalisation</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-2615  ">
+                            <a class="g-menu-item-container" href="/we-do/simplification.html">
+                                                <img src="/images/2020/icons/64x64/5-s-icons-simplification-64x64.png" alt="Simplification" />
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Simplification</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-2625  ">
+                            <a class="g-menu-item-container" href="/we-do/surveillance.html">
+                                                <img src="/images/2020/icons/64x64/5-s-icons-surveillance-64x64.png" alt="Surveillance" />
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Surveillance</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-2670  ">
+                            <a class="g-menu-item-container" href="/we-do/assistance.html">
+                                                <img src="/images/2020/icons/64x64/TECHNICAL_64.png" alt="Technical Assistance" />
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Technical Assistance</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+    
+            </ul>
+        </div>
+            </div>
+
+            </li>
+        </ul>
+            </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-204 g-parent g-standard g-menu-item-link-parent menuitem23" style="position: relative;">
+                            <a class="g-menu-item-container" href="/workshops-a-events.html">
+                                                                <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Events</span>
+            
+                    </span>
+                    <span class="g-menu-parent-indicator" data-g-menuparent=""></span>                            </a>
+                                                                            <ul class="g-dropdown g-inactive g-fade-in-up g-dropdown-right" style="width:500px;" data-g-item-width="500px">
+            <li class="g-dropdown-column">
+                        <div class="g-grid">
+                        <div class="g-block size-100">
+            <ul class="g-sublevel">
+                <li class="g-level-1 g-go-back">
+                    <a class="g-menu-item-container" href="#" data-g-menuparent=""><span>Back</span></a>
+                </li>
+                                                                                                                    
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-2685  ">
+                            <a class="g-menu-item-container" href="/workshops-a-events/workshop-materials-reports.html">
+                                                <i class="fa fa-file-text" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Workshop Materials</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-2684  ">
+                            <a class="g-menu-item-container" href="/workshops-a-events/training-materials.html">
+                                                <i class="far fa-file-alt" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Training Materials</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+    
+            </ul>
+        </div>
+            </div>
+
+            </li>
+        </ul>
+            </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-5 g-parent g-standard g-menu-item-link-parent menuitem23" style="position: relative;">
+                            <a class="g-menu-item-container" href="/newsroom.html">
+                                                                <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Newsroom</span>
+            
+                    </span>
+                    <span class="g-menu-parent-indicator" data-g-menuparent=""></span>                            </a>
+                                                                            <ul class="g-dropdown g-inactive g-fade-in-up g-dropdown-left" style="width:560px;" data-g-item-width="560px">
+            <li class="g-dropdown-column">
+                        <div class="g-grid">
+                        <div class="g-block size-100">
+            <ul class="g-sublevel">
+                <li class="g-level-1 g-go-back">
+                    <a class="g-menu-item-container" href="#" data-g-menuparent=""><span>Back</span></a>
+                </li>
+                                                                                                                    
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-2638  ">
+                            <a class="g-menu-item-container" href="/newsroom/latest-news.html">
+                                                <i class="far fa-bell" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Latest News</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-272  ">
+                            <a class="g-menu-item-container" href="/newsroom/newsletters.html">
+                                                <i class="far fa-newspaper" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Newsletters</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-66  ">
+                            <a class="g-menu-item-container" href="/newsroom/emsa-video-gallery.html">
+                                                <i class="fa fa-video-camera" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Video Gallery</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-1304  ">
+                            <a class="g-menu-item-container" href="/newsroom/infographics.html">
+                                                <i class="fas fa-chart-area" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Infographics</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-216  ">
+                            <a class="g-menu-item-container" href="/newsroom/press-releases.html">
+                                                <i class="fa fa-mail-forward" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Press Area</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-2761  ">
+                            <a class="g-menu-item-container" href="/newsroom/covid19-impact.html">
+                                                <i class="fa fa-ship" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">COVID-19 Impact</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-2834  ">
+                            <a class="g-menu-item-container" href="/newsroom/subscriptions/frontusers/profile.html">
+                                                <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Subscriptions</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-437  ">
+                            <a class="g-menu-item-container" href="/newsroom/connect.html">
+                                                <i class="far fa-comments" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Connect with EMSA</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+    
+            </ul>
+        </div>
+            </div>
+
+            </li>
+        </ul>
+            </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-110 g-parent g-standard g-menu-item-link-parent menuitem23" style="position: relative;">
+                            <a class="g-menu-item-container" href="/publications.html">
+                                                                <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Publications</span>
+            
+                    </span>
+                    <span class="g-menu-parent-indicator" data-g-menuparent=""></span>                            </a>
+                                                                            <ul class="g-dropdown g-inactive g-fade-in-up g-dropdown-left" style="width:550px;" data-g-item-width="550px">
+            <li class="g-dropdown-column">
+                        <div class="g-grid">
+                        <div class="g-block size-100">
+            <ul class="g-sublevel">
+                <li class="g-level-1 g-go-back">
+                    <a class="g-menu-item-container" href="#" data-g-menuparent=""><span>Back</span></a>
+                </li>
+                                                                                                                    
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-3789  ">
+                            <a class="g-menu-item-container" href="/publications/highlights.html">
+                                                <i class="far fa-calendar-check" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Annual Highlights 2024</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-709  ">
+                            <a class="g-menu-item-container" href="/publications/corporate-publications.html">
+                                                <i class="fa fa-bookmark" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Corporate Publications</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-2667  ">
+                            <a class="g-menu-item-container" href="/publications/leaflets.html">
+                                                <i class="far fa-bookmark" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Leaflets &amp; Brochures</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-2669  ">
+                            <a class="g-menu-item-container" href="/publications/inventories.html">
+                                                <i class="fa fa-bookmark" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Guidelines &amp; Inventories</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-2668  ">
+                            <a class="g-menu-item-container" href="/publications/reports.html">
+                                                <i class="far fa-bookmark" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Technical Reports</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-592  " style="position: relative;">
+                            <a class="g-menu-item-container" href="/publications/documents.html">
+                                                <i class="fa fa-archive" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Documents</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-419  ">
+                            <a class="g-menu-item-container" href="/publications/financial-texts.html">
+                                                <i class="fa fa-eur" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Financial Texts</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-64  ">
+                            <a class="g-menu-item-container" href="/publications/legislative-texts.html">
+                                                <i class="fa fa-legal" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Legislative Texts</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+    
+            </ul>
+        </div>
+            </div>
+
+            </li>
+        </ul>
+            </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-2635 g-parent g-standard g-menu-item-link-parent menuitem23" style="position: relative;">
+                            <a class="g-menu-item-container" href="/contact.html">
+                                                                <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Contact us</span>
+            
+                    </span>
+                    <span class="g-menu-parent-indicator" data-g-menuparent=""></span>                            </a>
+                                                                            <ul class="g-dropdown g-inactive g-fade-in-up g-dropdown-left" style="width:490px;" data-g-item-width="490px">
+            <li class="g-dropdown-column">
+                        <div class="g-grid">
+                        <div class="g-block size-100">
+            <ul class="g-sublevel">
+                <li class="g-level-1 g-go-back">
+                    <a class="g-menu-item-container" href="#" data-g-menuparent=""><span>Back</span></a>
+                </li>
+                                                                                                                    
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-2755  ">
+                            <a class="g-menu-item-container" href="/contact/getting-there.html">
+                                                <i class="fa fa-location-arrow" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Practical Information</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-7  ">
+                            <a class="g-menu-item-container" href="/contact/contacts.html">
+                                                <i class="fab fa-wpforms" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Contact Form</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-component g-menu-item-2636  ">
+                            <a class="g-menu-item-container" href="/contact/advanced-search.html">
+                                                <i class="fa fa-search-plus" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Advanced Search</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+                                                                                                
+        
+                
+        
+                
+        
+        <li class="g-menu-item g-menu-item-type-alias g-menu-item-109  ">
+                            <a class="g-menu-item-container" href="/newsroom/connect.html">
+                                                <i class="fa fa-question-circle" aria-hidden="true"></i>
+                                                    <span class="g-menu-item-content">
+                                    <span class="g-menu-item-title">Connect with EMSA</span>
+            
+                    </span>
+                                                </a>
+                                </li>
+    
+    
+            </ul>
+        </div>
+            </div>
+
+            </li>
+        </ul>
+            </li>
+    
+    
+        </ul>
+    </nav>
+            </div>
+        </div>
+                    
+
+        <div class="g-block size-14">
+             <div id="flexcontentsearch-3844-particle" class="g-content g-particle">            <div class="g-flexcontent-search">
+    <i class="fa fa-search search-icon" aria-hidden="true" onclick="openSearchModal()"></i>
+
+    <!-- Search Modal -->
+    <div id="searchModal" class="search-modal">
+        <div class="search-modal-content">
+            <input type="text" class="search-input-modal" placeholder="Search..." aria-label="Search">
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Add styles for positioning */
+    .search-modal-content {
+        position: absolute;
+        top: 33%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+</style>
+
+<script>
+function openSearchModal() {
+    var modal = document.getElementById('searchModal');
+    var searchInput = document.querySelector('.search-input-modal');
+
+    modal.style.display = "block";
+    searchInput.focus();
+
+    searchInput.addEventListener('keypress', function(event) {
+        if(event.key === 'Enter') {
+            var baseUrl = '/contact/advanced-search.html';
+            var searchURL = baseUrl + '?contenttypes[]=1&q=' + encodeURIComponent(searchInput.value) + '&p=all&areas[]=flexicontent&cc=p';
+            window.location.href = searchURL;
+        }
+    });
+
+    window.onclick = function(event) {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    }
+}
+</script>
+            </div>
+        </div>
+            </div>
+            </div>
+        
+    </section>
+                    
+                <section id="g-feature" role="main">
+                <div class="g-container">                                <div class="g-grid">                        
+
+        <div class="g-block size-100 show-on-desktop">
+             <div class="g-content">
+                                    <div class="platform-content"><div class=" moduletable  homeslideshow">
+        <div class="slideshowck  homeslideshow camera_wrap camera_white_skin" id="camera_wrap_732">
+			<div data-alt="The European Maritime Transport Environmental Report 2025" data-thumb="/images/2023/slideshowtop/EMTER2025.jpg" data-src="/images/2023/slideshowtop/EMTER2025.jpg" data-link="emter.html" data-target="_parent">
+														<div class="camera_caption fadeFromLeft">
+										<div class="camera_caption_title">
+						The European Maritime Transport Environmental Report 2025					</div>
+															<div class="camera_caption_desc">
+						Fully updated facts, data, and information											</div>
+																				</div>
+									</div>
+		<div data-alt="FuelEU Maritime" data-thumb="/images/2023/slideshowtop/FUEL_EU_MARITIME_BANNER_s.jpg" data-src="/images/2023/slideshowtop/FUEL_EU_MARITIME_BANNER_s.jpg" data-link="reducing-emissions/fuel-eu-maritime-regulation.html" data-target="_parent">
+														<div class="camera_caption fadeFromLeft">
+										<div class="camera_caption_title">
+						FuelEU Maritime					</div>
+															<div class="camera_caption_desc">
+						Information, updates and resources for shipping companies and maritime stakeholders											</div>
+																				</div>
+									</div>
+		<div data-alt="NAVISON" data-thumb="/images/2023/slideshowtop/NAVISON_BANNER_s.jpg" data-src="/images/2023/slideshowtop/NAVISON_BANNER_s.jpg" data-link="navison.html" data-target="_parent">
+														<div class="camera_caption fadeFromLeft">
+										<div class="camera_caption_title">
+						NAVISON					</div>
+															<div class="camera_caption_desc">
+						Historical and future forecast underwater noise data for all European seas											</div>
+																				</div>
+									</div>
+		<div data-alt="Alternative Fuels" data-thumb="/images/2023/slideshowtop/alternative_fuels_banner.jpg" data-src="/images/2023/slideshowtop/alternative_fuels_banner.jpg" data-link="sustainable-shipping/alternative-fuels.html " data-target="_parent">
+														<div class="camera_caption fadeFromLeft">
+										<div class="camera_caption_title">
+						Alternative Fuels					</div>
+															<div class="camera_caption_desc">
+						Reports and studies on alternative fuels and sources of power for shipping											</div>
+																				</div>
+									</div>
+</div>
+<div style="clear:both;"></div>
+</div></div>
+            
+        </div>
+        </div>
+            </div>
+                            <div class="g-grid">                        
+
+        <div class="g-block size-50 latestnews23">
+             <div class="g-content">
+                                    <div class="platform-content"><div class=" moduletable  newshome">
+            <h3 class="g-title">Latest News</h3>        
+		<div id="mod_flexicontent_816">
+
+
+		
+
+<!-- BOF DIV mod_flexicontent_wrapper -->
+
+<div class="news mod_flexicontent_wrapper mod_flexicontent_wrap newshome" id="mod_flexicontent_news816">
+
+
+	
+
+	<!-- BOF DIV mod_flexicontent -->
+
+	<div id="order_added816" class="mod_flexicontent">
+
+
+		
+	
+	<!-- <div class="modclear"></div> -->
+
+
+	
+		
+		<!-- BOF DIV mod_flexicontent_standard (standard items) -->
+
+		<div class="mod_flexicontent_standard mod_fcitems_box_standard_816" id="mod_fcitems_box_standard_816">
+
+			
+			<!-- BOF item -->	
+			<div class="mod_flexicontent_standard_wrapper odd"
+				onmouseover=""
+				onmouseout=""
+			>
+			<div class="mod_flexicontent_standard_wrapper_innerbox">
+
+
+			
+
+				<!-- BOF item title -->
+								<!-- EOF item title -->
+
+
+				<!-- BOF item's image -->
+								<!-- EOF item's image -->
+
+				
+					
+				
+				<!-- BOF item's content -->
+								<div class="content_standard fc_floated">
+
+					
+											<div class="fcitem_title_box">
+							<span class="fcitem_title">
+															<a href="/newsroom/latest-news/item/5560-mmo-adria-2025.html">Adriatic Sea MMO Exercise 2025: Strengthening Regional Cooperation in Maritime Safety and Environmen...</a>
+														</span>
+						</div>
+					
+				
+
+					
+					
+					
+					
+					
+					
+					
+					
+					<div class="clearfix"></div> 
+
+				</div> <!-- EOF item's content -->
+				
+				
+
+			
+
+			
+
+			</div>  <!-- EOF wrapper_innerbox -->
+			</div>  <!-- EOF wrapper -->
+			<!-- EOF item -->
+
+			
+			
+			<!-- BOF item -->	
+			<div class="mod_flexicontent_standard_wrapper even"
+				onmouseover=""
+				onmouseout=""
+			>
+			<div class="mod_flexicontent_standard_wrapper_innerbox">
+
+
+			
+
+				<!-- BOF item title -->
+								<!-- EOF item title -->
+
+
+				<!-- BOF item's image -->
+								<!-- EOF item's image -->
+
+				
+					
+				
+				<!-- BOF item's content -->
+								<div class="content_standard fc_floated">
+
+					
+											<div class="fcitem_title_box">
+							<span class="fcitem_title">
+															<a href="/we-do/safety/subsea/item/5557-underwater-services-user-group-meeting-at-emsa.html">Underwater Services User Group meeting at EMSA</a>
+														</span>
+						</div>
+					
+				
+
+					
+					
+					
+					
+					
+					
+					
+					
+					<div class="clearfix"></div> 
+
+				</div> <!-- EOF item's content -->
+				
+				
+
+			
+
+			
+
+			</div>  <!-- EOF wrapper_innerbox -->
+			</div>  <!-- EOF wrapper -->
+			<!-- EOF item -->
+
+			
+			
+			<!-- BOF item -->	
+			<div class="mod_flexicontent_standard_wrapper odd"
+				onmouseover=""
+				onmouseout=""
+			>
+			<div class="mod_flexicontent_standard_wrapper_innerbox">
+
+
+			
+
+				<!-- BOF item title -->
+								<!-- EOF item title -->
+
+
+				<!-- BOF item's image -->
+								<!-- EOF item's image -->
+
+				
+					
+				
+				<!-- BOF item's content -->
+								<div class="content_standard fc_floated">
+
+					
+											<div class="fcitem_title_box">
+							<span class="fcitem_title">
+															<a href="/newsroom/latest-news/item/5556-multipurpose-maritime-operation-2025.html">Multipurpose Maritime Operation 2025 in La Manche and the Southern North Sea concludes with strength...</a>
+														</span>
+						</div>
+					
+				
+
+					
+					
+					
+					
+					
+					
+					
+					
+					<div class="clearfix"></div> 
+
+				</div> <!-- EOF item's content -->
+				
+				
+
+			
+
+			
+
+			</div>  <!-- EOF wrapper_innerbox -->
+			</div>  <!-- EOF wrapper -->
+			<!-- EOF item -->
+
+			
+			
+			<!-- BOF item -->	
+			<div class="mod_flexicontent_standard_wrapper even"
+				onmouseover=""
+				onmouseout=""
+			>
+			<div class="mod_flexicontent_standard_wrapper_innerbox">
+
+
+			
+
+				<!-- BOF item title -->
+								<!-- EOF item title -->
+
+
+				<!-- BOF item's image -->
+								<!-- EOF item's image -->
+
+				
+					
+				
+				<!-- BOF item's content -->
+								<div class="content_standard fc_floated">
+
+					
+											<div class="fcitem_title_box">
+							<span class="fcitem_title">
+															<a href="/newsroom/latest-news/item/5549-19th-ctg-mppr-meeting-at-emsa.html">19th CTG MPPR meeting at EMSA</a>
+														</span>
+						</div>
+					
+				
+
+					
+					
+					
+					
+					
+					
+					
+					
+					<div class="clearfix"></div> 
+
+				</div> <!-- EOF item's content -->
+				
+				
+
+			
+
+			
+
+			</div>  <!-- EOF wrapper_innerbox -->
+			</div>  <!-- EOF wrapper -->
+			<!-- EOF item -->
+
+			
+			
+			<!-- BOF item -->	
+			<div class="mod_flexicontent_standard_wrapper odd"
+				onmouseover=""
+				onmouseout=""
+			>
+			<div class="mod_flexicontent_standard_wrapper_innerbox">
+
+
+			
+
+				<!-- BOF item title -->
+								<!-- EOF item title -->
+
+
+				<!-- BOF item's image -->
+								<!-- EOF item's image -->
+
+				
+					
+				
+				<!-- BOF item's content -->
+								<div class="content_standard fc_floated">
+
+					
+											<div class="fcitem_title_box">
+							<span class="fcitem_title">
+															<a href="/newsroom/latest-news/item/5548-emsa-participates-in-international-coast-guard-fora-in-rome-2.html">EMSA participates in international Coast Guard Fora in Rome</a>
+														</span>
+						</div>
+					
+				
+
+					
+					
+					
+					
+					
+					
+					
+					
+					<div class="clearfix"></div> 
+
+				</div> <!-- EOF item's content -->
+				
+				
+
+			
+
+			
+
+			</div>  <!-- EOF wrapper_innerbox -->
+			</div>  <!-- EOF wrapper -->
+			<!-- EOF item -->
+
+			
+					</div>
+
+		<!-- EOF DIV mod_flexicontent_standard (standard items) -->
+
+
+	
+	</div>
+
+	<!-- EOF DIV mod_flexicontent -->
+
+
+	<div class="modclear"></div>
+
+
+	
+	
+	
+	
+</div>
+
+<!-- EOF DIV mod_flexicontent_wrapper -->
+
+
+					<span class="module_readon newshome">
+			<a class="readon" href="/newsroom/latest-news.html" ><span>[More News]</span></a>
+		</span>
+	
+</div>
+	</div></div>
+            
+        </div>
+        </div>
+                    
+
+        <div class="g-block size-50">
+             <div id="custom-5932-particle" class="g-content g-particle">            <div class="responsive-iframe">
+  <iframe src="https://www.youtube-nocookie.com/embed/pFAxZTkA_dk?si=notOOD_8_rEEHvde" title="YouTube video player" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+</div>
+            </div>
+        </div>
+            </div>
+                            <div class="g-grid">                        
+
+        <div class="g-block size-100">
+             <div id="content-pro-8228-particle" class="g-content g-particle">            <div class="g-content-pro style3 infocuspro gutter-enabled" >
+								<div class="g-particle-intro">
+					<h3 class="g-title g-main-title">In Focus</h3>
+			<div class="g-title-separator no-intro-text"></div>
+			
+			</div>
+
+									<div class="g-grid">											
+				
+				
+				
+				
+				
+				
+				
+				
+				
+									<div class="g-block" >
+						<div class="g-content">
+																										<div class="g-content-pro-item uk-overlay">
+																		<div class="g-content-pro-image">
+						
+													<a target="_parent" href="/we-do/digitalisation/maritime-monitoring.html">								<img alt="IMS at EMSA" src="/images/2023/infocus/square-1.jpg" width="1700" height="1700">
+							</a>											</div>
+				
+						
+													<div class="g-info-container-style2 uk-overlay-panel uk-overlay-background uk-overlay-bottom">
+																						<h4 class="g-content-pro-title"><a target="_parent" href="/we-do/digitalisation/maritime-monitoring.html">IMS at EMSA</a></h4>
+				
+								
+								
+																						<div class="g-content-pro-desc">The enhanced maritime picture through digital services</div>
+				
+								
+															</div>
+											</div>
+										</div>
+					</div>
+				
+				
+											
+				
+				
+				
+				
+				
+				
+				
+				
+				
+									<div class="g-block" >
+						<div class="g-content">
+																										<div class="g-content-pro-item uk-overlay">
+																		<div class="g-content-pro-image">
+						
+													<a target="_parent" href="/emsafe">								<img alt="EMSAFE REPORT" src="/images/2023/infocus/square-2.jpg" width="1700" height="1700">
+							</a>											</div>
+				
+						
+													<div class="g-info-container-style2 uk-overlay-panel uk-overlay-background uk-overlay-bottom">
+																						<h4 class="g-content-pro-title"><a target="_parent" href="/emsafe">EMSAFE</a></h4>
+				
+								
+								
+																						<div class="g-content-pro-desc">The comprehensive overview of EU maritime safety</div>
+				
+								
+															</div>
+											</div>
+										</div>
+					</div>
+				
+				
+											
+				
+				
+				
+				
+				
+				
+				
+				
+				
+									<div class="g-block" >
+						<div class="g-content">
+																										<div class="g-content-pro-item uk-overlay">
+																		<div class="g-content-pro-image">
+						
+													<a target="_parent" href="/eumaritimeprofile.html">								<img alt="EU MARITIME PROFILE" src="/images/2023/infocus/square-3.jpg" width="1700" height="1700">
+							</a>											</div>
+				
+						
+													<div class="g-info-container-style2 uk-overlay-panel uk-overlay-background uk-overlay-bottom">
+																						<h4 class="g-content-pro-title"><a target="_parent" href="/eumaritimeprofile.html">EU MARITIME PROFILE</a></h4>
+				
+								
+								
+																						<div class="g-content-pro-desc">Up to date information on the EU maritime cluster
+
+</div>
+				
+								
+															</div>
+											</div>
+										</div>
+					</div>
+				
+				
+					</div>			<div class="g-grid">											
+				
+				
+				
+				
+				
+				
+				
+				
+				
+									<div class="g-block" >
+						<div class="g-content">
+																										<div class="g-content-pro-item uk-overlay">
+																		<div class="g-content-pro-image">
+						
+													<a target="_parent" href="/greening-award-initiative">								<img alt="GREENING AWARD INITIATIVE " src="/images/2023/infocus/greening-award-in-focus-box.jpg" width="1700" height="1700">
+							</a>											</div>
+				
+						
+													<div class="g-info-container-style2 uk-overlay-panel uk-overlay-background uk-overlay-bottom">
+																						<h4 class="g-content-pro-title"><a target="_parent" href="/greening-award-initiative">GREENING AWARD INITIATIVE </a></h4>
+				
+								
+								
+																						<div class="g-content-pro-desc">Celebrating coast guard sustainability </div>
+				
+								
+															</div>
+											</div>
+										</div>
+					</div>
+				
+				
+											
+				
+				
+				
+				
+				
+				
+				
+				
+				
+									<div class="g-block" >
+						<div class="g-content">
+																										<div class="g-content-pro-item uk-overlay">
+																		<div class="g-content-pro-image">
+						
+													<a target="_parent" href="/emter.html">								<img alt="EMTER REPORT" src="/images/2023/infocus/square-5.jpg" width="1700" height="1700">
+							</a>											</div>
+				
+						
+													<div class="g-info-container-style2 uk-overlay-panel uk-overlay-background uk-overlay-bottom">
+																						<h4 class="g-content-pro-title"><a target="_parent" href="/emter.html">EMTER</a></h4>
+				
+								
+								
+																						<div class="g-content-pro-desc">Maritime transport and the environment: the report
+
+</div>
+				
+								
+															</div>
+											</div>
+										</div>
+					</div>
+				
+				
+											
+				
+				
+				
+				
+				
+				
+				
+				
+				
+									<div class="g-block" >
+						<div class="g-content">
+																										<div class="g-content-pro-item uk-overlay">
+																		<div class="g-content-pro-image">
+						
+													<a target="_parent" href="/csn-menu.html">								<img alt="CLEANSEANET" src="/images/2023/infocus/square-6.jpg" width="1700" height="1700">
+							</a>											</div>
+				
+						
+													<div class="g-info-container-style2 uk-overlay-panel uk-overlay-background uk-overlay-bottom">
+																						<h4 class="g-content-pro-title"><a target="_parent" href="/csn-menu.html">CLEANSEANET</a></h4>
+				
+								
+								
+																						<div class="g-content-pro-desc">Satellite-based oil spill & vessel detection service</div>
+				
+								
+															</div>
+											</div>
+										</div>
+					</div>
+				
+				
+					</div>	
+		</div>
+            </div>
+        </div>
+            </div>
+                            <div class="g-grid">                        
+
+        <div class="g-block size-100">
+             <div class="g-content">
+                                    <div class=" moduletable  iconshome">
+        <div id="module-content-pro-704-particle" class="g-particle"><div class="g-content-pro style1 gutter-enabled" >
+								<div class="g-particle-intro">
+			
+		<p class="g-introtext"><h4>Find out more about our work</h4></p>	</div>
+
+									<div class="g-grid">											
+				
+				
+				
+				
+				
+				
+				
+				
+				
+									<div class="g-block" >
+						<div class="g-content">
+												<div class="g-content-pro-item">
+																		<div class="g-content-pro-image">
+						
+													<a target="_parent" href="/we-do/sustainability.html">								<img alt="Sustainability" src="/images/2023/icons/sustainability_new_web.png" width="110" height="114">
+							</a>											</div>
+				
+						
+													<div class="g-info-container">
+																						<h4 class="g-content-pro-title"><a target="_parent" href="/we-do/sustainability.html"><p style="text-align: center">Sustainability</p></a></h4>
+				
+								
+								
+								
+															</div>
+											</div>
+																								</div>
+					</div>
+				
+				
+											
+				
+				
+				
+				
+				
+				
+				
+				
+				
+									<div class="g-block" >
+						<div class="g-content">
+												<div class="g-content-pro-item">
+																		<div class="g-content-pro-image">
+						
+													<a target="_parent" href="/we-do/safety.html">								<img alt="Safety" src="/images/2023/icons/safety_new_web.png" width="110" height="114">
+							</a>											</div>
+				
+						
+													<div class="g-info-container">
+																						<h4 class="g-content-pro-title"><a target="_parent" href="/we-do/safety.html"><p style="text-align: center">Safety</p></a></h4>
+				
+								
+								
+								
+															</div>
+											</div>
+																								</div>
+					</div>
+				
+				
+											
+				
+				
+				
+				
+				
+				
+				
+				
+				
+									<div class="g-block" >
+						<div class="g-content">
+												<div class="g-content-pro-item">
+																		<div class="g-content-pro-image">
+						
+													<a target="_parent" href="/we-do/digitalisation.html">								<img alt="Digitalisation" src="/images/2023/icons/digitalisation_new_web.png" width="110" height="114">
+							</a>											</div>
+				
+						
+													<div class="g-info-container">
+																						<h4 class="g-content-pro-title"><a target="_parent" href="/we-do/digitalisation.html"><p style="text-align: center">Digitalisation</p></a></h4>
+				
+								
+								
+								
+															</div>
+											</div>
+																								</div>
+					</div>
+				
+				
+											
+				
+				
+				
+				
+				
+				
+				
+				
+				
+									<div class="g-block" >
+						<div class="g-content">
+												<div class="g-content-pro-item">
+																		<div class="g-content-pro-image">
+						
+													<a target="_parent" href="/we-do/simplification.html">								<img alt="Simplification" src="/images/2023/icons/simplification_new_web.png" width="110" height="114">
+							</a>											</div>
+				
+						
+													<div class="g-info-container">
+																						<h4 class="g-content-pro-title"><a target="_parent" href="/we-do/simplification.html"><p style="text-align: center">Simplification</p></a></h4>
+				
+								
+								
+								
+															</div>
+											</div>
+																								</div>
+					</div>
+				
+				
+											
+				
+				
+				
+				
+				
+				
+				
+				
+				
+									<div class="g-block" >
+						<div class="g-content">
+												<div class="g-content-pro-item">
+																		<div class="g-content-pro-image">
+						
+													<a target="_parent" href="/we-do/surveillance.html">								<img alt="Surveillance" src="/images/2023/icons/surveillance_new_web.png" width="110" height="114">
+							</a>											</div>
+				
+						
+													<div class="g-info-container">
+																						<h4 class="g-content-pro-title"><a target="_parent" href="/we-do/surveillance.html"><p style="text-align: center">Surveillance</p></a></h4>
+				
+								
+								
+								
+															</div>
+											</div>
+																								</div>
+					</div>
+				
+				
+					</div>	
+		</div></div></div>
+            
+        </div>
+        </div>
+            </div>
+            </div>
+        
+    </section>
+                    
+                <footer id="g-footer">
+                <div class="g-container">                                <div class="g-grid">                        
+
+        <div class="g-block size-25">
+             <div id="custom-6774-particle" class="g-content g-particle">            <div class="footer23 eu23">
+<div class="euflag23"><img src="/templates/g5_hydrogen/custom/images/EU-flag-66x98.jpg" alt="Europen Union flag" /></div>
+<div class="agency23">An Agency of the European Union</div>
+</div>
+            </div>
+        </div>
+                    
+
+        <div class="g-block size-25">
+             <div id="custom-7784-particle" class="g-content g-particle">            <div class="footer23">
+<div class="footer23main">
+<a href="/jobs">Working with us</a>
+</div>
+<div>
+<a href="/jobs/vacancies.html">Open vacancies</a>
+</div>
+<div>
+<a href="/trainees.html">Traineeships</a>
+</div>
+<div>
+<a href="/procurement.html">Public Procurement</a>
+</div>
+<div>
+<a href="https://experts.emsa.europa.eu/">Experts and Speakers</a>
+</div>
+
+</div>
+            </div>
+        </div>
+                    
+
+        <div class="g-block size-25">
+             <div id="custom-3777-particle" class="g-content g-particle">            <div class="footer23">
+<div class="footer23main">
+<a href="/transparency/">Transparency portal</a>
+</div>
+<div>
+<a href="/about/personal-data-protection.html">Data protection</a>
+</div>
+<div>
+<a href="/transparency/acess.html">Access to documents</a>
+</div>
+<div>
+<a href="/disclaimer.html">Legal notice</a>
+</div>
+ <div>
+ <a href="/accessibility.html">Accessibility</a>
+  </div>
+</div>
+            </div>
+        </div>
+                    
+
+        <div class="g-block size-25">
+             <div id="custom-6055-particle" class="g-content g-particle">            <div class="footer23">
+    <div class="footer23main">
+        <a href="/contact.html">Contact</a>
+    </div>
+    <div class="footer23address">
+        European Maritime Safety Agency
+        <br />
+        Praça Europa 4
+        <br />
+        Cais do Sodré
+        <br />
+        1249-206 LISBOA
+        <br />
+        Portugal
+    </div>
+    <div class="footer23contactlink">
+        <a href="/contact/contacts.html">Access our contact form</a>
+    </div>
+
+    <!-- Social Media Icons Row -->
+<div class="socialicons23">
+    <a href="https://www.facebook.com/europeanmaritimesafetyagency/"><img src="/templates/g5_hydrogen/custom/images/social/icons8-facebook-64.png" alt="Facebook" /></a>
+    <a href="https://www.linkedin.com/company/67837/"><img src="/templates/g5_hydrogen/custom/images/social/icons8-linkedin-64.png" alt="linkedin" /></a>
+    <a href="https://twitter.com/EMSA_EU"><img src="/templates/g5_hydrogen/custom/images/social/icons8-twitterx-64.png" alt="X" /></a>
+    <a href="https://www.instagram.com/emsa.eu/"><img src="/templates/g5_hydrogen/custom/images/social/icons8-instagram-64.png" alt="instagram" /></a>
+    <a href="https://www.youtube.com/user/EMSALisbon/"><img src="/templates/g5_hydrogen/custom/images/social/icons8-youtube-64-editsquare-roundedcorners2.png" alt="Youtube" /></a>
+</div>
+</div>
+            </div>
+        </div>
+            </div>
+                            <div class="g-grid">                        
+
+        <div class="g-block size-50 copyright23">
+             <div id="copyright-8280-particle" class="g-content g-particle">            &copy;
+        2025
+    European Maritime Safety Agency   All Rights Reserved.
+            </div>
+        </div>
+                    
+
+        <div class="g-block size-50 notice23">
+             <div id="custom-1872-particle" class="g-content g-particle">            <a href="/disclaimer.html">Information on this site is subject to a disclaimer, a copyright and personal data protection.</a>
+            </div>
+        </div>
+            </div>
+            </div>
+        
+    </footer>
+    
+                        
+
+        </div>
+                    
+
+                        <script type="text/javascript" src="/media/gantry5/assets/js/main.js"></script>
+    <script type="text/javascript" src="/templates/g5_hydrogen/custom/uikit/js/uikit.min.js"></script>
+    <script type="text/javascript">jQuery(window).load(function() { jQuery("#g-overlay").unbind(); });</script>
+    <script type="text/javascript" src="/templates/g5_hydrogen/custom/js/headroom.min.js"></script>
+    
+
+    
+
+        <script>
+        // grab an element
+        var myElement = document.querySelector("#g-navigation");
+        // construct an instance of Headroom, passing the element
+        var headroom  = new Headroom(myElement);
+        // initialise
+        headroom.init();
+
+        // grab an element
+        var myElement = document.querySelector(".g-offcanvas-toggle");
+        // construct an instance of Headroom, passing the element
+        var headroom  = new Headroom(myElement);
+        // initialise
+        headroom.init(); 
+    </script>
+</body>
+    </body>
+</html>

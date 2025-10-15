@@ -1,0 +1,11 @@
+# Requirements for IMO GISIS Data Downloader
+
+# Selenium for browser automation
+selenium>=4.15.0
+
+# Chrome webdriver manager (optional, for automatic driver management)
+webdriver-manager>=4.0.1
+
+# Additional utilities
+python-dateutil>=2.8.2
+requests>=2.31.0

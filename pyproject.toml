@@ -23,23 +23,39 @@ classifiers = [
 ]
 
 dependencies = [
-    "assetutilities @ git+https://github.com/vamseeachanta/assetutilities.git"
+    "assetutilities @ git+https://github.com/vamseeachanta/assetutilities.git",
+    "scrapy>=2.12.0",
+    "selenium>=4.15.0",
+    "beautifulsoup4>=4.12.0",
+    "pdfplumber>=0.10.0",
+    "sqlalchemy>=2.0.0",
+    "sqlmodel>=0.0.14",
+    "fastapi>=0.108.0",
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+    "tenacity>=8.2.0",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=7.0",
-    "pytest-cov>=4.0",
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-asyncio>=0.21.0",
     "pytest-benchmark>=4.0",
+    "faker>=20.1.0",
+    "factory-boy>=3.3.0",
     "black>=23.0",
     "flake8>=6.0",
     "mypy>=1.0",
     "pre-commit>=3.0",
 ]
 test = [
-    "pytest>=7.0",
-    "pytest-cov>=4.0",
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-asyncio>=0.21.0",
     "pytest-mock>=3.0",
+    "faker>=20.1.0",
+    "factory-boy>=3.3.0",
 ]
 docs = [
     "sphinx>=6.0",
