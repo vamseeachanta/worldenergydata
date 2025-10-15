@@ -1,0 +1,1318 @@
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'html' -->
+<!-- FILE NAME SUGGESTIONS:
+   * html--sites--default--files--2024%20Paris%20MoU%20Annual%20Report%20on%20PSC%20Final.pdf.html.twig
+   * html--sites--default--files.html.twig
+   * html--sites--default.html.twig
+   * html--sites.html.twig
+   x html.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/parismou/templates/layout/html.html.twig' -->
+<!DOCTYPE html>
+<html  lang="en" dir="ltr" prefix="content: http://purl.org/rss/1.0/modules/content/  dc: http://purl.org/dc/terms/  foaf: http://xmlns.com/foaf/0.1/  og: http://ogp.me/ns#  rdfs: http://www.w3.org/2000/01/rdf-schema#  schema: http://schema.org/  sioc: http://rdfs.org/sioc/ns#  sioct: http://rdfs.org/sioc/types#  skos: http://www.w3.org/2004/02/skos/core#  xsd: http://www.w3.org/2001/XMLSchema# ">
+<head>
+  <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+  <meta charset="utf-8" />
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GRC96H7KFL"></script>
+<script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments)};gtag("js", new Date());gtag("set", "developer_id.dMDhkMT", true);gtag("config", "G-GRC96H7KFL", {"groups":"default","page_location":"/404.html?page=" + document.location.pathname + document.location.search + "&from=" + document.referrer});</script>
+<link rel="canonical" href="https://parismou.org/404" />
+<meta name="description" content="The page you requested could not be found." />
+<meta name="Generator" content="Drupal 10 (https://www.drupal.org)" />
+<meta name="viewport" content="width=1300" />
+<link rel="icon" href="/themes/custom/parismou/favicon.ico" type="image/vnd.microsoft.icon" />
+<script>window.a2a_config=window.a2a_config||{};a2a_config.callbacks=[];a2a_config.overlays=[];a2a_config.templates={};</script>
+
+    <title>Page not found | Paris MoU</title>
+    <link rel="stylesheet" media="all" href="/core/modules/system/css/components/align.module.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/fieldgroup.module.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/container-inline.module.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/clearfix.module.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/details.module.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/hidden.module.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/item-list.module.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/js.module.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/nowrap.module.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/position-container.module.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/progress.module.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/reset-appearance.module.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/resize.module.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/sticky-header.module.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/system-status-counter.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/system-status-report-counters.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/system-status-report-general-info.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/tablesort.module.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/core/modules/system/css/components/tree-child.module.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/modules/custom/notify/assets/notify.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/core/modules/views/css/views.module.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/modules/contrib/views_slideshow/modules/views_slideshow_cycle/css/views_slideshow_cycle.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/modules/contrib/addtoany/css/addtoany.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/modules/contrib/webform/modules/webform_bootstrap/css/webform_bootstrap.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.css" integrity="sha256-0XAFLBbK7DgQ8t7mRWU5BF2OMm9tjtfH945Z7TTeNIo=" crossorigin="anonymous" />
+<link rel="stylesheet" media="all" href="https://cdn.jsdelivr.net/npm/@unicorn-fail/drupal-bootstrap-styles@0.0.2/dist/3.4.0/8.x-3.x/drupal-bootstrap.css" integrity="sha512-j4mdyNbQqqp+6Q/HtootpbGoc2ZX0C/ktbXnauPFEz7A457PB6le79qasOBVcrSrOBtGAm0aVU2SOKFzBl6RhA==" crossorigin="anonymous" />
+<link rel="stylesheet" media="all" href="/themes/custom/parismou/css/style.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/themes/custom/parismou/css/all.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/themes/custom/parismou/css/font-awesome.min.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/themes/custom/parismou/css/responsive.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/themes/custom/parismou/css/style-modif.css?t0vkdr" />
+<link rel="stylesheet" media="all" href="/themes/custom/parismou/css/nosass.css?t0vkdr" />
+
+      
+</head>
+
+<body class="path-sites page-node-type-page has-glyphicons node_2025">
+<a href="#main-content" class="visually-hidden focusable skip-link">
+  Skip to main content
+</a>
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'off_canvas_page_wrapper' -->
+<!-- BEGIN OUTPUT from 'core/modules/system/templates/off-canvas-page-wrapper.html.twig' -->
+  <div class="dialog-off-canvas-main-canvas" data-off-canvas-main-canvas>
+    
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'page' -->
+<!-- FILE NAME SUGGESTIONS:
+   * page--sites--default--files--2024%20Paris%20MoU%20Annual%20Report%20on%20PSC%20Final.pdf.html.twig
+   * page--sites--default--files.html.twig
+   * page--sites--default.html.twig
+   * page--sites.html.twig
+   x page.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/parismou/templates/layout/page.html.twig' -->
+
+          <header class="navbar navbar-default container" id="navbar" class="container" role="banner">
+      
+      <div class="navbar-header top-header">
+        
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'region' -->
+<!-- FILE NAME SUGGESTIONS:
+   * region--navigation.html.twig
+   x region.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/bootstrap/templates/system/region.html.twig' -->
+  <div class="region region-navigation">
+    
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   * block--parismou-branding.html.twig
+   x block--system-branding-block.html.twig
+   * block--system.html.twig
+   * block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/bootstrap/templates/block/block--system-branding-block.html.twig' -->
+      <a class="logo navbar-btn pull-left" href="/" title="Home" rel="home">
+      <img src="/sites/default/files/parismou-logo_0_0.png" alt="Home" />
+    </a>
+        <a class="name navbar-brand" href="/" title="Home" rel="home">Paris MoU</a>
+    
+<!-- END OUTPUT from 'themes/contrib/bootstrap/templates/block/block--system-branding-block.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   * block--customusermenu.html.twig
+   * block--custom-user-menu.html.twig
+   * block--parismouwbh.html.twig
+   x block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/bootstrap/templates/block/block.html.twig' -->
+<section id="block-customusermenu" class="block block-parismouwbh block-custom-user-menu clearfix">
+  
+    
+
+      <nav><div class="__custom_user_menu"><ul class="menu menu--account nav navbar-nav navbar-right"><li><a href="/user/login">Log in</a></li></ul></div></nav>
+  </section>
+
+
+<!-- END OUTPUT from 'themes/contrib/bootstrap/templates/block/block.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   * block--searchform.html.twig
+   * block--search-form-block.html.twig
+   x block--search.html.twig
+   * block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/bootstrap/templates/block/block--search.html.twig' -->
+<div class="search-block-form block block-search block-search-form-block" data-drupal-selector="search-block-form" id="block-searchform" role="search">
+  
+    
+      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'form' -->
+<!-- BEGIN OUTPUT from 'core/modules/system/templates/form.html.twig' -->
+<form action="/search/node" method="get" id="search-block-form" accept-charset="UTF-8">
+  
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'form_element' -->
+<!-- BEGIN OUTPUT from 'themes/contrib/bootstrap/templates/input/form-element.html.twig' -->
+<div class="form-item js-form-item form-type-search js-form-type-search form-item-keys js-form-item-keys form-no-label form-group">
+      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'form_element_label' -->
+<!-- BEGIN OUTPUT from 'themes/contrib/bootstrap/templates/input/form-element-label.html.twig' -->
+<label for="edit-keys" class="control-label sr-only">Search</label>
+<!-- END OUTPUT from 'themes/contrib/bootstrap/templates/input/form-element-label.html.twig' -->
+
+
+  
+  
+  
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'input__search' -->
+<!-- FILE NAME SUGGESTIONS:
+   * input--search.html.twig
+   * input--form-control--search.html.twig
+   x input--form-control.html.twig
+   * input.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/bootstrap/templates/input/input--form-control.html.twig' -->
+<div class="input-group"><input title="Enter the terms you wish to search for." data-drupal-selector="edit-keys" class="form-search form-control" placeholder="Search" type="search" id="edit-keys" name="keys" value="" size="15" maxlength="128" data-toggle="tooltip" /><span class="input-group-btn"><!-- THEME DEBUG --><!-- THEME HOOK: 'input__submit' --><!-- FILE NAME SUGGESTIONS:
+   * input--submit.html.twig
+   * input--button--submit.html.twig
+   x input--button.html.twig
+   * input.html.twig
+--><!-- BEGIN OUTPUT from 'themes/contrib/bootstrap/templates/input/input--button.html.twig' --><button type="submit" value="Search" class="button js-form-submit form-submit btn-primary btn icon-only" name=""><span class="sr-only">Search</span><span class="icon glyphicon glyphicon-search" aria-hidden="true"></span></button><!-- END OUTPUT from 'themes/contrib/bootstrap/templates/input/input--button.html.twig' --></span></div>
+<!-- END OUTPUT from 'themes/contrib/bootstrap/templates/input/input--form-control.html.twig' -->
+
+
+
+  
+  
+  </div>
+
+<!-- END OUTPUT from 'themes/contrib/bootstrap/templates/input/form-element.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'container' -->
+<!-- BEGIN OUTPUT from 'themes/contrib/bootstrap/templates/system/container.html.twig' -->
+<div class="form-actions form-group js-form-wrapper form-wrapper" data-drupal-selector="edit-actions" id="edit-actions"></div>
+
+<!-- END OUTPUT from 'themes/contrib/bootstrap/templates/system/container.html.twig' -->
+
+
+</form>
+
+<!-- END OUTPUT from 'core/modules/system/templates/form.html.twig' -->
+
+
+  </div>
+
+<!-- END OUTPUT from 'themes/contrib/bootstrap/templates/block/block--search.html.twig' -->
+
+
+  </div>
+
+<!-- END OUTPUT from 'themes/contrib/bootstrap/templates/system/region.html.twig' -->
+
+
+                          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+              </div>
+
+
+                    <div id="navbar-collapse" class="navbar-collapse collapse main-header">
+          
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'region' -->
+<!-- FILE NAME SUGGESTIONS:
+   * region--navigation-collapsible.html.twig
+   x region.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/bootstrap/templates/system/region.html.twig' -->
+  <div class="region region-navigation-collapsible">
+    
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   * block--test2.html.twig
+   * block--menu-block--test2.html.twig
+   * block--menu-block.html.twig
+   x block--system-menu-block.html.twig
+   * block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'core/modules/system/templates/block--system-menu-block.html.twig' -->
+<nav role="navigation" aria-labelledby="block-test2-menu" id="block-test2">
+            
+  <h2 class="visually-hidden" id="block-test2-menu">Test2</h2>
+  
+
+        
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'menu' -->
+<!-- FILE NAME SUGGESTIONS:
+   x menu--test2.html.twig
+   * menu.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/parismou/templates/menu/menu--test2.html.twig' -->
+
+    
+
+        
+              <div class="menu menu--test2 nav">
+          
+            <div class="__level1 __item ">
+                            
+              <a href="/inspection-database" data-drupal-link-system-path="node/1961">Inspection Database</a>
+              
+                
+              <div class="dropdown-menu">
+          
+            <div class="__level2 __item ">
+                            
+              <a href="/inspection-Database/inspection-search" data-drupal-link-system-path="node/1829">Inspection Search</a>
+                          </div>
+          
+            <div class="__level2 __item ">
+                            
+              <a href="/Inspection-Database/current-detentions" data-drupal-link-system-path="node/1851">Current detentions</a>
+                          </div>
+          
+            <div class="__level2 __item ">
+                            
+              <a href="/Inspection-Database/current-bannings" data-drupal-link-system-path="node/1848">Current bannings</a>
+                          </div>
+                  </div>
+          
+                          </div>
+          
+            <div class="__level1 __item ">
+                            
+              <a href="/Statistics%26Current-Lists" data-drupal-link-system-path="node/1953">Statistics &amp; Current Lists</a>
+              
+                
+              <div class="dropdown-menu">
+          
+            <div class="__level2 __item ">
+                            
+              <a href="/Statistics%26Current-Lists/inspections-results-kpis" data-drupal-link-system-path="node/1890">Inspections results, KPIs</a>
+                          </div>
+          
+            <div class="__level2 __item ">
+                            
+              <a href="/Statistics%26Current-Lists/inspection-results-deficiencies" data-drupal-link-system-path="node/1891">Inspection Results Deficiencies</a>
+                          </div>
+          
+            <div class="__level2 __item ">
+                            
+              <a href="/monthly-detentions/detentionlists-2024" data-drupal-link-system-path="node/2223">Monthly detentions</a>
+                          </div>
+          
+            <div class="__level2 __item ">
+                            
+              <a href="/Statistics%26Current-Lists/white-grey-and-black-list" data-drupal-link-system-path="node/1822">White, Grey and Black List</a>
+                          </div>
+          
+            <div class="__level2 __item ">
+                            
+              <a href="/Statistics%26Current-Lists/flags-meeting-low-risk-criteria" data-drupal-link-system-path="node/1820">Flags meeting low risk criteria</a>
+                          </div>
+          
+            <div class="__level2 __item ">
+                            
+              <a href="/Statistics%26Current-Lists/ros-meeting-low-risk-criteria/ro-performance-calculator" data-drupal-link-system-path="node/2182">RO Performance Calculator</a>
+                          </div>
+                  </div>
+          
+                          </div>
+          
+            <div class="__level1 __item ">
+                            
+              <a href="/PMoU-Procedures" data-drupal-link-system-path="node/1955">PMoU Procedures</a>
+              
+                
+              <div class="dropdown-menu">
+          
+            <div class="__level2 __item ">
+                            
+              <a href="/PMoU-Procedures/Lybrary/port-state-control-inspections-paris-mou" data-drupal-link-system-path="node/1843">Library</a>
+                          </div>
+          
+            <div class="__level2 __item ">
+                            
+              <a href="/PMoU-Procedures/ship-risk-calculator" data-drupal-link-system-path="node/1916">Ship Risk Calculator</a>
+                          </div>
+          
+            <div class="__level2 __item ">
+                            
+              <a href="/PMoU-Procedures/company-performance-calculator" data-drupal-link-system-path="node/1859">Company Performance Calculator</a>
+                          </div>
+          
+            <div class="__level2 __item ">
+                            
+              <a href="/pmou-procedures/ro-performance" data-drupal-link-system-path="node/2307">RO performance</a>
+                          </div>
+          
+            <div class="__level2 __item ">
+                            
+              <a href="/PMoU-Procedures/appeal-procedure" data-drupal-link-system-path="node/1917">Appeal procedure</a>
+                          </div>
+                  </div>
+          
+                          </div>
+          
+            <div class="__level1 __item ">
+                            
+              <a href="/publications" data-drupal-link-system-path="publications">Publications</a>
+                          </div>
+          
+            <div class="__level1 __item ">
+                            
+              <a href="/about-us" data-drupal-link-system-path="node/1954">About Us</a>
+              
+                
+              <div class="dropdown-menu">
+          
+            <div class="__level2 __item ">
+                            
+              <a href="/about-us/organisation" data-drupal-link-system-path="node/1873">Organisation</a>
+                          </div>
+          
+            <div class="__level2 __item ">
+                            
+              <a href="/about-us/history" data-drupal-link-system-path="node/1926">History</a>
+                          </div>
+          
+            <div class="__level2 __item ">
+                            
+              <a href="/about-us/privacy-statement-paris-mou" data-drupal-link-system-path="node/1898">Privacy Statement Paris MoU</a>
+                          </div>
+                  </div>
+          
+                          </div>
+          
+            <div class="__level1 __item ">
+                            
+              <a href="/support" data-drupal-link-system-path="node/1960">Contact</a>
+              
+                
+              <div class="dropdown-menu">
+          
+            <div class="__level2 __item ">
+                            
+              <a href="/contact/contact-secretariat" data-drupal-link-system-path="node/1832">Contact Secretariat</a>
+                          </div>
+          
+            <div class="__level2 __item ">
+                            
+              <a href="/contact/related-organisations" data-drupal-link-system-path="node/1826">Related organisations</a>
+                          </div>
+          
+            <div class="__level2 __item ">
+                            
+              <a href="/contact/international-offices" data-drupal-link-system-path="contact/international-offices">International Offices</a>
+                          </div>
+                  </div>
+          
+                          </div>
+                  </div>
+          
+
+<!-- END OUTPUT from 'themes/custom/parismou/templates/menu/menu--test2.html.twig' -->
+
+
+  </nav>
+
+<!-- END OUTPUT from 'core/modules/system/templates/block--system-menu-block.html.twig' -->
+
+
+  </div>
+
+<!-- END OUTPUT from 'themes/contrib/bootstrap/templates/system/region.html.twig' -->
+
+
+        </div>
+                </header>
+  
+                              <div class="container" role="heading">
+            
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'region' -->
+<!-- FILE NAME SUGGESTIONS:
+   * region--header.html.twig
+   x region.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/bootstrap/templates/system/region.html.twig' -->
+  <div class="region region-header">
+    
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   * block--parismou-breadcrumbs.html.twig
+   * block--system-breadcrumb-block.html.twig
+   x block--system.html.twig
+   * block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/bootstrap/templates/block/block--system.html.twig' -->
+  
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'breadcrumb' -->
+<!-- BEGIN OUTPUT from 'themes/contrib/bootstrap/templates/system/breadcrumb.html.twig' -->
+
+<!-- END OUTPUT from 'themes/contrib/bootstrap/templates/system/breadcrumb.html.twig' -->
+
+
+
+<!-- END OUTPUT from 'themes/contrib/bootstrap/templates/block/block--system.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   * block--parismou-messages.html.twig
+   x block--system-messages-block.html.twig
+   * block--system.html.twig
+   * block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'core/modules/system/templates/block--system-messages-block.html.twig' -->
+<div data-drupal-messages-fallback class="hidden"></div>
+
+<!-- END OUTPUT from 'core/modules/system/templates/block--system-messages-block.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   * block--parismou-page-title.html.twig
+   x block--page-title-block.html.twig
+   * block--core.html.twig
+   * block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/bootstrap/templates/block/block--page-title-block.html.twig' -->
+  
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'page_title' -->
+<!-- BEGIN OUTPUT from 'themes/contrib/bootstrap/templates/system/page-title.html.twig' -->
+  <h1 class="page-header">
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'field' -->
+<!-- FILE NAME SUGGESTIONS:
+   * field--node--title--page.html.twig
+   x field--node--title.html.twig
+   * field--node--page.html.twig
+   * field--title.html.twig
+   * field--string.html.twig
+   * field.html.twig
+-->
+<!-- BEGIN OUTPUT from 'core/modules/node/templates/field--node--title.html.twig' -->
+
+<span property="schema:name">Page not found</span>
+
+<!-- END OUTPUT from 'core/modules/node/templates/field--node--title.html.twig' -->
+
+</h1>
+
+<!-- END OUTPUT from 'themes/contrib/bootstrap/templates/system/page-title.html.twig' -->
+
+
+
+<!-- END OUTPUT from 'themes/contrib/bootstrap/templates/block/block--page-title-block.html.twig' -->
+
+
+  </div>
+
+<!-- END OUTPUT from 'themes/contrib/bootstrap/templates/system/region.html.twig' -->
+
+
+          </div>
+              
+                        <div class="home-banner">
+          
+          </div>
+        
+  <div role="main" class="main-container container js-quickedit-main-content">
+    <div class="row">
+
+            
+                  <section class="col-sm-9 has__sidebar_second __main_wrapper">
+
+                
+                                      
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'region' -->
+<!-- FILE NAME SUGGESTIONS:
+   * region--help.html.twig
+   x region.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/bootstrap/templates/system/region.html.twig' -->
+
+<!-- END OUTPUT from 'themes/contrib/bootstrap/templates/system/region.html.twig' -->
+
+
+                  
+
+
+                          <a id="main-content"></a>
+          
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'region' -->
+<!-- FILE NAME SUGGESTIONS:
+   * region--content.html.twig
+   x region.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/bootstrap/templates/system/region.html.twig' -->
+  <div class="region region-content">
+    
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   * block--parismou-content.html.twig
+   * block--system-main-block.html.twig
+   x block--system.html.twig
+   * block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/bootstrap/templates/block/block--system.html.twig' -->
+  
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'node' -->
+<!-- FILE NAME SUGGESTIONS:
+   * node--2025--full.html.twig
+   * node--2025.html.twig
+   * node--page--full.html.twig
+   x node--page.html.twig
+   * node--full.html.twig
+   * node.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/parismou/templates/node/node--page.html.twig' -->
+<div id="node-2025" class="clearfix template-padding node-page-template">
+
+  
+  <!-- <span class="training-date">Published on 5th of October 2025 </span> -->
+  <h1>Page not found</h1>
+
+  
+  <div class="training-text common-list">
+    <div>
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'field' -->
+<!-- FILE NAME SUGGESTIONS:
+   * field--node--body--page.html.twig
+   * field--node--body.html.twig
+   * field--node--page.html.twig
+   * field--body.html.twig
+   * field--text-with-summary.html.twig
+   x field.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/bootstrap/templates/field/field.html.twig' -->
+
+            <div property="schema:text" class="field field--name-body field--type-text-with-summary field--label-hidden field--item"><p>The page you requested could not be found.</p>
+</div>
+      
+<!-- END OUTPUT from 'themes/contrib/bootstrap/templates/field/field.html.twig' -->
+
+</div>
+  </div>
+
+  <div class="training-attachments policy-instructions">
+    
+  </div>
+
+
+  <div class="training-attachments">
+    
+  </div>
+  <div class="training-attachments template-content __content_blocks_wrapper __content_blocks__page">
+    
+  </div>
+
+
+
+  
+</div>
+
+
+<!-- END OUTPUT from 'themes/custom/parismou/templates/node/node--page.html.twig' -->
+
+
+
+<!-- END OUTPUT from 'themes/contrib/bootstrap/templates/block/block--system.html.twig' -->
+
+
+  </div>
+
+<!-- END OUTPUT from 'themes/contrib/bootstrap/templates/system/region.html.twig' -->
+
+
+              </section>
+
+                              <aside class="col-sm-3" role="complementary">
+            
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'region' -->
+<!-- FILE NAME SUGGESTIONS:
+   * region--sidebar-second.html.twig
+   x region.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/bootstrap/templates/system/region.html.twig' -->
+
+<!-- END OUTPUT from 'themes/contrib/bootstrap/templates/system/region.html.twig' -->
+
+
+          </aside>
+                  </div>
+  </div>
+
+      <footer class="footer" role="contentinfo">
+      <div class="container">
+        <div class="top-footer-img">
+
+        </div>
+        <div class="footer-top">
+          <div class="row">
+            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+              <div class="footer-social-media">
+                <div class="social-media">
+                  <a href="https://www.linkedin.com/groups/3252813/"><i class="fab fa-linkedin-in"></i>
+                    <span> PMoU on Linkedin</span></a>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6">
+
+            </div>
+          </div>
+        </div>
+        
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'region' -->
+<!-- FILE NAME SUGGESTIONS:
+   * region--footer.html.twig
+   x region.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/contrib/bootstrap/templates/system/region.html.twig' -->
+  <div class="region region-footer">
+    
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   * block--parismou-footer.html.twig
+   * block--system-menu-block--footer.html.twig
+   x block--system-menu-block.html.twig
+   * block--system.html.twig
+   * block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'core/modules/system/templates/block--system-menu-block.html.twig' -->
+<nav role="navigation" aria-labelledby="block-parismou-footer-menu" id="block-parismou-footer">
+            
+  <h2 class="visually-hidden" id="block-parismou-footer-menu">Footer menu</h2>
+  
+
+        
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'menu__footer' -->
+<!-- FILE NAME SUGGESTIONS:
+   * menu--footer.html.twig
+   x menu.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/parismou/templates/menu/menu.html.twig' -->
+
+
+
+
+    
+                      <ul class="menu menu--footer nav">
+                                              <li class="first last">
+                                                                      <a href="/contact" data-drupal-link-system-path="contact">Contact</a>
+                          </li>
+                  </ul>
+          
+
+
+
+
+<!-- END OUTPUT from 'themes/custom/parismou/templates/menu/menu.html.twig' -->
+
+
+  </nav>
+
+<!-- END OUTPUT from 'core/modules/system/templates/block--system-menu-block.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   * block--footerlinks-2.html.twig
+   * block--menu-block--footerlinks.html.twig
+   * block--menu-block.html.twig
+   x block--system-menu-block.html.twig
+   * block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'core/modules/system/templates/block--system-menu-block.html.twig' -->
+<nav role="navigation" aria-labelledby="block-footerlinks-2-menu" id="block-footerlinks-2">
+      
+  <h2 id="block-footerlinks-2-menu"><a href="/inspection-Database/inspection-search">Inspections Database</a></h2>
+  
+
+        
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'menu' -->
+<!-- FILE NAME SUGGESTIONS:
+   * menu--footerlinks.html.twig
+   x menu.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/parismou/templates/menu/menu.html.twig' -->
+
+
+
+
+    
+                      <ul class="menu menu--footerlinks nav">
+                                              <li class="first">
+                                                                      <a href="/inspection-Database/inspection-search" data-drupal-link-system-path="node/1829">Inspection Search</a>
+                          </li>
+                                              <li>
+                                                                      <a href="/Inspection-Database/current-detentions" data-drupal-link-system-path="node/1851">Current detentions</a>
+                          </li>
+                                              <li class="last">
+                                                                      <a href="/Inspection-Database/current-bannings" data-drupal-link-system-path="node/1848">Current bannings</a>
+                          </li>
+                  </ul>
+          
+
+
+
+
+<!-- END OUTPUT from 'themes/custom/parismou/templates/menu/menu.html.twig' -->
+
+
+  </nav>
+
+<!-- END OUTPUT from 'core/modules/system/templates/block--system-menu-block.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   * block--footerlinks-3.html.twig
+   * block--menu-block--footerlinks.html.twig
+   * block--menu-block.html.twig
+   x block--system-menu-block.html.twig
+   * block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'core/modules/system/templates/block--system-menu-block.html.twig' -->
+<nav role="navigation" aria-labelledby="block-footerlinks-3-menu" id="block-footerlinks-3">
+      
+  <h2 id="block-footerlinks-3-menu"><a href="/Statistics%26Current-Lists/monthly-detentions/detentionlists-2021">Statistics &amp; Current Lists</a></h2>
+  
+
+        
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'menu' -->
+<!-- FILE NAME SUGGESTIONS:
+   * menu--footerlinks.html.twig
+   x menu.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/parismou/templates/menu/menu.html.twig' -->
+
+
+
+
+    
+                      <ul class="menu menu--footerlinks nav">
+                                              <li class="first">
+                                                                      <a href="/Statistics%26Current-Lists/monthly-detentions/detentionlists-2021" data-drupal-link-system-path="node/1806">Monthly detentions</a>
+                          </li>
+                                              <li>
+                                                                      <a href="/Statistics%26Current-Lists/inspections-results-kpis" data-drupal-link-system-path="node/1890">Inspections KPI&#039;s</a>
+                          </li>
+                                              <li>
+                                                                      <a href="/Statistics%26Current-Lists/inspection-results-deficiencies" data-drupal-link-system-path="node/1891">Inspection Deficiencies</a>
+                          </li>
+                                              <li>
+                                                                      <a href="/Statistics%26Current-Lists/white-grey-and-black-list" data-drupal-link-system-path="node/1822">Current WGB List</a>
+                          </li>
+                                              <li class="last">
+                                                                      <a href="/Statistics%26Current-Lists/flags-meeting-low-risk-criteria" data-drupal-link-system-path="node/1820">Low Risk Flags</a>
+                          </li>
+                  </ul>
+          
+
+
+
+
+<!-- END OUTPUT from 'themes/custom/parismou/templates/menu/menu.html.twig' -->
+
+
+  </nav>
+
+<!-- END OUTPUT from 'core/modules/system/templates/block--system-menu-block.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   * block--footerlinks-4.html.twig
+   * block--menu-block--footerlinks.html.twig
+   * block--menu-block.html.twig
+   x block--system-menu-block.html.twig
+   * block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'core/modules/system/templates/block--system-menu-block.html.twig' -->
+<nav role="navigation" aria-labelledby="block-footerlinks-4-menu" id="block-footerlinks-4">
+      
+  <h2 id="block-footerlinks-4-menu"><a href="/PMoU-Procedures/Lybrary/port-state-control-inspections-paris-mou">PMoU Procedures</a></h2>
+  
+
+        
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'menu' -->
+<!-- FILE NAME SUGGESTIONS:
+   * menu--footerlinks.html.twig
+   x menu.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/parismou/templates/menu/menu.html.twig' -->
+
+
+
+
+    
+                      <ul class="menu menu--footerlinks nav">
+                                              <li class="first">
+                                                                      <a href="/PMoU-Procedures/Library/memorandum" data-drupal-link-system-path="node/1839">Memorandum</a>
+                          </li>
+                                              <li>
+                                                                      <a href="/PMoU-Procedures/Library/ship-risk-profile" data-drupal-link-system-path="node/1847">Ship Risk Profile</a>
+                          </li>
+                                              <li>
+                                                                      <a href="/PMoU-Procedures/Library/selection-scheme" data-drupal-link-system-path="node/1831">Selection scheme</a>
+                          </li>
+                                              <li class="last">
+                                                                      <a href="/PMoU-Procedures/Library/banning" data-drupal-link-system-path="node/1810">Banning</a>
+                          </li>
+                  </ul>
+          
+
+
+
+
+<!-- END OUTPUT from 'themes/custom/parismou/templates/menu/menu.html.twig' -->
+
+
+  </nav>
+
+<!-- END OUTPUT from 'core/modules/system/templates/block--system-menu-block.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   * block--footerlinks-6.html.twig
+   * block--menu-block--footerlinks.html.twig
+   * block--menu-block.html.twig
+   x block--system-menu-block.html.twig
+   * block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'core/modules/system/templates/block--system-menu-block.html.twig' -->
+<nav role="navigation" aria-labelledby="block-footerlinks-6-menu" id="block-footerlinks-6">
+      
+  <h2 id="block-footerlinks-6-menu"><a href="/publications">Publications</a></h2>
+  
+
+        
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'menu' -->
+<!-- FILE NAME SUGGESTIONS:
+   * menu--footerlinks.html.twig
+   x menu.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/parismou/templates/menu/menu.html.twig' -->
+
+
+
+
+    
+                      <ul class="menu menu--footerlinks nav">
+                                              <li class="first">
+                                                                      <a href="/publications?field_news_category_target_id=7" data-drupal-link-query="{&quot;field_news_category_target_id&quot;:&quot;7&quot;}" data-drupal-link-system-path="publications">Messages</a>
+                          </li>
+                                              <li>
+                                                                      <a href="/publications?field_news_category_target_id=4" data-drupal-link-query="{&quot;field_news_category_target_id&quot;:&quot;4&quot;}" data-drupal-link-system-path="publications">Annual reports</a>
+                          </li>
+                                              <li>
+                                                                      <a href="/publications?field_news_category_target_id=8" data-drupal-link-query="{&quot;field_news_category_target_id&quot;:&quot;8&quot;}" data-drupal-link-system-path="publications">Performance List</a>
+                          </li>
+                                              <li>
+                                                                      <a href="/publications?field_news_category_target_id=6" data-drupal-link-query="{&quot;field_news_category_target_id&quot;:&quot;6&quot;}" data-drupal-link-system-path="publications">PSC insp Guidelines</a>
+                          </li>
+                                              <li>
+                                                                      <a href="/publications?field_news_category_target_id=5" data-drupal-link-query="{&quot;field_news_category_target_id&quot;:&quot;5&quot;}" data-drupal-link-system-path="publications">PMoU deficiency codes</a>
+                          </li>
+                                              <li>
+                                                                      <a href="/publications?field_news_category_target_id=9" data-drupal-link-query="{&quot;field_news_category_target_id&quot;:&quot;9&quot;}" data-drupal-link-system-path="publications">CIC results</a>
+                          </li>
+                                              <li>
+                                                                      <a href="/publications?field_news_category_target_id=10" data-drupal-link-query="{&quot;field_news_category_target_id&quot;:&quot;10&quot;}" data-drupal-link-system-path="publications">Caught in the Net</a>
+                          </li>
+                                              <li class="last">
+                                                                      <a href="/publications?field_news_category_target_id=2" data-drupal-link-query="{&quot;field_news_category_target_id&quot;:&quot;2&quot;}" data-drupal-link-system-path="publications">Press releases</a>
+                          </li>
+                  </ul>
+          
+
+
+
+
+<!-- END OUTPUT from 'themes/custom/parismou/templates/menu/menu.html.twig' -->
+
+
+  </nav>
+
+<!-- END OUTPUT from 'core/modules/system/templates/block--system-menu-block.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   * block--footerlinks-5.html.twig
+   * block--menu-block--footerlinks.html.twig
+   * block--menu-block.html.twig
+   x block--system-menu-block.html.twig
+   * block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'core/modules/system/templates/block--system-menu-block.html.twig' -->
+<nav role="navigation" aria-labelledby="block-footerlinks-5-menu" id="block-footerlinks-5">
+      
+  <h2 id="block-footerlinks-5-menu"><a href="/PMoU-Procedures/appeal-procedure">Appeal procedure</a></h2>
+  
+
+        
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'menu' -->
+<!-- FILE NAME SUGGESTIONS:
+   * menu--footerlinks.html.twig
+   x menu.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/parismou/templates/menu/menu.html.twig' -->
+
+
+
+
+    
+                      <ul class="menu menu--footerlinks nav">
+                                              <li class="first">
+                                                                      <a href="/PMoU-Procedures/ship-risk-calculator" data-drupal-link-system-path="node/1916">Ship Risk Calculator</a>
+                          </li>
+                                              <li class="last">
+                                                                      <a href="/PMoU-Procedures/company-performance-calculator" data-drupal-link-system-path="node/1859">Company Performance Calculator</a>
+                          </li>
+                  </ul>
+          
+
+
+
+
+<!-- END OUTPUT from 'themes/custom/parismou/templates/menu/menu.html.twig' -->
+
+
+  </nav>
+
+<!-- END OUTPUT from 'core/modules/system/templates/block--system-menu-block.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   * block--footerlinks-7.html.twig
+   * block--menu-block--footerlinks.html.twig
+   * block--menu-block.html.twig
+   x block--system-menu-block.html.twig
+   * block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'core/modules/system/templates/block--system-menu-block.html.twig' -->
+<nav role="navigation" aria-labelledby="block-footerlinks-7-menu" id="block-footerlinks-7">
+      
+  <h2 id="block-footerlinks-7-menu"><a href="/about-us">About Us</a></h2>
+  
+
+        
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'menu' -->
+<!-- FILE NAME SUGGESTIONS:
+   * menu--footerlinks.html.twig
+   x menu.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/parismou/templates/menu/menu.html.twig' -->
+
+
+
+
+    
+                      <ul class="menu menu--footerlinks nav">
+                                              <li class="first last">
+                                                                      <a href="/about-us/privacy-statement-paris-mou" data-drupal-link-system-path="node/1898">PRIVACY STATEMENT PARIS MoU</a>
+                          </li>
+                  </ul>
+          
+
+
+
+
+<!-- END OUTPUT from 'themes/custom/parismou/templates/menu/menu.html.twig' -->
+
+
+  </nav>
+
+<!-- END OUTPUT from 'core/modules/system/templates/block--system-menu-block.html.twig' -->
+
+
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'block' -->
+<!-- FILE NAME SUGGESTIONS:
+   * block--footerlinks-8.html.twig
+   * block--menu-block--footerlinks.html.twig
+   * block--menu-block.html.twig
+   x block--system-menu-block.html.twig
+   * block.html.twig
+-->
+<!-- BEGIN OUTPUT from 'core/modules/system/templates/block--system-menu-block.html.twig' -->
+<nav role="navigation" aria-labelledby="block-footerlinks-8-menu" id="block-footerlinks-8">
+      
+  <h2 id="block-footerlinks-8-menu"><a href="/contact/contact-secretariat">Contact information</a></h2>
+  
+
+        
+
+<!-- THEME DEBUG -->
+<!-- THEME HOOK: 'menu' -->
+<!-- FILE NAME SUGGESTIONS:
+   * menu--footerlinks.html.twig
+   x menu.html.twig
+-->
+<!-- BEGIN OUTPUT from 'themes/custom/parismou/templates/menu/menu.html.twig' -->
+
+
+
+
+    
+                      <ul class="menu menu--footerlinks nav">
+                                              <li class="first last">
+                                                                      <a href="">Contact</a>
+                          </li>
+                  </ul>
+          
+
+
+
+
+<!-- END OUTPUT from 'themes/custom/parismou/templates/menu/menu.html.twig' -->
+
+
+  </nav>
+
+<!-- END OUTPUT from 'core/modules/system/templates/block--system-menu-block.html.twig' -->
+
+
+  </div>
+
+<!-- END OUTPUT from 'themes/contrib/bootstrap/templates/system/region.html.twig' -->
+
+
+        <!-- <div class="footer-menu">
+           <div class="row">
+              <div class="col-lg-2 col-md-4 col-sm-4 col-xs-12">
+                 <div class="footer-menu-list">
+                    <h5><a href="#">Inspections Database</a></h5>
+                    <ul class="">
+                       <li><a href="#">Inspection Search</a></li>
+                       <li><a href="#">Current detentions</a></li>
+                       <li><a href="#">Current bannings</a></li>
+                    </ul>
+                 </div>
+              </div>
+              <div class="col-lg-2 col-md-4 col-sm-4 col-xs-12">
+                 <div class="footer-menu-list">
+                    <h5><a href="#">Statistics & Current Lists</a></h5>
+                    <ul class="">
+                       <li><a href="#">Monthly detentions</a></li>
+                       <li><a href="#">Inspections KPI's</a></li>
+                       <li><a href="#">Inspection</a></li>
+                       <li><a href="#">Deficiencies</a></li>
+                       <li><a href="#">Current WGB List</a></li>
+                       <li><a href="#">Low Risk Flags</a></li>
+                       <li><a href="#">Low Risk RO</a></li>
+                    </ul>
+                 </div>
+              </div>
+              <div class="col-lg-2 col-md-4 col-sm-4 col-xs-12">
+                 <div class="footer-menu-list">
+                    <h5><a href="#">PMoU Procedures</a></h5>
+                    <ul class="">
+                       <li><a href="#">Memorandum</a></li>
+                       <li><a href="#">Ship Risk Profile</a></li>
+                       <li><a href="#">Company performance</a></li>
+                       <li><a href="#">Selection scheme</a></li>
+                       <li><a href="#">Inspection types</a></li>
+                       <li><a href="#">Periodic & additional inspections</a></li>
+                       <li><a href="#">Overriding & Unexpected factors</a></li>
+                       <li><a href="#">Deficiencies</a></li>
+                       <li><a href="#">Detentions</a></li>
+                       <li><a href="#">Banning</a></li>
+                       <li><a href="#">Inspection Themes</a></li>
+                    </ul>
+                 </div>
+              </div>
+              <div class="col-lg-2 col-md-4 col-sm-4 col-xs-12">
+                 <div class="footer-menu-list">
+                    <h5><a href="#">Appeal procedure</a></h5>
+                    <ul class="">
+                       <li><a href="#">Ship Risk Calculator</a></li>
+                       <li><a href="#">Company Performance</a></li>
+                       <li><a href="#">Calculator</a></li>
+                    </ul>
+                 </div>
+              </div>
+              <div class="col-lg-2 col-md-4 col-sm-4 col-xs-12">
+                 <div class="footer-menu-list">
+                    <h5><a href="#">Publications</a></h5>
+                    <ul class="">
+                       <li><a href="#">COVID-19 - CORONA</a></li>
+                       <li><a href="#">Messages</a></li>
+                       <li><a href="#">Annual reports</a></li>
+                       <li><a href="#">Performance List</a></li>
+                       <li><a href="#">PSC insp Guidelines</a></li>
+                       <li><a href="#">PMoU deficiency codes</a></li>
+                       <li><a href="#">CIC results</a></li>
+                       <li><a href="#">Caught in the Net</a></li>
+                       <li><a href="#">Press releases</a></li>
+                    </ul>
+                 </div>
+              </div>
+              <div class="col-lg-2 col-md-4 col-sm-4 col-xs-12">
+                 <div class="footer-menu-list">
+                    <h5><a href="#">About us</a></h5>
+                    <ul class="">
+                       <li><a href="#">PRIVACY STATEMENT</a></li>
+                       <li><a href="#">PARIS MoU</a></li>
+                    </ul>
+                    <h5 class="mt-4"><a href="#">Contact information</a></h5>
+                 </div>
+              </div>
+           </div>
+        </div> -->
+        <div class="footer-bottom">
+          <p>© 2025 Paris MoU</p>
+          <p style="font-size: 9px; opacity: .2; color: #fff; float: right; margin-top: -32px;">1.11
+</p>
+        </div>
+      </div>
+    </footer>
+  
+<!-- END OUTPUT from 'themes/custom/parismou/templates/layout/page.html.twig' -->
+
+
+  </div>
+
+<!-- END OUTPUT from 'core/modules/system/templates/off-canvas-page-wrapper.html.twig' -->
+
+
+
+<script type="application/json" data-drupal-selector="drupal-settings-json">{"path":{"baseUrl":"\/","scriptPath":null,"pathPrefix":"","currentPath":"","currentPathIsAdmin":false,"isFront":false,"currentLanguage":"en"},"pluralDelimiter":"\u0003","suppressDeprecationErrors":true,"google_analytics":{"account":"G-GRC96H7KFL","trackOutbound":true,"trackMailto":true,"trackTel":true,"trackDownload":true,"trackDownloadExtensions":"7z|aac|arc|arj|asf|asx|avi|bin|csv|doc(x|m)?|dot(x|m)?|exe|flv|gif|gz|gzip|hqx|jar|jpe?g|js|mp(2|3|4|e?g)|mov(ie)?|msi|msp|pdf|phps|png|ppt(x|m)?|pot(x|m)?|pps(x|m)?|ppam|sld(x|m)?|thmx|qtm?|ra(m|r)?|sea|sit|tar|tgz|torrent|txt|wav|wma|wmv|wpd|xls(x|m|b)?|xlt(x|m)|xlam|xml|z|zip"},"bootstrap":{"forms_has_error_value_toggle":1,"modal_animation":1,"modal_backdrop":"true","modal_focus_input":1,"modal_keyboard":1,"modal_select_text":1,"modal_show":1,"modal_size":"","popover_enabled":1,"popover_animation":1,"popover_auto_close":1,"popover_container":"body","popover_content":"","popover_delay":"0","popover_html":0,"popover_placement":"right","popover_selector":"","popover_title":"","popover_trigger":"click","tooltip_enabled":1,"tooltip_animation":1,"tooltip_container":"body","tooltip_delay":"0","tooltip_html":0,"tooltip_placement":"auto left","tooltip_selector":"","tooltip_trigger":"hover"},"ajaxTrustedUrl":{"\/search\/node":true},"viewsSlideshowCycle":{"#views_slideshow_cycle_main_header_banners-block_1":{"num_divs":5,"id_prefix":"#views_slideshow_cycle_main_","div_prefix":"#views_slideshow_cycle_div_","vss_id":"header_banners-block_1","effect":"scrollLeft","transition_advanced":1,"timeout":5000,"speed":700,"delay":0,"sync":1,"random":0,"pause":0,"pause_on_click":0,"action_advanced":0,"start_paused":0,"remember_slide":0,"remember_slide_days":1,"pause_in_middle":0,"pause_when_hidden":0,"pause_when_hidden_type":"full","amount_allowed_visible":"","nowrap":0,"fixed_height":1,"items_per_slide":1,"items_per_slide_first":0,"items_per_slide_first_number":1,"wait_for_image_load":1,"wait_for_image_load_timeout":3000,"cleartype":0,"cleartypenobg":0,"advanced_options":"{\u0022sync\u0022:\u00221\u0022}","advanced_options_choices":0,"advanced_options_entry":""}},"viewsSlideshow":{"header_banners-block_1":{"methods":{"goToSlide":["viewsSlideshowSlideCounter","viewsSlideshowPager","viewsSlideshowCycle"],"nextSlide":["viewsSlideshowSlideCounter","viewsSlideshowPager","viewsSlideshowCycle"],"pause":["viewsSlideshowControls","viewsSlideshowCycle"],"play":["viewsSlideshowControls","viewsSlideshowCycle"],"previousSlide":["viewsSlideshowSlideCounter","viewsSlideshowPager","viewsSlideshowCycle"],"transitionBegin":["viewsSlideshowSlideCounter","viewsSlideshowPager"],"transitionEnd":[]},"paused":0}},"user":{"uid":0,"permissionsHash":"1f21fa75b7fdc4f6aad80d7d7df3a87b6854da8a1c195ad3ba419f3f651ec6e1"}}</script>
+<script src="/core/assets/vendor/jquery/jquery.min.js?v=3.6.3"></script>
+<script src="/core/assets/vendor/underscore/underscore-min.js?v=1.13.6"></script>
+<script src="/core/misc/polyfills/element.matches.js?v=10.5.2"></script>
+<script src="/core/misc/polyfills/object.assign.js?v=10.5.2"></script>
+<script src="/core/assets/vendor/once/once.min.js?v=1.0.1"></script>
+<script src="/core/assets/vendor/jquery-once/jquery.once.min.js?v=10.5.2"></script>
+<script src="/core/misc/drupalSettingsLoader.js?v=10.5.2"></script>
+<script src="/core/misc/drupal.js?v=10.5.2"></script>
+<script src="/core/misc/drupal.init.js?v=10.5.2"></script>
+<script src="https://static.addtoany.com/menu/page.js" async></script>
+<script src="/modules/contrib/addtoany/js/addtoany.js?v=10.5.2"></script>
+<script src="/modules/noncomposer/google_analytics/js/google_analytics.js?v=10.5.2"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.js" integrity="sha256-29KjXnLtx9a95INIGpEvHDiqV/qydH2bBx0xcznuA6I=" crossorigin="anonymous"></script>
+<script src="/themes/custom/parismou/js/main.js?t0vkdr"></script>
+<script src="/themes/contrib/bootstrap/js/drupal.bootstrap.js?t0vkdr"></script>
+<script src="/themes/contrib/bootstrap/js/attributes.js?t0vkdr"></script>
+<script src="/themes/contrib/bootstrap/js/theme.js?t0vkdr"></script>
+<script src="/modules/contrib/webform/js/webform.behaviors.js?v=10.5.2"></script>
+<script src="/core/misc/jquery.once.bc.js?v=10.5.2"></script>
+<script src="/core/misc/states.js?v=10.5.2"></script>
+<script src="/themes/contrib/bootstrap/js/misc/states.js?t0vkdr"></script>
+<script src="/modules/contrib/webform/js/webform.states.js?v=10.5.2"></script>
+<script src="/modules/contrib/webform/modules/webform_bootstrap/js/webform_bootstrap.states.js?v=10.5.2"></script>
+<script src="/themes/contrib/bootstrap/js/popover.js?t0vkdr"></script>
+<script src="/themes/contrib/bootstrap/js/tooltip.js?t0vkdr"></script>
+<script src="/modules/custom/notify/assets/notify.js?t0vkdr"></script>
+<script src="/libraries/json2/json2.js?v=2"></script>
+<script src="/libraries/jquery.cycle/jquery.cycle.all.js?v=3.0.3"></script>
+<script src="/modules/contrib/views_slideshow/modules/views_slideshow_cycle/js/views_slideshow_cycle.js?t0vkdr"></script>
+<script src="/modules/contrib/views_slideshow/js/views_slideshow.js?v=10.5.2"></script>
+
+</body>
+</html>
+
+
+<!-- END OUTPUT from 'themes/custom/parismou/templates/layout/html.html.twig' -->
+

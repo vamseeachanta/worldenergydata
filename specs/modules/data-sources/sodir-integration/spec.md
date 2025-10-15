@@ -1,8 +1,11 @@
 # Spec Requirements Document
 
 > Spec: SODIR Integration
+> Module: data-sources
 > Created: 2025-07-23
-> Status: Planning
+> Last Updated: 2025-09-02
+> Status: Planning → Ready for Implementation
+> Version: 1.1
 
 ## Overview
 
@@ -57,8 +60,37 @@ As a researcher, I want to access survey data from SODIR including seismic surve
 
 ## Spec Documentation
 
-- Tasks: @specs/modules/data-sources/sodir-integration/tasks.md
-- Technical Specification: @specs/modules/data-sources/sodir-integration/sub-specs/technical-spec.md
-- API Specification: @specs/modules/data-sources/sodir-integration/sub-specs/api-spec.md
-- Database Schema: @specs/modules/data-sources/sodir-integration/sub-specs/database-schema.md
-- Tests Specification: @specs/modules/data-sources/sodir-integration/sub-specs/tests.md
+- **User Prompt:** @specs/modules/data-sources/sodir-integration/prompt.md
+- **Tasks:** @specs/modules/data-sources/sodir-integration/tasks.md
+- **Task Summary:** @specs/modules/data-sources/sodir-integration/task_summary.md
+- **Technical Specification:** @specs/modules/data-sources/sodir-integration/sub-specs/technical-spec.md
+- **API Specification:** @specs/modules/data-sources/sodir-integration/sub-specs/api-spec.md
+- **Database Schema:** @specs/modules/data-sources/sodir-integration/sub-specs/database-schema.md
+- **Tests Specification:** @specs/modules/data-sources/sodir-integration/sub-specs/tests.md
+- **Executive Summary:** @specs/modules/data-sources/sodir-integration/executive-summary.md
+
+## Implementation Priority
+
+Based on the enhanced spec modular system, this integration should be executed with the following priorities:
+
+1. **Foundation (Critical):** Tasks 1-2 establish the core infrastructure
+2. **Core Processing (High):** Tasks 3-4 implement data collection capabilities
+3. **Analysis (Medium):** Task 5 enables cross-regional features
+4. **Enhancement (Low):** Tasks 6-8 optimize and document the system
+
+## Agent Assignment Strategy
+
+This spec leverages specialized agents for optimal execution:
+- **API Specialist:** Handles all REST API integration tasks
+- **Data Specialist:** Manages data processing and normalization
+- **Test Specialist:** Ensures comprehensive test coverage
+- **Analysis Specialist:** Implements cross-regional comparison features
+- **Performance Specialist:** Optimizes system for large-scale processing
+
+## Success Metrics
+
+- ✅ Complete SODIR API integration with 99.9% uptime
+- ✅ Process all 6 major data types without errors
+- ✅ Enable seamless SODIR-BSEE cross-regional analysis
+- ✅ Achieve >90% test coverage across all components
+- ✅ Maintain <2 second response time for data queries

@@ -2,6 +2,6 @@
 Web scrapers for BSEE data sources.
 """
 
-from .web_scraper import BSEEWebScraper
+from .bsee_web import BSEEWebScraper
 
 __all__ = ['BSEEWebScraper']

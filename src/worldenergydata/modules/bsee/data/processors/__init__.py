@@ -2,7 +2,7 @@
 Data processors for BSEE data processing.
 """
 
-from .memory_processor import MemoryProcessor
-from .optimized_processor import OptimizedProcessor
+from .in_memory import MemoryProcessor
+from .high_performance import OptimizedProcessor
 
 __all__ = ['MemoryProcessor', 'OptimizedProcessor']

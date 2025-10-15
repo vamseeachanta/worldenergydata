@@ -1,0 +1,16 @@
+CASENUMBER,ACTIVITY_DATE,ACTIVITY_TIME,LATITUDE,LONGITUDE,INCIDENT_TYPE,FATALITIES,INJURIES,MISSING,VESSEL_NAME,VESSEL_TYPE,IMO_NUMBER,FLAG_STATE,DAMAGE_USD,INCIDENT_DESCRIPTION
+USCG-2024-001,2024-01-15,14:30,29.7604,-95.3698,COLLISION,0,2,0,M/V PACIFIC STAR,Cargo Ship,9876543,USA,250000.00,Collision with another vessel in Houston Ship Channel during fog conditions
+USCG-2024-002,2024-02-20,03:15,27.9506,-82.4572,GROUNDING,0,0,0,ADVENTURE SEEKER,Recreational,,,USA,15000.00,Vessel ran aground on sandbar near Tampa Bay entrance
+USCG-2024-003,2024-03-10,22:45,40.7128,-74.0060,FIRE,1,3,0,INDEPENDENCE STAR,Tanker,7654321,LBR,1500000.00,Engine room fire while anchored in New York Harbor
+USCG-2023-456,2023-11-05,16:20,32.7157,-117.1611,Allision,0,1,0,SEA RUNNER,Fishing Vessel,,,USA,35000.00,Vessel struck pier while docking in San Diego
+USCG-2023-457,2023-12-12,08:30,25.7617,-80.1918,CAPSIZING,2,1,1,MIAMI DREAM,Passenger,,,USA,500000.00,Vessel capsized in rough seas off Miami coast
+USCG-2024-004,2024-04-01,11:00,47.6062,-122.3321,MAN OVERBOARD,1,0,0,SEATTLE EXPRESS,Container,8765432,PAN,0,Crew member fell overboard during cargo operations in Seattle
+USCG-2024-005,2024-05-15,19:45,21.3099,-157.8581,FLOODING,0,0,0,HAWAII VOYAGER,Cruise Ship,6543219,USA,2000000.00,Hull breach caused flooding in lower decks near Honolulu
+USCG-2023-458,2023-10-20,05:00,61.2181,-149.9003,MATERIAL FAILURE,0,2,0,ALASKA PIONEER,Fishing Vessel,,,USA,75000.00,Hydraulic system failure led to loss of steering near Anchorage
+USCG-2024-006,2024-06-22,13:15,42.3601,-71.0589,EXPLOSION,3,5,0,BOSTON TRADER,Cargo Ship,5432198,GBR,3000000.00,Explosion in cargo hold containing hazardous materials
+USCG-2024-007,2024-07-04,20:00,38.9072,-77.0369,collision,0,4,0,POTOMAC PRINCESS,Passenger Ferry,,,USA,125000.00,Ferry collision with recreational boat on Potomac River
+USCG-2023-459,2023-09-18,10:30,36.8508,-76.2859,Grounding,0,0,0,USS MERCHANT,Military Auxiliary,4321987,USA,450000.00,Naval auxiliary vessel grounded in Norfolk harbor
+USCG-2024-008,2024-08-10,07:45,33.7490,-118.2693,PERSONNEL CASUALTY,0,1,0,PACIFIC QUEEN,Container,3219876,CHN,5000.00,Crew injury during container loading operations in Long Beach
+USCG-2024-009,2024-09-05,15:20,30.2672,-97.7431,POLLUTION,0,0,0,GULF TRANSPORT,Tanker,2198765,USA,800000.00,Oil spill from ruptured fuel tank in Gulf waters
+USCG-2023-460,2023-08-25,23:00,41.8781,-87.6298,Fire,0,3,0,LAKE MICHIGAN STAR,Passenger,,,USA,600000.00,Electrical fire in passenger cabin area on Lake Michigan
+USCG-2024-010,2024-10-12,12:00,37.7749,-122.4194,OTHER,0,0,0,SAN FRANCISCO TRADER,Cargo Ship,1987654,JPN,100000.00,Crane malfunction during cargo operations in San Francisco Bay
