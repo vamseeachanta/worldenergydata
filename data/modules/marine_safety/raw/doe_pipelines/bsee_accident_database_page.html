@@ -1,0 +1,571 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1"><link rel="stylesheet" type="text/css" href="/Main/DXR.axd?r=1_205,1_66,1_207,1_204-RA9er" /><span id="HTMLIncludeTop"><!doctype html>
+<div id="skip"><a href="#centercontent">Skip to Main Content</a></div>
+<!-- Conditionals add class to html tag with IE version and class of no-js.  no-js is removed by Modernizer if JS active -->
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+<head>
+
+<!-- forces IE to use the most current rendering engine in versions 8+, also triggers Chrome Frame if user has it installed in IE6- IE8 -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+<!--Generic meta that is dynamic, leave blank --> 
+<meta name="keywords" content="">
+<meta name="description" content="">
+<meta charset="UTF-8">
+
+<link rel="shortcut icon" href="/bsee/images/icons/favicon.ico" type="image/x-icon" />
+<link rel="icon" href="/bsee/images/icons/favicon.ico" type="image/vnd.microsoft.icon" />
+ 
+<!-- link to Modernizr, this script checks for: js, canvas, canvastext, rgba, hsla, backgroundsize, borderradius, boxshadow, textshadow, opacity, video audio
+It adds classes the the HTML tag if something is there or not there.
+-->
+<script src="/bsee/js/modernizr.custom.84557.js"></script>
+
+
+<!--<script src="/bsee/js/jquery-1.7.2.min.js" type="text/javascript" charset="utf-8"></script>-->
+<script src="/bsee/js/jquery-3.5.1.min.js" type="text/javascript" charset="utf-8"></script>
+
+<script src="/bsee/js/jquery.dropmenu.js"></script>
+<script src="/bsee/js/jquery.cookie.js" type="text/javascript"></script>
+
+<!--uswds banner-->
+<script src="/uswds/js/uswds-init.min.js"></script>
+<link rel="stylesheet" href="/uswds/css/uswds.min.banner.css" />
+
+<!--bxslider-->
+<script src="/bsee/js/jquery.bxslider.min.js"></script>
+<link rel="stylesheet" href="/bsee/css/jquery.bxslider.min.css" />
+
+<!--stickyalert-->
+<script src="/bsee/js/jquery.stickyalert.js"></script>
+<link rel="stylesheet" href="/bsee/css/jquery.stickyalert.css" />
+
+<script>
+jQuery(document).ready(function($){
+	$("#nav-one").dropmenu({
+			openAnimation: "size",
+			closeAnimation: "slide",
+			openSpeed: 300,
+			closeSpeed: 200,
+			closeDelay: 500,
+			zindex: 2000
+	});
+      if($.cookie("bseecss")) {
+         $("link.changeme").attr("href",$.cookie("bseecss"));
+      }
+      $("#switch a").click(function() { 
+         $("link.changeme").attr("href",$(this).attr('rel'));
+         $.cookie("bseecss",$(this).attr('rel'), {expires: 365, path: '/'});         return false;
+      });
+	  $(function () {
+        $('.bxslider').bxSlider({
+            mode: 'fade',
+            auto: true,
+            stopAutoOnClick: true,
+            captions: true,
+            slideWidth: 960,
+            speed: 500,
+            pause: 8000
+        });
+      });
+	  $('#alert-container').stickyalert({
+		barColor: '#007bff', // alert background color
+		barFontColor: '#FFF', // text font color
+		barFontSize: '1.2rem', // text font size
+		barText: 'The new Production by Platform Online Query is now available.', // the text to display, linked with barTextLink
+		barTextLink: '/Production/ProdbyPlatform/Default.aspx', // url for anchor
+		cookieRememberDays: '7', // in days
+		displayDelay: '3000' // in milliseconds, 3 second default
+	  });
+});
+
+</script>
+
+<link href="/bsee/css/bsee-omega.normalize.css" type="text/css" rel="stylesheet" media="screen" />
+<link href="/bsee/css/bsee-data.styles.css" rel="stylesheet" media="screen"  type="text/css"/>
+<link rel="stylesheet" class="changeme" media="screen" type="text/css" href="/bsee/css/shared2.css" />
+<link href="/bsee/css/print-home.css" rel="stylesheet" media="print"  type="text/css"/>
+
+
+<!--<div id="alert-container"></div>--></span><title>
+	Data Center 404 Error
+</title><span id="HTMLIncludeBottom">  
+    <script type="text/javascript">
+		function Search() {             
+		var searchtext = document.getElementById("edit-search-block-form--2").value;  
+		window.location = 'http://search.usa.gov/search?affiliate=bsee&query=data+center+' + searchtext;
+		return false;	}     
+	</script> 
+	
+
+
+</head>
+
+<body>
+<script src="/uswds/js/uswds.min.js"></script>
+
+<div id="govbanner">
+<section
+  class="usa-banner"
+  aria-label="Official website of the United States government"
+>
+  <div class="usa-accordion">
+    <header class="usa-banner__header">
+      <div class="usa-banner__inner">
+        <div class="grid-col-auto">
+          <img
+            aria-hidden="true"
+            class="usa-banner__header-flag"
+            src="/uswds/img/us_flag_small.png"
+            alt=""
+          />
+        </div>
+        <div class="grid-col-fill tablet:grid-col-auto" aria-hidden="true">
+          <p class="usa-banner__header-text">
+            An official website of the United States government
+          </p>
+          <p class="usa-banner__header-action">Here’s how you know</p>
+        </div>
+        <button
+          type="button"
+          class="usa-accordion__button usa-banner__button"
+          aria-expanded="false"
+          aria-controls="gov-banner-default"
+        >
+          <span class="usa-banner__button-text">Here’s how you know</span>
+        </button>
+      </div>
+    </header>
+    <div
+      class="usa-banner__content usa-accordion__content"
+      id="gov-banner-default"
+    >
+      <div class="grid-row grid-gap-lg">
+        <div class="usa-banner__guidance tablet:grid-col-6">
+          <img
+            class="usa-banner__icon usa-media-block__img"
+            src="/uswds/img/icon-dot-gov.svg"
+            role="img"
+            alt=""
+            aria-hidden="true"
+          />
+          <div class="usa-media-block__body">
+            <p>
+              <strong>Official websites use .gov</strong><br />A
+              <strong>.gov</strong> website belongs to an official government
+              organization in the United States.
+            </p>
+          </div>
+        </div>
+        <div class="usa-banner__guidance tablet:grid-col-6">
+          <img
+            class="usa-banner__icon usa-media-block__img"
+            src="/uswds/img/icon-https.svg"
+            role="img"
+            alt=""
+            aria-hidden="true"
+          />
+          <div class="usa-media-block__body">
+            <p>
+              <strong>Secure .gov websites use HTTPS</strong><br />A
+              <strong>lock</strong> (
+              <span class="icon-lock"
+                ><svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="52"
+                  height="64"
+                  viewBox="0 0 52 64"
+                  class="usa-banner__lock-image"
+                  role="img"
+                  aria-labelledby="banner-lock-description-default"
+                  focusable="false"
+                >
+                  <title id="banner-lock-title-default">Lock</title>
+                  <desc id="banner-lock-description-default">Locked padlock icon</desc>
+                  <path
+                    fill="#000000"
+                    fill-rule="evenodd"
+                    d="M26 0c10.493 0 19 8.507 19 19v9h3a4 4 0 0 1 4 4v28a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V32a4 4 0 0 1 4-4h3v-9C7 8.507 15.507 0 26 0zm0 8c-5.979 0-10.843 4.77-10.996 10.712L15 19v9h22v-9c0-6.075-4.925-11-11-11z"
+                  />
+                </svg> </span
+              >) or <strong>https://</strong> means you’ve safely connected to
+              the .gov website. Share sensitive information only on official,
+              secure websites.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div><!-- govbanner -->
+
+
+<div id="doi">
+<div id="centerthedoi"><a href="https://www.doi.gov" title="DOI.gov" rel="DOI.gov">U.S. DEPARTMENT OF THE INTERIOR</a>
+</div><!-- centerthedoi -->
+</div><!-- doi -->
+
+<!-- new header-->
+<div id="top">
+<header class="l-header" role="banner">
+
+<div class="l-branding-header-wrap">
+
+      <div class="l-branding l-region l-region--branding">
+          <a href="http://www.bsee.gov" title="BSEE.gov" rel="BSEE.gov" class="site-logo"><img src="/bsee/images/layout/logo.png" alt="Bureau of Safety and Environmental Enforcement" /></a>
+          <div class="site-name">
+              <a href="http://www.bsee.gov" title="BSEE.gov" rel="BSEE.gov"><span>Bureau of Safety and Environmental Enforcement</span></a>
+          </div>
+          <div class="site-slogan">Promoting Safety, Protecting the Environment and Conserving Offshore Resources</div>
+      </div> <!-- .l-branding  -->
+	  
+	  
+  <div class="l-region--header">
+  
+   
+    <div id="block-openpublic-menu-openpublic-utility-menu">
+    
+    <ul id="user-menu" class="links clearfix">
+        <li class="first"><a href="http://www.bsee.gov" title="BSEE.gov" alt="BSEE.gov">Home</a></li>
+        <li><a href="http://www.bsee.gov/sitemap" title="Sitemap" alt="Sitemap">Sitemap</a></li>
+        <li><a href="http://www.bsee.gov/careers/" title="Careers" alt="Careers">Careers</a></li>
+        <li><a href="/Main/HtmlPage.aspx?page=contactbsee" title="Contact Us" alt="Contact Us">Contact Us</a></li>
+        <li class="last"><a href="javascript:window.print()" title="Print" alt="Print">Print</a></li>
+    </ul>  
+    </div> <!--#block-openpublic-menu-openpublic-utility-menu-->
+    
+    <!--==SITE SEARCH==-->
+    <div class="site-search">
+        <form accept-charset="UTF-8" id="search-block-form" method="get" action="" class="search-block-form">
+               <div class="form-item form-type-textfield form-item-query">
+                    <label for="edit-search-block-form--2" class="element-invisible">Search using USASearch</label>
+                      <input type="text" maxlength="128" size="15" value="" name="query" id="edit-search-block-form--2" autocomplete="off" class="usagov-search-autocomplete ui-autocomplete-input ui-corner-all form-text" role="textbox" aria-autocomplete="list" aria-haspopup="true">
+              </div>
+  
+              <div id="edit-actions" class="form-actions form-wrapper">
+                  <input type="submit" class="form-submit" value="Search" name="op" id="edit-submit" onclick="return Search();">
+              </div>
+      </form>
+    </div> <!--#site-search-->
+    
+
+		<div id="block-follow-site">
+        <h2>Follow Bureau of Safety and Environmental Enforcement on:</h2>
+    				<div class='follow-links clearfix site'>
+					<span class='follow-link-wrapper css-switcher'>
+					<div id="switch">
+						<a class="full" href="#" rel="/bsee/css/shared2-full.css" alt="Go Full Width" title="Go Full Width">Go Full Width</a>
+						<a class="fixed" href="#" rel="/bsee/css/shared2.css" alt="Go Fixed Width" title="Go Fixed Width">Go Fixed Width</a>
+					</div>
+					</span>
+                    <span class='follow-link-wrapper follow-link-wrapper-youtube'><a href="https://www.youtube.com/user/bseegov" class="follow-link follow-link-youtube follow-link-site" title="Follow Bureau of Safety and Environmental Enforcement on YouTube"></a></span>
+					<span class='follow-link-wrapper follow-link-wrapper-facebook'><a href="https://www.facebook.com/BSEEgov/" class="follow-link follow-link-facebook follow-link-site" title="Follow Bureau of Safety and Environmental Enforcement on Facebook"></a></span>
+                    <span class='follow-link-wrapper follow-link-wrapper-twitter'><a href="https://twitter.com/BSEEgov" class="follow-link follow-link-twitter follow-link-site" title="Follow Bureau of Safety and Environmental Enforcement on Twitter"></a>
+      </span>
+      
+      <span class='follow-link-wrapper follow-link-wrapper-linkedin'><a href="https://www.linkedin.com/company/bureau-of-safety-and-environmental-enforcement" class="follow-link follow-link-linkedin follow-link-site" title="Follow Bureau of Safety and Environmental Enforcement on LinkedIn"></a>
+      </span>
+      
+      <span class='follow-link-wrapper follow-link-wrapper-flickr'><a href="https://www.flickr.com/photos/bseegov/" class="follow-link follow-link-flickr follow-link-site" title="Follow Bureau of Safety and Environmental Enforcement on Flickr"></a>
+      </span>
+	  <span class='follow-link-wrapper follow-link-wrapper-instagram'><a href="https://www.instagram.com/bseegov/" class="follow-link follow-link-instagram follow-link-site" title="Follow Bureau of Safety and Environmental Enforcement on Instagram"></a>
+      </span>
+      
+      <!--<span class='follow-link-wrapper follow-link-wrapper-this-site'><a href="https://www.bsee.gov/rss.xml" class="follow-link follow-link-this-site follow-link-site" title="Follow Bureau of Safety and Environmental Enforcement RSS"></a>
+      </span>-->
+	  </div>  
+         </div> <!-- #block-follow-site -->
+
+	  
+  </div><!-- #l-region--header -->
+ </div> <!-- #l-branding-header-wrap -->
+
+</header><!-- header -->
+</div><!-- top -->
+
+
+<div id="blacknavsides">
+<div id="centerthenav">
+
+
+<ul id="nav-one" class="dropmenu"> 
+		  <li> 
+				<a class="oneline" href="http://www.bsee.gov/">BSEE.GOV&#160;</a> 
+				<ul>
+				  <li><a href="https://www.bsee.gov/who-we-are/about-us">About BSEE</a></li>
+				  <li><a href="https://www.bsee.gov/collaboration">Collaboration</a></li>
+				  <li><a href="https://www.bsee.gov/newsroom">Newsroom</a></li>
+				  <li><a href="https://www.bsee.gov/environmental-stewardship">Environmental Stewardship</a></li>
+				  <li><a href="https://www.bsee.gov/protection">Protection</a></li>
+				  <li><a href="https://www.bsee.gov/preparedness-research">Preparedness & Research</a></li>
+				  <li><a href="https://www.bsee.gov/offshore-data-tools">Offshore Data & Tools</a></li>
+				  <li><a href="https://www.bsee.gov/reporting-prevention">Reporting & Prevention</a></li>
+				  <li><a href="/Main">BSEE Data Center</a></li>
+				</ul>
+			</li> 
+			<li> 
+				<a class="oneline" href="#">Online Queries</a> 
+				<ul> 
+				    <li><a href="/Main/Company.aspx#onlinequeries">Company</a>
+						<ul>
+							<li><a href="/Company/Approvals/Default.aspx">Approvals</a></li>
+							<li><a href="/Company/CompanyDetail/Default.aspx">Company Detail</a></li>
+							<li><a href="/Company/INCs/Default.aspx">Incidents of Non-Compliance</a></li>
+							<li><a href="/Leasing/LeaseOwner/Default.aspx">Lease Owner</a></li>
+							<li><a href="/Platform/PlatformStructures/Default.aspx">Platform Structure with associated INC count</a></li>
+						</ul>
+					</li> 
+					<li><a href="/Main/Leasing.aspx#onlinequeries">Leasing</a>
+						<ul>
+							<li><a href="/Leasing/Assignments/Default.aspx">Assignments</a></li>
+							<li><a href="/Company/CompanyDetail/Default.aspx">Company Detail</a></li>
+							<li><a href="/Leasing/DecomCostEst/Default.aspx">Decommissioning Cost Estimates</a></li>
+							<li><a href="/Leasing/LeaseAreaBlock/Default.aspx">Lease Area Block Lookup</a></li>
+							<li><a href="/Leasing/LeaseOwner/Default.aspx">Lease Owner</a></li>
+							<li><a href="/Leasing/NonReqDocuments/Default.aspx">Non-Required/Required Documents Received</a></li>
+							<li><a href="/Leasing/OffshoreStatsbyWD/Default.aspx">Offshore Statistics by Water Depth</a></li>
+							<li><a href="/Leasing/SerialRegisterPage/Default.aspx">Serial Register Page</a></li>
+						</ul>										
+					</li> 
+					<li><a href="/Main/Pipeline.aspx#onlinequeries">Pipeline</a>
+						<ul>
+							<li><a href="/Pipeline/PipelineLocation/Default.aspx">Pipeline Locations</a></li>
+							<li><a href="/Pipeline/PipelinePermits/Default.aspx">Pipeline Permits</a></li>
+							<li><a href="/Pipeline/ROWDescriptions/Default.aspx">ROW Descriptions</a></li>
+						</ul>					
+					</li>
+					<li><a href="/Main/Plans.aspx">Plans and Permits</a>
+						<ul>
+							<li><a href="/Well/APD/Default.aspx">Application for Permit to Drill (APD)</a></li>
+							<li><a href="/Well/eWellAPD/Default.aspx">eWell Submissions Applications for Permit to Drill</a></li>
+							<li><a href="/Well/eWellAPM/Default.aspx">eWell Submissions Applications for Permit to Modify</a></li>
+							<li><a href="/Plans/Plans/Default.aspx">Exploration and Development Plans</a></li>
+						</ul>									
+					</li>
+					<li><a href="/Main/Platform.aspx#onlinequeries">Platform/Rig</a>
+						<ul>
+							<li><a href="/Leasing/OffshoreStatsbyWD/Default.aspx">Offshore Statistics by Water Depth</a></li>
+							<li><a href="/Platform/PlatformStructures/Default.aspx">Platform Structure</a></li>
+							<li><a href="/Production/ProdbyPlatform/Default.aspx">Production by Platform</a></li>
+						</ul>							
+					</li>
+					<li><a href="/Main/Production.aspx#onlinequeries">Production</a>
+						<ul>
+							<li><a href="/Production/FMP/Default.aspx">Facility/Measurement Points (FMP)</a></li>
+							<li><a href="/Production/FMPMetersTanks/Default.aspx">FMP/Meters/Tanks Listing</a></li>
+							<li><a href="/Production/MCPFlowReport/Default.aspx">PASR / Commingling Flow Report</a></li>
+							<li><a href="/Leasing/OffshoreStatsbyWD/Default.aspx">Offshore Statistics by Water Depth</a></li>
+							<li><a href="/Production/ProdbyPlanArea/Default.aspx">Production by Planning Area with Daily Production Rates</a></li>
+							<li><a href="/Production/ProdbyPlatform/Default.aspx">Production by Platform</a></li>
+							<li><a href="/Production/ProductionData/Default.aspx">Production Data</a></li>
+						</ul>	
+					</li>
+					<li><a href="/Main/Well.aspx#onlinequeries">Well</a>
+						<ul>
+							<li><a href="/Well/APD/Default.aspx">Application for Permit to Drill (APD)</a></li>
+							<li><a href="/Well/API/Default.aspx">American Petroleum Institute (API) Lookup</a></li>
+							<li><a href="/Well/APIChanges/Default.aspx">American Petroleum Institute (API) Number Changes</a></li>
+							<li><a href="/Well/Borehole/Default.aspx">Borehole</a></li>
+							<li><a href="/Well/BHPS/Default.aspx">Bottomhole Pressure Survey</a></li>
+							<li><a href="/Well/eWellAPD/Default.aspx">eWell Submissions Applications for Permit to Drill</a></li>
+							<li><a href="/Well/eWellAPM/Default.aspx">eWell Submissions Applications for Permit to Modify</a></li>
+							<li><a href="/Well/eWellEOR/Default.aspx">eWell Submissions End of Operations Report</a></li>
+							<li><a href="/Well/eWellWAR/Default.aspx">eWell Submissions Well Activity Reports</a></li>
+						</ul>	
+					</li>
+				</ul> 
+			</li>  			
+			<li> 
+				<a href="#">Scanned<br>Documents</a> 
+				<ul> 
+					<li><a href="/Other/FileRequestSystem/ScanActiveLeases.aspx">Active-Inactive Leases</a></li>
+					<li><a href="/Other/FileRequestSystem/ScanAdjudicationFiles.aspx">Adjudication Files</a></li>
+					<li><a href="/Other/FileRequestSystem/ScanCollateralFiles.aspx">Collateral Files</a></li>
+					<li><a href="/Other/FileRequestSystem/ScanCompanyFiles.aspx">Company Files</a></li>
+					<li><a href="/Other/FileRequestSystem/ScanDirectionalSurveys.aspx">Directional Surveys</a></li>					
+					<li><a href="/Other/FileRequestSystem/ScanExpiredLeases.aspx">Expired Leases</a></li>
+					<li><a href="/Other/FileRequestSystem/ScanGGPermits.aspx">G&G Permits</a></li>					
+					<li><a href="/Other/FileRequestSystem/ScanPipelineMaps.aspx">Pipeline Maps</a></li>	
+					<li><a href="/Other/FileRequestSystem/ScanPlans.aspx">Plans</a></li>					
+					<li><a href="/Other/FileRequestSystem/ScanREnLeases.aspx">Renewable Energy Lease Files</a></li>
+					<li><a href="/Other/FileRequestSystem/ScanROW.aspx">ROW Files</a></li>	
+					<li><a href="/Other/FileRequestSystem/ScanSOPSOO.aspx">SOP-SOO</a></li>					
+					<li><a href="/Other/FileRequestSystem/ScanUnits.aspx">Unit Agreements</a></li>
+					<li><a href="/Other/FileRequestSystem/ScanWellFiles.aspx">Well</a></li>
+					<li><a href="/Other/FileRequestSystem/ScanWPTReports.aspx">Well Potential Test Reports</a></li>
+				</ul> 
+			</li>  
+            <li> 
+				<a class="oneline" href="#">PDF Reports</a>  
+                <ul> 
+					<li><a href="/Main/Company.aspx#pdf">Company</a></li>
+					<li><a href="/Main/Leasing.aspx#pdf">Leasing</a></li>
+					<li><a href="/Main/Paleo.aspx#pdf">Paleontologic</a></li>
+					<li><a href="/Main/Pipeline.aspx#pdf">Pipeline</a></li>
+					<li><a href="/Main/Plans.aspx#pdf">Plans and Permits</a>
+					<li><a href="/Main/Platform.aspx#pdf">Platform/Rig</a></li>
+					<li><a href="/Main/Production.aspx#pdf">Production</a></li>
+					<li><a href="/Main/Well.aspx#pdf">Well</a></li>
+                </ul>
+            </li>
+			<li> 
+				<a class="oneline" href="#">ASCII Downloads</a> 
+				<ul> 
+					<li><a href="/Main/Company.aspx#ascii">Company</a></li>
+					<li><a href="/Main/DirectionalSurvey.aspx#ascii">Directional Surveys</a></li>
+					<li><a href="/Main/FieldReserves.aspx#ascii">Field & Reserves</a></li>
+					<li><a href="/Main/GandG.aspx#ascii">Geological and Geophysical Studies</a></li>
+					<li><a href="/Main/Leasing.aspx#ascii">Leasing</a>
+					<ul class="floatleft">
+						<li><a href="/Main/AlaskaLeasing.aspx">Alaska Leasing</a></li>
+						<li><a href="/Main/Leasing.aspx#ascii">GOAR Leasing</a></li>
+						<li><a href="/Main/PacificLeasing.aspx">Pacific Leasing</a></li>
+					</ul>
+					</li>
+					<li><a href="/Main/Mapping.aspx#ascii">Mapping</a></li>
+					<li><a href="/Main/Paleo.aspx#ascii">Paleontologic</a></li>
+					<li><a href="/Main/Pipeline.aspx#ascii">Pipeline</a>
+					<ul class="floatleft">
+						<li><a href="/Main/Pipeline.aspx#ascii">GOAR Pipeline</a></li>
+						<li><a href="/Main/PacificPipeline.aspx">Pacific Pipeline</a></li>
+					</ul>
+					</li>
+					<li><a href="/Main/Plans.aspx#ascii">Plans and Permits</a>
+					<li><a href="/Main/Platform.aspx#ascii">Platform/Rig</a>
+					<ul class="floatleft">
+						<li><a href="/Main/Platform.aspx#ascii">GOAR Platform/Rig</a></li>
+						<li><a href="/Main/PacificPlatform.aspx">Pacific Platform/Rig</a></li>
+					</ul>
+					</li>
+					<li><a href="/Main/Production.aspx#ascii">Production</a>
+					<ul class="floatleft">
+						<li><a href="/Main/Production.aspx#ascii">GOAR Production</a>
+						<ul class="floatleft">
+							<li><a href="/Main/OGOR-A.aspx">OGOR-A</a></li>
+							<li><a href="/Main/OGOR-B.aspx">OGOR-B</a></li>
+							<li><a href="/Main/OGOR-C.aspx">OGOR-C</a></li>
+						</ul>
+						</li>
+						<li><a href="/Main/PacificProduction.aspx#ascii">Pacific Production</a></li>
+					</ul>
+					</li>
+					<li><a href="/Main/Well.aspx#ascii">Well</a>
+					<ul class="floatleft">
+						<li><a href="/Main/AlaskaWell.aspx">Alaska Well</a></li>
+						<li><a href="/Main/Well.aspx#ascii">GOAR Well</a></li>
+						<li><a href="/Main/PacificWell.aspx">Pacific Well</a></li>
+					</ul>
+					</li>
+				</ul>
+			</li>		
+			<li> 
+				<a class="oneline" href="#" style="border-right:none;">Other Resources</a> 
+				<ul> 
+					<li><a href="/Other/Files/Anchors.zip">Concrete Anchors</a></li>
+					<li><a href="/Main/HtmlPage.aspx?page=dataManagement">Data Management</a></li>
+					<li><a href="/Other/DataTables/DeepQualFields.aspx">Deepwater Natural Gas and Oil Qualified Fields</a></li>
+					<li><a href="http://www.boem.gov/ESPIS/">ESPIS</a></li>
+					<li><a href="https://timsweb.bsee.gov/">eWell Permitting and Reporting System</a></li>
+					<li><a href="/Other/RefundRequest/Default.aspx">Fees for Service Refund Request</a></li>
+					<li><a href="/Other/FileRequestSystem/Default.aspx">File Request System</a>
+					<ul class="floatleft">
+						<li><a href="/Other/FileRequestSystem/WellData.aspx">Well Data</a></li>
+					</ul>
+					</li>
+					<li><a href="/Other/DataTables/PermDeepStruc.aspx">GoA Permanent Deepwater Structures</a>
+					<li><a href="/Other/PIOrderingSystem/Default.aspx">Public Information Ordering System</a></li>
+					<li><a href="/Other/QuickData/Default.aspx">Quick Data Online Query</a></li>
+					<li><a href="/Main/Tutorials/Default.aspx">Video Tutorials</a></li>
+				</ul>
+			</li>
+ 
+</ul>	  
+	  
+</div><!--end of centerthenav-->
+</div><!--end of blacknavsides-->
+
+<div id="clear"><!--end of clear--></div>
+
+
+<div id="centercontent" class="content-box">
+
+<br \>
+<font color="red"></font>
+
+	
+</span></head>
+<body>
+    <form method="post" action="./404Error.aspx?aspxerrorpath=%2fMain%2fAccident.aspx" id="form1">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUKLTU0MDE3MzQ0NQ9kFgICAw9kFgICBw88KwAEAQAPFgIeBVZhbHVlBWhtYWlsdG86VERNQGJzZWUuZ292P3N1YmplY3Q9RGF0YSBDZW50ZXIgNDA0IEVycm9yJmJvZHk9RXJyb3JQYXRoOiAvTWFpbi9BY2NpZGVudC5hc3B4JTBEUmVmZXJyZXI6ICUwRCUwRGRkZFrkieSFWySRZ54fvuoQybPSpDFBNL53LNvkr1xpoK/e" />
+
+<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="B53EA62F" />
+    <div>
+        <a title="go to the homepage" class="dxeHyperlink" id="ASPxHyperLinkHomepage" href="/Main/Default.aspx" style="float: left;"><font size="5">Data Center</font></a>
+        <span class="dxeBase" id="ASPxLabelSlash"><font size="5">&gt;&gt;</font></span>
+        <br />
+        <span class="dxeBase" id="ASPxLabelTitle"><font size="6">404 Error Occurred</font></span>
+        <br />
+        <br />
+        A 404 File Not Found error occured during your web request.  This may be due to a bad link or if you entered an address that is invalid.
+        <br />
+        <br />
+        If you have reached this page through a bookmark, the resource you're looking for may have been moved to a new location.  We suggest you navigate to the <a href="/Main/Default.aspx">Data Center Homepage</a> and locate the desired resource from there.
+        <br />
+        <br />
+        If this problem reoccurs, please report it to 
+        <a class="dxeHyperlink" id="ASPxHyperLinkTDM" href="mailto:TDM@bsee.gov?subject=Data Center 404 Error&amp;body=ErrorPath: /Main/Accident.aspx%0DReferrer: %0D%0D">TDM@bsee.gov</a> and include the link to the desired page for assistance.
+        <br />
+        <br />
+    </div>
+    </form>
+    <span id="HTMLIncludeFooter"><br \><br \>
+</div><!--end of centercontent-->
+
+<div id="clear"><!--end of clear--></div>
+<div id="greenfootersides">
+<div id="centerthefooter">
+
+<div id="footer">
+	<div id="footerContent" align="center">
+		<a href="https://www.bsee.gov/who-we-are/working-with-us/careers">Careers</a>
+		<a href="/Main/HtmlPage.aspx?page=contactbsee">Contact Us</a>
+		<a href="https://www.bsee.gov/sitemap">Sitemap</a>
+		<a href="http://www.doi.gov">DOI.GOV</a>
+		<a href="http://www.usa.gov/">USA.GOV</a>
+		<a href="http://www.doioig.gov/">Inspector General</a>
+		<a href="https://www.bsee.gov/who-we-are/working-with-us/doing-business-with-bsee/fees-for-services">Fees for Services</a>
+		<a href="https://www.bsee.gov/site-page/disclaimer">Disclaimers</a>
+		<a href="https://www.bsee.gov/newsroom/library/foia">FOIA</a>
+		<a href="https://www.doi.gov/pmb/eeo/no-fear-act">No Fear Act</a>
+		<a href="https://www.bsee.gov/site-page/accessibility-policy">Accessibility</a>
+		<a class="lastfooterlink" href="https://www.bsee.gov/site-page/privacy-policy">Privacy</a>
+	</div><!--end of footerContent-->
+</div><!--end of footer-->
+
+</div><!--end of centerthefooter-->
+</div><!--end of greenfootersides-->
+
+
+
+<!-- Google tag for BSEE GA4 (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TXQ2ZK1TPZ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TXQ2ZK1TPZ');
+</script>
+
+</span>
+</body>
+</html>

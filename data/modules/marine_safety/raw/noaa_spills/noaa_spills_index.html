@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0">
+        <title>Raw Incident Data | IncidentNews | NOAA</title>
+        <link rel="shortcut icon" href="/static/images/favicon.ico">
+        <link href='//fonts.googleapis.com/css?family=Open+Sans|Open+Sans:700|Gudea|Gudea:700' rel='stylesheet' type='text/css'>
+        <!--[if lt IE 9]>
+        <script src="/static/js/html5shiv.js"></script>
+        <script>
+            if ( !Date.prototype.toISOString ) {
+                ( function() {
+
+                    function pad(number) {
+                        if ( number < 10 ) {
+                            return '0' + number;
+                        }
+                        return number;
+                    }
+
+                    Date.prototype.toISOString = function() {
+                        return this.getUTCFullYear() +
+                            '-' + pad( this.getUTCMonth() + 1 ) +
+                            '-' + pad( this.getUTCDate() ) +
+                            'T' + pad( this.getUTCHours() ) +
+                            ':' + pad( this.getUTCMinutes() ) +
+                            ':' + pad( this.getUTCSeconds() ) +
+                            '.' + (this.getUTCMilliseconds() / 1000).toFixed(3).slice( 2, 5 ) +
+                            'Z';
+                    };
+
+                }() );
+            }
+        </script>
+        <![endif]-->
+    <link rel="stylesheet" type="text/css" href="/fanstatic/inews/css/style.css" />
+<script type="text/javascript" src="/fanstatic/inews/js/jquery.js"></script>
+<script type="text/javascript" src="/fanstatic/inews/js/underscore.js"></script>
+<script type="text/javascript" src="/fanstatic/inews/js/backbone.js"></script></head>
+
+    <!-- BEGIN Analytics -->
+    <script async src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=DOC&amp;subagency=NOAA&amp;pga4=G-J62PCPTX27" id="_fed_an_ua_tag"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag()
+
+    {dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-J62PCPTX27');
+    </script>
+    <!-- END Analytics -->
+
+    <body>
+        <div class="sr-only"><a href="#content">Skip to content</a></div>
+        <div class="mobile-slide">
+            <main class="page-wrap">
+                <header>
+                    <nav class="navbar navbar-default" role="navigation">
+                        <div class="container">
+                            <div class="navbar-header">
+                                <a href="/" class="navbar-brand"><img src="/static/images/IncidentNews.png" alt="NOAA | IncidentNews" /></a>
+                                <button type="button" class="navbar-toggle" id="mobile-menu-toggle">
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                            </div>
+                            <div class="collapse navbar-collapse">
+                                <ul class="nav navbar-nav navbar-right">
+                                    <li><a href="/">Home</a></li>
+                                    <li><a href="/browse/date">Browse</a></li>
+                                    <li><a href="/map">Map</a></li>
+                                    <li><a href="/search/date">Search</a></li>
+                                    <li class="dropdown">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Newsfeed <b class="caret"></b></a>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="/incidents.atom" target="_blank">Atom</a></li>
+                                            <li><a href="/incidents.rss" target="_blank">RSS</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>  
+                            </div>
+                        </div>
+                    </nav>
+                        <div class="notification">The U.S. government is closed. This site will not be updated; however, NOAA websites and social media channels necessary to protect lives and property will be maintained. To learn more, visit <a href="https://www.commerce.gov/news/blog">commerce.gov</a>. <br /><br />
+
+For the latest forecasts and critical weather information, visit <a href="https://weather.gov">weather.gov</a>.</div>
+                </header>
+                <!-- *** BEGIN page content *** -->
+
+                <div class="in-header">
+                    <div class="bg"></div>
+                    <div class="burn-overlay"></div>
+                    <div class="container">
+                        <div class="row">
+                                <div class="col-md-9">
+                                    <h1>Raw Incident Data</h1>
+                                    
+    <p>
+        A machine-readable version of the incident data is available a CSV text file. You can use this to do historical research or statistics.
+    </p>
+    <p>On this page you can download a machine-readable version of the incident
+            data shown in this website. It covers selected oil spills off US coastal waters
+            and other incidents where NOAA's Office of Response and Restoration (OR&amp;R)
+            provided scientific support for the spill response. Some older records between
+            1957 and 1984 come from third-party databases. We hope that researchers and
+            other interested members of the public will find this information useful.
+    </p>
+
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                <a id="content"></a>
+                
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <p><a href="/raw/incidents.csv" class="btn btn-primary btn-lg">incidents.csv <span class="glyphicon glyphicon-download-alt"></span></a></p>
+
+            <p>The download size is approximately two megabytes.</p>
+
+            <p>Archive owner: Emergency Response Division, Office of Response and
+            Restoration, National Ocean Service, National Oceanic and Atmospheric
+            Administration (USA).  The contents are in the public domain; there is no
+            copyright restriction.</p>
+
+            <p>We welcome your feedback at 
+            <a href="mailto:orr.incidentnews@noaa.gov">orr.incidentnews@noaa.gov</a>. 
+            Please let us know if you find the data useful, or if you'd prefer a different
+            format or other kinds of spill data. We may or may not be able to comply with
+            your request, but we'd like to know what users are looking for in any case.</p>
+
+            <h2>File format</h2>
+
+            <p>The download is a text file in CSV (comma-separated values) format. It can
+            be imported into most spreadsheet programs or databases.<p>
+
+            <p>Each row is an incident. The order is most recent to oldest, and
+            secondarily by name.</p>
+
+            <p>The file is in the
+            UTF-8 character set with Excel formatting conventions. Null values
+            are represented by "" (an empty cell). Boolean values are
+            represented by "1" (true) and "0" (false). Dates are in
+            "YYYY-MM-DD" format. Embedded newlines in text fields are replaced
+            by a vertical tab character (ctrl-K, \v, 0xb) because a few
+            programs mistake them for end-of-record markers.</p>
+
+
+            <h2>Fields</h2>
+
+            <dl class="dl-normal fields">
+                <dt>id <em>(integer)</em></dt>
+                <dd>Our incident ID.</dd>
+
+                <dt>open_date  <em>(date)</em></dt>
+                <dd>The date OR&amp;R was notified of the spill. (For pre-1985 spills from
+                third-party databases, the spill date in the source database.)</dd>
+
+                <dt>name  <em>(text)</em></dt>
+                <dd>Incident name.</dd>
+
+                <dt>location  <em>(text)</em></dt>
+                <dd>Incident location. Usually "City, State".</dd>
+
+                <dt>lat  <em>(float)</em></dt>
+                <dd>Latitude. Positive is north, negative is south.
+                Value may be approximate.</dd>
+
+                <dt>lon  <em>(float)</em></dt>
+                <dd>Longitude. Positive is east, negative is west.
+                Value may be approximate.</dd>
+
+
+                <dt>threat  <em>(text)</em></dt>
+                <dd>The primary threat: "Oil", "Chemical", or "Other".
+                "Oil" means an oil spill. "Chemical" means a chemical or biological
+                agent spill. "Other" means some other kind of incident.
+                </dd>
+
+                <dt>tags  <em>(text)</em></dt>
+                <dd>
+                    <p>The tags assigned to the incident. These are mostly
+                    causes (what caused the incident). The current list of tags
+                    are:</p>
+
+                    <ul>
+                        <li>Adrift</li>
+                        <li>Allision</li>
+                        <li>Collision</li>
+                        <li>Coral</li>
+                        <li>Derelict</li>
+                        <li>Grounding</li>
+                        <li>Historic Wreck</li>
+                        <li>Hurricane</li>
+                        <li>Marine Debris</li>
+                        <li>Marine Mammal</li>
+                        <li>Mystery Substance</li>
+                        <li>Pipeline</li>
+                        <li>Railcar</li>
+                        <li>Search + Rescue</li>
+                        <li>Tsunami</li>
+                        <li>Wellhead</li>
+                    </ul>
+
+                    <p>Multiple tags are delimited by a pipe symbol (|).</p>
+                </dd>
+
+                <dt>commodity  <em>(text)</em></dt>
+                <dd>The item spilled. (Freeform text.)</dd>
+
+                <dt>is_measure_skim  <em>(boolean)</em></dt>
+                <dd>True if On-Water Recovery <em>(skimming)</em> was used as a countermeasure.</dd>
+
+                <dt>is_measure_shore  <em>(boolean)</em></dt>
+                <dd>True if Shoreline Cleanup was used as a countermeasure.</dd>
+
+                <dt>is_measure_bio  <em>(boolean)</em></dt>
+                <dd>True if Bioremediation was used as a countermeasure.</dd>
+
+                <dt>is_measure_disperse  <em>(boolean)</em></dt>
+                <dd>True if Dispersants were used as a countermeasure.</dd>
+
+                <dt>is_measure_burn  <em>(boolean)</em></dt>
+                <dd>True if In-Situ Burning was used as a countermeasure.</dd>
+
+                <dt>max_ptl_release_gallons  <em>(float)</em></dt>
+                <dd>    
+                    <p>Maximum <strong>potential</strong> release in gallons.
+                    This may be a known quantity or the upper bound of a
+                    minimum-maximum estimate. Note that different commodities
+                    have different toxicities and reaction characteristics, so
+                    10,000 gallons of one material may be more significant than
+                    10,000 gallons of another.</p>
+
+                    <p>Blank values indicate that the potential release is
+                    unknown or can't be converted to gallons. As of May
+                    2016, 2% of the releases were reported in a mass unit (e.g.,
+                    pounds) that can't be converted to gallons because the
+                    database doesn't know the commodity's density.  </p>
+                </dd>
+
+                <dt>posts  <em>(integer)</em></dt>
+
+                <dd>Number of posts in IncidentNews.</dd>
+
+                <dt>description  <em>(text)</em></dt>
+                <dd>Text description of the incident.</dd>
+            </dl>
+
+
+            <h2>Data format changelog</h2>
+
+            <ul>
+
+              <li><strong>2016-08-10:</strong> IncidentNews 3.0 release. The
+              CSV format was changed significantly.
+
+                <ul>
+                    <li>Moved 'open_date' to the second column to make the
+                        sort order clearer.</i>
+                    <li>Replaced 'cause' and 'other_cause' with 'tags'.
+                        Tags are a new categorization of causes and
+                        expandable to other kinds of tags.</li>
+                    <li>Replaced 'is_type_oil', 'is_type_bio', and
+                        'is_type_other' with 'threat'. This is a
+                        consolidated text field giving the same information.</li>
+                    <li>Replaced 'max_release_gallons' with 'max_ptl_release_gallons'.
+                        The value is now the maximum potential release rather
+                        than actual. The
+                        potential release guides our response effort, while the
+                        actual release is often not available.</li>
+                    <li>Replaced 'activity' with 'posts'. This is now the number of
+                        posts in IncidentNews rather than an arbitrary
+                        amount of effort.</li>
+                    <li>Deleted 'is_overflights'. It was an indirect way to distinguish
+                        large vs small spills.</li>
+                </ul>
+              </li>
+
+              <li><strong>2013-02-01:</strong> IncidentNews 2.0 release. The CSV export is
+              a separate file at a different URL. The SQLite format and ZIP file are no
+              longer available. The "open_date" field is now the date OR&R; was notified 
+              of the spill rather than the spill date. (See the field description above
+              for details.)  The other fields are unchanged.</li>
+
+              <li><strong>2011-05-06:</strong>  Initial release.</li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+
+                <!-- *** END page content *** -->
+            </main>
+            <div class="pre-footer">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a href="/raw/index">All incident report data is available here</a>
+                            <div class="pull-right">IncidentNews 4.0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="nav navbar-nav">
+                                <li><a href="mailto:orr.incidentnews@noaa.gov">Contact Us</a></li>
+                                <li><a href="/privacy">Privacy Policy</a></li>
+                                <li><a href="/survey">Website Survey</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <sup>
+                                Web site owner:
+                                <a href="http://response.restoration.noaa.gov/erd" target="_blank">
+                                    Emergency Response Division</a>, 
+                                <a href="http://response.restoration.noaa.gov/" target="_blank">
+                                    Office of Response and Restoration</a>, 
+                                <a href="http://www.oceanservice.noaa.gov/" target="_blank">
+                                    National Ocean Service</a>,
+                                <a href="http://www.noaa.gov/" target="_blank">
+                                    National Oceanic and Atmospheric Administration</a>
+                            </sup>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+        <div class="mobile-menu">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/browse/date">Browse</a></li>
+                <li><a href="/map">Map</a></li>
+                <li><a href="/search/date">Search</a></li>
+                <li>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Newsfeed</a>
+                    <ul>
+                        <li><a href="/incidents.atom" target="_blank">Atom</a></li>
+                        <li><a href="/incidents.rss" target="_blank">RSS</a></li>
+                    </ul>
+                </li>
+            </ul>  
+        </div>
+    <script type="text/javascript" src="/fanstatic/inews/js/bootstrap.js"></script>
+<script type="text/javascript" src="/fanstatic/inews/js/dayjs.min.js"></script>
+<script type="text/javascript" src="/fanstatic/inews/js/fastclick.js"></script>
+<script type="text/javascript" src="/fanstatic/inews/js/jquery-ui-1.10.4.custom.js"></script>
+<script type="text/javascript" src="/fanstatic/inews/js/layzr.js/dist/layzr.min.js"></script>
+<script type="text/javascript" src="/fanstatic/inews/js/datatables/media/js/jquery.dataTables.js"></script>
+<script type="text/javascript" src="/fanstatic/inews/js/datatables-bootstrap/integration/bootstrap/3/dataTables.bootstrap.js"></script>
+<script type="text/javascript" src="/fanstatic/inews/js/main.js"></script></body>
+   
+   
+    <!--[if lt IE 9]>
+        <script src="/static/js/respond.min.js"></script>
+        
+    <![endif]-->
+    <!--[if lt IE 8]>
+        <link rel="stylesheet" href="/static/css/bootstrap-ie7.css">
+    <![endif]-->
+</html>
