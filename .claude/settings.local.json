@@ -6,5 +6,12 @@
       "mcp__flow-nexus"
     ],
     "deny": []
-  }
+  },
+  "enabledMcpjsonServers": [
+    "claude-flow@alpha",
+    "ruv-swarm",
+    "flow-nexus",
+    "agentic-payments"
+  ],
+  "enableAllProjectMcpServers": true
 }
