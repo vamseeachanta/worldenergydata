@@ -1,0 +1,16 @@
+# ABOUTME: Field-level configuration for Shenandoah FPSO development inputs
+# ABOUTME: Supports analysis scenarios ahead of Shenandoah first oil
+
+field:
+  field_id: shenandoah
+  display_name: "Shenandoah"
+  status: under_development
+  leases_key: shenandoah
+  first_oil: "2025-10-01"
+  data_through: "2024-12-31"
+  operator: "Beacon Offshore Energy"
+  capex:
+    total_mm_usd: 1800
+  production_profile:
+    plateau_rate_mbopd: 100
+    gor_scf_per_bbl: 1300
