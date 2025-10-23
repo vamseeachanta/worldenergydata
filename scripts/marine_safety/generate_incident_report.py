@@ -957,6 +957,50 @@ def generate_executive_summary(data: dict, analyses: dict, output_dir: Path, use
     logger.info(f"Executive summary saved to {output_file}")
 
 
+def export_incident_data_to_csv(df: pd.DataFrame, incident_type: str, results_dir: Path) -> Path:
+    """Export incident data to CSV file for client-side loading."""
+    results_dir.mkdir(parents=True, exist_ok=True)
+
+    # Select columns based on incident type
+    if incident_type == 'hatch':
+        columns = ['incident_id', 'date', 'vessel_name', 'description', 'severity', 'location', 'source', 'fatalities', 'injuries']
+    elif incident_type == 'foundering':
+        columns = ['incident_id', 'date', 'vessel_name', 'description', 'fatalities', 'location', 'source', 'injuries']
+    elif incident_type == 'fatality':
+        columns = ['incident_id', 'date', 'vessel_name', 'description', 'incident_type', 'location', 'source', 'fatalities', 'injuries']
+    else:
+        columns = list(df.columns)
+
+    # Select available columns
+    available_columns = [col for col in columns if col in df.columns]
+    export_df = df[available_columns].copy()
+
+    # Clean and format data
+    if 'date' in export_df.columns:
+        export_df['date'] = pd.to_datetime(export_df['date'], errors='coerce').dt.strftime('%Y-%m-%d')
+        export_df['date'] = export_df['date'].fillna('Unknown')
+
+    if 'vessel_name' in export_df.columns:
+        export_df['vessel_name'] = export_df['vessel_name'].fillna('Unknown')
+
+    if 'description' in export_df.columns:
+        export_df['description'] = export_df['description'].fillna('No description available')
+
+    for col in ['fatalities', 'injuries']:
+        if col in export_df.columns:
+            export_df[col] = export_df[col].fillna(0).astype(int)
+
+    for col in ['severity', 'location', 'source', 'incident_type']:
+        if col in export_df.columns:
+            export_df[col] = export_df[col].fillna('N/A')
+
+    csv_path = results_dir / f'{incident_type}_incidents.csv'
+    export_df.to_csv(csv_path, index=False, encoding='utf-8')
+    logger.info(f"✓ Exported {len(export_df)} {incident_type} incidents to {csv_path}")
+
+    return csv_path
+
+
 def generate_detailed_report(incident_type: str, df: pd.DataFrame, analysis: dict,
                             visualizations: list, output_dir: Path, use_llm: bool):
     """Generate detailed HTML report for specific incident type."""
@@ -969,19 +1013,34 @@ def generate_detailed_report(incident_type: str, df: pd.DataFrame, analysis: dic
 
     title = title_map.get(incident_type, 'Incident Analysis')
 
-    html = f"""
-<!DOCTYPE html>
+    # Export incident data to CSV for optimized client-side loading
+    results_dir = Path('results/modules/marine_safety')
+    csv_path = export_incident_data_to_csv(df, incident_type, results_dir)
+    csv_relative_path = f'../../results/modules/marine_safety/{incident_type}_incidents.csv'
+
+    # Build column headers based on incident type
+    if incident_type == 'hatch':
+        table_headers = '<th>Incident ID</th><th>Date</th><th>Vessel</th><th>Description</th><th>Severity</th>'
+    elif incident_type == 'foundering':
+        table_headers = '<th>Incident ID</th><th>Date</th><th>Vessel</th><th>Description</th><th>Fatalities</th>'
+    elif incident_type == 'fatality':
+        table_headers = '<th>Incident ID</th><th>Date</th><th>Vessel</th><th>Description</th><th>Cause of Death</th>'
+    else:
+        table_headers = '<th>Incident ID</th><th>Date</th><th>Vessel</th><th>Description</th>'
+
+    html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{title} - Detailed Analysis</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
         body {{
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
             background: #f5f5f5;
@@ -994,10 +1053,8 @@ def generate_detailed_report(incident_type: str, df: pd.DataFrame, analysis: dic
             margin-bottom: 30px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }}
-        .header h1 {{
-            margin: 0;
-            font-size: 2.5em;
-        }}
+        .header h1 {{ margin: 0; font-size: 2.5em; }}
+        .header p {{ margin: 10px 0 0 0; font-size: 1.1em; opacity: 0.9; }}
         .section {{
             background: white;
             padding: 30px;
@@ -1011,9 +1068,7 @@ def generate_detailed_report(incident_type: str, df: pd.DataFrame, analysis: dic
             padding-bottom: 10px;
             margin-top: 0;
         }}
-        .plot-container {{
-            margin: 30px 0;
-        }}
+        .plot-container {{ margin: 30px 0; }}
         table {{
             width: 100%;
             border-collapse: collapse;
@@ -1028,45 +1083,30 @@ def generate_detailed_report(incident_type: str, df: pd.DataFrame, analysis: dic
             background: #1e3c72;
             color: white;
         }}
-        tr:hover {{
-            background: #f5f5f5;
-        }}
-
-        /* Enhanced description styles */
+        tr:hover {{ background: #f5f5f5; }}
         .description-cell {{
             max-width: 600px;
-            position: relative;
+            cursor: pointer;
         }}
-
         .description-summary {{
             font-size: 0.95em;
             color: #333;
             line-height: 1.4;
         }}
-
         .view-full-btn {{
             display: inline-block;
             margin-left: 8px;
-            padding: 3px 10px;
-            font-size: 0.75em;
+            padding: 4px 12px;
             background: #2a5298;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            transition: background 0.2s;
+            font-size: 0.85em;
         }}
+        .view-full-btn:hover {{ background: #1e3c72; }}
 
-        .view-full-btn:hover {{
-            background: #1e3c72;
-        }}
-
-        /* Tooltip for hover */
-        .description-cell[title] {{
-            cursor: help;
-        }}
-
-        /* Modal for full description */
+        /* Modal styles */
         .modal {{
             display: none;
             position: fixed;
@@ -1076,104 +1116,93 @@ def generate_detailed_report(incident_type: str, df: pd.DataFrame, analysis: dic
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0,0,0,0.75);
-            animation: fadeIn 0.3s;
+            background-color: rgba(0,0,0,0.6);
         }}
-
-        @keyframes fadeIn {{
-            from {{ opacity: 0; }}
-            to {{ opacity: 1; }}
-        }}
-
         .modal-content {{
             background-color: white;
-            margin: 3% auto;
+            margin: 5% auto;
             padding: 0;
-            border-radius: 12px;
-            max-width: 900px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-            animation: slideIn 0.3s;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 800px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }}
-
-        @keyframes slideIn {{
-            from {{
-                transform: translateY(-50px);
-                opacity: 0;
-            }}
-            to {{
-                transform: translateY(0);
-                opacity: 1;
-            }}
-        }}
-
         .modal-header {{
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
-            padding: 25px 30px;
-            border-radius: 12px 12px 0 0;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }}
-
-        .modal-header h2 {{
-            margin: 0;
-            font-size: 1.8em;
-        }}
-
+        .modal-header h2 {{ margin: 0; }}
         .close {{
             color: white;
-            font-size: 40px;
+            font-size: 35px;
             font-weight: bold;
             cursor: pointer;
-            transition: color 0.2s, transform 0.2s;
-            line-height: 1;
         }}
-
-        .close:hover {{
-            color: #ff6b6b;
-            transform: scale(1.1);
-        }}
-
-        .modal-body {{
-            padding: 30px;
-            line-height: 1.8;
-            font-size: 1.05em;
-            color: #444;
-        }}
-
+        .close:hover {{ color: #ffdd44; }}
+        .modal-body {{ padding: 30px; }}
         .incident-meta {{
-            background: #f0f4f8;
+            background: #f8f9fa;
             padding: 20px;
             border-radius: 8px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             border-left: 4px solid #2a5298;
         }}
-
-        .incident-meta p {{
-            margin: 8px 0;
-            font-size: 0.95em;
-        }}
-
+        .incident-meta p {{ margin: 8px 0; font-size: 0.95em; }}
         .incident-meta strong {{
             color: #1e3c72;
             margin-right: 10px;
             min-width: 100px;
             display: inline-block;
         }}
-
         .incident-description {{
             background: white;
             padding: 20px;
             border-radius: 8px;
             border: 1px solid #e0e0e0;
         }}
-
         .incident-description h3 {{
             color: #1e3c72;
             margin-top: 0;
             margin-bottom: 15px;
             font-size: 1.2em;
+        }}
+
+        /* Pagination styles */
+        .pagination {{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            gap: 10px;
+        }}
+        .pagination button {{
+            padding: 8px 16px;
+            background: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }}
+        .pagination button:hover {{ background: #1e3c72; }}
+        .pagination button:disabled {{
+            background: #ccc;
+            cursor: not-allowed;
+        }}
+        .pagination-info {{
+            font-size: 0.9em;
+            color: #666;
+        }}
+        .loading {{
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2em;
+            color: #666;
         }}
     </style>
 </head>
@@ -1191,8 +1220,7 @@ def generate_detailed_report(incident_type: str, df: pd.DataFrame, analysis: dic
                 <h2>Incident Details</h2>
                 <span class="close" onclick="closeModal()">&times;</span>
             </div>
-            <div class="modal-body" id="modalBodyContent">
-            </div>
+            <div class="modal-body" id="modalBodyContent"></div>
         </div>
     </div>
 
@@ -1200,161 +1228,146 @@ def generate_detailed_report(incident_type: str, df: pd.DataFrame, analysis: dic
         <h2>Interactive Visualizations</h2>
 """
 
-    # Add visualizations
+    # Add visualization placeholders
     for viz_name, fig in visualizations:
         html += f'        <div class="plot-container" id="plot-{viz_name}"></div>\n'
 
-    html += """
-    </div>
+    html += """    </div>
 
     <div class="section">
         <h2>Incident Details</h2>
-        <table>
-            <thead>
-                <tr>
+        <div class="loading" id="loadingMessage">Loading incident data...</div>
+        <div id="tableContainer" style="display:none;">
+            <table id="incidentTable">
+                <thead>
+                    <tr>
 """
+    html += f'                        {table_headers}\n'
+    html += """                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
 
-    # Add table headers based on incident type
-    if incident_type == 'hatch':
-        html += """
-                    <th>Incident ID</th>
-                    <th>Date</th>
-                    <th>Vessel</th>
-                    <th>Description</th>
-                    <th>Severity</th>
-"""
-    elif incident_type == 'foundering':
-        html += """
-                    <th>Incident ID</th>
-                    <th>Date</th>
-                    <th>Vessel</th>
-                    <th>Description</th>
-                    <th>Fatalities</th>
-"""
-    elif incident_type == 'fatality':
-        html += """
-                    <th>Incident ID</th>
-                    <th>Date</th>
-                    <th>Vessel</th>
-                    <th>Description</th>
-                    <th>Cause of Death</th>
-"""
-
-    html += """
-                </tr>
-            </thead>
-            <tbody>
-"""
-
-    # Add table rows with enhanced descriptions
-    for idx, row in df.iterrows():
-        html += "                <tr>\n"
-        html += f"                    <td>{row['incident_id']}</td>\n"
-
-        # Handle null dates
-        date_str = row['date'].strftime('%Y-%m-%d') if pd.notna(row['date']) else 'Unknown'
-        html += f"                    <td>{date_str}</td>\n"
-
-        # Handle missing vessel names
-        vessel = row.get('vessel_name', '') if pd.notna(row.get('vessel_name')) else ''
-        html += f"                    <td>{vessel if vessel else 'Unknown'}</td>\n"
-
-        # Enhanced description with smart summary and modal
-        full_description = str(row['description']) if pd.notna(row['description']) else 'No description available'
-        smart_summary = generate_smart_summary(full_description, max_length=150)
-
-        # Escape HTML characters for tooltip and modal
-        full_desc_escaped = full_description.replace('"', '&quot;').replace("'", "&#39;").replace('<', '&lt;').replace('>', '&gt;')
-        summary_escaped = smart_summary.replace('"', '&quot;').replace("'", "&#39;")
-
-        # Build incident data for modal as a JavaScript object literal
-        import json
-        incident_data = {
-            'id': str(row['incident_id']),
-            'date': date_str,
-            'vessel': vessel if vessel else 'Unknown',
-            'description': full_desc_escaped,
-            'severity': str(row.get('severity', 'N/A')),
-            'location': str(row.get('location', 'Unknown')),
-            'fatalities': str(int(row['fatalities'])) if pd.notna(row.get('fatalities')) else '0',
-            'injuries': str(int(row.get('injuries', 0))) if pd.notna(row.get('injuries')) else '0',
-            'source': str(row.get('source', 'Unknown'))
-        }
-
-        # Convert to JSON string for JavaScript
-        incident_json = json.dumps(incident_data)
-
-        html += f'''                    <td class="description-cell" title="{full_desc_escaped[:500]}...">
-                        <div class="description-summary">{summary_escaped}</div>
-                        <button class="view-full-btn" onclick='showIncidentDetails({incident_json})'>View Full Details</button>
-                    </td>\n'''
-
-        if incident_type == 'hatch':
-            html += f"                    <td>{row.get('severity', 'N/A')}</td>\n"
-        elif incident_type == 'foundering':
-            fatalities = int(row['fatalities']) if pd.notna(row.get('fatalities')) else 0
-            html += f"                    <td>{fatalities}</td>\n"
-        elif incident_type == 'fatality':
-            # Use incident_type as proxy for cause since cause_of_death column doesn't exist in real data
-            cause = row.get('incident_type', 'Unknown') if 'incident_type' in row else 'Unknown'
-            html += f"                    <td>{cause}</td>\n"
-
-        html += "                </tr>\n"
-
-    html += """
-            </tbody>
-        </table>
+            <!-- Pagination controls -->
+            <div class="pagination">
+                <button onclick="changePage(-1)" id="prevButton">← Previous</button>
+                <span class="pagination-info" id="pageInfo">Page 1</span>
+                <button onclick="changePage(1)" id="nextButton">Next →</button>
+            </div>
+        </div>
     </div>
 
     <script>
-"""
+        let allIncidents = [];
+        let currentPage = 1;
+        const itemsPerPage = 25;
 
-    # Add visualization scripts
-    for viz_name, fig in visualizations:
-        plot_json = fig.to_json()
-        html += f"""
-        Plotly.newPlot('plot-{viz_name}', {plot_json});
-"""
+        // Load CSV data
+        Papa.parse('""" + csv_relative_path + """', {
+            download: true,
+            header: true,
+            complete: function(results) {
+                allIncidents = results.data;
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.getElementById('tableContainer').style.display = 'block';
+                renderPage();
+            },
+            error: function(error) {
+                document.getElementById('loadingMessage').innerHTML =
+                    '<span style="color: #ff4444;">Error loading data: ' + error.message + '</span>';
+            }
+        });
 
-    # Add modal JavaScript functions
-    html += """
+        function renderPage() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
 
-        // Modal functions for incident details
-        function showIncidentDetails(incident) {
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageData = allIncidents.slice(start, end);
+
+            pageData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.incident_id || 'N/A'}</td>
+                    <td>${row.date || 'Unknown'}</td>
+                    <td>${row.vessel_name || 'Unknown'}</td>
+                    <td class="description-cell">
+                        <div class="description-summary">${truncateText(row.description, 150)}</div>
+                        <button class="view-full-btn" onclick='showIncidentDetails(${{JSON.stringify(row).replace(/'/g, "&#39;")}})'>View Full Details</button>
+                    </td>
+                    <td>${getExtraColumn(row)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            updatePaginationInfo();
+        }
+
+        function getExtraColumn(row) {{
+            const type = '{incident_type}';
+            if (type === 'hatch') return row.severity || 'N/A';
+            if (type === 'foundering') return row.fatalities || '0';
+            if (type === 'fatality') return row.incident_type || 'Unknown';
+            return '';
+        }}
+
+        function truncateText(text, maxLength) {{
+            if (!text) return 'No description available';
+            text = String(text);
+            if (text.length <= maxLength) return text;
+            return text.substring(0, maxLength - 3) + '...';
+        }}
+
+        function changePage(delta) {{
+            const totalPages = Math.ceil(allIncidents.length / itemsPerPage);
+            currentPage = Math.max(1, Math.min(currentPage + delta, totalPages));
+            renderPage();
+        }}
+
+        function updatePaginationInfo() {{
+            const totalPages = Math.ceil(allIncidents.length / itemsPerPage);
+            document.getElementById('pageInfo').textContent =
+                `Page ${{currentPage}} of ${{totalPages}} (${{allIncidents.length}} total incidents)`;
+            document.getElementById('prevButton').disabled = currentPage === 1;
+            document.getElementById('nextButton').disabled = currentPage === totalPages;
+        }}
+
+        function showIncidentDetails(incident) {{
             const modal = document.getElementById('incidentModal');
             const modalBody = document.getElementById('modalBodyContent');
 
-            // Build modal content with incident details
             modalBody.innerHTML = `
                 <div class="incident-meta">
-                    <p><strong>Incident ID:</strong> ${{incident.id}}</p>
-                    <p><strong>Date:</strong> ${{incident.date}}</p>
-                    <p><strong>Vessel:</strong> ${{incident.vessel}}</p>
-                    <p><strong>Location:</strong> ${{incident.location}}</p>
-                    <p><strong>Data Source:</strong> ${{incident.source}}</p>
-                    <p><strong>Severity:</strong> ${{incident.severity}}</p>
-                    <p><strong>Fatalities:</strong> ${{incident.fatalities}} | <strong>Injuries:</strong> ${{incident.injuries}}</p>
+                    <p><strong>Incident ID:</strong> ${{incident.incident_id || 'N/A'}}</p>
+                    <p><strong>Date:</strong> ${{incident.date || 'Unknown'}}</p>
+                    <p><strong>Vessel:</strong> ${{incident.vessel_name || 'Unknown'}}</p>
+                    <p><strong>Location:</strong> ${{incident.location || 'N/A'}}</p>
+                    <p><strong>Data Source:</strong> ${{incident.source || 'N/A'}}</p>
+                    ${{incident.severity ? '<p><strong>Severity:</strong> ' + incident.severity + '</p>' : ''}}
+                    ${{incident.fatalities ? '<p><strong>Fatalities:</strong> ' + incident.fatalities + '</p>' : ''}}
+                    ${{incident.injuries ? '<p><strong>Injuries:</strong> ' + incident.injuries + '</p>' : ''}}
                 </div>
                 <div class="incident-description">
                     <h3>Full Incident Description</h3>
-                    <p>${{incident.description}}</p>
+                    <p>${{incident.description || 'No description available'}}</p>
                 </div>
             `;
 
             modal.style.display = 'block';
-        }
+        }}
 
-        function closeModal() {
-            const modal = document.getElementById('incidentModal');
-            modal.style.display = 'none';
-        }
+        function closeModal() {{
+            document.getElementById('incidentModal').style.display = 'none';
+        }}
 
-        // Close modal when clicking outside of it
-        window.onclick = function(event) {
+        // Close modal when clicking outside
+        window.onclick = function(event) {{
             const modal = document.getElementById('incidentModal');
-            if (event.target == modal) {
+            if (event.target == modal) {{
                 modal.style.display = 'none';
-            }
+            }}
         }}
 
         // Close modal with Escape key
@@ -1363,14 +1376,20 @@ def generate_detailed_report(incident_type: str, df: pd.DataFrame, analysis: dic
                 closeModal();
             }}
         }});
-    </script>
-</body>
-</html>
 """
+
+    # Add visualization scripts
+    for viz_name, fig in visualizations:
+        plot_json = fig.to_json()
+        html += f"\n        Plotly.newPlot('plot-{viz_name}', {plot_json});\n"
+
+    html += """    </script>
+</body>
+</html>"""
 
     output_file = output_dir / f'{incident_type}_analysis.html'
     output_file.write_text(html)
-    logger.info(f"Detailed report saved to {output_file}")
+    logger.info(f"✓ Generated optimized report: {output_file}")
 
 
 def main():
