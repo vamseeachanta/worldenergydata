@@ -1,0 +1,16 @@
+# ABOUTME: Field-level configuration for the Kaskida pre-FID appraisal case
+# ABOUTME: Provides modular assumptions for Kaskida scenario evaluations
+
+field:
+  field_id: kaskida
+  display_name: "Kaskida"
+  status: pre_fid
+  leases_key: kaskida
+  first_oil: "2032-01-01"
+  data_through: "2024-12-31"
+  operator: "BP"
+  capex:
+    total_mm_usd: 10000
+  production_profile:
+    plateau_rate_mbopd: 120
+    gor_scf_per_bbl: 1000

@@ -1,0 +1,600 @@
+# ABOUTME: Main configuration for Lower Tertiary economic analysis
+# ABOUTME: Orchestrates data loading, calculations, and report generation
+
+metadata:
+  version: "1.0.0"
+  created_date: "2024-12-20"
+  analysis_name: "Lower Tertiary Industry Performance Analysis"
+  description: |
+    Comprehensive economic analysis of Lower Tertiary subsea developments
+    in the Gulf of Mexico, producing outputs that match the Industry
+    Performance paper published October 2020.
+
+# Configuration File References
+config_files:
+  economic_assumptions: "config/analysis/lower_tertiary/economic_assumptions.yml"
+  field_parameters: "config/analysis/lower_tertiary/field_parameters.yml"
+  price_deck: "data/prices/wti_full_monthly.xlsx"
+
+# Analysis Scope
+analysis_scope:
+  # Time period
+  time_period:
+    start_date: "2008-01-01"  # Early discoveries
+    end_date: "2024-12-31"    # Data cutoff
+    forecast_end: "2050-12-31"
+    
+  # Fields to analyze
+  fields_to_analyze:
+    producing:
+      - jack_st_malo
+      - stones
+      - julia
+      - anchor
+      - cascade_chinook
+    
+    development:
+      - shenandoah
+    
+    pre_fid:
+      - tiber
+      - kaskida
+    
+    # Focus on producing fields for matching paper results
+    primary_focus:
+      - jack_st_malo
+      - stones
+      - julia
+      - anchor
+  
+  # Aggregation levels
+  aggregations:
+    - field_level: true
+    - field_group_level: true
+    - operator_level: true
+    - basin_level: true
+    - time_series: true
+
+# Data Sources
+data_sources:
+  # Production data
+  production:
+    primary:
+      source: "BSEE monthly production"
+      path: "data/modules/bsee/zip/historical_production_yearly/"
+      file_pattern: "ogora*.zip"
+      format: "delimited_in_zip"
+      
+    fields_mapping:
+      - prod_date: "date"
+      - api_well_num: "api14"
+      - oil_prod_bbls: "oil_bbl"
+      - gas_prod_mcf: "gas_mcf"
+      - water_prod_bbls: "water_bbl"
+    
+    aggregation:
+      method: "sum"
+      group_by:
+        - lease_number
+        - year
+        - month
+    
+    validation:
+      check_negative_values: true
+      flag_zero_production: true
+      check_temporal_gaps: true
+  
+  # Price data
+  prices:
+    oil:
+      source: "EIA WTI Cushing"
+      path: "data/prices/wti_full_monthly.xlsx"
+      sheet: "Monthly Prices"
+      date_column: "Date"
+      price_column: "WTI_USD_BBL"
+      
+    gas:
+      source: "EIA Henry Hub"
+      path: "data/prices/henry_hub_monthly.xlsx"
+      sheet: "Monthly Prices"
+      date_column: "Date"
+      price_column: "HH_USD_MCF"
+    
+    fallback:
+      use_constant_prices: true
+      oil_usd_per_bbl: 75.00
+      gas_usd_per_mcf: 3.50
+  
+  # Well and drilling data
+  wells:
+    source: "BSEE well data"
+    paths:
+      - "data/modules/bsee/bin/war/"
+      - "data/modules/bsee/bin/directional_surveys/"
+    
+    use_for:
+      - well_count_validation
+      - drilling_timeline
+      - completion_dates
+  
+  # Cost data
+  costs:
+    source: "Public disclosures and field_parameters.yml"
+    inflation_adjustment:
+      enabled: true
+      base_year: 2024
+      index_source: "BLS PPI for oil and gas extraction"
+
+# Calculation Methods
+calculations:
+  
+  # Revenue calculations
+  revenue:
+    oil:
+      method: "volume_times_price"
+      formula: "oil_bbl * wti_price_usd_per_bbl"
+      adjustments:
+        quality_differential: 0.00
+        transportation_deduction: 0.00
+    
+    gas:
+      method: "volume_times_price"
+      formula: "gas_mcf * henry_hub_usd_per_mcf * (1 + basis_differential)"
+      basis_differential: -0.20
+    
+    ngl:
+      method: "derived_from_gas"
+      formula: "gas_mcf * ngl_yield_bbl_per_mcf * ngl_price_usd_per_bbl"
+      ngl_yield_bbl_per_mcf: 0.08
+    
+    total:
+      formula: "oil_revenue + gas_revenue + ngl_revenue"
+  
+  # Costs
+  costs:
+    royalty:
+      method: "percentage_of_gross_revenue"
+      rate: 0.1875
+      formula: "total_revenue * royalty_rate"
+    
+    severance_tax:
+      method: "percentage_of_gross_revenue"
+      rate: 0.00  # N/A for federal waters
+    
+    operating_costs:
+      method: "variable_per_unit_plus_fixed"
+      variable:
+        formula: "(oil_bbl + ngl_bbl) * opex_per_bbl + gas_mcf * opex_per_mcf"
+        opex_per_bbl: 15.00
+        opex_per_mcf: 0.50
+      fixed:
+        monthly_fixed_cost_usd: 10000000  # $10MM/month
+        escalation_rate_annual: 0.03
+    
+    capital_costs:
+      method: "from_field_parameters"
+      depreciation:
+        method: "straight_line"
+        period_years: 10
+        residual_value_pct: 0.10
+    
+    income_tax:
+      method: "percentage_of_net_income"
+      rate: 0.21
+      formula: "(revenue - royalty - opex - depreciation) * tax_rate"
+  
+  # Cash flow
+  cash_flow:
+    operating_cash_flow:
+      formula: "revenue - royalty - opex - income_tax"
+    
+    free_cash_flow:
+      formula: "operating_cash_flow - capex"
+    
+    cumulative_cash_flow:
+      method: "running_sum"
+      start_date: "fid_date"
+  
+  # NPV
+  npv:
+    methods:
+      - name: "NPV10"
+        discount_rate: 0.10
+        compounding: "monthly"
+        formula: "sum(cash_flow_t / (1 + monthly_rate)^t)"
+      
+      - name: "NPV15"
+        discount_rate: 0.15
+        compounding: "monthly"
+      
+      - name: "NPV8"
+        discount_rate: 0.08
+        compounding: "monthly"
+    
+    present_value_date: "fid_date"
+    include_abandonment: true
+  
+  # IRR
+  irr:
+    method: "xirr"  # Irregular time intervals
+    cash_flows: "monthly"
+    convergence_tolerance: 0.0001
+    max_iterations: 100
+  
+  # Payback Period
+  payback:
+    method: "cumulative_cash_flow_zero_crossing"
+    discounted: true
+    discount_rate: 0.10
+  
+  # Other Metrics
+  metrics:
+    profitability_index:
+      formula: "npv / total_capex"
+    
+    unit_technical_cost:
+      formula: "total_capex / eur_mmboe"
+    
+    finding_and_development_cost:
+      formula: "(exploration_capex + development_capex) / reserves_mmboe"
+
+# Output Configuration
+outputs:
+  
+  # Primary outputs matching paper
+  primary_reports:
+    
+    - name: "Production Revenue Summary"
+      type: "table"
+      aggregation: "annual"
+      fields:
+        - field_name
+        - year
+        - oil_production_mmbo
+        - gas_production_bcf
+        - oil_revenue_mm_usd
+        - gas_revenue_mm_usd
+        - total_revenue_mm_usd
+      subtotals:
+        - by_field
+        - by_year
+        - grand_total
+      format: "excel"
+      file: "results/lower_tertiary/production_revenue_summary.xlsx"
+    
+    - name: "NPV Analysis by Field"
+      type: "table"
+      fields:
+        - field_name
+        - total_capex_mm_usd
+        - cumulative_revenue_mm_usd
+        - cumulative_cash_flow_mm_usd
+        - npv10_mm_usd
+        - npv15_mm_usd
+        - irr_percent
+        - payback_years
+        - profitability_index
+      sort_by: "npv10_mm_usd"
+      sort_order: "descending"
+      format: "excel"
+      file: "results/lower_tertiary/npv_analysis_by_field.xlsx"
+    
+    - name: "Monthly Cash Flow Timeline"
+      type: "time_series"
+      aggregation: "monthly"
+      fields:
+        - date
+        - field_name
+        - production_mboe
+        - revenue_mm_usd
+        - operating_cost_mm_usd
+        - capex_mm_usd
+        - operating_cash_flow_mm_usd
+        - free_cash_flow_mm_usd
+        - cumulative_cash_flow_mm_usd
+      format: "excel"
+      file: "results/lower_tertiary/monthly_cash_flow.xlsx"
+    
+    - name: "Capital Deployment Schedule"
+      type: "table"
+      aggregation: "annual"
+      fields:
+        - field_name
+        - year
+        - capex_mm_usd
+        - capex_category  # exploration, development, abandonment
+      format: "excel"
+      file: "results/lower_tertiary/capital_deployment.xlsx"
+  
+  # HTML Interactive Reports
+  interactive_reports:
+    
+    - name: "Lower Tertiary Performance Dashboard"
+      type: "html_dashboard"
+      template: "plotly"
+      sections:
+        
+        - section: "Executive Summary"
+          content:
+            - total_investment_mm_usd
+            - cumulative_production_mmboe
+            - cumulative_revenue_mm_usd
+            - aggregate_npv10_mm_usd
+            - average_irr_percent
+        
+        - section: "Production Overview"
+          charts:
+            - type: "area_chart"
+              title: "Monthly Production by Field"
+              x_axis: "date"
+              y_axis: "production_mboed"
+              stack: true
+              series: "field_name"
+            
+            - type: "bar_chart"
+              title: "Cumulative Production by Field"
+              x_axis: "field_name"
+              y_axis: "cumulative_production_mmboe"
+              sort: "descending"
+        
+        - section: "Financial Performance"
+          charts:
+            - type: "waterfall_chart"
+              title: "NPV10 Composition by Field"
+              categories: "field_name"
+              values: "npv10_mm_usd"
+            
+            - type: "scatter_chart"
+              title: "IRR vs. Total Investment"
+              x_axis: "total_capex_mm_usd"
+              y_axis: "irr_percent"
+              size: "eur_mmboe"
+              color: "field_name"
+            
+            - type: "line_chart"
+              title: "Cumulative Cash Flow Timeline"
+              x_axis: "date"
+              y_axis: "cumulative_cash_flow_mm_usd"
+              series: "field_name"
+        
+        - section: "Unit Economics"
+          charts:
+            - type: "bar_chart"
+              title: "Unit Technical Cost ($/BOE)"
+              x_axis: "field_name"
+              y_axis: "unit_technical_cost_usd_per_boe"
+            
+            - type: "bar_chart"
+              title: "Operating Cost per BOE"
+              x_axis: "field_name"
+              y_axis: "opex_per_boe_usd"
+        
+        - section: "Sensitivity Analysis"
+          charts:
+            - type: "tornado_chart"
+              title: "NPV Sensitivity to Key Drivers"
+              base_case: "npv10_mm_usd"
+              variables:
+                - oil_price
+                - production
+                - opex
+                - capex
+              ranges: "±20%"
+      
+      output_file: "results/lower_tertiary/dashboard.html"
+      standalone: true
+      include_data_tables: true
+  
+  # Export formats
+  export_formats:
+    - csv
+    - excel
+    - json
+    - html
+  
+  # Intermediate outputs
+  save_intermediate:
+    enabled: true
+    path: "results/lower_tertiary/intermediate/"
+    files:
+      - monthly_production.csv
+      - monthly_prices.csv
+      - monthly_revenue.csv
+      - monthly_costs.csv
+      - monthly_cash_flow.csv
+      - npv_calculations.csv
+
+# Processing Options
+processing:
+  
+  # Performance
+  performance:
+    use_parallel: true
+    max_workers: 4
+    chunk_size: 10000
+    cache_enabled: true
+    cache_path: "cache/lower_tertiary/"
+  
+  # Error handling
+  error_handling:
+    on_missing_data: "warn"  # warn, error, skip
+    on_calculation_error: "warn"
+    log_warnings: true
+    log_file: "logs/lower_tertiary_analysis.log"
+  
+  # Validation
+  validation:
+    validate_inputs: true
+    validate_outputs: true
+    check_data_quality: true
+    quality_thresholds:
+      min_monthly_production: 100  # bbls
+      max_monthly_production: 10000000  # bbls
+      min_price: 20.0  # $/bbl
+      max_price: 200.0  # $/bbl
+  
+  # Logging
+  logging:
+    level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    handlers:
+      - console
+      - file
+
+# Comparison with Paper Benchmarks
+paper_benchmarks:
+  description: |
+    Expected results from "Industry Performance in Lower Tertiary 251020"
+    paper for validation of our calculations.
+  
+  # Key metrics to validate against
+  validation_targets:
+    
+    jack_st_malo:
+      cumulative_production_mmboe:
+        expected: 150
+        tolerance_pct: 10
+      cumulative_revenue_mm_usd:
+        expected: 8000
+        tolerance_pct: 15
+      npv10_mm_usd:
+        expected: 3500
+        tolerance_pct: 20
+    
+    stones:
+      cumulative_production_mmboe:
+        expected: 80
+        tolerance_pct: 10
+      cumulative_revenue_mm_usd:
+        expected: 4500
+        tolerance_pct: 15
+      npv10_mm_usd:
+        expected: 2000
+        tolerance_pct: 20
+    
+    julia:
+      cumulative_production_mmboe:
+        expected: 50
+        tolerance_pct: 10
+      cumulative_revenue_mm_usd:
+        expected: 2800
+        tolerance_pct: 15
+      npv10_mm_usd:
+        expected: 1200
+        tolerance_pct: 20
+  
+  validation_reports:
+    - name: "Comparison with Paper Results"
+      type: "validation_report"
+      format: "html"
+      file: "results/lower_tertiary/paper_comparison.html"
+      include:
+        - calculated_values
+        - paper_benchmarks
+        - variance_analysis
+        - assumptions_comparison
+
+# Execution Plan
+execution:
+  
+  # Pipeline stages
+  stages:
+    
+    - stage: 1
+      name: "Load Configurations"
+      actions:
+        - load_economic_assumptions
+        - load_field_parameters
+        - validate_configurations
+    
+    - stage: 2
+      name: "Load Data"
+      actions:
+        - load_production_data
+        - load_price_data
+        - load_well_data
+        - validate_data_quality
+    
+    - stage: 3
+      name: "Calculate Revenues"
+      actions:
+        - calculate_oil_revenue
+        - calculate_gas_revenue
+        - calculate_ngl_revenue
+        - aggregate_revenues
+    
+    - stage: 4
+      name: "Calculate Costs"
+      actions:
+        - calculate_royalties
+        - calculate_operating_costs
+        - calculate_depreciation
+        - calculate_income_tax
+    
+    - stage: 5
+      name: "Calculate Cash Flows"
+      actions:
+        - calculate_operating_cash_flow
+        - calculate_free_cash_flow
+        - calculate_cumulative_cash_flow
+    
+    - stage: 6
+      name: "Calculate Financial Metrics"
+      actions:
+        - calculate_npv
+        - calculate_irr
+        - calculate_payback
+        - calculate_profitability_index
+    
+    - stage: 7
+      name: "Run Sensitivities"
+      actions:
+        - run_price_sensitivity
+        - run_production_sensitivity
+        - run_cost_sensitivity
+        - aggregate_sensitivity_results
+    
+    - stage: 8
+      name: "Generate Reports"
+      actions:
+        - generate_excel_reports
+        - generate_html_dashboard
+        - generate_validation_report
+        - export_data_files
+    
+    - stage: 9
+      name: "Validate Results"
+      actions:
+        - compare_with_paper_benchmarks
+        - document_assumptions
+        - generate_final_summary
+  
+  # Run options
+  run_options:
+    run_all_stages: true
+    stop_on_error: false
+    save_checkpoint_after_each_stage: true
+    checkpoint_path: "checkpoints/lower_tertiary/"
+
+# Documentation
+documentation:
+  generate_readme: true
+  readme_path: "results/lower_tertiary/README.md"
+  include_in_readme:
+    - analysis_description
+    - configuration_summary
+    - data_sources
+    - calculation_methods
+    - output_files
+    - assumptions_and_limitations
+    - references
+  
+  generate_data_dictionary: true
+  data_dictionary_path: "results/lower_tertiary/DATA_DICTIONARY.md"
+
+# Version Control
+version_control:
+  track_inputs: true
+  track_config_changes: true
+  track_outputs: true
+  manifest_file: "results/lower_tertiary/analysis_manifest.json"
