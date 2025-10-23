@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hatch Maloperation Incidents - Detailed Analysis</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .header h1 { margin: 0; font-size: 2.5em; }
+        .header p { margin: 10px 0 0 0; font-size: 1.1em; opacity: 0.9; }
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .section h2 {
+            color: #1e3c72;
+            border-bottom: 3px solid #1e3c72;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        .plot-container { margin: 30px 0; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #1e3c72;
+            color: white;
+        }
+        tr:hover { background: #f5f5f5; }
+        .description-cell {
+            max-width: 600px;
+            cursor: pointer;
+        }
+        .description-summary {
+            font-size: 0.95em;
+            color: #333;
+            line-height: 1.4;
+        }
+        .view-full-btn {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 4px 12px;
+            background: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+        }
+        .view-full-btn:hover { background: #1e3c72; }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 800px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .modal-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header h2 { margin: 0; }
+        .close {
+            color: white;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover { color: #ffdd44; }
+        .modal-body { padding: 30px; }
+        .incident-meta {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2a5298;
+        }
+        .incident-meta p { margin: 8px 0; font-size: 0.95em; }
+        .incident-meta strong {
+            color: #1e3c72;
+            margin-right: 10px;
+            min-width: 100px;
+            display: inline-block;
+        }
+        .incident-description {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+        .incident-description h3 {
+            color: #1e3c72;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        /* Pagination styles */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            gap: 10px;
+        }
+        .pagination button {
+            padding: 8px 16px;
+            background: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .pagination button:hover { background: #1e3c72; }
+        .pagination button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .pagination-info {
+            font-size: 0.9em;
+            color: #666;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Hatch Maloperation Incidents</h1>
+        <p>Detailed Analysis Report</p>
+        <p>Generated: October 23, 2025 at 14:57:16</p>
+    </div>
+
+    <div class="section">
+        <h2>Interactive Visualizations</h2>
+        <div class="plot-container" id="plot-severity"></div>
+        <div class="plot-container" id="plot-trend"></div>
+    </div>
+
+    <script>
+        // Embedded chart data keeps the page lightweight while still showing key trends.
+        const hatchSeverity = {
+            x: ["CLASS 5", "Unknown", "PRELIMINARY INQUIRY", "FACT-FINDING", "CLASS C-4", "CLASS C-3", "FACTUAL AUDIT", "Other"],
+            y: [67243, 14624, 5957, 3441, 2911, 2563, 1840, 4039]
+        };
+
+        Plotly.newPlot('plot-severity', [{
+            x: hatchSeverity.x,
+            y: hatchSeverity.y,
+            type: 'bar',
+            marker: {color: '#2a5298'},
+            text: hatchSeverity.y.map(String),
+            textposition: 'outside'
+        }], {
+            title: 'Hatch Incidents by Assessment Class (Top Categories)',
+            margin: {t: 60, r: 20, b: 80, l: 60},
+            yaxis: {title: 'Incidents'},
+            xaxis: {title: 'Assessment Class'}
+        });
+
+        const hatchTrend = {
+            x: [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025],
+            y: [1210, 1294, 1412, 1365, 1315, 1286, 1477, 1307, 1113, 184]
+        };
+
+        Plotly.newPlot('plot-trend', [{
+            x: hatchTrend.x,
+            y: hatchTrend.y,
+            mode: 'lines+markers',
+            line: {color: '#ff7f0e', width: 3},
+            marker: {size: 8}
+        }], {
+            title: 'Hatch Incidents per Year (Last 10 Years)',
+            margin: {t: 60, r: 20, b: 80, l: 60},
+            yaxis: {title: 'Incidents'},
+            xaxis: {title: 'Year', dtick: 1}
+        });
+    </script>
+</body>
+</html>
