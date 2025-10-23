@@ -187,3 +187,7 @@ hive-mind-prompt-*.txt
 
 # Prevent data backup directories from being committed
 data/modules/*.backup*
+
+# Generated marine safety reports (can be regenerated)
+reports/marine_safety/*.html
+reports/marine_safety/*//*.html

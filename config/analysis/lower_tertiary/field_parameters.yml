@@ -1,0 +1,545 @@
+# ABOUTME: Field-specific parameters for Lower Tertiary developments
+# ABOUTME: Individual field data for Jack, St. Malo, Julia, Stones, Anchor, and other key fields
+
+metadata:
+  version: "1.0.0"
+  created_date: "2024-12-20"
+  description: |
+    Parameters for individual Lower Tertiary fields based on public
+    disclosures, BSEE data, and operator presentations.
+
+# Individual Field Configurations
+fields:
+  
+  # Jack / St. Malo (Chevron operated)
+  jack_st_malo:
+    field_names:
+      - "Jack"
+      - "St. Malo"
+    operator: "Chevron"
+    development_name: "Jack/St. Malo"
+    
+    location:
+      boem_field_codes:
+        - "WR545"  # Jack
+        - "WR543"  # St. Malo
+      area: "Walker Ridge"
+      water_depth_ft: 7000
+      distance_to_shore_miles: 280
+    
+    partners:
+      - name: "Chevron"
+        working_interest: 0.51
+        operator: true
+      - name: "Equinor"
+        working_interest: 0.245
+      - name: "Suncor"
+        working_interest: 0.245
+    
+    key_dates:
+      discovery: "2004-09-01"
+      fid: "2010-12-01"
+      first_oil: "2014-02-01"
+      data_through: "2024-12-31"
+    
+    development:
+      concept: "Subsea tieback to shared host"
+      host_facility: "Jack/St. Malo floating production unit"
+      host_capacity_mbopd: 177
+      well_count:
+        jack: 4
+        st_malo: 7
+        total: 11
+    
+    capex:
+      total_mm_usd: 7500  # Combined development
+      per_field:
+        jack_mm_usd: 3200
+        st_malo_mm_usd: 4300
+      actual_as_disclosed: true
+    
+    reserves:
+      combined_mmboe: 500
+      per_field:
+        jack_mmboe: 200
+        st_malo_mmboe: 300
+      source: "Operator estimates at FID"
+    
+    production_profile:
+      plateau_rate_mbopd: 94
+      gor_scf_per_bbl: 1200
+    
+  # Stones (Shell operated)
+  stones:
+    field_names:
+      - "Stones"
+    operator: "Shell"
+    
+    location:
+      boem_field_codes:
+        - "WR508"
+      area: "Walker Ridge"
+      water_depth_ft: 9500
+      distance_to_shore_miles: 200
+    
+    partners:
+      - name: "Shell"
+        working_interest: 1.00
+        operator: true
+    
+    key_dates:
+      discovery: "2005-01-01"
+      fid: "2013-05-01"
+      first_oil: "2016-09-01"
+      data_through: "2024-12-31"
+    
+    development:
+      concept: "Standalone FPSO"
+      host_facility: "Turritella FPSO"
+      host_capacity_mbopd: 50
+      well_count: 7
+      notable_features:
+        - "Deepest FPSO in world at startup"
+        - "All-electric subsea production system"
+    
+    capex:
+      total_mm_usd: 3800
+      breakdown:
+        fpso_mm_usd: 1500
+        subsea_mm_usd: 1800
+        wells_mm_usd: 500
+      actual_as_disclosed: true
+    
+    reserves:
+      mmboe: 250
+      source: "Shell public disclosures"
+    
+    production_profile:
+      plateau_rate_mbopd: 50
+      gor_scf_per_bbl: 850
+  
+  # Julia (Equinor/Exxon co-operated)
+  julia:
+    field_names:
+      - "Julia"
+    operator: "Equinor"
+    co_operator: "ExxonMobil"
+    
+    location:
+      boem_field_codes:
+        - "WR490"
+      area: "Walker Ridge"
+      water_depth_ft: 6600
+      distance_to_shore_miles: 265
+    
+    partners:
+      - name: "Equinor"
+        working_interest: 0.50
+        operator: true
+      - name: "ExxonMobil"
+        working_interest: 0.50
+        operator: true  # Co-operated
+    
+    key_dates:
+      discovery: "2007-01-01"
+      fid: "2016-09-01"
+      first_oil: "2019-05-01"
+      data_through: "2024-12-31"
+    
+    development:
+      concept: "Subsea tieback"
+      host_facility: "Equinor Titan mini-TLP"
+      host_capacity_mbopd: 24
+      well_count: 6
+    
+    capex:
+      total_mm_usd: 4700
+      breakdown:
+        titan_host_mm_usd: 2500
+        subsea_tieback_mm_usd: 1500
+        wells_mm_usd: 700
+      actual_as_disclosed: true
+    
+    reserves:
+      mmboe: 240
+      source: "Operator estimates"
+    
+    production_profile:
+      plateau_rate_mbopd: 34
+      gor_scf_per_bbl: 1000
+  
+  # Anchor (Chevron operated)
+  anchor:
+    field_names:
+      - "Anchor"
+    operator: "Chevron"
+    
+    location:
+      boem_field_codes:
+        - "GC895"  # Green Canyon
+      area: "Green Canyon"
+      water_depth_ft: 5000
+      distance_to_shore_miles: 140
+    
+    partners:
+      - name: "Chevron"
+        working_interest: 0.625
+        operator: true
+      - name: "Equinor"
+        working_interest: 0.25
+      - name: "TotalEnergies"
+        working_interest: 0.125
+    
+    key_dates:
+      discovery: "2014-01-01"
+      fid: "2019-12-01"
+      first_oil: "2024-08-01"
+      data_through: "2024-12-31"
+    
+    development:
+      concept: "Standalone Semi-submersible FPU"
+      host_facility: "Anchor FPU"
+      host_capacity_mbopd: 75
+      well_count: 7
+      notable_features:
+        - "20K psi wellheads - industry record"
+        - "HPHT technology advancement"
+    
+    capex:
+      total_mm_usd: 5600
+      breakdown:
+        fpu_mm_usd: 2500
+        subsea_20k_systems_mm_usd: 2300
+        wells_mm_usd: 800
+      actual_as_disclosed: true
+    
+    reserves:
+      mmboe: 440
+      source: "Chevron FID announcement"
+    
+    production_profile:
+      plateau_rate_mbopd: 75
+      gor_scf_per_bbl: 1100
+  
+  # Tiber (BP operated)
+  tiber:
+    field_names:
+      - "Tiber"
+    operator: "BP"
+    
+    location:
+      boem_field_codes:
+        - "KC102"  # Keathley Canyon
+      area: "Keathley Canyon"
+      water_depth_ft: 4100
+      distance_to_shore_miles: 250
+    
+    partners:
+      - name: "BP"
+        working_interest: 0.625
+        operator: true
+      - name: "ExxonMobil"
+        working_interest: 0.375
+    
+    key_dates:
+      discovery: "2009-09-01"
+      appraisal: "2009-2013"
+      fid: "TBD"  # Not yet sanctioned
+      data_through: "2024-12-31"
+    
+    development:
+      concept: "Planned subsea tieback"
+      status: "Pre-FID"
+      potential_host: "Atlantis"
+      well_count_planned: 8
+    
+    capex:
+      estimated_mm_usd: 8000
+      actual_as_disclosed: false
+      source: "Industry estimates"
+    
+    reserves:
+      estimated_mmboe: 400
+      source: "Industry estimates from discovery data"
+      uncertainty: "high"
+    
+    production_profile:
+      plateau_rate_mbopd: 80
+      gor_scf_per_bbl: 900
+      note: "Hypothetical - field not yet developed"
+  
+  # Shenandoah (Beacon Offshore operated)
+  shenandoah:
+    field_names:
+      - "Shenandoah"
+    operator: "Beacon Offshore Energy"
+    
+    location:
+      boem_field_codes:
+        - "WR051"
+      area: "Walker Ridge"
+      water_depth_ft: 5800
+      distance_to_shore_miles: 165
+    
+    partners:
+      - name: "Beacon Offshore Energy"
+        working_interest: 0.69
+        operator: true
+      - name: "LLOG Exploration"
+        working_interest: 0.00  # Sold to Beacon
+        operator: false
+      - name: "Navitas Petroleum"
+        working_interest: 0.31
+        operator: false
+    
+    key_dates:
+      discovery: "2009-01-01"
+      fid: "2021-08-01"
+      first_oil: "2025-Q4"  # Expected
+      data_through: "2024-12-31"
+    
+    development:
+      concept: "Standalone FPSO"
+      host_facility: "Shenandoah FPSO"
+      host_capacity_mbopd: 100
+      well_count: 6
+      notable_features:
+        - "Significant pre-FID write-offs by prior partners"
+        - "Cobalt bankruptcy asset"
+    
+    capex:
+      total_mm_usd: 1800
+      source: "Beacon FID announcement 2021"
+      actual_as_disclosed: true
+      
+      # Historical write-offs (not part of current capex)
+      prior_partner_writeoffs:
+        anadarko_mm_usd: 467
+        cobalt_mm_usd: 233
+        total_written_off_mm_usd: 700
+        note: "Sunk exploration costs not recovered"
+    
+    reserves:
+      mmboe: 300
+      source: "Beacon estimates at FID"
+    
+    production_profile:
+      plateau_rate_mbopd: 100
+      gor_scf_per_bbl: 1300
+  
+  # Cascade/Chinook (Petrobras/Total operated)
+  cascade_chinook:
+    field_names:
+      - "Cascade"
+      - "Chinook"
+    operator: "TotalEnergies"
+    
+    location:
+      boem_field_codes:
+        - "WR206"  # Cascade
+        - "WR207"  # Chinook  
+      area: "Walker Ridge"
+      water_depth_ft: 8200
+      distance_to_shore_miles: 300
+    
+    partners:
+      - name: "TotalEnergies"
+        working_interest: 0.60
+        operator: true
+      - name: "Equinor"
+        working_interest: 0.40
+    
+    key_dates:
+      discovery: "2002-01-01"
+      fid: "2016-02-01"
+      first_oil: "2021-08-01"
+      data_through: "2024-12-31"
+    
+    development:
+      concept: "Subsea tieback"
+      host_facility: "Subsea Port Production Unit (SPPU)"
+      host_capacity_mbopd: 75
+      well_count: 6
+      notable_features:
+        - "Long-distance tieback (30+ miles)"
+        - "Integrated development"
+    
+    capex:
+      total_mm_usd: 2900
+      actual_as_disclosed: true
+    
+    reserves:
+      combined_mmboe: 250
+      source: "Total FID announcement"
+    
+    production_profile:
+      plateau_rate_mbopd: 75
+      gor_scf_per_bbl: 1400
+  
+  # Kaskida (BP operated)
+  kaskida:
+    field_names:
+      - "Kaskida"
+    operator: "BP"
+    
+    location:
+      boem_field_codes:
+        - "KC292"
+      area: "Keathley Canyon"
+      water_depth_ft: 5900
+      distance_to_shore_miles: 250
+    
+    partners:
+      - name: "BP"
+        working_interest: 1.00
+        operator: true
+    
+    key_dates:
+      discovery: "2006-01-01"
+      appraisal: "2006-2011"
+      fid: "TBD"  # Not sanctioned
+      data_through: "2024-12-31"
+    
+    development:
+      concept: "Potential standalone development"
+      status: "Pre-FID appraisal"
+      well_count_planned: 10
+    
+    capex:
+      estimated_mm_usd: 10000
+      actual_as_disclosed: false
+      source: "Industry estimates"
+      uncertainty: "very high"
+    
+    reserves:
+      estimated_mmboe: 800
+      source: "Discovery announcement and industry estimates"
+      uncertainty: "high"
+    
+    production_profile:
+      plateau_rate_mbopd: 120
+      gor_scf_per_bbl: 1000
+      note: "Hypothetical - field not yet developed"
+
+# Field Groups for Aggregate Analysis
+field_groups:
+  producing:
+    name: "Currently Producing Lower Tertiary Fields"
+    fields:
+      - jack_st_malo
+      - stones
+      - julia
+      - anchor
+      - cascade_chinook
+    
+  pre_fid:
+    name: "Discoveries Awaiting Final Investment Decision"
+    fields:
+      - tiber
+      - kaskida
+    
+  under_development:
+    name: "Fields Under Development (Pre-First Oil)"
+    fields:
+      - shenandoah
+  
+  by_operator:
+    chevron:
+      - jack_st_malo
+      - anchor
+    shell:
+      - stones
+    equinor:
+      - julia
+      - jack_st_malo  # Partner
+      - anchor  # Partner
+      - cascade_chinook  # Partner
+    bp:
+      - tiber
+      - kaskida
+    beacon:
+      - shenandoah
+    total:
+      - cascade_chinook
+  
+  by_water_depth:
+    deep_5000_7000ft:
+      - jack_st_malo
+      - anchor
+      - shenandoah
+    ultra_deep_7000plus_ft:
+      - stones
+      - cascade_chinook
+      - kaskida
+
+# Data Quality Notes
+data_quality:
+  production_data:
+    source: "BSEE monthly production reports"
+    availability: "Through December 2024"
+    completeness:
+      jack_st_malo: "Complete 2014-2024"
+      stones: "Complete 2016-2024"
+      julia: "Complete 2019-2024"
+      anchor: "Partial 2024 (startup Aug 2024)"
+      cascade_chinook: "Complete 2021-2024"
+      shenandoah: "Not yet producing"
+      tiber: "No production data"
+      kaskida: "No production data"
+  
+  cost_data:
+    source: "Public disclosures, SEC filings, operator presentations"
+    reliability: "High for producing fields, estimates for pre-FID"
+    notes: |
+      Capital costs are as-disclosed by operators at FID or in
+      subsequent project updates. Actual costs may vary from initial
+      estimates, particularly for complex HPHT developments.
+  
+  reserves:
+    source: "Operator estimates, not independently verified"
+    classification: "Gross field estimates (before royalties/working interest)"
+    notes: |
+      Reserve estimates are operator estimates at FID or discovery.
+      Actual recoverable reserves may differ based on production
+      performance and future development decisions.
+
+# Analysis Recommendations
+recommendations:
+  aggregations:
+    - "Analyze producing fields with actual data"
+    - "Separate pre-FID fields due to high uncertainty"
+    - "Group by development concept (FPSO vs. tieback)"
+    - "Compare operator performance"
+  
+  sensitivities:
+    focus_on:
+      - "Oil price impact (±20% most relevant)"
+      - "Production decline rates"
+      - "Operating cost inflation"
+  
+  comparisons:
+    - "Early movers (Jack/St. Malo, Stones) vs. recent (Anchor)"
+    - "Standalone facilities vs. tiebacks"
+    - "Partner structure impact on decision-making"
+
+# References
+references:
+  - source: "BSEE production data"
+    url: "https://www.data.bsee.gov/Production/Files/OGORRawDataSet.zip"
+    accessed: "2024-12-20"
+  
+  - source: "Chevron investor presentations"
+    note: "Jack/St. Malo and Anchor project details"
+  
+  - source: "Shell project updates"
+    note: "Stones development and performance"
+  
+  - source: "Equinor Capital Markets Day presentations"
+    note: "Julia and Jack/St. Malo partnership details"
+  
+  - source: "Beacon Offshore FID announcement"
+    note: "Shenandoah development costs and timeline"
+    date: "2021-08-01"
+  
+  - source: "SEC 10-K and 10-Q filings"
+    note: "Impairments and project economics disclosures"

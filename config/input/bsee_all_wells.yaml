@@ -1,0 +1,158 @@
+# YAML Configuration: BSEE All Wells Analysis
+# Generated from: user_prompt.md
+# Purpose: Configure comprehensive BSEE well production analysis
+
+metadata:
+  feature_name: "bsee-all-wells-analysis"
+  created: "2025-10-22"
+  updated: "2025-10-22"
+  status: "production"
+  version: "1.0.0"
+  author: "worldenergydata"
+  description: "Comprehensive BSEE well production data analysis with FDAS enhancement"
+
+# Requirements from user_prompt.md
+requirements:
+  functional:
+    - requirement: "Analyze production data for all BSEE wells"
+      priority: "high"
+      implemented: true
+
+    - requirement: "Enhance BSEE data with FDAS information"
+      priority: "high"
+      implemented: true
+
+    - requirement: "Generate interactive HTML reports with Plotly"
+      priority: "high"
+      implemented: true
+
+  non_functional:
+    performance:
+      max_response_time_sec: 900  # 15 minutes
+      max_memory_mb: 2048
+      max_file_size_mb: 500
+
+# Input specifications
+input:
+  format: "csv"
+  source:
+    type: "file"
+    path: "data/modules/bsee/production/"
+    pattern: "*.csv"
+
+  validation:
+    required_columns:
+      - "LEASE_NUMBER"
+      - "API_WELL_NUMBER"
+      - "COMPLETION_NAME"
+      - "PROD_DATE"
+      - "OIL_PRODUCTION"
+      - "GAS_PRODUCTION"
+    null_handling: "skip"
+    encoding: "utf-8"
+
+# Processing specifications
+processing:
+  steps:
+    - name: "load_production_data"
+      module: "bsee.production"
+      function: "load_well_production"
+      params:
+        validate: true
+        encoding: "utf-8"
+
+    - name: "enhance_with_fdas"
+      module: "bsee.fdas"
+      function: "enhance_bsee_data"
+      params:
+        fdas_source: "data/modules/bsee/fdas/"
+        match_criteria: ["LEASE_NUMBER", "API_WELL_NUMBER"]
+
+    - name: "calculate_statistics"
+      module: "analysis.statistics"
+      function: "calculate_production_stats"
+      params:
+        statistics: ["sum", "mean", "median", "max"]
+        groupby: ["FIELD_NAME", "OPERATOR"]
+
+    - name: "generate_visualizations"
+      module: "visualization.plotly"
+      function: "create_production_plots"
+      params:
+        plot_types: ["timeseries", "scatter", "bar", "histogram"]
+        interactive: true
+
+# Output specifications
+output:
+  format: "html"
+  destination:
+    type: "file"
+    path: "reports/bsee/all_wells/"
+    filename_pattern: "production_report_{timestamp}.html"
+
+  content:
+    include_raw_data: false
+    include_statistics: true
+    include_visualizations: true
+    include_summary: true
+
+  visualization:
+    library: "plotly"
+    interactive: true
+    responsive: true
+    theme: "plotly_white"
+
+  export_formats:
+    - format: "csv"
+      path: "reports/bsee/all_wells/data/"
+      filename_pattern: "production_summary_{timestamp}.csv"
+
+    - format: "json"
+      path: "reports/bsee/all_wells/data/"
+      filename_pattern: "statistics_{timestamp}.json"
+
+# Error handling
+error_handling:
+  strategy: "continue"
+  retry:
+    enabled: false
+
+  logging:
+    level: "INFO"
+    destination: "both"
+    file_path: "logs/bsee_all_wells.log"
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+# Module specifications
+modules:
+  bsee_production:
+    path: "src/worldenergydata/modules/bsee"
+    entry_point: "production.py"
+    dependencies: ["pandas", "numpy"]
+
+  fdas_enhancement:
+    path: "src/worldenergydata/modules/bsee"
+    entry_point: "fdas.py"
+    dependencies: ["pandas"]
+
+  visualization:
+    path: "src/worldenergydata/visualization"
+    entry_point: "plotly_generator.py"
+    dependencies: ["plotly", "pandas"]
+
+# Execution configuration
+execution:
+  entry_point: "scripts/analyze_production_by_lease.py"
+
+  bash_command: |
+    python scripts/analyze_production_by_lease.py \
+      --output reports/bsee/all_wells/production_analysis \
+      --format html \
+      --interactive
+
+  environment:
+    python_version: "3.9+"
+    required_packages:
+      - pandas>=2.0.0
+      - numpy>=1.24.0
+      - plotly>=5.14.0

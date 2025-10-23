@@ -1,0 +1,27 @@
+# ABOUTME: Field-level configuration for Anchor HPHT development project
+# ABOUTME: Defines capex and scheduling inputs for Anchor field analyses
+
+field:
+  field_id: anchor
+  display_name: "Anchor"
+  status: producing
+  leases_key: anchor
+  first_oil: "2024-08-01"
+  data_through: "2024-12-31"
+  operator: "Chevron"
+  partners:
+    - name: "Chevron"
+      working_interest: 0.625
+    - name: "Equinor"
+      working_interest: 0.25
+    - name: "TotalEnergies"
+      working_interest: 0.125
+  capex:
+    total_mm_usd: 5600
+    fpu_mm_usd: 2500
+    subsea_mm_usd: 2300
+    wells_mm_usd: 800
+  production_profile:
+    plateau_rate_mbopd: 75
+    gor_scf_per_bbl: 1100
+  opex_per_boe: 15.0

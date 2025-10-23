@@ -1,0 +1,22 @@
+# ABOUTME: Field-level configuration for Cascade and Chinook combined tieback
+# ABOUTME: Provides modular economic assumptions for Cascade/Chinook analysis
+
+field:
+  field_id: cascade_chinook
+  display_name: "Cascade/Chinook"
+  status: producing
+  leases_key: cascade_chinook
+  first_oil: "2021-08-01"
+  data_through: "2024-12-31"
+  operator: "TotalEnergies"
+  partners:
+    - name: "TotalEnergies"
+      working_interest: 0.60
+    - name: "Equinor"
+      working_interest: 0.40
+  capex:
+    total_mm_usd: 2900
+  production_profile:
+    plateau_rate_mbopd: 75
+    gor_scf_per_bbl: 1400
+  opex_per_boe: 18.0
