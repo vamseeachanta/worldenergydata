@@ -191,3 +191,6 @@ data/modules/*.backup*
 # Generated marine safety reports (can be regenerated)
 reports/marine_safety/*.html
 reports/marine_safety/*//*.html
+
+# Large unoptimized HTML reports (use CSV exports instead)
+reports/marine_safety/*/*.html
