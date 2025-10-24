@@ -8,7 +8,7 @@
 
 ## Generated Brochures
 
-### ✅ Tier 1: Core Modules (3 brochures)
+### ✅ Tier 1: Core Modules (2 brochures)
 
 1. **BSEE Data Integration**
    - File: `marketing_brochure_bsee_data_integration.md`
@@ -21,12 +21,6 @@
    - Size: 3.3 KB
    - Focus: AI-enhanced marine safety incident detection
    - Key Features: BSEE safety database integration, incident classification, trend analysis
-
-3. **Wind Energy Data Integration**
-   - File: `marketing_brochure_wind_energy_data_integration.md`
-   - Size: 3.0 KB
-   - Focus: Renewable energy data collection for wind sector
-   - Key Features: Wind database integration, performance benchmarking, cross-sector comparison
 
 ### ✅ Tier 2: Advanced Modules (3 brochures)
 
@@ -183,7 +177,7 @@ python scripts/generate_marketing_brochures.py
 ## Next Steps
 
 ### 1. Review & Validate
-- [ ] Review all 8 generated brochures for technical accuracy
+- [ ] Review all 7 generated brochures for technical accuracy
 - [ ] Validate module capabilities against actual code
 - [ ] Check statistics are current
 - [ ] Verify contact information
@@ -234,7 +228,7 @@ worldenergydata/
 
 ## Success Metrics
 
-✅ **8 professional brochures** generated
+✅ **7 professional brochures** generated
 ✅ **3 tiers** of modules covered
 ✅ **4 target audiences** addressed
 ✅ **Consistent branding** across all materials
