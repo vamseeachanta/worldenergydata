@@ -2,14 +2,13 @@
 
 ## 🚀 Ready-to-Use Brochures
 
-**All 8 brochures are already generated!** No setup required.
+**All 7 brochures are already generated!** No setup required.
 
 ## 📂 Available Brochures
 
 ### Tier 1: Core Modules
 - [BSEE Data Integration](marketing_brochure_bsee_data_integration.md)
 - [Marine Safety Incident Analysis](marketing_brochure_marine_safety_incident_analysis.md)
-- [Wind Energy Data Integration](marketing_brochure_wind_energy_data_integration.md)
 
 ### Tier 2: Advanced Modules
 - [Economic Evaluation (NPV Analysis)](marketing_brochure_economic_evaluation_npv_analysis.md)
