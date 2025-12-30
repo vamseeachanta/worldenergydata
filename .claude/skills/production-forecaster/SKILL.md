@@ -299,9 +299,12 @@ class DeclineCurveAnalyzer:
         """
         if params.b == 0:
             # Exponential: EUR with economic limit and time cap
+            # If already below economic limit, no recoverable reserves
+            if params.qi <= economic_limit:
+                return 0.0
             # Time to reach economic limit: t = ln(qi/q_limit) / di
             t_econ = np.log(params.qi / economic_limit) / params.di
-            t_max = min(max_years, t_econ)
+            t_max = min(max_years, max(0.0, t_econ))
             # Cumulative: Np = (qi/di) * (1 - exp(-di*t))
             return params.qi * 365.25 / params.di * (1 - np.exp(-params.di * t_max))
         elif params.b == 1:
