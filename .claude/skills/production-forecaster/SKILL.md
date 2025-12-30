@@ -298,8 +298,12 @@ class DeclineCurveAnalyzer:
             max_years: Maximum forecast period
         """
         if params.b == 0:
-            # Exponential: EUR = qi / di
-            return params.qi * 365.25 / params.di
+            # Exponential: EUR with economic limit and time cap
+            # Time to reach economic limit: t = ln(qi/q_limit) / di
+            t_econ = np.log(params.qi / economic_limit) / params.di
+            t_max = min(max_years, t_econ)
+            # Cumulative: Np = (qi/di) * (1 - exp(-di*t))
+            return params.qi * 365.25 / params.di * (1 - np.exp(-params.di * t_max))
         elif params.b == 1:
             # Harmonic: EUR is infinite, use time limit
             # Cumulative = qi/di * ln(1 + di*t)
@@ -400,9 +404,9 @@ class ProductionForecaster:
         cumulative_gas = []
 
         current_date = self.start_date
-        months = int(years * 12)
+        total_months = int(years * 12)
 
-        for month in range(months):
+        for month in range(0, total_months, interval_months):
             t = month / 12.0  # Time in years
 
             rate = self._calculate_rate(t)
@@ -419,15 +423,11 @@ class ProductionForecaster:
             cumulative_oil.append(cum)
             cumulative_gas.append(cum * gor)
 
-            # Advance date
-            if current_date.month == 12:
-                current_date = date(current_date.year + 1, 1, 1)
-            else:
-                current_date = date(
-                    current_date.year,
-                    current_date.month + 1,
-                    1
-                )
+            # Advance date by interval_months
+            new_month = current_date.month + interval_months
+            new_year = current_date.year + (new_month - 1) // 12
+            new_month = ((new_month - 1) % 12) + 1
+            current_date = date(new_year, new_month, 1)
 
         # Calculate EUR
         analyzer = DeclineCurveAnalyzer.__new__(DeclineCurveAnalyzer)
