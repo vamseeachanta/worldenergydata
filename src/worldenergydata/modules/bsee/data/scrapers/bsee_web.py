@@ -127,7 +127,9 @@ class BSEEWebScraper:
                     
             except Exception as e:
                 logger.error(f"Unexpected error downloading from {url}: {str(e)}")
-                break
+                if attempt < max_retries - 1:
+                    logger.info(f"Retrying in {self.RETRY_DELAY} seconds...")
+                    time.sleep(self.RETRY_DELAY)
         
         logger.error(f"Failed to download from {url} after {max_retries} attempts")
         return None

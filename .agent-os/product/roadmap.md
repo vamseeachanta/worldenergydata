@@ -1,14 +1,14 @@
 # Product Roadmap
 
-> Last Updated: 2025-07-23
-> Version: 1.0.0
+> Last Updated: 2026-01-08
+> Version: 1.1.0
 > Status: Planning
 
 ## Phase 0: Already Completed
 
 The following features have been implemented:
 
-- [x] **BSEE Data Integration** - Complete data collection and processing system for Bureau of Safety and Environmental Enforcement data `L`
+- [x] **BSEE Data Integration** - Complete data collection and processing system for Bureau of Safety and Environmental Enforcement production data `L`
 - [x] **Production Data Analysis** - Oil and gas well production data analysis with timeline processing `L`
 - [x] **Directional Surveys Processing** - Well directional survey data processing and visualization `M`
 - [x] **NPV Analysis Framework** - Net Present Value economic evaluation using numpy-financial `L`
@@ -50,6 +50,7 @@ The following features have been implemented:
 
 ### Must-Have Features
 
+- [ ] **HSE Data Integration & Risk Assessment** - BSEE Health, Safety, and Environment incident databases with safety incident tracking, operational risk scoring, compliance monitoring, and ESG reporting capabilities integrated into economic analysis workflows `XL`
 - [ ] **SODIR Integration** - Norwegian offshore directorate data integration `L`
 - [ ] **Enhanced Wind Data** - Comprehensive wind energy database integration and analysis `L`
 - [ ] **Shipping Data Module** - Initial shipping and maritime energy data collection `L`
