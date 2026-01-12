@@ -75,7 +75,7 @@ llm = [
 
 # Use packages.find instead of conflicting with packages array
 [tool.setuptools.packages.find]
-where = ["."]
+where = ["src"]
 include = ["*"]
 exclude = ["tests*", "docs*"]
 

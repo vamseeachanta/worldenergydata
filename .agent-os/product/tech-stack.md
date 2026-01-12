@@ -1,7 +1,7 @@
 # Technical Stack
 
-> Last Updated: 2025-07-23
-> Version: 1.0.0
+> Last Updated: 2026-01-08
+> Version: 1.1.0
 
 ## Core Technologies
 
@@ -25,6 +25,7 @@
 
 ### Data Processing
 - **Core Libraries:** pandas, numpy, numpy-financial
+- **HSE Data Processing:** BSEE incident databases integration, safety metrics calculation, operational risk scoring, ESG compliance reporting
 - **File Formats:** openpyxl, xlrd, xmltodict, pyyaml
 - **Date/Time:** python-dateutil, pytz, tzdata
 
