@@ -5,91 +5,247 @@ This module contains schema definitions that specify the validation
 requirements for BSEE data, financial data, and configuration data.
 """
 
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 from datetime import datetime
+from enum import Enum
 import pandas as pd
 from loguru import logger
 
-from .base import ValidationSchema, ValidationResult, FieldValidator
+from .base import ValidationResult
 from .rules import (
-    DataTypeRule, RequiredFieldRule, RangeRule, DateFormatRule,
-    APINumberRule, BSEEDateRule, CrossFieldRule, PatternRule, UniqueRule
+    ValidationRules,
+    CrossFieldRules,
+    CustomValidators,
+    APINumberRule,
+    DataTypeRule,
+    DateFormatRule,
+    RangeRule,
+    PatternRule,
+    UniqueRule,
+    RequiredFieldRule,
+    CrossFieldRule
 )
+
+
+class DataType(Enum):
+    """Enum for field data types."""
+    INTEGER = 'integer'
+    STRING = 'string'
+    FLOAT = 'float'
+    DECIMAL = 'decimal'
+    BOOLEAN = 'boolean'
+    DATE = 'date'
+    DATETIME = 'datetime'
+    ARRAY = 'array'
+    OBJECT = 'object'
+
+
+class DateFormat(Enum):
+    """Enum for date format specifications."""
+    YYYYMM = 'YYYYMM'
+    YYYY_MM_DD = 'YYYY_MM_DD'
+    MM_DD_YYYY = 'MM_DD_YYYY'
+    DD_MM_YYYY = 'DD_MM_YYYY'
+    YYYYMMDD = 'YYYYMMDD'
+    ISO8601 = 'ISO8601'
+
+
+class FieldSchema:
+    """Defines validation requirements for a single field."""
+
+    def __init__(self, name: str, data_type: DataType, required: bool = True,
+                 nullable: bool = False, min_length: Optional[int] = None,
+                 max_length: Optional[int] = None, min_value: Optional[float] = None,
+                 max_value: Optional[float] = None, pattern: Optional[str] = None,
+                 date_format: Optional[str] = None, allowed_values: Optional[List[Any]] = None,
+                 precision: Optional[int] = None, scale: Optional[int] = None,
+                 default_value: Optional[Any] = None, description: Optional[str] = None,
+                 unit: Optional[str] = None):
+        self.name = name
+        self.data_type = data_type
+        self.required = required
+        self.nullable = nullable
+        self.min_length = min_length
+        self.max_length = max_length
+        self.min_value = min_value
+        self.max_value = max_value
+        self.pattern = pattern
+        self.date_format = date_format
+        self.allowed_values = allowed_values
+        self.precision = precision
+        self.scale = scale
+        self.default_value = default_value
+        self.description = description
+        self.unit = unit
+
+
+class FieldValidator:
+    """Validates individual fields against schema requirements."""
+
+    def __init__(self, name: str):
+        self.name = name
+        self.rules: List[Any] = []
+
+    def add_rule(self, rule: Any):
+        """Add a validation rule to this field."""
+        self.rules.append(rule)
+
+    def validate(self, data: pd.DataFrame) -> ValidationResult:
+        """Validate field in dataframe."""
+        result = ValidationResult()
+        if self.name not in data.columns:
+            result.add_warning(self.name, f"Field '{self.name}' not found in data")
+            return result
+
+        # Apply each rule
+        for rule in self.rules:
+            if hasattr(rule, 'validate'):
+                rule_result = rule.validate(data[self.name])
+                result.merge(rule_result)
+
+        return result
+
+
+class ValidationSchema:
+    """Container for field validation schemas and rules."""
+
+    def __init__(self, name: str, version: Optional[str] = None,
+                 description: Optional[str] = None):
+        self.name = name
+        self.version = version
+        self.description = description
+        self.fields: Dict[str, FieldSchema] = {}
+        self.field_validators: Dict[str, FieldValidator] = {}
+        self.cross_field_rules: List[Any] = []
+        self.custom_validators: List[str] = []
+
+    def add_field(self, field: FieldSchema):
+        """Add a field schema."""
+        self.fields[field.name] = field
+
+    def add_field_validator(self, field_name: str, validator: FieldValidator):
+        """Add a field validator."""
+        self.field_validators[field_name] = validator
+
+    def add_cross_field_rule(self, rule: Any):
+        """Add a cross-field validation rule."""
+        self.cross_field_rules.append(rule)
+
+    def get_required_fields(self) -> List[str]:
+        """Return list of field names marked as required."""
+        return [field.name for field in self.fields.values() if field.required]
+
+    def validate(self, data: Any) -> ValidationResult:
+        """Validate data against schema. Subclasses override for specific implementations."""
+        result = ValidationResult()
+        return result
 
 
 class BSEEProductionSchema(ValidationSchema):
     """
     Validation schema for BSEE production data.
-    
+
     This schema validates production data files including required fields,
     data types, value ranges, and BSEE-specific formatting requirements.
     """
-    
+
     def __init__(self):
         super().__init__("BSEE Production Data")
         self._setup_field_validators()
         self._setup_cross_field_rules()
-    
+
     def _setup_field_validators(self):
         """Set up field validators for production data."""
-        
+
         # API Well Number - required, 12 digits
-        api_validator = FieldValidator("API_WELL_NUMBER")
-        api_validator.add_rule(APINumberRule())
-        api_validator.add_rule(DataTypeRule([str, int], allow_null=False))
-        self.add_field_validator("API_WELL_NUMBER", api_validator)
-        
+        self.add_field(FieldSchema(
+            name="api_well_number",
+            data_type=DataType.STRING,
+            required=True,
+            nullable=False,
+            pattern=r'^\d{12}$',
+            description="API Well Number - 12 digit identifier"
+        ))
+
         # Production Date - can be YYYY-MM-DD or YYYYMM format
-        prod_date_validator = FieldValidator("PRODUCTION_DATE")
-        prod_date_validator.add_rule(DateFormatRule([
-            '%Y-%m-%d', '%Y-%m-%d %H:%M:%S', '%Y%m'
-        ], min_date=datetime(1970, 1, 1), max_date=datetime.now()))
-        self.add_field_validator("PRODUCTION_DATE", prod_date_validator)
-        
+        self.add_field(FieldSchema(
+            name="production_date",
+            data_type=DataType.DATE,
+            required=True,
+            nullable=False,
+            date_format=DateFormat.YYYY_MM_DD,
+            description="Production date in YYYY-MM-DD format"
+        ))
+
         # Oil Volume - numeric, non-negative
-        oil_volume_validator = FieldValidator("OIL_VOLUME")
-        oil_volume_validator.add_rule(DataTypeRule([int, float], allow_null=True))
-        oil_volume_validator.add_rule(RangeRule(min_value=0))
-        self.add_field_validator("OIL_VOLUME", oil_volume_validator)
-        
-        # Gas Volume - numeric, non-negative  
-        gas_volume_validator = FieldValidator("GAS_VOLUME")
-        gas_volume_validator.add_rule(DataTypeRule([int, float], allow_null=True))
-        gas_volume_validator.add_rule(RangeRule(min_value=0))
-        self.add_field_validator("GAS_VOLUME", gas_volume_validator)
-        
+        self.add_field(FieldSchema(
+            name="oil_volume",
+            data_type=DataType.FLOAT,
+            required=False,
+            nullable=True,
+            min_value=0,
+            description="Oil volume produced in barrels per day"
+        ))
+
+        # Gas Volume - numeric, non-negative
+        self.add_field(FieldSchema(
+            name="gas_volume",
+            data_type=DataType.FLOAT,
+            required=False,
+            nullable=True,
+            min_value=0,
+            description="Gas volume produced in million cubic feet per day"
+        ))
+
         # Water Volume - numeric, non-negative
-        water_volume_validator = FieldValidator("WATER_VOLUME")
-        water_volume_validator.add_rule(DataTypeRule([int, float], allow_null=True))
-        water_volume_validator.add_rule(RangeRule(min_value=0))
-        self.add_field_validator("WATER_VOLUME", water_volume_validator)
-        
+        self.add_field(FieldSchema(
+            name="water_volume",
+            data_type=DataType.FLOAT,
+            required=False,
+            nullable=True,
+            min_value=0,
+            description="Water volume produced in barrels per day"
+        ))
+
         # Lease Number - required pattern
-        lease_validator = FieldValidator("LEASE_NUMBER")
-        lease_validator.add_rule(PatternRule(
-            r'^OCS-[A-Z]-\d+$',
-            "Lease number must follow OCS-X-##### format"
+        self.add_field(FieldSchema(
+            name="lease_number",
+            data_type=DataType.STRING,
+            required=True,
+            nullable=False,
+            pattern=r'^OCS-[A-Z]-\d+$',
+            description="Lease number in OCS-X-##### format"
         ))
-        self.add_field_validator("LEASE_NUMBER", lease_validator)
-        
+
         # Field Name - required string
-        field_name_validator = FieldValidator("FIELD_NAME")
-        field_name_validator.add_rule(DataTypeRule(str, allow_null=False))
-        self.add_field_validator("FIELD_NAME", field_name_validator)
-        
-        # Days on Production - numeric, valid range
-        days_prod_validator = FieldValidator("DAYS_ON_PRODUCTION")
-        days_prod_validator.add_rule(DataTypeRule([int, float], allow_null=True))
-        days_prod_validator.add_rule(RangeRule(min_value=0, max_value=31))
-        self.add_field_validator("DAYS_ON_PRODUCTION", days_prod_validator)
-        
-        # Well Status - controlled vocabulary
-        well_status_validator = FieldValidator("WELL_STATUS")
-        well_status_validator.add_rule(PatternRule(
-            r'^(ACTIVE|INACTIVE|SHUT-IN|ABANDONED|SUSPENDED)$',
-            "Well status must be one of: ACTIVE, INACTIVE, SHUT-IN, ABANDONED, SUSPENDED"
+        self.add_field(FieldSchema(
+            name="field_name",
+            data_type=DataType.STRING,
+            required=True,
+            nullable=False,
+            description="Name of the production field"
         ))
-        self.add_field_validator("WELL_STATUS", well_status_validator)
+
+        # Days on Production - numeric, valid range
+        self.add_field(FieldSchema(
+            name="days_on_production",
+            data_type=DataType.INTEGER,
+            required=False,
+            nullable=True,
+            min_value=0,
+            max_value=31,
+            description="Number of days well was in production this month"
+        ))
+
+        # Well Status - controlled vocabulary
+        self.add_field(FieldSchema(
+            name="well_status",
+            data_type=DataType.STRING,
+            required=True,
+            nullable=False,
+            allowed_values=["ACTIVE", "INACTIVE", "SHUT-IN", "ABANDONED", "SUSPENDED"],
+            description="Current well status"
+        ))
     
     def _setup_cross_field_rules(self):
         """Set up cross-field validation rules."""
@@ -169,18 +325,32 @@ class BSEEWellSchema(ValidationSchema):
     
     def _setup_field_validators(self):
         """Set up field validators for well data."""
-        
+
         # API Well Number
         api_validator = FieldValidator("API_WELL_NUMBER")
         api_validator.add_rule(APINumberRule())
         api_validator.add_rule(UniqueRule())  # Well numbers should be unique
         self.add_field_validator("API_WELL_NUMBER", api_validator)
-        
+        self.add_field(FieldSchema(
+            name="api_number",
+            data_type=DataType.STRING,
+            required=True,
+            pattern=r'^OCS-[A-Z]{2}-\d+$',
+            description="API well number in OCS format"
+        ))
+
         # Well Name
         well_name_validator = FieldValidator("WELL_NAME")
         well_name_validator.add_rule(DataTypeRule(str, allow_null=False))
         self.add_field_validator("WELL_NAME", well_name_validator)
-        
+        self.add_field(FieldSchema(
+            name="well_name",
+            data_type=DataType.STRING,
+            required=True,
+            nullable=False,
+            description="Name of the well"
+        ))
+
         # Lease Number
         lease_validator = FieldValidator("LEASE_NUMBER")
         lease_validator.add_rule(PatternRule(
@@ -188,45 +358,101 @@ class BSEEWellSchema(ValidationSchema):
             "Lease number must follow OCS-X-##### format"
         ))
         self.add_field_validator("LEASE_NUMBER", lease_validator)
-        
+        self.add_field(FieldSchema(
+            name="lease_number",
+            data_type=DataType.STRING,
+            pattern=r'^OCS-[A-Z]-\d+$',
+            description="Lease number in OCS format"
+        ))
+
         # Water Depth - numeric, reasonable range
         water_depth_validator = FieldValidator("WATER_DEPTH")
         water_depth_validator.add_rule(DataTypeRule([int, float], allow_null=True))
         water_depth_validator.add_rule(RangeRule(min_value=0, max_value=15000))  # feet
         self.add_field_validator("WATER_DEPTH", water_depth_validator)
-        
+        self.add_field(FieldSchema(
+            name="water_depth",
+            data_type=DataType.FLOAT,
+            nullable=True,
+            min_value=0,
+            max_value=15000,
+            unit="feet",
+            description="Water depth at the well location"
+        ))
+
         # Total Depth - numeric, reasonable range
         total_depth_validator = FieldValidator("TOTAL_DEPTH")
         total_depth_validator.add_rule(DataTypeRule([int, float], allow_null=True))
         total_depth_validator.add_rule(RangeRule(min_value=0, max_value=50000))  # feet
         self.add_field_validator("TOTAL_DEPTH", total_depth_validator)
-        
+        self.add_field(FieldSchema(
+            name="tvd",
+            data_type=DataType.FLOAT,
+            nullable=True,
+            min_value=0,
+            max_value=50000,
+            unit="feet",
+            description="Total vertical depth of the well"
+        ))
+
         # Spud Date
         spud_date_validator = FieldValidator("SPUD_DATE")
         spud_date_validator.add_rule(DateFormatRule([
             '%Y-%m-%d', '%Y-%m-%d %H:%M:%S', '%m/%d/%Y'
         ], min_date=datetime(1950, 1, 1), max_date=datetime.now()))
         self.add_field_validator("SPUD_DATE", spud_date_validator)
-        
+        self.add_field(FieldSchema(
+            name="spud",
+            data_type=DataType.DATE,
+            nullable=True,
+            date_format=DateFormat.YYYY_MM_DD,
+            description="Well spud date (start of drilling)"
+        ))
+
         # Completion Date
         completion_date_validator = FieldValidator("COMPLETION_DATE")
         completion_date_validator.add_rule(DateFormatRule([
             '%Y-%m-%d', '%Y-%m-%d %H:%M:%S', '%m/%d/%Y'
         ], min_date=datetime(1950, 1, 1), max_date=datetime.now()))
         self.add_field_validator("COMPLETION_DATE", completion_date_validator)
-        
+        self.add_field(FieldSchema(
+            name="completion_date",
+            data_type=DataType.DATE,
+            nullable=True,
+            date_format=DateFormat.YYYY_MM_DD,
+            description="Well completion date (end of drilling)"
+        ))
+
         # Longitude - valid range
         longitude_validator = FieldValidator("LONGITUDE")
         longitude_validator.add_rule(DataTypeRule([int, float], allow_null=True))
         longitude_validator.add_rule(RangeRule(min_value=-180, max_value=180))
         self.add_field_validator("LONGITUDE", longitude_validator)
-        
+        self.add_field(FieldSchema(
+            name="longitude",
+            data_type=DataType.FLOAT,
+            nullable=True,
+            min_value=-180,
+            max_value=180,
+            unit="degrees",
+            description="Well location longitude coordinate"
+        ))
+
         # Latitude - valid range
         latitude_validator = FieldValidator("LATITUDE")
         latitude_validator.add_rule(DataTypeRule([int, float], allow_null=True))
         latitude_validator.add_rule(RangeRule(min_value=-90, max_value=90))
         self.add_field_validator("LATITUDE", latitude_validator)
-        
+        self.add_field(FieldSchema(
+            name="latitude",
+            data_type=DataType.FLOAT,
+            nullable=True,
+            min_value=-90,
+            max_value=90,
+            unit="degrees",
+            description="Well location latitude coordinate"
+        ))
+
         # Well Type
         well_type_validator = FieldValidator("WELL_TYPE")
         well_type_validator.add_rule(PatternRule(
@@ -305,7 +531,7 @@ class BSEELeaseSchema(ValidationSchema):
     
     def _setup_field_validators(self):
         """Set up field validators for lease data."""
-        
+
         # Lease Number
         lease_validator = FieldValidator("LEASE_NUMBER")
         lease_validator.add_rule(PatternRule(
@@ -314,16 +540,37 @@ class BSEELeaseSchema(ValidationSchema):
         ))
         lease_validator.add_rule(UniqueRule())
         self.add_field_validator("LEASE_NUMBER", lease_validator)
-        
+        self.add_field(FieldSchema(
+            name="lease_number",
+            data_type=DataType.STRING,
+            required=True,
+            pattern=r'^OCS-[A-Z]-\d+$',
+            description="BSEE lease number in OCS-X-##### format"
+        ))
+
         # Area Code
         area_validator = FieldValidator("AREA_CODE")
         area_validator.add_rule(DataTypeRule(str, allow_null=False))
         self.add_field_validator("AREA_CODE", area_validator)
-        
+        self.add_field(FieldSchema(
+            name="area_code",
+            data_type=DataType.STRING,
+            required=True,
+            nullable=False,
+            description="Gulf of Mexico area code"
+        ))
+
         # Block Number
         block_validator = FieldValidator("BLOCK_NUMBER")
         block_validator.add_rule(DataTypeRule([str, int], allow_null=False))
         self.add_field_validator("BLOCK_NUMBER", block_validator)
+        self.add_field(FieldSchema(
+            name="block_number",
+            data_type=DataType.STRING,
+            required=True,
+            nullable=False,
+            description="Block number within area"
+        ))
     
     def validate(self, data: Any) -> ValidationResult:
         """Validate BSEE lease data."""
@@ -363,34 +610,78 @@ class FinancialDataSchema(ValidationSchema):
     
     def _setup_field_validators(self):
         """Set up field validators for financial data."""
-        
+
         # NPV - can be negative
         npv_validator = FieldValidator("NPV")
         npv_validator.add_rule(DataTypeRule([int, float], allow_null=True))
         self.add_field_validator("NPV", npv_validator)
-        
+        self.add_field(FieldSchema(
+            name="npv",
+            data_type=DataType.DECIMAL,
+            required=False,
+            nullable=True,
+            unit="USD",
+            description="Net Present Value of the project (can be negative)"
+        ))
+
         # Discount Rate - percentage
         discount_rate_validator = FieldValidator("DISCOUNT_RATE")
         discount_rate_validator.add_rule(DataTypeRule([int, float], allow_null=False))
         discount_rate_validator.add_rule(RangeRule(min_value=0, max_value=100))
         self.add_field_validator("DISCOUNT_RATE", discount_rate_validator)
-        
+        self.add_field(FieldSchema(
+            name="discount_rate",
+            data_type=DataType.DECIMAL,
+            required=True,
+            nullable=False,
+            min_value=0,
+            max_value=100,
+            unit="percent",
+            description="Annual discount rate for NPV calculation"
+        ))
+
         # Cash Flow - can be negative
         cash_flow_validator = FieldValidator("CASH_FLOW")
         cash_flow_validator.add_rule(DataTypeRule([int, float], allow_null=True))
         self.add_field_validator("CASH_FLOW", cash_flow_validator)
-        
+        self.add_field(FieldSchema(
+            name="cash_flow",
+            data_type=DataType.DECIMAL,
+            required=False,
+            nullable=True,
+            unit="USD",
+            description="Annual cash flow (can be negative for costs)"
+        ))
+
         # Investment - should be positive
         investment_validator = FieldValidator("INVESTMENT")
         investment_validator.add_rule(DataTypeRule([int, float], allow_null=True))
         investment_validator.add_rule(RangeRule(min_value=0))
         self.add_field_validator("INVESTMENT", investment_validator)
-        
+        self.add_field(FieldSchema(
+            name="investment",
+            data_type=DataType.DECIMAL,
+            required=False,
+            nullable=True,
+            min_value=0,
+            unit="USD",
+            description="Initial capital investment required"
+        ))
+
         # Project Year - positive integer
         project_year_validator = FieldValidator("PROJECT_YEAR")
         project_year_validator.add_rule(DataTypeRule(int, allow_null=False))
         project_year_validator.add_rule(RangeRule(min_value=1, max_value=50))
         self.add_field_validator("PROJECT_YEAR", project_year_validator)
+        self.add_field(FieldSchema(
+            name="project_year",
+            data_type=DataType.INTEGER,
+            required=True,
+            nullable=False,
+            min_value=1,
+            max_value=50,
+            description="Project year for analysis (1-50 year horizon)"
+        ))
     
     def _setup_cross_field_rules(self):
         """Set up cross-field validation rules."""

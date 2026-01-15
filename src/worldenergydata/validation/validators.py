@@ -9,9 +9,18 @@ import json
 import yaml
 import logging
 
-from .schema import ValidationSchema, FieldSchema, DataType
+from .schemas import ValidationSchema, FieldSchema, DataType
 from .rules import ValidationRules, CrossFieldRules, CustomValidators
-from .exceptions import ValidationError, SchemaValidationError
+from .exceptions import (
+    ValidationError,
+    SchemaValidationError,
+    RequiredFieldError,
+    DataTypeError,
+    RangeValidationError,
+    DateFormatError,
+    ConsistencyError,
+    CrossFieldValidationError
+)
 
 logger = logging.getLogger(__name__)
 
@@ -35,21 +44,25 @@ class DataValidator:
     def validate(self, data: Union[Dict, pd.DataFrame, List[Dict]]) -> Tuple[bool, List[ValidationError]]:
         """
         Validate data against schema.
-        
+
         Args:
             data: Data to validate (dict, DataFrame, or list of dicts)
-            
+
         Returns:
             Tuple of (is_valid, errors)
         """
         self.errors = []
         self.warnings = []
-        
+
+        print(f"\n[DEBUG] validate() called with data type: {type(data).__name__}")
+        print(f"[DEBUG] Schema name: {self.schema.name}, strict mode: {self.strict}")
+
         # Convert data to consistent format
         if isinstance(data, pd.DataFrame):
             records = data.to_dict('records')
         elif isinstance(data, dict):
             records = [data]
+            print(f"[DEBUG] Dict input wrapped in list. Input: {data}")
         elif isinstance(data, list):
             records = data
         else:
@@ -78,39 +91,69 @@ class DataValidator:
     
     def _validate_record(self, record: Dict[str, Any], row_idx: int):
         """Validate a single record."""
+        print(f"\n[DEBUG] _validate_record() called for row {row_idx}")
+        print(f"[DEBUG] Record keys: {list(record.keys())}")
+
         # Check for required fields
         required_fields = self.schema.get_required_fields()
         for field_name in required_fields:
             if field_name not in record:
-                raise RequiredFieldError(
+                error = RequiredFieldError(
                     f"Required field missing in row {row_idx}",
-                    field=field_name
+                    field=field_name,
+                    row_index=row_idx
                 )
-        
+                if self.strict:
+                    raise error
+                self.errors.append(error)
+                continue
+
         # Validate each field
-        for field_schema in self.schema.fields:
+        for field_schema in self.schema.fields.values():
             field_name = field_schema.name
             value = record.get(field_name)
-            
+            print(f"[DEBUG] Validating field: {field_name}, value: {value} (type: {type(value).__name__})")
+
             try:
                 self._validate_field(value, field_schema, row_idx)
+                print(f"[DEBUG] Field {field_name} validation passed")
             except ValidationError as e:
+                print(f"[DEBUG] Field {field_name} validation FAILED: {type(e).__name__}: {e.message}")
                 e.message = f"Row {row_idx}: {e.message}"
-                raise
+                e.row_index = row_idx
+                if self.strict:
+                    raise
+                print(f"[DEBUG] Non-strict mode: appending error to self.errors")
+                self.errors.append(e)
+                print(f"[DEBUG] self.errors now has {len(self.errors)} errors")
     
     def _validate_field(self, value: Any, field_schema: FieldSchema, row_idx: int):
         """Validate a single field value."""
         field_name = field_schema.name
-        
+
+        print(f"[DEBUG] _validate_field() called: field={field_name}, value={value} (type: {type(value).__name__}), expected_type={field_schema.data_type}")
+
         # Required validation
-        ValidationRules.validate_required(value, field_name, field_schema.required)
-        
+        try:
+            ValidationRules.validate_required(value, field_name, field_schema.required)
+            print(f"[DEBUG] Required validation passed for {field_name}")
+        except ValidationError as e:
+            print(f"[DEBUG] Required validation FAILED for {field_name}: {e}")
+            raise
+
         # Skip further validation if null and nullable
         if value is None and field_schema.nullable:
+            print(f"[DEBUG] Skipping validation for {field_name} - null and nullable")
             return
-        
+
         # Data type validation
-        ValidationRules.validate_data_type(value, field_name, field_schema.data_type)
+        print(f"[DEBUG] About to call ValidationRules.validate_data_type() for {field_name}")
+        try:
+            ValidationRules.validate_data_type(value, field_name, field_schema.data_type)
+            print(f"[DEBUG] Type validation PASSED for {field_name}")
+        except ValidationError as e:
+            print(f"[DEBUG] Type validation FAILED for {field_name}: {type(e).__name__}: {e.message}")
+            raise
         
         # Range validation for numeric types
         if field_schema.data_type in [DataType.INTEGER, DataType.FLOAT, DataType.DECIMAL]:
@@ -190,6 +233,7 @@ class DataValidator:
                         
             except ValidationError as e:
                 e.message = f"Row {row_idx}: {e.message}"
+                e.row_index = row_idx
                 raise
     
     def validate_file(self, file_path: Union[str, Path]) -> Tuple[bool, List[ValidationError]]:
