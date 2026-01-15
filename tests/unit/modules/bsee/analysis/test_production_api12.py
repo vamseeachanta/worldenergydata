@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 from unittest.mock import Mock, patch, MagicMock
 import json
 
-from src.worldenergydata.modules.bsee.analysis.production_api12 import ProductionAPI12Analysis
+from worldenergydata.modules.bsee.analysis.production_api12 import ProductionAPI12Analysis
 
 
 class TestProductionAPI12Analysis:

@@ -8,14 +8,16 @@ from datetime import date
 import tempfile
 import shutil
 
-# Import only the modules we need directly
-sys.path.insert(0, str(Path(__file__).parent / "src"))
-
 # Import base template first
 from worldenergydata.modules.bsee.reports.comprehensive.templates.base import BaseReportTemplate
 
-# Now directly import and test the compliance template classes
-exec(open("src/worldenergydata/modules/bsee/reports/comprehensive/templates/compliance_template.py").read())
+# Import the compliance template classes directly
+from worldenergydata.modules.bsee.reports.comprehensive.templates.compliance_template import (
+    ComplianceMetrics,
+    EnvironmentalMetrics,
+    SafetyMetrics,
+    ComplianceTemplate
+)
 
 def test_compliance_metrics():
     """Test ComplianceMetrics functionality"""

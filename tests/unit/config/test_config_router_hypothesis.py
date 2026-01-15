@@ -14,7 +14,7 @@ import tempfile
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 
-from src.worldenergydata.modules.bsee.data.config.config_router import ConfigRouter
+from worldenergydata.modules.bsee.data.config.config_router import ConfigRouter
 
 
 # Custom strategies for generating configuration data
