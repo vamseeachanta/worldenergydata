@@ -1,0 +1,120 @@
+====================================================================================================
+COVERAGE GAP ANALYSIS - WORLDENERGYDATA TIER 1
+====================================================================================================
+
+📊 OVERALL METRICS
+  Total Modules: 69
+  Total Lines Valid: 8,557
+  Total Lines Covered: 1,640
+  Overall Coverage: 19.17%
+  Gap to 85% Target: 65.83 percentage points
+  Additional Lines Needed: 5,633
+
+📈 COVERAGE DISTRIBUTION
+        0%:   4 modules
+     6-10%:   5 modules
+    11-25%:  33 modules
+    26-50%:  19 modules
+    51-75%:   7 modules
+    76-99%:   1 modules
+
+🎯 TOP 30 LOWEST COVERAGE MODULES (HIGHEST PRIORITY)
+----------------------------------------------------------------------------------------------------
+Rank  Coverage     Lines           Module Path                                                 
+----------------------------------------------------------------------------------------------------
+1     0.0%         0/250           worldenergydata.validation/worldenergydata/validation/schemas.py
+2     0.0%         0/142           worldenergydata.validation/worldenergydata/validation/base.py
+3     0.0%         0/123           validators/validators/data_validator.py                     
+4     0.0%         0/2             worldenergydata/worldenergydata/__main__.py                 
+5     7.3%         33/454          worldenergydata.modules.bsee.analysis/worldenergydata/modules/bsee/analysis/well_api12.py
+6     8.5%         9/106           worldenergydata.modules.hse.importers/worldenergydata/modules/hse/importers/bsee_statistics_importer.py
+7     8.8%         9/102           worldenergydata.modules.bsee.analysis/worldenergydata/modules/bsee/analysis/well_rig_days.py
+8     9.1%         21/232          worldenergydata.modules.bsee.reports.comprehensive.aggregators/worldenergydata/modules/bsee/reports/comprehensive/aggregators/lease_aggregator_enhanced.py
+9     9.4%         30/318          worldenergydata.modules.bsee.reports.comprehensive/worldenergydata/modules/bsee/reports/comprehensive/data_loader_enhanced.py
+10    10.3%        34/331          worldenergydata.modules.bsee.data.cache/worldenergydata/modules/bsee/data/cache/chunk_manager.py
+11    10.6%        23/218          worldenergydata.modules.bsee.data.refresh/worldenergydata/modules/bsee/data/refresh/data_refresh_enhanced.py
+12    11.0%        25/228          worldenergydata.modules.bsee.data.enhanced/worldenergydata/modules/bsee/data/enhanced/data_refresh_chunked.py
+13    11.0%        9/82            worldenergydata.modules.hse.importers/worldenergydata/modules/hse/importers/bsee_penalties_importer.py
+14    11.5%        15/131          worldenergydata.testing.performance/worldenergydata/testing/performance/reporter.py
+15    11.5%        29/253          worldenergydata.modules.bsee.data.processors/worldenergydata/modules/bsee/data/processors/in_memory.py
+16    11.6%        19/164          worldenergydata.modules.bsee.reports.comprehensive.aggregators/worldenergydata/modules/bsee/reports/comprehensive/aggregators/field_aggregator_enhanced.py
+17    11.8%        9/76            worldenergydata.modules.hse.importers/worldenergydata/modules/hse/importers/bsee_incidents_importer.py
+18    12.0%        13/108          worldenergydata.testing.performance/worldenergydata/testing/performance/analyzer.py
+19    12.4%        20/161          worldenergydata.modules.bsee.reports.comprehensive.aggregators/worldenergydata/modules/bsee/reports/comprehensive/aggregators/base.py
+20    12.9%        13/101          worldenergydata.analysis.lower_tertiary/worldenergydata/analysis/lower_tertiary/npv.py
+21    13.3%        37/278          worldenergydata.modules.bsee.analysis/worldenergydata/modules/bsee/analysis/production_api12.py
+22    13.5%        19/141          worldenergydata.modules.bsee.reports.comprehensive.aggregators/worldenergydata/modules/bsee/reports/comprehensive/aggregators/block_aggregator_enhanced.py
+23    14.1%        13/92           worldenergydata.modules.bsee.paleowells/worldenergydata/modules/bsee/paleowells/visualizer.py
+24    15.2%        25/165          worldenergydata.validation/worldenergydata/validation/validators.py
+25    15.2%        17/112          worldenergydata.testing.performance/worldenergydata/testing/performance/dashboard.py
+26    16.1%        18/112          worldenergydata.modules.bsee.data._from_zip/worldenergydata/modules/bsee/data/_from_zip/production_data.py
+27    16.5%        18/109          worldenergydata.modules.bsee.paleowells/worldenergydata/modules/bsee/paleowells/data_downloader.py
+28    16.7%        20/120          worldenergydata.modules.bsee.data._from_bin/worldenergydata/modules/bsee/data/_from_bin/api_data.py
+29    16.8%        31/184          worldenergydata.modules.bsee.data._by_api/worldenergydata/modules/bsee/data/_by_api/well.py
+30    17.2%        15/87           worldenergydata.modules.bsee.data.config/worldenergydata/modules/bsee/data/config/config_router.py
+
+====================================================================================================
+PRIORITIZATION STRATEGY
+====================================================================================================
+
+🔴 PHASE 1: ZERO COVERAGE MODULES (0% → Target 40%)
+   Count: 4 modules
+   Impact: High - These modules have ZERO tests
+   Strategy: Start here - Maximum immediate impact
+   Effort: Add ~5-10 tests per module to reach 40% coverage
+
+   Zero coverage modules:
+     • worldenergydata.validation/worldenergydata/validation/schemas.py (250 lines)
+     • worldenergydata.validation/worldenergydata/validation/base.py (142 lines)
+     • validators/validators/data_validator.py (123 lines)
+     • worldenergydata/worldenergydata/__main__.py (2 lines)
+
+🟠 PHASE 2: VERY LOW COVERAGE MODULES (1-10% → Target 50%)
+   Count: 5 modules
+   Impact: Medium-High - Mostly untested
+   Strategy: After Phase 1, these provide good ROI
+   Effort: Add ~8-15 tests per module to reach 50% coverage
+
+🟡 PHASE 3: LOW COVERAGE MODULES (11-25% → Target 60%)
+   Count: 33 modules
+   Impact: Medium - Some tests exist, gaps remain
+   Strategy: Continue after Phase 2
+   Effort: Add ~10-20 tests per module to reach 60% coverage
+
+🟢 PHASE 4: MEDIUM COVERAGE MODULES (26-75% → Target 75%+)
+   Count: 26 modules
+   Impact: Medium-Low - Most functionality tested
+   Strategy: Fill gaps in edge cases and error handling
+   Effort: Add ~5-10 tests per module for edge cases
+
+✅ FULLY TESTED MODULES (76-100%)
+   Count: 1 modules
+   Status: Good - Maintain this quality
+
+====================================================================================================
+CRITICAL MODULES FOR IMMEDIATE TESTING
+====================================================================================================
+
+🎯 HIGHEST CRITICALITY FOR TEST EXPANSION:
+   (Validators, Schemas, Base modules, Core BSEE/HSE data)
+
+  1. [HIGH  ]    0.0%           0/250 - worldenergydata.validation/worldenergydata/validation/schemas.py
+  2. [HIGH  ]    0.0%           0/142 - worldenergydata.validation/worldenergydata/validation/base.py
+  3. [HIGH  ]    0.0%           0/123 - validators/validators/data_validator.py
+  4. [MEDIUM]    7.3%          33/454 - worldenergydata.modules.bsee.analysis/worldenergydata/modules/bsee/analysis/well_api12.py
+  5. [MEDIUM]    8.5%           9/106 - worldenergydata.modules.hse.importers/worldenergydata/modules/hse/importers/bsee_statistics_importer.py
+  6. [MEDIUM]    8.8%           9/102 - worldenergydata.modules.bsee.analysis/worldenergydata/modules/bsee/analysis/well_rig_days.py
+  7. [MEDIUM]    9.1%          21/232 - worldenergydata.modules.bsee.reports.comprehensive.aggregators/worldenergydata/modules/bsee/reports/comprehensive/aggregators/lease_aggregator_enhanced.py
+  8. [MEDIUM]    9.4%          30/318 - worldenergydata.modules.bsee.reports.comprehensive/worldenergydata/modules/bsee/reports/comprehensive/data_loader_enhanced.py
+  9. [MEDIUM]   10.3%          34/331 - worldenergydata.modules.bsee.data.cache/worldenergydata/modules/bsee/data/cache/chunk_manager.py
+  10. [MEDIUM]   10.6%          23/218 - worldenergydata.modules.bsee.data.refresh/worldenergydata/modules/bsee/data/refresh/data_refresh_enhanced.py
+  11. [MEDIUM]   11.0%          25/228 - worldenergydata.modules.bsee.data.enhanced/worldenergydata/modules/bsee/data/enhanced/data_refresh_chunked.py
+  12. [MEDIUM]   11.0%            9/82 - worldenergydata.modules.hse.importers/worldenergydata/modules/hse/importers/bsee_penalties_importer.py
+  13. [MEDIUM]   11.5%          29/253 - worldenergydata.modules.bsee.data.processors/worldenergydata/modules/bsee/data/processors/in_memory.py
+  14. [MEDIUM]   11.6%          19/164 - worldenergydata.modules.bsee.reports.comprehensive.aggregators/worldenergydata/modules/bsee/reports/comprehensive/aggregators/field_aggregator_enhanced.py
+  15. [MEDIUM]   11.8%            9/76 - worldenergydata.modules.hse.importers/worldenergydata/modules/hse/importers/bsee_incidents_importer.py
+  16. [MEDIUM]   12.4%          20/161 - worldenergydata.modules.bsee.reports.comprehensive.aggregators/worldenergydata/modules/bsee/reports/comprehensive/aggregators/base.py
+  17. [MEDIUM]   13.3%          37/278 - worldenergydata.modules.bsee.analysis/worldenergydata/modules/bsee/analysis/production_api12.py
+  18. [MEDIUM]   13.5%          19/141 - worldenergydata.modules.bsee.reports.comprehensive.aggregators/worldenergydata/modules/bsee/reports/comprehensive/aggregators/block_aggregator_enhanced.py
+  19. [MEDIUM]   14.1%           13/92 - worldenergydata.modules.bsee.paleowells/worldenergydata/modules/bsee/paleowells/visualizer.py
+  20. [MEDIUM]   15.2%          25/165 - worldenergydata.validation/worldenergydata/validation/validators.py

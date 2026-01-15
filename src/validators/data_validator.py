@@ -105,12 +105,13 @@ class DataValidator:
         if missing_data:
             results['missing_data'] = missing_data
             avg_missing = sum(missing_data.values()) / len(missing_data)
-            if avg_missing > 0.5:  # More than 50% missing
-                results['issues'].append(f'High missing data: {avg_missing:.1%} average')
-                results['quality_score'] -= 30
-            elif avg_missing > 0.2:  # More than 20% missing
-                results['issues'].append(f'Moderate missing data: {avg_missing:.1%} average')
-                results['quality_score'] -= 15
+            if avg_missing > 0.3:  # More than 30% missing (high threshold)
+                results['issues'].append('High missing data')
+                results['quality_score'] -= 40
+                results['valid'] = False
+            elif avg_missing > 0.15:  # More than 15% missing (moderate threshold)
+                results['issues'].append('Moderate missing data')
+                results['quality_score'] -= 20
 
         # Check for duplicates
         if unique_field and unique_field in df.columns:

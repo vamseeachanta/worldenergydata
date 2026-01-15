@@ -6,11 +6,14 @@ including result handling, field validation, and schema validation capabilities.
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Union, Callable
+from typing import Any, Dict, List, Optional, Union, Callable, TYPE_CHECKING
 from dataclasses import dataclass, field
 from datetime import datetime
 import pandas as pd
 from loguru import logger
+
+if TYPE_CHECKING:
+    from .schemas import FieldSchema
 
 
 @dataclass
@@ -346,6 +349,7 @@ class ValidationSchema(ABC):
         self.field_validators: Dict[str, FieldValidator] = {}
         self.cross_field_rules: List[ValidationRule] = []
         self.metadata_rules: List[ValidationRule] = []
+        self.fields: Dict[str, 'FieldSchema'] = {}
         
     @abstractmethod
     def validate(self, data: Any) -> ValidationResult:
@@ -373,4 +377,9 @@ class ValidationSchema(ABC):
     def add_metadata_rule(self, rule: ValidationRule) -> 'ValidationSchema':
         """Add a metadata validation rule."""
         self.metadata_rules.append(rule)
+        return self
+
+    def add_field(self, field_schema: 'FieldSchema') -> 'ValidationSchema':
+        """Add a field schema to the validation schema."""
+        self.fields[field_schema.name] = field_schema
         return self

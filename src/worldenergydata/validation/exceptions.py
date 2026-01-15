@@ -4,12 +4,13 @@ Validation exceptions for data quality checks.
 
 class ValidationError(Exception):
     """Base exception for validation errors."""
-    
-    def __init__(self, message, field=None, value=None, rule=None):
+
+    def __init__(self, message, field=None, value=None, rule=None, row_index=None):
         self.message = message
         self.field = field
         self.value = value
         self.rule = rule
+        self.row_index = row_index
         super().__init__(self.format_message())
     
     def format_message(self):

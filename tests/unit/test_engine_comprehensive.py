@@ -5,24 +5,24 @@ Target: 100% coverage for engine.py
 
 import pytest
 from unittest.mock import Mock, patch, MagicMock, call
-from src.worldenergydata.engine import engine
+from worldenergydata.engine import engine
 
 
 class TestEngine:
     """Comprehensive test suite for engine function"""
-    
+
     @pytest.fixture
     def mock_dependencies(self):
         """Mock all external dependencies"""
-        with patch('src.worldenergydata.engine.ConfigureApplicationInputs') as mock_app_manager_class, \
-             patch('src.worldenergydata.engine.SaveData') as mock_save_data_class, \
-             patch('src.worldenergydata.engine.WorkingWithYAML') as mock_wwyaml_class, \
-             patch('src.worldenergydata.engine.FileManagement') as mock_fm_class, \
-             patch('src.worldenergydata.engine.bsee') as mock_bsee_class, \
-             patch('src.worldenergydata.engine.zip') as mock_zip_class, \
-             patch('src.worldenergydata.engine.CustomRouter') as mock_custom_router_class, \
-             patch('src.worldenergydata.engine.logger') as mock_logger, \
-             patch('src.worldenergydata.engine.AttributeDict') as mock_attr_dict:
+        with patch('worldenergydata.engine.ConfigureApplicationInputs') as mock_app_manager_class, \
+             patch('worldenergydata.engine.SaveData') as mock_save_data_class, \
+             patch('worldenergydata.engine.WorkingWithYAML') as mock_wwyaml_class, \
+             patch('worldenergydata.engine.FileManagement') as mock_fm_class, \
+             patch('worldenergydata.engine.bsee') as mock_bsee_class, \
+             patch('worldenergydata.engine.zip') as mock_zip_class, \
+             patch('worldenergydata.engine.CustomRouter') as mock_custom_router_class, \
+             patch('worldenergydata.engine.logger') as mock_logger, \
+             patch('worldenergydata.engine.AttributeDict') as mock_attr_dict:
             
             # Create mock instances
             mock_app_manager = Mock()

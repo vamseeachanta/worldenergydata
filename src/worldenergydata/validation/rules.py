@@ -32,20 +32,21 @@ class ValidationRules:
         """Validate data type."""
         if value is None:
             return True  # Null handling is done separately
-        
+
         type_validators = {
-            DataType.STRING: lambda v: isinstance(v, str),
-            DataType.INTEGER: lambda v: isinstance(v, int) or (isinstance(v, str) and v.isdigit()),
-            DataType.FLOAT: lambda v: isinstance(v, (int, float)) or ValidationRules._is_numeric_string(v),
-            DataType.DECIMAL: lambda v: isinstance(v, (int, float)) or ValidationRules._is_numeric_string(v),
-            DataType.BOOLEAN: lambda v: isinstance(v, bool) or v in ["true", "false", "True", "False", "0", "1"],
-            DataType.DATE: lambda v: ValidationRules._is_date_string(v),
-            DataType.DATETIME: lambda v: ValidationRules._is_datetime_string(v),
-            DataType.ARRAY: lambda v: isinstance(v, (list, tuple)),
-            DataType.OBJECT: lambda v: isinstance(v, dict),
+            DataType.STRING.value: lambda v: isinstance(v, str),
+            DataType.INTEGER.value: lambda v: isinstance(v, int) or (isinstance(v, str) and v.isdigit()),
+            DataType.FLOAT.value: lambda v: isinstance(v, (int, float)) or ValidationRules._is_numeric_string(v),
+            DataType.DECIMAL.value: lambda v: isinstance(v, (int, float)) or ValidationRules._is_numeric_string(v),
+            DataType.BOOLEAN.value: lambda v: isinstance(v, bool) or v in ["true", "false", "True", "False", "0", "1"],
+            DataType.DATE.value: lambda v: ValidationRules._is_date_string(v),
+            DataType.DATETIME.value: lambda v: ValidationRules._is_datetime_string(v),
+            DataType.ARRAY.value: lambda v: isinstance(v, (list, tuple)),
+            DataType.OBJECT.value: lambda v: isinstance(v, dict),
         }
-        
-        validator = type_validators.get(data_type)
+
+        validator = type_validators.get(data_type.value)
+
         if validator and not validator(value):
             raise DataTypeError(
                 f"Invalid data type",
@@ -53,6 +54,7 @@ class ValidationRules:
                 value=value,
                 rule=f"Expected {data_type.value}"
             )
+
         return True
     
     @staticmethod
@@ -353,13 +355,13 @@ class CrossFieldRules:
 
 class CustomValidators:
     """Custom validators for specific business rules."""
-    
+
     @staticmethod
     def validate_api_well_number(value: str) -> bool:
         """Validate API well number format."""
         if not value:
             return True
-        
+
         # API well number should be 12 digits
         if not re.match(r"^\d{12}$", value):
             raise ValidationError(
@@ -367,21 +369,21 @@ class CustomValidators:
                 value=value,
                 rule="12-digit API number"
             )
-        
+
         # Additional checks could include state/county codes
         state_code = value[:2]
         if state_code not in ["17", "22", "48"]:  # Example: Louisiana, Texas offshore codes
             # This could be a warning rather than error
             pass
-        
+
         return True
-    
+
     @staticmethod
     def validate_lease_number(value: str) -> bool:
         """Validate BSEE lease number format."""
         if not value:
             return True
-        
+
         # Lease numbers are typically alphanumeric
         if not re.match(r"^[A-Z0-9]+$", value):
             raise ValidationError(
@@ -389,25 +391,25 @@ class CustomValidators:
                 value=value,
                 rule="Alphanumeric lease number"
             )
-        
+
         return True
-    
+
     @staticmethod
     def validate_production_date(value: str) -> bool:
         """Validate BSEE production date format (YYYYMM)."""
         if not value:
             return True
-        
+
         if not re.match(r"^\d{6}$", value):
             raise DateFormatError(
                 "Invalid production date format",
                 value=value,
                 rule="YYYYMM format required"
             )
-        
+
         year = int(value[:4])
         month = int(value[4:6])
-        
+
         current_year = datetime.now().year
         if not (1900 <= year <= current_year + 1):
             raise DateFormatError(
@@ -415,12 +417,209 @@ class CustomValidators:
                 value=value,
                 rule=f"Year must be between 1900 and {current_year + 1}"
             )
-        
+
         if not (1 <= month <= 12):
             raise DateFormatError(
                 "Invalid month in production date",
                 value=value,
                 rule="Month must be between 1 and 12"
             )
-        
+
         return True
+
+
+# ============================================================================
+# WRAPPER RULE CLASSES - TDD Step 3 Implementation
+# These classes wrap the static validation methods to provide instantiable
+# rule objects that can be added to field validators.
+# ============================================================================
+
+from typing import Union, List, Callable, Optional
+from datetime import datetime
+import pandas as pd
+from .base import ValidationResult
+
+
+class APINumberRule:
+    """Wrapper for API well number validation."""
+
+    def validate(self, data: pd.Series) -> ValidationResult:
+        """Validate API well numbers in a pandas Series."""
+        result = ValidationResult()
+        for idx, value in data.items():
+            try:
+                CustomValidators.validate_api_well_number(str(value) if pd.notna(value) else "")
+            except ValidationError as e:
+                result.add_error(str(idx), str(e), rule="api_number")
+        return result
+
+
+class DataTypeRule:
+    """Wrapper for data type validation."""
+
+    def __init__(self, allowed_types: Union[type, List[type]], allow_null: bool = True):
+        """Initialize with allowed type(s)."""
+        self.allowed_types = allowed_types if isinstance(allowed_types, (list, tuple)) else [allowed_types]
+        self.allow_null = allow_null
+
+    def validate(self, data: pd.Series) -> ValidationResult:
+        """Validate data types in a pandas Series."""
+        result = ValidationResult()
+        for idx, value in data.items():
+            if pd.isna(value):
+                if not self.allow_null:
+                    result.add_error(str(idx), "Null value not allowed", rule="data_type")
+            elif not isinstance(value, tuple(self.allowed_types)):
+                result.add_error(str(idx), f"Invalid type: {type(value)}", rule="data_type")
+        return result
+
+
+class DateFormatRule:
+    """Wrapper for date format validation."""
+
+    def __init__(self, formats: List[str], min_date: Optional[datetime] = None,
+                 max_date: Optional[datetime] = None):
+        """Initialize with allowed date formats and optional bounds."""
+        self.formats = formats
+        self.min_date = min_date
+        self.max_date = max_date
+
+    def validate(self, data: pd.Series) -> ValidationResult:
+        """Validate date formats in a pandas Series."""
+        result = ValidationResult()
+        for idx, value in data.items():
+            if pd.isna(value):
+                continue
+
+            # Try to parse with each format
+            parsed_date = None
+            for fmt in self.formats:
+                try:
+                    parsed_date = datetime.strptime(str(value), fmt)
+                    break
+                except ValueError:
+                    continue
+
+            if parsed_date is None:
+                result.add_error(str(idx), f"Could not parse date: {value}", rule="date_format")
+                continue
+
+            # Check date bounds
+            if self.min_date and parsed_date < self.min_date:
+                result.add_error(str(idx), f"Date before minimum: {self.min_date}", rule="date_format")
+            if self.max_date and parsed_date > self.max_date:
+                result.add_error(str(idx), f"Date after maximum: {self.max_date}", rule="date_format")
+
+        return result
+
+
+class RangeRule:
+    """Wrapper for numeric range validation."""
+
+    def __init__(self, min_value: Optional[float] = None, max_value: Optional[float] = None):
+        """Initialize with optional min and max values."""
+        self.min_value = min_value
+        self.max_value = max_value
+
+    def validate(self, data: pd.Series) -> ValidationResult:
+        """Validate numeric ranges in a pandas Series."""
+        result = ValidationResult()
+        for idx, value in data.items():
+            if pd.isna(value):
+                continue
+
+            try:
+                numeric_value = float(value)
+            except (ValueError, TypeError):
+                result.add_error(str(idx), f"Could not convert to number: {value}", rule="range")
+                continue
+
+            if self.min_value is not None and numeric_value < self.min_value:
+                result.add_error(str(idx), f"Value below minimum: {self.min_value}", rule="range")
+            if self.max_value is not None and numeric_value > self.max_value:
+                result.add_error(str(idx), f"Value above maximum: {self.max_value}", rule="range")
+
+        return result
+
+
+class PatternRule:
+    """Wrapper for regex pattern validation."""
+
+    def __init__(self, pattern: str, message: str = ""):
+        """Initialize with regex pattern and optional error message."""
+        self.pattern = pattern
+        self.message = message
+
+    def validate(self, data: pd.Series) -> ValidationResult:
+        """Validate regex patterns in a pandas Series."""
+        result = ValidationResult()
+        for idx, value in data.items():
+            if pd.isna(value):
+                continue
+
+            if not re.match(self.pattern, str(value)):
+                error_msg = self.message or f"Value does not match pattern: {self.pattern}"
+                result.add_error(str(idx), error_msg, rule="pattern")
+
+        return result
+
+
+class UniqueRule:
+    """Wrapper for field uniqueness validation."""
+
+    def validate(self, data: pd.Series) -> ValidationResult:
+        """Validate that values are unique in a pandas Series."""
+        result = ValidationResult()
+        duplicates = data[data.duplicated(keep=False)]
+
+        for idx, value in duplicates.items():
+            result.add_error(str(idx), f"Duplicate value found: {value}", rule="unique")
+
+        return result
+
+
+class RequiredFieldRule:
+    """Wrapper for required field validation."""
+
+    def __init__(self, required_fields: List[str]):
+        """Initialize with list of required field names."""
+        self.required_fields = required_fields
+
+    def validate(self, data: pd.DataFrame) -> ValidationResult:
+        """Validate that required fields exist in a DataFrame."""
+        result = ValidationResult()
+
+        for field in self.required_fields:
+            if field not in data.columns:
+                result.add_error(field, f"Required field missing: {field}", rule="required_field")
+            else:
+                # Check for missing values in required field
+                missing_count = data[field].isna().sum()
+                if missing_count > 0:
+                    result.add_error(field, f"Required field has {missing_count} missing values",
+                                   rule="required_field")
+
+        return result
+
+
+class CrossFieldRule:
+    """Wrapper for cross-field validation."""
+
+    def __init__(self, validation_func: Callable[[pd.DataFrame], List[str]],
+                 dependent_fields: List[str]):
+        """Initialize with validation function and list of dependent fields."""
+        self.validation_func = validation_func
+        self.dependent_fields = dependent_fields
+
+    def validate(self, data: pd.DataFrame) -> ValidationResult:
+        """Execute custom cross-field validation function."""
+        result = ValidationResult()
+
+        # Call validation function
+        errors = self.validation_func(data)
+
+        # Add errors to result
+        for error_msg in errors:
+            result.add_error("cross_field", error_msg, rule="cross_field")
+
+        return result

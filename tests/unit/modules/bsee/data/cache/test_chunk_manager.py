@@ -14,7 +14,7 @@ import pandas as pd
 import io
 import zipfile
 
-from src.worldenergydata.modules.bsee.data.cache.chunk_manager import ChunkMetadata
+from worldenergydata.modules.bsee.data.cache.chunk_manager import ChunkMetadata
 
 
 class TestChunkMetadata:
