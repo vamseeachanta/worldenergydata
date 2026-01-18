@@ -7,6 +7,14 @@
 
 ---
 
+## Plan Mode Convention (MANDATORY)
+When using plan mode, save plan files to: `specs/modules/<module>/`
+- `<module>` = relevant module name (e.g., bsee, sodir, eia, production)
+- Example: `specs/modules/bsee/well-extraction-plan.md`
+- Example: `specs/modules/production/field-analysis-plan.md`
+
+---
+
 ## 🚨 CROSS-REVIEW POLICY (MANDATORY)
 
 **ALL work performed by Claude Code or Google Gemini MUST be reviewed by OpenAI Codex.**
