@@ -74,11 +74,12 @@
 
 | Document | Description | Fields |
 |----------|-------------|--------|
-| [lease-fields.md](leasing/lease-fields.md) | Lease area/block data | 15 |
+| [lease-fields.md](leasing/lease-fields.md) | Lease data, status codes, royalty rates | 25+ |
+| [area-codes.md](leasing/area-codes.md) | OCS area/protraction codes (GOA, AK, PAC, ATL) | 70+ |
+| [block-numbering.md](leasing/block-numbering.md) | Block system, aliquots, dimensions | - |
 | [owner-fields.md](leasing/owner-fields.md) | Lease ownership | 12 |
 | [assignment-fields.md](leasing/assignment-fields.md) | Ownership assignments | 10 |
 | [decom-cost-fields.md](leasing/decom-cost-fields.md) | Decommissioning costs | 8 |
-| [area-codes.md](leasing/area-codes.md) | Area/protraction codes | 50+ |
 
 ---
 
@@ -95,9 +96,11 @@
 
 | Document | Description |
 |----------|-------------|
-| [api-number-format.md](common/api-number-format.md) | API 10/12 digit explanation |
+| [api-number-format.md](common/api-number-format.md) | API 10/12/14 digit explanation |
 | [region-codes.md](common/region-codes.md) | GOA, Pacific, Alaska, Atlantic |
 | [nad-projections.md](common/nad-projections.md) | NAD27, NAD83 coordinate systems |
+| [date-formats.md](common/date-formats.md) | Date handling and conventions |
+| [unit-conversions.md](common/unit-conversions.md) | BBL, MCF, depth, pressure units |
 | [district-codes.md](common/district-codes.md) | District identifiers |
 | [company-codes.md](common/company-codes.md) | Operator identifiers |
 

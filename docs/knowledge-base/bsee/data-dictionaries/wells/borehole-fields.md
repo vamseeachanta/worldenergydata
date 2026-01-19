@@ -143,3 +143,5 @@ Available export options:
 - [Type Codes](type-codes.md) - Complete type code reference
 - [API Number Format](../common/api-number-format.md) - API numbering system
 - [APD Fields](apd-fields.md) - Application for Permit to Drill fields
+- [WAR Fields](war-fields.md) - Well Activity Report fields
+- [Completion Fields](completion-fields.md) - Well completion data fields
