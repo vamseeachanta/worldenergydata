@@ -34,6 +34,11 @@ dependencies = [
     "pydantic>=2.5.0",
     "pydantic-settings>=2.1.0",
     "tenacity>=8.2.0",
+    # Vessel Hull Models dependencies
+    "numpy>=1.24.0",
+    "plotly>=5.18.0",
+    "typer>=0.9.0",
+    "rich>=13.0.0",
 ]
 
 [project.optional-dependencies]
