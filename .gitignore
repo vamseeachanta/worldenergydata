@@ -191,3 +191,7 @@ data/modules/*.backup*
 # Large unoptimized HTML reports in subdirectories (use CSV exports instead)
 reports/marine_safety/*/*.html
 *.bin
+
+# Large BSEE data files (>100MB GitHub limit)
+data/modules/bsee/zip/directional_survey/
+data/modules/bsee/zip/war/eWellWARRawData.zip
