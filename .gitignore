@@ -190,3 +190,4 @@ data/modules/*.backup*
 
 # Large unoptimized HTML reports in subdirectories (use CSV exports instead)
 reports/marine_safety/*/*.html
+*.bin
