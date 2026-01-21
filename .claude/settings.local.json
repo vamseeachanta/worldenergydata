@@ -2,16 +2,13 @@
   "permissions": {
     "allow": [
       "mcp__ruv-swarm",
-      "mcp__claude-flow@alpha",
-      "mcp__flow-nexus"
+      "mcp__claude-flow@alpha"
     ],
     "deny": []
   },
   "enabledMcpjsonServers": [
     "claude-flow@alpha",
-    "ruv-swarm",
-    "flow-nexus",
-    "agentic-payments"
+    "ruv-swarm"
   ],
-  "enableAllProjectMcpServers": true
+  "enableAllProjectMcpServers": false
 }
