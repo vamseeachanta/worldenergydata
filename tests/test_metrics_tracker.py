@@ -156,7 +156,7 @@ class TestMetricsTracker:
                 metrics['pass_rate'] = 0.0
                 
             # Load coverage.json if it exists
-            coverage_file = self.repo_path / 'coverage.json'
+            coverage_file = self.repo_path / 'reports' / 'coverage' / 'coverage.json'
             if coverage_file.exists():
                 with open(coverage_file, 'r') as f:
                     coverage_data = json.load(f)

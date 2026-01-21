@@ -411,7 +411,7 @@ jobs:
     - name: Upload coverage
       uses: codecov/codecov-action@v3
       with:
-        file: ./coverage.xml
+        file: ./reports/coverage/coverage.xml
     
     - name: Comment PR with results
       uses: actions/github-script@v6

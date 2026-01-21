@@ -36,7 +36,7 @@ The AI Agent Orchestration System provides intelligent multi-agent collaboration
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                   AI Agent Orchestrator                      │
-│  (modules/automation/agent_orchestrator.sh)                  │
+│  (scripts/automation/agent_orchestrator.sh)                  │
 └──────────────────┬──────────────────────────────────────────┘
                    │
         ┌──────────┴──────────┐
@@ -68,12 +68,12 @@ The AI Agent Orchestration System is pre-installed across all 26 repositories in
 
 ```bash
 # Check registry exists
-ls -la modules/config/ai-agents-registry.json
+ls -la config/ai_agents/ai-agents-registry.json
 
 # Check scripts are executable
-ls -la modules/automation/agent_orchestrator.sh
-ls -la modules/automation/gate_pass_review.sh
-ls -la modules/automation/update_ai_agents_daily.sh
+ls -la scripts/automation/agent_orchestrator.sh
+ls -la scripts/automation/gate_pass_review.sh
+ls -la scripts/automation/update_ai_agents_daily.sh
 ```
 
 ### Setup Daily Updates
@@ -85,7 +85,7 @@ Add to crontab for automatic daily updates:
 crontab -e
 
 # Add this line (runs at midnight UTC daily)
-0 0 * * * /mnt/github/workspace-hub/modules/automation/update_ai_agents_daily.sh
+0 0 * * * /mnt/github/workspace-hub/scripts/automation/update_ai_agents_daily.sh
 ```
 
 ## Usage
@@ -96,25 +96,25 @@ Select and execute the best agent for your task:
 
 ```bash
 # Basic usage
-./modules/automation/agent_orchestrator.sh <task-type> "<description>"
+./scripts/automation/agent_orchestrator.sh <task-type> "<description>"
 
 # With automated review
-./modules/automation/agent_orchestrator.sh code-generation \
+./scripts/automation/agent_orchestrator.sh code-generation \
   "Create user authentication API" \
   --with-review
 
 # Specify complexity
-./modules/automation/agent_orchestrator.sh code-refactoring \
+./scripts/automation/agent_orchestrator.sh code-refactoring \
   "Optimize database queries" \
   --complexity complex
 
 # Force specific agent
-./modules/automation/agent_orchestrator.sh test-creation \
+./scripts/automation/agent_orchestrator.sh test-creation \
   "Add unit tests for payment module" \
   --agent claude-flow-tester
 
 # Specify domain
-./modules/automation/agent_orchestrator.sh architecture-design \
+./scripts/automation/agent_orchestrator.sh architecture-design \
   "Design microservices architecture" \
   --domain python \
   --output report.md
@@ -126,19 +126,19 @@ Run automated quality checkpoints:
 
 ```bash
 # Review specification phase
-./modules/automation/gate_pass_review.sh specification . --auto
+./scripts/automation/gate_pass_review.sh specification . --auto
 
 # Review implementation with report
-./modules/automation/gate_pass_review.sh implementation . \
+./scripts/automation/gate_pass_review.sh implementation . \
   --report review-report.md
 
 # Verbose output
-./modules/automation/gate_pass_review.sh testing . \
+./scripts/automation/gate_pass_review.sh testing . \
   --verbose
 
 # All phases
 for phase in specification pseudocode architecture implementation testing refinement completion; do
-  ./modules/automation/gate_pass_review.sh $phase .
+  ./scripts/automation/gate_pass_review.sh $phase .
 done
 ```
 
@@ -148,13 +148,13 @@ Update agent capabilities manually or via cron:
 
 ```bash
 # Manual update
-./modules/automation/update_ai_agents_daily.sh
+./scripts/automation/update_ai_agents_daily.sh
 
 # Check update log
-tail -f modules/config/agent-updates.log
+tail -f config/ai_agents/agent-updates.log
 
 # View latest report
-ls -lt modules/config/agent-update-report-*.md | head -1 | xargs cat
+ls -lt config/ai_agents/agent-update-report-*.md | head -1 | xargs cat
 ```
 
 ## Agent Registry
@@ -241,44 +241,44 @@ Full SPARC methodology with gate-pass reviews:
 
 ```bash
 # Specification phase
-./modules/automation/agent_orchestrator.sh spec-creation \
+./scripts/automation/agent_orchestrator.sh spec-creation \
   "Design payment processing feature" \
   --with-review
 
-./modules/automation/gate_pass_review.sh specification .
+./scripts/automation/gate_pass_review.sh specification .
 
 # Pseudocode phase
-./modules/automation/agent_orchestrator.sh architecture-design \
+./scripts/automation/agent_orchestrator.sh architecture-design \
   "Algorithm for payment processing"
 
-./modules/automation/gate_pass_review.sh pseudocode .
+./scripts/automation/gate_pass_review.sh pseudocode .
 
 # Architecture phase
-./modules/automation/agent_orchestrator.sh architecture-design \
+./scripts/automation/agent_orchestrator.sh architecture-design \
   "Payment processing system architecture"
 
-./modules/automation/gate_pass_review.sh architecture .
+./scripts/automation/gate_pass_review.sh architecture .
 
 # Implementation (TDD)
 npx claude-flow sparc tdd "payment processing"
 
-./modules/automation/gate_pass_review.sh implementation .
+./scripts/automation/gate_pass_review.sh implementation .
 
 # Testing
-./modules/automation/agent_orchestrator.sh test-creation \
+./scripts/automation/agent_orchestrator.sh test-creation \
   "Comprehensive payment processing tests" \
   --with-review
 
-./modules/automation/gate_pass_review.sh testing .
+./scripts/automation/gate_pass_review.sh testing .
 
 # Refinement
-./modules/automation/agent_orchestrator.sh code-refactoring \
+./scripts/automation/agent_orchestrator.sh code-refactoring \
   "Optimize payment processing performance"
 
-./modules/automation/gate_pass_review.sh refinement .
+./scripts/automation/gate_pass_review.sh refinement .
 
 # Completion
-./modules/automation/gate_pass_review.sh completion .
+./scripts/automation/gate_pass_review.sh completion .
 ```
 
 ### 2. Feature Development Workflow
@@ -293,15 +293,15 @@ Rapid feature development with factory.ai and claude-flow:
 droid exec "implement user authentication with JWT"
 
 # 3. Review (Claude Flow)
-./modules/automation/gate_pass_review.sh implementation .
+./scripts/automation/gate_pass_review.sh implementation .
 
 # 4. Testing
-./modules/automation/agent_orchestrator.sh test-creation \
+./scripts/automation/agent_orchestrator.sh test-creation \
   "Authentication tests with 90% coverage" \
   --with-review
 
 # 5. Deploy
-./modules/automation/gate_pass_review.sh completion .
+./scripts/automation/gate_pass_review.sh completion .
 ```
 
 ### 3. Refactoring Workflow
@@ -310,23 +310,23 @@ Safe refactoring with automated testing:
 
 ```bash
 # 1. Analysis
-./modules/automation/agent_orchestrator.sh code-review \
+./scripts/automation/agent_orchestrator.sh code-review \
   "Analyze code quality and refactoring opportunities"
 
 # 2. Establish test baseline
-./modules/automation/agent_orchestrator.sh test-creation \
+./scripts/automation/agent_orchestrator.sh test-creation \
   "Comprehensive tests for current behavior"
 
-./modules/automation/gate_pass_review.sh testing .
+./scripts/automation/gate_pass_review.sh testing .
 
 # 3. Refactor
 droid exec "refactor user service to use dependency injection"
 
 # 4. Validate
-./modules/automation/gate_pass_review.sh refinement .
+./scripts/automation/gate_pass_review.sh refinement .
 
 # 5. Final review
-./modules/automation/gate_pass_review.sh completion .
+./scripts/automation/gate_pass_review.sh completion .
 ```
 
 ### 4. Bug Fix Workflow
@@ -335,23 +335,23 @@ Systematic bug fixing with root cause analysis:
 
 ```bash
 # 1. Reproduction
-./modules/automation/agent_orchestrator.sh bug-fixing \
+./scripts/automation/agent_orchestrator.sh bug-fixing \
   "Reproduce and document bug #123"
 
 # 2. Root cause analysis
-./modules/automation/agent_orchestrator.sh requirement-analysis \
+./scripts/automation/agent_orchestrator.sh requirement-analysis \
   "Analyze root cause of authentication failure"
 
 # 3. Fix implementation
 droid exec "fix authentication token validation bug"
 
-./modules/automation/gate_pass_review.sh implementation .
+./scripts/automation/gate_pass_review.sh implementation .
 
 # 4. Prevention
-./modules/automation/agent_orchestrator.sh test-creation \
+./scripts/automation/agent_orchestrator.sh test-creation \
   "Add regression tests for bug #123"
 
-./modules/automation/gate_pass_review.sh testing .
+./scripts/automation/gate_pass_review.sh testing .
 ```
 
 ### 5. Documentation Workflow
@@ -360,14 +360,14 @@ Comprehensive documentation creation:
 
 ```bash
 # 1. Planning
-./modules/automation/agent_orchestrator.sh documentation \
+./scripts/automation/agent_orchestrator.sh documentation \
   "Plan API documentation structure"
 
 # 2. Generation
 droid exec "generate API documentation from code comments"
 
 # 3. Validation
-./modules/automation/gate_pass_review.sh completion .
+./scripts/automation/gate_pass_review.sh completion .
 ```
 
 ## Integration Patterns
@@ -384,7 +384,7 @@ npx claude-flow@alpha swarm init --topology mesh
 droid exec "refactor all Python files to use async/await"
 
 # 3. Review with claude-flow agents
-./modules/automation/gate_pass_review.sh refinement . --auto
+./scripts/automation/gate_pass_review.sh refinement . --auto
 
 # 4. Orchestrate PR creation
 npx claude-flow@alpha hooks post-task
@@ -418,19 +418,19 @@ Multiple agents review from different perspectives:
 
 ```bash
 # Sequential specialized reviews
-./modules/automation/agent_orchestrator.sh code-review \
+./scripts/automation/agent_orchestrator.sh code-review \
   "Review for general quality" \
   --agent claude-flow-reviewer
 
-./modules/automation/agent_orchestrator.sh security-audit \
+./scripts/automation/agent_orchestrator.sh security-audit \
   "Review for security vulnerabilities" \
   --agent claude-flow-reviewer
 
-./modules/automation/agent_orchestrator.sh performance-opt \
+./scripts/automation/agent_orchestrator.sh performance-opt \
   "Review for performance optimization" \
   --agent claude-sonnet-4.5
 
-./modules/automation/agent_orchestrator.sh architecture-design \
+./scripts/automation/agent_orchestrator.sh architecture-design \
   "Review design patterns and architecture" \
   --agent claude-flow-architect
 ```
@@ -439,7 +439,7 @@ Multiple agents review from different perspectives:
 
 ### Agent Registry Configuration
 
-Edit `modules/config/ai-agents-registry.json`:
+Edit `config/ai_agents/ai-agents-registry.json`:
 
 ```json
 {
@@ -480,7 +480,7 @@ Adjust pass criteria per phase:
 
 ### Workflow Customization
 
-Create custom workflows in `modules/config/workflow-templates.json`:
+Create custom workflows in `config/ai_agents/workflow-templates.json`:
 
 ```json
 {
@@ -514,7 +514,7 @@ Run gate-pass reviews at the end of each SPARC phase:
 
 ```bash
 # After each phase
-./modules/automation/gate_pass_review.sh <phase> . --auto
+./scripts/automation/gate_pass_review.sh <phase> . --auto
 ```
 
 ### 2. Let the Orchestrator Choose
@@ -523,10 +523,10 @@ Trust the intelligent agent selection:
 
 ```bash
 # Good - let orchestrator decide
-./modules/automation/agent_orchestrator.sh code-generation "Create API"
+./scripts/automation/agent_orchestrator.sh code-generation "Create API"
 
 # Only force agent if you have specific requirements
-./modules/automation/agent_orchestrator.sh code-generation "Create API" \
+./scripts/automation/agent_orchestrator.sh code-generation "Create API" \
   --agent factory-ai-droid  # Only when necessary
 ```
 
@@ -539,7 +539,7 @@ Always review AI-generated changes before committing:
 git diff
 
 # Run gate-pass review
-./modules/automation/gate_pass_review.sh implementation .
+./scripts/automation/gate_pass_review.sh implementation .
 
 # Commit only after approval
 git add . && git commit -m "Add feature X"
@@ -551,10 +551,10 @@ Check daily update reports weekly:
 
 ```bash
 # View latest update report
-ls -lt modules/config/agent-update-report-*.md | head -1 | xargs cat
+ls -lt config/ai_agents/agent-update-report-*.md | head -1 | xargs cat
 
 # Check update log
-tail -20 modules/config/agent-updates.log
+tail -20 config/ai_agents/agent-updates.log
 ```
 
 ### 5. Use Workflows for Complex Tasks
@@ -578,11 +578,11 @@ For multi-step tasks, follow pre-built workflows:
 **Solution:**
 ```bash
 # Force specific agent
-./modules/automation/agent_orchestrator.sh <task-type> "<description>" \
+./scripts/automation/agent_orchestrator.sh <task-type> "<description>" \
   --agent <agent-name>
 
 # Or adjust complexity
-./modules/automation/agent_orchestrator.sh <task-type> "<description>" \
+./scripts/automation/agent_orchestrator.sh <task-type> "<description>" \
   --complexity complex
 ```
 
@@ -593,7 +593,7 @@ For multi-step tasks, follow pre-built workflows:
 **Solution:**
 ```bash
 # Run with verbose output
-./modules/automation/gate_pass_review.sh <phase> . \
+./scripts/automation/gate_pass_review.sh <phase> . \
   --verbose \
   --report review-details.md
 
@@ -611,13 +611,13 @@ cat review-details.md
 **Solution:**
 ```bash
 # Manually run daily update
-./modules/automation/update_ai_agents_daily.sh
+./scripts/automation/update_ai_agents_daily.sh
 
 # Verify sync
 for dir in */; do
   if [ -d "${dir}.git" ]; then
     echo "=== ${dir%/} ==="
-    ls -la "${dir}modules/config/ai-agents-registry.json"
+    ls -la "${dir}config/ai_agents/ai-agents-registry.json"
   fi
 done
 ```
@@ -668,7 +668,7 @@ Track and optimize agent performance:
 ```bash
 # Check agent metrics
 jq '.agents | to_entries[] | {agent: .key, avgScore: (.value.capabilities | to_entries | map(.value.score) | add / length)}' \
-  modules/config/ai-agents-registry.json
+  config/ai_agents/ai-agents-registry.json
 
 # Review performance logs
 ls -la .claude-flow/metrics/
@@ -686,11 +686,11 @@ Apply workflows across multiple repositories:
 for repo in repo1 repo2 repo3; do
   cd "$repo"
 
-  ./modules/automation/agent_orchestrator.sh code-refactoring \
+  ./scripts/automation/agent_orchestrator.sh code-refactoring \
     "Standardize error handling" \
     --with-review
 
-  ./modules/automation/gate_pass_review.sh refinement . --auto
+  ./scripts/automation/gate_pass_review.sh refinement . --auto
 
   cd ..
 done
@@ -700,16 +700,16 @@ done
 
 ### Documentation
 
-- **Agent Registry:** `modules/config/ai-agents-registry.json`
-- **Workflow Templates:** `modules/config/workflow-templates.json`
-- **Update Logs:** `modules/config/agent-updates.log`
-- **Update Reports:** `modules/config/agent-update-report-*.md`
+- **Agent Registry:** `config/ai_agents/ai-agents-registry.json`
+- **Workflow Templates:** `config/ai_agents/workflow-templates.json`
+- **Update Logs:** `config/ai_agents/agent-updates.log`
+- **Update Reports:** `config/ai_agents/agent-update-report-*.md`
 
 ### Scripts
 
-- **Orchestrator:** `modules/automation/agent_orchestrator.sh`
-- **Gate-Pass Review:** `modules/automation/gate_pass_review.sh`
-- **Daily Update:** `modules/automation/update_ai_agents_daily.sh`
+- **Orchestrator:** `scripts/automation/agent_orchestrator.sh`
+- **Gate-Pass Review:** `scripts/automation/gate_pass_review.sh`
+- **Daily Update:** `scripts/automation/update_ai_agents_daily.sh`
 
 ### Platform Documentation
 

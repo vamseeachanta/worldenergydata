@@ -80,7 +80,7 @@ test-integration: ## Run integration tests only
 test-coverage: ## Run tests with coverage report
 	@echo "$(BLUE)Running tests with coverage...$(NC)"
 	docker-compose exec api pytest tests/ --cov=app --cov-report=html --cov-report=term
-	@echo "$(GREEN)✓ Coverage report generated in htmlcov/$(NC)"
+	@echo "$(GREEN)✓ Coverage report generated in reports/coverage/htmlcov/$(NC)"
 
 test-watch: ## Run tests in watch mode
 	docker-compose exec api pytest-watch tests/
@@ -287,8 +287,8 @@ clean: ## Clean build artifacts
 	find . -type f -name "*.pyc" -delete 2>/dev/null || true
 	find . -type d -name "*.egg-info" -exec rm -rf {} + 2>/dev/null || true
 	find . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null || true
-	find . -type d -name "htmlcov" -exec rm -rf {} + 2>/dev/null || true
-	rm -f .coverage coverage.xml
+	find . -type d -path "*/reports/coverage/htmlcov" -exec rm -rf {} + 2>/dev/null || true
+	rm -f .coverage reports/coverage/coverage.xml
 	@echo "$(GREEN)✓ Cleaned$(NC)"
 
 install: ## Install development dependencies

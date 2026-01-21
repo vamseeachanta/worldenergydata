@@ -6,7 +6,7 @@ Agents are sourced from AITmpl and Claude Code Templates.
 ## Folder Structure
 
 ```
-agents/
+.claude/agent-library/worldenergydata/
 ├── security/          # Security audit and penetration testing
 ├── performance/       # Performance optimization agents
 ├── testing/          # Test generation and E2E testing

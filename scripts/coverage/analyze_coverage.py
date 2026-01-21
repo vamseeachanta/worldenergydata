@@ -283,8 +283,10 @@ def generate_report(modules: Dict[str, Dict], output_file: Path = None):
     return report_text
 
 if __name__ == '__main__':
-    xml_file = Path('/mnt/github/workspace-hub/worldenergydata/coverage.xml')
-    output_file = Path('/mnt/github/workspace-hub/worldenergydata/COVERAGE_ANALYSIS.txt')
+    project_root = Path(__file__).resolve().parents[2]
+    xml_file = project_root / 'reports' / 'coverage' / 'coverage.xml'
+    output_file = project_root / 'reports' / 'coverage' / 'COVERAGE_ANALYSIS.txt'
+    output_file.parent.mkdir(parents=True, exist_ok=True)
 
     print(f"📖 Parsing coverage.xml...", file=sys.stderr)
     modules = parse_coverage_xml(xml_file)

@@ -16,7 +16,7 @@ agents:
 custom_agents:
   - name: financial-analysis
     type: financial-domain-expert
-    path: agents/financial-analysis/
+    path: .claude/agent-library/worldenergydata/financial-analysis/
     description: Financial analysis and energy economics specialist
 
 integration:

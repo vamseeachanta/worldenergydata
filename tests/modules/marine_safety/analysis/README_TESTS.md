@@ -112,8 +112,8 @@ Generate test coverage reports:
 pytest --cov=worldenergydata.marine_safety.analysis --cov-report=html tests/modules/marine_safety/analysis/
 
 # View coverage report
-open htmlcov/index.html  # macOS
-xdg-open htmlcov/index.html  # Linux
+open reports/coverage/htmlcov/index.html  # macOS
+xdg-open reports/coverage/htmlcov/index.html  # Linux
 ```
 
 ## Test Data

@@ -429,7 +429,7 @@
         "execution": [
           "npx claude-flow@alpha swarm init --topology mesh",
           "droid exec 'refactor all Python files to use async/await'",
-          "./modules/automation/gate_pass_review.sh refinement . --auto",
+          "./scripts/automation/gate_pass_review.sh refinement . --auto",
           "npx claude-flow@alpha hooks post-task"
         ]
       }

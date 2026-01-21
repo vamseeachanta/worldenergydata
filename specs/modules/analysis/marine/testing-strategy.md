@@ -99,10 +99,10 @@ skip_covered = False
 fail_under = 80
 
 [html]
-directory = htmlcov
+directory = reports/coverage/htmlcov
 
 [xml]
-output = coverage.xml
+output = reports/coverage/coverage.xml
 ```
 
 ---
@@ -1662,7 +1662,7 @@ skip_covered = False
 show_missing = True
 
 [coverage:html]
-directory = htmlcov
+directory = reports/coverage/htmlcov
 ```
 
 ### Testcontainers Setup
@@ -1747,7 +1747,7 @@ jobs:
       - name: Upload coverage
         uses: codecov/codecov-action@v4
         with:
-          files: ./coverage.xml
+          files: ./reports/coverage/coverage.xml
           flags: unittests
 
   integration-tests:
@@ -1844,7 +1844,7 @@ tests/performance/datasets/
 !tests/fixtures/html/*.html
 
 # Exclude generated test artifacts
-htmlcov/
+reports/coverage/htmlcov/
 .coverage
 .pytest_cache/
 *.pyc
