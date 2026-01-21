@@ -103,6 +103,7 @@ Agents on-demand: `.claude/agent-library/` | Reference: `.claude/docs/agents.md`
 | `.claude/docs/agents.md` | Spawning agents |
 | `.claude/docs/mcp-tools.md` | MCP coordination |
 | `.claude/docs/execution-patterns.md` | Complex workflows |
+| `.claude/docs/memory-policies.md` | Cross-session memory |
 | `.claude/docs/CONTEXT_LIMITS.md` | Context management |
 | `.claude/docs/CROSS_REVIEW_POLICY.md` | Cross-review requirements |
 
