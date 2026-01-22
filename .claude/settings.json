@@ -62,6 +62,10 @@
           {
             "type": "command",
             "command": "cat | jq -r '.tool_input.command // empty' | tr '\\n' '\\0' | xargs -0 -I {} npx claude-flow@alpha hooks post-command --command '{}' --track-metrics true --store-results true"
+          },
+          {
+            "type": "command",
+            "command": "cat | /mnt/github/workspace-hub/worldenergydata/.claude/hooks/capture-corrections.sh"
           }
         ]
       },
@@ -108,7 +112,10 @@
   },
   "plansDirectory": "specs/modules",
   "includeCoAuthoredBy": true,
-  "enabledMcpjsonServers": ["claude-flow", "ruv-swarm"],
+  "enabledMcpjsonServers": [
+    "claude-flow",
+    "ruv-swarm"
+  ],
   "statusLine": {
     "type": "command",
     "command": ".claude/statusline-command.sh"
