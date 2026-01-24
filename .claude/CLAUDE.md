@@ -1,82 +1,44 @@
-# Claude Code Configuration
+# World Energy Data
 
-> Inherits: workspace-hub | Target: <8KB
+> Inherits: workspace-hub | Target: <18% (1.4KB)
 
-## Core Rules (MANDATORY)
+## Project Focus
 
-1. **TDD**: Write failing test → implement → refactor
-2. **YAGNI**: Simplest solution, no over-engineering
-3. **Batch operations**: Single message = all related operations
-4. **No sycophancy**: Push back on bad ideas, never "You're absolutely right!"
-5. **Ask first**: Stop and clarify rather than assume
+Global energy market data aggregation, analysis, and visualization platform.
 
-## Execution Patterns
+## Tech Stack
 
-### Task Tool for Agents
-```javascript
-// Single message - all agents in parallel
-Task("Researcher", "Analyze...", "researcher")
-Task("Coder", "Implement...", "coder")
-Task("Tester", "Test...", "tester")
-```
+- Python 3.11+ with uv
+- Data: pandas, numpy
+- Viz: Plotly (interactive HTML)
+- Testing: pytest
 
-### File Organization
-- `/src` - Source code
-- `/tests` - Test files
-- `/docs` - Documentation
-- `/data` - CSV files (raw/, processed/, results/)
-- `/reports` - HTML reports
+## Project Rules
 
-### HTML Reporting
-- Interactive plots only (Plotly, Bokeh, Altair)
-- No static matplotlib exports
-- CSV with relative paths
+1. Data sources must include attribution and timestamp
+2. Energy units standardized (BTU, MWh, barrels)
+3. All visualizations interactive HTML
+4. Validate against EIA/IEA formats
 
-## Code Standards
+## Key Directories
 
-### Naming
-Names tell what code does, not how:
-- `Tool` not `AbstractToolInterface`
-- Never: NewAPI, LegacyHandler, MCPWrapper
+- `src/` - Analysis modules
+- `data/` - Datasets (raw/, processed/)
+- `reports/` - HTML reports
+- `tests/` - Test files
 
-### Comments
-- Start files: `ABOUTME: ` (2 lines)
-- Explain WHAT/WHY, never "improved" or "new"
+## Commands
 
-### Git
-- Never skip pre-commit hooks
-- Never `git add -A` without `git status`
-- Commit frequently
-
-## Agent Coordination
-
-### Before/During/After Work
 ```bash
-npx claude-flow@alpha hooks pre-task --description "[task]"
-npx claude-flow@alpha hooks post-edit --file "[file]"
-npx claude-flow@alpha hooks post-task --task-id "[task]"
+uv run pytest              # Tests
+uv run python -m src.main  # Run analysis
 ```
 
-### MCP vs Claude Code
-- **MCP**: Coordination setup (swarm_init, topology)
-- **Claude Code Task tool**: Actual agent execution
+## Reference
 
-## SPARC Workflow
-1. Specification → Requirements
-2. Pseudocode → Algorithm design
-3. Architecture → System design
-4. Refinement → TDD implementation
-5. Completion → Integration
+- Agents: `.claude/docs/agents.md`
+- Full rules: Inherited from workspace-hub/CLAUDE.md
 
-## Reference Docs (Load on-demand)
-- `.claude/docs/ai-orchestration-reference.md` - Agents, MCP tools, examples
-- `.claude/docs/engineering-principles.md` - Full engineering principles
-- `~/.agent-os/instructions/create-spec.md` - Spec creation
-- `~/.agent-os/instructions/execute-tasks.md` - Task execution
+---
 
-## Rule Precedence
-1. Security/Safety
-2. TDD (mandatory)
-3. Code quality
-4. Orchestration patterns
-5. Project-specific overrides
+*Verbose docs in `.claude/docs/`*
