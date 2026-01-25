@@ -76,7 +76,27 @@ def pytest_sessionfinish(session, exitstatus):
 
 # Skip collection of experimental/archived test files
 def pytest_ignore_collect(path, config):
-    """Skip collection of experimental and archived test files."""
+    """Skip collection of experimental and archived test files.
+
+    Test directory structure (2025-01):
+        tests/
+        ├── unit/           # Module-grouped unit tests
+        │   ├── bsee/
+        │   ├── fdas/
+        │   ├── marine_safety/
+        │   ├── hse/
+        │   ├── reporting/
+        │   ├── vessel_hull_models/
+        │   └── well_production_dashboard/
+        ├── integration/    # Integration tests
+        │   └── modules/
+        ├── e2e/            # End-to-end tests
+        ├── fixtures/       # Test fixtures
+        ├── helpers/        # Test helpers
+        └── _archived/      # Legacy tests (not collected)
+            ├── legacy/
+            └── validation_runs/
+    """
     import re
     path_str = str(path)
     basename = path.basename
@@ -85,7 +105,11 @@ def pytest_ignore_collect(path, config):
     if basename.startswith("query_") and basename.endswith("_test.py"):
         return True
 
-    # Skip _archived_tests directories
+    # Skip _archived directory and all subdirectories (consolidated 2025-01)
+    if "/_archived/" in path_str or path_str.endswith("/_archived"):
+        return True
+
+    # Legacy pattern - keep for backward compatibility
     if "_archived_tests" in path_str:
         return True
 
@@ -94,7 +118,6 @@ def pytest_ignore_collect(path, config):
         return True
 
     # Skip directories explicitly listed in norecursedirs but not being honored
-    # Also skip experimental/incomplete test directories
     excluded_patterns = [
         "comprehensive-report-system",
         "financial-analysis-sme-code",
@@ -102,9 +125,6 @@ def pytest_ignore_collect(path, config):
         "/legacy/",
         "legacy_",
         "custom_scripts",
-        "/fdas/",  # Incomplete module with import errors
-        "/marine_safety/",  # Incomplete module with import errors
-        "/well_production_dashboard/"  # Incomplete module with import errors
     ]
 
     for pattern in excluded_patterns:

@@ -75,15 +75,26 @@ llm = [
     "accelerate>=0.25.0",
 ]
 
+[project.scripts]
+worldenergydata = "worldenergydata.cli.main:app"
+
 [project.urls]
 "Homepage" = "https://github.com/username/worldenergydata"
 "Bug Tracker" = "https://github.com/username/worldenergydata/issues"
 "Documentation" = "https://github.com/username/worldenergydata#readme"
 
-# Use packages.find instead of conflicting with packages array
+# Package discovery configuration
+# Auto-discovers all packages under src/ including:
+# - worldenergydata (main package)
+# - worldenergydata.cli (unified CLI orchestrator)
+# - worldenergydata.common (cross-cutting concerns layer)
+# - worldenergydata.modules (domain-specific modules)
+# - worldenergydata.analysis (analysis utilities)
+# - worldenergydata.validation (data validation)
+# - external, modules, validators (other src packages)
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["*"]
+include = ["worldenergydata*", "external*", "modules*", "validators*"]
 exclude = ["tests*", "docs*"]
 
 [tool.black]
