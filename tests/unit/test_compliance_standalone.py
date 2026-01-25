@@ -16,7 +16,9 @@ from worldenergydata.modules.bsee.reports.comprehensive.templates.compliance_tem
     ComplianceMetrics,
     EnvironmentalMetrics,
     SafetyMetrics,
-    ComplianceTemplate
+    ComplianceTemplate,
+    ProductionQuota,
+    RegulatoryMilestone
 )
 
 def test_compliance_metrics():

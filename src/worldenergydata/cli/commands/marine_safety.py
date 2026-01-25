@@ -18,10 +18,11 @@ from typing import Optional, List
 from pathlib import Path
 from enum import Enum
 from datetime import datetime
+import json
 
 from rich.console import Console
 from rich.table import Table
-from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn
 from rich.panel import Panel
 
 # Initialize console
@@ -74,6 +75,14 @@ def scrape_uscg(
         None, "--output", "-o",
         help="Output file path for scraped data"
     ),
+    checkpoint_dir: Optional[Path] = typer.Option(
+        None, "--checkpoint-dir",
+        help="Directory for checkpoint files"
+    ),
+    no_resume: bool = typer.Option(
+        False, "--no-resume",
+        help="Do not resume from checkpoint"
+    ),
     verbose: bool = typer.Option(
         False, "--verbose", "-v",
         help="Enable verbose output"
@@ -90,37 +99,80 @@ def scrape_uscg(
         worldenergydata marine-safety scrape uscg --output uscg_data.json --verbose
     """
     try:
+        console.print(
+            Panel(
+                f"[bold]USCG Scrape Configuration[/bold]\n"
+                f"Start Year: {start_year or 'All available'}\n"
+                f"End Year: {end_year or 'Current'}\n"
+                f"Output: {output or 'uscg_incidents.json'}\n"
+                f"Resume from checkpoint: {not no_resume}",
+                border_style="cyan"
+            )
+        )
+
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
             console=console
         ) as progress:
-            task = progress.add_task("[cyan]Scraping USCG MISLE data...", total=None)
-
-            console.print(
-                Panel(
-                    f"[bold]USCG Scrape Configuration[/bold]\n"
-                    f"Start Year: {start_year or 'All'}\n"
-                    f"End Year: {end_year or 'Current'}\n"
-                    f"Output: {output or 'Default'}",
-                    border_style="cyan"
-                )
-            )
+            task = progress.add_task("[cyan]Initializing USCG scraper...", total=100)
 
             try:
-                from worldenergydata.modules.marine_safety.scrapers.uscg_scraper import USCGScraper
+                from worldenergydata.modules.marine_safety.scrapers.uscg_scraper import USCGMarineCasualtyScraper
 
-                console.print("[yellow]Note:[/yellow] USCG scraper integration in progress")
+                progress.update(task, advance=20, description="[cyan]Loading scraper module...")
+
+                # Initialize scraper
+                scraper = USCGMarineCasualtyScraper(
+                    checkpoint_dir=checkpoint_dir or Path("checkpoints"),
+                    start_year=start_year,
+                    end_year=end_year,
+                    resume_from_checkpoint=not no_resume
+                )
+
+                progress.update(task, advance=30, description="[cyan]Scraping USCG data...")
+
+                # Run scraping
+                incidents = scraper.scrape()
+
+                progress.update(task, advance=30, description="[cyan]Saving results...")
+
+                # Export results
+                output_path = output or Path("uscg_incidents.json")
+                scraper.export_to_json(output_path)
+
+                progress.update(task, advance=20, description="[cyan]Generating statistics...")
+
+                # Get statistics
+                stats = scraper.get_statistics()
+
+                # Display results
+                results_table = Table(title="Scraping Results", show_header=True, header_style="bold cyan")
+                results_table.add_column("Metric", style="dim")
+                results_table.add_column("Value", justify="right")
+
+                results_table.add_row("Total Incidents", str(stats.get('total_incidents', 0)))
+                results_table.add_row("Total Fatalities", str(stats.get('total_fatalities', 0)))
+                results_table.add_row("Total Injuries", str(stats.get('total_injuries', 0)))
+
+                if stats.get('date_range'):
+                    results_table.add_row("Date Range", f"{stats['date_range'].get('start', 'N/A')} to {stats['date_range'].get('end', 'N/A')}")
+
+                console.print(results_table)
+                console.print(f"\n[green]Data exported to: {output_path}[/green]")
 
             except ImportError as e:
+                progress.update(task, completed=100)
                 console.print(f"[yellow]Warning:[/yellow] Could not import USCG scraper: {e}")
-
-            progress.update(task, completed=True)
+                console.print("[dim]Required dependencies: pdfplumber, beautifulsoup4, tenacity[/dim]")
 
         console.print("\n[green]USCG scraping completed[/green]")
 
     except Exception as e:
         console.print(f"[red]Error:[/red] {str(e)}")
+        if verbose:
+            import traceback
+            console.print(f"[dim]{traceback.format_exc()}[/dim]")
         raise typer.Exit(1)
 
 
@@ -241,6 +293,18 @@ def db_init(
         None, "--db-url",
         help="Database connection URL (defaults to SQLite)"
     ),
+    dev_mode: bool = typer.Option(
+        False, "--dev-mode",
+        help="Use SQLite schema for development"
+    ),
+    dry_run: bool = typer.Option(
+        False, "--dry-run",
+        help="Print SQL without executing"
+    ),
+    verbose: bool = typer.Option(
+        False, "--verbose", "-v",
+        help="Enable verbose output"
+    ),
 ):
     """
     Initialize database schema for marine safety data.
@@ -251,9 +315,10 @@ def db_init(
         worldenergydata marine-safety db init
         worldenergydata marine-safety db init --force
         worldenergydata marine-safety db init --db-url postgresql://user:pass@localhost/marine
+        worldenergydata marine-safety db init --dev-mode --db-url sqlite:///marine_safety.db
     """
     try:
-        if force:
+        if force and not dry_run:
             confirm = typer.confirm(
                 "This will drop all existing tables. Continue?",
                 default=False
@@ -262,29 +327,67 @@ def db_init(
                 console.print("[yellow]Operation cancelled[/yellow]")
                 raise typer.Exit()
 
+        # Default to SQLite for development if no URL provided
+        if not db_url:
+            db_url = "sqlite:///marine_safety.db"
+            dev_mode = True
+
+        console.print(
+            Panel(
+                f"[bold]Database Initialization[/bold]\n"
+                f"Database URL: {db_url}\n"
+                f"Dev Mode: {dev_mode}\n"
+                f"Force: {force}\n"
+                f"Dry Run: {dry_run}",
+                border_style="cyan"
+            )
+        )
+
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
             console=console
         ) as progress:
-            task = progress.add_task("[cyan]Initializing database schema...", total=None)
+            task = progress.add_task("[cyan]Initializing database schema...", total=100)
 
             try:
-                from worldenergydata.modules.marine_safety.database.init_db import init_database
+                from worldenergydata.modules.marine_safety.database.init_db import DatabaseInitializer
 
-                console.print("[yellow]Note:[/yellow] Database initialization integration in progress")
+                progress.update(task, advance=20, description="[cyan]Loading database initializer...")
+
+                # Initialize database
+                initializer = DatabaseInitializer(
+                    db_url=db_url,
+                    dev_mode=dev_mode,
+                    verify_only=False,
+                    dry_run=dry_run
+                )
+
+                progress.update(task, advance=40, description="[cyan]Creating schema...")
+
+                # Run initialization
+                initializer.run()
+
+                progress.update(task, advance=40, description="[cyan]Verifying schema...")
+
+                console.print("\n[green]Database initialized successfully[/green]")
 
             except ImportError as e:
+                progress.update(task, completed=100)
                 console.print(f"[yellow]Warning:[/yellow] Could not import database module: {e}")
+                console.print("[dim]Required dependencies: psycopg2-binary (for PostgreSQL)[/dim]")
 
-            progress.update(task, completed=True)
-
-        console.print("\n[green]Database initialized successfully[/green]")
+            except FileNotFoundError as e:
+                progress.update(task, completed=100)
+                console.print(f"[yellow]Warning:[/yellow] Schema file not found: {e}")
 
     except typer.Exit:
         raise
     except Exception as e:
         console.print(f"[red]Error:[/red] {str(e)}")
+        if verbose:
+            import traceback
+            console.print(f"[dim]{traceback.format_exc()}[/dim]")
         raise typer.Exit(1)
 
 
@@ -350,6 +453,82 @@ def stats(
         worldenergydata marine-safety stats --verbose
     """
     try:
+        with Progress(
+            SpinnerColumn(),
+            TextColumn("[progress.description]{task.description}"),
+            console=console
+        ) as progress:
+            task = progress.add_task("[cyan]Loading statistics...", total=100)
+
+            stats_data = {
+                "total_incidents": 0,
+                "uscg_incidents": 0,
+                "ntsb_incidents": 0,
+                "bsee_incidents": 0,
+                "maib_incidents": 0,
+                "date_range": "N/A",
+                "vessel_types": 0,
+                "incident_types": 0,
+            }
+
+            try:
+                from worldenergydata.modules.marine_safety.database.db_manager import get_db_manager
+
+                progress.update(task, advance=30, description="[cyan]Connecting to database...")
+
+                db_manager = get_db_manager()
+
+                progress.update(task, advance=40, description="[cyan]Querying statistics...")
+
+                # Check database connection
+                if db_manager.check_connection():
+                    with db_manager.session() as session:
+                        # Query statistics from database
+                        from sqlalchemy import text
+
+                        # Try to get incident counts
+                        try:
+                            result = session.execute(text("SELECT COUNT(*) FROM incidents"))
+                            stats_data["total_incidents"] = result.scalar() or 0
+                        except Exception:
+                            pass
+
+                        # Try to get source-specific counts
+                        try:
+                            result = session.execute(text("SELECT source, COUNT(*) FROM incidents GROUP BY source"))
+                            for row in result:
+                                source_name = row[0].lower() if row[0] else ""
+                                if "uscg" in source_name:
+                                    stats_data["uscg_incidents"] = row[1]
+                                elif "ntsb" in source_name:
+                                    stats_data["ntsb_incidents"] = row[1]
+                                elif "bsee" in source_name:
+                                    stats_data["bsee_incidents"] = row[1]
+                                elif "maib" in source_name:
+                                    stats_data["maib_incidents"] = row[1]
+                        except Exception:
+                            pass
+
+                progress.update(task, advance=30)
+
+            except ImportError:
+                progress.update(task, completed=100)
+                # Use file-based statistics if database not available
+                checkpoint_dir = Path("checkpoints")
+                if checkpoint_dir.exists():
+                    for f in checkpoint_dir.glob("*.json"):
+                        try:
+                            with open(f) as fp:
+                                data = json.load(fp)
+                                if "total_incidents" in data:
+                                    stats_data["total_incidents"] += data.get("total_incidents", 0)
+                        except Exception:
+                            pass
+
+            except Exception:
+                progress.update(task, completed=100)
+
+        # Create statistics table
         table = Table(
             title="Marine Safety Incident Statistics",
             show_header=True,
@@ -359,26 +538,42 @@ def stats(
         table.add_column("Metric", style="dim")
         table.add_column("Value", justify="right")
 
-        # Placeholder statistics - would be populated from actual data
-        table.add_row("Total Incidents", "Loading...")
-        table.add_row("USCG Incidents", "Loading...")
-        table.add_row("NTSB Incidents", "Loading...")
-        table.add_row("BSEE Incidents", "Loading...")
-        table.add_row("MAIB Incidents", "Loading...")
-        table.add_row("Date Range", "Loading...")
-        table.add_row("Vessel Types", "Loading...")
-        table.add_row("Incident Types", "Loading...")
+        # Filter by source if specified
+        if source == DataSource.all:
+            table.add_row("Total Incidents", f"{stats_data['total_incidents']:,}")
+            table.add_row("USCG Incidents", f"{stats_data['uscg_incidents']:,}")
+            table.add_row("NTSB Incidents", f"{stats_data['ntsb_incidents']:,}")
+            table.add_row("BSEE Incidents", f"{stats_data['bsee_incidents']:,}")
+            table.add_row("MAIB Incidents", f"{stats_data['maib_incidents']:,}")
+        elif source == DataSource.uscg:
+            table.add_row("USCG Incidents", f"{stats_data['uscg_incidents']:,}")
+        elif source == DataSource.ntsb:
+            table.add_row("NTSB Incidents", f"{stats_data['ntsb_incidents']:,}")
+        elif source == DataSource.bsee:
+            table.add_row("BSEE Incidents", f"{stats_data['bsee_incidents']:,}")
+        elif source == DataSource.maib:
+            table.add_row("MAIB Incidents", f"{stats_data['maib_incidents']:,}")
 
         if verbose:
-            table.add_row("Last Updated", datetime.now().strftime("%Y-%m-%d"))
-            table.add_row("Database Size", "Loading...")
-            table.add_row("Records with GPS", "Loading...")
+            table.add_row("", "")  # Spacer
+            table.add_row("Last Updated", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+            # Check for checkpoint files
+            checkpoint_dir = Path("checkpoints")
+            if checkpoint_dir.exists():
+                checkpoint_count = len(list(checkpoint_dir.glob("*.json")))
+                table.add_row("Checkpoint Files", str(checkpoint_count))
 
         console.print(table)
-        console.print("\n[yellow]Note:[/yellow] Live statistics integration in progress")
+
+        if stats_data["total_incidents"] == 0:
+            console.print("\n[yellow]Note:[/yellow] No incidents found. Use 'marine-safety scrape' to collect data.")
 
     except Exception as e:
         console.print(f"[red]Error:[/red] {str(e)}")
+        if verbose:
+            import traceback
+            console.print(f"[dim]{traceback.format_exc()}[/dim]")
         raise typer.Exit(1)
 
 
@@ -409,6 +604,10 @@ def export(
         None, "--limit",
         help="Limit number of records to export"
     ),
+    verbose: bool = typer.Option(
+        False, "--verbose", "-v",
+        help="Enable verbose output"
+    ),
 ):
     """
     Export marine safety incident data to various formats.
@@ -420,6 +619,19 @@ def export(
         worldenergydata marine-safety export parquet --output data.parquet --limit 1000
     """
     try:
+        console.print(
+            Panel(
+                f"[bold]Export Configuration[/bold]\n"
+                f"Format: {export_format.value}\n"
+                f"Output: {output}\n"
+                f"Source: {source.value}\n"
+                f"Start Date: {start_date or 'All'}\n"
+                f"End Date: {end_date or 'Current'}\n"
+                f"Limit: {limit or 'None'}",
+                border_style="cyan"
+            )
+        )
+
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
@@ -427,36 +639,132 @@ def export(
         ) as progress:
             task = progress.add_task(
                 f"[cyan]Exporting data to {export_format.value.upper()}...",
-                total=None
+                total=100
             )
 
-            console.print(
-                Panel(
-                    f"[bold]Export Configuration[/bold]\n"
-                    f"Format: {export_format.value}\n"
-                    f"Output: {output}\n"
-                    f"Source: {source.value}\n"
-                    f"Start Date: {start_date or 'All'}\n"
-                    f"End Date: {end_date or 'Current'}\n"
-                    f"Limit: {limit or 'None'}",
-                    border_style="cyan"
-                )
-            )
+            records_exported = 0
 
-            console.print("[yellow]Note:[/yellow] Data export integration in progress")
+            try:
+                from worldenergydata.modules.marine_safety.database.db_manager import get_db_manager
+                import pandas as pd
 
-            progress.update(task, completed=True)
+                progress.update(task, advance=20, description="[cyan]Connecting to database...")
+
+                db_manager = get_db_manager()
+
+                if db_manager.check_connection():
+                    progress.update(task, advance=30, description="[cyan]Querying data...")
+
+                    with db_manager.session() as session:
+                        from sqlalchemy import text
+
+                        # Build query with filters
+                        query = "SELECT * FROM incidents WHERE 1=1"
+                        params = {}
+
+                        if source != DataSource.all:
+                            query += " AND LOWER(source) LIKE :source"
+                            params["source"] = f"%{source.value}%"
+
+                        if start_date:
+                            query += " AND incident_date >= :start_date"
+                            params["start_date"] = start_date
+
+                        if end_date:
+                            query += " AND incident_date <= :end_date"
+                            params["end_date"] = end_date
+
+                        if limit:
+                            query += f" LIMIT {limit}"
+
+                        result = session.execute(text(query), params)
+                        rows = result.fetchall()
+                        columns = result.keys()
+
+                        progress.update(task, advance=30, description="[cyan]Exporting data...")
+
+                        # Convert to DataFrame
+                        df = pd.DataFrame(rows, columns=columns)
+                        records_exported = len(df)
+
+                        # Export based on format
+                        output.parent.mkdir(parents=True, exist_ok=True)
+
+                        if export_format == ExportFormat.csv:
+                            df.to_csv(output, index=False)
+                        elif export_format == ExportFormat.json:
+                            df.to_json(output, orient="records", indent=2, date_format="iso")
+                        elif export_format == ExportFormat.excel:
+                            df.to_excel(output, index=False, engine="openpyxl")
+                        elif export_format == ExportFormat.parquet:
+                            df.to_parquet(output, index=False)
+
+                        progress.update(task, advance=20)
+
+                else:
+                    # Try to export from checkpoint files
+                    progress.update(task, advance=30, description="[cyan]Loading from checkpoints...")
+
+                    checkpoint_dir = Path("checkpoints")
+                    all_incidents = []
+
+                    if checkpoint_dir.exists():
+                        for f in checkpoint_dir.glob("*.json"):
+                            try:
+                                with open(f) as fp:
+                                    data = json.load(fp)
+                                    if isinstance(data, list):
+                                        all_incidents.extend(data)
+                                    elif isinstance(data, dict) and "incidents" in data:
+                                        all_incidents.extend(data["incidents"])
+                            except Exception:
+                                pass
+
+                    if all_incidents:
+                        import pandas as pd
+                        df = pd.DataFrame(all_incidents)
+
+                        if limit:
+                            df = df.head(limit)
+
+                        records_exported = len(df)
+
+                        output.parent.mkdir(parents=True, exist_ok=True)
+
+                        if export_format == ExportFormat.csv:
+                            df.to_csv(output, index=False)
+                        elif export_format == ExportFormat.json:
+                            df.to_json(output, orient="records", indent=2)
+                        elif export_format == ExportFormat.excel:
+                            df.to_excel(output, index=False)
+                        elif export_format == ExportFormat.parquet:
+                            df.to_parquet(output, index=False)
+
+                    progress.update(task, advance=50)
+
+            except ImportError as e:
+                progress.update(task, completed=100)
+                console.print(f"[yellow]Warning:[/yellow] Could not import required modules: {e}")
+                console.print("[dim]Required dependencies: pandas, openpyxl (for Excel)[/dim]")
+                raise typer.Exit(1)
 
         console.print(
             Panel(
-                f"[green]Data exported successfully to:[/green]\n{output}",
+                f"[green]Data exported successfully[/green]\n"
+                f"Records: {records_exported:,}\n"
+                f"Output: {output}",
                 title="Export Complete",
                 border_style="green"
             )
         )
 
+    except typer.Exit:
+        raise
     except Exception as e:
         console.print(f"[red]Error:[/red] {str(e)}")
+        if verbose:
+            import traceback
+            console.print(f"[dim]{traceback.format_exc()}[/dim]")
         raise typer.Exit(1)
 
 

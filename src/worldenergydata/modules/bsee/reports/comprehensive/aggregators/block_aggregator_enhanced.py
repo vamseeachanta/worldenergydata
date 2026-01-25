@@ -17,8 +17,8 @@ from ..models import (
 
 # Import enhanced data loader and BSEE data modules
 from ..data_loader_enhanced import HierarchicalDataLoader
-from ....data._from_bin.block_data import BlockData
-from ....data._by_block.data_from_local_files import DataFromLocalFiles as BlockDataFromFiles
+from ....data.sources.bin.block_data import BlockData
+from ....data.loaders.block.local_files import DataFromLocalFiles as BlockDataFromFiles
 
 
 logger = logging.getLogger(__name__)

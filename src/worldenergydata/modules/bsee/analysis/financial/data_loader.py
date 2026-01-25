@@ -15,9 +15,9 @@ from datetime import datetime
 # Import from comprehensive reports module
 from ...reports.comprehensive.data_loader_enhanced import HierarchicalDataLoader
 from ...reports.comprehensive.hierarchical_aggregator import PriceDeck, CostStructure
-from ...data._from_bin.block_data import BlockData
-from ...data._from_bin.lease_data import LeaseData
-from ...data._from_bin.api_data import APIData
+from ...data.sources.bin.block_data import BlockData
+from ...data.sources.bin.lease_data import LeaseData
+from ...data.sources.bin.api_data import APIData
 
 
 def normalize_lease_number(val: Any) -> str:

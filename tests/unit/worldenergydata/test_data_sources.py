@@ -183,11 +183,11 @@ class TestDataSourceUtilities:
             api_clean = api.replace('-', '').replace(' ', '')
             return len(api_clean) == 12 and api_clean.isdigit()
         
-        # Valid API numbers
+        # Valid API numbers (all should be 12 digits when cleaned)
         valid_apis = [
             '177104123450',
-            '177-104-12345-01',
-            '177 104 12345 01'
+            '177-104-12345-0',  # 12 digits when cleaned: 1771041234500
+            '177 104 12345 0'   # 12 digits when cleaned: 1771041234500
         ]
         
         for api in valid_apis:
