@@ -1,0 +1,37 @@
+meta:
+  library: worldenergydata
+  basename: bsee_custom
+  label: goa_stones_julia_stmalo
+basename: bsee_custom
+data:
+  groups:
+  - bottom_block: ~
+    api12: ~
+    lease:
+    - G20351
+    - G16997
+    - G16970
+    - G16965
+    - G18753
+    - G17001
+  production_data: false
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: true
+    cfg_sensitivities: false
+Analysis:
+  basename: bsee_custom
+  analysis_root_folder: K:\github\worldenergydata\tests\modules\bsee\analysis
+  file_name: query_lease_goa_stones_julia_stmalo
+  file_name_for_overwrite: query_lease_goa_stones_julia_stmalo
+  log_folder: K:\github\worldenergydata\tests\modules\bsee\analysis\logs
+  start_time: 2025-07-21 09:36:18.249684
+  cfg_array_file_names: ~
+  DefaultInputFile: ~
+  CustomInputFile: K:\github\worldenergydata\tests\modules\bsee\analysis\query_lease.yml
+  result_folder: K:\github\worldenergydata\tests\modules\bsee\analysis\results
+  result_data_folder: K:\github\worldenergydata\tests\modules\bsee\analysis\results\Data
+  result_plot_folder: K:\github\worldenergydata\tests\modules\bsee\analysis\results\Plot
+  fe_folder: K:\github\worldenergydata\tests\modules\bsee\analysis\results

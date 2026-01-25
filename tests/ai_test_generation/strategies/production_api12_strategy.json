@@ -1,0 +1,306 @@
+{
+  "module": "production_api12",
+  "test_file": "test_production_api12.py",
+  "test_classes": [
+    {
+      "name": "TestProductionAPI12Analysis",
+      "target_class": "ProductionAPI12Analysis",
+      "test_methods": [
+        {
+          "name": "test___init___basic",
+          "type": "basic",
+          "description": "Test basic functionality of __init__"
+        },
+        {
+          "name": "test_router_basic",
+          "type": "basic",
+          "description": "Test basic functionality of router"
+        },
+        {
+          "name": "test_run_production_analysis_basic",
+          "type": "basic",
+          "description": "Test basic functionality of run_production_analysis"
+        },
+        {
+          "name": "test_run_production_analysis_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for run_production_analysis"
+        },
+        {
+          "name": "test_run_production_analysis_return_value",
+          "type": "return_value",
+          "description": "Test return value of run_production_analysis"
+        },
+        {
+          "name": "test_run_production_analysis_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for run_production_analysis"
+        },
+        {
+          "name": "test_pd_merge_clean_column_names_basic",
+          "type": "basic",
+          "description": "Test basic functionality of pd_merge_clean_column_names"
+        },
+        {
+          "name": "test_pd_merge_clean_column_names_return_value",
+          "type": "return_value",
+          "description": "Test return value of pd_merge_clean_column_names"
+        },
+        {
+          "name": "test_save_result_group_basic",
+          "type": "basic",
+          "description": "Test basic functionality of save_result_group"
+        },
+        {
+          "name": "test_save_result_group_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for save_result_group"
+        },
+        {
+          "name": "test_save_result_group_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for save_result_group"
+        },
+        {
+          "name": "test_save_result_groups_basic",
+          "type": "basic",
+          "description": "Test basic functionality of save_result_groups"
+        },
+        {
+          "name": "test_save_result_groups_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for save_result_groups"
+        },
+        {
+          "name": "test_analyze_data_for_api12_basic",
+          "type": "basic",
+          "description": "Test basic functionality of analyze_data_for_api12"
+        },
+        {
+          "name": "test_analyze_data_for_api12_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for analyze_data_for_api12"
+        },
+        {
+          "name": "test_analyze_data_for_api12_return_value",
+          "type": "return_value",
+          "description": "Test return value of analyze_data_for_api12"
+        },
+        {
+          "name": "test_analyze_data_for_api12_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for analyze_data_for_api12"
+        },
+        {
+          "name": "test_get_summary_df_api12_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_summary_df_api12"
+        },
+        {
+          "name": "test_get_summary_df_api12_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for get_summary_df_api12"
+        },
+        {
+          "name": "test_get_summary_df_api12_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_summary_df_api12"
+        },
+        {
+          "name": "test_get_summary_df_api12_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for get_summary_df_api12"
+        },
+        {
+          "name": "test_add_production_rate_and_date_to_df_basic",
+          "type": "basic",
+          "description": "Test basic functionality of add_production_rate_and_date_to_df"
+        },
+        {
+          "name": "test_add_production_rate_and_date_to_df_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for add_production_rate_and_date_to_df"
+        },
+        {
+          "name": "test_add_production_rate_and_date_to_df_return_value",
+          "type": "return_value",
+          "description": "Test return value of add_production_rate_and_date_to_df"
+        },
+        {
+          "name": "test_add_production_rate_and_date_to_df_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for add_production_rate_and_date_to_df"
+        },
+        {
+          "name": "test_convert_well_df_to_block_df_basic",
+          "type": "basic",
+          "description": "Test basic functionality of convert_well_df_to_block_df"
+        },
+        {
+          "name": "test_convert_well_df_to_block_df_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for convert_well_df_to_block_df"
+        },
+        {
+          "name": "test_convert_well_df_to_block_df_return_value",
+          "type": "return_value",
+          "description": "Test return value of convert_well_df_to_block_df"
+        },
+        {
+          "name": "test_convert_well_df_to_block_df_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for convert_well_df_to_block_df"
+        },
+        {
+          "name": "test_extract_block_mapping_basic",
+          "type": "basic",
+          "description": "Test basic functionality of extract_block_mapping"
+        },
+        {
+          "name": "test_extract_block_mapping_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for extract_block_mapping"
+        },
+        {
+          "name": "test_extract_block_mapping_return_value",
+          "type": "return_value",
+          "description": "Test return value of extract_block_mapping"
+        },
+        {
+          "name": "test_convert_block_to_field_basic",
+          "type": "basic",
+          "description": "Test basic functionality of convert_block_to_field"
+        },
+        {
+          "name": "test_convert_block_to_field_return_value",
+          "type": "return_value",
+          "description": "Test return value of convert_block_to_field"
+        },
+        {
+          "name": "test_plot_production_rate_by_well_basic",
+          "type": "basic",
+          "description": "Test basic functionality of plot_production_rate_by_well"
+        },
+        {
+          "name": "test_plot_production_rate_by_well_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for plot_production_rate_by_well"
+        },
+        {
+          "name": "test_plot_prod_cumulative_mmbbl_by_well_basic",
+          "type": "basic",
+          "description": "Test basic functionality of plot_prod_cumulative_mmbbl_by_well"
+        },
+        {
+          "name": "test_plot_prod_cumulative_mmbbl_by_well_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for plot_prod_cumulative_mmbbl_by_well"
+        },
+        {
+          "name": "test_plot_prod_cumulative_mmbbl_by_block_basic",
+          "type": "basic",
+          "description": "Test basic functionality of plot_prod_cumulative_mmbbl_by_block"
+        },
+        {
+          "name": "test_plot_prod_cumulative_mmbbl_by_block_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for plot_prod_cumulative_mmbbl_by_block"
+        },
+        {
+          "name": "test_plot_prod_cumulative_mmbbl_by_field_basic",
+          "type": "basic",
+          "description": "Test basic functionality of plot_prod_cumulative_mmbbl_by_field"
+        },
+        {
+          "name": "test_plot_prod_cumulative_mmbbl_by_field_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for plot_prod_cumulative_mmbbl_by_field"
+        },
+        {
+          "name": "test_plot_revenues_basic",
+          "type": "basic",
+          "description": "Test basic functionality of plot_revenues"
+        },
+        {
+          "name": "test_plot_revenues_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for plot_revenues"
+        },
+        {
+          "name": "test_generate_revenue_table_basic",
+          "type": "basic",
+          "description": "Test basic functionality of generate_revenue_table"
+        },
+        {
+          "name": "test_generate_revenue_table_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for generate_revenue_table"
+        },
+        {
+          "name": "test_generate_revenue_table_return_value",
+          "type": "return_value",
+          "description": "Test return value of generate_revenue_table"
+        },
+        {
+          "name": "test_generate_revenue_table_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for generate_revenue_table"
+        },
+        {
+          "name": "test_perform_npv_calculation_basic",
+          "type": "basic",
+          "description": "Test basic functionality of perform_npv_calculation"
+        },
+        {
+          "name": "test_perform_npv_calculation_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for perform_npv_calculation"
+        },
+        {
+          "name": "test_perform_npv_calculation_return_value",
+          "type": "return_value",
+          "description": "Test return value of perform_npv_calculation"
+        },
+        {
+          "name": "test_perform_npv_calculation_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for perform_npv_calculation"
+        },
+        {
+          "name": "test_perform_excel_aligned_npv_calculation_basic",
+          "type": "basic",
+          "description": "Test basic functionality of perform_excel_aligned_npv_calculation"
+        },
+        {
+          "name": "test_perform_excel_aligned_npv_calculation_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for perform_excel_aligned_npv_calculation"
+        },
+        {
+          "name": "test_perform_excel_aligned_npv_calculation_return_value",
+          "type": "return_value",
+          "description": "Test return value of perform_excel_aligned_npv_calculation"
+        },
+        {
+          "name": "test_perform_excel_aligned_npv_calculation_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for perform_excel_aligned_npv_calculation"
+        },
+        {
+          "name": "test_perform_decline_analysis_api12_basic",
+          "type": "basic",
+          "description": "Test basic functionality of perform_decline_analysis_api12"
+        },
+        {
+          "name": "test_perform_decline_analysis_api12_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for perform_decline_analysis_api12"
+        }
+      ]
+    }
+  ],
+  "test_functions": [],
+  "test_count": 58,
+  "coverage_approach": "focused",
+  "priority": "high"
+}

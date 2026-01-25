@@ -731,4 +731,8 @@ For additional support, examples, and community resources, visit:
 
 ---
 
+<<<<<<< HEAD
 *This guide is maintained by the AssetUtilities Hub Team and updated regularly with new features and improvements.*
+=======
+*This guide is maintained by the AssetUtilities Hub Team and updated regularly with new features and improvements.*
+>>>>>>> origin/main

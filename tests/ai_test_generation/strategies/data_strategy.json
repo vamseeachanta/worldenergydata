@@ -1,0 +1,417 @@
+{
+  "module": "data",
+  "test_file": "test_data.py",
+  "test_classes": [
+    {
+      "name": "TestReadDataFromSystemFiles",
+      "target_class": "ReadDataFromSystemFiles",
+      "test_methods": [
+        {
+          "name": "test_get_file_list_from_folder_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_file_list_from_folder"
+        },
+        {
+          "name": "test_get_file_list_from_folder_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for get_file_list_from_folder"
+        },
+        {
+          "name": "test_get_file_list_from_folder_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_file_list_from_folder"
+        },
+        {
+          "name": "test_get_file_list_from_folder_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for get_file_list_from_folder"
+        },
+        {
+          "name": "test_get_data_from_json_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_data_from_json"
+        },
+        {
+          "name": "test_get_data_from_json_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_data_from_json"
+        },
+        {
+          "name": "test_get_data_from_yaml_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_data_from_yaml"
+        },
+        {
+          "name": "test_get_data_from_yaml_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_data_from_yaml"
+        }
+      ]
+    },
+    {
+      "name": "TestReadDataFromString",
+      "target_class": "ReadDataFromString",
+      "test_methods": [
+        {
+          "name": "test___init___basic",
+          "type": "basic",
+          "description": "Test basic functionality of __init__"
+        },
+        {
+          "name": "test_get_line_numbers_containing_keyword_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_line_numbers_containing_keyword"
+        },
+        {
+          "name": "test_get_line_numbers_containing_keyword_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for get_line_numbers_containing_keyword"
+        },
+        {
+          "name": "test_get_line_numbers_containing_keyword_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_line_numbers_containing_keyword"
+        },
+        {
+          "name": "test_get_row_numbers_containing_keyword_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_row_numbers_containing_keyword"
+        },
+        {
+          "name": "test_get_row_numbers_containing_keyword_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for get_row_numbers_containing_keyword"
+        },
+        {
+          "name": "test_get_row_numbers_containing_keyword_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_row_numbers_containing_keyword"
+        },
+        {
+          "name": "test_get_row_numbers_containing_keyword_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for get_row_numbers_containing_keyword"
+        },
+        {
+          "name": "test_get_array_row_containing_any_of_keywords_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_array_row_containing_any_of_keywords"
+        },
+        {
+          "name": "test_get_array_row_containing_any_of_keywords_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for get_array_row_containing_any_of_keywords"
+        },
+        {
+          "name": "test_get_array_row_containing_any_of_keywords_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_array_row_containing_any_of_keywords"
+        },
+        {
+          "name": "test_get_array_row_containing_any_of_keywords_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for get_array_row_containing_any_of_keywords"
+        },
+        {
+          "name": "test_get_substrings_by_line_number_array_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_substrings_by_line_number_array"
+        },
+        {
+          "name": "test_get_substrings_by_line_number_array_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for get_substrings_by_line_number_array"
+        },
+        {
+          "name": "test_get_substrings_by_line_number_array_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_substrings_by_line_number_array"
+        },
+        {
+          "name": "test_get_sub_string_by_line_numbers_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_sub_string_by_line_numbers"
+        },
+        {
+          "name": "test_get_sub_string_by_line_numbers_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_sub_string_by_line_numbers"
+        },
+        {
+          "name": "test_get_xml_dict_from_byte_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_xml_dict_from_byte_data"
+        },
+        {
+          "name": "test_get_xml_dict_from_byte_data_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_xml_dict_from_byte_data"
+        },
+        {
+          "name": "test_get_all_lines_containing_all_key_words_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_all_lines_containing_all_key_words"
+        },
+        {
+          "name": "test_get_all_lines_containing_all_key_words_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_all_lines_containing_all_key_words"
+        },
+        {
+          "name": "test_get_all_lines_containing_any_key_words_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_all_lines_containing_any_key_words"
+        },
+        {
+          "name": "test_get_all_lines_containing_any_key_words_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_all_lines_containing_any_key_words"
+        },
+        {
+          "name": "test_get_all_array_rows_containing_any_keyword_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_all_array_rows_containing_any_keyword"
+        },
+        {
+          "name": "test_get_all_array_rows_containing_any_keyword_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for get_all_array_rows_containing_any_keyword"
+        },
+        {
+          "name": "test_get_all_array_rows_containing_any_keyword_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_all_array_rows_containing_any_keyword"
+        },
+        {
+          "name": "test_get_all_array_rows_containing_any_keyword_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for get_all_array_rows_containing_any_keyword"
+        },
+        {
+          "name": "test_get_first_array_row_containing_any_keyword_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_first_array_row_containing_any_keyword"
+        },
+        {
+          "name": "test_get_first_array_row_containing_any_keyword_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for get_first_array_row_containing_any_keyword"
+        },
+        {
+          "name": "test_get_first_array_row_containing_any_keyword_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_first_array_row_containing_any_keyword"
+        },
+        {
+          "name": "test_get_first_array_row_containing_any_keyword_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for get_first_array_row_containing_any_keyword"
+        },
+        {
+          "name": "test_get_first_array_row_containing_all_keywords_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_first_array_row_containing_all_keywords"
+        },
+        {
+          "name": "test_get_first_array_row_containing_all_keywords_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for get_first_array_row_containing_all_keywords"
+        },
+        {
+          "name": "test_get_first_array_row_containing_all_keywords_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_first_array_row_containing_all_keywords"
+        },
+        {
+          "name": "test_get_first_array_row_containing_all_keywords_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for get_first_array_row_containing_all_keywords"
+        },
+        {
+          "name": "test_get_all_array_row_containing_all_keywords_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_all_array_row_containing_all_keywords"
+        },
+        {
+          "name": "test_get_all_array_row_containing_all_keywords_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for get_all_array_row_containing_all_keywords"
+        },
+        {
+          "name": "test_get_all_array_row_containing_all_keywords_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_all_array_row_containing_all_keywords"
+        },
+        {
+          "name": "test_get_all_array_row_containing_all_keywords_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for get_all_array_row_containing_all_keywords"
+        },
+        {
+          "name": "test_get_intermediate_word_based_on_pattern_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_intermediate_word_based_on_pattern"
+        },
+        {
+          "name": "test_get_intermediate_word_based_on_pattern_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_intermediate_word_based_on_pattern"
+        }
+      ]
+    },
+    {
+      "name": "TestReadURLData",
+      "target_class": "ReadURLData",
+      "test_methods": [
+        {
+          "name": "test___init___basic",
+          "type": "basic",
+          "description": "Test basic functionality of __init__"
+        },
+        {
+          "name": "test_get_response_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_response_data"
+        },
+        {
+          "name": "test_get_response_data_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_response_data"
+        },
+        {
+          "name": "test_get_xml_data_as_dict_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_xml_data_as_dict"
+        },
+        {
+          "name": "test_get_xml_data_as_dict_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_xml_data_as_dict"
+        }
+      ]
+    },
+    {
+      "name": "TestAttributeDict",
+      "target_class": "AttributeDict",
+      "test_methods": [
+        {
+          "name": "test___init___basic",
+          "type": "basic",
+          "description": "Test basic functionality of __init__"
+        }
+      ]
+    },
+    {
+      "name": "TestRegEx",
+      "target_class": "RegEx",
+      "test_methods": [
+        {
+          "name": "test___init___basic",
+          "type": "basic",
+          "description": "Test basic functionality of __init__"
+        },
+        {
+          "name": "test_replace_in_string_basic",
+          "type": "basic",
+          "description": "Test basic functionality of replace_in_string"
+        },
+        {
+          "name": "test_replace_in_string_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for replace_in_string"
+        },
+        {
+          "name": "test_replace_in_string_return_value",
+          "type": "return_value",
+          "description": "Test return value of replace_in_string"
+        },
+        {
+          "name": "test_get_without_html_tags_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_without_html_tags"
+        },
+        {
+          "name": "test_get_without_html_tags_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for get_without_html_tags"
+        },
+        {
+          "name": "test_get_without_html_tags_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_without_html_tags"
+        }
+      ]
+    },
+    {
+      "name": "TestDateTimeUtility",
+      "target_class": "DateTimeUtility",
+      "test_methods": [
+        {
+          "name": "test_last_day_of_month_basic",
+          "type": "basic",
+          "description": "Test basic functionality of last_day_of_month"
+        },
+        {
+          "name": "test_last_day_of_month_return_value",
+          "type": "return_value",
+          "description": "Test return value of last_day_of_month"
+        }
+      ]
+    }
+  ],
+  "test_functions": [
+    {
+      "name": "test_get_initials_from_name_basic",
+      "type": "basic",
+      "description": "Test basic functionality of get_initials_from_name"
+    },
+    {
+      "name": "test_get_initials_from_name_return_value",
+      "type": "return_value",
+      "description": "Test return value of get_initials_from_name"
+    },
+    {
+      "name": "test_getClosestIntegerInList_basic",
+      "type": "basic",
+      "description": "Test basic functionality of getClosestIntegerInList"
+    },
+    {
+      "name": "test_getClosestIntegerInList_return_value",
+      "type": "return_value",
+      "description": "Test return value of getClosestIntegerInList"
+    },
+    {
+      "name": "test_transform_df_datetime_to_str_basic",
+      "type": "basic",
+      "description": "Test basic functionality of transform_df_datetime_to_str"
+    },
+    {
+      "name": "test_transform_df_datetime_to_str_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for transform_df_datetime_to_str"
+    },
+    {
+      "name": "test_transform_df_datetime_to_str_return_value",
+      "type": "return_value",
+      "description": "Test return value of transform_df_datetime_to_str"
+    },
+    {
+      "name": "test_transform_df_None_to_NULL_basic",
+      "type": "basic",
+      "description": "Test basic functionality of transform_df_None_to_NULL"
+    },
+    {
+      "name": "test_transform_df_None_to_NULL_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for transform_df_None_to_NULL"
+    },
+    {
+      "name": "test_transform_df_None_to_NULL_return_value",
+      "type": "return_value",
+      "description": "Test return value of transform_df_None_to_NULL"
+    }
+  ],
+  "test_count": 74,
+  "coverage_approach": "focused",
+  "priority": "high"
+}

@@ -23,7 +23,8 @@ classifiers = [
 ]
 
 dependencies = [
-    "assetutilities @ file:///mnt/github/workspace-hub/assetutilities",
+    # Use git URL for CI/CD compatibility, local path for development
+    "assetutilities @ git+https://github.com/vamseeachanta/assetutilities.git",
     "scrapy>=2.12.0",
     "selenium>=4.15.0",
     "beautifulsoup4>=4.12.0",

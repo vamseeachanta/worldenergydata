@@ -1,0 +1,236 @@
+basename: bsee
+type:
+  data: false
+  analysis: false
+  results: false
+parameters:
+  filepath:
+    data: data/modules/bsee/data
+    production:
+      csv: data\modules\bsee\csv\production
+      zip: data\modules\bsee\zip\production
+      bin: data\modules\bsee\bin\production
+    block: data/modules/bsee/block
+    APD: data/modules/bsee/data/csv/online_query_raw_data
+    apm:
+      zip: data/modules/bsee/zip/apm
+      bin: data/modules/bsee/bin/apm
+      columns:
+      - - MMS_COMPANY_NUM
+        - API_WELL_NUMBER
+        - WATER_DEPTH
+        - WELL_NM_BP_SFIX
+        - WELL_NM_ST_SFIX
+        - SURF_AREA_CODE
+        - SURF_BLOCK_NUM
+        - SURF_LEASE_NUM
+        - BOTM_AREA_CODE
+        - BOTM_BLOCK_NUM
+        - BOTM_LEASE_NUM
+        - RIG_ID_NUM
+        - BOREHOLE_STAT_CD
+        - WELL_TYPE_CODE
+        - BUS_ASC_NAME
+  max_allowed_npt: 90
+  borehole_codes:
+  - BOREHOLE_STAT_CD: APD
+    BOREHOLE_STAT_DESC: APPLICATION FOR PERMIT TO DRILL
+  - BOREHOLE_STAT_CD: AST
+    BOREHOLE_STAT_DESC: APPROVED SIDETRACK
+  - BOREHOLE_STAT_CD: CNL
+    BOREHOLE_STAT_DESC: BOREHOLE IS CANCELLED. THE REQUEST TO DRILL THE WELL IS CANCELLED
+      AFTER THE APD OR SUNDRY HAS BEEN APPROVED. THE STATUS DATE IS THE DATE THE BOREHOLE
+      WAS CANCELLED.
+  - BOREHOLE_STAT_CD: COM
+    BOREHOLE_STAT_DESC: BOREHOLE COMPLETED
+  - BOREHOLE_STAT_CD: CT
+    BOREHOLE_STAT_DESC: CORE TEST WELL
+  - BOREHOLE_STAT_CD: DRL
+    BOREHOLE_STAT_DESC: DRILLING ACTIVE
+  - BOREHOLE_STAT_CD: DSI
+    BOREHOLE_STAT_DESC: DRILLING SUSPENDED
+  - BOREHOLE_STAT_CD: PA
+    BOREHOLE_STAT_DESC: PERMANENTLY ABANDONED
+  - BOREHOLE_STAT_CD: ST
+    BOREHOLE_STAT_DESC: BOREHOLE SIDETRACKED
+  - BOREHOLE_STAT_CD: TA
+    BOREHOLE_STAT_DESC: TEMPORARILY ABANDONED
+  - BOREHOLE_STAT_CD: VCW
+    BOREHOLE_STAT_DESC: VOLUME CHAMBER WELL
+  - BOREHOLE_STAT_CD: PND
+    BOREHOLE_STAT_DESC: PENDING
+settings_master: ~
+data_retrieval:
+  well:
+    website:
+      url: https://www.data.bsee.gov/Well/APD/Default.aspx
+      form_data:
+        first_request:
+          ASPxFormLayout1$ASPxTextBoxAPI: ~
+          ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+        second_request:
+          ASPxFormLayout1$ASPxTextBoxAPI: ~
+          __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+          __EVENTARGUMENT: Click
+    csv:
+      BoreholeRawData_mv_boreholes_all: data/modules/bsee/csv/online_query_raw_data/BoreholeRawData_mv_boreholes_all.csv
+      eWellAPDRawData_mv_apd_main: data/modules/bseecsv/online_query_raw_data/eWellAPDRawData_mv_apd_main.csv
+    zip:
+      BoreholeRawData_mv_boreholes_all: data/modules/bsee/data/zip/BoreholeRawData_mv_boreholes_all.zip
+      eWellAPDRawData_mv_apd_main: data/modules/bsee/data/zip/eWellAPDRawData_mv_apd_main.zip
+  production:
+    website:
+      url: https://www.data.bsee.gov/Production/ProductionData/Default.aspx
+      form_data:
+        first_request:
+          ASPxFormLayout1$ASPxTextBoxLN: ~
+          ASPxFormLayout1$ASPxTextBoxDF: ~
+          ASPxFormLayout1$ASPxTextBoxDT: ~
+          ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+        second_request:
+          ASPxFormLayout1$ASPxTextBoxLN: ~
+          __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+          __EVENTARGUMENT: Click
+  block:
+    website:
+      url: https://www.data.bsee.gov/Well/APD/Default.aspx
+      form_data:
+        first_request:
+          ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
+          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: ~
+          ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+          ASPxFormLayout1$ASPxComboBoxBBN: None
+          ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+        second_request:
+          ASPxFormLayout1$ASPxComboBoxBA: Walker Ridge (WR)
+          ASPxFormLayout1$ASPxComboBoxBA$DDD$L: ~
+          ASPxFormLayout1_ASPxComboBoxBBN_VI: None
+          ASPxFormLayout1$ASPxComboBoxBBN: None
+          __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+          __EVENTARGUMENT: Click
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: true
+    cfg_sensitivities: false
+meta:
+  library: energydata
+  basename: bsee
+  label: goa_stmalo
+data:
+  apm: true
+  production_data: true
+  groups:
+  - bottom_block:
+      area: WR
+      number: 677
+    api12:
+    - 608124001800
+    - 608124002900
+    - 608124005700
+    - 608124005600
+    - 608124005800
+    - 608124005300
+    - 608124015100
+    label: WR_677
+    file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\WR_677.csv
+    well_data:
+    - api12:
+      - 608124001800
+      label: '608124001800'
+      file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124001800.csv
+    - api12:
+      - 608124002900
+      label: '608124002900'
+      file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124002900.csv
+    - api12:
+      - 608124005700
+      label: '608124005700'
+      file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005700.csv
+    - api12:
+      - 608124005600
+      label: '608124005600'
+      file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005600.csv
+    - api12:
+      - 608124005800
+      label: '608124005800'
+      file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005800.csv
+    - api12:
+      - 608124005300
+      label: '608124005300'
+      file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005300.csv
+    - api12:
+      - 608124015100
+      label: '608124015100'
+      file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124015100.csv
+analysis:
+  flag: true
+  api12: true
+  bottom_blocks: true
+Analysis:
+  basename: bsee
+  analysis_root_folder: k:\github\energydata\tests\modules\bsee\analysis
+  file_name: query_field_quickfire_goa_stmalo
+  file_name_for_overwrite: query_field_quickfire_goa_stmalo
+  log_folder: k:\github\energydata\tests\modules\bsee\analysis\logs
+  start_time: 2025-04-30 22:24:08.435198
+  cfg_array_file_names: ~
+  DefaultInputFile: ~
+  CustomInputFile: k:\github\energydata\tests\modules\bsee\analysis\query_field_quickfire.yml
+  result_folder: k:\github\energydata\tests\modules\bsee\analysis\results
+  result_data_folder: k:\github\energydata\tests\modules\bsee\analysis\results\Data
+  result_plot_folder: k:\github\energydata\tests\modules\bsee\analysis\results\Plot
+  fe_folder: k:\github\energydata\tests\modules\bsee\analysis\results
+bsee:
+  data:
+    apm: true
+    production_data: true
+    groups:
+    - bottom_block:
+        area: WR
+        number: 677
+      api12:
+      - 608124001800
+      - 608124002900
+      - 608124005700
+      - 608124005600
+      - 608124005800
+      - 608124005300
+      - 608124015100
+      label: WR_677
+      file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\WR_677.csv
+      well_data:
+      - api12:
+        - 608124001800
+        label: '608124001800'
+        file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124001800.csv
+      - api12:
+        - 608124002900
+        label: '608124002900'
+        file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124002900.csv
+      - api12:
+        - 608124005700
+        label: '608124005700'
+        file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005700.csv
+      - api12:
+        - 608124005600
+        label: '608124005600'
+        file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005600.csv
+      - api12:
+        - 608124005800
+        label: '608124005800'
+        file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005800.csv
+      - api12:
+        - 608124005300
+        label: '608124005300'
+        file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124005300.csv
+      - api12:
+        - 608124015100
+        label: '608124015100'
+        file_name: k:\github\energydata\tests\modules\bsee\analysis\results\Data\608124015100.csv
+    type: csv
+  analysis:
+    flag: true
+    api12: true
+    bottom_blocks: true

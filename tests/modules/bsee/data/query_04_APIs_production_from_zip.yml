@@ -1,0 +1,20 @@
+meta:
+  library: worldenergydata
+  basename: bsee
+
+basename: bsee
+
+data:
+  production_data: True
+  by: zip
+  groups:
+    - bottom_block: NULL
+      bottom_lease: NULL
+      api12: [608164024500, 608164025800, 608164025400, 608164025600]
+      
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False

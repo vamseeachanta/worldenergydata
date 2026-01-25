@@ -1,0 +1,118 @@
+{
+  "visualization_types": {
+    "field_level": [
+      {
+        "type": "bar_chart",
+        "title": "Field Comparison",
+        "metrics": [
+          "water_depth",
+          "well_count",
+          "avg_construction_days"
+        ]
+      },
+      {
+        "type": "scatter_plot",
+        "title": "Field Complexity Analysis",
+        "x_axis": "water_depth",
+        "y_axis": "construction_days",
+        "size": "well_count"
+      },
+      {
+        "type": "pie_chart",
+        "title": "Well Distribution by Field",
+        "values": "well_count",
+        "labels": "field_name"
+      }
+    ],
+    "well_level": [
+      {
+        "type": "gantt_chart",
+        "title": "Well Construction Timeline",
+        "phases": [
+          "spud",
+          "construction",
+          "completion",
+          "production"
+        ]
+      },
+      {
+        "type": "box_plot",
+        "title": "Well Performance Distribution",
+        "metrics": [
+          "construction_days",
+          "completion_days",
+          "total_days"
+        ]
+      },
+      {
+        "type": "heatmap",
+        "title": "Well Activity Matrix",
+        "rows": "well_name",
+        "columns": "month",
+        "values": "activity_type"
+      }
+    ],
+    "production": [
+      {
+        "type": "line_chart",
+        "title": "Production Trends",
+        "x_axis": "date",
+        "y_axis": "production_rate",
+        "grouping": "well"
+      },
+      {
+        "type": "area_chart",
+        "title": "Cumulative Production",
+        "x_axis": "date",
+        "y_axis": "cumulative_production",
+        "stacking": "field"
+      },
+      {
+        "type": "waterfall_chart",
+        "title": "Production Changes",
+        "categories": [
+          "base",
+          "new_wells",
+          "workovers",
+          "decline",
+          "current"
+        ]
+      }
+    ]
+  },
+  "color_schemes": {
+    "default": [
+      "#1f77b4",
+      "#ff7f0e",
+      "#2ca02c",
+      "#d62728",
+      "#9467bd"
+    ],
+    "field": {
+      "Jack": "#1f77b4",
+      "Julia": "#ff7f0e",
+      "St. Malo": "#2ca02c",
+      "Stones": "#d62728"
+    },
+    "status": {
+      "Active": "green",
+      "Inactive": "red",
+      "Suspended": "orange",
+      "P&A": "gray"
+    }
+  },
+  "export_formats": [
+    "html",
+    "png",
+    "svg",
+    "pdf"
+  ],
+  "interactive_features": [
+    "zoom",
+    "pan",
+    "hover",
+    "click_data",
+    "selection",
+    "export"
+  ]
+}
