@@ -1,4 +1,4 @@
-from worldenergydata.modules.bsee.data._from_zip.production_data import GetProdDataFromZip
+from worldenergydata.modules.bsee.data.sources.zip.production_data import GetProdDataFromZip
 
 production_from_zip = GetProdDataFromZip()
 

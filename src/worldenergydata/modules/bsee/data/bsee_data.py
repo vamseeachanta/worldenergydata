@@ -1,7 +1,7 @@
-from worldenergydata.modules.bsee.data._by_api.well import WellData
+from worldenergydata.modules.bsee.data.loaders.api.well import WellData
 from worldenergydata.modules.bsee.data.production.router import ProductionRouter
-from worldenergydata.modules.bsee.data._by_block.router import BlockRouter
-from worldenergydata.modules.bsee.data._by_lease.router import LeaseRouter
+from worldenergydata.modules.bsee.data.loaders.block.router import BlockRouter
+from worldenergydata.modules.bsee.data.loaders.lease.router import LeaseRouter
 from worldenergydata.modules.bsee.data.refresh.data_refresh import DataRefresh
 
 production = ProductionRouter()

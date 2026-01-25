@@ -7,19 +7,21 @@ with comprehensive configuration options.
 
 import sys
 import argparse
-import logging
 from pathlib import Path
 from typing import List, Optional
 import yaml
 import json
 from datetime import datetime
 
+from worldenergydata.common import get_logger
+from worldenergydata.common.logging import configure_logging
+
 from .analyzer import FinancialAnalyzer, AnalysisConfig, AnalysisResult
 from .config_loader import SMEConfigLoader
 
 # CLI utilities will be defined locally
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 def create_parser() -> argparse.ArgumentParser:

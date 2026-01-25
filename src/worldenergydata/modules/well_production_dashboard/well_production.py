@@ -11,9 +11,12 @@ from datetime import datetime, timedelta
 import json
 import yaml
 from pathlib import Path
-import logging
 from functools import lru_cache
 import time
+
+from worldenergydata.common import get_logger
+
+logger = get_logger(__name__)
 
 # Import base dashboard builder
 from worldenergydata.modules.bsee.reports.comprehensive.visualizations.dashboard_builder import (

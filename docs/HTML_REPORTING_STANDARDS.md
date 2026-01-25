@@ -250,7 +250,11 @@ df = pd.read_csv('C:/Users/user/data/results.csv')
 **Create reusable path resolver:**
 
 ```python
+<<<<<<< HEAD
+# src/worldenergydata/modules/reporting/utils/path_utils.py
+=======
 # src/reporting/path_utils.py
+>>>>>>> origin/main
 from pathlib import Path
 
 def get_data_path(filename, data_type='processed'):
@@ -265,12 +269,20 @@ def get_data_path(filename, data_type='processed'):
         Path object to data file
     """
     # Get project root (assuming standard structure)
+<<<<<<< HEAD
+    project_root = Path(__file__).parent.parent.parent.parent.parent
+=======
     project_root = Path(__file__).parent.parent.parent
+>>>>>>> origin/main
     return project_root / 'data' / data_type / filename
 
 # Usage in report generation
 import pandas as pd
+<<<<<<< HEAD
+from worldenergydata.modules.reporting.utils.path_utils import get_data_path
+=======
 from reporting.path_utils import get_data_path
+>>>>>>> origin/main
 
 df = pd.read_csv(get_data_path('analysis.csv'))
 ```
@@ -756,7 +768,11 @@ jobs:
           python-version: '3.11'
       - run: |
           pip install plotly pandas
+<<<<<<< HEAD
+          python src/worldenergydata/modules/reporting/auto_report.py
+=======
           python src/reporting/auto_report.py
+>>>>>>> origin/main
       - uses: actions/upload-artifact@v3
         with:
           name: reports
@@ -792,8 +808,13 @@ Before deploying any module, ensure:
 - **Statistical reports:** Use `altair-analysis-agent`
 
 ### Templates
+<<<<<<< HEAD
+- **Report templates:** `src/worldenergydata/modules/reporting/templates/`
+- **Example scripts:** `src/worldenergydata/modules/reporting/examples/`
+=======
 - **Report templates:** `modules/reporting/templates/`
 - **Example scripts:** `modules/reporting/examples/`
+>>>>>>> origin/main
 
 ---
 

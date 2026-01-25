@@ -6,24 +6,24 @@ Usage:
 """
 
 import argparse
-import logging
 from pathlib import Path
 import sys
 import json
+
+from worldenergydata.common import get_logger
+from worldenergydata.common.logging import configure_logging
 
 from .data_processor import PaleowellsDataProcessor
 from .data_downloader import BSEEDataDownloader
 from .visualizer import PaleowellsVisualizer
 
+logger = get_logger(__name__)
+
 
 def setup_logging(verbose: bool = False):
     """Set up logging configuration."""
-    level = logging.DEBUG if verbose else logging.INFO
-    logging.basicConfig(
-        level=level,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S'
-    )
+    level = "DEBUG" if verbose else "INFO"
+    configure_logging(level=level)
 
 
 def process_command(args):
