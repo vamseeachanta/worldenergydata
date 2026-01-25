@@ -8,13 +8,14 @@ This module coordinates all components of the financial analysis:
 - Report generation
 """
 
-import logging
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Any
 from dataclasses import dataclass, field
 from datetime import datetime
 import pandas as pd
 import numpy as np
+
+from worldenergydata.common import get_logger
 
 from .data_loader import SMEDataLoader
 from .lease_grouper import LeaseGrouper
@@ -27,7 +28,7 @@ from .validators import DataValidator
 from ...reports.comprehensive.hierarchical_aggregator import PriceDeck, CostStructure
 from ...reports.comprehensive.data_loader_enhanced import HierarchicalDataLoader
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 @dataclass

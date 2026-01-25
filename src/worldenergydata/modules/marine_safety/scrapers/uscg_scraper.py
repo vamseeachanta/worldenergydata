@@ -18,7 +18,6 @@ License: MIT
 """
 
 import json
-import logging
 import re
 import time
 from abc import ABC, abstractmethod
@@ -30,13 +29,17 @@ from urllib.parse import urljoin, urlparse
 import pdfplumber
 import requests
 from bs4 import BeautifulSoup
-from pydantic import BaseModel, Field, ValidationError, field_validator
+from pydantic import BaseModel, Field, ValidationError as PydanticValidationError, field_validator
 from tenacity import (
     retry,
     retry_if_exception_type,
     stop_after_attempt,
     wait_exponential,
 )
+
+from worldenergydata.common import get_logger
+
+logger = get_logger(__name__)
 
 # Configure structured logging
 logging.basicConfig(

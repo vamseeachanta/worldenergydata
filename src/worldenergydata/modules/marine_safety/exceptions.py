@@ -3,19 +3,34 @@ Custom Exceptions for Marine Safety Module
 
 Defines a hierarchy of custom exceptions for better error handling
 and debugging throughout the module.
+
+These exceptions extend the common exception hierarchy for consistency.
 """
 
 from typing import Optional, Dict, Any
 
+from worldenergydata.common.exceptions import (
+    ModuleError,
+    DataError as CommonDataError,
+    ValidationError as CommonValidationError,
+    ProcessingError as CommonProcessingError,
+    APIError as CommonAPIError,
+    DataSourceError as CommonDataSourceError,
+)
 
-class MarineSafetyError(Exception):
+
+class MarineSafetyError(ModuleError):
     """Base exception for all Marine Safety module errors"""
+
+    default_code = "MARINE_SAFETY_ERROR"
+    module_name = "marine_safety"
 
     def __init__(
         self,
         message: str,
         error_code: Optional[str] = None,
-        details: Optional[Dict[str, Any]] = None
+        details: Optional[Dict[str, Any]] = None,
+        cause: Optional[Exception] = None,
     ) -> None:
         """
         Initialize base exception.
@@ -24,20 +39,12 @@ class MarineSafetyError(Exception):
             message: Human-readable error message
             error_code: Optional error code for categorization
             details: Optional dictionary with additional error details
+            cause: Optional original exception that caused this error
         """
-        super().__init__(message)
-        self.message = message
-        self.error_code = error_code
-        self.details = details or {}
-
-    def __str__(self) -> str:
-        """String representation of the error"""
-        parts = [self.message]
-        if self.error_code:
-            parts.append(f"[{self.error_code}]")
-        if self.details:
-            parts.append(f"Details: {self.details}")
-        return " ".join(parts)
+        super().__init__(message, code=error_code, context=details, cause=cause)
+        # Backward compatibility aliases
+        self.error_code = self.code
+        self.details = self.context
 
 
 # Configuration Errors

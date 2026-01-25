@@ -24,4 +24,9 @@ warnings.warn(
     stacklevel=2
 )
 
-from worldenergydata.modules.bsee.data.sources.bin import *
+# Re-export classes explicitly for backward compatibility with submodule imports
+from worldenergydata.modules.bsee.data.sources.bin.api_data import APIData
+from worldenergydata.modules.bsee.data.sources.bin.block_data import BlockData
+from worldenergydata.modules.bsee.data.sources.bin.lease_data import LeaseData
+
+__all__ = ["APIData", "BlockData", "LeaseData"]

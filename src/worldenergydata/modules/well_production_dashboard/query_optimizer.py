@@ -17,9 +17,9 @@ from contextlib import contextmanager
 
 # Import BSEE data loaders
 from ..bsee.reports.comprehensive.data_loader_enhanced import HierarchicalDataLoader
-from ..bsee.data._from_bin.api_data import APIData
-from ..bsee.data._from_bin.lease_data import LeaseData
-from ..bsee.data._from_bin.block_data import BlockData
+from ..bsee.data.sources.bin.api_data import APIData
+from ..bsee.data.sources.bin.lease_data import LeaseData
+from ..bsee.data.sources.bin.block_data import BlockData
 
 logger = logging.getLogger(__name__)
 

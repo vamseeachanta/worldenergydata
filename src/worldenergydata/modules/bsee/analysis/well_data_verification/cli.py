@@ -5,13 +5,15 @@ Provides CLI access to verification workflows, data quality checks, and report g
 """
 
 import argparse
-import logging
 import sys
 import yaml
 from pathlib import Path
 from typing import Dict, Any, List, Optional
 from datetime import datetime
 import json
+
+from worldenergydata.common import get_logger
+from worldenergydata.common.logging import configure_logging
 
 # Import verification components
 from .base import VerificationWorkflow, VerificationResult
@@ -26,12 +28,9 @@ from .reports import (
     AuditTrailReport
 )
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+# Configure logging with common layer
+configure_logging()
+logger = get_logger(__name__)
 
 
 class VerificationCLI:

@@ -9,8 +9,10 @@ import json
 import sys
 from pathlib import Path
 from typing import Optional, Dict, Any
-import logging
 from datetime import datetime
+
+from worldenergydata.common import get_logger
+from worldenergydata.common.logging import configure_logging
 
 from .well_production import WellProductionDashboard, WellDashboardConfig
 from .export_manager import ExportConfiguration, ExportResult
@@ -18,13 +20,11 @@ from .export_manager import ExportConfiguration, ExportResult
 
 def setup_logging(verbose: bool):
     """Set up logging configuration."""
-    level = logging.DEBUG if verbose else logging.INFO
-    logging.basicConfig(
-        level=level,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    )
+    level = "DEBUG" if verbose else "INFO"
+    configure_logging(level=level)
 
-logger = logging.getLogger(__name__)
+
+logger = get_logger(__name__)
 
 
 class DashboardCLI:

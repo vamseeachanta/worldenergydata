@@ -310,12 +310,14 @@ class TestProductionAPI12Analysis:
     
     def test_production_forecasting(self, analyzer):
         """Test production forecasting capabilities"""
+        pytest.importorskip("sklearn")
+
         # Create historical data
         historical_data = pd.DataFrame({
-            'date': pd.date_range('2023-01-01', periods=12, freq='M'),
+            'date': pd.date_range('2023-01-01', periods=12, freq='ME'),
             'production': [1000 * (1 - 0.05 * i) for i in range(12)]  # Declining production
         })
-        
+
         # Simple linear forecast
         from sklearn.linear_model import LinearRegression
         

@@ -166,3 +166,11 @@ format = "black . && isort ."
 lint = "flake8 . & mypy . & pylint ."
 install = "uv pip install -e ."
 dev-install = "uv pip install -e .[dev]"
+
+[dependency-groups]
+dev = [
+    "hypothesis>=6.141.1",
+    "numpy-financial>=1.0.0",
+    "pytest-timeout>=2.4.0",
+    "xmltodict>=1.0.2",
+]

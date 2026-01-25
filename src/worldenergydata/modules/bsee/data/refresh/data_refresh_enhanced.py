@@ -35,8 +35,8 @@ except ImportError:
     CHUNK_MANAGER_AVAILABLE = False
 
 # Import existing processors for binary generation compatibility
-from worldenergydata.modules.bsee.data._from_zip.production_data import GetProdDataFromZip
-from worldenergydata.modules.bsee.data._from_zip.well_data import WellDataFromZip
+from worldenergydata.modules.bsee.data.sources.zip.production_data import GetProdDataFromZip
+from worldenergydata.modules.bsee.data.sources.zip.well_data import WellDataFromZip
 
 
 class DataRefreshEnhanced:

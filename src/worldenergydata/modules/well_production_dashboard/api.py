@@ -28,13 +28,14 @@ except ImportError:
 
 import pandas as pd
 from typing import Dict, Any, Optional
-import logging
 from datetime import datetime
 import io
 
+from worldenergydata.common import get_logger
+
 from .well_production import WellProductionDashboard, WellDashboardConfig
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class DashboardAPI:
