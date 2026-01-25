@@ -1,7 +1,7 @@
 from loguru import logger
 
-from worldenergydata.modules.bsee.data._from_zip.production_data import GetProdDataFromZip
-from worldenergydata.modules.bsee.data._from_zip.well_data import WellDataFromZip
+from worldenergydata.modules.bsee.data.sources.zip.production_data import GetProdDataFromZip
+from worldenergydata.modules.bsee.data.sources.zip.well_data import WellDataFromZip
 
 # Import enhanced components for routing
 from worldenergydata.modules.bsee.data.refresh.data_refresh_enhanced import DataRefreshEnhanced

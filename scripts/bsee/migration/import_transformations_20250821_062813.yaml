@@ -1,0 +1,71 @@
+transformation_report:
+  timestamp: '2025-08-21T06:28:13.525399'
+  base_path: /mnt/github/github/worldenergydata
+  transformation_rules:
+    worldenergydata.data_collectors.bsee_data_collector: worldenergydata.bsee.data_collection
+    worldenergydata.analysis.production_analysis: worldenergydata.bsee.analysis
+    worldenergydata.processing.directional_survey_processor: worldenergydata.bsee.processing
+    worldenergydata.bsee_data: worldenergydata.bsee
+    worldenergydata.bsee_analysis: worldenergydata.bsee.analysis
+    worldenergydata.bsee_processing: worldenergydata.bsee.processing
+    BSEEDataCollector: BSEEDataCollector
+    ProductionAnalyzer: ProductionAnalyzer
+    DirectionalProcessor: DirectionalProcessor
+    DirectionalSurveyProcessor: DirectionalProcessor
+  summary:
+    files_scanned: 447
+    files_with_transformable_imports: 1
+    total_transformable_imports: 2
+    file_details:
+    - file_path: scripts/bsee_migration/comprehensive_migration_test.py
+      imports_found:
+      - line_number: 12
+        original_line: import argparse
+        is_transformable: false
+      - line_number: 13
+        original_line: import importlib
+        is_transformable: false
+      - line_number: 14
+        original_line: import sys
+        is_transformable: false
+      - line_number: 15
+        original_line: import time
+        is_transformable: false
+      - line_number: 16
+        original_line: import traceback
+        is_transformable: false
+      - line_number: 17
+        original_line: from datetime import datetime
+        is_transformable: false
+      - line_number: 18
+        original_line: from pathlib import Path
+        is_transformable: false
+      - line_number: 19
+        original_line: from typing import Dict, List, Tuple, Any
+        is_transformable: false
+      - line_number: 21
+        original_line: import pandas as pd
+        is_transformable: false
+      - line_number: 22
+        original_line: import yaml
+        is_transformable: false
+      - line_number: 119
+        original_line: '            from worldenergydata.bsee.data_collection import
+          BSEEDataCollector'
+        is_transformable: true
+      - line_number: 151
+        original_line: '            from worldenergydata.bsee.analysis import ProductionAnalyzer'
+        is_transformable: true
+      - line_number: 224
+        original_line: '            from worldenergydata.bsee import data_collection,
+          analysis, processing'
+        is_transformable: false
+      - line_number: 231
+        original_line: '            import psutil'
+        is_transformable: false
+      - line_number: 232
+        original_line: '            import os'
+        is_transformable: false
+      transformable_imports: 2
+      syntax_valid: true
+      error: null

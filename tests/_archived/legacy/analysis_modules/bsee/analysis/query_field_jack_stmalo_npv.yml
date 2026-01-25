@@ -1,0 +1,45 @@
+meta:
+  library: worldenergydata
+  basename: bsee
+  label: goa_jack_stmalo
+
+basename: bsee
+
+data:
+  apm: False
+  production_data: True
+  groups:
+    -
+      bottom_block:
+        area: WR
+        number: 678
+      api12: NULL
+      bottom_lease: NULL
+    # - 
+    #   bottom_block:
+    #     area: WR
+    #     number: 759
+    #   api12: NULL
+    #   bottom_lease: NULL
+
+economics:
+  flag: True
+  cost:
+    OPEX: 15.00 # Per Barrel/BBL
+    CAPEX: 1460000000 # Excel-aligned CAPEX
+    discount_rate_annual: 0.10
+    well:
+      - bottom_block:
+        area: WR
+        number: 678
+        # number: [678, 759]
+
+analysis:
+  flag: True
+
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False

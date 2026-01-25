@@ -1,0 +1,47 @@
+meta:
+  library: worldenergydata
+  basename: bsee
+  label: goa_stones
+
+basename: bsee
+
+data:
+  apm: False
+  production_data: True
+  groups:
+    - 
+      bottom_block:
+        area: KC
+        number: 828
+      api12: NULL
+    # -
+    #   bottom_block:
+    #     area: KC
+    #     number: 829
+    #   api12: NULL
+    # -
+    #   bottom_block:
+    #     area: KC
+    #     number: 830
+    #   api12: NULL
+    # -
+    #   bottom_block:
+    #     area: KC
+    #     number: 871
+    #   api12: NULL
+    # -
+    #   bottom_block:
+    #     area: KC
+    #     number: 872
+    #   api12: NULL
+
+analysis:
+  flag: True
+  api12: True
+
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False

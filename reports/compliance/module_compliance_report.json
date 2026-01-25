@@ -1,0 +1,495 @@
+{
+  "timestamp": "2026-01-24T20:45:40.061317",
+  "total_modules": 7,
+  "compliant_count": 5,
+  "non_compliant_count": 2,
+  "module_results": [
+    {
+      "module_name": "bsee",
+      "is_compliant": false,
+      "issues": [
+        {
+          "rule": "init_file",
+          "severity": "error",
+          "message": "Missing __init__.py file",
+          "suggestion": "Create src/worldenergydata/modules/bsee/__init__.py with __all__ declaration"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/bsee/analysis/financial/analyzer.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/bsee/analysis/financial/cash_flow_calculator.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/bsee/analysis/financial/cli_interface.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/bsee/analysis/financial/config_loader.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/bsee/analysis/financial/drilling_completion.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/bsee/analysis/financial/lease_grouper.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/bsee/analysis/financial/report_generator.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/bsee/analysis/financial/validators.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/bsee/analysis/well_data_verification/cli.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/bsee/paleowells/data_downloader.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/bsee/paleowells/data_processor.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/bsee/paleowells/visualizer.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/bsee/reports/comprehensive/cli.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/bsee/reports/comprehensive/controller_performance.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/bsee/reports/comprehensive/data_loader_enhanced.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/bsee/reports/comprehensive/hierarchical_aggregator.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/bsee/reports/comprehensive/report_builder.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/bsee/reports/comprehensive/aggregators/base.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/bsee/reports/comprehensive/aggregators/block_aggregator_enhanced.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/bsee/reports/comprehensive/aggregators/field_aggregator_enhanced.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/bsee/reports/comprehensive/aggregators/lease_aggregator_enhanced.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/bsee/reports/comprehensive/performance/parallel_processor.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "naming",
+          "severity": "warning",
+          "message": "File 'src/worldenergydata/modules/bsee/data/_legacy/beautifulSoup_API.py' should use snake_case naming",
+          "suggestion": "Rename to 'beautifulsoup_api.py'"
+        }
+      ],
+      "metrics": {
+        "file_count": 150,
+        "python_file_count": 121,
+        "test_file_count": 116,
+        "max_directory_depth": 4,
+        "has_init": false,
+        "has_data_dir": true,
+        "has_readme": false,
+        "total_lines_of_code": 41422
+      },
+      "suggestions": [
+        "Add README.md documenting the module's purpose and usage"
+      ]
+    },
+    {
+      "module_name": "fdas",
+      "is_compliant": true,
+      "issues": [
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local custom exception in src/worldenergydata/modules/fdas/adapters/bsee_adapter.py",
+          "suggestion": "Use worldenergydata.common instead of local custom exception"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local custom exception in src/worldenergydata/modules/fdas/analysis/cashflow.py",
+          "suggestion": "Use worldenergydata.common instead of local custom exception"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local custom exception in src/worldenergydata/modules/fdas/core/config.py",
+          "suggestion": "Use worldenergydata.common instead of local custom exception"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local custom exception in src/worldenergydata/modules/fdas/core/financial.py",
+          "suggestion": "Use worldenergydata.common instead of local custom exception"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local custom exception in src/worldenergydata/modules/fdas/data/drilling.py",
+          "suggestion": "Use worldenergydata.common instead of local custom exception"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local custom exception in src/worldenergydata/modules/fdas/data/production.py",
+          "suggestion": "Use worldenergydata.common instead of local custom exception"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local custom exception in src/worldenergydata/modules/fdas/reports/excel_generator.py",
+          "suggestion": "Use worldenergydata.common instead of local custom exception"
+        }
+      ],
+      "metrics": {
+        "file_count": 14,
+        "python_file_count": 13,
+        "test_file_count": 4,
+        "max_directory_depth": 1,
+        "has_init": true,
+        "has_data_dir": true,
+        "has_readme": true,
+        "total_lines_of_code": 3017
+      },
+      "suggestions": []
+    },
+    {
+      "module_name": "hse",
+      "is_compliant": false,
+      "issues": [
+        {
+          "rule": "all_declaration",
+          "severity": "error",
+          "message": "__init__.py missing __all__ declaration",
+          "suggestion": "Add __all__ = [...] to declare public API"
+        },
+        {
+          "rule": "data_directory",
+          "severity": "warning",
+          "message": "Missing data/ directory",
+          "suggestion": "Create data/ directory if module handles data"
+        }
+      ],
+      "metrics": {
+        "file_count": 11,
+        "python_file_count": 11,
+        "test_file_count": 10,
+        "max_directory_depth": 1,
+        "has_init": true,
+        "has_data_dir": false,
+        "has_readme": false,
+        "total_lines_of_code": 2159
+      },
+      "suggestions": [
+        "Add README.md documenting the module's purpose and usage"
+      ]
+    },
+    {
+      "module_name": "marine_safety",
+      "is_compliant": true,
+      "issues": [
+        {
+          "rule": "data_directory",
+          "severity": "warning",
+          "message": "Missing data/ directory",
+          "suggestion": "Create data/ directory if module handles data"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local custom exception in src/worldenergydata/modules/marine_safety/exceptions.py",
+          "suggestion": "Use worldenergydata.common instead of local custom exception"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/marine_safety/analysis/llm_classifier.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/marine_safety/database/init_db.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/marine_safety/importers/base_importer.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/marine_safety/importers/misle_importer.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/marine_safety/processors/base_processor.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/marine_safety/processors/data_cleaner.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/marine_safety/processors/data_normalizer.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/marine_safety/scrapers/uscg_scraper.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local custom logger in src/worldenergydata/modules/marine_safety/utils/logger.py",
+          "suggestion": "Use worldenergydata.common instead of local custom logger"
+        }
+      ],
+      "metrics": {
+        "file_count": 36,
+        "python_file_count": 34,
+        "test_file_count": 10,
+        "max_directory_depth": 2,
+        "has_init": true,
+        "has_data_dir": false,
+        "has_readme": true,
+        "total_lines_of_code": 11828
+      },
+      "suggestions": []
+    },
+    {
+      "module_name": "reporting",
+      "is_compliant": true,
+      "issues": [
+        {
+          "rule": "data_directory",
+          "severity": "warning",
+          "message": "Missing data/ directory",
+          "suggestion": "Create data/ directory if module handles data"
+        }
+      ],
+      "metrics": {
+        "file_count": 6,
+        "python_file_count": 5,
+        "test_file_count": 0,
+        "max_directory_depth": 1,
+        "has_init": true,
+        "has_data_dir": false,
+        "has_readme": false,
+        "total_lines_of_code": 556
+      },
+      "suggestions": [
+        "Add README.md documenting the module's purpose and usage",
+        "Add test files to tests/modules/{module_name}/"
+      ]
+    },
+    {
+      "module_name": "vessel_hull_models",
+      "is_compliant": true,
+      "issues": [
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local custom exception in src/worldenergydata/modules/vessel_hull_models/exceptions.py",
+          "suggestion": "Use worldenergydata.common instead of local custom exception"
+        }
+      ],
+      "metrics": {
+        "file_count": 19,
+        "python_file_count": 19,
+        "test_file_count": 4,
+        "max_directory_depth": 2,
+        "has_init": true,
+        "has_data_dir": true,
+        "has_readme": false,
+        "total_lines_of_code": 2962
+      },
+      "suggestions": [
+        "Add README.md documenting the module's purpose and usage"
+      ]
+    },
+    {
+      "module_name": "well_production_dashboard",
+      "is_compliant": true,
+      "issues": [
+        {
+          "rule": "data_directory",
+          "severity": "warning",
+          "message": "Missing data/ directory",
+          "suggestion": "Create data/ directory if module handles data"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/well_production_dashboard/api.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/well_production_dashboard/api_enhanced.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/well_production_dashboard/cache_config.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/well_production_dashboard/cli.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/well_production_dashboard/export_manager.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/well_production_dashboard/field_aggregation.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/well_production_dashboard/interactive_components.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/well_production_dashboard/monitoring.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/well_production_dashboard/query_optimizer.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/well_production_dashboard/well_detail_views.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        },
+        {
+          "rule": "common_layer",
+          "severity": "warning",
+          "message": "Local direct logging usage in src/worldenergydata/modules/well_production_dashboard/well_production.py",
+          "suggestion": "Use worldenergydata.common instead of local direct logging usage"
+        }
+      ],
+      "metrics": {
+        "file_count": 13,
+        "python_file_count": 12,
+        "test_file_count": 11,
+        "max_directory_depth": 1,
+        "has_init": true,
+        "has_data_dir": false,
+        "has_readme": false,
+        "total_lines_of_code": 8125
+      },
+      "suggestions": [
+        "Add README.md documenting the module's purpose and usage"
+      ]
+    }
+  ],
+  "summary_metrics": {
+    "total_python_files": 215,
+    "total_test_files": 155,
+    "total_lines_of_code": 70069,
+    "modules_with_init": 6,
+    "modules_with_data_dir": 3,
+    "modules_with_readme": 2,
+    "average_directory_depth": 1.7142857142857142
+  }
+}

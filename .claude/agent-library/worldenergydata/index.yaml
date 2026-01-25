@@ -1,0 +1,29 @@
+# Agent Index for worldenergydata
+
+agents:
+  total: 1
+  categories:
+    security: []
+    performance: []
+    testing: []
+    documentation: []
+    devops: []
+    data: []
+    code_quality: []
+    financial:
+      - financial-analysis
+
+custom_agents:
+  - name: financial-analysis
+    type: financial-domain-expert
+    path: .claude/agent-library/worldenergydata/financial-analysis/
+    description: Financial analysis and energy economics specialist
+
+integration:
+  enabled: true
+  auto_select: true
+  commands:
+    - /spec
+    - /task
+    - /test
+    - /project

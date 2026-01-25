@@ -14,10 +14,16 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 
+from worldenergydata.common.exceptions import ConfigError
 
-class ConfigurationError(Exception):
-    """Raised when configuration loading or validation fails"""
-    pass
+
+class ConfigurationError(ConfigError):
+    """Raised when configuration loading or validation fails.
+
+    Extends the common ConfigError for FDAS-specific configuration issues.
+    """
+
+    default_code = "FDAS_CONFIG_ERROR"
 
 
 # Default assumptions for development systems

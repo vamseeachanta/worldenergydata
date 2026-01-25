@@ -1,20 +1,37 @@
 ---
 name: npv-analyzer
+<<<<<<< HEAD
+description: Perform NPV analysis and economic evaluation for oil & gas assets. Use for cash flow modeling, price scenario analysis, Monte Carlo simulation, P10/P50/P90 probabilistic analysis, working interest calculations, and financial metrics (IRR, payback, NPV) for field development projects.
+=======
 description: Perform NPV analysis and economic evaluation for oil & gas assets. Use for cash flow modeling, price scenario analysis, working interest calculations, and financial metrics (IRR, payback, NPV) for field development projects.
+>>>>>>> origin/main
 ---
 
 # NPV Analyzer
 
+<<<<<<< HEAD
+Perform comprehensive Net Present Value (NPV) analysis and economic evaluation for oil & gas development projects, including cash flow modeling, price scenarios, Monte Carlo simulation for probabilistic analysis, and financial metrics.
+=======
 Perform comprehensive Net Present Value (NPV) analysis and economic evaluation for oil & gas development projects, including cash flow modeling, price scenarios, and financial metrics.
+>>>>>>> origin/main
 
 ## When to Use
 
 - Calculating NPV for field development projects
 - Modeling cash flows with production forecasts
 - Running oil/gas price scenario analysis (low/mid/high)
+<<<<<<< HEAD
+- **Monte Carlo simulation for P10/P50/P90 NPV estimates**
+- **Probabilistic risk analysis with multiple input distributions**
 - Applying working interest and royalty calculations
 - Evaluating different development types (subsea, platform, FPSO)
 - Computing IRR, payback period, and profitability index
+- **Calculating Value at Risk (VaR) and Expected Shortfall**
+=======
+- Applying working interest and royalty calculations
+- Evaluating different development types (subsea, platform, FPSO)
+- Computing IRR, payback period, and profitability index
+>>>>>>> origin/main
 - Comparing economic outcomes across multiple scenarios
 
 ## Core Pattern
@@ -654,6 +671,388 @@ class ScenarioAnalyzer:
         return pd.DataFrame(results).sort_values('range', ascending=False)
 ```
 
+<<<<<<< HEAD
+### Monte Carlo Simulator
+
+```python
+from dataclasses import dataclass, field
+from typing import Optional, List, Dict, Tuple
+from enum import Enum
+import numpy as np
+import pandas as pd
+
+class DistributionType(Enum):
+    """Probability distribution types for Monte Carlo inputs."""
+    NORMAL = "normal"
+    LOGNORMAL = "lognormal"
+    TRIANGULAR = "triangular"
+    UNIFORM = "uniform"
+    PERT = "pert"
+
+@dataclass
+class DistributionParams:
+    """Parameters for probability distributions."""
+    distribution: DistributionType = DistributionType.TRIANGULAR
+    min_value: float = 0.0
+    mode_value: float = 0.0  # Most likely (for triangular/PERT)
+    max_value: float = 0.0
+    mean: Optional[float] = None  # For normal/lognormal
+    std_dev: Optional[float] = None
+
+    def sample(self, n_samples: int, rng: np.random.Generator = None) -> np.ndarray:
+        """Generate random samples from the distribution."""
+        if rng is None:
+            rng = np.random.default_rng()
+
+        if self.distribution == DistributionType.UNIFORM:
+            return rng.uniform(self.min_value, self.max_value, n_samples)
+
+        elif self.distribution == DistributionType.TRIANGULAR:
+            return rng.triangular(self.min_value, self.mode_value, self.max_value, n_samples)
+
+        elif self.distribution == DistributionType.NORMAL:
+            mean = self.mean or self.mode_value
+            std = self.std_dev or (self.max_value - self.min_value) / 6
+            samples = rng.normal(mean, std, n_samples)
+            return np.clip(samples, self.min_value, self.max_value)
+
+        elif self.distribution == DistributionType.LOGNORMAL:
+            mean = self.mean or self.mode_value
+            std = self.std_dev or 0.2
+            samples = rng.lognormal(np.log(mean), std, n_samples)
+            return np.clip(samples, self.min_value, self.max_value)
+
+        elif self.distribution == DistributionType.PERT:
+            # PERT uses Beta distribution with shape parameters
+            alpha = 1 + 4 * (self.mode_value - self.min_value) / (self.max_value - self.min_value)
+            beta = 1 + 4 * (self.max_value - self.mode_value) / (self.max_value - self.min_value)
+            samples = rng.beta(alpha, beta, n_samples)
+            return self.min_value + samples * (self.max_value - self.min_value)
+
+        raise ValueError(f"Unknown distribution: {self.distribution}")
+
+@dataclass
+class MonteCarloConfig:
+    """Configuration for Monte Carlo simulation."""
+    n_iterations: int = 1000
+    random_seed: Optional[int] = None
+
+    # Price distributions
+    oil_price: Optional[DistributionParams] = None
+    gas_price: Optional[DistributionParams] = None
+
+    # Cost multiplier distributions (1.0 = base case)
+    capex_multiplier: Optional[DistributionParams] = None
+    opex_multiplier: Optional[DistributionParams] = None
+
+    # Production multiplier distribution (1.0 = base case)
+    production_multiplier: Optional[DistributionParams] = None
+
+    # Discount rate distribution
+    discount_rate: Optional[DistributionParams] = None
+
+    # Correlation matrix (optional, for correlated variables)
+    correlations: Optional[Dict[str, Dict[str, float]]] = None
+
+@dataclass
+class MonteCarloResult:
+    """Results from Monte Carlo simulation."""
+    npv_values: np.ndarray
+    irr_values: np.ndarray
+    payback_values: np.ndarray
+
+    # Percentiles
+    p10_npv: float = 0.0  # 10th percentile (pessimistic)
+    p50_npv: float = 0.0  # 50th percentile (median)
+    p90_npv: float = 0.0  # 90th percentile (optimistic)
+
+    p10_irr: float = 0.0
+    p50_irr: float = 0.0
+    p90_irr: float = 0.0
+
+    # Statistics
+    mean_npv: float = 0.0
+    std_npv: float = 0.0
+    prob_positive_npv: float = 0.0
+
+    # Input samples (for correlation analysis)
+    input_samples: Optional[pd.DataFrame] = None
+
+    def summary(self) -> Dict:
+        """Generate summary statistics."""
+        return {
+            'mean_npv_mm': self.mean_npv / 1e6,
+            'std_npv_mm': self.std_npv / 1e6,
+            'p10_npv_mm': self.p10_npv / 1e6,
+            'p50_npv_mm': self.p50_npv / 1e6,
+            'p90_npv_mm': self.p90_npv / 1e6,
+            'p10_irr_pct': self.p10_irr * 100,
+            'p50_irr_pct': self.p50_irr * 100,
+            'p90_irr_pct': self.p90_irr * 100,
+            'prob_positive_npv_pct': self.prob_positive_npv * 100,
+            'n_iterations': len(self.npv_values)
+        }
+
+class MonteCarloSimulator:
+    """
+    Run Monte Carlo simulations for probabilistic NPV analysis.
+
+    Supports:
+    - Multiple probability distributions (normal, triangular, PERT, uniform, lognormal)
+    - Correlated input variables
+    - P10/P50/P90 output generation
+    - Risk analysis and probability of success
+    """
+
+    def __init__(self,
+                 production: List[ProductionForecast],
+                 base_prices: PriceAssumptions,
+                 fiscal: FiscalTerms,
+                 capex: CapexSchedule,
+                 opex: OpexAssumptions,
+                 base_discount_rate: float = 0.10):
+        """
+        Initialize Monte Carlo simulator.
+
+        Args:
+            production: Base case production forecast
+            base_prices: Base case price assumptions
+            fiscal: Fiscal terms (fixed)
+            capex: Base case capital expenditure
+            opex: Base case operating expenditure
+            base_discount_rate: Base case discount rate
+        """
+        self.production = production
+        self.base_prices = base_prices
+        self.fiscal = fiscal
+        self.capex = capex
+        self.opex = opex
+        self.base_discount_rate = base_discount_rate
+
+    def run_simulation(self, config: MonteCarloConfig) -> MonteCarloResult:
+        """
+        Run Monte Carlo simulation.
+
+        Args:
+            config: Simulation configuration with distributions
+
+        Returns:
+            MonteCarloResult with NPV distribution and statistics
+        """
+        rng = np.random.default_rng(config.random_seed)
+        n = config.n_iterations
+
+        # Generate input samples
+        samples = self._generate_samples(config, n, rng)
+
+        # Run iterations
+        npv_values = np.zeros(n)
+        irr_values = np.zeros(n)
+        payback_values = np.zeros(n)
+
+        for i in range(n):
+            # Build modified inputs for this iteration
+            prices = self._modify_prices(samples, i)
+            modified_capex = self._modify_capex(samples, i)
+            modified_opex = self._modify_opex(samples, i)
+            modified_production = self._modify_production(samples, i)
+            discount = samples.get('discount_rate', [self.base_discount_rate] * n)[i]
+
+            # Calculate NPV for this iteration
+            calc = NPVCalculator(
+                production=modified_production,
+                prices=prices,
+                fiscal=self.fiscal,
+                capex=modified_capex,
+                opex=modified_opex,
+                discount_rate=discount
+            )
+
+            npv_values[i] = calc.npv()
+            irr_values[i] = calc.irr() or 0.0
+            payback_values[i] = calc.payback_period() or float('inf')
+
+        # Calculate statistics
+        result = MonteCarloResult(
+            npv_values=npv_values,
+            irr_values=irr_values,
+            payback_values=payback_values,
+            p10_npv=np.percentile(npv_values, 10),
+            p50_npv=np.percentile(npv_values, 50),
+            p90_npv=np.percentile(npv_values, 90),
+            p10_irr=np.percentile(irr_values, 10),
+            p50_irr=np.percentile(irr_values, 50),
+            p90_irr=np.percentile(irr_values, 90),
+            mean_npv=np.mean(npv_values),
+            std_npv=np.std(npv_values),
+            prob_positive_npv=np.sum(npv_values > 0) / n,
+            input_samples=pd.DataFrame(samples)
+        )
+
+        return result
+
+    def _generate_samples(self, config: MonteCarloConfig, n: int,
+                         rng: np.random.Generator) -> Dict[str, np.ndarray]:
+        """Generate random samples for all input variables."""
+        samples = {}
+
+        if config.oil_price:
+            samples['oil_price'] = config.oil_price.sample(n, rng)
+        else:
+            samples['oil_price'] = np.full(n, self.base_prices.oil_price_usd_bbl)
+
+        if config.gas_price:
+            samples['gas_price'] = config.gas_price.sample(n, rng)
+        else:
+            samples['gas_price'] = np.full(n, self.base_prices.gas_price_usd_mmbtu)
+
+        if config.capex_multiplier:
+            samples['capex_mult'] = config.capex_multiplier.sample(n, rng)
+        else:
+            samples['capex_mult'] = np.ones(n)
+
+        if config.opex_multiplier:
+            samples['opex_mult'] = config.opex_multiplier.sample(n, rng)
+        else:
+            samples['opex_mult'] = np.ones(n)
+
+        if config.production_multiplier:
+            samples['prod_mult'] = config.production_multiplier.sample(n, rng)
+        else:
+            samples['prod_mult'] = np.ones(n)
+
+        if config.discount_rate:
+            samples['discount_rate'] = config.discount_rate.sample(n, rng)
+        else:
+            samples['discount_rate'] = np.full(n, self.base_discount_rate)
+
+        return samples
+
+    def _modify_prices(self, samples: Dict, index: int) -> PriceAssumptions:
+        """Create modified price assumptions for iteration."""
+        return PriceAssumptions(
+            oil_price_usd_bbl=samples['oil_price'][index],
+            gas_price_usd_mmbtu=samples['gas_price'][index],
+            ngl_price_usd_bbl=self.base_prices.ngl_price_usd_bbl,
+            annual_escalation_pct=self.base_prices.annual_escalation_pct
+        )
+
+    def _modify_capex(self, samples: Dict, index: int) -> CapexSchedule:
+        """Create modified CAPEX for iteration."""
+        mult = samples['capex_mult'][index]
+        return replace(self.capex,
+                      schedule={y: c * mult for y, c in self.capex.schedule.items()})
+
+    def _modify_opex(self, samples: Dict, index: int) -> OpexAssumptions:
+        """Create modified OPEX for iteration."""
+        mult = samples['opex_mult'][index]
+        return replace(self.opex,
+                      fixed_opex_usd_year=self.opex.fixed_opex_usd_year * mult,
+                      variable_opex_usd_boe=self.opex.variable_opex_usd_boe * mult)
+
+    def _modify_production(self, samples: Dict, index: int) -> List[ProductionForecast]:
+        """Create modified production forecast for iteration."""
+        mult = samples['prod_mult'][index]
+        return [
+            ProductionForecast(
+                year=p.year,
+                oil_mbbls=p.oil_mbbls * mult,
+                gas_mmcf=p.gas_mmcf * mult,
+                ngl_mbbls=p.ngl_mbbls * mult,
+                water_mbbls=p.water_mbbls
+            )
+            for p in self.production
+        ]
+
+    def quick_simulation(self,
+                        oil_range_pct: float = 0.30,
+                        cost_range_pct: float = 0.20,
+                        prod_range_pct: float = 0.15,
+                        n_iterations: int = 1000) -> MonteCarloResult:
+        """
+        Run quick Monte Carlo with triangular distributions.
+
+        Args:
+            oil_range_pct: Price range as percent of base (e.g., 0.30 = ±30%)
+            cost_range_pct: Cost range as percent of base
+            prod_range_pct: Production range as percent of base
+            n_iterations: Number of iterations
+
+        Returns:
+            MonteCarloResult with P10/P50/P90 values
+        """
+        base_oil = self.base_prices.oil_price_usd_bbl
+        base_gas = self.base_prices.gas_price_usd_mmbtu
+
+        config = MonteCarloConfig(
+            n_iterations=n_iterations,
+            oil_price=DistributionParams(
+                distribution=DistributionType.TRIANGULAR,
+                min_value=base_oil * (1 - oil_range_pct),
+                mode_value=base_oil,
+                max_value=base_oil * (1 + oil_range_pct)
+            ),
+            gas_price=DistributionParams(
+                distribution=DistributionType.TRIANGULAR,
+                min_value=base_gas * (1 - oil_range_pct),
+                mode_value=base_gas,
+                max_value=base_gas * (1 + oil_range_pct)
+            ),
+            capex_multiplier=DistributionParams(
+                distribution=DistributionType.TRIANGULAR,
+                min_value=1 - cost_range_pct * 0.5,  # CAPEX rarely comes in under
+                mode_value=1.0,
+                max_value=1 + cost_range_pct
+            ),
+            opex_multiplier=DistributionParams(
+                distribution=DistributionType.TRIANGULAR,
+                min_value=1 - cost_range_pct,
+                mode_value=1.0,
+                max_value=1 + cost_range_pct
+            ),
+            production_multiplier=DistributionParams(
+                distribution=DistributionType.TRIANGULAR,
+                min_value=1 - prod_range_pct,
+                mode_value=1.0,
+                max_value=1 + prod_range_pct * 0.5  # Production rarely exceeds forecast
+            )
+        )
+
+        return self.run_simulation(config)
+
+    def value_at_risk(self, result: MonteCarloResult,
+                      confidence: float = 0.95) -> float:
+        """
+        Calculate Value at Risk (VaR) for NPV.
+
+        Args:
+            result: Monte Carlo simulation result
+            confidence: Confidence level (e.g., 0.95 for 95%)
+
+        Returns:
+            VaR value (maximum expected loss at confidence level)
+        """
+        percentile = (1 - confidence) * 100
+        return np.percentile(result.npv_values, percentile)
+
+    def conditional_value_at_risk(self, result: MonteCarloResult,
+                                  confidence: float = 0.95) -> float:
+        """
+        Calculate Conditional VaR (Expected Shortfall).
+
+        Args:
+            result: Monte Carlo simulation result
+            confidence: Confidence level
+
+        Returns:
+            CVaR value (average loss in worst cases beyond VaR)
+        """
+        var = self.value_at_risk(result, confidence)
+        return np.mean(result.npv_values[result.npv_values <= var])
+```
+
+=======
+>>>>>>> origin/main
 ### Report Generator
 
 ```python
@@ -665,6 +1064,47 @@ class NPVReportGenerator:
     """Generate interactive HTML reports for NPV analysis."""
 
     def __init__(self, calculator: NPVCalculator,
+<<<<<<< HEAD
+                 scenario_analyzer: ScenarioAnalyzer = None,
+                 monte_carlo_result: MonteCarloResult = None):
+        """Initialize report generator."""
+        self.calculator = calculator
+        self.analyzer = scenario_analyzer
+        self.mc_result = monte_carlo_result
+
+    def generate_report(self, output_path: Path, project_name: str = "Project"):
+        """Generate comprehensive NPV analysis report with Monte Carlo."""
+        # Determine subplot layout based on Monte Carlo availability
+        if self.mc_result:
+            fig = make_subplots(
+                rows=4, cols=2,
+                subplot_titles=(
+                    'Annual Cash Flows',
+                    'Cumulative Cash Flow',
+                    'Price Scenario NPV',
+                    'Sensitivity Analysis',
+                    'Monte Carlo NPV Distribution',
+                    'P10/P50/P90 Summary',
+                    'Production Profile',
+                    'Revenue Breakdown'
+                ),
+                vertical_spacing=0.08,
+                specs=[[{}, {}], [{}, {}], [{}, {}], [{}, {}]]
+            )
+        else:
+            fig = make_subplots(
+                rows=3, cols=2,
+                subplot_titles=(
+                    'Annual Cash Flows',
+                    'Cumulative Cash Flow',
+                    'Price Scenario NPV',
+                    'Sensitivity Analysis',
+                    'Production Profile',
+                    'Revenue Breakdown'
+                ),
+                vertical_spacing=0.10
+            )
+=======
                  scenario_analyzer: ScenarioAnalyzer = None):
         """Initialize report generator."""
         self.calculator = calculator
@@ -684,6 +1124,7 @@ class NPVReportGenerator:
             ),
             vertical_spacing=0.10
         )
+>>>>>>> origin/main
 
         cf_df = self.calculator.to_dataframe()
 
@@ -744,6 +1185,69 @@ class NPVReportGenerator:
                     row=2, col=2
                 )
 
+<<<<<<< HEAD
+        # Monte Carlo visualization (if available)
+        mc_row = 3 if self.mc_result else None
+        prod_row = 4 if self.mc_result else 3
+
+        if self.mc_result:
+            # NPV histogram
+            fig.add_trace(
+                go.Histogram(
+                    x=self.mc_result.npv_values / 1e6,
+                    nbinsx=50,
+                    name='NPV Distribution',
+                    marker_color='steelblue',
+                    opacity=0.7
+                ),
+                row=3, col=1
+            )
+
+            # Add P10/P50/P90 lines
+            for pct, val, color in [
+                ('P10', self.mc_result.p10_npv, 'red'),
+                ('P50', self.mc_result.p50_npv, 'orange'),
+                ('P90', self.mc_result.p90_npv, 'green')
+            ]:
+                fig.add_vline(
+                    x=val / 1e6, line_dash='dash', line_color=color,
+                    annotation_text=pct, row=3, col=1
+                )
+
+            # P10/P50/P90 bar chart
+            fig.add_trace(
+                go.Bar(
+                    x=['P10', 'P50', 'P90'],
+                    y=[self.mc_result.p10_npv / 1e6,
+                       self.mc_result.p50_npv / 1e6,
+                       self.mc_result.p90_npv / 1e6],
+                    marker_color=['red', 'orange', 'green'],
+                    name='Percentiles'
+                ),
+                row=3, col=2
+            )
+
+            # Add probability annotation
+            mc_summary = (
+                f"<b>Monte Carlo Results</b><br>"
+                f"Iterations: {len(self.mc_result.npv_values):,}<br>"
+                f"Mean NPV: ${self.mc_result.mean_npv/1e6:.1f}MM<br>"
+                f"Std Dev: ${self.mc_result.std_npv/1e6:.1f}MM<br>"
+                f"P(NPV>0): {self.mc_result.prob_positive_npv*100:.1f}%"
+            )
+            fig.add_annotation(
+                text=mc_summary,
+                xref='paper', yref='paper',
+                x=1.02, y=0.50,
+                showarrow=False,
+                font=dict(size=11),
+                align='left',
+                bgcolor='lightyellow',
+                bordercolor='gray'
+            )
+
+=======
+>>>>>>> origin/main
         # Production profile
         prod_df = pd.DataFrame([
             {'year': p.year, 'oil': p.oil_mbbls, 'gas': p.gas_mmcf/6, 'ngl': p.ngl_mbbls}
@@ -753,12 +1257,20 @@ class NPVReportGenerator:
         fig.add_trace(
             go.Bar(x=prod_df['year'], y=prod_df['oil'],
                    name='Oil (Mbbls)', marker_color='green'),
+<<<<<<< HEAD
+            row=prod_row, col=1
+=======
             row=3, col=1
+>>>>>>> origin/main
         )
         fig.add_trace(
             go.Bar(x=prod_df['year'], y=prod_df['gas'],
                    name='Gas (BOE Mbbls)', marker_color='red'),
+<<<<<<< HEAD
+            row=prod_row, col=1
+=======
             row=3, col=1
+>>>>>>> origin/main
         )
 
         # Revenue breakdown
@@ -773,7 +1285,11 @@ class NPVReportGenerator:
                 values=[total_oil_rev, total_gas_rev, total_ngl_rev],
                 marker_colors=['green', 'red', 'orange']
             ),
+<<<<<<< HEAD
+            row=prod_row, col=2
+=======
             row=3, col=2
+>>>>>>> origin/main
         )
 
         # Summary metrics annotation
@@ -798,8 +1314,13 @@ class NPVReportGenerator:
         )
 
         fig.update_layout(
+<<<<<<< HEAD
+            height=1400 if self.mc_result else 1100,
+            title_text=f"{project_name} - NPV Analysis" + (" (Monte Carlo)" if self.mc_result else ""),
+=======
             height=1100,
             title_text=f"{project_name} - NPV Analysis",
+>>>>>>> origin/main
             showlegend=True,
             barmode='relative'
         )
@@ -924,6 +1445,65 @@ output:
   report_html: "reports/scenario_comparison.html"
 ```
 
+<<<<<<< HEAD
+### Monte Carlo Configuration
+
+```yaml
+# config/monte_carlo_analysis.yaml
+
+metadata:
+  project_name: "Lower Tertiary Development"
+  analyst: "Risk Analysis Team"
+  date: "2024-01-15"
+  version: "1.0"
+
+monte_carlo:
+  n_iterations: 10000
+  random_seed: 42  # For reproducibility
+
+  # Oil price distribution (triangular: min, mode, max)
+  oil_price:
+    distribution: triangular
+    min_value: 50.0
+    mode_value: 70.0
+    max_value: 100.0
+
+  # Gas price distribution
+  gas_price:
+    distribution: triangular
+    min_value: 2.50
+    mode_value: 3.50
+    max_value: 6.00
+
+  # CAPEX multiplier (typically skewed toward overruns)
+  capex_multiplier:
+    distribution: pert
+    min_value: 0.95
+    mode_value: 1.00
+    max_value: 1.30
+
+  # OPEX multiplier
+  opex_multiplier:
+    distribution: triangular
+    min_value: 0.85
+    mode_value: 1.00
+    max_value: 1.20
+
+  # Production multiplier (typically skewed toward underperformance)
+  production_multiplier:
+    distribution: pert
+    min_value: 0.70
+    mode_value: 1.00
+    max_value: 1.10
+
+output:
+  npv_distribution_csv: "data/results/npv_distribution.csv"
+  percentiles_json: "data/results/percentiles.json"
+  report_html: "reports/monte_carlo_analysis.html"
+```
+
+=======
+>>>>>>> origin/main
 ## CLI Usage
 
 ```bash
@@ -945,6 +1525,21 @@ python -m npv_analyzer breakeven --config config/npv_analysis.yaml --commodity o
 
 # Generate sensitivity tornado
 python -m npv_analyzer sensitivity --config config/npv_analysis.yaml --range 0.30
+<<<<<<< HEAD
+
+# Run Monte Carlo simulation
+python -m npv_analyzer montecarlo --config config/monte_carlo_analysis.yaml
+
+# Quick Monte Carlo with default distributions
+python -m npv_analyzer montecarlo --config config/npv_analysis.yaml \
+    --iterations 5000 \
+    --oil-range 0.30 \
+    --cost-range 0.20
+
+# Get P10/P50/P90 summary
+python -m npv_analyzer percentiles --config config/monte_carlo_analysis.yaml
+=======
+>>>>>>> origin/main
 ```
 
 ## Usage Examples
@@ -1006,6 +1601,77 @@ reporter.generate_report(
 )
 ```
 
+<<<<<<< HEAD
+### Example 3: Monte Carlo Simulation
+
+```python
+from npv_analyzer import (
+    MonteCarloSimulator, MonteCarloConfig, DistributionParams,
+    DistributionType, NPVReportGenerator
+)
+
+# Create Monte Carlo simulator
+mc_sim = MonteCarloSimulator(
+    production=production,
+    base_prices=prices,
+    fiscal=fiscal,
+    capex=capex,
+    opex=opex,
+    base_discount_rate=0.10
+)
+
+# Quick simulation with default triangular distributions
+result = mc_sim.quick_simulation(
+    oil_range_pct=0.30,  # ±30% oil price variation
+    cost_range_pct=0.20,  # ±20% cost variation
+    prod_range_pct=0.15,  # ±15% production variation
+    n_iterations=5000
+)
+
+# Print P10/P50/P90 results
+print(f"\nMonte Carlo Results ({len(result.npv_values):,} iterations):")
+print(f"P10 NPV: ${result.p10_npv/1e6:.1f}MM (pessimistic)")
+print(f"P50 NPV: ${result.p50_npv/1e6:.1f}MM (median)")
+print(f"P90 NPV: ${result.p90_npv/1e6:.1f}MM (optimistic)")
+print(f"Probability of positive NPV: {result.prob_positive_npv*100:.1f}%")
+
+# Custom distribution configuration
+custom_config = MonteCarloConfig(
+    n_iterations=10000,
+    random_seed=42,  # For reproducibility
+    oil_price=DistributionParams(
+        distribution=DistributionType.TRIANGULAR,
+        min_value=50, mode_value=70, max_value=100
+    ),
+    capex_multiplier=DistributionParams(
+        distribution=DistributionType.PERT,
+        min_value=0.95, mode_value=1.0, max_value=1.30
+    ),
+    production_multiplier=DistributionParams(
+        distribution=DistributionType.LOGNORMAL,
+        min_value=0.6, max_value=1.15, mean=1.0, std_dev=0.15
+    )
+)
+
+result = mc_sim.run_simulation(custom_config)
+
+# Calculate Value at Risk
+var_95 = mc_sim.value_at_risk(result, confidence=0.95)
+cvar_95 = mc_sim.conditional_value_at_risk(result, confidence=0.95)
+print(f"\nRisk Metrics:")
+print(f"VaR (95%): ${var_95/1e6:.1f}MM")
+print(f"CVaR (95%): ${cvar_95/1e6:.1f}MM")
+
+# Generate report with Monte Carlo visualization
+reporter = NPVReportGenerator(calc, analyzer, monte_carlo_result=result)
+reporter.generate_report(
+    Path("reports/npv_montecarlo_report.html"),
+    project_name="Lower Tertiary Development - Risk Analysis"
+)
+```
+
+=======
+>>>>>>> origin/main
 ## Best Practices
 
 ### Model Setup
@@ -1026,8 +1692,26 @@ reporter.generate_report(
 - Compare against investment criteria (hurdle rate, payback limits)
 - Archive analysis with assumptions
 
+<<<<<<< HEAD
+### Monte Carlo Analysis
+- Use 5,000-10,000 iterations for stable P10/P50/P90
+- Choose appropriate distributions (PERT for expert estimates, triangular for simple ranges)
+- CAPEX typically skewed toward overruns (use asymmetric distributions)
+- Production typically skewed toward underperformance
+- Set random seed for reproducible results
+- Calculate VaR and CVaR for risk management
+- Report probability of positive NPV for investment decisions
+
+## Related Skills
+
+- [bsee-data-extractor](../bsee-data-extractor/SKILL.md) - Production data for forecasts
+- [hse-risk-analyzer](../hse-risk-analyzer/SKILL.md) - Risk-adjusted NPV with safety data
+- [production-forecaster](../production-forecaster/SKILL.md) - Decline curve production forecasts
+- [engineering-report-generator](/mnt/github/workspace-hub/.claude/skills/development/engineering-report-generator/SKILL.md) - Report generation
+=======
 ## Related Skills
 
 - [bsee-data-extractor](../bsee-data-extractor/SKILL.md) - Production data for forecasts
 - [engineering-report-generator](/mnt/github/workspace-hub/.claude/skills/development/engineering-report-generator/SKILL.md) - Report generation
 - [data-pipeline-processor](/mnt/github/workspace-hub/.claude/skills/development/data-pipeline-processor/SKILL.md) - Data processing
+>>>>>>> origin/main

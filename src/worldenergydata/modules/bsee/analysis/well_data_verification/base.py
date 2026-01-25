@@ -13,7 +13,9 @@ from dataclasses import dataclass, field
 from worldenergydata.validation.base import ValidationError, ValidationResult
 from worldenergydata.validation.validators import DataValidator
 from worldenergydata.validation.schema import ValidationSchema
-from loguru import logger
+from worldenergydata.common import get_logger
+
+logger = get_logger(__name__)
 
 
 class VerificationError(ValidationError):

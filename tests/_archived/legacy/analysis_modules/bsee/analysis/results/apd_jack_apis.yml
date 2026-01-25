@@ -1,0 +1,111 @@
+&id001 !!python/object/new:assetutilities.common.data.AttributeDict
+state: *id001
+dictitems:
+  basename: bsee
+  type:
+    data: false
+    analysis: false
+    results: false
+  result_method: selenium
+  settings_master: ~
+  input:
+  - name: example1
+    well_api12: 608174149400
+  - name: example2
+    well_api12: 608174149401
+  default:
+    log_level: DEBUG
+    config:
+      overwrite:
+        output: true
+      cfg_sensitivities: false
+  meta:
+    library: energydata
+    basename: bsee
+  well_data:
+    flag: true
+    analysis: false
+  master_settings:
+    save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\Jack_well_data
+  form_data:
+    first_request:
+      ASPxFormLayout1$ASPxTextBoxAPI: None
+      ASPxFormLayout1$ASPxButtonSubmitQ: Submit Query
+    second_request:
+      ASPxFormLayout1$ASPxTextBoxAPI: None
+      __EVENTTARGET: ASPxFormLayout2$btnCsvExport
+      __EVENTARGUMENT: Click
+  settings:
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\Jack_well_data
+    label: API_1
+    well_api12: 608124005000
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\Jack_well_data
+    label: API_2
+    well_api12: 608124001301
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\Jack_well_data
+    label: API_3
+    well_api12: 608124012804
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\Jack_well_data
+    label: API_4
+    well_api12: 608124002703
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\Jack_well_data
+    label: API_5
+    well_api12: 608124005203
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\Jack_well_data
+    label: API_6
+    well_api12: 608124001701
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\Jack_well_data
+    label: API_7
+    well_api12: 608124012601
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\Jack_well_data
+    label: API_8
+    well_api12: 608124005103
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\Jack_well_data
+    label: API_9
+    well_api12: 608124012500
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\Jack_well_data
+    label: API_10
+    well_api12: 608124011504
+  - save_csv: true
+    url: https://www.data.bsee.gov/Well/APD/Default.aspx
+    output_dir: tests\modules\bsee\analysis\results\Data\Jack_well_data
+    label: API_11
+    well_api12: 608124011606
+  Analysis:
+    basename: bsee
+    analysis_root_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis
+    file_name: apd_jack_apis
+    file_name_for_overwrite: apd_jack_apis
+    result_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
+    log_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\logs
+    start_time: 2025-02-13 11:00:18.828920
+    cfg_array_file_names: ~
+    DefaultInputFile: ~
+    CustomInputFile: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\apd_jack_apis.yml
+    fe_folder: c:\Users\Sk Samdan\Desktop\github\energydata\tests\modules\bsee\analysis\results
+  bsee:
+    well_data:
+      type: csv
+      groups: []

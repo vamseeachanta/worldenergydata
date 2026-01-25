@@ -7,10 +7,11 @@ Abstract base class for bulk data importers.
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Generator
-import logging
 from sqlalchemy.orm import Session
 
-logger = logging.getLogger(__name__)
+from worldenergydata.common import get_logger
+
+logger = get_logger(__name__)
 
 
 class BaseImporter(ABC):

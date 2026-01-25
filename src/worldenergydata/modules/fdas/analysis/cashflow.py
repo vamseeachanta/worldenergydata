@@ -15,13 +15,21 @@ from datetime import datetime
 import pandas as pd
 import numpy as np
 
+from worldenergydata.common.exceptions import ProcessingError
 from ..core.config import AssumptionsManager
 from ..core.financial import calculate_npv, excel_like_mirr
 
 
-class CashflowError(Exception):
-    """Raised when cashflow calculation fails"""
-    pass
+class CashflowError(ProcessingError):
+    """Raised when cashflow calculation fails.
+
+    Extends the common ProcessingError for cashflow-specific failures.
+    """
+
+    default_code = "FDAS_CASHFLOW_ERROR"
+
+    def __init__(self, message: str, operation: str = "cashflow_calculation", **kwargs):
+        super().__init__(message, operation=operation, **kwargs)
 
 
 @dataclass

@@ -1,0 +1,146 @@
+basename: bsee
+type:
+  data: false
+  analysis: false
+  results: false
+parameters:
+  filepath:
+    data: data/modules/bsee/data
+    bin_dir: data/modules/bsee/bin
+    Well_APD_Default: data/modules/bsee/bin/Well_APD_Default
+    production:
+      zip: data\modules\bsee\zip\production_raw
+      bin: data\modules\bsee\bin\production_raw
+    APD: data/modules/bsee/bin/apd
+    apm:
+      zip: data/modules/bsee/zip/apd
+      bin: data/modules/bsee/bin/apd
+      columns:
+      - - MMS_COMPANY_NUM
+        - API_WELL_NUMBER
+        - WATER_DEPTH
+        - WELL_NM_BP_SFIX
+        - WELL_NM_ST_SFIX
+        - SURF_AREA_CODE
+        - SURF_BLOCK_NUM
+        - SURF_LEASE_NUM
+        - BOTM_AREA_CODE
+        - BOTM_BLOCK_NUM
+        - BOTM_LEASE_NUM
+        - RIG_ID_NUM
+        - BOREHOLE_STAT_CD
+        - WELL_TYPE_CODE
+        - BUS_ASC_NAME
+    war:
+      zip: data/modules/bsee/zip/war
+      bin: data/modules/bsee/bin/war
+  max_allowed_npt: 90
+  borehole_codes:
+  - BOREHOLE_STAT_CD: APD
+    BOREHOLE_STAT_DESC: APPLICATION FOR PERMIT TO DRILL
+  - BOREHOLE_STAT_CD: AST
+    BOREHOLE_STAT_DESC: APPROVED SIDETRACK
+  - BOREHOLE_STAT_CD: CNL
+    BOREHOLE_STAT_DESC: BOREHOLE IS CANCELLED. THE REQUEST TO DRILL THE WELL IS CANCELLED
+      AFTER THE APD OR SUNDRY HAS BEEN APPROVED. THE STATUS DATE IS THE DATE THE BOREHOLE
+      WAS CANCELLED.
+  - BOREHOLE_STAT_CD: COM
+    BOREHOLE_STAT_DESC: BOREHOLE COMPLETED
+  - BOREHOLE_STAT_CD: CT
+    BOREHOLE_STAT_DESC: CORE TEST WELL
+  - BOREHOLE_STAT_CD: DRL
+    BOREHOLE_STAT_DESC: DRILLING ACTIVE
+  - BOREHOLE_STAT_CD: DSI
+    BOREHOLE_STAT_DESC: DRILLING SUSPENDED
+  - BOREHOLE_STAT_CD: PA
+    BOREHOLE_STAT_DESC: PERMANENTLY ABANDONED
+  - BOREHOLE_STAT_CD: ST
+    BOREHOLE_STAT_DESC: BOREHOLE SIDETRACKED
+  - BOREHOLE_STAT_CD: TA
+    BOREHOLE_STAT_DESC: TEMPORARILY ABANDONED
+  - BOREHOLE_STAT_CD: VCW
+    BOREHOLE_STAT_DESC: VOLUME CHAMBER WELL
+  - BOREHOLE_STAT_CD: PND
+    BOREHOLE_STAT_DESC: PENDING
+settings_master: ~
+sources:
+  well:
+    url: https://www.data.bsee.gov/Well/Files/APDRawData.zip
+    display_name: Application for Permit to Drill
+    update_frequency: daily
+  war:
+    url: https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip
+    display_name: eWell Submissions WAR
+    update_frequency: daily
+  production:
+    url: https://www.data.bsee.gov/Production/Files/ProductionRawData.zip
+    display_name: Production Data
+    update_frequency: bi_monthly
+  portal:
+    url: https://www.data.bsee.gov/Main/RawData.aspx
+    display_name: BSEE Raw Data Portal
+data_retrieval:
+  well:
+    zip:
+      BoreholeRawData_mv_boreholes_all: data/modules/bsee/data/zip/BoreholeRawData_mv_boreholes_all.zip
+      eWellAPDRawData_mv_apd_main: data/modules/bsee/data/zip/eWellAPDRawData_mv_apd_main.zip
+  production: ~
+  block: ~
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: true
+    cfg_sensitivities: false
+meta:
+  library: worldenergydata
+  basename: bsee
+  mode: enhanced
+enhanced_mode: true
+chunked_refresh: true
+incremental_update: true
+force_refresh: false
+data:
+  well: false
+  war: true
+  production: false
+  apm: false
+processing:
+  in_memory: true
+  save_zip: false
+  chunk_size: 8192
+  timeout: 600
+  optimized: true
+  parallel: true
+cache:
+  enabled: true
+  directory: ~/.worldenergydata/cache
+  ttl_hours: 24
+  chunk_size_mb: 10
+  max_size_gb: 5
+performance:
+  max_workers: 4
+  memory_limit_mb: 2000
+  chunk_rows: 50000
+Analysis:
+  basename: bsee
+  analysis_root_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh
+  file_name: data_refresh_enhanced
+  file_name_for_overwrite: data_refresh_enhanced
+  log_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\logs
+  start_time: 2025-08-21 16:38:00.316719
+  cfg_array_file_names: ~
+  DefaultInputFile: ~
+  CustomInputFile: data_refresh_enhanced.yml
+  result_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\results
+  result_data_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\results\Data
+  result_plot_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\results\Plot
+  fe_folder: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\data\refresh\results
+bsee:
+  data:
+    well: false
+    war: true
+    production: false
+    apm: false
+    type: csv
+  analysis: {}
