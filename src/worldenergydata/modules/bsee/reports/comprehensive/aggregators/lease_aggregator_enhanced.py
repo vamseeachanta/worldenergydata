@@ -17,8 +17,8 @@ from ..models import (
 
 # Import enhanced data loader and BSEE data modules  
 from ..data_loader_enhanced import HierarchicalDataLoader
-from ....data._from_bin.lease_data import LeaseData
-from ....data._by_lease.data_from_local_files import DataFromLocalFiles as LeaseDataFromFiles
+from ....data.sources.bin.lease_data import LeaseData
+from ....data.loaders.lease.local_files import DataFromLocalFiles as LeaseDataFromFiles
 from ....data.production.production_data_sources import ProductionDataFromSources
 
 

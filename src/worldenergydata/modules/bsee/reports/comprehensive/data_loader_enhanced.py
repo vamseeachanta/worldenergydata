@@ -19,11 +19,11 @@ from .models import (
 # Import enhanced data refresh components
 from ...data.enhanced.data_refresh_chunked import DataRefreshChunked
 from ...data.refresh.data_refresh_enhanced import DataRefreshEnhanced
-from ...data._from_bin.block_data import BlockData
-from ...data._from_bin.lease_data import LeaseData
-from ...data._from_bin.api_data import APIData
-from ...data._by_block.data_from_local_files import DataFromLocalFiles as BlockDataFromFiles
-from ...data._by_lease.data_from_local_files import DataFromLocalFiles as LeaseDataFromFiles
+from ...data.sources.bin.block_data import BlockData
+from ...data.sources.bin.lease_data import LeaseData
+from ...data.sources.bin.api_data import APIData
+from ...data.loaders.block.local_files import DataFromLocalFiles as BlockDataFromFiles
+from ...data.loaders.lease.local_files import DataFromLocalFiles as LeaseDataFromFiles
 
 # Import BSEE analysis modules
 from ...analysis import well_api10, well_api12, production_api10, production_api12

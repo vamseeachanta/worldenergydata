@@ -490,7 +490,7 @@ class TestConfigRouterEdgeCases:
             'data': {'well': True, 'war': True, 'production': False}
         }
         
-        with patch('src.worldenergydata.modules.bsee.data.config.config_router.logger') as mock_logger:
+        with patch('worldenergydata.modules.bsee.data.config.config_router.logger') as mock_logger:
             router.log_config_summary(config)
             
             # Verify logging was called

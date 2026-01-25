@@ -399,6 +399,10 @@ def analyze(
         None, "--lease", "-l",
         help="Lease number to analyze"
     ),
+    dev_system: str = typer.Option(
+        "subsea15", "--dev-system", "-d",
+        help="Development system type (dry, subsea15, subsea20)"
+    ),
     discount_rate: float = typer.Option(
         0.10, "--discount-rate", "-r",
         help="Annual discount rate for analysis"
@@ -411,9 +415,17 @@ def analyze(
         3.50, "--gas-price",
         help="Gas price per MCF"
     ),
+    royalty_rate: float = typer.Option(
+        0.188, "--royalty-rate",
+        help="Royalty rate (e.g., 0.188 for 18.8%)"
+    ),
     output: Optional[Path] = typer.Option(
         None, "--output", "-o",
         help="Output file path for analysis results"
+    ),
+    verbose: bool = typer.Option(
+        False, "--verbose", "-v",
+        help="Enable verbose output"
     ),
 ):
     """
@@ -431,34 +443,101 @@ def analyze(
             console.print("[red]Error:[/red] Either --field or --lease is required")
             raise typer.Exit(1)
 
+        console.print(
+            Panel(
+                f"[bold]Analysis Configuration[/bold]\n"
+                f"Field: {field or 'N/A'}\n"
+                f"Lease: {lease or 'N/A'}\n"
+                f"Dev System: {dev_system}\n"
+                f"Discount Rate: {discount_rate:.2%}\n"
+                f"Oil Price: ${oil_price:.2f}/bbl\n"
+                f"Gas Price: ${gas_price:.2f}/MCF\n"
+                f"Royalty Rate: {royalty_rate:.2%}",
+                border_style="cyan"
+            )
+        )
+
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
             console=console
         ) as progress:
-            task = progress.add_task("[cyan]Running field development analysis...", total=None)
+            task = progress.add_task("[cyan]Running field development analysis...", total=100)
 
-            console.print(
-                Panel(
-                    f"[bold]Analysis Configuration[/bold]\n"
-                    f"Field: {field or 'N/A'}\n"
-                    f"Lease: {lease or 'N/A'}\n"
-                    f"Discount Rate: {discount_rate:.2%}\n"
-                    f"Oil Price: ${oil_price:.2f}/bbl\n"
-                    f"Gas Price: ${gas_price:.2f}/MCF",
-                    border_style="cyan"
-                )
-            )
+            analysis_results = {}
 
             try:
-                from worldenergydata.modules.fdas.adapters.bsee_adapter import BseeAdapter
+                progress.update(task, advance=20, description="[cyan]Loading FDAS modules...")
 
-                console.print("[yellow]Note:[/yellow] BSEE adapter integration in progress")
+                from worldenergydata.modules.fdas.core.config import AssumptionsManager
+                from worldenergydata.modules.fdas.analysis.cashflow import CashflowEngine
+
+                progress.update(task, advance=20, description="[cyan]Loading assumptions...")
+
+                # Initialize assumptions manager
+                assumptions_mgr = AssumptionsManager()
+
+                progress.update(task, advance=20, description="[cyan]Creating cashflow engine...")
+
+                # Initialize cashflow engine
+                cashflow_engine = CashflowEngine(assumptions_mgr, dev_system)
+
+                progress.update(task, advance=20, description="[cyan]Building analysis results...")
+
+                # Build analysis summary
+                analysis_results = {
+                    "configuration": {
+                        "field": field,
+                        "lease": lease,
+                        "dev_system": dev_system,
+                        "discount_rate": discount_rate,
+                        "oil_price": oil_price,
+                        "gas_price": gas_price,
+                        "royalty_rate": royalty_rate,
+                    },
+                    "assumptions": {
+                        "royalty_rate": assumptions_mgr.get(dev_system, 'ROYALTY_RATE', royalty_rate),
+                        "variable_opex_per_bbl": assumptions_mgr.get(dev_system, 'VARIABLE_OPEX_$/BBL', 12.0),
+                        "fixed_opex_mm_per_year": assumptions_mgr.get(dev_system, 'FIXED_OPEX_MM_PER_YEAR', 25.0),
+                    },
+                    "status": "analysis_ready",
+                    "notes": "Cashflow engine initialized. Use with production data for full analysis."
+                }
+
+                progress.update(task, advance=20, description="[cyan]Completing analysis...")
+
+                # Display results
+                results_table = Table(
+                    title="Field Development Analysis",
+                    show_header=True,
+                    header_style="bold cyan"
+                )
+                results_table.add_column("Parameter", style="dim")
+                results_table.add_column("Value", justify="right")
+
+                results_table.add_row("Development System", dev_system)
+                results_table.add_row("Royalty Rate", f"{analysis_results['assumptions']['royalty_rate']:.2%}")
+                results_table.add_row("Variable OPEX", f"${analysis_results['assumptions']['variable_opex_per_bbl']:.2f}/bbl")
+                results_table.add_row("Fixed OPEX", f"${analysis_results['assumptions']['fixed_opex_mm_per_year']:.1f}M/year")
+                results_table.add_row("", "")
+                results_table.add_row("Status", "[green]Analysis Ready[/green]")
+
+                console.print(results_table)
+
+                # Save output if specified
+                if output:
+                    import json
+                    output.parent.mkdir(parents=True, exist_ok=True)
+                    with open(output, 'w') as f:
+                        json.dump(analysis_results, f, indent=2, default=str)
+                    console.print(f"\n[dim]Analysis saved to: {output}[/dim]")
 
             except ImportError as e:
-                console.print(f"[yellow]Warning:[/yellow] Could not import FDAS adapter: {e}")
-
-            progress.update(task, completed=True)
+                progress.update(task, completed=100)
+                console.print(f"[yellow]Warning:[/yellow] Could not import FDAS modules: {e}")
+                if verbose:
+                    import traceback
+                    console.print(f"[dim]{traceback.format_exc()}[/dim]")
 
         console.print("\n[green]Analysis completed[/green]")
 
@@ -466,6 +545,9 @@ def analyze(
         raise
     except Exception as e:
         console.print(f"[red]Error:[/red] {str(e)}")
+        if verbose:
+            import traceback
+            console.print(f"[dim]{traceback.format_exc()}[/dim]")
         raise typer.Exit(1)
 
 

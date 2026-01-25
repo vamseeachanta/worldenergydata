@@ -109,7 +109,12 @@ class DataValidator:
                 continue
 
         # Validate each field
-        for field_schema in self.schema.fields.values():
+        # Support both list and dict for schema.fields
+        if isinstance(self.schema.fields, dict):
+            field_schemas = self.schema.fields.values()
+        else:
+            field_schemas = self.schema.fields
+        for field_schema in field_schemas:
             field_name = field_schema.name
             value = record.get(field_name)
             print(f"[DEBUG] Validating field: {field_name}, value: {value} (type: {type(value).__name__})")
