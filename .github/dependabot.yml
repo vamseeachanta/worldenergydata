@@ -1,0 +1,70 @@
+version: 2
+
+updates:
+  # Python dependencies
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "America/Chicago"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
+    labels:
+      - "dependencies"
+      - "python"
+    reviewers:
+      - "vamseeachanta"
+    groups:
+      # Group all development dependencies
+      dev-dependencies:
+        patterns:
+          - "pytest*"
+          - "black"
+          - "flake8"
+          - "mypy"
+          - "pre-commit"
+          - "faker"
+          - "factory-boy"
+        update-types:
+          - "minor"
+          - "patch"
+      # Group data science dependencies
+      data-science:
+        patterns:
+          - "pandas*"
+          - "numpy*"
+          - "plotly*"
+        update-types:
+          - "minor"
+          - "patch"
+      # Group web scraping dependencies
+      web-scraping:
+        patterns:
+          - "scrapy*"
+          - "selenium*"
+          - "beautifulsoup*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "America/Chicago"
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "chore(ci)"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    groups:
+      actions:
+        patterns:
+          - "*"
