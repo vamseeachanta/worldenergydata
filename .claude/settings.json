@@ -75,6 +75,11 @@
           {
             "type": "command",
             "command": "cat | jq -r '.tool_input.file_path // .tool_input.path // empty' | tr '\\n' '\\0' | xargs -0 -I {} npx claude-flow@alpha hooks post-edit --file '{}' --format true --update-memory true"
+          },
+          {
+            "type": "command",
+            "statusMessage": "Capturing correction patterns for RAGS learning",
+            "command": "cat | bash -c 'HOOK=\"\"; [ -f \"/d/workspace-hub/.claude/hooks/capture-corrections.sh\" ] && HOOK=\"/d/workspace-hub/.claude/hooks/capture-corrections.sh\"; [ -z \"$HOOK\" ] && [ -f \"/mnt/github/workspace-hub/.claude/hooks/capture-corrections.sh\" ] && HOOK=\"/mnt/github/workspace-hub/.claude/hooks/capture-corrections.sh\"; [ -n \"$HOOK\" ] && cat | \"$HOOK\" || cat > /dev/null'"
           }
         ]
       }
@@ -112,7 +117,10 @@
   },
   "plansDirectory": "specs/modules",
   "includeCoAuthoredBy": true,
-  "enabledMcpjsonServers": ["claude-flow", "ruv-swarm"],
+  "enabledMcpjsonServers": [
+    "claude-flow",
+    "ruv-swarm"
+  ],
   "statusLine": {
     "type": "command",
     "command": ".claude/statusline-command.sh"
