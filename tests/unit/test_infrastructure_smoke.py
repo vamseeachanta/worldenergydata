@@ -58,14 +58,12 @@ class TestInfrastructureSmoke:
                 plugin_name = 'pytest-xdist'
             assert plugin_name in installed_packages, f"Plugin {plugin} not installed"
 
-    @pytest.mark.skip(reason="Fixture project_root not implemented in conftest")
     def test_fixtures_available(self, project_root, test_data_dir, temp_dir):
         """Verify basic fixtures are available."""
         assert project_root.exists()
         assert test_data_dir.exists()
         assert temp_dir.exists()
 
-    @pytest.mark.skip(reason="Fixture sample_production_data not implemented in conftest")
     def test_data_fixtures_work(self, sample_production_data, sample_well_data):
         """Verify data fixtures generate correct data."""
         # Check production data
@@ -78,7 +76,6 @@ class TestInfrastructureSmoke:
         assert sample_well_data['api_well_number'] == '608124003301'
         assert 'field' in sample_well_data
 
-    @pytest.mark.skip(reason="Fixture mock_excel_file not implemented in conftest")
     def test_mock_file_fixtures(self, mock_excel_file, mock_yaml_config):
         """Verify mock file fixtures create files."""
         assert mock_excel_file.exists()
@@ -140,7 +137,6 @@ class TestInfrastructureSmoke:
         content = ini_path.read_text()
         assert "--cov=" in content
 
-    @pytest.mark.skip(reason="Fixture reset_environment not implemented in conftest")
     def test_environment_isolation(self, reset_environment):
         """Verify environment isolation fixture works."""
         import os
@@ -152,7 +148,6 @@ class TestInfrastructureSmoke:
         # After test, fixture should reset environment
         # (verified by fixture cleanup)
 
-    @pytest.mark.skip(reason="Fixture assert_dataframe_equal not implemented in conftest")
     def test_assertion_helpers(self, assert_dataframe_equal):
         """Verify custom assertion helpers work."""
         df1 = pd.DataFrame({'a': [1, 2], 'b': [3, 4]})
@@ -175,7 +170,6 @@ class TestInfrastructureSmoke:
 class TestInfrastructureIntegration:
     """Integration tests for test infrastructure."""
 
-    @pytest.mark.skip(reason="Fixture temp_dir not implemented in conftest")
     def test_full_test_workflow(self, temp_dir, sample_production_data):
         """Test a complete workflow using infrastructure."""
         # Use temp directory

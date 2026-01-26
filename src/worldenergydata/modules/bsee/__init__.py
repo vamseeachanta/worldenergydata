@@ -4,31 +4,61 @@
 """
 BSEE Module - Gulf of Mexico Offshore Oil & Gas Data
 
-This module provides comprehensive access to BSEE data including:
-- Well and production data access (API10/API12 formats)
-- Production analysis and forecasting
-- Financial analysis (NPV, cash flow)
-- Well data verification and quality assurance
-- Comprehensive reporting with multi-format export
-- Paleontological well analysis
+This module provides comprehensive access to BSEE (Bureau of Safety and
+Environmental Enforcement) data for Gulf of Mexico offshore oil and gas
+operations.
+
+Features:
+    - Well and production data access (API10/API12 formats)
+    - Production analysis and forecasting
+    - Financial analysis (NPV, cash flow calculations)
+    - Well data verification and quality assurance
+    - Comprehensive reporting with multi-format export (Excel, JSON, HTML, PDF)
+    - Paleontological well analysis
+
+Data Structure:
+    data/
+        loaders/           Data loading strategies
+            api/           API-based data access (by well API number)
+            block/         Block-based data access (by OCS block)
+            lease/         Lease-based data access (by lease number)
+        sources/           Data source handlers
+            bin/           Binary file sources (.bin format)
+            zip/           ZIP file sources (compressed BSEE downloads)
+    analysis/              Analysis tools
+        well_api12.py      API12 well analysis
+        well_api10.py      API10 well analysis
+        financial/         Financial analysis (NPV, cash flow)
+        well_data_verification/  Data quality verification
+    reports/               Report generation
+        comprehensive/     Multi-format comprehensive reports
 
 Example usage:
-    from worldenergydata.modules.bsee import (
-        bsee,
-        BSEEData,
-        BSEEAnalysis,
-    )
+    # Basic module usage
+    from worldenergydata.modules.bsee import bsee, BSEEData, BSEEAnalysis
+
+    # Data access
+    from worldenergydata.modules.bsee import WellData, BlockRouter, LeaseRouter
+
+    # Analysis
+    from worldenergydata.modules.bsee import WellAPI12, ProductionAPI12Analysis
 
     # Initialize and run analysis
-    cfg = bsee.router(cfg)
+    cfg = {"data": {"block": "759"}}
+    result_cfg = bsee.router(cfg)
 
-Submodule access:
-    from worldenergydata.modules.bsee.analysis import well_api12
-    from worldenergydata.modules.bsee.data import bsee_data
-    from worldenergydata.modules.bsee.reports import comprehensive
+CLI usage:
+    worldenergydata bsee analyze --block 759
+    worldenergydata bsee report --type field --id "Jack" --format excel
+    worldenergydata bsee data --api 608114001200
+    worldenergydata bsee refresh --type production
+
+See Also:
+    - docs/CLI.md: CLI command reference
+    - docs/MIGRATION_GUIDE.md: Migration from old import paths
 """
 
-from typing import TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 __version__ = "1.0.0"
 __all__ = [
@@ -76,7 +106,7 @@ if TYPE_CHECKING:
     from worldenergydata.modules.bsee.paleowells import PaleowellsVisualizer as PaleowellsVisualizer
 
 
-def __getattr__(name: str):
+def __getattr__(name: str) -> Any:
     """Lazy import of module components to avoid circular imports."""
 
     # Core classes

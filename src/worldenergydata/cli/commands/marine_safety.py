@@ -87,7 +87,7 @@ def scrape_uscg(
         False, "--verbose", "-v",
         help="Enable verbose output"
     ),
-):
+) -> None:
     """
     Scrape incident data from USCG MISLE database.
 
@@ -194,7 +194,7 @@ def scrape_ntsb(
         False, "--verbose", "-v",
         help="Enable verbose output"
     ),
-):
+) -> None:
     """
     Scrape incident data from NTSB marine accident database.
 
@@ -251,7 +251,7 @@ def scrape_maib(
         False, "--verbose", "-v",
         help="Enable verbose output"
     ),
-):
+) -> None:
     """
     Scrape incident data from UK MAIB (Marine Accident Investigation Branch).
 
@@ -305,7 +305,7 @@ def db_init(
         False, "--verbose", "-v",
         help="Enable verbose output"
     ),
-):
+) -> None:
     """
     Initialize database schema for marine safety data.
 
@@ -401,7 +401,7 @@ def db_migrate(
         False, "--dry-run",
         help="Show migration plan without executing"
     ),
-):
+) -> None:
     """
     Run database migrations to update schema.
 
@@ -443,7 +443,7 @@ def stats(
         False, "--verbose", "-v",
         help="Show detailed statistics"
     ),
-):
+) -> None:
     """
     Display statistics about marine safety incident data.
 
@@ -608,7 +608,7 @@ def export(
         False, "--verbose", "-v",
         help="Enable verbose output"
     ),
-):
+) -> None:
     """
     Export marine safety incident data to various formats.
 
@@ -782,7 +782,7 @@ def analyze(
         None, "--output", "-o",
         help="Output directory for analysis results"
     ),
-):
+) -> None:
     """
     Analyze marine safety incident patterns and trends.
 
@@ -816,7 +816,7 @@ def analyze(
 
 
 @app.command()
-def info():
+def info() -> None:
     """Display information about the marine safety module."""
     info_panel = Panel(
         """[bold cyan]Marine Safety Incident Data Module[/bold cyan]
@@ -852,7 +852,7 @@ See README.md in the marine_safety module directory""",
 
 
 @app.callback()
-def callback():
+def callback() -> None:
     """
     Marine safety incident data management.
 

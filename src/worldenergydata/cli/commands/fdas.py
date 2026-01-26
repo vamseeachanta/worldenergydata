@@ -48,7 +48,7 @@ class Period(str, Enum):
     annual = "annual"
 
 
-def parse_cashflows(cashflows_str: str) -> list:
+def parse_cashflows(cashflows_str: str) -> List[float]:
     """Parse cashflows from JSON string."""
     try:
         cashflows = json.loads(cashflows_str)
@@ -74,7 +74,7 @@ def calculate_npv(
         "--period", "-p",
         help="Cashflow period"
     ),
-):
+) -> None:
     """
     Calculate Net Present Value (NPV) of cashflow stream.
 
@@ -155,7 +155,7 @@ def calculate_mirr(
         None, "--reinvestment-rate",
         help="Annual reinvestment rate (defaults to discount rate)"
     ),
-):
+) -> None:
     """
     Calculate Modified Internal Rate of Return (MIRR).
 
@@ -237,7 +237,7 @@ def calculate_irr(
         "--period", "-p",
         help="Cashflow period"
     ),
-):
+) -> None:
     """
     Calculate Internal Rate of Return (IRR).
 
@@ -307,7 +307,7 @@ def calculate_all(
         "--period", "-p",
         help="Cashflow period"
     ),
-):
+) -> None:
     """
     Calculate all financial metrics for a cashflow stream.
 
@@ -427,7 +427,7 @@ def analyze(
         False, "--verbose", "-v",
         help="Enable verbose output"
     ),
-):
+) -> None:
     """
     Perform comprehensive field development analysis.
 
@@ -557,7 +557,7 @@ def classify(
         ...,
         help="Water depth in feet"
     ),
-):
+) -> None:
     """
     Classify development system by water depth.
 
@@ -607,7 +607,7 @@ def classify(
 
 
 @app.command()
-def info():
+def info() -> None:
     """Display information about the FDAS module."""
     info_panel = Panel(
         """[bold cyan]Field Development Analysis System (FDAS)[/bold cyan]
@@ -647,7 +647,7 @@ See FDAS module documentation for detailed usage""",
 
 
 @app.callback()
-def callback():
+def callback() -> None:
     """
     Field Development Analysis System (FDAS).
 
