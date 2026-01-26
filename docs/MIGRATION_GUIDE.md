@@ -243,6 +243,60 @@ For questions about this migration:
 3. Consult the API documentation in `docs/api/`
 4. Open an issue in the project repository
 
+## CLI Migration
+
+The new unified CLI replaces individual module entry points.
+
+### Old CLI Commands (Deprecated)
+
+```bash
+# Old BSEE commands
+python -m worldenergydata.modules.bsee.analysis.bsee_analysis
+python -m worldenergydata.modules.bsee.analysis.financial.cli_interface
+
+# Old Marine Safety commands
+python -m worldenergydata.modules.marine_safety.scrapers.uscg_scraper
+
+# Old FDAS commands
+python -m worldenergydata.modules.fdas.core.financial
+```
+
+### New CLI Commands
+
+```bash
+# Unified entry point
+worldenergydata --help
+
+# BSEE module
+worldenergydata bsee analyze --block 759
+worldenergydata bsee report --type field --id "Jack" --format excel
+worldenergydata bsee data --api 608114001200
+worldenergydata bsee refresh --type production
+worldenergydata bsee stats
+
+# Marine Safety module
+worldenergydata marine-safety scrape uscg --start-year 2020
+worldenergydata marine-safety db init --dev-mode
+worldenergydata marine-safety stats --source uscg
+worldenergydata marine-safety export csv --output incidents.csv
+
+# FDAS module
+worldenergydata fdas calculate-npv --cashflows "[-1000,100,200,300]"
+worldenergydata fdas calculate-mirr --cashflows "[-5000,1000,1500,2000]"
+worldenergydata fdas calculate-all --cashflows "[-1000,100,200,300,400,500]"
+worldenergydata fdas analyze --field "Thunder Horse" --discount-rate 0.10
+worldenergydata fdas classify 5000
+```
+
+### CLI Migration Table
+
+| Old Command | New Command |
+|-------------|-------------|
+| `python -m worldenergydata.modules.bsee.analysis.bsee_analysis --block 759` | `worldenergydata bsee analyze --block 759` |
+| `python -m worldenergydata.modules.bsee.analysis.financial.cli_interface` | `worldenergydata fdas analyze` |
+| Direct scraper execution | `worldenergydata marine-safety scrape uscg` |
+| Direct financial calculation scripts | `worldenergydata fdas calculate-npv` |
+
 ## Summary
 
 The reorganization provides:
@@ -252,3 +306,9 @@ The reorganization provides:
 - **Unified CLI**: Single entry point for all module commands
 - **Backward compatibility**: Shims ensure existing code continues to work with deprecation warnings
 - **Clear migration path**: 6-month deprecation period before removal in version 2.0.0
+
+## Related Documentation
+
+- [CLI.md](CLI.md): Complete CLI command reference
+- [README.md](../README.md): Project overview
+- [src/worldenergydata/README.md](../src/worldenergydata/README.md): Package structure

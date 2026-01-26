@@ -1,10 +1,25 @@
 """
 Unified CLI for WorldEnergyData.
 
+This module provides the main entry point for the WorldEnergyData command-line
+interface, orchestrating all module-specific commands through a unified Typer
+application with Rich console output.
+
+Architecture:
+    The CLI uses a modular architecture where each domain module (bsee,
+    marine-safety, fdas) provides its own Typer sub-application that is
+    registered with the main app.
+
 Usage:
     worldenergydata <module> <command> [options]
 
-Examples:
+    # Show help
+    worldenergydata --help
+
+    # Show available modules
+    worldenergydata info
+
+    # Module-specific commands
     worldenergydata bsee analyze --field "MC252"
     worldenergydata bsee report --block 759 --format excel
     worldenergydata marine-safety stats --source uscg
@@ -12,8 +27,22 @@ Examples:
 
 Modules:
     bsee          - BSEE (Bureau of Safety and Environmental Enforcement) data
-    marine-safety - Marine safety incident data management
-    fdas          - Field Development Analysis System
+                    including well production, directional surveys, and reports
+    marine-safety - Marine safety incident data from USCG, NTSB, MAIB, TSB
+    fdas          - Field Development Analysis System for NPV, MIRR, IRR
+
+Global Commands:
+    version       - Display version information
+    info          - Display information about available modules
+    status        - Display system status and data availability
+
+Dependencies:
+    - typer: CLI framework
+    - rich: Console formatting and progress display
+
+See Also:
+    - docs/CLI.md: Complete CLI reference documentation
+    - src/worldenergydata/cli/commands/: Module-specific command implementations
 """
 
 import typer
@@ -55,7 +84,7 @@ app.add_typer(
 
 
 @app.command()
-def version():
+def version() -> None:
     """Display version information."""
     try:
         from worldenergydata import __version__
@@ -74,7 +103,7 @@ def version():
 
 
 @app.command()
-def info():
+def info() -> None:
     """Display information about available modules."""
     table = Table(
         title="WorldEnergyData Modules",
@@ -108,7 +137,7 @@ def info():
 
 
 @app.command()
-def status():
+def status() -> None:
     """Display system status and data availability."""
     from pathlib import Path
     import os
@@ -154,7 +183,7 @@ def status():
 def main(
     ctx: typer.Context,
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Enable verbose output"),
-):
+) -> None:
     """
     WorldEnergyData CLI - Global energy market data platform.
 

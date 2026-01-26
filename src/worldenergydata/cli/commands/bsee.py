@@ -88,7 +88,7 @@ def analyze(
         False, "--verbose", "-v",
         help="Enable verbose output"
     ),
-):
+) -> None:
     """
     Analyze BSEE well and production data.
 
@@ -230,7 +230,7 @@ def report(
         False, "--verbose", "-v",
         help="Enable verbose output"
     ),
-):
+) -> None:
     """
     Generate comprehensive BSEE reports.
 
@@ -374,7 +374,7 @@ def data(
         False, "--verbose", "-v",
         help="Enable verbose output"
     ),
-):
+) -> None:
     """
     Retrieve BSEE data for a specific entity.
 
@@ -509,7 +509,7 @@ def refresh(
         False, "--verbose", "-v",
         help="Enable verbose output"
     ),
-):
+) -> None:
     """
     Refresh BSEE data from source.
 
@@ -591,7 +591,7 @@ def stats(
         False, "--verbose", "-v",
         help="Show detailed statistics"
     ),
-):
+) -> None:
     """
     Display BSEE data statistics.
 
@@ -696,7 +696,7 @@ def stats(
 
 
 @app.callback()
-def callback():
+def callback() -> None:
     """
     BSEE (Bureau of Safety and Environmental Enforcement) data operations.
 

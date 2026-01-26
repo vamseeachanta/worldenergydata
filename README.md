@@ -1,283 +1,232 @@
 # WorldEnergyData
 
-A comprehensive Python data library and analysis repository for the energy industry, providing integrated access to public energy data sources with built-in economic evaluation and production forecasting tools.
+A comprehensive Python data library and analysis platform for the energy industry, providing integrated access to public energy data sources with built-in economic evaluation, safety analysis, and production forecasting tools.
 
 ## Overview
 
 WorldEnergyData helps energy industry professionals, data analysts, researchers, and consultants make data-driven decisions by providing:
 
-- **Unified Data Access**: Automated collection and processing from multiple public sources (BSEE, SODIR, wind databases)
-- **Economic Analysis**: Built-in NPV analysis and production forecasting capabilities
-- **Cross-Sector Integration**: Modular architecture supporting oil & gas, wind, shipping, and other energy sectors
-
-## Key Features
-
-### Data Integration
-- **BSEE Data**: Bureau of Safety and Environmental Enforcement data including well production, directional surveys, and completion data
-- **Field Analysis**: Specialized tools for major deepwater fields (Anchor, Julia, Jack, St. Malo)
-- **Web Scraping**: Automated data collection using Scrapy, Selenium, and BeautifulSoup
-
-### Analysis Capabilities
-- **Economic Evaluation**: NPV analysis with numpy-financial
-- **Production Forecasting**: Timeline visualization and forecasting tools
-- **Data Visualization**: Interactive charts with matplotlib and plotly
-- **YAML Configuration**: Flexible workflow customization
-
-### Development Features
-- **Modern Python**: 3.9+ with UV package management
-- **Testing Framework**: Comprehensive pytest-based testing
-- **Code Quality**: black, isort, ruff, and mypy integration
-- **Modular Architecture**: Clean separation of data sources, processing, and analysis
+- **Unified CLI**: Single command-line interface for all modules (`worldenergydata <module> <command>`)
+- **Data Access**: Automated collection from multiple public sources (BSEE, USCG, NTSB, MAIB)
+- **Economic Analysis**: NPV, MIRR, IRR calculations with industry-standard methodology
+- **Safety Tracking**: Marine safety incident data from global maritime authorities
 
 ## Quick Start
 
 ### Installation
 
-#### Using UV (Recommended)
-
 ```bash
-# Install UV package manager
+# Install UV package manager (recommended)
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Clone the repository
+# Clone and setup
 git clone https://github.com/username/worldenergydata.git
 cd worldenergydata
-
-# Setup development environment
-./scripts/uv_setup.sh         # Linux/Mac
-./scripts/uv_migrate.bat       # Windows
-
-# Install dependencies
 uv sync
 
-# Run the application
-uv run python -m worldenergydata
+# Verify installation
+uv run worldenergydata --help
 ```
 
-#### Using pip
+### Basic Usage
 
 ```bash
-# Install from source
-pip install -e .
+# Show available modules
+uv run worldenergydata info
 
-# Install with development dependencies
-pip install -e ".[dev]"
+# BSEE data analysis
+uv run worldenergydata bsee analyze --field "Jack"
+uv run worldenergydata bsee report --type block --id 759 --format excel
+
+# Marine safety operations
+uv run worldenergydata marine-safety scrape uscg --start-year 2020
+uv run worldenergydata marine-safety stats --source all
+
+# Financial calculations
+uv run worldenergydata fdas calculate-npv --cashflows "[-1000,100,200,300]" --discount-rate 0.10
+uv run worldenergydata fdas calculate-all --cashflows "[-5000,1000,1500,2000]"
 ```
 
-### Running Tests
+## Modules
+
+### BSEE Module (`worldenergydata bsee`)
+Gulf of Mexico offshore oil & gas data from the Bureau of Safety and Environmental Enforcement:
+- Well and production data (API10/API12 formats)
+- Production analysis and reporting
+- Financial analysis (NPV, cash flow)
+- Comprehensive multi-format exports (Excel, JSON, HTML, PDF)
 
 ```bash
-# Run all tests
-uv run pytest
-
-# Run with coverage
-uv run pytest --cov=src --cov-report=html
-
-# Run specific test file
-uv run pytest tests/test_bsee.py
+worldenergydata bsee analyze --block 759
+worldenergydata bsee report --type field --id "Thunder Horse" --oil-price 80
+worldenergydata bsee data --api 608114001200
+worldenergydata bsee refresh --type production
 ```
 
-### Code Formatting and Linting
+### Marine Safety Module (`worldenergydata marine-safety`)
+Marine safety incident tracking from global maritime authorities:
+- USCG MISLE database
+- NTSB marine accident investigations
+- UK MAIB reports
+- TSB Canada data
 
 ```bash
-# Format code
-uv run black .
-uv run isort .
+worldenergydata marine-safety scrape uscg --start-year 2020 --end-year 2023
+worldenergydata marine-safety db init --dev-mode
+worldenergydata marine-safety export csv --output incidents.csv
+worldenergydata marine-safety stats --verbose
+```
 
-# Run linting
-uv run ruff check .
+### FDAS Module (`worldenergydata fdas`)
+Field Development Analysis System for deepwater project economics:
+- Excel-compatible MIRR calculations
+- NPV with customizable discount rates
+- IRR calculations (monthly/annual)
+- Water depth classification
 
-# Type checking
-uv run mypy src/
+```bash
+worldenergydata fdas calculate-npv --cashflows "[-1000,100,200,300,400,500]"
+worldenergydata fdas calculate-mirr --cashflows "[-5000,1000,1500,2000]" --discount-rate 0.12
+worldenergydata fdas analyze --field "Thunder Horse" --discount-rate 0.10
+worldenergydata fdas classify 5000
 ```
 
 ## Project Structure
 
 ```
 worldenergydata/
-├── src/
-│   └── worldenergydata/
-│       ├── modules/
-│       │   ├── bsee/              # BSEE data analysis
-│       │   └── well_production_dashboard/
-│       ├── common/                 # Shared utilities
-│       └── engine.py               # Core engine
-├── data/
-│   └── modules/                    # Data storage
-├── tests/                          # Test suite
-├── scripts/                        # Utility scripts
-├── docs/                           # Documentation
-│   ├── analysis-guides/
-│   ├── data-sources/
-│   ├── development/
+├── src/worldenergydata/
+│   ├── cli/                    # Unified CLI (Typer-based)
+│   │   ├── main.py             # Main entry point
+│   │   └── commands/           # Module-specific commands
+│   ├── common/                 # Shared utilities
+│   │   ├── logging.py          # Centralized logging
+│   │   ├── config.py           # Configuration management
+│   │   ├── exceptions.py       # Custom exceptions
+│   │   └── types.py            # Type definitions
 │   └── modules/
-├── pyproject.toml                  # Project configuration
-└── uv.lock                         # Dependency lock file
+│       ├── bsee/               # BSEE data module
+│       │   ├── data/           # Data loaders and sources
+│       │   ├── analysis/       # Analysis tools
+│       │   └── reports/        # Report generation
+│       ├── marine_safety/      # Marine safety module
+│       │   ├── scrapers/       # Data scrapers
+│       │   ├── database/       # Database operations
+│       │   └── analysis/       # Incident analysis
+│       └── fdas/               # Field Development Analysis
+│           ├── core/           # Financial calculations
+│           ├── adapters/       # BSEE integration
+│           └── analysis/       # Cashflow modeling
+├── data/                       # Data storage (raw/processed)
+├── tests/                      # Test suite
+├── docs/                       # Documentation
+│   ├── CLI.md                  # CLI reference
+│   └── MIGRATION_GUIDE.md      # Migration from old structure
+└── pyproject.toml              # Project configuration
 ```
 
-## Modules
+## Installation Options
 
-### BSEE Module
-Comprehensive BSEE (Bureau of Safety and Environmental Enforcement) data analysis:
-- Production data analysis
-- Directional surveys
-- Well completion data
-- Financial analysis with NPV calculations
-- Lease grouping and aggregation
+### Using UV (Recommended)
 
-### Well Production Dashboard
-Interactive dashboard for well production visualization and analysis.
+```bash
+# Install UV
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-## Configuration
+# Clone and install
+git clone https://github.com/username/worldenergydata.git
+cd worldenergydata
+uv sync
 
-WorldEnergyData uses YAML-based configuration for flexible data processing:
+# Run
+uv run worldenergydata --help
+```
 
-```yaml
-# Example configuration
-data_sources:
-  bsee:
-    enabled: true
-    fields: [Anchor, Julia, Jack, St. Malo]
+### Using pip
 
-analysis:
-  npv:
-    discount_rate: 0.10
-    price_deck: oil_gas_prices.csv
+```bash
+# Install from source
+pip install -e .
+
+# With development dependencies
+pip install -e ".[dev]"
 ```
 
 ## Development
 
-### Setting Up Development Environment
-
-```bash
-# Install development dependencies
-uv pip install -e ".[dev]"
-
-# Run pre-commit hooks
-pre-commit install
-```
-
-### Running Analysis Scripts
-
-```bash
-# BSEE data analysis
-uv run python -m worldenergydata.modules.bsee.analysis.bsee_analysis
-
-# Financial analysis
-uv run python -m worldenergydata.modules.bsee.analysis.financial.cli_interface
-```
-
-### Adding Dependencies
-
-```bash
-# Add a new dependency
-uv add requests
-
-# Add a development dependency
-uv add --dev pytest-asyncio
-```
-
-## Building and Publishing
-
-### Local Development Build
-
-```bash
-# Build the package
-python -m build
-
-# Install locally in editable mode
-pip install -e .
-```
-
-### Publishing to PyPI
-
-```bash
-# Update version
-bumpver update --patch
-
-# Build distribution
-python -m build
-
-# Upload to PyPI
-twine upload dist/*
-```
-
-## Testing
-
-The project uses pytest for comprehensive testing:
+### Testing
 
 ```bash
 # Run all tests
 uv run pytest
 
-# Run specific module tests
+# With coverage
+uv run pytest --cov=src --cov-report=html
+
+# Specific module
 uv run pytest tests/modules/test_bsee.py
+```
 
-# Run with coverage report
-uv run pytest --cov=src --cov-report=term-missing --cov-report=html
+### Code Quality
 
-# Run integration tests
-uv run python scripts/integration_test_directional_surveys.py
+```bash
+# Format
+uv run black .
+uv run isort .
+
+# Lint
+uv run ruff check .
+
+# Type check
+uv run mypy src/
+```
+
+### Adding Dependencies
+
+```bash
+uv add requests           # Runtime dependency
+uv add --dev pytest-cov   # Development dependency
 ```
 
 ## Documentation
 
-Comprehensive documentation is available in the `docs/` directory:
-
-- **[Analysis Guides](docs/analysis-guides/)**: Step-by-step analysis tutorials
-- **[Data Sources](docs/data-sources/)**: Information about data sources
-- **[Development](docs/development/)**: Development guidelines and UV usage
-- **[Module Docs](docs/modules/)**: Module-specific documentation
-
-## Contributing
-
-We welcome contributions! Please follow these guidelines:
-
-1. **Code Style**: Use black, isort, and ruff for formatting
-2. **Testing**: Add tests for new features
-3. **Documentation**: Update docs for significant changes
-4. **Commits**: Follow conventional commit messages
-
-```bash
-# Format before committing
-uv run black .
-uv run isort .
-
-# Run linting
-uv run ruff check .
-
-# Ensure tests pass
-uv run pytest
-```
+- **[CLI Reference](docs/CLI.md)**: Complete CLI command documentation
+- **[Migration Guide](docs/MIGRATION_GUIDE.md)**: Migrating from old import paths
+- **[API Documentation](docs/api/)**: Module API reference
 
 ## Technology Stack
 
-- **Language**: Python 3.9+
-- **Package Manager**: UV
-- **Data Processing**: pandas, numpy, numpy-financial
-- **Web Scraping**: Scrapy, Selenium, BeautifulSoup4
-- **Visualization**: matplotlib, plotly
-- **Testing**: pytest
-- **Code Quality**: black, isort, ruff, mypy
+| Category | Tools |
+|----------|-------|
+| Language | Python 3.9+ |
+| Package Manager | UV |
+| CLI Framework | Typer + Rich |
+| Data Processing | pandas, numpy, numpy-financial |
+| Web Scraping | Scrapy, Selenium, BeautifulSoup4 |
+| Database | SQLAlchemy, PostgreSQL/SQLite |
+| Testing | pytest |
+| Code Quality | black, isort, ruff, mypy |
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/new-feature`)
+3. Write tests first (TDD)
+4. Implement your changes
+5. Run quality checks (`uv run pytest && uv run ruff check .`)
+6. Submit a pull request
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file for details.
-
-## Authors
-
-Development Team - [dev@example.com](mailto:dev@example.com)
-
-## Support
-
-- **Issues**: [GitHub Issues](https://github.com/username/worldenergydata/issues)
-- **Documentation**: [Project Wiki](https://github.com/username/worldenergydata#readme)
+MIT License - see [LICENSE](LICENSE) for details.
 
 ## Acknowledgments
 
-- Bureau of Safety and Environmental Enforcement (BSEE) for public data access
-- Open-source community for excellent Python libraries
+- Bureau of Safety and Environmental Enforcement (BSEE)
+- US Coast Guard (USCG)
+- National Transportation Safety Board (NTSB)
+- UK Marine Accident Investigation Branch (MAIB)
 
 ---
 
-**Note**: This project is designed for analysis of public energy data sources. Always verify data accuracy and comply with data usage terms from source providers.
+**Note**: This project is for analysis of public energy data sources. Verify data accuracy and comply with source provider terms.
