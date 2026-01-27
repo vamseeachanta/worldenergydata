@@ -1,12 +1,13 @@
 # ABOUTME: URL-based BSEE incident importer using public APDRawData.zip
 # ABOUTME: Downloads from BSEE public API and processes well/incident data in memory
 
-from typing import List, Dict, Any
-from pathlib import Path
+from typing import Any, Dict, List
 
-from worldenergydata.modules.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
-from worldenergydata.modules.bsee.data.scrapers.bsee_web import BSEEWebScraper
 from worldenergydata.modules.bsee.data.processors.in_memory import MemoryProcessor
+from worldenergydata.modules.bsee.data.scrapers.bsee_web import BSEEWebScraper
+from worldenergydata.modules.hse.importers.bsee_incidents_importer import (
+    BSEEIncidentsImporter,
+)
 
 
 class BSEEIncidentsImporterURL(BSEEIncidentsImporter):
@@ -29,7 +30,7 @@ class BSEEIncidentsImporterURL(BSEEIncidentsImporter):
         print(f"Imported: {stats['imported_count']}, Skipped: {stats['skipped_count']}")
     """
 
-    BSEE_WELL_DATA_URL = 'https://www.data.bsee.gov/Well/Files/APDRawData.zip'
+    BSEE_WELL_DATA_URL = "https://www.data.bsee.gov/Well/Files/APDRawData.zip"
 
     def __init__(self, db_session, use_optimized: bool = True):
         """
@@ -60,8 +61,7 @@ class BSEEIncidentsImporterURL(BSEEIncidentsImporter):
         """
         # Download ZIP file to memory
         zip_data = self.scraper.download_zip_to_memory(
-            self.BSEE_WELL_DATA_URL,
-            data_type='well'
+            self.BSEE_WELL_DATA_URL, data_type="well"
         )
 
         if zip_data is None:
@@ -70,21 +70,20 @@ class BSEEIncidentsImporterURL(BSEEIncidentsImporter):
         # Process ZIP contents in memory
         # Returns: Dict[filename, Dict['data': DataFrame, 'metadata': {...}]]
         processed_data = self.processor.process_well_data(
-            zip_data,
-            cfg={}  # Use default processing configuration
+            zip_data, cfg={}  # Use default processing configuration
         )
 
         # Convert DataFrames to list of dictionaries for BaseImporter compatibility
         records = []
         for filename, file_data in processed_data.items():
             # Extract DataFrame from processing result
-            if isinstance(file_data, dict) and 'data' in file_data:
-                df = file_data['data']
+            if isinstance(file_data, dict) and "data" in file_data:
+                df = file_data["data"]
             else:
                 df = file_data
 
             # Convert to list of dicts
-            file_records = df.to_dict('records')
+            file_records = df.to_dict("records")
             records.extend(file_records)
 
         return records

@@ -5,22 +5,33 @@ Defines all database models following the optimized schema with proper
 relationships, indexes, and constraints.
 """
 
-from datetime import datetime, date
+from datetime import date, datetime
 from decimal import Decimal
-from typing import Optional, List
+from typing import List, Optional
+
 from sqlalchemy import (
-    String, Integer, DateTime, Date, Numeric, Text, Boolean,
-    ForeignKey, Index, CheckConstraint, UniqueConstraint, JSON
-)
-from sqlalchemy.orm import (
-    DeclarativeBase, Mapped, mapped_column, relationship
+    JSON,
+    Boolean,
+    CheckConstraint,
+    Date,
+    DateTime,
+    ForeignKey,
+    Index,
+    Integer,
+    Numeric,
+    String,
+    Text,
+    UniqueConstraint,
 )
 from sqlalchemy.dialects.postgresql import ENUM as PgEnum
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+
 from worldenergydata.modules.marine_safety import constants
 
 
 class Base(DeclarativeBase):
     """Base class for all models"""
+
     pass
 
 
@@ -28,17 +39,14 @@ class TimestampMixin:
     """Mixin for adding created_at and updated_at timestamps"""
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        nullable=False,
-        default=datetime.utcnow,
-        index=True
+        DateTime(timezone=True), nullable=False, default=datetime.utcnow, index=True
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
         default=datetime.utcnow,
         onupdate=datetime.utcnow,
-        index=True
+        index=True,
     )
 
 
@@ -59,14 +67,10 @@ class Company(Base, TimestampMixin):
 
     # Relationships
     vessels: Mapped[List["Vessel"]] = relationship(
-        "Vessel",
-        back_populates="company",
-        cascade="all, delete-orphan"
+        "Vessel", back_populates="company", cascade="all, delete-orphan"
     )
     incidents: Mapped[List["Incident"]] = relationship(
-        "Incident",
-        back_populates="company",
-        cascade="all, delete-orphan"
+        "Incident", back_populates="company", cascade="all, delete-orphan"
     )
 
 
@@ -84,28 +88,24 @@ class Vessel(Base, TimestampMixin):
     vessel_name: Mapped[str] = mapped_column(String(255), nullable=False)
     vessel_type: Mapped[str] = mapped_column(
         PgEnum(constants.VesselType, name="vessel_type_enum", schema="marine_safety"),
-        nullable=False
+        nullable=False,
     )
     imo_number: Mapped[Optional[str]] = mapped_column(String(10), unique=True)
     flag_state: Mapped[Optional[str]] = mapped_column(String(5))
     year_built: Mapped[Optional[int]] = mapped_column(Integer)
     gross_tonnage: Mapped[Optional[Decimal]] = mapped_column(Numeric(10, 2))
     company_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("companies.company_id", ondelete="SET NULL"),
-        index=True
+        ForeignKey("companies.company_id", ondelete="SET NULL"), index=True
     )
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     metadata_json: Mapped[Optional[dict]] = mapped_column(JSON)
 
     # Relationships
     company: Mapped[Optional["Company"]] = relationship(
-        "Company",
-        back_populates="vessels"
+        "Company", back_populates="vessels"
     )
     incidents: Mapped[List["Incident"]] = relationship(
-        "Incident",
-        back_populates="vessel",
-        cascade="all, delete-orphan"
+        "Incident", back_populates="vessel", cascade="all, delete-orphan"
     )
 
 
@@ -117,12 +117,10 @@ class Location(Base):
         Index("idx_location_coords", "latitude", "longitude"),
         Index("idx_location_region", "region_code"),
         CheckConstraint(
-            "latitude >= -90 AND latitude <= 90",
-            name="check_latitude_range"
+            "latitude >= -90 AND latitude <= 90", name="check_latitude_range"
         ),
         CheckConstraint(
-            "longitude >= -180 AND longitude <= 180",
-            name="check_longitude_range"
+            "longitude >= -180 AND longitude <= 180", name="check_longitude_range"
         ),
     )
 
@@ -137,9 +135,7 @@ class Location(Base):
 
     # Relationships
     incidents: Mapped[List["Incident"]] = relationship(
-        "Incident",
-        back_populates="location",
-        cascade="all, delete-orphan"
+        "Incident", back_populates="location", cascade="all, delete-orphan"
     )
 
 
@@ -157,63 +153,51 @@ class Incident(Base, TimestampMixin):
         Index("idx_incident_company", "company_id"),
         Index("idx_incident_location", "location_id"),
         Index(
-            "idx_incident_composite",
-            "incident_date",
-            "source_agency",
-            "incident_type"
+            "idx_incident_composite", "incident_date", "source_agency", "incident_type"
         ),
         UniqueConstraint(
-            "source_agency",
-            "source_incident_id",
-            name="uq_source_incident"
+            "source_agency", "source_incident_id", name="uq_source_incident"
         ),
     )
 
     incident_id: Mapped[int] = mapped_column(primary_key=True)
     source_agency: Mapped[str] = mapped_column(
         PgEnum(constants.DataSource, name="data_source_enum", schema="marine_safety"),
-        nullable=False
+        nullable=False,
     )
     source_incident_id: Mapped[str] = mapped_column(String(100), nullable=False)
     incident_date: Mapped[date] = mapped_column(Date, nullable=False)
     incident_time: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
     incident_type: Mapped[str] = mapped_column(
         PgEnum(
-            constants.IncidentType,
-            name="incident_type_enum",
-            schema="marine_safety"
+            constants.IncidentType, name="incident_type_enum", schema="marine_safety"
         ),
-        nullable=False
+        nullable=False,
     )
     severity_level: Mapped[int] = mapped_column(
-        Integer,
-        nullable=False,
-        default=constants.DEFAULT_SEVERITY
+        Integer, nullable=False, default=constants.DEFAULT_SEVERITY
     )
     status: Mapped[str] = mapped_column(
         PgEnum(
             constants.IncidentStatus,
             name="incident_status_enum",
-            schema="marine_safety"
+            schema="marine_safety",
         ),
         nullable=False,
-        default=constants.DEFAULT_STATUS
+        default=constants.DEFAULT_STATUS,
     )
     title: Mapped[Optional[str]] = mapped_column(String(500))
     description: Mapped[Optional[str]] = mapped_column(Text)
 
     # Foreign keys
     vessel_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("vessels.vessel_id", ondelete="SET NULL"),
-        index=True
+        ForeignKey("vessels.vessel_id", ondelete="SET NULL"), index=True
     )
     company_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("companies.company_id", ondelete="SET NULL"),
-        index=True
+        ForeignKey("companies.company_id", ondelete="SET NULL"), index=True
     )
     location_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("locations.location_id", ondelete="SET NULL"),
-        index=True
+        ForeignKey("locations.location_id", ondelete="SET NULL"), index=True
     )
 
     # Impact data
@@ -228,7 +212,7 @@ class Incident(Base, TimestampMixin):
         PgEnum(
             constants.WeatherCondition,
             name="weather_condition_enum",
-            schema="marine_safety"
+            schema="marine_safety",
         )
     )
     wind_speed_knots: Mapped[Optional[Decimal]] = mapped_column(Numeric(5, 2))
@@ -242,7 +226,7 @@ class Incident(Base, TimestampMixin):
         PgEnum(
             constants.InvestigationPriority,
             name="investigation_priority_enum",
-            schema="marine_safety"
+            schema="marine_safety",
         )
     )
 
@@ -256,26 +240,19 @@ class Incident(Base, TimestampMixin):
 
     # Relationships
     vessel: Mapped[Optional["Vessel"]] = relationship(
-        "Vessel",
-        back_populates="incidents"
+        "Vessel", back_populates="incidents"
     )
     company: Mapped[Optional["Company"]] = relationship(
-        "Company",
-        back_populates="incidents"
+        "Company", back_populates="incidents"
     )
     location: Mapped[Optional["Location"]] = relationship(
-        "Location",
-        back_populates="incidents"
+        "Location", back_populates="incidents"
     )
     causes: Mapped[List["IncidentCause"]] = relationship(
-        "IncidentCause",
-        back_populates="incident",
-        cascade="all, delete-orphan"
+        "IncidentCause", back_populates="incident", cascade="all, delete-orphan"
     )
     documents: Mapped[List["IncidentDocument"]] = relationship(
-        "IncidentDocument",
-        back_populates="incident",
-        cascade="all, delete-orphan"
+        "IncidentDocument", back_populates="incident", cascade="all, delete-orphan"
     )
 
 
@@ -290,26 +267,20 @@ class IncidentCause(Base):
 
     cause_id: Mapped[int] = mapped_column(primary_key=True)
     incident_id: Mapped[int] = mapped_column(
-        ForeignKey("incidents.incident_id", ondelete="CASCADE"),
-        nullable=False
+        ForeignKey("incidents.incident_id", ondelete="CASCADE"), nullable=False
     )
     cause_category: Mapped[str] = mapped_column(
         PgEnum(
-            constants.CauseCategory,
-            name="cause_category_enum",
-            schema="marine_safety"
+            constants.CauseCategory, name="cause_category_enum", schema="marine_safety"
         ),
-        nullable=False
+        nullable=False,
     )
     cause_description: Mapped[Optional[str]] = mapped_column(Text)
     is_primary: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     contributing_factor: Mapped[Optional[str]] = mapped_column(Text)
 
     # Relationships
-    incident: Mapped["Incident"] = relationship(
-        "Incident",
-        back_populates="causes"
-    )
+    incident: Mapped["Incident"] = relationship("Incident", back_populates="causes")
 
 
 class IncidentDocument(Base, TimestampMixin):
@@ -324,8 +295,7 @@ class IncidentDocument(Base, TimestampMixin):
 
     document_id: Mapped[int] = mapped_column(primary_key=True)
     incident_id: Mapped[int] = mapped_column(
-        ForeignKey("incidents.incident_id", ondelete="CASCADE"),
-        nullable=False
+        ForeignKey("incidents.incident_id", ondelete="CASCADE"), nullable=False
     )
     document_type: Mapped[str] = mapped_column(String(50), nullable=False)
     document_title: Mapped[Optional[str]] = mapped_column(String(500))
@@ -339,10 +309,7 @@ class IncidentDocument(Base, TimestampMixin):
     metadata_json: Mapped[Optional[dict]] = mapped_column(JSON)
 
     # Relationships
-    incident: Mapped["Incident"] = relationship(
-        "Incident",
-        back_populates="documents"
-    )
+    incident: Mapped["Incident"] = relationship("Incident", back_populates="documents")
 
 
 class ScrapeLog(Base):
@@ -358,12 +325,10 @@ class ScrapeLog(Base):
     scrape_id: Mapped[int] = mapped_column(primary_key=True)
     source_agency: Mapped[str] = mapped_column(
         PgEnum(constants.DataSource, name="data_source_enum", schema="marine_safety"),
-        nullable=False
+        nullable=False,
     )
     scrape_timestamp: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        nullable=False,
-        default=datetime.utcnow
+        DateTime(timezone=True), nullable=False, default=datetime.utcnow
     )
     status: Mapped[str] = mapped_column(String(50), nullable=False)
     records_found: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
@@ -373,3 +338,49 @@ class ScrapeLog(Base):
     error_message: Mapped[Optional[str]] = mapped_column(Text)
     execution_time_seconds: Mapped[Optional[Decimal]] = mapped_column(Numeric(10, 2))
     metadata_json: Mapped[Optional[dict]] = mapped_column(JSON)
+
+
+class IncidentLink(Base, TimestampMixin):
+    """
+    Links between potentially related incidents across data sources.
+
+    Used by the cross-source correlation engine to track duplicate or
+    related incident records from different agencies.
+    """
+
+    __tablename__ = "incident_links"
+    __table_args__ = (
+        Index("idx_link_incident_1", "incident_id_1"),
+        Index("idx_link_incident_2", "incident_id_2"),
+        Index("idx_link_confidence", "confidence_score"),
+        Index("idx_link_type", "match_type"),
+        Index("idx_link_verified", "verified"),
+        UniqueConstraint(
+            "incident_id_1", "incident_id_2", name="uq_incident_link_pair"
+        ),
+        CheckConstraint(
+            "confidence_score >= 0.00 AND confidence_score <= 1.00",
+            name="check_confidence_range",
+        ),
+        CheckConstraint("incident_id_1 < incident_id_2", name="check_link_ordering"),
+    )
+
+    link_id: Mapped[int] = mapped_column(primary_key=True)
+    incident_id_1: Mapped[int] = mapped_column(
+        ForeignKey("incidents.incident_id", ondelete="CASCADE"), nullable=False
+    )
+    incident_id_2: Mapped[int] = mapped_column(
+        ForeignKey("incidents.incident_id", ondelete="CASCADE"), nullable=False
+    )
+    confidence_score: Mapped[Decimal] = mapped_column(Numeric(3, 2), nullable=False)
+    match_type: Mapped[str] = mapped_column(String(50), nullable=False)
+    verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    metadata_json: Mapped[Optional[dict]] = mapped_column(JSON)
+
+    # Relationships
+    incident_1: Mapped["Incident"] = relationship(
+        "Incident", foreign_keys=[incident_id_1], backref="links_as_first"
+    )
+    incident_2: Mapped["Incident"] = relationship(
+        "Incident", foreign_keys=[incident_id_2], backref="links_as_second"
+    )

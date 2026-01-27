@@ -10,7 +10,6 @@ analysis in FEM tools like Gmsh, OpenFOAM, or other mesh-based solvers.
 
 from pathlib import Path
 from typing import Optional
-import numpy as np
 
 from worldenergydata.modules.vessel_hull_models.geometry.obj_parser import OBJMesh
 
@@ -180,7 +179,8 @@ def validate_msh_file(msh_path: Path) -> dict:
         else:
             # Parse version
             import re
-            match = re.search(r'\$MeshFormat\n([\d.]+)', content)
+
+            match = re.search(r"\$MeshFormat\n([\d.]+)", content)
             if match:
                 stats["version"] = match.group(1)
 
@@ -188,7 +188,7 @@ def validate_msh_file(msh_path: Path) -> dict:
             errors.append("Missing $Nodes section")
         else:
             # Count nodes
-            match = re.search(r'\$Nodes\n(\d+)', content)
+            match = re.search(r"\$Nodes\n(\d+)", content)
             if match:
                 stats["node_count"] = int(match.group(1))
 
@@ -196,7 +196,7 @@ def validate_msh_file(msh_path: Path) -> dict:
             errors.append("Missing $Elements section")
         else:
             # Count elements
-            match = re.search(r'\$Elements\n(\d+)', content)
+            match = re.search(r"\$Elements\n(\d+)", content)
             if match:
                 stats["element_count"] = int(match.group(1))
 

@@ -5,13 +5,13 @@ Creates professional, interactive HTML reports with Plotly visualizations
 and CSV data import using relative paths.
 """
 
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-import plotly.express as px
-import pandas as pd
-from pathlib import Path
 from datetime import datetime
-from typing import Dict, List, Optional
+from pathlib import Path
+from typing import Optional
+
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
 
 
 class PlotlyReportGenerator:
@@ -32,7 +32,7 @@ class PlotlyReportGenerator:
         self.figures = []
         self.summary_stats = {}
 
-    def add_summary_stat(self, label: str, value: str, unit: str = ''):
+    def add_summary_stat(self, label: str, value: str, unit: str = ""):
         """
         Add a summary statistic to display.
 
@@ -41,13 +41,11 @@ class PlotlyReportGenerator:
             value: Statistic value
             unit: Optional unit of measurement
         """
-        self.summary_stats[label] = {
-            'value': value,
-            'unit': unit
-        }
+        self.summary_stats[label] = {"value": value, "unit": unit}
 
-    def add_line_plot(self, df: pd.DataFrame, x: str, y: str,
-                      title: str, color: Optional[str] = None):
+    def add_line_plot(
+        self, df: pd.DataFrame, x: str, y: str, title: str, color: Optional[str] = None
+    ):
         """
         Add an interactive line plot.
 
@@ -58,22 +56,33 @@ class PlotlyReportGenerator:
             title: Plot title
             color: Optional column for color grouping
         """
-        fig = px.line(df, x=x, y=y, color=color,
-                      title=title,
-                      template='plotly_white',
-                      hover_data=df.columns.tolist())
+        fig = px.line(
+            df,
+            x=x,
+            y=y,
+            color=color,
+            title=title,
+            template="plotly_white",
+            hover_data=df.columns.tolist(),
+        )
 
         fig.update_layout(
-            hovermode='x unified',
+            hovermode="x unified",
             height=500,
             font=dict(size=12),
         )
 
         self.figures.append(fig)
 
-    def add_scatter_plot(self, df: pd.DataFrame, x: str, y: str,
-                         title: str, color: Optional[str] = None,
-                         size: Optional[str] = None):
+    def add_scatter_plot(
+        self,
+        df: pd.DataFrame,
+        x: str,
+        y: str,
+        title: str,
+        color: Optional[str] = None,
+        size: Optional[str] = None,
+    ):
         """
         Add an interactive scatter plot.
 
@@ -85,10 +94,16 @@ class PlotlyReportGenerator:
             color: Optional column for color
             size: Optional column for size
         """
-        fig = px.scatter(df, x=x, y=y, color=color, size=size,
-                         title=title,
-                         template='plotly_white',
-                         hover_data=df.columns.tolist())
+        fig = px.scatter(
+            df,
+            x=x,
+            y=y,
+            color=color,
+            size=size,
+            title=title,
+            template="plotly_white",
+            hover_data=df.columns.tolist(),
+        )
 
         fig.update_layout(
             height=500,
@@ -97,8 +112,9 @@ class PlotlyReportGenerator:
 
         self.figures.append(fig)
 
-    def add_bar_chart(self, df: pd.DataFrame, x: str, y: str,
-                      title: str, color: Optional[str] = None):
+    def add_bar_chart(
+        self, df: pd.DataFrame, x: str, y: str, title: str, color: Optional[str] = None
+    ):
         """
         Add an interactive bar chart.
 
@@ -109,10 +125,15 @@ class PlotlyReportGenerator:
             title: Plot title
             color: Optional column for color grouping
         """
-        fig = px.bar(df, x=x, y=y, color=color,
-                     title=title,
-                     template='plotly_white',
-                     hover_data=df.columns.tolist())
+        fig = px.bar(
+            df,
+            x=x,
+            y=y,
+            color=color,
+            title=title,
+            template="plotly_white",
+            hover_data=df.columns.tolist(),
+        )
 
         fig.update_layout(
             height=500,
@@ -121,8 +142,7 @@ class PlotlyReportGenerator:
 
         self.figures.append(fig)
 
-    def add_histogram(self, df: pd.DataFrame, column: str, title: str,
-                      nbins: int = 30):
+    def add_histogram(self, df: pd.DataFrame, column: str, title: str, nbins: int = 30):
         """
         Add an interactive histogram.
 
@@ -132,9 +152,9 @@ class PlotlyReportGenerator:
             title: Plot title
             nbins: Number of bins
         """
-        fig = px.histogram(df, x=column, nbins=nbins,
-                           title=title,
-                           template='plotly_white')
+        fig = px.histogram(
+            df, x=column, nbins=nbins, title=title, template="plotly_white"
+        )
 
         fig.update_layout(
             height=400,
@@ -152,23 +172,25 @@ class PlotlyReportGenerator:
             title: Plot title
         """
         # Calculate correlation matrix
-        corr = df.select_dtypes(include='number').corr()
+        corr = df.select_dtypes(include="number").corr()
 
-        fig = go.Figure(data=go.Heatmap(
-            z=corr.values,
-            x=corr.columns,
-            y=corr.columns,
-            colorscale='RdBu',
-            zmid=0,
-            text=corr.values.round(2),
-            texttemplate='%{text}',
-            textfont={"size": 10},
-            hovertemplate='%{x} vs %{y}: %{z:.2f}<extra></extra>'
-        ))
+        fig = go.Figure(
+            data=go.Heatmap(
+                z=corr.values,
+                x=corr.columns,
+                y=corr.columns,
+                colorscale="RdBu",
+                zmid=0,
+                text=corr.values.round(2),
+                texttemplate="%{text}",
+                textfont={"size": 10},
+                hovertemplate="%{x} vs %{y}: %{z:.2f}<extra></extra>",
+            )
+        )
 
         fig.update_layout(
             title=title,
-            template='plotly_white',
+            template="plotly_white",
             height=500,
             font=dict(size=12),
         )
@@ -328,11 +350,11 @@ class PlotlyReportGenerator:
                 <div class="stat-value">{stat['value']}<span class="stat-unit">{stat['unit']}</span></div>
             </div>
 """
-            html += '        </div>\n'
+            html += "        </div>\n"
 
         # Add plots
         for i, fig in enumerate(self.figures):
-            plot_id = f'plot{i+1}'
+            plot_id = f"plot{i+1}"
             html += f"""        <div class="plot-container">
             <div id="{plot_id}" class="plot"></div>
         </div>
@@ -350,7 +372,7 @@ class PlotlyReportGenerator:
 
         # Add plot configurations
         for i, fig in enumerate(self.figures):
-            plot_id = f'plot{i+1}'
+            plot_id = f"plot{i+1}"
             plot_json = fig.to_json()
             html += f"""
         // Plot {i+1}
@@ -366,40 +388,43 @@ class PlotlyReportGenerator:
 
         # Write to file
         Path(output_file).parent.mkdir(parents=True, exist_ok=True)
-        with open(output_file, 'w', encoding='utf-8') as f:
+        with open(output_file, "w", encoding="utf-8") as f:
             f.write(html)
 
         print(f"✓ HTML report generated: {output_file}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Example usage
     import numpy as np
 
     # Create sample data
-    dates = pd.date_range('2025-01-01', periods=100, freq='D')
-    df = pd.DataFrame({
-        'date': dates,
-        'value': np.cumsum(np.random.randn(100)) + 100,
-        'category': np.random.choice(['A', 'B', 'C'], 100)
-    })
+    dates = pd.date_range("2025-01-01", periods=100, freq="D")
+    df = pd.DataFrame(
+        {
+            "date": dates,
+            "value": np.cumsum(np.random.randn(100)) + 100,
+            "category": np.random.choice(["A", "B", "C"], 100),
+        }
+    )
 
     # Generate report
     report = PlotlyReportGenerator(
-        title='Sample Analysis Report',
-        module_name='Example Module',
-        repository_name='workspace-hub'
+        title="Sample Analysis Report",
+        module_name="Example Module",
+        repository_name="workspace-hub",
     )
 
     # Add summary stats
-    report.add_summary_stat('Total Records', '100')
-    report.add_summary_stat('Average Value', '99.8', 'units')
-    report.add_summary_stat('Categories', '3')
+    report.add_summary_stat("Total Records", "100")
+    report.add_summary_stat("Average Value", "99.8", "units")
+    report.add_summary_stat("Categories", "3")
 
     # Add plots
-    report.add_line_plot(df, x='date', y='value',
-                         title='Value Over Time', color='category')
-    report.add_histogram(df, 'value', 'Value Distribution')
+    report.add_line_plot(
+        df, x="date", y="value", title="Value Over Time", color="category"
+    )
+    report.add_histogram(df, "value", "Value Distribution")
 
     # Generate HTML
-    report.generate_html('example_report.html')
+    report.generate_html("example_report.html")

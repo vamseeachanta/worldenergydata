@@ -9,14 +9,13 @@ Date: 2025-10-03
 Source: Ported from FDAS build_multi_year_lease_matrix1.py
 """
 
-from typing import Dict, List, Optional, Tuple
-from datetime import datetime
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 
 class ProductionProcessingError(Exception):
     """Raised when production processing fails"""
+
     pass
 
 
@@ -50,17 +49,15 @@ class ProductionProcessor:
         Raises:
             ProductionProcessingError: If required columns missing
         """
-        required = ['PROD_DATE', 'OIL_VOLUME']
+        required = ["PROD_DATE", "OIL_VOLUME"]
         missing = [col for col in required if col not in self.production_df.columns]
 
         if missing:
-            raise ProductionProcessingError(
-                f"Missing required columns: {missing}"
-            )
+            raise ProductionProcessingError(f"Missing required columns: {missing}")
 
-    def aggregate_monthly(self,
-                         by: str = 'API_WELL_NUMBER',
-                         date_col: str = 'PROD_DATE') -> pd.DataFrame:
+    def aggregate_monthly(
+        self, by: str = "API_WELL_NUMBER", date_col: str = "PROD_DATE"
+    ) -> pd.DataFrame:
         """
         Aggregate production to monthly totals.
 
@@ -79,32 +76,34 @@ class ProductionProcessor:
 
         # Convert to datetime and extract year-month
         df[date_col] = pd.to_datetime(df[date_col])
-        df['YEAR_MONTH'] = df[date_col].dt.to_period('M')
+        df["YEAR_MONTH"] = df[date_col].dt.to_period("M")
 
         # Aggregate by grouping column and month
         agg_dict = {
-            'OIL_VOLUME': 'sum',
-            'WATER_VOLUME': 'sum' if 'WATER_VOLUME' in df.columns else lambda x: 0,
-            'GAS_VOLUME': 'sum' if 'GAS_VOLUME' in df.columns else lambda x: 0,
+            "OIL_VOLUME": "sum",
+            "WATER_VOLUME": "sum" if "WATER_VOLUME" in df.columns else lambda x: 0,
+            "GAS_VOLUME": "sum" if "GAS_VOLUME" in df.columns else lambda x: 0,
         }
 
-        monthly = df.groupby([by, 'YEAR_MONTH']).agg(agg_dict).reset_index()
+        monthly = df.groupby([by, "YEAR_MONTH"]).agg(agg_dict).reset_index()
 
         # Rename to FDAS convention
-        monthly = monthly.rename(columns={
-            'OIL_VOLUME': 'MONTHLY_OIL_BBL',
-            'WATER_VOLUME': 'MONTHLY_WATER_BBL',
-            'GAS_VOLUME': 'MONTHLY_GAS_MCF',
-        })
+        monthly = monthly.rename(
+            columns={
+                "OIL_VOLUME": "MONTHLY_OIL_BBL",
+                "WATER_VOLUME": "MONTHLY_WATER_BBL",
+                "GAS_VOLUME": "MONTHLY_GAS_MCF",
+            }
+        )
 
         # Sort by date
-        monthly = monthly.sort_values([by, 'YEAR_MONTH'])
+        monthly = monthly.sort_values([by, "YEAR_MONTH"])
 
         return monthly
 
-    def identify_first_oil(self,
-                          by: str = 'API_WELL_NUMBER',
-                          threshold_bbl: float = 10.0) -> pd.DataFrame:
+    def identify_first_oil(
+        self, by: str = "API_WELL_NUMBER", threshold_bbl: float = 10.0
+    ) -> pd.DataFrame:
         """
         Identify first oil date for wells/developments.
 
@@ -122,26 +121,25 @@ class ProductionProcessor:
         df = self.production_df.copy()
 
         # Convert date
-        df['PROD_DATE'] = pd.to_datetime(df['PROD_DATE'])
+        df["PROD_DATE"] = pd.to_datetime(df["PROD_DATE"])
 
         # Filter to significant production
-        df = df[df['OIL_VOLUME'] >= threshold_bbl]
+        df = df[df["OIL_VOLUME"] >= threshold_bbl]
 
         # Get first production date for each entity
-        first_oil = df.groupby(by).agg({
-            'PROD_DATE': 'min',
-            'OIL_VOLUME': 'sum'
-        }).reset_index()
+        first_oil = (
+            df.groupby(by).agg({"PROD_DATE": "min", "OIL_VOLUME": "sum"}).reset_index()
+        )
 
-        first_oil = first_oil.rename(columns={
-            'PROD_DATE': 'FIRST_OIL_DATE',
-            'OIL_VOLUME': 'CUMULATIVE_OIL_BBL'
-        })
+        first_oil = first_oil.rename(
+            columns={"PROD_DATE": "FIRST_OIL_DATE", "OIL_VOLUME": "CUMULATIVE_OIL_BBL"}
+        )
 
         return first_oil
 
-    def calculate_cumulative_production(self,
-                                       by: str = 'API_WELL_NUMBER') -> pd.DataFrame:
+    def calculate_cumulative_production(
+        self, by: str = "API_WELL_NUMBER"
+    ) -> pd.DataFrame:
         """
         Calculate cumulative production over time.
 
@@ -154,22 +152,21 @@ class ProductionProcessor:
         monthly = self.aggregate_monthly(by=by)
 
         # Calculate cumulative sums
-        monthly['CUMULATIVE_OIL_BBL'] = monthly.groupby(by)['MONTHLY_OIL_BBL'].cumsum()
-        monthly['CUMULATIVE_WATER_BBL'] = monthly.groupby(by)['MONTHLY_WATER_BBL'].cumsum()
-        monthly['CUMULATIVE_GAS_MCF'] = monthly.groupby(by)['MONTHLY_GAS_MCF'].cumsum()
+        monthly["CUMULATIVE_OIL_BBL"] = monthly.groupby(by)["MONTHLY_OIL_BBL"].cumsum()
+        monthly["CUMULATIVE_WATER_BBL"] = monthly.groupby(by)[
+            "MONTHLY_WATER_BBL"
+        ].cumsum()
+        monthly["CUMULATIVE_GAS_MCF"] = monthly.groupby(by)["MONTHLY_GAS_MCF"].cumsum()
 
         # Calculate water cut
-        total_liquid = monthly['MONTHLY_OIL_BBL'] + monthly['MONTHLY_WATER_BBL']
-        monthly['WATER_CUT'] = np.where(
-            total_liquid > 0,
-            monthly['MONTHLY_WATER_BBL'] / total_liquid,
-            0.0
+        total_liquid = monthly["MONTHLY_OIL_BBL"] + monthly["MONTHLY_WATER_BBL"]
+        monthly["WATER_CUT"] = np.where(
+            total_liquid > 0, monthly["MONTHLY_WATER_BBL"] / total_liquid, 0.0
         )
 
         return monthly
 
-    def generate_production_summary(self,
-                                   by: str = 'API_WELL_NUMBER') -> pd.DataFrame:
+    def generate_production_summary(self, by: str = "API_WELL_NUMBER") -> pd.DataFrame:
         """
         Generate comprehensive production summary.
 
@@ -184,36 +181,45 @@ class ProductionProcessor:
             >>> summary = proc.generate_production_summary(by='DEV_NAME')
         """
         df = self.production_df.copy()
-        df['PROD_DATE'] = pd.to_datetime(df['PROD_DATE'])
+        df["PROD_DATE"] = pd.to_datetime(df["PROD_DATE"])
 
-        summary = df.groupby(by).agg({
-            'OIL_VOLUME': ['sum', 'mean', 'max'],
-            'WATER_VOLUME': ['sum', 'mean'] if 'WATER_VOLUME' in df.columns else lambda x: 0,
-            'PROD_DATE': ['min', 'max', 'count'],
-        }).reset_index()
+        summary = (
+            df.groupby(by)
+            .agg(
+                {
+                    "OIL_VOLUME": ["sum", "mean", "max"],
+                    "WATER_VOLUME": (
+                        ["sum", "mean"] if "WATER_VOLUME" in df.columns else lambda x: 0
+                    ),
+                    "PROD_DATE": ["min", "max", "count"],
+                }
+            )
+            .reset_index()
+        )
 
         # Flatten column names
         summary.columns = [
-            f'{col[0]}_{col[1]}' if col[1] else col[0]
-            for col in summary.columns
+            f"{col[0]}_{col[1]}" if col[1] else col[0] for col in summary.columns
         ]
 
         # Rename for clarity
-        summary = summary.rename(columns={
-            'OIL_VOLUME_sum': 'TOTAL_OIL_BBL',
-            'OIL_VOLUME_mean': 'AVG_MONTHLY_OIL_BBL',
-            'OIL_VOLUME_max': 'PEAK_MONTHLY_OIL_BBL',
-            'WATER_VOLUME_sum': 'TOTAL_WATER_BBL',
-            'PROD_DATE_min': 'FIRST_PRODUCTION_DATE',
-            'PROD_DATE_max': 'LAST_PRODUCTION_DATE',
-            'PROD_DATE_count': 'PRODUCTION_MONTHS',
-        })
+        summary = summary.rename(
+            columns={
+                "OIL_VOLUME_sum": "TOTAL_OIL_BBL",
+                "OIL_VOLUME_mean": "AVG_MONTHLY_OIL_BBL",
+                "OIL_VOLUME_max": "PEAK_MONTHLY_OIL_BBL",
+                "WATER_VOLUME_sum": "TOTAL_WATER_BBL",
+                "PROD_DATE_min": "FIRST_PRODUCTION_DATE",
+                "PROD_DATE_max": "LAST_PRODUCTION_DATE",
+                "PROD_DATE_count": "PRODUCTION_MONTHS",
+            }
+        )
 
         return summary
 
-    def create_pivot_table(self,
-                          by: str = 'API_WELL_NUMBER',
-                          value: str = 'MONTHLY_OIL_BBL') -> pd.DataFrame:
+    def create_pivot_table(
+        self, by: str = "API_WELL_NUMBER", value: str = "MONTHLY_OIL_BBL"
+    ) -> pd.DataFrame:
         """
         Create pivot table with months as columns.
 
@@ -226,18 +232,14 @@ class ProductionProcessor:
         """
         monthly = self.aggregate_monthly(by=by)
 
-        pivot = monthly.pivot(
-            index=by,
-            columns='YEAR_MONTH',
-            values=value
-        ).fillna(0)
+        pivot = monthly.pivot(index=by, columns="YEAR_MONTH", values=value).fillna(0)
 
         return pivot
 
 
-def aggregate_monthly_production(production_df: pd.DataFrame,
-                                 by: str = 'DEV_NAME',
-                                 date_col: str = 'PROD_DATE') -> pd.DataFrame:
+def aggregate_monthly_production(
+    production_df: pd.DataFrame, by: str = "DEV_NAME", date_col: str = "PROD_DATE"
+) -> pd.DataFrame:
     """
     Convenience function to aggregate production monthly.
 
@@ -256,9 +258,11 @@ def aggregate_monthly_production(production_df: pd.DataFrame,
     return processor.aggregate_monthly(by=by, date_col=date_col)
 
 
-def identify_first_oil_date(production_df: pd.DataFrame,
-                            by: str = 'API_WELL_NUMBER',
-                            threshold_bbl: float = 10.0) -> pd.DataFrame:
+def identify_first_oil_date(
+    production_df: pd.DataFrame,
+    by: str = "API_WELL_NUMBER",
+    threshold_bbl: float = 10.0,
+) -> pd.DataFrame:
     """
     Convenience function to identify first oil dates.
 
@@ -294,10 +298,9 @@ class ProductionForecaster:
         """
         self.historical = historical_production
 
-    def exponential_decline(self,
-                           initial_rate: float,
-                           decline_rate: float,
-                           months: int) -> np.ndarray:
+    def exponential_decline(
+        self, initial_rate: float, decline_rate: float, months: int
+    ) -> np.ndarray:
         """
         Generate exponential decline forecast.
 
@@ -314,7 +317,7 @@ class ProductionForecaster:
             >>> forecast = forecaster.exponential_decline(10000, 0.15, 60)
         """
         # Convert annual decline to monthly
-        monthly_decline = 1 - (1 - decline_rate) ** (1/12)
+        monthly_decline = 1 - (1 - decline_rate) ** (1 / 12)
 
         # Generate forecast
         time_periods = np.arange(months)
@@ -322,11 +325,9 @@ class ProductionForecaster:
 
         return forecast
 
-    def hyperbolic_decline(self,
-                          initial_rate: float,
-                          initial_decline: float,
-                          b_factor: float,
-                          months: int) -> np.ndarray:
+    def hyperbolic_decline(
+        self, initial_rate: float, initial_decline: float, b_factor: float, months: int
+    ) -> np.ndarray:
         """
         Generate hyperbolic decline forecast.
 
@@ -346,6 +347,8 @@ class ProductionForecaster:
             forecast = initial_rate * np.exp(-initial_decline * time_periods)
         else:
             # Hyperbolic decline
-            forecast = initial_rate / (1 + b_factor * initial_decline * time_periods) ** (1/b_factor)
+            forecast = initial_rate / (
+                1 + b_factor * initial_decline * time_periods
+            ) ** (1 / b_factor)
 
         return forecast

@@ -1,16 +1,14 @@
 # ABOUTME: HTML report generation module for incident cause analysis
 # ABOUTME: Creates standalone interactive reports with embedded Plotly visualizations
 
-from dataclasses import dataclass, field
+from collections import Counter
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Any
-from collections import Counter
-import json
+from typing import Any, Dict, List, Optional
 
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 import plotly.express as px
+import plotly.graph_objects as go
 
 from ..constants import CauseCategory, SeverityLevel
 
@@ -25,6 +23,7 @@ class ReportFilters:
         cause_categories: Filter by specific cause categories
         min_severity: Filter by minimum severity level
     """
+
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
     cause_categories: Optional[List[CauseCategory]] = None
@@ -56,16 +55,14 @@ class ReportFilters:
         # Cause category filter
         if self.cause_categories:
             filtered = [
-                inc for inc in filtered
+                inc
+                for inc in filtered
                 if inc["cause_category"] in self.cause_categories
             ]
 
         # Severity filter
         if self.min_severity:
-            filtered = [
-                inc for inc in filtered
-                if inc["severity"] >= self.min_severity
-            ]
+            filtered = [inc for inc in filtered if inc["severity"] >= self.min_severity]
 
         return filtered
 
@@ -91,7 +88,7 @@ class CauseAnalysisReport:
         self,
         incidents: List[Dict[str, Any]],
         title: str = "Incident Cause Analysis Report",
-        filters: Optional[ReportFilters] = None
+        filters: Optional[ReportFilters] = None,
     ):
         """Initialize report with incident data.
 
@@ -282,17 +279,17 @@ class CauseAnalysisReport:
         metadata_items = [
             f"<strong>Generated on:</strong> {self.generation_date.strftime('%B %d, %Y at %I:%M %p')}",
             f"<strong>Total Incidents:</strong> {len(self.incidents)}",
-            f"<strong>Data Source:</strong> Marine Safety Incident Database"
+            "<strong>Data Source:</strong> Marine Safety Incident Database",
         ]
 
         # Add filter information
         if self.filters.start_date or self.filters.end_date:
             date_filter = "Date Range: "
             if self.filters.start_date:
-                date_filter += self.filters.start_date.strftime('%Y-%m-%d')
+                date_filter += self.filters.start_date.strftime("%Y-%m-%d")
             date_filter += " to "
             if self.filters.end_date:
-                date_filter += self.filters.end_date.strftime('%Y-%m-%d')
+                date_filter += self.filters.end_date.strftime("%Y-%m-%d")
             metadata_items.append(f"<strong>Filters Applied:</strong> {date_filter}")
 
         if self.filters.cause_categories:
@@ -300,7 +297,9 @@ class CauseAnalysisReport:
             metadata_items.append(f"<strong>Cause Categories:</strong> {categories}")
 
         if self.filters.min_severity:
-            metadata_items.append(f"<strong>Minimum Severity:</strong> {self.filters.min_severity.name}")
+            metadata_items.append(
+                f"<strong>Minimum Severity:</strong> {self.filters.min_severity.name}"
+            )
 
         metadata_html = " | ".join(metadata_items)
 
@@ -315,13 +314,14 @@ class CauseAnalysisReport:
 
         # Cause category breakdown
         cause_counts = Counter(inc["cause_category"].value for inc in self.incidents)
-        most_common_cause = cause_counts.most_common(1)[0] if cause_counts else ("Unknown", 0)
+        most_common_cause = (
+            cause_counts.most_common(1)[0] if cause_counts else ("Unknown", 0)
+        )
 
         # Severity breakdown
         severity_counts = Counter(inc["severity"].name for inc in self.incidents)
         serious_or_higher = sum(
-            1 for inc in self.incidents
-            if inc["severity"] >= SeverityLevel.SERIOUS
+            1 for inc in self.incidents if inc["severity"] >= SeverityLevel.SERIOUS
         )
 
         return f"""
@@ -489,27 +489,29 @@ class CauseAnalysisReport:
         """Create Plotly pie chart for cause distribution."""
         cause_counts = Counter(inc["cause_category"].value for inc in self.incidents)
 
-        labels = [cause.replace('_', ' ').title() for cause in cause_counts.keys()]
+        labels = [cause.replace("_", " ").title() for cause in cause_counts.keys()]
         values = list(cause_counts.values())
 
-        fig = go.Figure(data=[go.Pie(
-            labels=labels,
-            values=values,
-            hole=0.3,
-            marker=dict(
-                colors=px.colors.qualitative.Set3
-            )
-        )])
+        fig = go.Figure(
+            data=[
+                go.Pie(
+                    labels=labels,
+                    values=values,
+                    hole=0.3,
+                    marker=dict(colors=px.colors.qualitative.Set3),
+                )
+            ]
+        )
 
         fig.update_layout(
-            title="Incident Cause Category Distribution",
-            showlegend=True,
-            height=400
+            title="Incident Cause Category Distribution", showlegend=True, height=400
         )
 
         plot_json = fig.to_json()
 
-        return f"Plotly.newPlot('cause-pie-chart', {plot_json}.data, {plot_json}.layout);"
+        return (
+            f"Plotly.newPlot('cause-pie-chart', {plot_json}.data, {plot_json}.layout);"
+        )
 
     def _create_severity_trend_chart(self) -> str:
         """Create Plotly line chart for severity trends over time."""
@@ -532,16 +534,20 @@ class CauseAnalysisReport:
         colors = ["#d32f2f", "#f57c00", "#fbc02d", "#7cb342", "#388e3c"]
 
         for severity, color in zip(severities, colors):
-            counts = [monthly_severity[month].get(severity, 0) for month in sorted_months]
+            counts = [
+                monthly_severity[month].get(severity, 0) for month in sorted_months
+            ]
             if sum(counts) > 0:  # Only add if there's data
-                traces.append(go.Scatter(
-                    x=sorted_months,
-                    y=counts,
-                    mode='lines+markers',
-                    name=severity.title(),
-                    line=dict(color=color, width=2),
-                    marker=dict(size=8)
-                ))
+                traces.append(
+                    go.Scatter(
+                        x=sorted_months,
+                        y=counts,
+                        mode="lines+markers",
+                        name=severity.title(),
+                        line=dict(color=color, width=2),
+                        marker=dict(size=8),
+                    )
+                )
 
         fig = go.Figure(data=traces)
 
@@ -549,8 +555,8 @@ class CauseAnalysisReport:
             title="Severity Trend Over Time",
             xaxis_title="Month",
             yaxis_title="Number of Incidents",
-            hovermode='x unified',
-            height=400
+            hovermode="x unified",
+            height=400,
         )
 
         plot_json = fig.to_json()
@@ -561,13 +567,16 @@ class CauseAnalysisReport:
         """Generate hatch/opening maloperation analysis section."""
         # Filter incidents mentioning hatch or opening issues
         hatch_incidents = [
-            inc for inc in self.incidents
+            inc
+            for inc in self.incidents
             if "hatch" in inc.get("description", "").lower()
             or "opening" in inc.get("description", "").lower()
         ]
 
         hatch_count = len(hatch_incidents)
-        hatch_percentage = (hatch_count / len(self.incidents) * 100) if self.incidents else 0
+        hatch_percentage = (
+            (hatch_count / len(self.incidents) * 100) if self.incidents else 0
+        )
 
         # Analyze hatch-related incidents
         hatch_fatalities = sum(inc.get("fatalities", 0) for inc in hatch_incidents)

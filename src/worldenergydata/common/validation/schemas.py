@@ -6,8 +6,8 @@ energy data types used across modules.
 """
 
 import re
-from datetime import date, datetime
-from typing import Any, Dict, List, Optional, Union
+from datetime import date
+from typing import Optional
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -121,27 +121,12 @@ class ProductionSchema(BaseModel):
 
     api_well_number: str = Field(..., description="12-digit API well number")
     production_date: str = Field(..., description="Production date (YYYYMM)")
-    oil_volume: float = Field(
-        ...,
-        ge=0,
-        description="Oil production volume in barrels"
-    )
-    gas_volume: float = Field(
-        ...,
-        ge=0,
-        description="Gas production volume in MCF"
-    )
+    oil_volume: float = Field(..., ge=0, description="Oil production volume in barrels")
+    gas_volume: float = Field(..., ge=0, description="Gas production volume in MCF")
     water_volume: Optional[float] = Field(
-        default=None,
-        ge=0,
-        description="Water production volume in barrels"
+        default=None, ge=0, description="Water production volume in barrels"
     )
-    days_on_production: int = Field(
-        ...,
-        ge=0,
-        le=31,
-        description="Days on production"
-    )
+    days_on_production: int = Field(..., ge=0, le=31, description="Days on production")
     lease_number: Optional[str] = Field(default=None, description="Lease number")
 
     @field_validator("api_well_number")
@@ -191,8 +176,7 @@ class LeaseSchema(BaseModel):
     block_number: str = Field(..., description="Block number")
     effective_date: date = Field(..., description="Lease effective date")
     expiration_date: Optional[date] = Field(
-        default=None,
-        description="Lease expiration date"
+        default=None, description="Lease expiration date"
     )
 
     @field_validator("area_code")
@@ -221,28 +205,16 @@ class WellSchema(BaseModel):
     well_status: str = Field(..., description="Well status code")
     spud_date: Optional[date] = Field(default=None, description="Spud date")
     total_depth: Optional[float] = Field(
-        default=None,
-        ge=0,
-        le=50000,
-        description="Total depth in feet"
+        default=None, ge=0, le=50000, description="Total depth in feet"
     )
     water_depth: Optional[float] = Field(
-        default=None,
-        ge=0,
-        le=15000,
-        description="Water depth in feet"
+        default=None, ge=0, le=15000, description="Water depth in feet"
     )
     surface_latitude: Optional[float] = Field(
-        default=None,
-        ge=-90,
-        le=90,
-        description="Surface latitude"
+        default=None, ge=-90, le=90, description="Surface latitude"
     )
     surface_longitude: Optional[float] = Field(
-        default=None,
-        ge=-180,
-        le=180,
-        description="Surface longitude"
+        default=None, ge=-180, le=180, description="Surface longitude"
     )
 
     @field_validator("well_status")
@@ -250,9 +222,16 @@ class WellSchema(BaseModel):
     def validate_status(cls, v: str) -> str:
         """Validate well status."""
         valid_statuses = {
-            "ACTIVE", "INACTIVE", "PLUGGED", "ABANDONED",
-            "SUSPENDED", "PRODUCING", "SHUT-IN", "P&A",
-            "DRILLING", "COMPLETING"
+            "ACTIVE",
+            "INACTIVE",
+            "PLUGGED",
+            "ABANDONED",
+            "SUSPENDED",
+            "PRODUCING",
+            "SHUT-IN",
+            "P&A",
+            "DRILLING",
+            "COMPLETING",
         }
         v = v.upper()
         if v not in valid_statuses:
@@ -263,49 +242,17 @@ class WellSchema(BaseModel):
 class FinancialSchema(BaseModel):
     """Schema for validating financial analysis parameters."""
 
-    discount_rate: float = Field(
-        ...,
-        ge=0,
-        le=1,
-        description="Discount rate (0-1)"
-    )
-    oil_price: float = Field(
-        ...,
-        ge=0,
-        le=500,
-        description="Oil price in $/barrel"
-    )
-    gas_price: float = Field(
-        ...,
-        ge=0,
-        le=50,
-        description="Gas price in $/MCF"
-    )
-    capex: float = Field(
-        ...,
-        ge=0,
-        description="Capital expenditure in $"
-    )
-    opex: float = Field(
-        ...,
-        ge=0,
-        description="Operating expenditure in $"
-    )
+    discount_rate: float = Field(..., ge=0, le=1, description="Discount rate (0-1)")
+    oil_price: float = Field(..., ge=0, le=500, description="Oil price in $/barrel")
+    gas_price: float = Field(..., ge=0, le=50, description="Gas price in $/MCF")
+    capex: float = Field(..., ge=0, description="Capital expenditure in $")
+    opex: float = Field(..., ge=0, description="Operating expenditure in $")
     royalty_rate: float = Field(
-        default=0.125,
-        ge=0,
-        le=0.5,
-        description="Royalty rate (0-0.5)"
+        default=0.125, ge=0, le=0.5, description="Royalty rate (0-0.5)"
     )
     project_life_years: int = Field(
-        ...,
-        ge=1,
-        le=100,
-        description="Project life in years"
+        ..., ge=1, le=100, description="Project life in years"
     )
     working_interest: float = Field(
-        default=1.0,
-        ge=0,
-        le=1,
-        description="Working interest (0-1)"
+        default=1.0, ge=0, le=1, description="Working interest (0-1)"
     )

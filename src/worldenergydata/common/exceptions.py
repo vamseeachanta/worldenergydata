@@ -29,7 +29,7 @@ Example usage:
         logger.error(f"Data error: {e}")
 """
 
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, List, Optional
 
 
 class WorldEnergyDataError(Exception):
@@ -125,9 +125,7 @@ class ConfigError(WorldEnergyDataError):
         )
 
     @classmethod
-    def invalid_value(
-        cls, setting_name: str, value: Any, reason: str
-    ) -> "ConfigError":
+    def invalid_value(cls, setting_name: str, value: Any, reason: str) -> "ConfigError":
         """Create error for invalid setting value."""
         return cls(
             message=f"Invalid value for '{setting_name}': {reason}",
@@ -238,12 +236,14 @@ class ValidationError(DataError):
         value: Any = None,
     ) -> None:
         """Add a validation error to the list."""
-        self.errors.append({
-            "field": field,
-            "type": error_type,
-            "message": message,
-            "value": str(value) if value is not None else None,
-        })
+        self.errors.append(
+            {
+                "field": field,
+                "type": error_type,
+                "message": message,
+                "value": str(value) if value is not None else None,
+            }
+        )
 
     def has_errors(self) -> bool:
         """Check if there are any validation errors."""
@@ -278,9 +278,7 @@ class ValidationError(DataError):
         return error
 
     @classmethod
-    def invalid_type(
-        cls, field: str, expected: str, actual: str
-    ) -> "ValidationError":
+    def invalid_type(cls, field: str, expected: str, actual: str) -> "ValidationError":
         """Create error for type mismatch."""
         error = cls(
             message=f"Field '{field}' has invalid type: expected {expected}, got {actual}",
@@ -391,7 +389,9 @@ class APIError(WorldEnergyDataError):
         )
 
     @classmethod
-    def rate_limited(cls, api_name: str, retry_after: Optional[int] = None) -> "APIError":
+    def rate_limited(
+        cls, api_name: str, retry_after: Optional[int] = None
+    ) -> "APIError":
         """Create error for rate limiting."""
         context = {}
         if retry_after:
@@ -443,3 +443,17 @@ class EIAError(ModuleError):
 
     default_code = "EIA_ERROR"
     module_name = "eia"
+
+
+class TexasRRCError(ModuleError):
+    """Texas RRC module-specific errors."""
+
+    default_code = "TEXAS_RRC_ERROR"
+    module_name = "texas_rrc"
+
+
+class CanadaError(ModuleError):
+    """Canada module-specific errors (AER/BCER)."""
+
+    default_code = "CANADA_ERROR"
+    module_name = "canada"

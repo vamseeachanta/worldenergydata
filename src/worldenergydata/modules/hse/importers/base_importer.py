@@ -2,9 +2,11 @@
 # ABOUTME: Provides common validation, error handling, and database persistence framework
 
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any, Optional
 from datetime import datetime
+from typing import Any, Dict, List
+
 from sqlalchemy.orm import Session
+
 from worldenergydata.modules.hse.database.models import HSEIncident
 
 
@@ -35,8 +37,14 @@ class BaseImporter(ABC):
     """
 
     # Valid enum values
-    VALID_INCIDENT_TYPES = {'injury', 'spill', 'equipment_failure', 'violation'}
-    VALID_SEVERITY_LEVELS = {'fatality', 'lost_time', 'recordable', 'near_miss', 'minor'}
+    VALID_INCIDENT_TYPES = {"injury", "spill", "equipment_failure", "violation"}
+    VALID_SEVERITY_LEVELS = {
+        "fatality",
+        "lost_time",
+        "recordable",
+        "near_miss",
+        "minor",
+    }
 
     # Gulf of Mexico geographic boundaries
     GOM_LATITUDE_MIN = 18.0
@@ -110,7 +118,9 @@ class BaseImporter(ABC):
 
         # Handle wrong data type (not dictionary)
         if not isinstance(normalized_data, dict):
-            self.validation_errors.append(f"Data must be dictionary, got {type(normalized_data).__name__}")
+            self.validation_errors.append(
+                f"Data must be dictionary, got {type(normalized_data).__name__}"
+            )
             return False
 
         # Handle empty dictionary
@@ -121,15 +131,24 @@ class BaseImporter(ABC):
         valid = True
 
         # Check required fields
-        required_fields = ['bsee_incident_id', 'incident_date', 'operator', 'incident_type', 'severity']
+        required_fields = [
+            "bsee_incident_id",
+            "incident_date",
+            "operator",
+            "incident_type",
+            "severity",
+        ]
         for field in required_fields:
             if field not in normalized_data or normalized_data[field] is None:
                 self.validation_errors.append(f"Missing required field: {field}")
                 valid = False
 
         # Validate incident_type enum
-        if 'incident_type' in normalized_data and normalized_data['incident_type'] is not None:
-            if normalized_data['incident_type'] not in self.VALID_INCIDENT_TYPES:
+        if (
+            "incident_type" in normalized_data
+            and normalized_data["incident_type"] is not None
+        ):
+            if normalized_data["incident_type"] not in self.VALID_INCIDENT_TYPES:
                 self.validation_errors.append(
                     f"Invalid incident_type: {normalized_data['incident_type']}. "
                     f"Must be one of: {', '.join(self.VALID_INCIDENT_TYPES)}"
@@ -137,8 +156,8 @@ class BaseImporter(ABC):
                 valid = False
 
         # Validate severity enum
-        if 'severity' in normalized_data and normalized_data['severity'] is not None:
-            if normalized_data['severity'] not in self.VALID_SEVERITY_LEVELS:
+        if "severity" in normalized_data and normalized_data["severity"] is not None:
+            if normalized_data["severity"] not in self.VALID_SEVERITY_LEVELS:
                 self.validation_errors.append(
                     f"Invalid severity: {normalized_data['severity']}. "
                     f"Must be one of: {', '.join(self.VALID_SEVERITY_LEVELS)}"
@@ -146,16 +165,19 @@ class BaseImporter(ABC):
                 valid = False
 
         # Validate incident_date is datetime object
-        if 'incident_date' in normalized_data and normalized_data['incident_date'] is not None:
-            if not isinstance(normalized_data['incident_date'], datetime):
+        if (
+            "incident_date" in normalized_data
+            and normalized_data["incident_date"] is not None
+        ):
+            if not isinstance(normalized_data["incident_date"], datetime):
                 self.validation_errors.append(
                     f"incident_date must be datetime object, got {type(normalized_data['incident_date']).__name__}"
                 )
                 valid = False
 
         # Validate latitude within Gulf of Mexico range
-        if 'latitude' in normalized_data and normalized_data['latitude'] is not None:
-            lat = normalized_data['latitude']
+        if "latitude" in normalized_data and normalized_data["latitude"] is not None:
+            lat = normalized_data["latitude"]
             if lat < self.GOM_LATITUDE_MIN or lat > self.GOM_LATITUDE_MAX:
                 self.validation_errors.append(
                     f"Latitude {lat} outside Gulf of Mexico range "
@@ -164,8 +186,8 @@ class BaseImporter(ABC):
                 valid = False
 
         # Validate longitude within Gulf of Mexico range
-        if 'longitude' in normalized_data and normalized_data['longitude'] is not None:
-            lon = normalized_data['longitude']
+        if "longitude" in normalized_data and normalized_data["longitude"] is not None:
+            lon = normalized_data["longitude"]
             if lon < self.GOM_LONGITUDE_MIN or lon > self.GOM_LONGITUDE_MAX:
                 self.validation_errors.append(
                     f"Longitude {lon} outside Gulf of Mexico range "
@@ -187,13 +209,15 @@ class BaseImporter(ABC):
         Returns:
             True if incident exists in database, False otherwise
         """
-        if 'bsee_incident_id' not in data:
+        if "bsee_incident_id" not in data:
             return False
 
-        bsee_id = data['bsee_incident_id']
-        existing = self.db_session.query(HSEIncident).filter(
-            HSEIncident.bsee_incident_id == bsee_id
-        ).first()
+        bsee_id = data["bsee_incident_id"]
+        existing = (
+            self.db_session.query(HSEIncident)
+            .filter(HSEIncident.bsee_incident_id == bsee_id)
+            .first()
+        )
 
         return existing is not None
 
@@ -218,21 +242,21 @@ class BaseImporter(ABC):
         """
         # Create HSEIncident object
         incident = HSEIncident(
-            bsee_incident_id=data.get('bsee_incident_id'),
-            incident_date=data.get('incident_date'),
-            operator=data.get('operator'),
-            facility_name=data.get('facility_name'),
-            lease_number=data.get('lease_number'),
-            block_number=data.get('block_number'),
-            field_name=data.get('field_name'),
-            latitude=data.get('latitude'),
-            longitude=data.get('longitude'),
-            incident_type=data.get('incident_type'),
-            severity=data.get('severity'),
-            description=data.get('description'),
-            root_cause=data.get('root_cause'),
-            corrective_actions=data.get('corrective_actions'),
-            investigation_status=data.get('investigation_status')
+            bsee_incident_id=data.get("bsee_incident_id"),
+            incident_date=data.get("incident_date"),
+            operator=data.get("operator"),
+            facility_name=data.get("facility_name"),
+            lease_number=data.get("lease_number"),
+            block_number=data.get("block_number"),
+            field_name=data.get("field_name"),
+            latitude=data.get("latitude"),
+            longitude=data.get("longitude"),
+            incident_type=data.get("incident_type"),
+            severity=data.get("severity"),
+            description=data.get("description"),
+            root_cause=data.get("root_cause"),
+            corrective_actions=data.get("corrective_actions"),
+            investigation_status=data.get("investigation_status"),
         )
 
         # Persist to database
@@ -287,10 +311,10 @@ class BaseImporter(ABC):
 
         # Return statistics
         return {
-            'imported_count': self.imported_count,
-            'skipped_count': self.skipped_count,
-            'error_count': error_count,
-            'total_records': total_records
+            "imported_count": self.imported_count,
+            "skipped_count": self.skipped_count,
+            "error_count": error_count,
+            "total_records": total_records,
         }
 
     def clear_errors(self):

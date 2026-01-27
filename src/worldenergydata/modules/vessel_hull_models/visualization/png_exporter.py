@@ -10,21 +10,21 @@ More reliable than kaleido for static image generation.
 
 from pathlib import Path
 from typing import Optional, Tuple
-import numpy as np
 
 try:
     import matplotlib.pyplot as plt
     from mpl_toolkits.mplot3d import Axes3D
     from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+
     MATPLOTLIB_AVAILABLE = True
 except ImportError:
     MATPLOTLIB_AVAILABLE = False
 
+from worldenergydata.modules.vessel_hull_models.exceptions import VisualizationError
 from worldenergydata.modules.vessel_hull_models.geometry.obj_parser import (
     OBJMesh,
     parse_obj_file,
 )
-from worldenergydata.modules.vessel_hull_models.exceptions import VisualizationError
 
 
 def _check_matplotlib():
@@ -73,8 +73,8 @@ def export_hull_png(
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     # Create figure
-    fig = plt.figure(figsize=figsize, facecolor='white')
-    ax = fig.add_subplot(111, projection='3d')
+    fig = plt.figure(figsize=figsize, facecolor="white")
+    ax = fig.add_subplot(111, projection="3d")
 
     # Get vertices and faces
     vertices = mesh.vertices
@@ -117,14 +117,14 @@ def export_hull_png(
     ax.view_init(elev=elevation, azim=azimuth)
 
     # Labels
-    ax.set_xlabel('X (m)', fontsize=10)
-    ax.set_ylabel('Y (m)', fontsize=10)
-    ax.set_zlabel('Z (m)', fontsize=10)
+    ax.set_xlabel("X (m)", fontsize=10)
+    ax.set_ylabel("Y (m)", fontsize=10)
+    ax.set_zlabel("Z (m)", fontsize=10)
 
     # Title
     if title is None:
         title = mesh.object_name or "Vessel Hull"
-    ax.set_title(title, fontsize=14, fontweight='bold', pad=10)
+    ax.set_title(title, fontsize=14, fontweight="bold", pad=10)
 
     # Add statistics text box
     if show_stats:
@@ -139,17 +139,19 @@ def export_hull_png(
             f"  Faces: {stats['face_count']:,}"
         )
         ax.text2D(
-            0.02, 0.98, stats_text,
+            0.02,
+            0.98,
+            stats_text,
             transform=ax.transAxes,
             fontsize=9,
-            verticalalignment='top',
-            fontfamily='monospace',
-            bbox=dict(boxstyle='round', facecolor='white', alpha=0.8, edgecolor='gray')
+            verticalalignment="top",
+            fontfamily="monospace",
+            bbox=dict(boxstyle="round", facecolor="white", alpha=0.8, edgecolor="gray"),
         )
 
     # Adjust layout and save
     plt.tight_layout()
-    plt.savefig(output_path, dpi=dpi, bbox_inches='tight', facecolor='white')
+    plt.savefig(output_path, dpi=dpi, bbox_inches="tight", facecolor="white")
     plt.close(fig)
 
     return output_path
@@ -177,10 +179,10 @@ def render_obj_to_png(
     mesh = parse_obj_file(obj_path)
 
     if output_path is None:
-        output_path = obj_path.with_suffix('.png')
+        output_path = obj_path.with_suffix(".png")
 
-    if 'title' not in kwargs:
-        kwargs['title'] = obj_path.stem.replace('_', ' ').title()
+    if "title" not in kwargs:
+        kwargs["title"] = obj_path.stem.replace("_", " ").title()
 
     return export_hull_png(mesh, output_path, **kwargs)
 
@@ -212,7 +214,7 @@ def generate_preview_gallery(
 
     for obj_path in obj_files:
         obj_path = Path(obj_path)
-        png_name = obj_path.stem + '.png'
+        png_name = obj_path.stem + ".png"
         png_path = output_dir / png_name
 
         try:
@@ -259,13 +261,12 @@ def create_comparison_grid(
     rows = (n_files + cols - 1) // cols
 
     fig = plt.figure(
-        figsize=(cols * cell_size[0], rows * cell_size[1]),
-        facecolor='white'
+        figsize=(cols * cell_size[0], rows * cell_size[1]), facecolor="white"
     )
 
     for idx, obj_path in enumerate(obj_files):
         obj_path = Path(obj_path)
-        ax = fig.add_subplot(rows, cols, idx + 1, projection='3d')
+        ax = fig.add_subplot(rows, cols, idx + 1, projection="3d")
 
         try:
             mesh = parse_obj_file(obj_path)
@@ -277,8 +278,8 @@ def create_comparison_grid(
             poly = Poly3DCollection(
                 verts_list,
                 alpha=0.7,
-                facecolor='steelblue',
-                edgecolor='darkblue',
+                facecolor="steelblue",
+                edgecolor="darkblue",
                 linewidth=0.05,
             )
             ax.add_collection3d(poly)
@@ -301,14 +302,21 @@ def create_comparison_grid(
             ax.set_zticklabels([])
 
         except Exception as e:
-            ax.text(0.5, 0.5, 0.5, f"Error:\n{str(e)[:30]}",
-                   ha='center', va='center', fontsize=8)
-            ax.set_title(obj_path.stem[:25], fontsize=9, color='red')
+            ax.text(
+                0.5,
+                0.5,
+                0.5,
+                f"Error:\n{str(e)[:30]}",
+                ha="center",
+                va="center",
+                fontsize=8,
+            )
+            ax.set_title(obj_path.stem[:25], fontsize=9, color="red")
 
     plt.tight_layout()
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    plt.savefig(output_path, dpi=dpi, bbox_inches='tight', facecolor='white')
+    plt.savefig(output_path, dpi=dpi, bbox_inches="tight", facecolor="white")
     plt.close(fig)
 
     return output_path

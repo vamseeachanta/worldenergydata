@@ -1,0 +1,248 @@
+# SODIR Module Configuration
+# Norwegian Offshore Directorate Data Integration
+
+module: sodir
+version: 1.0.0
+description: Configuration for SODIR (Norwegian Offshore Directorate) data collection and analysis
+
+# API Configuration
+api:
+  base_url: https://factmaps.sodir.no/api/rest
+  rate_limit: 10  # requests per second
+  cache_ttl: 86400  # 24 hours in seconds
+  timeout: 30  # request timeout in seconds
+  max_retries: 3
+  retry_delay: 1  # seconds between retries
+
+  # Authentication (if required in future)
+  auth:
+    enabled: false
+    method: none  # none, api_key, oauth2
+
+  # Headers for API requests
+  headers:
+    User-Agent: "WorldEnergyData SODIR Client/1.0"
+    Accept: "application/json"
+    Accept-Encoding: "gzip, deflate"
+
+# Data Types Configuration
+data_types:
+  blocks:
+    enabled: true
+    endpoint_id: "1001"
+    description: "Norwegian Continental Shelf block information"
+    parameters:
+      format: json
+      # Optional date filters
+      # startdate: "2020-01-01"
+      # enddate: "2024-12-31"
+
+  wellbores:
+    enabled: true
+    endpoint_id: "5000"
+    description: "Wellbore drilling and completion data"
+    parameters:
+      format: json
+      # Optional filters
+      # wellboreStatus: "COMPLETED"
+      # npdidBlock: null
+
+  fields:
+    enabled: true
+    endpoint_id: "7100"
+    description: "Field information including reserves and production"
+    parameters:
+      format: json
+      # Optional filters
+      # fieldStatus: "PRODUCING"
+      # operator: null
+
+  discoveries:
+    enabled: true
+    endpoint_id: "7000"
+    description: "Discovery information and reserve classifications"
+    parameters:
+      format: json
+      # Optional filters
+      # discoveryYear: null
+      # hydrocarbon: "OIL"
+
+  surveys:
+    enabled: true
+    endpoint_id: "4000"
+    description: "Seismic surveys and geological studies"
+    parameters:
+      format: json
+      # Optional filters
+      # surveyType: "3D_SEISMIC"
+      # acquisitionYear: null
+
+  facilities:
+    enabled: false
+    endpoint_id: "3000"
+    description: "Offshore facilities and infrastructure"
+    parameters:
+      format: json
+
+# Data Processing Configuration
+processing:
+  # Coordinate system transformation
+  coordinates:
+    source_crs: "EPSG:32632"  # UTM Zone 32N (commonly used in Norwegian waters)
+    target_crs: "EPSG:4326"   # WGS84 (decimal degrees)
+
+  # Data validation
+  validation:
+    enabled: true
+    strict_mode: false  # If true, fail on any validation error
+    log_warnings: true
+
+  # Unit conversions
+  units:
+    depth: meters  # Convert to standard unit
+    area: square_kilometers
+    volume_oil: "million_sm3"  # Million standard cubic meters
+    volume_gas: "billion_sm3"  # Billion standard cubic meters
+
+  # Data normalization
+  normalization:
+    dates_format: "ISO8601"  # YYYY-MM-DD
+    missing_values: null
+    boolean_true: ["YES", "Y", "TRUE", "1"]
+    boolean_false: ["NO", "N", "FALSE", "0"]
+
+# Output Configuration
+output:
+  directory: "./data/sodir"
+  format: csv  # csv, json, parquet
+
+  # File naming pattern
+  naming:
+    pattern: "{data_type}_{date}_{time}.{format}"
+    date_format: "%Y%m%d"
+    time_format: "%H%M%S"
+
+  # Compression
+  compression:
+    enabled: false
+    format: gzip  # gzip, zip, bz2
+
+  # Storage organization
+  organization:
+    by_date: true
+    by_type: true
+    structure: "{year}/{month}/{data_type}/"
+
+# Analysis Configuration
+analysis:
+  enabled: false
+
+  # NPV Analysis
+  npv:
+    enabled: false
+    discount_rate: 0.08
+    currency: "NOK"
+
+  # Cross-regional comparison
+  cross_regional:
+    enabled: false
+    compare_with: ["bsee"]  # Compare with BSEE data
+    metrics:
+      - drilling_depth
+      - water_depth
+      - production_rates
+      - discovery_success_rate
+
+  # Production forecasting
+  forecasting:
+    enabled: false
+    methods:
+      - decline_curve
+      - monte_carlo
+    horizon_years: 10
+
+  # Visualization
+  visualization:
+    enabled: false
+    output_format: png
+    charts:
+      - block_allocation_timeline
+      - field_production_curves
+      - discovery_heatmap
+
+# Performance Configuration
+performance:
+  # Parallel processing
+  parallel:
+    enabled: true
+    max_workers: 4
+    chunk_size: 1000
+
+  # Memory optimization
+  memory:
+    max_cache_size_mb: 500
+    batch_size: 10000
+
+  # Progress tracking
+  progress:
+    enabled: true
+    update_interval: 10  # seconds
+
+# Logging Configuration
+logging:
+  level: INFO  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file:
+    enabled: true
+    path: "./logs/sodir.log"
+    max_size_mb: 10
+    backup_count: 5
+  console:
+    enabled: true
+    colored: true
+
+# Error Handling
+error_handling:
+  # Retry configuration
+  retry:
+    max_attempts: 3
+    backoff_factor: 2  # Exponential backoff
+    max_delay: 60  # Maximum delay between retries in seconds
+
+  # Error reporting
+  reporting:
+    save_errors: true
+    error_file: "./logs/sodir_errors.json"
+    include_traceback: true
+
+  # Recovery
+  recovery:
+    checkpoint_enabled: true
+    checkpoint_interval: 100  # Save progress every N records
+    resume_on_failure: true
+
+# Integration Configuration
+integration:
+  # BSEE integration for cross-regional analysis
+  bsee:
+    enabled: false
+    data_path: "./data/bsee"
+
+  # Database integration
+  database:
+    enabled: false
+    type: postgresql
+    connection:
+      host: localhost
+      port: 5432
+      database: worldenergydata
+      user: null
+      password: null
+
+  # Export formats for other systems
+  export:
+    enabled: false
+    formats:
+      - excel
+      - shapefile
+      - geojson

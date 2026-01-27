@@ -7,16 +7,9 @@ and debugging throughout the module.
 These exceptions extend the common exception hierarchy for consistency.
 """
 
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
 
-from worldenergydata.common.exceptions import (
-    ModuleError,
-    DataError as CommonDataError,
-    ValidationError as CommonValidationError,
-    ProcessingError as CommonProcessingError,
-    APIError as CommonAPIError,
-    DataSourceError as CommonDataSourceError,
-)
+from worldenergydata.common.exceptions import ModuleError
 
 
 class MarineSafetyError(ModuleError):
@@ -50,37 +43,44 @@ class MarineSafetyError(ModuleError):
 # Configuration Errors
 class ConfigurationError(MarineSafetyError):
     """Raised when there's a configuration error"""
+
     pass
 
 
 class InvalidConfigurationError(ConfigurationError):
     """Raised when configuration values are invalid"""
+
     pass
 
 
 class MissingConfigurationError(ConfigurationError):
     """Raised when required configuration is missing"""
+
     pass
 
 
 # Database Errors
 class DatabaseError(MarineSafetyError):
     """Base exception for database-related errors"""
+
     pass
 
 
 class ConnectionError(DatabaseError):
     """Raised when database connection fails"""
+
     pass
 
 
 class QueryError(DatabaseError):
     """Raised when a database query fails"""
+
     pass
 
 
 class IntegrityError(DatabaseError):
     """Raised when data integrity constraints are violated"""
+
     pass
 
 
@@ -88,10 +88,7 @@ class RecordNotFoundError(DatabaseError):
     """Raised when a requested record is not found"""
 
     def __init__(
-        self,
-        model_name: str,
-        identifier: Any,
-        message: Optional[str] = None
+        self, model_name: str, identifier: Any, message: Optional[str] = None
     ) -> None:
         """
         Initialize record not found error.
@@ -106,7 +103,7 @@ class RecordNotFoundError(DatabaseError):
         super().__init__(
             message=message,
             error_code="RECORD_NOT_FOUND",
-            details={"model": model_name, "identifier": identifier}
+            details={"model": model_name, "identifier": identifier},
         )
 
 
@@ -114,10 +111,7 @@ class DuplicateRecordError(DatabaseError):
     """Raised when attempting to create a duplicate record"""
 
     def __init__(
-        self,
-        model_name: str,
-        identifier: Any,
-        message: Optional[str] = None
+        self, model_name: str, identifier: Any, message: Optional[str] = None
     ) -> None:
         """
         Initialize duplicate record error.
@@ -132,13 +126,14 @@ class DuplicateRecordError(DatabaseError):
         super().__init__(
             message=message,
             error_code="DUPLICATE_RECORD",
-            details={"model": model_name, "identifier": identifier}
+            details={"model": model_name, "identifier": identifier},
         )
 
 
 # Validation Errors
 class ValidationError(MarineSafetyError):
     """Base exception for validation errors"""
+
     pass
 
 
@@ -146,11 +141,7 @@ class InvalidDataError(ValidationError):
     """Raised when data fails validation"""
 
     def __init__(
-        self,
-        field: str,
-        value: Any,
-        reason: str,
-        message: Optional[str] = None
+        self, field: str, value: Any, reason: str, message: Optional[str] = None
     ) -> None:
         """
         Initialize invalid data error.
@@ -166,7 +157,7 @@ class InvalidDataError(ValidationError):
         super().__init__(
             message=message,
             error_code="INVALID_DATA",
-            details={"field": field, "value": value, "reason": reason}
+            details={"field": field, "value": value, "reason": reason},
         )
 
 
@@ -186,13 +177,14 @@ class MissingRequiredFieldError(ValidationError):
         super().__init__(
             message=message,
             error_code="MISSING_REQUIRED_FIELD",
-            details={"field": field}
+            details={"field": field},
         )
 
 
 # Scraping Errors
 class ScraperError(MarineSafetyError):
     """Base exception for web scraping errors"""
+
     pass
 
 
@@ -200,10 +192,7 @@ class HTTPError(ScraperError):
     """Raised when HTTP request fails"""
 
     def __init__(
-        self,
-        url: str,
-        status_code: int,
-        message: Optional[str] = None
+        self, url: str, status_code: int, message: Optional[str] = None
     ) -> None:
         """
         Initialize HTTP error.
@@ -218,19 +207,14 @@ class HTTPError(ScraperError):
         super().__init__(
             message=message,
             error_code="HTTP_ERROR",
-            details={"url": url, "status_code": status_code}
+            details={"url": url, "status_code": status_code},
         )
 
 
 class ParsingError(ScraperError):
     """Raised when content parsing fails"""
 
-    def __init__(
-        self,
-        source: str,
-        reason: str,
-        message: Optional[str] = None
-    ) -> None:
+    def __init__(self, source: str, reason: str, message: Optional[str] = None) -> None:
         """
         Initialize parsing error.
 
@@ -244,7 +228,7 @@ class ParsingError(ScraperError):
         super().__init__(
             message=message,
             error_code="PARSING_ERROR",
-            details={"source": source, "reason": reason}
+            details={"source": source, "reason": reason},
         )
 
 
@@ -255,7 +239,7 @@ class RateLimitError(ScraperError):
         self,
         source: str,
         retry_after: Optional[int] = None,
-        message: Optional[str] = None
+        message: Optional[str] = None,
     ) -> None:
         """
         Initialize rate limit error.
@@ -272,7 +256,7 @@ class RateLimitError(ScraperError):
         super().__init__(
             message=message,
             error_code="RATE_LIMIT",
-            details={"source": source, "retry_after": retry_after}
+            details={"source": source, "retry_after": retry_after},
         )
 
 
@@ -293,13 +277,14 @@ class TimeoutError(ScraperError):
         super().__init__(
             message=message,
             error_code="TIMEOUT",
-            details={"url": url, "timeout": timeout}
+            details={"url": url, "timeout": timeout},
         )
 
 
 # Storage Errors
 class StorageError(MarineSafetyError):
     """Base exception for storage-related errors"""
+
     pass
 
 
@@ -317,9 +302,7 @@ class FileNotFoundError(StorageError):
         if message is None:
             message = f"File not found: {path}"
         super().__init__(
-            message=message,
-            error_code="FILE_NOT_FOUND",
-            details={"path": path}
+            message=message, error_code="FILE_NOT_FOUND", details={"path": path}
         )
 
 
@@ -340,7 +323,7 @@ class FileAccessError(StorageError):
         super().__init__(
             message=message,
             error_code="FILE_ACCESS_ERROR",
-            details={"path": path, "reason": reason}
+            details={"path": path, "reason": reason},
         )
 
 
@@ -348,11 +331,7 @@ class FileSizeError(StorageError):
     """Raised when file size exceeds limits"""
 
     def __init__(
-        self,
-        path: str,
-        size: int,
-        max_size: int,
-        message: Optional[str] = None
+        self, path: str, size: int, max_size: int, message: Optional[str] = None
     ) -> None:
         """
         Initialize file size error.
@@ -371,21 +350,24 @@ class FileSizeError(StorageError):
         super().__init__(
             message=message,
             error_code="FILE_SIZE_ERROR",
-            details={"path": path, "size": size, "max_size": max_size}
+            details={"path": path, "size": size, "max_size": max_size},
         )
 
 
 # Processing Errors
 class ProcessingError(MarineSafetyError):
     """Base exception for data processing errors"""
+
     pass
 
 
 class DataTransformationError(ProcessingError):
     """Raised when data transformation fails"""
+
     pass
 
 
 class EnrichmentError(ProcessingError):
     """Raised when data enrichment fails"""
+
     pass

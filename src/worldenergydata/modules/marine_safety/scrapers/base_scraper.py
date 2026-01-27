@@ -7,18 +7,22 @@ Abstract base class for all web scrapers with common functionality.
 import time
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Optional, Dict, Any, List
-from urllib.parse import urljoin, urlparse
+from typing import Any, Dict, List, Optional
+from urllib.parse import urljoin
+
 import httpx
 from bs4 import BeautifulSoup
+
 from worldenergydata.modules.marine_safety.config import get_config
-from worldenergydata.modules.marine_safety.constants import DataSource, RETRYABLE_HTTP_CODES
+from worldenergydata.modules.marine_safety.constants import (
+    RETRYABLE_HTTP_CODES,
+    DataSource,
+)
 from worldenergydata.modules.marine_safety.exceptions import (
     HTTPError,
-    TimeoutError,
-    RateLimitError,
     ParsingError,
-    ScraperError
+    RateLimitError,
+    TimeoutError,
 )
 from worldenergydata.modules.marine_safety.utils.logger import get_logger
 
@@ -32,10 +36,7 @@ class BaseScraper(ABC):
     """
 
     def __init__(
-        self,
-        source: DataSource,
-        base_url: str,
-        name: Optional[str] = None
+        self, source: DataSource, base_url: str, name: Optional[str] = None
     ) -> None:
         """
         Initialize the base scraper.
@@ -55,7 +56,7 @@ class BaseScraper(ABC):
         self.client = httpx.Client(
             timeout=self.config.request_timeout,
             headers={"User-Agent": self.config.user_agent},
-            follow_redirects=True
+            follow_redirects=True,
         )
 
         # Rate limiting
@@ -73,10 +74,7 @@ class BaseScraper(ABC):
         self._last_request_time = time.time()
 
     def _make_request(
-        self,
-        url: str,
-        method: str = "GET",
-        **kwargs: Any
+        self, url: str, method: str = "GET", **kwargs: Any
     ) -> httpx.Response:
         """
         Make HTTP request with retry logic.
@@ -101,7 +99,9 @@ class BaseScraper(ABC):
 
         while retries <= self.config.max_retries:
             try:
-                self.logger.debug(f"Request {method} {full_url} (attempt {retries + 1})")
+                self.logger.debug(
+                    f"Request {method} {full_url} (attempt {retries + 1})"
+                )
 
                 response = self.client.request(method, full_url, **kwargs)
                 response.raise_for_status()
@@ -109,11 +109,10 @@ class BaseScraper(ABC):
                 self._request_count += 1
                 return response
 
-            except httpx.TimeoutException as e:
+            except httpx.TimeoutException:
                 if retries >= self.config.max_retries:
                     raise TimeoutError(
-                        url=full_url,
-                        timeout=self.config.request_timeout
+                        url=full_url, timeout=self.config.request_timeout
                     )
                 retries += 1
                 time.sleep(self.config.retry_delay * retries)
@@ -126,8 +125,7 @@ class BaseScraper(ABC):
                     retry_after = int(e.response.headers.get("Retry-After", 60))
                     if retries >= self.config.max_retries:
                         raise RateLimitError(
-                            source=self.source.value,
-                            retry_after=retry_after
+                            source=self.source.value, retry_after=retry_after
                         )
                     self.logger.warning(
                         f"Rate limited, waiting {retry_after}s before retry"
@@ -137,7 +135,10 @@ class BaseScraper(ABC):
                     continue
 
                 # Retry on server errors
-                if status_code in RETRYABLE_HTTP_CODES and retries < self.config.max_retries:
+                if (
+                    status_code in RETRYABLE_HTTP_CODES
+                    and retries < self.config.max_retries
+                ):
                     retries += 1
                     time.sleep(self.config.retry_delay * retries)
                     continue
@@ -148,18 +149,12 @@ class BaseScraper(ABC):
             except httpx.RequestError as e:
                 if retries >= self.config.max_retries:
                     raise HTTPError(
-                        url=full_url,
-                        status_code=0,
-                        message=f"Request failed: {str(e)}"
+                        url=full_url, status_code=0, message=f"Request failed: {str(e)}"
                     )
                 retries += 1
                 time.sleep(self.config.retry_delay * retries)
 
-        raise HTTPError(
-            url=full_url,
-            status_code=0,
-            message="Max retries exceeded"
-        )
+        raise HTTPError(url=full_url, status_code=0, message="Max retries exceeded")
 
     def _parse_html(self, content: str) -> BeautifulSoup:
         """
@@ -175,15 +170,11 @@ class BaseScraper(ABC):
             return BeautifulSoup(content, "html.parser")
         except Exception as e:
             raise ParsingError(
-                source=self.source.value,
-                reason=f"Failed to parse HTML: {str(e)}"
+                source=self.source.value, reason=f"Failed to parse HTML: {str(e)}"
             )
 
     def _extract_text(
-        self,
-        element: Any,
-        selector: str,
-        default: Optional[str] = None
+        self, element: Any, selector: str, default: Optional[str] = None
     ) -> Optional[str]:
         """
         Safely extract text from HTML element.
@@ -202,15 +193,13 @@ class BaseScraper(ABC):
                 return found.get_text(strip=True)
             return default
         except Exception as e:
-            self.logger.warning(f"Failed to extract text with selector '{selector}': {e}")
+            self.logger.warning(
+                f"Failed to extract text with selector '{selector}': {e}"
+            )
             return default
 
     def _extract_attribute(
-        self,
-        element: Any,
-        selector: str,
-        attribute: str,
-        default: Optional[str] = None
+        self, element: Any, selector: str, attribute: str, default: Optional[str] = None
     ) -> Optional[str]:
         """
         Safely extract attribute from HTML element.
@@ -237,9 +226,7 @@ class BaseScraper(ABC):
 
     @abstractmethod
     def scrape(
-        self,
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None
+        self, start_date: Optional[datetime] = None, end_date: Optional[datetime] = None
     ) -> List[Dict[str, Any]]:
         """
         Scrape data from the source.
@@ -269,9 +256,7 @@ class BaseScraper(ABC):
     def close(self) -> None:
         """Close HTTP client and clean up resources"""
         self.client.close()
-        self.logger.info(
-            f"Scraper closed. Total requests made: {self._request_count}"
-        )
+        self.logger.info(f"Scraper closed. Total requests made: {self._request_count}")
 
     def __enter__(self) -> "BaseScraper":
         """Context manager entry"""

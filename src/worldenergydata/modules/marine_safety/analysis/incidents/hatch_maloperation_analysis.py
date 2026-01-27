@@ -24,15 +24,16 @@ Key features:
 - Statistical analysis and trending
 """
 
-import re
 import logging
-from typing import List, Dict, Any, Optional, Set, Tuple
-from datetime import datetime
+import re
 from collections import Counter, defaultdict
+from datetime import datetime
+from typing import Any, Dict, List, Optional
 
 # LLM classifier import (optional - graceful degradation if not installed)
 try:
     from ..llm_classifier import LLMIncidentClassifier
+
     LLM_AVAILABLE = True
 except ImportError:
     LLM_AVAILABLE = False
@@ -60,161 +61,156 @@ class HatchMaloperationAnalyzer:
     # Expanded to include all door, hatch, and opening incidents
     HATCH_PATTERNS = [
         # Hatch-specific patterns
-        r'\bhatch\s+maloperation\b',
-        r'\bhatch\s+failure\b',
-        r'\bhatch.*?failed',
-        r'\bhatch.*?improperly\s+secured\b',
-        r'\bhatch.*?not\s+secured\b',
-        r'\bhatch.*?unsecured\b',
-        r'\bhatch.*?left\s+open\b',
-        r'\bhatch.*?mechanism.*?failed\b',
-        r'\bhatch\s+seal\s+failure\b',
-        r'\baccess\s+hatch\b',
-        r'\bengine\s+room\s+hatch\b',
-        r'\bcargo\s+hatch\b',
-        r'\bwatertight\s+hatch\b',
-
+        r"\bhatch\s+maloperation\b",
+        r"\bhatch\s+failure\b",
+        r"\bhatch.*?failed",
+        r"\bhatch.*?improperly\s+secured\b",
+        r"\bhatch.*?not\s+secured\b",
+        r"\bhatch.*?unsecured\b",
+        r"\bhatch.*?left\s+open\b",
+        r"\bhatch.*?mechanism.*?failed\b",
+        r"\bhatch\s+seal\s+failure\b",
+        r"\baccess\s+hatch\b",
+        r"\bengine\s+room\s+hatch\b",
+        r"\bcargo\s+hatch\b",
+        r"\bwatertight\s+hatch\b",
         # Door-specific patterns
-        r'\bdoor\s+maloperation\b',
-        r'\bdoor\s+failure\b',
-        r'\bdoor.*?failed',
-        r'\bdoor.*?improperly\s+secured\b',
-        r'\bdoor.*?not\s+secured\b',
-        r'\bdoor.*?unsecured\b',
-        r'\bdoor.*?left\s+open\b',
-        r'\bdoor.*?mechanism.*?failed\b',
-        r'\bwatertight\s+door\b',
-        r'\baccess\s+door\b',
-        r'\bcargo\s+door\b',
-        r'\bbulkhead\s+door\b',
-        r'\bfire\s+door\b',
-
+        r"\bdoor\s+maloperation\b",
+        r"\bdoor\s+failure\b",
+        r"\bdoor.*?failed",
+        r"\bdoor.*?improperly\s+secured\b",
+        r"\bdoor.*?not\s+secured\b",
+        r"\bdoor.*?unsecured\b",
+        r"\bdoor.*?left\s+open\b",
+        r"\bdoor.*?mechanism.*?failed\b",
+        r"\bwatertight\s+door\b",
+        r"\baccess\s+door\b",
+        r"\bcargo\s+door\b",
+        r"\bbulkhead\s+door\b",
+        r"\bfire\s+door\b",
         # General opening patterns
-        r'\bopening\s+maloperation\b',
-        r'\bopening\s+failure\b',
-        r'\bopening.*?failed',
-        r'\bopening.*?not\s+secured\b',
-        r'\bopening.*?left\s+open\b',
-
+        r"\bopening\s+maloperation\b",
+        r"\bopening\s+failure\b",
+        r"\bopening.*?failed",
+        r"\bopening.*?not\s+secured\b",
+        r"\bopening.*?left\s+open\b",
         # Cover and seal patterns
-        r'\baccess\s+cover\s+maloperation\b',
-        r'\baccess\s+cover\s+failure\b',
-        r'\bmanhole\s+cover\b',
-        r'\bseal\s+failure\b',
-        r'\bcover.*?unsecured\b',
-        r'\bcover.*?not\s+secured\b',
-
+        r"\baccess\s+cover\s+maloperation\b",
+        r"\baccess\s+cover\s+failure\b",
+        r"\bmanhole\s+cover\b",
+        r"\bseal\s+failure\b",
+        r"\bcover.*?unsecured\b",
+        r"\bcover.*?not\s+secured\b",
         # Hardware failure patterns
-        r'\bhinge.*?failure\b',
-        r'\blatch.*?failure\b',
-        r'\block.*?failure\b',
-        r'\bfastener.*?failure\b',
-        r'\bclosure.*?failure\b',
-
+        r"\bhinge.*?failure\b",
+        r"\blatch.*?failure\b",
+        r"\block.*?failure\b",
+        r"\bfastener.*?failure\b",
+        r"\bclosure.*?failure\b",
         # Consequence-based patterns (opening-related flooding/ingress)
-        r'\bflooding.*?through.*?(?:hatch|door|opening|cover)\b',
-        r'\bwater\s+ingress.*?(?:hatch|door|opening|cover)\b',
-        r'\b(?:hatch|door|opening|cover).*?flooding\b',
+        r"\bflooding.*?through.*?(?:hatch|door|opening|cover)\b",
+        r"\bwater\s+ingress.*?(?:hatch|door|opening|cover)\b",
+        r"\b(?:hatch|door|opening|cover).*?flooding\b",
     ]
 
     # Location classification patterns
     ENGINE_ROOM_PATTERNS = [
-        r'\bengine\s+room\b',
-        r'\bmachinery\s+space\b',
-        r'\bmain\s+engine\b',
-        r'\bengine\s+compartment\b',
+        r"\bengine\s+room\b",
+        r"\bmachinery\s+space\b",
+        r"\bmain\s+engine\b",
+        r"\bengine\s+compartment\b",
     ]
 
     ENCLOSURE_PATTERNS = [
-        r'\benclosure\b',
-        r'\bcompartment\b',
-        r'\bdeck\s+access\b',
-        r'\bstorage\s+space\b',
-        r'\bcargo\s+hold\b',
-        r'\btank\s+access\b',
+        r"\benclosure\b",
+        r"\bcompartment\b",
+        r"\bdeck\s+access\b",
+        r"\bstorage\s+space\b",
+        r"\bcargo\s+hold\b",
+        r"\btank\s+access\b",
     ]
 
     # Consequence patterns
     CONSEQUENCE_PATTERNS = {
-        'flooding': [
-            r'\bflood(?:ing|ed)\b',
-            r'\bwater\s+ingress\b',
-            r'\btook\s+on\s+water\b',
-            r'\bbilge\s+pumps?\b',
+        "flooding": [
+            r"\bflood(?:ing|ed)\b",
+            r"\bwater\s+ingress\b",
+            r"\btook\s+on\s+water\b",
+            r"\bbilge\s+pumps?\b",
         ],
-        'fire': [
-            r'\bfire\b',
-            r'\bignition\b',
-            r'\bburns?\b',
-            r'\bflames?\b',
-            r'\bfire\s+suppression\b',
+        "fire": [
+            r"\bfire\b",
+            r"\bignition\b",
+            r"\bburns?\b",
+            r"\bflames?\b",
+            r"\bfire\s+suppression\b",
         ],
-        'personnel_injury': [
-            r'\binjur(?:y|ies|ed)\b',
-            r'\bhurt\b',
-            r'\bfracture\b',
-            r'\bwound(?:ed|s)?\b',
+        "personnel_injury": [
+            r"\binjur(?:y|ies|ed)\b",
+            r"\bhurt\b",
+            r"\bfracture\b",
+            r"\bwound(?:ed|s)?\b",
         ],
-        'fatality': [
-            r'\bfatalit(?:y|ies)\b',
-            r'\bdeath(?:s)?\b',
-            r'\blost\b.*\bcrew\b',
-            r'\bkilled\b',
+        "fatality": [
+            r"\bfatalit(?:y|ies)\b",
+            r"\bdeath(?:s)?\b",
+            r"\blost\b.*\bcrew\b",
+            r"\bkilled\b",
         ],
-        'equipment_damage': [
-            r'\bequipment\s+damage\b',
-            r'\bdamaged?\b',
-            r'\bfailure\b',
+        "equipment_damage": [
+            r"\bequipment\s+damage\b",
+            r"\bdamaged?\b",
+            r"\bfailure\b",
         ],
-        'vessel_stability': [
-            r'\blist(?:ed|ing)\b',
-            r'\bstability\b',
-            r'\bcapsize\b',
-            r'\bheeling\b',
+        "vessel_stability": [
+            r"\blist(?:ed|ing)\b",
+            r"\bstability\b",
+            r"\bcapsize\b",
+            r"\bheeling\b",
         ],
-        'near_miss': [
-            r'\bnear\s+miss\b',
-            r'\bpreventive\b',
-            r'\bdetected\s+during\s+inspection\b',
-            r'\bcould\s+have\b',
-        ]
+        "near_miss": [
+            r"\bnear\s+miss\b",
+            r"\bpreventive\b",
+            r"\bdetected\s+during\s+inspection\b",
+            r"\bcould\s+have\b",
+        ],
     }
 
     # Contributing factor patterns
     FACTOR_PATTERNS = {
-        'human_error': [
-            r'\bcrew.*?failed\b',
-            r'\bfailed\s+to\s+secure\b',
-            r'\bfailed\s+to\s+properly\b',
-            r'\bimproperly\b',
-            r'\bnegligence\b',
-            r'\binadequate\s+training\b',
+        "human_error": [
+            r"\bcrew.*?failed\b",
+            r"\bfailed\s+to\s+secure\b",
+            r"\bfailed\s+to\s+properly\b",
+            r"\bimproperly\b",
+            r"\bnegligence\b",
+            r"\binadequate\s+training\b",
         ],
-        'maintenance_issue': [
-            r'\bmaintenance\b',
-            r'\bimproperly\s+maintained\b',
-            r'\black\s+of\s+maintenance\b',
-            r'\bpreventive\s+maintenance\b',
-            r'\bwear\s+and\s+tear\b',
+        "maintenance_issue": [
+            r"\bmaintenance\b",
+            r"\bimproperly\s+maintained\b",
+            r"\black\s+of\s+maintenance\b",
+            r"\bpreventive\s+maintenance\b",
+            r"\bwear\s+and\s+tear\b",
         ],
-        'equipment_failure': [
-            r'\bequipment\s+failure\b',
-            r'\bmechanism.*?failed\b',
-            r'\bseal\s+failure\b',
-            r'\bdefective\b',
-            r'\bmalfunctioned\b',
+        "equipment_failure": [
+            r"\bequipment\s+failure\b",
+            r"\bmechanism.*?failed\b",
+            r"\bseal\s+failure\b",
+            r"\bdefective\b",
+            r"\bmalfunctioned\b",
         ],
-        'weather': [
-            r'\bheavy\s+seas?\b',
-            r'\bstorm\b',
-            r'\brough\s+(?:seas?|weather)\b',
-            r'\bhigh\s+winds?\b',
-            r'\badverse\s+(?:weather|conditions)\b',
+        "weather": [
+            r"\bheavy\s+seas?\b",
+            r"\bstorm\b",
+            r"\brough\s+(?:seas?|weather)\b",
+            r"\bhigh\s+winds?\b",
+            r"\badverse\s+(?:weather|conditions)\b",
         ],
-        'design_flaw': [
-            r'\bdesign\s+flaw\b',
-            r'\binadequate\s+design\b',
-            r'\bstructural\s+weakness\b',
+        "design_flaw": [
+            r"\bdesign\s+flaw\b",
+            r"\binadequate\s+design\b",
+            r"\bstructural\s+weakness\b",
         ],
     }
 
@@ -223,7 +219,7 @@ class HatchMaloperationAnalyzer:
         use_llm: bool = True,
         llm_confidence_threshold: float = 0.7,
         fallback_to_regex: bool = True,
-        llm_model_name: Optional[str] = None
+        llm_model_name: Optional[str] = None,
     ):
         """
         Initialize the HatchMaloperationAnalyzer.
@@ -239,12 +235,15 @@ class HatchMaloperationAnalyzer:
             If not installed, automatically falls back to regex-only mode.
         """
         # Compile regex patterns for better performance
-        self.compiled_hatch_patterns = [re.compile(pattern, re.IGNORECASE)
-                                       for pattern in self.HATCH_PATTERNS]
-        self.compiled_engine_room_patterns = [re.compile(pattern, re.IGNORECASE)
-                                             for pattern in self.ENGINE_ROOM_PATTERNS]
-        self.compiled_enclosure_patterns = [re.compile(pattern, re.IGNORECASE)
-                                           for pattern in self.ENCLOSURE_PATTERNS]
+        self.compiled_hatch_patterns = [
+            re.compile(pattern, re.IGNORECASE) for pattern in self.HATCH_PATTERNS
+        ]
+        self.compiled_engine_room_patterns = [
+            re.compile(pattern, re.IGNORECASE) for pattern in self.ENGINE_ROOM_PATTERNS
+        ]
+        self.compiled_enclosure_patterns = [
+            re.compile(pattern, re.IGNORECASE) for pattern in self.ENCLOSURE_PATTERNS
+        ]
 
         # LLM configuration
         self.use_llm = use_llm and LLM_AVAILABLE
@@ -256,30 +255,34 @@ class HatchMaloperationAnalyzer:
         if self.use_llm:
             try:
                 if llm_model_name:
-                    self.llm_classifier = LLMIncidentClassifier(model_name=llm_model_name)
+                    self.llm_classifier = LLMIncidentClassifier(
+                        model_name=llm_model_name
+                    )
                 else:
                     self.llm_classifier = LLMIncidentClassifier()
                 logging.info("LLM-based hatch detection enabled")
             except Exception as e:
-                logging.warning(f"Failed to initialize LLM classifier: {e}. Falling back to regex.")
+                logging.warning(
+                    f"Failed to initialize LLM classifier: {e}. Falling back to regex."
+                )
                 self.use_llm = False
                 self.llm_classifier = None
         else:
             if use_llm and not LLM_AVAILABLE:
-                logging.info("LLM requested but not available. Using regex-only detection.")
+                logging.info(
+                    "LLM requested but not available. Using regex-only detection."
+                )
 
         # Detection statistics
         self._detection_stats = {
-            'llm_detections': 0,
-            'regex_detections': 0,
-            'hybrid_detections': 0,
-            'total_analyzed': 0
+            "llm_detections": 0,
+            "regex_detections": 0,
+            "hybrid_detections": 0,
+            "total_analyzed": 0,
         }
 
     def is_hatch_maloperation_incident(
-        self,
-        incident: Dict[str, Any],
-        return_details: bool = False
+        self, incident: Dict[str, Any], return_details: bool = False
     ) -> bool | Dict[str, Any]:
         """
         Determine if an incident involves hatch/opening maloperation.
@@ -300,15 +303,19 @@ class HatchMaloperationAnalyzer:
                 - llm_reasoning: str (if LLM used)
                 - regex_matched: bool
         """
-        description = incident.get('description', '')
+        description = incident.get("description", "")
         if not description:
-            return False if not return_details else {
-                'is_hatch_incident': False,
-                'detection_method': 'none',
-                'reason': 'No description provided'
-            }
+            return (
+                False
+                if not return_details
+                else {
+                    "is_hatch_incident": False,
+                    "detection_method": "none",
+                    "reason": "No description provided",
+                }
+            )
 
-        self._detection_stats['total_analyzed'] += 1
+        self._detection_stats["total_analyzed"] += 1
 
         # Try LLM detection first (if enabled)
         llm_result = None
@@ -318,8 +325,8 @@ class HatchMaloperationAnalyzer:
         if self.use_llm and self.llm_classifier:
             try:
                 llm_result = self._detect_with_llm(description)
-                llm_detected = llm_result['is_hatch_incident']
-                llm_confidence = llm_result['confidence']
+                llm_detected = llm_result["is_hatch_incident"]
+                llm_confidence = llm_result["confidence"]
             except Exception as e:
                 logging.warning(f"LLM detection failed: {e}. Falling back to regex.")
                 llm_result = None
@@ -331,40 +338,40 @@ class HatchMaloperationAnalyzer:
         if llm_result and llm_confidence >= self.llm_confidence_threshold:
             # High-confidence LLM detection
             is_hatch = llm_detected
-            method = 'llm'
-            self._detection_stats['llm_detections'] += 1
+            method = "llm"
+            self._detection_stats["llm_detections"] += 1
 
             # If regex also matches, it's a hybrid detection
             if regex_detected and llm_detected:
-                method = 'hybrid'
-                self._detection_stats['hybrid_detections'] += 1
-                self._detection_stats['llm_detections'] -= 1  # Don't double count
+                method = "hybrid"
+                self._detection_stats["hybrid_detections"] += 1
+                self._detection_stats["llm_detections"] -= 1  # Don't double count
 
         elif self.fallback_to_regex or not self.use_llm:
             # Use regex (either as fallback or primary method)
             is_hatch = regex_detected
-            method = 'regex'
+            method = "regex"
             if regex_detected:
-                self._detection_stats['regex_detections'] += 1
+                self._detection_stats["regex_detections"] += 1
         else:
             # Low confidence LLM, no regex fallback
             is_hatch = llm_detected if llm_result else False
-            method = 'llm' if llm_result else 'none'
+            method = "llm" if llm_result else "none"
 
         # Return simple boolean or detailed result
         if not return_details:
             return is_hatch
 
         details = {
-            'is_hatch_incident': is_hatch,
-            'detection_method': method,
-            'regex_matched': regex_detected
+            "is_hatch_incident": is_hatch,
+            "detection_method": method,
+            "regex_matched": regex_detected,
         }
 
         if llm_result:
-            details['llm_confidence'] = llm_confidence
-            details['llm_reasoning'] = llm_result.get('reasoning', '')
-            details['matched_phrases'] = llm_result.get('matched_phrases', [])
+            details["llm_confidence"] = llm_confidence
+            details["llm_reasoning"] = llm_result.get("reasoning", "")
+            details["matched_phrases"] = llm_result.get("matched_phrases", [])
 
         return details
 
@@ -411,28 +418,32 @@ class HatchMaloperationAnalyzer:
                 - detection_mode: Current detection configuration
         """
         stats = self._detection_stats.copy()
-        stats['detection_mode'] = {
-            'llm_enabled': self.use_llm,
-            'regex_fallback': self.fallback_to_regex,
-            'llm_threshold': self.llm_confidence_threshold
+        stats["detection_mode"] = {
+            "llm_enabled": self.use_llm,
+            "regex_fallback": self.fallback_to_regex,
+            "llm_threshold": self.llm_confidence_threshold,
         }
 
         # Calculate percentages
-        total = stats['total_analyzed']
+        total = stats["total_analyzed"]
         if total > 0:
-            stats['llm_percentage'] = round(stats['llm_detections'] / total * 100, 2)
-            stats['regex_percentage'] = round(stats['regex_detections'] / total * 100, 2)
-            stats['hybrid_percentage'] = round(stats['hybrid_detections'] / total * 100, 2)
+            stats["llm_percentage"] = round(stats["llm_detections"] / total * 100, 2)
+            stats["regex_percentage"] = round(
+                stats["regex_detections"] / total * 100, 2
+            )
+            stats["hybrid_percentage"] = round(
+                stats["hybrid_detections"] / total * 100, 2
+            )
 
         return stats
 
     def reset_detection_statistics(self):
         """Reset detection statistics counters."""
         self._detection_stats = {
-            'llm_detections': 0,
-            'regex_detections': 0,
-            'hybrid_detections': 0,
-            'total_analyzed': 0
+            "llm_detections": 0,
+            "regex_detections": 0,
+            "hybrid_detections": 0,
+            "total_analyzed": 0,
         }
 
     def extract_hatch_related_text(self, incident: Dict[str, Any]) -> Optional[str]:
@@ -445,12 +456,12 @@ class HatchMaloperationAnalyzer:
         Returns:
             Extracted hatch-related text or None if not found
         """
-        description = incident.get('description', '')
+        description = incident.get("description", "")
         if not description:
             return None
 
         # Find sentences containing hatch-related terms
-        sentences = re.split(r'[.!?]', description)
+        sentences = re.split(r"[.!?]", description)
         relevant_sentences = []
 
         for sentence in sentences:
@@ -460,7 +471,7 @@ class HatchMaloperationAnalyzer:
                     break
 
         if relevant_sentences:
-            return ' '.join(relevant_sentences)
+            return " ".join(relevant_sentences)
 
         return None
 
@@ -474,24 +485,24 @@ class HatchMaloperationAnalyzer:
         Returns:
             Location classification: 'engine_room', 'other_enclosure', or 'unknown'
         """
-        description = incident.get('description', '')
+        description = incident.get("description", "")
         if not description:
-            return 'unknown'
+            return "unknown"
 
         # Check for engine room patterns
         for pattern in self.compiled_engine_room_patterns:
             if pattern.search(description):
-                return 'engine_room'
+                return "engine_room"
 
         # Check for other enclosure patterns
         for pattern in self.compiled_enclosure_patterns:
             if pattern.search(description):
                 # More specific classification for deck access
-                if re.search(r'\bdeck\s+access\b', description, re.IGNORECASE):
-                    return 'deck_access'
-                return 'other_enclosure'
+                if re.search(r"\bdeck\s+access\b", description, re.IGNORECASE):
+                    return "deck_access"
+                return "other_enclosure"
 
-        return 'unknown'
+        return "unknown"
 
     def analyze_consequences(self, incident: Dict[str, Any]) -> List[str]:
         """
@@ -503,7 +514,7 @@ class HatchMaloperationAnalyzer:
         Returns:
             List of consequence types identified
         """
-        description = incident.get('description', '')
+        description = incident.get("description", "")
         consequences = []
 
         # Check description against consequence patterns
@@ -514,13 +525,13 @@ class HatchMaloperationAnalyzer:
                     break
 
         # Also check explicit consequence indicators
-        if incident.get('fatalities', 0) > 0:
-            if 'fatality' not in consequences:
-                consequences.append('fatality')
+        if incident.get("fatalities", 0) > 0:
+            if "fatality" not in consequences:
+                consequences.append("fatality")
 
-        if incident.get('injuries', 0) > 0:
-            if 'personnel_injury' not in consequences:
-                consequences.append('personnel_injury')
+        if incident.get("injuries", 0) > 0:
+            if "personnel_injury" not in consequences:
+                consequences.append("personnel_injury")
 
         return list(set(consequences))  # Remove duplicates
 
@@ -534,7 +545,7 @@ class HatchMaloperationAnalyzer:
         Returns:
             List of contributing factor types identified
         """
-        description = incident.get('description', '')
+        description = incident.get("description", "")
         factors = []
 
         for factor_type, patterns in self.FACTOR_PATTERNS.items():
@@ -565,34 +576,36 @@ class HatchMaloperationAnalyzer:
         score = 0.0
 
         # Severity level contribution (0-30 points)
-        severity = incident.get('severity', 'Minor')
+        severity = incident.get("severity", "Minor")
         severity_scores = {
-            'Minor': 10,
-            'Moderate': 15,
-            'Serious': 20,
-            'Critical': 25,
-            'Catastrophic': 30
+            "Minor": 10,
+            "Moderate": 15,
+            "Serious": 20,
+            "Critical": 25,
+            "Catastrophic": 30,
         }
         score += severity_scores.get(severity, 10)
 
         # Fatalities (0-40 points)
-        fatalities = incident.get('fatalities', 0)
+        fatalities = incident.get("fatalities", 0)
         if fatalities > 0:
             score += min(40, 20 + (fatalities * 10))
 
         # Injuries (0-20 points)
-        injuries = incident.get('injuries', 0)
+        injuries = incident.get("injuries", 0)
         if injuries > 0:
             score += min(20, 10 + (injuries * 2))
 
         # Consequences (0-15 points)
         consequences = self.analyze_consequences(incident)
-        high_impact_consequences = ['flooding', 'fire', 'fatality', 'vessel_stability']
-        consequence_count = sum(1 for c in consequences if c in high_impact_consequences)
+        high_impact_consequences = ["flooding", "fire", "fatality", "vessel_stability"]
+        consequence_count = sum(
+            1 for c in consequences if c in high_impact_consequences
+        )
         score += min(15, consequence_count * 5)
 
         # Damage estimate (0-10 points)
-        damage = incident.get('estimated_damage_usd', 0)
+        damage = incident.get("estimated_damage_usd", 0)
         if damage >= 1000000:
             score += 10
         elif damage >= 500000:
@@ -606,7 +619,7 @@ class HatchMaloperationAnalyzer:
 
         # Location criticality (0-5 points)
         location_type = self.classify_location(incident)
-        if location_type == 'engine_room':
+        if location_type == "engine_room":
             score += 5  # Engine room is critical
 
         # Cap at 100
@@ -628,73 +641,73 @@ class HatchMaloperationAnalyzer:
         location = self.classify_location(incident)
 
         # Recommendations based on contributing factors
-        if 'human_error' in factors:
+        if "human_error" in factors:
             recommendations.append(
-                'Implement enhanced crew training on proper hatch securing procedures'
+                "Implement enhanced crew training on proper hatch securing procedures"
             )
             recommendations.append(
-                'Establish mandatory pre-departure hatch security checklist'
-            )
-
-        if 'maintenance_issue' in factors:
-            recommendations.append(
-                'Increase frequency of hatch mechanism inspection and maintenance'
-            )
-            recommendations.append(
-                'Implement preventive maintenance schedule for all hatch systems'
+                "Establish mandatory pre-departure hatch security checklist"
             )
 
-        if 'equipment_failure' in factors:
+        if "maintenance_issue" in factors:
             recommendations.append(
-                'Consider replacement or upgrade of aging hatch equipment'
+                "Increase frequency of hatch mechanism inspection and maintenance"
             )
             recommendations.append(
-                'Conduct engineering assessment of hatch design and specifications'
+                "Implement preventive maintenance schedule for all hatch systems"
             )
 
-        if 'weather' in factors:
+        if "equipment_failure" in factors:
             recommendations.append(
-                'Review and enhance procedures for securing hatches in adverse weather'
+                "Consider replacement or upgrade of aging hatch equipment"
             )
             recommendations.append(
-                'Install weather monitoring and alert systems for hatch operations'
+                "Conduct engineering assessment of hatch design and specifications"
+            )
+
+        if "weather" in factors:
+            recommendations.append(
+                "Review and enhance procedures for securing hatches in adverse weather"
+            )
+            recommendations.append(
+                "Install weather monitoring and alert systems for hatch operations"
             )
 
         # Recommendations based on consequences
-        if 'flooding' in consequences:
+        if "flooding" in consequences:
             recommendations.append(
-                'Install or upgrade bilge alarm systems in affected compartments'
+                "Install or upgrade bilge alarm systems in affected compartments"
             )
             recommendations.append(
-                'Conduct flooding scenario drills specific to hatch failure events'
-            )
-
-        if 'fire' in consequences:
-            recommendations.append(
-                'Review ventilation system design and fire prevention measures'
-            )
-            recommendations.append(
-                'Enhance fire detection and suppression capabilities in affected areas'
+                "Conduct flooding scenario drills specific to hatch failure events"
             )
 
-        if 'personnel_injury' in consequences or 'fatality' in consequences:
+        if "fire" in consequences:
             recommendations.append(
-                'Implement mandatory safety barriers and warning systems for hatch operations'
+                "Review ventilation system design and fire prevention measures"
             )
             recommendations.append(
-                'Require personal protective equipment for all personnel working with hatches'
+                "Enhance fire detection and suppression capabilities in affected areas"
+            )
+
+        if "personnel_injury" in consequences or "fatality" in consequences:
+            recommendations.append(
+                "Implement mandatory safety barriers and warning systems for hatch operations"
+            )
+            recommendations.append(
+                "Require personal protective equipment for all personnel working with hatches"
             )
 
         # Location-specific recommendations
-        if location == 'engine_room':
+        if location == "engine_room":
             recommendations.append(
-                'Prioritize engine room hatch integrity in vessel safety management system'
+                "Prioritize engine room hatch integrity in vessel safety management system"
             )
 
         # General recommendations if none were added
         if not recommendations:
             recommendations.append(
-                'Conduct comprehensive hatch system assessment and risk analysis'
+                "Conduct comprehensive hatch system assessment and risk analysis"
             )
 
         return recommendations
@@ -717,25 +730,25 @@ class HatchMaloperationAnalyzer:
             True if incident is significant, False otherwise
         """
         # Fatalities always make it significant
-        if incident.get('fatalities', 0) > 0:
+        if incident.get("fatalities", 0) > 0:
             return True
 
         # Multiple serious injuries
-        if incident.get('injuries', 0) > 2:
+        if incident.get("injuries", 0) > 2:
             return True
 
         # High damage
-        if incident.get('estimated_damage_usd', 0) > 500000:
+        if incident.get("estimated_damage_usd", 0) > 500000:
             return True
 
         # High severity
-        severity = incident.get('severity', 'Minor')
-        if severity in ['Catastrophic', 'Critical']:
+        severity = incident.get("severity", "Minor")
+        if severity in ["Catastrophic", "Critical"]:
             return True
 
         # Multiple high-impact consequences
         consequences = self.analyze_consequences(incident)
-        high_impact = ['flooding', 'fire', 'fatality', 'vessel_stability']
+        high_impact = ["flooding", "fire", "fatality", "vessel_stability"]
         if len([c for c in consequences if c in high_impact]) >= 2:
             return True
 
@@ -752,35 +765,37 @@ class HatchMaloperationAnalyzer:
             Case study dictionary with structured information
         """
         case_study = {
-            'incident_id': incident.get('incident_id'),
-            'date': incident.get('date'),
-            'location': incident.get('location'),
-            'summary': self._generate_summary(incident),
-            'location_type': self.classify_location(incident),
-            'contributing_factors': self.identify_contributing_factors(incident),
-            'consequences': self.analyze_consequences(incident),
-            'casualties': {
-                'fatalities': incident.get('fatalities', 0),
-                'injuries': incident.get('injuries', 0),
+            "incident_id": incident.get("incident_id"),
+            "date": incident.get("date"),
+            "location": incident.get("location"),
+            "summary": self._generate_summary(incident),
+            "location_type": self.classify_location(incident),
+            "contributing_factors": self.identify_contributing_factors(incident),
+            "consequences": self.analyze_consequences(incident),
+            "casualties": {
+                "fatalities": incident.get("fatalities", 0),
+                "injuries": incident.get("injuries", 0),
             },
-            'damage_estimate': incident.get('estimated_damage_usd', 0),
-            'risk_score': self.calculate_risk_score(incident),
-            'lessons_learned': self._extract_lessons_learned(incident),
-            'recommendations': self.generate_recommendations(incident),
+            "damage_estimate": incident.get("estimated_damage_usd", 0),
+            "risk_score": self.calculate_risk_score(incident),
+            "lessons_learned": self._extract_lessons_learned(incident),
+            "recommendations": self.generate_recommendations(incident),
         }
 
         return case_study
 
     def _generate_summary(self, incident: Dict[str, Any]) -> str:
         """Generate a concise summary of the incident."""
-        description = incident.get('description', '')
+        description = incident.get("description", "")
 
         # Extract first 200 characters or first two sentences
-        sentences = re.split(r'[.!?]', description)
+        sentences = re.split(r"[.!?]", description)
         if len(sentences) >= 2:
-            summary = '. '.join(sentences[:2]) + '.'
+            summary = ". ".join(sentences[:2]) + "."
         else:
-            summary = description[:200] + '...' if len(description) > 200 else description
+            summary = (
+                description[:200] + "..." if len(description) > 200 else description
+            )
 
         return summary
 
@@ -791,24 +806,34 @@ class HatchMaloperationAnalyzer:
         consequences = self.analyze_consequences(incident)
 
         # Generate lessons based on analysis
-        if 'human_error' in factors:
-            lessons.append('Proper training and procedures are critical for hatch operations')
+        if "human_error" in factors:
+            lessons.append(
+                "Proper training and procedures are critical for hatch operations"
+            )
 
-        if 'maintenance_issue' in factors:
-            lessons.append('Regular maintenance and inspection can prevent hatch failures')
+        if "maintenance_issue" in factors:
+            lessons.append(
+                "Regular maintenance and inspection can prevent hatch failures"
+            )
 
-        if 'flooding' in consequences:
-            lessons.append('Hatch integrity is essential for watertight compartment protection')
+        if "flooding" in consequences:
+            lessons.append(
+                "Hatch integrity is essential for watertight compartment protection"
+            )
 
-        if 'fatality' in consequences or 'personnel_injury' in consequences:
-            lessons.append('Hatch maloperation poses serious personnel safety risks')
+        if "fatality" in consequences or "personnel_injury" in consequences:
+            lessons.append("Hatch maloperation poses serious personnel safety risks")
 
         if not lessons:
-            lessons.append('Hatch system reliability requires continuous attention and oversight')
+            lessons.append(
+                "Hatch system reliability requires continuous attention and oversight"
+            )
 
         return lessons
 
-    def get_location_statistics(self, incidents: List[Dict[str, Any]]) -> Dict[str, int]:
+    def get_location_statistics(
+        self, incidents: List[Dict[str, Any]]
+    ) -> Dict[str, int]:
         """
         Generate location-based statistics for incidents.
 
@@ -825,11 +850,13 @@ class HatchMaloperationAnalyzer:
             location_counts[location_type] += 1
 
         stats = dict(location_counts)
-        stats['total'] = len(incidents)
+        stats["total"] = len(incidents)
 
         return stats
 
-    def get_consequence_statistics(self, incidents: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def get_consequence_statistics(
+        self, incidents: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
         """
         Generate consequence-based statistics.
 
@@ -848,17 +875,19 @@ class HatchMaloperationAnalyzer:
             for consequence in consequences:
                 consequence_counts[consequence] += 1
 
-            total_fatalities += incident.get('fatalities', 0)
-            total_injuries += incident.get('injuries', 0)
+            total_fatalities += incident.get("fatalities", 0)
+            total_injuries += incident.get("injuries", 0)
 
         return {
             **dict(consequence_counts),
-            'total_incidents': len(incidents),
-            'total_fatalities': total_fatalities,
-            'total_injuries': total_injuries,
+            "total_incidents": len(incidents),
+            "total_fatalities": total_fatalities,
+            "total_injuries": total_injuries,
         }
 
-    def get_severity_distribution(self, incidents: List[Dict[str, Any]]) -> Dict[str, int]:
+    def get_severity_distribution(
+        self, incidents: List[Dict[str, Any]]
+    ) -> Dict[str, int]:
         """
         Generate severity distribution statistics.
 
@@ -871,12 +900,14 @@ class HatchMaloperationAnalyzer:
         severity_counts = Counter()
 
         for incident in incidents:
-            severity = incident.get('severity', 'Unknown')
+            severity = incident.get("severity", "Unknown")
             severity_counts[severity] += 1
 
         return dict(severity_counts)
 
-    def get_time_series_data(self, incidents: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def get_time_series_data(
+        self, incidents: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
         """
         Generate time series data for incident trending.
 
@@ -890,11 +921,11 @@ class HatchMaloperationAnalyzer:
         monthly_counts = defaultdict(int)
 
         for incident in incidents:
-            incident_date = incident.get('date')
+            incident_date = incident.get("date")
             if incident_date:
                 # Create month key (YYYY-MM)
                 if isinstance(incident_date, datetime):
-                    month_key = incident_date.strftime('%Y-%m')
+                    month_key = incident_date.strftime("%Y-%m")
                 else:
                     # Handle date objects
                     month_key = f"{incident_date.year:04d}-{incident_date.month:02d}"
@@ -903,7 +934,7 @@ class HatchMaloperationAnalyzer:
 
         # Convert to sorted list of dictionaries
         time_series = [
-            {'period': month, 'count': count}
+            {"period": month, "count": count}
             for month, count in sorted(monthly_counts.items())
         ]
 
@@ -920,36 +951,44 @@ class HatchMaloperationAnalyzer:
             Dictionary with trend analysis
         """
         if not incidents:
-            return {'direction': 'stable', 'change_rate': 0}
+            return {"direction": "stable", "change_rate": 0}
 
         # Get time series
         time_series = self.get_time_series_data(incidents)
 
         if len(time_series) < 2:
-            return {'direction': 'stable', 'change_rate': 0}
+            return {"direction": "stable", "change_rate": 0}
 
         # Simple trend: compare first half to second half
         midpoint = len(time_series) // 2
-        first_half_avg = sum(d['count'] for d in time_series[:midpoint]) / midpoint
-        second_half_avg = sum(d['count'] for d in time_series[midpoint:]) / (len(time_series) - midpoint)
+        first_half_avg = sum(d["count"] for d in time_series[:midpoint]) / midpoint
+        second_half_avg = sum(d["count"] for d in time_series[midpoint:]) / (
+            len(time_series) - midpoint
+        )
 
-        change_rate = ((second_half_avg - first_half_avg) / first_half_avg * 100) if first_half_avg > 0 else 0
+        change_rate = (
+            ((second_half_avg - first_half_avg) / first_half_avg * 100)
+            if first_half_avg > 0
+            else 0
+        )
 
         if change_rate > 10:
-            direction = 'increasing'
+            direction = "increasing"
         elif change_rate < -10:
-            direction = 'decreasing'
+            direction = "decreasing"
         else:
-            direction = 'stable'
+            direction = "stable"
 
         return {
-            'direction': direction,
-            'change_rate': round(change_rate, 2),
-            'first_half_avg': round(first_half_avg, 2),
-            'second_half_avg': round(second_half_avg, 2),
+            "direction": direction,
+            "change_rate": round(change_rate, 2),
+            "first_half_avg": round(first_half_avg, 2),
+            "second_half_avg": round(second_half_avg, 2),
         }
 
-    def aggregate_recommendations(self, incidents: List[Dict[str, Any]]) -> Dict[str, int]:
+    def aggregate_recommendations(
+        self, incidents: List[Dict[str, Any]]
+    ) -> Dict[str, int]:
         """
         Aggregate recommendations from multiple incidents.
 
@@ -968,7 +1007,9 @@ class HatchMaloperationAnalyzer:
 
         return dict(recommendation_counts)
 
-    def generate_comprehensive_report(self, incidents: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def generate_comprehensive_report(
+        self, incidents: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
         """
         Generate comprehensive analysis report combining all features.
 
@@ -979,39 +1020,47 @@ class HatchMaloperationAnalyzer:
             Comprehensive report dictionary
         """
         # Filter to only hatch incidents
-        hatch_incidents = [inc for inc in incidents
-                          if self.is_hatch_maloperation_incident(inc)]
+        hatch_incidents = [
+            inc for inc in incidents if self.is_hatch_maloperation_incident(inc)
+        ]
 
         if not hatch_incidents:
-            return {
-                'error': 'No hatch maloperation incidents found in dataset'
-            }
+            return {"error": "No hatch maloperation incidents found in dataset"}
 
         # Generate all analyses
         report = {
-            'summary_statistics': {
-                'total_incidents': len(hatch_incidents),
-                'date_range': {
-                    'earliest': min(inc['date'] for inc in hatch_incidents if inc.get('date')),
-                    'latest': max(inc['date'] for inc in hatch_incidents if inc.get('date')),
+            "summary_statistics": {
+                "total_incidents": len(hatch_incidents),
+                "date_range": {
+                    "earliest": min(
+                        inc["date"] for inc in hatch_incidents if inc.get("date")
+                    ),
+                    "latest": max(
+                        inc["date"] for inc in hatch_incidents if inc.get("date")
+                    ),
                 },
-                'severity_distribution': self.get_severity_distribution(hatch_incidents),
+                "severity_distribution": self.get_severity_distribution(
+                    hatch_incidents
+                ),
             },
-            'location_analysis': self.get_location_statistics(hatch_incidents),
-            'consequence_analysis': self.get_consequence_statistics(hatch_incidents),
-            'contributing_factors': self._analyze_contributing_factors(hatch_incidents),
-            'risk_assessment': self._generate_risk_assessment(hatch_incidents),
-            'recommendations': self.aggregate_recommendations(hatch_incidents),
-            'case_studies': [
-                self.extract_case_study(inc) for inc in hatch_incidents
+            "location_analysis": self.get_location_statistics(hatch_incidents),
+            "consequence_analysis": self.get_consequence_statistics(hatch_incidents),
+            "contributing_factors": self._analyze_contributing_factors(hatch_incidents),
+            "risk_assessment": self._generate_risk_assessment(hatch_incidents),
+            "recommendations": self.aggregate_recommendations(hatch_incidents),
+            "case_studies": [
+                self.extract_case_study(inc)
+                for inc in hatch_incidents
                 if self.is_significant_incident(inc)
             ],
-            'trends': self.calculate_trends(hatch_incidents),
+            "trends": self.calculate_trends(hatch_incidents),
         }
 
         return report
 
-    def _analyze_contributing_factors(self, incidents: List[Dict[str, Any]]) -> Dict[str, int]:
+    def _analyze_contributing_factors(
+        self, incidents: List[Dict[str, Any]]
+    ) -> Dict[str, int]:
         """Analyze distribution of contributing factors across incidents."""
         factor_counts = Counter()
 
@@ -1022,7 +1071,9 @@ class HatchMaloperationAnalyzer:
 
         return dict(factor_counts)
 
-    def _generate_risk_assessment(self, incidents: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def _generate_risk_assessment(
+        self, incidents: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
         """Generate overall risk assessment from incidents."""
         risk_scores = [self.calculate_risk_score(inc) for inc in incidents]
 
@@ -1030,10 +1081,10 @@ class HatchMaloperationAnalyzer:
             return {}
 
         return {
-            'average_risk_score': round(sum(risk_scores) / len(risk_scores), 2),
-            'highest_risk_score': max(risk_scores),
-            'lowest_risk_score': min(risk_scores),
-            'high_risk_incidents': len([s for s in risk_scores if s >= 70]),
-            'moderate_risk_incidents': len([s for s in risk_scores if 40 <= s < 70]),
-            'low_risk_incidents': len([s for s in risk_scores if s < 40]),
+            "average_risk_score": round(sum(risk_scores) / len(risk_scores), 2),
+            "highest_risk_score": max(risk_scores),
+            "lowest_risk_score": min(risk_scores),
+            "high_risk_incidents": len([s for s in risk_scores if s >= 70]),
+            "moderate_risk_incidents": len([s for s in risk_scores if 40 <= s < 70]),
+            "low_risk_incidents": len([s for s in risk_scores if s < 40]),
         }

@@ -9,8 +9,8 @@ Rules can be used standalone or as part of a validation pipeline.
 
 import re
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional, Set, Type, Union
+from dataclasses import dataclass
+from typing import Any, Callable, Dict, List, Optional, Set
 
 
 @dataclass
@@ -55,7 +55,9 @@ class ValidationRule(ABC):
         self.custom_error = error_message
 
     @abstractmethod
-    def validate(self, value: Any, record: Optional[Dict[str, Any]] = None) -> RuleResult:
+    def validate(
+        self, value: Any, record: Optional[Dict[str, Any]] = None
+    ) -> RuleResult:
         """
         Validate a value against this rule.
 
@@ -85,18 +87,24 @@ class RequiredRule(ValidationRule):
         super().__init__(field_name, error_message)
         self.allow_empty_string = allow_empty_string
 
-    def validate(self, value: Any, record: Optional[Dict[str, Any]] = None) -> RuleResult:
+    def validate(
+        self, value: Any, record: Optional[Dict[str, Any]] = None
+    ) -> RuleResult:
         """Check that value is present and not empty."""
         if value is None:
             return RuleResult.failure(
                 self.get_error_message(f"Field '{self.field_name}' is required"),
-                "required"
+                "required",
             )
 
-        if not self.allow_empty_string and isinstance(value, str) and value.strip() == "":
+        if (
+            not self.allow_empty_string
+            and isinstance(value, str)
+            and value.strip() == ""
+        ):
             return RuleResult.failure(
                 self.get_error_message(f"Field '{self.field_name}' cannot be empty"),
-                "required"
+                "required",
             )
 
         return RuleResult.success()
@@ -118,7 +126,9 @@ class RangeRule(ValidationRule):
         self.max_value = max_value
         self.inclusive = inclusive
 
-    def validate(self, value: Any, record: Optional[Dict[str, Any]] = None) -> RuleResult:
+    def validate(
+        self, value: Any, record: Optional[Dict[str, Any]] = None
+    ) -> RuleResult:
         """Check that value is within range."""
         if value is None:
             return RuleResult.success()  # Use RequiredRule for null checks
@@ -127,8 +137,7 @@ class RangeRule(ValidationRule):
             num_value = float(value)
         except (ValueError, TypeError):
             return RuleResult.failure(
-                f"Field '{self.field_name}' must be numeric",
-                "type"
+                f"Field '{self.field_name}' must be numeric", "type"
             )
 
         if self.inclusive:
@@ -137,14 +146,14 @@ class RangeRule(ValidationRule):
                     self.get_error_message(
                         f"Field '{self.field_name}' must be >= {self.min_value}"
                     ),
-                    "range"
+                    "range",
                 )
             if self.max_value is not None and num_value > self.max_value:
                 return RuleResult.failure(
                     self.get_error_message(
                         f"Field '{self.field_name}' must be <= {self.max_value}"
                     ),
-                    "range"
+                    "range",
                 )
         else:
             if self.min_value is not None and num_value <= self.min_value:
@@ -152,14 +161,14 @@ class RangeRule(ValidationRule):
                     self.get_error_message(
                         f"Field '{self.field_name}' must be > {self.min_value}"
                     ),
-                    "range"
+                    "range",
                 )
             if self.max_value is not None and num_value >= self.max_value:
                 return RuleResult.failure(
                     self.get_error_message(
                         f"Field '{self.field_name}' must be < {self.max_value}"
                     ),
-                    "range"
+                    "range",
                 )
 
         return RuleResult.success()
@@ -179,7 +188,9 @@ class PatternRule(ValidationRule):
         self.pattern = re.compile(pattern)
         self.description = description or pattern
 
-    def validate(self, value: Any, record: Optional[Dict[str, Any]] = None) -> RuleResult:
+    def validate(
+        self, value: Any, record: Optional[Dict[str, Any]] = None
+    ) -> RuleResult:
         """Check that value matches pattern."""
         if value is None:
             return RuleResult.success()
@@ -192,7 +203,7 @@ class PatternRule(ValidationRule):
                 self.get_error_message(
                     f"Field '{self.field_name}' must match pattern: {self.description}"
                 ),
-                "pattern"
+                "pattern",
             )
 
         return RuleResult.success()
@@ -218,7 +229,9 @@ class EnumRule(ValidationRule):
                 str(v).lower() for v in allowed_values if v is not None
             }
 
-    def validate(self, value: Any, record: Optional[Dict[str, Any]] = None) -> RuleResult:
+    def validate(
+        self, value: Any, record: Optional[Dict[str, Any]] = None
+    ) -> RuleResult:
         """Check that value is in allowed set."""
         if value is None:
             return RuleResult.success()
@@ -229,7 +242,7 @@ class EnumRule(ValidationRule):
                     self.get_error_message(
                         f"Field '{self.field_name}' must be one of: {sorted(self.allowed_values)}"
                     ),
-                    "enum"
+                    "enum",
                 )
         else:
             if str(value).lower() not in self._lower_values:
@@ -237,7 +250,7 @@ class EnumRule(ValidationRule):
                     self.get_error_message(
                         f"Field '{self.field_name}' must be one of: {sorted(self.allowed_values)}"
                     ),
-                    "enum"
+                    "enum",
                 )
 
         return RuleResult.success()
@@ -257,7 +270,9 @@ class LengthRule(ValidationRule):
         self.min_length = min_length
         self.max_length = max_length
 
-    def validate(self, value: Any, record: Optional[Dict[str, Any]] = None) -> RuleResult:
+    def validate(
+        self, value: Any, record: Optional[Dict[str, Any]] = None
+    ) -> RuleResult:
         """Check string length."""
         if value is None:
             return RuleResult.success()
@@ -270,7 +285,7 @@ class LengthRule(ValidationRule):
                 self.get_error_message(
                     f"Field '{self.field_name}' must be at least {self.min_length} characters"
                 ),
-                "length"
+                "length",
             )
 
         if self.max_length is not None and length > self.max_length:
@@ -278,7 +293,7 @@ class LengthRule(ValidationRule):
                 self.get_error_message(
                     f"Field '{self.field_name}' must be at most {self.max_length} characters"
                 ),
-                "length"
+                "length",
             )
 
         return RuleResult.success()
@@ -311,7 +326,9 @@ class CrossFieldRule(ValidationRule):
         self.related_fields = related_fields
         self.validator = validator
 
-    def validate(self, value: Any, record: Optional[Dict[str, Any]] = None) -> RuleResult:
+    def validate(
+        self, value: Any, record: Optional[Dict[str, Any]] = None
+    ) -> RuleResult:
         """Validate cross-field relationship."""
         if record is None:
             return RuleResult.success()
@@ -325,7 +342,9 @@ class CrossFieldRule(ValidationRule):
 
         try:
             if not self.validator(record):
-                return RuleResult.failure(self.custom_error or "Cross-field validation failed", "cross_field")
+                return RuleResult.failure(
+                    self.custom_error or "Cross-field validation failed", "cross_field"
+                )
         except Exception as e:
             return RuleResult.failure(f"Validation error: {str(e)}", "cross_field")
 
@@ -352,7 +371,9 @@ class CustomRule(ValidationRule):
         super().__init__(field_name, error_message)
         self.validator = validator
 
-    def validate(self, value: Any, record: Optional[Dict[str, Any]] = None) -> RuleResult:
+    def validate(
+        self, value: Any, record: Optional[Dict[str, Any]] = None
+    ) -> RuleResult:
         """Validate using custom function."""
         if value is None:
             return RuleResult.success()
@@ -360,8 +381,7 @@ class CustomRule(ValidationRule):
         try:
             if not self.validator(value):
                 return RuleResult.failure(
-                    self.custom_error or "Custom validation failed",
-                    "custom"
+                    self.custom_error or "Custom validation failed", "custom"
                 )
         except Exception as e:
             return RuleResult.failure(f"Validation error: {str(e)}", "custom")

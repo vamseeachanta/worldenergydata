@@ -1,14 +1,14 @@
 import os
 import pickle
-import pandas as pd
 from pathlib import Path
 from typing import Dict, List, Union
+
+import pandas as pd
+from colorama import init as colorama_init
 from loguru import logger
 
-from colorama import Fore, Style
-from colorama import init as colorama_init
-
 colorama_init()
+
 
 class LeaseData:
     """
@@ -25,16 +25,42 @@ class LeaseData:
         self.cfg = cfg
         self.bin_folder_path = None
         self.lease_columns = [
-            'BOTM_LEASE_NUM', 'BOTM_LEASE_NUMBER', 'SURF_LEASE_NUM',
-            'LEASE_NUMBER', 'LEASE', 'COMP_LEASE_NUMBER'
+            "BOTM_LEASE_NUM",
+            "BOTM_LEASE_NUMBER",
+            "SURF_LEASE_NUM",
+            "LEASE_NUMBER",
+            "LEASE",
+            "COMP_LEASE_NUMBER",
         ]
 
         # Define the target folders containing lease data
         self.lease_data_folders = [
-            'apd', 'apichanges', 'apiraw', 'apm', 'assignments', 'bhps', 'borehole',
-            'decomcost', 'deepqual', 'eor', 'ewellapd', 'fmp', 'frs', 'incinv', 'lab',
-            'leaseowner', 'mcpflow', 'nonrequired', 'offshorestats', 'osfr', 'plans',
-            'platstruc', 'production_raw', 'scanneddocs', 'serialreg', 'war'
+            "apd",
+            "apichanges",
+            "apiraw",
+            "apm",
+            "assignments",
+            "bhps",
+            "borehole",
+            "decomcost",
+            "deepqual",
+            "eor",
+            "ewellapd",
+            "fmp",
+            "frs",
+            "incinv",
+            "lab",
+            "leaseowner",
+            "mcpflow",
+            "nonrequired",
+            "offshorestats",
+            "osfr",
+            "plans",
+            "platstruc",
+            "production_raw",
+            "scanneddocs",
+            "serialreg",
+            "war",
         ]
 
         # Initialize bin_folder_path if cfg is provided
@@ -48,7 +74,7 @@ class LeaseData:
         Args:
             cfg (dict): Configuration dictionary
         """
-        self.bin_folder_path = Path(cfg['parameters']['filepath']['bin_dir'])
+        self.bin_folder_path = Path(cfg["parameters"]["filepath"]["bin_dir"])
         if not self.bin_folder_path.exists():
             raise FileNotFoundError(f"Bin folder not found: {self.bin_folder_path}")
 
@@ -76,8 +102,14 @@ class LeaseData:
         # Ensure bin path is initialized
         self._ensure_bin_path_initialized(cfg)
 
-        cfg_input_lease = input_group['bottom_lease']['number'] if input_group and 'bottom_lease' in input_group and input_group['bottom_lease']['number'] is not None else None
-        bin_path = Path(cfg['parameters']['filepath']['bin_dir'])
+        cfg_input_lease = (
+            input_group["bottom_lease"]["number"]
+            if input_group
+            and "bottom_lease" in input_group
+            and input_group["bottom_lease"]["number"] is not None
+            else None
+        )
+        bin_path = Path(cfg["parameters"]["filepath"]["bin_dir"])
         if not bin_path.exists():
             raise FileNotFoundError(f"Bin folder not found: {bin_path}")
 
@@ -89,7 +121,9 @@ class LeaseData:
 
         return cfg
 
-    def get_lease_data_from_input_bin_files(self, lease_numbers: Union[str, int, List[Union[str, int]]]) -> Dict[str, pd.DataFrame]:
+    def get_lease_data_from_input_bin_files(
+        self, lease_numbers: Union[str, int, List[Union[str, int]]]
+    ) -> Dict[str, pd.DataFrame]:
         """
         Search for lease numbers across all .bin files in the specified lease data folders.
 
@@ -132,7 +166,9 @@ class LeaseData:
             List[Path]: List of paths to all .bin files
         """
         if self.bin_folder_path is None:
-            raise ValueError("bin_folder_path not initialized. Call router method first or provide cfg in __init__.")
+            raise ValueError(
+                "bin_folder_path not initialized. Call router method first or provide cfg in __init__."
+            )
 
         bin_files = []
 
@@ -145,12 +181,16 @@ class LeaseData:
                 # Search for .bin files in this specific folder and its subfolders
                 for root, dirs, files in os.walk(folder_path):
                     for file in files:
-                        if file.endswith('.bin'):
+                        if file.endswith(".bin"):
                             bin_files.append(Path(root) / file)
             else:
-                logger.warning(f"Folder {folder_path} does not exist or is not a directory")
+                logger.warning(
+                    f"Folder {folder_path} does not exist or is not a directory"
+                )
 
-        logger.success(f"Found {len(bin_files)} .bin files across {len(self.lease_data_folders)} lease data folders")
+        logger.success(
+            f"Found {len(bin_files)} .bin files across {len(self.lease_data_folders)} lease data folders"
+        )
         return bin_files
 
     def load_dataframe(self, file_path: Path) -> pd.DataFrame:
@@ -164,7 +204,7 @@ class LeaseData:
             pd.DataFrame: Loaded dataframe or empty DataFrame if failed
         """
         try:
-            with open(file_path, 'rb') as f:
+            with open(file_path, "rb") as f:
                 df = pickle.load(f)
 
             if isinstance(df, pd.DataFrame):
@@ -176,7 +216,9 @@ class LeaseData:
             logger.error(f"Error loading {file_path}: {e}")
             return pd.DataFrame()
 
-    def fetch_matching_lease_data_from_df(self, df: pd.DataFrame, lease_numbers: List[Union[str, int]]) -> pd.DataFrame:
+    def fetch_matching_lease_data_from_df(
+        self, df: pd.DataFrame, lease_numbers: List[Union[str, int]]
+    ) -> pd.DataFrame:
         """
         Search for lease numbers in a dataframe.
 
@@ -201,7 +243,7 @@ class LeaseData:
 
         for col in existing_columns:
             try:
-                if df[col].dtype == 'object':
+                if df[col].dtype == "object":
                     # For string columns, convert to string and use isin
                     col_str = df[col].astype(str)
                     str_lease_numbers = [str(ln) for ln in lease_numbers]
@@ -226,16 +268,22 @@ class LeaseData:
         """
         from assetutilities.common.utilities import is_dir_valid_func
 
-        lease_num = str(input_group['bottom_lease']['number']) if input_group and 'bottom_lease' in input_group and input_group['bottom_lease']['number'] is not None else None
-        label = 'lease_'+ lease_num
-        output_path = os.path.join(cfg['Analysis']['result_folder'], 'Data')
+        lease_num = (
+            str(input_group["bottom_lease"]["number"])
+            if input_group
+            and "bottom_lease" in input_group
+            and input_group["bottom_lease"]["number"] is not None
+            else None
+        )
+        label = "lease_" + lease_num
+        output_path = os.path.join(cfg["Analysis"]["result_folder"], "Data")
         if output_path is None:
-            result_folder = self.cfg['Analysis']['result_folder']
-            output_path = os.path.join(result_folder, 'Data')
-        analysis_root_folder = cfg['Analysis']['analysis_root_folder']
+            result_folder = self.cfg["Analysis"]["result_folder"]
+            output_path = os.path.join(result_folder, "Data")
+        analysis_root_folder = cfg["Analysis"]["analysis_root_folder"]
         is_dir_valid, output_path = is_dir_valid_func(output_path, analysis_root_folder)
 
-        output_file = os.path.join(output_path, str(label) + '.csv')
+        output_file = os.path.join(output_path, str(label) + ".csv")
 
         # Combine all results into a single DataFrame
         combined_df = pd.DataFrame()

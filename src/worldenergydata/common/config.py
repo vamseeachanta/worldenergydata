@@ -17,7 +17,7 @@ Example usage:
 import os
 from functools import lru_cache
 from pathlib import Path
-from typing import Optional, Any, Dict, List
+from typing import Any, Dict
 
 from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -46,7 +46,9 @@ class DatabaseSettings(BaseSettings):
     pool_timeout: int = Field(default=30, description="Pool timeout in seconds")
 
     # SSL settings
-    ssl_mode: str = Field(default="prefer", description="SSL mode (disable, prefer, require)")
+    ssl_mode: str = Field(
+        default="prefer", description="SSL mode (disable, prefer, require)"
+    )
 
     @property
     def url(self) -> str:
@@ -87,8 +89,7 @@ class CacheSettings(BaseSettings):
 
     # File cache settings
     directory: Path = Field(
-        default=Path(".cache"),
-        description="Directory for file-based cache"
+        default=Path(".cache"), description="Directory for file-based cache"
     )
 
     # Cache behavior
@@ -109,8 +110,7 @@ class APISettings(BaseSettings):
 
     # BSEE API settings
     bsee_base_url: str = Field(
-        default="https://www.data.bsee.gov",
-        description="BSEE data portal base URL"
+        default="https://www.data.bsee.gov", description="BSEE data portal base URL"
     )
     bsee_timeout: int = Field(default=60, description="BSEE API timeout in seconds")
     bsee_retries: int = Field(default=3, description="BSEE API retry count")
@@ -118,24 +118,20 @@ class APISettings(BaseSettings):
     # EIA API settings
     eia_api_key: str = Field(default="", description="EIA API key")
     eia_base_url: str = Field(
-        default="https://api.eia.gov",
-        description="EIA API base URL"
+        default="https://api.eia.gov", description="EIA API base URL"
     )
 
     # SODIR (Norwegian) API settings
     sodir_base_url: str = Field(
-        default="https://factpages.sodir.no",
-        description="SODIR data portal base URL"
+        default="https://factpages.sodir.no", description="SODIR data portal base URL"
     )
 
     # General API settings
     rate_limit_requests: int = Field(
-        default=10,
-        description="Max requests per rate_limit_period"
+        default=10, description="Max requests per rate_limit_period"
     )
     rate_limit_period: int = Field(
-        default=1,
-        description="Rate limit period in seconds"
+        default=1, description="Rate limit period in seconds"
     )
 
     @field_validator("eia_api_key")
@@ -177,35 +173,24 @@ class Settings(BaseSettings):
     log_json: bool = Field(default=False, description="Output logs as JSON")
 
     # Data directories
-    data_dir: Path = Field(
-        default=Path("data"),
-        description="Base data directory"
-    )
+    data_dir: Path = Field(default=Path("data"), description="Base data directory")
     raw_data_dir: Path = Field(
-        default=Path("data/raw"),
-        description="Raw data directory"
+        default=Path("data/raw"), description="Raw data directory"
     )
     processed_data_dir: Path = Field(
-        default=Path("data/processed"),
-        description="Processed data directory"
+        default=Path("data/processed"), description="Processed data directory"
     )
     reports_dir: Path = Field(
-        default=Path("reports"),
-        description="Reports output directory"
+        default=Path("reports"), description="Reports output directory"
     )
 
     # Processing settings
-    parallel_workers: int = Field(
-        default=4,
-        description="Number of parallel workers"
-    )
+    parallel_workers: int = Field(default=4, description="Number of parallel workers")
     batch_size: int = Field(
-        default=1000,
-        description="Default batch size for processing"
+        default=1000, description="Default batch size for processing"
     )
     chunk_size_mb: int = Field(
-        default=50,
-        description="Chunk size for large file processing in MB"
+        default=50, description="Chunk size for large file processing in MB"
     )
 
     # Nested settings
@@ -311,7 +296,7 @@ def get_module_settings(module_name: str) -> Dict[str, Any]:
     """
     prefix = f"MODULE_{module_name.upper()}_"
     return {
-        key[len(prefix):].lower(): value
+        key[len(prefix) :].lower(): value
         for key, value in os.environ.items()
         if key.startswith(prefix)
     }

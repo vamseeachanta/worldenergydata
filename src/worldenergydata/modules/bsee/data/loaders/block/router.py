@@ -1,18 +1,23 @@
-import pandas as pd
-from worldenergydata.modules.bsee.data.loaders.block.local_files import DataFromLocalFiles
+from worldenergydata.modules.bsee.data.loaders.block.local_files import (
+    DataFromLocalFiles,
+)
 from worldenergydata.modules.bsee.data.loaders.block.war_data import WARDataFromBin
 
 block_data_from_local_files = DataFromLocalFiles()
 WAR_data_from_bin = WARDataFromBin()
 
+
 class BlockRouter:
 
     def __init__(self):
-            pass
+        pass
 
     def router(self, cfg):
 
-        if 'groups' in cfg['data'] and cfg['data']['groups'][0]['bottom_block'] is not None:
+        if (
+            "groups" in cfg["data"]
+            and cfg["data"]["groups"][0]["bottom_block"] is not None
+        ):
             cfg = self.get_block_data_groups(cfg)
 
         return cfg
@@ -20,7 +25,7 @@ class BlockRouter:
     def get_block_data_groups(self, cfg):
 
         # utilized for temporary data retrieval
-        if 'by_bin' in cfg['data'] and cfg['data']['by_bin']:
+        if "by_bin" in cfg["data"] and cfg["data"]["by_bin"]:
             cfg, block_data_groups = WAR_data_from_bin.router(cfg)
         else:
             cfg, block_data_groups = block_data_from_local_files.router(cfg)

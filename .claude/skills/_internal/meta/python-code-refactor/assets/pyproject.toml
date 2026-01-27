@@ -1,0 +1,148 @@
+# Python Code Refactoring Tool Configuration
+# This configuration file provides settings for all code quality tools
+# used in the python-code-refactor skill.
+
+[tool.ruff]
+# Ruff - Fast Python linter and formatter
+target-version = "py311"
+line-length = 88
+exclude = [
+    ".git",
+    ".venv",
+    "__pycache__",
+    "*.pyc",
+    ".mypy_cache",
+    ".pytest_cache",
+    "build",
+    "dist",
+    ".eggs",
+]
+
+[tool.ruff.lint]
+# Enable comprehensive rule sets:
+# E, W - pycodestyle errors and warnings
+# F - Pyflakes
+# C90 - McCabe complexity
+# B - flake8-bugbear
+# SIM - flake8-simplify
+# C4 - flake8-comprehensions
+# UP - pyupgrade
+# I - isort
+# N - pep8-naming
+# D - pydocstyle
+# RUF - Ruff-specific rules
+select = ["E", "W", "F", "C90", "B", "SIM", "C4", "UP", "I", "N", "D", "RUF"]
+ignore = [
+    "D100",  # Missing docstring in public module
+    "D104",  # Missing docstring in public package
+]
+
+[tool.ruff.lint.mccabe]
+# Cyclomatic complexity threshold
+max-complexity = 10
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]
+force-single-line = false
+lines-after-imports = 2
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.complexipy]
+# Cognitive complexity analyzer
+max_complexity = 15
+output_format = "json"
+exclude = [
+    ".git",
+    ".venv",
+    "__pycache__",
+    "tests",
+]
+
+[tool.pytest.ini_options]
+# Pytest configuration
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --cov --cov-report=term-missing --cov-report=html"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+]
+
+[tool.coverage.run]
+# Coverage measurement settings
+branch = true
+source = ["src"]
+omit = [
+    "*/__pycache__/*",
+    "*/tests/*",
+    "*/.venv/*",
+    "*/conftest.py",
+]
+
+[tool.coverage.report]
+# Coverage reporting settings
+fail_under = 80
+show_missing = true
+skip_covered = false
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+    "if __name__ == .__main__.:",
+    "@abstractmethod",
+]
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.mypy]
+# MyPy type checking configuration
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+show_error_codes = true
+show_column_numbers = true
+ignore_missing_imports = false
+exclude = [
+    "^tests/",
+    "^build/",
+    "^dist/",
+]
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+
+[tool.bandit]
+# Security linter configuration
+exclude_dirs = ["tests", ".venv"]
+skips = ["B101"]  # Skip assert warnings in non-test code
+
+[tool.vulture]
+# Dead code detection
+min_confidence = 80
+exclude = ["tests/", ".venv/"]
+ignore_names = ["setUp", "tearDown", "setUpClass", "tearDownClass"]

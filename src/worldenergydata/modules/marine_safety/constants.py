@@ -6,7 +6,7 @@ vessel types, and other categorizations.
 """
 
 from enum import Enum, IntEnum
-from typing import Dict, List, Set
+from typing import Dict, Set
 
 
 class IncidentType(str, Enum):

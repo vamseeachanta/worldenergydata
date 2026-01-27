@@ -8,21 +8,21 @@ Creates interactive 3D visualizations of vessel hulls using Plotly mesh3d.
 """
 
 from pathlib import Path
-from typing import Optional, Dict, Any, Tuple
-import numpy as np
+from typing import Dict, Optional
 
 try:
     import plotly.graph_objects as go
     from plotly.subplots import make_subplots
+
     PLOTLY_AVAILABLE = True
 except ImportError:
     PLOTLY_AVAILABLE = False
 
+from worldenergydata.modules.vessel_hull_models.exceptions import VisualizationError
 from worldenergydata.modules.vessel_hull_models.geometry.obj_parser import (
     OBJMesh,
     parse_obj_file,
 )
-from worldenergydata.modules.vessel_hull_models.exceptions import VisualizationError
 
 
 def _check_plotly():

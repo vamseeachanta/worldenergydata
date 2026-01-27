@@ -14,38 +14,32 @@ Provides commands for:
 
 from pathlib import Path
 from typing import Optional
-import sys
 
 import typer
 from rich.console import Console
-from rich.table import Table
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.table import Table
 
 from worldenergydata.modules.vessel_hull_models.config import get_config
+from worldenergydata.modules.vessel_hull_models.exceptions import OBJParseError
+from worldenergydata.modules.vessel_hull_models.geometry.gdf_parser import (
+    convert_gdf_to_obj,
+    parse_gdf_file,
+    validate_gdf_file,
+)
+from worldenergydata.modules.vessel_hull_models.geometry.msh_exporter import (
+    convert_gdf_to_msh,
+    convert_obj_to_msh,
+)
 from worldenergydata.modules.vessel_hull_models.geometry.obj_parser import (
     parse_obj_file,
     validate_obj_file,
 )
-from worldenergydata.modules.vessel_hull_models.geometry.gdf_parser import (
-    parse_gdf_file,
-    convert_gdf_to_obj,
-    validate_gdf_file,
-)
-from worldenergydata.modules.vessel_hull_models.geometry.msh_exporter import (
-    convert_obj_to_msh,
-    convert_gdf_to_msh,
-    validate_msh_file,
-)
 from worldenergydata.modules.vessel_hull_models.visualization.plotly_3d import (
-    render_vessel_hull,
     export_hull_html,
+    render_vessel_hull,
 )
-from worldenergydata.modules.vessel_hull_models.exceptions import (
-    OBJParseError,
-    OBJValidationError,
-)
-
 
 app = typer.Typer(
     name="vessel-hull-models",
@@ -171,6 +165,7 @@ def visualize(
 
             if open_browser:
                 import webbrowser
+
                 webbrowser.open(f"file://{output.resolve()}")
         else:
             # Show interactive plot
@@ -250,9 +245,7 @@ def list_hulls(
 @app.command()
 def stats(
     file_path: Path = typer.Argument(..., help="Path to OBJ file"),
-    json_output: bool = typer.Option(
-        False, "--json", "-j", help="Output as JSON"
-    ),
+    json_output: bool = typer.Option(False, "--json", "-j", help="Output as JSON"),
 ) -> None:
     """
     Display detailed statistics for a hull model.
@@ -269,11 +262,14 @@ def stats(
 
         if json_output:
             import json
+
             console.print(json.dumps(stats_data, indent=2))
         else:
             panel_content = []
             panel_content.append(f"[bold]File:[/bold] {file_path.name}")
-            panel_content.append(f"[bold]Size:[/bold] {stats_data['file_size_bytes'] / 1024:.1f} KB")
+            panel_content.append(
+                f"[bold]Size:[/bold] {stats_data['file_size_bytes'] / 1024:.1f} KB"
+            )
             panel_content.append("")
             panel_content.append("[bold cyan]Geometry[/bold cyan]")
             panel_content.append(f"  Vertices: {stats_data['vertex_count']:,}")
@@ -287,12 +283,18 @@ def stats(
             panel_content.append(f"  Height (Z): {stats_data['height']:.2f}")
             panel_content.append("")
             panel_content.append("[bold cyan]Bounding Box[/bold cyan]")
-            panel_content.append(f"  Min: ({stats_data['bbox_min'][0]:.2f}, {stats_data['bbox_min'][1]:.2f}, {stats_data['bbox_min'][2]:.2f})")
-            panel_content.append(f"  Max: ({stats_data['bbox_max'][0]:.2f}, {stats_data['bbox_max'][1]:.2f}, {stats_data['bbox_max'][2]:.2f})")
+            panel_content.append(
+                f"  Min: ({stats_data['bbox_min'][0]:.2f}, {stats_data['bbox_min'][1]:.2f}, {stats_data['bbox_min'][2]:.2f})"
+            )
+            panel_content.append(
+                f"  Max: ({stats_data['bbox_max'][0]:.2f}, {stats_data['bbox_max'][1]:.2f}, {stats_data['bbox_max'][2]:.2f})"
+            )
 
             if stats_data.get("object_name"):
                 panel_content.append("")
-                panel_content.append(f"[bold]Object:[/bold] {stats_data['object_name']}")
+                panel_content.append(
+                    f"[bold]Object:[/bold] {stats_data['object_name']}"
+                )
             if stats_data.get("material"):
                 panel_content.append(f"[bold]Material:[/bold] {stats_data['material']}")
 
@@ -360,10 +362,14 @@ def info() -> None:
     table.add_row("Hull Storage Path", str(config.storage.hulls_path))
     table.add_row("Synthetic Path", str(config.storage.synthetic_path))
     table.add_row("Cache Path", str(config.storage.cache_path))
-    table.add_row("Max File Size", f"{config.storage.max_file_size / (1024*1024):.0f} MB")
+    table.add_row(
+        "Max File Size", f"{config.storage.max_file_size / (1024*1024):.0f} MB"
+    )
 
     # Geometry settings
-    table.add_row("Dimension Tolerance", f"{config.geometry.dimension_tolerance * 100:.0f}%")
+    table.add_row(
+        "Dimension Tolerance", f"{config.geometry.dimension_tolerance * 100:.0f}%"
+    )
     table.add_row("Mesh Repair Enabled", str(config.geometry.enable_mesh_repair))
 
     # Visualization settings
@@ -395,9 +401,7 @@ def convert_gdf(
     output_dir: Optional[Path] = typer.Option(
         None, "--output", "-o", help="Output directory (default: same as input)"
     ),
-    obj: bool = typer.Option(
-        True, "--obj/--no-obj", help="Generate OBJ file"
-    ),
+    obj: bool = typer.Option(True, "--obj/--no-obj", help="Generate OBJ file"),
     msh: bool = typer.Option(
         True, "--msh/--no-msh", help="Generate MSH file (Gmsh format)"
     ),
@@ -429,7 +433,9 @@ def convert_gdf(
         console.print(f"  [dim]Faces:[/dim] {mesh.face_count:,}")
 
         dims = mesh.dimensions
-        console.print(f"  [dim]Dimensions:[/dim] {dims['length']:.1f} × {dims['width']:.1f} × {dims['height']:.1f} m\n")
+        console.print(
+            f"  [dim]Dimensions:[/dim] {dims['length']:.1f} × {dims['width']:.1f} × {dims['height']:.1f} m\n"
+        )
 
         # Convert to OBJ
         if obj:
@@ -506,9 +512,7 @@ def validate_gdf_cmd(
 
 @app.command("list-gdf")
 def list_gdf(
-    directory: Path = typer.Argument(
-        ..., help="Directory to search for GDF files"
-    ),
+    directory: Path = typer.Argument(..., help="Directory to search for GDF files"),
     recursive: bool = typer.Option(
         True, "--recursive/--no-recursive", "-r", help="Search recursively"
     ),
@@ -582,18 +586,14 @@ def list_gdf(
 
 @app.command("batch-convert")
 def batch_convert(
-    directory: Path = typer.Argument(
-        ..., help="Directory containing GDF files"
-    ),
+    directory: Path = typer.Argument(..., help="Directory containing GDF files"),
     output_dir: Optional[Path] = typer.Option(
         None, "--output", "-o", help="Output directory (default: same as input)"
     ),
     recursive: bool = typer.Option(
         True, "--recursive/--no-recursive", "-r", help="Search recursively"
     ),
-    obj: bool = typer.Option(
-        True, "--obj/--no-obj", help="Generate OBJ files"
-    ),
+    obj: bool = typer.Option(True, "--obj/--no-obj", help="Generate OBJ files"),
     msh: bool = typer.Option(
         True, "--msh/--no-msh", help="Generate MSH files (Gmsh format)"
     ),
@@ -660,7 +660,7 @@ def batch_convert(
 
             progress.advance(task)
 
-    console.print(f"\n[bold]Batch Conversion Complete[/bold]")
+    console.print("\n[bold]Batch Conversion Complete[/bold]")
     console.print(f"  [green]✓ Successful:[/green] {success_count}")
     if error_count > 0:
         console.print(f"  [red]✗ Failed:[/red] {error_count}")

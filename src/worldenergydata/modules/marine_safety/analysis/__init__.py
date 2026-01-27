@@ -2,27 +2,43 @@
 Marine Safety Analysis Module
 
 This package provides comprehensive statistical analysis capabilities for marine
-safety incident data including cause analysis, trend identification, and
-cross-tabulation studies.
+safety incident data including cause analysis, trend identification,
+cross-tabulation studies, and cross-source incident correlation.
 """
 
 from .cause_statistics import (
     CauseStatistics,
-    FrequencyDistribution,
-    TemporalTrend,
     CrossTabulation,
-    StatisticalSummary
+    FrequencyDistribution,
+    StatisticalSummary,
+    TemporalTrend,
 )
-
-from .incidents.hatch_maloperation_analysis import (
-    HatchMaloperationAnalyzer
+from .correlation import (
+    DeduplicationMetrics,
+    DeduplicationResult,
+    IncidentDeduplicator,
+    IncidentMatcher,
+    MatchConfig,
+    MatchResult,
+    MatchType,
 )
+from .incidents.hatch_maloperation_analysis import HatchMaloperationAnalyzer
 
 __all__ = [
-    'CauseStatistics',
-    'FrequencyDistribution',
-    'TemporalTrend',
-    'CrossTabulation',
-    'StatisticalSummary',
-    'HatchMaloperationAnalyzer',
+    # Cause Statistics
+    "CauseStatistics",
+    "FrequencyDistribution",
+    "TemporalTrend",
+    "CrossTabulation",
+    "StatisticalSummary",
+    # Incident Analysis
+    "HatchMaloperationAnalyzer",
+    # Cross-Source Correlation
+    "IncidentMatcher",
+    "MatchConfig",
+    "MatchResult",
+    "MatchType",
+    "IncidentDeduplicator",
+    "DeduplicationResult",
+    "DeduplicationMetrics",
 ]
