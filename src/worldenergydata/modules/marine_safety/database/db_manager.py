@@ -5,24 +5,24 @@ Handles database connections, sessions, and basic CRUD operations.
 """
 
 from contextlib import asynccontextmanager, contextmanager
-from typing import AsyncGenerator, Generator, Optional, Type, TypeVar, List, Any
-from sqlalchemy import create_engine, text, event
+from typing import Any, AsyncGenerator, Generator, Optional, TypeVar
+
+from sqlalchemy import create_engine, event, text
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     AsyncSession,
     async_sessionmaker,
-    create_async_engine
+    create_async_engine,
 )
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import QueuePool
+
 from worldenergydata.modules.marine_safety.config import get_config
 from worldenergydata.modules.marine_safety.database.models import Base
 from worldenergydata.modules.marine_safety.exceptions import (
-    DatabaseError,
     ConnectionError as DBConnectionError,
-    QueryError,
-    RecordNotFoundError
 )
+from worldenergydata.modules.marine_safety.exceptions import DatabaseError, QueryError
 
 T = TypeVar("T", bound=Base)
 
@@ -65,7 +65,7 @@ class DatabaseManager:
         except Exception as e:
             raise DBConnectionError(
                 message=f"Failed to create database engine: {str(e)}",
-                error_code="ENGINE_CREATE_FAILED"
+                error_code="ENGINE_CREATE_FAILED",
             )
 
     def _create_async_engine(self) -> AsyncEngine:
@@ -91,7 +91,7 @@ class DatabaseManager:
         except Exception as e:
             raise DBConnectionError(
                 message=f"Failed to create async database engine: {str(e)}",
-                error_code="ASYNC_ENGINE_CREATE_FAILED"
+                error_code="ASYNC_ENGINE_CREATE_FAILED",
             )
 
     @property
@@ -113,9 +113,7 @@ class DatabaseManager:
         """Get or create synchronous session factory"""
         if self._session_factory is None:
             self._session_factory = sessionmaker(
-                bind=self.engine,
-                class_=Session,
-                expire_on_commit=False
+                bind=self.engine, class_=Session, expire_on_commit=False
             )
         return self._session_factory
 
@@ -124,9 +122,7 @@ class DatabaseManager:
         """Get or create asynchronous session factory"""
         if self._async_session_factory is None:
             self._async_session_factory = async_sessionmaker(
-                bind=self.async_engine,
-                class_=AsyncSession,
-                expire_on_commit=False
+                bind=self.async_engine, class_=AsyncSession, expire_on_commit=False
             )
         return self._async_session_factory
 
@@ -150,7 +146,7 @@ class DatabaseManager:
             session.rollback()
             raise QueryError(
                 message=f"Database operation failed: {str(e)}",
-                error_code="SESSION_ERROR"
+                error_code="SESSION_ERROR",
             )
         finally:
             session.close()
@@ -176,7 +172,7 @@ class DatabaseManager:
             await session.rollback()
             raise QueryError(
                 message=f"Async database operation failed: {str(e)}",
-                error_code="ASYNC_SESSION_ERROR"
+                error_code="ASYNC_SESSION_ERROR",
             )
         finally:
             await session.close()
@@ -185,28 +181,23 @@ class DatabaseManager:
         """Create database schema if it doesn't exist"""
         try:
             with self.engine.connect() as conn:
-                conn.execute(
-                    text(f"CREATE SCHEMA IF NOT EXISTS {self.config.schema}")
-                )
+                conn.execute(text(f"CREATE SCHEMA IF NOT EXISTS {self.config.schema}"))
                 conn.commit()
         except Exception as e:
             raise DatabaseError(
                 message=f"Failed to create schema: {str(e)}",
-                error_code="SCHEMA_CREATE_FAILED"
+                error_code="SCHEMA_CREATE_FAILED",
             )
 
     def create_tables(self) -> None:
         """Create all tables defined in models"""
         try:
             self.create_schema()
-            Base.metadata.create_all(
-                bind=self.engine,
-                checkfirst=True
-            )
+            Base.metadata.create_all(bind=self.engine, checkfirst=True)
         except Exception as e:
             raise DatabaseError(
                 message=f"Failed to create tables: {str(e)}",
-                error_code="TABLE_CREATE_FAILED"
+                error_code="TABLE_CREATE_FAILED",
             )
 
     def drop_tables(self) -> None:
@@ -216,7 +207,7 @@ class DatabaseManager:
         except Exception as e:
             raise DatabaseError(
                 message=f"Failed to drop tables: {str(e)}",
-                error_code="TABLE_DROP_FAILED"
+                error_code="TABLE_DROP_FAILED",
             )
 
     def check_connection(self) -> bool:

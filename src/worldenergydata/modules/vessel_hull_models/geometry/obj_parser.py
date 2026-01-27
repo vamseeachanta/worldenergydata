@@ -8,16 +8,13 @@ Parses Wavefront OBJ files and extracts mesh geometry data including
 vertices, faces, normals, and texture coordinates.
 """
 
-import re
-from pathlib import Path
 from dataclasses import dataclass, field
-from typing import List, Tuple, Optional, Dict, Any
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
 import numpy as np
 
-from worldenergydata.modules.vessel_hull_models.exceptions import (
-    OBJParseError,
-    OBJValidationError,
-)
+from worldenergydata.modules.vessel_hull_models.exceptions import OBJParseError
 
 
 @dataclass
@@ -27,6 +24,7 @@ class OBJMesh:
 
     Stores vertices, faces, normals, and computed bounding box.
     """
+
     vertices: np.ndarray  # Shape: (N, 3) - XYZ coordinates
     faces: np.ndarray  # Shape: (M, 3 or 4) - Vertex indices (0-based)
     normals: Optional[np.ndarray] = None  # Shape: (K, 3) - Normal vectors
@@ -165,7 +163,9 @@ class OBJParser:
         vertices = np.array(self._vertices, dtype=np.float32)
         faces = np.array(self._faces, dtype=np.int32)
         normals = np.array(self._normals, dtype=np.float32) if self._normals else None
-        texcoords = np.array(self._texcoords, dtype=np.float32) if self._texcoords else None
+        texcoords = (
+            np.array(self._texcoords, dtype=np.float32) if self._texcoords else None
+        )
 
         return OBJMesh(
             vertices=vertices,
@@ -216,7 +216,9 @@ class OBJParser:
         """Parse vertex coordinates"""
         try:
             if len(coords) < 3:
-                raise OBJParseError(f"Line {line_num}: Vertex needs at least 3 coordinates")
+                raise OBJParseError(
+                    f"Line {line_num}: Vertex needs at least 3 coordinates"
+                )
             x, y, z = float(coords[0]), float(coords[1]), float(coords[2])
             self._vertices.append([x, y, z])
         except ValueError as e:
@@ -236,7 +238,9 @@ class OBJParser:
         """Parse texture coordinates"""
         try:
             if len(coords) < 1:
-                raise OBJParseError(f"Line {line_num}: Texture coord needs at least 1 value")
+                raise OBJParseError(
+                    f"Line {line_num}: Texture coord needs at least 1 value"
+                )
             u = float(coords[0])
             v = float(coords[1]) if len(coords) > 1 else 0.0
             self._texcoords.append([u, v])
@@ -275,18 +279,20 @@ class OBJParser:
         # Handle quads by triangulating
         if len(vertex_indices) == 4:
             # Split quad into two triangles
-            self._faces.append([vertex_indices[0], vertex_indices[1], vertex_indices[2]])
-            self._faces.append([vertex_indices[0], vertex_indices[2], vertex_indices[3]])
+            self._faces.append(
+                [vertex_indices[0], vertex_indices[1], vertex_indices[2]]
+            )
+            self._faces.append(
+                [vertex_indices[0], vertex_indices[2], vertex_indices[3]]
+            )
         elif len(vertex_indices) == 3:
             self._faces.append(vertex_indices)
         else:
             # For polygons with more than 4 vertices, fan triangulation
             for i in range(1, len(vertex_indices) - 1):
-                self._faces.append([
-                    vertex_indices[0],
-                    vertex_indices[i],
-                    vertex_indices[i + 1]
-                ])
+                self._faces.append(
+                    [vertex_indices[0], vertex_indices[i], vertex_indices[i + 1]]
+                )
 
 
 def parse_obj_file(file_path: Path) -> OBJMesh:

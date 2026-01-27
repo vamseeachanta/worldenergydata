@@ -7,16 +7,18 @@ used independently or in conjunction with the schema classes.
 
 import re
 from dataclasses import dataclass, field
-from datetime import date, datetime
-from typing import Any, Dict, List, Optional, Tuple, Type, Union
+from datetime import datetime
+from typing import Any, Dict, List, Optional, Tuple, Type
 
-from pydantic import BaseModel, ValidationError as PydanticValidationError
+from pydantic import BaseModel
+from pydantic import ValidationError as PydanticValidationError
 
 from worldenergydata.common.types import DataFrameLike
 
 # Conditional pandas import
 try:
     import pandas as pd
+
     HAS_PANDAS = True
 except ImportError:
     HAS_PANDAS = False
@@ -220,7 +222,9 @@ def validate_production_record(
     required_fields = ["api_well_number", "production_date", "oil_volume", "gas_volume"]
     for field_name in required_fields:
         if field_name not in record or record[field_name] is None:
-            result.add_error(field_name, "required", f"Field '{field_name}' is required")
+            result.add_error(
+                field_name, "required", f"Field '{field_name}' is required"
+            )
 
     if not result.is_valid:
         result.failed_count = 1
@@ -230,13 +234,17 @@ def validate_production_record(
     api = record.get("api_well_number", "")
     is_valid, error = validate_api_number(api, required_length=12)
     if not is_valid:
-        result.add_error("api_well_number", "format", error or "Invalid API number", api)
+        result.add_error(
+            "api_well_number", "format", error or "Invalid API number", api
+        )
 
     # Validate date
     prod_date = record.get("production_date", "")
     is_valid, error = validate_date_format(str(prod_date), "%Y%m")
     if not is_valid:
-        result.add_error("production_date", "format", error or "Invalid date", prod_date)
+        result.add_error(
+            "production_date", "format", error or "Invalid date", prod_date
+        )
 
     # Validate volumes
     for vol_field in ["oil_volume", "gas_volume", "water_volume"]:
@@ -245,18 +253,15 @@ def validate_production_record(
                 value = float(record[vol_field])
                 if value < 0:
                     result.add_error(
-                        vol_field, "range",
-                        f"Volume cannot be negative", value
+                        vol_field, "range", "Volume cannot be negative", value
                     )
                 elif strict and value > 10000000:
                     result.add_warning(
-                        vol_field,
-                        f"Volume {value} seems unusually high", value
+                        vol_field, f"Volume {value} seems unusually high", value
                     )
             except (ValueError, TypeError):
                 result.add_error(
-                    vol_field, "type",
-                    f"Volume must be numeric", record[vol_field]
+                    vol_field, "type", "Volume must be numeric", record[vol_field]
                 )
 
     # Validate days on production
@@ -266,13 +271,17 @@ def validate_production_record(
             days_val = int(days)
             if days_val < 0 or days_val > 31:
                 result.add_error(
-                    "days_on_production", "range",
-                    "Days on production must be 0-31", days
+                    "days_on_production",
+                    "range",
+                    "Days on production must be 0-31",
+                    days,
                 )
         except (ValueError, TypeError):
             result.add_error(
-                "days_on_production", "type",
-                "Days on production must be an integer", days
+                "days_on_production",
+                "type",
+                "Days on production must be an integer",
+                days,
             )
 
     if not result.is_valid:
@@ -315,14 +324,14 @@ def validate_data(
         records = data
     else:
         result.add_error(
-            "_data", "type",
-            "Data must be a DataFrame or list of dictionaries"
+            "_data", "type", "Data must be a DataFrame or list of dictionaries"
         )
         return result
 
     # Sample if requested
     if sample_size and len(records) > sample_size:
         import random
+
         records = random.sample(records, sample_size)
 
     # Validate each record

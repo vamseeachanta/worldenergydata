@@ -1,0 +1,336 @@
+# Texas Railroad Commission Configuration
+# Texas Oil & Gas Regulatory Data Integration
+
+module: texas_rrc
+version: 1.0.0
+description: Configuration for Texas Railroad Commission data collection and analysis
+
+# API Configuration
+api:
+  base_url: https://mft.rrc.texas.gov
+  pdq_url: https://webapps2.rrc.texas.gov/EWA
+  rate_limit: 2  # requests per second
+  cache_ttl: 86400  # 24 hours in seconds
+  timeout: 60  # request timeout in seconds
+  max_retries: 3
+  retry_delay: 2  # seconds between retries
+
+  # Authentication (if required in future)
+  auth:
+    enabled: false
+    method: none  # none, api_key, oauth2
+
+  # Headers for API requests
+  headers:
+    User-Agent: "WorldEnergyData Texas RRC Client/1.0"
+    Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+    Accept-Encoding: "gzip, deflate"
+
+# Data Types Configuration
+data_types:
+  production:
+    enabled: true
+    source: pdq_dump
+    description: "Monthly oil and gas production data"
+    format: csv
+    update_frequency: monthly
+    parameters:
+      include_injection: true
+      include_disposition: true
+      # Optional date filters
+      # start_date: "2020-01"
+      # end_date: "2024-12"
+
+  wells:
+    enabled: true
+    source: wellbore_query
+    description: "Well completion and status information"
+    format: ascii
+    update_frequency: monthly
+    parameters:
+      include_inactive: false
+      include_plugged: false
+      # Optional filters
+      # district: null
+      # county: null
+
+  permits:
+    enabled: true
+    source: drilling_permits
+    description: "Drilling permit applications and approvals"
+    format: ascii
+    update_frequency: daily
+    parameters:
+      permit_types: ["NEW", "RECOMPLETION", "REENTRY", "FIELD_TRANSFER"]
+      # Optional filters
+      # status: "APPROVED"
+      # date_range: null
+
+  completions:
+    enabled: false
+    source: completion_reports
+    description: "Well completion reports (W-2 forms)"
+    format: ascii
+    update_frequency: weekly
+    parameters:
+      include_amendments: true
+
+  lease_production:
+    enabled: false
+    source: lease_records
+    description: "Lease-level production summaries"
+    format: csv
+    update_frequency: monthly
+    parameters:
+      aggregate_by: lease
+
+# District Configuration
+districts:
+  "01":
+    name: "San Antonio"
+    description: "South Central Texas"
+  "02":
+    name: "Corpus Christi"
+    description: "Gulf Coast"
+  "03":
+    name: "Houston"
+    description: "Southeast Texas"
+  "04":
+    name: "Deep South Texas"
+    description: "Rio Grande Valley"
+  "05":
+    name: "East Central Texas"
+    description: "Central East Texas"
+  "06":
+    name: "East Texas"
+    description: "Piney Woods region"
+  "7B":
+    name: "West Central Texas"
+    description: "Abilene area"
+  "7C":
+    name: "San Angelo"
+    description: "Permian Basin (east)"
+  "08":
+    name: "Midland"
+    description: "Permian Basin (central)"
+  "8A":
+    name: "Lubbock"
+    description: "Permian Basin (north)"
+  "09":
+    name: "North Texas"
+    description: "Dallas-Fort Worth area"
+  "10":
+    name: "Panhandle"
+    description: "Texas Panhandle"
+
+# Validation Configuration
+validation:
+  # API Number format validation
+  api_number:
+    state_code: "42"  # Texas FIPS code
+    format: "42-CCC-WWWWW-SS-DD"
+    description: "42 = Texas, CCC = County (3 digits), WWWWW = Well (5 digits), SS = Sidetrack, DD = Directional"
+    regex: "^42-\\d{3}-\\d{5}(-\\d{2})?(-\\d{2})?$"
+
+  # Texas coordinate bounds
+  coordinates:
+    lat_min: 25.8
+    lat_max: 36.5
+    lon_min: -106.6
+    lon_max: -93.5
+    crs: "EPSG:4326"
+
+  # Data quality checks
+  quality:
+    enabled: true
+    strict_mode: false
+    log_warnings: true
+    rules:
+      - check_api_format
+      - check_coordinate_bounds
+      - check_production_values
+      - check_date_ranges
+
+# Data Processing Configuration
+processing:
+  chunk_size: 50000
+  parallel_workers: 4
+  normalize_api: true
+  validate_coordinates: true
+
+  # Coordinate system transformation
+  coordinates:
+    source_crs: "EPSG:4267"  # NAD27 (commonly used in Texas records)
+    target_crs: "EPSG:4326"  # WGS84 (decimal degrees)
+
+  # Unit conversions
+  units:
+    depth: feet
+    oil: barrels
+    gas: mcf  # thousand cubic feet
+    water: barrels
+    pressure: psi
+
+  # Data normalization
+  normalization:
+    dates_format: "ISO8601"  # YYYY-MM-DD
+    missing_values: null
+    boolean_true: ["Y", "YES", "TRUE", "1", "ACTIVE"]
+    boolean_false: ["N", "NO", "FALSE", "0", "INACTIVE"]
+
+# Output Configuration
+output:
+  directory: ./data/texas_rrc
+  formats: [csv, parquet]
+  organize_by: [date, district, type]
+
+  # File naming pattern
+  naming:
+    pattern: "{data_type}_{district}_{date}.{format}"
+    date_format: "%Y%m%d"
+    time_format: "%H%M%S"
+
+  # Compression
+  compression:
+    enabled: true
+    format: gzip  # gzip, zip, bz2
+
+  # Storage organization
+  organization:
+    by_date: true
+    by_type: true
+    by_district: true
+    structure: "{year}/{month}/{district}/{data_type}/"
+
+# Analysis Configuration
+analysis:
+  enabled: false
+
+  # Production trend analysis
+  production_trends:
+    enabled: false
+    metrics:
+      - monthly_oil_production
+      - monthly_gas_production
+      - well_count_active
+      - average_production_per_well
+    aggregation_levels:
+      - state
+      - district
+      - county
+      - field
+
+  # Decline curve analysis
+  decline_curves:
+    enabled: false
+    methods:
+      - exponential
+      - hyperbolic
+      - harmonic
+    min_months: 12
+    forecast_months: 60
+
+  # District comparison
+  district_comparison:
+    enabled: false
+    compare_metrics:
+      - total_production
+      - active_wells
+      - new_permits
+      - completions
+    time_periods:
+      - monthly
+      - quarterly
+      - yearly
+
+  # Visualization
+  visualization:
+    enabled: false
+    output_format: png
+    charts:
+      - district_production_map
+      - production_trends
+      - permit_activity
+      - decline_curves
+
+# Performance Configuration
+performance:
+  # Parallel processing
+  parallel:
+    enabled: true
+    max_workers: 4
+    chunk_size: 50000
+
+  # Memory optimization
+  memory:
+    max_cache_size_mb: 1000
+    batch_size: 50000
+
+  # Progress tracking
+  progress:
+    enabled: true
+    update_interval: 10  # seconds
+
+# Logging Configuration
+logging:
+  level: INFO  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file:
+    enabled: true
+    path: "./logs/texas_rrc.log"
+    max_size_mb: 10
+    backup_count: 5
+  console:
+    enabled: true
+    colored: true
+
+# Error Handling
+error_handling:
+  # Retry configuration
+  retry:
+    max_attempts: 3
+    backoff_factor: 2  # Exponential backoff
+    max_delay: 60  # Maximum delay between retries in seconds
+
+  # Error reporting
+  reporting:
+    save_errors: true
+    error_file: "./logs/texas_rrc_errors.json"
+    include_traceback: true
+
+  # Recovery
+  recovery:
+    checkpoint_enabled: true
+    checkpoint_interval: 1000  # Save progress every N records
+    resume_on_failure: true
+
+# Integration Configuration
+integration:
+  # BSEE integration for Gulf of Mexico comparison
+  bsee:
+    enabled: false
+    data_path: "./data/bsee"
+
+  # SODIR integration for international comparison
+  sodir:
+    enabled: false
+    data_path: "./data/sodir"
+
+  # Database integration
+  database:
+    enabled: false
+    type: postgresql
+    connection:
+      host: localhost
+      port: 5432
+      database: worldenergydata
+      user: null
+      password: null
+
+  # Export formats for other systems
+  export:
+    enabled: false
+    formats:
+      - excel
+      - shapefile
+      - geojson

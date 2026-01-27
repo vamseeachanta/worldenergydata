@@ -30,12 +30,10 @@ from typing import (
     Any,
     Callable,
     Dict,
-    Iterator,
     List,
     Literal,
     Optional,
     Protocol,
-    Sequence,
     Tuple,
     TypeVar,
     Union,
@@ -45,6 +43,7 @@ from typing import (
 # Conditional pandas import for type hints
 try:
     import pandas as pd
+
     DataFrame = pd.DataFrame
     Series = pd.Series
 except ImportError:
@@ -109,6 +108,7 @@ DataQuality = Literal["high", "medium", "low", "unknown"]
 # =============================================================================
 # Protocol Classes
 # =============================================================================
+
 
 @runtime_checkable
 class DataSourceProtocol(Protocol):
@@ -361,6 +361,7 @@ class ReporterProtocol(Protocol):
 # =============================================================================
 # Container Types
 # =============================================================================
+
 
 class DataResult:
     """

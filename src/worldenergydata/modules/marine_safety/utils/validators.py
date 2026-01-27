@@ -4,14 +4,16 @@ Data Validators for Marine Safety Module
 Provides Pydantic models and validation functions for data integrity.
 """
 
-from datetime import datetime, date
+from datetime import date, datetime
 from decimal import Decimal
-from typing import Optional, List, Dict, Any
+from typing import Any, Dict, Optional
+
 from pydantic import BaseModel, Field, field_validator, model_validator
+
 from worldenergydata.modules.marine_safety import constants
 from worldenergydata.modules.marine_safety.exceptions import (
     InvalidDataError,
-    MissingRequiredFieldError
+    MissingRequiredFieldError,
 )
 
 
@@ -27,14 +29,10 @@ class IncidentValidator(BaseModel):
     # Optional core fields
     incident_time: Optional[datetime] = None
     severity_level: int = Field(
-        default=constants.DEFAULT_SEVERITY,
-        ge=1,
-        le=5,
-        description="Severity level 1-5"
+        default=constants.DEFAULT_SEVERITY, ge=1, le=5, description="Severity level 1-5"
     )
     status: constants.IncidentStatus = Field(
-        default=constants.DEFAULT_STATUS,
-        description="Investigation status"
+        default=constants.DEFAULT_STATUS, description="Investigation status"
     )
     title: Optional[str] = Field(None, max_length=500)
     description: Optional[str] = Field(None, max_length=10000)
@@ -47,14 +45,10 @@ class IncidentValidator(BaseModel):
 
     # Location
     latitude: Optional[Decimal] = Field(
-        None,
-        ge=constants.MIN_LATITUDE,
-        le=constants.MAX_LATITUDE
+        None, ge=constants.MIN_LATITUDE, le=constants.MAX_LATITUDE
     )
     longitude: Optional[Decimal] = Field(
-        None,
-        ge=constants.MIN_LONGITUDE,
-        le=constants.MAX_LONGITUDE
+        None, ge=constants.MIN_LONGITUDE, le=constants.MAX_LONGITUDE
     )
     location_name: Optional[str] = Field(None, max_length=500)
 
@@ -82,7 +76,7 @@ class IncidentValidator(BaseModel):
             raise InvalidDataError(
                 field="incident_date",
                 value=v,
-                reason="Incident date cannot be in the future"
+                reason="Incident date cannot be in the future",
             )
         return v
 
@@ -96,7 +90,7 @@ class IncidentValidator(BaseModel):
             raise InvalidDataError(
                 field="coordinates",
                 value=f"lat={self.latitude}, lon={self.longitude}",
-                reason="Both latitude and longitude must be provided together"
+                reason="Both latitude and longitude must be provided together",
             )
 
         return self
@@ -139,9 +133,7 @@ class VesselValidator(BaseModel):
         # IMO number checksum algorithm
         if len(v) != 7 or not v.isdigit():
             raise InvalidDataError(
-                field="imo_number",
-                value=v,
-                reason="IMO number must be 7 digits"
+                field="imo_number", value=v, reason="IMO number must be 7 digits"
             )
 
         # Calculate checksum
@@ -150,9 +142,7 @@ class VesselValidator(BaseModel):
 
         if check_digit != int(v[6]):
             raise InvalidDataError(
-                field="imo_number",
-                value=v,
-                reason="Invalid IMO number checksum"
+                field="imo_number", value=v, reason="Invalid IMO number checksum"
             )
 
         return v
@@ -173,14 +163,10 @@ class LocationValidator(BaseModel):
 
     location_name: Optional[str] = Field(None, max_length=500)
     latitude: Optional[Decimal] = Field(
-        None,
-        ge=constants.MIN_LATITUDE,
-        le=constants.MAX_LATITUDE
+        None, ge=constants.MIN_LATITUDE, le=constants.MAX_LATITUDE
     )
     longitude: Optional[Decimal] = Field(
-        None,
-        ge=constants.MIN_LONGITUDE,
-        le=constants.MAX_LONGITUDE
+        None, ge=constants.MIN_LONGITUDE, le=constants.MAX_LONGITUDE
     )
     water_depth_meters: Optional[Decimal] = Field(None, ge=0)
     region_code: Optional[str] = Field(None, max_length=10)
@@ -202,14 +188,14 @@ class LocationValidator(BaseModel):
             raise InvalidDataError(
                 field="coordinates",
                 value=f"lat={self.latitude}",
-                reason="Longitude required when latitude provided"
+                reason="Longitude required when latitude provided",
             )
 
         if self.longitude is not None and self.latitude is None:
             raise InvalidDataError(
                 field="coordinates",
                 value=f"lon={self.longitude}",
-                reason="Latitude required when longitude provided"
+                reason="Latitude required when longitude provided",
             )
 
         return self
@@ -233,7 +219,7 @@ class DocumentValidator(BaseModel):
             raise InvalidDataError(
                 field="document_url",
                 value=v,
-                reason="URL must start with http://, https://, or ftp://"
+                reason="URL must start with http://, https://, or ftp://",
             )
         return v
 

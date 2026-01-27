@@ -10,13 +10,11 @@ This module parses GDF files and converts them to OBJ format.
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
-import re
 
 import numpy as np
 
-from worldenergydata.modules.vessel_hull_models.geometry.obj_parser import OBJMesh
 from worldenergydata.modules.vessel_hull_models.exceptions import OBJParseError
+from worldenergydata.modules.vessel_hull_models.geometry.obj_parser import OBJMesh
 
 
 @dataclass
@@ -77,6 +75,199 @@ def parse_gdf_header(lines: list[str]) -> tuple[GDFHeader, int]:
     return header, 4  # Vertex data starts at line 4 (0-indexed)
 
 
+def _detect_vertices_per_panel(data_line_count: int, panel_count: int) -> int:
+    """
+    Detect whether GDF uses quads (4 vertices) or triangles (3 vertices) per panel.
+
+    Args:
+        data_line_count: Number of non-empty data lines
+        panel_count: Declared panel count from header
+
+    Returns:
+        4 for quads, 3 for triangles
+    """
+    if panel_count <= 0:
+        return 3
+    ratio = data_line_count / panel_count
+    return 4 if ratio >= 3.5 else 3
+
+
+def _parse_vertex_line(line: str) -> tuple[float, float, float] | None:
+    """
+    Parse a single vertex line.
+
+    Args:
+        line: Line containing x, y, z coordinates
+
+    Returns:
+        Tuple of (x, y, z) or None if parsing fails
+    """
+    parts = line.split()
+    if len(parts) < 3:
+        return None
+    try:
+        return float(parts[0]), float(parts[1]), float(parts[2])
+    except ValueError:
+        return None
+
+
+def _add_vertex_to_map(
+    coords: tuple[float, float, float],
+    vertices: list[tuple[float, float, float]],
+    vertex_map: dict[tuple[float, float, float], int],
+) -> int:
+    """
+    Add vertex to map if unique, return its index.
+
+    Args:
+        coords: Vertex coordinates (x, y, z)
+        vertices: List of unique vertices
+        vertex_map: Map from rounded coords to 1-indexed vertex index
+
+    Returns:
+        1-indexed vertex index
+    """
+    vertex_key = (round(coords[0], 6), round(coords[1], 6), round(coords[2], 6))
+
+    if vertex_key not in vertex_map:
+        vertex_map[vertex_key] = len(vertices) + 1  # 1-indexed for OBJ
+        vertices.append(coords)
+
+    return vertex_map[vertex_key]
+
+
+def _read_panel_vertices(
+    lines: list[str],
+    start_line: int,
+    vertices_per_panel: int,
+    vertices: list[tuple[float, float, float]],
+    vertex_map: dict[tuple[float, float, float], int],
+) -> tuple[list[int], int]:
+    """
+    Read vertices for a single panel from file lines.
+
+    Args:
+        lines: All file lines
+        start_line: Line index to start reading from
+        vertices_per_panel: Expected number of vertices (3 or 4)
+        vertices: Accumulated unique vertices list
+        vertex_map: Map for deduplication
+
+    Returns:
+        Tuple of (panel_vertex_indices, next_line_index)
+    """
+    panel_vertices: list[int] = []
+    current_line = start_line
+
+    while len(panel_vertices) < vertices_per_panel and current_line < len(lines):
+        line = lines[current_line].strip()
+        current_line += 1
+
+        if not line:
+            continue
+
+        coords = _parse_vertex_line(line)
+        if coords is not None:
+            vertex_idx = _add_vertex_to_map(coords, vertices, vertex_map)
+            panel_vertices.append(vertex_idx)
+
+    return panel_vertices, current_line
+
+
+def _create_faces_from_panel(
+    panel_vertices: list[int],
+    vertices_per_panel: int,
+) -> list[tuple[int, ...]]:
+    """
+    Create face(s) from panel vertices.
+
+    Quads are split into 2 triangles for OBJ compatibility.
+
+    Args:
+        panel_vertices: List of vertex indices for this panel
+        vertices_per_panel: Expected count (3 or 4)
+
+    Returns:
+        List of face tuples (1 for triangles, 2 for quads)
+    """
+    if vertices_per_panel == 4 and len(panel_vertices) == 4:
+        # Split quad into 2 triangles: (v1,v2,v3) and (v1,v3,v4)
+        return [
+            (panel_vertices[0], panel_vertices[1], panel_vertices[2]),
+            (panel_vertices[0], panel_vertices[2], panel_vertices[3]),
+        ]
+    if vertices_per_panel == 3 and len(panel_vertices) == 3:
+        return [tuple(panel_vertices)]
+    return []
+
+
+def _parse_panels(
+    lines: list[str],
+    data_start: int,
+    vertices_per_panel: int,
+    max_panels: int,
+) -> tuple[list[tuple[float, float, float]], list[tuple[int, ...]]]:
+    """
+    Parse all panels from GDF data lines.
+
+    Args:
+        lines: All file lines
+        data_start: Index of first data line
+        vertices_per_panel: 3 for triangles, 4 for quads
+        max_panels: Maximum number of panels to parse
+
+    Returns:
+        Tuple of (vertices, faces)
+    """
+    vertices: list[tuple[float, float, float]] = []
+    faces: list[tuple[int, ...]] = []
+    vertex_map: dict[tuple[float, float, float], int] = {}
+
+    current_line = data_start
+    panel_count = 0
+
+    while current_line < len(lines) and panel_count < max_panels:
+        panel_vertices, current_line = _read_panel_vertices(
+            lines, current_line, vertices_per_panel, vertices, vertex_map
+        )
+
+        new_faces = _create_faces_from_panel(panel_vertices, vertices_per_panel)
+        if new_faces:
+            faces.extend(new_faces)
+            panel_count += 1
+
+    return vertices, faces
+
+
+def _to_obj_mesh(
+    vertices: list[tuple[float, float, float]],
+    faces: list[tuple[int, ...]],
+    object_name: str,
+) -> OBJMesh:
+    """
+    Convert parsed vertices and faces to OBJMesh.
+
+    Args:
+        vertices: List of vertex coordinates
+        faces: List of face tuples (1-indexed)
+        object_name: Name for the mesh object
+
+    Returns:
+        OBJMesh with numpy arrays (0-indexed faces)
+    """
+    vertices_array = np.array(vertices, dtype=np.float64)
+    faces_array = np.array([[v - 1 for v in f] for f in faces], dtype=np.int32)
+
+    return OBJMesh(
+        vertices=vertices_array,
+        faces=faces_array,
+        normals=None,
+        texcoords=None,
+        object_name=object_name,
+        material_name=None,
+    )
+
+
 def parse_gdf_file(file_path: Path) -> OBJMesh:
     """
     Parse a GDF file and return a OBJMesh.
@@ -99,82 +290,22 @@ def parse_gdf_file(file_path: Path) -> OBJMesh:
     with open(file_path, "r") as f:
         lines = f.readlines()
 
-    # Parse header
     header, data_start = parse_gdf_header(lines)
 
-    # Count non-empty data lines to detect format
-    data_lines = [l for l in lines[data_start:] if l.strip()]
+    data_lines = [line for line in lines[data_start:] if line.strip()]
     data_line_count = len(data_lines)
 
-    # Detect format: quad (4 vertices/panel) or triangle (3 vertices/panel)
-    # Standard WAMIT uses 4 vertices per panel (quads)
-    ratio = data_line_count / header.panel_count if header.panel_count > 0 else 0
-    vertices_per_panel = 4 if ratio >= 3.5 else 3
-
-    # Parse vertex data
-    vertices: list[tuple[float, float, float]] = []
-    faces: list[tuple[int, ...]] = []
-
-    # Track unique vertices to avoid duplicates
-    vertex_map: dict[tuple[float, float, float], int] = {}
-
-    current_line = data_start
-    panel_count = 0
+    vertices_per_panel = _detect_vertices_per_panel(data_line_count, header.panel_count)
     max_panels = header.panel_count if vertices_per_panel == 4 else data_line_count // 3
 
-    while current_line < len(lines) and panel_count < max_panels:
-        # Read vertices for this panel (skip empty lines)
-        panel_vertices = []
+    vertices, faces = _parse_panels(lines, data_start, vertices_per_panel, max_panels)
 
-        while len(panel_vertices) < vertices_per_panel and current_line < len(lines):
-            line = lines[current_line].strip()
-            current_line += 1
-
-            if not line:
-                continue  # Skip empty lines, keep reading
-
-            parts = line.split()
-            if len(parts) >= 3:
-                try:
-                    x, y, z = float(parts[0]), float(parts[1]), float(parts[2])
-                    vertex_key = (round(x, 6), round(y, 6), round(z, 6))
-
-                    if vertex_key not in vertex_map:
-                        vertex_map[vertex_key] = len(vertices) + 1  # 1-indexed for OBJ
-                        vertices.append((x, y, z))
-
-                    panel_vertices.append(vertex_map[vertex_key])
-                except ValueError:
-                    continue
-
-        if vertices_per_panel == 4 and len(panel_vertices) == 4:
-            # Split quad into 2 triangles: (v1,v2,v3) and (v1,v3,v4)
-            faces.append((panel_vertices[0], panel_vertices[1], panel_vertices[2]))
-            faces.append((panel_vertices[0], panel_vertices[2], panel_vertices[3]))
-            panel_count += 1
-        elif vertices_per_panel == 3 and len(panel_vertices) == 3:
-            faces.append(tuple(panel_vertices))
-            panel_count += 1
-
-    # Apply symmetry if specified
     if header.symmetry_x or header.symmetry_y:
         vertices, faces = _apply_symmetry(
             vertices, faces, header.symmetry_x, header.symmetry_y
         )
 
-    # Convert to numpy arrays
-    vertices_array = np.array(vertices, dtype=np.float64)
-    # Convert faces to numpy array (0-indexed for OBJMesh)
-    faces_array = np.array([[v - 1 for v in f] for f in faces], dtype=np.int32)
-
-    return OBJMesh(
-        vertices=vertices_array,
-        faces=faces_array,
-        normals=None,
-        texcoords=None,
-        object_name=header.description,
-        material_name=None,
-    )
+    return _to_obj_mesh(vertices, faces, header.description)
 
 
 def _apply_symmetry(
@@ -205,7 +336,9 @@ def _apply_symmetry(
         vertex_map = {}
         for i, (x, y, z) in enumerate(vertices):
             mirrored = (x, -y, z)
-            if mirrored not in vertex_map and y != 0:  # Don't duplicate centerline vertices
+            if (
+                mirrored not in vertex_map and y != 0
+            ):  # Don't duplicate centerline vertices
                 vertex_map[i + 1] = len(all_vertices) + 1
                 all_vertices.append(mirrored)
             elif y == 0:
@@ -213,9 +346,7 @@ def _apply_symmetry(
 
         # Add mirrored faces (reverse winding for correct normals)
         for face in faces:
-            mirrored_face = tuple(
-                vertex_map.get(v, v) for v in reversed(face)
-            )
+            mirrored_face = tuple(vertex_map.get(v, v) for v in reversed(face))
             all_faces.append(mirrored_face)
 
     if symmetry_x:
@@ -233,9 +364,7 @@ def _apply_symmetry(
                 vertex_map[i + 1] = i + 1
 
         for face in current_faces:
-            mirrored_face = tuple(
-                vertex_map.get(v, v) for v in reversed(face)
-            )
+            mirrored_face = tuple(vertex_map.get(v, v) for v in reversed(face))
             all_faces.append(mirrored_face)
 
     return all_vertices, all_faces

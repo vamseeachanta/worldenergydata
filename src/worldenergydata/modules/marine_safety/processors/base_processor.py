@@ -4,9 +4,9 @@ Base Data Processor
 Abstract base class for all data processors in the marine safety module.
 """
 
-from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional
 import logging
+from abc import ABC, abstractmethod
+from typing import Any, Dict, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -27,11 +27,7 @@ class BaseProcessor(ABC):
             config: Optional configuration dictionary
         """
         self.config = config or {}
-        self.stats = {
-            'processed': 0,
-            'errors': 0,
-            'warnings': 0
-        }
+        self.stats = {"processed": 0, "errors": 0, "warnings": 0}
         logger.info(f"Initialized {self.__class__.__name__}")
 
     @abstractmethod
@@ -73,8 +69,4 @@ class BaseProcessor(ABC):
 
     def reset_stats(self):
         """Reset processing statistics."""
-        self.stats = {
-            'processed': 0,
-            'errors': 0,
-            'warnings': 0
-        }
+        self.stats = {"processed": 0, "errors": 0, "warnings": 0}

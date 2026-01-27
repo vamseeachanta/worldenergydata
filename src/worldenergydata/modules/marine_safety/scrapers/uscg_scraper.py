@@ -21,15 +21,15 @@ import json
 import re
 import time
 from abc import ABC, abstractmethod
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
-from urllib.parse import urljoin, urlparse
+from typing import Any, Dict, List, Optional, Set
+from urllib.parse import urljoin
 
 import pdfplumber
 import requests
 from bs4 import BeautifulSoup
-from pydantic import BaseModel, Field, ValidationError as PydanticValidationError, field_validator
+from pydantic import BaseModel, Field, field_validator
 from tenacity import (
     retry,
     retry_if_exception_type,
@@ -43,8 +43,7 @@ logger = get_logger(__name__)
 
 # Configure structured logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -53,8 +52,10 @@ logger = logging.getLogger(__name__)
 # Pydantic Models for Data Validation
 # ============================================================================
 
+
 class VesselInfo(BaseModel):
     """Vessel information model."""
+
     name: Optional[str] = Field(None, description="Vessel name")
     imo_number: Optional[str] = Field(None, description="IMO number")
     official_number: Optional[str] = Field(None, description="Official number")
@@ -62,11 +63,11 @@ class VesselInfo(BaseModel):
     flag: Optional[str] = Field(None, description="Flag state")
     gross_tonnage: Optional[float] = Field(None, description="Gross tonnage")
 
-    @field_validator('imo_number')
+    @field_validator("imo_number")
     @classmethod
     def validate_imo(cls, v: Optional[str]) -> Optional[str]:
         """Validate IMO number format (7 digits)."""
-        if v and not re.match(r'^\d{7}$', v):
+        if v and not re.match(r"^\d{7}$", v):
             logger.warning(f"Invalid IMO number format: {v}")
             return None
         return v
@@ -74,6 +75,7 @@ class VesselInfo(BaseModel):
 
 class LocationInfo(BaseModel):
     """Location information model."""
+
     latitude: Optional[float] = Field(None, ge=-90, le=90, description="Latitude")
     longitude: Optional[float] = Field(None, ge=-180, le=180, description="Longitude")
     location_description: Optional[str] = Field(None, description="Text description")
@@ -85,11 +87,12 @@ class LocationInfo(BaseModel):
 
 class CasualtyInfo(BaseModel):
     """Casualty statistics model."""
+
     fatalities: int = Field(default=0, ge=0, description="Number of fatalities")
     injuries: int = Field(default=0, ge=0, description="Number of injuries")
     missing: int = Field(default=0, ge=0, description="Number missing")
 
-    @field_validator('fatalities', 'injuries', 'missing')
+    @field_validator("fatalities", "injuries", "missing")
     @classmethod
     def validate_non_negative(cls, v: int) -> int:
         """Ensure casualty counts are non-negative."""
@@ -98,6 +101,7 @@ class CasualtyInfo(BaseModel):
 
 class MarineIncident(BaseModel):
     """Complete marine incident model."""
+
     incident_id: str = Field(..., description="Unique incident identifier")
     incident_date: datetime = Field(..., description="Date of incident")
     report_date: Optional[datetime] = Field(None, description="Date report published")
@@ -106,27 +110,32 @@ class MarineIncident(BaseModel):
 
     vessel: Optional[VesselInfo] = Field(None, description="Vessel information")
     location: Optional[LocationInfo] = Field(None, description="Location information")
-    casualties: CasualtyInfo = Field(default_factory=CasualtyInfo, description="Casualty statistics")
+    casualties: CasualtyInfo = Field(
+        default_factory=CasualtyInfo, description="Casualty statistics"
+    )
 
     description: Optional[str] = Field(None, description="Incident description")
     causes: List[str] = Field(default_factory=list, description="Identified causes")
-    recommendations: List[str] = Field(default_factory=list, description="Safety recommendations")
+    recommendations: List[str] = Field(
+        default_factory=list, description="Safety recommendations"
+    )
 
     report_url: Optional[str] = Field(None, description="URL to full report")
     pdf_url: Optional[str] = Field(None, description="URL to PDF report")
 
     source: str = Field(default="USCG", description="Data source")
-    scraped_at: datetime = Field(default_factory=datetime.utcnow, description="Scrape timestamp")
+    scraped_at: datetime = Field(
+        default_factory=datetime.utcnow, description="Scrape timestamp"
+    )
 
     class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
-        }
+        json_encoders = {datetime: lambda v: v.isoformat()}
 
 
 # ============================================================================
 # Base Scraper Abstract Class
 # ============================================================================
+
 
 class BaseScraper(ABC):
     """
@@ -145,7 +154,7 @@ class BaseScraper(ABC):
         checkpoint_dir: Optional[Path] = None,
         rate_limit_delay: float = 1.0,
         max_retries: int = 3,
-        timeout: int = 30
+        timeout: int = 30,
     ):
         """
         Initialize base scraper.
@@ -164,11 +173,13 @@ class BaseScraper(ABC):
         self.timeout = timeout
 
         self.session = requests.Session()
-        self.session.headers.update({
-            'User-Agent': 'WorldEnergyData-Scraper/1.0 (Research Project; +https://github.com/worldenergydata)',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.5',
-        })
+        self.session.headers.update(
+            {
+                "User-Agent": "WorldEnergyData-Scraper/1.0 (Research Project; +https://github.com/worldenergydata)",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.5",
+            }
+        )
 
         self.last_request_time = 0.0
         self._processed_urls: Set[str] = set()
@@ -188,7 +199,7 @@ class BaseScraper(ABC):
         retry=retry_if_exception_type((requests.RequestException, requests.Timeout)),
         stop=stop_after_attempt(3),
         wait=wait_exponential(multiplier=1, min=2, max=30),
-        reraise=True
+        reraise=True,
     )
     def _fetch_url(self, url: str, **kwargs) -> requests.Response:
         """
@@ -208,7 +219,7 @@ class BaseScraper(ABC):
 
         logger.debug(f"Fetching: {url}")
 
-        kwargs.setdefault('timeout', self.timeout)
+        kwargs.setdefault("timeout", self.timeout)
         response = self.session.get(url, **kwargs)
         response.raise_for_status()
 
@@ -224,7 +235,7 @@ class BaseScraper(ABC):
         """
         checkpoint_file = self.checkpoint_dir / f"{checkpoint_name}.json"
 
-        with open(checkpoint_file, 'w', encoding='utf-8') as f:
+        with open(checkpoint_file, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, default=str)
 
         logger.info(f"Checkpoint saved: {checkpoint_file}")
@@ -245,7 +256,7 @@ class BaseScraper(ABC):
             return None
 
         try:
-            with open(checkpoint_file, 'r', encoding='utf-8') as f:
+            with open(checkpoint_file, "r", encoding="utf-8") as f:
                 data = json.load(f)
             logger.info(f"Checkpoint loaded: {checkpoint_file}")
             return data
@@ -267,6 +278,7 @@ class BaseScraper(ABC):
 # ============================================================================
 # USCG Marine Casualty Scraper
 # ============================================================================
+
 
 class USCGMarineCasualtyScraper(BaseScraper):
     """
@@ -294,16 +306,16 @@ class USCGMarineCasualtyScraper(BaseScraper):
 
     # Incident type mappings
     INCIDENT_TYPES = {
-        'collision': 'Collision',
-        'grounding': 'Grounding',
-        'fire': 'Fire/Explosion',
-        'explosion': 'Fire/Explosion',
-        'sinking': 'Sinking',
-        'capsizing': 'Capsizing',
-        'flooding': 'Flooding',
-        'allision': 'Allision',
-        'material failure': 'Material Failure',
-        'personnel casualty': 'Personnel Casualty',
+        "collision": "Collision",
+        "grounding": "Grounding",
+        "fire": "Fire/Explosion",
+        "explosion": "Fire/Explosion",
+        "sinking": "Sinking",
+        "capsizing": "Capsizing",
+        "flooding": "Flooding",
+        "allision": "Allision",
+        "material failure": "Material Failure",
+        "personnel casualty": "Personnel Casualty",
     }
 
     def __init__(
@@ -314,7 +326,7 @@ class USCGMarineCasualtyScraper(BaseScraper):
         timeout: int = 30,
         start_year: Optional[int] = None,
         end_year: Optional[int] = None,
-        resume_from_checkpoint: bool = True
+        resume_from_checkpoint: bool = True,
     ):
         """
         Initialize USCG scraper.
@@ -354,7 +366,7 @@ class USCGMarineCasualtyScraper(BaseScraper):
         if self.resume_from_checkpoint:
             checkpoint = self._load_checkpoint("uscg_scraper")
             if checkpoint:
-                self._processed_report_ids = set(checkpoint.get('processed_ids', []))
+                self._processed_report_ids = set(checkpoint.get("processed_ids", []))
                 logger.info(
                     f"Resuming from checkpoint: {len(self._processed_report_ids)} "
                     f"reports already processed"
@@ -381,22 +393,30 @@ class USCGMarineCasualtyScraper(BaseScraper):
 
                         # Save checkpoint every 10 reports
                         if idx % 10 == 0:
-                            self._save_checkpoint("uscg_scraper", {
-                                'processed_ids': list(self._processed_report_ids),
-                                'last_update': datetime.utcnow().isoformat(),
-                                'total_incidents': len(self.incidents)
-                            })
+                            self._save_checkpoint(
+                                "uscg_scraper",
+                                {
+                                    "processed_ids": list(self._processed_report_ids),
+                                    "last_update": datetime.utcnow().isoformat(),
+                                    "total_incidents": len(self.incidents),
+                                },
+                            )
 
                 except Exception as e:
-                    logger.error(f"Error processing report {report_id}: {e}", exc_info=True)
+                    logger.error(
+                        f"Error processing report {report_id}: {e}", exc_info=True
+                    )
                     continue
 
             # Final checkpoint
-            self._save_checkpoint("uscg_scraper", {
-                'processed_ids': list(self._processed_report_ids),
-                'last_update': datetime.utcnow().isoformat(),
-                'total_incidents': len(self.incidents)
-            })
+            self._save_checkpoint(
+                "uscg_scraper",
+                {
+                    "processed_ids": list(self._processed_report_ids),
+                    "last_update": datetime.utcnow().isoformat(),
+                    "total_incidents": len(self.incidents),
+                },
+            )
 
             logger.info(f"Scraping complete: {len(self.incidents)} incidents collected")
 
@@ -418,18 +438,23 @@ class USCGMarineCasualtyScraper(BaseScraper):
 
         try:
             response = self._fetch_url(self.CASUALTY_REPORTS_URL)
-            soup = BeautifulSoup(response.content, 'html.parser')
+            soup = BeautifulSoup(response.content, "html.parser")
 
             # Find all report links (adjust selector based on actual page structure)
-            for link in soup.find_all('a', href=True):
-                href = link['href']
+            for link in soup.find_all("a", href=True):
+                href = link["href"]
 
                 # Look for PDF links or report detail pages
-                if any(pattern in href.lower() for pattern in ['.pdf', 'report', 'casualty', 'investigation']):
+                if any(
+                    pattern in href.lower()
+                    for pattern in [".pdf", "report", "casualty", "investigation"]
+                ):
                     full_url = urljoin(self.BASE_URL, href)
 
                     # Extract report ID from URL or link text
-                    report_id = self._extract_report_id(full_url, link.get_text(strip=True))
+                    report_id = self._extract_report_id(
+                        full_url, link.get_text(strip=True)
+                    )
 
                     if report_id:
                         report_links[report_id] = full_url
@@ -453,19 +478,21 @@ class USCGMarineCasualtyScraper(BaseScraper):
             Report ID or None
         """
         # Try to extract from URL
-        match = re.search(r'(?:report|investigation)[_-]?(\d+)', url, re.IGNORECASE)
+        match = re.search(r"(?:report|investigation)[_-]?(\d+)", url, re.IGNORECASE)
         if match:
             return f"USCG-{match.group(1)}"
 
         # Try to extract from link text
-        match = re.search(r'(\d{4,})', link_text)
+        match = re.search(r"(\d{4,})", link_text)
         if match:
             return f"USCG-{match.group(1)}"
 
         # Generate from URL hash as fallback
         return f"USCG-{abs(hash(url)) % 1000000:06d}"
 
-    def _process_report(self, report_id: str, report_url: str) -> Optional[MarineIncident]:
+    def _process_report(
+        self, report_id: str, report_url: str
+    ) -> Optional[MarineIncident]:
         """
         Process a single report (HTML or PDF).
 
@@ -477,7 +504,7 @@ class USCGMarineCasualtyScraper(BaseScraper):
             MarineIncident object or None
         """
         try:
-            if report_url.lower().endswith('.pdf'):
+            if report_url.lower().endswith(".pdf"):
                 return self._process_pdf_report(report_id, report_url)
             else:
                 return self._process_html_report(report_id, report_url)
@@ -486,7 +513,9 @@ class USCGMarineCasualtyScraper(BaseScraper):
             logger.error(f"Error processing report {report_id}: {e}", exc_info=True)
             return None
 
-    def _process_html_report(self, report_id: str, report_url: str) -> Optional[MarineIncident]:
+    def _process_html_report(
+        self, report_id: str, report_url: str
+    ) -> Optional[MarineIncident]:
         """
         Process HTML report page.
 
@@ -499,17 +528,13 @@ class USCGMarineCasualtyScraper(BaseScraper):
         """
         try:
             response = self._fetch_url(report_url)
-            soup = BeautifulSoup(response.content, 'html.parser')
+            soup = BeautifulSoup(response.content, "html.parser")
 
             # Extract data from HTML (structure depends on actual page layout)
             data = self._extract_html_data(soup, report_url)
 
             # Build and validate incident model
-            incident_data = {
-                'incident_id': report_id,
-                'report_url': report_url,
-                **data
-            }
+            incident_data = {"incident_id": report_id, "report_url": report_url, **data}
 
             return MarineIncident(**incident_data)
 
@@ -517,10 +542,14 @@ class USCGMarineCasualtyScraper(BaseScraper):
             logger.error(f"Validation error for {report_id}: {e}")
             return None
         except Exception as e:
-            logger.error(f"Error processing HTML report {report_id}: {e}", exc_info=True)
+            logger.error(
+                f"Error processing HTML report {report_id}: {e}", exc_info=True
+            )
             return None
 
-    def _process_pdf_report(self, report_id: str, pdf_url: str) -> Optional[MarineIncident]:
+    def _process_pdf_report(
+        self, report_id: str, pdf_url: str
+    ) -> Optional[MarineIncident]:
         """
         Process PDF report.
 
@@ -537,7 +566,7 @@ class USCGMarineCasualtyScraper(BaseScraper):
 
             # Save temporarily for pdfplumber
             temp_pdf = self.checkpoint_dir / f"{report_id}.pdf"
-            with open(temp_pdf, 'wb') as f:
+            with open(temp_pdf, "wb") as f:
                 for chunk in response.iter_content(chunk_size=8192):
                     f.write(chunk)
 
@@ -551,11 +580,7 @@ class USCGMarineCasualtyScraper(BaseScraper):
             temp_pdf.unlink(missing_ok=True)
 
             # Build and validate incident model
-            incident_data = {
-                'incident_id': report_id,
-                'pdf_url': pdf_url,
-                **data
-            }
+            incident_data = {"incident_id": report_id, "pdf_url": pdf_url, **data}
 
             return MarineIncident(**incident_data)
 
@@ -585,7 +610,7 @@ class USCGMarineCasualtyScraper(BaseScraper):
                     if text:
                         text_parts.append(text)
 
-            return '\n\n'.join(text_parts)
+            return "\n\n".join(text_parts)
 
         except Exception as e:
             logger.error(f"Error extracting PDF text from {pdf_path}: {e}")
@@ -603,25 +628,24 @@ class USCGMarineCasualtyScraper(BaseScraper):
             Dictionary of extracted data
         """
         data = {
-            'incident_date': datetime.now(),  # Placeholder
-            'incident_type': 'Unknown',
-            'description': '',
+            "incident_date": datetime.now(),  # Placeholder
+            "incident_type": "Unknown",
+            "description": "",
         }
 
         # Extract text content
-        text = soup.get_text(separator=' ', strip=True)
+        text = soup.get_text(separator=" ", strip=True)
 
         # Try to extract incident date
         date_match = re.search(
-            r'(?:date|occurred|incident).*?(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})',
+            r"(?:date|occurred|incident).*?(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})",
             text,
-            re.IGNORECASE
+            re.IGNORECASE,
         )
         if date_match:
             try:
-                data['incident_date'] = datetime.strptime(
-                    date_match.group(1).replace('-', '/'),
-                    '%m/%d/%Y'
+                data["incident_date"] = datetime.strptime(
+                    date_match.group(1).replace("-", "/"), "%m/%d/%Y"
                 )
             except ValueError:
                 pass
@@ -629,13 +653,17 @@ class USCGMarineCasualtyScraper(BaseScraper):
         # Try to extract incident type
         for pattern, incident_type in self.INCIDENT_TYPES.items():
             if pattern.lower() in text.lower():
-                data['incident_type'] = incident_type
+                data["incident_type"] = incident_type
                 break
 
         # Extract description from paragraphs
-        paragraphs = [p.get_text(strip=True) for p in soup.find_all('p') if len(p.get_text(strip=True)) > 50]
+        paragraphs = [
+            p.get_text(strip=True)
+            for p in soup.find_all("p")
+            if len(p.get_text(strip=True)) > 50
+        ]
         if paragraphs:
-            data['description'] = ' '.join(paragraphs[:3])  # First 3 paragraphs
+            data["description"] = " ".join(paragraphs[:3])  # First 3 paragraphs
 
         return data
 
@@ -651,25 +679,25 @@ class USCGMarineCasualtyScraper(BaseScraper):
             Dictionary of extracted data
         """
         data = {
-            'incident_date': datetime.now(),  # Placeholder
-            'incident_type': 'Unknown',
-            'description': '',
-            'vessel': None,
-            'location': None,
-            'casualties': CasualtyInfo(),
+            "incident_date": datetime.now(),  # Placeholder
+            "incident_type": "Unknown",
+            "description": "",
+            "vessel": None,
+            "location": None,
+            "casualties": CasualtyInfo(),
         }
 
         # Extract incident date
         date_patterns = [
-            r'(?:date|occurred|incident).*?(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})',
-            r'(\d{1,2}\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4})',
+            r"(?:date|occurred|incident).*?(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})",
+            r"(\d{1,2}\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4})",
         ]
         for pattern in date_patterns:
             match = re.search(pattern, text, re.IGNORECASE)
             if match:
                 try:
-                    date_str = match.group(1).replace('-', '/')
-                    data['incident_date'] = datetime.strptime(date_str, '%m/%d/%Y')
+                    date_str = match.group(1).replace("-", "/")
+                    data["incident_date"] = datetime.strptime(date_str, "%m/%d/%Y")
                     break
                 except ValueError:
                     continue
@@ -677,34 +705,38 @@ class USCGMarineCasualtyScraper(BaseScraper):
         # Extract incident type
         for pattern, incident_type in self.INCIDENT_TYPES.items():
             if pattern.lower() in text.lower():
-                data['incident_type'] = incident_type
+                data["incident_type"] = incident_type
                 break
 
         # Extract vessel name
         vessel_match = re.search(
-            r'(?:vessel|ship)\s+(?:name)?:?\s*([A-Z][A-Za-z\s]+?)(?:\s+(?:IMO|Official)|\n|$)',
-            text
+            r"(?:vessel|ship)\s+(?:name)?:?\s*([A-Z][A-Za-z\s]+?)(?:\s+(?:IMO|Official)|\n|$)",
+            text,
         )
         if vessel_match:
-            data['vessel'] = VesselInfo(name=vessel_match.group(1).strip())
+            data["vessel"] = VesselInfo(name=vessel_match.group(1).strip())
 
         # Extract casualties
-        fatality_match = re.search(r'(\d+)\s+(?:fatalities|deaths)', text, re.IGNORECASE)
+        fatality_match = re.search(
+            r"(\d+)\s+(?:fatalities|deaths)", text, re.IGNORECASE
+        )
         if fatality_match:
-            data['casualties'].fatalities = int(fatality_match.group(1))
+            data["casualties"].fatalities = int(fatality_match.group(1))
 
-        injury_match = re.search(r'(\d+)\s+injuries', text, re.IGNORECASE)
+        injury_match = re.search(r"(\d+)\s+injuries", text, re.IGNORECASE)
         if injury_match:
-            data['casualties'].injuries = int(injury_match.group(1))
+            data["casualties"].injuries = int(injury_match.group(1))
 
         # Extract description (first paragraph after "Summary" or "Synopsis")
         summary_match = re.search(
-            r'(?:summary|synopsis|description)[:\s]+(.*?)(?:\n\n|\nCauses|\nRecommendations)',
+            r"(?:summary|synopsis|description)[:\s]+(.*?)(?:\n\n|\nCauses|\nRecommendations)",
             text,
-            re.IGNORECASE | re.DOTALL
+            re.IGNORECASE | re.DOTALL,
         )
         if summary_match:
-            data['description'] = summary_match.group(1).strip()[:500]  # Limit to 500 chars
+            data["description"] = summary_match.group(1).strip()[
+                :500
+            ]  # Limit to 500 chars
 
         return data
 
@@ -717,12 +749,12 @@ class USCGMarineCasualtyScraper(BaseScraper):
         """
         output_file.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(output_file, 'w', encoding='utf-8') as f:
+        with open(output_file, "w", encoding="utf-8") as f:
             json.dump(
                 [incident.model_dump() for incident in self.incidents],
                 f,
                 indent=2,
-                default=str
+                default=str,
             )
 
         logger.info(f"Exported {len(self.incidents)} incidents to {output_file}")
@@ -737,7 +769,7 @@ class USCGMarineCasualtyScraper(BaseScraper):
         total = len(self.incidents)
 
         if total == 0:
-            return {'total_incidents': 0}
+            return {"total_incidents": 0}
 
         # Count by incident type
         type_counts = {}
@@ -756,15 +788,15 @@ class USCGMarineCasualtyScraper(BaseScraper):
             year_counts[year] = year_counts.get(year, 0) + 1
 
         return {
-            'total_incidents': total,
-            'incident_types': type_counts,
-            'total_fatalities': total_fatalities,
-            'total_injuries': total_injuries,
-            'year_distribution': dict(sorted(year_counts.items())),
-            'date_range': {
-                'start': min(inc.incident_date for inc in self.incidents).isoformat(),
-                'end': max(inc.incident_date for inc in self.incidents).isoformat(),
-            }
+            "total_incidents": total,
+            "incident_types": type_counts,
+            "total_fatalities": total_fatalities,
+            "total_injuries": total_injuries,
+            "year_distribution": dict(sorted(year_counts.items())),
+            "date_range": {
+                "start": min(inc.incident_date for inc in self.incidents).isoformat(),
+                "end": max(inc.incident_date for inc in self.incidents).isoformat(),
+            },
         }
 
 
@@ -772,37 +804,28 @@ class USCGMarineCasualtyScraper(BaseScraper):
 # Main Execution
 # ============================================================================
 
+
 def main():
     """Main execution function for testing."""
     import argparse
 
-    parser = argparse.ArgumentParser(description='USCG Marine Casualty Scraper')
+    parser = argparse.ArgumentParser(description="USCG Marine Casualty Scraper")
     parser.add_argument(
-        '--output',
+        "--output",
         type=Path,
-        default=Path('uscg_incidents.json'),
-        help='Output JSON file path'
+        default=Path("uscg_incidents.json"),
+        help="Output JSON file path",
     )
     parser.add_argument(
-        '--checkpoint-dir',
+        "--checkpoint-dir",
         type=Path,
-        default=Path('checkpoints'),
-        help='Checkpoint directory'
+        default=Path("checkpoints"),
+        help="Checkpoint directory",
     )
+    parser.add_argument("--start-year", type=int, help="Start year for scraping")
+    parser.add_argument("--end-year", type=int, help="End year for scraping")
     parser.add_argument(
-        '--start-year',
-        type=int,
-        help='Start year for scraping'
-    )
-    parser.add_argument(
-        '--end-year',
-        type=int,
-        help='End year for scraping'
-    )
-    parser.add_argument(
-        '--no-resume',
-        action='store_true',
-        help='Do not resume from checkpoint'
+        "--no-resume", action="store_true", help="Do not resume from checkpoint"
     )
 
     args = parser.parse_args()
@@ -812,7 +835,7 @@ def main():
         checkpoint_dir=args.checkpoint_dir,
         start_year=args.start_year,
         end_year=args.end_year,
-        resume_from_checkpoint=not args.no_resume
+        resume_from_checkpoint=not args.no_resume,
     )
 
     # Run scraping
@@ -823,17 +846,17 @@ def main():
 
     # Print statistics
     stats = scraper.get_statistics()
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("SCRAPING STATISTICS")
-    print("="*60)
+    print("=" * 60)
     print(f"Total incidents: {stats['total_incidents']}")
     print(f"Total fatalities: {stats['total_fatalities']}")
     print(f"Total injuries: {stats['total_injuries']}")
-    print(f"\nIncident types:")
-    for itype, count in stats['incident_types'].items():
+    print("\nIncident types:")
+    for itype, count in stats["incident_types"].items():
         print(f"  {itype}: {count}")
-    print("="*60)
+    print("=" * 60)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

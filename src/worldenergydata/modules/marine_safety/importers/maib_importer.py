@@ -7,14 +7,14 @@ Imports marine incidents from MAIB database including:
 - maib_affected_persons.csv: Affected person records (linked by Occurrence_Id)
 """
 
-from pathlib import Path
-from typing import Any, Dict, Generator, Optional
 import csv
 from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, Generator, Optional
 
-from .base_importer import BaseImporter
-from ..database.models import Incident, Vessel, Location
 from ..constants import IncidentType, VesselType
+from ..database.models import Incident, Location, Vessel
+from .base_importer import BaseImporter
 
 
 class MAIBImporter(BaseImporter):
@@ -22,50 +22,50 @@ class MAIBImporter(BaseImporter):
 
     # Map MAIB severity to incident types (heuristic)
     SEVERITY_TYPE_MAPPINGS = {
-        'very serious marine casualty': 'collision',
-        'serious marine casualty': 'collision',
-        'marine casualty': 'other',
-        'marine incident': 'other',
-        'less serious': 'other',
+        "very serious marine casualty": "collision",
+        "serious marine casualty": "collision",
+        "marine casualty": "other",
+        "marine incident": "other",
+        "less serious": "other",
     }
 
     # Map MAIB main event types to our IncidentType enum
     EVENT_TYPE_MAPPINGS = {
-        'collision': 'collision',
-        'contact': 'collision',
-        'grounding': 'grounding',
-        'foundering': 'flooding',
-        'flooding': 'flooding',
-        'fire': 'fire',
-        'explosion': 'explosion',
-        'capsizing': 'capsizing',
-        'listing': 'other',
-        'damage': 'other',
-        'equipment': 'other',
-        'machinery': 'other',
-        'accident to person': 'personnel_injury',
-        'person overboard': 'personnel_injury',
-        'injury': 'personnel_injury',
-        'death': 'personnel_injury',
+        "collision": "collision",
+        "contact": "collision",
+        "grounding": "grounding",
+        "foundering": "flooding",
+        "flooding": "flooding",
+        "fire": "fire",
+        "explosion": "explosion",
+        "capsizing": "capsizing",
+        "listing": "other",
+        "damage": "other",
+        "equipment": "other",
+        "machinery": "other",
+        "accident to person": "personnel_injury",
+        "person overboard": "personnel_injury",
+        "injury": "personnel_injury",
+        "death": "personnel_injury",
     }
 
     # Map MAIB vessel types to our VesselType enum
     VESSEL_TYPE_MAPPINGS = {
-        'fishing': 'fishing',
-        'cargo': 'cargo',
-        'tanker': 'tanker',
-        'chemical tanker': 'tanker',
-        'oil tanker': 'tanker',
-        'gas carrier': 'tanker',
-        'passenger': 'passenger',
-        'cruise': 'passenger',
-        'ferry': 'passenger',
-        'tugboat': 'tugboat',
-        'tug': 'tugboat',
-        'recreational': 'other',
-        'yacht': 'other',
-        'merchant': 'cargo',
-        'bulk carrier': 'cargo',
+        "fishing": "fishing",
+        "cargo": "cargo",
+        "tanker": "tanker",
+        "chemical tanker": "tanker",
+        "oil tanker": "tanker",
+        "gas carrier": "tanker",
+        "passenger": "passenger",
+        "cruise": "passenger",
+        "ferry": "passenger",
+        "tugboat": "tugboat",
+        "tug": "tugboat",
+        "recreational": "other",
+        "yacht": "other",
+        "merchant": "cargo",
+        "bulk carrier": "cargo",
     }
 
     def __init__(
@@ -74,7 +74,7 @@ class MAIBImporter(BaseImporter):
         vessels_file: Optional[Path] = None,
         persons_file: Optional[Path] = None,
         session: Any = None,
-        batch_size: int = 1000
+        batch_size: int = 1000,
     ):
         """
         Initialize MAIB importer.
@@ -104,170 +104,67 @@ class MAIBImporter(BaseImporter):
         if self.vessels_file and self.vessels_file.exists():
             print(f"Loading vessels data from {self.vessels_file}...")
             count = 0
-            with open(self.vessels_file, 'r', encoding='utf-8', errors='replace') as f:
+            with open(self.vessels_file, "r", encoding="utf-8", errors="replace") as f:
                 # MAIB files use semicolon delimiter
-                reader = csv.DictReader(f, delimiter=';')
+                reader = csv.DictReader(f, delimiter=";")
                 for row in reader:
-                    occid = row.get('Occurrence_Id', '').strip()
+                    occid = row.get("Occurrence_Id", "").strip()
                     if occid:
                         if occid not in self.vessels_by_occid:
                             self.vessels_by_occid[occid] = []
                         self.vessels_by_occid[occid].append(row)
                         count += 1
-            print(f"Loaded {count} vessel records for {len(self.vessels_by_occid)} unique occurrences")
+            print(
+                f"Loaded {count} vessel records for {len(self.vessels_by_occid)} unique occurrences"
+            )
 
         # Load affected persons
         if self.persons_file and self.persons_file.exists():
             print(f"Loading affected persons data from {self.persons_file}...")
             count = 0
-            with open(self.persons_file, 'r', encoding='utf-8', errors='replace') as f:
-                reader = csv.DictReader(f, delimiter=';')
+            with open(self.persons_file, "r", encoding="utf-8", errors="replace") as f:
+                reader = csv.DictReader(f, delimiter=";")
                 for row in reader:
-                    occid = row.get('Occurrence_Id', '').strip()
+                    occid = row.get("Occurrence_Id", "").strip()
                     if occid:
                         if occid not in self.persons_by_occid:
                             self.persons_by_occid[occid] = []
                         self.persons_by_occid[occid].append(row)
                         count += 1
-            print(f"Loaded {count} affected person records for {len(self.persons_by_occid)} unique occurrences")
+            print(
+                f"Loaded {count} affected person records for {len(self.persons_by_occid)} unique occurrences"
+            )
 
     def read_source(self) -> Generator[Dict[str, Any], None, None]:
         """Read records from occurrences CSV file."""
         # Load related data first
         self._load_related_data()
 
-        with open(self.source_path, 'r', encoding='utf-8', errors='replace') as f:
+        with open(self.source_path, "r", encoding="utf-8", errors="replace") as f:
             # MAIB files use semicolon delimiter
-            reader = csv.DictReader(f, delimiter=';')
+            reader = csv.DictReader(f, delimiter=";")
             for row in reader:
                 # Normalize keys
-                normalized_row = {k.strip() if k else k: v for k, v in row.items() if k is not None}
+                normalized_row = {
+                    k.strip() if k else k: v for k, v in row.items() if k is not None
+                }
                 yield normalized_row
 
     def parse_record(self, raw_record: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """Parse raw MAIB record into standardized format."""
         try:
-            occid = raw_record.get('Occurrence_Id', '').strip()
+            occid = self._extract_incident_id(raw_record)
             if not occid:
                 return None
 
-            # Basic mappings
-            parsed = {
-                'source_agency': 'MAIB_UK',
-                'source_incident_id': occid,
-            }
-
-            # Parse date (format: YYYY-MM-DD)
-            date_str = raw_record.get('Local_Date_Main_Event', '').strip()
-            if date_str:
-                parsed['incident_date'] = self._parse_date(date_str)
-
-            # Map severity and event type to incident type
-            severity = raw_record.get('Occurrence_Severity', '').strip().lower()
-            event_l1 = raw_record.get('Main_Event_L1', '').strip().lower()
-            event_l2 = raw_record.get('Main_Event_L2', '').strip().lower()
-            event_l3 = raw_record.get('Main_Event_L3', '').strip().lower()
-
-            # Try to match event types (most specific first)
-            incident_type = 'other'
-            for event_str in [event_l3, event_l2, event_l1, severity]:
-                if not event_str:
-                    continue
-                for key_word, mapped_type in self.EVENT_TYPE_MAPPINGS.items():
-                    if key_word in event_str:
-                        incident_type = mapped_type
-                        break
-                if incident_type != 'other':
-                    break
-
-            parsed['incident_type'] = incident_type
-
-            # Count casualties from affected persons
-            fatalities = 0
-            injuries = 0
-            if occid in self.persons_by_occid:
-                for person in self.persons_by_occid[occid]:
-                    injury_type = person.get('Injury_Type', '').strip().lower()
-                    if 'fatal' in injury_type or 'death' in injury_type:
-                        fatalities += 1
-                    elif 'injury' in injury_type or 'injured' in injury_type:
-                        injuries += 1
-
-            parsed['fatalities'] = fatalities
-            parsed['injuries'] = injuries
-            parsed['missing'] = 0  # Not explicitly tracked in MAIB data
-
-            # Description
-            short_desc = raw_record.get('Short_Description', '').strip()
-            full_desc = raw_record.get('Description', '').strip()
-            parsed['description'] = full_desc if full_desc else short_desc
-
-            # Location information
-            location_desc = raw_record.get('Occurrence_Location', '').strip()
-            coastal_state = raw_record.get('Coastal_State_Affected', '').strip()
-            nat_loc_l1 = raw_record.get('National_Location_L1', '').strip()
-            nat_loc_l2 = raw_record.get('National_Location_L2', '').strip()
-            port_l1 = raw_record.get('Port_Of_Accident_L1', '').strip()
-            port_l2 = raw_record.get('Port_Of_Accident_L2', '').strip()
-            lat = self._parse_float(raw_record.get('Latitude', ''))
-            lon = self._parse_float(raw_record.get('Longitude', ''))
-
-            if location_desc or coastal_state or lat or lon:
-                parsed['location'] = {
-                    'location_description': location_desc,
-                    'coastal_state': coastal_state,
-                    'national_location_l1': nat_loc_l1,
-                    'national_location_l2': nat_loc_l2,
-                    'port_l1': port_l1,
-                    'port_l2': port_l2,
-                    'latitude': lat,
-                    'longitude': lon,
-                }
-
-            # Vessel information from maib_vessels.csv
-            if occid in self.vessels_by_occid:
-                vessels = self.vessels_by_occid[occid]
-                if vessels:
-                    # Use first vessel (primary vessel in incident)
-                    vessel_data = vessels[0]
-                    parsed['vessel'] = {
-                        'flag_state': vessel_data.get('Flag_State', '').strip(),
-                        'vessel_category_l1': vessel_data.get('Vessel_Category_L1', '').strip(),
-                        'vessel_category_l2': vessel_data.get('Vessel_Category_L2', '').strip(),
-                        'ship_type_l1': vessel_data.get('Ship_Craft_Type_L1', '').strip(),
-                        'ship_type_l2': vessel_data.get('Ship_Craft_Type_L2', '').strip(),
-                        'ship_type_l3': vessel_data.get('Ship_Craft_Type_L3', '').strip(),
-                        'length_meters': self._parse_float(vessel_data.get('LOA_Length_Overall_in_Metres', '')),
-                        'gross_tonnage': self._parse_float(vessel_data.get('GT_Gross_Tonnage', '')),
-                        'year_built': self._parse_int(vessel_data.get('Year_Built', '')),
-                        'hull_material': vessel_data.get('Hull_Material', '').strip(),
-                        'is_commercial': vessel_data.get('Is_Commercial_Vessel', '').strip().lower() == 'true',
-                        'crew_voyage': self._parse_int(vessel_data.get('Crew_Voyage', '0')),
-                        'deaths_crew': self._parse_int(vessel_data.get('Deaths_Crew', '0')),
-                        'deaths_passenger': self._parse_int(vessel_data.get('Deaths_Passenger', '0')),
-                        'deaths_other': self._parse_int(vessel_data.get('Deaths_Other', '0')),
-                        'injuries_crew': self._parse_int(vessel_data.get('Injuries_Crew', '0')),
-                        'injuries_passenger': self._parse_int(vessel_data.get('Injuries_Passenger', '0')),
-                        'injuries_other': self._parse_int(vessel_data.get('Injuries_Other', '0')),
-                    }
-
-            # Environmental conditions
-            metadata = {}
-            if raw_record.get('Natural_Light'):
-                metadata['natural_light'] = raw_record.get('Natural_Light', '').strip()
-            if raw_record.get('Sea_State'):
-                metadata['sea_state'] = raw_record.get('Sea_State', '').strip()
-            if raw_record.get('Visibility'):
-                metadata['visibility'] = raw_record.get('Visibility', '').strip()
-            if raw_record.get('Weather'):
-                metadata['weather'] = raw_record.get('Weather', '').strip()
-            if raw_record.get('Wind_Force'):
-                metadata['wind_force'] = raw_record.get('Wind_Force', '').strip()
-            if raw_record.get('SAR_Intervention'):
-                metadata['sar_intervention'] = raw_record.get('SAR_Intervention', '').strip()
-
-            if metadata:
-                parsed['metadata'] = metadata
+            parsed = self._build_base_record(occid)
+            self._add_incident_date(parsed, raw_record)
+            parsed["incident_type"] = self._determine_incident_type(raw_record)
+            self._add_casualty_counts(parsed, occid)
+            self._add_description(parsed, raw_record)
+            self._add_location_data(parsed, raw_record)
+            self._add_vessel_info(parsed, occid)
+            self._add_environmental_metadata(parsed, raw_record)
 
             return parsed
 
@@ -275,48 +172,232 @@ class MAIBImporter(BaseImporter):
             print(f"Error parsing MAIB record {raw_record.get('Occurrence_Id')}: {e}")
             return None
 
+    def _extract_incident_id(self, raw_record: Dict[str, Any]) -> Optional[str]:
+        """Extract and validate incident ID from raw record."""
+        occid = raw_record.get("Occurrence_Id", "").strip()
+        return occid if occid else None
+
+    def _build_base_record(self, occid: str) -> Dict[str, Any]:
+        """Build base parsed record with source info."""
+        return {
+            "source_agency": "MAIB_UK",
+            "source_incident_id": occid,
+        }
+
+    def _add_incident_date(
+        self, parsed: Dict[str, Any], raw_record: Dict[str, Any]
+    ) -> None:
+        """Parse and add incident date to parsed record."""
+        date_str = raw_record.get("Local_Date_Main_Event", "").strip()
+        if date_str:
+            parsed["incident_date"] = self._parse_date(date_str)
+
+    def _determine_incident_type(self, raw_record: Dict[str, Any]) -> str:
+        """Map severity and event types to incident type."""
+        event_fields = [
+            raw_record.get("Main_Event_L3", "").strip().lower(),
+            raw_record.get("Main_Event_L2", "").strip().lower(),
+            raw_record.get("Main_Event_L1", "").strip().lower(),
+            raw_record.get("Occurrence_Severity", "").strip().lower(),
+        ]
+
+        for event_str in event_fields:
+            if not event_str:
+                continue
+            matched_type = self._match_event_type(event_str)
+            if matched_type != "other":
+                return matched_type
+
+        return "other"
+
+    def _match_event_type(self, event_str: str) -> str:
+        """Match event string against EVENT_TYPE_MAPPINGS."""
+        for key_word, mapped_type in self.EVENT_TYPE_MAPPINGS.items():
+            if key_word in event_str:
+                return mapped_type
+        return "other"
+
+    def _add_casualty_counts(self, parsed: Dict[str, Any], occid: str) -> None:
+        """Count and add casualties from affected persons data."""
+        fatalities, injuries = self._count_casualties(occid)
+        parsed["fatalities"] = fatalities
+        parsed["injuries"] = injuries
+        parsed["missing"] = 0  # Not explicitly tracked in MAIB data
+
+    def _count_casualties(self, occid: str) -> tuple:
+        """Count fatalities and injuries for an occurrence."""
+        if occid not in self.persons_by_occid:
+            return 0, 0
+
+        fatalities = 0
+        injuries = 0
+        for person in self.persons_by_occid[occid]:
+            injury_type = person.get("Injury_Type", "").strip().lower()
+            if "fatal" in injury_type or "death" in injury_type:
+                fatalities += 1
+            elif "injury" in injury_type or "injured" in injury_type:
+                injuries += 1
+
+        return fatalities, injuries
+
+    def _add_description(
+        self, parsed: Dict[str, Any], raw_record: Dict[str, Any]
+    ) -> None:
+        """Extract and add description to parsed record."""
+        short_desc = raw_record.get("Short_Description", "").strip()
+        full_desc = raw_record.get("Description", "").strip()
+        parsed["description"] = full_desc if full_desc else short_desc
+
+    def _add_location_data(
+        self, parsed: Dict[str, Any], raw_record: Dict[str, Any]
+    ) -> None:
+        """Extract and add location information to parsed record."""
+        location_data = self._extract_location_fields(raw_record)
+        if self._has_location_data(location_data):
+            parsed["location"] = location_data
+
+    def _extract_location_fields(self, raw_record: Dict[str, Any]) -> Dict[str, Any]:
+        """Extract all location-related fields from raw record."""
+        return {
+            "location_description": raw_record.get("Occurrence_Location", "").strip(),
+            "coastal_state": raw_record.get("Coastal_State_Affected", "").strip(),
+            "national_location_l1": raw_record.get("National_Location_L1", "").strip(),
+            "national_location_l2": raw_record.get("National_Location_L2", "").strip(),
+            "port_l1": raw_record.get("Port_Of_Accident_L1", "").strip(),
+            "port_l2": raw_record.get("Port_Of_Accident_L2", "").strip(),
+            "latitude": self._parse_float(raw_record.get("Latitude", "")),
+            "longitude": self._parse_float(raw_record.get("Longitude", "")),
+        }
+
+    def _has_location_data(self, location_data: Dict[str, Any]) -> bool:
+        """Check if location data contains meaningful information."""
+        return bool(
+            location_data.get("location_description")
+            or location_data.get("coastal_state")
+            or location_data.get("latitude")
+            or location_data.get("longitude")
+        )
+
+    def _add_vessel_info(self, parsed: Dict[str, Any], occid: str) -> None:
+        """Extract and add vessel information from linked vessels data."""
+        vessels = self.vessels_by_occid.get(occid)
+        if not vessels:
+            return
+
+        vessel_data = vessels[0]  # Use first vessel (primary vessel in incident)
+        parsed["vessel"] = self._build_vessel_record(vessel_data)
+
+    def _build_vessel_record(self, vessel_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Build vessel record from raw vessel data."""
+        return {
+            "flag_state": vessel_data.get("Flag_State", "").strip(),
+            "vessel_category_l1": vessel_data.get("Vessel_Category_L1", "").strip(),
+            "vessel_category_l2": vessel_data.get("Vessel_Category_L2", "").strip(),
+            "ship_type_l1": vessel_data.get("Ship_Craft_Type_L1", "").strip(),
+            "ship_type_l2": vessel_data.get("Ship_Craft_Type_L2", "").strip(),
+            "ship_type_l3": vessel_data.get("Ship_Craft_Type_L3", "").strip(),
+            "length_meters": self._parse_float(
+                vessel_data.get("LOA_Length_Overall_in_Metres", "")
+            ),
+            "gross_tonnage": self._parse_float(vessel_data.get("GT_Gross_Tonnage", "")),
+            "year_built": self._parse_int(vessel_data.get("Year_Built", "")),
+            "hull_material": vessel_data.get("Hull_Material", "").strip(),
+            "is_commercial": vessel_data.get("Is_Commercial_Vessel", "").strip().lower()
+            == "true",
+            "crew_voyage": self._parse_int(vessel_data.get("Crew_Voyage", "0")),
+            "deaths_crew": self._parse_int(vessel_data.get("Deaths_Crew", "0")),
+            "deaths_passenger": self._parse_int(
+                vessel_data.get("Deaths_Passenger", "0")
+            ),
+            "deaths_other": self._parse_int(vessel_data.get("Deaths_Other", "0")),
+            "injuries_crew": self._parse_int(vessel_data.get("Injuries_Crew", "0")),
+            "injuries_passenger": self._parse_int(
+                vessel_data.get("Injuries_Passenger", "0")
+            ),
+            "injuries_other": self._parse_int(vessel_data.get("Injuries_Other", "0")),
+        }
+
+    def _add_environmental_metadata(
+        self, parsed: Dict[str, Any], raw_record: Dict[str, Any]
+    ) -> None:
+        """Extract and add environmental conditions metadata."""
+        metadata = self._extract_environmental_fields(raw_record)
+        if metadata:
+            parsed["metadata"] = metadata
+
+    def _extract_environmental_fields(
+        self, raw_record: Dict[str, Any]
+    ) -> Dict[str, str]:
+        """Extract environmental condition fields from raw record."""
+        field_mappings = {
+            "Natural_Light": "natural_light",
+            "Sea_State": "sea_state",
+            "Visibility": "visibility",
+            "Weather": "weather",
+            "Wind_Force": "wind_force",
+            "SAR_Intervention": "sar_intervention",
+        }
+
+        metadata = {}
+        for raw_key, meta_key in field_mappings.items():
+            value = raw_record.get(raw_key, "").strip()
+            if value:
+                metadata[meta_key] = value
+
+        return metadata
+
     def map_to_model(self, parsed_record: Dict[str, Any]) -> Optional[Incident]:
         """Map parsed record to Incident model."""
         try:
             # Check for duplicate
-            existing = self.session.query(Incident).filter(
-                Incident.source_agency == parsed_record.get('source_agency'),
-                Incident.source_incident_id == parsed_record.get('source_incident_id')
-            ).first()
+            existing = (
+                self.session.query(Incident)
+                .filter(
+                    Incident.source_agency == parsed_record.get("source_agency"),
+                    Incident.source_incident_id
+                    == parsed_record.get("source_incident_id"),
+                )
+                .first()
+            )
 
             if existing:
                 return None
 
             # Create location
             location_id = None
-            if 'location' in parsed_record:
-                location_id = self._get_or_create_location(parsed_record['location'])
+            if "location" in parsed_record:
+                location_id = self._get_or_create_location(parsed_record["location"])
 
             # Create vessel
             vessel_id = None
-            if 'vessel' in parsed_record:
-                vessel_id = self._get_or_create_vessel(parsed_record['vessel'])
+            if "vessel" in parsed_record:
+                vessel_id = self._get_or_create_vessel(parsed_record["vessel"])
 
             # Create incident
             incident = Incident(
-                source_agency=parsed_record.get('source_agency'),
-                source_incident_id=parsed_record.get('source_incident_id'),
-                incident_date=parsed_record.get('incident_date'),
-                incident_type=IncidentType[parsed_record.get('incident_type', 'other').upper()],
-                fatalities=parsed_record.get('fatalities', 0),
-                injuries=parsed_record.get('injuries', 0),
-                missing_persons=parsed_record.get('missing', 0),
-                description=parsed_record.get('description'),
+                source_agency=parsed_record.get("source_agency"),
+                source_incident_id=parsed_record.get("source_incident_id"),
+                incident_date=parsed_record.get("incident_date"),
+                incident_type=IncidentType[
+                    parsed_record.get("incident_type", "other").upper()
+                ],
+                fatalities=parsed_record.get("fatalities", 0),
+                injuries=parsed_record.get("injuries", 0),
+                missing_persons=parsed_record.get("missing", 0),
+                description=parsed_record.get("description"),
                 location_id=location_id,
                 vessel_id=vessel_id,
-                metadata_json=parsed_record.get('metadata'),
+                metadata_json=parsed_record.get("metadata"),
             )
 
             return incident
 
         except Exception as e:
-            print(f"Error creating model for {parsed_record.get('source_incident_id')}: {e}")
+            print(
+                f"Error creating model for {parsed_record.get('source_incident_id')}: {e}"
+            )
             import traceback
+
             traceback.print_exc()
             return None
 
@@ -326,13 +407,13 @@ class MAIBImporter(BaseImporter):
             return None
 
         try:
-            return datetime.strptime(date_str, '%Y-%m-%d')
+            return datetime.strptime(date_str, "%Y-%m-%d")
         except:
             return None
 
     def _parse_int(self, value: str) -> int:
         """Parse integer value."""
-        if not value or value.strip() == '' or value.strip().lower() == 'na':
+        if not value or value.strip() == "" or value.strip().lower() == "na":
             return 0
         try:
             return int(float(value))
@@ -341,7 +422,7 @@ class MAIBImporter(BaseImporter):
 
     def _parse_float(self, value: str) -> Optional[float]:
         """Parse float value."""
-        if not value or value.strip() == '' or value.strip().lower() == 'na':
+        if not value or value.strip() == "" or value.strip().lower() == "na":
             return None
         try:
             return float(value)
@@ -356,27 +437,27 @@ class MAIBImporter(BaseImporter):
         for key, value in self.VESSEL_TYPE_MAPPINGS.items():
             if key in combined:
                 return value
-        return 'other'
+        return "other"
 
     def _get_or_create_location(self, location_data: Dict[str, Any]) -> Optional[int]:
         """Create location from MAIB location data."""
         try:
             # Build location name
             parts = []
-            if location_data.get('port_l2'):
-                parts.append(location_data['port_l2'])
-            if location_data.get('port_l1'):
-                parts.append(location_data['port_l1'])
-            if location_data.get('national_location_l2'):
-                parts.append(location_data['national_location_l2'])
-            if location_data.get('national_location_l1'):
-                parts.append(location_data['national_location_l1'])
-            if location_data.get('coastal_state'):
-                parts.append(location_data['coastal_state'])
-            if location_data.get('location_description'):
-                parts.append(location_data['location_description'])
+            if location_data.get("port_l2"):
+                parts.append(location_data["port_l2"])
+            if location_data.get("port_l1"):
+                parts.append(location_data["port_l1"])
+            if location_data.get("national_location_l2"):
+                parts.append(location_data["national_location_l2"])
+            if location_data.get("national_location_l1"):
+                parts.append(location_data["national_location_l1"])
+            if location_data.get("coastal_state"):
+                parts.append(location_data["coastal_state"])
+            if location_data.get("location_description"):
+                parts.append(location_data["location_description"])
 
-            location_name = ', '.join(filter(None, parts)) or 'Unknown UK Waters'
+            location_name = ", ".join(filter(None, parts)) or "Unknown UK Waters"
 
             # Check cache
             cache_key = f"maib_{location_name}"
@@ -384,9 +465,11 @@ class MAIBImporter(BaseImporter):
                 return self._location_cache[cache_key]
 
             # Check database
-            existing = self.session.query(Location).filter(
-                Location.location_name == location_name
-            ).first()
+            existing = (
+                self.session.query(Location)
+                .filter(Location.location_name == location_name)
+                .first()
+            )
 
             if existing:
                 self._location_cache[cache_key] = existing.location_id
@@ -394,17 +477,17 @@ class MAIBImporter(BaseImporter):
 
             # Create new location
             # Map coastal state to country code
-            coastal_state = location_data.get('coastal_state', '').upper()
-            if 'UNITED KINGDOM' in coastal_state or coastal_state == 'UK':
-                country_code = 'GB'
+            coastal_state = location_data.get("coastal_state", "").upper()
+            if "UNITED KINGDOM" in coastal_state or coastal_state == "UK":
+                country_code = "GB"
             else:
                 country_code = None
 
             location = Location(
                 location_name=location_name,
-                country_code=country_code or 'GB',  # Default to GB for MAIB data
-                latitude=location_data.get('latitude'),
-                longitude=location_data.get('longitude'),
+                country_code=country_code or "GB",  # Default to GB for MAIB data
+                latitude=location_data.get("latitude"),
+                longitude=location_data.get("longitude"),
             )
             self.session.add(location)
             self.session.flush()
@@ -432,42 +515,54 @@ class MAIBImporter(BaseImporter):
 
             # Create new vessel
             metadata = {}
-            for key in ['vessel_category_l1', 'vessel_category_l2', 'ship_type_l1',
-                       'ship_type_l2', 'ship_type_l3', 'hull_material', 'is_commercial',
-                       'crew_voyage', 'deaths_crew', 'deaths_passenger', 'deaths_other',
-                       'injuries_crew', 'injuries_passenger', 'injuries_other', 'gross_tonnage']:
+            for key in [
+                "vessel_category_l1",
+                "vessel_category_l2",
+                "ship_type_l1",
+                "ship_type_l2",
+                "ship_type_l3",
+                "hull_material",
+                "is_commercial",
+                "crew_voyage",
+                "deaths_crew",
+                "deaths_passenger",
+                "deaths_other",
+                "injuries_crew",
+                "injuries_passenger",
+                "injuries_other",
+                "gross_tonnage",
+            ]:
                 if vessel_data.get(key):
                     metadata[key] = vessel_data[key]
 
             # Store length_meters in metadata
-            if vessel_data.get('length_meters'):
-                metadata['length_meters'] = vessel_data['length_meters']
+            if vessel_data.get("length_meters"):
+                metadata["length_meters"] = vessel_data["length_meters"]
 
             # Determine vessel type from ship types
             vessel_type = self._map_vessel_type(
-                vessel_data.get('ship_type_l1', ''),
-                vessel_data.get('ship_type_l2', '')
+                vessel_data.get("ship_type_l1", ""), vessel_data.get("ship_type_l2", "")
             )
 
             # Map flag state to country code
-            flag_state = vessel_data.get('flag_state', '').upper()
-            if 'UNITED KINGDOM' in flag_state or flag_state == 'UK':
-                flag_code = 'GB'
-            elif 'NORWAY' in flag_state:
-                flag_code = 'NO'
-            elif 'GERMANY' in flag_state:
-                flag_code = 'DE'
-            elif 'NETHERLANDS' in flag_state:
-                flag_code = 'NL'
+            flag_state = vessel_data.get("flag_state", "").upper()
+            if "UNITED KINGDOM" in flag_state or flag_state == "UK":
+                flag_code = "GB"
+            elif "NORWAY" in flag_state:
+                flag_code = "NO"
+            elif "GERMANY" in flag_state:
+                flag_code = "DE"
+            elif "NETHERLANDS" in flag_state:
+                flag_code = "NL"
             else:
                 flag_code = None
 
             vessel = Vessel(
-                vessel_name='Unknown',  # MAIB data doesn't include vessel names
+                vessel_name="Unknown",  # MAIB data doesn't include vessel names
                 vessel_type=VesselType[vessel_type.upper()],
-                year_built=vessel_data.get('year_built'),
+                year_built=vessel_data.get("year_built"),
                 flag_state=flag_code,
-                metadata_json=metadata
+                metadata_json=metadata,
             )
             self.session.add(vessel)
             self.session.flush()

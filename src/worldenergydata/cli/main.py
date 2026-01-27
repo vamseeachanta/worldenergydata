@@ -46,12 +46,19 @@ See Also:
 """
 
 import typer
-from typing import Optional
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
-from worldenergydata.cli.commands import bsee, marine_safety, fdas
+from worldenergydata.cli.commands import (
+    bsee,
+    canada,
+    fdas,
+    marine_safety,
+    metocean,
+    sodir,
+    texas_rrc,
+)
 
 # Initialize console for rich output
 console = Console()
@@ -66,21 +73,25 @@ app = typer.Typer(
 )
 
 # Add module subcommands
-app.add_typer(
-    bsee.app,
-    name="bsee",
-    help="BSEE data operations and analysis"
-)
+app.add_typer(bsee.app, name="bsee", help="BSEE data operations and analysis")
 app.add_typer(
     marine_safety.app,
     name="marine-safety",
-    help="Marine safety incident data management"
+    help="Marine safety incident data management",
+)
+app.add_typer(fdas.app, name="fdas", help="Field Development Analysis System")
+app.add_typer(
+    sodir.app,
+    name="sodir",
+    help="SODIR (Norwegian Offshore Directorate) data operations",
 )
 app.add_typer(
-    fdas.app,
-    name="fdas",
-    help="Field Development Analysis System"
+    metocean.app, name="metocean", help="Metocean data - buoys, tides, marine weather"
 )
+app.add_typer(
+    texas_rrc.app, name="texas-rrc", help="Texas Railroad Commission oil & gas data"
+)
+app.add_typer(canada.app, name="canada", help="Canadian oil & gas data (AER/BCER)")
 
 
 @app.command()
@@ -97,7 +108,7 @@ def version() -> None:
             f"Version: [green]{__version__}[/green]\n"
             f"Global energy market data aggregation platform",
             title="About",
-            border_style="cyan"
+            border_style="cyan",
         )
     )
 
@@ -106,9 +117,7 @@ def version() -> None:
 def info() -> None:
     """Display information about available modules."""
     table = Table(
-        title="WorldEnergyData Modules",
-        show_header=True,
-        header_style="bold cyan"
+        title="WorldEnergyData Modules", show_header=True, header_style="bold cyan"
     )
 
     table.add_column("Module", style="bold")
@@ -116,43 +125,57 @@ def info() -> None:
     table.add_column("Key Commands", style="dim")
 
     table.add_row(
-        "bsee",
-        "BSEE data operations and analysis",
-        "analyze, report, data, refresh"
+        "bsee", "BSEE data operations and analysis", "analyze, report, data, refresh"
     )
     table.add_row(
-        "marine-safety",
-        "Marine safety incident data",
-        "scrape, stats, export, db"
+        "marine-safety", "Marine safety incident data", "scrape, stats, export, db"
     )
     table.add_row(
         "fdas",
         "Field Development Analysis System",
-        "calculate-npv, calculate-mirr, analyze"
+        "calculate-npv, calculate-mirr, analyze",
+    )
+    table.add_row(
+        "sodir", "SODIR (Norwegian Offshore Directorate)", "collect, analyze, status"
+    )
+    table.add_row(
+        "metocean",
+        "Metocean data (buoys, tides, weather)",
+        "stations, fetch, forecast, cache, db",
+    )
+    table.add_row(
+        "texas-rrc",
+        "Texas Railroad Commission oil & gas",
+        "collect, analyze, status, validate-api",
+    )
+    table.add_row(
+        "canada",
+        "Canadian oil & gas (AER/BCER)",
+        "collect, analyze, status, validate-uwi",
     )
 
     console.print(table)
 
-    console.print("\n[dim]Use 'worldenergydata <module> --help' for module-specific commands[/dim]")
+    console.print(
+        "\n[dim]Use 'worldenergydata <module> --help' for module-specific commands[/dim]"
+    )
 
 
 @app.command()
 def status() -> None:
     """Display system status and data availability."""
     from pathlib import Path
-    import os
 
-    console.print(
-        Panel(
-            "[bold]System Status[/bold]",
-            border_style="green"
-        )
-    )
+    console.print(Panel("[bold]System Status[/bold]", border_style="green"))
 
     # Check data directories
     data_paths = {
         "BSEE Data": Path("data/bsee"),
         "Marine Safety Data": Path("data/marine_safety"),
+        "SODIR Data": Path("data/sodir"),
+        "Metocean Data": Path("data/metocean"),
+        "Texas RRC Data": Path("data/texas_rrc"),
+        "Canada Data": Path("data/canada"),
         "Reports": Path("reports"),
     }
 
@@ -165,16 +188,10 @@ def status() -> None:
         if path.exists():
             file_count = len(list(path.rglob("*"))) if path.is_dir() else 1
             status_table.add_row(
-                name,
-                "[green]Available[/green]",
-                f"{file_count} files"
+                name, "[green]Available[/green]", f"{file_count} files"
             )
         else:
-            status_table.add_row(
-                name,
-                "[yellow]Not Found[/yellow]",
-                f"Path: {path}"
-            )
+            status_table.add_row(name, "[yellow]Not Found[/yellow]", f"Path: {path}")
 
     console.print(status_table)
 
@@ -182,7 +199,9 @@ def status() -> None:
 @app.callback(invoke_without_command=True)
 def main(
     ctx: typer.Context,
-    verbose: bool = typer.Option(False, "--verbose", "-v", help="Enable verbose output"),
+    verbose: bool = typer.Option(
+        False, "--verbose", "-v", help="Enable verbose output"
+    ),
 ) -> None:
     """
     WorldEnergyData CLI - Global energy market data platform.
@@ -197,7 +216,7 @@ def main(
                 "[bold cyan]WorldEnergyData[/bold cyan]\n\n"
                 "Global energy market data aggregation, analysis, and visualization platform.\n\n"
                 "[dim]Use --help for available commands[/dim]",
-                border_style="cyan"
+                border_style="cyan",
             )
         )
         raise typer.Exit()

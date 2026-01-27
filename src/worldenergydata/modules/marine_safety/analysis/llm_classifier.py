@@ -3,8 +3,8 @@
 
 import logging
 import re
-from typing import List, Dict, Optional, Union, Any
 import warnings
+from typing import Any, Dict, List, Optional
 
 # Suppress transformers warnings
 warnings.filterwarnings("ignore", category=UserWarning, module="transformers")
@@ -50,21 +50,37 @@ class LLMIncidentClassifier:
         "engine room access failure",
         "watertight door malfunction",
         "cover improperly fastened",
-        "other incident"
+        "other incident",
     ]
 
     # Keywords for phrase extraction
     INCIDENT_KEYWORDS = [
-        'hatch', 'opening', 'door', 'cover', 'access', 'secure', 'close',
-        'seal', 'watertight', 'fastened', 'malfunction', 'failure', 'unsealed',
-        'ajar', 'open', 'breach', 'leak', 'water', 'ingress'
+        "hatch",
+        "opening",
+        "door",
+        "cover",
+        "access",
+        "secure",
+        "close",
+        "seal",
+        "watertight",
+        "fastened",
+        "malfunction",
+        "failure",
+        "unsealed",
+        "ajar",
+        "open",
+        "breach",
+        "leak",
+        "water",
+        "ingress",
     ]
 
     def __init__(
         self,
-        model_name: str = 'facebook/bart-large-mnli',
+        model_name: str = "facebook/bart-large-mnli",
         use_gpu: bool = False,
-        confidence_threshold: float = 0.7
+        confidence_threshold: float = 0.7,
     ):
         """
         Initialize LLM classifier with specified model.
@@ -83,7 +99,9 @@ class LLMIncidentClassifier:
         self.confidence_threshold = confidence_threshold
 
         logger.info(f"Initializing LLM classifier with model: {model_name}")
-        logger.info(f"GPU enabled: {use_gpu}, Confidence threshold: {confidence_threshold}")
+        logger.info(
+            f"GPU enabled: {use_gpu}, Confidence threshold: {confidence_threshold}"
+        )
 
         try:
             from transformers import pipeline
@@ -91,9 +109,7 @@ class LLMIncidentClassifier:
             device = 0 if use_gpu else -1  # 0 for GPU, -1 for CPU
 
             self.classifier = pipeline(
-                "zero-shot-classification",
-                model=model_name,
-                device=device
+                "zero-shot-classification", model=model_name, device=device
             )
 
             logger.info("Model loaded successfully")
@@ -104,15 +120,10 @@ class LLMIncidentClassifier:
                 "Install with: pip install transformers torch"
             ) from e
         except Exception as e:
-            raise RuntimeError(
-                f"Failed to load model '{model_name}': {str(e)}"
-            ) from e
+            raise RuntimeError(f"Failed to load model '{model_name}': {str(e)}") from e
 
     def classify_incident(
-        self,
-        text: str,
-        candidate_labels: List[str],
-        multi_label: bool = False
+        self, text: str, candidate_labels: List[str], multi_label: bool = False
     ) -> Dict[str, Any]:
         """
         Classify single incident text with confidence scores.
@@ -140,63 +151,47 @@ class LLMIncidentClassifier:
         # Handle edge cases
         if text is None or not isinstance(text, str):
             logger.warning("Invalid input: text is None or not a string")
-            return {
-                'label': None,
-                'confidence': 0.0,
-                'all_scores': {}
-            }
+            return {"label": None, "confidence": 0.0, "all_scores": {}}
 
         # Handle empty or whitespace-only text
         if not text.strip():
             logger.warning("Empty or whitespace-only text provided")
-            return {
-                'label': None,
-                'confidence': 0.0,
-                'all_scores': {}
-            }
+            return {"label": None, "confidence": 0.0, "all_scores": {}}
 
         try:
             # Run classification
             result = self.classifier(
-                text,
-                candidate_labels=candidate_labels,
-                multi_label=multi_label
+                text, candidate_labels=candidate_labels, multi_label=multi_label
             )
 
             # Extract top prediction
-            top_label = result['labels'][0]
-            top_score = result['scores'][0]
+            top_label = result["labels"][0]
+            top_score = result["scores"][0]
 
             # Create score dictionary
             all_scores = {
-                label: score
-                for label, score in zip(result['labels'], result['scores'])
+                label: score for label, score in zip(result["labels"], result["scores"])
             }
 
             # Check confidence threshold
             final_label = top_label if top_score >= self.confidence_threshold else None
 
             return {
-                'label': final_label,
-                'confidence': float(top_score),
-                'all_scores': all_scores
+                "label": final_label,
+                "confidence": float(top_score),
+                "all_scores": all_scores,
             }
 
         except Exception as e:
             logger.error(f"Classification error: {str(e)}")
-            return {
-                'label': None,
-                'confidence': 0.0,
-                'all_scores': {},
-                'error': str(e)
-            }
+            return {"label": None, "confidence": 0.0, "all_scores": {}, "error": str(e)}
 
     def classify_batch(
         self,
         texts: List[str],
         candidate_labels: List[str],
         confidence_threshold: Optional[float] = None,
-        multi_label: bool = False
+        multi_label: bool = False,
     ) -> List[Dict[str, Any]]:
         """
         Batch classify multiple incidents for efficiency.
@@ -227,34 +222,38 @@ class LLMIncidentClassifier:
         if not texts:
             return []
 
-        threshold = confidence_threshold if confidence_threshold is not None else self.confidence_threshold
+        threshold = (
+            confidence_threshold
+            if confidence_threshold is not None
+            else self.confidence_threshold
+        )
 
         try:
             # Use pipeline's batch processing
             batch_results = self.classifier(
-                texts,
-                candidate_labels=candidate_labels,
-                multi_label=multi_label
+                texts, candidate_labels=candidate_labels, multi_label=multi_label
             )
 
             # Process results
             processed_results = []
             for result in batch_results:
-                top_label = result['labels'][0]
-                top_score = result['scores'][0]
+                top_label = result["labels"][0]
+                top_score = result["scores"][0]
 
                 all_scores = {
                     label: score
-                    for label, score in zip(result['labels'], result['scores'])
+                    for label, score in zip(result["labels"], result["scores"])
                 }
 
                 final_label = top_label if top_score >= threshold else None
 
-                processed_results.append({
-                    'label': final_label,
-                    'confidence': float(top_score),
-                    'all_scores': all_scores
-                })
+                processed_results.append(
+                    {
+                        "label": final_label,
+                        "confidence": float(top_score),
+                        "all_scores": all_scores,
+                    }
+                )
 
             return processed_results
 
@@ -262,12 +261,7 @@ class LLMIncidentClassifier:
             logger.error(f"Batch classification error: {str(e)}")
             # Return error results for each text
             return [
-                {
-                    'label': None,
-                    'confidence': 0.0,
-                    'all_scores': {},
-                    'error': str(e)
-                }
+                {"label": None, "confidence": 0.0, "all_scores": {}, "error": str(e)}
                 for _ in texts
             ]
 
@@ -301,11 +295,11 @@ class LLMIncidentClassifier:
         """
         if not text or not isinstance(text, str) or not text.strip():
             return {
-                'is_hatch_incident': False,
-                'confidence': 0.0,
-                'matched_phrases': [],
-                'reasoning': 'Invalid or empty input text',
-                'classification': {}
+                "is_hatch_incident": False,
+                "confidence": 0.0,
+                "matched_phrases": [],
+                "reasoning": "Invalid or empty input text",
+                "classification": {},
             }
 
         # Classify with hatch-specific labels
@@ -315,16 +309,16 @@ class LLMIncidentClassifier:
         matched_phrases = self.extract_incident_phrases(text)
 
         # Determine if it's a hatch incident
-        top_label = classification.get('label', '')
-        confidence = classification.get('confidence', 0.0)
+        top_label = classification.get("label", "")
+        confidence = classification.get("confidence", 0.0)
 
         # Consider it a hatch incident if:
         # 1. Classification is not 'other incident' AND confidence >= threshold
         # 2. OR matched phrases contain hatch-related terms with moderate confidence
         is_hatch_incident = (
-            top_label and
-            top_label != 'other incident' and
-            confidence >= self.confidence_threshold
+            top_label
+            and top_label != "other incident"
+            and confidence >= self.confidence_threshold
         )
 
         # Generate reasoning
@@ -341,11 +335,11 @@ class LLMIncidentClassifier:
             )
 
         return {
-            'is_hatch_incident': is_hatch_incident,
-            'confidence': confidence,
-            'matched_phrases': matched_phrases,
-            'reasoning': reasoning,
-            'classification': classification
+            "is_hatch_incident": is_hatch_incident,
+            "confidence": confidence,
+            "matched_phrases": matched_phrases,
+            "reasoning": reasoning,
+            "classification": classification,
         }
 
     def extract_incident_phrases(self, text: str) -> List[str]:
@@ -371,7 +365,7 @@ class LLMIncidentClassifier:
             return []
 
         # Split into sentences
-        sentences = re.split(r'[.!?]+', text)
+        sentences = re.split(r"[.!?]+", text)
 
         matched_phrases = []
 
@@ -402,21 +396,17 @@ class LLMIncidentClassifier:
         result = self.detect_hatch_maloperation(text)
 
         # Map to expected format
-        if result['is_hatch_incident']:
-            label = 'hatch_maloperation'  # or 'positive' or True
+        if result["is_hatch_incident"]:
+            label = "hatch_maloperation"  # or 'positive' or True
         else:
-            label = 'other'  # or 'negative' or False
+            label = "other"  # or 'negative' or False
 
-        return {
-            'label': label,
-            'confidence': result['confidence']
-        }
+        return {"label": label, "confidence": result["confidence"]}
 
 
 # Backwards compatibility aliases
 def create_classifier(
-    model_name: str = 'facebook/bart-large-mnli',
-    use_gpu: bool = False
+    model_name: str = "facebook/bart-large-mnli", use_gpu: bool = False
 ) -> LLMIncidentClassifier:
     """
     Factory function to create classifier instance.

@@ -6,7 +6,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 import pandas as pd
 import yaml
@@ -38,7 +38,8 @@ def load_lease_mapping(path: Path | str) -> Dict[str, Dict[str, object]]:
         }
 
     lease_lookup = {
-        _normalize_lease(lease): name for lease, name in (data.get("lease_to_field", {}) or {}).items()
+        _normalize_lease(lease): name
+        for lease, name in (data.get("lease_to_field", {}) or {}).items()
     }
 
     return {
@@ -81,7 +82,12 @@ def load_field_inputs(
         if status_filter_normalized and status != status_filter_normalized:
             continue
 
-        display_name = field_payload.get("display_name") or field_payload.get("name") or field_payload.get("field_name") or field_id
+        display_name = (
+            field_payload.get("display_name")
+            or field_payload.get("name")
+            or field_payload.get("field_name")
+            or field_id
+        )
         leases_key = field_payload.get("leases_key", field_id)
         leases = field_payload.get("leases")
         if leases is None:
@@ -89,9 +95,16 @@ def load_field_inputs(
         leases = [_normalize_lease(item) for item in leases]
 
         capex = field_payload.get("capex") or {}
-        first_oil = _resolve_first_oil(field_payload.get("first_oil") or field_payload.get("key_dates", {}).get("first_oil"))
-        data_through_value = field_payload.get("data_through") or field_payload.get("key_dates", {}).get("data_through")
-        data_through = pd.to_datetime(data_through_value) if data_through_value else None
+        first_oil = _resolve_first_oil(
+            field_payload.get("first_oil")
+            or field_payload.get("key_dates", {}).get("first_oil")
+        )
+        data_through_value = field_payload.get("data_through") or field_payload.get(
+            "key_dates", {}
+        ).get("data_through")
+        data_through = (
+            pd.to_datetime(data_through_value) if data_through_value else None
+        )
 
         profiles[field_id] = {
             "field_id": field_id,
@@ -160,9 +173,8 @@ def summarize_field_financials(
 
     df = monthly.copy()
     df = df.sort_values("date")
-    df["months_from_first_oil"] = (
-        (df["date"].dt.year - first_oil.year) * 12
-        + (df["date"].dt.month - first_oil.month)
+    df["months_from_first_oil"] = (df["date"].dt.year - first_oil.year) * 12 + (
+        df["date"].dt.month - first_oil.month
     )
     df["discount_factor"] = 1 / ((1 + monthly_discount) ** df["months_from_first_oil"])
 
@@ -188,7 +200,9 @@ def summarize_field_financials(
     profitability_index = (npv_project_mm / capex_total) if capex_total else 0.0
 
     return {
-        "Field": field_profile.get("display_name", field_profile.get("field_id", "Unknown")),
+        "Field": field_profile.get(
+            "display_name", field_profile.get("field_id", "Unknown")
+        ),
         "First Oil": first_oil.strftime("%Y-%m"),
         "Months": int(len(df)),
         "Oil (MMBO)": total_oil / 1_000_000.0,

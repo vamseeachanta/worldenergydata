@@ -14,16 +14,16 @@ Examples:
     worldenergydata bsee refresh --type well
 """
 
-import typer
-from typing import Optional, List
-from pathlib import Path
-from enum import Enum
 from datetime import datetime
+from enum import Enum
+from pathlib import Path
+from typing import Optional
 
+import typer
 from rich.console import Console
-from rich.table import Table
-from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskProgressColumn
 from rich.panel import Panel
+from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.table import Table
 
 # Initialize console
 console = Console()
@@ -38,6 +38,7 @@ app = typer.Typer(
 
 class ReportType(str, Enum):
     """Report type options."""
+
     block = "block"
     field = "field"
     lease = "lease"
@@ -46,6 +47,7 @@ class ReportType(str, Enum):
 
 class OutputFormat(str, Enum):
     """Output format options."""
+
     excel = "excel"
     json = "json"
     html = "html"
@@ -54,6 +56,7 @@ class OutputFormat(str, Enum):
 
 class DataType(str, Enum):
     """Data type options for refresh."""
+
     well = "well"
     production = "production"
     block = "block"
@@ -64,29 +67,28 @@ class DataType(str, Enum):
 @app.command()
 def analyze(
     block: Optional[str] = typer.Option(
-        None, "--block", "-b",
-        help="Block number to analyze (e.g., 759)"
+        None, "--block", "-b", help="Block number to analyze (e.g., 759)"
     ),
     field: Optional[str] = typer.Option(
-        None, "--field", "-f",
-        help="Field name to analyze (e.g., 'Jack', 'Thunder Horse')"
+        None,
+        "--field",
+        "-f",
+        help="Field name to analyze (e.g., 'Jack', 'Thunder Horse')",
     ),
     lease: Optional[str] = typer.Option(
-        None, "--lease", "-l",
-        help="Lease number to analyze (e.g., OCS-G-12345)"
+        None, "--lease", "-l", help="Lease number to analyze (e.g., OCS-G-12345)"
     ),
     api: Optional[str] = typer.Option(
-        None, "--api", "-a",
-        help="API number to analyze (10 or 12 digit)"
+        None, "--api", "-a", help="API number to analyze (10 or 12 digit)"
     ),
     output: Optional[Path] = typer.Option(
         Path("./reports"),
-        "--output", "-o",
-        help="Output directory for analysis results"
+        "--output",
+        "-o",
+        help="Output directory for analysis results",
     ),
     verbose: bool = typer.Option(
-        False, "--verbose", "-v",
-        help="Enable verbose output"
+        False, "--verbose", "-v", help="Enable verbose output"
     ),
 ) -> None:
     """
@@ -123,7 +125,9 @@ def analyze(
             params_table.add_row("API", api)
         params_table.add_row("Output", str(output))
 
-        console.print(Panel(params_table, title="Analysis Parameters", border_style="cyan"))
+        console.print(
+            Panel(params_table, title="Analysis Parameters", border_style="cyan")
+        )
 
         # Create output directory
         output.mkdir(parents=True, exist_ok=True)
@@ -131,7 +135,7 @@ def analyze(
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
-            console=console
+            console=console,
         ) as progress:
             task = progress.add_task("[cyan]Running BSEE analysis...", total=100)
 
@@ -139,7 +143,9 @@ def analyze(
             try:
                 from worldenergydata.modules.bsee.bsee import bsee as BSEEModule
 
-                progress.update(task, advance=20, description="[cyan]Loading BSEE module...")
+                progress.update(
+                    task, advance=20, description="[cyan]Loading BSEE module..."
+                )
 
                 # Build configuration
                 cfg = {
@@ -160,13 +166,17 @@ def analyze(
                     },
                 }
 
-                progress.update(task, advance=30, description="[cyan]Running analysis...")
+                progress.update(
+                    task, advance=30, description="[cyan]Running analysis..."
+                )
 
                 # Run the analysis through BSEE router
                 bsee_instance = BSEEModule()
                 result_cfg = bsee_instance.router(cfg)
 
-                progress.update(task, advance=50, description="[cyan]Completing analysis...")
+                progress.update(
+                    task, advance=50, description="[cyan]Completing analysis..."
+                )
 
                 if verbose:
                     console.print(f"\n[dim]Configuration result: {result_cfg}[/dim]")
@@ -176,7 +186,9 @@ def analyze(
 
             except ImportError as e:
                 progress.update(task, completed=100)
-                console.print(f"[yellow]Warning:[/yellow] Could not import BSEE module: {e}")
+                console.print(
+                    f"[yellow]Warning:[/yellow] Could not import BSEE module: {e}"
+                )
                 console.print("[dim]Ensure all dependencies are installed.[/dim]")
                 raise typer.Exit(1)
 
@@ -186,6 +198,7 @@ def analyze(
         console.print(f"[red]Error:[/red] {str(e)}")
         if verbose:
             import traceback
+
             console.print(f"[dim]{traceback.format_exc()}[/dim]")
         raise typer.Exit(1)
 
@@ -193,42 +206,30 @@ def analyze(
 @app.command()
 def report(
     report_type: ReportType = typer.Option(
-        ReportType.field,
-        "--type", "-t",
-        help="Type of report to generate"
+        ReportType.field, "--type", "-t", help="Type of report to generate"
     ),
     entity_id: str = typer.Option(
-        ..., "--id", "-i",
-        help="Entity identifier (block number, field name, or lease number)"
+        ...,
+        "--id",
+        "-i",
+        help="Entity identifier (block number, field name, or lease number)",
     ),
     output_format: OutputFormat = typer.Option(
-        OutputFormat.excel,
-        "--format", "-f",
-        help="Output format"
+        OutputFormat.excel, "--format", "-f", help="Output format"
     ),
     output: Path = typer.Option(
-        Path("./reports"),
-        "--output", "-o",
-        help="Output directory"
+        Path("./reports"), "--output", "-o", help="Output directory"
     ),
-    oil_price: float = typer.Option(
-        75.00,
-        "--oil-price",
-        help="Oil price per barrel"
-    ),
-    gas_price: float = typer.Option(
-        3.50,
-        "--gas-price",
-        help="Gas price per MCF"
-    ),
+    oil_price: float = typer.Option(75.00, "--oil-price", help="Oil price per barrel"),
+    gas_price: float = typer.Option(3.50, "--gas-price", help="Gas price per MCF"),
     discount_rate: float = typer.Option(
         0.10,
-        "--discount-rate", "-r",
-        help="Discount rate for NPV calculations (e.g., 0.10 for 10%)"
+        "--discount-rate",
+        "-r",
+        help="Discount rate for NPV calculations (e.g., 0.10 for 10%)",
     ),
     verbose: bool = typer.Option(
-        False, "--verbose", "-v",
-        help="Enable verbose output"
+        False, "--verbose", "-v", help="Enable verbose output"
     ),
 ) -> None:
     """
@@ -256,31 +257,40 @@ def report(
                 f"Oil Price: ${oil_price:.2f}/bbl\n"
                 f"Gas Price: ${gas_price:.2f}/MCF\n"
                 f"Discount Rate: {discount_rate:.1%}",
-                border_style="cyan"
+                border_style="cyan",
             )
         )
 
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
-            console=console
+            console=console,
         ) as progress:
             task = progress.add_task(
                 f"[cyan]Generating {report_type.value} report for {entity_id}...",
-                total=100
+                total=100,
             )
 
             try:
                 from worldenergydata.modules.bsee.reports.comprehensive.controller_enhanced import (
-                    ReportController, ReportConfiguration, ReportParameters, ReportType as CtrlReportType
+                    ReportConfiguration,
+                    ReportController,
+                    ReportParameters,
+                )
+                from worldenergydata.modules.bsee.reports.comprehensive.controller_enhanced import (
+                    ReportType as CtrlReportType,
                 )
 
-                progress.update(task, advance=20, description="[cyan]Loading report controller...")
+                progress.update(
+                    task, advance=20, description="[cyan]Loading report controller..."
+                )
 
                 # Initialize controller
                 controller = ReportController()
 
-                progress.update(task, advance=20, description="[cyan]Building configuration...")
+                progress.update(
+                    task, advance=20, description="[cyan]Building configuration..."
+                )
 
                 # Build report configuration
                 report_config = ReportConfiguration(
@@ -300,7 +310,9 @@ def report(
                     discount_rate=discount_rate,
                 )
 
-                progress.update(task, advance=30, description="[cyan]Generating report...")
+                progress.update(
+                    task, advance=30, description="[cyan]Generating report..."
+                )
 
                 # Generate report
                 result = controller.generate_report(report_config, params)
@@ -312,20 +324,24 @@ def report(
                     report_filename = f"{report_type.value}_{entity_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
                     if output_format == OutputFormat.json:
                         import json
+
                         report_path = output / f"{report_filename}.json"
-                        with open(report_path, 'w') as f:
+                        with open(report_path, "w") as f:
                             json.dump(result, f, indent=2, default=str)
                     else:
                         # For other formats, save metadata as JSON for now
                         report_path = output / f"{report_filename}_metadata.json"
                         import json
-                        with open(report_path, 'w') as f:
+
+                        with open(report_path, "w") as f:
                             json.dump(result, f, indent=2, default=str)
 
-                    console.print(f"\n[green]Report generated successfully[/green]")
+                    console.print("\n[green]Report generated successfully[/green]")
                     console.print(f"[dim]Report saved to: {report_path}[/dim]")
                 else:
-                    console.print(f"\n[yellow]Report generation completed with issues[/yellow]")
+                    console.print(
+                        "\n[yellow]Report generation completed with issues[/yellow]"
+                    )
                     if result.get("error"):
                         console.print(f"[dim]Error: {result.get('error')}[/dim]")
 
@@ -334,7 +350,9 @@ def report(
 
             except ImportError as e:
                 progress.update(task, completed=100)
-                console.print(f"[yellow]Warning:[/yellow] Could not import report module: {e}")
+                console.print(
+                    f"[yellow]Warning:[/yellow] Could not import report module: {e}"
+                )
                 console.print("[dim]Ensure all dependencies are installed.[/dim]")
 
         console.print(f"[dim]Output directory: {output}[/dim]")
@@ -343,6 +361,7 @@ def report(
         console.print(f"[red]Error:[/red] {str(e)}")
         if verbose:
             import traceback
+
             console.print(f"[dim]{traceback.format_exc()}[/dim]")
         raise typer.Exit(1)
 
@@ -350,29 +369,18 @@ def report(
 @app.command()
 def data(
     api: Optional[str] = typer.Option(
-        None, "--api", "-a",
-        help="API number (10 or 12 digit)"
+        None, "--api", "-a", help="API number (10 or 12 digit)"
     ),
-    block: Optional[str] = typer.Option(
-        None, "--block", "-b",
-        help="Block number"
-    ),
-    lease: Optional[str] = typer.Option(
-        None, "--lease", "-l",
-        help="Lease number"
-    ),
+    block: Optional[str] = typer.Option(None, "--block", "-b", help="Block number"),
+    lease: Optional[str] = typer.Option(None, "--lease", "-l", help="Lease number"),
     data_type: DataType = typer.Option(
-        DataType.well,
-        "--type", "-t",
-        help="Type of data to retrieve"
+        DataType.well, "--type", "-t", help="Type of data to retrieve"
     ),
     output: Optional[Path] = typer.Option(
-        None, "--output", "-o",
-        help="Output file path (optional)"
+        None, "--output", "-o", help="Output file path (optional)"
     ),
     verbose: bool = typer.Option(
-        False, "--verbose", "-v",
-        help="Enable verbose output"
+        False, "--verbose", "-v", help="Enable verbose output"
     ),
 ) -> None:
     """
@@ -405,19 +413,23 @@ def data(
             params_table.add_row("Lease", lease)
         params_table.add_row("Data Type", data_type.value)
 
-        console.print(Panel(params_table, title="Query Parameters", border_style="cyan"))
+        console.print(
+            Panel(params_table, title="Query Parameters", border_style="cyan")
+        )
 
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
-            console=console
+            console=console,
         ) as progress:
             task = progress.add_task("[cyan]Retrieving BSEE data...", total=100)
 
             try:
                 from worldenergydata.modules.bsee.data.bsee_data import BSEEData
 
-                progress.update(task, advance=30, description="[cyan]Loading BSEE data module...")
+                progress.update(
+                    task, advance=30, description="[cyan]Loading BSEE data module..."
+                )
 
                 bsee_data_module = BSEEData()
 
@@ -440,47 +452,75 @@ def data(
                 # Route through BSEE data
                 cfg, data_result = bsee_data_module.router(cfg)
 
-                progress.update(task, advance=30, description="[cyan]Processing results...")
+                progress.update(
+                    task, advance=30, description="[cyan]Processing results..."
+                )
 
                 # Display results
-                well_data = data_result.get('well_data')
-                production_data = data_result.get('production_data')
+                well_data = data_result.get("well_data")
+                production_data = data_result.get("production_data")
 
-                results_table = Table(title="Data Retrieved", show_header=True, header_style="bold cyan")
+                results_table = Table(
+                    title="Data Retrieved", show_header=True, header_style="bold cyan"
+                )
                 results_table.add_column("Data Type", style="dim")
                 results_table.add_column("Records", justify="right")
                 results_table.add_column("Status")
 
                 if well_data is not None:
-                    count = len(well_data) if hasattr(well_data, '__len__') else 0
-                    results_table.add_row("Well Data", str(count), "[green]Available[/green]")
+                    count = len(well_data) if hasattr(well_data, "__len__") else 0
+                    results_table.add_row(
+                        "Well Data", str(count), "[green]Available[/green]"
+                    )
                 else:
-                    results_table.add_row("Well Data", "0", "[yellow]Not found[/yellow]")
+                    results_table.add_row(
+                        "Well Data", "0", "[yellow]Not found[/yellow]"
+                    )
 
                 if production_data is not None:
-                    count = len(production_data) if hasattr(production_data, '__len__') else 0
-                    results_table.add_row("Production Data", str(count), "[green]Available[/green]")
+                    count = (
+                        len(production_data)
+                        if hasattr(production_data, "__len__")
+                        else 0
+                    )
+                    results_table.add_row(
+                        "Production Data", str(count), "[green]Available[/green]"
+                    )
                 else:
-                    results_table.add_row("Production Data", "0", "[yellow]Not found[/yellow]")
+                    results_table.add_row(
+                        "Production Data", "0", "[yellow]Not found[/yellow]"
+                    )
 
                 console.print(results_table)
 
                 # Save output if specified
                 if output:
                     import json
+
                     output_data = {
-                        "query": {"api": api, "block": block, "lease": lease, "data_type": data_type.value},
-                        "well_data_count": len(well_data) if well_data is not None else 0,
-                        "production_data_count": len(production_data) if production_data is not None else 0,
+                        "query": {
+                            "api": api,
+                            "block": block,
+                            "lease": lease,
+                            "data_type": data_type.value,
+                        },
+                        "well_data_count": (
+                            len(well_data) if well_data is not None else 0
+                        ),
+                        "production_data_count": (
+                            len(production_data) if production_data is not None else 0
+                        ),
                         "retrieved_at": datetime.now().isoformat(),
                     }
-                    with open(output, 'w') as f:
+                    with open(output, "w") as f:
                         json.dump(output_data, f, indent=2, default=str)
                     console.print(f"[dim]Data saved to: {output}[/dim]")
 
             except ImportError as e:
                 progress.update(task, completed=100)
-                console.print(f"[yellow]Warning:[/yellow] Could not import BSEE data module: {e}")
+                console.print(
+                    f"[yellow]Warning:[/yellow] Could not import BSEE data module: {e}"
+                )
 
         console.print("\n[green]Data retrieval completed[/green]")
 
@@ -490,6 +530,7 @@ def data(
         console.print(f"[red]Error:[/red] {str(e)}")
         if verbose:
             import traceback
+
             console.print(f"[dim]{traceback.format_exc()}[/dim]")
         raise typer.Exit(1)
 
@@ -497,17 +538,13 @@ def data(
 @app.command()
 def refresh(
     data_type: DataType = typer.Option(
-        DataType.all,
-        "--type", "-t",
-        help="Type of data to refresh"
+        DataType.all, "--type", "-t", help="Type of data to refresh"
     ),
     force: bool = typer.Option(
-        False, "--force", "-f",
-        help="Force refresh even if data is current"
+        False, "--force", "-f", help="Force refresh even if data is current"
     ),
     verbose: bool = typer.Option(
-        False, "--verbose", "-v",
-        help="Enable verbose output"
+        False, "--verbose", "-v", help="Enable verbose output"
     ),
 ) -> None:
     """
@@ -526,24 +563,27 @@ def refresh(
                 f"[bold]Data Refresh[/bold]\n"
                 f"Type: {data_type.value}\n"
                 f"Force: {force}",
-                border_style="cyan"
+                border_style="cyan",
             )
         )
 
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
-            console=console
+            console=console,
         ) as progress:
             task = progress.add_task(
-                f"[cyan]Refreshing {data_type.value} data...",
-                total=100
+                f"[cyan]Refreshing {data_type.value} data...", total=100
             )
 
             try:
-                from worldenergydata.modules.bsee.data.refresh.data_refresh import DataRefresh
+                from worldenergydata.modules.bsee.data.refresh.data_refresh import (
+                    DataRefresh,
+                )
 
-                progress.update(task, advance=20, description="[cyan]Loading refresh module...")
+                progress.update(
+                    task, advance=20, description="[cyan]Loading refresh module..."
+                )
 
                 refresh_module = DataRefresh()
 
@@ -560,12 +600,18 @@ def refresh(
                     },
                 }
 
-                progress.update(task, advance=30, description=f"[cyan]Refreshing {data_type.value} data...")
+                progress.update(
+                    task,
+                    advance=30,
+                    description=f"[cyan]Refreshing {data_type.value} data...",
+                )
 
                 # Run refresh
                 result_cfg, _ = refresh_module.router(cfg)
 
-                progress.update(task, advance=50, description="[cyan]Completing refresh...")
+                progress.update(
+                    task, advance=50, description="[cyan]Completing refresh..."
+                )
 
                 console.print("\n[green]Data refresh completed successfully[/green]")
 
@@ -574,13 +620,16 @@ def refresh(
 
             except ImportError as e:
                 progress.update(task, completed=100)
-                console.print(f"[yellow]Warning:[/yellow] Could not import refresh module: {e}")
+                console.print(
+                    f"[yellow]Warning:[/yellow] Could not import refresh module: {e}"
+                )
                 console.print("[dim]Ensure all dependencies are installed.[/dim]")
 
     except Exception as e:
         console.print(f"[red]Error:[/red] {str(e)}")
         if verbose:
             import traceback
+
             console.print(f"[dim]{traceback.format_exc()}[/dim]")
         raise typer.Exit(1)
 
@@ -588,8 +637,7 @@ def refresh(
 @app.command()
 def stats(
     verbose: bool = typer.Option(
-        False, "--verbose", "-v",
-        help="Show detailed statistics"
+        False, "--verbose", "-v", help="Show detailed statistics"
     ),
 ) -> None:
     """
@@ -602,7 +650,7 @@ def stats(
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
-            console=console
+            console=console,
         ) as progress:
             task = progress.add_task("[cyan]Loading BSEE data statistics...", total=100)
 
@@ -618,9 +666,10 @@ def stats(
 
             try:
                 from pathlib import Path
-                import os
 
-                progress.update(task, advance=30, description="[cyan]Checking data directories...")
+                progress.update(
+                    task, advance=30, description="[cyan]Checking data directories..."
+                )
 
                 # Check for data directories and count files
                 data_dirs = [
@@ -638,7 +687,9 @@ def stats(
                                 total_files += 1
                                 total_size += f.stat().st_size
 
-                progress.update(task, advance=40, description="[cyan]Gathering statistics...")
+                progress.update(
+                    task, advance=40, description="[cyan]Gathering statistics..."
+                )
 
                 # Try to load actual data if available
                 try:
@@ -652,7 +703,9 @@ def stats(
                 except ImportError:
                     pass
 
-                progress.update(task, advance=30, description="[cyan]Formatting results...")
+                progress.update(
+                    task, advance=30, description="[cyan]Formatting results..."
+                )
 
             except Exception as e:
                 progress.update(task, completed=100)
@@ -661,9 +714,7 @@ def stats(
 
         # Create statistics table
         table = Table(
-            title="BSEE Data Statistics",
-            show_header=True,
-            header_style="bold cyan"
+            title="BSEE Data Statistics", show_header=True, header_style="bold cyan"
         )
 
         table.add_column("Metric", style="dim")
@@ -683,12 +734,18 @@ def stats(
             table.add_row("", "")
             table.add_row("[dim]Data Directories[/dim]", "")
             for data_dir in data_dirs:
-                status = "[green]Exists[/green]" if data_dir.exists() else "[yellow]Not found[/yellow]"
+                status = (
+                    "[green]Exists[/green]"
+                    if data_dir.exists()
+                    else "[yellow]Not found[/yellow]"
+                )
                 table.add_row(f"  {data_dir}", status)
 
         console.print(table)
 
-        console.print("\n[dim]Use 'worldenergydata bsee refresh' to download/update data[/dim]")
+        console.print(
+            "\n[dim]Use 'worldenergydata bsee refresh' to download/update data[/dim]"
+        )
 
     except Exception as e:
         console.print(f"[red]Error:[/red] {str(e)}")

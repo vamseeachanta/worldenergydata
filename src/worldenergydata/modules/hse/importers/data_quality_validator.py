@@ -1,11 +1,12 @@
 # ABOUTME: Data quality validation for HSE incident data post-import
 # ABOUTME: Validates completeness, ranges, consistency, outliers, and temporal patterns
 
-from typing import Dict, Any, List
-from datetime import datetime, timedelta
-from sqlalchemy.orm import Session
-from sqlalchemy import func
 import json
+from datetime import datetime
+from typing import Any, Dict
+
+from sqlalchemy import func
+from sqlalchemy.orm import Session
 
 from worldenergydata.modules.hse.database.models import HSEIncident
 
@@ -29,25 +30,25 @@ class DataQualityValidator:
 
     # Required fields that must be present
     REQUIRED_FIELDS = [
-        'bsee_incident_id',
-        'incident_date',
-        'operator',
-        'incident_type',
-        'severity'
+        "bsee_incident_id",
+        "incident_date",
+        "operator",
+        "incident_type",
+        "severity",
     ]
 
     # Optional fields tracked for completeness
     OPTIONAL_FIELDS = [
-        'facility_name',
-        'lease_number',
-        'block_number',
-        'field_name',
-        'latitude',
-        'longitude',
-        'description',
-        'root_cause',
-        'corrective_actions',
-        'investigation_status'
+        "facility_name",
+        "lease_number",
+        "block_number",
+        "field_name",
+        "latitude",
+        "longitude",
+        "description",
+        "root_cause",
+        "corrective_actions",
+        "investigation_status",
     ]
 
     # Gulf of Mexico geographic boundaries
@@ -91,45 +92,57 @@ class DataQualityValidator:
 
         if total_records == 0:
             return {
-                'total_records': 0,
-                'required_fields_completeness': 0.0,
-                'optional_fields_completeness': 0.0,
-                'required_field_details': {},
-                'optional_field_details': {}
+                "total_records": 0,
+                "required_fields_completeness": 0.0,
+                "optional_fields_completeness": 0.0,
+                "required_field_details": {},
+                "optional_field_details": {},
             }
 
         result = {
-            'total_records': total_records,
-            'required_field_details': {},
-            'optional_field_details': {}
+            "total_records": total_records,
+            "required_field_details": {},
+            "optional_field_details": {},
         }
 
         # Check required fields
         required_populated = []
         for field in self.REQUIRED_FIELDS:
-            count = self.db_session.query(func.count(HSEIncident.id)).filter(
-                getattr(HSEIncident, field).isnot(None)
-            ).scalar()
+            count = (
+                self.db_session.query(func.count(HSEIncident.id))
+                .filter(getattr(HSEIncident, field).isnot(None))
+                .scalar()
+            )
 
             percentage = (count / total_records) * 100
-            result['required_field_details'][field] = percentage
+            result["required_field_details"][field] = percentage
             required_populated.append(percentage)
 
-        result['required_fields_completeness'] = sum(required_populated) / len(required_populated) if required_populated else 0.0
+        result["required_fields_completeness"] = (
+            sum(required_populated) / len(required_populated)
+            if required_populated
+            else 0.0
+        )
 
         # Check optional fields
         optional_populated = []
         for field in self.OPTIONAL_FIELDS:
             if hasattr(HSEIncident, field):
-                count = self.db_session.query(func.count(HSEIncident.id)).filter(
-                    getattr(HSEIncident, field).isnot(None)
-                ).scalar()
+                count = (
+                    self.db_session.query(func.count(HSEIncident.id))
+                    .filter(getattr(HSEIncident, field).isnot(None))
+                    .scalar()
+                )
 
                 percentage = (count / total_records) * 100
-                result['optional_field_details'][field] = percentage
+                result["optional_field_details"][field] = percentage
                 optional_populated.append(percentage)
 
-        result['optional_fields_completeness'] = sum(optional_populated) / len(optional_populated) if optional_populated else 0.0
+        result["optional_fields_completeness"] = (
+            sum(optional_populated) / len(optional_populated)
+            if optional_populated
+            else 0.0
+        )
 
         return result
 
@@ -153,31 +166,41 @@ class DataQualityValidator:
             }
         """
         result = {
-            'latitude_violations': 0,
-            'longitude_violations': 0,
-            'negative_penalty_violations': 0,
-            'negative_count_violations': 0
+            "latitude_violations": 0,
+            "longitude_violations": 0,
+            "negative_penalty_violations": 0,
+            "negative_count_violations": 0,
         }
 
         # Check latitude bounds
-        result['latitude_violations'] = self.db_session.query(func.count(HSEIncident.id)).filter(
-            HSEIncident.latitude.isnot(None),
-            (HSEIncident.latitude < self.GOM_LATITUDE_MIN) | (HSEIncident.latitude > self.GOM_LATITUDE_MAX)
-        ).scalar()
+        result["latitude_violations"] = (
+            self.db_session.query(func.count(HSEIncident.id))
+            .filter(
+                HSEIncident.latitude.isnot(None),
+                (HSEIncident.latitude < self.GOM_LATITUDE_MIN)
+                | (HSEIncident.latitude > self.GOM_LATITUDE_MAX),
+            )
+            .scalar()
+        )
 
         # Check longitude bounds
-        result['longitude_violations'] = self.db_session.query(func.count(HSEIncident.id)).filter(
-            HSEIncident.longitude.isnot(None),
-            (HSEIncident.longitude < self.GOM_LONGITUDE_MIN) | (HSEIncident.longitude > self.GOM_LONGITUDE_MAX)
-        ).scalar()
+        result["longitude_violations"] = (
+            self.db_session.query(func.count(HSEIncident.id))
+            .filter(
+                HSEIncident.longitude.isnot(None),
+                (HSEIncident.longitude < self.GOM_LONGITUDE_MIN)
+                | (HSEIncident.longitude > self.GOM_LONGITUDE_MAX),
+            )
+            .scalar()
+        )
 
         # Note: penalty_amount not in current HSEIncident model
         # Placeholder for future enhancement
-        result['negative_penalty_violations'] = 0
+        result["negative_penalty_violations"] = 0
 
         # Note: count fields not in current HSEIncident model
         # Placeholder for future enhancement
-        result['negative_count_violations'] = 0
+        result["negative_count_violations"] = 0
 
         return result
 
@@ -199,30 +222,38 @@ class DataQualityValidator:
             }
         """
         result = {
-            'severity_type_consistency': 0,
-            'facility_location_inconsistencies': 0,
-            'compliance_penalty_inconsistencies': 0
+            "severity_type_consistency": 0,
+            "facility_location_inconsistencies": 0,
+            "compliance_penalty_inconsistencies": 0,
         }
 
         # Check severity/type consistency
         # Example: fatality severity should not have near_miss incident type
         # This is a simplified check; could be enhanced with more rules
-        inconsistent = self.db_session.query(func.count(HSEIncident.id)).filter(
-            HSEIncident.severity == 'fatality',
-            HSEIncident.incident_type == 'near_miss'
-        ).scalar()
-        result['severity_type_consistency'] = inconsistent
+        inconsistent = (
+            self.db_session.query(func.count(HSEIncident.id))
+            .filter(
+                HSEIncident.severity == "fatality",
+                HSEIncident.incident_type == "near_miss",
+            )
+            .scalar()
+        )
+        result["severity_type_consistency"] = inconsistent
 
         # Check facility/location consistency
         # If facility_name is present, latitude/longitude should also be present
-        result['facility_location_inconsistencies'] = self.db_session.query(func.count(HSEIncident.id)).filter(
-            HSEIncident.facility_name.isnot(None),
-            (HSEIncident.latitude.is_(None) | HSEIncident.longitude.is_(None))
-        ).scalar()
+        result["facility_location_inconsistencies"] = (
+            self.db_session.query(func.count(HSEIncident.id))
+            .filter(
+                HSEIncident.facility_name.isnot(None),
+                (HSEIncident.latitude.is_(None) | HSEIncident.longitude.is_(None)),
+            )
+            .scalar()
+        )
 
         # Note: compliance_deadline and penalty_amount not in current model
         # Placeholder for future enhancement
-        result['compliance_penalty_inconsistencies'] = 0
+        result["compliance_penalty_inconsistencies"] = 0
 
         return result
 
@@ -246,10 +277,10 @@ class DataQualityValidator:
             }
         """
         result = {
-            'outlier_method': 'IQR',
-            'penalty_amount_outliers': 0,
-            'incident_count_outliers': 0,
-            'outliers': []
+            "outlier_method": "IQR",
+            "penalty_amount_outliers": 0,
+            "incident_count_outliers": 0,
+            "outliers": [],
         }
 
         # Note: Current HSEIncident model doesn't have penalty_amount or count fields
@@ -282,34 +313,41 @@ class DataQualityValidator:
             }
         """
         result = {
-            'future_date_violations': 0,
-            'unreasonably_old_violations': 0,
-            'deadline_before_incident_violations': 0,
-            'suspicious_date_gaps': []
+            "future_date_violations": 0,
+            "unreasonably_old_violations": 0,
+            "deadline_before_incident_violations": 0,
+            "suspicious_date_gaps": [],
         }
 
         now = datetime.now()
         earliest_reasonable = datetime(self.BSEE_FOUNDING_YEAR, 1, 1)
 
         # Check for future dates
-        result['future_date_violations'] = self.db_session.query(func.count(HSEIncident.id)).filter(
-            HSEIncident.incident_date > now
-        ).scalar()
+        result["future_date_violations"] = (
+            self.db_session.query(func.count(HSEIncident.id))
+            .filter(HSEIncident.incident_date > now)
+            .scalar()
+        )
 
         # Check for unreasonably old dates
-        result['unreasonably_old_violations'] = self.db_session.query(func.count(HSEIncident.id)).filter(
-            HSEIncident.incident_date < earliest_reasonable
-        ).scalar()
+        result["unreasonably_old_violations"] = (
+            self.db_session.query(func.count(HSEIncident.id))
+            .filter(HSEIncident.incident_date < earliest_reasonable)
+            .scalar()
+        )
 
         # Note: compliance_deadline not in current model
         # Placeholder for future enhancement
-        result['deadline_before_incident_violations'] = 0
+        result["deadline_before_incident_violations"] = 0
 
         # Check for suspicious date gaps (6+ months with no incidents)
         # This requires querying ordered incident dates and finding gaps
-        incidents = self.db_session.query(HSEIncident.incident_date).filter(
-            HSEIncident.incident_date.isnot(None)
-        ).order_by(HSEIncident.incident_date).all()
+        incidents = (
+            self.db_session.query(HSEIncident.incident_date)
+            .filter(HSEIncident.incident_date.isnot(None))
+            .order_by(HSEIncident.incident_date)
+            .all()
+        )
 
         if len(incidents) > 1:
             gaps = []
@@ -320,13 +358,15 @@ class DataQualityValidator:
 
                 # Flag gaps > 180 days (6 months) as suspicious
                 if gap_days > 180:
-                    gaps.append({
-                        'from_date': current_date.isoformat(),
-                        'to_date': next_date.isoformat(),
-                        'gap_days': gap_days
-                    })
+                    gaps.append(
+                        {
+                            "from_date": current_date.isoformat(),
+                            "to_date": next_date.isoformat(),
+                            "gap_days": gap_days,
+                        }
+                    )
 
-            result['suspicious_date_gaps'] = gaps
+            result["suspicious_date_gaps"] = gaps
 
         return result
 
@@ -370,16 +410,15 @@ class DataQualityValidator:
         temporal = self.validate_temporal()
 
         # Calculate overall quality score
-        total_records = completeness['total_records']
+        total_records = completeness["total_records"]
 
         # Completeness score (40% weight)
-        completeness_score = completeness['required_fields_completeness'] * 0.4
+        completeness_score = completeness["required_fields_completeness"] * 0.4
 
         # Range violations score (15% weight)
         if total_records > 0:
             range_violations = (
-                ranges['latitude_violations'] +
-                ranges['longitude_violations']
+                ranges["latitude_violations"] + ranges["longitude_violations"]
             )
             range_score = max(0, (1 - range_violations / total_records)) * 100 * 0.15
         else:
@@ -388,63 +427,71 @@ class DataQualityValidator:
         # Consistency violations score (15% weight)
         if total_records > 0:
             consistency_violations = (
-                consistency['severity_type_consistency'] +
-                consistency['facility_location_inconsistencies']
+                consistency["severity_type_consistency"]
+                + consistency["facility_location_inconsistencies"]
             )
-            consistency_score = max(0, (1 - consistency_violations / total_records)) * 100 * 0.15
+            consistency_score = (
+                max(0, (1 - consistency_violations / total_records)) * 100 * 0.15
+            )
         else:
             consistency_score = 0
 
         # Outlier score (15% weight)
         if total_records > 0:
             outlier_violations = (
-                outliers['penalty_amount_outliers'] +
-                outliers['incident_count_outliers']
+                outliers["penalty_amount_outliers"]
+                + outliers["incident_count_outliers"]
             )
-            outlier_score = max(0, (1 - outlier_violations / total_records)) * 100 * 0.15
+            outlier_score = (
+                max(0, (1 - outlier_violations / total_records)) * 100 * 0.15
+            )
         else:
             outlier_score = 0
 
         # Temporal violations score (15% weight)
         if total_records > 0:
             temporal_violations = (
-                temporal['future_date_violations'] +
-                temporal['unreasonably_old_violations']
+                temporal["future_date_violations"]
+                + temporal["unreasonably_old_violations"]
             )
-            temporal_score = max(0, (1 - temporal_violations / total_records)) * 100 * 0.15
+            temporal_score = (
+                max(0, (1 - temporal_violations / total_records)) * 100 * 0.15
+            )
         else:
             temporal_score = 0
 
         # Calculate overall score
         overall_quality_score = (
-            completeness_score +
-            range_score +
-            consistency_score +
-            outlier_score +
-            temporal_score
+            completeness_score
+            + range_score
+            + consistency_score
+            + outlier_score
+            + temporal_score
         )
 
         # Calculate total violations
         total_violations = (
-            ranges['latitude_violations'] +
-            ranges['longitude_violations'] +
-            consistency['severity_type_consistency'] +
-            consistency['facility_location_inconsistencies'] +
-            temporal['future_date_violations'] +
-            temporal['unreasonably_old_violations']
+            ranges["latitude_violations"]
+            + ranges["longitude_violations"]
+            + consistency["severity_type_consistency"]
+            + consistency["facility_location_inconsistencies"]
+            + temporal["future_date_violations"]
+            + temporal["unreasonably_old_violations"]
         )
 
         # Store results
         result = {
-            'completeness': completeness,
-            'ranges': ranges,
-            'consistency': consistency,
-            'outliers': outliers,
-            'temporal': temporal,
-            'overall_quality_score': round(overall_quality_score, 2),
-            'total_records': total_records,
-            'total_violations': total_violations,
-            'violation_percentage': round((total_violations / total_records * 100) if total_records > 0 else 0, 2)
+            "completeness": completeness,
+            "ranges": ranges,
+            "consistency": consistency,
+            "outliers": outliers,
+            "temporal": temporal,
+            "overall_quality_score": round(overall_quality_score, 2),
+            "total_records": total_records,
+            "total_violations": total_violations,
+            "violation_percentage": round(
+                (total_violations / total_records * 100) if total_records > 0 else 0, 2
+            ),
         }
 
         self.validation_results = result
@@ -470,34 +517,54 @@ class DataQualityValidator:
             }
         """
         if not self.validation_results:
-            raise ValueError("No validation results available. Run run_all_validations() first.")
+            raise ValueError(
+                "No validation results available. Run run_all_validations() first."
+            )
 
         report = {
-            'validation_timestamp': datetime.now().isoformat(),
-            'quality_score': self.validation_results['overall_quality_score'],
-            'violations_by_category': {
-                'completeness': {
-                    'required_fields': 100 - self.validation_results['completeness']['required_fields_completeness'],
-                    'optional_fields': 100 - self.validation_results['completeness']['optional_fields_completeness']
+            "validation_timestamp": datetime.now().isoformat(),
+            "quality_score": self.validation_results["overall_quality_score"],
+            "violations_by_category": {
+                "completeness": {
+                    "required_fields": 100
+                    - self.validation_results["completeness"][
+                        "required_fields_completeness"
+                    ],
+                    "optional_fields": 100
+                    - self.validation_results["completeness"][
+                        "optional_fields_completeness"
+                    ],
                 },
-                'range_violations': {
-                    'latitude': self.validation_results['ranges']['latitude_violations'],
-                    'longitude': self.validation_results['ranges']['longitude_violations']
+                "range_violations": {
+                    "latitude": self.validation_results["ranges"][
+                        "latitude_violations"
+                    ],
+                    "longitude": self.validation_results["ranges"][
+                        "longitude_violations"
+                    ],
                 },
-                'consistency_violations': {
-                    'severity_type': self.validation_results['consistency']['severity_type_consistency'],
-                    'facility_location': self.validation_results['consistency']['facility_location_inconsistencies']
+                "consistency_violations": {
+                    "severity_type": self.validation_results["consistency"][
+                        "severity_type_consistency"
+                    ],
+                    "facility_location": self.validation_results["consistency"][
+                        "facility_location_inconsistencies"
+                    ],
                 },
-                'temporal_violations': {
-                    'future_dates': self.validation_results['temporal']['future_date_violations'],
-                    'unreasonably_old': self.validation_results['temporal']['unreasonably_old_violations']
-                }
-            }
+                "temporal_violations": {
+                    "future_dates": self.validation_results["temporal"][
+                        "future_date_violations"
+                    ],
+                    "unreasonably_old": self.validation_results["temporal"][
+                        "unreasonably_old_violations"
+                    ],
+                },
+            },
         }
 
         return report
 
-    def export_quality_report(self, output_file: str, format: str = 'json'):
+    def export_quality_report(self, output_file: str, format: str = "json"):
         """
         Export quality report to file.
 
@@ -509,18 +576,20 @@ class DataQualityValidator:
             ValueError: If format is not supported or no results available
         """
         if not self.validation_results:
-            raise ValueError("No validation results available. Run run_all_validations() first.")
+            raise ValueError(
+                "No validation results available. Run run_all_validations() first."
+            )
 
-        if format not in ['json', 'html']:
+        if format not in ["json", "html"]:
             raise ValueError(f"Unsupported format: {format}. Use 'json' or 'html'.")
 
         report = self.generate_quality_report()
 
-        if format == 'json':
-            with open(output_file, 'w') as f:
+        if format == "json":
+            with open(output_file, "w") as f:
                 json.dump(report, f, indent=2)
 
-        elif format == 'html':
+        elif format == "html":
             # Generate basic HTML report
             html_content = f"""
 <!DOCTYPE html>
@@ -551,7 +620,7 @@ class DataQualityValidator:
         </tr>
 """
 
-            for category, violations in report['violations_by_category'].items():
+            for category, violations in report["violations_by_category"].items():
                 for vtype, count in violations.items():
                     html_content += f"<tr><td>{category}</td><td>{vtype}</td><td>{count}</td></tr>\n"
 
@@ -561,5 +630,5 @@ class DataQualityValidator:
 </html>
 """
 
-            with open(output_file, 'w') as f:
+            with open(output_file, "w") as f:
                 f.write(html_content)

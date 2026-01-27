@@ -1,21 +1,21 @@
 import os
 import pickle
-import pandas as pd
 from pathlib import Path
 from typing import Dict, List, Union
+
+import pandas as pd
+from colorama import init as colorama_init
 from loguru import logger
 
-from colorama import Fore, Style
-from colorama import init as colorama_init
-
 colorama_init()
+
 
 class BlockData:
     """
     A focused class to get block data from .bin files by block number.
     """
 
-    def __init__(self,cfg=None):
+    def __init__(self, cfg=None):
         """
         Initialize the BlockSearcher with the path to the bin folder.
 
@@ -24,22 +24,20 @@ class BlockData:
         """
         self.cfg = cfg
         self.bin_folder_path = None
-        self.block_columns = ['Bottom Block Number']
+        self.block_columns = ["Bottom Block Number"]
 
         # Initialize bin_folder_path if cfg is provided
         if cfg is not None:
             self._initialize_bin_path(cfg)
 
     def _initialize_bin_path(self, cfg):
-        """Initialize the bin folder path from configuration.
-        """
-        self.bin_folder_path = Path(cfg['parameters']['filepath']['Well_APD_Default'])
+        """Initialize the bin folder path from configuration."""
+        self.bin_folder_path = Path(cfg["parameters"]["filepath"]["Well_APD_Default"])
         if not self.bin_folder_path.exists():
             raise FileNotFoundError(f"Bin folder not found: {self.bin_folder_path}")
 
     def _ensure_bin_path_initialized(self, cfg):
-        """Ensure bin folder path is initialized, initialize if not.
-        """
+        """Ensure bin folder path is initialized, initialize if not."""
         if self.bin_folder_path is None:
             self._initialize_bin_path(cfg)
 
@@ -50,7 +48,12 @@ class BlockData:
         # Ensure bin path is initialized
         self._ensure_bin_path_initialized(cfg)
 
-        cfg_input_block = input_group['bottom_block']['number'] if 'number' in input_group['bottom_block'] and input_group['bottom_block']['number'] is not None else None
+        cfg_input_block = (
+            input_group["bottom_block"]["number"]
+            if "number" in input_group["bottom_block"]
+            and input_group["bottom_block"]["number"] is not None
+            else None
+        )
 
         # Use the initialized bin_folder_path instead of re-reading from config
         if not self.bin_folder_path.exists():
@@ -65,7 +68,9 @@ class BlockData:
 
         return cfg
 
-    def get_block_data_from_input_bin_files(self, block_numbers: Union[str, int, List[Union[str, int]]]) -> Dict[str, pd.DataFrame]:
+    def get_block_data_from_input_bin_files(
+        self, block_numbers: Union[str, int, List[Union[str, int]]]
+    ) -> Dict[str, pd.DataFrame]:
         """
         get block data across all .bin files from the bin folder.
 
@@ -109,11 +114,13 @@ class BlockData:
             List[Path]: List of paths to all .bin files
         """
         if self.bin_folder_path is None:
-            raise ValueError("bin_folder_path not initialized. Call router method first or provide cfg in __init__.")
+            raise ValueError(
+                "bin_folder_path not initialized. Call router method first or provide cfg in __init__."
+            )
 
         bin_files = []
         # Look for .bin files directly in the apd folder
-        for file_path in self.bin_folder_path.glob('*.bin'):
+        for file_path in self.bin_folder_path.glob("*.bin"):
             bin_files.append(file_path)
 
         return bin_files
@@ -129,7 +136,7 @@ class BlockData:
             pd.DataFrame: Loaded dataframe or empty DataFrame if failed
         """
         try:
-            with open(file_path, 'rb') as f:
+            with open(file_path, "rb") as f:
                 df = pickle.load(f)
 
             if isinstance(df, pd.DataFrame):
@@ -141,7 +148,9 @@ class BlockData:
             logger.error(f"Error loading {file_path}: {e}")
             return pd.DataFrame()
 
-    def get_matching_block_data_from_df(self, df: pd.DataFrame, block_numbers: List[Union[str, int]]) -> pd.DataFrame:
+    def get_matching_block_data_from_df(
+        self, df: pd.DataFrame, block_numbers: List[Union[str, int]]
+    ) -> pd.DataFrame:
         """
         Get matching block data from a dataframe.
 
@@ -166,7 +175,7 @@ class BlockData:
 
         for col in existing_columns:
             try:
-                if df[col].dtype == 'object':
+                if df[col].dtype == "object":
                     # For string columns, convert to string and use isin
                     col_str = df[col].astype(str)
                     str_block_numbers = [str(bn) for bn in block_numbers]
@@ -193,7 +202,7 @@ class BlockData:
         if isinstance(user_input, int):
             block_numbers.append(user_input)
         # Handle iterable input (list, tuple, etc.)
-        elif hasattr(user_input, '__iter__') and not isinstance(user_input, str):
+        elif hasattr(user_input, "__iter__") and not isinstance(user_input, str):
             for block in user_input:
                 if isinstance(block, int):
                     block_numbers.append(block)
@@ -213,17 +222,17 @@ class BlockData:
         """
         from assetutilities.common.utilities import is_dir_valid_func
 
-        bottom_block_num = str(input_group['bottom_block']['number'])
-        area = str(input_group['bottom_block']['area'])
-        label = area + '_' + bottom_block_num
-        output_path = os.path.join(cfg['Analysis']['result_folder'], 'Data')
+        bottom_block_num = str(input_group["bottom_block"]["number"])
+        area = str(input_group["bottom_block"]["area"])
+        label = area + "_" + bottom_block_num
+        output_path = os.path.join(cfg["Analysis"]["result_folder"], "Data")
         if output_path is None:
-            result_folder = self.cfg['Analysis']['result_folder']
-            output_path = os.path.join(result_folder, 'Data')
-        analysis_root_folder = cfg['Analysis']['analysis_root_folder']
+            result_folder = self.cfg["Analysis"]["result_folder"]
+            output_path = os.path.join(result_folder, "Data")
+        analysis_root_folder = cfg["Analysis"]["analysis_root_folder"]
         is_dir_valid, output_path = is_dir_valid_func(output_path, analysis_root_folder)
 
-        output_file = os.path.join(output_path, str(label) + '.csv')
+        output_file = os.path.join(output_path, str(label) + ".csv")
 
         # Combine all results into a single DataFrame
         combined_df = pd.DataFrame()

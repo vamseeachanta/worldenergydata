@@ -1,17 +1,12 @@
 # Standard library imports
-from loguru import logger
-import os
-import sys
+from assetutilities.common.ApplicationManager import ConfigureApplicationInputs
 
 # Third party imports
-from assetutilities.common.data import (
-    AttributeDict,  #noqa
-    SaveData,
-)
+from assetutilities.common.data import AttributeDict  # noqa
+from assetutilities.common.data import SaveData
 from assetutilities.common.file_management import FileManagement
-
-from assetutilities.common.ApplicationManager import ConfigureApplicationInputs
 from assetutilities.common.yml_utilities import WorkingWithYAML
+from loguru import logger
 
 # Reader imports
 from worldenergydata.modules.bsee.bsee import bsee
@@ -25,7 +20,7 @@ library_name = "worldenergydata"
 
 
 def engine(inputfile: str = None, cfg: dict = None, config_flag: bool = True) -> dict:
-    
+
     cfg_argv_dict = {}
     if cfg is None:
         inputfile, cfg_argv_dict = app_manager.validate_arguments_run_methods(inputfile)
@@ -34,9 +29,9 @@ def engine(inputfile: str = None, cfg: dict = None, config_flag: bool = True) ->
         if cfg is None:
             raise ValueError("cfg is None")
 
-    if 'basename' in cfg:
+    if "basename" in cfg:
         basename = cfg["basename"]
-    elif 'meta' in cfg:
+    elif "meta" in cfg:
         basename = cfg["meta"]["basename"]
     else:
         raise ValueError("basename not found in cfg")
@@ -45,7 +40,9 @@ def engine(inputfile: str = None, cfg: dict = None, config_flag: bool = True) ->
         fm = FileManagement()
         cfg_base = app_manager.configure(cfg, library_name, basename, cfg_argv_dict)
         cfg_base = fm.router(cfg_base)
-        result_folder_dict, cfg_base = app_manager.configure_result_folder(None, cfg_base)
+        result_folder_dict, cfg_base = app_manager.configure_result_folder(
+            None, cfg_base
+        )
     else:
         cfg_base = cfg
 
@@ -55,6 +52,24 @@ def engine(inputfile: str = None, cfg: dict = None, config_flag: bool = True) ->
     if basename in ["bsee"]:
         bsee_app = bsee()
         cfg_base = bsee_app.router(cfg_base)
+
+    elif basename in ["sodir"]:
+        from worldenergydata.modules.sodir.sodir import Sodir
+
+        sodir_app = Sodir()
+        cfg_base = sodir_app.router(cfg_base)
+
+    elif basename in ["texas_rrc"]:
+        from worldenergydata.modules.texas_rrc.texas_rrc import TexasRRC
+
+        texas_app = TexasRRC()
+        cfg_base = texas_app.router(cfg_base)
+
+    elif basename in ["canada"]:
+        from worldenergydata.modules.canada.canada import Canada
+
+        canada_app = Canada()
+        cfg_base = canada_app.router(cfg_base)
 
     elif basename in ["dwnld_from_zipurl"]:
         dwnld_from_zipurl = zip()
@@ -71,4 +86,3 @@ def engine(inputfile: str = None, cfg: dict = None, config_flag: bool = True) ->
     app_manager.save_cfg(cfg_base=cfg_base)
 
     return cfg_base
-

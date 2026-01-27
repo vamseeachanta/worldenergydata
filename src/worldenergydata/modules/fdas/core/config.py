@@ -9,10 +9,10 @@ Date: 2025-10-03
 Source: Ported from FDAS load_assumptions_fixed()
 """
 
-from typing import Dict, Any, Optional, Union
 from pathlib import Path
+from typing import Any, Dict, Optional, Union
+
 import pandas as pd
-import numpy as np
 
 from worldenergydata.common.exceptions import ConfigError
 
@@ -28,16 +28,16 @@ class ConfigurationError(ConfigError):
 
 # Default assumptions for development systems
 DEFAULT_ASSUMPTIONS = {
-    'DEV_SYSTEM': ['dry', 'subsea15', 'subsea20', 'default'],
-    'HOST_CAPEX_MM': [0.0, 300.0, 450.0, 300.0],  # Million USD
-    'SURF_PER_WELL_MM': [0.0, 8.0, 12.0, 8.0],
-    'MODU_LOADED_DAYRATE_MM': [0.6, 0.8, 1.0, 0.8],
-    'DRY_TREE_RIG_RATE_MM': [0.5, 0.5, 0.5, 0.5],
-    'ROYALTY_RATE': [0.125, 0.188, 0.188, 0.188],
-    'VARIABLE_OPEX_$/BBL': [8.0, 12.0, 15.0, 12.0],
-    'FIXED_OPEX_MM_PER_YEAR': [10.0, 25.0, 40.0, 25.0],
-    'DISCOUNT_RATE_ANNUAL': [0.10, 0.10, 0.10, 0.10],
-    'WTI_BASE_$/BBL': [75.0, 75.0, 75.0, 75.0],
+    "DEV_SYSTEM": ["dry", "subsea15", "subsea20", "default"],
+    "HOST_CAPEX_MM": [0.0, 300.0, 450.0, 300.0],  # Million USD
+    "SURF_PER_WELL_MM": [0.0, 8.0, 12.0, 8.0],
+    "MODU_LOADED_DAYRATE_MM": [0.6, 0.8, 1.0, 0.8],
+    "DRY_TREE_RIG_RATE_MM": [0.5, 0.5, 0.5, 0.5],
+    "ROYALTY_RATE": [0.125, 0.188, 0.188, 0.188],
+    "VARIABLE_OPEX_$/BBL": [8.0, 12.0, 15.0, 12.0],
+    "FIXED_OPEX_MM_PER_YEAR": [10.0, 25.0, 40.0, 25.0],
+    "DISCOUNT_RATE_ANNUAL": [0.10, 0.10, 0.10, 0.10],
+    "WTI_BASE_$/BBL": [75.0, 75.0, 75.0, 75.0],
 }
 
 
@@ -60,23 +60,31 @@ def normalize_dev_system(system_name: Optional[str]) -> str:
         'dry'
     """
     if pd.isna(system_name) or system_name is None:
-        return 'unknown'
+        return "unknown"
 
-    normalized = str(system_name).strip().lower().replace(' ', '').replace('-', '').replace('_', '')
+    normalized = (
+        str(system_name)
+        .strip()
+        .lower()
+        .replace(" ", "")
+        .replace("-", "")
+        .replace("_", "")
+    )
 
     # Map common variants
-    if 'dry' in normalized or 'tree' in normalized:
-        return 'dry'
-    elif '20' in normalized or 'ultra' in normalized:
-        return 'subsea20'
-    elif '15' in normalized or 'subsea' in normalized:
-        return 'subsea15'
+    if "dry" in normalized or "tree" in normalized:
+        return "dry"
+    elif "20" in normalized or "ultra" in normalized:
+        return "subsea20"
+    elif "15" in normalized or "subsea" in normalized:
+        return "subsea15"
     else:
         return normalized
 
 
-def classify_dev_system_by_depth(water_depth: Optional[float],
-                                 complex_name: Optional[str] = None) -> str:
+def classify_dev_system_by_depth(
+    water_depth: Optional[float], complex_name: Optional[str] = None
+) -> str:
     """
     Classify development system based on water depth.
 
@@ -96,16 +104,16 @@ def classify_dev_system_by_depth(water_depth: Optional[float],
         'subsea15'
     """
     if water_depth is None or pd.isna(water_depth):
-        return 'unknown'
+        return "unknown"
 
     depth = float(water_depth)
 
     if depth < 500:
-        return 'dry'
+        return "dry"
     elif depth < 6000:
-        return 'subsea15'
+        return "subsea15"
     else:
-        return 'subsea20'
+        return "subsea20"
 
 
 class AssumptionsManager:
@@ -130,14 +138,15 @@ class AssumptionsManager:
             self.assumptions = assumptions_df.copy()
 
         # Normalize development system names
-        if 'DEV_SYSTEM' in self.assumptions.columns:
-            self.assumptions['DEV_SYSTEM'] = self.assumptions['DEV_SYSTEM'].apply(
+        if "DEV_SYSTEM" in self.assumptions.columns:
+            self.assumptions["DEV_SYSTEM"] = self.assumptions["DEV_SYSTEM"].apply(
                 normalize_dev_system
             )
 
     @classmethod
-    def from_excel(cls, file_path: Union[str, Path],
-                   sheet_name: str = 'assumptions') -> 'AssumptionsManager':
+    def from_excel(
+        cls, file_path: Union[str, Path], sheet_name: str = "assumptions"
+    ) -> "AssumptionsManager":
         """
         Load assumptions from Excel file.
 
@@ -155,18 +164,22 @@ class AssumptionsManager:
             df = pd.read_excel(file_path, sheet_name=sheet_name)
 
             # Check if file is in transposed format (DEV_SYSTEM as first column with param names)
-            if 'DEV_SYSTEM' in df.columns and len(df.columns) > 2:
+            if "DEV_SYSTEM" in df.columns and len(df.columns) > 2:
                 # File is transposed - DEV_SYSTEM column contains parameter names
                 # Columns are development systems
-                dev_systems = [col for col in df.columns if col not in ['DEV_SYSTEM', 'Notes']]
+                dev_systems = [
+                    col for col in df.columns if col not in ["DEV_SYSTEM", "Notes"]
+                ]
 
                 # Transpose: create rows for each dev system
                 data_rows = []
                 for dev_sys in dev_systems:
-                    row_data = {'DEV_SYSTEM': dev_sys}
-                    for idx, param_name in df['DEV_SYSTEM'].items():
+                    row_data = {"DEV_SYSTEM": dev_sys}
+                    for idx, param_name in df["DEV_SYSTEM"].items():
                         # Clean parameter name to uppercase with underscores
-                        clean_param = str(param_name).replace(' ', '_').replace('/', '_').upper()
+                        clean_param = (
+                            str(param_name).replace(" ", "_").replace("/", "_").upper()
+                        )
                         value = df.loc[idx, dev_sys]
                         if pd.notna(value):
                             row_data[clean_param] = value
@@ -176,10 +189,12 @@ class AssumptionsManager:
 
             return cls(df)
         except Exception as e:
-            raise ConfigurationError(f"Failed to load assumptions from {file_path}: {e}")
+            raise ConfigurationError(
+                f"Failed to load assumptions from {file_path}: {e}"
+            )
 
     @classmethod
-    def from_dict(cls, assumptions_dict: Dict[str, Any]) -> 'AssumptionsManager':
+    def from_dict(cls, assumptions_dict: Dict[str, Any]) -> "AssumptionsManager":
         """
         Create assumptions manager from dictionary.
 
@@ -192,8 +207,7 @@ class AssumptionsManager:
         df = pd.DataFrame(assumptions_dict)
         return cls(df)
 
-    def get(self, system_name: str, parameter: str,
-            default: float = 0.0) -> float:
+    def get(self, system_name: str, parameter: str, default: float = 0.0) -> float:
         """
         Get assumption value for development system and parameter.
 
@@ -222,11 +236,11 @@ class AssumptionsManager:
         # Try direct match first
         if param_upper in self.assumptions.columns:
             # Try exact system match
-            mask = (self.assumptions['DEV_SYSTEM'] == system)
+            mask = self.assumptions["DEV_SYSTEM"] == system
 
             # Fallback to default system if not found
             if not mask.any():
-                mask = (self.assumptions['DEV_SYSTEM'] == 'default')
+                mask = self.assumptions["DEV_SYSTEM"] == "default"
 
             # Return value if found
             if mask.any():
@@ -234,11 +248,14 @@ class AssumptionsManager:
                 return float(value) if pd.notna(value) else default
 
         # Try alternate formats (/ replaced with _ in cleaning)
-        for alt_param in [param_upper.replace('/', '_'), param_upper.replace('$/', '$_')]:
+        for alt_param in [
+            param_upper.replace("/", "_"),
+            param_upper.replace("$/", "$_"),
+        ]:
             if alt_param in self.assumptions.columns:
-                mask = (self.assumptions['DEV_SYSTEM'] == system)
+                mask = self.assumptions["DEV_SYSTEM"] == system
                 if not mask.any():
-                    mask = (self.assumptions['DEV_SYSTEM'] == 'default')
+                    mask = self.assumptions["DEV_SYSTEM"] == "default"
 
                 if mask.any():
                     value = self.assumptions.loc[mask, alt_param].iloc[0]
@@ -257,10 +274,10 @@ class AssumptionsManager:
             Dictionary of parameter name -> value
         """
         system = normalize_dev_system(system_name)
-        mask = (self.assumptions['DEV_SYSTEM'] == system)
+        mask = self.assumptions["DEV_SYSTEM"] == system
 
         if not mask.any():
-            mask = (self.assumptions['DEV_SYSTEM'] == 'default')
+            mask = self.assumptions["DEV_SYSTEM"] == "default"
 
         if not mask.any():
             return {}
@@ -269,7 +286,7 @@ class AssumptionsManager:
         return {
             col: float(row[col])
             for col in self.assumptions.columns
-            if col != 'DEV_SYSTEM' and pd.notna(row[col])
+            if col != "DEV_SYSTEM" and pd.notna(row[col])
         }
 
     def validate(self) -> Dict[str, Any]:
@@ -280,45 +297,52 @@ class AssumptionsManager:
             Dictionary with validation results
         """
         validation = {
-            'valid': True,
-            'errors': [],
-            'warnings': [],
-            'systems_found': list(self.assumptions['DEV_SYSTEM'].unique()) if 'DEV_SYSTEM' in self.assumptions.columns else [],
-            'parameters_found': [col for col in self.assumptions.columns if col != 'DEV_SYSTEM'],
+            "valid": True,
+            "errors": [],
+            "warnings": [],
+            "systems_found": (
+                list(self.assumptions["DEV_SYSTEM"].unique())
+                if "DEV_SYSTEM" in self.assumptions.columns
+                else []
+            ),
+            "parameters_found": [
+                col for col in self.assumptions.columns if col != "DEV_SYSTEM"
+            ],
         }
 
         # Check required systems
-        required_systems = {'dry', 'subsea15', 'subsea20', 'default'}
-        found_systems = set(validation['systems_found'])
+        required_systems = {"dry", "subsea15", "subsea20", "default"}
+        found_systems = set(validation["systems_found"])
         missing_systems = required_systems - found_systems
 
         if missing_systems:
-            validation['warnings'].append(
+            validation["warnings"].append(
                 f"Missing development systems: {missing_systems}"
             )
 
         # Check required parameters
         required_params = {
-            'HOST_CAPEX_MM', 'SURF_PER_WELL_MM', 'ROYALTY_RATE',
-            'VARIABLE_OPEX_$/BBL', 'DISCOUNT_RATE_ANNUAL'
+            "HOST_CAPEX_MM",
+            "SURF_PER_WELL_MM",
+            "ROYALTY_RATE",
+            "VARIABLE_OPEX_$/BBL",
+            "DISCOUNT_RATE_ANNUAL",
         }
-        found_params = set(validation['parameters_found'])
+        found_params = set(validation["parameters_found"])
         missing_params = required_params - found_params
 
         if missing_params:
-            validation['errors'].append(
+            validation["errors"].append(
                 f"Missing required parameters: {missing_params}"
             )
-            validation['valid'] = False
+            validation["valid"] = False
 
         # Check for negative values where inappropriate
-        for param in ['HOST_CAPEX_MM', 'SURF_PER_WELL_MM', 'DISCOUNT_RATE_ANNUAL']:
+        for param in ["HOST_CAPEX_MM", "SURF_PER_WELL_MM", "DISCOUNT_RATE_ANNUAL"]:
             if param in self.assumptions.columns:
                 if (self.assumptions[param] < 0).any():
-                    validation['errors'].append(
-                        f"Negative values found in {param}"
-                    )
-                    validation['valid'] = False
+                    validation["errors"].append(f"Negative values found in {param}")
+                    validation["valid"] = False
 
         return validation
 
@@ -338,8 +362,9 @@ class PriceDeckManager:
         self.wti_df = wti_df
 
     @classmethod
-    def from_excel(cls, file_path: Union[str, Path],
-                   sheet_name: str = 'WTI') -> 'PriceDeckManager':
+    def from_excel(
+        cls, file_path: Union[str, Path], sheet_name: str = "WTI"
+    ) -> "PriceDeckManager":
         """
         Load WTI price deck from Excel.
 
@@ -371,9 +396,9 @@ class PriceDeckManager:
             return default
 
         # Try exact match
-        mask = (self.wti_df['year_month'] == year_month)
+        mask = self.wti_df["year_month"] == year_month
         if mask.any():
-            price = self.wti_df.loc[mask, 'wti_price'].iloc[0]
+            price = self.wti_df.loc[mask, "wti_price"].iloc[0]
             return float(price) if pd.notna(price) else default
 
         return default
@@ -400,18 +425,18 @@ def load_configuration(config_dir: Union[str, Path]) -> Dict[str, Any]:
     config = {}
 
     # Load assumptions
-    assumptions_file = config_path / 'default_assumptions.xlsx'
+    assumptions_file = config_path / "default_assumptions.xlsx"
     if assumptions_file.exists():
-        config['assumptions_manager'] = AssumptionsManager.from_excel(assumptions_file)
+        config["assumptions_manager"] = AssumptionsManager.from_excel(assumptions_file)
     else:
         # Use defaults
-        config['assumptions_manager'] = AssumptionsManager()
+        config["assumptions_manager"] = AssumptionsManager()
 
     # Load WTI prices
-    wti_file = config_path / 'wti_monthly.xlsx'
+    wti_file = config_path / "wti_monthly.xlsx"
     if wti_file.exists():
-        config['price_deck_manager'] = PriceDeckManager.from_excel(wti_file)
+        config["price_deck_manager"] = PriceDeckManager.from_excel(wti_file)
     else:
-        config['price_deck_manager'] = PriceDeckManager()
+        config["price_deck_manager"] = PriceDeckManager()
 
     return config

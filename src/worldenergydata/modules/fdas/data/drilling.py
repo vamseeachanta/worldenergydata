@@ -9,15 +9,16 @@ Date: 2025-10-03
 Source: Ported from FDAS extract_drilling_completion_days.py
 """
 
-from typing import Dict, List, Optional, Tuple, Set
-from datetime import datetime, timedelta
-import pandas as pd
-import numpy as np
 import re
+from datetime import datetime, timedelta
+from typing import Dict, List, Optional, Set, Tuple
+
+import pandas as pd
 
 
 class DrillingDataError(Exception):
     """Raised when drilling data processing fails"""
+
     pass
 
 
@@ -30,22 +31,59 @@ class CompletionActivityClassifier:
 
     # Completion activity keywords from FDAS
     COMPLETION_KEYWORDS = {
-        'completion', 'complete', 'completed', 'perf', 'perforate', 'perforated',
-        'stimulate', 'stimulation', 'frac', 'fracture', 'fractured', 'fracturing',
-        'acidize', 'acidizing', 'acid', 'gravel pack', 'gravelpack',
-        'casing', 'cement', 'cementing', 'liner', 'tubing',
-        'xmas tree', 'tree installation', 'subsea tree',
-        'flowline', 'hookup', 'tie-in', 'tieback',
+        "completion",
+        "complete",
+        "completed",
+        "perf",
+        "perforate",
+        "perforated",
+        "stimulate",
+        "stimulation",
+        "frac",
+        "fracture",
+        "fractured",
+        "fracturing",
+        "acidize",
+        "acidizing",
+        "acid",
+        "gravel pack",
+        "gravelpack",
+        "casing",
+        "cement",
+        "cementing",
+        "liner",
+        "tubing",
+        "xmas tree",
+        "tree installation",
+        "subsea tree",
+        "flowline",
+        "hookup",
+        "tie-in",
+        "tieback",
     }
 
     TESTING_KEYWORDS = {
-        'test', 'testing', 'dst', 'production test', 'flow test',
-        'pressure test', 'well test', 'buildup', 'drawdown',
+        "test",
+        "testing",
+        "dst",
+        "production test",
+        "flow test",
+        "pressure test",
+        "well test",
+        "buildup",
+        "drawdown",
     }
 
     DRILLING_KEYWORDS = {
-        'drill', 'drilling', 'drilled', 'spud', 'spudded',
-        'td', 'total depth', 'reached td', 'depth',
+        "drill",
+        "drilling",
+        "drilled",
+        "spud",
+        "spudded",
+        "td",
+        "total depth",
+        "reached td",
+        "depth",
     }
 
     def __init__(self, custom_keywords: Optional[Dict[str, Set[str]]] = None):
@@ -57,9 +95,11 @@ class CompletionActivityClassifier:
                            'completion', 'testing', 'drilling'
         """
         if custom_keywords:
-            self.completion_kw = custom_keywords.get('completion', self.COMPLETION_KEYWORDS)
-            self.testing_kw = custom_keywords.get('testing', self.TESTING_KEYWORDS)
-            self.drilling_kw = custom_keywords.get('drilling', self.DRILLING_KEYWORDS)
+            self.completion_kw = custom_keywords.get(
+                "completion", self.COMPLETION_KEYWORDS
+            )
+            self.testing_kw = custom_keywords.get("testing", self.TESTING_KEYWORDS)
+            self.drilling_kw = custom_keywords.get("drilling", self.DRILLING_KEYWORDS)
         else:
             self.completion_kw = self.COMPLETION_KEYWORDS
             self.testing_kw = self.TESTING_KEYWORDS
@@ -81,23 +121,23 @@ class CompletionActivityClassifier:
             'completion'
         """
         if pd.isna(remark):
-            return 'unknown'
+            return "unknown"
 
         remark_lower = str(remark).lower()
 
         # Check completion keywords first (most specific)
         if any(kw in remark_lower for kw in self.completion_kw):
-            return 'completion'
+            return "completion"
 
         # Check testing keywords
         if any(kw in remark_lower for kw in self.testing_kw):
-            return 'testing'
+            return "testing"
 
         # Check drilling keywords
         if any(kw in remark_lower for kw in self.drilling_kw):
-            return 'drilling'
+            return "drilling"
 
-        return 'unknown'
+        return "unknown"
 
     def extract_mud_weight(self, remark: str) -> Optional[float]:
         """
@@ -118,7 +158,7 @@ class CompletionActivityClassifier:
             return None
 
         # Pattern: number followed by 'ppg'
-        pattern = r'(\d+\.?\d*)\s*ppg'
+        pattern = r"(\d+\.?\d*)\s*ppg"
         match = re.search(pattern, str(remark).lower())
 
         if match:
@@ -135,9 +175,9 @@ class DrillingTimelineExtractor:
     for CAPEX timing in financial models.
     """
 
-    def __init__(self,
-                 well_activity_df: pd.DataFrame,
-                 remarks_df: Optional[pd.DataFrame] = None):
+    def __init__(
+        self, well_activity_df: pd.DataFrame, remarks_df: Optional[pd.DataFrame] = None
+    ):
         """
         Initialize timeline extractor.
 
@@ -158,16 +198,18 @@ class DrillingTimelineExtractor:
         Raises:
             DrillingDataError: If required columns missing
         """
-        required = ['API_WELL_NUMBER', 'SPUD_DATE']
+        required = ["API_WELL_NUMBER", "SPUD_DATE"]
         missing = [col for col in required if col not in self.activity_df.columns]
 
         if missing:
             raise DrillingDataError(f"Missing required columns: {missing}")
 
-    def calculate_drilling_days(self,
-                                spud_date: datetime,
-                                td_date: Optional[datetime] = None,
-                                gap_threshold_days: int = 90) -> Tuple[float, List[Tuple[datetime, datetime]]]:
+    def calculate_drilling_days(
+        self,
+        spud_date: datetime,
+        td_date: Optional[datetime] = None,
+        gap_threshold_days: int = 90,
+    ) -> Tuple[float, List[Tuple[datetime, datetime]]]:
         """
         Calculate drilling days with gap adjustment.
 
@@ -200,9 +242,9 @@ class DrillingTimelineExtractor:
 
         return float(total_days), date_ranges
 
-    def allocate_days_to_months(self,
-                                start_date: datetime,
-                                end_date: datetime) -> Dict[str, float]:
+    def allocate_days_to_months(
+        self, start_date: datetime, end_date: datetime
+    ) -> Dict[str, float]:
         """
         Allocate drilling days to monthly periods.
 
@@ -225,14 +267,16 @@ class DrillingTimelineExtractor:
         current = start_date
         while current <= end_date:
             # Get month key
-            month_key = current.strftime('%Y-%m')
+            month_key = current.strftime("%Y-%m")
 
             # Calculate days in this month
             month_end = datetime(current.year, current.month, 1)
             if current.month == 12:
                 month_end = datetime(current.year + 1, 1, 1) - timedelta(days=1)
             else:
-                month_end = datetime(current.year, current.month + 1, 1) - timedelta(days=1)
+                month_end = datetime(current.year, current.month + 1, 1) - timedelta(
+                    days=1
+                )
 
             # Bound by end date
             period_end = min(month_end, end_date)
@@ -266,7 +310,7 @@ class DrillingTimelineExtractor:
         """
         # Filter to well
         well_data = self.activity_df[
-            self.activity_df['API_WELL_NUMBER'] == api_well_number
+            self.activity_df["API_WELL_NUMBER"] == api_well_number
         ]
 
         if len(well_data) == 0:
@@ -275,12 +319,23 @@ class DrillingTimelineExtractor:
         well_row = well_data.iloc[0]
 
         # Get dates
-        spud_date = pd.to_datetime(well_row['SPUD_DATE'])
-        td_date = pd.to_datetime(well_row.get('TD_DATE')) if 'TD_DATE' in well_row and pd.notna(well_row.get('TD_DATE')) else None
-        completion_date = pd.to_datetime(well_row.get('COMPLETION_DATE')) if 'COMPLETION_DATE' in well_row and pd.notna(well_row.get('COMPLETION_DATE')) else None
+        spud_date = pd.to_datetime(well_row["SPUD_DATE"])
+        td_date = (
+            pd.to_datetime(well_row.get("TD_DATE"))
+            if "TD_DATE" in well_row and pd.notna(well_row.get("TD_DATE"))
+            else None
+        )
+        completion_date = (
+            pd.to_datetime(well_row.get("COMPLETION_DATE"))
+            if "COMPLETION_DATE" in well_row
+            and pd.notna(well_row.get("COMPLETION_DATE"))
+            else None
+        )
 
         # Calculate drilling days
-        drilling_days, drilling_ranges = self.calculate_drilling_days(spud_date, td_date)
+        drilling_days, drilling_ranges = self.calculate_drilling_days(
+            spud_date, td_date
+        )
 
         # Calculate completion days
         if td_date and completion_date:
@@ -300,14 +355,14 @@ class DrillingTimelineExtractor:
             completion_monthly = self.allocate_days_to_months(td_date, completion_date)
 
         return {
-            'api_well_number': api_well_number,
-            'spud_date': spud_date,
-            'td_date': td_date,
-            'completion_date': completion_date,
-            'drilling_days': drilling_days,
-            'completion_days': completion_days,
-            'drilling_monthly': drilling_monthly,
-            'completion_monthly': completion_monthly,
+            "api_well_number": api_well_number,
+            "spud_date": spud_date,
+            "td_date": td_date,
+            "completion_date": completion_date,
+            "drilling_days": drilling_days,
+            "completion_days": completion_days,
+            "drilling_monthly": drilling_monthly,
+            "completion_monthly": completion_monthly,
         }
 
     def extract_all_wells_timeline(self) -> pd.DataFrame:
@@ -323,7 +378,7 @@ class DrillingTimelineExtractor:
         """
         timelines = []
 
-        for api_well_number in self.activity_df['API_WELL_NUMBER'].unique():
+        for api_well_number in self.activity_df["API_WELL_NUMBER"].unique():
             try:
                 timeline = self.extract_well_timeline(api_well_number)
                 timelines.append(timeline)
@@ -352,21 +407,21 @@ class DrillingTimelineExtractor:
         remarks = self.remarks_df.copy()
 
         # Classify each remark
-        remarks['ACTIVITY_TYPE'] = remarks['REMARK'].apply(
+        remarks["ACTIVITY_TYPE"] = remarks["REMARK"].apply(
             self.classifier.classify_activity
         )
 
         # Extract mud weight
-        remarks['MUD_WEIGHT_PPG'] = remarks['REMARK'].apply(
+        remarks["MUD_WEIGHT_PPG"] = remarks["REMARK"].apply(
             self.classifier.extract_mud_weight
         )
 
         return remarks
 
 
-def calculate_drilling_days(spud_date: datetime,
-                            td_date: datetime,
-                            gap_threshold_days: int = 90) -> float:
+def calculate_drilling_days(
+    spud_date: datetime, td_date: datetime, gap_threshold_days: int = 90
+) -> float:
     """
     Convenience function to calculate drilling days.
 

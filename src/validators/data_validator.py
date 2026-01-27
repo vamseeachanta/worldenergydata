@@ -10,13 +10,14 @@ Usage:
     validator.generate_interactive_report(results, Path("report.html"))
 """
 
-import pandas as pd
 import logging
-from typing import Dict, List, Optional, Any
 from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+import pandas as pd
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 import yaml
+from plotly.subplots import make_subplots
 
 
 class DataValidator:
@@ -43,7 +44,7 @@ class DataValidator:
             Configuration dictionary
         """
         try:
-            with open(config_path, 'r') as f:
+            with open(config_path, "r") as f:
                 config = yaml.safe_load(f)
             self.logger.info(f"Loaded validation config from {config_path}")
             return config
@@ -55,7 +56,7 @@ class DataValidator:
         self,
         df: pd.DataFrame,
         required_fields: Optional[List[str]] = None,
-        unique_field: Optional[str] = None
+        unique_field: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Validate a DataFrame and return quality metrics.
@@ -78,61 +79,63 @@ class DataValidator:
             }
         """
         results = {
-            'valid': True,
-            'total_rows': len(df),
-            'total_columns': len(df.columns),
-            'issues': [],
-            'quality_score': 100.0
+            "valid": True,
+            "total_rows": len(df),
+            "total_columns": len(df.columns),
+            "issues": [],
+            "quality_score": 100.0,
         }
 
         # Check for empty DataFrame
         if df.empty:
-            results['valid'] = False
-            results['issues'].append('DataFrame is empty')
-            results['quality_score'] = 0.0
+            results["valid"] = False
+            results["issues"].append("DataFrame is empty")
+            results["quality_score"] = 0.0
             return results
 
         # Check required fields
         if required_fields:
             missing_fields = set(required_fields) - set(df.columns)
             if missing_fields:
-                results['valid'] = False
-                results['issues'].append(f'Missing required fields: {missing_fields}')
-                results['quality_score'] -= 20
+                results["valid"] = False
+                results["issues"].append(f"Missing required fields: {missing_fields}")
+                results["quality_score"] -= 20
 
         # Check for missing data
         missing_data = self._check_missing_data(df)
         if missing_data:
-            results['missing_data'] = missing_data
+            results["missing_data"] = missing_data
             avg_missing = sum(missing_data.values()) / len(missing_data)
             if avg_missing > 0.3:  # More than 30% missing (high threshold)
-                results['issues'].append('High missing data')
-                results['quality_score'] -= 40
-                results['valid'] = False
+                results["issues"].append("High missing data")
+                results["quality_score"] -= 40
+                results["valid"] = False
             elif avg_missing > 0.15:  # More than 15% missing (moderate threshold)
-                results['issues'].append('Moderate missing data')
-                results['quality_score'] -= 20
+                results["issues"].append("Moderate missing data")
+                results["quality_score"] -= 20
 
         # Check for duplicates
         if unique_field and unique_field in df.columns:
             duplicates = df[unique_field].duplicated().sum()
             if duplicates > 0:
-                results['issues'].append(f'{duplicates} duplicate {unique_field} values')
-                results['quality_score'] -= min(20, duplicates * 2)
+                results["issues"].append(
+                    f"{duplicates} duplicate {unique_field} values"
+                )
+                results["quality_score"] -= min(20, duplicates * 2)
 
         # Check data types
         type_issues = self._check_data_types(df)
         if type_issues:
-            results['type_issues'] = type_issues
-            results['issues'].extend(type_issues)
-            results['quality_score'] -= min(15, len(type_issues) * 5)
+            results["type_issues"] = type_issues
+            results["issues"].extend(type_issues)
+            results["quality_score"] -= min(15, len(type_issues) * 5)
 
         # Ensure quality score doesn't go below 0
-        results['quality_score'] = max(0.0, results['quality_score'])
+        results["quality_score"] = max(0.0, results["quality_score"])
 
         # Overall validation status
-        if results['quality_score'] < 60:
-            results['valid'] = False
+        if results["quality_score"] < 60:
+            results["valid"] = False
 
         return results
 
@@ -167,15 +170,15 @@ class DataValidator:
         issues = []
 
         # Get numeric fields from config or use defaults
-        numeric_fields = self.config.get('validation', {}).get('numeric_fields', [
-            'year', 'count', 'amount', 'value', 'quantity'
-        ])
+        numeric_fields = self.config.get("validation", {}).get(
+            "numeric_fields", ["year", "count", "amount", "value", "quantity"]
+        )
 
         for field in numeric_fields:
             if field in df.columns:
-                non_numeric = pd.to_numeric(df[field], errors='coerce').isna().sum()
+                non_numeric = pd.to_numeric(df[field], errors="coerce").isna().sum()
                 if non_numeric > 0 and not df[field].isna().all():
-                    issues.append(f'{field}: {non_numeric} non-numeric values')
+                    issues.append(f"{field}: {non_numeric} non-numeric values")
 
         return issues
 
@@ -194,22 +197,27 @@ class DataValidator:
         report.append("DATA VALIDATION REPORT")
         report.append("=" * 60)
 
-        report.append(f"\nOverall Status: {'✓ PASS' if validation_results['valid'] else '✗ FAIL'}")
+        report.append(
+            f"\nOverall Status: {'✓ PASS' if validation_results['valid'] else '✗ FAIL'}"
+        )
         report.append(f"Quality Score: {validation_results['quality_score']:.1f}/100.0")
 
-        report.append(f"\nDataset Size:")
+        report.append("\nDataset Size:")
         report.append(f"  - Rows: {validation_results['total_rows']}")
         report.append(f"  - Columns: {validation_results['total_columns']}")
 
-        if validation_results.get('missing_data'):
-            report.append(f"\nMissing Data:")
-            for col, pct in sorted(validation_results['missing_data'].items(),
-                                  key=lambda x: x[1], reverse=True):
+        if validation_results.get("missing_data"):
+            report.append("\nMissing Data:")
+            for col, pct in sorted(
+                validation_results["missing_data"].items(),
+                key=lambda x: x[1],
+                reverse=True,
+            ):
                 report.append(f"  - {col}: {pct:.1%}")
 
-        if validation_results['issues']:
+        if validation_results["issues"]:
             report.append(f"\nIssues Found ({len(validation_results['issues'])}):")
-            for i, issue in enumerate(validation_results['issues'], 1):
+            for i, issue in enumerate(validation_results["issues"], 1):
                 report.append(f"  {i}. {issue}")
 
         report.append("\n" + "=" * 60)
@@ -217,9 +225,7 @@ class DataValidator:
         return "\n".join(report)
 
     def generate_interactive_report(
-        self,
-        validation_results: Dict[str, Any],
-        output_path: Path
+        self, validation_results: Dict[str, Any], output_path: Path
     ) -> None:
         """
         Generate interactive HTML validation report with Plotly visualizations.
@@ -230,106 +236,121 @@ class DataValidator:
         """
         # Create subplots
         fig = make_subplots(
-            rows=2, cols=2,
+            rows=2,
+            cols=2,
             subplot_titles=(
-                'Quality Score',
-                'Missing Data by Column',
-                'Data Type Issues',
-                'Validation Summary'
+                "Quality Score",
+                "Missing Data by Column",
+                "Data Type Issues",
+                "Validation Summary",
             ),
             specs=[
-                [{'type': 'indicator'}, {'type': 'bar'}],
-                [{'type': 'bar'}, {'type': 'table'}]
-            ]
+                [{"type": "indicator"}, {"type": "bar"}],
+                [{"type": "bar"}, {"type": "table"}],
+            ],
         )
 
         # 1. Quality Score Gauge
         fig.add_trace(
             go.Indicator(
                 mode="gauge+number+delta",
-                value=validation_results['quality_score'],
-                delta={'reference': 80},
+                value=validation_results["quality_score"],
+                delta={"reference": 80},
                 gauge={
-                    'axis': {'range': [0, 100]},
-                    'bar': {'color': self._get_quality_color(validation_results['quality_score'])},
-                    'steps': [
-                        {'range': [0, 60], 'color': 'lightgray'},
-                        {'range': [60, 80], 'color': 'gray'},
-                        {'range': [80, 100], 'color': 'lightgreen'}
+                    "axis": {"range": [0, 100]},
+                    "bar": {
+                        "color": self._get_quality_color(
+                            validation_results["quality_score"]
+                        )
+                    },
+                    "steps": [
+                        {"range": [0, 60], "color": "lightgray"},
+                        {"range": [60, 80], "color": "gray"},
+                        {"range": [80, 100], "color": "lightgreen"},
                     ],
-                    'threshold': {
-                        'line': {'color': 'red', 'width': 4},
-                        'thickness': 0.75,
-                        'value': 80
-                    }
+                    "threshold": {
+                        "line": {"color": "red", "width": 4},
+                        "thickness": 0.75,
+                        "value": 80,
+                    },
                 },
-                title={'text': "Quality Score"}
+                title={"text": "Quality Score"},
             ),
-            row=1, col=1
+            row=1,
+            col=1,
         )
 
         # 2. Missing Data Bar Chart
-        if validation_results.get('missing_data'):
-            missing_data = validation_results['missing_data']
+        if validation_results.get("missing_data"):
+            missing_data = validation_results["missing_data"]
             fig.add_trace(
                 go.Bar(
                     x=list(missing_data.keys()),
                     y=[v * 100 for v in missing_data.values()],
-                    name='Missing %',
-                    marker_color='indianred',
-                    hovertemplate='%{x}<br>Missing: %{y:.1f}%<extra></extra>'
+                    name="Missing %",
+                    marker_color="indianred",
+                    hovertemplate="%{x}<br>Missing: %{y:.1f}%<extra></extra>",
                 ),
-                row=1, col=2
+                row=1,
+                col=2,
             )
 
         # 3. Data Type Issues
-        if validation_results.get('type_issues'):
-            type_issues = validation_results['type_issues']
+        if validation_results.get("type_issues"):
+            type_issues = validation_results["type_issues"]
             issue_counts = {}
             for issue in type_issues:
-                field = issue.split(':')[0]
-                count = int(issue.split(':')[1].split()[0])
+                field = issue.split(":")[0]
+                count = int(issue.split(":")[1].split()[0])
                 issue_counts[field] = count
 
             fig.add_trace(
                 go.Bar(
                     x=list(issue_counts.keys()),
                     y=list(issue_counts.values()),
-                    name='Type Issues',
-                    marker_color='orange',
-                    hovertemplate='%{x}<br>Issues: %{y}<extra></extra>'
+                    name="Type Issues",
+                    marker_color="orange",
+                    hovertemplate="%{x}<br>Issues: %{y}<extra></extra>",
                 ),
-                row=2, col=1
+                row=2,
+                col=1,
             )
 
         # 4. Summary Table
         summary_data = {
-            'Metric': ['Total Rows', 'Total Columns', 'Quality Score', 'Issues Found', 'Status'],
-            'Value': [
-                str(validation_results['total_rows']),
-                str(validation_results['total_columns']),
+            "Metric": [
+                "Total Rows",
+                "Total Columns",
+                "Quality Score",
+                "Issues Found",
+                "Status",
+            ],
+            "Value": [
+                str(validation_results["total_rows"]),
+                str(validation_results["total_columns"]),
                 f"{validation_results['quality_score']:.1f}/100",
-                str(len(validation_results['issues'])),
-                '✓ PASS' if validation_results['valid'] else '✗ FAIL'
-            ]
+                str(len(validation_results["issues"])),
+                "✓ PASS" if validation_results["valid"] else "✗ FAIL",
+            ],
         }
 
         fig.add_trace(
             go.Table(
                 header=dict(
                     values=list(summary_data.keys()),
-                    fill_color='paleturquoise',
-                    align='left',
-                    font=dict(size=12, color='black')
+                    fill_color="paleturquoise",
+                    align="left",
+                    font=dict(size=12, color="black"),
                 ),
                 cells=dict(
                     values=list(summary_data.values()),
-                    fill_color='lavender',
-                    align='left',
-                    font=dict(size=11)
-                )
+                    fill_color="lavender",
+                    align="left",
+                    font=dict(size=11),
+                ),
             ),
-            row=2, col=2
+            row=2,
+            col=2,
         )
 
         # Update layout
@@ -337,7 +358,7 @@ class DataValidator:
             title_text="Data Validation Report",
             height=800,
             showlegend=False,
-            template='plotly_white'
+            template="plotly_white",
         )
 
         # Update axes
@@ -348,7 +369,7 @@ class DataValidator:
 
         # Save as HTML
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        fig.write_html(output_path, include_plotlyjs='cdn')
+        fig.write_html(output_path, include_plotlyjs="cdn")
         self.logger.info(f"Interactive validation report saved to {output_path}")
 
     def _get_quality_color(self, score: float) -> str:
@@ -362,8 +383,8 @@ class DataValidator:
             Color name for gauge
         """
         if score >= 80:
-            return 'green'
+            return "green"
         elif score >= 60:
-            return 'yellow'
+            return "yellow"
         else:
-            return 'red'
+            return "red"

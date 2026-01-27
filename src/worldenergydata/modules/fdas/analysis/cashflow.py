@@ -9,15 +9,15 @@ Date: 2025-10-03
 Source: Ported from FDAS generate_financial_summary.py
 """
 
-from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Dict, List, Optional
+
 import pandas as pd
-import numpy as np
 
 from worldenergydata.common.exceptions import ProcessingError
+
 from ..core.config import AssumptionsManager
-from ..core.financial import calculate_npv, excel_like_mirr
 
 
 class CashflowError(ProcessingError):
@@ -49,6 +49,7 @@ class MonthlyCashflowModel:
         host_capex_usd: Host platform CAPEX
         net_cashflow_usd: Net cashflow (revenue - costs)
     """
+
     year_month: str
     oil_production_bbl: float = 0.0
     oil_revenue_usd: float = 0.0
@@ -69,12 +70,12 @@ class MonthlyCashflowModel:
         """
         revenue = self.oil_revenue_usd
         costs = (
-            self.royalty_usd +
-            self.variable_opex_usd +
-            self.fixed_opex_usd +
-            self.drilling_capex_usd +
-            self.facilities_capex_usd +
-            self.host_capex_usd
+            self.royalty_usd
+            + self.variable_opex_usd
+            + self.fixed_opex_usd
+            + self.drilling_capex_usd
+            + self.facilities_capex_usd
+            + self.host_capex_usd
         )
 
         self.net_cashflow_usd = revenue - costs
@@ -89,9 +90,9 @@ class CashflowEngine:
     to create detailed financial models.
     """
 
-    def __init__(self,
-                 assumptions_mgr: AssumptionsManager,
-                 dev_system: str = 'subsea15'):
+    def __init__(
+        self, assumptions_mgr: AssumptionsManager, dev_system: str = "subsea15"
+    ):
         """
         Initialize cashflow engine.
 
@@ -102,10 +103,12 @@ class CashflowEngine:
         self.assumptions = assumptions_mgr
         self.dev_system = dev_system
 
-    def calculate_host_capex_timing(self,
-                                    total_capex_mm: float,
-                                    first_oil_date: datetime,
-                                    months_before_first_oil: int = 24) -> Dict[str, float]:
+    def calculate_host_capex_timing(
+        self,
+        total_capex_mm: float,
+        first_oil_date: datetime,
+        months_before_first_oil: int = 24,
+    ) -> Dict[str, float]:
         """
         Allocate host platform CAPEX over time.
 
@@ -136,7 +139,7 @@ class CashflowEngine:
         for i in range(months_before_first_oil):
             # Go backwards from first oil
             month = current.replace(day=1)
-            month_key = month.strftime('%Y-%m')
+            month_key = month.strftime("%Y-%m")
             timing[month_key] = monthly_capex
 
             # Move back one month
@@ -147,9 +150,9 @@ class CashflowEngine:
 
         return timing
 
-    def calculate_drilling_capex(self,
-                                drilling_days_monthly: Dict[str, float],
-                                rig_rate_mm_per_day: float) -> Dict[str, float]:
+    def calculate_drilling_capex(
+        self, drilling_days_monthly: Dict[str, float], rig_rate_mm_per_day: float
+    ) -> Dict[str, float]:
         """
         Calculate drilling CAPEX from drilling days.
 
@@ -173,9 +176,9 @@ class CashflowEngine:
 
         return capex
 
-    def calculate_facilities_capex(self,
-                                   completion_dates_monthly: Dict[str, int],
-                                   surf_per_well_mm: float) -> Dict[str, float]:
+    def calculate_facilities_capex(
+        self, completion_dates_monthly: Dict[str, int], surf_per_well_mm: float
+    ) -> Dict[str, float]:
         """
         Calculate subsea facilities CAPEX.
 
@@ -199,10 +202,12 @@ class CashflowEngine:
 
         return capex
 
-    def calculate_revenue(self,
-                         oil_production_monthly: Dict[str, float],
-                         wti_price_monthly: Dict[str, float],
-                         oil_differential: float = 0.0) -> Dict[str, float]:
+    def calculate_revenue(
+        self,
+        oil_production_monthly: Dict[str, float],
+        wti_price_monthly: Dict[str, float],
+        oil_differential: float = 0.0,
+    ) -> Dict[str, float]:
         """
         Calculate oil revenue.
 
@@ -230,9 +235,9 @@ class CashflowEngine:
 
         return revenue
 
-    def calculate_royalty(self,
-                         revenue_monthly: Dict[str, float],
-                         royalty_rate: Optional[float] = None) -> Dict[str, float]:
+    def calculate_royalty(
+        self, revenue_monthly: Dict[str, float], royalty_rate: Optional[float] = None
+    ) -> Dict[str, float]:
         """
         Calculate royalty payments.
 
@@ -251,7 +256,7 @@ class CashflowEngine:
             ... )
         """
         if royalty_rate is None:
-            royalty_rate = self.assumptions.get(self.dev_system, 'ROYALTY_RATE', 0.188)
+            royalty_rate = self.assumptions.get(self.dev_system, "ROYALTY_RATE", 0.188)
 
         royalty = {}
         for month, revenue in revenue_monthly.items():
@@ -259,9 +264,11 @@ class CashflowEngine:
 
         return royalty
 
-    def calculate_variable_opex(self,
-                               oil_production_monthly: Dict[str, float],
-                               opex_per_bbl: Optional[float] = None) -> Dict[str, float]:
+    def calculate_variable_opex(
+        self,
+        oil_production_monthly: Dict[str, float],
+        opex_per_bbl: Optional[float] = None,
+    ) -> Dict[str, float]:
         """
         Calculate variable operating expenses.
 
@@ -277,7 +284,9 @@ class CashflowEngine:
             >>> opex = engine.calculate_variable_opex({'2024-01': 100000}, 12.0)
         """
         if opex_per_bbl is None:
-            opex_per_bbl = self.assumptions.get(self.dev_system, 'VARIABLE_OPEX_$/BBL', 12.0)
+            opex_per_bbl = self.assumptions.get(
+                self.dev_system, "VARIABLE_OPEX_$/BBL", 12.0
+            )
 
         opex = {}
         for month, production in oil_production_monthly.items():
@@ -285,10 +294,12 @@ class CashflowEngine:
 
         return opex
 
-    def calculate_fixed_opex(self,
-                            first_production_month: str,
-                            last_production_month: str,
-                            annual_fixed_opex_mm: Optional[float] = None) -> Dict[str, float]:
+    def calculate_fixed_opex(
+        self,
+        first_production_month: str,
+        last_production_month: str,
+        annual_fixed_opex_mm: Optional[float] = None,
+    ) -> Dict[str, float]:
         """
         Calculate fixed operating expenses.
 
@@ -306,7 +317,7 @@ class CashflowEngine:
         """
         if annual_fixed_opex_mm is None:
             annual_fixed_opex_mm = self.assumptions.get(
-                self.dev_system, 'FIXED_OPEX_MM_PER_YEAR', 25.0
+                self.dev_system, "FIXED_OPEX_MM_PER_YEAR", 25.0
             )
 
         monthly_fixed = annual_fixed_opex_mm / 12.0
@@ -314,7 +325,7 @@ class CashflowEngine:
         # Generate month range
         start = pd.to_datetime(first_production_month)
         end = pd.to_datetime(last_production_month)
-        months = pd.period_range(start, end, freq='M')
+        months = pd.period_range(start, end, freq="M")
 
         opex = {}
         for month in months:
@@ -322,11 +333,13 @@ class CashflowEngine:
 
         return opex
 
-    def generate_monthly_cashflow(self,
-                                  production_monthly: pd.DataFrame,
-                                  drilling_timeline: Dict[str, any],
-                                  wti_prices: Dict[str, float],
-                                  first_oil_date: datetime) -> List[MonthlyCashflowModel]:
+    def generate_monthly_cashflow(
+        self,
+        production_monthly: pd.DataFrame,
+        drilling_timeline: Dict[str, any],
+        wti_prices: Dict[str, float],
+        first_oil_date: datetime,
+    ) -> List[MonthlyCashflowModel]:
         """
         Generate complete monthly cashflow projection.
 
@@ -349,9 +362,9 @@ class CashflowEngine:
             ... )
         """
         # Extract parameters from assumptions
-        host_capex_mm = self.assumptions.get(self.dev_system, 'HOST_CAPEX_MM')
-        surf_per_well_mm = self.assumptions.get(self.dev_system, 'SURF_PER_WELL_MM')
-        rig_rate_mm = self.assumptions.get(self.dev_system, 'MODU_LOADED_DAYRATE_MM')
+        host_capex_mm = self.assumptions.get(self.dev_system, "HOST_CAPEX_MM")
+        surf_per_well_mm = self.assumptions.get(self.dev_system, "SURF_PER_WELL_MM")
+        rig_rate_mm = self.assumptions.get(self.dev_system, "MODU_LOADED_DAYRATE_MM")
 
         # Calculate CAPEX timing
         host_capex_monthly = self.calculate_host_capex_timing(
@@ -359,13 +372,16 @@ class CashflowEngine:
         )
 
         drilling_capex_monthly = self.calculate_drilling_capex(
-            drilling_timeline.get('drilling_monthly', {}),
-            rig_rate_mm
+            drilling_timeline.get("drilling_monthly", {}), rig_rate_mm
         )
 
         # Convert production to dict (ensure string keys)
-        prod_dict = {str(k): v for k, v in
-                    production_monthly.set_index('YEAR_MONTH')['MONTHLY_OIL_BBL'].to_dict().items()}
+        prod_dict = {
+            str(k): v
+            for k, v in production_monthly.set_index("YEAR_MONTH")["MONTHLY_OIL_BBL"]
+            .to_dict()
+            .items()
+        }
 
         # Calculate revenue and costs
         revenue_monthly = self.calculate_revenue(prod_dict, wti_prices)
@@ -373,11 +389,13 @@ class CashflowEngine:
         variable_opex_monthly = self.calculate_variable_opex(prod_dict)
 
         # Get date range (all keys as strings)
-        months = sorted(set(
-            list(prod_dict.keys()) +
-            list(host_capex_monthly.keys()) +
-            list(drilling_capex_monthly.keys())
-        ))
+        months = sorted(
+            set(
+                list(prod_dict.keys())
+                + list(host_capex_monthly.keys())
+                + list(drilling_capex_monthly.keys())
+            )
+        )
 
         # Build cashflow models
         cashflows = []
@@ -399,10 +417,12 @@ class CashflowEngine:
         return cashflows
 
 
-def generate_monthly_cashflow(production_df: pd.DataFrame,
-                              assumptions_mgr: AssumptionsManager,
-                              dev_system: str = 'subsea15',
-                              **kwargs) -> pd.DataFrame:
+def generate_monthly_cashflow(
+    production_df: pd.DataFrame,
+    assumptions_mgr: AssumptionsManager,
+    dev_system: str = "subsea15",
+    **kwargs,
+) -> pd.DataFrame:
     """
     Convenience function to generate monthly cashflow.
 
@@ -425,15 +445,12 @@ def generate_monthly_cashflow(production_df: pd.DataFrame,
     engine = CashflowEngine(assumptions_mgr, dev_system)
 
     # Extract required parameters from kwargs
-    drilling_timeline = kwargs.get('drilling_timeline', {})
-    wti_prices = kwargs.get('wti_prices', {})
-    first_oil_date = kwargs.get('first_oil_date', datetime.now())
+    drilling_timeline = kwargs.get("drilling_timeline", {})
+    wti_prices = kwargs.get("wti_prices", {})
+    first_oil_date = kwargs.get("first_oil_date", datetime.now())
 
     cashflows = engine.generate_monthly_cashflow(
-        production_df,
-        drilling_timeline,
-        wti_prices,
-        first_oil_date
+        production_df, drilling_timeline, wti_prices, first_oil_date
     )
 
     # Convert to DataFrame

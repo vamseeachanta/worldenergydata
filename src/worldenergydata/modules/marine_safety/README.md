@@ -3,7 +3,7 @@
 [![Python Version](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Status](https://img.shields.io/badge/status-active%20development-green.svg)]()
-[![Data Sources](https://img.shields.io/badge/data%20sources-7-brightgreen.svg)]()
+[![Data Sources](https://img.shields.io/badge/data%20sources-10-brightgreen.svg)]()
 
 A comprehensive marine safety incidents database module for collecting, storing, and analyzing incident data from global maritime authorities. Part of the WorldEnergyData project.
 
@@ -17,6 +17,13 @@ A comprehensive marine safety incidents database module for collecting, storing,
 - [Quick Start](#quick-start)
 - [Configuration](#configuration)
 - [CLI Usage](#cli-usage)
+  - [Scrape Commands](#scrape-commands)
+  - [Import Commands](#import-commands)
+  - [Refresh Commands](#refresh-commands)
+  - [Correlation Commands](#correlation-commands)
+  - [Statistics Commands](#statistics-commands)
+  - [Export Commands](#export-commands)
+  - [Database Commands](#database-commands)
 - [API Usage](#api-usage)
 - [Database Schema](#database-schema)
 - [Data Sources](#data-sources)
@@ -46,7 +53,7 @@ The Marine Safety module provides automated collection, normalization, and analy
 ## Features
 
 ### 1. **Multi-Source Data Collection**
-   - Scrapes data from 7 major international safety authorities
+   - Collects data from 10 major international safety authorities
    - Configurable scrapers with respect for robots.txt
    - Rate limiting and concurrent request management
    - Automatic retry logic with exponential backoff

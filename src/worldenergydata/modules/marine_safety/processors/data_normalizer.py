@@ -4,12 +4,12 @@ Data Normalizer
 Normalizes marine safety data to standard formats and mappings.
 """
 
-import re
-from typing import Any, Dict, List, Optional
 import logging
+from typing import Any, Dict, List, Optional
 
-from worldenergydata.modules.marine_safety.processors.base_processor import BaseProcessor
-from worldenergydata.modules.marine_safety import constants
+from worldenergydata.modules.marine_safety.processors.base_processor import (
+    BaseProcessor,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -28,94 +28,94 @@ class DataNormalizer(BaseProcessor):
 
     # Incident type mappings (various formats -> standard IncidentType enum values)
     INCIDENT_TYPE_MAPPINGS = {
-        'collision': 'collision',
-        'collisions': 'collision',
-        'vessel collision': 'collision',
-        'allision': 'collision',  # Allision is collision with stationary object
-        'allisions': 'collision',
-        'grounding': 'grounding',
-        'groundings': 'grounding',
-        'run aground': 'grounding',
-        'fire': 'fire',
-        'fires': 'fire',
-        'explosion': 'explosion',
-        'fire/explosion': 'fire',
-        'fire & explosion': 'fire',
-        'sinking': 'flooding',  # Map sinking to flooding
-        'sinkings': 'flooding',
-        'foundering': 'flooding',
-        'capsizing': 'capsizing',
-        'capsize': 'capsizing',
-        'flooding': 'flooding',
-        'material failure': 'equipment_failure',
-        'equipment failure': 'equipment_failure',
-        'machinery failure': 'equipment_failure',
-        'personnel casualty': 'personnel_injury',
-        'injury': 'personnel_injury',
-        'fatality': 'fatality',
-        'man overboard': 'personnel_injury',
-        'pollution': 'pollution',
-        'oil spill': 'pollution',
-        'hazmat': 'pollution',
-        'environmental': 'environmental',
-        'weather': 'weather_related',
-        'weather related': 'weather_related',
+        "collision": "collision",
+        "collisions": "collision",
+        "vessel collision": "collision",
+        "allision": "collision",  # Allision is collision with stationary object
+        "allisions": "collision",
+        "grounding": "grounding",
+        "groundings": "grounding",
+        "run aground": "grounding",
+        "fire": "fire",
+        "fires": "fire",
+        "explosion": "explosion",
+        "fire/explosion": "fire",
+        "fire & explosion": "fire",
+        "sinking": "flooding",  # Map sinking to flooding
+        "sinkings": "flooding",
+        "foundering": "flooding",
+        "capsizing": "capsizing",
+        "capsize": "capsizing",
+        "flooding": "flooding",
+        "material failure": "equipment_failure",
+        "equipment failure": "equipment_failure",
+        "machinery failure": "equipment_failure",
+        "personnel casualty": "personnel_injury",
+        "injury": "personnel_injury",
+        "fatality": "fatality",
+        "man overboard": "personnel_injury",
+        "pollution": "pollution",
+        "oil spill": "pollution",
+        "hazmat": "pollution",
+        "environmental": "environmental",
+        "weather": "weather_related",
+        "weather related": "weather_related",
     }
 
     # Vessel type standardization (maps to VesselType enum values)
     VESSEL_TYPE_MAPPINGS = {
-        'cargo': 'cargo_vessel',
-        'cargo ship': 'cargo_vessel',
-        'cargo vessel': 'cargo_vessel',
-        'container': 'cargo_vessel',
-        'container ship': 'cargo_vessel',
-        'tanker': 'tanker',
-        'oil tanker': 'tanker',
-        'chemical tanker': 'tanker',
-        'bulk carrier': 'cargo_vessel',
-        'bulker': 'cargo_vessel',
-        'passenger': 'other',  # Not in enum, use other
-        'passenger ship': 'other',
-        'cruise': 'other',
-        'cruise ship': 'other',
-        'ferry': 'other',
-        'passenger ferry': 'other',
-        'tug': 'tug',
-        'tugboat': 'tug',
-        'tow': 'tug',
-        'barge': 'other',
-        'fishing': 'other',
-        'fishing vessel': 'other',
-        'offshore': 'supply_vessel',
-        'platform': 'production_platform',
-        'supply vessel': 'supply_vessel',
-        'recreational': 'other',
-        'yacht': 'other',
-        'pleasure craft': 'other',
-        'military auxiliary': 'other',
-        'military': 'other',
+        "cargo": "cargo_vessel",
+        "cargo ship": "cargo_vessel",
+        "cargo vessel": "cargo_vessel",
+        "container": "cargo_vessel",
+        "container ship": "cargo_vessel",
+        "tanker": "tanker",
+        "oil tanker": "tanker",
+        "chemical tanker": "tanker",
+        "bulk carrier": "cargo_vessel",
+        "bulker": "cargo_vessel",
+        "passenger": "other",  # Not in enum, use other
+        "passenger ship": "other",
+        "cruise": "other",
+        "cruise ship": "other",
+        "ferry": "other",
+        "passenger ferry": "other",
+        "tug": "tug",
+        "tugboat": "tug",
+        "tow": "tug",
+        "barge": "other",
+        "fishing": "other",
+        "fishing vessel": "other",
+        "offshore": "supply_vessel",
+        "platform": "production_platform",
+        "supply vessel": "supply_vessel",
+        "recreational": "other",
+        "yacht": "other",
+        "pleasure craft": "other",
+        "military auxiliary": "other",
+        "military": "other",
     }
 
     # Country code standardization (common names -> ISO codes)
     COUNTRY_MAPPINGS = {
-        'united states': 'USA',
-        'us': 'USA',
-        'usa': 'USA',
-        'u.s.': 'USA',
-        'u.s.a.': 'USA',
-        'america': 'USA',
-        'united kingdom': 'GBR',
-        'uk': 'GBR',
-        'great britain': 'GBR',
-        'britain': 'GBR',
-        'canada': 'CAN',
-        'mexico': 'MEX',
-        'panama': 'PAN',
-        'liberia': 'LBR',
-        'marshall islands': 'MHL',
-        'bahamas': 'BHS',
-        'malta': 'MLT',
-        'cyprus': 'CYP',
+        "united states": "USA",
+        "us": "USA",
+        "usa": "USA",
+        "u.s.": "USA",
+        "u.s.a.": "USA",
+        "america": "USA",
+        "united kingdom": "GBR",
+        "uk": "GBR",
+        "great britain": "GBR",
+        "britain": "GBR",
+        "canada": "CAN",
+        "mexico": "MEX",
+        "panama": "PAN",
+        "liberia": "LBR",
+        "marshall islands": "MHL",
+        "bahamas": "BHS",
+        "malta": "MLT",
+        "cyprus": "CYP",
     }
 
     def __init__(self, config: Optional[Dict[str, Any]] = None):
@@ -123,14 +123,14 @@ class DataNormalizer(BaseProcessor):
         super().__init__(config)
 
         # Load custom mappings from config if provided
-        if self.config.get('incident_type_mappings'):
-            self.INCIDENT_TYPE_MAPPINGS.update(self.config['incident_type_mappings'])
+        if self.config.get("incident_type_mappings"):
+            self.INCIDENT_TYPE_MAPPINGS.update(self.config["incident_type_mappings"])
 
-        if self.config.get('vessel_type_mappings'):
-            self.VESSEL_TYPE_MAPPINGS.update(self.config['vessel_type_mappings'])
+        if self.config.get("vessel_type_mappings"):
+            self.VESSEL_TYPE_MAPPINGS.update(self.config["vessel_type_mappings"])
 
-        if self.config.get('country_mappings'):
-            self.COUNTRY_MAPPINGS.update(self.config['country_mappings'])
+        if self.config.get("country_mappings"):
+            self.COUNTRY_MAPPINGS.update(self.config["country_mappings"])
 
     def process(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -143,40 +143,46 @@ class DataNormalizer(BaseProcessor):
             Normalized incident data dictionary
         """
         if not self.validate(data):
-            self.stats['errors'] += 1
+            self.stats["errors"] += 1
             return data
 
         normalized = data.copy()
 
         try:
             # Normalize incident type
-            if 'incident_type' in normalized:
-                normalized['incident_type'] = self.normalize_incident_type(normalized['incident_type'])
+            if "incident_type" in normalized:
+                normalized["incident_type"] = self.normalize_incident_type(
+                    normalized["incident_type"]
+                )
 
             # Normalize vessel type
-            if 'vessel_type' in normalized:
-                normalized['vessel_type'] = self.normalize_vessel_type(normalized['vessel_type'])
+            if "vessel_type" in normalized:
+                normalized["vessel_type"] = self.normalize_vessel_type(
+                    normalized["vessel_type"]
+                )
 
             # Normalize country codes
-            for field in ['country', 'flag_state', 'country_code']:
+            for field in ["country", "flag_state", "country_code"]:
                 if field in normalized:
                     normalized[field] = self.normalize_country(normalized[field])
 
             # Normalize severity level
-            if 'severity_level' in normalized:
-                normalized['severity_level'] = self.normalize_severity(normalized.get('severity_level'),
-                                                                        normalized.get('fatalities', 0),
-                                                                        normalized.get('injuries', 0))
+            if "severity_level" in normalized:
+                normalized["severity_level"] = self.normalize_severity(
+                    normalized.get("severity_level"),
+                    normalized.get("fatalities", 0),
+                    normalized.get("injuries", 0),
+                )
 
             # Normalize status
-            if 'status' in normalized:
-                normalized['status'] = self.normalize_status(normalized['status'])
+            if "status" in normalized:
+                normalized["status"] = self.normalize_status(normalized["status"])
 
-            self.stats['processed'] += 1
+            self.stats["processed"] += 1
 
         except Exception as e:
             logger.error(f"Error normalizing data: {e}")
-            self.stats['errors'] += 1
+            self.stats["errors"] += 1
             return data
 
         return normalized
@@ -208,8 +214,8 @@ class DataNormalizer(BaseProcessor):
 
         # No match found - log warning and return original
         logger.warning(f"Unknown incident type: {incident_type}")
-        self.stats['warnings'] += 1
-        return incident_type.lower().replace(' ', '_')
+        self.stats["warnings"] += 1
+        return incident_type.lower().replace(" ", "_")
 
     def normalize_vessel_type(self, vessel_type: Optional[str]) -> Optional[str]:
         """
@@ -235,8 +241,8 @@ class DataNormalizer(BaseProcessor):
                 return value
 
         logger.warning(f"Unknown vessel type: {vessel_type}")
-        self.stats['warnings'] += 1
-        return vessel_type.lower().replace(' ', '_')
+        self.stats["warnings"] += 1
+        return vessel_type.lower().replace(" ", "_")
 
     def normalize_country(self, country: Optional[str]) -> Optional[str]:
         """
@@ -262,10 +268,12 @@ class DataNormalizer(BaseProcessor):
 
         # Return original if not found
         logger.warning(f"Unknown country: {country}")
-        self.stats['warnings'] += 1
+        self.stats["warnings"] += 1
         return country.upper() if len(country) == 3 else country
 
-    def normalize_severity(self, severity: Any, fatalities: int = 0, injuries: int = 0) -> int:
+    def normalize_severity(
+        self, severity: Any, fatalities: int = 0, injuries: int = 0
+    ) -> int:
         """
         Normalize severity level (1-5 scale).
 
@@ -285,16 +293,16 @@ class DataNormalizer(BaseProcessor):
         if isinstance(severity, str):
             severity_lower = severity.lower().strip()
             mapping = {
-                'minor': 1,
-                'low': 1,
-                'moderate': 2,
-                'medium': 2,
-                'major': 3,
-                'high': 3,
-                'severe': 4,
-                'serious': 4,
-                'catastrophic': 5,
-                'critical': 5,
+                "minor": 1,
+                "low": 1,
+                "moderate": 2,
+                "medium": 2,
+                "major": 3,
+                "high": 3,
+                "severe": 4,
+                "serious": 4,
+                "catastrophic": 5,
+                "critical": 5,
             }
             if severity_lower in mapping:
                 return mapping[severity_lower]
@@ -332,26 +340,26 @@ class DataNormalizer(BaseProcessor):
             Normalized status
         """
         if not status:
-            return 'draft'
+            return "draft"
 
         status_lower = status.lower().strip()
 
         # Status mappings
         mapping = {
-            'draft': 'draft',
-            'preliminary': 'draft',
-            'reported': 'reported',
-            'initial': 'reported',
-            'under investigation': 'under_investigation',
-            'investigating': 'under_investigation',
-            'active': 'under_investigation',
-            'in review': 'in_review',
-            'review': 'in_review',
-            'pending': 'in_review',
-            'completed': 'completed',
-            'complete': 'completed',
-            'final': 'completed',
-            'closed': 'completed',
+            "draft": "draft",
+            "preliminary": "draft",
+            "reported": "reported",
+            "initial": "reported",
+            "under investigation": "under_investigation",
+            "investigating": "under_investigation",
+            "active": "under_investigation",
+            "in review": "in_review",
+            "review": "in_review",
+            "pending": "in_review",
+            "completed": "completed",
+            "complete": "completed",
+            "final": "completed",
+            "closed": "completed",
         }
 
         for key, value in mapping.items():
@@ -359,8 +367,8 @@ class DataNormalizer(BaseProcessor):
                 return value
 
         logger.warning(f"Unknown status: {status}")
-        self.stats['warnings'] += 1
-        return 'draft'
+        self.stats["warnings"] += 1
+        return "draft"
 
     def batch_process(self, data_list: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """
@@ -379,7 +387,9 @@ class DataNormalizer(BaseProcessor):
             normalized = self.process(data)
             normalized_list.append(normalized)
 
-        logger.info(f"Batch normalized: {self.stats['processed']} records, "
-                   f"{self.stats['errors']} errors, {self.stats['warnings']} warnings")
+        logger.info(
+            f"Batch normalized: {self.stats['processed']} records, "
+            f"{self.stats['errors']} errors, {self.stats['warnings']} warnings"
+        )
 
         return normalized_list

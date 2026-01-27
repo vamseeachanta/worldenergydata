@@ -1,14 +1,14 @@
 import os
 import pickle
-import pandas as pd
 from pathlib import Path
 from typing import Dict, List, Union
+
+import pandas as pd
+from colorama import init as colorama_init
 from loguru import logger
 
-from colorama import Fore, Style
-from colorama import init as colorama_init
-
 colorama_init()
+
 
 class APIData:
     """
@@ -24,7 +24,7 @@ class APIData:
         """
         self.cfg = cfg
         self.bin_folder_path = None
-        self.api_columns = ['API Well Number']
+        self.api_columns = ["API Well Number"]
 
         # Initialize bin_folder_path if cfg is provided
         if cfg is not None:
@@ -37,7 +37,7 @@ class APIData:
         Args:
             cfg (dict): Configuration dictionary
         """
-        self.bin_folder_path = Path(cfg['parameters']['filepath']['Well_APD_Default'])
+        self.bin_folder_path = Path(cfg["parameters"]["filepath"]["Well_APD_Default"])
         if not self.bin_folder_path.exists():
             raise FileNotFoundError(f"Bin folder not found: {self.bin_folder_path}")
 
@@ -65,7 +65,11 @@ class APIData:
         # Ensure bin path is initialized
         self._ensure_bin_path_initialized(cfg)
 
-        cfg_input_api12 = input_group['api12'] if 'api12' in input_group and input_group['api12'] is not None else None
+        cfg_input_api12 = (
+            input_group["api12"]
+            if "api12" in input_group and input_group["api12"] is not None
+            else None
+        )
 
         # Use the initialized bin_folder_path instead of re-reading from config
         if not self.bin_folder_path.exists():
@@ -79,7 +83,9 @@ class APIData:
 
         return cfg
 
-    def get_api12_data_from_input_bin_files(self, api_numbers: Union[str, int, List[Union[str, int]]]) -> Dict[str, pd.DataFrame]:
+    def get_api12_data_from_input_bin_files(
+        self, api_numbers: Union[str, int, List[Union[str, int]]]
+    ) -> Dict[str, pd.DataFrame]:
         """
         Get data across all .bin files from input bin file directory by API numbers.
 
@@ -123,11 +129,13 @@ class APIData:
             List[Path]: List of paths to all .bin files
         """
         if self.bin_folder_path is None:
-            raise ValueError("bin_folder_path not initialized. Call router method first or provide cfg in __init__.")
+            raise ValueError(
+                "bin_folder_path not initialized. Call router method first or provide cfg in __init__."
+            )
 
         bin_files = []
         # Look for .bin files directly in the apd folder
-        for file_path in self.bin_folder_path.glob('*.bin'):
+        for file_path in self.bin_folder_path.glob("*.bin"):
             bin_files.append(file_path)
 
         return bin_files
@@ -143,19 +151,23 @@ class APIData:
             pd.DataFrame: Loaded dataframe or empty DataFrame if failed
         """
         try:
-            with open(file_path, 'rb') as f:
+            with open(file_path, "rb") as f:
                 df = pickle.load(f)
 
             if isinstance(df, pd.DataFrame):
                 return df
             else:
-                logger.warning(f"File {file_path} does not contain a DataFrame, returning empty DataFrame")
+                logger.warning(
+                    f"File {file_path} does not contain a DataFrame, returning empty DataFrame"
+                )
                 return pd.DataFrame()
         except Exception as e:
             logger.error(f"Error loading {file_path}: {e}")
             return pd.DataFrame()
 
-    def get_api12_matching_data(self, df: pd.DataFrame, api_numbers: List[Union[str, int]]) -> pd.DataFrame:
+    def get_api12_matching_data(
+        self, df: pd.DataFrame, api_numbers: List[Union[str, int]]
+    ) -> pd.DataFrame:
         """
         Get API12 matching data from a dataframe.
 
@@ -181,7 +193,7 @@ class APIData:
 
         for col in existing_columns:
             try:
-                if df[col].dtype == 'object':
+                if df[col].dtype == "object":
                     # For string columns, convert to string and use isin
                     col_str = df[col].astype(str)
                     str_api_numbers = [str(api) for api in api_numbers]
@@ -206,8 +218,9 @@ class APIData:
             List[Union[str, int]]: List of parsed API numbers
         """
         import re
+
         user_input = str(user_input).strip()
-        values = re.split(r'[,;\n\s]+', user_input.strip())
+        values = re.split(r"[,;\n\s]+", user_input.strip())
 
         parsed_values = []
         for value in values:
@@ -231,16 +244,16 @@ class APIData:
         """
         from assetutilities.common.utilities import is_dir_valid_func
 
-        api_num = str(input_group['api12'][0])
+        api_num = str(input_group["api12"][0])
         label = api_num
-        output_path = os.path.join(cfg['Analysis']['result_folder'], 'Data')
+        output_path = os.path.join(cfg["Analysis"]["result_folder"], "Data")
         if output_path is None:
-            result_folder = self.cfg['Analysis']['result_folder']
-            output_path = os.path.join(result_folder, 'Data')
-        analysis_root_folder = cfg['Analysis']['analysis_root_folder']
+            result_folder = self.cfg["Analysis"]["result_folder"]
+            output_path = os.path.join(result_folder, "Data")
+        analysis_root_folder = cfg["Analysis"]["analysis_root_folder"]
         is_dir_valid, output_path = is_dir_valid_func(output_path, analysis_root_folder)
 
-        output_file = os.path.join(output_path, str(label) + '.csv')
+        output_file = os.path.join(output_path, str(label) + ".csv")
 
         # Combine all results into a single DataFrame
         combined_df = pd.DataFrame()
