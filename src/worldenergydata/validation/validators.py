@@ -131,81 +131,115 @@ class DataValidator:
                 print(f"[DEBUG] self.errors now has {len(self.errors)} errors")
 
     def _validate_field(self, value: Any, field_schema: FieldSchema, row_idx: int):
-        """Validate a single field value."""
+        """Validate a single field value against schema constraints."""
         field_name = field_schema.name
-
-        print(
-            f"[DEBUG] _validate_field() called: field={field_name}, value={value} (type: {type(value).__name__}), expected_type={field_schema.data_type}"
+        logger.debug(
+            "Validating field=%s, value=%s (type=%s), expected=%s",
+            field_name, value, type(value).__name__, field_schema.data_type
         )
 
-        # Required validation
-        try:
-            ValidationRules.validate_required(value, field_name, field_schema.required)
-            print(f"[DEBUG] Required validation passed for {field_name}")
-        except ValidationError as e:
-            print(f"[DEBUG] Required validation FAILED for {field_name}: {e}")
-            raise
+        # Guard: Required field validation (early return on failure)
+        self._validate_required_field(value, field_name, field_schema.required)
 
-        # Skip further validation if null and nullable
+        # Guard: Skip further validation for null values in nullable fields
         if value is None and field_schema.nullable:
-            print(f"[DEBUG] Skipping validation for {field_name} - null and nullable")
+            logger.debug("Skipping validation for %s - null and nullable", field_name)
             return
 
-        # Data type validation
-        print(
-            f"[DEBUG] About to call ValidationRules.validate_data_type() for {field_name}"
+        # Core validation: data type
+        self._validate_field_type(value, field_name, field_schema.data_type)
+
+        # Type-specific validations via dispatch
+        self._validate_type_specific(value, field_name, field_schema)
+
+        # Optional constraint validations
+        self._validate_field_constraints(value, field_name, field_schema)
+
+        # Custom BSEE validators
+        self._validate_bsee_custom(value, field_name)
+
+    def _validate_required_field(
+        self, value: Any, field_name: str, is_required: bool
+    ) -> None:
+        """Validate required field constraint."""
+        ValidationRules.validate_required(value, field_name, is_required)
+        logger.debug("Required validation passed for %s", field_name)
+
+    def _validate_field_type(
+        self, value: Any, field_name: str, data_type: DataType
+    ) -> None:
+        """Validate field data type."""
+        ValidationRules.validate_data_type(value, field_name, data_type)
+        logger.debug("Type validation passed for %s", field_name)
+
+    def _validate_type_specific(
+        self, value: Any, field_name: str, field_schema: FieldSchema
+    ) -> None:
+        """Apply type-specific validations using dispatch pattern."""
+        # Dispatch table for type-specific validations
+        type_validators = {
+            DataType.INTEGER: self._validate_numeric_range,
+            DataType.FLOAT: self._validate_numeric_range,
+            DataType.DECIMAL: self._validate_numeric_range,
+            DataType.STRING: self._validate_string_length,
+        }
+        validator = type_validators.get(field_schema.data_type)
+        if validator:
+            validator(value, field_name, field_schema)
+
+    def _validate_numeric_range(
+        self, value: Any, field_name: str, field_schema: FieldSchema
+    ) -> None:
+        """Validate numeric field range constraints."""
+        ValidationRules.validate_range(
+            value, field_name, field_schema.min_value, field_schema.max_value
         )
-        try:
-            ValidationRules.validate_data_type(
-                value, field_name, field_schema.data_type
-            )
-            print(f"[DEBUG] Type validation PASSED for {field_name}")
-        except ValidationError as e:
-            print(
-                f"[DEBUG] Type validation FAILED for {field_name}: {type(e).__name__}: {e.message}"
-            )
-            raise
 
-        # Range validation for numeric types
-        if field_schema.data_type in [
-            DataType.INTEGER,
-            DataType.FLOAT,
-            DataType.DECIMAL,
-        ]:
-            ValidationRules.validate_range(
-                value, field_name, field_schema.min_value, field_schema.max_value
-            )
+    def _validate_string_length(
+        self, value: Any, field_name: str, field_schema: FieldSchema
+    ) -> None:
+        """Validate string field length constraints."""
+        ValidationRules.validate_length(
+            value, field_name, field_schema.min_length, field_schema.max_length
+        )
 
-        # Length validation for strings
-        if field_schema.data_type == DataType.STRING:
-            ValidationRules.validate_length(
-                value, field_name, field_schema.min_length, field_schema.max_length
-            )
-
-        # Pattern validation
+    def _validate_field_constraints(
+        self, value: Any, field_name: str, field_schema: FieldSchema
+    ) -> None:
+        """Validate optional field constraints (pattern, allowed values, date format)."""
         if field_schema.pattern:
             ValidationRules.validate_pattern(value, field_name, field_schema.pattern)
 
-        # Allowed values validation
         if field_schema.allowed_values:
             ValidationRules.validate_allowed_values(
                 value, field_name, field_schema.allowed_values
             )
 
-        # Date format validation
         if field_schema.date_format:
             ValidationRules.validate_date_format(
                 value, field_name, field_schema.date_format
             )
 
-        # Custom validators (only for BSEE schemas)
-        if self.schema.name.startswith("BSEE"):
-            if field_name == "API_WELL_NUMBER":
-                CustomValidators.validate_api_well_number(str(value) if value else "")
-            elif field_name == "LEASE_NUMBER":
-                CustomValidators.validate_lease_number(str(value) if value else "")
-            elif field_name == "PRODUCTION_DATE":
-                CustomValidators.validate_production_date(str(value) if value else "")
+    def _validate_bsee_custom(self, value: Any, field_name: str) -> None:
+        """Apply BSEE-specific custom validators."""
+        if not self.schema.name.startswith("BSEE"):
+            return
+
+        # Dispatch table for BSEE custom validators
+        bsee_validators = {
+            "API_WELL_NUMBER": lambda v: CustomValidators.validate_api_well_number(
+                str(v) if v else ""
+            ),
+            "LEASE_NUMBER": lambda v: CustomValidators.validate_lease_number(
+                str(v) if v else ""
+            ),
+            "PRODUCTION_DATE": lambda v: CustomValidators.validate_production_date(
+                str(v) if v else ""
+            ),
+        }
+        validator = bsee_validators.get(field_name)
+        if validator:
+            validator(value)
 
     def _validate_cross_fields(self, record: Dict[str, Any], row_idx: int):
         """Validate cross-field rules."""
