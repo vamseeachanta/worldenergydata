@@ -10,6 +10,9 @@ Marine Casualties and Incidents (MCI) module following the MSC-MEPC.3/Circ.4/Rev
 reporting format.
 
 Data available from 2005 onwards at gisis.imo.org (registration required).
+
+This module serves as the main entry point and re-exports all public names
+from the split sub-modules for backward compatibility.
 """
 
 import csv
@@ -17,12 +20,11 @@ import logging
 import re
 from decimal import Decimal
 from pathlib import Path
-from typing import Any, Dict, Generator, List, Optional, Tuple
+from typing import Any, Dict, Generator, List, Optional
 
 from sqlalchemy.orm import Session
 
 from worldenergydata.modules.marine_safety.constants import (
-    CauseCategory,
     DataSource,
     IncidentStatus,
     IncidentType,
@@ -36,6 +38,38 @@ from worldenergydata.modules.marine_safety.database.models import (
     Vessel,
 )
 from worldenergydata.modules.marine_safety.importers.base_importer import BaseImporter
+
+# Import from split modules
+from worldenergydata.modules.marine_safety.importers.imo_mappings import (
+    CASUALTY_TYPE_MAPPINGS,
+    CAUSE_MAPPINGS,
+    FIELD_MAPPINGS,
+    SHIP_TYPE_MAPPINGS,
+    STATUS_MAPPINGS,
+)
+from worldenergydata.modules.marine_safety.importers.imo_normalizers import (
+    FLAG_STATE_MAPPINGS,
+    get_flag_state_name,
+    is_flag_of_convenience,
+    normalize_flag_state,
+)
+from worldenergydata.modules.marine_safety.importers.imo_parser import (
+    build_environmental_impact,
+    build_location_description,
+    calculate_severity,
+    generate_title,
+    map_casualty_type,
+    map_ship_type,
+    map_status,
+    parse_contributing_factors,
+    parse_position,
+)
+from worldenergydata.modules.marine_safety.importers.imo_validators import (
+    extract_imo_number,
+    format_imo_number,
+    validate_imo,
+    validate_imo_number,
+)
 from worldenergydata.modules.marine_safety.processors.data_cleaner import DataCleaner
 from worldenergydata.modules.marine_safety.processors.data_normalizer import (
     DataNormalizer,
@@ -43,239 +77,37 @@ from worldenergydata.modules.marine_safety.processors.data_normalizer import (
 
 logger = logging.getLogger(__name__)
 
-
-def validate_imo_number(imo_number: str) -> Tuple[bool, Optional[str]]:
-    """
-    Validate IMO ship identification number using checksum algorithm.
-
-    IMO numbers are 7 digits with the last digit being a check digit.
-    The check digit is calculated as: sum of (digit * position) mod 10
-    where position starts at 7 for the first digit.
-
-    Args:
-        imo_number: The IMO number to validate (with or without 'IMO' prefix)
-
-    Returns:
-        Tuple of (is_valid, cleaned_number) where cleaned_number is
-        the 7-digit IMO number without prefix, or None if invalid
-    """
-    if not imo_number:
-        return False, None
-
-    # Remove IMO prefix and whitespace
-    cleaned = str(imo_number).upper().strip()
-    cleaned = re.sub(r"^IMO\s*", "", cleaned)
-    cleaned = re.sub(r"[^0-9]", "", cleaned)
-
-    # Must be exactly 7 digits
-    if len(cleaned) != 7:
-        return False, None
-
-    try:
-        # Calculate checksum: sum of (digit * position) for first 6 digits
-        # Position starts at 7 and decreases
-        checksum = 0
-        for i, digit in enumerate(cleaned[:6]):
-            checksum += int(digit) * (7 - i)
-
-        # Check digit is the ones place of the checksum
-        expected_check = checksum % 10
-        actual_check = int(cleaned[6])
-
-        if expected_check == actual_check:
-            return True, cleaned
-        else:
-            logger.debug(
-                f"IMO checksum mismatch for {imo_number}: "
-                f"expected {expected_check}, got {actual_check}"
-            )
-            return False, cleaned  # Return cleaned even if checksum fails
-
-    except (ValueError, IndexError):
-        return False, None
-
-
-def normalize_flag_state(flag_state: Optional[str]) -> Optional[str]:
-    """
-    Normalize flag state to ISO 2-letter country code.
-
-    Handles various IMO GISIS flag state formats including:
-    - Full country names
-    - ISO 2-letter codes
-    - ISO 3-letter codes
-    - Common variations and misspellings
-
-    Args:
-        flag_state: Raw flag state string from GISIS
-
-    Returns:
-        ISO 2-letter country code or original string if not found
-    """
-    if not flag_state:
-        return None
-
-    flag_lower = flag_state.lower().strip()
-
-    # Comprehensive flag state mappings (name/code -> ISO 2-letter)
-    flag_mappings = {
-        # Major flag states
-        "panama": "PA",
-        "pan": "PA",
-        "liberia": "LR",
-        "lbr": "LR",
-        "marshall islands": "MH",
-        "mhl": "MH",
-        "hong kong": "HK",
-        "hkg": "HK",
-        "hong kong, china": "HK",
-        "singapore": "SG",
-        "sgp": "SG",
-        "malta": "MT",
-        "mlt": "MT",
-        "bahamas": "BS",
-        "bhs": "BS",
-        "china": "CN",
-        "chn": "CN",
-        "greece": "GR",
-        "grc": "GR",
-        "japan": "JP",
-        "jpn": "JP",
-        "norway": "NO",
-        "nor": "NO",
-        "cyprus": "CY",
-        "cyp": "CY",
-        "united kingdom": "GB",
-        "uk": "GB",
-        "gbr": "GB",
-        "great britain": "GB",
-        "united states": "US",
-        "usa": "US",
-        "us": "US",
-        "united states of america": "US",
-        "denmark": "DK",
-        "dnk": "DK",
-        "italy": "IT",
-        "ita": "IT",
-        "netherlands": "NL",
-        "nld": "NL",
-        "germany": "DE",
-        "deu": "DE",
-        "france": "FR",
-        "fra": "FR",
-        "south korea": "KR",
-        "korea": "KR",
-        "kor": "KR",
-        "republic of korea": "KR",
-        "india": "IN",
-        "ind": "IN",
-        "indonesia": "ID",
-        "idn": "ID",
-        "turkey": "TR",
-        "tur": "TR",
-        "russia": "RU",
-        "rus": "RU",
-        "russian federation": "RU",
-        "brazil": "BR",
-        "bra": "BR",
-        "antigua and barbuda": "AG",
-        "atg": "AG",
-        "bermuda": "BM",
-        "bmu": "BM",
-        "cayman islands": "KY",
-        "cym": "KY",
-        "isle of man": "IM",
-        "imn": "IM",
-        "gibraltar": "GI",
-        "gib": "GI",
-        "portugal": "PT",
-        "prt": "PT",
-        "madeira": "PT",
-        "spain": "ES",
-        "esp": "ES",
-        "belgium": "BE",
-        "bel": "BE",
-        "canada": "CA",
-        "can": "CA",
-        "australia": "AU",
-        "aus": "AU",
-        "new zealand": "NZ",
-        "nzl": "NZ",
-        "philippines": "PH",
-        "phl": "PH",
-        "vietnam": "VN",
-        "vnm": "VN",
-        "thailand": "TH",
-        "tha": "TH",
-        "malaysia": "MY",
-        "mys": "MY",
-        "saudi arabia": "SA",
-        "sau": "SA",
-        "united arab emirates": "AE",
-        "uae": "AE",
-        "are": "AE",
-        "egypt": "EG",
-        "egy": "EG",
-        "south africa": "ZA",
-        "zaf": "ZA",
-        "nigeria": "NG",
-        "nga": "NG",
-        "mexico": "MX",
-        "mex": "MX",
-        "argentina": "AR",
-        "arg": "AR",
-        "chile": "CL",
-        "chl": "CL",
-        "peru": "PE",
-        "per": "PE",
-        "venezuela": "VE",
-        "ven": "VE",
-        "colombia": "CO",
-        "col": "CO",
-        "ecuador": "EC",
-        "ecu": "EC",
-        # Flags of convenience - additional
-        "vanuatu": "VU",
-        "vut": "VU",
-        "tuvalu": "TV",
-        "tuv": "TV",
-        "st vincent": "VC",
-        "st vincent and the grenadines": "VC",
-        "vct": "VC",
-        "belize": "BZ",
-        "blz": "BZ",
-        "cambodia": "KH",
-        "khm": "KH",
-        "mongolia": "MN",
-        "mng": "MN",
-        "palau": "PW",
-        "plw": "PW",
-        "comoros": "KM",
-        "com": "KM",
-        "togo": "TG",
-        "tgo": "TG",
-        "tanzania": "TZ",
-        "tza": "TZ",
-        "sierra leone": "SL",
-        "sle": "SL",
-        "moldova": "MD",
-        "mda": "MD",
-        "georgia": "GE",
-        "geo": "GE",
-    }
-
-    if flag_lower in flag_mappings:
-        return flag_mappings[flag_lower]
-
-    # If already 2-letter code, return uppercase
-    if len(flag_state) == 2:
-        return flag_state.upper()
-
-    # If 3-letter code in mappings, return
-    if flag_lower in flag_mappings:
-        return flag_mappings[flag_lower]
-
-    logger.debug(f"Unknown flag state: {flag_state}")
-    return flag_state.upper()[:2] if len(flag_state) >= 2 else flag_state
+# Re-export for backward compatibility
+__all__ = [
+    # Main class
+    "IMOGISISImporter",
+    # Validators
+    "validate_imo_number",
+    "validate_imo",
+    "extract_imo_number",
+    "format_imo_number",
+    # Normalizers
+    "normalize_flag_state",
+    "get_flag_state_name",
+    "is_flag_of_convenience",
+    "FLAG_STATE_MAPPINGS",
+    # Mappings
+    "FIELD_MAPPINGS",
+    "CASUALTY_TYPE_MAPPINGS",
+    "SHIP_TYPE_MAPPINGS",
+    "CAUSE_MAPPINGS",
+    "STATUS_MAPPINGS",
+    # Parsers
+    "parse_position",
+    "map_casualty_type",
+    "map_ship_type",
+    "map_status",
+    "parse_contributing_factors",
+    "build_location_description",
+    "build_environmental_impact",
+    "generate_title",
+    "calculate_severity",
+]
 
 
 class IMOGISISImporter(BaseImporter):
@@ -293,395 +125,12 @@ class IMOGISISImporter(BaseImporter):
     - Contributing factor extraction
     """
 
-    # IMO GISIS field name mappings to internal field names
-    FIELD_MAPPINGS: Dict[str, str] = {
-        # Ship identification
-        "IMO_NUMBER": "imo_number",
-        "IMO NUMBER": "imo_number",
-        "IMO NO": "imo_number",
-        "IMO NO.": "imo_number",
-        "IMONUMBER": "imo_number",
-        "SHIP_NAME": "vessel_name",
-        "SHIP NAME": "vessel_name",
-        "VESSEL_NAME": "vessel_name",
-        "VESSEL NAME": "vessel_name",
-        "NAME_OF_SHIP": "vessel_name",
-        "NAME OF SHIP": "vessel_name",
-        # Ship details
-        "FLAG_STATE": "flag_state",
-        "FLAG STATE": "flag_state",
-        "FLAG": "flag_state",
-        "SHIP_TYPE": "vessel_type",
-        "SHIP TYPE": "vessel_type",
-        "TYPE_OF_SHIP": "vessel_type",
-        "TYPE OF SHIP": "vessel_type",
-        "VESSEL_TYPE": "vessel_type",
-        "GROSS_TONNAGE": "gross_tonnage",
-        "GROSS TONNAGE": "gross_tonnage",
-        "GT": "gross_tonnage",
-        "YEAR_OF_BUILD": "year_built",
-        "YEAR OF BUILD": "year_built",
-        "YEAR_BUILT": "year_built",
-        "BUILT": "year_built",
-        "CLASSIFICATION_SOCIETY": "classification_society",
-        "CLASSIFICATION SOCIETY": "classification_society",
-        "CLASS": "classification_society",
-        # Incident date/time/location
-        "DATE_OF_OCCURRENCE": "incident_date",
-        "DATE OF OCCURRENCE": "incident_date",
-        "OCCURRENCE_DATE": "incident_date",
-        "INCIDENT_DATE": "incident_date",
-        "EVENT_DATE": "incident_date",
-        "DATE": "incident_date",
-        "TIME_OF_OCCURRENCE": "incident_time",
-        "TIME OF OCCURRENCE": "incident_time",
-        "TIME": "incident_time",
-        "LATITUDE": "latitude",
-        "LAT": "latitude",
-        "LONGITUDE": "longitude",
-        "LON": "longitude",
-        "LONG": "longitude",
-        "POSITION": "position",
-        "LOCATION": "location_description",
-        "PLACE_OF_OCCURRENCE": "location_description",
-        "PLACE OF OCCURRENCE": "location_description",
-        "AREA": "area",
-        "WATERS": "waters",
-        # Casualty classification
-        "NATURE_OF_CASUALTY": "incident_type",
-        "NATURE OF CASUALTY": "incident_type",
-        "CASUALTY_TYPE": "incident_type",
-        "CASUALTY TYPE": "incident_type",
-        "TYPE_OF_CASUALTY": "incident_type",
-        "TYPE OF CASUALTY": "incident_type",
-        "CATEGORY": "casualty_category",
-        "CASUALTY_CATEGORY": "casualty_category",
-        "CASUALTY CATEGORY": "casualty_category",
-        "SEVERITY": "severity",
-        "SEVERITY_CLASSIFICATION": "severity",
-        # Summary and description
-        "SUMMARY_OF_EVENTS": "description",
-        "SUMMARY OF EVENTS": "description",
-        "SUMMARY": "description",
-        "NARRATIVE": "description",
-        "DESCRIPTION": "description",
-        "SYNOPSIS": "description",
-        "BRIEF_DESCRIPTION": "description",
-        # Casualties
-        "FATALITIES": "fatalities",
-        "DEATHS": "fatalities",
-        "NUMBER_OF_DEATHS": "fatalities",
-        "NUMBER OF DEATHS": "fatalities",
-        "INJURIES": "injuries",
-        "INJURED": "injuries",
-        "NUMBER_OF_INJURIES": "injuries",
-        "NUMBER OF INJURIES": "injuries",
-        "MISSING_PERSONS": "missing_persons",
-        "MISSING PERSONS": "missing_persons",
-        "MISSING": "missing_persons",
-        "NUMBER_MISSING": "missing_persons",
-        # Environmental impact
-        "POLLUTION_QUANTITY": "pollution_quantity",
-        "POLLUTION QUANTITY": "pollution_quantity",
-        "OIL_SPILL": "pollution_quantity",
-        "OIL SPILL": "pollution_quantity",
-        "POLLUTION_TYPE": "pollution_type",
-        "POLLUTION TYPE": "pollution_type",
-        "ENVIRONMENTAL_IMPACT": "environmental_impact",
-        "ENVIRONMENTAL IMPACT": "environmental_impact",
-        # Contributing factors and causes
-        "CONTRIBUTING_FACTORS": "contributing_factors",
-        "CONTRIBUTING FACTORS": "contributing_factors",
-        "FACTORS": "contributing_factors",
-        "PROBABLE_CAUSE": "probable_cause",
-        "PROBABLE CAUSE": "probable_cause",
-        "CAUSE": "probable_cause",
-        "ROOT_CAUSE": "root_cause",
-        "ROOT CAUSE": "root_cause",
-        # Investigation details
-        "INVESTIGATION_REPORT_URL": "report_url",
-        "INVESTIGATION REPORT URL": "report_url",
-        "REPORT_URL": "report_url",
-        "REPORT URL": "report_url",
-        "REPORT_LINK": "report_url",
-        "INVESTIGATION_STATUS": "investigation_status",
-        "INVESTIGATION STATUS": "investigation_status",
-        "STATUS": "investigation_status",
-        "INVESTIGATING_STATE": "investigating_state",
-        "INVESTIGATING STATE": "investigating_state",
-        "LEAD_INVESTIGATING_STATE": "investigating_state",
-        # Reference numbers
-        "GISIS_REFERENCE": "source_incident_id",
-        "GISIS REFERENCE": "source_incident_id",
-        "REFERENCE_NUMBER": "source_incident_id",
-        "REFERENCE NUMBER": "source_incident_id",
-        "REFERENCE": "source_incident_id",
-        "MCI_REFERENCE": "source_incident_id",
-        "CASUALTY_ID": "source_incident_id",
-        "CASUALTY ID": "source_incident_id",
-        "ID": "source_incident_id",
-    }
-
-    # IMO casualty type mappings to IncidentType enum values
-    CASUALTY_TYPE_MAPPINGS: Dict[str, str] = {
-        # Collision categories
-        "collision": IncidentType.COLLISION.value,
-        "collision between ships": IncidentType.COLLISION.value,
-        "collision with another ship": IncidentType.COLLISION.value,
-        "contact": IncidentType.COLLISION.value,
-        "contact with fixed object": IncidentType.COLLISION.value,
-        "contact with floating object": IncidentType.COLLISION.value,
-        "striking": IncidentType.COLLISION.value,
-        "allision": IncidentType.COLLISION.value,
-        # Grounding
-        "grounding": IncidentType.GROUNDING.value,
-        "stranding": IncidentType.GROUNDING.value,
-        "grounding/stranding": IncidentType.GROUNDING.value,
-        "ran aground": IncidentType.GROUNDING.value,
-        # Fire and explosion
-        "fire": IncidentType.FIRE.value,
-        "fire on board": IncidentType.FIRE.value,
-        "explosion": IncidentType.EXPLOSION.value,
-        "fire/explosion": IncidentType.FIRE.value,
-        "fire and explosion": IncidentType.FIRE.value,
-        "fire and/or explosion": IncidentType.FIRE.value,
-        # Flooding and structural
-        "flooding": IncidentType.FLOODING.value,
-        "hull failure": IncidentType.STRUCTURAL_FAILURE.value,
-        "structural failure": IncidentType.STRUCTURAL_FAILURE.value,
-        "foundering": IncidentType.FLOODING.value,
-        "sinking": IncidentType.FLOODING.value,
-        "loss of watertight integrity": IncidentType.FLOODING.value,
-        "capsizing": IncidentType.CAPSIZING.value,
-        "capsize": IncidentType.CAPSIZING.value,
-        "listing": IncidentType.FLOODING.value,
-        "loss of stability": IncidentType.CAPSIZING.value,
-        # Equipment and machinery
-        "equipment failure": IncidentType.EQUIPMENT_FAILURE.value,
-        "machinery failure": IncidentType.EQUIPMENT_FAILURE.value,
-        "machinery damage": IncidentType.EQUIPMENT_FAILURE.value,
-        "loss of propulsion": IncidentType.LOSS_OF_PROPULSION.value,
-        "propulsion failure": IncidentType.LOSS_OF_PROPULSION.value,
-        "engine failure": IncidentType.LOSS_OF_PROPULSION.value,
-        "loss of steering": IncidentType.LOSS_OF_CONTROL.value,
-        "steering failure": IncidentType.LOSS_OF_CONTROL.value,
-        "loss of control": IncidentType.LOSS_OF_CONTROL.value,
-        "loss of electrical power": IncidentType.EQUIPMENT_FAILURE.value,
-        "blackout": IncidentType.EQUIPMENT_FAILURE.value,
-        # Personnel casualties
-        "occupational accident": IncidentType.PERSONNEL_INJURY.value,
-        "personnel injury": IncidentType.PERSONNEL_INJURY.value,
-        "injury": IncidentType.PERSONNEL_INJURY.value,
-        "man overboard": IncidentType.PERSONNEL_INJURY.value,
-        "person overboard": IncidentType.PERSONNEL_INJURY.value,
-        "fall overboard": IncidentType.PERSONNEL_INJURY.value,
-        "fatality": IncidentType.FATALITY.value,
-        "death": IncidentType.FATALITY.value,
-        "loss of life": IncidentType.FATALITY.value,
-        # Environmental
-        "pollution": IncidentType.POLLUTION.value,
-        "marine pollution": IncidentType.POLLUTION.value,
-        "oil pollution": IncidentType.POLLUTION.value,
-        "discharge": IncidentType.POLLUTION.value,
-        "oil spill": IncidentType.POLLUTION.value,
-        "chemical spill": IncidentType.POLLUTION.value,
-        # Weather related
-        "heavy weather damage": IncidentType.WEATHER_RELATED.value,
-        "weather damage": IncidentType.WEATHER_RELATED.value,
-        "parametric rolling": IncidentType.WEATHER_RELATED.value,
-        "cargo shift": IncidentType.WEATHER_RELATED.value,
-        # Near miss / hazardous
-        "near miss": IncidentType.NEAR_MISS.value,
-        "hazardous incident": IncidentType.NEAR_MISS.value,
-        "marine incident": IncidentType.OTHER.value,
-        "other": IncidentType.OTHER.value,
-    }
-
-    # IMO ship type mappings to VesselType enum values
-    SHIP_TYPE_MAPPINGS: Dict[str, str] = {
-        # Tankers
-        "oil tanker": VesselType.TANKER.value,
-        "crude oil tanker": VesselType.TANKER.value,
-        "product tanker": VesselType.TANKER.value,
-        "chemical tanker": VesselType.TANKER.value,
-        "chemical/oil products tanker": VesselType.TANKER.value,
-        "lpg tanker": VesselType.TANKER.value,
-        "lng tanker": VesselType.TANKER.value,
-        "gas carrier": VesselType.TANKER.value,
-        "tanker": VesselType.TANKER.value,
-        # Cargo vessels
-        "bulk carrier": VesselType.CARGO_VESSEL.value,
-        "bulker": VesselType.CARGO_VESSEL.value,
-        "general cargo": VesselType.CARGO_VESSEL.value,
-        "general cargo ship": VesselType.CARGO_VESSEL.value,
-        "cargo ship": VesselType.CARGO_VESSEL.value,
-        "container ship": VesselType.CARGO_VESSEL.value,
-        "containership": VesselType.CARGO_VESSEL.value,
-        "container": VesselType.CARGO_VESSEL.value,
-        "ro-ro cargo": VesselType.CARGO_VESSEL.value,
-        "roro": VesselType.CARGO_VESSEL.value,
-        "roll-on/roll-off": VesselType.CARGO_VESSEL.value,
-        "reefer": VesselType.CARGO_VESSEL.value,
-        "refrigerated cargo": VesselType.CARGO_VESSEL.value,
-        "heavy lift": VesselType.CARGO_VESSEL.value,
-        "barge": VesselType.CARGO_VESSEL.value,
-        "deck cargo ship": VesselType.CARGO_VESSEL.value,
-        # Offshore - drilling
-        "drilling rig": VesselType.DRILLING_RIG.value,
-        "drilling ship": VesselType.DRILLING_RIG.value,
-        "drill ship": VesselType.DRILLING_RIG.value,
-        "drillship": VesselType.DRILLING_RIG.value,
-        "mobile offshore drilling unit": VesselType.MODU.value,
-        "modu": VesselType.MODU.value,
-        "semi-submersible": VesselType.SEMISUBMERSIBLE.value,
-        "semisubmersible": VesselType.SEMISUBMERSIBLE.value,
-        "semi-submersible drilling rig": VesselType.SEMISUBMERSIBLE.value,
-        "jack-up": VesselType.JACKUP_RIG.value,
-        "jackup": VesselType.JACKUP_RIG.value,
-        "jack-up rig": VesselType.JACKUP_RIG.value,
-        # Offshore - production
-        "fpso": VesselType.FPSO.value,
-        "floating production storage offloading": VesselType.FPSO.value,
-        "fso": VesselType.FSO.value,
-        "floating storage": VesselType.FSO.value,
-        "flng": VesselType.FPSO.value,
-        "production platform": VesselType.PRODUCTION_PLATFORM.value,
-        "platform": VesselType.PRODUCTION_PLATFORM.value,
-        "fixed platform": VesselType.PRODUCTION_PLATFORM.value,
-        "tlp": VesselType.TLP.value,
-        "tension leg platform": VesselType.TLP.value,
-        "spar": VesselType.SPAR_PLATFORM.value,
-        "spar platform": VesselType.SPAR_PLATFORM.value,
-        # Support vessels
-        "offshore supply vessel": VesselType.SUPPLY_VESSEL.value,
-        "osv": VesselType.SUPPLY_VESSEL.value,
-        "supply vessel": VesselType.SUPPLY_VESSEL.value,
-        "platform supply vessel": VesselType.SUPPLY_VESSEL.value,
-        "psv": VesselType.SUPPLY_VESSEL.value,
-        "anchor handling tug supply": VesselType.ANCHOR_HANDLING.value,
-        "ahts": VesselType.ANCHOR_HANDLING.value,
-        "anchor handling": VesselType.ANCHOR_HANDLING.value,
-        "anchor handler": VesselType.ANCHOR_HANDLING.value,
-        "tug": VesselType.TUG.value,
-        "tugboat": VesselType.TUG.value,
-        "towboat": VesselType.TUG.value,
-        "harbour tug": VesselType.TUG.value,
-        "ocean tug": VesselType.TUG.value,
-        "push tug": VesselType.TUG.value,
-        "crew boat": VesselType.CREW_BOAT.value,
-        "crewboat": VesselType.CREW_BOAT.value,
-        "crew transfer vessel": VesselType.CREW_BOAT.value,
-        "ctv": VesselType.CREW_BOAT.value,
-        "standby vessel": VesselType.STANDBY_VESSEL.value,
-        "standby safety vessel": VesselType.STANDBY_VESSEL.value,
-        # Wind farm vessels
-        "wind turbine installation vessel": VesselType.WIND_TURBINE_INSTALL.value,
-        "wtiv": VesselType.WIND_TURBINE_INSTALL.value,
-        "wind installation": VesselType.WIND_TURBINE_INSTALL.value,
-        "cable layer": VesselType.CABLE_LAYER.value,
-        "cable laying vessel": VesselType.CABLE_LAYER.value,
-        "cable ship": VesselType.CABLE_LAYER.value,
-        "service operation vessel": VesselType.SERVICE_VESSEL.value,
-        "sov": VesselType.SERVICE_VESSEL.value,
-        # Research and diving
-        "research vessel": VesselType.RESEARCH_VESSEL.value,
-        "research ship": VesselType.RESEARCH_VESSEL.value,
-        "survey vessel": VesselType.RESEARCH_VESSEL.value,
-        "diving support vessel": VesselType.DIVING_SUPPORT.value,
-        "dsv": VesselType.DIVING_SUPPORT.value,
-        "diving vessel": VesselType.DIVING_SUPPORT.value,
-    }
-
-    # Contributing factor mappings to CauseCategory enum
-    CAUSE_MAPPINGS: Dict[str, str] = {
-        # Human error
-        "human error": CauseCategory.HUMAN_ERROR.value,
-        "human factor": CauseCategory.HUMAN_ERROR.value,
-        "human element": CauseCategory.HUMAN_ERROR.value,
-        "operator error": CauseCategory.HUMAN_ERROR.value,
-        "navigation error": CauseCategory.HUMAN_ERROR.value,
-        "watchkeeping": CauseCategory.HUMAN_ERROR.value,
-        "fatigue": CauseCategory.HUMAN_ERROR.value,
-        "situational awareness": CauseCategory.HUMAN_ERROR.value,
-        "bridge resource management": CauseCategory.HUMAN_ERROR.value,
-        # Equipment
-        "equipment failure": CauseCategory.EQUIPMENT_FAILURE.value,
-        "machinery failure": CauseCategory.EQUIPMENT_FAILURE.value,
-        "mechanical failure": CauseCategory.EQUIPMENT_FAILURE.value,
-        "technical failure": CauseCategory.EQUIPMENT_FAILURE.value,
-        # Design
-        "design deficiency": CauseCategory.DESIGN_FLAW.value,
-        "design flaw": CauseCategory.DESIGN_FLAW.value,
-        "structural design": CauseCategory.DESIGN_FLAW.value,
-        "construction defect": CauseCategory.DESIGN_FLAW.value,
-        # Maintenance
-        "maintenance": CauseCategory.MAINTENANCE_ISSUE.value,
-        "maintenance failure": CauseCategory.MAINTENANCE_ISSUE.value,
-        "lack of maintenance": CauseCategory.MAINTENANCE_ISSUE.value,
-        "poor maintenance": CauseCategory.MAINTENANCE_ISSUE.value,
-        "inadequate maintenance": CauseCategory.MAINTENANCE_ISSUE.value,
-        # Weather
-        "weather": CauseCategory.WEATHER.value,
-        "heavy weather": CauseCategory.WEATHER.value,
-        "adverse weather": CauseCategory.WEATHER.value,
-        "storm": CauseCategory.WEATHER.value,
-        # Environmental
-        "environmental": CauseCategory.ENVIRONMENTAL.value,
-        "sea state": CauseCategory.ENVIRONMENTAL.value,
-        "visibility": CauseCategory.ENVIRONMENTAL.value,
-        "current": CauseCategory.ENVIRONMENTAL.value,
-        "tide": CauseCategory.ENVIRONMENTAL.value,
-        # Procedural
-        "procedural": CauseCategory.PROCEDURAL.value,
-        "procedure": CauseCategory.PROCEDURAL.value,
-        "sms": CauseCategory.PROCEDURAL.value,
-        "safety management": CauseCategory.PROCEDURAL.value,
-        "non-compliance": CauseCategory.PROCEDURAL.value,
-        # Training
-        "training": CauseCategory.TRAINING.value,
-        "inadequate training": CauseCategory.TRAINING.value,
-        "lack of training": CauseCategory.TRAINING.value,
-        "competence": CauseCategory.TRAINING.value,
-        "certification": CauseCategory.TRAINING.value,
-        # Communication
-        "communication": CauseCategory.COMMUNICATION.value,
-        "communication failure": CauseCategory.COMMUNICATION.value,
-        "language barrier": CauseCategory.COMMUNICATION.value,
-        "miscommunication": CauseCategory.COMMUNICATION.value,
-        "vts": CauseCategory.COMMUNICATION.value,
-        # Management
-        "management": CauseCategory.MANAGEMENT.value,
-        "shore management": CauseCategory.MANAGEMENT.value,
-        "company policy": CauseCategory.MANAGEMENT.value,
-        "commercial pressure": CauseCategory.MANAGEMENT.value,
-        "manning": CauseCategory.MANAGEMENT.value,
-        "crew fatigue": CauseCategory.MANAGEMENT.value,
-        # External
-        "external": CauseCategory.EXTERNAL.value,
-        "third party": CauseCategory.EXTERNAL.value,
-        "other vessel": CauseCategory.EXTERNAL.value,
-        "shore side": CauseCategory.EXTERNAL.value,
-    }
-
-    # Investigation status mappings
-    STATUS_MAPPINGS: Dict[str, str] = {
-        "completed": IncidentStatus.FINAL_REPORT.value,
-        "complete": IncidentStatus.FINAL_REPORT.value,
-        "final report published": IncidentStatus.FINAL_REPORT.value,
-        "final report": IncidentStatus.FINAL_REPORT.value,
-        "published": IncidentStatus.FINAL_REPORT.value,
-        "preliminary report": IncidentStatus.PRELIMINARY_REPORT.value,
-        "preliminary": IncidentStatus.PRELIMINARY_REPORT.value,
-        "ongoing": IncidentStatus.UNDER_INVESTIGATION.value,
-        "in progress": IncidentStatus.UNDER_INVESTIGATION.value,
-        "under investigation": IncidentStatus.UNDER_INVESTIGATION.value,
-        "investigating": IncidentStatus.UNDER_INVESTIGATION.value,
-        "reported": IncidentStatus.REPORTED.value,
-        "notified": IncidentStatus.REPORTED.value,
-        "closed": IncidentStatus.CLOSED.value,
-        "archived": IncidentStatus.ARCHIVED.value,
-        "no investigation": IncidentStatus.CLOSED.value,
-    }
+    # Class-level mappings (references to imported mappings for compatibility)
+    FIELD_MAPPINGS = FIELD_MAPPINGS
+    CASUALTY_TYPE_MAPPINGS = CASUALTY_TYPE_MAPPINGS
+    SHIP_TYPE_MAPPINGS = SHIP_TYPE_MAPPINGS
+    CAUSE_MAPPINGS = CAUSE_MAPPINGS
+    STATUS_MAPPINGS = STATUS_MAPPINGS
 
     def __init__(
         self,
@@ -706,7 +155,7 @@ class IMOGISISImporter(BaseImporter):
         super().__init__(source_path, session, batch_size)
 
         self.file_format = file_format
-        self.validate_imo = validate_imo
+        self.validate_imo_flag = validate_imo
         self.strict_imo_validation = strict_imo_validation
         self.cleaner = DataCleaner()
         self.normalizer = DataNormalizer()
@@ -789,7 +238,7 @@ class IMOGISISImporter(BaseImporter):
             parsed: Dict[str, Any] = {}
 
             # Map fields using field mappings
-            for gisis_field, our_field in self.FIELD_MAPPINGS.items():
+            for gisis_field, our_field in FIELD_MAPPINGS.items():
                 if gisis_field in raw_record:
                     value = raw_record[gisis_field]
                     if value and str(value).strip():
@@ -813,7 +262,7 @@ class IMOGISISImporter(BaseImporter):
             parsed["source_agency"] = DataSource.IMO.value
 
             # Validate and normalize IMO number
-            if "imo_number" in parsed and self.validate_imo:
+            if "imo_number" in parsed and self.validate_imo_flag:
                 is_valid, cleaned_imo = validate_imo_number(parsed["imo_number"])
                 if is_valid:
                     parsed["imo_number"] = cleaned_imo
@@ -838,23 +287,21 @@ class IMOGISISImporter(BaseImporter):
 
             # Map casualty type to IncidentType enum
             if "incident_type" in parsed:
-                parsed["incident_type"] = self._map_casualty_type(
-                    parsed["incident_type"]
-                )
+                parsed["incident_type"] = map_casualty_type(parsed["incident_type"])
 
             # Map vessel/ship type to VesselType enum
             if "vessel_type" in parsed:
-                parsed["vessel_type"] = self._map_ship_type(parsed["vessel_type"])
+                parsed["vessel_type"] = map_ship_type(parsed["vessel_type"])
 
             # Map investigation status
             if "investigation_status" in parsed:
-                parsed["status"] = self._map_status(parsed["investigation_status"])
+                parsed["status"] = map_status(parsed["investigation_status"])
             else:
                 parsed["status"] = IncidentStatus.REPORTED.value
 
             # Parse position if provided in single field
             if "position" in parsed and "latitude" not in parsed:
-                lat, lon = self._parse_position(parsed["position"])
+                lat, lon = parse_position(parsed["position"])
                 if lat is not None:
                     parsed["latitude"] = lat
                 if lon is not None:
@@ -862,25 +309,21 @@ class IMOGISISImporter(BaseImporter):
 
             # Build location description if not present
             if "location_description" not in parsed:
-                parsed["location_description"] = self._build_location_description(
-                    parsed
-                )
+                parsed["location_description"] = build_location_description(parsed)
 
             # Extract contributing factors/causes
             if "contributing_factors" in parsed:
-                parsed["cause_categories"] = self._parse_contributing_factors(
+                parsed["cause_categories"] = parse_contributing_factors(
                     parsed["contributing_factors"]
                 )
 
             # Build environmental impact description
             if "pollution_quantity" in parsed or "pollution_type" in parsed:
-                parsed["environmental_impact"] = self._build_environmental_impact(
-                    parsed
-                )
+                parsed["environmental_impact"] = build_environmental_impact(parsed)
 
             # Generate title if not present
             if "title" not in parsed:
-                parsed["title"] = self._generate_title(parsed)
+                parsed["title"] = generate_title(parsed)
 
             # Clean the data
             parsed = self.cleaner.process(parsed)
@@ -893,216 +336,6 @@ class IMOGISISImporter(BaseImporter):
         except Exception as e:
             logger.error(f"Error parsing record: {e}")
             return None
-
-    def _map_casualty_type(self, casualty_type: str) -> str:
-        """Map IMO GISIS casualty type to IncidentType enum value."""
-        if not casualty_type:
-            return IncidentType.OTHER.value
-
-        casualty_lower = casualty_type.lower().strip()
-
-        # Try exact match
-        if casualty_lower in self.CASUALTY_TYPE_MAPPINGS:
-            return self.CASUALTY_TYPE_MAPPINGS[casualty_lower]
-
-        # Try partial match
-        for key, value in self.CASUALTY_TYPE_MAPPINGS.items():
-            if key in casualty_lower or casualty_lower in key:
-                return value
-
-        logger.debug(f"Unknown IMO casualty type: {casualty_type}")
-        return IncidentType.OTHER.value
-
-    def _map_ship_type(self, ship_type: str) -> str:
-        """Map IMO GISIS ship type to VesselType enum value."""
-        if not ship_type:
-            return VesselType.OTHER.value
-
-        ship_lower = ship_type.lower().strip()
-
-        # Try exact match
-        if ship_lower in self.SHIP_TYPE_MAPPINGS:
-            return self.SHIP_TYPE_MAPPINGS[ship_lower]
-
-        # Try partial match
-        for key, value in self.SHIP_TYPE_MAPPINGS.items():
-            if key in ship_lower:
-                return value
-
-        logger.debug(f"Unknown IMO ship type: {ship_type}")
-        return VesselType.OTHER.value
-
-    def _map_status(self, status: str) -> str:
-        """Map IMO investigation status to IncidentStatus enum value."""
-        if not status:
-            return IncidentStatus.REPORTED.value
-
-        status_lower = status.lower().strip()
-
-        # Try exact match
-        if status_lower in self.STATUS_MAPPINGS:
-            return self.STATUS_MAPPINGS[status_lower]
-
-        # Try partial match
-        for key, value in self.STATUS_MAPPINGS.items():
-            if key in status_lower:
-                return value
-
-        logger.debug(f"Unknown IMO status: {status}")
-        return IncidentStatus.REPORTED.value
-
-    def _parse_position(
-        self, position: str
-    ) -> Tuple[Optional[Decimal], Optional[Decimal]]:
-        """
-        Parse position string into latitude and longitude.
-
-        Handles various formats:
-        - "12.345, -67.890" (decimal)
-        - "12 30 N, 067 45 W" (degrees minutes)
-        - "12 30 45 N, 067 45 30 W" (degrees minutes seconds)
-
-        Args:
-            position: Position string
-
-        Returns:
-            Tuple of (latitude, longitude) as Decimals, or (None, None)
-        """
-        if not position:
-            return None, None
-
-        position = position.strip()
-
-        # Try decimal format first
-        decimal_pattern = r"(-?\d+\.?\d*)\s*[,;]\s*(-?\d+\.?\d*)"
-        match = re.match(decimal_pattern, position)
-        if match:
-            try:
-                lat = Decimal(match.group(1))
-                lon = Decimal(match.group(2))
-                if -90 <= lat <= 90 and -180 <= lon <= 180:
-                    return lat, lon
-            except (ValueError, InvalidOperation):
-                pass
-
-        # Try DMS format: 12 30 45 N, 067 45 30 W
-        dms_pattern = (
-            r"(\d+)\s*[°\s]\s*(\d+)\s*[\'′\s]?\s*(\d*\.?\d*)?\s*[\"″\s]?\s*([NS])\s*"
-            r"[,;]?\s*"
-            r"(\d+)\s*[°\s]\s*(\d+)\s*[\'′\s]?\s*(\d*\.?\d*)?\s*[\"″\s]?\s*([EW])"
-        )
-        match = re.search(dms_pattern, position, re.IGNORECASE)
-        if match:
-            try:
-                lat_deg = int(match.group(1))
-                lat_min = int(match.group(2))
-                lat_sec = float(match.group(3) or 0)
-                lat_dir = match.group(4).upper()
-
-                lon_deg = int(match.group(5))
-                lon_min = int(match.group(6))
-                lon_sec = float(match.group(7) or 0)
-                lon_dir = match.group(8).upper()
-
-                lat = Decimal(str(lat_deg + lat_min / 60 + lat_sec / 3600))
-                lon = Decimal(str(lon_deg + lon_min / 60 + lon_sec / 3600))
-
-                if lat_dir == "S":
-                    lat = -lat
-                if lon_dir == "W":
-                    lon = -lon
-
-                return lat, lon
-            except (ValueError, InvalidOperation):
-                pass
-
-        logger.debug(f"Could not parse position: {position}")
-        return None, None
-
-    def _build_location_description(self, parsed: Dict[str, Any]) -> Optional[str]:
-        """Build location description from available location fields."""
-        parts = []
-
-        if parsed.get("area"):
-            parts.append(parsed["area"])
-
-        if parsed.get("waters"):
-            parts.append(parsed["waters"])
-
-        if parsed.get("investigating_state"):
-            parts.append(f"Waters of {parsed['investigating_state']}")
-
-        return ", ".join(parts) if parts else None
-
-    def _parse_contributing_factors(self, factors: str) -> List[str]:
-        """
-        Parse contributing factors string into list of CauseCategory values.
-
-        Args:
-            factors: Contributing factors string (may be comma/semicolon separated)
-
-        Returns:
-            List of CauseCategory enum values
-        """
-        if not factors:
-            return []
-
-        # Split by common delimiters
-        factor_list = re.split(r"[,;/]", factors)
-        cause_categories = []
-
-        for factor in factor_list:
-            factor_lower = factor.lower().strip()
-            if not factor_lower:
-                continue
-
-            # Try exact match
-            if factor_lower in self.CAUSE_MAPPINGS:
-                cause = self.CAUSE_MAPPINGS[factor_lower]
-                if cause not in cause_categories:
-                    cause_categories.append(cause)
-                continue
-
-            # Try partial match
-            matched = False
-            for key, value in self.CAUSE_MAPPINGS.items():
-                if key in factor_lower:
-                    if value not in cause_categories:
-                        cause_categories.append(value)
-                    matched = True
-                    break
-
-            if not matched:
-                # Default to unknown
-                if CauseCategory.UNKNOWN.value not in cause_categories:
-                    cause_categories.append(CauseCategory.UNKNOWN.value)
-
-        return cause_categories
-
-    def _build_environmental_impact(self, parsed: Dict[str, Any]) -> str:
-        """Build environmental impact description from pollution fields."""
-        parts = []
-
-        if parsed.get("pollution_type"):
-            parts.append(f"Type: {parsed['pollution_type']}")
-
-        if parsed.get("pollution_quantity"):
-            parts.append(f"Quantity: {parsed['pollution_quantity']}")
-
-        return "; ".join(parts) if parts else ""
-
-    def _generate_title(self, parsed: Dict[str, Any]) -> str:
-        """Generate incident title from available fields."""
-        vessel_name = parsed.get("vessel_name", "Unknown Vessel")
-        incident_type = parsed.get("incident_type", "incident")
-        imo_number = parsed.get("imo_number", "")
-
-        # Format incident type for display
-        incident_display = incident_type.replace("_", " ").title()
-
-        if imo_number:
-            return f"{incident_display} - {vessel_name} (IMO {imo_number})"
-        return f"{incident_display} - {vessel_name}"
 
     def map_to_model(self, parsed_record: Dict[str, Any]) -> Optional[Incident]:
         """
@@ -1120,7 +353,7 @@ class IMOGISISImporter(BaseImporter):
             vessel_id = self._get_or_create_vessel(parsed_record)
 
             # Calculate severity based on casualties
-            severity = self._calculate_severity(
+            severity = calculate_severity(
                 parsed_record.get("fatalities", 0),
                 parsed_record.get("injuries", 0),
                 parsed_record.get("missing_persons", 0),
@@ -1160,32 +393,6 @@ class IMOGISISImporter(BaseImporter):
         except Exception as e:
             logger.error(f"Error mapping to model: {e}")
             return None
-
-    def _calculate_severity(self, fatalities: int, injuries: int, missing: int) -> int:
-        """
-        Calculate severity level based on casualties following IMO guidelines.
-
-        IMO categorizes casualties as:
-        - Very serious casualty: loss of ship, loss of life, severe pollution
-        - Serious casualty: fire, collision, grounding with significant damage
-        - Less serious casualty: other incidents
-
-        Returns:
-            Severity level (1=minimal, 2=minor, 3=moderate, 4=serious, 5=catastrophic)
-        """
-        total_severe = fatalities + missing
-
-        if total_severe >= 10:
-            return 5  # Catastrophic (very serious)
-        elif total_severe >= 5:
-            return 4  # Serious
-        elif total_severe >= 1:
-            return 3  # Moderate (serious)
-        elif injuries >= 10:
-            return 3  # Moderate
-        elif injuries >= 1:
-            return 2  # Minor
-        return 1  # Minimal
 
     def _get_or_create_location(self, record: Dict[str, Any]) -> Optional[int]:
         """
@@ -1451,18 +658,3 @@ class IMOGISISImporter(BaseImporter):
         self._location_cache.clear()
         self._vessel_cache.clear()
         logger.debug("Cleared importer caches")
-
-
-# Convenience function for IMO number validation
-def validate_imo(imo_number: str) -> bool:
-    """
-    Validate an IMO number.
-
-    Args:
-        imo_number: IMO number to validate
-
-    Returns:
-        True if valid, False otherwise
-    """
-    is_valid, _ = validate_imo_number(imo_number)
-    return is_valid
