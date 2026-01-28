@@ -65,10 +65,7 @@ from worldenergydata.modules.well_production_dashboard.query_optimizer import (
 )
 
 # Import visualization components
-
-
-
-logger = logging.getLogger(__name__)
+# Note: logger is already defined at line 18 using get_logger
 
 
 @dataclass

@@ -336,7 +336,7 @@ config = MarineSafetyConfig(
 
 ## CLI Usage
 
-The module provides a comprehensive command-line interface via the `marine-safety` command.
+The module provides a comprehensive command-line interface via the `marine-safety` command (also accessible as `wed marine-safety`).
 
 ### General Commands
 
@@ -350,7 +350,47 @@ Display module information and capabilities.
 marine-safety info
 ```
 
-### Scraping Commands
+---
+
+### Scrape Commands
+
+The `scrape` command group provides web scraping capabilities for data sources that support automated collection.
+
+#### `marine-safety scrape ntsb`
+Scrape incident data from the NTSB CAROL (Case Analysis and Reporting Online) database.
+
+**Options:**
+- `--start-year INT` - Starting year for data collection
+- `--end-year INT` - Ending year for data collection
+- `--output PATH` - Output file path for scraped data
+- `--verbose` - Enable verbose output
+
+**Examples:**
+```bash
+# Scrape NTSB data for 2020-2023
+marine-safety scrape ntsb --start-year 2020 --end-year 2023
+
+# Scrape with output file and verbose logging
+marine-safety scrape ntsb --start-year 2022 --output ntsb_2022.json --verbose
+```
+
+#### `marine-safety scrape atsb`
+Scrape incident data from the Australian Transport Safety Bureau (ATSB) investigations database.
+
+**Options:**
+- `--start-year INT` - Starting year for data collection
+- `--end-year INT` - Ending year for data collection
+- `--output PATH` - Output file path for scraped data
+- `--verbose` - Enable verbose output
+
+**Examples:**
+```bash
+# Scrape ATSB data for recent years
+marine-safety scrape atsb --start-year 2020 --end-year 2023
+
+# Scrape with output file
+marine-safety scrape atsb --start-year 2022 --output atsb_data.json --verbose
+```
 
 #### `marine-safety scrape uscg`
 Scrape incident data from USCG MISLE database.
@@ -368,24 +408,6 @@ marine-safety scrape uscg --start-year 2020 --end-year 2023
 
 # Scrape with output file
 marine-safety scrape uscg --start-year 2022 --output uscg_2022.json --verbose
-```
-
-#### `marine-safety scrape ntsb`
-Scrape incident data from NTSB marine accident database.
-
-**Options:**
-- `--start-year INT` - Starting year
-- `--end-year INT` - Ending year
-- `--output PATH` - Output file path
-- `--verbose` - Verbose output
-
-**Examples:**
-```bash
-# Scrape NTSB data
-marine-safety scrape ntsb --start-year 2020 --end-year 2023
-
-# Scrape with verbose logging
-marine-safety scrape ntsb --start-year 2022 --output ntsb_2022.json --verbose
 ```
 
 #### `marine-safety scrape bsee`
@@ -408,13 +430,386 @@ marine-safety scrape bsee --vessel-types "drilling rig" --vessel-types "platform
 marine-safety scrape bsee --output bsee_data.json --verbose
 ```
 
+---
+
+### Import Commands
+
+The `import` command group imports data from various maritime safety authorities. Some sources support automatic download, while others require manual file download first.
+
+#### Automatic Import Sources
+
+These sources support automatic download and import:
+
+#### `marine-safety import ntsb`
+Import NTSB marine incident data (automatic download from CAROL database).
+
+**Options:**
+- `--start-year INT` - Starting year (default: 2020)
+- `--end-year INT` - Ending year (default: current year)
+- `--verbose` - Enable verbose output
+
+**Examples:**
+```bash
+# Import NTSB data for default range
+marine-safety import ntsb
+
+# Import specific year range
+marine-safety import ntsb --start-year 2018 --end-year 2023 --verbose
+```
+
+#### `marine-safety import imo`
+Import IMO GISIS (Global Integrated Shipping Information System) global casualty data.
+
+**Options:**
+- `--start-year INT` - Starting year
+- `--end-year INT` - Ending year
+- `--verbose` - Enable verbose output
+
+**Examples:**
+```bash
+# Import IMO global data
+marine-safety import imo --start-year 2020 --end-year 2023
+
+# Import with verbose output
+marine-safety import imo --verbose
+```
+
+#### `marine-safety import atsb`
+Import Australian Transport Safety Bureau (ATSB) marine investigation data.
+
+**Options:**
+- `--start-year INT` - Starting year
+- `--end-year INT` - Ending year
+- `--verbose` - Enable verbose output
+
+**Examples:**
+```bash
+# Import ATSB data
+marine-safety import atsb --start-year 2020 --end-year 2023
+```
+
+#### `marine-safety import tsb`
+Import Canadian Transportation Safety Board (TSB) marine occurrence data.
+
+**Options:**
+- `--start-year INT` - Starting year
+- `--end-year INT` - Ending year
+- `--verbose` - Enable verbose output
+
+**Examples:**
+```bash
+# Import TSB Canada data
+marine-safety import tsb --start-year 2020 --end-year 2023
+```
+
+#### `marine-safety import maib`
+Import UK Marine Accident Investigation Branch (MAIB) data.
+
+**Options:**
+- `--start-year INT` - Starting year
+- `--end-year INT` - Ending year
+- `--verbose` - Enable verbose output
+
+**Examples:**
+```bash
+# Import MAIB UK data
+marine-safety import maib --start-year 2020 --end-year 2023
+```
+
+#### `marine-safety import noaa`
+Import NOAA Incident News oil spill and pollution incident data.
+
+**Options:**
+- `--start-year INT` - Starting year
+- `--end-year INT` - Ending year
+- `--verbose` - Enable verbose output
+
+**Examples:**
+```bash
+# Import NOAA oil spill data
+marine-safety import noaa --start-year 2020 --end-year 2023
+```
+
+#### `marine-safety import boating`
+Import USCG BARD (Boating Accident Report Database) recreational boating incident data.
+
+**Options:**
+- `--start-year INT` - Starting year
+- `--end-year INT` - Ending year
+- `--verbose` - Enable verbose output
+
+**Examples:**
+```bash
+# Import recreational boating data
+marine-safety import boating --start-year 2020 --end-year 2023
+```
+
+#### Manual Download Sources
+
+These sources require manual file download before import:
+
+#### `marine-safety import uscg`
+Import USCG MISLE (Marine Information for Safety and Law Enforcement) data.
+
+**Note:** This is a stub implementation. USCG MISLE data requires special access.
+
+**Options:**
+- `--file PATH` - Path to downloaded MISLE data file
+- `--verbose` - Enable verbose output
+
+**Examples:**
+```bash
+# Import from downloaded file
+marine-safety import uscg --file /path/to/misle_data.csv
+```
+
+#### `marine-safety import bsee`
+Import BSEE offshore incident data.
+
+**Note:** This is a stub implementation. BSEE data may require manual download.
+
+**Options:**
+- `--file PATH` - Path to downloaded BSEE data file
+- `--verbose` - Enable verbose output
+
+**Examples:**
+```bash
+# Import from downloaded file
+marine-safety import bsee --file /path/to/bsee_incidents.xlsx
+```
+
+#### `marine-safety import emsa`
+Import EU EMSA EMCIP (European Marine Casualty Information Platform) data.
+
+**Note:** Requires EMCIP access credentials.
+
+**Options:**
+- `--file PATH` - Path to downloaded EMCIP data file
+- `--verbose` - Enable verbose output
+
+**Examples:**
+```bash
+# Import from downloaded EMCIP export
+marine-safety import emsa --file /path/to/emcip_export.csv
+```
+
+---
+
+### Refresh Commands
+
+The `refresh` command group provides automated scrape + import workflows for supported sources.
+
+#### `marine-safety refresh ntsb`
+Automatically scrape and import the latest NTSB data.
+
+**Options:**
+- `--start-year INT` - Starting year (default: previous year)
+- `--end-year INT` - Ending year (default: current year)
+- `--verbose` - Enable verbose output
+
+**Examples:**
+```bash
+# Refresh NTSB data with defaults
+marine-safety refresh ntsb
+
+# Refresh specific year range
+marine-safety refresh ntsb --start-year 2020 --end-year 2023 --verbose
+```
+
+#### `marine-safety refresh atsb`
+Automatically scrape and import the latest ATSB data.
+
+**Options:**
+- `--start-year INT` - Starting year
+- `--end-year INT` - Ending year
+- `--verbose` - Enable verbose output
+
+**Examples:**
+```bash
+# Refresh ATSB data
+marine-safety refresh atsb
+
+# Refresh with verbose output
+marine-safety refresh atsb --verbose
+```
+
+#### `marine-safety refresh all`
+Refresh all available data sources that support automatic collection.
+
+**Options:**
+- `--start-year INT` - Starting year
+- `--end-year INT` - Ending year
+- `--verbose` - Enable verbose output
+
+**Examples:**
+```bash
+# Refresh all sources
+marine-safety refresh all
+
+# Refresh all sources for specific years
+marine-safety refresh all --start-year 2022 --end-year 2023 --verbose
+```
+
+**Note:** For sources that require manual download, the `refresh` command will display instructions on how to obtain the data files.
+
+---
+
+### Correlation Commands
+
+The `correlate` command group provides cross-source incident correlation and linking capabilities.
+
+#### `marine-safety correlate find-matches`
+Find potential matching incidents across different data sources based on date, location, vessel name, and other attributes.
+
+**Options:**
+- `--threshold FLOAT` - Similarity threshold (0.0-1.0, default: 0.7)
+- `--max-days INT` - Maximum days between incidents to consider as potential match (default: 3)
+- `--output PATH` - Output file for match results
+- `--verbose` - Enable verbose output
+
+**Examples:**
+```bash
+# Find matches with default settings
+marine-safety correlate find-matches
+
+# Find matches with stricter threshold
+marine-safety correlate find-matches --threshold 0.85
+
+# Export matches to file
+marine-safety correlate find-matches --output matches.json --verbose
+```
+
+#### `marine-safety correlate link`
+Create links between related incidents identified through correlation analysis.
+
+**Options:**
+- `--source-id TEXT` - Source incident ID
+- `--target-id TEXT` - Target incident ID
+- `--relationship TEXT` - Relationship type (same_incident, related, followup)
+- `--confidence FLOAT` - Confidence score (0.0-1.0)
+- `--verbose` - Enable verbose output
+
+**Examples:**
+```bash
+# Link two incidents
+marine-safety correlate link --source-id NTSB-2023-001 --target-id USCG-2023-456 --relationship same_incident --confidence 0.95
+
+# Link with automatic relationship detection
+marine-safety correlate link --source-id ATSB-2023-001 --target-id IMO-2023-789 --verbose
+```
+
+#### `marine-safety correlate stats`
+Display correlation statistics showing matches found across data sources.
+
+**Options:**
+- `--verbose` - Show detailed statistics
+
+**Examples:**
+```bash
+# Show correlation statistics
+marine-safety correlate stats
+
+# Show detailed breakdown
+marine-safety correlate stats --verbose
+```
+
+---
+
+### Statistics Commands
+
+#### `marine-safety stats`
+Display comprehensive statistics about marine safety incident data in the database.
+
+**Options:**
+- `--by-source` - Group statistics by data source
+- `--by-year` - Group statistics by year
+- `--source [all|uscg|ntsb|bsee|imo|atsb|tsb|maib|noaa|boating|emsa]` - Filter by specific source
+- `--verbose` - Show detailed statistics
+
+**Examples:**
+```bash
+# Show overall statistics
+marine-safety stats
+
+# Statistics grouped by data source
+marine-safety stats --by-source
+
+# Statistics grouped by year
+marine-safety stats --by-year
+
+# Combined grouping with verbose output
+marine-safety stats --by-source --by-year --verbose
+
+# Statistics for specific source only
+marine-safety stats --source ntsb --verbose
+```
+
+**Sample Output:**
+```
+Marine Safety Database Statistics
+=================================
+
+Total Incidents: 45,234
+Total Fatalities: 1,456
+Total Injuries: 8,234
+Date Range: 2015-01-01 to 2024-12-31
+
+By Source:
+  NTSB:     3,456 incidents
+  USCG:    15,234 incidents
+  BSEE:     2,100 incidents
+  IMO:     12,500 incidents
+  ATSB:     1,234 incidents
+  TSB:      2,456 incidents
+  MAIB:     3,254 incidents
+  NOAA:     2,000 incidents
+  BARD:     3,000 incidents
+```
+
+---
+
+### Export Commands
+
+#### `marine-safety export FORMAT`
+Export marine safety incident data to various formats.
+
+**Formats:**
+- `csv` - Comma-separated values
+- `json` - JSON format
+- `excel` - Excel spreadsheet (.xlsx)
+- `parquet` - Apache Parquet
+
+**Options:**
+- `--output PATH` - Output file path (required)
+- `--source [all|uscg|ntsb|bsee|imo|atsb|tsb|maib|noaa|boating|emsa]` - Data source to export (default: all)
+- `--start-date TEXT` - Start date filter (YYYY-MM-DD)
+- `--end-date TEXT` - End date filter (YYYY-MM-DD)
+- `--limit INT` - Limit number of records to export
+
+**Examples:**
+```bash
+# Export all data to CSV
+marine-safety export csv --output incidents.csv
+
+# Export NTSB data to JSON
+marine-safety export json --output ntsb.json --source ntsb
+
+# Export date range to Excel
+marine-safety export excel --output 2022_report.xlsx --start-date 2022-01-01 --end-date 2022-12-31
+
+# Export limited records to Parquet
+marine-safety export parquet --output sample.parquet --limit 10000
+```
+
+---
+
 ### Database Commands
 
 #### `marine-safety db init`
 Initialize database schema with all tables, indexes, and constraints.
 
 **Options:**
-- `--force` - Force recreation of existing database (⚠️ destructive)
+- `--force` - Force recreation of existing database (destructive)
 - `--db-url TEXT` - Database connection URL
 
 **Examples:**
@@ -465,60 +860,6 @@ marine-safety db seed --sample-size 500
 
 # Clear and seed
 marine-safety db seed --clear-existing --sample-size 200
-```
-
-### Statistics Commands
-
-#### `marine-safety stats`
-Display statistics about marine safety incident data.
-
-**Options:**
-- `--source [all|uscg|ntsb|bsee]` - Data source to show statistics for (default: all)
-- `--verbose` - Show detailed statistics
-
-**Examples:**
-```bash
-# Show overall statistics
-marine-safety stats
-
-# Statistics for USCG only
-marine-safety stats --source uscg
-
-# Detailed statistics
-marine-safety stats --verbose
-```
-
-### Export Commands
-
-#### `marine-safety export FORMAT`
-Export marine safety incident data to various formats.
-
-**Formats:**
-- `csv` - Comma-separated values
-- `json` - JSON format
-- `excel` - Excel spreadsheet (.xlsx)
-- `parquet` - Apache Parquet
-
-**Options:**
-- `--output PATH` - Output file path (required)
-- `--source [all|uscg|ntsb|bsee]` - Data source to export (default: all)
-- `--start-date TEXT` - Start date filter (YYYY-MM-DD)
-- `--end-date TEXT` - End date filter (YYYY-MM-DD)
-- `--limit INT` - Limit number of records to export
-
-**Examples:**
-```bash
-# Export all data to CSV
-marine-safety export csv --output incidents.csv
-
-# Export USCG data to JSON
-marine-safety export json --output uscg.json --source uscg
-
-# Export date range to Excel
-marine-safety export excel --output 2022_report.xlsx --start-date 2022-01-01 --end-date 2022-12-31
-
-# Export limited records to Parquet
-marine-safety export parquet --output sample.parquet --limit 10000
 ```
 
 ---
@@ -831,70 +1172,106 @@ Equipment/systems involved.
 
 ## Data Sources
 
-The module collects data from **7 authoritative international sources**:
+The module collects data from **10 authoritative international sources**:
 
-### 1. **BSEE (Bureau of Safety and Environmental Enforcement)** 🇺🇸
-- **Coverage**: US offshore oil & gas operations
-- **URL**: https://www.bsee.gov/stats-facts/offshore-incident-statistics
-- **Data Types**: Platform incidents, blowouts, fires, personnel injuries, environmental spills
-- **Historical Data**: 1990s - present
-- **Update Frequency**: Quarterly
-
-### 2. **USCG MISLE (US Coast Guard)** 🇺🇸
-- **Coverage**: US commercial vessels, recreational boating
-- **URL**: https://www.dco.uscg.mil/Our-Organization/Assistant-Commandant-for-Prevention-Policy-CG-5P/Inspections-Compliance-CG-5PC-/Office-of-Investigations-Casualty-Analysis/
-- **Data Types**: Vessel casualties, collisions, groundings, sinkings, personnel casualties
-- **Historical Data**: 1990s - present
-- **Update Frequency**: Continuous
-
-### 3. **NTSB (National Transportation Safety Board)** 🇺🇸
+### 1. **NTSB (National Transportation Safety Board)** 🇺🇸
 - **Coverage**: Major US marine accidents
 - **URL**: https://data.ntsb.gov/carol-main-public
 - **Data Types**: Serious accidents, fatalities, in-depth investigations
 - **Historical Data**: 1967 - present
 - **Update Frequency**: Real-time
+- **Import Command**: `marine-safety import ntsb` (automatic)
+- **Scrape Command**: `marine-safety scrape ntsb`
 
-### 4. **MAIB (Marine Accident Investigation Branch)** 🇬🇧
-- **Coverage**: UK-flagged vessels and UK waters
-- **URL**: https://www.gov.uk/maib-reports
-- **Data Types**: Commercial vessel accidents, investigation reports
-- **Historical Data**: 1990s - present
-- **Update Frequency**: Monthly
-
-### 5. **TSB (Transportation Safety Board)** 🇨🇦
-- **Coverage**: Canadian vessels and waters
-- **URL**: https://www.tsb.gc.ca/eng/rapports-reports/marine/
-- **Data Types**: Marine occurrences, investigation reports
-- **Historical Data**: 1990s - present
-- **Update Frequency**: Continuous
-
-### 6. **EMSA (European Maritime Safety Agency)** 🇪🇺
-- **Coverage**: European waters, EU-flagged vessels
-- **URL**: http://emcip.jrc.ec.europa.eu/
-- **Data Types**: Casualties, accidents, incidents in European waters
-- **Historical Data**: 2011 - present
-- **Update Frequency**: Real-time
-
-### 7. **IMO GISIS (International Maritime Organization)** 🌐
+### 2. **IMO GISIS (International Maritime Organization)** 🌐
 - **Coverage**: Global, all flag states
 - **URL**: https://gisis.imo.org/
 - **Data Types**: International casualties, port state control, pollution incidents
 - **Historical Data**: 1997 - present
 - **Update Frequency**: Continuous
+- **Import Command**: `marine-safety import imo` (automatic)
+
+### 3. **ATSB (Australian Transport Safety Bureau)** 🇦🇺
+- **Coverage**: Australian waters and Australian-flagged vessels
+- **URL**: https://www.atsb.gov.au/marine
+- **Data Types**: Marine safety investigations, accident reports
+- **Historical Data**: 2000s - present
+- **Update Frequency**: Continuous
+- **Import Command**: `marine-safety import atsb` (automatic)
+- **Scrape Command**: `marine-safety scrape atsb`
+
+### 4. **TSB (Transportation Safety Board)** 🇨🇦
+- **Coverage**: Canadian vessels and waters
+- **URL**: https://www.tsb.gc.ca/eng/rapports-reports/marine/
+- **Data Types**: Marine occurrences, investigation reports
+- **Historical Data**: 1990s - present
+- **Update Frequency**: Continuous
+- **Import Command**: `marine-safety import tsb` (automatic)
+
+### 5. **MAIB (Marine Accident Investigation Branch)** 🇬🇧
+- **Coverage**: UK-flagged vessels and UK waters
+- **URL**: https://www.gov.uk/maib-reports
+- **Data Types**: Commercial vessel accidents, investigation reports
+- **Historical Data**: 1990s - present
+- **Update Frequency**: Monthly
+- **Import Command**: `marine-safety import maib` (automatic)
+
+### 6. **NOAA Incident News** 🇺🇸
+- **Coverage**: US waters and international incidents affecting US interests
+- **URL**: https://incidentnews.noaa.gov/
+- **Data Types**: Oil spills, chemical releases, pollution incidents
+- **Historical Data**: 1967 - present
+- **Update Frequency**: Real-time
+- **Import Command**: `marine-safety import noaa` (automatic)
+
+### 7. **USCG BARD (Boating Accident Report Database)** 🇺🇸
+- **Coverage**: US recreational boating accidents
+- **URL**: https://uscgboating.org/statistics/accident_statistics.php
+- **Data Types**: Recreational boating casualties, fatalities, injuries
+- **Historical Data**: 2000s - present
+- **Update Frequency**: Annual
+- **Import Command**: `marine-safety import boating` (automatic)
+
+### 8. **USCG MISLE (Marine Information for Safety and Law Enforcement)** 🇺🇸
+- **Coverage**: US commercial vessels, recreational boating
+- **URL**: https://www.dco.uscg.mil/Our-Organization/Assistant-Commandant-for-Prevention-Policy-CG-5P/Inspections-Compliance-CG-5PC-/Office-of-Investigations-Casualty-Analysis/
+- **Data Types**: Vessel casualties, collisions, groundings, sinkings, personnel casualties
+- **Historical Data**: 1990s - present
+- **Update Frequency**: Continuous
+- **Import Command**: `marine-safety import uscg` (requires manual download)
+
+### 9. **BSEE (Bureau of Safety and Environmental Enforcement)** 🇺🇸
+- **Coverage**: US offshore oil & gas operations
+- **URL**: https://www.bsee.gov/stats-facts/offshore-incident-statistics
+- **Data Types**: Platform incidents, blowouts, fires, personnel injuries, environmental spills
+- **Historical Data**: 1990s - present
+- **Update Frequency**: Quarterly
+- **Import Command**: `marine-safety import bsee` (requires manual download)
+
+### 10. **EMSA EMCIP (European Marine Casualty Information Platform)** 🇪🇺
+- **Coverage**: European waters, EU-flagged vessels
+- **URL**: http://emcip.jrc.ec.europa.eu/
+- **Data Types**: Casualties, accidents, incidents in European waters
+- **Historical Data**: 2011 - present
+- **Update Frequency**: Real-time
+- **Import Command**: `marine-safety import emsa` (requires EMCIP access)
 
 ### Data Coverage Summary
 
-| Source | Geographic Scope | Vessel Types | Time Range | Records |
-|--------|-----------------|--------------|------------|---------|
-| BSEE   | US OCS          | Offshore platforms, rigs | 1990-present | ~5,000 |
-| USCG   | US waters       | All commercial + recreational | 1990-present | ~100,000 |
-| NTSB   | US              | Major accidents only | 1967-present | ~10,000 |
-| MAIB   | UK/International| Commercial vessels | 1990-present | ~15,000 |
-| TSB    | Canada          | All marine | 1990-present | ~8,000 |
-| EMSA   | EU waters       | All commercial | 2011-present | ~40,000 |
-| IMO    | Global          | International fleet | 1997-present | ~50,000 |
+| Source | Geographic Scope | Vessel Types | Time Range | Records | Auto Import |
+|--------|-----------------|--------------|------------|---------|-------------|
+| NTSB   | US              | Major accidents | 1967-present | ~10,000 | Yes |
+| IMO    | Global          | International fleet | 1997-present | ~50,000 | Yes |
+| ATSB   | Australia       | All marine | 2000-present | ~5,000 | Yes |
+| TSB    | Canada          | All marine | 1990-present | ~8,000 | Yes |
+| MAIB   | UK/International| Commercial vessels | 1990-present | ~15,000 | Yes |
+| NOAA   | US/Global       | Oil spills, pollution | 1967-present | ~8,000 | Yes |
+| BARD   | US              | Recreational boating | 2000-present | ~50,000 | Yes |
+| USCG   | US waters       | All commercial | 1990-present | ~100,000 | Manual |
+| BSEE   | US OCS          | Offshore platforms | 1990-present | ~5,000 | Manual |
+| EMSA   | EU waters       | All commercial | 2011-present | ~40,000 | Manual |
 
-**Total Estimated Coverage**: 200,000+ incidents
+**Total Estimated Coverage**: 290,000+ incidents
 
 ---
 
@@ -1358,8 +1735,8 @@ SOFTWARE.
 
 ---
 
-**Version**: 1.0.0
-**Last Updated**: 2025-10-03
+**Version**: 1.1.0
+**Last Updated**: 2026-01-27
 **Status**: Active Development
 
 For more information, see the [main project README](../../../../../README.md).

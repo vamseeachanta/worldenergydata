@@ -19,91 +19,68 @@ Note: ATSB covers Australian waters and the Southern Hemisphere.
 """
 
 import json
-import re
-import time
 from datetime import date, datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional
 from urllib.parse import urlencode, urljoin
 
 from worldenergydata.modules.marine_safety.config import get_config
-from worldenergydata.modules.marine_safety.constants import (
-    DataSource,
-    IncidentStatus,
-    IncidentType,
-    SeverityLevel,
+from worldenergydata.modules.marine_safety.constants import DataSource
+from worldenergydata.modules.marine_safety.exceptions import HTTPError
+
+# Import from split modules
+from worldenergydata.modules.marine_safety.scrapers.atsb_checkpoint import (
+    ATSBCheckpointManager,
 )
-from worldenergydata.modules.marine_safety.exceptions import (
-    HTTPError,
-    ParsingError,
-    RateLimitError,
-    ScraperError,
-    TimeoutError,
-    ValidationError,
+from worldenergydata.modules.marine_safety.scrapers.atsb_constants import (
+    ATSB_ID_PATTERN,
+    AUSTRALIAN_STATES,
+    BASE_URL,
+    DEFAULT_MIN_DATE_DAY,
+    DEFAULT_MIN_DATE_MONTH,
+    DEFAULT_MIN_DATE_YEAR,
+    DEFAULT_PAGE_SIZE,
+    INCIDENT_TYPE_MAPPING,
+    MARINE_URL,
+    MAX_PAGES,
+    PDF_BASE_URL,
+    STATUS_MAPPING,
+)
+from worldenergydata.modules.marine_safety.scrapers.atsb_exceptions import (
+    ATSBConnectionError,
+    ATSBDataValidationError,
+)
+from worldenergydata.modules.marine_safety.scrapers.atsb_extractor import (
+    extract_investigation_details,
+    map_incident_type,
+    normalize_australian_state,
+    parse_casualty_count,
+)
+from worldenergydata.modules.marine_safety.scrapers.atsb_parser import (
+    map_status,
+    parse_date,
+    parse_investigation_entry,
+    parse_investigation_list,
+)
+from worldenergydata.modules.marine_safety.scrapers.atsb_transformer import (
+    transform_investigation,
+)
+from worldenergydata.modules.marine_safety.scrapers.atsb_validator import (
+    validate_atsb_id,
+    validate_investigation_data,
 )
 from worldenergydata.modules.marine_safety.scrapers.base_scraper import BaseScraper
-from worldenergydata.modules.marine_safety.utils.logger import get_logger
 
-
-class ATSBDataValidationError(ValidationError):
-    """Raised when ATSB data fails validation."""
-
-    def __init__(
-        self,
-        field: str,
-        value: Any,
-        reason: str,
-        atsb_id: Optional[str] = None,
-        message: Optional[str] = None,
-    ) -> None:
-        """
-        Initialize ATSB data validation error.
-
-        Args:
-            field: Name of the field that failed validation
-            value: The invalid value
-            reason: Reason for validation failure
-            atsb_id: Optional ATSB investigation ID
-            message: Optional custom message
-        """
-        if message is None:
-            id_info = f" (ATSB ID: {atsb_id})" if atsb_id else ""
-            message = f"Invalid ATSB data for '{field}'{id_info}: {reason}"
-        super().__init__(
-            message=message,
-            error_code="ATSB_VALIDATION_ERROR",
-            details={
-                "field": field,
-                "value": value,
-                "reason": reason,
-                "atsb_id": atsb_id,
-            },
-        )
-
-
-class ATSBConnectionError(ScraperError):
-    """Raised when connection to ATSB website fails."""
-
-    def __init__(
-        self,
-        message: Optional[str] = None,
-        cause: Optional[Exception] = None,
-    ) -> None:
-        """
-        Initialize ATSB connection error.
-
-        Args:
-            message: Optional custom message
-            cause: Optional original exception
-        """
-        if message is None:
-            message = "Failed to connect to ATSB website"
-        super().__init__(
-            message=message,
-            error_code="ATSB_CONNECTION_ERROR",
-            details={"cause": str(cause) if cause else None},
-            cause=cause,
-        )
+# Re-export for backward compatibility
+__all__ = [
+    "ATSBScraper",
+    "ATSBDataValidationError",
+    "ATSBConnectionError",
+    "ATSB_ID_PATTERN",
+    "AUSTRALIAN_STATES",
+    "INCIDENT_TYPE_MAPPING",
+    "STATUS_MAPPING",
+]
 
 
 class ATSBScraper(BaseScraper):
@@ -128,88 +105,19 @@ class ATSBScraper(BaseScraper):
         PDF_BASE_URL: Base URL for PDF downloads
     """
 
-    BASE_URL = "https://www.atsb.gov.au"
-    MARINE_URL = "/publications/investigation_reports/marine"
-    PDF_BASE_URL = "https://www.atsb.gov.au/publications"
-
-    # ATSB Investigation ID pattern: e.g., MO-2022-001, 342-MO-2021-001
-    ATSB_ID_PATTERN = re.compile(
-        r"^(?:\d{3}-)?(?:MO|MR)-?\d{4}-?\d{3}$",
-        re.IGNORECASE,
-    )
-
-    # Australian state codes
-    AUSTRALIAN_STATES: Dict[str, str] = {
-        "nsw": "NSW",
-        "new south wales": "NSW",
-        "vic": "VIC",
-        "victoria": "VIC",
-        "qld": "QLD",
-        "queensland": "QLD",
-        "wa": "WA",
-        "western australia": "WA",
-        "sa": "SA",
-        "south australia": "SA",
-        "tas": "TAS",
-        "tasmania": "TAS",
-        "nt": "NT",
-        "northern territory": "NT",
-        "act": "ACT",
-        "australian capital territory": "ACT",
-    }
-
-    # Incident type mapping from ATSB categories
-    INCIDENT_TYPE_MAPPING: Dict[str, IncidentType] = {
-        "collision": IncidentType.COLLISION,
-        "contact": IncidentType.COLLISION,
-        "striking": IncidentType.COLLISION,
-        "grounding": IncidentType.GROUNDING,
-        "stranding": IncidentType.GROUNDING,
-        "fire": IncidentType.FIRE,
-        "explosion": IncidentType.EXPLOSION,
-        "capsizing": IncidentType.CAPSIZING,
-        "capsize": IncidentType.CAPSIZING,
-        "flooding": IncidentType.FLOODING,
-        "foundering": IncidentType.FLOODING,
-        "sinking": IncidentType.CAPSIZING,
-        "structural failure": IncidentType.STRUCTURAL_FAILURE,
-        "hull failure": IncidentType.STRUCTURAL_FAILURE,
-        "equipment failure": IncidentType.EQUIPMENT_FAILURE,
-        "machinery failure": IncidentType.EQUIPMENT_FAILURE,
-        "loss of propulsion": IncidentType.LOSS_OF_PROPULSION,
-        "propulsion failure": IncidentType.LOSS_OF_PROPULSION,
-        "loss of steering": IncidentType.LOSS_OF_CONTROL,
-        "loss of control": IncidentType.LOSS_OF_CONTROL,
-        "man overboard": IncidentType.PERSONNEL_INJURY,
-        "person overboard": IncidentType.PERSONNEL_INJURY,
-        "fall overboard": IncidentType.PERSONNEL_INJURY,
-        "injury": IncidentType.PERSONNEL_INJURY,
-        "fatality": IncidentType.FATALITY,
-        "death": IncidentType.FATALITY,
-        "pollution": IncidentType.POLLUTION,
-        "oil spill": IncidentType.POLLUTION,
-        "environmental": IncidentType.ENVIRONMENTAL,
-        "weather": IncidentType.WEATHER_RELATED,
-        "heavy weather": IncidentType.WEATHER_RELATED,
-        "storm": IncidentType.WEATHER_RELATED,
-        "cyclone": IncidentType.WEATHER_RELATED,
-    }
-
-    # Status mapping from ATSB investigation status
-    STATUS_MAPPING: Dict[str, IncidentStatus] = {
-        "active": IncidentStatus.UNDER_INVESTIGATION,
-        "open": IncidentStatus.UNDER_INVESTIGATION,
-        "preliminary": IncidentStatus.PRELIMINARY_REPORT,
-        "interim": IncidentStatus.PRELIMINARY_REPORT,
-        "final": IncidentStatus.FINAL_REPORT,
-        "completed": IncidentStatus.FINAL_REPORT,
-        "closed": IncidentStatus.CLOSED,
-    }
+    # Class-level constants for backward compatibility
+    BASE_URL = BASE_URL
+    MARINE_URL = MARINE_URL
+    PDF_BASE_URL = PDF_BASE_URL
+    ATSB_ID_PATTERN = ATSB_ID_PATTERN
+    AUSTRALIAN_STATES = AUSTRALIAN_STATES
+    INCIDENT_TYPE_MAPPING = INCIDENT_TYPE_MAPPING
+    STATUS_MAPPING = STATUS_MAPPING
 
     def __init__(
         self,
         checkpoint_dir: Optional[Path] = None,
-        page_size: int = 20,
+        page_size: int = DEFAULT_PAGE_SIZE,
         min_date: Optional[date] = None,
         download_pdfs: bool = False,
     ) -> None:
@@ -227,112 +135,63 @@ class ATSBScraper(BaseScraper):
         """
         super().__init__(
             source=DataSource.ATSB,
-            base_url=self.BASE_URL,
+            base_url=BASE_URL,
             name="atsb_marine_scraper",
         )
 
         self.config_obj = get_config()
-        self.checkpoint_dir = (
-            checkpoint_dir or self.config_obj.storage.cache_path / "atsb"
-        )
-        self.checkpoint_dir.mkdir(parents=True, exist_ok=True)
+        checkpoint_path = checkpoint_dir or self.config_obj.storage.cache_path / "atsb"
 
         self.page_size = page_size
-        self.min_date = min_date or date(2003, 1, 1)
+        self.min_date = min_date or date(
+            DEFAULT_MIN_DATE_YEAR,
+            DEFAULT_MIN_DATE_MONTH,
+            DEFAULT_MIN_DATE_DAY,
+        )
         self.download_pdfs = download_pdfs
 
+        # Initialize checkpoint manager
+        self._checkpoint = ATSBCheckpointManager(checkpoint_path)
+
         # PDF download directory
-        self.pdf_dir = self.checkpoint_dir / "pdfs"
+        self.pdf_dir = checkpoint_path / "pdfs"
         if download_pdfs:
             self.pdf_dir.mkdir(parents=True, exist_ok=True)
-
-        # Checkpointing state
-        self._checkpoint_file = self.checkpoint_dir / "atsb_scraper_checkpoint.json"
-        self._processed_ids: Set[str] = set()
-        self._last_checkpoint_time: Optional[datetime] = None
 
         self.logger.info(
             f"ATSB Scraper initialized (page_size={self.page_size}, "
             f"min_date={self.min_date}, download_pdfs={download_pdfs})"
         )
 
+    # Backward compatibility properties
+    @property
+    def checkpoint_dir(self) -> Path:
+        """Get checkpoint directory."""
+        return self._checkpoint.checkpoint_dir
+
+    @property
+    def _processed_ids(self) -> set:
+        """Get processed IDs for backward compatibility."""
+        return self._checkpoint.processed_ids
+
+    @property
+    def _last_checkpoint_time(self) -> Optional[datetime]:
+        """Get last checkpoint time for backward compatibility."""
+        return self._checkpoint.last_checkpoint_time
+
     def _load_checkpoint(self) -> None:
         """Load checkpoint data from disk if available."""
-        if not self._checkpoint_file.exists():
-            self.logger.debug("No checkpoint file found")
-            return
-
-        try:
-            with open(self._checkpoint_file, "r", encoding="utf-8") as f:
-                checkpoint = json.load(f)
-
-            self._processed_ids = set(checkpoint.get("processed_ids", []))
-            last_time = checkpoint.get("last_checkpoint_time")
-            if last_time:
-                self._last_checkpoint_time = datetime.fromisoformat(last_time)
-
-            self.logger.info(
-                f"Loaded checkpoint: {len(self._processed_ids)} processed IDs, "
-                f"last checkpoint: {self._last_checkpoint_time}"
-            )
-
-        except (json.JSONDecodeError, KeyError) as e:
-            self.logger.warning(f"Failed to load checkpoint: {e}")
+        self._checkpoint.load()
 
     def _save_checkpoint(self, force: bool = False) -> None:
-        """
-        Save checkpoint data to disk.
-
-        Args:
-            force: If True, save regardless of time since last checkpoint.
-                Otherwise, saves at most once per minute.
-        """
-        now = datetime.utcnow()
-        if (
-            not force
-            and self._last_checkpoint_time
-            and (now - self._last_checkpoint_time).total_seconds() < 60
-        ):
-            return
-
-        checkpoint = {
-            "processed_ids": list(self._processed_ids),
-            "last_checkpoint_time": now.isoformat(),
-            "total_processed": len(self._processed_ids),
-        }
-
-        try:
-            with open(self._checkpoint_file, "w", encoding="utf-8") as f:
-                json.dump(checkpoint, f, indent=2)
-
-            self._last_checkpoint_time = now
-            self.logger.debug(
-                f"Checkpoint saved: {len(self._processed_ids)} processed IDs"
-            )
-
-        except IOError as e:
-            self.logger.error(f"Failed to save checkpoint: {e}")
+        """Save checkpoint data to disk."""
+        self._checkpoint.save(force=force)
 
     def _normalize_australian_state(self, state: Optional[str]) -> Optional[str]:
-        """
-        Normalize Australian state names to standard codes.
+        """Normalize Australian state names to standard codes."""
+        return normalize_australian_state(state)
 
-        Args:
-            state: State name or code
-
-        Returns:
-            Normalized state code (e.g., NSW, VIC) or original if not recognized
-        """
-        if not state:
-            return None
-
-        state_lower = state.lower().strip()
-        return self.AUSTRALIAN_STATES.get(state_lower, state.upper())
-
-    def _fetch_investigation_list(
-        self,
-        page: int = 1,
-    ) -> str:
+    def _fetch_investigation_list(self, page: int = 1) -> str:
         """
         Fetch investigation listing page from ATSB.
 
@@ -345,14 +204,12 @@ class ATSBScraper(BaseScraper):
         Raises:
             HTTPError: If HTTP request fails
         """
-        # ATSB uses query parameters for pagination
         params = {
             "page": page,
             "items_per_page": self.page_size,
         }
 
-        url = f"{self.MARINE_URL}?{urlencode(params)}"
-
+        url = f"{MARINE_URL}?{urlencode(params)}"
         self.logger.debug(f"Fetching page {page}: {url}")
 
         try:
@@ -367,177 +224,32 @@ class ATSBScraper(BaseScraper):
             )
 
     def _parse_investigation_list(self, html_content: str) -> List[Dict[str, Any]]:
-        """
-        Parse investigation listing HTML to extract investigation metadata.
-
-        Args:
-            html_content: HTML content of investigation listing page
-
-        Returns:
-            List of investigation metadata dictionaries
-        """
+        """Parse investigation listing HTML to extract investigation metadata."""
         soup = self._parse_html(html_content)
-        investigations: List[Dict[str, Any]] = []
-
-        # Find investigation entries
-        # ATSB uses various CSS classes for investigation listings
-        entries = soup.select(
-            ".view-content .views-row, .investigation-item, .report-item"
+        return parse_investigation_list(
+            soup,
+            extract_text_fn=self._extract_text,
+            extract_attribute_fn=self._extract_attribute,
         )
-
-        if not entries:
-            # Try alternative selectors
-            entries = soup.select("article, .node--type-investigation")
-
-        for entry in entries:
-            try:
-                investigation = self._parse_investigation_entry(entry)
-                if investigation:
-                    investigations.append(investigation)
-            except Exception as e:
-                self.logger.warning(f"Failed to parse investigation entry: {e}")
-                continue
-
-        return investigations
 
     def _parse_investigation_entry(self, entry: Any) -> Optional[Dict[str, Any]]:
-        """
-        Parse a single investigation entry from HTML.
-
-        Args:
-            entry: BeautifulSoup element for the investigation
-
-        Returns:
-            Dictionary of investigation metadata or None
-        """
-        # Extract ATSB ID (report number)
-        atsb_id = None
-        id_selectors = [
-            ".field--name-field-report-number",
-            ".report-number",
-            ".investigation-id",
-            "h2 a",
-            "h3 a",
-        ]
-        for selector in id_selectors:
-            atsb_id = self._extract_text(entry, selector)
-            if atsb_id:
-                # Clean up the ID
-                atsb_id = re.sub(r"[^\w-]", "", atsb_id.strip())
-                break
-
-        if not atsb_id:
-            return None
-
-        # Extract title
-        title = self._extract_text(entry, "h2, h3, .title, .field--name-title")
-
-        # Extract report URL
-        report_url = self._extract_attribute(entry, "h2 a, h3 a, .title a", "href")
-        if report_url:
-            report_url = urljoin(self.base_url, report_url)
-
-        # Extract date
-        date_str = self._extract_text(
-            entry, ".date, .field--name-field-occurrence-date, .occurrence-date"
+        """Parse a single investigation entry from HTML."""
+        return parse_investigation_entry(
+            entry,
+            extract_text_fn=self._extract_text,
+            extract_attribute_fn=self._extract_attribute,
         )
-        occurrence_date = self._parse_date(date_str)
-
-        # Extract location
-        location = self._extract_text(entry, ".location, .field--name-field-location")
-
-        # Extract vessel name
-        vessel_name = self._extract_text(
-            entry, ".vessel-name, .field--name-field-vessel-name"
-        )
-
-        # Extract status
-        status_text = self._extract_text(
-            entry, ".status, .field--name-field-investigation-status"
-        )
-        status = self._map_status(status_text)
-
-        # Extract PDF link if available
-        pdf_url = self._extract_attribute(entry, "a[href*='.pdf'], .pdf-link a", "href")
-        if pdf_url:
-            pdf_url = urljoin(self.base_url, pdf_url)
-
-        return {
-            "atsb_id": atsb_id,
-            "title": title,
-            "report_url": report_url,
-            "occurrence_date": occurrence_date,
-            "location": location,
-            "vessel_name": vessel_name,
-            "status": status,
-            "pdf_url": pdf_url,
-        }
 
     def _parse_date(self, date_str: Optional[str]) -> Optional[date]:
-        """
-        Parse date string in various formats.
-
-        Args:
-            date_str: Date string
-
-        Returns:
-            Parsed date or None
-        """
-        if not date_str:
-            return None
-
-        date_str = date_str.strip()
-
-        # Try common Australian date formats
-        formats = [
-            "%d %B %Y",  # 15 January 2022
-            "%d %b %Y",  # 15 Jan 2022
-            "%d/%m/%Y",  # 15/01/2022
-            "%Y-%m-%d",  # 2022-01-15
-            "%B %d, %Y",  # January 15, 2022
-            "%b %d, %Y",  # Jan 15, 2022
-        ]
-
-        for fmt in formats:
-            try:
-                return datetime.strptime(date_str, fmt).date()
-            except ValueError:
-                continue
-
-        self.logger.warning(f"Could not parse date: {date_str}")
-        return None
+        """Parse date string in various formats."""
+        return parse_date(date_str)
 
     def _map_status(self, status_text: Optional[str]) -> str:
-        """
-        Map ATSB status text to IncidentStatus enum value.
-
-        Args:
-            status_text: Status text from ATSB
-
-        Returns:
-            IncidentStatus value as string
-        """
-        if not status_text:
-            return IncidentStatus.REPORTED.value
-
-        status_lower = status_text.lower().strip()
-
-        for key, value in self.STATUS_MAPPING.items():
-            if key in status_lower:
-                return value.value
-
-        return IncidentStatus.REPORTED.value
+        """Map ATSB status text to IncidentStatus enum value."""
+        return map_status(status_text)
 
     def _fetch_investigation_details(self, report_url: str) -> Dict[str, Any]:
-        """
-        Fetch detailed investigation data from report page.
-
-        Args:
-            report_url: URL of the investigation report page
-
-        Returns:
-            Dictionary of detailed investigation data
-        """
+        """Fetch detailed investigation data from report page."""
         try:
             response = self._make_request(report_url, method="GET")
             html_content = response.text
@@ -546,135 +258,15 @@ class ATSBScraper(BaseScraper):
             return {}
 
         soup = self._parse_html(html_content)
-        details: Dict[str, Any] = {}
-
-        # Extract incident type/category
-        incident_type = self._extract_text(
-            soup, ".field--name-field-occurrence-type, .occurrence-type"
-        )
-        if incident_type:
-            details["incident_type"] = self._map_incident_type(incident_type)
-
-        # Extract narrative/description
-        narrative = self._extract_text(soup, ".field--name-body, .narrative, .summary")
-        if narrative:
-            details["description"] = narrative[:5000]  # Limit length
-
-        # Extract casualties
-        fatalities_text = self._extract_text(
-            soup, ".field--name-field-fatalities, .fatalities"
-        )
-        if fatalities_text:
-            details["fatalities"] = self._parse_casualty_count(fatalities_text)
-
-        injuries_text = self._extract_text(
-            soup, ".field--name-field-injuries, .injuries"
-        )
-        if injuries_text:
-            details["injuries"] = self._parse_casualty_count(injuries_text)
-
-        # Extract vessel details
-        vessel_type = self._extract_text(
-            soup, ".field--name-field-vessel-type, .vessel-type"
-        )
-        if vessel_type:
-            details["vessel_type"] = vessel_type
-
-        flag_state = self._extract_text(
-            soup, ".field--name-field-flag-state, .flag-state"
-        )
-        if flag_state:
-            details["flag_state"] = flag_state
-
-        gross_tonnage = self._extract_text(
-            soup, ".field--name-field-gross-tonnage, .gross-tonnage"
-        )
-        if gross_tonnage:
-            try:
-                details["gross_tonnage"] = float(
-                    gross_tonnage.replace(",", "").replace(" ", "")
-                )
-            except ValueError:
-                pass
-
-        # Extract coordinates if available
-        lat = self._extract_text(soup, ".field--name-field-latitude, .latitude")
-        lon = self._extract_text(soup, ".field--name-field-longitude, .longitude")
-
-        if lat:
-            try:
-                details["latitude"] = float(lat.replace(",", "."))
-            except ValueError:
-                pass
-
-        if lon:
-            try:
-                details["longitude"] = float(lon.replace(",", "."))
-            except ValueError:
-                pass
-
-        # Extract state/region
-        state = self._extract_text(soup, ".field--name-field-state, .state-territory")
-        if state:
-            details["state"] = self._normalize_australian_state(state)
-
-        # Extract probable cause if available
-        probable_cause = self._extract_text(
-            soup, ".field--name-field-probable-cause, .probable-cause, .findings"
-        )
-        if probable_cause:
-            details["probable_cause"] = probable_cause[:5000]
-
-        return details
+        return extract_investigation_details(soup, self._extract_text)
 
     def _map_incident_type(self, incident_type: str) -> str:
-        """
-        Map ATSB incident type to IncidentType enum value.
-
-        Args:
-            incident_type: Incident type string from ATSB
-
-        Returns:
-            IncidentType value as string
-        """
-        incident_lower = incident_type.lower().strip()
-
-        # Try exact match first
-        if incident_lower in self.INCIDENT_TYPE_MAPPING:
-            return self.INCIDENT_TYPE_MAPPING[incident_lower].value
-
-        # Try partial match
-        for key, value in self.INCIDENT_TYPE_MAPPING.items():
-            if key in incident_lower or incident_lower in key:
-                return value.value
-
-        self.logger.warning(f"Unknown ATSB incident type: {incident_type}")
-        return IncidentType.OTHER.value
+        """Map ATSB incident type to IncidentType enum value."""
+        return map_incident_type(incident_type)
 
     def _parse_casualty_count(self, text: str) -> int:
-        """
-        Parse casualty count from text.
-
-        Args:
-            text: Text containing casualty information
-
-        Returns:
-            Casualty count as integer
-        """
-        if not text:
-            return 0
-
-        # Try to extract number from text
-        match = re.search(r"(\d+)", text)
-        if match:
-            return int(match.group(1))
-
-        # Check for keywords
-        text_lower = text.lower()
-        if "none" in text_lower or "no " in text_lower:
-            return 0
-
-        return 0
+        """Parse casualty count from text."""
+        return parse_casualty_count(text)
 
     def _download_pdf(self, pdf_url: str, atsb_id: str) -> Optional[Path]:
         """
@@ -690,7 +282,6 @@ class ATSBScraper(BaseScraper):
         if not self.download_pdfs:
             return None
 
-        # Clean filename
         filename = f"{atsb_id.replace('/', '-')}.pdf"
         pdf_path = self.pdf_dir / filename
 
@@ -712,88 +303,8 @@ class ATSBScraper(BaseScraper):
             return None
 
     def _parse_investigation(self, raw_data: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Parse raw investigation data into standardized format.
-
-        Args:
-            raw_data: Raw investigation data from scraping
-
-        Returns:
-            Standardized investigation dictionary
-        """
-        atsb_id = raw_data.get("atsb_id", "")
-
-        # Parse location into components
-        location_text = raw_data.get("location", "")
-        city = None
-        state = None
-
-        if location_text:
-            # Try to extract state from location
-            parts = location_text.split(",")
-            if len(parts) >= 2:
-                city = parts[0].strip()
-                state_part = parts[-1].strip()
-                state = self._normalize_australian_state(state_part)
-            else:
-                city = location_text
-
-        # Use details state if available
-        if raw_data.get("state"):
-            state = raw_data["state"]
-
-        # Build location dict
-        location = {
-            "latitude": raw_data.get("latitude"),
-            "longitude": raw_data.get("longitude"),
-            "city": city,
-            "state": state,
-            "country": "Australia",
-            "description": location_text,
-        }
-
-        # Build vessel dict
-        vessel = {
-            "name": raw_data.get("vessel_name"),
-            "type": raw_data.get("vessel_type"),
-            "flag": raw_data.get("flag_state"),
-            "gross_tonnage": raw_data.get("gross_tonnage"),
-        }
-
-        # Build casualties dict
-        casualties = {
-            "fatalities": raw_data.get("fatalities", 0),
-            "injuries": raw_data.get("injuries", 0),
-            "missing": 0,
-        }
-
-        # Build report URL
-        report_url = raw_data.get("report_url")
-
-        return {
-            "source": DataSource.ATSB.value,
-            "source_id": atsb_id,
-            "event_date": (
-                raw_data.get("occurrence_date").isoformat()
-                if raw_data.get("occurrence_date")
-                else None
-            ),
-            "incident_type": raw_data.get("incident_type", IncidentType.OTHER.value),
-            "status": raw_data.get("status", IncidentStatus.REPORTED.value),
-            "title": raw_data.get("title", ""),
-            "description": raw_data.get("description", ""),
-            "location": location,
-            "vessel": vessel,
-            "casualties": casualties,
-            "probable_cause": raw_data.get("probable_cause"),
-            "report_url": report_url,
-            "pdf_url": raw_data.get("pdf_url"),
-            "pdf_path": (
-                str(raw_data.get("pdf_path")) if raw_data.get("pdf_path") else None
-            ),
-            "scraped_at": datetime.utcnow().isoformat(),
-            "raw_data": raw_data,
-        }
+        """Parse raw investigation data into standardized format."""
+        return transform_investigation(raw_data)
 
     def scrape(
         self,
@@ -850,10 +361,9 @@ class ATSBScraper(BaseScraper):
 
         investigations: List[Dict[str, Any]] = []
         page = 1
-        max_pages = 100  # Safety limit
 
         try:
-            while page <= max_pages:
+            while page <= MAX_PAGES:
                 self.logger.info(f"Fetching page {page}")
 
                 try:
@@ -864,7 +374,6 @@ class ATSBScraper(BaseScraper):
                         break
                     raise
 
-                # Parse investigation list
                 page_investigations = self._parse_investigation_list(html_content)
 
                 if not page_investigations:
@@ -878,7 +387,7 @@ class ATSBScraper(BaseScraper):
                         continue
 
                     # Skip if already processed
-                    if atsb_id in self._processed_ids:
+                    if self._checkpoint.is_processed(atsb_id):
                         self.logger.debug(f"Skipping processed: {atsb_id}")
                         continue
 
@@ -912,7 +421,7 @@ class ATSBScraper(BaseScraper):
 
                         if self.validate_data(parsed):
                             investigations.append(parsed)
-                            self._processed_ids.add(atsb_id)
+                            self._checkpoint.add_processed_id(atsb_id)
                         else:
                             self.logger.warning(f"Validation failed for {atsb_id}")
 
@@ -952,106 +461,15 @@ class ATSBScraper(BaseScraper):
         Raises:
             ATSBDataValidationError: If validation fails with critical errors
         """
-        atsb_id = data.get("source_id", "")
-
-        # Required fields
-        required_fields = ["source_id", "source"]
-        for field in required_fields:
-            if not data.get(field):
-                self.logger.warning(f"Missing required field: {field}")
-                return False
-
-        # Validate ATSB ID format
-        if atsb_id and not self._validate_atsb_id(atsb_id):
-            self.logger.warning(f"Invalid ATSB ID format: {atsb_id}")
-            # Don't fail validation for ID format, just warn
-
-        # Validate date if present
-        event_date = data.get("event_date")
-        if event_date:
-            try:
-                if isinstance(event_date, str):
-                    parsed_date = datetime.fromisoformat(event_date).date()
-                else:
-                    parsed_date = event_date
-
-                if parsed_date < self.min_date:
-                    self.logger.warning(
-                        f"Event date {parsed_date} before min date {self.min_date}"
-                    )
-                if parsed_date > date.today():
-                    self.logger.warning(f"Event date {parsed_date} is in the future")
-                    return False
-
-            except (ValueError, TypeError) as e:
-                self.logger.warning(f"Invalid event date format: {event_date} - {e}")
-
-        # Validate casualties (non-negative)
-        casualties = data.get("casualties", {})
-        for key in ["fatalities", "injuries", "missing"]:
-            value = casualties.get(key, 0)
-            if isinstance(value, (int, float)) and value < 0:
-                self.logger.warning(f"Negative casualty count for {key}: {value}")
-                return False
-
-        # Validate coordinates if present
-        location = data.get("location", {})
-        lat = location.get("latitude")
-        lon = location.get("longitude")
-
-        if lat is not None:
-            try:
-                lat = float(lat)
-                if not -90 <= lat <= 90:
-                    self.logger.warning(f"Invalid latitude: {lat}")
-                    return False
-            except (ValueError, TypeError):
-                pass
-
-        if lon is not None:
-            try:
-                lon = float(lon)
-                if not -180 <= lon <= 180:
-                    self.logger.warning(f"Invalid longitude: {lon}")
-                    return False
-            except (ValueError, TypeError):
-                pass
-
-        return True
+        return validate_investigation_data(data, self.min_date)
 
     def _validate_atsb_id(self, atsb_id: str) -> bool:
-        """
-        Validate ATSB investigation ID format.
-
-        Args:
-            atsb_id: ATSB ID to validate
-
-        Returns:
-            True if valid format
-        """
-        if not atsb_id:
-            return False
-
-        clean_id = atsb_id.strip().upper()
-
-        # Check against pattern
-        if self.ATSB_ID_PATTERN.match(clean_id):
-            return True
-
-        # Accept more flexible patterns (e.g., MO2022001)
-        if re.match(r"^(?:MO|MR)\d{7,}$", clean_id):
-            return True
-
-        return False
+        """Validate ATSB investigation ID format."""
+        return validate_atsb_id(atsb_id)
 
     def clear_checkpoint(self) -> None:
         """Clear checkpoint data to start fresh."""
-        self._processed_ids.clear()
-        self._last_checkpoint_time = None
-
-        if self._checkpoint_file.exists():
-            self._checkpoint_file.unlink()
-            self.logger.info("Checkpoint cleared")
+        self._checkpoint.clear()
 
     def get_statistics(self) -> Dict[str, Any]:
         """
@@ -1060,20 +478,19 @@ class ATSBScraper(BaseScraper):
         Returns:
             Dictionary of scraping statistics
         """
-        return {
-            "source": DataSource.ATSB.value,
-            "total_processed_ids": len(self._processed_ids),
-            "last_checkpoint": (
-                self._last_checkpoint_time.isoformat()
-                if self._last_checkpoint_time
-                else None
-            ),
-            "total_requests": self._request_count,
-            "checkpoint_file": str(self._checkpoint_file),
-            "pdfs_downloaded": (
-                len(list(self.pdf_dir.glob("*.pdf"))) if self.pdf_dir.exists() else 0
-            ),
-        }
+        stats = self._checkpoint.get_statistics()
+        stats.update(
+            {
+                "source": DataSource.ATSB.value,
+                "total_requests": self._request_count,
+                "pdfs_downloaded": (
+                    len(list(self.pdf_dir.glob("*.pdf")))
+                    if self.pdf_dir.exists()
+                    else 0
+                ),
+            }
+        )
+        return stats
 
     def export_to_json(
         self,
