@@ -54,8 +54,10 @@ from worldenergydata.cli.commands import (
     bsee,
     canada,
     fdas,
+    landman,
     marine_safety,
     metocean,
+    mexico_cnh,
     sodir,
     texas_rrc,
 )
@@ -92,6 +94,16 @@ app.add_typer(
     texas_rrc.app, name="texas-rrc", help="Texas Railroad Commission oil & gas data"
 )
 app.add_typer(canada.app, name="canada", help="Canadian oil & gas data (AER/BCER)")
+app.add_typer(
+    mexico_cnh.app,
+    name="mexico-cnh",
+    help="Mexico CNH oil & gas data (SIH dashboard)",
+)
+app.add_typer(
+    landman.app,
+    name="landman",
+    help="Mineral ownership and lease data operations",
+)
 
 
 @app.command()
@@ -153,6 +165,16 @@ def info() -> None:
         "Canadian oil & gas (AER/BCER)",
         "collect, analyze, status, validate-uwi",
     )
+    table.add_row(
+        "mexico-cnh",
+        "Mexico CNH oil & gas (SIH dashboard)",
+        "scrape, download-open-data, status, validate-clave",
+    )
+    table.add_row(
+        "landman",
+        "Mineral ownership and lease data",
+        "search, lookup, county-info, providers, status",
+    )
 
     console.print(table)
 
@@ -176,6 +198,8 @@ def status() -> None:
         "Metocean Data": Path("data/metocean"),
         "Texas RRC Data": Path("data/texas_rrc"),
         "Canada Data": Path("data/canada"),
+        "Mexico CNH Data": Path("data/mexico_cnh"),
+        "Landman Data": Path("data/landman"),
         "Reports": Path("reports"),
     }
 

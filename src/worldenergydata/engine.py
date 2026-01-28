@@ -71,6 +71,18 @@ def engine(inputfile: str = None, cfg: dict = None, config_flag: bool = True) ->
         canada_app = Canada()
         cfg_base = canada_app.router(cfg_base)
 
+    elif basename in ["mexico_cnh"]:
+        from worldenergydata.modules.mexico_cnh.mexico_cnh import MexicoCNH
+
+        mexico_app = MexicoCNH()
+        cfg_base = mexico_app.router(cfg_base)
+
+    elif basename in ["landman"]:
+        from worldenergydata.modules.landman.landman import Landman
+
+        landman_app = Landman()
+        cfg_base = landman_app.router(cfg_base)
+
     elif basename in ["dwnld_from_zipurl"]:
         dwnld_from_zipurl = zip()
         cfg_base = dwnld_from_zipurl.router(cfg_base)
