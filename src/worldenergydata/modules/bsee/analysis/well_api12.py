@@ -465,7 +465,7 @@ class WellAPI12:
 
     def prepare_completion_data(self, completion_data):
         # Third party imports
-        from common.data import Transform
+        from assetutilities.common.data import Transform
 
         transform = Transform()
         field_x_ref = self.cfg["custom_parameters"]["field_x_ref"]

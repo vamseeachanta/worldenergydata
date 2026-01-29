@@ -17,11 +17,11 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
+# Fix pandas 3.0 + pyarrow compatibility issue
+pd.options.mode.string_storage = "python"
 
-def generate_synthetic_wave_data(
-    n_records: int = 5000,
-    seed: int = 42
-) -> pd.DataFrame:
+
+def generate_synthetic_wave_data(n_records: int = 5000, seed: int = 42) -> pd.DataFrame:
     """Generate synthetic wave height and direction data.
 
     Creates realistic-looking wave data with:
@@ -66,20 +66,22 @@ def generate_synthetic_wave_data(
     # Shuffle to mix data
     indices = np.random.permutation(n_records)
 
-    df = pd.DataFrame({
-        'wave_height_m': heights[indices],
-        'wave_direction_deg': directions[indices]
-    })
+    df = pd.DataFrame(
+        {
+            "wave_height_m": heights[indices],
+            "wave_direction_deg": directions[indices],
+        }
+    )
 
     return df
 
 
 def create_wave_rose(
     df: pd.DataFrame,
-    height_col: str = 'wave_height_m',
-    direction_col: str = 'wave_direction_deg',
+    height_col: str = "wave_height_m",
+    direction_col: str = "wave_direction_deg",
     n_sectors: int = 16,
-    output_path: str | None = None
+    output_path: str | None = None,
 ) -> go.Figure:
     """Create interactive wave rose with Plotly.
 
@@ -101,47 +103,49 @@ def create_wave_rose(
 
     # Bin directions into sectors
     df_copy = df.copy()
-    df_copy['dir_bin'] = pd.cut(
-        df_copy[direction_col],
-        bins=bins,
-        labels=bins[:-1] + sector_width / 2
+    df_copy["dir_bin"] = pd.cut(
+        df_copy[direction_col], bins=bins, labels=bins[:-1] + sector_width / 2
     )
 
     # Calculate statistics per sector
-    stats = df_copy.groupby('dir_bin', observed=True).agg({
-        height_col: ['count', 'mean', 'max']
-    }).reset_index()
-    stats.columns = ['direction', 'count', 'mean_hs', 'max_hs']
+    stats = (
+        df_copy.groupby("dir_bin", observed=True)
+        .agg({height_col: ["count", "mean", "max"]})
+        .reset_index()
+    )
+    stats.columns = ["direction", "count", "mean_hs", "max_hs"]
 
     # Convert direction to float
-    stats['direction'] = stats['direction'].astype(float)
+    stats["direction"] = stats["direction"].astype(float)
 
     # Calculate occurrence percentage
-    total = stats['count'].sum()
-    stats['occurrence_pct'] = 100 * stats['count'] / total
+    total = stats["count"].sum()
+    stats["occurrence_pct"] = 100 * stats["count"] / total
 
     # Create the wave rose figure
     fig = go.Figure()
 
-    fig.add_trace(go.Barpolar(
-        r=stats['occurrence_pct'],
-        theta=stats['direction'],
-        width=sector_width * 0.9,
-        marker_color=stats['mean_hs'],
-        marker_colorscale='Viridis',
-        marker_colorbar=dict(
-            title=dict(text='Mean Hs (m)', side='right'),
-            ticksuffix=' m',
-            thickness=20
-        ),
-        hovertemplate=(
-            '<b>Direction:</b> %{theta:.0f} deg<br>'
-            '<b>Occurrence:</b> %{r:.1f}%<br>'
-            '<b>Mean Hs:</b> %{marker.color:.2f} m'
-            '<extra></extra>'
-        ),
-        name='Wave Rose'
-    ))
+    fig.add_trace(
+        go.Barpolar(
+            r=stats["occurrence_pct"],
+            theta=stats["direction"],
+            width=sector_width * 0.9,
+            marker_color=stats["mean_hs"],
+            marker_colorscale="Viridis",
+            marker_colorbar=dict(
+                title=dict(text="Mean Hs (m)", side="right"),
+                ticksuffix=" m",
+                thickness=20,
+            ),
+            hovertemplate=(
+                "<b>Direction:</b> %{theta:.0f} deg<br>"
+                "<b>Occurrence:</b> %{r:.1f}%<br>"
+                "<b>Mean Hs:</b> %{marker.color:.2f} m"
+                "<extra></extra>"
+            ),
+            name="Wave Rose",
+        )
+    )
 
     # Configure polar layout for meteorological convention
     # (0=North at top, clockwise)
@@ -149,29 +153,27 @@ def create_wave_rose(
         polar=dict(
             radialaxis=dict(
                 visible=True,
-                range=[0, stats['occurrence_pct'].max() * 1.15],
-                ticksuffix='%',
+                range=[0, stats["occurrence_pct"].max() * 1.15],
+                ticksuffix="%",
                 showline=False,
-                gridcolor='lightgray'
+                gridcolor="lightgray",
             ),
             angularaxis=dict(
-                direction='clockwise',
+                direction="clockwise",
                 rotation=90,  # Put 0 deg (North) at top
-                tickmode='array',
+                tickmode="array",
                 tickvals=[0, 45, 90, 135, 180, 225, 270, 315],
-                ticktext=['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'],
-                gridcolor='lightgray'
+                ticktext=["N", "NE", "E", "SE", "S", "SW", "W", "NW"],
+                gridcolor="lightgray",
             ),
-            bgcolor='rgba(255,255,255,0.9)'
+            bgcolor="rgba(255,255,255,0.9)",
         ),
         title=dict(
-            text='Wave Rose - Direction Distribution',
-            x=0.5,
-            font=dict(size=18)
+            text="Wave Rose - Direction Distribution", x=0.5, font=dict(size=18)
         ),
         showlegend=False,
         margin=dict(l=80, r=80, t=80, b=60),
-        paper_bgcolor='white'
+        paper_bgcolor="white",
     )
 
     # Add summary annotation
@@ -182,15 +184,17 @@ def create_wave_rose(
     )
     fig.add_annotation(
         text=summary_text,
-        xref='paper', yref='paper',
-        x=0.02, y=0.98,
+        xref="paper",
+        yref="paper",
+        x=0.02,
+        y=0.98,
         showarrow=False,
         font=dict(size=11),
-        align='left',
-        bgcolor='rgba(255,255,255,0.8)',
-        bordercolor='gray',
+        align="left",
+        bgcolor="rgba(255,255,255,0.8)",
+        bordercolor="gray",
         borderwidth=1,
-        borderpad=5
+        borderpad=5,
     )
 
     if output_path:
@@ -203,28 +207,28 @@ def create_wave_rose(
 def main() -> None:
     """Generate wave rose demo and save to HTML."""
     # Define output path
-    output_dir = Path('/mnt/github/workspace-hub/worldenergydata/reports/metocean')
+    output_dir = Path("/mnt/github/workspace-hub/worldenergydata/reports/metocean")
     output_dir.mkdir(parents=True, exist_ok=True)
-    output_path = output_dir / 'test_wave_rose.html'
+    output_path = output_dir / "test_wave_rose.html"
 
     print("Generating synthetic wave data...")
     df = generate_synthetic_wave_data(n_records=5000)
 
     print(f"Data summary:")
     print(f"  Records: {len(df)}")
-    print(f"  Wave height range: {df['wave_height_m'].min():.2f} - {df['wave_height_m'].max():.2f} m")
+    print(
+        f"  Wave height range: {df['wave_height_m'].min():.2f} - {df['wave_height_m'].max():.2f} m"
+    )
     print(f"  Mean wave height: {df['wave_height_m'].mean():.2f} m")
-    print(f"  Direction range: {df['wave_direction_deg'].min():.1f} - {df['wave_direction_deg'].max():.1f} deg")
+    print(
+        f"  Direction range: {df['wave_direction_deg'].min():.1f} - {df['wave_direction_deg'].max():.1f} deg"
+    )
 
     print("\nCreating wave rose visualization...")
-    fig = create_wave_rose(
-        df,
-        n_sectors=16,
-        output_path=str(output_path)
-    )
+    fig = create_wave_rose(df, n_sectors=16, output_path=str(output_path))
 
     print(f"\nDone! Open the HTML file to view the interactive wave rose.")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

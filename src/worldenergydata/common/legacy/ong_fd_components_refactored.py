@@ -18,17 +18,17 @@ import logging
 from typing import Any
 
 import pandas as pd
+from assetutilities.common.data import AttributeDict
+from assetutilities.common.database import Database, get_db_connection
 
-from common.bsee_data_manager import BSEEData
-from common.data import AttributeDict, DateTimeUtility, transform_df_datetime_to_str
-from common.database import Database, get_db_connection
+from worldenergydata.common.legacy.bsee_data_manager import BSEEData
+from worldenergydata.common.legacy.data import (
+    DateTimeUtility,
+    transform_df_datetime_to_str,
+)
 
 # Import from refactored modules
-from .ong_fd_drilling import (
-    assign_st_bp_tree_info,
-    get_rig_days_and_drilling_wt,
-)
-from .ong_fd_summary import calculate_drilling_completion_summary
+from .ong_fd_drilling import assign_st_bp_tree_info, get_rig_days_and_drilling_wt
 from .ong_fd_geometry import evaluate_well_distances, prepare_completion_data
 from .ong_fd_production import (
     add_production_from_all_wells,
@@ -37,6 +37,7 @@ from .ong_fd_production import (
     prepare_field_production,
     prepare_field_production_rate,
 )
+from .ong_fd_summary import calculate_drilling_completion_summary
 from .ong_fd_tubulars import (
     prepare_casing_data,
     prepare_casing_tubular_summary_all_wells,
@@ -77,7 +78,9 @@ class ONGFDComponents:
         output_db_properties: dict[str, Any] = cfg["output_bsee_db"]
         self.dbe_output: Any
         self.connection_status: Any
-        self.dbe_output, self.connection_status = get_db_connection(output_db_properties)
+        self.dbe_output, self.connection_status = get_db_connection(
+            output_db_properties
+        )
 
         db_properties: dict[str, Any] = cfg["db"]
         self.dbe: Database = Database(db_properties)
@@ -226,8 +229,8 @@ class ONGFDComponents:
         self.output_data_api12_df: pd.DataFrame = well_data.copy()
 
         # Add GIS info using utility function
-        self.output_data_api12_df, self.field_x_ref, self.field_y_ref = add_gis_info_to_df(
-            self.output_data_api12_df
+        self.output_data_api12_df, self.field_x_ref, self.field_y_ref = (
+            add_gis_info_to_df(self.output_data_api12_df)
         )
         print("GIS data is formatted")
 
@@ -267,8 +270,12 @@ class ONGFDComponents:
                 well_api12: Any = df_temp.API12.iloc[0]
                 well_api10: int | str = get_api10_from_well_api(well_api12)
 
-                self.output_data_field_production_rate_df = prepare_field_production_rate(
-                    df_temp, completion_name, self.output_data_field_production_rate_df
+                self.output_data_field_production_rate_df = (
+                    prepare_field_production_rate(
+                        df_temp,
+                        completion_name,
+                        self.output_data_field_production_rate_df,
+                    )
                 )
                 self.output_data_field_production_df = prepare_field_production(
                     df_temp, completion_name, self.output_data_field_production_df
@@ -593,7 +600,9 @@ class ONGFDComponents:
 
     def prepare_visualizations(self) -> None:
         """Prepare visualizations using VisualizationComponents."""
-        from common.visualization_components import VisualizationComponents
+        from assetutilities.common.visualization_components import (
+            VisualizationComponents,
+        )
 
         vc = VisualizationComponents(self.cfg)
         vc.prepare_visualizations(self)
@@ -643,9 +652,7 @@ class ONGFDComponents:
 
     def plot_field_wells(self) -> None:
         """Plot 3D well paths for the field."""
-        plot_field_wells(
-            self.output_data_well_path, self.output_data_well_df, self.cfg
-        )
+        plot_field_wells(self.output_data_well_path, self.output_data_well_df, self.cfg)
 
     # Backward compatibility - keep method name
     def get_API10_from_well_API(self, well_api: Any) -> int | str:

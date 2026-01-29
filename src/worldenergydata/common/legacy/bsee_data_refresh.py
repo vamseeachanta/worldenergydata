@@ -6,7 +6,7 @@ from typing import Any
 
 
 def GetData_download_file_from_url(cfg: dict[str, Any]) -> None:
-    from common.data import GetData
+    from assetutilities.common.data import GetData
 
     get_data = GetData()
 

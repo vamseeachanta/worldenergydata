@@ -1,21 +1,19 @@
 # ABOUTME: Test suite for HTML cause analysis report generation module
 # ABOUTME: Validates report structure, visualizations, data tables, and filters
 
-import pytest
-from pathlib import Path
-from datetime import datetime, timedelta
-from bs4 import BeautifulSoup
 import json
 import re
+from datetime import datetime, timedelta
+from pathlib import Path
 
-from src.worldenergydata.modules.marine_safety.analysis.cause_report import (
+import pytest
+from bs4 import BeautifulSoup
+
+from worldenergydata.modules.marine_safety.analysis.cause_report import (
     CauseAnalysisReport,
     ReportFilters,
 )
-from src.worldenergydata.modules.marine_safety.constants import (
-    CauseCategory,
-    SeverityLevel,
-)
+from worldenergydata.modules.marine_safety.constants import CauseCategory, SeverityLevel
 
 
 @pytest.fixture
@@ -27,11 +25,19 @@ def sample_incident_data():
             "incident_id": f"INC-2024-{i:03d}",
             "date": base_date + timedelta(days=i * 10),
             "incident_type": "Flooding" if i % 3 == 0 else "Grounding",
-            "cause_category": CauseCategory.HUMAN_ERROR if i % 2 == 0 else CauseCategory.EQUIPMENT_FAILURE,
+            "cause_category": (
+                CauseCategory.HUMAN_ERROR
+                if i % 2 == 0
+                else CauseCategory.EQUIPMENT_FAILURE
+            ),
             "severity": SeverityLevel.SERIOUS if i % 4 == 0 else SeverityLevel.MODERATE,
             "vessel_name": f"Test Vessel {i}",
             "location": "Gulf of Mexico",
-            "description": f"Test incident {i} with hatch maloperation" if i % 5 == 0 else f"Test incident {i}",
+            "description": (
+                f"Test incident {i} with hatch maloperation"
+                if i % 5 == 0
+                else f"Test incident {i}"
+            ),
             "fatalities": 1 if i % 10 == 0 else 0,
             "injuries": i % 3,
             "investigation_complete": True,
@@ -73,7 +79,9 @@ class TestCauseAnalysisReport:
         assert report is not None
         assert len(report.incidents) == 0
 
-    def test_generate_html_creates_valid_html(self, sample_incident_data, temp_output_dir):
+    def test_generate_html_creates_valid_html(
+        self, sample_incident_data, temp_output_dir
+    ):
         """Test HTML generation creates valid HTML structure."""
         report = CauseAnalysisReport(sample_incident_data)
         output_file = temp_output_dir / "test_report.html"
@@ -92,7 +100,9 @@ class TestCauseAnalysisReport:
         assert soup.find("body") is not None
         assert soup.find("title") is not None
 
-    def test_html_contains_executive_summary(self, sample_incident_data, temp_output_dir):
+    def test_html_contains_executive_summary(
+        self, sample_incident_data, temp_output_dir
+    ):
         """Test HTML report contains executive summary section."""
         report = CauseAnalysisReport(sample_incident_data)
         output_file = temp_output_dir / "test_report.html"
@@ -106,10 +116,15 @@ class TestCauseAnalysisReport:
         assert summary_section is not None
 
         # Check summary contains key metrics
-        assert "Total Incidents" in html_content or "total incidents" in html_content.lower()
+        assert (
+            "Total Incidents" in html_content
+            or "total incidents" in html_content.lower()
+        )
         assert "Fatalities" in html_content or "fatalities" in html_content.lower()
 
-    def test_html_contains_statistical_findings(self, sample_incident_data, temp_output_dir):
+    def test_html_contains_statistical_findings(
+        self, sample_incident_data, temp_output_dir
+    ):
         """Test HTML report contains statistical findings section."""
         report = CauseAnalysisReport(sample_incident_data)
         output_file = temp_output_dir / "test_report.html"
@@ -142,7 +157,9 @@ class TestCauseAnalysisReport:
         viz_section = soup.find(id="visualizations")
         assert viz_section is not None
 
-    def test_html_contains_hatch_maloperation_section(self, sample_incident_data, temp_output_dir):
+    def test_html_contains_hatch_maloperation_section(
+        self, sample_incident_data, temp_output_dir
+    ):
         """Test HTML report contains hatch/opening maloperation analysis."""
         report = CauseAnalysisReport(sample_incident_data)
         output_file = temp_output_dir / "test_report.html"
@@ -178,7 +195,9 @@ class TestCauseAnalysisReport:
         html_content = output_file.read_text()
 
         # Check for DataTables
-        assert "datatables" in html_content.lower() or "datatable" in html_content.lower()
+        assert (
+            "datatables" in html_content.lower() or "datatable" in html_content.lower()
+        )
 
     def test_html_contains_navigation_menu(self, sample_incident_data, temp_output_dir):
         """Test HTML contains navigation menu for sections."""
@@ -210,7 +229,9 @@ class TestCauseAnalysisReport:
         assert "Generated on" in html_content or "generated" in html_content.lower()
         assert "Data Source" in html_content or "source" in html_content.lower()
 
-    def test_html_standalone_no_external_dependencies(self, sample_incident_data, temp_output_dir):
+    def test_html_standalone_no_external_dependencies(
+        self, sample_incident_data, temp_output_dir
+    ):
         """Test HTML is standalone with embedded resources."""
         report = CauseAnalysisReport(sample_incident_data)
         output_file = temp_output_dir / "test_report.html"
@@ -225,8 +246,7 @@ class TestCauseAnalysisReport:
     def test_filter_by_date_range(self, sample_incident_data):
         """Test filtering incidents by date range."""
         filters = ReportFilters(
-            start_date=datetime(2024, 1, 15),
-            end_date=datetime(2024, 2, 15)
+            start_date=datetime(2024, 1, 15), end_date=datetime(2024, 2, 15)
         )
 
         report = CauseAnalysisReport(sample_incident_data, filters=filters)
@@ -238,9 +258,7 @@ class TestCauseAnalysisReport:
 
     def test_filter_by_cause_category(self, sample_incident_data):
         """Test filtering incidents by cause category."""
-        filters = ReportFilters(
-            cause_categories=[CauseCategory.HUMAN_ERROR]
-        )
+        filters = ReportFilters(cause_categories=[CauseCategory.HUMAN_ERROR])
 
         report = CauseAnalysisReport(sample_incident_data, filters=filters)
 
@@ -250,9 +268,7 @@ class TestCauseAnalysisReport:
 
     def test_filter_by_severity(self, sample_incident_data):
         """Test filtering incidents by severity level."""
-        filters = ReportFilters(
-            min_severity=SeverityLevel.SERIOUS
-        )
+        filters = ReportFilters(min_severity=SeverityLevel.SERIOUS)
 
         report = CauseAnalysisReport(sample_incident_data, filters=filters)
 
@@ -265,8 +281,11 @@ class TestCauseAnalysisReport:
         filters = ReportFilters(
             start_date=datetime(2024, 1, 1),
             end_date=datetime(2024, 12, 31),
-            cause_categories=[CauseCategory.HUMAN_ERROR, CauseCategory.EQUIPMENT_FAILURE],
-            min_severity=SeverityLevel.MODERATE
+            cause_categories=[
+                CauseCategory.HUMAN_ERROR,
+                CauseCategory.EQUIPMENT_FAILURE,
+            ],
+            min_severity=SeverityLevel.MODERATE,
         )
 
         report = CauseAnalysisReport(sample_incident_data, filters=filters)
@@ -285,7 +304,12 @@ class TestCauseAnalysisReport:
 
         # Check for export buttons
         buttons = soup.find_all("button")
-        export_buttons = [btn for btn in buttons if "export" in btn.get_text().lower() or "download" in btn.get_text().lower()]
+        export_buttons = [
+            btn
+            for btn in buttons
+            if "export" in btn.get_text().lower()
+            or "download" in btn.get_text().lower()
+        ]
 
         assert len(export_buttons) > 0
 
@@ -298,14 +322,16 @@ class TestCauseAnalysisReport:
         html_content = output_file.read_text()
 
         # Check for responsive meta tag
-        assert 'viewport' in html_content
+        assert "viewport" in html_content
 
         # Check for responsive classes
         soup = BeautifulSoup(html_content, "html.parser")
         responsive_elements = soup.find_all(class_=re.compile(r"col-|container|row"))
         assert len(responsive_elements) > 0
 
-    def test_cause_category_distribution_chart(self, sample_incident_data, temp_output_dir):
+    def test_cause_category_distribution_chart(
+        self, sample_incident_data, temp_output_dir
+    ):
         """Test report includes cause category distribution chart."""
         report = CauseAnalysisReport(sample_incident_data)
         output_file = temp_output_dir / "test_report.html"
@@ -315,7 +341,9 @@ class TestCauseAnalysisReport:
 
         # Check for cause category mentions in visualizations
         assert "cause" in html_content.lower()
-        assert "category" in html_content.lower() or "distribution" in html_content.lower()
+        assert (
+            "category" in html_content.lower() or "distribution" in html_content.lower()
+        )
 
     def test_severity_trend_chart(self, sample_incident_data, temp_output_dir):
         """Test report includes severity trend over time chart."""
@@ -334,7 +362,7 @@ class TestCauseAnalysisReport:
         filters = ReportFilters(
             start_date=datetime(2024, 1, 1),
             end_date=datetime(2024, 12, 31),
-            cause_categories=[CauseCategory.HUMAN_ERROR]
+            cause_categories=[CauseCategory.HUMAN_ERROR],
         )
 
         report = CauseAnalysisReport(sample_incident_data, filters=filters)
@@ -345,7 +373,10 @@ class TestCauseAnalysisReport:
 
         # Check filters are documented
         assert "2024-01-01" in html_content or "January 1, 2024" in html_content
-        assert "human error" in html_content.lower() or "human_error" in html_content.lower()
+        assert (
+            "human error" in html_content.lower()
+            or "human_error" in html_content.lower()
+        )
 
 
 class TestReportFilters:
@@ -369,7 +400,7 @@ class TestReportFilters:
             start_date=start,
             end_date=end,
             cause_categories=[CauseCategory.HUMAN_ERROR],
-            min_severity=SeverityLevel.MODERATE
+            min_severity=SeverityLevel.MODERATE,
         )
 
         assert filters.start_date == start
@@ -381,8 +412,7 @@ class TestReportFilters:
         """Test filters validate date range."""
         with pytest.raises(ValueError):
             ReportFilters(
-                start_date=datetime(2024, 12, 31),
-                end_date=datetime(2024, 1, 1)
+                start_date=datetime(2024, 12, 31), end_date=datetime(2024, 1, 1)
             )
 
     def test_filters_apply_to_incidents(self, sample_incident_data):
@@ -390,7 +420,7 @@ class TestReportFilters:
         filters = ReportFilters(
             start_date=datetime(2024, 1, 15),
             end_date=datetime(2024, 2, 15),
-            cause_categories=[CauseCategory.HUMAN_ERROR]
+            cause_categories=[CauseCategory.HUMAN_ERROR],
         )
 
         filtered_data = filters.apply(sample_incident_data)

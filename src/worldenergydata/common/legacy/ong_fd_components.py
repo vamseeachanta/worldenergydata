@@ -6,9 +6,14 @@ import os
 from typing import Any
 
 import pandas as pd
-from common.bsee_data_manager import BSEEData
-from common.data import AttributeDict, DateTimeUtility, transform_df_datetime_to_str
-from common.database import Database, get_db_connection
+from assetutilities.common.data import AttributeDict
+from assetutilities.common.database import Database, get_db_connection
+
+from worldenergydata.common.legacy.bsee_data_manager import BSEEData
+from worldenergydata.common.legacy.data import (
+    DateTimeUtility,
+    transform_df_datetime_to_str,
+)
 
 dtu = DateTimeUtility()
 
@@ -179,7 +184,7 @@ class ONGFDComponents:
         self.output_data_api12_df["xyz"] = None
 
     def add_gis_info_to_well_data(self) -> None:
-        from common.data import Transform
+        from assetutilities.common.data import Transform
 
         transform = Transform()
         gis_cfg: dict[str, str] = {
@@ -687,7 +692,7 @@ class ONGFDComponents:
         return sidetrack_no, bypass_no, tree_elevation_aml
 
     def evaluate_well_distances(self) -> None:
-        from common.math_solvers import Geometry
+        from worldenergydata.common.legacy.math_solvers import Geometry
 
         geom = Geometry()
         self.output_data_api12_df["HORZ_DEPARTURE"] = 0
@@ -997,7 +1002,7 @@ class ONGFDComponents:
             ]
 
     def prepare_completion_data(self, completion_data: pd.DataFrame) -> None:
-        from common.data import Transform
+        from assetutilities.common.data import Transform
 
         transform = Transform()
         self.output_completions: pd.DataFrame = completion_data.merge(
@@ -1103,7 +1108,7 @@ class ONGFDComponents:
         if len(self.output_data_well_df["Well Name"].unique()) < len(
             self.output_data_well_df
         ):
-            from common.data import Transform
+            from assetutilities.common.data import Transform
 
             trans = Transform()
             old_list: list[str] = list(self.output_data_well_df["Well Name"])
@@ -1353,7 +1358,9 @@ class ONGFDComponents:
         )
 
     def prepare_visualizations(self) -> None:
-        from common.visualization_components import VisualizationComponents
+        from assetutilities.common.visualization_components import (
+            VisualizationComponents,
+        )
 
         vc = VisualizationComponents(self.cfg)
         vc.prepare_visualizations(self)
@@ -1381,7 +1388,7 @@ class ONGFDComponents:
                     df_array.append(df)
                     label_array.append(label)
 
-            from common.data import SaveData
+            from assetutilities.common.data import SaveData
 
             save_data = SaveData()
             file_name_without_extension: str = (

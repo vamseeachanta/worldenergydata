@@ -48,7 +48,7 @@ form_sumbit_variable = "dropDownSelection"
 
 
 def assignFieldList():
-    from common.data import ReadDataFromSystemFiles
+    from worldenergydata.common.legacy.data import ReadDataFromSystemFiles
 
     read_data = ReadDataFromSystemFiles()
     folder_with_file_type = os.path.join(
@@ -130,7 +130,7 @@ def performFormSubmissionActions():
 
 
 def assignContextData():
-    from common.data import ReadDataFromSystemFiles
+    from worldenergydata.common.legacy.data import ReadDataFromSystemFiles
 
     read_data = ReadDataFromSystemFiles()
     context["FieldName"] = context["form_submitted_value"]

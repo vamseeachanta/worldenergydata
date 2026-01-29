@@ -457,3 +457,10 @@ class CanadaError(ModuleError):
 
     default_code = "CANADA_ERROR"
     module_name = "canada"
+
+
+class MexicoCNHError(ModuleError):
+    """Mexico CNH module-specific errors."""
+
+    default_code = "MEXICO_CNH_ERROR"
+    module_name = "mexico_cnh"

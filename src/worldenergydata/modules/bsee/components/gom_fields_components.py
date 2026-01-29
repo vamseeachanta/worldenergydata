@@ -1,8 +1,8 @@
 import logging
 import os
 
-from common.data import transform_df_datetime_to_str, transform_df_None_to_NULL
-from common.database import get_db_connection, get_db_properties_for_service
+from worldenergydata.common.legacy.data import transform_df_datetime_to_str, transform_df_None_to_NULL
+from assetutilities.common.database import get_db_connection, get_db_properties_for_service
 
 script_working_dir = os.getcwd()
 if "tests" in script_working_dir:

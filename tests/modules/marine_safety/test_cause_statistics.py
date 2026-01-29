@@ -6,25 +6,32 @@ incident causes including frequency distributions, temporal trends, cross-tabula
 and specialized analysis for hatch/opening maloperation incidents.
 """
 
-import pytest
-import pandas as pd
-import numpy as np
-from datetime import datetime, date, timedelta
+from datetime import date, datetime, timedelta
 from decimal import Decimal
+
+import numpy as np
+import pandas as pd
+import pytest
 from sqlalchemy.orm import Session
 
-from src.worldenergydata.modules.marine_safety.analysis.cause_statistics import (
+from worldenergydata.modules.marine_safety.analysis.cause_statistics import (
     CauseStatistics,
-    FrequencyDistribution,
-    TemporalTrend,
     CrossTabulation,
-    StatisticalSummary
+    FrequencyDistribution,
+    StatisticalSummary,
+    TemporalTrend,
 )
-from src.worldenergydata.modules.marine_safety.database.models import (
-    Incident, IncidentCause, Vessel, Company
+from worldenergydata.modules.marine_safety.constants import (
+    CauseCategory,
+    DataSource,
+    IncidentType,
+    SeverityLevel,
 )
-from src.worldenergydata.modules.marine_safety.constants import (
-    CauseCategory, IncidentType, DataSource, SeverityLevel
+from worldenergydata.modules.marine_safety.database.models import (
+    Company,
+    Incident,
+    IncidentCause,
+    Vessel,
 )
 
 
@@ -40,12 +47,12 @@ def sample_incidents_with_causes(test_session):
     vessel1 = Vessel(
         vessel_name="Test Platform 1",
         vessel_type="production_platform",
-        company_id=company1.company_id
+        company_id=company1.company_id,
     )
     vessel2 = Vessel(
         vessel_name="Test Supply Vessel",
         vessel_type="supply_vessel",
-        company_id=company2.company_id
+        company_id=company2.company_id,
     )
     test_session.add_all([vessel1, vessel2])
     test_session.flush()
@@ -58,11 +65,11 @@ def sample_incidents_with_causes(test_session):
         incident = Incident(
             source_agency=DataSource.USCG,
             source_incident_id=f"HE-2024-{i:03d}",
-            incident_date=date(2024, 1, i+1),
+            incident_date=date(2024, 1, i + 1),
             incident_type=IncidentType.PERSONNEL_INJURY,
             severity_level=SeverityLevel.MINOR,
             vessel_id=vessel1.vessel_id,
-            company_id=company1.company_id
+            company_id=company1.company_id,
         )
         incidents.append(incident)
         test_session.add(incident)
@@ -72,7 +79,7 @@ def sample_incidents_with_causes(test_session):
             incident_id=incident.incident_id,
             cause_category=CauseCategory.HUMAN_ERROR,
             cause_description="Operator error during routine operations",
-            is_primary=True
+            is_primary=True,
         )
         test_session.add(cause)
 
@@ -81,11 +88,11 @@ def sample_incidents_with_causes(test_session):
         incident = Incident(
             source_agency=DataSource.BSEE,
             source_incident_id=f"EF-2024-{i:03d}",
-            incident_date=date(2024, 2, i+1),
+            incident_date=date(2024, 2, i + 1),
             incident_type=IncidentType.EQUIPMENT_FAILURE,
             severity_level=SeverityLevel.MODERATE,
             vessel_id=vessel2.vessel_id,
-            company_id=company2.company_id
+            company_id=company2.company_id,
         )
         incidents.append(incident)
         test_session.add(incident)
@@ -95,7 +102,7 @@ def sample_incidents_with_causes(test_session):
             incident_id=incident.incident_id,
             cause_category=CauseCategory.EQUIPMENT_FAILURE,
             cause_description="Hydraulic system failure",
-            is_primary=True
+            is_primary=True,
         )
         test_session.add(cause)
 
@@ -104,11 +111,11 @@ def sample_incidents_with_causes(test_session):
         incident = Incident(
             source_agency=DataSource.USCG,
             source_incident_id=f"WE-2024-{i:03d}",
-            incident_date=date(2024, 3, i+1),
+            incident_date=date(2024, 3, i + 1),
             incident_type=IncidentType.WEATHER_RELATED,
             severity_level=SeverityLevel.SERIOUS,
             vessel_id=vessel1.vessel_id,
-            company_id=company1.company_id
+            company_id=company1.company_id,
         )
         incidents.append(incident)
         test_session.add(incident)
@@ -118,7 +125,7 @@ def sample_incidents_with_causes(test_session):
             incident_id=incident.incident_id,
             cause_category=CauseCategory.WEATHER,
             cause_description="Hurricane force winds",
-            is_primary=True
+            is_primary=True,
         )
         test_session.add(cause)
 
@@ -130,7 +137,7 @@ def sample_incidents_with_causes(test_session):
         incident_type=IncidentType.STRUCTURAL_FAILURE,
         severity_level=SeverityLevel.CATASTROPHIC,
         vessel_id=vessel2.vessel_id,
-        company_id=company2.company_id
+        company_id=company2.company_id,
     )
     incidents.append(incident)
     test_session.add(incident)
@@ -140,7 +147,7 @@ def sample_incidents_with_causes(test_session):
         incident_id=incident.incident_id,
         cause_category=CauseCategory.MAINTENANCE_ISSUE,
         cause_description="Deferred maintenance on critical structural component",
-        is_primary=True
+        is_primary=True,
     )
     test_session.add(cause)
 
@@ -157,7 +164,9 @@ class TestCauseStatistics:
         assert stats.session == test_session
         assert isinstance(stats, CauseStatistics)
 
-    def test_calculate_frequency_distribution(self, test_session, sample_incidents_with_causes):
+    def test_calculate_frequency_distribution(
+        self, test_session, sample_incidents_with_causes
+    ):
         """Test frequency distribution calculation by cause category."""
         stats = CauseStatistics(test_session)
         distribution = stats.calculate_frequency_distribution()
@@ -170,13 +179,13 @@ class TestCauseStatistics:
         assert isinstance(distribution.data, pd.DataFrame)
 
         # Check expected counts
-        assert distribution.data.loc[CauseCategory.HUMAN_ERROR, 'count'] == 5
-        assert distribution.data.loc[CauseCategory.EQUIPMENT_FAILURE, 'count'] == 3
-        assert distribution.data.loc[CauseCategory.WEATHER, 'count'] == 2
-        assert distribution.data.loc[CauseCategory.MAINTENANCE_ISSUE, 'count'] == 1
+        assert distribution.data.loc[CauseCategory.HUMAN_ERROR, "count"] == 5
+        assert distribution.data.loc[CauseCategory.EQUIPMENT_FAILURE, "count"] == 3
+        assert distribution.data.loc[CauseCategory.WEATHER, "count"] == 2
+        assert distribution.data.loc[CauseCategory.MAINTENANCE_ISSUE, "count"] == 1
 
         # Check percentages sum to 100%
-        assert abs(distribution.data['percentage'].sum() - 100.0) < 0.01
+        assert abs(distribution.data["percentage"].sum() - 100.0) < 0.01
 
     def test_calculate_percentages(self, test_session, sample_incidents_with_causes):
         """Test percentage calculation for cause categories."""
@@ -184,11 +193,13 @@ class TestCauseStatistics:
         distribution = stats.calculate_frequency_distribution()
 
         # Human error should be ~45.5% (5/11)
-        human_error_pct = distribution.data.loc[CauseCategory.HUMAN_ERROR, 'percentage']
+        human_error_pct = distribution.data.loc[CauseCategory.HUMAN_ERROR, "percentage"]
         assert abs(human_error_pct - 45.45) < 0.1
 
         # Equipment failure should be ~27.3% (3/11)
-        equipment_pct = distribution.data.loc[CauseCategory.EQUIPMENT_FAILURE, 'percentage']
+        equipment_pct = distribution.data.loc[
+            CauseCategory.EQUIPMENT_FAILURE, "percentage"
+        ]
         assert abs(equipment_pct - 27.27) < 0.1
 
     def test_temporal_trend_analysis(self, test_session, sample_incidents_with_causes):
@@ -196,7 +207,7 @@ class TestCauseStatistics:
         stats = CauseStatistics(test_session)
 
         # Analyze by month
-        trends = stats.calculate_temporal_trends(period='month')
+        trends = stats.calculate_temporal_trends(period="month")
 
         assert isinstance(trends, TemporalTrend)
         assert trends.data is not None
@@ -206,19 +217,21 @@ class TestCauseStatistics:
         assert len(trends.data) >= 3
 
         # Each row should have period and counts by category
-        assert 'period' in trends.data.columns
-        assert any(col.startswith('count_') for col in trends.data.columns)
+        assert "period" in trends.data.columns
+        assert any(col.startswith("count_") for col in trends.data.columns)
 
     def test_temporal_trend_by_year(self, test_session, sample_incidents_with_causes):
         """Test temporal trend analysis grouped by year."""
         stats = CauseStatistics(test_session)
 
-        trends = stats.calculate_temporal_trends(period='year')
+        trends = stats.calculate_temporal_trends(period="year")
 
         assert isinstance(trends, TemporalTrend)
         assert len(trends.data) >= 1  # All incidents in 2024
 
-    def test_cross_tabulation_with_severity(self, test_session, sample_incidents_with_causes):
+    def test_cross_tabulation_with_severity(
+        self, test_session, sample_incidents_with_causes
+    ):
         """Test cross-tabulation of causes with severity levels."""
         stats = CauseStatistics(test_session)
 
@@ -232,7 +245,9 @@ class TestCauseStatistics:
         assert CauseCategory.HUMAN_ERROR in crosstab.data.index
 
         # Should have severity levels as columns
-        assert any(str(severity) in str(crosstab.data.columns) for severity in SeverityLevel)
+        assert any(
+            str(severity) in str(crosstab.data.columns) for severity in SeverityLevel
+        )
 
     def test_hatch_opening_maloperation_stats(self, test_session):
         """Test specialized statistics for hatch/opening maloperation incidents."""
@@ -245,11 +260,11 @@ class TestCauseStatistics:
             incident = Incident(
                 source_agency=DataSource.MAIB,
                 source_incident_id=f"HATCH-2024-{i:03d}",
-                incident_date=date(2024, 5, i+1),
+                incident_date=date(2024, 5, i + 1),
                 incident_type=IncidentType.FLOODING,
                 severity_level=SeverityLevel.SERIOUS,
                 vessel_id=vessel.vessel_id,
-                description="Hatch cover maloperation leading to water ingress"
+                description="Hatch cover maloperation leading to water ingress",
             )
             test_session.add(incident)
             test_session.flush()
@@ -258,7 +273,7 @@ class TestCauseStatistics:
                 incident_id=incident.incident_id,
                 cause_category=CauseCategory.PROCEDURAL,
                 cause_description="Hatch cover not properly secured",
-                is_primary=True
+                is_primary=True,
             )
             test_session.add(cause)
 
@@ -269,10 +284,12 @@ class TestCauseStatistics:
 
         assert hatch_stats is not None
         assert isinstance(hatch_stats, dict)
-        assert 'total_incidents' in hatch_stats
-        assert hatch_stats['total_incidents'] >= 3
+        assert "total_incidents" in hatch_stats
+        assert hatch_stats["total_incidents"] >= 3
 
-    def test_summary_report_generation(self, test_session, sample_incidents_with_causes):
+    def test_summary_report_generation(
+        self, test_session, sample_incidents_with_causes
+    ):
         """Test generation of comprehensive summary report."""
         stats = CauseStatistics(test_session)
 
@@ -293,13 +310,19 @@ class TestCauseStatistics:
             include_confidence_intervals=True
         )
 
-        assert 'ci_lower' in distribution.data.columns
-        assert 'ci_upper' in distribution.data.columns
+        assert "ci_lower" in distribution.data.columns
+        assert "ci_upper" in distribution.data.columns
 
         # Confidence intervals should be valid
         for idx in distribution.data.index:
-            assert distribution.data.loc[idx, 'ci_lower'] <= distribution.data.loc[idx, 'percentage']
-            assert distribution.data.loc[idx, 'percentage'] <= distribution.data.loc[idx, 'ci_upper']
+            assert (
+                distribution.data.loc[idx, "ci_lower"]
+                <= distribution.data.loc[idx, "percentage"]
+            )
+            assert (
+                distribution.data.loc[idx, "percentage"]
+                <= distribution.data.loc[idx, "ci_upper"]
+            )
 
     def test_export_to_csv(self, test_session, sample_incidents_with_causes, tmp_path):
         """Test exporting statistics to CSV file."""
@@ -315,8 +338,8 @@ class TestCauseStatistics:
         # Verify data can be read back
         df = pd.read_csv(csv_path)
         assert len(df) > 0
-        assert 'count' in df.columns
-        assert 'percentage' in df.columns
+        assert "count" in df.columns
+        assert "percentage" in df.columns
 
     def test_filter_by_date_range(self, test_session, sample_incidents_with_causes):
         """Test filtering statistics by date range."""
@@ -324,12 +347,11 @@ class TestCauseStatistics:
 
         # Filter to January only
         distribution = stats.calculate_frequency_distribution(
-            start_date=date(2024, 1, 1),
-            end_date=date(2024, 1, 31)
+            start_date=date(2024, 1, 1), end_date=date(2024, 1, 31)
         )
 
         # Should only include January incidents (5 human error)
-        total = distribution.data['count'].sum()
+        total = distribution.data["count"].sum()
         assert total == 5
 
     def test_filter_by_severity(self, test_session, sample_incidents_with_causes):
@@ -342,7 +364,7 @@ class TestCauseStatistics:
         )
 
         # Should include weather (2) + maintenance (1) = 3
-        total = distribution.data['count'].sum()
+        total = distribution.data["count"].sum()
         assert total == 3
 
     def test_empty_dataset_handling(self, test_session):
@@ -367,7 +389,7 @@ class TestCauseStatistics:
             incident_date=date(2024, 1, 1),
             incident_type=IncidentType.OTHER,
             severity_level=SeverityLevel.MINOR,
-            vessel_id=vessel.vessel_id
+            vessel_id=vessel.vessel_id,
         )
         test_session.add(incident)
         test_session.flush()
@@ -375,7 +397,7 @@ class TestCauseStatistics:
         cause = IncidentCause(
             incident_id=incident.incident_id,
             cause_category=CauseCategory.UNKNOWN,
-            is_primary=True
+            is_primary=True,
         )
         test_session.add(cause)
         test_session.commit()
@@ -383,12 +405,17 @@ class TestCauseStatistics:
         stats = CauseStatistics(test_session)
         distribution = stats.calculate_frequency_distribution()
 
-        assert distribution.data.loc[CauseCategory.UNKNOWN, 'count'] == 1
-        assert abs(distribution.data.loc[CauseCategory.UNKNOWN, 'percentage'] - 100.0) < 0.01
+        assert distribution.data.loc[CauseCategory.UNKNOWN, "count"] == 1
+        assert (
+            abs(distribution.data.loc[CauseCategory.UNKNOWN, "percentage"] - 100.0)
+            < 0.01
+        )
 
     def test_multiple_causes_per_incident(self, test_session):
         """Test handling of incidents with multiple contributing causes."""
-        vessel = Vessel(vessel_name="Multi Cause Test", vessel_type="production_platform")
+        vessel = Vessel(
+            vessel_name="Multi Cause Test", vessel_type="production_platform"
+        )
         test_session.add(vessel)
         test_session.flush()
 
@@ -398,7 +425,7 @@ class TestCauseStatistics:
             incident_date=date(2024, 6, 1),
             incident_type=IncidentType.EXPLOSION,
             severity_level=SeverityLevel.CATASTROPHIC,
-            vessel_id=vessel.vessel_id
+            vessel_id=vessel.vessel_id,
         )
         test_session.add(incident)
         test_session.flush()
@@ -408,7 +435,7 @@ class TestCauseStatistics:
             incident_id=incident.incident_id,
             cause_category=CauseCategory.EQUIPMENT_FAILURE,
             cause_description="Gas detection system failure",
-            is_primary=True
+            is_primary=True,
         )
 
         # Contributing causes
@@ -417,14 +444,14 @@ class TestCauseStatistics:
             cause_category=CauseCategory.MAINTENANCE_ISSUE,
             cause_description="Deferred maintenance on safety systems",
             is_primary=False,
-            contributing_factor="Inadequate preventive maintenance schedule"
+            contributing_factor="Inadequate preventive maintenance schedule",
         )
 
         cause3 = IncidentCause(
             incident_id=incident.incident_id,
             cause_category=CauseCategory.PROCEDURAL,
             cause_description="Failure to follow gas testing procedures",
-            is_primary=False
+            is_primary=False,
         )
 
         test_session.add_all([cause1, cause2, cause3])
@@ -434,12 +461,12 @@ class TestCauseStatistics:
 
         # Test all causes
         all_causes_dist = stats.calculate_frequency_distribution(primary_only=False)
-        assert all_causes_dist.data['count'].sum() == 3
+        assert all_causes_dist.data["count"].sum() == 3
 
         # Test primary only
         primary_dist = stats.calculate_frequency_distribution(primary_only=True)
-        assert primary_dist.data['count'].sum() == 1
-        assert primary_dist.data.loc[CauseCategory.EQUIPMENT_FAILURE, 'count'] == 1
+        assert primary_dist.data["count"].sum() == 1
+        assert primary_dist.data.loc[CauseCategory.EQUIPMENT_FAILURE, "count"] == 1
 
     def test_dataframe_return_format(self, test_session, sample_incidents_with_causes):
         """Test that results are returned as pandas DataFrames for easy visualization."""
@@ -456,14 +483,14 @@ class TestCauseStatistics:
 
     def test_comprehensive_docstrings(self):
         """Test that all methods have comprehensive docstrings."""
-        from inspect import getmembers, ismethod, getdoc
+        from inspect import getdoc, getmembers, ismethod
 
         # This will fail until we implement the class
         # but helps verify documentation completeness
         stats_class = CauseStatistics
 
         for name, method in getmembers(stats_class, predicate=lambda x: callable(x)):
-            if not name.startswith('_'):  # Skip private methods
+            if not name.startswith("_"):  # Skip private methods
                 doc = getdoc(method)
                 assert doc is not None, f"Method {name} missing docstring"
                 assert len(doc) > 20, f"Method {name} has insufficient documentation"

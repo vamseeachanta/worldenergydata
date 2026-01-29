@@ -1,16 +1,17 @@
 # ABOUTME: Skill demonstration script for metocean-data-fetcher.
-# ABOUTME: Fetches real-time buoy data from NDBC station 41001 and displays observations.
+# ABOUTME: Fetches real-time buoy data from NDBC stations and displays observations.
 
 """
 Metocean Data Fetcher Skill Demonstration
 
 This script demonstrates the metocean-data-fetcher skill by:
 1. Connecting to NDBC (National Data Buoy Center)
-2. Fetching station info for buoy 41001
+2. Fetching station info for a Gulf of Mexico buoy
 3. Retrieving real-time observations
 4. Saving output to a test file
 
-Station 41001 is located in the Atlantic Ocean, east of Cape Hatteras, NC.
+Station 42001 is located in the Mid-Gulf, 180 nm South of Southwest Pass, LA.
+Fallback stations are provided in case the primary station has no data.
 """
 
 import json
@@ -22,15 +23,15 @@ from pathlib import Path
 from typing import Optional
 
 from worldenergydata.modules.metocean.clients import (
-    NDBCClient,
-    NDBCStation,
-    NDBCObservation,
     FetchResult,
+    NDBCClient,
+    NDBCObservation,
+    NDBCStation,
 )
 from worldenergydata.modules.metocean.exceptions import (
     HTTPError,
-    TimeoutError,
     ParsingError,
+    TimeoutError,
 )
 
 # Configure logging
@@ -40,8 +41,11 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Target station
-STATION_ID = "41001"
+# Target stations (primary and fallbacks)
+# 42001: Mid-Gulf buoy with reliable real-time data
+# 42002: Western Gulf buoy
+# 41009: Cape Canaveral buoy
+STATION_IDS = ["42001", "42002", "41009"]
 
 # Output directory
 OUTPUT_DIR = Path(__file__).parent / "output"
@@ -203,44 +207,62 @@ def main() -> int:
     """
     Main entry point for the skill demonstration.
 
+    Attempts to fetch data from multiple NDBC stations until one succeeds.
+
     Returns:
         Exit code (0 for success, 1 for failure)
     """
     print("\n" + "=" * 60)
     print("METOCEAN DATA FETCHER SKILL DEMONSTRATION")
     print("=" * 60)
-    print(f"Target Station: {STATION_ID}")
+    print(f"Target Stations: {', '.join(STATION_IDS)}")
     print(f"Fetch Time: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}")
 
-    try:
-        # Fetch data
-        data = fetch_station_data(STATION_ID)
+    # Try each station until we get data
+    for station_id in STATION_IDS:
+        print(f"\nAttempting station {station_id}...")
 
-        # Save output
-        output_file = OUTPUT_DIR / f"ndbc_{STATION_ID}_data.json"
-        save_output(data, output_file)
+        try:
+            # Fetch data
+            data = fetch_station_data(station_id)
 
-        # Summary
-        print("\n" + "=" * 60)
-        print("SUMMARY")
-        print("=" * 60)
-        obs_count = len(data.get("observations", []))
-        error_count = len(data.get("errors", []))
+            obs_count = len(data.get("observations", []))
+            error_count = len(data.get("errors", []))
 
-        print(f"Observations retrieved: {obs_count}")
-        print(f"Errors encountered: {error_count}")
-        print(f"Output file: {output_file}")
+            # Save output regardless of success
+            output_file = OUTPUT_DIR / f"ndbc_{station_id}_data.json"
+            save_output(data, output_file)
 
-        if error_count > 0:
-            print("\nErrors:")
-            for err in data["errors"]:
-                print(f"  - {err}")
+            # Summary
+            print("\n" + "=" * 60)
+            print("SUMMARY")
+            print("=" * 60)
 
-        return 0 if error_count == 0 else 1
+            print(f"Station: {station_id}")
+            print(f"Observations retrieved: {obs_count}")
+            print(f"Errors encountered: {error_count}")
+            print(f"Output file: {output_file}")
 
-    except Exception as e:
-        logger.exception(f"Unexpected error: {e}")
-        return 1
+            if error_count > 0:
+                print("\nErrors:")
+                for err in data["errors"]:
+                    print(f"  - {err}")
+
+            # If we got observations, we're done
+            if obs_count > 0:
+                print("\nSkill demonstration completed successfully.")
+                return 0
+
+            # Otherwise try next station
+            print(f"\nNo observations from {station_id}, trying next station...")
+
+        except Exception as e:
+            logger.warning(f"Failed to fetch from {station_id}: {e}")
+            continue
+
+    # All stations failed
+    logger.error("Failed to retrieve data from any station")
+    return 1
 
 
 if __name__ == "__main__":
