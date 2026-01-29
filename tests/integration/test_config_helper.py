@@ -4,7 +4,7 @@ ABOUTME: Provides test config generation functions for engine integration tests
 """
 
 from pathlib import Path
-from typing import Dict, Any
+from typing import Any, Dict
 
 
 def get_complete_test_config(tmp_path: Path) -> Dict[str, Any]:
@@ -18,22 +18,13 @@ def get_complete_test_config(tmp_path: Path) -> Dict[str, Any]:
         Dictionary with complete test configuration
     """
     return {
-        'basename': 'bsee',
-        'data_dir': str(tmp_path / 'data'),
-        'output_dir': str(tmp_path / 'output'),
-        'fields': {
-            'production': True,
-            'completion': True,
-            'directional': False
-        },
-        'processing': {
-            'clean': True,
-            'validate': True
-        },
-        'analysis': {
-            'npv': False,
-            'statistics': True
-        }
+        "basename": "bsee",
+        "data": {},
+        "data_dir": str(tmp_path / "data"),
+        "output_dir": str(tmp_path / "output"),
+        "fields": {"production": True, "completion": True, "directional": False},
+        "processing": {"clean": True, "validate": True},
+        "analysis": {"npv": False, "statistics": True},
     }
 
 
@@ -48,7 +39,8 @@ def get_minimal_test_config(tmp_path: Path) -> Dict[str, Any]:
         Dictionary with minimal test configuration
     """
     return {
-        'basename': 'bsee',
-        'data_dir': str(tmp_path / 'data'),
-        'output_dir': str(tmp_path / 'output')
+        "basename": "bsee",
+        "data": {},
+        "data_dir": str(tmp_path / "data"),
+        "output_dir": str(tmp_path / "output"),
     }

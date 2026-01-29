@@ -79,22 +79,21 @@ class ProductionProcessor:
         df["YEAR_MONTH"] = df[date_col].dt.to_period("M")
 
         # Aggregate by grouping column and month
-        agg_dict = {
-            "OIL_VOLUME": "sum",
-            "WATER_VOLUME": "sum" if "WATER_VOLUME" in df.columns else lambda x: 0,
-            "GAS_VOLUME": "sum" if "GAS_VOLUME" in df.columns else lambda x: 0,
-        }
+        agg_dict = {"OIL_VOLUME": "sum"}
+        if "WATER_VOLUME" in df.columns:
+            agg_dict["WATER_VOLUME"] = "sum"
+        if "GAS_VOLUME" in df.columns:
+            agg_dict["GAS_VOLUME"] = "sum"
 
         monthly = df.groupby([by, "YEAR_MONTH"]).agg(agg_dict).reset_index()
 
         # Rename to FDAS convention
-        monthly = monthly.rename(
-            columns={
-                "OIL_VOLUME": "MONTHLY_OIL_BBL",
-                "WATER_VOLUME": "MONTHLY_WATER_BBL",
-                "GAS_VOLUME": "MONTHLY_GAS_MCF",
-            }
-        )
+        rename_map = {"OIL_VOLUME": "MONTHLY_OIL_BBL"}
+        if "WATER_VOLUME" in monthly.columns:
+            rename_map["WATER_VOLUME"] = "MONTHLY_WATER_BBL"
+        if "GAS_VOLUME" in monthly.columns:
+            rename_map["GAS_VOLUME"] = "MONTHLY_GAS_MCF"
+        monthly = monthly.rename(columns=rename_map)
 
         # Sort by date
         monthly = monthly.sort_values([by, "YEAR_MONTH"])

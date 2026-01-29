@@ -11,19 +11,21 @@ Source: Ported from FDAS generate_financial_summary.py
 """
 
 from typing import Optional, Tuple
+
 import numpy as np
 import numpy_financial as npf
 
 
 class FinancialCalculationError(Exception):
     """Raised when financial calculations cannot be completed"""
+
     pass
 
 
 def excel_like_mirr(
     cashflows: np.ndarray,
     discount_rate_annual: float,
-    reinvestment_rate_annual: Optional[float] = None
+    reinvestment_rate_annual: Optional[float] = None,
 ) -> Tuple[float, float]:
     """
     Calculate Modified Internal Rate of Return using Excel-compatible methodology.
@@ -73,7 +75,7 @@ def excel_like_mirr(
     if nonzero_indices.size == 0:
         return np.nan, np.nan
 
-    trimmed_cashflows = cashflows[nonzero_indices[0]:nonzero_indices[-1] + 1]
+    trimmed_cashflows = cashflows[nonzero_indices[0] : nonzero_indices[-1] + 1]
 
     # Require both positive and negative cashflows
     if not (np.any(trimmed_cashflows > 0) and np.any(trimmed_cashflows < 0)):
@@ -83,8 +85,8 @@ def excel_like_mirr(
     n_periods = trimmed_cashflows.size - 1
 
     # Convert annual rates to monthly (assuming monthly cashflows)
-    monthly_discount_rate = (1.0 + discount_rate_annual) ** (1/12) - 1.0
-    monthly_reinvest_rate = (1.0 + reinvestment_rate_annual) ** (1/12) - 1.0
+    monthly_discount_rate = (1.0 + discount_rate_annual) ** (1 / 12) - 1.0
+    monthly_reinvest_rate = (1.0 + reinvestment_rate_annual) ** (1 / 12) - 1.0
 
     # Future value of positive cashflows (compounded forward at reinvestment rate)
     fv_positive = sum(
@@ -114,9 +116,7 @@ def excel_like_mirr(
 
 
 def calculate_npv(
-    cashflows: np.ndarray,
-    discount_rate_annual: float,
-    period: str = 'monthly'
+    cashflows: np.ndarray, discount_rate_annual: float, period: str = "monthly"
 ) -> float:
     """
     Calculate Net Present Value of cashflow stream.
@@ -147,9 +147,9 @@ def calculate_npv(
         )
 
     # Convert annual rate to period rate
-    if period == 'monthly':
-        period_rate = (1.0 + discount_rate_annual) ** (1/12) - 1.0
-    elif period == 'annual':
+    if period == "monthly":
+        period_rate = (1.0 + discount_rate_annual) ** (1 / 12) - 1.0
+    elif period == "annual":
         period_rate = discount_rate_annual
     else:
         raise FinancialCalculationError(
@@ -167,9 +167,7 @@ def calculate_npv(
 
 
 def calculate_trimmed_npv(
-    cashflows: np.ndarray,
-    discount_rate_annual: float,
-    period: str = 'monthly'
+    cashflows: np.ndarray, discount_rate_annual: float, period: str = "monthly"
 ) -> float:
     """
     Calculate NPV using Excel methodology (trimmed to first/last non-zero).
@@ -197,14 +195,13 @@ def calculate_trimmed_npv(
     if nonzero_indices.size == 0:
         return 0.0
 
-    trimmed_cashflows = cashflows[nonzero_indices[0]:nonzero_indices[-1] + 1]
+    trimmed_cashflows = cashflows[nonzero_indices[0] : nonzero_indices[-1] + 1]
 
     return calculate_npv(trimmed_cashflows, discount_rate_annual, period)
 
 
 def calculate_irr(
-    cashflows: np.ndarray,
-    period: str = 'monthly'
+    cashflows: np.ndarray, period: str = "monthly"
 ) -> Tuple[float, float]:
     """
     Calculate Internal Rate of Return.
@@ -231,7 +228,7 @@ def calculate_irr(
             raise FinancialCalculationError("IRR calculation returned NaN")
 
         # Annualize if monthly
-        if period == 'monthly':
+        if period == "monthly":
             annual_irr = (1.0 + period_irr) ** 12 - 1.0
         else:
             annual_irr = period_irr
@@ -243,8 +240,7 @@ def calculate_irr(
 
 
 def calculate_payback_period(
-    cashflows: np.ndarray,
-    period: str = 'monthly'
+    cashflows: np.ndarray, period: str = "monthly"
 ) -> Tuple[int, float]:
     """
     Calculate payback period (when cumulative cashflow turns positive).
@@ -263,16 +259,16 @@ def calculate_payback_period(
     """
     cumulative = np.cumsum(cashflows)
 
-    # Find first period where cumulative is positive
-    positive_indices = np.where(cumulative > 0)[0]
+    # Find first period where cumulative is non-negative (breakeven or positive)
+    positive_indices = np.where(cumulative >= 0)[0]
 
     if positive_indices.size == 0:
         return len(cashflows), np.inf
 
-    payback_period = int(positive_indices[0] + 1)  # +1 because index is 0-based
+    payback_period = int(positive_indices[0])
 
     # Convert to years
-    if period == 'monthly':
+    if period == "monthly":
         years_to_payback = payback_period / 12.0
     else:
         years_to_payback = float(payback_period)
@@ -296,28 +292,51 @@ def validate_cashflow_stream(cashflows: np.ndarray) -> dict:
         >>> print(info['has_both_signs'])
         True
     """
+    if len(cashflows) == 0:
+        return {
+            "length": 0,
+            "has_values": False,
+            "has_nonzero": False,
+            "has_positive": False,
+            "has_negative": False,
+            "has_both_signs": False,
+            "sum": 0.0,
+            "mean": 0.0,
+            "std": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "first_nonzero_index": None,
+            "last_nonzero_index": None,
+        }
+
+    has_nonzero = bool(np.any(np.abs(cashflows) > 1e-6))
+    has_positive = bool(np.any(cashflows > 0))
+    has_negative = bool(np.any(cashflows < 0))
+
     return {
-        'length': len(cashflows),
-        'has_values': len(cashflows) > 0,
-        'has_nonzero': np.any(np.abs(cashflows) > 1e-6),
-        'has_positive': np.any(cashflows > 0),
-        'has_negative': np.any(cashflows < 0),
-        'has_both_signs': np.any(cashflows > 0) and np.any(cashflows < 0),
-        'sum': float(np.sum(cashflows)),
-        'mean': float(np.mean(cashflows)),
-        'std': float(np.std(cashflows)),
-        'min': float(np.min(cashflows)),
-        'max': float(np.max(cashflows)),
-        'first_nonzero_index': int(np.where(np.abs(cashflows) > 1e-6)[0][0]) if np.any(np.abs(cashflows) > 1e-6) else None,
-        'last_nonzero_index': int(np.where(np.abs(cashflows) > 1e-6)[0][-1]) if np.any(np.abs(cashflows) > 1e-6) else None,
+        "length": len(cashflows),
+        "has_values": True,
+        "has_nonzero": has_nonzero,
+        "has_positive": has_positive,
+        "has_negative": has_negative,
+        "has_both_signs": has_positive and has_negative,
+        "sum": float(np.sum(cashflows)),
+        "mean": float(np.mean(cashflows)),
+        "std": float(np.std(cashflows)),
+        "min": float(np.min(cashflows)),
+        "max": float(np.max(cashflows)),
+        "first_nonzero_index": (
+            int(np.where(np.abs(cashflows) > 1e-6)[0][0]) if has_nonzero else None
+        ),
+        "last_nonzero_index": (
+            int(np.where(np.abs(cashflows) > 1e-6)[0][-1]) if has_nonzero else None
+        ),
     }
 
 
 # Module-level convenience function
 def calculate_all_metrics(
-    cashflows: np.ndarray,
-    discount_rate_annual: float = 0.10,
-    period: str = 'monthly'
+    cashflows: np.ndarray, discount_rate_annual: float = 0.10, period: str = "monthly"
 ) -> dict:
     """
     Calculate all financial metrics for a cashflow stream.
@@ -337,51 +356,53 @@ def calculate_all_metrics(
         >>> print(f"MIRR: {metrics['mirr_annual']:.2%}")
     """
     results = {
-        'period': period,
-        'discount_rate_annual': discount_rate_annual,
+        "period": period,
+        "discount_rate_annual": discount_rate_annual,
     }
 
     # Validation
     validation = validate_cashflow_stream(cashflows)
-    results['validation'] = validation
+    results["validation"] = validation
 
     # NPV
     try:
-        results['npv'] = calculate_npv(cashflows, discount_rate_annual, period)
-        results['npv_trimmed'] = calculate_trimmed_npv(cashflows, discount_rate_annual, period)
+        results["npv"] = calculate_npv(cashflows, discount_rate_annual, period)
+        results["npv_trimmed"] = calculate_trimmed_npv(
+            cashflows, discount_rate_annual, period
+        )
     except Exception as e:
-        results['npv'] = None
-        results['npv_trimmed'] = None
-        results['npv_error'] = str(e)
+        results["npv"] = None
+        results["npv_trimmed"] = None
+        results["npv_error"] = str(e)
 
     # MIRR
     try:
         mirr_m, mirr_a = excel_like_mirr(cashflows, discount_rate_annual)
-        results['mirr_monthly'] = mirr_m
-        results['mirr_annual'] = mirr_a
+        results["mirr_monthly"] = mirr_m
+        results["mirr_annual"] = mirr_a
     except Exception as e:
-        results['mirr_monthly'] = None
-        results['mirr_annual'] = None
-        results['mirr_error'] = str(e)
+        results["mirr_monthly"] = None
+        results["mirr_annual"] = None
+        results["mirr_error"] = str(e)
 
     # IRR
     try:
         irr_p, irr_a = calculate_irr(cashflows, period)
-        results['irr_period'] = irr_p
-        results['irr_annual'] = irr_a
+        results["irr_period"] = irr_p
+        results["irr_annual"] = irr_a
     except Exception as e:
-        results['irr_period'] = None
-        results['irr_annual'] = None
-        results['irr_error'] = str(e)
+        results["irr_period"] = None
+        results["irr_annual"] = None
+        results["irr_error"] = str(e)
 
     # Payback
     try:
         pb_p, pb_y = calculate_payback_period(cashflows, period)
-        results['payback_periods'] = pb_p
-        results['payback_years'] = pb_y
+        results["payback_periods"] = pb_p
+        results["payback_years"] = pb_y
     except Exception as e:
-        results['payback_periods'] = None
-        results['payback_years'] = None
-        results['payback_error'] = str(e)
+        results["payback_periods"] = None
+        results["payback_years"] = None
+        results["payback_error"] = str(e)
 
     return results

@@ -1,11 +1,11 @@
 # ABOUTME: Comprehensive tests for LLM-based incident classification system
 # ABOUTME: Tests model loading, classification accuracy, edge cases, and performance
 
-import pytest
 import time
-from typing import List, Dict, Any
-from unittest.mock import patch, MagicMock
+from typing import Any, Dict, List
+from unittest.mock import MagicMock, patch
 
+import pytest
 
 # Test Data: Realistic incident descriptions
 POSITIVE_HATCH_CASES = [
@@ -50,19 +50,33 @@ class TestLLMClassifierInitialization:
 
     def test_llm_classifier_initialization(self):
         """Test basic initialization of LLM classifier."""
-        from worldenergydata.modules.marine_safety.analysis.llm_classifier import LLMIncidentClassifier
+        try:
+            import transformers  # noqa: F401
+        except ImportError:
+            pytest.skip("transformers library not installed")
+
+        from worldenergydata.modules.marine_safety.analysis.llm_classifier import (
+            LLMIncidentClassifier,
+        )
 
         classifier = LLMIncidentClassifier()
 
         assert classifier is not None
-        assert hasattr(classifier, 'model')
-        assert hasattr(classifier, 'tokenizer')
-        assert hasattr(classifier, 'classify')
-        assert hasattr(classifier, 'classify_batch')
+        assert hasattr(classifier, "model")
+        assert hasattr(classifier, "tokenizer")
+        assert hasattr(classifier, "classify")
+        assert hasattr(classifier, "classify_batch")
 
     def test_model_loading_with_cache(self):
         """Test that model loading uses cache on subsequent loads."""
-        from worldenergydata.modules.marine_safety.analysis.llm_classifier import LLMIncidentClassifier
+        try:
+            import transformers  # noqa: F401
+        except ImportError:
+            pytest.skip("transformers library not installed")
+
+        from worldenergydata.modules.marine_safety.analysis.llm_classifier import (
+            LLMIncidentClassifier,
+        )
 
         # First load (may download model)
         start_time = time.time()
@@ -79,9 +93,18 @@ class TestLLMClassifierInitialization:
 
     def test_fallback_on_model_load_failure(self):
         """Test graceful fallback when model loading fails."""
-        from worldenergydata.modules.marine_safety.analysis.llm_classifier import LLMIncidentClassifier
+        try:
+            import transformers  # noqa: F401
+        except ImportError:
+            pytest.skip("transformers library not installed")
 
-        with patch('transformers.AutoModelForSequenceClassification.from_pretrained') as mock_model:
+        from worldenergydata.modules.marine_safety.analysis.llm_classifier import (
+            LLMIncidentClassifier,
+        )
+
+        with patch(
+            "transformers.AutoModelForSequenceClassification.from_pretrained"
+        ) as mock_model:
             mock_model.side_effect = Exception("Model download failed")
 
             # Should either raise clear error or fall back to rule-based
@@ -96,7 +119,9 @@ class TestLLMClassifierInitialization:
 
     def test_custom_model_path(self):
         """Test initialization with custom model path."""
-        from worldenergydata.modules.marine_safety.analysis.llm_classifier import LLMIncidentClassifier
+        from worldenergydata.modules.marine_safety.analysis.llm_classifier import (
+            LLMIncidentClassifier,
+        )
 
         custom_model = "distilbert-base-uncased"
         classifier = LLMIncidentClassifier(model_name=custom_model)
@@ -110,7 +135,10 @@ class TestBasicClassification:
     @pytest.fixture
     def classifier(self):
         """Fixture providing initialized classifier."""
-        from worldenergydata.modules.marine_safety.analysis.llm_classifier import LLMIncidentClassifier
+        from worldenergydata.modules.marine_safety.analysis.llm_classifier import (
+            LLMIncidentClassifier,
+        )
+
         return LLMIncidentClassifier()
 
     def test_classify_hatch_maloperation_positive(self, classifier):
@@ -119,10 +147,10 @@ class TestBasicClassification:
         result = classifier.classify(text)
 
         assert result is not None
-        assert 'label' in result
-        assert 'confidence' in result
-        assert result['label'] in ['hatch_maloperation', 'positive', True]
-        assert 0.0 <= result['confidence'] <= 1.0
+        assert "label" in result
+        assert "confidence" in result
+        assert result["label"] in ["hatch_maloperation", "positive", True]
+        assert 0.0 <= result["confidence"] <= 1.0
 
     def test_classify_hatch_maloperation_negative(self, classifier):
         """Test classification of negative hatch maloperation cases."""
@@ -130,19 +158,19 @@ class TestBasicClassification:
         result = classifier.classify(text)
 
         assert result is not None
-        assert 'label' in result
-        assert 'confidence' in result
-        assert result['label'] in ['other', 'negative', False]
-        assert 0.0 <= result['confidence'] <= 1.0
+        assert "label" in result
+        assert "confidence" in result
+        assert result["label"] in ["other", "negative", False]
+        assert 0.0 <= result["confidence"] <= 1.0
 
     def test_confidence_scores_returned(self, classifier):
         """Test that confidence scores are properly returned."""
         text = "engine room access hatch left open"
         result = classifier.classify(text)
 
-        assert 'confidence' in result
-        assert isinstance(result['confidence'], float)
-        assert 0.0 <= result['confidence'] <= 1.0
+        assert "confidence" in result
+        assert isinstance(result["confidence"], float)
+        assert 0.0 <= result["confidence"] <= 1.0
 
     def test_batch_classification(self, classifier):
         """Test batch classification of multiple incidents."""
@@ -150,14 +178,14 @@ class TestBasicClassification:
             "hatch not closed properly",
             "collision with pier",
             "watertight door malfunction",
-            "fire in galley"
+            "fire in galley",
         ]
 
         results = classifier.classify_batch(texts)
 
         assert len(results) == len(texts)
-        assert all('label' in r for r in results)
-        assert all('confidence' in r for r in results)
+        assert all("label" in r for r in results)
+        assert all("confidence" in r for r in results)
 
     def test_classification_determinism(self, classifier):
         """Test that same input produces consistent output."""
@@ -166,9 +194,9 @@ class TestBasicClassification:
         result1 = classifier.classify(text)
         result2 = classifier.classify(text)
 
-        assert result1['label'] == result2['label']
+        assert result1["label"] == result2["label"]
         # Confidence should be very close (allow tiny floating point differences)
-        assert abs(result1['confidence'] - result2['confidence']) < 0.01
+        assert abs(result1["confidence"] - result2["confidence"]) < 0.01
 
 
 class TestHatchDetectionPatterns:
@@ -177,7 +205,10 @@ class TestHatchDetectionPatterns:
     @pytest.fixture
     def classifier(self):
         """Fixture providing initialized classifier."""
-        from worldenergydata.modules.marine_safety.analysis.llm_classifier import LLMIncidentClassifier
+        from worldenergydata.modules.marine_safety.analysis.llm_classifier import (
+            LLMIncidentClassifier,
+        )
+
         return LLMIncidentClassifier()
 
     def test_detect_hatch_not_closed(self, classifier):
@@ -190,8 +221,11 @@ class TestHatchDetectionPatterns:
 
         for text in texts:
             result = classifier.classify(text)
-            assert result['label'] in ['hatch_maloperation', 'positive', True], \
-                f"Failed to detect hatch issue in: {text}"
+            assert result["label"] in [
+                "hatch_maloperation",
+                "positive",
+                True,
+            ], f"Failed to detect hatch issue in: {text}"
 
     def test_detect_opening_maloperation(self, classifier):
         """Test detection of various opening maloperation patterns."""
@@ -203,8 +237,11 @@ class TestHatchDetectionPatterns:
 
         for text in texts:
             result = classifier.classify(text)
-            assert result['label'] in ['hatch_maloperation', 'positive', True], \
-                f"Failed to detect opening issue in: {text}"
+            assert result["label"] in [
+                "hatch_maloperation",
+                "positive",
+                True,
+            ], f"Failed to detect opening issue in: {text}"
 
     def test_detect_engine_room_access_failure(self, classifier):
         """Test detection of engine room access-related issues."""
@@ -216,8 +253,11 @@ class TestHatchDetectionPatterns:
 
         for text in texts:
             result = classifier.classify(text)
-            assert result['label'] in ['hatch_maloperation', 'positive', True], \
-                f"Failed to detect engine room access issue in: {text}"
+            assert result["label"] in [
+                "hatch_maloperation",
+                "positive",
+                True,
+            ], f"Failed to detect engine room access issue in: {text}"
 
     def test_detect_watertight_door_issue(self, classifier):
         """Test detection of watertight door malfunctions."""
@@ -229,15 +269,21 @@ class TestHatchDetectionPatterns:
 
         for text in texts:
             result = classifier.classify(text)
-            assert result['label'] in ['hatch_maloperation', 'positive', True], \
-                f"Failed to detect watertight door issue in: {text}"
+            assert result["label"] in [
+                "hatch_maloperation",
+                "positive",
+                True,
+            ], f"Failed to detect watertight door issue in: {text}"
 
     def test_negative_case_no_hatch_incident(self, classifier):
         """Test that non-hatch incidents are properly classified as negative."""
         for text in NEGATIVE_HATCH_CASES:
             result = classifier.classify(text)
-            assert result['label'] in ['other', 'negative', False], \
-                f"False positive for non-hatch incident: {text}"
+            assert result["label"] in [
+                "other",
+                "negative",
+                False,
+            ], f"False positive for non-hatch incident: {text}"
 
 
 class TestEdgeCases:
@@ -246,7 +292,10 @@ class TestEdgeCases:
     @pytest.fixture
     def classifier(self):
         """Fixture providing initialized classifier."""
-        from worldenergydata.modules.marine_safety.analysis.llm_classifier import LLMIncidentClassifier
+        from worldenergydata.modules.marine_safety.analysis.llm_classifier import (
+            LLMIncidentClassifier,
+        )
+
         return LLMIncidentClassifier()
 
     def test_empty_text_handling(self, classifier):
@@ -254,9 +303,9 @@ class TestEdgeCases:
         result = classifier.classify("")
 
         assert result is not None
-        assert 'label' in result
+        assert "label" in result
         # Empty text should likely be classified as 'other' or have low confidence
-        assert result.get('confidence', 1.0) < 0.8
+        assert result.get("confidence", 1.0) < 0.8
 
     def test_none_value_handling(self, classifier):
         """Test handling of None value."""
@@ -273,7 +322,7 @@ class TestEdgeCases:
         result = classifier.classify("   \t\n  ")
 
         assert result is not None
-        assert 'label' in result
+        assert "label" in result
 
     def test_very_long_text_handling(self, classifier):
         """Test handling of very long text (beyond typical token limits)."""
@@ -287,14 +336,14 @@ class TestEdgeCases:
         """Test handling of non-English text."""
         multilingual_texts = {
             "es": "La escotilla no estaba cerrada correctamente",  # Spanish
-            "fr": "L'écoutille n'était pas correctement fermée",    # French
-            "de": "Die Luke war nicht richtig geschlossen",         # German
+            "fr": "L'écoutille n'était pas correctement fermée",  # French
+            "de": "Die Luke war nicht richtig geschlossen",  # German
         }
 
         for lang, text in multilingual_texts.items():
             result = classifier.classify(text)
             assert result is not None
-            assert 'label' in result
+            assert "label" in result
 
     def test_special_characters_handling(self, classifier):
         """Test handling of text with special characters."""
@@ -313,7 +362,7 @@ class TestEdgeCases:
         result = classifier.classify("123456789")
 
         assert result is not None
-        assert result['label'] in ['other', 'negative', False]
+        assert result["label"] in ["other", "negative", False]
 
 
 class TestPerformance:
@@ -322,7 +371,10 @@ class TestPerformance:
     @pytest.fixture
     def classifier(self):
         """Fixture providing initialized classifier."""
-        from worldenergydata.modules.marine_safety.analysis.llm_classifier import LLMIncidentClassifier
+        from worldenergydata.modules.marine_safety.analysis.llm_classifier import (
+            LLMIncidentClassifier,
+        )
+
         return LLMIncidentClassifier()
 
     def test_batch_processing_faster_than_individual(self, classifier):
@@ -375,8 +427,9 @@ class TestPerformance:
     def test_memory_usage_stability(self, classifier):
         """Test that memory usage remains stable across multiple classifications."""
         import gc
-        import psutil
         import os
+
+        import psutil
 
         process = psutil.Process(os.getpid())
         gc.collect()
@@ -394,7 +447,9 @@ class TestPerformance:
         memory_increase = final_memory - initial_memory
 
         # Memory increase should be less than 200 MB
-        assert memory_increase < 200, f"Memory leak detected: {memory_increase:.1f}MB increase"
+        assert (
+            memory_increase < 200
+        ), f"Memory leak detected: {memory_increase:.1f}MB increase"
 
 
 class TestClassificationAccuracy:
@@ -403,7 +458,10 @@ class TestClassificationAccuracy:
     @pytest.fixture
     def classifier(self):
         """Fixture providing initialized classifier."""
-        from worldenergydata.modules.marine_safety.analysis.llm_classifier import LLMIncidentClassifier
+        from worldenergydata.modules.marine_safety.analysis.llm_classifier import (
+            LLMIncidentClassifier,
+        )
+
         return LLMIncidentClassifier()
 
     def test_positive_case_accuracy(self, classifier):
@@ -411,8 +469,7 @@ class TestClassificationAccuracy:
         results = classifier.classify_batch(POSITIVE_HATCH_CASES)
 
         positive_predictions = sum(
-            1 for r in results
-            if r['label'] in ['hatch_maloperation', 'positive', True]
+            1 for r in results if r["label"] in ["hatch_maloperation", "positive", True]
         )
 
         accuracy = positive_predictions / len(results)
@@ -425,8 +482,7 @@ class TestClassificationAccuracy:
         results = classifier.classify_batch(NEGATIVE_HATCH_CASES)
 
         negative_predictions = sum(
-            1 for r in results
-            if r['label'] in ['other', 'negative', False]
+            1 for r in results if r["label"] in ["other", "negative", False]
         )
 
         accuracy = negative_predictions / len(results)
@@ -446,31 +502,55 @@ class TestClassificationAccuracy:
         ambiguous_result = classifier.classify("problem with door")
 
         # Clear cases should have higher confidence than ambiguous cases
-        assert positive_result['confidence'] > ambiguous_result['confidence']
-        assert negative_result['confidence'] > ambiguous_result['confidence']
+        assert positive_result["confidence"] > ambiguous_result["confidence"]
+        assert negative_result["confidence"] > ambiguous_result["confidence"]
 
     def test_f1_score_calculation(self, classifier):
         """Test overall F1 score on test dataset."""
         all_texts = POSITIVE_HATCH_CASES + NEGATIVE_HATCH_CASES
-        true_labels = ['positive'] * len(POSITIVE_HATCH_CASES) + ['negative'] * len(NEGATIVE_HATCH_CASES)
+        true_labels = ["positive"] * len(POSITIVE_HATCH_CASES) + ["negative"] * len(
+            NEGATIVE_HATCH_CASES
+        )
 
         results = classifier.classify_batch(all_texts)
         predictions = [
-            'positive' if r['label'] in ['hatch_maloperation', 'positive', True] else 'negative'
+            (
+                "positive"
+                if r["label"] in ["hatch_maloperation", "positive", True]
+                else "negative"
+            )
             for r in results
         ]
 
         # Calculate F1
-        tp = sum(1 for t, p in zip(true_labels, predictions) if t == 'positive' and p == 'positive')
-        fp = sum(1 for t, p in zip(true_labels, predictions) if t == 'negative' and p == 'positive')
-        fn = sum(1 for t, p in zip(true_labels, predictions) if t == 'positive' and p == 'negative')
+        tp = sum(
+            1
+            for t, p in zip(true_labels, predictions)
+            if t == "positive" and p == "positive"
+        )
+        fp = sum(
+            1
+            for t, p in zip(true_labels, predictions)
+            if t == "negative" and p == "positive"
+        )
+        fn = sum(
+            1
+            for t, p in zip(true_labels, predictions)
+            if t == "positive" and p == "negative"
+        )
 
         precision = tp / (tp + fp) if (tp + fp) > 0 else 0
         recall = tp / (tp + fn) if (tp + fn) > 0 else 0
-        f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
+        f1 = (
+            2 * (precision * recall) / (precision + recall)
+            if (precision + recall) > 0
+            else 0
+        )
 
         # F1 score should be at least 0.75
-        assert f1 >= 0.75, f"F1 score too low: {f1:.3f} (precision={precision:.3f}, recall={recall:.3f})"
+        assert (
+            f1 >= 0.75
+        ), f"F1 score too low: {f1:.3f} (precision={precision:.3f}, recall={recall:.3f})"
 
 
 class TestRobustness:
@@ -479,7 +559,10 @@ class TestRobustness:
     @pytest.fixture
     def classifier(self):
         """Fixture providing initialized classifier."""
-        from worldenergydata.modules.marine_safety.analysis.llm_classifier import LLMIncidentClassifier
+        from worldenergydata.modules.marine_safety.analysis.llm_classifier import (
+            LLMIncidentClassifier,
+        )
+
         return LLMIncidentClassifier()
 
     def test_concurrent_classification(self, classifier):
@@ -507,7 +590,11 @@ class TestRobustness:
 
         for inp in problematic_inputs:
             try:
-                result = classifier.classify(inp) if inp is not None else classifier.classify("")
+                result = (
+                    classifier.classify(inp)
+                    if inp is not None
+                    else classifier.classify("")
+                )
                 assert result is not None
             except Exception as e:
                 # If error occurs, should be handled gracefully
@@ -515,7 +602,9 @@ class TestRobustness:
 
     def test_repeated_initialization(self):
         """Test that repeated initialization doesn't cause issues."""
-        from worldenergydata.modules.marine_safety.analysis.llm_classifier import LLMIncidentClassifier
+        from worldenergydata.modules.marine_safety.analysis.llm_classifier import (
+            LLMIncidentClassifier,
+        )
 
         # Create multiple instances
         classifiers = [LLMIncidentClassifier() for _ in range(3)]
@@ -525,7 +614,7 @@ class TestRobustness:
 
         assert len(results) == 3
         assert all(r is not None for r in results)
-        assert all(r['label'] == results[0]['label'] for r in results)
+        assert all(r["label"] == results[0]["label"] for r in results)
 
 
 # Pytest configuration
@@ -541,6 +630,7 @@ def setup_test_environment():
 
     # Cleanup after tests
     import gc
+
     gc.collect()
 
 

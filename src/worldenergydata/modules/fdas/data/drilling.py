@@ -248,9 +248,12 @@ class DrillingTimelineExtractor:
         """
         Allocate drilling days to monthly periods.
 
+        Uses exclusive end_date, consistent with calculate_drilling_days
+        which returns (end - start).days.
+
         Args:
-            start_date: Start of drilling
-            end_date: End of drilling
+            start_date: Start of drilling (inclusive)
+            end_date: End of drilling (exclusive)
 
         Returns:
             Dictionary mapping year-month to drilling days
@@ -265,32 +268,22 @@ class DrillingTimelineExtractor:
         allocation = {}
 
         current = start_date
-        while current <= end_date:
-            # Get month key
+        while current < end_date:
             month_key = current.strftime("%Y-%m")
 
-            # Calculate days in this month
-            month_end = datetime(current.year, current.month, 1)
+            # First day of next month
             if current.month == 12:
-                month_end = datetime(current.year + 1, 1, 1) - timedelta(days=1)
+                next_month = datetime(current.year + 1, 1, 1)
             else:
-                month_end = datetime(current.year, current.month + 1, 1) - timedelta(
-                    days=1
-                )
+                next_month = datetime(current.year, current.month + 1, 1)
 
-            # Bound by end date
-            period_end = min(month_end, end_date)
-
-            # Calculate days in period
-            days_in_month = (period_end - current).days + 1
+            # Period runs from current to min(next_month, end_date), exclusive
+            period_end = min(next_month, end_date)
+            days_in_month = (period_end - current).days
 
             allocation[month_key] = allocation.get(month_key, 0) + days_in_month
 
-            # Move to next month
-            if current.month == 12:
-                current = datetime(current.year + 1, 1, 1)
-            else:
-                current = datetime(current.year, current.month + 1, 1)
+            current = next_month
 
         return allocation
 

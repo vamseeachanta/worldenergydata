@@ -42,7 +42,7 @@ class ProductionAPI12Analysis:
         pass
 
     def router(self, cfg):
-        pass
+        return cfg
 
     def run_production_analysis(self, cfg, data):
         """
