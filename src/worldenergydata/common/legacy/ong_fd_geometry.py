@@ -9,8 +9,7 @@ from __future__ import annotations
 from typing import Any
 
 import pandas as pd
-
-from common.data import AttributeDict
+from assetutilities.common.data import AttributeDict
 
 
 def evaluate_well_distances(
@@ -29,7 +28,7 @@ def evaluate_well_distances(
     Returns:
         Tuple of (updated API12 df, updated field_summary, producing wells df or None)
     """
-    from common.math_solvers import Geometry
+    from worldenergydata.common.legacy.math_solvers import Geometry
 
     geom = Geometry()
     output_data_api12_df["HORZ_DEPARTURE"] = 0
@@ -166,7 +165,7 @@ def prepare_completion_data(
     Returns:
         Output completions DataFrame with GIS coordinates
     """
-    from common.data import Transform
+    from assetutilities.common.data import Transform
 
     transform = Transform()
 

@@ -4,7 +4,7 @@ import os
 from typing import Any
 
 import pandas as pd
-from common.database import get_db_connection
+from assetutilities.common.database import get_db_connection
 
 
 class BSEEData:

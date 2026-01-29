@@ -45,7 +45,7 @@ def add_gis_info_to_df(
     Returns:
         Tuple of (modified DataFrame, field_x_ref, field_y_ref)
     """
-    from common.data import Transform
+    from assetutilities.common.data import Transform
 
     transform = Transform()
 
@@ -107,7 +107,7 @@ def save_output_data_to_excel(
         label_array: List of sheet names
         file_name_without_extension: Base filename without extension
     """
-    from common.data import SaveData
+    from assetutilities.common.data import SaveData
 
     save_data = SaveData()
     cfg_temp: dict[str, Any] = {
@@ -126,7 +126,7 @@ def transform_list_to_unique(old_list: list[str]) -> list[str]:
     Returns:
         List with unique values
     """
-    from common.data import Transform
+    from assetutilities.common.data import Transform
 
     trans = Transform()
     cfg_temp: dict[str, Any] = {

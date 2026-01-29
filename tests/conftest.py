@@ -19,6 +19,11 @@ import numpy as np
 import pandas as pd
 import pytest
 
+# Fix pandas/pyarrow compatibility issue with pytest-cov JSON reporting.
+# pandas 3.0+ uses pyarrow string backend by default, which can cause
+# ArrowTypeError during pytest session finish when coverage data is serialized.
+pd.options.mode.string_storage = "python"
+
 # Add src directory to sys.path so pytest can resolve validators module
 # (validators is a top-level package at src/validators/, separate from worldenergydata)
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))

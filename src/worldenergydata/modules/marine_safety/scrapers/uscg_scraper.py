@@ -41,12 +41,6 @@ from worldenergydata.common import get_logger
 
 logger = get_logger(__name__)
 
-# Configure structured logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
-logger = logging.getLogger(__name__)
-
 
 # ============================================================================
 # Pydantic Models for Data Validation

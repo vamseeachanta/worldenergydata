@@ -11,7 +11,7 @@ from typing import Any
 
 import pandas as pd
 
-from common.data import DateTimeUtility
+from worldenergydata.common.legacy.data import DateTimeUtility
 
 from .ong_fd_utils import get_api10_from_well_api
 

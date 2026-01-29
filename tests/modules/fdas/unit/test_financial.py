@@ -8,17 +8,18 @@ Author: WorldEnergyData Team
 Date: 2025-10-03
 """
 
-import pytest
 import numpy as np
-from src.worldenergydata.modules.fdas.core.financial import (
-    excel_like_mirr,
-    calculate_npv,
-    calculate_trimmed_npv,
-    calculate_irr,
-    calculate_payback_period,
-    validate_cashflow_stream,
-    calculate_all_metrics,
+import pytest
+
+from worldenergydata.modules.fdas.core.financial import (
     FinancialCalculationError,
+    calculate_all_metrics,
+    calculate_irr,
+    calculate_npv,
+    calculate_payback_period,
+    calculate_trimmed_npv,
+    excel_like_mirr,
+    validate_cashflow_stream,
 )
 
 
@@ -76,7 +77,9 @@ class TestExcelLikeMIRR:
 
     def test_mirr_annualization(self):
         """Test that monthly MIRR is correctly annualized"""
-        cashflows = np.array([-1000, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100])
+        cashflows = np.array(
+            [-1000, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100]
+        )
         mirr_m, mirr_a = excel_like_mirr(cashflows, 0.10)
 
         # Annual should be (1 + monthly)^12 - 1
@@ -101,7 +104,7 @@ class TestNPV:
     def test_basic_npv_calculation(self):
         """Test NPV with known values"""
         cashflows = np.array([-1000, 500, 500, 500])
-        npv = calculate_npv(cashflows, 0.10, period='annual')
+        npv = calculate_npv(cashflows, 0.10, period="annual")
 
         # Known result: NPV ≈ 243.43 at 10% discount
         assert npv > 200 and npv < 300, f"NPV should be ~243, got {npv}"
@@ -117,11 +120,11 @@ class TestNPV:
         """Test NPV calculation for monthly vs annual periods"""
         cashflows_annual = np.array([-1000, 500, 500])
 
-        npv_annual = calculate_npv(cashflows_annual, 0.10, period='annual')
+        npv_annual = calculate_npv(cashflows_annual, 0.10, period="annual")
 
         # Monthly equivalent (same cashflow, monthly rate)
         cashflows_monthly = np.array([-1000, 41.67, 41.67] * 12)  # Approximate
-        npv_monthly = calculate_npv(cashflows_monthly, 0.10, period='monthly')
+        npv_monthly = calculate_npv(cashflows_monthly, 0.10, period="monthly")
 
         # Annual should be higher due to compounding
         assert npv_annual > 0, "Annual NPV should be positive"
@@ -141,7 +144,7 @@ class TestNPV:
         cashflows = np.array([-1000, 100, 200])
 
         with pytest.raises(FinancialCalculationError):
-            calculate_npv(cashflows, 0.10, period='weekly')
+            calculate_npv(cashflows, 0.10, period="weekly")
 
 
 class TestIRR:
@@ -151,7 +154,7 @@ class TestIRR:
         """Test IRR with known values"""
         # Classic example: invest $1000, receive $1100 in one year
         cashflows = np.array([-1000, 1100])
-        irr_p, irr_a = calculate_irr(cashflows, period='annual')
+        irr_p, irr_a = calculate_irr(cashflows, period="annual")
 
         # IRR should be 10%
         assert np.isclose(irr_a, 0.10, atol=0.001), f"IRR should be ~10%, got {irr_a}"
@@ -160,7 +163,7 @@ class TestIRR:
         """Test IRR monthly to annual conversion"""
         # Monthly cashflows
         cashflows = np.array([-1000] + [100] * 12)
-        irr_m, irr_a = calculate_irr(cashflows, period='monthly')
+        irr_m, irr_a = calculate_irr(cashflows, period="monthly")
 
         # Annual should be (1 + monthly)^12 - 1
         expected_annual = (1 + irr_m) ** 12 - 1
@@ -181,7 +184,7 @@ class TestPaybackPeriod:
     def test_basic_payback(self):
         """Test payback period calculation"""
         cashflows = np.array([-1000, 300, 300, 300, 300, 300])
-        periods, years = calculate_payback_period(cashflows, period='annual')
+        periods, years = calculate_payback_period(cashflows, period="annual")
 
         # Payback should be 4 years (cumulative positive after period 4)
         assert periods == 4, f"Payback should be 4 periods, got {periods}"
@@ -190,7 +193,7 @@ class TestPaybackPeriod:
     def test_payback_monthly(self):
         """Test payback period with monthly cashflows"""
         cashflows = np.array([-1200] + [100] * 20)
-        periods, years = calculate_payback_period(cashflows, period='monthly')
+        periods, years = calculate_payback_period(cashflows, period="monthly")
 
         # Payback at month 12 (after 12 months of $100)
         assert periods == 12, f"Payback should be 12 months, got {periods}"
@@ -212,37 +215,37 @@ class TestCashflowValidation:
         cf = np.array([-1000, 100, 200, 300, 400])
         info = validate_cashflow_stream(cf)
 
-        assert info['has_values'] is True
-        assert info['has_nonzero'] is True
-        assert info['has_positive'] is True
-        assert info['has_negative'] is True
-        assert info['has_both_signs'] is True
-        assert info['length'] == 5
-        assert np.isclose(info['sum'], 0)  # Breaks even
+        assert info["has_values"] is True
+        assert info["has_nonzero"] is True
+        assert info["has_positive"] is True
+        assert info["has_negative"] is True
+        assert info["has_both_signs"] is True
+        assert info["length"] == 5
+        assert np.isclose(info["sum"], 0)  # Breaks even
 
     def test_validate_empty_cashflow(self):
         """Test validation of empty cashflow"""
         cf = np.array([])
         info = validate_cashflow_stream(cf)
 
-        assert info['has_values'] is False
-        assert info['length'] == 0
+        assert info["has_values"] is False
+        assert info["length"] == 0
 
     def test_validate_all_zeros(self):
         """Test validation of all-zero cashflow"""
         cf = np.array([0, 0, 0, 0])
         info = validate_cashflow_stream(cf)
 
-        assert info['has_nonzero'] is False
-        assert info['first_nonzero_index'] is None
+        assert info["has_nonzero"] is False
+        assert info["first_nonzero_index"] is None
 
     def test_validate_with_padding(self):
         """Test validation identifies first/last nonzero indices"""
         cf = np.array([0, 0, -1000, 100, 200, 0, 0])
         info = validate_cashflow_stream(cf)
 
-        assert info['first_nonzero_index'] == 2
-        assert info['last_nonzero_index'] == 4
+        assert info["first_nonzero_index"] == 2
+        assert info["last_nonzero_index"] == 4
 
 
 class TestCalculateAllMetrics:
@@ -254,17 +257,17 @@ class TestCalculateAllMetrics:
         metrics = calculate_all_metrics(cf, 0.10)
 
         # Should have all expected keys
-        assert 'npv' in metrics
-        assert 'mirr_annual' in metrics
-        assert 'irr_annual' in metrics
-        assert 'payback_years' in metrics
-        assert 'validation' in metrics
+        assert "npv" in metrics
+        assert "mirr_annual" in metrics
+        assert "irr_annual" in metrics
+        assert "payback_years" in metrics
+        assert "validation" in metrics
 
         # All should be valid numbers
-        assert metrics['npv'] is not None
-        assert metrics['mirr_annual'] is not None
-        assert metrics['irr_annual'] is not None
-        assert metrics['payback_years'] is not None
+        assert metrics["npv"] is not None
+        assert metrics["mirr_annual"] is not None
+        assert metrics["irr_annual"] is not None
+        assert metrics["payback_years"] is not None
 
     def test_all_metrics_handles_errors(self):
         """Test that errors are gracefully handled"""
@@ -273,8 +276,8 @@ class TestCalculateAllMetrics:
         metrics = calculate_all_metrics(cf, 0.10)
 
         # Should have error messages
-        assert 'mirr_error' in metrics or metrics['mirr_annual'] is None
-        assert 'irr_error' in metrics or metrics['irr_annual'] is None
+        assert "mirr_error" in metrics or metrics["mirr_annual"] is None
+        assert "irr_error" in metrics or metrics["irr_annual"] is None
 
     def test_all_metrics_custom_parameters(self):
         """Test all metrics with custom discount rate"""
@@ -284,7 +287,7 @@ class TestCalculateAllMetrics:
         metrics_15 = calculate_all_metrics(cf, 0.15)
 
         # Higher discount rate should give lower NPV
-        assert metrics_15['npv'] < metrics_10['npv']
+        assert metrics_15["npv"] < metrics_10["npv"]
 
 
 class TestRegressionAgainstFDAS:
@@ -294,16 +297,18 @@ class TestRegressionAgainstFDAS:
         """Test calculation matches expected Anchor field results"""
         # Simplified Anchor field cashflow (example values)
         # Real test would use golden baseline data
-        cashflows = np.array([
-            -1500e6,  # Initial CAPEX
-            -500e6,   # Year 1 additional CAPEX
-            200e6,    # Year 2 production
-            800e6,    # Year 3 peak production
-            600e6,    # Year 4
-            400e6,    # Year 5
-        ])
+        cashflows = np.array(
+            [
+                -1500e6,  # Initial CAPEX
+                -500e6,  # Year 1 additional CAPEX
+                200e6,  # Year 2 production
+                800e6,  # Year 3 peak production
+                600e6,  # Year 4
+                400e6,  # Year 5
+            ]
+        )
 
-        npv = calculate_npv(cashflows, 0.10, period='annual')
+        npv = calculate_npv(cashflows, 0.10, period="annual")
         mirr_m, mirr_a = excel_like_mirr(cashflows, 0.10)
 
         # Should be profitable
@@ -329,6 +334,7 @@ class TestPerformance:
         cashflows[0] = -100000  # Initial investment
 
         import time
+
         start = time.time()
         npv = calculate_npv(cashflows, 0.10)
         elapsed = time.time() - start
@@ -343,6 +349,7 @@ class TestPerformance:
         cashflows[0] = -50000
 
         import time
+
         start = time.time()
         metrics = calculate_all_metrics(cashflows, 0.10)
         elapsed = time.time() - start
@@ -351,5 +358,5 @@ class TestPerformance:
         assert elapsed < 0.05, f"All metrics too slow: {elapsed:.4f}s"
 
 
-if __name__ == '__main__':
-    pytest.main([__file__, '-v', '--tb=short'])
+if __name__ == "__main__":
+    pytest.main([__file__, "-v", "--tb=short"])
