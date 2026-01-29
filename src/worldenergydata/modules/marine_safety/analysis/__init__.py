@@ -13,16 +13,24 @@ from .cause_statistics import (
     StatisticalSummary,
     TemporalTrend,
 )
-from .correlation import (
-    DeduplicationMetrics,
-    DeduplicationResult,
-    IncidentDeduplicator,
-    IncidentMatcher,
-    MatchConfig,
-    MatchResult,
-    MatchType,
-)
 from .incidents.hatch_maloperation_analysis import HatchMaloperationAnalyzer
+
+# Correlation subpackage requires rapidfuzz (optional dependency).
+# Use lazy imports so the rest of the analysis module remains usable without it.
+try:
+    from .correlation import (
+        DeduplicationMetrics,
+        DeduplicationResult,
+        IncidentDeduplicator,
+        IncidentMatcher,
+        MatchConfig,
+        MatchResult,
+        MatchType,
+    )
+
+    _HAS_CORRELATION = True
+except ImportError:
+    _HAS_CORRELATION = False
 
 __all__ = [
     # Cause Statistics
@@ -33,12 +41,16 @@ __all__ = [
     "StatisticalSummary",
     # Incident Analysis
     "HatchMaloperationAnalyzer",
-    # Cross-Source Correlation
-    "IncidentMatcher",
-    "MatchConfig",
-    "MatchResult",
-    "MatchType",
-    "IncidentDeduplicator",
-    "DeduplicationResult",
-    "DeduplicationMetrics",
 ]
+
+if _HAS_CORRELATION:
+    __all__ += [
+        # Cross-Source Correlation
+        "IncidentMatcher",
+        "MatchConfig",
+        "MatchResult",
+        "MatchType",
+        "IncidentDeduplicator",
+        "DeduplicationResult",
+        "DeduplicationMetrics",
+    ]
