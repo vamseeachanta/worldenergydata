@@ -1,0 +1,152 @@
+# Latest Baseline: Extended Lower Tertiary Analysis (WRK-010)
+# Source: BSEE OGOR-A through Oct 2025 + V30 lease mappings
+# WTI: V30 xlsx (Jan 1986 - Jul 2025) + EIA GitHub CSV (Aug-Oct 2025)
+# Generated: 2026-01-31
+
+metadata:
+  based_on: golden_baseline_v30.yml
+  extraction_date: "2026-01-31"
+  time_period: "2000-09 through 2025-10"
+  v30_time_period: "2000-09 through 2025-05"
+  wti_sources:
+    v30_xlsx: 475
+    eia_github: 3
+    fred_api: 0
+    flat_forward: 0
+  note: "Extended V30 production window to Oct 2025. Revenue uses historical monthly WTI."
+
+projects:
+  jack_st_malo:
+    display_name: "Jack St Malo"
+    total_oil_bbl: 421032342
+    total_revenue_usd: 26591680308.76
+    well_test_oil_bbl: 205380
+    months: 131
+    first_date: "2014-12-01"
+    last_date: "2025-10-01"
+    v30_comparison:
+      v30_oil_bbl: 406571771
+      delta_oil_bbl: 14460571
+      delta_oil_pct: 3.56
+      v30_revenue_usd: 25648472771.59
+      delta_revenue_usd: 943207537.17
+      delta_revenue_pct: 3.68
+      is_significant: false
+
+  stones:
+    display_name: "Stones"
+    total_oil_bbl: 86326766
+    total_revenue_usd: 5756376039.86
+    months: 107
+    first_date: "2016-09-01"
+    last_date: "2025-10-01"
+    v30_comparison:
+      v30_oil_bbl: 83657789
+      delta_oil_bbl: 2668977
+      delta_oil_pct: 3.19
+      v30_revenue_usd: 5582443248.58
+      delta_revenue_usd: 173932791.28
+      delta_revenue_pct: 3.12
+      is_significant: false
+
+  julia:
+    display_name: "Julia"
+    total_oil_bbl: 74028262
+    total_revenue_usd: 4916924581.64
+    months: 116
+    first_date: "2016-03-01"
+    last_date: "2025-10-01"
+    v30_comparison:
+      v30_oil_bbl: 70936158
+      delta_oil_bbl: 3092104
+      delta_oil_pct: 4.36
+      v30_revenue_usd: 4715155663.31
+      delta_revenue_usd: 201768918.33
+      delta_revenue_pct: 4.28
+      is_significant: false
+
+  big_foot:
+    display_name: "Big Foot"
+    total_oil_bbl: 72174604
+    total_revenue_usd: 5083426679.71
+    months: 84
+    first_date: "2018-11-01"
+    last_date: "2025-10-01"
+    v30_comparison:
+      v30_oil_bbl: 66870656
+      delta_oil_bbl: 5303948
+      delta_oil_pct: 7.93
+      v30_revenue_usd: 4737808705.76
+      delta_revenue_usd: 345617973.95
+      delta_revenue_pct: 7.29
+      is_significant: true
+      explanation: "Active producing field with material new production"
+
+  cascade_chinook:
+    display_name: "Cascade Chinook"
+    total_oil_bbl: 38593041
+    total_revenue_usd: 2703406691.68
+    months: 157
+    first_date: "2012-09-01"
+    last_date: "2025-10-01"
+    well_test_oil_bbl: 0
+    first_oil_correction: "2012-09-01 (golden baseline: 2014-01-01)"
+    v30_comparison:
+      v30_oil_bbl: 34322807
+      delta_oil_bbl: 4270234
+      delta_oil_pct: 12.44
+      v30_revenue_usd: 2326873535.60
+      delta_revenue_usd: 376533156.08
+      delta_revenue_pct: 16.18
+      is_significant: true
+      explanation: "First oil corrected from 2014-01 to 2012-09, adding ~3.26M bbl"
+
+  anchor:
+    display_name: "Anchor"
+    total_oil_bbl: 13604598
+    total_revenue_usd: 912358986.32
+    months: 15
+    first_date: "2024-08-01"
+    last_date: "2025-10-01"
+    v30_comparison:
+      v30_oil_bbl: 6912846
+      delta_oil_bbl: 6691752
+      delta_oil_pct: 96.80
+      v30_revenue_usd: 476309533.77
+      delta_revenue_usd: 436049452.55
+      delta_revenue_pct: 91.55
+      is_significant: true
+      explanation: "Ramping field — significant new production in extended window"
+
+  shenandoah:
+    display_name: "Shenandoah"
+    total_oil_bbl: 5943207
+    total_revenue_usd: 372451941.87
+    months: 5
+    first_date: "2025-02-01"
+    last_date: "2025-10-01"
+    v30_comparison:
+      v30_oil_bbl: 3784
+      delta_oil_bbl: 5939423
+      delta_oil_pct: 156961.50
+      v30_revenue_usd: 270669.52
+      delta_revenue_usd: 372181272.35
+      delta_revenue_pct: 137503.95
+      is_significant: true
+      explanation: "Ramping field — significant new production in extended window"
+
+  # Exploration-only projects (unchanged from V30)
+  north_platte:
+    display_name: "North Platte"
+    total_oil_bbl: 0
+    status: unchanged
+
+  kaskida:
+    display_name: "Kaskida"
+    total_oil_bbl: 0
+    status: unchanged
+
+  tiber:
+    display_name: "Tiber"
+    total_oil_bbl: 0
+    status: unchanged
