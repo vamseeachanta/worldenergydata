@@ -6,7 +6,14 @@ This package provides modules for loading data from various source formats:
 """
 
 from worldenergydata.modules.bsee.data.sources.bin import APIData, BlockData, LeaseData
-from worldenergydata.modules.bsee.data.sources.zip import GetProdDataFromZip, WellDataFromZip
+from worldenergydata.modules.bsee.data.sources.zip import (
+    DeepwaterStructureDataFromZip,
+    GetProdDataFromZip,
+    PipelineLocationDataFromZip,
+    PipelinePermitDataFromZip,
+    PlatformDataFromZip,
+    WellDataFromZip,
+)
 
 __all__ = [
     "APIData",
@@ -14,4 +21,8 @@ __all__ = [
     "LeaseData",
     "GetProdDataFromZip",
     "WellDataFromZip",
+    "PlatformDataFromZip",
+    "PipelinePermitDataFromZip",
+    "DeepwaterStructureDataFromZip",
+    "PipelineLocationDataFromZip",
 ]

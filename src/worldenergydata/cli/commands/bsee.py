@@ -61,33 +61,38 @@ class DataType(str, Enum):
     production = "production"
     block = "block"
     lease = "lease"
+    platform = "platform"
+    pipeline_permit = "pipeline_permit"
+    deepwater_structure = "deepwater_structure"
+    pipeline_location = "pipeline_location"
+    infrastructure = "infrastructure"  # All 4 infrastructure types combined
     all = "all"
 
 
 @app.command()
 def analyze(
-    block: Optional[str] = typer.Option(
+    block: Optional[str] = typer.Option(  # noqa: B008
         None, "--block", "-b", help="Block number to analyze (e.g., 759)"
     ),
-    field: Optional[str] = typer.Option(
+    field: Optional[str] = typer.Option(  # noqa: B008
         None,
         "--field",
         "-f",
         help="Field name to analyze (e.g., 'Jack', 'Thunder Horse')",
     ),
-    lease: Optional[str] = typer.Option(
+    lease: Optional[str] = typer.Option(  # noqa: B008
         None, "--lease", "-l", help="Lease number to analyze (e.g., OCS-G-12345)"
     ),
-    api: Optional[str] = typer.Option(
+    api: Optional[str] = typer.Option(  # noqa: B008
         None, "--api", "-a", help="API number to analyze (10 or 12 digit)"
     ),
-    output: Optional[Path] = typer.Option(
-        Path("./reports"),
+    output: Optional[Path] = typer.Option(  # noqa: B008
+        Path("./reports"),  # noqa: B008
         "--output",
         "-o",
         help="Output directory for analysis results",
     ),
-    verbose: bool = typer.Option(
+    verbose: bool = typer.Option(  # noqa: B008
         False, "--verbose", "-v", help="Enable verbose output"
     ),
 ) -> None:
@@ -205,30 +210,34 @@ def analyze(
 
 @app.command()
 def report(
-    report_type: ReportType = typer.Option(
+    report_type: ReportType = typer.Option(  # noqa: B008
         ReportType.field, "--type", "-t", help="Type of report to generate"
     ),
-    entity_id: str = typer.Option(
+    entity_id: str = typer.Option(  # noqa: B008
         ...,
         "--id",
         "-i",
         help="Entity identifier (block number, field name, or lease number)",
     ),
-    output_format: OutputFormat = typer.Option(
+    output_format: OutputFormat = typer.Option(  # noqa: B008
         OutputFormat.excel, "--format", "-f", help="Output format"
     ),
-    output: Path = typer.Option(
-        Path("./reports"), "--output", "-o", help="Output directory"
+    output: Path = typer.Option(  # noqa: B008
+        Path("./reports"), "--output", "-o", help="Output directory"  # noqa: B008
     ),
-    oil_price: float = typer.Option(75.00, "--oil-price", help="Oil price per barrel"),
-    gas_price: float = typer.Option(3.50, "--gas-price", help="Gas price per MCF"),
-    discount_rate: float = typer.Option(
+    oil_price: float = typer.Option(  # noqa: B008
+        75.00, "--oil-price", help="Oil price per barrel"
+    ),
+    gas_price: float = typer.Option(  # noqa: B008
+        3.50, "--gas-price", help="Gas price per MCF"
+    ),  # noqa: B008
+    discount_rate: float = typer.Option(  # noqa: B008
         0.10,
         "--discount-rate",
         "-r",
         help="Discount rate for NPV calculations (e.g., 0.10 for 10%)",
     ),
-    verbose: bool = typer.Option(
+    verbose: bool = typer.Option(  # noqa: B008
         False, "--verbose", "-v", help="Enable verbose output"
     ),
 ) -> None:
@@ -320,8 +329,8 @@ def report(
                 progress.update(task, advance=30, description="[cyan]Saving report...")
 
                 if result.get("status") == "success":
-                    # Save report output
-                    report_filename = f"{report_type.value}_{entity_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+                    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                    report_filename = f"{report_type.value}_{entity_id}_{timestamp}"
                     if output_format == OutputFormat.json:
                         import json
 
@@ -368,18 +377,22 @@ def report(
 
 @app.command()
 def data(
-    api: Optional[str] = typer.Option(
+    api: Optional[str] = typer.Option(  # noqa: B008
         None, "--api", "-a", help="API number (10 or 12 digit)"
     ),
-    block: Optional[str] = typer.Option(None, "--block", "-b", help="Block number"),
-    lease: Optional[str] = typer.Option(None, "--lease", "-l", help="Lease number"),
-    data_type: DataType = typer.Option(
+    block: Optional[str] = typer.Option(  # noqa: B008
+        None, "--block", "-b", help="Block number"
+    ),  # noqa: B008
+    lease: Optional[str] = typer.Option(  # noqa: B008
+        None, "--lease", "-l", help="Lease number"
+    ),  # noqa: B008
+    data_type: DataType = typer.Option(  # noqa: B008
         DataType.well, "--type", "-t", help="Type of data to retrieve"
     ),
-    output: Optional[Path] = typer.Option(
+    output: Optional[Path] = typer.Option(  # noqa: B008
         None, "--output", "-o", help="Output file path (optional)"
     ),
-    verbose: bool = typer.Option(
+    verbose: bool = typer.Option(  # noqa: B008
         False, "--verbose", "-v", help="Enable verbose output"
     ),
 ) -> None:
@@ -537,13 +550,13 @@ def data(
 
 @app.command()
 def refresh(
-    data_type: DataType = typer.Option(
+    data_type: DataType = typer.Option(  # noqa: B008
         DataType.all, "--type", "-t", help="Type of data to refresh"
     ),
-    force: bool = typer.Option(
+    force: bool = typer.Option(  # noqa: B008
         False, "--force", "-f", help="Force refresh even if data is current"
     ),
-    verbose: bool = typer.Option(
+    verbose: bool = typer.Option(  # noqa: B008
         False, "--verbose", "-v", help="Enable verbose output"
     ),
 ) -> None:
@@ -555,6 +568,8 @@ def refresh(
     Examples:
         worldenergydata bsee refresh --type well
         worldenergydata bsee refresh --type production --force
+        worldenergydata bsee refresh --type platform
+        worldenergydata bsee refresh --type infrastructure
         worldenergydata bsee refresh --type all --verbose
     """
     try:
@@ -588,15 +603,47 @@ def refresh(
                 refresh_module = DataRefresh()
 
                 # Build configuration based on data type
+                infrastructure_types = [
+                    DataType.platform,
+                    DataType.pipeline_permit,
+                    DataType.deepwater_structure,
+                    DataType.pipeline_location,
+                    DataType.infrastructure,
+                    DataType.all,
+                ]
+
+                # Use enhanced mode for infrastructure types and 'all'
+                use_enhanced = data_type in infrastructure_types
+
                 cfg = {
                     "basename": "bsee",
                     "data": {
                         "refresh": True,
                         "apm": data_type in [DataType.well, DataType.all],
                         "production": data_type in [DataType.production, DataType.all],
+                        "platform": data_type
+                        in [DataType.platform, DataType.infrastructure, DataType.all],
+                        "pipeline_permit": data_type
+                        in [
+                            DataType.pipeline_permit,
+                            DataType.infrastructure,
+                            DataType.all,
+                        ],
+                        "deepwater_structure": data_type
+                        in [
+                            DataType.deepwater_structure,
+                            DataType.infrastructure,
+                            DataType.all,
+                        ],
+                        "pipeline_location": data_type
+                        in [
+                            DataType.pipeline_location,
+                            DataType.infrastructure,
+                            DataType.all,
+                        ],
                     },
                     "meta": {
-                        "mode": "legacy",
+                        "mode": "enhanced" if use_enhanced else "legacy",
                     },
                 }
 
@@ -636,7 +683,7 @@ def refresh(
 
 @app.command()
 def stats(
-    verbose: bool = typer.Option(
+    verbose: bool = typer.Option(  # noqa: B008
         False, "--verbose", "-v", help="Show detailed statistics"
     ),
 ) -> None:
@@ -695,7 +742,7 @@ def stats(
                 try:
                     from worldenergydata.modules.bsee.data.bsee_data import BSEEData
 
-                    bsee_data = BSEEData()
+                    _bsee_data = BSEEData()  # noqa: F841
                     # Note: Would need to actually query data to get real counts
                     stats_data["data_files"] = total_files
                     stats_data["data_size_mb"] = total_size / (1024 * 1024)

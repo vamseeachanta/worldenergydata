@@ -120,14 +120,30 @@ class DataRefreshEnhanced:
         well_flag = cfg.get("data", {}).get("well", False)
         war_flag = cfg.get("data", {}).get("war", False)
         production_flag = cfg.get("data", {}).get("production", False)
+        platform_flag = cfg.get("data", {}).get("platform", False)
+        pipeline_permit_flag = cfg.get("data", {}).get("pipeline_permit", False)
+        deepwater_flag = cfg.get("data", {}).get("deepwater_structure", False)
+        pipeline_loc_flag = cfg.get("data", {}).get("pipeline_location", False)
 
-        if well_flag or war_flag or production_flag:
+        if (
+            well_flag
+            or war_flag
+            or production_flag
+            or platform_flag
+            or pipeline_permit_flag
+            or deepwater_flag
+            or pipeline_loc_flag
+        ):
             logger.info("Data type flags detected, processing requested data sources")
 
             # Process each data type based on flags
             self.refresh_well_data_enhanced(cfg)
             self.refresh_war_data_enhanced(cfg)
             self.refresh_production_data_enhanced(cfg)
+            self.refresh_platform_data_enhanced(cfg)
+            self.refresh_pipeline_permit_data_enhanced(cfg)
+            self.refresh_deepwater_structure_data_enhanced(cfg)
+            self.refresh_pipeline_location_data_enhanced(cfg)
 
             # Report statistics
             self._report_statistics()
@@ -169,7 +185,8 @@ class DataRefreshEnhanced:
             f"  Chunked Downloads: {'ENABLED' if self.use_chunked_downloads else 'DISABLED'}"
         )
         logger.info(
-            f"  Optimized Processing: {'ENABLED' if self.memory_processor.use_optimized else 'DISABLED'}"
+            f"  Optimized Processing: "
+            f"{'ENABLED' if self.memory_processor.use_optimized else 'DISABLED'}"
         )
         logger.info("  Parallel Zip Processing: ENABLED")
 
@@ -554,3 +571,303 @@ class DataRefreshEnhanced:
 
         except Exception as e:
             logger.error(f"Error saving production data binary: {str(e)}")
+
+    def refresh_platform_data_enhanced(self, cfg: Dict[str, Any]) -> None:
+        """Refresh platform structure data with fresh download."""
+        platform_flag = cfg.get("data", {}).get("platform", False)
+        if platform_flag:
+            logger.info(
+                "Processing platform structure data with enhanced optimizations"
+            )
+            try:
+                platform_url = (
+                    "https://www.data.bsee.gov/Platform/Files/PlatStrucRawData.zip"
+                )
+                if self.use_chunked_downloads:
+                    logger.info("Using chunk-based download with change detection")
+                    change_info = self.chunk_manager.check_remote_changes(
+                        platform_url, "platform"
+                    )
+                    if not change_info["has_changed"]:
+                        logger.info("Platform data unchanged - checking cache")
+                        self.stats["bytes_cached"] += change_info[
+                            "remote_metadata"
+                        ].get("content_length", 0)
+                    zip_data = self.chunk_manager.download_with_chunks(
+                        platform_url,
+                        "platform",
+                        force_refresh=cfg.get("force_refresh", False),
+                    )
+                else:
+                    logger.info(f"Downloading platform data from {platform_url}")
+                    zip_data = self.web_scraper.download_zip_to_memory(
+                        platform_url, data_type="platform"
+                    )
+                if zip_data:
+                    self.stats["bytes_downloaded"] += len(zip_data)
+                    logger.info("Processing platform data with memory processor")
+                    processed_data = self.memory_processor.process_platform_data(
+                        zip_data, cfg
+                    )
+                    logger.info("Saving platform data to binary format")
+                    self._save_platform_data_binary(processed_data, cfg)
+                    logger.info("Platform data refresh completed")
+                else:
+                    logger.error("Failed to download platform data")
+            except Exception as e:
+                logger.error(f"Error refreshing platform data: {str(e)}")
+
+    def refresh_pipeline_permit_data_enhanced(self, cfg: Dict[str, Any]) -> None:
+        """Refresh pipeline permit data with fresh download."""
+        pipeline_permit_flag = cfg.get("data", {}).get("pipeline_permit", False)
+        if pipeline_permit_flag:
+            logger.info("Processing pipeline permit data with enhanced optimizations")
+            try:
+                pipeline_permit_url = (
+                    "https://www.data.bsee.gov/Pipeline/Files/PipePermRawData.zip"
+                )
+                if self.use_chunked_downloads:
+                    logger.info("Using chunk-based download with change detection")
+                    change_info = self.chunk_manager.check_remote_changes(
+                        pipeline_permit_url, "pipeline_permit"
+                    )
+                    if not change_info["has_changed"]:
+                        logger.info("Pipeline permit data unchanged - checking cache")
+                        self.stats["bytes_cached"] += change_info[
+                            "remote_metadata"
+                        ].get("content_length", 0)
+                    zip_data = self.chunk_manager.download_with_chunks(
+                        pipeline_permit_url,
+                        "pipeline_permit",
+                        force_refresh=cfg.get("force_refresh", False),
+                    )
+                else:
+                    logger.info(
+                        f"Downloading pipeline permit data from {pipeline_permit_url}"
+                    )
+                    zip_data = self.web_scraper.download_zip_to_memory(
+                        pipeline_permit_url, data_type="pipeline_permit"
+                    )
+                if zip_data:
+                    self.stats["bytes_downloaded"] += len(zip_data)
+                    logger.info("Processing pipeline permit data with memory processor")
+                    processed_data = self.memory_processor.process_pipeline_permit_data(
+                        zip_data, cfg
+                    )
+                    logger.info("Saving pipeline permit data to binary format")
+                    self._save_pipeline_permit_data_binary(processed_data, cfg)
+                    logger.info("Pipeline permit data refresh completed")
+                else:
+                    logger.error("Failed to download pipeline permit data")
+            except Exception as e:
+                logger.error(f"Error refreshing pipeline permit data: {str(e)}")
+
+    def refresh_deepwater_structure_data_enhanced(self, cfg: Dict[str, Any]) -> None:
+        """Refresh deepwater (permitted) structure data with fresh download."""
+        deepwater_flag = cfg.get("data", {}).get("deepwater_structure", False)
+        if deepwater_flag:
+            logger.info(
+                "Processing deepwater structure data with enhanced optimizations"
+            )
+            try:
+                deepwater_url = (
+                    "https://www.data.bsee.gov/Platform/Files/PermStrucRawData.zip"
+                )
+                if self.use_chunked_downloads:
+                    logger.info("Using chunk-based download with change detection")
+                    change_info = self.chunk_manager.check_remote_changes(
+                        deepwater_url, "deepwater_structure"
+                    )
+                    if not change_info["has_changed"]:
+                        logger.info(
+                            "Deepwater structure data unchanged - checking cache"
+                        )
+                        self.stats["bytes_cached"] += change_info[
+                            "remote_metadata"
+                        ].get("content_length", 0)
+                    zip_data = self.chunk_manager.download_with_chunks(
+                        deepwater_url,
+                        "deepwater_structure",
+                        force_refresh=cfg.get("force_refresh", False),
+                    )
+                else:
+                    logger.info(
+                        f"Downloading deepwater structure data from {deepwater_url}"
+                    )
+                    zip_data = self.web_scraper.download_zip_to_memory(
+                        deepwater_url, data_type="deepwater_structure"
+                    )
+                if zip_data:
+                    self.stats["bytes_downloaded"] += len(zip_data)
+                    logger.info(
+                        "Processing deepwater structure data with memory processor"
+                    )
+                    processed_data = (
+                        self.memory_processor.process_deepwater_structure_data(
+                            zip_data, cfg
+                        )
+                    )
+                    logger.info("Saving deepwater structure data to binary format")
+                    self._save_deepwater_structure_data_binary(processed_data, cfg)
+                    logger.info("Deepwater structure data refresh completed")
+                else:
+                    logger.error("Failed to download deepwater structure data")
+            except Exception as e:
+                logger.error(f"Error refreshing deepwater structure data: {str(e)}")
+
+    def refresh_pipeline_location_data_enhanced(self, cfg: Dict[str, Any]) -> None:
+        """Refresh pipeline location data with fresh download."""
+        pipeline_loc_flag = cfg.get("data", {}).get("pipeline_location", False)
+        if pipeline_loc_flag:
+            logger.info("Processing pipeline location data with enhanced optimizations")
+            try:
+                pipeline_loc_url = (
+                    "https://www.data.bsee.gov/Pipeline/Files/PipeLocAllRawData.zip"
+                )
+                if self.use_chunked_downloads:
+                    logger.info("Using chunk-based download with change detection")
+                    change_info = self.chunk_manager.check_remote_changes(
+                        pipeline_loc_url, "pipeline_location"
+                    )
+                    if not change_info["has_changed"]:
+                        logger.info("Pipeline location data unchanged - checking cache")
+                        self.stats["bytes_cached"] += change_info[
+                            "remote_metadata"
+                        ].get("content_length", 0)
+                    zip_data = self.chunk_manager.download_with_chunks(
+                        pipeline_loc_url,
+                        "pipeline_location",
+                        force_refresh=cfg.get("force_refresh", False),
+                    )
+                else:
+                    logger.info(
+                        f"Downloading pipeline location data from {pipeline_loc_url}"
+                    )
+                    zip_data = self.web_scraper.download_zip_to_memory(
+                        pipeline_loc_url, data_type="pipeline_location"
+                    )
+                if zip_data:
+                    self.stats["bytes_downloaded"] += len(zip_data)
+                    logger.info(
+                        "Processing pipeline location data with memory processor"
+                    )
+                    processed_data = (
+                        self.memory_processor.process_pipeline_location_data(
+                            zip_data, cfg
+                        )
+                    )
+                    logger.info("Saving pipeline location data to binary format")
+                    self._save_pipeline_location_data_binary(processed_data, cfg)
+                    logger.info("Pipeline location data refresh completed")
+                else:
+                    logger.error("Failed to download pipeline location data")
+            except Exception as e:
+                logger.error(f"Error refreshing pipeline location data: {str(e)}")
+
+    def _save_platform_data_binary(self, data: Any, cfg: Dict[str, Any]) -> None:
+        """Save platform data to binary format."""
+        try:
+            bin_path = (
+                cfg.get("parameters", {})
+                .get("filepath", {})
+                .get("platform", {})
+                .get("bin", "data/modules/bsee/bin/platform")
+            )
+            current_dir = Path(__file__).parent
+            while current_dir != current_dir.parent:
+                if (current_dir / "pyproject.toml").exists():
+                    project_root = current_dir
+                    break
+                current_dir = current_dir.parent
+            else:
+                project_root = Path(__file__).parent.parent.parent.parent.parent.parent
+            abs_bin_path = project_root / bin_path
+            abs_bin_path.mkdir(parents=True, exist_ok=True)
+            self.memory_processor.save_to_binary(
+                data, str(abs_bin_path), "platform_data"
+            )
+            logger.info(f"Platform data saved to {abs_bin_path}")
+        except Exception as e:
+            logger.error(f"Error saving platform data binary: {str(e)}")
+
+    def _save_pipeline_permit_data_binary(self, data: Any, cfg: Dict[str, Any]) -> None:
+        """Save pipeline permit data to binary format."""
+        try:
+            bin_path = (
+                cfg.get("parameters", {})
+                .get("filepath", {})
+                .get("pipeline_permit", {})
+                .get("bin", "data/modules/bsee/bin/pipeline_permit")
+            )
+            current_dir = Path(__file__).parent
+            while current_dir != current_dir.parent:
+                if (current_dir / "pyproject.toml").exists():
+                    project_root = current_dir
+                    break
+                current_dir = current_dir.parent
+            else:
+                project_root = Path(__file__).parent.parent.parent.parent.parent.parent
+            abs_bin_path = project_root / bin_path
+            abs_bin_path.mkdir(parents=True, exist_ok=True)
+            self.memory_processor.save_to_binary(
+                data, str(abs_bin_path), "pipeline_permit_data"
+            )
+            logger.info(f"Pipeline permit data saved to {abs_bin_path}")
+        except Exception as e:
+            logger.error(f"Error saving pipeline permit data binary: {str(e)}")
+
+    def _save_deepwater_structure_data_binary(
+        self, data: Any, cfg: Dict[str, Any]
+    ) -> None:
+        """Save deepwater structure data to binary format."""
+        try:
+            bin_path = (
+                cfg.get("parameters", {})
+                .get("filepath", {})
+                .get("deepwater_structure", {})
+                .get("bin", "data/modules/bsee/bin/deepwater_structure")
+            )
+            current_dir = Path(__file__).parent
+            while current_dir != current_dir.parent:
+                if (current_dir / "pyproject.toml").exists():
+                    project_root = current_dir
+                    break
+                current_dir = current_dir.parent
+            else:
+                project_root = Path(__file__).parent.parent.parent.parent.parent.parent
+            abs_bin_path = project_root / bin_path
+            abs_bin_path.mkdir(parents=True, exist_ok=True)
+            self.memory_processor.save_to_binary(
+                data, str(abs_bin_path), "deepwater_structure_data"
+            )
+            logger.info(f"Deepwater structure data saved to {abs_bin_path}")
+        except Exception as e:
+            logger.error(f"Error saving deepwater structure data binary: {str(e)}")
+
+    def _save_pipeline_location_data_binary(
+        self, data: Any, cfg: Dict[str, Any]
+    ) -> None:
+        """Save pipeline location data to binary format."""
+        try:
+            bin_path = (
+                cfg.get("parameters", {})
+                .get("filepath", {})
+                .get("pipeline_location", {})
+                .get("bin", "data/modules/bsee/bin/pipeline_location")
+            )
+            current_dir = Path(__file__).parent
+            while current_dir != current_dir.parent:
+                if (current_dir / "pyproject.toml").exists():
+                    project_root = current_dir
+                    break
+                current_dir = current_dir.parent
+            else:
+                project_root = Path(__file__).parent.parent.parent.parent.parent.parent
+            abs_bin_path = project_root / bin_path
+            abs_bin_path.mkdir(parents=True, exist_ok=True)
+            self.memory_processor.save_to_binary(
+                data, str(abs_bin_path), "pipeline_location_data"
+            )
+            logger.info(f"Pipeline location data saved to {abs_bin_path}")
+        except Exception as e:
+            logger.error(f"Error saving pipeline location data binary: {str(e)}")
