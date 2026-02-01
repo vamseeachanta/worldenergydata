@@ -106,7 +106,7 @@ wheels = [
 [[package]]
 name = "assetutilities"
 version = "0.1.0"
-source = { git = "https://github.com/vamseeachanta/assetutilities.git#6be93abb230287cee579c449d74f39e992acff58" }
+source = { git = "https://github.com/vamseeachanta/assetutilities.git#c23cdfc5d77e7f7207f83e874fa4711f39529e57" }
 dependencies = [
     { name = "beautifulsoup4" },
     { name = "build" },
@@ -5656,6 +5656,7 @@ dependencies = [
     { name = "pandas" },
     { name = "pdfplumber" },
     { name = "plotly" },
+    { name = "psutil" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "reportlab" },
@@ -5746,6 +5747,7 @@ requires-dist = [
     { name = "pdfplumber", specifier = ">=0.10.0" },
     { name = "plotly", specifier = ">=5.18.0" },
     { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=3.0" },
+    { name = "psutil", specifier = ">=7.2.1" },
     { name = "psutil", marker = "extra == 'dev'", specifier = ">=5.9.0" },
     { name = "psutil", marker = "extra == 'test'", specifier = ">=5.9.0" },
     { name = "pydantic", specifier = ">=2.5.0" },

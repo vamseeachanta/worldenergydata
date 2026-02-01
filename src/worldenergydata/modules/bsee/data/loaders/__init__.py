@@ -4,11 +4,24 @@ This package provides modules for loading data by different identifiers:
 - api: Load data by API12 well numbers
 - block: Load data by block numbers
 - lease: Load data by lease numbers
+- infrastructure: Load platform and pipeline data
 """
 
-from worldenergydata.modules.bsee.data.loaders.api import WellRouter, WellData
-from worldenergydata.modules.bsee.data.loaders.block import BlockRouter, DataFromLocalFiles as BlockDataFromLocalFiles, WARDataFromBin
-from worldenergydata.modules.bsee.data.loaders.lease import LeaseRouter, DataFromLocalFiles as LeaseDataFromLocalFiles
+from worldenergydata.modules.bsee.data.loaders.api import WellData, WellRouter
+from worldenergydata.modules.bsee.data.loaders.block import BlockRouter
+from worldenergydata.modules.bsee.data.loaders.block import (
+    DataFromLocalFiles as BlockDataFromLocalFiles,
+)
+from worldenergydata.modules.bsee.data.loaders.block import WARDataFromBin
+from worldenergydata.modules.bsee.data.loaders.infrastructure import (
+    InfrastructureRouter,
+    PipelineLoader,
+    PlatformLoader,
+)
+from worldenergydata.modules.bsee.data.loaders.lease import (
+    DataFromLocalFiles as LeaseDataFromLocalFiles,
+)
+from worldenergydata.modules.bsee.data.loaders.lease import LeaseRouter
 
 __all__ = [
     "WellRouter",
@@ -18,4 +31,7 @@ __all__ = [
     "WARDataFromBin",
     "LeaseRouter",
     "LeaseDataFromLocalFiles",
+    "InfrastructureRouter",
+    "PlatformLoader",
+    "PipelineLoader",
 ]

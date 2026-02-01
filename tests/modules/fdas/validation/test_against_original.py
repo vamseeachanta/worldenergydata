@@ -9,7 +9,6 @@ Date: 2025-10-03
 """
 
 import sys
-from datetime import datetime
 from pathlib import Path
 
 import numpy as np
@@ -17,7 +16,10 @@ import pandas as pd
 import pytest
 
 # Add FDAS source to path for comparison
-FDAS_SOURCE_DIR = Path("/home/vamsee/Downloads/FDAS_V30")
+FDAS_SOURCE_DIR = (
+    Path(__file__).resolve().parents[4]
+    / "docs/modules/bsee/analysis/production/FDAS_V30"
+)
 sys.path.insert(0, str(FDAS_SOURCE_DIR))
 
 # Import original FDAS functions for comparison
@@ -35,14 +37,13 @@ except ImportError:
     ORIGINAL_AVAILABLE = False
     print("Warning: Original FDAS code not available for comparison")
 
-from worldenergydata.modules.fdas.core.config import (
+from worldenergydata.modules.fdas.core.config import (  # noqa: E402
     AssumptionsManager,
     classify_dev_system_by_depth,
 )
 
 # Import our implementation
-from worldenergydata.modules.fdas.core.financial import (
-    calculate_all_metrics,
+from worldenergydata.modules.fdas.core.financial import (  # noqa: E402
     calculate_npv,
     excel_like_mirr,
 )

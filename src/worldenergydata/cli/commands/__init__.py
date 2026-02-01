@@ -11,6 +11,7 @@ Each module provides subcommands for a specific domain:
 - canada: Canadian oil & gas data (AER/BCER)
 - mexico_cnh: Mexico CNH oil & gas data (SIH dashboard)
 - landman: Mineral ownership and lease data operations
+- lng_terminals: Global LNG terminal dataset with engineering design data
 """
 
 from worldenergydata.cli.commands import (
@@ -18,6 +19,7 @@ from worldenergydata.cli.commands import (
     canada,
     fdas,
     landman,
+    lng_terminals,
     marine_safety,
     metocean,
     mexico_cnh,
@@ -35,4 +37,5 @@ __all__ = [
     "canada",
     "mexico_cnh",
     "landman",
+    "lng_terminals",
 ]

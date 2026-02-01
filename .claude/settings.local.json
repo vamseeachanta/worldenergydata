@@ -3,15 +3,16 @@
     "allow": [
       "mcp__ruv-swarm",
       "mcp__claude-flow@alpha",
-      "mcp__flow-nexus"
+      "mcp__flow-nexus",
+      "WebFetch(domain:www.marineinsight.com)"
     ],
     "deny": []
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "claude-flow@alpha",
     "ruv-swarm",
     "flow-nexus",
     "agentic-payments"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }

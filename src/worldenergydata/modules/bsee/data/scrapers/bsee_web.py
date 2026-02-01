@@ -26,6 +26,10 @@ class BSEEWebScraper:
         "production": "https://www.data.bsee.gov/Production/Files/ProductionRawData.zip",
         "war": "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip",
         "portal": "https://www.data.bsee.gov/Main/RawData.aspx",
+        "platform": "https://www.data.bsee.gov/Platform/Files/PlatStrucRawData.zip",
+        "pipeline_permit": "https://www.data.bsee.gov/Pipeline/Files/PipePermRawData.zip",
+        "deepwater_structure": "https://www.data.bsee.gov/Platform/Files/PermStrucRawData.zip",
+        "pipeline_location": "https://www.data.bsee.gov/Pipeline/Files/PipeLocAllRawData.zip",
     }
 
     # Request configuration
@@ -35,6 +39,10 @@ class BSEEWebScraper:
         "production": 1200,  # 20 minutes for ~15-50 MB files
         "war": 2400,  # 40 minutes for ~100+ MB files
         "default": 600,  # 10 minutes default
+        "platform": 600,  # 10 minutes
+        "pipeline_permit": 600,  # 10 minutes
+        "deepwater_structure": 600,  # 10 minutes
+        "pipeline_location": 900,  # 15 minutes (larger file)
     }
     CHUNK_SIZE = 32768  # 32KB chunks for faster streaming
     MAX_RETRIES = 5  # Increased retries for large files
@@ -121,11 +129,10 @@ class BSEEWebScraper:
                             >= self.PROGRESS_INTERVAL
                         ):
                             progress = (downloaded / file_size) * 100
-                            speed_mbps = (downloaded - last_progress_log) / (
-                                1024 * 1024
-                            )  # MB downloaded since last log
                             logger.info(
-                                f"Download progress: {progress:.1f}% ({downloaded/(1024*1024):.1f} MB / {file_size/(1024*1024):.1f} MB)"
+                                f"Download progress: {progress:.1f}%"
+                                f" ({downloaded/(1024*1024):.1f} MB"
+                                f" / {file_size/(1024*1024):.1f} MB)"
                             )
                             last_progress_log = downloaded
 
@@ -187,6 +194,52 @@ class BSEEWebScraper:
         """
         logger.info("Downloading BSEE WAR data")
         return self.download_zip_to_memory(self.URLS["war"], data_type="war")
+
+    def download_platform_data(self) -> Optional[ByteString]:
+        """
+        Download platform structure data.
+
+        Returns:
+            Bytes of the zip file or None if failed
+        """
+        logger.info("Downloading BSEE platform structure data")
+        return self.download_zip_to_memory(self.URLS["platform"], data_type="platform")
+
+    def download_pipeline_permit_data(self) -> Optional[ByteString]:
+        """
+        Download pipeline permit data.
+
+        Returns:
+            Bytes of the zip file or None if failed
+        """
+        logger.info("Downloading BSEE pipeline permit data")
+        return self.download_zip_to_memory(
+            self.URLS["pipeline_permit"], data_type="pipeline_permit"
+        )
+
+    def download_deepwater_structure_data(self) -> Optional[ByteString]:
+        """
+        Download deepwater permanent structure data.
+
+        Returns:
+            Bytes of the zip file or None if failed
+        """
+        logger.info("Downloading BSEE deepwater structure data")
+        return self.download_zip_to_memory(
+            self.URLS["deepwater_structure"], data_type="deepwater_structure"
+        )
+
+    def download_pipeline_location_data(self) -> Optional[ByteString]:
+        """
+        Download pipeline location data.
+
+        Returns:
+            Bytes of the zip file or None if failed
+        """
+        logger.info("Downloading BSEE pipeline location data")
+        return self.download_zip_to_memory(
+            self.URLS["pipeline_location"], data_type="pipeline_location"
+        )
 
     def verify_url_accessibility(self, url: str) -> bool:
         """

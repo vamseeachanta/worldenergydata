@@ -55,6 +55,7 @@ from worldenergydata.cli.commands import (
     canada,
     fdas,
     landman,
+    lng_terminals,
     marine_safety,
     metocean,
     mexico_cnh,
@@ -103,6 +104,11 @@ app.add_typer(
     landman.app,
     name="landman",
     help="Mineral ownership and lease data operations",
+)
+app.add_typer(
+    lng_terminals.app,
+    name="lng-terminals",
+    help="Global LNG terminal dataset with engineering design data",
 )
 
 
@@ -175,6 +181,11 @@ def info() -> None:
         "Mineral ownership and lease data",
         "search, lookup, county-info, providers, status",
     )
+    table.add_row(
+        "lng-terminals",
+        "Global LNG terminal dataset",
+        "collect, process, export, report, pipeline",
+    )
 
     console.print(table)
 
@@ -200,6 +211,7 @@ def status() -> None:
         "Canada Data": Path("data/canada"),
         "Mexico CNH Data": Path("data/mexico_cnh"),
         "Landman Data": Path("data/landman"),
+        "LNG Terminals Data": Path("data/modules/lng_terminals"),
         "Reports": Path("reports"),
     }
 
@@ -223,7 +235,7 @@ def status() -> None:
 @app.callback(invoke_without_command=True)
 def main(
     ctx: typer.Context,
-    verbose: bool = typer.Option(
+    verbose: bool = typer.Option(  # noqa: B008  # noqa: B008
         False, "--verbose", "-v", help="Enable verbose output"
     ),
 ) -> None:
