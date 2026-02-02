@@ -11,7 +11,7 @@ This module provides configurable safety analysis tools for HSE
 - Statistical hypothesis testing (t-test, ANOVA, chi-square)
 - Configurable schema mappings for any data source
 
-Ported from the ENIGMA project and generalized for multi-client use.
+Generalized safety analysis toolkit for multi-client use.
 
 Example usage:
     from worldenergydata.modules.safety_analysis import (
@@ -98,6 +98,22 @@ from worldenergydata.modules.safety_analysis.reports import (
     SummaryStat,
 )
 
+# Risk Index
+from worldenergydata.modules.safety_analysis.risk_index import (
+    ActivityRiskScore,
+    CompositeScore,
+    DataAssembler,
+    DimensionScore,
+    NormalizationResult,
+    RiskCategory,
+    RiskDashboard,
+    RiskScorer,
+    generate_methodology_html,
+    normalize_to_scale,
+    percentile_rank,
+    risk_index_app,
+)
+
 __version__ = "0.1.0"
 __all__ = [
     # Config
@@ -147,4 +163,17 @@ __all__ = [
     "IncidentReport",
     "CorrelationReport",
     "ClassificationReport",
+    # Risk Index
+    "ActivityRiskScore",
+    "CompositeScore",
+    "DataAssembler",
+    "DimensionScore",
+    "NormalizationResult",
+    "RiskCategory",
+    "RiskDashboard",
+    "RiskScorer",
+    "generate_methodology_html",
+    "normalize_to_scale",
+    "percentile_rank",
+    "risk_index_app",
 ]
