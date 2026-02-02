@@ -38,6 +38,12 @@ Example usage:
     observations = processor.process(raw_df)
 """
 
+# Adapters
+from worldenergydata.modules.safety_analysis.adapters import (
+    BaseAdapter,
+    CSVAdapter,
+    HSEAdapter,
+)
 from worldenergydata.modules.safety_analysis.config import AnalysisConfig
 from worldenergydata.modules.safety_analysis.constants import (
     ClassifierType,
@@ -72,11 +78,24 @@ from worldenergydata.modules.safety_analysis.exceptions import (
 
 # NLP components
 from worldenergydata.modules.safety_analysis.nlp import (
+    BertClassificationPipeline,
+    BertConfig,
+    BertEmbedder,
     ClassificationPipeline,
     ModelEntry,
     ModelRegistry,
     SafetyTfidfVectorizer,
     TextPreprocessor,
+)
+
+# Reports
+from worldenergydata.modules.safety_analysis.reports import (
+    BaseReport,
+    ClassificationReport,
+    CorrelationReport,
+    IncidentReport,
+    ReportSection,
+    SummaryStat,
 )
 
 __version__ = "0.1.0"
@@ -114,4 +133,18 @@ __all__ = [
     "ModelEntry",
     "ModelRegistry",
     "ClassificationPipeline",
+    "BertConfig",
+    "BertEmbedder",
+    "BertClassificationPipeline",
+    # Adapters
+    "BaseAdapter",
+    "HSEAdapter",
+    "CSVAdapter",
+    # Reports
+    "BaseReport",
+    "ReportSection",
+    "SummaryStat",
+    "IncidentReport",
+    "CorrelationReport",
+    "ClassificationReport",
 ]

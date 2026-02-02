@@ -7,6 +7,11 @@ gated behind try/except imports. Install extras as needed:
     pip install worldenergydata[safety-bert]   # torch, transformers
 """
 
+from worldenergydata.modules.safety_analysis.nlp.bert_pipeline import (
+    BertClassificationPipeline,
+    BertConfig,
+    BertEmbedder,
+)
 from worldenergydata.modules.safety_analysis.nlp.classification_pipeline import (
     ClassificationPipeline,
 )
@@ -27,4 +32,7 @@ __all__ = [
     "ModelEntry",
     "ModelRegistry",
     "ClassificationPipeline",
+    "BertConfig",
+    "BertEmbedder",
+    "BertClassificationPipeline",
 ]

@@ -62,6 +62,7 @@ from worldenergydata.cli.commands import (
     sodir,
     texas_rrc,
 )
+from worldenergydata.modules.safety_analysis import cli as safety_analysis_cli
 
 # Initialize console for rich output
 console = Console()
@@ -109,6 +110,11 @@ app.add_typer(
     lng_terminals.app,
     name="lng-terminals",
     help="Global LNG terminal dataset with engineering design data",
+)
+app.add_typer(
+    safety_analysis_cli.app,
+    name="safety-analysis",
+    help="Safety analysis and HSE data processing",
 )
 
 
@@ -185,6 +191,11 @@ def info() -> None:
         "lng-terminals",
         "Global LNG terminal dataset",
         "collect, process, export, report, pipeline",
+    )
+    table.add_row(
+        "safety-analysis",
+        "Safety analysis and HSE data processing",
+        "load, classify, correlate, report, status",
     )
 
     console.print(table)
