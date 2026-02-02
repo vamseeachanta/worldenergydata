@@ -1,11 +1,13 @@
 # ABOUTME: Concrete importer for BSEE civil penalties database CSV data
 # ABOUTME: Implements CSV parsing and field normalization for HSE violation/penalty records
 
-from typing import List, Dict, Any
 from datetime import datetime
 from pathlib import Path
+from typing import Any, Dict, List
+
 import pandas as pd
 
+from worldenergydata.modules.hse.database.models import HSEIncident, ViolationIncident
 from worldenergydata.modules.hse.importers.base_importer import BaseImporter
 
 
@@ -72,7 +74,7 @@ class BSEEPenaltiesImporter(BaseImporter):
             df = pd.read_csv(csv_path)
 
             # Convert DataFrame to list of dictionaries
-            records = df.to_dict('records')
+            records = df.to_dict("records")
 
             return records
 
@@ -112,108 +114,158 @@ class BSEEPenaltiesImporter(BaseImporter):
         normalized = {}
 
         # Required field: bsee_incident_id
-        if 'incident_id' in raw_data:
-            normalized['bsee_incident_id'] = raw_data['incident_id']
+        if "incident_id" in raw_data:
+            normalized["bsee_incident_id"] = raw_data["incident_id"]
 
         # Required field: incident_date (convert string to datetime)
-        if 'incident_date' in raw_data:
-            date_str = raw_data['incident_date']
+        if "incident_date" in raw_data:
+            date_str = raw_data["incident_date"]
             if isinstance(date_str, str):
                 # Try parsing with time component first
                 try:
-                    normalized['incident_date'] = datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')
-                except ValueError:
-                    # Fall back to date-only format
-                    try:
-                        normalized['incident_date'] = datetime.strptime(date_str, '%Y-%m-%d')
-                    except ValueError:
-                        # If parsing fails, keep original (will fail validation)
-                        normalized['incident_date'] = date_str
-            else:
-                # Already datetime object
-                normalized['incident_date'] = date_str
-
-        # Required field: operator
-        if 'operator_name' in raw_data:
-            normalized['operator'] = raw_data['operator_name']
-
-        # Required field: incident_type (automatically set to 'violation')
-        normalized['incident_type'] = 'violation'
-
-        # Required field: severity
-        if 'severity' in raw_data:
-            normalized['severity'] = raw_data['severity']
-
-        # Optional field: inc_number (INC number)
-        if 'inc_number' in raw_data:
-            normalized['inc_number'] = raw_data['inc_number']
-        else:
-            normalized['inc_number'] = None
-
-        # Optional field: violation_type
-        if 'violation_type' in raw_data:
-            normalized['violation_type'] = raw_data['violation_type']
-        else:
-            normalized['violation_type'] = None
-
-        # Optional field: regulation_cited
-        if 'regulation_cited' in raw_data:
-            normalized['regulation_cited'] = raw_data['regulation_cited']
-        else:
-            normalized['regulation_cited'] = None
-
-        # Optional field: penalty_amount (convert string to float)
-        if 'penalty_amount' in raw_data and raw_data['penalty_amount'] is not None:
-            try:
-                if isinstance(raw_data['penalty_amount'], str):
-                    normalized['penalty_amount'] = float(raw_data['penalty_amount'])
-                else:
-                    normalized['penalty_amount'] = raw_data['penalty_amount']
-            except (ValueError, TypeError):
-                normalized['penalty_amount'] = None
-        else:
-            normalized['penalty_amount'] = None
-
-        # Optional field: penalty_status
-        if 'penalty_status' in raw_data:
-            normalized['penalty_status'] = raw_data['penalty_status']
-        else:
-            normalized['penalty_status'] = None
-
-        # Optional field: compliance_deadline (convert string to datetime)
-        if 'compliance_deadline' in raw_data and raw_data['compliance_deadline'] is not None:
-            deadline_str = raw_data['compliance_deadline']
-            if isinstance(deadline_str, str):
-                # Try parsing with time component first
-                try:
-                    normalized['compliance_deadline'] = datetime.strptime(
-                        deadline_str, '%Y-%m-%d %H:%M:%S'
+                    normalized["incident_date"] = datetime.strptime(
+                        date_str, "%Y-%m-%d %H:%M:%S"
                     )
                 except ValueError:
                     # Fall back to date-only format
                     try:
-                        normalized['compliance_deadline'] = datetime.strptime(
-                            deadline_str, '%Y-%m-%d'
+                        normalized["incident_date"] = datetime.strptime(
+                            date_str, "%Y-%m-%d"
+                        )
+                    except ValueError:
+                        # If parsing fails, keep original (will fail validation)
+                        normalized["incident_date"] = date_str
+            else:
+                # Already datetime object
+                normalized["incident_date"] = date_str
+
+        # Required field: operator
+        if "operator_name" in raw_data:
+            normalized["operator"] = raw_data["operator_name"]
+
+        # Required field: incident_type (automatically set to 'violation')
+        normalized["incident_type"] = "violation"
+
+        # Required field: severity
+        if "severity" in raw_data:
+            normalized["severity"] = raw_data["severity"]
+
+        # Optional field: inc_number (INC number)
+        normalized["inc_number"] = raw_data.get("inc_number")
+
+        # Optional field: violation_type
+        normalized["violation_type"] = raw_data.get("violation_type")
+
+        # Optional field: regulation_cited
+        normalized["regulation_cited"] = raw_data.get("regulation_cited")
+
+        # Optional field: penalty_amount (convert string to float)
+        if "penalty_amount" in raw_data and raw_data["penalty_amount"] is not None:
+            try:
+                if isinstance(raw_data["penalty_amount"], str):
+                    normalized["penalty_amount"] = float(raw_data["penalty_amount"])
+                else:
+                    normalized["penalty_amount"] = raw_data["penalty_amount"]
+            except (ValueError, TypeError):
+                normalized["penalty_amount"] = None
+        else:
+            normalized["penalty_amount"] = None
+
+        # Optional field: penalty_status
+        normalized["penalty_status"] = raw_data.get("penalty_status")
+
+        # Optional field: compliance_deadline (convert string to datetime)
+        if (
+            "compliance_deadline" in raw_data
+            and raw_data["compliance_deadline"] is not None
+        ):
+            deadline_str = raw_data["compliance_deadline"]
+            if isinstance(deadline_str, str):
+                # Try parsing with time component first
+                try:
+                    normalized["compliance_deadline"] = datetime.strptime(
+                        deadline_str, "%Y-%m-%d %H:%M:%S"
+                    )
+                except ValueError:
+                    # Fall back to date-only format
+                    try:
+                        normalized["compliance_deadline"] = datetime.strptime(
+                            deadline_str, "%Y-%m-%d"
                         )
                     except ValueError:
                         # If parsing fails, set to None
-                        normalized['compliance_deadline'] = None
+                        normalized["compliance_deadline"] = None
             else:
                 # Already datetime object
-                normalized['compliance_deadline'] = deadline_str
+                normalized["compliance_deadline"] = deadline_str
         else:
-            normalized['compliance_deadline'] = None
+            normalized["compliance_deadline"] = None
 
         # Optional field: compliance_achieved (convert string to boolean)
-        if 'compliance_achieved' in raw_data and raw_data['compliance_achieved'] is not None:
-            achieved_str = raw_data['compliance_achieved']
+        if (
+            "compliance_achieved" in raw_data
+            and raw_data["compliance_achieved"] is not None
+        ):
+            achieved_str = raw_data["compliance_achieved"]
             if isinstance(achieved_str, str):
                 # Parse 'True'/'False' strings to boolean
-                normalized['compliance_achieved'] = achieved_str == 'True'
+                normalized["compliance_achieved"] = achieved_str == "True"
             else:
                 # Already boolean or other type
-                normalized['compliance_achieved'] = achieved_str
+                normalized["compliance_achieved"] = achieved_str
         else:
-            normalized['compliance_achieved'] = None
+            normalized["compliance_achieved"] = None
 
         return normalized
+
+    def import_record(self, data: Dict[str, Any]):
+        """
+        Import single penalty/violation record to database.
+
+        Creates both an HSEIncident base record and a linked ViolationIncident
+        child record to persist violation-specific fields (inc_number,
+        violation_type, regulation_cited, penalty_amount, penalty_status,
+        compliance_deadline, compliance_achieved).
+
+        Args:
+            data: Validated, normalized data dictionary containing both
+                  HSEIncident and ViolationIncident fields
+        """
+        # Create HSEIncident base record
+        incident = HSEIncident(
+            bsee_incident_id=data.get("bsee_incident_id"),
+            incident_date=data.get("incident_date"),
+            operator=data.get("operator"),
+            facility_name=data.get("facility_name"),
+            lease_number=data.get("lease_number"),
+            block_number=data.get("block_number"),
+            field_name=data.get("field_name"),
+            latitude=data.get("latitude"),
+            longitude=data.get("longitude"),
+            incident_type=data.get("incident_type"),
+            severity=data.get("severity"),
+            description=data.get("description"),
+            root_cause=data.get("root_cause"),
+            corrective_actions=data.get("corrective_actions"),
+            investigation_status=data.get("investigation_status"),
+        )
+
+        self.db_session.add(incident)
+        self.db_session.flush()  # Flush to get the generated incident.id
+
+        # Create ViolationIncident child record with violation-specific fields
+        violation = ViolationIncident(
+            hse_incident_id=incident.id,
+            inc_number=data.get("inc_number"),
+            violation_type=data.get("violation_type"),
+            regulation_cited=data.get("regulation_cited"),
+            penalty_amount=data.get("penalty_amount"),
+            penalty_status=data.get("penalty_status"),
+            compliance_deadline=data.get("compliance_deadline"),
+            compliance_achieved=data.get("compliance_achieved"),
+        )
+
+        self.db_session.add(violation)
+        self.db_session.commit()
+
+        self.imported_count += 1

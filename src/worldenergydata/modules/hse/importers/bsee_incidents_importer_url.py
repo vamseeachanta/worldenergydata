@@ -1,5 +1,5 @@
-# ABOUTME: URL-based BSEE incident importer using public APDRawData.zip
-# ABOUTME: Downloads from BSEE public API and processes well/incident data in memory
+# ABOUTME: URL-based BSEE incident importer using public incident investigation data
+# ABOUTME: Downloads from BSEE public API and processes incident investigation records in memory
 
 from typing import Any, Dict, List
 
@@ -14,15 +14,20 @@ class BSEEIncidentsImporterURL(BSEEIncidentsImporter):
     """
     URL-based variant of BSEEIncidentsImporter.
 
-    Downloads HSE incident data from public BSEE APDRawData.zip instead of using
-    local CSV files. All normalization, validation, and persistence logic is
-    inherited from parent class.
+    Downloads HSE incident investigation data from the BSEE public data portal.
+    All normalization, validation, and persistence logic is inherited from
+    parent class.
 
     Public Data Source:
-        https://www.data.bsee.gov/Well/Files/APDRawData.zip
-        - Well data including incidents, permits, and drilling information
-        - Updated daily by BSEE
-        - Typical file size: 10-20 MB compressed
+        https://www.data.bsee.gov/Other/DataTables/IncidentInvestigations.aspx
+        - Incident investigation records reported under 30 CFR 250.188
+        - Updated regularly by BSEE
+        - Typical file size: 5-15 MB compressed
+
+    TODO: The exact raw data download URL for incident investigations should be
+        confirmed from https://www.data.bsee.gov/Other/DataTables/IncidentInvestigations.aspx
+        as BSEE may change their file hosting paths. The current URL follows the
+        standard BSEE naming convention for raw data downloads.
 
     Usage:
         importer = BSEEIncidentsImporterURL(db_session)
@@ -30,7 +35,10 @@ class BSEEIncidentsImporterURL(BSEEIncidentsImporter):
         print(f"Imported: {stats['imported_count']}, Skipped: {stats['skipped_count']}")
     """
 
-    BSEE_WELL_DATA_URL = "https://www.data.bsee.gov/Well/Files/APDRawData.zip"
+    # Incident investigation raw data (not APDRawData.zip which is well permit data)
+    BSEE_INCIDENT_DATA_URL = (
+        "https://www.data.bsee.gov/Other/Files/IncidentInvestigationsRawData.zip"
+    )
 
     def __init__(self, db_session, use_optimized: bool = True):
         """
@@ -47,13 +55,13 @@ class BSEEIncidentsImporterURL(BSEEIncidentsImporter):
 
     def fetch_data(self) -> List[Dict[str, Any]]:
         """
-        Fetch raw incident data from BSEE public API.
+        Fetch raw incident investigation data from BSEE public API.
 
-        Downloads APDRawData.zip from BSEE, extracts contents in memory,
-        processes well data, and returns records as list of dictionaries.
+        Downloads incident investigation raw data from BSEE, extracts contents
+        in memory, and returns records as list of dictionaries.
 
         Returns:
-            List of dictionaries containing raw incident data from BSEE API
+            List of dictionaries containing raw incident investigation data
 
         Raises:
             ValueError: If download fails after all retries
@@ -61,28 +69,21 @@ class BSEEIncidentsImporterURL(BSEEIncidentsImporter):
         """
         # Download ZIP file to memory
         zip_data = self.scraper.download_zip_to_memory(
-            self.BSEE_WELL_DATA_URL, data_type="well"
+            self.BSEE_INCIDENT_DATA_URL, data_type="default"
         )
 
         if zip_data is None:
-            raise ValueError(f"Failed to download data from {self.BSEE_WELL_DATA_URL}")
+            raise ValueError(
+                f"Failed to download data from {self.BSEE_INCIDENT_DATA_URL}"
+            )
 
-        # Process ZIP contents in memory
-        # Returns: Dict[filename, Dict['data': DataFrame, 'metadata': {...}]]
-        processed_data = self.processor.process_well_data(
-            zip_data, cfg={}  # Use default processing configuration
-        )
+        # Process ZIP contents in memory using generic processor
+        # Incident investigation data is not well/production/WAR specific
+        processed_data = self.processor.process_zip_in_memory(zip_data)
 
         # Convert DataFrames to list of dictionaries for BaseImporter compatibility
         records = []
-        for filename, file_data in processed_data.items():
-            # Extract DataFrame from processing result
-            if isinstance(file_data, dict) and "data" in file_data:
-                df = file_data["data"]
-            else:
-                df = file_data
-
-            # Convert to list of dicts
+        for _filename, df in processed_data.items():
             file_records = df.to_dict("records")
             records.extend(file_records)
 

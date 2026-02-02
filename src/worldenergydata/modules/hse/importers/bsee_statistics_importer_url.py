@@ -1,5 +1,5 @@
-# ABOUTME: URL-based BSEE statistics importer using public ProductionRawData.zip
-# ABOUTME: Downloads from BSEE public API and processes aggregated production statistics in memory
+# ABOUTME: URL-based BSEE statistics importer using public incident statistics data
+# ABOUTME: Downloads from BSEE public API and processes aggregated safety statistics in memory
 
 from typing import Any, Dict, List
 
@@ -14,15 +14,19 @@ class BSEEStatisticsImporterURL(BSEEStatisticsImporter):
     """
     URL-based variant of BSEEStatisticsImporter.
 
-    Downloads HSE safety statistics from public BSEE ProductionRawData.zip instead
-    of using local CSV files. All normalization, validation, and persistence logic
-    is inherited from parent class.
+    Downloads HSE safety statistics from the BSEE public data portal instead
+    of using local CSV files. All normalization, validation, and persistence
+    logic is inherited from parent class.
 
     Public Data Source:
-        https://www.data.bsee.gov/Production/Files/ProductionRawData.zip
-        - Aggregated production statistics including incident counts
-        - Updated bi-monthly by BSEE
-        - Typical file size: 50-80 MB compressed
+        https://www.data.bsee.gov/Other/DataTables/IncidentInvestigations.aspx
+        - Aggregated safety statistics and incident counts
+        - Updated regularly by BSEE
+
+    TODO: The exact raw data download URL for incident statistics should be
+        confirmed from the BSEE data portal. The current URL follows the
+        standard BSEE naming convention. Production data (ProductionRawData.zip)
+        is NOT the correct source for safety statistics.
 
     Usage:
         importer = BSEEStatisticsImporterURL(db_session)
@@ -30,8 +34,9 @@ class BSEEStatisticsImporterURL(BSEEStatisticsImporter):
         print(f"Imported: {stats['imported_count']}, Skipped: {stats['skipped_count']}")
     """
 
-    BSEE_PRODUCTION_DATA_URL = (
-        "https://www.data.bsee.gov/Production/Files/ProductionRawData.zip"
+    # Incident statistics raw data (not ProductionRawData.zip which is production data)
+    BSEE_INCIDENT_STATS_URL = (
+        "https://www.data.bsee.gov/Other/Files/IncidentStatisticsRawData.zip"
     )
 
     def __init__(self, db_session, use_optimized: bool = True):
@@ -49,54 +54,45 @@ class BSEEStatisticsImporterURL(BSEEStatisticsImporter):
 
     def fetch_data(self) -> List[Dict[str, Any]]:
         """
-        Fetch raw statistics data from BSEE public API.
+        Fetch raw safety statistics data from BSEE public API.
 
-        Downloads ProductionRawData.zip from BSEE, extracts contents in memory,
-        processes production statistics, and returns records as list of dictionaries.
+        Downloads incident statistics raw data from BSEE, extracts contents
+        in memory, and returns records as list of dictionaries.
 
         Returns:
-            List of dictionaries containing raw production statistics from BSEE API
+            List of dictionaries containing raw safety statistics from BSEE API
 
         Raises:
             ValueError: If download fails after all retries
             RuntimeError: If ZIP extraction or processing fails
         """
-        # Download ZIP file to memory (larger file, longer timeout)
+        # Download ZIP file to memory
         zip_data = self.scraper.download_zip_to_memory(
-            self.BSEE_PRODUCTION_DATA_URL, data_type="production"
+            self.BSEE_INCIDENT_STATS_URL, data_type="default"
         )
 
         if zip_data is None:
             raise ValueError(
-                f"Failed to download data from {self.BSEE_PRODUCTION_DATA_URL}"
+                f"Failed to download data from {self.BSEE_INCIDENT_STATS_URL}"
             )
 
-        # Process ZIP contents in memory
-        # Production data requires optimized processing due to size (50-80 MB)
-        processed_data = self.processor.process_production_data(
-            zip_data, cfg={"calculate_boe": True}  # Calculate barrels of oil equivalent
-        )
+        # Process ZIP contents in memory using generic processor
+        # Statistics data is not well/production/WAR specific
+        processed_data = self.processor.process_zip_in_memory(zip_data)
 
         # Convert DataFrames to list of dictionaries for BaseImporter compatibility
         records = []
-        for filename, file_data in processed_data.items():
-            # Extract DataFrame from processing result
-            if isinstance(file_data, dict) and "data" in file_data:
-                df = file_data["data"]
-            else:
-                df = file_data
-
-            # Convert to list of dicts
+        for _filename, df in processed_data.items():
             file_records = df.to_dict("records")
             records.extend(file_records)
 
         return records
 
-    # normalize_data() inherited unchanged from BSEEStatisticsImporter
-    # Performs field mapping:
-    #   - incident_id → bsee_incident_id
-    #   - report_date (string) → incident_date (datetime)
+    # normalize_data(), validate_data(), is_duplicate(), and import_record()
+    # inherited from BSEEStatisticsImporter.
+    # Persists to SafetyStatistic model (not HSEIncident).
+    # Field mappings:
+    #   - report_date (string) → report_date (datetime)
     #   - operator_name → operator
-    #   - incident_type → automatically set to 'equipment_failure'
-    #   - severity → severity (unchanged)
+    #   - facility → facility_name
     #   - operational_period, total_incidents, counts (string) → integers

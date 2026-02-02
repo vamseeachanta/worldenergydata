@@ -3,18 +3,22 @@
 
 from .models import (
     Base,
+    EquipmentFailure,
     HSEIncident,
     InjuryIncident,
+    SafetyStatistic,
     SpillIncident,
+    ToxicRelease,
     ViolationIncident,
-    EquipmentFailure
 )
 
 __all__ = [
-    'Base',
-    'HSEIncident',
-    'InjuryIncident',
-    'SpillIncident',
-    'ViolationIncident',
-    'EquipmentFailure'
+    "Base",
+    "HSEIncident",
+    "InjuryIncident",
+    "SpillIncident",
+    "ViolationIncident",
+    "SafetyStatistic",
+    "EquipmentFailure",
+    "ToxicRelease",
 ]

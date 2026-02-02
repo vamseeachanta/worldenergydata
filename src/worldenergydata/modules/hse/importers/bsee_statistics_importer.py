@@ -1,11 +1,13 @@
 # ABOUTME: Concrete importer for BSEE safety statistics database CSV data
 # ABOUTME: Implements CSV parsing and field normalization for aggregated HSE statistics records
 
-from typing import List, Dict, Any
 from datetime import datetime
 from pathlib import Path
+from typing import Any, Dict, List
+
 import pandas as pd
 
+from worldenergydata.modules.hse.database.models import SafetyStatistic
 from worldenergydata.modules.hse.importers.base_importer import BaseImporter
 
 
@@ -74,7 +76,7 @@ class BSEEStatisticsImporter(BaseImporter):
             df = pd.read_csv(csv_path)
 
             # Convert DataFrame to list of dictionaries
-            records = df.to_dict('records')
+            records = df.to_dict("records")
 
             return records
 
@@ -86,17 +88,14 @@ class BSEEStatisticsImporter(BaseImporter):
 
     def normalize_data(self, raw_data: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Normalize raw CSV data to match database schema.
+        Normalize raw CSV data to match SafetyStatistic database schema.
 
-        Performs field mapping from BSEE statistics CSV format to HSEIncident
+        Performs field mapping from BSEE statistics CSV format to SafetyStatistic
         database schema and converts data types as needed.
 
         Field Mappings:
-        - incident_id → bsee_incident_id
-        - report_date (string) → incident_date (datetime)
+        - report_date (string) → report_date (datetime)
         - operator_name → operator
-        - incident_type → automatically set to 'equipment_failure'
-        - severity → severity (unchanged)
         - facility → facility_name
         - field → field_name
         - operational_period (string) → operational_period (integer)
@@ -111,137 +110,235 @@ class BSEEStatisticsImporter(BaseImporter):
             raw_data: Raw data dictionary from CSV
 
         Returns:
-            Normalized dictionary matching HSEIncident schema
+            Normalized dictionary matching SafetyStatistic schema
         """
         normalized = {}
 
-        # Required field: bsee_incident_id
-        if 'incident_id' in raw_data:
-            normalized['bsee_incident_id'] = raw_data['incident_id']
-
-        # Required field: incident_date (convert string to datetime)
-        if 'report_date' in raw_data:
-            date_str = raw_data['report_date']
+        # Required field: report_date (convert string to datetime)
+        if "report_date" in raw_data:
+            date_str = raw_data["report_date"]
             if isinstance(date_str, str):
-                # Try parsing with time component first
                 try:
-                    normalized['incident_date'] = datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')
+                    normalized["report_date"] = datetime.strptime(
+                        date_str, "%Y-%m-%d %H:%M:%S"
+                    )
                 except ValueError:
-                    # Fall back to date-only format
                     try:
-                        normalized['incident_date'] = datetime.strptime(date_str, '%Y-%m-%d')
+                        normalized["report_date"] = datetime.strptime(
+                            date_str, "%Y-%m-%d"
+                        )
                     except ValueError:
-                        # If parsing fails, keep original (will fail validation)
-                        normalized['incident_date'] = date_str
+                        normalized["report_date"] = date_str
             else:
-                # Already datetime object
-                normalized['incident_date'] = date_str
+                normalized["report_date"] = date_str
 
         # Required field: operator
-        if 'operator_name' in raw_data:
-            normalized['operator'] = raw_data['operator_name']
-
-        # Required field: incident_type (automatically set to 'equipment_failure')
-        normalized['incident_type'] = 'equipment_failure'
-
-        # Required field: severity
-        if 'severity' in raw_data:
-            normalized['severity'] = raw_data['severity']
+        if "operator_name" in raw_data:
+            normalized["operator"] = raw_data["operator_name"]
 
         # Optional field: facility_name
-        if 'facility' in raw_data:
-            normalized['facility_name'] = raw_data['facility']
-        else:
-            normalized['facility_name'] = None
+        normalized["facility_name"] = raw_data.get("facility")
 
         # Optional field: field_name
-        if 'field' in raw_data:
-            normalized['field_name'] = raw_data['field']
-        else:
-            normalized['field_name'] = None
+        normalized["field_name"] = raw_data.get("field")
 
         # Optional field: operational_period (convert string to integer)
-        if 'operational_period' in raw_data and raw_data['operational_period'] is not None:
+        if (
+            "operational_period" in raw_data
+            and raw_data["operational_period"] is not None
+        ):
             try:
-                if isinstance(raw_data['operational_period'], str):
-                    normalized['operational_period'] = int(raw_data['operational_period'])
+                if isinstance(raw_data["operational_period"], str):
+                    normalized["operational_period"] = int(
+                        raw_data["operational_period"]
+                    )
                 else:
-                    normalized['operational_period'] = raw_data['operational_period']
+                    normalized["operational_period"] = raw_data["operational_period"]
             except (ValueError, TypeError):
-                normalized['operational_period'] = None
+                normalized["operational_period"] = None
         else:
-            normalized['operational_period'] = None
+            normalized["operational_period"] = None
 
         # Optional field: total_incidents (convert string to integer)
-        if 'total_incidents' in raw_data and raw_data['total_incidents'] is not None:
+        if "total_incidents" in raw_data and raw_data["total_incidents"] is not None:
             try:
-                if isinstance(raw_data['total_incidents'], str):
-                    normalized['total_incidents'] = int(raw_data['total_incidents'])
+                if isinstance(raw_data["total_incidents"], str):
+                    normalized["total_incidents"] = int(raw_data["total_incidents"])
                 else:
-                    normalized['total_incidents'] = raw_data['total_incidents']
+                    normalized["total_incidents"] = raw_data["total_incidents"]
             except (ValueError, TypeError):
-                normalized['total_incidents'] = None
+                normalized["total_incidents"] = None
         else:
-            normalized['total_incidents'] = None
+            normalized["total_incidents"] = None
 
         # Optional field: fatality_count (convert string to integer)
-        if 'fatality_count' in raw_data and raw_data['fatality_count'] is not None:
+        if "fatality_count" in raw_data and raw_data["fatality_count"] is not None:
             try:
-                if isinstance(raw_data['fatality_count'], str):
-                    normalized['fatality_count'] = int(raw_data['fatality_count'])
+                if isinstance(raw_data["fatality_count"], str):
+                    normalized["fatality_count"] = int(raw_data["fatality_count"])
                 else:
-                    normalized['fatality_count'] = raw_data['fatality_count']
+                    normalized["fatality_count"] = raw_data["fatality_count"]
             except (ValueError, TypeError):
-                normalized['fatality_count'] = None
+                normalized["fatality_count"] = None
         else:
-            normalized['fatality_count'] = None
+            normalized["fatality_count"] = None
 
         # Optional field: lost_time_count (convert string to integer)
-        if 'lost_time_count' in raw_data and raw_data['lost_time_count'] is not None:
+        if "lost_time_count" in raw_data and raw_data["lost_time_count"] is not None:
             try:
-                if isinstance(raw_data['lost_time_count'], str):
-                    normalized['lost_time_count'] = int(raw_data['lost_time_count'])
+                if isinstance(raw_data["lost_time_count"], str):
+                    normalized["lost_time_count"] = int(raw_data["lost_time_count"])
                 else:
-                    normalized['lost_time_count'] = raw_data['lost_time_count']
+                    normalized["lost_time_count"] = raw_data["lost_time_count"]
             except (ValueError, TypeError):
-                normalized['lost_time_count'] = None
+                normalized["lost_time_count"] = None
         else:
-            normalized['lost_time_count'] = None
+            normalized["lost_time_count"] = None
 
         # Optional field: recordable_count (convert string to integer)
-        if 'recordable_count' in raw_data and raw_data['recordable_count'] is not None:
+        if "recordable_count" in raw_data and raw_data["recordable_count"] is not None:
             try:
-                if isinstance(raw_data['recordable_count'], str):
-                    normalized['recordable_count'] = int(raw_data['recordable_count'])
+                if isinstance(raw_data["recordable_count"], str):
+                    normalized["recordable_count"] = int(raw_data["recordable_count"])
                 else:
-                    normalized['recordable_count'] = raw_data['recordable_count']
+                    normalized["recordable_count"] = raw_data["recordable_count"]
             except (ValueError, TypeError):
-                normalized['recordable_count'] = None
+                normalized["recordable_count"] = None
         else:
-            normalized['recordable_count'] = None
+            normalized["recordable_count"] = None
 
         # Optional field: near_miss_count (convert string to integer)
-        if 'near_miss_count' in raw_data and raw_data['near_miss_count'] is not None:
+        if "near_miss_count" in raw_data and raw_data["near_miss_count"] is not None:
             try:
-                if isinstance(raw_data['near_miss_count'], str):
-                    normalized['near_miss_count'] = int(raw_data['near_miss_count'])
+                if isinstance(raw_data["near_miss_count"], str):
+                    normalized["near_miss_count"] = int(raw_data["near_miss_count"])
                 else:
-                    normalized['near_miss_count'] = raw_data['near_miss_count']
+                    normalized["near_miss_count"] = raw_data["near_miss_count"]
             except (ValueError, TypeError):
-                normalized['near_miss_count'] = None
+                normalized["near_miss_count"] = None
         else:
-            normalized['near_miss_count'] = None
+            normalized["near_miss_count"] = None
 
         # Optional field: minor_count (convert string to integer)
-        if 'minor_count' in raw_data and raw_data['minor_count'] is not None:
+        if "minor_count" in raw_data and raw_data["minor_count"] is not None:
             try:
-                if isinstance(raw_data['minor_count'], str):
-                    normalized['minor_count'] = int(raw_data['minor_count'])
+                if isinstance(raw_data["minor_count"], str):
+                    normalized["minor_count"] = int(raw_data["minor_count"])
                 else:
-                    normalized['minor_count'] = raw_data['minor_count']
+                    normalized["minor_count"] = raw_data["minor_count"]
             except (ValueError, TypeError):
-                normalized['minor_count'] = None
+                normalized["minor_count"] = None
         else:
-            normalized['minor_count'] = None
+            normalized["minor_count"] = None
 
         return normalized
+
+    def validate_data(self, normalized_data: Dict[str, Any]) -> bool:
+        """
+        Validate normalized statistics data meets SafetyStatistic requirements.
+
+        Overrides base validation since SafetyStatistic has different required
+        fields than HSEIncident (no bsee_incident_id, incident_type, severity).
+
+        Required fields: report_date, operator.
+
+        Args:
+            normalized_data: Normalized data dictionary
+
+        Returns:
+            True if validation passes, False otherwise
+        """
+        if normalized_data is None:
+            self.validation_errors.append("Data is None")
+            return False
+
+        if not isinstance(normalized_data, dict):
+            self.validation_errors.append(
+                f"Data must be dictionary, got {type(normalized_data).__name__}"
+            )
+            return False
+
+        if not normalized_data:
+            self.validation_errors.append("Data is empty dictionary")
+            return False
+
+        valid = True
+
+        # Check required fields for SafetyStatistic
+        required_fields = ["report_date", "operator"]
+        for field in required_fields:
+            if field not in normalized_data or normalized_data[field] is None:
+                self.validation_errors.append(f"Missing required field: {field}")
+                valid = False
+
+        # Validate report_date is datetime object
+        if (
+            "report_date" in normalized_data
+            and normalized_data["report_date"] is not None
+            and not isinstance(normalized_data["report_date"], datetime)
+        ):
+            self.validation_errors.append(
+                f"report_date must be datetime object, got "
+                f"{type(normalized_data['report_date']).__name__}"
+            )
+            valid = False
+
+        return valid
+
+    def is_duplicate(self, data: Dict[str, Any]) -> bool:
+        """
+        Check if safety statistic record already exists in database.
+
+        Duplicate detection based on operator + report_date + facility_name
+        composite key, since SafetyStatistic has no bsee_incident_id.
+
+        Args:
+            data: Normalized data dictionary
+
+        Returns:
+            True if record exists in database, False otherwise
+        """
+        if "operator" not in data or "report_date" not in data:
+            return False
+
+        query = self.db_session.query(SafetyStatistic).filter(
+            SafetyStatistic.operator == data["operator"],
+            SafetyStatistic.report_date == data["report_date"],
+        )
+
+        if data.get("facility_name") is not None:
+            query = query.filter(SafetyStatistic.facility_name == data["facility_name"])
+        else:
+            query = query.filter(SafetyStatistic.facility_name.is_(None))
+
+        return query.first() is not None
+
+    def import_record(self, data: Dict[str, Any]):
+        """
+        Import single statistics record to database as SafetyStatistic.
+
+        Creates a SafetyStatistic object (not HSEIncident) since this data
+        represents aggregated counts rather than individual incidents.
+
+        Args:
+            data: Validated, normalized data dictionary matching
+                  SafetyStatistic schema
+        """
+        statistic = SafetyStatistic(
+            report_date=data.get("report_date"),
+            operator=data.get("operator"),
+            facility_name=data.get("facility_name"),
+            field_name=data.get("field_name"),
+            operational_period=data.get("operational_period"),
+            total_incidents=data.get("total_incidents"),
+            fatality_count=data.get("fatality_count"),
+            lost_time_count=data.get("lost_time_count"),
+            recordable_count=data.get("recordable_count"),
+            near_miss_count=data.get("near_miss_count"),
+            minor_count=data.get("minor_count"),
+        )
+
+        self.db_session.add(statistic)
+        self.db_session.commit()
+
+        self.imported_count += 1

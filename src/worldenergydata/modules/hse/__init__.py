@@ -33,19 +33,29 @@ from worldenergydata.common import get_logger
 # Database models
 from worldenergydata.modules.hse.database import (
     Base,
+    EquipmentFailure,
     HSEIncident,
     InjuryIncident,
     SpillIncident,
+    ToxicRelease,
     ViolationIncident,
-    EquipmentFailure,
 )
 
 # Importers
 from worldenergydata.modules.hse.importers.base_importer import BaseImporter
-from worldenergydata.modules.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
-from worldenergydata.modules.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
-from worldenergydata.modules.hse.importers.bsee_statistics_importer import BSEEStatisticsImporter
-from worldenergydata.modules.hse.importers.data_quality_validator import DataQualityValidator
+from worldenergydata.modules.hse.importers.bsee_incidents_importer import (
+    BSEEIncidentsImporter,
+)
+from worldenergydata.modules.hse.importers.bsee_penalties_importer import (
+    BSEEPenaltiesImporter,
+)
+from worldenergydata.modules.hse.importers.bsee_statistics_importer import (
+    BSEEStatisticsImporter,
+)
+from worldenergydata.modules.hse.importers.data_quality_validator import (
+    DataQualityValidator,
+)
+from worldenergydata.modules.hse.importers.epa_tri_importer import EPATRIImporter
 
 __version__ = "1.0.0"
 __all__ = [
@@ -56,11 +66,13 @@ __all__ = [
     "SpillIncident",
     "ViolationIncident",
     "EquipmentFailure",
+    "ToxicRelease",
     # Importers
     "BaseImporter",
     "BSEEIncidentsImporter",
     "BSEEPenaltiesImporter",
     "BSEEStatisticsImporter",
+    "EPATRIImporter",
     # Validation
     "DataQualityValidator",
 ]
