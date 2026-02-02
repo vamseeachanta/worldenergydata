@@ -55,6 +55,7 @@ dependencies = [
     "typer>=0.9.0",
     "rich>=13.0.0",
     "psutil>=7.2.1",
+    "pyarrow>=14.0.0",
 ]
 
 [project.optional-dependencies]
@@ -188,8 +189,12 @@ dev-install = "uv pip install -e .[dev]"
 
 [dependency-groups]
 dev = [
+    "faker>=37.8.0",
     "hypothesis>=6.141.1",
     "numpy-financial>=1.0.0",
+    "pytest-asyncio>=1.2.0",
+    "pytest-cov>=7.0.0",
     "pytest-timeout>=2.4.0",
+    "responses>=0.25.8",
     "xmltodict>=1.0.2",
 ]
