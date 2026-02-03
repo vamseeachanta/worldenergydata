@@ -15,6 +15,12 @@ review:
   status: "pending"
 work_item: WRK-014
 depends_on: [WRK-012, WRK-013]
+implementation:
+  phases_complete: [1, 2, 3, 4, 5]
+  next_phase: 6
+  commit: "3bff1cb7"
+  tests: "137 passing (5 test files)"
+  status: "phases 1-5 complete, phase 6 pending"
 ---
 
 # WRK-014: HSE Risk Index Implementation Plan
@@ -165,30 +171,42 @@ Output location: `reports/hse/wrk014_hse_risk_index.html`
 
 ## 6. Implementation Phases
 
-### Phase 1: Models + Normalizer (TDD)
-- Write `test_models.py` and `test_normalizer.py`
-- Implement `models.py` and `normalizer.py`
+### Phase 1: Models + Normalizer (TDD) -- COMPLETE
+- [x] Write `test_models.py` (37 tests) and `test_normalizer.py` (24 tests)
+- [x] Implement `models.py` and `normalizer.py`
 
-### Phase 2: Data Assembler
-- Write `test_data_assembler.py`
-- Implement `data_assembler.py` — load from actual DB/CSV files, classify, aggregate
+### Phase 2: Data Assembler -- COMPLETE
+- [x] Write `test_data_assembler.py` (30 tests)
+- [x] Implement `data_assembler.py` — load from actual DB/CSV files, classify, aggregate
 
-### Phase 3: Risk Scorer
-- Write `test_scorer.py`
-- Implement `scorer.py` — dimension weights, composite formula
+### Phase 3: Risk Scorer -- COMPLETE
+- [x] Write `test_scorer.py` (32 tests)
+- [x] Implement `scorer.py` — dimension weights, composite formula
 
-### Phase 4: Dashboard
-- Write `test_dashboard.py`
-- Implement `dashboard.py` — Plotly figures, HTML assembly
+### Phase 4: Dashboard -- COMPLETE
+- [x] Write `test_dashboard.py` (14 tests)
+- [x] Implement `dashboard.py` — Plotly figures, HTML assembly
 
-### Phase 5: Methodology + CLI
-- Implement `methodology.py` — transparency documentation
-- Implement `cli.py` + `__main__.py` — CLI entry points
+### Phase 5: Methodology + CLI -- COMPLETE
+- [x] Implement `methodology.py` — transparency documentation
+- [x] Implement `cli.py` + `__main__.py` — CLI entry points (Typer-based)
 
-### Phase 6: Integration + Validation
-- Run full pipeline end-to-end on real data
-- Validate risk rankings against domain knowledge (e.g., diving should rank high-acute, production should rank high-chronic)
-- Generate final report, update WRK-014 status
+### Phase 6: Integration + Validation -- PENDING (next pickup)
+- [ ] Run full pipeline end-to-end on real data:
+  ```bash
+  uv run python -m worldenergydata.modules.safety_analysis.risk_index compute
+  uv run python -m worldenergydata.modules.safety_analysis.risk_index dashboard
+  uv run python -m worldenergydata.modules.safety_analysis.risk_index export --format csv
+  ```
+- [ ] Validate risk rankings against domain knowledge:
+  - DIVE/CRANE activities must score HIGH/CRITICAL acute risk
+  - PROD/ENV activities must show elevated chronic risk
+  - Marine Transport should rank high on acute due to fatality count (9,527 from WRK-013)
+  - Pipeline Operations should show compliance risk
+- [ ] Cross-reference composite ranking with WRK-013 mishap frequency ranking (expect high correlation)
+- [ ] Review low-confidence flags (activities with <10 incidents across all sources)
+- [ ] Generate final HTML dashboard: `reports/hse/wrk014_hse_risk_index.html`
+- [ ] Update WRK-014 status to COMPLETE
 
 ## 7. Validation Approach
 
@@ -213,3 +231,38 @@ Output location: `reports/hse/wrk014_hse_risk_index.html`
 - Chronic risk dimension relies on EPA TRI as proxy (facility-level, not incident-level)
 - Activities with fewer than 10 incidents across all sources are flagged as "low confidence"
 - Historical data (various date ranges per source) — not normalized to single time window yet
+
+## 10. Session Log
+
+### Session 1 (2026-02-02) — Phases 1-5 Implementation
+
+**Commit**: `3bff1cb7` on `feature/hse-data-acquisition`
+**Agent**: claude-opus-4.5 | **Session**: `jaunty-plotting-boole`
+
+**Completed**:
+- All 8 source files created in `src/worldenergydata/modules/safety_analysis/risk_index/`
+- 137 tests across 5 test files (all passing)
+- Legal compliance scan: zero violations
+- Pre-commit hooks: all 17 passed (black, isort, flake8+simplify, bandit, gitleaks)
+
+**Files created** (17 total, 5,219 lines):
+| File | Lines | Purpose |
+|------|-------|---------|
+| `models.py` | 145 | Pydantic v2: RiskCategory, DimensionScore, ActivityRiskScore, CompositeScore |
+| `normalizer.py` | 113 | Percentile-rank normalization engine |
+| `data_assembler.py` | 548 | Multi-source loading (BSEE, OSHA, Marine, PHMSA, EPA TRI) + classification |
+| `scorer.py` | 319 | Weighted dimension + composite scoring |
+| `dashboard.py` | 527 | Plotly HTML: heatmap, radar, bar, risk matrix, treemap |
+| `methodology.py` | 329 | Transparency documentation generator |
+| `cli.py` | 579 | Typer CLI: compute, dashboard, export subcommands |
+| `__init__.py` | 45 | Package exports |
+| `__main__.py` | 7 | Entry point |
+
+**Next pickup**: Phase 6 — end-to-end validation on real data (see checklist above)
+
+**Known considerations for Phase 6**:
+- Only `marine_safety.db` SQLite exists; BSEE/PHMSA data are in raw CSV/pipe-delimited files
+- OSHA data in `data/modules/hse/raw/osha/`, EPA TRI in `data/modules/hse/raw/epa_tri/`
+- `DataAssembler` has static loaders for each source format
+- `IncidentClassifier` from `safety_analysis.taxonomy` handles activity classification
+- Activities with <10 incidents get "low confidence" flag — review these in output
