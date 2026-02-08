@@ -9,7 +9,7 @@ import pandas as pd
 import pytest
 
 try:
-    from worldenergydata.analysis.lower_tertiary.wti_prices import (
+    from worldenergydata.lower_tertiary.wti_prices import (
         V30_LAST_PRICE,
         get_wti_source_summary,
         load_extended_wti_prices,
@@ -81,7 +81,7 @@ def test_extended_within_v30_range_no_extension():
 
 @skip_no_wti
 def test_flat_forward_fallback(monkeypatch):
-    import worldenergydata.analysis.lower_tertiary.wti_prices as wti_mod
+    import worldenergydata.lower_tertiary.wti_prices as wti_mod
 
     monkeypatch.setattr(wti_mod, "_HAS_REQUESTS", False)
     monkeypatch.delenv("FRED_API_KEY", raising=False)

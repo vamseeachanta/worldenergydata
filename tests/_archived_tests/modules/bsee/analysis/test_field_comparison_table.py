@@ -27,7 +27,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', '..
 
 # Import only if needed, avoid plotly dependency for this test
 try:
-    from worldenergydata.modules.bsee.analysis.production_api12 import ProductionAPI12Analysis
+    from worldenergydata.bsee.analysis.production_api12 import ProductionAPI12Analysis
 except ImportError as e:
     logger.warning(f"Could not import ProductionAPI12Analysis: {e}")
     ProductionAPI12Analysis = None

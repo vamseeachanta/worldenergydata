@@ -9,14 +9,14 @@ and transformation of raw DataFrames into domain model objects.
 import pandas as pd
 import pytest
 
-from worldenergydata.modules.safety_analysis.adapters.base_adapter import BaseAdapter
-from worldenergydata.modules.safety_analysis.adapters.hse_adapter import HSEAdapter
-from worldenergydata.modules.safety_analysis.core.models import (
+from worldenergydata.safety_analysis.adapters.base_adapter import BaseAdapter
+from worldenergydata.safety_analysis.adapters.hse_adapter import HSEAdapter
+from worldenergydata.safety_analysis.core.models import (
     SafetyIncident,
     SafetyObservation,
 )
-from worldenergydata.modules.safety_analysis.core.schemas import SchemaMapping
-from worldenergydata.modules.safety_analysis.exceptions import SafetyDataError
+from worldenergydata.safety_analysis.core.schemas import SchemaMapping
+from worldenergydata.safety_analysis.exceptions import SafetyDataError
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -223,7 +223,7 @@ class TestCSVAdapter:
 
     def test_csv_adapter_importable(self):
         """CSVAdapter can be imported from the adapters package."""
-        from worldenergydata.modules.safety_analysis.adapters.csv_adapter import (
+        from worldenergydata.safety_analysis.adapters.csv_adapter import (
             CSVAdapter,
         )
 
@@ -231,7 +231,7 @@ class TestCSVAdapter:
 
     def test_load_observations(self, sample_csv_file, observation_schema):
         """CSVAdapter.load_observations loads data from the configured path."""
-        from worldenergydata.modules.safety_analysis.adapters.csv_adapter import (
+        from worldenergydata.safety_analysis.adapters.csv_adapter import (
             CSVAdapter,
         )
 
@@ -247,7 +247,7 @@ class TestCSVAdapter:
 
     def test_load_incidents(self, sample_incidents_csv, incident_schema):
         """CSVAdapter.load_incidents loads data from the configured path."""
-        from worldenergydata.modules.safety_analysis.adapters.csv_adapter import (
+        from worldenergydata.safety_analysis.adapters.csv_adapter import (
             CSVAdapter,
         )
 
@@ -263,7 +263,7 @@ class TestCSVAdapter:
 
     def test_load_observations_no_path_raises(self, observation_schema):
         """CSVAdapter raises SafetyDataError when no observations_path is set."""
-        from worldenergydata.modules.safety_analysis.adapters.csv_adapter import (
+        from worldenergydata.safety_analysis.adapters.csv_adapter import (
             CSVAdapter,
         )
 
@@ -280,7 +280,7 @@ class TestCSVAdapter:
         self, sample_csv_file, sample_observations_df, observation_schema
     ):
         """CSVAdapter.process_observations returns SafetyObservation models."""
-        from worldenergydata.modules.safety_analysis.adapters.csv_adapter import (
+        from worldenergydata.safety_analysis.adapters.csv_adapter import (
             CSVAdapter,
         )
 
@@ -303,7 +303,7 @@ class TestCSVAdapter:
         incident_schema,
     ):
         """CSVAdapter.load_all returns a tuple of (obs_df, inc_df)."""
-        from worldenergydata.modules.safety_analysis.adapters.csv_adapter import (
+        from worldenergydata.safety_analysis.adapters.csv_adapter import (
             CSVAdapter,
         )
 

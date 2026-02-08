@@ -516,7 +516,7 @@ src/worldenergydata/modules/fdas/
 ### Phase 3: Integration (Week 5-6)
 ```python
 # High-level API for end users
-from worldenergydata.modules.fdas import FDASAnalyzer
+from worldenergydata.fdas import FDASAnalyzer
 
 analyzer = FDASAnalyzer(config='config.yaml')
 results = analyzer.analyze_field('Anchor')

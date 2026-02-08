@@ -12,7 +12,7 @@ import numpy as np
 src_path = os.path.join(os.path.dirname(__file__), 'src')
 sys.path.insert(0, src_path)
 
-from worldenergydata.modules.bsee.analysis.well_api12 import WellAPI12
+from worldenergydata.bsee.analysis.well_api12 import WellAPI12
 
 def test_actual_3d_plotting():
     """Generate actual 3D plots to verify visualization works"""

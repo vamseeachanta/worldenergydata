@@ -5,7 +5,7 @@
 
 import pytest
 
-from worldenergydata.modules.metocean.processors.unit_converter import (
+from worldenergydata.metocean.processors.unit_converter import (
     LengthUnit,
     PressureUnit,
     SpeedUnit,

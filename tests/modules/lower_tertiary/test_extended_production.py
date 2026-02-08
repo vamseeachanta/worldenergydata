@@ -11,7 +11,7 @@ import pytest
 import yaml
 
 try:
-    from worldenergydata.analysis.lower_tertiary.v30_reproducer import (
+    from worldenergydata.lower_tertiary.v30_reproducer import (
         reproduce_v30_production,
     )
 

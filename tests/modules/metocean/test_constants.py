@@ -11,7 +11,7 @@ class TestDataSourceEnum:
 
     def test_data_source_values(self):
         """Test DataSource enum values."""
-        from worldenergydata.modules.metocean.constants import DataSource
+        from worldenergydata.metocean.constants import DataSource
 
         assert DataSource.NDBC.value == "ndbc"
         assert DataSource.COOPS.value == "coops"
@@ -21,7 +21,7 @@ class TestDataSourceEnum:
 
     def test_data_source_membership(self):
         """Test DataSource enum membership."""
-        from worldenergydata.modules.metocean.constants import DataSource
+        from worldenergydata.metocean.constants import DataSource
 
         assert "ndbc" in [ds.value for ds in DataSource]
         assert "coops" in [ds.value for ds in DataSource]
@@ -32,7 +32,7 @@ class TestDataTypeEnum:
 
     def test_data_type_values(self):
         """Test DataType enum values."""
-        from worldenergydata.modules.metocean.constants import DataType
+        from worldenergydata.metocean.constants import DataType
 
         assert DataType.REALTIME.value == "realtime"
         assert DataType.HISTORICAL.value == "historical"
@@ -44,7 +44,7 @@ class TestStationTypeEnum:
 
     def test_station_type_values(self):
         """Test StationType enum values."""
-        from worldenergydata.modules.metocean.constants import StationType
+        from worldenergydata.metocean.constants import StationType
 
         assert StationType.BUOY.value == "buoy"
         assert StationType.COASTAL.value == "coastal"
@@ -59,7 +59,7 @@ class TestQualityFlagEnum:
 
     def test_quality_flag_values(self):
         """Test QualityFlag enum values."""
-        from worldenergydata.modules.metocean.constants import QualityFlag
+        from worldenergydata.metocean.constants import QualityFlag
 
         assert QualityFlag.GOOD.value == "good"
         assert QualityFlag.SUSPECT.value == "suspect"
@@ -72,7 +72,7 @@ class TestMetoceanParameterEnum:
 
     def test_parameter_values(self):
         """Test MetoceanParameter enum values."""
-        from worldenergydata.modules.metocean.constants import MetoceanParameter
+        from worldenergydata.metocean.constants import MetoceanParameter
 
         assert MetoceanParameter.WAVE_HEIGHT.value == "wave_height_m"
         assert MetoceanParameter.WIND_SPEED.value == "wind_speed_ms"
@@ -85,7 +85,7 @@ class TestSeaStateEnum:
 
     def test_sea_state_values(self):
         """Test SeaState enum values."""
-        from worldenergydata.modules.metocean.constants import SeaState
+        from worldenergydata.metocean.constants import SeaState
 
         assert SeaState.CALM == 0
         assert SeaState.SLIGHT == 2
@@ -99,7 +99,7 @@ class TestGeographicBounds:
 
     def test_gom_bbox(self):
         """Test Gulf of Mexico bounding box."""
-        from worldenergydata.modules.metocean.constants import GOM_BBOX
+        from worldenergydata.metocean.constants import GOM_BBOX
 
         lon_min, lon_max, lat_min, lat_max = GOM_BBOX
 
@@ -110,7 +110,7 @@ class TestGeographicBounds:
 
     def test_gom_bbox_contains_valid_region(self):
         """Test that GOM bbox contains expected region."""
-        from worldenergydata.modules.metocean.constants import GOM_BBOX
+        from worldenergydata.metocean.constants import GOM_BBOX
 
         lon_min, lon_max, lat_min, lat_max = GOM_BBOX
 
@@ -126,7 +126,7 @@ class TestGeographicBounds:
 
     def test_region_bounds_keys(self):
         """Test that all expected regions are defined."""
-        from worldenergydata.modules.metocean.constants import REGION_BOUNDS
+        from worldenergydata.metocean.constants import REGION_BOUNDS
 
         expected_regions = [
             "GOM",
@@ -150,7 +150,7 @@ class TestParameterRanges:
 
     def test_parameter_ranges_exist(self):
         """Test that parameter ranges are defined."""
-        from worldenergydata.modules.metocean.constants import PARAMETER_RANGES
+        from worldenergydata.metocean.constants import PARAMETER_RANGES
 
         assert "wave_height_m" in PARAMETER_RANGES
         assert "wind_speed_ms" in PARAMETER_RANGES
@@ -158,7 +158,7 @@ class TestParameterRanges:
 
     def test_parameter_ranges_have_min_max(self):
         """Test that parameter ranges have min and max."""
-        from worldenergydata.modules.metocean.constants import PARAMETER_RANGES
+        from worldenergydata.metocean.constants import PARAMETER_RANGES
 
         for param, ranges in PARAMETER_RANGES.items():
             assert "min" in ranges, f"Missing min for {param}"
@@ -167,7 +167,7 @@ class TestParameterRanges:
 
     def test_wave_height_range(self):
         """Test wave height reasonable range."""
-        from worldenergydata.modules.metocean.constants import PARAMETER_RANGES
+        from worldenergydata.metocean.constants import PARAMETER_RANGES
 
         ranges = PARAMETER_RANGES["wave_height_m"]
         assert ranges["min"] == 0.0  # Waves can't be negative
@@ -175,7 +175,7 @@ class TestParameterRanges:
 
     def test_pressure_range(self):
         """Test atmospheric pressure reasonable range."""
-        from worldenergydata.modules.metocean.constants import PARAMETER_RANGES
+        from worldenergydata.metocean.constants import PARAMETER_RANGES
 
         ranges = PARAMETER_RANGES["pressure_hpa"]
         # Should include extreme values (record lows in hurricanes, highs)
@@ -188,7 +188,7 @@ class TestNDBCConstants:
 
     def test_ndbc_missing_values(self):
         """Test NDBC missing value indicators."""
-        from worldenergydata.modules.metocean.constants import NDBC_MISSING_VALUES
+        from worldenergydata.metocean.constants import NDBC_MISSING_VALUES
 
         assert "MM" in NDBC_MISSING_VALUES
         assert "999" in NDBC_MISSING_VALUES
@@ -196,7 +196,7 @@ class TestNDBCConstants:
 
     def test_ndbc_columns_mapping(self):
         """Test NDBC column name mapping."""
-        from worldenergydata.modules.metocean.constants import NDBC_COLUMNS
+        from worldenergydata.metocean.constants import NDBC_COLUMNS
 
         assert NDBC_COLUMNS["WDIR"] == "wind_direction_deg"
         assert NDBC_COLUMNS["WSPD"] == "wind_speed_ms"
@@ -206,7 +206,7 @@ class TestNDBCConstants:
 
     def test_ndbc_station_types_mapping(self):
         """Test NDBC station type mapping."""
-        from worldenergydata.modules.metocean.constants import (
+        from worldenergydata.metocean.constants import (
             NDBC_STATION_TYPES,
             StationType,
         )
@@ -221,7 +221,7 @@ class TestAPIConstants:
 
     def test_base_urls_defined(self):
         """Test that base URLs are defined."""
-        from worldenergydata.modules.metocean.constants import (
+        from worldenergydata.metocean.constants import (
             COOPS_BASE_URL,
             NDBC_BASE_URL,
             OPEN_METEO_BASE_URL,
@@ -233,7 +233,7 @@ class TestAPIConstants:
 
     def test_retryable_http_codes(self):
         """Test retryable HTTP status codes."""
-        from worldenergydata.modules.metocean.constants import RETRYABLE_HTTP_CODES
+        from worldenergydata.metocean.constants import RETRYABLE_HTTP_CODES
 
         # Server errors should be retryable
         assert 500 in RETRYABLE_HTTP_CODES
@@ -254,25 +254,25 @@ class TestDefaultValues:
 
     def test_default_fetch_timeout(self):
         """Test default fetch timeout."""
-        from worldenergydata.modules.metocean.constants import DEFAULT_FETCH_TIMEOUT
+        from worldenergydata.metocean.constants import DEFAULT_FETCH_TIMEOUT
 
         assert DEFAULT_FETCH_TIMEOUT == 30
 
     def test_default_max_retries(self):
         """Test default max retries."""
-        from worldenergydata.modules.metocean.constants import DEFAULT_MAX_RETRIES
+        from worldenergydata.metocean.constants import DEFAULT_MAX_RETRIES
 
         assert DEFAULT_MAX_RETRIES == 3
 
     def test_max_concurrent_requests(self):
         """Test max concurrent requests."""
-        from worldenergydata.modules.metocean.constants import MAX_CONCURRENT_REQUESTS
+        from worldenergydata.metocean.constants import MAX_CONCURRENT_REQUESTS
 
         assert MAX_CONCURRENT_REQUESTS == 5
 
     def test_coordinate_bounds(self):
         """Test coordinate validation bounds."""
-        from worldenergydata.modules.metocean.constants import (
+        from worldenergydata.metocean.constants import (
             MAX_LATITUDE,
             MAX_LONGITUDE,
             MIN_LATITUDE,

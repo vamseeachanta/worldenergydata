@@ -11,7 +11,7 @@ Date: 2025-10-03
 import numpy as np
 import pytest
 
-from worldenergydata.modules.fdas.core.financial import (
+from worldenergydata.fdas.core.financial import (
     FinancialCalculationError,
     calculate_all_metrics,
     calculate_irr,

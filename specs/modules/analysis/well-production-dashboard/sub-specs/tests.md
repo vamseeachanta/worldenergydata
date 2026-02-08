@@ -297,7 +297,7 @@ def authenticated_client():
 ### External Services
 ```python
 # Mock data sources
-@patch('worldenergydata.modules.bsee.loader')
+@patch('worldenergydata.bsee.loader')
 def test_with_mock_data(mock_loader):
     mock_loader.return_value = sample_data
 

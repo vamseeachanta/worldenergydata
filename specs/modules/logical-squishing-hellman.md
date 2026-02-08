@@ -209,13 +209,13 @@ class NewSourceScraper(BaseScraper):
 ### Manual Verification
 ```bash
 # Run importer
-uv run python -m worldenergydata.modules.marine_safety.cli import ntsb --limit 100
+uv run python -m worldenergydata.marine_safety.cli import ntsb --limit 100
 
 # Check statistics
-uv run python -m worldenergydata.modules.marine_safety.cli stats --verbose
+uv run python -m worldenergydata.marine_safety.cli stats --verbose
 
 # Export and validate
-uv run python -m worldenergydata.modules.marine_safety.cli export csv --output test.csv
+uv run python -m worldenergydata.marine_safety.cli export csv --output test.csv
 ```
 
 ## Critical Files Reference

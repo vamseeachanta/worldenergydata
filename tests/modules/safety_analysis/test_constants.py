@@ -1,6 +1,6 @@
 """Tests for safety analysis constants and enums."""
 
-from worldenergydata.modules.safety_analysis.constants import (
+from worldenergydata.safety_analysis.constants import (
     SEVERITY_LABEL_MAP,
     ClassifierType,
     FeatureType,

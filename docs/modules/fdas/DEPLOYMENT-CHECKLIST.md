@@ -452,7 +452,7 @@ pip install -e .
 
 ### Basic Usage
 ```python
-from worldenergydata.modules.fdas import (
+from worldenergydata.fdas import (
     calculate_npv,
     excel_like_mirr,
     AssumptionsManager

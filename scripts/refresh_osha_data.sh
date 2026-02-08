@@ -17,7 +17,7 @@ echo ""
 
 # Step 1: Download OSHA enforcement data (inspections, violations, accidents)
 echo "Step 1/4: Downloading OSHA enforcement data..."
-uv run python -m worldenergydata.modules.hse.acquirers.osha_acquirer \
+uv run python -m worldenergydata.hse.acquirers.osha_acquirer \
   --output-dir "$DATA_DIR" \
   --force \
   --filter-naics
@@ -26,7 +26,7 @@ echo ""
 
 # Step 2: Download OSHA fatality and severe injury data
 echo "Step 2/4: Downloading OSHA fatality/severe injury data..."
-uv run python -m worldenergydata.modules.hse.acquirers.osha_fatalities_acquirer \
+uv run python -m worldenergydata.hse.acquirers.osha_fatalities_acquirer \
   --output-dir "$FATALITY_DIR" \
   --force \
   --filter-naics \
@@ -66,7 +66,7 @@ echo ""
 
 # Step 4: Import to database
 echo "Step 4/4: Importing to HSE database..."
-uv run python -m worldenergydata.modules.hse.importers.osha_importer \
+uv run python -m worldenergydata.hse.importers.osha_importer \
   --data-dir "$DATA_DIR"
 
 echo ""

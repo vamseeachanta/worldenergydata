@@ -11,7 +11,7 @@ from unittest.mock import MagicMock, Mock, patch
 import numpy as np
 import pandas as pd
 
-from worldenergydata.modules.bsee.analysis.financial.data_loader import (
+from worldenergydata.bsee.analysis.financial.data_loader import (
     SMEDataLoader,
     normalize_lease_number,
     pick_column,
@@ -101,7 +101,7 @@ class TestSMEDataLoader(unittest.TestCase):
             pick_column(df, ["MISSING"], required=True)
 
     @patch(
-        "src.worldenergydata.modules.bsee.analysis.financial.data_loader.HierarchicalDataLoader"
+        "src.worldenergydata.bsee.analysis.financial.data_loader.HierarchicalDataLoader"
     )
     def test_load_leases_data(self, mock_hierarchical):
         """Test loading lease data using HierarchicalDataLoader"""
@@ -122,7 +122,7 @@ class TestSMEDataLoader(unittest.TestCase):
         )
 
     @patch(
-        "src.worldenergydata.modules.bsee.analysis.financial.data_loader.HierarchicalDataLoader"
+        "src.worldenergydata.bsee.analysis.financial.data_loader.HierarchicalDataLoader"
     )
     def test_load_production_data(self, mock_hierarchical):
         """Test loading production data"""
@@ -217,7 +217,7 @@ class TestSMEDataLoader(unittest.TestCase):
     def test_integration_with_comprehensive_loader(self):
         """Test integration with comprehensive report's HierarchicalDataLoader"""
         with patch(
-            "src.worldenergydata.modules.bsee.reports.comprehensive.data_loader_enhanced.HierarchicalDataLoader"
+            "src.worldenergydata.bsee.reports.comprehensive.data_loader_enhanced.HierarchicalDataLoader"
         ) as mock_class:
             mock_instance = MagicMock()
             mock_class.return_value = mock_instance
@@ -238,7 +238,7 @@ class TestDataValidation(unittest.TestCase):
 
     def test_validate_required_columns(self):
         """Test validation of required columns in dataframes"""
-        from worldenergydata.modules.bsee.analysis.financial.data_loader import (
+        from worldenergydata.bsee.analysis.financial.data_loader import (
             validate_required_columns,
         )
 
@@ -253,7 +253,7 @@ class TestDataValidation(unittest.TestCase):
 
     def test_validate_date_columns(self):
         """Test validation of date columns"""
-        from worldenergydata.modules.bsee.analysis.financial.data_loader import (
+        from worldenergydata.bsee.analysis.financial.data_loader import (
             validate_date_columns,
         )
 

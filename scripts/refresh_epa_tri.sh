@@ -51,7 +51,7 @@ mkdir -p "${OUTPUT_DIR}"
 # Step 1: Acquire data from EPA
 echo "[1/2] Acquiring EPA TRI data for years: ${YEARS}..."
 cd "${PROJECT_ROOT}"
-uv run python -m worldenergydata.modules.hse.acquirers.epa_tri_acquirer \
+uv run python -m worldenergydata.hse.acquirers.epa_tri_acquirer \
     --output-dir "${OUTPUT_DIR}" \
     --years "${YEARS}" \
     ${FORCE_FLAG} \

@@ -15,8 +15,8 @@ pytestmark = pytest.mark.skipif(not _HAS_SKLEARN, reason="scikit-learn not insta
 
 import pandas as pd  # noqa: E402
 
-from worldenergydata.modules.safety_analysis.config import NLPConfig  # noqa: E402
-from worldenergydata.modules.safety_analysis.nlp.text_preprocessing import (  # noqa: E402
+from worldenergydata.safety_analysis.config import NLPConfig  # noqa: E402
+from worldenergydata.safety_analysis.nlp.text_preprocessing import (  # noqa: E402
     TextPreprocessor,
 )
 

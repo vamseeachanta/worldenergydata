@@ -102,8 +102,8 @@ Current coverage target: 30-40% (realistic for legacy codebase)
 |--------|----------|--------|
 | worldenergydata.validation | 85% | ✅ Good |
 | worldenergydata.testing | 75% | ✅ Good |
-| worldenergydata.modules.bsee | 25% | 🟡 Improving |
-| worldenergydata.modules.financial | 20% | 🟡 Needs work |
+| worldenergydata.bsee | 25% | 🟡 Improving |
+| worldenergydata.financial | 20% | 🟡 Needs work |
 
 ## Test Cleanup History
 
@@ -135,7 +135,7 @@ Current coverage target: 30-40% (realistic for legacy codebase)
 
 ```python
 import pytest
-from worldenergydata.modules.bsee import ProductionAnalyzer
+from worldenergydata.bsee import ProductionAnalyzer
 
 class TestProductionAnalyzer:
     """Test suite for ProductionAnalyzer."""

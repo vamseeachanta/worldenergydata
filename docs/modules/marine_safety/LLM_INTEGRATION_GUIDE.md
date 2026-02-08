@@ -60,7 +60,7 @@ Incident Description
 ### Minimal Example
 
 ```python
-from worldenergydata.modules.marine_safety.analysis import HatchMaloperationAnalyzer
+from worldenergydata.marine_safety.analysis import HatchMaloperationAnalyzer
 import pandas as pd
 
 # Load incidents

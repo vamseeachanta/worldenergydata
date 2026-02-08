@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 from unittest.mock import Mock, patch, MagicMock
 import json
 
-from worldenergydata.modules.bsee.analysis.production_api12 import ProductionAPI12Analysis
+from worldenergydata.bsee.analysis.production_api12 import ProductionAPI12Analysis
 
 
 class TestProductionAPI12Analysis:
@@ -90,7 +90,7 @@ class TestProductionAPI12Analysis:
             'production_data': [sample_production_data]
         }
 
-        with patch('worldenergydata.modules.bsee.analysis.production_api12.logger') as mock_logger:
+        with patch('worldenergydata.bsee.analysis.production_api12.logger') as mock_logger:
             # Run analysis
             analyzer.run_production_analysis(cfg, data)
 
@@ -104,13 +104,13 @@ class TestProductionAPI12Analysis:
         cfg = {'Analysis': {'analysis_root_folder': '/tmp'}}
         data = {}
 
-        with patch('worldenergydata.modules.bsee.analysis.production_api12.logger') as mock_logger:
+        with patch('worldenergydata.bsee.analysis.production_api12.logger') as mock_logger:
             analyzer.run_production_analysis(cfg, data)
 
             # Should log error for no data
             mock_logger.error.assert_called_with("No production data found in the provided data.")
     
-    @patch('worldenergydata.modules.bsee.analysis.production_api12.pd.DataFrame')
+    @patch('worldenergydata.bsee.analysis.production_api12.pd.DataFrame')
     def test_get_production_by_time(self, mock_df, analyzer, sample_production_data):
         """Test get_production_by_time method"""
         # This tests the time-based production analysis
@@ -145,7 +145,7 @@ class TestProductionAPI12Analysis:
         assert 'OIL_RATE_BOPD' in sample_production_data.columns
         assert sample_production_data['OIL_RATE_BOPD'].mean() > 0
     
-    @patch('worldenergydata.modules.bsee.analysis.production_api12.save_data')
+    @patch('worldenergydata.bsee.analysis.production_api12.save_data')
     def test_save_production_results(self, mock_save, analyzer, sample_production_data):
         """Test saving production results"""
         cfg = {
@@ -180,7 +180,7 @@ class TestProductionAPI12Analysis:
         assert summary['total_oil'] > 0
         assert summary['production_days'] == 12  # 12 months of data
     
-    @patch('worldenergydata.modules.bsee.analysis.production_api12.px')
+    @patch('worldenergydata.bsee.analysis.production_api12.px')
     def test_create_production_plots(self, mock_px, analyzer, sample_production_data):
         """Test production visualization creation"""
         # Mock plotly express
@@ -241,7 +241,7 @@ class TestProductionAPI12Analysis:
 
         cfg = {'Analysis': {'analysis_root_folder': '/tmp'}}
 
-        with patch('worldenergydata.modules.bsee.analysis.production_api12.logger') as mock_logger:
+        with patch('worldenergydata.bsee.analysis.production_api12.logger') as mock_logger:
             analyzer.run_production_analysis(cfg, invalid_data)
             # Should handle None gracefully
             mock_logger.error.assert_called()
@@ -300,7 +300,7 @@ class TestProductionAPI12Analysis:
         assert sample_production_data['WATER_CUT'].min() >= 0
         assert sample_production_data['WATER_CUT'].max() <= 100
     
-    @patch('worldenergydata.modules.bsee.analysis.production_api12.go')
+    @patch('worldenergydata.bsee.analysis.production_api12.go')
     def test_create_interactive_dashboard(self, mock_go, analyzer, sample_production_data):
         """Test interactive dashboard creation"""
         mock_fig = Mock()

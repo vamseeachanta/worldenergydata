@@ -162,16 +162,16 @@ from worldenergydata.validation.rules import ValidationRules, CrossFieldRules
 from worldenergydata.validation.schema import ValidationSchema
 
 # From BSEE modules
-from worldenergydata.modules.bsee.data.processors.in_memory import InMemoryProcessor
-from worldenergydata.modules.bsee.analysis.financial.validators import (
+from worldenergydata.bsee.data.processors.in_memory import InMemoryProcessor
+from worldenergydata.bsee.analysis.financial.validators import (
     validate_required_columns,
     validate_date_columns,
     validate_numeric_columns,
     validate_lease_numbers
 )
-from worldenergydata.modules.bsee.reports.comprehensive.exporters.excel_exporter import ExcelExporter
-from worldenergydata.modules.bsee.reports.comprehensive.exporters.pdf_exporter import PDFExporter
-from worldenergydata.modules.bsee.reports.comprehensive.controller_enhanced import ReportController
+from worldenergydata.bsee.reports.comprehensive.exporters.excel_exporter import ExcelExporter
+from worldenergydata.bsee.reports.comprehensive.exporters.pdf_exporter import PDFExporter
+from worldenergydata.bsee.reports.comprehensive.controller_enhanced import ReportController
 ```
 
 ### Extension Strategy

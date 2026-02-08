@@ -15,7 +15,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent / "src"
 
 # Import models using try/except to handle dependency issues
 try:
-    from worldenergydata.modules.bsee.reports.comprehensive.models import (
+    from worldenergydata.bsee.reports.comprehensive.models import (
         ProductionMetrics,
         EconomicMetrics,
         WellSummary
@@ -34,7 +34,7 @@ class TestBaseReportTemplate:
         """Test BaseReportTemplate initialization with default values"""
         # This test will fail initially until we implement BaseReportTemplate
         with pytest.importerror_raises(ImportError):
-            from worldenergydata.modules.bsee.reports.comprehensive.templates import BaseReportTemplate
+            from worldenergydata.bsee.reports.comprehensive.templates import BaseReportTemplate
             
             template = BaseReportTemplate(
                 template_name="test_template",
@@ -52,7 +52,7 @@ class TestBaseReportTemplate:
     def test_base_report_template_with_custom_template_path(self):
         """Test BaseReportTemplate with custom template directory"""
         with pytest.importerror_raises(ImportError):
-            from worldenergydata.modules.bsee.reports.comprehensive.templates import BaseReportTemplate
+            from worldenergydata.bsee.reports.comprehensive.templates import BaseReportTemplate
             
             template_dir = Path(__file__).parent / "test_templates"
             template = BaseReportTemplate(
@@ -70,7 +70,7 @@ class TestBaseReportTemplate:
     def test_base_report_template_jinja_environment_setup(self):
         """Test that Jinja2 environment is properly configured"""
         with pytest.importerror_raises(ImportError):
-            from worldenergydata.modules.bsee.reports.comprehensive.templates import BaseReportTemplate
+            from worldenergydata.bsee.reports.comprehensive.templates import BaseReportTemplate
             
             template = BaseReportTemplate(
                 template_name="jinja_test",
@@ -91,7 +91,7 @@ class TestBaseReportTemplate:
     def test_base_report_template_context_initialization(self):
         """Test template context is properly initialized"""
         with pytest.importerror_raises(ImportError):
-            from worldenergydata.modules.bsee.reports.comprehensive.templates import BaseReportTemplate
+            from worldenergydata.bsee.reports.comprehensive.templates import BaseReportTemplate
             
             template = BaseReportTemplate(
                 template_name="context_test",
@@ -114,7 +114,7 @@ class TestBaseReportTemplate:
     def test_base_report_template_with_invalid_template_type(self):
         """Test BaseReportTemplate with invalid template type"""
         with pytest.importerror_raises(ImportError):
-            from worldenergydata.modules.bsee.reports.comprehensive.templates import BaseReportTemplate
+            from worldenergydata.bsee.reports.comprehensive.templates import BaseReportTemplate
             
             with pytest.raises(ValueError, match="Invalid template type"):
                 BaseReportTemplate(
@@ -125,7 +125,7 @@ class TestBaseReportTemplate:
     def test_base_report_template_supported_template_types(self):
         """Test all supported template types"""
         with pytest.importerror_raises(ImportError):
-            from worldenergydata.modules.bsee.reports.comprehensive.templates import BaseReportTemplate
+            from worldenergydata.bsee.reports.comprehensive.templates import BaseReportTemplate
             
             supported_types = ["economic", "operational", "compliance", "executive"]
             
@@ -139,7 +139,7 @@ class TestBaseReportTemplate:
     def test_base_report_template_metadata_handling(self):
         """Test template metadata storage and retrieval"""
         with pytest.importerror_raises(ImportError):
-            from worldenergydata.modules.bsee.reports.comprehensive.templates import BaseReportTemplate
+            from worldenergydata.bsee.reports.comprehensive.templates import BaseReportTemplate
             
             template = BaseReportTemplate(
                 template_name="metadata_test",
@@ -159,7 +159,7 @@ class TestBaseReportTemplate:
     def test_base_report_template_default_context_variables(self):
         """Test that default context variables are available"""
         with pytest.importerror_raises(ImportError):
-            from worldenergydata.modules.bsee.reports.comprehensive.templates import BaseReportTemplate
+            from worldenergydata.bsee.reports.comprehensive.templates import BaseReportTemplate
             
             template = BaseReportTemplate(
                 template_name="defaults_test",
@@ -183,7 +183,7 @@ class TestTemplateContextBuilding:
     def test_build_context_from_production_metrics(self):
         """Test building template context from production data"""
         with pytest.importerror_raises(ImportError):
-            from worldenergydata.modules.bsee.reports.comprehensive.templates import BaseReportTemplate
+            from worldenergydata.bsee.reports.comprehensive.templates import BaseReportTemplate
             
             template = BaseReportTemplate(
                 template_name="production_context_test",
@@ -222,7 +222,7 @@ class TestTemplateContextBuilding:
     def test_build_context_from_economic_metrics(self):
         """Test building template context from economic data"""
         with pytest.importerror_raises(ImportError):
-            from worldenergydata.modules.bsee.reports.comprehensive.templates import BaseReportTemplate
+            from worldenergydata.bsee.reports.comprehensive.templates import BaseReportTemplate
             
             template = BaseReportTemplate(
                 template_name="economic_context_test",
@@ -256,7 +256,7 @@ class TestTemplateContextBuilding:
     def test_build_context_validation(self):
         """Test context validation before rendering"""
         with pytest.importerror_raises(ImportError):
-            from worldenergydata.modules.bsee.reports.comprehensive.templates import BaseReportTemplate
+            from worldenergydata.bsee.reports.comprehensive.templates import BaseReportTemplate
             
             template = BaseReportTemplate(
                 template_name="validation_test",
@@ -289,7 +289,7 @@ class TestTemplateInheritanceSystem:
     def test_template_inheritance_setup(self):
         """Test template inheritance system initialization"""
         with pytest.importerror_raises(ImportError):
-            from worldenergydata.modules.bsee.reports.comprehensive.templates import BaseReportTemplate
+            from worldenergydata.bsee.reports.comprehensive.templates import BaseReportTemplate
             
             # Create base template
             base_template = BaseReportTemplate(
@@ -310,7 +310,7 @@ class TestTemplateInheritanceSystem:
     def test_template_block_override(self):
         """Test template block overriding in inheritance"""
         with pytest.importerror_raises(ImportError):
-            from worldenergydata.modules.bsee.reports.comprehensive.templates import BaseReportTemplate
+            from worldenergydata.bsee.reports.comprehensive.templates import BaseReportTemplate
             
             template = BaseReportTemplate(
                 template_name="override_test",

@@ -236,16 +236,16 @@ python src/worldenergydata/modules/marine_safety/scrapers/uscg_scraper.py \
 ### Use CLI
 ```bash
 # Show help
-python -m worldenergydata.modules.marine_safety.cli --help
+python -m worldenergydata.marine_safety.cli --help
 
 # Initialize database
-python -m worldenergydata.modules.marine_safety.cli db init
+python -m worldenergydata.marine_safety.cli db init
 
 # Run scraper
-python -m worldenergydata.modules.marine_safety.cli scrape uscg --year 2024
+python -m worldenergydata.marine_safety.cli scrape uscg --year 2024
 
 # Show statistics
-python -m worldenergydata.modules.marine_safety.cli stats
+python -m worldenergydata.marine_safety.cli stats
 ```
 
 ---

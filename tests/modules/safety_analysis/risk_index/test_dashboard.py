@@ -4,8 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from worldenergydata.modules.safety_analysis.risk_index.dashboard import RiskDashboard
-from worldenergydata.modules.safety_analysis.risk_index.models import (
+from worldenergydata.safety_analysis.risk_index.dashboard import RiskDashboard
+from worldenergydata.safety_analysis.risk_index.models import (
     ActivityRiskScore,
     CompositeScore,
     DimensionScore,

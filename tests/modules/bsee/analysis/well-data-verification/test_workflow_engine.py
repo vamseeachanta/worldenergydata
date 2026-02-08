@@ -12,22 +12,22 @@ from typing import Dict, Any, List
 import pandas as pd
 import numpy as np
 
-from worldenergydata.modules.analysis.verification.engine.workflow import (
+from worldenergydata.analysis.verification.engine.workflow import (
     WorkflowEngine,
     WorkflowState,
     WorkflowStep,
     WorkflowSession,
     WorkflowCheckpoint
 )
-from worldenergydata.modules.analysis.verification.engine.validators import (
+from worldenergydata.analysis.verification.engine.validators import (
     StepValidator,
     WorkflowValidator
 )
-from worldenergydata.modules.analysis.verification.engine.progress import (
+from worldenergydata.analysis.verification.engine.progress import (
     ProgressTracker,
     StepStatus
 )
-from worldenergydata.modules.analysis.verification.config import VerificationConfig
+from worldenergydata.analysis.verification.config import VerificationConfig
 
 
 class TestWorkflowState:

@@ -8,7 +8,7 @@
 
 ```mermaid
 graph TB
-    subgraph "worldenergydata.modules.bsee"
+    subgraph "worldenergydata.bsee"
         subgraph "analysis.sme_financial"
             C[sme_analyzer.py<br/>Main SME Orchestrator]
             D[lease_grouper.py<br/>Lease Grouping Logic]

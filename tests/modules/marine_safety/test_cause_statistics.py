@@ -14,20 +14,20 @@ import pandas as pd
 import pytest
 from sqlalchemy.orm import Session
 
-from worldenergydata.modules.marine_safety.analysis.cause_statistics import (
+from worldenergydata.marine_safety.analysis.cause_statistics import (
     CauseStatistics,
     CrossTabulation,
     FrequencyDistribution,
     StatisticalSummary,
     TemporalTrend,
 )
-from worldenergydata.modules.marine_safety.constants import (
+from worldenergydata.marine_safety.constants import (
     CauseCategory,
     DataSource,
     IncidentType,
     SeverityLevel,
 )
-from worldenergydata.modules.marine_safety.database.models import (
+from worldenergydata.marine_safety.database.models import (
     Company,
     Incident,
     IncidentCause,

@@ -176,7 +176,7 @@ python -m worldenergydata.reports.comprehensive \
 
 ### Python API
 ```python
-from worldenergydata.modules.bsee.reports.comprehensive import ReportController
+from worldenergydata.bsee.reports.comprehensive import ReportController
 
 # Initialize controller
 controller = ReportController()

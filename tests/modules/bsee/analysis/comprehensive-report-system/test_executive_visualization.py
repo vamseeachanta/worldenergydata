@@ -7,7 +7,7 @@ from datetime import datetime
 from decimal import Decimal
 import json
 
-from worldenergydata.modules.bsee.reports.comprehensive.templates.executive_template import (
+from worldenergydata.bsee.reports.comprehensive.templates.executive_template import (
     ExecutiveTemplate,
     ExecutiveDashboard,
     TrafficLightIndicator,
@@ -69,7 +69,7 @@ class TestExecutiveVisualization(unittest.TestCase):
             )
             self.assertEqual(status, expected)
     
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.templates.executive_template.go')
+    @patch('worldenergydata.bsee.reports.comprehensive.templates.executive_template.go')
     def test_executive_dashboard_generation(self, mock_go):
         """Test generation of executive dashboard."""
         mock_go.Figure.return_value = MagicMock()
@@ -85,7 +85,7 @@ class TestExecutiveVisualization(unittest.TestCase):
         self.assertIn('traffic_lights', dashboard.components)
         self.assertIn('trend_charts', dashboard.components)
     
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.templates.executive_template.go')
+    @patch('worldenergydata.bsee.reports.comprehensive.templates.executive_template.go')
     def test_kpi_gauge_chart_creation(self, mock_go):
         """Test creation of KPI gauge charts."""
         mock_figure = MagicMock()
@@ -108,7 +108,7 @@ class TestExecutiveVisualization(unittest.TestCase):
         call_args = mock_go.Figure.call_args
         self.assertIn('data', call_args[1])
     
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.templates.executive_template.go')
+    @patch('worldenergydata.bsee.reports.comprehensive.templates.executive_template.go')
     def test_trend_sparkline_creation(self, mock_go):
         """Test creation of trend sparklines."""
         mock_figure = MagicMock()
@@ -124,7 +124,7 @@ class TestExecutiveVisualization(unittest.TestCase):
         mock_go.Figure.assert_called_once()
         self.assertEqual(sparkline, mock_figure)
     
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.templates.executive_template.go')
+    @patch('worldenergydata.bsee.reports.comprehensive.templates.executive_template.go')
     def test_executive_summary_chart(self, mock_go):
         """Test creation of executive summary chart."""
         mock_figure = MagicMock()
@@ -141,7 +141,7 @@ class TestExecutiveVisualization(unittest.TestCase):
         mock_go.Figure.assert_called_once()
         self.assertEqual(chart, mock_figure)
     
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.templates.executive_template.go')
+    @patch('worldenergydata.bsee.reports.comprehensive.templates.executive_template.go')
     def test_traffic_light_grid_visualization(self, mock_go):
         """Test creation of traffic light grid visualization."""
         mock_figure = MagicMock()
@@ -174,7 +174,7 @@ class TestExecutiveVisualization(unittest.TestCase):
         self.assertGreater(layout_config['grid_rows'], 0)
         self.assertGreater(layout_config['grid_cols'], 0)
     
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.templates.executive_template.make_subplots')
+    @patch('worldenergydata.bsee.reports.comprehensive.templates.executive_template.make_subplots')
     def test_multi_panel_dashboard_creation(self, mock_subplots):
         """Test creation of multi-panel executive dashboard."""
         mock_fig = MagicMock()
@@ -271,7 +271,7 @@ class TestCompetitiveBenchmarking(unittest.TestCase):
         self.assertGreaterEqual(percentiles['production_efficiency'], 0)
         self.assertLessEqual(percentiles['production_efficiency'], 100)
     
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.templates.executive_template.go')
+    @patch('worldenergydata.bsee.reports.comprehensive.templates.executive_template.go')
     def test_benchmark_radar_chart(self, mock_go):
         """Test creation of competitive benchmark radar chart."""
         mock_figure = MagicMock()

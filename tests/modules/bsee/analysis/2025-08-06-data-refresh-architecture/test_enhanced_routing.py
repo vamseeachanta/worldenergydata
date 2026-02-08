@@ -94,7 +94,7 @@ def test_legacy_routing():
     
     print("\n1. Testing legacy configuration detection in data_refresh.py")
     
-    from worldenergydata.modules.bsee.data.refresh.data_refresh import DataRefresh
+    from worldenergydata.bsee.data.refresh.data_refresh import DataRefresh
     
     # Create a legacy configuration
     legacy_config = {

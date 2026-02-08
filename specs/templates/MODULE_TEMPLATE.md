@@ -538,7 +538,7 @@ To integrate a new module with the package:
 3. **Register CLI** in unified CLI entry point:
 
    ```python
-   from worldenergydata.modules.new_module.cli import cli as new_module_cli
+   from worldenergydata.new_module.cli import cli as new_module_cli
    main.add_command(new_module_cli, name="new-module")
    ```
 

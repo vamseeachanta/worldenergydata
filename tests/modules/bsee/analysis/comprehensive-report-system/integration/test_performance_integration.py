@@ -12,15 +12,15 @@ from datetime import datetime, date
 from pathlib import Path
 import tempfile
 
-from worldenergydata.modules.bsee.reports.comprehensive.controller_performance import (
+from worldenergydata.bsee.reports.comprehensive.controller_performance import (
     PerformanceReportController,
     PerformanceConfiguration,
     ReportConfiguration,
     ReportParameters,
     ReportType
 )
-from worldenergydata.modules.bsee.reports.comprehensive.performance.cache import CacheManager
-from worldenergydata.modules.bsee.reports.comprehensive.performance.parallel_processor import ParallelProcessor
+from worldenergydata.bsee.reports.comprehensive.performance.cache import CacheManager
+from worldenergydata.bsee.reports.comprehensive.performance.parallel_processor import ParallelProcessor
 
 
 class TestPerformanceIntegration:

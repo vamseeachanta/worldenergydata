@@ -7,8 +7,8 @@ from unittest.mock import MagicMock, Mock, patch
 import pandas as pd
 import pytest
 
-from worldenergydata.modules.hse.database.models import HSEIncident
-from worldenergydata.modules.hse.importers.bsee_statistics_importer_url import (
+from worldenergydata.hse.database.models import HSEIncident
+from worldenergydata.hse.importers.bsee_statistics_importer_url import (
     BSEEStatisticsImporterURL,
 )
 

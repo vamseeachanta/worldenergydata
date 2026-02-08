@@ -22,7 +22,7 @@ class TestSMEFinancialModuleStructure(unittest.TestCase):
     def test_module_imports(self):
         """Test that all SME financial modules can be imported"""
         try:
-            from worldenergydata.modules.bsee.analysis import financial
+            from worldenergydata.bsee.analysis import financial
             self.assertIsNotNone(financial)
         except ImportError as e:
             self.skipTest(f"SME Financial module not yet created: {e}")
@@ -43,7 +43,7 @@ class TestSMEFinancialModuleStructure(unittest.TestCase):
         for submodule in submodules:
             try:
                 module = __import__(
-                    f'worldenergydata.modules.bsee.analysis.financial.{submodule}',
+                    f'worldenergydata.bsee.analysis.financial.{submodule}',
                     fromlist=[submodule]
                 )
                 self.assertIsNotNone(module)
@@ -53,9 +53,9 @@ class TestSMEFinancialModuleStructure(unittest.TestCase):
     def test_comprehensive_imports(self):
         """Test that SME module can import from comprehensive reports"""
         try:
-            from worldenergydata.modules.bsee.reports.comprehensive.data_loader_enhanced import HierarchicalDataLoader
-            from worldenergydata.modules.bsee.reports.comprehensive.hierarchical_aggregator import PriceDeck, CostStructure
-            from worldenergydata.modules.bsee.reports.comprehensive.exporters.excel_exporter import ExcelExporter
+            from worldenergydata.bsee.reports.comprehensive.data_loader_enhanced import HierarchicalDataLoader
+            from worldenergydata.bsee.reports.comprehensive.hierarchical_aggregator import PriceDeck, CostStructure
+            from worldenergydata.bsee.reports.comprehensive.exporters.excel_exporter import ExcelExporter
             
             self.assertIsNotNone(HierarchicalDataLoader)
             self.assertIsNotNone(PriceDeck)
@@ -120,7 +120,7 @@ class TestSMEConfiguration(unittest.TestCase):
     def test_config_loader(self):
         """Test configuration loader functionality"""
         try:
-            from worldenergydata.modules.bsee.analysis.financial.config_loader import SMEConfigLoader
+            from worldenergydata.bsee.analysis.financial.config_loader import SMEConfigLoader
             
             with patch('builtins.open', create=True) as mock_open:
                 mock_open.return_value.__enter__.return_value.read.return_value = yaml.dump(self.test_config)
@@ -176,7 +176,7 @@ class TestSMEDataLoader(unittest.TestCase):
     def test_data_loader_creation(self):
         """Test SME data loader can be created"""
         try:
-            from worldenergydata.modules.bsee.analysis.financial.sme_data_loader import SMEDataLoader
+            from worldenergydata.bsee.analysis.financial.sme_data_loader import SMEDataLoader
             loader = SMEDataLoader()
             self.assertIsNotNone(loader)
         except ImportError:
@@ -185,8 +185,8 @@ class TestSMEDataLoader(unittest.TestCase):
     def test_comprehensive_loader_import(self):
         """Test that SME loader uses comprehensive data loader"""
         try:
-            from worldenergydata.modules.bsee.analysis.financial.sme_data_loader import SMEDataLoader
-            from worldenergydata.modules.bsee.reports.comprehensive.data_loader_enhanced import HierarchicalDataLoader
+            from worldenergydata.bsee.analysis.financial.sme_data_loader import SMEDataLoader
+            from worldenergydata.bsee.reports.comprehensive.data_loader_enhanced import HierarchicalDataLoader
             
             loader = SMEDataLoader()
             # Should have a reference to comprehensive loader
@@ -201,7 +201,7 @@ class TestSMEDataLoader(unittest.TestCase):
         mock_read_excel.return_value = self.test_production_data
         
         try:
-            from worldenergydata.modules.bsee.analysis.financial.sme_data_loader import SMEDataLoader
+            from worldenergydata.bsee.analysis.financial.sme_data_loader import SMEDataLoader
             
             loader = SMEDataLoader()
             data = loader.load_matrix_production('test.xlsx')
@@ -231,7 +231,7 @@ class TestLeaseGrouper(unittest.TestCase):
     def test_lease_grouper_creation(self):
         """Test lease grouper can be created"""
         try:
-            from worldenergydata.modules.bsee.analysis.financial.lease_grouper import LeaseGrouper
+            from worldenergydata.bsee.analysis.financial.lease_grouper import LeaseGrouper
             grouper = LeaseGrouper(self.group_config)
             self.assertIsNotNone(grouper)
         except ImportError:
@@ -240,7 +240,7 @@ class TestLeaseGrouper(unittest.TestCase):
     def test_apply_grouping(self):
         """Test applying lease grouping to data"""
         try:
-            from worldenergydata.modules.bsee.analysis.financial.lease_grouper import LeaseGrouper
+            from worldenergydata.bsee.analysis.financial.lease_grouper import LeaseGrouper
             
             grouper = LeaseGrouper(self.group_config)
             grouped_data = grouper.apply_lease_grouping(self.test_data)
@@ -271,8 +271,8 @@ class TestCashFlowCalculator(unittest.TestCase):
     def test_cash_flow_calculator_creation(self):
         """Test cash flow calculator can be created"""
         try:
-            from worldenergydata.modules.bsee.analysis.financial.cash_flow_calculator import CashFlowCalculator
-            from worldenergydata.modules.bsee.reports.comprehensive.hierarchical_aggregator import PriceDeck, CostStructure
+            from worldenergydata.bsee.analysis.financial.cash_flow_calculator import CashFlowCalculator
+            from worldenergydata.bsee.reports.comprehensive.hierarchical_aggregator import PriceDeck, CostStructure
             
             calculator = CashFlowCalculator(PriceDeck(), CostStructure())
             self.assertIsNotNone(calculator)
@@ -282,8 +282,8 @@ class TestCashFlowCalculator(unittest.TestCase):
     def test_monthly_cash_flow_calculation(self):
         """Test monthly cash flow calculation"""
         try:
-            from worldenergydata.modules.bsee.analysis.financial.cash_flow_calculator import CashFlowCalculator
-            from worldenergydata.modules.bsee.reports.comprehensive.hierarchical_aggregator import PriceDeck, CostStructure
+            from worldenergydata.bsee.analysis.financial.cash_flow_calculator import CashFlowCalculator
+            from worldenergydata.bsee.reports.comprehensive.hierarchical_aggregator import PriceDeck, CostStructure
             
             calculator = CashFlowCalculator(PriceDeck(), CostStructure())
             cash_flow = calculator.calculate_monthly_cash_flow(
@@ -300,8 +300,8 @@ class TestCashFlowCalculator(unittest.TestCase):
     def test_npv_calculation(self):
         """Test NPV calculation"""
         try:
-            from worldenergydata.modules.bsee.analysis.financial.cash_flow_calculator import CashFlowCalculator
-            from worldenergydata.modules.bsee.reports.comprehensive.hierarchical_aggregator import PriceDeck, CostStructure
+            from worldenergydata.bsee.analysis.financial.cash_flow_calculator import CashFlowCalculator
+            from worldenergydata.bsee.reports.comprehensive.hierarchical_aggregator import PriceDeck, CostStructure
             
             calculator = CashFlowCalculator(PriceDeck(), CostStructure())
             

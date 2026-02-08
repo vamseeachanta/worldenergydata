@@ -23,7 +23,7 @@ from loguru import logger
 # Add src to path for importing
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', 'src'))
 
-from worldenergydata.modules.bsee.analysis.production_api12 import ProductionAPI12Analysis
+from worldenergydata.bsee.analysis.production_api12 import ProductionAPI12Analysis
 
 
 class ExcelAlignedNPVCalculator:

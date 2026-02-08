@@ -178,7 +178,7 @@ def temp_output_dir():
 pytest tests/modules/bsee/analysis/financial-analysis-sme-code/ -v
 
 # Run with coverage
-pytest tests/modules/bsee/analysis/financial-analysis-sme-code/ --cov=worldenergydata.modules.bsee.analysis.sme_financial --cov-report=html
+pytest tests/modules/bsee/analysis/financial-analysis-sme-code/ --cov=worldenergydata.bsee.analysis.sme_financial --cov-report=html
 
 # Run specific test categories
 pytest tests/modules/bsee/analysis/financial-analysis-sme-code/ -m "unit"

@@ -8,6 +8,6 @@ Wrapper module that exposes the metocean module's CLI commands
 to the main worldenergydata CLI.
 """
 
-from worldenergydata.modules.metocean.cli import app
+from worldenergydata.metocean.cli import app
 
 __all__ = ["app"]

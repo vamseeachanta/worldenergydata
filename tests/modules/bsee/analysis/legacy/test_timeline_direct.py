@@ -11,7 +11,7 @@ current_dir = Path(__file__).parent
 src_dir = current_dir.parent.parent.parent / "src"
 sys.path.insert(0, str(src_dir))
 
-from worldenergydata.modules.bsee.analysis.well_api12 import WellAPI12
+from worldenergydata.bsee.analysis.well_api12 import WellAPI12
 
 def test_timeline_with_production_dates():
     """Test timeline generation with production dates"""

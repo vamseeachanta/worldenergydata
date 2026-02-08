@@ -332,9 +332,9 @@ class TestGetLogger:
         """Test logger uses the provided name."""
         from worldenergydata.common.logging import get_logger
 
-        logger = get_logger("worldenergydata.modules.bsee")
+        logger = get_logger("worldenergydata.bsee")
 
-        assert logger.logger.name == "worldenergydata.modules.bsee"
+        assert logger.logger.name == "worldenergydata.bsee"
 
 
 class TestGetModuleLogger:
@@ -346,7 +346,7 @@ class TestGetModuleLogger:
 
         logger = get_module_logger("bsee")
 
-        assert logger.logger.name == "worldenergydata.modules.bsee"
+        assert logger.logger.name == "worldenergydata.bsee"
 
     def test_get_module_logger_with_component(self):
         """Test module logger with component has correct naming."""
@@ -354,7 +354,7 @@ class TestGetModuleLogger:
 
         logger = get_module_logger("bsee", "data")
 
-        assert logger.logger.name == "worldenergydata.modules.bsee.data"
+        assert logger.logger.name == "worldenergydata.bsee.data"
 
     def test_get_module_logger_context(self):
         """Test module logger has module context set."""

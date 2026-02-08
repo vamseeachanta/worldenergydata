@@ -22,13 +22,13 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-from worldenergydata.modules.metocean.clients import (
+from worldenergydata.metocean.clients import (
     FetchResult,
     NDBCClient,
     NDBCObservation,
     NDBCStation,
 )
-from worldenergydata.modules.metocean.exceptions import (
+from worldenergydata.metocean.exceptions import (
     HTTPError,
     ParsingError,
     TimeoutError,

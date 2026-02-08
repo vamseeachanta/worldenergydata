@@ -17,7 +17,7 @@ from typing import Dict, List, Tuple, Optional
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', 'src'))
 
 try:
-    from worldenergydata.modules.bsee.analysis.production_api12 import ProductionAPI12Analysis
+    from worldenergydata.bsee.analysis.production_api12 import ProductionAPI12Analysis
     PRODUCTION_API12_AVAILABLE = True
 except ImportError as e:
     print(f"Warning: Could not import ProductionAPI12Analysis: {e}")

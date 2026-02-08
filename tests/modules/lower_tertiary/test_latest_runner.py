@@ -6,7 +6,7 @@ ABOUTME: Verifies full pipeline, comparisons, deviation flagging, and revenue
 import pytest
 
 try:
-    from worldenergydata.analysis.lower_tertiary.latest_runner import (
+    from worldenergydata.lower_tertiary.latest_runner import (
         compare_against_v30,
         run_classified_analysis,
         run_latest_analysis,

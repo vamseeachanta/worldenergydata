@@ -163,7 +163,7 @@ class SODIRDataClient:
         ncs_df = self.get_field_production(ncs_field)
 
         # Get GOM data (via BSEE client)
-        from worldenergydata.modules.bsee.data import get_production_data
+        from worldenergydata.bsee.data import get_production_data
         gom_df = get_production_data(api_number=gom_api)
 
         # Align by months on production

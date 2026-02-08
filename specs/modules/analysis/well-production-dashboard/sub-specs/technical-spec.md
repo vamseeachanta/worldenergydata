@@ -112,12 +112,12 @@ worldenergydata/
 
 ```python
 # well_production.py - Extending DashboardBuilder
-from worldenergydata.modules.bsee.reports.comprehensive.visualizations.dashboard_builder import (
+from worldenergydata.bsee.reports.comprehensive.visualizations.dashboard_builder import (
     DashboardBuilder,
     DashboardConfig,
     ChartConfig
 )
-from worldenergydata.modules.analysis.verification import (
+from worldenergydata.analysis.verification import (
     VerificationWorkflow,
     DataQualityChecker,
     AuditLogger
@@ -322,7 +322,7 @@ class QualityIndicator:
 ```python
 # API endpoints leveraging existing patterns
 from fastapi import FastAPI, Depends
-from worldenergydata.modules.analysis.verification import verify_data
+from worldenergydata.analysis.verification import verify_data
 
 app = FastAPI()
 
@@ -381,7 +381,7 @@ ROLE_PERMISSIONS = {
 ```python
 # tests/modules/analysis/dashboard/test_well_production.py
 import pytest
-from worldenergydata.modules.analysis.dashboard import WellProductionDashboard
+from worldenergydata.analysis.dashboard import WellProductionDashboard
 
 def test_dashboard_initialization():
     """Test dashboard initialization with verification."""
@@ -425,15 +425,15 @@ COPY requirements-dashboard.txt .
 RUN pip install -r requirements-dashboard.txt
 COPY src/worldenergydata/modules/analysis/dashboard /app/dashboard
 EXPOSE 8050
-CMD ["python", "-m", "worldenergydata.modules.analysis.dashboard.cli", "serve"]
+CMD ["python", "-m", "worldenergydata.analysis.dashboard.cli", "serve"]
 ```
 
 ### CLI Commands
 ```bash
 # Dashboard CLI commands
-python -m worldenergydata.modules.analysis.dashboard.cli serve --port 8050
-python -m worldenergydata.modules.analysis.dashboard.cli export --well WELL_001
-python -m worldenergydata.modules.analysis.dashboard.cli verify --check-quality
+python -m worldenergydata.analysis.dashboard.cli serve --port 8050
+python -m worldenergydata.analysis.dashboard.cli export --well WELL_001
+python -m worldenergydata.analysis.dashboard.cli verify --check-quality
 ```
 
 ## Performance Optimization
@@ -441,7 +441,7 @@ python -m worldenergydata.modules.analysis.dashboard.cli verify --check-quality
 ### Caching Strategy (Leveraging Existing)
 ```python
 # Reuse comprehensive report caching
-from worldenergydata.modules.bsee.reports.comprehensive import CacheManager
+from worldenergydata.bsee.reports.comprehensive import CacheManager
 
 cache = CacheManager()
 cache.set_verified_data(well_id, data, ttl=3600)
@@ -457,7 +457,7 @@ cache.set_verified_data(well_id, data, ttl=3600)
 ### Integrated Monitoring
 ```python
 # Extend existing monitoring
-from worldenergydata.modules.analysis.verification.audit import AuditLogger
+from worldenergydata.analysis.verification.audit import AuditLogger
 
 audit = AuditLogger()
 audit.log_dashboard_access(user_id, well_id, action)

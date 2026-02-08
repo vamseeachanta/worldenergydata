@@ -10,7 +10,7 @@ This is the API specification for the spec detailed in @specs/modules/bsee/finan
 ### Main Module Interface
 
 ```python
-from worldenergydata.modules.bsee.analysis.sme_financial import FinancialAnalyzer
+from worldenergydata.bsee.analysis.sme_financial import FinancialAnalyzer
 
 # Initialize analyzer
 analyzer = FinancialAnalyzer(config_path="config.yaml")
@@ -203,7 +203,7 @@ class ReportGenerator:
 
 ```bash
 # Run financial analysis
-python -m worldenergydata.modules.bsee.analysis.sme_financial \
+python -m worldenergydata.bsee.analysis.sme_financial \
     --input data/input.xlsx \
     --output results/financial_analysis.xlsx \
     --config config.yaml
@@ -233,7 +233,7 @@ optional arguments:
 ### Example 1: Basic Analysis
 
 ```python
-from worldenergydata.modules.bsee.analysis.sme_financial import FinancialAnalyzer
+from worldenergydata.bsee.analysis.sme_financial import FinancialAnalyzer
 
 # Run with default configuration
 analyzer = FinancialAnalyzer()
@@ -248,7 +248,7 @@ print(f"Analysis complete. NPV: ${results['total_npv']:,.2f}")
 ### Example 2: Custom Configuration
 
 ```python
-from worldenergydata.modules.bsee.analysis.sme_financial import FinancialAnalyzer
+from worldenergydata.bsee.analysis.sme_financial import FinancialAnalyzer
 
 # Custom configuration
 config = {
@@ -274,7 +274,7 @@ results = analyzer.analyze(
 
 ```python
 import pandas as pd
-from worldenergydata.modules.bsee.analysis.sme_financial import (
+from worldenergydata.bsee.analysis.sme_financial import (
     LeaseProcessor, CashFlowCalculator
 )
 

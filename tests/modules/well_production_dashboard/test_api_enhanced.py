@@ -15,11 +15,11 @@ import pandas as pd
 import pytest
 
 # Mock Flask and related imports
-with patch("worldenergydata.modules.well_production_dashboard.api_enhanced.Flask"):
+with patch("worldenergydata.well_production_dashboard.api_enhanced.Flask"):
     with patch(
-        "worldenergydata.modules.well_production_dashboard.api_enhanced.jsonify"
+        "worldenergydata.well_production_dashboard.api_enhanced.jsonify"
     ):
-        from worldenergydata.modules.well_production_dashboard.api_enhanced import (
+        from worldenergydata.well_production_dashboard.api_enhanced import (
             APIAuthenticator,
             CacheManager,
             EnhancedDashboardAPI,

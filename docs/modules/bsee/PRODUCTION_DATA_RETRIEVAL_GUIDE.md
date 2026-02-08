@@ -56,7 +56,7 @@ default:
 ### Python Usage
 
 ```python
-from worldenergydata.modules.bsee.data._from_zip.production_data import GetProdDataFromZip
+from worldenergydata.bsee.data._from_zip.production_data import GetProdDataFromZip
 
 # Initialize
 prod_loader = GetProdDataFromZip()
@@ -229,7 +229,7 @@ df_filtered = df[df['COMPLETION_NAME'].str.contains(completion_suffix)]
 ### Handling Multiple Completions
 
 ```python
-from worldenergydata.modules.bsee.analysis.production_api12 import ProductionAPI12Analysis
+from worldenergydata.bsee.analysis.production_api12 import ProductionAPI12Analysis
 
 analyzer = ProductionAPI12Analysis()
 
@@ -313,7 +313,7 @@ default:
 ### Python Usage
 
 ```python
-from worldenergydata.modules.bsee.data._from_bin.lease_data import LeaseData
+from worldenergydata.bsee.data._from_bin.lease_data import LeaseData
 
 # Initialize
 lease_loader = LeaseData(cfg)
@@ -372,7 +372,7 @@ lease_data_folders = [
 ### Lease-Level Production Aggregation
 
 ```python
-from worldenergydata.modules.bsee.analysis.financial.lease_grouper import LeaseGrouper
+from worldenergydata.bsee.analysis.financial.lease_grouper import LeaseGrouper
 
 # Initialize aggregator
 lease_grouper = LeaseGrouper()
@@ -534,7 +534,7 @@ df['WATER_CUT_PCT'] = (df['MON_WTR_PROD_VOL'] / total_liquid) * 100
 ### Production Decline Analysis
 
 ```python
-from worldenergydata.modules.bsee.analysis.production_api12 import ProductionAPI12Analysis
+from worldenergydata.bsee.analysis.production_api12 import ProductionAPI12Analysis
 
 analyzer = ProductionAPI12Analysis()
 
@@ -550,8 +550,8 @@ analyzer = ProductionAPI12Analysis()
 ### Economic Analysis Integration
 
 ```python
-from worldenergydata.modules.bsee.analysis.financial.analyzer import FinancialAnalyzer
-from worldenergydata.modules.bsee.analysis.financial.analyzer import AnalysisConfig
+from worldenergydata.bsee.analysis.financial.analyzer import FinancialAnalyzer
+from worldenergydata.bsee.analysis.financial.analyzer import AnalysisConfig
 
 # Configure financial analysis
 config = AnalysisConfig(
@@ -602,7 +602,7 @@ Binary files provide faster access (10-100x speedup vs ZIP parsing).
 ### Data Refresh
 
 ```python
-from worldenergydata.modules.bsee.data._from_zip.production_data import GetProdDataFromZip
+from worldenergydata.bsee.data._from_zip.production_data import GetProdDataFromZip
 
 prod_loader = GetProdDataFromZip()
 
@@ -772,7 +772,7 @@ prod_loader.save_zip_data_to_binary(cfg)
 
 ### Class: `ProductionAPI12Analysis`
 
-**Location:** `worldenergydata.modules.bsee.analysis.production_api12`
+**Location:** `worldenergydata.bsee.analysis.production_api12`
 
 **Key Methods:**
 - `run_production_analysis(cfg, data)` - Main analysis entry point
@@ -782,7 +782,7 @@ prod_loader.save_zip_data_to_binary(cfg)
 
 ### Class: `GetProdDataFromZip`
 
-**Location:** `worldenergydata.modules.bsee.data._from_zip.production_data`
+**Location:** `worldenergydata.bsee.data._from_zip.production_data`
 
 **Key Methods:**
 - `get_production_data_by_wellapi12(cfg, api12)` - Get data for one API12
@@ -791,7 +791,7 @@ prod_loader.save_zip_data_to_binary(cfg)
 
 ### Class: `LeaseData`
 
-**Location:** `worldenergydata.modules.bsee.data._from_bin.lease_data`
+**Location:** `worldenergydata.bsee.data._from_bin.lease_data`
 
 **Key Methods:**
 - `get_lease_data_from_input_bin_files(lease_numbers)` - Get lease data

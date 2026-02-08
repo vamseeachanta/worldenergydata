@@ -1547,7 +1547,7 @@ output:
 ```bash
 # Run spider diagram analysis
 uv run python -c "
-from worldenergydata.modules.economics.sensitivity import SpiderDiagramAnalyzer
+from worldenergydata.economics.sensitivity import SpiderDiagramAnalyzer
 # ... analysis code
 "
 
@@ -1558,7 +1558,7 @@ uv run python -m worldenergydata.cli sensitivity-dashboard \
 
 # Quick breakeven analysis
 uv run python -c "
-from worldenergydata.modules.economics.sensitivity import BreakevenAnalyzer
+from worldenergydata.economics.sensitivity import BreakevenAnalyzer
 analyzer = BreakevenAnalyzer(npv_calc)
 result = analyzer.find_breakeven('oil_price', 70, range_pct=0.5, unit='\$/bbl')
 print(f'Breakeven oil price: \${result.breakeven_value:.2f}/bbl')
@@ -1571,7 +1571,7 @@ print(f'Breakeven oil price: \${result.breakeven_value:.2f}/bbl')
 # ABOUTME: Complete example of multi-dimensional sensitivity analysis
 # ABOUTME: Shows spider diagram, surface, breakeven, and scenario comparison
 
-from worldenergydata.modules.economics.sensitivity import (
+from worldenergydata.economics.sensitivity import (
     SensitivityParameter,
     SpiderDiagramAnalyzer,
     SensitivitySurfaceAnalyzer,

@@ -3,10 +3,10 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from worldenergydata.modules.bsee.data.schemas.deepwater_structure import (
+from worldenergydata.bsee.data.schemas.deepwater_structure import (
     DeepwaterStructureSchema,
 )
-from worldenergydata.modules.bsee.data.schemas.pipeline import (
+from worldenergydata.bsee.data.schemas.pipeline import (
     PipelineLocationSchema,
     PipelinePermitSchema,
 )

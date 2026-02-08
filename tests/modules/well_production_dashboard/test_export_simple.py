@@ -7,7 +7,7 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 
-from worldenergydata.modules.well_production_dashboard.export_manager import (
+from worldenergydata.well_production_dashboard.export_manager import (
     ExportConfiguration,
     ExportResult,
     VerificationMetadata,

@@ -13,7 +13,7 @@ import pytest
 # Add src to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent.parent))
 
-from worldenergydata.modules.bsee.reports.comprehensive.models import (
+from worldenergydata.bsee.reports.comprehensive.models import (
     Block,
     EconomicMetrics,
     Field,
@@ -29,7 +29,7 @@ class TestDataAggregatorABC:
 
     def test_abstract_base_class_cannot_be_instantiated(self):
         """Test that ABC cannot be directly instantiated"""
-        from worldenergydata.modules.bsee.reports.comprehensive.aggregators.base import (
+        from worldenergydata.bsee.reports.comprehensive.aggregators.base import (
             DataAggregator,
         )
 
@@ -38,7 +38,7 @@ class TestDataAggregatorABC:
 
     def test_abstract_methods_required(self):
         """Test that subclasses must implement abstract methods"""
-        from worldenergydata.modules.bsee.reports.comprehensive.aggregators.base import (
+        from worldenergydata.bsee.reports.comprehensive.aggregators.base import (
             DataAggregator,
         )
 
@@ -50,7 +50,7 @@ class TestDataAggregatorABC:
 
     def test_complete_implementation_works(self):
         """Test that properly implemented subclass can be instantiated"""
-        from worldenergydata.modules.bsee.reports.comprehensive.aggregators.base import (
+        from worldenergydata.bsee.reports.comprehensive.aggregators.base import (
             DataAggregator,
         )
 
@@ -99,7 +99,7 @@ class TestBlockAggregator:
 
     def test_block_aggregator_initialization(self):
         """Test BlockAggregator can be initialized"""
-        from worldenergydata.modules.bsee.reports.comprehensive.aggregators.block_aggregator import (
+        from worldenergydata.bsee.reports.comprehensive.aggregators.block_aggregator import (
             BlockAggregator,
         )
 
@@ -109,7 +109,7 @@ class TestBlockAggregator:
 
     def test_block_production_summation(self):
         """Test production summation across fields"""
-        from worldenergydata.modules.bsee.reports.comprehensive.aggregators.block_aggregator import (
+        from worldenergydata.bsee.reports.comprehensive.aggregators.block_aggregator import (
             BlockAggregator,
         )
 
@@ -122,7 +122,7 @@ class TestBlockAggregator:
 
     def test_block_field_count(self):
         """Test field counting in block"""
-        from worldenergydata.modules.bsee.reports.comprehensive.aggregators.block_aggregator import (
+        from worldenergydata.bsee.reports.comprehensive.aggregators.block_aggregator import (
             BlockAggregator,
         )
 
@@ -133,7 +133,7 @@ class TestBlockAggregator:
 
     def test_block_metrics_calculation(self):
         """Test metrics calculation for block"""
-        from worldenergydata.modules.bsee.reports.comprehensive.aggregators.block_aggregator import (
+        from worldenergydata.bsee.reports.comprehensive.aggregators.block_aggregator import (
             BlockAggregator,
         )
 
@@ -172,7 +172,7 @@ class TestFieldAggregator:
 
     def test_field_aggregator_initialization(self):
         """Test FieldAggregator can be initialized"""
-        from worldenergydata.modules.bsee.reports.comprehensive.aggregators.field_aggregator import (
+        from worldenergydata.bsee.reports.comprehensive.aggregators.field_aggregator import (
             FieldAggregator,
         )
 
@@ -182,7 +182,7 @@ class TestFieldAggregator:
 
     def test_field_lease_aggregation(self):
         """Test aggregation of leases to field level"""
-        from worldenergydata.modules.bsee.reports.comprehensive.aggregators.field_aggregator import (
+        from worldenergydata.bsee.reports.comprehensive.aggregators.field_aggregator import (
             FieldAggregator,
         )
 
@@ -217,7 +217,7 @@ class TestLeaseAggregator:
 
     def test_lease_aggregator_initialization(self):
         """Test LeaseAggregator can be initialized"""
-        from worldenergydata.modules.bsee.reports.comprehensive.aggregators.lease_aggregator import (
+        from worldenergydata.bsee.reports.comprehensive.aggregators.lease_aggregator import (
             LeaseAggregator,
         )
 
@@ -227,7 +227,7 @@ class TestLeaseAggregator:
 
     def test_lease_well_metrics(self):
         """Test well-level metrics aggregation"""
-        from worldenergydata.modules.bsee.reports.comprehensive.aggregators.lease_aggregator import (
+        from worldenergydata.bsee.reports.comprehensive.aggregators.lease_aggregator import (
             LeaseAggregator,
         )
 
@@ -246,7 +246,7 @@ class TestDataValidation:
 
     def test_validation_empty_data(self):
         """Test validation with empty data"""
-        from worldenergydata.modules.bsee.reports.comprehensive.aggregators.field_aggregator import (
+        from worldenergydata.bsee.reports.comprehensive.aggregators.field_aggregator import (
             FieldAggregator,
         )
 
@@ -255,7 +255,7 @@ class TestDataValidation:
 
     def test_validation_missing_required_fields(self):
         """Test validation with missing required fields"""
-        from worldenergydata.modules.bsee.reports.comprehensive.aggregators.field_aggregator import (
+        from worldenergydata.bsee.reports.comprehensive.aggregators.field_aggregator import (
             FieldAggregator,
         )
 
@@ -265,7 +265,7 @@ class TestDataValidation:
 
     def test_validation_valid_data(self):
         """Test validation with valid data"""
-        from worldenergydata.modules.bsee.reports.comprehensive.aggregators.field_aggregator import (
+        from worldenergydata.bsee.reports.comprehensive.aggregators.field_aggregator import (
             FieldAggregator,
         )
 
@@ -279,7 +279,7 @@ class TestAggregationAccuracy:
 
     def test_zero_production_handling(self):
         """Test handling of zero production values"""
-        from worldenergydata.modules.bsee.reports.comprehensive.aggregators.lease_aggregator import (
+        from worldenergydata.bsee.reports.comprehensive.aggregators.lease_aggregator import (
             LeaseAggregator,
         )
 
@@ -297,7 +297,7 @@ class TestAggregationAccuracy:
 
     def test_partial_data_handling(self):
         """Test handling of partial production data"""
-        from worldenergydata.modules.bsee.reports.comprehensive.aggregators.lease_aggregator import (
+        from worldenergydata.bsee.reports.comprehensive.aggregators.lease_aggregator import (
             LeaseAggregator,
         )
 
@@ -316,7 +316,7 @@ class TestAggregationAccuracy:
 
     def test_large_dataset_aggregation(self):
         """Test aggregation with large number of wells"""
-        from worldenergydata.modules.bsee.reports.comprehensive.aggregators.lease_aggregator import (
+        from worldenergydata.bsee.reports.comprehensive.aggregators.lease_aggregator import (
             LeaseAggregator,
         )
 

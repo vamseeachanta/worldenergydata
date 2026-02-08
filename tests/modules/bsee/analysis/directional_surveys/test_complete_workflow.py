@@ -24,7 +24,7 @@ from unittest.mock import Mock, patch
 # Add src to path to import the module
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../../../../src'))
 
-from worldenergydata.modules.bsee.analysis.well_api12 import WellAPI12
+from worldenergydata.bsee.analysis.well_api12 import WellAPI12
 
 
 class TestDirectionalSurveysWorkflow:

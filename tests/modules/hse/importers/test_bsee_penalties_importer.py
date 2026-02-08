@@ -13,7 +13,7 @@ class TestBSEEPenaltiesImporterInterface:
 
     def test_can_instantiate_with_db_session_and_csv_path(self, db_session):
         """Test basic instantiation with required parameters"""
-        from worldenergydata.modules.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
+        from worldenergydata.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
 
         importer = BSEEPenaltiesImporter(db_session, csv_file_path="penalties.csv")
 
@@ -23,8 +23,8 @@ class TestBSEEPenaltiesImporterInterface:
 
     def test_inherits_from_base_importer(self, db_session):
         """Test that BSEEPenaltiesImporter inherits from BaseImporter"""
-        from worldenergydata.modules.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
-        from worldenergydata.modules.hse.importers.base_importer import BaseImporter
+        from worldenergydata.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
+        from worldenergydata.hse.importers.base_importer import BaseImporter
 
         importer = BSEEPenaltiesImporter(db_session)
 
@@ -32,7 +32,7 @@ class TestBSEEPenaltiesImporterInterface:
 
     def test_has_required_methods(self, db_session):
         """Test that importer has fetch_data and normalize_data methods"""
-        from worldenergydata.modules.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
+        from worldenergydata.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
 
         importer = BSEEPenaltiesImporter(db_session)
 
@@ -89,7 +89,7 @@ class TestPenaltiesCSVParsing:
 
     def test_fetch_data_reads_csv_file(self, db_session, sample_penalties_csv):
         """Test that fetch_data successfully reads CSV file"""
-        from worldenergydata.modules.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
+        from worldenergydata.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
 
         importer = BSEEPenaltiesImporter(db_session, csv_file_path=sample_penalties_csv)
         records = importer.fetch_data()
@@ -99,7 +99,7 @@ class TestPenaltiesCSVParsing:
 
     def test_fetch_data_returns_list_of_dicts(self, db_session, sample_penalties_csv):
         """Test that fetch_data returns list of dictionaries"""
-        from worldenergydata.modules.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
+        from worldenergydata.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
 
         importer = BSEEPenaltiesImporter(db_session, csv_file_path=sample_penalties_csv)
         records = importer.fetch_data()
@@ -109,7 +109,7 @@ class TestPenaltiesCSVParsing:
 
     def test_fetch_data_raises_file_not_found_error(self, db_session):
         """Test that fetch_data raises FileNotFoundError for missing file"""
-        from worldenergydata.modules.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
+        from worldenergydata.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
 
         importer = BSEEPenaltiesImporter(db_session, csv_file_path="nonexistent.csv")
 
@@ -124,7 +124,7 @@ class TestPenaltiesCSVParsing:
             temp_path = f.name
 
         try:
-            from worldenergydata.modules.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
+            from worldenergydata.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
             importer = BSEEPenaltiesImporter(db_session, csv_file_path=temp_path)
             records = importer.fetch_data()
 
@@ -134,7 +134,7 @@ class TestPenaltiesCSVParsing:
 
     def test_fetch_data_preserves_all_columns(self, db_session, sample_penalties_csv):
         """Test that all CSV columns are preserved in returned dictionaries"""
-        from worldenergydata.modules.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
+        from worldenergydata.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
 
         importer = BSEEPenaltiesImporter(db_session, csv_file_path=sample_penalties_csv)
         records = importer.fetch_data()
@@ -162,7 +162,7 @@ class TestPenaltiesCSVParsing:
             temp_path = f.name
 
         try:
-            from worldenergydata.modules.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
+            from worldenergydata.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
             importer = BSEEPenaltiesImporter(db_session, csv_file_path=temp_path)
             records = importer.fetch_data()
 
@@ -172,7 +172,7 @@ class TestPenaltiesCSVParsing:
 
     def test_fetch_data_parses_multiple_rows(self, db_session, sample_penalties_csv):
         """Test that fetch_data correctly parses multiple CSV rows"""
-        from worldenergydata.modules.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
+        from worldenergydata.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
 
         importer = BSEEPenaltiesImporter(db_session, csv_file_path=sample_penalties_csv)
         records = importer.fetch_data()
@@ -189,7 +189,7 @@ class TestPenaltiesCSVParsing:
             temp_path = f.name
 
         try:
-            from worldenergydata.modules.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
+            from worldenergydata.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
             importer = BSEEPenaltiesImporter(db_session, csv_file_path=temp_path)
 
             # Should either raise ValueError or return data that fails validation
@@ -205,7 +205,7 @@ class TestPenaltiesDataNormalization:
     @pytest.fixture
     def importer(self, db_session):
         """Create penalties importer instance for testing"""
-        from worldenergydata.modules.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
+        from worldenergydata.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
         return BSEEPenaltiesImporter(db_session)
 
     def test_normalize_converts_incident_id_to_bsee_incident_id(self, importer):
@@ -462,7 +462,7 @@ class TestPenaltiesDeduplication:
             temp_path = f.name
 
         try:
-            from worldenergydata.modules.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
+            from worldenergydata.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
             importer = BSEEPenaltiesImporter(db_session, csv_file_path=temp_path)
             stats = importer.import_data()
 
@@ -474,7 +474,7 @@ class TestPenaltiesDeduplication:
 
     def test_duplicate_detection_by_bsee_incident_id_in_database(self, db_session):
         """Test that penalty already in database is detected as duplicate"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         # Create existing incident in database
         existing_incident = HSEIncident(
@@ -503,7 +503,7 @@ class TestPenaltiesDeduplication:
             temp_path = f.name
 
         try:
-            from worldenergydata.modules.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
+            from worldenergydata.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
             importer = BSEEPenaltiesImporter(db_session, csv_file_path=temp_path)
             stats = importer.import_data()
 
@@ -519,7 +519,7 @@ class TestPenaltiesIncrementalUpdates:
 
     def test_imports_new_penalties_only(self, db_session):
         """Test that only new penalties are imported"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         # Create existing penalty
         existing = HSEIncident(
@@ -555,7 +555,7 @@ class TestPenaltiesIncrementalUpdates:
             temp_path = f.name
 
         try:
-            from worldenergydata.modules.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
+            from worldenergydata.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
             importer = BSEEPenaltiesImporter(db_session, csv_file_path=temp_path)
             stats = importer.import_data()
 
@@ -566,7 +566,7 @@ class TestPenaltiesIncrementalUpdates:
 
     def test_skips_existing_penalties(self, db_session):
         """Test that existing penalties are skipped during import"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         # Create multiple existing penalties
         for i in range(3):
@@ -597,7 +597,7 @@ class TestPenaltiesIncrementalUpdates:
             temp_path = f.name
 
         try:
-            from worldenergydata.modules.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
+            from worldenergydata.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
             importer = BSEEPenaltiesImporter(db_session, csv_file_path=temp_path)
             stats = importer.import_data()
 
@@ -633,7 +633,7 @@ class TestPenaltiesIncrementalUpdates:
             temp_path = f.name
 
         try:
-            from worldenergydata.modules.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
+            from worldenergydata.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
             importer = BSEEPenaltiesImporter(db_session, csv_file_path=temp_path)
             stats = importer.import_data()
 
@@ -651,7 +651,7 @@ def db_session():
     """Create test database session with in-memory SQLite"""
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
-    from worldenergydata.modules.hse.database.models import Base
+    from worldenergydata.hse.database.models import Base
 
     # Use in-memory SQLite for testing
     engine = create_engine('sqlite:///:memory:')

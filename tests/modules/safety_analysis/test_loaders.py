@@ -2,8 +2,8 @@
 
 import pytest
 
-from worldenergydata.modules.safety_analysis.data.loaders import SafetyDataLoader
-from worldenergydata.modules.safety_analysis.exceptions import SafetyDataError
+from worldenergydata.safety_analysis.data.loaders import SafetyDataLoader
+from worldenergydata.safety_analysis.exceptions import SafetyDataError
 
 
 class TestSafetyDataLoader:

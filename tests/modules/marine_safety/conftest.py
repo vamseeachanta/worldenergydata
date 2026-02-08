@@ -57,7 +57,7 @@ def test_session(test_db):
   Returns:
     SQLAlchemy Session: Database session with automatic rollback
   """
-  from worldenergydata.modules.marine_safety.database.models import Base
+  from worldenergydata.marine_safety.database.models import Base
 
   # Create all tables
   Base.metadata.create_all(test_db)

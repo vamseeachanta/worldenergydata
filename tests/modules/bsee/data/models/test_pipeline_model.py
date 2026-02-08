@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from worldenergydata.modules.bsee.data.models.pipeline import (
+from worldenergydata.bsee.data.models.pipeline import (
     PipelineLocation,
     PipelinePermit,
 )

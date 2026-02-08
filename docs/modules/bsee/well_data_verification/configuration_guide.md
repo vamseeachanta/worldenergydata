@@ -30,7 +30,7 @@ base_config.yaml          # Base configuration
 ### Loading Configuration
 
 ```python
-from worldenergydata.modules.analysis.verification.config import VerificationConfig
+from worldenergydata.analysis.verification.config import VerificationConfig
 
 # Load single configuration
 config = VerificationConfig.from_yaml("verification_config.yaml")

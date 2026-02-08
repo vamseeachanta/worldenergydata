@@ -87,12 +87,12 @@ The simplest way to start is using the command-line interface:
 
 ```bash
 # Run a basic verification workflow
-python -m worldenergydata.modules.analysis.verification.cli verify \
+python -m worldenergydata.analysis.verification.cli verify \
     --data-file production_data.csv \
     --output-dir ./verification_results
 
 # Check data quality
-python -m worldenergydata.modules.analysis.verification.cli quality-check \
+python -m worldenergydata.analysis.verification.cli quality-check \
     --data-file production_data.csv \
     --config quality_config.yaml
 ```
@@ -102,8 +102,8 @@ python -m worldenergydata.modules.analysis.verification.cli quality-check \
 For programmatic access:
 
 ```python
-from worldenergydata.modules.analysis.verification import VerificationEngine
-from worldenergydata.modules.analysis.verification.config import VerificationConfig
+from worldenergydata.analysis.verification import VerificationEngine
+from worldenergydata.analysis.verification.config import VerificationConfig
 
 # Load configuration
 config = VerificationConfig.from_yaml("verification_config.yaml")
@@ -130,7 +130,7 @@ The system supports multiple data sources:
 Example data loading:
 
 ```python
-from worldenergydata.modules.analysis.verification.processors import BSEEDataAdapter
+from worldenergydata.analysis.verification.processors import BSEEDataAdapter
 
 # Load BSEE production data
 adapter = BSEEDataAdapter()
@@ -146,7 +146,7 @@ data = adapter.convert_date_columns(data)
 Define and apply custom validation rules:
 
 ```python
-from worldenergydata.modules.analysis.verification.quality import ValidationRuleBuilder
+from worldenergydata.analysis.verification.quality import ValidationRuleBuilder
 
 # Create validation rules
 builder = ValidationRuleBuilder()
@@ -175,7 +175,7 @@ results = validator.validate(data, rules=[oil_rule, well_rule])
 Identify statistical anomalies in production data:
 
 ```python
-from worldenergydata.modules.analysis.verification.quality import OutlierDetector
+from worldenergydata.analysis.verification.quality import OutlierDetector
 
 detector = OutlierDetector(method="z_score", threshold=3.0)
 outliers = detector.detect(data["oil_production"])
@@ -190,7 +190,7 @@ for idx, value in outliers:
 Compare data against Excel reference files:
 
 ```python
-from worldenergydata.modules.analysis.verification.cross_reference import CrossReferenceModule
+from worldenergydata.analysis.verification.cross_reference import CrossReferenceModule
 
 # Initialize cross-reference module
 cross_ref = CrossReferenceModule()
@@ -263,7 +263,7 @@ workflow:
 Workflows support pause and resume functionality:
 
 ```python
-from worldenergydata.modules.analysis.verification.engine import WorkflowEngine
+from worldenergydata.analysis.verification.engine import WorkflowEngine
 
 # Start workflow
 engine = WorkflowEngine()
@@ -289,7 +289,7 @@ engine.continue_workflow(resumed_session)
 Check for missing data and gaps:
 
 ```python
-from worldenergydata.modules.analysis.verification.quality import CompletenessChecker
+from worldenergydata.analysis.verification.quality import CompletenessChecker
 
 checker = CompletenessChecker()
 results = checker.check(data)
@@ -304,7 +304,7 @@ print(f"Missing Months: {results.missing_months}")
 Validate oil and gas production values:
 
 ```python
-from worldenergydata.modules.analysis.verification.quality import ProductionVolumeValidator
+from worldenergydata.analysis.verification.quality import ProductionVolumeValidator
 
 validator = ProductionVolumeValidator(
     oil_min=0, oil_max=100000,
@@ -321,7 +321,7 @@ for issue in results.issues:
 Perform statistical quality checks:
 
 ```python
-from worldenergydata.modules.analysis.verification.quality import DataQualityFramework
+from worldenergydata.analysis.verification.quality import DataQualityFramework
 
 framework = DataQualityFramework()
 quality_report = framework.analyze(data)
@@ -339,7 +339,7 @@ print(f"Outliers: {quality_report.outlier_count}")
 All verification activities are automatically logged:
 
 ```python
-from worldenergydata.modules.analysis.verification.audit import AuditSystem
+from worldenergydata.analysis.verification.audit import AuditSystem
 
 # Initialize audit system
 audit = AuditSystem(user="john.doe@company.com")
@@ -361,7 +361,7 @@ logs = audit.query_logs(
 Generate compliance reports for regulatory requirements:
 
 ```python
-from worldenergydata.modules.analysis.verification.audit import ComplianceManager
+from worldenergydata.analysis.verification.audit import ComplianceManager
 
 compliance = ComplianceManager()
 
@@ -380,7 +380,7 @@ report = compliance.generate_compliance_report(
 Control access to verification functions:
 
 ```python
-from worldenergydata.modules.analysis.verification.audit import SecurityController
+from worldenergydata.analysis.verification.audit import SecurityController
 
 security = SecurityController()
 
@@ -399,7 +399,7 @@ else:
 Generate comprehensive verification reports:
 
 ```python
-from worldenergydata.modules.analysis.verification.reports import VerificationReportGenerator
+from worldenergydata.analysis.verification.reports import VerificationReportGenerator
 
 generator = VerificationReportGenerator()
 
@@ -427,7 +427,7 @@ generator.export_excel(report, "verification_report.xlsx")
 Create custom report templates:
 
 ```python
-from worldenergydata.modules.analysis.verification.reports import ReportTemplate
+from worldenergydata.analysis.verification.reports import ReportTemplate
 
 # Define custom template
 template = ReportTemplate(
@@ -500,7 +500,7 @@ verification:
 Implement robust error handling:
 
 ```python
-from worldenergydata.modules.analysis.verification.base import VerificationError
+from worldenergydata.analysis.verification.base import VerificationError
 
 try:
     results = engine.verify_data(data)

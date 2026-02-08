@@ -71,7 +71,7 @@ except Exception as e:
     sys.exit(2)
 
 try:
-    from worldenergydata.modules.bsee.data.refresh.data_refresh_enhanced import DataRefreshEnhanced
+    from worldenergydata.bsee.data.refresh.data_refresh_enhanced import DataRefreshEnhanced
     print("ENHANCED_IMPORT_SUCCESS")
 except ImportError as e:
     print(f"ENHANCED_IMPORT_ERROR: {str(e)}")

@@ -277,7 +277,7 @@ def mock_excel_data():
 ### External Services
 ```python
 # Mock BSEE data source
-@patch('worldenergydata.modules.bsee.data_loader')
+@patch('worldenergydata.bsee.data_loader')
 def test_with_mock_bsee(mock_loader):
     mock_loader.return_value = sample_data
     

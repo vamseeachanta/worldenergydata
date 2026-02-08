@@ -3,7 +3,7 @@
 import pandas as pd
 import pytest
 
-from worldenergydata.modules.safety_analysis.analysis.incident_aggregation import (
+from worldenergydata.safety_analysis.analysis.incident_aggregation import (
     aggregate_by_group,
     aggregate_by_severity,
     aggregate_by_time,

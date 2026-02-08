@@ -2,14 +2,14 @@
 
 from datetime import datetime
 
-from worldenergydata.modules.lng_terminals.constants import (
+from worldenergydata.lng_terminals.constants import (
     Region,
     TerminalFunction,
     TerminalStatus,
     TerminalType,
 )
-from worldenergydata.modules.lng_terminals.models.terminal import LNGTerminal
-from worldenergydata.modules.lng_terminals.processors.deduplicator import Deduplicator
+from worldenergydata.lng_terminals.models.terminal import LNGTerminal
+from worldenergydata.lng_terminals.processors.deduplicator import Deduplicator
 
 
 def _make_terminal(name: str, country: str = "USA", **kwargs) -> LNGTerminal:

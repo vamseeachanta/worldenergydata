@@ -91,7 +91,7 @@ cache:
 ### Python API
 
 ```python
-from worldenergydata.modules.bsee.data.refresh.data_refresh_chunked import DataRefreshChunked
+from worldenergydata.bsee.data.refresh.data_refresh_chunked import DataRefreshChunked
 
 # Initialize with custom cache directory
 refresh = DataRefreshChunked(cache_dir="/path/to/cache")
@@ -125,7 +125,7 @@ refresh.clear_cache()  # Clear all
 python tests/modules/bsee/data/refresh/test_chunked_refresh.py
 
 # Check cache statistics
-python -c "from worldenergydata.modules.bsee.data.refresh.chunk_manager import ChunkManager; cm = ChunkManager(); print(cm.get_cache_stats())"
+python -c "from worldenergydata.bsee.data.refresh.chunk_manager import ChunkManager; cm = ChunkManager(); print(cm.get_cache_stats())"
 ```
 
 ## Performance Benefits

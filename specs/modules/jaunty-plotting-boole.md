@@ -194,9 +194,9 @@ Output location: `reports/hse/wrk014_hse_risk_index.html`
 ### Phase 6: Integration + Validation -- PENDING (next pickup)
 - [ ] Run full pipeline end-to-end on real data:
   ```bash
-  uv run python -m worldenergydata.modules.safety_analysis.risk_index compute
-  uv run python -m worldenergydata.modules.safety_analysis.risk_index dashboard
-  uv run python -m worldenergydata.modules.safety_analysis.risk_index export --format csv
+  uv run python -m worldenergydata.safety_analysis.risk_index compute
+  uv run python -m worldenergydata.safety_analysis.risk_index dashboard
+  uv run python -m worldenergydata.safety_analysis.risk_index export --format csv
   ```
 - [ ] Validate risk rankings against domain knowledge:
   - DIVE/CRANE activities must score HIGH/CRITICAL acute risk
@@ -214,7 +214,7 @@ Output location: `reports/hse/wrk014_hse_risk_index.html`
 2. **Sanity checks**: DIVE/CRANE activities must score HIGH/CRITICAL acute risk; PROD/ENV must show chronic risk
 3. **Boundary tests**: All-zero inputs, single-source activities, tied percentiles
 4. **Cross-reference**: Compare composite ranking with WRK-013 mishap frequency ranking — high correlation expected
-5. **End-to-end**: `uv run python -m worldenergydata.modules.safety_analysis.risk_index compute` produces valid CSV; `dashboard` produces valid HTML
+5. **End-to-end**: `uv run python -m worldenergydata.safety_analysis.risk_index compute` produces valid CSV; `dashboard` produces valid HTML
 
 ## 8. Key Dependencies
 

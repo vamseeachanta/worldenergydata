@@ -131,7 +131,7 @@ Revenue: $18.7B
 
 ### Load Production Data
 ```python
-from worldenergydata.modules.fdas import ProductionDataLoader
+from worldenergydata.fdas import ProductionDataLoader
 
 loader = ProductionDataLoader()
 prod = loader.load_bsee_production('production.csv')
@@ -139,7 +139,7 @@ prod = loader.load_bsee_production('production.csv')
 
 ### Run Analysis
 ```python
-from worldenergydata.modules.fdas import FDASAnalyzer
+from worldenergydata.fdas import FDASAnalyzer
 
 analyzer = FDASAnalyzer(config='config.yaml')
 results = analyzer.analyze_field('Anchor')

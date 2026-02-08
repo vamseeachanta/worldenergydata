@@ -98,9 +98,9 @@ from pathlib import Path
 def test_module_initialization():
     """Test that all modules initialize correctly."""
     modules_to_test = [
-        'worldenergydata.modules.bsee',
-        'worldenergydata.modules.bsee.analysis',
-        'worldenergydata.modules.bsee.data',
+        'worldenergydata.bsee',
+        'worldenergydata.bsee.analysis',
+        'worldenergydata.bsee.data',
         'worldenergydata.testing.performance',
         'worldenergydata.validation',
     ]

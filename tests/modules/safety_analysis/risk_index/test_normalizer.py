@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from worldenergydata.modules.safety_analysis.risk_index.normalizer import (
+from worldenergydata.safety_analysis.risk_index.normalizer import (
     NormalizationResult,
     normalize_to_scale,
     percentile_rank,

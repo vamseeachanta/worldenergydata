@@ -13,7 +13,7 @@ from pathlib import Path
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../../../../src'))
 
-from worldenergydata.modules.bsee.reports.comprehensive.cli import ReportCLI
+from worldenergydata.bsee.reports.comprehensive.cli import ReportCLI
 
 
 class TestCLI(unittest.TestCase):
@@ -114,7 +114,7 @@ class TestCLI(unittest.TestCase):
         self.assertTrue(args.progress)
         self.assertTrue(args.verbose)
     
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.cli.yaml.safe_load')
+    @patch('worldenergydata.bsee.reports.comprehensive.cli.yaml.safe_load')
     def test_load_config(self, mock_yaml_load):
         """Test loading configuration from YAML file"""
         mock_config = {
@@ -156,8 +156,8 @@ class TestCLI(unittest.TestCase):
         # Config value should remain if arg is None
         self.assertEqual(merged['gas_price'], 3.50)
     
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.cli.HierarchicalAggregator')
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.cli.GoByReportBuilder')
+    @patch('worldenergydata.bsee.reports.comprehensive.cli.HierarchicalAggregator')
+    @patch('worldenergydata.bsee.reports.comprehensive.cli.GoByReportBuilder')
     def test_initialize_components(self, mock_builder, mock_aggregator):
         """Test component initialization"""
         config = {
@@ -222,7 +222,7 @@ class TestCLI(unittest.TestCase):
         self.assertIn('Total Wells', html)
         self.assertIn('5', html)
     
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.cli.ReportCLI.generate_single_report')
+    @patch('worldenergydata.bsee.reports.comprehensive.cli.ReportCLI.generate_single_report')
     def test_run_single_report(self, mock_generate):
         """Test running CLI for single report generation"""
         mock_generate.return_value = Path('./reports/block_759.xlsx')
@@ -239,7 +239,7 @@ class TestCLI(unittest.TestCase):
         output = mock_stdout.getvalue()
         self.assertIn('Report generated successfully', output)
     
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.cli.ReportCLI.generate_batch_reports')
+    @patch('worldenergydata.bsee.reports.comprehensive.cli.ReportCLI.generate_batch_reports')
     def test_run_batch_reports(self, mock_generate_batch):
         """Test running CLI for batch report generation"""
         mock_generate_batch.return_value = [

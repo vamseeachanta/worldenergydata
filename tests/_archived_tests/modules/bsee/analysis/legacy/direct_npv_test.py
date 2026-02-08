@@ -6,7 +6,7 @@ import sys
 import os
 sys.path.insert(0, '../../../../')
 
-from src.worldenergydata.modules.bsee.analysis.production_api12 import Bsee_Production_API12
+from src.worldenergydata.bsee.analysis.production_api12 import Bsee_Production_API12
 from assetutilities.common.yml_utilities import ymlInput
 
 def main():

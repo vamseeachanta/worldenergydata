@@ -161,7 +161,7 @@ graph TD
 ### 5.1 Data Loading Interface
 ```python
 # Import and extend from comprehensive reports
-from worldenergydata.modules.bsee.reports.comprehensive.data_loader_enhanced import HierarchicalDataLoader
+from worldenergydata.bsee.reports.comprehensive.data_loader_enhanced import HierarchicalDataLoader
 
 class SMEDataLoader:
     def __init__(self):
@@ -174,7 +174,7 @@ class SMEDataLoader:
 ### 5.2 Aggregation Interface
 ```python
 # Import and use existing aggregator
-from worldenergydata.modules.bsee.reports.comprehensive.hierarchical_aggregator import BaseAggregator, PriceDeck, CostStructure
+from worldenergydata.bsee.reports.comprehensive.hierarchical_aggregator import BaseAggregator, PriceDeck, CostStructure
 
 class SMEAggregator:
     def __init__(self):
@@ -192,7 +192,7 @@ class SMEAggregator:
 class SMEFinancialCLI:
     def __init__(self):
         # Import excel exporter from comprehensive
-        from worldenergydata.modules.bsee.reports.comprehensive.exporters import excel_exporter
+        from worldenergydata.bsee.reports.comprehensive.exporters import excel_exporter
         self.excel_exporter = excel_exporter
         
     # SME-specific CLI arguments

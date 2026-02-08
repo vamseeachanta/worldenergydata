@@ -3,11 +3,11 @@
 import pytest
 import yaml
 
-from worldenergydata.modules.safety_analysis.core.schemas import (
+from worldenergydata.safety_analysis.core.schemas import (
     SchemaMapping,
     SchemaRegistry,
 )
-from worldenergydata.modules.safety_analysis.exceptions import SafetyDataError
+from worldenergydata.safety_analysis.exceptions import SafetyDataError
 
 
 class TestSchemaMapping:

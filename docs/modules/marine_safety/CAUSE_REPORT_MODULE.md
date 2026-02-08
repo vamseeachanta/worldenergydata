@@ -65,7 +65,7 @@ pip install -e .
 ```python
 from datetime import datetime
 from pathlib import Path
-from worldenergydata.modules.marine_safety.analysis.cause_report import (
+from worldenergydata.marine_safety.analysis.cause_report import (
     CauseAnalysisReport
 )
 
@@ -101,11 +101,11 @@ report.generate_html(output_file)
 ### Filtering Incidents
 
 ```python
-from worldenergydata.modules.marine_safety.analysis.cause_report import (
+from worldenergydata.marine_safety.analysis.cause_report import (
     CauseAnalysisReport,
     ReportFilters
 )
-from worldenergydata.modules.marine_safety.constants import (
+from worldenergydata.marine_safety.constants import (
     CauseCategory,
     SeverityLevel
 )
@@ -264,7 +264,7 @@ Report generation benchmarks:
 
 ```python
 from pathlib import Path
-from worldenergydata.modules.marine_safety.analysis.cause_report import (
+from worldenergydata.marine_safety.analysis.cause_report import (
     CauseAnalysisReport,
     ReportFilters
 )

@@ -24,7 +24,7 @@ This spec implements a comprehensive reporting system for BSEE well and producti
 
 ## Key Deliverables
 
-1. **Report Generation Module** - Complete Python module at `worldenergydata.modules.bsee.reports.comprehensive`
+1. **Report Generation Module** - Complete Python module at `worldenergydata.bsee.reports.comprehensive`
 2. **Template System** - Flexible Jinja2 templates for customizable reports
 3. **Export Engine** - Multi-format export capabilities with professional formatting
 4. **CLI Interface** - Command-line tool for report generation with various options
@@ -509,7 +509,7 @@ This implementation will enhance agent knowledge in:
 - Detailed logging and error handling
 
 **Technical Components:**
-- CLI entry point at `worldenergydata.modules.bsee.reports.comprehensive.cli`
+- CLI entry point at `worldenergydata.bsee.reports.comprehensive.cli`
 - Command groups: generate, export, analyze, configure
 - Configuration management via YAML files
 - Progress tracking with rich library

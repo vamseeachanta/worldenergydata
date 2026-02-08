@@ -114,7 +114,7 @@ well_production_dashboard:
 ### Dashboard Initialization
 
 ```python
-from worldenergydata.modules.well_production_dashboard import (
+from worldenergydata.well_production_dashboard import (
     WellProductionDashboard,
     WellDashboardConfig,
     WellMetrics,
@@ -183,7 +183,7 @@ dashboard = WellProductionDashboard.from_yaml('config/dashboard_config.yaml')
 ### Well Metrics Calculations
 
 ```python
-from worldenergydata.modules.well_production_dashboard import WellMetrics
+from worldenergydata.well_production_dashboard import WellMetrics
 
 # NPV Calculation
 cash_flows = [-1500, 200, 400, 600, 800, 700, 500, 400, 300, 200]
@@ -211,7 +211,7 @@ print(f"Payback Period: {indicators['payback_period']:.1f} years")
 
 ```python
 import pandas as pd
-from worldenergydata.modules.well_production_dashboard import WellMetrics
+from worldenergydata.well_production_dashboard import WellMetrics
 
 # Historical production data
 historical = pd.Series([1000, 950, 900, 860, 820, 785, 750, 720, 690, 665])
@@ -231,7 +231,7 @@ print(forecast[['forecast', 'lower_bound', 'upper_bound']].head())
 ### Field Aggregation
 
 ```python
-from worldenergydata.modules.well_production_dashboard import FieldAggregator
+from worldenergydata.well_production_dashboard import FieldAggregator
 import pandas as pd
 
 # Load well data
@@ -265,7 +265,7 @@ print(f"Trend Comparison: {comparison['trend_comparison']:.2f}")
 ### REST API Integration
 
 ```python
-from worldenergydata.modules.well_production_dashboard import DashboardAPI
+from worldenergydata.well_production_dashboard import DashboardAPI
 
 # Initialize API with dashboard
 api = DashboardAPI(dashboard)
@@ -283,7 +283,7 @@ api.run(host='0.0.0.0', port=5000, debug=False)
 ### CLI Usage
 
 ```python
-from worldenergydata.modules.well_production_dashboard import DashboardCLI
+from worldenergydata.well_production_dashboard import DashboardCLI
 
 # Initialize CLI
 cli = DashboardCLI()
@@ -317,11 +317,11 @@ print(options)
 ### Dashboard Export
 
 ```python
-from worldenergydata.modules.well_production_dashboard import (
+from worldenergydata.well_production_dashboard import (
     WellProductionDashboard,
     WellDashboardConfig
 )
-from worldenergydata.modules.well_production_dashboard.export_manager import (
+from worldenergydata.well_production_dashboard.export_manager import (
     WellDashboardExportManager,
     ExportConfiguration
 )
@@ -402,16 +402,16 @@ dashboard.cache_manager.clear()
 
 ```bash
 # Run dashboard server
-python -m worldenergydata.modules.well_production_dashboard.cli run --config config/dashboard.yaml
+python -m worldenergydata.well_production_dashboard.cli run --config config/dashboard.yaml
 
 # Export dashboard
-python -m worldenergydata.modules.well_production_dashboard.cli export --format pdf --output reports/export.pdf
+python -m worldenergydata.well_production_dashboard.cli export --format pdf --output reports/export.pdf
 
 # List available options
-python -m worldenergydata.modules.well_production_dashboard.cli --help
+python -m worldenergydata.well_production_dashboard.cli --help
 
 # Verbose mode for debugging
-python -m worldenergydata.modules.well_production_dashboard.cli -v run --config config/dashboard.yaml
+python -m worldenergydata.well_production_dashboard.cli -v run --config config/dashboard.yaml
 ```
 
 ## Key Classes

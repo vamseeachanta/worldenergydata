@@ -17,7 +17,7 @@ from unittest.mock import patch, MagicMock
 import sys
 sys.path.insert(0, 'src')
 
-from worldenergydata.modules.bsee.data.config.config_router import ConfigRouter
+from worldenergydata.bsee.data.config.config_router import ConfigRouter
 
 
 @pytest.mark.skip(reason="Tests written for planned ConfigRouter expansion - interface not yet implemented")

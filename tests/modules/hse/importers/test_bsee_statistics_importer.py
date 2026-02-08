@@ -13,7 +13,7 @@ class TestBSEEStatisticsImporterInterface:
 
     def test_can_instantiate_with_db_session_and_csv_path(self, db_session):
         """Test that BSEEStatisticsImporter can be instantiated with db_session and csv_file_path"""
-        from worldenergydata.modules.hse.importers.bsee_statistics_importer import BSEEStatisticsImporter
+        from worldenergydata.hse.importers.bsee_statistics_importer import BSEEStatisticsImporter
 
         importer = BSEEStatisticsImporter(db_session, csv_file_path="test.csv")
 
@@ -23,8 +23,8 @@ class TestBSEEStatisticsImporterInterface:
 
     def test_inherits_from_base_importer(self, db_session):
         """Test that BSEEStatisticsImporter inherits from BaseImporter"""
-        from worldenergydata.modules.hse.importers.bsee_statistics_importer import BSEEStatisticsImporter
-        from worldenergydata.modules.hse.importers.base_importer import BaseImporter
+        from worldenergydata.hse.importers.bsee_statistics_importer import BSEEStatisticsImporter
+        from worldenergydata.hse.importers.base_importer import BaseImporter
 
         importer = BSEEStatisticsImporter(db_session, csv_file_path="test.csv")
 
@@ -32,7 +32,7 @@ class TestBSEEStatisticsImporterInterface:
 
     def test_has_required_methods(self, db_session):
         """Test that BSEEStatisticsImporter implements fetch_data and normalize_data methods"""
-        from worldenergydata.modules.hse.importers.bsee_statistics_importer import BSEEStatisticsImporter
+        from worldenergydata.hse.importers.bsee_statistics_importer import BSEEStatisticsImporter
 
         importer = BSEEStatisticsImporter(db_session, csv_file_path="test.csv")
 
@@ -48,7 +48,7 @@ class TestStatisticsCSVParsing:
     @pytest.fixture
     def statistics_importer(self, db_session):
         """Create BSEEStatisticsImporter for testing"""
-        from worldenergydata.modules.hse.importers.bsee_statistics_importer import BSEEStatisticsImporter
+        from worldenergydata.hse.importers.bsee_statistics_importer import BSEEStatisticsImporter
         return BSEEStatisticsImporter(db_session)
 
     def test_fetch_data_reads_csv_file(self, statistics_importer):
@@ -225,7 +225,7 @@ class TestStatisticsDataNormalization:
     @pytest.fixture
     def statistics_importer(self, db_session):
         """Create BSEEStatisticsImporter for testing"""
-        from worldenergydata.modules.hse.importers.bsee_statistics_importer import BSEEStatisticsImporter
+        from worldenergydata.hse.importers.bsee_statistics_importer import BSEEStatisticsImporter
         return BSEEStatisticsImporter(db_session)
 
     def test_normalize_converts_incident_id_to_bsee_incident_id(self, statistics_importer):
@@ -428,7 +428,7 @@ class TestStatisticsDeduplication:
     @pytest.fixture
     def statistics_importer(self, db_session):
         """Create BSEEStatisticsImporter for testing"""
-        from worldenergydata.modules.hse.importers.bsee_statistics_importer import BSEEStatisticsImporter
+        from worldenergydata.hse.importers.bsee_statistics_importer import BSEEStatisticsImporter
         return BSEEStatisticsImporter(db_session)
 
     def test_csv_duplicate_detection(self, statistics_importer):
@@ -461,7 +461,7 @@ class TestStatisticsDeduplication:
 
     def test_database_duplicate_detection(self, statistics_importer, db_session):
         """Test that importer detects duplicates already in database"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         # Insert existing incident
         existing = HSEIncident(
@@ -501,12 +501,12 @@ class TestStatisticsIncrementalUpdates:
     @pytest.fixture
     def statistics_importer(self, db_session):
         """Create BSEEStatisticsImporter for testing"""
-        from worldenergydata.modules.hse.importers.bsee_statistics_importer import BSEEStatisticsImporter
+        from worldenergydata.hse.importers.bsee_statistics_importer import BSEEStatisticsImporter
         return BSEEStatisticsImporter(db_session)
 
     def test_imports_only_new_statistics(self, statistics_importer, db_session):
         """Test that importer only imports new statistics records"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         # Insert existing incident
         existing = HSEIncident(
@@ -547,7 +547,7 @@ class TestStatisticsIncrementalUpdates:
 
     def test_skips_existing_statistics(self, statistics_importer, db_session):
         """Test that importer skips statistics already in database"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         # Insert existing incident
         existing = HSEIncident(
@@ -612,7 +612,7 @@ def db_session():
     """Create test database session with in-memory SQLite"""
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
-    from worldenergydata.modules.hse.database.models import Base
+    from worldenergydata.hse.database.models import Base
 
     # Use in-memory SQLite for testing
     engine = create_engine('sqlite:///:memory:')

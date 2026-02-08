@@ -39,8 +39,8 @@
 
 3. **Engine.py Import Dependencies**: Verified critical imports:
    ```python
-   from worldenergydata.modules.bsee.bsee import bsee
-   from worldenergydata.modules.bsee.zip_data_dwnld.zip import zip
+   from worldenergydata.bsee.bsee import bsee
+   from worldenergydata.bsee.zip_data_dwnld.zip import zip
    ```
    The plan correctly identifies `engine.py` as requiring non-breaking updates.
 

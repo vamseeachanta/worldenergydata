@@ -14,7 +14,7 @@ HTML report generation module for marine safety incident cause analysis with:
 ## Quick Start
 
 ```python
-from worldenergydata.modules.marine_safety.analysis.cause_report import (
+from worldenergydata.marine_safety.analysis.cause_report import (
     CauseAnalysisReport
 )
 
@@ -50,7 +50,7 @@ report.generate_html(Path("reports/analysis.html"))
 
 ### Filtering
 ```python
-from worldenergydata.modules.marine_safety.analysis.cause_report import ReportFilters
+from worldenergydata.marine_safety.analysis.cause_report import ReportFilters
 
 # Date range filter
 filters = ReportFilters(

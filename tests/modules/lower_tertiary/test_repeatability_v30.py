@@ -19,7 +19,7 @@ import pytest
 import yaml
 
 try:
-    from worldenergydata.analysis.lower_tertiary.v30_reproducer import (
+    from worldenergydata.lower_tertiary.v30_reproducer import (
         load_ogor_production,
         load_v30_leases,
         reproduce_v30_production,

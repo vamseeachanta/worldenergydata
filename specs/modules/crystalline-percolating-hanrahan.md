@@ -223,12 +223,12 @@ jinja2 = ">=3.1.0"         # HTML templates (existing)
 
 ```bash
 # Search for specific vessel
-uv run python -m worldenergydata.modules.vessel_hull_models.cli search \
+uv run python -m worldenergydata.vessel_hull_models.cli search \
     --name "Sleipnir" \
     --sources cgtrader,sketchfab,turbosquid
 
 # Download and register model
-uv run python -m worldenergydata.modules.vessel_hull_models.cli acquire \
+uv run python -m worldenergydata.vessel_hull_models.cli acquire \
     --source cgtrader \
     --model-id "offshore-crane-vessel-sleipnir" \
     --vessel-name "Sleipnir" \
@@ -239,7 +239,7 @@ uv run python -m worldenergydata.modules.vessel_hull_models.cli acquire \
 
 ```bash
 # Generate synthetic hulls from vessel database
-uv run python -m worldenergydata.modules.vessel_hull_models.cli generate \
+uv run python -m worldenergydata.vessel_hull_models.cli generate \
     --vessel-type crane_vessel \
     --source marinetraffic \
     --output-dir data/modules/vessel_hull_models/synthetic/
@@ -249,7 +249,7 @@ uv run python -m worldenergydata.modules.vessel_hull_models.cli generate \
 
 ```bash
 # Validate hull model geometry
-uv run python -m worldenergydata.modules.vessel_hull_models.cli validate \
+uv run python -m worldenergydata.vessel_hull_models.cli validate \
     --file data/modules/vessel_hull_models/hulls/sleipnir.obj \
     --expected-loa 220 \
     --expected-beam 102 \
@@ -264,7 +264,7 @@ uv run python -m worldenergydata.modules.vessel_hull_models.cli validate \
 
 ```python
 # Example usage
-from worldenergydata.modules.vessel_hull_models.visualization import plotly_3d
+from worldenergydata.vessel_hull_models.visualization import plotly_3d
 
 fig = plotly_3d.render_vessel(
     obj_path="data/modules/vessel_hull_models/hulls/sleipnir.obj",

@@ -15,7 +15,7 @@ import tempfile
 import yaml
 
 # Import components to test
-from worldenergydata.modules.well_production_dashboard.well_detail_views import (
+from worldenergydata.well_production_dashboard.well_detail_views import (
     WellDetailView,
     ProductionChartBuilder,
     EconomicMetricsCalculator,
@@ -497,7 +497,7 @@ class TestWellDetailView(unittest.TestCase):
             })
         }
         
-    @patch('worldenergydata.modules.analysis.dashboard.well_detail_views.VerificationWorkflow')
+    @patch('worldenergydata.analysis.dashboard.well_detail_views.VerificationWorkflow')
     def test_render_well_detail_page(self, mock_verification):
         """Test rendering complete well detail page."""
         mock_verification.return_value.get_verification_status.return_value = {

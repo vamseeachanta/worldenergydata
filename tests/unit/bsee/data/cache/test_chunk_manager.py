@@ -15,7 +15,7 @@ from unittest.mock import MagicMock, Mock, mock_open, patch
 import pandas as pd
 import pytest
 
-from worldenergydata.modules.bsee.data.cache.chunk_manager import ChunkMetadata
+from worldenergydata.bsee.data.cache.chunk_manager import ChunkMetadata
 
 
 class TestChunkMetadata:
@@ -122,7 +122,7 @@ class TestChunkManager:
     def test_chunk_manager_init(self, temp_cache_dir):
         """Test ChunkManager initialization if class exists"""
         try:
-            from worldenergydata.modules.bsee.data.cache.chunk_manager import (
+            from worldenergydata.bsee.data.cache.chunk_manager import (
                 ChunkManager,
             )
 
@@ -140,7 +140,7 @@ class TestChunkManager:
 
         # Test if there's a checksum calculation function
         try:
-            from worldenergydata.modules.bsee.data.cache.chunk_manager import (
+            from worldenergydata.bsee.data.cache.chunk_manager import (
                 calculate_checksum,
             )
 

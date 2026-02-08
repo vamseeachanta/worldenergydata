@@ -142,8 +142,8 @@ This implementation will enhance agent knowledge in:
 - `openpyxl`: Excel export
 
 ### Internal Modules
-- `worldenergydata.modules.bsee`: Data source
-- `worldenergydata.modules.analysis.verification`: Data quality
+- `worldenergydata.bsee`: Data source
+- `worldenergydata.analysis.verification`: Data quality
 - `worldenergydata.utils.aggregation`: Data processing
 
 ## Success Criteria

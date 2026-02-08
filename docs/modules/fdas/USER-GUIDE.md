@@ -27,7 +27,7 @@ pip install worldenergydata
 ### Basic Usage
 
 ```python
-from worldenergydata.modules.fdas import (
+from worldenergydata.fdas import (
     calculate_npv,
     excel_like_mirr,
     AssumptionsManager
@@ -210,7 +210,7 @@ Classify development system based on water depth.
 Process and analyze production data.
 
 ```python
-from worldenergydata.modules.fdas.data import ProductionProcessor
+from worldenergydata.fdas.data import ProductionProcessor
 
 processor = ProductionProcessor(production_df)
 
@@ -231,7 +231,7 @@ stats = processor.get_production_statistics(by='DEV_NAME')
 Extract drilling and completion timelines.
 
 ```python
-from worldenergydata.modules.fdas.data import DrillingTimelineExtractor
+from worldenergydata.fdas.data import DrillingTimelineExtractor
 
 extractor = DrillingTimelineExtractor(well_data)
 
@@ -253,7 +253,7 @@ timeline = extractor.extract_timeline(
 Generate monthly cashflow projections.
 
 ```python
-from worldenergydata.modules.fdas.analysis import CashflowEngine
+from worldenergydata.fdas.analysis import CashflowEngine
 from datetime import datetime
 
 engine = CashflowEngine(assumptions_mgr, dev_system='subsea15')
@@ -284,7 +284,7 @@ cashflows = engine.generate_monthly_cashflow(
 Load and process BSEE data for FDAS analysis.
 
 ```python
-from worldenergydata.modules.fdas import BseeAdapter
+from worldenergydata.fdas import BseeAdapter
 from pathlib import Path
 
 bsee_dir = Path('data/modules/bsee/current')
@@ -309,7 +309,7 @@ dev_data = adapter.load_by_development('ANCHOR')
 
 ```python
 import numpy as np
-from worldenergydata.modules.fdas import calculate_npv, excel_like_mirr
+from worldenergydata.fdas import calculate_npv, excel_like_mirr
 
 # Field development cashflow (millions USD)
 cashflows = np.array([
@@ -339,7 +339,7 @@ print(f"Project Status: {'✓ PROFITABLE' if npv > 0 else '✗ UNPROFITABLE'}")
 ### Example 2: Using Assumptions Manager
 
 ```python
-from worldenergydata.modules.fdas import AssumptionsManager
+from worldenergydata.fdas import AssumptionsManager
 from pathlib import Path
 
 # Load assumptions from Excel
@@ -362,7 +362,7 @@ print(f"Royalty rate: {royalty:.1%}")
 
 ```python
 import pandas as pd
-from worldenergydata.modules.fdas.data import ProductionProcessor
+from worldenergydata.fdas.data import ProductionProcessor
 
 # Load production data
 production_df = pd.read_csv('production.csv')
@@ -386,13 +386,13 @@ print(f"Peak month: {monthly['MONTHLY_OIL_BBL'].max():,.0f} BBL")
 ### Example 4: Complete Workflow
 
 ```python
-from worldenergydata.modules.fdas import (
+from worldenergydata.fdas import (
     AssumptionsManager,
     BseeAdapter,
     CashflowEngine,
     calculate_all_metrics
 )
-from worldenergydata.modules.fdas.data import (
+from worldenergydata.fdas.data import (
     ProductionProcessor,
     DrillingTimelineExtractor
 )
@@ -495,7 +495,7 @@ If BSEE data structure differs from FDAS requirements:
 Generate formatted Excel reports with cashflow projections:
 
 ```python
-from worldenergydata.modules.fdas.reports import FDASReportBuilder
+from worldenergydata.fdas.reports import FDASReportBuilder
 
 builder = FDASReportBuilder(
     development_name='ANCHOR',

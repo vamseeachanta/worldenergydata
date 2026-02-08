@@ -89,7 +89,7 @@ modules/<module_name>/
 
 ```python
 # Main classes
-from worldenergydata.modules.bsee import (
+from worldenergydata.bsee import (
     bsee,
     BSEEData,
     BSEEAnalysis,
@@ -98,19 +98,19 @@ from worldenergydata.modules.bsee import (
 )
 
 # Data loaders
-from worldenergydata.modules.bsee.data.loaders.api import WellData
-from worldenergydata.modules.bsee.data.loaders.block import BlockRouter
-from worldenergydata.modules.bsee.data.loaders.lease import LeaseRouter
+from worldenergydata.bsee.data.loaders.api import WellData
+from worldenergydata.bsee.data.loaders.block import BlockRouter
+from worldenergydata.bsee.data.loaders.lease import LeaseRouter
 
 # Data sources
-from worldenergydata.modules.bsee.data.sources.bin import APIData
-from worldenergydata.modules.bsee.data.sources.zip import GetProdDataFromZip
+from worldenergydata.bsee.data.sources.bin import APIData
+from worldenergydata.bsee.data.sources.zip import GetProdDataFromZip
 ```
 
 ### Marine Safety Module
 
 ```python
-from worldenergydata.modules.marine_safety import (
+from worldenergydata.marine_safety import (
     config,
     constants,
     exceptions,
@@ -120,16 +120,16 @@ from worldenergydata.modules.marine_safety import (
 )
 
 # Scrapers
-from worldenergydata.modules.marine_safety.scrapers.uscg_scraper import USCGMarineCasualtyScraper
+from worldenergydata.marine_safety.scrapers.uscg_scraper import USCGMarineCasualtyScraper
 
 # Database
-from worldenergydata.modules.marine_safety.database.db_manager import get_db_manager
+from worldenergydata.marine_safety.database.db_manager import get_db_manager
 ```
 
 ### FDAS Module
 
 ```python
-from worldenergydata.modules.fdas import (
+from worldenergydata.fdas import (
     # Financial functions
     excel_like_mirr,
     calculate_npv,

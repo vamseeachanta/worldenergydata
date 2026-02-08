@@ -465,7 +465,7 @@ METOCEAN_CACHE_MAX_SIZE_MB=500
 ### Manual Verification
 ```bash
 # 1. Verify module imports
-python -c "from worldenergydata.modules.metocean import MetoceanConfig"
+python -c "from worldenergydata.metocean import MetoceanConfig"
 
 # 2. Initialize database
 wed metocean db init

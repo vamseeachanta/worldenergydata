@@ -10,7 +10,7 @@ from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 
-from worldenergydata.modules.bsee.paleowells.data_downloader import BSEEDataDownloader
+from worldenergydata.bsee.paleowells.data_downloader import BSEEDataDownloader
 
 
 @pytest.fixture
@@ -167,10 +167,10 @@ class TestBSEEDataDownloader:
 
     @patch("zipfile.is_zipfile", return_value=True)
     @patch(
-        "worldenergydata.modules.bsee.paleowells.data_downloader.BSEEDataDownloader.download_file"
+        "worldenergydata.bsee.paleowells.data_downloader.BSEEDataDownloader.download_file"
     )
     @patch(
-        "worldenergydata.modules.bsee.paleowells.data_downloader.BSEEDataDownloader.extract_zip"
+        "worldenergydata.bsee.paleowells.data_downloader.BSEEDataDownloader.extract_zip"
     )
     def test_download_dataset(
         self, mock_extract, mock_download, mock_is_zip, downloader, temp_dir
@@ -198,7 +198,7 @@ class TestBSEEDataDownloader:
         assert "Unknown dataset" in str(exc_info.value)
 
     @patch(
-        "worldenergydata.modules.bsee.paleowells.data_downloader.BSEEDataDownloader.download_dataset"
+        "worldenergydata.bsee.paleowells.data_downloader.BSEEDataDownloader.download_dataset"
     )
     @patch("time.sleep")  # Mock sleep to speed up test
     def test_download_all_datasets(self, mock_sleep, mock_download_dataset, downloader):

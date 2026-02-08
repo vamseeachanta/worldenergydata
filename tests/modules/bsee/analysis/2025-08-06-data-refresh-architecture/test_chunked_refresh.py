@@ -18,8 +18,8 @@ from loguru import logger
 project_root = Path(__file__).parent.parent.parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from worldenergydata.modules.bsee.data.cache.chunk_manager import ChunkManager
-from worldenergydata.modules.bsee.data.enhanced.data_refresh_chunked import (
+from worldenergydata.bsee.data.cache.chunk_manager import ChunkManager
+from worldenergydata.bsee.data.enhanced.data_refresh_chunked import (
     DataRefreshChunked,
 )
 
@@ -153,7 +153,7 @@ def test_incremental_updates():
     import numpy as np
     import pandas as pd
 
-    from worldenergydata.modules.bsee.data.cache.chunk_manager import ChunkManager
+    from worldenergydata.bsee.data.cache.chunk_manager import ChunkManager
 
     chunk_manager = ChunkManager()
 

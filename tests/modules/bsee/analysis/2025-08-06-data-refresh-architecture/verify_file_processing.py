@@ -12,10 +12,10 @@ from pathlib import Path
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from worldenergydata.modules.bsee.data.processors.memory_processor import (
+from worldenergydata.bsee.data.processors.memory_processor import (
     MemoryProcessor,
 )
-from worldenergydata.modules.bsee.data.scrapers.web_scraper import BSEEWebScraper
+from worldenergydata.bsee.data.scrapers.web_scraper import BSEEWebScraper
 
 
 def check_well_data():

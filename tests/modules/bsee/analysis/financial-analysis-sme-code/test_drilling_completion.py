@@ -10,7 +10,7 @@ from unittest.mock import MagicMock, Mock, patch
 import numpy as np
 import pandas as pd
 
-from worldenergydata.modules.bsee.analysis.financial.drilling_completion import (
+from worldenergydata.bsee.analysis.financial.drilling_completion import (
     DrillingCompletionProcessor,
     allocate_dc_costs_monthly,
     build_dc_day_maps,

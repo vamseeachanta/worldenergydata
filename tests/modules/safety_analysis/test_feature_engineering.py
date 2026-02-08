@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from worldenergydata.modules.safety_analysis.analysis.feature_engineering import (
+from worldenergydata.safety_analysis.analysis.feature_engineering import (
     FeatureEngineer,
 )
 

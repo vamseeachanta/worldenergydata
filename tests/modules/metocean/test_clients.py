@@ -8,14 +8,14 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from worldenergydata.modules.metocean.clients import (
+from worldenergydata.metocean.clients import (
     COOPSClient,
     NDBCClient,
     NDBCObservation,
     NDBCStation,
     OpenMeteoClient,
 )
-from worldenergydata.modules.metocean.constants import DataSource, StationType
+from worldenergydata.metocean.constants import DataSource, StationType
 
 
 class TestNDBCClient:
@@ -207,7 +207,7 @@ class TestFetchResult:
 
     def test_fetch_result_creation(self):
         """Test FetchResult can be created."""
-        from worldenergydata.modules.metocean.clients import FetchResult
+        from worldenergydata.metocean.clients import FetchResult
 
         result = FetchResult(
             data=[{"test": "data"}],
@@ -224,7 +224,7 @@ class TestFetchResult:
 
     def test_fetch_result_with_errors(self):
         """Test FetchResult with errors."""
-        from worldenergydata.modules.metocean.clients import FetchResult
+        from worldenergydata.metocean.clients import FetchResult
 
         result = FetchResult(
             data=[],

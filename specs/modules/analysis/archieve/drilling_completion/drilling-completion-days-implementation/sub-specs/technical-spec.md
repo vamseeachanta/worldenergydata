@@ -74,7 +74,7 @@ The custom router will be enhanced with:
 ```python
 def router(self, cfg):
     if 'drilling_n_completion_days' in cfg and cfg['drilling_n_completion_days']['flag']:
-        from worldenergydata.modules.bsee.analysis.drilling_completion_days import DrillingCompletionDaysFramework
+        from worldenergydata.bsee.analysis.drilling_completion_days import DrillingCompletionDaysFramework
         drilling_analysis = DrillingCompletionDaysFramework()
         drilling_analysis.router(cfg)
     # ... existing routing logic

@@ -3,7 +3,7 @@
 import numpy as np
 import pandas as pd
 
-from worldenergydata.modules.safety_analysis.analysis.statistical_tests import (
+from worldenergydata.safety_analysis.analysis.statistical_tests import (
     anova_test,
     chi_square_test,
     linear_regression_summary,

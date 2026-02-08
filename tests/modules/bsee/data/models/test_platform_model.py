@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from worldenergydata.modules.bsee.data.models.platform import PlatformStructure
+from worldenergydata.bsee.data.models.platform import PlatformStructure
 
 
 class TestPlatformStructure:

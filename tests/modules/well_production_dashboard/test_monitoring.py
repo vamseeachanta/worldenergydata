@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from unittest.mock import MagicMock, Mock, call, patch
 
-from worldenergydata.modules.well_production_dashboard.monitoring import (
+from worldenergydata.well_production_dashboard.monitoring import (
     AuditEntry,
     DashboardMonitor,
     PerformanceMetrics,
@@ -327,7 +327,7 @@ class TestDashboardMonitor(unittest.TestCase):
         alert = callback.call_args[0][0]
         self.assertEqual(alert["type"], "slow_response")
 
-    @patch("src.worldenergydata.modules.well_production_dashboard.monitoring.psutil")
+    @patch("src.worldenergydata.well_production_dashboard.monitoring.psutil")
     def test_background_monitoring(self, mock_psutil):
         """Test background monitoring thread."""
         # Configure mock

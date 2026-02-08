@@ -4,11 +4,11 @@ import json
 
 import pytest
 
-from worldenergydata.modules.lng_terminals.collectors.seed_collector import (
+from worldenergydata.lng_terminals.collectors.seed_collector import (
     SeedCollector,
 )
-from worldenergydata.modules.lng_terminals.models.terminal import LNGTerminal
-from worldenergydata.modules.lng_terminals.reports.quality_dashboard import (
+from worldenergydata.lng_terminals.models.terminal import LNGTerminal
+from worldenergydata.lng_terminals.reports.quality_dashboard import (
     QualityDashboard,
 )
 

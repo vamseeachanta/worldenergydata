@@ -179,16 +179,16 @@ import dash  # Interactive dashboards
 ### Custom Modules
 ```python
 # Portfolio optimization
-from worldenergydata.modules.portfolio import markowitz_optimization
+from worldenergydata.portfolio import markowitz_optimization
 
 # Risk analysis
-from worldenergydata.modules.risk import calculate_var, stress_test
+from worldenergydata.risk import calculate_var, stress_test
 
 # Valuation
-from worldenergydata.modules.valuation import dcf_model, relative_valuation
+from worldenergydata.valuation import dcf_model, relative_valuation
 
 # Energy finance
-from worldenergydata.modules.energy_finance import oil_price_forecast
+from worldenergydata.energy_finance import oil_price_forecast
 ```
 
 ## Integration with WorldEnergyData

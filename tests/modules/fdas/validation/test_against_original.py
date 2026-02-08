@@ -37,13 +37,13 @@ except ImportError:
     ORIGINAL_AVAILABLE = False
     print("Warning: Original FDAS code not available for comparison")
 
-from worldenergydata.modules.fdas.core.config import (  # noqa: E402
+from worldenergydata.fdas.core.config import (  # noqa: E402
     AssumptionsManager,
     classify_dev_system_by_depth,
 )
 
 # Import our implementation
-from worldenergydata.modules.fdas.core.financial import (  # noqa: E402
+from worldenergydata.fdas.core.financial import (  # noqa: E402
     calculate_npv,
     excel_like_mirr,
 )

@@ -13,7 +13,7 @@ class TestBSEEIncidentsImporterInterface:
 
     def test_bsee_incidents_importer_can_be_instantiated(self, db_session):
         """Test that BSEEIncidentsImporter concrete class can be instantiated"""
-        from worldenergydata.modules.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
+        from worldenergydata.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
 
         importer = BSEEIncidentsImporter(db_session)
 
@@ -22,8 +22,8 @@ class TestBSEEIncidentsImporterInterface:
 
     def test_bsee_incidents_importer_inherits_from_base_importer(self, db_session):
         """Test that BSEEIncidentsImporter inherits from BaseImporter"""
-        from worldenergydata.modules.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
-        from worldenergydata.modules.hse.importers.base_importer import BaseImporter
+        from worldenergydata.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
+        from worldenergydata.hse.importers.base_importer import BaseImporter
 
         importer = BSEEIncidentsImporter(db_session)
 
@@ -31,7 +31,7 @@ class TestBSEEIncidentsImporterInterface:
 
     def test_bsee_incidents_importer_implements_fetch_data(self, db_session):
         """Test that BSEEIncidentsImporter implements fetch_data method"""
-        from worldenergydata.modules.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
+        from worldenergydata.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
 
         importer = BSEEIncidentsImporter(db_session)
 
@@ -40,7 +40,7 @@ class TestBSEEIncidentsImporterInterface:
 
     def test_bsee_incidents_importer_implements_normalize_data(self, db_session):
         """Test that BSEEIncidentsImporter implements normalize_data method"""
-        from worldenergydata.modules.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
+        from worldenergydata.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
 
         importer = BSEEIncidentsImporter(db_session)
 
@@ -66,7 +66,7 @@ INC-2024-003,2024-03-10,Chevron USA,MODU Charlie,WR-789,Walker Ridge 789,Jack/St
     @pytest.fixture
     def importer_with_csv(self, db_session, sample_csv_file):
         """Create importer configured to read from sample CSV"""
-        from worldenergydata.modules.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
+        from worldenergydata.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
 
         importer = BSEEIncidentsImporter(db_session, csv_file_path=sample_csv_file)
         return importer
@@ -101,7 +101,7 @@ INC-2024-003,2024-03-10,Chevron USA,MODU Charlie,WR-789,Walker Ridge 789,Jack/St
 
     def test_fetch_data_handles_missing_file(self, db_session, tmp_path):
         """Test that fetch_data raises error for missing CSV file"""
-        from worldenergydata.modules.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
+        from worldenergydata.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
 
         missing_file = tmp_path / "nonexistent.csv"
         importer = BSEEIncidentsImporter(db_session, csv_file_path=missing_file)
@@ -111,7 +111,7 @@ INC-2024-003,2024-03-10,Chevron USA,MODU Charlie,WR-789,Walker Ridge 789,Jack/St
 
     def test_fetch_data_handles_empty_csv(self, db_session, tmp_path):
         """Test that fetch_data handles empty CSV file"""
-        from worldenergydata.modules.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
+        from worldenergydata.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
 
         empty_csv = tmp_path / "empty.csv"
         empty_csv.write_text("incident_id,incident_date,operator_name\n")
@@ -128,7 +128,7 @@ class TestDataNormalization:
     @pytest.fixture
     def importer(self, db_session):
         """Create BSEEIncidentsImporter instance"""
-        from worldenergydata.modules.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
+        from worldenergydata.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
         return BSEEIncidentsImporter(db_session)
 
     def test_normalize_data_converts_incident_id_field(self, importer):
@@ -317,12 +317,12 @@ INC-2024-001,2024-01-15,Shell Offshore Inc.,injury,recordable"""
         csv_file = tmp_path / "bsee_incidents_with_dupes.csv"
         csv_file.write_text(csv_content)
 
-        from worldenergydata.modules.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
+        from worldenergydata.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
         return BSEEIncidentsImporter(db_session, csv_file_path=csv_file)
 
     def test_import_data_detects_duplicates_in_csv(self, importer_with_csv, db_session):
         """Test that import_data detects duplicate incident IDs in CSV"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         # First import
         stats = importer_with_csv.import_data()
@@ -334,8 +334,8 @@ INC-2024-001,2024-01-15,Shell Offshore Inc.,injury,recordable"""
 
     def test_import_data_detects_duplicates_in_database(self, db_session, tmp_path):
         """Test that import_data detects duplicates already in database"""
-        from worldenergydata.modules.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
+        from worldenergydata.hse.database.models import HSEIncident
 
         # Create existing incident in database
         existing = HSEIncident(
@@ -370,8 +370,8 @@ class TestIncrementalUpdates:
 
     def test_import_data_identifies_new_incidents(self, db_session, tmp_path):
         """Test that import_data correctly identifies new incidents"""
-        from worldenergydata.modules.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
+        from worldenergydata.hse.database.models import HSEIncident
 
         # First import with 2 incidents
         csv_content_1 = """incident_id,incident_date,operator_name,incident_type,severity
@@ -404,8 +404,8 @@ INC-2024-003,2024-03-10,Chevron USA,equipment_failure,near_miss"""
 
     def test_import_data_handles_empty_database(self, db_session, tmp_path):
         """Test that import_data handles initial import to empty database"""
-        from worldenergydata.modules.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
+        from worldenergydata.hse.database.models import HSEIncident
 
         csv_content = """incident_id,incident_date,operator_name,incident_type,severity
 INC-2024-001,2024-01-15,Shell Offshore Inc.,injury,recordable
@@ -434,7 +434,7 @@ def db_session():
     """Create test database session with in-memory SQLite"""
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
-    from worldenergydata.modules.hse.database.models import Base
+    from worldenergydata.hse.database.models import Base
 
     # Use in-memory SQLite for testing
     engine = create_engine('sqlite:///:memory:')

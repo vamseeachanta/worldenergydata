@@ -57,7 +57,7 @@ from datetime import datetime, timedelta
 from tests.modules.sodir_module.sodir import SodirModule
 from tests.modules.sodir_module.cross_regional import CrossRegionalAnalyzer
 from tests.modules.sodir_module.visualization import SodirVisualizer
-from src.worldenergydata.modules.bsee.bsee import BSEEModule
+from src.worldenergydata.bsee.bsee import BSEEModule
 ```
 
 ### Configuration Setup
@@ -492,7 +492,7 @@ def compare_field_economics():
     """Compare field economics between regions."""
     
     from tests.modules.sodir_module.npv_norway import NorwayNPVCalculator
-    from src.worldenergydata.modules.bsee.analysis.financial.analyzer import FinancialAnalyzer
+    from src.worldenergydata.bsee.analysis.financial.analyzer import FinancialAnalyzer
     
     # Norwegian NPV calculation
     norway_npv = NorwayNPVCalculator()

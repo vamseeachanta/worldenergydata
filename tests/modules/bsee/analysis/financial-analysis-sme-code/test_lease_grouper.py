@@ -10,7 +10,7 @@ from unittest.mock import Mock, patch
 import numpy as np
 import pandas as pd
 
-from worldenergydata.modules.bsee.analysis.financial.lease_grouper import (
+from worldenergydata.bsee.analysis.financial.lease_grouper import (
     LeaseGrouper,
     aggregate_production_by_lease,
     group_leases_by_development,

@@ -21,20 +21,20 @@ from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 
-from worldenergydata.modules.marine_safety.constants import (
+from worldenergydata.marine_safety.constants import (
     DataSource,
     IncidentStatus,
     IncidentType,
     SeverityLevel,
     VesselType,
 )
-from worldenergydata.modules.marine_safety.database.models import (
+from worldenergydata.marine_safety.database.models import (
     Base,
     Incident,
     Location,
     Vessel,
 )
-from worldenergydata.modules.marine_safety.exceptions import (
+from worldenergydata.marine_safety.exceptions import (
     HTTPError,
     ParsingError,
     RateLimitError,

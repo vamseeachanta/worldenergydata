@@ -146,7 +146,7 @@ def analyze(
 
             # Import and run analysis
             try:
-                from worldenergydata.modules.bsee.bsee import bsee as BSEEModule
+                from worldenergydata.bsee.bsee import bsee as BSEEModule
 
                 progress.update(
                     task, advance=20, description="[cyan]Loading BSEE module..."
@@ -281,12 +281,12 @@ def report(
             )
 
             try:
-                from worldenergydata.modules.bsee.reports.comprehensive.controller_enhanced import (
+                from worldenergydata.bsee.reports.comprehensive.controller_enhanced import (
                     ReportConfiguration,
                     ReportController,
                     ReportParameters,
                 )
-                from worldenergydata.modules.bsee.reports.comprehensive.controller_enhanced import (
+                from worldenergydata.bsee.reports.comprehensive.controller_enhanced import (
                     ReportType as CtrlReportType,
                 )
 
@@ -438,7 +438,7 @@ def data(
             task = progress.add_task("[cyan]Retrieving BSEE data...", total=100)
 
             try:
-                from worldenergydata.modules.bsee.data.bsee_data import BSEEData
+                from worldenergydata.bsee.data.bsee_data import BSEEData
 
                 progress.update(
                     task, advance=30, description="[cyan]Loading BSEE data module..."
@@ -592,7 +592,7 @@ def refresh(
             )
 
             try:
-                from worldenergydata.modules.bsee.data.refresh.data_refresh import (
+                from worldenergydata.bsee.data.refresh.data_refresh import (
                     DataRefresh,
                 )
 
@@ -740,7 +740,7 @@ def stats(
 
                 # Try to load actual data if available
                 try:
-                    from worldenergydata.modules.bsee.data.bsee_data import BSEEData
+                    from worldenergydata.bsee.data.bsee_data import BSEEData
 
                     _bsee_data = BSEEData()  # noqa: F841
                     # Note: Would need to actually query data to get real counts

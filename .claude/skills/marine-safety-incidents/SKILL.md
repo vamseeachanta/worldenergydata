@@ -119,8 +119,8 @@ marine_safety:
 ### Data Collection
 
 ```python
-from worldenergydata.modules.marine_safety.scrapers import MarineSafetyScraper
-from worldenergydata.modules.marine_safety.database import IncidentDatabase
+from worldenergydata.marine_safety.scrapers import MarineSafetyScraper
+from worldenergydata.marine_safety.database import IncidentDatabase
 
 # Initialize scraper
 scraper = MarineSafetyScraper()
@@ -141,7 +141,7 @@ print(f"Imported {len(incidents)} incidents")
 ### Incident Analysis
 
 ```python
-from worldenergydata.modules.marine_safety.analysis import IncidentAnalyzer
+from worldenergydata.marine_safety.analysis import IncidentAnalyzer
 
 # Initialize analyzer
 analyzer = IncidentAnalyzer(database_url="postgresql://...")
@@ -165,7 +165,7 @@ severity = analyzer.severity_distribution()
 ### Geographic Hotspot Detection
 
 ```python
-from worldenergydata.modules.marine_safety.analysis import GeographicAnalyzer
+from worldenergydata.marine_safety.analysis import GeographicAnalyzer
 
 # Initialize geographic analyzer
 geo = GeographicAnalyzer()
@@ -187,7 +187,7 @@ geo.generate_map(
 ### Risk Scoring
 
 ```python
-from worldenergydata.modules.marine_safety.analysis import RiskAssessor
+from worldenergydata.marine_safety.analysis import RiskAssessor
 
 # Initialize risk assessor
 risk = RiskAssessor()
@@ -206,7 +206,7 @@ print(f"Risk Level: {scores['level']}")  # LOW, MEDIUM, HIGH, CRITICAL
 ### Reporting
 
 ```python
-from worldenergydata.modules.marine_safety.visualization import SafetyReportGenerator
+from worldenergydata.marine_safety.visualization import SafetyReportGenerator
 
 # Initialize report generator
 reporter = SafetyReportGenerator()
@@ -230,16 +230,16 @@ report = reporter.generate_report(
 
 ```bash
 # Scrape incident data
-python -m worldenergydata.modules.marine_safety.cli scrape --source uscg --year 2023
+python -m worldenergydata.marine_safety.cli scrape --source uscg --year 2023
 
 # Analyze trends
-python -m worldenergydata.modules.marine_safety.cli analyze --type trends --output trends.html
+python -m worldenergydata.marine_safety.cli analyze --type trends --output trends.html
 
 # Generate risk report
-python -m worldenergydata.modules.marine_safety.cli report --format html --output safety_report.html
+python -m worldenergydata.marine_safety.cli report --format html --output safety_report.html
 
 # Export data
-python -m worldenergydata.modules.marine_safety.cli export --format csv --output incidents.csv
+python -m worldenergydata.marine_safety.cli export --format csv --output incidents.csv
 ```
 
 ## Key Classes

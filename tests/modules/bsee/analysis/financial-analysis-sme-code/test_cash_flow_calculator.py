@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from worldenergydata.modules.bsee.analysis.financial.cash_flow_calculator import (
+from worldenergydata.bsee.analysis.financial.cash_flow_calculator import (
     CashFlowCalculator,
     DevelopmentType,
     FinancialParameters,

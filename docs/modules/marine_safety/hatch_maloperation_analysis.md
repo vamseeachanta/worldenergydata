@@ -135,7 +135,7 @@ pip install -e ".[llm]"
 ### LLM-Based Detection (Recommended)
 
 ```python
-from worldenergydata.modules.marine_safety.analysis import HatchMaloperationAnalyzer
+from worldenergydata.marine_safety.analysis import HatchMaloperationAnalyzer
 
 # Initialize with LLM detection (default)
 analyzer = HatchMaloperationAnalyzer(

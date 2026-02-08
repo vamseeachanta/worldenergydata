@@ -85,7 +85,7 @@ class TestGitBashCompatibility:
         
         # Test that data refresh module can be imported (may fail due to missing dependencies)
         try:
-            from worldenergydata.modules.bsee.data.refresh.data_refresh import DataRefresh
+            from worldenergydata.bsee.data.refresh.data_refresh import DataRefresh
             refresh = DataRefresh()
             assert refresh is not None
         except (ImportError, ModuleNotFoundError) as e:
@@ -387,7 +387,7 @@ class TestGitBashCompatibility:
         
         # 4. Module imports work (with dependency consideration)
         try:
-            from worldenergydata.modules.bsee.data.refresh.data_refresh import DataRefresh
+            from worldenergydata.bsee.data.refresh.data_refresh import DataRefresh
             refresh_instance = DataRefresh()
             assert refresh_instance is not None
         except (ImportError, ModuleNotFoundError) as e:

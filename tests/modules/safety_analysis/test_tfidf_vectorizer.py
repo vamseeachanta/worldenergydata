@@ -15,11 +15,11 @@ pytestmark = pytest.mark.skipif(not _HAS_SKLEARN, reason="scikit-learn not insta
 
 from scipy import sparse  # noqa: E402
 
-from worldenergydata.modules.safety_analysis.config import (  # noqa: E402
+from worldenergydata.safety_analysis.config import (  # noqa: E402
     AnalysisConfig,
     NLPConfig,
 )
-from worldenergydata.modules.safety_analysis.nlp.tfidf_vectorizer import (  # noqa: E402
+from worldenergydata.safety_analysis.nlp.tfidf_vectorizer import (  # noqa: E402
     SafetyTfidfVectorizer,
 )
 

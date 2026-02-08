@@ -13,7 +13,7 @@ import tempfile
 import shutil
 
 # Import directly from the compliance template module
-from worldenergydata.modules.bsee.reports.comprehensive.templates.compliance_template import (
+from worldenergydata.bsee.reports.comprehensive.templates.compliance_template import (
     ComplianceTemplate,
     ComplianceMetrics,
     EnvironmentalMetrics,

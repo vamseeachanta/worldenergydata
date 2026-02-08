@@ -160,8 +160,8 @@ class BSEEIncidentsImporterURL(BSEEIncidentsImporter):
 ```python
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from worldenergydata.modules.hse.database.models import Base
-from worldenergydata.modules.hse.importers.bsee_incidents_importer_url import BSEEIncidentsImporterURL
+from worldenergydata.hse.database.models import Base
+from worldenergydata.hse.importers.bsee_incidents_importer_url import BSEEIncidentsImporterURL
 
 # Setup database
 engine = create_engine('postgresql://user:pass@localhost/hse_db')
@@ -182,13 +182,13 @@ print(f"Total processed: {stats['total_count']} records")
 
 ```python
 # Option 1: Use CSV-based importer
-from worldenergydata.modules.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
+from worldenergydata.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
 
 csv_importer = BSEEIncidentsImporter(session, csv_file_path='data/incidents.csv')
 csv_stats = csv_importer.import_data()
 
 # Option 2: Use URL-based importer
-from worldenergydata.modules.hse.importers.bsee_incidents_importer_url import BSEEIncidentsImporterURL
+from worldenergydata.hse.importers.bsee_incidents_importer_url import BSEEIncidentsImporterURL
 
 url_importer = BSEEIncidentsImporterURL(session)
 url_stats = url_importer.import_data()
@@ -200,8 +200,8 @@ url_stats = url_importer.import_data()
 
 ```python
 import os
-from worldenergydata.modules.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
-from worldenergydata.modules.hse.importers.bsee_incidents_importer_url import BSEEIncidentsImporterURL
+from worldenergydata.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
+from worldenergydata.hse.importers.bsee_incidents_importer_url import BSEEIncidentsImporterURL
 
 # Use environment variable to switch sources
 USE_URL_REFRESH = os.getenv('HSE_USE_URL_REFRESH', 'false').lower() == 'true'
@@ -379,7 +379,7 @@ except Exception as e:
 
 import pytest
 from unittest.mock import Mock, patch
-from worldenergydata.modules.hse.importers.bsee_incidents_importer_url import BSEEIncidentsImporterURL
+from worldenergydata.hse.importers.bsee_incidents_importer_url import BSEEIncidentsImporterURL
 
 class TestBSEEIncidentsImporterURL:
     """Test URL-based incidents importer."""
@@ -428,7 +428,7 @@ class TestBSEEIncidentsImporterURL:
 
 ```python
 import responses
-from worldenergydata.modules.hse.importers.bsee_incidents_importer_url import BSEEIncidentsImporterURL
+from worldenergydata.hse.importers.bsee_incidents_importer_url import BSEEIncidentsImporterURL
 
 @responses.activate
 def test_full_import_workflow_with_mock_http(db_session):
@@ -601,7 +601,7 @@ class BSEEIncidentsImporterURL(BSEEIncidentsImporter):
 
 Cache downloaded ZIP files to avoid re-downloading:
 ```python
-from worldenergydata.modules.bsee.data.cache.chunk_manager import ChunkManager
+from worldenergydata.bsee.data.cache.chunk_manager import ChunkManager
 
 cache = ChunkManager(cache_dir='cache/bsee')
 zip_data = cache.get_or_fetch(url, scraper.download_zip_to_memory)

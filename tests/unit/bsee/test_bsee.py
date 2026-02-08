@@ -13,7 +13,7 @@ import sys
 # Add src to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent / "src"))
 
-from worldenergydata.modules.bsee.bsee import bsee
+from worldenergydata.bsee.bsee import bsee
 from tests.test_markers import unit
 
 
@@ -36,8 +36,8 @@ class TestBSEE:
         instance = bsee()
         assert instance is not None
     
-    @patch('worldenergydata.modules.bsee.bsee.bsee_analysis')
-    @patch('worldenergydata.modules.bsee.bsee.bsee_data')
+    @patch('worldenergydata.bsee.bsee.bsee_analysis')
+    @patch('worldenergydata.bsee.bsee.bsee_data')
     def test_router_basic(self, mock_bsee_data, mock_bsee_analysis):
         """Test basic router functionality."""
         # Setup mocks
@@ -58,8 +58,8 @@ class TestBSEE:
         mock_bsee_data.router.assert_called_once_with(self.mock_cfg)
         mock_bsee_analysis.router.assert_called_once_with(self.mock_cfg, test_data)
     
-    @patch('worldenergydata.modules.bsee.bsee.bsee_analysis')
-    @patch('worldenergydata.modules.bsee.bsee.bsee_data')
+    @patch('worldenergydata.bsee.bsee.bsee_analysis')
+    @patch('worldenergydata.bsee.bsee.bsee_data')
     def test_router_without_analysis_key(self, mock_bsee_data, mock_bsee_analysis):
         """Test router when cfg doesn't have analysis key."""
         # Setup cfg without analysis
@@ -79,8 +79,8 @@ class TestBSEE:
         assert 'bsee' in result
         assert result['bsee']['analysis'] == {}  # Should be empty dict
     
-    @patch('worldenergydata.modules.bsee.bsee.bsee_analysis')
-    @patch('worldenergydata.modules.bsee.bsee.bsee_data')
+    @patch('worldenergydata.bsee.bsee.bsee_analysis')
+    @patch('worldenergydata.bsee.bsee.bsee_data')
     def test_router_data_copy(self, mock_bsee_data, mock_bsee_analysis):
         """Test that router creates copies of data and analysis."""
         # Setup
@@ -107,8 +107,8 @@ class TestBSEE:
         assert result['bsee']['data']['key'] == 'value'
         assert result['bsee']['analysis']['analysis_key'] == 'analysis_value'
     
-    @patch('worldenergydata.modules.bsee.bsee.bsee_analysis')
-    @patch('worldenergydata.modules.bsee.bsee.bsee_data')
+    @patch('worldenergydata.bsee.bsee.bsee_analysis')
+    @patch('worldenergydata.bsee.bsee.bsee_data')
     def test_router_exception_propagation(self, mock_bsee_data, mock_bsee_analysis):
         """Test that exceptions in sub-routers propagate."""
         # Setup data router to raise exception
@@ -118,8 +118,8 @@ class TestBSEE:
         with pytest.raises(RuntimeError, match="Data router failed"):
             self.bsee_instance.router(self.mock_cfg)
     
-    @patch('worldenergydata.modules.bsee.bsee.bsee_analysis')
-    @patch('worldenergydata.modules.bsee.bsee.bsee_data')
+    @patch('worldenergydata.bsee.bsee.bsee_analysis')
+    @patch('worldenergydata.bsee.bsee.bsee_data')
     def test_router_with_different_basename(self, mock_bsee_data, mock_bsee_analysis):
         """Test router with different basename."""
         cfg = {
@@ -146,9 +146,9 @@ class TestBSEEIntegration:
     
     def test_module_imports(self):
         """Test that all required modules can be imported."""
-        from worldenergydata.modules.bsee.bsee import bsee
-        from worldenergydata.modules.bsee.data.bsee_data import BSEEData
-        from worldenergydata.modules.bsee.analysis.bsee_analysis import BSEEAnalysis
+        from worldenergydata.bsee.bsee import bsee
+        from worldenergydata.bsee.data.bsee_data import BSEEData
+        from worldenergydata.bsee.analysis.bsee_analysis import BSEEAnalysis
         
         assert bsee is not None
         assert BSEEData is not None
@@ -156,7 +156,7 @@ class TestBSEEIntegration:
     
     def test_global_instances(self):
         """Test that global instances are created."""
-        from worldenergydata.modules.bsee.bsee import bsee_data, bsee_analysis
+        from worldenergydata.bsee.bsee import bsee_data, bsee_analysis
         
         assert bsee_data is not None
         assert bsee_analysis is not None

@@ -59,11 +59,11 @@ elif basename in ["dwnld_from_zipurl"]:
 **Required Addition**:
 ```python
 elif basename in ["sodir"]:
-    from worldenergydata.modules.sodir.sodir import Sodir
+    from worldenergydata.sodir.sodir import Sodir
     sodir_app = Sodir()
     cfg_base = sodir_app.router(cfg_base)
 elif basename in ["texas_rrc"]:
-    from worldenergydata.modules.texas_rrc.texas_rrc import TexasRRC
+    from worldenergydata.texas_rrc.texas_rrc import TexasRRC
     texas_app = TexasRRC()
     cfg_base = texas_app.router(cfg_base)
 # ... etc for each module

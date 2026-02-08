@@ -146,19 +146,19 @@ from sklearn.preprocessing import StandardScaler
 ### Custom Modules
 ```python
 # Trajectory calculations
-from worldenergydata.modules.drilling.trajectory import minimum_curvature
+from worldenergydata.drilling.trajectory import minimum_curvature
 
 # Hydraulics
-from worldenergydata.modules.drilling.hydraulics import ecd_calculation
+from worldenergydata.drilling.hydraulics import ecd_calculation
 
 # Torque and drag
-from worldenergydata.modules.drilling.torque_drag import soft_string_model
+from worldenergydata.drilling.torque_drag import soft_string_model
 
 # Well control
-from worldenergydata.modules.drilling.well_control import kick_tolerance
+from worldenergydata.drilling.well_control import kick_tolerance
 
 # Casing design
-from worldenergydata.modules.drilling.casing import burst_collapse_design
+from worldenergydata.drilling.casing import burst_collapse_design
 ```
 
 ## Common Calculations

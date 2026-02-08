@@ -29,7 +29,7 @@ Follow these steps to manually export marine investigation data.
    Run the processing command:
    ```bash
    uv run python -c "
-   from worldenergydata.modules.marine_safety.acquirers.ntsb_carol_acquirer import NTSBCAROLAcquirer
+   from worldenergydata.marine_safety.acquirers.ntsb_carol_acquirer import NTSBCAROLAcquirer
    acquirer = NTSBCAROLAcquirer(output_dir='data/modules/marine_safety/raw/ntsb')
    acquirer.process_export('data/modules/marine_safety/raw/ntsb/ntsb_marine_investigations.csv')
    "

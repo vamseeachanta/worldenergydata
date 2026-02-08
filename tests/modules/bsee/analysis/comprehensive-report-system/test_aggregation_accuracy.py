@@ -11,15 +11,15 @@ import pytest
 # Add src to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent.parent))
 
-from worldenergydata.modules.bsee.reports.comprehensive.aggregators import (
+from worldenergydata.bsee.reports.comprehensive.aggregators import (
     BlockAggregator,
     FieldAggregator,
     LeaseAggregator,
 )
-from worldenergydata.modules.bsee.reports.comprehensive.data_loader import (
+from worldenergydata.bsee.reports.comprehensive.data_loader import (
     HierarchicalDataLoader,
 )
-from worldenergydata.modules.bsee.reports.comprehensive.models import (
+from worldenergydata.bsee.reports.comprehensive.models import (
     Block,
     Field,
     Lease,
@@ -236,7 +236,7 @@ class TestDataValidation:
 
     def test_negative_production_detection(self):
         """Test detection of negative production values"""
-        from worldenergydata.modules.bsee.reports.comprehensive.aggregators.base import (
+        from worldenergydata.bsee.reports.comprehensive.aggregators.base import (
             DataAggregator,
         )
 
@@ -265,7 +265,7 @@ class TestDataValidation:
 
     def test_data_completeness_check(self):
         """Test data completeness validation"""
-        from worldenergydata.modules.bsee.reports.comprehensive.aggregators.field_aggregator import (
+        from worldenergydata.bsee.reports.comprehensive.aggregators.field_aggregator import (
             FieldAggregator,
         )
 

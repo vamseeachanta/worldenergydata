@@ -6,7 +6,7 @@ integrated into the configuration router's default config,
 validation, and system info reporting.
 """
 
-from worldenergydata.modules.bsee.data.config.config_router import ConfigRouter
+from worldenergydata.bsee.data.config.config_router import ConfigRouter
 
 INFRASTRUCTURE_KEYS = [
     "platform",

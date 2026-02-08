@@ -413,7 +413,7 @@ tests/modules/hse/
 # tests/modules/hse/processors/test_safety_metrics.py
 
 import pytest
-from worldenergydata.modules.hse.processors.safety_metrics import SafetyMetricsCalculator
+from worldenergydata.hse.processors.safety_metrics import SafetyMetricsCalculator
 
 def test_trir_calculation_zero_injuries():
     """Test TRIR calculation with zero injuries"""

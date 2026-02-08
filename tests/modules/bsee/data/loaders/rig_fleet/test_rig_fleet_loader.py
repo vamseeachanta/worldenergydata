@@ -15,7 +15,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from worldenergydata.modules.bsee.data.loaders.rig_fleet.rig_fleet_loader import (
+from worldenergydata.bsee.data.loaders.rig_fleet.rig_fleet_loader import (
     RigFleetLoader,
 )
 

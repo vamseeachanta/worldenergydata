@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from worldenergydata.modules.bsee.data.schemas.rig_fleet import RigFleetSchema
+from worldenergydata.bsee.data.schemas.rig_fleet import RigFleetSchema
 
 
 class TestRigFleetSchema:

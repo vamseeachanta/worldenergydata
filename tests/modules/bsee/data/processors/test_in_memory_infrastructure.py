@@ -5,7 +5,7 @@ import zipfile
 
 import pandas as pd
 
-from worldenergydata.modules.bsee.data.processors.in_memory import MemoryProcessor
+from worldenergydata.bsee.data.processors.in_memory import MemoryProcessor
 
 
 def _create_test_zip(data: str, filename: str = "test_data.txt") -> bytes:

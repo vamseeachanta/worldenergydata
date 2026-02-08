@@ -18,7 +18,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "helpers"))
 
 from bsee_data_converter import BSEEDataConverter
 
-from worldenergydata.modules.bsee.analysis.production_api12 import (
+from worldenergydata.bsee.analysis.production_api12 import (
     ProductionAPI12Analysis,
 )
 

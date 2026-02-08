@@ -17,7 +17,7 @@ sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
 from tests.test_markers import unit  # noqa: E402
 
-from worldenergydata.analysis.lower_tertiary.npv import (  # noqa: E402
+from worldenergydata.lower_tertiary.npv import (  # noqa: E402
     calculate_monthly_financials,
     load_field_inputs,
     load_lease_mapping,

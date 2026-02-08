@@ -2,15 +2,15 @@
 
 import pytest
 
-from worldenergydata.modules.safety_analysis.constants import (
+from worldenergydata.safety_analysis.constants import (
     ObservationType,
     SeverityLevel,
 )
-from worldenergydata.modules.safety_analysis.data.processors import (
+from worldenergydata.safety_analysis.data.processors import (
     IncidentProcessor,
     ObservationProcessor,
 )
-from worldenergydata.modules.safety_analysis.exceptions import SafetyDataError
+from worldenergydata.safety_analysis.exceptions import SafetyDataError
 
 
 class TestObservationProcessor:

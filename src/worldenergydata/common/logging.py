@@ -242,11 +242,11 @@ def get_module_logger(
 
     Example:
         logger = get_module_logger("bsee", "data")
-        # Creates logger: worldenergydata.modules.bsee.data
+        # Creates logger: worldenergydata.bsee.data
     """
     if component:
-        name = f"worldenergydata.modules.{module_name}.{component}"
+        name = f"worldenergydata.{module_name}.{component}"
     else:
-        name = f"worldenergydata.modules.{module_name}"
+        name = f"worldenergydata.{module_name}"
 
     return get_logger(name, context={"module": module_name, "component": component})

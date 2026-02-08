@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 import yaml
 
-from worldenergydata.modules.analysis.verification.quality import (
+from worldenergydata.analysis.verification.quality import (
     ProductionVolumeValidator,
     CompletenessChecker,
     OutlierDetector,

@@ -193,7 +193,7 @@ def scrape(
             )
 
             try:
-                from worldenergydata.modules.mexico_cnh.mexico_cnh import MexicoCNH
+                from worldenergydata.mexico_cnh.mexico_cnh import MexicoCNH
 
                 progress.update(
                     task, advance=10, description="[cyan]Loading Mexico CNH module..."
@@ -374,7 +374,7 @@ def download_open_data(
             )
 
             try:
-                from worldenergydata.modules.mexico_cnh.mexico_cnh import MexicoCNH
+                from worldenergydata.mexico_cnh.mexico_cnh import MexicoCNH
 
                 progress.update(
                     task, advance=20, description="[cyan]Loading Mexico CNH module..."

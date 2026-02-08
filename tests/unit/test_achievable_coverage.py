@@ -24,23 +24,23 @@ class TestAchievableCoverage:
 
     def test_bsee_module_import(self):
         """Test basic imports work"""
-        from worldenergydata.modules.bsee import bsee
+        from worldenergydata.bsee import bsee
         assert bsee is not None
 
-    @pytest.mark.skip(reason="custom_router module does not exist in worldenergydata.modules.bsee")
+    @pytest.mark.skip(reason="custom_router module does not exist in worldenergydata.bsee")
     def test_custom_router_import(self):
         """Test custom router import"""
         pass
 
-    @pytest.mark.skip(reason="worldenergydata.modules.financial module does not exist")
+    @pytest.mark.skip(reason="worldenergydata.financial module does not exist")
     def test_financial_npv_analysis(self):
         """Test NPV analysis which is domain-independent"""
         pass
 
     def test_data_module_imports(self):
         """Test data module imports"""
-        from worldenergydata.modules.bsee.data import bsee_data
-        from worldenergydata.modules.bsee.data import apm_data
+        from worldenergydata.bsee.data import bsee_data
+        from worldenergydata.bsee.data import apm_data
 
         assert bsee_data is not None
         assert apm_data is not None
@@ -57,7 +57,7 @@ class TestAchievableCoverage:
 
     def test_data_refresh_module(self):
         """Test data refresh module"""
-        from worldenergydata.modules.bsee.data.refresh.data_refresh import DataRefresh
+        from worldenergydata.bsee.data.refresh.data_refresh import DataRefresh
 
         refresher = DataRefresh()
 
@@ -103,7 +103,7 @@ class TestAchievableCoverage:
 
     def test_chunk_metadata_comprehensive(self):
         """More comprehensive test of ChunkMetadata"""
-        from worldenergydata.modules.bsee.data.cache.chunk_manager import ChunkMetadata
+        from worldenergydata.bsee.data.cache.chunk_manager import ChunkMetadata
         from datetime import datetime
 
         # Test all initialization parameters

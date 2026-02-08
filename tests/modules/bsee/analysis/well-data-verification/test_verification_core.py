@@ -10,13 +10,13 @@ from typing import Dict, Any, List
 import pandas as pd
 
 # These imports will be implemented in the next steps
-from worldenergydata.modules.analysis.verification.base import (
+from worldenergydata.analysis.verification.base import (
     VerificationResult,
     VerificationWorkflow,
     VerificationError
 )
-from worldenergydata.modules.analysis.verification.config import VerificationConfig
-from worldenergydata.modules.analysis.verification.processors import BSEEDataAdapter
+from worldenergydata.analysis.verification.config import VerificationConfig
+from worldenergydata.analysis.verification.processors import BSEEDataAdapter
 
 
 class TestVerificationResult:
@@ -261,7 +261,7 @@ class TestModuleIntegration:
     
     def test_imports_bsee_validators(self):
         """Test importing BSEE financial validators."""
-        from worldenergydata.modules.bsee.analysis.financial.validators import (
+        from worldenergydata.bsee.analysis.financial.validators import (
             validate_required_columns,
             validate_numeric_columns
         )
@@ -276,7 +276,7 @@ class TestModuleIntegration:
         # For now, we'll test the import path exists
         import importlib.util
         
-        spec = importlib.util.find_spec("worldenergydata.modules.bsee.reports")
+        spec = importlib.util.find_spec("worldenergydata.bsee.reports")
         assert spec is not None
 
 

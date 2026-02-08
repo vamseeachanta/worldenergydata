@@ -13,7 +13,7 @@ import sys
 # Add src to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent.parent / "src"))
 
-from worldenergydata.modules.bsee.data.production.production_data_sources import ProductionDataFromSources
+from worldenergydata.bsee.data.production.production_data_sources import ProductionDataFromSources
 from tests.test_markers import unit
 
 
@@ -46,7 +46,7 @@ class TestProductionDataFromSources:
         result = self.prod_source.router(self.mock_cfg)
         assert result is None
     
-    @patch('worldenergydata.modules.bsee.data.production.production_data_sources.production_from_zip')
+    @patch('worldenergydata.bsee.data.production.production_data_sources.production_from_zip')
     def test_get_data_without_zip(self, mock_prod_zip):
         """Test get_data without zip flag."""
         # Setup
@@ -67,7 +67,7 @@ class TestProductionDataFromSources:
         assert calls[0] == call(self.mock_cfg, ['123456789012'])
         assert calls[1] == call(self.mock_cfg, ['234567890123'])
     
-    @patch('worldenergydata.modules.bsee.data.production.production_data_sources.production_from_zip')
+    @patch('worldenergydata.bsee.data.production.production_data_sources.production_from_zip')
     def test_get_data_with_zip(self, mock_prod_zip):
         """Test get_data with zip flag."""
         # Setup
@@ -96,7 +96,7 @@ class TestProductionDataFromSources:
         # Check that get_production_from_zip was called
         mock_prod_zip.get_production_data_by_wellapi12.assert_called_once_with(cfg, '123456789012')
     
-    @patch('worldenergydata.modules.bsee.data.production.production_data_sources.production_from_zip')
+    @patch('worldenergydata.bsee.data.production.production_data_sources.production_from_zip')
     def test_get_production_from_zip(self, mock_prod_zip):
         """Test get_production_from_zip method."""
         # Setup
@@ -110,7 +110,7 @@ class TestProductionDataFromSources:
         assert result == self.mock_cfg
         mock_prod_zip.get_production_data_by_wellapi12.assert_called_once_with(self.mock_cfg, api12)
     
-    @patch('worldenergydata.modules.bsee.data.production.production_data_sources.production_from_zip')
+    @patch('worldenergydata.bsee.data.production.production_data_sources.production_from_zip')
     def test_get_data_empty_groups(self, mock_prod_zip):
         """Test get_data with empty groups."""
         # Setup
@@ -129,7 +129,7 @@ class TestProductionDataFromSources:
         assert production_data_groups == []
         mock_prod_zip.get_data_by_api12_array.assert_not_called()
     
-    @patch('worldenergydata.modules.bsee.data.production.production_data_sources.production_from_zip')
+    @patch('worldenergydata.bsee.data.production.production_data_sources.production_from_zip')
     def test_get_data_multiple_api12_per_group(self, mock_prod_zip):
         """Test get_data with multiple API12s per group."""
         # Setup
@@ -161,7 +161,7 @@ class TestProductionDataFromSourcesIntegration:
     
     def test_module_imports(self):
         """Test that all required modules can be imported."""
-        from worldenergydata.modules.bsee.data.production.production_data_sources import (
+        from worldenergydata.bsee.data.production.production_data_sources import (
             ProductionDataFromSources,
             production_from_zip
         )

@@ -46,7 +46,7 @@ mkdir -p "${OUTPUT_DIR}"
 # Step 1: Acquire data from NTSB CAROL
 echo "[1/2] Acquiring NTSB CAROL marine data..."
 cd "${PROJECT_ROOT}"
-uv run python -m worldenergydata.modules.marine_safety.acquirers.ntsb_carol_acquirer \
+uv run python -m worldenergydata.marine_safety.acquirers.ntsb_carol_acquirer \
     --output-dir "${OUTPUT_DIR}" \
     --max-pages "${MAX_PAGES}" \
     ${FORCE_FLAG} \

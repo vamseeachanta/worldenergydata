@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from worldenergydata.modules.safety_analysis.analysis.decomposition import (
+from worldenergydata.safety_analysis.analysis.decomposition import (
     _HAS_STATSMODELS,
     decompose_signal,
     remove_trend_and_seasonality,

@@ -244,8 +244,8 @@ The engineer configures a cron job to run the refresh command with retry logic a
 
 ### Required Modules
 - **worldenergydata.engine:** Core processing orchestration
-- **worldenergydata.modules.bsee:** BSEE-specific data processing logic
-- **worldenergydata.modules.bsee.data._from_zip:** Existing zip processing components for compatibility
+- **worldenergydata.bsee:** BSEE-specific data processing logic
+- **worldenergydata.bsee.data._from_zip:** Existing zip processing components for compatibility
 
 ### Optional Integrations
 - **requests/urllib3:** HTTP client for API access and web scraping

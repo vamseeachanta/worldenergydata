@@ -8,7 +8,7 @@ properly registered in the BSEEWebScraper class.
 
 import re
 
-from worldenergydata.modules.bsee.data.scrapers.bsee_web import BSEEWebScraper
+from worldenergydata.bsee.data.scrapers.bsee_web import BSEEWebScraper
 
 INFRASTRUCTURE_KEYS = [
     "platform",

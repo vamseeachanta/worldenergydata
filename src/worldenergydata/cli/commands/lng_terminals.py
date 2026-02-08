@@ -15,6 +15,6 @@ Examples:
     worldenergydata lng-terminals pipeline
 """
 
-from worldenergydata.modules.lng_terminals.cli import app
+from worldenergydata.lng_terminals.cli import app
 
 __all__ = ["app"]

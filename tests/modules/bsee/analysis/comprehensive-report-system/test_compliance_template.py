@@ -9,7 +9,7 @@ from unittest.mock import Mock, patch
 import tempfile
 import shutil
 
-from worldenergydata.modules.bsee.reports.comprehensive.templates.compliance_template import (
+from worldenergydata.bsee.reports.comprehensive.templates.compliance_template import (
     ComplianceTemplate,
     ComplianceMetrics,
     EnvironmentalMetrics,
@@ -17,7 +17,7 @@ from worldenergydata.modules.bsee.reports.comprehensive.templates.compliance_tem
     ProductionQuota,
     RegulatoryMilestone
 )
-from worldenergydata.modules.bsee.reports.comprehensive.models import (
+from worldenergydata.bsee.reports.comprehensive.models import (
     ProductionMetrics,
     EconomicMetrics,
     Well,

@@ -13,7 +13,7 @@ from pathlib import Path
 import tempfile
 import yaml
 
-from worldenergydata.modules.analysis.verification.cross_reference import (
+from worldenergydata.analysis.verification.cross_reference import (
     ExcelBenchmarkReader,
     FieldMapper,
     ComparisonEngine,

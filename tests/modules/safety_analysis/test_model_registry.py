@@ -18,10 +18,10 @@ pytestmark = pytest.mark.skipif(not _HAS_SKLEARN, reason="scikit-learn not insta
 if _HAS_SKLEARN:
     from sklearn.ensemble import RandomForestClassifier
 
-    from worldenergydata.modules.safety_analysis.exceptions import (
+    from worldenergydata.safety_analysis.exceptions import (
         SafetyClassificationError,
     )
-    from worldenergydata.modules.safety_analysis.nlp.model_registry import (
+    from worldenergydata.safety_analysis.nlp.model_registry import (
         ModelEntry,
         ModelRegistry,
     )

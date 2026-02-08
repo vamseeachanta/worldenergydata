@@ -16,7 +16,7 @@
 
 #### Problem: Module Import Error
 ```python
-ImportError: No module named 'worldenergydata.modules.analysis.verification'
+ImportError: No module named 'worldenergydata.analysis.verification'
 ```
 
 **Solution:**
@@ -64,12 +64,12 @@ bash: wdv: command not found
 **Solution:**
 1. Use full module path:
    ```bash
-   python -m worldenergydata.modules.analysis.verification.cli --help
+   python -m worldenergydata.analysis.verification.cli --help
    ```
 
 2. Or create an alias:
    ```bash
-   alias wdv="python -m worldenergydata.modules.analysis.verification.cli"
+   alias wdv="python -m worldenergydata.analysis.verification.cli"
    ```
 
 #### Problem: Invalid Arguments
@@ -80,7 +80,7 @@ Error: Invalid value for '--format': 'json' is not one of 'pdf', 'excel', 'both'
 **Solution:**
 Check valid options using help:
 ```bash
-python -m worldenergydata.modules.analysis.verification.cli verify --help
+python -m worldenergydata.analysis.verification.cli verify --help
 ```
 
 ## Error Messages
@@ -152,7 +152,7 @@ python -m worldenergydata.modules.analysis.verification.cli verify --help
 
 3. Use configuration validator:
    ```python
-   from worldenergydata.modules.analysis.verification.config import VerificationConfig
+   from worldenergydata.analysis.verification.config import VerificationConfig
    config = VerificationConfig.from_yaml("config.yaml")
    errors = config.validate()
    if errors:
@@ -266,7 +266,7 @@ python -m worldenergydata.modules.analysis.verification.cli verify --help
 
 3. **Use Data Cleaning Workflow:**
    ```python
-   from worldenergydata.modules.analysis.verification.utils import DataCleaner
+   from worldenergydata.analysis.verification.utils import DataCleaner
    
    cleaner = DataCleaner()
    cleaned_data = cleaner.clean(data, {
@@ -350,7 +350,7 @@ python -m worldenergydata.modules.analysis.verification.cli verify --help
 
 3. **Use Default Configuration:**
    ```python
-   from worldenergydata.modules.analysis.verification.config import get_default_config
+   from worldenergydata.analysis.verification.config import get_default_config
    
    config = get_default_config()
    # Modify as needed
@@ -392,7 +392,7 @@ python -m worldenergydata.modules.analysis.verification.cli verify --help
 1. **Check Module Installation:**
    ```python
    try:
-       from worldenergydata.modules.bsee.data import ProductionDataProcessor
+       from worldenergydata.bsee.data import ProductionDataProcessor
        print("BSEE modules available")
    except ImportError as e:
        print(f"BSEE modules not found: {e}")
@@ -400,7 +400,7 @@ python -m worldenergydata.modules.analysis.verification.cli verify --help
 
 2. **Use Adapter Pattern:**
    ```python
-   from worldenergydata.modules.analysis.verification.processors import BSEEDataAdapter
+   from worldenergydata.analysis.verification.processors import BSEEDataAdapter
    
    adapter = BSEEDataAdapter()
    # Adapter handles import issues gracefully
@@ -626,14 +626,14 @@ def run_diagnostics():
     
     print("\n=== Verification Module ===")
     try:
-        from worldenergydata.modules.analysis.verification import VerificationEngine
+        from worldenergydata.analysis.verification import VerificationEngine
         print("✓ Verification module imported successfully")
     except ImportError as e:
         print(f"✗ Import error: {e}")
     
     print("\n=== BSEE Modules ===")
     try:
-        from worldenergydata.modules.bsee.data import ProductionDataProcessor
+        from worldenergydata.bsee.data import ProductionDataProcessor
         print("✓ BSEE modules available")
     except ImportError as e:
         print(f"✗ BSEE modules not found: {e}")

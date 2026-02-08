@@ -26,7 +26,7 @@ Refresh all BSEE (Bureau of Safety and Environmental Enforcement) data to enable
 
 ```python
 # Test script - run in Python REPL or as script
-from worldenergydata.modules.bsee.data.scrapers.bsee_web import BSEEWebScraper
+from worldenergydata.bsee.data.scrapers.bsee_web import BSEEWebScraper
 
 scraper = BSEEWebScraper()
 
@@ -59,7 +59,7 @@ for data_type in ['well', 'production', 'war']:
 **Goal:** Download smallest file (~5-10 MB) to verify download mechanism works.
 
 ```python
-from worldenergydata.modules.bsee.data.scrapers.bsee_web import BSEEWebScraper
+from worldenergydata.bsee.data.scrapers.bsee_web import BSEEWebScraper
 
 scraper = BSEEWebScraper()
 
@@ -91,7 +91,7 @@ else:
 **Goal:** Download production data (~15-50 MB).
 
 ```python
-from worldenergydata.modules.bsee.data.scrapers.bsee_web import BSEEWebScraper
+from worldenergydata.bsee.data.scrapers.bsee_web import BSEEWebScraper
 
 scraper = BSEEWebScraper()
 
@@ -118,7 +118,7 @@ else:
 **Goal:** Download WAR data (~120+ MB) - only after smaller files succeed.
 
 ```python
-from worldenergydata.modules.bsee.data.scrapers.bsee_web import BSEEWebScraper
+from worldenergydata.bsee.data.scrapers.bsee_web import BSEEWebScraper
 
 scraper = BSEEWebScraper()
 
@@ -155,7 +155,7 @@ data:
 # Run the refresh
 cd /mnt/github/workspace-hub/worldenergydata
 uv run python -c "
-from worldenergydata.modules.bsee.data.refresh.data_refresh_enhanced import DataRefreshEnhanced
+from worldenergydata.bsee.data.refresh.data_refresh_enhanced import DataRefreshEnhanced
 import yaml
 
 with open('config/input/bsee_refresh.yaml') as f:

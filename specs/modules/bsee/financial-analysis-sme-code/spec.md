@@ -75,7 +75,7 @@ The workflow involves:
 
 ## Expected Deliverable
 
-1. Fully integrated financial analysis module in `worldenergydata.modules.bsee.analysis.sme_financial`
+1. Fully integrated financial analysis module in `worldenergydata.bsee.analysis.sme_financial`
 2. Comprehensive test suite with >90% coverage for all financial calculations
 3. Command-line interface for running financial analysis with configurable parameters
 4. Generated Excel reports matching V18 format with formatted worksheets and README tab

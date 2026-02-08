@@ -339,7 +339,7 @@ print(peak_production)
 **Solution:** Download and convert production data to binary format:
 
 ```python
-from worldenergydata.modules.bsee.data._from_zip.production_data import GetProdDataFromZip
+from worldenergydata.bsee.data._from_zip.production_data import GetProdDataFromZip
 
 prod_loader = GetProdDataFromZip()
 prod_loader.save_zip_data_to_binary(cfg)
@@ -404,7 +404,7 @@ Typical output sizes (20 leases, 5 years):
 ### Use with Financial Analysis
 
 ```python
-from worldenergydata.modules.bsee.analysis.financial.analyzer import FinancialAnalyzer
+from worldenergydata.bsee.analysis.financial.analyzer import FinancialAnalyzer
 
 # Load production by lease
 production_df = pd.read_csv('b_production_by_lease_*.csv')

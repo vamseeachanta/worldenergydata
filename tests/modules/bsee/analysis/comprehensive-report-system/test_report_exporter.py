@@ -10,7 +10,7 @@ import os
 from pathlib import Path
 from abc import ABC, abstractmethod
 
-from worldenergydata.modules.bsee.reports.comprehensive.exporters.base import (
+from worldenergydata.bsee.reports.comprehensive.exporters.base import (
     ReportExporter,
     ExportFormat,
     ExportConfig,
@@ -174,7 +174,7 @@ class TestExcelExporter(unittest.TestCase):
     
     def setUp(self):
         """Set up test fixtures."""
-        from worldenergydata.modules.bsee.reports.comprehensive.exporters.excel_exporter import ExcelExporter
+        from worldenergydata.bsee.reports.comprehensive.exporters.excel_exporter import ExcelExporter
         self.exporter = ExcelExporter()
         self.sample_data = self._create_sample_data()
         self.temp_dir = tempfile.mkdtemp()
@@ -209,7 +209,7 @@ class TestExcelExporter(unittest.TestCase):
             }
         }
     
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.exporters.excel_exporter.Workbook')
+    @patch('worldenergydata.bsee.reports.comprehensive.exporters.excel_exporter.Workbook')
     def test_excel_export_basic(self, mock_workbook):
         """Test basic Excel export functionality."""
         mock_wb = MagicMock()
@@ -247,7 +247,7 @@ class TestExcelExporter(unittest.TestCase):
     
     def test_excel_chart_embedding(self):
         """Test embedding charts in Excel."""
-        with patch('worldenergydata.modules.bsee.reports.comprehensive.exporters.excel_exporter.Image') as mock_image:
+        with patch('worldenergydata.bsee.reports.comprehensive.exporters.excel_exporter.Image') as mock_image:
             chart_embedded = self.exporter.embed_chart(
                 worksheet=MagicMock(),
                 chart_data=MagicMock(),
@@ -293,7 +293,7 @@ class TestPDFExporter(unittest.TestCase):
     
     def setUp(self):
         """Set up test fixtures."""
-        from worldenergydata.modules.bsee.reports.comprehensive.exporters.pdf_exporter import PDFExporter
+        from worldenergydata.bsee.reports.comprehensive.exporters.pdf_exporter import PDFExporter
         self.exporter = PDFExporter()
         self.sample_data = self._create_sample_data()
         self.temp_dir = tempfile.mkdtemp()
@@ -329,8 +329,8 @@ class TestPDFExporter(unittest.TestCase):
             }
         }
     
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.exporters.pdf_exporter.HTML')
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.exporters.pdf_exporter.CSS')
+    @patch('worldenergydata.bsee.reports.comprehensive.exporters.pdf_exporter.HTML')
+    @patch('worldenergydata.bsee.reports.comprehensive.exporters.pdf_exporter.CSS')
     def test_pdf_export_basic(self, mock_css, mock_html):
         """Test basic PDF export functionality."""
         mock_html_instance = MagicMock()
@@ -420,7 +420,7 @@ class TestBatchExporter(unittest.TestCase):
     
     def setUp(self):
         """Set up test fixtures."""
-        from worldenergydata.modules.bsee.reports.comprehensive.exporters.batch import BatchExporter
+        from worldenergydata.bsee.reports.comprehensive.exporters.batch import BatchExporter
         self.batch_exporter = BatchExporter()
         self.temp_dir = tempfile.mkdtemp()
     

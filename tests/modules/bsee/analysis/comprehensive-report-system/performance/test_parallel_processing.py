@@ -43,12 +43,12 @@ class TestParallelProcessing:
     @pytest.fixture
     def parallel_processor(self):
         """Create parallel processor instance."""
-        from worldenergydata.modules.bsee.reports.comprehensive.performance.parallel_processor import ParallelProcessor
+        from worldenergydata.bsee.reports.comprehensive.performance.parallel_processor import ParallelProcessor
         return ParallelProcessor(max_workers=4)
     
     def test_parallel_processor_initialization(self):
         """Test parallel processor initialization."""
-        from worldenergydata.modules.bsee.reports.comprehensive.performance.parallel_processor import ParallelProcessor
+        from worldenergydata.bsee.reports.comprehensive.performance.parallel_processor import ParallelProcessor
         
         # Test default initialization
         processor = ParallelProcessor()
@@ -207,7 +207,7 @@ class TestParallelProcessing:
     
     def test_performance_scaling(self, sample_org_units):
         """Test performance scaling with different worker counts."""
-        from worldenergydata.modules.bsee.reports.comprehensive.performance.parallel_processor import ParallelProcessor
+        from worldenergydata.bsee.reports.comprehensive.performance.parallel_processor import ParallelProcessor
         
         # Test with different worker counts
         worker_counts = [1, 2, 4, 8]
@@ -270,7 +270,7 @@ class TestParallelProcessing:
     @pytest.mark.integration
     def test_integration_with_aggregators(self, parallel_processor, sample_org_units):
         """Test parallel processing integration with BSEE aggregators."""
-        from worldenergydata.modules.bsee.reports.comprehensive.aggregators.block_aggregator_enhanced import BlockAggregator
+        from worldenergydata.bsee.reports.comprehensive.aggregators.block_aggregator_enhanced import BlockAggregator
         
         processor = parallel_processor
         aggregator = BlockAggregator()

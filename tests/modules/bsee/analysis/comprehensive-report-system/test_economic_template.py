@@ -8,15 +8,15 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from worldenergydata.modules.bsee.reports.comprehensive.hierarchical_aggregator import (
+from worldenergydata.bsee.reports.comprehensive.hierarchical_aggregator import (
     CostStructure,
     PriceDeck,
 )
-from worldenergydata.modules.bsee.reports.comprehensive.models import (
+from worldenergydata.bsee.reports.comprehensive.models import (
     EconomicMetrics,
     ProductionMetrics,
 )
-from worldenergydata.modules.bsee.reports.comprehensive.templates.economic_template import (
+from worldenergydata.bsee.reports.comprehensive.templates.economic_template import (
     CostAnalysis,
     EconomicAnalysis,
     EconomicForecast,

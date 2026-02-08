@@ -11,7 +11,7 @@ from datetime import datetime
 import pandas as pd
 import json
 
-from worldenergydata.modules.analysis.verification.reports import (
+from worldenergydata.analysis.verification.reports import (
     VerificationReportGenerator,
     ReportTemplate,
     ReportSection,

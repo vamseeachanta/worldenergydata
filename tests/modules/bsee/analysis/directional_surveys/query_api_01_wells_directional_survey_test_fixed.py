@@ -17,7 +17,7 @@ import shutil
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../../../src'))
 
-from worldenergydata.modules.bsee.analysis.well_api12 import WellAPI12
+from worldenergydata.bsee.analysis.well_api12 import WellAPI12
 
 
 def create_test_data_from_yaml():

@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from worldenergydata.modules.safety_analysis.analysis.time_series import (
+from worldenergydata.safety_analysis.analysis.time_series import (
     TimeSeriesBuilder,
     calculate_gradient,
     calculate_moving_average,

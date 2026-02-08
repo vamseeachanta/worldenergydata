@@ -234,7 +234,7 @@ src/worldenergydata/modules/bsee/analysis/
 ### CLI Interface
 ```bash
 # Run analysis using BSEE data
-python -m worldenergydata.modules.bsee.analysis.sme_financial \
+python -m worldenergydata.bsee.analysis.sme_financial \
     --data-dir data/modules/bsee/ \
     --output financial_results.xlsx \
     --config config/bsee_financial.yaml

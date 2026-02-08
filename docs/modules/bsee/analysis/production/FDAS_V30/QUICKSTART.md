@@ -56,7 +56,7 @@ cp /path/to/your/bin/files/*.bin data/bsee/production/bin/
 
 3. **Convert to binary:**
    ```python
-   from worldenergydata.modules.bsee.data._from_zip.production_data import GetProdDataFromZip
+   from worldenergydata.bsee.data._from_zip.production_data import GetProdDataFromZip
    
    cfg = {
        'parameters': {
@@ -271,7 +271,7 @@ print(top_wells)
 The outputs are ready for NPV/economics analysis:
 
 ```python
-from worldenergydata.modules.bsee.analysis.financial.analyzer import FinancialAnalyzer
+from worldenergydata.bsee.analysis.financial.analyzer import FinancialAnalyzer
 
 # Use production by lease for economics
 lease_prod = pd.read_csv('b_production_by_lease_*.csv')

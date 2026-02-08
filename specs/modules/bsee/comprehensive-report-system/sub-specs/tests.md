@@ -378,7 +378,7 @@ class TestPerformanceRegression:
 ```yaml
 - name: Run Report Tests
   run: |
-    uv run pytest tests/bsee/reports/ -v --cov=worldenergydata.modules.bsee.reports
+    uv run pytest tests/bsee/reports/ -v --cov=worldenergydata.bsee.reports
     uv run pytest tests/integration/reports/ -v -m "not slow"
     
 - name: Template Validation

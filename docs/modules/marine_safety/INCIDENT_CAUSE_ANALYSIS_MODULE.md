@@ -130,7 +130,7 @@ pip install -e .
 ### Basic Usage
 
 ```python
-from worldenergydata.modules.marine_safety.analysis import (
+from worldenergydata.marine_safety.analysis import (
     IncidentCauseExtractor,
     CauseStatistics,
     CauseVisualizer,
@@ -332,7 +332,7 @@ The module now supports **open-source LLM-based detection** using Hugging Face T
 
 #### Basic LLM Detection (Recommended)
 ```python
-from worldenergydata.modules.marine_safety.analysis import HatchMaloperationAnalyzer
+from worldenergydata.marine_safety.analysis import HatchMaloperationAnalyzer
 
 # Enable LLM-based detection (default)
 analyzer = HatchMaloperationAnalyzer(

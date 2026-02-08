@@ -13,7 +13,7 @@ class TestHSEIncidentBaseModel:
 
     def test_hse_incident_creation_with_valid_data(self, db_session):
         """Test HSEIncident model creation with all valid required fields"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         incident = HSEIncident(
             bsee_incident_id="INC-2024-001",
@@ -48,7 +48,7 @@ class TestHSEIncidentBaseModel:
 
     def test_hse_incident_required_bsee_id(self, db_session):
         """Test that bsee_incident_id is required (NOT NULL constraint)"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         incident = HSEIncident(
             # Missing bsee_incident_id (required)
@@ -64,7 +64,7 @@ class TestHSEIncidentBaseModel:
 
     def test_hse_incident_required_incident_date(self, db_session):
         """Test that incident_date is required (NOT NULL constraint)"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         incident = HSEIncident(
             bsee_incident_id="INC-2024-002",
@@ -80,7 +80,7 @@ class TestHSEIncidentBaseModel:
 
     def test_hse_incident_required_operator(self, db_session):
         """Test that operator is required (NOT NULL constraint)"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         incident = HSEIncident(
             bsee_incident_id="INC-2024-003",
@@ -96,7 +96,7 @@ class TestHSEIncidentBaseModel:
 
     def test_hse_incident_unique_bsee_id(self, db_session):
         """Test that bsee_incident_id must be unique"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         # Create first incident
         incident1 = HSEIncident(
@@ -123,7 +123,7 @@ class TestHSEIncidentBaseModel:
 
     def test_hse_incident_type_enum_valid_values(self, db_session):
         """Test all valid incident_type enum values"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         valid_types = ["injury", "spill", "equipment_failure", "violation"]
 
@@ -146,7 +146,7 @@ class TestHSEIncidentBaseModel:
     )
     def test_hse_incident_type_enum_invalid_value(self, db_session):
         """Test that invalid incident_type raises error"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         with pytest.raises((ValueError, IntegrityError)):
             incident = HSEIncident(
@@ -161,7 +161,7 @@ class TestHSEIncidentBaseModel:
 
     def test_hse_incident_severity_enum_valid_values(self, db_session):
         """Test all valid severity enum values"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         valid_severities = ["fatality", "lost_time", "recordable", "near_miss", "minor"]
 
@@ -184,7 +184,7 @@ class TestHSEIncidentBaseModel:
     )
     def test_hse_incident_severity_enum_invalid_value(self, db_session):
         """Test that invalid severity raises error"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         with pytest.raises((ValueError, IntegrityError)):
             incident = HSEIncident(
@@ -199,7 +199,7 @@ class TestHSEIncidentBaseModel:
 
     def test_hse_incident_latitude_valid_gom_range(self, db_session):
         """Test valid latitude within Gulf of Mexico range (18-31°N)"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         valid_latitudes = [18.0, 25.5, 28.0, 30.5, 31.0]
 
@@ -221,7 +221,7 @@ class TestHSEIncidentBaseModel:
 
     def test_hse_incident_latitude_invalid_below_range(self, db_session):
         """Test that latitude below GOM range (< 18°N) raises validation error"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         with pytest.raises((ValueError, IntegrityError)):
             incident = HSEIncident(
@@ -238,7 +238,7 @@ class TestHSEIncidentBaseModel:
 
     def test_hse_incident_latitude_invalid_above_range(self, db_session):
         """Test that latitude above GOM range (> 31°N) raises validation error"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         with pytest.raises((ValueError, IntegrityError)):
             incident = HSEIncident(
@@ -255,7 +255,7 @@ class TestHSEIncidentBaseModel:
 
     def test_hse_incident_longitude_valid_gom_range(self, db_session):
         """Test valid longitude within Gulf of Mexico range (-98 to -80°W)"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         valid_longitudes = [-98.0, -94.5, -89.0, -85.0, -80.0]
 
@@ -277,7 +277,7 @@ class TestHSEIncidentBaseModel:
 
     def test_hse_incident_longitude_invalid_west_of_range(self, db_session):
         """Test that longitude west of GOM range (< -98°W) raises validation error"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         with pytest.raises((ValueError, IntegrityError)):
             incident = HSEIncident(
@@ -294,7 +294,7 @@ class TestHSEIncidentBaseModel:
 
     def test_hse_incident_longitude_invalid_east_of_range(self, db_session):
         """Test that longitude east of GOM range (> -80°W) raises validation error"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         with pytest.raises((ValueError, IntegrityError)):
             incident = HSEIncident(
@@ -311,7 +311,7 @@ class TestHSEIncidentBaseModel:
 
     def test_hse_incident_optional_fields_can_be_null(self, db_session):
         """Test that optional fields can be NULL"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         incident = HSEIncident(
             bsee_incident_id="INC-OPTIONAL",
@@ -338,7 +338,7 @@ class TestHSEIncidentBaseModel:
 
     def test_hse_incident_timestamps_auto_populated(self, db_session):
         """Test that created_at and updated_at timestamps are automatically populated"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         incident = HSEIncident(
             bsee_incident_id="INC-TIMESTAMP",
@@ -361,7 +361,7 @@ class TestHSEIncidentBaseModel:
         """Test that updated_at timestamp is set when incident is modified"""
         import time
 
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         incident = HSEIncident(
             bsee_incident_id="INC-UPDATE",
@@ -397,7 +397,7 @@ class TestInjuryIncidentModel:
 
     def test_injury_incident_creation_with_valid_data(self, db_session):
         """Test InjuryIncident creation with all required fields"""
-        from worldenergydata.modules.hse.database.models import (
+        from worldenergydata.hse.database.models import (
             HSEIncident,
             InjuryIncident,
         )
@@ -436,7 +436,7 @@ class TestInjuryIncidentModel:
 
     def test_injury_incident_relationship_to_hse_incident(self, db_session):
         """Test foreign key relationship between InjuryIncident and HSEIncident"""
-        from worldenergydata.modules.hse.database.models import (
+        from worldenergydata.hse.database.models import (
             HSEIncident,
             InjuryIncident,
         )
@@ -469,7 +469,7 @@ class TestSpillIncidentModel:
 
     def test_spill_incident_creation_with_valid_data(self, db_session):
         """Test SpillIncident creation with all required fields"""
-        from worldenergydata.modules.hse.database.models import (
+        from worldenergydata.hse.database.models import (
             HSEIncident,
             SpillIncident,
         )
@@ -505,7 +505,7 @@ class TestSpillIncidentModel:
 
     def test_spill_incident_volume_conversion(self, db_session):
         """Test barrel to gallon conversion (1 barrel = 42 gallons)"""
-        from worldenergydata.modules.hse.database.models import (
+        from worldenergydata.hse.database.models import (
             HSEIncident,
             SpillIncident,
         )
@@ -538,7 +538,7 @@ class TestViolationIncidentModel:
 
     def test_violation_incident_creation_with_valid_data(self, db_session):
         """Test ViolationIncident creation with all required fields"""
-        from worldenergydata.modules.hse.database.models import (
+        from worldenergydata.hse.database.models import (
             HSEIncident,
             ViolationIncident,
         )
@@ -574,7 +574,7 @@ class TestViolationIncidentModel:
 
     def test_violation_penalty_status_enum(self, db_session):
         """Test penalty_status enum constraint"""
-        from worldenergydata.modules.hse.database.models import (
+        from worldenergydata.hse.database.models import (
             HSEIncident,
             ViolationIncident,
         )
@@ -610,7 +610,7 @@ class TestEquipmentFailureModel:
 
     def test_equipment_failure_creation_with_valid_data(self, db_session):
         """Test EquipmentFailure creation with all required fields"""
-        from worldenergydata.modules.hse.database.models import (
+        from worldenergydata.hse.database.models import (
             EquipmentFailure,
             HSEIncident,
         )
@@ -653,7 +653,7 @@ def db_session():
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
 
-    from worldenergydata.modules.hse.database.models import Base
+    from worldenergydata.hse.database.models import Base
 
     # Use in-memory SQLite for testing
     engine = create_engine("sqlite:///:memory:")

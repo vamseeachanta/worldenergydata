@@ -149,7 +149,7 @@ sys.path.insert(0, str(Path.cwd() / 'src'))
 
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import Session
-from worldenergydata.modules.marine_safety.database.models import Incident, Vessel, Location
+from worldenergydata.marine_safety.database.models import Incident, Vessel, Location
 
 db_path = Path('data/modules/marine_safety/database/marine_safety.db')
 engine = create_engine(f'sqlite:///{db_path}', echo=False)

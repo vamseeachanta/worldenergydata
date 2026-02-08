@@ -21,7 +21,7 @@ sys.path.insert(
 
 try:
     from worldenergydata.engine import engine
-    from worldenergydata.modules.bsee.analysis.production_api12 import (
+    from worldenergydata.bsee.analysis.production_api12 import (
         ProductionAPI12Analysis,
     )
 
@@ -138,7 +138,7 @@ class TestNPVIntegrationWorkflow:
         if not ENGINE_AVAILABLE:
             raise ImportError("ProductionAPI12Analysis not available")
 
-        from worldenergydata.modules.bsee.analysis.production_api12 import (
+        from worldenergydata.bsee.analysis.production_api12 import (
             ProductionAPI12Analysis,
         )
 
@@ -176,7 +176,7 @@ class TestNPVIntegrationWorkflow:
             print("Revenue table generation skipped - engine not available")
             return pd.DataFrame()
 
-        from worldenergydata.modules.bsee.analysis.production_api12 import (
+        from worldenergydata.bsee.analysis.production_api12 import (
             ProductionAPI12Analysis,
         )
 
@@ -222,7 +222,7 @@ class TestNPVIntegrationWorkflow:
             print("NPV calculation skipped - engine not available")
             return {}
 
-        from worldenergydata.modules.bsee.analysis.production_api12 import (
+        from worldenergydata.bsee.analysis.production_api12 import (
             ProductionAPI12Analysis,
         )
 

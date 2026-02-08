@@ -173,7 +173,7 @@ def collect(
             )
 
             try:
-                from worldenergydata.modules.canada.canada import Canada
+                from worldenergydata.canada.canada import Canada
 
                 progress.update(
                     task, advance=10, description="[cyan]Loading Canada module..."
@@ -345,7 +345,7 @@ def analyze(
             )
 
             try:
-                from worldenergydata.modules.canada.analysis import CanadaAnalysis
+                from worldenergydata.canada.analysis import CanadaAnalysis
 
                 progress.update(
                     task, advance=20, description="[cyan]Loading analysis module..."

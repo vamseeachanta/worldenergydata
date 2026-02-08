@@ -12,7 +12,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent.parent / "src"))
 
 # Import models for compatibility  
-from worldenergydata.modules.bsee.reports.comprehensive.models import ProductionMetrics, EconomicMetrics
+from worldenergydata.bsee.reports.comprehensive.models import ProductionMetrics, EconomicMetrics
 
 
 # Import the compliance template classes directly 

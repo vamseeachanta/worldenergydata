@@ -2,8 +2,8 @@
 
 import pytest
 
-from worldenergydata.modules.lng_terminals.constants import Region, TerminalStatus
-from worldenergydata.modules.lng_terminals.processors.normalizer import (
+from worldenergydata.lng_terminals.constants import Region, TerminalStatus
+from worldenergydata.lng_terminals.processors.normalizer import (
     COUNTRY_TO_REGION,
     Normalizer,
 )
@@ -104,7 +104,7 @@ class TestNormalizerIntegration:
 
     def test_normalize_terminals_from_seed(self):
         """Normalizer should process seed collector output without errors."""
-        from worldenergydata.modules.lng_terminals.collectors.seed_collector import (
+        from worldenergydata.lng_terminals.collectors.seed_collector import (
             SeedCollector,
         )
 

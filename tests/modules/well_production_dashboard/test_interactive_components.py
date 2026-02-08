@@ -13,7 +13,7 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../src')))
 
-from worldenergydata.modules.well_production_dashboard.interactive_components import (
+from worldenergydata.well_production_dashboard.interactive_components import (
     QualityFilter,
     DateRangeSelector,
     WellChartLibrary,
@@ -142,7 +142,7 @@ class TestWellChartLibrary(unittest.TestCase):
             'temperature': np.random.rand(100) * 200
         })
     
-    @patch('worldenergydata.modules.well_production_dashboard.interactive_components.go')
+    @patch('worldenergydata.well_production_dashboard.interactive_components.go')
     def test_create_type_curve(self, mock_go):
         """Test type curve visualization."""
         mock_go.Figure.return_value = MagicMock()
@@ -150,7 +150,7 @@ class TestWellChartLibrary(unittest.TestCase):
         self.assertIsNotNone(chart)
         mock_go.Figure.assert_called_once()
     
-    @patch('worldenergydata.modules.well_production_dashboard.interactive_components.go')
+    @patch('worldenergydata.well_production_dashboard.interactive_components.go')
     def test_create_bubble_map(self, mock_go):
         """Test bubble map for multi-well visualization."""
         mock_go.Figure.return_value = MagicMock()
@@ -164,7 +164,7 @@ class TestWellChartLibrary(unittest.TestCase):
         self.assertIsNotNone(chart)
         mock_go.Figure.assert_called_once()
     
-    @patch('worldenergydata.modules.well_production_dashboard.interactive_components.go')
+    @patch('worldenergydata.well_production_dashboard.interactive_components.go')
     def test_create_waterfall_chart(self, mock_go):
         """Test waterfall chart for production changes."""
         mock_go.Figure.return_value = MagicMock()
@@ -172,7 +172,7 @@ class TestWellChartLibrary(unittest.TestCase):
         self.assertIsNotNone(chart)
         mock_go.Figure.assert_called_once()
     
-    @patch('worldenergydata.modules.well_production_dashboard.interactive_components.go')
+    @patch('worldenergydata.well_production_dashboard.interactive_components.go')
     def test_create_gauge_chart(self, mock_go):
         """Test gauge chart for KPIs."""
         mock_go.Figure.return_value = MagicMock()
@@ -185,7 +185,7 @@ class TestWellChartLibrary(unittest.TestCase):
         self.assertIsNotNone(chart)
         mock_go.Figure.assert_called_once()
     
-    @patch('worldenergydata.modules.well_production_dashboard.interactive_components.go')
+    @patch('worldenergydata.well_production_dashboard.interactive_components.go')
     def test_create_3d_surface(self, mock_go):
         """Test 3D surface plot for reservoir visualization."""
         mock_go.Figure.return_value = MagicMock()
@@ -283,7 +283,7 @@ class TestAnomalyHighlighter(unittest.TestCase):
             self.assertIn('y', ann)
             self.assertIn('text', ann)
     
-    @patch('worldenergydata.modules.well_production_dashboard.interactive_components.go')
+    @patch('worldenergydata.well_production_dashboard.interactive_components.go')
     def test_highlight_in_chart(self, mock_go):
         """Test highlighting anomalies in chart."""
         mock_figure = MagicMock()
@@ -355,7 +355,7 @@ class TestInteractiveDashboardComponents(unittest.TestCase):
         filtered = self.dashboard.apply_all_filters(data, filters)
         self.assertLessEqual(len(filtered), len(data))
     
-    @patch('worldenergydata.modules.well_production_dashboard.interactive_components.dcc')
+    @patch('worldenergydata.well_production_dashboard.interactive_components.dcc')
     def test_create_interactive_layout(self, mock_dcc):
         """Test interactive layout creation."""
         mock_dcc.Graph.return_value = MagicMock()

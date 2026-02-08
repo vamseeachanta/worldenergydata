@@ -11,7 +11,7 @@ command interface itself.
 import pytest
 from typer.testing import CliRunner
 
-from worldenergydata.modules.safety_analysis.cli import app
+from worldenergydata.safety_analysis.cli import app
 
 runner = CliRunner()
 

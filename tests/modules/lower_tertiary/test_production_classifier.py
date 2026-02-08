@@ -8,7 +8,7 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-from worldenergydata.analysis.lower_tertiary.production_classifier import (
+from worldenergydata.lower_tertiary.production_classifier import (
     ProductionClass,
     classify_production,
     summarize_classification,
@@ -123,7 +123,7 @@ def test_summarize_classification():
 # ---------------------------------------------------------------------------
 
 try:
-    from worldenergydata.analysis.lower_tertiary.v30_reproducer import (
+    from worldenergydata.lower_tertiary.v30_reproducer import (
         aggregate_production_by_development,
         load_ogor_production,
         load_v30_leases,

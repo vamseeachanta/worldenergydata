@@ -20,7 +20,7 @@ Complete documentation for the BSEE Comprehensive Report System, a powerful fram
 #### Generate Your First Report
 ```bash
 # Simple field report
-python -m worldenergydata.modules.bsee.reports.comprehensive generate \
+python -m worldenergydata.bsee.reports.comprehensive generate \
     --level field \
     --unit "Jack" \
     --format excel
@@ -37,7 +37,7 @@ report:
 ```
 
 ```bash
-python -m worldenergydata.modules.bsee.reports.comprehensive generate --config config.yaml
+python -m worldenergydata.bsee.reports.comprehensive generate --config config.yaml
 ```
 
 ### 📊 Report Types
@@ -79,7 +79,7 @@ BSEE Data → Aggregation → Templates → Export
 
 ```python
 # Main components
-from worldenergydata.modules.bsee.reports.comprehensive import (
+from worldenergydata.bsee.reports.comprehensive import (
     ReportController,      # Main orchestrator
     DataAggregator,       # Data processing
     TemplateEngine,       # Report templates
@@ -116,7 +116,7 @@ worldenergydata/modules/bsee/reports/comprehensive/
 pytest tests/modules/bsee/analysis/comprehensive-report-system/
 
 # With coverage
-pytest --cov=worldenergydata.modules.bsee.reports.comprehensive
+pytest --cov=worldenergydata.bsee.reports.comprehensive
 ```
 
 ### 📝 Configuration Examples
@@ -172,7 +172,7 @@ reports:
 
 1. **Monthly Production Reports**
    ```bash
-   python -m worldenergydata.modules.bsee.reports.comprehensive generate \
+   python -m worldenergydata.bsee.reports.comprehensive generate \
        --level field \
        --units "ALL" \
        --template operational \
@@ -182,7 +182,7 @@ reports:
 
 2. **Annual Financial Analysis**
    ```bash
-   python -m worldenergydata.modules.bsee.reports.comprehensive generate \
+   python -m worldenergydata.bsee.reports.comprehensive generate \
        --level block \
        --unit "Walker Ridge" \
        --template economic \
@@ -193,7 +193,7 @@ reports:
 
 3. **Compliance Audit Package**
    ```bash
-   python -m worldenergydata.modules.bsee.reports.comprehensive generate \
+   python -m worldenergydata.bsee.reports.comprehensive generate \
        --level field \
        --units "Jack,Julia,St Malo,Stones" \
        --template compliance \

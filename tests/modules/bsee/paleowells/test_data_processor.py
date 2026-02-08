@@ -9,7 +9,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from worldenergydata.modules.bsee.paleowells.data_processor import (
+from worldenergydata.bsee.paleowells.data_processor import (
     PaleowellsDataProcessor,
 )
 

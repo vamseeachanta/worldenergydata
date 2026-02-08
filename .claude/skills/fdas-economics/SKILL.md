@@ -112,7 +112,7 @@ fdas_economics:
 ### Financial Calculations
 
 ```python
-from worldenergydata.modules.fdas import (
+from worldenergydata.fdas import (
     calculate_npv,
     excel_like_mirr,
     calculate_irr,
@@ -149,7 +149,7 @@ metrics = calculate_all_metrics(cashflows, discount_rate=0.10)
 ### Assumptions Management
 
 ```python
-from worldenergydata.modules.fdas import AssumptionsManager, classify_dev_system_by_depth
+from worldenergydata.fdas import AssumptionsManager, classify_dev_system_by_depth
 
 # Load assumptions from Excel
 mgr = AssumptionsManager.from_excel('lease_assumptions.xlsx')
@@ -172,7 +172,7 @@ print(f"Royalty rate: {royalty_rate:.1%}")
 ### Production Processing
 
 ```python
-from worldenergydata.modules.fdas.data import ProductionProcessor
+from worldenergydata.fdas.data import ProductionProcessor
 import pandas as pd
 
 # Load production data
@@ -198,7 +198,7 @@ print(f"Total Production: {stats['TOTAL_OIL_BBL'].iloc[0]:,.0f} BBL")
 ### Drilling Timeline Extraction
 
 ```python
-from worldenergydata.modules.fdas.data import DrillingTimelineExtractor
+from worldenergydata.fdas.data import DrillingTimelineExtractor
 
 # Extract drilling timeline
 extractor = DrillingTimelineExtractor(well_data)
@@ -216,7 +216,7 @@ print(f"Total Drilling Months: {len(timeline['drilling_monthly'])}")
 ### Cashflow Engine
 
 ```python
-from worldenergydata.modules.fdas.analysis import CashflowEngine
+from worldenergydata.fdas.analysis import CashflowEngine
 from datetime import datetime
 
 # Initialize cashflow engine
@@ -244,7 +244,7 @@ for cf in cashflows[:3]:
 ### BSEE Data Integration
 
 ```python
-from worldenergydata.modules.fdas import BseeAdapter
+from worldenergydata.fdas import BseeAdapter
 from pathlib import Path
 
 # Initialize BSEE adapter
@@ -268,7 +268,7 @@ production = adapter.load_production(
 ### Excel Report Generation
 
 ```python
-from worldenergydata.modules.fdas.reports import FDASReportBuilder
+from worldenergydata.fdas.reports import FDASReportBuilder
 
 # Generate formatted Excel report
 builder = FDASReportBuilder(
@@ -285,16 +285,16 @@ print("Excel report generated: anchor_economics.xlsx")
 ### Complete Workflow Example
 
 ```python
-from worldenergydata.modules.fdas import (
+from worldenergydata.fdas import (
     AssumptionsManager,
     BseeAdapter,
     calculate_all_metrics
 )
-from worldenergydata.modules.fdas.data import (
+from worldenergydata.fdas.data import (
     ProductionProcessor,
     DrillingTimelineExtractor
 )
-from worldenergydata.modules.fdas.analysis import CashflowEngine
+from worldenergydata.fdas.analysis import CashflowEngine
 from pathlib import Path
 import numpy as np
 

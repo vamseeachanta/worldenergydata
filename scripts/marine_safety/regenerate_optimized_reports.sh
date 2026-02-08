@@ -47,7 +47,7 @@ import sys
 sys.path.insert(0, 'src')
 
 try:
-    from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import HatchMaloperationAnalyzer
+    from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import HatchMaloperationAnalyzer
 
     # Load data
     analyzer = HatchMaloperationAnalyzer()

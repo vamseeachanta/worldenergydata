@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from worldenergydata.modules.bsee.analysis.financial.report_generator import (
+from worldenergydata.bsee.analysis.financial.report_generator import (
     ExcelFormatter,
     ReportGenerator,
     format_currency,
@@ -258,7 +258,7 @@ class TestReportGenerator:
         wb.save(str(test_file))
 
         with patch(
-            "src.worldenergydata.modules.bsee.analysis.financial.report_generator.load_workbook"
+            "src.worldenergydata.bsee.analysis.financial.report_generator.load_workbook"
         ) as mock_load:
             mock_wb = MagicMock()
             mock_load.return_value = mock_wb

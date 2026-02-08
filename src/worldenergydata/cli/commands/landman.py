@@ -141,7 +141,7 @@ def search(
             )
 
             try:
-                from worldenergydata.modules.landman.landman import Landman
+                from worldenergydata.landman.landman import Landman
 
                 progress.update(
                     task, advance=10, description="[cyan]Loading Landman module..."
@@ -301,7 +301,7 @@ def lookup(
             task = progress.add_task("[cyan]Looking up record...", total=100)
 
             try:
-                from worldenergydata.modules.landman.landman import Landman
+                from worldenergydata.landman.landman import Landman
 
                 progress.update(
                     task, advance=20, description="[cyan]Loading Landman module..."
@@ -392,11 +392,11 @@ def county_info(
             )
 
             try:
-                from worldenergydata.modules.landman.exceptions import (
+                from worldenergydata.landman.exceptions import (
                     CountyNotFoundError,
                     StateNotSupportedError,
                 )
-                from worldenergydata.modules.landman.providers.county_reference import (
+                from worldenergydata.landman.providers.county_reference import (
                     CountyReferenceProvider,
                 )
 
@@ -508,8 +508,8 @@ def providers(
             task = progress.add_task("[cyan]Loading provider information...", total=100)
 
             try:
-                from worldenergydata.modules.landman.landman import Landman
-                from worldenergydata.modules.landman.providers.county_reference import (
+                from worldenergydata.landman.landman import Landman
+                from worldenergydata.landman.providers.county_reference import (
                     CountyReferenceProvider,
                 )
 
@@ -686,8 +686,8 @@ def status(
 
             # Try to load module
             try:
-                from worldenergydata.modules.landman.landman import Landman
-                from worldenergydata.modules.landman.providers.county_reference import (
+                from worldenergydata.landman.landman import Landman
+                from worldenergydata.landman.providers.county_reference import (
                     CountyReferenceProvider,
                 )
 
@@ -747,7 +747,7 @@ def status(
         # Module status
         if status_data["module_loaded"]:
             table.add_row(
-                "Module", "[green]Loaded[/green]", "worldenergydata.modules.landman"
+                "Module", "[green]Loaded[/green]", "worldenergydata.landman"
             )
         else:
             table.add_row(
@@ -868,7 +868,7 @@ def callback() -> None:
 
 def _display_search_results(result, verbose: bool = False) -> None:
     """Display search results in table format."""
-    from worldenergydata.modules.landman.models import OwnerSearchResult
+    from worldenergydata.landman.models import OwnerSearchResult
 
     if isinstance(result, OwnerSearchResult):
         # Display ownership records
@@ -1001,7 +1001,7 @@ def _display_title_records(records, verbose: bool = False) -> None:
 
 def _display_county_info(info) -> None:
     """Display county clerk information in formatted panel."""
-    from worldenergydata.modules.landman.models import CountyClerkInfo
+    from worldenergydata.landman.models import CountyClerkInfo
 
     if isinstance(info, CountyClerkInfo):
         lines = []

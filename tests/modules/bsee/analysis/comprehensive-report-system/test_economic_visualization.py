@@ -10,12 +10,12 @@ import plotly.graph_objects as go
 import pytest
 from plotly.subplots import make_subplots
 
-from worldenergydata.modules.bsee.reports.comprehensive.hierarchical_aggregator import (
+from worldenergydata.bsee.reports.comprehensive.hierarchical_aggregator import (
     CostStructure,
     PriceDeck,
 )
-from worldenergydata.modules.bsee.reports.comprehensive.models import ProductionMetrics
-from worldenergydata.modules.bsee.reports.comprehensive.templates.economic_template import (
+from worldenergydata.bsee.reports.comprehensive.models import ProductionMetrics
+from worldenergydata.bsee.reports.comprehensive.templates.economic_template import (
     EconomicTemplate,
     SensitivityAnalysis,
     WaterfallComponent,

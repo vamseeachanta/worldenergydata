@@ -1,6 +1,9 @@
-# ABOUTME: Provides economic and production analysis utilities for worldenergydata
-# ABOUTME: Exposes lower tertiary analytical subpackages
+# ABOUTME: Analysis package for worldenergydata (placeholder after lower_tertiary moved).
+# ABOUTME: Lower tertiary is now at worldenergydata.lower_tertiary.
 
-"""Top-level analysis package for worldenergydata."""
+"""Analysis package for worldenergydata.
 
-__all__ = ["lower_tertiary"]
+Note: lower_tertiary has been moved to worldenergydata.lower_tertiary (WRK-096).
+"""
+
+__all__: list[str] = []

@@ -149,7 +149,7 @@ def calculate_npv(cashflows, discount_rate, n_months):
 
 ### Module Structure
 ```
-worldenergydata.modules.bsee.analysis.sme_financial/
+worldenergydata.bsee.analysis.sme_financial/
 ├── __init__.py
 ├── config.py              # Lease mappings and constants
 ├── data_loader.py         # Input file parsing

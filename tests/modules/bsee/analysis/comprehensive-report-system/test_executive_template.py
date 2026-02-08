@@ -9,7 +9,7 @@ import json
 import pandas as pd
 import numpy as np
 
-from worldenergydata.modules.bsee.reports.comprehensive.templates.executive_template import (
+from worldenergydata.bsee.reports.comprehensive.templates.executive_template import (
     ExecutiveTemplate,
     ExecutiveKPI,
     StrategicMetric,

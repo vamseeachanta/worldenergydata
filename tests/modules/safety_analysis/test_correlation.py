@@ -4,14 +4,14 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from worldenergydata.modules.safety_analysis.analysis.correlation import (
+from worldenergydata.safety_analysis.analysis.correlation import (
     LaggedCrossCorrelation,
     create_incident_counts,
     create_observation_counts,
     crosscorr,
     extract_asset_rates,
 )
-from worldenergydata.modules.safety_analysis.exceptions import SafetyCorrelationError
+from worldenergydata.safety_analysis.exceptions import SafetyCorrelationError
 
 
 class TestCrosscorr:

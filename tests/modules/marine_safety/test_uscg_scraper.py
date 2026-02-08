@@ -11,7 +11,7 @@ import requests
 from requests.exceptions import RequestException, Timeout, ConnectionError
 from bs4 import BeautifulSoup
 
-from worldenergydata.modules.marine_safety.scrapers.uscg_scraper import USCGMarineCasualtyScraper
+from worldenergydata.marine_safety.scrapers.uscg_scraper import USCGMarineCasualtyScraper
 
 
 @pytest.fixture

@@ -63,7 +63,7 @@ verification:
 Execute the verification using the CLI:
 
 ```bash
-python -m worldenergydata.modules.analysis.verification.cli verify \
+python -m worldenergydata.analysis.verification.cli verify \
     --config verification_config.yaml
 ```
 
@@ -162,8 +162,8 @@ verification:
 ### Step 3: Run Multi-Field Verification
 
 ```python
-from worldenergydata.modules.analysis.verification import VerificationEngine
-from worldenergydata.modules.analysis.verification.config import MultiFieldConfig
+from worldenergydata.analysis.verification import VerificationEngine
+from worldenergydata.analysis.verification.config import MultiFieldConfig
 
 # Load configuration
 config = MultiFieldConfig.from_yaml("multi_field_config.yaml")
@@ -237,7 +237,7 @@ cross_reference:
 ### Step 3: Run Cross-Reference
 
 ```python
-from worldenergydata.modules.analysis.verification.cross_reference import CrossReferenceModule
+from worldenergydata.analysis.verification.cross_reference import CrossReferenceModule
 
 # Initialize cross-reference module
 cross_ref = CrossReferenceModule.from_config("cross_reference_config.yaml")
@@ -329,7 +329,7 @@ workflow:
 ### Step 2: Implement Monthly Verification
 
 ```python
-from worldenergydata.modules.analysis.verification.engine import WorkflowEngine
+from worldenergydata.analysis.verification.engine import WorkflowEngine
 from datetime import datetime, timedelta
 
 class MonthlyVerification:
@@ -447,7 +447,7 @@ anomaly_detection:
 ### Step 2: Run Anomaly Investigation
 
 ```python
-from worldenergydata.modules.analysis.verification.quality import AnomalyInvestigator
+from worldenergydata.analysis.verification.quality import AnomalyInvestigator
 
 class AnomalyWorkflow:
     def __init__(self, config_file):

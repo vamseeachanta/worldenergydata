@@ -2,7 +2,7 @@
 
 from unittest.mock import patch
 
-from worldenergydata.modules.bsee.data.refresh.data_refresh_enhanced import (
+from worldenergydata.bsee.data.refresh.data_refresh_enhanced import (
     DataRefreshEnhanced,
 )
 

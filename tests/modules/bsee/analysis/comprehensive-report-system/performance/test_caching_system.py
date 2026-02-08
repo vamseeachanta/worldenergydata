@@ -53,12 +53,12 @@ class TestRedisLikeCaching:
     @pytest.fixture
     def cache_instance(self):
         """Create a cache instance for testing."""
-        from worldenergydata.modules.bsee.reports.comprehensive.performance.cache import MetricsCache
+        from worldenergydata.bsee.reports.comprehensive.performance.cache import MetricsCache
         return MetricsCache(max_size_mb=100, ttl_seconds=3600)
     
     def test_cache_initialization(self):
         """Test cache system initialization."""
-        from worldenergydata.modules.bsee.reports.comprehensive.performance.cache import MetricsCache
+        from worldenergydata.bsee.reports.comprehensive.performance.cache import MetricsCache
         
         # Test default initialization
         cache = MetricsCache()
@@ -293,8 +293,8 @@ class TestRedisLikeCaching:
     @pytest.mark.integration
     def test_cache_integration_with_aggregators(self):
         """Test cache integration with BSEE aggregators."""
-        from worldenergydata.modules.bsee.reports.comprehensive.performance.cache import MetricsCache
-        from worldenergydata.modules.bsee.reports.comprehensive.aggregators.block_aggregator_enhanced import BlockAggregator
+        from worldenergydata.bsee.reports.comprehensive.performance.cache import MetricsCache
+        from worldenergydata.bsee.reports.comprehensive.aggregators.block_aggregator_enhanced import BlockAggregator
         
         cache = MetricsCache()
         aggregator = BlockAggregator()

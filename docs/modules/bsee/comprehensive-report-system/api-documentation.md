@@ -18,7 +18,7 @@ The BSEE Comprehensive Report System provides a Python API for programmatic repo
 
 ### Installation
 ```python
-from worldenergydata.modules.bsee.reports.comprehensive import (
+from worldenergydata.bsee.reports.comprehensive import (
     ReportController,
     DataAggregator,
     TemplateEngine,
@@ -526,7 +526,7 @@ viz.export_static(dashboard, format='png', path='dashboard.png')
 ### Complete Workflow Example
 
 ```python
-from worldenergydata.modules.bsee.reports.comprehensive import (
+from worldenergydata.bsee.reports.comprehensive import (
     ReportController,
     DataLoader,
     ConfigManager
@@ -669,7 +669,7 @@ class ValidationError(ReportGenerationError):
 ### Error Handling Example
 
 ```python
-from worldenergydata.modules.bsee.reports.comprehensive.exceptions import (
+from worldenergydata.bsee.reports.comprehensive.exceptions import (
     DataNotFoundError,
     TemplateError,
     ExportError
@@ -715,7 +715,7 @@ def safe_report_generation(unit_name: str) -> Optional[Report]:
 
 ```python
 from functools import lru_cache
-from worldenergydata.modules.bsee.reports.comprehensive.cache import CacheManager
+from worldenergydata.bsee.reports.comprehensive.cache import CacheManager
 
 class OptimizedReportController(ReportController):
     """Report controller with performance optimizations."""

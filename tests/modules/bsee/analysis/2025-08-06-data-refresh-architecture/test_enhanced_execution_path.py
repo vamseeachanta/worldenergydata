@@ -17,10 +17,10 @@ import os
 project_root = Path(__file__).parent.parent.parent.parent.parent.parent
 sys.path.insert(0, str(project_root / 'src'))
 
-from worldenergydata.modules.bsee.data.refresh.data_refresh_enhanced import DataRefreshEnhanced
-from worldenergydata.modules.bsee.data.config import ConfigRouter
-from worldenergydata.modules.bsee.data.scrapers import BSEEWebScraper
-from worldenergydata.modules.bsee.data.processors import MemoryProcessor
+from worldenergydata.bsee.data.refresh.data_refresh_enhanced import DataRefreshEnhanced
+from worldenergydata.bsee.data.config import ConfigRouter
+from worldenergydata.bsee.data.scrapers import BSEEWebScraper
+from worldenergydata.bsee.data.processors import MemoryProcessor
 
 
 class TestEnhancedExecutionPath(unittest.TestCase):
@@ -281,8 +281,8 @@ class TestParallelSystemIndependence(unittest.TestCase):
         
         # Import both modules to ensure no conflicts
         try:
-            from worldenergydata.modules.bsee.data.refresh.data_refresh import DataRefresh
-            from worldenergydata.modules.bsee.data.refresh.data_refresh_enhanced import DataRefreshEnhanced
+            from worldenergydata.bsee.data.refresh.data_refresh import DataRefresh
+            from worldenergydata.bsee.data.refresh.data_refresh_enhanced import DataRefreshEnhanced
             
             # Instantiate both classes
             legacy = DataRefresh()

@@ -64,39 +64,39 @@ python -m worldenergydata fdas --help
 
 | Old Import Path (Deprecated) | New Import Path |
 |------------------------------|-----------------|
-| `from worldenergydata.modules.bsee.data._by_api.well import WellData` | `from worldenergydata.modules.bsee.data.loaders.api.well import WellData` |
-| `from worldenergydata.modules.bsee.data._by_api.router import WellRouter` | `from worldenergydata.modules.bsee.data.loaders.api.router import WellRouter` |
-| `from worldenergydata.modules.bsee.data._by_api import *` | `from worldenergydata.modules.bsee.data.loaders.api import *` |
+| `from worldenergydata.bsee.data._by_api.well import WellData` | `from worldenergydata.bsee.data.loaders.api.well import WellData` |
+| `from worldenergydata.bsee.data._by_api.router import WellRouter` | `from worldenergydata.bsee.data.loaders.api.router import WellRouter` |
+| `from worldenergydata.bsee.data._by_api import *` | `from worldenergydata.bsee.data.loaders.api import *` |
 
 ### BSEE Data Loaders (by Block)
 
 | Old Import Path (Deprecated) | New Import Path |
 |------------------------------|-----------------|
-| `from worldenergydata.modules.bsee.data._by_block.router import BlockRouter` | `from worldenergydata.modules.bsee.data.loaders.block.router import BlockRouter` |
-| `from worldenergydata.modules.bsee.data._by_block.data_from_local_files import DataFromLocalFiles` | `from worldenergydata.modules.bsee.data.loaders.block.local_files import DataFromLocalFiles` |
-| `from worldenergydata.modules.bsee.data._by_block.war_data import WARDataFromBin` | `from worldenergydata.modules.bsee.data.loaders.block.war_data import WARDataFromBin` |
+| `from worldenergydata.bsee.data._by_block.router import BlockRouter` | `from worldenergydata.bsee.data.loaders.block.router import BlockRouter` |
+| `from worldenergydata.bsee.data._by_block.data_from_local_files import DataFromLocalFiles` | `from worldenergydata.bsee.data.loaders.block.local_files import DataFromLocalFiles` |
+| `from worldenergydata.bsee.data._by_block.war_data import WARDataFromBin` | `from worldenergydata.bsee.data.loaders.block.war_data import WARDataFromBin` |
 
 ### BSEE Data Loaders (by Lease)
 
 | Old Import Path (Deprecated) | New Import Path |
 |------------------------------|-----------------|
-| `from worldenergydata.modules.bsee.data._by_lease.router import LeaseRouter` | `from worldenergydata.modules.bsee.data.loaders.lease.router import LeaseRouter` |
-| `from worldenergydata.modules.bsee.data._by_lease.data_from_local_files import DataFromLocalFiles` | `from worldenergydata.modules.bsee.data.loaders.lease.local_files import DataFromLocalFiles` |
+| `from worldenergydata.bsee.data._by_lease.router import LeaseRouter` | `from worldenergydata.bsee.data.loaders.lease.router import LeaseRouter` |
+| `from worldenergydata.bsee.data._by_lease.data_from_local_files import DataFromLocalFiles` | `from worldenergydata.bsee.data.loaders.lease.local_files import DataFromLocalFiles` |
 
 ### BSEE Data Sources (Binary)
 
 | Old Import Path (Deprecated) | New Import Path |
 |------------------------------|-----------------|
-| `from worldenergydata.modules.bsee.data._from_bin.api_data import APIData` | `from worldenergydata.modules.bsee.data.sources.bin.api_data import APIData` |
-| `from worldenergydata.modules.bsee.data._from_bin.block_data import BlockData` | `from worldenergydata.modules.bsee.data.sources.bin.block_data import BlockData` |
-| `from worldenergydata.modules.bsee.data._from_bin.lease_data import LeaseData` | `from worldenergydata.modules.bsee.data.sources.bin.lease_data import LeaseData` |
+| `from worldenergydata.bsee.data._from_bin.api_data import APIData` | `from worldenergydata.bsee.data.sources.bin.api_data import APIData` |
+| `from worldenergydata.bsee.data._from_bin.block_data import BlockData` | `from worldenergydata.bsee.data.sources.bin.block_data import BlockData` |
+| `from worldenergydata.bsee.data._from_bin.lease_data import LeaseData` | `from worldenergydata.bsee.data.sources.bin.lease_data import LeaseData` |
 
 ### BSEE Data Sources (ZIP)
 
 | Old Import Path (Deprecated) | New Import Path |
 |------------------------------|-----------------|
-| `from worldenergydata.modules.bsee.data._from_zip.production_data import GetProdDataFromZip` | `from worldenergydata.modules.bsee.data.sources.zip.production_data import GetProdDataFromZip` |
-| `from worldenergydata.modules.bsee.data._from_zip.well_data import WellDataFromZip` | `from worldenergydata.modules.bsee.data.sources.zip.well_data import WellDataFromZip` |
+| `from worldenergydata.bsee.data._from_zip.production_data import GetProdDataFromZip` | `from worldenergydata.bsee.data.sources.zip.production_data import GetProdDataFromZip` |
+| `from worldenergydata.bsee.data._from_zip.well_data import WellDataFromZip` | `from worldenergydata.bsee.data.sources.zip.well_data import WellDataFromZip` |
 
 ## Deprecation Timeline
 
@@ -131,16 +131,16 @@ Use these search patterns to find deprecated imports:
 
 ```bash
 # Find all deprecated _by_api imports
-grep -r "from worldenergydata.modules.bsee.data._by_api" .
+grep -r "from worldenergydata.bsee.data._by_api" .
 
 # Find all deprecated _by_block imports
-grep -r "from worldenergydata.modules.bsee.data._by_block" .
+grep -r "from worldenergydata.bsee.data._by_block" .
 
 # Find all deprecated _from_bin imports
-grep -r "from worldenergydata.modules.bsee.data._from_bin" .
+grep -r "from worldenergydata.bsee.data._from_bin" .
 
 # Find all deprecated _from_zip imports
-grep -r "from worldenergydata.modules.bsee.data._from_zip" .
+grep -r "from worldenergydata.bsee.data._from_zip" .
 ```
 
 ### Step 3: Update Imports
@@ -149,12 +149,12 @@ Replace deprecated imports with new paths:
 
 ```python
 # Before (deprecated)
-from worldenergydata.modules.bsee.data._by_api.well import WellData
-from worldenergydata.modules.bsee.data._from_bin.api_data import APIData
+from worldenergydata.bsee.data._by_api.well import WellData
+from worldenergydata.bsee.data._from_bin.api_data import APIData
 
 # After
-from worldenergydata.modules.bsee.data.loaders.api.well import WellData
-from worldenergydata.modules.bsee.data.sources.bin.api_data import APIData
+from worldenergydata.bsee.data.loaders.api.well import WellData
+from worldenergydata.bsee.data.sources.bin.api_data import APIData
 ```
 
 ### Step 4: Use Common Utilities
@@ -174,34 +174,34 @@ from worldenergydata.common.validators import validate_api_number
 
 ```python
 # Before
-from worldenergydata.modules.bsee.data._by_api import *
+from worldenergydata.bsee.data._by_api import *
 
 # After
-from worldenergydata.modules.bsee.data.loaders.api import *
+from worldenergydata.bsee.data.loaders.api import *
 ```
 
 ### Pattern 2: Router Classes
 
 ```python
 # Before
-from worldenergydata.modules.bsee.data._by_api.router import WellRouter
-from worldenergydata.modules.bsee.data._by_block.router import BlockRouter
+from worldenergydata.bsee.data._by_api.router import WellRouter
+from worldenergydata.bsee.data._by_block.router import BlockRouter
 
 # After
-from worldenergydata.modules.bsee.data.loaders.api.router import WellRouter
-from worldenergydata.modules.bsee.data.loaders.block.router import BlockRouter
+from worldenergydata.bsee.data.loaders.api.router import WellRouter
+from worldenergydata.bsee.data.loaders.block.router import BlockRouter
 ```
 
 ### Pattern 3: Data Source Classes
 
 ```python
 # Before
-from worldenergydata.modules.bsee.data._from_bin.api_data import APIData
-from worldenergydata.modules.bsee.data._from_zip.production_data import GetProdDataFromZip
+from worldenergydata.bsee.data._from_bin.api_data import APIData
+from worldenergydata.bsee.data._from_zip.production_data import GetProdDataFromZip
 
 # After
-from worldenergydata.modules.bsee.data.sources.bin.api_data import APIData
-from worldenergydata.modules.bsee.data.sources.zip.production_data import GetProdDataFromZip
+from worldenergydata.bsee.data.sources.bin.api_data import APIData
+from worldenergydata.bsee.data.sources.zip.production_data import GetProdDataFromZip
 ```
 
 ## Backward Compatibility
@@ -213,9 +213,9 @@ Example of what happens with old imports:
 ```python
 >>> import warnings
 >>> warnings.filterwarnings('default')
->>> from worldenergydata.modules.bsee.data._by_api import *
-DeprecationWarning: Importing from 'worldenergydata.modules.bsee.data._by_api' is deprecated.
-Please use 'worldenergydata.modules.bsee.data.loaders.api' instead.
+>>> from worldenergydata.bsee.data._by_api import *
+DeprecationWarning: Importing from 'worldenergydata.bsee.data._by_api' is deprecated.
+Please use 'worldenergydata.bsee.data.loaders.api' instead.
 This import path will be removed in version 2.0.0.
 ```
 
@@ -227,8 +227,8 @@ After updating imports, verify everything works:
 # Run import tests
 uv run python -c "from worldenergydata import *"
 uv run python -c "from worldenergydata.common import *"
-uv run python -c "from worldenergydata.modules.bsee.data.loaders import *"
-uv run python -c "from worldenergydata.modules.bsee.data.sources import *"
+uv run python -c "from worldenergydata.bsee.data.loaders import *"
+uv run python -c "from worldenergydata.bsee.data.sources import *"
 
 # Run your test suite with warnings as errors
 uv run pytest --fail-on-warnings -W error::DeprecationWarning
@@ -251,14 +251,14 @@ The new unified CLI replaces individual module entry points.
 
 ```bash
 # Old BSEE commands
-python -m worldenergydata.modules.bsee.analysis.bsee_analysis
-python -m worldenergydata.modules.bsee.analysis.financial.cli_interface
+python -m worldenergydata.bsee.analysis.bsee_analysis
+python -m worldenergydata.bsee.analysis.financial.cli_interface
 
 # Old Marine Safety commands
-python -m worldenergydata.modules.marine_safety.scrapers.uscg_scraper
+python -m worldenergydata.marine_safety.scrapers.uscg_scraper
 
 # Old FDAS commands
-python -m worldenergydata.modules.fdas.core.financial
+python -m worldenergydata.fdas.core.financial
 ```
 
 ### New CLI Commands
@@ -292,8 +292,8 @@ worldenergydata fdas classify 5000
 
 | Old Command | New Command |
 |-------------|-------------|
-| `python -m worldenergydata.modules.bsee.analysis.bsee_analysis --block 759` | `worldenergydata bsee analyze --block 759` |
-| `python -m worldenergydata.modules.bsee.analysis.financial.cli_interface` | `worldenergydata fdas analyze` |
+| `python -m worldenergydata.bsee.analysis.bsee_analysis --block 759` | `worldenergydata bsee analyze --block 759` |
+| `python -m worldenergydata.bsee.analysis.financial.cli_interface` | `worldenergydata fdas analyze` |
 | Direct scraper execution | `worldenergydata marine-safety scrape uscg` |
 | Direct financial calculation scripts | `worldenergydata fdas calculate-npv` |
 

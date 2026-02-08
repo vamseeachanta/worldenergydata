@@ -42,7 +42,7 @@ pip install openpyxl weasyprint plotly jinja2 click pyyaml pandas numpy
 The module is part of the worldenergydata package:
 ```bash
 cd /path/to/worldenergydata
-python -m worldenergydata.modules.bsee.reports.comprehensive --help
+python -m worldenergydata.bsee.reports.comprehensive --help
 ```
 
 ## Quick Start
@@ -50,7 +50,7 @@ python -m worldenergydata.modules.bsee.reports.comprehensive --help
 ### Generate a Basic Report
 ```bash
 # Generate a block-level report for Atwater Valley
-python -m worldenergydata.modules.bsee.reports.comprehensive generate \
+python -m worldenergydata.bsee.reports.comprehensive generate \
     --level block \
     --unit "Atwater Valley" \
     --format excel \
@@ -60,7 +60,7 @@ python -m worldenergydata.modules.bsee.reports.comprehensive generate \
 ### Generate Multiple Reports
 ```bash
 # Generate reports for multiple fields
-python -m worldenergydata.modules.bsee.reports.comprehensive generate \
+python -m worldenergydata.bsee.reports.comprehensive generate \
     --level field \
     --units "Jack,Julia,St Malo,Stones" \
     --format pdf \
@@ -71,7 +71,7 @@ python -m worldenergydata.modules.bsee.reports.comprehensive generate \
 
 ### Main Command Structure
 ```
-python -m worldenergydata.modules.bsee.reports.comprehensive [COMMAND] [OPTIONS]
+python -m worldenergydata.bsee.reports.comprehensive [COMMAND] [OPTIONS]
 ```
 
 ### Available Commands
@@ -93,14 +93,14 @@ Generate reports for specified organizational units.
 **Examples:**
 ```bash
 # Single field report
-python -m worldenergydata.modules.bsee.reports.comprehensive generate \
+python -m worldenergydata.bsee.reports.comprehensive generate \
     --level field \
     --unit "Jack" \
     --template economic \
     --format excel
 
 # Multiple lease reports with date range
-python -m worldenergydata.modules.bsee.reports.comprehensive generate \
+python -m worldenergydata.bsee.reports.comprehensive generate \
     --level lease \
     --units "WC544-001,WC544-002" \
     --start-date 2023-01-01 \
@@ -118,7 +118,7 @@ Export previously generated reports to different formats.
 
 **Example:**
 ```bash
-python -m worldenergydata.modules.bsee.reports.comprehensive export \
+python -m worldenergydata.bsee.reports.comprehensive export \
     --input reports/jack_field_report.json \
     --format pdf \
     --output reports/jack_field_report.pdf
@@ -135,7 +135,7 @@ Perform quick analysis without full report generation.
 
 **Example:**
 ```bash
-python -m worldenergydata.modules.bsee.reports.comprehensive analyze \
+python -m worldenergydata.bsee.reports.comprehensive analyze \
     --level field \
     --unit "Jack" \
     --metric production \
@@ -152,7 +152,7 @@ Create or modify configuration files.
 
 **Example:**
 ```bash
-python -m worldenergydata.modules.bsee.reports.comprehensive configure \
+python -m worldenergydata.bsee.reports.comprehensive configure \
     --create \
     --template economic \
     --output config/economic_reports.yaml
@@ -240,7 +240,7 @@ options:
 
 Run with configuration:
 ```bash
-python -m worldenergydata.modules.bsee.reports.comprehensive generate \
+python -m worldenergydata.bsee.reports.comprehensive generate \
     --config config/report_config.yaml
 ```
 
@@ -258,7 +258,7 @@ export BSEE_REPORT_CACHE_ENABLED=true
 Generate monthly production reports for all fields in Walker Ridge:
 
 ```bash
-python -m worldenergydata.modules.bsee.reports.comprehensive generate \
+python -m worldenergydata.bsee.reports.comprehensive generate \
     --level block \
     --unit "Walker Ridge" \
     --template operational \
@@ -272,7 +272,7 @@ python -m worldenergydata.modules.bsee.reports.comprehensive generate \
 Create compliance reports for regulatory audit:
 
 ```bash
-python -m worldenergydata.modules.bsee.reports.comprehensive generate \
+python -m worldenergydata.bsee.reports.comprehensive generate \
     --level field \
     --units "Jack,Julia,St Malo,Stones" \
     --template compliance \
@@ -284,7 +284,7 @@ python -m worldenergydata.modules.bsee.reports.comprehensive generate \
 Generate executive dashboard for all blocks:
 
 ```bash
-python -m worldenergydata.modules.bsee.reports.comprehensive generate \
+python -m worldenergydata.bsee.reports.comprehensive generate \
     --level block \
     --units "ALL" \
     --template executive \
@@ -319,7 +319,7 @@ output:
 ```
 
 ```bash
-python -m worldenergydata.modules.bsee.reports.comprehensive generate \
+python -m worldenergydata.bsee.reports.comprehensive generate \
     --config batch_reports.yaml
 ```
 

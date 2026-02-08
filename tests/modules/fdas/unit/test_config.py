@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from worldenergydata.modules.fdas.core.config import (
+from worldenergydata.fdas.core.config import (
     DEFAULT_ASSUMPTIONS,
     AssumptionsManager,
     ConfigurationError,

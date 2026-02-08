@@ -114,7 +114,7 @@ def scrape_uscg(
             task = progress.add_task("[cyan]Initializing USCG scraper...", total=100)
 
             try:
-                from worldenergydata.modules.marine_safety.scrapers.uscg_scraper import (
+                from worldenergydata.marine_safety.scrapers.uscg_scraper import (
                     USCGMarineCasualtyScraper,
                 )
 
@@ -279,7 +279,7 @@ def scrape_maib(
             task = progress.add_task("[cyan]Scraping MAIB data...", total=None)
 
             try:
-                from worldenergydata.modules.marine_safety.importers.maib_importer import (
+                from worldenergydata.marine_safety.importers.maib_importer import (
                     MAIBImporter,
                 )
 
@@ -363,7 +363,7 @@ def db_init(
             task = progress.add_task("[cyan]Initializing database schema...", total=100)
 
             try:
-                from worldenergydata.modules.marine_safety.database.init_db import (
+                from worldenergydata.marine_safety.database.init_db import (
                     DatabaseInitializer,
                 )
 
@@ -493,7 +493,7 @@ def stats(
             }
 
             try:
-                from worldenergydata.modules.marine_safety.database.db_manager import (
+                from worldenergydata.marine_safety.database.db_manager import (
                     get_db_manager,
                 )
 
@@ -674,7 +674,7 @@ def export(
             try:
                 import pandas as pd
 
-                from worldenergydata.modules.marine_safety.database.db_manager import (
+                from worldenergydata.marine_safety.database.db_manager import (
                     get_db_manager,
                 )
 
@@ -844,7 +844,7 @@ def analyze(
             task = progress.add_task("[cyan]Analyzing incident data...", total=None)
 
             try:
-                from worldenergydata.modules.marine_safety.analysis.cause_analyzer import (
+                from worldenergydata.marine_safety.analysis.cause_analyzer import (
                     CauseAnalyzer,
                 )
 

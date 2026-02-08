@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from worldenergydata.modules.bsee.data.models.rig_fleet import RigFleetEntry
+from worldenergydata.bsee.data.models.rig_fleet import RigFleetEntry
 
 
 class TestRigFleetEntry:

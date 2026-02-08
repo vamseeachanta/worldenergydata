@@ -369,7 +369,7 @@ The SODIR module is designed to work seamlessly with the existing BSEE module:
 
 ```python
 from tests.modules.sodir_module.sodir import SodirModule
-from src.worldenergydata.modules.bsee.bsee import BSEEModule
+from src.worldenergydata.bsee.bsee import BSEEModule
 
 # Initialize both modules
 sodir = SodirModule()

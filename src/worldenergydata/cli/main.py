@@ -62,7 +62,7 @@ from worldenergydata.cli.commands import (
     sodir,
     texas_rrc,
 )
-from worldenergydata.modules.safety_analysis import cli as safety_analysis_cli
+from worldenergydata.safety_analysis import cli as safety_analysis_cli
 
 # Initialize console for rich output
 console = Console()

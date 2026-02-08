@@ -10,10 +10,10 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-from worldenergydata.modules.safety_analysis.risk_index.data_assembler import (
+from worldenergydata.safety_analysis.risk_index.data_assembler import (
     DataAssembler,
 )
-from worldenergydata.modules.safety_analysis.taxonomy.incident_classifier import (
+from worldenergydata.safety_analysis.taxonomy.incident_classifier import (
     IncidentClassifier,
 )
 

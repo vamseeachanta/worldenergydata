@@ -5,12 +5,12 @@ from datetime import datetime
 import pytest
 from pydantic import ValidationError
 
-from worldenergydata.modules.safety_analysis.constants import (
+from worldenergydata.safety_analysis.constants import (
     IncidentType,
     ObservationType,
     SeverityLevel,
 )
-from worldenergydata.modules.safety_analysis.core.models import (
+from worldenergydata.safety_analysis.core.models import (
     ClassificationResult,
     CorrelationResult,
     SafetyIncident,

@@ -75,7 +75,7 @@ cache:
 ### Implementation Example
 
 ```python
-from worldenergydata.modules.bsee.reports.comprehensive.cache import CacheManager
+from worldenergydata.bsee.reports.comprehensive.cache import CacheManager
 
 # Configure cache
 cache_config = {

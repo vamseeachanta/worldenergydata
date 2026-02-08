@@ -14,19 +14,19 @@ from typing import Any
 
 import pytest
 
-from worldenergydata.modules.lng_terminals.collectors.base_collector import (
+from worldenergydata.lng_terminals.collectors.base_collector import (
     BaseCollector,
 )
-from worldenergydata.modules.lng_terminals.config import CacheConfig, LNGTerminalsConfig
-from worldenergydata.modules.lng_terminals.constants import (
+from worldenergydata.lng_terminals.config import CacheConfig, LNGTerminalsConfig
+from worldenergydata.lng_terminals.constants import (
     RefreshMode,
     SourceReliability,
     TerminalFunction,
     TerminalStatus,
     TerminalType,
 )
-from worldenergydata.modules.lng_terminals.exceptions import LNGCollectionError
-from worldenergydata.modules.lng_terminals.models.terminal import LNGTerminal
+from worldenergydata.lng_terminals.exceptions import LNGCollectionError
+from worldenergydata.lng_terminals.models.terminal import LNGTerminal
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -97,7 +97,7 @@ def reset_config(tmp_path):
     Points the cache directory at the pytest ``tmp_path`` so that each
     test gets an isolated, empty cache on the real filesystem.
     """
-    import worldenergydata.modules.lng_terminals.config as config_module
+    import worldenergydata.lng_terminals.config as config_module
 
     config_module._config = LNGTerminalsConfig(
         cache=CacheConfig(
@@ -361,7 +361,7 @@ class TestCacheRoundTrip:
 
     def test_cache_disabled_skips_write(self, sample_terminals, tmp_path):
         """When config.cache.enabled is False, no cache files are created."""
-        import worldenergydata.modules.lng_terminals.config as config_module
+        import worldenergydata.lng_terminals.config as config_module
 
         config_module._config = LNGTerminalsConfig(
             cache=CacheConfig(
@@ -531,7 +531,7 @@ class TestDefaultRefreshMode:
 
     def test_config_default_full(self, tmp_path):
         """Changing config default to 'full' is respected by the collector."""
-        import worldenergydata.modules.lng_terminals.config as config_module
+        import worldenergydata.lng_terminals.config as config_module
 
         config_module._config = LNGTerminalsConfig(
             cache=CacheConfig(

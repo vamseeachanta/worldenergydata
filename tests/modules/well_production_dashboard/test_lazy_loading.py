@@ -10,7 +10,7 @@ from unittest.mock import MagicMock, Mock, patch
 import numpy as np
 import pandas as pd
 
-from worldenergydata.modules.well_production_dashboard.query_optimizer import (
+from worldenergydata.well_production_dashboard.query_optimizer import (
     LazyDataLoader,
     LazyLoadConfig,
     QueryOptimizer,
@@ -162,16 +162,16 @@ class TestQueryOptimizerLazyLoading(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures."""
         with patch(
-            "src.worldenergydata.modules.well_production_dashboard.query_optimizer.HierarchicalDataLoader"
+            "src.worldenergydata.well_production_dashboard.query_optimizer.HierarchicalDataLoader"
         ):
             with patch(
-                "src.worldenergydata.modules.well_production_dashboard.query_optimizer.APIData"
+                "src.worldenergydata.well_production_dashboard.query_optimizer.APIData"
             ):
                 with patch(
-                    "src.worldenergydata.modules.well_production_dashboard.query_optimizer.LeaseData"
+                    "src.worldenergydata.well_production_dashboard.query_optimizer.LeaseData"
                 ):
                     with patch(
-                        "src.worldenergydata.modules.well_production_dashboard.query_optimizer.BlockData"
+                        "src.worldenergydata.well_production_dashboard.query_optimizer.BlockData"
                     ):
                         self.optimizer = QueryOptimizer()
 

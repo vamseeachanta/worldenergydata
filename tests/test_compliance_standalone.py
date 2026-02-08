@@ -9,10 +9,10 @@ import tempfile
 import shutil
 
 # Import base template first
-from worldenergydata.modules.bsee.reports.comprehensive.templates.base import BaseReportTemplate
+from worldenergydata.bsee.reports.comprehensive.templates.base import BaseReportTemplate
 
 # Import the compliance template classes directly
-from worldenergydata.modules.bsee.reports.comprehensive.templates.compliance_template import (
+from worldenergydata.bsee.reports.comprehensive.templates.compliance_template import (
     ComplianceMetrics,
     EnvironmentalMetrics,
     SafetyMetrics,

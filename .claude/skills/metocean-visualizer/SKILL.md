@@ -493,7 +493,7 @@ def generate_metocean_report(
 ## Usage Examples
 
 ```python
-from worldenergydata.modules.metocean.visualize import MetoceanChartBuilder
+from worldenergydata.metocean.visualize import MetoceanChartBuilder
 import pandas as pd
 
 # Load data

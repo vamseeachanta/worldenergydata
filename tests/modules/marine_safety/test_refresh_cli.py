@@ -20,7 +20,7 @@ from unittest.mock import MagicMock, Mock, patch
 import pytest
 from click.testing import CliRunner
 
-from worldenergydata.modules.marine_safety.cli import cli, refresh
+from worldenergydata.marine_safety.cli import cli, refresh
 
 
 class TestRefreshCommandRegistration:

@@ -15,11 +15,11 @@ from unittest.mock import patch, MagicMock
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
 from worldenergydata.engine import engine
-from worldenergydata.modules.bsee.analysis.production_api12 import ProductionAPI12Analysis
-from worldenergydata.modules.bsee.data.cache.chunk_manager import ChunkMetadata
+from worldenergydata.bsee.analysis.production_api12 import ProductionAPI12Analysis
+from worldenergydata.bsee.data.cache.chunk_manager import ChunkMetadata
 # Memory processor might not exist, let's handle it gracefully
 try:
-    from worldenergydata.modules.bsee.data.cache.memory_processor import MemoryProcessor
+    from worldenergydata.bsee.data.cache.memory_processor import MemoryProcessor
 except ImportError:
     MemoryProcessor = None
 

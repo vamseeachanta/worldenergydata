@@ -1,7 +1,7 @@
 """Tests for LNG terminal web collector."""
 
-from worldenergydata.modules.lng_terminals.collectors.web_collector import WebCollector
-from worldenergydata.modules.lng_terminals.constants import (
+from worldenergydata.lng_terminals.collectors.web_collector import WebCollector
+from worldenergydata.lng_terminals.constants import (
     SourceReliability,
     TerminalType,
 )

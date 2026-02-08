@@ -125,16 +125,16 @@ import striplog  # Lithology and stratigraphy
 ### Custom Modules
 ```python
 # Decline curve analysis
-from worldenergydata.modules.decline_curves import arps_decline
+from worldenergydata.decline_curves import arps_decline
 
 # PVT correlations
-from worldenergydata.modules.pvt import standing_correlation
+from worldenergydata.pvt import standing_correlation
 
 # Material balance
-from worldenergydata.modules.material_balance import tank_model
+from worldenergydata.material_balance import tank_model
 
 # Economics
-from worldenergydata.modules.economics import npv_analysis
+from worldenergydata.economics import npv_analysis
 ```
 
 ## Integration with WorldEnergyData

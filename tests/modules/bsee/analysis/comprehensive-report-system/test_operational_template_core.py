@@ -7,7 +7,7 @@ import unittest
 from datetime import date, datetime, timedelta
 from typing import Dict, List, Optional
 
-from worldenergydata.modules.bsee.reports.comprehensive.templates.operational_template import (
+from worldenergydata.bsee.reports.comprehensive.templates.operational_template import (
     EquipmentMetrics,
     FailureAnalysis,
     MaintenanceRecord,

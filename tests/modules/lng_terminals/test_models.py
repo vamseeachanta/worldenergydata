@@ -4,7 +4,7 @@ from datetime import date, datetime
 
 import pytest
 
-from worldenergydata.modules.lng_terminals.constants import (
+from worldenergydata.lng_terminals.constants import (
     PipelineType,
     Region,
     SourceReliability,
@@ -12,18 +12,18 @@ from worldenergydata.modules.lng_terminals.constants import (
     TerminalStatus,
     TerminalType,
 )
-from worldenergydata.modules.lng_terminals.models.data_quality import (
+from worldenergydata.lng_terminals.models.data_quality import (
     QualityScore,
     SourceCitation,
 )
-from worldenergydata.modules.lng_terminals.models.design import (
+from worldenergydata.lng_terminals.models.design import (
     HullDesign,
     MarineInfrastructure,
     PipelineSpec,
     ProcessEquipment,
     StorageSpec,
 )
-from worldenergydata.modules.lng_terminals.models.terminal import LNGTerminal
+from worldenergydata.lng_terminals.models.terminal import LNGTerminal
 
 
 class TestEnums:

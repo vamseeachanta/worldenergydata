@@ -1,11 +1,11 @@
 """Tests for LNG terminal seed collector."""
 
-from worldenergydata.modules.lng_terminals.collectors.seed_collector import (
+from worldenergydata.lng_terminals.collectors.seed_collector import (
     _SEED_TERMINALS,
     SeedCollector,
 )
-from worldenergydata.modules.lng_terminals.constants import TerminalStatus, TerminalType
-from worldenergydata.modules.lng_terminals.models.terminal import LNGTerminal
+from worldenergydata.lng_terminals.constants import TerminalStatus, TerminalType
+from worldenergydata.lng_terminals.models.terminal import LNGTerminal
 
 
 class TestSeedData:

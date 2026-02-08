@@ -14,7 +14,7 @@ import tempfile
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 
-from worldenergydata.modules.bsee.data.config.config_router import ConfigRouter
+from worldenergydata.bsee.data.config.config_router import ConfigRouter
 
 
 # Custom strategies for generating configuration data
@@ -490,7 +490,7 @@ class TestConfigRouterEdgeCases:
             'data': {'well': True, 'war': True, 'production': False}
         }
         
-        with patch('worldenergydata.modules.bsee.data.config.config_router.logger') as mock_logger:
+        with patch('worldenergydata.bsee.data.config.config_router.logger') as mock_logger:
             router.log_config_summary(config)
             
             # Verify logging was called

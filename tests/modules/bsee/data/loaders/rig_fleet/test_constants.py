@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from worldenergydata.modules.bsee.data.loaders.rig_fleet.constants import (
+from worldenergydata.bsee.data.loaders.rig_fleet.constants import (
     RigStatus,
     RigType,
     classify_rig_type,

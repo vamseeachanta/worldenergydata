@@ -478,7 +478,7 @@ def calculate_cause_confidence(incident_type, summary_text, cause_keywords):
 ### Example 1: Simple Mapping
 
 ```python
-from worldenergydata.modules.marine_safety.constants import CauseCategory
+from worldenergydata.marine_safety.constants import CauseCategory
 
 def map_tsb_cause(incident_type: str) -> dict:
     """Map TSB incident type to cause category"""

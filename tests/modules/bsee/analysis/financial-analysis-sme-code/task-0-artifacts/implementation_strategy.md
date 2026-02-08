@@ -216,7 +216,7 @@ tests/modules/bsee/analysis/sme_financial/
 # test_cash_flow_calculator.py
 import pytest
 import pandas as pd
-from worldenergydata.modules.bsee.analysis.sme_financial.processors import CashFlowCalculator
+from worldenergydata.bsee.analysis.sme_financial.processors import CashFlowCalculator
 
 class TestCashFlowCalculator:
     
@@ -242,7 +242,7 @@ class TestCashFlowCalculator:
 # Use existing worldenergydata utilities
 from worldenergydata.utils.data_loader import load_excel_data
 from worldenergydata.utils.validators import validate_dataframe
-from worldenergydata.modules.bsee.common import normalize_api_number
+from worldenergydata.bsee.common import normalize_api_number
 ```
 
 ### Maintain Compatibility
@@ -283,18 +283,18 @@ def monitor_performance(func):
 ### Command Structure
 ```bash
 # Basic usage
-python -m worldenergydata.modules.bsee.analysis.sme_financial analyze \
+python -m worldenergydata.bsee.analysis.sme_financial analyze \
     --leases data/leases.xlsx \
     --production data/production.xlsx \
     --output results.xlsx
 
 # With configuration
-python -m worldenergydata.modules.bsee.analysis.sme_financial analyze \
+python -m worldenergydata.bsee.analysis.sme_financial analyze \
     --config config/financial.yaml \
     --output results.xlsx
 
 # From BSEE data
-python -m worldenergydata.modules.bsee.analysis.sme_financial analyze \
+python -m worldenergydata.bsee.analysis.sme_financial analyze \
     --from-bsee data/modules/bsee/ \
     --output results.xlsx
 ```

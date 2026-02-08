@@ -88,11 +88,11 @@ Standardize the worldenergydata repository's 7 modules to follow a consistent st
 # Old path shim: data/_by_api/__init__.py
 import warnings
 warnings.warn(
-    "worldenergydata.modules.bsee.data._by_api is deprecated. "
-    "Use worldenergydata.modules.bsee.data.loaders.api instead.",
+    "worldenergydata.bsee.data._by_api is deprecated. "
+    "Use worldenergydata.bsee.data.loaders.api instead.",
     DeprecationWarning, stacklevel=2
 )
-from worldenergydata.modules.bsee.data.loaders.api import *
+from worldenergydata.bsee.data.loaders.api import *
 ```
 
 **Timeline:** 2 minor versions before removal

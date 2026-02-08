@@ -55,7 +55,7 @@ class TestLLMClassifierInitialization:
         except ImportError:
             pytest.skip("transformers library not installed")
 
-        from worldenergydata.modules.marine_safety.analysis.llm_classifier import (
+        from worldenergydata.marine_safety.analysis.llm_classifier import (
             LLMIncidentClassifier,
         )
 
@@ -74,7 +74,7 @@ class TestLLMClassifierInitialization:
         except ImportError:
             pytest.skip("transformers library not installed")
 
-        from worldenergydata.modules.marine_safety.analysis.llm_classifier import (
+        from worldenergydata.marine_safety.analysis.llm_classifier import (
             LLMIncidentClassifier,
         )
 
@@ -98,7 +98,7 @@ class TestLLMClassifierInitialization:
         except ImportError:
             pytest.skip("transformers library not installed")
 
-        from worldenergydata.modules.marine_safety.analysis.llm_classifier import (
+        from worldenergydata.marine_safety.analysis.llm_classifier import (
             LLMIncidentClassifier,
         )
 
@@ -119,7 +119,7 @@ class TestLLMClassifierInitialization:
 
     def test_custom_model_path(self):
         """Test initialization with custom model path."""
-        from worldenergydata.modules.marine_safety.analysis.llm_classifier import (
+        from worldenergydata.marine_safety.analysis.llm_classifier import (
             LLMIncidentClassifier,
         )
 
@@ -135,7 +135,7 @@ class TestBasicClassification:
     @pytest.fixture
     def classifier(self):
         """Fixture providing initialized classifier."""
-        from worldenergydata.modules.marine_safety.analysis.llm_classifier import (
+        from worldenergydata.marine_safety.analysis.llm_classifier import (
             LLMIncidentClassifier,
         )
 
@@ -205,7 +205,7 @@ class TestHatchDetectionPatterns:
     @pytest.fixture
     def classifier(self):
         """Fixture providing initialized classifier."""
-        from worldenergydata.modules.marine_safety.analysis.llm_classifier import (
+        from worldenergydata.marine_safety.analysis.llm_classifier import (
             LLMIncidentClassifier,
         )
 
@@ -292,7 +292,7 @@ class TestEdgeCases:
     @pytest.fixture
     def classifier(self):
         """Fixture providing initialized classifier."""
-        from worldenergydata.modules.marine_safety.analysis.llm_classifier import (
+        from worldenergydata.marine_safety.analysis.llm_classifier import (
             LLMIncidentClassifier,
         )
 
@@ -371,7 +371,7 @@ class TestPerformance:
     @pytest.fixture
     def classifier(self):
         """Fixture providing initialized classifier."""
-        from worldenergydata.modules.marine_safety.analysis.llm_classifier import (
+        from worldenergydata.marine_safety.analysis.llm_classifier import (
             LLMIncidentClassifier,
         )
 
@@ -458,7 +458,7 @@ class TestClassificationAccuracy:
     @pytest.fixture
     def classifier(self):
         """Fixture providing initialized classifier."""
-        from worldenergydata.modules.marine_safety.analysis.llm_classifier import (
+        from worldenergydata.marine_safety.analysis.llm_classifier import (
             LLMIncidentClassifier,
         )
 
@@ -559,7 +559,7 @@ class TestRobustness:
     @pytest.fixture
     def classifier(self):
         """Fixture providing initialized classifier."""
-        from worldenergydata.modules.marine_safety.analysis.llm_classifier import (
+        from worldenergydata.marine_safety.analysis.llm_classifier import (
             LLMIncidentClassifier,
         )
 
@@ -602,7 +602,7 @@ class TestRobustness:
 
     def test_repeated_initialization(self):
         """Test that repeated initialization doesn't cause issues."""
-        from worldenergydata.modules.marine_safety.analysis.llm_classifier import (
+        from worldenergydata.marine_safety.analysis.llm_classifier import (
             LLMIncidentClassifier,
         )
 

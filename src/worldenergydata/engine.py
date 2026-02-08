@@ -9,8 +9,8 @@ from assetutilities.common.yml_utilities import WorkingWithYAML
 from loguru import logger
 
 # Reader imports
-from worldenergydata.modules.bsee.bsee import bsee
-from worldenergydata.modules.bsee.zip_data_dwnld.zip import zip
+from worldenergydata.bsee.bsee import bsee
+from worldenergydata.bsee.zip_data_dwnld.zip import zip
 
 app_manager = ConfigureApplicationInputs()
 save_data = SaveData()
@@ -54,31 +54,31 @@ def engine(inputfile: str = None, cfg: dict = None, config_flag: bool = True) ->
         cfg_base = bsee_app.router(cfg_base)
 
     elif basename in ["sodir"]:
-        from worldenergydata.modules.sodir.sodir import Sodir
+        from worldenergydata.sodir.sodir import Sodir
 
         sodir_app = Sodir()
         cfg_base = sodir_app.router(cfg_base)
 
     elif basename in ["texas_rrc"]:
-        from worldenergydata.modules.texas_rrc.texas_rrc import TexasRRC
+        from worldenergydata.texas_rrc.texas_rrc import TexasRRC
 
         texas_app = TexasRRC()
         cfg_base = texas_app.router(cfg_base)
 
     elif basename in ["canada"]:
-        from worldenergydata.modules.canada.canada import Canada
+        from worldenergydata.canada.canada import Canada
 
         canada_app = Canada()
         cfg_base = canada_app.router(cfg_base)
 
     elif basename in ["mexico_cnh"]:
-        from worldenergydata.modules.mexico_cnh.mexico_cnh import MexicoCNH
+        from worldenergydata.mexico_cnh.mexico_cnh import MexicoCNH
 
         mexico_app = MexicoCNH()
         cfg_base = mexico_app.router(cfg_base)
 
     elif basename in ["landman"]:
-        from worldenergydata.modules.landman.landman import Landman
+        from worldenergydata.landman.landman import Landman
 
         landman_app = Landman()
         cfg_base = landman_app.router(cfg_base)

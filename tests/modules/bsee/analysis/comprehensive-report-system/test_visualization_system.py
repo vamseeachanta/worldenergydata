@@ -8,11 +8,11 @@ from decimal import Decimal
 import numpy as np
 import pandas as pd
 
-from worldenergydata.modules.bsee.reports.comprehensive.visualizations.production_charts import ProductionChart
-from worldenergydata.modules.bsee.reports.comprehensive.visualizations.well_performance_charts import WellPerformanceChart
-from worldenergydata.modules.bsee.reports.comprehensive.visualizations.economic_charts import EconomicChart
-from worldenergydata.modules.bsee.reports.comprehensive.visualizations.geographic_charts import GeographicChart
-from worldenergydata.modules.bsee.reports.comprehensive.visualizations.dashboard_builder import DashboardBuilder
+from worldenergydata.bsee.reports.comprehensive.visualizations.production_charts import ProductionChart
+from worldenergydata.bsee.reports.comprehensive.visualizations.well_performance_charts import WellPerformanceChart
+from worldenergydata.bsee.reports.comprehensive.visualizations.economic_charts import EconomicChart
+from worldenergydata.bsee.reports.comprehensive.visualizations.geographic_charts import GeographicChart
+from worldenergydata.bsee.reports.comprehensive.visualizations.dashboard_builder import DashboardBuilder
 
 
 class TestProductionCharts(unittest.TestCase):
@@ -34,7 +34,7 @@ class TestProductionCharts(unittest.TestCase):
             'well_count': np.random.randint(20, 30, 12)
         })
     
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.visualizations.production_charts.go')
+    @patch('worldenergydata.bsee.reports.comprehensive.visualizations.production_charts.go')
     def test_production_trend_chart_creation(self, mock_go):
         """Test creation of production trend chart."""
         mock_figure = MagicMock()
@@ -66,7 +66,7 @@ class TestProductionCharts(unittest.TestCase):
         # Empty data
         self.assertFalse(self.chart_builder.validate_data(pd.DataFrame()))
     
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.visualizations.production_charts.go')
+    @patch('worldenergydata.bsee.reports.comprehensive.visualizations.production_charts.go')
     def test_cumulative_production_chart(self, mock_go):
         """Test cumulative production chart generation."""
         mock_figure = MagicMock()
@@ -80,7 +80,7 @@ class TestProductionCharts(unittest.TestCase):
         self.assertEqual(chart, mock_figure)
         mock_go.Figure.assert_called_once()
     
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.visualizations.production_charts.go')
+    @patch('worldenergydata.bsee.reports.comprehensive.visualizations.production_charts.go')
     def test_production_by_well_chart(self, mock_go):
         """Test production by well chart."""
         mock_figure = MagicMock()
@@ -144,7 +144,7 @@ class TestWellPerformanceCharts(unittest.TestCase):
             'depth': np.random.uniform(5000, 15000, 20)
         })
     
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.visualizations.well_performance_charts.go')
+    @patch('worldenergydata.bsee.reports.comprehensive.visualizations.well_performance_charts.go')
     def test_scatter_plot_creation(self, mock_go):
         """Test creation of well performance scatter plot."""
         mock_figure = MagicMock()
@@ -160,7 +160,7 @@ class TestWellPerformanceCharts(unittest.TestCase):
         self.assertEqual(chart, mock_figure)
         mock_go.Figure.assert_called_once()
     
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.visualizations.well_performance_charts.go')
+    @patch('worldenergydata.bsee.reports.comprehensive.visualizations.well_performance_charts.go')
     def test_heat_map_creation(self, mock_go):
         """Test creation of well performance heat map."""
         mock_figure = MagicMock()
@@ -180,7 +180,7 @@ class TestWellPerformanceCharts(unittest.TestCase):
         
         self.assertEqual(chart, mock_figure)
     
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.visualizations.well_performance_charts.go')
+    @patch('worldenergydata.bsee.reports.comprehensive.visualizations.well_performance_charts.go')
     def test_bubble_chart_creation(self, mock_go):
         """Test creation of bubble chart for multi-dimensional data."""
         mock_figure = MagicMock()
@@ -240,7 +240,7 @@ class TestEconomicCharts(unittest.TestCase):
             })
         }
     
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.visualizations.go')
+    @patch('worldenergydata.bsee.reports.comprehensive.visualizations.go')
     def test_waterfall_chart_creation(self, mock_go):
         """Test creation of waterfall chart for revenue/cost breakdown."""
         mock_figure = MagicMock()
@@ -255,7 +255,7 @@ class TestEconomicCharts(unittest.TestCase):
         self.assertEqual(chart, mock_figure)
         mock_go.Figure.assert_called_once()
     
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.visualizations.go')
+    @patch('worldenergydata.bsee.reports.comprehensive.visualizations.go')
     def test_roi_chart_creation(self, mock_go):
         """Test creation of ROI visualization."""
         mock_figure = MagicMock()
@@ -272,7 +272,7 @@ class TestEconomicCharts(unittest.TestCase):
         
         self.assertEqual(chart, mock_figure)
     
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.visualizations.economic_charts.go')
+    @patch('worldenergydata.bsee.reports.comprehensive.visualizations.economic_charts.go')
     def test_cashflow_chart(self, mock_go):
         """Test cashflow visualization."""
         mock_figure = MagicMock()
@@ -325,7 +325,7 @@ class TestGeographicCharts(unittest.TestCase):
             'field': np.random.choice(['Field A', 'Field B', 'Field C'], 30)
         })
     
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.visualizations.go')
+    @patch('worldenergydata.bsee.reports.comprehensive.visualizations.go')
     def test_well_location_map(self, mock_go):
         """Test creation of well location map."""
         mock_figure = MagicMock()
@@ -340,7 +340,7 @@ class TestGeographicCharts(unittest.TestCase):
         self.assertEqual(chart, mock_figure)
         mock_go.Figure.assert_called_once()
     
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.visualizations.go')
+    @patch('worldenergydata.bsee.reports.comprehensive.visualizations.go')
     def test_field_boundary_map(self, mock_go):
         """Test creation of field boundary map."""
         mock_figure = MagicMock()
@@ -375,7 +375,7 @@ class TestGeographicCharts(unittest.TestCase):
         invalid_data.loc[0, 'longitude'] = 300  # Invalid longitude
         self.assertFalse(self.chart_builder.validate_coordinates(invalid_data))
     
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.visualizations.go')
+    @patch('worldenergydata.bsee.reports.comprehensive.visualizations.go')
     def test_production_density_map(self, mock_go):
         """Test production density heat map."""
         mock_figure = MagicMock()
@@ -455,7 +455,7 @@ class TestInteractiveDashboard(unittest.TestCase):
         self.assertEqual(filters['well_status']['type'], 'multiselect')
         self.assertEqual(filters['field']['type'], 'multiselect')
     
-    @patch('worldenergydata.modules.bsee.reports.comprehensive.visualizations.dashboard_builder.go')
+    @patch('worldenergydata.bsee.reports.comprehensive.visualizations.dashboard_builder.go')
     def test_drill_down_capability(self, mock_go):
         """Test drill-down functionality in charts."""
         mock_figure = MagicMock()

@@ -3,7 +3,7 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from worldenergydata.modules.bsee.data.schemas.platform import PlatformStructureSchema
+from worldenergydata.bsee.data.schemas.platform import PlatformStructureSchema
 
 
 class TestPlatformStructureSchema:

@@ -144,7 +144,7 @@ metocean:
 ### NDBC Client
 
 ```python
-from worldenergydata.modules.metocean.clients.ndbc_client import NDBCClient
+from worldenergydata.metocean.clients.ndbc_client import NDBCClient
 
 # Use context manager for proper cleanup
 with NDBCClient() as client:
@@ -181,7 +181,7 @@ with NDBCClient() as client:
 
 ```python
 from datetime import datetime, timedelta
-from worldenergydata.modules.metocean.clients.coops_client import COOPSClient
+from worldenergydata.metocean.clients.coops_client import COOPSClient
 
 with COOPSClient() as client:
     # List tide stations in Gulf region
@@ -230,7 +230,7 @@ with COOPSClient() as client:
 
 ```python
 from datetime import datetime, timedelta
-from worldenergydata.modules.metocean.clients.open_meteo_client import OpenMeteoClient
+from worldenergydata.metocean.clients.open_meteo_client import OpenMeteoClient
 
 with OpenMeteoClient() as client:
     # Note: Open-Meteo uses coordinates, NOT stations
@@ -269,7 +269,7 @@ with OpenMeteoClient() as client:
 
 ```python
 from datetime import datetime, timedelta
-from worldenergydata.modules.metocean.clients.erddap_client import ERDDAPClient
+from worldenergydata.metocean.clients.erddap_client import ERDDAPClient
 
 # Initialize with specific server
 client = ERDDAPClient(server="gcoos")  # Gulf of Mexico
@@ -311,7 +311,7 @@ all_datasets = client.list_datasets()
 ### MET Norway Client
 
 ```python
-from worldenergydata.modules.metocean.clients.met_norway_client import MetNorwayClient
+from worldenergydata.metocean.clients.met_norway_client import MetNorwayClient
 
 with MetNorwayClient() as client:
     # Note: MET Norway uses coordinates, NOT stations
@@ -529,8 +529,8 @@ wed metocean status
 
 ```python
 from pathlib import Path
-from worldenergydata.modules.metocean.exporters.csv_exporter import CSVExporter
-from worldenergydata.modules.metocean.processors.data_harmonizer import DataHarmonizer
+from worldenergydata.metocean.exporters.csv_exporter import CSVExporter
+from worldenergydata.metocean.processors.data_harmonizer import DataHarmonizer
 
 # Harmonize observations first
 harmonizer = DataHarmonizer(apply_quality_checks=True)
@@ -560,7 +560,7 @@ count = exporter.export_summary(
 ### JSON Exporter
 
 ```python
-from worldenergydata.modules.metocean.exporters.json_exporter import JSONExporter
+from worldenergydata.metocean.exporters.json_exporter import JSONExporter
 
 exporter = JSONExporter()
 
@@ -574,7 +574,7 @@ exporter.export_geojson(harmonized, Path("data.geojson"))
 ### NetCDF Exporter
 
 ```python
-from worldenergydata.modules.metocean.exporters.netcdf_exporter import NetCDFExporter
+from worldenergydata.metocean.exporters.netcdf_exporter import NetCDFExporter
 
 # Requires: pip install netCDF4
 exporter = NetCDFExporter()
@@ -586,8 +586,8 @@ exporter.export(harmonized, Path("data.nc"))  # CF-compliant NetCDF
 Standardize data from multiple sources to a common format.
 
 ```python
-from worldenergydata.modules.metocean.processors.data_harmonizer import DataHarmonizer
-from worldenergydata.modules.metocean.constants import DataSource
+from worldenergydata.metocean.processors.data_harmonizer import DataHarmonizer
+from worldenergydata.metocean.constants import DataSource
 
 harmonizer = DataHarmonizer(apply_quality_checks=True)
 
@@ -640,8 +640,8 @@ for obs in merged:
 ### 1. Gulf of Mexico Buoy Survey
 
 ```python
-from worldenergydata.modules.metocean.clients.ndbc_client import NDBCClient
-from worldenergydata.modules.metocean.exporters.csv_exporter import CSVExporter
+from worldenergydata.metocean.clients.ndbc_client import NDBCClient
+from worldenergydata.metocean.exporters.csv_exporter import CSVExporter
 
 # Discover and fetch all GOM buoys
 with NDBCClient() as client:
@@ -662,7 +662,7 @@ exporter.export(all_obs, "gom_survey.csv")
 
 ```python
 from datetime import datetime
-from worldenergydata.modules.metocean.clients.coops_client import COOPSClient
+from worldenergydata.metocean.clients.coops_client import COOPSClient
 
 with COOPSClient() as client:
     start = datetime(2024, 1, 1)
@@ -682,9 +682,9 @@ with COOPSClient() as client:
 ### 3. Forecast Validation (Forecast vs Observation)
 
 ```python
-from worldenergydata.modules.metocean.clients.ndbc_client import NDBCClient
-from worldenergydata.modules.metocean.clients.open_meteo_client import OpenMeteoClient
-from worldenergydata.modules.metocean.processors.data_harmonizer import DataHarmonizer
+from worldenergydata.metocean.clients.ndbc_client import NDBCClient
+from worldenergydata.metocean.clients.open_meteo_client import OpenMeteoClient
+from worldenergydata.metocean.processors.data_harmonizer import DataHarmonizer
 
 # Get buoy observations
 with NDBCClient() as ndbc:

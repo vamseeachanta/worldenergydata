@@ -279,7 +279,7 @@ def get_data_path(filename, data_type='processed'):
 # Usage in report generation
 import pandas as pd
 <<<<<<< HEAD
-from worldenergydata.modules.reporting.utils.path_utils import get_data_path
+from worldenergydata.reporting.utils.path_utils import get_data_path
 =======
 from reporting.path_utils import get_data_path
 >>>>>>> origin/main

@@ -14,7 +14,7 @@ from pathlib import Path
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent / "src"))
 
-from worldenergydata.modules.bsee.analysis.bsee_analysis import BSEEAnalysis
+from worldenergydata.bsee.analysis.bsee_analysis import BSEEAnalysis
 from tests.test_markers import unit, smoke
 
 
@@ -51,7 +51,7 @@ class TestBSEEAnalysis:
         analysis = BSEEAnalysis()
         assert analysis is not None
     
-    @patch('worldenergydata.modules.bsee.analysis.bsee_analysis.logger')
+    @patch('worldenergydata.bsee.analysis.bsee_analysis.logger')
     def test_router_with_analysis_flag_true(self, mock_logger):
         """Test router when analysis flag is True."""
         with patch.object(self.analysis, 'run_analysis_for_all_wells') as mock_run:
@@ -63,7 +63,7 @@ class TestBSEEAnalysis:
             mock_run.assert_called_once_with(self.mock_cfg, self.mock_data)
             mock_logger.info.assert_any_call("Running analysis for all wells...")
     
-    @patch('worldenergydata.modules.bsee.analysis.bsee_analysis.logger')
+    @patch('worldenergydata.bsee.analysis.bsee_analysis.logger')
     def test_router_with_analysis_flag_false(self, mock_logger):
         """Test router when analysis flag is False."""
         cfg = {'analysis': {'flag': False}}
@@ -73,7 +73,7 @@ class TestBSEEAnalysis:
         assert result == cfg
         mock_logger.info.assert_any_call("Analysis not enabled or flag is False")
     
-    @patch('worldenergydata.modules.bsee.analysis.bsee_analysis.logger')
+    @patch('worldenergydata.bsee.analysis.bsee_analysis.logger')
     def test_router_without_analysis_key(self, mock_logger):
         """Test router when analysis key is missing."""
         cfg = {'other': 'data'}
@@ -83,8 +83,8 @@ class TestBSEEAnalysis:
         assert result == cfg
         mock_logger.info.assert_any_call("Analysis not enabled or flag is False")
     
-    @patch('worldenergydata.modules.bsee.analysis.bsee_analysis.well_api12_analysis')
-    @patch('worldenergydata.modules.bsee.analysis.bsee_analysis.prod_api12_analysis')
+    @patch('worldenergydata.bsee.analysis.bsee_analysis.well_api12_analysis')
+    @patch('worldenergydata.bsee.analysis.bsee_analysis.prod_api12_analysis')
     def test_run_analysis_for_all_wells(self, mock_prod_analysis, mock_well_analysis):
         """Test run_analysis_for_all_wells method."""
         # Setup mocks
@@ -115,7 +115,7 @@ class TestBSEEAnalysis:
             mock_well_analysis.save_result_groups.assert_called_once()
             mock_well_analysis.plot_well_timeline_df.assert_called_once()
     
-    @patch('worldenergydata.modules.bsee.analysis.bsee_analysis.well_api12_analysis')
+    @patch('worldenergydata.bsee.analysis.bsee_analysis.well_api12_analysis')
     def test_run_analysis_with_no_production_data(self, mock_well_analysis):
         """Test analysis when production data is None."""
         data = {'production_data': None}
@@ -128,8 +128,8 @@ class TestBSEEAnalysis:
         assert result == self.mock_cfg
         mock_well_analysis.run_well_analysis.assert_called_once()
     
-    @patch('worldenergydata.modules.bsee.analysis.bsee_analysis.well_api12_analysis')
-    @patch('worldenergydata.modules.bsee.analysis.bsee_analysis.logger')
+    @patch('worldenergydata.bsee.analysis.bsee_analysis.well_api12_analysis')
+    @patch('worldenergydata.bsee.analysis.bsee_analysis.logger')
     def test_add_production_dates_to_well_summary(self, mock_logger, mock_well_api12):
         """Test adding production dates to well summary."""
         # Mock save_result_groups to avoid file operations
@@ -160,7 +160,7 @@ class TestBSEEAnalysis:
         assert well_df.loc[0, 'START_PRODUCTION_DATE'] == '2020-01-01'
         assert well_df.loc[0, 'LAST_PRODUCTION_DATE'] == '2023-12-31'
     
-    @patch('worldenergydata.modules.bsee.analysis.bsee_analysis.logger')
+    @patch('worldenergydata.bsee.analysis.bsee_analysis.logger')
     def test_add_production_dates_empty_dataframes(self, mock_logger):
         """Test adding production dates with empty dataframes."""
         well_groups = {'well_summary_df_groups': pd.DataFrame()}
@@ -174,8 +174,8 @@ class TestBSEEAnalysis:
             "Production or well summary data is empty - skipping production date integration"
         )
     
-    @patch('worldenergydata.modules.bsee.analysis.bsee_analysis.well_api12_analysis')
-    @patch('worldenergydata.modules.bsee.analysis.bsee_analysis.logger')
+    @patch('worldenergydata.bsee.analysis.bsee_analysis.well_api12_analysis')
+    @patch('worldenergydata.bsee.analysis.bsee_analysis.logger')
     def test_add_production_dates_no_matching_wells(self, mock_logger, mock_well_api12):
         """Test adding production dates when no wells match."""
         # Mock save_result_groups to avoid file operations
@@ -241,8 +241,8 @@ class TestBSEEAnalysisParameterized:
         (['999999999999'], 0),
         ([], 0),
     ])
-    @patch('worldenergydata.modules.bsee.analysis.bsee_analysis.well_api12_analysis')
-    @patch('worldenergydata.modules.bsee.analysis.bsee_analysis.logger')
+    @patch('worldenergydata.bsee.analysis.bsee_analysis.well_api12_analysis')
+    @patch('worldenergydata.bsee.analysis.bsee_analysis.logger')
     def test_production_date_matching(self, mock_logger, mock_well_api12, analysis, api12, expected_matches):
         """Test production date matching with various API12 values."""
         # Mock save_result_groups to avoid file operations
@@ -288,12 +288,12 @@ class TestBSEEAnalysisSmoke:
     
     def test_module_imports(self):
         """Test that BSEEAnalysis module can be imported."""
-        from worldenergydata.modules.bsee.analysis import bsee_analysis
+        from worldenergydata.bsee.analysis import bsee_analysis
         assert bsee_analysis.BSEEAnalysis is not None
     
     def test_global_objects_initialized(self):
         """Test that global objects are initialized."""
-        from worldenergydata.modules.bsee.analysis import bsee_analysis
+        from worldenergydata.bsee.analysis import bsee_analysis
         assert bsee_analysis.bsee_data is not None
         assert bsee_analysis.well_api12_analysis is not None
         assert bsee_analysis.well_api10_analysis is not None

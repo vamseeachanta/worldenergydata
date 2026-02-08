@@ -66,21 +66,21 @@ psutil>=5.8.0  # Optional
 ### 1. Command Line Interface
 ```bash
 # View available commands
-python -m worldenergydata.modules.well_production_dashboard.cli --help
+python -m worldenergydata.well_production_dashboard.cli --help
 
 # Start the dashboard server
-python -m worldenergydata.modules.well_production_dashboard.cli serve
+python -m worldenergydata.well_production_dashboard.cli serve
 
 # Generate a report for specific wells
-python -m worldenergydata.modules.well_production_dashboard.cli report --wells W001,W002 --format pdf
+python -m worldenergydata.well_production_dashboard.cli report --wells W001,W002 --format pdf
 
 # Verify data quality
-python -m worldenergydata.modules.well_production_dashboard.cli verify --field "Test Field"
+python -m worldenergydata.well_production_dashboard.cli verify --field "Test Field"
 ```
 
 ### 2. Python API
 ```python
-from worldenergydata.modules.well_production_dashboard import WellProductionDashboard
+from worldenergydata.well_production_dashboard import WellProductionDashboard
 
 # Initialize dashboard
 dashboard = WellProductionDashboard(config_path="config/dashboard_config.yml")
@@ -102,7 +102,7 @@ dashboard.export_to_excel(
 ### 3. Web Interface
 ```bash
 # Start the web server
-python -m worldenergydata.modules.well_production_dashboard.cli serve --port 8050
+python -m worldenergydata.well_production_dashboard.cli serve --port 8050
 
 # Open browser to http://localhost:8050
 ```
@@ -190,7 +190,7 @@ dashboard.export_batch(
 
 #### `serve` - Start Dashboard Server
 ```bash
-python -m worldenergydata.modules.well_production_dashboard.cli serve \
+python -m worldenergydata.well_production_dashboard.cli serve \
     --host 0.0.0.0 \
     --port 8050 \
     --debug
@@ -199,14 +199,14 @@ python -m worldenergydata.modules.well_production_dashboard.cli serve \
 #### `report` - Generate Reports
 ```bash
 # Generate PDF report for specific wells
-python -m worldenergydata.modules.well_production_dashboard.cli report \
+python -m worldenergydata.well_production_dashboard.cli report \
     --wells W001,W002,W003 \
     --format pdf \
     --output reports/production_report.pdf \
     --include-verification
 
 # Generate Excel report for a field
-python -m worldenergydata.modules.well_production_dashboard.cli report \
+python -m worldenergydata.well_production_dashboard.cli report \
     --field "Test Field" \
     --format excel \
     --output reports/field_report.xlsx
@@ -215,12 +215,12 @@ python -m worldenergydata.modules.well_production_dashboard.cli report \
 #### `verify` - Run Data Verification
 ```bash
 # Verify specific wells
-python -m worldenergydata.modules.well_production_dashboard.cli verify \
+python -m worldenergydata.well_production_dashboard.cli verify \
     --wells W001,W002 \
     --output verification_report.json
 
 # Verify entire field
-python -m worldenergydata.modules.well_production_dashboard.cli verify \
+python -m worldenergydata.well_production_dashboard.cli verify \
     --field "Test Field" \
     --quality-threshold 0.8
 ```
@@ -228,7 +228,7 @@ python -m worldenergydata.modules.well_production_dashboard.cli verify \
 #### `export` - Batch Export Data
 ```bash
 # Export multiple formats
-python -m worldenergydata.modules.well_production_dashboard.cli export \
+python -m worldenergydata.well_production_dashboard.cli export \
     --wells W001,W002 \
     --formats pdf,excel,json \
     --output-dir exports/
@@ -237,19 +237,19 @@ python -m worldenergydata.modules.well_production_dashboard.cli export \
 #### `cache` - Manage Cache
 ```bash
 # Clear cache
-python -m worldenergydata.modules.well_production_dashboard.cli cache --clear
+python -m worldenergydata.well_production_dashboard.cli cache --clear
 
 # View cache statistics
-python -m worldenergydata.modules.well_production_dashboard.cli cache --stats
+python -m worldenergydata.well_production_dashboard.cli cache --stats
 ```
 
 #### `monitor` - View Monitoring Data
 ```bash
 # View performance metrics
-python -m worldenergydata.modules.well_production_dashboard.cli monitor --metrics
+python -m worldenergydata.well_production_dashboard.cli monitor --metrics
 
 # View audit trail
-python -m worldenergydata.modules.well_production_dashboard.cli monitor --audit \
+python -m worldenergydata.well_production_dashboard.cli monitor --audit \
     --user admin \
     --last-hours 24
 ```
@@ -262,7 +262,7 @@ python -m worldenergydata.modules.well_production_dashboard.cli monitor --audit 
 Main dashboard class that orchestrates all functionality.
 
 ```python
-from worldenergydata.modules.well_production_dashboard import WellProductionDashboard
+from worldenergydata.well_production_dashboard import WellProductionDashboard
 
 dashboard = WellProductionDashboard(
     config_path="config/dashboard_config.yml",
@@ -283,7 +283,7 @@ dashboard = WellProductionDashboard(
 Handles query optimization and lazy loading for large datasets.
 
 ```python
-from worldenergydata.modules.well_production_dashboard.query_optimizer import QueryOptimizer
+from worldenergydata.well_production_dashboard.query_optimizer import QueryOptimizer
 
 optimizer = QueryOptimizer()
 optimizer.optimize_for_dashboard(enable_lazy=True, prefetch=2)
@@ -300,7 +300,7 @@ for chunk in optimizer.get_data_chunked(filters={'status': 'active'}):
 Provides monitoring and audit logging capabilities.
 
 ```python
-from worldenergydata.modules.well_production_dashboard.monitoring import DashboardMonitor
+from worldenergydata.well_production_dashboard.monitoring import DashboardMonitor
 
 monitor = DashboardMonitor(config={'audit_file': 'logs/audit.jsonl'})
 
@@ -395,7 +395,7 @@ def process_large_dataset(well_ids):
 ### Caching Strategies
 ```python
 # Configure Redis caching
-from worldenergydata.modules.well_production_dashboard.cache_config import CacheConfig
+from worldenergydata.well_production_dashboard.cache_config import CacheConfig
 
 cache_config = CacheConfig(
     backend="redis",
@@ -472,7 +472,7 @@ For additional help:
 
 ### Complete Workflow Example
 ```python
-from worldenergydata.modules.well_production_dashboard import WellProductionDashboard
+from worldenergydata.well_production_dashboard import WellProductionDashboard
 from datetime import datetime, timedelta
 
 # Initialize dashboard

@@ -10,7 +10,7 @@ from unittest.mock import Mock, patch
 import numpy as np
 import pandas as pd
 
-from worldenergydata.modules.bsee.analysis.financial.validators import (
+from worldenergydata.bsee.analysis.financial.validators import (
     DataValidator,
     validate_date_columns,
     validate_drilling_data,

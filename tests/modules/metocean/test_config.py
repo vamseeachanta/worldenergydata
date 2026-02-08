@@ -14,7 +14,7 @@ class TestMetoceanConfig:
 
     def test_config_loads_defaults(self):
         """Test that config loads with default values."""
-        from worldenergydata.modules.metocean.config import MetoceanConfig
+        from worldenergydata.metocean.config import MetoceanConfig
 
         config = MetoceanConfig()
 
@@ -36,7 +36,7 @@ class TestMetoceanConfig:
 
     def test_get_config_singleton(self):
         """Test that get_config returns the same instance."""
-        from worldenergydata.modules.metocean.config import get_config, reload_config
+        from worldenergydata.metocean.config import get_config, reload_config
 
         # Force reload to start fresh
         reload_config()
@@ -48,7 +48,7 @@ class TestMetoceanConfig:
 
     def test_reload_config_creates_new_instance(self):
         """Test that reload_config creates a new instance."""
-        from worldenergydata.modules.metocean.config import get_config, reload_config
+        from worldenergydata.metocean.config import get_config, reload_config
 
         config1 = get_config()
         config2 = reload_config()
@@ -59,7 +59,7 @@ class TestMetoceanConfig:
 
     def test_database_url_generation(self):
         """Test database URL generation."""
-        from worldenergydata.modules.metocean.config import DatabaseConfig
+        from worldenergydata.metocean.config import DatabaseConfig
 
         db_config = DatabaseConfig(
             host="testhost",
@@ -77,7 +77,7 @@ class TestMetoceanConfig:
 
     def test_async_database_url(self):
         """Test async database URL generation."""
-        from worldenergydata.modules.metocean.config import DatabaseConfig
+        from worldenergydata.metocean.config import DatabaseConfig
 
         db_config = DatabaseConfig()
         assert "asyncpg" in db_config.async_url
@@ -86,14 +86,14 @@ class TestMetoceanConfig:
         """Test that invalid environment raises error."""
         from pydantic import ValidationError
 
-        from worldenergydata.modules.metocean.config import MetoceanConfig
+        from worldenergydata.metocean.config import MetoceanConfig
 
         with pytest.raises(ValidationError):
             MetoceanConfig(environment="invalid_env")
 
     def test_valid_environments(self):
         """Test that valid environments are accepted."""
-        from worldenergydata.modules.metocean.config import MetoceanConfig
+        from worldenergydata.metocean.config import MetoceanConfig
 
         for env in ["development", "staging", "production", "test"]:
             config = MetoceanConfig(environment=env)
@@ -104,7 +104,7 @@ class TestMetoceanConfig:
         import tempfile
         from pathlib import Path
 
-        from worldenergydata.modules.metocean.config import CacheConfig
+        from worldenergydata.metocean.config import CacheConfig
 
         with tempfile.TemporaryDirectory() as tmpdir:
             cache_path = Path(tmpdir) / "test_cache"
@@ -120,7 +120,7 @@ class TestAPIConfig:
 
     def test_api_config_defaults(self):
         """Test API config default values."""
-        from worldenergydata.modules.metocean.config import APIConfig
+        from worldenergydata.metocean.config import APIConfig
 
         config = APIConfig()
 
@@ -133,7 +133,7 @@ class TestAPIConfig:
 
     def test_cmems_credentials_optional(self):
         """Test that CMEMS credentials are optional."""
-        from worldenergydata.modules.metocean.config import APIConfig
+        from worldenergydata.metocean.config import APIConfig
 
         config = APIConfig()
         assert config.cmems_username is None
@@ -148,7 +148,7 @@ class TestStorageConfig:
         import tempfile
         from pathlib import Path
 
-        from worldenergydata.modules.metocean.config import StorageConfig
+        from worldenergydata.metocean.config import StorageConfig
 
         with tempfile.TemporaryDirectory() as tmpdir:
             base = Path(tmpdir) / "metocean"

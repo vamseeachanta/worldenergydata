@@ -9,7 +9,7 @@ import pytest
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 
-from worldenergydata.modules.marine_safety.utils.validators import (
+from worldenergydata.marine_safety.utils.validators import (
     IncidentValidator,
     VesselValidator,
     LocationValidator,

@@ -230,11 +230,11 @@ cause_report.py: 97.52% coverage (only 3 lines uncovered - edge case error handl
 ```python
 from datetime import datetime
 from pathlib import Path
-from worldenergydata.modules.marine_safety.analysis.cause_report import (
+from worldenergydata.marine_safety.analysis.cause_report import (
     CauseAnalysisReport,
     ReportFilters
 )
-from worldenergydata.modules.marine_safety.constants import (
+from worldenergydata.marine_safety.constants import (
     CauseCategory,
     SeverityLevel
 )

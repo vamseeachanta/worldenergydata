@@ -22,8 +22,8 @@ project_root = Path(__file__).parent.parent.parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 from worldenergydata.engine import engine
-from worldenergydata.modules.bsee.data.refresh.data_refresh_enhanced import DataRefreshEnhanced
-from worldenergydata.modules.bsee.data.config import ConfigRouter
+from worldenergydata.bsee.data.refresh.data_refresh_enhanced import DataRefreshEnhanced
+from worldenergydata.bsee.data.config import ConfigRouter
 
 
 class IntegrationTester:

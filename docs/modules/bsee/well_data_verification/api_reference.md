@@ -17,7 +17,7 @@
 Main orchestrator for verification workflows.
 
 ```python
-from worldenergydata.modules.analysis.verification import VerificationEngine
+from worldenergydata.analysis.verification import VerificationEngine
 
 class VerificationEngine:
     """Main verification engine coordinating all verification activities."""
@@ -67,7 +67,7 @@ class VerificationEngine:
 Container for verification results.
 
 ```python
-from worldenergydata.modules.analysis.verification.base import VerificationResult
+from worldenergydata.analysis.verification.base import VerificationResult
 
 class VerificationResult:
     """Results from verification process."""
@@ -103,7 +103,7 @@ class VerificationResult:
 Configuration management for verification.
 
 ```python
-from worldenergydata.modules.analysis.verification.config import VerificationConfig
+from worldenergydata.analysis.verification.config import VerificationConfig
 
 class VerificationConfig:
     """Configuration for verification process."""
@@ -143,7 +143,7 @@ class VerificationConfig:
 Manages verification workflows with state tracking.
 
 ```python
-from worldenergydata.modules.analysis.verification.engine import WorkflowEngine
+from worldenergydata.analysis.verification.engine import WorkflowEngine
 
 class WorkflowEngine:
     """Engine for managing verification workflows."""
@@ -263,7 +263,7 @@ class WorkflowStep:
 Comprehensive data quality assessment.
 
 ```python
-from worldenergydata.modules.analysis.verification.quality import DataQualityFramework
+from worldenergydata.analysis.verification.quality import DataQualityFramework
 
 class DataQualityFramework:
     """Framework for data quality assessment."""
@@ -404,7 +404,7 @@ class ValidationRuleBuilder:
 Compares data with Excel benchmarks.
 
 ```python
-from worldenergydata.modules.analysis.verification.cross_reference import CrossReferenceModule
+from worldenergydata.analysis.verification.cross_reference import CrossReferenceModule
 
 class CrossReferenceModule:
     """Module for cross-referencing with benchmarks."""
@@ -488,7 +488,7 @@ class FieldMapper:
 Comprehensive audit trail management.
 
 ```python
-from worldenergydata.modules.analysis.verification.audit import AuditSystem
+from worldenergydata.analysis.verification.audit import AuditSystem
 
 class AuditSystem:
     """System for audit trail management."""
@@ -594,7 +594,7 @@ class SecurityController:
 Generates verification reports.
 
 ```python
-from worldenergydata.modules.analysis.verification.reports import VerificationReportGenerator
+from worldenergydata.analysis.verification.reports import VerificationReportGenerator
 
 class VerificationReportGenerator:
     """Generator for verification reports."""
@@ -675,7 +675,7 @@ class ReportTemplate:
 Utility for loading data from various sources.
 
 ```python
-from worldenergydata.modules.analysis.verification.utils import DataLoader
+from worldenergydata.analysis.verification.utils import DataLoader
 
 class DataLoader:
     """Loader for various data formats."""
@@ -766,7 +766,7 @@ class CrossReferenceError(VerificationError):
 ### Error Handling
 
 ```python
-from worldenergydata.modules.analysis.verification import (
+from worldenergydata.analysis.verification import (
     VerificationEngine,
     VerificationError,
     DataValidationError
@@ -795,8 +795,8 @@ except Exception as e:
 ### Basic Verification
 
 ```python
-from worldenergydata.modules.analysis.verification import VerificationEngine
-from worldenergydata.modules.analysis.verification.config import VerificationConfig
+from worldenergydata.analysis.verification import VerificationEngine
+from worldenergydata.analysis.verification.config import VerificationConfig
 
 # Load configuration
 config = VerificationConfig.from_yaml("config.yaml")
@@ -820,7 +820,7 @@ report.save("verification_report.pdf")
 ### Custom Validation Rules
 
 ```python
-from worldenergydata.modules.analysis.verification.quality import ValidationRuleBuilder
+from worldenergydata.analysis.verification.quality import ValidationRuleBuilder
 
 # Build custom rules
 builder = ValidationRuleBuilder()
@@ -839,7 +839,7 @@ results = engine.verify_data(data, rules=rules)
 ### Workflow with Checkpoints
 
 ```python
-from worldenergydata.modules.analysis.verification.engine import WorkflowEngine
+from worldenergydata.analysis.verification.engine import WorkflowEngine
 
 # Initialize workflow
 engine = WorkflowEngine()
@@ -864,7 +864,7 @@ except Exception as e:
 ### Audit Trail
 
 ```python
-from worldenergydata.modules.analysis.verification.audit import AuditSystem
+from worldenergydata.analysis.verification.audit import AuditSystem
 
 # Initialize audit
 audit = AuditSystem(user="john.doe@company.com")

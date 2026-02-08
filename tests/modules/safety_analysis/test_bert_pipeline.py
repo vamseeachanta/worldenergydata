@@ -28,26 +28,26 @@ pytestmark = pytest.mark.skipif(
     reason="torch/transformers or scikit-learn not installed",
 )
 
-from worldenergydata.modules.safety_analysis.config import (  # noqa: E402
+from worldenergydata.safety_analysis.config import (  # noqa: E402
     AnalysisConfig,
     HyperparamConfig,
 )
-from worldenergydata.modules.safety_analysis.constants import (  # noqa: E402
+from worldenergydata.safety_analysis.constants import (  # noqa: E402
     ClassifierType,
 )
-from worldenergydata.modules.safety_analysis.core.models import (  # noqa: E402
+from worldenergydata.safety_analysis.core.models import (  # noqa: E402
     ClassificationResult,
 )
-from worldenergydata.modules.safety_analysis.exceptions import (  # noqa: E402
+from worldenergydata.safety_analysis.exceptions import (  # noqa: E402
     OptionalDependencyError,
     SafetyClassificationError,
 )
-from worldenergydata.modules.safety_analysis.nlp.bert_pipeline import (  # noqa: E402
+from worldenergydata.safety_analysis.nlp.bert_pipeline import (  # noqa: E402
     BertClassificationPipeline,
     BertConfig,
     BertEmbedder,
 )
-from worldenergydata.modules.safety_analysis.nlp.model_registry import (  # noqa: E402
+from worldenergydata.safety_analysis.nlp.model_registry import (  # noqa: E402
     ModelEntry,
 )
 
@@ -336,7 +336,7 @@ class TestOptionalDependencyError:
         """When torch/transformers are unavailable, BertEmbedder init should raise."""
         with (
             patch(
-                "worldenergydata.modules.safety_analysis.nlp.bert_pipeline._HAS_BERT",
+                "worldenergydata.safety_analysis.nlp.bert_pipeline._HAS_BERT",
                 False,
             ),
             pytest.raises(OptionalDependencyError),

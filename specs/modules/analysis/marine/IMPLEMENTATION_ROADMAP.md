@@ -817,12 +817,12 @@ def export_taxonomy():
 **Usage Examples:**
 ```bash
 # Run analysis from configuration
-python -m worldenergydata.modules.marine_safety.analysis.incidents.cli analyze \
+python -m worldenergydata.marine_safety.analysis.incidents.cli analyze \
     --config config/analysis/foundering_hatch_door.yml \
     --output-dir reports/marine_safety/
 
 # Interactive exploration
-python -m worldenergydata.modules.marine_safety.analysis.incidents.cli explore \
+python -m worldenergydata.marine_safety.analysis.incidents.cli explore \
     --incident-type Foundering \
     --incident-type Flooding \
     --cause hatch \
@@ -832,7 +832,7 @@ python -m worldenergydata.modules.marine_safety.analysis.incidents.cli explore \
     --output results/foundering_analysis.html
 
 # List available categories
-python -m worldenergydata.modules.marine_safety.analysis.incidents.cli list-categories
+python -m worldenergydata.marine_safety.analysis.incidents.cli list-categories
 ```
 
 ### 5.2 Python API
@@ -868,7 +868,7 @@ def analyze_incidents(config_path: str, output_dir: str):
 
 **Python API Usage Example:**
 ```python
-from worldenergydata.modules.marine_safety.analysis import incidents
+from worldenergydata.marine_safety.analysis import incidents
 
 # Method 1: Configuration-based
 incidents.analyze_incidents(
@@ -877,7 +877,7 @@ incidents.analyze_incidents(
 )
 
 # Method 2: Programmatic
-from worldenergydata.modules.marine_safety.analysis.incidents import (
+from worldenergydata.marine_safety.analysis.incidents import (
     IncidentExplorer, IncidentFilterEngine, IncidentStatisticalAnalyzer
 )
 
@@ -899,8 +899,8 @@ temporal_results = analyzer.temporal_analysis()
 causal_results = analyzer.causal_analysis()
 
 # Generate report
-from worldenergydata.modules.marine_safety.analysis.reports import InteractiveHTMLReportGenerator
-from worldenergydata.modules.marine_safety.analysis.visualizations import IncidentChartGenerator
+from worldenergydata.marine_safety.analysis.reports import InteractiveHTMLReportGenerator
+from worldenergydata.marine_safety.analysis.visualizations import IncidentChartGenerator
 
 chart_gen = IncidentChartGenerator()
 report_gen = InteractiveHTMLReportGenerator(analyzer, chart_gen)

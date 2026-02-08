@@ -682,7 +682,7 @@ class HSEReportGenerator:
 ### Basic Operator Safety Assessment
 
 ```python
-from worldenergydata.modules.hse import HSERiskAnalyzer
+from worldenergydata.hse import HSERiskAnalyzer
 
 # Initialize analyzer
 analyzer = HSERiskAnalyzer()
@@ -742,7 +742,7 @@ print(comparison[['operator', 'safety_score', 'risk_category', 'total_incidents'
 ### Generate Reports
 
 ```python
-from worldenergydata.modules.hse import HSEReportGenerator
+from worldenergydata.hse import HSEReportGenerator
 
 # Initialize report generator
 reporter = HSEReportGenerator(analyzer)
@@ -801,8 +801,8 @@ hse_analysis:
 ## Integration with NPV Analysis
 
 ```python
-from worldenergydata.modules.hse import HSERiskAnalyzer
-from worldenergydata.modules.economics import NPVCalculator
+from worldenergydata.hse import HSERiskAnalyzer
+from worldenergydata.economics import NPVCalculator
 
 # Initialize components
 hse_analyzer = HSERiskAnalyzer()

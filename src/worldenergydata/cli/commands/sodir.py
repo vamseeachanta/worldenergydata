@@ -156,7 +156,7 @@ def collect(
             )
 
             try:
-                from worldenergydata.modules.sodir import Sodir
+                from worldenergydata.sodir import Sodir
 
                 progress.update(
                     task, advance=10, description="[cyan]Loading SODIR module..."
@@ -336,7 +336,7 @@ def analyze(
             task = progress.add_task("[cyan]Running SODIR analysis...", total=100)
 
             try:
-                from worldenergydata.modules.sodir.analysis import (
+                from worldenergydata.sodir.analysis import (
                     AnalysisConfig,
                     SodirAnalysis,
                 )
@@ -554,7 +554,7 @@ def status(
 
             # Try to check cache status
             try:
-                from worldenergydata.modules.sodir.cache import SodirCache
+                from worldenergydata.sodir.cache import SodirCache
 
                 cache = SodirCache()
                 status_data["cache_status"] = "Available"
@@ -680,7 +680,7 @@ def clear_cache(
         raise typer.Exit(0)
 
     try:
-        from worldenergydata.modules.sodir.cache import SodirCache
+        from worldenergydata.sodir.cache import SodirCache
 
         cache = SodirCache()
         entries_before = len(cache.cache)

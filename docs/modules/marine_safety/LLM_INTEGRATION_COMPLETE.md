@@ -35,7 +35,7 @@ def extract_incident_phrases(text: str) -> List[str]
 
 **Sample Usage**:
 ```python
-from worldenergydata.modules.marine_safety.analysis.llm_classifier import LLMIncidentClassifier
+from worldenergydata.marine_safety.analysis.llm_classifier import LLMIncidentClassifier
 
 classifier = LLMIncidentClassifier()
 result = classifier.detect_hatch_maloperation(
@@ -247,7 +247,7 @@ pip install worldenergydata[llm]
 ### 2. Basic Usage
 
 ```python
-from worldenergydata.modules.marine_safety.analysis import HatchMaloperationAnalyzer
+from worldenergydata.marine_safety.analysis import HatchMaloperationAnalyzer
 import pandas as pd
 
 # Load your incident data

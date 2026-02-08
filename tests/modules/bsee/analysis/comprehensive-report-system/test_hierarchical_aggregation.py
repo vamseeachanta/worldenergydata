@@ -12,11 +12,11 @@ import os
 # Add src to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../../../../src'))
 
-from worldenergydata.modules.bsee.reports.comprehensive.hierarchical_aggregator import (
+from worldenergydata.bsee.reports.comprehensive.hierarchical_aggregator import (
     WellAggregator, LeaseAggregator, FieldAggregator, BlockAggregator,
     HierarchicalAggregator, PriceDeck, CostStructure
 )
-from worldenergydata.modules.bsee.reports.comprehensive.models import (
+from worldenergydata.bsee.reports.comprehensive.models import (
     Well, Lease, Field, Block
 )
 

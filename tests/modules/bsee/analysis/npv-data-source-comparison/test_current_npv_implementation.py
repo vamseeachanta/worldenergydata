@@ -20,7 +20,7 @@ sys.path.insert(
     0, os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "src")
 )
 
-from worldenergydata.modules.bsee.analysis.production_api12 import (
+from worldenergydata.bsee.analysis.production_api12 import (
     ProductionAPI12Analysis,
 )
 

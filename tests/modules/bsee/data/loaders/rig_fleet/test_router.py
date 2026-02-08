@@ -7,7 +7,7 @@ Tests cover:
 
 from __future__ import annotations
 
-from worldenergydata.modules.bsee.data.loaders.rig_fleet.router import (
+from worldenergydata.bsee.data.loaders.rig_fleet.router import (
     RigFleetRouter,
 )
 

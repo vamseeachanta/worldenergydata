@@ -6,15 +6,15 @@ from pathlib import Path
 
 import pytest
 
-from worldenergydata.modules.lng_terminals.collectors.seed_collector import (
+from worldenergydata.lng_terminals.collectors.seed_collector import (
     SeedCollector,
 )
-from worldenergydata.modules.lng_terminals.exceptions import LNGExportError
-from worldenergydata.modules.lng_terminals.exporters.csv_exporter import CSVExporter
-from worldenergydata.modules.lng_terminals.exporters.parquet_exporter import (
+from worldenergydata.lng_terminals.exceptions import LNGExportError
+from worldenergydata.lng_terminals.exporters.csv_exporter import CSVExporter
+from worldenergydata.lng_terminals.exporters.parquet_exporter import (
     ParquetExporter,
 )
-from worldenergydata.modules.lng_terminals.models.terminal import LNGTerminal
+from worldenergydata.lng_terminals.models.terminal import LNGTerminal
 
 
 @pytest.fixture

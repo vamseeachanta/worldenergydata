@@ -11,15 +11,15 @@ import pandas as pd
 import plotly.graph_objects as go
 import pytest
 
-from worldenergydata.modules.safety_analysis.core.models import CorrelationResult
-from worldenergydata.modules.safety_analysis.reports.base_report import BaseReport
-from worldenergydata.modules.safety_analysis.reports.classification_report import (
+from worldenergydata.safety_analysis.core.models import CorrelationResult
+from worldenergydata.safety_analysis.reports.base_report import BaseReport
+from worldenergydata.safety_analysis.reports.classification_report import (
     ClassificationReport,
 )
-from worldenergydata.modules.safety_analysis.reports.correlation_report import (
+from worldenergydata.safety_analysis.reports.correlation_report import (
     CorrelationReport,
 )
-from worldenergydata.modules.safety_analysis.reports.incident_report import (
+from worldenergydata.safety_analysis.reports.incident_report import (
     IncidentReport,
 )
 

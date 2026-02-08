@@ -1,0 +1,98 @@
+# Go-By Report Configuration
+# Configuration matching the Jack/Julia/St Malo/Stones field report formats
+
+# Report settings for Go-By format
+type: field                    # Default to field reports like go-by examples
+format: excel                  # Go-by reports are Excel format
+output: ./reports/goby        # Output directory for go-by style reports
+
+# Go-By Fields Configuration
+# These match the actual go-by report examples
+goby_fields:
+  jack:
+    field_name: "Jack"
+    block: "WR 759"
+    operator: "Chevron"
+  st_malo:
+    field_name: "St. Malo"
+    block: "WR 678"
+    operator: "Chevron"
+  julia:
+    field_name: "Julia"
+    block: "WR 627"
+    operator: "ExxonMobil"
+  stones:
+    field_name: "Stones"
+    block: "WR 508"
+    operator: "Shell"
+
+# Standard Price Deck (Gulf of Mexico deepwater)
+price_deck:
+  oil_price: 75.00            # WTI benchmark
+  gas_price: 3.50              # Henry Hub benchmark
+  ngl_price: 30.00             # NGL pricing
+
+# Deepwater Cost Structure
+cost_structure:
+  operating_cost: 15.00        # Higher for deepwater operations
+  royalty_rate: 0.1875         # Standard federal offshore rate (18.75%)
+  severance_tax_rate: 0.00     # No severance tax for federal waters
+
+# Report Structure (14-row go-by format)
+report_structure:
+  rows:
+    - "Field Name"
+    - "Lease Number"
+    - "Well Name"
+    - "API Number"
+    - "Water Depth (ft)"
+    - "Total Depth (ft)"
+    - "Spud Date"
+    - "Status"
+    - "Oil Production (bbls)"
+    - "Gas Production (mcf)"
+    - "Water Production (bbls)"
+    - "Gross Revenue ($)"
+    - "Operating Cost ($)"
+    - "Net Income ($)"
+
+# Aggregation Settings
+aggregation:
+  by_lease: true               # Aggregate by lease as in go-by reports
+  by_well_status: true         # Group by well status
+  include_totals: true         # Include total rows
+  include_averages: true       # Include average calculations
+
+# Excel Formatting (matching go-by style)
+excel_format:
+  header_color: "CCCCCC"       # Gray headers
+  font: "Arial"
+  font_size: 10
+  column_widths:
+    field_name: 15
+    lease_number: 15
+    well_name: 20
+    api_number: 15
+    water_depth: 12
+    total_depth: 12
+    spud_date: 12
+    status: 10
+    oil_production: 15
+    gas_production: 15
+    water_production: 15
+    gross_revenue: 15
+    operating_cost: 15
+    net_income: 15
+
+# Processing options
+processing:
+  cache: true                  # Cache data for performance
+  progress: true               # Show progress for large reports
+  validate_data: true          # Validate against go-by structure
+
+# Example usage commands:
+# Generate Jack field report:
+#   python -m worldenergydata.bsee.reports.comprehensive --config goby_report_config.yaml --id Jack
+#
+# Generate all go-by field reports:
+#   python -m worldenergydata.bsee.reports.comprehensive --config goby_report_config.yaml --ids Jack,Julia,St_Malo,Stones --batch

@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from worldenergydata.modules.bsee.analysis.financial.analyzer import (
+from worldenergydata.bsee.analysis.financial.analyzer import (
     AnalysisConfig,
     AnalysisResult,
     FinancialAnalyzer,
@@ -196,7 +196,7 @@ class TestEndToEndIntegration:
 
     def test_cli_execution(self, test_data_dir, tmp_path):
         """Test CLI interface execution"""
-        from worldenergydata.modules.bsee.analysis.financial.cli_interface import main
+        from worldenergydata.bsee.analysis.financial.cli_interface import main
 
         output_file = tmp_path / "cli_output.xlsx"
 
@@ -219,7 +219,7 @@ class TestEndToEndIntegration:
 
         with patch("sys.argv", ["cli_interface.py"] + test_args):
             with patch(
-                "src.worldenergydata.modules.bsee.analysis.financial.analyzer.FinancialAnalyzer.run_analysis"
+                "src.worldenergydata.bsee.analysis.financial.analyzer.FinancialAnalyzer.run_analysis"
             ) as mock_run:
                 mock_run.return_value = MagicMock(
                     success=True, output_file=str(output_file)
@@ -373,7 +373,7 @@ class TestConfigurationLoading:
         with open(config_file, "w") as f:
             yaml.dump(config_data, f)
 
-        from worldenergydata.modules.bsee.analysis.financial.config_loader import (
+        from worldenergydata.bsee.analysis.financial.config_loader import (
             load_config,
         )
 
@@ -385,7 +385,7 @@ class TestConfigurationLoading:
 
     def test_config_validation(self):
         """Test configuration validation"""
-        from worldenergydata.modules.bsee.analysis.financial.config_loader import (
+        from worldenergydata.bsee.analysis.financial.config_loader import (
             validate_config,
         )
 

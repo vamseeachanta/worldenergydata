@@ -12,10 +12,10 @@ import sys
 src_path = Path(__file__).parent.parent.parent.parent / "src"
 sys.path.insert(0, str(src_path))
 
-from worldenergydata.modules.marine_safety.analysis.cause_visualizations import (
+from worldenergydata.marine_safety.analysis.cause_visualizations import (
     CauseVisualizer,
 )
-from worldenergydata.modules.marine_safety.constants import (
+from worldenergydata.marine_safety.constants import (
     CauseCategory,
     SeverityLevel,
 )

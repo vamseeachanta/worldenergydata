@@ -16,7 +16,7 @@ from unittest.mock import MagicMock, Mock, call, patch
 import numpy as np
 import pandas as pd
 
-from worldenergydata.modules.well_production_dashboard.export_manager import (
+from worldenergydata.well_production_dashboard.export_manager import (
     ExportConfiguration,
     ExportResult,
     VerificationMetadata,
@@ -144,7 +144,7 @@ class TestWellDashboardExportManager(unittest.TestCase):
         self.assertIsInstance(self.export_manager.config, dict)
 
     @patch(
-        "src.worldenergydata.modules.well_production_dashboard.export_manager.ExcelExporter"
+        "src.worldenergydata.well_production_dashboard.export_manager.ExcelExporter"
     )
     def test_export_to_excel(self, mock_excel_exporter):
         """Test Excel export functionality"""
@@ -166,7 +166,7 @@ class TestWellDashboardExportManager(unittest.TestCase):
         self.assertIn(".xlsx", result.file_path)
 
     @patch(
-        "src.worldenergydata.modules.well_production_dashboard.export_manager.PDFExporter"
+        "src.worldenergydata.well_production_dashboard.export_manager.PDFExporter"
     )
     def test_export_to_pdf(self, mock_pdf_exporter):
         """Test PDF export functionality"""
@@ -246,7 +246,7 @@ class TestWellDashboardExportManager(unittest.TestCase):
         self.assertIn("charts", prepared_data)
 
     @patch(
-        "src.worldenergydata.modules.well_production_dashboard.export_manager.BatchExporter"
+        "src.worldenergydata.well_production_dashboard.export_manager.BatchExporter"
     )
     def test_batch_export(self, mock_batch_exporter):
         """Test batch export functionality"""
@@ -389,7 +389,7 @@ class TestExportIntegration(unittest.TestCase):
     """Integration tests for export functionality"""
 
     @patch(
-        "src.worldenergydata.modules.well_production_dashboard.well_production.WellProductionDashboard"
+        "src.worldenergydata.well_production_dashboard.well_production.WellProductionDashboard"
     )
     def test_dashboard_export_integration(self, mock_dashboard):
         """Test integration between dashboard and export manager"""
@@ -417,7 +417,7 @@ class TestExportIntegration(unittest.TestCase):
 
     def test_cli_export_command(self):
         """Test CLI export command integration"""
-        from worldenergydata.modules.well_production_dashboard.cli import DashboardCLI
+        from worldenergydata.well_production_dashboard.cli import DashboardCLI
 
         cli = DashboardCLI()
 

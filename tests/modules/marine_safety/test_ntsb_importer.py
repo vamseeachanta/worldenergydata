@@ -18,19 +18,19 @@ from unittest.mock import MagicMock, Mock, PropertyMock, patch
 import httpx
 import pytest
 
-from worldenergydata.modules.marine_safety.constants import (
+from worldenergydata.marine_safety.constants import (
     DataSource,
     IncidentType,
     SeverityLevel,
     VesselType,
 )
-from worldenergydata.modules.marine_safety.database.models import (
+from worldenergydata.marine_safety.database.models import (
     Base,
     Incident,
     Location,
     Vessel,
 )
-from worldenergydata.modules.marine_safety.exceptions import (
+from worldenergydata.marine_safety.exceptions import (
     HTTPError,
     ParsingError,
     RateLimitError,
@@ -228,7 +228,7 @@ class TestNTSBScraperInitialization:
     @pytest.mark.unit
     def test_scraper_default_initialization(self):
         """Test scraper initializes with default configuration."""
-        # Import would be: from worldenergydata.modules.marine_safety.scrapers.ntsb_scraper import NTSBScraper
+        # Import would be: from worldenergydata.marine_safety.scrapers.ntsb_scraper import NTSBScraper
         # Since the scraper doesn't exist yet, we test expected interface
 
         # Expected attributes after initialization

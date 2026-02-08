@@ -422,7 +422,7 @@ Reports include incident tables that can be copied/exported. For programmatic ac
 ```python
 # Load and analyze programmatically
 import pandas as pd
-from worldenergydata.modules.marine_safety.analysis.incidents import HatchMaloperationAnalyzer
+from worldenergydata.marine_safety.analysis.incidents import HatchMaloperationAnalyzer
 
 df = pd.read_csv('data/modules/marine_safety/input/hatch_incidents.csv')
 analyzer = HatchMaloperationAnalyzer(use_llm=True)
@@ -443,7 +443,7 @@ pd.DataFrame(results).to_csv('hatch_analysis_results.csv')
 The Python module can be imported and used in larger systems:
 
 ```python
-from worldenergydata.modules.marine_safety.analysis import HatchMaloperationAnalyzer
+from worldenergydata.marine_safety.analysis import HatchMaloperationAnalyzer
 
 class IncidentMonitoringSystem:
     def __init__(self):

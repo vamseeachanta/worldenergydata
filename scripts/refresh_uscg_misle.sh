@@ -49,7 +49,7 @@ echo "Step 1: Downloading MISLE bulk data..."
 echo "  Output: $OUTPUT_DIR"
 echo ""
 
-uv run python -m worldenergydata.modules.marine_safety.acquirers.uscg_misle_acquirer \
+uv run python -m worldenergydata.marine_safety.acquirers.uscg_misle_acquirer \
     --output-dir "$OUTPUT_DIR" $FORCE_FLAG
 
 echo ""
@@ -75,11 +75,11 @@ else
     echo "  Found data files, proceeding with import..."
     # Import uses the existing MISLEImporter
     # Uncomment when database and CLI are configured:
-    # uv run python -m worldenergydata.modules.marine_safety.cli_import \
+    # uv run python -m worldenergydata.marine_safety.cli_import \
     #     --source misle --data-dir "$OUTPUT_DIR"
     echo "  NOTE: Database import step requires database configuration."
     echo "  Run manually when ready:"
-    echo "    uv run python -m worldenergydata.modules.marine_safety.cli_import --source misle --data-dir $OUTPUT_DIR"
+    echo "    uv run python -m worldenergydata.marine_safety.cli_import --source misle --data-dir $OUTPUT_DIR"
 fi
 
 echo ""

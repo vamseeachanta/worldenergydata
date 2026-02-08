@@ -44,7 +44,7 @@ WorldEnergyData Repository
 The verification system can directly use BSEE data processors:
 
 ```python
-from worldenergydata.modules.bsee.data import (
+from worldenergydata.bsee.data import (
     ProductionDataProcessor,
     LeaseDataProcessor,
     WellDataProcessor,
@@ -65,7 +65,7 @@ data = processor.convert_units(data, target="metric")
 The verification system provides an adapter for seamless integration:
 
 ```python
-from worldenergydata.modules.analysis.verification.processors import BSEEDataAdapter
+from worldenergydata.analysis.verification.processors import BSEEDataAdapter
 
 class BSEEDataAdapter:
     """Adapter for BSEE data processors."""
@@ -113,8 +113,8 @@ data_sources:
 ### Production Data Processing
 
 ```python
-from worldenergydata.modules.bsee.data import ProductionDataProcessor
-from worldenergydata.modules.analysis.verification import VerificationEngine
+from worldenergydata.bsee.data import ProductionDataProcessor
+from worldenergydata.analysis.verification import VerificationEngine
 
 # Load and process BSEE production data
 processor = ProductionDataProcessor()
@@ -142,7 +142,7 @@ results = engine.verify_data(monthly_data)
 ### Well Data Processing
 
 ```python
-from worldenergydata.modules.bsee.data import WellDataProcessor
+from worldenergydata.bsee.data import WellDataProcessor
 
 # Process well master data
 well_processor = WellDataProcessor()
@@ -167,7 +167,7 @@ verification_engine.cross_reference_wells(
 ### Lease Data Processing
 
 ```python
-from worldenergydata.modules.bsee.data import LeaseDataProcessor
+from worldenergydata.bsee.data import LeaseDataProcessor
 
 # Process lease information
 lease_processor = LeaseDataProcessor()
@@ -188,7 +188,7 @@ verification_engine.validate_lease_production(
 ### Reusing Financial Validation Logic
 
 ```python
-from worldenergydata.modules.bsee.analysis.financial.validators import (
+from worldenergydata.bsee.analysis.financial.validators import (
     validate_oil_prices,
     validate_revenue_calculations,
     validate_royalty_rates
@@ -223,7 +223,7 @@ class FinancialVerification:
 ### Column Validators
 
 ```python
-from worldenergydata.modules.bsee.analysis.financial.validators import (
+from worldenergydata.bsee.analysis.financial.validators import (
     ColumnValidator,
     DateColumnConverter,
     NumericColumnValidator
@@ -257,7 +257,7 @@ numeric_issues = numeric_validator.validate(
 ### Leveraging Report Exporters
 
 ```python
-from worldenergydata.modules.bsee.reports.comprehensive import (
+from worldenergydata.bsee.reports.comprehensive import (
     ReportExporter,
     PDFExporter,
     ExcelExporter
@@ -295,7 +295,7 @@ class VerificationReportGenerator:
 ### Report Controller Patterns
 
 ```python
-from worldenergydata.modules.bsee.reports.comprehensive import ReportController
+from worldenergydata.bsee.reports.comprehensive import ReportController
 
 class VerificationReportController(ReportController):
     """Extends BSEE report controller for verification."""
@@ -325,8 +325,8 @@ class VerificationReportController(ReportController):
 ### Pattern 1: Data Loading and Validation
 
 ```python
-from worldenergydata.modules.bsee.data import ProductionDataProcessor
-from worldenergydata.modules.analysis.verification import VerificationEngine
+from worldenergydata.bsee.data import ProductionDataProcessor
+from worldenergydata.analysis.verification import VerificationEngine
 
 def verify_bsee_production(file_path):
     """Common pattern for BSEE data verification."""
@@ -352,8 +352,8 @@ def verify_bsee_production(file_path):
 ### Pattern 2: Cross-Module Validation
 
 ```python
-from worldenergydata.modules.bsee.analysis.financial import FinancialAnalyzer
-from worldenergydata.modules.analysis.verification import DataQualityFramework
+from worldenergydata.bsee.analysis.financial import FinancialAnalyzer
+from worldenergydata.analysis.verification import DataQualityFramework
 
 def cross_validate_financial_data(production_data, price_data):
     """Cross-validate using multiple BSEE modules."""
@@ -384,8 +384,8 @@ def cross_validate_financial_data(production_data, price_data):
 ### Pattern 3: Workflow Integration
 
 ```python
-from worldenergydata.modules.bsee.workflows import BSEEWorkflow
-from worldenergydata.modules.analysis.verification.engine import WorkflowEngine
+from worldenergydata.bsee.workflows import BSEEWorkflow
+from worldenergydata.analysis.verification.engine import WorkflowEngine
 
 class IntegratedVerificationWorkflow(BSEEWorkflow):
     """Integrate verification into BSEE workflows."""
@@ -440,7 +440,7 @@ def map_bsee_to_verification(bsee_data):
 ### Unit Conversions
 
 ```python
-from worldenergydata.modules.bsee.utils import UnitConverter
+from worldenergydata.bsee.utils import UnitConverter
 
 # BSEE unit conversions
 converter = UnitConverter()
@@ -464,10 +464,10 @@ def convert_bsee_units(data):
 ### Example 1: Complete BSEE Data Verification
 
 ```python
-from worldenergydata.modules.bsee.data import ProductionDataProcessor
-from worldenergydata.modules.bsee.analysis.financial import FinancialValidator
-from worldenergydata.modules.analysis.verification import VerificationEngine
-from worldenergydata.modules.bsee.reports.comprehensive import ReportExporter
+from worldenergydata.bsee.data import ProductionDataProcessor
+from worldenergydata.bsee.analysis.financial import FinancialValidator
+from worldenergydata.analysis.verification import VerificationEngine
+from worldenergydata.bsee.reports.comprehensive import ReportExporter
 
 def complete_bsee_verification(month="2024-01"):
     """Complete verification using BSEE infrastructure."""
@@ -505,8 +505,8 @@ def complete_bsee_verification(month="2024-01"):
 ### Example 2: Jack Field Specific Verification
 
 ```python
-from worldenergydata.modules.bsee.data import FieldDataProcessor
-from worldenergydata.modules.analysis.verification.cross_reference import CrossReferenceModule
+from worldenergydata.bsee.data import FieldDataProcessor
+from worldenergydata.analysis.verification.cross_reference import CrossReferenceModule
 
 def verify_jack_field():
     """Verify Jack Field production using BSEE data."""
@@ -539,8 +539,8 @@ def verify_jack_field():
 ### Example 3: Batch Verification of Multiple Fields
 
 ```python
-from worldenergydata.modules.bsee.data import BatchProcessor
-from worldenergydata.modules.analysis.verification import BatchVerification
+from worldenergydata.bsee.data import BatchProcessor
+from worldenergydata.analysis.verification import BatchVerification
 
 def batch_verify_fields(field_list):
     """Batch verification of multiple BSEE fields."""
@@ -575,8 +575,8 @@ def batch_verify_fields(field_list):
 ### Example 4: Real-time BSEE Data Monitoring
 
 ```python
-from worldenergydata.modules.bsee.streaming import BSEEDataStream
-from worldenergydata.modules.analysis.verification.quality import RealTimeMonitor
+from worldenergydata.bsee.streaming import BSEEDataStream
+from worldenergydata.analysis.verification.quality import RealTimeMonitor
 
 def monitor_bsee_data():
     """Real-time monitoring of BSEE data quality."""
@@ -616,7 +616,7 @@ Always check for existing BSEE functionality before implementing new features:
 
 ```python
 # Good: Reuse existing processor
-from worldenergydata.modules.bsee.data import ProductionDataProcessor
+from worldenergydata.bsee.data import ProductionDataProcessor
 processor = ProductionDataProcessor()
 
 # Avoid: Reimplementing data loading

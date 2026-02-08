@@ -16,21 +16,21 @@ from unittest.mock import MagicMock, Mock, patch
 
 import pandas as pd
 
-from worldenergydata.modules.well_production_dashboard.export_manager import (
+from worldenergydata.well_production_dashboard.export_manager import (
     ExportConfiguration,
     WellDashboardExportManager,
 )
-from worldenergydata.modules.well_production_dashboard.monitoring import (
+from worldenergydata.well_production_dashboard.monitoring import (
     AuditEntry,
     DashboardMonitor,
 )
-from worldenergydata.modules.well_production_dashboard.query_optimizer import (
+from worldenergydata.well_production_dashboard.query_optimizer import (
     LazyLoadConfig,
     QueryOptimizer,
 )
 
 # Import dashboard components
-from worldenergydata.modules.well_production_dashboard.well_production import (
+from worldenergydata.well_production_dashboard.well_production import (
     FieldAggregator,
     WellMetrics,
     WellProductionDashboard,
@@ -85,7 +85,7 @@ monitoring:
         """Set up for each test."""
         # Create dashboard with mocked dependencies
         with patch(
-            "src.worldenergydata.modules.well_production_dashboard.well_production.DashboardBuilder"
+            "src.worldenergydata.well_production_dashboard.well_production.DashboardBuilder"
         ):
             self.dashboard = WellProductionDashboard(config_path=str(self.config_path))
 
@@ -360,7 +360,7 @@ class TestCLIIntegration(unittest.TestCase):
 
     def test_cli_commands_available(self):
         """Test that all CLI commands are available."""
-        from worldenergydata.modules.well_production_dashboard.cli import DashboardCLI
+        from worldenergydata.well_production_dashboard.cli import DashboardCLI
 
         cli = DashboardCLI()
 
@@ -373,11 +373,11 @@ class TestCLIIntegration(unittest.TestCase):
         self.assertTrue(hasattr(cli, "monitor"))
 
     @patch(
-        "src.worldenergydata.modules.well_production_dashboard.cli.WellProductionDashboard"
+        "src.worldenergydata.well_production_dashboard.cli.WellProductionDashboard"
     )
     def test_cli_report_generation(self, mock_dashboard):
         """Test CLI report generation."""
-        from worldenergydata.modules.well_production_dashboard.cli import DashboardCLI
+        from worldenergydata.well_production_dashboard.cli import DashboardCLI
 
         cli = DashboardCLI()
         cli.dashboard = mock_dashboard.return_value

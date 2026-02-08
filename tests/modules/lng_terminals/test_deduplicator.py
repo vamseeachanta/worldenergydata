@@ -2,13 +2,13 @@
 
 from datetime import datetime
 
-from worldenergydata.modules.lng_terminals.constants import (
+from worldenergydata.lng_terminals.constants import (
     TerminalFunction,
     TerminalStatus,
     TerminalType,
 )
-from worldenergydata.modules.lng_terminals.models.terminal import LNGTerminal
-from worldenergydata.modules.lng_terminals.processors.deduplicator import Deduplicator
+from worldenergydata.lng_terminals.models.terminal import LNGTerminal
+from worldenergydata.lng_terminals.processors.deduplicator import Deduplicator
 
 
 def _make_terminal(
@@ -114,7 +114,7 @@ class TestDeduplicator:
 
     def test_seed_data_dedup(self):
         """Dedup on seed data should not remove any (they're all distinct)."""
-        from worldenergydata.modules.lng_terminals.collectors.seed_collector import (
+        from worldenergydata.lng_terminals.collectors.seed_collector import (
             SeedCollector,
         )
 

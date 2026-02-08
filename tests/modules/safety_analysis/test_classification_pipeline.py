@@ -23,21 +23,21 @@ except ImportError:
 
 pytestmark = pytest.mark.skipif(not _HAS_SKLEARN, reason="scikit-learn not installed")
 
-from worldenergydata.modules.safety_analysis.config import (  # noqa: E402
+from worldenergydata.safety_analysis.config import (  # noqa: E402
     AnalysisConfig,
     HyperparamConfig,
 )
-from worldenergydata.modules.safety_analysis.constants import (  # noqa: E402
+from worldenergydata.safety_analysis.constants import (  # noqa: E402
     ClassifierType,
 )
-from worldenergydata.modules.safety_analysis.core.models import (  # noqa: E402
+from worldenergydata.safety_analysis.core.models import (  # noqa: E402
     ClassificationResult,
 )
-from worldenergydata.modules.safety_analysis.exceptions import (  # noqa: E402
+from worldenergydata.safety_analysis.exceptions import (  # noqa: E402
     OptionalDependencyError,
     SafetyClassificationError,
 )
-from worldenergydata.modules.safety_analysis.nlp.classification_pipeline import (  # noqa: E402
+from worldenergydata.safety_analysis.nlp.classification_pipeline import (  # noqa: E402
     ClassificationPipeline,
 )
 
@@ -252,7 +252,7 @@ class TestErrorPaths:
         """When sklearn is unavailable, constructing the pipeline should raise."""
         with (
             patch(
-                "worldenergydata.modules.safety_analysis.nlp"
+                "worldenergydata.safety_analysis.nlp"
                 ".classification_pipeline._HAS_SKLEARN",
                 False,
             ),

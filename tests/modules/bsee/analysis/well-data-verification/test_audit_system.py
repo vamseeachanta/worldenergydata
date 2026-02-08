@@ -15,20 +15,20 @@ import uuid
 from unittest.mock import Mock, patch, MagicMock
 
 # Import audit system components (to be implemented)
-from worldenergydata.modules.analysis.verification.audit.logger import AuditLogger
-from worldenergydata.modules.analysis.verification.audit.tracker import (
+from worldenergydata.analysis.verification.audit.logger import AuditLogger
+from worldenergydata.analysis.verification.audit.tracker import (
     ActivityTracker,
     VerificationStatusManager,
     DataLineageTracker
 )
-from worldenergydata.modules.analysis.verification.audit.database import (
+from worldenergydata.analysis.verification.audit.database import (
     AuditDatabase,
     AuditEvent,
     UserActivity,
     VerificationStatus,
     DataLineage
 )
-from worldenergydata.modules.analysis.verification.audit.compliance import (
+from worldenergydata.analysis.verification.audit.compliance import (
     ComplianceReportGenerator,
     ComplianceReport
 )

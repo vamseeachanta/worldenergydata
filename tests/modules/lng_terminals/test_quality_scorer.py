@@ -2,18 +2,18 @@
 
 from datetime import datetime
 
-from worldenergydata.modules.lng_terminals.collectors.seed_collector import (
+from worldenergydata.lng_terminals.collectors.seed_collector import (
     SeedCollector,
 )
-from worldenergydata.modules.lng_terminals.constants import (
+from worldenergydata.lng_terminals.constants import (
     Region,
     TerminalFunction,
     TerminalStatus,
     TerminalType,
 )
-from worldenergydata.modules.lng_terminals.models.data_quality import QualityScore
-from worldenergydata.modules.lng_terminals.models.terminal import LNGTerminal
-from worldenergydata.modules.lng_terminals.processors.quality_scorer import (
+from worldenergydata.lng_terminals.models.data_quality import QualityScore
+from worldenergydata.lng_terminals.models.terminal import LNGTerminal
+from worldenergydata.lng_terminals.processors.quality_scorer import (
     QualityScorer,
 )
 

@@ -397,8 +397,8 @@ async def run_extreme_analysis(station_id: str, start_year: int, end_year: int):
     """Complete extreme value analysis workflow."""
 
     # Import metocean module components
-    from worldenergydata.modules.metocean.clients.ndbc_client import NDBCClient
-    from worldenergydata.modules.metocean.processors.data_harmonizer import DataHarmonizer
+    from worldenergydata.metocean.clients.ndbc_client import NDBCClient
+    from worldenergydata.metocean.processors.data_harmonizer import DataHarmonizer
 
     # Fetch historical data
     async with NDBCClient() as client:

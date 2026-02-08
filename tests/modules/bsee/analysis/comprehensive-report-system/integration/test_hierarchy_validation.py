@@ -13,16 +13,16 @@ from datetime import datetime, date
 from typing import Dict, List, Any
 import tempfile
 
-from worldenergydata.modules.bsee.reports.comprehensive.controller_enhanced import (
+from worldenergydata.bsee.reports.comprehensive.controller_enhanced import (
     ReportController, ReportConfiguration, ReportParameters, ReportType,
     HierarchyNode, HierarchyTree
 )
-from worldenergydata.modules.bsee.reports.comprehensive.models import (
+from worldenergydata.bsee.reports.comprehensive.models import (
     OrganizationalUnit, WellSummary, ProductionMetrics, HierarchyLevel
 )
-from worldenergydata.modules.bsee.reports.comprehensive.aggregators.block_aggregator_enhanced import BlockAggregator
-from worldenergydata.modules.bsee.reports.comprehensive.aggregators.field_aggregator_enhanced import FieldAggregator
-from worldenergydata.modules.bsee.reports.comprehensive.aggregators.lease_aggregator_enhanced import LeaseAggregator
+from worldenergydata.bsee.reports.comprehensive.aggregators.block_aggregator_enhanced import BlockAggregator
+from worldenergydata.bsee.reports.comprehensive.aggregators.field_aggregator_enhanced import FieldAggregator
+from worldenergydata.bsee.reports.comprehensive.aggregators.lease_aggregator_enhanced import LeaseAggregator
 
 
 class TestHierarchyValidation:

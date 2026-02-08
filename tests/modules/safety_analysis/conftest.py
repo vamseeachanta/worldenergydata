@@ -3,7 +3,7 @@
 import pandas as pd
 import pytest
 
-from worldenergydata.modules.safety_analysis.core.schemas import SchemaMapping
+from worldenergydata.safety_analysis.core.schemas import SchemaMapping
 
 
 @pytest.fixture

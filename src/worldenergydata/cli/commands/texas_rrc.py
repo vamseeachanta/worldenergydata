@@ -177,7 +177,7 @@ def collect(
             )
 
             try:
-                from worldenergydata.modules.texas_rrc.texas_rrc import TexasRRC
+                from worldenergydata.texas_rrc.texas_rrc import TexasRRC
 
                 progress.update(
                     task, advance=10, description="[cyan]Loading Texas RRC module..."
@@ -342,7 +342,7 @@ def analyze(
             task = progress.add_task("[cyan]Running Texas RRC analysis...", total=100)
 
             try:
-                from worldenergydata.modules.texas_rrc.analysis import TexasRRCAnalysis
+                from worldenergydata.texas_rrc.analysis import TexasRRCAnalysis
 
                 progress.update(
                     task, advance=20, description="[cyan]Loading analysis module..."

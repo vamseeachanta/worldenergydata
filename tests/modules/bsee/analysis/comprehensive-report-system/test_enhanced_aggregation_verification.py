@@ -14,8 +14,8 @@ from unittest.mock import Mock, patch, MagicMock
 src_path = Path(__file__).parent.parent.parent.parent.parent / 'src'
 sys.path.insert(0, str(src_path))
 
-from worldenergydata.modules.bsee.reports.comprehensive.data_loader_enhanced import HierarchicalDataLoader
-from worldenergydata.modules.bsee.reports.comprehensive.aggregators.lease_aggregator_enhanced import LeaseAggregator
+from worldenergydata.bsee.reports.comprehensive.data_loader_enhanced import HierarchicalDataLoader
+from worldenergydata.bsee.reports.comprehensive.aggregators.lease_aggregator_enhanced import LeaseAggregator
 
 
 def test_block_data_integration():

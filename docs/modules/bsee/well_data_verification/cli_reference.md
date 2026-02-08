@@ -15,23 +15,23 @@ The CLI is included with the WorldEnergyData package. Access it via Python modul
 
 ```bash
 # Run the CLI
-python -m worldenergydata.modules.analysis.verification.cli [command] [options]
+python -m worldenergydata.analysis.verification.cli [command] [options]
 
 # Or create an alias for convenience
-alias wdv="python -m worldenergydata.modules.analysis.verification.cli"
+alias wdv="python -m worldenergydata.analysis.verification.cli"
 ```
 
 ## Basic Usage
 
 ```bash
 # General syntax
-python -m worldenergydata.modules.analysis.verification.cli [command] [options]
+python -m worldenergydata.analysis.verification.cli [command] [options]
 
 # Get help
-python -m worldenergydata.modules.analysis.verification.cli --help
+python -m worldenergydata.analysis.verification.cli --help
 
 # Get help for a specific command
-python -m worldenergydata.modules.analysis.verification.cli verify --help
+python -m worldenergydata.analysis.verification.cli verify --help
 ```
 
 ## Commands
@@ -41,7 +41,7 @@ python -m worldenergydata.modules.analysis.verification.cli verify --help
 Run a complete verification workflow on production data.
 
 ```bash
-python -m worldenergydata.modules.analysis.verification.cli verify \
+python -m worldenergydata.analysis.verification.cli verify \
     --data-file <path> \
     --config <config_file> \
     --output-dir <directory>
@@ -61,7 +61,7 @@ python -m worldenergydata.modules.analysis.verification.cli verify \
 
 **Example:**
 ```bash
-python -m worldenergydata.modules.analysis.verification.cli verify \
+python -m worldenergydata.analysis.verification.cli verify \
     --data-file production_2024.csv \
     --config verification_config.yaml \
     --output-dir ./results \
@@ -74,7 +74,7 @@ python -m worldenergydata.modules.analysis.verification.cli verify \
 Run data quality checks without full verification.
 
 ```bash
-python -m worldenergydata.modules.analysis.verification.cli quality-check \
+python -m worldenergydata.analysis.verification.cli quality-check \
     --data-file <path> \
     [options]
 ```
@@ -92,7 +92,7 @@ python -m worldenergydata.modules.analysis.verification.cli quality-check \
 
 **Example:**
 ```bash
-python -m worldenergydata.modules.analysis.verification.cli quality-check \
+python -m worldenergydata.analysis.verification.cli quality-check \
     --data-file monthly_production.csv \
     --all \
     --threshold 0.90 \
@@ -104,7 +104,7 @@ python -m worldenergydata.modules.analysis.verification.cli quality-check \
 Compare production data with Excel benchmarks.
 
 ```bash
-python -m worldenergydata.modules.analysis.verification.cli cross-reference \
+python -m worldenergydata.analysis.verification.cli cross-reference \
     --data-file <path> \
     --benchmark <excel_file> \
     [options]
@@ -122,7 +122,7 @@ python -m worldenergydata.modules.analysis.verification.cli cross-reference \
 
 **Example:**
 ```bash
-python -m worldenergydata.modules.analysis.verification.cli cross-reference \
+python -m worldenergydata.analysis.verification.cli cross-reference \
     --data-file actual_production.csv \
     --benchmark expected_values.xlsx \
     --sheet "Q1_2024" \
@@ -135,7 +135,7 @@ python -m worldenergydata.modules.analysis.verification.cli cross-reference \
 Validate data against custom rules.
 
 ```bash
-python -m worldenergydata.modules.analysis.verification.cli validate-rules \
+python -m worldenergydata.analysis.verification.cli validate-rules \
     --data-file <path> \
     --rules <rules_file> \
     [options]
@@ -152,7 +152,7 @@ python -m worldenergydata.modules.analysis.verification.cli validate-rules \
 
 **Example:**
 ```bash
-python -m worldenergydata.modules.analysis.verification.cli validate-rules \
+python -m worldenergydata.analysis.verification.cli validate-rules \
     --data-file production.csv \
     --rules custom_rules.yaml \
     --export-violations violations.csv
@@ -163,7 +163,7 @@ python -m worldenergydata.modules.analysis.verification.cli validate-rules \
 Query and export audit logs.
 
 ```bash
-python -m worldenergydata.modules.analysis.verification.cli audit-log \
+python -m worldenergydata.analysis.verification.cli audit-log \
     [options]
 ```
 
@@ -177,7 +177,7 @@ python -m worldenergydata.modules.analysis.verification.cli audit-log \
 
 **Example:**
 ```bash
-python -m worldenergydata.modules.analysis.verification.cli audit-log \
+python -m worldenergydata.analysis.verification.cli audit-log \
     --start-date 2024-01-01 \
     --end-date 2024-01-31 \
     --user john.doe \
@@ -189,7 +189,7 @@ python -m worldenergydata.modules.analysis.verification.cli audit-log \
 Generate verification reports from existing results.
 
 ```bash
-python -m worldenergydata.modules.analysis.verification.cli generate-report \
+python -m worldenergydata.analysis.verification.cli generate-report \
     --results <results_file> \
     [options]
 ```
@@ -206,7 +206,7 @@ python -m worldenergydata.modules.analysis.verification.cli generate-report \
 
 **Example:**
 ```bash
-python -m worldenergydata.modules.analysis.verification.cli generate-report \
+python -m worldenergydata.analysis.verification.cli generate-report \
     --results verification_results.json \
     --template comprehensive \
     --format pdf \
@@ -219,7 +219,7 @@ python -m worldenergydata.modules.analysis.verification.cli generate-report \
 Manage verification workflows.
 
 ```bash
-python -m worldenergydata.modules.analysis.verification.cli workflow \
+python -m worldenergydata.analysis.verification.cli workflow \
     <subcommand> \
     [options]
 ```
@@ -234,19 +234,19 @@ python -m worldenergydata.modules.analysis.verification.cli workflow \
 **Example:**
 ```bash
 # List available workflows
-python -m worldenergydata.modules.analysis.verification.cli workflow list
+python -m worldenergydata.analysis.verification.cli workflow list
 
 # Run a workflow
-python -m worldenergydata.modules.analysis.verification.cli workflow run \
+python -m worldenergydata.analysis.verification.cli workflow run \
     --name monthly_verification \
     --config workflow_config.yaml
 
 # Check status
-python -m worldenergydata.modules.analysis.verification.cli workflow status \
+python -m worldenergydata.analysis.verification.cli workflow status \
     --session-id abc123
 
 # Resume workflow
-python -m worldenergydata.modules.analysis.verification.cli workflow resume \
+python -m worldenergydata.analysis.verification.cli workflow resume \
     --checkpoint checkpoint_abc123.json
 ```
 
@@ -255,7 +255,7 @@ python -m worldenergydata.modules.analysis.verification.cli workflow resume \
 Manage configuration files.
 
 ```bash
-python -m worldenergydata.modules.analysis.verification.cli config \
+python -m worldenergydata.analysis.verification.cli config \
     <subcommand> \
     [options]
 ```
@@ -268,16 +268,16 @@ python -m worldenergydata.modules.analysis.verification.cli config \
 **Example:**
 ```bash
 # Generate template
-python -m worldenergydata.modules.analysis.verification.cli config generate \
+python -m worldenergydata.analysis.verification.cli config generate \
     --type verification \
     --output my_config.yaml
 
 # Validate configuration
-python -m worldenergydata.modules.analysis.verification.cli config validate \
+python -m worldenergydata.analysis.verification.cli config validate \
     --file my_config.yaml
 
 # Merge configurations
-python -m worldenergydata.modules.analysis.verification.cli config merge \
+python -m worldenergydata.analysis.verification.cli config merge \
     --base base_config.yaml \
     --override custom_config.yaml \
     --output merged_config.yaml
@@ -490,7 +490,7 @@ rules:
 
 ```bash
 # Simple verification with default settings
-python -m worldenergydata.modules.analysis.verification.cli verify \
+python -m worldenergydata.analysis.verification.cli verify \
     --data-file production_jan_2024.csv \
     --output-dir ./results
 ```
@@ -499,7 +499,7 @@ python -m worldenergydata.modules.analysis.verification.cli verify \
 
 ```bash
 # Full verification with custom configuration
-python -m worldenergydata.modules.analysis.verification.cli verify \
+python -m worldenergydata.analysis.verification.cli verify \
     --data-file production_q1_2024.csv \
     --config advanced_verification.yaml \
     --output-dir ./q1_results \
@@ -513,14 +513,14 @@ python -m worldenergydata.modules.analysis.verification.cli verify \
 
 ```bash
 # Run quality checks and export results
-python -m worldenergydata.modules.analysis.verification.cli quality-check \
+python -m worldenergydata.analysis.verification.cli quality-check \
     --data-file raw_production.csv \
     --completeness \
     --outliers \
     --ranges \
     --threshold 0.90 \
     --export quality_results.json \
-    | python -m worldenergydata.modules.analysis.verification.cli generate-report \
+    | python -m worldenergydata.analysis.verification.cli generate-report \
     --results - \
     --format pdf \
     --output quality_report.pdf
@@ -534,7 +534,7 @@ python -m worldenergydata.modules.analysis.verification.cli quality-check \
 
 for file in data/*.csv; do
     echo "Processing $file..."
-    python -m worldenergydata.modules.analysis.verification.cli verify \
+    python -m worldenergydata.analysis.verification.cli verify \
         --data-file "$file" \
         --config standard_config.yaml \
         --output-dir "./results/$(basename $file .csv)" \
@@ -546,13 +546,13 @@ done
 
 ```bash
 # Compare with benchmarks and generate discrepancy report
-python -m worldenergydata.modules.analysis.verification.cli cross-reference \
+python -m worldenergydata.analysis.verification.cli cross-reference \
     --data-file actual_production.csv \
     --benchmark expected_production.xlsx \
     --sheet "January" \
     --tolerance 5 \
     --export-discrepancies discrepancies.xlsx \
-    && python -m worldenergydata.modules.analysis.verification.cli generate-report \
+    && python -m worldenergydata.analysis.verification.cli generate-report \
     --results discrepancies.xlsx \
     --template discrepancy_report \
     --format pdf \
@@ -564,17 +564,17 @@ python -m worldenergydata.modules.analysis.verification.cli cross-reference \
 
 ```bash
 # Start a workflow
-SESSION_ID=$(python -m worldenergydata.modules.analysis.verification.cli workflow run \
+SESSION_ID=$(python -m worldenergydata.analysis.verification.cli workflow run \
     --name monthly_verification \
     --config workflow_config.yaml \
     --output-json | jq -r '.session_id')
 
 # Check status
-python -m worldenergydata.modules.analysis.verification.cli workflow status \
+python -m worldenergydata.analysis.verification.cli workflow status \
     --session-id $SESSION_ID
 
 # If paused, resume
-python -m worldenergydata.modules.analysis.verification.cli workflow resume \
+python -m worldenergydata.analysis.verification.cli workflow resume \
     --session-id $SESSION_ID
 ```
 
@@ -582,7 +582,7 @@ python -m worldenergydata.modules.analysis.verification.cli workflow resume \
 
 ```bash
 # Query audit logs for specific user and export
-python -m worldenergydata.modules.analysis.verification.cli audit-log \
+python -m worldenergydata.analysis.verification.cli audit-log \
     --start-date 2024-01-01 \
     --end-date 2024-01-31 \
     --user john.doe@company.com \
@@ -627,7 +627,7 @@ export WDV_CONFIG_DIR=/opt/wdv/config
 export WDV_LOG_LEVEL=DEBUG
 export WDV_PARALLEL_WORKERS=8
 
-python -m worldenergydata.modules.analysis.verification.cli verify \
+python -m worldenergydata.analysis.verification.cli verify \
     --data-file production.csv
 ```
 

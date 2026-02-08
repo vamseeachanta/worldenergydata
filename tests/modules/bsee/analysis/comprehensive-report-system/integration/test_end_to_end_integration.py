@@ -16,23 +16,23 @@ from typing import Dict, List, Any
 import shutil
 import os
 
-from worldenergydata.modules.bsee.reports.comprehensive.controller_enhanced import (
+from worldenergydata.bsee.reports.comprehensive.controller_enhanced import (
     ReportController
 )
-from worldenergydata.modules.bsee.reports.comprehensive.models import (
+from worldenergydata.bsee.reports.comprehensive.models import (
     OrganizationalUnit, WellSummary, ProductionMetrics, HierarchyLevel
 )
-from worldenergydata.modules.bsee.reports.comprehensive.aggregators.block_aggregator_enhanced import BlockAggregator
-from worldenergydata.modules.bsee.reports.comprehensive.aggregators.field_aggregator_enhanced import FieldAggregator
-from worldenergydata.modules.bsee.reports.comprehensive.aggregators.lease_aggregator_enhanced import LeaseAggregator
-from worldenergydata.modules.bsee.reports.comprehensive.aggregators.base import DataAggregator
-from worldenergydata.modules.bsee.reports.comprehensive.templates.compliance_template import ComplianceTemplate
-from worldenergydata.modules.bsee.reports.comprehensive.templates.economic_template import EconomicTemplate
-from worldenergydata.modules.bsee.reports.comprehensive.templates.operational_template import OperationalTemplate
-from worldenergydata.modules.bsee.reports.comprehensive.templates.executive_template import ExecutiveTemplate
-from worldenergydata.modules.bsee.reports.comprehensive.exporters.excel_exporter import ExcelExporter
-from worldenergydata.modules.bsee.reports.comprehensive.exporters.pdf_exporter import PDFExporter
-from worldenergydata.modules.bsee.reports.comprehensive.exporters.base import ReportExporter
+from worldenergydata.bsee.reports.comprehensive.aggregators.block_aggregator_enhanced import BlockAggregator
+from worldenergydata.bsee.reports.comprehensive.aggregators.field_aggregator_enhanced import FieldAggregator
+from worldenergydata.bsee.reports.comprehensive.aggregators.lease_aggregator_enhanced import LeaseAggregator
+from worldenergydata.bsee.reports.comprehensive.aggregators.base import DataAggregator
+from worldenergydata.bsee.reports.comprehensive.templates.compliance_template import ComplianceTemplate
+from worldenergydata.bsee.reports.comprehensive.templates.economic_template import EconomicTemplate
+from worldenergydata.bsee.reports.comprehensive.templates.operational_template import OperationalTemplate
+from worldenergydata.bsee.reports.comprehensive.templates.executive_template import ExecutiveTemplate
+from worldenergydata.bsee.reports.comprehensive.exporters.excel_exporter import ExcelExporter
+from worldenergydata.bsee.reports.comprehensive.exporters.pdf_exporter import PDFExporter
+from worldenergydata.bsee.reports.comprehensive.exporters.base import ReportExporter
 
 
 class TestEndToEndIntegration:

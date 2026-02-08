@@ -54,7 +54,7 @@ class TestDashboardPerformance(unittest.TestCase):
         """Test dashboard loads within 3 seconds."""
         # Import the actual module
         try:
-            from worldenergydata.modules.well_production_dashboard.well_production import (
+            from worldenergydata.well_production_dashboard.well_production import (
                 WellProductionDashboard,
             )
 
@@ -84,7 +84,7 @@ class TestDashboardPerformance(unittest.TestCase):
     def test_chart_refresh_performance(self):
         """Test chart refresh completes within 500ms."""
         try:
-            from worldenergydata.modules.well_production_dashboard.interactive_components import (
+            from worldenergydata.well_production_dashboard.interactive_components import (
                 InteractiveComponents,
             )
 

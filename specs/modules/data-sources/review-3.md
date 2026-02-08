@@ -115,9 +115,9 @@ class TexasRRCValidationError(TexasRRCError, DataError):
 **Recommendation**: Implement a module registry pattern before Phase 2:
 ```python
 MODULE_REGISTRY = {
-    "bsee": ("worldenergydata.modules.bsee.bsee", "bsee"),
-    "sodir": ("worldenergydata.modules.sodir.sodir", "Sodir"),
-    "texas_rrc": ("worldenergydata.modules.texas_rrc.texas_rrc", "TexasRRC"),
+    "bsee": ("worldenergydata.bsee.bsee", "bsee"),
+    "sodir": ("worldenergydata.sodir.sodir", "Sodir"),
+    "texas_rrc": ("worldenergydata.texas_rrc.texas_rrc", "TexasRRC"),
     # etc.
 }
 

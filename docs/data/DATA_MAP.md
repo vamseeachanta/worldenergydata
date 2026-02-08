@@ -66,7 +66,7 @@ bsee/current/
 
 ```python
 # BSEE Data
-from worldenergydata.modules.bsee.analysis import bsee_analysis
+from worldenergydata.bsee.analysis import bsee_analysis
 
 # Access current data
 data_path = "data/modules/bsee/current/"

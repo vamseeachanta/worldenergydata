@@ -18,7 +18,7 @@ import yaml
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent / "src"))
 
 from tests.test_markers import integration
-from worldenergydata.modules.bsee.analysis.bsee_analysis import BSEEAnalysis
+from worldenergydata.bsee.analysis.bsee_analysis import BSEEAnalysis
 
 
 @integration
@@ -95,8 +95,8 @@ class TestBSEEAnalysisIntegration:
             assert result is not None
             mock_run.assert_called_once_with(test_config, test_data)
 
-    @patch("worldenergydata.modules.bsee.analysis.bsee_analysis.well_api12_analysis")
-    @patch("worldenergydata.modules.bsee.analysis.bsee_analysis.prod_api12_analysis")
+    @patch("worldenergydata.bsee.analysis.bsee_analysis.well_api12_analysis")
+    @patch("worldenergydata.bsee.analysis.bsee_analysis.prod_api12_analysis")
     def test_run_analysis_for_all_wells_integration(
         self, mock_prod, mock_well, test_config, test_data
     ):
@@ -144,7 +144,7 @@ class TestBSEEAnalysisIntegration:
         assert "START_PRODUCTION_DATE" in well_df.columns
         assert "LAST_PRODUCTION_DATE" in well_df.columns
 
-    @patch("worldenergydata.modules.bsee.analysis.bsee_analysis.well_api12_analysis")
+    @patch("worldenergydata.bsee.analysis.bsee_analysis.well_api12_analysis")
     def test_add_production_dates_integration(self, mock_well_api12, test_data):
         """Test production date integration with real data."""
         analysis = BSEEAnalysis()

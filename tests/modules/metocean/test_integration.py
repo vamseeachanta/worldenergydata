@@ -19,8 +19,8 @@ class TestNDBCIntegration:
 
     def test_fetch_stations_gom(self):
         """Test fetching stations from Gulf of Mexico region."""
-        from worldenergydata.modules.metocean.clients import NDBCClient
-        from worldenergydata.modules.metocean.constants import GOM_BBOX
+        from worldenergydata.metocean.clients import NDBCClient
+        from worldenergydata.metocean.constants import GOM_BBOX
 
         with NDBCClient() as client:
             result = client.fetch_stations(bbox=GOM_BBOX)
@@ -33,7 +33,7 @@ class TestNDBCIntegration:
 
     def test_fetch_stations_no_filter(self):
         """Test fetching all active stations."""
-        from worldenergydata.modules.metocean.clients import NDBCClient
+        from worldenergydata.metocean.clients import NDBCClient
 
         with NDBCClient() as client:
             result = client.fetch_stations()
@@ -43,7 +43,7 @@ class TestNDBCIntegration:
 
     def test_fetch_realtime_42001(self):
         """Test fetching real-time data from station 42001 (Gulf of Mexico)."""
-        from worldenergydata.modules.metocean.clients import NDBCClient
+        from worldenergydata.metocean.clients import NDBCClient
 
         with NDBCClient() as client:
             result = client.fetch_realtime("42001")
@@ -56,7 +56,7 @@ class TestNDBCIntegration:
 
     def test_fetch_realtime_has_expected_fields(self):
         """Test that realtime data has expected observation fields."""
-        from worldenergydata.modules.metocean.clients import NDBCClient
+        from worldenergydata.metocean.clients import NDBCClient
 
         with NDBCClient() as client:
             result = client.fetch_realtime("42001")
@@ -73,7 +73,7 @@ class TestNDBCIntegration:
 
     def test_get_station_info(self):
         """Test getting info for a specific station."""
-        from worldenergydata.modules.metocean.clients import NDBCClient
+        from worldenergydata.metocean.clients import NDBCClient
 
         with NDBCClient() as client:
             station = client.get_station_info("42001")
@@ -89,8 +89,8 @@ class TestCOOPSIntegration:
 
     def test_fetch_stations(self):
         """Test fetching CO-OPS stations."""
-        from worldenergydata.modules.metocean.clients import COOPSClient
-        from worldenergydata.modules.metocean.constants import GOM_BBOX
+        from worldenergydata.metocean.clients import COOPSClient
+        from worldenergydata.metocean.constants import GOM_BBOX
 
         with COOPSClient() as client:
             result = client.fetch_stations(bbox=GOM_BBOX)
@@ -100,7 +100,7 @@ class TestCOOPSIntegration:
 
     def test_fetch_water_levels(self):
         """Test fetching water level data from a tide station."""
-        from worldenergydata.modules.metocean.clients import COOPSClient
+        from worldenergydata.metocean.clients import COOPSClient
 
         # 8761724 is Grand Isle, LA - a well-known CO-OPS station
         with COOPSClient() as client:
@@ -117,7 +117,7 @@ class TestOpenMeteoIntegration:
 
     def test_fetch_marine_forecast(self):
         """Test fetching marine forecast for a location."""
-        from worldenergydata.modules.metocean.clients import OpenMeteoClient
+        from worldenergydata.metocean.clients import OpenMeteoClient
 
         # Location in Gulf of Mexico
         lat, lon = 28.5, -88.5
@@ -137,7 +137,7 @@ class TestOpenMeteoIntegration:
 
     def test_fetch_forecast_with_params(self):
         """Test fetching forecast with specific parameters."""
-        from worldenergydata.modules.metocean.clients import OpenMeteoClient
+        from worldenergydata.metocean.clients import OpenMeteoClient
 
         lat, lon = 28.5, -88.5
 
@@ -156,8 +156,8 @@ class TestDataHarmonizerIntegration:
 
     def test_harmonize_ndbc_data(self):
         """Test harmonizing NDBC observation data."""
-        from worldenergydata.modules.metocean.clients import NDBCClient
-        from worldenergydata.modules.metocean.processors import DataHarmonizer
+        from worldenergydata.metocean.clients import NDBCClient
+        from worldenergydata.metocean.processors import DataHarmonizer
 
         with NDBCClient() as client:
             result = client.fetch_realtime("42001")
@@ -178,8 +178,8 @@ class TestCacheIntegration:
         """Test that cache returns data on repeated fetch."""
         import time
 
-        from worldenergydata.modules.metocean.cache import CacheKey, CacheManager
-        from worldenergydata.modules.metocean.constants import DataSource
+        from worldenergydata.metocean.cache import CacheKey, CacheManager
+        from worldenergydata.metocean.constants import DataSource
 
         cache = CacheManager(cache_dir=tmp_path)
 

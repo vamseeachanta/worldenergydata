@@ -9,9 +9,9 @@ import zipfile
 import pandas as pd
 from datetime import datetime
 
-from worldenergydata.modules.hse.importers.bsee_incidents_importer_url import BSEEIncidentsImporterURL
-from worldenergydata.modules.hse.importers.bsee_statistics_importer_url import BSEEStatisticsImporterURL
-from worldenergydata.modules.hse.importers.bsee_penalties_importer_url import BSEEPenaltiesImporterURL
+from worldenergydata.hse.importers.bsee_incidents_importer_url import BSEEIncidentsImporterURL
+from worldenergydata.hse.importers.bsee_statistics_importer_url import BSEEStatisticsImporterURL
+from worldenergydata.hse.importers.bsee_penalties_importer_url import BSEEPenaltiesImporterURL
 
 
 class TestBSEEIncidentsImporterURLIntegration:

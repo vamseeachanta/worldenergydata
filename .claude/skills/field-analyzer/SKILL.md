@@ -108,7 +108,7 @@ class FieldAnalyzer:
             raise ValueError(f"Unknown field: {field_name}")
 
         # Query BSEE for wells in field blocks
-        from worldenergydata.modules.bsee.data import query_wells_by_block
+        from worldenergydata.bsee.data import query_wells_by_block
 
         all_apis = []
         for block in field_def.blocks:
@@ -128,7 +128,7 @@ class FieldAnalyzer:
 
         Returns monthly field-level production totals.
         """
-        from worldenergydata.modules.bsee.data import get_production_data
+        from worldenergydata.bsee.data import get_production_data
 
         field_def = self.field_definitions.get(field_name.upper())
         if not field_def:

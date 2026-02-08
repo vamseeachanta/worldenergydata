@@ -31,7 +31,7 @@ This spec implements comprehensive financial analysis capabilities for BSEE oil 
 
 ## Key Deliverables
 
-1. **Financial Analysis Module** - Complete Python module at `worldenergydata.modules.bsee.analysis.sme_financial`
+1. **Financial Analysis Module** - Complete Python module at `worldenergydata.bsee.analysis.sme_financial`
 2. **Excel Report Generator** - Automated generation of V18-format financial analysis workbooks
 3. **CLI Interface** - Command-line tool for running analysis with configurable parameters
 4. **Comprehensive Tests** - Full test suite with >90% coverage

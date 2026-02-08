@@ -10,7 +10,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 
-from worldenergydata.modules.marine_safety.analysis.cause_analyzer import (
+from worldenergydata.marine_safety.analysis.cause_analyzer import (
     IncidentCauseExtractor,
     CauseNormalizer,
     map_to_cause_category,
@@ -18,7 +18,7 @@ from worldenergydata.modules.marine_safety.analysis.cause_analyzer import (
     extract_causes_from_narrative,
     clean_cause_data,
 )
-from worldenergydata.modules.marine_safety.constants import CauseCategory
+from worldenergydata.marine_safety.constants import CauseCategory
 
 
 @pytest.fixture

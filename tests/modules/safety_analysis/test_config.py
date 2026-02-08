@@ -1,6 +1,6 @@
 """Tests for safety analysis configuration."""
 
-from worldenergydata.modules.safety_analysis.config import (
+from worldenergydata.safety_analysis.config import (
     AnalysisConfig,
     CorrelationConfig,
     HyperparamConfig,

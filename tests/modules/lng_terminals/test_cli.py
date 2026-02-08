@@ -2,7 +2,7 @@
 
 from typer.testing import CliRunner
 
-from worldenergydata.modules.lng_terminals.cli import app
+from worldenergydata.lng_terminals.cli import app
 
 runner = CliRunner()
 

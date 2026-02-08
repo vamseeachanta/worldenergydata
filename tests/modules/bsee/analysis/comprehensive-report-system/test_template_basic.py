@@ -11,7 +11,7 @@ from datetime import date, datetime
 # Add src to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent / "src"))
 
-from worldenergydata.modules.bsee.reports.comprehensive.templates.base import BaseReportTemplate, TemplateContext
+from worldenergydata.bsee.reports.comprehensive.templates.base import BaseReportTemplate, TemplateContext
 
 
 class TestBaseReportTemplateBasic:

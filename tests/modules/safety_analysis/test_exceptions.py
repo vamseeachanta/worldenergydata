@@ -1,7 +1,7 @@
 """Tests for safety analysis exception hierarchy."""
 
 from worldenergydata.common.exceptions import ModuleError, WorldEnergyDataError
-from worldenergydata.modules.safety_analysis.exceptions import (
+from worldenergydata.safety_analysis.exceptions import (
     OptionalDependencyError,
     SafetyAnalysisError,
     SafetyClassificationError,

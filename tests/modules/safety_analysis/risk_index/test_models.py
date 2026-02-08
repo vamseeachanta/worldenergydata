@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 import pytest
 from pydantic import ValidationError
 
-from worldenergydata.modules.safety_analysis.risk_index.models import (
+from worldenergydata.safety_analysis.risk_index.models import (
     ActivityRiskScore,
     CompositeScore,
     DimensionScore,

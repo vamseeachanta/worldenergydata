@@ -2,13 +2,13 @@
 
 from datetime import datetime
 
-from worldenergydata.modules.lng_terminals.constants import (
+from worldenergydata.lng_terminals.constants import (
     TerminalFunction,
     TerminalStatus,
     TerminalType,
 )
-from worldenergydata.modules.lng_terminals.models.terminal import LNGTerminal
-from worldenergydata.modules.lng_terminals.processors.enricher import (
+from worldenergydata.lng_terminals.models.terminal import LNGTerminal
+from worldenergydata.lng_terminals.processors.enricher import (
     SOURCE_PRIORITY,
     Enricher,
 )

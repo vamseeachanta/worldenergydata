@@ -13,7 +13,7 @@ class TestBaseImporterAbstractInterface:
 
     def test_base_importer_cannot_be_instantiated_directly(self, db_session):
         """Test that BaseImporter abstract class cannot be instantiated"""
-        from worldenergydata.modules.hse.importers.base_importer import BaseImporter
+        from worldenergydata.hse.importers.base_importer import BaseImporter
 
         with pytest.raises(TypeError) as exc_info:
             importer = BaseImporter(db_session)
@@ -22,7 +22,7 @@ class TestBaseImporterAbstractInterface:
 
     def test_base_importer_requires_fetch_data_implementation(self, db_session):
         """Test that concrete importer must implement fetch_data() method"""
-        from worldenergydata.modules.hse.importers.base_importer import BaseImporter
+        from worldenergydata.hse.importers.base_importer import BaseImporter
 
         class IncompleteImporter(BaseImporter):
             def normalize_data(self, raw_data):
@@ -35,7 +35,7 @@ class TestBaseImporterAbstractInterface:
 
     def test_base_importer_requires_normalize_data_implementation(self, db_session):
         """Test that concrete importer must implement normalize_data() method"""
-        from worldenergydata.modules.hse.importers.base_importer import BaseImporter
+        from worldenergydata.hse.importers.base_importer import BaseImporter
 
         class IncompleteImporter(BaseImporter):
             def fetch_data(self):
@@ -48,7 +48,7 @@ class TestBaseImporterAbstractInterface:
 
     def test_concrete_importer_with_all_methods_can_be_instantiated(self, db_session):
         """Test that concrete importer with all required methods works"""
-        from worldenergydata.modules.hse.importers.base_importer import BaseImporter
+        from worldenergydata.hse.importers.base_importer import BaseImporter
 
         class ConcreteImporter(BaseImporter):
             def fetch_data(self):
@@ -72,7 +72,7 @@ class TestDataValidationFramework:
     @pytest.fixture
     def concrete_importer(self, db_session):
         """Create concrete importer for validation testing"""
-        from worldenergydata.modules.hse.importers.base_importer import BaseImporter
+        from worldenergydata.hse.importers.base_importer import BaseImporter
 
         class TestImporter(BaseImporter):
             def fetch_data(self):
@@ -200,7 +200,7 @@ class TestErrorHandlingForMalformedData:
     @pytest.fixture
     def concrete_importer(self, db_session):
         """Create concrete importer for error handling testing"""
-        from worldenergydata.modules.hse.importers.base_importer import BaseImporter
+        from worldenergydata.hse.importers.base_importer import BaseImporter
 
         class TestImporter(BaseImporter):
             def fetch_data(self):
@@ -263,7 +263,7 @@ class TestDuplicateDetectionAndSkipping:
     @pytest.fixture
     def concrete_importer(self, db_session):
         """Create concrete importer for duplicate testing"""
-        from worldenergydata.modules.hse.importers.base_importer import BaseImporter
+        from worldenergydata.hse.importers.base_importer import BaseImporter
 
         class TestImporter(BaseImporter):
             def fetch_data(self):
@@ -276,7 +276,7 @@ class TestDuplicateDetectionAndSkipping:
 
     def test_duplicate_detection_by_bsee_incident_id(self, concrete_importer, db_session):
         """Test that duplicate bsee_incident_id is detected"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         # Create existing incident in database
         existing_incident = HSEIncident(
@@ -304,7 +304,7 @@ class TestDuplicateDetectionAndSkipping:
 
     def test_non_duplicate_detection(self, concrete_importer, db_session):
         """Test that unique bsee_incident_id is not flagged as duplicate"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         # Create existing incident
         existing_incident = HSEIncident(
@@ -332,7 +332,7 @@ class TestDuplicateDetectionAndSkipping:
 
     def test_skipped_count_increments_on_duplicate(self, concrete_importer, db_session):
         """Test that skipped_count increments when duplicate detected"""
-        from worldenergydata.modules.hse.database.models import HSEIncident
+        from worldenergydata.hse.database.models import HSEIncident
 
         # Create existing incident
         existing = HSEIncident(
@@ -367,7 +367,7 @@ class TestImportStatisticsTracking:
     @pytest.fixture
     def concrete_importer(self, db_session):
         """Create concrete importer for statistics testing"""
-        from worldenergydata.modules.hse.importers.base_importer import BaseImporter
+        from worldenergydata.hse.importers.base_importer import BaseImporter
 
         class TestImporter(BaseImporter):
             def fetch_data(self):
@@ -465,7 +465,7 @@ def db_session():
     """Create test database session with in-memory SQLite"""
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
-    from worldenergydata.modules.hse.database.models import Base
+    from worldenergydata.hse.database.models import Base
 
     # Use in-memory SQLite for testing
     engine = create_engine('sqlite:///:memory:')

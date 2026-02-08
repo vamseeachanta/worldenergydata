@@ -2,16 +2,16 @@
 
 import pytest
 
-from worldenergydata.modules.lng_terminals.analysis.capacity_analysis import (
+from worldenergydata.lng_terminals.analysis.capacity_analysis import (
     CapacityAnalysis,
 )
-from worldenergydata.modules.lng_terminals.analysis.timeline_analysis import (
+from worldenergydata.lng_terminals.analysis.timeline_analysis import (
     TimelineAnalysis,
 )
-from worldenergydata.modules.lng_terminals.collectors.seed_collector import (
+from worldenergydata.lng_terminals.collectors.seed_collector import (
     SeedCollector,
 )
-from worldenergydata.modules.lng_terminals.models.terminal import LNGTerminal
+from worldenergydata.lng_terminals.models.terminal import LNGTerminal
 
 
 @pytest.fixture

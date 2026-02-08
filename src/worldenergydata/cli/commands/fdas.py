@@ -97,7 +97,7 @@ def calculate_npv(
             task = progress.add_task("[cyan]Calculating NPV...", total=None)
 
             try:
-                from worldenergydata.modules.fdas.core.financial import calculate_npv as calc_npv
+                from worldenergydata.fdas.core.financial import calculate_npv as calc_npv
 
                 npv = calc_npv(
                     __import__("numpy").array(cf_list),
@@ -177,7 +177,7 @@ def calculate_mirr(
             task = progress.add_task("[cyan]Calculating MIRR...", total=None)
 
             try:
-                from worldenergydata.modules.fdas.core.financial import excel_like_mirr
+                from worldenergydata.fdas.core.financial import excel_like_mirr
 
                 import numpy as np
 
@@ -256,7 +256,7 @@ def calculate_irr(
             task = progress.add_task("[cyan]Calculating IRR...", total=None)
 
             try:
-                from worldenergydata.modules.fdas.core.financial import calculate_irr as calc_irr
+                from worldenergydata.fdas.core.financial import calculate_irr as calc_irr
 
                 import numpy as np
 
@@ -328,7 +328,7 @@ def calculate_all(
             task = progress.add_task("[cyan]Calculating all metrics...", total=None)
 
             try:
-                from worldenergydata.modules.fdas.core.financial import calculate_all_metrics
+                from worldenergydata.fdas.core.financial import calculate_all_metrics
 
                 import numpy as np
 
@@ -469,8 +469,8 @@ def analyze(
             try:
                 progress.update(task, advance=20, description="[cyan]Loading FDAS modules...")
 
-                from worldenergydata.modules.fdas.core.config import AssumptionsManager
-                from worldenergydata.modules.fdas.analysis.cashflow import CashflowEngine
+                from worldenergydata.fdas.core.config import AssumptionsManager
+                from worldenergydata.fdas.analysis.cashflow import CashflowEngine
 
                 progress.update(task, advance=20, description="[cyan]Loading assumptions...")
 
@@ -570,7 +570,7 @@ def classify(
         worldenergydata fdas classify 10000
     """
     try:
-        from worldenergydata.modules.fdas.core.config import classify_dev_system_by_depth
+        from worldenergydata.fdas.core.config import classify_dev_system_by_depth
 
         classification = classify_dev_system_by_depth(water_depth)
 

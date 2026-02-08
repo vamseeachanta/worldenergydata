@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import create_engine, insert
 from sqlalchemy.orm import sessionmaker
 
-from worldenergydata.modules.hse.database.models import Base, HSEIncident
+from worldenergydata.hse.database.models import Base, HSEIncident
 
 
 class TestDataQualityValidatorInterface:
@@ -14,7 +14,7 @@ class TestDataQualityValidatorInterface:
 
     def test_can_instantiate_with_db_session(self, db_session):
         """Test validator can be instantiated with database session"""
-        from worldenergydata.modules.hse.importers.data_quality_validator import DataQualityValidator
+        from worldenergydata.hse.importers.data_quality_validator import DataQualityValidator
 
         validator = DataQualityValidator(db_session)
 
@@ -23,7 +23,7 @@ class TestDataQualityValidatorInterface:
 
     def test_has_required_validation_methods(self, db_session):
         """Test validator has all required validation methods"""
-        from worldenergydata.modules.hse.importers.data_quality_validator import DataQualityValidator
+        from worldenergydata.hse.importers.data_quality_validator import DataQualityValidator
 
         validator = DataQualityValidator(db_session)
 
@@ -36,7 +36,7 @@ class TestDataQualityValidatorInterface:
 
     def test_initializes_validation_results_dict(self, db_session):
         """Test validator initializes empty validation results dictionary"""
-        from worldenergydata.modules.hse.importers.data_quality_validator import DataQualityValidator
+        from worldenergydata.hse.importers.data_quality_validator import DataQualityValidator
 
         validator = DataQualityValidator(db_session)
 
@@ -50,7 +50,7 @@ class TestCompletenessValidation:
     @pytest.fixture
     def validator(self, db_session):
         """Create validator instance for testing"""
-        from worldenergydata.modules.hse.importers.data_quality_validator import DataQualityValidator
+        from worldenergydata.hse.importers.data_quality_validator import DataQualityValidator
         return DataQualityValidator(db_session)
 
     def test_validate_completeness_checks_required_fields(self, validator, db_session):
@@ -117,7 +117,7 @@ class TestRangeValidation:
     @pytest.fixture
     def validator(self, db_session):
         """Create validator instance for testing"""
-        from worldenergydata.modules.hse.importers.data_quality_validator import DataQualityValidator
+        from worldenergydata.hse.importers.data_quality_validator import DataQualityValidator
         return DataQualityValidator(db_session)
 
     def test_validate_ranges_checks_latitude_bounds(self, validator, db_session):
@@ -206,7 +206,7 @@ class TestConsistencyValidation:
     @pytest.fixture
     def validator(self, db_session):
         """Create validator instance for testing"""
-        from worldenergydata.modules.hse.importers.data_quality_validator import DataQualityValidator
+        from worldenergydata.hse.importers.data_quality_validator import DataQualityValidator
         return DataQualityValidator(db_session)
 
     def test_validate_consistency_checks_severity_incident_type_alignment(self, validator, db_session):
@@ -263,7 +263,7 @@ class TestOutlierDetection:
     @pytest.fixture
     def validator(self, db_session):
         """Create validator instance for testing"""
-        from worldenergydata.modules.hse.importers.data_quality_validator import DataQualityValidator
+        from worldenergydata.hse.importers.data_quality_validator import DataQualityValidator
         return DataQualityValidator(db_session)
 
     def test_detect_outliers_identifies_extreme_penalty_amounts(self, validator, db_session):
@@ -306,7 +306,7 @@ class TestTemporalValidation:
     @pytest.fixture
     def validator(self, db_session):
         """Create validator instance for testing"""
-        from worldenergydata.modules.hse.importers.data_quality_validator import DataQualityValidator
+        from worldenergydata.hse.importers.data_quality_validator import DataQualityValidator
         return DataQualityValidator(db_session)
 
     def test_validate_temporal_checks_incident_date_not_future(self, validator, db_session):
@@ -367,7 +367,7 @@ class TestRunAllValidations:
     @pytest.fixture
     def validator(self, db_session):
         """Create validator instance for testing"""
-        from worldenergydata.modules.hse.importers.data_quality_validator import DataQualityValidator
+        from worldenergydata.hse.importers.data_quality_validator import DataQualityValidator
         return DataQualityValidator(db_session)
 
     def test_run_all_validations_executes_all_checks(self, validator, db_session):
@@ -425,7 +425,7 @@ class TestValidationReporting:
     @pytest.fixture
     def validator(self, db_session):
         """Create validator instance for testing"""
-        from worldenergydata.modules.hse.importers.data_quality_validator import DataQualityValidator
+        from worldenergydata.hse.importers.data_quality_validator import DataQualityValidator
         return DataQualityValidator(db_session)
 
     def test_generate_quality_report_creates_dict(self, validator, db_session):
@@ -465,7 +465,7 @@ def db_session():
     """Create test database session with in-memory SQLite"""
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
-    from worldenergydata.modules.hse.database.models import Base
+    from worldenergydata.hse.database.models import Base
 
     # Use in-memory SQLite for testing
     engine = create_engine('sqlite:///:memory:')

@@ -5,12 +5,12 @@ from datetime import datetime, timezone
 import numpy as np
 import pandas as pd
 
-from worldenergydata.modules.safety_analysis.risk_index.models import (
+from worldenergydata.safety_analysis.risk_index.models import (
     CompositeScore,
     DimensionScore,
     RiskCategory,
 )
-from worldenergydata.modules.safety_analysis.risk_index.scorer import RiskScorer
+from worldenergydata.safety_analysis.risk_index.scorer import RiskScorer
 
 
 def _make_assembled_df(rows: list[dict]) -> pd.DataFrame:

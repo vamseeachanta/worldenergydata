@@ -15,7 +15,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent / "src"))
 
 try:
-    from worldenergydata.modules.bsee.reports.comprehensive.templates.operational_template import (
+    from worldenergydata.bsee.reports.comprehensive.templates.operational_template import (
         OperationalTemplate,
         ProductionEfficiencyMetrics,
         WellOperationalMetrics,

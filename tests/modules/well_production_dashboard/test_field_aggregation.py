@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 # Import the module we're testing
-from worldenergydata.modules.well_production_dashboard.field_aggregation import (
+from worldenergydata.well_production_dashboard.field_aggregation import (
     FieldAggregationDashboard,
     FieldComparator,
     FieldEconomicSummary,
@@ -89,7 +89,7 @@ class TestFieldAggregationDashboard(unittest.TestCase):
             wells.append(well_data)
         return wells
     
-    @patch('worldenergydata.modules.well_production_dashboard.field_aggregation.BSEEAggregator')
+    @patch('worldenergydata.well_production_dashboard.field_aggregation.BSEEAggregator')
     def test_aggregate_field_data(self, mock_aggregator):
         """Test field-level data aggregation."""
         # Setup mock
@@ -132,7 +132,7 @@ class TestFieldAggregationDashboard(unittest.TestCase):
         self.assertIn('gas_oil_ratio', metrics)
         self.assertIn('field_efficiency', metrics)
     
-    @patch('worldenergydata.modules.well_production_dashboard.field_aggregation.VerificationSystem')
+    @patch('worldenergydata.well_production_dashboard.field_aggregation.VerificationSystem')
     def test_apply_verification_overlay(self, mock_verification):
         """Test verification overlay on aggregated data."""
         # Setup mock
@@ -279,7 +279,7 @@ class TestFieldEconomicSummary(unittest.TestCase):
         self.assertIn('profit_margin', summary)
         self.assertIn('break_even_price', summary)
     
-    @patch('worldenergydata.modules.well_production_dashboard.field_aggregation.DataQualityFramework')
+    @patch('worldenergydata.well_production_dashboard.field_aggregation.DataQualityFramework')
     def test_apply_quality_scores(self, mock_quality):
         """Test application of quality scores to economic summary."""
         # Setup mock
@@ -378,8 +378,8 @@ class TestFieldProductionChart(unittest.TestCase):
 class TestIntegration(unittest.TestCase):
     """Integration tests for field aggregation module."""
     
-    @patch('worldenergydata.modules.well_production_dashboard.field_aggregation.BSEEAggregator')
-    @patch('worldenergydata.modules.well_production_dashboard.field_aggregation.VerificationSystem')
+    @patch('worldenergydata.well_production_dashboard.field_aggregation.BSEEAggregator')
+    @patch('worldenergydata.well_production_dashboard.field_aggregation.VerificationSystem')
     def test_end_to_end_field_aggregation(self, mock_verification, mock_aggregator):
         """Test end-to-end field aggregation workflow."""
         # Setup mocks

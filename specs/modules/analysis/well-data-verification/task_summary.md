@@ -142,7 +142,7 @@ This implementation will enhance agent knowledge in:
 - `jsonschema`: Validation rule schema
 
 ### Internal Modules
-- `worldenergydata.modules.bsee`: Data source integration
+- `worldenergydata.bsee`: Data source integration
 - `worldenergydata.core.validation`: Base validation framework
 - `worldenergydata.utils.reporting`: Report utilities
 

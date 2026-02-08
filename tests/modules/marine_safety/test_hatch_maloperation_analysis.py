@@ -128,7 +128,7 @@ class TestHatchMaloperationPatternMatching:
 
     def test_identifies_hatch_maloperation_basic(self, hatch_maloperation_incidents):
         """Test basic identification of hatch maloperation terminology."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -142,7 +142,7 @@ class TestHatchMaloperationPatternMatching:
 
     def test_identifies_hatch_failure_terminology(self, hatch_maloperation_incidents):
         """Test identification of 'hatch failure' variation."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -156,7 +156,7 @@ class TestHatchMaloperationPatternMatching:
 
     def test_identifies_opening_maloperation(self, hatch_maloperation_incidents):
         """Test identification of 'opening maloperation' variation."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -170,7 +170,7 @@ class TestHatchMaloperationPatternMatching:
 
     def test_identifies_access_cover_terminology(self, hatch_maloperation_incidents):
         """Test identification of 'access cover' terminology."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -184,7 +184,7 @@ class TestHatchMaloperationPatternMatching:
 
     def test_rejects_non_hatch_incidents(self, hatch_maloperation_incidents):
         """Test that non-hatch incidents are correctly excluded."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -198,7 +198,7 @@ class TestHatchMaloperationPatternMatching:
 
     def test_extract_relevant_text(self, hatch_maloperation_incidents):
         """Test extraction of hatch-related text from descriptions."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -217,7 +217,7 @@ class TestLocationClassification:
 
     def test_classify_engine_room_location(self, hatch_maloperation_incidents):
         """Test classification of engine room hatch incidents."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -231,7 +231,7 @@ class TestLocationClassification:
 
     def test_classify_other_enclosure_location(self, hatch_maloperation_incidents):
         """Test classification of other enclosure types."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -245,7 +245,7 @@ class TestLocationClassification:
 
     def test_get_location_statistics(self, hatch_maloperation_incidents):
         """Test generation of location-based statistics."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -267,7 +267,7 @@ class TestConsequenceAnalysis:
 
     def test_identify_flooding_consequence(self, hatch_maloperation_incidents):
         """Test identification of flooding as a consequence."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -280,7 +280,7 @@ class TestConsequenceAnalysis:
 
     def test_identify_fire_consequence(self, hatch_maloperation_incidents):
         """Test identification of fire as a consequence."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -293,7 +293,7 @@ class TestConsequenceAnalysis:
 
     def test_identify_personnel_injury_consequence(self, hatch_maloperation_incidents):
         """Test identification of personnel injury as a consequence."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -307,7 +307,7 @@ class TestConsequenceAnalysis:
 
     def test_identify_fatality_consequence(self, hatch_maloperation_incidents):
         """Test identification of fatalities as a consequence."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -321,7 +321,7 @@ class TestConsequenceAnalysis:
 
     def test_get_consequence_statistics(self, hatch_maloperation_incidents):
         """Test generation of consequence statistics."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -343,7 +343,7 @@ class TestContributingFactorIdentification:
 
     def test_identify_human_error_factor(self, hatch_maloperation_incidents):
         """Test identification of human error as a contributing factor."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -357,7 +357,7 @@ class TestContributingFactorIdentification:
 
     def test_identify_maintenance_factor(self, hatch_maloperation_incidents):
         """Test identification of maintenance issues as a contributing factor."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -371,7 +371,7 @@ class TestContributingFactorIdentification:
 
     def test_identify_equipment_failure_factor(self, hatch_maloperation_incidents):
         """Test identification of equipment failure as a contributing factor."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -385,7 +385,7 @@ class TestContributingFactorIdentification:
 
     def test_identify_weather_factor(self, hatch_maloperation_incidents):
         """Test identification of weather as a contributing factor."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -403,7 +403,7 @@ class TestRiskScoring:
 
     def test_calculate_risk_score_basic(self, hatch_maloperation_incidents):
         """Test basic risk score calculation."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -417,7 +417,7 @@ class TestRiskScoring:
 
     def test_catastrophic_incident_has_high_risk_score(self, hatch_maloperation_incidents):
         """Test that catastrophic incidents have higher risk scores."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -436,7 +436,7 @@ class TestRiskScoring:
 
     def test_fatalities_increase_risk_score(self, hatch_maloperation_incidents):
         """Test that fatalities significantly increase risk score."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -458,7 +458,7 @@ class TestRecommendationGeneration:
 
     def test_generate_recommendations_for_human_error(self, hatch_maloperation_incidents):
         """Test recommendation generation for human error cases."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -472,7 +472,7 @@ class TestRecommendationGeneration:
 
     def test_generate_recommendations_for_maintenance_issues(self, hatch_maloperation_incidents):
         """Test recommendation generation for maintenance-related incidents."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -487,7 +487,7 @@ class TestRecommendationGeneration:
 
     def test_generate_recommendations_for_equipment_failure(self, hatch_maloperation_incidents):
         """Test recommendation generation for equipment failure cases."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -502,7 +502,7 @@ class TestRecommendationGeneration:
 
     def test_aggregate_recommendations_from_multiple_incidents(self, hatch_maloperation_incidents):
         """Test aggregating recommendations from multiple similar incidents."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -522,7 +522,7 @@ class TestCaseStudyExtraction:
 
     def test_extract_case_study_basic(self, hatch_maloperation_incidents):
         """Test basic case study extraction."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -540,7 +540,7 @@ class TestCaseStudyExtraction:
 
     def test_significant_incidents_flagged(self, hatch_maloperation_incidents):
         """Test that significant incidents are properly flagged."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -554,7 +554,7 @@ class TestCaseStudyExtraction:
 
     def test_minor_incidents_not_flagged(self, hatch_maloperation_incidents):
         """Test that minor incidents are not flagged as significant."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -572,7 +572,7 @@ class TestStatisticsAndVisualization:
 
     def test_generate_severity_distribution(self, hatch_maloperation_incidents):
         """Test generation of severity distribution statistics."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -589,7 +589,7 @@ class TestStatisticsAndVisualization:
 
     def test_generate_time_series_data(self, hatch_maloperation_incidents):
         """Test generation of time series data for trending."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -605,7 +605,7 @@ class TestStatisticsAndVisualization:
 
     def test_calculate_trends(self, hatch_maloperation_incidents):
         """Test trend calculation over time."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 
@@ -625,7 +625,7 @@ class TestComprehensiveAnalysis:
 
     def test_full_analysis_report_generation(self, hatch_maloperation_incidents):
         """Test generation of comprehensive analysis report."""
-        from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
             HatchMaloperationAnalyzer
         )
 

@@ -1,14 +1,14 @@
 """Tests for FERC LNG terminal collector."""
 
-from worldenergydata.modules.lng_terminals.collectors.ferc_collector import (
+from worldenergydata.lng_terminals.collectors.ferc_collector import (
     FERCCollector,
 )
-from worldenergydata.modules.lng_terminals.constants import (
+from worldenergydata.lng_terminals.constants import (
     Region,
     TerminalFunction,
     TerminalType,
 )
-from worldenergydata.modules.lng_terminals.models.terminal import LNGTerminal
+from worldenergydata.lng_terminals.models.terminal import LNGTerminal
 
 
 class TestFERCCollector:
