@@ -1,9 +1,6 @@
-eWellWARRawData.zip filter=lfs diff=lfs merge=lfs -text
-mv_war_main_prop_remark.bin filter=lfs diff=lfs merge=lfs -text
-mv_war_main.bin filter=lfs diff=lfs merge=lfs -text
-FRSWellDataRawData.zip filter=lfs diff=lfs merge=lfs -text
-dsptsdelimit.csv filter=lfs diff=lfs merge=lfs -text
-well_directional_surveys.csv filter=lfs diff=lfs merge=lfs -text
-dsptsdelimit.bin filter=lfs diff=lfs merge=lfs -text
-*.bin filter=lfs diff=lfs merge=lfs -text
-data/modules/bsee/archive/*.tar.gz filter=lfs diff=lfs merge=lfs -text
+# Binary file markers (no LFS — use .gitignore for large files)
+*.bin binary
+*.pdf binary
+*.xlsx binary
+*.zip binary
+*.gpkg binary
