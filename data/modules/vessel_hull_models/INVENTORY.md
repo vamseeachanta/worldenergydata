@@ -1,7 +1,7 @@
 # Vessel Hull Models - Asset Inventory
 
 > Last Updated: 2026-01-19
-> Source: Gathered from digitalmodel repository
+> Source: Authoritative collection — hull geometry acquired from CAD exports (Rhino), OrcaWave diffraction analysis, and 3D model repositories
 
 ## Available Hull Models
 
@@ -41,45 +41,19 @@ Small-scale components for mooring and subsea visualization:
 
 ---
 
-## External Resources (digitalmodel)
+## Related Engineering Tools
 
-### MarineTraffic API Integration
+The following tools in the workspace can consume hull geometry from this collection.
+See `workspace-hub/docs/DATA_RESIDENCE_POLICY.md` for the cross-repo data handoff contract.
 
-A MarineTraffic API client exists in digitalmodel for vessel specifications:
+### MarineTraffic API
+Vessel specification lookup by IMO/MMSI number. Provides dimensions (LOA, beam, draft), vessel type, and flag data to enrich hull model metadata.
 
-```
-/mnt/github/workspace-hub/digitalmodel/src/digitalmodel/data_procurement/vessel/api_clients/marinetraffic_client.py
-```
+### Parametric Hull Generation
+Wigley hull and Series-60 parametric formulas can generate hull geometry for vessels where 3D models are unavailable. These are engineering reference tools (Tier 2) that produce derived data — outputs stay in the engineering analysis repo, not here.
 
-**Capabilities:**
-- Query vessel by IMO number
-- Query vessel by MMSI
-- Search by vessel name
-- Get vessel dimensions (LOA, beam, draft)
-- Get vessel type and flag
-
-### Wigley Hull Reference
-
-OpenFOAM case study for parametric Wigley hull:
-```
-/mnt/github/workspace-hub/digitalmodel/docs/modules/openfoam/case_studies/wigleHull_LTS/
-- wigley_hull_coefficients.ods (spreadsheet with coefficients)
-- wigley_hull_in_waves.pdf (documentation)
-- wigleyHull_LTS.tar.gz (OpenFOAM case files)
-```
-
-### Blender Automation
-
-Marine engineering integration examples:
-```
-/mnt/github/workspace-hub/digitalmodel/src/blender_automation/examples/marine_engineering_integration.py
-```
-
-**Capabilities:**
-- Ship hull import/export
-- Mesh cleanup and optimization
-- Multi-format export (STL, OBJ, PLY, GLTF)
-- CFD preparation
+### Mesh Processing
+Blender automation pipeline for hull mesh cleanup, format conversion (STL, OBJ, PLY, GLTF), and CFD preparation.
 
 ---
 
