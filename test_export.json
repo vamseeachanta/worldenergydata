@@ -1,0 +1,157 @@
+{
+  "export_date": "2026-02-01T19:27:01.693006",
+  "configuration": {
+    "formats": [
+      "pdf",
+      "excel",
+      "json"
+    ],
+    "include_verification": true,
+    "include_charts": true,
+    "include_raw_data": true,
+    "include_field_aggregation": false,
+    "chart_format": "base64",
+    "date_range": null,
+    "wells_filter": null,
+    "quality_threshold": null
+  },
+  "summary": {
+    "report_date": "2026-02-01T19:27:01.693254",
+    "total_wells": 3,
+    "total_production_oil": "3300",
+    "total_production_gas": "16500",
+    "average_quality_score": 0.9166666666666666
+  },
+  "production_data": {
+    "Field/Block/Lease": [
+      0,
+      0,
+      0
+    ],
+    "Well Name": [
+      "Well-001",
+      "Well-002",
+      "Well-003"
+    ],
+    "Oil Production (BBL)": [
+      1000,
+      1500,
+      800
+    ],
+    "Gas Production (MCF)": [
+      5000,
+      7500,
+      4000
+    ],
+    "Water Production (BBL)": [
+      100,
+      150,
+      80
+    ],
+    "Operating Days": [
+      30,
+      30,
+      28
+    ],
+    "Oil Sales (BBL)": [
+      0,
+      0,
+      0
+    ],
+    "Gas Sales (MCF)": [
+      0,
+      0,
+      0
+    ],
+    "Revenue ($)": [
+      0,
+      0,
+      0
+    ],
+    "Operating Cost ($)": [
+      0,
+      0,
+      0
+    ],
+    "Net Income ($)": [
+      0,
+      0,
+      0
+    ],
+    "Cumulative Oil (BBL)": [
+      0,
+      0,
+      0
+    ],
+    "Cumulative Gas (MCF)": [
+      0,
+      0,
+      0
+    ],
+    "Quality Score": [
+      0.95,
+      0.88,
+      0.92
+    ]
+  },
+  "economic_data": {
+    "npv": 15000000,
+    "irr": 0.25,
+    "payback_period": 3.5,
+    "total_revenue": 50000000,
+    "total_cost": 35000000
+  },
+  "verification_data": {
+    "quality_score": 0.91,
+    "verification_date": "2026-02-01T19:27:01.603631",
+    "audit_trail_id": "AUDIT-2025-001",
+    "anomalies_detected": 3,
+    "data_completeness": 0.96,
+    "verification_status": "Verified",
+    "last_audit_date": null,
+    "data_sources": []
+  },
+  "charts": {
+    "production_trend": {
+      "type": "image",
+      "format": "base64",
+      "data": "<Mock name='mock.to_image()' id='126046822753616'>"
+    },
+    "decline_curve": {
+      "type": "image",
+      "format": "base64",
+      "data": "<Mock name='mock.to_image()' id='126046822754768'>"
+    },
+    "economic_summary": {
+      "type": "image",
+      "format": "base64",
+      "data": "<Mock name='mock.to_image()' id='126046822759120'>"
+    }
+  },
+  "raw_data": [
+    {
+      "well_name": "Well-001",
+      "oil_production": 1000,
+      "gas_production": 5000,
+      "water_production": 100,
+      "operating_days": 30,
+      "quality_score": 0.95
+    },
+    {
+      "well_name": "Well-002",
+      "oil_production": 1500,
+      "gas_production": 7500,
+      "water_production": 150,
+      "operating_days": 30,
+      "quality_score": 0.88
+    },
+    {
+      "well_name": "Well-003",
+      "oil_production": 800,
+      "gas_production": 4000,
+      "water_production": 80,
+      "operating_days": 28,
+      "quality_score": 0.92
+    }
+  ]
+}

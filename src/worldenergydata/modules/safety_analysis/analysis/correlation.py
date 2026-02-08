@@ -4,7 +4,7 @@ Lag Correlation Analysis for Safety Data
 Compute lag-N cross-correlation between observation counts and incident
 counts to identify leading/lagging indicator relationships.
 
-Ported from ENIGMA sshe_lib_correlation_tools.py.
+Lagged cross-correlation analysis for observation-incident relationships.
 """
 
 import numpy as np

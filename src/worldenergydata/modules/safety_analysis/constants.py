@@ -9,7 +9,7 @@ from enum import Enum
 
 
 class SeverityLevel(str, Enum):
-    """Severity levels for safety incidents (0-5 scale from ENIGMA)."""
+    """Severity levels for safety incidents (0-5 scale)."""
 
     NO_HURT = "no_hurt"
     MINOR = "minor"

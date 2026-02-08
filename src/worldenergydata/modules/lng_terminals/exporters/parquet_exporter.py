@@ -54,6 +54,14 @@ class ParquetExporter:
         try:
             rows = [t.to_flat_dict() for t in terminals]
             df = pd.DataFrame(rows)
+
+            # Convert object columns to explicit string dtype so PyArrow
+            # can infer a consistent Arrow type (avoids 'Input object was
+            # not a NumPy array' errors on mixed str/None columns).
+            for col in df.columns:
+                if df[col].dtype == "object":
+                    df[col] = df[col].astype(pd.StringDtype())
+
             df.to_parquet(output_path, engine="pyarrow", index=False)
             logger.info(f"Exported {len(terminals)} terminals to {output_path}")
             return output_path

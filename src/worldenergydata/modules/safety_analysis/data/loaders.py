@@ -2,7 +2,6 @@
 Safety Data Loaders
 
 File-based data loading for CSV, Excel, and Parquet safety data files.
-Replaces Databricks spark.sql() calls from ENIGMA.
 """
 
 from pathlib import Path

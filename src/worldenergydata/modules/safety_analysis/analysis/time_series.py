@@ -4,8 +4,8 @@ Time Series Analysis for Safety Data
 Build regular time series from irregular safety observations and incidents,
 normalize by active assets, compute gradients and moving averages.
 
-Ported from ENIGMA sshe_lib_time_series.py - generalized to work with
-any asset type (rigs, facilities, platforms) via configurable column names.
+Generalized to work with any asset type (rigs, facilities, platforms)
+via configurable column names.
 """
 
 from datetime import datetime

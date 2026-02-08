@@ -4,8 +4,8 @@ Incident Aggregation and Hurt Index
 Aggregate safety incidents by time period, severity, work activity,
 and compute hurt indices for comparative analysis.
 
-Ported from ENIGMA cod/incident_analysis.py — generalized from
-Databricks/Spark to plain pandas.
+Aggregate safety incidents by time period, severity, and work activity
+using plain pandas.
 """
 
 from typing import Dict, List, Optional

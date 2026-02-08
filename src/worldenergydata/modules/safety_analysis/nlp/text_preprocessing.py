@@ -123,8 +123,8 @@ class TextPreprocessor:
     def combine_columns(self, df: "pd.DataFrame", columns: List[str]) -> "pd.Series":
         """Concatenate multiple text columns, then preprocess.
 
-        This replaces ENIGMA's ``cols='both'`` pattern where description
-        and action columns are merged before TF-IDF fitting.
+        This supports a multi-column pattern where description and action
+        columns are merged before TF-IDF fitting.
         """
         combined = df[columns[0]].fillna("").astype(str)
         for col in columns[1:]:

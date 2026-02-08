@@ -3,8 +3,8 @@
 Model Registry for Safety Analysis
 
 File-based model persistence that stores trained classifiers alongside
-JSON metadata (metrics, params, feature type).  Replaces MLflow for
-lightweight, self-contained model management.
+JSON metadata (metrics, params, feature type) for lightweight,
+self-contained model management.
 
 Directory layout::
 

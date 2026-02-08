@@ -4,7 +4,7 @@ Feature Engineering for Safety Time Series
 Compute 30+ statistical and FFT features from windowed time series
 for downstream ML classification tasks.
 
-Ported from ENIGMA sshe_lib_feature_engineering.py.
+Statistical and FFT feature extraction from time series windows.
 """
 
 from typing import List, Optional, Tuple
