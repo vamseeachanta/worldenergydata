@@ -1,0 +1,7076 @@
+version: 1.0.0
+generated_at: '2026-02-08T13:59:11.493857+00:00'
+total_modules: 9
+total_datasets: 356
+total_size_bytes: 6837011086
+modules:
+  bsee:
+    name: bsee
+    description: US Gulf of Mexico offshore data from BSEE
+    path: data/modules/bsee
+    domains:
+    - completions
+    - drilling
+    - general
+    - geology
+    - infrastructure
+    - operations
+    - production
+    datasets:
+    - name: completion_perforations
+      path: data/modules/bsee/current/completions/completion_perforations.csv
+      format: csv
+      domain: completions
+      size_bytes: 3997
+      row_count: 100
+      columns:
+      - API_WELL_NUMBER
+      - WELL_NAME
+      - PERF_TOP_MD
+      - PERF_BOTM_TVD
+      - PERF_TOP_TVD
+      - PERF_BASE_MD
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: completion_properties
+      path: data/modules/bsee/current/completions/completion_properties.csv
+      format: csv
+      domain: completions
+      size_bytes: 5825
+      row_count: 100
+      columns:
+      - API_WELL_NUMBER
+      - COMP_LATITUDE
+      - COMP_LONGITUDE
+      - COMP_RSVR_NAME
+      - COMP_INTERVAL_NAME
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: completion_summary
+      path: data/modules/bsee/current/completions/completion_summary.csv
+      format: csv
+      domain: completions
+      size_bytes: 4048
+      row_count: 100
+      columns:
+      - API_WELL_NUMBER
+      - WELL_NAME
+      - INTERVAL
+      - COMP_AREA_CODE
+      - COMP_BLOCK_NUMBER
+      - COMP_STATUS_CD
+      - VALUE
+      - VALUE_DESC
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: geology_markers
+      path: data/modules/bsee/current/geology/geology_markers.csv
+      format: csv
+      domain: geology
+      size_bytes: 3335
+      row_count: 100
+      columns:
+      - API_WELL_NUMBER
+      - WELL_NAME
+      - GEO_MARKER_NAME
+      - TOP_MD
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: hydrocarbon_bearing_interval
+      path: data/modules/bsee/current/geology/hydrocarbon_bearing_interval.csv
+      format: csv
+      domain: geology
+      size_bytes: 5477
+      row_count: 100
+      columns:
+      - API_WELL_NUMBER
+      - WELL_NAME
+      - SN_HC_BEARING_INTVL
+      - SN_EOR_FK
+      - INTERVAL_NAME
+      - TOP_MD
+      - BOTTOM_MD
+      - HYDROCARBON_TYPE_CD
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: all_bsee_blocks
+      path: data/modules/bsee/current/infrastructure/all_bsee_blocks.csv
+      format: csv
+      domain: infrastructure
+      size_bytes: 607
+      row_count: 100
+      columns:
+      - BOTM_FLD_NAME_CD
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: ST_BP_and_tree_height
+      path: data/modules/bsee/current/operations/ST_BP_and_tree_height.csv
+      format: csv
+      domain: operations
+      size_bytes: 2706
+      row_count: 100
+      columns:
+      - SN_EOR
+      - API_WELL_NUMBER
+      - WELL_NM_ST_SFIX
+      - WELL_NM_BP_SFIX
+      - SUBSEA_TREE_HEIGHT_AML
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: cut_casings
+      path: data/modules/bsee/current/operations/cut_casings.csv
+      format: csv
+      domain: operations
+      size_bytes: 4497
+      row_count: 100
+      columns:
+      - API_WELL_NUMBER
+      - WELL_NAME
+      - CASING_SIZE
+      - CASING_CUT_DATE
+      - CASING_CUT_METHOD_CD
+      - CASING_CUT_DEPTH
+      - CASING_CUT_MDL_IND
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: well_activity_bop_tests
+      path: data/modules/bsee/current/operations/well_activity_bop_tests.csv
+      format: csv
+      domain: operations
+      size_bytes: 5180
+      row_count: 100
+      columns:
+      - BOP_TEST_DATE
+      - RAM_TST_PRSS
+      - ANNULAR_TST_PRSS
+      - BUS_ASC_NAME
+      - API_WELL_NUMBER
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: well_activity_open_hole
+      path: data/modules/bsee/current/operations/well_activity_open_hole.csv
+      format: csv
+      domain: operations
+      size_bytes: 6583
+      row_count: 100
+      columns:
+      - API_WELL_NUMBER
+      - WELL_NAME
+      - BUS_ASC_NAME
+      - OPERATIONS_COMPLETED_DATE
+      - TOOL_LOGGING_METHOD_NAME
+      - LOG_INTV_TOP_MD
+      - LOG_INTV_BOTM_MD
+      - LOG_TOOL_TYPE_CODE
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: well_activity_remarks
+      path: data/modules/bsee/current/operations/well_activity_remarks.csv
+      format: csv
+      domain: operations
+      size_bytes: 68237
+      row_count: 100
+      columns:
+      - API_WELL_NUMBER
+      - WELL_NAME
+      - WAR_START_DT
+      - SN_WAR
+      - TEXT_REMARK
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: well_activity_summary
+      path: data/modules/bsee/current/operations/well_activity_summary.csv
+      format: csv
+      domain: operations
+      size_bytes: 9431
+      row_count: 100
+      columns:
+      - WAR_START_DT
+      - WAR_END_DT
+      - RIG_NAME
+      - API_WELL_NUMBER
+      - WELL_NAME
+      - WELL_ACTIVITY_CD
+      - DRILLING_MD
+      - DRILL_FLUID_WGT
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: production
+      path: data/modules/bsee/current/production/production.csv
+      format: csv
+      domain: production
+      size_bytes: 2361
+      row_count: 100
+      columns:
+      - API_WELL_NUMBER
+      - PRODUCTION_DATE
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: well_data
+      path: data/modules/bsee/current/wells/well_data.csv
+      format: csv
+      domain: drilling
+      size_bytes: 4135645
+      row_count: 57281
+      columns:
+      - API_WELL_NUMBER
+      - WELL_NAME
+      - WATER_DEPTH
+      - SURF_LATITUDE
+      - WELL_NAME_SUFFIX
+      - COMPANY_NAME
+      - BOTM_FLD_NAME_CD
+      - WELL_SPUD_DATE
+      - TOTAL_DEPTH_DATE
+      - BH_TOTAL_MD
+      - WELL_BORE_TVD
+      - WELL_BP_ST_KICKOFF_MD
+      - BOREHOLE_STAT_DT
+      - BOREHOLE_STAT_CD
+      - CASING_CUT_CODE
+      - UNDWTR_COMP_STUB
+      - SURF_LONGITUDE
+      - BOTM_LATITUDE
+      - BOTM_LONGITUDE
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: well_directional_surveys
+      path: data/modules/bsee/current/wells/well_directional_surveys.csv
+      format: csv
+      domain: drilling
+      size_bytes: 129
+      row_count: 2
+      columns:
+      - version https://git-lfs.github.com/spec/v1
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: well_tubulars
+      path: data/modules/bsee/current/wells/well_tubulars.csv
+      format: csv
+      domain: drilling
+      size_bytes: 12155
+      row_count: 100
+      columns:
+      - API_WELL_NUMBER
+      - WELL_NAME
+      - WAR_START_DT
+      - WAR_END_DT
+      - CSNG_INTV_TYPE_CD
+      - CSNG_HOLE_SIZE
+      - CASING_SIZE
+      - CASING_WEIGHT
+      - CASING_GRADE
+      - CSNG_LINER_TEST_PRSS
+      - CSNG_SHOE_TEST_PRSS
+      - CSNG_CEMENT_VOL
+      - SN_WAR_CSNG_INTV
+      - CSNG_SETTING_BOTM_MD
+      - CSNG_SETTING_TOP_MD
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: Paleowells
+      path: data/modules/bsee/paleowells/Paleowells.csv
+      format: csv
+      domain: general
+      size_bytes: 646179
+      row_count: 6362
+      columns:
+      - ''
+      - Record Type
+      - API Well Number
+      - Paleo Report ID Number
+      - Total Number of Reports for API
+      - Measured Depth
+      - True Vertical Depth
+      - Definite/Possible
+      - At/In
+      - Paleo Age
+      - Definite/Possible
+      - At/In
+      - Ecozone
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    binary_stores:
+    - name: Well_APD_Default
+      path: data/modules/bsee/bin/Well_APD_Default/Well_APD_Default.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_apd_main_all
+      path: data/modules/bsee/bin/apd/mv_apd_main_all.bin
+      format: pickle
+      domain: general
+      size_bytes: 6543534
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-21'
+      description: null
+    - name: mv_apddata_all
+      path: data/modules/bsee/bin/apd/mv_apddata_all.bin
+      format: pickle
+      domain: general
+      size_bytes: 2032658
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-21'
+      description: null
+    - name: mv_apichanges_all
+      path: data/modules/bsee/bin/apichanges/mv_apichanges_all.bin
+      format: pickle
+      domain: general
+      size_bytes: 130
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_api_list
+      path: data/modules/bsee/bin/apiraw/mv_api_list.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_api_wellcomps
+      path: data/modules/bsee/bin/apiraw/mv_api_wellcomps.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_apm_attachments
+      path: data/modules/bsee/bin/apm/mv_apm_attachments.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_apm_borehole_stat_codes
+      path: data/modules/bsee/bin/apm/mv_apm_borehole_stat_codes.bin
+      format: pickle
+      domain: general
+      size_bytes: 128
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_apm_main
+      path: data/modules/bsee/bin/apm/mv_apm_main.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_apm_main_prop
+      path: data/modules/bsee/bin/apm/mv_apm_main_prop.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_apm_main_prop_narrative
+      path: data/modules/bsee/bin/apm/mv_apm_main_prop_narrative.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_apm_preventers
+      path: data/modules/bsee/bin/apm/mv_apm_preventers.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_apm_primary_op_codes
+      path: data/modules/bsee/bin/apm/mv_apm_primary_op_codes.bin
+      format: pickle
+      domain: general
+      size_bytes: 128
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_apm_question_responses
+      path: data/modules/bsee/bin/apm/mv_apm_question_responses.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_apm_questions
+      path: data/modules/bsee/bin/apm/mv_apm_questions.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_apm_resubmittals
+      path: data/modules/bsee/bin/apm/mv_apm_resubmittals.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_apm_rig_view
+      path: data/modules/bsee/bin/apm/mv_apm_rig_view.bin
+      format: pickle
+      domain: general
+      size_bytes: 130
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_apm_suboperation_codes
+      path: data/modules/bsee/bin/apm/mv_apm_suboperation_codes.bin
+      format: pickle
+      domain: general
+      size_bytes: 129
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_apm_suboperations
+      path: data/modules/bsee/bin/apm/mv_apm_suboperations.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_apm_verbals
+      path: data/modules/bsee/bin/apm/mv_apm_verbals.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_apm_well_type_codes
+      path: data/modules/bsee/bin/apm/mv_apm_well_type_codes.bin
+      format: pickle
+      domain: general
+      size_bytes: 128
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_approval_info
+      path: data/modules/bsee/bin/approvals/mv_approval_info.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_assignments
+      path: data/modules/bsee/bin/assignments/mv_assignments.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_bhpsurvey
+      path: data/modules/bsee/bin/bhps/mv_bhpsurvey.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_boreholes_all
+      path: data/modules/bsee/bin/borehole/mv_boreholes_all.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_companies_active
+      path: data/modules/bsee/bin/companydetails/mv_companies_active.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_companies_all
+      path: data/modules/bsee/bin/companydetails/mv_companies_all.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_decom_cost_estimates
+      path: data/modules/bsee/bin/decomcost/mv_decom_cost_estimates.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_decom_cost_inst_pipe
+      path: data/modules/bsee/bin/decomcost/mv_decom_cost_inst_pipe.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_decom_cost_inst_plat
+      path: data/modules/bsee/bin/decomcost/mv_decom_cost_inst_plat.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_decom_cost_prop_pipe
+      path: data/modules/bsee/bin/decomcost/mv_decom_cost_prop_pipe.bin
+      format: pickle
+      domain: general
+      size_bytes: 130
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_decom_cost_prop_plat
+      path: data/modules/bsee/bin/decomcost/mv_decom_cost_prop_plat.bin
+      format: pickle
+      domain: general
+      size_bytes: 129
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_decom_cost_prop_well
+      path: data/modules/bsee/bin/decomcost/mv_decom_cost_prop_well.bin
+      format: pickle
+      domain: general
+      size_bytes: 129
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_decom_cost_spud_well
+      path: data/modules/bsee/bin/decomcost/mv_decom_cost_spud_well.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_decom_cost_totals
+      path: data/modules/bsee/bin/decomcost/mv_decom_cost_totals.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_deep_water_field_leases
+      path: data/modules/bsee/bin/deepqual/mv_deep_water_field_leases.bin
+      format: pickle
+      domain: general
+      size_bytes: 130
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: dsptsdelimit
+      path: data/modules/bsee/bin/dsptsdelimit/dsptsdelimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 134
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_eor_casingcutcodes
+      path: data/modules/bsee/bin/eor/mv_eor_casingcutcodes.bin
+      format: pickle
+      domain: general
+      size_bytes: 128
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_eor_completions
+      path: data/modules/bsee/bin/eor/mv_eor_completions.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_eor_completionsprop
+      path: data/modules/bsee/bin/eor/mv_eor_completionsprop.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_eor_compstatcodes
+      path: data/modules/bsee/bin/eor/mv_eor_compstatcodes.bin
+      format: pickle
+      domain: general
+      size_bytes: 129
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_eor_cut_casings
+      path: data/modules/bsee/bin/eor/mv_eor_cut_casings.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_eor_geomarkers
+      path: data/modules/bsee/bin/eor/mv_eor_geomarkers.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_eor_hcbearing_intvl_comps
+      path: data/modules/bsee/bin/eor/mv_eor_hcbearing_intvl_comps.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_eor_hydrobarbtypecodes
+      path: data/modules/bsee/bin/eor/mv_eor_hydrobarbtypecodes.bin
+      format: pickle
+      domain: general
+      size_bytes: 128
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_eor_mainquery
+      path: data/modules/bsee/bin/eor/mv_eor_mainquery.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_eor_mainquery_prop
+      path: data/modules/bsee/bin/eor/mv_eor_mainquery_prop.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_eor_operationcodes
+      path: data/modules/bsee/bin/eor/mv_eor_operationcodes.bin
+      format: pickle
+      domain: general
+      size_bytes: 128
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_eor_perf_intervals
+      path: data/modules/bsee/bin/eor/mv_eor_perf_intervals.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_hcbearing_intervals
+      path: data/modules/bsee/bin/eor/mv_hcbearing_intervals.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_apd_attachments
+      path: data/modules/bsee/bin/ewellapd/mv_apd_attachments.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_apd_casing_intervals
+      path: data/modules/bsee/bin/ewellapd/mv_apd_casing_intervals.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_apd_casing_sectons
+      path: data/modules/bsee/bin/ewellapd/mv_apd_casing_sectons.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_apd_geologic
+      path: data/modules/bsee/bin/ewellapd/mv_apd_geologic.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_apd_main
+      path: data/modules/bsee/bin/ewellapd/mv_apd_main.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_apd_main_prop
+      path: data/modules/bsee/bin/ewellapd/mv_apd_main_prop.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_apd_question_responses
+      path: data/modules/bsee/bin/ewellapd/mv_apd_question_responses.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_apd_questions
+      path: data/modules/bsee/bin/ewellapd/mv_apd_questions.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_fmp_meas_locations
+      path: data/modules/bsee/bin/fmp/mv_fmp_meas_locations.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_fmplist
+      path: data/modules/bsee/bin/fmp/mv_fmplist.bin
+      format: pickle
+      domain: general
+      size_bytes: 130
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_frs_file_inventory
+      path: data/modules/bsee/bin/frs/mv_frs_file_inventory.bin
+      format: pickle
+      domain: general
+      size_bytes: 134
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: ogora1996delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora1996delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora1997delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora1997delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora1998delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora1998delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora1999delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora1999delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora2000delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora2000delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora2001delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora2001delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora2002delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora2002delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora2003delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora2003delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora2004delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora2004delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora2005delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora2005delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora2006delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora2006delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora2007delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora2007delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora2008delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora2008delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora2009delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora2009delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora2010delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora2010delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora2011delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora2011delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora2012delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora2012delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora2013delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora2013delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora2014delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora2014delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora2015delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora2015delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora2016delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora2016delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora2017delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora2017delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora2018delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora2018delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora2019delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora2019delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora2020delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora2020delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora2021delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora2021delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora2022delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora2022delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora2023delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora2023delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogora2024delimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogora2024delimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: ogoradelimit
+      path: data/modules/bsee/bin/historical_production_yearly/ogoradelimit.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-02'
+      description: null
+    - name: mv_acc_investigations
+      path: data/modules/bsee/bin/incinv/mv_acc_investigations.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_incs_by_oper
+      path: data/modules/bsee/bin/incs/mv_incs_by_oper.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_incs_fac_shutins_alaska
+      path: data/modules/bsee/bin/incs/mv_incs_fac_shutins_alaska.bin
+      format: pickle
+      domain: general
+      size_bytes: 129
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_incs_fac_shutins_gulf
+      path: data/modules/bsee/bin/incs/mv_incs_fac_shutins_gulf.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_incs_fac_shutins_pacific
+      path: data/modules/bsee/bin/incs/mv_incs_fac_shutins_pacific.bin
+      format: pickle
+      domain: general
+      size_bytes: 129
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_incs_inspections_alaska
+      path: data/modules/bsee/bin/incs/mv_incs_inspections_alaska.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_incs_inspections_gulf
+      path: data/modules/bsee/bin/incs/mv_incs_inspections_gulf.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_incs_inspections_pacific
+      path: data/modules/bsee/bin/incs/mv_incs_inspections_pacific.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_incs_shutins_alaska
+      path: data/modules/bsee/bin/incs/mv_incs_shutins_alaska.bin
+      format: pickle
+      domain: general
+      size_bytes: 129
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_incs_shutins_gulf
+      path: data/modules/bsee/bin/incs/mv_incs_shutins_gulf.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_incs_shutins_pacific
+      path: data/modules/bsee/bin/incs/mv_incs_shutins_pacific.bin
+      format: pickle
+      domain: general
+      size_bytes: 130
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_incs_warnings_alaska
+      path: data/modules/bsee/bin/incs/mv_incs_warnings_alaska.bin
+      format: pickle
+      domain: general
+      size_bytes: 129
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_incs_warnings_gulf
+      path: data/modules/bsee/bin/incs/mv_incs_warnings_gulf.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_incs_warnings_pacific
+      path: data/modules/bsee/bin/incs/mv_incs_warnings_pacific.bin
+      format: pickle
+      domain: general
+      size_bytes: 130
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_insp_by_oper
+      path: data/modules/bsee/bin/incs/mv_insp_by_oper.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_lease_area_block
+      path: data/modules/bsee/bin/lab/mv_lease_area_block.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_lease_owners_main
+      path: data/modules/bsee/bin/leaseowner/mv_lease_owners_main.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_mcpflowareablock
+      path: data/modules/bsee/bin/mcpflow/mv_mcpflowareablock.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_mcpflowleaseunits
+      path: data/modules/bsee/bin/mcpflow/mv_mcpflowleaseunits.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_mcpflowluoper
+      path: data/modules/bsee/bin/mcpflow/mv_mcpflowluoper.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_mcpflowmeaslocations
+      path: data/modules/bsee/bin/mcpflow/mv_mcpflowmeaslocations.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_mcpflowsubops
+      path: data/modules/bsee/bin/mcpflow/mv_mcpflowsubops.bin
+      format: pickle
+      domain: general
+      size_bytes: 129
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_mcpflowsystems
+      path: data/modules/bsee/bin/mcpflow/mv_mcpflowsystems.bin
+      format: pickle
+      domain: general
+      size_bytes: 130
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_mcpflowunits
+      path: data/modules/bsee/bin/mcpflow/mv_mcpflowunits.bin
+      format: pickle
+      domain: general
+      size_bytes: 130
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_nonrequired
+      path: data/modules/bsee/bin/nonrequired/mv_nonrequired.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: ocsprod_gasmonth
+      path: data/modules/bsee/bin/ocsprod/ocsprod_gasmonth.bin
+      format: pickle
+      domain: general
+      size_bytes: 129
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: ocsprod_gasyear
+      path: data/modules/bsee/bin/ocsprod/ocsprod_gasyear.bin
+      format: pickle
+      domain: general
+      size_bytes: 129
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: ocsprod_oilmonth
+      path: data/modules/bsee/bin/ocsprod/ocsprod_oilmonth.bin
+      format: pickle
+      domain: general
+      size_bytes: 129
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: ocsprod_oilyear
+      path: data/modules/bsee/bin/ocsprod/ocsprod_oilyear.bin
+      format: pickle
+      domain: general
+      size_bytes: 129
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_sbwd_apds
+      path: data/modules/bsee/bin/offshorestats/mv_sbwd_apds.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_sbwd_leases
+      path: data/modules/bsee/bin/offshorestats/mv_sbwd_leases.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_sbwd_platforms
+      path: data/modules/bsee/bin/offshorestats/mv_sbwd_platforms.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_sbwd_wells
+      path: data/modules/bsee/bin/offshorestats/mv_sbwd_wells.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_sbwd_wells2
+      path: data/modules/bsee/bin/offshorestats/mv_sbwd_wells2.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_osfr_companies
+      path: data/modules/bsee/bin/osfr/mv_osfr_companies.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_osfr_information
+      path: data/modules/bsee/bin/osfr/mv_osfr_information.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_osfr_segments
+      path: data/modules/bsee/bin/osfr/mv_osfr_segments.bin
+      format: pickle
+      domain: general
+      size_bytes: 130
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_perm_platforms
+      path: data/modules/bsee/bin/permstruc/mv_perm_platforms.bin
+      format: pickle
+      domain: general
+      size_bytes: 129
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_subsea_boreholes
+      path: data/modules/bsee/bin/permstruc/mv_subsea_boreholes.bin
+      format: pickle
+      domain: general
+      size_bytes: 130
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_pipelinelocation
+      path: data/modules/bsee/bin/pipeloc/mv_pipelinelocation.bin
+      format: pickle
+      domain: general
+      size_bytes: 134
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_pipeperm_pipelines
+      path: data/modules/bsee/bin/pipeperm/mv_pipeperm_pipelines.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_pipeperm_segments
+      path: data/modules/bsee/bin/pipeperm/mv_pipeperm_segments.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_pipeperm_submittals
+      path: data/modules/bsee/bin/pipeperm/mv_pipeperm_submittals.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_planblocks
+      path: data/modules/bsee/bin/plans/mv_planblocks.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_plancompanies
+      path: data/modules/bsee/bin/plans/mv_plancompanies.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_planssites
+      path: data/modules/bsee/bin/plans/mv_planssites.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_plansubmittals
+      path: data/modules/bsee/bin/plans/mv_plansubmittals.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_plansubmittalsdate
+      path: data/modules/bsee/bin/plans/mv_plansubmittalsdate.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_platstruc_authorityhist
+      path: data/modules/bsee/bin/platstruc/mv_platstruc_authorityhist.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_platstruc_cgrefcodes
+      path: data/modules/bsee/bin/platstruc/mv_platstruc_cgrefcodes.bin
+      format: pickle
+      domain: general
+      size_bytes: 128
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_platstruc_inccount
+      path: data/modules/bsee/bin/platstruc/mv_platstruc_inccount.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_platstruc_leases
+      path: data/modules/bsee/bin/platstruc/mv_platstruc_leases.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_platstruc_platformincs
+      path: data/modules/bsee/bin/platstruc/mv_platstruc_platformincs.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_platstruc_rightofways
+      path: data/modules/bsee/bin/platstruc/mv_platstruc_rightofways.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_platstruc_ruers
+      path: data/modules/bsee/bin/platstruc/mv_platstruc_ruers.bin
+      format: pickle
+      domain: general
+      size_bytes: 130
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_platstruc_structures
+      path: data/modules/bsee/bin/platstruc/mv_platstruc_structures.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_pbpadata
+      path: data/modules/bsee/bin/production_plan_area/mv_pbpadata.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_production_waterdepth
+      path: data/modules/bsee/bin/production_raw/mv_production_waterdepth.bin
+      format: pickle
+      domain: general
+      size_bytes: 346903
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-21'
+      description: null
+    - name: mv_productiondata
+      path: data/modules/bsee/bin/production_raw/mv_productiondata.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-21'
+      description: null
+    - name: mv_productionsum
+      path: data/modules/bsee/bin/production_raw/mv_productionsum.bin
+      format: pickle
+      domain: general
+      size_bytes: 1422
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-21'
+      description: null
+    - name: mv_productionsumwd
+      path: data/modules/bsee/bin/production_raw/mv_productionsumwd.bin
+      format: pickle
+      domain: general
+      size_bytes: 1232
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-21'
+      description: null
+    - name: mv_rowdescriptions
+      path: data/modules/bsee/bin/rowdesc/mv_rowdescriptions.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_preact
+      path: data/modules/bsee/bin/royaltyref/mv_preact.bin
+      format: pickle
+      domain: general
+      size_bytes: 129
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: scan_active_inactive_leases
+      path: data/modules/bsee/bin/scanneddocs/scan_active_inactive_leases.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: scan_adjudication_files
+      path: data/modules/bsee/bin/scanneddocs/scan_adjudication_files.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: scan_collateral_files
+      path: data/modules/bsee/bin/scanneddocs/scan_collateral_files.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: scan_company_files
+      path: data/modules/bsee/bin/scanneddocs/scan_company_files.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: scan_dir_surveys
+      path: data/modules/bsee/bin/scanneddocs/scan_dir_surveys.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: scan_expired_leases
+      path: data/modules/bsee/bin/scanneddocs/scan_expired_leases.bin
+      format: pickle
+      domain: general
+      size_bytes: 130
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: scan_gg_permits
+      path: data/modules/bsee/bin/scanneddocs/scan_gg_permits.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: scan_pipeline_maps
+      path: data/modules/bsee/bin/scanneddocs/scan_pipeline_maps.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: scan_plans
+      path: data/modules/bsee/bin/scanneddocs/scan_plans.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: scan_renleases
+      path: data/modules/bsee/bin/scanneddocs/scan_renleases.bin
+      format: pickle
+      domain: general
+      size_bytes: 130
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: scan_row
+      path: data/modules/bsee/bin/scanneddocs/scan_row.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: scan_sop_soo
+      path: data/modules/bsee/bin/scanneddocs/scan_sop_soo.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: scan_units
+      path: data/modules/bsee/bin/scanneddocs/scan_units.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: scan_well_files
+      path: data/modules/bsee/bin/scanneddocs/scan_well_files.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: scan_well_potential_tests
+      path: data/modules/bsee/bin/scanneddocs/scan_well_potential_tests.bin
+      format: pickle
+      domain: general
+      size_bytes: 130
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_serreg_companies
+      path: data/modules/bsee/bin/serialreg/mv_serreg_companies.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_serreg_descriptions
+      path: data/modules/bsee/bin/serialreg/mv_serreg_descriptions.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_serreg_high_bids
+      path: data/modules/bsee/bin/serialreg/mv_serreg_high_bids.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_serreg_lease_owner_assigns
+      path: data/modules/bsee/bin/serialreg/mv_serreg_lease_owner_assigns.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_serreg_lease_owner_groups
+      path: data/modules/bsee/bin/serialreg/mv_serreg_lease_owner_groups.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_serreg_lease_owner_remarks
+      path: data/modules/bsee/bin/serialreg/mv_serreg_lease_owner_remarks.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_serreg_lease_owners
+      path: data/modules/bsee/bin/serialreg/mv_serreg_lease_owners.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_serreg_leases
+      path: data/modules/bsee/bin/serialreg/mv_serreg_leases.bin
+      format: pickle
+      domain: general
+      size_bytes: 132
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_serreg_portion_aliquots
+      path: data/modules/bsee/bin/serialreg/mv_serreg_portion_aliquots.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_serreg_rates
+      path: data/modules/bsee/bin/serialreg/mv_serreg_rates.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_serreg_remarks
+      path: data/modules/bsee/bin/serialreg/mv_serreg_remarks.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_serreg_xys
+      path: data/modules/bsee/bin/serialreg/mv_serreg_xys.bin
+      format: pickle
+      domain: general
+      size_bytes: 131
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: mv_war_boreholes_view
+      path: data/modules/bsee/bin/war/mv_war_boreholes_view.bin
+      format: pickle
+      domain: general
+      size_bytes: 2671453
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-21'
+      description: null
+    - name: mv_war_main
+      path: data/modules/bsee/bin/war/mv_war_main.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-21'
+      description: null
+    - name: mv_war_main_prop
+      path: data/modules/bsee/bin/war/mv_war_main_prop.bin
+      format: pickle
+      domain: general
+      size_bytes: 133
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-21'
+      description: null
+    - name: mv_war_main_prop_remark
+      path: data/modules/bsee/bin/war/mv_war_main_prop_remark.bin
+      format: pickle
+      domain: general
+      size_bytes: 134
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-25'
+      description: null
+    - name: mv_war_open_hole_runs
+      path: data/modules/bsee/bin/war/mv_war_open_hole_runs.bin
+      format: pickle
+      domain: general
+      size_bytes: 1209678
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-21'
+      description: null
+    - name: mv_war_open_hole_tools
+      path: data/modules/bsee/bin/war/mv_war_open_hole_tools.bin
+      format: pickle
+      domain: general
+      size_bytes: 446697
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-21'
+      description: null
+    - name: mv_war_tubular_summaries
+      path: data/modules/bsee/bin/war/mv_war_tubular_summaries.bin
+      format: pickle
+      domain: general
+      size_bytes: 15211186
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-21'
+      description: null
+    - name: mv_war_tubular_summaries_prop
+      path: data/modules/bsee/bin/war/mv_war_tubular_summaries_prop.bin
+      format: pickle
+      domain: general
+      size_bytes: 5433226
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-21'
+      description: null
+    documentation:
+      readme: data/modules/bsee/README.md
+      data_dictionary: data/modules/bsee/DATA_DICTIONARY.md
+  fdas:
+    name: fdas
+    description: Floating production data advisory system
+    path: data/modules/fdas
+    domains:
+    - drilling
+    datasets:
+    - name: well_data_enhanced
+      path: data/modules/fdas/enhanced/wells/well_data_enhanced.csv
+      format: csv
+      domain: drilling
+      size_bytes: 4593879
+      row_count: 57281
+      columns:
+      - API_WELL_NUMBER
+      - WELL_NAME
+      - WATER_DEPTH
+      - SURF_LATITUDE
+      - WELL_NAME_SUFFIX
+      - COMPANY_NAME
+      - BOTM_FLD_NAME_CD
+      - WELL_SPUD_DATE
+      - TOTAL_DEPTH_DATE
+      - BH_TOTAL_MD
+      - WELL_BORE_TVD
+      - WELL_BP_ST_KICKOFF_MD
+      - BOREHOLE_STAT_DT
+      - BOREHOLE_STAT_CD
+      - CASING_CUT_CODE
+      - UNDWTR_COMP_STUB
+      - SURF_LONGITUDE
+      - BOTM_LATITUDE
+      - BOTM_LONGITUDE
+      - DEV_SYSTEM
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-10-04'
+      description: null
+    binary_stores: []
+    documentation: {}
+  hse:
+    name: hse
+    description: Health, Safety and Environment data
+    path: data/modules/hse
+    domains:
+    - general
+    datasets:
+    - name: tri_basic_2020-2024_oil_gas_combined
+      path: data/modules/hse/raw/epa_tri/tri_basic_2020-2024_oil_gas_combined.csv
+      format: csv
+      domain: general
+      size_bytes: 23611977
+      row_count: 36696
+      columns:
+      - year
+      - trifd
+      - frs id
+      - facility name
+      - street address
+      - city
+      - county
+      - st
+      - zip
+      - bia
+      - tribe
+      - latitude
+      - longitude
+      - horizontal datum
+      - parent co name
+      - parent co db num
+      - standard parent co name
+      - foreign parent co name
+      - foreign parent co db num
+      - standard foreign parent co name
+      - federal facility
+      - industry sector code
+      - industry sector
+      - primary sic
+      - sic 2
+      - sic 3
+      - sic 4
+      - sic 5
+      - sic 6
+      - primary naics
+      - naics 2
+      - naics 3
+      - naics 4
+      - naics 5
+      - naics 6
+      - doc_ctrl_num
+      - chemical
+      - elemental metal included
+      - tri chemical/compound id
+      - cas#
+      - srs id
+      - clean air act chemical
+      - classification
+      - metal
+      - metal category
+      - carcinogen
+      - pbt
+      - pfas
+      - form type
+      - unit of measure
+      - 5.1 - fugitive air
+      - 5.2 - stack air
+      - 5.3 - water
+      - 5.4 - underground
+      - 5.4.1 - underground cl i
+      - 5.4.2 - underground c ii-v
+      - 5.5.1 - landfills
+      - 5.5.1a - rcra c landfill
+      - 5.5.1b - other landfills
+      - 5.5.2 - land treatment
+      - 5.5.3 - surface impndmnt
+      - 5.5.3a - rcra surface im
+      - 5.5.3b - other surface i
+      - 5.5.4 - other disposal
+      - on-site release total
+      - 6.1 - potw - trns rlse
+      - 6.1 - potw - trns trt
+      - potw - total transfers
+      - 6.2 - m10
+      - 6.2 - m41
+      - 6.2 - m62
+      - 6.2 - m40 metal
+      - 6.2 - m61 metal
+      - 6.2 - m71
+      - 6.2 - m81
+      - 6.2 - m82
+      - 6.2 - m72
+      - 6.2 - m63
+      - 6.2 - m66
+      - 6.2 - m67
+      - 6.2 - m64
+      - 6.2 - m65
+      - 6.2 - m73
+      - 6.2 - m79
+      - 6.2 - m90
+      - 6.2 - m94
+      - 6.2 - m99
+      - off-site release total
+      - 6.2 - m20
+      - 6.2 - m24
+      - 6.2 - m26
+      - 6.2 - m28
+      - 6.2 - m93
+      - off-site recycled total
+      - 6.2 - m56
+      - 6.2 - m92
+      - off-site energy recovery t
+      - 6.2 - m40 non-metal
+      - 6.2 - m50
+      - 6.2 - m54
+      - 6.2 - m61 non-metal
+      - 6.2 - m69
+      - 6.2 - m95
+      - off-site treated total
+      - 6.2 - unclassified
+      - 6.2 - total transfer
+      - total releases
+      - 8.1 - releases
+      - 8.1a - on-site contained
+      - 8.1b - on-site other
+      - 8.1c - off-site contain
+      - 8.1d - off-site other r
+      - 8.2 - energy recover on
+      - 8.3 - energy recover of
+      - 8.4 - recycling on site
+      - 8.5 - recycling off sit
+      - 8.6 - treatment on site
+      - 8.7 - treatment off site
+      - production wste (8.1-8.7)
+      - 8.8 - one-time release
+      - prod_ratio_or_ activity
+      - 8.9 - production ratio
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-02'
+      description: null
+    - name: tri_basic_2020_oil_gas
+      path: data/modules/hse/raw/epa_tri/tri_basic_2020_oil_gas.csv
+      format: csv
+      domain: general
+      size_bytes: 7735583
+      row_count: 12047
+      columns:
+      - year
+      - trifd
+      - frs id
+      - facility name
+      - street address
+      - city
+      - county
+      - st
+      - zip
+      - bia
+      - tribe
+      - latitude
+      - longitude
+      - horizontal datum
+      - parent co name
+      - parent co db num
+      - standard parent co name
+      - foreign parent co name
+      - foreign parent co db num
+      - standard foreign parent co name
+      - federal facility
+      - industry sector code
+      - industry sector
+      - primary sic
+      - sic 2
+      - sic 3
+      - sic 4
+      - sic 5
+      - sic 6
+      - primary naics
+      - naics 2
+      - naics 3
+      - naics 4
+      - naics 5
+      - naics 6
+      - doc_ctrl_num
+      - chemical
+      - elemental metal included
+      - tri chemical/compound id
+      - cas#
+      - srs id
+      - clean air act chemical
+      - classification
+      - metal
+      - metal category
+      - carcinogen
+      - pbt
+      - pfas
+      - form type
+      - unit of measure
+      - 5.1 - fugitive air
+      - 5.2 - stack air
+      - 5.3 - water
+      - 5.4 - underground
+      - 5.4.1 - underground cl i
+      - 5.4.2 - underground c ii-v
+      - 5.5.1 - landfills
+      - 5.5.1a - rcra c landfill
+      - 5.5.1b - other landfills
+      - 5.5.2 - land treatment
+      - 5.5.3 - surface impndmnt
+      - 5.5.3a - rcra surface im
+      - 5.5.3b - other surface i
+      - 5.5.4 - other disposal
+      - on-site release total
+      - 6.1 - potw - trns rlse
+      - 6.1 - potw - trns trt
+      - potw - total transfers
+      - 6.2 - m10
+      - 6.2 - m41
+      - 6.2 - m62
+      - 6.2 - m40 metal
+      - 6.2 - m61 metal
+      - 6.2 - m71
+      - 6.2 - m81
+      - 6.2 - m82
+      - 6.2 - m72
+      - 6.2 - m63
+      - 6.2 - m66
+      - 6.2 - m67
+      - 6.2 - m64
+      - 6.2 - m65
+      - 6.2 - m73
+      - 6.2 - m79
+      - 6.2 - m90
+      - 6.2 - m94
+      - 6.2 - m99
+      - off-site release total
+      - 6.2 - m20
+      - 6.2 - m24
+      - 6.2 - m26
+      - 6.2 - m28
+      - 6.2 - m93
+      - off-site recycled total
+      - 6.2 - m56
+      - 6.2 - m92
+      - off-site energy recovery t
+      - 6.2 - m40 non-metal
+      - 6.2 - m50
+      - 6.2 - m54
+      - 6.2 - m61 non-metal
+      - 6.2 - m69
+      - 6.2 - m95
+      - off-site treated total
+      - 6.2 - unclassified
+      - 6.2 - total transfer
+      - total releases
+      - 8.1 - releases
+      - 8.1a - on-site contained
+      - 8.1b - on-site other
+      - 8.1c - off-site contain
+      - 8.1d - off-site other r
+      - 8.2 - energy recover on
+      - 8.3 - energy recover of
+      - 8.4 - recycling on site
+      - 8.5 - recycling off sit
+      - 8.6 - treatment on site
+      - 8.7 - treatment off site
+      - production wste (8.1-8.7)
+      - 8.8 - one-time release
+      - prod_ratio_or_ activity
+      - 8.9 - production ratio
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-02'
+      description: null
+    - name: tri_basic_2021_oil_gas
+      path: data/modules/hse/raw/epa_tri/tri_basic_2021_oil_gas.csv
+      format: csv
+      domain: general
+      size_bytes: 7461115
+      row_count: 11616
+      columns:
+      - year
+      - trifd
+      - frs id
+      - facility name
+      - street address
+      - city
+      - county
+      - st
+      - zip
+      - bia
+      - tribe
+      - latitude
+      - longitude
+      - horizontal datum
+      - parent co name
+      - parent co db num
+      - standard parent co name
+      - foreign parent co name
+      - foreign parent co db num
+      - standard foreign parent co name
+      - federal facility
+      - industry sector code
+      - industry sector
+      - primary sic
+      - sic 2
+      - sic 3
+      - sic 4
+      - sic 5
+      - sic 6
+      - primary naics
+      - naics 2
+      - naics 3
+      - naics 4
+      - naics 5
+      - naics 6
+      - doc_ctrl_num
+      - chemical
+      - elemental metal included
+      - tri chemical/compound id
+      - cas#
+      - srs id
+      - clean air act chemical
+      - classification
+      - metal
+      - metal category
+      - carcinogen
+      - pbt
+      - pfas
+      - form type
+      - unit of measure
+      - 5.1 - fugitive air
+      - 5.2 - stack air
+      - 5.3 - water
+      - 5.4 - underground
+      - 5.4.1 - underground cl i
+      - 5.4.2 - underground c ii-v
+      - 5.5.1 - landfills
+      - 5.5.1a - rcra c landfill
+      - 5.5.1b - other landfills
+      - 5.5.2 - land treatment
+      - 5.5.3 - surface impndmnt
+      - 5.5.3a - rcra surface im
+      - 5.5.3b - other surface i
+      - 5.5.4 - other disposal
+      - on-site release total
+      - 6.1 - potw - trns rlse
+      - 6.1 - potw - trns trt
+      - potw - total transfers
+      - 6.2 - m10
+      - 6.2 - m41
+      - 6.2 - m62
+      - 6.2 - m40 metal
+      - 6.2 - m61 metal
+      - 6.2 - m71
+      - 6.2 - m81
+      - 6.2 - m82
+      - 6.2 - m72
+      - 6.2 - m63
+      - 6.2 - m66
+      - 6.2 - m67
+      - 6.2 - m64
+      - 6.2 - m65
+      - 6.2 - m73
+      - 6.2 - m79
+      - 6.2 - m90
+      - 6.2 - m94
+      - 6.2 - m99
+      - off-site release total
+      - 6.2 - m20
+      - 6.2 - m24
+      - 6.2 - m26
+      - 6.2 - m28
+      - 6.2 - m93
+      - off-site recycled total
+      - 6.2 - m56
+      - 6.2 - m92
+      - off-site energy recovery t
+      - 6.2 - m40 non-metal
+      - 6.2 - m50
+      - 6.2 - m54
+      - 6.2 - m61 non-metal
+      - 6.2 - m69
+      - 6.2 - m95
+      - off-site treated total
+      - 6.2 - unclassified
+      - 6.2 - total transfer
+      - total releases
+      - 8.1 - releases
+      - 8.1a - on-site contained
+      - 8.1b - on-site other
+      - 8.1c - off-site contain
+      - 8.1d - off-site other r
+      - 8.2 - energy recover on
+      - 8.3 - energy recover of
+      - 8.4 - recycling on site
+      - 8.5 - recycling off sit
+      - 8.6 - treatment on site
+      - 8.7 - treatment off site
+      - production wste (8.1-8.7)
+      - 8.8 - one-time release
+      - prod_ratio_or_ activity
+      - 8.9 - production ratio
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-02'
+      description: null
+    - name: tri_basic_2022-2023_oil_gas_combined
+      path: data/modules/hse/raw/epa_tri/tri_basic_2022-2023_oil_gas_combined.csv
+      format: csv
+      domain: general
+      size_bytes: 9502985
+      row_count: 14807
+      columns:
+      - year
+      - trifd
+      - frs id
+      - facility name
+      - street address
+      - city
+      - county
+      - st
+      - zip
+      - bia
+      - tribe
+      - latitude
+      - longitude
+      - horizontal datum
+      - parent co name
+      - parent co db num
+      - standard parent co name
+      - foreign parent co name
+      - foreign parent co db num
+      - standard foreign parent co name
+      - federal facility
+      - industry sector code
+      - industry sector
+      - primary sic
+      - sic 2
+      - sic 3
+      - sic 4
+      - sic 5
+      - sic 6
+      - primary naics
+      - naics 2
+      - naics 3
+      - naics 4
+      - naics 5
+      - naics 6
+      - doc_ctrl_num
+      - chemical
+      - elemental metal included
+      - tri chemical/compound id
+      - cas#
+      - srs id
+      - clean air act chemical
+      - classification
+      - metal
+      - metal category
+      - carcinogen
+      - pbt
+      - pfas
+      - form type
+      - unit of measure
+      - 5.1 - fugitive air
+      - 5.2 - stack air
+      - 5.3 - water
+      - 5.4 - underground
+      - 5.4.1 - underground cl i
+      - 5.4.2 - underground c ii-v
+      - 5.5.1 - landfills
+      - 5.5.1a - rcra c landfill
+      - 5.5.1b - other landfills
+      - 5.5.2 - land treatment
+      - 5.5.3 - surface impndmnt
+      - 5.5.3a - rcra surface im
+      - 5.5.3b - other surface i
+      - 5.5.4 - other disposal
+      - on-site release total
+      - 6.1 - potw - trns rlse
+      - 6.1 - potw - trns trt
+      - potw - total transfers
+      - 6.2 - m10
+      - 6.2 - m41
+      - 6.2 - m62
+      - 6.2 - m40 metal
+      - 6.2 - m61 metal
+      - 6.2 - m71
+      - 6.2 - m81
+      - 6.2 - m82
+      - 6.2 - m72
+      - 6.2 - m63
+      - 6.2 - m66
+      - 6.2 - m67
+      - 6.2 - m64
+      - 6.2 - m65
+      - 6.2 - m73
+      - 6.2 - m79
+      - 6.2 - m90
+      - 6.2 - m94
+      - 6.2 - m99
+      - off-site release total
+      - 6.2 - m20
+      - 6.2 - m24
+      - 6.2 - m26
+      - 6.2 - m28
+      - 6.2 - m93
+      - off-site recycled total
+      - 6.2 - m56
+      - 6.2 - m92
+      - off-site energy recovery t
+      - 6.2 - m40 non-metal
+      - 6.2 - m50
+      - 6.2 - m54
+      - 6.2 - m61 non-metal
+      - 6.2 - m69
+      - 6.2 - m95
+      - off-site treated total
+      - 6.2 - unclassified
+      - 6.2 - total transfer
+      - total releases
+      - 8.1 - releases
+      - 8.1a - on-site contained
+      - 8.1b - on-site other
+      - 8.1c - off-site contain
+      - 8.1d - off-site other r
+      - 8.2 - energy recover on
+      - 8.3 - energy recover of
+      - 8.4 - recycling on site
+      - 8.5 - recycling off sit
+      - 8.6 - treatment on site
+      - 8.7 - treatment off site
+      - production wste (8.1-8.7)
+      - 8.8 - one-time release
+      - prod_ratio_or_ activity
+      - 8.9 - production ratio
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-02'
+      description: null
+    - name: tri_basic_2022_oil_gas
+      path: data/modules/hse/raw/epa_tri/tri_basic_2022_oil_gas.csv
+      format: csv
+      domain: general
+      size_bytes: 6644435
+      row_count: 10361
+      columns:
+      - year
+      - trifd
+      - frs id
+      - facility name
+      - street address
+      - city
+      - county
+      - st
+      - zip
+      - bia
+      - tribe
+      - latitude
+      - longitude
+      - horizontal datum
+      - parent co name
+      - parent co db num
+      - standard parent co name
+      - foreign parent co name
+      - foreign parent co db num
+      - standard foreign parent co name
+      - federal facility
+      - industry sector code
+      - industry sector
+      - primary sic
+      - sic 2
+      - sic 3
+      - sic 4
+      - sic 5
+      - sic 6
+      - primary naics
+      - naics 2
+      - naics 3
+      - naics 4
+      - naics 5
+      - naics 6
+      - doc_ctrl_num
+      - chemical
+      - elemental metal included
+      - tri chemical/compound id
+      - cas#
+      - srs id
+      - clean air act chemical
+      - classification
+      - metal
+      - metal category
+      - carcinogen
+      - pbt
+      - pfas
+      - form type
+      - unit of measure
+      - 5.1 - fugitive air
+      - 5.2 - stack air
+      - 5.3 - water
+      - 5.4 - underground
+      - 5.4.1 - underground cl i
+      - 5.4.2 - underground c ii-v
+      - 5.5.1 - landfills
+      - 5.5.1a - rcra c landfill
+      - 5.5.1b - other landfills
+      - 5.5.2 - land treatment
+      - 5.5.3 - surface impndmnt
+      - 5.5.3a - rcra surface im
+      - 5.5.3b - other surface i
+      - 5.5.4 - other disposal
+      - on-site release total
+      - 6.1 - potw - trns rlse
+      - 6.1 - potw - trns trt
+      - potw - total transfers
+      - 6.2 - m10
+      - 6.2 - m41
+      - 6.2 - m62
+      - 6.2 - m40 metal
+      - 6.2 - m61 metal
+      - 6.2 - m71
+      - 6.2 - m81
+      - 6.2 - m82
+      - 6.2 - m72
+      - 6.2 - m63
+      - 6.2 - m66
+      - 6.2 - m67
+      - 6.2 - m64
+      - 6.2 - m65
+      - 6.2 - m73
+      - 6.2 - m79
+      - 6.2 - m90
+      - 6.2 - m94
+      - 6.2 - m99
+      - off-site release total
+      - 6.2 - m20
+      - 6.2 - m24
+      - 6.2 - m26
+      - 6.2 - m28
+      - 6.2 - m93
+      - off-site recycled total
+      - 6.2 - m56
+      - 6.2 - m92
+      - off-site energy recovery t
+      - 6.2 - m40 non-metal
+      - 6.2 - m50
+      - 6.2 - m54
+      - 6.2 - m61 non-metal
+      - 6.2 - m69
+      - 6.2 - m95
+      - off-site treated total
+      - 6.2 - unclassified
+      - 6.2 - total transfer
+      - total releases
+      - 8.1 - releases
+      - 8.1a - on-site contained
+      - 8.1b - on-site other
+      - 8.1c - off-site contain
+      - 8.1d - off-site other r
+      - 8.2 - energy recover on
+      - 8.3 - energy recover of
+      - 8.4 - recycling on site
+      - 8.5 - recycling off sit
+      - 8.6 - treatment on site
+      - 8.7 - treatment off site
+      - production wste (8.1-8.7)
+      - 8.8 - one-time release
+      - prod_ratio_or_ activity
+      - 8.9 - production ratio
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-02'
+      description: null
+    - name: tri_basic_2023_oil_gas
+      path: data/modules/hse/raw/epa_tri/tri_basic_2023_oil_gas.csv
+      format: csv
+      domain: general
+      size_bytes: 2853237
+      row_count: 4446
+      columns:
+      - year
+      - trifd
+      - frs id
+      - facility name
+      - street address
+      - city
+      - county
+      - st
+      - zip
+      - bia
+      - tribe
+      - latitude
+      - longitude
+      - horizontal datum
+      - parent co name
+      - parent co db num
+      - standard parent co name
+      - foreign parent co name
+      - foreign parent co db num
+      - standard foreign parent co name
+      - federal facility
+      - industry sector code
+      - industry sector
+      - primary sic
+      - sic 2
+      - sic 3
+      - sic 4
+      - sic 5
+      - sic 6
+      - primary naics
+      - naics 2
+      - naics 3
+      - naics 4
+      - naics 5
+      - naics 6
+      - doc_ctrl_num
+      - chemical
+      - elemental metal included
+      - tri chemical/compound id
+      - cas#
+      - srs id
+      - clean air act chemical
+      - classification
+      - metal
+      - metal category
+      - carcinogen
+      - pbt
+      - pfas
+      - form type
+      - unit of measure
+      - 5.1 - fugitive air
+      - 5.2 - stack air
+      - 5.3 - water
+      - 5.4 - underground
+      - 5.4.1 - underground cl i
+      - 5.4.2 - underground c ii-v
+      - 5.5.1 - landfills
+      - 5.5.1a - rcra c landfill
+      - 5.5.1b - other landfills
+      - 5.5.2 - land treatment
+      - 5.5.3 - surface impndmnt
+      - 5.5.3a - rcra surface im
+      - 5.5.3b - other surface i
+      - 5.5.4 - other disposal
+      - on-site release total
+      - 6.1 - potw - trns rlse
+      - 6.1 - potw - trns trt
+      - potw - total transfers
+      - 6.2 - m10
+      - 6.2 - m41
+      - 6.2 - m62
+      - 6.2 - m40 metal
+      - 6.2 - m61 metal
+      - 6.2 - m71
+      - 6.2 - m81
+      - 6.2 - m82
+      - 6.2 - m72
+      - 6.2 - m63
+      - 6.2 - m66
+      - 6.2 - m67
+      - 6.2 - m64
+      - 6.2 - m65
+      - 6.2 - m73
+      - 6.2 - m79
+      - 6.2 - m90
+      - 6.2 - m94
+      - 6.2 - m99
+      - off-site release total
+      - 6.2 - m20
+      - 6.2 - m24
+      - 6.2 - m26
+      - 6.2 - m28
+      - 6.2 - m93
+      - off-site recycled total
+      - 6.2 - m56
+      - 6.2 - m92
+      - off-site energy recovery t
+      - 6.2 - m40 non-metal
+      - 6.2 - m50
+      - 6.2 - m54
+      - 6.2 - m61 non-metal
+      - 6.2 - m69
+      - 6.2 - m95
+      - off-site treated total
+      - 6.2 - unclassified
+      - 6.2 - total transfer
+      - total releases
+      - 8.1 - releases
+      - 8.1a - on-site contained
+      - 8.1b - on-site other
+      - 8.1c - off-site contain
+      - 8.1d - off-site other r
+      - 8.2 - energy recover on
+      - 8.3 - energy recover of
+      - 8.4 - recycling on site
+      - 8.5 - recycling off sit
+      - 8.6 - treatment on site
+      - 8.7 - treatment off site
+      - production wste (8.1-8.7)
+      - 8.8 - one-time release
+      - prod_ratio_or_ activity
+      - 8.9 - production ratio
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-02'
+      description: null
+    - name: tri_basic_2024_oil_gas
+      path: data/modules/hse/raw/epa_tri/tri_basic_2024_oil_gas.csv
+      format: csv
+      domain: general
+      size_bytes: 8409837
+      row_count: 13033
+      columns:
+      - year
+      - trifd
+      - frs id
+      - facility name
+      - street address
+      - city
+      - county
+      - st
+      - zip
+      - bia
+      - tribe
+      - latitude
+      - longitude
+      - horizontal datum
+      - parent co name
+      - parent co db num
+      - standard parent co name
+      - foreign parent co name
+      - foreign parent co db num
+      - standard foreign parent co name
+      - federal facility
+      - industry sector code
+      - industry sector
+      - primary sic
+      - sic 2
+      - sic 3
+      - sic 4
+      - sic 5
+      - sic 6
+      - primary naics
+      - naics 2
+      - naics 3
+      - naics 4
+      - naics 5
+      - naics 6
+      - doc_ctrl_num
+      - chemical
+      - elemental metal included
+      - tri chemical/compound id
+      - cas#
+      - srs id
+      - clean air act chemical
+      - classification
+      - metal
+      - metal category
+      - carcinogen
+      - pbt
+      - pfas
+      - form type
+      - unit of measure
+      - 5.1 - fugitive air
+      - 5.2 - stack air
+      - 5.3 - water
+      - 5.4 - underground
+      - 5.4.1 - underground cl i
+      - 5.4.2 - underground c ii-v
+      - 5.5.1 - landfills
+      - 5.5.1a - rcra c landfill
+      - 5.5.1b - other landfills
+      - 5.5.2 - land treatment
+      - 5.5.3 - surface impndmnt
+      - 5.5.3a - rcra surface im
+      - 5.5.3b - other surface i
+      - 5.5.4 - other disposal
+      - on-site release total
+      - 6.1 - potw - trns rlse
+      - 6.1 - potw - trns trt
+      - potw - total transfers
+      - 6.2 - m10
+      - 6.2 - m41
+      - 6.2 - m62
+      - 6.2 - m40 metal
+      - 6.2 - m61 metal
+      - 6.2 - m71
+      - 6.2 - m81
+      - 6.2 - m82
+      - 6.2 - m72
+      - 6.2 - m63
+      - 6.2 - m66
+      - 6.2 - m67
+      - 6.2 - m64
+      - 6.2 - m65
+      - 6.2 - m73
+      - 6.2 - m79
+      - 6.2 - m90
+      - 6.2 - m94
+      - 6.2 - m99
+      - off-site release total
+      - 6.2 - m20
+      - 6.2 - m24
+      - 6.2 - m26
+      - 6.2 - m28
+      - 6.2 - m93
+      - off-site recycled total
+      - 6.2 - m56
+      - 6.2 - m92
+      - off-site energy recovery t
+      - 6.2 - m40 non-metal
+      - 6.2 - m50
+      - 6.2 - m54
+      - 6.2 - m61 non-metal
+      - 6.2 - m69
+      - 6.2 - m95
+      - off-site treated total
+      - 6.2 - unclassified
+      - 6.2 - total transfer
+      - total releases
+      - 8.1 - releases
+      - 8.1a - on-site contained
+      - 8.1b - on-site other
+      - 8.1c - off-site contain
+      - 8.1d - off-site other r
+      - 8.2 - energy recover on
+      - 8.3 - energy recover of
+      - 8.4 - recycling on site
+      - 8.5 - recycling off sit
+      - 8.6 - treatment on site
+      - 8.7 - treatment off site
+      - production wste (8.1-8.7)
+      - 8.8 - one-time release
+      - prod_ratio_or_ activity
+      - 8.9 - production ratio
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-02'
+      description: null
+    - name: osha_accident
+      path: data/modules/hse/raw/osha/osha_accident.csv
+      format: csv
+      domain: general
+      size_bytes: 38070344
+      row_count: 165628
+      columns:
+      - summary_nr
+      - report_id
+      - event_date
+      - event_time
+      - event_desc
+      - event_keyword
+      - const_end_use
+      - build_stories
+      - nonbuild_ht
+      - project_cost
+      - project_type
+      - sic_list
+      - fatality
+      - state_flag
+      - abstract_text
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_accident_abstract0
+      path: data/modules/hse/raw/osha/osha_accident_abstract0.csv
+      format: csv
+      domain: general
+      size_bytes: 118471083
+      row_count: 1000000
+      columns:
+      - summary_nr
+      - line_nr
+      - abstract_text
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_accident_abstract1
+      path: data/modules/hse/raw/osha/osha_accident_abstract1.csv
+      format: csv
+      domain: general
+      size_bytes: 17467268
+      row_count: 149763
+      columns:
+      - summary_nr
+      - line_nr
+      - abstract_text
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_accident_injury
+      path: data/modules/hse/raw/osha/osha_accident_injury.csv
+      format: csv
+      domain: general
+      size_bytes: 28114228
+      row_count: 231634
+      columns:
+      - summary_nr
+      - rel_insp_nr
+      - age
+      - sex
+      - nature_of_inj
+      - part_of_body
+      - src_of_injury
+      - event_type
+      - evn_factor
+      - hum_factor
+      - occ_code
+      - degree_of_inj
+      - task_assigned
+      - hazsub
+      - const_op
+      - const_op_cause
+      - fat_cause
+      - fall_distance
+      - fall_ht
+      - injury_line_nr
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_accident_lookup2
+      path: data/modules/hse/raw/osha/osha_accident_lookup2.csv
+      format: csv
+      domain: general
+      size_bytes: 59809
+      row_count: 861
+      columns:
+      - accident_code
+      - accident_number
+      - accident_value
+      - accident_letter
+      - load_date
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_data_dictionary
+      path: data/modules/hse/raw/osha/osha_data_dictionary.csv
+      format: csv
+      domain: general
+      size_bytes: 19003
+      row_count: 137
+      columns:
+      - table_name
+      - column_name
+      - attribute_name
+      - definition
+      - column_datatype
+      - display_name
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_inspection0
+      path: data/modules/hse/raw/osha/osha_inspection0.csv
+      format: csv
+      domain: general
+      size_bytes: 265694158
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - reporting_id
+      - state_flag
+      - estab_name
+      - site_address
+      - site_city
+      - site_state
+      - site_zip
+      - owner_type
+      - owner_code
+      - adv_notice
+      - safety_hlth
+      - sic_code
+      - naics_code
+      - insp_type
+      - insp_scope
+      - why_no_insp
+      - union_status
+      - safety_manuf
+      - safety_const
+      - safety_marit
+      - health_manuf
+      - health_const
+      - health_marit
+      - migrant
+      - mail_street
+      - mail_city
+      - mail_state
+      - mail_zip
+      - host_est_key
+      - nr_in_estab
+      - open_date
+      - case_mod_date
+      - close_conf_date
+      - close_case_date
+      - ld_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_inspection1
+      path: data/modules/hse/raw/osha/osha_inspection1.csv
+      format: csv
+      domain: general
+      size_bytes: 290794799
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - reporting_id
+      - state_flag
+      - estab_name
+      - site_address
+      - site_city
+      - site_state
+      - site_zip
+      - owner_type
+      - owner_code
+      - adv_notice
+      - safety_hlth
+      - sic_code
+      - naics_code
+      - insp_type
+      - insp_scope
+      - why_no_insp
+      - union_status
+      - safety_manuf
+      - safety_const
+      - safety_marit
+      - health_manuf
+      - health_const
+      - health_marit
+      - migrant
+      - mail_street
+      - mail_city
+      - mail_state
+      - mail_zip
+      - host_est_key
+      - nr_in_estab
+      - open_date
+      - case_mod_date
+      - close_conf_date
+      - close_case_date
+      - ld_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_inspection2
+      path: data/modules/hse/raw/osha/osha_inspection2.csv
+      format: csv
+      domain: general
+      size_bytes: 289908802
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - reporting_id
+      - state_flag
+      - estab_name
+      - site_address
+      - site_city
+      - site_state
+      - site_zip
+      - owner_type
+      - owner_code
+      - adv_notice
+      - safety_hlth
+      - sic_code
+      - naics_code
+      - insp_type
+      - insp_scope
+      - why_no_insp
+      - union_status
+      - safety_manuf
+      - safety_const
+      - safety_marit
+      - health_manuf
+      - health_const
+      - health_marit
+      - migrant
+      - mail_street
+      - mail_city
+      - mail_state
+      - mail_zip
+      - host_est_key
+      - nr_in_estab
+      - open_date
+      - case_mod_date
+      - close_conf_date
+      - close_case_date
+      - ld_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_inspection3
+      path: data/modules/hse/raw/osha/osha_inspection3.csv
+      format: csv
+      domain: general
+      size_bytes: 309676151
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - reporting_id
+      - state_flag
+      - estab_name
+      - site_address
+      - site_city
+      - site_state
+      - site_zip
+      - owner_type
+      - owner_code
+      - adv_notice
+      - safety_hlth
+      - sic_code
+      - naics_code
+      - insp_type
+      - insp_scope
+      - why_no_insp
+      - union_status
+      - safety_manuf
+      - safety_const
+      - safety_marit
+      - health_manuf
+      - health_const
+      - health_marit
+      - migrant
+      - mail_street
+      - mail_city
+      - mail_state
+      - mail_zip
+      - host_est_key
+      - nr_in_estab
+      - open_date
+      - case_mod_date
+      - close_conf_date
+      - close_case_date
+      - ld_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_inspection4
+      path: data/modules/hse/raw/osha/osha_inspection4.csv
+      format: csv
+      domain: general
+      size_bytes: 315799743
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - reporting_id
+      - state_flag
+      - estab_name
+      - site_address
+      - site_city
+      - site_state
+      - site_zip
+      - owner_type
+      - owner_code
+      - adv_notice
+      - safety_hlth
+      - sic_code
+      - naics_code
+      - insp_type
+      - insp_scope
+      - why_no_insp
+      - union_status
+      - safety_manuf
+      - safety_const
+      - safety_marit
+      - health_manuf
+      - health_const
+      - health_marit
+      - migrant
+      - mail_street
+      - mail_city
+      - mail_state
+      - mail_zip
+      - host_est_key
+      - nr_in_estab
+      - open_date
+      - case_mod_date
+      - close_conf_date
+      - close_case_date
+      - ld_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_inspection5
+      path: data/modules/hse/raw/osha/osha_inspection5.csv
+      format: csv
+      domain: general
+      size_bytes: 49168295
+      row_count: 155760
+      columns:
+      - activity_nr
+      - reporting_id
+      - state_flag
+      - estab_name
+      - site_address
+      - site_city
+      - site_state
+      - site_zip
+      - owner_type
+      - owner_code
+      - adv_notice
+      - safety_hlth
+      - sic_code
+      - naics_code
+      - insp_type
+      - insp_scope
+      - why_no_insp
+      - union_status
+      - safety_manuf
+      - safety_const
+      - safety_marit
+      - health_manuf
+      - health_const
+      - health_marit
+      - migrant
+      - mail_street
+      - mail_city
+      - mail_state
+      - mail_zip
+      - host_est_key
+      - nr_in_estab
+      - open_date
+      - case_mod_date
+      - close_conf_date
+      - close_case_date
+      - ld_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_metadata
+      path: data/modules/hse/raw/osha/osha_metadata.csv
+      format: csv
+      domain: general
+      size_bytes: 2676
+      row_count: 1
+      columns:
+      - unique_id
+      - user_generated
+      - title
+      - dataset_group_name
+      - description
+      - agency_name
+      - agency_short_name
+      - data_gov_catalog_type
+      - subject_area_taxonomy
+      - specialized_dat_catg_desg
+      - keywords
+      - date_released
+      - date_updated
+      - agency_program_url
+      - agency_data_series_url
+      - collection_mode
+      - frequency
+      - period_of_coverage
+      - unit_of_analyis
+      - geographic_scope
+      - geographic_granularity
+      - reference_for_technical_doc
+      - data_dictionary_variables_list
+      - data_collection_instrument
+      - bib_citation_for_dataset
+      - num_of_dset_repe_by_this_subi
+      - additional_metadata
+      - dset_use_requires_a_lice_agr
+      - dataset_license_agreement_url
+      - access_point
+      - media_format
+      - file_size
+      - file_format
+      - statistical_methodology
+      - sampling
+      - estimation
+      - weighting
+      - disclosure_avoidance
+      - questionaire_design
+      - series_breaks
+      - non_response_adjutment
+      - seasonal_adjustment
+      - data_quality
+      - is_recd_a_part_og_ogd_subi
+      - recd_list_in_agy_open_gov_plan
+      - is_this_a_high_value_dataset
+      - what_make_a_high_val_dset
+      - how_is_this_new
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_optional_info0
+      path: data/modules/hse/raw/osha/osha_optional_info0.csv
+      format: csv
+      domain: general
+      size_bytes: 60173927
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - opt_type
+      - opt_id
+      - opt_value
+      - opt_info_id
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_optional_info1
+      path: data/modules/hse/raw/osha/osha_optional_info1.csv
+      format: csv
+      domain: general
+      size_bytes: 41826095
+      row_count: 697677
+      columns:
+      - activity_nr
+      - opt_type
+      - opt_id
+      - opt_value
+      - opt_info_id
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_related_activity0
+      path: data/modules/hse/raw/osha/osha_related_activity0.csv
+      format: csv
+      domain: general
+      size_bytes: 59900771
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - rel_type
+      - rel_act_nr
+      - rel_safety
+      - rel_health
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_related_activity1
+      path: data/modules/hse/raw/osha/osha_related_activity1.csv
+      format: csv
+      domain: general
+      size_bytes: 59742085
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - rel_type
+      - rel_act_nr
+      - rel_safety
+      - rel_health
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_related_activity2
+      path: data/modules/hse/raw/osha/osha_related_activity2.csv
+      format: csv
+      domain: general
+      size_bytes: 26857981
+      row_count: 455469
+      columns:
+      - activity_nr
+      - rel_type
+      - rel_act_nr
+      - rel_safety
+      - rel_health
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_strategic_codes0
+      path: data/modules/hse/raw/osha/osha_strategic_codes0.csv
+      format: csv
+      domain: general
+      size_bytes: 52843503
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - prog_type
+      - prog_value
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_strategic_codes1
+      path: data/modules/hse/raw/osha/osha_strategic_codes1.csv
+      format: csv
+      domain: general
+      size_bytes: 54123756
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - prog_type
+      - prog_value
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_strategic_codes2
+      path: data/modules/hse/raw/osha/osha_strategic_codes2.csv
+      format: csv
+      domain: general
+      size_bytes: 44754468
+      row_count: 866221
+      columns:
+      - activity_nr
+      - prog_type
+      - prog_value
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation0
+      path: data/modules/hse/raw/osha/osha_violation0.csv
+      format: csv
+      domain: general
+      size_bytes: 162714355
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - citation_id
+      - delete_flag
+      - standard
+      - viol_type
+      - issuance_date
+      - abate_date
+      - abate_complete
+      - current_penalty
+      - initial_penalty
+      - contest_date
+      - final_order_date
+      - nr_instances
+      - nr_exposed
+      - rec
+      - gravity
+      - emphasis
+      - hazcat
+      - fta_insp_nr
+      - fta_issuance_date
+      - fta_penalty
+      - fta_contest_date
+      - fta_final_order_date
+      - hazsub1
+      - hazsub2
+      - hazsub3
+      - hazsub4
+      - hazsub5
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation1
+      path: data/modules/hse/raw/osha/osha_violation1.csv
+      format: csv
+      domain: general
+      size_bytes: 163044513
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - citation_id
+      - delete_flag
+      - standard
+      - viol_type
+      - issuance_date
+      - abate_date
+      - abate_complete
+      - current_penalty
+      - initial_penalty
+      - contest_date
+      - final_order_date
+      - nr_instances
+      - nr_exposed
+      - rec
+      - gravity
+      - emphasis
+      - hazcat
+      - fta_insp_nr
+      - fta_issuance_date
+      - fta_penalty
+      - fta_contest_date
+      - fta_final_order_date
+      - hazsub1
+      - hazsub2
+      - hazsub3
+      - hazsub4
+      - hazsub5
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation10
+      path: data/modules/hse/raw/osha/osha_violation10.csv
+      format: csv
+      domain: general
+      size_bytes: 171230616
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - citation_id
+      - delete_flag
+      - standard
+      - viol_type
+      - issuance_date
+      - abate_date
+      - abate_complete
+      - current_penalty
+      - initial_penalty
+      - contest_date
+      - final_order_date
+      - nr_instances
+      - nr_exposed
+      - rec
+      - gravity
+      - emphasis
+      - hazcat
+      - fta_insp_nr
+      - fta_issuance_date
+      - fta_penalty
+      - fta_contest_date
+      - fta_final_order_date
+      - hazsub1
+      - hazsub2
+      - hazsub3
+      - hazsub4
+      - hazsub5
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation11
+      path: data/modules/hse/raw/osha/osha_violation11.csv
+      format: csv
+      domain: general
+      size_bytes: 180143131
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - citation_id
+      - delete_flag
+      - standard
+      - viol_type
+      - issuance_date
+      - abate_date
+      - abate_complete
+      - current_penalty
+      - initial_penalty
+      - contest_date
+      - final_order_date
+      - nr_instances
+      - nr_exposed
+      - rec
+      - gravity
+      - emphasis
+      - hazcat
+      - fta_insp_nr
+      - fta_issuance_date
+      - fta_penalty
+      - fta_contest_date
+      - fta_final_order_date
+      - hazsub1
+      - hazsub2
+      - hazsub3
+      - hazsub4
+      - hazsub5
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation12
+      path: data/modules/hse/raw/osha/osha_violation12.csv
+      format: csv
+      domain: general
+      size_bytes: 183868299
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - citation_id
+      - delete_flag
+      - standard
+      - viol_type
+      - issuance_date
+      - abate_date
+      - abate_complete
+      - current_penalty
+      - initial_penalty
+      - contest_date
+      - final_order_date
+      - nr_instances
+      - nr_exposed
+      - rec
+      - gravity
+      - emphasis
+      - hazcat
+      - fta_insp_nr
+      - fta_issuance_date
+      - fta_penalty
+      - fta_contest_date
+      - fta_final_order_date
+      - hazsub1
+      - hazsub2
+      - hazsub3
+      - hazsub4
+      - hazsub5
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation13
+      path: data/modules/hse/raw/osha/osha_violation13.csv
+      format: csv
+      domain: general
+      size_bytes: 33855978
+      row_count: 185397
+      columns:
+      - activity_nr
+      - citation_id
+      - delete_flag
+      - standard
+      - viol_type
+      - issuance_date
+      - abate_date
+      - abate_complete
+      - current_penalty
+      - initial_penalty
+      - contest_date
+      - final_order_date
+      - nr_instances
+      - nr_exposed
+      - rec
+      - gravity
+      - emphasis
+      - hazcat
+      - fta_insp_nr
+      - fta_issuance_date
+      - fta_penalty
+      - fta_contest_date
+      - fta_final_order_date
+      - hazsub1
+      - hazsub2
+      - hazsub3
+      - hazsub4
+      - hazsub5
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation2
+      path: data/modules/hse/raw/osha/osha_violation2.csv
+      format: csv
+      domain: general
+      size_bytes: 165806171
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - citation_id
+      - delete_flag
+      - standard
+      - viol_type
+      - issuance_date
+      - abate_date
+      - abate_complete
+      - current_penalty
+      - initial_penalty
+      - contest_date
+      - final_order_date
+      - nr_instances
+      - nr_exposed
+      - rec
+      - gravity
+      - emphasis
+      - hazcat
+      - fta_insp_nr
+      - fta_issuance_date
+      - fta_penalty
+      - fta_contest_date
+      - fta_final_order_date
+      - hazsub1
+      - hazsub2
+      - hazsub3
+      - hazsub4
+      - hazsub5
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation3
+      path: data/modules/hse/raw/osha/osha_violation3.csv
+      format: csv
+      domain: general
+      size_bytes: 168169026
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - citation_id
+      - delete_flag
+      - standard
+      - viol_type
+      - issuance_date
+      - abate_date
+      - abate_complete
+      - current_penalty
+      - initial_penalty
+      - contest_date
+      - final_order_date
+      - nr_instances
+      - nr_exposed
+      - rec
+      - gravity
+      - emphasis
+      - hazcat
+      - fta_insp_nr
+      - fta_issuance_date
+      - fta_penalty
+      - fta_contest_date
+      - fta_final_order_date
+      - hazsub1
+      - hazsub2
+      - hazsub3
+      - hazsub4
+      - hazsub5
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation4
+      path: data/modules/hse/raw/osha/osha_violation4.csv
+      format: csv
+      domain: general
+      size_bytes: 170061380
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - citation_id
+      - delete_flag
+      - standard
+      - viol_type
+      - issuance_date
+      - abate_date
+      - abate_complete
+      - current_penalty
+      - initial_penalty
+      - contest_date
+      - final_order_date
+      - nr_instances
+      - nr_exposed
+      - rec
+      - gravity
+      - emphasis
+      - hazcat
+      - fta_insp_nr
+      - fta_issuance_date
+      - fta_penalty
+      - fta_contest_date
+      - fta_final_order_date
+      - hazsub1
+      - hazsub2
+      - hazsub3
+      - hazsub4
+      - hazsub5
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation5
+      path: data/modules/hse/raw/osha/osha_violation5.csv
+      format: csv
+      domain: general
+      size_bytes: 169075371
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - citation_id
+      - delete_flag
+      - standard
+      - viol_type
+      - issuance_date
+      - abate_date
+      - abate_complete
+      - current_penalty
+      - initial_penalty
+      - contest_date
+      - final_order_date
+      - nr_instances
+      - nr_exposed
+      - rec
+      - gravity
+      - emphasis
+      - hazcat
+      - fta_insp_nr
+      - fta_issuance_date
+      - fta_penalty
+      - fta_contest_date
+      - fta_final_order_date
+      - hazsub1
+      - hazsub2
+      - hazsub3
+      - hazsub4
+      - hazsub5
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation6
+      path: data/modules/hse/raw/osha/osha_violation6.csv
+      format: csv
+      domain: general
+      size_bytes: 169518181
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - citation_id
+      - delete_flag
+      - standard
+      - viol_type
+      - issuance_date
+      - abate_date
+      - abate_complete
+      - current_penalty
+      - initial_penalty
+      - contest_date
+      - final_order_date
+      - nr_instances
+      - nr_exposed
+      - rec
+      - gravity
+      - emphasis
+      - hazcat
+      - fta_insp_nr
+      - fta_issuance_date
+      - fta_penalty
+      - fta_contest_date
+      - fta_final_order_date
+      - hazsub1
+      - hazsub2
+      - hazsub3
+      - hazsub4
+      - hazsub5
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation7
+      path: data/modules/hse/raw/osha/osha_violation7.csv
+      format: csv
+      domain: general
+      size_bytes: 167010563
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - citation_id
+      - delete_flag
+      - standard
+      - viol_type
+      - issuance_date
+      - abate_date
+      - abate_complete
+      - current_penalty
+      - initial_penalty
+      - contest_date
+      - final_order_date
+      - nr_instances
+      - nr_exposed
+      - rec
+      - gravity
+      - emphasis
+      - hazcat
+      - fta_insp_nr
+      - fta_issuance_date
+      - fta_penalty
+      - fta_contest_date
+      - fta_final_order_date
+      - hazsub1
+      - hazsub2
+      - hazsub3
+      - hazsub4
+      - hazsub5
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation8
+      path: data/modules/hse/raw/osha/osha_violation8.csv
+      format: csv
+      domain: general
+      size_bytes: 170455488
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - citation_id
+      - delete_flag
+      - standard
+      - viol_type
+      - issuance_date
+      - abate_date
+      - abate_complete
+      - current_penalty
+      - initial_penalty
+      - contest_date
+      - final_order_date
+      - nr_instances
+      - nr_exposed
+      - rec
+      - gravity
+      - emphasis
+      - hazcat
+      - fta_insp_nr
+      - fta_issuance_date
+      - fta_penalty
+      - fta_contest_date
+      - fta_final_order_date
+      - hazsub1
+      - hazsub2
+      - hazsub3
+      - hazsub4
+      - hazsub5
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation9
+      path: data/modules/hse/raw/osha/osha_violation9.csv
+      format: csv
+      domain: general
+      size_bytes: 170259916
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - citation_id
+      - delete_flag
+      - standard
+      - viol_type
+      - issuance_date
+      - abate_date
+      - abate_complete
+      - current_penalty
+      - initial_penalty
+      - contest_date
+      - final_order_date
+      - nr_instances
+      - nr_exposed
+      - rec
+      - gravity
+      - emphasis
+      - hazcat
+      - fta_insp_nr
+      - fta_issuance_date
+      - fta_penalty
+      - fta_contest_date
+      - fta_final_order_date
+      - hazsub1
+      - hazsub2
+      - hazsub3
+      - hazsub4
+      - hazsub5
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation_event0
+      path: data/modules/hse/raw/osha/osha_violation_event0.csv
+      format: csv
+      domain: general
+      size_bytes: 93051404
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - citation_id
+      - pen_fta
+      - hist_event
+      - hist_date
+      - hist_penalty
+      - hist_abate_date
+      - hist_vtype
+      - hist_insp_nr
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation_event1
+      path: data/modules/hse/raw/osha/osha_violation_event1.csv
+      format: csv
+      domain: general
+      size_bytes: 94529839
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - citation_id
+      - pen_fta
+      - hist_event
+      - hist_date
+      - hist_penalty
+      - hist_abate_date
+      - hist_vtype
+      - hist_insp_nr
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation_event10
+      path: data/modules/hse/raw/osha/osha_violation_event10.csv
+      format: csv
+      domain: general
+      size_bytes: 90508378
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - citation_id
+      - pen_fta
+      - hist_event
+      - hist_date
+      - hist_penalty
+      - hist_abate_date
+      - hist_vtype
+      - hist_insp_nr
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation_event11
+      path: data/modules/hse/raw/osha/osha_violation_event11.csv
+      format: csv
+      domain: general
+      size_bytes: 46408521
+      row_count: 513726
+      columns:
+      - activity_nr
+      - citation_id
+      - pen_fta
+      - hist_event
+      - hist_date
+      - hist_penalty
+      - hist_abate_date
+      - hist_vtype
+      - hist_insp_nr
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation_event2
+      path: data/modules/hse/raw/osha/osha_violation_event2.csv
+      format: csv
+      domain: general
+      size_bytes: 94391574
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - citation_id
+      - pen_fta
+      - hist_event
+      - hist_date
+      - hist_penalty
+      - hist_abate_date
+      - hist_vtype
+      - hist_insp_nr
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation_event3
+      path: data/modules/hse/raw/osha/osha_violation_event3.csv
+      format: csv
+      domain: general
+      size_bytes: 94656778
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - citation_id
+      - pen_fta
+      - hist_event
+      - hist_date
+      - hist_penalty
+      - hist_abate_date
+      - hist_vtype
+      - hist_insp_nr
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation_event4
+      path: data/modules/hse/raw/osha/osha_violation_event4.csv
+      format: csv
+      domain: general
+      size_bytes: 94525529
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - citation_id
+      - pen_fta
+      - hist_event
+      - hist_date
+      - hist_penalty
+      - hist_abate_date
+      - hist_vtype
+      - hist_insp_nr
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation_event5
+      path: data/modules/hse/raw/osha/osha_violation_event5.csv
+      format: csv
+      domain: general
+      size_bytes: 94629083
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - citation_id
+      - pen_fta
+      - hist_event
+      - hist_date
+      - hist_penalty
+      - hist_abate_date
+      - hist_vtype
+      - hist_insp_nr
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation_event6
+      path: data/modules/hse/raw/osha/osha_violation_event6.csv
+      format: csv
+      domain: general
+      size_bytes: 94776346
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - citation_id
+      - pen_fta
+      - hist_event
+      - hist_date
+      - hist_penalty
+      - hist_abate_date
+      - hist_vtype
+      - hist_insp_nr
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation_event7
+      path: data/modules/hse/raw/osha/osha_violation_event7.csv
+      format: csv
+      domain: general
+      size_bytes: 94792329
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - citation_id
+      - pen_fta
+      - hist_event
+      - hist_date
+      - hist_penalty
+      - hist_abate_date
+      - hist_vtype
+      - hist_insp_nr
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation_event8
+      path: data/modules/hse/raw/osha/osha_violation_event8.csv
+      format: csv
+      domain: general
+      size_bytes: 91405664
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - citation_id
+      - pen_fta
+      - hist_event
+      - hist_date
+      - hist_penalty
+      - hist_abate_date
+      - hist_vtype
+      - hist_insp_nr
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation_event9
+      path: data/modules/hse/raw/osha/osha_violation_event9.csv
+      format: csv
+      domain: general
+      size_bytes: 90598049
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - citation_id
+      - pen_fta
+      - hist_event
+      - hist_date
+      - hist_penalty
+      - hist_abate_date
+      - hist_vtype
+      - hist_insp_nr
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation_gen_duty_std0
+      path: data/modules/hse/raw/osha/osha_violation_gen_duty_std0.csv
+      format: csv
+      domain: general
+      size_bytes: 102030007
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - citation_id
+      - line_nr
+      - line_text
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation_gen_duty_std1
+      path: data/modules/hse/raw/osha/osha_violation_gen_duty_std1.csv
+      format: csv
+      domain: general
+      size_bytes: 515248276
+      row_count: 1000000
+      columns:
+      - activity_nr
+      - citation_id
+      - line_nr
+      - line_text
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    - name: osha_violation_gen_duty_std2
+      path: data/modules/hse/raw/osha/osha_violation_gen_duty_std2.csv
+      format: csv
+      domain: general
+      size_bytes: 132504664
+      row_count: 190950
+      columns:
+      - activity_nr
+      - citation_id
+      - line_nr
+      - line_text
+      - load_dt
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-02-01'
+      description: null
+    binary_stores: []
+    documentation: {}
+  lngc:
+    name: lngc
+    description: LNG carrier fleet data
+    path: data/modules/lngc
+    domains:
+    - general
+    datasets:
+    - name: seapeak_group_fleet_list-1
+      path: data/modules/lngc/seapeak_group_fleet_list-1.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 15790
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    binary_stores: []
+    documentation: {}
+  marine_safety:
+    name: marine_safety
+    description: Maritime casualty and safety incident data
+    path: data/modules/marine_safety
+    domains:
+    - general
+    datasets:
+    - name: fatality_incidents
+      path: data/modules/marine_safety/input/fatality_incidents.csv
+      format: csv
+      domain: general
+      size_bytes: 3324
+      row_count: 20
+      columns:
+      - incident_id
+      - date
+      - vessel_name
+      - description
+      - fatalities
+      - cause_of_death
+      - location
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-10-23'
+      description: null
+    - name: foundering_incidents
+      path: data/modules/marine_safety/input/foundering_incidents.csv
+      format: csv
+      domain: general
+      size_bytes: 2464
+      row_count: 15
+      columns:
+      - incident_id
+      - date
+      - vessel_name
+      - description
+      - fatalities
+      - location
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-10-23'
+      description: null
+    - name: hatch_incidents
+      path: data/modules/marine_safety/input/hatch_incidents.csv
+      format: csv
+      domain: general
+      size_bytes: 4577
+      row_count: 30
+      columns:
+      - incident_id
+      - date
+      - vessel_name
+      - description
+      - severity
+      - location
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-10-23'
+      description: null
+    - name: cy-2018-excel-spreadsheet
+      path: data/modules/marine_safety/raw/bsee_offshore/excel/cy-2018-excel-spreadsheet.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 53449
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: cy-2019-excel-spreadsheet
+      path: data/modules/marine_safety/raw/bsee_offshore/excel/cy-2019-excel-spreadsheet.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 332806
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-10-08'
+      description: null
+    - name: cy-2020-excel-spreadsheet
+      path: data/modules/marine_safety/raw/bsee_offshore/excel/cy-2020-excel-spreadsheet.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 53449
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: cy-2021-excel-spreadsheet
+      path: data/modules/marine_safety/raw/bsee_offshore/excel/cy-2021-excel-spreadsheet.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 36238916
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-25'
+      description: null
+    - name: cy-2022-excel-spreadsheet
+      path: data/modules/marine_safety/raw/bsee_offshore/excel/cy-2022-excel-spreadsheet.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 53449
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: cy-2023-excel-spreadsheet
+      path: data/modules/marine_safety/raw/bsee_offshore/excel/cy-2023-excel-spreadsheet.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 53449
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: fy-2007-excel-spreadsheet
+      path: data/modules/marine_safety/raw/bsee_offshore/excel/fy-2007-excel-spreadsheet.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 53449
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: fy-2008-excel-spreadsheet
+      path: data/modules/marine_safety/raw/bsee_offshore/excel/fy-2008-excel-spreadsheet.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 53449
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: fy-2009-excel-spreadsheet
+      path: data/modules/marine_safety/raw/bsee_offshore/excel/fy-2009-excel-spreadsheet.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 53449
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: fy-2010-excel-spreadsheet
+      path: data/modules/marine_safety/raw/bsee_offshore/excel/fy-2010-excel-spreadsheet.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 53449
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: fy-2011-excel-spreadsheet
+      path: data/modules/marine_safety/raw/bsee_offshore/excel/fy-2011-excel-spreadsheet.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 53449
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: fy-2012-excel-spreadsheet
+      path: data/modules/marine_safety/raw/bsee_offshore/excel/fy-2012-excel-spreadsheet.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 53449
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: fy-2013-excel-spreadsheet
+      path: data/modules/marine_safety/raw/bsee_offshore/excel/fy-2013-excel-spreadsheet.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 53449
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: fy-2014-excel-spreadsheet
+      path: data/modules/marine_safety/raw/bsee_offshore/excel/fy-2014-excel-spreadsheet.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 53449
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: fy-2015-excel-spreadsheet
+      path: data/modules/marine_safety/raw/bsee_offshore/excel/fy-2015-excel-spreadsheet.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 53449
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: fy-2016-excel-spreadsheet
+      path: data/modules/marine_safety/raw/bsee_offshore/excel/fy-2016-excel-spreadsheet.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 53449
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: fy-2017-excel-spreadsheet
+      path: data/modules/marine_safety/raw/bsee_offshore/excel/fy-2017-excel-spreadsheet.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 53449
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: injuries
+      path: data/modules/marine_safety/raw/canadian_tsb/injuries.csv
+      format: csv
+      domain: general
+      size_bytes: 1348938
+      row_count: 20291
+      columns:
+      - "\uFEFF\uFEFFOccNo"
+      - OccID
+      - VesselID
+      - VesselName
+      - XrfOccVesselVictimCountID
+      - ManuallyEnteredStatsIND
+      - VictimMissing
+      - VictimMinorInjuries
+      - VictimSeriousInjuries
+      - VictimDeath
+      - TotalVesselInjuries
+      - TotalPeopleInWater
+      - PeopleInWaterWearingLSE
+      - PeopleInWaterLseTypeID
+      - PeopleInWaterLseTypeDisplayEng
+      - PeopleInWaterLseTypeDisplayFre
+      - PeopleInWaterNoLSE
+      - PeopleInWaterDontKnowLSE
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: lifesaving_equipment
+      path: data/modules/marine_safety/raw/canadian_tsb/lifesaving_equipment.csv
+      format: csv
+      domain: general
+      size_bytes: 1465250
+      row_count: 73382
+      columns:
+      - "\uFEFF\uFEFFOccNo"
+      - OccID
+      - VesselID
+      - VesselName
+      - XrfOccVesselLsApplianceID
+      - LsApplianceID
+      - LsApplianceDisplayEng
+      - LsApplianceDisplayFre
+      - UsedEnum
+      - UsedEnumDisplayEng
+      - UsedEnumDisplayFre
+      - ApprovedEnum
+      - ApprovedEnumDisplayEng
+      - ApprovedEnumDisplayFre
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: navigation_equipment
+      path: data/modules/marine_safety/raw/canadian_tsb/navigation_equipment.csv
+      format: csv
+      domain: general
+      size_bytes: 26515720
+      row_count: 307244
+      columns:
+      - "\uFEFF\uFEFFOccNo"
+      - OccID
+      - VesselID
+      - VesselName
+      - XrfOccVesselNavAidID
+      - NavigationAidTypeID
+      - NavigationAidTypeDisplayEng
+      - NavigationAidTypeDisplayFre
+      - NavigationAidSubTypeID
+      - NavigationAidSubTypeDisplayEng
+      - NavigationAidSubTypeDisplayFre
+      - OnOffEnum
+      - OnOffEnumDisplayEng
+      - OnOffEnumDisplayFre
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: occurrence
+      path: data/modules/marine_safety/raw/canadian_tsb/occurrence.csv
+      format: csv
+      domain: general
+      size_bytes: 94310221
+      row_count: 86288
+      columns:
+      - "\uFEFF\uFEFFOccID"
+      - OccNo
+      - OccClassID
+      - OccClassDisplayEng
+      - OccClassDisplayFre
+      - OccDate
+      - OccTime
+      - TimeZoneID
+      - TimeZoneDisplayEng
+      - TimeZoneDisplayFre
+      - ProvinceID
+      - ProvinceDisplayEng
+      - ProvinceDisplayFre
+      - OccurrenceTypeID
+      - OccTypeDisplayEng
+      - OccTypeDisplayFre
+      - AccIncTypeID
+      - AccIncTypeDisplayEng
+      - AccIncTypeDisplayFre
+      - ImoClassLevelID
+      - ImoClasslevelDisplayEng
+      - ImoClassLevelDisplayFre
+      - Summary
+      - InjuriesIND
+      - InjuriesIND_DisplayEng
+      - InjuriesIND_DisplayFre
+      - SearchAndRescueIND
+      - SearchAndRescueIND_DisplayEng
+      - SearchAndRescueIND_DisplayFre
+      - DamageIND
+      - DamageIND_DisplayEng
+      - DamageIND_DisplayFre
+      - SafetyCommIssuedIND
+      - SafetyCommIssuedIND_DisplayEng
+      - SafetyCommIssuedIND_DisplayFre
+      - PollutionIND
+      - PollutionIND_DisplayEng
+      - PollutionIND_DisplayFre
+      - DeployedIND
+      - DeployedIND_DisplayEng
+      - DeployedIND_DisplayFre
+      - AreaTypeID
+      - AreaTypeDisplayEng
+      - AreaTypeDisplayFre
+      - RoutingID
+      - RoutingDisplayEng
+      - RoutingDisplayFre
+      - WithInPilotBoardingAreaEnum
+      - WithInPilotBoardingAreaEnum_DisplayEng
+      - WithInPilotBoardingAreaEnum_DisplayFre
+      - Latitude
+      - LatEnum
+      - LatEnum_Bearing_DisplayEng
+      - LatEnum_Bearing_DisplayFre
+      - Longitude
+      - LongEnum
+      - LongEnum_Bearing_DisplayEng
+      - LongEnum_Bearing_DisplayFre
+      - PositionEstimatedIND
+      - PositionEstimatedIND_DisplayEng
+      - PositionEstimatedIND_DisplayFre
+      - NearestLocationDistance_Nm
+      - NearestLocationDescription
+      - BearingID
+      - BearingDisplay
+      - FatigueInvestEnum
+      - FatigueInvestEnum_DisplayEng
+      - FatigueInvestEnum_DisplayFre
+      - FatigueContFactorEnum
+      - FatigueContFactorEnum_DisplayEng
+      - FatigueContFactorEnum_DisplayFre
+      - WeatherFactorEnum
+      - WeatherFactorEnum_DisplayEng
+      - WeatherFactorEnum_DisplayFre
+      - ReleasedDate
+      - OccClosedDate
+      - RegionResponsibilityID
+      - RegionResponsibilityDisplayEng
+      - RegionResponsibilityDisplayFre
+      - RegionOfOccurrenceID
+      - RegionOfOccurrenceDisplayEng
+      - RegionOfOccurrenceDisplayFre
+      - ReportSourceID
+      - ReportSourceeDisplayEng
+      - ReportSourceDisplayFre
+      - PositionTypeEnum
+      - PositionTypeDisplayEng
+      - PositionTypeDisplayFre
+      - Position
+      - PositionInText
+      - EntryDate
+      - MajorChangesIncludedInDaily
+      - IncludedInDailyEnum
+      - IncludedInDailyEnumDisplayEng
+      - IncludedInDailyEnumDisplayFre
+      - EnvironmentalConditionID
+      - VisibilityDistance_Nm
+      - LightConditionID
+      - LightConditionDisplayEng
+      - LightConditionDisplayFre
+      - WeatherConditionID
+      - WeatherConditionDisplayEng
+      - WeatherConditionDisplayFre
+      - WindDirectionID
+      - WindDirection
+      - WindSpeedTypeID
+      - WindSpeedTypeDisplayEng
+      - WindSpeedTypeDisplayFre
+      - BeaufortScaleID
+      - BeaufortScaleDisplayEng
+      - BeaufortScaleDisplayFre
+      - WindSpeed_Knots
+      - SeaStateID
+      - SeaStateDisplayEng
+      - SeaStateDisplayFre
+      - SwellDirectionID
+      - SwellDirection
+      - SwellHeight_Meters
+      - AirTemp_Celsius
+      - SeatTemp_Celsius
+      - IceCoverage_ScaleOutOf1to10
+      - IcebergEnum
+      - IcebergEnumDisplayEng
+      - IcebergEnumDisplayFre
+      - BergyBitsEnum
+      - BergyBitsEnumDisplayEng
+      - BergyBitsEnumDisplayFre
+      - GrowlersEnum
+      - GrowlersEnumDisplayEng
+      - GrowlersEnumDisplayFre
+      - UnderIceRegimeEnum
+      - UnderIceRegimeEnumDisplayEng
+      - UnderIceRegimeEnumDisplayFre
+      - ObservedByID
+      - ObservedByDisplayEng
+      - ObservedByDisplayFre
+      - VesselIcingPresentEnum
+      - VesselIcingPresentEnumDisplayEng
+      - VesselIcingPresentEnumDisplayFre
+      - VesselIcingQualificationID
+      - VesselIcingQualificationDisplayEng
+      - VesselIcingQualificationDisplayFre
+      - NotificationDetailID
+      - ReportedDate
+      - ReportedByID
+      - ReportedByDisplayEng
+      - ReportedByDisplayFre
+      - SubstantiallyInsterestedStateIND
+      - OtherStateInvestigatingID
+      - OtherStateInvestigatingDisplayEng
+      - OtherStateInvestigatingDisplayFre
+      - SubstantiallyInterestedStateID
+      - SubstantiallyInterestedStateDisplayEng
+      - SubstantiallyInterestedStateDisplayFre
+      - TotalDeaths
+      - TotalMinorInjuries
+      - TotalSeriousInjuries
+      - TotalMissingIndividuals
+      - TotalPeopleInTheWater
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: recording_equipment
+      path: data/modules/marine_safety/raw/canadian_tsb/recording_equipment.csv
+      format: csv
+      domain: general
+      size_bytes: 4125162
+      row_count: 75867
+      columns:
+      - "\uFEFF\uFEFFOccNo"
+      - OccID
+      - VesselID
+      - VesselName
+      - VesselSoftwareAudioID
+      - RecordingEquipID
+      - RecordingEquipDisplayEng
+      - RecordingEquipDisplayFre
+      - SoftwareAudioMakeID
+      - SoftwareAudioMakeDisplayEng
+      - SoftwareAudioMakeDisplayFre
+      - SoftwareAudioModelID
+      - SoftwareAudioModelDisplayEng
+      - SoftwareAudioModelDisplayFre
+      - SoftwareVersion
+      - SerialNumber
+      - VdrDetailID
+      - RecCapacity_NumberOfDays
+      - RecAudioFilesDelEnum
+      - RecAudioFilesDelEnumDisplayEng
+      - RecAudioFilesDelEnumDisplayFre
+      - RecAudioFilesSegregatedEnum
+      - RecAudioFilesSegregatedEnumDisplayEng
+      - RecAudioFilesSegregatedEnumDisplayFre
+      - CapsuleRecCapacity_NumberOfDays
+      - CapsuleAudioFilesDelEnum
+      - CapsuleAudioFilesDelEnumDisplayEng
+      - CapsuleAudioFilesDelEnumDisplayFre
+      - CapsuleAudioFilesSegregatedEnum
+      - CapsuleAudioFilesSegregatedEnumDisplayEng
+      - CapsuleAudioFilesSegregatedEnumDisplayFre
+      - DataExtractedEnum
+      - DataExtractedEnumDisplayEng
+      - DataExtractedEnumDisplayFre
+      - ReasonNotExtractedID
+      - ReasonNotExtractedDisplayEng
+      - ReasonNotExtractedDisplayFre
+      - EquipSeizedEnum
+      - EquipSeizedEnumDisplayEng
+      - EquipSeizedEnumDisplayFre
+      - InstructionsPostedEnum
+      - InstructionsPostedEnumDisplayEng
+      - InstructionsPostedEnumDisplayFre
+      - InstructionAvailableEnum
+      - InstructionAvailableEnumDisplayEng
+      - InstructionAvailableEnumDisplayFre
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: vessel
+      path: data/modules/marine_safety/raw/canadian_tsb/vessel.csv
+      format: csv
+      domain: general
+      size_bytes: 75412186
+      row_count: 72070
+      columns:
+      - "\uFEFF\uFEFFOccNo"
+      - OccID
+      - VesselID
+      - VesselName
+      - VesselVersion
+      - ParentVesselID
+      - ParentVesselName
+      - ParentVesselVersion
+      - IMO
+      - OfficialNo
+      - VRN
+      - MMSI
+      - VesselTypeID
+      - VesselTypeDisplayEng
+      - VesselTypeDisplayFre
+      - VesselSubTypeID
+      - VesselSubTypeDisplayEng
+      - VesselSubTypeDisplayFre
+      - CallSign
+      - VesselFlagID
+      - VesselFlagDisplayEng
+      - VesselFlagDisplayFre
+      - PortOfRegistryID
+      - PortOfRegistryDisplayEng
+      - PortOfRegistryDisplayFre
+      - ClassSocietyID
+      - ClassSocietyDisplayEng
+      - ClassSocietyDisplayFre
+      - Length_Meters
+      - LengthTypeID
+      - LengthTypeDisplayEng
+      - LengthTypeDisplayFre
+      - Width_Meters
+      - WidthTypeID
+      - WidthTypeDisplayEng
+      - WidthTypeDisplayFre
+      - GrossTonnage
+      - UnknownGrossTonnageIND
+      - PropulsionTypeID
+      - PropulsionTypeDisplayEng
+      - PropulsionTypeDisplayFre
+      - HullMaterialID
+      - HullMaterialDisplayEng
+      - HullMaterialTypeDisplayFre
+      - SmsOnBoardEnum
+      - SmsOnBoardDisplayEng
+      - SmsOnBoardDisplayFre
+      - SmsTypeEnum
+      - SmsTypeDisplayEng
+      - SmsTypeDisplayFre
+      - YearBuilt
+      - YearRebuilt
+      - VesselBuilderID
+      - VesselBuilderName
+      - VesselBuilderAddressLine1
+      - VesselBuilderAddressLine2
+      - VesselBuilderCity
+      - VesselBuilderProvince
+      - VesselBuilderCountryID
+      - VesselBuilderCountryDisplayEng
+      - VesselBuilderCountryDisplayFre
+      - VesselBuilderPostalZipCode
+      - VesselBuilderEmailAddress
+      - VesselBuilderPhoneNumber
+      - OccurrencePrimaryAccIncIND
+      - AccIncTypeID
+      - AccIncTypeDisplayEng
+      - AccIncTypeDisplayFre
+      - OccTypeID
+      - OccTypeDisplayEng
+      - OccTypeDisplayFre
+      - SeaPollutionDegreeID
+      - SeaPollutionDegreeDisplayEng
+      - SeaPollutionDegreeDisplayFre
+      - AirPollutionEnum
+      - AirPollutionDisplayEng
+      - AirPollutionDisplayFre
+      - NumberOfCrew
+      - NumberOfEvacuated
+      - NumberOfGuest
+      - NumberOfOther
+      - NumberOfPass
+      - NumberOfPilots
+      - TotalPeopleOnBoard
+      - TotalVesselMissingIndividuals
+      - TotalVesselMinorInjuries
+      - TotalVesselSeriousInjuries
+      - TotalVesselDeaths
+      - TotalVesselPeopleInTheWater
+      - DepartureLocationTypeID
+      - DepartureLocationTypeDisplayEng
+      - DepartureLocationTypeDisplayFre
+      - DepartureCountryID
+      - DepartureCountryDisplayEng
+      - DepartureCountryDisplayFre
+      - DeparturePortID
+      - DeparturePortDisplayEng
+      - DeparturePortDisplayFre
+      - DepartureDate
+      - DepartureTime
+      - DepartureTimeZoneID
+      - DepartureTimeZoneDisplayEng
+      - DepartureTimeZoneDisplayFre
+      - DestinationLocationTypeID
+      - DestinationLocationTypeDisplayEng
+      - DestinationLocationTypeDisplayFre
+      - DestinationCountryID
+      - DestinationCountryDisplayEng
+      - DestinationCountryDisplayFre
+      - DestinationPortID
+      - DestinationPortDisplayEng
+      - DestinationPortDisplayFre
+      - DestinationDate
+      - DestinationTime
+      - DestinationTimeZoneID
+      - DestinationTimeZoneDisplayEng
+      - DestinationTimeZoneDisplayFre
+      - VesselPhaseID
+      - VesselPhaseDisplayEng
+      - VesselPhaseDisplayFre
+      - Speed_Knots
+      - XrfActvityID
+      - ActivityCategoryID
+      - ActivityCategoryDisplayEng
+      - ActivityCategoryDisplayFre
+      - ActivityTypeID
+      - ActivityTypeDisplayEng
+      - ActivityTypeDisplayFre
+      - Course_Degrees
+      - DraughtFwd_Meters
+      - DraughtAft_Meters
+      - FisheryTypeID
+      - FisheryTypeDisplayEng
+      - FisheryTypeDisplayFre
+      - GearTypeID
+      - GearTypeDisplayEng
+      - GearTypeDisplayFre
+      - MultipleFishingOpsEnum
+      - MultipleFishingOpsDisplayEng
+      - MultipleFishingOpsDisplayFre
+      - TowingPushingInd
+      - xrfTowedVesselID
+      - TowedSequence
+      - TowedVesselId
+      - TowedVesselVersion
+      - TowedVesselTypeID
+      - TowedVesselTypeDisplayEng
+      - TowedVesselTypeDisplayFre
+      - TowedVesselName
+      - TowlineLength_Meters
+      - TotalLength_Meters
+      - VesselCargoID
+      - CargoCategoryID
+      - CargoCategoryDisplayEng
+      - CargoCategoryDisplayFre
+      - CargoProductTypeID
+      - CargoProductTypeDisplayEng
+      - CargoProductTypeDisplayFre
+      - ProductDetailID
+      - ProductDetailDisplayEng
+      - ProductDetailDisplayFre
+      - QuantityOnBoard
+      - QuantityOnBoardUnitsEnum
+      - QuantityOnBoardUnitsDisplayEng
+      - QuantityOnBoardUnitsDisplayFre
+      - StowedOnDeckEnum
+      - StowedOnDeckEnumDisplayEng
+      - StowedOnDeckEnumDisplayFre
+      - ProdReleaseEnum
+      - ProdReleaseEnumDisplayEng
+      - ProdReleaseEnumEnumDisplayFre
+      - ProdReleaseLocEnum
+      - ProdReleaseLocEnumDisplayEng
+      - ProdReleaseLocEnumDisplayFre
+      - QuantityReleased
+      - QuantityReleasedUnitsEnum
+      - QuantReleasedUnitsDisplayEng
+      - QuantReleasedUnitsDisplayFre
+      - UnNumber
+      - ImoClass
+      - VesselDamageID
+      - VesselDamageLocationCategoryID
+      - VesselDamageLocationCategoryDisplayEng
+      - VesselDamageLocationCategoryDisplayFre
+      - VesselDamageLocationSubCategoryID
+      - VesselDamageLocationSubCategoryDisplayEng
+      - VesselDamageLocationSubCategoryDisplayFre
+      - VesselDamageLocationID
+      - VesselDamageLocationDisplayEng
+      - VesselDamageLocationDisplayFre
+      - VesselDamageDegreeID
+      - VesselDamageDegreeDisplayEng
+      - VesselDamageDegreeDisplayFre
+      - VesselIceRelatedDamageIND
+      - OtherDamageObjectID
+      - OtherObjectTypeID
+      - OtherObjectTypeDisplayEng
+      - OtherObjectTypeDisplayFre
+      - OtherObjectID
+      - OtherObjectDisplayEng
+      - OtherObjectDisplayFre
+      - OtherObjectDamageDegreeID
+      - OtherObjectDamageDegreeDisplayEng
+      - OtherObjectDamageDegreeDisplayFre
+      - OtherObjectIceRelatedDamageIND
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: Accidents_1995-2012
+      path: data/modules/marine_safety/raw/dlp_historical/Accidents_1995-2012.csv
+      format: csv
+      domain: general
+      size_bytes: 32817884
+      row_count: 80340
+      columns:
+      - BARDID
+      - Year
+      - NumberVesselsinvolved
+      - Date
+      - Time
+      - NameofBodyofWater
+      - NearestCityorTown
+      - County
+      - State
+      - Clear
+      - Cloudy
+      - Fog
+      - Rain
+      - Snow
+      - Hazy
+      - WaterConditions
+      - StrongCurrent
+      - AirTemperature
+      - WaterTemperature
+      - Wind
+      - DayNight
+      - Visibility
+      - AccidentEvent1
+      - AccidentEvent2
+      - AccidentEvent3
+      - OtherAccidentEvent
+      - AccidentCause1
+      - AccidentCause2
+      - AccidentCause3
+      - OtherAccidentCause
+      - MachineryFailure
+      - EquipmentFailure
+      - DamagetoNonVesselProperty
+      - Injurybeyond1stAid
+      - Numberdeaths
+      - meetsdamagethreshold
+      - DayofWeek
+      - AlcoholInvolved
+      - AvesselLoss
+      - Numberinjured
+      - Totaldamage
+      - NumberVesselsLost
+      - Statecaseid
+      - TimeofDay
+      - TimeDesignation
+      - CongestedWaters
+      - NumberDisappeared
+      - OtherEquipmentFailure
+      - OtherMachineryFailure
+      - Redactednarrative
+      - HazardousWaters
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: Deaths_1995-2012
+      path: data/modules/marine_safety/raw/dlp_historical/Deaths_1995-2012.csv
+      format: csv
+      domain: general
+      size_bytes: 695646
+      row_count: 9675
+      columns:
+      - DeceasedID
+      - BARDID
+      - Year
+      - VesselID
+      - DeceasedGender
+      - DeceasedRole
+      - CauseofDeath
+      - OtherCauseofDeath
+      - Disappearance
+      - DeceasedPFDWorn
+      - PFDType
+      - DeceasedBAC
+      - DeceasedAge
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-10-04'
+      description: null
+    - name: Injuries_1995-2012
+      path: data/modules/marine_safety/raw/dlp_historical/Injuries_1995-2012.csv
+      format: csv
+      domain: general
+      size_bytes: 4920239
+      row_count: 50789
+      columns:
+      - BARDID
+      - VesselID
+      - Year
+      - InjuredAge
+      - PrimaryInjury
+      - SecondaryInjury
+      - TreatmentBeyondFirstAid
+      - AdmittedtoHospital
+      - InjuredRole
+      - CauseOfInjury
+      - InjuredID
+      - InjuredBodyPart
+      - InjuredBodyPartOther
+      - InjuredGender
+      - InjuredPFDuse
+      - OtherPrimaryInjury
+      - OtherInjuryCause
+      - InjuredRoleOther
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-10-04'
+      description: null
+    - name: Vessels_1995-2012
+      path: data/modules/marine_safety/raw/dlp_historical/Vessels_1995-2012.csv
+      format: csv
+      domain: general
+      size_bytes: 29034570
+      row_count: 110491
+      columns:
+      - BARDID
+      - VesselID
+      - Year
+      - OperatorGender
+      - OperatorAge
+      - OWIArrest
+      - BAC
+      - OperatorExperience
+      - OperatorEducation
+      - RentedBoat
+      - NumberPeopleonboard
+      - NUmberPeopleTowed
+      - RegistrationNumber
+      - DocumentNumber
+      - Manufacturer
+      - Model
+      - HIN
+      - VesselName
+      - Vesseltype
+      - OtherVesseltype
+      - HullMaterial
+      - OtherHullmaterial
+      - EngineType
+      - NumberofEngines
+      - Horsepower
+      - FuelType
+      - Propulsion
+      - Length
+      - Yearbuilt
+      - Operation1
+      - Operation2
+      - Operation3
+      - OtherOperation
+      - Activity1
+      - Activity2
+      - Activity3
+      - PFDsOnboard
+      - PFDsAccessible
+      - FireExtingOnboard
+      - FireExtingUsed
+      - DamagetoVessel
+      - NumberBoatingCitations
+      - VesselaCompleteLoss
+      - ActivitiesWere
+      - OperatorPFDWorn
+      - OtherEducation
+      - OtherEngine
+      - BeamWidth
+      - DepthinFeet
+      - DepthinInches
+      - USCGAuxiliaryVesselDecal
+      - USPowerSquadronVSCDecal
+      - FederalAgencyName
+      - StateAgencyName
+      - OtherAgencyName
+      - EngineManufacturer
+      - OtherActivity
+      - FireExtType
+      - AmountFireExtUsed
+      - NumberPeopleWearingLifeJackets
+      - NumberLifejacketsonboard
+      - NumberFireExtOnboard
+      - NumberFireExtUsed
+      - OperatorusingAlcohol
+      - OperatorusingDrugs
+      - WeatherReportsConsulted
+      - InternetTrainingOrganization
+      - EngineCutOffSwitchUsed
+      - PropertyDamageAmountofOther
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: all_reported_pipeline_incidents_1986_present
+      path: data/modules/marine_safety/raw/doe_pipelines/all_reported_pipeline_incidents_1986_present.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 0
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-10-07'
+      description: null
+    - name: GISIS-MCIR-19000101-19691231
+      path: data/modules/marine_safety/raw/imo_gisis/GISIS-MCIR-19000101-19691231.csv
+      format: csv
+      domain: general
+      size_bytes: 4008
+      row_count: 23
+      columns:
+      - Reference
+      - Number of ships involved
+      - Ships involved
+      - SOLAS status
+      - Flag Administrations
+      - Ship types
+      - Occurrence date and time
+      - Casualty event
+      - Casualty severity
+      - Coordinates
+      - Place
+      - Location
+      - Number of investigation reports
+      - Administrations submitting investigation reports
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: GISIS-MCIR-19700101-19891231
+      path: data/modules/marine_safety/raw/imo_gisis/GISIS-MCIR-19700101-19891231.csv
+      format: csv
+      domain: general
+      size_bytes: 76165
+      row_count: 610
+      columns:
+      - Reference
+      - Number of ships involved
+      - Ships involved
+      - SOLAS status
+      - Flag Administrations
+      - Ship types
+      - Occurrence date and time
+      - Casualty event
+      - Casualty severity
+      - Coordinates
+      - Place
+      - Location
+      - Number of investigation reports
+      - Administrations submitting investigation reports
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: GISIS-MCIR-19900101-19991231
+      path: data/modules/marine_safety/raw/imo_gisis/GISIS-MCIR-19900101-19991231.csv
+      format: csv
+      domain: general
+      size_bytes: 421292
+      row_count: 2604
+      columns:
+      - Reference
+      - Number of ships involved
+      - Ships involved
+      - SOLAS status
+      - Flag Administrations
+      - Ship types
+      - Occurrence date and time
+      - Casualty event
+      - Casualty severity
+      - Coordinates
+      - Place
+      - Location
+      - Number of investigation reports
+      - Administrations submitting investigation reports
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: GISIS-MCIR-20001011-20091231
+      path: data/modules/marine_safety/raw/imo_gisis/GISIS-MCIR-20001011-20091231.csv
+      format: csv
+      domain: general
+      size_bytes: 916781
+      row_count: 4434
+      columns:
+      - Reference
+      - Number of ships involved
+      - Ships involved
+      - SOLAS status
+      - Flag Administrations
+      - Ship types
+      - Occurrence date and time
+      - Casualty event
+      - Casualty severity
+      - Coordinates
+      - Place
+      - Location
+      - Number of investigation reports
+      - Administrations submitting investigation reports
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: GISIS-MCIR-20101011-20191231
+      path: data/modules/marine_safety/raw/imo_gisis/GISIS-MCIR-20101011-20191231.csv
+      format: csv
+      domain: general
+      size_bytes: 1011194
+      row_count: 4270
+      columns:
+      - Reference
+      - Number of ships involved
+      - Ships involved
+      - SOLAS status
+      - Flag Administrations
+      - Ship types
+      - Occurrence date and time
+      - Casualty event
+      - Casualty severity
+      - Coordinates
+      - Place
+      - Location
+      - Number of investigation reports
+      - Administrations submitting investigation reports
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: GISIS-MCIR-20200101-20251010
+      path: data/modules/marine_safety/raw/imo_gisis/GISIS-MCIR-20200101-20251010.csv
+      format: csv
+      domain: general
+      size_bytes: 324962
+      row_count: 1244
+      columns:
+      - Reference
+      - Number of ships involved
+      - Ships involved
+      - SOLAS status
+      - Flag Administrations
+      - Ship types
+      - Occurrence date and time
+      - Casualty event
+      - Casualty severity
+      - Coordinates
+      - Place
+      - Location
+      - Number of investigation reports
+      - Administrations submitting investigation reports
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: imo_gisis_collated
+      path: data/modules/marine_safety/raw/imo_gisis/imo_gisis_collated.csv
+      format: csv
+      domain: general
+      size_bytes: 2493730
+      row_count: 13338
+      columns:
+      - Reference
+      - Number of ships involved
+      - Ships involved
+      - SOLAS status
+      - Flag Administrations
+      - Ship types
+      - Occurrence date and time
+      - Casualty event
+      - Casualty severity
+      - Coordinates
+      - Place
+      - Location
+      - Number of investigation reports
+      - Administrations submitting investigation reports
+      - Year
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: sample_misle_data
+      path: data/modules/marine_safety/raw/misle/sample_misle_data.csv
+      format: csv
+      domain: general
+      size_bytes: 2691
+      row_count: 15
+      columns:
+      - CASENUMBER
+      - ACTIVITY_DATE
+      - ACTIVITY_TIME
+      - LATITUDE
+      - LONGITUDE
+      - INCIDENT_TYPE
+      - FATALITIES
+      - INJURIES
+      - MISSING
+      - VESSEL_NAME
+      - VESSEL_TYPE
+      - IMO_NUMBER
+      - FLAG_STATE
+      - DAMAGE_USD
+      - INCIDENT_DESCRIPTION
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-10-04'
+      description: null
+    - name: cfid_persons
+      path: data/modules/marine_safety/raw/niosh_cfid/cfid_persons.csv
+      format: csv
+      domain: general
+      size_bytes: 0
+      row_count: 0
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-10-05'
+      description: null
+    - name: incidents
+      path: data/modules/marine_safety/raw/noaa_spills/incidents.csv
+      format: csv
+      domain: general
+      size_bytes: 3123264
+      row_count: 4797
+      columns:
+      - id
+      - open_date
+      - name
+      - location
+      - lat
+      - lon
+      - threat
+      - tags
+      - commodity
+      - measure_skim
+      - measure_shore
+      - measure_bio
+      - measure_disperse
+      - measure_burn
+      - max_ptl_release_gallons
+      - posts
+      - description
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: oregon_osha_inspections
+      path: data/modules/marine_safety/raw/osha_maritime/oregon_osha_inspections.csv
+      format: csv
+      domain: general
+      size_bytes: 2070
+      row_count: 36
+      columns:
+      - Year
+      - Consultations opened
+      - Employees affected
+      - SHARP
+      - VPP
+      - Inspections
+      - Workers covered by inspections
+      - Percent in compliance
+      - Citations
+      - Violations
+      - Penalties ($ millions)
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-10-07'
+      description: null
+    - name: osha_severe_injury_reports
+      path: data/modules/marine_safety/raw/osha_maritime/osha_severe_injury_reports.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 473
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: EightCauseMappingMethods
+      path: data/modules/marine_safety/raw/phmsa_hazmat/EightCauseMappingMethods.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 28187
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-02-14'
+      description: null
+    - name: SevenCauseMappingMethods
+      path: data/modules/marine_safety/raw/phmsa_hazmat/SevenCauseMappingMethods.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 28314
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-02-25'
+      description: null
+    - name: gd1986tofeb2004
+      path: data/modules/marine_safety/raw/phmsa_hazmat/gd1986tofeb2004.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 1362003
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-30'
+      description: null
+    - name: gd2010toPresent
+      path: data/modules/marine_safety/raw/phmsa_hazmat/gd2010toPresent.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 2083538
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-30'
+      description: null
+    - name: gdmar2004to2009
+      path: data/modules/marine_safety/raw/phmsa_hazmat/gdmar2004to2009.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 756015
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-30'
+      description: null
+    - name: gtgg1986to2001
+      path: data/modules/marine_safety/raw/phmsa_hazmat/gtgg1986to2001.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 778945
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-30'
+      description: null
+    - name: gtgg2002to2009
+      path: data/modules/marine_safety/raw/phmsa_hazmat/gtgg2002to2009.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 897606
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-30'
+      description: null
+    - name: gtggungs2010toPresent
+      path: data/modules/marine_safety/raw/phmsa_hazmat/gtggungs2010toPresent.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 3025658
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-30'
+      description: null
+    - name: hazmat_incidents_10_years
+      path: data/modules/marine_safety/raw/phmsa_hazmat/hazmat_incidents_10_years.csv
+      format: csv
+      domain: general
+      size_bytes: 1242
+      row_count: 26
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: hl1986to2001
+      path: data/modules/marine_safety/raw/phmsa_hazmat/hl1986to2001.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 1964564
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-30'
+      description: null
+    - name: hl2002to2009
+      path: data/modules/marine_safety/raw/phmsa_hazmat/hl2002to2009.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 2427297
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-30'
+      description: null
+    - name: hl2010toPresent
+      path: data/modules/marine_safety/raw/phmsa_hazmat/hl2010toPresent.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 7627417
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-30'
+      description: null
+    - name: lng2011toPresent
+      path: data/modules/marine_safety/raw/phmsa_hazmat/lng2011toPresent.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 87947
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-30'
+      description: null
+    - name: maib_affected_persons
+      path: data/modules/marine_safety/raw/uk_maib/maib_affected_persons.csv
+      format: csv
+      domain: general
+      size_bytes: 2475531
+      row_count: 2024
+      columns:
+      - Occurrence_Id;Local_Date_Main_Event;Date_Main_Event_Unconfirmed;Year_Reported;Occurrence_Severity;Main_Event_L1;Main_Event_L2;Main_Event_L3;Not_Vessel_Operations;Short_Description;Description;State_Reporting;National_Location_L1;National_Location_L2;Latitude;Longitude;Lat_Long_Unknown;Port_Of_Accident_L1;Port_Of_Accident_L2;Vessel_Profile_Id;Vessel_Severity;Flag_State;Vessel_Category_L1;Vessel_Category_L2;Ship_Craft_Type_L1;Ship_Craft_Type_L2;Ship_Craft_Type_L3;Ship_Craft_Type_L4;Ship_Craft_Type_L5;Registered_Length_In_Metres;LOA_Length_Overall_in_Metres;GT_Gross_Tonnage;Loss_Of_Vessel_Damage;Did_The_Vessel_Sink;Vessel_Abandoned;Affected_Person_Id;Sequence_No;Age;Gender;Affected_Person_Type;Rank;On_Duty;Physical_Condition_L1;Physical_Condition_L2;Physical_Condition_L3;Injury_Type_L1;Injury_Type_L2;Parts_of_Body_Injured;Affected_Person_Place_On_Board_L1;Affected_Person_Place_On_Board_L2;Affected_Person_Place_On_Board_L3;Affected_Person_Place_On_Board_L4;Affected_Person_Place_On_Board_L5;Affected_Person_Deviation_L1;Affected_Person_Deviation_L2;PPE_Used;PPE_Deficient;Publication_Date;Publication_No;Publication_Type;Published_Report_Website_Link;Affected_Person_Record_Modified_On
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: maib_occurrences
+      path: data/modules/marine_safety/raw/uk_maib/maib_occurrences.csv
+      format: csv
+      domain: general
+      size_bytes: 4593323
+      row_count: 5876
+      columns:
+      - Occurrence_Id;Local_Date_Main_Event;Date_Main_Event_Unconfirmed;Year_Reported;Occurrence_Severity;Main_Event_L1;Main_Event_L2;Main_Event_L3;Not_Vessel_Operations;Short_Description;Description;National_Keywords;EMCIP_Keywords;SAR_Intervention;State_Reporting;Occurrence_Location;Coastal_State_Affected;National_Location_L1;National_Location_L2;Latitude;Longitude;Lat_Long_Unknown;Port_Of_Accident_L1;Port_Of_Accident_L2;Natural_Light;Sea_State;Visibility;Weather;Wind_Force;Publication_Date;Publication_No;Publication_Type;Published_Report_Website_Link;Occurrence_Record_Modified_On;Last_Updated_At;Occurrences_Reported_From;Occurrences_Reported_To
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    - name: maib_vessels
+      path: data/modules/marine_safety/raw/uk_maib/maib_vessels.csv
+      format: csv
+      domain: general
+      size_bytes: 5951046
+      row_count: 6348
+      columns:
+      - Occurrence_Id;Local_Date_Main_Event;Date_Main_Event_Unconfirmed;Year_Reported;Occurrence_Severity;Main_Event_L1;Main_Event_L2;Main_Event_L3;Not_Vessel_Operations;Short_Description;Description;State_Reporting;National_Location_L1;National_Location_L2;Latitude;Longitude;Lat_Long_Unknown;Port_Of_Accident_L1;Port_Of_Accident_L2;Vessel_Profile_Id;Vessel_Severity;Flag_State;Vessel_Category_L1;Vessel_Category_L2;Ship_Craft_Type_L1;Ship_Craft_Type_L2;Ship_Craft_Type_L3;Ship_Craft_Type_L4;Ship_Craft_Type_L5;Is_Commercial_Vessel;Ship_Boat;Registered_Length_In_Metres;LOA_Length_Overall_in_Metres;GT_Gross_Tonnage;Hull_Material;Year_Built;Deaths_Crew;Deaths_Passenger;Deaths_Other;Deaths_Total;Injuries_Crew;Injuries_Passenger;Injuries_Other;Injuries_Total;Loss_Of_Vessel_Damage;Did_The_Vessel_Sink;Vessel_Abandoned;Damage_Description;Pollution_Result;Crew_Voyage;Voyage_Segment;Pilot_On_Board;Place_On_Board_L1;Place_On_Board_L2;Place_On_Board_L3;Place_On_Board_L4;Place_On_Board_L5;Port_Of_Departure_L1;Port_Of_Departure_L2;Publication_Date;Publication_No;Publication_Type;Published_Report_Website_Link;Vessel_Record_Modified_On
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-26'
+      description: null
+    binary_stores: []
+    documentation: {}
+  oil_price:
+    name: oil_price
+    description: Historical oil price data
+    path: data/modules/oil_price
+    domains:
+    - economics
+    datasets:
+    - name: F000000__3a
+      path: data/modules/oil_price/F000000__3a.xls
+      format: xls
+      domain: economics
+      size_bytes: 33280
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: F000000__3m
+      path: data/modules/oil_price/F000000__3m.xls
+      format: xls
+      domain: economics
+      size_bytes: 53248
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    binary_stores: []
+    documentation: {}
+  pipeline_safety:
+    name: pipeline_safety
+    description: Pipeline safety incident data
+    path: data/modules/pipeline_safety
+    domains:
+    - general
+    datasets:
+    - name: EightCauseMappingMethods
+      path: data/modules/pipeline_safety/raw/phmsa/extracted/EightCauseMappingMethods.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 28187
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-02-14'
+      description: null
+    - name: SevenCauseMappingMethods
+      path: data/modules/pipeline_safety/raw/phmsa/extracted/SevenCauseMappingMethods.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 28314
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-02-25'
+      description: null
+    - name: gd1986tofeb2004
+      path: data/modules/pipeline_safety/raw/phmsa/extracted/gd1986tofeb2004.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 1362003
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-30'
+      description: null
+    - name: gd2010toPresent
+      path: data/modules/pipeline_safety/raw/phmsa/extracted/gd2010toPresent.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 2083538
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-30'
+      description: null
+    - name: gdmar2004to2009
+      path: data/modules/pipeline_safety/raw/phmsa/extracted/gdmar2004to2009.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 756015
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-30'
+      description: null
+    - name: gtgg1986to2001
+      path: data/modules/pipeline_safety/raw/phmsa/extracted/gtgg1986to2001.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 778945
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-30'
+      description: null
+    - name: gtgg2002to2009
+      path: data/modules/pipeline_safety/raw/phmsa/extracted/gtgg2002to2009.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 897606
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-30'
+      description: null
+    - name: gtggungs2010toPresent
+      path: data/modules/pipeline_safety/raw/phmsa/extracted/gtggungs2010toPresent.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 3025658
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-30'
+      description: null
+    - name: hl1986to2001
+      path: data/modules/pipeline_safety/raw/phmsa/extracted/hl1986to2001.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 1964564
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-30'
+      description: null
+    - name: hl2002to2009
+      path: data/modules/pipeline_safety/raw/phmsa/extracted/hl2002to2009.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 2427297
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-30'
+      description: null
+    - name: hl2010toPresent
+      path: data/modules/pipeline_safety/raw/phmsa/extracted/hl2010toPresent.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 7627417
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-30'
+      description: null
+    - name: lng2011toPresent
+      path: data/modules/pipeline_safety/raw/phmsa/extracted/lng2011toPresent.xlsx
+      format: xlsx
+      domain: general
+      size_bytes: 87947
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-09-30'
+      description: null
+    binary_stores: []
+    documentation: {}
+  sodir_zip_data:
+    name: sodir_zip_data
+    description: Norwegian Continental Shelf data from Sodir
+    path: data/modules/sodir_zip_data
+    domains:
+    - general
+    datasets:
+    - name: afxAreaCurrent
+      path: data/modules/sodir_zip_data/afxAreaCurrent.csv
+      format: csv
+      domain: general
+      size_bytes: 537254
+      row_count: 438
+      columns:
+      - "\uFEFFafxNpdidAfexArea"
+      - afxName
+      - afxKind
+      - afxDateApproved
+      - afxDateValidFrom
+      - afxDateValidTo
+      - afxActive
+      - afxFactPageUrl
+      - afxFactMapUrl
+      - afxPublishOnInternet
+      - cmpLongName
+      - cmpFactPageUrl
+      - cmpNpdidCompany
+      - afxDateUpdated
+      - afxDateUpdatedMax
+      - afxAreaGeometryWKT
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: afxAreaSplitByBlock
+      path: data/modules/sodir_zip_data/afxAreaSplitByBlock.csv
+      format: csv
+      domain: general
+      size_bytes: 2157924
+      row_count: 1037
+      columns:
+      - "\uFEFFafxNpdidAfexArea"
+      - afxName
+      - afxKind
+      - afxFactPageUrl
+      - afxAreaPolyDateValidFrom
+      - afxAreaPolyDateValidTo
+      - prlName
+      - prlFactPageUrl
+      - afxAreaPolyNationCode2
+      - blcName
+      - afxAreaPolyNo
+      - blcNpdidBlock
+      - afxAreaPolyArea
+      - prlNpdidLicence
+      - afxAreaPolyDateUpdated
+      - afxAreaPolyHstPK
+      - afxAreaGeometryWKT
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: apaAreaGross
+      path: data/modules/sodir_zip_data/apaAreaGross.csv
+      format: csv
+      domain: general
+      size_bytes: 30853
+      row_count: 1
+      columns:
+      - "\uFEFFNPDIDLicencingActivityApaGross"
+      - year
+      - comment
+      - km2
+      - approved
+      - dissolved
+      - apaAreaGeometryWKT
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: apaAreaNet
+      path: data/modules/sodir_zip_data/apaAreaNet.csv
+      format: csv
+      domain: general
+      size_bytes: 184
+      row_count: 1
+      columns:
+      - "\uFEFFapaPolyId"
+      - ApaRoundNameEN
+      - ApaRoundNameNO
+      - datePublished
+      - dateLocked
+      - dateApplicationDeadline
+      - blockName
+      - quadrantNumber
+      - blockNumber
+      - blcNpdidBlock
+      - z_from
+      - z_to
+      - stratigraphical
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: baaAreaCurrent
+      path: data/modules/sodir_zip_data/baaAreaCurrent.csv
+      format: csv
+      domain: general
+      size_bytes: 439511
+      row_count: 74
+      columns:
+      - "\uFEFFbaaNpdidBsnsArrArea"
+      - baaName
+      - baaKind
+      - baaDateApproved
+      - baaDateValidFrom
+      - baaDateValidTo
+      - baaActive
+      - baaFactPageUrl
+      - baaFactMapUrl
+      - baaPublishOnInternet
+      - cmpLongName
+      - cmpFactPageUrl
+      - cmpNpdidCompany
+      - baaDateUpdated
+      - baaDateUpdatedMax
+      - baaAreaGeometryWKT
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: baaAreaSplitByBlock
+      path: data/modules/sodir_zip_data/baaAreaSplitByBlock.csv
+      format: csv
+      domain: general
+      size_bytes: 2138993
+      row_count: 759
+      columns:
+      - "\uFEFFbaaNpdidBsnsArrArea"
+      - baaName
+      - baaKind
+      - baaFactPageUrl
+      - baaAreaPolyDateValidFrom
+      - baaAreaPolyDateValidTo
+      - prlName
+      - prlFactPageUrl
+      - baaAreaPolyNationCode2
+      - baaAreaPolyBlockName
+      - baaAreaPolyNo
+      - baaAreaPolyArea
+      - baaAreaPolyDateUpdated
+      - baaAreaGeometryWKT
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: blkArea
+      path: data/modules/sodir_zip_data/blkArea.csv
+      format: csv
+      domain: general
+      size_bytes: 16955905
+      row_count: 1827
+      columns:
+      - "\uFEFFblcName"
+      - blcNpdidBlock
+      - blcArea
+      - qadName
+      - blcBlockNo
+      - blcMainArea
+      - blkAreaGeometryWKT
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: dscArea
+      path: data/modules/sodir_zip_data/dscArea.csv
+      format: csv
+      domain: general
+      size_bytes: 6480031
+      row_count: null
+      columns:
+      - "\uFEFFdscNpdidDiscovery"
+      - dscName
+      - dscCurrentActivityStatus
+      - wlbName
+      - wlbFactPageUrl
+      - dscDiscoveryYear
+      - fldName
+      - fldFactPageUrl
+      - dscDateFromInclInField
+      - dscFactPageUrl
+      - dscFactMapUrl
+      - dscOwnerKind
+      - dscOwnerName
+      - dscOwnerFactPageUrl
+      - cmpLongName
+      - cmpNpdidCompany
+      - dscHcType
+      - ngpName
+      - nmaName
+      - dscResInclInDiscoveryName
+      - dscResInclInDiscoveryFactPageUrl
+      - dscDateUpdated
+      - dscDateUpdatedMax
+      - fldNpdidField
+      - dscAreaGeometryWKT
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: fclPoint
+      path: data/modules/sodir_zip_data/fclPoint.csv
+      format: csv
+      domain: general
+      size_bytes: 550835
+      row_count: 1179
+      columns:
+      - "\uFEFFfclNpdidFacility"
+      - fclNpdidCurrentOperator
+      - fclNpdidCurrentRespCompany
+      - fclFixedOrMoveable
+      - fclName
+      - fclKind
+      - fclPhase
+      - fclFunctions
+      - fclGeodeticDatum
+      - fclNsDeg
+      - fclNsMin
+      - fclNsSec
+      - fclNsCode
+      - fclEwDeg
+      - fclEwMin
+      - fclEwSec
+      - fclEwCode
+      - fclUtmHemisphere
+      - fclUtmZone
+      - fclNsUtm
+      - fclEwUtm
+      - fclRkb
+      - fclWaterDepth
+      - fclStartupDate
+      - fclDesignLifetime
+      - fclStatus
+      - fclSurface
+      - fclBelongsToName
+      - fclBelongsToS
+      - fclBelongsToKind
+      - fclCurrentOperatorName
+      - fclCurrentRespCompanyName
+      - fclNationCode2
+      - fclNationName
+      - fclBelongsToFactPageUrl
+      - fclFactPageUrl
+      - fclFactMapUrl
+      - fclSlotCapacityGross
+      - fclSlotCapacityNet
+      - fclDateUpdated
+      - fclFormalName1Quadrant
+      - fclFormalName2Block
+      - fclPointGeometryWKT
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: fldArea
+      path: data/modules/sodir_zip_data/fldArea.csv
+      format: csv
+      domain: general
+      size_bytes: 3142278
+      row_count: null
+      columns:
+      - "\uFEFFfldName"
+      - fldCurrentActivitySatus
+      - wlbName
+      - fldDiscoveryYear
+      - fldOwnerKind
+      - fldOwnerName
+      - fldNpdidOwner
+      - cmpLongName
+      - cmpNpdidCompany
+      - fldMainSupplyBase
+      - fldHcType
+      - fldMainArea
+      - wlbFactPageUrl
+      - fldFactMapUrl
+      - fldFactPageUrl
+      - wlbNpdidWellbore
+      - fldNpdidField
+      - fldDateUpdated
+      - fldDateUpdatedMax
+      - fldAreaGeometryWKT
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: pipLine
+      path: data/modules/sodir_zip_data/pipLine.csv
+      format: csv
+      domain: general
+      size_bytes: 137982
+      row_count: 79
+      columns:
+      - "\uFEFFpplName"
+      - pplNpdidPipeline
+      - pplMapLabel
+      - pplBelongsToName
+      - cmpLongName
+      - pplCurrentPhase
+      - pplCurrentPhaseFromDate
+      - fclNameFrom
+      - fclNameTo
+      - pplMainGroupingName
+      - pplDimension
+      - pplWaterDepth
+      - pplMedium
+      - pplNpdidBelongsTo
+      - fclNpdidFacilityFrom
+      - fclNpdidFacilityTo
+      - cmpNpdidCompany
+      - pplDateUpdated
+      - pplFactPageUrl
+      - pplFactMapUrl
+      - pipGeometryWKT
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: prlAreaCurrent
+      path: data/modules/sodir_zip_data/prlAreaCurrent.csv
+      format: csv
+      domain: general
+      size_bytes: 3012675
+      row_count: 1696
+      columns:
+      - "\uFEFFprlNpdidLicence"
+      - lcaNpdidLicensingActivity
+      - prlName
+      - prlLicensingActivityName
+      - prlStatus
+      - prlStratigraphical
+      - prlActive
+      - prlFactPageUrl
+      - prlFactMapUrl
+      - prlDateGranted
+      - prlDateValidTo
+      - prlOriginalArea
+      - prlCurrentArea
+      - prlPhaseCurrent
+      - prlMainArea
+      - prlDateInitialPeriodExpires
+      - prlInitialPeriod
+      - prlDateLastChanged
+      - cmpFactPageUrl
+      - cmpNpdidCompany
+      - cmpLongName
+      - prlDateUpdated
+      - prlDateUpdatedMax
+      - prlAreaGeometryWKT
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: prlAreaSplitByBlock
+      path: data/modules/sodir_zip_data/prlAreaSplitByBlock.csv
+      format: csv
+      domain: general
+      size_bytes: 23270285
+      row_count: 5617
+      columns:
+      - "\uFEFFprlNpdidLicence"
+      - prlName
+      - prlAreaPolyStratigraphical
+      - prlAreaPolyDateValidFrom
+      - prlAreaPolyDateValidTo
+      - prlAreaPolyNationCode
+      - prlAreaPolyBlockName
+      - prlAreaPolyPolyNo
+      - prlAreaPolyPolyArea
+      - prlAreaPolyVertLimEn
+      - prlAreaPolyVertLimNo
+      - prlAreaPolyFromZvalue
+      - prlAreaPolyToZvalue
+      - cmpLongName
+      - prlAreaDateUpdated
+      - prlAreaGeometryWKT
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: qadArea
+      path: data/modules/sodir_zip_data/qadArea.csv
+      format: csv
+      domain: general
+      size_bytes: 5375730
+      row_count: 192
+      columns:
+      - "\uFEFFqadName"
+      - qadAreaGeometryWKT
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: seaArea
+      path: data/modules/sodir_zip_data/seaArea.csv
+      format: csv
+      domain: general
+      size_bytes: 85231319
+      row_count: null
+      columns:
+      - "\uFEFFseaName"
+      - seaNpdidSurvey
+      - seaStatus
+      - seaMarketAvailable
+      - seaCompanyReported
+      - seaSurveyTypeMain
+      - seaSurveyTypePart
+      - geoArea
+      - seaPolygonKind
+      - seaNetGross
+      - seaSourceType
+      - seaSourceNumber
+      - seaSourceSize
+      - seaSourcePressure
+      - seaPlanFromDate
+      - seaPlanToDate
+      - seaPlanBoatKm
+      - seaDateStarting
+      - seaDateFinalized
+      - seaSensorNumbers
+      - seaSensorLength
+      - seaSensorType
+      - seaBoatTotalKm
+      - sea3DKm2
+      - seaFactMapUrl
+      - seaFactPageUrl
+      - seaAreaGeometryWKT
+      update_frequency: null
+      source_url: null
+      last_modified: '2026-01-25'
+      description: null
+    - name: subArea
+      path: data/modules/sodir_zip_data/subArea.csv
+      format: csv
+      domain: general
+      size_bytes: 5078756
+      row_count: null
+      columns:
+      - "\uFEFFsubName"
+      - subNpdidSubArea
+      - subAreaGeometryWKT
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    - name: wlbPoint
+      path: data/modules/sodir_zip_data/wlbPoint.csv
+      format: csv
+      domain: general
+      size_bytes: 8400743
+      row_count: 9386
+      columns:
+      - "\uFEFFwlbWellboreName"
+      - wlbNpdidWellbore
+      - wlbWell
+      - wlbDrillingOperator
+      - cmpFactPageUrl
+      - cmpNpdidCompany
+      - wlbProductionLicence
+      - wlbPurpose
+      - wlbStatus
+      - wlbContent
+      - wlbWellType
+      - wlbEntryDate
+      - wlbCompletionDate
+      - wlbField
+      - wlbDrillPermit
+      - wlbDiscovery
+      - wlbDiscoveryWellbore
+      - wlbBottomHoleTemperature
+      - wlbSeismicLocation
+      - wlbMaxInclation
+      - wlbKellyBushElevation
+      - wlbKickOffPoint
+      - wlbFinalVerticalDepth
+      - wlbTotalDepth
+      - wlbWaterDepth
+      - wlbAgeAtTd
+      - wlbFormationAtTd
+      - wlbMainArea
+      - wlbDrillingFacility
+      - wlbFacilityTypeDrilling
+      - wlbDrillingFacilityFixedOrMove
+      - wlbProductionFacility
+      - wlbLicensingActivity
+      - wlbMultilateral
+      - wlbPurposePlanned
+      - wlbContentPlanned
+      - wlbEntryYear
+      - wlbCompletionYear
+      - wlbReentry
+      - wlbEntryPreDrillDate
+      - wlbCompPreDrillDate
+      - wlbReleasedDate
+      - wlbReclassFromWellbore
+      - wlbDateReclass
+      - wlbReentryExplorationActivity
+      - wlbPlotSymbol
+      - wlbFormationWithHc1
+      - wlbAgeWithHc1
+      - wlbFormationWithHc2
+      - wlbAgeWithHc2
+      - wlbFormationWithHc3
+      - wlbAgeWithHc3
+      - wlbDrillingDays
+      - wlbGeodeticDatum
+      - wlbNsDeg
+      - wlbNsMin
+      - wlbNsSec
+      - wlbNsCode
+      - wlbEwDeg
+      - wlbEwMin
+      - wlbEwSec
+      - wlbEwCode
+      - wlbNsDecDeg
+      - wlbEwDecDeg
+      - wlbNsUtm
+      - wlbEwUtm
+      - wlbUtmZone
+      - wlbNamePart1
+      - wlbNamePart2
+      - wlbNamePart3
+      - wlbNamePart4
+      - wlbNamePart5
+      - wlbNamePart6
+      - wlbFactPageUrl
+      - wlbFactMapUrl
+      - wlbPressReleaseUrl
+      - wlbDiskosWellboreType
+      - wlbDiskosWellboreParent
+      - prlNpdidProdLicenceTarget
+      - dscNpdidDiscovery
+      - fldNpdidField
+      - fclNpdidFacilityDrilling
+      - fclNpdidFacilityProducing
+      - wlbNpdidWellboreReclass
+      - prlNpdidProductionLicence
+      - wlbEntryDay
+      - wlbEntryMonth
+      - wlbCompletionDay
+      - wlbCompletionMonth
+      - wlbDrillPerApprovedPermitDate
+      - wlbDrillPerEwDeg
+      - wlbDrillPerLegalRefEnLegalNote
+      - wlbDrillPerLegalRefNbLegalNote
+      - wlbDrillPerNbComment
+      - wlbDrillPerNsDeg
+      - wlbEntryDatePlanned
+      - wlbAliasName
+      - wlbWdssQcDate
+      - wlbSubSea
+      - wlbWdssVolumeReference
+      - wlbCoreSampleAvailable
+      - wlbCuttingsSamplesAvailable
+      - wlbWithCasingAndLot
+      - wlbWithCompositeLog
+      - wlbWithCorePhoto
+      - wlbWithCores
+      - wlbWithCuttings
+      - wlbWithDocReportedByLicensee
+      - wlbWithDst
+      - wlbWithFormationTops
+      - wlbWithGeochemInfo
+      - wlbWithLog
+      - wlbWithMud
+      - wlbWithNpdPapers
+      - wlbWithOilSamples
+      - wlbWithOldWdss
+      - wlbWithPalySlides
+      - wlbPluggedDate
+      - wlbWithWellboreHistory
+      - wlbLicenceTargetName
+      - wlbPluggedAbandonDate
+      - wlbNpdidSiteSurvey
+      - wlbSiteSurvey
+      - wlbDateUpdatedMax
+      - wlbDateUpdated
+      - wlbPointGeometryWKT
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    binary_stores: []
+    documentation: {}
+  wind:
+    name: wind
+    description: Wind energy resource and turbine data
+    path: data/modules/wind
+    domains:
+    - renewable
+    datasets:
+    - name: uswtdb_v3_2_20201014_codebook
+      path: data/modules/wind/uswtdb_v3_2_20201014_codebook.xlsx
+      format: xlsx
+      domain: renewable
+      size_bytes: 15779
+      row_count: null
+      columns: null
+      update_frequency: null
+      source_url: null
+      last_modified: '2025-07-31'
+      description: null
+    binary_stores: []
+    documentation: {}

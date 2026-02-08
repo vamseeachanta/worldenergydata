@@ -296,3 +296,16 @@ temp_backup_copy_final_v2.csv
 **Generated:** 2025-10-02
 **Maintainer:** WorldEnergyData Team
 **Next Review:** After data cleanup
+
+---
+
+## Machine-Readable Data Catalog
+
+A machine-readable catalog of all datasets is available at:
+- **YAML**: `data/catalog/data-catalog.yml`
+- **JSON**: Generate with `python scripts/generate_data_catalog.py --format json`
+
+Regenerate after adding new data:
+```bash
+python scripts/generate_data_catalog.py
+```
