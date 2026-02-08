@@ -6,6 +6,11 @@ from the Gulf of Mexico, including geological epoch analysis and well data visua
 """
 
 from .data_processor import PaleowellsDataProcessor
-from .visualizer import PaleowellsVisualizer
+from .era_classifier import GeologicalEraClassifier
 
-__all__ = ['PaleowellsDataProcessor', 'PaleowellsVisualizer']
+try:
+    from .visualizer import PaleowellsVisualizer
+except ImportError:
+    PaleowellsVisualizer = None  # matplotlib not available
+
+__all__ = ['PaleowellsDataProcessor', 'GeologicalEraClassifier', 'PaleowellsVisualizer']
