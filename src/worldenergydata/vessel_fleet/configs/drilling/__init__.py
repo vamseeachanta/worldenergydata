@@ -1,0 +1,1 @@
+"""Drilling vessel configuration."""
