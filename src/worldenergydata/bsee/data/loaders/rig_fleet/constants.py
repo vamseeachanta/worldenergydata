@@ -15,6 +15,7 @@ class RigType(str, Enum):
     TENDER_ASSISTED = "tender_assisted"
     INLAND_BARGE = "inland_barge"
     SUBMERSIBLE = "submersible"
+    LAND_RIG = "land_rig"
     UNKNOWN = "unknown"
 
 
@@ -32,9 +33,21 @@ class RigStatus(str, Enum):
     UNKNOWN = "unknown"
 
 
+class DataSource(str, Enum):
+    """Origin of rig fleet data."""
+
+    BSEE_WAR = "bsee_war"
+    MANUAL_OVERRIDE = "manual_override"
+    XLS_HISTORICAL = "xls_historical"
+    UNKNOWN = "unknown"
+
+
 # Known rig name patterns for heuristic classification.
-# Keys are substrings to match (case-insensitive), values are RigType.
+# Ordered by specificity: longer/more-specific prefixes first within each type
+# to avoid ambiguous matches (e.g. "OCEAN" could be drillship or semi-sub).
+
 _DRILLSHIP_KEYWORDS: tuple[str, ...] = (
+    "NOBLE GLOBETROTTER",
     "DEEPWATER",
     "DISCOVERER",
     "EXPLORER",
@@ -46,10 +59,17 @@ _DRILLSHIP_KEYWORDS: tuple[str, ...] = (
     "DHIRUBHAI",
     "BOLETTE",
     "WEST NEPTUNE",
+    "COBALT",
+    "BULLY",
 )
 
 _SEMI_SUB_KEYWORDS: tuple[str, ...] = (
     "DEVELOPMENT DRILLER",
+    "TRANSOCEAN",
+    "NAUTILUS",
+    "SEDCO",
+    "SCARABEO",
+    "MAERSK",
     "OCEAN",
     "ATWOOD",
     "PAUL ROMANO",
@@ -60,22 +80,43 @@ _SEMI_SUB_KEYWORDS: tuple[str, ...] = (
 )
 
 _JACK_UP_KEYWORDS: tuple[str, ...] = (
+    "KEY SINGAPORE",
+    "KEY MANHATTAN",
+    "KEY HAWAII",
+    "CECIL PROVINE",
+    "RALPH COFFMAN",
     "ROWAN",
     "ENSCO",
     "SPARTAN",
-    "KEY HAWAII",
     "GORILLA",
-    "RALPH COFFMAN",
+    "HERCULES",
+    "SEAHAWK",
+    "SUNDOWNER",
 )
 
 _PLATFORM_RIG_KEYWORDS: tuple[str, ...] = (
+    "HELMERICH & PAYNE",
+    "HELMERICH &AMP; PAYNE",
     "PLATFORM RIG",
     "PRODUCTION RIG",
+    "NABORS",
+    "H&P",
+    "PARKER",
+    "FLEX RIG",
+)
+
+_INLAND_BARGE_KEYWORDS: tuple[str, ...] = (
+    "INLAND",
+    "BARGE",
 )
 
 
 def classify_rig_type(rig_name: str) -> RigType:
     """Classify rig type from name using known naming patterns.
+
+    Uses prefix-priority matching: checks each category's keyword list
+    in order.  Place more-specific keywords earlier in each tuple to
+    avoid false positives.
 
     Args:
         rig_name: The rig name string from WAR or fleet data.
@@ -93,5 +134,7 @@ def classify_rig_type(rig_name: str) -> RigType:
         return RigType.JACK_UP
     if any(kw in name_upper for kw in _PLATFORM_RIG_KEYWORDS):
         return RigType.PLATFORM_RIG
+    if any(kw in name_upper for kw in _INLAND_BARGE_KEYWORDS):
+        return RigType.INLAND_BARGE
 
     return RigType.UNKNOWN

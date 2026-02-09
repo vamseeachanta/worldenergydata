@@ -17,6 +17,7 @@ _RIG_TYPE_DISPLAY_MAP: dict[str, str] = {
     "tender_assisted": "Tender Assisted",
     "inland_barge": "Inland Barge",
     "submersible": "Submersible",
+    "land_rig": "Land Rig",
 }
 
 _INACTIVE_STATUSES: frozenset[str] = frozenset({
@@ -55,6 +56,11 @@ class RigFleetEntry:
     wells_drilled_count: Optional[int] = None
     last_war_date: Optional[str] = None
     last_area_code: Optional[str] = None
+    data_source: Optional[str] = None
+    is_offshore: Optional[bool] = None
+    first_war_date: Optional[str] = None
+    last_block_number: Optional[str] = None
+    max_water_depth_ft: Optional[float] = None
 
     @property
     def is_active(self) -> bool:
@@ -82,3 +88,16 @@ class RigFleetEntry:
     def rig_type_display(self) -> str:
         """Human-readable rig type derived from rig_type string."""
         return _RIG_TYPE_DISPLAY_MAP.get(self.rig_type, "Unknown")
+
+    @property
+    def is_offshore_derived(self) -> bool:
+        """Whether the rig operates offshore.
+
+        Uses the explicit ``is_offshore`` flag when set, otherwise
+        infers from rig type (land_rig -> False, everything else -> True).
+        """
+        if self.is_offshore is not None:
+            return self.is_offshore
+        if self.rig_type == "land_rig":
+            return False
+        return True

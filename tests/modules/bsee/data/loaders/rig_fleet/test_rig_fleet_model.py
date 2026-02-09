@@ -90,3 +90,35 @@ class TestRigFleetEntry:
         """None rig type maps to 'Unknown'."""
         entry = self._make_entry(rig_type=None)
         assert entry.rig_type_display == "Unknown"
+
+    def test_rig_type_display_land_rig(self):
+        """Land rig type maps to 'Land Rig'."""
+        entry = self._make_entry(rig_type="land_rig")
+        assert entry.rig_type_display == "Land Rig"
+
+    # --- is_offshore_derived ---
+
+    def test_is_offshore_derived_explicit_true(self):
+        """Explicit is_offshore=True returns True."""
+        entry = self._make_entry(is_offshore=True)
+        assert entry.is_offshore_derived is True
+
+    def test_is_offshore_derived_explicit_false(self):
+        """Explicit is_offshore=False returns False."""
+        entry = self._make_entry(is_offshore=False)
+        assert entry.is_offshore_derived is False
+
+    def test_is_offshore_derived_fallback_not_land(self):
+        """When is_offshore is None, non-land rig type returns True."""
+        entry = self._make_entry(rig_type="drillship", is_offshore=None)
+        assert entry.is_offshore_derived is True
+
+    def test_is_offshore_derived_fallback_land_rig(self):
+        """When is_offshore is None, land_rig type returns False."""
+        entry = self._make_entry(rig_type="land_rig", is_offshore=None)
+        assert entry.is_offshore_derived is False
+
+    def test_is_offshore_derived_fallback_none_type(self):
+        """When both is_offshore and rig_type are None, returns True."""
+        entry = self._make_entry(rig_type=None, is_offshore=None)
+        assert entry.is_offshore_derived is True

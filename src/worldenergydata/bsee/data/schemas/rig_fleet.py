@@ -33,6 +33,9 @@ class RigFleetSchema(BaseModel):
     FLAG_STATE: Optional[str] = None
     LAST_WAR_DATE: Optional[str] = None
     LAST_AREA_CODE: Optional[str] = None
+    DATA_SOURCE: Optional[str] = None
+    FIRST_WAR_DATE: Optional[str] = None
+    LAST_BLOCK_NUMBER: Optional[str] = None
 
     # Optional float fields
     WATER_DEPTH_RATING_FT: Optional[float] = None
@@ -41,11 +44,15 @@ class RigFleetSchema(BaseModel):
     BEAM_M: Optional[float] = None
     DISPLACEMENT_TONNES: Optional[float] = None
     MOONPOOL_DIAMETER_M: Optional[float] = None
+    MAX_WATER_DEPTH_FT: Optional[float] = None
 
     # Optional int fields
     DP_CLASS: Optional[int] = None
     YEAR_BUILT: Optional[int] = None
     WELLS_DRILLED_COUNT: Optional[int] = None
+
+    # Optional bool fields
+    IS_OFFSHORE: Optional[bool] = None
 
     # --- Validators ---
 
@@ -66,6 +73,9 @@ class RigFleetSchema(BaseModel):
         "FLAG_STATE",
         "LAST_WAR_DATE",
         "LAST_AREA_CODE",
+        "DATA_SOURCE",
+        "FIRST_WAR_DATE",
+        "LAST_BLOCK_NUMBER",
         mode="before",
     )
     @classmethod
@@ -82,6 +92,7 @@ class RigFleetSchema(BaseModel):
         "BEAM_M",
         "DISPLACEMENT_TONNES",
         "MOONPOOL_DIAMETER_M",
+        "MAX_WATER_DEPTH_FT",
         mode="before",
     )
     @classmethod
@@ -103,6 +114,7 @@ class RigFleetSchema(BaseModel):
         "BEAM_M",
         "DISPLACEMENT_TONNES",
         "MOONPOOL_DIAMETER_M",
+        "MAX_WATER_DEPTH_FT",
     )
     @classmethod
     def _validate_non_negative_floats(

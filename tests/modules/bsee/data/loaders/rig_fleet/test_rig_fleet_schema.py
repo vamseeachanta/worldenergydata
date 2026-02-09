@@ -32,6 +32,11 @@ class TestRigFleetSchema:
             "WELLS_DRILLED_COUNT": 55,
             "LAST_WAR_DATE": "2024-12-15",
             "LAST_AREA_CODE": "GC",
+            "DATA_SOURCE": "bsee_war",
+            "IS_OFFSHORE": True,
+            "FIRST_WAR_DATE": "2015-01-10",
+            "LAST_BLOCK_NUMBER": "640",
+            "MAX_WATER_DEPTH_FT": 9800.0,
         }
         defaults.update(overrides)
         return defaults
@@ -59,6 +64,11 @@ class TestRigFleetSchema:
         assert schema.WELLS_DRILLED_COUNT == 55
         assert schema.LAST_WAR_DATE == "2024-12-15"
         assert schema.LAST_AREA_CODE == "GC"
+        assert schema.DATA_SOURCE == "bsee_war"
+        assert schema.IS_OFFSHORE is True
+        assert schema.FIRST_WAR_DATE == "2015-01-10"
+        assert schema.LAST_BLOCK_NUMBER == "640"
+        assert schema.MAX_WATER_DEPTH_FT == 9800.0
 
     def test_valid_schema_required_only(self):
         """Only RIG_NAME is required; all other fields default to None."""
@@ -82,6 +92,11 @@ class TestRigFleetSchema:
         assert schema.WELLS_DRILLED_COUNT is None
         assert schema.LAST_WAR_DATE is None
         assert schema.LAST_AREA_CODE is None
+        assert schema.DATA_SOURCE is None
+        assert schema.IS_OFFSHORE is None
+        assert schema.FIRST_WAR_DATE is None
+        assert schema.LAST_BLOCK_NUMBER is None
+        assert schema.MAX_WATER_DEPTH_FT is None
 
     def test_strip_rig_name_whitespace(self):
         """Leading/trailing whitespace is stripped from RIG_NAME."""
@@ -105,6 +120,9 @@ class TestRigFleetSchema:
             FLAG_STATE="",
             LAST_WAR_DATE="",
             LAST_AREA_CODE="",
+            DATA_SOURCE="",
+            FIRST_WAR_DATE="",
+            LAST_BLOCK_NUMBER="",
         )
         assert schema.RIG_TYPE is None
         assert schema.RIG_STATUS is None
@@ -114,6 +132,9 @@ class TestRigFleetSchema:
         assert schema.FLAG_STATE is None
         assert schema.LAST_WAR_DATE is None
         assert schema.LAST_AREA_CODE is None
+        assert schema.DATA_SOURCE is None
+        assert schema.FIRST_WAR_DATE is None
+        assert schema.LAST_BLOCK_NUMBER is None
 
     def test_coerce_string_water_depth_to_float(self):
         """String water depth is coerced to float."""
@@ -162,3 +183,27 @@ class TestRigFleetSchema:
             MOONPOOL_DIAMETER_M="7.6",
         )
         assert schema.MOONPOOL_DIAMETER_M == 7.6
+
+    def test_max_water_depth_ft_coercion(self):
+        """String MAX_WATER_DEPTH_FT is coerced to float."""
+        schema = RigFleetSchema(
+            RIG_NAME="TEST RIG",
+            MAX_WATER_DEPTH_FT="8500.0",
+        )
+        assert schema.MAX_WATER_DEPTH_FT == 8500.0
+
+    def test_reject_negative_max_water_depth(self):
+        """Negative MAX_WATER_DEPTH_FT raises ValidationError."""
+        with pytest.raises(ValidationError, match="MAX_WATER_DEPTH_FT"):
+            RigFleetSchema(
+                RIG_NAME="TEST RIG",
+                MAX_WATER_DEPTH_FT=-50.0,
+            )
+
+    def test_is_offshore_bool_coercion(self):
+        """IS_OFFSHORE accepts bool values."""
+        schema = RigFleetSchema(RIG_NAME="TEST RIG", IS_OFFSHORE=True)
+        assert schema.IS_OFFSHORE is True
+
+        schema_false = RigFleetSchema(RIG_NAME="TEST RIG", IS_OFFSHORE=False)
+        assert schema_false.IS_OFFSHORE is False

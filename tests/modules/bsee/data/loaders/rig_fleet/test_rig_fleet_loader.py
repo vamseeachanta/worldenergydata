@@ -5,6 +5,10 @@ Tests cover:
 - WAR data aggregation into fleet inventory
 - Override CSV application
 - Rig well history queries
+- New aggregation fields (FIRST_WAR_DATE, MAX_WATER_DEPTH_FT)
+- DATA_SOURCE and IS_OFFSHORE auto-set
+- .local/ fallback loading
+- Offshore status filtering
 """
 
 from __future__ import annotations
@@ -94,6 +98,47 @@ class TestLoadData:
 
         assert result is not None
         assert result["RIG_NAME"].iloc[0] == "STENA DRILLMAX"
+
+    def test_load_data_prefers_local_dir(self, tmp_path: Path):
+        """Data from .local/ directory takes precedence over bin/."""
+        # Create bin directory with sample data
+        bin_dir = tmp_path / "bin"
+        bin_dir.mkdir()
+        df_bin = pd.DataFrame({"RIG_NAME": ["SAMPLE_RIG"]})
+        with open(bin_dir / "fleet.bin", "wb") as f:
+            pickle.dump(df_bin, f)
+
+        # Create .local directory with full data
+        local_dir = tmp_path / "local"
+        local_dir.mkdir()
+        df_local = pd.DataFrame({"RIG_NAME": ["FULL_RIG_A", "FULL_RIG_B"]})
+        with open(local_dir / "rig_fleet_full.bin", "wb") as f:
+            pickle.dump(df_local, f)
+
+        loader = RigFleetLoader()
+        loader._bin_dir = str(bin_dir)
+        loader._local_dir = str(local_dir)
+        result = loader._load_data()
+
+        assert result is not None
+        assert len(result) == 2
+        assert "FULL_RIG_A" in result["RIG_NAME"].values
+
+    def test_load_data_falls_back_to_bin_when_no_local(self, tmp_path: Path):
+        """Falls back to bin/ when .local/ doesn't exist."""
+        bin_dir = tmp_path / "bin"
+        bin_dir.mkdir()
+        df_bin = pd.DataFrame({"RIG_NAME": ["SAMPLE_RIG"]})
+        with open(bin_dir / "fleet.bin", "wb") as f:
+            pickle.dump(df_bin, f)
+
+        loader = RigFleetLoader()
+        loader._bin_dir = str(bin_dir)
+        loader._local_dir = str(tmp_path / "nonexistent")
+        result = loader._load_data()
+
+        assert result is not None
+        assert result["RIG_NAME"].iloc[0] == "SAMPLE_RIG"
 
 
 # ---------------------------------------------------------------------------
@@ -195,6 +240,50 @@ class TestBuildFleetFromWar:
         result = loader.build_fleet_from_war(war_df)
 
         assert result["LAST_WAR_DATE"].iloc[0] == "2024-06-15"
+
+    def test_build_fleet_from_war_tracks_first_war_date(self):
+        """FIRST_WAR_DATE is the min WAR_START_DT per rig."""
+        war_df = pd.DataFrame({
+            "RIG_NAME": ["RIG_Z", "RIG_Z", "RIG_Z"],
+            "WAR_START_DT": ["2020-03-15", "2018-01-01", "2019-06-01"],
+        })
+        loader = RigFleetLoader()
+        result = loader.build_fleet_from_war(war_df)
+
+        assert result["FIRST_WAR_DATE"].iloc[0] == "2018-01-01"
+
+    def test_build_fleet_from_war_tracks_max_water_depth(self):
+        """MAX_WATER_DEPTH_FT is the max WATER_DEPTH per rig."""
+        war_df = pd.DataFrame({
+            "RIG_NAME": ["RIG_W", "RIG_W", "RIG_W"],
+            "WATER_DEPTH": [500.0, 8500.0, 3200.0],
+        })
+        loader = RigFleetLoader()
+        result = loader.build_fleet_from_war(war_df)
+
+        assert result["MAX_WATER_DEPTH_FT"].iloc[0] == 8500.0
+
+    def test_build_fleet_from_war_sets_data_source(self):
+        """DATA_SOURCE is set to 'bsee_war' for all rows."""
+        war_df = pd.DataFrame({
+            "RIG_NAME": ["RIG_A", "RIG_B"],
+            "API_WELL_NUMBER": ["001", "002"],
+        })
+        loader = RigFleetLoader()
+        result = loader.build_fleet_from_war(war_df)
+
+        assert (result["DATA_SOURCE"] == "bsee_war").all()
+
+    def test_build_fleet_from_war_sets_is_offshore(self):
+        """IS_OFFSHORE is set to True for all BSEE WAR rows."""
+        war_df = pd.DataFrame({
+            "RIG_NAME": ["RIG_A", "RIG_B"],
+            "API_WELL_NUMBER": ["001", "002"],
+        })
+        loader = RigFleetLoader()
+        result = loader.build_fleet_from_war(war_df)
+
+        assert (result["IS_OFFSHORE"] == True).all()  # noqa: E712
 
 
 # ---------------------------------------------------------------------------
@@ -328,5 +417,65 @@ class TestGetRigsByType:
         loader = RigFleetLoader()
         loader._bin_dir = str(tmp_path)
         result = loader.get_rigs_by_type("drillship")
+
+        assert result is None
+
+
+# ---------------------------------------------------------------------------
+# get_rigs_by_offshore_status tests
+# ---------------------------------------------------------------------------
+
+
+class TestGetRigsByOffshoreStatus:
+    """Tests for offshore status filtering."""
+
+    def test_filter_offshore_rigs(self, tmp_path: Path):
+        """Filters loaded data by IS_OFFSHORE == True."""
+        df = pd.DataFrame({
+            "RIG_NAME": ["OFFSHORE_A", "LAND_B", "OFFSHORE_C"],
+            "IS_OFFSHORE": [True, False, True],
+        })
+        bin_file = tmp_path / "fleet.bin"
+        with open(bin_file, "wb") as f:
+            pickle.dump(df, f)
+
+        loader = RigFleetLoader()
+        loader._bin_dir = str(tmp_path)
+        result = loader.get_rigs_by_offshore_status(True)
+
+        assert result is not None
+        assert len(result) == 2
+
+    def test_filter_onshore_rigs(self, tmp_path: Path):
+        """Filters loaded data by IS_OFFSHORE == False."""
+        df = pd.DataFrame({
+            "RIG_NAME": ["OFFSHORE_A", "LAND_B"],
+            "IS_OFFSHORE": [True, False],
+        })
+        bin_file = tmp_path / "fleet.bin"
+        with open(bin_file, "wb") as f:
+            pickle.dump(df, f)
+
+        loader = RigFleetLoader()
+        loader._bin_dir = str(tmp_path)
+        result = loader.get_rigs_by_offshore_status(False)
+
+        assert result is not None
+        assert len(result) == 1
+        assert result["RIG_NAME"].iloc[0] == "LAND_B"
+
+    def test_filter_returns_none_when_no_column(self, tmp_path: Path):
+        """Returns None when IS_OFFSHORE column is missing."""
+        df = pd.DataFrame({
+            "RIG_NAME": ["RIG_A"],
+            "RIG_TYPE": ["drillship"],
+        })
+        bin_file = tmp_path / "fleet.bin"
+        with open(bin_file, "wb") as f:
+            pickle.dump(df, f)
+
+        loader = RigFleetLoader()
+        loader._bin_dir = str(tmp_path)
+        result = loader.get_rigs_by_offshore_status(True)
 
         assert result is None

@@ -1,6 +1,7 @@
 """Rig fleet data loading and classification."""
 
 from worldenergydata.bsee.data.loaders.rig_fleet.constants import (
+    DataSource,
     RigStatus,
     RigType,
     classify_rig_type,
@@ -13,6 +14,7 @@ from worldenergydata.bsee.data.loaders.rig_fleet.router import (
 )
 
 __all__ = [
+    "DataSource",
     "RigType",
     "RigStatus",
     "classify_rig_type",

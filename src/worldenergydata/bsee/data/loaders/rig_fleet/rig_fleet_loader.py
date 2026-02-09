@@ -20,13 +20,14 @@ class RigFleetLoader:
     def __init__(self):
         self.data: Optional[pd.DataFrame] = None
         self._bin_dir = "data/modules/bsee/bin/rig_fleet"
+        self._local_dir = "data/modules/bsee/.local/rig_fleet"
 
     def _load_data(self, cfg: Optional[Dict] = None) -> Optional[pd.DataFrame]:
         """Load rig fleet data from binary file.
 
-        Reads all .bin files from the configured directory, deserialises
-        each as a pandas DataFrame, and concatenates the results.  The
-        result is cached on ``self.data`` so subsequent calls are free.
+        Checks ``.local/`` directory first for full fleet data, then
+        falls back to ``bin/`` for the committed sample.  The result
+        is cached on ``self.data`` so subsequent calls are free.
 
         Args:
             cfg: Optional configuration dict.  When provided, a custom
@@ -39,7 +40,7 @@ class RigFleetLoader:
         if self.data is not None:
             return self.data
         try:
-            bin_path = Path(self._bin_dir)
+            # Config override takes absolute precedence
             if cfg:
                 custom_path = (
                     cfg.get("parameters", {})
@@ -48,28 +49,40 @@ class RigFleetLoader:
                     .get("bin")
                 )
                 if custom_path:
-                    bin_path = Path(custom_path)
+                    return self._load_from_dir(Path(custom_path))
 
-            bin_files = list(bin_path.glob("*.bin"))
-            if not bin_files:
-                logger.warning(f"No rig fleet binary files found in {bin_path}")
-                return None
+            # Try .local/ first (full fleet), then bin/ (sample)
+            local_path = Path(self._local_dir)
+            if local_path.exists():
+                result = self._load_from_dir(local_path)
+                if result is not None:
+                    return result
 
-            frames = []
-            for bf in bin_files:
-                with open(bf, "rb") as f:
-                    df = pickle.load(f)  # nosec B301
-                    if isinstance(df, pd.DataFrame):
-                        frames.append(df)
+            return self._load_from_dir(Path(self._bin_dir))
 
-            if frames:
-                self.data = pd.concat(frames, ignore_index=True)
-                logger.info(f"Loaded {len(self.data)} rig fleet records")
-                return self.data
-            return None
         except Exception as e:
             logger.error(f"Error loading rig fleet data: {str(e)}")
             return None
+
+    def _load_from_dir(self, bin_path: Path) -> Optional[pd.DataFrame]:
+        """Load and cache all .bin files from a directory."""
+        bin_files = list(bin_path.glob("*.bin"))
+        if not bin_files:
+            logger.warning(f"No rig fleet binary files found in {bin_path}")
+            return None
+
+        frames = []
+        for bf in bin_files:
+            with open(bf, "rb") as f:
+                df = pickle.load(f)  # nosec B301
+                if isinstance(df, pd.DataFrame):
+                    frames.append(df)
+
+        if frames:
+            self.data = pd.concat(frames, ignore_index=True)
+            logger.info(f"Loaded {len(self.data)} rig fleet records")
+            return self.data
+        return None
 
     def build_fleet_from_war(
         self, war_df: pd.DataFrame
@@ -78,8 +91,9 @@ class RigFleetLoader:
 
         Args:
             war_df: DataFrame with at least a ``RIG_NAME`` column.
-                Optionally ``WAR_END_DT``, ``AREA_CODE``,
-                ``BLOCK_NUMBER``, and ``API_WELL_NUMBER``.
+                Optionally ``WAR_END_DT``, ``WAR_START_DT``,
+                ``AREA_CODE``, ``BLOCK_NUMBER``, ``API_WELL_NUMBER``,
+                and ``WATER_DEPTH``.
 
         Returns:
             DataFrame with one row per unique rig and aggregated stats.
@@ -109,10 +123,14 @@ class RigFleetLoader:
             agg_dict["API_WELL_NUMBER"] = "nunique"
         if "WAR_END_DT" in filtered.columns:
             agg_dict["WAR_END_DT"] = "max"
+        if "WAR_START_DT" in filtered.columns:
+            agg_dict["WAR_START_DT"] = "min"
         if "AREA_CODE" in filtered.columns:
             agg_dict["AREA_CODE"] = "last"
         if "BLOCK_NUMBER" in filtered.columns:
             agg_dict["BLOCK_NUMBER"] = "last"
+        if "WATER_DEPTH" in filtered.columns:
+            agg_dict["WATER_DEPTH"] = "max"
 
         if agg_dict:
             fleet_df = filtered.groupby("RIG_NAME", as_index=False).agg(agg_dict)
@@ -125,8 +143,10 @@ class RigFleetLoader:
         rename_map = {
             "API_WELL_NUMBER": "WELLS_DRILLED_COUNT",
             "WAR_END_DT": "LAST_WAR_DATE",
+            "WAR_START_DT": "FIRST_WAR_DATE",
             "AREA_CODE": "LAST_AREA_CODE",
             "BLOCK_NUMBER": "LAST_BLOCK_NUMBER",
+            "WATER_DEPTH": "MAX_WATER_DEPTH_FT",
         }
         fleet_df.rename(
             columns={k: v for k, v in rename_map.items() if k in fleet_df.columns},
@@ -137,6 +157,10 @@ class RigFleetLoader:
         fleet_df["RIG_TYPE"] = fleet_df["RIG_NAME"].apply(
             lambda name: classify_rig_type(name).value
         )
+
+        # Mark all BSEE WAR rows as offshore with bsee_war source
+        fleet_df["DATA_SOURCE"] = "bsee_war"
+        fleet_df["IS_OFFSHORE"] = True
 
         logger.info(f"Built fleet of {len(fleet_df)} unique rigs from WAR data")
         return fleet_df
@@ -205,6 +229,27 @@ class RigFleetLoader:
         mask = df["RIG_TYPE"] == rig_type
         result = df[mask]
         logger.info(f"Found {len(result)} rigs of type {rig_type}")
+        return result if not result.empty else None
+
+    def get_rigs_by_offshore_status(
+        self, is_offshore: bool, cfg: Optional[Dict] = None
+    ) -> Optional[pd.DataFrame]:
+        """Get rigs filtered by offshore/onshore status.
+
+        Args:
+            is_offshore: True for offshore, False for onshore.
+            cfg: Optional configuration dict passed to ``_load_data``.
+
+        Returns:
+            Filtered DataFrame or None when no matches / missing column.
+        """
+        df = self._load_data(cfg)
+        if df is None:
+            return None
+        if "IS_OFFSHORE" not in df.columns:
+            return None
+        mask = df["IS_OFFSHORE"] == is_offshore
+        result = df[mask]
         return result if not result.empty else None
 
     def get_rig_well_history(

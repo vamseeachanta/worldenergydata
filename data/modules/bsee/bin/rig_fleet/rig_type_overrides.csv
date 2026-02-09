@@ -1,9 +1,9 @@
-RIG_NAME,RIG_TYPE
-* COIL TUBING UNIT,unknown
-* DIVE SUPPORT VESSEL (DSV),unknown
-* LIFT BOAT,unknown
-* WIRELINE UNIT,unknown
-NABORS MODS 200,platform_rig
-NOBLE GLOBETROTTER II,drillship
-OLYMPUS N88,platform_rig
-VALARIS DPS-5,semi_submersible
+RIG_NAME,RIG_TYPE,NOTES
+* COIL TUBING UNIT,unknown,non-drilling support unit
+* DIVE SUPPORT VESSEL (DSV),unknown,non-drilling support vessel
+* LIFT BOAT,unknown,non-drilling lift boat
+* WIRELINE UNIT,unknown,non-drilling wireline unit
+NABORS MODS 200,platform_rig,Nabors modular platform rig
+NOBLE GLOBETROTTER II,drillship,Noble Corp drillship
+OLYMPUS N88,platform_rig,Shell TLP platform rig
+VALARIS DPS-5,semi_submersible,Valaris DP semi-submersible

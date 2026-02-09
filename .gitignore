@@ -197,6 +197,9 @@ data/modules/bsee.backup*/
 data/modules/bsee/*.zip
 data/modules/bsee/bsee_*.csv
 
+# Local data - not synced to git (large files, downloaded on demand)
+data/modules/bsee/.local/
+
 # Marine safety raw data (regenerate: download_datasets.py)
 data/modules/marine_safety/raw/**/*.csv
 data/modules/marine_safety/raw/**/*.xlsx
