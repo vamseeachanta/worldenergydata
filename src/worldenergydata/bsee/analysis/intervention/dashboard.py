@@ -1,7 +1,8 @@
-"""Intervention insights dashboard (WRK-115 Phase 2).
+"""GOM Intervention Market Intelligence Report (WRK-115 Phase 2).
 
-Produces an interactive 8-panel Plotly HTML dashboard visualising
-BSEE WAR intervention activity in the Gulf of Mexico.
+Produces a comprehensive multi-section HTML report with Plotly charts,
+data tables, and narrative text for engineering/intervention services
+market intelligence in the Gulf of Mexico.
 """
 
 from __future__ import annotations
@@ -12,354 +13,470 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 
 from worldenergydata.bsee.analysis.intervention.activity_aggregator import (
     WARActivityAggregator,
     classify_activity,
 )
 
-_DISPLAY_NAMES: dict[str, str] = {
-    "wireline_unit": "Wireline",
-    "coil_tubing_unit": "Coil Tubing",
-    "lift_boat": "Lift Boat",
-    "snubbing_unit": "Snubbing",
-    "support_vessel": "Support Vessel",
-    "pumping_unit": "Pumping",
+_DN: dict[str, str] = {
+    "wireline_unit": "Wireline Unit", "coil_tubing_unit": "Coil Tubing Unit",
+    "lift_boat": "Lift Boat", "snubbing_unit": "Snubbing Unit",
+    "support_vessel": "Support Vessel", "pumping_unit": "Pumping Unit",
     "workover_rig": "Workover Rig",
 }
-_INTERVENTION_TYPES = list(_DISPLAY_NAMES.keys())
+_IT = list(_DN.keys())
+_CLR_D, _CLR_I = "#3B82F6", "#EF4444"
+_PAL = ["#3B82F6", "#EF4444", "#10B981", "#F59E0B",
+        "#8B5CF6", "#EC4899", "#06B6D4", "#84CC16"]
+_DK = ("DECOMMISSION", "ABANDONMENT", "P&A", "PLUG")
+_MO = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
-_CLR_DRILLING = "#3B82F6"
-_CLR_INTERVENTION = "#EF4444"
-_CLR_PALETTE = [
-    "#3B82F6", "#EF4444", "#10B981", "#F59E0B",
-    "#8B5CF6", "#EC4899", "#06B6D4", "#84CC16",
+_SREF = [
+    ("Wireline Unit", "Electric line or slickline operations",
+     "Wireline truck/skid, lubricator, sheaves",
+     "Well logging, perforation, plug setting, gauge monitoring"),
+    ("Coil Tubing Unit", "Continuous steel tubing operations",
+     "CT reel, injector head, BOP stack",
+     "Well cleanouts, nitrogen lifts, acid stimulation, sand removal"),
+    ("Lift Boat", "Self-elevating work platform",
+     "Jackup-style legs, crane, work deck",
+     "Platform access, equipment staging, light well work"),
+    ("Snubbing Unit", "Hydraulic workover under pressure",
+     "Snubbing jack, traveling slips, BOP",
+     "Live well intervention, tubing changes under pressure"),
+    ("Support Vessel", "Marine support operations",
+     "DP vessel, ROV, dive systems",
+     "Subsea intervention, dive support, construction"),
+    ("Workover Rig", "Full workover capability",
+     "Mast/derrick, drawworks, mud system",
+     "Major workovers, recompletions, sidetrack prep"),
+    ("Pumping Unit", "Pressure pumping services",
+     "Pump trucks, blender, manifold", "Cementing, stimulation, squeeze jobs"),
 ]
-_CLR_BG = "#FAFAFA"
-_CLR_GRID = "#E5E7EB"
-_CLR_TEXT = "#1F2937"
-_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-           "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+_AREF = [
+    ("EI", "Eugene Island", "Shelf", "Central GOM"),
+    ("SS", "Ship Shoal", "Shelf", "Central GOM"),
+    ("SP", "South Pass", "Shelf", "Central GOM"),
+    ("HI", "High Island", "Shelf", "Western GOM"),
+    ("SM", "South Marsh Island", "Shelf", "Central GOM"),
+    ("WD", "West Delta", "Shelf", "Central GOM"),
+    ("VR", "Vermilion", "Shelf", "Central GOM"),
+    ("ST", "South Timbalier", "Shelf", "Central GOM"),
+    ("MP", "Main Pass", "Shelf", "Central GOM"),
+    ("EB", "East Breaks", "Slope", "Western GOM"),
+    ("MC", "Mississippi Canyon", "Deepwater", "Central GOM"),
+    ("GC", "Green Canyon", "Deepwater", "Central GOM"),
+    ("WC", "West Cameron", "Shelf", "Western GOM"),
+    ("EC", "East Cameron", "Shelf", "Western GOM"),
+    ("GB", "Garden Banks", "Deepwater", "Western GOM"),
+    ("VK", "Viosca Knoll", "Deepwater", "Central GOM"),
+    ("GI", "Grand Isle", "Shelf", "Central GOM"),
+    ("WR", "Walker Ridge", "Ultra-Deepwater", "Central GOM"),
+    ("EW", "Ewing Bank", "Slope", "Central GOM"),
+    ("MI", "Mustang Island", "Shelf", "Western GOM"),
+]
+_AL = {r[0]: r[1] for r in _AREF}
 
 
-def _yearly_by_category(df: pd.DataFrame) -> pd.DataFrame:
+def _ybc(df: pd.DataFrame) -> pd.DataFrame:
     """Pivot record counts by [YEAR, ACTIVITY_CATEGORY]."""
     tmp = df.copy()
     tmp["ACTIVITY_CATEGORY"] = tmp["RIG_TYPE"].map(classify_activity)
-    tbl = (
-        tmp[tmp["ACTIVITY_CATEGORY"].isin(["drilling", "intervention"])]
-        .groupby(["YEAR", "ACTIVITY_CATEGORY"]).size()
-        .unstack(fill_value=0)
-    )
-    for cat in ("drilling", "intervention"):
-        if cat not in tbl.columns:
-            tbl[cat] = 0
+    tbl = (tmp[tmp["ACTIVITY_CATEGORY"].isin(["drilling", "intervention"])]
+           .groupby(["YEAR", "ACTIVITY_CATEGORY"]).size().unstack(fill_value=0))
+    for c in ("drilling", "intervention"):
+        if c not in tbl.columns:
+            tbl[c] = 0
     return tbl
 
 
-def _intervention_slice(
-    df: pd.DataFrame, year_lo: int = 2015, year_hi: int = 2025,
-) -> pd.DataFrame:
+def _islice(df: pd.DataFrame, lo: int = 2015, hi: int = 2025) -> pd.DataFrame:
     """Filter to intervention records within a year range."""
-    mask = (
-        (df["YEAR"] >= year_lo)
-        & (df["YEAR"] <= year_hi)
-        & (df["RIG_TYPE"].map(classify_activity) == "intervention")
-    )
-    return df[mask]
+    return df[(df["YEAR"] >= lo) & (df["YEAR"] <= hi)
+              & (df["RIG_TYPE"].map(classify_activity) == "intervention")]
+
+
+def _fhtml(fig: go.Figure, idx: int) -> str:
+    return fig.to_html(full_html=False, include_plotlyjs=(idx == 0),
+                       config={"displayModeBar": True, "responsive": True})
+
+
+def _tbl(hdr: list[str], rows: list[list]) -> str:
+    h = "".join(f"<th>{x}</th>" for x in hdr)
+    b = "".join("<tr>" + "".join(f"<td>{c}</td>" for c in r) + "</tr>" for r in rows)
+    return f'<table class="data-table"><thead><tr>{h}</tr></thead><tbody>{b}</tbody></table>'
+
+
+def _decom(n: str) -> bool:
+    u = str(n).upper()
+    return any(k in u for k in _DK)
+
+
+def _mode(s: pd.Series) -> str:
+    m = s.mode()
+    return m.iloc[0] if not m.empty else "N/A"
 
 
 class InterventionDashboard:
-    """Generate an interactive 8-panel intervention market dashboard."""
+    """Generate a comprehensive intervention market intelligence HTML report."""
 
     def __init__(self, war_df: pd.DataFrame, fleet_df: pd.DataFrame) -> None:
         self._agg = WARActivityAggregator(war_df, fleet_df)
         enriched = self._agg._join_rig_types()
-        self._df = enriched[
-            enriched["RIG_NAME"].notna() & enriched["YEAR"].notna()
-        ].copy()
+        self._df = enriched[enriched["RIG_NAME"].notna() & enriched["YEAR"].notna()].copy()
         if not self._df.empty:
             self._df["YEAR"] = self._df["YEAR"].astype(int)
-        self._has_bus_asc = "BUS_ASC_NAME" in self._df.columns
+        self._has_bus = "BUS_ASC_NAME" in self._df.columns
+        self._has_con = "CONTACT_NAME" in self._df.columns
+        self._fi = 0
 
     def generate(
-        self,
-        output_path: str = "reports/bsee/intervention/intervention_dashboard.html",
+        self, output_path: str = "reports/bsee/intervention/intervention_dashboard.html",
     ) -> str:
-        """Generate full dashboard HTML and save to *output_path*."""
+        """Generate full market intelligence HTML report."""
         Path(output_path).parent.mkdir(parents=True, exist_ok=True)
-        fig = make_subplots(
-            rows=4, cols=2,
-            subplot_titles=[
-                "GOM Has Become an Intervention Basin",
-                "Intervention-to-Drilling Ratio",
-                "Intervention Activity by Service Type (2015-2025)",
-                "Service Type Growth: 2015 vs 2024",
-                "Top Operators Using Intervention Services (2020-2025)",
-                "Addressable Market: Wells & Leases Requiring Intervention",
-                "Seasonal Intervention Activity Index",
-                "Intervention Activity by GOM Area (2015-2025)",
-            ],
-            vertical_spacing=0.07, horizontal_spacing=0.10,
-            specs=[[{}, {}], [{}, {}],
-                   [{}, {"secondary_y": True}],
-                   [{"type": "polar"}, {}]],
-        )
-        for fn, r, c in [
-            (self._p1_structural_shift, 1, 1),
-            (self._p2_ratio_trend, 1, 2),
-            (self._p3_service_type_bar, 2, 1),
-            (self._p4_service_type_growth, 2, 2),
-            (self._p5_top_operators, 3, 1),
-            (self._p6_addressable_market, 3, 2),
-            (self._p7_seasonal_pattern, 4, 1),
-            (self._p8_geographic, 4, 2),
-        ]:
-            fn(fig, r, c)
-
-        total = len(self._df)
-        yr_min = int(self._df["YEAR"].min()) if not self._df.empty else 0
-        yr_max = int(self._df["YEAR"].max()) if not self._df.empty else 0
+        self._fi = 0
+        n = len(self._df)
+        y0 = int(self._df["YEAR"].min()) if not self._df.empty else 0
+        y1 = int(self._df["YEAR"].max()) if not self._df.empty else 0
         ts = datetime.now(tz=timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-        fig.update_layout(
-            title=dict(
-                text=(
-                    "GOM Intervention & Workover Services Market Intelligence"
-                    "<br><sup>Source: BSEE Well Activity Reports (WAR) | "
-                    f"{total:,} enriched records | {yr_min}-{yr_max}</sup>"
-                ),
-                x=0.5, font=dict(size=22, color=_CLR_TEXT),
-            ),
-            height=2400, width=1400,
-            paper_bgcolor=_CLR_BG, plot_bgcolor="white",
-            font=dict(color=_CLR_TEXT, size=11),
-            showlegend=False, margin=dict(t=120, b=100),
-        )
-        fig.add_annotation(
-            text=(f"Generated from BSEE WAR data | {total:,} records "
-                  f"| {yr_min}-{yr_max} | Dashboard built {ts}"),
-            xref="paper", yref="paper", x=0.5, y=-0.02,
-            showarrow=False, font=dict(size=10, color="#6B7280"),
-        )
-        fig.write_html(output_path, include_plotlyjs=True)
+        secs = [self._s1(n, y0, y1), self._s2(), self._s3(), self._s4(),
+                self._s5(), self._s6(), self._s7(), self._s8(), self._s9(),
+                self._s10(n, y0, y1)]
+        Path(output_path).write_text(self._html(secs, n, y0, y1, ts), encoding="utf-8")
         return output_path
 
-    # -- Panel helpers ------------------------------------------------------
-
-    def _p1_structural_shift(self, fig: go.Figure, r: int, c: int) -> None:
+    def _s1(self, n: int, y0: int, y1: int) -> dict:
+        bl = []
         if self._df.empty:
-            return
-        yearly = _yearly_by_category(self._df)
-        if yearly.empty:
-            return
-        for cat, clr, fill_c in [
-            ("drilling", _CLR_DRILLING, "rgba(59,130,246,0.3)"),
-            ("intervention", _CLR_INTERVENTION, "rgba(239,68,68,0.3)"),
-        ]:
-            fig.add_trace(go.Scatter(
-                x=yearly.index, y=yearly[cat], name=cat.title(),
-                fill="tozeroy", mode="lines",
-                line=dict(color=clr, width=1), fillcolor=fill_c,
-                showlegend=False,
-            ), row=r, col=c)
-        cross = yearly[yearly["intervention"] >= yearly["drilling"]].index
-        if len(cross):
-            yr = int(cross[0])
-            fig.add_annotation(
-                x=yr, y=float(yearly.loc[yr, "intervention"]),
-                text=f"Crossover ~{yr}", showarrow=True, arrowhead=2,
-                font=dict(size=10, color=_CLR_INTERVENTION), row=r, col=c,
-            )
-        fig.update_xaxes(title_text="Year", row=r, col=c)
-        fig.update_yaxes(title_text="WAR Records", row=r, col=c)
+            bl.append(f"Dataset contains {n} records.")
+            return {"title": "Executive Summary", "content": self._bul(bl)}
+        yy = _ybc(self._df)
+        iv = int(yy["intervention"].sum()); dr = int(yy["drilling"].sum())
+        sh = iv / (iv + dr) * 100 if (iv + dr) else 0
+        bl.append(f"<strong>{n:,}</strong> enriched WAR records spanning "
+                  f"<strong>{y0}-{y1}</strong>. Intervention = <strong>{sh:.0f}%</strong> "
+                  f"of classified activity.")
+        idf = _islice(self._df)
+        if not idf.empty:
+            svc = idf.groupby("RIG_TYPE").size()
+            bl.append(f"Top service line: <strong>{_DN.get(svc.idxmax(), svc.idxmax())}</strong>.")
+        if self._has_bus and not idf.empty:
+            bl.append(f"Top operator: <strong>{idf.groupby('BUS_ASC_NAME').size().idxmax()}</strong>.")
+        if not idf.empty:
+            aa = idf.groupby("AREA_CODE").size().sort_values(ascending=False).head(3)
+            bl.append(f"Key areas: <strong>{', '.join(_AL.get(a, a) for a in aa.index)}</strong>.")
+        return {"title": "Executive Summary", "content": self._bul(bl)}
 
-    def _p2_ratio_trend(self, fig: go.Figure, r: int, c: int) -> None:
+    def _s2(self) -> dict:
+        ch, nar = [], ""
         if self._df.empty:
-            return
-        yearly = _yearly_by_category(self._df)
-        if yearly.empty:
-            return
-        yearly = yearly[yearly.index >= 2000]
-        if yearly.empty:
-            return
-        ratio = (yearly["intervention"]
-                 / yearly["drilling"].replace(0, np.nan)).dropna()
-        if ratio.empty:
-            return
-        colours = ["#10B981" if v > 1 else _CLR_INTERVENTION for v in ratio]
-        fig.add_trace(go.Scatter(
-            x=ratio.index, y=ratio.values, mode="lines+markers",
-            marker=dict(color=colours, size=6),
-            line=dict(color="#6B7280", width=2), showlegend=False,
-        ), row=r, col=c)
-        fig.add_hline(
-            y=1.0, line_dash="dash", line_color="#9CA3AF",
-            annotation_text="Parity (1.0)", annotation_font_size=9,
-            row=r, col=c,
+            return {"title": "Market Structure -- Drilling vs Intervention Shift",
+                    "content": "<p>No data available.</p>", "charts": []}
+        yy = _ybc(self._df)
+        f1 = go.Figure()
+        for cat, clr, fc in [("drilling", _CLR_D, "rgba(59,130,246,0.3)"),
+                              ("intervention", _CLR_I, "rgba(239,68,68,0.3)")]:
+            f1.add_trace(go.Scatter(x=yy.index.tolist(), y=yy[cat].tolist(),
+                                    name=cat.title(), fill="tozeroy", mode="lines",
+                                    line=dict(color=clr, width=1.5), fillcolor=fc))
+        f1.update_layout(title="GOM Has Become an Intervention Basin",
+                         xaxis_title="Year", yaxis_title="WAR Records", height=400,
+                         legend=dict(orientation="h", yanchor="bottom", y=1.02))
+        ch.append(_fhtml(f1, self._fi)); self._fi += 1
+        y2 = yy[yy.index >= 2000]
+        if not y2.empty:
+            rat = (y2["intervention"] / y2["drilling"].replace(0, np.nan)).dropna()
+            if not rat.empty:
+                f2 = go.Figure(go.Scatter(
+                    x=rat.index.tolist(), y=rat.values.tolist(), mode="lines+markers",
+                    line=dict(color="#6B7280", width=2),
+                    marker=dict(size=6, color=["#10B981" if v > 1 else _CLR_I for v in rat])))
+                f2.add_hline(y=1.0, line_dash="dash", line_color="#9CA3AF",
+                             annotation_text="Parity (1.0)")
+                f2.update_layout(title="Intervention-to-Drilling Ratio", xaxis_title="Year",
+                                 yaxis_title="Ratio (Intervention / Drilling)", height=350)
+                ch.append(_fhtml(f2, self._fi)); self._fi += 1
+        last = yy.tail(1)
+        if not last.empty:
+            yr = int(last.index[0])
+            iv, dr = int(last["intervention"].iloc[0]), int(last["drilling"].iloc[0])
+            nar = (f"<p>In {yr}, intervention ({iv:,}) "
+                   f"{'exceeded' if iv > dr else 'trailed'} drilling ({dr:,}).</p>")
+        return {"title": "Market Structure -- Drilling vs Intervention Shift",
+                "content": nar, "charts": ch}
+
+    def _s3(self) -> dict:
+        ch = []
+        idf = _islice(self._df)
+        if idf.empty:
+            return {"title": "Service Line Analysis",
+                    "content": "<p>No data 2015-2025.</p>", "charts": []}
+        cnt = (idf[idf["RIG_TYPE"].isin(_IT)].groupby("RIG_TYPE").size()
+               .sort_values(ascending=True))
+        if not cnt.empty:
+            tot = cnt.sum()
+            lb = [_DN.get(t, t) for t in cnt.index]
+            f1 = go.Figure(go.Bar(
+                y=lb, x=cnt.values, orientation="h",
+                text=[f"{v:,} ({v/tot*100:.1f}%)" for v in cnt.values],
+                textposition="outside", marker_color=_PAL[:len(lb)]))
+            f1.update_layout(title="Intervention Activity by Service Type (2015-2025)",
+                             xaxis_title="WAR Records", height=400, margin=dict(l=160))
+            ch.append(_fhtml(f1, self._fi)); self._fi += 1
+        yrs = sorted(idf["YEAR"].unique())
+        ya, yb = (2015 if 2015 in yrs else yrs[0]), (2024 if 2024 in yrs else yrs[-1])
+        ea = idf[idf["YEAR"] == ya].groupby("RIG_TYPE").size().reindex(_IT, fill_value=0)
+        la = idf[idf["YEAR"] == yb].groupby("RIG_TYPE").size().reindex(_IT, fill_value=0)
+        lg = [_DN.get(t, t) for t in _IT]
+        f2 = go.Figure()
+        f2.add_trace(go.Bar(x=lg, y=ea.values, name=str(ya), marker_color=_CLR_D))
+        f2.add_trace(go.Bar(x=lg, y=la.values, name=str(yb), marker_color=_CLR_I))
+        f2.update_layout(title=f"Service Type Growth: {ya} vs {yb}", barmode="group",
+                         yaxis_title="WAR Records", height=400)
+        ch.append(_fhtml(f2, self._fi)); self._fi += 1
+        ref = _tbl(["Service Type", "Description", "Typical Equipment", "Use Case"],
+                    [list(r) for r in _SREF])
+        return {"title": "Service Line Analysis",
+                "content": "<h3>Service Type Reference</h3>" + ref, "charts": ch}
+
+    def _s4(self) -> dict:
+        ch = []
+        if not self._has_bus or self._df.empty:
+            return {"title": "Operator & Client Intelligence",
+                    "content": "<p>No operator data.</p>", "charts": []}
+        idf = _islice(self._df, 2020, 2025)
+        if idf.empty:
+            return {"title": "Operator & Client Intelligence",
+                    "content": "<p>No records 2020-2025.</p>", "charts": []}
+        top = idf.groupby("BUS_ASC_NAME").size().sort_values(ascending=True).tail(20)
+        clr = ["#F59E0B" if _decom(n) else _CLR_I for n in top.index]
+        f1 = go.Figure(go.Bar(y=top.index.tolist(), x=top.values, orientation="h",
+                               marker_color=clr, text=[f"{v:,}" for v in top.values],
+                               textposition="outside"))
+        f1.update_layout(title="Top Operators Using Intervention Services (2020-2025)",
+                         xaxis_title="Intervention Records", height=600, margin=dict(l=250))
+        ch.append(_fhtml(f1, self._fi)); self._fi += 1
+        rows = []
+        for op in reversed(top.index):
+            s = idf[idf["BUS_ASC_NAME"] == op]
+            si = s[s["RIG_TYPE"].isin(_IT)]
+            ps = _DN.get(_mode(si["RIG_TYPE"]), _mode(si["RIG_TYPE"])) if not si.empty else "N/A"
+            rows.append([op, f"{len(s):,}", ps, _mode(s["AREA_CODE"]),
+                         "Yes" if _decom(op) else "No"])
+        t = _tbl(["Operator", "Records", "Primary Service", "Top Area", "Decom"], rows)
+        return {"title": "Operator & Client Intelligence", "content": t, "charts": ch}
+
+    def _s5(self) -> dict:
+        ch = []
+        idf = _islice(self._df, 2020, 2025)
+        if idf.empty:
+            return {"title": "Equipment & Service Vendors",
+                    "content": "<p>No data.</p>", "charts": []}
+        eq = idf.groupby("RIG_NAME").size().sort_values(ascending=True).tail(20)
+        f1 = go.Figure(go.Bar(y=eq.index.tolist(), x=eq.values, orientation="h",
+                               marker_color=_CLR_I, text=[f"{v:,}" for v in eq.values],
+                               textposition="outside"))
+        f1.update_layout(title="Top Intervention Equipment Units (2020-2025)",
+                         xaxis_title="WAR Records", height=600, margin=dict(l=250))
+        ch.append(_fhtml(f1, self._fi)); self._fi += 1
+        top30 = idf.groupby("RIG_NAME").size().sort_values(ascending=False).head(30)
+        rows = []
+        for rig in top30.index:
+            s = idf[idf["RIG_NAME"] == rig]
+            rt = _DN.get(_mode(s["RIG_TYPE"]), _mode(s["RIG_TYPE"]))
+            to = _mode(s["BUS_ASC_NAME"]) if self._has_bus else "N/A"
+            rows.append([rig, rt, f"{len(s):,}", to, _mode(s["AREA_CODE"])])
+        t = _tbl(["Equipment", "Type", "Records", "Top Operator", "Top Area"], rows)
+        return {"title": "Equipment & Service Vendors", "content": t, "charts": ch}
+
+    def _s6(self) -> dict:
+        idf = _islice(self._df, 2020, 2025)
+        if not self._has_con or idf.empty:
+            return {"title": "Contact Intelligence",
+                    "content": "<p><em>Contact data (CONTACT_NAME) not available.</em></p>"}
+        cts = idf.groupby("CONTACT_NAME").size().sort_values(ascending=False).head(30)
+        rows = []
+        for nm in cts.index:
+            s = idf[idf["CONTACT_NAME"] == nm]
+            po = _mode(s["BUS_ASC_NAME"]) if self._has_bus else "N/A"
+            si = s[s["RIG_TYPE"].isin(_IT)]
+            ps = _DN.get(_mode(si["RIG_TYPE"]), _mode(si["RIG_TYPE"])) if not si.empty else "N/A"
+            rows.append([nm, f"{len(s):,}", po, ps])
+        t = _tbl(["Contact Name", "Records", "Primary Operator", "Primary Service"], rows)
+        note = "<p><em>Contacts are BSEE-reported field representatives.</em></p>"
+        return {"title": "Contact Intelligence", "content": t + note}
+
+    def _s7(self) -> dict:
+        ch = []
+        idf = _islice(self._df)
+        if idf.empty:
+            return {"title": "Geographic Market Intelligence",
+                    "content": "<p>No data.</p>", "charts": []}
+        cnt = idf.groupby("AREA_CODE").size().sort_values(ascending=True).tail(15)
+        tot = cnt.sum()
+        lb = [f"{c} - {_AL.get(c, c)} ({v/tot*100:.1f}%)" for c, v in zip(cnt.index, cnt.values)]
+        f1 = go.Figure(go.Bar(y=lb, x=cnt.values, orientation="h",
+                               marker_color=(_PAL * 3)[:len(lb)],
+                               text=[f"{v:,}" for v in cnt.values], textposition="outside"))
+        f1.update_layout(title="Intervention Activity by GOM Area (2015-2025)",
+                         xaxis_title="Intervention Records", height=500, margin=dict(l=300))
+        ch.append(_fhtml(f1, self._fi)); self._fi += 1
+        ref = _tbl(["Code", "Area Name", "Water Depth", "Region"],
+                    [list(r) for r in _AREF])
+        return {"title": "Geographic Market Intelligence",
+                "content": "<h3>GOM Area Code Reference</h3>" + ref, "charts": ch}
+
+    def _s8(self) -> dict:
+        ch, nar = [], ""
+        idf = _islice(self._df)
+        if idf.empty:
+            return {"title": "Addressable Market", "content": "<p>No data.</p>", "charts": []}
+        by = idf.groupby("YEAR").agg(w=("API_WELL_NUMBER", "nunique"),
+                                      l=("BOTM_LEASE_NUM", "nunique"))
+        f1 = go.Figure()
+        f1.add_trace(go.Scatter(x=by.index.tolist(), y=by["w"].tolist(),
+                                mode="lines+markers", name="Unique Wells",
+                                line=dict(color=_CLR_D, width=2)))
+        f1.add_trace(go.Scatter(x=by.index.tolist(), y=by["l"].tolist(),
+                                mode="lines+markers", name="Unique Leases",
+                                line=dict(color="#10B981", width=2, dash="dash"), yaxis="y2"))
+        f1.update_layout(title="Addressable Market: Wells & Leases Requiring Intervention",
+                         xaxis_title="Year", yaxis=dict(title="Unique Wells"),
+                         yaxis2=dict(title="Unique Leases", overlaying="y", side="right"),
+                         height=400, legend=dict(orientation="h", yanchor="bottom", y=1.02))
+        ch.append(_fhtml(f1, self._fi)); self._fi += 1
+        isea = _islice(self._df, 2020, 2025).copy()
+        if not isea.empty and "WAR_START_DT" in isea.columns:
+            dt = pd.to_datetime(isea["WAR_START_DT"], format="mixed", dayfirst=False, errors="coerce")
+            isea["MONTH"] = dt.dt.month
+            isea = isea[isea["MONTH"].notna()]
+            if not isea.empty:
+                mo = isea.groupby("MONTH").size().reindex(range(1, 13), fill_value=0)
+                avg = mo.mean()
+                if avg > 0:
+                    ix = mo / avg
+                    th = _MO + [_MO[0]]
+                    rv = list(ix.values) + [float(ix.values[0])]
+                    f2 = go.Figure(go.Scatterpolar(r=rv, theta=th, fill="toself",
+                                                    fillcolor="rgba(59,130,246,0.15)",
+                                                    line=dict(color=_CLR_D, width=2)))
+                    f2.update_layout(title="Seasonal Intervention Activity Index", height=400,
+                                     polar=dict(radialaxis=dict(tickfont=dict(size=9))))
+                    ch.append(_fhtml(f2, self._fi)); self._fi += 1
+        aw, al = int(by["w"].mean()), int(by["l"].mean())
+        nar = (f"<p>On average, <strong>{aw:,}</strong> unique wells across "
+               f"<strong>{al:,}</strong> leases require intervention annually.</p>")
+        return {"title": "Addressable Market", "content": nar, "charts": ch}
+
+    def _s9(self) -> dict:
+        idf, idr = _islice(self._df), _islice(self._df, 2020, 2025)
+        ti = len(idf)
+        p = []
+        # 9.1
+        wl = len(idf[idf["RIG_TYPE"] == "wireline_unit"]) if not idf.empty else 0
+        wp = wl / ti * 100 if ti else 0
+        ww = idf[idf["RIG_TYPE"] == "wireline_unit"]["API_WELL_NUMBER"].nunique() if not idf.empty else 0
+        p.append(f"<h3>9.1 Well Intervention Engineering</h3>"
+                 f"<p>Wireline program design, CT job planning, snubbing engineering. "
+                 f"Wireline = <strong>{wp:.0f}%</strong> of intervention, "
+                 f"<strong>{ww:,}</strong> unique wells.</p>")
+        # 9.2
+        dp = 0.0
+        if self._has_bus and not idr.empty:
+            dp = idr["BUS_ASC_NAME"].apply(_decom).sum() / len(idr) * 100
+        p.append(f"<h3>9.2 Decommissioning &amp; P&amp;A Engineering</h3>"
+                 f"<p>P&amp;A program management, well abandonment engineering. "
+                 f"Decom operators = <strong>{dp:.1f}%</strong> of recent activity.</p>")
+        # 9.3
+        mt = {"lift_boat", "support_vessel"}
+        mc = len(idf[idf["RIG_TYPE"].isin(mt)]) if not idf.empty else 0
+        mp = mc / ti * 100 if ti else 0
+        an = []
+        if not idf.empty:
+            ma = idf[idf["RIG_TYPE"].isin(mt)].groupby("AREA_CODE").size()
+            an = [_AL.get(a, a) for a in ma.sort_values(ascending=False).head(3).index]
+        p.append(f"<h3>9.3 Marine &amp; Logistics Coordination</h3>"
+                 f"<p>Lift boat + support vessel = <strong>{mp:.0f}%</strong> of "
+                 f"intervention in <strong>{', '.join(an) if an else 'N/A'}</strong>.</p>")
+        # 9.4
+        yw = idf.groupby("YEAR")["API_WELL_NUMBER"].nunique().mean() if not idf.empty else 0
+        yl = idf.groupby("YEAR")["BOTM_LEASE_NUM"].nunique().mean() if not idf.empty else 0
+        p.append(f"<h3>9.4 Asset Integrity &amp; Well Surveillance</h3>"
+                 f"<p><strong>{int(yw):,}</strong> wells / <strong>{int(yl):,}</strong> "
+                 f"leases annually require intervention.</p>")
+        # 9.5
+        sp = (int(self._df["YEAR"].max()) - int(self._df["YEAR"].min()) + 1
+              if not self._df.empty else 0)
+        p.append(f"<h3>9.5 Data Analytics &amp; Decision Support</h3>"
+                 f"<p>Dataset: <strong>{sp}</strong> years, <strong>{len(self._df):,}"
+                 f"</strong> records for trend analysis.</p>")
+        return {"title": "Engineering Marketing Services Opportunities",
+                "content": "\n".join(p)}
+
+    def _s10(self, n: int, y0: int, y1: int) -> dict:
+        return {"title": "Methodology & Data Dictionary", "content":
+                "<ul>"
+                "<li><strong>Source:</strong> BSEE Well Activity Reports (eWellWARRawData.zip)</li>"
+                f"<li><strong>Records:</strong> {n:,} | <strong>Range:</strong> {y0}-{y1}</li>"
+                "<li><strong>Classification:</strong> keyword-based rig type from RIG_NAME</li>"
+                "<li><strong>Categories:</strong> Drilling (drillship, semi-sub, jack-up, "
+                "platform rig, tender, barge, submersible) vs Intervention (wireline, CT, "
+                "lift boat, snubbing, support vessel, workover rig, pumping)</li>"
+                "<li><strong>Limitations:</strong> generic entries aggregate multiple units; "
+                "operator names may vary across filings</li></ul>"}
+
+    @staticmethod
+    def _bul(items: list[str]) -> str:
+        return "<ul>" + "".join(f"<li>{i}</li>" for i in items) + "</ul>" if items else ""
+
+    def _html(self, secs: list[dict], n: int, y0: int, y1: int, ts: str) -> str:
+        toc, body = "", ""
+        for i, s in enumerate(secs, 1):
+            aid = f"section-{i}"
+            toc += f'<li><a href="#{aid}">{s["title"]}</a></li>'
+            body += f'<div class="section" id="{aid}"><h2>{i}. {s["title"]}</h2>'
+            for c in s.get("charts", []):
+                body += f'<div class="chart-container">{c}</div>'
+            body += s.get("content", "") + "</div>"
+        return (
+            '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">'
+            '<meta name="viewport" content="width=device-width,initial-scale=1.0">'
+            '<title>GOM Intervention Market Intelligence Report</title>'
+            '<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script><style>'
+            'body{font-family:system-ui,-apple-system,sans-serif;margin:0;padding:20px;'
+            'background:#fff;color:#1F2937}'
+            '.container{max-width:1200px;margin:0 auto}'
+            '.header{text-align:center;padding:30px 0;border-bottom:3px solid #1e3a5f}'
+            '.header h1{color:#1e3a5f;margin:0 0 8px;font-size:28px}'
+            '.header .subtitle{color:#6B7280;font-size:14px}'
+            '.toc{background:#F9FAFB;border:1px solid #E5E7EB;border-radius:6px;'
+            'padding:20px 30px;margin:20px 0}'
+            '.toc h3{margin-top:0;color:#1e3a5f}.toc ul{column-count:2;padding-left:20px}'
+            '.toc a{color:#3B82F6;text-decoration:none}'
+            '.toc a:hover{text-decoration:underline}'
+            '.section{margin:30px 0;padding-top:10px}'
+            '.section h2{color:#1e3a5f;border-bottom:2px solid #1e3a5f;padding-bottom:8px;'
+            'font-size:22px}'
+            '.section h3{color:#374151;font-size:17px;margin-top:24px}'
+            '.chart-container{margin:16px 0}'
+            '.data-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px}'
+            '.data-table th{background:#1e3a5f;color:#fff;padding:8px 12px;text-align:left}'
+            '.data-table td{padding:6px 12px;border-bottom:1px solid #E5E7EB}'
+            '.data-table tr:nth-child(even){background:#F9FAFB}'
+            '.data-table tr:hover{background:#EFF6FF}'
+            '.footer{text-align:center;padding:20px 0;margin-top:40px;'
+            'border-top:1px solid #E5E7EB;color:#9CA3AF;font-size:12px}'
+            'ul{line-height:1.8}p{line-height:1.7}'
+            '</style></head><body><div class="container">'
+            '<div class="header">'
+            '<h1>GOM Intervention &amp; Workover Services &mdash; Market Intelligence Report</h1>'
+            f'<div class="subtitle">Source: BSEE Well Activity Reports | {n:,} records | {y0}-{y1}</div>'
+            '</div>'
+            f'<div class="toc"><h3>Table of Contents</h3><ul>{toc}</ul></div>'
+            f'{body}'
+            f'<div class="footer">Generated {ts} | BSEE WAR Data | worldenergydata pipeline</div>'
+            '</div></body></html>'
         )
-        fig.update_xaxes(title_text="Year", row=r, col=c)
-        fig.update_yaxes(title_text="Ratio (Intervention / Drilling)",
-                         row=r, col=c)
-
-    def _p3_service_type_bar(self, fig: go.Figure, r: int, c: int) -> None:
-        if self._df.empty:
-            return
-        df = self._df[(self._df["YEAR"] >= 2015) & (self._df["YEAR"] <= 2025)]
-        counts = (df[df["RIG_TYPE"].isin(_INTERVENTION_TYPES)]
-                  .groupby("RIG_TYPE").size().sort_values(ascending=True))
-        if counts.empty:
-            return
-        total = counts.sum()
-        labels = [_DISPLAY_NAMES.get(t, t) for t in counts.index]
-        fig.add_trace(go.Bar(
-            y=labels, x=counts.values, orientation="h",
-            text=[f"{v:,} ({v/total*100:.1f}%)" for v in counts.values],
-            textposition="outside",
-            marker_color=_CLR_PALETTE[:len(labels)], showlegend=False,
-        ), row=r, col=c)
-        fig.update_xaxes(title_text="WAR Records", row=r, col=c)
-
-    def _p4_service_type_growth(self, fig: go.Figure, r: int, c: int) -> None:
-        if self._df.empty:
-            return
-        df = self._df[self._df["RIG_TYPE"].isin(_INTERVENTION_TYPES)]
-        if df.empty:
-            return
-        yrs = sorted(df["YEAR"].unique())
-        y0 = 2015 if 2015 in yrs else yrs[0]
-        y1 = 2024 if 2024 in yrs else yrs[-1]
-        early = (df[df["YEAR"] == y0].groupby("RIG_TYPE").size()
-                 .reindex(_INTERVENTION_TYPES, fill_value=0))
-        late = (df[df["YEAR"] == y1].groupby("RIG_TYPE").size()
-                .reindex(_INTERVENTION_TYPES, fill_value=0))
-        labels = [_DISPLAY_NAMES.get(t, t) for t in _INTERVENTION_TYPES]
-        for vals, yr, clr in [(early, y0, _CLR_DRILLING),
-                              (late, y1, _CLR_INTERVENTION)]:
-            fig.add_trace(go.Bar(
-                x=labels, y=vals.values, name=str(yr),
-                marker_color=clr, showlegend=False, textposition="none",
-            ), row=r, col=c)
-        for stype in _INTERVENTION_TYPES:
-            e, l = early[stype], late[stype]
-            txt = ""
-            if e > 0:
-                pct = (l - e) / e * 100
-                txt = f"{'+' if pct > 0 else ''}{pct:.0f}%"
-            elif l > 0:
-                txt = "New"
-            if txt:
-                fig.add_annotation(
-                    x=_DISPLAY_NAMES.get(stype, stype), y=max(e, l),
-                    text=txt, showarrow=False,
-                    font=dict(size=9, color=_CLR_TEXT), yshift=12,
-                    row=r, col=c,
-                )
-        fig.update_layout(barmode="group")
-        fig.update_yaxes(title_text="WAR Records", row=r, col=c)
-
-    def _p5_top_operators(self, fig: go.Figure, r: int, c: int) -> None:
-        if self._df.empty or not self._has_bus_asc:
-            return
-        df = _intervention_slice(self._df, 2020, 2025)
-        if df.empty:
-            return
-        top = df.groupby("BUS_ASC_NAME").size().sort_values(ascending=True).tail(15)
-        if top.empty:
-            return
-        decom_kw = ("DECOMMISSION", "ABANDONMENT", "P&A", "PLUG")
-        colours = [
-            "#F59E0B" if any(k in str(n).upper() for k in decom_kw)
-            else _CLR_INTERVENTION for n in top.index
-        ]
-        fig.add_trace(go.Bar(
-            y=top.index, x=top.values, orientation="h",
-            marker_color=colours, showlegend=False,
-            text=[f"{v:,}" for v in top.values], textposition="outside",
-        ), row=r, col=c)
-        fig.update_xaxes(title_text="Intervention Records", row=r, col=c)
-
-    def _p6_addressable_market(self, fig: go.Figure, r: int, c: int) -> None:
-        if self._df.empty:
-            return
-        df = _intervention_slice(self._df, 2015, 2025)
-        if df.empty:
-            return
-        by_yr = df.groupby("YEAR").agg(
-            wells=("API_WELL_NUMBER", "nunique"),
-            leases=("BOTM_LEASE_NUM", "nunique"),
-        )
-        fig.add_trace(go.Scatter(
-            x=by_yr.index, y=by_yr["wells"], mode="lines+markers",
-            name="Unique Wells", line=dict(color=_CLR_DRILLING, width=2),
-            marker=dict(size=6), showlegend=False,
-        ), row=r, col=c)
-        fig.add_trace(go.Scatter(
-            x=by_yr.index, y=by_yr["leases"], mode="lines+markers",
-            name="Unique Leases",
-            line=dict(color="#10B981", width=2, dash="dash"),
-            marker=dict(size=6), showlegend=False,
-        ), row=r, col=c, secondary_y=True)
-        fig.update_xaxes(title_text="Year", row=r, col=c)
-        fig.update_yaxes(title_text="Unique Wells", row=r, col=c,
-                         secondary_y=False)
-        fig.update_yaxes(title_text="Unique Leases", row=r, col=c,
-                         secondary_y=True)
-
-    def _p7_seasonal_pattern(self, fig: go.Figure, r: int, c: int) -> None:
-        if self._df.empty:
-            return
-        df = _intervention_slice(self._df, 2020, 2025).copy()
-        if df.empty:
-            return
-        if "WAR_START_DT" not in df.columns:
-            return
-        dt = pd.to_datetime(df["WAR_START_DT"], format="mixed",
-                            dayfirst=False, errors="coerce")
-        df["MONTH"] = dt.dt.month
-        df = df[df["MONTH"].notna()]
-        if df.empty:
-            return
-        monthly = df.groupby("MONTH").size().reindex(range(1, 13), fill_value=0)
-        avg = monthly.mean()
-        if avg == 0:
-            return
-        idx = monthly / avg
-        colours = [
-            "#EF4444" if m in range(6, 12) else _CLR_DRILLING
-            for m in range(1, 13)
-        ]
-        theta = _MONTHS + [_MONTHS[0]]
-        r_vals = list(idx.values) + [idx.values[0]]
-        c_vals = colours + [colours[0]]
-        fig.add_trace(go.Scatterpolar(
-            r=r_vals, theta=theta, fill="toself",
-            fillcolor="rgba(59,130,246,0.15)",
-            line=dict(color=_CLR_DRILLING, width=2),
-            marker=dict(color=c_vals, size=7), showlegend=False,
-        ), row=r, col=c)
-        fig.update_polars(
-            radialaxis=dict(gridcolor=_CLR_GRID, tickfont=dict(size=9)),
-            angularaxis=dict(gridcolor=_CLR_GRID, tickfont=dict(size=9)),
-            bgcolor="white",
-        )
-
-    def _p8_geographic(self, fig: go.Figure, r: int, c: int) -> None:
-        if self._df.empty:
-            return
-        df = _intervention_slice(self._df, 2015, 2025)
-        if df.empty:
-            return
-        counts = (df.groupby("AREA_CODE").size()
-                  .sort_values(ascending=True).tail(10))
-        if counts.empty:
-            return
-        total = counts.sum()
-        labels = [f"{cd} ({v/total*100:.1f}%)"
-                  for cd, v in zip(counts.index, counts.values)]
-        fig.add_trace(go.Bar(
-            y=labels, x=counts.values, orientation="h",
-            marker_color=_CLR_PALETTE[:len(labels)], showlegend=False,
-            text=[f"{v:,}" for v in counts.values], textposition="outside",
-        ), row=r, col=c)
-        fig.update_xaxes(title_text="Intervention Records", row=r, col=c)

@@ -1,12 +1,11 @@
-"""Tests for intervention insights dashboard (WRK-115 Phase 2).
+"""Tests for intervention market intelligence report (WRK-115 Phase 2).
 
-TDD Red phase: tests define expected dashboard behavior before
+TDD Red phase: tests define expected report behavior before
 implementation.
 """
 
 from __future__ import annotations
 
-import os
 import tempfile
 from pathlib import Path
 
@@ -112,8 +111,8 @@ class TestDashboardGeneratesHtml:
             assert Path(result_path).exists()
             assert Path(result_path).stat().st_size > 0
 
-    def test_dashboard_html_is_self_contained(self) -> None:
-        """HTML should include plotly.js inline (no external deps)."""
+    def test_dashboard_html_references_plotly(self) -> None:
+        """HTML should reference plotly.js (CDN or inline)."""
         war_df = _make_war_df()
         fleet_df = _make_fleet_df()
         dashboard = InterventionDashboard(war_df, fleet_df)
@@ -127,14 +126,42 @@ class TestDashboardGeneratesHtml:
 
 
 # ---------------------------------------------------------------------------
-# Test: dashboard contains expected chart titles
+# Test: report contains expected section titles
 # ---------------------------------------------------------------------------
 
 
-class TestDashboardContainsExpectedCharts:
-    """Verify the HTML contains all 8 expected panel titles."""
+class TestDashboardContainsExpectedSections:
+    """Verify the HTML contains all 10 expected section titles."""
+
+    def test_dashboard_contains_expected_section_titles(self) -> None:
+        war_df = _make_war_df()
+        fleet_df = _make_fleet_df()
+        dashboard = InterventionDashboard(war_df, fleet_df)
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_path = str(Path(tmpdir) / "test_dashboard.html")
+            dashboard.generate(output_path)
+            content = Path(output_path).read_text()
+
+            expected_titles = [
+                "Executive Summary",
+                "Market Structure",
+                "Service Line Analysis",
+                "Operator",
+                "Equipment",
+                "Contact Intelligence",
+                "Geographic Market Intelligence",
+                "Addressable Market",
+                "Engineering Marketing Services Opportunities",
+                "Methodology",
+            ]
+            for title in expected_titles:
+                assert title in content, (
+                    f"Expected section title '{title}' not found in report HTML"
+                )
 
     def test_dashboard_contains_expected_chart_titles(self) -> None:
+        """Charts from the original dashboard should still appear."""
         war_df = _make_war_df()
         fleet_df = _make_fleet_df()
         dashboard = InterventionDashboard(war_df, fleet_df)
@@ -156,8 +183,72 @@ class TestDashboardContainsExpectedCharts:
             ]
             for title in expected_titles:
                 assert title in content, (
-                    f"Expected chart title '{title}' not found in dashboard HTML"
+                    f"Expected chart title '{title}' not found in report HTML"
                 )
+
+
+# ---------------------------------------------------------------------------
+# Test: report contains data tables and reference content
+# ---------------------------------------------------------------------------
+
+
+class TestDashboardContainsTablesAndReferences:
+    """Verify the HTML contains data tables and reference sections."""
+
+    def test_report_contains_data_tables(self) -> None:
+        war_df = _make_war_df()
+        fleet_df = _make_fleet_df()
+        dashboard = InterventionDashboard(war_df, fleet_df)
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_path = str(Path(tmpdir) / "test_dashboard.html")
+            dashboard.generate(output_path)
+            content = Path(output_path).read_text()
+
+            assert "data-table" in content
+            assert "<table" in content
+            assert "<thead" in content
+
+    def test_report_contains_service_type_reference(self) -> None:
+        war_df = _make_war_df()
+        fleet_df = _make_fleet_df()
+        dashboard = InterventionDashboard(war_df, fleet_df)
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_path = str(Path(tmpdir) / "test_dashboard.html")
+            dashboard.generate(output_path)
+            content = Path(output_path).read_text()
+
+            assert "Wireline Unit" in content
+            assert "Coil Tubing Unit" in content
+            assert "Lift Boat" in content
+
+    def test_report_contains_area_reference(self) -> None:
+        war_df = _make_war_df()
+        fleet_df = _make_fleet_df()
+        dashboard = InterventionDashboard(war_df, fleet_df)
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_path = str(Path(tmpdir) / "test_dashboard.html")
+            dashboard.generate(output_path)
+            content = Path(output_path).read_text()
+
+            assert "Eugene Island" in content
+            assert "Mississippi Canyon" in content
+            assert "Green Canyon" in content
+
+    def test_report_contains_table_of_contents(self) -> None:
+        war_df = _make_war_df()
+        fleet_df = _make_fleet_df()
+        dashboard = InterventionDashboard(war_df, fleet_df)
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_path = str(Path(tmpdir) / "test_dashboard.html")
+            dashboard.generate(output_path)
+            content = Path(output_path).read_text()
+
+            assert "Table of Contents" in content
+            assert "section-1" in content
 
 
 # ---------------------------------------------------------------------------
