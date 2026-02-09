@@ -16,6 +16,13 @@ class RigType(str, Enum):
     INLAND_BARGE = "inland_barge"
     SUBMERSIBLE = "submersible"
     LAND_RIG = "land_rig"
+    WIRELINE_UNIT = "wireline_unit"
+    COIL_TUBING_UNIT = "coil_tubing_unit"
+    LIFT_BOAT = "lift_boat"
+    SNUBBING_UNIT = "snubbing_unit"
+    WORKOVER_RIG = "workover_rig"
+    SUPPORT_VESSEL = "support_vessel"
+    PUMPING_UNIT = "pumping_unit"
     UNKNOWN = "unknown"
 
 
@@ -110,6 +117,53 @@ _INLAND_BARGE_KEYWORDS: tuple[str, ...] = (
     "BARGE",
 )
 
+_WIRELINE_KEYWORDS: tuple[str, ...] = (
+    "WIRELINE",
+    "SLICKLINE",
+    "E-LINE",
+    "ELECTRIC LINE",
+    "/SL",
+    "/WL",
+    "/EL",
+)
+
+_COIL_TUBING_KEYWORDS: tuple[str, ...] = (
+    "COIL TUBING",
+    "COILED TUBING",
+    "CT UNIT",
+    "/CT",
+)
+
+_LIFT_BOAT_KEYWORDS: tuple[str, ...] = (
+    "LIFT BOAT",
+    "LIFTBOAT",
+    "L.BOAT",
+    "L BOAT",
+)
+
+_SNUBBING_KEYWORDS: tuple[str, ...] = (
+    "SNUBBING",
+    "HYDRAULIC WORKOVER",
+)
+
+_SUPPORT_VESSEL_KEYWORDS: tuple[str, ...] = (
+    "ANCHOR HANDLING",
+    "DIVE SUPPORT",
+    "CONSTRUCTION VESSEL",
+    "DIVE BOA",
+    "D. BOAT",
+    "DSV",
+)
+
+_PUMPING_KEYWORDS: tuple[str, ...] = (
+    "PUMPING UNIT",
+    "PUMP UNIT",
+)
+
+_WORKOVER_KEYWORDS: tuple[str, ...] = (
+    "WORKOVER",
+)
+
 
 def classify_rig_type(rig_name: str) -> RigType:
     """Classify rig type from name using known naming patterns.
@@ -126,6 +180,23 @@ def classify_rig_type(rig_name: str) -> RigType:
     """
     name_upper = rig_name.upper().strip()
 
+    # Intervention types first (most-specific to least-specific).
+    if any(kw in name_upper for kw in _SNUBBING_KEYWORDS):
+        return RigType.SNUBBING_UNIT
+    if any(kw in name_upper for kw in _COIL_TUBING_KEYWORDS):
+        return RigType.COIL_TUBING_UNIT
+    if any(kw in name_upper for kw in _WIRELINE_KEYWORDS):
+        return RigType.WIRELINE_UNIT
+    if any(kw in name_upper for kw in _LIFT_BOAT_KEYWORDS):
+        return RigType.LIFT_BOAT
+    if any(kw in name_upper for kw in _SUPPORT_VESSEL_KEYWORDS):
+        return RigType.SUPPORT_VESSEL
+    if any(kw in name_upper for kw in _PUMPING_KEYWORDS):
+        return RigType.PUMPING_UNIT
+    if any(kw in name_upper for kw in _WORKOVER_KEYWORDS):
+        return RigType.WORKOVER_RIG
+
+    # Drilling rig types.
     if any(kw in name_upper for kw in _DRILLSHIP_KEYWORDS):
         return RigType.DRILLSHIP
     if any(kw in name_upper for kw in _SEMI_SUB_KEYWORDS):

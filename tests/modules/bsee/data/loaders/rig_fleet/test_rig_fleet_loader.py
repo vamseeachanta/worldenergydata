@@ -36,6 +36,7 @@ class TestLoadData:
         """Empty directory produces None."""
         loader = RigFleetLoader()
         loader._bin_dir = str(tmp_path)
+        loader._local_dir = str(tmp_path / "nonexistent_local")
         result = loader._load_data()
         assert result is None
 
@@ -49,6 +50,7 @@ class TestLoadData:
 
         loader = RigFleetLoader()
         loader._bin_dir = str(tmp_path)
+        loader._local_dir = str(tmp_path / "nonexistent_local")
 
         # Act - load twice
         first = loader._load_data()
@@ -72,6 +74,7 @@ class TestLoadData:
 
         loader = RigFleetLoader()
         loader._bin_dir = str(tmp_path)
+        loader._local_dir = str(tmp_path / "nonexistent_local")
         result = loader._load_data()
 
         assert result is not None
@@ -399,6 +402,7 @@ class TestGetRigsByType:
 
         loader = RigFleetLoader()
         loader._bin_dir = str(tmp_path)
+        loader._local_dir = str(tmp_path / "nonexistent_local")
         result = loader.get_rigs_by_type("drillship")
 
         assert result is not None
@@ -416,6 +420,7 @@ class TestGetRigsByType:
 
         loader = RigFleetLoader()
         loader._bin_dir = str(tmp_path)
+        loader._local_dir = str(tmp_path / "nonexistent_local")
         result = loader.get_rigs_by_type("drillship")
 
         assert result is None
@@ -441,6 +446,7 @@ class TestGetRigsByOffshoreStatus:
 
         loader = RigFleetLoader()
         loader._bin_dir = str(tmp_path)
+        loader._local_dir = str(tmp_path / "nonexistent_local")
         result = loader.get_rigs_by_offshore_status(True)
 
         assert result is not None
@@ -458,6 +464,7 @@ class TestGetRigsByOffshoreStatus:
 
         loader = RigFleetLoader()
         loader._bin_dir = str(tmp_path)
+        loader._local_dir = str(tmp_path / "nonexistent_local")
         result = loader.get_rigs_by_offshore_status(False)
 
         assert result is not None
@@ -476,6 +483,7 @@ class TestGetRigsByOffshoreStatus:
 
         loader = RigFleetLoader()
         loader._bin_dir = str(tmp_path)
+        loader._local_dir = str(tmp_path / "nonexistent_local")
         result = loader.get_rigs_by_offshore_status(True)
 
         assert result is None

@@ -16,7 +16,7 @@ class TestRigTypeEnum:
     """Tests for RigType enumeration."""
 
     def test_rig_type_enum_values(self):
-        """All 9 rig types have expected string values."""
+        """All 16 rig types have expected string values."""
         assert RigType.DRILLSHIP.value == "drillship"
         assert RigType.SEMI_SUBMERSIBLE.value == "semi_submersible"
         assert RigType.JACK_UP.value == "jack_up"
@@ -25,8 +25,15 @@ class TestRigTypeEnum:
         assert RigType.INLAND_BARGE.value == "inland_barge"
         assert RigType.SUBMERSIBLE.value == "submersible"
         assert RigType.LAND_RIG.value == "land_rig"
+        assert RigType.WIRELINE_UNIT.value == "wireline_unit"
+        assert RigType.COIL_TUBING_UNIT.value == "coil_tubing_unit"
+        assert RigType.LIFT_BOAT.value == "lift_boat"
+        assert RigType.SNUBBING_UNIT.value == "snubbing_unit"
+        assert RigType.WORKOVER_RIG.value == "workover_rig"
+        assert RigType.SUPPORT_VESSEL.value == "support_vessel"
+        assert RigType.PUMPING_UNIT.value == "pumping_unit"
         assert RigType.UNKNOWN.value == "unknown"
-        assert len(RigType) == 9
+        assert len(RigType) == 16
 
 
 class TestRigStatusEnum:
@@ -123,6 +130,15 @@ class TestClassifyRigType:
             # Inland barge
             ("INLAND BARGE 5", RigType.INLAND_BARGE),
             ("DELTA BARGE II", RigType.INLAND_BARGE),
+            # Intervention types
+            ("* WIRELINE UNIT", RigType.WIRELINE_UNIT),
+            ("* COIL TUBING UNIT", RigType.COIL_TUBING_UNIT),
+            ("* LIFT BOAT", RigType.LIFT_BOAT),
+            ("* SNUBBING UNIT", RigType.SNUBBING_UNIT),
+            ("* HYDRAULIC WORKOVER UNIT", RigType.SNUBBING_UNIT),
+            ("AMERICAN CONSTITUTION D. BOAT", RigType.SUPPORT_VESSEL),
+            ("* GENERIC SNUBBING UNIT", RigType.SNUBBING_UNIT),
+            ("BAKER ATLAS WIRELINE", RigType.WIRELINE_UNIT),
         ],
     )
     def test_classify_expanded_keywords(self, rig_name: str, expected: RigType):

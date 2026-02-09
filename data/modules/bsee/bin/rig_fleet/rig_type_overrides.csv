@@ -1,9 +1,1558 @@
 RIG_NAME,RIG_TYPE,NOTES
-* COIL TUBING UNIT,unknown,non-drilling support unit
-* DIVE SUPPORT VESSEL (DSV),unknown,non-drilling support vessel
-* LIFT BOAT,unknown,non-drilling lift boat
-* WIRELINE UNIT,unknown,non-drilling wireline unit
-NABORS MODS 200,platform_rig,Nabors modular platform rig
-NOBLE GLOBETROTTER II,drillship,Noble Corp drillship
-OLYMPUS N88,platform_rig,Shell TLP platform rig
-VALARIS DPS-5,semi_submersible,Valaris DP semi-submersible
+"""PRIDE ARKANSAS""",jack_up,Pride jack-up rig
+#2 CARAVEL PROSPECT,unknown,garbage entry
+&P 108,unknown,typo/garbage
+* ANCHOR HANDLING VESSEL,support_vessel,anchor handling vessel
+* COIL TUBING UNIT,coil_tubing_unit,generic coiled tubing unit
+* COIL TUBING UNIT (HOUMA #2),coil_tubing_unit,coiled tubing unit - Houma district
+* COIL TUBING UNIT (HOUMA #3),coil_tubing_unit,coiled tubing unit - Houma district
+* COIL TUBING UNIT (HOUMA #4),coil_tubing_unit,coiled tubing unit - Houma district
+* COIL TUBING UNIT (HOUMA DIST,coil_tubing_unit,coiled tubing unit - Houma district
+* COIL TUBING UNIT (L.C. #2),coil_tubing_unit,coiled tubing unit - Lake Charles district
+* COIL TUBING UNIT (L.C. DIST),coil_tubing_unit,coiled tubing unit - Lake Charles district
+* COIL TUBING UNIT (L.J. #2),coil_tubing_unit,coiled tubing unit - Lake Jackson district
+* COIL TUBING UNIT (L.J. #3),coil_tubing_unit,coiled tubing unit - Lake Jackson district
+* COIL TUBING UNIT (L.J. DIST),coil_tubing_unit,coiled tubing unit - Lake Jackson district
+* COIL TUBING UNIT (LAF #2),coil_tubing_unit,coiled tubing unit - Lafayette district
+* COIL TUBING UNIT (LAF DIST),coil_tubing_unit,coiled tubing unit - Lafayette district
+* COIL TUBING UNIT (N.O. #2),coil_tubing_unit,coiled tubing unit - New Orleans district
+* COIL TUBING UNIT (N.O. #3),coil_tubing_unit,coiled tubing unit - New Orleans district
+* COIL TUBING UNIT (N.O. DIST),coil_tubing_unit,coiled tubing unit - New Orleans district
+* DIVE SUPPORT VESSEL (DSV),support_vessel,dive support vessel
+* DP SEMI RIG TO BE DETERMINED,unknown,TBD entry
+* DRILL SHIP TO BE DETERMINED,unknown,TBD entry
+* EEB Generic Inspection Facility,unknown,inspection facility
+* GENERIC COIL TUBING UNIT,coil_tubing_unit,generic coiled tubing unit
+* GENERIC PIPELINE CONSTRUCTION VESSEL,support_vessel,pipeline construction vessel
+* GENERIC SNUBBING UNIT,snubbing_unit,generic snubbing unit
+* HYDRAULIC WORKOVER UNIT,snubbing_unit,hydraulic workover unit
+* HYDRAULIC WORKOVER UNIT      HO#2,snubbing_unit,hydraulic workover unit
+* HYDRAULIC WORKOVER UNIT (ALTERNATE),snubbing_unit,hydraulic workover unit
+* HYDRAULIC WORKOVER UNIT (HO),snubbing_unit,hydraulic workover unit - Houma
+* HYDRAULIC WORKOVER UNIT (LAF,snubbing_unit,hydraulic workover unit - Lafayette
+* HYDRAULIC WORKOVER UNIT (LC),snubbing_unit,hydraulic workover unit - Lake Charles
+* HYDRAULIC WORKOVER UNIT (LJ),snubbing_unit,hydraulic workover unit - Lake Jackson
+* HYDRAULIC WORKOVER UNIT (NO),snubbing_unit,hydraulic workover unit - New Orleans
+* HYDRAULIC WORKOVER UNIT HO#3,snubbing_unit,hydraulic workover unit
+* HYDRAULIC WORKOVER UNIT LJ#2,snubbing_unit,hydraulic workover unit
+* HYDRAULIC WORKOVER UNIT NO#2,snubbing_unit,hydraulic workover unit
+* JACKUP RIG TO BE DETERMINED,unknown,TBD entry
+* LIFT BOAT,lift_boat,generic lift boat
+* LIFT BOAT (HOUMA #2),lift_boat,lift boat - Houma district
+* LIFT BOAT (HOUMA #3),lift_boat,lift boat - Houma district
+* LIFT BOAT (HOUMA DIST),lift_boat,lift boat - Houma district
+* LIFT BOAT (L.C.#2),lift_boat,lift boat - Lake Charles district
+* LIFT BOAT (L.C.#3),lift_boat,lift boat - Lake Charles district
+* LIFT BOAT (L.J. #2)),lift_boat,lift boat - Lake Jackson district
+* LIFT BOAT (L.J. #3),lift_boat,lift boat - Lake Jackson district
+* LIFT BOAT (LAF #2),lift_boat,lift boat - Lafayette district
+* LIFT BOAT (LAF #3),lift_boat,lift boat - Lafayette district
+* LIFT BOAT (LAFAYETTE DIST),lift_boat,lift boat - Lafayette district
+* LIFT BOAT (LAKE CHARLES DIST,lift_boat,lift boat - Lake Charles district
+* LIFT BOAT (LAKE JACKSON),lift_boat,lift boat - Lake Jackson district
+* LIFT BOAT (N.O. #2),lift_boat,lift boat - New Orleans district
+* LIFT BOAT (N.O. #3),lift_boat,lift boat - New Orleans district
+* LIFT BOAT (NEW ORLEANS DIST),lift_boat,lift boat - New Orleans district
+* NONE RIG PA OPERATION,unknown,plugging & abandonment operation
+* NONE RIG PA OPERATION (HOUMA,unknown,plugging & abandonment operation
+* NONE RIG PA OPERATION (LAF),unknown,plugging & abandonment operation
+* NONE RIG PA OPERATION (LC),unknown,plugging & abandonment operation
+* NONE RIG PA OPERATION (LJ),unknown,plugging & abandonment operation
+* NONE RIG PA OPERATION (NO),unknown,plugging & abandonment operation
+* SNUBBING UNIT,snubbing_unit,generic snubbing unit
+* SNUBBING UNIT (HOUMA #2),snubbing_unit,snubbing unit - Houma district
+* SNUBBING UNIT (HOUMA DIST),snubbing_unit,snubbing unit - Houma district
+* SNUBBING UNIT (L.C. DIST),snubbing_unit,snubbing unit - Lake Charles district
+* SNUBBING UNIT (L.J. DIST),snubbing_unit,snubbing unit - Lake Jackson district
+* SNUBBING UNIT (LAF DIST),snubbing_unit,snubbing unit - Lafayette district
+* SNUBBING UNIT (N.O.DIST),snubbing_unit,snubbing unit - New Orleans district
+* UNSPECIFIED - DO NOT DELETE,unknown,unspecified generic entry
+* WIRELINE (GENERIC),wireline_unit,generic wireline unit
+* WIRELINE UNIT,wireline_unit,generic wireline unit
+* WIRELINE UNIT (HOUMA #2),wireline_unit,wireline unit - Houma district
+* WIRELINE UNIT (HOUMA #3),wireline_unit,wireline unit - Houma district
+* WIRELINE UNIT (HOUMA #5),wireline_unit,wireline unit - Houma district
+* WIRELINE UNIT (HOUMA DIST),wireline_unit,wireline unit - Houma district
+* WIRELINE UNIT (L.C.#2),wireline_unit,wireline unit - Lake Charles district
+* WIRELINE UNIT (L.C.#3),wireline_unit,wireline unit - Lake Charles district
+* WIRELINE UNIT (L.C.DIST),wireline_unit,wireline unit - Lake Charles district
+* WIRELINE UNIT (L.J.#2),wireline_unit,wireline unit - Lake Jackson district
+* WIRELINE UNIT (L.J.#3),wireline_unit,wireline unit - Lake Jackson district
+* WIRELINE UNIT (L.J.DIST),wireline_unit,wireline unit - Lake Jackson district
+* WIRELINE UNIT (LAF #2),wireline_unit,wireline unit - Lafayette district
+* WIRELINE UNIT (LAF #3),wireline_unit,wireline unit - Lafayette district
+* WIRELINE UNIT (LAF DIST),wireline_unit,wireline unit - Lafayette district
+* WIRELINE UNIT (N.O. #2),wireline_unit,wireline unit - New Orleans district
+* WIRELINE UNIT (N.O. #3),wireline_unit,wireline unit - New Orleans district
+* WIRELINE UNIT (N.O.DIST),wireline_unit,wireline unit - New Orleans district
+** RIG TO BE DETERMINED,unknown,TBD entry
+** RIG TO BE DETERMINED DP SEMI,unknown,TBD entry
+",AROME 300",unknown,typo/unclear
+-,unknown,garbage entry
+.,unknown,garbage entry
+/SL,wireline_unit,slickline unit abbreviation
+1004 E,unknown,unclear designation
+11-JUN-2002,unknown,date entry
+14000,unknown,number only
+21MAR90,unknown,date entry
+23514,unknown,number only
+30BLE AMOS RUNNER,jack_up,Noble Amos Runner typo
+3NSCO 98,jack_up,Ensco 98 typo
+41EP,unknown,unclear designation
+6025,unknown,number only
+ACHILLES,jack_up,Falcon Achilles jack-up
+ADIATIC IV,jack_up,Adriatic IV typo
+ADIRATIC III,jack_up,Adriatic III typo
+ADRIATIC,jack_up,Glomar/GSF Adriatic jack-up
+ADRIATIC 11,jack_up,Adriatic II typo
+ADRIATIC 111,jack_up,Adriatic III typo
+ADRIATIC II,jack_up,Glomar/GSF Adriatic II jack-up
+ADRIATIC III,jack_up,Glomar/GSF Adriatic III jack-up
+ADRIATIC IV,jack_up,Glomar/GSF Adriatic IV jack-up
+ADRIATIC IX,jack_up,Glomar/GSF Adriatic IX jack-up
+ADRIATIC X,jack_up,Glomar/GSF Adriatic X jack-up
+AL BREAUX,jack_up,jack-up rig
+ALABAMA,jack_up,Pride Alabama jack-up
+ALASKA,jack_up,Rowan/Pride Alaska jack-up
+AMBERJACK/EL,wireline_unit,platform with electric line
+AMERICAN CONSTITUTION,support_vessel,dive support vessel
+AMERICAN CONSTITUTION D. BOAT,support_vessel,dive support vessel
+AMERICAN CONSTITUTION DIVE BOA,support_vessel,dive support vessel
+AMIRANTE,jack_up,Transocean Amirante jack-up
+AMOS RUNNER,jack_up,Noble Amos Runner jack-up
+ANCHORAGE,jack_up,Rowan Anchorage jack-up
+APPLIED SNUBBING TECH #103,snubbing_unit,snubbing unit
+ARAPAHOE (LIFT BOAT),lift_boat,lift boat
+ARCTIC 1,jack_up,GSF Arctic I jack-up
+ARCTIC I,jack_up,GSF Arctic I jack-up
+ARCTOC 1,jack_up,Arctic I typo
+ARIES RAM XI L.BOAT/FALCON PHO,lift_boat,Aries Ram XI lift boat
+ARRIATIC IV,jack_up,Adriatic IV typo
+ARRIATIC IVV,jack_up,Adriatic IV typo
+ARTIC 1,jack_up,Arctic I typo
+ARTIC I,jack_up,GSF Arctic I jack-up
+AST SNUBBING UNIT #104,snubbing_unit,snubbing unit
+ATTWOOD HUNTER,jack_up,Atwood Hunter jack-up
+ATTWOOD RICHMOND,jack_up,Atwood Richmond jack-up
+AUGER,platform_rig,Auger TLP platform rig
+AUGER TLP,platform_rig,Auger TLP platform rig
+B/A,unknown,unclear abbreviation
+BAKER ATLAS WIRELINE,wireline_unit,wireline unit
+BALTIC 1,jack_up,Glomar Baltic I jack-up
+BALTIC I,jack_up,Glomar Baltic I jack-up
+BELFORD DOLPHIN,semi_submersible,Belford Dolphin semi
+BILL JENNINGS,jack_up,Noble Bill Jennings jack-up
+BLAKE 1006,jack_up,Blake jack-up rig
+BLAKE 1007,jack_up,Blake jack-up rig
+BLAKE 101,jack_up,Blake jack-up rig
+BLAKE 14,jack_up,Blake jack-up rig
+BLAKE 1501,jack_up,Blake jack-up rig
+BLAKE 1501E,jack_up,Blake jack-up rig
+BLAKE 1502,jack_up,Blake jack-up rig
+BLAKE 1505,jack_up,Blake jack-up rig
+BLAKE 151,jack_up,Blake jack-up rig
+BLAKE 202,jack_up,Blake jack-up rig
+BLAKE 210,jack_up,Blake jack-up rig
+BLAKE 303,jack_up,Blake jack-up rig
+BLAKE 651,jack_up,Blake jack-up rig
+BLAKE INTERNATIONAL,jack_up,Blake jack-up rig
+BOAT,unknown,unclear designation
+BOB PALMER,jack_up,Rowan Bob Palmer jack-up
+BOOKER 1005,jack_up,Booker jack-up rig
+BOOKER 651,jack_up,Booker jack-up rig
+BOOKER 653,jack_up,Booker jack-up rig
+BORGNY DOLPHIN,semi_submersible,Borgny Dolphin semi
+BRAID LINE/CTU/EL,wireline_unit,multi-intervention unit
+BRAIDED LN/EL/CTU/SL,wireline_unit,multi-intervention unit
+C E THORNTON,jack_up,C.E. Thornton jack-up
+C KIRK RHEIN,jack_up,C. Kirk Rhein jack-up
+C KIRK RHEIN JR,jack_up,C. Kirk Rhein Jr jack-up
+"C KIRK RHEIN, JR",jack_up,C. Kirk Rhein Jr jack-up
+C R LUIGS,jack_up,C.R. Luigs jack-up
+C-T,coil_tubing_unit,coiled tubing unit abbreviation
+"C. KIRK REHEIN, JR",jack_up,C. Kirk Rhein Jr jack-up
+C. KIRK RHEIN,jack_up,C. Kirk Rhein jack-up
+"C. KIRK RHEIN, JR.",jack_up,C. Kirk Rhein Jr jack-up
+C. R. LUIGS,jack_up,C.R. Luigs jack-up
+C.E. THORNTON,jack_up,C.E. Thornton jack-up
+"C.KIRK RHEIN, JR.",jack_up,C. Kirk Rhein Jr jack-up
+C.R. LUGIS,jack_up,C.R. Luigs typo
+C.R. LUIGIS,jack_up,C.R. Luigs typo
+C.R. LUIGS,jack_up,C.R. Luigs jack-up
+C.R.LUIGS,jack_up,C.R. Luigs jack-up
+C/T,coil_tubing_unit,coiled tubing unit abbreviation
+CAL DIVE Q-4000,support_vessel,Cal Dive Q-4000 dive support vessel
+CAL DIVE UNCLE JOHN,support_vessel,Cal Dive Uncle John dive support vessel
+CAL-DIVE Q-4000,support_vessel,Cal Dive Q-4000 dive support vessel
+CAL-DIVE UNCLE JOHN,support_vessel,Cal Dive Uncle John dive support vessel
+CALDIVE Q-4000,support_vessel,Cal Dive Q-4000 dive support vessel
+CALDIVE Q-4000 (SS),support_vessel,Cal Dive Q-4000 dive support vessel
+CARDINAL SERVICES - PJ JONES,unknown,service company entry
+CARL NORBERG,jack_up,Noble Carl Norberg jack-up
+CARL NORBERT,jack_up,Noble Carl Norberg typo
+CARL NORGERB,jack_up,Noble Carl Norberg typo
+CDCILE PROVINE,jack_up,Cecil Provine typo
+CDI Q-4000,support_vessel,Cal Dive Q-4000 dive support vessel
+CEAN KING,semi_submersible,Ocean King typo
+CECIL PRIVINE,jack_up,Cecil Provine jack-up
+CECILE PROVINE,jack_up,Cecil Provine jack-up
+CELTIC SEA,jack_up,GSF Celtic Sea jack-up
+CHALLENGER MINERALS INC,unknown,operator name
+CHARLES COPELAND,jack_up,jack-up rig
+CHERYL DANIELS,lift_boat,lift boat
+CHHILES TONALA,jack_up,Chiles Tonala typo
+"CHILES ""FALRIG 20""",jack_up,Chiles jack-up rig
+"CHILES ""TONALA""",jack_up,Chiles Tonala jack-up
+CHILES COLUMBIS,jack_up,Chiles Columbus typo
+CHILES COLUMBUS,jack_up,Chiles Columbus jack-up
+CHILES MAGELIAN,jack_up,Chiles Magellan typo
+CHILES MAGELLAN,jack_up,Chiles Magellan jack-up
+CHILES OFFSHORE TONALA,jack_up,Chiles Tonala jack-up
+CHILES TONALA,jack_up,Chiles Tonala jack-up
+CHILLES TONALA,jack_up,Chiles Tonala typo
+CIOL TUBING,coil_tubing_unit,coiled tubing unit typo
+CIUK TUBING,coil_tubing_unit,coiled tubing unit typo
+CLADIVE Q-4000 (SS),support_vessel,Cal Dive Q-4000 dive support vessel
+CLIFF 156,jack_up,Cliffs Drilling jack-up
+CLIFF 200,jack_up,Cliffs Drilling jack-up
+CLIFF DRILLING 100,jack_up,Cliffs Drilling jack-up
+CLIFF DRILLING 150,jack_up,Cliffs Drilling jack-up
+CLIFF DRILLING 151,jack_up,Cliffs Drilling jack-up
+CLIFF DRILLING 152,jack_up,Cliffs Drilling jack-up
+CLIFF DRILLING 155,jack_up,Cliffs Drilling jack-up
+CLIFF DRILLING 200,jack_up,Cliffs Drilling jack-up
+CLIFF'S 200,jack_up,Cliffs Drilling jack-up
+CLIFF'S RIG NO. 150,jack_up,Cliffs Drilling jack-up
+CLIFFS 150,jack_up,Cliffs Drilling jack-up
+CLIFFS 152,jack_up,Cliffs Drilling jack-up
+CLIFFS 153,jack_up,Cliffs Drilling jack-up
+CLIFFS 155,jack_up,Cliffs Drilling jack-up
+CLIFFS 156,jack_up,Cliffs Drilling jack-up
+CLIFFS 180,jack_up,Cliffs Drilling jack-up
+CLIFFS 200,jack_up,Cliffs Drilling jack-up
+CLIFFS DRILLING 152,jack_up,Cliffs Drilling jack-up
+CLIFFS DRILLING 153,jack_up,Cliffs Drilling jack-up
+CLIFFS DRILLING 156,jack_up,Cliffs Drilling jack-up
+CLIFFS DRILLING 180,jack_up,Cliffs Drilling jack-up
+CLIFFS RIG 152,jack_up,Cliffs Drilling jack-up
+CLIFFS RIG 180,jack_up,Cliffs Drilling jack-up
+CLOMAR MAIN PASS IV,jack_up,Glomar Main Pass IV typo
+COASTAL RIG 22,jack_up,Coastal jack-up rig
+COIL TBG UNIT,coil_tubing_unit,coiled tubing unit abbreviation
+COIL TUBING,coil_tubing_unit,coiled tubing unit
+COIL TUBING UNIT,coil_tubing_unit,coiled tubing unit
+COIL TUBING UNIT - E-LINE,coil_tubing_unit,coiled tubing with electric line
+COIL TUBING UNIT / ELU,coil_tubing_unit,coiled tubing with electric line
+COIL TUBING UNIT/TETRA 7,coil_tubing_unit,coiled tubing unit
+COIL TUBING UNIT/WIRELINE UNIT,coil_tubing_unit,coiled tubing with wireline
+COIL TUBING/ ELECTRIC LINE,coil_tubing_unit,coiled tubing with electric line
+COIL TUBING/ SLICKLINE,coil_tubing_unit,coiled tubing with slickline
+COIL TUNBING UNIT,coil_tubing_unit,coiled tubing unit typo
+COILED TBG,coil_tubing_unit,coiled tubing unit abbreviation
+COILED TBG UNIT,coil_tubing_unit,coiled tubing unit abbreviation
+COILED TBG/SLICKLINE,coil_tubing_unit,coiled tubing with slickline
+COILED TUBING,coil_tubing_unit,coiled tubing unit
+COILED TUBING UNIT,coil_tubing_unit,coiled tubing unit
+CR LUIGS,jack_up,C.R. Luigs jack-up
+CT,coil_tubing_unit,coiled tubing unit abbreviation
+CT & EL,coil_tubing_unit,coiled tubing with electric line
+CT UNIT,coil_tubing_unit,coiled tubing unit
+"CT UNIT, WIRELINE",coil_tubing_unit,coiled tubing with wireline
+"CT, EL, WL",coil_tubing_unit,multi-intervention unit
+CT/EL,coil_tubing_unit,coiled tubing with electric line
+CT/EL UNIT,coil_tubing_unit,coiled tubing with electric line
+CTU,coil_tubing_unit,coiled tubing unit abbreviation
+CTU & EL,coil_tubing_unit,coiled tubing with electric line
+CTU & SL,coil_tubing_unit,coiled tubing with slickline
+CTU - EL,coil_tubing_unit,coiled tubing with electric line
+CTU / E-LINE,coil_tubing_unit,coiled tubing with electric line
+CTU AND PA UNIT,coil_tubing_unit,coiled tubing unit
+CTU EWU SLU,coil_tubing_unit,multi-intervention unit
+"CTU, EL, SL",coil_tubing_unit,multi-intervention unit
+"CTU, SL",coil_tubing_unit,coiled tubing with slickline
+CTU-WIRELINE UNIT,coil_tubing_unit,coiled tubing with wireline
+CTU/ HWO UNIT,coil_tubing_unit,coiled tubing with hydraulic workover
+CTU/EL,coil_tubing_unit,coiled tubing with electric line
+CTU/EL/SL,coil_tubing_unit,multi-intervention unit
+CTU/ELU,coil_tubing_unit,coiled tubing with electric line
+CTU/EWU,coil_tubing_unit,coiled tubing with wireline
+CTU/POOL 10,coil_tubing_unit,coiled tubing on Pool rig
+CTU/PRIDE MICHIGAN,coil_tubing_unit,coiled tubing on Pride Michigan
+CTU/SLICKLINE,coil_tubing_unit,coiled tubing with slickline
+CTU/WIRELINE/SLICK-LINE UNIT,coil_tubing_unit,multi-intervention unit
+CTU/WL,coil_tubing_unit,coiled tubing with wireline
+CTU/WL UNIT,coil_tubing_unit,coiled tubing with wireline
+CUDD SNUBBING UNIT,snubbing_unit,snubbing unit
+CUPERIOR ENERGY SERVICES P&A,unknown,P&A operation typo
+D O AMERICA,semi_submersible,Diamond Ocean America typo
+D O KING,semi_submersible,Diamond Ocean King typo
+D.O. CHAMPION,semi_submersible,Diamond Ocean Champion semi
+D.O. COLUMBIA,semi_submersible,Diamond Ocean Columbia semi
+D.O. CONCORD,semi_submersible,Diamond Ocean Concord semi
+D.O. CONFIDENCE,semi_submersible,Diamond Ocean Confidence semi
+D.O. CRUSADER,semi_submersible,Diamond Ocean Crusader semi
+D.O. DRAKE,semi_submersible,Diamond Ocean Drake semi
+D.O. KING,semi_submersible,Diamond Ocean King semi
+D.O. NEW ERA,semi_submersible,Diamond Ocean New Era semi
+D.O. NUGGET,semi_submersible,Diamond Ocean Nugget semi
+D.O. SARATOGA,semi_submersible,Diamond Ocean Saratoga semi
+D.O. SUMMIT,semi_submersible,Diamond Ocean Summit semi
+D/B BOAT,unknown,unclear designation
+D/B BOAZ,unknown,unclear designation
+D/V HAMMERHEAD,support_vessel,dive vessel
+DD 202,jack_up,drilling rig
+DEEP SEAS,drillship,Discoverer Deep Seas drillship
+DIAMOND AMBASSADOR,semi_submersible,Diamond Ambassador semi
+DIAMOND COLUMBIA,semi_submersible,Diamond Ocean Columbia semi
+DIAMOND CONCORD,semi_submersible,Diamond Ocean Concord semi
+DIAMOND LEXINGTON,semi_submersible,Diamond Lexington semi
+DIAMOND NEW ERA,semi_submersible,Diamond Ocean New Era semi
+DIAMOND OFFSHORE RATHER,semi_submersible,Diamond Offshore Rather semi
+DIAMOND OFFSHORE WEST VELA,semi_submersible,Diamond West Vela semi
+DIAMOND SARATOGA,semi_submersible,Diamond Ocean Saratoga semi
+DIAMOND SUMMIT,semi_submersible,Diamond Ocean Summit semi
+DIAMOND VICTORY,jack_up,Diamond Victory jack-up
+DIAMOND WEST AURIGA,semi_submersible,Diamond West Auriga semi
+DIAMOND WORKER,jack_up,Diamond Worker jack-up
+DIAMOND-OCEN KING,semi_submersible,Diamond Ocean King typo
+DICSOVERER 534,drillship,Discoverer drillship typo
+DISCOVER DEEP SEAS,drillship,Discoverer Deep Seas drillship
+DISCOVER ENTERPIRSE,drillship,Discoverer Enterprise typo
+DISCOVER ENTERPRISE,drillship,Discoverer Enterprise drillship
+DISCOVERY DEEP SEAS,drillship,Discoverer Deep Seas drillship
+DISCOVERY ENTERPRISE,drillship,Discoverer Enterprise drillship
+DISOVERER SPIRIT,drillship,Discoverer Spirit typo
+DIVE BOAT,support_vessel,dive support vessel
+DIVE SUPPORT VESSEL (DSV),support_vessel,dive support vessel
+DIVE VESSEL/WIRELINE UNIT,support_vessel,dive vessel with wireline
+DIXIE ENDEAVOR LIFT BOAT,lift_boat,Dixie Endeavor lift boat
+DIXIE LEGACY LIFT BOAT,lift_boat,Dixie Legacy lift boat
+DO CONCORD,semi_submersible,Diamond Ocean Concord semi
+DO QUEST,semi_submersible,Diamond Ocean Quest semi
+DOLPHIN,jack_up,Dolphin Titan jack-up
+DOLPHIN 105,jack_up,Dolphin Titan 105 jack-up
+DOLPHIN 106,jack_up,Dolphin Titan 106 jack-up
+DOLPHIN 109,jack_up,Dolphin Titan 109 jack-up
+DOLPHIN 110,jack_up,Dolphin Titan 110 jack-up
+DOLPHIN 111,jack_up,Dolphin Titan 111 jack-up
+DOLPHIN II0,jack_up,Dolphin Titan 110 typo
+DOLPHIN III,jack_up,Dolphin Titan III jack-up
+DOLPHIN TITAL 105 (JU),jack_up,Dolphin Titan 105 jack-up
+DOLPHIN TITAL 106 (JU),jack_up,Dolphin Titan 106 jack-up
+DOLPHIN TITAN 105 (JU),jack_up,Dolphin Titan 105 jack-up
+DOLPHIN TITAN 106 (JU),jack_up,Dolphin Titan 106 jack-up
+DOLPHIN TITAN 110,jack_up,Dolphin Titan 110 jack-up
+DOLPHIN TITAN 111,jack_up,Dolphin Titan 111 jack-up
+DOLPHIN TITAN III,jack_up,Dolphin Titan III jack-up
+DOLPHION TITAL 106 (JU),jack_up,Dolphin Titan 106 typo
+DP WORKBOAT,support_vessel,dynamic positioning workboat
+DRILLING 3-1/16 CTU FOR SIDETRACKS WITH MUD MOTOR,coil_tubing_unit,coiled tubing drilling
+DRL,unknown,unclear abbreviation
+DSV,support_vessel,dive support vessel abbreviation
+"DSV ""AMERICAN CONSTITUTION""",support_vessel,dive support vessel
+DSV AMERICAN TRIUMPH,support_vessel,dive support vessel
+DSV-AMERICAN TRIUMPH,support_vessel,dive support vessel
+DT 105,jack_up,Dolphin Titan 105 jack-up
+DT 106,jack_up,Dolphin Titan 106 jack-up
+DT 110,jack_up,Dolphin Titan 110 jack-up
+DT-105,jack_up,Dolphin Titan 105 jack-up
+DUAL RIG 41,jack_up,Dual Drilling jack-up
+DULARGE,unknown,unclear designation
+DW MILLENNIUM,drillship,Deepwater Millennium drillship
+DW PATHFINDER,drillship,Deepwater Pathfinder drillship
+DW PATHFRINDER,drillship,Deepwater Pathfinder typo
+E LINE,wireline_unit,electric line unit abbreviation
+E-LINE,wireline_unit,electric line unit
+E-LINE & CTU,wireline_unit,electric line with coiled tubing
+E-LINE & TCU,wireline_unit,electric line with coiled tubing
+E-LINE / COIL TUBING,wireline_unit,electric line with coiled tubing
+E-LINE / COOIL TUBING UNIT,wireline_unit,electric line with coiled tubing
+E-LINE / S-LINE,wireline_unit,electric line with slickline
+E-LINE UNIT,wireline_unit,electric line unit
+E-LINE/SLICKLINE,wireline_unit,electric line with slickline
+E-LINE/SLICKLINE UNIT,wireline_unit,electric line with slickline
+E-LINE/SLICKLINE/CTU,wireline_unit,multi-intervention unit
+"E-LINTE, CT",wireline_unit,electric line with coiled tubing typo
+E/L,wireline_unit,electric line abbreviation
+E/L & SNUBBING UNIT,wireline_unit,electric line with snubbing
+E/LINE,wireline_unit,electric line abbreviation
+E/LINE & CT,wireline_unit,electric line with coiled tubing
+EAR FREDERICKSON,jack_up,Earl Frederickson typo
+EARL FREDEREICKSON,jack_up,Earl Frederickson typo
+EARL FREDERICKSON,jack_up,Noble Earl Frederickson jack-up
+EARL FREDERICSON,jack_up,Earl Frederickson typo
+EARL FREDRICKSON,jack_up,Earl Frederickson typo
+ECSCO 98,jack_up,Ensco 98 typo
+EDDIE PAUL,jack_up,Noble Eddie Paul jack-up
+EE-LINE,wireline_unit,electric line typo
+EL,wireline_unit,electric line abbreviation
+EL & P&A UNIT,wireline_unit,electric line with P&A
+EL & SL,wireline_unit,electric line with slickline
+EL / SLU,wireline_unit,electric line with slickline
+EL UNIT,wireline_unit,electric line unit
+"EL,SL,CTU",wireline_unit,multi-intervention unit
+EL/CT,wireline_unit,electric line with coiled tubing
+EL/CTU,wireline_unit,electric line with coiled tubing
+EL/EDDIE PAUL,wireline_unit,electric line on Eddie Paul rig
+EL/SL,wireline_unit,electric line with slickline
+EL/SL UNIT,wireline_unit,electric line with slickline
+EL/SLICKLINE,wireline_unit,electric line with slickline
+EL/SLU,wireline_unit,electric line with slickline
+EL/SNUBBING UNIT,wireline_unit,electric line with snubbing
+ELEC LINE UNIT,wireline_unit,electric line unit
+ELECTRIC LIN UNIT,wireline_unit,electric line unit typo
+ELECTRIC LINE,wireline_unit,electric line unit
+ELECTRIC LINE / COIL TUBING,wireline_unit,electric line with coiled tubing
+ELECTRIC LINE / WIRELINE UNITS,wireline_unit,electric line unit
+ELECTRIC LINE UNIT,wireline_unit,electric line unit
+"ELECTRIC LINE, RBF 253",wireline_unit,electric line on RBF rig
+ELECTRIC LINE/SLICK LINE,wireline_unit,electric line with slickline
+ELECTRIC LINE/SLICKLINE UNIT,wireline_unit,electric line with slickline
+ELECTRIC LINE/WIRELINE UNITS,wireline_unit,electric line unit
+ELECTRICL LINE,wireline_unit,electric line typo
+ELU,wireline_unit,electric line unit abbreviation
+ELU/SLU,wireline_unit,electric line with slickline
+ENCSO 69,jack_up,Ensco 69 typo
+ENSOC 90,jack_up,Ensco 90 typo
+ENSOC A55,jack_up,Ensco A55 typo
+ENTERPRISE 205,jack_up,Enterprise jack-up rig
+ENTERPRISE 263,jack_up,Enterprise jack-up rig
+ENTERPRISE 264,jack_up,Enterprise jack-up rig
+ENTERPRISE 351,jack_up,Enterprise jack-up rig
+ENXCO 90,jack_up,Ensco 90 typo
+ENXSO 89,jack_up,Ensco 89 typo
+ERIC DANOS,lift_boat,Eric Danos lift boat
+EWLU,wireline_unit,electric/wireline unit abbreviation
+EWU,wireline_unit,electric/wireline unit abbreviation
+EWU CTU,wireline_unit,electric/wireline with coiled tubing
+EWU SLU,wireline_unit,electric/wireline with slickline
+EWU/SLU,wireline_unit,electric/wireline with slickline
+F,unknown,single character garbage
+F. G. MCCLINTOCK,jack_up,F.G. McClintock jack-up
+F.G. MCCLINTOCK,jack_up,F.G. McClintock jack-up
+FAITH LIFTBOAT,lift_boat,Faith lift boat
+FALCON 100,jack_up,Falcon jack-up rig
+FALCON 152,jack_up,Falcon jack-up rig
+FALCON 153,jack_up,Falcon jack-up rig
+FALCON 18,jack_up,Falcon jack-up rig
+FALCON 19,jack_up,Falcon jack-up rig
+FALCON 20,jack_up,Falcon jack-up rig
+FALCON 203,jack_up,Falcon jack-up rig
+FALCON 206,jack_up,Falcon jack-up rig
+FALCON 77,jack_up,Falcon jack-up rig
+FALCON 78,jack_up,Falcon jack-up rig
+FALCON 82,jack_up,Falcon jack-up rig
+FALCON 84,jack_up,Falcon jack-up rig
+FALCON 85,jack_up,Falcon jack-up rig
+FALCON 86,jack_up,Falcon jack-up rig
+FALCON ACHILLES,jack_up,Falcon Achilles jack-up
+FALCON GALLOWAY,jack_up,Falcon Galloway jack-up
+FALCON MCCLINTOCK,jack_up,Falcon McClintock jack-up
+FALCON NO. 156,jack_up,Falcon jack-up rig
+FALCON PHOENIX I,jack_up,Falcon Phoenix I jack-up
+FALCON PHOENIX II,jack_up,Falcon Phoenix II jack-up
+FALCON PHOENIX III,jack_up,Falcon Phoenix III jack-up
+FALCON PHOENIX IV,jack_up,Falcon Phoenix IV jack-up
+FALCON RIG #52,jack_up,Falcon jack-up rig
+FALCON RIG 17,jack_up,Falcon jack-up rig
+FALCON RIG 18,jack_up,Falcon jack-up rig
+FALCON RIG 86,jack_up,Falcon jack-up rig
+FALCON TAURUS,jack_up,Falcon Taurus jack-up
+FALCON'S PHOENIX II,jack_up,Falcon Phoenix II jack-up
+FALCON-PHOENIX IV,jack_up,Falcon Phoenix IV jack-up
+FALRIG 17,jack_up,Falcon jack-up rig
+FALRIG 18,jack_up,Falcon jack-up rig
+FALRIG 19,jack_up,Falcon jack-up rig
+FALRIG 20,jack_up,Falcon jack-up rig
+FALRIG 20 RBF 253,jack_up,Falcon jack-up rig
+FALRIG 20 RBF 263,jack_up,Falcon jack-up rig
+FALRIG 47,jack_up,Falcon jack-up rig
+FALRIG 77,jack_up,Falcon jack-up rig
+FALRIG 82,jack_up,Falcon jack-up rig
+FALRIG 84,jack_up,Falcon jack-up rig
+FALRIG 85,jack_up,Falcon jack-up rig
+FALRIG 86,jack_up,Falcon jack-up rig
+FALRIG TAURUS,jack_up,Falcon Taurus jack-up
+FOCUS WL,wireline_unit,wireline unit
+FREEPORT 2,jack_up,Freeport jack-up rig
+FREEPORT RIG 1,jack_up,Freeport jack-up rig
+FREEPORT RIG 2,jack_up,Freeport jack-up rig
+FREEPORT RIG I,jack_up,Freeport jack-up rig
+FREEPROT RIG 2,jack_up,Freeport jack-up rig typo
+FRI RODLI,jack_up,Noble Fri Rodli jack-up
+FRONTIER DRILLER,drillship,Frontier Driller drillship
+G H GALLOWAY,jack_up,G.H. Galloway jack-up
+G. H. GALLOWAY,jack_up,G.H. Galloway jack-up
+G.H. GALLOWAY,jack_up,G.H. Galloway jack-up
+GALLOWAY,jack_up,Galloway jack-up
+GENE ROSSER,jack_up,Noble Gene Rosser jack-up
+GENERIC COIL TUBING UNIT,coil_tubing_unit,generic coiled tubing unit
+GEORGE GALLOWAY,jack_up,George Galloway jack-up
+GEORGE H GALLOWAY,jack_up,George H. Galloway jack-up
+GEORGE H. GALLOWAY,jack_up,George H. Galloway jack-up
+GIBLERT ROWE,jack_up,Gilbert Rowe typo
+GILBERT ROWE,jack_up,Gilbert Rowe jack-up
+GILBERT TOWE,jack_up,Gilbert Rowe typo
+GLO0MAR ADRIATIC IV,jack_up,Glomar Adriatic IV typo
+GLOBAL ADRIATIC III,jack_up,Global/GSF Adriatic III jack-up
+GLOBAL CELTIC SEA,jack_up,Global/GSF Celtic Sea jack-up
+GLOBAL HIGH ISLAND IV,jack_up,Global/GSF High Island IV jack-up
+GLOBAL KINGFISH,jack_up,Global Kingfish jack-up
+GLOBAL L/B DOLPHIN,lift_boat,Global lift boat Dolphin
+GLOBAL MARINE ADRIATIC,jack_up,Global Marine Adriatic jack-up
+GLOBAL MARINE BALTIC,jack_up,Global Marine Baltic jack-up
+GLOBAL MARINE BALTIC 1,jack_up,Global Marine Baltic I jack-up
+GLOBAL MARINE BALTIC I,jack_up,Global Marine Baltic I jack-up
+GLOBAL MARINE BLATIC I,jack_up,Global Marine Baltic I typo
+GLOBAL MARINE CELTIC SEA,jack_up,Global Marine Celtic Sea jack-up
+GLOBAL MARINE HI IV/CTU,jack_up,Global Marine High Island IV with CTU
+GLOBAL MARINE HIGH ISLAND II,jack_up,Global Marine High Island II jack-up
+GLOBAL MARINE MAIN PASS IV,jack_up,Global Marine Main Pass IV jack-up
+GLOBAL MARINE MP IV,jack_up,Global Marine Main Pass IV jack-up
+"GLOBAL MV HAMMERHEAD WIRELINE""",wireline_unit,wireline unit on vessel
+GLOBAL SANTA FE,jack_up,GSF jack-up rig
+"GLOBAL SANTA FE  ""CELTIC SEA""",jack_up,GSF Celtic Sea jack-up
+"GLOBAL SANTA FE ""ADRIATIC X""",jack_up,GSF Adriatic X jack-up
+"GLOBAL SANTA FE ""ADRIATICX""",jack_up,GSF Adriatic X jack-up
+"GLOBAL SANTA FE ""MAIN PASS 1""",jack_up,GSF Main Pass I jack-up
+"GLOBAL SANTA FE ""MAIN PASS I""",jack_up,GSF Main Pass I jack-up
+GLOBAL SANTA FE - MAIN PASS I,jack_up,GSF Main Pass I jack-up
+GLOBAL SANTA FE ADRIATIC III,jack_up,GSF Adriatic III jack-up
+GLOBAL SANTA FE ARCTIC 1,jack_up,GSF Arctic I jack-up
+GLOBAL SANTA FE ARTIC I,jack_up,GSF Arctic I jack-up
+GLOBAL SANTA FE HIGH ISLAND I,jack_up,GSF High Island I jack-up
+GLOBAL SANTA FE HIGH ISLAND II,jack_up,GSF High Island II jack-up
+GLOBAL SANTA FE HIGH ISLAND VI,jack_up,GSF High Island VI jack-up
+GLOBAL SANTA FE HIGH ISLANDI,jack_up,GSF High Island I jack-up
+GLOBAL SANTA FE INC.,unknown,company name
+GLOBAL SANTA FE JACK RYAN,jack_up,GSF Jack Ryan jack-up
+"GLOBAL SANTA FE"" CELTIC SEA""",jack_up,GSF Celtic Sea jack-up
+GLOBAL SANTA FE-ARCTIC 1,jack_up,GSF Arctic I jack-up
+GLOBAL SANTA FE-MAIN PASS I,jack_up,GSF Main Pass I jack-up
+GLOBAL SANTA FE/HIGH ISLAND VI,jack_up,GSF High Island VI jack-up
+GLOBAL SANTA FE: C.R. LUIGS,jack_up,GSF C.R. Luigs jack-up
+GLOBAL SANTA FE: CR LUIGS,jack_up,GSF C.R. Luigs jack-up
+GLOBAL SANTAFE ADRIATIC 10,jack_up,GSF Adriatic X jack-up
+GLOBAL SANTE FE  MAIN PASS I,jack_up,GSF Main Pass I jack-up
+GLOBAL SANTE FE CELTIC SEA,jack_up,GSF Celtic Sea jack-up
+GLOMAR ADRIATIC,jack_up,Glomar Adriatic jack-up
+GLOMAR ADRIATIC II,jack_up,Glomar Adriatic II jack-up
+GLOMAR ADRIATIC III,jack_up,Glomar Adriatic III jack-up
+GLOMAR ADRIATIC IV,jack_up,Glomar Adriatic IV jack-up
+GLOMAR ADRIATIC IX,jack_up,Glomar Adriatic IX jack-up
+GLOMAR ADRIATIC VI,jack_up,Glomar Adriatic VI jack-up
+GLOMAR ADRIATIC VII,jack_up,Glomar Adriatic VII jack-up
+GLOMAR ADRIATIC X,jack_up,Glomar Adriatic X jack-up
+GLOMAR ADRIATICX,jack_up,Glomar Adriatic X jack-up
+GLOMAR ARCTIC 1,jack_up,Glomar Arctic I jack-up
+GLOMAR ARCTIC I,jack_up,Glomar Arctic I jack-up
+GLOMAR ARTIC 1,jack_up,Glomar Arctic I jack-up
+GLOMAR ARTIC I,jack_up,Glomar Arctic I jack-up
+GLOMAR BALTIC I,jack_up,Glomar Baltic I jack-up
+GLOMAR C. R. LUIGS,jack_up,Glomar C.R. Luigs jack-up
+GLOMAR C.R. LUIGS,jack_up,Glomar C.R. Luigs jack-up
+GLOMAR CELTIC SEA,jack_up,Glomar Celtic Sea jack-up
+GLOMAR CLETIC SEA,jack_up,Glomar Celtic Sea typo
+GLOMAR HI ISL VIII,jack_up,Glomar High Island VIII jack-up
+GLOMAR HI ISLAND VIII,jack_up,Glomar High Island VIII jack-up
+GLOMAR HIGH ISL. II,jack_up,Glomar High Island II jack-up
+GLOMAR HIGH ISLAND,jack_up,Glomar High Island jack-up
+GLOMAR HIGH ISLAND 1,jack_up,Glomar High Island I jack-up
+GLOMAR HIGH ISLAND 11,jack_up,Glomar High Island II jack-up
+GLOMAR HIGH ISLAND I,jack_up,Glomar High Island I jack-up
+GLOMAR HIGH ISLAND II,jack_up,Glomar High Island II jack-up
+GLOMAR HIGH ISLAND III,jack_up,Glomar High Island III jack-up
+GLOMAR HIGH ISLAND IV,jack_up,Glomar High Island IV jack-up
+GLOMAR HIGH ISLAND VIII,jack_up,Glomar High Island VIII jack-up
+GLOMAR HIGH ISLAND VIII 593-31,jack_up,Glomar High Island VIII jack-up
+GLOMAR HIGH ISLAND VILL,jack_up,Glomar High Island VIII jack-up
+GLOMAR HISH ISLAND 1,jack_up,Glomar High Island I typo
+GLOMAR HISH ISLAND II,jack_up,Glomar High Island II typo
+GLOMAR MAIN PASS,jack_up,Glomar Main Pass jack-up
+GLOMAR MAIN PASS 1,jack_up,Glomar Main Pass I jack-up
+GLOMAR MAIN PASS I,jack_up,Glomar Main Pass I jack-up
+GLOMAR MAIN PASS IV,jack_up,Glomar Main Pass IV jack-up
+GLOMAR MARINE HIGH ISLAND IV,jack_up,Glomar High Island IV jack-up
+"GLOMAR MV HAMMERHEAD ""WIRELINE",wireline_unit,wireline unit on vessel
+GLOOMAR CELTIC SEA,jack_up,Glomar Celtic Sea typo
+GM HIGH ISLAND II,jack_up,Glomar High Island II jack-up
+GOMAR CELTIC SEA,jack_up,Glomar Celtic Sea typo
+GSF ADRIATIC III,jack_up,GSF Adriatic III jack-up
+GSF ARCTIC I,jack_up,GSF Arctic I jack-up
+GSF ARTIC I,jack_up,GSF Arctic I jack-up
+GSF C.R. LUIGS,jack_up,GSF C.R. Luigs jack-up
+GSF CELTIC SEA,jack_up,GSF Celtic Sea jack-up
+GSF HIGH ISLAND 1,jack_up,GSF High Island I jack-up
+GSF HIGH ISLAND I,jack_up,GSF High Island I jack-up
+GSF HIGH ISLAND II,jack_up,GSF High Island II jack-up
+GSF HIGH ISLAND III,jack_up,GSF High Island III jack-up
+GSF HIGH ISLAND IV,jack_up,GSF High Island IV jack-up
+GSF HIGH ISLAND VIII,jack_up,GSF High Island VIII jack-up
+GSF MAIN PASS I,jack_up,GSF Main Pass I jack-up
+GSF MAIN PASS IV,jack_up,GSF Main Pass IV jack-up
+GULF ISLAND III,jack_up,Gulf Island III jack-up
+GULF ISLAND VII,jack_up,Gulf Island VII jack-up
+GULF ISLAND VIII,jack_up,Gulf Island VIII jack-up
+H & P  105,jack_up,H&P 105 jack-up
+H & P 105,jack_up,H&P 105 jack-up
+H & P 201,jack_up,H&P 201 jack-up
+H & P 204,jack_up,H&P 204 jack-up
+H & P 205,jack_up,H&P 205 jack-up
+H & P 406 (TLP),platform_rig,H&P 406 platform rig on TLP
+H& 108,jack_up,H&P 108 jack-up
+H&_ 108,jack_up,H&P 108 jack-up typo
+H7P 100,jack_up,H&P 100 jack-up typo
+H7P RIG 202,jack_up,H&P 202 jack-up typo
+HALIFAX,jack_up,Halifax jack-up rig
+HALLIBURTON CT,coil_tubing_unit,Halliburton coiled tubing
+HARKAND SPEARFISH,support_vessel,Harkand support vessel
+HARVEY INTERVENTION,support_vessel,Harvey intervention vessel
+HARVEY SUB-SEA,support_vessel,Harvey subsea vessel
+HES WL UNIT,wireline_unit,wireline unit
+HI II,jack_up,High Island II abbreviation
+HIGH ILSAND VIII,jack_up,High Island VIII typo
+HIGH ISL. VIII,jack_up,High Island VIII abbreviation
+HIGH ISLALND 111,jack_up,High Island III typo
+HIGH ISLAN III,jack_up,High Island III typo
+HIGH ISLAND,jack_up,High Island jack-up rig
+HIGH ISLAND / COIL TUBING UNIT,jack_up,High Island rig with coiled tubing
+HIGH ISLAND 1,jack_up,High Island I jack-up
+HIGH ISLAND 11,jack_up,High Island II jack-up
+HIGH ISLAND 111,jack_up,High Island III jack-up
+HIGH ISLAND 8,jack_up,High Island VIII jack-up
+HIGH ISLAND BLOCK VIII,jack_up,High Island VIII jack-up
+HIGH ISLAND I,jack_up,GSF High Island I jack-up
+HIGH ISLAND II,jack_up,GSF High Island II jack-up
+HIGH ISLAND III,jack_up,GSF High Island III jack-up
+HIGH ISLAND IV,jack_up,GSF High Island IV jack-up
+HIGH ISLAND RIG III,jack_up,High Island III jack-up
+HIGH ISLAND VII,jack_up,High Island VII jack-up
+HIGH ISLAND VIII,jack_up,GSF High Island VIII jack-up
+HIGH ISLND VIII,jack_up,High Island VIII typo
+HIGHISLAND III,jack_up,High Island III jack-up
+HISG ISLAND IV,jack_up,High Island IV typo
+HO 105,snubbing_unit,hydraulic workover unit
+HOLSTEIN SPAR RIG,platform_rig,Holstein Spar platform rig
+HOLSTEIN SPAR RIG DRILLING,platform_rig,Holstein Spar platform rig
+HOMER FARRINGTON,jack_up,Noble Homer Farrington jack-up
+HOMER FERRINGTON,jack_up,Noble Homer Ferrington jack-up
+HOS WARLAND,support_vessel,HOS support vessel
+HOS WOODLAND,support_vessel,HOS support vessel
+HP 106,jack_up,H&P 106 jack-up
+HP 107,jack_up,H&P 107 jack-up
+HP 203,jack_up,H&P 203 jack-up
+HWC,snubbing_unit,hydraulic workover company abbreviation
+HWC #114,snubbing_unit,hydraulic workover unit
+HWC 104,snubbing_unit,hydraulic workover unit
+HWC 109,snubbing_unit,hydraulic workover unit
+HWC 114,snubbing_unit,hydraulic workover unit
+HWC 115,snubbing_unit,hydraulic workover unit
+HWC 123 SNUBBING UNIT,snubbing_unit,snubbing unit
+HWC 125,snubbing_unit,hydraulic workover unit
+HWC 125 SNUBBER,snubbing_unit,snubbing unit
+HWC SNUBBING UNIT,snubbing_unit,snubbing unit
+HWO,snubbing_unit,hydraulic workover abbreviation
+HWO UNIT,snubbing_unit,hydraulic workover unit
+HYDRAULIC WO UNIT,snubbing_unit,hydraulic workover unit
+HYDRAULIC WORKOVER RIG (HWO),snubbing_unit,hydraulic workover unit
+HYDRAULIC WORKOVER UNIT,snubbing_unit,hydraulic workover unit
+HYP 91,jack_up,H&P 91 typo
+Harvey Deep Sea,support_vessel,Harvey support vessel
+INTERNATIONAL FRONTIER,jack_up,International Frontier jack-up
+ISLAND INTERVENTION,support_vessel,Island Intervention vessel
+ISLAND PERFORMER,support_vessel,Island Performer vessel
+ISLAND VENTURE,support_vessel,Island Venture vessel
+ISS #17,jack_up,ISS jack-up rig
+ISS #28,jack_up,ISS jack-up rig
+ISS 18,jack_up,ISS jack-up rig
+ISS 18 P/F,jack_up,ISS jack-up rig platform
+ISS 22,jack_up,ISS jack-up rig
+ISS#17,jack_up,ISS jack-up rig
+ISS18 P/F,jack_up,ISS jack-up rig platform
+J/U ARIES RAM 7,lift_boat,Aries Ram 7 lift boat
+J/U LIFTBOAT JUAN,lift_boat,Juan lift boat
+JACK RYAN,jack_up,GSF Jack Ryan jack-up
+JACK UP BOAT,lift_boat,jack-up boat/lift boat
+JACK-UP BOAT,lift_boat,jack-up boat/lift boat
+JACK-UP-BOAT,lift_boat,jack-up boat/lift boat
+JACKUP,jack_up,generic jack-up
+JACKUP BOAT,lift_boat,jack-up boat/lift boat
+JIM THOMPSON,jack_up,Noble Jim Thompson jack-up
+JOE ALFORD,jack_up,Noble Joe Alford jack-up
+JOHN CHANCER SONAR,support_vessel,sonar support vessel
+JOHN SANDIFER,jack_up,Noble John Sandifer jack-up
+JOHN SANNDIFER,jack_up,Noble John Sandifer typo
+JOHNNIE HOFFMAN,jack_up,Noble Johnnie Hoffman jack-up
+JOPHNNIE HOFFMAN,jack_up,Noble Johnnie Hoffman typo
+JU,lift_boat,jack-up boat abbreviation
+JU BOAT,lift_boat,jack-up boat/lift boat
+JU BOAT W/WIRELINE UNIT,lift_boat,jack-up boat with wireline
+JU BOAT/POWER 8,lift_boat,jack-up boat
+JU LIFTBOAT JUAN,lift_boat,Juan lift boat
+JUAN,lift_boat,Juan lift boat
+JUB SUPERIOR VALOR,lift_boat,Superior Valor lift boat
+KELLI BEADLE,lift_boat,Kelli Beadle lift boat
+L-B / WL / EL,lift_boat,lift boat with wireline/electric line
+L/B,lift_boat,lift boat abbreviation
+"L/B ""GULFISLAND 4"" - CTU",lift_boat,Gulf Island 4 lift boat with CTU
+"L/B ""RAM 8"" - CTU",lift_boat,Ram 8 lift boat with CTU
+"L/B ""SPIRIT"" WLU",lift_boat,Spirit lift boat with wireline
+L/B ADVENTURER,lift_boat,Adventurer lift boat
+L/B ALEC SCOTT,lift_boat,Alec Scott lift boat
+"L/B ARIES ""RAM 11""",lift_boat,Aries Ram 11 lift boat
+"L/B ARIES ""RAM XII""",lift_boat,Aries Ram XII lift boat
+L/B ARIES RAM 11,lift_boat,Aries Ram 11 lift boat
+L/B BOBBY,lift_boat,Bobby lift boat
+L/B DISCOVER WELL TEST EQUIP.,lift_boat,Discovery lift boat
+L/B DISCOVERY,lift_boat,Discovery lift boat
+L/B DISCOVERY-W/L UNIT,lift_boat,Discovery lift boat with wireline
+L/B DONNIE PAUL30,lift_boat,Donnie Paul lift boat
+L/B FOCUS,lift_boat,Focus lift boat
+L/B INDEPENDENCE,lift_boat,Independence lift boat
+L/B INTEGRITY,lift_boat,Integrity lift boat
+L/B JUAN,lift_boat,Juan lift boat
+L/B RAM 8 - CTU,lift_boat,Ram 8 lift boat with CTU
+L/B RAM XIV,lift_boat,Ram XIV lift boat
+L/B SPIRIT & WL UNIT,lift_boat,Spirit lift boat with wireline
+L/B SUPERIOR QUALITY,lift_boat,Superior Quality lift boat
+L/B SUPERIOR VALOR,lift_boat,Superior Valor lift boat
+"L/B TAMMY (WL, EL, CT)",lift_boat,Tammy lift boat with intervention units
+L/BJA HOLLEMAN,lift_boat,JA Holleman lift boat
+L/BJN MITCHELL,lift_boat,JN Mitchell lift boat
+L/G VICTORY,lift_boat,Victory lift boat
+LAB LIFT III,lift_boat,Lab Lift III lift boat
+LAB LIFT III (COIL TUING),lift_boat,Lab Lift III with coiled tubing
+LAB LIFT IV,lift_boat,Lab Lift IV lift boat
+LAB LIFT IV BOAT,lift_boat,Lab Lift IV lift boat
+LAB LIFT V,lift_boat,Lab Lift V lift boat
+LAB LIFT V/ SNUBBING UNIT,lift_boat,Lab Lift V with snubbing
+LAB LIFT V/SNUBBING UNIT,lift_boat,Lab Lift V with snubbing
+"LABORDE MARINE ""LAB LIFT III""",lift_boat,Lab Lift III lift boat
+LAFFIT PINCAY,lift_boat,Laffit Pincay lift boat
+LB,lift_boat,lift boat abbreviation
+LB CHRISTIE & HWC 123,lift_boat,Christie lift boat with HWC
+LB ERIC DANOS,lift_boat,Eric Danos lift boat
+LB JUAN,lift_boat,Juan lift boat
+LB SUPERIOR CONQUEROR,lift_boat,Superior Conqueror lift boat
+LB/CTU,lift_boat,lift boat with coiled tubing
+LBJ HOLLEMAN,lift_boat,LBJ Holleman lift boat
+LEONARD JONES,jack_up,Noble Leonard Jones jack-up
+LESTER PELTUS,jack_up,Noble Lester Pettus typo
+LESTER PETTUS,jack_up,Noble Lester Pettus jack-up
+LESTER PETUS,jack_up,Noble Lester Pettus typo
+LESTER PTTTUS,jack_up,Noble Lester Pettus typo
+LEWIS DUGGER,jack_up,Noble Lewis Dugger jack-up
+LEXINGTON,semi_submersible,Diamond Lexington semi
+LIFT BOAT,lift_boat,generic lift boat
+"LIFT BOAT "" ENDURANCE"" /WL&EL",lift_boat,Endurance lift boat with wireline
+"LIFT BOAT ""ENDURANCE""/WL/EL",lift_boat,Endurance lift boat with wireline
+"LIFT BOAT ""KAITLYN EYMARD""",lift_boat,Kaitlyn Eymard lift boat
+"LIFT BOAT ""SPIRIT"" / CTU",lift_boat,Spirit lift boat with CTU
+LIFT BOAT (BLAKE 101),lift_boat,Blake lift boat
+LIFT BOAT - GULF ISLAND II,lift_boat,Gulf Island II lift boat
+LIFT BOAT / CTU,lift_boat,lift boat with coiled tubing
+LIFT BOAT / WIRELINE,lift_boat,lift boat with wireline
+LIFT BOAT AND DIVERS,lift_boat,lift boat with divers
+LIFT BOAT ARIES MARINE RAM X,lift_boat,Aries Ram X lift boat
+LIFT BOAT BLUE RUNNER - W/L UN,lift_boat,Blue Runner lift boat with wireline
+LIFT BOAT COIL TUBING UNIT,lift_boat,lift boat with coiled tubing
+LIFT BOAT ENDURANCE / WL/EL,lift_boat,Endurance lift boat with wireline
+LIFT BOAT LABLIFT 4 - W/L UNIT,lift_boat,Lab Lift 4 with wireline
+LIFT BOAT LACIE BOURG,lift_boat,Lacie Bourg lift boat
+LIFT BOAT LAREDO GRAND,lift_boat,Laredo Grand lift boat
+LIFT BOAT PETITE,lift_boat,Petite lift boat
+LIFT BOAT SARAH DAVID,lift_boat,Sarah David lift boat
+LIFT BOAT SUPERIOR CHALLENGE,lift_boat,Superior Challenge lift boat
+LIFT BOAT SUPERIOR CLASS,lift_boat,Superior Class lift boat
+LIFT BOAT SUPERIOR ENDEAVOR,lift_boat,Superior Endeavor lift boat
+LIFT BOAT TAMMY,lift_boat,Tammy lift boat
+LIFT BOAT-AIRES RAM I,lift_boat,Aries Ram I lift boat
+LIFT BOAT-GULF ISLAND II,lift_boat,Gulf Island II lift boat
+LIFT BOAT/COIL TUBING,lift_boat,lift boat with coiled tubing
+LIFT BOAT/COIL TUBING UNIT,lift_boat,lift boat with coiled tubing
+LIFT BOAT/CTU,lift_boat,lift boat with coiled tubing
+LIFT BOAT/EL,lift_boat,lift boat with electric line
+LIFT BOAT/ELECTRIC LINE,lift_boat,lift boat with electric line
+LIFT BOAT/WIRELINE,lift_boat,lift boat with wireline
+LIFTBOAT,lift_boat,lift boat
+"LIFTBOAT ""MYRTLE""",lift_boat,Myrtle lift boat
+LIFTBOAT / WL / EL,lift_boat,lift boat with wireline/electric line
+LIFTBOAT ALEX SCOTT,lift_boat,Alex Scott lift boat
+LIFTBOAT C/T,lift_boat,lift boat with coiled tubing
+LIFTBOAT CHAMNPION,lift_boat,Champion lift boat
+LIFTBOAT CTU,lift_boat,lift boat with coiled tubing
+LIFTBOAT ERIC DANOS,lift_boat,Eric Danos lift boat
+LIFTBOAT FOCUS / WL/EL,lift_boat,Focus lift boat with wireline/electric line
+LIFTBOAT FOCUS WL/EL,lift_boat,Focus lift boat with wireline/electric line
+LIFTBOAT JUAN,lift_boat,Juan lift boat
+LIFTBOAT KAITLYN EZMARD,lift_boat,Kaitlyn Eymard lift boat
+LIFTBOAT MR. ALLEN,lift_boat,Mr. Allen lift boat
+LIFTBOAT MYRTLE,lift_boat,Myrtle lift boat
+LIFTBOAT RAM XI,lift_boat,Ram XI lift boat
+LIFTBOAT RENE DANOS,lift_boat,Rene Danos lift boat
+LIFTBOAT SEA BASS,lift_boat,Sea Bass lift boat
+LIFTBOAT SUPERIOR ENDEAVOR,lift_boat,Superior Endeavor lift boat
+LIFTBOAT SUPERIOR LEGACY,lift_boat,Superior Legacy lift boat
+LIFTBOAT SUPERIOR VISION,lift_boat,Superior Vision lift boat
+LIFTBOAT TAMMY,lift_boat,Tammy lift boat
+LIFTBOAT TARPON,lift_boat,Tarpon lift boat
+LIFTBOAT WIRELINE UNIT,lift_boat,lift boat with wireline
+LIFTBOAT/ CTU,lift_boat,lift boat with coiled tubing
+LIFTBOAT/ SLICKLINE,lift_boat,lift boat with slickline
+LIFTBOAT/CTU,lift_boat,lift boat with coiled tubing
+LIFTBOAT/EL UNIT,lift_boat,lift boat with electric line
+LIFTBOAT/SLICKLINE,lift_boat,lift boat with slickline
+LIFTBOAT/WIRELINE/CT,lift_boat,lift boat with multi-intervention
+LIFTBOAT/WL UNIT,lift_boat,lift boat with wireline
+LIS ENERGY SERVICES,unknown,service company entry
+LORRIS BOUIGUARD,jack_up,Noble Lorris Bouzigard typo
+LORRIS BOURZIGARD,jack_up,Noble Lorris Bouzigard typo
+LORRIS BOUZIARD,jack_up,Noble Lorris Bouzigard typo
+LORRIS BOUZIGARD,jack_up,Noble Lorris Bouzigard jack-up
+LORRIS BOUZIGARD(SS),jack_up,Noble Lorris Bouzigard jack-up
+LUBRICATOR,unknown,equipment not rig
+LUKE DAVID LIFT BOAT,lift_boat,Luke David lift boat
+M. G. HULME,jack_up,M.G. Hulme jack-up
+"M. G. HULME, JR.",jack_up,M.G. Hulme Jr jack-up
+"M.G. HULME, JR.",jack_up,M.G. Hulme Jr jack-up
+M/V (SEA LION),support_vessel,Sea Lion support vessel
+M/V JEAN-ELAINE,support_vessel,Jean-Elaine support vessel
+M/V JOHN GILBERT JACKUP,jack_up,John Gilbert jack-up
+MAARINE 304,jack_up,Marine 304 typo
+MAD DOG,platform_rig,Mad Dog Spar platform rig
+MAD DOG SPAR RIG,platform_rig,Mad Dog Spar platform rig
+MADD DOG,platform_rig,Mad Dog Spar typo
+MAIAN PASS IV,jack_up,Main Pass IV typo
+MAIN PASS !,jack_up,Main Pass I typo
+MAIN PASS 1,jack_up,Main Pass I jack-up
+MAIN PASS 226,jack_up,Main Pass jack-up rig
+MAIN PASS I,jack_up,GSF Main Pass I jack-up
+MAIN PASS IV,jack_up,GSF Main Pass IV jack-up
+MALLARD 41,jack_up,Mallard jack-up rig
+MALLARD 41-E,jack_up,Mallard jack-up rig
+MALLARD RIG 42E,jack_up,Mallard jack-up rig
+MAN O WAR SLICKLINE,wireline_unit,slickline unit
+MARIANAS,jack_up,Transocean Marianas jack-up
+MARINE,jack_up,Marine jack-up rig
+MARINE # 18,jack_up,Marine jack-up rig
+MARINE # 303,jack_up,Marine jack-up rig
+MARINE #15,jack_up,Marine jack-up rig
+MARINE #225,jack_up,Marine jack-up rig
+MARINE #304,jack_up,Marine jack-up rig
+MARINE 15,jack_up,Marine jack-up rig
+MARINE 16,jack_up,Marine jack-up rig
+MARINE 17,jack_up,Marine jack-up rig
+MARINE 18,jack_up,Marine jack-up rig
+MARINE 200,jack_up,Marine jack-up rig
+MARINE 201,jack_up,Marine jack-up rig
+MARINE 202,jack_up,Marine jack-up rig
+MARINE 225,jack_up,Marine jack-up rig
+MARINE 3,jack_up,Marine jack-up rig
+MARINE 300,jack_up,Marine jack-up rig
+MARINE 300\,jack_up,Marine jack-up rig typo
+MARINE 301,jack_up,Marine jack-up rig
+MARINE 303,jack_up,Marine jack-up rig
+MARINE 304,jack_up,Marine jack-up rig
+MARINE 304/PRIDE WISCONSIN,jack_up,Marine 304/Pride Wisconsin jack-up
+MARINE 4,jack_up,Marine jack-up rig
+MARINE 700,jack_up,Marine jack-up rig
+MARINE HIGH ISLAND VIII,jack_up,Marine High Island VIII jack-up
+MARINE III,jack_up,Marine jack-up rig
+MARINE IV,jack_up,Marine jack-up rig
+MARINE NO. 16,jack_up,Marine jack-up rig
+MARINE RIG #4,jack_up,Marine jack-up rig
+MARINE RIG 3,jack_up,Marine jack-up rig
+MARINE XV,jack_up,Marine jack-up rig
+MARINE XVII,jack_up,Marine jack-up rig
+MARINE XVIII,jack_up,Marine jack-up rig
+MASTER BRANDON,support_vessel,Master Brandon support vessel
+MAX SMITH,jack_up,Noble Max Smith jack-up
+MIDDLETOWN,jack_up,jack-up rig
+MIDNIGHT HUNTER,support_vessel,Midnight Hunter dive vessel
+MIDNIGHT HUNTER DIVE VESSEL,support_vessel,Midnight Hunter dive vessel
+MILLENNIUM,drillship,Deepwater Millennium drillship
+MISS AUDREY LB,lift_boat,Miss Audrey lift boat
+MISSISSIPPI,jack_up,Pride Mississippi jack-up
+MOBS 200,jack_up,MODS 200 typo
+MOD 141,jack_up,MODS 141 jack-up
+MODS 141,jack_up,MODS 141 jack-up
+MODS 150,jack_up,MODS 150 jack-up
+MODS 200,jack_up,MODS 200 jack-up
+MR BICE,jack_up,Mr. Bice jack-up
+MR. BICE,jack_up,Mr. Bice jack-up
+MRINE 17,jack_up,Marine 17 typo
+MSV AMERICAN,support_vessel,MSV American support vessel
+MSV BRANDON BORDELON,support_vessel,MSV Brandon Bordelon support vessel
+MSV CADE CANDIES,support_vessel,MSV Cade Candies support vessel
+MSV CAL DIVE Q-4000,support_vessel,MSV Cal Dive Q-4000 support vessel
+MSV HARVEY BLUE SEA,support_vessel,MSV Harvey Blue Sea support vessel
+MV NORTHERN RIVER DIVE BOAT,support_vessel,Northern River dive vessel
+N/,unknown,unclear entry
+N/A,unknown,not applicable entry
+N/Q,unknown,unclear entry
+NA - WIRELINE,wireline_unit,wireline unit
+NA/,unknown,unclear entry
+NABOR DOLPHIN TITAN,jack_up,Nabors Dolphin Titan jack-up
+NABOR MODS 150,jack_up,Nabors MODS 150 jack-up
+NABOR T270,jack_up,Nabors T270 jack-up
+NEW ERA,semi_submersible,Diamond Ocean New Era semi
+NEW ERA (SS),semi_submersible,Diamond Ocean New Era semi
+NEW ORLEANS,jack_up,jack-up rig
+NOBEL AMOS RUNNER,jack_up,Noble Amos Runner typo
+NOBEL CARL NORBERG,jack_up,Noble Carl Norberg typo
+NOBEL EDDIE PAUL,jack_up,Noble Eddie Paul typo
+"NOBLE ""CARL NORBERG""",jack_up,Noble Carl Norberg jack-up
+"NOBLE ""EARL FREDERICKSON""",jack_up,Noble Earl Frederickson jack-up
+"NOBLE ""EDDIE PAUL""",jack_up,Noble Eddie Paul jack-up
+"NOBLE ""FRI RODLI""",jack_up,Noble Fri Rodli jack-up
+"NOBLE ""JIM THOMPSON""",jack_up,Noble Jim Thompson jack-up
+"NOBLE ""JOE ALFORD""",jack_up,Noble Joe Alford jack-up
+"NOBLE ""JOHNNIE HOFFMAN""",jack_up,Noble Johnnie Hoffman jack-up
+"NOBLE ""JOHNNIE""HOFFMAN",jack_up,Noble Johnnie Hoffman typo
+"NOBLE ""LORRIS BOUZIGARD""",jack_up,Noble Lorris Bouzigard jack-up
+"NOBLE ""LORRIS BOUZIGARD'",jack_up,Noble Lorris Bouzigard typo
+"NOBLE ""THERALD MARTIN""",jack_up,Noble Therald Martin jack-up
+NOBLE - FRI RODLI,jack_up,Noble Fri Rodli jack-up
+NOBLE AMOS RUNNER,jack_up,Noble Amos Runner jack-up
+NOBLE BILL JENNING,jack_up,Noble Bill Jennings typo
+NOBLE BILL JENNINGS,jack_up,Noble Bill Jennings jack-up
+NOBLE BOB DOUGLAS,jack_up,Noble Bob Douglas jack-up
+NOBLE CARL NORBERG,jack_up,Noble Carl Norberg jack-up
+NOBLE CLYDE BOUDREAUX,jack_up,Noble Clyde Boudreaux jack-up
+NOBLE DANNY ADKINS,jack_up,Noble Danny Adkins jack-up
+NOBLE DOLPHIN 110,jack_up,Noble Dolphin 110 jack-up
+NOBLE DON TAYLOR,jack_up,Noble Don Taylor jack-up
+NOBLE DRILLER,jack_up,Noble Driller jack-up
+NOBLE EARL FREDERICKSON,jack_up,Noble Earl Frederickson jack-up
+NOBLE EARL FREDRICKSON,jack_up,Noble Earl Frederickson typo
+NOBLE EDDIE PAUL,jack_up,Noble Eddie Paul jack-up
+NOBLE ERARL FREDERICKSON,jack_up,Noble Earl Frederickson typo
+NOBLE FAYE KOZACK (FKA KHAMSIN),jack_up,Noble Faye Kozack jack-up
+NOBLE FRI RODI,jack_up,Noble Fri Rodli typo
+NOBLE FRI RODLI,jack_up,Noble Fri Rodli jack-up
+NOBLE FRY RODLI,jack_up,Noble Fri Rodli typo
+NOBLE GENE ROSSER,jack_up,Noble Gene Rosser jack-up
+NOBLE HOMER FARRINGTON,jack_up,Noble Homer Farrington jack-up
+NOBLE HOMER FERRINGTON,jack_up,Noble Homer Ferrington jack-up
+NOBLE JACK RYAN,jack_up,Noble Jack Ryan jack-up
+NOBLE JIM DAY,jack_up,Noble Jim Day jack-up
+NOBLE JIM THOMPGSON,jack_up,Noble Jim Thompson typo
+NOBLE JIM THOMPSON,jack_up,Noble Jim Thompson jack-up
+NOBLE JIM THOMSON,jack_up,Noble Jim Thompson typo
+NOBLE JIM THOMSPON,jack_up,Noble Jim Thompson typo
+NOBLE JOE ALFORD,jack_up,Noble Joe Alford jack-up
+NOBLE JOH SANDIFER,jack_up,Noble John Sandifer typo
+NOBLE JOHN SANDIFER,jack_up,Noble John Sandifer jack-up
+NOBLE JOHN SNDIFER,jack_up,Noble John Sandifer typo
+NOBLE JOHNNIE HOFFMAN,jack_up,Noble Johnnie Hoffman jack-up
+NOBLE JOPHNNIE HOFFMAN,jack_up,Noble Johnnie Hoffman typo
+NOBLE LEONARD JONES,jack_up,Noble Leonard Jones jack-up
+NOBLE LESTER PETTUS,jack_up,Noble Lester Pettus jack-up
+NOBLE LEWIS DUGGER,jack_up,Noble Lewis Dugger jack-up
+NOBLE LORRIS BOUZIGARD,jack_up,Noble Lorris Bouzigard jack-up
+NOBLE MAX SMITH,jack_up,Noble Max Smith jack-up
+NOBLE PAUL RAMANO,jack_up,Noble Paul Ramano jack-up
+NOBLE SAM CROFT,jack_up,Noble Sam Croft jack-up
+NOBLE SAM NOBLE,jack_up,Noble Sam Noble jack-up
+NOBLE THERALD MARTIN,jack_up,Noble Therald Martin jack-up
+NOBLE TOM JOBE,jack_up,Noble Tom Jobe jack-up
+NOBLE TOM JOBE ILJU,jack_up,Noble Tom Jobe jack-up
+NOBLE TOM MADDEN,jack_up,Noble Tom Madden jack-up
+NOBLE TOME JOBE,jack_up,Noble Tom Jobe typo
+"NOBLE""JOE ALFORD""",jack_up,Noble Joe Alford jack-up
+NOBLE-BILL JENNINGS,jack_up,Noble Bill Jennings jack-up
+NOBLE-LESTER PETTUS,jack_up,Noble Lester Pettus jack-up
+NOBLES JOE ALFORD,jack_up,Noble Joe Alford jack-up
+NOBLES SAM NOBLE,jack_up,Noble Sam Noble jack-up
+NONE - CRANE,unknown,crane operation
+NONE/ CRANE,unknown,crane operation
+NORTHERN RIVER DIVE VESSEL,support_vessel,Northern River dive vessel
+NOVLE EDDIE PAUL,jack_up,Noble Eddie Paul typo
+O'VOYAGER,support_vessel,O'Voyager support vessel
+OCAN CHAMPPION,semi_submersible,Ocean Champion typo
+OCAN TITAN,semi_submersible,Ocean Titan typo
+OCEEAN KING,semi_submersible,Ocean King typo
+OCEN QUEST,semi_submersible,Ocean Quest typo
+ODIN BICTORY,jack_up,Odin Victory typo
+ODIN VICTORY,jack_up,Odin Victory jack-up
+OEAN SUMMIT,semi_submersible,Ocean Summit typo
+OEDC EXPL & PROD.,unknown,operator name
+OFFSHORE 1003E,jack_up,Pride Offshore 1003E jack-up
+OFFSHORE RATHER,semi_submersible,Diamond Offshore Rather semi
+OLYMPIC INTERVENTION IV,support_vessel,Olympic Intervention vessel
+P & A UNIT,unknown,plugging & abandonment unit
+P&A CREW,unknown,plugging & abandonment crew
+P&A UNIT,unknown,plugging & abandonment unit
+P&U UNIT,unknown,plugging unit typo
+P7A UNIT,unknown,P&A unit typo
+PA,unknown,plugging & abandonment abbreviation
+PA UNIT,unknown,plugging & abandonment unit
+PARKAER 22J,jack_up,Parker 22J typo
+PATHFINDER,drillship,Deepwater Pathfinder drillship
+PAUL DANOS & SUPERIOR  LIFTBOA,lift_boat,Paul Danos lift boat
+PCEAM CRISADER,semi_submersible,Ocean Crusader typo
+PEGGY MASSER,lift_boat,Peggy Masser lift boat
+PERF-O-LOG,wireline_unit,perforation logging unit
+PETROBRAS 10000,drillship,Petrobras drillship
+PETTUS,jack_up,Noble Lester Pettus jack-up
+PHOENIX 1,jack_up,Falcon Phoenix I jack-up
+PHOENIX 11,jack_up,Falcon Phoenix II typo
+PHOENIX 2,jack_up,Falcon Phoenix II jack-up
+PHOENIX 3,jack_up,Falcon Phoenix III jack-up
+PHOENIX D V KIMBERLY CANDIES,support_vessel,Phoenix dive vessel
+PHOENIX I,jack_up,Falcon Phoenix I jack-up
+PHOENIX II,jack_up,Falcon Phoenix II jack-up
+PHOENIX III,jack_up,Falcon Phoenix III jack-up
+PHOENIX IV,jack_up,Falcon Phoenix IV jack-up
+PIPE UNIT,unknown,pipeline unit
+PLATFORM,platform_rig,platform rig
+PLATFORM SNUBBING UNIT,snubbing_unit,snubbing unit on platform
+POOL #50,jack_up,Pool jack-up rig
+POOL #53,jack_up,Pool jack-up rig
+POOL 10,jack_up,Pool jack-up rig
+POOL 14,jack_up,Pool jack-up rig
+POOL 141,jack_up,Pool jack-up rig
+POOL 143,jack_up,Pool jack-up rig
+POOL 150,jack_up,Pool jack-up rig
+POOL 1502,jack_up,Pool jack-up rig
+POOL 16,jack_up,Pool jack-up rig
+POOL 17,jack_up,Pool jack-up rig
+POOL 18,jack_up,Pool jack-up rig
+POOL 3,jack_up,Pool jack-up rig
+POOL 50,jack_up,Pool jack-up rig
+POOL 50 RIG,jack_up,Pool jack-up rig
+POOL 53,jack_up,Pool jack-up rig
+POOL 54,jack_up,Pool jack-up rig
+POOL 54/CTU,jack_up,Pool rig with coiled tubing
+POOL 9,jack_up,Pool jack-up rig
+POOL 903,jack_up,Pool jack-up rig
+POOL 908,jack_up,Pool jack-up rig
+POOL NO. 141,jack_up,Pool jack-up rig
+POOL OFFSHORE,jack_up,Pool jack-up rig
+POOL RANGER #6,jack_up,Pool Ranger jack-up
+POOL RANGER IV,jack_up,Pool Ranger jack-up
+POOL RANGER V,jack_up,Pool Ranger jack-up
+POOL RIG #140,jack_up,Pool jack-up rig
+POOL RIG #54,jack_up,Pool jack-up rig
+POOL RIG #9,jack_up,Pool jack-up rig
+POOL RIG 10,jack_up,Pool jack-up rig
+POOL RIG 141,jack_up,Pool jack-up rig
+POOL RIG 17,jack_up,Pool jack-up rig
+POOL RIG 18,jack_up,Pool jack-up rig
+POOL RIG 53,jack_up,Pool jack-up rig
+POOL RIG 54,jack_up,Pool jack-up rig
+POOL RIG 9,jack_up,Pool jack-up rig
+POOL RIG IV,jack_up,Pool jack-up rig
+POOL RIG VI,jack_up,Pool jack-up rig
+POOL RIG. 141,jack_up,Pool jack-up rig
+POOLOFFSHORE,jack_up,Pool Offshore jack-up
+POWER 8 LIFT BOAT,lift_boat,Power 8 lift boat
+POWER II,lift_boat,Power II lift boat
+POWER OFFSHORE #2,lift_boat,Power Offshore lift boat
+"POWER SWIVEL UNIT, CASING JACK",unknown,drilling equipment not rig
+POWER XI,lift_boat,Power XI lift boat
+POWERS V LIFT BOAT/CT UNIT,lift_boat,Powers V lift boat with CTU
+PRIDE  NEW MEXICO,jack_up,Pride New Mexico jack-up
+"PRIDE ""OKLAHOMA""",jack_up,Pride Oklahoma jack-up
+PRIDE 1002,jack_up,Pride jack-up rig
+PRIDE 1002 E,jack_up,Pride jack-up rig
+PRIDE 1002E,jack_up,Pride jack-up rig
+PRIDE 1003,jack_up,Pride jack-up rig
+PRIDE 1003 E,jack_up,Pride jack-up rig
+PRIDE 1003E,jack_up,Pride jack-up rig
+PRIDE 1004,jack_up,Pride jack-up rig
+PRIDE 1004 E,jack_up,Pride jack-up rig
+PRIDE 1004E,jack_up,Pride jack-up rig
+PRIDE 1006,jack_up,Pride jack-up rig
+PRIDE 100S,jack_up,Pride jack-up rig typo
+PRIDE 103,jack_up,Pride jack-up rig
+PRIDE 1051,jack_up,Pride jack-up rig
+PRIDE 130,jack_up,Pride jack-up rig
+PRIDE 14,jack_up,Pride jack-up rig
+PRIDE 1501,jack_up,Pride jack-up rig
+PRIDE 1501 (JU),jack_up,Pride jack-up rig
+PRIDE 1501 (PF),jack_up,Pride jack-up platform rig
+PRIDE 1501 E,jack_up,Pride jack-up rig
+PRIDE 1501(PF),jack_up,Pride jack-up platform rig
+PRIDE 1501-E,jack_up,Pride jack-up rig
+PRIDE 1501E,jack_up,Pride jack-up rig
+PRIDE 1502,jack_up,Pride jack-up rig
+PRIDE 1502-E,jack_up,Pride jack-up rig
+PRIDE 1502E,jack_up,Pride jack-up rig
+PRIDE 1503,jack_up,Pride jack-up rig
+PRIDE 151,jack_up,Pride jack-up rig
+PRIDE 210,jack_up,Pride jack-up rig
+PRIDE 220,jack_up,Pride jack-up rig
+PRIDE 551,jack_up,Pride jack-up rig
+PRIDE 650,jack_up,Pride jack-up rig
+PRIDE 650 E,jack_up,Pride jack-up rig
+PRIDE 650E,jack_up,Pride jack-up rig
+PRIDE 651,jack_up,Pride jack-up rig
+PRIDE 653,jack_up,Pride jack-up rig
+PRIDE 751,jack_up,Pride jack-up rig
+PRIDE 952,jack_up,Pride jack-up rig
+PRIDE ALABAMA,jack_up,Pride Alabama jack-up
+PRIDE ALASKA,jack_up,Pride Alaska jack-up
+PRIDE ARIZONA,jack_up,Pride Arizona jack-up
+PRIDE ARKANSAS,jack_up,Pride Arkansas jack-up
+PRIDE ARZONA,jack_up,Pride Arizona typo
+PRIDE CALIFORNIA,jack_up,Pride California jack-up
+PRIDE COLORADO,jack_up,Pride Colorado jack-up
+PRIDE FLORDA,jack_up,Pride Florida typo
+PRIDE FLORID,jack_up,Pride Florida typo
+PRIDE FLORIDA,jack_up,Pride Florida jack-up
+PRIDE FLORIDA - JU,jack_up,Pride Florida jack-up
+PRIDE GEORGIA,jack_up,Pride Georgia jack-up
+PRIDE GEORGIE,jack_up,Pride Georgia typo
+PRIDE KANSAS,jack_up,Pride Kansas jack-up
+PRIDE KENTUCKY,jack_up,Pride Kentucky jack-up
+PRIDE LOUISIANA,jack_up,Pride Louisiana jack-up
+PRIDE LOUISIANA\,jack_up,Pride Louisiana typo
+PRIDE LOUSISANA,jack_up,Pride Louisiana typo
+PRIDE MAD DOG SPAR RIG,platform_rig,Pride on Mad Dog Spar
+PRIDE MICHICAN,jack_up,Pride Michigan typo
+PRIDE MICHIGAN,jack_up,Pride Michigan jack-up
+PRIDE MISSISSIPPI,jack_up,Pride Mississippi jack-up
+PRIDE MISSOURI,jack_up,Pride Missouri jack-up
+PRIDE NEBRASKA,jack_up,Pride Nebraska jack-up
+PRIDE NEBRASKA (MARINE 200),jack_up,Pride Nebraska jack-up
+PRIDE NEVADA,jack_up,Pride Nevada jack-up
+PRIDE NEVEDA,jack_up,Pride Nevada typo
+PRIDE NEW MEXICO,jack_up,Pride New Mexico jack-up
+PRIDE NORTH DAKOTA,jack_up,Pride North Dakota jack-up
+PRIDE NORTH DOKOTA,jack_up,Pride North Dakota typo
+PRIDE OF ARKANSAS,jack_up,Pride Arkansas jack-up
+PRIDE OF MISSISSIPPI,jack_up,Pride Mississippi jack-up
+PRIDE OF MISSOURI,jack_up,Pride Missouri jack-up
+PRIDE OFFSHORE #1004,jack_up,Pride Offshore jack-up
+PRIDE OFFSHORE #1501,jack_up,Pride Offshore jack-up
+PRIDE OFFSHORE 1003-E,jack_up,Pride Offshore jack-up
+PRIDE OFFSHORE 1003E,jack_up,Pride Offshore jack-up
+PRIDE OFFSHORE 1501,jack_up,Pride Offshore jack-up
+PRIDE OFFSHORE 650,jack_up,Pride Offshore jack-up
+PRIDE OFFSHORE MISSISSIPPI,jack_up,Pride Mississippi jack-up
+"PRIDE OFFSHORE, MISSISSIPPI",jack_up,Pride Mississippi jack-up
+PRIDE OKLAHOMA,jack_up,Pride Oklahoma jack-up
+PRIDE RIG #210,jack_up,Pride jack-up rig
+PRIDE RIG 1004,jack_up,Pride jack-up rig
+PRIDE RIG 1004E,jack_up,Pride jack-up rig
+PRIDE RIG 1501-E,jack_up,Pride jack-up rig
+PRIDE RIG 1501E,jack_up,Pride jack-up rig
+PRIDE RIG 210,jack_up,Pride jack-up rig
+PRIDE RIG 750,jack_up,Pride jack-up rig
+PRIDE RIG 951,jack_up,Pride jack-up rig
+PRIDE SOUTH CAROLINA,jack_up,Pride South Carolina jack-up
+PRIDE TENNESSE,jack_up,Pride Tennessee typo
+PRIDE TENNESSEE,jack_up,Pride Tennessee jack-up
+PRIDE TEXAS,jack_up,Pride Texas jack-up
+PRIDE UTAH,jack_up,Pride Utah jack-up
+PRIDE VIKING,jack_up,Pride Viking jack-up
+PRIDE WEST VIRGINIA,jack_up,Pride West Virginia jack-up
+PRIDE WISCONSIN,jack_up,Pride Wisconsin jack-up
+PRIDE WISCONSIN (MARINE 304),jack_up,Pride Wisconsin jack-up
+PRIDE WYOMING,jack_up,Pride Wyoming jack-up
+PRIDGE FLORIDA,jack_up,Pride Florida typo
+PRIODE FLORIDA (JU),jack_up,Pride Florida typo
+PRODE 1003,jack_up,Pride 1003 typo
+PULLING UNIT,workover_rig,pulling unit
+PUMPING BOAT,pumping_unit,pumping boat
+PUMPING EQUIPMENT,pumping_unit,pumping equipment
+PUMPING OPERATION FROM A BOAT,pumping_unit,pumping operation
+Q-4000,support_vessel,Cal Dive Q-4000 support vessel
+R E THIBODEAUX (LIFT BOAT),lift_boat,R.E. Thibodeaux lift boat
+R H GALLOWAY,jack_up,R.H. Galloway jack-up
+R& B FALCON 254,jack_up,R&B Falcon jack-up
+R&B #252,jack_up,R&B Falcon jack-up
+R&B 153,jack_up,R&B Falcon jack-up
+R&B 252,jack_up,R&B Falcon jack-up
+R&B 253,jack_up,R&B Falcon jack-up
+"R&B C. KIRK RHEIN, JR.",jack_up,R&B C. Kirk Rhein Jr jack-up
+R&B F. G. MCCLINTOCK,jack_up,R&B F.G. McClintock jack-up
+R&B FALCO 152,jack_up,R&B Falcon jack-up
+R&B FALCOM 250,jack_up,R&B Falcon typo
+R&B FALCON,jack_up,R&B Falcon jack-up
+R&B FALCON # 205,jack_up,R&B Falcon jack-up
+R&B FALCON 100,jack_up,R&B Falcon jack-up
+R&B FALCON 155,jack_up,R&B Falcon jack-up
+R&B FALCON 156,jack_up,R&B Falcon jack-up
+R&B FALCON 191,jack_up,R&B Falcon jack-up
+R&B FALCON 200,jack_up,R&B Falcon jack-up
+R&B FALCON 203,jack_up,R&B Falcon jack-up
+R&B FALCON 204,jack_up,R&B Falcon jack-up
+R&B FALCON 205,jack_up,R&B Falcon jack-up
+R&B FALCON 206,jack_up,R&B Falcon jack-up
+R&B FALCON 207,jack_up,R&B Falcon jack-up
+R&B FALCON 250,jack_up,R&B Falcon jack-up
+R&B FALCON 251,jack_up,R&B Falcon jack-up
+R&B FALCON 252,jack_up,R&B Falcon jack-up
+R&B FALCON 253,jack_up,R&B Falcon jack-up
+R&B FALCON 254,jack_up,R&B Falcon jack-up
+R&B FALCON 75,jack_up,R&B Falcon jack-up
+R&B FALCON 78,jack_up,R&B Falcon jack-up
+R&B FALCON RIG 18,jack_up,R&B Falcon jack-up
+R&B FLACON 206,jack_up,R&B Falcon typo
+R&B GEORGE GALLOWAY,jack_up,R&B George Galloway jack-up
+R&B MILLENNIUM,drillship,R&B Millennium drillship
+R. H. GALLOWAY,jack_up,R.H. Galloway jack-up
+R.B. FALCON,jack_up,R&B Falcon jack-up
+R.H. GALLOWAY,jack_up,R.H. Galloway jack-up
+R7B FALCON 156,jack_up,R&B Falcon typo
+R7B GALLOWAY,jack_up,R&B Galloway typo
+RAID LN/CTU/EL/SL,wireline_unit,multi-intervention unit
+RAM X,lift_boat,Ram X lift boat
+RAM XIV,lift_boat,Ram XIV lift boat
+RANGER,jack_up,Ranger jack-up rig
+RANGER 5,jack_up,Ranger jack-up rig
+RANGER IV,jack_up,Ranger jack-up rig
+RANGER VI,jack_up,Ranger jack-up rig
+RANGER VII,jack_up,Ranger jack-up rig
+RB FALCON #205,jack_up,R&B Falcon jack-up
+RB FALCON 156,jack_up,R&B Falcon jack-up
+RB FALCON 200,jack_up,R&B Falcon jack-up
+RB FALCON 202,jack_up,R&B Falcon jack-up
+RB FALCON 204,jack_up,R&B Falcon jack-up
+RB FALCON 205,jack_up,R&B Falcon jack-up
+RB FALCON 207,jack_up,R&B Falcon jack-up
+RB FALCON 250,jack_up,R&B Falcon jack-up
+RB FALCON 253,jack_up,R&B Falcon jack-up
+RB FALCON 86,jack_up,R&B Falcon jack-up
+"RBF ""155""",jack_up,R&B Falcon jack-up
+RBF # 75,jack_up,R&B Falcon jack-up
+RBF #75,jack_up,R&B Falcon jack-up
+RBF 150,jack_up,R&B Falcon jack-up
+RBF 152,jack_up,R&B Falcon jack-up
+RBF 153,jack_up,R&B Falcon jack-up
+RBF 155,jack_up,R&B Falcon jack-up
+RBF 156,jack_up,R&B Falcon jack-up
+RBF 191,jack_up,R&B Falcon jack-up
+RBF 200,jack_up,R&B Falcon jack-up
+RBF 201,jack_up,R&B Falcon jack-up
+RBF 202,jack_up,R&B Falcon jack-up
+RBF 203,jack_up,R&B Falcon jack-up
+RBF 204,jack_up,R&B Falcon jack-up
+RBF 205,jack_up,R&B Falcon jack-up
+RBF 206,jack_up,R&B Falcon jack-up
+RBF 207,jack_up,R&B Falcon jack-up
+RBF 250,jack_up,R&B Falcon jack-up
+RBF 251,jack_up,R&B Falcon jack-up
+RBF 252,jack_up,R&B Falcon jack-up
+RBF 253,jack_up,R&B Falcon jack-up
+RBF 254,jack_up,R&B Falcon jack-up
+RBF 75,jack_up,R&B Falcon jack-up
+RBF MCCLINTOCK,jack_up,R&B McClintock jack-up
+RBF-203,jack_up,R&B Falcon jack-up
+RBFF 75,jack_up,R&B Falcon typo
+RBR 152,jack_up,R&B Falcon typo
+RBR 207,jack_up,R&B Falcon typo
+REB 250,jack_up,R&B Falcon typo
+REEPORT RIG 1,jack_up,Freeport Rig 1 typo
+REMINGTON OIL & GAS CORP,unknown,operator name
+RENE DANOS,lift_boat,Rene Danos lift boat
+RIAN RICHE,jack_up,Ryan Riche jack-up
+RICHARDSON,jack_up,Richardson jack-up rig
+RICHMOND,jack_up,Atwood Richmond jack-up
+RICHMOND #8,jack_up,Richmond jack-up rig
+RICHMOND RIG 8,jack_up,Richmond jack-up rig
+RIG PRIDE 650,jack_up,Pride 650 jack-up
+RIGLESS,unknown,rigless operation
+RIGLESS - CRANE,unknown,rigless crane operation
+RIGLESS - ELECTRIC LIE,wireline_unit,rigless electric line operation
+RIGLESS CRANE,unknown,rigless crane operation
+RIGLESS P & A UNIT,unknown,rigless P&A operation
+RIGLESS P&A,unknown,rigless P&A operation
+RIGLESS P&A UNIT,unknown,rigless P&A operation
+RIGLESS PA UNIT,unknown,rigless P&A operation
+ROGER FOWLER,jack_up,Roger Fowler jack-up
+ROWAAN FORT WORTH,jack_up,Rowan Fort Worth typo
+ROWAM BOB PALMER,jack_up,Rowan Bob Palmer typo
+ROWAM ODESSA,jack_up,Rowan Odessa typo
+ROWN ALASKA,jack_up,Rowan Alaska typo
+ROWN ANCHORAGE,jack_up,Rowan Anchorage typo
+S/L,wireline_unit,slickline abbreviation
+S/L AND W/L,wireline_unit,slickline and wireline
+S/L W/L COIL TUBING,wireline_unit,multi-intervention unit
+SAIPEM SANTORINI,semi_submersible,Saipem Santorini semi
+SAM NOBLE,jack_up,Noble Sam Noble jack-up
+SANTA FE HIGH ISLAND II,jack_up,Santa Fe High Island II jack-up
+SANTA FE RIG 140,jack_up,Santa Fe jack-up rig
+SCHLUMBERGER COIL TUBING,coil_tubing_unit,Schlumberger coiled tubing
+SCHLUMBERGER WIRELINE,wireline_unit,Schlumberger wireline
+SCOOTER YEARGAIN,lift_boat,Scooter Yeargain lift boat
+SD III,jack_up,Sundowner III jack-up
+SD IV,jack_up,Sundowner IV jack-up
+SEA BASS,lift_boat,Sea Bass lift boat
+SEADRILL SEVAN LOUISIANA,drillship,Seadrill Sevan Louisiana drillship
+SEADRILL WEST AURIGA,semi_submersible,Seadrill West Auriga semi
+SEADRILL WEST CAPRICORN,semi_submersible,Seadrill West Capricorn semi
+SEADRILL WEST SIRIUS,semi_submersible,Seadrill West Sirius semi
+SEADRILL WEST VELA,semi_submersible,Seadrill West Vela semi
+SENECA RESOURCES,unknown,operator name
+SHOEMAKER,jack_up,Shoemaker jack-up rig
+SIUPERIOR ENERGY SERVICES P&A,unknown,Superior P&A typo
+SK-EL,wireline_unit,slickline/electric line abbreviation
+SL,wireline_unit,slickline abbreviation
+SL & EL,wireline_unit,slickline with electric line
+SL - LIFT BOAT,wireline_unit,slickline on lift boat
+SL / COIL TUBING,wireline_unit,slickline with coiled tubing
+SL AND CTU,wireline_unit,slickline with coiled tubing
+SL AND WL,wireline_unit,slickline with wireline
+SL UNIT,wireline_unit,slickline unit
+"SL, WL",wireline_unit,slickline and wireline
+SL/ EL,wireline_unit,slickline with electric line
+SL/ WL/ COIL TUBING,wireline_unit,multi-intervention unit
+SL/CT UNIT,wireline_unit,slickline with coiled tubing
+SL/CTU,wireline_unit,slickline with coiled tubing
+SL/EL,wireline_unit,slickline with electric line
+SL/EL UNIT,wireline_unit,slickline with electric line
+SL/EL UNITS,wireline_unit,slickline with electric line
+SL/ELINE UNIT,wireline_unit,slickline with electric line
+SL/SNUBBING UNIT,wireline_unit,slickline with snubbing
+SL/WL,wireline_unit,slickline with wireline
+SL/WL UNITS,wireline_unit,slickline with wireline
+SLICK LINE,wireline_unit,slickline unit
+SLICK LINE UNIT,wireline_unit,slickline unit
+SLICK LINE/ ELECTRIC LINE,wireline_unit,slickline with electric line
+SLICK-LINE & E-LINE,wireline_unit,slickline with electric line
+SLICKINE,wireline_unit,slickline typo
+SLICKLINE,wireline_unit,slickline unit
+SLICKLINE  UNIT,wireline_unit,slickline unit
+SLICKLINE & E-LINE,wireline_unit,slickline with electric line
+SLICKLINE / CTU,wireline_unit,slickline with coiled tubing
+SLICKLINE / ELECTRIC LINE,wireline_unit,slickline with electric line
+SLICKLINE / ELECTRICLINE,wireline_unit,slickline with electric line
+SLICKLINE AND ELECTRIC LINE,wireline_unit,slickline with electric line
+SLICKLINE AND WIRELINE,wireline_unit,slickline with wireline
+SLICKLINE UNIT,wireline_unit,slickline unit
+SLICKLINE UNIT/ELECTRIC LINE U,wireline_unit,slickline with electric line
+SLICKLINE UNIT/WIRELINE UNIT,wireline_unit,slickline with wireline
+SLICKLINE WIRELINE COIL TUBING,wireline_unit,multi-intervention unit
+SLICKLINE-E-LINE,wireline_unit,slickline with electric line
+SLICKLINE/ CTU,wireline_unit,slickline with coiled tubing
+SLICKLINE/ ELECTRIC LINE,wireline_unit,slickline with electric line
+SLICKLINE/ ELECTRRIC LINE,wireline_unit,slickline with electric line typo
+SLICKLINE/COILED TUBING,wireline_unit,slickline with coiled tubing
+SLICKLINE/CTU,wireline_unit,slickline with coiled tubing
+SLICKLINE/E-LINE,wireline_unit,slickline with electric line
+SLICKLINE/E-LINE/CT,wireline_unit,multi-intervention unit
+SLICKLINE/ELECTRIC LINE,wireline_unit,slickline with electric line
+SLICKLINE/ELECTRIC LINE UNIT,wireline_unit,slickline with electric line
+SLICKLINE/WIRELINE,wireline_unit,slickline with wireline
+SLICKLINE/WIRELINE/COIL TUBING,wireline_unit,multi-intervention unit
+SLICLINE,wireline_unit,slickline typo
+SLICLINE / ELECTRIC LINE,wireline_unit,slickline with electric line typo
+SLICLINE UNIT,wireline_unit,slickline unit typo
+SLIKLINE,wireline_unit,slickline typo
+SLU,wireline_unit,slickline unit abbreviation
+SLU/ELU,wireline_unit,slickline with electric line
+SNDOWNER 8,jack_up,Sundowner 8 typo
+SNHUBBING UNIT,snubbing_unit,snubbing unit typo
+SNU/CTU,snubbing_unit,snubbing with coiled tubing
+SNUB UNIT,snubbing_unit,snubbing unit abbreviation
+SNUBBER HWC 125,snubbing_unit,snubbing unit
+SNUBBING UNIT,snubbing_unit,snubbing unit
+SNUBBING UNIT (HWO) SLICKLINE,snubbing_unit,snubbing with slickline
+SNUBBING UNIT HWC #123,snubbing_unit,snubbing unit
+"SNUBBING UNIT, E-LINE",snubbing_unit,snubbing with electric line
+SONAL RATHER,semi_submersible,Sonat Rather semi
+SONAT DF 86,jack_up,Sonat jack-up rig
+SONAT DF 96,jack_up,Sonat jack-up rig
+SONAT GEORGE RICHARDSON,jack_up,Sonat George Richardson jack-up
+SONAT RATHER,semi_submersible,Sonat Rather semi
+SOUTHWESTERN RIG #153,jack_up,Southwestern jack-up rig
+SPERIOR WELL SSVC,unknown,Superior service typo
+SSD #16,jack_up,SSD jack-up rig
+SSD#16,jack_up,SSD jack-up rig
+STEVE CONLEY,jack_up,Steve Conley jack-up
+STOLT OFFSHORE DLB,support_vessel,Stolt Offshore dive support vessel
+STOLTZ AMERICAN CONSTITUTION,support_vessel,Stoltz dive support vessel
+"STOTZ ""AMERICAN CONSTITUTION""",support_vessel,Stotz dive support vessel
+"STOTZ ""AMERICAN CONSTITUTION:",support_vessel,Stotz dive support vessel
+SUBBING UNIT,snubbing_unit,snubbing unit typo
+SUNDOWN III,jack_up,Sundowner III jack-up
+SUNDWNER 1,jack_up,Sundowner 1 typo
+SUNDWONER IV,jack_up,Sundowner IV typo
+SUPERIOR,lift_boat,Superior lift boat
+SUPERIOR ACHIEVEMENT,lift_boat,Superior Achievement lift boat
+SUPERIOR BISION,lift_boat,Superior Vision typo
+SUPERIOR COIL TUBING,coil_tubing_unit,Superior coiled tubing
+SUPERIOR COURAGE (LIFT BOAT),lift_boat,Superior Courage lift boat
+SUPERIOR COURAGE LIFT BOAT,lift_boat,Superior Courage lift boat
+SUPERIOR DISCOVERY,lift_boat,Superior Discovery lift boat
+SUPERIOR ELECTRIC LINE,wireline_unit,Superior electric line
+SUPERIOR ENDEAVOR,lift_boat,Superior Endeavor lift boat
+SUPERIOR ENDURANCE,lift_boat,Superior Endurance lift boat
+SUPERIOR ENDURANCE - JU BOAT,lift_boat,Superior Endurance lift boat
+SUPERIOR ENERGY,unknown,company name
+SUPERIOR ENERGY SERVICES P & A,unknown,Superior P&A operation
+SUPERIOR ENERGY SERVICES P&A,unknown,Superior P&A operation
+SUPERIOR FORCE LIFT BOAT,lift_boat,Superior Force lift boat
+SUPERIOR GULF ISLAND IV,lift_boat,Superior Gulf Island IV lift boat
+SUPERIOR INTEGRITY LB,lift_boat,Superior Integrity lift boat
+SUPERIOR LIFTBOAT VALOR - CTU,lift_boat,Superior Valor with CTU
+SUPERIOR MISSION,lift_boat,Superior Mission lift boat
+SUPERIOR P & A,unknown,Superior P&A operation
+SUPERIOR P&A,unknown,Superior P&A operation
+SUPERIOR P&A UNIT,unknown,Superior P&A operation
+SUPERIOR SERVICES DIVE BOAT,support_vessel,Superior dive support vessel
+SUPERIOR SLICKLINE,wireline_unit,Superior slickline
+SUPERIOR VISION,lift_boat,Superior Vision lift boat
+SUPERIOR VISION - JU,lift_boat,Superior Vision lift boat
+SUPERIOR VISION - JU BOAT,lift_boat,Superior Vision lift boat
+SUPERIOR WELL SERVICE,unknown,Superior well service operation
+SUPERIOR WELL SVC,unknown,Superior well service operation
+SUPERIOR WIRELINE UNIT,wireline_unit,Superior wireline unit
+SWS E/L,wireline_unit,electric line unit
+Seadrill West Vela,semi_submersible,Seadrill West Vela semi
+T. O. F100,jack_up,Transocean F100 jack-up
+T.O. AMIRANTE,jack_up,Transocean Amirante jack-up
+T.O. HENRY GOODRICH,jack_up,Transocean Henry Goodrich jack-up
+T.O. MARIANAS,jack_up,Transocean Marianas jack-up
+TADCO 204,jack_up,TADCO jack-up rig
+TEMPORARY WELL TEST EQUIPMENT,unknown,temporary equipment
+TETRA,jack_up,Tetra jack-up rig
+TETRA #7,jack_up,Tetra jack-up rig
+TETRA - RIGLESS,unknown,Tetra rigless operation
+TETRA -RIGLESS,unknown,Tetra rigless operation
+TETRA 7,jack_up,Tetra jack-up rig
+TETRA ARAPAHO,jack_up,Tetra Arapaho jack-up
+TETRA DB-1,jack_up,Tetra DB-1 jack-up
+TETRA P&A UNIT,unknown,Tetra P&A operation
+TETRA RIG,jack_up,Tetra jack-up rig
+TETRA RIG #7,jack_up,Tetra jack-up rig
+TETRA RIG 7,jack_up,Tetra jack-up rig
+TETRA WORKHORSE IV,jack_up,Tetra Workhorse IV jack-up
+TETRA- RIGLESS,unknown,Tetra rigless operation
+THE 100,jack_up,TODCO/RBF jack-up
+THE 150,jack_up,TODCO/RBF jack-up
+THE 152,jack_up,TODCO/RBF jack-up
+THE 153,jack_up,TODCO/RBF jack-up
+THE 156,jack_up,TODCO/RBF jack-up
+THE 200,jack_up,TODCO/RBF jack-up
+THE 201,jack_up,TODCO/RBF jack-up
+THE 202,jack_up,TODCO/RBF jack-up
+THE 203,jack_up,TODCO/RBF jack-up
+THE 204,jack_up,TODCO/RBF jack-up
+THE 205,jack_up,TODCO/RBF jack-up
+THE 207,jack_up,TODCO/RBF jack-up
+THE 250,jack_up,TODCO/RBF jack-up
+THE 251,jack_up,TODCO/RBF jack-up
+THE 252,jack_up,TODCO/RBF jack-up
+THE 253,jack_up,TODCO/RBF jack-up
+THE 75,jack_up,TODCO/RBF jack-up
+THE 77,jack_up,TODCO/RBF jack-up
+THE 78,jack_up,TODCO/RBF jack-up
+THERALD MARTIN,jack_up,Noble Therald Martin jack-up
+TIR VIKING,jack_up,Tor Viking typo
+TO HORIZON,drillship,Transocean Horizon drillship
+TO MARIANAS,jack_up,Transocean Marianas jack-up
+TO MILLENNIUM,drillship,Transocean Millennium drillship
+TO SPIRIT,semi_submersible,Transocean Spirit semi
+TODCO  THE 152,jack_up,TODCO/RBF jack-up
+"TODCO "" THE 152""",jack_up,TODCO/RBF jack-up
+"TODCO ""THE 152""",jack_up,TODCO/RBF jack-up
+"TODCO ""THE 201""",jack_up,TODCO/RBF jack-up
+"TODCO ""THE 202""",jack_up,TODCO/RBF jack-up
+"TODCO ""THE 250""",jack_up,TODCO/RBF jack-up
+"TODCO ""THE 253""",jack_up,TODCO/RBF jack-up
+TODCO ' THE 152',jack_up,TODCO/RBF jack-up
+TODCO 'THE 152',jack_up,TODCO/RBF jack-up
+TODCO -THE 253,jack_up,TODCO/RBF jack-up
+TODCO 150,jack_up,TODCO jack-up rig
+TODCO 156,jack_up,TODCO jack-up rig
+TODCO 17,jack_up,TODCO jack-up rig
+TODCO 175,jack_up,TODCO jack-up rig
+TODCO 200,jack_up,TODCO jack-up rig
+TODCO 201,jack_up,TODCO jack-up rig
+TODCO 202,jack_up,TODCO jack-up rig
+TODCO 203,jack_up,TODCO jack-up rig
+TODCO 204,jack_up,TODCO jack-up rig
+TODCO 204 - JACKUP RIG,jack_up,TODCO jack-up rig
+TODCO 207,jack_up,TODCO jack-up rig
+TODCO 250,jack_up,TODCO jack-up rig
+TODCO 251,jack_up,TODCO jack-up rig
+TODCO 253,jack_up,TODCO jack-up rig
+TODCO 27,jack_up,TODCO jack-up rig
+TODCO 48,jack_up,TODCO jack-up rig
+TODCO 55,jack_up,TODCO jack-up rig
+TODCO 64,jack_up,TODCO jack-up rig
+TODCO 75,jack_up,TODCO jack-up rig
+TODCO RBF 200,jack_up,TODCO/RBF jack-up
+TODCO RBF 205,jack_up,TODCO/RBF jack-up
+TODCO RBF 251,jack_up,TODCO/RBF jack-up
+TODCO RBF 253,jack_up,TODCO/RBF jack-up
+TODCO RIG #55,jack_up,TODCO jack-up rig
+TODCO THE 150,jack_up,TODCO/RBF jack-up
+TODCO THE 201,jack_up,TODCO/RBF jack-up
+TODCO THE 204,jack_up,TODCO/RBF jack-up
+TODCO THE 207,jack_up,TODCO/RBF jack-up
+TODCO THE 75,jack_up,TODCO/RBF jack-up
+TODCO/RBF 251,jack_up,TODCO/RBF jack-up
+TOM JOBE,jack_up,Noble Tom Jobe jack-up
+TOM TOBE,jack_up,Noble Tom Jobe typo
+TOME JOBE,jack_up,Noble Tom Jobe typo
+TONALA,jack_up,Chiles Tonala jack-up
+TOR VIKING,jack_up,Tor Viking jack-up
+TOR VIKING (SS),jack_up,Tor Viking jack-up
+TSF 201,jack_up,TSF jack-up rig
+TSF ENTERPRISE,jack_up,TSF Enterprise jack-up
+UNCLE JOHN,support_vessel,Cal Dive Uncle John support vessel
+UNSPECIFIED - DO NOT DELETE,unknown,unspecified generic entry
+VALOR LIFT BOAT,lift_boat,Valor lift boat
+W/EL,wireline_unit,wireline/electric line abbreviation
+W/L,wireline_unit,wireline abbreviation
+W/L UNIT,wireline_unit,wireline unit
+WE/EL,wireline_unit,wireline/electric line abbreviation
+WEATHERFORD WIRELINE,wireline_unit,Weatherford wireline
+WFD 250,jack_up,Weatherford jack-up rig
+WFD 300,jack_up,Weatherford jack-up rig
+WFD 350,jack_up,Weatherford jack-up rig
+WFD 400,jack_up,Weatherford jack-up rig
+WIRELINE,wireline_unit,wireline unit
+WIRELINE & CTU,wireline_unit,wireline with coiled tubing
+WIRELINE UNIT,wireline_unit,wireline unit
+WIRELINE UNIT / ELECTRIC LINE,wireline_unit,wireline with electric line
+WIRELINE UNIT/COILED TUBING,wireline_unit,wireline with coiled tubing
+WIRELINE UNIT/CT UNIT,wireline_unit,wireline with coiled tubing
+WIRELINE UNIT/CTU,wireline_unit,wireline with coiled tubing
+WIRELINE-EL,wireline_unit,wireline with electric line
+WIRELINE/COIL TUBING,wireline_unit,wireline with coiled tubing
+WIRELINE/COIL TUBING UNIT,wireline_unit,wireline with coiled tubing
+WIRELINE/CTU,wireline_unit,wireline with coiled tubing
+WIRELINE/EL,wireline_unit,wireline with electric line
+WIRELINE/ELECTRIC LINE,wireline_unit,wireline with electric line
+WIRELINE/ELECTRIC LINE UNIT,wireline_unit,wireline with electric line
+WIRELINE/ELU,wireline_unit,wireline with electric line
+WL,wireline_unit,wireline abbreviation
+WL & CT UNITS,wireline_unit,wireline with coiled tubing
+WL & CTU,wireline_unit,wireline with coiled tubing
+WL / EL,wireline_unit,wireline with electric line
+WL AND CTU,wireline_unit,wireline with coiled tubing
+WL UNIT,wireline_unit,wireline unit
+WL UNIT OPERATING OF DSV,wireline_unit,wireline on dive support vessel
+"WL UNIT, LB SUPERIOR VALOR",wireline_unit,wireline on lift boat
+WL/ ELECTRIC LINE,wireline_unit,wireline with electric line
+WL/CT UNIT,wireline_unit,wireline with coiled tubing
+WL/CTU,wireline_unit,wireline with coiled tubing
+WL/E/,wireline_unit,wireline with electric line
+WL/EL,wireline_unit,wireline with electric line
+WL/EL UNITS,wireline_unit,wireline with electric line
+WL/SL,wireline_unit,wireline with slickline
+WL/SL UNIT,wireline_unit,wireline with slickline
+WLP,wireline_unit,wireline abbreviation
+WLU,wireline_unit,wireline unit abbreviation
+WLU AND CTU,wireline_unit,wireline with coiled tubing
+WLU/ CTU,wireline_unit,wireline with coiled tubing
+WLY,wireline_unit,wireline abbreviation typo
+WORK HORSE 4,jack_up,Workhorse 4 jack-up
+WORKBOAT,support_vessel,workboat
+WORKED OFF EB 159 A P/F,unknown,unclear designation
+WORKER,jack_up,Diamond Worker jack-up
+WORKHORSE #9,jack_up,Workhorse jack-up rig
+WORKHORSE - IX,jack_up,Workhorse IX jack-up
+WORKHORSE FOUR,jack_up,Workhorse 4 jack-up
+WORKHORSE IX,jack_up,Workhorse IX jack-up
+WUPERIOR P&A,unknown,Superior P&A typo
+WYOMING,jack_up,Pride Wyoming jack-up
+Wotan,semi_submersible,Wotan semi-submersible
+\,unknown,garbage entry
+],unknown,garbage entry

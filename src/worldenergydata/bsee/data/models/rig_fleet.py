@@ -18,6 +18,13 @@ _RIG_TYPE_DISPLAY_MAP: dict[str, str] = {
     "inland_barge": "Inland Barge",
     "submersible": "Submersible",
     "land_rig": "Land Rig",
+    "wireline_unit": "Wireline Unit",
+    "coil_tubing_unit": "Coil Tubing Unit",
+    "lift_boat": "Lift Boat",
+    "snubbing_unit": "Snubbing Unit",
+    "workover_rig": "Workover Rig",
+    "support_vessel": "Support Vessel",
+    "pumping_unit": "Pumping Unit",
 }
 
 _INACTIVE_STATUSES: frozenset[str] = frozenset({

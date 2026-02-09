@@ -29,6 +29,7 @@ class TestRigFleetRouter:
         router = RigFleetRouter()
         # Point loader at empty dir so _load_data returns None
         router.rig_fleet_loader._bin_dir = str(tmp_path)
+        router.rig_fleet_loader._local_dir = str(tmp_path / "nonexistent_local")
 
         cfg = {"data": {"rig_fleet": True}}
         result_cfg, result_data = router.router(cfg)

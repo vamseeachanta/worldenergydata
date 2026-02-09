@@ -122,3 +122,52 @@ class TestRigFleetEntry:
         """When both is_offshore and rig_type are None, returns True."""
         entry = self._make_entry(rig_type=None, is_offshore=None)
         assert entry.is_offshore_derived is True
+
+    # --- intervention type display names ---
+
+    def test_rig_type_display_wireline_unit(self):
+        """Wireline unit type maps to 'Wireline Unit'."""
+        entry = self._make_entry(rig_type="wireline_unit")
+        assert entry.rig_type_display == "Wireline Unit"
+
+    def test_rig_type_display_coil_tubing_unit(self):
+        """Coil tubing unit type maps to 'Coil Tubing Unit'."""
+        entry = self._make_entry(rig_type="coil_tubing_unit")
+        assert entry.rig_type_display == "Coil Tubing Unit"
+
+    def test_rig_type_display_lift_boat(self):
+        """Lift boat type maps to 'Lift Boat'."""
+        entry = self._make_entry(rig_type="lift_boat")
+        assert entry.rig_type_display == "Lift Boat"
+
+    def test_rig_type_display_snubbing_unit(self):
+        """Snubbing unit type maps to 'Snubbing Unit'."""
+        entry = self._make_entry(rig_type="snubbing_unit")
+        assert entry.rig_type_display == "Snubbing Unit"
+
+    def test_rig_type_display_workover_rig(self):
+        """Workover rig type maps to 'Workover Rig'."""
+        entry = self._make_entry(rig_type="workover_rig")
+        assert entry.rig_type_display == "Workover Rig"
+
+    def test_rig_type_display_support_vessel(self):
+        """Support vessel type maps to 'Support Vessel'."""
+        entry = self._make_entry(rig_type="support_vessel")
+        assert entry.rig_type_display == "Support Vessel"
+
+    def test_rig_type_display_pumping_unit(self):
+        """Pumping unit type maps to 'Pumping Unit'."""
+        entry = self._make_entry(rig_type="pumping_unit")
+        assert entry.rig_type_display == "Pumping Unit"
+
+    # --- intervention types are offshore ---
+
+    def test_is_offshore_derived_wireline_unit(self):
+        """Wireline unit defaults to offshore (True)."""
+        entry = self._make_entry(rig_type="wireline_unit", is_offshore=None)
+        assert entry.is_offshore_derived is True
+
+    def test_is_offshore_derived_snubbing_unit(self):
+        """Snubbing unit defaults to offshore (True)."""
+        entry = self._make_entry(rig_type="snubbing_unit", is_offshore=None)
+        assert entry.is_offshore_derived is True
