@@ -204,6 +204,44 @@ class TestBoreholeJoin:
         assert "DRILLING_DAYS" not in result.columns
 
 
+class TestBoreholeColumnCollision:
+    """Regression: WAR zip includes mv_war_boreholes_view.txt columns."""
+
+    def test_war_with_preexisting_bh_columns(
+        self, war_df: pd.DataFrame, fleet_df: pd.DataFrame,
+        borehole_df: pd.DataFrame,
+    ) -> None:
+        """When WAR already has BH_TOTAL_MD etc., join must not produce _x/_y."""
+        war_with_bh = war_df.copy()
+        war_with_bh["BH_TOTAL_MD"] = 9999.0
+        war_with_bh["WELL_SPUD_DATE"] = "2019-01-01"
+        war_with_bh["TOTAL_DEPTH_DATE"] = "2019-06-01"
+        war_with_bh["WELL_NAME_SUFFIX"] = "ST00BP00"
+
+        engine = ActivityEnrichmentEngine(war_with_bh, fleet_df, borehole_df)
+        result = engine.enrich()
+
+        assert "BH_TOTAL_MD" in result.columns
+        assert "BH_TOTAL_MD_x" not in result.columns
+        assert "BH_TOTAL_MD_y" not in result.columns
+        matched = result[result["API_WELL_NUMBER"] == "W001"]
+        assert matched["BH_TOTAL_MD"].notna().all()
+
+    def test_join_stats_with_preexisting_columns(
+        self, war_df: pd.DataFrame, fleet_df: pd.DataFrame,
+        borehole_df: pd.DataFrame,
+    ) -> None:
+        """get_join_stats() must report >0% borehole match rate."""
+        war_with_bh = war_df.copy()
+        war_with_bh["BH_TOTAL_MD"] = float("nan")
+        war_with_bh["WELL_SPUD_DATE"] = pd.NaT
+
+        engine = ActivityEnrichmentEngine(war_with_bh, fleet_df, borehole_df)
+        engine.enrich()
+        stats = engine.get_join_stats()
+        assert stats["borehole_match_rate"] > 0.0
+
+
 # -- Step 3: Water depth classification tests --------------------------------
 
 

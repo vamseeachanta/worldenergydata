@@ -98,10 +98,25 @@ class ActivityEnrichmentEngine:
 
     # -- Step 2: WAR to Borehole join ----------------------------------------
 
+    # Columns that borehole join will introduce — drop WAR-side copies
+    # to prevent pandas _x/_y suffix collision.  The WAR zip's
+    # mv_war_boreholes_view.txt already contains these columns; the
+    # borehole download is the authoritative source.
+    _BH_JOIN_COLS = frozenset({
+        "WELL_SPUD_DATE", "TOTAL_DEPTH_DATE", "BH_TOTAL_MD",
+        "WELL_NAME_SUFFIX", "DRILLING_DAYS", "BOREHOLE_STAT_CD",
+        "WELL_BORE_TVD",
+    })
+
     def _join_borehole(self, df: pd.DataFrame) -> pd.DataFrame:
         """Left-join borehole data, compute drilling days and coalesce depth."""
         if self._borehole_df is None:
             return df
+
+        # Drop WAR-side columns that collide with borehole join columns.
+        overlap = [c for c in self._BH_JOIN_COLS if c in df.columns]
+        if overlap:
+            df = df.drop(columns=overlap)
 
         bh = self._borehole_df.rename(
             columns={"WATER_DEPTH": "BH_WATER_DEPTH"},

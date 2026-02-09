@@ -10,6 +10,14 @@ from __future__ import annotations
 import pandas as pd
 
 
+def _filter_valid_years(df: pd.DataFrame, year_col: str = "YEAR") -> pd.DataFrame:
+    """Drop rows where year_col is NaN, '<NA>', or 'nan' (string)."""
+    if year_col not in df.columns:
+        return df
+    mask = df[year_col].astype(str).str.match(r"^\d{4}$")
+    return df[mask].copy()
+
+
 class InsightGenerator:
     """Transform analysis results into ranked business insights."""
 
@@ -94,6 +102,8 @@ class InsightGenerator:
         # Year-over-year drilling duration trend
         de = self._results.get("drilling_efficiency", {})
         by_year = de.get("by_year", pd.DataFrame())
+        if isinstance(by_year, pd.DataFrame):
+            by_year = _filter_valid_years(by_year)
         if isinstance(by_year, pd.DataFrame) and len(by_year) >= 2:
             sorted_df = by_year.sort_values("YEAR").reset_index(drop=True)
             first_mean = float(sorted_df.iloc[0]["mean_days"])
@@ -115,6 +125,8 @@ class InsightGenerator:
         # Year-over-year depth trend
         wd = self._results.get("well_depth", {})
         depth_by_year = wd.get("by_year", pd.DataFrame())
+        if isinstance(depth_by_year, pd.DataFrame):
+            depth_by_year = _filter_valid_years(depth_by_year)
         if isinstance(depth_by_year, pd.DataFrame) and len(depth_by_year) >= 2:
             sorted_df = depth_by_year.sort_values("YEAR").reset_index(drop=True)
             first_md = float(sorted_df.iloc[0]["mean_md"])
@@ -215,6 +227,8 @@ class InsightGenerator:
         # Year-over-year activity decline
         de = self._results.get("drilling_efficiency", {})
         by_year = de.get("by_year", pd.DataFrame())
+        if isinstance(by_year, pd.DataFrame):
+            by_year = _filter_valid_years(by_year)
         if isinstance(by_year, pd.DataFrame) and len(by_year) >= 2:
             sorted_df = by_year.sort_values("YEAR").reset_index(drop=True)
             first_count = int(sorted_df.iloc[0]["count"])
@@ -247,6 +261,8 @@ class InsightGenerator:
         # Areas with declining activity (compare year-over-year count)
         wd = self._results.get("well_depth", {})
         depth_by_year = wd.get("by_year", pd.DataFrame())
+        if isinstance(depth_by_year, pd.DataFrame):
+            depth_by_year = _filter_valid_years(depth_by_year)
         if isinstance(depth_by_year, pd.DataFrame) and len(depth_by_year) >= 2:
             sorted_df = depth_by_year.sort_values("YEAR").reset_index(drop=True)
             first_count = int(sorted_df.iloc[0]["count"])
