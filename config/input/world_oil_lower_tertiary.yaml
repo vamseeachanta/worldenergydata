@@ -1,0 +1,229 @@
+# config/input/world_oil_lower_tertiary.yaml
+# World Oil Lower Tertiary article analysis — field mappings, article metrics, report config
+# Single source of truth for all analysis inputs
+
+metadata:
+  feature_name: "world-oil-lower-tertiary-reports"
+  version: "1.0.0"
+  description: "World Oil LT article analysis — field mappings, article metrics, report config"
+  articles:
+    part1:
+      title: "America's Promising Lower Tertiary Frontier — Two Decades Later"
+      publication: "World Oil"
+      date: "2025-10"
+      author: "Frontier Deepwater"
+    part2:
+      title: "Enhancing Industry Performance — The Options"
+      publication: "World Oil"
+      date: "2026-01"
+      author: "Frontier Deepwater"
+
+# ── Field Block Mappings ──────────────────────────────────────────────
+fields:
+  subsea:
+    Jack:
+      area: WR
+      blocks: [718, 719, 758, 759]
+      operator: "Chevron"
+      first_oil: 2014
+    "St. Malo":
+      area: WR
+      blocks: [633, 634, 677, 678]
+      operator: "Chevron"
+      first_oil: 2014
+    Julia:
+      area: WR
+      blocks: [540, 584, 627]
+      operator: "ExxonMobil"
+      first_oil: 2016
+    Stones:
+      area: WR
+      blocks: [508]
+      operator: "Shell"
+      first_oil: 2016
+    "Cascade/Chinook":
+      area: WR
+      blocks: [205, 206, 469, 470]
+      operator: "Petrobras"
+      first_oil: 2012
+    Anchor:
+      area: GC
+      blocks: [807]
+      operator: "Chevron"
+      first_oil: 2024
+    Shenandoah:
+      area: WR
+      blocks: [51, 52, 53]
+      operator: "Beacon Offshore"
+      first_oil: null  # Under development
+    Kaskida:
+      area: KC
+      blocks: [291, 292]
+      operator: "BP"
+      first_oil: null
+    Tiber:
+      area: KC
+      blocks: [102]
+      operator: "BP"
+      first_oil: null
+
+  dry_tree:
+    Mars:
+      area: MC
+      blocks: [687, 727, 763, 807]
+      operator: "Shell"
+      first_oil: 1996
+      platform: "TLP"
+    Ursa:
+      area: MC
+      blocks: [809, 810, 854]
+      operator: "Shell"
+      first_oil: 1999
+      platform: "TLP"
+    "Mad Dog":
+      area: GC
+      blocks: [782, 826]
+      operator: "BP"
+      first_oil: 2005
+      platform: "Spar"
+    "Horn Mountain":
+      area: MC
+      blocks: [126, 127]
+      operator: "BP"
+      first_oil: 2002
+      platform: "Spar"
+
+# ── Article-Derived Metrics ───────────────────────────────────────────
+# Source: Frontier Deepwater analysis of BSEE data (2025)
+article_metrics:
+  source_attribution: "Frontier Deepwater analysis of BSEE data (2025)"
+  aggregate:
+    total_investment_billion: 50
+    total_modu_days: 20000
+    total_dc_cost_billion: 20
+    subsea_uptime_pct: 67
+    zones_perforated_pct_range: [25, 30]
+    intervention_cost_per_well_million: 100
+
+  recovery_factors:
+    subsea:
+      range_pct: [2, 10]
+      label: "Subsea tieback"
+    dry_tree:
+      range_pct: [30, 40]
+      label: "Dry-tree (Spar/TLP)"
+
+  economics:
+    mean_subsea_npv_billion: -1.2
+    discount_rate: 0.10
+
+  julia_deep_dive:
+    oip_billion_bbl: 6
+    sanctioned_billion_bbl: 1
+    actual_recovery_mmbbl: 71
+    legacy_csv_mmbbl: 68.4
+
+  validation_table:
+    fields:
+      - name: "Jack/St. Malo"
+        appraisal_wells: 7
+        discovery_to_fo_years: 11
+        recovery_factor_pct: 2.5
+      - name: "Julia"
+        appraisal_wells: 4
+        discovery_to_fo_years: 9
+        recovery_factor_pct: 1.2
+      - name: "Stones"
+        appraisal_wells: 3
+        discovery_to_fo_years: 12
+        recovery_factor_pct: 3.1
+      - name: "Cascade/Chinook"
+        appraisal_wells: 5
+        discovery_to_fo_years: 8
+        recovery_factor_pct: 2.0
+
+# ── Architecture Ratings (Part 2) ────────────────────────────────────
+# Qualitative heatmap: 5 systems x 6 criteria, scale 1-5
+architecture:
+  systems: ["Subsea Tieback", "Spar", "TLP", "Semi/DDS", "FrPS"]
+  criteria: ["Intervention Access", "Recovery Potential", "Water Depth Range",
+             "CAPEX Efficiency", "Operational Uptime", "Well Count Capacity"]
+  ratings:
+    "Subsea Tieback": [1, 2, 5, 4, 3, 2]
+    "Spar":           [4, 4, 4, 3, 4, 3]
+    "TLP":            [5, 5, 2, 3, 5, 5]
+    "Semi/DDS":       [5, 5, 5, 2, 4, 5]
+    "FrPS":           [4, 4, 5, 4, 4, 4]
+
+  depth_limits_ft:
+    "Subsea Tieback": {min: 0, max: 12000}
+    "Spar":           {min: 2000, max: 8000}
+    "TLP":            {min: 1000, max: 6000}
+    "Semi/DDS":       {min: 3000, max: 10000}
+    "FrPS":           {min: 3000, max: 10000}
+
+  pros_cons:
+    "Subsea Tieback":
+      pros: ["Lower CAPEX", "Ultra-deepwater capable", "Modular expansion"]
+      cons: ["No intervention access", "Low recovery 2-10%", "High workover cost $100M+"]
+    "Spar":
+      pros: ["Dry-tree wells", "Good motion characteristics", "Proven to 8000ft"]
+      cons: ["Higher CAPEX", "Limited to ~8000ft water depth"]
+    "TLP":
+      pros: ["Full dry-tree access", "Highest recovery 30-40%", "Best intervention"]
+      cons: ["Depth limited to ~5-6000ft", "Tendon fatigue in ultra-deep"]
+    "Semi/DDS":
+      pros: ["Deepwater capable", "Dry-tree access", "High well count"]
+      cons: ["Highest CAPEX", "Complex risers", "New technology risk"]
+    "FrPS":
+      pros: ["Floating production flexibility", "Deepwater capable", "Redeployable"]
+      cons: ["No dry-tree", "Riser complexity", "Turret challenges"]
+
+# ── Data Paths ────────────────────────────────────────────────────────
+data:
+  war_zip: "data/modules/bsee/.local/war/eWellWARRawData.zip"
+  legacy_results_dir: "tests/modules/bsee/analysis/legacy/results"
+  legacy_fields:
+    julia:
+      rate: "prod_rate_bopd_goa_julia.csv"
+      cumulative: "prod_cumulative_mmbbl_goa_julia.csv"
+      prod_summary: "prod_summ_goa_julia.csv"
+      well_summary: "well_summ_goa_julia.csv"
+    stmalo:
+      rate: "prod_rate_bopd_goa_stmalo.csv"
+      cumulative: "prod_cumulative_mmbbl_goa_stmalo.csv"
+      prod_summary: "prod_summ_goa_stmalo.csv"
+      well_summary: "well_summ_goa_stmalo.csv"
+    stones:
+      rate: "prod_rate_bopd_goa_stones.csv"
+      cumulative: "prod_cumulative_mmbbl_goa_stones.csv"
+      prod_summary: "prod_summ_goa_stones.csv"
+      well_summary: "well_summ_goa_stones.csv"
+
+# ── Report Output Configuration ──────────────────────────────────────
+output:
+  visualization:
+    library: plotly
+    interactive: true
+    theme: plotly_white
+  reports:
+    part1:
+      filename: "lt_performance_report.html"
+      title: "Lower Tertiary Performance Analysis"
+      output_dir: "frontierdeepwater/Mktg/World Oil/2025-10"
+    part2:
+      filename: "lt_options_report.html"
+      title: "Architecture Options Analysis"
+      output_dir: "frontierdeepwater/Mktg/World Oil/2026-01"
+    executive:
+      filename: "lt_executive_summary.html"
+      title: "Lower Tertiary Executive Summary"
+      output_dir: "frontierdeepwater/Mktg/World Oil"
+  copy_to: "reports/bsee/lower_tertiary"
+
+execution:
+  entry_point: "scripts/bsee/generate_world_oil_reports.py"
+  bash_command: |
+    PYTHONPATH=src /usr/bin/python3 scripts/bsee/generate_world_oil_reports.py \
+      --config config/input/world_oil_lower_tertiary.yaml \
+      --report all
