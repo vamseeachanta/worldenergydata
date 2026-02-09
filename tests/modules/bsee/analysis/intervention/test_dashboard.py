@@ -250,6 +250,20 @@ class TestDashboardContainsTablesAndReferences:
             assert "Table of Contents" in content
             assert "section-1" in content
 
+    def test_report_contains_related_report_links(self) -> None:
+        war_df = _make_war_df()
+        fleet_df = _make_fleet_df()
+        dashboard = InterventionDashboard(war_df, fleet_df)
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_path = str(Path(tmpdir) / "test_dashboard.html")
+            dashboard.generate(output_path)
+            content = Path(output_path).read_text()
+
+            assert "drilling_analysis.html" in content
+            assert "intervention_by_service.html" in content
+            assert "Related Reports" in content
+
 
 # ---------------------------------------------------------------------------
 # Test: dashboard handles empty data gracefully

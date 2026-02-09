@@ -122,7 +122,12 @@ def _mode(s: pd.Series) -> str:
 class InterventionDashboard:
     """Generate a comprehensive intervention market intelligence HTML report."""
 
-    def __init__(self, war_df: pd.DataFrame, fleet_df: pd.DataFrame) -> None:
+    def __init__(
+        self,
+        war_df: pd.DataFrame,
+        fleet_df: pd.DataFrame,
+        insights: dict | None = None,
+    ) -> None:
         self._agg = WARActivityAggregator(war_df, fleet_df)
         enriched = self._agg._join_rig_types()
         self._df = enriched[enriched["RIG_NAME"].notna() & enriched["YEAR"].notna()].copy()
@@ -130,6 +135,7 @@ class InterventionDashboard:
             self._df["YEAR"] = self._df["YEAR"].astype(int)
         self._has_bus = "BUS_ASC_NAME" in self._df.columns
         self._has_con = "CONTACT_NAME" in self._df.columns
+        self._insights = insights
         self._fi = 0
 
     def generate(
@@ -142,9 +148,12 @@ class InterventionDashboard:
         y0 = int(self._df["YEAR"].min()) if not self._df.empty else 0
         y1 = int(self._df["YEAR"].max()) if not self._df.empty else 0
         ts = datetime.now(tz=timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-        secs = [self._s1(n, y0, y1), self._s2(), self._s3(), self._s4(),
-                self._s5(), self._s6(), self._s7(), self._s8(), self._s9(),
-                self._s10(n, y0, y1)]
+        secs = [self._s1(n, y0, y1)]
+        if self._insights is not None:
+            secs.append(self._s_insights())
+        secs.extend([self._s2(), self._s3(), self._s4(),
+                      self._s5(), self._s6(), self._s7(), self._s8(), self._s9(),
+                      self._s10(n, y0, y1)])
         Path(output_path).write_text(self._html(secs, n, y0, y1, ts), encoding="utf-8")
         return output_path
 
@@ -169,6 +178,22 @@ class InterventionDashboard:
             aa = idf.groupby("AREA_CODE").size().sort_values(ascending=False).head(3)
             bl.append(f"Key areas: <strong>{', '.join(_AL.get(a, a) for a in aa.index)}</strong>.")
         return {"title": "Executive Summary", "content": self._bul(bl)}
+
+    def _s_insights(self) -> dict:
+        """Key insights summary from Phase 4 pipeline."""
+        if not self._insights:
+            return {
+                "title": "Key Insights",
+                "content": "<p><em>Run enhanced pipeline for AI-generated insights.</em></p>",
+            }
+        bl: list[str] = []
+        for category in ["key_findings", "market_trends", "risk_factors"]:
+            items = self._insights.get(category, [])
+            if items:
+                bl.append(f"<h3>{category.replace('_', ' ').title()}</h3>")
+                bl.append("<ul>" + "".join(f"<li>{item}</li>" for item in items) + "</ul>")
+        content = "\n".join(bl) if bl else "<p>No insights available.</p>"
+        return {"title": "Key Insights", "content": content}
 
     def _s2(self) -> dict:
         ch, nar = [], ""
@@ -476,6 +501,13 @@ class InterventionDashboard:
             f'<div class="subtitle">Source: BSEE Well Activity Reports | {n:,} records | {y0}-{y1}</div>'
             '</div>'
             f'<div class="toc"><h3>Table of Contents</h3><ul>{toc}</ul></div>'
+            '<div class="related-reports" style="background:#EFF6FF;border:1px solid #3B82F6;'
+            'border-radius:6px;padding:16px 24px;margin:16px 0;display:flex;gap:24px;'
+            'align-items:center"><strong style="color:#1e3a5f">Related Reports:</strong>'
+            '<a href="drilling_analysis.html" style="color:#3B82F6;text-decoration:none;'
+            'font-weight:500">Drilling Analysis Report &rarr;</a>'
+            '<a href="intervention_by_service.html" style="color:#EF4444;text-decoration:none;'
+            'font-weight:500">Intervention by Service Type &rarr;</a></div>'
             f'{body}'
             f'<div class="footer">Generated {ts} | BSEE WAR Data | worldenergydata pipeline</div>'
             '</div></body></html>'
