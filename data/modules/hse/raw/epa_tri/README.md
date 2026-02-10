@@ -43,6 +43,37 @@ uv run python -m worldenergydata.hse.acquirers.epa_tri_acquirer \
 
 - pandas, requests
 
+## Import Summary (2026-02-10)
+
+**Database**: `data/modules/hse/hse_incidents.db` (20 MB, `toxic_releases` table)
+
+| Year | Records |
+|------|---------|
+| 2020 | 12,047 |
+| 2021 | 11,616 |
+| 2022 | 10,345 |
+| 2023 | 4,446 |
+| 2024 | 13,033 |
+| **Total** | **51,487** |
+
+16 cross-year duplicate records were detected and skipped. 0 errors.
+
+**Top chemicals by total release volume (lbs)**:
+1. Hydrogen sulfide: 192.6M
+2. Nitrate compounds: 133.6M
+3. Ammonia: 30.5M
+4. Hydrogen cyanide: 19.3M
+5. Sulfuric acid aerosols: 18.0M
+6. n-Hexane: 17.0M
+7. Toluene: 16.4M
+8. Methanol: 12.9M
+9. Hydrochloric acid aerosols: 12.0M
+10. Xylene (mixed isomers): 11.5M
+
+**Top states**: TX (9,605), CA (3,373), LA (3,357), OH (2,552), PA (1,973)
+
+**NAICS codes present**: 424710, 324110, 424690, 324121, 211130, 324199, 324191, 324122, 424720, 213113
+
 ## Last Regenerated
 
 2026-02-01 (acquirer script working as of this date)
