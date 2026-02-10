@@ -128,14 +128,11 @@ dmypy.json
 .fallback-cache/
 .claude/settings.local.json
 .mcp.json
-claude-flow.config.json
 .swarm/
 .hive-mind/
-.claude-flow/
 hive-mind-prompt-*.txt
 memory/
 coordination/
-memory/claude-flow-data.json
 memory/sessions/*
 !memory/sessions/README.md
 memory/agents/*
@@ -149,7 +146,6 @@ coordination/orchestration/*
 *.sqlite
 *.sqlite-journal
 *.sqlite-wal
-claude-flow
 
 # ============================================================
 # Pipeline-regenerable data (see DATA_RESIDENCE_POLICY.md)
