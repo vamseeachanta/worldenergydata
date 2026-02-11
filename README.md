@@ -24,9 +24,16 @@ git clone https://github.com/username/worldenergydata.git
 cd worldenergydata
 uv sync
 
+# Populate BSEE data (not stored in git, ~300 MB download)
+make data
+# or: python3 scripts/refresh_bsee_all.py
+
 # Verify installation
 uv run worldenergydata --help
 ```
+
+> **Note**: BSEE analysis modules require local data that is not stored in git.
+> Run `make data` after cloning to download datasets. See [Local Data Pattern](docs/data/LOCAL_DATA_PATTERN.md).
 
 ### Basic Usage
 

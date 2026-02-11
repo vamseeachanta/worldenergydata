@@ -41,6 +41,15 @@ clean:
 	find . -type d -name ".mypy_cache" -exec rm -rf {} + 2>/dev/null & \
 	wait
 
+# BSEE data management
+.PHONY: data data-dry
+
+data:  ## Download BSEE datasets (~300 MB, ~8 min)
+	python3 scripts/refresh_bsee_all.py
+
+data-dry:  ## Show what data would be downloaded
+	python3 scripts/refresh_bsee_all.py --dry-run
+
 # Parallel file processing example
 process-files:
 	@echo "📁 Processing files in parallel..."

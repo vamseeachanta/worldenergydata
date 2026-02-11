@@ -28,6 +28,8 @@ Data governance: see workspace-hub `docs/DATA_RESIDENCE_POLICY.md`
 
 This repo owns **Tier 1 — Collection Data**: raw data from external public sources (APIs, web scraping, downloads). If the data comes from an external public source, it belongs here.
 
+**IMPORTANT — Local Data Required**: BSEE binary data (~300 MB) is **not stored in git**. After cloning, run `make data` (or `python3 scripts/refresh_bsee_all.py`) to download datasets. Without this, BSEE analysis modules return empty results. See `docs/data/LOCAL_DATA_PATTERN.md`.
+
 ## Key Directories
 
 - `src/` - Analysis modules

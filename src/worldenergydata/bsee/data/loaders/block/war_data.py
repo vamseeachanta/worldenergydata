@@ -1,6 +1,9 @@
+import logging
 import os
 
 import pandas as pd
+
+logger = logging.getLogger(__name__)
 
 from assetutilities.common.yml_utilities import WorkingWithYAML
 
@@ -56,7 +59,13 @@ class WARDataFromBin:
         return cfg
 
     def read_file(self, filepath):
-        df = pd.read_pickle(filepath)
+        try:
+            df = pd.read_pickle(filepath)
+        except (FileNotFoundError, OSError) as e:
+            logger.warning(
+                "BSEE data not found: %s. Run: python3 scripts/refresh_bsee_all.py", filepath
+            )
+            return pd.DataFrame()
         for column in df.select_dtypes(include="object"):
             df[column] = df[column].str.strip().str.strip('"')
         return df

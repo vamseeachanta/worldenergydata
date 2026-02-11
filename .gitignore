@@ -162,19 +162,9 @@ data/modules/hse/raw/epa_tri/*.csv
 # BSEE raw data (regenerate: bsee_acquirer.py)
 data/modules/hse/raw/bsee/
 data/modules/bsee/zip/
-data/modules/bsee/bin/production/
-data/modules/bsee/bin/production_yearly/
-data/modules/bsee/bin/apm/
-data/modules/bsee/bin/war/
-data/modules/bsee/bin/ewellapd/
-data/modules/bsee/bin/apd/
-data/modules/bsee/bin/borehole/
-data/modules/bsee/bin/bhps/
-data/modules/bsee/bin/frs/
-data/modules/bsee/bin/eor/
-data/modules/bsee/bin/api/
-data/modules/bsee/bin/plans/
-data/modules/bsee/bin/pipeperm/
+
+# BSEE binary data — regenerate via: python3 scripts/refresh_bsee_all.py
+data/modules/bsee/bin/**/*.bin
 data/modules/bsee/csv/online_query_raw_data/
 data/modules/bsee/csv/production/
 data/modules/bsee/csv/well/
