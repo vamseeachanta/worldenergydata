@@ -247,5 +247,17 @@ tests/modules/sodir/seaArea.csv
 tests/modules/sodir/prlAreaSplitByBlock.csv
 
 # Large report outputs
+reports/bsee/
 reports/marine_safety/*/*.html
+reports/coverage/
 results/modules/marine_safety/
+
+# Nested clones (not submodules)
+frontierdeepwater/
+
+# Claude Flow artifacts (transient)
+**/.claude-flow/
+
+# Auto-generated spec files
+specs/modules/eager-*
+specs/modules/expressive-*
