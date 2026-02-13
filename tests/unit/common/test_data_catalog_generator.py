@@ -21,7 +21,12 @@ from worldenergydata.common.catalog import DataCatalog, DatasetEntry, ModuleCata
 
 # Import the generator under test from scripts/
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
-from generate_data_catalog import DataCatalogGenerator, _DOMAIN_MAP
+from generate_data_catalog import (
+    DataCatalogGenerator,
+    _DOMAIN_MAP,
+    _LFS_SIGNATURE,
+    load_source_registry,
+)
 
 
 # -- Helpers -----------------------------------------------------------------
@@ -99,6 +104,8 @@ class TestScanBinaryFile:
         assert entry.size_bytes == 103
         assert entry.last_modified is not None
         assert entry.path == "data/modules/test_mod/bin/model.bin"
+        assert entry.is_lfs_stub is False
+        assert entry.data_status == "real"
 
 
 # -- Excel file scanning -----------------------------------------------------
@@ -281,14 +288,14 @@ class TestGenerate:
             header=["a", "b"], rows=[["1", "2"]],
         )
         gen = DataCatalogGenerator(root)
-        output_path = gen.generate(output_format="yaml")
+        output_path, catalog = gen.generate(output_format="yaml")
 
         assert output_path.exists()
         assert output_path.suffix == ".yml"
         assert output_path.name == "data-catalog.yml"
         with open(output_path) as f:
             loaded = yaml.safe_load(f)
-        assert loaded["version"] == "1.0.0"
+        assert loaded["version"] == "1.1.0"
         assert loaded["total_modules"] == 1
         assert "test_mod" in loaded["modules"]
 
@@ -300,14 +307,14 @@ class TestGenerate:
             header=["x"], rows=[["10"]],
         )
         gen = DataCatalogGenerator(root)
-        output_path = gen.generate(output_format="json")
+        output_path, catalog = gen.generate(output_format="json")
 
         assert output_path.exists()
         assert output_path.suffix == ".json"
         assert output_path.name == "data-catalog.json"
         with open(output_path) as f:
             loaded = json.load(f)
-        assert loaded["version"] == "1.0.0"
+        assert loaded["version"] == "1.1.0"
         assert loaded["total_modules"] == 1
         assert "test_mod" in loaded["modules"]
 
@@ -323,7 +330,7 @@ class TestGenerate:
             header=["b"], rows=[["2"]],
         )
         gen = DataCatalogGenerator(root)
-        output_path = gen.generate(module_name="mod_a", output_format="json")
+        output_path, catalog = gen.generate(module_name="mod_a", output_format="json")
 
         with open(output_path) as f:
             loaded = json.load(f)
@@ -337,3 +344,185 @@ class TestGenerate:
         gen = DataCatalogGenerator(root)
         with pytest.raises(FileNotFoundError, match="Module not found"):
             gen.generate(module_name="nonexistent")
+
+
+# -- LFS stub detection -----------------------------------------------------
+
+class TestLfsStubDetection:
+    """Tests for Git LFS stub detection in scan_binary_file."""
+
+    def test_scan_binary_lfs_stub(self, tmp_path: Path):
+        """A file starting with the LFS signature is flagged as a stub."""
+        root = _make_project(tmp_path)
+        bin_path = root / "data" / "modules" / "test_mod" / "bin" / "stub.bin"
+        bin_path.parent.mkdir(parents=True)
+        lfs_content = (
+            b"version https://git-lfs.github.com/spec/v1\n"
+            b"oid sha256:abc123\nsize 12345\n"
+        )
+        bin_path.write_bytes(lfs_content)
+        gen = DataCatalogGenerator(root)
+        entry = gen.scan_binary_file(bin_path)
+
+        assert entry.is_lfs_stub is True
+        assert entry.data_status == "lfs_stub"
+
+    def test_scan_binary_real_file(self, tmp_path: Path):
+        """A file with pickle header is detected as real data."""
+        root = _make_project(tmp_path)
+        bin_path = root / "data" / "modules" / "test_mod" / "bin" / "real.bin"
+        bin_path.parent.mkdir(parents=True)
+        bin_path.write_bytes(b"\x80\x04\x95" + b"\x00" * 100)
+        gen = DataCatalogGenerator(root)
+        entry = gen.scan_binary_file(bin_path)
+
+        assert entry.is_lfs_stub is False
+        assert entry.data_status == "real"
+
+    def test_scan_binary_empty_file(self, tmp_path: Path):
+        """A zero-byte file gets data_status='empty'."""
+        root = _make_project(tmp_path)
+        bin_path = root / "data" / "modules" / "test_mod" / "bin" / "empty.bin"
+        bin_path.parent.mkdir(parents=True)
+        bin_path.write_bytes(b"")
+        gen = DataCatalogGenerator(root)
+        entry = gen.scan_binary_file(bin_path)
+
+        assert entry.is_lfs_stub is False
+        assert entry.data_status == "empty"
+        assert entry.size_bytes == 0
+
+
+# -- Source registry merge ---------------------------------------------------
+
+class TestSourceRegistryMerge:
+    """Tests for _merge_source_registry."""
+
+    def test_merge_applies_source_url(self, tmp_path: Path):
+        """Registry URLs are applied to matching datasets."""
+        root = _make_project(tmp_path)
+        registry_dir = root / "data" / "catalog"
+        registry_dir.mkdir(parents=True, exist_ok=True)
+        (registry_dir / "source-registry.yml").write_text(
+            "modules:\n"
+            "  test_mod:\n"
+            "    datasets:\n"
+            "      data:\n"
+            "        source_url: https://example.com/data.zip\n"
+        )
+        _write_csv(
+            root / "data" / "modules" / "test_mod" / "data.csv",
+            header=["a"], rows=[["1"]],
+        )
+        gen = DataCatalogGenerator(root)
+        _, catalog = gen.generate(output_format="yaml")
+
+        ds = catalog.modules["test_mod"].datasets[0]
+        assert ds.source_url == "https://example.com/data.zip"
+
+    def test_merge_applies_default_frequency(self, tmp_path: Path):
+        """Module-level default_update_frequency flows to datasets."""
+        root = _make_project(tmp_path)
+        registry_dir = root / "data" / "catalog"
+        registry_dir.mkdir(parents=True, exist_ok=True)
+        (registry_dir / "source-registry.yml").write_text(
+            "modules:\n"
+            "  test_mod:\n"
+            "    default_update_frequency: quarterly\n"
+        )
+        _write_csv(
+            root / "data" / "modules" / "test_mod" / "data.csv",
+            header=["a"], rows=[["1"]],
+        )
+        gen = DataCatalogGenerator(root)
+        _, catalog = gen.generate(output_format="yaml")
+
+        ds = catalog.modules["test_mod"].datasets[0]
+        assert ds.update_frequency == "quarterly"
+
+    def test_merge_no_registry_file(self, tmp_path: Path):
+        """Missing registry file causes no crash; fields stay None."""
+        root = _make_project(tmp_path)
+        _write_csv(
+            root / "data" / "modules" / "test_mod" / "data.csv",
+            header=["a"], rows=[["1"]],
+        )
+        gen = DataCatalogGenerator(root)
+        _, catalog = gen.generate(output_format="yaml")
+
+        ds = catalog.modules["test_mod"].datasets[0]
+        assert ds.source_url is None
+        assert ds.update_frequency is None
+
+
+# -- Staleness calculation ---------------------------------------------------
+
+class TestStalenessCalculation:
+    """Tests for _compute_staleness."""
+
+    def test_stale_dataset(self, tmp_path: Path):
+        """A dataset with old last_refreshed relative to frequency is marked stale."""
+        root = _make_project(tmp_path)
+        _write_csv(
+            root / "data" / "modules" / "test_mod" / "data.csv",
+            header=["a"], rows=[["1"]],
+        )
+        gen = DataCatalogGenerator(root)
+        catalog = gen.scan_all_modules()
+
+        ds = catalog.modules["test_mod"].datasets[0]
+        ds.update_frequency = "daily"
+        ds.last_refreshed = "2020-01-01T00:00:00+00:00"
+        ds.data_status = "real"
+
+        gen._compute_staleness(catalog)
+        assert ds.data_status == "stale"
+
+    def test_fresh_dataset(self, tmp_path: Path):
+        """A recently refreshed dataset stays as 'real'."""
+        root = _make_project(tmp_path)
+        _write_csv(
+            root / "data" / "modules" / "test_mod" / "data.csv",
+            header=["a"], rows=[["1"]],
+        )
+        gen = DataCatalogGenerator(root)
+        catalog = gen.scan_all_modules()
+
+        ds = catalog.modules["test_mod"].datasets[0]
+        from datetime import datetime, timezone
+        ds.update_frequency = "annual"
+        ds.last_refreshed = datetime.now(timezone.utc).isoformat()
+        ds.data_status = "real"
+
+        gen._compute_staleness(catalog)
+        assert ds.data_status == "real"
+
+
+# -- Freshness report -------------------------------------------------------
+
+class TestFreshnessReport:
+    """Tests for print_freshness_report."""
+
+    def test_report_output(self, tmp_path: Path, capsys):
+        """Report prints a table with correct counts."""
+        root = _make_project(tmp_path)
+        # Create a module with a real CSV and an LFS stub binary
+        mod_dir = root / "data" / "modules" / "test_mod"
+        _write_csv(mod_dir / "data.csv", header=["a"], rows=[["1"]])
+        bin_path = mod_dir / "bin" / "stub.bin"
+        bin_path.parent.mkdir(parents=True)
+        lfs_content = (
+            b"version https://git-lfs.github.com/spec/v1\n"
+            b"oid sha256:abc123\nsize 12345\n"
+        )
+        bin_path.write_bytes(lfs_content)
+
+        gen = DataCatalogGenerator(root)
+        _, catalog = gen.generate(output_format="yaml")
+
+        DataCatalogGenerator.print_freshness_report(catalog)
+        captured = capsys.readouterr()
+
+        assert "Data Freshness Report" in captured.out
+        assert "test_mod" in captured.out
+        assert "TOTAL" in captured.out

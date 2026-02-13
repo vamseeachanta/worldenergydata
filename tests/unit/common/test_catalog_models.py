@@ -92,7 +92,7 @@ def sample_module(
 def sample_catalog(sample_module: ModuleCatalogEntry) -> DataCatalog:
     """A data catalog with one module."""
     catalog = DataCatalog(
-        version="1.0.0",
+        version="1.1.0",
         generated_at="2025-06-01T00:00:00+00:00",
     )
     catalog.modules["production"] = sample_module
@@ -139,6 +139,25 @@ class TestDatasetEntry:
         assert minimal_dataset.source_url is None
         assert minimal_dataset.last_modified is None
         assert minimal_dataset.description is None
+        assert minimal_dataset.last_refreshed is None
+        assert minimal_dataset.is_lfs_stub is False
+        assert minimal_dataset.data_status == "unknown"
+
+    def test_dataset_entry_new_fields(self):
+        """New freshness-tracking fields can be set explicitly."""
+        ds = DatasetEntry(
+            name="test",
+            path="data/test.bin",
+            format="pickle",
+            domain="general",
+            size_bytes=130,
+            last_refreshed="2026-01-10T00:00:00+00:00",
+            is_lfs_stub=True,
+            data_status="lfs_stub",
+        )
+        assert ds.last_refreshed == "2026-01-10T00:00:00+00:00"
+        assert ds.is_lfs_stub is True
+        assert ds.data_status == "lfs_stub"
 
 
 # ---------------------------------------------------------------------------
@@ -200,7 +219,7 @@ class TestDataCatalog:
         """to_dict produces the expected top-level structure."""
         result = sample_catalog.to_dict()
 
-        assert result["version"] == "1.0.0"
+        assert result["version"] == "1.1.0"
         assert result["generated_at"] == "2025-06-01T00:00:00+00:00"
         assert result["total_modules"] == 1
         assert result["total_datasets"] == 3
@@ -225,7 +244,7 @@ class TestDataCatalog:
         with open(yaml_path) as f:
             loaded = yaml.safe_load(f)
 
-        assert loaded["version"] == "1.0.0"
+        assert loaded["version"] == "1.1.0"
         assert loaded["total_modules"] == 1
         assert "production" in loaded["modules"]
 
@@ -241,7 +260,7 @@ class TestDataCatalog:
         with open(json_path) as f:
             loaded = json.load(f)
 
-        assert loaded["version"] == "1.0.0"
+        assert loaded["version"] == "1.1.0"
         assert loaded["total_modules"] == 1
         assert "production" in loaded["modules"]
 
@@ -251,3 +270,44 @@ class TestDataCatalog:
         assert catalog.generated_at != ""
         # Verify it contains a valid ISO-ish timestamp (has 'T' separator)
         assert "T" in catalog.generated_at
+
+    def test_data_catalog_version(self):
+        """Default catalog version is 1.1.0 after freshness-tracking fields."""
+        catalog = DataCatalog()
+        assert catalog.version == "1.1.0"
+
+
+# ---------------------------------------------------------------------------
+# refresh_catalog() helper
+# ---------------------------------------------------------------------------
+
+
+class TestRefreshCatalog:
+    """Tests for the refresh_catalog auto-regeneration helper."""
+
+    def test_refresh_catalog_missing_script(self, tmp_path):
+        """Returns False when the generator script is not found."""
+        from worldenergydata.common.catalog import refresh_catalog
+
+        assert refresh_catalog(project_root=tmp_path) is False
+
+    def test_refresh_catalog_with_script(self, tmp_path):
+        """Returns True when the generator script runs successfully."""
+        from worldenergydata.common.catalog import refresh_catalog
+
+        scripts_dir = tmp_path / "scripts"
+        scripts_dir.mkdir()
+        # Create a minimal generator that does nothing
+        script = scripts_dir / "generate_data_catalog.py"
+        script.write_text("# no-op\n")
+        assert refresh_catalog(project_root=tmp_path) is True
+
+    def test_refresh_catalog_script_failure(self, tmp_path):
+        """Returns False when the generator script fails."""
+        from worldenergydata.common.catalog import refresh_catalog
+
+        scripts_dir = tmp_path / "scripts"
+        scripts_dir.mkdir()
+        script = scripts_dir / "generate_data_catalog.py"
+        script.write_text("import sys; sys.exit(1)\n")
+        assert refresh_catalog(project_root=tmp_path) is False

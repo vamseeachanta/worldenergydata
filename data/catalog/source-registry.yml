@@ -1,0 +1,199 @@
+# Source metadata for worldenergydata datasets.
+# Used by generate_data_catalog.py to populate source_url and update_frequency.
+#
+# IMPORTANT: Regenerate catalog after any data changes:
+#   python3 scripts/generate_data_catalog.py
+#   python3 scripts/generate_data_catalog.py --report
+
+modules:
+  bsee:
+    source_base_url: https://www.data.bsee.gov
+    license: "US Government Public Domain"
+    default_update_frequency: quarterly
+    datasets:
+      well_data:
+        source_url: https://www.data.bsee.gov/Well/Files/APDRawData.zip
+      production:
+        source_url: https://www.data.bsee.gov/Production/Files/ProductionRawData.zip
+      eWellWARRawData:
+        source_url: https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip
+      PlatStrucRawData:
+        source_url: https://www.data.bsee.gov/Platform/Files/PlatStrucRawData.zip
+      PipePermRawData:
+        source_url: https://www.data.bsee.gov/Pipeline/Files/PipePermRawData.zip
+      PermStrucRawData:
+        source_url: https://www.data.bsee.gov/Platform/Files/PermStrucRawData.zip
+      PipeLocAllRawData:
+        source_url: https://www.data.bsee.gov/Pipeline/Files/PipeLocAllRawData.zip
+      IncInvRawData:
+        source_url: https://www.data.bsee.gov/Other/Files/IncInvRawData.zip
+      INCSRawData:
+        source_url: https://www.data.bsee.gov/Company/Files/INCSRawData.zip
+      IncidentStatisticsRawData:
+        source_url: https://www.data.bsee.gov/Other/Files/IncidentStatisticsRawData.zip
+
+  hse:
+    license: "US Government Public Domain"
+    datasets:
+      osha_inspection:
+        source_url: https://enforcedata.dol.gov/views/data_catalogs/zip/osha_inspection.csv.zip
+        update_frequency: annual
+      osha_violation:
+        source_url: https://enforcedata.dol.gov/views/data_catalogs/zip/osha_violation.csv.zip
+        update_frequency: annual
+      osha_accident:
+        source_url: https://enforcedata.dol.gov/views/data_catalogs/zip/osha_accident.csv.zip
+        update_frequency: annual
+      osha_accident_injury:
+        source_url: https://enforcedata.dol.gov/views/data_catalogs/zip/osha_accident_injury.csv.zip
+        update_frequency: annual
+      epa_tri:
+        source_url: https://data.epa.gov/efservice/MV_TRI_BASIC_DOWNLOAD
+        update_frequency: annual
+      bsee_incidents:
+        source_url: https://www.data.bsee.gov/Other/Files/IncInvRawData.zip
+        update_frequency: quarterly
+      bsee_incs:
+        source_url: https://www.data.bsee.gov/Company/Files/INCSRawData.zip
+        update_frequency: quarterly
+
+  sodir_zip_data:
+    source_base_url: https://factmaps.sodir.no/api/rest
+    license: "Norwegian Government Open Data"
+    default_update_frequency: quarterly
+    datasets:
+      blocks:
+        source_url: https://factmaps.sodir.no/api/rest/1001
+      wellbores:
+        source_url: https://factmaps.sodir.no/api/rest/5000
+      fields:
+        source_url: https://factmaps.sodir.no/api/rest/7100
+      discoveries:
+        source_url: https://factmaps.sodir.no/api/rest/7000
+      surveys:
+        source_url: https://factmaps.sodir.no/api/rest/4000
+
+  marine_safety:
+    license: "US Government Public Domain"
+    default_update_frequency: quarterly
+    datasets:
+      uscg_misle:
+        source_url: https://www.dco.uscg.mil/Portals/9/DCO%20Documents/5p/CG-INV/datasets/MISLE_DATA.zip
+        update_frequency: quarterly
+      ntsb_carol:
+        source_url: https://data.ntsb.gov
+        update_frequency: quarterly
+
+  metocean:
+    license: "US Government Public Domain / Open Data"
+    datasets:
+      ndbc:
+        source_url: https://www.ndbc.noaa.gov
+        update_frequency: daily
+      coops:
+        source_url: https://api.tidesandcurrents.noaa.gov/api/prod
+        update_frequency: daily
+      open_meteo:
+        source_url: https://marine-api.open-meteo.com/v1/marine
+        update_frequency: daily
+      erddap:
+        source_url: https://erddap.ioos.us/erddap
+        update_frequency: daily
+      cmems:
+        source_url: https://nrt.cmems-du.eu/motu-web/Motu
+        update_frequency: daily
+      met_norway:
+        source_url: https://api.met.no/weatherapi
+        update_frequency: daily
+      hycom:
+        source_url: https://ncss.hycom.org/thredds/ncss
+        update_frequency: daily
+
+  canada:
+    license: "Canadian Government Open Data"
+    default_update_frequency: monthly
+    datasets:
+      aer_st37:
+        source_url: https://www.aer.ca/providing-information/data-and-reports/statistical-reports/st37
+        update_frequency: monthly
+      aer_st102:
+        source_url: https://www.aer.ca/providing-information/data-and-reports/statistical-reports/st102
+        update_frequency: monthly
+      bcer_production:
+        source_url: https://www.bc-er.ca/data/production
+        update_frequency: monthly
+      petrinex_ab:
+        source_url: https://www.petrinex.gov.ab.ca/publicdata
+        update_frequency: monthly
+
+  mexico_cnh:
+    source_base_url: https://sih.hidrocarburos.gob.mx
+    license: "Mexican Government Open Data"
+    default_update_frequency: monthly
+    datasets:
+      sih_production:
+        source_url: https://sih.hidrocarburos.gob.mx/dashboardProduccion.html
+      sih_wells:
+        source_url: https://sih.hidrocarburos.gob.mx/dashboardPozos.html
+      sih_fields:
+        source_url: https://sih.hidrocarburos.gob.mx/dashboardCampos.html
+      datos_gob:
+        source_url: https://datos.gob.mx/busca/organization/cnh
+
+  texas_rrc:
+    source_base_url: https://mft.rrc.texas.gov
+    license: "Texas Government Public Data"
+    default_update_frequency: monthly
+    datasets:
+      mft:
+        source_url: https://mft.rrc.texas.gov
+        update_frequency: daily
+      pdq:
+        source_url: https://webapps2.rrc.texas.gov/EWA
+        update_frequency: monthly
+
+  wind:
+    license: "Various Open Data"
+    default_update_frequency: annual
+    datasets: {}
+
+  oil_price:
+    license: "Public Data"
+    default_update_frequency: daily
+    datasets: {}
+
+  pipeline_safety:
+    license: "US Government Public Domain"
+    default_update_frequency: annual
+    datasets: {}
+
+  lng_terminals:
+    license: "Various Government / Industry Open Data"
+    datasets:
+      ferc:
+        source_url: https://www.ferc.gov
+        update_frequency: quarterly
+      gie_alsi:
+        source_url: https://alsi.gie.eu/api
+        update_frequency: daily
+      giignl:
+        source_url: https://giignl.org
+        update_frequency: annual
+
+  vessel_hull_models:
+    license: "Public Industry Data"
+    default_update_frequency: static
+    datasets: {}
+
+  lngc:
+    license: "Public Industry Data"
+    default_update_frequency: static
+    datasets: {}
+
+  landman:
+    license: "US State Government Public Data"
+    default_update_frequency: monthly
+    datasets:
+      blm:
+        source_url: https://reports.blm.gov/
+        update_frequency: monthly

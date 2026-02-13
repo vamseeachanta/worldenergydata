@@ -38,12 +38,16 @@ Example usage:
 from __future__ import annotations
 
 import json
+import logging
+import subprocess
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
 import yaml
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -63,6 +67,11 @@ class DatasetEntry:
         source_url: Upstream URL the data was fetched from.
         last_modified: ISO-8601 timestamp of last file modification.
         description: Free-text description of the dataset.
+        last_refreshed: ISO-8601 timestamp of when data was last
+            fetched from its upstream source (distinct from file mtime).
+        is_lfs_stub: True if the file is a Git LFS pointer, not real data.
+        data_status: Summary status — one of real, lfs_stub, empty,
+            stale, or unknown.
     """
 
     name: str
@@ -76,6 +85,9 @@ class DatasetEntry:
     source_url: Optional[str] = None
     last_modified: Optional[str] = None
     description: Optional[str] = None
+    last_refreshed: Optional[str] = None
+    is_lfs_stub: bool = False
+    data_status: str = "unknown"
 
 
 @dataclass
@@ -123,7 +135,7 @@ class DataCatalog:
         modules: Mapping of module name to its catalog entry.
     """
 
-    version: str = "1.0.0"
+    version: str = "1.1.0"
     generated_at: str = ""
     modules: dict[str, ModuleCatalogEntry] = field(default_factory=dict)
 
@@ -197,3 +209,43 @@ class DataCatalog:
         path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "w") as f:
             json.dump(self.to_dict(), f, indent=2)
+
+
+# ---------------------------------------------------------------------------
+# Auto-regeneration helper
+# ---------------------------------------------------------------------------
+
+
+def refresh_catalog(project_root: Path | None = None) -> bool:
+    """Regenerate the data catalog after a data mutation.
+
+    Call this from data loaders/importers after successfully fetching or
+    modifying datasets.  Runs ``scripts/generate_data_catalog.py`` as a
+    subprocess so it can be used from any context without circular imports.
+
+    Args:
+        project_root: Path to the worldenergydata project root.  If *None*,
+            attempts to discover it from the ``catalog.py`` file location.
+
+    Returns:
+        ``True`` if the catalog was regenerated successfully, ``False`` on
+        error (logged but not raised).
+    """
+    if project_root is None:
+        project_root = Path(__file__).resolve().parent.parent.parent.parent
+    script = project_root / "scripts" / "generate_data_catalog.py"
+    if not script.exists():
+        logger.warning("Catalog generator not found at %s", script)
+        return False
+    try:
+        subprocess.run(
+            ["python3", str(script), "--project-root", str(project_root)],
+            check=True,
+            capture_output=True,
+            timeout=120,
+        )
+        logger.info("Data catalog regenerated successfully")
+        return True
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:
+        logger.warning("Catalog regeneration failed: %s", exc)
+        return False
