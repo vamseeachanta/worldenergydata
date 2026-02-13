@@ -89,15 +89,18 @@ class PipelineRunner:
         """Execute the full analysis pipeline for a resolved field."""
         warnings: list[str] = []
 
-        # 1. Load production data
-        production_df = self._load_production_data(warnings)
+        # 1. Load production data and filter to resolved field
+        raw_production_df = self._load_production_data(warnings)
+        production_df = self._filter_to_field(
+            raw_production_df, context, warnings
+        )
 
         # 2. Run AllFieldsRunner for production summary
         production_summary = self._run_production_analysis(
             production_df, warnings
         )
 
-        # 3. Compute wellbore count from production data
+        # 3. Compute wellbore count from field-scoped production data
         wellbore_count = self._compute_wellbore_count(
             production_df, context
         )
@@ -319,11 +322,46 @@ class PipelineRunner:
     # ------------------------------------------------------------------
 
     @staticmethod
+    def _filter_to_field(
+        df: pd.DataFrame,
+        context: FieldContext,
+        warnings: list[str],
+    ) -> pd.DataFrame:
+        """Filter production DataFrame to rows belonging to the resolved field.
+
+        Tries field code column first, then lease number.  Returns the
+        unfiltered DataFrame if no matching column is found (with a warning).
+        """
+        if df.empty:
+            return df
+
+        # Try field code columns
+        field_col_candidates = [
+            "FIELD_NAME_CODE", "BOTM_FLD_NAME_CD", "FIELD_CODE",
+        ]
+        for col in field_col_candidates:
+            if col in df.columns:
+                filtered = df[df[col].astype(str) == context.field_code]
+                if not filtered.empty:
+                    return filtered
+
+        # Fallback: filter by leases
+        if context.leases and "LEASE_NUMBER" in df.columns:
+            filtered = df[df["LEASE_NUMBER"].isin(context.leases)]
+            if not filtered.empty:
+                return filtered
+
+        warnings.append(
+            "Could not filter production data to field — using full dataset"
+        )
+        return df
+
+    @staticmethod
     def _collect_api12s(
         context: FieldContext,
         production_df: pd.DataFrame,
     ) -> list[str]:
-        """Gather unique well API12 numbers from production data."""
+        """Gather unique well API12 numbers from field-scoped production data."""
         if not production_df.empty and "API_WELL_NUMBER" in production_df.columns:
             return (
                 production_df["API_WELL_NUMBER"]
@@ -331,7 +369,6 @@ class PipelineRunner:
                 .unique()
                 .tolist()
             )
-        # Fallback: no production data -> empty list
         return []
 
     @staticmethod
@@ -339,7 +376,7 @@ class PipelineRunner:
         production_df: pd.DataFrame,
         context: FieldContext,
     ) -> int:
-        """Count unique wellbores from production data or context."""
+        """Count unique wellbores from field-scoped production data or context."""
         if not production_df.empty and "API_WELL_NUMBER" in production_df.columns:
             return int(production_df["API_WELL_NUMBER"].nunique())
         return context.well_count

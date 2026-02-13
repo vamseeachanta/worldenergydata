@@ -166,17 +166,13 @@ def _try_lease_lookup(
     # Gather all leases for this field
     all_leases = _leases_for_field(field_code, lease_field_map)
 
-    # Geological era
-    well_eras = era_classifier.get_well_eras()
-    era = _dominant_era_for_wells(list(well_eras.keys()), era_classifier) if well_eras else "Unknown"
-
     return FieldContext(
         field_code=field_code,
         field_name=field_resolver.resolve(field_code),
         leases=tuple(all_leases),
         area_code=area_code,
-        geological_era=era,
-        well_count=len(well_eras) if well_eras else 0,
+        geological_era="Unknown",
+        well_count=0,
         query_type="lease",
     )
 
@@ -195,16 +191,17 @@ def _try_field_code(
     leases = _leases_for_field(query, lease_field_map)
     area_code = _area_for_field(query, lease_field_map)
 
-    well_eras = era_classifier.get_well_eras()
-    era = _dominant_era_for_wells(list(well_eras.keys()), era_classifier) if well_eras else "Unknown"
-
+    # Note: well_count and geological_era are set to defaults here because
+    # we cannot reliably determine field-specific wells from the era
+    # classifier alone (it holds global well data).  The pipeline runner
+    # derives accurate field-scoped stats from production data.
     return FieldContext(
         field_code=query,
         field_name=all_fields[query],
         leases=tuple(leases),
         area_code=area_code,
-        geological_era=era,
-        well_count=len(well_eras) if well_eras else 0,
+        geological_era="Unknown",
+        well_count=0,
         query_type="field_code",
     )
 
@@ -223,20 +220,13 @@ def _try_field_name(
             leases = _leases_for_field(code, lease_field_map)
             area_code = _area_for_field(code, lease_field_map)
 
-            well_eras = era_classifier.get_well_eras()
-            era = (
-                _dominant_era_for_wells(list(well_eras.keys()), era_classifier)
-                if well_eras
-                else "Unknown"
-            )
-
             return FieldContext(
                 field_code=code,
                 field_name=name,
                 leases=tuple(leases),
                 area_code=area_code,
-                geological_era=era,
-                well_count=len(well_eras) if well_eras else 0,
+                geological_era="Unknown",
+                well_count=0,
                 query_type="field_name",
             )
     return None
