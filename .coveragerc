@@ -1,6 +1,7 @@
 [run]
 # Source paths to measure coverage for
-source = src
+# Only measure worldenergydata package, not external/modules/validators
+source = src/worldenergydata
 
 # Branches to measure
 branch = True
@@ -17,7 +18,8 @@ omit =
     */alembic/*
     */setup.py
     */conftest.py
-    */__init__.py
+    # Keep __init__.py - they contain important imports and re-exports
+    # */__init__.py
 
 # Parallel processing
 parallel = True
