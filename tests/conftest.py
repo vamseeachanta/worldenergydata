@@ -306,7 +306,7 @@ def pytest_sessionfinish(session, exitstatus):
 
 
 # Skip collection of experimental/archived test files
-def pytest_ignore_collect(path, config):
+def pytest_ignore_collect(collection_path, config):
     """Skip collection of experimental and archived test files.
 
     Test directory structure (2025-01):
@@ -329,8 +329,8 @@ def pytest_ignore_collect(path, config):
             └── validation_runs/
     """
     import re
-    path_str = str(path)
-    basename = path.basename
+    path_str = str(collection_path)
+    basename = collection_path.name
 
     # Skip query_*.py files (exploratory scripts)
     if basename.startswith("query_") and basename.endswith("_test.py"):
