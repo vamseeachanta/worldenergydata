@@ -63,6 +63,18 @@ class DrillingRigSchema(BaseVesselSchema):
     SPUD_CAN_DIAMETER_FT: Optional[float] = None
     JU_DESIGN: Optional[str] = None
 
+    # Hull geometry — for RAO / diffraction analysis mapping
+    HULL_FORM_TYPE: Optional[str] = None  # semi_sub, drillship, jackup, barge, spar
+    PONTOON_LENGTH_M: Optional[float] = None
+    PONTOON_WIDTH_M: Optional[float] = None
+    PONTOON_HEIGHT_M: Optional[float] = None
+    COLUMN_DIAMETER_M: Optional[float] = None
+    COLUMN_SPACING_M: Optional[float] = None
+    COLUMN_COUNT: Optional[int] = None
+    GM_M: Optional[float] = None  # Metacentric height
+    VCG_M: Optional[float] = None  # Vertical centre of gravity
+    HULL_LIBRARY_REF: Optional[str] = None  # Cross-ref to digitalmodel hull_library catalog
+
     # Onshore rig-specific
     MAST_HEIGHT_FT: Optional[float] = None
     WALKING_SYSTEM: Optional[bool] = None
@@ -87,6 +99,7 @@ class DrillingRigSchema(BaseVesselSchema):
         "RIG_TYPE", "RIG_STATUS", "RIG_DESIGN", "BOP_MANUFACTURER",
         "LEG_TYPE", "JU_DESIGN", "AC_SCR_POWER", "RIG_MODEL",
         "LAST_WAR_DATE", "FIRST_WAR_DATE", "LAST_AREA_CODE", "LAST_BLOCK_NUMBER",
+        "HULL_FORM_TYPE", "HULL_LIBRARY_REF",
         mode="before",
     )
     @classmethod
@@ -105,6 +118,9 @@ class DrillingRigSchema(BaseVesselSchema):
         "VARIABLE_DECK_LOAD_ST", "DECK_AREA_SQ_FT",
         "LEG_LENGTH_FT", "CANTILEVER_REACH_FT", "CANTILEVER_CAPACITY_KIPS",
         "PRELOAD_CAPACITY_ST", "SPUD_CAN_DIAMETER_FT",
+        "PONTOON_LENGTH_M", "PONTOON_WIDTH_M", "PONTOON_HEIGHT_M",
+        "COLUMN_DIAMETER_M", "COLUMN_SPACING_M",
+        "GM_M", "VCG_M",
         "MAST_HEIGHT_FT", "SETBACK_CAPACITY_KIPS",
         mode="before",
     )
@@ -129,6 +145,9 @@ class DrillingRigSchema(BaseVesselSchema):
         "VARIABLE_DECK_LOAD_ST", "DECK_AREA_SQ_FT",
         "LEG_LENGTH_FT", "CANTILEVER_REACH_FT", "CANTILEVER_CAPACITY_KIPS",
         "PRELOAD_CAPACITY_ST", "SPUD_CAN_DIAMETER_FT",
+        "PONTOON_LENGTH_M", "PONTOON_WIDTH_M", "PONTOON_HEIGHT_M",
+        "COLUMN_DIAMETER_M", "COLUMN_SPACING_M",
+        "GM_M", "VCG_M",
         "MAST_HEIGHT_FT", "SETBACK_CAPACITY_KIPS",
     )
     @classmethod
@@ -137,7 +156,7 @@ class DrillingRigSchema(BaseVesselSchema):
             raise ValueError("Value must be >= 0")
         return v
 
-    @field_validator("MUD_PUMP_COUNT", "WELLS_DRILLED_COUNT", mode="before")
+    @field_validator("MUD_PUMP_COUNT", "WELLS_DRILLED_COUNT", "COLUMN_COUNT", mode="before")
     @classmethod
     def _coerce_rig_int_fields(cls, v: object) -> object:
         if v is None:
