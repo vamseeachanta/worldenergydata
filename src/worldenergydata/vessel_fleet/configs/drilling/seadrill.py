@@ -6,7 +6,7 @@ from worldenergydata.vessel_fleet.collectors.fleet_page_collector import (
 
 CONFIG = ContractorConfig(
     name="seadrill",
-    fleet_url="https://www.seadrill.com/fleet",
+    fleet_url="https://www.seadrill.com/fleet/",  # validated 2026-02-13 (Puppeteer)
     vessel_category="drilling_rig",
     vessel_type="drilling_rig",
     owner="Seadrill Limited",
@@ -25,23 +25,88 @@ CONFIG = ContractorConfig(
 
 KNOWN_VESSELS = [
     {
+        "VESSEL_NAME": "Sevan Louisiana",
+        "RIG_TYPE": "semi_submersible",
+        "OWNER": "Seadrill Limited",
+    },
+    {
+        "VESSEL_NAME": "Sonangol Libongos",
+        "RIG_TYPE": "drillship",
+        "OWNER": "Sonadrill Holding Ltd",
+    },
+    {
+        "VESSEL_NAME": "Sonangol Quenguela",
+        "RIG_TYPE": "drillship",
+        "OWNER": "Sonadrill Holding Ltd",
+    },
+    {
+        "VESSEL_NAME": "West Aquarius",
+        "RIG_TYPE": "semi_submersible",
+        "OWNER": "Seadrill Limited",
+    },
+    {
+        "VESSEL_NAME": "West Auriga",
+        "RIG_TYPE": "drillship",
+        "OWNER": "Seadrill Limited",
+    },
+    {
+        "VESSEL_NAME": "West Capella",
+        "RIG_TYPE": "drillship",
+        "OWNER": "Seadrill Limited",
+    },
+    {
+        "VESSEL_NAME": "West Carina",
+        "RIG_TYPE": "drillship",
+        "OWNER": "Seadrill Limited",
+    },
+    {
+        "VESSEL_NAME": "West Eclipse",
+        "RIG_TYPE": "semi_submersible",
+        "OWNER": "Seadrill Limited",
+    },
+    {
+        "VESSEL_NAME": "West Elara",
+        "RIG_TYPE": "jack_up",
+        "OWNER": "Seadrill Limited",
+    },
+    {
+        "VESSEL_NAME": "West Gemini",
+        "RIG_TYPE": "drillship",
+        "OWNER": "Seadrill Limited",
+    },
+    {
+        "VESSEL_NAME": "West Jupiter",
+        "RIG_TYPE": "drillship",
+        "OWNER": "Seadrill Limited",
+    },
+    {
         "VESSEL_NAME": "West Neptune",
         "RIG_TYPE": "drillship",
-        "WATER_DEPTH_RATING_FT": 10000.0,
-        "YEAR_BUILT": 2014,
-        "DP_CLASS": 3,
+        "OWNER": "Seadrill Limited",
+    },
+    {
+        "VESSEL_NAME": "West Phoenix",
+        "RIG_TYPE": "semi_submersible",
+        "OWNER": "Seadrill Limited",
+    },
+    {
+        "VESSEL_NAME": "West Polaris",
+        "RIG_TYPE": "drillship",
+        "OWNER": "Seadrill Limited",
     },
     {
         "VESSEL_NAME": "West Saturn",
         "RIG_TYPE": "drillship",
-        "WATER_DEPTH_RATING_FT": 10000.0,
-        "YEAR_BUILT": 2014,
-        "DP_CLASS": 3,
+        "OWNER": "Seadrill Limited",
     },
     {
-        "VESSEL_NAME": "West Gemini",
-        "RIG_TYPE": "semi_submersible",
-        "WATER_DEPTH_RATING_FT": 7500.0,
-        "YEAR_BUILT": 2010,
+        "VESSEL_NAME": "West Tellus",
+        "RIG_TYPE": "drillship",
+        "OWNER": "Seadrill Limited",
+    },
+    {
+        "VESSEL_NAME": "West Vela",
+        "RIG_TYPE": "drillship",
+        "OWNER": "Seadrill Limited",
     },
 ]
