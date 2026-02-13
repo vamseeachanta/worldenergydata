@@ -233,4 +233,12 @@ def populate_estimated_dimensions(df: pd.DataFrame) -> pd.DataFrame:
             filled += 1
 
     logger.info("Estimated dimensions for %d rigs", filled)
+
+    # Refresh HULL_LIBRARY_REF now that LOA_M may have been filled
+    if filled > 0 and "HULL_LIBRARY_REF" in result.columns:
+        from worldenergydata.vessel_hull_models.rig_hulls.hull_form_mapper import (
+            refresh_hull_library_refs,
+        )
+        result = refresh_hull_library_refs(result)
+
     return result

@@ -89,17 +89,30 @@ def populate_hull_forms(df: pd.DataFrame) -> pd.DataFrame:
         100 * populated / total if total else 0,
     )
 
-    # Assign HULL_LIBRARY_REF for rigs with hull form and dimensions
-    if "HULL_LIBRARY_REF" not in result.columns:
-        result["HULL_LIBRARY_REF"] = None
-    ref_mask = (
+    result = refresh_hull_library_refs(result)
+    return result
+
+
+def refresh_hull_library_refs(df: pd.DataFrame) -> pd.DataFrame:
+    """Recompute HULL_LIBRARY_REF for rigs with stale or missing refs.
+
+    Only updates refs that are missing or end with '_generic' (stale from
+    before dimension estimation). Custom/manually-set refs are preserved.
+
+    Should be called after any operation that changes LOA_M or HULL_FORM_TYPE
+    (e.g. after populate_estimated_dimensions).
+    """
+    result = df if "HULL_LIBRARY_REF" in df.columns else df.assign(HULL_LIBRARY_REF=None)
+    mask = (
         result["HULL_FORM_TYPE"].notna()
-        & result["HULL_LIBRARY_REF"].isna()
+        & (
+            result["HULL_LIBRARY_REF"].isna()
+            | result["HULL_LIBRARY_REF"].str.endswith("_generic", na=False)
+        )
     )
-    result.loc[ref_mask, "HULL_LIBRARY_REF"] = result.loc[ref_mask].apply(
+    result.loc[mask, "HULL_LIBRARY_REF"] = result.loc[mask].apply(
         _make_hull_library_ref, axis=1,
     )
-
     return result
 
 

@@ -127,3 +127,17 @@ class TestPopulateEstimatedDimensions:
         })
         populate_estimated_dimensions(df)
         assert pd.isna(df["LOA_M"].iloc[0])
+
+    def test_refreshes_hull_library_ref(self):
+        """Verify HULL_LIBRARY_REF updates after dimension estimation (P2 fix)."""
+        df = pd.DataFrame({
+            "HULL_FORM_TYPE": ["drillship", "semi_submersible"],
+            "LOA_M": [None, None],
+            "BEAM_M": [None, None],
+            "DRAFT_M": [None, None],
+            "HULL_LIBRARY_REF": ["drillship_generic", "semi_submersible_generic"],
+        })
+        result = populate_estimated_dimensions(df)
+        # After estimation, refs should reflect estimated LOA buckets
+        assert result["HULL_LIBRARY_REF"].iloc[0] == "drillship_230m"
+        assert result["LOA_M"].iloc[0] == 228.0
