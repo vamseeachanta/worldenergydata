@@ -20,6 +20,8 @@ from worldenergydata.vessel_fleet.dedup.deduplicator import deduplicate_fleet
 from worldenergydata.vessel_fleet.quality.validator import validate_fleet
 from worldenergydata.vessel_fleet.quality.completeness import fleet_completeness_report
 from worldenergydata.vessel_fleet.storage.parquet import ParquetStore
+from worldenergydata.vessel_hull_models.rig_hulls.hull_form_mapper import populate_hull_forms
+from worldenergydata.vessel_hull_models.rig_hulls.hull_estimator import populate_estimated_dimensions
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
@@ -72,6 +74,16 @@ def main() -> int:
         validate_fleet(construction, "construction_vessel")
         report = fleet_completeness_report(construction, "construction_vessel")
         logger.info("Construction vessels completeness: %.1f%%", report["avg_completeness"] * 100)
+
+    # Enrich drilling rigs with hull form classification and dimension estimates
+    if drilling:
+        import pandas as pd
+        drilling_df = pd.DataFrame(drilling)
+        drilling_df = populate_hull_forms(drilling_df)
+        drilling_df = populate_estimated_dimensions(drilling_df)
+        drilling = drilling_df.to_dict("records")
+        hull_filled = drilling_df["HULL_FORM_TYPE"].notna().sum()
+        logger.info("Hull form populated: %d/%d", hull_filled, len(drilling))
 
     # Save curated output
     curated_dir = data_dir / "curated"

@@ -1,0 +1,6 @@
+VESSEL_NAME,RIG_TYPE,HULL_FORM_TYPE,LOA_M,BEAM_M,DRAFT_M,DISPLACEMENT_TONNES,WATER_DEPTH_RATING_FT,RIG_DESIGN,YEAR_BUILT,DP_CLASS,PONTOON_LENGTH_M,PONTOON_WIDTH_M,PONTOON_HEIGHT_M,COLUMN_DIAMETER_M,COLUMN_SPACING_M,COLUMN_COUNT,DIMENSION_CONFIDENCE,SOURCE_CITATION
+DEEPWATER ATLAS,semi_submersible,semi_sub,100.0,78.0,22.5,55000.0,12000,GVA 7500,2022,3,,,,,58.6,4,measured,"Transocean fleet page (public); DNV class records"
+DEEPWATER PROTEUS,drillship,drillship,238.0,42.0,12.0,96000.0,12000,Samsung 12000,2014,3,,,,,,,,measured,"Transocean fleet page (public)"
+VALARIS DS-17,drillship,drillship,238.0,42.0,12.0,96000.0,12000,Samsung 12000,2014,3,,,,,,,,measured,"Valaris fleet page (public)"
+MAERSK DEVELOPER,semi_submersible,semi_sub,118.0,92.4,23.0,50000.0,10000,DSS-21,2009,3,,,,,67.5,4,measured,"Maersk Drilling fleet page (public); ABS class records"
+ROWAN GORILLA VI,jack_up,jackup,78.0,93.0,10.0,24000.0,500,LeTourneau Super Gorilla,2001,0,,,,,,,,measured,"Valaris fleet page (public); Offshore Magazine rig database"
