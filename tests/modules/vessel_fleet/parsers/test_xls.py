@@ -122,3 +122,83 @@ class TestXlsFleetParser:
         parser = XlsFleetParser(sample_xls)
         records = parser.parse()
         assert records[0]["IS_OFFSHORE"] is True
+
+    def test_hull_form_type_drillship(self, sample_xls):
+        parser = XlsFleetParser(sample_xls)
+        records = parser.parse()
+        assert records[0]["HULL_FORM_TYPE"] == "drillship"
+
+    def test_hull_form_type_semi_sub(self, sample_xls):
+        parser = XlsFleetParser(sample_xls)
+        records = parser.parse()
+        assert records[1]["HULL_FORM_TYPE"] == "semi_sub"
+
+    def test_rig_name_set(self, sample_xls):
+        parser = XlsFleetParser(sample_xls)
+        records = parser.parse()
+        assert records[0]["RIG_NAME"] == "DEEPWATER TITAN"
+        assert records[0]["RIG_NAME"] == records[0]["VESSEL_NAME"]
+
+
+class TestXlsRealData:
+    """Integration test with real XLS data (skipped if file not present)."""
+
+    @pytest.fixture
+    def real_xls_output(self):
+        pq = Path(__file__).resolve().parents[4] / "data/modules/vessel_fleet/raw/xls_historical/floaters.parquet"
+        if not pq.exists():
+            pytest.skip("XLS ingest not run (floaters.parquet missing)")
+        return pd.read_parquet(pq).to_dict("records")
+
+    def test_real_count_at_least_150(self, real_xls_output):
+        assert len(real_xls_output) >= 150
+
+    def test_real_hull_form_type_populated(self, real_xls_output):
+        populated = sum(1 for r in real_xls_output if r.get("HULL_FORM_TYPE"))
+        assert populated >= 140
+
+    def test_real_rig_name_matches_vessel_name(self, real_xls_output):
+        for r in real_xls_output:
+            assert r.get("RIG_NAME") == r.get("VESSEL_NAME")
+
+    def test_real_loa_populated(self, real_xls_output):
+        populated = sum(1 for r in real_xls_output if r.get("LOA_M"))
+        assert populated >= 140
+
+    def test_real_only_floater_types(self, real_xls_output):
+        import math
+        expected = {"semi_submersible", "drillship"}
+        for r in real_xls_output:
+            rig_type = r.get("RIG_TYPE")
+            # Parquet round-trip turns None → NaN; allow both
+            if rig_type is None or (isinstance(rig_type, float) and math.isnan(rig_type)):
+                continue
+            assert rig_type in expected, f"Unexpected type: {rig_type}"
+
+
+class TestXlsFleetParserMalformedTypes:
+    """Verify multi-word vessel type codes are handled correctly."""
+
+    @pytest.fixture
+    def malformed_xls(self, tmp_path):
+        data = {
+            0: ["", "RIG ALPHA", "RIG BETA"],
+            1: ["VESSEL TYPE", "SS F&G 9500", "DS Gusto, MSC Bully PRD"],
+            2: ["MAXIMUM WATER DEPTH RATING (ft.)", "8000", "12000"],
+        }
+        df = pd.DataFrame(data).T
+        xls_path = tmp_path / "malformed.xlsx"
+        df.to_excel(str(xls_path), index=False, header=False, engine="openpyxl")
+        return xls_path
+
+    def test_malformed_ss_maps_correctly(self, malformed_xls):
+        parser = XlsFleetParser(malformed_xls)
+        records = parser.parse()
+        assert records[0]["RIG_TYPE"] == "semi_submersible"
+        assert records[0]["HULL_FORM_TYPE"] == "semi_sub"
+
+    def test_malformed_ds_maps_correctly(self, malformed_xls):
+        parser = XlsFleetParser(malformed_xls)
+        records = parser.parse()
+        assert records[1]["RIG_TYPE"] == "drillship"
+        assert records[1]["HULL_FORM_TYPE"] == "drillship"

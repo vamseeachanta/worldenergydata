@@ -28,6 +28,12 @@ _VESSEL_TYPE_MAP: dict[str, str] = {
     "DS": "drillship",
 }
 
+# XLS vessel type code -> hull form type for RAO/diffraction mapping
+_HULL_FORM_MAP: dict[str, str] = {
+    "SS": "semi_sub",
+    "DS": "drillship",
+}
+
 # XLS row label -> DrillingRigSchema field name.
 # Only maps fields we want to extract; unmapped rows are skipped.
 _FIELD_MAP: dict[str, str] = {
@@ -144,12 +150,19 @@ class XlsFleetParser:
             if val is not None and str(val).strip() not in ("", "nan"):
                 raw[schema_field] = str(val).strip()
 
-        # Vessel type mapping
+        # Vessel type mapping — handle multi-word values where design info
+        # leaked into the type field (e.g. "SS F&G 9500", "DS Gusto, MSC Bully PRD")
         vtype_raw = raw.get("_VESSEL_TYPE_RAW", "")
+        vtype_prefix = vtype_raw.split()[0].upper() if vtype_raw else ""
         record["VESSEL_TYPE"] = "drilling_rig"
         record["RIG_TYPE"] = _VESSEL_TYPE_MAP.get(
-            vtype_raw, vtype_raw.lower() if vtype_raw else None
+            vtype_raw,
+            _VESSEL_TYPE_MAP.get(vtype_prefix, vtype_raw.lower() if vtype_raw else None),
         )
+        record["HULL_FORM_TYPE"] = _HULL_FORM_MAP.get(
+            vtype_raw, _HULL_FORM_MAP.get(vtype_prefix)
+        )
+        record["RIG_NAME"] = rig_name
 
         # Simple string fields
         for field in ("RIG_DESIGN", "CLASSIFICATION_SOCIETY"):
