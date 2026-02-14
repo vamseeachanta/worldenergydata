@@ -295,8 +295,8 @@ class MarineInfrastructure(BaseModel):
     water_depth_m: Optional[float] = Field(
         default=None,
         ge=0,
-        le=100,
-        description="Water depth at berth in metres",
+        le=5000,
+        description="Water depth at berth in metres (or mooring depth for FLNG/FSRU)",
     )
     jetty_count: Optional[int] = Field(
         default=None,
