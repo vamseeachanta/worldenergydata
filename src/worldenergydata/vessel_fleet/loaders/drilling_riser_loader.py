@@ -1,0 +1,157 @@
+"""Load drilling riser component data from curated dataset.
+
+Provides query interface for riser joints, BOPs, LMRPs, flex joints,
+and telescopic joints by component type, size, and pressure rating.
+"""
+
+from __future__ import annotations
+
+import logging
+from pathlib import Path
+from typing import Optional
+
+import pandas as pd
+
+logger = logging.getLogger(__name__)
+
+_DATA_DIR = (
+    Path(__file__).resolve().parents[4]
+    / "data"
+    / "modules"
+    / "vessel_fleet"
+    / "curated"
+)
+_DEFAULT_FILE = "drilling_riser_components.csv"
+
+VALID_COMPONENT_TYPES = (
+    "riser_joint",
+    "bop",
+    "lmrp",
+    "flex_joint",
+    "telescopic_joint",
+)
+
+
+class DrillingRiserLoader:
+    """Query drilling riser component data from the curated dataset.
+
+    Loads riser components from CSV storage and provides query methods
+    by component type, size, and pressure rating.
+    """
+
+    def __init__(self, data_dir: Optional[Path] = None) -> None:
+        self._data_dir = data_dir or _DATA_DIR
+        self._df: Optional[pd.DataFrame] = None
+
+    def load(self) -> pd.DataFrame:
+        """Load curated drilling riser component data (lazy, cached)."""
+        if self._df is not None:
+            return self._df
+
+        csv_path = self._data_dir / _DEFAULT_FILE
+        if not csv_path.exists():
+            logger.warning("Drilling riser data not found: %s", csv_path)
+            self._df = pd.DataFrame()
+            return self._df
+
+        df = pd.read_csv(csv_path)
+        self._df = df
+        logger.info("Loaded %d drilling riser components", len(df))
+        return self._df
+
+    def get_by_id(self, component_id: str) -> Optional[dict]:
+        """Look up component by ID."""
+        df = self.load()
+        if df.empty:
+            return None
+        mask = df["COMPONENT_ID"] == component_id
+        matches = df[mask]
+        if matches.empty:
+            return None
+        return matches.iloc[0].to_dict()
+
+    def get_by_type(self, component_type: str) -> pd.DataFrame:
+        """Get all components of a given type.
+
+        Args:
+            component_type: One of riser_joint, bop, lmrp,
+                flex_joint, telescopic_joint.
+        """
+        df = self.load()
+        if df.empty:
+            return df
+        mask = df["COMPONENT_TYPE"] == component_type
+        return df[mask].copy()
+
+    def get_riser_joints(self) -> pd.DataFrame:
+        """Get all riser joints."""
+        return self.get_by_type("riser_joint")
+
+    def get_bops(self) -> pd.DataFrame:
+        """Get all BOPs."""
+        return self.get_by_type("bop")
+
+    def get_lmrps(self) -> pd.DataFrame:
+        """Get all LMRPs."""
+        return self.get_by_type("lmrp")
+
+    def get_flex_joints(self) -> pd.DataFrame:
+        """Get all flex joints."""
+        return self.get_by_type("flex_joint")
+
+    def get_telescopic_joints(self) -> pd.DataFrame:
+        """Get all telescopic joints."""
+        return self.get_by_type("telescopic_joint")
+
+    def filter_by_size(self, od_in: float) -> pd.DataFrame:
+        """Filter riser joints by OD (inches)."""
+        df = self.get_riser_joints()
+        if df.empty:
+            return df
+        mask = df["OD_IN"] == od_in
+        return df[mask].copy()
+
+    def filter_by_pressure_rating(
+        self,
+        min_psi: float,
+        max_psi: Optional[float] = None,
+    ) -> pd.DataFrame:
+        """Filter all components by pressure rating range."""
+        df = self.load()
+        if df.empty:
+            return df
+        mask = df["PRESSURE_RATING_PSI"] >= min_psi
+        if max_psi is not None:
+            mask = mask & (df["PRESSURE_RATING_PSI"] <= max_psi)
+        return df[mask].copy()
+
+    def filter_bops_by_bore(self, bore_in: float) -> pd.DataFrame:
+        """Filter BOPs by bore size."""
+        bops = self.get_bops()
+        if bops.empty:
+            return bops
+        mask = bops["BORE_SIZE_IN"] == bore_in
+        return bops[mask].copy()
+
+    def filter_subsea_bops(self) -> pd.DataFrame:
+        """Get subsea BOPs only."""
+        bops = self.get_bops()
+        if bops.empty:
+            return bops
+        mask = bops["BOP_TYPE"].str.lower() == "subsea"
+        return bops[mask].copy()
+
+    def component_type_summary(self) -> dict:
+        """Count of components by type."""
+        df = self.load()
+        if df.empty:
+            return {}
+        return df["COMPONENT_TYPE"].value_counts().to_dict()
+
+    def manufacturer_summary(self) -> dict:
+        """Count of components by manufacturer."""
+        df = self.load()
+        if df.empty:
+            return {}
+        mfr = df["MANUFACTURER"].dropna()
+        return mfr.value_counts().to_dict()
