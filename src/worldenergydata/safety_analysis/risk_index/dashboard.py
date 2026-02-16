@@ -9,8 +9,9 @@ and a methodology documentation section.
 
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
 
+import pandas as pd
 import plotly.graph_objects as go
 
 from worldenergydata.common import get_logger
@@ -35,11 +36,17 @@ class RiskDashboard:
 
     DIMENSION_LABELS = ["Acute", "Chronic", "Compliance"]
 
-    def generate(self, composite: CompositeScore) -> str:
+    def generate(
+        self,
+        composite: CompositeScore,
+        time_series: Optional[pd.DataFrame] = None,
+    ) -> str:
         """Generate complete HTML dashboard from CompositeScore.
 
         Args:
             composite: The composite score container with activity scores.
+            time_series: Optional DataFrame with columns 'year' and
+                'composite_score' for the annual risk trend chart.
 
         Returns:
             A self-contained HTML string with embedded Plotly charts.
@@ -54,6 +61,9 @@ class RiskDashboard:
             figures["matrix"] = self._create_risk_matrix(scores)
             figures["treemap"] = self._create_treemap(scores)
 
+        if time_series is not None and len(time_series) > 0:
+            figures["trend"] = self._create_time_trend(time_series)
+
         methodology = self._create_methodology_section(composite)
         metadata = {
             "generated_at": datetime.now(tz=timezone.utc).strftime(
@@ -63,19 +73,25 @@ class RiskDashboard:
         }
         return self._assemble_html(figures, methodology, metadata)
 
-    def save(self, composite: CompositeScore, path: str | Path) -> Path:
+    def save(
+        self,
+        composite: CompositeScore,
+        path: str | Path,
+        time_series: Optional[pd.DataFrame] = None,
+    ) -> Path:
         """Generate and save dashboard to HTML file.
 
         Args:
             composite: The composite score container.
             path: Destination file path for the HTML.
+            time_series: Optional annual time series for trend chart.
 
         Returns:
             The resolved output path.
         """
         path = Path(path)
         path.parent.mkdir(parents=True, exist_ok=True)
-        html = self.generate(composite)
+        html = self.generate(composite, time_series=time_series)
         path.write_text(html, encoding="utf-8")
         logger.info("Dashboard saved: %s", path)
         return path
@@ -225,6 +241,49 @@ class RiskDashboard:
         )
         return fig
 
+    def _create_time_trend(self, time_series: pd.DataFrame) -> go.Figure:
+        """Annual risk trend line chart with rolling average."""
+        ts = time_series.sort_values("year")
+        years = ts["year"].tolist()
+        scores = ts["composite_score"].tolist()
+
+        fig = go.Figure()
+        fig.add_trace(
+            go.Scatter(
+                x=years,
+                y=scores,
+                mode="lines+markers",
+                name="Annual Composite",
+                line={"color": "#e74c3c", "width": 2},
+                marker={"size": 8},
+                hovertemplate="Year: %{x}<br>Score: %{y:.1f}<extra></extra>",
+            )
+        )
+
+        # 3-year rolling average if enough data
+        if len(ts) >= 3:
+            rolling = ts["composite_score"].rolling(window=3, min_periods=2).mean()
+            fig.add_trace(
+                go.Scatter(
+                    x=years,
+                    y=rolling.tolist(),
+                    mode="lines",
+                    name="3-Year Rolling Avg",
+                    line={"color": "#3498db", "width": 2, "dash": "dash"},
+                    hovertemplate="Year: %{x}<br>Rolling Avg: %{y:.1f}<extra></extra>",
+                )
+            )
+
+        fig.update_layout(
+            title="Risk Trend Over Time (Annual Composite Score)",
+            xaxis_title="Year",
+            yaxis_title="Composite Risk Score",
+            yaxis={"range": [0, 11]},
+            height=400,
+            showlegend=True,
+        )
+        return fig
+
     def _create_treemap(self, scores: List[ActivityRiskScore]) -> go.Figure:
         """Hierarchical activity risk breakdown treemap."""
         labels = ["All Activities"]
@@ -352,6 +411,7 @@ class RiskDashboard:
             "radar": "Dimension Profile Radar",
             "matrix": "Risk Matrix",
             "treemap": "Risk Treemap",
+            "trend": "Risk Trend Over Time",
         }
 
         for _idx, (key, fig) in enumerate(figures.items()):

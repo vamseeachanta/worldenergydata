@@ -7,11 +7,15 @@ and a composite risk index for each activity in the assembled DataFrame.
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 import pandas as pd
 
+from worldenergydata.safety_analysis.risk_index.config_loader import (
+    RiskConfig,
+    default_config,
+)
 from worldenergydata.safety_analysis.risk_index.models import (
     ActivityRiskScore,
     CompositeScore,
@@ -36,7 +40,7 @@ _METRIC_COLUMNS = [
 class RiskScorer:
     """Computes three-dimensional risk scores and composite index.
 
-    Dimensions:
+    Dimensions and weights are configurable via RiskConfig. Defaults:
         acute:      0.40 * fatality_rate + 0.35 * injury_rate + 0.25 * frequency
         chronic:    1.0 * tri_carcinogen_lbs
         compliance: 1.0 * inc_rate
@@ -45,27 +49,13 @@ class RiskScorer:
         0.50 * acute + 0.25 * chronic + 0.25 * compliance
     """
 
-    ACUTE_WEIGHTS: Dict[str, float] = {
-        "fatality_rate": 0.40,
-        "injury_rate": 0.35,
-        "frequency": 0.25,
-    }
-
-    CHRONIC_WEIGHTS: Dict[str, float] = {
-        "tri_carcinogen_lbs": 1.0,
-    }
-
-    COMPLIANCE_WEIGHTS: Dict[str, float] = {
-        "inc_rate": 1.0,
-    }
-
-    COMPOSITE_WEIGHTS: Dict[str, float] = {
-        "acute": 0.50,
-        "chronic": 0.25,
-        "compliance": 0.25,
-    }
-
-    DEFAULT_SCORE: float = 5.5
+    def __init__(self, config: Optional[RiskConfig] = None) -> None:
+        cfg = config or default_config()
+        self.ACUTE_WEIGHTS: Dict[str, float] = dict(cfg.acute_weights)
+        self.CHRONIC_WEIGHTS: Dict[str, float] = dict(cfg.chronic_weights)
+        self.COMPLIANCE_WEIGHTS: Dict[str, float] = dict(cfg.compliance_weights)
+        self.COMPOSITE_WEIGHTS: Dict[str, float] = dict(cfg.composite_weights)
+        self.DEFAULT_SCORE: float = cfg.default_missing_score
 
     def score(self, assembled: pd.DataFrame) -> CompositeScore:
         """Compute risk scores for all activities.

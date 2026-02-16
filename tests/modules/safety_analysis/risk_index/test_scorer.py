@@ -421,7 +421,7 @@ class TestMissingMetricHandling:
         scores_by_code = {s.activity_code: s for s in result.scores}
         # A has NaN tri, should get DEFAULT_SCORE (5.5) for chronic
         a_chronic = scores_by_code["A"].chronic.score
-        assert abs(a_chronic - RiskScorer.DEFAULT_SCORE) < 0.01
+        assert abs(a_chronic - RiskScorer().DEFAULT_SCORE) < 0.01
 
     def test_nan_inc_rate_gets_default_score(self):
         df = _make_assembled_df(
@@ -460,7 +460,7 @@ class TestMissingMetricHandling:
         result = scorer.score(df)
         scores_by_code = {s.activity_code: s for s in result.scores}
         a_compliance = scores_by_code["A"].compliance.score
-        assert abs(a_compliance - RiskScorer.DEFAULT_SCORE) < 0.01
+        assert abs(a_compliance - RiskScorer().DEFAULT_SCORE) < 0.01
 
 
 class TestSingleActivity:

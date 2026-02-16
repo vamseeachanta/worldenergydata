@@ -1,0 +1,37 @@
+# HSE Risk Index Configuration
+# Weights for the three-dimensional risk scoring framework.
+# All weights within a dimension must sum to 1.0.
+# Composite weights must sum to 1.0.
+
+composite_weights:
+  acute: 0.50
+  chronic: 0.25
+  compliance: 0.25
+
+acute_weights:
+  fatality_rate: 0.40
+  injury_rate: 0.35
+  frequency: 0.25
+
+chronic_weights:
+  tri_carcinogen_lbs: 1.0
+
+compliance_weights:
+  inc_rate: 1.0
+
+# Score defaults
+default_missing_score: 5.5
+normalization_method: percentile_rank
+
+# Risk category thresholds (upper bound inclusive)
+category_thresholds:
+  low: 3.0
+  medium: 5.0
+  high: 7.0
+  # critical: everything above 7.0
+
+# Water depth bands (feet)
+water_depth_bands:
+  shallow: 500
+  mid: 5000
+  # deep: everything above 5000
