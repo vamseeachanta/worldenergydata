@@ -69,13 +69,93 @@ VIOLATION_TYPE_MAP = {
     "U": "violation",  # Unclassified
 }
 
-# Degree of injury mapping for accident_injury records
+# Degree of injury mapping for accident_injury records.
+# CSV data contains numeric codes (1, 2, 3) per OSHA data dictionary.
+# Text variants included for robustness (e.g. if data format changes).
 DEGREE_SEVERITY = {
+    # Numeric codes (actual CSV values)
+    "1": "fatality",
+    "2": "lost_time",
+    "3": "recordable",
+    "0": "near_miss",
+    # Text variants (from osha_accident_lookup2.csv DEGR codes)
     "Fatality": "fatality",
     "Hospitalized injury": "lost_time",
-    "Amputation": "lost_time",
+    "Non Hospitalized injury": "recordable",
     "Non-hospitalized injury": "recordable",
+    "Amputation": "lost_time",
 }
+
+
+# Map CSV column names to lookup2 accident_code prefixes
+INJURY_FIELD_LOOKUP_CODES = {
+    "nature_of_inj": "IN",
+    "part_of_body": "BD",
+    "src_of_injury": "SO",
+    "evn_factor": "EN",
+    "hum_factor": "HU",
+    "occ_code": "OCC",
+    "degree_of_inj": "DEGR",
+}
+
+# Human-readable labels for description building
+INJURY_FIELD_LABELS = {
+    "nature_of_inj": "Nature",
+    "part_of_body": "Body part",
+    "src_of_injury": "Source",
+    "event_type": "Event",
+}
+
+
+def _load_accident_lookups(
+    lookup_path: Path,
+) -> Dict[str, Dict[str, str]]:
+    """Load osha_accident_lookup2.csv into nested dict {code: {number: value}}.
+
+    Args:
+        lookup_path: Path to osha_accident_lookup2.csv.
+
+    Returns:
+        Dict mapping accident_code -> {accident_number -> accident_value}.
+    """
+    if not lookup_path.exists():
+        logger.warning("Lookup file not found: %s", lookup_path)
+        return {}
+
+    df = pd.read_csv(lookup_path, dtype=str, encoding="latin-1")
+    col_map = {c: c.strip().strip('"').lower() for c in df.columns}
+    df = df.rename(columns=col_map)
+
+    lookups: Dict[str, Dict[str, str]] = {}
+    for _, row in df.iterrows():
+        code = (_safe_str(row.get("accident_code")) or "").strip('"')
+        number = (_safe_str(row.get("accident_number")) or "").strip('"')
+        value = (_safe_str(row.get("accident_value")) or "").strip('"')
+        if code and number:
+            if code not in lookups:
+                lookups[code] = {}
+            lookups[code][number] = value
+
+    return lookups
+
+
+def _decode_field(
+    lookups: Dict[str, Dict[str, str]],
+    field_name: str,
+    raw_value: Optional[str],
+) -> Optional[str]:
+    """Decode a numeric field using lookup table.
+
+    Returns decoded text if found, raw value if no lookup, None if empty.
+    """
+    if raw_value is None:
+        return None
+    code = INJURY_FIELD_LOOKUP_CODES.get(field_name)
+    if code and code in lookups:
+        decoded = lookups[code].get(raw_value)
+        if decoded:
+            return decoded
+    return raw_value
 
 
 def _safe_str(value: Any) -> Optional[str]:
@@ -144,6 +224,10 @@ class OSHAImporter:
         self.skipped_count = 0
         self.error_count = 0
         self.validation_errors: List[str] = []
+
+        # Load accident lookup table for decoding numeric fields
+        lookup_path = self.data_dir / "osha_accident_lookup2.csv"
+        self._lookups = _load_accident_lookups(lookup_path)
 
     def import_data(self) -> Dict[str, int]:
         """
@@ -510,20 +594,13 @@ class OSHAImporter:
         degree = _safe_str(row.get("degree_of_inj")) or ""
         severity = DEGREE_SEVERITY.get(degree, "recordable")
 
-        # Build description from injury nature
+        # Build description from injury detail fields (decoded via lookup table)
         desc_parts = []
-        nature = _safe_str(row.get("nature_of_inj"))
-        if nature:
-            desc_parts.append(f"Nature: {nature}")
-        body_part = _safe_str(row.get("part_of_body"))
-        if body_part:
-            desc_parts.append(f"Body part: {body_part}")
-        event_type = _safe_str(row.get("event_type"))
-        if event_type:
-            desc_parts.append(f"Event: {event_type}")
-        source = _safe_str(row.get("environ_factor"))
-        if source:
-            desc_parts.append(f"Environment: {source}")
+        for field, label in INJURY_FIELD_LABELS.items():
+            raw = _safe_str(row.get(field))
+            if raw:
+                decoded = _decode_field(self._lookups, field, raw)
+                desc_parts.append(f"{label}: {decoded}")
 
         description = "; ".join(desc_parts) if desc_parts else None
 
