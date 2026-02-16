@@ -1,7 +1,7 @@
 version: 1.1.0
 generated_at: '2026-02-13T20:03:48.574643+00:00'
-total_modules: 9
-total_datasets: 245
+total_modules: 10
+total_datasets: 246
 total_size_bytes: 8545436015
 modules:
   bsee:
@@ -2353,6 +2353,49 @@ modules:
       last_modified: '2025-10-04'
       description: null
       last_refreshed: null
+      is_lfs_stub: false
+      data_status: real
+    binary_stores: []
+    documentation: {}
+  lng_terminals:
+    name: lng_terminals
+    description: Global LNG terminal projects dataset with comprehensive parameters
+    path: data/modules/lng_terminals
+    domains:
+    - terminals
+    - infrastructure
+    datasets:
+    - name: terminals_seed
+      path: data/modules/lng_terminals/curated/terminals_seed.csv
+      format: csv
+      domain: terminals
+      size_bytes: 28388
+      row_count: 218
+      columns:
+      - terminal_name
+      - country
+      - latitude
+      - longitude
+      - terminal_type
+      - function
+      - status
+      - capacity_mtpa
+      - year_commissioned
+      - operator
+      - owner
+      - water_depth_m
+      - storage_m3
+      - jetty_count
+      - capex_usd_million
+      - source
+      - source_url
+      - data_confidence
+      update_frequency: quarterly
+      source_url: https://globalenergymonitor.org
+      last_modified: '2026-02-16'
+      description: Curated global LNG terminal dataset covering 218 terminals across
+        55 countries. Includes export terminals, import terminals, FSRUs, and FLNGs.
+      last_refreshed: '2026-02-16'
       is_lfs_stub: false
       data_status: real
     binary_stores: []
