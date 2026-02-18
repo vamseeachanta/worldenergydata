@@ -215,6 +215,11 @@ data/drilling_rigs/
 
 # Legacy/backup data
 consolidation_backup/
+backups/
+*.backup*
+*.backup-*
+CLAUDE.md.backup*
+pyproject.toml.backup
 data/bsee/
 
 # Large docs (regenerable or legacy)
@@ -261,3 +266,8 @@ frontierdeepwater/
 # Auto-generated spec files
 specs/modules/eager-*
 specs/modules/expressive-*
+
+# Test output artifacts
+test_output/
+output/
+CLAUDE.md.backup-*
