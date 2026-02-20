@@ -208,6 +208,9 @@ data/posters/*.pdf
 # Brazil ANP cached CSVs (regenerate: anp_client.py download)
 src/worldenergydata/brazil_anp/data/
 
+# UKCS NSTA cached CSVs (regenerate: nsta_client.py download)
+src/worldenergydata/ukcs/data/
+
 # LNGC data
 data/modules/lngc/
 data/lngc/
