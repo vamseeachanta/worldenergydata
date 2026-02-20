@@ -45,6 +45,16 @@ from worldenergydata.canada.common.validators import (
     ValidationError,
     ValidationResult,
 )
+from worldenergydata.canada.emerging_basins.watch_list import (
+    EMERGING_BASINS,
+    EmergingBasinStub,
+    get_basin,
+    get_emerging_basins,
+)
+from worldenergydata.canada.production.cnloer_loader import (
+    CnloerLoader,
+    CnloerProductionRecord,
+)
 
 __version__ = "1.0.0"
 __all__ = [
@@ -63,4 +73,12 @@ __all__ = [
     # Caching
     "CanadaCache",
     "FileDownloadCache",
+    # C-NLOER offshore production
+    "CnloerLoader",
+    "CnloerProductionRecord",
+    # Emerging basins
+    "EmergingBasinStub",
+    "EMERGING_BASINS",
+    "get_emerging_basins",
+    "get_basin",
 ]
