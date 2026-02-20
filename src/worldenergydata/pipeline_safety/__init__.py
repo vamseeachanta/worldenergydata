@@ -29,12 +29,20 @@ from worldenergydata.pipeline_safety.database import Base, PipelineIncident
 from worldenergydata.pipeline_safety.importers.phmsa_importer import (
     PHMSAImporter,
 )
+from worldenergydata.pipeline_safety.workflow import (
+    FFSResult,
+    PipelineDefect,
+    PipelineSafetyWorkflow,
+)
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __all__ = [
     "Base",
     "PipelineIncident",
     "PHMSAImporter",
+    "PipelineDefect",
+    "FFSResult",
+    "PipelineSafetyWorkflow",
 ]
 
 _logger = get_logger(__name__)
