@@ -16,12 +16,15 @@ from typing import Optional
 
 import pandas as pd
 
+from worldenergydata.common.units import OilUnits, GasUnits
+
 logger = logging.getLogger(__name__)
 
+# Backward-compatible module-level aliases (sourced from common.units)
 # 1 tonne of crude oil ≈ 7.33 barrels
-TONNES_TO_BBL: float = 7.33
+TONNES_TO_BBL: float = OilUnits.TONNE_TO_BBL
 # 1 MMscf = 1000 Mcf
-MMSCF_TO_MCF: float = 1000.0
+MMSCF_TO_MCF: float = GasUnits.MMSCF_TO_MCF
 
 _RAW_OIL_COL = "OilProduction (Thousand Tonnes)"
 _RAW_GAS_COL = "GasProduction (MMscf)"

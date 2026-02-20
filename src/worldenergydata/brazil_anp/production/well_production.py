@@ -16,9 +16,12 @@ from typing import Optional
 
 import pandas as pd
 
+from worldenergydata.common.units import OilUnits
+
 logger = logging.getLogger(__name__)
 
-SM3_TO_BBL = 6.2898
+# Backward-compatible module-level alias (sourced from common.units)
+SM3_TO_BBL = OilUnits.SM3_TO_BBL
 
 
 def convert_sm3_to_bbl(sm3: float) -> float:

@@ -9,11 +9,13 @@ from typing import Any, Dict, List, Optional
 
 import pandas as pd
 
+from worldenergydata.common.units import OilUnits, GasUnits
+
 logger = logging.getLogger(__name__)
 
-# Conversion factors
-SM3_TO_BBL = 6.2898
-MSM3_TO_MCF = 35.3147  # 1 million Sm3 = 35.3147 thousand cubic feet (Mcf)
+# Backward-compatible module-level aliases (sourced from common.units)
+SM3_TO_BBL = OilUnits.SM3_TO_BBL
+MSM3_TO_MCF = GasUnits.MSM3_TO_MMSCF  # 1 million Sm3 = 35.3147 thousand cubic feet (Mcf)
 
 # SODIR monthly production endpoint
 PRODUCTION_ENDPOINT = "/field/production/monthly"
