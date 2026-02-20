@@ -73,6 +73,9 @@ __all__: List[str] = [
     "database",
     "scrapers",
     "utils",
+    "CrossDatabaseAnalyzer",
+    "CrossDatabaseQuery",
+    "CrossDatabaseResult",
 ]
 
 # Module-level exports
@@ -82,3 +85,8 @@ from worldenergydata.marine_safety import exceptions
 from worldenergydata.marine_safety import database
 from worldenergydata.marine_safety import scrapers
 from worldenergydata.marine_safety import utils
+from worldenergydata.marine_safety.cross_database import (
+    CrossDatabaseAnalyzer,
+    CrossDatabaseQuery,
+    CrossDatabaseResult,
+)
