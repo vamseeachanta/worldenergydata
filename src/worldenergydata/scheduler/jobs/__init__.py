@@ -7,6 +7,7 @@ from worldenergydata.scheduler.jobs.eia_us_refresh import EiaUsRefreshJob
 from worldenergydata.scheduler.jobs.brazil_anp_refresh import BrazilAnpRefreshJob
 from worldenergydata.scheduler.jobs.ukcs_refresh import UkcsRefreshJob
 from worldenergydata.scheduler.jobs.metocean_refresh import MetoceanRefreshJob
+from worldenergydata.scheduler.jobs.lng_terminals_refresh import LngTerminalsRefreshJob
 
 __all__ = [
     "AbstractJob",
@@ -17,4 +18,5 @@ __all__ = [
     "BrazilAnpRefreshJob",
     "UkcsRefreshJob",
     "MetoceanRefreshJob",
+    "LngTerminalsRefreshJob",
 ]
