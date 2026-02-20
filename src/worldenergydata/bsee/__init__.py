@@ -62,6 +62,9 @@ from typing import Any, TYPE_CHECKING
 
 __version__ = "1.0.0"
 __all__ = [
+    # Skill wrapper — zero-config agent-callable entry point
+    "bsee_field_pipeline",
+    "BseeFieldResult",
     # Core
     "bsee",
     "BSEEData",
@@ -90,6 +93,8 @@ __all__ = [
 
 # Type checking imports for IDE support
 if TYPE_CHECKING:
+    from worldenergydata.bsee.skill import bsee_field_pipeline as bsee_field_pipeline
+    from worldenergydata.bsee.skill import BseeFieldResult as BseeFieldResult
     from worldenergydata.bsee.bsee import bsee as bsee
     from worldenergydata.bsee.data.bsee_data import BSEEData as BSEEData
     from worldenergydata.bsee.analysis.bsee_analysis import BSEEAnalysis as BSEEAnalysis
@@ -108,6 +113,15 @@ if TYPE_CHECKING:
 
 def __getattr__(name: str) -> Any:
     """Lazy import of module components to avoid circular imports."""
+
+    # Skill wrapper
+    if name == "bsee_field_pipeline":
+        from worldenergydata.bsee.skill import bsee_field_pipeline
+        return bsee_field_pipeline
+
+    if name == "BseeFieldResult":
+        from worldenergydata.bsee.skill import BseeFieldResult
+        return BseeFieldResult
 
     # Core classes
     if name == "bsee":
