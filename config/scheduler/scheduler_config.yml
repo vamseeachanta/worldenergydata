@@ -1,0 +1,51 @@
+# Worldenergydata Scheduler Configuration
+# -----------------------------------------
+# Controls which data refresh jobs run, on what schedule, and how failures
+# are monitored and reported.
+
+jobs:
+  - name: bsee_refresh
+    interval: weekly
+    time: "02:00"
+    enabled: true
+    # data_path: /path/to/local/bsee/data  # optional: override default BSEE data location
+
+  - name: sodir_refresh
+    interval: daily
+    time: "03:00"
+    enabled: true
+
+  - name: eia_us_refresh
+    interval: monthly
+    day: 5
+    time: "04:00"
+    enabled: true
+    # api_key: null  # Set to your EIA API key for authenticated endpoints
+
+  - name: metocean_refresh
+    interval: daily
+    time: "01:00"
+    enabled: true
+    locations:
+      - {lat: 28.5, lon: -88.5, name: "GOM"}
+      - {lat: 60.0, lon: 2.0, name: "NCS"}
+
+  - name: brazil_anp_refresh
+    interval: monthly
+    day: 10
+    time: "05:00"
+    enabled: true
+
+  - name: ukcs_refresh
+    interval: monthly
+    day: 7
+    time: "06:00"
+    enabled: true
+
+monitoring:
+  log_dir: logs/scheduler/
+  log_retention_days: 30
+  retry_max: 3
+  retry_backoff_seconds: 60
+  webhook_url: null   # Set to a URL to receive POST with status.json on each cycle
+  status_file: logs/scheduler/status.json
