@@ -129,6 +129,10 @@ class FieldProcessor:
                 "cumulative_condensate_production_mmbbl": self._convert_to_mmbbl(
                     field_data.get("fldCumulativeCondensateProduction")
                 ),
+                # Water injection
+                "cumulative_water_injected_sm3": self._safe_float(
+                    field_data.get("fldCumulativeWaterInjection")
+                ),
                 # Infrastructure
                 "main_supply_base": field_data.get("fldMainSupplyBase"),
                 "main_area": field_data.get("fldMainArea"),
