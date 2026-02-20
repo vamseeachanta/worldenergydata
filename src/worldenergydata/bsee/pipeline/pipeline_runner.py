@@ -85,8 +85,43 @@ class PipelineRunner:
     # Public API
     # ------------------------------------------------------------------
 
-    def run(self, context: FieldContext) -> FieldReport:
-        """Execute the full analysis pipeline for a resolved field."""
+    def run(
+        self,
+        context: FieldContext,
+        export_formats: list[str] | None = None,
+        export_dir: str | None = None,
+    ) -> FieldReport:
+        """Execute the full analysis pipeline for a resolved field.
+
+        Parameters
+        ----------
+        context:
+            Resolved field context (from :func:`resolve_field`).
+        export_formats:
+            Optional list of formats to export after the pipeline completes.
+            Supported values: ``"xlsx"``, ``"parquet"``, ``"csv"``,
+            ``"json"``, ``"pdf"``.  When *None* (default) no export is run.
+
+            Integration pattern::
+
+                from worldenergydata.reporting import export_report
+
+                class _FieldReportAdapter:
+                    def __init__(self, report: FieldReport) -> None:
+                        self.data = report.production_summary
+                        self.summary = report.activity_analysis
+
+                adapter = _FieldReportAdapter(field_report)
+                manifest = export_report(
+                    adapter,
+                    formats=export_formats,
+                    output_dir=export_dir,
+                    filename_prefix=context.field_name.lower().replace(" ", "_"),
+                )
+        export_dir:
+            Directory for exported files.  Passed through to
+            :func:`~worldenergydata.reporting.export_report`.
+        """
         warnings: list[str] = []
 
         # 1. Load production data and filter to resolved field
@@ -114,7 +149,7 @@ class PipelineRunner:
         )
 
         # 6. Build consolidated FieldReport
-        return FieldReport(
+        report = FieldReport(
             context=context,
             generated_at=datetime.now(timezone.utc).isoformat(),
             production_summary=production_summary,
@@ -126,6 +161,47 @@ class PipelineRunner:
             lease_count=len(context.leases),
             warnings=warnings,
         )
+
+        # 7. Optional multi-format export stage
+        if export_formats:
+            self._export_report(report, export_formats, export_dir, context)
+
+        return report
+
+    def _export_report(
+        self,
+        report: FieldReport,
+        export_formats: list[str],
+        export_dir: str | None,
+        context: FieldContext,
+    ) -> None:
+        """Run the multi-format export stage as the pipeline's final step."""
+        try:
+            from worldenergydata.reporting import export_report
+
+            class _Adapter:
+                """Adapt FieldReport to the export_report interface."""
+
+                def __init__(self, r: FieldReport) -> None:
+                    self.data = r.production_summary
+                    self.summary = r.activity_analysis
+
+            prefix = context.field_name.lower().replace(" ", "_")
+            manifest = export_report(
+                _Adapter(report),
+                formats=export_formats,
+                output_dir=export_dir,
+                filename_prefix=prefix,
+            )
+            logger.info(
+                "Export complete — %d formats succeeded, dir=%s",
+                len(manifest.formats_succeeded),
+                manifest.output_dir,
+            )
+            if manifest.formats_failed:
+                logger.warning("Export failures: %s", manifest.formats_failed)
+        except Exception as exc:
+            logger.warning("Export stage failed: %s", exc)
 
     # ------------------------------------------------------------------
     # Stage 1: Production data loading
