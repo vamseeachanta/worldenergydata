@@ -114,8 +114,19 @@ from worldenergydata.safety_analysis.risk_index import (
     risk_index_app,
 )
 
+# Skill
+from worldenergydata.safety_analysis.skill import (
+    SKILL_NAME,
+    EnigmaResult,
+    enigma_safety_analysis,
+)
+
 __version__ = "0.1.0"
 __all__ = [
+    # Skill
+    "enigma_safety_analysis",
+    "EnigmaResult",
+    "SKILL_NAME",
     # Config
     "AnalysisConfig",
     # Constants
