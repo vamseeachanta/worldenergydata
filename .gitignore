@@ -205,6 +205,9 @@ data/modules/sodir_zip_data/prlAreaSplitByBlock.csv
 data/modules/posters/*.pdf
 data/posters/*.pdf
 
+# Brazil ANP cached CSVs (regenerate: anp_client.py download)
+src/worldenergydata/brazil_anp/data/
+
 # LNGC data
 data/modules/lngc/
 data/lngc/
