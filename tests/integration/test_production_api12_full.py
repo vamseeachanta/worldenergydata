@@ -257,7 +257,7 @@ class TestProductionAPI12Full:
         """Test various aggregation methods"""
         # Monthly aggregation
         monthly = production_df.groupby(
-            pd.Grouper(key="PRODUCTION_DATE", freq="M")
+            pd.Grouper(key="PRODUCTION_DATE", freq="ME")
         ).agg({"OIL_VOLUME": "sum", "GAS_VOLUME": "sum", "WATER_VOLUME": "sum"})
         assert len(monthly) > 0
 

@@ -97,7 +97,7 @@ class TestCompleteWorkflow:
         prod_data = pd.DataFrame(
             {
                 "API12": ["608124003301"] * 12 + ["608124003302"] * 12,
-                "DATE": pd.date_range("2020-01-01", periods=12, freq="M").tolist() * 2,
+                "DATE": pd.date_range("2020-01-01", periods=12, freq="ME").tolist() * 2,
                 "OIL_BBL": np.random.uniform(10000, 20000, 24),
                 "GAS_MCF": np.random.uniform(5000, 10000, 24),
             }
@@ -187,7 +187,7 @@ class TestDataPipelineIntegration:
         input_data = pd.DataFrame(
             {
                 "api": ["123", "456", "789"],
-                "date": pd.date_range("2020-01-01", periods=3, freq="M"),
+                "date": pd.date_range("2020-01-01", periods=3, freq="ME"),
                 "value": [100, 200, 300],
             }
         )
@@ -230,7 +230,7 @@ class TestDataPipelineIntegration:
         prod_data = pd.DataFrame(
             {
                 "api": ["123", "123", "456", "456"],
-                "month": pd.date_range("2020-01-01", periods=2, freq="M").tolist() * 2,
+                "month": pd.date_range("2020-01-01", periods=2, freq="ME").tolist() * 2,
                 "oil": [1000, 1100, 2000, 2100],
             }
         )
@@ -238,7 +238,7 @@ class TestDataPipelineIntegration:
         # Source 3: Economic data
         econ_data = pd.DataFrame(
             {
-                "month": pd.date_range("2020-01-01", periods=2, freq="M"),
+                "month": pd.date_range("2020-01-01", periods=2, freq="ME"),
                 "oil_price": [75.0, 78.0],
             }
         )
