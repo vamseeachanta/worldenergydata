@@ -1,0 +1,366 @@
+# worldenergydata module manifest
+# Machine-readable index for agent discovery
+# Generated: 2026-02-20 | WRK-252
+# Usage: agents query this to find data sources by region, type, or domain
+#
+# Fields:
+#   name            — Python package name under src/worldenergydata/
+#   domain          — thematic data domain
+#   region          — geographic scope (list)
+#   source          — upstream data authority / agency
+#   description     — one-sentence summary
+#   data_types      — list of data categories available
+#   update_frequency — known or estimated cadence
+#   status          — active | partial | planned
+#   related_wrk     — relevant WRK work items
+#   in_scheduler    — true if wired into WRK-076 automated refresh scheduler
+
+version: "1.0"
+generated: "2026-02-20"
+total_modules: 18
+
+modules:
+
+  # ── US OFFSHORE ────────────────────────────────────────────────────────────
+
+  - name: bsee
+    domain: us_offshore
+    region: [gulf_of_mexico]
+    source: BSEE
+    description: "Comprehensive Gulf of Mexico offshore data — wells, production, casing, drilling, completions, interventions, financial analysis, and HSE incidents via BSEE public datasets."
+    data_types:
+      - wellbore
+      - production
+      - casing
+      - drilling
+      - completions
+      - interventions
+      - field_economics
+      - paleowells
+    update_frequency: monthly
+    status: active
+    related_wrk: [WRK-017, WRK-111, WRK-239, WRK-254, WRK-261]
+    in_scheduler: true   # jobs/bsee_refresh.py
+
+  - name: hse
+    domain: us_offshore
+    region: [gulf_of_mexico]
+    source: BSEE
+    description: "BSEE Health, Safety, and Environment incident management — injuries, spills, violations, equipment failures, penalties, and EPA TRI toxic releases for Gulf of Mexico offshore."
+    data_types:
+      - hse_incidents
+      - injuries
+      - spills
+      - violations
+      - equipment_failures
+      - penalties
+      - toxic_releases
+    update_frequency: monthly
+    status: active
+    related_wrk: [WRK-163, WRK-198, WRK-249]
+    in_scheduler: false
+
+  - name: fdas
+    domain: us_offshore
+    region: [gulf_of_mexico]
+    source: BSEE
+    description: "Field Development Analysis System — NPV, MIRR, IRR, and payback calculations for deepwater Gulf of Mexico fields with BSEE production data integration and water-depth-based development classification."
+    data_types:
+      - npv
+      - mirr
+      - irr
+      - cashflow
+      - development_systems
+      - price_deck
+    update_frequency: on_demand
+    status: active
+    related_wrk: [WRK-081, WRK-111, WRK-171, WRK-191, WRK-219, WRK-254, WRK-261]
+    in_scheduler: false
+
+  - name: lower_tertiary
+    domain: us_offshore
+    region: [gulf_of_mexico]
+    source: BSEE
+    description: "Economic analysis and NPV calculations for Ultra-Deepwater Lower Tertiary (Wilcox) fields in the Gulf of Mexico — Anchor, Cascade/Chinook, Jack/St. Malo, Julia, Kaskida, Shenandoah, Stones, Tiber."
+    data_types:
+      - field_economics
+      - npv
+      - production_forecast
+      - cashflow
+    update_frequency: annual
+    status: active
+    related_wrk: [WRK-019, WRK-085, WRK-111, WRK-137, WRK-146, WRK-163, WRK-219, WRK-221]
+    in_scheduler: false
+
+  - name: pipeline_safety
+    domain: us_onshore
+    region: [united_states]
+    source: PHMSA
+    description: "PHMSA pipeline safety incident data — gas distribution, gas transmission/gathering, hazardous liquid, and LNG facility incidents spanning 1986 to present (~21,000 records)."
+    data_types:
+      - pipeline_incidents
+      - gas_distribution
+      - gas_transmission
+      - hazardous_liquid
+      - lng_facility
+    update_frequency: annual
+    status: active
+    related_wrk: [WRK-248]
+    in_scheduler: false
+
+  - name: texas_rrc
+    domain: us_onshore
+    region: [texas]
+    source: Texas_RRC
+    description: "Texas Railroad Commission oil and gas data — production (PDQ data dump), wellbore records, drilling permits, and district-based data organized by RRC API number (42-XXX-XXXXX)."
+    data_types:
+      - production
+      - wellbore
+      - drilling_permits
+    update_frequency: monthly
+    status: active
+    related_wrk: [WRK-018, WRK-019, WRK-260]
+    in_scheduler: true   # config/texas_rrc.yml present
+
+  - name: landman
+    domain: us_onshore
+    region: [united_states]
+    source: county_records_BLM
+    description: "Mineral ownership and lease data from US county clerk records, BLM federal land records, and state GIS — supporting Section-Township-Range title chain and lease expiration tracking."
+    data_types:
+      - mineral_ownership
+      - lease_records
+      - drilling_permits
+      - blm_mining_claims
+      - well_records
+    update_frequency: on_demand
+    status: active
+    related_wrk: []
+    in_scheduler: false
+
+  - name: eia_us
+    domain: us_onshore
+    region: [united_states, alaska]
+    source: EIA
+    description: "US Energy Information Administration data — state-level crude/NGL production, DPR basin drilling productivity (Permian, Bakken, Eagle Ford), Alaska field breakdowns, and international country production series."
+    data_types:
+      - production
+      - drilling_productivity
+      - basin_analysis
+      - international_production
+    update_frequency: monthly
+    status: active
+    related_wrk: [WRK-019, WRK-218, WRK-260]
+    in_scheduler: true   # jobs/eia_us_refresh.py
+
+  # ── NORWAY / NCS ────────────────────────────────────────────────────────────
+
+  - name: sodir
+    domain: norway_offshore
+    region: [norwegian_continental_shelf]
+    source: SODIR_NPD
+    description: "Norwegian Offshore Directorate (SODIR/NPD) REST API integration — blocks, wellbores, fields, discoveries, surveys, production data, cross-regional analysis with BSEE, and NPV models for NCS fields."
+    data_types:
+      - wellbore
+      - production
+      - fields
+      - discoveries
+      - surveys
+      - blocks
+      - field_economics
+    update_frequency: monthly
+    status: active
+    related_wrk: [WRK-018, WRK-191, WRK-196, WRK-197, WRK-260]
+    in_scheduler: true   # jobs/sodir_refresh.py
+
+  # ── UK / NORTH SEA ──────────────────────────────────────────────────────────
+
+  - name: ukcs
+    domain: uk_offshore
+    region: [uk_continental_shelf, north_sea]
+    source: NSTA
+    description: "UK Continental Shelf data from NSTA — open production data, well completions, decline curve analysis, and UK fiscal regime models (RFCT, SC, EPL, IA)."
+    data_types:
+      - production
+      - wells
+      - completions
+      - field_economics
+    update_frequency: monthly
+    status: active
+    related_wrk: [WRK-018, WRK-080, WRK-170, WRK-171, WRK-191, WRK-196, WRK-197, WRK-260]
+    in_scheduler: true   # jobs/ukcs_refresh.py
+
+  # ── BRAZIL OFFSHORE ─────────────────────────────────────────────────────────
+
+  - name: brazil_anp
+    domain: brazil_offshore
+    region: [brazil, pre_salt, santos_basin, campos_basin]
+    source: ANP
+    description: "Brazilian National Agency of Petroleum (ANP) public production data — well-level and field-level production, decline curve analysis, and fiscal regime models for concession and PSA regimes."
+    data_types:
+      - production
+      - wells
+      - field_economics
+      - fiscal_regimes
+    update_frequency: monthly
+    status: active
+    related_wrk: [WRK-018, WRK-019, WRK-171, WRK-196, WRK-197, WRK-220, WRK-260]
+    in_scheduler: true   # jobs/brazil_anp_refresh.py
+
+  # ── MEXICO ───────────────────────────────────────────────────────────────────
+
+  - name: mexico_cnh
+    domain: mexico_offshore
+    region: [mexico, gulf_of_mexico_mexican_waters]
+    source: CNH
+    description: "Mexico National Hydrocarbons Commission (CNH) data via SIH dashboard scraping — production reports, well data (Clave del Pozo format), field/block information, and Round 1/2 contract tracking."
+    data_types:
+      - production
+      - wells
+      - fields
+      - blocks
+      - contracts
+    update_frequency: monthly
+    status: active
+    related_wrk: [WRK-018, WRK-019, WRK-085, WRK-111, WRK-170, WRK-260]
+    in_scheduler: true   # config/mexico_cnh.yml present
+
+  # ── CANADA ───────────────────────────────────────────────────────────────────
+
+  - name: canada
+    domain: canada_onshore
+    region: [alberta, british_columbia, saskatchewan, manitoba, yukon, northwest_territories]
+    source: AER_BCER
+    description: "Canadian energy data — AER (Alberta) and BCER (British Columbia) API clients with UWI parsing/validation and province-specific coordinate validation (NAD83, DLS/NTS survey systems)."
+    data_types:
+      - wellbore
+      - production
+      - permits
+    update_frequency: monthly
+    status: active
+    related_wrk: [WRK-076, WRK-196, WRK-260]
+    in_scheduler: false   # config/canada.yml present but no scheduler job file
+
+  # ── MARINE SAFETY ────────────────────────────────────────────────────────────
+
+  - name: marine_safety
+    domain: marine_safety
+    region: [global, united_states, united_kingdom, canada, australia, europe]
+    source: USCG_MISLE_NTSB_MAIB_TSB_EMSA_IMO_ATSB_NOAA
+    description: "Multi-authority marine safety incident tracking for offshore energy industry — scraping and importing from USCG MISLE, NTSB, MAIB (UK), TSB (Canada), EMSA, IMO, ATSB (Australia), and NOAA."
+    data_types:
+      - marine_incidents
+      - casualties
+      - investigations
+      - trend_analysis
+      - cause_analysis
+    update_frequency: monthly
+    status: active
+    related_wrk: [WRK-076, WRK-249, WRK-250]
+    in_scheduler: false   # referenced in WRK-076 plan but no job file exists yet
+
+  # ── METOCEAN ─────────────────────────────────────────────────────────────────
+
+  - name: metocean
+    domain: metocean
+    region: [global, gulf_of_mexico]
+    source: NDBC_COOPS_OpenMeteo_ERDDAP_METNorway
+    description: "Meteorological and oceanographic data from NOAA NDBC buoys, CO-OPS tidal/current stations, Open-Meteo marine forecasts, ERDDAP, and MET Norway — with unified caching, quality-checking, and database storage."
+    data_types:
+      - wave_data
+      - wind_data
+      - current_data
+      - tidal_data
+      - temperature
+      - pressure
+      - forecasts
+    update_frequency: daily
+    status: active
+    related_wrk: [WRK-015, WRK-020, WRK-046, WRK-165, WRK-170, WRK-175, WRK-177, WRK-178]
+    in_scheduler: true   # jobs/metocean_refresh.py
+
+  # ── LNG ───────────────────────────────────────────────────────────────────────
+
+  - name: lng_terminals
+    domain: lng
+    region: [global]
+    source: public_datasets
+    description: "Global LNG terminal dataset with engineering design data — terminal locations, capacities, and infrastructure specifications queryable by region and operator."
+    data_types:
+      - terminal_locations
+      - capacities
+      - infrastructure
+    update_frequency: annual
+    status: partial
+    related_wrk: [WRK-050, WRK-246, WRK-255]
+    in_scheduler: false
+
+  # ── VESSEL ───────────────────────────────────────────────────────────────────
+
+  - name: vessel_fleet
+    domain: vessel_data
+    region: [global]
+    source: public_datasets_industry
+    description: "Global offshore vessel fleet data — construction vessel specifications (DP class, crane capacity, deck area) and drilling riser component inventory (BOP, flex joints, LMRP, riser joints, telescopic joints)."
+    data_types:
+      - construction_vessels
+      - drilling_risers
+      - bop_equipment
+      - vessel_specifications
+    update_frequency: one_time
+    status: active
+    related_wrk: [WRK-046, WRK-137, WRK-163, WRK-165, WRK-254]
+    in_scheduler: false
+
+  - name: vessel_hull_models
+    domain: vessel_data
+    region: [global]
+    source: public_datasets_industry
+    description: "3D hull geometry acquisition and visualization for offshore installation barges — OBJ format hull models for hydrodynamic analysis and structural assessment."
+    data_types:
+      - hull_geometry
+      - rig_hulls
+      - obj_models
+    update_frequency: one_time
+    status: active
+    related_wrk: [WRK-126, WRK-137, WRK-163, WRK-255]
+    in_scheduler: false
+
+# ─── SUPPORTING MODULES (infrastructure, not data sources) ──────────────────
+#
+# The following packages exist under src/worldenergydata/ but are infrastructure
+# rather than standalone data-source modules; they are omitted from the discovery
+# index above:
+#
+#   analysis           — shared analysis utilities
+#   base_configs       — shared base configuration classes
+#   cli                — top-level CLI entry point
+#   common             — shared utilities (logging, types, units)
+#   engine             — orchestration engine
+#   modules            — module registry / catalog
+#   production         — generic production utilities (shared across regions)
+#   reporting          — shared reporting infrastructure
+#   safety_analysis    — generalized ML/NLP safety analysis toolkit (feeds hse + marine_safety)
+#   scheduler          — automated data refresh scheduler (WRK-076)
+#   testing            — shared test utilities
+#   validation         — shared validation rules and schemas
+#   well_production_dashboard — interactive Plotly dashboard wrapping bsee production (WRK-019, WRK-021, WRK-042)
+#
+# ─── SCHEDULER GAPS (WRK-076 candidates) ─────────────────────────────────────
+#
+# Modules with update_frequency monthly or daily but in_scheduler: false.
+# These should be wired into the WRK-076 scheduler to fulfil the automated
+# collection commitment made on the aceengineer website.
+#
+#   - hse:              monthly, not in scheduler  (BSEE incident import)
+#   - pipeline_safety:  annual,  not in scheduler  (PHMSA batch download)
+#   - landman:          on_demand — scheduler not applicable; pull on request
+#   - canada:           monthly, not in scheduler  (config/canada.yml exists, no job adapter)
+#   - marine_safety:    monthly, not in scheduler  (WRK-076 plan calls for marine_safety_refresh.py, not yet created)
+#   - lng_terminals:    annual,  not in scheduler  (dataset is largely static; low priority)
+#
+# Priority order for WRK-076 wiring:
+#   1. canada       — config already exists, just needs jobs/canada_refresh.py adapter
+#   2. hse          — high-value incident data; pairs with bsee (already scheduled)
+#   3. marine_safety — WRK-076 plan explicitly lists marine_safety_refresh.py as Phase 2 deliverable
+#   4. pipeline_safety — annual cadence makes manual fetch acceptable short-term
