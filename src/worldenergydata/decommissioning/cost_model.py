@@ -146,7 +146,7 @@ class DecommissioningCostEstimator:
                 f"Valid regions: {sorted(_VALID_REGIONS)}"
             )
 
-        factors = _COST_FACTORS[asset_type]
+        factors = self._get_factors(asset_type)
         multiplier = _REGION_MULTIPLIERS[region]
 
         wt = weight_tonnes if weight_tonnes is not None else 0.0
@@ -219,3 +219,40 @@ class DecommissioningCostEstimator:
                 totals.get(est.region, 0.0) + est.estimated_cost_musd, 4
             )
         return totals
+
+    @classmethod
+    def from_calibration(cls, calibration: "DecommissioningCostEstimator") -> "DecommissioningCostEstimator":
+        """Create estimator with calibrated cost factors.
+
+        Args:
+            calibration: A fitted CostModelCalibration instance.
+
+        Returns:
+            DecommissioningCostEstimator with calibrated _COST_FACTORS applied.
+
+        Raises:
+            RuntimeError: If calibration.fit() has not been called.
+        """
+        # Import here to avoid circular import at module level
+        from worldenergydata.decommissioning.cost_calibration import (
+            CostModelCalibration,
+        )
+
+        if not isinstance(calibration, CostModelCalibration):
+            raise TypeError(
+                f"Expected CostModelCalibration instance, got {type(calibration)!r}"
+            )
+
+        fitted = calibration.fitted_factors()
+        instance = cls()
+        # Monkey-patch the module-level factors for this call chain via a subclass approach
+        # We store factors on the instance to allow override in estimate()
+        instance._calibrated_factors = fitted  # type: ignore[attr-defined]
+        return instance
+
+    def _get_factors(self, asset_type: str) -> dict:
+        """Return cost factors, preferring calibrated values if present."""
+        calibrated = getattr(self, "_calibrated_factors", None)
+        if calibrated and asset_type in calibrated:
+            return calibrated[asset_type]
+        return _COST_FACTORS[asset_type]

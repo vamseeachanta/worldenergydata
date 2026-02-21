@@ -45,6 +45,11 @@ from worldenergydata.decommissioning.data_completeness import (
     CompletenessScore,
     DataCompletenessScorer,
 )
+from worldenergydata.decommissioning.cost_calibration import (
+    CalibrationFit,
+    CalibrationResult,
+    CostModelCalibration,
+)
 
 __all__ = [
     # Cost model
@@ -62,4 +67,8 @@ __all__ = [
     # Data completeness
     "CompletenessScore",
     "DataCompletenessScorer",
+    # Cost calibration
+    "CalibrationFit",
+    "CalibrationResult",
+    "CostModelCalibration",
 ]
