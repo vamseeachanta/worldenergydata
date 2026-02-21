@@ -241,6 +241,7 @@ def enigma_safety_analysis(
     asset_type: str,
     scenario: str,
     parameters: Optional[dict] = None,
+    calibrator: Optional["EnigmaCalibrator"] = None,  # type: ignore[name-defined]  # noqa: F821
 ) -> EnigmaResult:
     """Zero-config entry point for ENIGMA technical safety analysis.
 
@@ -257,6 +258,8 @@ def enigma_safety_analysis(
         parameters: Optional dict of overrides. Supported keys:
             - ``risk_score_override`` (float 0.0–1.0): bypass computed score.
             Unrecognised keys are silently ignored.
+        calibrator: Optional :class:`EnigmaCalibrator` instance. When provided
+            and fitted, uses data-driven risk scores instead of the static matrix.
 
     Returns:
         :class:`EnigmaResult` with risk_score, risk_level, fault_propagation,
@@ -273,6 +276,9 @@ def enigma_safety_analysis(
     if "risk_score_override" in params:
         score = float(params["risk_score_override"])
         score = round(min(max(score, 0.0), 1.0), 4)
+    elif calibrator is not None and getattr(calibrator, "_fitted", False):
+        raw_score, _ = calibrator.risk_score(asset_type, scenario)
+        score = round(min(max(float(raw_score), 0.0), 1.0), 4)
     else:
         score = _compute_risk_score(asset_type, scenario)
 
