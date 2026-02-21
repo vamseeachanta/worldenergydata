@@ -8,6 +8,11 @@ from worldenergydata.well_planning.risk_model import (
 )
 from worldenergydata.well_planning.risk_registry import WELL_PLANNING_RISKS
 from worldenergydata.well_planning.risk_analyzer import WellPlanningRiskAnalyzer
+from worldenergydata.well_planning.risk_calibrator import (
+    CalibrationRecord,
+    RiskCalibrationReport,
+    RiskCalibrator,
+)
 
 __all__ = [
     "RiskAuthority",
@@ -16,4 +21,7 @@ __all__ = [
     "WellPlanningRisk",
     "WELL_PLANNING_RISKS",
     "WellPlanningRiskAnalyzer",
+    "CalibrationRecord",
+    "RiskCalibrationReport",
+    "RiskCalibrator",
 ]
