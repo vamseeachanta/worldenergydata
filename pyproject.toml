@@ -125,7 +125,7 @@ worldenergydata = "worldenergydata.cli.main:app"
 # - external, modules, validators (other src packages)
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["worldenergydata*", "external*", "modules*", "validators*"]
+include = ["worldenergydata*", "external*", "modules*"]
 exclude = ["tests*", "docs*"]
 
 [tool.black]

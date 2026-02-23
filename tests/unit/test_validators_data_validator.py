@@ -11,7 +11,7 @@ from unittest.mock import patch, MagicMock
 import tempfile
 import yaml
 
-from validators.data_validator import DataValidator
+from assetutilities.common.validation import DataValidator
 
 
 class TestDataValidatorInit:
