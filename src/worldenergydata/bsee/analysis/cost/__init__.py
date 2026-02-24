@@ -1,7 +1,8 @@
-# ABOUTME: WRK-171 sanctioned project cost calibration module.
-# ABOUTME: Provides models, dataset builder, regional loader, and multivariate calibration.
+# ABOUTME: WRK-171/WRK-019 cost estimation and benchmarking module.
+# ABOUTME: Provides models, dataset builder, regional loader, multivariate calibration,
+# ABOUTME: cost summary aggregation, cross-regional benchmarking, and report generation.
 
-"""Sanctioned project cost calibration — WRK-171.
+"""Drilling, completion, and intervention cost module — WRK-171 + WRK-019.
 
 Exports:
     CostRecord, CostEstimate, CalibrationComparison — core data models
@@ -9,6 +10,14 @@ Exports:
     RegionalCostLoader — YAML-backed day-rate database
     MultivariateCalibration — linear regression cost predictor
     CostEngine — proxy + calibrated cost estimation
+    FieldCostSummary — per-field cost roll-up dataclass (WRK-019)
+    summarize_field_costs — build FieldCostSummary from estimate lists
+    summarize_lease_costs — per-lease aggregation dict
+    summarize_region_costs — cross-field DataFrame
+    BenchmarkResult — per-field benchmarking result (WRK-019)
+    compare_fields_to_regional_average — deviation from regional mean
+    detect_outliers — flag fields beyond std threshold
+    build_comparison_dataframe — tidy DataFrame for reporting
 """
 
 from worldenergydata.bsee.analysis.cost.models import (
@@ -31,9 +40,22 @@ from worldenergydata.bsee.analysis.cost.cost_calibration import (
     CalibrationReport,
 )
 from worldenergydata.bsee.analysis.cost.cost_engine import CostEngine
+from worldenergydata.bsee.analysis.cost.cost_summary import (
+    FieldCostSummary,
+    summarize_field_costs,
+    summarize_lease_costs,
+    summarize_region_costs,
+)
+from worldenergydata.bsee.analysis.cost.benchmarking import (
+    BenchmarkResult,
+    compare_fields_to_regional_average,
+    detect_outliers,
+    build_comparison_dataframe,
+)
 
 __all__ = [
     "ActivityType",
+    "BenchmarkResult",
     "CalibrationComparison",
     "CalibrationReport",
     "ConfidenceLevel",
@@ -41,12 +63,19 @@ __all__ = [
     "CostEstimate",
     "CostRecord",
     "CostType",
+    "FieldCostSummary",
     "MultivariateCalibration",
     "RegionalCostLoader",
     "RigType",
     "SanctionedProjectDataset",
     "WaterDepthBand",
     "WellDepthBand",
+    "build_comparison_dataframe",
     "classify_water_depth_band",
     "classify_well_depth_band",
+    "compare_fields_to_regional_average",
+    "detect_outliers",
+    "summarize_field_costs",
+    "summarize_lease_costs",
+    "summarize_region_costs",
 ]

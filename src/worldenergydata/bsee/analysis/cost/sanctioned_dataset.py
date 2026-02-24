@@ -282,11 +282,16 @@ class SanctionedProjectDataset:
         else:
             rig_type = RigType.DRILLSHIP
 
-        # Activity type
-        activity_type = rng.choice(
-            [ActivityType.DRILLING, ActivityType.COMPLETION, ActivityType.INTERVENTION],
-            p=[0.55, 0.35, 0.10],
+        # Activity type — use integer index to avoid numpy returning numpy.str_
+        _activity_choices = [
+            ActivityType.DRILLING,
+            ActivityType.COMPLETION,
+            ActivityType.INTERVENTION,
+        ]
+        activity_idx = int(
+            rng.choice(len(_activity_choices), p=[0.55, 0.35, 0.10])
         )
+        activity_type = _activity_choices[activity_idx]
 
         # Cost based on depth/region
         base_day_rate = _proxy_day_rate(water_depth_m, region)

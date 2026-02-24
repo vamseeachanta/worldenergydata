@@ -1,0 +1,294 @@
+# ABOUTME: WRK-019 regional cost profiles for drilling, completion, and intervention.
+# ABOUTME: Extends economic_assumptions.yml pattern to multiple regions and environments.
+# Units: USD millions unless noted. Year: 2022 base. Depth in metres.
+
+metadata:
+  version: "1.0.0"
+  created_date: "2026-02-24"
+  base_year: 2022
+  description: |
+    Regional cost profiles for the WRK-019 cost estimation layer.
+    Each profile documents representative well costs by environment (offshore/onshore),
+    water depth band, well type, and activity. Values are 2022 USD millions.
+    Sources: SPE/OTC papers, operator earnings disclosures, BOEM studies.
+  notes: |
+    - All values are proxy estimates; confidence is MEDIUM unless noted.
+    - Use day_rates.yml for duration-based proxy calculations.
+    - These profiles provide a cross-validation anchor and cost-per-well benchmarks.
+
+# ---------------------------------------------------------------------------
+# Environment flags
+# ---------------------------------------------------------------------------
+environments:
+  offshore:
+    description: "Marine environment — jack-up, semi-sub, or drillship"
+    regions:
+      - gom
+      - north_sea
+      - brazil
+      - west_africa
+      - asia_pacific
+  onshore:
+    description: "Land-based drilling — land rig"
+    regions:
+      - permian
+      - eagle_ford
+      - bakken
+      - haynesville
+
+# ---------------------------------------------------------------------------
+# Gulf of Mexico
+# ---------------------------------------------------------------------------
+profiles:
+
+  gom:
+    description: "US Gulf of Mexico — BSEE-regulated federal waters"
+    environment: offshore
+    regulator: BSEE
+    fiscal_terms:
+      royalty_rate: 0.1875
+      federal_tax_rate: 0.21
+    well_cost_usd_mm:
+      # Source: BOEM OCS economic studies; SPE/OTC papers; operator disclosures
+      shelf_jackup:
+        water_depth_band: shallow
+        well_depth_band: shallow
+        drilling_usd_mm: 8.0
+        completion_usd_mm: 4.0
+        intervention_workover_usd_mm: 2.5
+        confidence: medium
+      mid_water_semi:
+        water_depth_band: mid
+        well_depth_band: medium
+        drilling_usd_mm: 45.0
+        completion_usd_mm: 18.0
+        intervention_workover_usd_mm: 8.0
+        confidence: medium
+      deepwater_drillship:
+        water_depth_band: deep
+        well_depth_band: deep
+        drilling_usd_mm: 120.0
+        completion_usd_mm: 45.0
+        intervention_workover_usd_mm: 15.0
+        confidence: medium
+      ultra_deep_hpht:
+        water_depth_band: ultra_deep
+        well_depth_band: ultra_deep
+        hpht: true
+        drilling_usd_mm: 200.0
+        completion_usd_mm: 75.0
+        intervention_workover_usd_mm: 25.0
+        confidence: medium
+        notes: "Lower Tertiary HPHT benchmarks; see economic_assumptions.yml"
+    lower_tertiary_anchor:
+      description: "Lower Tertiary HPHT — highest-confidence GOM anchor"
+      source: "config/analysis/lower_tertiary/economic_assumptions.yml"
+      drilling_range_usd_mm: [150, 250]
+      completion_range_usd_mm: [50, 100]
+      confidence: high
+      notes: "Use only for Lower Tertiary interval depth > 25000 ft TVD"
+
+  # ---------------------------------------------------------------------------
+  # North Sea (NCS + UKCS combined proxy)
+  # ---------------------------------------------------------------------------
+  north_sea:
+    description: "North Sea — Norwegian NCS and UK UKCS combined proxy"
+    environment: offshore
+    regulator: Sodir/NSTA
+    fiscal_terms:
+      royalty_rate: 0.00
+      petroleum_tax_rate: 0.71
+      corporate_tax_rate: 0.22
+      notes: "Norwegian uplift scheme reduces effective tax burden"
+    well_cost_usd_mm:
+      shelf_jackup:
+        water_depth_band: shallow
+        well_depth_band: shallow
+        drilling_usd_mm: 12.0
+        completion_usd_mm: 6.0
+        intervention_workover_usd_mm: 3.5
+        confidence: medium
+      mid_water_semi:
+        water_depth_band: mid
+        well_depth_band: medium
+        drilling_usd_mm: 55.0
+        completion_usd_mm: 22.0
+        intervention_workover_usd_mm: 10.0
+        confidence: medium
+      deepwater:
+        water_depth_band: deep
+        well_depth_band: deep
+        drilling_usd_mm: 140.0
+        completion_usd_mm: 55.0
+        intervention_workover_usd_mm: 18.0
+        confidence: medium
+    cost_premium_vs_gom: 1.25
+    notes: >
+      North Sea rates carry ~25% premium vs GOM due to harsher conditions,
+      stricter regulations, and higher labour costs.
+
+  # ---------------------------------------------------------------------------
+  # Brazil (pre-salt / Santos / Campos)
+  # ---------------------------------------------------------------------------
+  brazil:
+    description: "Brazil — Petrobras pre-salt and post-salt proxy"
+    environment: offshore
+    regulator: ANP
+    fiscal_terms:
+      royalty_rate: 0.10
+      production_sharing: true
+      notes: "Pre-salt under production-sharing; post-salt under concessions"
+    well_cost_usd_mm:
+      shallow:
+        water_depth_band: shallow
+        well_depth_band: shallow
+        drilling_usd_mm: 7.5
+        completion_usd_mm: 3.5
+        intervention_workover_usd_mm: 2.0
+        confidence: medium
+      mid_water:
+        water_depth_band: mid
+        well_depth_band: medium
+        drilling_usd_mm: 42.0
+        completion_usd_mm: 16.0
+        intervention_workover_usd_mm: 7.0
+        confidence: medium
+      presalt_deep:
+        water_depth_band: deep
+        well_depth_band: deep
+        drilling_usd_mm: 110.0
+        completion_usd_mm: 42.0
+        intervention_workover_usd_mm: 14.0
+        confidence: medium
+      presalt_ultra_deep:
+        water_depth_band: ultra_deep
+        well_depth_band: ultra_deep
+        drilling_usd_mm: 165.0
+        completion_usd_mm: 65.0
+        intervention_workover_usd_mm: 20.0
+        confidence: medium
+    notes: >
+      Pre-salt well costs inflated by: salt section drilling complexity,
+      deepwater CO2 management (high CO2 content), and long tiebacks.
+
+  # ---------------------------------------------------------------------------
+  # West Africa (Nigeria, Angola, Equatorial Guinea)
+  # ---------------------------------------------------------------------------
+  west_africa:
+    description: "West Africa — Nigeria, Angola, Equatorial Guinea proxy"
+    environment: offshore
+    regulator: DPR/NUPRC
+    well_cost_usd_mm:
+      shallow:
+        water_depth_band: shallow
+        well_depth_band: shallow
+        drilling_usd_mm: 6.5
+        completion_usd_mm: 3.0
+        intervention_workover_usd_mm: 1.8
+        confidence: low
+      mid_water:
+        water_depth_band: mid
+        well_depth_band: medium
+        drilling_usd_mm: 38.0
+        completion_usd_mm: 14.5
+        intervention_workover_usd_mm: 6.0
+        confidence: medium
+      deepwater:
+        water_depth_band: deep
+        well_depth_band: deep
+        drilling_usd_mm: 100.0
+        completion_usd_mm: 38.0
+        intervention_workover_usd_mm: 12.5
+        confidence: medium
+
+  # ---------------------------------------------------------------------------
+  # Asia-Pacific (SE Asia, Australia)
+  # ---------------------------------------------------------------------------
+  asia_pacific:
+    description: "Asia-Pacific — SE Asia and Australia proxy"
+    environment: offshore
+    regulator: various
+    well_cost_usd_mm:
+      shallow:
+        water_depth_band: shallow
+        well_depth_band: shallow
+        drilling_usd_mm: 6.0
+        completion_usd_mm: 2.8
+        intervention_workover_usd_mm: 1.6
+        confidence: low
+      mid_water:
+        water_depth_band: mid
+        well_depth_band: medium
+        drilling_usd_mm: 35.0
+        completion_usd_mm: 13.5
+        intervention_workover_usd_mm: 5.5
+        confidence: medium
+      deepwater:
+        water_depth_band: deep
+        well_depth_band: deep
+        drilling_usd_mm: 90.0
+        completion_usd_mm: 34.0
+        intervention_workover_usd_mm: 11.0
+        confidence: medium
+
+  # ---------------------------------------------------------------------------
+  # Permian Basin (onshore)
+  # ---------------------------------------------------------------------------
+  permian:
+    description: "Permian Basin — onshore Texas/New Mexico tight oil"
+    environment: onshore
+    regulator: "Texas RRC / New Mexico OCD"
+    well_cost_usd_mm:
+      horizontal_wolfcamp:
+        water_depth_band: shallow
+        well_depth_band: medium
+        drilling_usd_mm: 1.8
+        completion_usd_mm: 3.2
+        intervention_workover_usd_mm: 0.8
+        confidence: medium
+        notes: "Typical 10,000+ ft lateral Wolfcamp well"
+      vertical_conventional:
+        water_depth_band: shallow
+        well_depth_band: shallow
+        drilling_usd_mm: 0.9
+        completion_usd_mm: 0.8
+        intervention_workover_usd_mm: 0.4
+        confidence: medium
+    notes: >
+      Permian completion costs often exceed drilling costs due to hydraulic
+      fracturing intensity (high stage counts, large proppant volumes).
+
+  # ---------------------------------------------------------------------------
+  # Eagle Ford (onshore)
+  # ---------------------------------------------------------------------------
+  eagle_ford:
+    description: "Eagle Ford Shale — onshore South Texas"
+    environment: onshore
+    regulator: "Texas RRC"
+    well_cost_usd_mm:
+      horizontal_eagle_ford:
+        water_depth_band: shallow
+        well_depth_band: medium
+        drilling_usd_mm: 2.0
+        completion_usd_mm: 3.5
+        intervention_workover_usd_mm: 0.9
+        confidence: medium
+    notes: >
+      Eagle Ford wells are comparable to Permian in cost structure but have
+      somewhat higher drill-out complexity in the condensate window.
+
+# ---------------------------------------------------------------------------
+# Cross-regional cost indices (2022 base = GOM deep = 1.00)
+# ---------------------------------------------------------------------------
+cost_indices_2022:
+  description: |
+    Normalised drilling cost index relative to GOM deepwater = 1.00.
+    Useful for cross-regional benchmarking when absolute costs are uncertain.
+  indices:
+    gom_deep: 1.00
+    north_sea_deep: 1.17
+    brazil_presalt: 0.92
+    west_africa_deep: 0.83
+    asia_pacific_deep: 0.75
+    permian_horizontal: 0.015   # onshore cost order-of-magnitude lower
+    eagle_ford_horizontal: 0.017

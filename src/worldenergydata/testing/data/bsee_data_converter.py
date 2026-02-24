@@ -425,7 +425,7 @@ def create_sample_bsee_data():
     converter = BSEEDataConverter(seed=42)
     
     # Create test data directory
-    test_data_dir = Path("tests/fixtures/data/bsee_test_data")
+    test_data_dir = Path("tests/data/bsee_test_data")
     
     # Generate and save all test data
     files = converter.save_test_data(test_data_dir, prefix="sample")
