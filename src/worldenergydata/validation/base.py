@@ -5,13 +5,15 @@ This module provides the foundation classes that all validators inherit from,
 including result handling, field validation, and schema validation capabilities.
 """
 
+import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 import pandas as pd
-from loguru import logger
+
+logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from .schemas import FieldSchema
@@ -128,14 +130,11 @@ class ValidationResult:
 
     def get_errors_by_severity(self, severity: str) -> List[ValidationError]:
         """Get all issues of a specific severity level."""
-        if severity == "error":
-            return self.errors
-        elif severity == "warning":
-            return self.warnings
-        elif severity == "info":
-            return self.info
-        else:
-            return []
+        return {
+            "error": self.errors,
+            "warning": self.warnings,
+            "info": self.info,
+        }.get(severity, [])
 
     def merge(self, other: "ValidationResult") -> "ValidationResult":
         """Merge another validation result into this one."""
