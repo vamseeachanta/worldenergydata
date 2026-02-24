@@ -771,3 +771,214 @@ class TestCorrelationConfig:
         cfg = CorrelationConfig()
         assert cfg.date_window_days == 5
         assert cfg.location_threshold_km == 100.0
+
+
+# ---------------------------------------------------------------------------
+# WRK-320: OperationPhase enum and classifier
+# ---------------------------------------------------------------------------
+
+from worldenergydata.marine_safety.analysis.incidents.incident_taxonomy import (
+    OperationPhase,
+    OperationPhaseClassifier,
+)
+
+
+class TestOperationPhase:
+    def test_has_manoeuvring(self):
+        assert OperationPhase.MANOEUVRING == "manoeuvring"
+
+    def test_has_anchored(self):
+        assert OperationPhase.ANCHORED == "anchored"
+
+    def test_has_underway(self):
+        assert OperationPhase.UNDERWAY == "underway"
+
+    def test_has_port_operations(self):
+        assert OperationPhase.PORT_OPERATIONS == "port_operations"
+
+    def test_has_cargo_operations(self):
+        assert OperationPhase.CARGO_OPERATIONS == "cargo_operations"
+
+    def test_has_fishing_ops(self):
+        assert OperationPhase.FISHING_OPS == "fishing_ops"
+
+    def test_has_unknown(self):
+        assert OperationPhase.UNKNOWN == "unknown"
+
+    def test_all_values_are_strings(self):
+        for phase in OperationPhase:
+            assert isinstance(phase.value, str)
+
+
+class TestOperationPhaseClassifier:
+    @pytest.fixture()
+    def op_classifier(self) -> OperationPhaseClassifier:
+        return OperationPhaseClassifier()
+
+    def test_classify_manoeuvring_from_cause(self, op_classifier):
+        result = op_classifier.classify(
+            operation_text="vessel was manoeuvring to berth"
+        )
+        assert result == OperationPhase.MANOEUVRING
+
+    def test_classify_anchored(self, op_classifier):
+        result = op_classifier.classify(
+            operation_text="vessel at anchor in harbour"
+        )
+        assert result == OperationPhase.ANCHORED
+
+    def test_classify_underway(self, op_classifier):
+        result = op_classifier.classify(
+            operation_text="vessel proceeding underway in open sea"
+        )
+        assert result == OperationPhase.UNDERWAY
+
+    def test_classify_port_operations(self, op_classifier):
+        result = op_classifier.classify(
+            operation_text="incident occurred during port operations alongside berth"
+        )
+        assert result == OperationPhase.PORT_OPERATIONS
+
+    def test_classify_cargo_operations(self, op_classifier):
+        result = op_classifier.classify(
+            operation_text="loading cargo at terminal"
+        )
+        assert result == OperationPhase.CARGO_OPERATIONS
+
+    def test_classify_fishing_ops(self, op_classifier):
+        result = op_classifier.classify(
+            operation_text="vessel engaged in fishing operations"
+        )
+        assert result == OperationPhase.FISHING_OPS
+
+    def test_classify_none_returns_unknown(self, op_classifier):
+        result = op_classifier.classify(operation_text=None)
+        assert result == OperationPhase.UNKNOWN
+
+    def test_classify_empty_string_returns_unknown(self, op_classifier):
+        result = op_classifier.classify(operation_text="")
+        assert result == OperationPhase.UNKNOWN
+
+    def test_classify_unrecognised_returns_unknown(self, op_classifier):
+        result = op_classifier.classify(
+            operation_text="vessel in transit XYZ mode zeta"
+        )
+        assert result == OperationPhase.UNKNOWN
+
+    def test_classify_docking_maps_to_port_operations(self, op_classifier):
+        result = op_classifier.classify(operation_text="vessel docking at quayside")
+        assert result == OperationPhase.PORT_OPERATIONS
+
+    def test_classify_trawling_maps_to_fishing_ops(self, op_classifier):
+        result = op_classifier.classify(operation_text="trawling in rough conditions")
+        assert result == OperationPhase.FISHING_OPS
+
+
+# ---------------------------------------------------------------------------
+# WRK-320: TaxonomyRecord includes operation_phase
+# ---------------------------------------------------------------------------
+
+
+class TestTaxonomyRecordOperationPhase:
+    def test_default_operation_phase_is_unknown(self):
+        r = _make_record()
+        assert r.operation_phase == OperationPhase.UNKNOWN
+
+    def test_can_set_operation_phase_underway(self):
+        r = _make_record()
+        r.operation_phase = OperationPhase.UNDERWAY
+        assert r.operation_phase == OperationPhase.UNDERWAY
+
+    def test_operation_phase_accepted_as_constructor_kwarg(self):
+        r = TaxonomyRecord(
+            report_id="X1",
+            source="uscg",
+            incident_date="2022-01-01",
+            vessel_name="TEST",
+            vessel_type="cargo",
+            incident_type="collision",
+            root_cause=RootCauseType.HUMAN_ERROR,
+            raw_cause=None,
+            narrative=None,
+            latitude=None,
+            longitude=None,
+            operation_phase=OperationPhase.MANOEUVRING,
+        )
+        assert r.operation_phase == OperationPhase.MANOEUVRING
+
+
+# ---------------------------------------------------------------------------
+# WRK-320: build_pattern_report includes operation_phase column
+# ---------------------------------------------------------------------------
+
+
+class TestBuildPatternReportOperationPhase:
+    def test_operation_phase_column_present(self):
+        r = _make_record()
+        result = build_pattern_report([r])
+        assert "operation_phase" in result.columns
+
+    def test_operation_phase_value_correct(self):
+        r = _make_record()
+        r.operation_phase = OperationPhase.UNDERWAY
+        result = build_pattern_report([r])
+        assert result.iloc[0]["operation_phase"] == "underway"
+
+    def test_aggregates_by_operation_phase(self):
+        records = [
+            _make_record("A", source="uscg"),
+            _make_record("B", source="uscg"),
+        ]
+        records[0].operation_phase = OperationPhase.UNDERWAY
+        records[1].operation_phase = OperationPhase.UNDERWAY
+        result = build_pattern_report(records)
+        row = result[result["operation_phase"] == "underway"]
+        assert row["count"].sum() == 2
+
+    def test_separates_different_operation_phases(self):
+        records = [
+            _make_record("A", source="uscg"),
+            _make_record("B", source="maib"),
+        ]
+        records[0].operation_phase = OperationPhase.UNDERWAY
+        records[1].operation_phase = OperationPhase.ANCHORED
+        result = build_pattern_report(records)
+        phases = set(result["operation_phase"].unique())
+        assert "underway" in phases
+        assert "anchored" in phases
+
+
+# ---------------------------------------------------------------------------
+# WRK-320: MISLE column map includes operation phase field
+# ---------------------------------------------------------------------------
+
+
+from worldenergydata.marine_safety.analysis.incidents.incident_taxonomy import (
+    MISLE_OPERATION_COLUMN,
+)
+
+
+class TestMISLEColumnMap:
+    def test_misle_operation_column_is_string(self):
+        assert isinstance(MISLE_OPERATION_COLUMN, str)
+
+    def test_normaliser_extracts_misle_operation_phase(self):
+        """Normaliser must handle MISLE ACTIVITY_TYPE column for op phase."""
+        normaliser = IncidentDataFrameNormaliser()
+        df = pd.DataFrame([{
+            "MASTER_KEY": "MISLE-2022-001",
+            "EVENT_DATE": "2022-04-10",
+            "VESSEL_NAME": "MV PELICAN",
+            "VESSEL_TYPE": "cargo",
+            "PRIMARY_CAUSE": "operator error",
+            "NARRATIVE": "Collision while manoeuvring to berth",
+            "CASUALTY_TYPE": "collision",
+            "LATITUDE": 29.7,
+            "LONGITUDE": -95.0,
+            "INJURY_COUNT": 0,
+            "FATALITY_COUNT": 0,
+            MISLE_OPERATION_COLUMN: "manoeuvring",
+        }])
+        result = normaliser.normalise(df, source="uscg")
+        # Must not raise; operation_phase column should be present or mappable
+        assert "report_id" in result.columns

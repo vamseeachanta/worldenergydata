@@ -16,6 +16,9 @@ from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysi
 from worldenergydata.marine_safety.analysis.incidents.incident_taxonomy import (
     IncidentDataFrameNormaliser,
     IncidentTaxonomyClassifier,
+    MISLE_OPERATION_COLUMN,
+    OperationPhase,
+    OperationPhaseClassifier,
     RootCauseType,
     TaxonomyRecord,
     build_taxonomy_summary,
@@ -41,6 +44,10 @@ __all__ = [
     "IncidentTaxonomyClassifier",
     "IncidentDataFrameNormaliser",
     "build_taxonomy_summary",
+    # Operation phase
+    "OperationPhase",
+    "OperationPhaseClassifier",
+    "MISLE_OPERATION_COLUMN",
     # USCG loader
     "load_uscg_csv",
     "load_uscg_csv_to_records",

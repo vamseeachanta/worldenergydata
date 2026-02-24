@@ -285,21 +285,27 @@ def build_pattern_report(
     records: List[TaxonomyRecord],
 ) -> pd.DataFrame:
     """
-    Produce a cross-tabulation of incident patterns by cause type, vessel type, and year.
+    Produce a cross-tabulation of incident patterns by cause type, vessel type,
+    operation phase, and year.
 
     Args:
         records: Combined list of TaxonomyRecord from all sources.
 
     Returns:
-        DataFrame with columns: year, vessel_type, root_cause, source, count,
-        fatalities, injuries.
+        DataFrame with columns: year, vessel_type, root_cause, operation_phase,
+        source, count, fatalities, injuries.
     """
+    from worldenergydata.marine_safety.analysis.incidents.incident_taxonomy import (
+        OperationPhase,
+    )
+
     if not records:
         return pd.DataFrame(
             columns=[
                 "year",
                 "vessel_type",
                 "root_cause",
+                "operation_phase",
                 "source",
                 "count",
                 "fatalities",
@@ -310,11 +316,13 @@ def build_pattern_report(
     rows = []
     for r in records:
         year = _extract_year(r.incident_date)
+        op_phase = getattr(r, "operation_phase", OperationPhase.UNKNOWN)
         rows.append(
             {
                 "year": year,
                 "vessel_type": r.vessel_type or "unknown",
                 "root_cause": r.root_cause.value,
+                "operation_phase": op_phase.value if hasattr(op_phase, "value") else str(op_phase),
                 "source": r.source,
                 "count": 1,
                 "fatalities": r.fatality_count,
@@ -324,14 +332,17 @@ def build_pattern_report(
 
     df = pd.DataFrame(rows)
     summary = (
-        df.groupby(["year", "vessel_type", "root_cause", "source"], dropna=False)
+        df.groupby(
+            ["year", "vessel_type", "root_cause", "operation_phase", "source"],
+            dropna=False,
+        )
         .agg(
             count=("count", "sum"),
             fatalities=("fatalities", "sum"),
             injuries=("injuries", "sum"),
         )
         .reset_index()
-        .sort_values(["root_cause", "vessel_type"])
+        .sort_values(["root_cause", "vessel_type", "operation_phase"])
     )
     return summary
 
