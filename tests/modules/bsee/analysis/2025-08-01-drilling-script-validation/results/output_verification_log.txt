@@ -1,4 +1,4 @@
-Generated output file: C:\Users\Sk Samdan\Desktop\github\worldenergydata\tests\modules\bsee\analysis\2025-08-01-drilling-script-validation\results\drilling_and_completion_days_by_api_test_output.xlsx
+Generated output file: /mnt/local-analysis/workspace-hub/worldenergydata/tests/modules/bsee/analysis/2025-08-01-drilling-script-validation/results/drilling_and_completion_days_by_api_test_output.xlsx
 File size: 14358 bytes
 Number of rows: 122
 Number of columns: 12
