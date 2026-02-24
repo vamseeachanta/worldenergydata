@@ -134,7 +134,9 @@ class IncidentCorrelator:
         matches.sort(key=lambda m: m.confidence, reverse=True)
         logger.info(
             "Correlator found %d matches between %d and %d records",
-            len(matches), len(list_a), len(list_b),
+            len(matches),
+            len(list_a),
+            len(list_b),
         )
         return matches
 
@@ -254,25 +256,27 @@ def build_correlation_summary(matches: List[CorrelationMatch]) -> pd.DataFrame:
 
     rows = []
     for m in matches:
-        rows.append({
-            "report_id_a": m.record_a.report_id,
-            "source_a": m.record_a.source,
-            "report_id_b": m.record_b.report_id,
-            "source_b": m.record_b.source,
-            "incident_date_a": m.record_a.incident_date,
-            "incident_date_b": m.record_b.incident_date,
-            "vessel_name_a": m.record_a.vessel_name,
-            "vessel_name_b": m.record_b.vessel_name,
-            "root_cause_a": m.record_a.root_cause.value,
-            "root_cause_b": m.record_b.root_cause.value,
-            "vessel_type_a": m.record_a.vessel_type,
-            "vessel_type_b": m.record_b.vessel_type,
-            "date_diff_days": m.date_diff_days,
-            "distance_km": m.distance_km,
-            "name_similarity": round(m.name_similarity, 4),
-            "confidence": round(m.confidence, 4),
-            "match_reasons": "; ".join(m.match_reasons),
-        })
+        rows.append(
+            {
+                "report_id_a": m.record_a.report_id,
+                "source_a": m.record_a.source,
+                "report_id_b": m.record_b.report_id,
+                "source_b": m.record_b.source,
+                "incident_date_a": m.record_a.incident_date,
+                "incident_date_b": m.record_b.incident_date,
+                "vessel_name_a": m.record_a.vessel_name,
+                "vessel_name_b": m.record_b.vessel_name,
+                "root_cause_a": m.record_a.root_cause.value,
+                "root_cause_b": m.record_b.root_cause.value,
+                "vessel_type_a": m.record_a.vessel_type,
+                "vessel_type_b": m.record_b.vessel_type,
+                "date_diff_days": m.date_diff_days,
+                "distance_km": m.distance_km,
+                "name_similarity": round(m.name_similarity, 4),
+                "confidence": round(m.confidence, 4),
+                "match_reasons": "; ".join(m.match_reasons),
+            }
+        )
 
     return pd.DataFrame(rows)
 
@@ -292,29 +296,42 @@ def build_pattern_report(
     """
     if not records:
         return pd.DataFrame(
-            columns=["year", "vessel_type", "root_cause", "source", "count",
-                     "fatalities", "injuries"]
+            columns=[
+                "year",
+                "vessel_type",
+                "root_cause",
+                "source",
+                "count",
+                "fatalities",
+                "injuries",
+            ]
         )
 
     rows = []
     for r in records:
         year = _extract_year(r.incident_date)
-        rows.append({
-            "year": year,
-            "vessel_type": r.vessel_type or "unknown",
-            "root_cause": r.root_cause.value,
-            "source": r.source,
-            "count": 1,
-            "fatalities": r.fatality_count,
-            "injuries": r.injury_count,
-        })
+        rows.append(
+            {
+                "year": year,
+                "vessel_type": r.vessel_type or "unknown",
+                "root_cause": r.root_cause.value,
+                "source": r.source,
+                "count": 1,
+                "fatalities": r.fatality_count,
+                "injuries": r.injury_count,
+            }
+        )
 
     df = pd.DataFrame(rows)
     summary = (
-        df.groupby(["year", "vessel_type", "root_cause", "source"])
-        .agg(count=("count", "sum"), fatalities=("fatalities", "sum"), injuries=("injuries", "sum"))
+        df.groupby(["year", "vessel_type", "root_cause", "source"], dropna=False)
+        .agg(
+            count=("count", "sum"),
+            fatalities=("fatalities", "sum"),
+            injuries=("injuries", "sum"),
+        )
         .reset_index()
-        .sort_values(["year", "root_cause", "vessel_type"])
+        .sort_values(["root_cause", "vessel_type"])
     )
     return summary
 
@@ -325,8 +342,10 @@ def build_pattern_report(
 
 
 def _haversine(
-    lat1: float, lon1: Optional[float],
-    lat2: float, lon2: Optional[float],
+    lat1: float,
+    lon1: Optional[float],
+    lat2: float,
+    lon2: Optional[float],
 ) -> float:
     """Return great-circle distance in km between two (lat, lon) pairs."""
     if lon1 is None or lon2 is None:
@@ -334,7 +353,10 @@ def _haversine(
     lat1r, lat2r = math.radians(lat1), math.radians(lat2)
     dlat = math.radians(lat2 - lat1)
     dlon = math.radians((lon2 or 0) - (lon1 or 0))
-    a = math.sin(dlat / 2) ** 2 + math.cos(lat1r) * math.cos(lat2r) * math.sin(dlon / 2) ** 2
+    a = (
+        math.sin(dlat / 2) ** 2
+        + math.cos(lat1r) * math.cos(lat2r) * math.sin(dlon / 2) ** 2
+    )
     return _EARTH_RADIUS_KM * 2 * math.asin(math.sqrt(a))
 
 

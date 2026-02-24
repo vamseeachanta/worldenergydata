@@ -15,36 +15,33 @@ Covers:
 
 from __future__ import annotations
 
-from datetime import date
-
 import pandas as pd
 import pytest
 
+from worldenergydata.marine_safety.analysis.incidents.incident_correlator import (
+    CorrelationConfig,
+    CorrelationMatch,
+    IncidentCorrelator,
+    _days_apart,
+    _extract_year,
+    _haversine,
+    _jaccard_similarity,
+    build_correlation_summary,
+    build_pattern_report,
+)
 from worldenergydata.marine_safety.analysis.incidents.incident_taxonomy import (
     IncidentDataFrameNormaliser,
     IncidentTaxonomyClassifier,
     RootCauseType,
     TaxonomyRecord,
-    build_taxonomy_summary,
     _safe_float,
     _safe_str,
+    build_taxonomy_summary,
 )
 from worldenergydata.marine_safety.analysis.incidents.uscg_client import (
     describe_uscg_dataset,
     load_dataframe_as_uscg,
 )
-from worldenergydata.marine_safety.analysis.incidents.incident_correlator import (
-    CorrelationConfig,
-    CorrelationMatch,
-    IncidentCorrelator,
-    build_correlation_summary,
-    build_pattern_report,
-    _days_apart,
-    _jaccard_similarity,
-    _haversine,
-    _extract_year,
-)
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -64,72 +61,78 @@ def normaliser() -> IncidentDataFrameNormaliser:
 @pytest.fixture()
 def sample_uscg_df() -> pd.DataFrame:
     """Minimal USCG-style DataFrame with raw column names."""
-    return pd.DataFrame([
-        {
-            "REPORT_NUM": "USCG-2021-001",
-            "VESSEL_NAME": "MV Atlantic Ranger",
-            "EVENT_DATE": "2021-03-15",
-            "CASUALTY_TYPE": "COLLISION",
-            "PRIMARY_CAUSE": "operator error during bridge watch",
-            "NARRATIVE": "Vessel collided with pier due to crew inattention.",
-            "LATITUDE": 29.5,
-            "LONGITUDE": -94.2,
-            "INJURY_COUNT": 2,
-            "FATALITY_COUNT": 0,
-            "VESSEL_TYPE": "cargo",
-        },
-        {
-            "REPORT_NUM": "USCG-2021-002",
-            "VESSEL_NAME": "F/V Blue Horizon",
-            "EVENT_DATE": "2021-07-04",
-            "CASUALTY_TYPE": "SINKING",
-            "PRIMARY_CAUSE": "machinery failure in engine room",
-            "NARRATIVE": "Flooding caused by failed pump.",
-            "LATITUDE": 27.1,
-            "LONGITUDE": -97.0,
-            "INJURY_COUNT": 0,
-            "FATALITY_COUNT": 1,
-            "VESSEL_TYPE": "fishing",
-        },
-    ])
+    return pd.DataFrame(
+        [
+            {
+                "REPORT_NUM": "USCG-2021-001",
+                "VESSEL_NAME": "MV Atlantic Ranger",
+                "EVENT_DATE": "2021-03-15",
+                "CASUALTY_TYPE": "COLLISION",
+                "PRIMARY_CAUSE": "operator error during bridge watch",
+                "NARRATIVE": "Vessel collided with pier due to crew inattention.",
+                "LATITUDE": 29.5,
+                "LONGITUDE": -94.2,
+                "INJURY_COUNT": 2,
+                "FATALITY_COUNT": 0,
+                "VESSEL_TYPE": "cargo",
+            },
+            {
+                "REPORT_NUM": "USCG-2021-002",
+                "VESSEL_NAME": "F/V Blue Horizon",
+                "EVENT_DATE": "2021-07-04",
+                "CASUALTY_TYPE": "SINKING",
+                "PRIMARY_CAUSE": "machinery failure in engine room",
+                "NARRATIVE": "Flooding caused by failed pump.",
+                "LATITUDE": 27.1,
+                "LONGITUDE": -97.0,
+                "INJURY_COUNT": 0,
+                "FATALITY_COUNT": 1,
+                "VESSEL_TYPE": "fishing",
+            },
+        ]
+    )
 
 
 @pytest.fixture()
 def sample_maib_df() -> pd.DataFrame:
     """Minimal MAIB-style DataFrame."""
-    return pd.DataFrame([
-        {
-            "Occurrence_Id": "MAIB-2021-999",
-            "Date": "2021-03-16",
-            "Vessel_Name": "MV ATLANTIC RANGER",
-            "Vessel_Type": "cargo",
-            "Main_Event": "collision",
-            "Abstract": "Vessel struck jetty; crew inattention cited.",
-            "Latitude": 29.55,
-            "Longitude": -94.1,
-            "Deaths": 0,
-            "Injuries": 2,
-        },
-    ])
+    return pd.DataFrame(
+        [
+            {
+                "Occurrence_Id": "MAIB-2021-999",
+                "Date": "2021-03-16",
+                "Vessel_Name": "MV ATLANTIC RANGER",
+                "Vessel_Type": "cargo",
+                "Main_Event": "collision",
+                "Abstract": "Vessel struck jetty; crew inattention cited.",
+                "Latitude": 29.55,
+                "Longitude": -94.1,
+                "Deaths": 0,
+                "Injuries": 2,
+            },
+        ]
+    )
 
 
 @pytest.fixture()
 def sample_ntsb_df() -> pd.DataFrame:
     """Minimal NTSB-style DataFrame."""
-    return pd.DataFrame([
-        {
-            "EventId": "NTSB-MAR-2020-001",
-            "EventDate": "2020-06-01",
-            "VesselName": "SS GULF PROVIDER",
-            "VesselType": "tanker",
-            "ProbableCause": "inadequate safety management system procedures",
-            "Narrative": "Grounding attributed to non-compliance with watchkeeping procedure.",
-            "Latitude": 28.0,
-            "Longitude": -90.0,
-            "FatalCount": 0,
-            "InjuryCount": 3,
-        },
-    ])
+    return pd.DataFrame(
+        [
+            {
+                "EventId": "NTSB-MAR-2020-001",
+                "EventDate": "2020-06-01",
+                "VesselName": "SS GULF PROVIDER",
+                "VesselType": "tanker",
+                "ProbableCause": "inadequate safety management system procedures",
+                "Narrative": "Grounding attributed to non-compliance with watchkeeping procedure.",
+                "Latitude": 28.0,
+                "Longitude": -90.0,
+                "FatalCount": 0,
+                "InjuryCount": 3,
+            },
+        ]
+    )
 
 
 def _make_record(
@@ -191,8 +194,13 @@ class TestRootCauseType:
     def test_all_seven_types_present(self):
         types = {e.value for e in RootCauseType}
         assert types == {
-            "human_error", "equipment_failure", "environmental",
-            "procedure", "design_defect", "management", "unknown",
+            "human_error",
+            "equipment_failure",
+            "environmental",
+            "procedure",
+            "design_defect",
+            "management",
+            "unknown",
         }
 
 
@@ -211,7 +219,9 @@ class TestIncidentTaxonomyClassifier:
         assert result == RootCauseType.HUMAN_ERROR
 
     def test_classify_watchkeeping_returns_human_error(self, classifier):
-        result = classifier.classify(narrative="failure of watchkeeping led to grounding")
+        result = classifier.classify(
+            narrative="failure of watchkeeping led to grounding"
+        )
         assert result == RootCauseType.HUMAN_ERROR
 
     def test_classify_machinery_failure_returns_equipment_failure(self, classifier):
@@ -227,7 +237,9 @@ class TestIncidentTaxonomyClassifier:
         assert result == RootCauseType.ENVIRONMENTAL
 
     def test_classify_heavy_seas_returns_environmental(self, classifier):
-        result = classifier.classify(narrative="vessel lost power in heavy seas with high winds")
+        result = classifier.classify(
+            narrative="vessel lost power in heavy seas with high winds"
+        )
         assert result == RootCauseType.ENVIRONMENTAL
 
     def test_classify_sms_deficiency_returns_procedure(self, classifier):
@@ -243,11 +255,15 @@ class TestIncidentTaxonomyClassifier:
         assert result == RootCauseType.DESIGN_DEFECT
 
     def test_classify_safety_culture_returns_management(self, classifier):
-        result = classifier.classify(primary_cause="safety culture failure at company level")
+        result = classifier.classify(
+            primary_cause="safety culture failure at company level"
+        )
         assert result == RootCauseType.MANAGEMENT
 
     def test_classify_management_failure_returns_management(self, classifier):
-        result = classifier.classify(narrative="management failure contributed to the accident")
+        result = classifier.classify(
+            narrative="management failure contributed to the accident"
+        )
         assert result == RootCauseType.MANAGEMENT
 
     def test_classify_empty_string_returns_unknown(self, classifier):
@@ -259,15 +275,19 @@ class TestIncidentTaxonomyClassifier:
         assert result == RootCauseType.UNKNOWN
 
     def test_classify_narrative_takes_precedence_over_empty_cause(self, classifier):
-        result = classifier.classify(primary_cause=None, narrative="operator fatigue noted")
+        result = classifier.classify(
+            primary_cause=None, narrative="operator fatigue noted"
+        )
         assert result == RootCauseType.HUMAN_ERROR
 
     def test_classify_dataframe_assigns_correct_types(self, classifier):
-        df = pd.DataFrame([
-            {"primary_cause": "operator error", "narrative": ""},
-            {"primary_cause": "engine failure", "narrative": ""},
-            {"primary_cause": "", "narrative": "heavy seas"},
-        ])
+        df = pd.DataFrame(
+            [
+                {"primary_cause": "operator error", "narrative": ""},
+                {"primary_cause": "engine failure", "narrative": ""},
+                {"primary_cause": "", "narrative": "heavy seas"},
+            ]
+        )
         series = classifier.classify_dataframe(df)
         assert list(series) == [
             RootCauseType.HUMAN_ERROR,
@@ -316,7 +336,9 @@ class TestIncidentDataFrameNormaliser:
         result = normaliser.normalise(pd.DataFrame(), source="uscg")
         assert result.empty
 
-    def test_to_taxonomy_records_produces_correct_count(self, normaliser, sample_uscg_df):
+    def test_to_taxonomy_records_produces_correct_count(
+        self, normaliser, sample_uscg_df
+    ):
         df = normaliser.normalise(sample_uscg_df, source="uscg")
         records = normaliser.to_taxonomy_records(df, source="uscg")
         assert len(records) == 2
@@ -327,7 +349,9 @@ class TestIncidentDataFrameNormaliser:
         # First record: "operator error during bridge watch"
         assert records[0].root_cause == RootCauseType.HUMAN_ERROR
 
-    def test_to_taxonomy_records_classify_equipment_failure(self, normaliser, sample_uscg_df):
+    def test_to_taxonomy_records_classify_equipment_failure(
+        self, normaliser, sample_uscg_df
+    ):
         df = normaliser.normalise(sample_uscg_df, source="uscg")
         records = normaliser.to_taxonomy_records(df, source="uscg")
         # Second record: "machinery failure in engine room"
@@ -357,26 +381,42 @@ class TestBuildTaxonomySummary:
 
     def test_aggregates_multiple_records_same_cause_source(self):
         records = [
-            _make_record(report_id="A", root_cause=RootCauseType.HUMAN_ERROR, source="uscg"),
-            _make_record(report_id="B", root_cause=RootCauseType.HUMAN_ERROR, source="uscg"),
+            _make_record(
+                report_id="A", root_cause=RootCauseType.HUMAN_ERROR, source="uscg"
+            ),
+            _make_record(
+                report_id="B", root_cause=RootCauseType.HUMAN_ERROR, source="uscg"
+            ),
         ]
         result = build_taxonomy_summary(records)
         assert result.iloc[0]["count"] == 2
 
     def test_separates_different_sources(self):
         records = [
-            _make_record(report_id="A", source="uscg", root_cause=RootCauseType.HUMAN_ERROR),
-            _make_record(report_id="B", source="maib", root_cause=RootCauseType.HUMAN_ERROR),
+            _make_record(
+                report_id="A", source="uscg", root_cause=RootCauseType.HUMAN_ERROR
+            ),
+            _make_record(
+                report_id="B", source="maib", root_cause=RootCauseType.HUMAN_ERROR
+            ),
         ]
         result = build_taxonomy_summary(records)
         assert len(result) == 2
 
     def test_sums_fatalities(self):
         records = [
-            _make_record(report_id="A", source="uscg", root_cause=RootCauseType.EQUIPMENT_FAILURE,
-                         fatality_count=2),
-            _make_record(report_id="B", source="uscg", root_cause=RootCauseType.EQUIPMENT_FAILURE,
-                         fatality_count=1),
+            _make_record(
+                report_id="A",
+                source="uscg",
+                root_cause=RootCauseType.EQUIPMENT_FAILURE,
+                fatality_count=2,
+            ),
+            _make_record(
+                report_id="B",
+                source="uscg",
+                root_cause=RootCauseType.EQUIPMENT_FAILURE,
+                fatality_count=1,
+            ),
         ]
         result = build_taxonomy_summary(records)
         assert result.iloc[0]["fatalities"] == 3
@@ -411,7 +451,10 @@ class TestDescribeUSCGDataset:
         from worldenergydata.marine_safety.analysis.incidents.incident_taxonomy import (
             IncidentDataFrameNormaliser,
         )
-        normalised = IncidentDataFrameNormaliser().normalise(sample_uscg_df, source="uscg")
+
+        normalised = IncidentDataFrameNormaliser().normalise(
+            sample_uscg_df, source="uscg"
+        )
         result = describe_uscg_dataset(normalised)
         assert result["total_records"] == 2
 
@@ -419,7 +462,10 @@ class TestDescribeUSCGDataset:
         from worldenergydata.marine_safety.analysis.incidents.incident_taxonomy import (
             IncidentDataFrameNormaliser,
         )
-        normalised = IncidentDataFrameNormaliser().normalise(sample_uscg_df, source="uscg")
+
+        normalised = IncidentDataFrameNormaliser().normalise(
+            sample_uscg_df, source="uscg"
+        )
         result = describe_uscg_dataset(normalised)
         assert "cargo" in result["vessel_types"]
 
@@ -439,19 +485,39 @@ class TestIncidentCorrelator:
 
     def test_matching_records_different_sources_produce_match(self):
         corr = IncidentCorrelator(config=CorrelationConfig(date_window_days=3))
-        a = _make_record("A", source="uscg", incident_date="2021-03-15",
-                         vessel_name="MV ATLANTIC RANGER", latitude=29.5, longitude=-94.2)
-        b = _make_record("B", source="maib", incident_date="2021-03-16",
-                         vessel_name="MV ATLANTIC RANGER", latitude=29.55, longitude=-94.1)
+        a = _make_record(
+            "A",
+            source="uscg",
+            incident_date="2021-03-15",
+            vessel_name="MV ATLANTIC RANGER",
+            latitude=29.5,
+            longitude=-94.2,
+        )
+        b = _make_record(
+            "B",
+            source="maib",
+            incident_date="2021-03-16",
+            vessel_name="MV ATLANTIC RANGER",
+            latitude=29.55,
+            longitude=-94.1,
+        )
         matches = corr.correlate([a], [b])
         assert len(matches) == 1
 
     def test_match_confidence_between_zero_and_one(self):
         corr = IncidentCorrelator(config=CorrelationConfig(date_window_days=3))
-        a = _make_record("A", source="uscg", incident_date="2021-03-15",
-                         vessel_name="ATLANTIC RANGER")
-        b = _make_record("B", source="maib", incident_date="2021-03-16",
-                         vessel_name="ATLANTIC RANGER")
+        a = _make_record(
+            "A",
+            source="uscg",
+            incident_date="2021-03-15",
+            vessel_name="ATLANTIC RANGER",
+        )
+        b = _make_record(
+            "B",
+            source="maib",
+            incident_date="2021-03-16",
+            vessel_name="ATLANTIC RANGER",
+        )
         matches = corr.correlate([a], [b])
         assert 0.0 <= matches[0].confidence <= 1.0
 
@@ -466,30 +532,41 @@ class TestIncidentCorrelator:
         corr = IncidentCorrelator(
             config=CorrelationConfig(date_window_days=10, location_threshold_km=10.0)
         )
-        a = _make_record("A", source="uscg", incident_date="2021-01-01",
-                         latitude=29.0, longitude=-90.0)
-        b = _make_record("B", source="maib", incident_date="2021-01-02",
-                         latitude=51.5, longitude=0.1)  # London vs Gulf of Mexico
+        a = _make_record(
+            "A",
+            source="uscg",
+            incident_date="2021-01-01",
+            latitude=29.0,
+            longitude=-90.0,
+        )
+        b = _make_record(
+            "B", source="maib", incident_date="2021-01-02", latitude=51.5, longitude=0.1
+        )  # London vs Gulf of Mexico
         matches = corr.correlate([a], [b])
         assert matches == []
 
     def test_correlate_multi_three_sources(self):
         corr = IncidentCorrelator(config=CorrelationConfig(date_window_days=5))
-        a = _make_record("A", source="uscg", incident_date="2021-03-15",
-                         vessel_name="TEST SHIP")
-        b = _make_record("B", source="maib", incident_date="2021-03-16",
-                         vessel_name="TEST SHIP")
-        c = _make_record("C", source="ntsb", incident_date="2021-03-17",
-                         vessel_name="TEST SHIP")
+        a = _make_record(
+            "A", source="uscg", incident_date="2021-03-15", vessel_name="TEST SHIP"
+        )
+        b = _make_record(
+            "B", source="maib", incident_date="2021-03-16", vessel_name="TEST SHIP"
+        )
+        c = _make_record(
+            "C", source="ntsb", incident_date="2021-03-17", vessel_name="TEST SHIP"
+        )
         matches = corr.correlate_multi([a], [b], [c])
         assert len(matches) >= 2  # A-B and A-C and B-C all possible
 
     def test_correlate_multi_deduplicates(self):
         corr = IncidentCorrelator(config=CorrelationConfig(date_window_days=5))
-        a = _make_record("A", source="uscg", incident_date="2021-01-10",
-                         vessel_name="SHARED")
-        b = _make_record("B", source="maib", incident_date="2021-01-11",
-                         vessel_name="SHARED")
+        a = _make_record(
+            "A", source="uscg", incident_date="2021-01-10", vessel_name="SHARED"
+        )
+        b = _make_record(
+            "B", source="maib", incident_date="2021-01-11", vessel_name="SHARED"
+        )
         # Pass same sets twice — should deduplicate by (report_id_a, report_id_b)
         matches = corr.correlate_multi([a], [b], [b])
         ids = [(m.record_a.report_id, m.record_b.report_id) for m in matches]
@@ -510,9 +587,12 @@ class TestBuildCorrelationSummary:
         a = _make_record("A", source="uscg", incident_date="2021-01-01")
         b = _make_record("B", source="maib", incident_date="2021-01-02")
         match = CorrelationMatch(
-            record_a=a, record_b=b,
-            date_diff_days=1, distance_km=15.0,
-            name_similarity=0.9, confidence=0.85,
+            record_a=a,
+            record_b=b,
+            date_diff_days=1,
+            distance_km=15.0,
+            name_similarity=0.9,
+            confidence=0.85,
             match_reasons=["date_diff=1d"],
         )
         df = build_correlation_summary([match])
@@ -523,9 +603,12 @@ class TestBuildCorrelationSummary:
         a = _make_record("A", source="uscg")
         b = _make_record("B", source="maib")
         match = CorrelationMatch(
-            record_a=a, record_b=b,
-            date_diff_days=0, distance_km=0.0,
-            name_similarity=1.0, confidence=1.0,
+            record_a=a,
+            record_b=b,
+            date_diff_days=0,
+            distance_km=0.0,
+            name_similarity=1.0,
+            confidence=1.0,
         )
         df = build_correlation_summary([match])
         assert len(df) == 1
@@ -554,20 +637,33 @@ class TestBuildPatternReport:
 
     def test_aggregates_same_group(self):
         records = [
-            _make_record("A", incident_date="2021-01-01", vessel_type="cargo",
-                         root_cause=RootCauseType.HUMAN_ERROR, source="uscg"),
-            _make_record("B", incident_date="2021-06-01", vessel_type="cargo",
-                         root_cause=RootCauseType.HUMAN_ERROR, source="uscg"),
+            _make_record(
+                "A",
+                incident_date="2021-01-01",
+                vessel_type="cargo",
+                root_cause=RootCauseType.HUMAN_ERROR,
+                source="uscg",
+            ),
+            _make_record(
+                "B",
+                incident_date="2021-06-01",
+                vessel_type="cargo",
+                root_cause=RootCauseType.HUMAN_ERROR,
+                source="uscg",
+            ),
         ]
         result = build_pattern_report(records)
-        row = result[(result["vessel_type"] == "cargo") & (result["root_cause"] == "human_error")]
+        row = result[
+            (result["vessel_type"] == "cargo") & (result["root_cause"] == "human_error")
+        ]
         assert row["count"].sum() == 2
 
     def test_handles_none_dates(self):
         r = _make_record(incident_date=None)
         result = build_pattern_report([r])
         assert not result.empty
-        assert result.iloc[0]["year"] is None
+        # None dates become NaN in the groupby result
+        assert pd.isna(result.iloc[0]["year"])
 
 
 # ---------------------------------------------------------------------------
@@ -638,7 +734,6 @@ class TestSafeHelpers:
         assert _safe_str(None) is None
 
     def test_safe_str_nan_returns_none(self):
-        import math
         assert _safe_str(float("nan")) is None
 
     def test_safe_str_strips_whitespace(self):
