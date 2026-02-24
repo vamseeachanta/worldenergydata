@@ -26,7 +26,8 @@ from worldenergydata.bsee.analysis.cost.regional_loader import RegionalCostLoade
 
 @pytest.fixture()
 def config_dir() -> Path:
-    return Path(__file__).parents[7] / "config" / "analysis" / "cost_data"
+    # parents[5] = <repo_root> (test file is 6 levels deep inside tests/)
+    return Path(__file__).parents[5] / "config" / "analysis" / "cost_data"
 
 
 @pytest.fixture()

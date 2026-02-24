@@ -16,10 +16,15 @@ from worldenergydata.bsee.analysis.cost.models import ActivityType, WaterDepthBa
 
 
 @pytest.fixture()
-def loader(tmp_path: Path) -> RegionalCostLoader:
-    """Return a loader pointed at the real day_rates.yml in config/."""
+def loader() -> RegionalCostLoader:
+    """Return a loader pointed at the real day_rates.yml in config/.
+
+    Path: <repo_root>/config/analysis/cost_data/
+    test file is at: <repo_root>/tests/unit/bsee/analysis/cost/test_*.py
+    parents[5] = <repo_root>
+    """
     config_root = (
-        Path(__file__).parents[7] / "config" / "analysis" / "cost_data"
+        Path(__file__).parents[5] / "config" / "analysis" / "cost_data"
     )
     return RegionalCostLoader(config_dir=config_root)
 

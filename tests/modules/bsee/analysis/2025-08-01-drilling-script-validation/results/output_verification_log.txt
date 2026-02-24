@@ -1,5 +1,0 @@
-Generated output file: /mnt/local-analysis/workspace-hub/worldenergydata/tests/modules/bsee/analysis/2025-08-01-drilling-script-validation/results/drilling_and_completion_days_by_api_test_output.xlsx
-File size: 14358 bytes
-Number of rows: 122
-Number of columns: 12
-Columns: LEASE_NAME, SURF_LEASE_NUM, WATER_DEPTH, API_WELL_NUMBER, WELL_NAME, WELL_SPUD_DATE, TOTAL_DEPTH_DATE, DRILLING_DAYS, COMPLETION_DAYS, MAX_BH_TOTAL_MD, MAX_WELL_BORE_TVD, MAX_DRILL_FLUID_WGT

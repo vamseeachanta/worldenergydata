@@ -1,1 +1,0 @@
-# Directional surveys test module

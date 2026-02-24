@@ -7,6 +7,7 @@ Each module provides subcommands for a specific domain:
 - eia: EIA API v2 weekly petroleum and gas feed ingestion
 - marine_safety: Marine safety incident data
 - fdas: Field development analysis system
+- ndbc: NDBC buoy data — scatter matrices, Weibull fits, wave roses (WRK-316)
 - sodir: SODIR (Norwegian Offshore Directorate) data operations
 - metocean: Metocean data (buoys, tides, marine weather)
 - texas_rrc: Texas Railroad Commission data operations
@@ -27,6 +28,7 @@ from worldenergydata.cli.commands import (
     marine_safety,
     metocean,
     mexico_cnh,
+    ndbc,
     sodir,
     texas_rrc,
 )
@@ -37,6 +39,7 @@ __all__ = [
     "eia",
     "marine_safety",
     "fdas",
+    "ndbc",
     "sodir",
     "metocean",
     "texas_rrc",

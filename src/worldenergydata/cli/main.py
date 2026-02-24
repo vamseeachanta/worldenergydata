@@ -61,6 +61,7 @@ from worldenergydata.cli.commands import (
     marine_safety,
     metocean,
     mexico_cnh,
+    ndbc,
     production_forecast,
     sodir,
     texas_rrc,
@@ -104,6 +105,11 @@ app.add_typer(
 )
 app.add_typer(
     metocean.app, name="metocean", help="Metocean data - buoys, tides, marine weather"
+)
+app.add_typer(
+    ndbc.app,
+    name="ndbc",
+    help="NDBC buoy data: scatter matrices, Weibull fits, wave roses",
 )
 app.add_typer(
     texas_rrc.app, name="texas-rrc", help="Texas Railroad Commission oil & gas data"

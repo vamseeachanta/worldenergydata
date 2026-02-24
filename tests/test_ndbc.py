@@ -1,6 +1,9 @@
 # ABOUTME: Tests for NDBC buoy data ingestion and wave scatter matrix (WRK-316).
-# ABOUTME: Verifies NDBCClient facade, parse_stdmet_line, build_scatter_matrix, filter_by_season.
+# ABOUTME: Verifies NDBCClient facade, parse_stdmet_line, build_scatter_matrix,
+# ABOUTME: filter_by_season, fit_weibull_hs, wave_rose, and parse_stdmet_file.
 """Tests for NDBC buoy data ingestion."""
+
+import pathlib
 
 import numpy as np
 import pandas as pd
@@ -11,7 +14,15 @@ from worldenergydata.metocean.ndbc import (
     NDBCClient,
     build_scatter_matrix,
     filter_by_season,
+    fit_weibull_hs,
+    parse_stdmet_file,
     parse_stdmet_line,
+    wave_rose,
+)
+
+# Sample NDBC data file for file-based tests
+_SAMPLE_DATA_FILE = (
+    pathlib.Path(__file__).parent / "test_data" / "ndbc" / "42001h2023.txt"
 )
 
 
@@ -226,3 +237,200 @@ def test_filter_by_season_default_time_col():
     # Should not raise even without explicit time_col argument
     result = filter_by_season(df, months=[1])
     assert isinstance(result, pd.DataFrame)
+
+
+# ---------------------------------------------------------------------------
+# parse_stdmet_file
+# ---------------------------------------------------------------------------
+
+def test_parse_stdmet_file_returns_list():
+    """parse_stdmet_file returns a list of dicts."""
+    records = parse_stdmet_file(_SAMPLE_DATA_FILE)
+    assert isinstance(records, list)
+
+
+def test_parse_stdmet_file_nonempty():
+    """parse_stdmet_file returns at least one record from the sample file."""
+    records = parse_stdmet_file(_SAMPLE_DATA_FILE)
+    assert len(records) > 0
+
+
+def test_parse_stdmet_file_has_hs():
+    """Records from parse_stdmet_file contain 'hs' key."""
+    records = parse_stdmet_file(_SAMPLE_DATA_FILE)
+    assert all("hs" in r for r in records)
+
+
+def test_parse_stdmet_file_string_path():
+    """parse_stdmet_file accepts a plain string path."""
+    records = parse_stdmet_file(str(_SAMPLE_DATA_FILE))
+    assert isinstance(records, list)
+
+
+def test_parse_stdmet_file_missing_path_returns_empty():
+    """parse_stdmet_file returns empty list when file does not exist."""
+    records = parse_stdmet_file("/nonexistent/path/to/file.txt")
+    assert records == []
+
+
+# ---------------------------------------------------------------------------
+# fit_weibull_hs
+# ---------------------------------------------------------------------------
+
+def _hs_series(n: int = 200, seed: int = 0) -> list:
+    """Generate synthetic Hs values (positive float list) for Weibull tests."""
+    rng = np.random.default_rng(seed)
+    return list(rng.weibull(2.0, size=n) * 2.0 + 0.3)
+
+
+def test_fit_weibull_hs_returns_dict():
+    """fit_weibull_hs returns a dict."""
+    result = fit_weibull_hs(_hs_series())
+    assert isinstance(result, dict)
+
+
+def test_fit_weibull_2p_keys():
+    """2-parameter Weibull result has 'scale' and 'shape' keys."""
+    result = fit_weibull_hs(_hs_series(), n_params=2)
+    assert "scale" in result
+    assert "shape" in result
+
+
+def test_fit_weibull_3p_keys():
+    """3-parameter Weibull result has 'scale', 'shape', and 'loc' keys."""
+    result = fit_weibull_hs(_hs_series(), n_params=3)
+    assert "scale" in result
+    assert "shape" in result
+    assert "loc" in result
+
+
+def test_fit_weibull_scale_positive():
+    """Weibull scale parameter must be positive."""
+    result = fit_weibull_hs(_hs_series(), n_params=2)
+    assert result["scale"] > 0
+
+
+def test_fit_weibull_shape_positive():
+    """Weibull shape parameter must be positive."""
+    result = fit_weibull_hs(_hs_series(), n_params=2)
+    assert result["shape"] > 0
+
+
+def test_fit_weibull_n_params_2_is_default():
+    """Default n_params is 2 (2-parameter Weibull)."""
+    r2 = fit_weibull_hs(_hs_series())
+    r2_explicit = fit_weibull_hs(_hs_series(), n_params=2)
+    assert set(r2.keys()) == set(r2_explicit.keys())
+
+
+def test_fit_weibull_invalid_n_params_raises():
+    """n_params other than 2 or 3 raises ValueError."""
+    with pytest.raises(ValueError):
+        fit_weibull_hs(_hs_series(), n_params=4)
+
+
+def test_fit_weibull_empty_raises():
+    """Empty Hs list raises ValueError."""
+    with pytest.raises(ValueError):
+        fit_weibull_hs([])
+
+
+def test_fit_weibull_too_few_points_raises():
+    """Fewer than 3 data points raises ValueError."""
+    with pytest.raises(ValueError):
+        fit_weibull_hs([1.0, 2.0])
+
+
+def test_fit_weibull_hs_from_file():
+    """fit_weibull_hs works on Hs values parsed from sample data file."""
+    records = parse_stdmet_file(_SAMPLE_DATA_FILE)
+    hs_values = [r["hs"] for r in records if r.get("hs") is not None]
+    assert len(hs_values) > 0
+    result = fit_weibull_hs(hs_values, n_params=2)
+    assert "scale" in result and "shape" in result
+
+
+# ---------------------------------------------------------------------------
+# wave_rose
+# ---------------------------------------------------------------------------
+
+def _wave_records(n: int = 100, seed: int = 42) -> list:
+    """Generate synthetic records with hs and mwd."""
+    rng = np.random.default_rng(seed)
+    hs_vals = rng.weibull(2.0, size=n) * 2.0 + 0.5
+    mwd_vals = rng.uniform(0, 360, size=n)
+    return [{"hs": float(h), "mwd": float(d)} for h, d in zip(hs_vals, mwd_vals)]
+
+
+def test_wave_rose_returns_dict():
+    """wave_rose returns a dict."""
+    result = wave_rose(_wave_records())
+    assert isinstance(result, dict)
+
+
+def test_wave_rose_has_sectors():
+    """wave_rose result has 'sectors' key."""
+    result = wave_rose(_wave_records())
+    assert "sectors" in result
+
+
+def test_wave_rose_has_mean_hs():
+    """wave_rose result has 'mean_hs' key."""
+    result = wave_rose(_wave_records())
+    assert "mean_hs" in result
+
+
+def test_wave_rose_sector_count_default():
+    """Default wave_rose uses 8 directional sectors."""
+    result = wave_rose(_wave_records())
+    assert len(result["sectors"]) == 8
+
+
+def test_wave_rose_sector_count_custom():
+    """wave_rose respects custom n_sectors argument."""
+    result = wave_rose(_wave_records(), n_sectors=16)
+    assert len(result["sectors"]) == 16
+
+
+def test_wave_rose_sectors_are_strings():
+    """wave_rose sector keys are strings describing direction ranges."""
+    result = wave_rose(_wave_records())
+    assert all(isinstance(s, str) for s in result["sectors"])
+
+
+def test_wave_rose_mean_hs_nonnegative():
+    """wave_rose mean_hs values are non-negative."""
+    result = wave_rose(_wave_records())
+    assert all(v >= 0 for v in result["mean_hs"].values())
+
+
+def test_wave_rose_frequency_sums_to_one():
+    """wave_rose frequency values sum to 1.0."""
+    result = wave_rose(_wave_records())
+    assert "frequency" in result
+    total = sum(result["frequency"].values())
+    assert abs(total - 1.0) < 1e-6
+
+
+def test_wave_rose_empty_records_returns_empty_sectors():
+    """wave_rose with empty records returns sectors with zero mean_hs."""
+    result = wave_rose([])
+    assert isinstance(result, dict)
+    assert all(v == 0.0 for v in result["mean_hs"].values())
+
+
+def test_wave_rose_records_missing_mwd_skipped():
+    """wave_rose skips records without 'mwd' key."""
+    records = [{"hs": 1.5}, {"hs": 2.0}, {"hs": 1.8, "mwd": 180.0}]
+    result = wave_rose(records)
+    assert isinstance(result, dict)
+    # One valid record: mwd=180 => sector index int(180/45)=4 => "180-225deg"
+    assert result["mean_hs"].get("180-225deg") == pytest.approx(1.8, rel=1e-4)
+
+
+def test_wave_rose_from_file():
+    """wave_rose works on records parsed from sample data file."""
+    records = parse_stdmet_file(_SAMPLE_DATA_FILE)
+    result = wave_rose(records)
+    assert isinstance(result, dict)
+    assert "sectors" in result

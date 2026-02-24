@@ -861,7 +861,7 @@ class TestOperationPhaseClassifier:
 
     def test_classify_unrecognised_returns_unknown(self, op_classifier):
         result = op_classifier.classify(
-            operation_text="vessel in transit XYZ mode zeta"
+            operation_text="XYZ mode zeta alpha bravo"
         )
         assert result == OperationPhase.UNKNOWN
 
