@@ -1032,6 +1032,26 @@ wheels = [
 ]
 
 [[package]]
+name = "dash"
+version = "4.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "flask" },
+    { name = "importlib-metadata" },
+    { name = "nest-asyncio" },
+    { name = "plotly" },
+    { name = "requests" },
+    { name = "retrying" },
+    { name = "setuptools" },
+    { name = "typing-extensions" },
+    { name = "werkzeug" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/20/dd/3aed9bfd81dfd8f44b3a5db0583080ac9470d5e92ee134982bd5c69e286e/dash-4.0.0.tar.gz", hash = "sha256:c5f2bca497af288f552aea3ae208f6a0cca472559003dac84ac21187a1c3a142", size = 6943263, upload-time = "2026-02-03T19:42:27.92Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0b/8c/dd63d210b28a7589f4bc1e84880525368147425c717d12834ab562f52d14/dash-4.0.0-py3-none-any.whl", hash = "sha256:e36b4b4eae9e1fa4136bf4f1450ed14ef76063bc5da0b10f8ab07bd57a7cb1ab", size = 7247521, upload-time = "2026-02-03T19:42:25.01Z" },
+]
+
+[[package]]
 name = "deepdiff"
 version = "8.6.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1628,7 +1648,7 @@ name = "importlib-metadata"
 version = "8.7.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "zipp", marker = "python_full_version < '3.12'" },
+    { name = "zipp" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/76/66/650a33bd90f786193e4de4b3ad86ea60b53c89b669a5c7be931fac31cdb0/importlib_metadata-8.7.0.tar.gz", hash = "sha256:d13b81ad223b890aa16c5471f2ac3056cf76c5f10f82d6f9292f0b415f389000", size = 56641, upload-time = "2025-04-27T15:29:01.736Z" }
 wheels = [
@@ -2547,6 +2567,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/00/dd/40ff412dabf90ef6b99266b0b74f217bb88733541733849e0153a108c750/narwhals-2.6.0.tar.gz", hash = "sha256:5c9e2ba923e6a0051017e146184e49fb793548936f978ce130c9f55a9a81240e", size = 561649, upload-time = "2025-09-29T09:08:56.482Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/50/3b/0e2c535c3e6970cfc5763b67f6cc31accaab35a7aa3e322fb6a12830450f/narwhals-2.6.0-py3-none-any.whl", hash = "sha256:3215ea42afb452c6c8527e79cefbe542b674aa08d7e2e99d46b2c9708870e0d4", size = 408435, upload-time = "2025-09-29T09:08:54.503Z" },
+]
+
+[[package]]
+name = "nest-asyncio"
+version = "1.6.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/83/f8/51569ac65d696c8ecbee95938f89d4abf00f47d58d48f6fbabfe8f0baefe/nest_asyncio-1.6.0.tar.gz", hash = "sha256:6f172d5449aca15afd6c646851f4e31e02c598d553a667e38cafa997cfec55fe", size = 7418, upload-time = "2024-01-21T14:25:19.227Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a0/c4/c2971a3ba4c6103a3d10c4b0f24f461ddc027f0f09763220cf35ca1401b3/nest_asyncio-1.6.0-py3-none-any.whl", hash = "sha256:87af6efd6b5e897c81050477ef65c62e2b2f35d51703cae01aff2905b1852e1c", size = 5195, upload-time = "2024-01-21T14:25:17.223Z" },
 ]
 
 [[package]]
@@ -4330,6 +4359,15 @@ wheels = [
 ]
 
 [[package]]
+name = "retrying"
+version = "1.4.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/c8/5a/b17e1e257d3e6f2e7758930e1256832c9ddd576f8631781e6a072914befa/retrying-1.4.2.tar.gz", hash = "sha256:d102e75d53d8d30b88562d45361d6c6c934da06fab31bd81c0420acb97a8ba39", size = 11411, upload-time = "2025-08-03T03:35:25.189Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/67/f3/6cd296376653270ac1b423bb30bd70942d9916b6978c6f40472d6ac038e7/retrying-1.4.2-py3-none-any.whl", hash = "sha256:bbc004aeb542a74f3569aeddf42a2516efefcdaff90df0eb38fbfbf19f179f59", size = 10859, upload-time = "2025-08-03T03:35:23.829Z" },
+]
+
+[[package]]
 name = "rfc3986"
 version = "2.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -5563,6 +5601,10 @@ dependencies = [
     { name = "typing-extensions", marker = "python_full_version >= '3.10'" },
 ]
 wheels = [
+    { url = "https://files.pythonhosted.org/packages/5b/30/bfebdd8ec77db9a79775121789992d6b3b75ee5494971294d7b4b7c999bc/torch-2.10.0-2-cp310-none-macosx_11_0_arm64.whl", hash = "sha256:2b980edd8d7c0a68c4e951ee1856334a43193f98730d97408fbd148c1a933313", size = 79411457, upload-time = "2026-02-10T21:44:59.189Z" },
+    { url = "https://files.pythonhosted.org/packages/0f/8b/4b61d6e13f7108f36910df9ab4b58fd389cc2520d54d81b88660804aad99/torch-2.10.0-2-cp311-none-macosx_11_0_arm64.whl", hash = "sha256:418997cb02d0a0f1497cf6a09f63166f9f5df9f3e16c8a716ab76a72127c714f", size = 79423467, upload-time = "2026-02-10T21:44:48.711Z" },
+    { url = "https://files.pythonhosted.org/packages/d3/54/a2ba279afcca44bbd320d4e73675b282fcee3d81400ea1b53934efca6462/torch-2.10.0-2-cp312-none-macosx_11_0_arm64.whl", hash = "sha256:13ec4add8c3faaed8d13e0574f5cd4a323c11655546f91fbe6afa77b57423574", size = 79498202, upload-time = "2026-02-10T21:44:52.603Z" },
+    { url = "https://files.pythonhosted.org/packages/ec/23/2c9fe0c9c27f7f6cb865abcea8a4568f29f00acaeadfc6a37f6801f84cb4/torch-2.10.0-2-cp313-none-macosx_11_0_arm64.whl", hash = "sha256:e521c9f030a3774ed770a9c011751fb47c4d12029a3d6522116e48431f2ff89e", size = 79498254, upload-time = "2026-02-10T21:44:44.095Z" },
     { url = "https://files.pythonhosted.org/packages/0c/1a/c61f36cfd446170ec27b3a4984f072fd06dab6b5d7ce27e11adb35d6c838/torch-2.10.0-cp310-cp310-manylinux_2_28_aarch64.whl", hash = "sha256:5276fa790a666ee8becaffff8acb711922252521b28fbce5db7db5cf9cb2026d", size = 145992962, upload-time = "2026-01-21T16:24:14.04Z" },
     { url = "https://files.pythonhosted.org/packages/b5/60/6662535354191e2d1555296045b63e4279e5a9dbad49acf55a5d38655a39/torch-2.10.0-cp310-cp310-manylinux_2_28_x86_64.whl", hash = "sha256:aaf663927bcd490ae971469a624c322202a2a1e68936eb952535ca4cd3b90444", size = 915599237, upload-time = "2026-01-21T16:23:25.497Z" },
     { url = "https://files.pythonhosted.org/packages/40/b8/66bbe96f0d79be2b5c697b2e0b187ed792a15c6c4b8904613454651db848/torch-2.10.0-cp310-cp310-win_amd64.whl", hash = "sha256:a4be6a2a190b32ff5c8002a0977a25ea60e64f7ba46b1be37093c141d9c49aeb", size = 113720931, upload-time = "2026-01-21T16:24:23.743Z" },
@@ -5980,6 +6022,7 @@ source = { editable = "." }
 dependencies = [
     { name = "assetutilities" },
     { name = "beautifulsoup4" },
+    { name = "dash" },
     { name = "fastapi" },
     { name = "httpx" },
     { name = "loguru" },
@@ -6086,6 +6129,7 @@ requires-dist = [
     { name = "assetutilities", git = "https://github.com/vamseeachanta/assetutilities.git" },
     { name = "beautifulsoup4", specifier = ">=4.12.0" },
     { name = "black", marker = "extra == 'dev'", specifier = ">=23.0" },
+    { name = "dash", specifier = ">=2.14.0" },
     { name = "factory-boy", marker = "extra == 'dev'", specifier = ">=3.3.0" },
     { name = "factory-boy", marker = "extra == 'test'", specifier = ">=3.3.0" },
     { name = "faker", marker = "extra == 'dev'", specifier = ">=20.1.0" },
