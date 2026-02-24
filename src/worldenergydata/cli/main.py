@@ -53,6 +53,7 @@ from rich.table import Table
 from worldenergydata.cli.commands import (
     bsee,
     canada,
+    dashboard,
     eia,
     fdas,
     landman,
@@ -80,6 +81,11 @@ app = typer.Typer(
 
 # Add module subcommands
 app.add_typer(bsee.app, name="bsee", help="BSEE data operations and analysis")
+app.add_typer(
+    dashboard.app,
+    name="dashboard",
+    help="Launch the Plotly Dash BSEE/FDAS web dashboard",
+)
 app.add_typer(
     eia.app,
     name="eia",

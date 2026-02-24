@@ -3,6 +3,7 @@ CLI Command Modules
 
 Each module provides subcommands for a specific domain:
 - bsee: BSEE data operations and analysis
+- dashboard: Plotly Dash web dashboard for BSEE/FDAS data
 - eia: EIA API v2 weekly petroleum and gas feed ingestion
 - marine_safety: Marine safety incident data
 - fdas: Field development analysis system
@@ -18,6 +19,7 @@ Each module provides subcommands for a specific domain:
 from worldenergydata.cli.commands import (
     bsee,
     canada,
+    dashboard,
     eia,
     fdas,
     landman,
@@ -31,6 +33,7 @@ from worldenergydata.cli.commands import (
 
 __all__ = [
     "bsee",
+    "dashboard",
     "eia",
     "marine_safety",
     "fdas",
