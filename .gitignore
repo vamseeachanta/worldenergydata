@@ -284,3 +284,6 @@ CLAUDE.md.backup-*
 # Windows-path directory artifacts (cross-platform path bug — WRK-364)
 # Matches dirs like: D:\workspace-hub\... created on Windows and synced to Linux
 [A-Z]:\*
+
+# Runtime artifacts (generated, not for git)
+results/
