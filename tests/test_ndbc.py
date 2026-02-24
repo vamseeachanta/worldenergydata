@@ -8,7 +8,6 @@ import pathlib
 import numpy as np
 import pandas as pd
 import pytest
-from unittest.mock import patch, MagicMock
 
 from worldenergydata.metocean.ndbc import (
     NDBCClient,
@@ -29,6 +28,7 @@ _SAMPLE_DATA_FILE = (
 # ---------------------------------------------------------------------------
 # NDBCClient initialisation
 # ---------------------------------------------------------------------------
+
 
 def test_ndbc_client_init():
     client = NDBCClient()
@@ -56,6 +56,7 @@ def test_ndbc_client_has_get_historical():
 # ---------------------------------------------------------------------------
 # build_scatter_matrix
 # ---------------------------------------------------------------------------
+
 
 def test_build_scatter_matrix_empty():
     """Empty records return a zero-filled matrix."""
@@ -133,6 +134,7 @@ def test_scatter_matrix_none_values_ignored():
 # parse_stdmet_line
 # ---------------------------------------------------------------------------
 
+
 def test_parse_stdmet_line_valid():
     """Parse a standard NDBC stdmet line."""
     line = "2023 01 15 00 30  1.2  8  9.5 180 15.2"
@@ -142,7 +144,10 @@ def test_parse_stdmet_line_valid():
 
 def test_parse_stdmet_line_returns_dict():
     """parse_stdmet_line returns a dict with expected keys."""
-    line = "2024 01 15 12 00 180  5.0  6.0   1.2   8.0   5.5 170  1015.0  22.5  24.0  18.0   MM   MM    MM"
+    line = (
+        "2024 01 15 12 00 180  5.0  6.0   1.2   8.0   5.5"
+        " 170  1015.0  22.5  24.0  18.0   MM   MM    MM"
+    )
     record = parse_stdmet_line(line)
     assert isinstance(record, dict)
     assert "observation_time" in record
@@ -151,7 +156,10 @@ def test_parse_stdmet_line_returns_dict():
 def test_parse_stdmet_line_wave_fields():
     """parse_stdmet_line extracts wave height and period."""
     # Format: YY MM DD hh mm WDIR WSPD GST WVHT DPD APD MWD PRES ATMP WTMP DEWP VIS PTDY TIDE
-    line = "2024 06 01 12 00 270  8.0  9.5   2.3  10.0   7.1 265  1013.0  20.0  22.0  16.0   MM   MM    MM"
+    line = (
+        "2024 06 01 12 00 270  8.0  9.5   2.3  10.0   7.1"
+        " 265  1013.0  20.0  22.0  16.0   MM   MM    MM"
+    )
     record = parse_stdmet_line(line)
     assert record is not None
     assert record.get("hs") == pytest.approx(2.3)
@@ -187,22 +195,27 @@ def test_parse_stdmet_line_too_short_returns_none():
 # filter_by_season
 # ---------------------------------------------------------------------------
 
+
 def test_filter_by_season_returns_dataframe():
     """filter_by_season returns a pandas DataFrame."""
-    df = pd.DataFrame({
-        "time": pd.date_range("2020-01-01", periods=12, freq="MS"),
-        "hs": np.ones(12),
-    })
+    df = pd.DataFrame(
+        {
+            "time": pd.date_range("2020-01-01", periods=12, freq="MS"),
+            "hs": np.ones(12),
+        }
+    )
     result = filter_by_season(df, months=[1, 2, 3], time_col="time")
     assert isinstance(result, pd.DataFrame)
 
 
 def test_filter_by_season_correct_months():
     """filter_by_season keeps only rows in specified months."""
-    df = pd.DataFrame({
-        "time": pd.date_range("2020-01-01", periods=12, freq="MS"),
-        "hs": np.arange(12, dtype=float),
-    })
+    df = pd.DataFrame(
+        {
+            "time": pd.date_range("2020-01-01", periods=12, freq="MS"),
+            "hs": np.arange(12, dtype=float),
+        }
+    )
     result = filter_by_season(df, months=[6, 7, 8], time_col="time")
     assert len(result) == 3
     assert all(result["time"].dt.month.isin([6, 7, 8]))
@@ -210,30 +223,36 @@ def test_filter_by_season_correct_months():
 
 def test_filter_by_season_empty_months_returns_empty():
     """Passing an empty months list returns an empty DataFrame."""
-    df = pd.DataFrame({
-        "time": pd.date_range("2020-01-01", periods=12, freq="MS"),
-        "hs": np.ones(12),
-    })
+    df = pd.DataFrame(
+        {
+            "time": pd.date_range("2020-01-01", periods=12, freq="MS"),
+            "hs": np.ones(12),
+        }
+    )
     result = filter_by_season(df, months=[], time_col="time")
     assert len(result) == 0
 
 
 def test_filter_by_season_all_months():
     """Passing all 12 months returns the full DataFrame."""
-    df = pd.DataFrame({
-        "time": pd.date_range("2020-01-01", periods=12, freq="MS"),
-        "hs": np.ones(12),
-    })
+    df = pd.DataFrame(
+        {
+            "time": pd.date_range("2020-01-01", periods=12, freq="MS"),
+            "hs": np.ones(12),
+        }
+    )
     result = filter_by_season(df, months=list(range(1, 13)), time_col="time")
     assert len(result) == 12
 
 
 def test_filter_by_season_default_time_col():
     """filter_by_season uses 'time' as default column name."""
-    df = pd.DataFrame({
-        "time": pd.date_range("2020-01-01", periods=4, freq="QS"),
-        "hs": np.ones(4),
-    })
+    df = pd.DataFrame(
+        {
+            "time": pd.date_range("2020-01-01", periods=4, freq="QS"),
+            "hs": np.ones(4),
+        }
+    )
     # Should not raise even without explicit time_col argument
     result = filter_by_season(df, months=[1])
     assert isinstance(result, pd.DataFrame)
@@ -242,6 +261,7 @@ def test_filter_by_season_default_time_col():
 # ---------------------------------------------------------------------------
 # parse_stdmet_file
 # ---------------------------------------------------------------------------
+
 
 def test_parse_stdmet_file_returns_list():
     """parse_stdmet_file returns a list of dicts."""
@@ -276,6 +296,7 @@ def test_parse_stdmet_file_missing_path_returns_empty():
 # ---------------------------------------------------------------------------
 # fit_weibull_hs
 # ---------------------------------------------------------------------------
+
 
 def _hs_series(n: int = 200, seed: int = 0) -> list:
     """Generate synthetic Hs values (positive float list) for Weibull tests."""
@@ -353,6 +374,7 @@ def test_fit_weibull_hs_from_file():
 # ---------------------------------------------------------------------------
 # wave_rose
 # ---------------------------------------------------------------------------
+
 
 def _wave_records(n: int = 100, seed: int = 42) -> list:
     """Generate synthetic records with hs and mwd."""
