@@ -47,7 +47,7 @@ production = pd.read_csv('test_production.csv')
 
 # Convert date column to datetime
 production['PRODUCTION_DATE'] = pd.to_datetime(
-    production['PRODUCTION_DATE'], 
+    production['PRODUCTION_DATE'],
     format='%Y%m'
 )
 ```
