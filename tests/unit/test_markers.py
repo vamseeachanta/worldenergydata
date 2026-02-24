@@ -79,7 +79,7 @@ def requires_data_file(filename: str) -> Callable:
     from pathlib import Path
     
     def decorator(func: Callable) -> Callable:
-        data_path = Path("tests/test_data") / filename
+        data_path = Path("tests/fixtures") / filename
         return pytest.mark.skipif(
             not data_path.exists(),
             reason=f"Required data file {filename} not found"

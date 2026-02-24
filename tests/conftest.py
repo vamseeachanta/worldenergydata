@@ -44,7 +44,7 @@ def project_root() -> Path:
 @pytest.fixture
 def test_data_dir(project_root: Path) -> Path:
     """Return the test data directory, creating it if needed."""
-    test_data = project_root / "tests" / "test_data"
+    test_data = project_root / "tests" / "fixtures"
     test_data.mkdir(parents=True, exist_ok=True)
     return test_data
 

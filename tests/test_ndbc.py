@@ -22,7 +22,7 @@ from worldenergydata.metocean.ndbc import (
 
 # Sample NDBC data file for file-based tests
 _SAMPLE_DATA_FILE = (
-    pathlib.Path(__file__).parent / "test_data" / "ndbc" / "42001h2023.txt"
+    pathlib.Path(__file__).parent / "fixtures" / "ndbc" / "42001h2023.txt"
 )
 
 

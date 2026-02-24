@@ -25,11 +25,15 @@ from worldenergydata.bsee.pipeline.field_report import (
     render_html,
     save_report,
 )
+from worldenergydata.bsee.pipeline.field_cost_integration import (
+    FieldPipelineCostIntegrator,
+)
 
 __all__ = [
     "CasingString",
     "casing_matrix",
     "FieldContext",
+    "FieldPipelineCostIntegrator",
     "FieldQueryError",
     "FieldReport",
     "load_well_casing",

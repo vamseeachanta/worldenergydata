@@ -52,7 +52,7 @@ from worldenergydata.bsee.pipeline.field_cost_integration import (
 @pytest.fixture()
 def config_dir() -> Path:
     """Path to config/analysis/cost_data relative to repo root."""
-    return Path(__file__).parents[4] / "config" / "analysis" / "cost_data"
+    return Path(__file__).parents[3] / "config" / "analysis" / "cost_data"
 
 
 @pytest.fixture()

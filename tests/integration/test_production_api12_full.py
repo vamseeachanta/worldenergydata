@@ -32,7 +32,7 @@ class TestProductionAPI12Full:
     @pytest.fixture
     def test_data_dir(self):
         """Get test data directory"""
-        return Path(__file__).parent.parent / "test_data" / "bsee"
+        return Path(__file__).parent.parent / "fixtures" / "bsee"
 
     @pytest.fixture
     def production_df(self, test_data_dir):

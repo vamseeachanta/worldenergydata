@@ -19,11 +19,11 @@ from tests.test_markers import unit, smoke, integration
 
 # Define test config locally since test_config was archived
 TEST_CONFIG = {
-    'test_data_dir': Path(__file__).parent / 'test_data',
+    'test_data_dir': Path(__file__).parent.parent / 'fixtures',
     'timeout': 30,
     'parallel': False
 }
-TEST_DATA = Path(__file__).parent / 'test_data'
+TEST_DATA = Path(__file__).parent.parent / 'fixtures'
 
 
 @smoke
@@ -95,10 +95,10 @@ class TestInfrastructureSmoke:
     @pytest.mark.skip(reason="Test data files not in expected location")
     def test_test_data_accessible(self):
         """Verify test data files are accessible."""
-        sample_csv = Path("tests/test_data/sample_production_data.csv")
+        sample_csv = Path("tests/fixtures/sample_production_data.csv")
         assert sample_csv.exists(), "Sample CSV data not found"
 
-        sample_config = Path("tests/test_data/sample_config.yml")
+        sample_config = Path("tests/fixtures/sample_config.yml")
         assert sample_config.exists(), "Sample config not found"
 
     def test_markers_work(self):

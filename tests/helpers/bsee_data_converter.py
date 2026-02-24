@@ -104,7 +104,7 @@ class BSEEDataConverter:
     @staticmethod
     def load_and_convert_test_data():
         """Load our generated test data and convert it to BSEE format"""
-        test_data_path = Path('tests/test_data/bsee')
+        test_data_path = Path('tests/fixtures/bsee')
         
         if not test_data_path.exists():
             return None
@@ -174,7 +174,7 @@ if __name__ == "__main__":
     if converted is not None:
         print(f"Converted {len(converted)} records")
         print("Columns:", list(converted.columns))
-        converted.to_csv('tests/test_data/bsee/production_data_bsee_format.csv', index=False)
+        converted.to_csv('tests/fixtures/bsee/production_data_bsee_format.csv', index=False)
     
     # Create minimal BSEE data
     minimal = converter.create_minimal_bsee_data()
