@@ -35,6 +35,13 @@ from worldenergydata.metocean.clients import (
     OpenMeteoForecast,
 )
 
+# NDBC facade — scatter matrix and seasonal filtering (WRK-316)
+from worldenergydata.metocean.ndbc import (
+    build_scatter_matrix,
+    filter_by_season,
+    parse_stdmet_line,
+)
+
 # Configuration
 from worldenergydata.metocean.config import (
     MetoceanConfig,
@@ -167,4 +174,8 @@ __all__ = [
     "init_database",
     # CLI
     "cli_app",
+    # NDBC scatter / seasonal helpers (WRK-316)
+    "build_scatter_matrix",
+    "filter_by_season",
+    "parse_stdmet_line",
 ]

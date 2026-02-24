@@ -53,6 +53,7 @@ from rich.table import Table
 from worldenergydata.cli.commands import (
     bsee,
     canada,
+    eia,
     fdas,
     landman,
     lng_terminals,
@@ -79,6 +80,11 @@ app = typer.Typer(
 
 # Add module subcommands
 app.add_typer(bsee.app, name="bsee", help="BSEE data operations and analysis")
+app.add_typer(
+    eia.app,
+    name="eia",
+    help="EIA API v2 weekly petroleum and gas feed ingestion",
+)
 app.add_typer(
     marine_safety.app,
     name="marine-safety",

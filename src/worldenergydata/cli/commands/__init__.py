@@ -3,6 +3,7 @@ CLI Command Modules
 
 Each module provides subcommands for a specific domain:
 - bsee: BSEE data operations and analysis
+- eia: EIA API v2 weekly petroleum and gas feed ingestion
 - marine_safety: Marine safety incident data
 - fdas: Field development analysis system
 - sodir: SODIR (Norwegian Offshore Directorate) data operations
@@ -17,6 +18,7 @@ Each module provides subcommands for a specific domain:
 from worldenergydata.cli.commands import (
     bsee,
     canada,
+    eia,
     fdas,
     landman,
     lng_terminals,
@@ -29,6 +31,7 @@ from worldenergydata.cli.commands import (
 
 __all__ = [
     "bsee",
+    "eia",
     "marine_safety",
     "fdas",
     "sodir",
