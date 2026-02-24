@@ -105,6 +105,16 @@ repos:
       - id: commitizen
         stages: [commit-msg]
 
+  # Guard: reject Windows-path directory artifacts (WRK-364)
+  - repo: local
+    hooks:
+      - id: no-windows-path-dirs
+        name: No Windows-path directory artifacts
+        language: python
+        entry: python scripts/hooks/check-no-windows-paths.py
+        pass_filenames: false
+        stages: [pre-commit]
+
 # CI configuration
 ci:
   autofix_commit_msg: "style: auto-fix by pre-commit hooks"
