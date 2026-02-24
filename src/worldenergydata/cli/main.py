@@ -59,6 +59,7 @@ from worldenergydata.cli.commands import (
     marine_safety,
     metocean,
     mexico_cnh,
+    production_forecast,
     sodir,
     texas_rrc,
 )
@@ -115,6 +116,11 @@ app.add_typer(
     safety_analysis_cli.app,
     name="safety-analysis",
     help="Safety analysis and HSE data processing",
+)
+app.add_typer(
+    production_forecast.app,
+    name="forecast",
+    help="Arps decline curve analysis — fit, EUR, and production forecast",
 )
 
 
