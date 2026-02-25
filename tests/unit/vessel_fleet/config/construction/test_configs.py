@@ -11,7 +11,7 @@ def config_module(request):
     """Load each construction config module."""
     import importlib
     mod = importlib.import_module(
-        f"worldenergydata.vessel_fleet.configs.construction.{request.param}"
+        f"worldenergydata.vessel_fleet.config.construction.{request.param}"
     )
     return mod, request.param
 

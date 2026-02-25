@@ -86,13 +86,13 @@ class TestLoadKnownVessels:
 
     def test_loads_real_noble_config(self):
         records = _load_known_vessels(
-            "worldenergydata.vessel_fleet.configs.drilling.noble"
+            "worldenergydata.vessel_fleet.config.drilling.noble"
         )
         assert len(records) >= 25  # Noble has 31 KNOWN_VESSELS
 
     def test_sets_default_fields(self):
         records = _load_known_vessels(
-            "worldenergydata.vessel_fleet.configs.drilling.noble"
+            "worldenergydata.vessel_fleet.config.drilling.noble"
         )
         for rec in records:
             assert rec.get("OWNER") == "Noble Corporation plc"
@@ -182,7 +182,7 @@ class TestCollectOperatorFleet:
             pytest.skip("Noble scrape JSON not found")
 
         records = collect_operator_fleet(
-            config_path="worldenergydata.vessel_fleet.configs.drilling.noble",
+            config_path="worldenergydata.vessel_fleet.config.drilling.noble",
             scrape_dir=scrape_dir,
             try_web=False,
         )

@@ -12,7 +12,7 @@ def config_module(request):
     """Load each drilling config module."""
     import importlib
     mod = importlib.import_module(
-        f"worldenergydata.vessel_fleet.configs.drilling.{request.param}"
+        f"worldenergydata.vessel_fleet.config.drilling.{request.param}"
     )
     return mod, request.param
 

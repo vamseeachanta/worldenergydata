@@ -25,16 +25,16 @@ logger = logging.getLogger(__name__)
 _DEFAULT_OUTPUT_DIR = _PROJECT_ROOT / "data" / "modules" / "vessel_fleet" / "raw" / "construction_contractors"
 
 _CONSTRUCTION_CONFIGS = [
-    "worldenergydata.vessel_fleet.configs.construction.heerema",
-    "worldenergydata.vessel_fleet.configs.construction.allseas",
-    "worldenergydata.vessel_fleet.configs.construction.saipem_vessels",
-    "worldenergydata.vessel_fleet.configs.construction.subsea7",
-    "worldenergydata.vessel_fleet.configs.construction.boskalis",
-    "worldenergydata.vessel_fleet.configs.construction.deme",
-    "worldenergydata.vessel_fleet.configs.construction.mcdermott",
-    "worldenergydata.vessel_fleet.configs.construction.van_oord",
-    "worldenergydata.vessel_fleet.configs.construction.eneti",
-    "worldenergydata.vessel_fleet.configs.construction.oht",
+    "worldenergydata.vessel_fleet.config.construction.heerema",
+    "worldenergydata.vessel_fleet.config.construction.allseas",
+    "worldenergydata.vessel_fleet.config.construction.saipem_vessels",
+    "worldenergydata.vessel_fleet.config.construction.subsea7",
+    "worldenergydata.vessel_fleet.config.construction.boskalis",
+    "worldenergydata.vessel_fleet.config.construction.deme",
+    "worldenergydata.vessel_fleet.config.construction.mcdermott",
+    "worldenergydata.vessel_fleet.config.construction.van_oord",
+    "worldenergydata.vessel_fleet.config.construction.eneti",
+    "worldenergydata.vessel_fleet.config.construction.oht",
 ]
 
 

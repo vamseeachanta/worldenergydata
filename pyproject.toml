@@ -129,6 +129,9 @@ where = ["src"]
 include = ["worldenergydata*", "external*", "modules*"]
 exclude = ["tests*", "docs*"]
 
+[tool.setuptools.package-data]
+"worldenergydata.bsee" = ["sql/*.sql", "templates/*.html"]
+
 [tool.black]
 line-length = 88
 target-version = ['py38', 'py39', 'py310', 'py311']

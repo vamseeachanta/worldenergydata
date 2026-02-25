@@ -41,19 +41,19 @@ _DEFAULT_SCRAPE_DIR = (
 )
 
 _DRILLING_CONFIGS = [
-    "worldenergydata.vessel_fleet.configs.drilling.transocean",
-    "worldenergydata.vessel_fleet.configs.drilling.valaris",
-    "worldenergydata.vessel_fleet.configs.drilling.borr",
-    "worldenergydata.vessel_fleet.configs.drilling.noble",
-    "worldenergydata.vessel_fleet.configs.drilling.saipem",
-    "worldenergydata.vessel_fleet.configs.drilling.seadrill",
-    "worldenergydata.vessel_fleet.configs.drilling.cosl",
-    "worldenergydata.vessel_fleet.configs.drilling.ades",
-    "worldenergydata.vessel_fleet.configs.drilling.stena",
-    "worldenergydata.vessel_fleet.configs.drilling.vantage",
-    "worldenergydata.vessel_fleet.configs.drilling.nabors",
-    "worldenergydata.vessel_fleet.configs.drilling.patterson_uti",
-    "worldenergydata.vessel_fleet.configs.drilling.helmerich_payne",
+    "worldenergydata.vessel_fleet.config.drilling.transocean",
+    "worldenergydata.vessel_fleet.config.drilling.valaris",
+    "worldenergydata.vessel_fleet.config.drilling.borr",
+    "worldenergydata.vessel_fleet.config.drilling.noble",
+    "worldenergydata.vessel_fleet.config.drilling.saipem",
+    "worldenergydata.vessel_fleet.config.drilling.seadrill",
+    "worldenergydata.vessel_fleet.config.drilling.cosl",
+    "worldenergydata.vessel_fleet.config.drilling.ades",
+    "worldenergydata.vessel_fleet.config.drilling.stena",
+    "worldenergydata.vessel_fleet.config.drilling.vantage",
+    "worldenergydata.vessel_fleet.config.drilling.nabors",
+    "worldenergydata.vessel_fleet.config.drilling.patterson_uti",
+    "worldenergydata.vessel_fleet.config.drilling.helmerich_payne",
 ]
 
 # Operators with pre-collected Puppeteer scrape JSON
