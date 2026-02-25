@@ -12,22 +12,17 @@ from worldenergydata.bsee.pipeline.casing_schematic import (
     load_well_casing,
     render_casing_svg,
 )
+from worldenergydata.bsee.pipeline.field_cost_integration import (
+    FieldPipelineCostIntegrator,
+)
 from worldenergydata.bsee.pipeline.field_query import (
     FieldContext,
     FieldQueryError,
     resolve_field,
 )
-from worldenergydata.bsee.pipeline.pipeline_runner import (
-    FieldReport,
-    PipelineRunner,
-)
-from worldenergydata.bsee.pipeline.field_report import (
-    render_html,
-    save_report,
-)
-from worldenergydata.bsee.pipeline.field_cost_integration import (
-    FieldPipelineCostIntegrator,
-)
+from worldenergydata.bsee.pipeline.field_report import render_html, save_report
+from worldenergydata.bsee.pipeline.pipeline_runner import FieldReport, PipelineRunner
+from worldenergydata.bsee.pipeline.spec_lookup import PipelineSpecLookup
 
 __all__ = [
     "CasingString",
@@ -38,6 +33,7 @@ __all__ = [
     "FieldReport",
     "load_well_casing",
     "PipelineRunner",
+    "PipelineSpecLookup",
     "render_casing_svg",
     "render_html",
     "resolve_field",
