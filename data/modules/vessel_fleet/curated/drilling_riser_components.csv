@@ -22,3 +22,16 @@ FJ-LOWER-18.75,flex_joint,,Lower Flex Joint 18-3/4in,,,,,10.0,8.5,,,,,10000.0,,,
 TJ-21-50,telescopic_joint,,Telescopic Joint 21in,21.0,,,,35.0,6.0,,,,,5000.0,,,,,,,,,,50.0,65.0,45.0,,API 16R,Telescopic joint with 50ft stroke for 21in riser
 TJ-21-75,telescopic_joint,,Telescopic Joint 21in Long,21.0,,,,42.0,7.5,,,,,5000.0,,,,,,,,,,75.0,80.0,60.0,,API 16R,Long-stroke telescopic joint for deepwater 21in riser
 TJ-18.75-50,telescopic_joint,,Telescopic Joint 18-3/4in,18.75,,,,28.0,4.8,,,,,10000.0,,,,,,,,,,50.0,60.0,42.0,,API 16R,Telescopic joint with 50ft stroke for 18-3/4in riser
+RJ-21-75-NOV-MERLIN,riser_joint,NOV,Merlin 21in Standard Joint,21.0,19.5,0.75,75.0,23.0,3.9,G105,merlin_connector,0,,5000.0,,,,,,,,,,,,,,API 16R / API STD 16F,NOV Merlin 21in standard riser joint G105
+RJ-21-75-NOV-MERLIN-BUOY,riser_joint,NOV,Merlin 21in Joint w/ Buoyancy,21.0,19.5,0.75,75.0,23.0,-4.5,G105,merlin_connector,100,49.0,5000.0,,,,,,,,,,,,,,API 16R / API STD 16F,NOV Merlin 21in riser joint with syntactic foam buoyancy
+RJ-21-75-CAM,riser_joint,Cameron,DDR 21in Standard Joint,21.0,19.5,0.75,75.0,22.8,3.8,G105,H-4 collet,0,,5000.0,,,,,,,,,,,,,,API 16R / API STD 16F,Cameron DDR 21in standard riser joint
+RJ-21-75-CAM-BUOY,riser_joint,Cameron,DDR 21in Joint w/ Buoyancy,21.0,19.5,0.75,75.0,22.8,-4.1,G105,H-4 collet,100,49.0,5000.0,,,,,,,,,,,,,,API 16R / API STD 16F,Cameron DDR 21in riser joint with buoyancy module
+RJ-21-75-HYD,riser_joint,Hydril,DHT 21in Standard Joint,21.0,19.5,0.75,75.0,23.2,3.9,G105,wedge-lock,0,,5000.0,,,,,,,,,,,,,,API 16R / API STD 16F,Hydril DHT 21in riser joint
+RJ-21-75-S135,riser_joint,,Standard 21in S135 Joint,21.0,19.25,0.875,75.0,26.0,5.2,S135,flanged,0,,10000.0,,,,,,,,,,,,,,API 16R / API STD 16F,Heavy duty S135 grade 21in joint for high-pressure / HPHT
+RJ-21-50-PUP-NOV,riser_joint,NOV,Merlin 21in Pup Joint,21.0,19.5,0.75,50.0,15.5,2.6,G105,merlin_connector,0,,5000.0,,,,,,,,,,,,,,API 16R / API STD 16F,NOV Merlin 21in pup joint 50ft
+RJ-21-30-PUP,riser_joint,,21in Short Pup Joint,21.0,19.5,0.75,30.0,9.0,1.5,X-80,flanged,0,,5000.0,,,,,,,,,,,,,,API 16R,30ft pup joint for fine length adjustment
+RJ-18.75-75-NOV,riser_joint,NOV,Merlin 18-3/4in Standard Joint,18.75,17.25,0.75,75.0,18.5,3.1,G105,merlin_connector,0,,10000.0,,,,,,,,,,,,,,API 16R / API STD 16F,NOV Merlin 18-3/4in standard riser joint
+RJ-18.75-75-CAM,riser_joint,Cameron,DDR 18-3/4in Standard Joint,18.75,17.25,0.75,75.0,18.2,3.0,G105,H-4 collet,0,,10000.0,,,,,,,,,,,,,,API 16R / API STD 16F,Cameron DDR 18-3/4in standard riser joint
+RJ-21.5-75-BARE,riser_joint,,Standard 21-1/2in Joint,21.5,20.0,0.75,75.0,24.0,4.1,G105,flanged,0,,5000.0,,,,,,,,,,,,,,API 16R / API STD 16F,Standard 21-1/2in riser joint (large bore configuration)
+RJ-24-75-BARE,riser_joint,,Standard 24in Joint,24.0,22.5,0.75,75.0,30.0,5.5,G105,flanged,0,,5000.0,,,,,,,,,,,,,,API 16R / API STD 16F,Standard 24in bare riser joint (large bore)
+RJ-24-75-BUOY,riser_joint,,Standard 24in Joint w/ Buoyancy,24.0,22.5,0.75,75.0,30.0,-5.8,G105,flanged,100,55.0,5000.0,,,,,,,,,,,,,,API 16R / API STD 16F,24in riser joint with syntactic foam buoyancy module

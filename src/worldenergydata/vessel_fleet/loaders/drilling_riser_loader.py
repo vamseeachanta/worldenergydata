@@ -103,13 +103,62 @@ class DrillingRiserLoader:
         """Get all telescopic joints."""
         return self.get_by_type("telescopic_joint")
 
-    def filter_by_size(self, od_in: float) -> pd.DataFrame:
-        """Filter riser joints by OD (inches)."""
+    def filter_by_size(
+        self,
+        od_in: float,
+        tolerance_in: float = 0.1,
+    ) -> pd.DataFrame:
+        """Filter riser joints by OD (inches) with optional tolerance.
+
+        Uses tolerance-based matching to handle floating-point OD values
+        extracted from model files (e.g., OrcaFlex .dat → inches conversion).
+
+        Args:
+            od_in: Target outer diameter in inches.
+            tolerance_in: Allowable deviation in inches (default 0.1").
+                Set to 0.0 for exact equality matching.
+        """
         df = self.get_riser_joints()
         if df.empty:
             return df
-        mask = df["OD_IN"] == od_in
+        mask = (df["OD_IN"] - od_in).abs() <= tolerance_in
         return df[mask].copy()
+
+    def query(
+        self,
+        component_type: Optional[str] = None,
+        od_in: Optional[float] = None,
+        manufacturer: Optional[str] = None,
+        min_pressure_psi: Optional[float] = None,
+    ) -> pd.DataFrame:
+        """General-purpose query across all riser components.
+
+        Each kwarg filters the result; omit to skip that filter.
+
+        Args:
+            component_type: One of riser_joint, bop, lmrp,
+                flex_joint, telescopic_joint.
+            od_in: OD filter (tolerance ±0.1" applied automatically).
+            manufacturer: Exact manufacturer name match.
+            min_pressure_psi: Minimum pressure rating filter.
+        """
+        df = self.load()
+        if df.empty:
+            return df
+
+        if component_type is not None:
+            df = df[df["COMPONENT_TYPE"] == component_type]
+
+        if od_in is not None and "OD_IN" in df.columns:
+            df = df[(df["OD_IN"] - od_in).abs() <= 0.1]
+
+        if manufacturer is not None and "MANUFACTURER" in df.columns:
+            df = df[df["MANUFACTURER"] == manufacturer]
+
+        if min_pressure_psi is not None and "PRESSURE_RATING_PSI" in df.columns:
+            df = df[df["PRESSURE_RATING_PSI"] >= min_pressure_psi]
+
+        return df.copy()
 
     def filter_by_pressure_rating(
         self,
