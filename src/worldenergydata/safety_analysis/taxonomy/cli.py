@@ -25,7 +25,7 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List
 
-from worldenergydata.safety_analysis.taxonomy.activity_taxonomy import (
+from worldenergydata.safety_analysis.taxonomy.activity_registry import (
     ActivityTaxonomy,
 )
 from worldenergydata.safety_analysis.taxonomy.incident_classifier import (

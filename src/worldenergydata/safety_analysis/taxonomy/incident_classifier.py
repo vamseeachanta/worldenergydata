@@ -22,10 +22,12 @@ import re
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Sequence
 
-from worldenergydata.safety_analysis.taxonomy.activity_taxonomy import (
+from worldenergydata.safety_analysis.taxonomy.activity_definitions import (
     Activity,
-    ActivityTaxonomy,
     Subactivity,
+)
+from worldenergydata.safety_analysis.taxonomy.activity_registry import (
+    ActivityTaxonomy,
 )
 
 VALID_SOURCES = frozenset(
