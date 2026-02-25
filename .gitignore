@@ -287,3 +287,12 @@ CLAUDE.md.backup-*
 
 # Runtime artifacts (generated, not for git)
 results/
+
+# Generated output artifacts
+report_*.xlsx
+test_export*.json
+COVERAGE_ANALYSIS.txt
+*.tmp
+
+# Archive directories (moved to _archive/)
+archive/
