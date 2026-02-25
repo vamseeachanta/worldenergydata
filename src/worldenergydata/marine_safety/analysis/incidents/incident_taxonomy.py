@@ -12,13 +12,19 @@ from typing import Dict, List, Optional
 
 import pandas as pd
 
-# ---------------------------------------------------------------------------
-# MISLE operation phase column constant
-# ---------------------------------------------------------------------------
+# Re-export column maps from dedicated module (keeps this file ≤500 lines)
+from worldenergydata.marine_safety.analysis.incidents.column_maps import (
+    MAIB_COLUMN_MAP,
+    NTSB_COLUMN_MAP,
+    USCG_COLUMN_MAP,
+)
 
-# Standard USCG MISLE CSV column for operation/activity phase at time of incident.
-# Common field names in MISLE exports include ACTIVITY_TYPE and OPERATION_TYPE.
-MISLE_OPERATION_COLUMN: str = "ACTIVITY_TYPE"
+# Re-export operation phase types from dedicated module (keeps this file ≤500 lines)
+from worldenergydata.marine_safety.analysis.incidents.operation_phase import (  # noqa: F401
+    MISLE_OPERATION_COLUMN,
+    OperationPhase,
+    OperationPhaseClassifier,
+)
 
 
 class RootCauseType(str, Enum):
@@ -52,128 +58,6 @@ class RootCauseType(str, Enum):
 
     UNKNOWN = "unknown"
     """Insufficient data to determine root cause."""
-
-
-class OperationPhase(str, Enum):
-    """
-    Vessel operation phase at the time of the incident.
-
-    Aligned with:
-    - MAIB occurrence categorisation (operation phase fields)
-    - USCG MISLE ACTIVITY_TYPE codes
-    - IMO Casualty Investigation Code operation categories
-    - NTSB marine investigation phase-of-operation
-    """
-
-    MANOEUVRING = "manoeuvring"
-    """Vessel manoeuvring in confined waters, approaching berth or anchorage."""
-
-    ANCHORED = "anchored"
-    """Vessel at anchor or moored."""
-
-    UNDERWAY = "underway"
-    """Vessel underway in open water on a passage."""
-
-    PORT_OPERATIONS = "port_operations"
-    """Vessel alongside at berth, in dry dock, or engaged in port activity."""
-
-    CARGO_OPERATIONS = "cargo_operations"
-    """Loading, discharging, or transferring cargo or fuel."""
-
-    FISHING_OPS = "fishing_ops"
-    """Vessel engaged in active fishing operations (trawling, hauling, netting)."""
-
-    UNKNOWN = "unknown"
-    """Insufficient data to determine operation phase."""
-
-
-# ---------------------------------------------------------------------------
-# Operation phase keyword map
-# ---------------------------------------------------------------------------
-
-_PHASE_KEYWORD_MAP: List[tuple[str, OperationPhase]] = [
-    # Manoeuvring
-    ("manoeuv", OperationPhase.MANOEUVRING),
-    ("maneouv", OperationPhase.MANOEUVRING),
-    ("maneuvering", OperationPhase.MANOEUVRING),
-    ("berthing", OperationPhase.MANOEUVRING),
-    ("departing berth", OperationPhase.MANOEUVRING),
-    ("leaving port", OperationPhase.MANOEUVRING),
-    ("approach.*berth", OperationPhase.MANOEUVRING),
-    ("turning", OperationPhase.MANOEUVRING),
-    ("pilotage", OperationPhase.MANOEUVRING),
-    # Anchored / moored
-    ("at anchor", OperationPhase.ANCHORED),
-    ("anchored", OperationPhase.ANCHORED),
-    ("moored", OperationPhase.ANCHORED),
-    ("at mooring", OperationPhase.ANCHORED),
-    ("lying at anchor", OperationPhase.ANCHORED),
-    ("swinging at anchor", OperationPhase.ANCHORED),
-    # Underway / passage
-    ("underway", OperationPhase.UNDERWAY),
-    ("passage", OperationPhase.UNDERWAY),
-    ("in transit", OperationPhase.UNDERWAY),
-    ("proceeding", OperationPhase.UNDERWAY),
-    ("on voyage", OperationPhase.UNDERWAY),
-    ("open sea", OperationPhase.UNDERWAY),
-    ("ocean passage", OperationPhase.UNDERWAY),
-    # Port operations
-    ("in port", OperationPhase.PORT_OPERATIONS),
-    ("at berth", OperationPhase.PORT_OPERATIONS),
-    ("docking", OperationPhase.PORT_OPERATIONS),
-    ("port operation", OperationPhase.PORT_OPERATIONS),
-    ("alongside", OperationPhase.PORT_OPERATIONS),
-    ("dry dock", OperationPhase.PORT_OPERATIONS),
-    # Cargo operations
-    ("loading cargo", OperationPhase.CARGO_OPERATIONS),
-    ("discharging cargo", OperationPhase.CARGO_OPERATIONS),
-    ("cargo operation", OperationPhase.CARGO_OPERATIONS),
-    ("bunkering", OperationPhase.CARGO_OPERATIONS),
-    ("cargo transfer", OperationPhase.CARGO_OPERATIONS),
-    ("loading.*terminal", OperationPhase.CARGO_OPERATIONS),
-    ("unloading", OperationPhase.CARGO_OPERATIONS),
-    # Fishing operations
-    ("fishing", OperationPhase.FISHING_OPS),
-    ("trawling", OperationPhase.FISHING_OPS),
-    ("hauling", OperationPhase.FISHING_OPS),
-    ("netting", OperationPhase.FISHING_OPS),
-    ("pot hauling", OperationPhase.FISHING_OPS),
-]
-
-
-class OperationPhaseClassifier:
-    """
-    Classifies a vessel's operation phase at the time of an incident.
-
-    Operates on free-text operation/activity descriptions.
-    Applies a priority-ordered keyword scan with regex support.
-    """
-
-    def __init__(self) -> None:
-        self._compiled: List[tuple[re.Pattern, OperationPhase]] = [
-            (re.compile(pat, re.IGNORECASE), phase)
-            for pat, phase in _PHASE_KEYWORD_MAP
-        ]
-
-    def classify(self, operation_text: Optional[str] = None) -> OperationPhase:
-        """
-        Classify an operation phase from free-text.
-
-        Args:
-            operation_text: Description of vessel activity at time of incident.
-
-        Returns:
-            OperationPhase enum value.
-        """
-        if not operation_text:
-            return OperationPhase.UNKNOWN
-        text = str(operation_text).strip()
-        if not text:
-            return OperationPhase.UNKNOWN
-        for pattern, phase in self._compiled:
-            if pattern.search(text):
-                return phase
-        return OperationPhase.UNKNOWN
 
 
 # ---------------------------------------------------------------------------
@@ -257,65 +141,6 @@ _KEYWORD_MAP: List[tuple[str, RootCauseType]] = [
 
 
 # ---------------------------------------------------------------------------
-# Source-specific field name normalisers
-# ---------------------------------------------------------------------------
-
-# Maps from raw source column names to canonical names used internally.
-USCG_COLUMN_MAP: Dict[str, str] = {
-    "REPORT_NUM": "report_id",
-    "MASTER_KEY": "report_id",
-    "VESSEL_NAME": "vessel_name",
-    "VES_NAME": "vessel_name",
-    "EVENT_DATE": "incident_date",
-    "DATE": "incident_date",
-    "LATITUDE": "latitude",
-    "LAT": "latitude",
-    "LONGITUDE": "longitude",
-    "LON": "longitude",
-    "CASUALTY_TYPE": "incident_type",
-    "PRIMARY_CAUSE": "primary_cause",
-    "NARRATIVE": "narrative",
-    "INJURY_COUNT": "injury_count",
-    "FATALITY_COUNT": "fatality_count",
-    "VESSEL_TYPE": "vessel_type",
-    "VES_TYPE": "vessel_type",
-    # MISLE-specific operation phase field
-    "ACTIVITY_TYPE": "activity_type",
-    "OPERATION_TYPE": "activity_type",
-    "OPERATION_PHASE": "activity_type",
-}
-
-MAIB_COLUMN_MAP: Dict[str, str] = {
-    "Occurrence_Id": "report_id",
-    "Date": "incident_date",
-    "Accident_Title": "title",
-    "Main_Event": "incident_type",
-    "Abstract": "narrative",
-    "Vessel_Name": "vessel_name",
-    "Vessel_Type": "vessel_type",
-    "Latitude": "latitude",
-    "Longitude": "longitude",
-    "Deaths": "fatality_count",
-    "Injuries": "injury_count",
-}
-
-NTSB_COLUMN_MAP: Dict[str, str] = {
-    "EventId": "report_id",
-    "EventDate": "incident_date",
-    "AccidentTitle": "title",
-    "IncidentType": "incident_type",
-    "ProbableCause": "primary_cause",
-    "Narrative": "narrative",
-    "VesselName": "vessel_name",
-    "VesselType": "vessel_type",
-    "Latitude": "latitude",
-    "Longitude": "longitude",
-    "FatalCount": "fatality_count",
-    "InjuryCount": "injury_count",
-}
-
-
-# ---------------------------------------------------------------------------
 # Core dataclass
 # ---------------------------------------------------------------------------
 
@@ -376,8 +201,7 @@ class IncidentTaxonomyClassifier:
     def __init__(self) -> None:
         # Pre-compile all patterns for efficiency
         self._compiled: List[tuple[re.Pattern, RootCauseType]] = [
-            (re.compile(pat, re.IGNORECASE), cat)
-            for pat, cat in _KEYWORD_MAP
+            (re.compile(pat, re.IGNORECASE), cat) for pat, cat in _KEYWORD_MAP
         ]
 
     def classify(
@@ -481,7 +305,9 @@ class IncidentDataFrameNormaliser:
         # Coerce numeric fields
         for col in ("fatality_count", "injury_count"):
             if col in result.columns:
-                result[col] = pd.to_numeric(result[col], errors="coerce").fillna(0).astype(int)
+                result[col] = (
+                    pd.to_numeric(result[col], errors="coerce").fillna(0).astype(int)
+                )
 
         # Coerce coordinate fields
         for col in ("latitude", "longitude"):
@@ -606,7 +432,11 @@ def build_taxonomy_summary(records: List[TaxonomyRecord]) -> pd.DataFrame:
     df = pd.DataFrame(rows)
     summary = (
         df.groupby(["root_cause", "source"])
-        .agg(count=("count", "sum"), fatalities=("fatalities", "sum"), injuries=("injuries", "sum"))
+        .agg(
+            count=("count", "sum"),
+            fatalities=("fatalities", "sum"),
+            injuries=("injuries", "sum"),
+        )
         .reset_index()
         .sort_values(["root_cause", "source"])
     )
