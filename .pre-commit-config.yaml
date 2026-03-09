@@ -97,6 +97,8 @@ repos:
     rev: v8.21.2
     hooks:
       - id: gitleaks
+        # Note: requires workspace-hub parent checkout; ../.gitleaks.toml is hub-relative
+        args: [--config, ../.gitleaks.toml]
 
   # Commit message linting
   - repo: https://github.com/commitizen-tools/commitizen
