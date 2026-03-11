@@ -1,54 +1,18 @@
 # World Energy Data
+> Inherits workspace-hub | Python 3.11+ / pandas / Plotly / pytest
 
-> Inherits: workspace-hub | Target: <18% (1.4KB)
+## Rules
+1. Data attribution + timestamp required | Units: BTU/MWh/barrels standardized
+2. All visualizations: interactive HTML | Validate EIA/IEA formats
+3. TDD mandatory | Files ≤500 lines | BSEE binary (~300MB) not in git — run `make data`
 
-## Project Focus
-
-Global energy market data aggregation, analysis, and visualization platform.
-
-## Tech Stack
-
-- Python 3.11+ with uv
-- Data: pandas, numpy
-- Viz: Plotly (interactive HTML)
-- Testing: pytest
-
-## Project Rules
-
-1. Data sources must include attribution and timestamp
-2. Energy units standardized (BTU, MWh, barrels)
-3. All visualizations interactive HTML
-4. Validate against EIA/IEA formats
-5. TDD mandatory — tests before implementation
-6. Files under 500 lines (modular design)
-
-## Data Governance
-
-Data governance: see workspace-hub `docs/DATA_RESIDENCE_POLICY.md`
-
-This repo owns **Tier 1 — Collection Data**: raw data from external public sources (APIs, web scraping, downloads). If the data comes from an external public source, it belongs here.
-
-**IMPORTANT — Local Data Required**: BSEE binary data (~300 MB) is **not stored in git**. After cloning, run `make data` (or `python3 scripts/refresh_bsee_all.py`) to download datasets. Without this, BSEE analysis modules return empty results. See `docs/data/LOCAL_DATA_PATTERN.md`.
-
-## Key Directories
-
-- `src/` - Analysis modules
-- `data/` - Datasets (raw/, processed/, modules/)
-- `reports/` - HTML reports
-- `tests/` - Test files
+## Data Tier
+Tier 1 — Collection: raw public-source data.
+Governance: `docs/DATA_RESIDENCE_POLICY.md` | Local data: `docs/data/LOCAL_DATA_PATTERN.md`
 
 ## Commands
+`uv run pytest` | `uv run python -m src.main`
 
-```bash
-uv run pytest              # Tests
-uv run python -m src.main  # Run analysis
-```
-
-## Reference
-
-- Agents: `.claude/docs/agents.md`
-- Full rules: Inherited from workspace-hub/CLAUDE.md
-
----
-
-*Verbose docs in `.claude/docs/`*
+## Dirs
+`src/` `data/{raw,processed,modules}/` `reports/` `tests/`
+> Full rules inherited from workspace-hub/CLAUDE.md | Agents: `.claude/docs/agents.md`
