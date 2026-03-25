@@ -1,10 +1,28 @@
-# Binary file markers (no LFS — use .gitignore for large files)
-*.bin binary
+# Guard rails — prevent large binary re-introduction (WRK-1341)
+# These file types were relocated to /mnt/ace/<repo>/
+# Mark as binary so git does not attempt diff/merge
 *.pdf binary
+*.sim binary
+*.dat binary
+*.pptx binary
+*.docx binary
+*.doc binary
 *.xlsx binary
+*.xls binary
+*.xlsm binary
+*.jar binary
 *.zip binary
-*.gpkg binary
+*.gz binary
+*.exe binary
+*.chm binary
+*.bin binary
+*.dxf binary
+*.dwg binary
+*.3dm binary
+*.shp binary
+*.sldprt binary
+*.sldasm binary
+*.wbpz binary
+*.o binary
+*.a binary
 
-# Data files — track with LFS stubs in data/ directories
-data/**/*.parquet filter=lfs diff=lfs merge=lfs -text
-data/**/*.csv filter=lfs diff=lfs merge=lfs -text
