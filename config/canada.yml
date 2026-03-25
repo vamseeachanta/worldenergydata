@@ -1,0 +1,323 @@
+# Canada Oil & Gas Configuration
+# Alberta Energy Regulator (AER) and BC Energy Regulator (BCER) Data Integration
+
+module: canada
+version: 1.0.0
+description: Configuration for Canadian oil & gas data collection and analysis
+
+# Alberta Energy Regulator (AER) Configuration
+aer:
+  base_url: https://www.aer.ca
+  data_url: https://static.aer.ca/prd/data
+  api_url: https://api.aer.ca
+  rate_limit: 2  # requests per second
+  cache_ttl: 86400  # 24 hours in seconds
+  timeout: 60  # request timeout in seconds
+  max_retries: 3
+  retry_delay: 2  # seconds between retries
+
+  # Authentication (if required in future)
+  auth:
+    enabled: false
+    method: none  # none, api_key, oauth2
+
+  # Headers for API requests
+  headers:
+    User-Agent: "WorldEnergyData Canada Client/1.0"
+    Accept: "application/json,text/csv,application/xml;q=0.9,*/*;q=0.8"
+    Accept-Encoding: "gzip, deflate"
+
+  # Data endpoints
+  endpoints:
+    wells: /wells
+    production: /production
+    facilities: /facilities
+    licenses: /licenses
+    spills: /spills
+    compliance: /compliance
+
+  # ST37 Production Data
+  st37:
+    url: https://www.aer.ca/providing-information/data-and-reports/statistical-reports/st37
+    format: csv
+    update_frequency: monthly
+    description: "Alberta monthly oil and gas production by well"
+
+  # ST102 Well List
+  st102:
+    url: https://www.aer.ca/providing-information/data-and-reports/statistical-reports/st102
+    format: csv
+    update_frequency: monthly
+    description: "Alberta well status and attribute listing"
+
+# BC Energy Regulator (BCER) Configuration
+bcer:
+  base_url: https://www.bc-er.ca
+  data_url: https://www.bc-er.ca/data
+  api_url: https://www.bc-er.ca/api
+  rate_limit: 2  # requests per second
+  cache_ttl: 86400  # 24 hours in seconds
+  timeout: 60  # request timeout in seconds
+  max_retries: 3
+  retry_delay: 2  # seconds between retries
+
+  # Authentication
+  auth:
+    enabled: false
+    method: none
+
+  # Headers for API requests
+  headers:
+    User-Agent: "WorldEnergyData Canada Client/1.0"
+    Accept: "application/json,text/csv,application/xml;q=0.9,*/*;q=0.8"
+    Accept-Encoding: "gzip, deflate"
+
+  # Data endpoints
+  endpoints:
+    wells: /wells
+    production: /production
+    facilities: /facilities
+    permits: /permits
+
+  # Monthly production reports
+  production_reports:
+    url: https://www.bc-er.ca/data/production
+    format: csv
+    update_frequency: monthly
+    description: "BC monthly oil and gas production"
+
+# Data Types Configuration
+data_types:
+  wells:
+    enabled: true
+    description: "Well locations, status, and attributes"
+    format: csv
+    update_frequency: monthly
+    parameters:
+      include_abandoned: false
+      include_suspended: true
+
+  production:
+    enabled: true
+    description: "Monthly oil and gas production data"
+    format: csv
+    update_frequency: monthly
+    parameters:
+      include_injection: true
+      include_disposition: true
+
+  facilities:
+    enabled: true
+    description: "Facility information and status"
+    format: csv
+    update_frequency: monthly
+    parameters:
+      include_pipelines: true
+      include_batteries: true
+
+  licenses:
+    enabled: true
+    description: "Well license applications and approvals"
+    format: csv
+    update_frequency: weekly
+    parameters:
+      license_types: ["NEW", "AMENDMENT", "TRANSFER"]
+
+# UWI Validation Configuration
+validation:
+  uwi:
+    format: "DLS"  # Dominion Land Survey
+    description: "L-EE/AA-BB-CCC-DD-WM/S format"
+    regex: "^[0-9]{1}[0-9]{2}/[0-9]{2}-[0-9]{2}-[0-9]{3}-[0-9]{2}[WE][1-6]/[0-9]$"
+
+  # Alberta coordinate bounds
+  alberta_bounds:
+    lat_min: 49.0
+    lat_max: 60.0
+    lon_min: -120.0
+    lon_max: -110.0
+    crs: "EPSG:4326"
+
+  # BC coordinate bounds
+  bc_bounds:
+    lat_min: 48.3
+    lat_max: 60.0
+    lon_min: -139.0
+    lon_max: -114.0
+    crs: "EPSG:4326"
+
+  # Data quality checks
+  quality:
+    enabled: true
+    strict_mode: false
+    log_warnings: true
+    rules:
+      - check_uwi_format
+      - check_coordinate_bounds
+      - check_production_values
+      - check_date_ranges
+
+# Data Processing Configuration
+processing:
+  chunk_size: 50000
+  parallel_workers: 4
+  normalize_uwi: true
+  validate_coordinates: true
+
+  # Coordinate system transformation
+  coordinates:
+    source_crs: "EPSG:4326"  # WGS84
+    target_crs: "EPSG:4326"  # WGS84
+
+  # Unit conversions
+  units:
+    depth: meters
+    oil: cubic_meters  # m3
+    gas: e3m3  # thousand cubic meters
+    water: cubic_meters
+    pressure: kpa
+
+  # Data normalization
+  normalization:
+    dates_format: "ISO8601"  # YYYY-MM-DD
+    missing_values: null
+    boolean_true: ["Y", "YES", "TRUE", "1", "ACTIVE"]
+    boolean_false: ["N", "NO", "FALSE", "0", "INACTIVE"]
+
+# Output Configuration
+output:
+  directory: ./data/canada
+  formats: [csv, parquet]
+  organize_by: [province, date, type]
+
+  # File naming pattern
+  naming:
+    pattern: "{province}_{data_type}_{date}.{format}"
+    date_format: "%Y%m%d"
+    time_format: "%H%M%S"
+
+  # Compression
+  compression:
+    enabled: true
+    format: gzip
+
+  # Storage organization
+  organization:
+    by_date: true
+    by_type: true
+    by_province: true
+    structure: "{province}/{year}/{month}/{data_type}/"
+
+# Analysis Configuration
+analysis:
+  enabled: false
+
+  # Production trend analysis
+  production_trends:
+    enabled: false
+    metrics:
+      - monthly_oil_production
+      - monthly_gas_production
+      - well_count_active
+      - average_production_per_well
+    aggregation_levels:
+      - province
+      - field
+      - pool
+      - operator
+
+  # Decline curve analysis
+  decline_curves:
+    enabled: false
+    methods:
+      - exponential
+      - hyperbolic
+      - harmonic
+    min_months: 12
+    forecast_months: 60
+
+  # Visualization
+  visualization:
+    enabled: false
+    output_format: png
+    charts:
+      - province_production_map
+      - production_trends
+      - well_activity
+      - decline_curves
+
+# Performance Configuration
+performance:
+  parallel:
+    enabled: true
+    max_workers: 4
+    chunk_size: 50000
+
+  memory:
+    max_cache_size_mb: 1000
+    batch_size: 50000
+
+  progress:
+    enabled: true
+    update_interval: 10  # seconds
+
+# Logging Configuration
+logging:
+  level: INFO
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file:
+    enabled: true
+    path: "./logs/canada.log"
+    max_size_mb: 10
+    backup_count: 5
+  console:
+    enabled: true
+    colored: true
+
+# Error Handling
+error_handling:
+  retry:
+    max_attempts: 3
+    backoff_factor: 2
+    max_delay: 60
+
+  reporting:
+    save_errors: true
+    error_file: "./logs/canada_errors.json"
+    include_traceback: true
+
+  recovery:
+    checkpoint_enabled: true
+    checkpoint_interval: 1000
+    resume_on_failure: true
+
+# Integration Configuration
+integration:
+  # BSEE integration for comparison
+  bsee:
+    enabled: false
+    data_path: "./data/bsee"
+
+  # Texas RRC integration for comparison
+  texas_rrc:
+    enabled: false
+    data_path: "./data/texas_rrc"
+
+  # Database integration
+  database:
+    enabled: false
+    type: postgresql
+    connection:
+      host: localhost
+      port: 5432
+      database: worldenergydata
+      user: null
+      password: null
+
+  # Export formats
+  export:
+    enabled: false
+    formats:
+      - excel
+      - shapefile
+      - geojson

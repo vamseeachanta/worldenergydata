@@ -1,0 +1,51 @@
+# BSEE Comprehensive Report Configuration
+# This file contains default settings for report generation
+
+# Report settings
+type: field                    # Options: block, field, lease, well
+format: excel                  # Options: excel, pdf, html, json, all
+output: ./reports             # Output directory
+
+# Price deck configuration
+oil_price: 75.00              # Oil price per barrel ($/bbl)
+gas_price: 3.50               # Gas price per MCF ($/mcf)
+ngl_price: 30.00              # NGL price per barrel ($/bbl)
+
+# Cost structure
+operating_cost: 12.50         # Operating cost per BOE ($/BOE)
+royalty_rate: 0.1875          # Royalty rate (18.75%)
+tax_rate: 0.05                # Severance tax rate (5%)
+
+# Processing options
+batch: false                  # Enable batch processing
+parallel: 1                   # Number of parallel workers
+cache: true                   # Enable data caching
+progress: true                # Show progress bar
+
+# Data options
+refresh_data: false           # Force data refresh before generation
+data_path: ./data/bsee       # Path to BSEE data directory
+
+# Logging
+verbose: false                # Enable verbose logging
+quiet: false                  # Suppress output except errors
+
+# Example entity configurations
+# Uncomment and modify as needed:
+
+# Block report example:
+# type: block
+# id: "759"
+
+# Field report example:
+# type: field
+# id: "Jack"
+
+# Lease reports example (multiple):
+# type: lease
+# ids: "OCS-G-12345,OCS-G-12346,OCS-G-12347"
+
+# Custom price deck example:
+# oil_price: 80.00
+# gas_price: 4.50
+# operating_cost: 15.00

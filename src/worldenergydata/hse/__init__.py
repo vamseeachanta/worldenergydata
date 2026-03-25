@@ -1,0 +1,80 @@
+# ABOUTME: HSE (Health, Safety, Environment) module initialization
+# ABOUTME: Exports database models, importers, and data quality validation for BSEE HSE incidents
+
+"""
+HSE Module - Health, Safety, and Environment Incident Management
+
+This module provides comprehensive HSE incident data management for BSEE
+Gulf of Mexico offshore operations including:
+- SQLAlchemy ORM models for incident tracking
+- Data importers for BSEE incident, penalty, and statistics databases
+- Post-import data quality validation
+- Geographic validation for Gulf of Mexico boundaries
+
+Example usage:
+    from worldenergydata.hse import (
+        HSEIncident,
+        BaseImporter,
+        BSEEIncidentsImporter,
+        DataQualityValidator,
+    )
+
+    # Import incidents from CSV
+    importer = BSEEIncidentsImporter(db_session, csv_file_path="incidents.csv")
+    stats = importer.import_data()
+
+    # Validate data quality
+    validator = DataQualityValidator(db_session)
+    results = validator.run_all_validations()
+"""
+
+from worldenergydata.common import get_logger
+
+# Database models
+from worldenergydata.hse.database import (
+    Base,
+    EquipmentFailure,
+    HSEIncident,
+    InjuryIncident,
+    SpillIncident,
+    ToxicRelease,
+    ViolationIncident,
+)
+
+# Importers
+from worldenergydata.hse.importers.base_importer import BaseImporter
+from worldenergydata.hse.importers.bsee_incidents_importer import (
+    BSEEIncidentsImporter,
+)
+from worldenergydata.hse.importers.bsee_penalties_importer import (
+    BSEEPenaltiesImporter,
+)
+from worldenergydata.hse.importers.bsee_statistics_importer import (
+    BSEEStatisticsImporter,
+)
+from worldenergydata.hse.importers.data_quality_validator import (
+    DataQualityValidator,
+)
+from worldenergydata.hse.importers.epa_tri_importer import EPATRIImporter
+
+__version__ = "1.0.0"
+__all__ = [
+    # Database models
+    "Base",
+    "HSEIncident",
+    "InjuryIncident",
+    "SpillIncident",
+    "ViolationIncident",
+    "EquipmentFailure",
+    "ToxicRelease",
+    # Importers
+    "BaseImporter",
+    "BSEEIncidentsImporter",
+    "BSEEPenaltiesImporter",
+    "BSEEStatisticsImporter",
+    "EPATRIImporter",
+    # Validation
+    "DataQualityValidator",
+]
+
+_logger = get_logger(__name__)

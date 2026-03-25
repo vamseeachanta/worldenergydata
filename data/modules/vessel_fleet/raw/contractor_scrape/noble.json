@@ -1,0 +1,335 @@
+{
+  "name": "noble",
+  "owner": "Noble Corporation",
+  "url": "https://www.noblecorp.com/our-fleet",
+  "timestamp": "2026-02-13T03:55:26.048Z",
+  "status": "success",
+  "vessels": [],
+  "tables": [],
+  "links": [
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/default.aspx#maincontent",
+      "text": "Skip to main content"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/default.aspx",
+      "text": "Our Fleet"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/default.aspx",
+      "text": "Fleet"
+    },
+    {
+      "href": "https://noblecorp.com/investors/reports-and-filings/fleet-status-report/default.aspx",
+      "text": "Fleet Status Report"
+    },
+    {
+      "href": "https://noblecorp.com/investors/reports-and-filings/fleet-status-report/default.aspx",
+      "text": "Fleet Status Report"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/default.aspx",
+      "text": "Our Fleet"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/default.aspx",
+      "text": "Fleet"
+    },
+    {
+      "href": "https://noblecorp.com/investors/reports-and-filings/fleet-status-report/default.aspx",
+      "text": "Fleet Status Report"
+    },
+    {
+      "href": "https://noblecorp.com/investors/reports-and-filings/fleet-status-report/default.aspx",
+      "text": "Fleet Status Report"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/default.aspx",
+      "text": "Our Fleet"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2024/Ocean-Apex/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_downloads/fleet/2024/08/apex-specification-sheet-revised.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2024/Ocean-BlackHawk/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_downloads/fleet/2024/08/blackhawk-specification-sheet-revised.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2024/Noble-BlackHornet/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_downloads/fleet/2024/08/blackhornet-specification.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2024/Ocean-BlackLion/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_downloads/fleet/2024/08/ocean-blacklion-specification.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2024/Ocean-Courage/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_downloads/fleet/2024/08/ocean-courage-specification-sheet-revised.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2024/Ocean-Endeavor/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_downloads/fleet/2024/08/endeavor-specification-sheet-revised.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2024/Ocean-GreatWhite/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_downloads/fleet/2024/08/greatwhite-specification-sheet-revised.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2024/Ocean-BlackRhino/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_downloads/fleet/2024/08/ocean-blackrhino-specification-sheet-revised.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2021/Noble-Bob-Douglas/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_downloads/fleet/Rig-Details-Noble-Bob-Douglas.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2020/Noble-Developer/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_fleet/2024/01/developer.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2020/Noble-Deliverer/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_fleet/2024/01/deliverer.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2020/Noble-Discoverer/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_fleet/2024/01/discoverer.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2020/Noble-Don-Taylor/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_downloads/fleet/Rig-Details-Noble-Don-Taylor.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2020/Noble-Faye-Kozack/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_fleet/2023/noble-faye-kozack.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2020/Noble-Santa-Ana/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_downloads/fleet/2023/rig-details-noble-gerry-de-souza.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2020/Noble-Globetrotter-I/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_downloads/fleet/Rig-Details-Noble-GlobetrotterI.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2020/Noble-Globetrotter-II/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_downloads/fleet/Rig-Details-Noble-GlobetrotterII.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2020/Noble-Innovator/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_downloads/fleet/2023/07/edited-noble-innovator.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2020/Noble-Integrator/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_fleet/2024/01/integrator.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2020/Noble-Interceptor/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_fleet/2024/01/interceptor.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2020/Noble-Intrepid/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_fleet/2024/01/intrepid.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2020/Noble-Invincible/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_fleet/2024/01/invincible.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2020/Noble-Patriot/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_downloads/fleet/2024/08/patriot-specification-sheet-revised.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2020/Maersk-Resolve-/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_fleet/2024/01/resolve.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2020/Noble-Sam-Croft/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_downloads/fleet/Rig-Details-Noble-Sam-Croft.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2020/Noble-Lafosse/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_fleet/2023/09/revised-nsl.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2020/Noble-Tom-Madden/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_downloads/fleet/Rig-Details-Noble-Tom-Madden.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2020/Maersk-Valiant/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_fleet/2024/01/valiant.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2020/Noble-Venturer/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_fleet/2023/08/revised-noble-venturer.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2020/Noble-Viking/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_fleet/2024/01/viking.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/fleet-details/2020/Noble-Voyager/default.aspx",
+      "text": "Rig Summary"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_fleet/2024/01/voyager.pdf",
+      "text": "Download Summary PDF"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/default.aspx",
+      "text": "Our Fleet"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/default.aspx",
+      "text": "Fleet"
+    },
+    {
+      "href": "https://noblecorp.com/investors/reports-and-filings/fleet-status-report/default.aspx",
+      "text": "Fleet Status Report"
+    },
+    {
+      "href": "https://noblecorp.com/our-fleet/fleet/default.aspx#",
+      "text": "Cookie Preferences"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_downloads/2022/Privacy-Statement-External-Website-and-app(16791486.1).pdf",
+      "text": "Privacy Policy"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_downloads/2025/Modern-Slavery-Statement-April-2025-signed.pdf",
+      "text": "Modern Slavery and Transparency Statement"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_downloads/2025/External-Privacy-Notice-English.pdf",
+      "text": "Privacy and Cookies Notice"
+    },
+    {
+      "href": "https://s201.q4cdn.com/439848451/files/doc_downloads/2025/External-Privacy-Statement-Portuguese.pdf",
+      "text": "Aviso de Privacidade e Cookies"
+    }
+  ],
+  "rawHtml": "close disclaimer Cookies on this website. We use cookies on Noble Corporation to provide you with the best possible experience. If you wish to review the cookies we store, please select the Cookie Preferences option on this banner. After your preferences are saved, you can use the cookie icon at the left to modify your selections at any time. For more information, you can review our Privacy Policy and Cookie Policy. Accept Cookie Preferences No, thanks close preference sidebar Noble Corporation Cookie Preferences Please use the following sections to learn more about the types of cookies we use, and how you can opt out of those you do not wish to be stored. At Noble Corporation, we respect your privacy and are committed to protecting your information. For more information, you can review our Privacy Policy and Cookie Policy. Save Settings Necessary Cookies These cookies are necessary for the services and viewing experience of this site, and cannot be opted out of via this tool. If you still wish to remove these, you may do using your browser settings. A description of these technologies is provided in our Privacy Policy and Cookie Policy. Google Analytics Google Analytics option toggle on/off Skip to main content First Choice Offshore.® Our Company Company OverviewCompany HistoryNORMS CenterHealth, Safety, and EnvironmentSustainabilityBoard of DirectorsManagement TeamBrand Portal Careers CareersNobleAdvances® Our Fleet FleetFleet Status Report Investors NewsEvents & PresentationsReports & Filings Quarterly ResultsFleet Status ReportAnnual Reports & Proxy StatementsSEC FilingsReg G ReconciliationInteractive Analyst CentreIRS Forms 8937 Corporate Governance Governance DocumentsCommittee CompositionBoard of DirectorsManagement Team Stock Information Stock Quote & ChartHistorical Stock LookupDividend Information Warrant InformationSocial Media Contact Our Fleet Our Company Company OverviewCompany HistoryNORMS CenterHealth, Safety, and EnvironmentSustainabilityBoard of DirectorsManagement TeamBrand Portal Careers CareersNobleAdvances® Our Fleet FleetFleet Status Report Investors NewsEvents & PresentationsReports & Filings Quarterly ResultsFleet Status ReportAnnual Reports & Proxy StatementsSEC FilingsReg G ReconciliationInteractive Analyst CentreIRS Forms 8937 Corporate Governance Governance DocumentsCommittee CompositionBoard of DirectorsManagement Team Stock Information Stock Quote & ChartHistorical Stock LookupDividend Information Warrant InformationSocial Media Contact Home / Our Fleet / Fleet Noble operates one of the youngest and most advanced fleets in the offshore drilling industry Rig Type:Select Rig TypesemisubmersibledrillshipjackupWater Depth:Select Water Depth120001000060001500492350Location:Select LocationFar East & OceaniaUS Gulf of MexicoSouth AmericaEurope and Mediterraneanwest-africaOcean ApexRig Summary Enhanced Victory Class Currently in Australia 6,000 ft Water Depth Available: 2025-Q3 Download Summary PDF Noble BlackHawkRig Summary Gusto P10000 Currently in US Gulf 12,000 ft Water Depth Available: 2026-Q4 Download Summary PDF Noble BlackHornetRig Summary Gusto P10000 Currently in US Gulf 12,000 ft Water Depth Available: 2029-Q1 Download Summary PDF Noble BlackLionRig Summary Gusto P10000 Currently in US Gulf 12,000 ft Water Depth Available: 2028-Q3 Download Summary PDF Noble CourageRig Summary F&G ExD Millennium Currently in Brazil 10,000 ft Water Depth Available: 2027-Q4 Download Summary PDF Noble EndeavorRig Summary Odeco Victory Currently in South America 8,000 ft Water Depth Available: 2028-Q2 Download Summary PDF Noble GreatWhiteRig Summary Moss CS60E Currently in Norway 10,000 ft Water Depth Available: 2030-Q2 Download Summary PDF Noble BlackRhinoRig Summary Gusto P10000 Currently in US Gulf 12,000 ft Water Depth Available: 2026-Q2 Download Summary PDF Noble Bob DouglasRig Summary Gusto P10000 Currently in Guyana 12,000 ft Water Depth Available: 2029-Q1 Download Summary PDF Noble DeveloperRig Summary DSS21-DPS2 Currently in Suriname 10,000 ft Water DepthAvailable: 2027-Q3 Download Summary PDF Noble DelivererRig Summary DSS21-DPS2 Currently in Malaysia 10,000 ft Water DepthAvailable: 2025-Q2 Download Summary PDF Noble DiscovererRig Summary DSS21-DPS2 Currently in Colombia 10,000 ft Water DepthAvailable: 2029-Q4 Download Summary PDF Noble Don TaylorRig Summary Gusto P10000 Currently in Guyana 12,000 ft Water Depth Available: 2029-Q1 Download Summary PDF Noble Faye KozackRig Summary Samsung 96K Currently in Brazil 12,000 ft Water DepthAvailable: 2027-Q1 Download Summary PDF Noble Gerry de SouzaRig Summary Samsung 12000 Double Hull Currently in Nigeria 12,000 ft Water DepthAvailable: 2028-Q2 Download Summary PDF Noble Globetrotter IRig Summary Globetrotter Class Currently in Bulgaria 10,000 ft Water Depth Available: 2026-Q2 Download Summary PDF Noble Globetrotter IIRig Summary Globetrotter Class Currently in US Gulf 10,000 ft Water Depth Available: 2024-Q2 Download Summary PDF Noble InnovatorRig Summary Gusto MSC CJ 70 - 150 MC Currently in United Kingdom 492 ft Water DepthAvailable: 2027-Q3 Download Summary PDF Noble IntegratorRig Summary Gusto MSC CJ70 X150 MD Currently in Norway 492 ft Water DepthAvailable: 2027-Q4 Download Summary PDF Noble InterceptorRig Summary Gusto MSC CJ70 X150 MD Currently in Norway 492 ft Water DepthAvailable: 2027-Q1 Download Summary PDF Noble IntrepidRig Summary Gusto MSC CJ70 X150 MD Currently in Norway 492 ft Water DepthAvailable: 2026-Q3 Download Summary PDF Noble InvincibleRig Summary Gusto MSC CJ70 X150 MD Currently in Norway 492 ft Water DepthAvailable: 2027-Q4 Download Summary PDF Noble PatriotRig Summary Trosvik, Bingo 3000 Currently in United Kingdom 1,500 ft Water Depth Available: 2028-Q2 Download Summary PDF Noble Resolve Rig Summary Gusto MSC CJ50 X100 MC Currently in Spain 350 ft Water DepthAvailable: 2026-Q1 Download Summary PDF Noble Sam CroftRig Summary Gusto P10000 Currently in Guyana 12,000 ft Water Depth Available: 2029-Q1 Download Summary PDF Noble Stanley LafosseRig Summary Samsung 96K Currently in US Gulf 12,000 ft Water DepthAvailable: 2027-Q3 Download Summary PDF Noble Tom MaddenRig Summary Gusto P10000 Currently in Guyana 12,000 ft Water Depth Available: 2029-Q1 Download Summary PDF Noble ValiantRig Summary Ship shaped, Samsung 96K Currently in Suriname 12,000 ft Water DepthAvailable: 2029-Q3 Download Summary PDF Noble VenturerRig Summary Ship shaped, Samsung 96K Currently in Ghana 12,000 ft Water DepthAvailable: 2031-Q3 Download Summary PDF Noble VikingRig Summary Ship shaped, Samsung 96K Currently in Brunei 12,000 ft Water DepthAvailable: 2026-Q3 Download Summary PDF Noble VoyagerRig Summary Ship shaped, Samsung 96K Currently in US Gulf 12,000 ft Water DepthAvailable: 2030-Q2 Download Summary PDF No items found Our Company Company OverviewCompany HistoryNORMS CenterHealth, Safety, and EnvironmentSustainabilityBoard of DirectorsManagement TeamBrand Portal Careers CareersNobleAdvances® Our Fleet FleetFleet Status Report Investors NewsEvents & PresentationsReports & FilingsCorporate GovernanceStock InformationWarrant InformationSocial Media Contact Stay Connected facebook linkedin Legal Notice NobleLine - Ethics Hotline Modern Slavery and Transparency Statement Privacy and Cookies Notice Aviso de Privacidade e Cookies Cookie Preferences © Copyright 2026 Noble Corporation. All Rights Reserved. Powered By Q4 Inc. 5.173.0.1 (opens in new window)",
+  "pageTitle": "Our Fleet | Noble Corporation",
+  "errors": [],
+  "httpStatus": 200
+}

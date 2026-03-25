@@ -1,0 +1,26 @@
+# ABOUTME: Field-level configuration for Jack/St. Malo development inputs
+# ABOUTME: Provides capex and schedule parameters for per-field analysis runs
+
+field:
+  field_id: jack_st_malo
+  display_name: "Jack/St. Malo"
+  status: producing
+  leases_key: jack_st_malo
+  first_oil: "2014-02-01"
+  data_through: "2024-12-31"
+  operator: "Chevron"
+  partners:
+    - name: "Chevron"
+      working_interest: 0.51
+    - name: "Equinor"
+      working_interest: 0.245
+    - name: "Suncor"
+      working_interest: 0.245
+  capex:
+    total_mm_usd: 7500
+    wells_mm_usd: 4100
+    facilities_mm_usd: 3400
+  opex_per_boe: 15.0
+  production_profile:
+    plateau_rate_mbopd: 94
+    gor_scf_per_bbl: 1200

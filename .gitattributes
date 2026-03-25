@@ -1,0 +1,10 @@
+# Binary file markers (no LFS — use .gitignore for large files)
+*.bin binary
+*.pdf binary
+*.xlsx binary
+*.zip binary
+*.gpkg binary
+
+# Data files — track with LFS stubs in data/ directories
+data/**/*.parquet filter=lfs diff=lfs merge=lfs -text
+data/**/*.csv filter=lfs diff=lfs merge=lfs -text

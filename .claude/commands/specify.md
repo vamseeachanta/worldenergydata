@@ -1,0 +1,1 @@
+../../../digitalmodel/.claude/commands/specify.md

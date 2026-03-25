@@ -1,0 +1,138 @@
+name: PR Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  pr-title:
+    name: Validate PR Title
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check PR title format
+        uses: amannn/action-semantic-pull-request@v6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            docs
+            style
+            refactor
+            perf
+            test
+            build
+            ci
+            chore
+            revert
+          requireScope: false
+          subjectPattern: ^.{1,80}$
+          subjectPatternError: |
+            The subject "{subject}" found in the pull request title "{title}"
+            doesn't match the required pattern. The subject must be 80 characters or less.
+
+  file-size:
+    name: Check File Sizes
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Check for large files
+        run: |
+          MAX_SIZE=5000000  # 5MB in bytes
+          LARGE_FILES=""
+
+          for file in $(git diff --name-only origin/main...HEAD 2>/dev/null || git diff --name-only HEAD~1); do
+            if [ -f "$file" ]; then
+              SIZE=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null || echo "0")
+              if [ "$SIZE" -gt "$MAX_SIZE" ]; then
+                LARGE_FILES="$LARGE_FILES\n- $file ($(numfmt --to=iec $SIZE))"
+              fi
+            fi
+          done
+
+          if [ -n "$LARGE_FILES" ]; then
+            echo "::warning::Large files detected (>5MB):$LARGE_FILES"
+          fi
+
+  sensitive-files:
+    name: Check Sensitive Files
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Check for sensitive files
+        run: |
+          SENSITIVE_PATTERNS=(
+            ".env"
+            "*.pem"
+            "*.key"
+            "*secret*"
+            "*credential*"
+            "*.p12"
+            "id_rsa"
+            "id_dsa"
+          )
+
+          FOUND=""
+          for pattern in "${SENSITIVE_PATTERNS[@]}"; do
+            FILES=$(git diff --name-only origin/main...HEAD 2>/dev/null | grep -E "$pattern" || true)
+            if [ -n "$FILES" ]; then
+              FOUND="$FOUND\n$FILES"
+            fi
+          done
+
+          if [ -n "$FOUND" ]; then
+            echo "::error::Potentially sensitive files detected:$FOUND"
+            exit 1
+          fi
+
+  changelog-check:
+    name: Changelog Check
+    runs-on: ubuntu-latest
+    if: |
+      !contains(github.event.pull_request.labels.*.name, 'skip-changelog') &&
+      !startsWith(github.event.pull_request.title, 'chore') &&
+      !startsWith(github.event.pull_request.title, 'ci')
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Check changelog update
+        run: |
+          if git diff --name-only origin/main...HEAD | grep -qE "^CHANGELOG|^HISTORY|^NEWS"; then
+            echo "Changelog has been updated"
+          else
+            echo "::notice::Consider updating the changelog for this PR"
+          fi
+
+  code-owners:
+    name: Code Owners Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Check CODEOWNERS exists
+        run: |
+          if [ -f ".github/CODEOWNERS" ] || [ -f "CODEOWNERS" ] || [ -f "docs/CODEOWNERS" ]; then
+            echo "CODEOWNERS file found"
+          else
+            echo "::notice::Consider adding a CODEOWNERS file"
+          fi

@@ -1,0 +1,154 @@
+"""Unit tests for the all_fields_report module."""
+
+import pytest
+from pathlib import Path
+
+import pandas as pd
+
+from tests.test_markers import unit
+
+
+def _make_result_df():
+    """Create sample AllFieldsRunner result DataFrame."""
+    return pd.DataFrame(
+        {
+            "FIELD_CODE": ["100", "200", "300", "400"],
+            "FIELD_NAME": ["Thunder Horse", "Mars", "Atlantis", "Auger"],
+            "GEOLOGICAL_ERA": ["Miocene", "Miocene", "Eocene", "Pliocene"],
+            "WATER_DEPTH_AVG": [6300.0, 2940.0, 7070.0, 2860.0],
+            "WELL_COUNT": [25, 60, 10, 40],
+            "FIRST_PRODUCTION": [2008, 1996, 2007, 1994],
+            "LAST_PRODUCTION": [2023, 2023, 2023, 2023],
+            "CUM_OIL_MMBBL": [350.0, 900.0, 180.0, 500.0],
+            "CUM_GAS_BCF": [200.0, 600.0, 100.0, 400.0],
+            "CUM_WATER_MMBBL": [50.0, 200.0, 30.0, 100.0],
+            "PEAK_OIL_BOPD": [80000.0, 120000.0, 50000.0, 90000.0],
+            "NPV10_MM_USD": [None, None, None, None],
+            "IRR_PCT": [None, None, None, None],
+            "PAYBACK_YRS": [None, None, None, None],
+        }
+    )
+
+
+@unit
+class TestAllFieldsReport:
+    """Tests for AllFieldsReport class."""
+
+    @pytest.fixture
+    def report_df(self):
+        return _make_result_df()
+
+    @pytest.fixture
+    def report(self, report_df):
+        from worldenergydata.bsee.reports.all_fields_report import (
+            AllFieldsReport,
+        )
+
+        return AllFieldsReport(report_df)
+
+    def test_init(self, report_df):
+        """Test report initialization."""
+        from worldenergydata.bsee.reports.all_fields_report import (
+            AllFieldsReport,
+        )
+
+        rpt = AllFieldsReport(report_df)
+        assert rpt._df is not None
+        assert len(rpt._df) == 4
+
+    def test_generate_markdown(self, report, tmp_path):
+        """Test markdown report generation."""
+        output = tmp_path / "report.md"
+        report.generate_markdown(output)
+
+        assert output.exists()
+        content = output.read_text()
+        assert "# BSEE All-Fields Analysis" in content
+        assert "Thunder Horse" in content
+        assert "Mars" in content
+        assert "Miocene" in content
+
+    def test_markdown_has_era_grouping(self, report, tmp_path):
+        """Test markdown report groups by geological era."""
+        output = tmp_path / "report.md"
+        report.generate_markdown(output)
+
+        content = output.read_text()
+        assert "Miocene" in content
+        assert "Eocene" in content
+        assert "Pliocene" in content
+
+    def test_markdown_has_executive_summary(self, report, tmp_path):
+        """Test markdown report has executive summary section."""
+        output = tmp_path / "report.md"
+        report.generate_markdown(output)
+
+        content = output.read_text()
+        assert "Summary" in content
+        assert "4" in content  # total fields
+
+    def test_generate_csv(self, report, tmp_path):
+        """Test CSV export."""
+        output = tmp_path / "report.csv"
+        report.generate_csv(output)
+
+        assert output.exists()
+        df = pd.read_csv(output)
+        assert len(df) == 4
+        assert "FIELD_CODE" in df.columns
+        assert "FIELD_NAME" in df.columns
+        assert "CUM_OIL_MMBBL" in df.columns
+
+    def test_csv_sorted_by_oil(self, report, tmp_path):
+        """Test CSV is sorted by cumulative oil descending."""
+        output = tmp_path / "report.csv"
+        report.generate_csv(output)
+
+        df = pd.read_csv(output)
+        assert df.iloc[0]["FIELD_NAME"] == "Mars"  # highest CUM_OIL
+
+    def test_generate_html(self, report, tmp_path):
+        """Test HTML dashboard generation."""
+        output = tmp_path / "dashboard.html"
+        report.generate_html(output)
+
+        assert output.exists()
+        content = output.read_text()
+        assert "<html" in content.lower() or "plotly" in content.lower()
+
+    def test_get_era_summary(self, report):
+        """Test era summary statistics."""
+        summary = report.get_era_summary()
+
+        assert isinstance(summary, pd.DataFrame)
+        assert len(summary) == 3  # Miocene, Eocene, Pliocene
+        assert "FIELD_COUNT" in summary.columns
+        assert "TOTAL_OIL_MMBBL" in summary.columns
+
+    def test_era_summary_sorted_by_production(self, report):
+        """Test era summary is sorted by total production."""
+        summary = report.get_era_summary()
+        # Miocene fields have most oil (350 + 900 = 1250)
+        assert summary.iloc[0].name == "Miocene"
+
+    def test_empty_dataframe(self, tmp_path):
+        """Test report generation with empty data."""
+        from worldenergydata.bsee.reports.all_fields_report import (
+            AllFieldsReport,
+        )
+
+        empty_df = pd.DataFrame(
+            columns=[
+                "FIELD_CODE", "FIELD_NAME", "GEOLOGICAL_ERA",
+                "CUM_OIL_MMBBL", "CUM_GAS_BCF",
+            ]
+        )
+        rpt = AllFieldsReport(empty_df)
+
+        md_out = tmp_path / "report.md"
+        rpt.generate_markdown(md_out)
+        assert md_out.exists()
+
+        csv_out = tmp_path / "report.csv"
+        rpt.generate_csv(csv_out)
+        assert csv_out.exists()

@@ -1,0 +1,62 @@
+[
+  {
+    "name": "valaris",
+    "owner": "Valaris Limited",
+    "url": "https://www.valaris.com/our-fleet",
+    "httpStatus": 200,
+    "status": "success",
+    "tableCount": 0,
+    "totalRows": 0,
+    "linkCount": 25,
+    "cardCount": 0,
+    "errors": []
+  },
+  {
+    "name": "noble",
+    "owner": "Noble Corporation",
+    "url": "https://www.noblecorp.com/our-fleet",
+    "httpStatus": 200,
+    "status": "success",
+    "tableCount": 0,
+    "totalRows": 0,
+    "linkCount": 80,
+    "cardCount": 0,
+    "errors": []
+  },
+  {
+    "name": "seadrill",
+    "owner": "Seadrill Limited",
+    "url": "https://www.seadrill.com/fleet/",
+    "httpStatus": 200,
+    "status": "success",
+    "tableCount": 0,
+    "totalRows": 0,
+    "linkCount": 78,
+    "cardCount": 0,
+    "errors": []
+  },
+  {
+    "name": "nabors",
+    "owner": "Nabors Industries",
+    "url": "https://www.nabors.com/our-rigs",
+    "httpStatus": 404,
+    "status": "success",
+    "tableCount": 0,
+    "totalRows": 0,
+    "linkCount": 221,
+    "cardCount": 0,
+    "errors": []
+  },
+  {
+    "name": "helmerich_payne",
+    "owner": "Helmerich & Payne",
+    "url": "https://www.hpinc.com/rig-fleet/flexrig-fleet",
+    "httpStatus": 200,
+    "status": "success",
+    "tableCount": 3,
+    "totalRows": 20,
+    "linkCount": 18,
+    "cardCount": 0,
+    "errors": []
+  }
+]

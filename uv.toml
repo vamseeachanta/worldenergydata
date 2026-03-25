@@ -1,0 +1,7 @@
+# UV Configuration
+python-preference = "managed"
+compile-bytecode = true
+
+[pip]
+index-url = "https://pypi.org/simple"
+prerelease = "if-necessary-or-explicit"

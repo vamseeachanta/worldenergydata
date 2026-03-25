@@ -1,0 +1,298 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# PEP 582
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+/nul
+
+# Agent OS / Claude Flow
+.agent-os/cache/
+.agent-os/temp/
+.cross-repo-cache/
+.fallback-cache/
+.claude/settings.local.json
+.mcp.json
+.swarm/
+.hive-mind/
+hive-mind-prompt-*.txt
+memory/
+coordination/
+memory/sessions/*
+!memory/sessions/README.md
+memory/agents/*
+!memory/agents/README.md
+coordination/memory_bank/*
+coordination/subtasks/*
+coordination/orchestration/*
+*.db
+*.db-journal
+*.db-wal
+*.sqlite
+*.sqlite-journal
+*.sqlite-wal
+
+# ============================================================
+# Pipeline-regenerable data (see DATA_RESIDENCE_POLICY.md)
+# ============================================================
+
+# OSHA raw data (regenerate: osha_acquirer.py)
+data/modules/hse/raw/osha/*.csv
+data/modules/hse/raw/osha/*.csv.zip
+data/modules/hse/raw/osha/*.sh
+
+# EPA TRI raw data (regenerate: epa_tri_acquirer.py)
+data/modules/hse/raw/epa_tri/*.csv
+
+# BSEE raw data (regenerate: bsee_acquirer.py)
+data/modules/hse/raw/bsee/
+data/modules/bsee/zip/
+
+# BSEE binary data — regenerate via: python3 scripts/refresh_bsee_all.py
+data/modules/bsee/bin/**/*.bin
+data/modules/bsee/csv/online_query_raw_data/
+data/modules/bsee/csv/production/
+data/modules/bsee/csv/well/
+data/modules/bsee/data/csv/
+data/modules/bsee/data/borehole/
+data/modules/bsee/data/analysis_data/
+data/modules/bsee/production/
+data/modules/bsee/full_data/
+data/modules/bsee/legacy/
+data/modules/bsee/archive/
+data/modules/bsee/well/
+data/modules/bsee/superseded/
+data/modules/bsee/_data_for_analysis/
+data/modules/bsee/data_for_analysis/
+data/modules/bsee.backup*/
+data/modules/bsee/*.zip
+data/modules/bsee/bsee_*.csv
+
+# Local data - not synced to git (large files, downloaded on demand)
+data/modules/bsee/.local/
+
+# Marine safety raw data (regenerate: download_datasets.py)
+data/modules/marine_safety/raw/**/*.csv
+data/modules/marine_safety/raw/**/*.xlsx
+data/modules/marine_safety/raw/**/*.gpkg
+data/modules/marine_safety/raw/**/*.zip
+data/modules/marine_safety/raw/**/*.pdf
+
+# Pipeline safety raw extracts
+data/modules/pipeline_safety/raw/phmsa/extracted/*.xlsx
+data/modules/pipeline_safety/raw/phmsa/extracted/*.pdf
+
+# SODIR large CSVs
+data/modules/sodir_zip_data/seaArea.csv
+data/modules/sodir_zip_data/prlAreaSplitByBlock.csv
+
+# Posters (large PDFs)
+data/modules/posters/*.pdf
+data/posters/*.pdf
+
+# Brazil ANP cached CSVs (regenerate: anp_client.py download)
+src/worldenergydata/brazil_anp/data/
+
+# UKCS NSTA cached CSVs (regenerate: nsta_client.py download)
+src/worldenergydata/ukcs/data/
+
+# EIA US cached API responses (regenerate: EIAApiClient.fetch_series())
+src/worldenergydata/eia_us/data/
+
+# LNGC data
+data/modules/lngc/
+data/lngc/
+
+# Drilling rigs offline data
+data/modules/drilling_rigs/offshore/
+data/drilling_rigs/
+
+# Legacy/backup data
+consolidation_backup/
+backups/
+*.backup*
+*.backup-*
+CLAUDE.md.backup*
+pyproject.toml.backup
+data/bsee/
+
+# Large docs (regenerable or legacy)
+docs/data_science/*.pdf
+docs/data_science/ref/*.pdf
+docs/modules/bsee/data/SME_Roy_attachments/
+docs/modules/bsee/_legacy/
+docs/modules/bsee/legacy/
+docs/modules/bsee/superseded/
+docs/raw_data/bsee/
+docs/raw_data/wind/*.xlsx
+docs/modules/equipment/fender/*.pdf
+docs/modules/equipment/buoys/*.pdf
+docs/modules/policy/*.pdf
+docs/project_management/*.pdf
+docs/literature/*.pdf
+docs/legacy_bsee/
+
+# Test artifacts
+tests/_archived/
+tests/**/results/*.html
+tests/**/results/*.csv
+tests/**/results/*.xlsx
+tests/modules/bsee/data/temp_delete/
+tests/modules/bsee/data/well_production_yearly/
+tests/modules/bsee/data/results/
+tests/modules/bsee/analysis/results/
+tests/modules/sodir/zip_data/
+tests/modules/sodir/seaArea.csv
+tests/modules/sodir/prlAreaSplitByBlock.csv
+
+# Large report outputs
+reports/bsee/
+reports/marine_safety/*/*.html
+reports/coverage/
+results/modules/marine_safety/
+
+# Nested clones (not submodules)
+frontierdeepwater/
+
+# Claude Flow artifacts (transient)
+**/.claude-flow/
+
+# Auto-generated spec files
+specs/modules/eager-*
+specs/modules/expressive-*
+
+# Test output artifacts
+test_output/
+output/
+CLAUDE.md.backup-*
+
+# Windows-path directory artifacts (cross-platform path bug — WRK-364)
+# Matches dirs like: D:\workspace-hub\... created on Windows and synced to Linux
+[A-Z]:\*
+
+# Runtime artifacts (generated, not for git)
+results/
+
+# Generated output artifacts
+report_*.xlsx
+test_export*.json
+COVERAGE_ANALYSIS.txt
+*.tmp
+
+# Archive directories (moved to _archive/)
+archive/

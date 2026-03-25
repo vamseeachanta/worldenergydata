@@ -1,0 +1,66 @@
+# Consolidated Requirements
+# Generated from all requirements.txt files in repository
+# This file is now replaced by pyproject.toml
+# Kept for reference only
+
+# From: scripts/requirements.txt
+# Core dependencies
+pandas
+numpy
+python-dateutil
+pytz
+tzdata
+
+# Data processing
+openpyxl
+xlrd
+xmltodict
+pyyaml
+
+# Web scraping
+bs4
+requests
+scrapy==2.13.4
+selenium
+
+# Plotting and visualization
+matplotlib
+plotly
+
+# Network and async
+urllib3
+certifi
+h11
+idna
+outcome
+trio
+trio-websocket
+wsproto
+
+# Development utilities
+attrs
+cffi
+pycparser
+PySocks
+six
+sniffio
+sortedcontainers
+soupsieve
+typing_extensions
+crochet
+colorama
+loguru
+
+# Financial calculations
+numpy-financial
+
+# Testing
+pytest
+deepdiff
+
+# Asset utilities (for legacy tests)
+assetutilities
+jinja2
+webcolors
+ruamel.yaml
+

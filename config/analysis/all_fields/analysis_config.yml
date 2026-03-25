@@ -1,0 +1,44 @@
+# All-Fields BSEE Analysis Configuration
+# WRK-011: All-Lease Field Analysis with Nicknames and Geological Era Grouping
+
+analysis_scope:
+  # Tier 1: All fields get production analysis + field names + geological era
+  tier_1: all
+
+  # Tier 2: These fields also get full financial analysis
+  tier_2:
+    config_dir: config/analysis/lower_tertiary/fields/
+    fields:
+      - anchor
+      - cascade_chinook
+      - jack_st_malo
+      - julia
+      - shenandoah
+      - stones
+      - big_foot
+
+data_sources:
+  # Historical production data (OGOR yearly files)
+  production: data/modules/bsee/bin/historical_production_yearly/
+
+  # Production summary (annual totals — always available)
+  production_summary: data/modules/bsee/bin/production_raw/mv_productionsum.bin
+  production_summary_wd: data/modules/bsee/bin/production_raw/mv_productionsumwd.bin
+
+  # Water depth lookup
+  water_depth: data/modules/bsee/bin/production_raw/mv_production_waterdepth.bin
+
+  # Paleowells geological data
+  paleowells: data/modules/bsee/paleowells/Paleowells.csv
+
+  # Field name sources (may be LFS stubs)
+  field_leases: data/modules/bsee/bin/deepqual/mv_deep_water_field_leases.bin
+  platform_structures: data/modules/bsee/bin/platstruc/mv_platstruc_structures.bin
+  lease_area_block: data/modules/bsee/bin/lab/mv_lease_area_block.bin
+
+output:
+  report_dir: reports/bsee/
+  results_dir: results/bsee/
+  markdown: all_fields_analysis.md
+  csv: all_fields_summary.csv
+  html: all_fields_dashboard.html

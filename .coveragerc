@@ -1,0 +1,67 @@
+[run]
+# Source paths to measure coverage for
+# Only measure worldenergydata package, not external/modules/validators
+source = src/worldenergydata
+
+# Branches to measure
+branch = True
+
+# Omit patterns
+omit =
+    */tests/*
+    */test_*.py
+    */__pycache__/*
+    */venv/*
+    */env/*
+    */.venv/*
+    */migrations/*
+    */alembic/*
+    */setup.py
+    */conftest.py
+    # Keep __init__.py - they contain important imports and re-exports
+    # */__init__.py
+
+# Parallel processing
+parallel = True
+
+[report]
+# Report format
+precision = 2
+show_missing = True
+skip_covered = False
+skip_empty = True
+
+# Exclude lines from coverage
+exclude_lines =
+    # Standard pragma
+    pragma: no cover
+
+    # Don't complain about missing debug code
+    def __repr__
+    def __str__
+
+    # Don't complain if tests don't hit defensive assertion code
+    raise AssertionError
+    raise NotImplementedError
+
+    # Don't complain if non-runnable code isn't run
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+
+    # Don't complain about abstract methods
+    @abstractmethod
+    @abc.abstractmethod
+
+    # Don't complain about pass statements
+    pass
+
+    # Don't complain about ellipsis
+    \.\.\.
+
+[html]
+# HTML report directory
+directory = htmlcov
+
+[xml]
+# XML report file
+output = coverage.xml

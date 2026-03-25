@@ -1,0 +1,591 @@
+{
+  "potential_name_duplicates": 53,
+  "exact_filename_duplicates": 13,
+  "name_based_duplicates": [
+    {
+      "file1": ".ai\\system-overview\\README.md",
+      "file2": "README.md",
+      "name_similarity": 1.0,
+      "same_category": false,
+      "file1_category": "development",
+      "file2_category": "user-guide"
+    },
+    {
+      "file1": ".ai\\system-overview\\README.md",
+      "file2": "docs\\README.md",
+      "name_similarity": 1.0,
+      "same_category": false,
+      "file1_category": "development",
+      "file2_category": "user-guide"
+    },
+    {
+      "file1": ".ai\\system-overview\\README.md",
+      "file2": ".ai\\workflows\\implementation\\README.md",
+      "name_similarity": 1.0,
+      "same_category": false,
+      "file1_category": "development",
+      "file2_category": "reference/literature"
+    },
+    {
+      "file1": ".ai\\workflows\\ai-journey-documentation.md",
+      "file2": ".ai\\workflows\\implementation\\change-documentation.md",
+      "name_similarity": 0.7727272727272727,
+      "same_category": false,
+      "file1_category": "development",
+      "file2_category": "user-guide"
+    },
+    {
+      "file1": ".ai\\workflows\\implementation\\implementation-summary.md",
+      "file2": ".ai\\workflows\\implementation\\implementation-tracking.md",
+      "name_similarity": 0.7111111111111111,
+      "same_category": true,
+      "file1_category": "development",
+      "file2_category": "development"
+    },
+    {
+      "file1": ".ai\\workflows\\implementation\\issue-planning.md",
+      "file2": ".ai\\workflows\\implementation\\templates\\issue-planning-template.md",
+      "name_similarity": 0.7567567567567568,
+      "same_category": true,
+      "file1_category": "development",
+      "file2_category": "development"
+    },
+    {
+      "file1": "docs\\development\\index.md",
+      "file2": "docs\\user-guide\\index.md",
+      "name_similarity": 1.0,
+      "same_category": false,
+      "file1_category": "development",
+      "file2_category": "user-guide"
+    },
+    {
+      "file1": "docs\\development\\index.md",
+      "file2": "docs\\data-sources\\index.md",
+      "name_similarity": 1.0,
+      "same_category": false,
+      "file1_category": "development",
+      "file2_category": "data-sources/bsee"
+    },
+    {
+      "file1": "docs\\development\\index.md",
+      "file2": "docs\\analysis-guides\\index.md",
+      "name_similarity": 1.0,
+      "same_category": false,
+      "file1_category": "development",
+      "file2_category": "analysis-guides/economic-evaluation"
+    },
+    {
+      "file1": "docs\\development\\index.md",
+      "file2": "docs\\examples\\index.md",
+      "name_similarity": 1.0,
+      "same_category": false,
+      "file1_category": "development",
+      "file2_category": "analysis-guides/economic-evaluation"
+    },
+    {
+      "file1": "docs\\development\\index.md",
+      "file2": "docs\\reference\\index.md",
+      "name_similarity": 1.0,
+      "same_category": false,
+      "file1_category": "development",
+      "file2_category": "data-sources/equipment"
+    },
+    {
+      "file1": "scripts\\requirements.txt",
+      "file2": "docs\\sub_ai\\_agents\\requirements.md",
+      "name_similarity": 1.0,
+      "same_category": false,
+      "file1_category": "development",
+      "file2_category": "user-guide"
+    },
+    {
+      "file1": "scripts\\requirements.txt",
+      "file2": "src\\worldenergydata.egg-info\\requires.txt",
+      "name_similarity": 0.8,
+      "same_category": false,
+      "file1_category": "development",
+      "file2_category": "analysis-guides/economic-evaluation"
+    },
+    {
+      "file1": "README.md",
+      "file2": "docs\\README.md",
+      "name_similarity": 1.0,
+      "same_category": true,
+      "file1_category": "user-guide",
+      "file2_category": "user-guide"
+    },
+    {
+      "file1": "README.md",
+      "file2": ".ai\\workflows\\implementation\\README.md",
+      "name_similarity": 1.0,
+      "same_category": false,
+      "file1_category": "user-guide",
+      "file2_category": "reference/literature"
+    },
+    {
+      "file1": ".agent-os\\specs\\2025-07-24-docs-organization\\spec.md",
+      "file2": ".agent-os\\specs\\2025-07-23-sodir-integration\\spec.md",
+      "name_similarity": 1.0,
+      "same_category": false,
+      "file1_category": "user-guide",
+      "file2_category": "data-sources/bsee"
+    },
+    {
+      "file1": "docs\\README.md",
+      "file2": ".ai\\workflows\\implementation\\README.md",
+      "name_similarity": 1.0,
+      "same_category": false,
+      "file1_category": "user-guide",
+      "file2_category": "reference/literature"
+    },
+    {
+      "file1": "docs\\modules\\fracfocus\\data.md",
+      "file2": "docs\\modules\\onshore\\wyoming\\data.md",
+      "name_similarity": 1.0,
+      "same_category": false,
+      "file1_category": "user-guide",
+      "file2_category": "data-sources/onshore"
+    },
+    {
+      "file1": "docs\\modules\\materials\\resources.md",
+      "file2": "src\\worldenergydata.egg-info\\SOURCES.txt",
+      "name_similarity": 0.875,
+      "same_category": false,
+      "file1_category": "user-guide",
+      "file2_category": "data-sources/bsee"
+    },
+    {
+      "file1": "docs\\sub_ai\\_agents\\requirements.md",
+      "file2": "src\\worldenergydata.egg-info\\requires.txt",
+      "name_similarity": 0.8,
+      "same_category": false,
+      "file1_category": "user-guide",
+      "file2_category": "analysis-guides/economic-evaluation"
+    },
+    {
+      "file1": "docs\\sub_ai\\_agents\\rules.md",
+      "file2": "docs\\sub_ai\\_agents\\alt-rules.md",
+      "name_similarity": 0.7142857142857143,
+      "same_category": false,
+      "file1_category": "user-guide",
+      "file2_category": "reference/literature"
+    },
+    {
+      "file1": "docs\\user-guide\\index.md",
+      "file2": "docs\\data-sources\\index.md",
+      "name_similarity": 1.0,
+      "same_category": false,
+      "file1_category": "user-guide",
+      "file2_category": "data-sources/bsee"
+    },
+    {
+      "file1": "docs\\user-guide\\index.md",
+      "file2": "docs\\analysis-guides\\index.md",
+      "name_similarity": 1.0,
+      "same_category": false,
+      "file1_category": "user-guide",
+      "file2_category": "analysis-guides/economic-evaluation"
+    },
+    {
+      "file1": "docs\\user-guide\\index.md",
+      "file2": "docs\\examples\\index.md",
+      "name_similarity": 1.0,
+      "same_category": false,
+      "file1_category": "user-guide",
+      "file2_category": "analysis-guides/economic-evaluation"
+    },
+    {
+      "file1": "docs\\user-guide\\index.md",
+      "file2": "docs\\reference\\index.md",
+      "name_similarity": 1.0,
+      "same_category": false,
+      "file1_category": "user-guide",
+      "file2_category": "data-sources/equipment"
+    },
+    {
+      "file1": "docs\\data-sources\\index.md",
+      "file2": "docs\\analysis-guides\\index.md",
+      "name_similarity": 1.0,
+      "same_category": false,
+      "file1_category": "data-sources/bsee",
+      "file2_category": "analysis-guides/economic-evaluation"
+    },
+    {
+      "file1": "docs\\data-sources\\index.md",
+      "file2": "docs\\examples\\index.md",
+      "name_similarity": 1.0,
+      "same_category": false,
+      "file1_category": "data-sources/bsee",
+      "file2_category": "analysis-guides/economic-evaluation"
+    },
+    {
+      "file1": "docs\\data-sources\\index.md",
+      "file2": "docs\\reference\\index.md",
+      "name_similarity": 1.0,
+      "same_category": false,
+      "file1_category": "data-sources/bsee",
+      "file2_category": "data-sources/equipment"
+    },
+    {
+      "file1": "docs\\modules\\bsee\\analysis\\economics\\intro.md",
+      "file2": "docs\\raw_data\\wa\\intro.md",
+      "name_similarity": 1.0,
+      "same_category": true,
+      "file1_category": "data-sources/bsee",
+      "file2_category": "data-sources/bsee"
+    },
+    {
+      "file1": "docs\\modules\\bsee\\analysis\\rig_days\\rig_days_by_WAR.md",
+      "file2": "docs\\modules\\bsee\\analysis\\rig_days\\rig_days_summary.md",
+      "name_similarity": 0.7096774193548387,
+      "same_category": true,
+      "file1_category": "data-sources/bsee",
+      "file2_category": "data-sources/bsee"
+    },
+    {
+      "file1": "docs\\modules\\bsee\\data\\apm_data_rev1.md",
+      "file2": "docs\\modules\\bsee\\data\\data_rev1.md",
+      "name_similarity": 0.8181818181818182,
+      "same_category": true,
+      "file1_category": "data-sources/bsee",
+      "file2_category": "data-sources/bsee"
+    },
+    {
+      "file1": "docs\\modules\\bsee\\data\\clean_up\\data_explaination.md",
+      "file2": "docs\\raw_data\\bsee\\data_exploration.md",
+      "name_similarity": 0.8484848484848485,
+      "same_category": true,
+      "file1_category": "data-sources/bsee",
+      "file2_category": "data-sources/bsee"
+    },
+    {
+      "file1": "docs\\modules\\bsee\\data\\clean_up\\data_for_analysis.md",
+      "file2": "docs\\modules\\bsee\\_legacy\\data_for_analysis_legacy.md",
+      "name_similarity": 0.8292682926829268,
+      "same_category": true,
+      "file1_category": "data-sources/bsee",
+      "file2_category": "data-sources/bsee"
+    },
+    {
+      "file1": "docs\\modules\\bsee\\_legacy\\code\\mitra\\calculations\\Datatypes file.txt",
+      "file2": "docs\\modules\\bsee\\_legacy\\superseded\\calculations\\Datatypes file.txt",
+      "name_similarity": 1.0,
+      "same_category": true,
+      "file1_category": "data-sources/bsee",
+      "file2_category": "data-sources/bsee"
+    },
+    {
+      "file1": "docs\\modules\\bsee\\_legacy\\code\\mitra\\calculations\\PaleogeneEpochs.txt",
+      "file2": "docs\\modules\\bsee\\_legacy\\superseded\\calculations\\PaleogeneEpochs.txt",
+      "name_similarity": 1.0,
+      "same_category": true,
+      "file1_category": "data-sources/bsee",
+      "file2_category": "data-sources/bsee"
+    },
+    {
+      "file1": "docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\BoreholeRawData\\mv_boreholes.txt",
+      "file2": "docs\\modules\\bsee\\_legacy\\superseded\\data\\BoreholeRawData\\mv_boreholes.txt",
+      "name_similarity": 1.0,
+      "same_category": true,
+      "file1_category": "data-sources/bsee",
+      "file2_category": "data-sources/bsee"
+    },
+    {
+      "file1": "docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\gepaldmp_all\\gepaldmp_Header.txt",
+      "file2": "docs\\modules\\bsee\\_legacy\\superseded\\data\\gepaldmp_all\\gepaldmp_Header.txt",
+      "name_similarity": 1.0,
+      "same_category": true,
+      "file1_category": "data-sources/bsee",
+      "file2_category": "data-sources/bsee"
+    },
+    {
+      "file1": "docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\gepaldmp_all\\gepaldmp_Header.txt",
+      "file2": "docs\\raw_data\\bsee\\paleo\\gepaldmp_Header.txt",
+      "name_similarity": 1.0,
+      "same_category": true,
+      "file1_category": "data-sources/bsee",
+      "file2_category": "data-sources/bsee"
+    },
+    {
+      "file1": "docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\gepaldmp_all\\gepaldmp_Paleo.txt",
+      "file2": "docs\\modules\\bsee\\_legacy\\superseded\\data\\gepaldmp_all\\gepaldmp_Header.txt",
+      "name_similarity": 0.7586206896551724,
+      "same_category": true,
+      "file1_category": "data-sources/bsee",
+      "file2_category": "data-sources/bsee"
+    },
+    {
+      "file1": "docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\gepaldmp_all\\gepaldmp_Paleo.txt",
+      "file2": "docs\\modules\\bsee\\_legacy\\superseded\\data\\gepaldmp_all\\gepaldmp_Paleo.txt",
+      "name_similarity": 1.0,
+      "same_category": true,
+      "file1_category": "data-sources/bsee",
+      "file2_category": "data-sources/bsee"
+    },
+    {
+      "file1": "docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\gepaldmp_all\\gepaldmp_Paleo.txt",
+      "file2": "docs\\raw_data\\bsee\\paleo\\gepaldmp_Header.txt",
+      "name_similarity": 0.7586206896551724,
+      "same_category": true,
+      "file1_category": "data-sources/bsee",
+      "file2_category": "data-sources/bsee"
+    },
+    {
+      "file1": "docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\gepaldmp_all\\gepaldmp_Paleo.txt",
+      "file2": "docs\\raw_data\\bsee\\paleo\\gepaldmp_Paleo.txt",
+      "name_similarity": 1.0,
+      "same_category": true,
+      "file1_category": "data-sources/bsee",
+      "file2_category": "data-sources/bsee"
+    },
+    {
+      "file1": "docs\\modules\\bsee\\_legacy\\superseded\\data\\gepaldmp_all\\gepaldmp_Header.txt",
+      "file2": "docs\\raw_data\\bsee\\paleo\\gepaldmp_Header.txt",
+      "name_similarity": 1.0,
+      "same_category": true,
+      "file1_category": "data-sources/bsee",
+      "file2_category": "data-sources/bsee"
+    },
+    {
+      "file1": "docs\\modules\\bsee\\_legacy\\superseded\\data\\gepaldmp_all\\gepaldmp_Paleo.txt",
+      "file2": "docs\\raw_data\\bsee\\paleo\\gepaldmp_Header.txt",
+      "name_similarity": 0.7586206896551724,
+      "same_category": true,
+      "file1_category": "data-sources/bsee",
+      "file2_category": "data-sources/bsee"
+    },
+    {
+      "file1": "docs\\modules\\bsee\\_legacy\\superseded\\data\\gepaldmp_all\\gepaldmp_Paleo.txt",
+      "file2": "docs\\raw_data\\bsee\\paleo\\gepaldmp_Paleo.txt",
+      "name_similarity": 1.0,
+      "same_category": true,
+      "file1_category": "data-sources/bsee",
+      "file2_category": "data-sources/bsee"
+    },
+    {
+      "file1": "docs\\raw_data\\bsee\\other\\mastdatadelimit.txt",
+      "file2": "docs\\raw_data\\bsee\\other\\mastproddelimit.txt",
+      "name_similarity": 0.8,
+      "same_category": true,
+      "file1_category": "data-sources/bsee",
+      "file2_category": "data-sources/bsee"
+    },
+    {
+      "file1": ".agent-os\\specs\\2025-07-23-sodir-integration\\tasks.md",
+      "file2": ".agent-os\\specs\\2025-07-24-docs-organization\\tasks.md",
+      "name_similarity": 1.0,
+      "same_category": false,
+      "file1_category": "data-sources/sodir",
+      "file2_category": "reference/literature"
+    },
+    {
+      "file1": ".agent-os\\specs\\2025-07-23-sodir-integration\\sub-specs\\technical-spec.md",
+      "file2": ".agent-os\\specs\\2025-07-24-docs-organization\\sub-specs\\technical-spec.md",
+      "name_similarity": 1.0,
+      "same_category": false,
+      "file1_category": "data-sources/sodir",
+      "file2_category": "reference/equipment-specs"
+    },
+    {
+      "file1": ".agent-os\\specs\\2025-07-23-sodir-integration\\sub-specs\\tests.md",
+      "file2": ".agent-os\\specs\\2025-07-24-docs-organization\\sub-specs\\tests.md",
+      "name_similarity": 1.0,
+      "same_category": false,
+      "file1_category": "data-sources/sodir",
+      "file2_category": "reference/equipment-specs"
+    },
+    {
+      "file1": "docs\\analysis-guides\\index.md",
+      "file2": "docs\\examples\\index.md",
+      "name_similarity": 1.0,
+      "same_category": true,
+      "file1_category": "analysis-guides/economic-evaluation",
+      "file2_category": "analysis-guides/economic-evaluation"
+    },
+    {
+      "file1": "docs\\analysis-guides\\index.md",
+      "file2": "docs\\reference\\index.md",
+      "name_similarity": 1.0,
+      "same_category": false,
+      "file1_category": "analysis-guides/economic-evaluation",
+      "file2_category": "data-sources/equipment"
+    },
+    {
+      "file1": "docs\\examples\\index.md",
+      "file2": "docs\\reference\\index.md",
+      "name_similarity": 1.0,
+      "same_category": false,
+      "file1_category": "analysis-guides/economic-evaluation",
+      "file2_category": "data-sources/equipment"
+    },
+    {
+      "file1": "data\\modules\\lngc\\lngc.md",
+      "file2": "docs\\modules\\bsee\\analysis\\economics\\lng.md",
+      "name_similarity": 0.8571428571428571,
+      "same_category": true,
+      "file1_category": "data-sources/lng",
+      "file2_category": "data-sources/lng"
+    }
+  ],
+  "filename_duplicates": [
+    {
+      "filename": "readme.md",
+      "locations": [
+        ".ai\\system-overview\\README.md",
+        "README.md",
+        "docs\\README.md",
+        ".ai\\workflows\\implementation\\README.md"
+      ],
+      "categories": [
+        "development",
+        "user-guide",
+        "user-guide",
+        "reference/literature"
+      ]
+    },
+    {
+      "filename": "index.md",
+      "locations": [
+        "docs\\development\\index.md",
+        "docs\\user-guide\\index.md",
+        "docs\\data-sources\\index.md",
+        "docs\\analysis-guides\\index.md",
+        "docs\\examples\\index.md",
+        "docs\\reference\\index.md"
+      ],
+      "categories": [
+        "development",
+        "user-guide",
+        "data-sources/bsee",
+        "analysis-guides/economic-evaluation",
+        "analysis-guides/economic-evaluation",
+        "data-sources/equipment"
+      ]
+    },
+    {
+      "filename": "spec.md",
+      "locations": [
+        ".agent-os\\specs\\2025-07-24-docs-organization\\spec.md",
+        ".agent-os\\specs\\2025-07-23-sodir-integration\\spec.md"
+      ],
+      "categories": [
+        "user-guide",
+        "data-sources/bsee"
+      ]
+    },
+    {
+      "filename": "data.md",
+      "locations": [
+        "docs\\modules\\fracfocus\\data.md",
+        "docs\\modules\\onshore\\wyoming\\data.md"
+      ],
+      "categories": [
+        "user-guide",
+        "data-sources/onshore"
+      ]
+    },
+    {
+      "filename": "intro.md",
+      "locations": [
+        "docs\\modules\\bsee\\analysis\\economics\\intro.md",
+        "docs\\raw_data\\wa\\intro.md"
+      ],
+      "categories": [
+        "data-sources/bsee",
+        "data-sources/bsee"
+      ]
+    },
+    {
+      "filename": "datatypes file.txt",
+      "locations": [
+        "docs\\modules\\bsee\\_legacy\\code\\mitra\\calculations\\Datatypes file.txt",
+        "docs\\modules\\bsee\\_legacy\\superseded\\calculations\\Datatypes file.txt"
+      ],
+      "categories": [
+        "data-sources/bsee",
+        "data-sources/bsee"
+      ]
+    },
+    {
+      "filename": "paleogeneepochs.txt",
+      "locations": [
+        "docs\\modules\\bsee\\_legacy\\code\\mitra\\calculations\\PaleogeneEpochs.txt",
+        "docs\\modules\\bsee\\_legacy\\superseded\\calculations\\PaleogeneEpochs.txt"
+      ],
+      "categories": [
+        "data-sources/bsee",
+        "data-sources/bsee"
+      ]
+    },
+    {
+      "filename": "mv_boreholes.txt",
+      "locations": [
+        "docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\BoreholeRawData\\mv_boreholes.txt",
+        "docs\\modules\\bsee\\_legacy\\superseded\\data\\BoreholeRawData\\mv_boreholes.txt"
+      ],
+      "categories": [
+        "data-sources/bsee",
+        "data-sources/bsee"
+      ]
+    },
+    {
+      "filename": "gepaldmp_header.txt",
+      "locations": [
+        "docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\gepaldmp_all\\gepaldmp_Header.txt",
+        "docs\\modules\\bsee\\_legacy\\superseded\\data\\gepaldmp_all\\gepaldmp_Header.txt",
+        "docs\\raw_data\\bsee\\paleo\\gepaldmp_Header.txt"
+      ],
+      "categories": [
+        "data-sources/bsee",
+        "data-sources/bsee",
+        "data-sources/bsee"
+      ]
+    },
+    {
+      "filename": "gepaldmp_paleo.txt",
+      "locations": [
+        "docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\gepaldmp_all\\gepaldmp_Paleo.txt",
+        "docs\\modules\\bsee\\_legacy\\superseded\\data\\gepaldmp_all\\gepaldmp_Paleo.txt",
+        "docs\\raw_data\\bsee\\paleo\\gepaldmp_Paleo.txt"
+      ],
+      "categories": [
+        "data-sources/bsee",
+        "data-sources/bsee",
+        "data-sources/bsee"
+      ]
+    },
+    {
+      "filename": "tasks.md",
+      "locations": [
+        ".agent-os\\specs\\2025-07-23-sodir-integration\\tasks.md",
+        ".agent-os\\specs\\2025-07-24-docs-organization\\tasks.md"
+      ],
+      "categories": [
+        "data-sources/sodir",
+        "reference/literature"
+      ]
+    },
+    {
+      "filename": "technical-spec.md",
+      "locations": [
+        ".agent-os\\specs\\2025-07-23-sodir-integration\\sub-specs\\technical-spec.md",
+        ".agent-os\\specs\\2025-07-24-docs-organization\\sub-specs\\technical-spec.md"
+      ],
+      "categories": [
+        "data-sources/sodir",
+        "reference/equipment-specs"
+      ]
+    },
+    {
+      "filename": "tests.md",
+      "locations": [
+        ".agent-os\\specs\\2025-07-23-sodir-integration\\sub-specs\\tests.md",
+        ".agent-os\\specs\\2025-07-24-docs-organization\\sub-specs\\tests.md"
+      ],
+      "categories": [
+        "data-sources/sodir",
+        "reference/equipment-specs"
+      ]
+    }
+  ]
+}

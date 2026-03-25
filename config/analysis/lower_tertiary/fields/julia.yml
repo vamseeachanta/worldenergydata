@@ -1,0 +1,25 @@
+# ABOUTME: Field-level configuration for Julia subsea tieback project
+# ABOUTME: Supplies modular inputs for Julia economic analysis scenarios
+
+field:
+  field_id: julia
+  display_name: "Julia"
+  status: producing
+  leases_key: julia
+  first_oil: "2019-05-01"
+  data_through: "2024-12-31"
+  operator: "Equinor"
+  partners:
+    - name: "Equinor"
+      working_interest: 0.50
+    - name: "ExxonMobil"
+      working_interest: 0.50
+  capex:
+    total_mm_usd: 4700
+    host_mm_usd: 2500
+    subsea_mm_usd: 1500
+    wells_mm_usd: 700
+  production_profile:
+    plateau_rate_mbopd: 34
+    gor_scf_per_bbl: 1000
+  opex_per_boe: 18.0

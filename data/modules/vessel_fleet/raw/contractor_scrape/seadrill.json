@@ -1,0 +1,327 @@
+{
+  "name": "seadrill",
+  "owner": "Seadrill Limited",
+  "url": "https://www.seadrill.com/fleet/",
+  "timestamp": "2026-02-13T03:55:38.825Z",
+  "status": "success",
+  "vessels": [],
+  "tables": [],
+  "links": [
+    {
+      "href": "https://www.seadrill.com/fleet/#",
+      "text": "Consent"
+    },
+    {
+      "href": "https://www.seadrill.com/fleet/#",
+      "text": "Details"
+    },
+    {
+      "href": "https://www.seadrill.com/fleet/#",
+      "text": "[#IABV2SETTINGS#]"
+    },
+    {
+      "href": "https://www.seadrill.com/fleet/#",
+      "text": "About"
+    },
+    {
+      "href": "https://www.seadrill.com/fleet/#",
+      "text": "Show details"
+    },
+    {
+      "href": "https://www.seadrill.com/fleet/#",
+      "text": "Cloudflare1"
+    },
+    {
+      "href": "https://www.seadrill.com/fleet/#",
+      "text": "Cookiebot1"
+    },
+    {
+      "href": "https://www.seadrill.com/fleet/#",
+      "text": "Google2"
+    },
+    {
+      "href": "https://www.seadrill.com/fleet/#",
+      "text": "Q45"
+    },
+    {
+      "href": "https://www.seadrill.com/fleet/#",
+      "text": "challenges.cloudflare.comvimeo.com2"
+    },
+    {
+      "href": "https://www.seadrill.com/fleet/#",
+      "text": "login.q4inc.comseadrillcorp2019tf.q4web.com2"
+    },
+    {
+      "href": "https://www.seadrill.com/fleet/#",
+      "text": "vimeo.comwpenginepowered.comwww.seadrill.com3"
+    },
+    {
+      "href": "https://www.seadrill.com/fleet/#",
+      "text": "Adobe Inc.1"
+    },
+    {
+      "href": "https://www.seadrill.com/fleet/#",
+      "text": "Google2"
+    },
+    {
+      "href": "https://www.seadrill.com/fleet/#",
+      "text": "Q43"
+    },
+    {
+      "href": "https://www.seadrill.com/fleet/#",
+      "text": "Vimeo1"
+    },
+    {
+      "href": "https://www.seadrill.com/fleet/#",
+      "text": "Google2"
+    },
+    {
+      "href": "https://www.seadrill.com/fleet/#",
+      "text": "Q45"
+    },
+    {
+      "href": "https://www.seadrill.com/fleet/#",
+      "text": "Cross-domain consent[#BULK_CONSENT_DOMAINS_COUNT#]"
+    },
+    {
+      "href": "https://www.instagram.com/seadrillltd/",
+      "text": "Follow"
+    },
+    {
+      "href": "https://uk.linkedin.com/company/seadrill",
+      "text": "Follow"
+    },
+    {
+      "href": "https://twitter.com/seadrillltd",
+      "text": "Follow"
+    },
+    {
+      "href": "https://www.seadrill.com/about-us/",
+      "text": "About Us"
+    },
+    {
+      "href": "https://www.seadrill.com/about-us/",
+      "text": "Learn more"
+    },
+    {
+      "href": "https://www.seadrill.com/about-us/our-values/",
+      "text": "Our values"
+    },
+    {
+      "href": "https://www.seadrill.com/about-us/code-of-conduct/",
+      "text": "Code of conduct"
+    },
+    {
+      "href": "https://www.seadrill.com/corporate-governance/",
+      "text": "Corporate governance"
+    },
+    {
+      "href": "https://www.seadrill.com/about-us/board-and-senior-management/",
+      "text": "Board & Senior Management"
+    },
+    {
+      "href": "https://www.seadrill.com/about-us/transparency-and-equal-pay-report-brazil/",
+      "text": "Transparency and equal pay report Brazil"
+    },
+    {
+      "href": "https://www.seadrill.com/innovation/",
+      "text": "Innovation"
+    },
+    {
+      "href": "https://www.seadrill.com/sustainability/",
+      "text": "Sustainability"
+    },
+    {
+      "href": "https://www.seadrill.com/fleet/",
+      "text": "Fleet"
+    },
+    {
+      "href": "https://www.seadrill.com/safety/",
+      "text": "Safety"
+    },
+    {
+      "href": "https://ir.seadrill.com/",
+      "text": "Investors"
+    },
+    {
+      "href": "https://ir.seadrill.com/overview/default.aspx",
+      "text": "Learn more"
+    },
+    {
+      "href": "https://ir.seadrill.com/news/default.aspx",
+      "text": "Press Releases"
+    },
+    {
+      "href": "https://ir.seadrill.com/financials/sec-filings/default.aspx",
+      "text": "SEC Filings"
+    },
+    {
+      "href": "https://ir.seadrill.com/financials/quarterly-results/default.aspx",
+      "text": "Quarterly Results"
+    },
+    {
+      "href": "https://ir.seadrill.com/events-and-presentations/default.aspx",
+      "text": "Presentations"
+    },
+    {
+      "href": "https://www.seadrill.com/wp-content/uploads/2025/08/Seadrill-Fleet-Status-Report-August-6-2025-vF.pdf",
+      "text": "Fleet Status Report"
+    },
+    {
+      "href": "https://www.seadrill.com/media/",
+      "text": "Media"
+    },
+    {
+      "href": "https://www.seadrill.com/media/",
+      "text": "Learn more"
+    },
+    {
+      "href": "https://www.seadrill.com/media/video-gallery/",
+      "text": "Video gallery"
+    },
+    {
+      "href": "https://www.seadrill.com/media/image-gallery/",
+      "text": "Image gallery"
+    },
+    {
+      "href": "https://www.seadrill.com/media/world-seadrill-magazine/",
+      "text": "World of Seadrill Magazine"
+    },
+    {
+      "href": "https://www.seadrill.com/careers/",
+      "text": "Careers"
+    },
+    {
+      "href": "https://www.seadrill.com/careers/",
+      "text": "Learn more"
+    },
+    {
+      "href": "https://www.seadrill.com/careers/offshore/",
+      "text": "Offshore"
+    },
+    {
+      "href": "https://www.seadrill.com/careers/onshore/",
+      "text": "Onshore"
+    },
+    {
+      "href": "https://www.seadrill.com/contact/",
+      "text": "Contact"
+    },
+    {
+      "href": "https://www.seadrill.com/search/",
+      "text": ""
+    },
+    {
+      "href": "https://www.seadrill.com/search/",
+      "text": "U"
+    },
+    {
+      "href": "https://www.seadrill.com/wp-content/uploads/2024/01/Sevan_Louisiana.pdf",
+      "text": "Technical Sheet"
+    },
+    {
+      "href": "https://www.seadrill.com/wp-content/uploads/2024/01/SONANGOL_LIBONGOS.pdf",
+      "text": "Technical Sheet"
+    },
+    {
+      "href": "https://www.seadrill.com/wp-content/uploads/2024/01/SONANGOL_QUENGUELA.pdf",
+      "text": "Technical Sheet"
+    },
+    {
+      "href": "https://www.seadrill.com/wp-content/uploads/2024/01/West_Aquarius-V3.pdf",
+      "text": "Technical Sheet"
+    },
+    {
+      "href": "https://www.seadrill.com/wp-content/uploads/2024/11/2024-10-West_Auriga.pdf",
+      "text": "Technical Sheet"
+    },
+    {
+      "href": "https://www.seadrill.com/wp-content/uploads/2025/02/2025-02-West_Capella-V2.pdf",
+      "text": "Technical Sheet"
+    },
+    {
+      "href": "https://www.seadrill.com/wp-content/uploads/2024/11/2024-09-West_Carina.pdf",
+      "text": "Technical Sheet"
+    },
+    {
+      "href": "https://www.seadrill.com/wp-content/uploads/2024/01/West_Eclipse.v1.pdf",
+      "text": "Technical Sheet"
+    },
+    {
+      "href": "https://www.seadrill.com/wp-content/uploads/2024/01/West_Elara.pdf",
+      "text": "Technical Sheet"
+    },
+    {
+      "href": "https://www.seadrill.com/wp-content/uploads/2024/01/West_Gemini.pdf",
+      "text": "Technical Sheet"
+    },
+    {
+      "href": "https://www.seadrill.com/wp-content/uploads/2024/01/2024-01_West_Jupiter.pdf",
+      "text": "Technical Sheet"
+    },
+    {
+      "href": "https://www.seadrill.com/wp-content/uploads/2025/07/2025-05-West_Neptune.pdf",
+      "text": "Technical Sheet"
+    },
+    {
+      "href": "https://www.seadrill.com/wp-content/uploads/2024/01/West_Phoenix-1.pdf",
+      "text": "Technical Sheet"
+    },
+    {
+      "href": "https://www.seadrill.com/wp-content/uploads/2025/07/2025-05-West_Polaris.pdf",
+      "text": "Technical Sheet"
+    },
+    {
+      "href": "https://www.seadrill.com/wp-content/uploads/2024/01/West_Saturn.1.pdf",
+      "text": "Technical Sheet"
+    },
+    {
+      "href": "https://www.seadrill.com/wp-content/uploads/2024/01/2024-01_West_Tellus.pdf",
+      "text": "Technical Sheet"
+    },
+    {
+      "href": "https://www.seadrill.com/wp-content/uploads/2024/11/2024-10-West_Vela.pdf",
+      "text": "Technical Sheet"
+    },
+    {
+      "href": "https://www.seadrill.com/privacy-settings/",
+      "text": "Privacy"
+    },
+    {
+      "href": "https://www.seadrill.com/legal-notice/",
+      "text": "Legal Notice"
+    },
+    {
+      "href": "https://www.seadrill.com/sitemap/",
+      "text": "Sitemap"
+    },
+    {
+      "href": "https://www.seadrill.com/alert-service/",
+      "text": "Alert Service"
+    },
+    {
+      "href": "https://www.seadrill.com/modern-slavery-act-statement/",
+      "text": "Modern Slavery Act Statement"
+    },
+    {
+      "href": "https://www.seadrill.com/transparency-act-statement/",
+      "text": "Transparency Act Statement"
+    },
+    {
+      "href": "https://www.instagram.com/seadrillltd/?hl=en",
+      "text": "Follow"
+    },
+    {
+      "href": "https://uk.linkedin.com/company/seadrill",
+      "text": "Follow"
+    },
+    {
+      "href": "https://twitter.com/seadrillltd",
+      "text": "Follow"
+    }
+  ],
+  "rawHtml": "ConsentDetails[#IABV2SETTINGS#]AboutThe law states that we can store cookies on your device if they are strictly necessary for the operation of this site. For all other types of cookies we need your permissionThis site uses different types of cookies. Some cookies are placed by third party services that appear on our pages.You can at any time change or withdraw your consent from the Cookie Declaration on our website.Learn more about who we are, how you can contact us and how we process personal data in our Privacy Policy.Consent SelectionNecessary Preferences Statistics Marketing Show detailsDetailsNecessary 16 Necessary cookies help make a website usable by enabling basic functions like page navigation and access to secure areas of the website. The website cannot function properly without these cookies.Cloudflare1Learn more about this providercf.turnstile.uThis cookie is used to distinguish between humans and bots. Maximum Storage Duration: PersistentType: HTML Local StorageCookiebot1Learn more about this providerCookieConsentStores the user's cookie consent state for the current domainMaximum Storage Duration: 1 yearType: HTTP CookieGoogle2Learn more about this providerSome of the data collected by this provider is for the purposes of personalization and measuring advertising effectiveness._GRECAPTCHAThis cookie is used to distinguish between humans and bots. This is beneficial for the website, in order to make valid reports on the use of their website.Maximum Storage Duration: 180 daysType: HTTP Cookie_grecaptchaThis cookie is used to distinguish between humans and bots. This is beneficial for the website, in order to make valid reports on the use of their website.Maximum Storage Duration: PersistentType: HTML Local StorageQ45Learn more about this providerrc::aThis cookie is used to distinguish between humans and bots. This is beneficial for the website, in order to make valid reports on the use of their website.Maximum Storage Duration: PersistentType: HTML Local Storagerc::bThis cookie is used to distinguish between humans and bots. Maximum Storage Duration: SessionType: HTML Local Storagerc::cThis cookie is used to distinguish between humans and bots. Maximum Storage Duration: SessionType: HTML Local Storagerc::fThis cookie is used to distinguish between humans and bots. Maximum Storage Duration: PersistentType: HTML Local Storagedid_compatEnsures visitor browsing-security by preventing cross-site request forgery. This cookie is essential for the security of the website and visitor. Maximum Storage Duration: 1 yearType: HTTP Cookiechallenges.cloudflare.comvimeo.com2_cfuvid [x2]PendingMaximum Storage Duration: SessionType: HTTP Cookielogin.q4inc.comseadrillcorp2019tf.q4web.com2did [x2]Unique id that identifies the user's session.Maximum Storage Duration: 1 yearType: HTTP Cookievimeo.comwpenginepowered.comwww.seadrill.com3__cf_bm [x3]This cookie is used to distinguish between humans and bots. This is beneficial for the website, in order to make valid reports on the use of their website.Maximum Storage Duration: 1 dayType: HTTP CookiePreferences 0 Preference cookies enable a website to remember information that changes the way the website behaves or looks, like your preferred language or the region that you are in.We do not use cookies of this type.Statistics 7 Statistic cookies help website owners to understand how visitors interact with websites by collecting and reporting information anonymously.Adobe Inc.1Learn more about this providerp.gifKeeps track of special fonts used on the website for internal analysis. The cookie does not register any visitor data. Maximum Storage Duration: SessionType: Pixel TrackerGoogle2Learn more about this providerSome of the data collected by this provider is for the purposes of personalization and measuring advertising effectiveness._ga [x2]Used to send data to Google Analytics about the visitor's device and behavior. Tracks the visitor across devices and marketing channels.Maximum Storage Duration: 2 yearsType: HTTP CookieQ43Learn more about this providersnowplowOutQueue_#_post2Registers statistical data on users' behaviour on the website. Used for internal analytics by the website operator. Maximum Storage Duration: PersistentType: HTML Local StoragesnowplowOutQueue_#_post2.expiresRegisters statistical data on users' behaviour on the website. Used for internal analytics by the website operator. Maximum Storage Duration: PersistentType: HTML Local StoragespRegisters statistical data on users' behaviour on the website. Used for internal analytics by the website operator. Maximum Storage Duration: 1 yearType: HTTP CookieVimeo1Learn more about this providervuidCollects data on the user's visits to the website, such as which pages have been read.Maximum Storage Duration: 2 yearsType: HTTP CookieMarketing 2 Marketing cookies are used to track visitors across websites. The intention is to display ads that are relevant and engaging for the individual user and thereby more valuable for publishers and third party advertisers.Google2Learn more about this providerSome of the data collected by this provider is for the purposes of personalization and measuring advertising effectiveness._gid [x2]Used to send data to Google Analytics about the visitor's device and behavior. Tracks the visitor across devices and marketing channels.Maximum Storage Duration: 1 dayType: HTTP CookieUnclassified 5Unclassified cookies are cookies that we are in the process of classifying, together with the providers of individual cookies.Q45Learn more about this provider__uxq412__id.8834PendingMaximum Storage Duration: 1 yearType: HTTP Cookie__uxq412__ses.8834PendingMaximum Storage Duration: 1 dayType: HTTP Cookieq4l_idp_token_fetch_attemptedPendingMaximum Storage Duration: SessionType: HTML Local Storageq4l_token_fetch_attemptedPendingMaximum Storage Duration: SessionType: HTML Local Storageq4tPendingMaximum Storage Duration: PersistentType: HTML Local StorageCross-domain consent[#BULK_CONSENT_DOMAINS_COUNT#] [#BULK_CONSENT_TITLE#]List of domains your consent applies to: [#BULK_CONSENT_DOMAINS#]Cookie declaration last updated on 2/6/26 by Cookiebot[#IABV2_TITLE#][#IABV2_BODY_INTRO#][#IABV2_BODY_LEGITIMATE_INTEREST_INTRO#][#IABV2_BODY_PREFERENCE_INTRO#][#IABV2_LABEL_PURPOSES#][#IABV2_BODY_PURPOSES_INTRO#][#IABV2_BODY_PURPOSES#][#IABV2_LABEL_FEATURES#][#IABV2_BODY_FEATURES_INTRO#][#IABV2_BODY_FEATURES#][#IABV2_LABEL_PARTNERS#][#IABV2_BODY_PARTNERS_INTRO#][#IABV2_BODY_PARTNERS#]AboutPlease state your consent ID and date when you contact us regarding your consent. Do not sell or share my personal informationDeny Allow selection Customize Allow all FollowFollowFollow About Us About Us Seadrill is setting the standard in deepwater oil and gas drilling. Learn more Our valuesCode of conductCorporate governanceBoard & Senior ManagementTransparency and equal pay report Brazil InnovationSustainabilityFleetSafetyInvestors Investors We’re a disciplined deepwater driller committed to maximizing shareholder value. Learn more Press ReleasesSEC FilingsQuarterly ResultsPresentationsFleet Status Report Media Media The latest news and media for Seadrill Limited. Learn more Video galleryImage galleryWorld of Seadrill Magazine Careers Careers Seadrill works offshore and onshore in the oil & gas industry. For careers, jobs and work on rigs and onshore, search for positions. Learn more OffshoreOnshoreCurrent openings Contact U Video Player 00:0000:0000:05Use Up/Down Arrow keys to increase or decrease volume. Our fleet is your business  Download fleet status report A High Quality, Modern Fleet We have a high-quality, modern floater-focused fleet operating in premier basins around the world, setting the standard in offshore drilling. Our Rig Portfolio We have the right fleet for the future. Rig type Rig type Jack-up Drillship Semi-submersible Ownership Ownership Seadrill Limited Sonadrill Holding Ltd Availability Availability Available 2023 2024 2025 2026 2027 2028 2029 2030 Sevan Louisiana TYPE Semi-submersibleAVAILABILITY Jun 2025OWNERSHIP Seadrill Limited Technical Sheet Sonangol Libongos TYPE DrillshipAVAILABILITY Jun 2025OWNERSHIP Sonadrill Holding Ltd Technical Sheet Sonangol Quenguela TYPE DrillshipAVAILABILITY Oct 2025OWNERSHIP Sonadrill Holding Ltd Technical Sheet West Aquarius TYPE Semi-submersibleAVAILABILITY AvailableOWNERSHIP Seadrill Limited Technical Sheet West Auriga TYPE DrillshipAVAILABILITY Dec 2027OWNERSHIP Seadrill Limited Technical Sheet West Capella TYPE DrillshipAVAILABILITY Feb 2025OWNERSHIP Seadrill Limited Technical Sheet West Carina TYPE DrillshipAVAILABILITY Jan 2026OWNERSHIP Seadrill Limited Technical Sheet West Eclipse TYPE Semi-submersibleAVAILABILITY AvailableOWNERSHIP Seadrill Limited Technical Sheet West Elara TYPE Jack-upAVAILABILITY Mar 2028OWNERSHIP Seadrill Limited Technical Sheet West Gemini TYPE DrillshipAVAILABILITY May 2025OWNERSHIP Seadrill Limited Technical Sheet West Jupiter TYPE DrillshipAVAILABILITY Q1 2029OWNERSHIP Seadrill Limited Technical Sheet West Neptune TYPE Drillship AVAILABILITY Apr 2026 OWNERSHIP Seadrill Limited Technical Sheet West Phoenix TYPE Semi-submersibleAVAILABILITY AvailableOWNERSHIP Seadrill Limited Technical Sheet West Polaris TYPE Drillship AVAILABILITY Feb 2028 OWNERSHIP Seadrill Limited Technical Sheet West Saturn TYPE DrillshipAVAILABILITY Aug 2030OWNERSHIP Seadrill Limited Technical Sheet West Tellus TYPE DrillshipAVAILABILITY Q1 2029OWNERSHIP Seadrill Limited Technical Sheet West Vela TYPE DrillshipAVAILABILITY Sept 2025OWNERSHIP Seadrill Limited Technical Sheet PrivacyLegal NoticeSitemapAlert Service Modern Slavery Act Statement Transparency Act Statement © Seadrill Limited 2026 FollowFollowFollow",
+  "pageTitle": "Fleet - Seadrill Limited (NYSE:SDRL)",
+  "errors": [],
+  "httpStatus": 200
+}

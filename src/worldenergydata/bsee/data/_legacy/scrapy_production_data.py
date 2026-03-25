@@ -1,0 +1,110 @@
+import scrapy
+from scrapy.utils.response import open_in_browser  # noqa useful while program is running
+from scrapy.crawler import CrawlerRunner  # noqa
+from twisted.internet import reactor, defer  # noqa
+from scrapy import FormRequest  # noqa
+
+import warnings
+warnings.filterwarnings("ignore", category=scrapy.exceptions.ScrapyDeprecationWarning)
+
+import pandas as pd  # noqa
+import os  # noqa
+from io import BytesIO  # noqa
+import logging  # noqa
+from loguru import logger
+from colorama import Fore, Style
+from colorama import init as colorama_init
+
+from crochet import setup, wait_for
+
+colorama_init()
+
+# Initialize Crochet
+setup()
+
+logging.getLogger('scrapy').propagate = False  # to avoid displaying log outputs in terminal
+
+
+class SpiderBsee(scrapy.Spider):
+    name = 'Production_data'
+    start_urls = ['https://www.data.bsee.gov/Production/ProductionData/Default.aspx']
+
+    def __init__(self, input_item=None, cfg=None, data_store=None,*args, **kwargs):
+        super(SpiderBsee, self).__init__(*args, **kwargs)
+        self.input_item = input_item
+        self.cfg = cfg
+        self.data_store = data_store
+
+    def parse(self, response):
+
+        lease_num = str(self.input_item['lease_number'])
+        start = str(self.input_item['Duration']['from'])
+        end = str(self.input_item['Duration']['to'])
+
+        first_request_data = self.cfg['data_retrieval']['production']['website']['form_data']['first_request']
+        first_request_data['ASPxFormLayout1$ASPxTextBoxLN'] = lease_num
+        first_request_data['ASPxFormLayout1$ASPxTextBoxDF'] = start
+        first_request_data['ASPxFormLayout1$ASPxTextBoxDT'] = end
+
+        logger.debug(f"Getting data for LEASE {lease_num} ... START")
+
+        yield FormRequest.from_response(response, formdata=first_request_data, callback=self.step2)
+
+    def step2(self, response):
+        if response.status == 200:
+            logger.success(f"{Fore.GREEN} Webpage's Data request is successful{Style.RESET_ALL}")
+        else:
+            logger.error(f"{Fore.RED}Data request failed to webpage{Style.RESET_ALL}. Status code: {response.status}")
+
+        lease_num = str(self.input_item['lease_number'])
+        start = str(self.input_item['Duration']['from'])
+        end = str(self.input_item['Duration']['to'])
+
+        second_request_data = self.cfg['data_retrieval']['production']['website']['form_data']['second_request']
+        second_request_data['ASPxFormLayout1$ASPxTextBoxLN'] = lease_num
+        second_request_data['ASPxFormLayout1$ASPxTextBoxDF'] = start
+        second_request_data['ASPxFormLayout1$ASPxTextBoxDT'] = end
+
+        yield FormRequest.from_response(response, formdata=second_request_data, callback=self.parse_csv_data)
+
+    def parse_csv_data(self, response):
+        lease_num = self.input_item['lease_number']
+        label = self.cfg['meta']['label']
+        output_path = output_path = os.path.join(self.cfg['Analysis']['result_folder'], 'Data')
+        output_file = os.path.join(output_path, str(label) + '.csv')
+
+        if response.status == 200:
+            logger.debug(f"Getting data for LEASE {lease_num} ... COMPLETE")
+            response_csv = pd.read_csv(BytesIO(response.body))
+            
+            if response_csv.empty:
+                logger.warning(f"{Fore.RED}Empty DataFrame for lease {lease_num}. Skipping CSV file.{Style.RESET_ALL}")
+            else:
+                with open(output_file, 'wb') as f:
+                    f.write(response.body)
+                    # logging.debug("\n****The Scraped data of given value ****\n")
+                    # logging.debug(response_csv)
+
+                self.data_store['data'] = response_csv  # Store DataFrame in data_store
+                
+        else:
+            logger.error(f"{Fore.RED}Failed to get the data for lease.{lease_num}. Status code: {response.status} {Style.RESET_ALL}")
+            self.data_store['data'] = pd.DataFrame()
+
+# Class to run the Scrapy spider
+class ScrapyRunnerProduction:
+    def __init__(self):
+        self.runner = CrawlerRunner({
+            'LOG_LEVEL': 'CRITICAL',
+        })
+
+    @wait_for(timeout=60.0) 
+    def run_spider(self, cfg, input_item):
+        data_store = {}
+        deferred = self.runner.crawl(SpiderBsee, input_item=input_item, cfg=cfg, data_store=data_store)
+        deferred.addCallback(lambda _: data_store.get('data', pd.DataFrame()))  # Return DataFrame from data_store
+        return deferred
+
+if __name__ == "__main__":
+    runner = ScrapyRunnerProduction()
+    spider_bsee = SpiderBsee()
