@@ -50,3 +50,8 @@ monitoring:
   retry_backoff_seconds: 60
   webhook_url: null   # Set to a URL to receive POST with status.json on each cycle
   status_file: logs/scheduler/status.json
+  smtp_host: null    # Set in .env as SMTP_HOST
+  smtp_user: null    # Set in .env as SMTP_USER
+  smtp_pass: null    # Set in .env as SMTP_PASS
+  smtp_port: 587
+  alert_recipients: []  # Defaults to smtp_user if empty

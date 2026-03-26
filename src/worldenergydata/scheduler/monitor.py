@@ -170,6 +170,43 @@ class StatusReporter:
         if self.webhook_url:
             self._post_webhook(report)
 
+    def check_and_alert(self, results: List[JobResult], alert_sender) -> None:
+        """Write status, check for failures and staleness, send alerts.
+
+        Per D-16: Alert on failure after retries and staleness breach.
+        Partial success (status=success, records=0) does NOT alert.
+
+        Args:
+            results: List of JobResults from this run cycle.
+            alert_sender: AlertSender instance for sending email alerts.
+        """
+        self.write_status(results)
+
+        # Alert on failures (D-16 trigger 1)
+        failures = [r for r in results if r.status == "failure"]
+        for f in failures:
+            alert_sender.send_alert(
+                f"[WED] Job FAILED: {f.job_name}",
+                f"Job {f.job_name} failed at {f.end_time}.\nError: {f.error_msg}",
+            )
+
+        # Alert on staleness (D-16 trigger 2)
+        from worldenergydata.scheduler.staleness import check_staleness
+
+        status = self._read_status()
+        stale_jobs = check_staleness(status)
+        for job_name in stale_jobs:
+            alert_sender.send_alert(
+                f"[WED] Data STALE: {job_name}",
+                f"Job {job_name} has not completed within expected cadence.",
+            )
+
+    def _read_status(self) -> dict:
+        """Read and return the status.json content."""
+        if self.status_file.exists():
+            return json.loads(self.status_file.read_text(encoding="utf-8"))
+        return {"jobs": {}}
+
     def _post_webhook(self, report: dict) -> None:
         """POST the status report to the configured webhook URL."""
         if requests is None:  # pragma: no cover
