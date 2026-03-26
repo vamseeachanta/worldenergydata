@@ -1,4 +1,11 @@
-"""LNG Terminals dataset refresh job."""
+"""LNG terminal capacity/utilization data refresh job -- Tier 2 (scaffolding only).
+
+TODO: Implement data fetching for LNG terminal data.
+- Identify LNG terminal data sources (GIIGNL, IHS, public datasets)
+- Add HTTP client or data loader logic
+- Write Parquet output to data/lng_terminals/ directory
+- Add tests in tests/unit/scheduler/test_lng_terminals_adapter.py
+"""
 import logging
 from datetime import datetime
 
@@ -8,55 +15,31 @@ logger = logging.getLogger(__name__)
 
 
 class LngTerminalsRefreshJob(AbstractJob):
-    """Refresh the global LNG terminals dataset."""
+    """Refresh LNG terminal capacity/utilization data -- Tier 2 stub.
+
+    This adapter follows the standard pattern (D-17) but data
+    fetching is not yet implemented. Returns a skipped result
+    until implementation is complete.
+    """
 
     name = "lng_terminals_refresh"
 
     def run(self, config: dict) -> JobResult:
-        """Execute LNG terminals data refresh.
-
-        Loads the built-in LNG terminal dataset and optionally applies
-        any configured source overrides.
+        """Return skipped result until LNG terminal fetching is implemented.
 
         Args:
-            config: May contain "data_path" for external source data.
+            config: Reserved for future use (e.g., data_path).
 
         Returns:
-            JobResult indicating success or failure.
+            JobResult with status="skipped".
         """
         start = datetime.now()
-        try:
-            data_path = config.get("data_path")
-            if data_path:
-                logger.info("LNG terminals refresh using data_path=%s", data_path)
-            else:
-                logger.info("LNG terminals refresh using built-in dataset.")
-
-            from worldenergydata.lng_terminals.query import (
-                LngTerminalClient,
-                LngTerminalQuery,
-            )
-
-            client = LngTerminalClient()
-            result = client.query(LngTerminalQuery())
-            records = result.total_count
-
-            logger.info("LNG terminals refresh completed: %d terminals.", records)
-            return JobResult(
-                job_name=self.name,
-                start_time=start,
-                end_time=datetime.now(),
-                status="success",
-                records_updated=records,
-                error_msg=None,
-            )
-        except Exception as exc:  # pragma: no cover
-            logger.error("LNG terminals refresh failed: %s", exc)
-            return JobResult(
-                job_name=self.name,
-                start_time=start,
-                end_time=datetime.now(),
-                status="failure",
-                records_updated=0,
-                error_msg=str(exc),
-            )
+        logger.info("%s: Tier 2 stub -- not yet implemented.", self.name)
+        return JobResult(
+            job_name=self.name,
+            start_time=start,
+            end_time=datetime.now(),
+            status="skipped",
+            records_updated=0,
+            error_msg=None,
+        )

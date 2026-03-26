@@ -1,4 +1,11 @@
-"""UKCS (UK Continental Shelf) data refresh job."""
+"""UK Continental Shelf (UKCS) data refresh job -- Tier 2 (scaffolding only).
+
+TODO: Implement data fetching for UKCS production data.
+- Identify NSTA (North Sea Transition Authority) data endpoints
+- Add HTTP client for production/well data retrieval
+- Write Parquet output to data/ukcs/ directory
+- Add tests in tests/unit/scheduler/test_ukcs_adapter.py
+"""
 import logging
 from datetime import datetime
 
@@ -8,39 +15,31 @@ logger = logging.getLogger(__name__)
 
 
 class UkcsRefreshJob(AbstractJob):
-    """Refresh UK Continental Shelf oil and gas production data."""
+    """Refresh UK Continental Shelf production data -- Tier 2 stub.
+
+    This adapter follows the standard pattern (D-17) but data
+    fetching is not yet implemented. Returns a skipped result
+    until implementation is complete.
+    """
 
     name = "ukcs_refresh"
 
     def run(self, config: dict) -> JobResult:
-        """Execute UKCS data refresh.
+        """Return skipped result until UKCS fetching is implemented.
 
         Args:
-            config: Optional configuration (e.g., nsta_api_url, output_dir).
+            config: Reserved for future use (e.g., nsta_api_url, output_dir).
 
         Returns:
-            JobResult indicating success or failure.
+            JobResult with status="skipped".
         """
         start = datetime.now()
-        try:
-            logger.info("UKCS data refresh started.")
-            # Stub: real implementation fetches from NSTA (North Sea Transition Authority) data
-            logger.info("UKCS data refresh completed (stub).")
-            return JobResult(
-                job_name=self.name,
-                start_time=start,
-                end_time=datetime.now(),
-                status="success",
-                records_updated=0,
-                error_msg=None,
-            )
-        except Exception as exc:  # pragma: no cover
-            logger.error("UKCS refresh failed: %s", exc)
-            return JobResult(
-                job_name=self.name,
-                start_time=start,
-                end_time=datetime.now(),
-                status="failure",
-                records_updated=0,
-                error_msg=str(exc),
-            )
+        logger.info("%s: Tier 2 stub -- not yet implemented.", self.name)
+        return JobResult(
+            job_name=self.name,
+            start_time=start,
+            end_time=datetime.now(),
+            status="skipped",
+            records_updated=0,
+            error_msg=None,
+        )

@@ -100,15 +100,16 @@ class TestMetoceanJobLocations:
         result = job.run(config={"locations": []})
         assert result is not None
 
-    def test_metocean_records_updated_reflects_location_count(self):
-        """records_updated should equal number of locations processed."""
+    def test_metocean_tier2_stub_returns_skipped(self):
+        """Tier 2 stub returns skipped status with zero records."""
         job = MetoceanRefreshJob()
         locations = [
             {"lat": 28.5, "lon": -88.5, "name": "GOM"},
             {"lat": 60.0, "lon": 2.0, "name": "NCS"},
         ]
         result = job.run(config={"locations": locations})
-        assert result.records_updated == len(locations)
+        assert result.status == "skipped"
+        assert result.records_updated == 0
 
 
 class TestBseeJobConfig:
