@@ -6,9 +6,11 @@ from typing import Dict, List, Optional
 
 import schedule
 
+from worldenergydata.scheduler.alerting import AlertSender
 from worldenergydata.scheduler.config import SchedulerConfig, load_config, validate_config
 from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
 from worldenergydata.scheduler.monitor import JobLogger, RetryManager, StatusReporter
+from worldenergydata.scheduler.status_enricher import enrich_status
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +45,13 @@ class DataScheduler:
         self._status_reporter = StatusReporter(
             status_file=mon.get("status_file", "logs/scheduler/status.json"),
             webhook_url=mon.get("webhook_url"),
+        )
+        self._alert_sender = AlertSender(
+            smtp_host=mon.get("smtp_host"),
+            smtp_user=mon.get("smtp_user"),
+            smtp_pass=mon.get("smtp_pass"),
+            smtp_port=mon.get("smtp_port", 587),
+            recipients=mon.get("alert_recipients", []),
         )
 
     def register_job(self, job: AbstractJob) -> None:
@@ -124,6 +133,8 @@ class DataScheduler:
         result = self._retry_manager.run_with_retry(_run)
         self._record_result(job_name, result)
         self._job_logger.log_result(result)
+        # Trigger alerting and enriched status write
+        self._status_reporter.check_and_alert([result], self._alert_sender)
         logger.info(
             "Job '%s' finished with status=%s records=%d",
             job_name,
@@ -138,11 +149,10 @@ class DataScheduler:
         self._job_state[job_name]["last_result"] = result.status
 
     def status(self) -> dict:
-        """Return per-job status summary.
+        """Return per-job status summary enriched with staleness details.
 
         Returns:
-            Dict with 'jobs' key mapping job name to last_run, next_run,
-            last_result fields.
+            Dict with 'jobs', 'staleness', and 'alerts' keys.
         """
         jobs_status = {}
         for name, state in self._job_state.items():
@@ -151,7 +161,8 @@ class DataScheduler:
                 "last_result": state["last_result"],
                 "next_run": state["next_run"],
             }
-        return {"jobs": jobs_status}
+        base = {"jobs": jobs_status}
+        return enrich_status(base)
 
     def _schedule_jobs(self) -> None:
         """Register enabled jobs with the schedule library."""
