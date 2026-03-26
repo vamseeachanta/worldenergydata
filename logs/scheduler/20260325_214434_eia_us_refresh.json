@@ -1,0 +1,8 @@
+{
+  "job_name": "eia_us_refresh",
+  "start_time": "2026-03-25T21:44:34.641559",
+  "end_time": "2026-03-25T21:44:34.641688",
+  "status": "success",
+  "records_updated": 0,
+  "error_msg": null
+}
