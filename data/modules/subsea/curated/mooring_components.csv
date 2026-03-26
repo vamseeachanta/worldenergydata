@@ -1,0 +1,15 @@
+COMPONENT_ID,COMPONENT_TYPE,MANUFACTURER,SIZE_MM,MBL_KN,WEIGHT_KG_PER_M,MATERIAL,GRADE,DATA_SOURCE,NOTES
+MC-CH-R3-84,chain,Vicinay,84,4740,141.0,steel,R3,Vicinay catalog,R3 studless chain 84mm
+MC-CH-R3-100,chain,Vicinay,100,6580,199.0,steel,R3,Vicinay catalog,R3 studless chain 100mm
+MC-CH-R4-84,chain,Vicinay,84,5920,141.0,steel,R4,Vicinay catalog,R4 studless chain 84mm
+MC-CH-R4-100,chain,Vicinay,100,8230,199.0,steel,R4,Vicinay catalog,R4 studless chain 100mm
+MC-CH-R5-84,chain,Vicinay,84,6670,141.0,steel,R5,Vicinay catalog,R5 studless chain 84mm
+MC-WR-6S-76,wire_rope,Bridon-Bekaert,76,5880,25.8,steel,,Bridon-Bekaert spec,6-strand spiral wire rope 76mm
+MC-WR-6S-89,wire_rope,Bridon-Bekaert,89,8040,35.4,steel,,Bridon-Bekaert spec,6-strand spiral wire rope 89mm
+MC-WR-6S-102,wire_rope,Bridon-Bekaert,102,10530,46.5,steel,,Bridon-Bekaert spec,6-strand spiral wire rope 102mm
+MC-PR-160,polyester_rope,Lankhorst,160,9810,12.8,polyester,,API RP 2SK Table 3,Sub-rope polyester tether 160mm
+MC-PR-200,polyester_rope,Lankhorst,200,15300,20.0,polyester,,API RP 2SK Table 3,Sub-rope polyester tether 200mm
+MC-AN-VLA-15,anchor,Vryhof,15000,14710,,steel,,Vryhof catalog,Stevmanta VLA 15t anchor
+MC-AN-SEPLA-20,anchor,InterMoor,20000,19620,,steel,,API RP 2SK Table 3,Suction embedded plate anchor 20t
+MC-CON-H-LINK,connector,Vicinay,100,8230,45.0,steel,R4,Vicinay catalog,H-link chain connector R4 100mm
+MC-CH-R4-120,chain,Vicinay,120,11700,286.0,steel,R4,Vicinay catalog,R4 studless chain 120mm for deep water
