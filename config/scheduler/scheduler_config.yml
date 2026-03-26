@@ -20,6 +20,7 @@ jobs:
     day: 5
     time: "04:00"
     enabled: true
+    output_dir: data/eia
     # api_key: null  # Set to your EIA API key for authenticated endpoints
 
   - name: metocean_refresh
