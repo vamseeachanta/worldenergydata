@@ -8,6 +8,7 @@ TODO: Implement data fetching for UKCS production data.
 """
 import logging
 from datetime import datetime
+from pathlib import Path
 
 from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
 
@@ -23,6 +24,7 @@ class UkcsRefreshJob(AbstractJob):
     """
 
     name = "ukcs_refresh"
+    default_output_dir = Path("data/modules/ukcs")
 
     def run(self, config: dict) -> JobResult:
         """Return skipped result until UKCS fetching is implemented.
@@ -34,7 +36,10 @@ class UkcsRefreshJob(AbstractJob):
             JobResult with status="skipped".
         """
         start = datetime.now()
+        output_dir = Path(config.get("output_dir", self.default_output_dir))
+        # Scaffolded for future adapter implementation; path is intentionally resolved now.
         logger.info("%s: Tier 2 stub -- not yet implemented.", self.name)
+        logger.debug("%s output directory: %s", self.name, output_dir)
         return JobResult(
             job_name=self.name,
             start_time=start,

@@ -18,6 +18,10 @@ jobs:
     interval: daily
     time: "02:00"
     enabled: true
+  - name: lng_terminals_refresh
+    interval: weekly
+    time: "07:00"
+    enabled: true
 
 monitoring:
   log_dir: {log_dir}
@@ -59,16 +63,35 @@ class TestCLIImports:
         from worldenergydata.scheduler.cli import cmd_stop
         assert callable(cmd_stop)
 
+    def test_cli_all_jobs_includes_lng_terminals_job(self):
+        from worldenergydata.scheduler.cli import ALL_JOBS
+
+        names = [job.name for job in ALL_JOBS]
+        assert "lng_terminals_refresh" in names
+
 
 class TestCLIStatusCommand:
+    def test_status_default_job_registry_includes_lng_terminals(self, tmp_path):
+        config_path = _write_config(tmp_path)
+        from worldenergydata.scheduler.cli import cmd_status
+
+        result = cmd_status(config_path=config_path)
+
+        assert "lng_terminals_refresh" in result["jobs"]
+
     def test_status_returns_dict(self, tmp_path):
         config_path = _write_config(tmp_path)
         from worldenergydata.scheduler.cli import cmd_status
         from worldenergydata.scheduler.jobs.bsee_refresh import BseeRefreshJob
+        from worldenergydata.scheduler.jobs.lng_terminals_refresh import LngTerminalsRefreshJob
 
-        result = cmd_status(config_path=config_path, jobs=[BseeRefreshJob()])
+        result = cmd_status(
+            config_path=config_path,
+            jobs=[BseeRefreshJob(), LngTerminalsRefreshJob()],
+        )
         assert isinstance(result, dict)
         assert "jobs" in result
+        assert "lng_terminals_refresh" in result["jobs"]
 
     def test_status_no_jobs_shows_empty(self, tmp_path):
         config_path = _write_config(tmp_path)

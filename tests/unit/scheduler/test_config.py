@@ -14,22 +14,43 @@ jobs:
     interval: weekly
     time: "02:00"
     enabled: true
+    output_dir: data/modules/bsee
   - name: sodir_refresh
     interval: daily
     time: "03:00"
     enabled: true
+    output_dir: data/modules/sodir
   - name: eia_us_refresh
     interval: monthly
     day: 5
     time: "04:00"
     enabled: false
+    output_dir: data/modules/eia
   - name: metocean_refresh
     interval: daily
     time: "01:00"
     enabled: true
+    output_dir: data/modules/metocean
     locations:
       - {lat: 28.5, lon: -88.5, name: "GOM"}
       - {lat: 60.0, lon: 2.0, name: "NCS"}
+  - name: brazil_anp_refresh
+    interval: monthly
+    day: 10
+    time: "05:00"
+    enabled: true
+    output_dir: data/modules/brazil_anp
+  - name: ukcs_refresh
+    interval: monthly
+    day: 7
+    time: "06:00"
+    enabled: true
+    output_dir: data/modules/ukcs
+  - name: lng_terminals_refresh
+    interval: weekly
+    time: "07:00"
+    enabled: true
+    output_dir: data/modules/lng_terminals
 
 monitoring:
   log_dir: logs/scheduler/
@@ -69,6 +90,26 @@ def _write_temp_yaml(content: str) -> str:
 
 
 class TestLoadConfig:
+    def test_repo_scheduler_config_includes_lng_and_modules_output_dirs(self):
+        repo_config = Path(
+            "/mnt/local-analysis/workspace-hub/worldenergydata/config/scheduler/scheduler_config.yml"
+        )
+
+        config = load_config(str(repo_config))
+
+        expected_names = {
+            "bsee_refresh",
+            "sodir_refresh",
+            "eia_us_refresh",
+            "metocean_refresh",
+            "brazil_anp_refresh",
+            "ukcs_refresh",
+            "lng_terminals_refresh",
+        }
+        assert {job["name"] for job in config.jobs} == expected_names
+        for job in config.jobs:
+            assert job["output_dir"].startswith("data/modules/")
+
     def test_load_valid_config(self):
         path = _write_temp_yaml(VALID_YAML)
         try:
@@ -81,7 +122,7 @@ class TestLoadConfig:
         path = _write_temp_yaml(VALID_YAML)
         try:
             config = load_config(path)
-            assert len(config.jobs) == 4
+            assert len(config.jobs) == 7
         finally:
             os.unlink(path)
 
@@ -94,6 +135,36 @@ class TestLoadConfig:
             assert "sodir_refresh" in names
             assert "eia_us_refresh" in names
             assert "metocean_refresh" in names
+            assert "brazil_anp_refresh" in names
+            assert "ukcs_refresh" in names
+            assert "lng_terminals_refresh" in names
+        finally:
+            os.unlink(path)
+
+    def test_load_config_uses_data_modules_output_dir_convention(self):
+        path = _write_temp_yaml(VALID_YAML)
+        try:
+            config = load_config(path)
+            expected = {
+                "bsee_refresh": "data/modules/bsee",
+                "sodir_refresh": "data/modules/sodir",
+                "eia_us_refresh": "data/modules/eia",
+                "metocean_refresh": "data/modules/metocean",
+                "brazil_anp_refresh": "data/modules/brazil_anp",
+                "ukcs_refresh": "data/modules/ukcs",
+                "lng_terminals_refresh": "data/modules/lng_terminals",
+            }
+            actual = {job["name"]: job["output_dir"] for job in config.jobs}
+            assert actual == expected
+        finally:
+            os.unlink(path)
+
+    def test_load_config_lng_terminals_output_dir(self):
+        path = _write_temp_yaml(VALID_YAML)
+        try:
+            config = load_config(path)
+            lng = next(j for j in config.jobs if j["name"] == "lng_terminals_refresh")
+            assert lng["output_dir"] == "data/modules/lng_terminals"
         finally:
             os.unlink(path)
 

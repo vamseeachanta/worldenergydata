@@ -18,6 +18,7 @@ from worldenergydata.scheduler.jobs.eia_us_refresh import EiaUsRefreshJob
 from worldenergydata.scheduler.jobs.brazil_anp_refresh import BrazilAnpRefreshJob
 from worldenergydata.scheduler.jobs.ukcs_refresh import UkcsRefreshJob
 from worldenergydata.scheduler.jobs.metocean_refresh import MetoceanRefreshJob
+from worldenergydata.scheduler.jobs.lng_terminals_refresh import LngTerminalsRefreshJob
 from worldenergydata.scheduler.scheduler import DataScheduler
 
 logger = logging.getLogger(__name__)
@@ -31,6 +32,7 @@ ALL_JOBS: List[AbstractJob] = [
     BrazilAnpRefreshJob(),
     UkcsRefreshJob(),
     MetoceanRefreshJob(),
+    LngTerminalsRefreshJob(),
 ]
 
 

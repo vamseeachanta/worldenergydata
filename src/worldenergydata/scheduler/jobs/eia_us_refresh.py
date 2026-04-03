@@ -27,6 +27,7 @@ class EiaUsRefreshJob(AbstractJob):
     """
 
     name = "eia_us_refresh"
+    default_output_dir = Path("data/modules/eia")
 
     def run(self, config: dict) -> JobResult:
         """Execute EIA US data refresh.
@@ -34,7 +35,7 @@ class EiaUsRefreshJob(AbstractJob):
         Args:
             config: May contain:
                 - "api_key": EIA API key (falls back to EIA_API_KEY env var)
-                - "output_dir": Output directory path (defaults to "data/eia")
+                - "output_dir": Output directory path (defaults to "data/modules/eia")
 
         Returns:
             JobResult indicating success or failure.
@@ -42,7 +43,7 @@ class EiaUsRefreshJob(AbstractJob):
         start = datetime.now()
         try:
             api_key = config.get("api_key") or os.environ.get("EIA_API_KEY")
-            output_dir = Path(config.get("output_dir", "data/eia"))
+            output_dir = Path(config.get("output_dir", self.default_output_dir))
 
             sync = EIAIngestionSync(api_key=api_key, output_dir=output_dir)
             results = sync.run_all()

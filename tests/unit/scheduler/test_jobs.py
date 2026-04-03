@@ -1,6 +1,7 @@
-"""Tests for all 6 job adapter stubs: bsee, sodir, eia_us, brazil_anp, ukcs, metocean."""
+"""Tests for all scheduler job adapters, including LNG terminals."""
 import pytest
 from datetime import datetime
+from pathlib import Path
 
 from worldenergydata.scheduler.jobs.base import JobResult, AbstractJob
 from worldenergydata.scheduler.jobs.bsee_refresh import BseeRefreshJob
@@ -9,6 +10,7 @@ from worldenergydata.scheduler.jobs.eia_us_refresh import EiaUsRefreshJob
 from worldenergydata.scheduler.jobs.brazil_anp_refresh import BrazilAnpRefreshJob
 from worldenergydata.scheduler.jobs.ukcs_refresh import UkcsRefreshJob
 from worldenergydata.scheduler.jobs.metocean_refresh import MetoceanRefreshJob
+from worldenergydata.scheduler.jobs.lng_terminals_refresh import LngTerminalsRefreshJob
 
 
 ALL_JOB_CLASSES = [
@@ -18,6 +20,7 @@ ALL_JOB_CLASSES = [
     BrazilAnpRefreshJob,
     UkcsRefreshJob,
     MetoceanRefreshJob,
+    LngTerminalsRefreshJob,
 ]
 
 ALL_JOB_NAMES = [
@@ -27,6 +30,7 @@ ALL_JOB_NAMES = [
     "brazil_anp_refresh",
     "ukcs_refresh",
     "metocean_refresh",
+    "lng_terminals_refresh",
 ]
 
 
@@ -81,6 +85,23 @@ class TestJobAdapterInterface:
         job = JobClass()
         result = job.run(config={})
         assert result is not None
+
+    @pytest.mark.parametrize(
+        "JobClass,expected_path",
+        [
+            (BseeRefreshJob, "data/modules/bsee"),
+            (SodirRefreshJob, "data/modules/sodir"),
+            (EiaUsRefreshJob, "data/modules/eia"),
+            (BrazilAnpRefreshJob, "data/modules/brazil_anp"),
+            (UkcsRefreshJob, "data/modules/ukcs"),
+            (MetoceanRefreshJob, "data/modules/metocean"),
+            (LngTerminalsRefreshJob, "data/modules/lng_terminals"),
+        ],
+    )
+    def test_job_default_output_dir_matches_modules_convention(
+        self, JobClass, expected_path
+    ):
+        assert Path(JobClass.default_output_dir) == Path(expected_path)
 
 
 class TestMetoceanJobLocations:

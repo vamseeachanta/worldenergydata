@@ -32,6 +32,7 @@ class SodirRefreshJob(AbstractJob):
     """
 
     name = "sodir_refresh"
+    default_output_dir = Path("data/modules/sodir")
 
     def run(self, config: dict) -> JobResult:
         """Execute SODIR data refresh.
@@ -39,14 +40,14 @@ class SodirRefreshJob(AbstractJob):
         Args:
             config: Configuration dictionary.  Recognised keys:
                 - base_url: SODIR API base URL (default https://factmaps.sodir.no)
-                - output_dir: Directory for Parquet output (default data/sodir)
+                - output_dir: Directory for Parquet output (default data/modules/sodir)
 
         Returns:
             JobResult indicating success or failure.
         """
         start = datetime.now()
         base_url = config.get("base_url", "https://factmaps.sodir.no")
-        output_dir = Path(config.get("output_dir", "data/sodir"))
+        output_dir = Path(config.get("output_dir", self.default_output_dir))
         output_dir.mkdir(parents=True, exist_ok=True)
 
         client = SodirAPIClient(base_url=base_url)

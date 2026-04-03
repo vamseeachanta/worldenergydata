@@ -42,6 +42,7 @@ class BseeRefreshJob(AbstractJob):
     """Refresh BSEE Gulf of Mexico offshore structural and pipeline data."""
 
     name = "bsee_refresh"
+    default_output_dir = Path("data/modules/bsee")
 
     def run(self, config: dict) -> JobResult:
         """Execute BSEE data refresh across all dataset types.
@@ -50,13 +51,13 @@ class BseeRefreshJob(AbstractJob):
         tolerated -- only a complete failure of all datasets returns failure.
 
         Args:
-            config: Must contain "output_dir" for Parquet output location.
+            config: May contain "output_dir" for Parquet output location.
 
         Returns:
             JobResult with total records across all successful datasets.
         """
         start = datetime.now()
-        output_dir = Path(config.get("output_dir", "data/bsee"))
+        output_dir = Path(config.get("output_dir", self.default_output_dir))
         output_dir.mkdir(parents=True, exist_ok=True)
 
         scraper = BSEEWebScraper()

@@ -8,6 +8,7 @@ TODO: Implement data fetching for LNG terminal data.
 """
 import logging
 from datetime import datetime
+from pathlib import Path
 
 from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
 
@@ -23,18 +24,22 @@ class LngTerminalsRefreshJob(AbstractJob):
     """
 
     name = "lng_terminals_refresh"
+    default_output_dir = Path("data/modules/lng_terminals")
 
     def run(self, config: dict) -> JobResult:
         """Return skipped result until LNG terminal fetching is implemented.
 
         Args:
-            config: Reserved for future use (e.g., data_path).
+            config: Reserved for future use (e.g., data_path, output_dir).
 
         Returns:
             JobResult with status="skipped".
         """
         start = datetime.now()
+        output_dir = Path(config.get("output_dir", self.default_output_dir))
+        # Scaffolded for future adapter implementation; path is intentionally resolved now.
         logger.info("%s: Tier 2 stub -- not yet implemented.", self.name)
+        logger.debug("%s output directory: %s", self.name, output_dir)
         return JobResult(
             job_name=self.name,
             start_time=start,

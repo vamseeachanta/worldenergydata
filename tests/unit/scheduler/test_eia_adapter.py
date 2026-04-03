@@ -104,13 +104,13 @@ class TestEiaUsRefreshJob:
         assert len(df) == 2
 
     @patch("worldenergydata.scheduler.jobs.eia_us_refresh.EIAIngestionSync")
-    def test_output_dir_defaults_to_data_eia(self, mock_sync_cls, tmp_path):
-        """Output directory defaults to 'data/eia' when not specified in config."""
+    def test_output_dir_defaults_to_data_modules_eia(self, mock_sync_cls, tmp_path):
+        """Output directory defaults to 'data/modules/eia' when not specified in config."""
         from worldenergydata.scheduler.jobs.eia_us_refresh import EiaUsRefreshJob
 
         mock_instance = MagicMock()
         mock_instance.run_all.return_value = []
-        mock_instance.output_dir = Path("data/eia")
+        mock_instance.output_dir = Path("data/modules/eia")
         mock_sync_cls.return_value = mock_instance
 
         job = EiaUsRefreshJob()
@@ -119,4 +119,4 @@ class TestEiaUsRefreshJob:
         call_kwargs = mock_sync_cls.call_args[1]
         output_dir = call_kwargs.get("output_dir", None)
         assert output_dir is not None
-        assert str(output_dir) == "data/eia"
+        assert str(output_dir) == "data/modules/eia"

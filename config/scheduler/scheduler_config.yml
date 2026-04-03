@@ -8,25 +8,28 @@ jobs:
     interval: weekly
     time: "02:00"
     enabled: true
+    output_dir: data/modules/bsee
     # data_path: /path/to/local/bsee/data  # optional: override default BSEE data location
 
   - name: sodir_refresh
     interval: daily
     time: "03:00"
     enabled: true
+    output_dir: data/modules/sodir
 
   - name: eia_us_refresh
     interval: monthly
     day: 5
     time: "04:00"
     enabled: true
-    output_dir: data/eia
+    output_dir: data/modules/eia
     # api_key: null  # Set to your EIA API key for authenticated endpoints
 
   - name: metocean_refresh
     interval: daily
     time: "01:00"
     enabled: true
+    output_dir: data/modules/metocean
     locations:
       - {lat: 28.5, lon: -88.5, name: "GOM"}
       - {lat: 60.0, lon: 2.0, name: "NCS"}
@@ -36,12 +39,20 @@ jobs:
     day: 10
     time: "05:00"
     enabled: true
+    output_dir: data/modules/brazil_anp
 
   - name: ukcs_refresh
     interval: monthly
     day: 7
     time: "06:00"
     enabled: true
+    output_dir: data/modules/ukcs
+
+  - name: lng_terminals_refresh
+    interval: weekly
+    time: "07:00"
+    enabled: true
+    output_dir: data/modules/lng_terminals
 
 monitoring:
   log_dir: logs/scheduler/

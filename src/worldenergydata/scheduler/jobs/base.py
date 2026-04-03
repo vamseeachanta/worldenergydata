@@ -3,6 +3,7 @@ import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Optional
 
 logger = logging.getLogger(__name__)
@@ -30,6 +31,7 @@ class AbstractJob(ABC):
     """Abstract base class for all data collection jobs."""
 
     name: str
+    default_output_dir: Path
 
     @abstractmethod
     def run(self, config: dict) -> JobResult:
