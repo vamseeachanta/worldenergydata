@@ -336,7 +336,9 @@ def pytest_ignore_collect(collection_path, config):
     if basename.startswith("query_") and basename.endswith("_test.py"):
         return True
 
-    # Skip _archived directory and all subdirectories (consolidated 2025-01)
+    # Skip _archive and _archived directories and all subdirectories (consolidated 2025-01)
+    if "/_archive/" in path_str or path_str.endswith("/_archive"):
+        return True
     if "/_archived/" in path_str or path_str.endswith("/_archived"):
         return True
 
