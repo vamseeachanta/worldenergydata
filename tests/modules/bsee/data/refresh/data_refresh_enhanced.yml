@@ -1,0 +1,20 @@
+cache:
+  enabled: true
+  ttl_hours: 24
+chunked_refresh: true
+data:
+  production: false
+  war: false
+  well: true
+default:
+  log_level: INFO
+enhanced_mode: true
+incremental_update: true
+meta:
+  basename: bsee
+  library: worldenergydata
+  mode: enhanced
+processing:
+  in_memory: true
+  optimized: true
+  parallel: true
