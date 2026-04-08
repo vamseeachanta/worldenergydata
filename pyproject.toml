@@ -58,6 +58,7 @@ dependencies = [
     "psutil>=7.2.1",
     "schedule>=1.2.0",
     "pyarrow>=14.0.0",
+    "scikit-learn>=1.6.1",
 ]
 
 [project.optional-dependencies]

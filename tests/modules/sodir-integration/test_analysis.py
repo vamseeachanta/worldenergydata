@@ -11,32 +11,32 @@ import pandas as pd
 import pytest
 
 # Import the modules to test
-from sodir_module.analysis import (
+from worldenergydata.sodir.analysis import (
     AnalysisConfig,
     CrossRegionalComparison,
     FieldAnalysisResult,
     ProductionForecast,
     SodirAnalysis,
 )
-from sodir_module.cross_regional import (
+from worldenergydata.sodir.cross_regional import (
     ComparisonResult,
     CrossRegionalAnalyzer,
     NormalizationStrategy,
     RegionalMetrics,
 )
-from sodir_module.forecasting import (
+from worldenergydata.sodir.forecasting import (
     DeclineCurve,
     ForecastModel,
     ForecastResult,
     ProductionForecaster,
 )
-from sodir_module.npv_norway import (
+from worldenergydata.sodir.npv_norway import (
     CashFlowResult,
     NorwayNPVCalculator,
     NorwegianFinancialParameters,
     TaxRegime,
 )
-from sodir_module.visualization import (
+from worldenergydata.sodir.visualization import (
     ChartConfig,
     DashboardGenerator,
     MapVisualization,

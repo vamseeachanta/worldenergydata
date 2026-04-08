@@ -384,3 +384,65 @@ class IncidentLink(Base, TimestampMixin):
     incident_2: Mapped["Incident"] = relationship(
         "Incident", foreign_keys=[incident_id_2], backref="links_as_second"
     )
+
+
+# ---------------------------------------------------------------------------
+# Additional models added for backward compatibility (#2003)
+# ---------------------------------------------------------------------------
+
+
+
+
+# ---------------------------------------------------------------------------
+# Additional models added for backward compatibility (#2003)
+# ---------------------------------------------------------------------------
+
+
+class Personnel(Base, TimestampMixin):
+    """Personnel involved in or responding to an incident."""
+
+    __tablename__ = "personnel"
+    __table_args__ = (Index("idx_personnel_incident", "incident_id"),)
+
+    personnel_id: Mapped[int] = mapped_column(primary_key=True)
+    incident_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("incidents.incident_id", ondelete="SET NULL")
+    )
+    name: Mapped[Optional[str]] = mapped_column(String(200))
+    role: Mapped[Optional[str]] = mapped_column(String(100))
+    nationality: Mapped[Optional[str]] = mapped_column(String(100))
+    injured: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    fatality: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    notes: Mapped[Optional[str]] = mapped_column(Text)
+
+    # Relationships
+    incident: Mapped[Optional["Incident"]] = relationship(
+        "Incident", backref="personnel"
+    )
+
+
+class Investigation(Base, TimestampMixin):
+    """Formal investigation record associated with an incident."""
+
+    __tablename__ = "investigations"
+    __table_args__ = (
+        Index("idx_investigation_incident", "incident_id"),
+        Index("idx_investigation_status", "status"),
+    )
+
+    investigation_id: Mapped[int] = mapped_column(primary_key=True)
+    incident_id: Mapped[int] = mapped_column(
+        ForeignKey("incidents.incident_id", ondelete="CASCADE"), nullable=False
+    )
+    lead_agency: Mapped[Optional[str]] = mapped_column(String(200))
+    status: Mapped[Optional[str]] = mapped_column(String(50))
+    opened_date: Mapped[Optional[date]] = mapped_column(Date)
+    closed_date: Mapped[Optional[date]] = mapped_column(Date)
+    report_url: Mapped[Optional[str]] = mapped_column(String(500))
+    findings: Mapped[Optional[str]] = mapped_column(Text)
+    recommendations: Mapped[Optional[str]] = mapped_column(Text)
+
+    # Relationships
+    incident: Mapped["Incident"] = relationship(
+        "Incident", backref="investigations"
+    )

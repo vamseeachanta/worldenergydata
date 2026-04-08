@@ -9,11 +9,11 @@ from pathlib import Path
 import pytest
 from bs4 import BeautifulSoup
 
-from src.worldenergydata.modules.marine_safety.analysis.cause_report import (
+from worldenergydata.marine_safety.analysis.cause_report import (
     CauseAnalysisReport,
     ReportFilters,
 )
-from src.worldenergydata.modules.marine_safety.constants import (
+from worldenergydata.marine_safety.constants import (
     CauseCategory,
     SeverityLevel,
 )
