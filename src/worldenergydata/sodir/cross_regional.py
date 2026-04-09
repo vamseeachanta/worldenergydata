@@ -440,8 +440,8 @@ class CrossRegionalAnalyzer:
             - bsee_metrics.production_efficiency,
         }
 
-        # Calculate percentage differences
-        for key in metrics_diff:
+        # Calculate percentage differences (iterate over a snapshot to avoid mutating dict during iteration)
+        for key in list(metrics_diff):
             base_metric = (
                 key.replace("_diff", "").replace("_m", "").replace("_mmboe", "")
             )
