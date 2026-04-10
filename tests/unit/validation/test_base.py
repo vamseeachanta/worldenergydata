@@ -2,6 +2,7 @@
 # ABOUTME: Foundation tests covering error representation, result aggregation, and state management
 
 import pytest
+import pandas as pd
 from datetime import datetime
 from typing import Dict, Any, List
 from unittest.mock import MagicMock, patch
@@ -672,6 +673,48 @@ class TestBaseValidatorAbstractClass:
 
         assert result.metadata["validator"] == "TestValidator"
         assert "timestamp" in result.metadata
+
+
+class TestFieldValidatorExtraction:
+    """Tests for FieldValidator._extract_field_data() with DataFrame, dict, and Series."""
+
+    def test_field_found_in_dataframe(self):
+        validator = FieldValidator("depth")
+        df = pd.DataFrame({"depth": [100, 200, 300], "name": ["a", "b", "c"]})
+        data = validator._extract_field_data(df)
+        assert list(data) == [100, 200, 300]
+
+    def test_field_missing_from_dataframe_returns_none(self):
+        validator = FieldValidator("missing_field")
+        df = pd.DataFrame({"depth": [1, 2]})
+        assert validator._extract_field_data(df) is None
+
+    def test_field_found_in_dict(self):
+        validator = FieldValidator("api_number")
+        data = validator._extract_field_data({"api_number": "123", "other": "x"})
+        assert data == "123"
+
+    def test_field_missing_from_dict_returns_none(self):
+        validator = FieldValidator("missing")
+        assert validator._extract_field_data({"other": 1}) is None
+
+    def test_field_found_as_named_series(self):
+        validator = FieldValidator("production")
+        series = pd.Series([10, 20, 30], name="production")
+        data = validator._extract_field_data(series)
+        assert list(data) == [10, 20, 30]
+
+    def test_series_with_wrong_name_returns_none(self):
+        validator = FieldValidator("production")
+        series = pd.Series([10, 20, 30], name="other_field")
+        assert validator._extract_field_data(series) is None
+
+    def test_validate_missing_field_adds_field_existence_error(self):
+        """FieldValidator.validate() adds error when field not found."""
+        validator = FieldValidator("nonexistent")
+        result = validator.validate({"other": "data"})
+        assert not result.is_valid
+        assert any("not found" in e.message for e in result.errors)
 
 
 if __name__ == "__main__":
