@@ -51,6 +51,18 @@ _FIELD_ALIASES: dict[str, list[str]] = {
     ],
     "fluid_type": ["fluid_type", "Fluid Type", "fluid", "Fluid"],
     "region": ["region", "Region", "basin", "Basin", "area", "Area"],
+    "flowline_diameter_in": [
+        "flowline_diameter_in", "Flowline Diameter (in)", "flowline_diameter",
+        "Flowline_Diameter_in", "flowlineDiameter",
+    ],
+    "flowline_material": [
+        "flowline_material", "Flowline Material", "flowline_mat",
+        "Flowline_Material", "flowlineMaterial",
+    ],
+    "layout_type": [
+        "layout_type", "Layout Type", "layout", "Layout",
+        "subsea_layout", "Subsea Layout",
+    ],
 }
 
 
@@ -81,9 +93,7 @@ def normalize_project(raw: dict) -> dict:
                 f"No name field found in record. "
                 f"Tried: {aliases}. Keys present: {list(raw.keys())}"
             )
-        if val is not None and canonical == "water_depth_m":
-            val = _safe_float(val)
-        elif val is not None and canonical == "tieback_distance_km":
+        if val is not None and canonical in ("water_depth_m", "tieback_distance_km", "flowline_diameter_in"):
             val = _safe_float(val)
         elif val is not None and canonical in ("num_wells", "num_trees", "num_manifolds"):
             val = _safe_int(val)
