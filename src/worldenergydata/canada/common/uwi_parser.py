@@ -138,15 +138,15 @@ class UWIParser:
 
         # Parse a DLS UWI (Alberta)
         components = parser.parse("100.16-09-010-09W4.00")
-        print(components.survey_system)  # UWISurveySystem.DLS
+        logger.info(components.survey_system)  # UWISurveySystem.DLS
 
         # Validate a UWI
         is_valid, error = parser.validate("100.16-09-010-09W4.00")
-        print(f"Valid: {is_valid}")
+        logger.info(f"Valid: {is_valid}")
 
         # Normalize a UWI
         normalized = parser.normalize("100/16-09-010-09W4/00")
-        print(normalized)  # 100.16-09-010-09W4.00
+        logger.info(normalized)  # 100.16-09-010-09W4.00
     """
 
     # DLS format pattern

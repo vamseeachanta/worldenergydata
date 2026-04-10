@@ -12,6 +12,10 @@ from typing import Any, Dict, List, Optional, Union
 import yaml
 from jinja2 import DictLoader, Environment, FileSystemLoader, Template
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class TemplateFormat(Enum):
     """Supported template formats"""
@@ -256,7 +260,7 @@ class TemplateLoader:
                         self.config_cache[template_name] = config
                         return config
                     except Exception as e:
-                        print(f"Warning: Failed to load config {config_file}: {e}")
+                        logger.warning(f"Warning: Failed to load config {config_file}: {e}")
 
         return None
 
@@ -323,7 +327,7 @@ class TemplateLoader:
                         return template
 
                 except Exception as e:
-                    print(f"Warning: Failed to load template {template_file}: {e}")
+                    logger.warning(f"Warning: Failed to load template {template_file}: {e}")
 
         return None
 

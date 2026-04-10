@@ -11,6 +11,10 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 @dataclass
 class ChartConfig:
@@ -495,7 +499,7 @@ class ProductionChart:
 
             return True
         except Exception as e:
-            print(f"Error exporting chart: {e}")
+            logger.error(f"Error exporting chart: {e}")
             return False
 
     def create_decline_curve(

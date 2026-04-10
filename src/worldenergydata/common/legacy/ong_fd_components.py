@@ -11,6 +11,10 @@ from assetutilities.common.database import Database, get_db_connection
 
 from worldenergydata.common.legacy.bsee_data_manager import BSEEData
 from worldenergydata.common.legacy.data import (
+
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
     DateTimeUtility,
     transform_df_datetime_to_str,
 )
@@ -121,11 +125,11 @@ class ONGFDComponents:
                 cfg_input: dict[str, Any] = self.cfg["default"]["input_data"].copy()
                 self.dbe.get_input_data(cfg_input)
             else:
-                print("No input data in configuration")
+                logger.info("No input data in configuration")
         else:
             import sys
 
-            print("No data source specified")
+            logger.info("No data source specified")
             sys.exit()
 
     def prepare_field_api12_data(self) -> None:
@@ -155,7 +159,7 @@ class ONGFDComponents:
             api10_value: int | str = self.get_API10_from_well_API(well_api)
             API10.append(api10_value)
         self.dbe.input_data_well["API10"] = API10
-        print("Well API data is prepared")
+        logger.info("Well API data is prepared")
 
     def get_API10_from_well_API(self, well_api: Any) -> int | str:
         well_api_str: str = str(well_api)
@@ -218,7 +222,7 @@ class ONGFDComponents:
             self.output_data_api12_df["SURF_y"] - self.field_y_ref
         )
 
-        print("GIS data is formatted")
+        logger.info("GIS data is formatted")
 
     def prepare_production_data(self, production_data: pd.DataFrame) -> None:
         self.output_data_production_df_array: dict[str, pd.DataFrame] = {}
@@ -242,7 +246,7 @@ class ONGFDComponents:
 
         if len(self.output_data_production_df_array) != 0:
             self.add_production_from_all_wells()
-        print("Production data is prepared")
+        logger.info("Production data is prepared")
 
     def add_production_rate_and_date_to_df(self, df: pd.DataFrame) -> pd.DataFrame:
         import datetime
@@ -1439,7 +1443,7 @@ class ONGFDComponents:
                 api12_dir_survey_df["az"].iloc[df_row] = Azimuth
                 api12_dir_survey_df["inc"].iloc[df_row] = Inclination
 
-            print("Processing Survey for api12 {} of {}".format(count, len(API12_list)))
+            logger.info("Processing Survey for api12 {} of {}".format(count, len(API12_list)))
             survey_xyz: pd.DataFrame = self.process_survey_xyz(api12_dir_survey_df)
             survey_xyz_wh_adjusted: pd.DataFrame = self.add_relative_WH_positions(
                 api12, survey_xyz

@@ -141,24 +141,24 @@ def main(argv=None):
     comparison = analysis.fit_all_models(ts)
 
     # Print summary
-    print(f"\n{'=' * 60}")
-    print(f"Decline Curve Analysis: {ts.field_name}")
-    print(f"Product: {ts.product_type} | Points: {ts.n_after_filter}")
-    print(f"Best model: {comparison.best_model}")
-    print(f"{'=' * 60}")
-    print(comparison.summary_table().to_string(index=False))
+    logger.info(f"\n{'=' * 60}")
+    logger.info(f"Decline Curve Analysis: {ts.field_name}")
+    logger.info(f"Product: {ts.product_type} | Points: {ts.n_after_filter}")
+    logger.info(f"Best model: {comparison.best_model}")
+    logger.info(f"{'=' * 60}")
+    logger.info(comparison.summary_table().to_string(index=False))
 
     # Forecast
     forecast = analysis.forecast(comparison)
     eur = analysis.calculate_eur(comparison)
 
-    print(f"\nEUR by model:")
+    logger.info(f"\nEUR by model:")
     for model, value in eur.items():
-        print(f"  {model}: {value:,.0f}")
+        logger.info(f"  {model}: {value:,.0f}")
 
-    print(f"\nForecast ({args.forecast_periods} periods):")
+    logger.info(f"\nForecast ({args.forecast_periods} periods):")
     forecast_df = forecast.to_dataframe()
-    print(forecast_df.to_string(index=False))
+    logger.info(forecast_df.to_string(index=False))
 
     # Generate HTML report
     if args.output:

@@ -7,6 +7,10 @@ import pandas as pd
 from colorama import Fore, Style
 from colorama import init as colorama_init
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 colorama_init()
 
 class BSEEDataScrapper:
@@ -49,9 +53,9 @@ class BSEEDataScrapper:
         soup = BeautifulSoup(response.content, 'html.parser')
 
         if response.status_code == 200:
-            print(f"{Fore.GREEN} submitted given form data successfully!{Style.RESET_ALL}")
+            logger.info(f"{Fore.GREEN} submitted given form data successfully!{Style.RESET_ALL}")
         else:
-            print(f"{Fore.RED}Failed to submit the form data{Style.RESET_ALL}. Status code: {response.status_code}")
+            logger.info(f"{Fore.RED}Failed to submit the form data{Style.RESET_ALL}. Status code: {response.status_code}")
 
         viewstate = soup.find('input', {'name': '__VIEWSTATE'})['value']
         eventvalidation = soup.find('input', {'name': '__EVENTVALIDATION'})['value']
@@ -73,10 +77,10 @@ class BSEEDataScrapper:
             with open(csv_path, 'wb') as f:
                 f.write(csv_response.content)
                 df = pd.read_csv(BytesIO(csv_response.content)) # For displaying data
-                print()
-                print("****The Scraped data of given parameter ****\n\n")
-                print(df)
+                logger.info()
+                logger.info("****The Scraped data of given parameter ****\n\n")
+                logger.info(df)
         else:
-            print(f"{Fore.RED}Failed to export CSV file.{Style.RESET_ALL} Status code: {csv_response.status_code}")
+            logger.info(f"{Fore.RED}Failed to export CSV file.{Style.RESET_ALL} Status code: {csv_response.status_code}")
 
     

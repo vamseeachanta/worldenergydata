@@ -29,6 +29,10 @@ from worldenergydata.safety_analysis.taxonomy.activity_registry import (
     ActivityTaxonomy,
 )
 from worldenergydata.safety_analysis.taxonomy.incident_classifier import (
+
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
     IncidentClassifier,
 )
 
@@ -105,19 +109,19 @@ def _load_csv_records(path: Path) -> List[Dict[str, Any]]:
 def cmd_classify(args: argparse.Namespace) -> None:
     """Classify incidents from input file and write results."""
     if not args.input.exists():
-        print(f"Error: Input file not found: {args.input}", file=sys.stderr)
+        logger.error(f"Error: Input file not found: {args.input}", file=sys.stderr)
         sys.exit(1)
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
 
-    print(f"Loading records from {args.input}...")
+    logger.info(f"Loading records from {args.input}...")
     records = _load_csv_records(args.input)
     if args.limit > 0:
         records = records[: args.limit]
-    print(f"Loaded {len(records)} records")
+    logger.info(f"Loaded {len(records)} records")
 
     classifier = IncidentClassifier()
-    print(f"Classifying with source={args.source}...")
+    logger.info(f"Classifying with source={args.source}...")
     results = classifier.classify_batch(records, source=args.source)
 
     # Write results alongside original fields
@@ -149,7 +153,7 @@ def cmd_classify(args: argparse.Namespace) -> None:
             )
             writer.writerow(row)
 
-    print(f"Wrote {len(results)} classified records to {args.output}")
+    logger.info(f"Wrote {len(results)} classified records to {args.output}")
 
     # Print distribution summary
     _print_distribution(results)
@@ -158,30 +162,30 @@ def cmd_classify(args: argparse.Namespace) -> None:
 def cmd_taxonomy(args: argparse.Namespace) -> None:
     """Display the full taxonomy tree."""
     taxonomy = ActivityTaxonomy()
-    print(f"Activity Taxonomy ({len(taxonomy.activities)} activities)")
-    print("=" * 60)
+    logger.info(f"Activity Taxonomy ({len(taxonomy.activities)} activities)")
+    logger.info("=" * 60)
     for activity in taxonomy.activities:
-        print(f"\n  {activity.code}: {activity.name}")
-        print(f"    {activity.description}")
+        logger.info(f"\n  {activity.code}: {activity.name}")
+        logger.info(f"    {activity.description}")
         if activity.sic_codes:
-            print(f"    SIC: {', '.join(activity.sic_codes)}")
+            logger.info(f"    SIC: {', '.join(activity.sic_codes)}")
         if activity.naics_codes:
-            print(f"    NAICS: {', '.join(activity.naics_codes)}")
+            logger.info(f"    NAICS: {', '.join(activity.naics_codes)}")
         if activity.bsee_accident_types:
-            print(f"    BSEE types: {', '.join(activity.bsee_accident_types)}")
+            logger.info(f"    BSEE types: {', '.join(activity.bsee_accident_types)}")
         if activity.marine_incident_types:
-            print(f"    Marine types: {', '.join(activity.marine_incident_types)}")
+            logger.info(f"    Marine types: {', '.join(activity.marine_incident_types)}")
         if activity.phmsa_cause_categories:
-            print(f"    PHMSA causes: {', '.join(activity.phmsa_cause_categories)}")
+            logger.info(f"    PHMSA causes: {', '.join(activity.phmsa_cause_categories)}")
         for sub in activity.subactivities:
-            print(f"      - {sub.code}: {sub.name}")
+            logger.info(f"      - {sub.code}: {sub.name}")
 
 
 def cmd_summary(args: argparse.Namespace) -> None:
     """Display taxonomy summary statistics."""
     classifier = IncidentClassifier()
     summary = classifier.get_taxonomy_summary()
-    print(json.dumps(summary, indent=2))
+    logger.info(json.dumps(summary, indent=2))
 
 
 def _print_distribution(results: list) -> None:
@@ -194,15 +198,15 @@ def _print_distribution(results: list) -> None:
         activity_counts[f"{r.activity} ({r.activity_name})"] += 1
         method_counts[r.match_method] += 1
 
-    print("\nActivity Distribution:")
+    logger.info("\nActivity Distribution:")
     for activity, count in activity_counts.most_common():
         pct = 100.0 * count / len(results)
-        print(f"  {activity}: {count} ({pct:.1f}%)")
+        logger.info(f"  {activity}: {count} ({pct:.1f}%)")
 
-    print("\nMatch Method Distribution:")
+    logger.info("\nMatch Method Distribution:")
     for method, count in method_counts.most_common():
         pct = 100.0 * count / len(results)
-        print(f"  {method}: {count} ({pct:.1f}%)")
+        logger.info(f"  {method}: {count} ({pct:.1f}%)")
 
 
 def main(argv: List[str] | None = None) -> None:

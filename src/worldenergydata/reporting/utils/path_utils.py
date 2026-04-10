@@ -10,6 +10,10 @@ import os
 from pathlib import Path
 from typing import Union
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 def get_project_root() -> Path:
     """
@@ -135,6 +139,6 @@ def relative_path_from_report(data_file: Union[str, Path],
 
 if __name__ == '__main__':
     # Example usage
-    print("Project root:", get_project_root())
-    print("Data path:", get_data_path('example.csv'))
-    print("Report path:", get_report_path('report.html'))
+    logger.info("Project root:", get_project_root())
+    logger.info("Data path:", get_data_path('example.csv'))
+    logger.info("Report path:", get_report_path('report.html'))

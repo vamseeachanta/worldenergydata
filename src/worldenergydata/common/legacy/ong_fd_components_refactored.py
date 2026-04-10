@@ -51,6 +51,10 @@ from .ong_fd_utils import (
 )
 from .ong_fd_wellpath import plot_field_wells, prepare_well_paths
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 dtu = DateTimeUtility()
 
 
@@ -182,11 +186,11 @@ class ONGFDComponents:
                 cfg_input: dict[str, Any] = self.cfg["default"]["input_data"].copy()
                 self.dbe.get_input_data(cfg_input)
             else:
-                print("No input data in configuration")
+                logger.info("No input data in configuration")
         else:
             import sys
 
-            print("No data source specified")
+            logger.info("No data source specified")
             sys.exit()
 
     def prepare_field_api12_data(self) -> None:
@@ -218,7 +222,7 @@ class ONGFDComponents:
             api10_value: int | str = get_api10_from_well_api(well_api)
             API10.append(api10_value)
         self.dbe.input_data_well["API10"] = API10
-        print("Well API data is prepared")
+        logger.info("Well API data is prepared")
 
     def prepare_api12_data(self, well_data: pd.DataFrame) -> None:
         """Prepare API12 data with GIS and production columns.
@@ -232,7 +236,7 @@ class ONGFDComponents:
         self.output_data_api12_df, self.field_x_ref, self.field_y_ref = (
             add_gis_info_to_df(self.output_data_api12_df)
         )
-        print("GIS data is formatted")
+        logger.info("GIS data is formatted")
 
         # Add production columns
         self.output_data_api12_df["O_PROD_STATUS"] = 0
@@ -305,7 +309,7 @@ class ONGFDComponents:
                 ].tolist(),
             }
 
-        print("Production data is prepared")
+        logger.info("Production data is prepared")
 
     def add_sidetracklabel_rig_rigdays(
         self, WAR_summary: pd.DataFrame, ST_BP_and_tree_height: pd.DataFrame

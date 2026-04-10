@@ -15,6 +15,10 @@ from typing import Dict, List, Optional, Set, Tuple
 
 import pandas as pd
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class DrillingDataError(Exception):
     """Raised when drilling data processing fails"""
@@ -377,7 +381,7 @@ class DrillingTimelineExtractor:
                 timelines.append(timeline)
             except Exception as e:
                 # Log error and continue
-                print(f"Warning: Failed to extract timeline for {api_well_number}: {e}")
+                logger.warning(f"Warning: Failed to extract timeline for {api_well_number}: {e}")
 
         if not timelines:
             raise DrillingDataError("No timelines extracted")

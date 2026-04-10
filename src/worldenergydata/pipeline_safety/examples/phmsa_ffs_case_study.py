@@ -16,6 +16,10 @@ import pandas as pd
 
 from worldenergydata.pipeline_safety.workflow import PipelineSafetyWorkflow
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 # ---------------------------------------------------------------------------
 # Synthetic PHMSA incident dataset — 20 records, 2015-2024
 # ---------------------------------------------------------------------------
@@ -288,23 +292,23 @@ _INCIDENTS = [
 
 def main() -> None:
     """Run the PHMSA FFS case study and print results."""
-    print("Loading PHMSA synthetic incident dataset...")
+    logger.info("Loading PHMSA synthetic incident dataset...")
     df = pd.DataFrame(_INCIDENTS)
-    print(f"  {len(df)} incidents loaded, years {df['year'].min()}-{df['year'].max()}")
+    logger.info(f"  {len(df)} incidents loaded, years {df['year'].min()}-{df['year'].max()}")
 
     workflow = PipelineSafetyWorkflow()
 
-    print("\nRunning batch FFS assessment (Modified B31G)...")
+    logger.info("\nRunning batch FFS assessment (Modified B31G)...")
     report = workflow.generate_report(df, method="modified_b31g")
-    print(f"  Assessment complete: {len(report)} results")
+    logger.info(f"  Assessment complete: {len(report)} results")
 
-    print("\nVerdict summary:")
+    logger.info("\nVerdict summary:")
     summary = workflow.verdict_summary(report)
     for verdict, count in summary.items():
-        print(f"  {verdict:<10}: {count}")
+        logger.info(f"  {verdict:<10}: {count}")
 
-    print("\nCase Study Narrative:")
-    print(workflow.case_study_narrative(report))
+    logger.info("\nCase Study Narrative:")
+    logger.info(workflow.case_study_narrative(report))
 
 
 if __name__ == "__main__":

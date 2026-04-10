@@ -6,6 +6,10 @@ from typing import Any, Dict, List
 from worldenergydata.bsee.data.processors.in_memory import MemoryProcessor
 from worldenergydata.bsee.data.scrapers.bsee_web import BSEEWebScraper
 from worldenergydata.hse.importers.bsee_penalties_importer import (
+
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
     BSEEPenaltiesImporter,
 )
 
@@ -28,7 +32,7 @@ class BSEEPenaltiesImporterURL(BSEEPenaltiesImporter):
     Usage:
         importer = BSEEPenaltiesImporterURL(db_session)
         stats = importer.import_data()
-        print(f"Imported: {stats['imported_count']}, Skipped: {stats['skipped_count']}")
+        logger.info(f"Imported: {stats['imported_count']}, Skipped: {stats['skipped_count']}")
     """
 
     # INCs (Incidents of Non-Compliance) raw data

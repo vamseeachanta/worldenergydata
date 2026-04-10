@@ -151,14 +151,14 @@ class COOPSClient(BaseClient):
             gom_bbox = (-98.0, -80.0, 18.0, 31.0)
             result = client.fetch_stations(bbox=gom_bbox)
             for station in result.data:
-                print(f"{station.station_id}: {station.name}")
+                logger.info(f"{station.station_id}: {station.name}")
 
             # Get water level data for Grand Isle, LA
             start = datetime(2024, 1, 1)
             end = datetime(2024, 1, 7)
             data = client.fetch_water_level("8761724", start, end)
             for obs in data.data[:5]:
-                print(f"{obs.observation_time}: {obs.water_level_m}m")
+                logger.info(f"{obs.observation_time}: {obs.water_level_m}m")
 
             # Get tide predictions
             preds = client.fetch_tide_predictions("8761724", start, end)

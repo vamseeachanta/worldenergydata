@@ -327,27 +327,27 @@ def print_analysis_banner():
     ║                    Version 20 (V20)                         ║
     ╚══════════════════════════════════════════════════════════════╝
     """
-    print(banner)
+    logger.info(banner)
 
 
 def print_results_summary(result: AnalysisResult):
     """Print analysis results summary"""
     if result.success:
-        print("\n✅ Analysis completed successfully!")
-        print(f"   Output file: {result.output_file}")
+        logger.info("\n✅ Analysis completed successfully!")
+        logger.info(f"   Output file: {result.output_file}")
 
         if result.metrics_summary:
-            print("\n📊 Summary Metrics:")
-            print(f"   Total NPV: ${result.metrics_summary.get('total_npv', 0):,.0f}")
-            print(
+            logger.info("\n📊 Summary Metrics:")
+            logger.info(f"   Total NPV: ${result.metrics_summary.get('total_npv', 0):,.0f}")
+            logger.info(
                 f"   Total Oil: {result.metrics_summary.get('total_oil_bbls', 0):,.0f} bbls"
             )
-            print(
+            logger.info(
                 f"   Developments: {result.metrics_summary.get('development_count', 0)}"
             )
-            print(f"   Execution Time: {result.execution_time:.2f} seconds")
+            logger.info(f"   Execution Time: {result.execution_time:.2f} seconds")
     else:
-        print(f"\n❌ Analysis failed: {result.error_message}")
+        logger.info(f"\n❌ Analysis failed: {result.error_message}")
 
 
 def list_developments(config: AnalysisConfig):
@@ -366,18 +366,18 @@ def list_developments(config: AnalysisConfig):
     else:
         developments = []
 
-    print("\n📋 Available Developments:")
+    logger.info("\n📋 Available Developments:")
     for i, dev in enumerate(developments, 1):
-        print(f"   {i}. {dev}")
+        logger.info(f"   {i}. {dev}")
 
-    print(f"\nTotal: {len(developments)} developments found")
+    logger.info(f"\nTotal: {len(developments)} developments found")
 
 
 def validate_data(config: AnalysisConfig):
     """Validate input data without running full analysis"""
     analyzer = FinancialAnalyzer(config)
 
-    print("\n🔍 Validating input data...")
+    logger.info("\n🔍 Validating input data...")
 
     try:
         # Load data
@@ -388,14 +388,14 @@ def validate_data(config: AnalysisConfig):
         drill_valid = analyzer.validator.validate_drilling_data(drill_data)
 
         if prod_valid and drill_valid:
-            print("✅ Data validation passed!")
-            print(f"   Production records: {len(prod_data):,}")
-            print(f"   Drilling records: {len(drill_data):,}")
+            logger.info("✅ Data validation passed!")
+            logger.info(f"   Production records: {len(prod_data):,}")
+            logger.info(f"   Drilling records: {len(drill_data):,}")
         else:
-            print("❌ Data validation failed!")
+            logger.info("❌ Data validation failed!")
 
     except Exception as e:
-        print(f"❌ Validation error: {str(e)}")
+        logger.info(f"❌ Validation error: {str(e)}")
 
 
 def export_config(args: argparse.Namespace):
@@ -428,7 +428,7 @@ def export_config(args: argparse.Namespace):
         with open(export_path, "w") as f:
             yaml.dump(config_dict, f, default_flow_style=False)
 
-    print(f"✅ Configuration exported to: {export_path}")
+    logger.info(f"✅ Configuration exported to: {export_path}")
 
 
 def main(argv: Optional[List[str]] = None) -> int:
@@ -475,7 +475,7 @@ def main(argv: Optional[List[str]] = None) -> int:
 
         # Run analysis
         if args.dry_run:
-            print("\n🔄 Dry run mode - no files will be generated")
+            logger.info("\n🔄 Dry run mode - no files will be generated")
             result = analyzer.run_analysis(output_path=None)
         else:
             output_path = (
@@ -493,7 +493,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     except Exception as e:
         logger.error(f"CLI execution failed: {str(e)}")
         if not args.quiet:
-            print(f"\n❌ Error: {str(e)}")
+            logger.info(f"\n❌ Error: {str(e)}")
         return 1
 
 

@@ -347,7 +347,7 @@ Examples:
 
         for idx, entity_id in enumerate(entity_ids, 1):
             if config.get("progress"):
-                print(f"Processing {idx}/{total}: {entity_id}")
+                logger.info(f"Processing {idx}/{total}: {entity_id}")
 
             try:
                 report_path = self.generate_single_report(
@@ -537,9 +537,9 @@ Examples:
                     config=config,
                 )
 
-                print(f"\n✅ Generated {len(report_paths)} reports:")
+                logger.info(f"\n✅ Generated {len(report_paths)} reports:")
                 for path in report_paths:
-                    print(f"  - {path}")
+                    logger.info(f"  - {path}")
 
             else:
                 # Single report
@@ -551,20 +551,20 @@ Examples:
                     config=config,
                 )
 
-                print("\n✅ Report generated successfully:")
-                print(f"  {report_path}")
+                logger.info("\n✅ Report generated successfully:")
+                logger.info(f"  {report_path}")
 
             return 0
 
         except KeyboardInterrupt:
-            print("\n⚠️ Operation cancelled by user")
+            logger.info("\n⚠️ Operation cancelled by user")
             return 130
 
         except Exception as e:
             logger.error(
                 f"Error: {e}", exc_info=args.verbose if "args" in locals() else False
             )
-            print(f"\n❌ Error: {e}")
+            logger.info(f"\n❌ Error: {e}")
             return 1
 
 

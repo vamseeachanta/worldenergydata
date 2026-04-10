@@ -86,6 +86,10 @@ from worldenergydata.common.legacy.wellpath_trajectory import (
 
 # Re-export visualization functions
 from worldenergydata.common.legacy.wellpath_visualization import (
+
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
     COLOR_PALETTE,
     DEFAULT_COLOR,
     create_formation_plane,
@@ -1248,4 +1252,4 @@ if __name__ == "__main__":
     myApplication(root)
     mainloop()
 
-print("hasta proxima vez")
+logger.info("hasta proxima vez")

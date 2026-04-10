@@ -25,6 +25,10 @@ import numpy as np
 import pandas as pd
 
 from worldenergydata.metocean.statistics import (
+
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
     ExtremeValueAnalysis,
     JointProbabilityModel,
     EnvironmentalContour,
@@ -90,55 +94,55 @@ def run_north_sea_example(output_path: str = "north_sea_report.html") -> None:
     output_path:
         Output HTML file path.
     """
-    print("=" * 60)
-    print("North Sea Example — NCS Ekofisk Area")
-    print("=" * 60)
+    logger.info("=" * 60)
+    logger.info("North Sea Example — NCS Ekofisk Area")
+    logger.info("=" * 60)
 
     # 1. Generate synthetic data
-    print("\n[1/6] Generating synthetic NCS data (3-hourly)...")
+    logger.info("\n[1/6] Generating synthetic NCS data (3-hourly)...")
     hs, tp = _generate_ncs_data()
-    print(f"      {len(hs):,} records | Hs range: {hs.min():.2f}–{hs.max():.2f} m")
-    print(f"      Tp range: {tp.min():.2f}–{tp.max():.2f} s")
+    logger.info(f"      {len(hs):,} records | Hs range: {hs.min():.2f}–{hs.max():.2f} m")
+    logger.info(f"      Tp range: {tp.min():.2f}–{tp.max():.2f} s")
 
     # 2. Weather windows
-    print("\n[2/6] Weather Window Analysis...")
+    logger.info("\n[2/6] Weather Window Analysis...")
     wwa = WeatherWindowAnalysis()
 
     # Installation vessel: Hs < 2.5 m, 12-hour minimum window
     ww_install = wwa.operability(hs, threshold=2.5, min_window_hours=12)
-    print(f"      Installation (Hs<2.5m, 12h): {ww_install.operability_pct:.1f}% operable")
+    logger.info(f"      Installation (Hs<2.5m, 12h): {ww_install.operability_pct:.1f}% operable")
 
     # Diving operations: Hs < 1.5 m
     ww_dive = wwa.operability(hs, threshold=1.5, min_window_hours=6)
-    print(f"      Diving (Hs<1.5m, 6h):        {ww_dive.operability_pct:.1f}% operable")
+    logger.info(f"      Diving (Hs<1.5m, 6h):        {ww_dive.operability_pct:.1f}% operable")
 
     # 3. Monthly operability heatmap
-    print("\n[3/6] Monthly Operability...")
+    logger.info("\n[3/6] Monthly Operability...")
     monthly_df = wwa.monthly_operability(hs, threshold=2.5)
-    print(monthly_df[["month_name", "operability_pct"]].to_string())
+    logger.info(monthly_df[["month_name", "operability_pct"]].to_string())
 
     # 4. Wave spectra comparison
-    print("\n[4/6] Wave Spectra (JONSWAP vs Torsethaugen)...")
+    logger.info("\n[4/6] Wave Spectra (JONSWAP vs Torsethaugen)...")
     ws = WaveSpectra()
     design_hs = float(hs.quantile(0.99))
     design_tp = float(tp[hs >= hs.quantile(0.99)].median())
-    print(f"      Design sea state: Hs={design_hs:.2f}m, Tp={design_tp:.2f}s")
+    logger.info(f"      Design sea state: Hs={design_hs:.2f}m, Tp={design_tp:.2f}s")
 
     jonswap = ws.jonswap(hs=design_hs, tp=design_tp)
     torse = ws.torsethaugen(hs=design_hs, tp=design_tp)
-    print(f"      JONSWAP m0 = {jonswap.spectral_moments['m0']:.4f} m²"
+    logger.info(f"      JONSWAP m0 = {jonswap.spectral_moments['m0']:.4f} m²"
           f" → Hs_check = {4*jonswap.spectral_moments['m0']**0.5:.2f} m")
-    print(f"      Torsethaugen m0 = {torse.spectral_moments['m0']:.4f} m²")
+    logger.info(f"      Torsethaugen m0 = {torse.spectral_moments['m0']:.4f} m²")
 
     # 5. Scatter diagram
-    print("\n[5/6] Hs-Tp Scatter Diagram...")
+    logger.info("\n[5/6] Hs-Tp Scatter Diagram...")
     data_df = pd.DataFrame({"hs": hs.values, "tp": tp.values})
     sd = ScatterDiagram()
     scatter_df = sd.compute(data_df, var1="hs", var2="tp", step_var1=0.5, step_var2=1.0)
-    print(f"      {scatter_df.shape[0]} Hs bins × {scatter_df.shape[1]} Tp bins")
+    logger.info(f"      {scatter_df.shape[0]} Hs bins × {scatter_df.shape[1]} Tp bins")
 
     # 6. Report
-    print(f"\n[6/6] Assembling HTML report → {output_path}")
+    logger.info(f"\n[6/6] Assembling HTML report → {output_path}")
     report = MetoceanReport(
         location_name="North Sea — NCS Ekofisk Area",
         lat=_NCS_LAT,
@@ -163,7 +167,7 @@ def run_north_sea_example(output_path: str = "north_sea_report.html") -> None:
     report.add_weather_windows(ww_install)
 
     report.save_html(output_path)
-    print(f"[Done]  Report saved: {output_path}")
+    logger.info(f"[Done]  Report saved: {output_path}")
 
 
 if __name__ == "__main__":

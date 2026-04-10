@@ -642,13 +642,13 @@ Examples:
 
     output_files = acquirer.acquire()
 
-    print("\nAcquisition summary:")
-    print(f"  Years requested: {years}")
-    print(f"  Files created: {len(output_files)}")
+    logger.info("\nAcquisition summary:")
+    logger.info(f"  Years requested: {years}")
+    logger.info(f"  Files created: {len(output_files)}")
     for f in output_files:
         if f and f.exists():
             size_mb = f.stat().st_size / (1024 * 1024)
-            print(f"  - {f} ({size_mb:.1f} MB)")
+            logger.info(f"  - {f} ({size_mb:.1f} MB)")
 
 
 if __name__ == "__main__":

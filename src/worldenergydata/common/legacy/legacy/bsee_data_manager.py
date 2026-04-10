@@ -6,6 +6,10 @@ from typing import Any
 import pandas as pd
 from assetutilities.common.database import get_db_connection
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class BSEEData:
 
@@ -28,9 +32,9 @@ class BSEEData:
                 df = self.dbe.executeScriptsFromFile(filename)
                 api10_list = df.API10.to_list()
             except Exception:
-                print("Error getting data from Database")
+                logger.info("Error getting data from Database")
         else:
-            print("Not a valid filename")
+            logger.info("Not a valid filename")
 
         return api10_list
 
@@ -87,7 +91,7 @@ class BSEEData:
             try:
                 df = self.dbe.executeScriptsFromFile(filename, [api10])
             except Exception:
-                print("Error getting data from Database")
+                logger.info("Error getting data from Database")
         else:
-            print("Not a valid filename: {}".format(filename))
+            logger.info("Not a valid filename: {}".format(filename))
         return df

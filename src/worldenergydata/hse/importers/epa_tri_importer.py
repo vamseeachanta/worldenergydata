@@ -519,11 +519,11 @@ Examples:
         input_path = Path(args.input) if args.input else Path(args.input_dir)
         if input_path.is_file():
             df = pd.read_csv(input_path, low_memory=False)
-            print(f"File: {input_path}")
-            print(f"Records: {len(df)}")
-            print(f"Columns: {list(df.columns)}")
-            print("Sample (first 3 rows):")
-            print(df.head(3).to_string())
+            logger.info(f"File: {input_path}")
+            logger.info(f"Records: {len(df)}")
+            logger.info(f"Columns: {list(df.columns)}")
+            logger.info("Sample (first 3 rows):")
+            logger.info(df.head(3).to_string())
         return
 
     # Create database engine and session
@@ -540,11 +540,11 @@ Examples:
         else:
             stats = importer.import_directory(Path(args.input_dir))
 
-        print("\nImport summary:")
-        print(f"  Total records: {stats['total_records']}")
-        print(f"  Imported: {stats['imported_count']}")
-        print(f"  Skipped (duplicates): {stats['skipped_count']}")
-        print(f"  Errors: {stats['error_count']}")
+        logger.info("\nImport summary:")
+        logger.info(f"  Total records: {stats['total_records']}")
+        logger.info(f"  Imported: {stats['imported_count']}")
+        logger.info(f"  Skipped (duplicates): {stats['skipped_count']}")
+        logger.info(f"  Errors: {stats['error_count']}")
 
     finally:
         session.close()

@@ -23,6 +23,10 @@ from worldenergydata.production.unified.query import (
 from worldenergydata.production.unified.router import RegionRouter
 from worldenergydata.production.unified.normalizer import Normalizer
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class UnifiedProductionClient:
     """Orchestrate cross-regional production queries.
@@ -40,8 +44,8 @@ class UnifiedProductionClient:
                 end="2023-12",
             )
         )
-        print(result.data.head())
-        print(result.summary)
+        logger.info(result.data.head())
+        logger.info(result.summary)
     """
 
     def __init__(self) -> None:

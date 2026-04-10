@@ -9,6 +9,10 @@ from sqlalchemy.orm import Session
 
 from worldenergydata.hse.database.models import HSEIncident
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class BaseImporter(ABC):
     """
@@ -33,7 +37,7 @@ class BaseImporter(ABC):
 
         importer = BSEEIncidentsImporter(db_session)
         stats = importer.import_data()
-        print(f"Imported: {stats['imported_count']}, Skipped: {stats['skipped_count']}")
+        logger.info(f"Imported: {stats['imported_count']}, Skipped: {stats['skipped_count']}")
     """
 
     # Valid enum values

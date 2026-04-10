@@ -10,6 +10,10 @@ from worldenergydata.modules.hse.importers.bsee_statistics_importer import (
     BSEEStatisticsImporter,
 )
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class BSEEStatisticsImporterURL(BSEEStatisticsImporter):
     """
@@ -28,7 +32,7 @@ class BSEEStatisticsImporterURL(BSEEStatisticsImporter):
     Usage:
         importer = BSEEStatisticsImporterURL(db_session)
         stats = importer.import_data()
-        print(f"Imported: {stats['imported_count']}, Skipped: {stats['skipped_count']}")
+        logger.info(f"Imported: {stats['imported_count']}, Skipped: {stats['skipped_count']}")
     """
 
     BSEE_PRODUCTION_DATA_URL = (

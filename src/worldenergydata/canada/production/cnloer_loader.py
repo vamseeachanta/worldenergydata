@@ -31,6 +31,10 @@ import pandas as pd
 
 from worldenergydata.common.units import GasUnits, OilUnits, WaterUnits
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 # ---------------------------------------------------------------------------
 # Data record
 # ---------------------------------------------------------------------------
@@ -333,7 +337,7 @@ class CnloerLoader:
         loader = CnloerLoader()
         records = loader.load_field("Hibernia", start_year=2000, end_year=2010)
         df = loader.to_dataframe(records)
-        print(df[["year", "oil_bbl"]].head())
+        logger.info(df[["year", "oil_bbl"]].head())
     """
 
     def available_fields(self) -> List[str]:

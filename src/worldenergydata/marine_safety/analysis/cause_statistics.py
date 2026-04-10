@@ -42,6 +42,10 @@ from sqlalchemy.orm import Session
 
 from worldenergydata.marine_safety.constants import CauseCategory, SeverityLevel
 from worldenergydata.marine_safety.database.models import (
+
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
     Incident,
     IncidentCause,
 )
@@ -244,31 +248,31 @@ class StatisticalSummary:
 
     def print_report(self) -> None:
         """Print formatted text report of statistical summary."""
-        print("\n" + "=" * 60)
-        print("MARINE SAFETY INCIDENT CAUSE STATISTICAL SUMMARY")
-        print("=" * 60)
-        print(f"\nTotal Incidents: {self.total_incidents}")
-        print(f"Total Cause Records: {self.total_causes}")
-        print(f"Date Range: {self.date_range[0]} to {self.date_range[1]}")
-        print(
+        logger.info("\n" + "=" * 60)
+        logger.info("MARINE SAFETY INCIDENT CAUSE STATISTICAL SUMMARY")
+        logger.info("=" * 60)
+        logger.info(f"\nTotal Incidents: {self.total_incidents}")
+        logger.info(f"Total Cause Records: {self.total_causes}")
+        logger.info(f"Date Range: {self.date_range[0]} to {self.date_range[1]}")
+        logger.info(
             f"\nMost Common Cause: {self.most_common_cause} ({self.cause_distribution[self.most_common_cause]} occurrences)"
         )
-        print(
+        logger.info(
             f"Least Common Cause: {self.least_common_cause} ({self.cause_distribution[self.least_common_cause]} occurrences)"
         )
 
-        print("\n--- Cause Category Distribution ---")
+        logger.info("\n--- Cause Category Distribution ---")
         for cause, count in sorted(
             self.cause_distribution.items(), key=lambda x: x[1], reverse=True
         ):
             pct = (count / self.total_causes) * 100
-            print(f"  {cause}: {count} ({pct:.1f}%)")
+            logger.info(f"  {cause}: {count} ({pct:.1f}%)")
 
-        print("\n--- Severity Level Distribution ---")
+        logger.info("\n--- Severity Level Distribution ---")
         for severity, count in sorted(self.severity_distribution.items()):
             pct = (count / self.total_incidents) * 100
-            print(f"  Level {severity}: {count} ({pct:.1f}%)")
-        print("=" * 60 + "\n")
+            logger.info(f"  Level {severity}: {count} ({pct:.1f}%)")
+        logger.info("=" * 60 + "\n")
 
 
 class CauseStatistics:

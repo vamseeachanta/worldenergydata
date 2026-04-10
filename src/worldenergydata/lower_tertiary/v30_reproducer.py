@@ -11,6 +11,10 @@ from pathlib import Path
 import pandas as pd
 import yaml
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
 FDAS_V30_DIR = PROJECT_ROOT / "docs/modules/bsee/analysis/production/FDAS_V30"
 OGOR_ZIP_DIR = PROJECT_ROOT / "data/modules/bsee/zip/historical_production_yearly"
@@ -279,20 +283,20 @@ def reproduce_v30_production(
 
 
 if __name__ == "__main__":
-    print("=" * 80)
-    print("V30 Production Reproduction from BSEE OGOR Data")
-    print("=" * 80)
+    logger.info("=" * 80)
+    logger.info("V30 Production Reproduction from BSEE OGOR Data")
+    logger.info("=" * 80)
 
     baseline = load_golden_baseline()
     results = reproduce_v30_production()
 
-    print(f"\nDevelopments found: {len(results)}")
+    logger.info(f"\nDevelopments found: {len(results)}")
     header = (
         f"{'Development':<25} {'OGOR Oil (BBL)':>18} "
         f"{'V30 Oil (BBL)':>18} {'Delta %':>10}"
     )
-    print(header)
-    print("-" * 75)
+    logger.info(header)
+    logger.info("-" * 75)
 
     for _proj_id, proj_data in baseline["projects"].items():
         dev_name = proj_data["display_name"]
@@ -301,9 +305,9 @@ if __name__ == "__main__":
         if dev_name in results:
             actual = results[dev_name]["total_oil_bbl"]
             delta = ((actual - expected) / expected * 100) if expected else 0
-            print(
+            logger.info(
                 f"{dev_name:<25} {actual:>18,.0f} "
                 f"{expected:>18,.0f} {delta:>+10.2f}%"
             )
         else:
-            print(f"{dev_name:<25} {'NOT FOUND':>18} {expected:>18,.0f}")
+            logger.info(f"{dev_name:<25} {'NOT FOUND':>18} {expected:>18,.0f}")

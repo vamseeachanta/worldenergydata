@@ -9,6 +9,10 @@ import pandas as pd
 
 from worldenergydata.modules.hse.importers.base_importer import BaseImporter
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class BSEEStatisticsImporter(BaseImporter):
     """
@@ -21,7 +25,7 @@ class BSEEStatisticsImporter(BaseImporter):
     Usage:
         importer = BSEEStatisticsImporter(db_session, csv_file_path="statistics.csv")
         stats = importer.import_data()
-        print(f"Imported: {stats['imported_count']}, Skipped: {stats['skipped_count']}")
+        logger.info(f"Imported: {stats['imported_count']}, Skipped: {stats['skipped_count']}")
     """
 
     def __init__(self, db_session, csv_file_path: str = None):

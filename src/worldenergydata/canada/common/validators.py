@@ -136,11 +136,11 @@ class CanadaDataValidator:
 
         # Validate a UWI
         result = validator.validate_uwi("100.16-09-010-09W4.00")
-        print(f"Valid: {result.is_valid}")
+        logger.info(f"Valid: {result.is_valid}")
 
         # Validate coordinates
         result = validator.validate_coordinates(53.5461, -113.4938)
-        print(f"Within Canada: {result.is_valid}")
+        logger.info(f"Within Canada: {result.is_valid}")
 
         # Validate a complete well record
         record = {

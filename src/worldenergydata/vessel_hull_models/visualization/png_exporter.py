@@ -22,6 +22,10 @@ except ImportError:
 
 from worldenergydata.vessel_hull_models.exceptions import VisualizationError
 from worldenergydata.vessel_hull_models.geometry.obj_parser import (
+
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
     OBJMesh,
     parse_obj_file,
 )
@@ -225,9 +229,9 @@ def generate_preview_gallery(
                 dpi=dpi,
             )
             created_files.append(png_path)
-            print(f"  ✓ {obj_path.stem}")
+            logger.info(f"  ✓ {obj_path.stem}")
         except Exception as e:
-            print(f"  ✗ {obj_path.stem}: {e}")
+            logger.info(f"  ✗ {obj_path.stem}: {e}")
 
     return created_files
 

@@ -116,7 +116,7 @@ def main(argv: Optional[List[str]] = None) -> None:
     args = argv if argv is not None else sys.argv[1:]
 
     if not args:
-        print(
+        logger.info(
             "Usage:\n"
             "  python -m worldenergydata.scheduler start [--config PATH]\n"
             "  python -m worldenergydata.scheduler stop [--config PATH]\n"
@@ -135,35 +135,35 @@ def main(argv: Optional[List[str]] = None) -> None:
             config_path = args[idx + 1]
 
     if command == "start":
-        print(f"Starting scheduler with config: {config_path}")
+        logger.info(f"Starting scheduler with config: {config_path}")
         scheduler = _build_scheduler(config_path, ALL_JOBS)
         scheduler.start()
 
     elif command == "stop":
         result = cmd_stop(config_path=config_path)
-        print(result["message"])
+        logger.info(result["message"])
 
     elif command == "status":
         result = cmd_status(config_path=config_path)
-        print(json.dumps(result, indent=2))
+        logger.info(json.dumps(result, indent=2))
 
     elif command == "run-job":
         if len(args) < 2:
-            print("Error: run-job requires a job name argument.")
+            logger.info("Error: run-job requires a job name argument.")
             sys.exit(1)
         job_name = args[1]
         try:
             result = cmd_run_job(job_name=job_name, config_path=config_path)
-            print(f"Job '{job_name}' completed with status: {result.status}")
-            print(f"  records_updated: {result.records_updated}")
+            logger.info(f"Job '{job_name}' completed with status: {result.status}")
+            logger.info(f"  records_updated: {result.records_updated}")
             if result.error_msg:
-                print(f"  error: {result.error_msg}")
+                logger.info(f"  error: {result.error_msg}")
         except ValueError as exc:
-            print(f"Error: {exc}")
+            logger.error(f"Error: {exc}")
             sys.exit(1)
 
     else:
-        print(f"Unknown command: '{command}'")
+        logger.info(f"Unknown command: '{command}'")
         sys.exit(1)
 
 

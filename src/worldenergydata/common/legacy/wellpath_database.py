@@ -12,6 +12,10 @@ from typing import Any
 
 import pandas as pd
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 # Database file extension
 BASE_EXT: str = ".db"
 
@@ -31,7 +35,7 @@ def first_start(wellnames_given: list[str] | None = None) -> list[str]:
     if wellnames_given is None:
         wellnames_given = []
 
-    print("first start")
+    logger.info("first start")
     if not os.path.exists("wellnames.db"):
         con: sqlite3.Connection = sqlite3.connect("wellnames.db")
         cursor: sqlite3.Cursor = con.cursor()
@@ -45,7 +49,7 @@ def first_start(wellnames_given: list[str] | None = None) -> list[str]:
         cursor.execute(sql)
         con.close()
     else:
-        print("file wellnames.db already exists", " load wells from database...")
+        logger.info("file wellnames.db already exists", " load wells from database...")
         con = sqlite3.connect("wellnames.db")
         cursor = con.cursor()
         sql = "SELECT * FROM wells"

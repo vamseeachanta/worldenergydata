@@ -10,8 +10,8 @@ Example usage:
     from worldenergydata.common.config import get_settings, Settings
 
     settings = get_settings()
-    print(settings.data_dir)
-    print(settings.bsee_api_base_url)
+    logger.info(settings.data_dir)
+    logger.info(settings.bsee_api_base_url)
 """
 
 import os
@@ -21,6 +21,10 @@ from typing import Any, Dict
 
 from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 class DatabaseSettings(BaseSettings):
@@ -268,7 +272,7 @@ def get_settings() -> Settings:
 
     Example:
         settings = get_settings()
-        print(settings.data_dir)
+        logger.info(settings.data_dir)
     """
     return Settings()
 

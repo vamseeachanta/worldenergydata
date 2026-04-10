@@ -401,6 +401,10 @@ All files follow official BSEE data formats:
 ```python
 import pandas as pd
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 # Load production data
 production = pd.read_csv('test_production.csv')
 
@@ -430,9 +434,9 @@ def create_sample_bsee_data():
     # Generate and save all test data
     files = converter.save_test_data(test_data_dir, prefix="sample")
     
-    print("Created BSEE test data files:")
+    logger.info("Created BSEE test data files:")
     for data_type, file_path in files.items():
-        print(f"  {data_type}: {file_path}")
+        logger.info(f"  {data_type}: {file_path}")
     
     return files
 

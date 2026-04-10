@@ -18,7 +18,7 @@ Usage:
 
     importer = BSEEINCSImporter(data_dir="data/modules/hse/raw/bsee")
     records = importer.load()
-    print(f"Loaded {len(records)} INC records")
+    logger.info(f"Loaded {len(records)} INC records")
 
     # CLI
     uv run python -m worldenergydata.hse.importers.bsee_incs_importer \\

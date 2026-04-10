@@ -10,6 +10,10 @@ from worldenergydata.modules.hse.importers.bsee_penalties_importer import (
     BSEEPenaltiesImporter,
 )
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class BSEEPenaltiesImporterURL(BSEEPenaltiesImporter):
     """
@@ -33,7 +37,7 @@ class BSEEPenaltiesImporterURL(BSEEPenaltiesImporter):
     Usage:
         importer = BSEEPenaltiesImporterURL(db_session)
         stats = importer.import_data()
-        print(f"Imported: {stats['imported_count']}, Skipped: {stats['skipped_count']}")
+        logger.info(f"Imported: {stats['imported_count']}, Skipped: {stats['skipped_count']}")
     """
 
     BSEE_WAR_DATA_URL = "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip"

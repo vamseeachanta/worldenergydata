@@ -15,6 +15,10 @@ from pydantic import ValidationError as PydanticValidationError
 
 from worldenergydata.common.types import DataFrameLike
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 # Conditional pandas import
 try:
     import pandas as pd
@@ -121,7 +125,7 @@ def validate_api_number(
     Example:
         is_valid, error = validate_api_number("608114123400")
         if not is_valid:
-            print(f"Invalid API: {error}")
+            logger.info(f"Invalid API: {error}")
     """
     if not api_number:
         return False, "API number is required"
@@ -313,7 +317,7 @@ def validate_data(
 
         result = validate_data(df, ProductionSchema)
         if not result.is_valid:
-            print(f"Found {len(result.errors)} errors")
+            logger.info(f"Found {len(result.errors)} errors")
     """
     result = ValidationResult()
 

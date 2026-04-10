@@ -382,33 +382,33 @@ class QualitySummary:
 
     def _print_plain(self) -> None:
         """Print plain text summary when Rich is not available."""
-        print("\n" + "=" * 60)
-        print("MARINE SAFETY DATA QUALITY DASHBOARD")
-        print("=" * 60)
-        print(f"Generated: {self.generated_at.strftime('%Y-%m-%d %H:%M:%S')}")
-        print(f"Overall Quality Score: {self.overall_quality_score:.1f}/100")
+        logger.info("\n" + "=" * 60)
+        logger.info("MARINE SAFETY DATA QUALITY DASHBOARD")
+        logger.info("=" * 60)
+        logger.info(f"Generated: {self.generated_at.strftime('%Y-%m-%d %H:%M:%S')}")
+        logger.info(f"Overall Quality Score: {self.overall_quality_score:.1f}/100")
 
-        print("\n--- Coverage by Source ---")
+        logger.info("\n--- Coverage by Source ---")
         for source, count in sorted(
             self.coverage.by_source.items(), key=lambda x: x[1], reverse=True
         ):
-            print(f"  {source.upper()}: {count:,}")
-        print(f"  Total: {self.coverage.total_records:,}")
+            logger.info(f"  {source.upper()}: {count:,}")
+        logger.info(f"  Total: {self.coverage.total_records:,}")
 
-        print("\n--- Field Completeness ---")
+        logger.info("\n--- Field Completeness ---")
         for field_name, pct in sorted(
             self.completeness.field_completeness.items(),
             key=lambda x: x[1],
             reverse=True,
         ):
-            print(f"  {field_name}: {pct:.1f}%")
+            logger.info(f"  {field_name}: {pct:.1f}%")
 
-        print("\n--- Duplicates ---")
-        print(f"  Total Links: {self.duplicates.total_links:,}")
-        print(f"  Verified: {self.duplicates.verified_duplicates:,}")
-        print(f"  Potential: {self.duplicates.potential_duplicates:,}")
+        logger.info("\n--- Duplicates ---")
+        logger.info(f"  Total Links: {self.duplicates.total_links:,}")
+        logger.info(f"  Verified: {self.duplicates.verified_duplicates:,}")
+        logger.info(f"  Potential: {self.duplicates.potential_duplicates:,}")
 
-        print("=" * 60 + "\n")
+        logger.info("=" * 60 + "\n")
 
 
 class DataQualityDashboard:

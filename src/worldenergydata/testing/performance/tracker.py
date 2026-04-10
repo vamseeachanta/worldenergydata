@@ -10,6 +10,10 @@ from datetime import datetime
 from typing import Dict, Any, Optional
 from .database import PerformanceDatabase, TestExecutionRecord
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class TestPerformanceTracker:
     """Track test performance metrics during execution."""
@@ -191,14 +195,14 @@ class PytestPerformancePlugin:
         """Called after test session finishes."""
         summary = self.tracker.get_session_summary()
         
-        print("\n" + "="*60)
-        print("Test Performance Summary")
-        print("="*60)
-        print(f"Total Tests: {summary['total_tests']}")
-        print(f"Total Duration: {summary['total_duration']:.2f}s")
-        print(f"Average Duration: {summary['avg_duration']:.3f}s")
-        print(f"Success Rate: {summary['success_rate']:.1f}%")
-        print("="*60)
+        logger.info("\n" + "="*60)
+        logger.info("Test Performance Summary")
+        logger.info("="*60)
+        logger.info(f"Total Tests: {summary['total_tests']}")
+        logger.info(f"Total Duration: {summary['total_duration']:.2f}s")
+        logger.info(f"Average Duration: {summary['avg_duration']:.3f}s")
+        logger.info(f"Success Rate: {summary['success_rate']:.1f}%")
+        logger.info("="*60)
 
 
 def pytest_configure(config):

@@ -9,6 +9,10 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class TestAnalyzer:
     """Analyze test suite for cleanup opportunities."""
@@ -71,7 +75,7 @@ class TestAnalyzer:
             self.test_methods[str(file_path)] = test_methods
 
         except Exception as e:
-            print(f"Error analyzing {file_path}: {e}")
+            logger.error(f"Error analyzing {file_path}: {e}")
 
     def _find_duplicate_tests(self):
         """Find duplicate test implementations."""
@@ -106,7 +110,7 @@ class TestAnalyzer:
                             test_signatures[signature] = test_id
 
             except Exception as e:
-                print(f"Error finding duplicates in {file_path}: {e}")
+                logger.error(f"Error finding duplicates in {file_path}: {e}")
 
     def _find_obsolete_tests(self):
         """Find tests for deprecated or removed features."""
@@ -282,7 +286,7 @@ class TestCleaner:
                     f.write(ast.unparse(archive_tree))
 
         except Exception as e:
-            print(f"Error archiving from {file_path}: {e}")
+            logger.error(f"Error archiving from {file_path}: {e}")
 
     def remove_empty_files(self):
         """Remove test files that have no test methods."""
@@ -297,7 +301,7 @@ class TestCleaner:
                     self.cleanup_log.append(f"Removed empty file: {test_file}")
 
             except Exception as e:
-                print(f"Error checking {test_file}: {e}")
+                logger.error(f"Error checking {test_file}: {e}")
 
     def consolidate_imports(self):
         """Consolidate and organize imports in test files."""
@@ -332,7 +336,7 @@ class TestCleaner:
                 self.cleanup_log.append(f"Organized imports in: {test_file}")
 
             except Exception as e:
-                print(f"Error organizing imports in {test_file}: {e}")
+                logger.error(f"Error organizing imports in {test_file}: {e}")
 
     def generate_cleanup_report(self) -> str:
         """Generate cleanup report."""

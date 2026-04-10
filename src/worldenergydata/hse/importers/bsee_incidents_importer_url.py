@@ -6,6 +6,10 @@ from typing import Any, Dict, List
 from worldenergydata.bsee.data.processors.in_memory import MemoryProcessor
 from worldenergydata.bsee.data.scrapers.bsee_web import BSEEWebScraper
 from worldenergydata.hse.importers.bsee_incidents_importer import (
+
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
     BSEEIncidentsImporter,
 )
 
@@ -32,7 +36,7 @@ class BSEEIncidentsImporterURL(BSEEIncidentsImporter):
     Usage:
         importer = BSEEIncidentsImporterURL(db_session)
         stats = importer.import_data()
-        print(f"Imported: {stats['imported_count']}, Skipped: {stats['skipped_count']}")
+        logger.info(f"Imported: {stats['imported_count']}, Skipped: {stats['skipped_count']}")
     """
 
     # Incident investigation raw data (not APDRawData.zip which is well permit data)

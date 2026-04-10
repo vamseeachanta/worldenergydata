@@ -24,6 +24,10 @@ import numpy as np
 import pandas as pd
 
 from worldenergydata.metocean.statistics import (
+
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
     ExtremeValueAnalysis,
     JointProbabilityModel,
     EnvironmentalContour,
@@ -86,48 +90,48 @@ def run_gom_example(output_path: str = "gom_report.html") -> None:
     output_path:
         Output HTML file path.
     """
-    print("=" * 60)
-    print("GoM Example — NDBC 42035 (West Cameron Block)")
-    print("=" * 60)
+    logger.info("=" * 60)
+    logger.info("GoM Example — NDBC 42035 (West Cameron Block)")
+    logger.info("=" * 60)
 
     # 1. Generate synthetic data
-    print("\n[1/5] Generating synthetic GoM data...")
+    logger.info("\n[1/5] Generating synthetic GoM data...")
     hs, tp = _generate_gom_data()
-    print(f"      {len(hs):,} hourly records | Hs range: {hs.min():.2f}–{hs.max():.2f} m")
-    print(f"      Tp range: {tp.min():.2f}–{tp.max():.2f} s")
+    logger.info(f"      {len(hs):,} hourly records | Hs range: {hs.min():.2f}–{hs.max():.2f} m")
+    logger.info(f"      Tp range: {tp.min():.2f}–{tp.max():.2f} s")
 
     # 2. EVA
-    print("\n[2/5] Extreme Value Analysis (POT, Weibull_2P)...")
+    logger.info("\n[2/5] Extreme Value Analysis (POT, Weibull_2P)...")
     eva = ExtremeValueAnalysis()
     eva_result = eva.fit_pot(hs, periods=[1, 10, 50, 100, 1000])
     table = eva.return_period_table(eva_result)
-    print("      Return Period Table:")
-    print(table.to_string())
+    logger.info("      Return Period Table:")
+    logger.info(table.to_string())
 
     # 3. Joint probability
-    print("\n[3/5] Hs-Tp Joint Probability (CMA)...")
+    logger.info("\n[3/5] Hs-Tp Joint Probability (CMA)...")
     jpm = JointProbabilityModel()
     joint_model = jpm.fit(hs, tp, periods=[50])
     scatter = jpm.scatter_diagram(hs, tp)
-    print(f"      Scatter diagram: {scatter.shape[0]} Hs bins × {scatter.shape[1]} Tp bins")
-    print(f"      Total occurrence sum: {scatter.values.sum():.2f}%")
+    logger.info(f"      Scatter diagram: {scatter.shape[0]} Hs bins × {scatter.shape[1]} Tp bins")
+    logger.info(f"      Total occurrence sum: {scatter.values.sum():.2f}%")
 
     # 4. IFORM contour
-    print("\n[4/5] IFORM Environmental Contour (50-year)...")
+    logger.info("\n[4/5] IFORM Environmental Contour (50-year)...")
     ec = EnvironmentalContour()
     contour = ec.iform(joint_model, return_period=50)
-    print(f"      Contour points: {len(contour.hs_values)}")
-    print(f"      Hs max on contour: {contour.hs_values.max():.2f} m")
+    logger.info(f"      Contour points: {len(contour.hs_values)}")
+    logger.info(f"      Hs max on contour: {contour.hs_values.max():.2f} m")
 
     # 5. Weather windows
-    print("\n[5/5] Weather Windows (Hs < 2.0 m threshold)...")
+    logger.info("\n[5/5] Weather Windows (Hs < 2.0 m threshold)...")
     wwa = WeatherWindowAnalysis()
     ww_result = wwa.operability(hs, threshold=2.0, min_window_hours=12)
-    print(f"      Operability: {ww_result.operability_pct:.1f}%")
-    print(f"      Total windows >= 12h: {ww_result.total_windows}")
+    logger.info(f"      Operability: {ww_result.operability_pct:.1f}%")
+    logger.info(f"      Total windows >= 12h: {ww_result.total_windows}")
 
     # Report
-    print(f"\n[Report] Assembling HTML report → {output_path}")
+    logger.info(f"\n[Report] Assembling HTML report → {output_path}")
     report = MetoceanReport(
         location_name="GoM — West Cameron Block (NDBC 42035)",
         lat=_GoM_LAT,
@@ -138,7 +142,7 @@ def run_gom_example(output_path: str = "gom_report.html") -> None:
     report.add_contour(contour)
     report.add_weather_windows(ww_result)
     report.save_html(output_path)
-    print(f"[Done]  Report saved: {output_path}")
+    logger.info(f"[Done]  Report saved: {output_path}")
 
 
 if __name__ == "__main__":

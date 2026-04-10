@@ -122,12 +122,12 @@ class NDBCClient(BaseClient):
             # Get all active stations
             result = client.fetch_stations()
             for station in result.data:
-                print(f"{station.station_id}: {station.name}")
+                logger.info(f"{station.station_id}: {station.name}")
 
             # Get real-time data for a specific buoy
             data = client.fetch_realtime("41001")
             for obs in data.data[:5]:
-                print(f"{obs.observation_time}: {obs.wave_height_m}m waves")
+                logger.info(f"{obs.observation_time}: {obs.wave_height_m}m waves")
     """
 
     def __init__(self) -> None:

@@ -17,6 +17,10 @@ from ..constants import IncidentType, VesselType
 from ..database.models import Incident, Location, Vessel
 from .base_importer import BaseImporter
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class TSBImporter(BaseImporter):
     """Import Canadian TSB marine occurrence data."""
@@ -88,7 +92,7 @@ class TSBImporter(BaseImporter):
         """Pre-load vessels, injuries, and equipment data into memory."""
         # Load vessels
         if self.vessels_file and self.vessels_file.exists():
-            print(f"Loading vessels data from {self.vessels_file}...")
+            logger.info(f"Loading vessels data from {self.vessels_file}...")
             count = 0
             with open(
                 self.vessels_file, "r", encoding="utf-8-sig", errors="replace"
@@ -105,13 +109,13 @@ class TSBImporter(BaseImporter):
                             self.vessels_by_occno[occno] = []
                         self.vessels_by_occno[occno].append(cleaned_row)
                         count += 1
-            print(
+            logger.info(
                 f"Loaded {count} vessel records for {len(self.vessels_by_occno)} unique occurrences"
             )
 
         # Load injuries
         if self.injuries_file and self.injuries_file.exists():
-            print(f"Loading injuries data from {self.injuries_file}...")
+            logger.info(f"Loading injuries data from {self.injuries_file}...")
             count = 0
             with open(
                 self.injuries_file, "r", encoding="utf-8-sig", errors="replace"
@@ -128,13 +132,13 @@ class TSBImporter(BaseImporter):
                             self.injuries_by_occno[occno] = []
                         self.injuries_by_occno[occno].append(cleaned_row)
                         count += 1
-            print(
+            logger.info(
                 f"Loaded {count} injury records for {len(self.injuries_by_occno)} unique occurrences"
             )
 
         # Load equipment data (stored in metadata, not loaded upfront due to size)
         # Equipment files: navigation_equipment, lifesaving_equipment, recording_equipment
-        print("Equipment files will be processed on-demand (large datasets)")
+        logger.info("Equipment files will be processed on-demand (large datasets)")
 
     def read_source(self) -> Generator[Dict[str, Any], None, None]:
         """Read records from occurrence CSV file."""
@@ -300,7 +304,7 @@ class TSBImporter(BaseImporter):
             return parsed
 
         except Exception as e:
-            print(f"Error parsing TSB record {raw_record.get('OccNo')}: {e}")
+            logger.error(f"Error parsing TSB record {raw_record.get('OccNo')}: {e}")
             return None
 
     def map_to_model(self, parsed_record: Dict[str, Any]) -> Optional[Incident]:
@@ -350,7 +354,7 @@ class TSBImporter(BaseImporter):
             return incident
 
         except Exception as e:
-            print(
+            logger.info(
                 f"Error creating model for {parsed_record.get('source_incident_id')}: {e}"
             )
             import traceback
@@ -446,7 +450,7 @@ class TSBImporter(BaseImporter):
             return location.location_id
 
         except Exception as e:
-            print(f"Error creating location: {e}")
+            logger.error(f"Error creating location: {e}")
             return None
 
     def _map_province_code(self, province: str) -> Optional[str]:
@@ -529,5 +533,5 @@ class TSBImporter(BaseImporter):
             return vessel.vessel_id
 
         except Exception as e:
-            print(f"Error creating vessel: {e}")
+            logger.error(f"Error creating vessel: {e}")
             return None

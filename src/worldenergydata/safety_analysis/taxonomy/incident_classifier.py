@@ -11,7 +11,7 @@ Supported sources: bsee, osha, marine_safety, phmsa, epa_tri.
 Usage:
     classifier = IncidentClassifier()
     result = classifier.classify({"ACCIDENT_TYPE": "EXPLOSION"}, source="bsee")
-    print(result.activity, result.subactivity, result.confidence)
+    logger.info(result.activity, result.subactivity, result.confidence)
 
     results = classifier.classify_batch(records, source="bsee")
 """
@@ -27,6 +27,10 @@ from worldenergydata.safety_analysis.taxonomy.activity_definitions import (
     Subactivity,
 )
 from worldenergydata.safety_analysis.taxonomy.activity_registry import (
+
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
     ActivityTaxonomy,
 )
 

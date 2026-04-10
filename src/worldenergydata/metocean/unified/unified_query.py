@@ -15,7 +15,7 @@ Usage:
         end_date=datetime(2023, 12, 31),
     )
     result = client.query(query)
-    print(result.data.head())
+    logger.info(result.data.head())
 """
 
 from __future__ import annotations
@@ -102,7 +102,7 @@ class UnifiedMetoceanClient:
                               start_date=datetime(2023,1,1),
                               end_date=datetime(2023,1,31))
         result = client.query(query)
-        print(result.data)
+        logger.info(result.data)
     """
 
     def __init__(self, max_workers: int = 5) -> None:

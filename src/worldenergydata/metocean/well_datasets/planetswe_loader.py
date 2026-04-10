@@ -16,13 +16,17 @@ Usage::
 
     loader = PlanetsweLoader()
     for sample in loader.stream_sample(n_steps=10):
-        print(sample["data"].shape)
+        logger.info(sample["data"].shape)
 """
 
 from __future__ import annotations
 
 from itertools import islice
 from typing import Any, Dict, Generator
+
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
 
 # Optional dependency guard — the_well is not required for core worldenergydata operation.
 try:

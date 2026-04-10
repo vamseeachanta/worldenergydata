@@ -10,6 +10,10 @@ from worldenergydata.modules.hse.importers.bsee_incidents_importer import (
     BSEEIncidentsImporter,
 )
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class BSEEIncidentsImporterURL(BSEEIncidentsImporter):
     """
@@ -28,7 +32,7 @@ class BSEEIncidentsImporterURL(BSEEIncidentsImporter):
     Usage:
         importer = BSEEIncidentsImporterURL(db_session)
         stats = importer.import_data()
-        print(f"Imported: {stats['imported_count']}, Skipped: {stats['skipped_count']}")
+        logger.info(f"Imported: {stats['imported_count']}, Skipped: {stats['skipped_count']}")
     """
 
     BSEE_WELL_DATA_URL = "https://www.data.bsee.gov/Well/Files/APDRawData.zip"

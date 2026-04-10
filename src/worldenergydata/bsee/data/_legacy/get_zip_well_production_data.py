@@ -2,6 +2,10 @@ import requests
 from bs4 import BeautifulSoup
 import os
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class GetWellProdData:
             
@@ -31,14 +35,14 @@ class GetWellProdData:
             links = soup.find_all("a", string="Delimit")
 
             if not links:
-                print("No 'Delimit' links found.")
+                logger.info("No 'Delimit' links found.")
                 exit()
 
             def download_file(file_url, save_path):
                 response = requests.get(file_url, headers=headers, timeout=60)
                 with open(save_path, "wb") as file:
                     file.write(response.content)
-                print(f"Downloaded: {save_path}")
+                logger.info(f"Downloaded: {save_path}")
 
             base_url = "https://www.data.bsee.gov"
             for link in links:
@@ -46,4 +50,4 @@ class GetWellProdData:
                 file_name = os.path.join(save_dir, link["href"].split("/")[-1])
                 download_file(file_url, file_name)
 
-            print("All files downloaded.")
+            logger.info("All files downloaded.")

@@ -11,6 +11,10 @@ import sqlite3
 from dataclasses import dataclass, field
 from typing import Any
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 # Database file extension
 BASE_EXT: str = ".db"
 
@@ -326,7 +330,7 @@ class WellMap:
             cursor.execute(sql)
             wcon.close()
         else:
-            print("database loaded")
+            logger.info("database loaded")
 
         wcon = sqlite3.connect(self.name + BASE_EXT)
         cursor = wcon.cursor()
@@ -363,7 +367,7 @@ class WellMap:
             cursor.execute(sql)
             wcon.close()
         else:
-            print("database loaded")
+            logger.info("database loaded")
 
         wcon = sqlite3.connect(self.name + BASE_EXT)
         cursor = wcon.cursor()

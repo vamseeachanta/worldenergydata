@@ -24,11 +24,11 @@ Example usage:
 
     parser = UWIParser()
     components = parser.parse("100.16-09-010-09W4.00")
-    print(f"Survey system: {components.survey_system}")
+    logger.info(f"Survey system: {components.survey_system}")
 
     validator = CanadaDataValidator()
     result = validator.validate_uwi("100.16-09-010-09W4.00")
-    print(f"Valid: {result.is_valid}")
+    logger.info(f"Valid: {result.is_valid}")
 """
 
 from worldenergydata.canada.aer.api_client import AERClient
@@ -52,6 +52,10 @@ from worldenergydata.canada.emerging_basins.watch_list import (
     get_emerging_basins,
 )
 from worldenergydata.canada.production.cnloer_loader import (
+
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
     CnloerLoader,
     CnloerProductionRecord,
 )

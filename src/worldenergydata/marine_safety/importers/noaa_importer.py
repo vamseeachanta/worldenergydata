@@ -30,6 +30,10 @@ from ..constants import IncidentType
 from ..database.models import Incident, Location
 from .base_importer import BaseImporter
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class NOAAImporter(BaseImporter):
     """Import NOAA Oil Spill and Chemical Release data."""
@@ -104,7 +108,7 @@ class NOAAImporter(BaseImporter):
             return parsed
 
         except Exception as e:
-            print(f"Error parsing NOAA record {raw_record.get('id')}: {e}")
+            logger.error(f"Error parsing NOAA record {raw_record.get('id')}: {e}")
             return None
 
     def _extract_incident_id(self, raw_record: Dict[str, Any]) -> Optional[str]:
@@ -304,7 +308,7 @@ class NOAAImporter(BaseImporter):
 
         except Exception as e:
             incident_id = parsed_record.get("source_incident_id")
-            print(f"Error creating model for {incident_id}: {e}")
+            logger.error(f"Error creating model for {incident_id}: {e}")
             return None
 
     def _parse_date(self, date_str: str) -> Optional[datetime]:
@@ -424,7 +428,7 @@ class NOAAImporter(BaseImporter):
             return location.location_id
 
         except Exception as e:
-            print(f"Error creating location: {e}")
+            logger.error(f"Error creating location: {e}")
             return None
 
     def is_duplicate(self, model_instance: Incident) -> bool:

@@ -227,9 +227,9 @@ class PHMSAImporter:
             data_dir="/path/to/phmsa/extracted",
         )
         stats = importer.import_data()
-        print(f"Imported: {stats['imported_count']}")
-        print(f"Skipped duplicates: {stats['skipped_count']}")
-        print(f"Errors: {stats['error_count']}")
+        logger.info(f"Imported: {stats['imported_count']}")
+        logger.info(f"Skipped duplicates: {stats['skipped_count']}")
+        logger.error(f"Errors: {stats['error_count']}")
     """
 
     def __init__(

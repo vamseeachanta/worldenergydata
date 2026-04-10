@@ -48,15 +48,15 @@ class DataValidator:
         self.errors = []
         self.warnings = []
 
-        print(f"\n[DEBUG] validate() called with data type: {type(data).__name__}")
-        print(f"[DEBUG] Schema name: {self.schema.name}, strict mode: {self.strict}")
+        logger.info(f"\n[DEBUG] validate() called with data type: {type(data).__name__}")
+        logger.info(f"[DEBUG] Schema name: {self.schema.name}, strict mode: {self.strict}")
 
         # Convert data to consistent format
         if isinstance(data, pd.DataFrame):
             records = data.to_dict("records")
         elif isinstance(data, dict):
             records = [data]
-            print(f"[DEBUG] Dict input wrapped in list. Input: {data}")
+            logger.info(f"[DEBUG] Dict input wrapped in list. Input: {data}")
         elif isinstance(data, list):
             records = data
         else:
@@ -85,8 +85,8 @@ class DataValidator:
 
     def _validate_record(self, record: Dict[str, Any], row_idx: int):
         """Validate a single record."""
-        print(f"\n[DEBUG] _validate_record() called for row {row_idx}")
-        print(f"[DEBUG] Record keys: {list(record.keys())}")
+        logger.info(f"\n[DEBUG] _validate_record() called for row {row_idx}")
+        logger.info(f"[DEBUG] Record keys: {list(record.keys())}")
 
         # Check for required fields
         required_fields = self.schema.get_required_fields()
@@ -111,24 +111,24 @@ class DataValidator:
         for field_schema in field_schemas:
             field_name = field_schema.name
             value = record.get(field_name)
-            print(
+            logger.info(
                 f"[DEBUG] Validating field: {field_name}, value: {value} (type: {type(value).__name__})"
             )
 
             try:
                 self._validate_field(value, field_schema, row_idx)
-                print(f"[DEBUG] Field {field_name} validation passed")
+                logger.info(f"[DEBUG] Field {field_name} validation passed")
             except ValidationError as e:
-                print(
+                logger.info(
                     f"[DEBUG] Field {field_name} validation FAILED: {type(e).__name__}: {e.message}"
                 )
                 e.message = f"Row {row_idx}: {e.message}"
                 e.row_index = row_idx
                 if self.strict:
                     raise
-                print("[DEBUG] Non-strict mode: appending error to self.errors")
+                logger.info("[DEBUG] Non-strict mode: appending error to self.errors")
                 self.errors.append(e)
-                print(f"[DEBUG] self.errors now has {len(self.errors)} errors")
+                logger.info(f"[DEBUG] self.errors now has {len(self.errors)} errors")
 
     def _validate_field(self, value: Any, field_schema: FieldSchema, row_idx: int):
         """Validate a single field value against schema constraints."""

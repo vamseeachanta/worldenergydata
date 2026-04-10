@@ -38,11 +38,15 @@ Example usage:
         with SIHScraper(headless=True) as scraper:
             scraper.navigate_to_production()
             path = scraper.export_production_data(field="CANTARELL")
-            print(f"Downloaded to: {path}")
+            logger.info(f"Downloaded to: {path}")
 """
 
 from .mexico_cnh import MexicoCNH
 from .scrapers import SELENIUM_AVAILABLE, SIHScraper
+
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
 
 __version__ = "1.0.0"
 __all__ = ["MexicoCNH", "SIHScraper", "SELENIUM_AVAILABLE"]

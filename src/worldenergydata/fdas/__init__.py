@@ -53,9 +53,9 @@ Example usage:
 
     # Calculate all metrics
     results = calculate_all_metrics(cashflows, discount_rate=0.10)
-    print(f"NPV: ${results['npv']:,.2f}")
-    print(f"MIRR: {results['mirr_annual']:.2%}")
-    print(f"Payback: {results['payback_years']:.1f} years")
+    logger.info(f"NPV: ${results['npv']:,.2f}")
+    logger.info(f"MIRR: {results['mirr_annual']:.2%}")
+    logger.info(f"Payback: {results['payback_years']:.1f} years")
 
 CLI usage:
     worldenergydata fdas calculate-npv --cashflows "[-1000,100,200,300]"
@@ -85,6 +85,10 @@ from .core import (
 )
 
 from .adapters import (
+
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
     BseeAdapter,
     LeaseMapping,
     AdapterError,

@@ -55,6 +55,10 @@ from typing import Any, Callable, Dict, List, Optional
 import numpy as np
 import pandas as pd
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 @dataclass
 class DashboardConfig:
@@ -568,7 +572,7 @@ class DashboardBuilder:
 
             return False
         except Exception as e:
-            print(f"Error exporting dashboard: {e}")
+            logger.error(f"Error exporting dashboard: {e}")
             return False
 
     def create_realtime_dashboard(

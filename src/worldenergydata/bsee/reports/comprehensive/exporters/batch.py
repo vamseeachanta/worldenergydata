@@ -13,6 +13,10 @@ from .base import ExportConfig, ExportFormat, ExportResult, ReportExporter
 from .excel_exporter import ExcelExporter
 from .pdf_exporter import PDFExporter
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class BatchExporter:
     """
@@ -42,13 +46,13 @@ class BatchExporter:
         try:
             exporters[ExportFormat.EXCEL] = ExcelExporter()
         except Exception as e:
-            print(f"Failed to initialize Excel exporter: {e}")
+            logger.info(f"Failed to initialize Excel exporter: {e}")
 
         # PDF exporter
         try:
             exporters[ExportFormat.PDF] = PDFExporter()
         except Exception as e:
-            print(f"Failed to initialize PDF exporter: {e}")
+            logger.info(f"Failed to initialize PDF exporter: {e}")
 
         return exporters
 

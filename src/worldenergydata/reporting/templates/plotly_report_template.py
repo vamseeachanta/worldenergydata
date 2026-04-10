@@ -13,6 +13,10 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class PlotlyReportGenerator:
     """Generate interactive HTML reports with Plotly."""
@@ -391,7 +395,7 @@ class PlotlyReportGenerator:
         with open(output_file, "w", encoding="utf-8") as f:
             f.write(html)
 
-        print(f"✓ HTML report generated: {output_file}")
+        logger.info(f"✓ HTML report generated: {output_file}")
 
 
 if __name__ == "__main__":

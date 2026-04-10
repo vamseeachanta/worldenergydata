@@ -17,7 +17,7 @@ Usage:
 
     importer = BSEEIncInvImporter(data_dir="data/modules/hse/raw/bsee")
     records = importer.load()
-    print(f"Loaded {len(records)} incident investigation records")
+    logger.info(f"Loaded {len(records)} incident investigation records")
 
     # CLI
     uv run python -m worldenergydata.hse.importers.bsee_incinv_importer \\

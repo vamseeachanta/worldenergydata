@@ -197,6 +197,10 @@ def test_field_application(field_name):
 import pytest
 from pathlib import Path
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 @pytest.mark.parametrize("excel_type", [
     "field_economics",
     "npv_accuracy",
@@ -258,7 +262,7 @@ def test_excel_data_extraction(excel_type):
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(content)
             self.consolidated_tests.append(str(file_path))
-            print(f"Created consolidated test: {file_path}")
+            logger.info(f"Created consolidated test: {file_path}")
 
     def generate_report(self) -> str:
         """Generate consolidation report."""

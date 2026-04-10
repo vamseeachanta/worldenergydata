@@ -287,35 +287,35 @@ if __name__ == "__main__":
     results = run_latest_analysis()
     comparison = compare_against_v30(results)
 
-    print("=" * 80)
-    print("Extended Lower Tertiary Analysis — WRK-010")
-    print(f"Period: {results['metadata']['time_period']}")
-    print(f"Data: {results['metadata']['data_vintage']}")
-    print("=" * 80)
+    logger.info("=" * 80)
+    logger.info("Extended Lower Tertiary Analysis — WRK-010")
+    logger.info(f"Period: {results['metadata']['time_period']}")
+    logger.info(f"Data: {results['metadata']['data_vintage']}")
+    logger.info("=" * 80)
 
     header = (
         f"{'Development':<25} {'Latest Oil':>15} {'V30 Oil':>15} "
         f"{'Delta %':>10} {'Significant':>12}"
     )
-    print(header)
-    print("-" * 80)
+    logger.info(header)
+    logger.info("-" * 80)
 
     for dev_name, comp in comparison["developments"].items():
-        print(
+        logger.info(
             f"{dev_name:<25} {comp['latest_oil_bbl']:>15,.0f} "
             f"{comp['v30_oil_bbl']:>15,.0f} {comp['delta_oil_pct']:>+10.2f}% "
             f"{'YES' if comp['is_significant'] else '':>12}"
         )
 
     if comparison["deviations"]:
-        print(f"\nSignificant deviations ({len(comparison['deviations'])}):")
+        logger.info(f"\nSignificant deviations ({len(comparison['deviations'])}):")
         for dev in comparison["deviations"]:
-            print(
+            logger.info(
                 f"  {dev['development']}: {dev['delta_oil_pct']:+.2f}% "
                 f"— {dev['explanation']}"
             )
 
     if comparison["exploration_unchanged"]:
-        print(
+        logger.info(
             f"\nExploration unchanged: {', '.join(comparison['exploration_unchanged'])}"
         )

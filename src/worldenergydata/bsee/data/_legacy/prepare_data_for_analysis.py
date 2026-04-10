@@ -1,6 +1,10 @@
 import os
 import pandas as pd
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 class PrepareBseeData:
 
     def router(self, cfg):
@@ -31,7 +35,7 @@ class PrepareBseeData:
                 df.columns = columns
                 dataframes.append(df)
             else:
-                print(f"Warning: File not found - {file_name}")
+                logger.warning(f"Warning: File not found - {file_name}")
         
         merged_df = pd.concat(dataframes, axis=1)
         

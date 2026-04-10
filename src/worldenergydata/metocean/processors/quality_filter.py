@@ -15,6 +15,10 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple
 
 from worldenergydata.metocean.constants import (
+
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
     PARAMETER_RANGES,
     MetoceanParameter,
     QualityFlag,
@@ -53,7 +57,7 @@ class QualityFilter:
             MetoceanParameter.WAVE_HEIGHT, 15.0
         )
         if not result.passed:
-            print(f"Invalid: {result.reason}")
+            logger.info(f"Invalid: {result.reason}")
 
         # Detect spikes in data
         result = QualityFilter.check_spike(

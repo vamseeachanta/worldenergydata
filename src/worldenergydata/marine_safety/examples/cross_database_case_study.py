@@ -19,6 +19,10 @@ or directly:
 """
 
 from worldenergydata.marine_safety.cross_database import (
+
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
     CrossDatabaseAnalyzer,
     CrossDatabaseQuery,
 )
@@ -26,15 +30,15 @@ from worldenergydata.marine_safety.cross_database import (
 
 def _section(title: str) -> None:
     width = 64
-    print()
-    print("=" * width)
-    print(f"  {title}")
-    print("=" * width)
+    logger.info()
+    logger.info("=" * width)
+    logger.info(f"  {title}")
+    logger.info("=" * width)
 
 
 def _subsection(title: str) -> None:
-    print()
-    print(f"-- {title} --")
+    logger.info()
+    logger.info(f"-- {title} --")
 
 
 def main() -> None:
@@ -44,14 +48,14 @@ def main() -> None:
     # 1. Full cross-database query                                        #
     # ------------------------------------------------------------------ #
     _section("CROSS-DATABASE MARINE SAFETY CASE STUDY")
-    print("Querying all 4 sources: MAIB, IMO, EMSA, TSB (2015-2024)")
+    logger.info("Querying all 4 sources: MAIB, IMO, EMSA, TSB (2015-2024)")
 
     result = analyzer.query(CrossDatabaseQuery())
 
-    print(f"\nTotal incidents retrieved : {result.total_incidents}")
-    print("Breakdown by source:")
+    logger.info(f"\nTotal incidents retrieved : {result.total_incidents}")
+    logger.info("Breakdown by source:")
     for src, count in sorted(result.by_source.items()):
-        print(f"  {src.upper():6s} : {count:4d} incidents")
+        logger.info(f"  {src.upper():6s} : {count:4d} incidents")
 
     # ------------------------------------------------------------------ #
     # 2. Correlation analysis                                             #
@@ -63,23 +67,23 @@ def main() -> None:
     _subsection("Incident type severity ranking (mean score 1=minor … 5=fatal)")
     type_sev = corrs["incident_type_severity"]
     for _, row in type_sev.iterrows():
-        print(f"  {row['incident_type']:20s}  {row['mean_severity_score']:.2f}")
+        logger.info(f"  {row['incident_type']:20s}  {row['mean_severity_score']:.2f}")
 
     _subsection("Source cross-reporting overlap rate")
     overlap = corrs["source_overlap_rate"]
-    print(f"  Incidents in same type/year/region across 2+ sources: {overlap:.1%}")
+    logger.info(f"  Incidents in same type/year/region across 2+ sources: {overlap:.1%}")
 
     _subsection("Year-over-year trend (all sources, last 5 years)")
     trend = corrs["trend_yoy"]
     recent = trend[trend["year"] >= 2020]
     yoy_total = recent.groupby("year")["count"].sum()
     for yr, cnt in yoy_total.items():
-        print(f"  {yr}: {cnt:3d} incidents")
+        logger.info(f"  {yr}: {cnt:3d} incidents")
 
     _subsection("Top 5 incident types")
     top = analyzer.top_incident_types(result.data, n=5)
     for _, row in top.iterrows():
-        print(f"  {row['incident_type']:20s}  {int(row['count']):3d}")
+        logger.info(f"  {row['incident_type']:20s}  {int(row['count']):3d}")
 
     # ------------------------------------------------------------------ #
     # 3. Risk hotspots                                                    #
@@ -87,7 +91,7 @@ def main() -> None:
     _section("RISK HOTSPOTS — REGION x INCIDENT TYPE")
 
     hotspots = analyzer.risk_hotspots(result.data)
-    print(hotspots.to_string())
+    logger.info(hotspots.to_string())
 
     # ------------------------------------------------------------------ #
     # 4. Top 3 findings                                                   #
@@ -113,7 +117,7 @@ def main() -> None:
         else 0
     )
     ratio = ns_ground_rate / global_ground_rate if global_ground_rate > 0 else float("inf")
-    print(
+    logger.info(
         f"\n[Finding 1] Tankers in North Sea have a {ratio:.1f}x higher grounding"
         f" rate ({ns_ground_rate:.1%}) than the global tanker average"
         f" ({global_ground_rate:.1%})."
@@ -127,7 +131,7 @@ def main() -> None:
     fatal_rate = (fatal_by_type / total_by_type).sort_values(ascending=False)
     top_fatal_vessel = fatal_rate.index[0]
     top_fatal_pct = fatal_rate.iloc[0]
-    print(
+    logger.info(
         f"\n[Finding 2] '{top_fatal_vessel}' vessels have the highest proportion"
         f" of fatal incidents at {top_fatal_pct:.1%} of their incidents across"
         f" all four databases."
@@ -140,7 +144,7 @@ def main() -> None:
         & (result.data["incident_type"] == "grounding")
     ]
     sources_reporting = ns_tanker_groundings["source"].unique().tolist()
-    print(
+    logger.info(
         f"\n[Finding 3] North Sea tanker groundings are reported by"
         f" {len(sources_reporting)} of 4 sources"
         f" ({', '.join(sorted(sources_reporting)).upper()}), suggesting"
@@ -148,8 +152,8 @@ def main() -> None:
         f" data reconciliation studies."
     )
 
-    print()
-    print("Case study complete.")
+    logger.info()
+    logger.info("Case study complete.")
 
 
 if __name__ == "__main__":

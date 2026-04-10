@@ -37,12 +37,12 @@ def process_command(args):
                 Path(args.output_directory) if args.output_directory else None
             ),
         )
-        print(f"Processed {len(df)} records")
+        logger.info(f"Processed {len(df)} records")
 
         if args.analyze:
             analysis = processor.analyze_well_epochs(df)
-            print("\nAnalysis Results:")
-            print(json.dumps(analysis, indent=2, default=str))
+            logger.info("\nAnalysis Results:")
+            logger.info(json.dumps(analysis, indent=2, default=str))
     else:
         # Try to process existing data
         df = processor.parse_fixed_width_file(
@@ -53,7 +53,7 @@ def process_command(args):
                 else None
             ),
         )
-        print(f"Parsed {len(df)} records")
+        logger.info(f"Parsed {len(df)} records")
 
 
 def download_command(args):
@@ -63,15 +63,15 @@ def download_command(args):
     if args.info:
         # Just show available datasets
         info = downloader.get_latest_data_info()
-        print("\nAvailable BSEE/BOEM Datasets:")
-        print("-" * 60)
+        logger.info("\nAvailable BSEE/BOEM Datasets:")
+        logger.info("-" * 60)
         for name, details in info.items():
-            print(f"\n{name}:")
-            print(f"  Description: {details['description']}")
-            print(f"  Available: {details.get('available', 'Unknown')}")
+            logger.info(f"\n{name}:")
+            logger.info(f"  Description: {details['description']}")
+            logger.info(f"  Available: {details.get('available', 'Unknown')}")
             if details.get("size") and details["size"] != "Unknown":
                 size_mb = int(details["size"]) / (1024 * 1024)
-                print(f"  Size: {size_mb:.2f} MB")
+                logger.info(f"  Size: {size_mb:.2f} MB")
     else:
         # Download datasets
         datasets = args.datasets if args.datasets else None
@@ -80,13 +80,13 @@ def download_command(args):
         )
 
         # Print summary
-        print("\nDownload Summary:")
-        print("-" * 60)
+        logger.info("\nDownload Summary:")
+        logger.info("-" * 60)
         for result in results:
             status = "✓" if result["download_success"] else "✗"
-            print(f"{status} {result['dataset']}: {result['description']}")
+            logger.info(f"{status} {result['dataset']}: {result['description']}")
             if result["extract_success"]:
-                print(f"  Extracted {len(result['extracted_files'])} files")
+                logger.info(f"  Extracted {len(result['extracted_files'])} files")
 
 
 def visualize_command(args):
@@ -102,13 +102,13 @@ def visualize_command(args):
         # Try default location
         default_csv = Path(args.data_directory) / "paleowells.csv"
         if not default_csv.exists():
-            print(
+            logger.info(
                 "Error: No CSV file found. Please specify with --csv-file or run process command first."
             )
             sys.exit(1)
         df = pd.read_csv(default_csv)
 
-    print(f"Loaded {len(df)} records for visualization")
+    logger.info(f"Loaded {len(df)} records for visualization")
 
     # Create output directory
     output_dir = (
@@ -121,14 +121,14 @@ def visualize_command(args):
     if args.report:
         # Generate comprehensive report
         figures = visualizer.create_comprehensive_report(df, output_dir)
-        print(f"\nGenerated {len(figures)} figures in {output_dir}")
+        logger.info(f"\nGenerated {len(figures)} figures in {output_dir}")
         for name, path in figures.items():
-            print(f"  - {name}: {path}")
+            logger.info(f"  - {name}: {path}")
     else:
         # Generate individual plots based on options
         if args.epochs:
             fig = visualizer.plot_wells_by_epoch(df, output_dir / "wells_by_epoch.png")
-            print("Created epoch distribution plot")
+            logger.info("Created epoch distribution plot")
 
         if args.depth:
             fig = visualizer.plot_depth_distribution(
@@ -137,13 +137,13 @@ def visualize_command(args):
                 save_path=output_dir
                 / f"{args.depth_type.lower().replace(' ', '_')}_distribution.png",
             )
-            print("Created depth distribution plot")
+            logger.info("Created depth distribution plot")
 
         if args.classification:
             fig = visualizer.plot_classification_pie(
                 df, output_dir / "classification.png"
             )
-            print("Created classification pie chart")
+            logger.info("Created classification pie chart")
 
 
 def main():

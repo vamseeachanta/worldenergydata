@@ -976,10 +976,10 @@ Examples:
 
     if args.process_export:
         output = acquirer.process_export(args.process_export)
-        print(f"Processed export: {output}")
+        logger.info(f"Processed export: {output}")
     else:
         output = acquirer.acquire()
-        print(f"Output: {output}")
+        logger.info(f"Output: {output}")
 
 
 if __name__ == "__main__":

@@ -15,6 +15,10 @@ from typing import Any, Callable, Dict, List, Optional
 
 from worldenergydata.metocean.exceptions import ExportError, ExportWriteError
 from worldenergydata.metocean.processors.data_harmonizer import (
+
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
     HarmonizedObservation,
 )
 
@@ -35,7 +39,7 @@ class CSVExporter:
 
         # Export observations
         count = exporter.export(observations, Path("output.csv"))
-        print(f"Exported {count} records")
+        logger.info(f"Exported {count} records")
 
         # Export with date filter
         count = exporter.export(

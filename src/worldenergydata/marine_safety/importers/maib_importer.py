@@ -16,6 +16,10 @@ from ..constants import IncidentType, VesselType
 from ..database.models import Incident, Location, Vessel
 from .base_importer import BaseImporter
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class MAIBImporter(BaseImporter):
     """Import UK MAIB marine occurrence data."""
@@ -102,7 +106,7 @@ class MAIBImporter(BaseImporter):
         """Pre-load vessels and affected persons data into memory."""
         # Load vessels
         if self.vessels_file and self.vessels_file.exists():
-            print(f"Loading vessels data from {self.vessels_file}...")
+            logger.info(f"Loading vessels data from {self.vessels_file}...")
             count = 0
             with open(self.vessels_file, "r", encoding="utf-8", errors="replace") as f:
                 # MAIB files use semicolon delimiter
@@ -114,13 +118,13 @@ class MAIBImporter(BaseImporter):
                             self.vessels_by_occid[occid] = []
                         self.vessels_by_occid[occid].append(row)
                         count += 1
-            print(
+            logger.info(
                 f"Loaded {count} vessel records for {len(self.vessels_by_occid)} unique occurrences"
             )
 
         # Load affected persons
         if self.persons_file and self.persons_file.exists():
-            print(f"Loading affected persons data from {self.persons_file}...")
+            logger.info(f"Loading affected persons data from {self.persons_file}...")
             count = 0
             with open(self.persons_file, "r", encoding="utf-8", errors="replace") as f:
                 reader = csv.DictReader(f, delimiter=";")
@@ -131,7 +135,7 @@ class MAIBImporter(BaseImporter):
                             self.persons_by_occid[occid] = []
                         self.persons_by_occid[occid].append(row)
                         count += 1
-            print(
+            logger.info(
                 f"Loaded {count} affected person records for {len(self.persons_by_occid)} unique occurrences"
             )
 
@@ -169,7 +173,7 @@ class MAIBImporter(BaseImporter):
             return parsed
 
         except Exception as e:
-            print(f"Error parsing MAIB record {raw_record.get('Occurrence_Id')}: {e}")
+            logger.error(f"Error parsing MAIB record {raw_record.get('Occurrence_Id')}: {e}")
             return None
 
     def _extract_incident_id(self, raw_record: Dict[str, Any]) -> Optional[str]:
@@ -393,7 +397,7 @@ class MAIBImporter(BaseImporter):
             return incident
 
         except Exception as e:
-            print(
+            logger.info(
                 f"Error creating model for {parsed_record.get('source_incident_id')}: {e}"
             )
             import traceback
@@ -496,7 +500,7 @@ class MAIBImporter(BaseImporter):
             return location.location_id
 
         except Exception as e:
-            print(f"Error creating location: {e}")
+            logger.error(f"Error creating location: {e}")
             return None
 
     def _get_or_create_vessel(self, vessel_data: Dict[str, Any]) -> Optional[int]:
@@ -571,5 +575,5 @@ class MAIBImporter(BaseImporter):
             return vessel.vessel_id
 
         except Exception as e:
-            print(f"Error creating vessel: {e}")
+            logger.error(f"Error creating vessel: {e}")
             return None

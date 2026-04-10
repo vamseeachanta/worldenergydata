@@ -20,6 +20,10 @@ from ..constants import IncidentType, VesselType
 from ..database.models import Incident, Location, Vessel
 from .base_importer import BaseImporter
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class BoatingImporter(BaseImporter):
     """Import USCG Boating Accident Report Database (BARD) data."""
@@ -119,7 +123,7 @@ class BoatingImporter(BaseImporter):
         """Pre-load vessels, deaths, and injuries data into memory."""
         # Load vessels
         if self.vessels_file and self.vessels_file.exists():
-            print(f"Loading vessels data from {self.vessels_file}...")
+            logger.info(f"Loading vessels data from {self.vessels_file}...")
             with open(self.vessels_file, "r", encoding="utf-8", errors="replace") as f:
                 reader = csv.DictReader(f)
                 for row in reader:
@@ -128,13 +132,13 @@ class BoatingImporter(BaseImporter):
                         if bardid not in self.vessels_by_bardid:
                             self.vessels_by_bardid[bardid] = []
                         self.vessels_by_bardid[bardid].append(row)
-            print(
+            logger.info(
                 f"Loaded {len(self.vessels_by_bardid)} unique BARD incidents with vessel data"
             )
 
         # Load deaths
         if self.deaths_file and self.deaths_file.exists():
-            print(f"Loading deaths data from {self.deaths_file}...")
+            logger.info(f"Loading deaths data from {self.deaths_file}...")
             with open(self.deaths_file, "r", encoding="utf-8", errors="replace") as f:
                 reader = csv.DictReader(f)
                 for row in reader:
@@ -143,13 +147,13 @@ class BoatingImporter(BaseImporter):
                         if bardid not in self.deaths_by_bardid:
                             self.deaths_by_bardid[bardid] = []
                         self.deaths_by_bardid[bardid].append(row)
-            print(
+            logger.info(
                 f"Loaded {sum(len(v) for v in self.deaths_by_bardid.values())} death records"
             )
 
         # Load injuries - count per BARDID
         if self.injuries_file and self.injuries_file.exists():
-            print(f"Loading injuries data from {self.injuries_file}...")
+            logger.info(f"Loading injuries data from {self.injuries_file}...")
             with open(self.injuries_file, "r", encoding="utf-8", errors="replace") as f:
                 reader = csv.DictReader(f)
                 for row in reader:
@@ -158,7 +162,7 @@ class BoatingImporter(BaseImporter):
                         self.injuries_by_bardid[bardid] = (
                             self.injuries_by_bardid.get(bardid, 0) + 1
                         )
-            print(f"Loaded {sum(self.injuries_by_bardid.values())} injury records")
+            logger.info(f"Loaded {sum(self.injuries_by_bardid.values())} injury records")
 
     def read_source(self) -> Generator[Dict[str, Any], None, None]:
         """Read records from Accidents CSV file."""
@@ -192,7 +196,7 @@ class BoatingImporter(BaseImporter):
             return parsed
 
         except Exception as e:
-            print(f"Error parsing BARD record {raw_record.get('BARDID')}: {e}")
+            logger.error(f"Error parsing BARD record {raw_record.get('BARDID')}: {e}")
             return None
 
     def _extract_incident_id(self, raw_record: Dict[str, Any]) -> Optional[str]:
@@ -377,7 +381,7 @@ class BoatingImporter(BaseImporter):
             return incident
 
         except Exception as e:
-            print(
+            logger.info(
                 f"Error creating model for {parsed_record.get('source_incident_id')}: {e}"
             )
             return None
@@ -482,7 +486,7 @@ class BoatingImporter(BaseImporter):
             return location.location_id
 
         except Exception as e:
-            print(f"Error creating location: {e}")
+            logger.error(f"Error creating location: {e}")
             return None
 
     def _get_or_create_vessel(self, vessel_data: Dict[str, Any]) -> Optional[int]:
@@ -526,5 +530,5 @@ class BoatingImporter(BaseImporter):
             return vessel.vessel_id
 
         except Exception as e:
-            print(f"Error creating vessel: {e}")
+            logger.error(f"Error creating vessel: {e}")
             return None

@@ -106,7 +106,7 @@ class OpenMeteoClient(BaseClient):
                 forecast_days=7
             )
             for forecast in result.data[:5]:
-                print(f"{forecast.forecast_time}: {forecast.wave_height_m}m waves")
+                logger.info(f"{forecast.forecast_time}: {forecast.wave_height_m}m waves")
 
             # Get historical data
             from datetime import datetime, timedelta
@@ -202,7 +202,7 @@ class OpenMeteoClient(BaseClient):
         Example:
             result = client.fetch_forecast(28.5, -88.5, forecast_days=3)
             for forecast in result.data:
-                print(f"{forecast.forecast_time}: {forecast.wave_height_m}m")
+                logger.info(f"{forecast.forecast_time}: {forecast.wave_height_m}m")
         """
         vars_to_fetch = variables or self.ALL_HOURLY_VARS
 
@@ -357,7 +357,7 @@ class OpenMeteoClient(BaseClient):
         Example:
             result = client.fetch_realtime_coords(28.5, -88.5)
             current = result.data[0]  # Most recent forecast
-            print(f"Current wave height: {current.wave_height_m}m")
+            logger.info(f"Current wave height: {current.wave_height_m}m")
         """
         return self.fetch_forecast(
             latitude=latitude,

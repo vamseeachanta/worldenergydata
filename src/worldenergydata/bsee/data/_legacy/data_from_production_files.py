@@ -7,6 +7,10 @@ import pandas as pd
 
 from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 wwy = WorkingWithYAML()
 
 class DataFromFiles:
@@ -45,7 +49,7 @@ class DataFromFiles:
                     df = pd.read_csv(file_path)
                     
                     if 'API_WELL_NUMBER' not in df.columns:
-                        print(f"Skipping {file_name}: 'API_WELL_NUMBER' column not found.")
+                        logger.info(f"Skipping {file_name}: 'API_WELL_NUMBER' column not found.")
                         continue
                     
                     # Find matching rows for the current api12
@@ -62,20 +66,20 @@ class DataFromFiles:
                         else:
                             api12_dataframes[api12] = pd.concat([api12_dataframes[api12], matching_rows], ignore_index=True)
                     else:
-                        print(f"No matching rows found for API {api12} in {file_name}.")
+                        logger.info(f"No matching rows found for API {api12} in {file_name}.")
 
                 except FileNotFoundError:
-                    print(f"File not found: {file_path}")
+                    logger.info(f"File not found: {file_path}")
                 except pd.errors.EmptyDataError:
-                    print(f"Empty or corrupt CSV file: {file_path}")
+                    logger.info(f"Empty or corrupt CSV file: {file_path}")
                 except Exception as e:
-                    print(f"An error occurred while processing {file_name}: {e}")
+                    logger.info(f"An error occurred while processing {file_name}: {e}")
 
         # Write each api12 DataFrame to a separate output file
         for api12, df in api12_dataframes.items():
             output_file = os.path.join(output_file)
             df.to_csv(output_file, index=False)
-            print(f"Matched rows for {api12} written to {output_file} .")
+            logger.info(f"Matched rows for {api12} written to {output_file} .")
 
         logging.info(f"Getting production data for API12: {api12} ... COMPLETE")
 

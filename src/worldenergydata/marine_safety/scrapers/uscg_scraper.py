@@ -840,16 +840,16 @@ def main():
 
     # Print statistics
     stats = scraper.get_statistics()
-    print("\n" + "=" * 60)
-    print("SCRAPING STATISTICS")
-    print("=" * 60)
-    print(f"Total incidents: {stats['total_incidents']}")
-    print(f"Total fatalities: {stats['total_fatalities']}")
-    print(f"Total injuries: {stats['total_injuries']}")
-    print("\nIncident types:")
+    logger.info("\n" + "=" * 60)
+    logger.info("SCRAPING STATISTICS")
+    logger.info("=" * 60)
+    logger.info(f"Total incidents: {stats['total_incidents']}")
+    logger.info(f"Total fatalities: {stats['total_fatalities']}")
+    logger.info(f"Total injuries: {stats['total_injuries']}")
+    logger.info("\nIncident types:")
     for itype, count in stats["incident_types"].items():
-        print(f"  {itype}: {count}")
-    print("=" * 60)
+        logger.info(f"  {itype}: {count}")
+    logger.info("=" * 60)
 
 
 if __name__ == "__main__":

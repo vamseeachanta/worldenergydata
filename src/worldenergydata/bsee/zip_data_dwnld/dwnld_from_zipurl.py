@@ -8,6 +8,10 @@ from urllib.parse import urlparse
 import requests
 import pandas as pd
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 class DownloadFromZipUrl:
     """
     A Focused Module for downloading raw data (delimit files) from zip urls.
@@ -37,10 +41,10 @@ class DownloadFromZipUrl:
 
             z = zipfile.ZipFile(io.BytesIO(r.content))
         except requests.exceptions.RequestException as e:
-            print(f"Request failed: {e}")
+            logger.info(f"Request failed: {e}")
             return
         except zipfile.BadZipFile as e:
-            print(f"Failed to unzip file: {e}")
+            logger.info(f"Failed to unzip file: {e}")
             return
 
         extracted_files = z.namelist()
@@ -59,7 +63,7 @@ class DownloadFromZipUrl:
                         df = pd.read_csv(file, sep=',', encoding='ISO-8859-1', low_memory=False, nrows=100)
                         
                 except Exception as e:
-                    print(f"Could not read {file} as CSV: {e}")
+                    logger.info(f"Could not read {file} as CSV: {e}")
                     continue
 
                 df.to_csv(os.path.join(result_folder, csv_filename), index=False)

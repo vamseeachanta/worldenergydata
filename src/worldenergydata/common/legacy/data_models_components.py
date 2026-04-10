@@ -5,6 +5,10 @@ from typing import Any
 
 import pandas as pd
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class DataModelsComponents:
 
@@ -103,8 +107,8 @@ class DataModelsComponents:
             except Exception:
                 import sys
 
-                print("Could not process a file: {}".format(file_name))
-                print(sys.exc_info())
+                logger.info("Could not process a file: {}".format(file_name))
+                logger.info(sys.exc_info())
                 logging.error(
                     "Could not process a file: {}".format(file_name), exc_info=True
                 )
@@ -130,8 +134,8 @@ class DataModelsComponents:
             except Exception:
                 import sys
 
-                print("Could not process a file: {}".format(cfg_db))
-                print(sys.exc_info())
+                logger.info("Could not process a file: {}".format(cfg_db))
+                logger.info(sys.exc_info())
                 logging.error(
                     "Could not process a file: {}".format(cfg_db), exc_info=True
                 )
@@ -194,8 +198,8 @@ class DataModelsComponents:
                     except Exception:
                         import sys
 
-                        print("Could not process a file: {}".format(file_name))
-                        print(sys.exc_info())
+                        logger.info("Could not process a file: {}".format(file_name))
+                        logger.info(sys.exc_info())
                         logging.error(
                             "Could not process a file: {}".format(file_name),
                             exc_info=True,
@@ -223,7 +227,7 @@ class DataModelsComponents:
                 input_data: dict[str, list[dict[str, Any]]] = {"sets": [cfg_url]}
                 self.process_zip_files(input_data)
             else:
-                print("Could not process a file: {}".format(cfg_url))
+                logger.info("Could not process a file: {}".format(cfg_url))
                 logging.error(
                     "Could not process a file: {}".format(cfg_url), exc_info=True
                 )

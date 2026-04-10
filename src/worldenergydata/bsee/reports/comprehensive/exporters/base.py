@@ -12,6 +12,10 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class ExportFormat(Enum):
     """Supported export formats."""
@@ -154,7 +158,7 @@ class ReportExporter(ABC):
             output_path.parent.mkdir(parents=True, exist_ok=True)
             return True
         except Exception as e:
-            print(f"Failed to create output directory: {e}")
+            logger.info(f"Failed to create output directory: {e}")
             return False
 
     def check_file_size_limit(self, file_path: Path) -> bool:

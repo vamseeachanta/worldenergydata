@@ -10,6 +10,10 @@ import pandas as pd
 from worldenergydata.hse.database.models import HSEIncident, ViolationIncident
 from worldenergydata.hse.importers.base_importer import BaseImporter
 
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 class BSEEPenaltiesImporter(BaseImporter):
     """
@@ -22,7 +26,7 @@ class BSEEPenaltiesImporter(BaseImporter):
     Usage:
         importer = BSEEPenaltiesImporter(db_session, csv_file_path="penalties.csv")
         stats = importer.import_data()
-        print(f"Imported: {stats['imported_count']}, Skipped: {stats['skipped_count']}")
+        logger.info(f"Imported: {stats['imported_count']}, Skipped: {stats['skipped_count']}")
     """
 
     def __init__(self, db_session, csv_file_path: str = None):
