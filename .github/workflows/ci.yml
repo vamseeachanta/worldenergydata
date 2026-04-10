@@ -127,8 +127,7 @@ jobs:
           uv run mypy src/worldenergydata/ \
             --ignore-missing-imports \
             --no-error-summary \
-            --show-error-codes \
-            || true  # Allow type check to pass with warnings for now
+            --show-error-codes
 
   security:
     name: Security Scan

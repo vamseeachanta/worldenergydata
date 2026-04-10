@@ -23,42 +23,41 @@ classifiers = [
 ]
 
 dependencies = [
-    # Use git URL for CI/CD compatibility, local path for development
-    "assetutilities @ git+https://github.com/vamseeachanta/assetutilities.git",
-    "scrapy>=2.12.0",
-    "selenium>=4.15.0",
-    "beautifulsoup4>=4.12.0",
-    "pdfplumber>=0.10.0",
-    "sqlalchemy>=2.0.0",
-    "sqlmodel>=0.0.14",
-    "fastapi>=0.108.0",
-    "pydantic>=2.5.0",
-    "pydantic-settings>=2.1.0",
-    "tenacity>=8.2.0",
+    "assetutilities>=0.1.0,<1.0",
+    "scrapy>=2.12.0,<3.0",
+    "selenium>=4.15.0,<5.0",
+    "beautifulsoup4>=4.12.0,<5.0",
+    "pdfplumber>=0.10.0,<1.0",
+    "sqlalchemy>=2.0.0,<3.0",
+    "sqlmodel>=0.0.14,<1.0",
+    "fastapi>=0.108.0,<2.0",
+    "pydantic>=2.5.0,<3.0",
+    "pydantic-settings>=2.1.0,<3.0",
+    "tenacity>=8.2.0,<10.0",
     # Data processing and analysis
-    "numpy>=1.24.0",
-    "pandas>=2.0.0",
-    "scipy>=1.11.0",
+    "numpy>=1.24.0,<3.0",
+    "pandas>=2.0.0,<3.0",
+    "scipy>=1.11.0,<2.0",
     # Visualization
-    "plotly>=5.18.0",
-    "dash>=2.14.0",
-    "seaborn>=0.13.0",
+    "plotly>=5.18.0,<6.0",
+    "dash>=2.14.0,<3.0",
+    "seaborn>=0.13.0,<1.0",
     # HTTP client
-    "httpx>=0.25.0",
+    "httpx>=0.25.0,<1.0",
     # PDF generation
-    "reportlab>=4.0.0",
+    "reportlab>=4.0.0,<5.0",
     # Excel support
-    "openpyxl>=3.1.0",
-    "xlsxwriter>=3.1.0",
+    "openpyxl>=3.1.0,<4.0",
+    "xlsxwriter>=3.1.0,<4.0",
     # Logging
-    "loguru>=0.7.0",
+    "loguru>=0.7.0,<1.0",
     # CLI
-    "typer>=0.9.0",
-    "rich>=13.0.0",
-    "psutil>=7.2.1",
-    "schedule>=1.2.0",
-    "pyarrow>=14.0.0",
-    "scikit-learn>=1.6.1",
+    "typer>=0.9.0,<1.0",
+    "rich>=13.0.0,<14.0",
+    "psutil>=7.2.1,<8.0",
+    "schedule>=1.2.0,<2.0",
+    "pyarrow>=14.0.0,<20.0",
+    "scikit-learn>=1.6.1,<2.0",
 ]
 
 [project.optional-dependencies]
