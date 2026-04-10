@@ -15,12 +15,13 @@ from typing import Any, Callable, Dict, List, Optional
 
 from worldenergydata.metocean.exceptions import ExportError, ExportWriteError
 from worldenergydata.metocean.processors.data_harmonizer import (
+    HarmonizedObservation,
+)
+
 
 from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
-    HarmonizedObservation,
-)
 
 
 class CSVExporter:

@@ -52,13 +52,14 @@ from worldenergydata.canada.emerging_basins.watch_list import (
     get_emerging_basins,
 )
 from worldenergydata.canada.production.cnloer_loader import (
+    CnloerLoader,
+    CnloerProductionRecord,
+)
+
 
 from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
-    CnloerLoader,
-    CnloerProductionRecord,
-)
 
 __version__ = "1.0.0"
 __all__ = [

@@ -19,13 +19,14 @@ or directly:
 """
 
 from worldenergydata.marine_safety.cross_database import (
+    CrossDatabaseAnalyzer,
+    CrossDatabaseQuery,
+)
+
 
 from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
-    CrossDatabaseAnalyzer,
-    CrossDatabaseQuery,
-)
 
 
 def _section(title: str) -> None:

@@ -85,14 +85,15 @@ from .core import (
 )
 
 from .adapters import (
-
-from worldenergydata.common.logging import get_logger
-
-logger = get_logger(__name__)
     BseeAdapter,
     LeaseMapping,
     AdapterError,
 )
+
+
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
 
 __version__ = '1.0.0'
 

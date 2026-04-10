@@ -86,10 +86,6 @@ from worldenergydata.common.legacy.wellpath_trajectory import (
 
 # Re-export visualization functions
 from worldenergydata.common.legacy.wellpath_visualization import (
-
-from worldenergydata.common.logging import get_logger
-
-logger = get_logger(__name__)
     COLOR_PALETTE,
     DEFAULT_COLOR,
     create_formation_plane,
@@ -98,6 +94,11 @@ logger = get_logger(__name__)
     plot_multiple_wells,
     plot_single_well,
 )
+
+
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 # Legacy function for compatibility

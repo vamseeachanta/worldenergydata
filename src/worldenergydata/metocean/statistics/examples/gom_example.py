@@ -24,16 +24,17 @@ import numpy as np
 import pandas as pd
 
 from worldenergydata.metocean.statistics import (
-
-from worldenergydata.common.logging import get_logger
-
-logger = get_logger(__name__)
     ExtremeValueAnalysis,
     JointProbabilityModel,
     EnvironmentalContour,
     MetoceanReport,
     WeatherWindowAnalysis,
 )
+
+
+from worldenergydata.common.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 # ---------------------------------------------------------------------------

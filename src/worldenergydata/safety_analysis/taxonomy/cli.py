@@ -29,12 +29,13 @@ from worldenergydata.safety_analysis.taxonomy.activity_registry import (
     ActivityTaxonomy,
 )
 from worldenergydata.safety_analysis.taxonomy.incident_classifier import (
+    IncidentClassifier,
+)
+
 
 from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
-    IncidentClassifier,
-)
 
 
 def _parse_args(argv: List[str] | None = None) -> argparse.Namespace:

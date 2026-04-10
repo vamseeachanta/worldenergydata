@@ -6,12 +6,13 @@ from typing import Any, Dict, List
 from worldenergydata.bsee.data.processors.in_memory import MemoryProcessor
 from worldenergydata.bsee.data.scrapers.bsee_web import BSEEWebScraper
 from worldenergydata.hse.importers.bsee_statistics_importer import (
+    BSEEStatisticsImporter,
+)
+
 
 from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
-    BSEEStatisticsImporter,
-)
 
 
 class BSEEStatisticsImporterURL(BSEEStatisticsImporter):

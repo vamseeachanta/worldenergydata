@@ -42,13 +42,14 @@ from sqlalchemy.orm import Session
 
 from worldenergydata.marine_safety.constants import CauseCategory, SeverityLevel
 from worldenergydata.marine_safety.database.models import (
+    Incident,
+    IncidentCause,
+)
+
 
 from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
-    Incident,
-    IncidentCause,
-)
 
 
 @dataclass

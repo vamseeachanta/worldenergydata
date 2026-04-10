@@ -11,13 +11,14 @@ from assetutilities.common.database import Database, get_db_connection
 
 from worldenergydata.common.legacy.bsee_data_manager import BSEEData
 from worldenergydata.common.legacy.data import (
+    DateTimeUtility,
+    transform_df_datetime_to_str,
+)
+
 
 from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
-    DateTimeUtility,
-    transform_df_datetime_to_str,
-)
 
 dtu = DateTimeUtility()
 

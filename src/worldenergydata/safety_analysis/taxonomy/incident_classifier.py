@@ -27,12 +27,13 @@ from worldenergydata.safety_analysis.taxonomy.activity_definitions import (
     Subactivity,
 )
 from worldenergydata.safety_analysis.taxonomy.activity_registry import (
+    ActivityTaxonomy,
+)
+
 
 from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
-    ActivityTaxonomy,
-)
 
 VALID_SOURCES = frozenset(
     {
