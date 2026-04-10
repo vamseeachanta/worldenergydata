@@ -7,6 +7,7 @@ from typing import Dict
 
 import pandas as pd
 
+from worldenergydata.common.data_resolver import DataNotFoundError, get_module_data
 from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
 from worldenergydata.sodir.api_client import SodirAPIClient
 from worldenergydata.sodir.endpoints import SODIR_ENDPOINTS
@@ -21,6 +22,11 @@ SODIR_DATASETS: Dict[str, str] = {
     "fields": "sodir_fields.parquet",
 }
 
+try:
+    _DEFAULT_OUTPUT_DIR = get_module_data("sodir")
+except DataNotFoundError:
+    _DEFAULT_OUTPUT_DIR = Path("data/modules/sodir")
+
 
 class SodirRefreshJob(AbstractJob):
     """Refresh SODIR Norwegian Continental Shelf production data.
@@ -32,7 +38,7 @@ class SodirRefreshJob(AbstractJob):
     """
 
     name = "sodir_refresh"
-    default_output_dir = Path("data/modules/sodir")
+    default_output_dir = _DEFAULT_OUTPUT_DIR
 
     def run(self, config: dict) -> JobResult:
         """Execute SODIR data refresh.

@@ -10,6 +10,8 @@ from typing import Any, Dict, List, Optional
 
 import pandas as pd
 
+from worldenergydata.common.data_resolver import get_data_root
+
 from ....data.loaders.block.local_files import DataFromLocalFiles as BlockDataFromFiles
 from ....data.sources.bin.block_data import BlockData
 
@@ -38,7 +40,7 @@ class BlockAggregator(DataAggregator):
         """
         super().__init__()
         self.hierarchy_level = HierarchyLevel.BLOCK
-        self.data_path = data_path or Path("data/bsee")
+        self.data_path = data_path or get_data_root() / "bsee"
 
         # Initialize data fetchers
         self.block_data_fetcher = BlockData()

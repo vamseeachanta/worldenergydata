@@ -234,19 +234,26 @@ def status() -> None:
     """Display system status and data availability."""
     from pathlib import Path
 
+    from worldenergydata.common.data_resolver import DataNotFoundError, get_data_root, get_module_data
+
     console.print(Panel("[bold]System Status[/bold]", border_style="green"))
 
     # Check data directories
+    try:
+        _data_root = get_data_root()
+    except DataNotFoundError:
+        _data_root = Path("data")
+
     data_paths = {
-        "BSEE Data": Path("data/bsee"),
-        "Marine Safety Data": Path("data/marine_safety"),
-        "SODIR Data": Path("data/sodir"),
-        "Metocean Data": Path("data/metocean"),
-        "Texas RRC Data": Path("data/texas_rrc"),
-        "Canada Data": Path("data/canada"),
-        "Mexico CNH Data": Path("data/mexico_cnh"),
-        "Landman Data": Path("data/landman"),
-        "LNG Terminals Data": Path("data/modules/lng_terminals"),
+        "BSEE Data": _data_root / "bsee",
+        "Marine Safety Data": _data_root / "marine_safety",
+        "SODIR Data": _data_root / "sodir",
+        "Metocean Data": _data_root / "metocean",
+        "Texas RRC Data": _data_root / "texas_rrc",
+        "Canada Data": _data_root / "canada",
+        "Mexico CNH Data": _data_root / "mexico_cnh",
+        "Landman Data": _data_root / "landman",
+        "LNG Terminals Data": _data_root / "modules" / "lng_terminals",
         "Reports": Path("reports"),
     }
 

@@ -11,11 +11,17 @@ from pathlib import Path
 
 import pandas as pd
 
+from worldenergydata.common.data_resolver import DataNotFoundError, get_module_data
 from worldenergydata.eia.ingestion import EIAIngestionSync
 from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
 from worldenergydata.scheduler.parquet_output import write_parquet
 
 logger = logging.getLogger(__name__)
+
+try:
+    _DEFAULT_OUTPUT_DIR = get_module_data("eia")
+except DataNotFoundError:
+    _DEFAULT_OUTPUT_DIR = Path("data/modules/eia")
 
 
 class EiaUsRefreshJob(AbstractJob):
@@ -27,7 +33,7 @@ class EiaUsRefreshJob(AbstractJob):
     """
 
     name = "eia_us_refresh"
-    default_output_dir = Path("data/modules/eia")
+    default_output_dir = _DEFAULT_OUTPUT_DIR
 
     def run(self, config: dict) -> JobResult:
         """Execute EIA US data refresh.

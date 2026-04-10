@@ -6,11 +6,15 @@ import logging
 from pathlib import Path
 from typing import Any, Optional
 
+from worldenergydata.common.data_resolver import DataNotFoundError, get_module_data
 from worldenergydata.vessel_fleet.storage.parquet import ParquetStore
 
 logger = logging.getLogger(__name__)
 
-_DEFAULT_DATA_DIR = Path("data/modules/vessel_fleet/curated")
+try:
+    _DEFAULT_DATA_DIR = get_module_data("vessel_fleet") / "curated"
+except DataNotFoundError:
+    _DEFAULT_DATA_DIR = Path("data/modules/vessel_fleet/curated")
 
 
 class FleetRouter:

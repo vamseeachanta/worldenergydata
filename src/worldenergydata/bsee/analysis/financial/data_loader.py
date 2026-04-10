@@ -10,6 +10,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import pandas as pd
 
+from worldenergydata.common.data_resolver import get_module_data
+
 from ...data.sources.bin.api_data import APIData
 from ...data.sources.bin.block_data import BlockData
 from ...data.sources.bin.lease_data import LeaseData
@@ -126,7 +128,7 @@ class SMEDataLoader:
         Args:
             data_path: Path to BSEE data directory
         """
-        self.data_path = data_path or Path("data/modules/bsee")
+        self.data_path = data_path or get_module_data("bsee")
 
         # Initialize HierarchicalDataLoader from comprehensive reports
         self.hierarchical_loader = HierarchicalDataLoader(data_path=self.data_path)

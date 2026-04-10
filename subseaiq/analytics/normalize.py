@@ -63,6 +63,22 @@ _FIELD_ALIASES: dict[str, list[str]] = {
         "layout_type", "Layout Type", "layout", "Layout",
         "subsea_layout", "Subsea Layout",
     ],
+    "year_concept": [
+        "year_concept", "Concept Year", "concept_year",
+        "Year Concept", "year_concept_select",
+    ],
+    "year_feed": [
+        "year_feed", "FEED Year", "feed_year",
+        "Year FEED", "year_feed_start",
+    ],
+    "year_fid": [
+        "year_fid", "FID Year", "fid_year",
+        "Year FID", "year_final_investment_decision",
+    ],
+    "year_first_oil": [
+        "year_first_oil", "First Oil Year", "first_oil_year",
+        "Year First Oil", "year_production_start",
+    ],
 }
 
 
@@ -95,7 +111,10 @@ def normalize_project(raw: dict) -> dict:
             )
         if val is not None and canonical in ("water_depth_m", "tieback_distance_km", "flowline_diameter_in"):
             val = _safe_float(val)
-        elif val is not None and canonical in ("num_wells", "num_trees", "num_manifolds"):
+        elif val is not None and canonical in (
+            "num_wells", "num_trees", "num_manifolds",
+            "year_concept", "year_feed", "year_fid", "year_first_oil",
+        ):
             val = _safe_int(val)
         result[canonical] = val
     return result

@@ -14,6 +14,7 @@ from typing import Optional
 import pandas as pd
 
 from worldenergydata.bsee.data.scrapers.bsee_web import BSEEWebScraper
+from worldenergydata.common.data_resolver import DataNotFoundError, get_module_data
 from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
 
 logger = logging.getLogger(__name__)
@@ -37,12 +38,17 @@ BSEE_DATASETS = {
     },
 }
 
+try:
+    _DEFAULT_OUTPUT_DIR = get_module_data("bsee")
+except DataNotFoundError:
+    _DEFAULT_OUTPUT_DIR = Path("data/modules/bsee")
+
 
 class BseeRefreshJob(AbstractJob):
     """Refresh BSEE Gulf of Mexico offshore structural and pipeline data."""
 
     name = "bsee_refresh"
-    default_output_dir = Path("data/modules/bsee")
+    default_output_dir = _DEFAULT_OUTPUT_DIR
 
     def run(self, config: dict) -> JobResult:
         """Execute BSEE data refresh across all dataset types.

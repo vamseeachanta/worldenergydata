@@ -11,6 +11,8 @@ from typing import Any, Dict, Iterator, List, Optional
 
 import pandas as pd
 
+from worldenergydata.common.data_resolver import get_data_root
+
 # Import enhanced data refresh components
 from ...data.enhanced.data_refresh_chunked import DataRefreshChunked
 from ...data.loaders.block.local_files import DataFromLocalFiles as BlockDataFromFiles
@@ -48,7 +50,7 @@ class HierarchicalDataLoader:
             data_path: Path to BSEE data directory
             use_enhanced_refresh: Use enhanced data refresh for fresh data
         """
-        self.data_path = data_path or Path("data/bsee")
+        self.data_path = data_path or get_data_root() / "bsee"
         self.use_enhanced_refresh = use_enhanced_refresh
 
         # Initialize data fetchers

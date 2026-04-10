@@ -15,7 +15,12 @@ from typing import Optional
 import pandas as pd
 from loguru import logger
 
-_DEFAULT_LOCAL_DIR = Path("data/modules/bsee/.local")
+from worldenergydata.common.data_resolver import DataNotFoundError, get_module_data
+
+try:
+    _DEFAULT_LOCAL_DIR = get_module_data("bsee") / ".local"
+except DataNotFoundError:
+    _DEFAULT_LOCAL_DIR = Path("data/modules/bsee/.local")
 
 # Column rename map: WAR raw names -> standardised names
 _COLUMN_RENAME_MAP: dict[str, str] = {

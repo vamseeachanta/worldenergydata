@@ -10,9 +10,15 @@ import logging
 from datetime import datetime
 from pathlib import Path
 
+from worldenergydata.common.data_resolver import DataNotFoundError, get_module_data
 from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
 
 logger = logging.getLogger(__name__)
+
+try:
+    _DEFAULT_OUTPUT_DIR = get_module_data("brazil_anp")
+except DataNotFoundError:
+    _DEFAULT_OUTPUT_DIR = Path("data/modules/brazil_anp")
 
 
 class BrazilAnpRefreshJob(AbstractJob):
@@ -24,7 +30,7 @@ class BrazilAnpRefreshJob(AbstractJob):
     """
 
     name = "brazil_anp_refresh"
-    default_output_dir = Path("data/modules/brazil_anp")
+    default_output_dir = _DEFAULT_OUTPUT_DIR
 
     def run(self, config: dict) -> JobResult:
         """Return skipped result until ANP fetching is implemented.

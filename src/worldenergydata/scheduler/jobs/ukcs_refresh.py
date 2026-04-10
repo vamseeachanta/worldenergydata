@@ -10,9 +10,15 @@ import logging
 from datetime import datetime
 from pathlib import Path
 
+from worldenergydata.common.data_resolver import DataNotFoundError, get_module_data
 from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
 
 logger = logging.getLogger(__name__)
+
+try:
+    _DEFAULT_OUTPUT_DIR = get_module_data("ukcs")
+except DataNotFoundError:
+    _DEFAULT_OUTPUT_DIR = Path("data/modules/ukcs")
 
 
 class UkcsRefreshJob(AbstractJob):
@@ -24,7 +30,7 @@ class UkcsRefreshJob(AbstractJob):
     """
 
     name = "ukcs_refresh"
-    default_output_dir = Path("data/modules/ukcs")
+    default_output_dir = _DEFAULT_OUTPUT_DIR
 
     def run(self, config: dict) -> JobResult:
         """Return skipped result until UKCS fetching is implemented.

@@ -10,6 +10,8 @@ from typing import Any, Dict, List, Optional
 
 import pandas as pd
 
+from worldenergydata.common.data_resolver import get_data_root
+
 from ....data.loaders.lease.local_files import DataFromLocalFiles as LeaseDataFromFiles
 from ....data.production.production_data_sources import ProductionDataFromSources
 from ....data.sources.bin.lease_data import LeaseData
@@ -47,7 +49,7 @@ class LeaseAggregator(DataAggregator):
         """
         super().__init__()
         self.hierarchy_level = HierarchyLevel.LEASE
-        self.data_path = data_path or Path("data/bsee")
+        self.data_path = data_path or get_data_root() / "bsee"
 
         # Initialize data fetchers
         self.lease_data_fetcher = LeaseData()

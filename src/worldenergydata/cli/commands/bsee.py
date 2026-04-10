@@ -20,6 +20,8 @@ from pathlib import Path
 from typing import Optional
 
 import typer
+
+from worldenergydata.common.data_resolver import get_data_root
 from rich.console import Console
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
@@ -719,10 +721,11 @@ def stats(
                 )
 
                 # Check for data directories and count files
+                data_root = get_data_root()
                 data_dirs = [
-                    Path("data/bsee"),
-                    Path("data/raw"),
-                    Path("data/processed"),
+                    data_root / "bsee",
+                    data_root / "raw",
+                    data_root / "processed",
                 ]
 
                 total_files = 0
