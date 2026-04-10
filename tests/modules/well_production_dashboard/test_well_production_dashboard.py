@@ -19,7 +19,7 @@ from worldenergydata.modules.analysis.dashboard.well_production import (
     WellMetrics,
     WellProductionDashboard,
 )
-from worldenergydata.modules.bsee.reports.comprehensive.visualizations.dashboard_builder import (
+from worldenergydata.bsee.reports.comprehensive.visualizations.dashboard_builder import (
     ChartConfig,
     DashboardBuilder,
     DashboardConfig,

@@ -21,14 +21,14 @@ from scipy import optimize
 from scipy.stats import linregress
 
 # Import verification components
-from worldenergydata.modules.bsee.analysis.well_data_verification import (
+from worldenergydata.bsee.analysis.well_data_verification import (
     VerificationResult,
     VerificationWorkflow,
 )
-from worldenergydata.modules.bsee.analysis.well_data_verification.audit import (
+from worldenergydata.bsee.analysis.well_data_verification.audit import (
     AuditLogger,
 )
-from worldenergydata.modules.bsee.analysis.well_data_verification.quality import (
+from worldenergydata.bsee.analysis.well_data_verification.quality import (
     DataQualityFramework,
 )
 
@@ -50,7 +50,7 @@ except ImportError:
     warnings.warn("Plotly not available, chart functionality will be limited")
 
 # Import export components
-from worldenergydata.modules.bsee.reports.comprehensive.exporters import (
+from worldenergydata.bsee.reports.comprehensive.exporters import (
     ExportFormat,
     ReportExporter,
 )

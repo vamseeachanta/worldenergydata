@@ -4,8 +4,8 @@
 from pathlib import Path
 from typing import Any, Dict, List
 
-from worldenergydata.modules.bsee.data.processors.in_memory import MemoryProcessor
-from worldenergydata.modules.bsee.data.scrapers.bsee_web import BSEEWebScraper
+from worldenergydata.bsee.data.processors.in_memory import MemoryProcessor
+from worldenergydata.bsee.data.scrapers.bsee_web import BSEEWebScraper
 from worldenergydata.modules.hse.importers.bsee_incidents_importer import (
     BSEEIncidentsImporter,
 )

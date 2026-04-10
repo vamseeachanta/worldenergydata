@@ -20,28 +20,28 @@ import pandas as pd
 try:
     # Import verification components
     from worldenergydata.modules.analysis.verification.models import VerificationResult
-    from worldenergydata.modules.bsee.reports.comprehensive.exporters.base import (
+    from worldenergydata.bsee.reports.comprehensive.exporters.base import (
         ExportConfig,
         ExportFormat,
     )
-    from worldenergydata.modules.bsee.reports.comprehensive.exporters.base import (
+    from worldenergydata.bsee.reports.comprehensive.exporters.base import (
         ExportResult as BaseExportResult,
     )
-    from worldenergydata.modules.bsee.reports.comprehensive.exporters.base import (
+    from worldenergydata.bsee.reports.comprehensive.exporters.base import (
         ReportExporter,
     )
-    from worldenergydata.modules.bsee.reports.comprehensive.exporters.batch import (
+    from worldenergydata.bsee.reports.comprehensive.exporters.batch import (
         BatchExporter,
     )
-    from worldenergydata.modules.bsee.reports.comprehensive.exporters.excel_exporter import (
+    from worldenergydata.bsee.reports.comprehensive.exporters.excel_exporter import (
         ExcelExporter,
     )
-    from worldenergydata.modules.bsee.reports.comprehensive.exporters.pdf_exporter import (
+    from worldenergydata.bsee.reports.comprehensive.exporters.pdf_exporter import (
         PDFExporter,
     )
 
     # Import report builder for BSEE standard formatting
-    from worldenergydata.modules.bsee.reports.comprehensive.report_builder import (
+    from worldenergydata.bsee.reports.comprehensive.report_builder import (
         GoByReportBuilder,
     )
 except (ImportError, ModuleNotFoundError):
