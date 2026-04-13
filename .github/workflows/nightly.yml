@@ -40,7 +40,7 @@ jobs:
             --durations=20
 
       - name: Upload coverage report
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-report
           path: coverage-report/
@@ -102,7 +102,7 @@ jobs:
             || echo "No benchmarks found or benchmark tests skipped"
 
       - name: Upload benchmark results
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: benchmark-results
@@ -117,7 +117,7 @@ jobs:
 
     steps:
       - name: Create issue on failure
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const title = `Nightly build failed - ${new Date().toISOString().split('T')[0]}`;
