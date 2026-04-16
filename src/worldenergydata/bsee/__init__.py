@@ -99,16 +99,32 @@ if TYPE_CHECKING:
     from worldenergydata.bsee.data.bsee_data import BSEEData as BSEEData
     from worldenergydata.bsee.analysis.bsee_analysis import BSEEAnalysis as BSEEAnalysis
     from worldenergydata.bsee.data.loaders.api.well import WellData as WellData
-    from worldenergydata.bsee.data.production.router import ProductionRouter as ProductionRouter
-    from worldenergydata.bsee.data.loaders.block.router import BlockRouter as BlockRouter
-    from worldenergydata.bsee.data.loaders.lease.router import LeaseRouter as LeaseRouter
-    from worldenergydata.bsee.data.refresh.data_refresh import DataRefresh as DataRefresh
+    from worldenergydata.bsee.data.production.router import (
+        ProductionRouter as ProductionRouter,
+    )
+    from worldenergydata.bsee.data.loaders.block.router import (
+        BlockRouter as BlockRouter,
+    )
+    from worldenergydata.bsee.data.loaders.lease.router import (
+        LeaseRouter as LeaseRouter,
+    )
+    from worldenergydata.bsee.data.refresh.data_refresh import (
+        DataRefresh as DataRefresh,
+    )
     from worldenergydata.bsee.analysis.well_api12 import WellAPI12 as WellAPI12
     from worldenergydata.bsee.analysis.well_api10 import WellAPI10 as WellAPI10
-    from worldenergydata.bsee.analysis.production_api12 import ProductionAPI12Analysis as ProductionAPI12Analysis
-    from worldenergydata.bsee.analysis.production_api10 import ProductionAPI10Analysis as ProductionAPI10Analysis
-    from worldenergydata.bsee.paleowells import PaleowellsDataProcessor as PaleowellsDataProcessor
-    from worldenergydata.bsee.paleowells import PaleowellsVisualizer as PaleowellsVisualizer
+    from worldenergydata.bsee.analysis.production_api12 import (
+        ProductionAPI12Analysis as ProductionAPI12Analysis,
+    )
+    from worldenergydata.bsee.analysis.production_api10 import (
+        ProductionAPI10Analysis as ProductionAPI10Analysis,
+    )
+    from worldenergydata.bsee.paleowells import (
+        PaleowellsDataProcessor as PaleowellsDataProcessor,
+    )
+    from worldenergydata.bsee.paleowells import (
+        PaleowellsVisualizer as PaleowellsVisualizer,
+    )
 
 
 def __getattr__(name: str) -> Any:
@@ -117,96 +133,122 @@ def __getattr__(name: str) -> Any:
     # Skill wrapper
     if name == "bsee_field_pipeline":
         from worldenergydata.bsee.skill import bsee_field_pipeline
+
         return bsee_field_pipeline
 
     if name == "BseeFieldResult":
         from worldenergydata.bsee.skill import BseeFieldResult
+
         return BseeFieldResult
 
     # Core classes
     if name == "bsee":
         from worldenergydata.bsee.bsee import bsee
+
         return bsee
 
     if name == "BSEEData":
         from worldenergydata.bsee.data.bsee_data import BSEEData
+
         return BSEEData
 
     if name == "BSEEAnalysis":
         from worldenergydata.bsee.analysis.bsee_analysis import BSEEAnalysis
+
         return BSEEAnalysis
 
     # Data layer
     if name == "WellData":
         from worldenergydata.bsee.data.loaders.api.well import WellData
+
         return WellData
 
     if name == "ProductionRouter":
         from worldenergydata.bsee.data.production.router import ProductionRouter
+
         return ProductionRouter
 
     if name == "BlockRouter":
         from worldenergydata.bsee.data.loaders.block.router import BlockRouter
+
         return BlockRouter
 
     if name == "LeaseRouter":
         from worldenergydata.bsee.data.loaders.lease.router import LeaseRouter
+
         return LeaseRouter
 
     if name == "DataRefresh":
         from worldenergydata.bsee.data.refresh.data_refresh import DataRefresh
+
         return DataRefresh
 
     # Analysis layer
     if name == "WellAPI12":
         from worldenergydata.bsee.analysis.well_api12 import WellAPI12
+
         return WellAPI12
 
     if name == "WellAPI10":
         from worldenergydata.bsee.analysis.well_api10 import WellAPI10
+
         return WellAPI10
 
     if name == "ProductionAPI12Analysis":
-        from worldenergydata.bsee.analysis.production_api12 import ProductionAPI12Analysis
+        from worldenergydata.bsee.analysis.production_api12 import (
+            ProductionAPI12Analysis,
+        )
+
         return ProductionAPI12Analysis
 
     if name == "ProductionAPI10Analysis":
-        from worldenergydata.bsee.analysis.production_api10 import ProductionAPI10Analysis
+        from worldenergydata.bsee.analysis.production_api10 import (
+            ProductionAPI10Analysis,
+        )
+
         return ProductionAPI10Analysis
 
     # Submodules
     if name == "well_data_verification":
         from worldenergydata.bsee.analysis import well_data_verification
+
         return well_data_verification
 
     if name == "financial":
         from worldenergydata.bsee.analysis import financial
+
         return financial
 
     if name == "comprehensive":
         from worldenergydata.bsee.reports import comprehensive
+
         return comprehensive
 
     # Paleowells
     if name == "PaleowellsDataProcessor":
         from worldenergydata.bsee.paleowells import PaleowellsDataProcessor
+
         return PaleowellsDataProcessor
 
     if name == "PaleowellsVisualizer":
         from worldenergydata.bsee.paleowells import PaleowellsVisualizer
+
         return PaleowellsVisualizer
 
     # Query API singletons (issue #288)
     if name == "production":
         from worldenergydata.bsee.api import production
+
         return production
 
     if name == "wells":
         from worldenergydata.bsee.api import wells
+
         return wells
 
     if name == "companies":
         from worldenergydata.bsee.api import companies
+
         return companies
 
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

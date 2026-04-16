@@ -20,7 +20,6 @@ import numpy as np
 import pandas as pd
 import pytest
 
-
 # ==========================================================================
 # BSEE Query API Tests
 # ==========================================================================
@@ -187,8 +186,7 @@ class TestBSEEWellsQuery:
         result = wq.query(area_code="MC")
         assert len(result) == 2
         assert all(
-            r.strip().upper() == "MC"
-            for r in result["BOTM_AREA_CODE"].astype(str)
+            r.strip().upper() == "MC" for r in result["BOTM_AREA_CODE"].astype(str)
         )
 
     @patch(
@@ -375,9 +373,7 @@ class TestFDASEconomicsQuery:
 
         # -100 + 50 + 50 = 0 at period 2
         cashflows = [-100, 50, 50, 50]
-        periods, years = EconomicsQuery.payback_period(
-            cashflows, period="annual"
-        )
+        periods, years = EconomicsQuery.payback_period(cashflows, period="annual")
         assert isinstance(periods, int)
         assert isinstance(years, float)
         assert periods == 2  # Cumulative turns non-negative at index 2

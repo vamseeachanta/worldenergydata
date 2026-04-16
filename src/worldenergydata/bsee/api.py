@@ -100,9 +100,7 @@ class ProductionQuery:
             df = self._loader.load()
             if df is None:
                 return pd.DataFrame()
-            mask = (df["LEASE_NUMBER"] == lease) & (
-                df["PROD_YEAR"].isin(year_list)
-            )
+            mask = (df["LEASE_NUMBER"] == lease) & (df["PROD_YEAR"].isin(year_list))
             return df[mask].reset_index(drop=True)
 
         if lease:
@@ -244,18 +242,12 @@ class WellsQuery:
                 ac = parts[0].upper()
                 blk = parts[1]
                 mask &= (
-                    df["BOTM_AREA_CODE"].astype(str).str.strip().str.upper()
-                    == ac
-                ) & (
-                    df["BOTM_BLOCK_NUMBER"].astype(str).str.strip() == blk
-                )
+                    df["BOTM_AREA_CODE"].astype(str).str.strip().str.upper() == ac
+                ) & (df["BOTM_BLOCK_NUMBER"].astype(str).str.strip() == blk)
             elif "BOTM_AREA_CODE" in df.columns:
                 # Single value — try area code match
                 mask &= (
-                    df["BOTM_AREA_CODE"]
-                    .astype(str)
-                    .str.strip()
-                    .str.upper()
+                    df["BOTM_AREA_CODE"].astype(str).str.strip().str.upper()
                     == field.strip().upper()
                 )
 

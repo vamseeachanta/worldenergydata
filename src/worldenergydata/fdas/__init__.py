@@ -76,7 +76,6 @@ from .core import (
     calculate_irr,
     calculate_all_metrics,
     FinancialCalculationError,
-
     # Configuration
     AssumptionsManager,
     PriceDeckManager,
@@ -95,32 +94,28 @@ from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
 
-__version__ = '1.0.0'
+__version__ = "1.0.0"
 
 __all__ = [
     # Core financial
-    'excel_like_mirr',
-    'calculate_npv',
-    'calculate_irr',
-    'calculate_all_metrics',
-    'FinancialCalculationError',
-
+    "excel_like_mirr",
+    "calculate_npv",
+    "calculate_irr",
+    "calculate_all_metrics",
+    "FinancialCalculationError",
     # Configuration
-    'AssumptionsManager',
-    'PriceDeckManager',
-    'classify_dev_system_by_depth',
-    'ConfigurationError',
-
+    "AssumptionsManager",
+    "PriceDeckManager",
+    "classify_dev_system_by_depth",
+    "ConfigurationError",
     # Adapters
-    'BseeAdapter',
-    'LeaseMapping',
-    'AdapterError',
-
+    "BseeAdapter",
+    "LeaseMapping",
+    "AdapterError",
     # Query API (issue #288)
-    'economics',
-
+    "economics",
     # Metadata
-    '__version__',
+    "__version__",
 ]
 
 
@@ -128,5 +123,6 @@ def __getattr__(name: str):
     """Lazy import of query API singletons (issue #288)."""
     if name == "economics":
         from worldenergydata.fdas.api import economics
+
         return economics
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

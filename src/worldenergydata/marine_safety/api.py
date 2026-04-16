@@ -69,9 +69,7 @@ class IncidentsQuery:
             CrossDatabaseAnalyzer,
         )
 
-        self._analyzer = CrossDatabaseAnalyzer(
-            importer_config=importer_config
-        )
+        self._analyzer = CrossDatabaseAnalyzer(importer_config=importer_config)
 
     def query(
         self,
@@ -209,9 +207,7 @@ class IncidentsQuery:
         """
         return self._analyzer.trend_analysis(data)
 
-    def top_types(
-        self, data: pd.DataFrame, n: int = 10
-    ) -> pd.DataFrame:
+    def top_types(self, data: pd.DataFrame, n: int = 10) -> pd.DataFrame:
         """Top-n incident types by total count across all sources.
 
         Parameters

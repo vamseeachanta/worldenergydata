@@ -57,6 +57,7 @@ del _install_redirect
 # Keeps ``import worldenergydata`` fast by deferring heavy sub-module
 # imports until first attribute access.
 
+
 def __getattr__(name: str):
     """Lazy import of top-level query API namespaces.
 
@@ -77,5 +78,6 @@ def __getattr__(name: str):
     """
     if name == "marine_safety_api":
         from worldenergydata.marine_safety import api as _ms_api
+
         return _ms_api
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
