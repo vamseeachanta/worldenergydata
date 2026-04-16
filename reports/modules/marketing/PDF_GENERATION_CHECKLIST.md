@@ -175,7 +175,7 @@ fi
 cd /mnt/github/workspace-hub/worldenergydata
 
 # Generate PDFs for all brochures
-python scripts/generate_marketing_brochures.py --pdf
+python scripts/reporting/generate_marketing_brochures.py --pdf
 
 # Check for errors
 echo "Exit code: $?"
@@ -430,7 +430,7 @@ git add .gitignore
 git commit -m "Exclude PDFs from git tracking
 
 PDFs can be regenerated with:
-  python scripts/generate_marketing_brochures.py --pdf
+  python scripts/reporting/generate_marketing_brochures.py --pdf
 
 Reduces repository size and avoids binary file tracking.
 
@@ -561,7 +561,7 @@ gh release create v1.0-marketing \
 cd /mnt/github/workspace-hub/worldenergydata
 
 # Regenerate all PDFs
-python scripts/generate_marketing_brochures.py --pdf
+python scripts/reporting/generate_marketing_brochures.py --pdf
 
 # Or regenerate specific brochure
 pandoc reports/modules/marketing/marketing_brochure_[name].md \

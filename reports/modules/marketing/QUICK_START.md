@@ -32,24 +32,24 @@ cat reports/modules/marketing/marketing_brochure_bsee_data_integration.md
 sudo apt-get install pandoc texlive-xetex
 
 # Generate all PDFs
-python scripts/generate_marketing_brochures.py --pdf
+python scripts/reporting/generate_marketing_brochures.py --pdf
 ```
 
 ### Regenerate All Brochures
 ```bash
-python scripts/generate_marketing_brochures.py
+python scripts/reporting/generate_marketing_brochures.py
 ```
 
 ### Regenerate Specific Tier
 ```bash
 # Only Tier 1 (core modules)
-python scripts/generate_marketing_brochures.py --tier tier_1_core
+python scripts/reporting/generate_marketing_brochures.py --tier tier_1_core
 
 # Only Tier 2 (advanced modules)
-python scripts/generate_marketing_brochures.py --tier tier_2_advanced
+python scripts/reporting/generate_marketing_brochures.py --tier tier_2_advanced
 
 # Only Tier 3 (integration modules)
-python scripts/generate_marketing_brochures.py --tier tier_3_integration
+python scripts/reporting/generate_marketing_brochures.py --tier tier_3_integration
 ```
 
 ## ✏️ Customize Brochures
@@ -63,7 +63,7 @@ python scripts/generate_marketing_brochures.py --tier tier_3_integration
 
 3. **Regenerate brochures:**
    ```bash
-   python scripts/generate_marketing_brochures.py
+   python scripts/reporting/generate_marketing_brochures.py
    ```
 
 ## 📧 Share Brochures
