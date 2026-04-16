@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 # Configuration
 SOURCE_DIR = "worldenergydata/data/raw/legacy_production/source"
-OUTPUT_FILE = "worldenergydata/data/legacy_production_inventory.json"
+OUTPUT_FILE = "worldenergydata/data/modules/bsee/legacy/production_inventory.json"
 
 # Interesting file types for production data
 DATA_EXTENSIONS = {
