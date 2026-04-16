@@ -5,6 +5,8 @@ This module tests the selection of one high-difference and one low-difference we
 for detailed methodology comparison.
 """
 
+from pathlib import Path
+
 import pandas as pd
 import pytest
 
@@ -18,7 +20,14 @@ from tests.modules.bsee.analysis.api12_drilling_completion_analysis.well_selecto
     select_representative_wells,
 )
 
+_LEASE_FILE = "tests/modules/bsee/analysis/results/drilling_and_completion_days_by_api_validation_20250805_191100.xlsx"
+_API12_FILE = "tests/modules/bsee/analysis/results/well_summ_multiple_wells.csv"
 
+
+@pytest.mark.skipif(
+    not Path(_LEASE_FILE).exists() or not Path(_API12_FILE).exists(),
+    reason="Requires BSEE data files (run 'make data' first)",
+)
 class TestRepresentativeWells:
     """Test class for representative well selection."""
 

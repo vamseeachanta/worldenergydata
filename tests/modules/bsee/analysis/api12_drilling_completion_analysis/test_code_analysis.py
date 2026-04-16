@@ -12,19 +12,30 @@ from typing import Any, Dict, List
 
 import pytest
 
+# Paths to scripts under analysis
+_LEASE_SCRIPT = "src/worldenergydata/modules/bsee/analysis/custom_scripts/Roy/july/drilling_and_completion_days.py"
+_API12_SCRIPT = "src/worldenergydata/bsee/analysis/well_api12.py"
 
+_lease_missing = not Path(_LEASE_SCRIPT).exists()
+_api12_missing = not Path(_API12_SCRIPT).exists()
+
+
+@pytest.mark.skipif(
+    _lease_missing or _api12_missing,
+    reason="Requires lease custom script and api12 source files on disk",
+)
 class TestCodeAnalysis:
     """Test class for code analysis functionality."""
 
     @pytest.fixture
     def lease_script_path(self):
         """Path to the lease method script."""
-        return "src/worldenergydata/modules/bsee/analysis/custom_scripts/Roy/july/drilling_and_completion_days.py"
+        return _LEASE_SCRIPT
 
     @pytest.fixture
     def api12_script_path(self):
         """Path to the API12 method script."""
-        return "src/worldenergydata/modules/bsee/analysis/well_api12.py"
+        return _API12_SCRIPT
 
     def test_analyze_script_imports(self, lease_script_path, api12_script_path):
         """Test analysis of import statements in both scripts."""

@@ -8,20 +8,30 @@ to identify variances and document methodology differences.
 
 import os
 from datetime import datetime
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pytest
 from loguru import logger
+
+_EXCEL_CSV = os.path.join("results", "jack_st_malo_excel_economics_20250730_130153.csv")
+_TASK8_CSV = os.path.join(
+    "tests",
+    "modules",
+    "bsee",
+    "analysis",
+    "results",
+    "jack_st_malo_monthly_economics_test_20250729_113950.csv",
+)
 
 
 class ExcelVsTask8Comparison:
     """Compare Excel economics data with Task 8 programmatic calculations"""
 
     def __init__(self):
-        self.excel_csv_path = (
-            r"results\jack_st_malo_excel_economics_20250730_130153.csv"
-        )
-        self.task8_csv_path = r"tests\modules\bsee\analysis\results\jack_st_malo_monthly_economics_test_20250729_113950.csv"
+        self.excel_csv_path = _EXCEL_CSV
+        self.task8_csv_path = _TASK8_CSV
         self.output_folder = "results"
 
     def load_dataframes(self):
@@ -340,6 +350,10 @@ class ExcelVsTask8Comparison:
         return report_path
 
 
+@pytest.mark.skipif(
+    not Path(_EXCEL_CSV).exists() or not Path(_TASK8_CSV).exists(),
+    reason="Requires BSEE results CSV files (run 'make data' first)",
+)
 def test_excel_vs_task8_comparison():
     """Test the comparison functionality"""
 
