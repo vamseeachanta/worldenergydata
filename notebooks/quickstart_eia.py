@@ -100,17 +100,35 @@ except Exception as exc:
 
 # %%
 # Synthetic US crude production data (annual, thousand barrels per day)
-us_crude = pd.DataFrame({
-    "year": list(range(2010, 2026)),
-    "production_kbd": [
-        5482, 5646, 6506, 7441, 8774, 9431, 8853, 9356,
-        10964, 12247, 11316, 11254, 11886, 12927, 13201, 13400,
-    ],
-})
+us_crude = pd.DataFrame(
+    {
+        "year": list(range(2010, 2026)),
+        "production_kbd": [
+            5482,
+            5646,
+            6506,
+            7441,
+            8774,
+            9431,
+            8853,
+            9356,
+            10964,
+            12247,
+            11316,
+            11254,
+            11886,
+            12927,
+            13201,
+            13400,
+        ],
+    }
+)
 
 fig, ax = plt.subplots(figsize=(10, 5))
 ax.plot(us_crude["year"], us_crude["production_kbd"], marker="o", color="steelblue")
-ax.fill_between(us_crude["year"], us_crude["production_kbd"], alpha=0.15, color="steelblue")
+ax.fill_between(
+    us_crude["year"], us_crude["production_kbd"], alpha=0.15, color="steelblue"
+)
 ax.set_xlabel("Year")
 ax.set_ylabel("Production (kbd)")
 ax.set_title("US Crude Oil Production (EIA Data)")
@@ -132,11 +150,23 @@ plt.show()
 
 # %%
 # Synthetic top producing states
-states = pd.DataFrame({
-    "state": ["Texas", "New Mexico", "North Dakota", "Alaska", "Colorado",
-              "Oklahoma", "California", "Wyoming", "Louisiana", "Utah"],
-    "production_kbd": [5600, 1900, 1200, 440, 430, 380, 340, 250, 105, 100],
-})
+states = pd.DataFrame(
+    {
+        "state": [
+            "Texas",
+            "New Mexico",
+            "North Dakota",
+            "Alaska",
+            "Colorado",
+            "Oklahoma",
+            "California",
+            "Wyoming",
+            "Louisiana",
+            "Utah",
+        ],
+        "production_kbd": [5600, 1900, 1200, 440, 430, 380, 340, 250, 105, 100],
+    }
+)
 
 fig, ax = plt.subplots(figsize=(10, 5))
 ax.barh(states["state"], states["production_kbd"], color="steelblue")

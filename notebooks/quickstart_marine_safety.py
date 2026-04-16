@@ -18,7 +18,10 @@ import pandas as pd
 
 DATA_DIR = (
     Path(__file__).resolve().parent.parent
-    / "data" / "modules" / "marine_safety" / "input"
+    / "data"
+    / "modules"
+    / "marine_safety"
+    / "input"
 )
 
 # %% [markdown]
@@ -87,7 +90,12 @@ foundering[["incident_id", "date", "vessel_name", "fatalities", "location"]]
 severity_counts = hatch["severity"].value_counts()
 
 fig, ax = plt.subplots(figsize=(7, 5))
-colors = {"Critical": "#e74c3c", "High": "#e67e22", "Medium": "#f1c40f", "Low": "#2ecc71"}
+colors = {
+    "Critical": "#e74c3c",
+    "High": "#e67e22",
+    "Medium": "#f1c40f",
+    "Low": "#2ecc71",
+}
 bar_colors = [colors.get(s, "gray") for s in severity_counts.index]
 severity_counts.plot.bar(ax=ax, color=bar_colors, edgecolor="white")
 ax.set_xlabel("Severity")
@@ -103,10 +111,14 @@ plt.show()
 # Merge all three datasets into a single view with a common category column.
 
 # %%
-fatalities_slim = fatalities[["incident_id", "date", "vessel_name", "description"]].copy()
+fatalities_slim = fatalities[
+    ["incident_id", "date", "vessel_name", "description"]
+].copy()
 fatalities_slim["category"] = "Fatality"
 
-foundering_slim = foundering[["incident_id", "date", "vessel_name", "description"]].copy()
+foundering_slim = foundering[
+    ["incident_id", "date", "vessel_name", "description"]
+].copy()
 foundering_slim["category"] = "Foundering"
 
 hatch_slim = hatch[["incident_id", "date", "vessel_name", "description"]].copy()
@@ -116,7 +128,9 @@ combined = pd.concat([fatalities_slim, foundering_slim, hatch_slim], ignore_inde
 combined["date"] = pd.to_datetime(combined["date"], errors="coerce")
 
 fig, ax = plt.subplots(figsize=(8, 4))
-combined["category"].value_counts().plot.bar(ax=ax, color=["indianred", "steelblue", "goldenrod"])
+combined["category"].value_counts().plot.bar(
+    ax=ax, color=["indianred", "steelblue", "goldenrod"]
+)
 ax.set_ylabel("Number of Incidents")
 ax.set_title("Incidents by Category")
 ax.set_xticklabels(ax.get_xticklabels(), rotation=0)

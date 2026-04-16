@@ -17,7 +17,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # Resolve repo-relative data path
-DATA_DIR = Path(__file__).resolve().parent.parent / "data" / "modules" / "bsee" / "current"
+DATA_DIR = (
+    Path(__file__).resolve().parent.parent / "data" / "modules" / "bsee" / "current"
+)
 
 # %% [markdown]
 # ## 1. Load well data
@@ -53,11 +55,7 @@ plt.show()
 # ## 3. Top operators by well count
 
 # %%
-top_operators = (
-    wells["COMPANY_NAME"]
-    .value_counts()
-    .head(15)
-)
+top_operators = wells["COMPANY_NAME"].value_counts().head(15)
 
 fig, ax = plt.subplots(figsize=(10, 6))
 top_operators.plot.barh(ax=ax, color="steelblue")
@@ -94,8 +92,12 @@ plt.show()
 wells["depth_class"] = pd.cut(
     wells["WATER_DEPTH"],
     bins=[0, 500, 1000, 5000, 15000],
-    labels=["Shallow (<500 ft)", "Mid-water (500-1000 ft)",
-            "Deepwater (1000-5000 ft)", "Ultra-deep (>5000 ft)"],
+    labels=[
+        "Shallow (<500 ft)",
+        "Mid-water (500-1000 ft)",
+        "Deepwater (1000-5000 ft)",
+        "Ultra-deep (>5000 ft)",
+    ],
 )
 depth_counts = wells["depth_class"].value_counts().sort_index()
 

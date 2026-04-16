@@ -110,12 +110,14 @@ except Exception as exc:
 
 # %%
 # Synthetic example showing the kind of analysis you can do with NCS data
-ncs_example = pd.DataFrame({
-    "field": ["Johan Sverdrup", "Troll", "Ekofisk", "Snorre", "Gullfaks"],
-    "peak_oil_kbd": [755, 175, 370, 220, 250],
-    "start_year": [2019, 1995, 1971, 1992, 1986],
-    "water_depth_m": [115, 330, 75, 350, 220],
-})
+ncs_example = pd.DataFrame(
+    {
+        "field": ["Johan Sverdrup", "Troll", "Ekofisk", "Snorre", "Gullfaks"],
+        "peak_oil_kbd": [755, 175, 370, 220, 250],
+        "start_year": [2019, 1995, 1971, 1992, 1986],
+        "water_depth_m": [115, 330, 75, 350, 220],
+    }
+)
 
 fig, ax = plt.subplots(figsize=(9, 5))
 ax.barh(ncs_example["field"], ncs_example["peak_oil_kbd"], color="steelblue")

@@ -85,10 +85,24 @@ npvs = [econ.npv(cashflows, discount_rate=r, period="annual") for r in rates]
 fig, ax = plt.subplots(figsize=(10, 5))
 ax.plot(rates * 100, npvs, marker="o", markersize=4)
 ax.axhline(0, color="gray", linestyle="--", linewidth=0.8)
-ax.fill_between(rates * 100, npvs, 0, where=[n > 0 for n in npvs],
-                alpha=0.15, color="green", label="NPV > 0")
-ax.fill_between(rates * 100, npvs, 0, where=[n <= 0 for n in npvs],
-                alpha=0.15, color="red", label="NPV < 0")
+ax.fill_between(
+    rates * 100,
+    npvs,
+    0,
+    where=[n > 0 for n in npvs],
+    alpha=0.15,
+    color="green",
+    label="NPV > 0",
+)
+ax.fill_between(
+    rates * 100,
+    npvs,
+    0,
+    where=[n <= 0 for n in npvs],
+    alpha=0.15,
+    color="red",
+    label="NPV < 0",
+)
 ax.set_xlabel("Discount Rate (%)")
 ax.set_ylabel("NPV ($M)")
 ax.set_title("NPV Sensitivity to Discount Rate")
@@ -112,15 +126,17 @@ records = []
 for name, s in scenarios.items():
     cf = [s["capex"]] + [s["revenue"]] * s["years"]
     m = econ.all_metrics(cf, discount_rate=0.10, period="annual")
-    records.append({
-        "Scenario": name,
-        "Capex ($M)": abs(s["capex"]),
-        "Annual Rev ($M)": s["revenue"],
-        "Years": s["years"],
-        "NPV ($M)": round(m["npv"], 1),
-        "IRR (%)": round((m.get("irr_annual") or 0) * 100, 1),
-        "Payback (yr)": round(m.get("payback_years") or 0, 1),
-    })
+    records.append(
+        {
+            "Scenario": name,
+            "Capex ($M)": abs(s["capex"]),
+            "Annual Rev ($M)": s["revenue"],
+            "Years": s["years"],
+            "NPV ($M)": round(m["npv"], 1),
+            "IRR (%)": round((m.get("irr_annual") or 0) * 100, 1),
+            "Payback (yr)": round(m.get("payback_years") or 0, 1),
+        }
+    )
 
 comparison = pd.DataFrame(records)
 print(comparison.to_string(index=False))
@@ -142,12 +158,21 @@ ax1.set_title("Annual Cashflows")
 ax1.axhline(0, color="gray", linewidth=0.8)
 
 # Cumulative cashflow
-ax2.plot(range(len(cumulative)), cumulative, marker="o", markersize=4, color="steelblue")
+ax2.plot(
+    range(len(cumulative)), cumulative, marker="o", markersize=4, color="steelblue"
+)
 ax2.axhline(0, color="gray", linestyle="--", linewidth=0.8)
-ax2.fill_between(range(len(cumulative)), cumulative, 0,
-                 where=cumulative >= 0, alpha=0.15, color="green")
-ax2.fill_between(range(len(cumulative)), cumulative, 0,
-                 where=cumulative < 0, alpha=0.15, color="red")
+ax2.fill_between(
+    range(len(cumulative)),
+    cumulative,
+    0,
+    where=cumulative >= 0,
+    alpha=0.15,
+    color="green",
+)
+ax2.fill_between(
+    range(len(cumulative)), cumulative, 0, where=cumulative < 0, alpha=0.15, color="red"
+)
 ax2.set_xlabel("Year")
 ax2.set_ylabel("Cumulative Cashflow ($M)")
 ax2.set_title("Cumulative Cashflow")
