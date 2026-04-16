@@ -1,0 +1,330 @@
+module: marine_safety
+description: Maritime casualty and safety incident data
+datasets:
+- name: fatality_incidents.csv
+  path: data/modules/marine_safety/input/fatality_incidents.csv
+  format: csv
+  columns:
+  - name: incident_id
+    type: string
+    description: ''
+    unit: ''
+  - name: date
+    type: datetime
+    description: ''
+    unit: ''
+  - name: vessel_name
+    type: string
+    description: ''
+    unit: ''
+  - name: description
+    type: string
+    description: ''
+    unit: ''
+  - name: fatalities
+    type: integer
+    description: ''
+    unit: ''
+  - name: cause_of_death
+    type: string
+    description: ''
+    unit: ''
+  - name: location
+    type: string
+    description: ''
+    unit: ''
+  row_count: 20
+  size_bytes: 3324
+  last_modified: '2025-10-23T01:01:14.205854+00:00'
+- name: foundering_incidents.csv
+  path: data/modules/marine_safety/input/foundering_incidents.csv
+  format: csv
+  columns:
+  - name: incident_id
+    type: string
+    description: ''
+    unit: ''
+  - name: date
+    type: datetime
+    description: ''
+    unit: ''
+  - name: vessel_name
+    type: string
+    description: ''
+    unit: ''
+  - name: description
+    type: string
+    description: ''
+    unit: ''
+  - name: fatalities
+    type: integer
+    description: ''
+    unit: ''
+  - name: location
+    type: string
+    description: ''
+    unit: ''
+  row_count: 15
+  size_bytes: 2464
+  last_modified: '2025-10-23T01:01:00.862546+00:00'
+- name: hatch_incidents.csv
+  path: data/modules/marine_safety/input/hatch_incidents.csv
+  format: csv
+  columns:
+  - name: incident_id
+    type: string
+    description: ''
+    unit: ''
+  - name: date
+    type: datetime
+    description: ''
+    unit: ''
+  - name: vessel_name
+    type: string
+    description: ''
+    unit: ''
+  - name: description
+    type: string
+    description: ''
+    unit: ''
+  - name: severity
+    type: string
+    description: ''
+    unit: ''
+  - name: location
+    type: string
+    description: ''
+    unit: ''
+  row_count: 30
+  size_bytes: 4577
+  last_modified: '2025-10-23T01:00:46.574723+00:00'
+- name: bsee_data_dataset.json
+  path: data/modules/marine_safety/raw/bsee_offshore/bsee_data_dataset.json
+  format: json
+  columns: []
+  size_bytes: 28166
+  last_modified: '2026-03-15T13:06:39.729704+00:00'
+- name: bsee_data_package_search_q=incidents.json
+  path: data/modules/marine_safety/raw/bsee_offshore/bsee_data_package_search_q=incidents.json
+  format: json
+  columns: []
+  size_bytes: 28191
+  last_modified: '2026-03-15T13:06:39.732129+00:00'
+- name: data_gov_maritime_search.json
+  path: data/modules/marine_safety/raw/data_gov_maritime_search.json
+  format: json
+  columns:
+  - name: help
+    type: str
+    description: ''
+    unit: ''
+  - name: success
+    type: bool
+    description: ''
+    unit: ''
+  - name: result
+    type: dict
+    description: ''
+    unit: ''
+  size_bytes: 34620
+  last_modified: '2026-03-15T13:06:39.738429+00:00'
+- name: data_gov_osha_search.json
+  path: data/modules/marine_safety/raw/data_gov_osha_search.json
+  format: json
+  columns:
+  - name: help
+    type: str
+    description: ''
+    unit: ''
+  - name: success
+    type: bool
+    description: ''
+    unit: ''
+  - name: result
+    type: dict
+    description: ''
+    unit: ''
+  size_bytes: 12440
+  last_modified: '2026-03-15T13:06:39.739590+00:00'
+- name: data_gov_pipeline_search.json
+  path: data/modules/marine_safety/raw/data_gov_pipeline_search.json
+  format: json
+  columns:
+  - name: help
+    type: str
+    description: ''
+    unit: ''
+  - name: success
+    type: bool
+    description: ''
+    unit: ''
+  - name: result
+    type: dict
+    description: ''
+    unit: ''
+  size_bytes: 550753
+  last_modified: '2026-03-15T13:06:39.757553+00:00'
+- name: download_log.json
+  path: data/modules/marine_safety/raw/download_log.json
+  format: json
+  columns:
+  - name: timestamp
+    type: str
+    description: ''
+    unit: ''
+  - name: source
+    type: str
+    description: ''
+    unit: ''
+  - name: status
+    type: str
+    description: ''
+    unit: ''
+  - name: details
+    type: str
+    description: ''
+    unit: ''
+  size_bytes: 4174
+  last_modified: '2026-03-15T13:06:39.762880+00:00'
+- name: collation_summary.json
+  path: data/modules/marine_safety/raw/imo_gisis/collation_summary.json
+  format: json
+  columns:
+  - name: collation_date
+    type: str
+    description: ''
+    unit: ''
+  - name: input_files
+    type: int
+    description: ''
+    unit: ''
+  - name: files_processed
+    type: int
+    description: ''
+    unit: ''
+  - name: files_failed
+    type: int
+    description: ''
+    unit: ''
+  - name: total_records
+    type: int
+    description: ''
+    unit: ''
+  - name: duplicate_records
+    type: int
+    description: ''
+    unit: ''
+  - name: unique_references
+    type: int
+    description: ''
+    unit: ''
+  - name: date_range
+    type: dict
+    description: ''
+    unit: ''
+  - name: columns
+    type: list
+    description: ''
+    unit: ''
+  - name: file_statistics
+    type: list
+    description: ''
+    unit: ''
+  - name: severity_breakdown
+    type: dict
+    description: ''
+    unit: ''
+  - name: output_file
+    type: str
+    description: ''
+    unit: ''
+  - name: output_size_mb
+    type: float
+    description: ''
+    unit: ''
+  size_bytes: 1815
+  last_modified: '2026-03-15T13:06:39.770009+00:00'
+- name: download_summary.json
+  path: data/modules/marine_safety/raw/imo_gisis/download_summary.json
+  format: json
+  columns:
+  - name: download_date
+    type: str
+    description: ''
+    unit: ''
+  - name: total_records
+    type: int
+    description: ''
+    unit: ''
+  - name: successful
+    type: int
+    description: ''
+    unit: ''
+  - name: results
+    type: list
+    description: ''
+    unit: ''
+  size_bytes: 999
+  last_modified: '2026-03-15T13:06:39.771015+00:00'
+- name: OSHA_Maritime_Inspections.json
+  path: data/modules/marine_safety/raw/osha_maritime/OSHA_Maritime_Inspections.json
+  format: json
+  columns: []
+  size_bytes: 4288
+  last_modified: '2026-03-15T13:06:39.817875+00:00'
+- name: test_scrape_2024.json
+  path: data/modules/marine_safety/raw/uscg/test_scrape_2024.json
+  format: json
+  columns: []
+  size_bytes: 2
+  last_modified: '2026-03-15T13:06:39.825147+00:00'
+- name: acquisition_manifest.json
+  path: data/modules/marine_safety/raw/uscg_misle/acquisition_manifest.json
+  format: json
+  columns:
+  - name: status
+    type: str
+    description: ''
+    unit: ''
+  - name: timestamp
+    type: str
+    description: ''
+    unit: ''
+  - name: output_dir
+    type: str
+    description: ''
+    unit: ''
+  - name: urls_attempted
+    type: list
+    description: ''
+    unit: ''
+  - name: download_url
+    type: NoneType
+    description: ''
+    unit: ''
+  - name: zip_path
+    type: NoneType
+    description: ''
+    unit: ''
+  - name: extracted_files
+    type: list
+    description: ''
+    unit: ''
+  - name: file_count
+    type: int
+    description: ''
+    unit: ''
+  - name: total_size_bytes
+    type: int
+    description: ''
+    unit: ''
+  - name: errors
+    type: list
+    description: ''
+    unit: ''
+  - name: manual_instructions
+    type: dict
+    description: ''
+    unit: ''
+  size_bytes: 3227
+  last_modified: '2026-02-08T17:12:15.619128+00:00'

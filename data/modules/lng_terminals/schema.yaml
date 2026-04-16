@@ -1,0 +1,82 @@
+module: lng_terminals
+description: Global LNG terminal infrastructure data
+datasets:
+- name: terminals_seed.csv
+  path: data/modules/lng_terminals/curated/terminals_seed.csv
+  format: csv
+  columns:
+  - name: terminal_name
+    type: string
+    description: ''
+    unit: ''
+  - name: country
+    type: string
+    description: ''
+    unit: ''
+  - name: latitude
+    type: float
+    description: ''
+    unit: degrees
+  - name: longitude
+    type: float
+    description: ''
+    unit: degrees
+  - name: terminal_type
+    type: string
+    description: ''
+    unit: ''
+  - name: function
+    type: string
+    description: ''
+    unit: ''
+  - name: status
+    type: string
+    description: ''
+    unit: ''
+  - name: capacity_mtpa
+    type: float
+    description: ''
+    unit: tonnes
+  - name: year_commissioned
+    type: integer
+    description: ''
+    unit: ''
+  - name: operator
+    type: string
+    description: ''
+    unit: ''
+  - name: owner
+    type: string
+    description: ''
+    unit: ''
+  - name: water_depth_m
+    type: float
+    description: ''
+    unit: feet
+  - name: storage_m3
+    type: integer
+    description: ''
+    unit: m3
+  - name: jetty_count
+    type: integer
+    description: ''
+    unit: ''
+  - name: capex_usd_million
+    type: float
+    description: ''
+    unit: USD
+  - name: source
+    type: string
+    description: ''
+    unit: ''
+  - name: source_url
+    type: string
+    description: ''
+    unit: ''
+  - name: data_confidence
+    type: string
+    description: ''
+    unit: ''
+  row_count: 227
+  size_bytes: 32265
+  last_modified: '2026-02-16T18:47:05.739990+00:00'

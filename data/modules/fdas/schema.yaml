@@ -1,0 +1,90 @@
+module: fdas
+description: Field Development Analysis System - enhanced well data
+datasets:
+- name: well_data_enhanced.csv
+  path: data/modules/fdas/enhanced/wells/well_data_enhanced.csv
+  format: csv
+  columns:
+  - name: API_WELL_NUMBER
+    type: float
+    description: ''
+    unit: ''
+  - name: WELL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: WATER_DEPTH
+    type: float
+    description: ''
+    unit: feet
+  - name: SURF_LATITUDE
+    type: float
+    description: ''
+    unit: degrees
+  - name: WELL_NAME_SUFFIX
+    type: string
+    description: ''
+    unit: ''
+  - name: COMPANY_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: BOTM_FLD_NAME_CD
+    type: string
+    description: ''
+    unit: ''
+  - name: WELL_SPUD_DATE
+    type: datetime
+    description: ''
+    unit: ''
+  - name: TOTAL_DEPTH_DATE
+    type: datetime
+    description: ''
+    unit: feet
+  - name: BH_TOTAL_MD
+    type: float
+    description: ''
+    unit: feet
+  - name: WELL_BORE_TVD
+    type: integer
+    description: ''
+    unit: feet
+  - name: WELL_BP_ST_KICKOFF_MD
+    type: integer
+    description: ''
+    unit: feet
+  - name: BOREHOLE_STAT_DT
+    type: datetime
+    description: ''
+    unit: ''
+  - name: BOREHOLE_STAT_CD
+    type: string
+    description: ''
+    unit: ''
+  - name: CASING_CUT_CODE
+    type: string
+    description: ''
+    unit: ''
+  - name: UNDWTR_COMP_STUB
+    type: string
+    description: ''
+    unit: ''
+  - name: SURF_LONGITUDE
+    type: float
+    description: ''
+    unit: degrees
+  - name: BOTM_LATITUDE
+    type: float
+    description: ''
+    unit: degrees
+  - name: BOTM_LONGITUDE
+    type: float
+    description: ''
+    unit: degrees
+  - name: DEV_SYSTEM
+    type: string
+    description: ''
+    unit: ''
+  row_count: 57281
+  size_bytes: 4593879
+  last_modified: '2025-10-04T04:09:56.944525+00:00'
