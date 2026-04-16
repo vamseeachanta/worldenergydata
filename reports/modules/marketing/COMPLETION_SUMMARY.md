@@ -264,7 +264,7 @@ sudo apt-get install -y pandoc
 sudo apt-get install -y texlive-xetex texlive-fonts-recommended texlive-fonts-extra
 
 # Option 2: Generate PDFs (after installation)
-python scripts/generate_marketing_brochures.py --pdf
+python scripts/reporting/generate_marketing_brochures.py --pdf
 ```
 
 **Distribution Channels Available Now:**
@@ -363,7 +363,7 @@ python scripts/generate_marketing_brochures.py --pdf
 
 **PDF Generation (requires prerequisites):**
 - ⏸️ Pandoc + texlive-xetex installation (~500MB)
-- ⏸️ Command: `python scripts/generate_marketing_brochures.py --pdf`
+- ⏸️ Command: `python scripts/reporting/generate_marketing_brochures.py --pdf`
 - ⏸️ Professional PDF versions for presentations
 - ⏸️ Printable versions for trade shows
 
@@ -382,7 +382,7 @@ python scripts/generate_marketing_brochures.py --pdf
 **After Major Releases:**
 - [ ] Update feature descriptions
 - [ ] Add new modules/capabilities
-- [ ] Regenerate brochures: `python scripts/generate_marketing_brochures.py`
+- [ ] Regenerate brochures: `python scripts/reporting/generate_marketing_brochures.py`
 
 **Configuration Location:**
 - File: `specs/modules/marketing/worldenergydata_marketing_config.yaml`
@@ -417,7 +417,7 @@ python scripts/generate_marketing_brochures.py --pdf
    sudo apt-get install -y pandoc texlive-xetex texlive-fonts-recommended texlive-fonts-extra
 
    # Generate PDFs
-   python scripts/generate_marketing_brochures.py --pdf
+   python scripts/reporting/generate_marketing_brochures.py --pdf
    ```
 
 5. **Implement Wind Energy Module (if desired)**
@@ -575,19 +575,19 @@ sudo apt-get update
 sudo apt-get install -y pandoc texlive-xetex texlive-fonts-recommended texlive-fonts-extra
 
 # Generate all PDFs
-python scripts/generate_marketing_brochures.py --pdf
+python scripts/reporting/generate_marketing_brochures.py --pdf
 
 # Generate specific tier with PDFs
-python scripts/generate_marketing_brochures.py --tier tier_1_core --pdf
+python scripts/reporting/generate_marketing_brochures.py --tier tier_1_core --pdf
 ```
 
 ### Regenerate Brochures
 ```bash
 # Regenerate all brochures
-python scripts/generate_marketing_brochures.py
+python scripts/reporting/generate_marketing_brochures.py
 
 # Regenerate specific tier
-python scripts/generate_marketing_brochures.py --tier tier_2_advanced
+python scripts/reporting/generate_marketing_brochures.py --tier tier_2_advanced
 ```
 
 ### Update Configuration
@@ -596,7 +596,7 @@ python scripts/generate_marketing_brochures.py --tier tier_2_advanced
 vim specs/modules/marketing/worldenergydata_marketing_config.yaml
 
 # After editing, regenerate brochures
-python scripts/generate_marketing_brochures.py
+python scripts/reporting/generate_marketing_brochures.py
 ```
 
 ---

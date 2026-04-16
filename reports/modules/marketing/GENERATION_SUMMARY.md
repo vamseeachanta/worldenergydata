@@ -128,23 +128,23 @@ cat reports/modules/marketing/marketing_brochure_bsee_data_integration.md
 sudo apt-get install pandoc texlive-xetex
 
 # Generate PDFs for all brochures
-python scripts/generate_marketing_brochures.py --pdf
+python scripts/reporting/generate_marketing_brochures.py --pdf
 
 # Or regenerate specific tier with PDFs
-python scripts/generate_marketing_brochures.py --tier tier_1_core --pdf
+python scripts/reporting/generate_marketing_brochures.py --tier tier_1_core --pdf
 ```
 
 ### Regenerate Brochures
 
 ```bash
 # Regenerate all brochures
-python scripts/generate_marketing_brochures.py
+python scripts/reporting/generate_marketing_brochures.py
 
 # Regenerate specific tier
-python scripts/generate_marketing_brochures.py --tier tier_1_core
+python scripts/reporting/generate_marketing_brochures.py --tier tier_1_core
 
 # Regenerate with PDF output
-python scripts/generate_marketing_brochures.py --tier tier_2_advanced --pdf
+python scripts/reporting/generate_marketing_brochures.py --tier tier_2_advanced --pdf
 ```
 
 ---
@@ -169,7 +169,7 @@ Key sections to customize:
 
 ```bash
 # After editing config, regenerate brochures
-python scripts/generate_marketing_brochures.py
+python scripts/reporting/generate_marketing_brochures.py
 ```
 
 ---
@@ -211,7 +211,7 @@ worldenergydata/
 │   ├── marketing_config_schema.yaml                # Schema/template
 │   ├── worldenergydata_marketing_config.yaml       # This repo's config
 │   └── README.md                                   # System documentation
-├── scripts/
+├── scripts/reporting/
 │   └── generate_marketing_brochures.py             # Generator script
 └── reports/modules/marketing/
     ├── marketing_brochure_bsee_data_integration.md

@@ -354,7 +354,7 @@ sudo apt-get install -y pandoc texlive-xetex
 cd /mnt/github/workspace-hub/worldenergydata
 
 # Generate PDFs for all brochures
-python scripts/generate_marketing_brochures.py --pdf
+python scripts/reporting/generate_marketing_brochures.py --pdf
 
 # PDFs will be created in reports/modules/marketing/ directory
 # Expected files: marketing_brochure_*.pdf (one per .md file)
