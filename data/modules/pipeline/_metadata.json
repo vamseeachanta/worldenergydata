@@ -1,0 +1,17 @@
+{
+  "module": "pipeline",
+  "last_refresh": "2026-03-03T00:00:00Z",
+  "record_count": 43,
+  "file_count": 1,
+  "total_size_bytes": 3861,
+  "source_url": "",
+  "format": "csv",
+  "files": [
+    {
+      "name": "api_5l_pipe_schedule.csv",
+      "size_bytes": 3861,
+      "modified": "2026-03-03",
+      "rows": 43
+    }
+  ]
+}

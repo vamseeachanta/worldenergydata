@@ -1,0 +1,31 @@
+{
+  "module": "wind",
+  "last_refresh": "2025-07-31T00:00:00Z",
+  "record_count": 0,
+  "file_count": 4,
+  "total_size_bytes": 7356656,
+  "source_url": "",
+  "format": "zip",
+  "files": [
+    {
+      "name": "uswtdbCSV.zip",
+      "size_bytes": 1458710,
+      "modified": "2025-07-31"
+    },
+    {
+      "name": "uswtdbGeoJSON.zip",
+      "size_bytes": 1430239,
+      "modified": "2025-07-31"
+    },
+    {
+      "name": "uswtdbSHP.zip",
+      "size_bytes": 4451928,
+      "modified": "2025-07-31"
+    },
+    {
+      "name": "uswtdb_v3_2_20201014_codebook.xlsx",
+      "size_bytes": 15779,
+      "modified": "2025-07-31"
+    }
+  ]
+}

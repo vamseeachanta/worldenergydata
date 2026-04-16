@@ -1,0 +1,72 @@
+{
+  "module": "lng_terminals",
+  "last_refresh": "2026-02-16T00:00:00Z",
+  "record_count": 227,
+  "file_count": 12,
+  "total_size_bytes": 208450,
+  "source_url": "",
+  "format": "json",
+  "files": [
+    {
+      "name": "cache/ferc_cache.json",
+      "size_bytes": 3,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "cache/ferc_meta.json",
+      "size_bytes": 89,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "cache/gie_cache.json",
+      "size_bytes": 3,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "cache/gie_meta.json",
+      "size_bytes": 88,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "cache/giignl_cache.json",
+      "size_bytes": 3,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "cache/giignl_meta.json",
+      "size_bytes": 91,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "cache/seed_dataset_cache.json",
+      "size_bytes": 102831,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "cache/seed_dataset_meta.json",
+      "size_bytes": 99,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "cache/web_cache.json",
+      "size_bytes": 3,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "cache/web_meta.json",
+      "size_bytes": 88,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "curated/terminals_seed.csv",
+      "size_bytes": 32265,
+      "modified": "2026-02-16",
+      "rows": 227
+    },
+    {
+      "name": "reports/lng_terminals_list.html",
+      "size_bytes": 72887,
+      "modified": "2026-02-08"
+    }
+  ]
+}

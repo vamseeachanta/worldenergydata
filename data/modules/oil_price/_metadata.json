@@ -1,0 +1,21 @@
+{
+  "module": "oil_price",
+  "last_refresh": "2025-07-31T00:00:00Z",
+  "record_count": 0,
+  "file_count": 2,
+  "total_size_bytes": 86528,
+  "source_url": "",
+  "format": "xls",
+  "files": [
+    {
+      "name": "F000000__3a.xls",
+      "size_bytes": 33280,
+      "modified": "2025-07-31"
+    },
+    {
+      "name": "F000000__3m.xls",
+      "size_bytes": 53248,
+      "modified": "2025-07-31"
+    }
+  ]
+}

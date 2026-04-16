@@ -1,0 +1,17 @@
+{
+  "module": "fdas",
+  "last_refresh": "2025-10-04T00:00:00Z",
+  "record_count": 57281,
+  "file_count": 1,
+  "total_size_bytes": 4593879,
+  "source_url": "",
+  "format": "csv",
+  "files": [
+    {
+      "name": "enhanced/wells/well_data_enhanced.csv",
+      "size_bytes": 4593879,
+      "modified": "2025-10-04",
+      "rows": 57281
+    }
+  ]
+}
