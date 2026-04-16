@@ -1,21 +1,32 @@
 """Generate machine-readable data catalog by scanning data directories.
 
 Walks ``data/modules/`` and produces a YAML or JSON catalog describing
-every CSV, parquet, Excel, and binary file it finds.  Metadata such as
-column names, row counts, file sizes, and inferred business domains are
-extracted without loading entire files into memory.
+every CSV, parquet, Excel, binary, and zip file it finds.  Metadata such
+as column names, row counts, file sizes, and inferred business domains
+are extracted without loading entire files into memory.
+
+Supports external data roots (e.g. ``/mnt/ace/worldenergydata/data/``)
+via the ``--external-data-root`` flag or the ``WED_DATA_ROOT`` env var.
+When an external root is provided, its ``modules/`` subtree is merged
+with the in-repo ``data/modules/`` so that large binary and raw data
+hosted outside the repo appear in the catalog.
 
 Usage:
     uv run python scripts/generate_data_catalog.py
     uv run python scripts/generate_data_catalog.py --module bsee
     uv run python scripts/generate_data_catalog.py --format json
+    uv run python scripts/generate_data_catalog.py --external-data-root /mnt/ace/worldenergydata/data
+    WED_DATA_ROOT=/mnt/ace/worldenergydata/data uv run python scripts/generate_data_catalog.py
 """
 
 from __future__ import annotations
 
 import argparse
 import csv
+import os
 import sys
+import zipfile
+from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -26,6 +37,7 @@ import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 from worldenergydata.common.catalog import (
+    ColumnSchema,
     DataCatalog,
     DatasetEntry,
     ModuleCatalogEntry,
@@ -83,6 +95,16 @@ _FREQUENCY_DAYS: dict[str, int] = {
     "static": 99999,
 }
 
+# Skip directories during recursive scan
+_SKIP_DIRS = {
+    ".local",
+    ".claude-flow",
+    "__pycache__",
+    "checkpoints",
+    "cache",
+    ".temp_downloads",
+}
+
 
 def load_source_registry(project_root: Path) -> dict[str, Any]:
     """Load source-registry.yml and return as nested dict."""
@@ -93,37 +115,115 @@ def load_source_registry(project_root: Path) -> dict[str, Any]:
         return yaml.safe_load(f) or {}
 
 
-class DataCatalogGenerator:
-    """Scan data directories and produce a structured catalog."""
+def _load_osha_data_dictionary(dict_path: Path) -> dict[str, dict[str, dict[str, str]]]:
+    """Load the OSHA data dictionary CSV and return a nested mapping.
 
-    def __init__(self, project_root: Path) -> None:
+    Returns:
+        ``{table_name: {column_name: {"definition": ..., "display_name": ..., "datatype": ...}}}``
+    """
+    result: dict[str, dict[str, dict[str, str]]] = defaultdict(dict)
+    if not dict_path.exists():
+        return result
+    try:
+        with open(dict_path, "r", newline="", errors="replace") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                table = row.get("table_name", "").strip().strip('"')
+                col = row.get("column_name", "").strip().strip('"')
+                if table and col:
+                    result[table][col] = {
+                        "definition": row.get("definition", "").strip().strip('"'),
+                        "display_name": row.get("display_name", "").strip().strip('"'),
+                        "datatype": row.get("column_datatype", "").strip().strip('"'),
+                    }
+    except Exception:
+        pass
+    return result
+
+
+def _humanize_bytes(n: int) -> str:
+    """Return a human-readable file size string."""
+    for unit in ("B", "KB", "MB", "GB", "TB"):
+        if abs(n) < 1024:
+            return f"{n:.1f} {unit}" if unit != "B" else f"{n} {unit}"
+        n /= 1024  # type: ignore[assignment]
+    return f"{n:.1f} PB"
+
+
+class DataCatalogGenerator:
+    """Scan data directories and produce a structured catalog.
+
+    Args:
+        project_root: Path to the worldenergydata project root.
+        external_data_root: Optional path to an external data directory
+            (e.g. ``/mnt/ace/worldenergydata/data/``).  When provided,
+            its ``modules/`` subtree is merged into the scan.
+        follow_symlinks: Whether to follow symlinks during directory
+            traversal (default ``True``).
+    """
+
+    def __init__(
+        self,
+        project_root: Path,
+        external_data_root: Path | None = None,
+        follow_symlinks: bool = True,
+    ) -> None:
         self.project_root = project_root
         self.data_root = project_root / "data" / "modules"
+        self.external_data_root = external_data_root
+        self.follow_symlinks = follow_symlinks
+        self._osha_dict: dict[str, dict[str, dict[str, str]]] | None = None
 
     # ------------------------------------------------------------------
     # File-level scanners
     # ------------------------------------------------------------------
 
+    def _relative_path(self, path: Path) -> str:
+        """Return path relative to project root, or absolute if outside."""
+        try:
+            if path.is_relative_to(self.project_root):
+                return str(path.relative_to(self.project_root))
+        except (ValueError, TypeError):
+            pass
+        return str(path)
+
     def scan_csv_file(self, path: Path) -> DatasetEntry:
-        """Scan a CSV file for metadata without loading the entire file."""
+        """Scan a CSV file for metadata without loading the entire file.
+
+        For very large CSV files (>100 MB), only counts a sample of rows
+        and extrapolates to avoid long scan times.
+        """
         columns = None
         row_count = None
+        size = path.stat().st_size
         try:
             with open(path, "r", newline="", errors="replace") as f:
                 reader = csv.reader(f)
                 header = next(reader, None)
                 if header:
                     columns = [c.strip() for c in header]
-                row_count = sum(1 for _ in reader)
+                if size > 100_000_000:
+                    # For very large files, estimate row count from sample
+                    sample_rows = 0
+                    sample_bytes = 0
+                    for i, row in enumerate(reader):
+                        sample_bytes += sum(len(c) for c in row) + len(row)
+                        sample_rows += 1
+                        if i >= 999:
+                            break
+                    if sample_rows > 0 and sample_bytes > 0:
+                        row_count = int(sample_rows * (size / sample_bytes))
+                else:
+                    row_count = sum(1 for _ in reader)
         except Exception:
             pass
 
         return DatasetEntry(
             name=path.stem,
-            path=str(path.relative_to(self.project_root)),
+            path=self._relative_path(path),
             format="csv",
             domain=self.infer_domain(path),
-            size_bytes=path.stat().st_size,
+            size_bytes=size,
             row_count=row_count,
             columns=columns,
             last_modified=datetime.fromtimestamp(
@@ -148,7 +248,7 @@ class DataCatalogGenerator:
 
         return DatasetEntry(
             name=path.stem,
-            path=str(path.relative_to(self.project_root)),
+            path=self._relative_path(path),
             format="pickle",
             domain=self.infer_domain(path),
             size_bytes=size,
@@ -163,7 +263,7 @@ class DataCatalogGenerator:
         """Scan an Excel file for basic metadata (size only, no parsing)."""
         return DatasetEntry(
             name=path.stem,
-            path=str(path.relative_to(self.project_root)),
+            path=self._relative_path(path),
             format="xlsx" if path.suffix == ".xlsx" else "xls",
             domain=self.infer_domain(path),
             size_bytes=path.stat().st_size,
@@ -171,6 +271,143 @@ class DataCatalogGenerator:
                 path.stat().st_mtime, tz=timezone.utc
             ).strftime("%Y-%m-%d"),
         )
+
+    def scan_zip_file(self, path: Path) -> DatasetEntry:
+        """Scan a zip archive for metadata: size, contained file listing."""
+        contents: list[str] = []
+        try:
+            with zipfile.ZipFile(path, "r") as zf:
+                contents = zf.namelist()
+        except Exception:
+            pass
+
+        desc = f"ZIP archive with {len(contents)} file(s)"
+        if contents:
+            desc += f": {', '.join(contents[:5])}"
+            if len(contents) > 5:
+                desc += f" ... (+{len(contents) - 5} more)"
+
+        return DatasetEntry(
+            name=path.stem,
+            path=(
+                str(path.relative_to(self.project_root))
+                if path.is_relative_to(self.project_root)
+                else str(path)
+            ),
+            format="zip",
+            domain=self.infer_domain(path),
+            size_bytes=path.stat().st_size,
+            description=desc,
+            last_modified=datetime.fromtimestamp(
+                path.stat().st_mtime, tz=timezone.utc
+            ).strftime("%Y-%m-%d"),
+            data_status="real",
+        )
+
+    def scan_binary_directory(self, dir_path: Path) -> DatasetEntry:
+        """Catalog a directory of binary files by extension, count, and size.
+
+        Instead of reading individual binary files as CSVs, this produces
+        a single summary entry for the directory.
+        """
+        ext_counts: dict[str, int] = defaultdict(int)
+        ext_sizes: dict[str, int] = defaultdict(int)
+        total_files = 0
+        total_size = 0
+
+        for fp in dir_path.rglob("*"):
+            if not fp.is_file():
+                continue
+            parts = fp.relative_to(dir_path).parts
+            if any(p in _SKIP_DIRS or p.startswith(".") for p in parts[:-1]):
+                continue
+            ext = fp.suffix.lower() or "(no ext)"
+            ext_counts[ext] += 1
+            ext_sizes[ext] += fp.stat().st_size
+            total_files += 1
+            total_size += fp.stat().st_size
+
+        ext_summary = ", ".join(
+            f"{ext}: {count} files ({_humanize_bytes(ext_sizes[ext])})"
+            for ext, count in sorted(ext_counts.items(), key=lambda x: -x[1])
+        )
+        desc = (
+            f"Binary data directory: {total_files} files, "
+            f"{_humanize_bytes(total_size)} total. "
+            f"Breakdown: {ext_summary}"
+        )
+
+        return DatasetEntry(
+            name=dir_path.name,
+            path=(
+                str(dir_path.relative_to(self.project_root))
+                if dir_path.is_relative_to(self.project_root)
+                else str(dir_path)
+            ),
+            format="binary_directory",
+            domain=self.infer_domain(dir_path),
+            size_bytes=total_size,
+            row_count=total_files,
+            description=desc,
+            last_modified=datetime.fromtimestamp(
+                dir_path.stat().st_mtime, tz=timezone.utc
+            ).strftime("%Y-%m-%d"),
+            data_status="real",
+        )
+
+    def _get_osha_dict(self) -> dict[str, dict[str, dict[str, str]]]:
+        """Lazy-load the OSHA data dictionary."""
+        if self._osha_dict is None:
+            candidates = [
+                self.data_root / "hse" / "raw" / "osha" / "osha_data_dictionary.csv",
+            ]
+            if self.external_data_root:
+                candidates.insert(
+                    0,
+                    self.external_data_root
+                    / "modules"
+                    / "hse"
+                    / "raw"
+                    / "osha"
+                    / "osha_data_dictionary.csv",
+                )
+            for cand in candidates:
+                if cand.exists():
+                    self._osha_dict = _load_osha_data_dictionary(cand)
+                    break
+            if self._osha_dict is None:
+                self._osha_dict = {}
+        return self._osha_dict
+
+    def _enrich_osha_columns(self, entry: DatasetEntry, file_path: Path) -> None:
+        """Add column descriptions from the OSHA data dictionary."""
+        osha_dict = self._get_osha_dict()
+        if not osha_dict or not entry.columns:
+            return
+
+        # Derive table name from filename: osha_accident.csv -> osha_accident
+        table_name = file_path.stem
+        # Handle numbered splits: osha_violation3.csv -> osha_violation
+        import re
+
+        base_table = re.sub(r"\d+$", "", table_name)
+
+        col_info = osha_dict.get(table_name) or osha_dict.get(base_table) or {}
+        if not col_info:
+            return
+
+        schemas: list[ColumnSchema] = []
+        for col_name in entry.columns:
+            info = col_info.get(col_name, {})
+            schemas.append(
+                ColumnSchema(
+                    name=col_name,
+                    type=info.get("datatype", "string"),
+                    description=info.get("definition", ""),
+                    unit="",
+                )
+            )
+        entry.column_schemas = schemas
 
     # ------------------------------------------------------------------
     # Domain inference
@@ -189,8 +426,117 @@ class DataCatalogGenerator:
     # Module and catalog scanning
     # ------------------------------------------------------------------
 
+    def _scan_directory_tree(
+        self,
+        module_path: Path,
+        datasets: list[DatasetEntry],
+        binary_stores: list[DatasetEntry],
+        domains_seen: set[str],
+        is_osha_dir: bool = False,
+    ) -> None:
+        """Scan a directory tree for data files, populating lists in place.
+
+        For ``bin/`` directories containing many binary files, produces a
+        single summary entry per subdirectory instead of per-file entries.
+        For ``zip/`` directories, catalogs each zip archive.
+        For CSV files in OSHA directories, enriches with data dictionary.
+        """
+        # Identify special subdirectories for bulk handling
+        bin_dir = module_path / "bin"
+        zip_dir = module_path / "zip"
+
+        # Handle bin/ directory as bulk binary stores
+        if bin_dir.is_dir():
+            for sub in sorted(bin_dir.iterdir()):
+                if sub.is_dir() and not sub.name.startswith("."):
+                    entry = self.scan_binary_directory(sub)
+                    binary_stores.append(entry)
+                    domains_seen.add(entry.domain)
+            # Also catalog any top-level files in bin/
+            for fp in sorted(bin_dir.iterdir()):
+                if fp.is_file() and not fp.name.startswith("."):
+                    if fp.suffix.lower() == ".bin":
+                        entry = self.scan_binary_file(fp)
+                        binary_stores.append(entry)
+                        domains_seen.add(entry.domain)
+
+        # Handle zip/ directory
+        if zip_dir.is_dir():
+            for fp in sorted(zip_dir.rglob("*")):
+                if fp.is_file() and fp.suffix.lower() == ".zip":
+                    entry = self.scan_zip_file(fp)
+                    binary_stores.append(entry)
+                    domains_seen.add(entry.domain)
+
+        # Walk remaining files (skip bin/ and zip/ already handled)
+        for file_path in sorted(module_path.rglob("*")):
+            if not file_path.is_file():
+                continue
+            # Skip files already handled in bin/ and zip/ directories
+            try:
+                rel = file_path.relative_to(module_path)
+            except ValueError:
+                continue
+            parts = rel.parts
+            if parts and parts[0] in ("bin", "zip"):
+                continue
+            # Skip hidden and cache directories
+            if any(p in _SKIP_DIRS or p.startswith(".") for p in parts[:-1]):
+                continue
+
+            suffix = file_path.suffix.lower()
+            if suffix == ".csv":
+                entry = self.scan_csv_file(file_path)
+                # Enrich OSHA CSVs with data dictionary
+                if is_osha_dir or "osha" in file_path.name.lower():
+                    self._enrich_osha_columns(entry, file_path)
+                datasets.append(entry)
+                domains_seen.add(entry.domain)
+            elif suffix == ".bin":
+                entry = self.scan_binary_file(file_path)
+                binary_stores.append(entry)
+                domains_seen.add(entry.domain)
+            elif suffix in (".xlsx", ".xls"):
+                entry = self.scan_excel_file(file_path)
+                datasets.append(entry)
+                domains_seen.add(entry.domain)
+            elif suffix == ".parquet":
+                entry = DatasetEntry(
+                    name=file_path.stem,
+                    path=(
+                        str(file_path.relative_to(self.project_root))
+                        if file_path.is_relative_to(self.project_root)
+                        else str(file_path)
+                    ),
+                    format="parquet",
+                    domain=self.infer_domain(file_path),
+                    size_bytes=file_path.stat().st_size,
+                    last_modified=datetime.fromtimestamp(
+                        file_path.stat().st_mtime, tz=timezone.utc
+                    ).strftime("%Y-%m-%d"),
+                )
+                datasets.append(entry)
+                domains_seen.add(entry.domain)
+            elif suffix == ".zip":
+                entry = self.scan_zip_file(file_path)
+                binary_stores.append(entry)
+                domains_seen.add(entry.domain)
+
+    def _get_external_module_path(self, module_name: str) -> Path | None:
+        """Return the external data path for a module, if it exists."""
+        if not self.external_data_root:
+            return None
+        ext = self.external_data_root / "modules" / module_name
+        if ext.is_dir():
+            return ext
+        return None
+
     def scan_module(self, module_path: Path) -> ModuleCatalogEntry:
-        """Scan a single data module directory."""
+        """Scan a single data module directory.
+
+        If an external data root is configured, merges files from the
+        external ``modules/<name>/`` directory into the scan.
+        """
         module_name = module_path.name
         datasets: list[DatasetEntry] = []
         binary_stores: list[DatasetEntry] = []
@@ -205,43 +551,42 @@ class DataCatalogGenerator:
                     doc_path.relative_to(self.project_root)
                 )
 
-        # Walk directory for data files
-        for file_path in sorted(module_path.rglob("*")):
-            if not file_path.is_file():
-                continue
-            suffix = file_path.suffix.lower()
-            if suffix == ".csv":
-                entry = self.scan_csv_file(file_path)
-                datasets.append(entry)
-                domains_seen.add(entry.domain)
-            elif suffix == ".bin":
-                entry = self.scan_binary_file(file_path)
-                binary_stores.append(entry)
-                domains_seen.add(entry.domain)
-            elif suffix in (".xlsx", ".xls"):
-                entry = self.scan_excel_file(file_path)
-                datasets.append(entry)
-                domains_seen.add(entry.domain)
-            elif suffix == ".parquet":
-                entry = DatasetEntry(
-                    name=file_path.stem,
-                    path=str(file_path.relative_to(self.project_root)),
-                    format="parquet",
-                    domain=self.infer_domain(file_path),
-                    size_bytes=file_path.stat().st_size,
-                    last_modified=datetime.fromtimestamp(
-                        file_path.stat().st_mtime, tz=timezone.utc
-                    ).strftime("%Y-%m-%d"),
-                )
-                datasets.append(entry)
-                domains_seen.add(entry.domain)
+        # Determine if this is an HSE module with OSHA data
+        is_osha = module_name == "hse"
+
+        # Scan the in-repo directory
+        self._scan_directory_tree(
+            module_path, datasets, binary_stores, domains_seen, is_osha_dir=is_osha
+        )
+
+        # Merge external data if available
+        ext_path = self._get_external_module_path(module_name)
+        if ext_path and ext_path.resolve() != module_path.resolve():
+            # Track names already cataloged to avoid duplicates
+            # (paths differ between in-repo and external so compare by name)
+            seen_names = {d.name for d in datasets} | {b.name for b in binary_stores}
+
+            ext_datasets: list[DatasetEntry] = []
+            ext_binaries: list[DatasetEntry] = []
+            self._scan_directory_tree(
+                ext_path, ext_datasets, ext_binaries, domains_seen, is_osha_dir=is_osha
+            )
+
+            for d in ext_datasets:
+                if d.name not in seen_names:
+                    datasets.append(d)
+                    seen_names.add(d.name)
+            for b in ext_binaries:
+                if b.name not in seen_names:
+                    binary_stores.append(b)
+                    seen_names.add(b.name)
 
         return ModuleCatalogEntry(
             name=module_name,
             description=_MODULE_DESCRIPTIONS.get(
                 module_name, f"{module_name} data module"
             ),
-            path=str(module_path.relative_to(self.project_root)),
+            path=self._relative_path(module_path),
             domains=sorted(domains_seen),
             datasets=datasets,
             binary_stores=binary_stores,
@@ -268,9 +613,7 @@ class DataCatalogGenerator:
                 if not ds.source_url:
                     ds.source_url = ds_reg.get("source_url") or default_url
                 if not ds.update_frequency:
-                    ds.update_frequency = (
-                        ds_reg.get("update_frequency") or default_freq
-                    )
+                    ds.update_frequency = ds_reg.get("update_frequency") or default_freq
 
     def _compute_staleness(self, catalog: DataCatalog) -> None:
         """Mark datasets as stale when last_refreshed exceeds frequency."""
@@ -283,9 +626,7 @@ class DataCatalogGenerator:
                     ds.data_status = "real"
                 if ds.last_refreshed and ds.update_frequency:
                     refreshed = datetime.fromisoformat(ds.last_refreshed)
-                    max_age = _FREQUENCY_DAYS.get(
-                        ds.update_frequency, 99999
-                    )
+                    max_age = _FREQUENCY_DAYS.get(ds.update_frequency, 99999)
                     if (now - refreshed).days > max_age:
                         ds.data_status = "stale"
 
@@ -343,16 +684,37 @@ class DataCatalogGenerator:
     # ------------------------------------------------------------------
 
     def scan_all_modules(self) -> DataCatalog:
-        """Scan all modules under data/modules/."""
+        """Scan all modules under data/modules/.
+
+        If an external data root is configured, also discovers modules
+        that exist only in the external root (not in the repo).
+        """
         catalog = DataCatalog()
-        if not self.data_root.exists():
+        if not self.data_root.exists() and not self.external_data_root:
             return catalog
 
-        for module_path in sorted(self.data_root.iterdir()):
-            if module_path.is_dir() and not module_path.name.startswith("."):
-                entry = self.scan_module(module_path)
-                if entry.dataset_count > 0:
-                    catalog.modules[entry.name] = entry
+        # Collect module names from both in-repo and external roots
+        module_names: set[str] = set()
+        if self.data_root.exists():
+            for mp in self.data_root.iterdir():
+                if mp.is_dir() and not mp.name.startswith("."):
+                    module_names.add(mp.name)
+        if self.external_data_root:
+            ext_modules = self.external_data_root / "modules"
+            if ext_modules.is_dir():
+                for mp in ext_modules.iterdir():
+                    if mp.is_dir() and not mp.name.startswith("."):
+                        module_names.add(mp.name)
+
+        for module_name in sorted(module_names):
+            # Use in-repo path as primary; fall back to external
+            module_path = self.data_root / module_name
+            if not module_path.exists() and self.external_data_root:
+                module_path = self.external_data_root / "modules" / module_name
+
+            entry = self.scan_module(module_path)
+            if entry.dataset_count > 0:
+                catalog.modules[entry.name] = entry
 
         return catalog
 
@@ -401,15 +763,40 @@ class DataCatalogGenerator:
         return output_path, catalog
 
 
+def _resolve_external_root(cli_value: str | None) -> Path | None:
+    """Resolve external data root from CLI arg or WED_DATA_ROOT env var."""
+    path_str = cli_value or os.environ.get("WED_DATA_ROOT")
+    if not path_str:
+        # Auto-detect common locations
+        default = Path("/mnt/ace/worldenergydata/data")
+        if default.is_dir():
+            return default
+        return None
+    p = Path(path_str)
+    if p.is_dir():
+        return p
+    print(f"WARNING: external data root not found: {p}", file=sys.stderr)
+    return None
+
+
 def main() -> None:
     """CLI entry point."""
     parser = argparse.ArgumentParser(description="Generate data catalog")
     parser.add_argument("--module", help="Scan specific module only")
+    parser.add_argument("--format", choices=["yaml", "json"], default="yaml")
+    parser.add_argument("--project-root", default=None, help="Project root path")
     parser.add_argument(
-        "--format", choices=["yaml", "json"], default="yaml"
+        "--external-data-root",
+        default=None,
+        help="Path to external data directory (e.g. /mnt/ace/worldenergydata/data). "
+        "Also reads WED_DATA_ROOT env var. Auto-detects /mnt/ace if present.",
     )
     parser.add_argument(
-        "--project-root", default=None, help="Project root path"
+        "--follow-symlinks",
+        default=True,
+        action=argparse.BooleanOptionalAction,
+        help="Follow symlinks when scanning directories (default: True). "
+        "Use --no-follow-symlinks to disable.",
     )
     parser.add_argument(
         "--report",
@@ -423,11 +810,24 @@ def main() -> None:
         if args.project_root
         else Path(__file__).resolve().parent.parent
     )
-    generator = DataCatalogGenerator(root)
+    ext_root = _resolve_external_root(args.external_data_root)
+    if ext_root:
+        print(f"External data root: {ext_root}")
+
+    generator = DataCatalogGenerator(
+        root,
+        external_data_root=ext_root,
+        follow_symlinks=args.follow_symlinks,
+    )
     output_path, catalog = generator.generate(
         module_name=args.module, output_format=args.format
     )
     print(f"Catalog written to: {output_path}")
+    print(
+        f"  {catalog.total_modules} modules, "
+        f"{catalog.total_datasets} datasets, "
+        f"{_humanize_bytes(catalog.total_size_bytes)}"
+    )
     if args.report:
         print()
         DataCatalogGenerator.print_freshness_report(catalog)

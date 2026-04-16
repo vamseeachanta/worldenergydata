@@ -1,17 +1,23 @@
 """Generate per-module schema.yaml files and a top-level data/catalog.yaml.
 
-Scans ``data/modules/`` for CSV, Parquet, and JSON data files, infers column
-schemas (name, type, unit), and writes per-module and aggregated catalogs.
+Scans ``data/modules/`` for CSV, Parquet, JSON, binary, and zip data files,
+infers column schemas (name, type, unit), and writes per-module and
+aggregated catalogs.
+
+Supports external data roots (e.g. ``/mnt/ace/worldenergydata/data/``)
+via ``--external-data-root`` or the ``WED_DATA_ROOT`` env var.
 
 Usage:
     python scripts/generate_catalog.py
     python scripts/generate_catalog.py --module bsee
     python scripts/generate_catalog.py --dry-run
+    python scripts/generate_catalog.py --external-data-root /mnt/ace/worldenergydata/data
 """
 
 from __future__ import annotations
 
-import argparse, csv, json, re, sys
+import argparse, csv, json, os, re, sys, zipfile
+from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -70,8 +76,108 @@ _MODULE_DESC = {
     "vessel_hull_models": "3D vessel hull geometry models",
     "wind": "Wind energy resource and turbine data",
 }
-_SKIP_DIRS = {".local", ".claude-flow", "__pycache__", "checkpoints", "cache"}
+_SKIP_DIRS = {
+    ".local",
+    ".claude-flow",
+    "__pycache__",
+    "checkpoints",
+    "cache",
+    ".temp_downloads",
+}
 _SKIP_FILES = {"_metadata.json"}
+
+
+def _humanize_bytes(n: int) -> str:
+    for unit in ("B", "KB", "MB", "GB", "TB"):
+        if abs(n) < 1024:
+            return f"{n:.1f} {unit}" if unit != "B" else f"{n} {unit}"
+        n /= 1024  # type: ignore[assignment]
+    return f"{n:.1f} PB"
+
+
+def _load_osha_data_dictionary(dict_path: Path) -> dict[str, dict[str, dict[str, str]]]:
+    """Load OSHA data dictionary CSV -> {table: {col: {definition, display_name, datatype}}}."""
+    result: dict[str, dict[str, dict[str, str]]] = defaultdict(dict)
+    if not dict_path.exists():
+        return result
+    try:
+        with open(dict_path, "r", newline="", errors="replace") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                table = row.get("table_name", "").strip().strip('"')
+                col = row.get("column_name", "").strip().strip('"')
+                if table and col:
+                    result[table][col] = {
+                        "definition": row.get("definition", "").strip().strip('"'),
+                        "display_name": row.get("display_name", "").strip().strip('"'),
+                        "datatype": row.get("column_datatype", "").strip().strip('"'),
+                    }
+    except Exception:
+        pass
+    return result
+
+
+def scan_binary_directory(dir_path: Path, root: Path) -> dict[str, Any]:
+    """Catalog a directory of binary files by extension, count, and total size."""
+    ext_counts: dict[str, int] = defaultdict(int)
+    ext_sizes: dict[str, int] = defaultdict(int)
+    total_files = total_size = 0
+    for fp in dir_path.rglob("*"):
+        if not fp.is_file():
+            continue
+        parts = fp.relative_to(dir_path).parts
+        if any(p in _SKIP_DIRS or p.startswith(".") for p in parts[:-1]):
+            continue
+        ext = fp.suffix.lower() or "(no ext)"
+        ext_counts[ext] += 1
+        ext_sizes[ext] += fp.stat().st_size
+        total_files += 1
+        total_size += fp.stat().st_size
+
+    ext_summary = "; ".join(
+        f"{ext}: {c} files ({_humanize_bytes(ext_sizes[ext])})"
+        for ext, c in sorted(ext_counts.items(), key=lambda x: -x[1])
+    )
+    try:
+        rel = str(dir_path.relative_to(root))
+    except ValueError:
+        rel = str(dir_path)
+    return {
+        "name": dir_path.name,
+        "path": rel,
+        "format": "binary_directory",
+        "file_count": total_files,
+        "size_bytes": total_size,
+        "description": f"Binary data directory: {total_files} files, {_humanize_bytes(total_size)}. {ext_summary}",
+        "last_modified": datetime.fromtimestamp(
+            dir_path.stat().st_mtime, tz=timezone.utc
+        ).isoformat(),
+    }
+
+
+def scan_zip(path: Path, root: Path) -> dict[str, Any]:
+    """Catalog a zip archive with name, size, and contents listing."""
+    contents: list[str] = []
+    try:
+        with zipfile.ZipFile(path, "r") as zf:
+            contents = zf.namelist()
+    except Exception:
+        pass
+    try:
+        rel = str(path.relative_to(root))
+    except ValueError:
+        rel = str(path)
+    return {
+        "name": path.name,
+        "path": rel,
+        "format": "zip",
+        "size_bytes": path.stat().st_size,
+        "contents": contents[:20],
+        "contents_count": len(contents),
+        "last_modified": datetime.fromtimestamp(
+            path.stat().st_mtime, tz=timezone.utc
+        ).isoformat(),
+    }
 
 
 def _infer_type(values: list[str]) -> str:
@@ -155,6 +261,16 @@ def _count_rows(path: Path) -> int | None:
         return None
 
 
+def _rel_path(path: Path, root: Path) -> str:
+    """Return relative path if inside root, else absolute."""
+    try:
+        if path.is_relative_to(root):
+            return str(path.relative_to(root))
+    except (ValueError, TypeError):
+        pass
+    return str(path)
+
+
 def scan_csv(path: Path, root: Path) -> dict[str, Any]:
     hdr, rows = _sample_csv(path)
     cols = []
@@ -163,7 +279,7 @@ def scan_csv(path: Path, root: Path) -> dict[str, Any]:
         cols.append(_col_schema(name, _infer_type(vals)))
     return {
         "name": path.name,
-        "path": str(path.relative_to(root)),
+        "path": _rel_path(path, root),
         "format": "csv",
         "columns": cols,
         "row_count": _count_rows(path),
@@ -199,7 +315,7 @@ def scan_parquet(path: Path, root: Path) -> dict[str, Any]:
         pass
     return {
         "name": path.name,
-        "path": str(path.relative_to(root)),
+        "path": _rel_path(path, root),
         "format": "parquet",
         "columns": cols,
         "row_count": row_count,
@@ -230,7 +346,7 @@ def scan_json(path: Path, root: Path) -> dict[str, Any]:
         pass
     return {
         "name": path.name,
-        "path": str(path.relative_to(root)),
+        "path": _rel_path(path, root),
         "format": "json",
         "columns": cols,
         "size_bytes": path.stat().st_size,
@@ -238,60 +354,207 @@ def scan_json(path: Path, root: Path) -> dict[str, Any]:
     }
 
 
-def scan_module(mod_path: Path, root: Path) -> dict[str, Any]:
+def _scan_tree(
+    mod_path: Path, root: Path, osha_dict: dict | None = None
+) -> tuple[list[dict], list[dict]]:
+    """Scan a module directory tree, returning (datasets, binary_stores)."""
     datasets: list[dict] = []
+    binary_stores: list[dict] = []
+    bin_dir = mod_path / "bin"
+    zip_dir = mod_path / "zip"
+
+    # Handle bin/ directory as bulk binary stores
+    if bin_dir.is_dir():
+        for sub in sorted(bin_dir.iterdir()):
+            if sub.is_dir() and not sub.name.startswith("."):
+                binary_stores.append(scan_binary_directory(sub, root))
+        for fp in sorted(bin_dir.iterdir()):
+            if fp.is_file() and fp.suffix.lower() == ".bin":
+                try:
+                    rel = str(fp.relative_to(root))
+                except ValueError:
+                    rel = str(fp)
+                binary_stores.append(
+                    {
+                        "name": fp.name,
+                        "path": rel,
+                        "format": "binary",
+                        "size_bytes": fp.stat().st_size,
+                        "last_modified": datetime.fromtimestamp(
+                            fp.stat().st_mtime, tz=timezone.utc
+                        ).isoformat(),
+                    }
+                )
+
+    # Handle zip/ directory
+    if zip_dir.is_dir():
+        for fp in sorted(zip_dir.rglob("*")):
+            if fp.is_file() and fp.suffix.lower() == ".zip":
+                binary_stores.append(scan_zip(fp, root))
+
+    # Walk remaining files
     for fp in sorted(mod_path.rglob("*")):
         if not fp.is_file() or fp.name in _SKIP_FILES:
             continue
-        parts = fp.relative_to(mod_path).parts
+        try:
+            parts = fp.relative_to(mod_path).parts
+        except ValueError:
+            continue
+        if parts and parts[0] in ("bin", "zip"):
+            continue
         if any(p in _SKIP_DIRS or p.startswith(".") for p in parts[:-1]):
             continue
         s = fp.suffix.lower()
         if s == ".csv":
-            datasets.append(scan_csv(fp, root))
+            entry = scan_csv(fp, root)
+            # Enrich OSHA CSVs with data dictionary
+            if osha_dict and "osha" in fp.name.lower():
+                table_name = fp.stem
+                base_table = re.sub(r"\d+$", "", table_name)
+                col_info = osha_dict.get(table_name) or osha_dict.get(base_table) or {}
+                if col_info and entry.get("columns"):
+                    for col in entry["columns"]:
+                        info = col_info.get(col["name"], {})
+                        if info.get("definition"):
+                            col["description"] = info["definition"]
+                        if info.get("datatype"):
+                            col["type"] = info["datatype"]
+            datasets.append(entry)
         elif s == ".parquet":
             datasets.append(scan_parquet(fp, root))
         elif s == ".json" and fp.stat().st_size < 50_000_000:
             lo = fp.name.lower()
             if "metrics" not in lo and "agent" not in lo:
                 datasets.append(scan_json(fp, root))
+        elif s == ".zip":
+            binary_stores.append(scan_zip(fp, root))
+
+    return datasets, binary_stores
+
+
+def scan_module(
+    mod_path: Path,
+    root: Path,
+    external_mod_path: Path | None = None,
+    osha_dict: dict | None = None,
+) -> dict[str, Any]:
+    datasets, binary_stores = _scan_tree(mod_path, root, osha_dict=osha_dict)
+
+    # Merge external data if available
+    if (
+        external_mod_path
+        and external_mod_path.is_dir()
+        and external_mod_path.resolve() != mod_path.resolve()
+    ):
+        seen = {d.get("path") for d in datasets} | {
+            b.get("path") for b in binary_stores
+        }
+        ext_ds, ext_bs = _scan_tree(external_mod_path, root, osha_dict=osha_dict)
+        for d in ext_ds:
+            if d.get("path") not in seen:
+                datasets.append(d)
+        for b in ext_bs:
+            if b.get("path") not in seen:
+                binary_stores.append(b)
+
     desc = _MODULE_DESC.get(mod_path.name, f"{mod_path.name} data module")
-    if not datasets:
+    all_entries = datasets + binary_stores
+    if not all_entries:
         desc += " (no data files present \u2014 run 'make data' to populate)"
-    return {"module": mod_path.name, "description": desc, "datasets": datasets}
+    total_size = sum(e.get("size_bytes", 0) for e in all_entries)
+    if total_size > 0:
+        desc += f" [{_humanize_bytes(total_size)}]"
+    return {
+        "module": mod_path.name,
+        "description": desc,
+        "datasets": datasets,
+        "binary_stores": binary_stores,
+    }
+
+
+def _resolve_external_root(cli_value: str | None) -> Path | None:
+    """Resolve external data root from CLI arg, env var, or auto-detect."""
+    path_str = cli_value or os.environ.get("WED_DATA_ROOT")
+    if not path_str:
+        default = Path("/mnt/ace/worldenergydata/data")
+        if default.is_dir():
+            return default
+        return None
+    p = Path(path_str)
+    if p.is_dir():
+        return p
+    print(f"WARNING: external data root not found: {p}", file=sys.stderr)
+    return None
 
 
 def generate_catalog(
-    root: Path, module_filter: str | None = None, dry_run: bool = False
+    root: Path,
+    module_filter: str | None = None,
+    dry_run: bool = False,
+    external_data_root: Path | None = None,
 ) -> dict[str, Any]:
     data_root = root / "data" / "modules"
-    if not data_root.exists():
+    ext_modules = external_data_root / "modules" if external_data_root else None
+
+    if not data_root.exists() and not ext_modules:
         print(f"Data root not found: {data_root}", file=sys.stderr)
         return {"modules": {}}
+
+    # Collect all module names from both roots
+    module_names: set[str] = set()
+    if data_root.exists():
+        for mp in data_root.iterdir():
+            if mp.is_dir() and not mp.name.startswith("."):
+                module_names.add(mp.name)
+    if ext_modules and ext_modules.is_dir():
+        for mp in ext_modules.iterdir():
+            if mp.is_dir() and not mp.name.startswith("."):
+                module_names.add(mp.name)
+
+    # Load OSHA data dictionary if available
+    osha_dict = None
+    candidates = [data_root / "hse" / "raw" / "osha" / "osha_data_dictionary.csv"]
+    if ext_modules:
+        candidates.insert(
+            0, ext_modules / "hse" / "raw" / "osha" / "osha_data_dictionary.csv"
+        )
+    for cand in candidates:
+        if cand.exists():
+            osha_dict = _load_osha_data_dictionary(cand)
+            break
+
     mods: dict[str, Any] = {}
     written: list[str] = []
-    for mp in sorted(data_root.iterdir()):
-        if not mp.is_dir() or mp.name.startswith("."):
+    for name in sorted(module_names):
+        if module_filter and name != module_filter:
             continue
-        if module_filter and mp.name != module_filter:
-            continue
-        schema = scan_module(mp, root)
-        mods[mp.name] = schema
-        if not dry_run:
+        mp = data_root / name
+        ext_mp = ext_modules / name if ext_modules else None
+        if not mp.exists() and ext_mp and ext_mp.is_dir():
+            mp = ext_mp
+            ext_mp = None
+
+        use_osha = osha_dict if name == "hse" else None
+        schema = scan_module(mp, root, external_mod_path=ext_mp, osha_dict=use_osha)
+        mods[name] = schema
+        if not dry_run and mp.is_relative_to(root):
             sp = mp / "schema.yaml"
             with open(sp, "w") as f:
                 yaml.dump(schema, f, default_flow_style=False, sort_keys=False)
             written.append(str(sp.relative_to(root)))
+
     tot_ds = sum(len(m.get("datasets", [])) for m in mods.values())
+    tot_bs = sum(len(m.get("binary_stores", [])) for m in mods.values())
     tot_sz = sum(
         sum(d.get("size_bytes", 0) for d in m.get("datasets", []))
+        + sum(b.get("size_bytes", 0) for b in m.get("binary_stores", []))
         for m in mods.values()
     )
     catalog = {
-        "version": "2.0.0",
+        "version": "2.1.0",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "total_modules": len(mods),
-        "total_datasets": tot_ds,
+        "total_datasets": tot_ds + tot_bs,
         "total_size_bytes": tot_sz,
         "modules": mods,
     }
@@ -301,7 +564,8 @@ def generate_catalog(
         with open(cp, "w") as f:
             yaml.dump(catalog, f, default_flow_style=False, sort_keys=False)
         written.append(str(cp.relative_to(root)))
-    print(f"Scanned {len(mods)} modules, {tot_ds} datasets")
+    print(f"Scanned {len(mods)} modules, {tot_ds} datasets, {tot_bs} binary stores")
+    print(f"Total size: {_humanize_bytes(tot_sz)}")
     if written:
         print(f"Wrote {len(written)} files:")
         for fp in written:
@@ -318,13 +582,33 @@ def main() -> None:
     ap.add_argument("--module", help="Process only this module")
     ap.add_argument("--dry-run", action="store_true", help="Scan without writing")
     ap.add_argument("--project-root", default=None, help="Override project root")
+    ap.add_argument(
+        "--external-data-root",
+        default=None,
+        help="Path to external data directory (e.g. /mnt/ace/worldenergydata/data). "
+        "Also reads WED_DATA_ROOT env var. Auto-detects /mnt/ace if present.",
+    )
+    ap.add_argument(
+        "--follow-symlinks",
+        default=True,
+        action=argparse.BooleanOptionalAction,
+        help="Follow symlinks when scanning (default: True)",
+    )
     args = ap.parse_args()
     root = (
         Path(args.project_root)
         if args.project_root
         else Path(__file__).resolve().parent.parent
     )
-    generate_catalog(root, module_filter=args.module, dry_run=args.dry_run)
+    ext_root = _resolve_external_root(args.external_data_root)
+    if ext_root:
+        print(f"External data root: {ext_root}")
+    generate_catalog(
+        root,
+        module_filter=args.module,
+        dry_run=args.dry_run,
+        external_data_root=ext_root,
+    )
 
 
 if __name__ == "__main__":
