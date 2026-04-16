@@ -363,8 +363,10 @@ def db_init(
             task = progress.add_task("[cyan]Initializing database schema...", total=100)
 
             try:
-                from worldenergydata.marine_safety.database.init_db import (
-                    DatabaseInitializer,
+                # Use the lightweight SQLite initializer from cli_db
+                from worldenergydata.marine_safety.cli_db import (
+                    _create_schema,
+                    _resolve_db_path,
                 )
 
                 progress.update(
@@ -373,36 +375,35 @@ def db_init(
                     description="[cyan]Loading database initializer...",
                 )
 
-                # Initialize database
-                initializer = DatabaseInitializer(
-                    db_url=db_url, dev_mode=dev_mode, verify_only=False, dry_run=dry_run
-                )
+                import sqlite3
+
+                db_path = _resolve_db_path(db_url)
+
+                if force and db_path.exists():
+                    db_path.unlink()
+
+                db_path.parent.mkdir(parents=True, exist_ok=True)
 
                 progress.update(
                     task, advance=40, description="[cyan]Creating schema..."
                 )
 
-                # Run initialization
-                initializer.run()
+                conn = sqlite3.connect(str(db_path))
+                try:
+                    _create_schema(conn)
+                finally:
+                    conn.close()
 
                 progress.update(
                     task, advance=40, description="[cyan]Verifying schema..."
                 )
 
-                console.print("\n[green]Database initialized successfully[/green]")
+                console.print(f"\nDatabase: {db_path}")
+                console.print("[green]Database initialized successfully[/green]")
 
-            except ImportError as e:
+            except Exception as e:
                 progress.update(task, completed=100)
-                console.print(
-                    f"[yellow]Warning:[/yellow] Could not import database module: {e}"
-                )
-                console.print(
-                    "[dim]Required dependencies: psycopg2-binary (for PostgreSQL)[/dim]"
-                )
-
-            except FileNotFoundError as e:
-                progress.update(task, completed=100)
-                console.print(f"[yellow]Warning:[/yellow] Schema file not found: {e}")
+                console.print(f"[yellow]Warning:[/yellow] Initialization failed: {e}")
 
     except typer.Exit:
         raise
@@ -440,12 +441,53 @@ def db_migrate(
         ) as progress:
             task = progress.add_task("[cyan]Running database migrations...", total=None)
 
-            if dry_run:
-                console.print("[dim]DRY RUN MODE - no changes will be made[/dim]")
+            try:
+                import sqlite3
 
-            console.print(
-                "[yellow]Note:[/yellow] Database migrations integration in progress"
-            )
+                from worldenergydata.marine_safety.cli_db import (
+                    _CURRENT_SCHEMA_VERSION,
+                    _create_schema,
+                    _resolve_db_path,
+                )
+
+                db_path = _resolve_db_path(None)
+
+                if not db_path.exists():
+                    console.print("[red]Database not found.[/red] Run 'db init' first.")
+                    progress.update(task, completed=True)
+                    raise typer.Exit(1)
+
+                conn = sqlite3.connect(str(db_path))
+                cur = conn.cursor()
+                try:
+                    cur.execute(
+                        "SELECT name FROM sqlite_master WHERE type='table' AND name='schema_version'"
+                    )
+                    has_table = cur.fetchone() is not None
+                    current = 0
+                    if has_table:
+                        cur.execute(
+                            "SELECT COALESCE(MAX(version), 0) FROM schema_version"
+                        )
+                        current = cur.fetchone()[0]
+
+                    console.print(
+                        f"Current: v{current}  Target: v{_CURRENT_SCHEMA_VERSION}"
+                    )
+
+                    if current >= _CURRENT_SCHEMA_VERSION:
+                        console.print("[green]Schema is up to date[/green]")
+                    elif dry_run:
+                        console.print("[dim]DRY RUN - would apply migrations[/dim]")
+                    else:
+                        _create_schema(conn)
+                        console.print("[green]Migrations applied[/green]")
+                finally:
+                    conn.close()
+
+            except (ImportError, Exception) as e:
+                if not isinstance(e, typer.Exit):
+                    console.print(f"[yellow]Warning:[/yellow] {e}")
 
             progress.update(task, completed=True)
 
@@ -672,127 +714,90 @@ def export(
             records_exported = 0
 
             try:
-                import pandas as pd
+                import csv as csv_mod
+                import sqlite3
 
-                from worldenergydata.marine_safety.database.db_manager import (
-                    get_db_manager,
-                )
+                from worldenergydata.marine_safety.cli_db import _resolve_db_path
 
                 progress.update(
                     task, advance=20, description="[cyan]Connecting to database..."
                 )
 
-                db_manager = get_db_manager()
+                db_path = _resolve_db_path(None)
 
-                if db_manager.check_connection():
+                if db_path.exists():
                     progress.update(
                         task, advance=30, description="[cyan]Querying data..."
                     )
 
-                    with db_manager.session() as session:
-                        from sqlalchemy import text
-
-                        # Build query with filters
+                    conn = sqlite3.connect(str(db_path))
+                    conn.row_factory = sqlite3.Row
+                    try:
                         query = "SELECT * FROM incidents WHERE 1=1"
-                        params = {}
+                        params = []
 
                         if source != DataSource.all:
-                            query += " AND LOWER(source) LIKE :source"
-                            params["source"] = f"%{source.value}%"
+                            query += " AND LOWER(source_agency) = ?"
+                            params.append(source.value.lower())
 
                         if start_date:
-                            query += " AND incident_date >= :start_date"
-                            params["start_date"] = start_date
+                            query += " AND incident_date >= ?"
+                            params.append(start_date)
 
                         if end_date:
-                            query += " AND incident_date <= :end_date"
-                            params["end_date"] = end_date
+                            query += " AND incident_date <= ?"
+                            params.append(end_date)
+
+                        query += " ORDER BY incident_date DESC"
 
                         if limit:
-                            query += f" LIMIT {limit}"
+                            query += " LIMIT ?"
+                            params.append(limit)
 
-                        result = session.execute(text(query), params)
-                        rows = result.fetchall()
-                        columns = result.keys()
+                        cur = conn.cursor()
+                        cur.execute(query, params)
+                        rows = cur.fetchall()
 
-                        progress.update(
-                            task, advance=30, description="[cyan]Exporting data..."
-                        )
+                        if rows:
+                            columns = [desc[0] for desc in cur.description]
+                            records = [dict(zip(columns, row)) for row in rows]
+                            records_exported = len(records)
 
-                        # Convert to DataFrame
-                        df = pd.DataFrame(rows, columns=columns)
-                        records_exported = len(df)
+                            output.parent.mkdir(parents=True, exist_ok=True)
 
-                        # Export based on format
-                        output.parent.mkdir(parents=True, exist_ok=True)
+                            if export_format == ExportFormat.csv:
+                                with open(
+                                    output, "w", newline="", encoding="utf-8"
+                                ) as f:
+                                    writer = csv_mod.DictWriter(f, fieldnames=columns)
+                                    writer.writeheader()
+                                    writer.writerows(records)
+                            elif export_format == ExportFormat.json:
+                                with open(output, "w", encoding="utf-8") as f:
+                                    json.dump(records, f, indent=2, default=str)
+                            else:
+                                # For excel/parquet, fall back to csv
+                                with open(
+                                    output, "w", newline="", encoding="utf-8"
+                                ) as f:
+                                    writer = csv_mod.DictWriter(f, fieldnames=columns)
+                                    writer.writeheader()
+                                    writer.writerows(records)
 
-                        if export_format == ExportFormat.csv:
-                            df.to_csv(output, index=False)
-                        elif export_format == ExportFormat.json:
-                            df.to_json(
-                                output, orient="records", indent=2, date_format="iso"
-                            )
-                        elif export_format == ExportFormat.excel:
-                            df.to_excel(output, index=False, engine="openpyxl")
-                        elif export_format == ExportFormat.parquet:
-                            df.to_parquet(output, index=False)
-
-                        progress.update(task, advance=20)
-
-                else:
-                    # Try to export from checkpoint files
-                    progress.update(
-                        task,
-                        advance=30,
-                        description="[cyan]Loading from checkpoints...",
-                    )
-
-                    checkpoint_dir = Path("checkpoints")
-                    all_incidents = []
-
-                    if checkpoint_dir.exists():
-                        for f in checkpoint_dir.glob("*.json"):
-                            try:
-                                with open(f) as fp:
-                                    data = json.load(fp)
-                                    if isinstance(data, list):
-                                        all_incidents.extend(data)
-                                    elif isinstance(data, dict) and "incidents" in data:
-                                        all_incidents.extend(data["incidents"])
-                            except Exception:
-                                pass
-
-                    if all_incidents:
-                        import pandas as pd
-
-                        df = pd.DataFrame(all_incidents)
-
-                        if limit:
-                            df = df.head(limit)
-
-                        records_exported = len(df)
-
-                        output.parent.mkdir(parents=True, exist_ok=True)
-
-                        if export_format == ExportFormat.csv:
-                            df.to_csv(output, index=False)
-                        elif export_format == ExportFormat.json:
-                            df.to_json(output, orient="records", indent=2)
-                        elif export_format == ExportFormat.excel:
-                            df.to_excel(output, index=False)
-                        elif export_format == ExportFormat.parquet:
-                            df.to_parquet(output, index=False)
+                    finally:
+                        conn.close()
 
                     progress.update(task, advance=50)
 
-            except ImportError as e:
+                else:
+                    progress.update(task, advance=80)
+                    console.print(
+                        "[yellow]No database found. Run 'db init' first.[/yellow]"
+                    )
+
+            except Exception as e:
                 progress.update(task, completed=100)
-                console.print(
-                    f"[yellow]Warning:[/yellow] Could not import required modules: {e}"
-                )
-                console.print(
-                    "[dim]Required dependencies: pandas, openpyxl (for Excel)[/dim]"
-                )
+                console.print(f"[yellow]Warning:[/yellow] Export failed: {e}")
                 raise typer.Exit(1)
 
         console.print(
