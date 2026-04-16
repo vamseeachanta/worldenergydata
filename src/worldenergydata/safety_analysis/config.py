@@ -11,6 +11,8 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings
 
+from worldenergydata.common.data_resolver import get_data_root_safe
+
 
 class NLPConfig(BaseModel):
     """Configuration for NLP text processing."""
@@ -51,7 +53,9 @@ class AnalysisConfig(BaseSettings):
     model_config = {"env_prefix": "SAFETY_", "case_sensitive": False}
 
     # Data paths
-    data_dir: Path = Path("data/safety_analysis")
+    data_dir: Path = Field(
+        default_factory=lambda: get_data_root_safe() / "safety_analysis"
+    )
     model_dir: Path = Path("models/safety_analysis")
     report_dir: Path = Path("reports/safety_analysis")
 

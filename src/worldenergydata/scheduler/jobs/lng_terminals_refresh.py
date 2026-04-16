@@ -6,19 +6,17 @@ TODO: Implement data fetching for LNG terminal data.
 - Write Parquet output to data/lng_terminals/ directory
 - Add tests in tests/unit/scheduler/test_lng_terminals_adapter.py
 """
+
 import logging
 from datetime import datetime
 from pathlib import Path
 
-from worldenergydata.common.data_resolver import DataNotFoundError, get_module_data
+from worldenergydata.common.data_resolver import get_module_data_safe
 from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
 
 logger = logging.getLogger(__name__)
 
-try:
-    _DEFAULT_OUTPUT_DIR = get_module_data("lng_terminals")
-except DataNotFoundError:
-    _DEFAULT_OUTPUT_DIR = Path("data/modules/lng_terminals")
+_DEFAULT_OUTPUT_DIR = get_module_data_safe("lng_terminals")
 
 
 class LngTerminalsRefreshJob(AbstractJob):

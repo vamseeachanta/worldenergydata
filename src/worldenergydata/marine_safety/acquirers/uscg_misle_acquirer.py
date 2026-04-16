@@ -34,8 +34,11 @@ from tenacity import (
 )
 
 from worldenergydata.common import get_logger
+from worldenergydata.common.data_resolver import get_module_data_safe
 
 logger = get_logger(__name__)
+
+_MARINE_SAFETY_DATA = get_module_data_safe("marine_safety")
 
 # Known USCG MISLE download URLs in order of preference
 MISLE_URLS = [
@@ -501,7 +504,7 @@ class USCGMISLEAcquirer:
                     "Data Liberation Project historical extracts (1995-2012) "
                     "are available in the dlp_historical directory"
                 ),
-                "path": "data/modules/marine_safety/raw/dlp_historical/",
+                "path": str(_MARINE_SAFETY_DATA / "raw" / "dlp_historical") + "/",
                 "files": [
                     "Accidents_1995-2012.csv",
                     "Vessels_1995-2012.csv",

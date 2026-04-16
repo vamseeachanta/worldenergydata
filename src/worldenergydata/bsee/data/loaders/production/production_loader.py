@@ -21,9 +21,11 @@ from typing import Any, Dict, Optional, Union
 
 import pandas as pd
 
+from worldenergydata.common.data_resolver import get_module_data_safe
+
 logger = logging.getLogger(__name__)
 
-_DEFAULT_BIN_DIR = "data/modules/bsee/bin/production_raw"
+_DEFAULT_BIN_DIR = str(get_module_data_safe("bsee") / "bin" / "production_raw")
 
 
 class ProductionLoader:

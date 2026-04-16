@@ -1,9 +1,13 @@
 import os
 import pandas as pd
 
+from worldenergydata.common.data_resolver import get_module_data_safe
 from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
+
+_BSEE_DATA = str(get_module_data_safe("bsee"))
+
 
 class PrepareBseeData:
 
@@ -13,18 +17,18 @@ class PrepareBseeData:
         config_data = cfg.get("config_data_map", [])
 
         for config in config_data:
-            
+
             label = config["label"]
             files = config["files"]
             output_dfs[label] = self.merge_columns_from_files(cfg, files, label)
-        
+
         return output_dfs
-    
+
     def merge_columns_from_files(self, cfg, files, label):
-        
-        data_dir = cfg['settings']['data_dir']
+
+        data_dir = cfg["settings"]["data_dir"]
         dataframes = []
-        
+
         for file_info in files:
             file_name = file_info["name"]
             columns = file_info["columns"]
@@ -36,14 +40,15 @@ class PrepareBseeData:
                 dataframes.append(df)
             else:
                 logger.warning(f"Warning: File not found - {file_name}")
-        
+
         merged_df = pd.concat(dataframes, axis=1)
-        
-        output_path = os.path.join("data", "modules", "bsee","data_for_analysis", f"{label}.csv")
-        os.makedirs(os.path.dirname(output_path), exist_ok=True)  
+
+        output_path = os.path.join(_BSEE_DATA, "data_for_analysis", f"{label}.csv")
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
         merged_df.to_csv(output_path, index=False)
 
         return merged_df
 
-if __name__ == "__main__": 
+
+if __name__ == "__main__":
     prepare_bsee_data = PrepareBseeData()
