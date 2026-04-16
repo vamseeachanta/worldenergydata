@@ -17,7 +17,11 @@ from loguru import logger
 
 _EXCEL_CSV = os.path.join("results", "jack_st_malo_excel_economics_20250730_130153.csv")
 _TASK8_CSV = os.path.join(
-    "tests", "modules", "bsee", "analysis", "results",
+    "tests",
+    "modules",
+    "bsee",
+    "analysis",
+    "results",
     "jack_st_malo_monthly_economics_test_20250729_113950.csv",
 )
 

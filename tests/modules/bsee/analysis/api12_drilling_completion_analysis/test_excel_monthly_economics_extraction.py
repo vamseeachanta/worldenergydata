@@ -22,7 +22,10 @@ sys.path.insert(
 )
 
 _EXCEL_FILE = os.path.join(
-    "docs", "modules", "bsee", "data",
+    "docs",
+    "modules",
+    "bsee",
+    "data",
     "NPV_JStM-WELL-Production-Data-thru-2019.xlsx",
 )
 
