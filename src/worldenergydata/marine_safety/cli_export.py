@@ -1,13 +1,17 @@
 # ABOUTME: CLI commands for exporting marine safety incident data.
-# ABOUTME: Supports CSV, JSON, Excel, and Parquet export formats.
+# ABOUTME: Supports CSV and JSON export formats from SQLite database.
 
 """
 Marine Safety CLI - Export Commands
 
-Commands for exporting marine safety incident data to various formats.
+Commands for exporting marine safety incident data to CSV or JSON.
 """
 
+import csv
+import json
+import sqlite3
 import sys
+from pathlib import Path
 from typing import Optional
 
 import click
@@ -19,21 +23,38 @@ from worldenergydata.marine_safety.cli_utils import (
 )
 
 
+def _default_db_path() -> Path:
+    """Return the default SQLite database path."""
+    repo_root = Path(__file__).resolve().parent.parent.parent.parent
+    return repo_root / "data" / "modules" / "marine_safety" / "marine_safety.db"
+
+
+def _resolve_db_path(db_url: Optional[str]) -> Path:
+    """Resolve a db-url string to a concrete Path."""
+    if db_url:
+        path_str = db_url.replace("sqlite:///", "").replace("sqlite://", "")
+        return Path(path_str)
+    return _default_db_path()
+
+
 @click.command()
 @click.argument(
     "format",
-    type=click.Choice(["csv", "json", "excel", "parquet"], case_sensitive=False),
+    type=click.Choice(["csv", "json"], case_sensitive=False),
 )
 @click.option("--output", type=click.Path(), required=True, help="Output file path")
 @click.option(
     "--source",
-    type=click.Choice(["all", "uscg", "ntsb", "bsee"], case_sensitive=False),
+    type=click.Choice(
+        ["all", "uscg", "ntsb", "bsee", "maib", "other"], case_sensitive=False
+    ),
     default="all",
     help="Data source to export",
 )
 @click.option("--start-date", help="Start date filter (YYYY-MM-DD)")
 @click.option("--end-date", help="End date filter (YYYY-MM-DD)")
 @click.option("--limit", type=int, help="Limit number of records to export")
+@click.option("--db-url", help="Database connection URL (defaults to SQLite)")
 def export(
     format: str,
     output: str,
@@ -41,41 +62,86 @@ def export(
     start_date: Optional[str],
     end_date: Optional[str],
     limit: Optional[int],
+    db_url: Optional[str],
 ):
     """
-    Export marine safety incident data to various formats
+    Export marine safety incident data to CSV or JSON
 
     Examples:
         marine-safety export csv --output incidents.csv
         marine-safety export json --output incidents.json --source uscg
-        marine-safety export excel --output report.xlsx --start-date 2020-01-01
-        marine-safety export parquet --output data.parquet --limit 1000
+        marine-safety export csv --output recent.csv --start-date 2024-01-01
+        marine-safety export json --output subset.json --limit 100
     """
     try:
+        db_path = _resolve_db_path(db_url)
+
+        if not db_path.exists():
+            console.print(
+                "[red]Database not found.[/red] Run 'db init' first."
+            )
+            sys.exit(1)
+
+        output_path = Path(output)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+
         with create_progress_spinner("Exporting") as progress:
             task = progress.add_task(
                 f"[cyan]Exporting data to {format.upper()}...", total=None
             )
 
-            # TODO: Import and execute export
-            # from .export import export_data
-            # export_data(format, output, source, start_date, end_date, limit)
+            conn = sqlite3.connect(str(db_path))
+            conn.row_factory = sqlite3.Row
+            try:
+                query = "SELECT * FROM incidents WHERE 1=1"
+                params = []
 
-            console.print("[yellow]Data export not yet implemented[/yellow]")
-            console.print(f"Format: {format}")
-            console.print(f"Output: {output}")
-            console.print(f"Source: {source}")
-            if start_date:
-                console.print(f"Start date: {start_date}")
-            if end_date:
-                console.print(f"End date: {end_date}")
-            if limit:
-                console.print(f"Limit: {limit} records")
+                if source != "all":
+                    query += " AND LOWER(source_agency) = ?"
+                    params.append(source.lower())
+
+                if start_date:
+                    query += " AND incident_date >= ?"
+                    params.append(start_date)
+
+                if end_date:
+                    query += " AND incident_date <= ?"
+                    params.append(end_date)
+
+                query += " ORDER BY incident_date DESC"
+
+                if limit:
+                    query += " LIMIT ?"
+                    params.append(limit)
+
+                cur = conn.cursor()
+                cur.execute(query, params)
+                rows = cur.fetchall()
+
+                if not rows:
+                    console.print("[yellow]No records match the filter criteria[/yellow]")
+                    progress.update(task, completed=True)
+                    return
+
+                columns = [desc[0] for desc in cur.description]
+                records = [dict(zip(columns, row)) for row in rows]
+
+                if format.lower() == "csv":
+                    with open(output_path, "w", newline="", encoding="utf-8") as f:
+                        writer = csv.DictWriter(f, fieldnames=columns)
+                        writer.writeheader()
+                        writer.writerows(records)
+                else:
+                    with open(output_path, "w", encoding="utf-8") as f:
+                        json.dump(records, f, indent=2, default=str)
+
+            finally:
+                conn.close()
 
             progress.update(task, completed=True)
 
         panel = Panel(
-            f"[green]Data exported successfully to:[/green]\n{output}",
+            f"[green]Exported {len(records)} records to:[/green]\n{output_path}",
             title="Export Complete",
             border_style="green",
         )
