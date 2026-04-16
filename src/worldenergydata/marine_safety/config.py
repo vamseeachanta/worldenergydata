@@ -10,6 +10,8 @@ from typing import Any, Optional
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from worldenergydata.common.data_resolver import get_data_root_safe
+
 
 class DatabaseConfig(BaseSettings):
     """Database connection configuration"""
@@ -87,14 +89,16 @@ class StorageConfig(BaseSettings):
     """Storage configuration for documents and files"""
 
     base_path: Path = Field(
-        default=Path("data/marine_safety"), description="Base path for data storage"
+        default_factory=lambda: get_data_root_safe() / "marine_safety",
+        description="Base path for data storage",
     )
     documents_path: Path = Field(
-        default=Path("data/marine_safety/documents"),
+        default_factory=lambda: get_data_root_safe() / "marine_safety" / "documents",
         description="Path for storing documents",
     )
     cache_path: Path = Field(
-        default=Path("data/marine_safety/cache"), description="Path for caching data"
+        default_factory=lambda: get_data_root_safe() / "marine_safety" / "cache",
+        description="Path for caching data",
     )
     max_file_size: int = Field(
         default=100 * 1024 * 1024, description="Maximum file size in bytes"  # 100MB

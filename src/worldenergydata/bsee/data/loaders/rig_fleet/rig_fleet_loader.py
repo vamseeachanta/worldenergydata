@@ -12,6 +12,9 @@ from loguru import logger
 from worldenergydata.bsee.data.loaders.rig_fleet.constants import (
     classify_rig_type,
 )
+from worldenergydata.common.data_resolver import get_module_data_safe
+
+_BSEE_DATA = get_module_data_safe("bsee")
 
 
 class RigFleetLoader:
@@ -19,8 +22,8 @@ class RigFleetLoader:
 
     def __init__(self):
         self.data: Optional[pd.DataFrame] = None
-        self._bin_dir = "data/modules/bsee/bin/rig_fleet"
-        self._local_dir = "data/modules/bsee/.local/rig_fleet"
+        self._bin_dir = str(_BSEE_DATA / "bin" / "rig_fleet")
+        self._local_dir = str(_BSEE_DATA / ".local" / "rig_fleet")
 
     def _load_data(self, cfg: Optional[Dict] = None) -> Optional[pd.DataFrame]:
         """Load rig fleet data from binary file.
@@ -84,9 +87,7 @@ class RigFleetLoader:
             return self.data
         return None
 
-    def build_fleet_from_war(
-        self, war_df: pd.DataFrame
-    ) -> pd.DataFrame:
+    def build_fleet_from_war(self, war_df: pd.DataFrame) -> pd.DataFrame:
         """Extract unique rigs from WAR data and build fleet inventory.
 
         Args:
@@ -135,9 +136,7 @@ class RigFleetLoader:
         if agg_dict:
             fleet_df = filtered.groupby("RIG_NAME", as_index=False).agg(agg_dict)
         else:
-            fleet_df = (
-                filtered[["RIG_NAME"]].drop_duplicates().reset_index(drop=True)
-            )
+            fleet_df = filtered[["RIG_NAME"]].drop_duplicates().reset_index(drop=True)
 
         # Rename aggregated columns to domain-meaningful names
         rename_map = {
@@ -268,8 +267,6 @@ class RigFleetLoader:
         """
         if "RIG_NAME" not in war_df.columns:
             return None
-        mask = (
-            war_df["RIG_NAME"].str.strip().str.upper() == rig_name.strip().upper()
-        )
+        mask = war_df["RIG_NAME"].str.strip().str.upper() == rig_name.strip().upper()
         result = war_df[mask]
         return result if not result.empty else None

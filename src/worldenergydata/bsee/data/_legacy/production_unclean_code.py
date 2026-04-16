@@ -3,6 +3,9 @@
 import pandas as pd
 
 from worldenergydata.common.bsee.retrieve_data_templates import RetrieveDataTemplates
+from worldenergydata.common.data_resolver import get_module_data_safe
+
+_BSEE_DATA = str(get_module_data_safe("bsee"))
 from worldenergydata.bsee.data._legacy.prepare_data_for_analysis import (
     PrepareBseeData,
 )
@@ -65,7 +68,7 @@ class ProductionUncleanCode:
 
         settings = {
             "api12": api12,
-            "files_folder": "data/modules/bsee/production/zip",
+            "files_folder": f"{_BSEE_DATA}/production/zip",
         }
         production_yml["settings"].update(settings)
         production_data = energy_engine(

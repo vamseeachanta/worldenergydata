@@ -6,6 +6,10 @@ from typing import Any, Dict
 
 from loguru import logger
 
+from worldenergydata.common.data_resolver import get_module_data_safe
+
+_BSEE_BIN = str(get_module_data_safe("bsee") / "bin")
+
 
 class DeepwaterStructureDataFromZip:
     """Load and process deepwater structure data from ZIP files."""
@@ -53,7 +57,7 @@ class DeepwaterStructureDataFromZip:
                         cfg.get("parameters", {})
                         .get("filepath", {})
                         .get("deepwater_structure", {})
-                        .get("bin", "data/modules/bsee/bin/deepwater_structure")
+                        .get("bin", f"{_BSEE_BIN}/deepwater_structure")
                     )
                     processor.save_to_binary(
                         processed, bin_path, "deepwater_structure_data"

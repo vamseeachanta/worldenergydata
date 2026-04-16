@@ -20,12 +20,9 @@ from loguru import logger
 from worldenergydata.bsee.data.utils.api_well_normalizer import (
     normalize_api_well_number,
 )
-from worldenergydata.common.data_resolver import DataNotFoundError, get_module_data
+from worldenergydata.common.data_resolver import get_module_data_safe
 
-try:
-    _DEFAULT_LOCAL_DIR = get_module_data("bsee") / ".local"
-except DataNotFoundError:
-    _DEFAULT_LOCAL_DIR = Path("data/modules/bsee/.local")
+_DEFAULT_LOCAL_DIR = get_module_data_safe("bsee") / ".local"
 _CACHE_FILENAME = "BoreholeRawData.zip"
 _CACHE_MAX_AGE_DAYS = 30
 _SOURCE_URL = "https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip"
@@ -133,9 +130,7 @@ class BoreholeDataAcquirer:
         df = df[keep].copy()
 
         # Normalize API_WELL_NUMBER to string
-        df["API_WELL_NUMBER"] = normalize_api_well_number(
-            df["API_WELL_NUMBER"]
-        )
+        df["API_WELL_NUMBER"] = normalize_api_well_number(df["API_WELL_NUMBER"])
 
         # Parse dates
         for col in ("WELL_SPUD_DATE", "TOTAL_DEPTH_DATE"):
@@ -147,9 +142,7 @@ class BoreholeDataAcquirer:
         # Numeric columns to float32
         for col in ("BH_TOTAL_MD", "WELL_BORE_TVD", "WATER_DEPTH"):
             if col in df.columns:
-                df[col] = pd.to_numeric(df[col], errors="coerce").astype(
-                    "float32"
-                )
+                df[col] = pd.to_numeric(df[col], errors="coerce").astype("float32")
 
         # Coordinates to float
         for col in (
@@ -180,9 +173,7 @@ class BoreholeDataAcquirer:
             try:
                 meta = json.loads(meta_file.read_text())
                 downloaded_at = datetime.fromisoformat(meta["downloaded_at"])
-                age_days = (
-                    datetime.now(tz=timezone.utc) - downloaded_at
-                ).days
+                age_days = (datetime.now(tz=timezone.utc) - downloaded_at).days
                 if age_days > _CACHE_MAX_AGE_DAYS:
                     logger.info(
                         f"Cached borehole data is {age_days} days old "
@@ -208,6 +199,4 @@ class BoreholeDataAcquirer:
         }
         meta_file = self._cache_dir / "download_metadata.json"
         meta_file.write_text(json.dumps(meta, indent=2))
-        logger.info(
-            f"Cached borehole zip ({len(zip_data)} bytes) to {cache_file}"
-        )
+        logger.info(f"Cached borehole zip ({len(zip_data)} bytes) to {cache_file}")

@@ -11,7 +11,10 @@ import sys
 from pathlib import Path
 
 from worldenergydata.common import get_logger
+from worldenergydata.common.data_resolver import get_module_data_safe
 from worldenergydata.common.logging import configure_logging
+
+_BSEE_DATA = str(get_module_data_safe("bsee"))
 
 from .data_downloader import BSEEDataDownloader
 from .data_processor import PaleowellsDataProcessor
@@ -168,8 +171,8 @@ def main():
     process_parser.add_argument(
         "--data-directory",
         "-d",
-        default="data/modules/bsee/paleowells",
-        help="Data directory (default: data/modules/bsee/paleowells)",
+        default=f"{_BSEE_DATA}/paleowells",
+        help="Data directory (default: <bsee_module>/paleowells)",
     )
     process_parser.add_argument(
         "--output-directory", "-o", help="Output directory for processed files"
@@ -192,7 +195,7 @@ def main():
     download_parser.add_argument(
         "--data-directory",
         "-d",
-        default="data/modules/bsee/downloads",
+        default=f"{_BSEE_DATA}/downloads",
         help="Directory to store downloads",
     )
     download_parser.add_argument(
@@ -219,7 +222,7 @@ def main():
     viz_parser.add_argument(
         "--data-directory",
         "-d",
-        default="data/modules/bsee/paleowells",
+        default=f"{_BSEE_DATA}/paleowells",
         help="Data directory",
     )
     viz_parser.add_argument(

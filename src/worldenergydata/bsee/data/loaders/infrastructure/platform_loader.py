@@ -9,13 +9,15 @@ from typing import Dict, Optional
 import pandas as pd
 from loguru import logger
 
+from worldenergydata.common.data_resolver import get_module_data_safe
+
 
 class PlatformLoader:
     """Load platform structure data from binary files."""
 
     def __init__(self):
         self.data: Optional[pd.DataFrame] = None
-        self._bin_dir = "data/modules/bsee/bin/platform"
+        self._bin_dir = str(get_module_data_safe("bsee") / "bin" / "platform")
 
     def _load_data(self, cfg: Optional[Dict] = None) -> Optional[pd.DataFrame]:
         """Load platform data from binary file."""

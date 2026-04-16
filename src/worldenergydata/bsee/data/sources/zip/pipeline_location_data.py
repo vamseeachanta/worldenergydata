@@ -6,6 +6,10 @@ from typing import Any, Dict
 
 from loguru import logger
 
+from worldenergydata.common.data_resolver import get_module_data_safe
+
+_BSEE_BIN = str(get_module_data_safe("bsee") / "bin")
+
 
 class PipelineLocationDataFromZip:
     """Load and process pipeline location data from ZIP files."""
@@ -45,7 +49,7 @@ class PipelineLocationDataFromZip:
                         cfg.get("parameters", {})
                         .get("filepath", {})
                         .get("pipeline_location", {})
-                        .get("bin", "data/modules/bsee/bin/pipeline_location")
+                        .get("bin", f"{_BSEE_BIN}/pipeline_location")
                     )
                     processor.save_to_binary(
                         processed, bin_path, "pipeline_location_data"

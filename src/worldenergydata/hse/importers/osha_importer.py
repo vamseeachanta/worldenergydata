@@ -37,12 +37,13 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
 from worldenergydata.common import get_logger
+from worldenergydata.common.data_resolver import get_module_data_safe
 from worldenergydata.hse.database.models import Base, HSEIncident
 
 logger = get_logger(__name__)
 
 # Default database URL (SQLite)
-DEFAULT_DB_URL = "sqlite:///data/modules/hse/hse_incidents.db"
+DEFAULT_DB_URL = f"sqlite:///{get_module_data_safe('hse') / 'hse_incidents.db'}"
 
 # OSHA inspection type to severity mapping
 INSPECTION_TYPE_SEVERITY = {

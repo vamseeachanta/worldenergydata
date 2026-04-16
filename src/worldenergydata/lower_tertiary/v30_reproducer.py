@@ -3,6 +3,7 @@
 ABOUTME: Reproduces FDAS V30 lower tertiary results from raw BSEE OGOR data
 ABOUTME: Uses V30 assumptions and methodology for WRK-009 repeatability verification
 """
+
 from __future__ import annotations
 
 import zipfile
@@ -11,13 +12,14 @@ from pathlib import Path
 import pandas as pd
 import yaml
 
+from worldenergydata.common.data_resolver import get_module_data_safe
 from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
 
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
 FDAS_V30_DIR = PROJECT_ROOT / "docs/modules/bsee/analysis/production/FDAS_V30"
-OGOR_ZIP_DIR = PROJECT_ROOT / "data/modules/bsee/zip/historical_production_yearly"
+OGOR_ZIP_DIR = get_module_data_safe("bsee") / "zip" / "historical_production_yearly"
 GOLDEN_BASELINE_PATH = (
     PROJECT_ROOT / "config/analysis/lower_tertiary/golden_baseline_v30.yml"
 )

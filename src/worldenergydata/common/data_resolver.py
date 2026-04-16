@@ -77,6 +77,33 @@ def get_module_data(module: str) -> Path:
     )
 
 
+def get_data_root_safe() -> Path:
+    """Resolve the data root, falling back to ``<project_root>/data`` on error.
+
+    Unlike :func:`get_data_root`, this helper **never** raises
+    :class:`DataNotFoundError`.  It is designed for use as a
+    ``default_factory`` in pydantic ``Field`` declarations where
+    raising at import time would be undesirable.
+    """
+    try:
+        return get_data_root()
+    except DataNotFoundError:
+        return _get_project_root() / "data"
+
+
+def get_module_data_safe(module: str) -> Path:
+    """Get the module data directory without raising.
+
+    Falls back to ``<data_root>/modules/<module>`` when the directory
+    does not yet exist on disk.  Useful for module-level constants and
+    ``default_factory`` callables.
+    """
+    try:
+        return get_module_data(module)
+    except DataNotFoundError:
+        return get_data_root_safe() / "modules" / module
+
+
 def _clear_cache() -> None:
     """Clear the cached data root. Used in tests."""
     get_data_root.cache_clear()

@@ -21,6 +21,9 @@ from typing import Any, Dict
 from loguru import logger
 
 from worldenergydata.bsee.data.config import ConfigRouter
+from worldenergydata.common.data_resolver import get_module_data_safe
+
+_BSEE_BIN = str(get_module_data_safe("bsee") / "bin")
 from worldenergydata.bsee.data.processors import MemoryProcessor
 
 # Import the new components
@@ -458,7 +461,7 @@ class DataRefreshEnhanced:
                 cfg.get("parameters", {})
                 .get("filepath", {})
                 .get("apm", {})
-                .get("bin", "data/modules/bsee/bin/apd")
+                .get("bin", f"{_BSEE_BIN}/apd")
             )
 
             # Convert to absolute path relative to project root
@@ -500,7 +503,7 @@ class DataRefreshEnhanced:
                 cfg.get("parameters", {})
                 .get("filepath", {})
                 .get("war", {})
-                .get("bin", "data/modules/bsee/bin/war")
+                .get("bin", f"{_BSEE_BIN}/war")
             )
 
             # Convert to absolute path relative to project root
@@ -542,7 +545,7 @@ class DataRefreshEnhanced:
                 cfg.get("parameters", {})
                 .get("filepath", {})
                 .get("production", {})
-                .get("bin", "data/modules/bsee/bin/production_raw")
+                .get("bin", f"{_BSEE_BIN}/production_raw")
             )
 
             # Convert to absolute path relative to project root
@@ -771,7 +774,7 @@ class DataRefreshEnhanced:
                 cfg.get("parameters", {})
                 .get("filepath", {})
                 .get("platform", {})
-                .get("bin", "data/modules/bsee/bin/platform")
+                .get("bin", f"{_BSEE_BIN}/platform")
             )
             current_dir = Path(__file__).parent
             while current_dir != current_dir.parent:
@@ -797,7 +800,7 @@ class DataRefreshEnhanced:
                 cfg.get("parameters", {})
                 .get("filepath", {})
                 .get("pipeline_permit", {})
-                .get("bin", "data/modules/bsee/bin/pipeline_permit")
+                .get("bin", f"{_BSEE_BIN}/pipeline_permit")
             )
             current_dir = Path(__file__).parent
             while current_dir != current_dir.parent:
@@ -825,7 +828,7 @@ class DataRefreshEnhanced:
                 cfg.get("parameters", {})
                 .get("filepath", {})
                 .get("deepwater_structure", {})
-                .get("bin", "data/modules/bsee/bin/deepwater_structure")
+                .get("bin", f"{_BSEE_BIN}/deepwater_structure")
             )
             current_dir = Path(__file__).parent
             while current_dir != current_dir.parent:
@@ -853,7 +856,7 @@ class DataRefreshEnhanced:
                 cfg.get("parameters", {})
                 .get("filepath", {})
                 .get("pipeline_location", {})
-                .get("bin", "data/modules/bsee/bin/pipeline_location")
+                .get("bin", f"{_BSEE_BIN}/pipeline_location")
             )
             current_dir = Path(__file__).parent
             while current_dir != current_dir.parent:

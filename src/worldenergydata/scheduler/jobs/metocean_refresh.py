@@ -6,19 +6,17 @@ TODO: Implement data fetching for metocean sources.
 - Write Parquet output to data/metocean/ directory
 - Add tests in tests/unit/scheduler/test_metocean_adapter.py
 """
+
 import logging
 from datetime import datetime
 from pathlib import Path
 
-from worldenergydata.common.data_resolver import DataNotFoundError, get_module_data
+from worldenergydata.common.data_resolver import get_module_data_safe
 from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
 
 logger = logging.getLogger(__name__)
 
-try:
-    _DEFAULT_OUTPUT_DIR = get_module_data("metocean")
-except DataNotFoundError:
-    _DEFAULT_OUTPUT_DIR = Path("data/modules/metocean")
+_DEFAULT_OUTPUT_DIR = get_module_data_safe("metocean")
 
 
 class MetoceanRefreshJob(AbstractJob):

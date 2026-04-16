@@ -7,7 +7,7 @@ from typing import Dict
 
 import pandas as pd
 
-from worldenergydata.common.data_resolver import DataNotFoundError, get_module_data
+from worldenergydata.common.data_resolver import get_module_data_safe
 from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
 from worldenergydata.sodir.api_client import SodirAPIClient
 from worldenergydata.sodir.endpoints import SODIR_ENDPOINTS
@@ -22,10 +22,7 @@ SODIR_DATASETS: Dict[str, str] = {
     "fields": "sodir_fields.parquet",
 }
 
-try:
-    _DEFAULT_OUTPUT_DIR = get_module_data("sodir")
-except DataNotFoundError:
-    _DEFAULT_OUTPUT_DIR = Path("data/modules/sodir")
+_DEFAULT_OUTPUT_DIR = get_module_data_safe("sodir")
 
 
 class SodirRefreshJob(AbstractJob):
@@ -67,9 +64,7 @@ class SodirRefreshJob(AbstractJob):
                 endpoint_path = endpoint_cfg["endpoint"]
                 table_id = endpoint_cfg["table_id"]
 
-                response = client.get(
-                    endpoint_path, params={"table": table_id}
-                )
+                response = client.get(endpoint_path, params={"table": table_id})
                 rows = response.get("data", [])
 
                 if rows:
