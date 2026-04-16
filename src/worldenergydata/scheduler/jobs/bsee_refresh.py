@@ -15,7 +15,11 @@ import pandas as pd
 
 from worldenergydata.bsee.data.scrapers.bsee_web import BSEEWebScraper
 from worldenergydata.common.data_resolver import get_module_data_safe
-from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult, write_refresh_metadata
+from worldenergydata.scheduler.jobs.base import (
+    AbstractJob,
+    JobResult,
+    write_refresh_metadata,
+)
 
 logger = logging.getLogger(__name__)
 

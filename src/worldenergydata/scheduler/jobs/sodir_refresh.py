@@ -8,7 +8,11 @@ from typing import Dict
 import pandas as pd
 
 from worldenergydata.common.data_resolver import get_module_data_safe
-from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult, write_refresh_metadata
+from worldenergydata.scheduler.jobs.base import (
+    AbstractJob,
+    JobResult,
+    write_refresh_metadata,
+)
 from worldenergydata.sodir.api_client import SodirAPIClient
 from worldenergydata.sodir.endpoints import SODIR_ENDPOINTS
 from worldenergydata.sodir.errors import SodirAPIError

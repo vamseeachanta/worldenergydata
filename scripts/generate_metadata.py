@@ -18,8 +18,17 @@ from pathlib import Path
 
 # Data file extensions to include in metadata
 DATA_EXTENSIONS = {
-    ".csv", ".parquet", ".db", ".json", ".xls", ".xlsx",
-    ".zip", ".txt", ".bin", ".pkl", ".html",
+    ".csv",
+    ".parquet",
+    ".db",
+    ".json",
+    ".xls",
+    ".xlsx",
+    ".zip",
+    ".txt",
+    ".bin",
+    ".pkl",
+    ".html",
 }
 
 # Extensions where row counting makes sense
@@ -110,9 +119,7 @@ def build_metadata(module_name: str, module_dir: Path) -> dict:
     all_dates = [f["modified"] for f in files]
     last_refresh_date = max(all_dates) if all_dates else None
     # Build an ISO timestamp from the date (midnight UTC)
-    last_refresh = (
-        f"{last_refresh_date}T00:00:00Z" if last_refresh_date else None
-    )
+    last_refresh = f"{last_refresh_date}T00:00:00Z" if last_refresh_date else None
 
     return {
         "module": module_name,
@@ -131,9 +138,7 @@ def main() -> None:
         print(f"ERROR: modules directory not found: {MODULES_DIR}", file=sys.stderr)
         sys.exit(1)
 
-    modules = sorted(
-        p for p in MODULES_DIR.iterdir() if p.is_dir()
-    )
+    modules = sorted(p for p in MODULES_DIR.iterdir() if p.is_dir())
     print(f"Scanning {len(modules)} module(s) under {MODULES_DIR} ...")
 
     for module_dir in modules:

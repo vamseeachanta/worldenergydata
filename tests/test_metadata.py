@@ -28,9 +28,7 @@ class TestGenerateMetadata:
             text=True,
             cwd=str(REPO_ROOT),
         )
-        assert result.returncode == 0, (
-            f"generate_metadata.py failed:\n{result.stderr}"
-        )
+        assert result.returncode == 0, f"generate_metadata.py failed:\n{result.stderr}"
 
     def test_metadata_json_created_for_each_module(self):
         """Every module directory should have a _metadata.json after running."""
@@ -72,9 +70,7 @@ class TestGenerateMetadata:
                 continue
             data = json.loads(meta_path.read_text())
             missing = required_keys - set(data.keys())
-            assert not missing, (
-                f"{mod_dir.name}/_metadata.json missing keys: {missing}"
-            )
+            assert not missing, f"{mod_dir.name}/_metadata.json missing keys: {missing}"
 
     def test_metadata_record_count_non_negative(self):
         """record_count must be >= 0 for every module."""
@@ -88,9 +84,9 @@ class TestGenerateMetadata:
             if not meta_path.exists():
                 continue
             data = json.loads(meta_path.read_text())
-            assert data["record_count"] >= 0, (
-                f"{mod_dir.name} has negative record_count"
-            )
+            assert (
+                data["record_count"] >= 0
+            ), f"{mod_dir.name} has negative record_count"
 
 
 # ---------------------------------------------------------------------------
@@ -109,6 +105,6 @@ class TestCLIStatus:
             text=True,
             cwd=str(REPO_ROOT),
         )
-        assert result.returncode == 0, (
-            f"CLI status failed:\nstdout={result.stdout}\nstderr={result.stderr}"
-        )
+        assert (
+            result.returncode == 0
+        ), f"CLI status failed:\nstdout={result.stdout}\nstderr={result.stderr}"

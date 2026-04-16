@@ -255,7 +255,9 @@ def status() -> None:
     modules_dir = _data_root / "modules"
     if not modules_dir.is_dir():
         console.print("[red]No data/modules directory found.[/red]")
-        console.print("[dim]Run 'make data' or 'python3 scripts/generate_metadata.py' first.[/dim]")
+        console.print(
+            "[dim]Run 'make data' or 'python3 scripts/generate_metadata.py' first.[/dim]"
+        )
         return
 
     now = datetime.now(tz=timezone.utc)
@@ -287,7 +289,12 @@ def status() -> None:
 
         if not meta_path.exists():
             status_table.add_row(
-                module_name, "[dim]no metadata[/dim]", "-", "-", "-", "-",
+                module_name,
+                "[dim]no metadata[/dim]",
+                "-",
+                "-",
+                "-",
+                "-",
             )
             continue
 
@@ -295,7 +302,12 @@ def status() -> None:
             meta = json.loads(meta_path.read_text())
         except (json.JSONDecodeError, OSError):
             status_table.add_row(
-                module_name, "[red]read error[/red]", "-", "-", "-", "-",
+                module_name,
+                "[red]read error[/red]",
+                "-",
+                "-",
+                "-",
+                "-",
             )
             continue
 

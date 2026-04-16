@@ -1,4 +1,5 @@
 """Base classes for scheduler jobs: JobResult dataclass and AbstractJob interface."""
+
 import json
 import logging
 from abc import ABC, abstractmethod

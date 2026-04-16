@@ -1,6 +1,10 @@
 """Job adapter implementations for the data collection scheduler."""
 
-from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult, write_refresh_metadata
+from worldenergydata.scheduler.jobs.base import (
+    AbstractJob,
+    JobResult,
+    write_refresh_metadata,
+)
 from worldenergydata.scheduler.jobs.bsee_refresh import BseeRefreshJob
 from worldenergydata.scheduler.jobs.sodir_refresh import SodirRefreshJob
 from worldenergydata.scheduler.jobs.eia_us_refresh import EiaUsRefreshJob

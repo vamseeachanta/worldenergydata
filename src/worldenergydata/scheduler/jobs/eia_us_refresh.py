@@ -13,7 +13,11 @@ import pandas as pd
 
 from worldenergydata.common.data_resolver import get_module_data_safe
 from worldenergydata.eia.ingestion import EIAIngestionSync
-from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult, write_refresh_metadata
+from worldenergydata.scheduler.jobs.base import (
+    AbstractJob,
+    JobResult,
+    write_refresh_metadata,
+)
 from worldenergydata.scheduler.parquet_output import write_parquet
 
 logger = logging.getLogger(__name__)
