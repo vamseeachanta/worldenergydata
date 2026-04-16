@@ -28,8 +28,8 @@ from generate_data_catalog import (
     load_source_registry,
 )
 
-
 # -- Helpers -----------------------------------------------------------------
+
 
 def _make_project(tmp_path: Path) -> Path:
     """Create a minimal project structure and return the project root."""
@@ -50,6 +50,7 @@ def _write_csv(path: Path, header: list[str], rows: list[list[str]]) -> None:
 
 # -- CSV scanning ------------------------------------------------------------
 
+
 class TestScanCsvFile:
     """Tests for DataCatalogGenerator.scan_csv_file."""
 
@@ -60,7 +61,11 @@ class TestScanCsvFile:
         _write_csv(
             csv_path,
             header=["well_id", "oil_bbl", "gas_mcf"],
-            rows=[["W001", "100", "200"], ["W002", "150", "300"], ["W003", "120", "240"]],
+            rows=[
+                ["W001", "100", "200"],
+                ["W002", "150", "300"],
+                ["W003", "120", "240"],
+            ],
         )
         gen = DataCatalogGenerator(root)
         entry = gen.scan_csv_file(csv_path)
@@ -87,6 +92,7 @@ class TestScanCsvFile:
 
 # -- Binary file scanning ----------------------------------------------------
 
+
 class TestScanBinaryFile:
     """Tests for DataCatalogGenerator.scan_binary_file."""
 
@@ -109,6 +115,7 @@ class TestScanBinaryFile:
 
 
 # -- Excel file scanning -----------------------------------------------------
+
 
 class TestScanExcelFile:
     """Tests for DataCatalogGenerator.scan_excel_file."""
@@ -142,6 +149,7 @@ class TestScanExcelFile:
 
 # -- Domain inference --------------------------------------------------------
 
+
 class TestInferDomain:
     """Tests for DataCatalogGenerator.infer_domain."""
 
@@ -169,6 +177,7 @@ class TestInferDomain:
 
 # -- Module scanning ---------------------------------------------------------
 
+
 class TestScanModule:
     """Tests for DataCatalogGenerator.scan_module."""
 
@@ -178,11 +187,13 @@ class TestScanModule:
         mod_dir = root / "data" / "modules" / "test_mod"
         _write_csv(
             mod_dir / "current" / "production" / "data.csv",
-            header=["date", "oil"], rows=[["2024-01", "100"]],
+            header=["date", "oil"],
+            rows=[["2024-01", "100"]],
         )
         _write_csv(
             mod_dir / "current" / "wells" / "headers.csv",
-            header=["well_id", "name"], rows=[["W1", "Alpha"], ["W2", "Beta"]],
+            header=["well_id", "name"],
+            rows=[["W1", "Alpha"], ["W2", "Beta"]],
         )
         gen = DataCatalogGenerator(root)
         entry = gen.scan_module(mod_dir)
@@ -212,7 +223,9 @@ class TestScanModule:
         """Module with both CSV and .bin files separates them correctly."""
         root = _make_project(tmp_path)
         mod_dir = root / "data" / "modules" / "mixed_mod"
-        _write_csv(mod_dir / "current" / "data.csv", header=["x", "y"], rows=[["1", "2"]])
+        _write_csv(
+            mod_dir / "current" / "data.csv", header=["x", "y"], rows=[["1", "2"]]
+        )
         bin_path = mod_dir / "bin" / "store.bin"
         bin_path.parent.mkdir(parents=True)
         bin_path.write_bytes(b"\x00" * 50)
@@ -240,6 +253,7 @@ class TestScanModule:
 
 # -- Multi-module scanning ---------------------------------------------------
 
+
 class TestScanAllModules:
     """Tests for DataCatalogGenerator.scan_all_modules."""
 
@@ -248,11 +262,13 @@ class TestScanAllModules:
         root = _make_project(tmp_path)
         _write_csv(
             root / "data" / "modules" / "mod_a" / "data.csv",
-            header=["col1"], rows=[["val1"]],
+            header=["col1"],
+            rows=[["val1"]],
         )
         _write_csv(
             root / "data" / "modules" / "mod_b" / "info.csv",
-            header=["col2"], rows=[["val2"], ["val3"]],
+            header=["col2"],
+            rows=[["val2"], ["val3"]],
         )
         (root / "data" / "modules" / "mod_c").mkdir(parents=True)  # empty
         gen = DataCatalogGenerator(root)
@@ -277,6 +293,7 @@ class TestScanAllModules:
 
 # -- Catalog generation (output files) ---------------------------------------
 
+
 class TestGenerate:
     """Tests for DataCatalogGenerator.generate."""
 
@@ -285,7 +302,8 @@ class TestGenerate:
         root = _make_project(tmp_path)
         _write_csv(
             root / "data" / "modules" / "test_mod" / "data.csv",
-            header=["a", "b"], rows=[["1", "2"]],
+            header=["a", "b"],
+            rows=[["1", "2"]],
         )
         gen = DataCatalogGenerator(root)
         output_path, catalog = gen.generate(output_format="yaml")
@@ -304,7 +322,8 @@ class TestGenerate:
         root = _make_project(tmp_path)
         _write_csv(
             root / "data" / "modules" / "test_mod" / "data.csv",
-            header=["x"], rows=[["10"]],
+            header=["x"],
+            rows=[["10"]],
         )
         gen = DataCatalogGenerator(root)
         output_path, catalog = gen.generate(output_format="json")
@@ -323,11 +342,13 @@ class TestGenerate:
         root = _make_project(tmp_path)
         _write_csv(
             root / "data" / "modules" / "mod_a" / "data.csv",
-            header=["a"], rows=[["1"]],
+            header=["a"],
+            rows=[["1"]],
         )
         _write_csv(
             root / "data" / "modules" / "mod_b" / "data.csv",
-            header=["b"], rows=[["2"]],
+            header=["b"],
+            rows=[["2"]],
         )
         gen = DataCatalogGenerator(root)
         output_path, catalog = gen.generate(module_name="mod_a", output_format="json")
@@ -347,6 +368,7 @@ class TestGenerate:
 
 
 # -- LFS stub detection -----------------------------------------------------
+
 
 class TestLfsStubDetection:
     """Tests for Git LFS stub detection in scan_binary_file."""
@@ -395,6 +417,7 @@ class TestLfsStubDetection:
 
 # -- Source registry merge ---------------------------------------------------
 
+
 class TestSourceRegistryMerge:
     """Tests for _merge_source_registry."""
 
@@ -412,7 +435,8 @@ class TestSourceRegistryMerge:
         )
         _write_csv(
             root / "data" / "modules" / "test_mod" / "data.csv",
-            header=["a"], rows=[["1"]],
+            header=["a"],
+            rows=[["1"]],
         )
         gen = DataCatalogGenerator(root)
         _, catalog = gen.generate(output_format="yaml")
@@ -426,13 +450,12 @@ class TestSourceRegistryMerge:
         registry_dir = root / "data" / "catalog"
         registry_dir.mkdir(parents=True, exist_ok=True)
         (registry_dir / "source-registry.yml").write_text(
-            "modules:\n"
-            "  test_mod:\n"
-            "    default_update_frequency: quarterly\n"
+            "modules:\n" "  test_mod:\n" "    default_update_frequency: quarterly\n"
         )
         _write_csv(
             root / "data" / "modules" / "test_mod" / "data.csv",
-            header=["a"], rows=[["1"]],
+            header=["a"],
+            rows=[["1"]],
         )
         gen = DataCatalogGenerator(root)
         _, catalog = gen.generate(output_format="yaml")
@@ -445,7 +468,8 @@ class TestSourceRegistryMerge:
         root = _make_project(tmp_path)
         _write_csv(
             root / "data" / "modules" / "test_mod" / "data.csv",
-            header=["a"], rows=[["1"]],
+            header=["a"],
+            rows=[["1"]],
         )
         gen = DataCatalogGenerator(root)
         _, catalog = gen.generate(output_format="yaml")
@@ -457,6 +481,7 @@ class TestSourceRegistryMerge:
 
 # -- Staleness calculation ---------------------------------------------------
 
+
 class TestStalenessCalculation:
     """Tests for _compute_staleness."""
 
@@ -465,7 +490,8 @@ class TestStalenessCalculation:
         root = _make_project(tmp_path)
         _write_csv(
             root / "data" / "modules" / "test_mod" / "data.csv",
-            header=["a"], rows=[["1"]],
+            header=["a"],
+            rows=[["1"]],
         )
         gen = DataCatalogGenerator(root)
         catalog = gen.scan_all_modules()
@@ -483,13 +509,15 @@ class TestStalenessCalculation:
         root = _make_project(tmp_path)
         _write_csv(
             root / "data" / "modules" / "test_mod" / "data.csv",
-            header=["a"], rows=[["1"]],
+            header=["a"],
+            rows=[["1"]],
         )
         gen = DataCatalogGenerator(root)
         catalog = gen.scan_all_modules()
 
         ds = catalog.modules["test_mod"].datasets[0]
         from datetime import datetime, timezone
+
         ds.update_frequency = "annual"
         ds.last_refreshed = datetime.now(timezone.utc).isoformat()
         ds.data_status = "real"
@@ -499,6 +527,7 @@ class TestStalenessCalculation:
 
 
 # -- Freshness report -------------------------------------------------------
+
 
 class TestFreshnessReport:
     """Tests for print_freshness_report."""
@@ -526,3 +555,292 @@ class TestFreshnessReport:
         assert "Data Freshness Report" in captured.out
         assert "test_mod" in captured.out
         assert "TOTAL" in captured.out
+
+
+# -- External data root merging ---------------------------------------------
+
+
+class TestExternalDataRoot:
+    """Tests for external data root merging."""
+
+    def test_external_root_adds_binary_directory(self, tmp_path: Path):
+        """External root with bin/ subdirectories adds binary_stores entries."""
+        root = _make_project(tmp_path)
+        mod_dir = root / "data" / "modules" / "bsee"
+        _write_csv(mod_dir / "current" / "data.csv", header=["a"], rows=[["1"]])
+
+        # Create external data with bin/ directory
+        ext_root = tmp_path / "external" / "data"
+        ext_bin = ext_root / "modules" / "bsee" / "bin" / "production_raw"
+        ext_bin.mkdir(parents=True)
+        (ext_bin / "file1.bin").write_bytes(b"\x00" * 100)
+        (ext_bin / "file2.bin").write_bytes(b"\x00" * 200)
+
+        gen = DataCatalogGenerator(root, external_data_root=ext_root)
+        entry = gen.scan_module(mod_dir)
+
+        assert len(entry.datasets) == 1  # the CSV
+        assert len(entry.binary_stores) >= 1  # at least the bin directory
+        # Total size should include external binary data
+        assert entry.total_size_bytes > 300
+
+    def test_external_root_adds_zip_files(self, tmp_path: Path):
+        """External root with zip/ files adds binary_stores entries."""
+        import zipfile as zf
+
+        root = _make_project(tmp_path)
+        mod_dir = root / "data" / "modules" / "bsee"
+        _write_csv(mod_dir / "current" / "data.csv", header=["a"], rows=[["1"]])
+
+        # Create external zip
+        ext_root = tmp_path / "external" / "data"
+        ext_zip_dir = ext_root / "modules" / "bsee" / "zip" / "surveys"
+        ext_zip_dir.mkdir(parents=True)
+        zip_path = ext_zip_dir / "test.zip"
+        with zf.ZipFile(zip_path, "w") as z:
+            z.writestr("data.csv", "a,b\n1,2\n")
+
+        gen = DataCatalogGenerator(root, external_data_root=ext_root)
+        entry = gen.scan_module(mod_dir)
+
+        zip_entries = [b for b in entry.binary_stores if b.format == "zip"]
+        assert len(zip_entries) >= 1
+        assert zip_entries[0].description
+        assert "1 file(s)" in zip_entries[0].description
+
+    def test_external_root_merges_csv_files(self, tmp_path: Path):
+        """External root CSV files appear in the module's dataset list."""
+        root = _make_project(tmp_path)
+        mod_dir = root / "data" / "modules" / "hse"
+        mod_dir.mkdir(parents=True)
+
+        # Create external OSHA CSV
+        ext_root = tmp_path / "external" / "data"
+        osha_dir = ext_root / "modules" / "hse" / "raw" / "osha"
+        osha_dir.mkdir(parents=True)
+        _write_csv(
+            osha_dir / "osha_accident.csv",
+            header=["summary_nr", "event_date"],
+            rows=[["1001", "20240101"]],
+        )
+
+        gen = DataCatalogGenerator(root, external_data_root=ext_root)
+        entry = gen.scan_module(mod_dir)
+
+        csv_names = [d.name for d in entry.datasets if d.format == "csv"]
+        assert "osha_accident" in csv_names
+
+    def test_external_root_no_duplicates(self, tmp_path: Path):
+        """Datasets present in both roots appear only once."""
+        root = _make_project(tmp_path)
+        mod_dir = root / "data" / "modules" / "test_mod"
+        _write_csv(mod_dir / "data.csv", header=["a"], rows=[["1"]])
+
+        # External root with same file path
+        ext_root = tmp_path / "external" / "data"
+        ext_mod = ext_root / "modules" / "test_mod"
+        _write_csv(ext_mod / "data.csv", header=["a"], rows=[["1"]])
+
+        gen = DataCatalogGenerator(root, external_data_root=ext_root)
+        entry = gen.scan_module(mod_dir)
+
+        csv_ds = [d for d in entry.datasets if d.format == "csv"]
+        assert len(csv_ds) == 1  # Not duplicated
+
+    def test_no_external_root_still_works(self, tmp_path: Path):
+        """Generator works correctly with no external root."""
+        root = _make_project(tmp_path)
+        mod_dir = root / "data" / "modules" / "test_mod"
+        _write_csv(mod_dir / "data.csv", header=["a"], rows=[["1"]])
+
+        gen = DataCatalogGenerator(root)  # No external root
+        entry = gen.scan_module(mod_dir)
+
+        assert len(entry.datasets) == 1
+        assert entry.datasets[0].name == "data"
+
+    def test_scan_all_discovers_external_only_modules(self, tmp_path: Path):
+        """Modules that only exist in external root are discovered."""
+        root = _make_project(tmp_path)
+        _write_csv(
+            root / "data" / "modules" / "mod_a" / "data.csv",
+            header=["a"],
+            rows=[["1"]],
+        )
+
+        ext_root = tmp_path / "external" / "data"
+        ext_mod = ext_root / "modules" / "ext_only_mod"
+        _write_csv(ext_mod / "data.csv", header=["b"], rows=[["2"]])
+
+        gen = DataCatalogGenerator(root, external_data_root=ext_root)
+        catalog = gen.scan_all_modules()
+
+        assert "mod_a" in catalog.modules
+        assert "ext_only_mod" in catalog.modules
+
+
+# -- OSHA data dictionary enrichment ----------------------------------------
+
+
+class TestOshaEnrichment:
+    """Tests for OSHA data dictionary column enrichment."""
+
+    def test_osha_columns_enriched(self, tmp_path: Path):
+        """OSHA CSV columns get descriptions from the data dictionary."""
+        root = _make_project(tmp_path)
+        ext_root = tmp_path / "external" / "data"
+        osha_dir = ext_root / "modules" / "hse" / "raw" / "osha"
+        osha_dir.mkdir(parents=True)
+
+        # Create data dictionary
+        _write_csv(
+            osha_dir / "osha_data_dictionary.csv",
+            header=[
+                "table_name",
+                "column_name",
+                "attribute_name",
+                "definition",
+                "column_datatype",
+                "display_name",
+            ],
+            rows=[
+                [
+                    "osha_accident",
+                    "summary_nr",
+                    "Summary NR",
+                    "Identifies the accident form",
+                    "Numeric, Length=9",
+                    "Summary NR",
+                ],
+                [
+                    "osha_accident",
+                    "event_date",
+                    "Event Date",
+                    "Date of accident",
+                    "Numeric, Length=8",
+                    "Event Date",
+                ],
+            ],
+        )
+
+        # Create OSHA accident CSV
+        _write_csv(
+            osha_dir / "osha_accident.csv",
+            header=["summary_nr", "event_date", "event_desc"],
+            rows=[["1001", "20240101", "test"]],
+        )
+
+        # Create in-repo hse module
+        hse_dir = root / "data" / "modules" / "hse"
+        hse_dir.mkdir(parents=True)
+
+        gen = DataCatalogGenerator(root, external_data_root=ext_root)
+        entry = gen.scan_module(hse_dir)
+
+        osha_ds = [d for d in entry.datasets if d.name == "osha_accident"]
+        assert len(osha_ds) == 1
+        ds = osha_ds[0]
+        assert ds.column_schemas is not None
+        assert len(ds.column_schemas) == 3
+
+        # Check enriched columns
+        schema_map = {cs.name: cs for cs in ds.column_schemas}
+        assert "Identifies the accident form" in schema_map["summary_nr"].description
+        assert "Date of accident" in schema_map["event_date"].description
+
+    def test_osha_numbered_splits_matched(self, tmp_path: Path):
+        """Numbered OSHA files (osha_violation3.csv) match base table in dictionary."""
+        root = _make_project(tmp_path)
+        ext_root = tmp_path / "external" / "data"
+        osha_dir = ext_root / "modules" / "hse" / "raw" / "osha"
+        osha_dir.mkdir(parents=True)
+
+        _write_csv(
+            osha_dir / "osha_data_dictionary.csv",
+            header=[
+                "table_name",
+                "column_name",
+                "attribute_name",
+                "definition",
+                "column_datatype",
+                "display_name",
+            ],
+            rows=[
+                [
+                    "osha_violation",
+                    "activity_nr",
+                    "Activity NR",
+                    "Unique activity identifier",
+                    "Numeric",
+                    "Activity NR",
+                ],
+            ],
+        )
+        _write_csv(
+            osha_dir / "osha_violation3.csv",
+            header=["activity_nr", "other_col"],
+            rows=[["1001", "x"]],
+        )
+
+        hse_dir = root / "data" / "modules" / "hse"
+        hse_dir.mkdir(parents=True)
+
+        gen = DataCatalogGenerator(root, external_data_root=ext_root)
+        entry = gen.scan_module(hse_dir)
+
+        viol_ds = [d for d in entry.datasets if d.name == "osha_violation3"]
+        assert len(viol_ds) == 1
+        assert viol_ds[0].column_schemas is not None
+        schema_map = {cs.name: cs for cs in viol_ds[0].column_schemas}
+        assert "Unique activity identifier" in schema_map["activity_nr"].description
+
+
+# -- Zip file scanning -------------------------------------------------------
+
+
+class TestZipScanning:
+    """Tests for zip file scanning."""
+
+    def test_scan_zip_file(self, tmp_path: Path):
+        """scan_zip_file captures file listing from zip archive."""
+        import zipfile as zf
+
+        root = _make_project(tmp_path)
+        zip_path = root / "data" / "modules" / "test_mod" / "archive.zip"
+        zip_path.parent.mkdir(parents=True, exist_ok=True)
+        with zf.ZipFile(zip_path, "w") as z:
+            z.writestr("data1.csv", "a\n1\n")
+            z.writestr("data2.csv", "b\n2\n")
+
+        gen = DataCatalogGenerator(root)
+        entry = gen.scan_zip_file(zip_path)
+
+        assert entry.name == "archive"
+        assert entry.format == "zip"
+        assert "2 file(s)" in entry.description
+        assert entry.size_bytes > 0
+
+
+# -- Binary directory scanning -----------------------------------------------
+
+
+class TestBinaryDirectoryScanning:
+    """Tests for binary directory scanning."""
+
+    def test_scan_binary_directory(self, tmp_path: Path):
+        """scan_binary_directory summarizes file counts and sizes."""
+        root = _make_project(tmp_path)
+        bin_dir = root / "data" / "modules" / "test_mod" / "bin" / "production"
+        bin_dir.mkdir(parents=True)
+        (bin_dir / "file1.bin").write_bytes(b"\x00" * 100)
+        (bin_dir / "file2.bin").write_bytes(b"\x00" * 200)
+        (bin_dir / ".gitkeep").write_bytes(b"")
+
+        gen = DataCatalogGenerator(root)
+        entry = gen.scan_binary_directory(bin_dir)
+
+        assert entry.name == "production"
+        assert entry.format == "binary_directory"
+        assert entry.size_bytes == 300
+        assert entry.row_count == 3  # file count including .gitkeep
+        assert "Binary data directory" in entry.description
