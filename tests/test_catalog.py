@@ -34,9 +34,9 @@ def generate_catalog():
         timeout=120,
         env={**__import__("os").environ, "PYTHONPATH": str(PROJECT_ROOT / "src")},
     )
-    assert result.returncode == 0, (
-        f"generate_catalog.py failed:\nstdout: {result.stdout}\nstderr: {result.stderr}"
-    )
+    assert (
+        result.returncode == 0
+    ), f"generate_catalog.py failed:\nstdout: {result.stdout}\nstderr: {result.stderr}"
 
 
 class TestCatalogYaml:
@@ -53,7 +53,13 @@ class TestCatalogYaml:
     def test_catalog_has_required_fields(self):
         with open(CATALOG_PATH) as f:
             data = yaml.safe_load(f)
-        for key in ("version", "generated_at", "total_modules", "total_datasets", "modules"):
+        for key in (
+            "version",
+            "generated_at",
+            "total_modules",
+            "total_datasets",
+            "modules",
+        ):
             assert key in data, f"Missing required field: {key}"
 
     def test_catalog_modules_not_empty(self):
@@ -69,9 +75,7 @@ class TestCatalogYaml:
     def test_catalog_total_datasets_consistent(self):
         with open(CATALOG_PATH) as f:
             data = yaml.safe_load(f)
-        computed = sum(
-            len(m.get("datasets", [])) for m in data["modules"].values()
-        )
+        computed = sum(len(m.get("datasets", [])) for m in data["modules"].values())
         assert data["total_datasets"] == computed
 
 
@@ -88,12 +92,13 @@ class TestModuleSchemas:
 
     def test_at_least_five_modules_have_schemas(self):
         schema_files = [
-            d / "schema.yaml" for d in self._module_dirs()
+            d / "schema.yaml"
+            for d in self._module_dirs()
             if (d / "schema.yaml").exists()
         ]
-        assert len(schema_files) >= 5, (
-            f"Expected at least 5 module schemas, found {len(schema_files)}"
-        )
+        assert (
+            len(schema_files) >= 5
+        ), f"Expected at least 5 module schemas, found {len(schema_files)}"
 
     def test_each_schema_is_valid_yaml(self):
         for module_dir in self._module_dirs():
@@ -102,9 +107,7 @@ class TestModuleSchemas:
                 continue
             with open(schema_path) as f:
                 data = yaml.safe_load(f)
-            assert isinstance(data, dict), (
-                f"{schema_path} should parse to a dict"
-            )
+            assert isinstance(data, dict), f"{schema_path} should parse to a dict"
 
     def test_each_schema_has_required_fields(self):
         for module_dir in self._module_dirs():
@@ -115,9 +118,9 @@ class TestModuleSchemas:
                 data = yaml.safe_load(f)
             assert "module" in data, f"{schema_path}: missing 'module' field"
             assert "datasets" in data, f"{schema_path}: missing 'datasets' field"
-            assert isinstance(data["datasets"], list), (
-                f"{schema_path}: 'datasets' should be a list"
-            )
+            assert isinstance(
+                data["datasets"], list
+            ), f"{schema_path}: 'datasets' should be a list"
 
     def test_dataset_entries_have_required_fields(self):
         required = {"name", "path", "format", "columns", "size_bytes"}
@@ -157,17 +160,28 @@ class TestColumnSchemas:
     def test_columns_have_name_and_type(self):
         for module_name, ds in self._all_datasets():
             for col in ds["columns"]:
-                assert "name" in col, (
-                    f"{module_name}/{ds['name']}: column missing 'name'"
-                )
+                assert (
+                    "name" in col
+                ), f"{module_name}/{ds['name']}: column missing 'name'"
                 assert "type" in col, (
                     f"{module_name}/{ds['name']}/{col.get('name', '?')}: "
                     "column missing 'type'"
                 )
 
     def test_column_types_are_valid(self):
-        valid_types = {"string", "integer", "float", "datetime", "boolean",
-                       "str", "int", "list", "dict", "NoneType", "bool"}
+        valid_types = {
+            "string",
+            "integer",
+            "float",
+            "datetime",
+            "boolean",
+            "str",
+            "int",
+            "list",
+            "dict",
+            "NoneType",
+            "bool",
+        }
         for module_name, ds in self._all_datasets():
             for col in ds["columns"]:
                 assert col["type"] in valid_types, (
@@ -178,6 +192,6 @@ class TestColumnSchemas:
     def test_csv_datasets_have_row_count(self):
         for module_name, ds in self._all_datasets():
             if ds.get("format") == "csv":
-                assert "row_count" in ds and ds["row_count"] is not None, (
-                    f"{module_name}/{ds['name']}: CSV dataset missing row_count"
-                )
+                assert (
+                    "row_count" in ds and ds["row_count"] is not None
+                ), f"{module_name}/{ds['name']}: CSV dataset missing row_count"

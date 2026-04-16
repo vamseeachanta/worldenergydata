@@ -214,9 +214,7 @@ class DataCatalog:
         """
         path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "w") as f:
-            yaml.dump(
-                self.to_dict(), f, default_flow_style=False, sort_keys=False
-            )
+            yaml.dump(self.to_dict(), f, default_flow_style=False, sort_keys=False)
 
     def to_json(self, path: Path) -> None:
         """Serialize the catalog to a JSON file.

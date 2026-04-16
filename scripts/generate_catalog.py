@@ -8,6 +8,7 @@ Usage:
     python scripts/generate_catalog.py --module bsee
     python scripts/generate_catalog.py --dry-run
 """
+
 from __future__ import annotations
 
 import argparse, csv, json, re, sys
@@ -17,19 +18,42 @@ from typing import Any
 
 import yaml
 
-_DATE_RE = [re.compile(p) for p in [
-    r"^\d{1,2}/\d{1,2}/\d{4}$", r"^\d{4}-\d{2}-\d{2}", r"^\d{1,2}-[A-Za-z]{3}-\d{4}$"
-]]
+_DATE_RE = [
+    re.compile(p)
+    for p in [
+        r"^\d{1,2}/\d{1,2}/\d{4}$",
+        r"^\d{4}-\d{2}-\d{2}",
+        r"^\d{1,2}-[A-Za-z]{3}-\d{4}$",
+    ]
+]
 _UNIT_HINTS = {
-    "depth": "feet", "md": "feet", "tvd": "feet",
-    "latitude": "degrees", "longitude": "degrees", "lat": "degrees",
-    "lon": "degrees", "lng": "degrees",
-    "capacity": "tonnes", "mtpa": "MTPA", "weight": "kg", "mbl": "kN",
-    "size_mm": "mm", "loa_m": "m", "beam_m": "m", "draft_m": "m",
-    "reach_m": "m", "tension_t": "tonnes", "capacity_t": "tonnes",
-    "tonnage": "tonnes", "displacement": "tonnes", "area_m2": "m2",
-    "speed_knots": "knots", "water_depth": "feet", "water_depth_m": "m",
-    "capex_usd": "USD", "storage_m3": "m3",
+    "depth": "feet",
+    "md": "feet",
+    "tvd": "feet",
+    "latitude": "degrees",
+    "longitude": "degrees",
+    "lat": "degrees",
+    "lon": "degrees",
+    "lng": "degrees",
+    "capacity": "tonnes",
+    "mtpa": "MTPA",
+    "weight": "kg",
+    "mbl": "kN",
+    "size_mm": "mm",
+    "loa_m": "m",
+    "beam_m": "m",
+    "draft_m": "m",
+    "reach_m": "m",
+    "tension_t": "tonnes",
+    "capacity_t": "tonnes",
+    "tonnage": "tonnes",
+    "displacement": "tonnes",
+    "area_m2": "m2",
+    "speed_knots": "knots",
+    "water_depth": "feet",
+    "water_depth_m": "m",
+    "capex_usd": "USD",
+    "storage_m3": "m3",
 }
 _MODULE_DESC = {
     "bsee": "Bureau of Safety and Environmental Enforcement - GOM data",
@@ -53,7 +77,16 @@ _SKIP_FILES = {"_metadata.json"}
 def _infer_type(values: list[str]) -> str:
     if not values:
         return "string"
-    if {v.lower() for v in values} <= {"true", "false", "yes", "no", "1", "0", "t", "f"}:
+    if {v.lower() for v in values} <= {
+        "true",
+        "false",
+        "yes",
+        "no",
+        "1",
+        "0",
+        "t",
+        "f",
+    }:
         return "boolean"
     ints = floats = dates = 0
     for v in values:
@@ -128,28 +161,51 @@ def scan_csv(path: Path, root: Path) -> dict[str, Any]:
     for i, name in enumerate(hdr):
         vals = [r[i] for r in rows if i < len(r) and r[i].strip()]
         cols.append(_col_schema(name, _infer_type(vals)))
-    return {"name": path.name, "path": str(path.relative_to(root)), "format": "csv",
-            "columns": cols, "row_count": _count_rows(path),
-            "size_bytes": path.stat().st_size, "last_modified": _mtime_iso(path)}
+    return {
+        "name": path.name,
+        "path": str(path.relative_to(root)),
+        "format": "csv",
+        "columns": cols,
+        "row_count": _count_rows(path),
+        "size_bytes": path.stat().st_size,
+        "last_modified": _mtime_iso(path),
+    }
 
 
 def scan_parquet(path: Path, root: Path) -> dict[str, Any]:
     cols, row_count = [], None
     try:
         import pandas as pd
+
         df = pd.read_parquet(path)
         row_count = len(df)
         for c in df.columns:
             d = str(df[c].dtype)
-            t = ("integer" if "int" in d else "float" if "float" in d
-                 else "datetime" if "datetime" in d else "boolean" if "bool" in d
-                 else "string")
+            t = (
+                "integer"
+                if "int" in d
+                else (
+                    "float"
+                    if "float" in d
+                    else (
+                        "datetime"
+                        if "datetime" in d
+                        else "boolean" if "bool" in d else "string"
+                    )
+                )
+            )
             cols.append(_col_schema(c, t))
     except Exception:
         pass
-    return {"name": path.name, "path": str(path.relative_to(root)), "format": "parquet",
-            "columns": cols, "row_count": row_count,
-            "size_bytes": path.stat().st_size, "last_modified": _mtime_iso(path)}
+    return {
+        "name": path.name,
+        "path": str(path.relative_to(root)),
+        "format": "parquet",
+        "columns": cols,
+        "row_count": row_count,
+        "size_bytes": path.stat().st_size,
+        "last_modified": _mtime_iso(path),
+    }
 
 
 def scan_json(path: Path, root: Path) -> dict[str, Any]:
@@ -157,16 +213,29 @@ def scan_json(path: Path, root: Path) -> dict[str, Any]:
     try:
         with open(path, "r", errors="replace") as f:
             data = json.load(f)
-        items = data.items() if isinstance(data, dict) else (
-            data[0].items() if isinstance(data, list) and data and isinstance(data[0], dict)
-            else [])
-        cols = [{"name": k, "type": type(v).__name__, "description": "", "unit": ""}
-                for k, v in items]
+        items = (
+            data.items()
+            if isinstance(data, dict)
+            else (
+                data[0].items()
+                if isinstance(data, list) and data and isinstance(data[0], dict)
+                else []
+            )
+        )
+        cols = [
+            {"name": k, "type": type(v).__name__, "description": "", "unit": ""}
+            for k, v in items
+        ]
     except Exception:
         pass
-    return {"name": path.name, "path": str(path.relative_to(root)), "format": "json",
-            "columns": cols, "size_bytes": path.stat().st_size,
-            "last_modified": _mtime_iso(path)}
+    return {
+        "name": path.name,
+        "path": str(path.relative_to(root)),
+        "format": "json",
+        "columns": cols,
+        "size_bytes": path.stat().st_size,
+        "last_modified": _mtime_iso(path),
+    }
 
 
 def scan_module(mod_path: Path, root: Path) -> dict[str, Any]:
@@ -192,8 +261,9 @@ def scan_module(mod_path: Path, root: Path) -> dict[str, Any]:
     return {"module": mod_path.name, "description": desc, "datasets": datasets}
 
 
-def generate_catalog(root: Path, module_filter: str | None = None,
-                     dry_run: bool = False) -> dict[str, Any]:
+def generate_catalog(
+    root: Path, module_filter: str | None = None, dry_run: bool = False
+) -> dict[str, Any]:
     data_root = root / "data" / "modules"
     if not data_root.exists():
         print(f"Data root not found: {data_root}", file=sys.stderr)
@@ -213,11 +283,18 @@ def generate_catalog(root: Path, module_filter: str | None = None,
                 yaml.dump(schema, f, default_flow_style=False, sort_keys=False)
             written.append(str(sp.relative_to(root)))
     tot_ds = sum(len(m.get("datasets", [])) for m in mods.values())
-    tot_sz = sum(sum(d.get("size_bytes", 0) for d in m.get("datasets", []))
-                 for m in mods.values())
-    catalog = {"version": "2.0.0", "generated_at": datetime.now(timezone.utc).isoformat(),
-               "total_modules": len(mods), "total_datasets": tot_ds,
-               "total_size_bytes": tot_sz, "modules": mods}
+    tot_sz = sum(
+        sum(d.get("size_bytes", 0) for d in m.get("datasets", []))
+        for m in mods.values()
+    )
+    catalog = {
+        "version": "2.0.0",
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "total_modules": len(mods),
+        "total_datasets": tot_ds,
+        "total_size_bytes": tot_sz,
+        "modules": mods,
+    }
     if not dry_run:
         cp = root / "data" / "catalog.yaml"
         cp.parent.mkdir(parents=True, exist_ok=True)
@@ -236,12 +313,17 @@ def generate_catalog(root: Path, module_filter: str | None = None,
 
 def main() -> None:
     ap = argparse.ArgumentParser(
-        description="Generate per-module schema.yaml and aggregated data/catalog.yaml")
+        description="Generate per-module schema.yaml and aggregated data/catalog.yaml"
+    )
     ap.add_argument("--module", help="Process only this module")
     ap.add_argument("--dry-run", action="store_true", help="Scan without writing")
     ap.add_argument("--project-root", default=None, help="Override project root")
     args = ap.parse_args()
-    root = Path(args.project_root) if args.project_root else Path(__file__).resolve().parent.parent
+    root = (
+        Path(args.project_root)
+        if args.project_root
+        else Path(__file__).resolve().parent.parent
+    )
     generate_catalog(root, module_filter=args.module, dry_run=args.dry_run)
 
 
