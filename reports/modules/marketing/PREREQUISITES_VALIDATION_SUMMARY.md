@@ -213,7 +213,7 @@ which xelatex
 2. Execute installation commands (Pandoc + LaTeX)
 3. Verify installations with `which` commands
 4. Proceed to PDF generation test (PDF_GENERATION_CHECKLIST.md lines 141-169)
-5. Generate all PDFs: `python scripts/generate_marketing_brochures.py --pdf`
+5. Generate all PDFs: `python scripts/reporting/generate_marketing_brochures.py --pdf`
 
 **Pros:**
 - Unblocks PDF generation workflow
