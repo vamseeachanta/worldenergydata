@@ -12,25 +12,27 @@ from typing import Optional, Any
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from worldenergydata.common.data_resolver import get_module_data_safe
+
 
 class StorageConfig(BaseSettings):
     """Storage configuration for hull models and cache"""
 
     base_path: Path = Field(
-        default=Path("data/modules/vessel_hull_models"),
-        description="Base path for hull model storage"
+        default_factory=lambda: get_module_data_safe("vessel_hull_models"),
+        description="Base path for hull model storage",
     )
     hulls_path: Path = Field(
-        default=Path("data/modules/vessel_hull_models/hulls"),
-        description="Path for storing acquired hull models"
+        default_factory=lambda: get_module_data_safe("vessel_hull_models") / "hulls",
+        description="Path for storing acquired hull models",
     )
     synthetic_path: Path = Field(
-        default=Path("data/modules/vessel_hull_models/synthetic"),
-        description="Path for parametrically generated hulls"
+        default_factory=lambda: get_module_data_safe("vessel_hull_models") / "synthetic",
+        description="Path for parametrically generated hulls",
     )
     cache_path: Path = Field(
-        default=Path("data/modules/vessel_hull_models/cache"),
-        description="Path for caching data"
+        default_factory=lambda: get_module_data_safe("vessel_hull_models") / "cache",
+        description="Path for caching data",
     )
     max_file_size: int = Field(
         default=500 * 1024 * 1024,  # 500MB

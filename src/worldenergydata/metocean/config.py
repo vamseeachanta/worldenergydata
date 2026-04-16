@@ -9,6 +9,8 @@ from typing import Any, Optional
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from worldenergydata.common.data_resolver import get_data_root_safe
+
 
 class DatabaseConfig(BaseSettings):
     """Database connection configuration for metocean data storage."""
@@ -87,7 +89,8 @@ class CacheConfig(BaseSettings):
     ttl_hours: int = Field(default=24, description="Cache time-to-live in hours")
     max_size_mb: int = Field(default=500, description="Maximum cache size in MB")
     cache_path: Path = Field(
-        default=Path("data/metocean/cache"), description="Path for cache storage"
+        default_factory=lambda: get_data_root_safe() / "metocean" / "cache",
+        description="Path for cache storage",
     )
     enabled: bool = Field(default=True, description="Enable caching")
 
@@ -112,13 +115,16 @@ class StorageConfig(BaseSettings):
     """Configuration for data storage."""
 
     base_path: Path = Field(
-        default=Path("data/metocean"), description="Base path for data storage"
+        default_factory=lambda: get_data_root_safe() / "metocean",
+        description="Base path for data storage",
     )
     raw_path: Path = Field(
-        default=Path("data/metocean/raw"), description="Path for raw data"
+        default_factory=lambda: get_data_root_safe() / "metocean" / "raw",
+        description="Path for raw data",
     )
     processed_path: Path = Field(
-        default=Path("data/metocean/processed"), description="Path for processed data"
+        default_factory=lambda: get_data_root_safe() / "metocean" / "processed",
+        description="Path for processed data",
     )
 
     model_config = SettingsConfigDict(

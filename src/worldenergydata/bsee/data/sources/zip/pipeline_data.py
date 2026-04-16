@@ -6,6 +6,10 @@ from typing import Any, Dict
 
 from loguru import logger
 
+from worldenergydata.common.data_resolver import get_module_data_safe
+
+_BSEE_BIN = str(get_module_data_safe("bsee") / "bin")
+
 
 class PipelinePermitDataFromZip:
     """Load and process pipeline permit data from ZIP files."""
@@ -54,7 +58,7 @@ class PipelinePermitDataFromZip:
                         cfg.get("parameters", {})
                         .get("filepath", {})
                         .get("pipeline_permit", {})
-                        .get("bin", "data/modules/bsee/bin/pipeline_permit")
+                        .get("bin", f"{_BSEE_BIN}/pipeline_permit")
                     )
                     processor.save_to_binary(
                         processed, bin_path, "pipeline_permit_data"

@@ -9,6 +9,8 @@ from typing import Dict, Optional
 import pandas as pd
 from loguru import logger
 
+from worldenergydata.common.data_resolver import get_module_data_safe
+
 
 class PipelineLoader:
     """Load pipeline permit and location data from binary files."""
@@ -16,8 +18,8 @@ class PipelineLoader:
     def __init__(self):
         self.permit_data: Optional[pd.DataFrame] = None
         self.location_data: Optional[pd.DataFrame] = None
-        self._permit_bin_dir = "data/modules/bsee/bin/pipeline_permit"
-        self._location_bin_dir = "data/modules/bsee/bin/pipeline_location"
+        self._permit_bin_dir = str(get_module_data_safe("bsee") / "bin" / "pipeline_permit")
+        self._location_bin_dir = str(get_module_data_safe("bsee") / "bin" / "pipeline_location")
 
     def _load_permit_data(self, cfg: Optional[Dict] = None) -> Optional[pd.DataFrame]:
         """Load pipeline permit data from binary file."""

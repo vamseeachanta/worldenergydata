@@ -11,6 +11,10 @@ from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
 from assetutilities.modules.zip_utilities.zip_files_to_dataframe import ZipFilestoDf
 from assetutilities.common.utilities import get_repository_filename
 
+from worldenergydata.common.data_resolver import get_module_data_safe
+
+_BSEE_BIN = str(get_module_data_safe("bsee") / "bin")
+
 wwy = WorkingWithYAML()
 zip_files_to_df = ZipFilestoDf()
 
@@ -198,7 +202,7 @@ class WellData:
 
         library_name = 'worldenergydata'
         library_file_cfg = {
-            'filename': f"data/modules/bsee/bin/borehole/{file_name}",
+            'filename': f"{_BSEE_BIN}/borehole/{file_name}",
             'library_name': library_name,
             'repository_path': None
         }
@@ -232,7 +236,7 @@ class WellData:
 
         library_name = 'worldenergydata'
         library_file_cfg = {
-            'filename': f"data/modules/bsee/bin/eor/{file_name}",
+            'filename': f"{_BSEE_BIN}/eor/{file_name}",
             'library_name': library_name,
             'repository_path': None
         }
@@ -253,7 +257,7 @@ class WellData:
 
         library_name = 'worldenergydata'
         library_file_cfg = {
-            'filename': f"data/modules/bsee/bin/ewellapd/{file_name}",
+            'filename': f"{_BSEE_BIN}/ewellapd/{file_name}",
             'library_name': library_name,
             'repository_path': None
         }
@@ -274,7 +278,7 @@ class WellData:
 
         library_name = 'worldenergydata'
         library_file_cfg = {
-            'filename': f"data/modules/bsee/bin/war/{file_name}",
+            'filename': f"{_BSEE_BIN}/war/{file_name}",
             'library_name': library_name,
             'repository_path': None
         }
@@ -295,7 +299,7 @@ class WellData:
 
         library_name = 'worldenergydata'
         library_file_cfg = {
-            'filename': f"data/modules/bsee/bin/war/{file_name}",
+            'filename': f"{_BSEE_BIN}/war/{file_name}",
             'library_name': library_name,
             'repository_path': None
         }

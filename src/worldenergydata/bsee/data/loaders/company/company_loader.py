@@ -20,9 +20,11 @@ from typing import Optional, Union
 
 import pandas as pd
 
+from worldenergydata.common.data_resolver import get_module_data_safe
+
 logger = logging.getLogger(__name__)
 
-_DEFAULT_BIN_DIR = "data/modules/bsee/bin/companydetails"
+_DEFAULT_BIN_DIR = str(get_module_data_safe("bsee") / "bin" / "companydetails")
 
 _REGION_COL_MAP = {
     "GOM": "GOM_REGION_CODE",

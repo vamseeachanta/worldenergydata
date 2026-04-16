@@ -11,17 +11,14 @@ from pathlib import Path
 
 import pandas as pd
 
-from worldenergydata.common.data_resolver import DataNotFoundError, get_module_data
+from worldenergydata.common.data_resolver import get_module_data_safe
 from worldenergydata.eia.ingestion import EIAIngestionSync
 from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
 from worldenergydata.scheduler.parquet_output import write_parquet
 
 logger = logging.getLogger(__name__)
 
-try:
-    _DEFAULT_OUTPUT_DIR = get_module_data("eia")
-except DataNotFoundError:
-    _DEFAULT_OUTPUT_DIR = Path("data/modules/eia")
+_DEFAULT_OUTPUT_DIR = get_module_data_safe("eia")
 
 
 class EiaUsRefreshJob(AbstractJob):

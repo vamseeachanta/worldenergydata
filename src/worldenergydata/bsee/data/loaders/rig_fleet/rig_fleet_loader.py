@@ -12,6 +12,9 @@ from loguru import logger
 from worldenergydata.bsee.data.loaders.rig_fleet.constants import (
     classify_rig_type,
 )
+from worldenergydata.common.data_resolver import get_module_data_safe
+
+_BSEE_DATA = get_module_data_safe("bsee")
 
 
 class RigFleetLoader:
@@ -19,8 +22,8 @@ class RigFleetLoader:
 
     def __init__(self):
         self.data: Optional[pd.DataFrame] = None
-        self._bin_dir = "data/modules/bsee/bin/rig_fleet"
-        self._local_dir = "data/modules/bsee/.local/rig_fleet"
+        self._bin_dir = str(_BSEE_DATA / "bin" / "rig_fleet")
+        self._local_dir = str(_BSEE_DATA / ".local" / "rig_fleet")
 
     def _load_data(self, cfg: Optional[Dict] = None) -> Optional[pd.DataFrame]:
         """Load rig fleet data from binary file.

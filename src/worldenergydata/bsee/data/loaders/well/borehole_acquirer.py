@@ -20,12 +20,9 @@ from loguru import logger
 from worldenergydata.bsee.data.utils.api_well_normalizer import (
     normalize_api_well_number,
 )
-from worldenergydata.common.data_resolver import DataNotFoundError, get_module_data
+from worldenergydata.common.data_resolver import get_module_data_safe
 
-try:
-    _DEFAULT_LOCAL_DIR = get_module_data("bsee") / ".local"
-except DataNotFoundError:
-    _DEFAULT_LOCAL_DIR = Path("data/modules/bsee/.local")
+_DEFAULT_LOCAL_DIR = get_module_data_safe("bsee") / ".local"
 _CACHE_FILENAME = "BoreholeRawData.zip"
 _CACHE_MAX_AGE_DAYS = 30
 _SOURCE_URL = "https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip"

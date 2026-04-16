@@ -13,6 +13,9 @@ from loguru import logger
 
 # Import chunk manager from cache module
 from worldenergydata.bsee.data.cache import ChunkManager
+from worldenergydata.common.data_resolver import get_module_data_safe
+
+_BSEE_BIN = str(get_module_data_safe("bsee") / "bin")
 from worldenergydata.bsee.data.config import ConfigRouter
 from worldenergydata.bsee.data.processors import MemoryProcessor
 
@@ -331,18 +334,18 @@ class DataRefreshChunked:
             "well": cfg.get("parameters", {})
             .get("filepath", {})
             .get("apm", {})
-            .get("bin", "data/modules/bsee/bin/apd"),
+            .get("bin", f"{_BSEE_BIN}/apd"),
             "production": cfg.get("parameters", {})
             .get("filepath", {})
             .get("production", {})
-            .get("bin", "data/modules/bsee/bin/production_raw"),
+            .get("bin", f"{_BSEE_BIN}/production_raw"),
             "war": cfg.get("parameters", {})
             .get("filepath", {})
             .get("war", {})
-            .get("bin", "data/modules/bsee/bin/war"),
+            .get("bin", f"{_BSEE_BIN}/war"),
         }
 
-        bin_path = path_map.get(data_type, f"data/modules/bsee/bin/{data_type}")
+        bin_path = path_map.get(data_type, f"{_BSEE_BIN}/{data_type}")
 
         # Find project root
         current_dir = Path(__file__).parent

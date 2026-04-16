@@ -22,7 +22,7 @@ from ..bsee.data.sources.bin.lease_data import LeaseData
 
 # Import BSEE data loaders
 from ..bsee.reports.comprehensive.data_loader_enhanced import HierarchicalDataLoader
-from ..common.data_resolver import DataNotFoundError, get_data_root
+from ..common.data_resolver import get_data_root_safe
 
 logger = logging.getLogger(__name__)
 
@@ -177,10 +177,7 @@ class QueryOptimizer:
         Args:
             data_path: Path to BSEE data directory
         """
-        try:
-            self.data_path = data_path or get_data_root() / "bsee"
-        except DataNotFoundError:
-            self.data_path = data_path or Path("data/bsee")
+        self.data_path = data_path or get_data_root_safe() / "bsee"
 
         # Initialize BSEE data loaders
         self.hierarchical_loader = HierarchicalDataLoader(data_path)

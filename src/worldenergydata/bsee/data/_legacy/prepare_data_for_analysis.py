@@ -1,9 +1,12 @@
 import os
 import pandas as pd
 
+from worldenergydata.common.data_resolver import get_module_data_safe
 from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
+
+_BSEE_DATA = str(get_module_data_safe("bsee"))
 
 class PrepareBseeData:
 
@@ -39,7 +42,7 @@ class PrepareBseeData:
         
         merged_df = pd.concat(dataframes, axis=1)
         
-        output_path = os.path.join("data", "modules", "bsee","data_for_analysis", f"{label}.csv")
+        output_path = os.path.join(_BSEE_DATA, "data_for_analysis", f"{label}.csv")
         os.makedirs(os.path.dirname(output_path), exist_ok=True)  
         merged_df.to_csv(output_path, index=False)
 
