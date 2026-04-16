@@ -1,0 +1,86 @@
+module: vessel_hull_models
+description: 3D vessel hull geometry models
+datasets:
+- name: sample_rigs.csv
+  path: data/modules/vessel_hull_models/csv/rig_hulls/sample_rigs.csv
+  format: csv
+  columns:
+  - name: VESSEL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: RIG_TYPE
+    type: string
+    description: ''
+    unit: ''
+  - name: HULL_FORM_TYPE
+    type: string
+    description: ''
+    unit: ''
+  - name: LOA_M
+    type: float
+    description: ''
+    unit: m
+  - name: BEAM_M
+    type: float
+    description: ''
+    unit: m
+  - name: DRAFT_M
+    type: float
+    description: ''
+    unit: m
+  - name: DISPLACEMENT_TONNES
+    type: float
+    description: ''
+    unit: tonnes
+  - name: WATER_DEPTH_RATING_FT
+    type: integer
+    description: ''
+    unit: feet
+  - name: RIG_DESIGN
+    type: string
+    description: ''
+    unit: ''
+  - name: YEAR_BUILT
+    type: integer
+    description: ''
+    unit: ''
+  - name: DP_CLASS
+    type: integer
+    description: ''
+    unit: ''
+  - name: PONTOON_LENGTH_M
+    type: string
+    description: ''
+    unit: ''
+  - name: PONTOON_WIDTH_M
+    type: string
+    description: ''
+    unit: ''
+  - name: PONTOON_HEIGHT_M
+    type: string
+    description: ''
+    unit: ''
+  - name: COLUMN_DIAMETER_M
+    type: string
+    description: ''
+    unit: ''
+  - name: COLUMN_SPACING_M
+    type: float
+    description: ''
+    unit: ''
+  - name: COLUMN_COUNT
+    type: integer
+    description: ''
+    unit: ''
+  - name: DIMENSION_CONFIDENCE
+    type: string
+    description: ''
+    unit: ''
+  - name: SOURCE_CITATION
+    type: string
+    description: ''
+    unit: ''
+  row_count: 5
+  size_bytes: 1024
+  last_modified: '2026-02-13T14:10:59.743552+00:00'

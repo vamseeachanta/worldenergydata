@@ -1,0 +1,4 @@
+module: pipeline_safety
+description: "PHMSA pipeline safety incident data (no data files present \u2014 run\
+  \ 'make data' to populate)"
+datasets: []

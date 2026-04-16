@@ -1,0 +1,50 @@
+module: pipeline
+description: Pipeline engineering reference data
+datasets:
+- name: api_5l_pipe_schedule.csv
+  path: data/modules/pipeline/api_5l_pipe_schedule.csv
+  format: csv
+  columns:
+  - name: nps_in
+    type: float
+    description: ''
+    unit: ''
+  - name: od_mm
+    type: float
+    description: ''
+    unit: ''
+  - name: od_in
+    type: float
+    description: ''
+    unit: ''
+  - name: schedule
+    type: string
+    description: ''
+    unit: ''
+  - name: wt_mm
+    type: float
+    description: ''
+    unit: ''
+  - name: wt_in
+    type: float
+    description: ''
+    unit: ''
+  - name: weight_kgm
+    type: float
+    description: ''
+    unit: kg
+  - name: grade_range
+    type: string
+    description: ''
+    unit: ''
+  - name: standard
+    type: string
+    description: ''
+    unit: ''
+  - name: domain_hint
+    type: string
+    description: ''
+    unit: ''
+  row_count: 43
+  size_bytes: 3861
+  last_modified: '2026-03-03T22:30:40.761917+00:00'

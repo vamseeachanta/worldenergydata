@@ -1,0 +1,101 @@
+module: subsea
+description: Subsea equipment and mooring component data
+datasets:
+- name: mooring_components.csv
+  path: data/modules/subsea/curated/mooring_components.csv
+  format: csv
+  columns:
+  - name: COMPONENT_ID
+    type: string
+    description: ''
+    unit: ''
+  - name: COMPONENT_TYPE
+    type: string
+    description: ''
+    unit: ''
+  - name: MANUFACTURER
+    type: string
+    description: ''
+    unit: ''
+  - name: SIZE_MM
+    type: integer
+    description: ''
+    unit: mm
+  - name: MBL_KN
+    type: integer
+    description: ''
+    unit: kN
+  - name: WEIGHT_KG_PER_M
+    type: float
+    description: ''
+    unit: kg
+  - name: MATERIAL
+    type: string
+    description: ''
+    unit: ''
+  - name: GRADE
+    type: string
+    description: ''
+    unit: ''
+  - name: DATA_SOURCE
+    type: string
+    description: ''
+    unit: ''
+  - name: NOTES
+    type: string
+    description: ''
+    unit: ''
+  row_count: 14
+  size_bytes: 1504
+  last_modified: '2026-03-26T04:20:02.844689+00:00'
+- name: rigid_jumper_specs.csv
+  path: data/modules/subsea/curated/rigid_jumper_specs.csv
+  format: csv
+  columns:
+  - name: COMPONENT_ID
+    type: string
+    description: ''
+    unit: ''
+  - name: MANUFACTURER
+    type: string
+    description: ''
+    unit: ''
+  - name: OD_IN
+    type: float
+    description: ''
+    unit: ''
+  - name: WALL_THICKNESS_IN
+    type: float
+    description: ''
+    unit: ''
+  - name: LENGTH_FT
+    type: float
+    description: ''
+    unit: ''
+  - name: MATERIAL_GRADE
+    type: string
+    description: ''
+    unit: ''
+  - name: PRESSURE_RATING_PSI
+    type: integer
+    description: ''
+    unit: ''
+  - name: WEIGHT_AIR_KIPS
+    type: float
+    description: ''
+    unit: kg
+  - name: CONNECTION_TYPE
+    type: string
+    description: ''
+    unit: ''
+  - name: DATA_SOURCE
+    type: string
+    description: ''
+    unit: ''
+  - name: NOTES
+    type: string
+    description: ''
+    unit: ''
+  row_count: 14
+  size_bytes: 1612
+  last_modified: '2026-03-26T04:19:51.247253+00:00'
