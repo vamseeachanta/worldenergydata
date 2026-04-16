@@ -1,0 +1,4 @@
+module: wind
+description: "Wind energy resource and turbine data (no data files present \u2014\
+  \ run 'make data' to populate)"
+datasets: []

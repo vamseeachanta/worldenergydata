@@ -1,0 +1,602 @@
+module: bsee
+description: Bureau of Safety and Environmental Enforcement - GOM data
+datasets:
+- name: completion_perforations.csv
+  path: data/modules/bsee/current/completions/completion_perforations.csv
+  format: csv
+  columns:
+  - name: API_WELL_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  - name: WELL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: PERF_TOP_MD
+    type: integer
+    description: ''
+    unit: feet
+  - name: PERF_BOTM_TVD
+    type: integer
+    description: ''
+    unit: feet
+  - name: PERF_TOP_TVD
+    type: integer
+    description: ''
+    unit: feet
+  - name: PERF_BASE_MD
+    type: integer
+    description: ''
+    unit: feet
+  row_count: 100
+  size_bytes: 3997
+  last_modified: '2025-07-31T11:24:19.677972+00:00'
+- name: completion_properties.csv
+  path: data/modules/bsee/current/completions/completion_properties.csv
+  format: csv
+  columns:
+  - name: API_WELL_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  - name: COMP_LATITUDE
+    type: float
+    description: ''
+    unit: degrees
+  - name: COMP_LONGITUDE
+    type: float
+    description: ''
+    unit: degrees
+  - name: COMP_RSVR_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: COMP_INTERVAL_NAME
+    type: string
+    description: ''
+    unit: ''
+  row_count: 100
+  size_bytes: 5825
+  last_modified: '2025-07-31T11:24:19.678297+00:00'
+- name: completion_summary.csv
+  path: data/modules/bsee/current/completions/completion_summary.csv
+  format: csv
+  columns:
+  - name: API_WELL_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  - name: WELL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: INTERVAL
+    type: string
+    description: ''
+    unit: ''
+  - name: COMP_AREA_CODE
+    type: string
+    description: ''
+    unit: ''
+  - name: COMP_BLOCK_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  - name: COMP_STATUS_CD
+    type: string
+    description: ''
+    unit: ''
+  - name: VALUE
+    type: string
+    description: ''
+    unit: ''
+  - name: VALUE_DESC
+    type: string
+    description: ''
+    unit: ''
+  row_count: 100
+  size_bytes: 4048
+  last_modified: '2025-07-31T11:24:19.689104+00:00'
+- name: geology_markers.csv
+  path: data/modules/bsee/current/geology/geology_markers.csv
+  format: csv
+  columns:
+  - name: API_WELL_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  - name: WELL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: GEO_MARKER_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: TOP_MD
+    type: integer
+    description: ''
+    unit: feet
+  row_count: 100
+  size_bytes: 3335
+  last_modified: '2025-07-31T11:24:19.689923+00:00'
+- name: hydrocarbon_bearing_interval.csv
+  path: data/modules/bsee/current/geology/hydrocarbon_bearing_interval.csv
+  format: csv
+  columns:
+  - name: API_WELL_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  - name: WELL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: SN_HC_BEARING_INTVL
+    type: integer
+    description: ''
+    unit: ''
+  - name: SN_EOR_FK
+    type: integer
+    description: ''
+    unit: ''
+  - name: INTERVAL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: TOP_MD
+    type: integer
+    description: ''
+    unit: feet
+  - name: BOTTOM_MD
+    type: integer
+    description: ''
+    unit: feet
+  - name: HYDROCARBON_TYPE_CD
+    type: string
+    description: ''
+    unit: ''
+  row_count: 100
+  size_bytes: 5477
+  last_modified: '2025-07-31T11:24:19.690355+00:00'
+- name: all_bsee_blocks.csv
+  path: data/modules/bsee/current/infrastructure/all_bsee_blocks.csv
+  format: csv
+  columns:
+  - name: BOTM_FLD_NAME_CD
+    type: string
+    description: ''
+    unit: ''
+  row_count: 100
+  size_bytes: 607
+  last_modified: '2025-07-31T11:24:19.677738+00:00'
+- name: ST_BP_and_tree_height.csv
+  path: data/modules/bsee/current/operations/ST_BP_and_tree_height.csv
+  format: csv
+  columns:
+  - name: SN_EOR
+    type: integer
+    description: ''
+    unit: ''
+  - name: API_WELL_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  - name: WELL_NM_ST_SFIX
+    type: integer
+    description: ''
+    unit: ''
+  - name: WELL_NM_BP_SFIX
+    type: boolean
+    description: ''
+    unit: ''
+  - name: SUBSEA_TREE_HEIGHT_AML
+    type: float
+    description: ''
+    unit: ''
+  row_count: 100
+  size_bytes: 2706
+  last_modified: '2025-07-31T11:24:19.677546+00:00'
+- name: cut_casings.csv
+  path: data/modules/bsee/current/operations/cut_casings.csv
+  format: csv
+  columns:
+  - name: API_WELL_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  - name: WELL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: CASING_SIZE
+    type: float
+    description: ''
+    unit: ''
+  - name: CASING_CUT_DATE
+    type: datetime
+    description: ''
+    unit: ''
+  - name: CASING_CUT_METHOD_CD
+    type: string
+    description: ''
+    unit: ''
+  - name: CASING_CUT_DEPTH
+    type: integer
+    description: ''
+    unit: feet
+  - name: CASING_CUT_MDL_IND
+    type: string
+    description: ''
+    unit: feet
+  row_count: 100
+  size_bytes: 4497
+  last_modified: '2025-07-31T11:24:19.689548+00:00'
+- name: well_activity_bop_tests.csv
+  path: data/modules/bsee/current/operations/well_activity_bop_tests.csv
+  format: csv
+  columns:
+  - name: BOP_TEST_DATE
+    type: datetime
+    description: ''
+    unit: ''
+  - name: RAM_TST_PRSS
+    type: float
+    description: ''
+    unit: ''
+  - name: ANNULAR_TST_PRSS
+    type: float
+    description: ''
+    unit: ''
+  - name: BUS_ASC_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: API_WELL_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  row_count: 100
+  size_bytes: 5180
+  last_modified: '2025-07-31T11:24:19.690884+00:00'
+- name: well_activity_open_hole.csv
+  path: data/modules/bsee/current/operations/well_activity_open_hole.csv
+  format: csv
+  columns:
+  - name: API_WELL_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  - name: WELL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: BUS_ASC_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: OPERATIONS_COMPLETED_DATE
+    type: datetime
+    description: ''
+    unit: ''
+  - name: TOOL_LOGGING_METHOD_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: LOG_INTV_TOP_MD
+    type: integer
+    description: ''
+    unit: feet
+  - name: LOG_INTV_BOTM_MD
+    type: integer
+    description: ''
+    unit: feet
+  - name: LOG_TOOL_TYPE_CODE
+    type: string
+    description: ''
+    unit: ''
+  row_count: 100
+  size_bytes: 6583
+  last_modified: '2025-07-31T11:24:19.691184+00:00'
+- name: well_activity_remarks.csv
+  path: data/modules/bsee/current/operations/well_activity_remarks.csv
+  format: csv
+  columns:
+  - name: API_WELL_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  - name: WELL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: WAR_START_DT
+    type: string
+    description: ''
+    unit: ''
+  - name: SN_WAR
+    type: integer
+    description: ''
+    unit: ''
+  - name: TEXT_REMARK
+    type: string
+    description: ''
+    unit: ''
+  row_count: 100
+  size_bytes: 68237
+  last_modified: '2026-03-15T13:06:39.553589+00:00'
+- name: well_activity_summary.csv
+  path: data/modules/bsee/current/operations/well_activity_summary.csv
+  format: csv
+  columns:
+  - name: WAR_START_DT
+    type: string
+    description: ''
+    unit: ''
+  - name: WAR_END_DT
+    type: string
+    description: ''
+    unit: ''
+  - name: RIG_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: API_WELL_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  - name: WELL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: WELL_ACTIVITY_CD
+    type: string
+    description: ''
+    unit: ''
+  - name: DRILLING_MD
+    type: float
+    description: ''
+    unit: feet
+  - name: DRILL_FLUID_WGT
+    type: float
+    description: ''
+    unit: ''
+  row_count: 100
+  size_bytes: 9431
+  last_modified: '2025-07-31T11:24:19.692925+00:00'
+- name: production.csv
+  path: data/modules/bsee/current/production/production.csv
+  format: csv
+  columns:
+  - name: API_WELL_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  - name: PRODUCTION_DATE
+    type: datetime
+    description: ''
+    unit: ''
+  row_count: 100
+  size_bytes: 2361
+  last_modified: '2025-07-31T11:24:19.690582+00:00'
+- name: well_data.csv
+  path: data/modules/bsee/current/wells/well_data.csv
+  format: csv
+  columns:
+  - name: API_WELL_NUMBER
+    type: float
+    description: ''
+    unit: ''
+  - name: WELL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: WATER_DEPTH
+    type: float
+    description: ''
+    unit: feet
+  - name: SURF_LATITUDE
+    type: float
+    description: ''
+    unit: degrees
+  - name: WELL_NAME_SUFFIX
+    type: string
+    description: ''
+    unit: ''
+  - name: COMPANY_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: BOTM_FLD_NAME_CD
+    type: string
+    description: ''
+    unit: ''
+  - name: WELL_SPUD_DATE
+    type: datetime
+    description: ''
+    unit: ''
+  - name: TOTAL_DEPTH_DATE
+    type: datetime
+    description: ''
+    unit: feet
+  - name: BH_TOTAL_MD
+    type: float
+    description: ''
+    unit: feet
+  - name: WELL_BORE_TVD
+    type: integer
+    description: ''
+    unit: feet
+  - name: WELL_BP_ST_KICKOFF_MD
+    type: integer
+    description: ''
+    unit: feet
+  - name: BOREHOLE_STAT_DT
+    type: datetime
+    description: ''
+    unit: ''
+  - name: BOREHOLE_STAT_CD
+    type: string
+    description: ''
+    unit: ''
+  - name: CASING_CUT_CODE
+    type: string
+    description: ''
+    unit: ''
+  - name: UNDWTR_COMP_STUB
+    type: string
+    description: ''
+    unit: ''
+  - name: SURF_LONGITUDE
+    type: float
+    description: ''
+    unit: degrees
+  - name: BOTM_LATITUDE
+    type: float
+    description: ''
+    unit: degrees
+  - name: BOTM_LONGITUDE
+    type: float
+    description: ''
+    unit: degrees
+  row_count: 57281
+  size_bytes: 4135645
+  last_modified: '2025-07-31T11:24:19.782853+00:00'
+- name: well_directional_surveys.csv
+  path: data/modules/bsee/current/wells/well_directional_surveys.csv
+  format: csv
+  columns:
+  - name: version https://git-lfs.github.com/spec/v1
+    type: string
+    description: ''
+    unit: ''
+  row_count: 2
+  size_bytes: 129
+  last_modified: '2025-07-31T11:24:19.783256+00:00'
+- name: well_tubulars.csv
+  path: data/modules/bsee/current/wells/well_tubulars.csv
+  format: csv
+  columns:
+  - name: API_WELL_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  - name: WELL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: WAR_START_DT
+    type: string
+    description: ''
+    unit: ''
+  - name: WAR_END_DT
+    type: string
+    description: ''
+    unit: ''
+  - name: CSNG_INTV_TYPE_CD
+    type: string
+    description: ''
+    unit: ''
+  - name: CSNG_HOLE_SIZE
+    type: float
+    description: ''
+    unit: ''
+  - name: CASING_SIZE
+    type: float
+    description: ''
+    unit: ''
+  - name: CASING_WEIGHT
+    type: float
+    description: ''
+    unit: kg
+  - name: CASING_GRADE
+    type: string
+    description: ''
+    unit: ''
+  - name: CSNG_LINER_TEST_PRSS
+    type: float
+    description: ''
+    unit: ''
+  - name: CSNG_SHOE_TEST_PRSS
+    type: float
+    description: ''
+    unit: ''
+  - name: CSNG_CEMENT_VOL
+    type: float
+    description: ''
+    unit: ''
+  - name: SN_WAR_CSNG_INTV
+    type: integer
+    description: ''
+    unit: ''
+  - name: CSNG_SETTING_BOTM_MD
+    type: integer
+    description: ''
+    unit: feet
+  - name: CSNG_SETTING_TOP_MD
+    type: integer
+    description: ''
+    unit: feet
+  row_count: 100
+  size_bytes: 12155
+  last_modified: '2025-07-31T11:24:19.783855+00:00'
+- name: Paleowells.csv
+  path: data/modules/bsee/paleowells/Paleowells.csv
+  format: csv
+  columns:
+  - name: ''
+    type: integer
+    description: ''
+    unit: ''
+  - name: Record Type
+    type: string
+    description: ''
+    unit: ''
+  - name: API Well Number
+    type: integer
+    description: ''
+    unit: ''
+  - name: Paleo Report ID Number
+    type: integer
+    description: ''
+    unit: ''
+  - name: Total Number of Reports for API
+    type: integer
+    description: ''
+    unit: ''
+  - name: Measured Depth
+    type: integer
+    description: ''
+    unit: feet
+  - name: True Vertical Depth
+    type: integer
+    description: ''
+    unit: feet
+  - name: Definite/Possible
+    type: string
+    description: ''
+    unit: ''
+  - name: At/In
+    type: string
+    description: ''
+    unit: ''
+  - name: Paleo Age
+    type: string
+    description: ''
+    unit: ''
+  - name: Definite/Possible
+    type: string
+    description: ''
+    unit: ''
+  - name: At/In
+    type: string
+    description: ''
+    unit: ''
+  - name: Ecozone
+    type: float
+    description: ''
+    unit: ''
+  row_count: 6362
+  size_bytes: 646179
+  last_modified: '2026-03-15T13:06:39.668970+00:00'

@@ -51,6 +51,23 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
+class ColumnSchema:
+    """Schema for a single column in a dataset.
+
+    Attributes:
+        name: Column name as it appears in the data file.
+        type: Inferred data type (string, integer, float, datetime, boolean).
+        description: Human-readable description (blank for auto-generated).
+        unit: Physical or business unit (e.g. "feet", "barrels", "psi").
+    """
+
+    name: str
+    type: str = "string"
+    description: str = ""
+    unit: str = ""
+
+
+@dataclass
 class DatasetEntry:
     """A single dataset (CSV, binary, parquet, etc.) in the catalog.
 
@@ -62,6 +79,8 @@ class DatasetEntry:
         size_bytes: File size in bytes.
         row_count: Number of rows, if applicable.
         columns: Column names, if applicable.
+        column_schemas: Typed column schemas with name, type, description,
+            and unit for each column.
         update_frequency: How often the data is refreshed
             (daily, weekly, monthly, quarterly, annual, static).
         source_url: Upstream URL the data was fetched from.
@@ -81,6 +100,7 @@ class DatasetEntry:
     size_bytes: int
     row_count: Optional[int] = None
     columns: Optional[list[str]] = None
+    column_schemas: Optional[list[ColumnSchema]] = None
     update_frequency: Optional[str] = None
     source_url: Optional[str] = None
     last_modified: Optional[str] = None
