@@ -1,8 +1,9 @@
 """Base classes for scheduler jobs: JobResult dataclass and AbstractJob interface."""
+import json
 import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Optional
 
@@ -68,3 +69,46 @@ class AbstractJob(ABC):
 
         elapsed = datetime.now() - last_run
         return elapsed >= threshold
+
+
+def write_refresh_metadata(
+    module_name: str,
+    output_dir: Path,
+    records_updated: int,
+) -> None:
+    """Write a ``_metadata.json`` file after a successful refresh.
+
+    This provides a lightweight signal for the CLI ``status`` command and
+    any downstream freshness dashboards.
+
+    Args:
+        module_name: Logical module identifier (e.g. ``"bsee"``).
+        output_dir: Module data directory where ``_metadata.json`` is written.
+        records_updated: Total records written during this refresh.
+    """
+    try:
+        file_count = sum(
+            1
+            for p in output_dir.rglob("*")
+            if p.is_file() and p.name != "_metadata.json"
+        )
+        total_size = sum(
+            p.stat().st_size
+            for p in output_dir.rglob("*")
+            if p.is_file() and p.name != "_metadata.json"
+        )
+        metadata = {
+            "module": module_name,
+            "last_refresh": datetime.now(tz=timezone.utc).isoformat(),
+            "record_count": records_updated,
+            "file_count": file_count,
+            "total_size_bytes": total_size,
+            "source_url": "",
+            "format": "parquet",
+            "files": [],
+        }
+        meta_path = output_dir / "_metadata.json"
+        meta_path.write_text(json.dumps(metadata, indent=2) + "\n")
+        logger.info("Wrote %s", meta_path)
+    except Exception as exc:
+        logger.warning("Failed to write _metadata.json for %s: %s", module_name, exc)

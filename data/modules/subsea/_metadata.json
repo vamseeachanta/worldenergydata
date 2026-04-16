@@ -1,0 +1,23 @@
+{
+  "module": "subsea",
+  "last_refresh": "2026-03-26T00:00:00Z",
+  "record_count": 28,
+  "file_count": 2,
+  "total_size_bytes": 3116,
+  "source_url": "",
+  "format": "csv",
+  "files": [
+    {
+      "name": "curated/mooring_components.csv",
+      "size_bytes": 1504,
+      "modified": "2026-03-26",
+      "rows": 14
+    },
+    {
+      "name": "curated/rigid_jumper_specs.csv",
+      "size_bytes": 1612,
+      "modified": "2026-03-26",
+      "rows": 14
+    }
+  ]
+}

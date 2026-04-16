@@ -1,0 +1,17 @@
+{
+  "module": "vessel_hull_models",
+  "last_refresh": "2026-02-13T00:00:00Z",
+  "record_count": 5,
+  "file_count": 1,
+  "total_size_bytes": 1024,
+  "source_url": "",
+  "format": "csv",
+  "files": [
+    {
+      "name": "csv/rig_hulls/sample_rigs.csv",
+      "size_bytes": 1024,
+      "modified": "2026-02-13",
+      "rows": 5
+    }
+  ]
+}

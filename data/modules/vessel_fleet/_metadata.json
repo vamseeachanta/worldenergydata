@@ -1,0 +1,49 @@
+{
+  "module": "vessel_fleet",
+  "last_refresh": "2026-03-03T00:00:00Z",
+  "record_count": 2263,
+  "file_count": 7,
+  "total_size_bytes": 275460,
+  "source_url": "",
+  "format": "csv",
+  "files": [
+    {
+      "name": "curated/construction_vessels.csv",
+      "size_bytes": 4860,
+      "modified": "2026-03-03",
+      "rows": 17
+    },
+    {
+      "name": "curated/construction_vessels.parquet",
+      "size_bytes": 23402,
+      "modified": "2026-03-03"
+    },
+    {
+      "name": "curated/drilling_rigs.csv",
+      "size_bytes": 201262,
+      "modified": "2026-03-03",
+      "rows": 2210
+    },
+    {
+      "name": "curated/drilling_riser_components.csv",
+      "size_bytes": 6598,
+      "modified": "2026-03-03",
+      "rows": 36
+    },
+    {
+      "name": "raw/contractor_scrape/noble.json",
+      "size_bytes": 19507,
+      "modified": "2026-02-13"
+    },
+    {
+      "name": "raw/contractor_scrape/scrape_summary.json",
+      "size_bytes": 1322,
+      "modified": "2026-02-13"
+    },
+    {
+      "name": "raw/contractor_scrape/seadrill.json",
+      "size_bytes": 18509,
+      "modified": "2026-02-13"
+    }
+  ]
+}

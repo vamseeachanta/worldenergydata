@@ -1,0 +1,168 @@
+{
+  "module": "bsee",
+  "last_refresh": "2026-03-15T00:00:00Z",
+  "record_count": 65045,
+  "file_count": 28,
+  "total_size_bytes": 157257578,
+  "source_url": "",
+  "format": "csv",
+  "files": [
+    {
+      "name": ".local/borehole/BoreholeRawData.zip",
+      "size_bytes": 3480073,
+      "modified": "2026-02-09"
+    },
+    {
+      "name": ".local/borehole/BoreholeRawData/mv_boreholes_all.txt",
+      "size_bytes": 13587325,
+      "modified": "2026-02-09"
+    },
+    {
+      "name": ".local/borehole/download_metadata.json",
+      "size_bytes": 393,
+      "modified": "2026-02-09"
+    },
+    {
+      "name": ".local/data_index.json",
+      "size_bytes": 316,
+      "modified": "2026-02-09"
+    },
+    {
+      "name": ".local/rig_fleet/rig_fleet_full.bin",
+      "size_bytes": 422385,
+      "modified": "2026-02-13"
+    },
+    {
+      "name": ".local/rig_fleet/rig_fleet_metadata.json",
+      "size_bytes": 584,
+      "modified": "2026-02-09"
+    },
+    {
+      "name": ".local/rig_fleet/subsets/rig_fleet.bin",
+      "size_bytes": 5149,
+      "modified": "2026-02-13"
+    },
+    {
+      "name": ".local/war/download_metadata.json",
+      "size_bytes": 249,
+      "modified": "2026-02-09"
+    },
+    {
+      "name": ".local/war/eWellWARRawData.zip",
+      "size_bytes": 127933804,
+      "modified": "2026-02-09"
+    },
+    {
+      "name": ".local/war/war_borehole_view.pkl",
+      "size_bytes": 6020228,
+      "modified": "2026-02-09"
+    },
+    {
+      "name": "current/completions/completion_perforations.csv",
+      "size_bytes": 3997,
+      "modified": "2025-07-31",
+      "rows": 100
+    },
+    {
+      "name": "current/completions/completion_properties.csv",
+      "size_bytes": 5825,
+      "modified": "2025-07-31",
+      "rows": 100
+    },
+    {
+      "name": "current/completions/completion_summary.csv",
+      "size_bytes": 4048,
+      "modified": "2025-07-31",
+      "rows": 100
+    },
+    {
+      "name": "current/geology/geology_markers.csv",
+      "size_bytes": 3335,
+      "modified": "2025-07-31",
+      "rows": 100
+    },
+    {
+      "name": "current/geology/hydrocarbon_bearing_interval.csv",
+      "size_bytes": 5477,
+      "modified": "2025-07-31",
+      "rows": 100
+    },
+    {
+      "name": "current/infrastructure/all_bsee_blocks.csv",
+      "size_bytes": 607,
+      "modified": "2025-07-31",
+      "rows": 100
+    },
+    {
+      "name": "current/operations/ST_BP_and_tree_height.csv",
+      "size_bytes": 2706,
+      "modified": "2025-07-31",
+      "rows": 100
+    },
+    {
+      "name": "current/operations/cut_casings.csv",
+      "size_bytes": 4497,
+      "modified": "2025-07-31",
+      "rows": 100
+    },
+    {
+      "name": "current/operations/well_activity_bop_tests.csv",
+      "size_bytes": 5180,
+      "modified": "2025-07-31",
+      "rows": 100
+    },
+    {
+      "name": "current/operations/well_activity_open_hole.csv",
+      "size_bytes": 6583,
+      "modified": "2025-07-31",
+      "rows": 100
+    },
+    {
+      "name": "current/operations/well_activity_remarks.csv",
+      "size_bytes": 68237,
+      "modified": "2026-03-15",
+      "rows": 100
+    },
+    {
+      "name": "current/operations/well_activity_summary.csv",
+      "size_bytes": 9431,
+      "modified": "2025-07-31",
+      "rows": 100
+    },
+    {
+      "name": "current/production/production.csv",
+      "size_bytes": 2361,
+      "modified": "2025-07-31",
+      "rows": 100
+    },
+    {
+      "name": "current/wells/well_data.csv",
+      "size_bytes": 4135645,
+      "modified": "2025-07-31",
+      "rows": 57281
+    },
+    {
+      "name": "current/wells/well_directional_surveys.csv",
+      "size_bytes": 129,
+      "modified": "2025-07-31",
+      "rows": 2
+    },
+    {
+      "name": "current/wells/well_tubulars.csv",
+      "size_bytes": 12155,
+      "modified": "2025-07-31",
+      "rows": 100
+    },
+    {
+      "name": "paleowells/Lower Tertiary Wells.txt",
+      "size_bytes": 890680,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "paleowells/Paleowells.csv",
+      "size_bytes": 646179,
+      "modified": "2026-03-15",
+      "rows": 6362
+    }
+  ]
+}
