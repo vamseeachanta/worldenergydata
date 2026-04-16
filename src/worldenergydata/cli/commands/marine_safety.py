@@ -376,6 +376,7 @@ def db_init(
                 )
 
                 import sqlite3
+
                 db_path = _resolve_db_path(db_url)
 
                 if force and db_path.exists():
@@ -402,9 +403,7 @@ def db_init(
 
             except Exception as e:
                 progress.update(task, completed=100)
-                console.print(
-                    f"[yellow]Warning:[/yellow] Initialization failed: {e}"
-                )
+                console.print(f"[yellow]Warning:[/yellow] Initialization failed: {e}")
 
     except typer.Exit:
         raise
@@ -454,9 +453,7 @@ def db_migrate(
                 db_path = _resolve_db_path(None)
 
                 if not db_path.exists():
-                    console.print(
-                        "[red]Database not found.[/red] Run 'db init' first."
-                    )
+                    console.print("[red]Database not found.[/red] Run 'db init' first.")
                     progress.update(task, completed=True)
                     raise typer.Exit(1)
 
@@ -769,7 +766,9 @@ def export(
                             output.parent.mkdir(parents=True, exist_ok=True)
 
                             if export_format == ExportFormat.csv:
-                                with open(output, "w", newline="", encoding="utf-8") as f:
+                                with open(
+                                    output, "w", newline="", encoding="utf-8"
+                                ) as f:
                                     writer = csv_mod.DictWriter(f, fieldnames=columns)
                                     writer.writeheader()
                                     writer.writerows(records)
@@ -778,7 +777,9 @@ def export(
                                     json.dump(records, f, indent=2, default=str)
                             else:
                                 # For excel/parquet, fall back to csv
-                                with open(output, "w", newline="", encoding="utf-8") as f:
+                                with open(
+                                    output, "w", newline="", encoding="utf-8"
+                                ) as f:
                                     writer = csv_mod.DictWriter(f, fieldnames=columns)
                                     writer.writeheader()
                                     writer.writerows(records)
@@ -796,9 +797,7 @@ def export(
 
             except Exception as e:
                 progress.update(task, completed=100)
-                console.print(
-                    f"[yellow]Warning:[/yellow] Export failed: {e}"
-                )
+                console.print(f"[yellow]Warning:[/yellow] Export failed: {e}")
                 raise typer.Exit(1)
 
         console.print(

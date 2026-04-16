@@ -77,9 +77,7 @@ def export(
         db_path = _resolve_db_path(db_url)
 
         if not db_path.exists():
-            console.print(
-                "[red]Database not found.[/red] Run 'db init' first."
-            )
+            console.print("[red]Database not found.[/red] Run 'db init' first.")
             sys.exit(1)
 
         output_path = Path(output)
@@ -119,7 +117,9 @@ def export(
                 rows = cur.fetchall()
 
                 if not rows:
-                    console.print("[yellow]No records match the filter criteria[/yellow]")
+                    console.print(
+                        "[yellow]No records match the filter criteria[/yellow]"
+                    )
                     progress.update(task, completed=True)
                     return
 

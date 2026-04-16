@@ -18,13 +18,13 @@ from click.testing import CliRunner
 from worldenergydata.marine_safety.cli_db import db, _create_schema
 from worldenergydata.marine_safety.cli_export import export
 
-
 runner = CliRunner()
 
 
 # ---------------------------------------------------------------------------
 # db init
 # ---------------------------------------------------------------------------
+
 
 class TestDbInit:
     """Test the 'db init' CLI subcommand."""
@@ -69,7 +69,9 @@ class TestDbInit:
         conn.close()
 
         # Force recreate (--force auto-confirms in non-interactive)
-        result = runner.invoke(db, ["init", "--force", "--db-url", f"sqlite:///{db_file}"], input="y\n")
+        result = runner.invoke(
+            db, ["init", "--force", "--db-url", f"sqlite:///{db_file}"], input="y\n"
+        )
         assert result.exit_code == 0
 
         conn = sqlite3.connect(str(db_file))
@@ -84,6 +86,7 @@ class TestDbInit:
 # db migrate
 # ---------------------------------------------------------------------------
 
+
 class TestDbMigrate:
     """Test the 'db migrate' CLI subcommand."""
 
@@ -96,19 +99,24 @@ class TestDbMigrate:
         db_file = tmp_path / "test.db"
         runner.invoke(db, ["init", "--db-url", f"sqlite:///{db_file}"])
 
-        result = runner.invoke(db, ["migrate", "--check", "--db-url", f"sqlite:///{db_file}"])
+        result = runner.invoke(
+            db, ["migrate", "--check", "--db-url", f"sqlite:///{db_file}"]
+        )
         assert result.exit_code == 0
         assert "up to date" in result.output.lower()
 
     def test_migrate_no_db_fails(self, tmp_path):
         db_file = tmp_path / "nonexistent.db"
-        result = runner.invoke(db, ["migrate", "--check", "--db-url", f"sqlite:///{db_file}"])
+        result = runner.invoke(
+            db, ["migrate", "--check", "--db-url", f"sqlite:///{db_file}"]
+        )
         assert result.exit_code != 0
 
 
 # ---------------------------------------------------------------------------
 # db seed
 # ---------------------------------------------------------------------------
+
 
 class TestDbSeed:
     """Test the 'db seed' CLI subcommand."""
@@ -160,6 +168,7 @@ class TestDbSeed:
 # ---------------------------------------------------------------------------
 # export
 # ---------------------------------------------------------------------------
+
 
 class TestExport:
     """Test the 'export' CLI subcommand."""
@@ -240,9 +249,12 @@ class TestExport:
             export,
             [
                 "csv",
-                "--output", str(out_file),
-                "--source", "uscg",
-                "--db-url", f"sqlite:///{db_file}",
+                "--output",
+                str(out_file),
+                "--source",
+                "uscg",
+                "--db-url",
+                f"sqlite:///{db_file}",
             ],
         )
         assert result.exit_code == 0
@@ -265,6 +277,7 @@ class TestExport:
 # ---------------------------------------------------------------------------
 # scrape (help only -- actual scraping requires network)
 # ---------------------------------------------------------------------------
+
 
 class TestScrapeHelp:
     """Test scrape subcommands show help without crashing."""
@@ -301,6 +314,7 @@ class TestScrapeHelp:
 # ---------------------------------------------------------------------------
 # Integration: init + seed + export round-trip
 # ---------------------------------------------------------------------------
+
 
 class TestRoundTrip:
     """Test full round-trip: init -> seed -> export."""
@@ -365,9 +379,12 @@ class TestRoundTrip:
             export,
             [
                 "csv",
-                "--output", str(out_file),
-                "--limit", "3",
-                "--db-url", f"sqlite:///{db_file}",
+                "--output",
+                str(out_file),
+                "--limit",
+                "3",
+                "--db-url",
+                f"sqlite:///{db_file}",
             ],
         )
         assert result.exit_code == 0

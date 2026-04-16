@@ -41,8 +41,7 @@ def _resolve_db_path(db_url: Optional[str]) -> Path:
 def _create_schema(conn: sqlite3.Connection) -> None:
     """Create all tables from scratch."""
     cur = conn.cursor()
-    cur.executescript(
-        """
+    cur.executescript("""
         CREATE TABLE IF NOT EXISTS schema_version (
             version INTEGER NOT NULL,
             applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -148,8 +147,7 @@ def _create_schema(conn: sqlite3.Connection) -> None:
             created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             UNIQUE(incident_id_1, incident_id_2)
         );
-        """
-    )
+        """)
 
     # Record schema version
     cur.execute("DELETE FROM schema_version")
@@ -231,9 +229,7 @@ def migrate(check: bool, dry_run: bool, db_url: Optional[str]):
         db_path = _resolve_db_path(db_url)
 
         if not db_path.exists():
-            console.print(
-                "[red]Database not found.[/red] Run 'db init' first."
-            )
+            console.print("[red]Database not found.[/red] Run 'db init' first.")
             sys.exit(1)
 
         conn = sqlite3.connect(str(db_path))
@@ -248,9 +244,7 @@ def migrate(check: bool, dry_run: bool, db_url: Optional[str]):
             if not has_version_table:
                 current_version = 0
             else:
-                cur.execute(
-                    "SELECT COALESCE(MAX(version), 0) FROM schema_version"
-                )
+                cur.execute("SELECT COALESCE(MAX(version), 0) FROM schema_version")
                 current_version = cur.fetchone()[0]
 
             console.print(f"Current schema version: {current_version}")
@@ -316,9 +310,7 @@ def seed(data_dir: Optional[Path], clear_existing: bool, db_url: Optional[str]):
         db_path = _resolve_db_path(db_url)
 
         if not db_path.exists():
-            console.print(
-                "[red]Database not found.[/red] Run 'db init' first."
-            )
+            console.print("[red]Database not found.[/red] Run 'db init' first.")
             sys.exit(1)
 
         if data_dir is None:
@@ -352,16 +344,12 @@ def seed(data_dir: Optional[Path], clear_existing: bool, db_url: Optional[str]):
             total_loaded = 0
 
             with create_progress_spinner("Seeding") as progress:
-                task = progress.add_task(
-                    "[cyan]Loading seed data...", total=None
-                )
+                task = progress.add_task("[cyan]Loading seed data...", total=None)
 
                 for csv_file in csv_files:
                     file_count = _load_csv_seed(conn, csv_file)
                     total_loaded += file_count
-                    console.print(
-                        f"  Loaded {file_count} records from {csv_file.name}"
-                    )
+                    console.print(f"  Loaded {file_count} records from {csv_file.name}")
 
                 progress.update(task, completed=True)
 
@@ -406,8 +394,15 @@ def _load_csv_seed(conn: sqlite3.Connection, csv_path: Path) -> int:
                          incident_type, title, description, fatalities)
                     VALUES (?, ?, ?, ?, ?, ?, ?)
                     """,
-                    (source, incident_id, date_val, incident_type,
-                     title, description, fatalities),
+                    (
+                        source,
+                        incident_id,
+                        date_val,
+                        incident_type,
+                        title,
+                        description,
+                        fatalities,
+                    ),
                 )
                 if cur.rowcount > 0:
                     count += 1
