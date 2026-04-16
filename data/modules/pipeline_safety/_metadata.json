@@ -1,0 +1,91 @@
+{
+  "module": "pipeline_safety",
+  "last_refresh": "2026-02-08T00:00:00Z",
+  "record_count": 0,
+  "file_count": 16,
+  "total_size_bytes": 21068858,
+  "source_url": "",
+  "format": "xlsx",
+  "files": [
+    {
+      "name": "raw/phmsa/.claude-flow/metrics/agent-metrics.json",
+      "size_bytes": 2,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/phmsa/.claude-flow/metrics/performance.json",
+      "size_bytes": 157,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/phmsa/.claude-flow/metrics/task-metrics.json",
+      "size_bytes": 177,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/phmsa/extracted/EightCauseMappingMethods.xlsx",
+      "size_bytes": 28187,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/phmsa/extracted/Index Data Sources.txt",
+      "size_bytes": 1031,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/phmsa/extracted/SevenCauseMappingMethods.xlsx",
+      "size_bytes": 28314,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/phmsa/extracted/gd1986tofeb2004.xlsx",
+      "size_bytes": 1362003,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/phmsa/extracted/gd2010toPresent.xlsx",
+      "size_bytes": 2083538,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/phmsa/extracted/gdmar2004to2009.xlsx",
+      "size_bytes": 756015,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/phmsa/extracted/gtgg1986to2001.xlsx",
+      "size_bytes": 778945,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/phmsa/extracted/gtgg2002to2009.xlsx",
+      "size_bytes": 897606,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/phmsa/extracted/gtggungs2010toPresent.xlsx",
+      "size_bytes": 3025658,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/phmsa/extracted/hl1986to2001.xlsx",
+      "size_bytes": 1964564,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/phmsa/extracted/hl2002to2009.xlsx",
+      "size_bytes": 2427297,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/phmsa/extracted/hl2010toPresent.xlsx",
+      "size_bytes": 7627417,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/phmsa/extracted/lng2011toPresent.xlsx",
+      "size_bytes": 87947,
+      "modified": "2026-02-08"
+    }
+  ]
+}

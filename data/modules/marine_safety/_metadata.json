@@ -1,0 +1,359 @@
+{
+  "module": "marine_safety",
+  "last_refresh": "2026-03-15T00:00:00Z",
+  "record_count": 65,
+  "file_count": 69,
+  "total_size_bytes": 112161441,
+  "source_url": "",
+  "format": "html",
+  "files": [
+    {
+      "name": "checkpoints/uscg_scraper.json",
+      "size_bytes": 96,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "database/marine_safety.db",
+      "size_bytes": 62283776,
+      "modified": "2025-10-06"
+    },
+    {
+      "name": "input/fatality_incidents.csv",
+      "size_bytes": 3324,
+      "modified": "2025-10-23",
+      "rows": 20
+    },
+    {
+      "name": "input/foundering_incidents.csv",
+      "size_bytes": 2464,
+      "modified": "2025-10-23",
+      "rows": 15
+    },
+    {
+      "name": "input/hatch_incidents.csv",
+      "size_bytes": 4577,
+      "modified": "2025-10-23",
+      "rows": 30
+    },
+    {
+      "name": "marine_safety.db",
+      "size_bytes": 48365568,
+      "modified": "2025-10-08"
+    },
+    {
+      "name": "raw/bsee_incident_statistics.html",
+      "size_bytes": 99097,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/bsee_offshore/.claude-flow/metrics/agent-metrics.json",
+      "size_bytes": 2,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/bsee_offshore/.claude-flow/metrics/performance.json",
+      "size_bytes": 157,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/bsee_offshore/.claude-flow/metrics/task-metrics.json",
+      "size_bytes": 177,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/bsee_offshore/bsee_data_dataset.json",
+      "size_bytes": 28166,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/bsee_offshore/bsee_data_package_search_q=incidents.json",
+      "size_bytes": 28191,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/bsee_offshore/excel/.claude-flow/metrics/agent-metrics.json",
+      "size_bytes": 2,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/bsee_offshore/excel/.claude-flow/metrics/performance.json",
+      "size_bytes": 157,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/bsee_offshore/excel/.claude-flow/metrics/task-metrics.json",
+      "size_bytes": 169,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/bsee_offshore/pdf/.claude-flow/metrics/agent-metrics.json",
+      "size_bytes": 2,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/bsee_offshore/pdf/.claude-flow/metrics/performance.json",
+      "size_bytes": 157,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/bsee_offshore/pdf/.claude-flow/metrics/task-metrics.json",
+      "size_bytes": 177,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/canadian_tsb/tsb_page.html",
+      "size_bytes": 36477,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/data_gov_maritime_search.json",
+      "size_bytes": 34620,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/data_gov_osha_search.json",
+      "size_bytes": 12440,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/data_gov_pipeline_search.json",
+      "size_bytes": 550753,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/dlp_historical/.claude-flow/metrics/agent-metrics.json",
+      "size_bytes": 2,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/dlp_historical/.claude-flow/metrics/performance.json",
+      "size_bytes": 157,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/dlp_historical/.claude-flow/metrics/task-metrics.json",
+      "size_bytes": 177,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/doe_pipelines/bsee_accident_database_page.html",
+      "size_bytes": 28134,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/doe_pipelines/phmsa_pipeline_data.html",
+      "size_bytes": 0,
+      "modified": "2025-10-07"
+    },
+    {
+      "name": "raw/download_log.json",
+      "size_bytes": 4174,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/imca_dp/imca_annual_analysis_page_2024.html",
+      "size_bytes": 54872,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/imo_gisis/.claude-flow/metrics/agent-metrics.json",
+      "size_bytes": 2,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/imo_gisis/.claude-flow/metrics/performance.json",
+      "size_bytes": 157,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/imo_gisis/.claude-flow/metrics/task-metrics.json",
+      "size_bytes": 177,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/imo_gisis/COMPLETION_SUMMARY.txt",
+      "size_bytes": 5551,
+      "modified": "2025-10-11"
+    },
+    {
+      "name": "raw/imo_gisis/QUICK_MANUAL_DOWNLOAD.txt",
+      "size_bytes": 2150,
+      "modified": "2025-10-09"
+    },
+    {
+      "name": "raw/imo_gisis/collation_summary.json",
+      "size_bytes": 1815,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/imo_gisis/download_summary.json",
+      "size_bytes": 999,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/imo_gisis/no_results_2010.html",
+      "size_bytes": 27135,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/imo_gisis/no_results_2011.html",
+      "size_bytes": 27482,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/imo_gisis/no_results_2012.html",
+      "size_bytes": 27482,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/imo_gisis/no_results_2013.html",
+      "size_bytes": 27135,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/imo_gisis/no_results_2014.html",
+      "size_bytes": 27482,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/imo_gisis/no_results_2015.html",
+      "size_bytes": 27135,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/imo_gisis/no_results_2016.html",
+      "size_bytes": 27135,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/imo_gisis/no_results_2017.html",
+      "size_bytes": 27135,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/imo_gisis/no_results_2018.html",
+      "size_bytes": 27135,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/imo_gisis/no_results_2019.html",
+      "size_bytes": 27135,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/imo_gisis/page_structure_2010.html",
+      "size_bytes": 27135,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/imo_gisis/page_structure_2011.html",
+      "size_bytes": 27482,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/imo_gisis/page_structure_2012.html",
+      "size_bytes": 27482,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/imo_gisis/page_structure_2013.html",
+      "size_bytes": 27135,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/imo_gisis/page_structure_2014.html",
+      "size_bytes": 27482,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/imo_gisis/page_structure_2015.html",
+      "size_bytes": 27135,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/imo_gisis/page_structure_2016.html",
+      "size_bytes": 27135,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/imo_gisis/page_structure_2017.html",
+      "size_bytes": 27135,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/imo_gisis/page_structure_2018.html",
+      "size_bytes": 27135,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/imo_gisis/page_structure_2019.html",
+      "size_bytes": 27135,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/imo_gisis/page_structure_2020.html",
+      "size_bytes": 27135,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/noaa_spills/noaa_spills_index.html",
+      "size_bytes": 17814,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/osha_maritime/OSHA_Maritime_Inspections.json",
+      "size_bytes": 4288,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/osha_maritime/osha_fatalities.html",
+      "size_bytes": 0,
+      "modified": "2025-10-07"
+    },
+    {
+      "name": "raw/phmsa_hazmat/.claude-flow/metrics/agent-metrics.json",
+      "size_bytes": 2,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/phmsa_hazmat/.claude-flow/metrics/performance.json",
+      "size_bytes": 157,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/phmsa_hazmat/.claude-flow/metrics/task-metrics.json",
+      "size_bytes": 169,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/phmsa_hazmat/Index Data Sources.txt",
+      "size_bytes": 1088,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/phmsa_hazmat/phmsa_hazmat_main.html",
+      "size_bytes": 0,
+      "modified": "2025-10-07"
+    },
+    {
+      "name": "raw/uk_maib/maib_page.html",
+      "size_bytes": 13861,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/uscg/test_scrape_2024.json",
+      "size_bytes": 2,
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "raw/uscg_misle/acquisition_manifest.json",
+      "size_bytes": 3227,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "raw/uscg_misle/misle_data_page.html",
+      "size_bytes": 0,
+      "modified": "2025-10-05"
+    }
+  ]
+}

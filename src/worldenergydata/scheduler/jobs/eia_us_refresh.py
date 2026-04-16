@@ -13,7 +13,11 @@ import pandas as pd
 
 from worldenergydata.common.data_resolver import get_module_data_safe
 from worldenergydata.eia.ingestion import EIAIngestionSync
-from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
+from worldenergydata.scheduler.jobs.base import (
+    AbstractJob,
+    JobResult,
+    write_refresh_metadata,
+)
 from worldenergydata.scheduler.parquet_output import write_parquet
 
 logger = logging.getLogger(__name__)
@@ -61,6 +65,7 @@ class EiaUsRefreshJob(AbstractJob):
                 total_records,
                 len(results),
             )
+            write_refresh_metadata("eia", output_dir, total_records)
             return JobResult(
                 job_name=self.name,
                 start_time=start,

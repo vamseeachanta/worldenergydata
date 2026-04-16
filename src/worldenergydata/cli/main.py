@@ -231,47 +231,129 @@ def info() -> None:
 
 @app.command()
 def status() -> None:
-    """Display system status and data availability."""
+    """Show data freshness status for all modules.
+
+    Reads ``_metadata.json`` from each module under ``data/modules/`` and
+    displays a colour-coded freshness table.  Green = refreshed within
+    30 days, yellow = 30-90 days, red = older than 90 days or never.
+
+    Run ``python3 scripts/generate_metadata.py`` to regenerate metadata.
+    """
+    import json
+    from datetime import datetime, timezone
     from pathlib import Path
 
-    from worldenergydata.common.data_resolver import DataNotFoundError, get_data_root, get_module_data
+    from worldenergydata.common.data_resolver import DataNotFoundError, get_data_root
 
-    console.print(Panel("[bold]System Status[/bold]", border_style="green"))
+    console.print(Panel("[bold]Data Freshness Status[/bold]", border_style="green"))
 
-    # Check data directories
     try:
         _data_root = get_data_root()
     except DataNotFoundError:
         _data_root = Path("data")
 
-    data_paths = {
-        "BSEE Data": _data_root / "bsee",
-        "Marine Safety Data": _data_root / "marine_safety",
-        "SODIR Data": _data_root / "sodir",
-        "Metocean Data": _data_root / "metocean",
-        "Texas RRC Data": _data_root / "texas_rrc",
-        "Canada Data": _data_root / "canada",
-        "Mexico CNH Data": _data_root / "mexico_cnh",
-        "Landman Data": _data_root / "landman",
-        "LNG Terminals Data": _data_root / "modules" / "lng_terminals",
-        "Reports": Path("reports"),
-    }
+    modules_dir = _data_root / "modules"
+    if not modules_dir.is_dir():
+        console.print("[red]No data/modules directory found.[/red]")
+        console.print(
+            "[dim]Run 'make data' or 'python3 scripts/generate_metadata.py' first.[/dim]"
+        )
+        return
 
-    status_table = Table(show_header=True, header_style="bold")
-    status_table.add_column("Component")
-    status_table.add_column("Status")
-    status_table.add_column("Details", style="dim")
+    now = datetime.now(tz=timezone.utc)
 
-    for name, path in data_paths.items():
-        if path.exists():
-            file_count = len(list(path.rglob("*"))) if path.is_dir() else 1
+    status_table = Table(
+        title="Module Freshness",
+        show_header=True,
+        header_style="bold cyan",
+    )
+    status_table.add_column("Module", style="bold")
+    status_table.add_column("Last Refresh", justify="center")
+    status_table.add_column("Age (days)", justify="right")
+    status_table.add_column("Records", justify="right")
+    status_table.add_column("Files", justify="right")
+    status_table.add_column("Size", justify="right")
+
+    def _human_size(n: int) -> str:
+        for unit in ("B", "KB", "MB", "GB"):
+            if abs(n) < 1024:
+                return f"{n:.0f} {unit}" if unit == "B" else f"{n:.1f} {unit}"
+            n /= 1024  # type: ignore[assignment]
+        return f"{n:.1f} TB"
+
+    module_dirs = sorted(p for p in modules_dir.iterdir() if p.is_dir())
+
+    for mod_dir in module_dirs:
+        meta_path = mod_dir / "_metadata.json"
+        module_name = mod_dir.name
+
+        if not meta_path.exists():
             status_table.add_row(
-                name, "[green]Available[/green]", f"{file_count} files"
+                module_name,
+                "[dim]no metadata[/dim]",
+                "-",
+                "-",
+                "-",
+                "-",
             )
+            continue
+
+        try:
+            meta = json.loads(meta_path.read_text())
+        except (json.JSONDecodeError, OSError):
+            status_table.add_row(
+                module_name,
+                "[red]read error[/red]",
+                "-",
+                "-",
+                "-",
+                "-",
+            )
+            continue
+
+        last_refresh = meta.get("last_refresh")
+        if last_refresh:
+            try:
+                lr_dt = datetime.fromisoformat(last_refresh.replace("Z", "+00:00"))
+                age_days = (now - lr_dt).days
+            except (ValueError, TypeError):
+                lr_dt = None
+                age_days = None
         else:
-            status_table.add_row(name, "[yellow]Not Found[/yellow]", f"Path: {path}")
+            lr_dt = None
+            age_days = None
+
+        # Colour-code by freshness
+        if age_days is not None:
+            if age_days <= 30:
+                age_style = "green"
+            elif age_days <= 90:
+                age_style = "yellow"
+            else:
+                age_style = "red"
+            age_str = f"[{age_style}]{age_days}[/{age_style}]"
+            lr_str = f"[{age_style}]{last_refresh[:10]}[/{age_style}]"
+        else:
+            age_str = "[red]never[/red]"
+            lr_str = "[red]never[/red]"
+
+        record_count = meta.get("record_count", 0)
+        file_count = meta.get("file_count", 0)
+        total_size = meta.get("total_size_bytes", 0)
+
+        status_table.add_row(
+            module_name,
+            lr_str,
+            age_str,
+            f"{record_count:,}",
+            str(file_count),
+            _human_size(total_size),
+        )
 
     console.print(status_table)
+    console.print(
+        "\n[dim]Regenerate metadata: python3 scripts/generate_metadata.py[/dim]"
+    )
 
 
 @app.callback(invoke_without_command=True)
