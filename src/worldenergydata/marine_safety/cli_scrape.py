@@ -32,11 +32,13 @@ def scrape():
 @click.option("--start-year", type=int, help="Starting year for data collection")
 @click.option("--end-year", type=int, help="Ending year for data collection")
 @click.option("--output", type=click.Path(), help="Output file path for scraped data")
+@click.option("--dry-run", is_flag=True, help="Show plan without scraping")
 @click.option("--verbose", is_flag=True, help="Enable verbose output")
 def uscg(
     start_year: Optional[int],
     end_year: Optional[int],
     output: Optional[str],
+    dry_run: bool,
     verbose: bool,
 ):
     """
@@ -45,25 +47,64 @@ def uscg(
     Examples:
         marine-safety scrape uscg --start-year 2020 --end-year 2023
         marine-safety scrape uscg --output uscg_data.json --verbose
+        marine-safety scrape uscg --dry-run
     """
     try:
+        from worldenergydata.marine_safety.scrapers.uscg_scraper import (
+            USCGMarineCasualtyScraper,
+        )
+
+        effective_start = start_year or 2020
+        effective_end = end_year or datetime.now().year
+        output_path = Path(output) if output else Path("uscg_incidents.json")
+
+        if dry_run:
+            console.print(
+                Panel(
+                    f"[cyan]Would scrape USCG MISLE data[/cyan]\n\n"
+                    f"Year range: {effective_start} - {effective_end}\n"
+                    f"Output: {output_path}",
+                    title="Dry Run",
+                    border_style="yellow",
+                )
+            )
+            return
+
+        if verbose:
+            console.print(f"[dim]Year range: {effective_start}-{effective_end}[/dim]")
+            console.print(f"[dim]Output file: {output_path}[/dim]")
+
+        scraper = USCGMarineCasualtyScraper(
+            start_year=effective_start,
+            end_year=effective_end,
+        )
+
         with create_progress_spinner("Scraping") as progress:
             task = progress.add_task("[cyan]Scraping USCG MISLE data...", total=None)
-
-            # TODO: Import and execute USCG scraper
-            # from .scrapers.uscg_scraper import USCGScraper
-            # scraper = USCGScraper()
-            # data = scraper.scrape(start_year, end_year)
-
-            console.print("[yellow]USCG scraper not yet implemented[/yellow]")
-            console.print(f"Parameters: start={start_year}, end={end_year}")
-
+            incidents = scraper.scrape()
             progress.update(task, completed=True)
 
+        # Export results
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        scraper.export_to_json(output_path)
+
+        stats = scraper.get_statistics()
+        console.print(f"Scraped {stats.get('total_incidents', 0)} incidents")
+        console.print(f"Output: {output_path}")
         console.print("[green]v[/green] USCG scraping completed", style="bold")
 
+    except ImportError as e:
+        console.print(f"[red]x Import Error:[/red] {str(e)}", style="bold")
+        console.print(
+            "[yellow]Install dependencies: pdfplumber beautifulsoup4 tenacity[/yellow]"
+        )
+        sys.exit(1)
     except Exception as e:
         console.print(f"[red]x Error:[/red] {str(e)}", style="bold")
+        if verbose:
+            import traceback
+
+            console.print(traceback.format_exc())
         sys.exit(1)
 
 
