@@ -57,12 +57,14 @@ class FleetRouter:
         if owner:
             owner_lower = owner.lower()
             results = [
-                r for r in results
+                r
+                for r in results
                 if r.get("OWNER") and owner_lower in r["OWNER"].lower()
             ]
         if min_water_depth_ft is not None:
             results = [
-                r for r in results
+                r
+                for r in results
                 if r.get("WATER_DEPTH_RATING_FT") is not None
                 and r["WATER_DEPTH_RATING_FT"] >= min_water_depth_ft
             ]
@@ -87,12 +89,14 @@ class FleetRouter:
         if owner:
             owner_lower = owner.lower()
             results = [
-                r for r in results
+                r
+                for r in results
                 if r.get("OWNER") and owner_lower in r["OWNER"].lower()
             ]
         if min_crane_capacity_t is not None:
             results = [
-                r for r in results
+                r
+                for r in results
                 if r.get("MAIN_CRANE_CAPACITY_T") is not None
                 and r["MAIN_CRANE_CAPACITY_T"] >= min_crane_capacity_t
             ]

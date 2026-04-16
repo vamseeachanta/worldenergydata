@@ -69,17 +69,13 @@ class BseeRefreshJob(AbstractJob):
 
         for dataset_name, info in BSEE_DATASETS.items():
             try:
-                records = self._process_dataset(
-                    scraper, dataset_name, info, output_dir
-                )
+                records = self._process_dataset(scraper, dataset_name, info, output_dir)
                 if records is not None:
                     total_records += records
                 else:
                     failed_datasets.append(dataset_name)
             except Exception as exc:
-                logger.warning(
-                    "BSEE %s processing error: %s", dataset_name, exc
-                )
+                logger.warning("BSEE %s processing error: %s", dataset_name, exc)
                 failed_datasets.append(dataset_name)
 
         if total_records > 0:
@@ -97,9 +93,7 @@ class BseeRefreshJob(AbstractJob):
                 error_msg=None,
             )
 
-        error_msg = (
-            f"All BSEE downloads failed: {', '.join(failed_datasets)}"
-        )
+        error_msg = f"All BSEE downloads failed: {', '.join(failed_datasets)}"
         logger.error(error_msg)
         return JobResult(
             job_name=self.name,
@@ -125,26 +119,18 @@ class BseeRefreshJob(AbstractJob):
         url = BSEEWebScraper.URLS[info["url_key"]]
         logger.info("BSEE downloading %s from %s", dataset_name, url)
 
-        zip_bytes = scraper.download_zip_to_memory(
-            url, data_type=info["url_key"]
-        )
+        zip_bytes = scraper.download_zip_to_memory(url, data_type=info["url_key"])
         if zip_bytes is None:
             logger.warning("BSEE %s download returned None", dataset_name)
             return None
 
         with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf:
-            csv_names = [
-                n for n in zf.namelist() if n.lower().endswith(".csv")
-            ]
+            csv_names = [n for n in zf.namelist() if n.lower().endswith(".csv")]
             if not csv_names:
-                logger.warning(
-                    "BSEE %s zip contains no CSV files", dataset_name
-                )
+                logger.warning("BSEE %s zip contains no CSV files", dataset_name)
                 return None
             csv_name = csv_names[0]
-            logger.info(
-                "BSEE %s extracting %s", dataset_name, csv_name
-            )
+            logger.info("BSEE %s extracting %s", dataset_name, csv_name)
             df = pd.read_csv(zf.open(csv_name))
 
         out_path = output_dir / info["output_file"]

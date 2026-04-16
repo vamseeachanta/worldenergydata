@@ -6,6 +6,7 @@ TODO: Implement data fetching for Brazil ANP production data.
 - Write Parquet output to data/brazil_anp/ directory
 - Add tests in tests/unit/scheduler/test_brazil_anp_adapter.py
 """
+
 import logging
 from datetime import datetime
 from pathlib import Path

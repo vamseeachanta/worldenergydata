@@ -27,7 +27,8 @@ class StorageConfig(BaseSettings):
         description="Path for storing acquired hull models",
     )
     synthetic_path: Path = Field(
-        default_factory=lambda: get_module_data_safe("vessel_hull_models") / "synthetic",
+        default_factory=lambda: get_module_data_safe("vessel_hull_models")
+        / "synthetic",
         description="Path for parametrically generated hulls",
     )
     cache_path: Path = Field(
@@ -35,18 +36,19 @@ class StorageConfig(BaseSettings):
         description="Path for caching data",
     )
     max_file_size: int = Field(
-        default=500 * 1024 * 1024,  # 500MB
-        description="Maximum file size in bytes"
+        default=500 * 1024 * 1024, description="Maximum file size in bytes"  # 500MB
     )
 
     model_config = SettingsConfigDict(
         env_prefix="VESSEL_HULL_STORAGE_",
         env_file=".env",
         env_file_encoding="utf-8",
-        extra="ignore"
+        extra="ignore",
     )
 
-    @field_validator("base_path", "hulls_path", "synthetic_path", "cache_path", mode="before")
+    @field_validator(
+        "base_path", "hulls_path", "synthetic_path", "cache_path", mode="before"
+    )
     @classmethod
     def resolve_paths(cls, v: Any) -> Path:
         """Resolve paths"""
@@ -59,14 +61,15 @@ class AcquisitionConfig(BaseSettings):
 
     user_agent: str = Field(
         default="WorldEnergyData-VesselHullModels/1.0",
-        description="User agent for HTTP requests"
+        description="User agent for HTTP requests",
     )
     request_timeout: int = Field(default=60, description="Request timeout in seconds")
     max_retries: int = Field(default=3, description="Maximum retry attempts")
-    retry_delay: float = Field(default=2.0, description="Delay between retries in seconds")
+    retry_delay: float = Field(
+        default=2.0, description="Delay between retries in seconds"
+    )
     rate_limit_delay: float = Field(
-        default=1.0,
-        description="Delay between requests in seconds"
+        default=1.0, description="Delay between requests in seconds"
     )
 
     # Repository-specific settings
@@ -75,13 +78,15 @@ class AcquisitionConfig(BaseSettings):
     grabcad_enabled: bool = Field(default=True, description="Enable GrabCAD search")
 
     # API keys (optional - for premium features)
-    sketchfab_api_key: Optional[str] = Field(default=None, description="SketchFab API key")
+    sketchfab_api_key: Optional[str] = Field(
+        default=None, description="SketchFab API key"
+    )
 
     model_config = SettingsConfigDict(
         env_prefix="VESSEL_HULL_ACQUISITION_",
         env_file=".env",
         env_file_encoding="utf-8",
-        extra="ignore"
+        extra="ignore",
     )
 
 
@@ -89,27 +94,23 @@ class GeometryConfig(BaseSettings):
     """Configuration for geometry processing"""
 
     dimension_tolerance: float = Field(
-        default=0.05,
-        description="Tolerance for dimension validation (0.05 = 5%)"
+        default=0.05, description="Tolerance for dimension validation (0.05 = 5%)"
     )
     default_decimation: int = Field(
-        default=50_000,
-        description="Default face count for mesh decimation"
+        default=50_000, description="Default face count for mesh decimation"
     )
     enable_mesh_repair: bool = Field(
-        default=True,
-        description="Enable automatic mesh repair"
+        default=True, description="Enable automatic mesh repair"
     )
     max_vertex_count: int = Field(
-        default=10_000_000,
-        description="Maximum vertex count to process"
+        default=10_000_000, description="Maximum vertex count to process"
     )
 
     model_config = SettingsConfigDict(
         env_prefix="VESSEL_HULL_GEOMETRY_",
         env_file=".env",
         env_file_encoding="utf-8",
-        extra="ignore"
+        extra="ignore",
     )
 
 
@@ -117,27 +118,26 @@ class VisualizationConfig(BaseSettings):
     """Configuration for 3D visualization"""
 
     default_colorscale: str = Field(
-        default="Viridis",
-        description="Default Plotly colorscale for depth coloring"
+        default="Viridis", description="Default Plotly colorscale for depth coloring"
     )
     show_waterline: bool = Field(
-        default=True,
-        description="Show waterline plane by default"
+        default=True, description="Show waterline plane by default"
     )
     background_color: str = Field(
-        default="rgb(230, 240, 250)",
-        description="Default background color"
+        default="rgb(230, 240, 250)", description="Default background color"
     )
     html_template_dir: Path = Field(
-        default=Path("src/worldenergydata/modules/vessel_hull_models/visualization/templates"),
-        description="Directory for HTML templates"
+        default=Path(
+            "src/worldenergydata/modules/vessel_hull_models/visualization/templates"
+        ),
+        description="Directory for HTML templates",
     )
 
     model_config = SettingsConfigDict(
         env_prefix="VESSEL_HULL_VIZ_",
         env_file=".env",
         env_file_encoding="utf-8",
-        extra="ignore"
+        extra="ignore",
     )
 
 
@@ -159,7 +159,7 @@ class VesselHullModelsConfig(BaseSettings):
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=False,
-        extra="ignore"
+        extra="ignore",
     )
 
 

@@ -71,9 +71,7 @@ class WARDataAcquirer:
             return None
 
         merged = pd.concat(dataframes.values(), ignore_index=True)
-        logger.info(
-            f"Merged {len(dataframes)} WAR files -> {len(merged)} total rows"
-        )
+        logger.info(f"Merged {len(dataframes)} WAR files -> {len(merged)} total rows")
 
         return self._normalize_columns(merged)
 
@@ -84,9 +82,7 @@ class WARDataAcquirer:
         columns are silently skipped.
         """
         rename = {
-            old: new
-            for old, new in _COLUMN_RENAME_MAP.items()
-            if old in df.columns
+            old: new for old, new in _COLUMN_RENAME_MAP.items() if old in df.columns
         }
         if rename:
             df = df.rename(columns=rename)
@@ -120,9 +116,7 @@ class WARDataAcquirer:
             try:
                 meta = json.loads(meta_file.read_text())
                 downloaded_at = datetime.fromisoformat(meta["downloaded_at"])
-                age_days = (
-                    datetime.now(tz=timezone.utc) - downloaded_at
-                ).days
+                age_days = (datetime.now(tz=timezone.utc) - downloaded_at).days
                 if age_days > _CACHE_MAX_AGE_DAYS:
                     logger.info(
                         f"Cached WAR data is {age_days} days old "

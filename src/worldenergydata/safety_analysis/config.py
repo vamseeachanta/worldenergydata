@@ -53,7 +53,9 @@ class AnalysisConfig(BaseSettings):
     model_config = {"env_prefix": "SAFETY_", "case_sensitive": False}
 
     # Data paths
-    data_dir: Path = Field(default_factory=lambda: get_data_root_safe() / "safety_analysis")
+    data_dir: Path = Field(
+        default_factory=lambda: get_data_root_safe() / "safety_analysis"
+    )
     model_dir: Path = Path("models/safety_analysis")
     report_dir: Path = Path("reports/safety_analysis")
 

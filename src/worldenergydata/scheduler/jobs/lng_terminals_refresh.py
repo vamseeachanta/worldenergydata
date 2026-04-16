@@ -6,6 +6,7 @@ TODO: Implement data fetching for LNG terminal data.
 - Write Parquet output to data/lng_terminals/ directory
 - Add tests in tests/unit/scheduler/test_lng_terminals_adapter.py
 """
+
 import logging
 from datetime import datetime
 from pathlib import Path

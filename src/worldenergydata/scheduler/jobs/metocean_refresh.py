@@ -6,6 +6,7 @@ TODO: Implement data fetching for metocean sources.
 - Write Parquet output to data/metocean/ directory
 - Add tests in tests/unit/scheduler/test_metocean_adapter.py
 """
+
 import logging
 from datetime import datetime
 from pathlib import Path

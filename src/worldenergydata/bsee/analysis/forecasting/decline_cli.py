@@ -85,9 +85,7 @@ def main(argv=None):
         type=Path,
         help="Path to production .bin file (default: auto-detect)",
     )
-    parser.add_argument(
-        "--verbose", "-v", action="store_true", help="Verbose logging"
-    )
+    parser.add_argument("--verbose", "-v", action="store_true", help="Verbose logging")
 
     args = parser.parse_args(argv)
 

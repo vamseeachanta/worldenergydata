@@ -18,6 +18,7 @@ _BSEE_BIN = str(get_module_data_safe("bsee") / "bin")
 wwy = WorkingWithYAML()
 zip_files_to_df = ZipFilestoDf()
 
+
 class WellData:
 
     def __init__(self):
@@ -33,39 +34,53 @@ class WellData:
         BoreholeRawData_df = self.get_BoreholeRawData_from_bin(cfg)
         eWellAPDRawData_df = self.get_eWellAPDRawData_from_bin(cfg)
         eWellEORRawData_df = self.get_eWellEORRawData_from_bin(cfg)
-        eWellWARRawData_mv_war_main_df = self.get_eWellWARRawData_mv_war_main_from_bin(cfg)
-        eWellWARRawData_mv_war_main_prop_df = self.get_eWellWARRawData_mv_war_main_prop_from_bin(cfg)
+        eWellWARRawData_mv_war_main_df = self.get_eWellWARRawData_mv_war_main_from_bin(
+            cfg
+        )
+        eWellWARRawData_mv_war_main_prop_df = (
+            self.get_eWellWARRawData_mv_war_main_prop_from_bin(cfg)
+        )
 
-        bsee_csv_data = {'BoreholeRawData_df': BoreholeRawData_df,
-                         'eWellAPDRawData_df': eWellAPDRawData_df,
-                         'eWellEORRawData_df': eWellEORRawData_df,
-                         'eWellWARRawData_mv_war_main_df': eWellWARRawData_mv_war_main_df,
-                         'eWellWARRawData_mv_war_main_prop_df': eWellWARRawData_mv_war_main_prop_df}
+        bsee_csv_data = {
+            "BoreholeRawData_df": BoreholeRawData_df,
+            "eWellAPDRawData_df": eWellAPDRawData_df,
+            "eWellEORRawData_df": eWellEORRawData_df,
+            "eWellWARRawData_mv_war_main_df": eWellWARRawData_mv_war_main_df,
+            "eWellWARRawData_mv_war_main_prop_df": eWellWARRawData_mv_war_main_prop_df,
+        }
 
-        #TODO assess the need for this data
+        # TODO assess the need for this data
         cfg = self.fetch_well_data(cfg)
         well_data_groups = []
-        for group in cfg[cfg['basename']]['data']['groups'] if 'groups' in cfg[cfg['basename']]['data'] else []:
-            if 'api12' not in group:
+        for group in (
+            cfg[cfg["basename"]]["data"]["groups"]
+            if "groups" in cfg[cfg["basename"]]["data"]
+            else []
+        ):
+            if "api12" not in group:
                 logger.error(f"API12 not found in group: {group}")
-            api12_array = group['api12']
+            api12_array = group["api12"]
             well_data_group = []
             for api12_idx in range(0, len(api12_array)):
-                api12_metadata = group['well_data'][api12_idx].copy()
+                api12_metadata = group["well_data"][api12_idx].copy()
 
-                merged_api12_df = self.get_api12_merged_df_from_all_sources(cfg, bsee_csv_data, api12_metadata)
-                individual_df_data = self.get_api12_data_from_all_sources(cfg, bsee_csv_data, api12_metadata)
+                merged_api12_df = self.get_api12_merged_df_from_all_sources(
+                    cfg, bsee_csv_data, api12_metadata
+                )
+                individual_df_data = self.get_api12_data_from_all_sources(
+                    cfg, bsee_csv_data, api12_metadata
+                )
 
-                api12_metadata.update({'merged_api12_df': merged_api12_df})
+                api12_metadata.update({"merged_api12_df": merged_api12_df})
                 api12_metadata.update(individual_df_data)
 
-                #TODO Other data sources
+                # TODO Other data sources
                 # directional_surveys = self.bsee_data.get_directional_surveys_by_api10(api10)
                 # well_tubulars_data = self.bsee_data.get_well_tubulars_data_by_api10(api10)
                 # completion_data = self.bsee_data.get_completion_data_by_api10(api10)
                 # Maintenance data
                 apm = self.apm_data.get_apm_data(cfg, api12_metadata)
-                api12_metadata.update({'apm': apm})
+                api12_metadata.update({"apm": apm})
 
                 well_data_group.append(api12_metadata)
 
@@ -74,137 +89,184 @@ class WellData:
         return cfg, well_data_groups
 
     def get_api12_merged_df_from_all_sources(self, cfg, bsee_csv_data, api12_metadata):
-        api12 = api12_metadata['api12'][0]
-        BoreholeRawData_df = bsee_csv_data['BoreholeRawData_df']
-        eWellAPDRawData_df = bsee_csv_data['eWellAPDRawData_df']
-        eWellEORRawData_df = bsee_csv_data['eWellEORRawData_df']
-        eWellWARRawData_mv_war_main_df = bsee_csv_data['eWellWARRawData_mv_war_main_df']
-        eWellWARRawData_mv_war_main_prop_df = bsee_csv_data['eWellWARRawData_mv_war_main_prop_df']
+        api12 = api12_metadata["api12"][0]
+        BoreholeRawData_df = bsee_csv_data["BoreholeRawData_df"]
+        eWellAPDRawData_df = bsee_csv_data["eWellAPDRawData_df"]
+        eWellEORRawData_df = bsee_csv_data["eWellEORRawData_df"]
+        eWellWARRawData_mv_war_main_df = bsee_csv_data["eWellWARRawData_mv_war_main_df"]
+        eWellWARRawData_mv_war_main_prop_df = bsee_csv_data[
+            "eWellWARRawData_mv_war_main_prop_df"
+        ]
 
-        api12_well_data = pd.read_csv(api12_metadata['file_name'])
-        api12_eWellEORRawData = eWellEORRawData_df[eWellEORRawData_df['API_WELL_NUMBER'] == api12].copy()
-        api12_eWellWARRawData_mv_war_main = eWellWARRawData_mv_war_main_df[eWellWARRawData_mv_war_main_df['API_WELL_NUMBER'] == api12].copy()
+        api12_well_data = pd.read_csv(api12_metadata["file_name"])
+        api12_eWellEORRawData = eWellEORRawData_df[
+            eWellEORRawData_df["API_WELL_NUMBER"] == api12
+        ].copy()
+        api12_eWellWARRawData_mv_war_main = eWellWARRawData_mv_war_main_df[
+            eWellWARRawData_mv_war_main_df["API_WELL_NUMBER"] == api12
+        ].copy()
         # api12_eWellWARRawData_mv_war_main_prop = eWellWARRawData_mv_war_main_prop_df[eWellWARRawData_mv_war_main_prop_df['API_WELL_NUMBER'] == api12].copy()
 
-        Borehole_apd_df = self.get_Borehole_apd_for_all_wells(BoreholeRawData_df, eWellAPDRawData_df)
-        api12_Borehole_apd = self.get_Borehole_apd_for_api12(cfg, Borehole_apd_df, api12)
+        Borehole_apd_df = self.get_Borehole_apd_for_all_wells(
+            BoreholeRawData_df, eWellAPDRawData_df
+        )
+        api12_Borehole_apd = self.get_Borehole_apd_for_api12(
+            cfg, Borehole_apd_df, api12
+        )
 
         # Merge all dataframes
-        api12_df = pd.merge(api12_Borehole_apd, api12_well_data, how='inner' ,
-                                    left_on=['API_WELL_NUMBER'], right_on=['API Well Number'])
-        api12_df = pd.merge(api12_eWellEORRawData, api12_df, how='outer' ,
-                                    left_on=['API_WELL_NUMBER'], right_on=['API Well Number'])
+        api12_df = pd.merge(
+            api12_Borehole_apd,
+            api12_well_data,
+            how="inner",
+            left_on=["API_WELL_NUMBER"],
+            right_on=["API Well Number"],
+        )
+        api12_df = pd.merge(
+            api12_eWellEORRawData,
+            api12_df,
+            how="outer",
+            left_on=["API_WELL_NUMBER"],
+            right_on=["API Well Number"],
+        )
         api12_df = self.pd_merge_clean_column_names(api12_df)
 
-        api12_df = pd.merge(api12_eWellWARRawData_mv_war_main, api12_df, how='outer' ,
-                                    left_on=['API_WELL_NUMBER'], right_on=['API Well Number'])
+        api12_df = pd.merge(
+            api12_eWellWARRawData_mv_war_main,
+            api12_df,
+            how="outer",
+            left_on=["API_WELL_NUMBER"],
+            right_on=["API Well Number"],
+        )
         api12_df = self.pd_merge_clean_column_names(api12_df)
 
-        api12_df = pd.merge(api12_df, eWellWARRawData_mv_war_main_prop_df, how='left' ,
-                                    left_on=['SN_WAR'], right_on=['SN_WAR'])
+        api12_df = pd.merge(
+            api12_df,
+            eWellWARRawData_mv_war_main_prop_df,
+            how="left",
+            left_on=["SN_WAR"],
+            right_on=["SN_WAR"],
+        )
         api12_df = self.pd_merge_clean_column_names(api12_df)
 
         return api12_df
 
     def get_api12_data_from_all_sources(self, cfg, bsee_csv_data, api12_metadata):
-        api12 = api12_metadata['api12'][0]
-        api12_df = pd.read_csv(api12_metadata['file_name'])
+        api12 = api12_metadata["api12"][0]
+        api12_df = pd.read_csv(api12_metadata["file_name"])
 
-        BoreholeRawData_df = bsee_csv_data['BoreholeRawData_df']
-        eWellAPDRawData_df = bsee_csv_data['eWellAPDRawData_df']
-        eWellEORRawData_df = bsee_csv_data['eWellEORRawData_df']
-        eWellWARRawData_mv_war_main_df = bsee_csv_data['eWellWARRawData_mv_war_main_df']
-        eWellWARRawData_mv_war_main_prop_df = bsee_csv_data['eWellWARRawData_mv_war_main_prop_df']
+        BoreholeRawData_df = bsee_csv_data["BoreholeRawData_df"]
+        eWellAPDRawData_df = bsee_csv_data["eWellAPDRawData_df"]
+        eWellEORRawData_df = bsee_csv_data["eWellEORRawData_df"]
+        eWellWARRawData_mv_war_main_df = bsee_csv_data["eWellWARRawData_mv_war_main_df"]
+        eWellWARRawData_mv_war_main_prop_df = bsee_csv_data[
+            "eWellWARRawData_mv_war_main_prop_df"
+        ]
 
         datasets = {
-            'api12_BoreholeRawData': BoreholeRawData_df,
-            'api12_eWellAPDRawData': eWellAPDRawData_df,
-            'api12_eWellEORRawData': eWellEORRawData_df,
-            'api12_eWellWARRawData_mv_war_main': eWellWARRawData_mv_war_main_df
+            "api12_BoreholeRawData": BoreholeRawData_df,
+            "api12_eWellAPDRawData": eWellAPDRawData_df,
+            "api12_eWellEORRawData": eWellEORRawData_df,
+            "api12_eWellWARRawData_mv_war_main": eWellWARRawData_mv_war_main_df,
         }
-        data = {'api12_df': api12_df}
+        data = {"api12_df": api12_df}
 
         # Filter dataframes by API12 which are not empty
         for key, df in datasets.items():
-            filtered_df = df[df['API_WELL_NUMBER'] == api12].copy()
+            filtered_df = df[df["API_WELL_NUMBER"] == api12].copy()
             data[key] = filtered_df
 
         # Handling api12_eWellWARRawData_mv_war_main_prop separately since it depends on another dataset
-        if 'api12_eWellWARRawData_mv_war_main' in data:
-            api12_eWellWARRawData_mv_war_main_prop = eWellWARRawData_mv_war_main_prop_df[
-                eWellWARRawData_mv_war_main_prop_df['SN_WAR'].isin(data['api12_eWellWARRawData_mv_war_main']['SN_WAR'])
-            ]
-            data['api12_eWellWARRawData_mv_war_main_prop'] = api12_eWellWARRawData_mv_war_main_prop
+        if "api12_eWellWARRawData_mv_war_main" in data:
+            api12_eWellWARRawData_mv_war_main_prop = (
+                eWellWARRawData_mv_war_main_prop_df[
+                    eWellWARRawData_mv_war_main_prop_df["SN_WAR"].isin(
+                        data["api12_eWellWARRawData_mv_war_main"]["SN_WAR"]
+                    )
+                ]
+            )
+            data["api12_eWellWARRawData_mv_war_main_prop"] = (
+                api12_eWellWARRawData_mv_war_main_prop
+            )
 
         return data
 
     def get_Borehole_apd_for_all_wells(self, BoreholeRawData_df, eWellAPDRawData_df):
 
-        self.Borehole_apd_df = self.get_merged_data(BoreholeRawData_df, eWellAPDRawData_df)
+        self.Borehole_apd_df = self.get_merged_data(
+            BoreholeRawData_df, eWellAPDRawData_df
+        )
 
         return self.Borehole_apd_df
 
     def get_Borehole_apd_for_api12(self, cfg, Borehole_apd_df, api12):
-        api12_Borehole_apd = Borehole_apd_df[Borehole_apd_df['API_WELL_NUMBER'] == api12].copy()
-
+        api12_Borehole_apd = Borehole_apd_df[
+            Borehole_apd_df["API_WELL_NUMBER"] == api12
+        ].copy()
 
         return api12_Borehole_apd
 
     def fetch_well_data(self, cfg):
-        cfg[cfg['basename']]['data'].update({'type': 'csv'})
+        cfg[cfg["basename"]]["data"].update({"type": "csv"})
         cfg = self.fetch_well_data_from_local_files(cfg)
 
         return cfg
 
     def fetch_well_data_from_local_files(self, cfg):
-        groups = cfg[cfg['basename']]['data']['groups'] if 'groups' in cfg[cfg['basename']]['data'] else []
+        groups = (
+            cfg[cfg["basename"]]["data"]["groups"]
+            if "groups" in cfg[cfg["basename"]]["data"]
+            else []
+        )
         api_data = APIData()
 
         for group_idx in range(0, len(groups)):
             group = groups[group_idx]
-            api12_array = group.get('api12', [])  # Get API numbers list
+            api12_array = group.get("api12", [])  # Get API numbers list
 
             api12_group_output = []
             for api12_idx in range(0, len(api12_array)):
                 api12 = api12_array[api12_idx]
-                api12_meta_data = {'api12': [api12], 'label': str(api12)}
+                api12_meta_data = {"api12": [api12], "label": str(api12)}
 
                 api_data.router(cfg, api12_meta_data)
                 api12_output_cfg = self.generate_output_item(cfg, api12_meta_data)
                 api12_group_output.append(api12_output_cfg)
 
-            cfg[cfg['basename']]['data']['groups'][group_idx].update({'well_data': api12_group_output})
+            cfg[cfg["basename"]]["data"]["groups"][group_idx].update(
+                {"well_data": api12_group_output}
+            )
 
         return cfg
 
     def generate_output_item(self, cfg, input_item):
 
-        label = input_item['label']
-        output_path = os.path.join(cfg['Analysis']['result_folder'], 'Data')
+        label = input_item["label"]
+        output_path = os.path.join(cfg["Analysis"]["result_folder"], "Data")
         if output_path is None:
-            result_folder = cfg['Analysis']['result_folder']
-            output_path = os.path.join(result_folder, 'Data')
+            result_folder = cfg["Analysis"]["result_folder"]
+            output_path = os.path.join(result_folder, "Data")
 
-        analysis_root_folder = cfg['Analysis']['analysis_root_folder']
+        analysis_root_folder = cfg["Analysis"]["analysis_root_folder"]
         is_dir_valid, output_path = is_dir_valid_func(output_path, analysis_root_folder)
 
-        output_file = os.path.join(output_path, str(label) + '.csv')
+        output_file = os.path.join(output_path, str(label) + ".csv")
 
         input_item_csv_cfg = deepcopy(input_item)
-        input_item_csv_cfg.update({'label': label, 'file_name': output_file})
+        input_item_csv_cfg.update({"label": label, "file_name": output_file})
         output_data = input_item_csv_cfg
 
         return output_data
 
     def get_BoreholeRawData_from_bin(self, cfg):
 
-        file_name = 'mv_boreholes_all.bin'
+        file_name = "mv_boreholes_all.bin"
 
-        library_name = 'worldenergydata'
+        library_name = "worldenergydata"
         library_file_cfg = {
-            'filename': f"{_BSEE_BIN}/borehole/{file_name}",
-            'library_name': library_name,
-            'repository_path': None
+            "filename": f"{_BSEE_BIN}/borehole/{file_name}",
+            "library_name": library_name,
+            "repository_path": None,
         }
 
         file_is_valid, file_name = get_repository_filename(library_file_cfg)
@@ -212,19 +274,19 @@ class WellData:
 
         if file_is_valid:
             df = pd.read_pickle(file_name)
-            borehole_codes = cfg['parameters']['borehole_codes']
+            borehole_codes = cfg["parameters"]["borehole_codes"]
 
-            BOREHOLE_STAT_CD = df['BOREHOLE_STAT_CD']
+            BOREHOLE_STAT_CD = df["BOREHOLE_STAT_CD"]
 
-            df['BOREHOLE_STAT_DESC'] = None
-            BOREHOLE_STAT_DESC = [None]*len(BOREHOLE_STAT_CD)
+            df["BOREHOLE_STAT_DESC"] = None
+            BOREHOLE_STAT_DESC = [None] * len(BOREHOLE_STAT_CD)
             for idx in range(0, len(BOREHOLE_STAT_CD)):
                 code = BOREHOLE_STAT_CD.iloc[idx]
                 for item in borehole_codes:
-                    if code == item['BOREHOLE_STAT_CD']:
-                        BOREHOLE_STAT_DESC[idx] = item['BOREHOLE_STAT_DESC']
+                    if code == item["BOREHOLE_STAT_CD"]:
+                        BOREHOLE_STAT_DESC[idx] = item["BOREHOLE_STAT_DESC"]
 
-            df['BOREHOLE_STAT_DESC'] = BOREHOLE_STAT_DESC
+            df["BOREHOLE_STAT_DESC"] = BOREHOLE_STAT_DESC
         else:
             raise Exception(f"File not found: {file_name}")
 
@@ -232,13 +294,13 @@ class WellData:
 
     def get_eWellEORRawData_from_bin(self, cfg):
 
-        file_name = 'mv_eor_mainquery.bin'
+        file_name = "mv_eor_mainquery.bin"
 
-        library_name = 'worldenergydata'
+        library_name = "worldenergydata"
         library_file_cfg = {
-            'filename': f"{_BSEE_BIN}/eor/{file_name}",
-            'library_name': library_name,
-            'repository_path': None
+            "filename": f"{_BSEE_BIN}/eor/{file_name}",
+            "library_name": library_name,
+            "repository_path": None,
         }
 
         file_is_valid, file_name = get_repository_filename(library_file_cfg)
@@ -253,13 +315,13 @@ class WellData:
     def get_eWellAPDRawData_from_bin(self, cfg):
 
         # Load CSV files
-        file_name = 'mv_apd_main.bin'
+        file_name = "mv_apd_main.bin"
 
-        library_name = 'worldenergydata'
+        library_name = "worldenergydata"
         library_file_cfg = {
-            'filename': f"{_BSEE_BIN}/ewellapd/{file_name}",
-            'library_name': library_name,
-            'repository_path': None
+            "filename": f"{_BSEE_BIN}/ewellapd/{file_name}",
+            "library_name": library_name,
+            "repository_path": None,
         }
 
         file_is_valid, file_name = get_repository_filename(library_file_cfg)
@@ -274,13 +336,13 @@ class WellData:
     def get_eWellWARRawData_mv_war_main_from_bin(self, cfg):
 
         # Load CSV files
-        file_name = 'mv_war_main.bin'
+        file_name = "mv_war_main.bin"
 
-        library_name = 'worldenergydata'
+        library_name = "worldenergydata"
         library_file_cfg = {
-            'filename': f"{_BSEE_BIN}/war/{file_name}",
-            'library_name': library_name,
-            'repository_path': None
+            "filename": f"{_BSEE_BIN}/war/{file_name}",
+            "library_name": library_name,
+            "repository_path": None,
         }
 
         file_is_valid, file_name = get_repository_filename(library_file_cfg)
@@ -295,13 +357,13 @@ class WellData:
     def get_eWellWARRawData_mv_war_main_prop_from_bin(self, cfg):
 
         # Load CSV files
-        file_name = 'mv_war_main_prop.bin'
+        file_name = "mv_war_main_prop.bin"
 
-        library_name = 'worldenergydata'
+        library_name = "worldenergydata"
         library_file_cfg = {
-            'filename': f"{_BSEE_BIN}/war/{file_name}",
-            'library_name': library_name,
-            'repository_path': None
+            "filename": f"{_BSEE_BIN}/war/{file_name}",
+            "library_name": library_name,
+            "repository_path": None,
         }
 
         file_is_valid, file_name = get_repository_filename(library_file_cfg)
@@ -326,8 +388,8 @@ class WellData:
         return merged_df
 
     def pd_merge_clean_column_names(self, merged_df):
-        merged_df = merged_df.loc[:, ~merged_df.columns.str.endswith('_y')]
-        merged_df.columns = merged_df.columns.str.replace('_x', '', regex=True)
+        merged_df = merged_df.loc[:, ~merged_df.columns.str.endswith("_y")]
+        merged_df.columns = merged_df.columns.str.replace("_x", "", regex=True)
         return merged_df
 
     # Old methods that are not used anymore, but kept for reference
@@ -355,20 +417,22 @@ class WellData:
 
     def get_eWellAPMRawData_from_zip(self, cfg):
 
-        columns = [MMS_COMPANY_NUM,
-                    API_WELL_NUMBER,
-                    WATER_DEPTH,
-                    WELL_NM_BP_SFIX,
-                    WELL_NM_ST_SFIX,
-                    SURF_AREA_CODE,
-                    SURF_BLOCK_NUM,
-                    SURF_LEASE_NUM,
-                    BOTM_AREA_CODE,
-                    BOTM_BLOCK_NUM,
-                    BOTM_LEASE_NUM,
-                    RIG_ID_NUM,
-                    BOREHOLE_STAT_CD,
-                    WELL_TYPE_CODE,
-                    BUS_ASC_NAME]
+        columns = [
+            MMS_COMPANY_NUM,
+            API_WELL_NUMBER,
+            WATER_DEPTH,
+            WELL_NM_BP_SFIX,
+            WELL_NM_ST_SFIX,
+            SURF_AREA_CODE,
+            SURF_BLOCK_NUM,
+            SURF_LEASE_NUM,
+            BOTM_AREA_CODE,
+            BOTM_BLOCK_NUM,
+            BOTM_LEASE_NUM,
+            RIG_ID_NUM,
+            BOREHOLE_STAT_CD,
+            WELL_TYPE_CODE,
+            BUS_ASC_NAME,
+        ]
 
-        #TODO
+        # TODO

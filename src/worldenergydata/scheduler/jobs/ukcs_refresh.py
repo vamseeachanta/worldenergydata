@@ -6,6 +6,7 @@ TODO: Implement data fetching for UKCS production data.
 - Write Parquet output to data/ukcs/ directory
 - Add tests in tests/unit/scheduler/test_ukcs_adapter.py
 """
+
 import logging
 from datetime import datetime
 from pathlib import Path

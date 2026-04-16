@@ -179,12 +179,16 @@ class Settings(BaseSettings):
     log_json: bool = Field(default=False, description="Output logs as JSON")
 
     # Data directories
-    data_dir: Path = Field(default_factory=get_data_root_safe, description="Base data directory")
+    data_dir: Path = Field(
+        default_factory=get_data_root_safe, description="Base data directory"
+    )
     raw_data_dir: Path = Field(
-        default_factory=lambda: get_data_root_safe() / "raw", description="Raw data directory"
+        default_factory=lambda: get_data_root_safe() / "raw",
+        description="Raw data directory",
     )
     processed_data_dir: Path = Field(
-        default_factory=lambda: get_data_root_safe() / "processed", description="Processed data directory"
+        default_factory=lambda: get_data_root_safe() / "processed",
+        description="Processed data directory",
     )
     reports_dir: Path = Field(
         default=Path("reports"), description="Reports output directory"

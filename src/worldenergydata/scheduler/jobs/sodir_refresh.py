@@ -64,9 +64,7 @@ class SodirRefreshJob(AbstractJob):
                 endpoint_path = endpoint_cfg["endpoint"]
                 table_id = endpoint_cfg["table_id"]
 
-                response = client.get(
-                    endpoint_path, params={"table": table_id}
-                )
+                response = client.get(endpoint_path, params={"table": table_id})
                 rows = response.get("data", [])
 
                 if rows:
