@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 # Configuration
 SOURCE_DIR = "worldenergydata/data/raw/legacy_safety/source"
-OUTPUT_FILE = "worldenergydata/data/legacy_safety_inventory.json"
+OUTPUT_FILE = "worldenergydata/data/modules/hse/legacy/safety_inventory.json"
 
 # Interesting file types for safety/integrity data
 DATA_EXTENSIONS = {
