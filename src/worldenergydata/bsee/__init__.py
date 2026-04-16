@@ -196,4 +196,17 @@ def __getattr__(name: str) -> Any:
         from worldenergydata.bsee.paleowells import PaleowellsVisualizer
         return PaleowellsVisualizer
 
+    # Query API singletons (issue #288)
+    if name == "production":
+        from worldenergydata.bsee.api import production
+        return production
+
+    if name == "wells":
+        from worldenergydata.bsee.api import wells
+        return wells
+
+    if name == "companies":
+        from worldenergydata.bsee.api import companies
+        return companies
+
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

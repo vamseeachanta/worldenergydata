@@ -49,3 +49,33 @@ from worldenergydata._compat import install_redirect as _install_redirect
 
 _install_redirect()
 del _install_redirect
+
+
+# ---------------------------------------------------------------------------
+# Lazy attribute access for query API modules
+# ---------------------------------------------------------------------------
+# Keeps ``import worldenergydata`` fast by deferring heavy sub-module
+# imports until first attribute access.
+
+def __getattr__(name: str):
+    """Lazy import of top-level query API namespaces.
+
+    Supported attributes:
+
+    * ``marine_safety_api`` — :mod:`worldenergydata.marine_safety.api` (incidents)
+
+    Note: ``bsee`` and ``fdas`` are real subpackages whose ``__init__.py``
+    files expose query API singletons (``production``, ``wells``,
+    ``companies``, ``economics``) via their own ``__getattr__``.
+
+    Examples
+    --------
+    >>> import worldenergydata as wed
+    >>> df = wed.bsee.production.query(year=2022)
+    >>> npv = wed.fdas.economics.npv([-1000, 100, 200], 0.10)
+    >>> df = wed.marine_safety_api.incidents.query(source="maib")
+    """
+    if name == "marine_safety_api":
+        from worldenergydata.marine_safety import api as _ms_api
+        return _ms_api
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

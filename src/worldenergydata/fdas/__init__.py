@@ -116,6 +116,17 @@ __all__ = [
     'LeaseMapping',
     'AdapterError',
 
+    # Query API (issue #288)
+    'economics',
+
     # Metadata
     '__version__',
 ]
+
+
+def __getattr__(name: str):
+    """Lazy import of query API singletons (issue #288)."""
+    if name == "economics":
+        from worldenergydata.fdas.api import economics
+        return economics
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
