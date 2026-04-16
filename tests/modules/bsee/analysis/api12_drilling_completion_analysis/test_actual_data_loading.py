@@ -15,14 +15,21 @@ from tests.modules.bsee.analysis.api12_drilling_completion_analysis.data_loader 
     load_and_prepare_data,
 )
 
+_LEASE_FILE = "tests/modules/bsee/analysis/results/drilling_and_completion_days_by_api_validation_20250805_191100.xlsx"
+_API12_FILE = "tests/modules/bsee/analysis/results/well_summ_multiple_wells.csv"
 
+
+@pytest.mark.skipif(
+    not Path(_LEASE_FILE).exists() or not Path(_API12_FILE).exists(),
+    reason="Requires BSEE data files (run 'make data' first)",
+)
 class TestActualDataLoading:
     """Test class for loading actual data files."""
 
     def test_load_actual_files(self):
         """Test loading the actual lease and API12 data files."""
-        lease_file = "tests/modules/bsee/analysis/results/drilling_and_completion_days_by_api_validation_20250805_191100.xlsx"
-        api12_file = "tests/modules/bsee/analysis/results/well_summ_multiple_wells.csv"
+        lease_file = _LEASE_FILE
+        api12_file = _API12_FILE
 
         # Verify files exist
         assert Path(lease_file).exists(), f"Lease file not found: {lease_file}"

@@ -4,19 +4,32 @@ This module validates that production data extraction matches Excel methodology.
 """
 
 import os
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import pytest
 
+_EXCEL_FILE = os.path.join(
+    "docs",
+    "modules",
+    "bsee",
+    "data",
+    "NPV_JStM-WELL-Production-Data-thru-2019.xlsx",
+)
 
+
+@pytest.mark.skipif(
+    not Path(_EXCEL_FILE).exists(),
+    reason="Requires BSEE Excel data file (run 'make data' first)",
+)
 class TestProductionDataAlignment:
     """Test suite for production data alignment with Excel analysis."""
 
     @pytest.fixture
     def excel_file_path(self):
         """Path to the Excel NPV analysis file."""
-        return r"docs\modules\bsee\data\NPV_JStM-WELL-Production-Data-thru-2019.xlsx"
+        return _EXCEL_FILE
 
     def test_excel_production_data_identification(self, excel_file_path):
         """Test that we can identify the production data row in Excel."""

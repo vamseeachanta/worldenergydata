@@ -4,6 +4,8 @@ Test field-based analysis for API12 drilling completion comparison.
 This module tests the functionality for analyzing wells grouped by field/lease name.
 """
 
+from pathlib import Path
+
 import pandas as pd
 import pytest
 
@@ -16,7 +18,14 @@ from tests.modules.bsee.analysis.api12_drilling_completion_analysis.well_selecto
     get_wells_by_field,
 )
 
+_LEASE_FILE = "tests/modules/bsee/analysis/results/drilling_and_completion_days_by_api_validation_20250805_191100.xlsx"
+_API12_FILE = "tests/modules/bsee/analysis/results/well_summ_multiple_wells.csv"
 
+
+@pytest.mark.skipif(
+    not Path(_LEASE_FILE).exists() or not Path(_API12_FILE).exists(),
+    reason="Requires BSEE data files (run 'make data' first)",
+)
 class TestFieldAnalysis:
     """Test class for field-based analysis functionality."""
 

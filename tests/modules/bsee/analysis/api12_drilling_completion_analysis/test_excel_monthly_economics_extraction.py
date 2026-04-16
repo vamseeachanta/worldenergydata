@@ -9,9 +9,11 @@ and generates a CSV file with the same structure as the Task 8 DataFrame for com
 import os
 import sys
 from datetime import datetime
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pytest
 from loguru import logger
 
 # Add src to path for importing
@@ -19,14 +21,20 @@ sys.path.insert(
     0, os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "src")
 )
 
+_EXCEL_FILE = os.path.join(
+    "docs",
+    "modules",
+    "bsee",
+    "data",
+    "NPV_JStM-WELL-Production-Data-thru-2019.xlsx",
+)
+
 
 class ExcelMonthlyEconomicsExtractor:
     """Extract monthly economic calculations from Excel NPV file"""
 
     def __init__(self):
-        self.excel_file_path = (
-            r"docs\modules\bsee\data\NPV_JStM-WELL-Production-Data-thru-2019.xlsx"
-        )
+        self.excel_file_path = _EXCEL_FILE
         self.excel_sheet = "NPV w Mo'ly data chart"
         self.output_folder = "results"
 
@@ -301,6 +309,10 @@ class ExcelMonthlyEconomicsExtractor:
         return df_economics, csv_path
 
 
+@pytest.mark.skipif(
+    not Path(_EXCEL_FILE).exists(),
+    reason="Requires BSEE Excel data file (run 'make data' first)",
+)
 def test_excel_monthly_economics_extraction():
     """Test the Excel monthly economics extraction"""
 
