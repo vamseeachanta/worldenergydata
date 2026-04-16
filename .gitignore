@@ -296,3 +296,6 @@ COVERAGE_ANALYSIS.txt
 
 # Archive directories (moved to _archive/)
 archive/
+
+# Agent worktrees (local-only, must not be tracked as gitlinks)
+.claude/worktrees/
