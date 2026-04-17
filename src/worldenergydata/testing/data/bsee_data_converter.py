@@ -5,6 +5,7 @@ This module provides utilities to convert generic test data into BSEE-specific f
 required by the WorldEnergyData modules.
 """
 
+import logging
 import random
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -12,6 +13,8 @@ from typing import Dict, List, Optional, Union
 
 import numpy as np
 import pandas as pd
+
+logger = logging.getLogger(__name__)
 
 
 class BSEEDataConverter:

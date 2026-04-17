@@ -2,9 +2,12 @@
 Test consolidation utilities for reducing redundancy.
 """
 
+import logging
 import re
 from pathlib import Path
 from typing import Dict, List
+
+logger = logging.getLogger(__name__)
 
 
 class TestConsolidator:
