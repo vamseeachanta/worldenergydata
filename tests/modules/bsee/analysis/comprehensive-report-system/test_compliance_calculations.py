@@ -2,30 +2,17 @@
 Tests for compliance metrics calculations and validation
 """
 
-import sys
 from datetime import date, datetime
-from pathlib import Path
 from unittest.mock import Mock, patch
 
 import pytest
 
-# Add src to path for testing
-sys.path.insert(
-    0, str(Path(__file__).parent.parent.parent.parent.parent.parent / "src")
-)
-
-# Import models for compatibility
-from worldenergydata.modules.bsee.reports.comprehensive.models import (
-    EconomicMetrics,
-    ProductionMetrics,
-)
-
-# Import the compliance template classes directly
-exec(
-    open(
-        Path(__file__).parent.parent.parent.parent.parent.parent
-        / "src/worldenergydata/modules/bsee/reports/comprehensive/templates/compliance_template.py"
-    ).read()
+from worldenergydata.bsee.reports.comprehensive.templates.compliance_models import (
+    ComplianceMetrics,
+    EnvironmentalMetrics,
+    ProductionQuota,
+    RegulatoryMilestone,
+    SafetyMetrics,
 )
 
 
