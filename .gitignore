@@ -16,6 +16,10 @@ eggs/
 .eggs/
 lib/
 lib64/
+# Exception: cadence-cron vendored helper (wed#309) — byte-identical copy of
+# workspace-hub/scripts/cron/lib/cadence-common.sh, enforced by pre-push.
+!scripts/cron/lib/
+!scripts/cron/lib/*.sh
 parts/
 sdist/
 var/
