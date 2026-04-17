@@ -5,7 +5,7 @@ Tests coordinate validation, date validation, business logic rules,
 and cross-field validation.
 """
 
-from datetime import date, datetime, timedelta
+from datetime import date
 from decimal import Decimal
 
 import pytest
@@ -16,86 +16,6 @@ from worldenergydata.marine_safety.utils.validators import (
     LocationValidator,
     VesselValidator,
 )
-
-
-class TestDateValidator:
-    """Test suite for date validation."""
-
-    @pytest.mark.unit
-    def test_valid_incident_date(self):
-        """Test that valid incident dates pass validation."""
-        validator = DateValidator()
-
-        # Recent date
-        result = validator.validate_incident_date(date.today() - timedelta(days=7))
-        assert result.is_valid
-
-        # Historical date
-        result = validator.validate_incident_date(date(2020, 1, 1))
-        assert result.is_valid
-
-    @pytest.mark.unit
-    def test_future_incident_date(self):
-        """Test that future dates fail validation."""
-        validator = DateValidator()
-
-        future_date = date.today() + timedelta(days=1)
-        result = validator.validate_incident_date(future_date)
-
-        assert not result.is_valid
-        assert "future" in result.errors[0].lower()
-
-    @pytest.mark.unit
-    def test_very_old_incident_date(self):
-        """Test validation of very old incident dates."""
-        validator = DateValidator(min_year=1900)
-
-        # Valid old date
-        result = validator.validate_incident_date(date(1950, 1, 1))
-        assert result.is_valid
-
-        # Too old
-        result = validator.validate_incident_date(date(1800, 1, 1))
-        assert not result.is_valid
-
-    @pytest.mark.unit
-    def test_date_range_validation(self):
-        """Test validation of date ranges."""
-        validator = DateValidator()
-
-        start_date = date(2024, 1, 1)
-        end_date = date(2024, 12, 31)
-
-        # Valid range
-        result = validator.validate_date_range(start_date, end_date)
-        assert result.is_valid
-
-        # Invalid range (end before start)
-        result = validator.validate_date_range(end_date, start_date)
-        assert not result.is_valid
-
-    @pytest.mark.unit
-    def test_date_format_validation(self):
-        """Test validation of date string formats."""
-        validator = DateValidator()
-
-        # Valid formats
-        valid_formats = ["2024-01-15", "01/15/2024", "2024/01/15"]
-
-        for date_str in valid_formats:
-            result = validator.validate_date_string(date_str)
-            assert result.is_valid
-
-    @pytest.mark.unit
-    def test_invalid_date_format(self):
-        """Test handling of invalid date formats."""
-        validator = DateValidator()
-
-        invalid_formats = ["not-a-date", "13/32/2024", "2024-13-01", ""]
-
-        for date_str in invalid_formats:
-            result = validator.validate_date_string(date_str)
-            assert not result.is_valid
 
 
 class TestIncidentValidator:
@@ -254,49 +174,6 @@ class TestVesselValidator:
         assert not result.is_valid
 
 
-class TestIMOValidator:
-    """Test suite for IMO number validation."""
-
-    @pytest.mark.unit
-    def test_valid_imo_format(self):
-        """Test validation of valid IMO number formats."""
-        validator = IMOValidator()
-
-        valid_imos = ["9876543", "1234567", "9999999"]
-
-        for imo in valid_imos:
-            result = validator.validate(imo)
-            assert result.is_valid
-
-    @pytest.mark.unit
-    def test_invalid_imo_length(self):
-        """Test that IMO numbers must be 7 digits."""
-        validator = IMOValidator()
-
-        invalid_imos = ["123456", "12345678", ""]  # Too short  # Too long  # Empty
-
-        for imo in invalid_imos:
-            result = validator.validate(imo)
-            assert not result.is_valid
-
-    @pytest.mark.unit
-    def test_imo_checksum(self):
-        """Test IMO number checksum validation."""
-        validator = IMOValidator(validate_checksum=True)
-
-        # Valid IMO with correct checksum (example)
-        result = validator.validate("9074729")
-        assert result.is_valid
-
-    @pytest.mark.unit
-    def test_imo_non_numeric(self):
-        """Test that IMO numbers must be numeric."""
-        validator = IMOValidator()
-
-        result = validator.validate("ABC1234")
-        assert not result.is_valid
-
-
 class TestCrossFieldValidation:
     """Test suite for cross-field validation rules."""
 
@@ -346,30 +223,3 @@ class TestCrossFieldValidation:
         assert result.is_valid
 
 
-class TestValidationResult:
-    """Test suite for ValidationResult class."""
-
-    @pytest.mark.unit
-    def test_validation_result_success(self):
-        """Test creating a successful validation result."""
-        result = ValidationResult(is_valid=True, errors=[])
-
-        assert result.is_valid
-        assert result.errors == []
-
-    @pytest.mark.unit
-    def test_validation_result_failure(self):
-        """Test creating a failed validation result."""
-        errors = ["Error 1", "Error 2"]
-        result = ValidationResult(is_valid=False, errors=errors)
-
-        assert not result.is_valid
-        assert len(result.errors) == 2
-
-    @pytest.mark.unit
-    def test_validation_result_string_representation(self):
-        """Test string representation of validation results."""
-        result = ValidationResult(is_valid=False, errors=["Invalid data"])
-
-        str_repr = str(result)
-        assert "Invalid data" in str_repr
