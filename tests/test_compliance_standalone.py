@@ -12,6 +12,10 @@ from pathlib import Path
 from worldenergydata.bsee.reports.comprehensive.templates.base import BaseReportTemplate
 
 # Import the compliance template classes directly
+from worldenergydata.bsee.reports.comprehensive.templates.compliance_models import (
+    ProductionQuota,
+    RegulatoryMilestone,
+)
 from worldenergydata.bsee.reports.comprehensive.templates.compliance_template import (
     ComplianceMetrics,
     ComplianceTemplate,
