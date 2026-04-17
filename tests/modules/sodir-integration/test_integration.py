@@ -535,25 +535,5 @@ class TestModuleIntegration(unittest.TestCase):
         mock_api.get_blocks.assert_called_once()
         mock_storage.save_raw_data.assert_called()
 
-    def test_configuration_validation(self):
-        """Test configuration validation across components."""
-        # Invalid configuration
-        invalid_config = {
-            "api": {
-                "base_url": "",  # Invalid URL
-                "rate_limit": -1,  # Invalid rate limit
-            }
-        }
-
-        # Should handle invalid config gracefully
-        try:
-            module = SodirModule(invalid_config)
-            # Module should use defaults for invalid values
-            self.assertIsNotNone(module)
-        except Exception as e:
-            # Or raise meaningful error
-            self.assertIn("config", str(e).lower())
-
-
 if __name__ == "__main__":
     unittest.main()

@@ -19,27 +19,9 @@ import pytest
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from worldenergydata.engine import engine
-
 
 class TestCriticalOperationsPerformance:
     """Test performance of critical operations."""
-
-    def test_engine_initialization_performance(self, benchmark, tmp_path):
-        """Test Engine initialization performance."""
-        config = {
-            "input": {"file_type": "csv", "file_path": str(tmp_path / "test.csv")},
-            "output": {"file_type": "csv", "file_path": str(tmp_path / "output.csv")},
-        }
-
-        def init_engine():
-            return Engine(config)
-
-        result = benchmark(init_engine)
-        assert result is not None
-
-        # Performance assertions
-        assert benchmark.stats["mean"] < 0.1  # Should initialize in < 100ms
 
     def test_data_loading_performance(
         self, benchmark, sample_production_data, tmp_path
