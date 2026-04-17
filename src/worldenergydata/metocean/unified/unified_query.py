@@ -139,9 +139,7 @@ class UnifiedMetoceanClient:
             MetoceanResult containing merged data and metadata
         """
         selected_sources = self._coverage.get_clients(q.lat, q.lon)
-        logger.info(
-            f"Query ({q.lat}, {q.lon}): selected sources {selected_sources}"
-        )
+        logger.info(f"Query ({q.lat}, {q.lon}): selected sources {selected_sources}")
 
         # Parallel fetch
         source_dataframes: Dict[str, pd.DataFrame] = {}
@@ -155,9 +153,7 @@ class UnifiedMetoceanClient:
                 try:
                     df = future.result()
                     source_dataframes[src] = df
-                    logger.debug(
-                        f"Source {src} returned {len(df)} rows"
-                    )
+                    logger.debug(f"Source {src} returned {len(df)} rows")
                 except Exception as exc:
                     logger.warning(f"Source {src} failed: {exc}")
                     source_dataframes[src] = pd.DataFrame(
@@ -245,8 +241,11 @@ class UnifiedMetoceanClient:
         with NDBCClient() as client:
             stations_result = client.fetch_stations()
             station = _nearest_station(
-                stations_result.data, query.lat, query.lon,
-                lat_attr="latitude", lon_attr="longitude",
+                stations_result.data,
+                query.lat,
+                query.lon,
+                lat_attr="latitude",
+                lon_attr="longitude",
                 id_attr="station_id",
             )
             if station is None:
@@ -260,8 +259,9 @@ class UnifiedMetoceanClient:
                 end_date=query.end_date,
             )
 
-        obs_dicts = [vars(obs) if hasattr(obs, "__dict__") else obs
-                     for obs in result.data]
+        obs_dicts = [
+            vars(obs) if hasattr(obs, "__dict__") else obs for obs in result.data
+        ]
         return self._harmonizer.harmonize_ndbc(obs_dicts)
 
     def _fetch_coops(self, query: MetoceanQuery) -> pd.DataFrame:
@@ -271,8 +271,11 @@ class UnifiedMetoceanClient:
         with COOPSClient() as client:
             stations_result = client.fetch_stations()
             station = _nearest_station(
-                stations_result.data, query.lat, query.lon,
-                lat_attr="latitude", lon_attr="longitude",
+                stations_result.data,
+                query.lat,
+                query.lon,
+                lat_attr="latitude",
+                lon_attr="longitude",
                 id_attr="station_id",
             )
             if station is None:
@@ -287,8 +290,10 @@ class UnifiedMetoceanClient:
                     start_date=query.start_date,
                     end_date=query.end_date,
                 )
-                obs_dicts = [vars(obs) if hasattr(obs, "__dict__") else obs
-                             for obs in result.data]
+                obs_dicts = [
+                    vars(obs) if hasattr(obs, "__dict__") else obs
+                    for obs in result.data
+                ]
                 return self._harmonizer.harmonize_coops_current(obs_dicts)
             except Exception:
                 result = client.fetch_water_level(
@@ -296,8 +301,10 @@ class UnifiedMetoceanClient:
                     start_date=query.start_date,
                     end_date=query.end_date,
                 )
-                obs_dicts = [vars(obs) if hasattr(obs, "__dict__") else obs
-                             for obs in result.data]
+                obs_dicts = [
+                    vars(obs) if hasattr(obs, "__dict__") else obs
+                    for obs in result.data
+                ]
                 return self._harmonizer.harmonize_coops_water_level(obs_dicts)
 
     def _fetch_open_meteo(self, query: MetoceanQuery) -> pd.DataFrame:
@@ -312,8 +319,9 @@ class UnifiedMetoceanClient:
                 end_date=query.end_date,
             )
 
-        obs_dicts = [vars(obs) if hasattr(obs, "__dict__") else obs
-                     for obs in result.data]
+        obs_dicts = [
+            vars(obs) if hasattr(obs, "__dict__") else obs for obs in result.data
+        ]
         return self._harmonizer.harmonize_open_meteo(obs_dicts)
 
     def _fetch_met_norway(self, query: MetoceanQuery) -> pd.DataFrame:
@@ -326,8 +334,9 @@ class UnifiedMetoceanClient:
                 longitude=query.lon,
             )
 
-        obs_dicts = [vars(obs) if hasattr(obs, "__dict__") else obs
-                     for obs in result.data]
+        obs_dicts = [
+            vars(obs) if hasattr(obs, "__dict__") else obs for obs in result.data
+        ]
         return self._harmonizer.harmonize_met_norway(obs_dicts)
 
     def _fetch_erddap(self, query: MetoceanQuery) -> pd.DataFrame:
@@ -342,8 +351,9 @@ class UnifiedMetoceanClient:
                 bbox=(query.lon - 1, query.lon + 1, query.lat - 1, query.lat + 1),
             )
 
-        obs_dicts = [vars(obs) if hasattr(obs, "__dict__") else obs
-                     for obs in result.data]
+        obs_dicts = [
+            vars(obs) if hasattr(obs, "__dict__") else obs for obs in result.data
+        ]
         return self._harmonizer.harmonize_erddap(obs_dicts)
 
     # ------------------------------------------------------------------

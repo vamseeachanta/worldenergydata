@@ -202,9 +202,9 @@ class EnvironmentalContour:
         # Prefer contours already computed inside metocean-stats
         if joint_model._raw_result is not None:
             raw = joint_model._raw_result
-            contour_hs_list = raw[8]   # list of arrays, one per period
-            contour_tp_list = raw[9]   # list of arrays, one per period
-            periods_list = raw[10]     # list of periods
+            contour_hs_list = raw[8]  # list of arrays, one per period
+            contour_tp_list = raw[9]  # list of arrays, one per period
+            periods_list = raw[10]  # list of periods
 
             if isinstance(periods_list, (list, tuple)) and len(periods_list) > 0:
                 # Find closest requested period

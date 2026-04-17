@@ -54,11 +54,13 @@ class BaseCollector(ABC):
         self._cache: dict[str, tuple[float, Any]] = {}
 
         self.session = requests.Session()
-        self.session.headers.update({
-            "User-Agent": _DEFAULT_USER_AGENT,
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            "Accept-Encoding": "gzip, deflate",
-        })
+        self.session.headers.update(
+            {
+                "User-Agent": _DEFAULT_USER_AGENT,
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                "Accept-Encoding": "gzip, deflate",
+            }
+        )
 
     @abstractmethod
     def collect(self) -> Any:
@@ -109,17 +111,24 @@ class BaseCollector(ABC):
         for attempt in range(self.max_retries):
             try:
                 response = self.session.get(
-                    url, timeout=self.timeout, **kwargs,
+                    url,
+                    timeout=self.timeout,
+                    **kwargs,
                 )
                 response.raise_for_status()
                 self._set_cache(url, response)
                 return response
             except Exception as exc:
                 last_exc = exc
-                delay = self.retry_base_delay * (2 ** attempt)
+                delay = self.retry_base_delay * (2**attempt)
                 logger.warning(
                     "%s: attempt %d/%d for %s failed: %s (retry in %.1fs)",
-                    self.name, attempt + 1, self.max_retries, url, exc, delay,
+                    self.name,
+                    attempt + 1,
+                    self.max_retries,
+                    url,
+                    exc,
+                    delay,
                 )
                 if attempt < self.max_retries - 1:
                     time.sleep(delay)

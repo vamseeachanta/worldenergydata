@@ -25,18 +25,18 @@ from typing import Dict, List, Tuple
 logger = logging.getLogger(__name__)
 
 # ── Tax rates ──────────────────────────────────────────────────────────────
-PPT_RATE_PSC = 0.6575       # Petroleum Profits Tax: 65.75% (PSC regime)
-CITA_RATE = 0.30            # Companies Income Tax: 30%
-NDDC_LEVY_RATE = 0.03       # Niger Delta Development Commission levy: 3%
+PPT_RATE_PSC = 0.6575  # Petroleum Profits Tax: 65.75% (PSC regime)
+CITA_RATE = 0.30  # Companies Income Tax: 30%
+NDDC_LEVY_RATE = 0.03  # Niger Delta Development Commission levy: 3%
 
 # ── Royalty table: (min_depth_m, max_depth_m, rate) ──────────────────────
 # Depth-based royalty for deepwater PSC blocks (Nigeria Deep Offshore Act)
 DEEPWATER_ROYALTY_TABLE: List[Tuple[int, int, float]] = [
-    (0, 200, 0.05),       # 0–200m:   5%
-    (200, 500, 0.04),     # 200–500m: 4%
-    (500, 800, 0.03),     # 500–800m: 3%
-    (800, 1000, 0.015),   # 800–1000m: 1.5%
-    (1000, 9999, 0.00),   # >= 1000m:  0% (incentivised deepwater)
+    (0, 200, 0.05),  # 0–200m:   5%
+    (200, 500, 0.04),  # 200–500m: 4%
+    (500, 800, 0.03),  # 500–800m: 3%
+    (800, 1000, 0.015),  # 800–1000m: 1.5%
+    (1000, 9999, 0.00),  # >= 1000m:  0% (incentivised deepwater)
 ]
 
 # ── Profit oil split tiers: (max_production_bopd, nnpc_share) ────────────

@@ -14,8 +14,15 @@ from worldenergydata.eia_us.production.basin_production import BasinProductionLo
 from worldenergydata.eia_us.production.state_production import StateProductionLoader
 
 _STATES = ["TX", "ND", "NM", "OK", "CO", "WY", "LA", "AK", "CA", "OH", "WV", "PA"]
-_BASINS = ["Permian", "Bakken", "Eagle Ford", "DJ Basin", "Appalachian",
-           "Haynesville", "Anadarko"]
+_BASINS = [
+    "Permian",
+    "Bakken",
+    "Eagle Ford",
+    "DJ Basin",
+    "Appalachian",
+    "Haynesville",
+    "Anadarko",
+]
 
 random.seed(42)
 

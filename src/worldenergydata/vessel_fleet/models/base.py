@@ -6,8 +6,8 @@ from dataclasses import dataclass
 from typing import Optional
 
 from worldenergydata.vessel_fleet.constants import (
-    INACTIVE_STATUSES,
     FT_TO_M,
+    INACTIVE_STATUSES,
     M_TO_FT,
 )
 
@@ -74,7 +74,7 @@ class BaseVesselEntry:
         name = self.vessel_name.strip().upper()
         for prefix in _VESSEL_NAME_PREFIXES:
             if name.startswith(prefix):
-                name = name[len(prefix):]
+                name = name[len(prefix) :]
                 break
         return name.strip()
 

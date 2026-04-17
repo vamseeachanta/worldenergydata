@@ -4,10 +4,10 @@ import pandas as pd
 import pytest
 
 from worldenergydata.vessel_hull_models.rig_hulls.hull_form_mapper import (
+    _make_hull_library_ref,
     map_hull_form,
     populate_hull_forms,
     refresh_hull_library_refs,
-    _make_hull_library_ref,
 )
 
 
@@ -88,19 +88,23 @@ class TestMakeHullLibraryRef:
 
 class TestPopulateHullForms:
     def test_populates_missing(self):
-        df = pd.DataFrame({
-            "RIG_TYPE": ["drillship", "semi_submersible"],
-            "HULL_FORM_TYPE": [None, None],
-        })
+        df = pd.DataFrame(
+            {
+                "RIG_TYPE": ["drillship", "semi_submersible"],
+                "HULL_FORM_TYPE": [None, None],
+            }
+        )
         result = populate_hull_forms(df)
         assert result["HULL_FORM_TYPE"].iloc[0] == "drillship"
         assert result["HULL_FORM_TYPE"].iloc[1] == "semi_sub"
 
     def test_preserves_existing(self):
-        df = pd.DataFrame({
-            "RIG_TYPE": ["drillship"],
-            "HULL_FORM_TYPE": ["custom_form"],
-        })
+        df = pd.DataFrame(
+            {
+                "RIG_TYPE": ["drillship"],
+                "HULL_FORM_TYPE": ["custom_form"],
+            }
+        )
         result = populate_hull_forms(df)
         assert result["HULL_FORM_TYPE"].iloc[0] == "custom_form"
 
@@ -115,10 +119,12 @@ class TestPopulateHullForms:
         assert "HULL_FORM_TYPE" in result.columns
 
     def test_original_not_modified(self):
-        df = pd.DataFrame({
-            "RIG_TYPE": ["drillship"],
-            "HULL_FORM_TYPE": [None],
-        })
+        df = pd.DataFrame(
+            {
+                "RIG_TYPE": ["drillship"],
+                "HULL_FORM_TYPE": [None],
+            }
+        )
         original_val = df["HULL_FORM_TYPE"].iloc[0]
         populate_hull_forms(df)
         assert df["HULL_FORM_TYPE"].iloc[0] is original_val
@@ -126,36 +132,44 @@ class TestPopulateHullForms:
 
 class TestRefreshHullLibraryRefs:
     def test_adds_generic_ref(self):
-        df = pd.DataFrame({
-            "HULL_FORM_TYPE": ["drillship"],
-            "LOA_M": [None],
-            "HULL_LIBRARY_REF": [None],
-        })
+        df = pd.DataFrame(
+            {
+                "HULL_FORM_TYPE": ["drillship"],
+                "LOA_M": [None],
+                "HULL_LIBRARY_REF": [None],
+            }
+        )
         result = refresh_hull_library_refs(df)
         assert result["HULL_LIBRARY_REF"].iloc[0] == "drillship_generic"
 
     def test_updates_stale_generic(self):
-        df = pd.DataFrame({
-            "HULL_FORM_TYPE": ["drillship"],
-            "LOA_M": [228.0],
-            "HULL_LIBRARY_REF": ["drillship_generic"],
-        })
+        df = pd.DataFrame(
+            {
+                "HULL_FORM_TYPE": ["drillship"],
+                "LOA_M": [228.0],
+                "HULL_LIBRARY_REF": ["drillship_generic"],
+            }
+        )
         result = refresh_hull_library_refs(df)
         assert result["HULL_LIBRARY_REF"].iloc[0] == "drillship_230m"
 
     def test_preserves_custom_ref(self):
-        df = pd.DataFrame({
-            "HULL_FORM_TYPE": ["drillship"],
-            "LOA_M": [228.0],
-            "HULL_LIBRARY_REF": ["custom_ref_from_rao"],
-        })
+        df = pd.DataFrame(
+            {
+                "HULL_FORM_TYPE": ["drillship"],
+                "LOA_M": [228.0],
+                "HULL_LIBRARY_REF": ["custom_ref_from_rao"],
+            }
+        )
         result = refresh_hull_library_refs(df)
         assert result["HULL_LIBRARY_REF"].iloc[0] == "custom_ref_from_rao"
 
     def test_no_hull_library_ref_column(self):
-        df = pd.DataFrame({
-            "HULL_FORM_TYPE": ["semi_sub"],
-            "LOA_M": [100.0],
-        })
+        df = pd.DataFrame(
+            {
+                "HULL_FORM_TYPE": ["semi_sub"],
+                "LOA_M": [100.0],
+            }
+        )
         result = refresh_hull_library_refs(df)
         assert "HULL_LIBRARY_REF" in result.columns

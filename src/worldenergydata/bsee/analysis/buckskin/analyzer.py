@@ -264,10 +264,12 @@ class BuckskinAnalyzer:
 
         counts = years.value_counts().sort_index()
         cum = counts.cumsum()
-        return pd.DataFrame({
-            "year": cum.index,
-            "cumulative_wells": cum.values,
-        })
+        return pd.DataFrame(
+            {
+                "year": cum.index,
+                "cumulative_wells": cum.values,
+            }
+        )
 
     # ------------------------------------------------------------------
     # BOEM lease mapping
@@ -312,7 +314,9 @@ class BuckskinAnalyzer:
         adapter = BseeDeclineAdapter(min_points=5)
         try:
             ts = adapter.extract_from_dataframe(
-                df, product=product, label=BUCKSKIN.field_name,
+                df,
+                product=product,
+                label=BUCKSKIN.field_name,
             )
         except (ValueError, KeyError) as exc:
             logger.warning("Cannot extract decline data: %s", exc)
@@ -322,7 +326,8 @@ class BuckskinAnalyzer:
             return None
 
         analysis = DeclineAnalysis(
-            forecast_periods=forecast_periods, economic_limit=100.0,
+            forecast_periods=forecast_periods,
+            economic_limit=100.0,
         )
         try:
             comparison = analysis.fit_all_models(ts)

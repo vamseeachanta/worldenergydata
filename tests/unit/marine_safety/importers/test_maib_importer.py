@@ -33,21 +33,54 @@ def maib_occurrence_csv(tmp_path):
 
     with open(csv_path, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f, delimiter=";")
-        writer.writerow([
-            "Occurrence_Id", "Local_Date_Main_Event", "Main_Event_L1", "Main_Event_L2",
-            "Main_Event_L3", "Occurrence_Severity", "Short_Description", "Description",
-            "Occurrence_Location", "Coastal_State_Affected", "Latitude", "Longitude"
-        ])
-        writer.writerow([
-            "OCC-001", "2023-05-15", "Navigation", "Collision", "Collision with vessel",
-            "serious marine casualty", "Collision in fog", "Two vessels collided in dense fog",
-            "English Channel", "UNITED KINGDOM", "50.5", "-1.25"
-        ])
-        writer.writerow([
-            "OCC-002", "2023-06-20", "Technical", "Fire", "Engine room fire",
-            "marine casualty", "Engine fire", "Fire broke out in engine room",
-            "North Sea", "UK", "55.123", "2.456"
-        ])
+        writer.writerow(
+            [
+                "Occurrence_Id",
+                "Local_Date_Main_Event",
+                "Main_Event_L1",
+                "Main_Event_L2",
+                "Main_Event_L3",
+                "Occurrence_Severity",
+                "Short_Description",
+                "Description",
+                "Occurrence_Location",
+                "Coastal_State_Affected",
+                "Latitude",
+                "Longitude",
+            ]
+        )
+        writer.writerow(
+            [
+                "OCC-001",
+                "2023-05-15",
+                "Navigation",
+                "Collision",
+                "Collision with vessel",
+                "serious marine casualty",
+                "Collision in fog",
+                "Two vessels collided in dense fog",
+                "English Channel",
+                "UNITED KINGDOM",
+                "50.5",
+                "-1.25",
+            ]
+        )
+        writer.writerow(
+            [
+                "OCC-002",
+                "2023-06-20",
+                "Technical",
+                "Fire",
+                "Engine room fire",
+                "marine casualty",
+                "Engine fire",
+                "Fire broke out in engine room",
+                "North Sea",
+                "UK",
+                "55.123",
+                "2.456",
+            ]
+        )
 
     return csv_path
 
@@ -59,20 +92,57 @@ def maib_vessels_csv(tmp_path):
 
     with open(csv_path, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f, delimiter=";")
-        writer.writerow([
-            "Occurrence_Id", "Flag_State", "Vessel_Category_L1", "Ship_Craft_Type_L1",
-            "Ship_Craft_Type_L2", "LOA_Length_Overall_in_Metres", "GT_Gross_Tonnage",
-            "Year_Built", "Hull_Material", "Is_Commercial_Vessel", "Crew_Voyage",
-            "Deaths_Crew", "Injuries_Crew"
-        ])
-        writer.writerow([
-            "OCC-001", "United Kingdom", "Cargo Ship", "General Cargo", "Bulk Carrier",
-            "150.5", "5000", "2010", "Steel", "True", "20", "0", "2"
-        ])
-        writer.writerow([
-            "OCC-002", "Norway", "Tanker", "Oil Tanker", "Crude Oil Tanker",
-            "200.0", "25000", "2015", "Steel", "True", "25", "1", "3"
-        ])
+        writer.writerow(
+            [
+                "Occurrence_Id",
+                "Flag_State",
+                "Vessel_Category_L1",
+                "Ship_Craft_Type_L1",
+                "Ship_Craft_Type_L2",
+                "LOA_Length_Overall_in_Metres",
+                "GT_Gross_Tonnage",
+                "Year_Built",
+                "Hull_Material",
+                "Is_Commercial_Vessel",
+                "Crew_Voyage",
+                "Deaths_Crew",
+                "Injuries_Crew",
+            ]
+        )
+        writer.writerow(
+            [
+                "OCC-001",
+                "United Kingdom",
+                "Cargo Ship",
+                "General Cargo",
+                "Bulk Carrier",
+                "150.5",
+                "5000",
+                "2010",
+                "Steel",
+                "True",
+                "20",
+                "0",
+                "2",
+            ]
+        )
+        writer.writerow(
+            [
+                "OCC-002",
+                "Norway",
+                "Tanker",
+                "Oil Tanker",
+                "Crude Oil Tanker",
+                "200.0",
+                "25000",
+                "2015",
+                "Steel",
+                "True",
+                "25",
+                "1",
+                "3",
+            ]
+        )
 
     return csv_path
 
@@ -95,9 +165,7 @@ def maib_persons_csv(tmp_path):
 def test_maib_importer_initialization(maib_occurrence_csv, mock_session):
     """Test MAIB importer initializes correctly"""
     importer = MAIBImporter(
-        occurrences_file=maib_occurrence_csv,
-        session=mock_session,
-        batch_size=10
+        occurrences_file=maib_occurrence_csv, session=mock_session, batch_size=10
     )
 
     assert importer.source_path == maib_occurrence_csv
@@ -106,13 +174,15 @@ def test_maib_importer_initialization(maib_occurrence_csv, mock_session):
     assert importer.persons_by_occid == {}
 
 
-def test_maib_read_source(maib_occurrence_csv, maib_vessels_csv, maib_persons_csv, mock_session):
+def test_maib_read_source(
+    maib_occurrence_csv, maib_vessels_csv, maib_persons_csv, mock_session
+):
     """Test MAIB read_source yields records correctly"""
     importer = MAIBImporter(
         occurrences_file=maib_occurrence_csv,
         vessels_file=maib_vessels_csv,
         persons_file=maib_persons_csv,
-        session=mock_session
+        session=mock_session,
     )
 
     records = list(importer.read_source())
@@ -127,7 +197,7 @@ def test_maib_vessels_loading(maib_occurrence_csv, maib_vessels_csv, mock_sessio
     importer = MAIBImporter(
         occurrences_file=maib_occurrence_csv,
         vessels_file=maib_vessels_csv,
-        session=mock_session
+        session=mock_session,
     )
 
     importer._load_related_data()
@@ -143,7 +213,7 @@ def test_maib_persons_loading(maib_occurrence_csv, maib_persons_csv, mock_sessio
     importer = MAIBImporter(
         occurrences_file=maib_occurrence_csv,
         persons_file=maib_persons_csv,
-        session=mock_session
+        session=mock_session,
     )
 
     importer._load_related_data()
@@ -154,12 +224,14 @@ def test_maib_persons_loading(maib_occurrence_csv, maib_persons_csv, mock_sessio
     assert len(importer.persons_by_occid["OCC-002"]) == 1
 
 
-def test_maib_parse_collision_record(maib_occurrence_csv, maib_vessels_csv, mock_session):
+def test_maib_parse_collision_record(
+    maib_occurrence_csv, maib_vessels_csv, mock_session
+):
     """Test parsing MAIB collision record"""
     importer = MAIBImporter(
         occurrences_file=maib_occurrence_csv,
         vessels_file=maib_vessels_csv,
-        session=mock_session
+        session=mock_session,
     )
 
     raw_record = {
@@ -174,7 +246,7 @@ def test_maib_parse_collision_record(maib_occurrence_csv, maib_vessels_csv, mock
         "Occurrence_Location": "English Channel",
         "Coastal_State_Affected": "UNITED KINGDOM",
         "Latitude": "50.5",
-        "Longitude": "-1.25"
+        "Longitude": "-1.25",
     }
 
     parsed = importer.parse_record(raw_record)
@@ -191,10 +263,7 @@ def test_maib_parse_collision_record(maib_occurrence_csv, maib_vessels_csv, mock
 
 def test_maib_parse_fire_record(maib_occurrence_csv, mock_session):
     """Test parsing MAIB fire record"""
-    importer = MAIBImporter(
-        occurrences_file=maib_occurrence_csv,
-        session=mock_session
-    )
+    importer = MAIBImporter(occurrences_file=maib_occurrence_csv, session=mock_session)
 
     raw_record = {
         "Occurrence_Id": "OCC-002",
@@ -208,7 +277,7 @@ def test_maib_parse_fire_record(maib_occurrence_csv, mock_session):
         "Occurrence_Location": "North Sea",
         "Coastal_State_Affected": "UK",
         "Latitude": "55.123",
-        "Longitude": "2.456"
+        "Longitude": "2.456",
     }
 
     parsed = importer.parse_record(raw_record)
@@ -223,7 +292,7 @@ def test_maib_casualty_counting(maib_occurrence_csv, maib_persons_csv, mock_sess
     importer = MAIBImporter(
         occurrences_file=maib_occurrence_csv,
         persons_file=maib_persons_csv,
-        session=mock_session
+        session=mock_session,
     )
 
     importer._load_related_data()
@@ -239,10 +308,7 @@ def test_maib_casualty_counting(maib_occurrence_csv, maib_persons_csv, mock_sess
 
 def test_maib_date_parsing(maib_occurrence_csv, mock_session):
     """Test MAIB date parsing"""
-    importer = MAIBImporter(
-        occurrences_file=maib_occurrence_csv,
-        session=mock_session
-    )
+    importer = MAIBImporter(occurrences_file=maib_occurrence_csv, session=mock_session)
 
     valid_date = importer._parse_date("2023-05-15")
     assert valid_date == datetime(2023, 5, 15)
@@ -256,10 +322,7 @@ def test_maib_date_parsing(maib_occurrence_csv, mock_session):
 
 def test_maib_vessel_type_mapping(maib_occurrence_csv, mock_session):
     """Test MAIB vessel type mapping"""
-    importer = MAIBImporter(
-        occurrences_file=maib_occurrence_csv,
-        session=mock_session
-    )
+    importer = MAIBImporter(occurrences_file=maib_occurrence_csv, session=mock_session)
 
     assert importer._map_vessel_type("Fishing", "Trawler") == "fishing"
     assert importer._map_vessel_type("Cargo", "Container Ship") == "cargo"
@@ -270,17 +333,14 @@ def test_maib_vessel_type_mapping(maib_occurrence_csv, mock_session):
 
 def test_maib_incident_type_determination(maib_occurrence_csv, mock_session):
     """Test MAIB incident type determination from event fields"""
-    importer = MAIBImporter(
-        occurrences_file=maib_occurrence_csv,
-        session=mock_session
-    )
+    importer = MAIBImporter(occurrences_file=maib_occurrence_csv, session=mock_session)
 
     # Test collision event
     collision_record = {
         "Main_Event_L3": "collision with vessel",
         "Main_Event_L2": "collision",
         "Main_Event_L1": "navigation",
-        "Occurrence_Severity": "serious"
+        "Occurrence_Severity": "serious",
     }
     assert importer._determine_incident_type(collision_record) == "collision"
 
@@ -289,7 +349,7 @@ def test_maib_incident_type_determination(maib_occurrence_csv, mock_session):
         "Main_Event_L3": "",
         "Main_Event_L2": "grounding",
         "Main_Event_L1": "navigation",
-        "Occurrence_Severity": "serious"
+        "Occurrence_Severity": "serious",
     }
     assert importer._determine_incident_type(grounding_record) == "grounding"
 
@@ -298,17 +358,14 @@ def test_maib_incident_type_determination(maib_occurrence_csv, mock_session):
         "Main_Event_L3": "",
         "Main_Event_L2": "fire",
         "Main_Event_L1": "technical",
-        "Occurrence_Severity": "marine casualty"
+        "Occurrence_Severity": "marine casualty",
     }
     assert importer._determine_incident_type(fire_record) == "fire"
 
 
 def test_maib_parse_with_missing_fields(maib_occurrence_csv, mock_session):
     """Test MAIB parsing handles missing optional fields gracefully"""
-    importer = MAIBImporter(
-        occurrences_file=maib_occurrence_csv,
-        session=mock_session
-    )
+    importer = MAIBImporter(occurrences_file=maib_occurrence_csv, session=mock_session)
 
     minimal_record = {
         "Occurrence_Id": "OCC-MIN",
@@ -322,7 +379,7 @@ def test_maib_parse_with_missing_fields(maib_occurrence_csv, mock_session):
         "Occurrence_Location": "",
         "Coastal_State_Affected": "",
         "Latitude": "",
-        "Longitude": ""
+        "Longitude": "",
     }
 
     parsed = importer.parse_record(minimal_record)
@@ -337,16 +394,10 @@ def test_maib_parse_with_missing_fields(maib_occurrence_csv, mock_session):
 
 def test_maib_parse_invalid_record(maib_occurrence_csv, mock_session):
     """Test MAIB parsing rejects invalid records"""
-    importer = MAIBImporter(
-        occurrences_file=maib_occurrence_csv,
-        session=mock_session
-    )
+    importer = MAIBImporter(occurrences_file=maib_occurrence_csv, session=mock_session)
 
     # Missing occurrence ID
-    invalid_record = {
-        "Occurrence_Id": "",
-        "Local_Date_Main_Event": "2023-01-01"
-    }
+    invalid_record = {"Occurrence_Id": "", "Local_Date_Main_Event": "2023-01-01"}
 
     parsed = importer.parse_record(invalid_record)
     assert parsed is None

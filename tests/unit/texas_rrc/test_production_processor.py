@@ -3,12 +3,14 @@
 import pandas as pd
 import pytest
 
-from worldenergydata.texas_rrc.processors.production_processor import ProductionProcessor
-
+from worldenergydata.texas_rrc.processors.production_processor import (
+    ProductionProcessor,
+)
 
 # ---------------------------------------------------------------------------
 # Init and constants
 # ---------------------------------------------------------------------------
+
 
 class TestProductionProcessorInit:
     def test_defaults(self):
@@ -24,6 +26,7 @@ class TestProductionProcessorInit:
 # ---------------------------------------------------------------------------
 # _normalize_api_to_14_digit
 # ---------------------------------------------------------------------------
+
 
 class TestNormalizeApi14:
     def test_10_digit(self):
@@ -63,6 +66,7 @@ class TestNormalizeApi14:
 # _parse_production_date
 # ---------------------------------------------------------------------------
 
+
 class TestParseProductionDate:
     def test_yyyymm(self):
         proc = ProductionProcessor()
@@ -97,6 +101,7 @@ class TestParseProductionDate:
 # ---------------------------------------------------------------------------
 # _process_record (dict-based)
 # ---------------------------------------------------------------------------
+
 
 class TestProcessRecord:
     def test_basic(self):
@@ -140,6 +145,7 @@ class TestProcessRecord:
 # _process_records (list-based)
 # ---------------------------------------------------------------------------
 
+
 class TestProcessRecords:
     def test_basic(self):
         proc = ProductionProcessor()
@@ -162,6 +168,7 @@ class TestProcessRecords:
 # _normalize_columns
 # ---------------------------------------------------------------------------
 
+
 class TestNormalizeColumns:
     def test_standard_columns(self):
         proc = ProductionProcessor()
@@ -181,6 +188,7 @@ class TestNormalizeColumns:
 # process (DataFrame)
 # ---------------------------------------------------------------------------
 
+
 class TestProcessDataFrame:
     def test_empty_df(self):
         proc = ProductionProcessor()
@@ -190,11 +198,13 @@ class TestProcessDataFrame:
 
     def test_basic_df(self):
         proc = ProductionProcessor()
-        df = pd.DataFrame({
-            "DISTRICT_NO": ["01"],
-            "OIL_BBL": ["100"],
-            "GAS_MCF": ["500"],
-        })
+        df = pd.DataFrame(
+            {
+                "DISTRICT_NO": ["01"],
+                "OIL_BBL": ["100"],
+                "GAS_MCF": ["500"],
+            }
+        )
         result = proc.process(df, validate=False)
         assert "district" in result.columns
         assert "boe_total" in result.columns
@@ -202,11 +212,13 @@ class TestProcessDataFrame:
 
     def test_year_month_combined(self):
         proc = ProductionProcessor()
-        df = pd.DataFrame({
-            "CYCLE_YEAR": [2023],
-            "CYCLE_MONTH": [1],
-            "OIL_BBL": [100],
-        })
+        df = pd.DataFrame(
+            {
+                "CYCLE_YEAR": [2023],
+                "CYCLE_MONTH": [1],
+                "OIL_BBL": [100],
+            }
+        )
         result = proc.process(df, validate=False)
         assert "production_date" in result.columns
         assert result.iloc[0]["production_date"] == "2023-01"
@@ -216,13 +228,16 @@ class TestProcessDataFrame:
 # aggregate_monthly
 # ---------------------------------------------------------------------------
 
+
 class TestAggregateMonthly:
     def test_basic(self):
         proc = ProductionProcessor()
-        df = pd.DataFrame({
-            "production_date": ["2023-01", "2023-01", "2023-02"],
-            "oil_production": [100.0, 200.0, 150.0],
-        })
+        df = pd.DataFrame(
+            {
+                "production_date": ["2023-01", "2023-01", "2023-02"],
+                "oil_production": [100.0, 200.0, 150.0],
+            }
+        )
         result = proc.aggregate_monthly(df)
         assert len(result) == 2
         jan = result[result["production_date"] == "2023-01"]
@@ -253,13 +268,16 @@ class TestAggregateMonthly:
 # aggregate_annual
 # ---------------------------------------------------------------------------
 
+
 class TestAggregateAnnual:
     def test_basic(self):
         proc = ProductionProcessor()
-        df = pd.DataFrame({
-            "production_date": ["2023-01", "2023-06", "2024-01"],
-            "oil_production": [100.0, 200.0, 150.0],
-        })
+        df = pd.DataFrame(
+            {
+                "production_date": ["2023-01", "2023-06", "2024-01"],
+                "oil_production": [100.0, 200.0, 150.0],
+            }
+        )
         result = proc.aggregate_annual(df)
         assert len(result) == 2
 
@@ -282,23 +300,28 @@ class TestAggregateAnnual:
 # aggregate_by_district
 # ---------------------------------------------------------------------------
 
+
 class TestAggregateByDistrict:
     def test_basic(self):
         proc = ProductionProcessor()
-        df = pd.DataFrame({
-            "district": ["01", "01", "02"],
-            "oil_production": [100.0, 200.0, 150.0],
-        })
+        df = pd.DataFrame(
+            {
+                "district": ["01", "01", "02"],
+                "oil_production": [100.0, 200.0, 150.0],
+            }
+        )
         result = proc.aggregate_by_district(df)
         assert len(result) == 2
 
     def test_with_lease(self):
         proc = ProductionProcessor()
-        df = pd.DataFrame({
-            "district": ["01", "01"],
-            "oil_production": [100.0, 200.0],
-            "lease_number": ["L1", "L2"],
-        })
+        df = pd.DataFrame(
+            {
+                "district": ["01", "01"],
+                "oil_production": [100.0, 200.0],
+                "lease_number": ["L1", "L2"],
+            }
+        )
         result = proc.aggregate_by_district(df)
         assert "lease_count" in result.columns
         assert result.iloc[0]["lease_count"] == 2
@@ -323,24 +346,29 @@ class TestAggregateByDistrict:
 # aggregate_by_lease
 # ---------------------------------------------------------------------------
 
+
 class TestAggregateByLease:
     def test_basic(self):
         proc = ProductionProcessor()
-        df = pd.DataFrame({
-            "lease_number": ["L1", "L1", "L2"],
-            "oil_production": [100.0, 200.0, 150.0],
-        })
+        df = pd.DataFrame(
+            {
+                "lease_number": ["L1", "L1", "L2"],
+                "oil_production": [100.0, 200.0, 150.0],
+            }
+        )
         result = proc.aggregate_by_lease(df)
         assert len(result) == 2
 
     def test_with_name_and_district(self):
         proc = ProductionProcessor()
-        df = pd.DataFrame({
-            "lease_number": ["L1", "L1"],
-            "lease_name": ["Ranch A", "Ranch A"],
-            "district": ["01", "01"],
-            "oil_production": [100.0, 200.0],
-        })
+        df = pd.DataFrame(
+            {
+                "lease_number": ["L1", "L1"],
+                "lease_name": ["Ranch A", "Ranch A"],
+                "district": ["01", "01"],
+                "oil_production": [100.0, 200.0],
+            }
+        )
         result = proc.aggregate_by_lease(df)
         assert len(result) == 1
 
@@ -355,13 +383,16 @@ class TestAggregateByLease:
 # filter_by_date_range
 # ---------------------------------------------------------------------------
 
+
 class TestFilterByDateRange:
     def test_dataframe(self):
         proc = ProductionProcessor()
-        df = pd.DataFrame({
-            "production_date": ["2023-01", "2023-06", "2024-01"],
-            "oil_production": [100.0, 200.0, 150.0],
-        })
+        df = pd.DataFrame(
+            {
+                "production_date": ["2023-01", "2023-06", "2024-01"],
+                "oil_production": [100.0, 200.0, 150.0],
+            }
+        )
         result = proc.filter_by_date_range(df, "2023-01", "2023-12")
         assert len(result) == 2
 
@@ -385,12 +416,15 @@ class TestFilterByDateRange:
 # iter_processed
 # ---------------------------------------------------------------------------
 
+
 class TestIterProcessed:
     def test_basic(self):
         proc = ProductionProcessor()
-        records = iter([
-            {"district": "01", "oil_production": "100"},
-        ])
+        records = iter(
+            [
+                {"district": "01", "oil_production": "100"},
+            ]
+        )
         result = list(proc.iter_processed(records, validate=False))
         assert len(result) == 1
         assert result[0]["oil_production"] == 100.0
@@ -399,6 +433,7 @@ class TestIterProcessed:
 # ---------------------------------------------------------------------------
 # stats
 # ---------------------------------------------------------------------------
+
 
 class TestStats:
     def test_initial(self):

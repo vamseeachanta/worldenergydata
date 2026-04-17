@@ -3,14 +3,14 @@
 import pytest
 from pydantic import ValidationError
 
+from worldenergydata.bsee.data.schemas.deepwater_structure import (
+    DeepwaterStructureSchema,
+)
 from worldenergydata.bsee.data.schemas.pipeline import (
     PipelineLocationSchema,
     PipelinePermitSchema,
 )
 from worldenergydata.bsee.data.schemas.platform import PlatformStructureSchema
-from worldenergydata.bsee.data.schemas.deepwater_structure import (
-    DeepwaterStructureSchema,
-)
 from worldenergydata.bsee.data.schemas.rig_fleet import RigFleetSchema
 
 
@@ -22,12 +22,20 @@ class TestPipelinePermitSchema:
 
     def test_all_fields(self):
         s = PipelinePermitSchema(
-            SEGMENT_NUM="SEG001", PPL_SIZE_CODE="12",
-            MAOP_PRSS=1200.0, RECV_MAOP_PRSS=1100.0,
-            SEG_LENGTH=5.5, MAX_WTR_DPTH=500.0, MIN_WTR_DPTH=100.0,
-            PROD_CODE="OIL", STATUS_CODE="ACT",
-            PPL_CONST_DATE="2020-01-15", ABAN_DATE=None,
-            AREA_CODE="MC", BLOCK_NUMBER="100", LEASE_NUMBER="G12345",
+            SEGMENT_NUM="SEG001",
+            PPL_SIZE_CODE="12",
+            MAOP_PRSS=1200.0,
+            RECV_MAOP_PRSS=1100.0,
+            SEG_LENGTH=5.5,
+            MAX_WTR_DPTH=500.0,
+            MIN_WTR_DPTH=100.0,
+            PROD_CODE="OIL",
+            STATUS_CODE="ACT",
+            PPL_CONST_DATE="2020-01-15",
+            ABAN_DATE=None,
+            AREA_CODE="MC",
+            BLOCK_NUMBER="100",
+            LEASE_NUMBER="G12345",
         )
         assert s.SEGMENT_NUM == "SEG001"
         assert s.MAOP_PRSS == 1200.0
@@ -66,9 +74,13 @@ class TestPipelineLocationSchema:
 
     def test_all_fields(self):
         s = PipelineLocationSchema(
-            SEGMENT_NUM="SEG001", POINT_NUM=1,
-            LATITUDE=29.5, LONGITUDE=-90.0,
-            WATER_DEPTH=500.0, AREA_CODE="MC", BLOCK_NUMBER="100",
+            SEGMENT_NUM="SEG001",
+            POINT_NUM=1,
+            LATITUDE=29.5,
+            LONGITUDE=-90.0,
+            WATER_DEPTH=500.0,
+            AREA_CODE="MC",
+            BLOCK_NUMBER="100",
         )
         assert s.POINT_NUM == 1
         assert s.LATITUDE == 29.5
@@ -92,7 +104,9 @@ class TestPipelineLocationSchema:
         assert s.LONGITUDE == -90.0
 
     def test_latitude_out_of_range(self):
-        with pytest.raises(ValidationError, match="LATITUDE must be between -90 and 90"):
+        with pytest.raises(
+            ValidationError, match="LATITUDE must be between -90 and 90"
+        ):
             PipelineLocationSchema(LATITUDE=91.0)
 
     def test_latitude_negative_out_of_range(self):
@@ -100,7 +114,9 @@ class TestPipelineLocationSchema:
             PipelineLocationSchema(LATITUDE=-91.0)
 
     def test_longitude_out_of_range(self):
-        with pytest.raises(ValidationError, match="LONGITUDE must be between -180 and 180"):
+        with pytest.raises(
+            ValidationError, match="LONGITUDE must be between -180 and 180"
+        ):
             PipelineLocationSchema(LONGITUDE=181.0)
 
     def test_longitude_boundary(self):
@@ -113,7 +129,9 @@ class TestPipelineLocationSchema:
 class TestPlatformStructureSchema:
     def test_required_fields(self):
         s = PlatformStructureSchema(
-            AREA_CODE="MC", BLOCK_NUMBER="100", STRUCTURE_NUMBER="A001",
+            AREA_CODE="MC",
+            BLOCK_NUMBER="100",
+            STRUCTURE_NUMBER="A001",
         )
         assert s.AREA_CODE == "MC"
         assert s.BLOCK_NUMBER == "100"
@@ -125,7 +143,9 @@ class TestPlatformStructureSchema:
 
     def test_optional_defaults(self):
         s = PlatformStructureSchema(
-            AREA_CODE="MC", BLOCK_NUMBER="100", STRUCTURE_NUMBER="A001",
+            AREA_CODE="MC",
+            BLOCK_NUMBER="100",
+            STRUCTURE_NUMBER="A001",
         )
         assert s.WATER_DEPTH is None
         assert s.DECK_COUNT is None
@@ -133,15 +153,20 @@ class TestPlatformStructureSchema:
 
     def test_empty_str_to_none(self):
         s = PlatformStructureSchema(
-            AREA_CODE="MC", BLOCK_NUMBER="100", STRUCTURE_NUMBER="A001",
-            STRUCTURE_NAME="  ", LEASE_NUMBER="",
+            AREA_CODE="MC",
+            BLOCK_NUMBER="100",
+            STRUCTURE_NUMBER="A001",
+            STRUCTURE_NAME="  ",
+            LEASE_NUMBER="",
         )
         assert s.STRUCTURE_NAME is None
         assert s.LEASE_NUMBER is None
 
     def test_water_depth_from_string(self):
         s = PlatformStructureSchema(
-            AREA_CODE="MC", BLOCK_NUMBER="100", STRUCTURE_NUMBER="A001",
+            AREA_CODE="MC",
+            BLOCK_NUMBER="100",
+            STRUCTURE_NUMBER="A001",
             WATER_DEPTH="500.0",
         )
         assert s.WATER_DEPTH == 500.0
@@ -149,21 +174,28 @@ class TestPlatformStructureSchema:
     def test_water_depth_negative_raises(self):
         with pytest.raises(ValidationError, match="WATER_DEPTH must be >= 0"):
             PlatformStructureSchema(
-                AREA_CODE="MC", BLOCK_NUMBER="100", STRUCTURE_NUMBER="A001",
+                AREA_CODE="MC",
+                BLOCK_NUMBER="100",
+                STRUCTURE_NUMBER="A001",
                 WATER_DEPTH=-10.0,
             )
 
     def test_int_from_string(self):
         s = PlatformStructureSchema(
-            AREA_CODE="MC", BLOCK_NUMBER="100", STRUCTURE_NUMBER="A001",
-            DECK_COUNT=" 3 ", SLOT_COUNT="24",
+            AREA_CODE="MC",
+            BLOCK_NUMBER="100",
+            STRUCTURE_NUMBER="A001",
+            DECK_COUNT=" 3 ",
+            SLOT_COUNT="24",
         )
         assert s.DECK_COUNT == 3
         assert s.SLOT_COUNT == 24
 
     def test_int_empty_to_none(self):
         s = PlatformStructureSchema(
-            AREA_CODE="MC", BLOCK_NUMBER="100", STRUCTURE_NUMBER="A001",
+            AREA_CODE="MC",
+            BLOCK_NUMBER="100",
+            STRUCTURE_NUMBER="A001",
             DECK_COUNT="",
         )
         assert s.DECK_COUNT is None
@@ -171,14 +203,18 @@ class TestPlatformStructureSchema:
     def test_latitude_validation(self):
         with pytest.raises(ValidationError, match="LATITUDE"):
             PlatformStructureSchema(
-                AREA_CODE="MC", BLOCK_NUMBER="100", STRUCTURE_NUMBER="A001",
+                AREA_CODE="MC",
+                BLOCK_NUMBER="100",
+                STRUCTURE_NUMBER="A001",
                 LATITUDE=100.0,
             )
 
     def test_longitude_validation(self):
         with pytest.raises(ValidationError, match="LONGITUDE"):
             PlatformStructureSchema(
-                AREA_CODE="MC", BLOCK_NUMBER="100", STRUCTURE_NUMBER="A001",
+                AREA_CODE="MC",
+                BLOCK_NUMBER="100",
+                STRUCTURE_NUMBER="A001",
                 LONGITUDE=-200.0,
             )
 
@@ -186,22 +222,30 @@ class TestPlatformStructureSchema:
 class TestDeepwaterStructureSchema:
     def test_required_fields(self):
         s = DeepwaterStructureSchema(
-            AREA_CODE="GC", BLOCK_NUMBER="200", STRUCTURE_NUMBER="B002",
+            AREA_CODE="GC",
+            BLOCK_NUMBER="200",
+            STRUCTURE_NUMBER="B002",
         )
         assert s.AREA_CODE == "GC"
 
     def test_permit_fields(self):
         s = DeepwaterStructureSchema(
-            AREA_CODE="GC", BLOCK_NUMBER="200", STRUCTURE_NUMBER="B002",
-            PERMIT_NUMBER="P12345", BUS_ASC_NAME="Shell",
+            AREA_CODE="GC",
+            BLOCK_NUMBER="200",
+            STRUCTURE_NUMBER="B002",
+            PERMIT_NUMBER="P12345",
+            BUS_ASC_NAME="Shell",
         )
         assert s.PERMIT_NUMBER == "P12345"
         assert s.BUS_ASC_NAME == "Shell"
 
     def test_empty_permit_to_none(self):
         s = DeepwaterStructureSchema(
-            AREA_CODE="GC", BLOCK_NUMBER="200", STRUCTURE_NUMBER="B002",
-            PERMIT_NUMBER="  ", BUS_ASC_NAME="",
+            AREA_CODE="GC",
+            BLOCK_NUMBER="200",
+            STRUCTURE_NUMBER="B002",
+            PERMIT_NUMBER="  ",
+            BUS_ASC_NAME="",
         )
         assert s.PERMIT_NUMBER is None
         assert s.BUS_ASC_NAME is None
@@ -209,21 +253,28 @@ class TestDeepwaterStructureSchema:
     def test_water_depth_negative(self):
         with pytest.raises(ValidationError, match="WATER_DEPTH must be >= 0"):
             DeepwaterStructureSchema(
-                AREA_CODE="GC", BLOCK_NUMBER="200", STRUCTURE_NUMBER="B002",
+                AREA_CODE="GC",
+                BLOCK_NUMBER="200",
+                STRUCTURE_NUMBER="B002",
                 WATER_DEPTH=-500.0,
             )
 
     def test_lat_lon_validation(self):
         with pytest.raises(ValidationError):
             DeepwaterStructureSchema(
-                AREA_CODE="GC", BLOCK_NUMBER="200", STRUCTURE_NUMBER="B002",
+                AREA_CODE="GC",
+                BLOCK_NUMBER="200",
+                STRUCTURE_NUMBER="B002",
                 LATITUDE=95.0,
             )
 
     def test_int_coercion(self):
         s = DeepwaterStructureSchema(
-            AREA_CODE="GC", BLOCK_NUMBER="200", STRUCTURE_NUMBER="B002",
-            DECK_COUNT="5", SLOT_COUNT=" 30 ",
+            AREA_CODE="GC",
+            BLOCK_NUMBER="200",
+            STRUCTURE_NUMBER="B002",
+            DECK_COUNT="5",
+            SLOT_COUNT=" 30 ",
         )
         assert s.DECK_COUNT == 5
         assert s.SLOT_COUNT == 30
@@ -239,7 +290,7 @@ class TestRigFleetSchema:
             RigFleetSchema()
 
     def test_rig_name_strip_quotes(self):
-        s = RigFleetSchema(RIG_NAME="\"DEEPWATER NAUTILUS\"")
+        s = RigFleetSchema(RIG_NAME='"DEEPWATER NAUTILUS"')
         assert s.RIG_NAME == "DEEPWATER NAUTILUS"
 
     def test_rig_name_strip_single_quotes(self):
@@ -287,7 +338,9 @@ class TestRigFleetSchema:
         assert s.YEAR_BUILT == 2020
 
     def test_year_built_too_old(self):
-        with pytest.raises(ValidationError, match="YEAR_BUILT must be between 1900 and 2035"):
+        with pytest.raises(
+            ValidationError, match="YEAR_BUILT must be between 1900 and 2035"
+        ):
             RigFleetSchema(RIG_NAME="TEST", YEAR_BUILT=1800)
 
     def test_year_built_too_future(self):
@@ -307,15 +360,21 @@ class TestRigFleetSchema:
     def test_all_optional_fields(self):
         s = RigFleetSchema(
             RIG_NAME="DEEPWATER HORIZON",
-            RIG_TYPE="drillship", RIG_STATUS="active",
-            OWNER="Transocean", OPERATOR="BP",
+            RIG_TYPE="drillship",
+            RIG_STATUS="active",
+            OWNER="Transocean",
+            OPERATOR="BP",
             WATER_DEPTH_RATING_FT=10000.0,
             DRILLING_DEPTH_RATING_FT=30000.0,
-            LOA_M=230.0, BEAM_M=36.0,
+            LOA_M=230.0,
+            BEAM_M=36.0,
             DISPLACEMENT_TONNES=52587.0,
-            DP_CLASS=3, YEAR_BUILT=2001,
-            IMO_NUMBER="1234567", FLAG_STATE="MHL",
-            IS_OFFSHORE=True, WELLS_DRILLED_COUNT=15,
+            DP_CLASS=3,
+            YEAR_BUILT=2001,
+            IMO_NUMBER="1234567",
+            FLAG_STATE="MHL",
+            IS_OFFSHORE=True,
+            WELLS_DRILLED_COUNT=15,
         )
         assert s.OPERATOR == "BP"
         assert s.IS_OFFSHORE is True

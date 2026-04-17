@@ -1,10 +1,10 @@
 """Unit tests for the AllFieldsRunner module."""
 
-import pytest
-from unittest.mock import Mock, MagicMock, patch
 from pathlib import Path
+from unittest.mock import MagicMock, Mock, patch
 
 import pandas as pd
+import pytest
 
 from tests.test_markers import unit
 

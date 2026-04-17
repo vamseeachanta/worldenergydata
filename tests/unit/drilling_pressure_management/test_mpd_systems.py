@@ -1,7 +1,7 @@
 """Tests for MPD system catalog — mpd_systems module."""
 
-import pytest
 import pandas as pd
+import pytest
 
 from worldenergydata.drilling_pressure_management.mpd_systems import (
     MPD_SYSTEMS,
@@ -36,45 +36,43 @@ class TestMPDSystemsCatalog:
     def test_all_mpd_types_are_valid(self):
         valid_types = {"CBHP", "PMCD", "dual_gradient", "RFC", "multi_mode"}
         for entry in MPD_SYSTEMS:
-            assert entry.mpd_type in valid_types, (
-                f"{entry.system_id} has unknown mpd_type={entry.mpd_type!r}"
-            )
+            assert (
+                entry.mpd_type in valid_types
+            ), f"{entry.system_id} has unknown mpd_type={entry.mpd_type!r}"
 
     def test_all_max_pressure_ratings_positive(self):
         for entry in MPD_SYSTEMS:
-            assert entry.max_pressure_rating_psi > 0, (
-                f"{entry.system_id} has non-positive pressure rating"
-            )
+            assert (
+                entry.max_pressure_rating_psi > 0
+            ), f"{entry.system_id} has non-positive pressure rating"
 
     def test_all_max_flow_rates_positive(self):
         for entry in MPD_SYSTEMS:
-            assert entry.max_flow_rate_gpm > 0, (
-                f"{entry.system_id} has non-positive flow rate"
-            )
+            assert (
+                entry.max_flow_rate_gpm > 0
+            ), f"{entry.system_id} has non-positive flow rate"
 
     def test_all_key_features_non_empty(self):
         for entry in MPD_SYSTEMS:
-            assert entry.key_features, (
-                f"{entry.system_id} has empty key_features"
-            )
+            assert entry.key_features, f"{entry.system_id} has empty key_features"
 
     def test_all_key_features_have_at_least_three_items(self):
         for entry in MPD_SYSTEMS:
-            assert len(entry.key_features) >= 3, (
-                f"{entry.system_id} has fewer than 3 key_features"
-            )
+            assert (
+                len(entry.key_features) >= 3
+            ), f"{entry.system_id} has fewer than 3 key_features"
 
     def test_all_compatible_rig_types_non_empty(self):
         for entry in MPD_SYSTEMS:
-            assert entry.compatible_rig_types, (
-                f"{entry.system_id} has empty compatible_rig_types"
-            )
+            assert (
+                entry.compatible_rig_types
+            ), f"{entry.system_id} has empty compatible_rig_types"
 
     def test_all_suitable_water_depths_non_empty(self):
         for entry in MPD_SYSTEMS:
-            assert entry.suitable_water_depths, (
-                f"{entry.system_id} has empty suitable_water_depths"
-            )
+            assert (
+                entry.suitable_water_depths
+            ), f"{entry.system_id} has empty suitable_water_depths"
 
     def test_system_ids_are_unique(self):
         ids = [s.system_id for s in MPD_SYSTEMS]
@@ -153,8 +151,12 @@ class TestSystemsSummary:
     def test_dataframe_has_expected_columns(self):
         df = systems_summary()
         expected = {
-            "system_id", "manufacturer", "product_name",
-            "mpd_type", "max_pressure_rating_psi", "max_flow_rate_gpm",
+            "system_id",
+            "manufacturer",
+            "product_name",
+            "mpd_type",
+            "max_pressure_rating_psi",
+            "max_flow_rate_gpm",
         }
         assert expected.issubset(set(df.columns))
 

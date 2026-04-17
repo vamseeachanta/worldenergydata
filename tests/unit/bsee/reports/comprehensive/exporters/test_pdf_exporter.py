@@ -6,10 +6,10 @@ from worldenergydata.bsee.reports.comprehensive.exporters.pdf_exporter import (
     PDFExporter,
 )
 
-
 # ---------------------------------------------------------------------------
 # Init
 # ---------------------------------------------------------------------------
+
 
 class TestPDFExporterInit:
     def test_supported_format(self):
@@ -25,6 +25,7 @@ class TestPDFExporterInit:
 # ---------------------------------------------------------------------------
 # validate_data
 # ---------------------------------------------------------------------------
+
 
 class TestValidateData:
     def test_empty_data(self):
@@ -68,6 +69,7 @@ class TestValidateData:
 # get_supported_features
 # ---------------------------------------------------------------------------
 
+
 class TestGetSupportedFeatures:
     def test_returns_list(self):
         exporter = PDFExporter()
@@ -91,6 +93,7 @@ class TestGetSupportedFeatures:
 # generate_html
 # ---------------------------------------------------------------------------
 
+
 class TestGenerateHtml:
     def test_basic_structure(self):
         exporter = PDFExporter()
@@ -101,10 +104,12 @@ class TestGenerateHtml:
 
     def test_with_content(self):
         exporter = PDFExporter()
-        html = exporter.generate_html({
-            "report_metadata": {"title": "Report"},
-            "content": {"executive_summary": "Summary text"},
-        })
+        html = exporter.generate_html(
+            {
+                "report_metadata": {"title": "Report"},
+                "content": {"executive_summary": "Summary text"},
+            }
+        )
         assert "Executive Summary" in html
 
     def test_empty_metadata(self):

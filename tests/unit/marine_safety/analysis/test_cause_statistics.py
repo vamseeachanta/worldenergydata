@@ -17,10 +17,10 @@ from worldenergydata.marine_safety.analysis.cause_statistics import (
 )
 from worldenergydata.marine_safety.constants import CauseCategory, SeverityLevel
 
-
 # ---------------------------------------------------------------------------
 # FrequencyDistribution
 # ---------------------------------------------------------------------------
+
 
 class TestFrequencyDistribution:
     def test_init(self):
@@ -71,6 +71,7 @@ class TestFrequencyDistribution:
 # TemporalTrend
 # ---------------------------------------------------------------------------
 
+
 class TestTemporalTrend:
     def test_init(self):
         df = pd.DataFrame({"period": [202401], "count_fire": [3]})
@@ -108,6 +109,7 @@ class TestTemporalTrend:
 # ---------------------------------------------------------------------------
 # CrossTabulation
 # ---------------------------------------------------------------------------
+
 
 class TestCrossTabulation:
     def _make_crosstab(self):
@@ -158,6 +160,7 @@ class TestCrossTabulation:
 # ---------------------------------------------------------------------------
 # StatisticalSummary
 # ---------------------------------------------------------------------------
+
 
 class TestStatisticalSummary:
     def _make_summary(self):

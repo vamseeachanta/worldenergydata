@@ -160,9 +160,7 @@ _PUMPING_KEYWORDS: tuple[str, ...] = (
     "PUMP UNIT",
 )
 
-_WORKOVER_KEYWORDS: tuple[str, ...] = (
-    "WORKOVER",
-)
+_WORKOVER_KEYWORDS: tuple[str, ...] = ("WORKOVER",)
 
 
 def classify_rig_type(rig_name: str) -> RigType:

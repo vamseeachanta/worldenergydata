@@ -36,7 +36,8 @@ class TestRiserJointEntry:
 
     def test_has_buoyancy_true(self):
         r = RiserJointEntry(
-            component_id="RJ-001", buoyancy_coverage_pct=90.0,
+            component_id="RJ-001",
+            buoyancy_coverage_pct=90.0,
         )
         assert r.has_buoyancy is True
 
@@ -46,7 +47,8 @@ class TestRiserJointEntry:
 
     def test_has_buoyancy_zero(self):
         r = RiserJointEntry(
-            component_id="RJ-001", buoyancy_coverage_pct=0.0,
+            component_id="RJ-001",
+            buoyancy_coverage_pct=0.0,
         )
         assert r.has_buoyancy is False
 
@@ -91,7 +93,8 @@ class TestBOPEntry:
     def test_total_ram_count(self):
         b = BOPEntry(
             component_id="BOP-001",
-            shear_ram_count=2, pipe_ram_count=3,
+            shear_ram_count=2,
+            pipe_ram_count=3,
         )
         assert b.total_ram_count == 5
 
@@ -179,7 +182,8 @@ class TestTelescopicJointEntry:
 
     def test_total_length_ft_no_inner(self):
         t = TelescopicJointEntry(
-            component_id="TJ-001", outer_barrel_length_ft=60.0,
+            component_id="TJ-001",
+            outer_barrel_length_ft=60.0,
         )
         assert t.total_length_ft == 60.0
 

@@ -14,10 +14,10 @@ from worldenergydata.fdas.core.financial import (
     validate_cashflow_stream,
 )
 
-
 # ---------------------------------------------------------------------------
 # excel_like_mirr
 # ---------------------------------------------------------------------------
+
 
 class TestExcelLikeMirr:
     def test_basic_cashflows(self):
@@ -78,6 +78,7 @@ class TestExcelLikeMirr:
 # calculate_npv
 # ---------------------------------------------------------------------------
 
+
 class TestCalculateNpv:
     def test_basic_monthly(self):
         cf = np.array([-1000, 100, 200, 300, 400, 500])
@@ -120,6 +121,7 @@ class TestCalculateNpv:
 # calculate_trimmed_npv
 # ---------------------------------------------------------------------------
 
+
 class TestCalculateTrimmedNpv:
     def test_basic(self):
         cf = np.array([0, 0, -1000, 200, 300, 0, 0])
@@ -141,6 +143,7 @@ class TestCalculateTrimmedNpv:
 # ---------------------------------------------------------------------------
 # calculate_irr
 # ---------------------------------------------------------------------------
+
 
 class TestCalculateIrr:
     def test_basic_monthly(self):
@@ -164,6 +167,7 @@ class TestCalculateIrr:
 # ---------------------------------------------------------------------------
 # calculate_payback_period
 # ---------------------------------------------------------------------------
+
 
 class TestCalculatePaybackPeriod:
     def test_basic_monthly(self):
@@ -194,6 +198,7 @@ class TestCalculatePaybackPeriod:
 # ---------------------------------------------------------------------------
 # validate_cashflow_stream
 # ---------------------------------------------------------------------------
+
 
 class TestValidateCashflowStream:
     def test_empty(self):
@@ -232,6 +237,7 @@ class TestValidateCashflowStream:
 # ---------------------------------------------------------------------------
 # calculate_all_metrics
 # ---------------------------------------------------------------------------
+
 
 class TestCalculateAllMetrics:
     def test_basic(self):

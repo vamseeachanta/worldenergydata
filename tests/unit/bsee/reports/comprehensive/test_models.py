@@ -126,7 +126,8 @@ class TestWellModel:
 
     def test_init_full(self):
         w = Well(
-            "W001", "TestWell",
+            "W001",
+            "TestWell",
             api_number="123",
             lease_id="L001",
             spud_date=date(2024, 1, 1),
@@ -139,7 +140,9 @@ class TestWellModel:
 
     def test_construction_days(self):
         w = Well(
-            "W001", "TestWell", lease_id="L001",
+            "W001",
+            "TestWell",
+            lease_id="L001",
             spud_date=date(2024, 1, 1),
             last_activity_date=date(2024, 4, 1),
         )
@@ -295,7 +298,9 @@ class TestWellSummary:
 
     def test_from_well(self):
         w = Well("W001", "TestWell", lease_id="L001")
-        w.set_production_data({"oil_bbls": 500, "gas_mcf": 2000, "water_bbls": 100, "days_on": 30})
+        w.set_production_data(
+            {"oil_bbls": 500, "gas_mcf": 2000, "water_bbls": 100, "days_on": 30}
+        )
         ws = WellSummary.from_well(w)
         assert ws.well_id == "W001"
         assert ws.total_oil_bbls == 500
@@ -336,7 +341,9 @@ class TestProductionMetrics:
 
     def test_oil_per_well_per_day(self):
         pm = ProductionMetrics(
-            oil_production_bbls=36500, active_well_count=10, days_in_period=365,
+            oil_production_bbls=36500,
+            active_well_count=10,
+            days_in_period=365,
         )
         assert pm.oil_per_well_per_day == 10.0
 
@@ -350,21 +357,25 @@ class TestProductionMetrics:
 
     def test_total_revenue(self):
         pm = ProductionMetrics(
-            oil_volume_bbl=1000, oil_price_usd=80.0,
-            gas_volume_mcf=10000, gas_price_usd=4.0,
+            oil_volume_bbl=1000,
+            oil_price_usd=80.0,
+            gas_volume_mcf=10000,
+            gas_price_usd=4.0,
         )
         assert pm.total_revenue() == 120000.0
 
     def test_net_revenue(self):
         pm = ProductionMetrics(
-            oil_volume_bbl=1000, oil_price_usd=80.0,
+            oil_volume_bbl=1000,
+            oil_price_usd=80.0,
             operating_cost_usd=20000,
         )
         assert pm.net_revenue() == 60000.0
 
     def test_operating_margin(self):
         pm = ProductionMetrics(
-            oil_volume_bbl=1000, oil_price_usd=100.0,
+            oil_volume_bbl=1000,
+            oil_price_usd=100.0,
             operating_cost_usd=25000,
         )
         assert pm.operating_margin() == 0.75
@@ -389,8 +400,10 @@ class TestEconomicMetrics:
 
     def test_calculate_net_income(self):
         em = EconomicMetrics(
-            revenue=100000, operating_costs=30000,
-            capital_costs=10000, royalties=18750,
+            revenue=100000,
+            operating_costs=30000,
+            capital_costs=10000,
+            royalties=18750,
         )
         net = em.calculate_net_income()
         assert net == 41250.0
@@ -422,7 +435,8 @@ class TestEconomicMetrics:
 
     def test_from_production(self):
         pm = ProductionMetrics(
-            oil_production_bbls=1000, gas_production_mcf=5000,
+            oil_production_bbls=1000,
+            gas_production_mcf=5000,
         )
         price_deck = {"oil": 75.0, "gas": 4.0}
         em = EconomicMetrics.from_production(pm, price_deck)

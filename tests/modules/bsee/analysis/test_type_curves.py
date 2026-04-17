@@ -21,8 +21,8 @@ from worldenergydata.modules.bsee.analysis.type_curves import (
     rate_integral_derivative,
 )
 
-
 # --- Fetkovich boundary stems (analytical verification) ---
+
 
 class TestFetkovichBoundary:
     def test_exponential_stem_b0_matches_analytical(self):
@@ -57,6 +57,7 @@ class TestFetkovichBoundary:
 
 # --- Fetkovich transient stems ---
 
+
 class TestFetkovichTransient:
     def test_transient_returns_positive_arrays(self):
         """Transient stems should produce positive qDd and tDd."""
@@ -80,11 +81,16 @@ class TestFetkovichTransient:
         mask_trans = (tDd_trans > 0.3) & (tDd_trans < 0.7)
         if mask_trans.any():
             qDd_trans_overlap = qDd_trans[mask_trans]
-            assert np.all(qDd_trans_overlap > 0), "Transient should be positive in overlap"
-            assert np.all(qDd_trans_overlap < 5), "Transient should be bounded in overlap"
+            assert np.all(
+                qDd_trans_overlap > 0
+            ), "Transient should be positive in overlap"
+            assert np.all(
+                qDd_trans_overlap < 5
+            ), "Transient should be bounded in overlap"
 
 
 # --- Fetkovich type curve set ---
+
 
 class TestFetkovichTypecurve:
     def test_typecurve_set_has_correct_count(self):
@@ -96,6 +102,7 @@ class TestFetkovichTypecurve:
 
 
 # --- Blasingame helper functions ---
+
 
 class TestBlasingameHelpers:
     def test_material_balance_time_constant_rate(self):
@@ -131,6 +138,7 @@ class TestBlasingameHelpers:
 
 # --- Blasingame type curve set ---
 
+
 class TestBlasingameTypecurve:
     def test_blasingame_set_has_all_functions(self):
         tc = blasingame_typecurve(reD_values=[10, 50])
@@ -140,6 +148,7 @@ class TestBlasingameTypecurve:
 
 
 # --- Auto-matching with synthetic data ---
+
 
 def _make_synthetic_exponential(qi=500.0, Di=0.003, n_days=500):
     """Generate synthetic exponential decline data."""
@@ -152,8 +161,16 @@ def _make_synthetic_exponential(qi=500.0, Di=0.003, n_days=500):
 
 def _default_params():
     return ReservoirParams(
-        k=10.0, h=50.0, phi=0.15, mu=1.0, ct=1e-5,
-        rw=0.35, re=1000.0, pi=4000.0, pwf=3000.0, Bo=1.2,
+        k=10.0,
+        h=50.0,
+        phi=0.15,
+        mu=1.0,
+        ct=1e-5,
+        rw=0.35,
+        re=1000.0,
+        pi=4000.0,
+        pwf=3000.0,
+        Bo=1.2,
     )
 
 
@@ -185,13 +202,16 @@ class TestAutoMatchSynthetic:
         q_noisy = q * (1 + 0.1 * rng.standard_normal(len(q)))
         q_noisy = np.maximum(q_noisy, 1.0)
         Np_noisy = np.cumsum(q_noisy)
-        data = ProductionData(time=t, rate=q_noisy, cumulative=Np_noisy, pressure_drawdown=dp)
+        data = ProductionData(
+            time=t, rate=q_noisy, cumulative=Np_noisy, pressure_drawdown=dp
+        )
         params = _default_params()
         result = match_fetkovich(data, params)
         assert result.residual < 200.0  # looser tolerance for noisy data
 
 
 # --- Error handling ---
+
 
 class TestErrorHandling:
     def test_empty_production_data_raises(self):

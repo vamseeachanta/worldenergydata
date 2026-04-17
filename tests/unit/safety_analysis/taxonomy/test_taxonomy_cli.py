@@ -13,12 +13,17 @@ from worldenergydata.safety_analysis.taxonomy.cli import (
 
 class TestParseArgs:
     def test_classify_command(self):
-        args = _parse_args([
-            "classify",
-            "--source", "bsee",
-            "--input", "/tmp/data.csv",
-            "--output", "/tmp/out.csv",
-        ])
+        args = _parse_args(
+            [
+                "classify",
+                "--source",
+                "bsee",
+                "--input",
+                "/tmp/data.csv",
+                "--output",
+                "/tmp/out.csv",
+            ]
+        )
         assert args.command == "classify"
         assert args.source == "bsee"
         assert str(args.input) == "/tmp/data.csv"
@@ -26,23 +31,34 @@ class TestParseArgs:
         assert args.limit == 0
 
     def test_classify_with_limit(self):
-        args = _parse_args([
-            "classify",
-            "--source", "osha",
-            "--input", "/tmp/data.csv",
-            "--output", "/tmp/out.csv",
-            "--limit", "100",
-        ])
+        args = _parse_args(
+            [
+                "classify",
+                "--source",
+                "osha",
+                "--input",
+                "/tmp/data.csv",
+                "--output",
+                "/tmp/out.csv",
+                "--limit",
+                "100",
+            ]
+        )
         assert args.limit == 100
 
     def test_classify_all_sources(self):
         for source in ["bsee", "osha", "marine_safety", "phmsa", "epa_tri"]:
-            args = _parse_args([
-                "classify",
-                "--source", source,
-                "--input", "/tmp/in.csv",
-                "--output", "/tmp/out.csv",
-            ])
+            args = _parse_args(
+                [
+                    "classify",
+                    "--source",
+                    source,
+                    "--input",
+                    "/tmp/in.csv",
+                    "--output",
+                    "/tmp/out.csv",
+                ]
+            )
             assert args.source == source
 
     def test_taxonomy_command(self):
@@ -59,16 +75,23 @@ class TestParseArgs:
 
     def test_classify_missing_source_raises(self):
         with pytest.raises(SystemExit):
-            _parse_args(["classify", "--input", "/tmp/in.csv", "--output", "/tmp/out.csv"])
+            _parse_args(
+                ["classify", "--input", "/tmp/in.csv", "--output", "/tmp/out.csv"]
+            )
 
     def test_classify_invalid_source_raises(self):
         with pytest.raises(SystemExit):
-            _parse_args([
-                "classify",
-                "--source", "invalid",
-                "--input", "/tmp/in.csv",
-                "--output", "/tmp/out.csv",
-            ])
+            _parse_args(
+                [
+                    "classify",
+                    "--source",
+                    "invalid",
+                    "--input",
+                    "/tmp/in.csv",
+                    "--output",
+                    "/tmp/out.csv",
+                ]
+            )
 
 
 class TestLoadCsvRecords:
@@ -82,7 +105,7 @@ class TestLoadCsvRecords:
 
     def test_load_strips_whitespace(self, tmp_path):
         csv_file = tmp_path / "test.csv"
-        csv_file.write_text(' name , value \n Alpha , 10 \n')
+        csv_file.write_text(" name , value \n Alpha , 10 \n")
         records = _load_csv_records(csv_file)
         assert records[0]["name"] == "Alpha"
         assert records[0]["value"] == "10"

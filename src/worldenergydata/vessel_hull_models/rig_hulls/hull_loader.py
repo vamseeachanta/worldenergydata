@@ -107,20 +107,20 @@ class HullDataLoader:
                 "loa_m": int(subset["LOA_M"].notna().sum()),
                 "beam_m": int(subset["BEAM_M"].notna().sum()),
                 "draft_m": int(subset["DRAFT_M"].notna().sum()),
-                "measured": int(
-                    (subset["DIMENSION_CONFIDENCE"] == "measured").sum()
-                )
-                if "DIMENSION_CONFIDENCE" in subset.columns
-                else 0,
-                "estimated": int(
-                    (subset["DIMENSION_CONFIDENCE"] == "estimated").sum()
-                )
-                if "DIMENSION_CONFIDENCE" in subset.columns
-                else 0,
-                "generic": int(
-                    (subset["DIMENSION_CONFIDENCE"] == "generic").sum()
-                )
-                if "DIMENSION_CONFIDENCE" in subset.columns
-                else 0,
+                "measured": (
+                    int((subset["DIMENSION_CONFIDENCE"] == "measured").sum())
+                    if "DIMENSION_CONFIDENCE" in subset.columns
+                    else 0
+                ),
+                "estimated": (
+                    int((subset["DIMENSION_CONFIDENCE"] == "estimated").sum())
+                    if "DIMENSION_CONFIDENCE" in subset.columns
+                    else 0
+                ),
+                "generic": (
+                    int((subset["DIMENSION_CONFIDENCE"] == "generic").sum())
+                    if "DIMENSION_CONFIDENCE" in subset.columns
+                    else 0
+                ),
             }
         return result

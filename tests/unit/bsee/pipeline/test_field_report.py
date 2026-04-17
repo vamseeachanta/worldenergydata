@@ -16,10 +16,10 @@ from worldenergydata.bsee.pipeline.casing_schematic import CasingString
 from worldenergydata.bsee.pipeline.field_query import FieldContext
 from worldenergydata.bsee.pipeline.pipeline_runner import FieldReport
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
+
 
 def _make_context(**overrides) -> FieldContext:
     defaults = dict(
@@ -165,17 +165,13 @@ class TestRenderHtmlBasic:
         assert "<html" in result
         assert "</html>" in result
 
-    def test_render_html_contains_field_name(
-        self, sample_report: FieldReport
-    ) -> None:
+    def test_render_html_contains_field_name(self, sample_report: FieldReport) -> None:
         from worldenergydata.bsee.pipeline.field_report import render_html
 
         result = render_html(sample_report)
         assert "BUCKSKIN" in result
 
-    def test_render_html_contains_field_code(
-        self, sample_report: FieldReport
-    ) -> None:
+    def test_render_html_contains_field_code(self, sample_report: FieldReport) -> None:
         from worldenergydata.bsee.pipeline.field_report import render_html
 
         result = render_html(sample_report)
@@ -187,9 +183,7 @@ class TestRenderHtmlBasic:
         result = render_html(sample_report)
         assert "Miocene" in result
 
-    def test_render_html_contains_timestamp(
-        self, sample_report: FieldReport
-    ) -> None:
+    def test_render_html_contains_timestamp(self, sample_report: FieldReport) -> None:
         from worldenergydata.bsee.pipeline.field_report import render_html
 
         result = render_html(sample_report)
@@ -224,9 +218,7 @@ class TestProductionSection:
         assert "45.2" in result  # CUM_OIL_MMBBL
         assert "120.5" in result  # CUM_GAS_BCF
 
-    def test_render_html_empty_production(
-        self, empty_report: FieldReport
-    ) -> None:
+    def test_render_html_empty_production(self, empty_report: FieldReport) -> None:
         from worldenergydata.bsee.pipeline.field_report import render_html
 
         result = render_html(empty_report)
@@ -241,9 +233,7 @@ class TestProductionSection:
 class TestCasingSection:
     """Tests for the casing schematics section."""
 
-    def test_render_html_contains_casing_svg(
-        self, sample_report: FieldReport
-    ) -> None:
+    def test_render_html_contains_casing_svg(self, sample_report: FieldReport) -> None:
         from worldenergydata.bsee.pipeline.field_report import render_html
 
         result = render_html(sample_report)
@@ -282,9 +272,7 @@ class TestActivitySection:
         result = render_html(sample_report)
         assert "drilling_efficiency" in result or "Drilling" in result
 
-    def test_render_html_empty_activity(
-        self, empty_report: FieldReport
-    ) -> None:
+    def test_render_html_empty_activity(self, empty_report: FieldReport) -> None:
         from worldenergydata.bsee.pipeline.field_report import render_html
 
         result = render_html(empty_report)
@@ -299,9 +287,7 @@ class TestActivitySection:
 class TestWarningsSection:
     """Tests for the warnings section."""
 
-    def test_render_html_warnings_displayed(
-        self, sample_report: FieldReport
-    ) -> None:
+    def test_render_html_warnings_displayed(self, sample_report: FieldReport) -> None:
         from worldenergydata.bsee.pipeline.field_report import render_html
 
         result = render_html(sample_report)
@@ -384,18 +370,14 @@ class TestSaveReport:
 class TestStyling:
     """Verify expected CSS classes and colour scheme."""
 
-    def test_render_html_contains_css(
-        self, sample_report: FieldReport
-    ) -> None:
+    def test_render_html_contains_css(self, sample_report: FieldReport) -> None:
         from worldenergydata.bsee.pipeline.field_report import render_html
 
         result = render_html(sample_report)
         assert "<style>" in result
         assert "#1a3a5c" in result  # dark blue header colour
 
-    def test_render_html_contains_plotly_cdn(
-        self, sample_report: FieldReport
-    ) -> None:
+    def test_render_html_contains_plotly_cdn(self, sample_report: FieldReport) -> None:
         from worldenergydata.bsee.pipeline.field_report import render_html
 
         result = render_html(sample_report)

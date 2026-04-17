@@ -4,11 +4,11 @@ import pytest
 
 from worldenergydata.brazil_anp.analysis.field_economics import (
     ConcessionRegime,
-    PSARegime,
     FiscalResult,
+    PSARegime,
+    calculate_psa_government_take,
     calculate_royalties_concession,
     calculate_special_participation,
-    calculate_psa_government_take,
 )
 
 

@@ -4,59 +4,64 @@ ABOUTME: Tests data validation workflows with Dict, DataFrame, and file inputs
 """
 
 import json
-import pytest
-import pandas as pd
-import numpy as np
+from datetime import date, datetime
 from pathlib import Path
-from datetime import datetime, date
-from typing import Dict, List, Any
+from typing import Any, Dict, List
 
-from worldenergydata.validation.base import ValidationResult, BaseValidator
+import numpy as np
+import pandas as pd
+import pytest
+
+from worldenergydata.validation.base import BaseValidator, ValidationResult
 from worldenergydata.validation.exceptions import ValidationError
 from worldenergydata.validation.schema import DateFormat
 from worldenergydata.validation.schemas import (
-    ValidationSchema, FieldSchema, DataType, FieldValidator
+    DataType,
+    FieldSchema,
+    FieldValidator,
+    ValidationSchema,
 )
 from worldenergydata.validation.validators import DataValidator, ValidationManager
-
 
 # ============================================================================
 # FIXTURES - Real test data (no mocks)
 # ============================================================================
 
+
 @pytest.fixture
 def simple_schema():
     """Create a basic validation schema for testing."""
     schema = ValidationSchema(
-        name="SimpleData",
-        version="1.0.0",
-        description="Simple test schema"
+        name="SimpleData", version="1.0.0", description="Simple test schema"
     )
 
-    schema.add_field(FieldSchema(
-        name="id",
-        data_type=DataType.INTEGER,
-        required=True,
-        nullable=False
-    ))
+    schema.add_field(
+        FieldSchema(
+            name="id", data_type=DataType.INTEGER, required=True, nullable=False
+        )
+    )
 
-    schema.add_field(FieldSchema(
-        name="name",
-        data_type=DataType.STRING,
-        required=True,
-        nullable=False,
-        min_length=1,
-        max_length=100
-    ))
+    schema.add_field(
+        FieldSchema(
+            name="name",
+            data_type=DataType.STRING,
+            required=True,
+            nullable=False,
+            min_length=1,
+            max_length=100,
+        )
+    )
 
-    schema.add_field(FieldSchema(
-        name="value",
-        data_type=DataType.FLOAT,
-        required=False,
-        nullable=True,
-        min_value=0.0,
-        max_value=1000.0
-    ))
+    schema.add_field(
+        FieldSchema(
+            name="value",
+            data_type=DataType.FLOAT,
+            required=False,
+            nullable=True,
+            min_value=0.0,
+            max_value=1000.0,
+        )
+    )
 
     return schema
 
@@ -67,55 +72,67 @@ def production_schema():
     schema = ValidationSchema(
         name="ProductionData",
         version="1.0.0",
-        description="Oil and gas production data"
+        description="Oil and gas production data",
     )
 
-    schema.add_field(FieldSchema(
-        name="well_id",
-        data_type=DataType.STRING,
-        required=True,
-        nullable=False,
-        pattern=r"^[A-Z0-9\-]{5,20}$"  # Simple alphanumeric pattern
-    ))
+    schema.add_field(
+        FieldSchema(
+            name="well_id",
+            data_type=DataType.STRING,
+            required=True,
+            nullable=False,
+            pattern=r"^[A-Z0-9\-]{5,20}$",  # Simple alphanumeric pattern
+        )
+    )
 
-    schema.add_field(FieldSchema(
-        name="production_date",
-        data_type=DataType.DATE,
-        required=True,
-        nullable=False,
-        date_format=DateFormat.YYYY_MM_DD
-    ))
+    schema.add_field(
+        FieldSchema(
+            name="production_date",
+            data_type=DataType.DATE,
+            required=True,
+            nullable=False,
+            date_format=DateFormat.YYYY_MM_DD,
+        )
+    )
 
-    schema.add_field(FieldSchema(
-        name="oil_production_bbl",
-        data_type=DataType.FLOAT,
-        required=True,
-        nullable=False,
-        min_value=0.0
-    ))
+    schema.add_field(
+        FieldSchema(
+            name="oil_production_bbl",
+            data_type=DataType.FLOAT,
+            required=True,
+            nullable=False,
+            min_value=0.0,
+        )
+    )
 
-    schema.add_field(FieldSchema(
-        name="gas_production_mcf",
-        data_type=DataType.FLOAT,
-        required=True,
-        nullable=False,
-        min_value=0.0
-    ))
+    schema.add_field(
+        FieldSchema(
+            name="gas_production_mcf",
+            data_type=DataType.FLOAT,
+            required=True,
+            nullable=False,
+            min_value=0.0,
+        )
+    )
 
-    schema.add_field(FieldSchema(
-        name="water_production_bbl",
-        data_type=DataType.FLOAT,
-        required=False,
-        nullable=True,
-        min_value=0.0
-    ))
+    schema.add_field(
+        FieldSchema(
+            name="water_production_bbl",
+            data_type=DataType.FLOAT,
+            required=False,
+            nullable=True,
+            min_value=0.0,
+        )
+    )
 
     # Add cross-field validation rule
-    schema.add_cross_field_rule({
-        "type": "date_consistency",
-        "fields": ["production_date", "production_date"],
-        "operator": "lte"
-    })
+    schema.add_cross_field_rule(
+        {
+            "type": "date_consistency",
+            "fields": ["production_date", "production_date"],
+            "operator": "lte",
+        }
+    )
 
     return schema
 
@@ -123,11 +140,7 @@ def production_schema():
 @pytest.fixture
 def valid_dict_data():
     """Valid single record as dictionary."""
-    return {
-        "id": 1,
-        "name": "Test Record",
-        "value": 42.5
-    }
+    return {"id": 1, "name": "Test Record", "value": 42.5}
 
 
 @pytest.fixture
@@ -138,7 +151,7 @@ def valid_dict_data_production():
         "production_date": "2025-01-10",
         "oil_production_bbl": 100.0,
         "gas_production_mcf": 250.0,
-        "water_production_bbl": 50.0
+        "water_production_bbl": 50.0,
     }
 
 
@@ -148,28 +161,40 @@ def invalid_dict_data():
     return {
         "id": 1,
         # Missing required "name" field
-        "value": 42.5
+        "value": 42.5,
     }
 
 
 @pytest.fixture
 def valid_dataframe():
     """Valid DataFrame with multiple records."""
-    return pd.DataFrame([
-        {"id": 1, "name": "Record 1", "value": 10.5},
-        {"id": 2, "name": "Record 2", "value": 20.3},
-        {"id": 3, "name": "Record 3", "value": 30.1},
-    ])
+    return pd.DataFrame(
+        [
+            {"id": 1, "name": "Record 1", "value": 10.5},
+            {"id": 2, "name": "Record 2", "value": 20.3},
+            {"id": 3, "name": "Record 3", "value": 30.1},
+        ]
+    )
 
 
 @pytest.fixture
 def invalid_dataframe():
     """Invalid DataFrame with type mismatches."""
-    return pd.DataFrame([
-        {"id": "not_an_int", "name": "Record 1", "value": 10.5},  # Wrong type for id
-        {"id": 2, "name": "Record 2", "value": "not_a_float"},     # Wrong type for value
-        {"id": 3, "name": "Record 3", "value": 30.1},
-    ])
+    return pd.DataFrame(
+        [
+            {
+                "id": "not_an_int",
+                "name": "Record 1",
+                "value": 10.5,
+            },  # Wrong type for id
+            {
+                "id": 2,
+                "name": "Record 2",
+                "value": "not_a_float",
+            },  # Wrong type for value
+            {"id": 3, "name": "Record 3", "value": 30.1},
+        ]
+    )
 
 
 @pytest.fixture
@@ -195,6 +220,7 @@ def temp_json_file(tmp_path):
 # ============================================================================
 # TEST CLASS 1: DataValidator Initialization
 # ============================================================================
+
 
 class TestDataValidatorInitialization:
     """Test DataValidator initialization and configuration."""
@@ -232,6 +258,7 @@ class TestDataValidatorInitialization:
 # TEST CLASS 2: validate() with Dict Input
 # ============================================================================
 
+
 class TestValidateWithDictInput:
     """Test validate() method with dictionary input."""
 
@@ -242,7 +269,9 @@ class TestValidateWithDictInput:
         assert is_valid is True
         assert len(errors) == 0
 
-    def test_validate_dict_missing_required_field_fails(self, simple_schema, invalid_dict_data):
+    def test_validate_dict_missing_required_field_fails(
+        self, simple_schema, invalid_dict_data
+    ):
         """Test validation fails when required field is missing."""
         validator = DataValidator(simple_schema, strict=False)
         is_valid, errors = validator.validate(invalid_dict_data)
@@ -282,17 +311,22 @@ class TestValidateWithDictInput:
 # TEST CLASS 3: validate() with DataFrame Input
 # ============================================================================
 
+
 class TestValidateWithDataFrameInput:
     """Test validate() method with DataFrame input."""
 
-    def test_validate_valid_dataframe_returns_success(self, simple_schema, valid_dataframe):
+    def test_validate_valid_dataframe_returns_success(
+        self, simple_schema, valid_dataframe
+    ):
         """Test validating valid DataFrame returns success."""
         validator = DataValidator(simple_schema)
         is_valid, errors = validator.validate(valid_dataframe)
         assert is_valid is True
         assert len(errors) == 0
 
-    def test_validate_dataframe_preserves_row_indices(self, simple_schema, valid_dataframe):
+    def test_validate_dataframe_preserves_row_indices(
+        self, simple_schema, valid_dataframe
+    ):
         """Test row indices are preserved in validation errors."""
         validator = DataValidator(simple_schema, strict=False)
         # Create invalid dataframe with error in row 1
@@ -319,9 +353,7 @@ class TestValidateWithDataFrameInput:
     def test_validate_dataframe_type_mismatch(self, simple_schema):
         """Test DataFrame with type mismatches fails validation."""
         validator = DataValidator(simple_schema, strict=False)
-        df = pd.DataFrame([
-            {"id": "not_int", "name": "Test", "value": 42.5}
-        ])
+        df = pd.DataFrame([{"id": "not_int", "name": "Test", "value": 42.5}])
         is_valid, errors = validator.validate(df)
         assert is_valid is False
 
@@ -329,6 +361,7 @@ class TestValidateWithDataFrameInput:
 # ============================================================================
 # TEST CLASS 4: validate() with List[Dict] Input
 # ============================================================================
+
 
 class TestValidateWithListInput:
     """Test validate() method with List[Dict] input."""
@@ -373,10 +406,13 @@ class TestValidateWithListInput:
 # TEST CLASS 5: validate() with Pattern Validation
 # ============================================================================
 
+
 class TestValidateWithPatternMatching:
     """Test pattern validation in fields."""
 
-    def test_validate_valid_pattern_passes(self, production_schema, valid_dict_data_production):
+    def test_validate_valid_pattern_passes(
+        self, production_schema, valid_dict_data_production
+    ):
         """Test validation passes for pattern-matching field."""
         validator = DataValidator(production_schema)
         is_valid, errors = validator.validate(valid_dict_data_production)
@@ -389,7 +425,7 @@ class TestValidateWithPatternMatching:
             "well_id": "invalid_well_id!@#",  # Violates pattern
             "production_date": "2025-01-10",
             "oil_production_bbl": 100.0,
-            "gas_production_mcf": 250.0
+            "gas_production_mcf": 250.0,
         }
         is_valid, errors = validator.validate(data)
         assert is_valid is False
@@ -399,10 +435,13 @@ class TestValidateWithPatternMatching:
 # TEST CLASS 6: validate() with Date Validation
 # ============================================================================
 
+
 class TestValidateWithDateFields:
     """Test date field validation."""
 
-    def test_validate_valid_date_format_passes(self, production_schema, valid_dict_data_production):
+    def test_validate_valid_date_format_passes(
+        self, production_schema, valid_dict_data_production
+    ):
         """Test validation passes for valid date format."""
         validator = DataValidator(production_schema)
         is_valid, errors = validator.validate(valid_dict_data_production)
@@ -415,7 +454,7 @@ class TestValidateWithDateFields:
             "well_id": "WELL-001",
             "production_date": "01-10-2025",  # Wrong format (should be YYYY-MM-DD)
             "oil_production_bbl": 100.0,
-            "gas_production_mcf": 250.0
+            "gas_production_mcf": 250.0,
         }
         is_valid, errors = validator.validate(data)
         assert is_valid is False
@@ -424,6 +463,7 @@ class TestValidateWithDateFields:
 # ============================================================================
 # TEST CLASS 7: validate_file() for Different File Formats
 # ============================================================================
+
 
 class TestValidateFileFormats:
     """Test validate_file() with different file formats."""
@@ -447,7 +487,9 @@ class TestValidateFileFormats:
         with pytest.raises(FileNotFoundError):
             validator.validate_file(Path("/nonexistent/file.csv"))
 
-    def test_validate_file_unsupported_format_raises_error(self, simple_schema, tmp_path):
+    def test_validate_file_unsupported_format_raises_error(
+        self, simple_schema, tmp_path
+    ):
         """Test validation fails for unsupported file format."""
         validator = DataValidator(simple_schema)
         unsupported_file = tmp_path / "data.xyz"
@@ -459,6 +501,7 @@ class TestValidateFileFormats:
 # ============================================================================
 # TEST CLASS 8: get_validation_report()
 # ============================================================================
+
 
 class TestValidationReport:
     """Test validation report generation."""
@@ -490,6 +533,7 @@ class TestValidationReport:
 # ============================================================================
 # TEST CLASS 9: ValidationManager - Registry Pattern
 # ============================================================================
+
 
 class TestValidationManager:
     """Test ValidationManager for schema registry pattern."""
@@ -527,7 +571,9 @@ class TestValidationManager:
         """Test validate_with_schema method."""
         manager = ValidationManager()
         manager.register_schema(simple_schema)
-        is_valid, errors = manager.validate_with_schema(simple_schema.name, valid_dict_data)
+        is_valid, errors = manager.validate_with_schema(
+            simple_schema.name, valid_dict_data
+        )
         assert is_valid is True
 
     def test_validate_with_schema_fails_for_unknown_schema(self):
@@ -548,6 +594,7 @@ class TestValidationManager:
 # ============================================================================
 # TEST CLASS 10: Strict vs. Lenient Mode
 # ============================================================================
+
 
 class TestStrictVsLenientMode:
     """Test strict vs. lenient validation modes."""
@@ -579,6 +626,7 @@ class TestStrictVsLenientMode:
 # ============================================================================
 # TEST CLASS 11: Error Aggregation and State
 # ============================================================================
+
 
 class TestErrorAggregation:
     """Test error aggregation across validation calls."""
@@ -617,7 +665,7 @@ class TestErrorAggregation:
             print(f"  - MRO: {type(error).__mro__}")
             print(f"  - Repr: {repr(error)}")
             print(f"  - Has message attr: {hasattr(error, 'message')}")
-            if hasattr(error, 'message'):
+            if hasattr(error, "message"):
                 print(f"  - message value: {error.message}")
 
         # Always assert pass for diagnostic test so it doesn't block other tests
@@ -627,6 +675,7 @@ class TestErrorAggregation:
 # ============================================================================
 # TEST CLASS 12: Edge Cases and Special Scenarios
 # ============================================================================
+
 
 class TestEdgeCases:
     """Test edge cases and special scenarios."""
@@ -670,11 +719,13 @@ class TestEdgeCases:
         """Test validation with large DataFrame."""
         validator = DataValidator(simple_schema)
         # Create large DataFrame (1000 records)
-        large_df = pd.DataFrame({
-            "id": range(1, 1001),
-            "name": [f"Record_{i}" for i in range(1, 1001)],
-            "value": np.random.uniform(0, 1000, 1000)
-        })
+        large_df = pd.DataFrame(
+            {
+                "id": range(1, 1001),
+                "name": [f"Record_{i}" for i in range(1, 1001)],
+                "value": np.random.uniform(0, 1000, 1000),
+            }
+        )
         is_valid, errors = validator.validate(large_df)
         assert is_valid is True
         assert len(errors) == 0
@@ -712,6 +763,7 @@ class TestEdgeCases:
 # TEST CLASS 13: Validator Chaining and Composition
 # ============================================================================
 
+
 class TestValidatorComposition:
     """Test composing and chaining multiple validators."""
 
@@ -744,6 +796,7 @@ class TestValidatorComposition:
 # TEST CLASS 14: Integration Tests
 # ============================================================================
 
+
 class TestIntegrationScenarios:
     """Test realistic integration scenarios."""
 
@@ -756,25 +809,29 @@ class TestIntegrationScenarios:
             "well_id": "WELL-001",
             "production_date": "2025-01-10",
             "oil_production_bbl": 100.0,
-            "gas_production_mcf": 250.0
+            "gas_production_mcf": 250.0,
         }
         is_valid, _ = validator.validate(single_record)
         assert is_valid is True
 
         # Multiple records in DataFrame
-        df = pd.DataFrame([
-            single_record,
-            {
-                "well_id": "WELL-002",
-                "production_date": "2025-01-11",
-                "oil_production_bbl": 120.0,
-                "gas_production_mcf": 300.0
-            }
-        ])
+        df = pd.DataFrame(
+            [
+                single_record,
+                {
+                    "well_id": "WELL-002",
+                    "production_date": "2025-01-11",
+                    "oil_production_bbl": 120.0,
+                    "gas_production_mcf": 300.0,
+                },
+            ]
+        )
         is_valid, _ = validator.validate(df)
         assert is_valid is True
 
-    def test_manager_workflow_load_validate_analyze(self, simple_schema, valid_dict_data):
+    def test_manager_workflow_load_validate_analyze(
+        self, simple_schema, valid_dict_data
+    ):
         """Test typical manager workflow."""
         manager = ValidationManager()
         manager.register_schema(simple_schema)
@@ -793,6 +850,7 @@ class TestIntegrationScenarios:
 # TEST CLASS 15: Performance and Scale Tests
 # ============================================================================
 
+
 class TestPerformanceScenarios:
     """Test performance with larger datasets."""
 
@@ -800,8 +858,7 @@ class TestPerformanceScenarios:
         """Test validation completes for 1000 records."""
         validator = DataValidator(simple_schema)
         records = [
-            {"id": i, "name": f"Record_{i}", "value": float(i)}
-            for i in range(1, 1001)
+            {"id": i, "name": f"Record_{i}", "value": float(i)} for i in range(1, 1001)
         ]
         is_valid, errors = validator.validate(records)
         assert is_valid is True
@@ -812,7 +869,11 @@ class TestPerformanceScenarios:
         validator = DataValidator(simple_schema, strict=False)
         # Create DataFrame with some invalid records
         records = [
-            {"id": i, "name": f"Record_{i}", "value": float(i) if i % 100 != 0 else 2000.0}  # Every 100th is out of range
+            {
+                "id": i,
+                "name": f"Record_{i}",
+                "value": float(i) if i % 100 != 0 else 2000.0,
+            }  # Every 100th is out of range
             for i in range(1, 501)
         ]
         is_valid, errors = validator.validate(records)

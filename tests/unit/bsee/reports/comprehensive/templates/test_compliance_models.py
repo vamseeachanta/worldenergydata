@@ -1,7 +1,8 @@
 """Tests for compliance data models."""
 
-import pytest
 from datetime import date
+
+import pytest
 
 from worldenergydata.bsee.reports.comprehensive.templates.compliance_models import (
     ComplianceMetrics,
@@ -33,7 +34,8 @@ class TestComplianceMetrics:
 
     def test_gas_compliance_percentage(self):
         c = ComplianceMetrics(
-            permitted_gas_mcf=1000.0, actual_gas_mcf=900.0,
+            permitted_gas_mcf=1000.0,
+            actual_gas_mcf=900.0,
         )
         assert c.gas_compliance_percentage() == pytest.approx(90.0)
 
@@ -101,7 +103,8 @@ class TestEnvironmentalMetrics:
 
     def test_calculate_environmental_score_capped_at_zero(self):
         e = EnvironmentalMetrics(
-            spill_incidents=20, environmental_violations=10,
+            spill_incidents=20,
+            environmental_violations=10,
         )
         assert e.calculate_environmental_score() == 0.0
 
@@ -147,7 +150,8 @@ class TestSafetyMetrics:
 
     def test_calculate_safety_score_perfect(self):
         s = SafetyMetrics(
-            safety_inspections=5, safety_training_hours=20.0,
+            safety_inspections=5,
+            safety_training_hours=20.0,
         )
         score = s.calculate_safety_score()
         assert score > 0.95
@@ -182,15 +186,18 @@ class TestProductionQuota:
 
     def test_overall_compliance_score(self):
         p = ProductionQuota(
-            oil_quota_bbls=10000.0, actual_oil_bbls=9000.0,
-            gas_quota_mcf=50000.0, actual_gas_mcf=40000.0,
+            oil_quota_bbls=10000.0,
+            actual_oil_bbls=9000.0,
+            gas_quota_mcf=50000.0,
+            actual_gas_mcf=40000.0,
         )
         score = p.overall_compliance_score()
         assert 0.0 <= score <= 1.0
 
     def test_overall_compliance_score_zero_volumes(self):
         p = ProductionQuota(
-            oil_quota_bbls=10000.0, gas_quota_mcf=50000.0,
+            oil_quota_bbls=10000.0,
+            gas_quota_mcf=50000.0,
         )
         score = p.overall_compliance_score()
         assert score == 0.0
@@ -205,8 +212,10 @@ class TestProductionQuota:
 
     def test_is_quota_not_exceeded(self):
         p = ProductionQuota(
-            oil_quota_bbls=1000.0, actual_oil_bbls=900.0,
-            gas_quota_mcf=5000.0, actual_gas_mcf=4000.0,
+            oil_quota_bbls=1000.0,
+            actual_oil_bbls=900.0,
+            gas_quota_mcf=5000.0,
+            actual_gas_mcf=4000.0,
         )
         assert p.is_quota_exceeded() is False
 

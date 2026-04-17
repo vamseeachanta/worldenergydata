@@ -26,9 +26,9 @@ import numpy as np
 import pandas as pd
 
 from worldenergydata.bsee.analysis.cost._calibration_features import (
+    _PROXY_RATES_2022,
     PROXY_REGIONS,
     REQUIRED_FIT_COLUMNS,
-    _PROXY_RATES_2022,
     build_feature_matrix,
 )
 from worldenergydata.bsee.analysis.cost.models import (
@@ -132,8 +132,7 @@ class MultivariateCalibration:
         """
         if df.empty:
             raise ValueError(
-                "Cannot fit on an empty DataFrame. "
-                "Provide at least one record."
+                "Cannot fit on an empty DataFrame. " "Provide at least one record."
             )
 
         missing = REQUIRED_FIT_COLUMNS - set(df.columns)
@@ -199,8 +198,13 @@ class MultivariateCalibration:
         """
         self._assert_fitted()
         point = self.predict(
-            region=region, water_depth_m=water_depth_m, well_depth_m=well_depth_m,
-            activity_type=activity_type, year=year, hpht=hpht, subsea=subsea,
+            region=region,
+            water_depth_m=water_depth_m,
+            well_depth_m=well_depth_m,
+            activity_type=activity_type,
+            year=year,
+            hpht=hpht,
+            subsea=subsea,
         )
         df = self._training_df
         assert df is not None
@@ -209,7 +213,9 @@ class MultivariateCalibration:
         residuals = y - y_hat
 
         rng = np.random.default_rng(0)
-        boot_preds = [point + float(rng.choice(residuals)) for _ in range(_BOOTSTRAP_SAMPLES)]
+        boot_preds = [
+            point + float(rng.choice(residuals)) for _ in range(_BOOTSTRAP_SAMPLES)
+        ]
         lower = max(float(np.percentile(boot_preds, alpha / 2 * 100)), 0.0)
         upper = float(np.percentile(boot_preds, (1 - alpha / 2) * 100))
         return point, lower, upper
@@ -240,17 +246,19 @@ class MultivariateCalibration:
             val_idx = indices[start:end]
             train_idx = np.concatenate([indices[:start], indices[end:]])
 
-            X_tr, y_tr, _ = build_feature_matrix(df.iloc[train_idx].reset_index(drop=True))
-            X_val, y_val, _ = build_feature_matrix(df.iloc[val_idx].reset_index(drop=True))
+            X_tr, y_tr, _ = build_feature_matrix(
+                df.iloc[train_idx].reset_index(drop=True)
+            )
+            X_val, y_val, _ = build_feature_matrix(
+                df.iloc[val_idx].reset_index(drop=True)
+            )
 
             coeffs, _, _, _ = np.linalg.lstsq(X_tr, y_tr, rcond=None)
             y_hat = X_val @ coeffs
             ss_res = float(np.sum((y_val - y_hat) ** 2))
             ss_tot = float(np.sum((y_val - y_val.mean()) ** 2))
             rmse = float(np.sqrt(ss_res / max(len(y_val), 1)))
-            r2 = float(np.clip(
-                1.0 - ss_res / ss_tot if ss_tot > 0 else 0.0, -1.0, 1.0
-            ))
+            r2 = float(np.clip(1.0 - ss_res / ss_tot if ss_tot > 0 else 0.0, -1.0, 1.0))
             rmses.append(rmse)
             r2s.append(r2)
 
@@ -305,16 +313,20 @@ class MultivariateCalibration:
         hpht: bool,
         subsea: bool,
     ) -> np.ndarray:
-        single_row = pd.DataFrame([{
-            "region": region,
-            "water_depth_m": water_depth_m,
-            "well_depth_m": well_depth_m,
-            "activity_type": activity_type.value,
-            "year_drilling": year,
-            "hpht": hpht,
-            "subsea": subsea,
-            "cost_usd_mm": 0.0,
-        }])
+        single_row = pd.DataFrame(
+            [
+                {
+                    "region": region,
+                    "water_depth_m": water_depth_m,
+                    "well_depth_m": well_depth_m,
+                    "activity_type": activity_type.value,
+                    "year_drilling": year,
+                    "hpht": hpht,
+                    "subsea": subsea,
+                    "cost_usd_mm": 0.0,
+                }
+            ]
+        )
         X, _, _ = build_feature_matrix(single_row)
         return X[0]
 
@@ -337,9 +349,7 @@ class MultivariateCalibration:
             proxy_comparisons=comparisons,
         )
 
-    def _build_proxy_comparisons(
-        self, df: pd.DataFrame
-    ) -> list[CalibrationComparison]:
+    def _build_proxy_comparisons(self, df: pd.DataFrame) -> list[CalibrationComparison]:
         comparisons: list[CalibrationComparison] = []
         mid_depths = {
             WaterDepthBand.SHALLOW: 150.0,
@@ -359,14 +369,16 @@ class MultivariateCalibration:
 
                     water_m = mid_depths[band]
                     ref_cost_mm = self.predict(
-                        region=region, water_depth_m=water_m, well_depth_m=5000.0,
-                        activity_type=activity, year=2022,
+                        region=region,
+                        water_depth_m=water_m,
+                        well_depth_m=5000.0,
+                        activity_type=activity,
+                        year=2022,
                     )
                     calibrated_rate = (ref_cost_mm * 1_000_000) / ref_days
 
-                    mask = (
-                        (df["region"] == region)
-                        & (df["activity_type"] == activity.value)
+                    mask = (df["region"] == region) & (
+                        df["activity_type"] == activity.value
                     )
                     n_pts = int(mask.sum())
                     cell_df = df[mask]
@@ -378,19 +390,25 @@ class MultivariateCalibration:
                         cell_rmse = 0.0
 
                     confidence = (
-                        ConfidenceLevel.HIGH if n_pts >= 5
-                        else ConfidenceLevel.MEDIUM if n_pts >= 1
-                        else ConfidenceLevel.LOW
+                        ConfidenceLevel.HIGH
+                        if n_pts >= 5
+                        else (
+                            ConfidenceLevel.MEDIUM
+                            if n_pts >= 1
+                            else ConfidenceLevel.LOW
+                        )
                     )
-                    comparisons.append(CalibrationComparison(
-                        region=region,
-                        water_depth_band=band,
-                        activity_type=activity,
-                        proxy_rate_usd_day=float(proxy_rate),
-                        calibrated_rate_usd_day=round(calibrated_rate, 2),
-                        n_data_points=n_pts,
-                        rmse_usd_mm=round(cell_rmse, 4),
-                        confidence=confidence,
-                    ))
+                    comparisons.append(
+                        CalibrationComparison(
+                            region=region,
+                            water_depth_band=band,
+                            activity_type=activity,
+                            proxy_rate_usd_day=float(proxy_rate),
+                            calibrated_rate_usd_day=round(calibrated_rate, 2),
+                            n_data_points=n_pts,
+                            rmse_usd_mm=round(cell_rmse, 4),
+                            confidence=confidence,
+                        )
+                    )
 
         return comparisons

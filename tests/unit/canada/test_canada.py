@@ -102,32 +102,40 @@ class TestSummarizeData:
 
     def test_list_data(self):
         c = Canada()
-        result = c._summarize_data({
-            "aer": {"wells": [1, 2, 3], "production": [4, 5]},
-        })
+        result = c._summarize_data(
+            {
+                "aer": {"wells": [1, 2, 3], "production": [4, 5]},
+            }
+        )
         assert result["aer_wells"] == 3
         assert result["aer_production"] == 2
 
     def test_dict_data(self):
         c = Canada()
-        result = c._summarize_data({
-            "aer": {"wells": {"w1": {}, "w2": {}}},
-        })
+        result = c._summarize_data(
+            {
+                "aer": {"wells": {"w1": {}, "w2": {}}},
+            }
+        )
         assert result["aer_wells"] == 2
 
     def test_scalar_data(self):
         c = Canada()
-        result = c._summarize_data({
-            "aer": {"status": "complete"},
-        })
+        result = c._summarize_data(
+            {
+                "aer": {"status": "complete"},
+            }
+        )
         assert result["aer_status"] == 1
 
     def test_multiple_provinces(self):
         c = Canada()
-        result = c._summarize_data({
-            "aer": {"wells": [1, 2]},
-            "bcer": {"wells": [3]},
-        })
+        result = c._summarize_data(
+            {
+                "aer": {"wells": [1, 2]},
+                "bcer": {"wells": [3]},
+            }
+        )
         assert result["aer_wells"] == 2
         assert result["bcer_wells"] == 1
 

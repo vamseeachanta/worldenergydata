@@ -6,20 +6,26 @@ import sys
 
 # Run tests with coverage
 result = subprocess.run(
-    [sys.executable, '-m', 'pytest', 
-     'tests/integration/', 'tests/unit/', 
-     '--cov=src/worldenergydata', 
-     '--cov-report=term', 
-     '--tb=no', '-q'],
+    [
+        sys.executable,
+        "-m",
+        "pytest",
+        "tests/integration/",
+        "tests/unit/",
+        "--cov=src/worldenergydata",
+        "--cov-report=term",
+        "--tb=no",
+        "-q",
+    ],
     capture_output=True,
     text=True,
-    cwd='C:/Users/Sk Samdan/Desktop/github/worldenergydata'
+    cwd="C:/Users/Sk Samdan/Desktop/github/worldenergydata",
 )
 
 # Extract and print coverage percentage
-lines = result.stdout.split('\n')
+lines = result.stdout.split("\n")
 for line in lines:
-    if 'TOTAL' in line:
+    if "TOTAL" in line:
         parts = line.split()
         if len(parts) >= 5:
             print(f"Total Coverage: {parts[-1]}")

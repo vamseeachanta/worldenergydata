@@ -37,8 +37,12 @@ class RiserJointSchema(BaseModel):
     NOTES: Optional[str] = None
 
     @field_validator(
-        "MANUFACTURER", "MODEL", "GRADE", "CONNECTION_TYPE",
-        "DATA_SOURCE", "NOTES",
+        "MANUFACTURER",
+        "MODEL",
+        "GRADE",
+        "CONNECTION_TYPE",
+        "DATA_SOURCE",
+        "NOTES",
         mode="before",
     )
     @classmethod
@@ -48,9 +52,15 @@ class RiserJointSchema(BaseModel):
         return v
 
     @field_validator(
-        "OD_IN", "ID_IN", "WALL_THICKNESS_IN", "LENGTH_FT",
-        "WEIGHT_AIR_KIPS", "WEIGHT_WATER_KIPS",
-        "BUOYANCY_COVERAGE_PCT", "BUOYANCY_OD_IN", "PRESSURE_RATING_PSI",
+        "OD_IN",
+        "ID_IN",
+        "WALL_THICKNESS_IN",
+        "LENGTH_FT",
+        "WEIGHT_AIR_KIPS",
+        "WEIGHT_WATER_KIPS",
+        "BUOYANCY_COVERAGE_PCT",
+        "BUOYANCY_OD_IN",
+        "PRESSURE_RATING_PSI",
         mode="before",
     )
     @classmethod
@@ -65,9 +75,15 @@ class RiserJointSchema(BaseModel):
         return v
 
     @field_validator(
-        "OD_IN", "ID_IN", "WALL_THICKNESS_IN", "LENGTH_FT",
-        "WEIGHT_AIR_KIPS", "WEIGHT_WATER_KIPS",
-        "BUOYANCY_COVERAGE_PCT", "BUOYANCY_OD_IN", "PRESSURE_RATING_PSI",
+        "OD_IN",
+        "ID_IN",
+        "WALL_THICKNESS_IN",
+        "LENGTH_FT",
+        "WEIGHT_AIR_KIPS",
+        "WEIGHT_WATER_KIPS",
+        "BUOYANCY_COVERAGE_PCT",
+        "BUOYANCY_OD_IN",
+        "PRESSURE_RATING_PSI",
     )
     @classmethod
     def _validate_non_negative(cls, v: Optional[float]) -> Optional[float]:
@@ -105,7 +121,11 @@ class BOPSchema(BaseModel):
     NOTES: Optional[str] = None
 
     @field_validator(
-        "BOP_TYPE", "MANUFACTURER", "MODEL", "DATA_SOURCE", "NOTES",
+        "BOP_TYPE",
+        "MANUFACTURER",
+        "MODEL",
+        "DATA_SOURCE",
+        "NOTES",
         mode="before",
     )
     @classmethod
@@ -115,8 +135,11 @@ class BOPSchema(BaseModel):
         return v
 
     @field_validator(
-        "BORE_SIZE_IN", "PRESSURE_RATING_PSI",
-        "HEIGHT_FT", "WEIGHT_AIR_KIPS", "WEIGHT_WATER_KIPS",
+        "BORE_SIZE_IN",
+        "PRESSURE_RATING_PSI",
+        "HEIGHT_FT",
+        "WEIGHT_AIR_KIPS",
+        "WEIGHT_WATER_KIPS",
         mode="before",
     )
     @classmethod
@@ -131,8 +154,11 @@ class BOPSchema(BaseModel):
         return v
 
     @field_validator(
-        "BORE_SIZE_IN", "PRESSURE_RATING_PSI",
-        "HEIGHT_FT", "WEIGHT_AIR_KIPS", "WEIGHT_WATER_KIPS",
+        "BORE_SIZE_IN",
+        "PRESSURE_RATING_PSI",
+        "HEIGHT_FT",
+        "WEIGHT_AIR_KIPS",
+        "WEIGHT_WATER_KIPS",
     )
     @classmethod
     def _validate_non_negative(cls, v: Optional[float]) -> Optional[float]:
@@ -141,7 +167,9 @@ class BOPSchema(BaseModel):
         return v
 
     @field_validator(
-        "ANNULAR_COUNT", "SHEAR_RAM_COUNT", "PIPE_RAM_COUNT",
+        "ANNULAR_COUNT",
+        "SHEAR_RAM_COUNT",
+        "PIPE_RAM_COUNT",
         mode="before",
     )
     @classmethod
@@ -180,7 +208,11 @@ class LMRPSchema(BaseModel):
     NOTES: Optional[str] = None
 
     @field_validator(
-        "MANUFACTURER", "MODEL", "CONNECTOR_TYPE", "DATA_SOURCE", "NOTES",
+        "MANUFACTURER",
+        "MODEL",
+        "CONNECTOR_TYPE",
+        "DATA_SOURCE",
+        "NOTES",
         mode="before",
     )
     @classmethod
@@ -190,8 +222,11 @@ class LMRPSchema(BaseModel):
         return v
 
     @field_validator(
-        "BORE_SIZE_IN", "PRESSURE_RATING_PSI",
-        "HEIGHT_FT", "WEIGHT_AIR_KIPS", "WEIGHT_WATER_KIPS",
+        "BORE_SIZE_IN",
+        "PRESSURE_RATING_PSI",
+        "HEIGHT_FT",
+        "WEIGHT_AIR_KIPS",
+        "WEIGHT_WATER_KIPS",
         mode="before",
     )
     @classmethod
@@ -206,8 +241,11 @@ class LMRPSchema(BaseModel):
         return v
 
     @field_validator(
-        "BORE_SIZE_IN", "PRESSURE_RATING_PSI",
-        "HEIGHT_FT", "WEIGHT_AIR_KIPS", "WEIGHT_WATER_KIPS",
+        "BORE_SIZE_IN",
+        "PRESSURE_RATING_PSI",
+        "HEIGHT_FT",
+        "WEIGHT_AIR_KIPS",
+        "WEIGHT_WATER_KIPS",
     )
     @classmethod
     def _validate_non_negative(cls, v: Optional[float]) -> Optional[float]:
@@ -252,7 +290,11 @@ class FlexJointSchema(BaseModel):
     NOTES: Optional[str] = None
 
     @field_validator(
-        "POSITION", "MANUFACTURER", "MODEL", "DATA_SOURCE", "NOTES",
+        "POSITION",
+        "MANUFACTURER",
+        "MODEL",
+        "DATA_SOURCE",
+        "NOTES",
         mode="before",
     )
     @classmethod
@@ -262,8 +304,12 @@ class FlexJointSchema(BaseModel):
         return v
 
     @field_validator(
-        "BORE_SIZE_IN", "MAX_ANGLE_DEG", "STIFFNESS_FT_KIP_PER_DEG",
-        "HEIGHT_FT", "WEIGHT_AIR_KIPS", "PRESSURE_RATING_PSI",
+        "BORE_SIZE_IN",
+        "MAX_ANGLE_DEG",
+        "STIFFNESS_FT_KIP_PER_DEG",
+        "HEIGHT_FT",
+        "WEIGHT_AIR_KIPS",
+        "PRESSURE_RATING_PSI",
         mode="before",
     )
     @classmethod
@@ -278,8 +324,12 @@ class FlexJointSchema(BaseModel):
         return v
 
     @field_validator(
-        "BORE_SIZE_IN", "MAX_ANGLE_DEG", "STIFFNESS_FT_KIP_PER_DEG",
-        "HEIGHT_FT", "WEIGHT_AIR_KIPS", "PRESSURE_RATING_PSI",
+        "BORE_SIZE_IN",
+        "MAX_ANGLE_DEG",
+        "STIFFNESS_FT_KIP_PER_DEG",
+        "HEIGHT_FT",
+        "WEIGHT_AIR_KIPS",
+        "PRESSURE_RATING_PSI",
     )
     @classmethod
     def _validate_non_negative(cls, v: Optional[float]) -> Optional[float]:
@@ -310,7 +360,10 @@ class TelescopicJointSchema(BaseModel):
     NOTES: Optional[str] = None
 
     @field_validator(
-        "MANUFACTURER", "MODEL", "DATA_SOURCE", "NOTES",
+        "MANUFACTURER",
+        "MODEL",
+        "DATA_SOURCE",
+        "NOTES",
         mode="before",
     )
     @classmethod
@@ -320,9 +373,13 @@ class TelescopicJointSchema(BaseModel):
         return v
 
     @field_validator(
-        "OD_IN", "BORE_SIZE_IN", "STROKE_FT",
-        "OUTER_BARREL_LENGTH_FT", "INNER_BARREL_LENGTH_FT",
-        "WEIGHT_AIR_KIPS", "PRESSURE_RATING_PSI",
+        "OD_IN",
+        "BORE_SIZE_IN",
+        "STROKE_FT",
+        "OUTER_BARREL_LENGTH_FT",
+        "INNER_BARREL_LENGTH_FT",
+        "WEIGHT_AIR_KIPS",
+        "PRESSURE_RATING_PSI",
         mode="before",
     )
     @classmethod
@@ -337,9 +394,13 @@ class TelescopicJointSchema(BaseModel):
         return v
 
     @field_validator(
-        "OD_IN", "BORE_SIZE_IN", "STROKE_FT",
-        "OUTER_BARREL_LENGTH_FT", "INNER_BARREL_LENGTH_FT",
-        "WEIGHT_AIR_KIPS", "PRESSURE_RATING_PSI",
+        "OD_IN",
+        "BORE_SIZE_IN",
+        "STROKE_FT",
+        "OUTER_BARREL_LENGTH_FT",
+        "INNER_BARREL_LENGTH_FT",
+        "WEIGHT_AIR_KIPS",
+        "PRESSURE_RATING_PSI",
     )
     @classmethod
     def _validate_non_negative(cls, v: Optional[float]) -> Optional[float]:

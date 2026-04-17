@@ -15,10 +15,10 @@ from worldenergydata.bsee.data.cache.chunk_manager import (
     ChunkMetadata,
 )
 
-
 # ---------------------------------------------------------------------------
 # ChunkMetadata
 # ---------------------------------------------------------------------------
+
 
 class TestChunkMetadata:
     def test_init(self):
@@ -38,8 +38,10 @@ class TestChunkMetadata:
 
     def test_init_with_row_range(self):
         meta = ChunkMetadata(
-            chunk_id="c1", checksum="xyz",
-            timestamp=datetime(2024, 1, 1), size_bytes=500,
+            chunk_id="c1",
+            checksum="xyz",
+            timestamp=datetime(2024, 1, 1),
+            size_bytes=500,
             row_range=(0, 100),
         )
         assert meta.row_range == (0, 100)
@@ -47,7 +49,10 @@ class TestChunkMetadata:
     def test_to_dict(self):
         ts = datetime(2024, 6, 15, 12, 0, 0)
         meta = ChunkMetadata(
-            chunk_id="c1", checksum="abc", timestamp=ts, size_bytes=2048,
+            chunk_id="c1",
+            checksum="abc",
+            timestamp=ts,
+            size_bytes=2048,
         )
         d = meta.to_dict()
         assert d["chunk_id"] == "c1"
@@ -60,7 +65,10 @@ class TestChunkMetadata:
 
     def test_to_dict_changed(self):
         meta = ChunkMetadata(
-            chunk_id="c2", checksum="def", timestamp=datetime.now(), size_bytes=100,
+            chunk_id="c2",
+            checksum="def",
+            timestamp=datetime.now(),
+            size_bytes=100,
         )
         meta.is_changed = True
         meta.download_required = False
@@ -101,8 +109,11 @@ class TestChunkMetadata:
     def test_roundtrip(self):
         ts = datetime(2024, 3, 15, 8, 30, 0)
         original = ChunkMetadata(
-            chunk_id="test", checksum="hash123", timestamp=ts,
-            size_bytes=4096, row_range=(0, 50000),
+            chunk_id="test",
+            checksum="hash123",
+            timestamp=ts,
+            size_bytes=4096,
+            row_range=(0, 50000),
         )
         original.is_changed = True
         d = original.to_dict()
@@ -116,6 +127,7 @@ class TestChunkMetadata:
 # ---------------------------------------------------------------------------
 # ChunkManager init
 # ---------------------------------------------------------------------------
+
 
 class TestChunkManagerInit:
     def test_custom_cache_dir(self, tmp_path):
@@ -137,6 +149,7 @@ class TestChunkManagerInit:
 # Metadata persistence
 # ---------------------------------------------------------------------------
 
+
 class TestMetadataPersistence:
     def test_save_and_load_metadata(self, tmp_path):
         cache_dir = tmp_path / "cache"
@@ -148,8 +161,13 @@ class TestMetadataPersistence:
             size_bytes=1024,
         )
         mgr._update_metadata(
-            "well", [chunk],
-            {"ETag": '"etag1"', "Last-Modified": "Mon, 01 Jan 2024", "Content-Length": "1024"},
+            "well",
+            [chunk],
+            {
+                "ETag": '"etag1"',
+                "Last-Modified": "Mon, 01 Jan 2024",
+                "Content-Length": "1024",
+            },
         )
         # Reload from disk
         mgr2 = ChunkManager(cache_dir=cache_dir)
@@ -175,6 +193,7 @@ class TestMetadataPersistence:
 # ---------------------------------------------------------------------------
 # Cache chunk operations
 # ---------------------------------------------------------------------------
+
 
 class TestCacheChunkOperations:
     def test_cache_chunk(self, tmp_path):
@@ -238,6 +257,7 @@ class TestCacheChunkOperations:
 # clear_cache
 # ---------------------------------------------------------------------------
 
+
 class TestClearCache:
     def test_clear_specific_type(self, tmp_path):
         mgr = ChunkManager(cache_dir=tmp_path / "cache")
@@ -266,6 +286,7 @@ class TestClearCache:
 # get_cache_stats
 # ---------------------------------------------------------------------------
 
+
 class TestGetCacheStats:
     def test_empty(self, tmp_path):
         mgr = ChunkManager(cache_dir=tmp_path / "cache")
@@ -291,6 +312,7 @@ class TestGetCacheStats:
 # ---------------------------------------------------------------------------
 # _identify_dataframe_changes
 # ---------------------------------------------------------------------------
+
 
 class TestIdentifyDataframeChanges:
     def test_no_changes(self, tmp_path):
@@ -340,6 +362,7 @@ class TestIdentifyDataframeChanges:
 # _extract_zip_data
 # ---------------------------------------------------------------------------
 
+
 def _make_zip(files):
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w") as zf:
@@ -379,6 +402,7 @@ class TestExtractZipData:
 # process_incremental_changes
 # ---------------------------------------------------------------------------
 
+
 class TestProcessIncrementalChanges:
     def test_no_previous_data(self, tmp_path):
         mgr = ChunkManager(cache_dir=tmp_path / "cache")
@@ -415,6 +439,7 @@ class TestProcessIncrementalChanges:
 # ---------------------------------------------------------------------------
 # _update_file_metadata
 # ---------------------------------------------------------------------------
+
 
 class TestUpdateFileMetadata:
     def test_basic(self, tmp_path):

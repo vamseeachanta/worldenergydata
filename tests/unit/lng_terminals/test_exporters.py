@@ -38,6 +38,7 @@ def _make_terminal(**overrides):
 # CSVExporter
 # ---------------------------------------------------------------------------
 
+
 class TestCSVExporterInit:
     def test_with_path(self, tmp_path):
         exporter = CSVExporter(output_dir=tmp_path)
@@ -128,6 +129,7 @@ class TestCountByAttr:
 # ParquetExporter
 # ---------------------------------------------------------------------------
 
+
 class TestParquetExporterInit:
     def test_with_path(self, tmp_path):
         exporter = ParquetExporter(output_dir=tmp_path)
@@ -142,6 +144,7 @@ class TestParquetExport:
 
     def test_basic_export(self, tmp_path):
         import pandas as pd
+
         exporter = ParquetExporter(output_dir=tmp_path)
         terminals = [_make_terminal(terminal_name="Sabine Pass")]
         path = exporter.export(terminals, "test.parquet")
@@ -151,6 +154,7 @@ class TestParquetExport:
 
     def test_multiple_terminals(self, tmp_path):
         import pandas as pd
+
         exporter = ParquetExporter(output_dir=tmp_path)
         terminals = [
             _make_terminal(terminal_name="A"),

@@ -35,71 +35,101 @@ class TestReportRowData:
 
     def test_format_value_currency(self):
         r = ReportRowData(
-            row_number=1, row_type=ReportRowType.ECONOMICS, label="Rev",
-            value=1234567.89, format_type="currency",
+            row_number=1,
+            row_type=ReportRowType.ECONOMICS,
+            label="Rev",
+            value=1234567.89,
+            format_type="currency",
         )
         assert r.format_value() == "$1,234,567.89"
 
     def test_format_value_percentage(self):
         r = ReportRowData(
-            row_number=1, row_type=ReportRowType.ECONOMICS, label="M",
-            value=85.3, format_type="percentage",
+            row_number=1,
+            row_type=ReportRowType.ECONOMICS,
+            label="M",
+            value=85.3,
+            format_type="percentage",
         )
         assert r.format_value() == "85.3%"
 
     def test_format_value_number(self):
         r = ReportRowData(
-            row_number=1, row_type=ReportRowType.WELL_DETAILS, label="W",
-            value=1500, format_type="number",
+            row_number=1,
+            row_type=ReportRowType.WELL_DETAILS,
+            label="W",
+            value=1500,
+            format_type="number",
         )
         assert r.format_value() == "1,500"
 
     def test_format_value_decimal(self):
         r = ReportRowData(
-            row_number=1, row_type=ReportRowType.HEADER, label="D",
-            value=3.14159, format_type="decimal",
+            row_number=1,
+            row_type=ReportRowType.HEADER,
+            label="D",
+            value=3.14159,
+            format_type="decimal",
         )
         assert r.format_value() == "3.14"
 
     def test_format_value_date_obj(self):
         r = ReportRowData(
-            row_number=1, row_type=ReportRowType.FIELD_INFO, label="D",
-            value=date(2024, 3, 15), format_type="date",
+            row_number=1,
+            row_type=ReportRowType.FIELD_INFO,
+            label="D",
+            value=date(2024, 3, 15),
+            format_type="date",
         )
         assert r.format_value() == "2024-03-15"
 
     def test_format_value_date_string(self):
         r = ReportRowData(
-            row_number=1, row_type=ReportRowType.FIELD_INFO, label="D",
-            value="2024-01-01", format_type="date",
+            row_number=1,
+            row_type=ReportRowType.FIELD_INFO,
+            label="D",
+            value="2024-01-01",
+            format_type="date",
         )
         assert r.format_value() == "2024-01-01"
 
     def test_format_value_barrels(self):
         r = ReportRowData(
-            row_number=1, row_type=ReportRowType.PRODUCTION_SUMMARY, label="Oil",
-            value=50000, format_type="barrels",
+            row_number=1,
+            row_type=ReportRowType.PRODUCTION_SUMMARY,
+            label="Oil",
+            value=50000,
+            format_type="barrels",
         )
         assert r.format_value() == "50,000 bbl"
 
     def test_format_value_gas(self):
         r = ReportRowData(
-            row_number=1, row_type=ReportRowType.PRODUCTION_SUMMARY, label="Gas",
-            value=100000, format_type="gas",
+            row_number=1,
+            row_type=ReportRowType.PRODUCTION_SUMMARY,
+            label="Gas",
+            value=100000,
+            format_type="gas",
         )
         assert r.format_value() == "100,000 Mcf"
 
     def test_format_value_days(self):
         r = ReportRowData(
-            row_number=1, row_type=ReportRowType.PRODUCTION_SUMMARY, label="Days",
-            value=365, format_type="days",
+            row_number=1,
+            row_type=ReportRowType.PRODUCTION_SUMMARY,
+            label="Days",
+            value=365,
+            format_type="days",
         )
         assert r.format_value() == "365 days"
 
     def test_format_value_text_default(self):
         r = ReportRowData(
-            row_number=1, row_type=ReportRowType.NOTES, label="N",
-            value="Active", format_type="text",
+            row_number=1,
+            row_type=ReportRowType.NOTES,
+            label="N",
+            value="Active",
+            format_type="text",
         )
         assert r.format_value() == "Active"
 
@@ -239,9 +269,19 @@ class TestGoByReportMapper:
     def test_create_custom_structure(self):
         row_defs = [
             {"label": "Title", "row_type": "header"},
-            {"label": "Oil", "row_type": "production_summary", "format_type": "barrels", "value": 1000},
+            {
+                "label": "Oil",
+                "row_type": "production_summary",
+                "format_type": "barrels",
+                "value": 1000,
+            },
         ]
-        entity = {"entity_id": "E1", "entity_name": "Test", "entity_type": "field", "report_title": "Custom"}
+        entity = {
+            "entity_id": "E1",
+            "entity_name": "Test",
+            "entity_type": "field",
+            "report_title": "Custom",
+        }
         report = GoByReportMapper.create_custom_structure(row_defs, entity)
         assert len(report.rows) == 2
         assert report.rows[0].row_type == ReportRowType.HEADER

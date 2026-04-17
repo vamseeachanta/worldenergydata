@@ -1,13 +1,13 @@
 """Tests for landman module data validators."""
 
 from worldenergydata.landman.validators import (
-    LandmanDataValidator,
-    US_STATE_CODES,
     MAJOR_OG_STATES,
-    is_valid_legal_description,
-    is_valid_state_code,
-    is_valid_mineral_interest,
+    US_STATE_CODES,
+    LandmanDataValidator,
     is_major_og_state,
+    is_valid_legal_description,
+    is_valid_mineral_interest,
+    is_valid_state_code,
 )
 
 

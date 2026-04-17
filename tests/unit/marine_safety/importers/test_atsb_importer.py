@@ -27,6 +27,7 @@ def importer(tmp_path):
 # Constants / class attributes
 # ---------------------------------------------------------------------------
 
+
 class TestATSBConstants:
     def test_field_mappings_not_empty(self):
         assert len(ATSBImporter.FIELD_MAPPINGS) > 20
@@ -36,8 +37,14 @@ class TestATSBConstants:
         assert ATSBImporter.AUSTRALIAN_STATES["new south wales"] == "NSW"
 
     def test_occurrence_type_mappings(self):
-        assert ATSBImporter.OCCURRENCE_TYPE_MAPPINGS["grounding"] == IncidentType.GROUNDING.value
-        assert ATSBImporter.OCCURRENCE_TYPE_MAPPINGS["collision"] == IncidentType.COLLISION.value
+        assert (
+            ATSBImporter.OCCURRENCE_TYPE_MAPPINGS["grounding"]
+            == IncidentType.GROUNDING.value
+        )
+        assert (
+            ATSBImporter.OCCURRENCE_TYPE_MAPPINGS["collision"]
+            == IncidentType.COLLISION.value
+        )
         assert ATSBImporter.OCCURRENCE_TYPE_MAPPINGS["fire"] == IncidentType.FIRE.value
 
     def test_vessel_type_mappings(self):
@@ -46,14 +53,20 @@ class TestATSBConstants:
         assert ATSBImporter.VESSEL_TYPE_MAPPINGS["fpso"] == VesselType.FPSO.value
 
     def test_status_mappings(self):
-        assert ATSBImporter.STATUS_MAPPINGS["final"] == IncidentStatus.FINAL_REPORT.value
-        assert ATSBImporter.STATUS_MAPPINGS["active"] == IncidentStatus.UNDER_INVESTIGATION.value
+        assert (
+            ATSBImporter.STATUS_MAPPINGS["final"] == IncidentStatus.FINAL_REPORT.value
+        )
+        assert (
+            ATSBImporter.STATUS_MAPPINGS["active"]
+            == IncidentStatus.UNDER_INVESTIGATION.value
+        )
         assert ATSBImporter.STATUS_MAPPINGS["closed"] == IncidentStatus.CLOSED.value
 
 
 # ---------------------------------------------------------------------------
 # Init
 # ---------------------------------------------------------------------------
+
 
 class TestATSBImporterInit:
     def test_auto_detect_csv(self, tmp_path):
@@ -88,6 +101,7 @@ class TestATSBImporterInit:
 # ---------------------------------------------------------------------------
 # _normalize_state
 # ---------------------------------------------------------------------------
+
 
 class TestNormalizeState:
     def test_standard_abbreviation(self, importer):
@@ -128,15 +142,24 @@ class TestNormalizeState:
 # _map_occurrence_type
 # ---------------------------------------------------------------------------
 
+
 class TestMapOccurrenceType:
     def test_exact_match(self, importer):
-        assert importer._map_occurrence_type("grounding") == IncidentType.GROUNDING.value
-        assert importer._map_occurrence_type("collision") == IncidentType.COLLISION.value
+        assert (
+            importer._map_occurrence_type("grounding") == IncidentType.GROUNDING.value
+        )
+        assert (
+            importer._map_occurrence_type("collision") == IncidentType.COLLISION.value
+        )
         assert importer._map_occurrence_type("fire") == IncidentType.FIRE.value
-        assert importer._map_occurrence_type("explosion") == IncidentType.EXPLOSION.value
+        assert (
+            importer._map_occurrence_type("explosion") == IncidentType.EXPLOSION.value
+        )
 
     def test_case_insensitive(self, importer):
-        assert importer._map_occurrence_type("GROUNDING") == IncidentType.GROUNDING.value
+        assert (
+            importer._map_occurrence_type("GROUNDING") == IncidentType.GROUNDING.value
+        )
         assert importer._map_occurrence_type("Fire") == IncidentType.FIRE.value
 
     def test_partial_match(self, importer):
@@ -144,7 +167,10 @@ class TestMapOccurrenceType:
         assert result in (IncidentType.FIRE.value, IncidentType.EXPLOSION.value)
 
     def test_unknown(self, importer):
-        assert importer._map_occurrence_type("xyz unknown event") == IncidentType.OTHER.value
+        assert (
+            importer._map_occurrence_type("xyz unknown event")
+            == IncidentType.OTHER.value
+        )
 
     def test_empty(self, importer):
         assert importer._map_occurrence_type("") == IncidentType.OTHER.value
@@ -156,18 +182,27 @@ class TestMapOccurrenceType:
         assert importer._map_occurrence_type("flooding") == IncidentType.FLOODING.value
 
     def test_capsizing(self, importer):
-        assert importer._map_occurrence_type("capsizing") == IncidentType.CAPSIZING.value
+        assert (
+            importer._map_occurrence_type("capsizing") == IncidentType.CAPSIZING.value
+        )
 
     def test_equipment_failure(self, importer):
-        assert importer._map_occurrence_type("equipment failure") == IncidentType.EQUIPMENT_FAILURE.value
+        assert (
+            importer._map_occurrence_type("equipment failure")
+            == IncidentType.EQUIPMENT_FAILURE.value
+        )
 
     def test_weather(self, importer):
-        assert importer._map_occurrence_type("heavy weather") == IncidentType.WEATHER_RELATED.value
+        assert (
+            importer._map_occurrence_type("heavy weather")
+            == IncidentType.WEATHER_RELATED.value
+        )
 
 
 # ---------------------------------------------------------------------------
 # _map_vessel_type
 # ---------------------------------------------------------------------------
+
 
 class TestMapVesselType:
     def test_exact_match(self, importer):
@@ -191,28 +226,41 @@ class TestMapVesselType:
         assert importer._map_vessel_type(None) == VesselType.OTHER.value
 
     def test_offshore(self, importer):
-        assert importer._map_vessel_type("drilling rig") == VesselType.DRILLING_RIG.value
-        assert importer._map_vessel_type("supply vessel") == VesselType.SUPPLY_VESSEL.value
+        assert (
+            importer._map_vessel_type("drilling rig") == VesselType.DRILLING_RIG.value
+        )
+        assert (
+            importer._map_vessel_type("supply vessel") == VesselType.SUPPLY_VESSEL.value
+        )
 
     def test_research(self, importer):
-        assert importer._map_vessel_type("research vessel") == VesselType.RESEARCH_VESSEL.value
+        assert (
+            importer._map_vessel_type("research vessel")
+            == VesselType.RESEARCH_VESSEL.value
+        )
 
 
 # ---------------------------------------------------------------------------
 # _map_status
 # ---------------------------------------------------------------------------
 
+
 class TestMapStatus:
     def test_exact_match(self, importer):
         assert importer._map_status("final") == IncidentStatus.FINAL_REPORT.value
         assert importer._map_status("closed") == IncidentStatus.CLOSED.value
-        assert importer._map_status("active") == IncidentStatus.UNDER_INVESTIGATION.value
+        assert (
+            importer._map_status("active") == IncidentStatus.UNDER_INVESTIGATION.value
+        )
 
     def test_case_insensitive(self, importer):
         assert importer._map_status("FINAL") == IncidentStatus.FINAL_REPORT.value
 
     def test_partial_match(self, importer):
-        assert importer._map_status("final report published") == IncidentStatus.FINAL_REPORT.value
+        assert (
+            importer._map_status("final report published")
+            == IncidentStatus.FINAL_REPORT.value
+        )
 
     def test_unknown(self, importer):
         assert importer._map_status("xyz") == IncidentStatus.REPORTED.value
@@ -227,6 +275,7 @@ class TestMapStatus:
 # ---------------------------------------------------------------------------
 # _build_location_description
 # ---------------------------------------------------------------------------
+
 
 class TestBuildLocationDescription:
     def test_all_parts(self, importer):
@@ -253,6 +302,7 @@ class TestBuildLocationDescription:
 # _generate_title
 # ---------------------------------------------------------------------------
 
+
 class TestGenerateTitle:
     def test_with_all_fields(self, importer):
         parsed = {
@@ -274,6 +324,7 @@ class TestGenerateTitle:
 # ---------------------------------------------------------------------------
 # _calculate_severity
 # ---------------------------------------------------------------------------
+
 
 class TestCalculateSeverity:
     def test_catastrophic(self, importer):
@@ -300,6 +351,7 @@ class TestCalculateSeverity:
 # ---------------------------------------------------------------------------
 # _parse_nested_record
 # ---------------------------------------------------------------------------
+
 
 class TestParseNestedRecord:
     def test_basic(self, importer):
@@ -346,6 +398,7 @@ class TestParseNestedRecord:
 # _parse_flat_record
 # ---------------------------------------------------------------------------
 
+
 class TestParseFlatRecord:
     def test_basic(self, importer):
         raw = {
@@ -374,6 +427,7 @@ class TestParseFlatRecord:
 # ---------------------------------------------------------------------------
 # _get_atsb_id
 # ---------------------------------------------------------------------------
+
 
 class TestGetATSBId:
     def test_atsb_id_field(self, importer):
@@ -404,6 +458,7 @@ class TestGetATSBId:
 # ---------------------------------------------------------------------------
 # clear_caches
 # ---------------------------------------------------------------------------
+
 
 class TestClearCaches:
     def test_clears(self, importer):

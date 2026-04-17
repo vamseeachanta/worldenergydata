@@ -3,20 +3,20 @@
 import pytest
 
 from worldenergydata.eia_us.analysis.us_fiscal import (
-    FederalOnshoreFiscal,
-    TexasFiscal,
-    NorthDakotaFiscal,
-    GoMCrosscheck,
-    USFiscalResult,
     FEDERAL_ONSHORE_ROYALTY_RATE,
-    TEXAS_OIL_SEVERANCE_RATE,
-    TEXAS_GAS_SEVERANCE_RATE,
     ND_OIL_EXTRACTION_RATE,
     ND_OIL_PRODUCTION_RATE,
+    TEXAS_GAS_SEVERANCE_RATE,
+    TEXAS_OIL_SEVERANCE_RATE,
+    FederalOnshoreFiscal,
+    GoMCrosscheck,
+    NorthDakotaFiscal,
+    TexasFiscal,
+    USFiscalResult,
 )
 
-
 # ── Rate constants ─────────────────────────────────────────────────────────────
+
 
 class TestFiscalRateConstants:
     def test_federal_onshore_royalty_16_67_percent(self):
@@ -36,6 +36,7 @@ class TestFiscalRateConstants:
 
 
 # ── Federal Onshore ────────────────────────────────────────────────────────────
+
 
 class TestFederalOnshoreFiscal:
     @pytest.fixture
@@ -70,6 +71,7 @@ class TestFederalOnshoreFiscal:
 
 # ── Texas ──────────────────────────────────────────────────────────────────────
 
+
 class TestTexasFiscal:
     @pytest.fixture
     def regime(self):
@@ -102,6 +104,7 @@ class TestTexasFiscal:
 
 
 # ── North Dakota ───────────────────────────────────────────────────────────────
+
 
 class TestNorthDakotaFiscal:
     @pytest.fixture
@@ -137,6 +140,7 @@ class TestNorthDakotaFiscal:
 
 
 # ── GoM Crosscheck ─────────────────────────────────────────────────────────────
+
 
 class TestGoMCrosscheck:
     @pytest.fixture

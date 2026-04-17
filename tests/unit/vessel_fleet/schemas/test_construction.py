@@ -30,19 +30,22 @@ class TestConstructionVesselSchemaInheritance:
 class TestConstructionVesselSchemaCoercion:
     def test_float_from_string(self):
         schema = ConstructionVesselSchema(
-            VESSEL_NAME="T", MAIN_CRANE_CAPACITY_T="14200",
+            VESSEL_NAME="T",
+            MAIN_CRANE_CAPACITY_T="14200",
         )
         assert schema.MAIN_CRANE_CAPACITY_T == 14200.0
 
     def test_float_empty_to_none(self):
         schema = ConstructionVesselSchema(
-            VESSEL_NAME="T", PIPELAY_TENSION_T="",
+            VESSEL_NAME="T",
+            PIPELAY_TENSION_T="",
         )
         assert schema.PIPELAY_TENSION_T is None
 
     def test_string_empty_to_none(self):
         schema = ConstructionVesselSchema(
-            VESSEL_NAME="T", PIPELAY_METHOD="",
+            VESSEL_NAME="T",
+            PIPELAY_METHOD="",
         )
         assert schema.PIPELAY_METHOD is None
 
@@ -55,7 +58,8 @@ class TestConstructionVesselSchemaValidation:
     def test_negative_crane_capacity_raises(self):
         with pytest.raises(Exception):
             ConstructionVesselSchema(
-                VESSEL_NAME="T", MAIN_CRANE_CAPACITY_T=-100,
+                VESSEL_NAME="T",
+                MAIN_CRANE_CAPACITY_T=-100,
             )
 
     def test_negative_deck_area_raises(self):

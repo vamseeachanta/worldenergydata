@@ -25,15 +25,13 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List
 
+from worldenergydata.common.logging import get_logger
 from worldenergydata.safety_analysis.taxonomy.activity_registry import (
     ActivityTaxonomy,
 )
 from worldenergydata.safety_analysis.taxonomy.incident_classifier import (
     IncidentClassifier,
 )
-
-
-from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
 
@@ -175,9 +173,13 @@ def cmd_taxonomy(args: argparse.Namespace) -> None:
         if activity.bsee_accident_types:
             logger.info(f"    BSEE types: {', '.join(activity.bsee_accident_types)}")
         if activity.marine_incident_types:
-            logger.info(f"    Marine types: {', '.join(activity.marine_incident_types)}")
+            logger.info(
+                f"    Marine types: {', '.join(activity.marine_incident_types)}"
+            )
         if activity.phmsa_cause_categories:
-            logger.info(f"    PHMSA causes: {', '.join(activity.phmsa_cause_categories)}")
+            logger.info(
+                f"    PHMSA causes: {', '.join(activity.phmsa_cause_categories)}"
+            )
         for sub in activity.subactivities:
             logger.info(f"      - {sub.code}: {sub.name}")
 

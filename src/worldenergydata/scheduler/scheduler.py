@@ -1,4 +1,5 @@
 """Main DataScheduler: job registration, loop, start/stop, status, manual trigger."""
+
 import logging
 import time
 from datetime import datetime
@@ -7,7 +8,11 @@ from typing import Dict, List, Optional
 import schedule
 
 from worldenergydata.scheduler.alerting import AlertSender
-from worldenergydata.scheduler.config import SchedulerConfig, load_config, validate_config
+from worldenergydata.scheduler.config import (
+    SchedulerConfig,
+    load_config,
+    validate_config,
+)
 from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
 from worldenergydata.scheduler.monitor import JobLogger, RetryManager, StatusReporter
 from worldenergydata.scheduler.status_enricher import enrich_status
@@ -65,8 +70,7 @@ class DataScheduler:
         """
         if job.name in self._jobs:
             raise ValueError(
-                f"Job '{job.name}' is already registered. "
-                "Use a unique name per job."
+                f"Job '{job.name}' is already registered. " "Use a unique name per job."
             )
         self._jobs[job.name] = job
         self._job_state[job.name] = {
@@ -180,6 +184,7 @@ class DataScheduler:
             def make_task(name: str) -> callable:
                 def _task():
                     self.run_once(name)
+
                 return _task
 
             task = make_task(job_name)

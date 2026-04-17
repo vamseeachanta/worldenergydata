@@ -214,7 +214,7 @@ def validate_drilling_data(df: pd.DataFrame) -> Tuple[bool, List[str]]:
 
 
 def validate_financial_assumptions(
-    assumptions: Dict[str, Any]
+    assumptions: Dict[str, Any],
 ) -> Tuple[bool, List[str]]:
     """
     Validate financial assumptions

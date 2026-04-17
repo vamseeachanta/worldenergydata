@@ -1,9 +1,9 @@
 """Tests for validation rules engine."""
 
-import pytest
 from datetime import datetime
 
 import pandas as pd
+import pytest
 
 from worldenergydata.validation.exceptions import (
     ConsistencyError,
@@ -87,16 +87,21 @@ class TestValidationRulesDataType:
             ValidationRules.validate_data_type("yes", "f", DataType.BOOLEAN)
 
     def test_date_valid(self):
-        assert ValidationRules.validate_data_type("2024-01-01", "f", DataType.DATE) is True
+        assert (
+            ValidationRules.validate_data_type("2024-01-01", "f", DataType.DATE) is True
+        )
 
     def test_date_invalid(self):
         with pytest.raises(DataTypeError):
             ValidationRules.validate_data_type("not-a-date", "f", DataType.DATE)
 
     def test_datetime_valid(self):
-        assert ValidationRules.validate_data_type(
-            "2024-01-01T12:00:00", "f", DataType.DATETIME
-        ) is True
+        assert (
+            ValidationRules.validate_data_type(
+                "2024-01-01T12:00:00", "f", DataType.DATETIME
+            )
+            is True
+        )
 
     def test_datetime_invalid(self):
         with pytest.raises(DataTypeError):
@@ -110,7 +115,9 @@ class TestValidationRulesDataType:
             ValidationRules.validate_data_type("not array", "f", DataType.ARRAY)
 
     def test_object_valid(self):
-        assert ValidationRules.validate_data_type({"k": "v"}, "f", DataType.OBJECT) is True
+        assert (
+            ValidationRules.validate_data_type({"k": "v"}, "f", DataType.OBJECT) is True
+        )
 
     def test_object_invalid(self):
         with pytest.raises(DataTypeError):
@@ -145,7 +152,10 @@ class TestValidationRulesRange:
 
 class TestValidationRulesLength:
     def test_valid_length(self):
-        assert ValidationRules.validate_length("hello", "f", min_length=1, max_length=10) is True
+        assert (
+            ValidationRules.validate_length("hello", "f", min_length=1, max_length=10)
+            is True
+        )
 
     def test_too_short(self):
         with pytest.raises(ValidationError):
@@ -159,12 +169,17 @@ class TestValidationRulesLength:
         assert ValidationRules.validate_length(None, "f", min_length=1) is True
 
     def test_non_string_converted(self):
-        assert ValidationRules.validate_length(123, "f", min_length=1, max_length=5) is True
+        assert (
+            ValidationRules.validate_length(123, "f", min_length=1, max_length=5)
+            is True
+        )
 
 
 class TestValidationRulesPattern:
     def test_valid_pattern(self):
-        assert ValidationRules.validate_pattern("123456789012", "f", r"^\d{12}$") is True
+        assert (
+            ValidationRules.validate_pattern("123456789012", "f", r"^\d{12}$") is True
+        )
 
     def test_invalid_pattern(self):
         with pytest.raises(ValidationError):
@@ -179,11 +194,18 @@ class TestValidationRulesPattern:
 
 class TestValidationRulesAllowedValues:
     def test_valid_value(self):
-        assert ValidationRules.validate_allowed_values("ACTIVE", "f", ["ACTIVE", "INACTIVE"]) is True
+        assert (
+            ValidationRules.validate_allowed_values(
+                "ACTIVE", "f", ["ACTIVE", "INACTIVE"]
+            )
+            is True
+        )
 
     def test_invalid_value(self):
         with pytest.raises(ValidationError):
-            ValidationRules.validate_allowed_values("UNKNOWN", "f", ["ACTIVE", "INACTIVE"])
+            ValidationRules.validate_allowed_values(
+                "UNKNOWN", "f", ["ACTIVE", "INACTIVE"]
+            )
 
     def test_none_allowed_list(self):
         assert ValidationRules.validate_allowed_values("anything", "f", None) is True
@@ -194,7 +216,10 @@ class TestValidationRulesAllowedValues:
 
 class TestValidationRulesDateFormat:
     def test_yyyymm_valid(self):
-        assert ValidationRules.validate_date_format("202301", "f", DateFormat.YYYYMM) is True
+        assert (
+            ValidationRules.validate_date_format("202301", "f", DateFormat.YYYYMM)
+            is True
+        )
 
     def test_yyyymm_invalid_format(self):
         with pytest.raises(DateFormatError):
@@ -209,22 +234,34 @@ class TestValidationRulesDateFormat:
             ValidationRules.validate_date_format("180001", "f", DateFormat.YYYYMM)
 
     def test_yyyy_mm_dd_valid(self):
-        assert ValidationRules.validate_date_format("2024-01-15", "f", DateFormat.YYYY_MM_DD) is True
+        assert (
+            ValidationRules.validate_date_format(
+                "2024-01-15", "f", DateFormat.YYYY_MM_DD
+            )
+            is True
+        )
 
     def test_yyyy_mm_dd_invalid(self):
         with pytest.raises(DateFormatError):
-            ValidationRules.validate_date_format("01/15/2024", "f", DateFormat.YYYY_MM_DD)
+            ValidationRules.validate_date_format(
+                "01/15/2024", "f", DateFormat.YYYY_MM_DD
+            )
 
     def test_iso8601_valid(self):
-        assert ValidationRules.validate_date_format(
-            "2024-01-15T12:00:00Z", "f", DateFormat.ISO8601
-        ) is True
+        assert (
+            ValidationRules.validate_date_format(
+                "2024-01-15T12:00:00Z", "f", DateFormat.ISO8601
+            )
+            is True
+        )
 
     def test_none_format_skipped(self):
         assert ValidationRules.validate_date_format("anything", "f", None) is True
 
     def test_none_value_skipped(self):
-        assert ValidationRules.validate_date_format(None, "f", DateFormat.YYYYMM) is True
+        assert (
+            ValidationRules.validate_date_format(None, "f", DateFormat.YYYYMM) is True
+        )
 
 
 class TestValidationRulesHelpers:
@@ -298,7 +335,9 @@ class TestCrossFieldRulesProductionConsistency:
 class TestCrossFieldRulesSumConsistency:
     def test_valid_sum(self):
         data = {"a": 30, "b": 70, "total": 100}
-        assert CrossFieldRules.validate_sum_consistency(data, ["a", "b"], "total") is True
+        assert (
+            CrossFieldRules.validate_sum_consistency(data, ["a", "b"], "total") is True
+        )
 
     def test_invalid_sum(self):
         data = {"a": 30, "b": 70, "total": 50}
@@ -307,9 +346,12 @@ class TestCrossFieldRulesSumConsistency:
 
     def test_within_tolerance(self):
         data = {"a": 30.005, "b": 69.999, "total": 100}
-        assert CrossFieldRules.validate_sum_consistency(
-            data, ["a", "b"], "total", tolerance=0.01
-        ) is True
+        assert (
+            CrossFieldRules.validate_sum_consistency(
+                data, ["a", "b"], "total", tolerance=0.01
+            )
+            is True
+        )
 
 
 class TestCrossFieldRulesPercentageSum:
@@ -324,9 +366,10 @@ class TestCrossFieldRulesPercentageSum:
 
     def test_within_tolerance(self):
         data = {"p1": 50.005, "p2": 49.999}
-        assert CrossFieldRules.validate_percentage_sum(
-            data, ["p1", "p2"], tolerance=0.01
-        ) is True
+        assert (
+            CrossFieldRules.validate_percentage_sum(data, ["p1", "p2"], tolerance=0.01)
+            is True
+        )
 
 
 class TestCustomValidatorsAPIWellNumber:

@@ -30,10 +30,10 @@ class ExportManifest:
     """Records the result of a multi-format export operation."""
 
     output_dir: str
-    files: dict[str, str]               # format -> absolute file path
+    files: dict[str, str]  # format -> absolute file path
     formats_requested: list[str]
     formats_succeeded: list[str]
-    formats_failed: dict[str, str]      # format -> error message
+    formats_failed: dict[str, str]  # format -> error message
     timestamp: str
 
 
@@ -51,9 +51,7 @@ def _write_xlsx(df: pd.DataFrame, summary: dict, dest: Path) -> str:
 
     with pd.ExcelWriter(dest, engine="openpyxl") as writer:
         df.to_excel(writer, sheet_name="data", index=False)
-        summary_df = pd.DataFrame(
-            list(summary.items()), columns=["key", "value"]
-        )
+        summary_df = pd.DataFrame(list(summary.items()), columns=["key", "value"])
         summary_df.to_excel(writer, sheet_name="summary", index=False)
 
     return str(dest)
@@ -93,8 +91,7 @@ def _write_html_report(df: pd.DataFrame, summary: dict, dest: Path) -> str:
     rows_html = df.head(200).to_html(classes="data-table", border=1, index=False)
 
     summary_rows = "".join(
-        f"<tr><td><b>{k}</b></td><td>{v}</td></tr>"
-        for k, v in summary.items()
+        f"<tr><td><b>{k}</b></td><td>{v}</td></tr>" for k, v in summary.items()
     )
 
     html = f"""<!DOCTYPE html>
@@ -134,11 +131,11 @@ _EXTENSIONS: dict[str, str] = {
     "parquet": ".parquet",
     "csv": ".csv",
     "json": ".json",
-    "pdf": ".html",         # HTML fallback; manifest key re-mapped to html_report
+    "pdf": ".html",  # HTML fallback; manifest key re-mapped to html_report
 }
 
 _MANIFEST_KEYS: dict[str, str] = {
-    "pdf": "html_report",   # re-label pdf -> html_report in manifest
+    "pdf": "html_report",  # re-label pdf -> html_report in manifest
 }
 
 

@@ -8,7 +8,6 @@ from worldenergydata.brazil_anp.production.field_production import (
 )
 from worldenergydata.brazil_anp.production.well_production import SM3_TO_BBL
 
-
 MOCK_WELL_RECORDS = pd.DataFrame(
     {
         "field": ["LULA", "LULA", "LULA", "BUZIOS", "MARLIM"],
@@ -37,16 +36,14 @@ class TestFieldProductionAggregator:
     def test_aggregate_groups_by_field_and_date(self, aggregator):
         result = aggregator.aggregate(MOCK_WELL_RECORDS.copy())
         lula_jan = result[
-            (result["field"] == "LULA")
-            & (result["date"] == pd.Timestamp("2023-01-01"))
+            (result["field"] == "LULA") & (result["date"] == pd.Timestamp("2023-01-01"))
         ]
         assert len(lula_jan) == 1
 
     def test_aggregate_sums_oil_production(self, aggregator):
         result = aggregator.aggregate(MOCK_WELL_RECORDS.copy())
         lula_jan = result[
-            (result["field"] == "LULA")
-            & (result["date"] == pd.Timestamp("2023-01-01"))
+            (result["field"] == "LULA") & (result["date"] == pd.Timestamp("2023-01-01"))
         ]
         expected = 314490.0 + 283041.0
         assert abs(lula_jan.iloc[0]["oil_bbl"] - expected) < 1.0
@@ -54,8 +51,7 @@ class TestFieldProductionAggregator:
     def test_aggregate_sums_water_production(self, aggregator):
         result = aggregator.aggregate(MOCK_WELL_RECORDS.copy())
         lula_jan = result[
-            (result["field"] == "LULA")
-            & (result["date"] == pd.Timestamp("2023-01-01"))
+            (result["field"] == "LULA") & (result["date"] == pd.Timestamp("2023-01-01"))
         ]
         expected = 125796.0 + 138375.6
         assert abs(lula_jan.iloc[0]["water_bbl"] - expected) < 1.0
@@ -63,8 +59,7 @@ class TestFieldProductionAggregator:
     def test_aggregate_counts_wells(self, aggregator):
         result = aggregator.aggregate(MOCK_WELL_RECORDS.copy())
         lula_jan = result[
-            (result["field"] == "LULA")
-            & (result["date"] == pd.Timestamp("2023-01-01"))
+            (result["field"] == "LULA") & (result["date"] == pd.Timestamp("2023-01-01"))
         ]
         assert lula_jan.iloc[0]["well_count"] == 2
 
@@ -95,7 +90,16 @@ class TestFieldProductionAggregator:
 
     def test_empty_input(self, aggregator):
         empty = pd.DataFrame(
-            columns=["field", "well", "date", "oil_bbl", "condensate_bbl", "gas_m3", "water_bbl", "oil_bbl_per_day"]
+            columns=[
+                "field",
+                "well",
+                "date",
+                "oil_bbl",
+                "condensate_bbl",
+                "gas_m3",
+                "water_bbl",
+                "oil_bbl_per_day",
+            ]
         )
         result = aggregator.aggregate(empty)
         assert isinstance(result, pd.DataFrame)

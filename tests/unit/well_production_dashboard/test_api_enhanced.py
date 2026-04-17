@@ -16,9 +16,7 @@ import pytest
 
 # Mock Flask and related imports
 with patch("worldenergydata.well_production_dashboard.api_enhanced.Flask"):
-    with patch(
-        "worldenergydata.well_production_dashboard.api_enhanced.jsonify"
-    ):
+    with patch("worldenergydata.well_production_dashboard.api_enhanced.jsonify"):
         from worldenergydata.well_production_dashboard.api_enhanced import (
             APIAuthenticator,
             CacheManager,

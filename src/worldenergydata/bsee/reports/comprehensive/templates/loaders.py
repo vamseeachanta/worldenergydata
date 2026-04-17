@@ -260,7 +260,9 @@ class TemplateLoader:
                         self.config_cache[template_name] = config
                         return config
                     except Exception as e:
-                        logger.warning(f"Warning: Failed to load config {config_file}: {e}")
+                        logger.warning(
+                            f"Warning: Failed to load config {config_file}: {e}"
+                        )
 
         return None
 
@@ -327,7 +329,9 @@ class TemplateLoader:
                         return template
 
                 except Exception as e:
-                    logger.warning(f"Warning: Failed to load template {template_file}: {e}")
+                    logger.warning(
+                        f"Warning: Failed to load template {template_file}: {e}"
+                    )
 
         return None
 

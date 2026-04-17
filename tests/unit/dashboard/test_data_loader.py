@@ -9,14 +9,15 @@ Covers:
   - Sample/fallback data generation when real data absent
 """
 
-import pandas as pd
-import pytest
 from pathlib import Path
 
+import pandas as pd
+import pytest
 
 # ---------------------------------------------------------------------------
 # Production data loader tests
 # ---------------------------------------------------------------------------
+
 
 class TestLoadProductionData:
     """Tests for load_production_data()."""
@@ -34,9 +35,9 @@ class TestLoadProductionData:
 
         df = load_production_data()
         required = {"PRODUCTION_DATE", "OIL_BBL", "GAS_MCF", "WATER_BBL", "FIELD_NAME"}
-        assert required.issubset(set(df.columns)), (
-            f"Missing columns: {required - set(df.columns)}"
-        )
+        assert required.issubset(
+            set(df.columns)
+        ), f"Missing columns: {required - set(df.columns)}"
 
     def test_load_production_data_not_empty(self):
         """Production DataFrame must have at least one row."""
@@ -51,9 +52,9 @@ class TestLoadProductionData:
 
         df = load_production_data()
         for col in ("OIL_BBL", "GAS_MCF", "WATER_BBL"):
-            assert pd.api.types.is_numeric_dtype(df[col]), (
-                f"Column {col} is not numeric"
-            )
+            assert pd.api.types.is_numeric_dtype(
+                df[col]
+            ), f"Column {col} is not numeric"
 
     def test_load_production_data_date_parseable(self):
         """PRODUCTION_DATE column must be parseable as datetime."""
@@ -76,6 +77,7 @@ class TestLoadProductionData:
 # ---------------------------------------------------------------------------
 # Platform / well location data tests
 # ---------------------------------------------------------------------------
+
 
 class TestLoadPlatformData:
     """Tests for load_platform_data()."""
@@ -108,12 +110,12 @@ class TestLoadPlatformData:
 
         df = load_platform_data()
         df_clean = df.dropna(subset=["LATITUDE", "LONGITUDE"])
-        assert (df_clean["LATITUDE"].between(17.0, 31.0)).all(), (
-            "Latitude out of GOM bounds"
-        )
-        assert (df_clean["LONGITUDE"].between(-98.0, -80.0)).all(), (
-            "Longitude out of GOM bounds"
-        )
+        assert (
+            df_clean["LATITUDE"].between(17.0, 31.0)
+        ).all(), "Latitude out of GOM bounds"
+        assert (
+            df_clean["LONGITUDE"].between(-98.0, -80.0)
+        ).all(), "Longitude out of GOM bounds"
 
     def test_load_platform_data_not_empty(self):
         """Platform DataFrame must have at least one row."""
@@ -126,6 +128,7 @@ class TestLoadPlatformData:
 # ---------------------------------------------------------------------------
 # FDAS incident data tests
 # ---------------------------------------------------------------------------
+
 
 class TestLoadIncidentData:
     """Tests for load_incident_data()."""
@@ -143,9 +146,9 @@ class TestLoadIncidentData:
 
         df = load_incident_data()
         required = {"INCIDENT_TYPE", "SEVERITY", "INCIDENT_YEAR", "AREA_NAME"}
-        assert required.issubset(set(df.columns)), (
-            f"Missing columns: {required - set(df.columns)}"
-        )
+        assert required.issubset(
+            set(df.columns)
+        ), f"Missing columns: {required - set(df.columns)}"
 
     def test_load_incident_data_severity_values_valid(self):
         """SEVERITY column must only contain recognised severity levels."""
@@ -184,6 +187,7 @@ class TestLoadIncidentData:
 # ---------------------------------------------------------------------------
 # Sample data generator tests
 # ---------------------------------------------------------------------------
+
 
 class TestSampleDataGenerators:
     """Tests for the internal sample/fallback data generators."""

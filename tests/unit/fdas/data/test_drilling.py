@@ -12,10 +12,10 @@ from worldenergydata.fdas.data.drilling import (
     calculate_drilling_days,
 )
 
-
 # ---------------------------------------------------------------------------
 # DrillingDataError
 # ---------------------------------------------------------------------------
+
 
 class TestDrillingDataError:
     def test_is_exception(self):
@@ -30,6 +30,7 @@ class TestDrillingDataError:
 # ---------------------------------------------------------------------------
 # CompletionActivityClassifier
 # ---------------------------------------------------------------------------
+
 
 class TestClassifierInit:
     def test_default_keywords(self):
@@ -127,6 +128,7 @@ class TestExtractMudWeight:
 # ---------------------------------------------------------------------------
 # DrillingTimelineExtractor
 # ---------------------------------------------------------------------------
+
 
 def _make_activity_df(**overrides):
     defaults = {
@@ -250,7 +252,9 @@ class TestClassifyActivitiesFromRemarks:
 
     def test_with_remarks(self):
         df = _make_activity_df()
-        remarks = pd.DataFrame({"REMARK": ["Perforated zone", "Drilling ahead", "Waiting"]})
+        remarks = pd.DataFrame(
+            {"REMARK": ["Perforated zone", "Drilling ahead", "Waiting"]}
+        )
         extractor = DrillingTimelineExtractor(df, remarks_df=remarks)
         result = extractor.classify_activities_from_remarks()
         assert "ACTIVITY_TYPE" in result.columns

@@ -7,25 +7,24 @@ Run with:
 """
 
 import os
+
 import pytest
 
 plotly = pytest.importorskip("plotly", reason="plotly not installed")
 pd = pytest.importorskip("pandas", reason="pandas not installed")
 
-import plotly.graph_objects as go
 import pandas as pd
+import plotly.graph_objects as go
 
+from worldenergydata.bsee.visualization import FieldMapConfig as FieldMapConfigViaInit
+from worldenergydata.bsee.visualization import FoliumGomMap as FoliumGomMapViaInit
+from worldenergydata.bsee.visualization import GomFieldMap as GomFieldMapViaInit
 from worldenergydata.bsee.visualization.field_map import (
-    GomFieldMap,
     FieldMapConfig,
     FieldRecord,
+    GomFieldMap,
 )
 from worldenergydata.bsee.visualization.folium_map import FoliumGomMap
-from worldenergydata.bsee.visualization import (
-    GomFieldMap as GomFieldMapViaInit,
-    FieldMapConfig as FieldMapConfigViaInit,
-    FoliumGomMap as FoliumGomMapViaInit,
-)
 
 # ---------------------------------------------------------------------------
 # Constants and valid sets
@@ -44,6 +43,7 @@ LON_MIN, LON_MAX = -96.0, -84.0
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture(scope="module")
 def map_instance():
@@ -64,6 +64,7 @@ def default_fig(map_instance, fields):
 # 1. load_fields — catalog integrity
 # ---------------------------------------------------------------------------
 
+
 class TestLoadFields:
     def test_load_fields_returns_list(self, map_instance):
         result = map_instance.load_fields()
@@ -78,27 +79,27 @@ class TestLoadFields:
 
     def test_lat_in_gom_bounds(self, fields):
         for f in fields:
-            assert LAT_MIN <= f.lat <= LAT_MAX, (
-                f"{f.field_name}: lat {f.lat} outside [{LAT_MIN}, {LAT_MAX}]"
-            )
+            assert (
+                LAT_MIN <= f.lat <= LAT_MAX
+            ), f"{f.field_name}: lat {f.lat} outside [{LAT_MIN}, {LAT_MAX}]"
 
     def test_lon_in_gom_bounds(self, fields):
         for f in fields:
-            assert LON_MIN <= f.lon <= LON_MAX, (
-                f"{f.field_name}: lon {f.lon} outside [{LON_MIN}, {LON_MAX}]"
-            )
+            assert (
+                LON_MIN <= f.lon <= LON_MAX
+            ), f"{f.field_name}: lon {f.lon} outside [{LON_MIN}, {LON_MAX}]"
 
     def test_geological_era_valid_values(self, fields):
         for f in fields:
-            assert f.geological_era in VALID_ERAS, (
-                f"{f.field_name}: invalid era '{f.geological_era}'"
-            )
+            assert (
+                f.geological_era in VALID_ERAS
+            ), f"{f.field_name}: invalid era '{f.geological_era}'"
 
     def test_cumulative_oil_nonnegative(self, fields):
         for f in fields:
-            assert f.cumulative_oil_bbl >= 0, (
-                f"{f.field_name}: negative cum_oil_bbl {f.cumulative_oil_bbl}"
-            )
+            assert (
+                f.cumulative_oil_bbl >= 0
+            ), f"{f.field_name}: negative cum_oil_bbl {f.cumulative_oil_bbl}"
 
     def test_cumulative_gas_nonnegative(self, fields):
         for f in fields:
@@ -106,15 +107,15 @@ class TestLoadFields:
 
     def test_water_depth_positive(self, fields):
         for f in fields:
-            assert f.water_depth_m > 0, (
-                f"{f.field_name}: non-positive water_depth_m {f.water_depth_m}"
-            )
+            assert (
+                f.water_depth_m > 0
+            ), f"{f.field_name}: non-positive water_depth_m {f.water_depth_m}"
 
     def test_status_valid_values(self, fields):
         for f in fields:
-            assert f.status in VALID_STATUSES, (
-                f"{f.field_name}: invalid status '{f.status}'"
-            )
+            assert (
+                f.status in VALID_STATUSES
+            ), f"{f.field_name}: invalid status '{f.status}'"
 
     def test_peak_rate_nonnegative(self, fields):
         for f in fields:
@@ -129,16 +130,21 @@ class TestLoadFields:
             assert f.operator and isinstance(f.operator, str)
 
     def test_first_production_year_plausible(self, fields):
-        producing = [f for f in fields if f.status == "producing" and f.first_production_year < 2050]
+        producing = [
+            f
+            for f in fields
+            if f.status == "producing" and f.first_production_year < 2050
+        ]
         for f in producing:
-            assert 1950 <= f.first_production_year <= 2030, (
-                f"{f.field_name}: year {f.first_production_year} out of range"
-            )
+            assert (
+                1950 <= f.first_production_year <= 2030
+            ), f"{f.field_name}: year {f.first_production_year} out of range"
 
 
 # ---------------------------------------------------------------------------
 # 2. Named fields present
 # ---------------------------------------------------------------------------
+
 
 class TestNamedFieldsPresent:
     def _field_names(self, fields):
@@ -179,6 +185,7 @@ class TestNamedFieldsPresent:
 # ---------------------------------------------------------------------------
 # 3. plot() — Plotly figure output
 # ---------------------------------------------------------------------------
+
 
 class TestPlot:
     def test_plot_returns_figure(self, default_fig):
@@ -228,6 +235,7 @@ class TestPlot:
 # 4. plot_production_timeline()
 # ---------------------------------------------------------------------------
 
+
 class TestPlotProductionTimeline:
     def test_returns_figure(self, map_instance):
         fig = map_instance.plot_production_timeline("Atlantis")
@@ -255,6 +263,7 @@ class TestPlotProductionTimeline:
 # 5. export_html()
 # ---------------------------------------------------------------------------
 
+
 class TestExportHtml:
     def test_export_creates_file(self, map_instance, default_fig, tmp_path):
         out = str(tmp_path / "test_map.html")
@@ -281,6 +290,7 @@ class TestExportHtml:
 # ---------------------------------------------------------------------------
 # 6. field_summary_table()
 # ---------------------------------------------------------------------------
+
 
 class TestFieldSummaryTable:
     def test_returns_dataframe(self, map_instance):
@@ -314,6 +324,7 @@ class TestFieldSummaryTable:
 # 7. FieldMapConfig defaults
 # ---------------------------------------------------------------------------
 
+
 class TestFieldMapConfig:
     def test_default_color_by(self):
         cfg = FieldMapConfig()
@@ -345,6 +356,7 @@ class TestFieldMapConfig:
 # ---------------------------------------------------------------------------
 # 8. FieldRecord dataclass
 # ---------------------------------------------------------------------------
+
 
 class TestFieldRecord:
     def test_field_record_all_attributes_present(self):
@@ -378,6 +390,7 @@ class TestFieldRecord:
 # 9. FoliumGomMap — graceful fallback
 # ---------------------------------------------------------------------------
 
+
 class TestFoliumGomMap:
     def test_plot_returns_nonnone_or_graceful(self):
         fmap = FoliumGomMap()
@@ -406,6 +419,7 @@ class TestFoliumGomMap:
 # ---------------------------------------------------------------------------
 # 10. __init__ re-exports
 # ---------------------------------------------------------------------------
+
 
 class TestModuleExports:
     def test_gom_field_map_importable_from_init(self):

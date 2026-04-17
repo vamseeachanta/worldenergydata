@@ -6,10 +6,10 @@ from worldenergydata.bsee.reports.comprehensive.report_builder import (
     GoByReportBuilder,
 )
 
-
 # ---------------------------------------------------------------------------
 # Init
 # ---------------------------------------------------------------------------
+
 
 class TestGoByReportBuilderInit:
     def test_defaults(self):
@@ -27,6 +27,7 @@ class TestGoByReportBuilderInit:
 # _build_metadata
 # ---------------------------------------------------------------------------
 
+
 class TestBuildMetadata:
     def test_basic(self):
         builder = GoByReportBuilder()
@@ -43,6 +44,7 @@ class TestBuildMetadata:
 # ---------------------------------------------------------------------------
 # _build_summary_section
 # ---------------------------------------------------------------------------
+
 
 class TestBuildSummarySection:
     def test_no_data(self):
@@ -82,6 +84,7 @@ class TestBuildSummarySection:
 # ---------------------------------------------------------------------------
 # _create_well_row
 # ---------------------------------------------------------------------------
+
 
 class TestCreateWellRow:
     def test_full_data(self):
@@ -129,6 +132,7 @@ class TestCreateWellRow:
 # ---------------------------------------------------------------------------
 # _build_detail_rows
 # ---------------------------------------------------------------------------
+
 
 class TestBuildDetailRows:
     def test_no_data(self):
@@ -196,6 +200,7 @@ class TestBuildDetailRows:
 # _build_aggregation_section
 # ---------------------------------------------------------------------------
 
+
 class TestBuildAggregationSection:
     def test_no_data(self):
         builder = GoByReportBuilder()
@@ -250,6 +255,7 @@ class TestBuildAggregationSection:
 # _prepare_chart_data
 # ---------------------------------------------------------------------------
 
+
 class TestPrepareChartData:
     def test_no_data(self):
         builder = GoByReportBuilder()
@@ -278,12 +284,15 @@ class TestPrepareChartData:
 # _validate_report_data
 # ---------------------------------------------------------------------------
 
+
 class TestValidateReportData:
     def test_complete_report(self):
         builder = GoByReportBuilder()
         report = {
-            "metadata": {}, "summary": {},
-            "detail_rows": [], "aggregations": {},
+            "metadata": {},
+            "summary": {},
+            "detail_rows": [],
+            "aggregations": {},
         }
         # Should not raise
         builder._validate_report_data(report)
@@ -296,8 +305,10 @@ class TestValidateReportData:
     def test_row_length_mismatch(self):
         builder = GoByReportBuilder()
         report = {
-            "metadata": {}, "summary": {},
-            "detail_rows": [[1, 2, 3]], "aggregations": {},
+            "metadata": {},
+            "summary": {},
+            "detail_rows": [[1, 2, 3]],
+            "aggregations": {},
         }
         # Should not raise, just log warning about row length
         builder._validate_report_data(report)
@@ -307,15 +318,27 @@ class TestValidateReportData:
 # _apply_goby_formatting
 # ---------------------------------------------------------------------------
 
+
 class TestApplyGobyFormatting:
     def test_formats_production_volumes(self):
         builder = GoByReportBuilder()
         report = {
             "detail_rows": [
                 [
-                    "F", "L", "W", "API", 5000, 20000, "2024-01-01", "Active",
-                    50000.7, 200000.3, 10000.9,  # production columns
-                    4000000.123, 1500000.456, 2500000.789,  # financial columns
+                    "F",
+                    "L",
+                    "W",
+                    "API",
+                    5000,
+                    20000,
+                    "2024-01-01",
+                    "Active",
+                    50000.7,
+                    200000.3,
+                    10000.9,  # production columns
+                    4000000.123,
+                    1500000.456,
+                    2500000.789,  # financial columns
                 ]
             ]
         }

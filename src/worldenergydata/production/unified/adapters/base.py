@@ -12,7 +12,7 @@ from typing import List, Optional, Tuple
 
 import pandas as pd
 
-from worldenergydata.production.unified.query import ProductionQuery, STANDARD_COLUMNS
+from worldenergydata.production.unified.query import STANDARD_COLUMNS, ProductionQuery
 
 
 class AbstractProductionAdapter(ABC):

@@ -16,19 +16,22 @@ class TestDrillingRigEntry:
 
     def test_is_deepwater_capable_true(self):
         r = DrillingRigEntry(
-            vessel_name="T", water_depth_rating_ft=10000.0,
+            vessel_name="T",
+            water_depth_rating_ft=10000.0,
         )
         assert r.is_deepwater_capable is True
 
     def test_is_deepwater_capable_false(self):
         r = DrillingRigEntry(
-            vessel_name="T", water_depth_rating_ft=3000.0,
+            vessel_name="T",
+            water_depth_rating_ft=3000.0,
         )
         assert r.is_deepwater_capable is False
 
     def test_is_deepwater_capable_boundary(self):
         r = DrillingRigEntry(
-            vessel_name="T", water_depth_rating_ft=4000.0,
+            vessel_name="T",
+            water_depth_rating_ft=4000.0,
         )
         assert r.is_deepwater_capable is True
 
@@ -38,19 +41,22 @@ class TestDrillingRigEntry:
 
     def test_is_ultra_deepwater_true(self):
         r = DrillingRigEntry(
-            vessel_name="T", water_depth_rating_ft=10000.0,
+            vessel_name="T",
+            water_depth_rating_ft=10000.0,
         )
         assert r.is_ultra_deepwater is True
 
     def test_is_ultra_deepwater_false(self):
         r = DrillingRigEntry(
-            vessel_name="T", water_depth_rating_ft=5000.0,
+            vessel_name="T",
+            water_depth_rating_ft=5000.0,
         )
         assert r.is_ultra_deepwater is False
 
     def test_is_ultra_deepwater_boundary(self):
         r = DrillingRigEntry(
-            vessel_name="T", water_depth_rating_ft=7500.0,
+            vessel_name="T",
+            water_depth_rating_ft=7500.0,
         )
         assert r.is_ultra_deepwater is True
 

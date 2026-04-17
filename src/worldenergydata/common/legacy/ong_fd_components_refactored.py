@@ -26,6 +26,7 @@ from worldenergydata.common.legacy.data import (
     DateTimeUtility,
     transform_df_datetime_to_str,
 )
+from worldenergydata.common.logging import get_logger
 
 # Import from refactored modules
 from .ong_fd_drilling import assign_st_bp_tree_info, get_rig_days_and_drilling_wt
@@ -50,8 +51,6 @@ from .ong_fd_utils import (
     transform_list_to_unique,
 )
 from .ong_fd_wellpath import plot_field_wells, prepare_well_paths
-
-from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
 

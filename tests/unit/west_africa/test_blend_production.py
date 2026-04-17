@@ -1,15 +1,15 @@
 """Tests for Nigeria monthly blend/stream production loader."""
 
-import pytest
 from unittest.mock import MagicMock, patch
+
+import pytest
 
 from worldenergydata.west_africa.nigeria.blend_production import (
     BlendProductionLoader,
+    BlendRecord,
     aggregate_by_blend,
     filter_by_period,
-    BlendRecord,
 )
-
 
 SAMPLE_RECORDS = [
     BlendRecord(blend="BONNY LIGHT", volume_kbd=152.3, month=1, year=2024),
@@ -82,18 +82,12 @@ class TestFilterByPeriod:
 
 
 class TestBlendProductionLoader:
-    @patch(
-        "worldenergydata.west_africa.nigeria.blend_production"
-        ".NuprcClient"
-    )
+    @patch("worldenergydata.west_africa.nigeria.blend_production" ".NuprcClient")
     def test_loader_initialises(self, mock_client_cls):
         loader = BlendProductionLoader()
         assert loader is not None
 
-    @patch(
-        "worldenergydata.west_africa.nigeria.blend_production"
-        ".NuprcClient"
-    )
+    @patch("worldenergydata.west_africa.nigeria.blend_production" ".NuprcClient")
     def test_load_returns_list(self, mock_client_cls):
         mock_client = MagicMock()
         mock_client.download_pdf.return_value = b""
@@ -103,10 +97,7 @@ class TestBlendProductionLoader:
         result = loader.load(year=2024, month=1)
         assert isinstance(result, list)
 
-    @patch(
-        "worldenergydata.west_africa.nigeria.blend_production"
-        ".NuprcClient"
-    )
+    @patch("worldenergydata.west_africa.nigeria.blend_production" ".NuprcClient")
     def test_load_handles_missing_pdf_gracefully(self, mock_client_cls):
         from worldenergydata.west_africa.nigeria.nuprc_client import NuprcAPIError
 

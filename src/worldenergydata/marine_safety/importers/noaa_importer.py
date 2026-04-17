@@ -26,11 +26,11 @@ from decimal import Decimal
 from pathlib import Path
 from typing import Any, Dict, Generator, Optional
 
+from worldenergydata.common.logging import get_logger
+
 from ..constants import IncidentType
 from ..database.models import Incident, Location
 from .base_importer import BaseImporter
-
-from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
 

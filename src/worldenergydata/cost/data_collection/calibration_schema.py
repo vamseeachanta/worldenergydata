@@ -14,7 +14,6 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
-
 # ---------------------------------------------------------------------------
 # Categorical enums
 # ---------------------------------------------------------------------------
@@ -23,19 +22,19 @@ from pydantic import BaseModel, Field
 class WaterDepthBand(str, Enum):
     """Water depth classification bands (metres)."""
 
-    SHALLOW = "shallow"       # 0–300 m  (jack-up range)
-    MID = "mid"               # 300–1,000 m
-    DEEP = "deep"             # 1,000–2,000 m
-    ULTRA_DEEP = "ultra_deep" # > 2,000 m
+    SHALLOW = "shallow"  # 0–300 m  (jack-up range)
+    MID = "mid"  # 300–1,000 m
+    DEEP = "deep"  # 1,000–2,000 m
+    ULTRA_DEEP = "ultra_deep"  # > 2,000 m
 
 
 class WellDepthBand(str, Enum):
     """Total well depth classification bands (metres TVD/MD)."""
 
-    SHALLOW = "shallow"       # 0–2,000 m
-    MEDIUM = "medium"         # 2,000–4,000 m
-    DEEP = "deep"             # 4,000–7,000 m
-    ULTRA_DEEP = "ultra_deep" # > 7,000 m
+    SHALLOW = "shallow"  # 0–2,000 m
+    MEDIUM = "medium"  # 2,000–4,000 m
+    DEEP = "deep"  # 4,000–7,000 m
+    ULTRA_DEEP = "ultra_deep"  # > 7,000 m
 
 
 class RigType(str, Enum):
@@ -73,9 +72,9 @@ class CostType(str, Enum):
 class Confidence(str, Enum):
     """Data quality / confidence level for the cost entry."""
 
-    HIGH = "high"       # Direct operator/regulatory disclosure
-    MEDIUM = "medium"   # Inferred from aggregate or partial disclosure
-    LOW = "low"         # Estimated / analyst estimate
+    HIGH = "high"  # Direct operator/regulatory disclosure
+    MEDIUM = "medium"  # Inferred from aggregate or partial disclosure
+    LOW = "low"  # Estimated / analyst estimate
 
 
 # ---------------------------------------------------------------------------
@@ -134,9 +133,7 @@ class CostDataPoint(BaseModel):
     activity_type: ActivityType = Field(..., description="Well activity category")
 
     # Technical flags
-    hpht: bool = Field(
-        ..., description="High pressure / high temperature well flag"
-    )
+    hpht: bool = Field(..., description="High pressure / high temperature well flag")
     subsea: SubseaType = Field(
         ..., description="Completion architecture — subsea or dry tree"
     )
@@ -149,8 +146,8 @@ class CostDataPoint(BaseModel):
 
     # Provenance
     source: str = Field(
-        ..., min_length=1, description="Data source (operator report, press release, etc.)"
+        ...,
+        min_length=1,
+        description="Data source (operator report, press release, etc.)",
     )
-    confidence: Confidence = Field(
-        ..., description="Data quality / confidence level"
-    )
+    confidence: Confidence = Field(..., description="Data quality / confidence level")

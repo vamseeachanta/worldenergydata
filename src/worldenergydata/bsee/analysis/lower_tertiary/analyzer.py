@@ -8,8 +8,8 @@ from typing import Any
 import pandas as pd
 
 from .config import LTConfig
-from .war_extractor import LTWarExtractor
 from .legacy_loader import LegacyProductionLoader
+from .war_extractor import LTWarExtractor
 
 logger = logging.getLogger(__name__)
 
@@ -42,24 +42,28 @@ class LTAnalyzer:
         rows: list[dict[str, Any]] = []
         for name, info in self._config.subsea_fields.items():
             df = self._war.extract_field(name)
-            rows.append({
-                "field": name,
-                "area": info["area"],
-                "records": len(df),
-                "category": "subsea",
-                "operator": info.get("operator", ""),
-                "first_oil": info.get("first_oil"),
-            })
+            rows.append(
+                {
+                    "field": name,
+                    "area": info["area"],
+                    "records": len(df),
+                    "category": "subsea",
+                    "operator": info.get("operator", ""),
+                    "first_oil": info.get("first_oil"),
+                }
+            )
         for name, info in self._config.dry_tree_fields.items():
             df = self._war.extract_field(name)
-            rows.append({
-                "field": name,
-                "area": info["area"],
-                "records": len(df),
-                "category": "dry_tree",
-                "operator": info.get("operator", ""),
-                "first_oil": info.get("first_oil"),
-            })
+            rows.append(
+                {
+                    "field": name,
+                    "area": info["area"],
+                    "records": len(df),
+                    "category": "dry_tree",
+                    "operator": info.get("operator", ""),
+                    "first_oil": info.get("first_oil"),
+                }
+            )
         return pd.DataFrame(rows)
 
     def drilling_activity_by_year(self) -> pd.DataFrame:

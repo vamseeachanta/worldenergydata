@@ -74,20 +74,22 @@ _FIELD_MAP: dict[str, str] = {
 }
 
 # Rows that are section headers (skip during parsing)
-_SECTION_HEADERS: frozenset[str] = frozenset({
-    "RIG INFORMATION",
-    "RIG INFORMATION (CONTINUED)",
-    "VESSEL PARTICULARS",
-    "MOORING/STATION KEEPING",
-    "LIFTING EQUIPMENT",
-    "DRILLING EQUIPMENT",
-    "ENGINEERING COMPANY DETAILS",
-    "MUD PUMPS",
-    "MUD PIT DATA",
-    "SOLIDS CONTROL",
-    "RISER AND TENSIONER DATA",
-    "BOP and BOP CONTROL DETAILS",
-})
+_SECTION_HEADERS: frozenset[str] = frozenset(
+    {
+        "RIG INFORMATION",
+        "RIG INFORMATION (CONTINUED)",
+        "VESSEL PARTICULARS",
+        "MOORING/STATION KEEPING",
+        "LIFTING EQUIPMENT",
+        "DRILLING EQUIPMENT",
+        "ENGINEERING COMPANY DETAILS",
+        "MUD PUMPS",
+        "MUD PIT DATA",
+        "SOLIDS CONTROL",
+        "RISER AND TENSIONER DATA",
+        "BOP and BOP CONTROL DETAILS",
+    }
+)
 
 FT_TO_M: float = 0.3048
 
@@ -157,7 +159,9 @@ class XlsFleetParser:
         record["VESSEL_TYPE"] = "drilling_rig"
         record["RIG_TYPE"] = _VESSEL_TYPE_MAP.get(
             vtype_raw,
-            _VESSEL_TYPE_MAP.get(vtype_prefix, vtype_raw.lower() if vtype_raw else None),
+            _VESSEL_TYPE_MAP.get(
+                vtype_prefix, vtype_raw.lower() if vtype_raw else None
+            ),
         )
         record["HULL_FORM_TYPE"] = _HULL_FORM_MAP.get(
             vtype_raw, _HULL_FORM_MAP.get(vtype_prefix)
@@ -178,11 +182,16 @@ class XlsFleetParser:
 
         # Numeric fields (parse mixed formats)
         numeric_fields = [
-            "MAX_WATER_DEPTH_FT", "WATER_DEPTH_RATING_FT",
-            "DRILLING_DEPTH_RATING_FT", "TRANSIT_SPEED_KNOTS",
-            "VARIABLE_DECK_LOAD_ST", "HOOKLOAD_RATING_KIPS",
-            "DRAWWORKS_HP", "ROTARY_TABLE_SIZE_IN",
-            "RISER_SIZE_IN", "RISER_LENGTH_FT",
+            "MAX_WATER_DEPTH_FT",
+            "WATER_DEPTH_RATING_FT",
+            "DRILLING_DEPTH_RATING_FT",
+            "TRANSIT_SPEED_KNOTS",
+            "VARIABLE_DECK_LOAD_ST",
+            "HOOKLOAD_RATING_KIPS",
+            "DRAWWORKS_HP",
+            "ROTARY_TABLE_SIZE_IN",
+            "RISER_SIZE_IN",
+            "RISER_LENGTH_FT",
         ]
         for field in numeric_fields:
             if field in raw:
@@ -221,9 +230,7 @@ class XlsFleetParser:
                 # Single value -> treat as diameter
                 single = parse_numeric(moonpool_raw)
                 if single:
-                    record["MOONPOOL_DIAMETER_M"] = round(
-                        single * FT_TO_M, 2
-                    )
+                    record["MOONPOOL_DIAMETER_M"] = round(single * FT_TO_M, 2)
 
         # DP rating: "DP2" -> 2
         dp_raw = raw.get("_DP_RATING_RAW")

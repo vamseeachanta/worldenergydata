@@ -276,7 +276,13 @@ class TestGenerateExecutiveKpis:
         kpis = gen.generate_executive_kpis(data)
         assert len(kpis) == 5
         categories = {k.category for k in kpis}
-        assert categories == {"Financial", "Operational", "Production", "Safety", "Environmental"}
+        assert categories == {
+            "Financial",
+            "Operational",
+            "Production",
+            "Safety",
+            "Environmental",
+        }
 
     def test_empty_data(self):
         gen = KPIGenerator()

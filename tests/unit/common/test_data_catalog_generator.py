@@ -22,9 +22,9 @@ from worldenergydata.common.catalog import DataCatalog, DatasetEntry, ModuleCata
 # Import the generator under test from scripts/
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 from generate_data_catalog import (
-    DataCatalogGenerator,
     _DOMAIN_MAP,
     _LFS_SIGNATURE,
+    DataCatalogGenerator,
     load_source_registry,
 )
 

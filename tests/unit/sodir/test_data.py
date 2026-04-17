@@ -4,10 +4,10 @@ import pytest
 
 from worldenergydata.sodir.data import SodirData
 
-
 # ---------------------------------------------------------------------------
 # Init
 # ---------------------------------------------------------------------------
+
 
 class TestSodirDataInit:
     def test_default_init(self):
@@ -29,6 +29,7 @@ class TestSodirDataInit:
 # ---------------------------------------------------------------------------
 # get_statistics
 # ---------------------------------------------------------------------------
+
 
 class TestGetStatistics:
     def test_initial_stats(self):
@@ -58,6 +59,7 @@ class TestGetStatistics:
 # ---------------------------------------------------------------------------
 # validate_* methods (without validator)
 # ---------------------------------------------------------------------------
+
 
 class TestValidateFieldNoValidator:
     def test_returns_valid(self):
@@ -108,6 +110,7 @@ class TestValidateWellboreNoValidator:
 # _validate_data (without validator)
 # ---------------------------------------------------------------------------
 
+
 class TestValidateData:
     def test_no_validation_method(self):
         sd = SodirData()
@@ -126,6 +129,7 @@ class TestValidateData:
 # ---------------------------------------------------------------------------
 # generate_validation_report
 # ---------------------------------------------------------------------------
+
 
 class TestGenerateValidationReport:
     def test_basic(self):
@@ -154,6 +158,7 @@ class TestGenerateValidationReport:
 # ---------------------------------------------------------------------------
 # collect_dataset (no API)
 # ---------------------------------------------------------------------------
+
 
 class TestCollectDatasetNoAPI:
     def test_no_api_client_raises(self):

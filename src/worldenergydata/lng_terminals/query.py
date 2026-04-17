@@ -10,7 +10,6 @@ import pandas as pd
 
 from worldenergydata.lng_terminals._dataset import TERMINALS
 
-
 # ---------------------------------------------------------------------------
 # Query dataclasses
 # ---------------------------------------------------------------------------

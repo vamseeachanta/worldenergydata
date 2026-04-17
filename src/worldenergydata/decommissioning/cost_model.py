@@ -18,19 +18,19 @@ from typing import Optional
 _COST_FACTORS: dict[str, dict] = {
     "jacket": {
         "base_musd": 2.0,
-        "per_tonne_musd": 0.00005,   # $0.05/tonne → 0.00005 MUSD/tonne
-        "per_m_depth_musd": 0.005,   # $5k/m depth → 0.005 MUSD/m
+        "per_tonne_musd": 0.00005,  # $0.05/tonne → 0.00005 MUSD/tonne
+        "per_m_depth_musd": 0.005,  # $5k/m depth → 0.005 MUSD/m
         "confidence": "medium",
     },
     "well_p_and_a": {
         "base_musd": 8.0,
         "per_tonne_musd": 0.0,
-        "per_m_depth_musd": 0.015,   # $15k/m depth
+        "per_m_depth_musd": 0.015,  # $15k/m depth
         "confidence": "medium",
     },
     "fpso": {
         "base_musd": 80.0,
-        "per_tonne_musd": 0.00002,   # $0.02/tonne
+        "per_tonne_musd": 0.00002,  # $0.02/tonne
         "per_m_depth_musd": 0.0,
         "confidence": "low",
     },
@@ -41,7 +41,7 @@ _COST_FACTORS: dict[str, dict] = {
         "confidence": "high",
     },
     "pipeline_km": {
-        "base_musd": 0.5,            # per km
+        "base_musd": 0.5,  # per km
         "per_tonne_musd": 0.0,
         "per_m_depth_musd": 0.0,
         "confidence": "medium",
@@ -86,7 +86,7 @@ class DecommissioningCostEstimate:
     weight_tonnes: float
     region: str
     estimated_cost_musd: float
-    confidence: str           # "low" | "medium" | "high"
+    confidence: str  # "low" | "medium" | "high"
     year: int
     data_source: str
     notes: str = ""
@@ -195,9 +195,7 @@ class DecommissioningCostEstimator:
             results.append(estimate)
         return results
 
-    def total_cost_musd(
-        self, estimates: list[DecommissioningCostEstimate]
-    ) -> float:
+    def total_cost_musd(self, estimates: list[DecommissioningCostEstimate]) -> float:
         """Sum estimated costs across all estimates.
 
         Returns:
@@ -221,7 +219,9 @@ class DecommissioningCostEstimator:
         return totals
 
     @classmethod
-    def from_calibration(cls, calibration: "DecommissioningCostEstimator") -> "DecommissioningCostEstimator":
+    def from_calibration(
+        cls, calibration: "DecommissioningCostEstimator"
+    ) -> "DecommissioningCostEstimator":
         """Create estimator with calibrated cost factors.
 
         Args:

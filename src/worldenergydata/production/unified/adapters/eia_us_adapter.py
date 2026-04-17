@@ -23,17 +23,33 @@ class EiaUsAdapter(AbstractProductionAdapter):
     # (play_name, peak_oil_bbl, peak_gas_mcf, peak_water_bbl,
     #  peak_cond_bbl, start_year, start_month, n_months)
     _FIELDS = [
-        ("Permian",    250_000_000, 350_000_000, 90_000_000, 5_000_000, 2010,  1, 180),
-        ("Bakken",      80_000_000,  50_000_000, 30_000_000, 1_000_000, 2008,  1, 192),
-        ("Eagle Ford",  60_000_000, 220_000_000, 20_000_000, 8_000_000, 2010,  6, 174),
+        ("Permian", 250_000_000, 350_000_000, 90_000_000, 5_000_000, 2010, 1, 180),
+        ("Bakken", 80_000_000, 50_000_000, 30_000_000, 1_000_000, 2008, 1, 192),
+        ("Eagle Ford", 60_000_000, 220_000_000, 20_000_000, 8_000_000, 2010, 6, 174),
     ]
 
     def fetch(self, query: ProductionQuery) -> pd.DataFrame:
         rows = []
-        for field_name, peak_oil, peak_gas, peak_water, peak_cond, sy, sm, n_months in self._FIELDS:
+        for (
+            field_name,
+            peak_oil,
+            peak_gas,
+            peak_water,
+            peak_cond,
+            sy,
+            sm,
+            n_months,
+        ) in self._FIELDS:
             rows.extend(
                 self._generate_field_rows(
-                    field_name, peak_oil, peak_gas, peak_water, peak_cond, sy, sm, n_months
+                    field_name,
+                    peak_oil,
+                    peak_gas,
+                    peak_water,
+                    peak_cond,
+                    sy,
+                    sm,
+                    n_months,
                 )
             )
 

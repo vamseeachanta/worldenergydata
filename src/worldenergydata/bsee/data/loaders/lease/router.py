@@ -2,14 +2,18 @@ from worldenergydata.bsee.data.loaders.lease.local_files import DataFromLocalFil
 
 lease_data_from_local_files = DataFromLocalFiles()
 
+
 class LeaseRouter:
 
     def __init__(self):
-            pass
+        pass
 
     def router(self, cfg):
 
-        if 'groups' in cfg['data'] and cfg['data']['groups'][0]['bottom_lease'] is not None:
+        if (
+            "groups" in cfg["data"]
+            and cfg["data"]["groups"][0]["bottom_lease"] is not None
+        ):
             cfg = self.get_lease_data_groups(cfg)
 
         return cfg

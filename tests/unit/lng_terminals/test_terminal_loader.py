@@ -1,8 +1,8 @@
 """Tests for LNG terminal loader module."""
 
-import pytest
-import pandas as pd
 import numpy as np
+import pandas as pd
+import pytest
 
 from worldenergydata.lng_terminals.constants import (
     SourceReliability,
@@ -12,10 +12,10 @@ from worldenergydata.lng_terminals.constants import (
 )
 from worldenergydata.lng_terminals.loaders.terminal_loader import TerminalLoader
 
-
 # ---------------------------------------------------------------------------
 # Init
 # ---------------------------------------------------------------------------
+
 
 class TestTerminalLoaderInit:
     def test_with_valid_file(self, tmp_path):
@@ -39,6 +39,7 @@ class TestTerminalLoaderInit:
 # ---------------------------------------------------------------------------
 # Static helpers
 # ---------------------------------------------------------------------------
+
 
 class TestGetRequiredStr:
     def test_basic(self):
@@ -104,7 +105,10 @@ class TestGetOptionalInt:
 
 class TestParseTerminalType:
     def test_valid(self):
-        assert TerminalLoader._parse_terminal_type("onshore_import") == TerminalType.ONSHORE_IMPORT
+        assert (
+            TerminalLoader._parse_terminal_type("onshore_import")
+            == TerminalType.ONSHORE_IMPORT
+        )
 
     def test_with_whitespace(self):
         assert TerminalLoader._parse_terminal_type("  fsru  ") == TerminalType.FSRU
@@ -147,6 +151,7 @@ class TestParseReliability:
 # Load from CSV
 # ---------------------------------------------------------------------------
 
+
 class TestLoadFromCSV:
     def test_load_basic(self, tmp_path):
         csv_file = tmp_path / "terminals.csv"
@@ -185,16 +190,18 @@ class TestIdentifySourcedFields:
         f = tmp_path / "test.csv"
         f.write_text("")
         loader = TerminalLoader(file_path=f)
-        row = pd.Series({
-            "terminal_name": "Test",
-            "country": "USA",
-            "terminal_type": "import",
-            "function": "import",
-            "status": "operational",
-            "latitude": 29.0,
-            "longitude": -90.0,
-            "capacity_mtpa": None,
-        })
+        row = pd.Series(
+            {
+                "terminal_name": "Test",
+                "country": "USA",
+                "terminal_type": "import",
+                "function": "import",
+                "status": "operational",
+                "latitude": 29.0,
+                "longitude": -90.0,
+                "capacity_mtpa": None,
+            }
+        )
         fields = loader._identify_sourced_fields(row)
         assert "terminal_name" in fields
         assert "latitude" in fields

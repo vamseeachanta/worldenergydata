@@ -18,10 +18,20 @@ def _make_multi_source_df():
         for source, base in [("ndbc", 1.0), ("open_meteo", 1.1), ("met_norway", 0.9)]:
             rows.extend(
                 [
-                    {"timestamp": ts, "parameter": "Hs", "value": base + h * 0.05,
-                     "source": source, "unit": "m"},
-                    {"timestamp": ts, "parameter": "wind_speed",
-                     "value": 5.0 + h * 0.1, "source": source, "unit": "m/s"},
+                    {
+                        "timestamp": ts,
+                        "parameter": "Hs",
+                        "value": base + h * 0.05,
+                        "source": source,
+                        "unit": "m",
+                    },
+                    {
+                        "timestamp": ts,
+                        "parameter": "wind_speed",
+                        "value": 5.0 + h * 0.1,
+                        "source": source,
+                        "unit": "m/s",
+                    },
                 ]
             )
     return pd.DataFrame(rows)
@@ -122,8 +132,13 @@ class TestMetoceanDashboardEdgeCases:
     def test_single_source_dashboard(self):
         d = MetoceanDashboard()
         rows = [
-            {"timestamp": datetime(2023, 6, 1, h, 0), "parameter": "Hs",
-             "value": 1.5, "source": "ndbc", "unit": "m"}
+            {
+                "timestamp": datetime(2023, 6, 1, h, 0),
+                "parameter": "Hs",
+                "value": 1.5,
+                "source": "ndbc",
+                "unit": "m",
+            }
             for h in range(5)
         ]
         df = pd.DataFrame(rows)

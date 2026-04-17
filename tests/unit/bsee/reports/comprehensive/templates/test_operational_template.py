@@ -5,20 +5,20 @@ from datetime import date
 import pytest
 
 from worldenergydata.bsee.reports.comprehensive.templates.operational_template import (
+    EquipmentMetrics,
+    FailureAnalysis,
+    MaintenanceRecord,
+    OperationalKPI,
     OperationalTemplate,
+    ProductionEfficiencyMetrics,
     WellOperationalMetrics,
     WellStatus,
-    ProductionEfficiencyMetrics,
-    EquipmentMetrics,
-    MaintenanceRecord,
-    FailureAnalysis,
-    OperationalKPI,
 )
-
 
 # ---------------------------------------------------------------------------
 # Init
 # ---------------------------------------------------------------------------
+
 
 class TestOperationalTemplateInit:
     def test_default(self):
@@ -29,9 +29,7 @@ class TestOperationalTemplateInit:
         assert "operational_summary" in tpl.required_context
 
     def test_custom(self):
-        tpl = OperationalTemplate(
-            template_name="custom_ops", version="2.0.0"
-        )
+        tpl = OperationalTemplate(template_name="custom_ops", version="2.0.0")
         assert tpl.template_name == "custom_ops"
         assert tpl.version == "2.0.0"
 
@@ -39,6 +37,7 @@ class TestOperationalTemplateInit:
 # ---------------------------------------------------------------------------
 # build_operational_context
 # ---------------------------------------------------------------------------
+
 
 class TestBuildOperationalContext:
     def _make_well_metrics(self):
@@ -128,6 +127,7 @@ class TestBuildOperationalContext:
 # Delegation methods
 # ---------------------------------------------------------------------------
 
+
 class TestDelegationMethods:
     def _make_well_metrics(self):
         return [
@@ -152,9 +152,7 @@ class TestDelegationMethods:
 
     def test_render_template_string(self):
         tpl = OperationalTemplate()
-        result = tpl.render_template_string(
-            "Hello {{ name }}", {"name": "World"}
-        )
+        result = tpl.render_template_string("Hello {{ name }}", {"name": "World"})
         assert result == "Hello World"
 
     def test_format_kpis(self):

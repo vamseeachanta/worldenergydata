@@ -13,13 +13,12 @@ from pathlib import Path
 import pandas as pd
 import plotly.graph_objects as go
 
-
 # -- Color palette for activity categories ------------------------------------
 
 _ACTIVITY_COLORS: dict[str, str] = {
-    "drilling": "#1f77b4",       # blue
-    "intervention": "#d62728",   # red
-    "unknown": "#7f7f7f",        # gray
+    "drilling": "#1f77b4",  # blue
+    "intervention": "#d62728",  # red
+    "unknown": "#7f7f7f",  # gray
 }
 
 _RIG_TYPE_COLORS: dict[str, str] = {
@@ -126,9 +125,7 @@ class FieldVisualizationModule:
             ("WELL_STATUS", "Status"),
         ]:
             if col in merged.columns:
-                hover_parts.append(
-                    label + ": " + merged[col].astype(str)
-                )
+                hover_parts.append(label + ": " + merged[col].astype(str))
 
         hover_text = hover_parts[0] if hover_parts else merged.index.astype(str)
         for part in hover_parts[1:]:
@@ -162,7 +159,10 @@ class FieldVisualizationModule:
         """Generate a Scatter3d HTML showing subsurface well trajectories."""
         merged = self._merge_coordinates()
         required = [
-            "SURF_LATITUDE", "SURF_LONGITUDE", "BH_TOTAL_MD", "WATER_DEPTH",
+            "SURF_LATITUDE",
+            "SURF_LONGITUDE",
+            "BH_TOTAL_MD",
+            "WATER_DEPTH",
         ]
         if merged is None or merged.empty:
             html = _placeholder_html(
@@ -188,9 +188,7 @@ class FieldVisualizationModule:
             wells = wells.assign(BOTM_LATITUDE=wells["SURF_LATITUDE"])
         if "BOTM_LONGITUDE" not in wells.columns:
             wells = wells.assign(BOTM_LONGITUDE=wells["SURF_LONGITUDE"])
-        wells["BOTM_LATITUDE"] = wells["BOTM_LATITUDE"].fillna(
-            wells["SURF_LATITUDE"]
-        )
+        wells["BOTM_LATITUDE"] = wells["BOTM_LATITUDE"].fillna(wells["SURF_LATITUDE"])
         wells["BOTM_LONGITUDE"] = wells["BOTM_LONGITUDE"].fillna(
             wells["SURF_LONGITUDE"]
         )
@@ -210,7 +208,9 @@ class FieldVisualizationModule:
 
             traces.append(
                 go.Scatter3d(
-                    x=x, y=y, z=z,
+                    x=x,
+                    y=y,
+                    z=z,
                     mode="lines+markers",
                     line=dict(color=color, width=4),
                     marker=dict(size=3, color=color),
@@ -239,9 +239,7 @@ class FieldVisualizationModule:
         html = _wrap_html("3D Subsurface View", plotly_div)
         return _write(output_path, html)
 
-    def generate_well_schematic(
-        self, api_well_number: str, output_path: str
-    ) -> str:
+    def generate_well_schematic(self, api_well_number: str, output_path: str) -> str:
         """Generate an SVG well casing schematic for a single well."""
         well_info = self._get_well_info(api_well_number)
         if well_info is None:
@@ -266,9 +264,13 @@ class FieldVisualizationModule:
 
         coord_cols = ["API_WELL_NUMBER"]
         for col in [
-            "SURF_LATITUDE", "SURF_LONGITUDE",
-            "BOTM_LATITUDE", "BOTM_LONGITUDE",
-            "BH_TOTAL_MD", "WELL_BORE_TVD", "WATER_DEPTH",
+            "SURF_LATITUDE",
+            "SURF_LONGITUDE",
+            "BOTM_LATITUDE",
+            "BOTM_LONGITUDE",
+            "BH_TOTAL_MD",
+            "WELL_BORE_TVD",
+            "WATER_DEPTH",
         ]:
             if col in self._borehole.columns:
                 coord_cols.append(col)

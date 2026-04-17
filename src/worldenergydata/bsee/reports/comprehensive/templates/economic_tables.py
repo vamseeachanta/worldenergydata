@@ -10,7 +10,7 @@ import numpy_financial as npf
 
 
 def generate_sensitivity_analysis_tables(
-    economic_context: Dict[str, Any]
+    economic_context: Dict[str, Any],
 ) -> Dict[str, str]:
     """
     Generate HTML tables for sensitivity analysis showing NPV and IRR variations

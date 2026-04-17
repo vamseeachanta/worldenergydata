@@ -7,8 +7,11 @@ from worldenergydata.metocean.exceptions import (
     CacheWriteError,
     ClientError,
     ConfigurationError,
-    DataNotFoundError,
+)
+from worldenergydata.metocean.exceptions import ConnectionError as MetConnectionError
+from worldenergydata.metocean.exceptions import (
     DatabaseError,
+    DataNotFoundError,
     ExportError,
     ExportFormatError,
     ExportWriteError,
@@ -22,9 +25,6 @@ from worldenergydata.metocean.exceptions import (
     RateLimitError,
     TimeoutError,
     ValidationError,
-)
-from worldenergydata.metocean.exceptions import (
-    ConnectionError as MetConnectionError,
 )
 
 
@@ -93,9 +93,7 @@ class TestValidationErrors:
         assert err.context["value"] == 999
 
     def test_invalid_data_custom(self):
-        err = InvalidDataError(
-            field="f", value="v", reason="r", message="Custom"
-        )
+        err = InvalidDataError(field="f", value="v", reason="r", message="Custom")
         assert "Custom" in str(err)
 
 
@@ -185,9 +183,7 @@ class TestExportErrors:
         assert err.code == "METOCEAN_EXPORT_FORMAT"
 
     def test_export_format_with_supported(self):
-        err = ExportFormatError(
-            format_name="xml", supported_formats=["csv", "json"]
-        )
+        err = ExportFormatError(format_name="xml", supported_formats=["csv", "json"])
         assert "csv" in str(err)
         assert "json" in str(err)
 

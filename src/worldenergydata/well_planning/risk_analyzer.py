@@ -45,9 +45,7 @@ class WellPlanningRiskAnalyzer:
 
     def get_by_severity(self, min_severity: RiskSeverity) -> list[WellPlanningRisk]:
         """Return risks with severity >= *min_severity* (by integer value)."""
-        return [
-            r for r in self._risks if r.severity.value >= min_severity.value
-        ]
+        return [r for r in self._risks if r.severity.value >= min_severity.value]
 
     def high_priority_risks(self, threshold: float = 2.0) -> list[WellPlanningRisk]:
         """Return risks with ``risk_score >= threshold``, sorted score descending."""

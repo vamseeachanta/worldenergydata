@@ -6,13 +6,14 @@ NOTE: Many imports have been updated to use skip decorators for modules that
 don't exist or have different APIs than expected.
 """
 
-import pytest
-import pandas as pd
-import numpy as np
-from pathlib import Path
-import sys
-from unittest.mock import patch, MagicMock, Mock
 import json
+import sys
+from pathlib import Path
+from unittest.mock import MagicMock, Mock, patch
+
+import numpy as np
+import pandas as pd
+import pytest
 import yaml
 
 # Add src to path
@@ -25,9 +26,12 @@ class TestAchievableCoverage:
     def test_bsee_module_import(self):
         """Test basic imports work"""
         from worldenergydata.bsee import bsee
+
         assert bsee is not None
 
-    @pytest.mark.skip(reason="custom_router module does not exist in worldenergydata.bsee")
+    @pytest.mark.skip(
+        reason="custom_router module does not exist in worldenergydata.bsee"
+    )
     def test_custom_router_import(self):
         """Test custom router import"""
         pass
@@ -39,8 +43,7 @@ class TestAchievableCoverage:
 
     def test_data_module_imports(self):
         """Test data module imports"""
-        from worldenergydata.bsee.data import bsee_data
-        from worldenergydata.bsee.data import apm_data
+        from worldenergydata.bsee.data import apm_data, bsee_data
 
         assert bsee_data is not None
         assert apm_data is not None
@@ -65,8 +68,8 @@ class TestAchievableCoverage:
         assert refresher is not None
 
         # Test check method if it exists
-        if hasattr(refresher, 'check_for_updates'):
-            with patch('requests.get') as mock_get:
+        if hasattr(refresher, "check_for_updates"):
+            with patch("requests.get") as mock_get:
                 mock_get.return_value.status_code = 200
                 result = refresher.check_for_updates()
                 assert result is not None or result is None
@@ -76,7 +79,9 @@ class TestAchievableCoverage:
         """Test web scraper initialization"""
         pass
 
-    @pytest.mark.skip(reason="ProductionDataSources class does not exist with expected interface")
+    @pytest.mark.skip(
+        reason="ProductionDataSources class does not exist with expected interface"
+    )
     def test_production_data_sources(self):
         """Test production data sources module"""
         pass
@@ -103,8 +108,9 @@ class TestAchievableCoverage:
 
     def test_chunk_metadata_comprehensive(self):
         """More comprehensive test of ChunkMetadata"""
-        from worldenergydata.bsee.data.cache.chunk_manager import ChunkMetadata
         from datetime import datetime
+
+        from worldenergydata.bsee.data.cache.chunk_manager import ChunkMetadata
 
         # Test all initialization parameters
         metadata = ChunkMetadata(
@@ -112,7 +118,7 @@ class TestAchievableCoverage:
             checksum="abc123xyz789",
             timestamp=datetime.now(),
             size_bytes=1024,
-            row_range=(0, 100)
+            row_range=(0, 100),
         )
 
         # Test all attributes
@@ -125,8 +131,8 @@ class TestAchievableCoverage:
 
         # Test to_dict
         d = metadata.to_dict()
-        assert d['chunk_id'] == "test_chunk_001"
-        assert 'timestamp' in d
+        assert d["chunk_id"] == "test_chunk_001"
+        assert "timestamp" in d
 
         # Test modifications
         metadata.is_changed = True
@@ -135,7 +141,9 @@ class TestAchievableCoverage:
         metadata.download_required = False
         assert metadata.download_required == False
 
-    @pytest.mark.skip(reason="ProductionAnalysis class does not exist in production_api10 module")
+    @pytest.mark.skip(
+        reason="ProductionAnalysis class does not exist in production_api10 module"
+    )
     def test_analysis_modules_basic(self):
         """Test basic analysis module imports and initialization"""
         pass
@@ -143,51 +151,43 @@ class TestAchievableCoverage:
     def test_simple_data_operations(self):
         """Test simple data operations that don't require specific formats"""
         # Create simple test data
-        df = pd.DataFrame({
-            'API': ['123', '456', '789'],
-            'VALUE': [100, 200, 300]
-        })
+        df = pd.DataFrame({"API": ["123", "456", "789"], "VALUE": [100, 200, 300]})
 
         # Test aggregations
-        total = df['VALUE'].sum()
+        total = df["VALUE"].sum()
         assert total == 600
 
-        mean = df['VALUE'].mean()
+        mean = df["VALUE"].mean()
         assert mean == 200
 
         # Test groupby
-        df['GROUP'] = ['A', 'A', 'B']
-        grouped = df.groupby('GROUP')['VALUE'].sum()
-        assert grouped['A'] == 300
-        assert grouped['B'] == 300
+        df["GROUP"] = ["A", "A", "B"]
+        grouped = df.groupby("GROUP")["VALUE"].sum()
+        assert grouped["A"] == 300
+        assert grouped["B"] == 300
 
     def test_yaml_config_handling(self):
         """Test YAML configuration handling"""
         config = {
-            'meta': {
-                'library': 'worldenergydata',
-                'basename': 'test'
-            },
-            'data': {
-                'source': 'test_source'
-            }
+            "meta": {"library": "worldenergydata", "basename": "test"},
+            "data": {"source": "test_source"},
         }
 
         # Test config access patterns
-        assert config['meta']['library'] == 'worldenergydata'
-        assert config.get('data', {}).get('source') == 'test_source'
-        assert config.get('missing', 'default') == 'default'
+        assert config["meta"]["library"] == "worldenergydata"
+        assert config.get("data", {}).get("source") == "test_source"
+        assert config.get("missing", "default") == "default"
 
     def test_file_operations(self, tmp_path):
         """Test file operations"""
         # Test CSV write/read
-        df = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6]})
+        df = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6]})
         csv_file = tmp_path / "test.csv"
         df.to_csv(csv_file, index=False)
 
         df_read = pd.read_csv(csv_file)
         assert len(df_read) == 3
-        assert list(df_read.columns) == ['A', 'B']
+        assert list(df_read.columns) == ["A", "B"]
 
         # Test Excel write/read
         excel_file = tmp_path / "test.xlsx"
@@ -208,9 +208,9 @@ class TestAchievableCoverage:
         assert df.empty == True
 
         # Test missing key handling
-        config = {'key1': 'value1'}
-        value = config.get('key2', 'default')
-        assert value == 'default'
+        config = {"key1": "value1"}
+        value = config.get("key2", "default")
+        assert value == "default"
 
     def test_data_validation_patterns(self):
         """Test common data validation patterns"""
@@ -220,11 +220,11 @@ class TestAchievableCoverage:
         assert positive_only == [1, 2, 3]
 
         # Test string validation
-        strings = ['api123', '', None, 'api456']
+        strings = ["api123", "", None, "api456"]
         valid_strings = [s for s in strings if s]
-        assert valid_strings == ['api123', 'api456']
+        assert valid_strings == ["api123", "api456"]
 
         # Test date validation
-        dates = pd.date_range('2020-01-01', periods=5)
+        dates = pd.date_range("2020-01-01", periods=5)
         assert len(dates) == 5
         assert dates[0].year == 2020

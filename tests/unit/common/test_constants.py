@@ -168,7 +168,7 @@ class TestConvertUnits:
 
     def test_same_unit_returns_value(self):
         """Test converting to same unit returns original value."""
-        from worldenergydata.common.constants import convert_units, EnergyUnits
+        from worldenergydata.common.constants import EnergyUnits, convert_units
 
         result = convert_units(100.0, EnergyUnits.BTU, EnergyUnits.BTU)
 
@@ -176,7 +176,7 @@ class TestConvertUnits:
 
     def test_btu_to_mmbtu(self):
         """Test BTU to MMBTU conversion."""
-        from worldenergydata.common.constants import convert_units, EnergyUnits
+        from worldenergydata.common.constants import EnergyUnits, convert_units
 
         result = convert_units(1_000_000, EnergyUnits.BTU, EnergyUnits.MMBTU)
 
@@ -184,7 +184,7 @@ class TestConvertUnits:
 
     def test_mmbtu_to_btu(self):
         """Test MMBTU to BTU conversion."""
-        from worldenergydata.common.constants import convert_units, EnergyUnits
+        from worldenergydata.common.constants import EnergyUnits, convert_units
 
         result = convert_units(1.0, EnergyUnits.MMBTU, EnergyUnits.BTU)
 
@@ -192,7 +192,7 @@ class TestConvertUnits:
 
     def test_barrel_to_gallon(self):
         """Test barrel to gallon conversion."""
-        from worldenergydata.common.constants import convert_units, EnergyUnits
+        from worldenergydata.common.constants import EnergyUnits, convert_units
 
         result = convert_units(1.0, EnergyUnits.BARREL, EnergyUnits.GALLON)
 
@@ -200,7 +200,7 @@ class TestConvertUnits:
 
     def test_mcf_to_scf(self):
         """Test MCF to SCF conversion."""
-        from worldenergydata.common.constants import convert_units, EnergyUnits
+        from worldenergydata.common.constants import EnergyUnits, convert_units
 
         result = convert_units(1.0, EnergyUnits.MCF, EnergyUnits.SCF)
 
@@ -208,7 +208,7 @@ class TestConvertUnits:
 
     def test_boe_to_mcf(self):
         """Test BOE to MCF conversion."""
-        from worldenergydata.common.constants import convert_units, EnergyUnits
+        from worldenergydata.common.constants import EnergyUnits, convert_units
 
         result = convert_units(1.0, EnergyUnits.BOE, EnergyUnits.MCF)
 
@@ -224,7 +224,7 @@ class TestConvertUnits:
 
     def test_reverse_conversion_calculated(self):
         """Test reverse conversion is calculated when direct not available."""
-        from worldenergydata.common.constants import convert_units, EnergyUnits
+        from worldenergydata.common.constants import EnergyUnits, convert_units
 
         # GALLON -> BARREL (reverse of BARREL -> GALLON)
         result = convert_units(42.0, EnergyUnits.GALLON, EnergyUnits.BARREL)
@@ -233,7 +233,7 @@ class TestConvertUnits:
 
     def test_invalid_conversion_raises(self):
         """Test invalid conversion raises ValueError."""
-        from worldenergydata.common.constants import convert_units, EnergyUnits
+        from worldenergydata.common.constants import EnergyUnits, convert_units
 
         with pytest.raises(ValueError) as exc_info:
             # POUND to MWH has no conversion path
@@ -254,7 +254,7 @@ class TestGetConversionFactor:
 
     def test_returns_conversion_factor(self):
         """Test get_conversion_factor returns correct factor."""
-        from worldenergydata.common.constants import get_conversion_factor, EnergyUnits
+        from worldenergydata.common.constants import EnergyUnits, get_conversion_factor
 
         factor = get_conversion_factor(EnergyUnits.MMBTU, EnergyUnits.BTU)
 
@@ -262,7 +262,7 @@ class TestGetConversionFactor:
 
     def test_same_unit_returns_one(self):
         """Test conversion factor for same unit is 1.0."""
-        from worldenergydata.common.constants import get_conversion_factor, EnergyUnits
+        from worldenergydata.common.constants import EnergyUnits, get_conversion_factor
 
         factor = get_conversion_factor(EnergyUnits.BTU, EnergyUnits.BTU)
 
@@ -283,6 +283,7 @@ class TestDataConstants:
     def test_api_patterns(self):
         """Test API number patterns are valid regex."""
         import re
+
         from worldenergydata.common.constants import DataConstants
 
         assert re.match(DataConstants.API_10_PATTERN, "1234567890")
@@ -295,6 +296,7 @@ class TestDataConstants:
     def test_date_formats(self):
         """Test date format strings are valid."""
         from datetime import datetime
+
         from worldenergydata.common.constants import DataConstants
 
         assert datetime.strptime("202312", DataConstants.DATE_FORMAT_YYYYMM)
@@ -412,7 +414,7 @@ class TestConversionConsistency:
 
     def test_round_trip_btu_mmbtu(self):
         """Test BTU -> MMBTU -> BTU round trip."""
-        from worldenergydata.common.constants import convert_units, EnergyUnits
+        from worldenergydata.common.constants import EnergyUnits, convert_units
 
         original = 5_000_000
         mmbtu = convert_units(original, EnergyUnits.BTU, EnergyUnits.MMBTU)
@@ -422,7 +424,7 @@ class TestConversionConsistency:
 
     def test_round_trip_barrel_gallon(self):
         """Test BARREL -> GALLON -> BARREL round trip."""
-        from worldenergydata.common.constants import convert_units, EnergyUnits
+        from worldenergydata.common.constants import EnergyUnits, convert_units
 
         original = 10.0
         gallon = convert_units(original, EnergyUnits.BARREL, EnergyUnits.GALLON)
@@ -432,7 +434,7 @@ class TestConversionConsistency:
 
     def test_round_trip_mcf_scf(self):
         """Test MCF -> SCF -> MCF round trip."""
-        from worldenergydata.common.constants import convert_units, EnergyUnits
+        from worldenergydata.common.constants import EnergyUnits, convert_units
 
         original = 50.0
         scf = convert_units(original, EnergyUnits.MCF, EnergyUnits.SCF)
@@ -442,7 +444,7 @@ class TestConversionConsistency:
 
     def test_chain_conversion_consistency(self):
         """Test chained conversions maintain consistency."""
-        from worldenergydata.common.constants import convert_units, EnergyUnits
+        from worldenergydata.common.constants import EnergyUnits, convert_units
 
         # BOE -> MCF -> BOE should be consistent
         original_boe = 10.0

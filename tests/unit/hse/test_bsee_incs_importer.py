@@ -19,8 +19,8 @@ project_root = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(project_root / "src"))
 
 from worldenergydata.hse.importers.bsee_incs_importer import (
-    BSEEINCSImporter,
     REGION_MAP,
+    BSEEINCSImporter,
 )
 
 
@@ -103,15 +103,17 @@ class TestNormalizeRow:
 
     def test_single_warning_inc(self, importer):
         """Row with only warnings should emit 1 record."""
-        row = pd.Series({
-            "INC_DATE": "8/21/2020 2:12:53 PM",
-            "REGION": "G",
-            "BUS_ASC_CODE": "03295",
-            "BUS_ASC_NAME": "Fieldwood Energy LLC",
-            "WARNING_INCS": "3",
-            "COMP_SHUTIN_INCS": "0",
-            "FAC_SHUTIN_INCS": "0",
-        })
+        row = pd.Series(
+            {
+                "INC_DATE": "8/21/2020 2:12:53 PM",
+                "REGION": "G",
+                "BUS_ASC_CODE": "03295",
+                "BUS_ASC_NAME": "Fieldwood Energy LLC",
+                "WARNING_INCS": "3",
+                "COMP_SHUTIN_INCS": "0",
+                "FAC_SHUTIN_INCS": "0",
+            }
+        )
         records = importer._normalize_row(row, 0)
         assert len(records) == 1
         assert records[0]["violation_type"] == "warning"
@@ -120,15 +122,17 @@ class TestNormalizeRow:
 
     def test_all_three_inc_categories(self, importer):
         """Row with all 3 non-zero categories should emit 3 records."""
-        row = pd.Series({
-            "INC_DATE": "8/21/2020 2:12:53 PM",
-            "REGION": "G",
-            "BUS_ASC_CODE": "03295",
-            "BUS_ASC_NAME": "Fieldwood Energy LLC",
-            "WARNING_INCS": "1",
-            "COMP_SHUTIN_INCS": "2",
-            "FAC_SHUTIN_INCS": "3",
-        })
+        row = pd.Series(
+            {
+                "INC_DATE": "8/21/2020 2:12:53 PM",
+                "REGION": "G",
+                "BUS_ASC_CODE": "03295",
+                "BUS_ASC_NAME": "Fieldwood Energy LLC",
+                "WARNING_INCS": "1",
+                "COMP_SHUTIN_INCS": "2",
+                "FAC_SHUTIN_INCS": "3",
+            }
+        )
         records = importer._normalize_row(row, 0)
         assert len(records) == 3
         types = {r["violation_type"] for r in records}
@@ -136,85 +140,97 @@ class TestNormalizeRow:
 
     def test_zero_counts_emit_no_records(self, importer):
         """Row with all-zero counts should emit 0 records."""
-        row = pd.Series({
-            "INC_DATE": "8/21/2020 2:12:53 PM",
-            "REGION": "G",
-            "BUS_ASC_CODE": "03295",
-            "BUS_ASC_NAME": "Fieldwood Energy LLC",
-            "WARNING_INCS": "0",
-            "COMP_SHUTIN_INCS": "0",
-            "FAC_SHUTIN_INCS": "0",
-        })
+        row = pd.Series(
+            {
+                "INC_DATE": "8/21/2020 2:12:53 PM",
+                "REGION": "G",
+                "BUS_ASC_CODE": "03295",
+                "BUS_ASC_NAME": "Fieldwood Energy LLC",
+                "WARNING_INCS": "0",
+                "COMP_SHUTIN_INCS": "0",
+                "FAC_SHUTIN_INCS": "0",
+            }
+        )
         records = importer._normalize_row(row, 0)
         assert len(records) == 0
 
     def test_bad_date_returns_empty_list(self, importer):
         """Row with unparseable date should return empty list."""
-        row = pd.Series({
-            "INC_DATE": "invalid-date",
-            "REGION": "G",
-            "BUS_ASC_CODE": "03295",
-            "BUS_ASC_NAME": "Fieldwood Energy LLC",
-            "WARNING_INCS": "1",
-            "COMP_SHUTIN_INCS": "0",
-            "FAC_SHUTIN_INCS": "0",
-        })
+        row = pd.Series(
+            {
+                "INC_DATE": "invalid-date",
+                "REGION": "G",
+                "BUS_ASC_CODE": "03295",
+                "BUS_ASC_NAME": "Fieldwood Energy LLC",
+                "WARNING_INCS": "1",
+                "COMP_SHUTIN_INCS": "0",
+                "FAC_SHUTIN_INCS": "0",
+            }
+        )
         records = importer._normalize_row(row, 0)
         assert len(records) == 0
 
     def test_region_code_mapping_gulf(self, importer):
         """Region code 'G' should map to 'Gulf of Mexico'."""
-        row = pd.Series({
-            "INC_DATE": "8/21/2020",
-            "REGION": "G",
-            "BUS_ASC_CODE": "00001",
-            "BUS_ASC_NAME": "Test Operator",
-            "WARNING_INCS": "1",
-            "COMP_SHUTIN_INCS": "0",
-            "FAC_SHUTIN_INCS": "0",
-        })
+        row = pd.Series(
+            {
+                "INC_DATE": "8/21/2020",
+                "REGION": "G",
+                "BUS_ASC_CODE": "00001",
+                "BUS_ASC_NAME": "Test Operator",
+                "WARNING_INCS": "1",
+                "COMP_SHUTIN_INCS": "0",
+                "FAC_SHUTIN_INCS": "0",
+            }
+        )
         records = importer._normalize_row(row, 0)
         assert records[0]["region"] == "Gulf of Mexico"
 
     def test_region_code_mapping_alaska(self, importer):
         """Region code 'A' should map to 'Alaska'."""
-        row = pd.Series({
-            "INC_DATE": "8/21/2020",
-            "REGION": "A",
-            "BUS_ASC_CODE": "00001",
-            "BUS_ASC_NAME": "Test Operator",
-            "WARNING_INCS": "1",
-            "COMP_SHUTIN_INCS": "0",
-            "FAC_SHUTIN_INCS": "0",
-        })
+        row = pd.Series(
+            {
+                "INC_DATE": "8/21/2020",
+                "REGION": "A",
+                "BUS_ASC_CODE": "00001",
+                "BUS_ASC_NAME": "Test Operator",
+                "WARNING_INCS": "1",
+                "COMP_SHUTIN_INCS": "0",
+                "FAC_SHUTIN_INCS": "0",
+            }
+        )
         records = importer._normalize_row(row, 0)
         assert records[0]["region"] == "Alaska"
 
     def test_region_code_mapping_pacific(self, importer):
         """Region code 'P' should map to 'Pacific'."""
-        row = pd.Series({
-            "INC_DATE": "8/21/2020",
-            "REGION": "P",
-            "BUS_ASC_CODE": "00001",
-            "BUS_ASC_NAME": "Test Operator",
-            "WARNING_INCS": "1",
-            "COMP_SHUTIN_INCS": "0",
-            "FAC_SHUTIN_INCS": "0",
-        })
+        row = pd.Series(
+            {
+                "INC_DATE": "8/21/2020",
+                "REGION": "P",
+                "BUS_ASC_CODE": "00001",
+                "BUS_ASC_NAME": "Test Operator",
+                "WARNING_INCS": "1",
+                "COMP_SHUTIN_INCS": "0",
+                "FAC_SHUTIN_INCS": "0",
+            }
+        )
         records = importer._normalize_row(row, 0)
         assert records[0]["region"] == "Pacific"
 
     def test_all_records_have_violation_type(self, importer):
         """All emitted records should have incident_type='violation'."""
-        row = pd.Series({
-            "INC_DATE": "8/21/2020",
-            "REGION": "G",
-            "BUS_ASC_CODE": "00001",
-            "BUS_ASC_NAME": "Test Operator",
-            "WARNING_INCS": "1",
-            "COMP_SHUTIN_INCS": "1",
-            "FAC_SHUTIN_INCS": "1",
-        })
+        row = pd.Series(
+            {
+                "INC_DATE": "8/21/2020",
+                "REGION": "G",
+                "BUS_ASC_CODE": "00001",
+                "BUS_ASC_NAME": "Test Operator",
+                "WARNING_INCS": "1",
+                "COMP_SHUTIN_INCS": "1",
+                "FAC_SHUTIN_INCS": "1",
+            }
+        )
         records = importer._normalize_row(row, 0)
         for r in records:
             assert r["incident_type"] == "violation"
@@ -222,15 +238,17 @@ class TestNormalizeRow:
 
     def test_composite_id_includes_operator_code(self, importer):
         """Composite ID should include the operator business associate code."""
-        row = pd.Series({
-            "INC_DATE": "1/3/1948",
-            "REGION": "G",
-            "BUS_ASC_CODE": "12345",
-            "BUS_ASC_NAME": "Old Operator",
-            "WARNING_INCS": "1",
-            "COMP_SHUTIN_INCS": "0",
-            "FAC_SHUTIN_INCS": "0",
-        })
+        row = pd.Series(
+            {
+                "INC_DATE": "1/3/1948",
+                "REGION": "G",
+                "BUS_ASC_CODE": "12345",
+                "BUS_ASC_NAME": "Old Operator",
+                "WARNING_INCS": "1",
+                "COMP_SHUTIN_INCS": "0",
+                "FAC_SHUTIN_INCS": "0",
+            }
+        )
         records = importer._normalize_row(row, 99)
         assert "12345" in records[0]["bsee_incident_id"]
         assert "99" in records[0]["bsee_incident_id"]

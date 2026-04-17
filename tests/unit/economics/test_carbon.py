@@ -22,10 +22,10 @@ from worldenergydata.economics.dcf import (
     build_cash_flow_schedule,
 )
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
+
 
 def _field_schedule(carbon_price: float = 0.0) -> CashFlowSchedule:
     """Standard 5-year field development schedule for sensitivity tests.
@@ -51,6 +51,7 @@ def _field_schedule(carbon_price: float = 0.0) -> CashFlowSchedule:
 # ---------------------------------------------------------------------------
 # carbon_npv_curve
 # ---------------------------------------------------------------------------
+
 
 class TestCarbonNpvCurve:
     """Tests for NPV vs. carbon price curve generation."""
@@ -125,6 +126,7 @@ class TestCarbonNpvCurve:
 # ---------------------------------------------------------------------------
 # breakeven_carbon_price
 # ---------------------------------------------------------------------------
+
 
 class TestBreakevenCarbonPrice:
     """Tests for NPV=0 breakeven carbon price solver."""
@@ -216,6 +218,7 @@ class TestBreakevenCarbonPrice:
 # ---------------------------------------------------------------------------
 # tornado_sensitivity
 # ---------------------------------------------------------------------------
+
 
 class TestTornadoSensitivity:
     """Tests for tornado chart sensitivity data generation."""

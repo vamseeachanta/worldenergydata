@@ -46,7 +46,8 @@ class BakerHughesCollector(BaseCollector):
             df = pd.read_excel(io.BytesIO(content))
             logger.info(
                 "Downloaded NA rig count: %d rows x %d cols",
-                len(df), len(df.columns),
+                len(df),
+                len(df.columns),
             )
             return df
         except Exception as exc:
@@ -64,7 +65,8 @@ class BakerHughesCollector(BaseCollector):
             df = pd.read_excel(io.BytesIO(content))
             logger.info(
                 "Downloaded international rig count: %d rows x %d cols",
-                len(df), len(df.columns),
+                len(df),
+                len(df.columns),
             )
             return df
         except Exception as exc:

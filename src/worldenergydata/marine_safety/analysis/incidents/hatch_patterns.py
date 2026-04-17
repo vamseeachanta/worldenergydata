@@ -14,7 +14,6 @@ hatch, door, and opening maloperation incidents. Patterns are organized by categ
 
 from typing import Dict, List
 
-
 # Pattern matching for hatch maloperation terminology variations
 # Expanded to include all door, hatch, and opening incidents
 HATCH_PATTERNS: List[str] = [

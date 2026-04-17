@@ -23,8 +23,8 @@ from typing import Any
 
 import pandas as pd
 
-from worldenergydata.bsee.analysis.cost.models import ConfidenceLevel
 from worldenergydata.bsee.analysis.cost.cost_summary import FieldCostSummary
+from worldenergydata.bsee.analysis.cost.models import ConfidenceLevel
 
 logger = logging.getLogger(__name__)
 
@@ -119,14 +119,9 @@ def compare_fields_to_regional_average(
         deviation_pct = (
             ((cost - mean_cost) / mean_cost * 100.0) if mean_cost != 0.0 else 0.0
         )
-        is_outlier = (
-            std_dev > 0.0
-            and abs(cost - mean_cost) > threshold_std * std_dev
-        )
+        is_outlier = std_dev > 0.0 and abs(cost - mean_cost) > threshold_std * std_dev
 
-        cost_per_well = (
-            cost / summary.n_wells if summary.n_wells > 0 else 0.0
-        )
+        cost_per_well = cost / summary.n_wells if summary.n_wells > 0 else 0.0
 
         # Determine dominant confidence from estimates
         confidence = _dominant_confidence(summary)

@@ -18,7 +18,9 @@ class TestPlanetsweLoaderImport:
 
     def test_module_importable(self):
         """Test that well_datasets module can be imported."""
-        from worldenergydata.metocean.well_datasets import planetswe_loader  # noqa: F401
+        from worldenergydata.metocean.well_datasets import (  # noqa: F401
+            planetswe_loader,
+        )
 
     def test_class_importable(self):
         """Test that PlanetsweLoader class is importable."""

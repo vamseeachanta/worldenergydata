@@ -13,4 +13,4 @@ try:
 except ImportError:
     PaleowellsVisualizer = None  # matplotlib not available
 
-__all__ = ['PaleowellsDataProcessor', 'GeologicalEraClassifier', 'PaleowellsVisualizer']
+__all__ = ["PaleowellsDataProcessor", "GeologicalEraClassifier", "PaleowellsVisualizer"]

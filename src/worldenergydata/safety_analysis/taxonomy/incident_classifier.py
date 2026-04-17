@@ -22,6 +22,7 @@ import re
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Sequence
 
+from worldenergydata.common.logging import get_logger
 from worldenergydata.safety_analysis.taxonomy.activity_definitions import (
     Activity,
     Subactivity,
@@ -29,9 +30,6 @@ from worldenergydata.safety_analysis.taxonomy.activity_definitions import (
 from worldenergydata.safety_analysis.taxonomy.activity_registry import (
     ActivityTaxonomy,
 )
-
-
-from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
 

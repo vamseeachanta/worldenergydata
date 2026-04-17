@@ -7,32 +7,26 @@ This module provides high-impact performance optimizations:
 """
 
 from .cache import (
-    MetricsCache,
-    CacheEntry,
     CachedAggregator,
+    CacheEntry,
     CacheManager,
-    cache_manager
+    MetricsCache,
+    cache_manager,
 )
-
-from .parallel_processor import (
-    ParallelProcessor,
-    ProcessingResult,
-    BatchProcessor
-)
+from .parallel_processor import BatchProcessor, ParallelProcessor, ProcessingResult
 
 __all__ = [
     # Cache components
-    'MetricsCache',
-    'CacheEntry',
-    'CachedAggregator',
-    'CacheManager',
-    'cache_manager',
-    
+    "MetricsCache",
+    "CacheEntry",
+    "CachedAggregator",
+    "CacheManager",
+    "cache_manager",
     # Parallel processing components
-    'ParallelProcessor',
-    'ProcessingResult',
-    'BatchProcessor'
+    "ParallelProcessor",
+    "ProcessingResult",
+    "BatchProcessor",
 ]
 
 # Module version
-__version__ = '1.0.0'
+__version__ = "1.0.0"

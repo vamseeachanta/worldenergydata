@@ -21,6 +21,11 @@ from typing import Any
 import pandas as pd
 import pytest
 
+from worldenergydata.bsee.analysis.cost.cost_engine import CostEngine
+from worldenergydata.bsee.analysis.cost.cost_summary import (
+    FieldCostSummary,
+    summarize_field_costs,
+)
 from worldenergydata.bsee.analysis.cost.models import (
     ActivityType,
     ConfidenceLevel,
@@ -28,21 +33,15 @@ from worldenergydata.bsee.analysis.cost.models import (
     WaterDepthBand,
     WellDepthBand,
 )
-from worldenergydata.bsee.analysis.cost.cost_engine import CostEngine
-from worldenergydata.bsee.analysis.cost.cost_summary import (
-    FieldCostSummary,
-    summarize_field_costs,
-)
 from worldenergydata.bsee.analysis.cost.regional_loader import RegionalCostLoader
-from worldenergydata.bsee.pipeline.field_query import FieldContext
-from worldenergydata.bsee.pipeline.pipeline_runner import FieldReport
 from worldenergydata.bsee.pipeline.field_cost_integration import (
     FieldPipelineCostIntegrator,
-    _infer_region,
     _default_water_depth_m,
     _default_well_depth_m,
+    _infer_region,
 )
-
+from worldenergydata.bsee.pipeline.field_query import FieldContext
+from worldenergydata.bsee.pipeline.pipeline_runner import FieldReport
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -91,7 +90,9 @@ def _make_report(
     return FieldReport(
         context=context,
         generated_at="2024-01-01T00:00:00+00:00",
-        production_summary=production_df if production_df is not None else pd.DataFrame(),
+        production_summary=(
+            production_df if production_df is not None else pd.DataFrame()
+        ),
         activity_analysis={},
         casing_strings={},
         casing_matrices={},

@@ -222,9 +222,7 @@ def _parse_blend_rows_from_table(
     return rows
 
 
-def _find_column(
-    header: List[str], keywords: List[str]
-) -> Optional[int]:
+def _find_column(header: List[str], keywords: List[str]) -> Optional[int]:
     """Return index of first header column matching any keyword."""
     for idx, cell in enumerate(header):
         for kw in keywords:

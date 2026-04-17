@@ -125,8 +125,4 @@ class CrossSourceBenchmark:
             "intervention_activities",
             "production",
         )
-        return sum(
-            1
-            for attr in domain_attrs
-            if not getattr(result, attr).empty
-        )
+        return sum(1 for attr in domain_attrs if not getattr(result, attr).empty)

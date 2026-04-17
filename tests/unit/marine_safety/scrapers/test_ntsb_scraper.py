@@ -16,16 +16,14 @@ from worldenergydata.marine_safety.scrapers.ntsb_scraper import (
     NTSBScraper,
 )
 
-
 # ---------------------------------------------------------------------------
 # NTSBDataValidationError
 # ---------------------------------------------------------------------------
 
+
 class TestNTSBDataValidationError:
     def test_default_message(self):
-        err = NTSBDataValidationError(
-            field="vessel_name", value="", reason="empty"
-        )
+        err = NTSBDataValidationError(field="vessel_name", value="", reason="empty")
         assert "vessel_name" in str(err)
         assert "empty" in str(err)
 
@@ -43,8 +41,7 @@ class TestNTSBDataValidationError:
 
     def test_details(self):
         err = NTSBDataValidationError(
-            field="flag", value="XX", reason="invalid country",
-            ntsb_id="DCA22MM001"
+            field="flag", value="XX", reason="invalid country", ntsb_id="DCA22MM001"
         )
         assert err.details["field"] == "flag"
         assert err.details["value"] == "XX"
@@ -54,6 +51,7 @@ class TestNTSBDataValidationError:
 # ---------------------------------------------------------------------------
 # NTSBConnectionError
 # ---------------------------------------------------------------------------
+
 
 class TestNTSBConnectionError:
     def test_default_message(self):
@@ -74,6 +72,7 @@ class TestNTSBConnectionError:
 # NTSBScraper constants
 # ---------------------------------------------------------------------------
 
+
 class TestNTSBScraperConstants:
     def test_base_url(self):
         assert "data.ntsb.gov" in NTSBScraper.BASE_URL
@@ -91,6 +90,7 @@ class TestNTSBScraperConstants:
 # ---------------------------------------------------------------------------
 # NTSB_ID_PATTERN
 # ---------------------------------------------------------------------------
+
 
 class TestNTSBIDPattern:
     def test_mar_format(self):
@@ -112,6 +112,7 @@ class TestNTSBIDPattern:
 # ---------------------------------------------------------------------------
 # Incident type mapping
 # ---------------------------------------------------------------------------
+
 
 class TestIncidentTypeMapping:
     def test_collision(self):
@@ -142,6 +143,7 @@ class TestIncidentTypeMapping:
 # ---------------------------------------------------------------------------
 # Status mapping
 # ---------------------------------------------------------------------------
+
 
 class TestStatusMapping:
     def test_open(self):

@@ -20,10 +20,18 @@ from worldenergydata.vessel_hull_models.constants import (
 class TestVesselType:
     def test_all_members(self):
         expected = {
-            "CRANE_VESSEL", "PIPELAY_VESSEL", "DERRICK_LAY_VESSEL",
-            "SINGLE_LIFT_VESSEL", "PSV", "AHTS", "CONSTRUCTION_VESSEL",
-            "DIVING_SUPPORT_VESSEL", "FPSO", "SEMI_SUBMERSIBLE",
-            "JACK_UP", "GENERIC",
+            "CRANE_VESSEL",
+            "PIPELAY_VESSEL",
+            "DERRICK_LAY_VESSEL",
+            "SINGLE_LIFT_VESSEL",
+            "PSV",
+            "AHTS",
+            "CONSTRUCTION_VESSEL",
+            "DIVING_SUPPORT_VESSEL",
+            "FPSO",
+            "SEMI_SUBMERSIBLE",
+            "JACK_UP",
+            "GENERIC",
         }
         assert {m.name for m in VesselType} == expected
 
@@ -35,8 +43,12 @@ class TestVesselType:
 class TestModelSource:
     def test_all_members(self):
         expected = {
-            "CGTRADER", "SKETCHFAB", "TURBOSQUID",
-            "GRABCAD", "PARAMETRIC", "MANUAL",
+            "CGTRADER",
+            "SKETCHFAB",
+            "TURBOSQUID",
+            "GRABCAD",
+            "PARAMETRIC",
+            "MANUAL",
         }
         assert {m.name for m in ModelSource} == expected
 
@@ -85,7 +97,10 @@ class TestPriorityVessels:
 
     def test_vessel_types(self):
         assert PRIORITY_VESSELS["sleipnir"]["type"] == VesselType.CRANE_VESSEL
-        assert PRIORITY_VESSELS["pioneering_spirit"]["type"] == VesselType.SINGLE_LIFT_VESSEL
+        assert (
+            PRIORITY_VESSELS["pioneering_spirit"]["type"]
+            == VesselType.SINGLE_LIFT_VESSEL
+        )
 
 
 class TestScalarConstants:

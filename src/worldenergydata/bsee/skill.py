@@ -62,6 +62,7 @@ _DEFAULT_FIELD_META = {
 # Output type
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class BseeFieldResult:
     """Structured result returned by :func:`bsee_field_pipeline`.
@@ -85,6 +86,7 @@ class BseeFieldResult:
 # ---------------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------------
+
 
 def _build_synthetic_production(
     meta: dict,
@@ -110,9 +112,7 @@ def _build_synthetic_production(
                 # Ramp-up phase: linear from 0 to peak
                 ramp_months = abs((first_year - peak_year) * 12 + (1 - peak_month))
                 ramp_months = max(ramp_months, 1)
-                fraction = (
-                    ((yr - first_year) * 12 + (mo - 1)) / ramp_months
-                )
+                fraction = ((yr - first_year) * 12 + (mo - 1)) / ramp_months
                 fraction = min(fraction, 1.0)
                 oil = peak_oil * fraction
             else:
@@ -123,13 +123,15 @@ def _build_synthetic_production(
             gas = oil * 1.4  # GOR ~1.4 MCF/BBL
             water = oil * 0.8  # WOR ~0.8
 
-            rows.append({
-                "year": yr,
-                "month": mo,
-                "oil_bbl": round(oil, 0),
-                "gas_mcf": round(gas, 0),
-                "water_bbl": round(water, 0),
-            })
+            rows.append(
+                {
+                    "year": yr,
+                    "month": mo,
+                    "oil_bbl": round(oil, 0),
+                    "gas_mcf": round(gas, 0),
+                    "water_bbl": round(water, 0),
+                }
+            )
 
     df = pd.DataFrame(rows)
 
@@ -172,14 +174,14 @@ def _compute_summary(df: pd.DataFrame) -> dict:
     last_date = f"{int(last_row['year'])}-{int(last_row['month']):02d}"
 
     # Annualised decline from peak to last data point
-    months_from_peak = (
-        (last_row["year"] - peak_row["year"]) * 12
-        + (last_row["month"] - peak_row["month"])
+    months_from_peak = (last_row["year"] - peak_row["year"]) * 12 + (
+        last_row["month"] - peak_row["month"]
     )
     peak_val = float(peak_row["oil_bbl"])
     last_val = float(last_row["oil_bbl"])
     if months_from_peak > 0 and peak_val > 0 and last_val > 0:
         import math
+
         monthly_rate = -math.log(last_val / peak_val) / months_from_peak
         decline_rate_pct = round(monthly_rate * 12 * 100, 2)
     else:
@@ -197,6 +199,7 @@ def _compute_summary(df: pd.DataFrame) -> dict:
 # ---------------------------------------------------------------------------
 # Public entry point
 # ---------------------------------------------------------------------------
+
 
 def bsee_field_pipeline(
     field_name: str,

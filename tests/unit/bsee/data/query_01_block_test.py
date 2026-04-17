@@ -1,8 +1,8 @@
-import pytest
-import deepdiff
 import os
 import sys
 
+import deepdiff
+import pytest
 from assetutilities.common.yml_utilities import ymlInput
 
 from worldenergydata.engine import engine
@@ -15,20 +15,18 @@ def run_application(input_file, expected_result={}):
 
 
 def get_valid_pytest_output_file(pytest_output_file):
-    if pytest_output_file is not None and not os.path.isfile(
-            pytest_output_file):
-        pytest_output_file = os.path.join(os.path.dirname(__file__),
-                                          pytest_output_file)
+    if pytest_output_file is not None and not os.path.isfile(pytest_output_file):
+        pytest_output_file = os.path.join(os.path.dirname(__file__), pytest_output_file)
     return pytest_output_file
+
 
 def test_application():
 
-    # Comprehensive analysis 
-    input_file = 'query_01_block.yml' 
+    # Comprehensive analysis
+    input_file = "query_01_block.yml"
 
     # custom tests
     # input_file = 'custom_analysis.yml'
-  
 
     pytest_output_file = None
     # pytest_output_file = get_valid_pytest_output_file(pytest_output_file)

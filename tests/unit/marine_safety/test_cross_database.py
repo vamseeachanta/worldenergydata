@@ -19,6 +19,7 @@ from worldenergydata.marine_safety.cross_database import (
 # Fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
 def analyzer() -> CrossDatabaseAnalyzer:
     return CrossDatabaseAnalyzer()
@@ -39,6 +40,7 @@ def full_data(full_result: CrossDatabaseResult) -> pd.DataFrame:
 # CrossDatabaseQuery defaults
 # ---------------------------------------------------------------------------
 
+
 class TestCrossDatabaseQueryDefaults:
     def test_default_sources_includes_all_four(self):
         q = CrossDatabaseQuery()
@@ -56,6 +58,7 @@ class TestCrossDatabaseQueryDefaults:
 # ---------------------------------------------------------------------------
 # query() — return type and basic structure
 # ---------------------------------------------------------------------------
+
 
 class TestQueryReturnType:
     def test_query_returns_cross_database_result(self, full_result):
@@ -77,11 +80,19 @@ class TestQueryReturnType:
 # Schema columns
 # ---------------------------------------------------------------------------
 
+
 class TestSchemaColumns:
     REQUIRED_COLUMNS = [
-        "source", "incident_id", "date", "incident_type",
-        "vessel_type", "region", "fatalities", "injuries",
-        "severity", "description",
+        "source",
+        "incident_id",
+        "date",
+        "incident_type",
+        "vessel_type",
+        "region",
+        "fatalities",
+        "injuries",
+        "severity",
+        "description",
     ]
 
     def test_all_required_columns_present(self, full_data):
@@ -105,6 +116,7 @@ class TestSchemaColumns:
 # Dataset size requirements
 # ---------------------------------------------------------------------------
 
+
 class TestDatasetSize:
     def test_total_incidents_at_least_200(self, full_result):
         assert full_result.total_incidents >= 200
@@ -120,14 +132,13 @@ class TestDatasetSize:
         df = full_result.data
         for src, count in full_result.by_source.items():
             actual = int((df["source"] == src).sum())
-            assert actual == count, (
-                f"{src}: by_source={count}, groupby={actual}"
-            )
+            assert actual == count, f"{src}: by_source={count}, groupby={actual}"
 
 
 # ---------------------------------------------------------------------------
 # Filtering — sources
 # ---------------------------------------------------------------------------
+
 
 class TestFilterBySources:
     def test_filter_maib_only(self, analyzer):
@@ -152,11 +163,10 @@ class TestFilterBySources:
 # Filtering — incident types
 # ---------------------------------------------------------------------------
 
+
 class TestFilterByIncidentType:
     def test_filter_collision_only(self, analyzer):
-        result = analyzer.query(
-            CrossDatabaseQuery(incident_types=["collision"])
-        )
+        result = analyzer.query(CrossDatabaseQuery(incident_types=["collision"]))
         assert set(result.data["incident_type"].unique()) == {"collision"}
 
     def test_filter_two_incident_types(self, analyzer):
@@ -167,15 +177,14 @@ class TestFilterByIncidentType:
         assert types.issubset({"collision", "grounding"})
 
     def test_filter_incident_type_reduces_count(self, analyzer, full_result):
-        result = analyzer.query(
-            CrossDatabaseQuery(incident_types=["fire"])
-        )
+        result = analyzer.query(CrossDatabaseQuery(incident_types=["fire"]))
         assert result.total_incidents < full_result.total_incidents
 
 
 # ---------------------------------------------------------------------------
 # Filtering — year range
 # ---------------------------------------------------------------------------
+
 
 class TestFilterByYear:
     def test_start_year_2020_excludes_earlier(self, analyzer):
@@ -189,9 +198,7 @@ class TestFilterByYear:
         assert (years <= 2019).all()
 
     def test_year_range_combines_start_and_end(self, analyzer):
-        result = analyzer.query(
-            CrossDatabaseQuery(start_year=2018, end_year=2020)
-        )
+        result = analyzer.query(CrossDatabaseQuery(start_year=2018, end_year=2020))
         years = pd.to_datetime(result.data["date"]).dt.year
         assert (years >= 2018).all()
         assert (years <= 2020).all()
@@ -201,25 +208,21 @@ class TestFilterByYear:
 # Filtering — regions
 # ---------------------------------------------------------------------------
 
+
 class TestFilterByRegion:
     def test_filter_north_sea(self, analyzer):
-        result = analyzer.query(
-            CrossDatabaseQuery(regions=["north_sea"])
-        )
+        result = analyzer.query(CrossDatabaseQuery(regions=["north_sea"]))
         assert set(result.data["region"].unique()) == {"north_sea"}
 
     def test_filter_multiple_regions(self, analyzer):
-        result = analyzer.query(
-            CrossDatabaseQuery(regions=["north_sea", "atlantic"])
-        )
-        assert set(result.data["region"].unique()).issubset(
-            {"north_sea", "atlantic"}
-        )
+        result = analyzer.query(CrossDatabaseQuery(regions=["north_sea", "atlantic"]))
+        assert set(result.data["region"].unique()).issubset({"north_sea", "atlantic"})
 
 
 # ---------------------------------------------------------------------------
 # Combined filters (AND logic)
 # ---------------------------------------------------------------------------
+
 
 class TestCombinedFilters:
     def test_source_and_type_combined(self, analyzer):
@@ -230,9 +233,7 @@ class TestCombinedFilters:
         assert set(result.data["incident_type"].unique()) == {"collision"}
 
     def test_source_and_year_combined(self, analyzer):
-        result = analyzer.query(
-            CrossDatabaseQuery(sources=["tsb"], start_year=2020)
-        )
+        result = analyzer.query(CrossDatabaseQuery(sources=["tsb"], start_year=2020))
         assert set(result.data["source"].unique()) == {"tsb"}
         years = pd.to_datetime(result.data["date"]).dt.year
         assert (years >= 2020).all()
@@ -257,6 +258,7 @@ class TestCombinedFilters:
 # ---------------------------------------------------------------------------
 # correlations()
 # ---------------------------------------------------------------------------
+
 
 class TestCorrelations:
     REQUIRED_KEYS = [
@@ -305,6 +307,7 @@ class TestCorrelations:
 # trend_analysis()
 # ---------------------------------------------------------------------------
 
+
 class TestTrendAnalysis:
     def test_returns_dataframe(self, analyzer, full_data):
         trend = analyzer.trend_analysis(full_data)
@@ -327,6 +330,7 @@ class TestTrendAnalysis:
 # ---------------------------------------------------------------------------
 # top_incident_types()
 # ---------------------------------------------------------------------------
+
 
 class TestTopIncidentTypes:
     def test_returns_dataframe(self, analyzer, full_data):
@@ -358,6 +362,7 @@ class TestTopIncidentTypes:
 # ---------------------------------------------------------------------------
 # risk_hotspots()
 # ---------------------------------------------------------------------------
+
 
 class TestRiskHotspots:
     def test_returns_dataframe(self, analyzer, full_data):

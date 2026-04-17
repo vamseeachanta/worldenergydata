@@ -1,4 +1,5 @@
 """Tests for staleness detection with per-source cadence thresholds."""
+
 from datetime import datetime, timedelta
 from unittest.mock import patch
 
@@ -9,7 +10,6 @@ from worldenergydata.scheduler.staleness import (
     check_staleness,
     get_staleness_details,
 )
-
 
 FROZEN_NOW = datetime(2026, 3, 25, 12, 0, 0)
 
@@ -40,11 +40,19 @@ class TestCheckStaleness:
         # SODIR ran 12 hours ago (threshold 36h) — OK
         # BSEE ran 5 days ago (threshold 10d) — OK
         # EIA ran 20 days ago (threshold 45d) — OK
-        status = _make_status({
-            "sodir_refresh": _job_entry((FROZEN_NOW - timedelta(hours=12)).isoformat()),
-            "bsee_refresh": _job_entry((FROZEN_NOW - timedelta(days=5)).isoformat()),
-            "eia_us_refresh": _job_entry((FROZEN_NOW - timedelta(days=20)).isoformat()),
-        })
+        status = _make_status(
+            {
+                "sodir_refresh": _job_entry(
+                    (FROZEN_NOW - timedelta(hours=12)).isoformat()
+                ),
+                "bsee_refresh": _job_entry(
+                    (FROZEN_NOW - timedelta(days=5)).isoformat()
+                ),
+                "eia_us_refresh": _job_entry(
+                    (FROZEN_NOW - timedelta(days=20)).isoformat()
+                ),
+            }
+        )
         result = check_staleness(status)
         assert result == []
 
@@ -54,11 +62,19 @@ class TestCheckStaleness:
         mock_dt.now.return_value = FROZEN_NOW
         mock_dt.fromisoformat = datetime.fromisoformat
 
-        status = _make_status({
-            "sodir_refresh": _job_entry((FROZEN_NOW - timedelta(hours=40)).isoformat()),
-            "bsee_refresh": _job_entry((FROZEN_NOW - timedelta(days=1)).isoformat()),
-            "eia_us_refresh": _job_entry((FROZEN_NOW - timedelta(days=1)).isoformat()),
-        })
+        status = _make_status(
+            {
+                "sodir_refresh": _job_entry(
+                    (FROZEN_NOW - timedelta(hours=40)).isoformat()
+                ),
+                "bsee_refresh": _job_entry(
+                    (FROZEN_NOW - timedelta(days=1)).isoformat()
+                ),
+                "eia_us_refresh": _job_entry(
+                    (FROZEN_NOW - timedelta(days=1)).isoformat()
+                ),
+            }
+        )
         result = check_staleness(status)
         assert result == ["sodir_refresh"]
 
@@ -68,11 +84,19 @@ class TestCheckStaleness:
         mock_dt.now.return_value = FROZEN_NOW
         mock_dt.fromisoformat = datetime.fromisoformat
 
-        status = _make_status({
-            "sodir_refresh": _job_entry((FROZEN_NOW - timedelta(hours=1)).isoformat()),
-            "bsee_refresh": _job_entry((FROZEN_NOW - timedelta(days=11)).isoformat()),
-            "eia_us_refresh": _job_entry((FROZEN_NOW - timedelta(days=1)).isoformat()),
-        })
+        status = _make_status(
+            {
+                "sodir_refresh": _job_entry(
+                    (FROZEN_NOW - timedelta(hours=1)).isoformat()
+                ),
+                "bsee_refresh": _job_entry(
+                    (FROZEN_NOW - timedelta(days=11)).isoformat()
+                ),
+                "eia_us_refresh": _job_entry(
+                    (FROZEN_NOW - timedelta(days=1)).isoformat()
+                ),
+            }
+        )
         result = check_staleness(status)
         assert result == ["bsee_refresh"]
 
@@ -82,11 +106,19 @@ class TestCheckStaleness:
         mock_dt.now.return_value = FROZEN_NOW
         mock_dt.fromisoformat = datetime.fromisoformat
 
-        status = _make_status({
-            "sodir_refresh": _job_entry((FROZEN_NOW - timedelta(hours=1)).isoformat()),
-            "bsee_refresh": _job_entry((FROZEN_NOW - timedelta(days=1)).isoformat()),
-            "eia_us_refresh": _job_entry((FROZEN_NOW - timedelta(days=50)).isoformat()),
-        })
+        status = _make_status(
+            {
+                "sodir_refresh": _job_entry(
+                    (FROZEN_NOW - timedelta(hours=1)).isoformat()
+                ),
+                "bsee_refresh": _job_entry(
+                    (FROZEN_NOW - timedelta(days=1)).isoformat()
+                ),
+                "eia_us_refresh": _job_entry(
+                    (FROZEN_NOW - timedelta(days=50)).isoformat()
+                ),
+            }
+        )
         result = check_staleness(status)
         assert result == ["eia_us_refresh"]
 
@@ -96,11 +128,17 @@ class TestCheckStaleness:
         mock_dt.now.return_value = FROZEN_NOW
         mock_dt.fromisoformat = datetime.fromisoformat
 
-        status = _make_status({
-            "sodir_refresh": _job_entry(None),
-            "bsee_refresh": _job_entry((FROZEN_NOW - timedelta(days=1)).isoformat()),
-            "eia_us_refresh": _job_entry((FROZEN_NOW - timedelta(days=1)).isoformat()),
-        })
+        status = _make_status(
+            {
+                "sodir_refresh": _job_entry(None),
+                "bsee_refresh": _job_entry(
+                    (FROZEN_NOW - timedelta(days=1)).isoformat()
+                ),
+                "eia_us_refresh": _job_entry(
+                    (FROZEN_NOW - timedelta(days=1)).isoformat()
+                ),
+            }
+        )
         result = check_staleness(status)
         assert result == ["sodir_refresh"]
 
@@ -111,12 +149,22 @@ class TestCheckStaleness:
         mock_dt.fromisoformat = datetime.fromisoformat
 
         # Only tracked jobs present, plus an untracked one
-        status = _make_status({
-            "sodir_refresh": _job_entry((FROZEN_NOW - timedelta(hours=1)).isoformat()),
-            "bsee_refresh": _job_entry((FROZEN_NOW - timedelta(days=1)).isoformat()),
-            "eia_us_refresh": _job_entry((FROZEN_NOW - timedelta(days=1)).isoformat()),
-            "brazil_anp_refresh": _job_entry(None),  # untracked, stale, but should be ignored
-        })
+        status = _make_status(
+            {
+                "sodir_refresh": _job_entry(
+                    (FROZEN_NOW - timedelta(hours=1)).isoformat()
+                ),
+                "bsee_refresh": _job_entry(
+                    (FROZEN_NOW - timedelta(days=1)).isoformat()
+                ),
+                "eia_us_refresh": _job_entry(
+                    (FROZEN_NOW - timedelta(days=1)).isoformat()
+                ),
+                "brazil_anp_refresh": _job_entry(
+                    None
+                ),  # untracked, stale, but should be ignored
+            }
+        )
         result = check_staleness(status)
         assert result == []
 
@@ -126,11 +174,17 @@ class TestCheckStaleness:
         mock_dt.now.return_value = FROZEN_NOW
         mock_dt.fromisoformat = datetime.fromisoformat
 
-        status = _make_status({
-            "sodir_refresh": _job_entry((FROZEN_NOW - timedelta(hours=40)).isoformat()),
-            "bsee_refresh": _job_entry((FROZEN_NOW - timedelta(days=1)).isoformat()),
-            "eia_us_refresh": _job_entry(None),
-        })
+        status = _make_status(
+            {
+                "sodir_refresh": _job_entry(
+                    (FROZEN_NOW - timedelta(hours=40)).isoformat()
+                ),
+                "bsee_refresh": _job_entry(
+                    (FROZEN_NOW - timedelta(days=1)).isoformat()
+                ),
+                "eia_us_refresh": _job_entry(None),
+            }
+        )
         details = get_staleness_details(status)
         assert len(details) == 3
 

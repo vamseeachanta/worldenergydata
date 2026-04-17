@@ -2,9 +2,9 @@
 # ABOUTME: Exports GomFieldMap (Plotly) and FoliumGomMap (Leaflet) with FieldMapConfig.
 
 from worldenergydata.bsee.visualization.field_map import (
-    GomFieldMap,
     FieldMapConfig,
     FieldRecord,
+    GomFieldMap,
 )
 from worldenergydata.bsee.visualization.folium_map import FoliumGomMap
 

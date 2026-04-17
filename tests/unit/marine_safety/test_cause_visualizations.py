@@ -1,12 +1,13 @@
 # ABOUTME: Test suite for marine safety cause visualization module
 # ABOUTME: Validates interactive Plotly visualizations for incident cause analysis
 
-import pytest
-import pandas as pd
-import plotly.graph_objects as go
+import sys
 from datetime import datetime, timedelta
 from pathlib import Path
-import sys
+
+import pandas as pd
+import plotly.graph_objects as go
+import pytest
 
 # Add src to path for imports
 src_path = Path(__file__).parent.parent.parent.parent / "src"
@@ -36,15 +37,17 @@ def sample_incident_data():
         cause_idx = i % len(causes)
         severity_idx = min(i % len(severities), len(severities) - 1)
 
-        data.append({
-            'incident_id': f'INC-{i:04d}',
-            'date': incident_date,
-            'cause_category': causes[cause_idx].value,
-            'severity': severities[severity_idx],
-            'description': f'Test incident {i}',
-            'vessel_type': 'supply_vessel',
-            'location': 'Gulf of Mexico',
-        })
+        data.append(
+            {
+                "incident_id": f"INC-{i:04d}",
+                "date": incident_date,
+                "cause_category": causes[cause_idx].value,
+                "severity": severities[severity_idx],
+                "description": f"Test incident {i}",
+                "vessel_type": "supply_vessel",
+                "location": "Gulf of Mexico",
+            }
+        )
 
     return pd.DataFrame(data)
 
@@ -56,25 +59,27 @@ def hatch_maloperation_data():
 
     data = []
     maloperation_types = [
-        'improper_securing',
-        'delayed_closure',
-        'missing_fasteners',
-        'inadequate_inspection',
-        'structural_damage'
+        "improper_securing",
+        "delayed_closure",
+        "missing_fasteners",
+        "inadequate_inspection",
+        "structural_damage",
     ]
 
     for i in range(50):
         incident_date = base_date + timedelta(days=i * 7)
 
-        data.append({
-            'incident_id': f'HATCH-{i:03d}',
-            'date': incident_date,
-            'maloperation_type': maloperation_types[i % len(maloperation_types)],
-            'severity': list(SeverityLevel)[i % len(list(SeverityLevel))],
-            'hatch_location': f'Hatch #{(i % 5) + 1}',
-            'weather_condition': 'rough_seas' if i % 3 == 0 else 'calm',
-            'consequences': 'flooding' if i % 4 == 0 else 'near_miss',
-        })
+        data.append(
+            {
+                "incident_id": f"HATCH-{i:03d}",
+                "date": incident_date,
+                "maloperation_type": maloperation_types[i % len(maloperation_types)],
+                "severity": list(SeverityLevel)[i % len(list(SeverityLevel))],
+                "hatch_location": f"Hatch #{(i % 5) + 1}",
+                "weather_condition": "rough_seas" if i % 3 == 0 else "calm",
+                "consequences": "flooding" if i % 4 == 0 else "near_miss",
+            }
+        )
 
     return pd.DataFrame(data)
 
@@ -95,7 +100,7 @@ class TestCauseVisualizerInitialization:
 
     def test_default_color_scheme(self, visualizer):
         """Test that visualizer has default color scheme."""
-        assert hasattr(visualizer, 'color_scheme')
+        assert hasattr(visualizer, "color_scheme")
         assert isinstance(visualizer.color_scheme, dict)
         assert len(visualizer.color_scheme) > 0
 
@@ -110,21 +115,28 @@ class TestCauseFrequencyVisualization:
         assert isinstance(fig, go.Figure)
         assert len(fig.data) > 0
         assert fig.layout.title.text is not None
-        assert 'Cause' in fig.layout.xaxis.title.text or 'Category' in fig.layout.xaxis.title.text
+        assert (
+            "Cause" in fig.layout.xaxis.title.text
+            or "Category" in fig.layout.xaxis.title.text
+        )
         # Y-axis should indicate quantity/count (could be 'Count', 'Frequency', 'Number', or 'Incidents')
         y_title = fig.layout.yaxis.title.text.lower()
-        assert any(word in y_title for word in ['count', 'frequency', 'number', 'incidents'])
+        assert any(
+            word in y_title for word in ["count", "frequency", "number", "incidents"]
+        )
 
     def test_cause_frequency_interactivity(self, visualizer, sample_incident_data):
         """Test that cause frequency chart has interactive features."""
         fig = visualizer.create_cause_frequency_chart(sample_incident_data)
 
         # Check for hover data
-        assert fig.data[0].hovertemplate is not None or fig.data[0].hoverinfo is not None
+        assert (
+            fig.data[0].hovertemplate is not None or fig.data[0].hoverinfo is not None
+        )
 
     def test_cause_frequency_with_empty_data(self, visualizer):
         """Test handling of empty dataframe."""
-        empty_df = pd.DataFrame(columns=['cause_category', 'severity'])
+        empty_df = pd.DataFrame(columns=["cause_category", "severity"])
         fig = visualizer.create_cause_frequency_chart(empty_df)
 
         assert isinstance(fig, go.Figure)
@@ -140,13 +152,15 @@ class TestTimeSeriesVisualization:
         assert isinstance(fig, go.Figure)
         assert len(fig.data) > 0
         assert fig.layout.xaxis.title.text is not None
-        assert 'time' in fig.layout.xaxis.title.text.lower() or 'date' in fig.layout.xaxis.title.text.lower()
+        assert (
+            "time" in fig.layout.xaxis.title.text.lower()
+            or "date" in fig.layout.xaxis.title.text.lower()
+        )
 
     def test_time_series_monthly_aggregation(self, visualizer, sample_incident_data):
         """Test monthly aggregation option for time series."""
         fig = visualizer.create_cause_trend_over_time(
-            sample_incident_data,
-            aggregation='monthly'
+            sample_incident_data, aggregation="monthly"
         )
 
         assert isinstance(fig, go.Figure)
@@ -157,7 +171,7 @@ class TestTimeSeriesVisualization:
         fig = visualizer.create_cause_trend_over_time(sample_incident_data)
 
         # Plotly figures should have dragmode for zoom/pan
-        assert fig.layout.dragmode in ['zoom', 'pan', None]
+        assert fig.layout.dragmode in ["zoom", "pan", None]
 
 
 class TestPieChartVisualization:
@@ -169,20 +183,22 @@ class TestPieChartVisualization:
 
         assert isinstance(fig, go.Figure)
         assert len(fig.data) > 0
-        assert fig.data[0].type == 'pie'
+        assert fig.data[0].type == "pie"
 
     def test_pie_chart_shows_percentages(self, visualizer, sample_incident_data):
         """Test that pie chart displays percentages."""
         fig = visualizer.create_cause_proportion_pie_chart(sample_incident_data)
 
         # Pie chart should have textinfo showing percentages
-        assert 'percent' in fig.data[0].textinfo or fig.data[0].texttemplate is not None
+        assert "percent" in fig.data[0].textinfo or fig.data[0].texttemplate is not None
 
     def test_pie_chart_hover_info(self, visualizer, sample_incident_data):
         """Test that pie chart has hover information."""
         fig = visualizer.create_cause_proportion_pie_chart(sample_incident_data)
 
-        assert fig.data[0].hovertemplate is not None or fig.data[0].hoverinfo is not None
+        assert (
+            fig.data[0].hovertemplate is not None or fig.data[0].hoverinfo is not None
+        )
 
 
 class TestHeatmapVisualization:
@@ -194,7 +210,7 @@ class TestHeatmapVisualization:
 
         assert isinstance(fig, go.Figure)
         assert len(fig.data) > 0
-        assert fig.data[0].type == 'heatmap'
+        assert fig.data[0].type == "heatmap"
 
     def test_heatmap_has_colorscale(self, visualizer, sample_incident_data):
         """Test that heatmap has appropriate colorscale."""
@@ -227,7 +243,9 @@ class TestHatchMaloperationVisualization:
         # Should have data for multiple maloperation types
         assert len(fig.data) > 0
 
-    def test_hatch_maloperation_severity_breakdown(self, visualizer, hatch_maloperation_data):
+    def test_hatch_maloperation_severity_breakdown(
+        self, visualizer, hatch_maloperation_data
+    ):
         """Test severity breakdown in hatch maloperation visualization."""
         fig = visualizer.create_hatch_maloperation_severity_breakdown(
             hatch_maloperation_data
@@ -245,22 +263,22 @@ class TestSunburstVisualization:
 
         assert isinstance(fig, go.Figure)
         assert len(fig.data) > 0
-        assert fig.data[0].type == 'sunburst'
+        assert fig.data[0].type == "sunburst"
 
     def test_sunburst_multiple_levels(self, visualizer, sample_incident_data):
         """Test that sunburst has multiple hierarchical levels."""
         fig = visualizer.create_cause_hierarchy_sunburst(sample_incident_data)
 
         # Sunburst should have parents and labels
-        assert hasattr(fig.data[0], 'labels')
-        assert hasattr(fig.data[0], 'parents')
+        assert hasattr(fig.data[0], "labels")
+        assert hasattr(fig.data[0], "parents")
 
     def test_sunburst_interactivity(self, visualizer, sample_incident_data):
         """Test sunburst click-to-zoom functionality."""
         fig = visualizer.create_cause_hierarchy_sunburst(sample_incident_data)
 
         # Sunburst charts in Plotly are inherently interactive
-        assert fig.data[0].type == 'sunburst'
+        assert fig.data[0].type == "sunburst"
 
 
 class TestVisualizationCommonFeatures:
@@ -269,11 +287,11 @@ class TestVisualizationCommonFeatures:
     def test_all_charts_return_plotly_figure(self, visualizer, sample_incident_data):
         """Test that all visualization methods return Plotly Figure objects."""
         methods = [
-            'create_cause_frequency_chart',
-            'create_cause_trend_over_time',
-            'create_cause_proportion_pie_chart',
-            'create_cause_severity_heatmap',
-            'create_cause_hierarchy_sunburst',
+            "create_cause_frequency_chart",
+            "create_cause_trend_over_time",
+            "create_cause_proportion_pie_chart",
+            "create_cause_severity_heatmap",
+            "create_cause_hierarchy_sunburst",
         ]
 
         for method_name in methods:
@@ -284,11 +302,11 @@ class TestVisualizationCommonFeatures:
     def test_all_charts_have_titles(self, visualizer, sample_incident_data):
         """Test that all charts have titles."""
         methods = [
-            'create_cause_frequency_chart',
-            'create_cause_trend_over_time',
-            'create_cause_proportion_pie_chart',
-            'create_cause_severity_heatmap',
-            'create_cause_hierarchy_sunburst',
+            "create_cause_frequency_chart",
+            "create_cause_trend_over_time",
+            "create_cause_proportion_pie_chart",
+            "create_cause_severity_heatmap",
+            "create_cause_hierarchy_sunburst",
         ]
 
         for method_name in methods:
@@ -310,7 +328,9 @@ class TestVisualizationCommonFeatures:
 class TestExportFunctionality:
     """Test export capabilities for HTML reports."""
 
-    def test_figure_can_be_exported_to_html(self, visualizer, sample_incident_data, tmp_path):
+    def test_figure_can_be_exported_to_html(
+        self, visualizer, sample_incident_data, tmp_path
+    ):
         """Test that figures can be exported to HTML files."""
         fig = visualizer.create_cause_frequency_chart(sample_incident_data)
 
@@ -323,9 +343,12 @@ class TestExportFunctionality:
     def test_multiple_charts_export(self, visualizer, sample_incident_data, tmp_path):
         """Test exporting multiple charts to HTML."""
         charts = [
-            ('frequency', visualizer.create_cause_frequency_chart(sample_incident_data)),
-            ('trend', visualizer.create_cause_trend_over_time(sample_incident_data)),
-            ('pie', visualizer.create_cause_proportion_pie_chart(sample_incident_data)),
+            (
+                "frequency",
+                visualizer.create_cause_frequency_chart(sample_incident_data),
+            ),
+            ("trend", visualizer.create_cause_trend_over_time(sample_incident_data)),
+            ("pie", visualizer.create_cause_proportion_pie_chart(sample_incident_data)),
         ]
 
         for name, fig in charts:
@@ -342,14 +365,14 @@ class TestResponsiveDesign:
         fig = visualizer.create_cause_frequency_chart(sample_incident_data)
 
         # Check layout has autosize or width settings
-        assert hasattr(fig.layout, 'autosize') or hasattr(fig.layout, 'width')
+        assert hasattr(fig.layout, "autosize") or hasattr(fig.layout, "width")
 
     def test_charts_have_proper_margins(self, visualizer, sample_incident_data):
         """Test that charts have proper margins for different screens."""
         fig = visualizer.create_cause_frequency_chart(sample_incident_data)
 
         # Should have margin settings
-        assert hasattr(fig.layout, 'margin')
+        assert hasattr(fig.layout, "margin")
 
 
 class TestDataValidation:
@@ -357,7 +380,7 @@ class TestDataValidation:
 
     def test_missing_required_columns(self, visualizer):
         """Test handling of missing required columns."""
-        incomplete_df = pd.DataFrame({'some_col': [1, 2, 3]})
+        incomplete_df = pd.DataFrame({"some_col": [1, 2, 3]})
 
         # Should either raise informative error or handle gracefully
         # Implementation will determine exact behavior
@@ -367,13 +390,13 @@ class TestDataValidation:
             assert isinstance(fig, go.Figure)
         except (KeyError, ValueError) as e:
             # If it raises, error message should be informative
-            assert 'cause' in str(e).lower() or 'column' in str(e).lower()
+            assert "cause" in str(e).lower() or "column" in str(e).lower()
 
     def test_null_values_handling(self, visualizer, sample_incident_data):
         """Test handling of null values in data."""
         # Add some null values
         data_with_nulls = sample_incident_data.copy()
-        data_with_nulls.loc[0:5, 'cause_category'] = None
+        data_with_nulls.loc[0:5, "cause_category"] = None
 
         fig = visualizer.create_cause_frequency_chart(data_with_nulls)
         assert isinstance(fig, go.Figure)
@@ -386,8 +409,7 @@ class TestCustomization:
         """Test setting custom title on charts."""
         custom_title = "Custom Test Title"
         fig = visualizer.create_cause_frequency_chart(
-            sample_incident_data,
-            title=custom_title
+            sample_incident_data, title=custom_title
         )
 
         assert custom_title in fig.layout.title.text
@@ -395,8 +417,8 @@ class TestCustomization:
     def test_custom_color_scheme(self):
         """Test using custom color scheme."""
         custom_colors = {
-            CauseCategory.HUMAN_ERROR: '#FF0000',
-            CauseCategory.EQUIPMENT_FAILURE: '#00FF00',
+            CauseCategory.HUMAN_ERROR: "#FF0000",
+            CauseCategory.EQUIPMENT_FAILURE: "#00FF00",
         }
 
         visualizer = CauseVisualizer(color_scheme=custom_colors)

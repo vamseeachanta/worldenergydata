@@ -48,7 +48,7 @@ class MetoceanCoverage:
     _NDBC_LAT_MIN = 15.0
     _NDBC_LAT_MAX = 65.0
     _NDBC_LON_MIN = -180.0  # western most: 180W
-    _NDBC_LON_MAX = -60.0   # eastern most: 60W
+    _NDBC_LON_MAX = -60.0  # eastern most: 60W
 
     # Met Norway: Norwegian and adjacent seas
     _MET_NORWAY_LAT_MIN = 55.0

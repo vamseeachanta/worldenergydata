@@ -12,6 +12,9 @@ from typing import Any
 import pandas as pd
 import pytest
 
+from worldenergydata.bsee.pipeline.adapters.benchmarking import (
+    CrossSourceBenchmark,
+)
 from worldenergydata.bsee.pipeline.adapters.common_schema import (
     AdapterInterface,
     AdapterResult,
@@ -19,17 +22,14 @@ from worldenergydata.bsee.pipeline.adapters.common_schema import (
     DomainStatus,
     SourceMetadata,
 )
-from worldenergydata.bsee.pipeline.adapters.benchmarking import (
-    CrossSourceBenchmark,
-)
 from worldenergydata.bsee.pipeline.adapters.multi_source_query import (
     MultiSourceQuery,
 )
 
-
 # ---------------------------------------------------------------------------
 # Stub adapters
 # ---------------------------------------------------------------------------
+
 
 class StubBSEE(AdapterInterface):
     """Simulates BSEE with production + wellbore + drilling data."""
@@ -41,26 +41,34 @@ class StubBSEE(AdapterInterface):
             field_name=query.upper(),
             leases=("G00001", "G00002"),
             well_count=12,
-            wellbore_summary=pd.DataFrame({
-                "well_id": ["W1", "W2", "W3"],
-                "status": ["producing", "plugged", "producing"],
-                "depth_m": [3000, 2500, 4000],
-            }),
-            drilling_activities=pd.DataFrame({
-                "well_id": ["W1", "W2"],
-                "spud_date": ["2020-01-15", "2021-06-01"],
-                "duration_days": [45, 60],
-            }),
-            production=pd.DataFrame({
-                "date": ["2024-01", "2024-02"],
-                "oil_m3": [1500.0, 1400.0],
-                "gas_m3": [500000.0, 480000.0],
-            }),
-            casing_strings=pd.DataFrame({
-                "well_id": ["W1"],
-                "casing_od_mm": [339.7],
-                "grade": ["L80"],
-            }),
+            wellbore_summary=pd.DataFrame(
+                {
+                    "well_id": ["W1", "W2", "W3"],
+                    "status": ["producing", "plugged", "producing"],
+                    "depth_m": [3000, 2500, 4000],
+                }
+            ),
+            drilling_activities=pd.DataFrame(
+                {
+                    "well_id": ["W1", "W2"],
+                    "spud_date": ["2020-01-15", "2021-06-01"],
+                    "duration_days": [45, 60],
+                }
+            ),
+            production=pd.DataFrame(
+                {
+                    "date": ["2024-01", "2024-02"],
+                    "oil_m3": [1500.0, 1400.0],
+                    "gas_m3": [500000.0, 480000.0],
+                }
+            ),
+            casing_strings=pd.DataFrame(
+                {
+                    "well_id": ["W1"],
+                    "casing_od_mm": [339.7],
+                    "grade": ["L80"],
+                }
+            ),
         )
 
     def get_metadata(self) -> SourceMetadata:
@@ -88,16 +96,20 @@ class StubSODIR(AdapterInterface):
             field_name=query.upper(),
             leases=("PL001",),
             well_count=8,
-            wellbore_summary=pd.DataFrame({
-                "well_id": ["N1", "N2"],
-                "status": ["producing", "producing"],
-                "depth_m": [2800, 3100],
-            }),
-            production=pd.DataFrame({
-                "date": ["2024-01", "2024-02"],
-                "oil_m3": [2000.0, 1900.0],
-                "gas_m3": [300000.0, 290000.0],
-            }),
+            wellbore_summary=pd.DataFrame(
+                {
+                    "well_id": ["N1", "N2"],
+                    "status": ["producing", "producing"],
+                    "depth_m": [2800, 3100],
+                }
+            ),
+            production=pd.DataFrame(
+                {
+                    "date": ["2024-01", "2024-02"],
+                    "oil_m3": [2000.0, 1900.0],
+                    "gas_m3": [300000.0, 290000.0],
+                }
+            ),
         )
 
     def get_metadata(self) -> SourceMetadata:
@@ -157,6 +169,7 @@ class StubFailing(AdapterInterface):
 # MultiSourceQuery tests
 # ---------------------------------------------------------------------------
 
+
 class TestMultiSourceQueryRegistration:
     def test_empty_by_default(self):
         msq = MultiSourceQuery()
@@ -195,27 +208,33 @@ class TestMultiSourceQueryDispatch:
         assert results["bsee"].well_count == 12
 
     def test_query_all_registered(self):
-        msq = MultiSourceQuery({
-            "bsee": StubBSEE(),
-            "sodir": StubSODIR(),
-        })
+        msq = MultiSourceQuery(
+            {
+                "bsee": StubBSEE(),
+                "sodir": StubSODIR(),
+            }
+        )
         results = msq.query("test_field")
         assert set(results.keys()) == {"bsee", "sodir"}
 
     def test_query_all_convenience(self):
-        msq = MultiSourceQuery({
-            "bsee": StubBSEE(),
-            "sodir": StubSODIR(),
-        })
+        msq = MultiSourceQuery(
+            {
+                "bsee": StubBSEE(),
+                "sodir": StubSODIR(),
+            }
+        )
         results = msq.query_all("test_field")
         assert len(results) == 2
 
     def test_query_subset(self):
-        msq = MultiSourceQuery({
-            "bsee": StubBSEE(),
-            "sodir": StubSODIR(),
-            "empty": StubEmpty(),
-        })
+        msq = MultiSourceQuery(
+            {
+                "bsee": StubBSEE(),
+                "sodir": StubSODIR(),
+                "empty": StubEmpty(),
+            }
+        )
         results = msq.query("field_x", sources=["bsee", "sodir"])
         assert set(results.keys()) == {"bsee", "sodir"}
 
@@ -244,10 +263,12 @@ class TestMultiSourceQueryDispatch:
 
 class TestMultiSourceQueryErrorHandling:
     def test_failing_adapter_omitted(self):
-        msq = MultiSourceQuery({
-            "bsee": StubBSEE(),
-            "fail": StubFailing(),
-        })
+        msq = MultiSourceQuery(
+            {
+                "bsee": StubBSEE(),
+                "fail": StubFailing(),
+            }
+        )
         results = msq.query("field_x")
         assert "bsee" in results
         assert "fail" not in results
@@ -258,11 +279,13 @@ class TestMultiSourceQueryErrorHandling:
         assert results == {}
 
     def test_failing_does_not_affect_others(self):
-        msq = MultiSourceQuery({
-            "bsee": StubBSEE(),
-            "fail": StubFailing(),
-            "sodir": StubSODIR(),
-        })
+        msq = MultiSourceQuery(
+            {
+                "bsee": StubBSEE(),
+                "fail": StubFailing(),
+                "sodir": StubSODIR(),
+            }
+        )
         results = msq.query("field_x")
         assert len(results) == 2
         assert results["bsee"].well_count == 12
@@ -271,10 +294,12 @@ class TestMultiSourceQueryErrorHandling:
 
 class TestMultiSourceQueryAvailability:
     def test_availability_matrix_structure(self):
-        msq = MultiSourceQuery({
-            "bsee": StubBSEE(),
-            "sodir": StubSODIR(),
-        })
+        msq = MultiSourceQuery(
+            {
+                "bsee": StubBSEE(),
+                "sodir": StubSODIR(),
+            }
+        )
         matrix = msq.source_availability_matrix()
         # 2 sources x 6 domains = 12 rows
         assert len(matrix) == 12
@@ -299,12 +324,15 @@ class TestMultiSourceQueryAvailability:
 # CrossSourceBenchmark tests
 # ---------------------------------------------------------------------------
 
+
 def _make_results() -> dict[str, AdapterResult]:
     """Build a two-source result dict for benchmark tests."""
-    msq = MultiSourceQuery({
-        "bsee": StubBSEE(),
-        "sodir": StubSODIR(),
-    })
+    msq = MultiSourceQuery(
+        {
+            "bsee": StubBSEE(),
+            "sodir": StubSODIR(),
+        }
+    )
     return msq.query_all("test_field")
 
 

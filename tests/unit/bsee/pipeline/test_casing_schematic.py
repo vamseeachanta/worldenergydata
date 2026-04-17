@@ -22,10 +22,10 @@ from worldenergydata.bsee.pipeline.casing_schematic import (
     render_casing_svg,
 )
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
+
 
 def _make_string(
     interval_type: str = "C",
@@ -124,6 +124,7 @@ def _write_csv(path: Path, rows: list[str]) -> Path:
 # CasingString dataclass
 # ---------------------------------------------------------------------------
 
+
 class TestCasingString:
     def test_casing_string_creation(self):
         cs = _make_string()
@@ -153,6 +154,7 @@ class TestCasingString:
 # ---------------------------------------------------------------------------
 # load_well_casing
 # ---------------------------------------------------------------------------
+
 
 class TestLoadWellCasing:
     def test_load_well_casing_missing_file(self):
@@ -229,6 +231,7 @@ class TestLoadWellCasing:
 # casing_matrix
 # ---------------------------------------------------------------------------
 
+
 class TestCasingMatrix:
     def test_casing_matrix_columns(self):
         df = casing_matrix(SAMPLE_STRINGS)
@@ -265,7 +268,12 @@ class TestCasingMatrix:
 
     def test_casing_matrix_sorted_outer_to_inner(self):
         # Input in random order; output should be sorted by hole size desc
-        shuffled = [SAMPLE_STRINGS[2], SAMPLE_STRINGS[0], SAMPLE_STRINGS[3], SAMPLE_STRINGS[1]]
+        shuffled = [
+            SAMPLE_STRINGS[2],
+            SAMPLE_STRINGS[0],
+            SAMPLE_STRINGS[3],
+            SAMPLE_STRINGS[1],
+        ]
         df = casing_matrix(shuffled)
         hole_sizes = df["Hole Size (in)"].tolist()
         assert hole_sizes == sorted(hole_sizes, reverse=True)
@@ -274,6 +282,7 @@ class TestCasingMatrix:
 # ---------------------------------------------------------------------------
 # render_casing_svg
 # ---------------------------------------------------------------------------
+
 
 class TestRenderCasingSvg:
     def test_render_casing_svg_valid_xml(self):

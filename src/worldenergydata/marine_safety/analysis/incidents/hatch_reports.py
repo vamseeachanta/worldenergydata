@@ -66,9 +66,7 @@ class HatchReportGenerator:
             return {"error": "No hatch maloperation incidents found in dataset"}
 
         # Collect dates for range calculation
-        incident_dates = [
-            inc["date"] for inc in hatch_incidents if inc.get("date")
-        ]
+        incident_dates = [inc["date"] for inc in hatch_incidents if inc.get("date")]
 
         # Generate all analyses
         report = {
@@ -169,9 +167,7 @@ class HatchReportGenerator:
 
         return case_studies
 
-    def generate_trend_report(
-        self, incidents: List[Dict[str, Any]]
-    ) -> Dict[str, Any]:
+    def generate_trend_report(self, incidents: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
         Generate a trend-focused report.
 

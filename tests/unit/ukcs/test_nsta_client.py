@@ -8,7 +8,6 @@ import pytest
 
 from worldenergydata.ukcs.production.nsta_client import NSTAClient
 
-
 MOCK_PRODUCTION_CSV = (
     "FieldName,Year,Month,OilProduction (Thousand Tonnes),"
     "GasProduction (MMscf),WaterProduction (Thousand Tonnes)\n"

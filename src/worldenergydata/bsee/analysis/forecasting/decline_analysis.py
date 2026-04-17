@@ -208,9 +208,7 @@ class DeclineAnalysis:
         return eur_results
 
     @staticmethod
-    def _compute_aic(
-        actual: np.ndarray, predicted: np.ndarray, n_params: int
-    ) -> float:
+    def _compute_aic(actual: np.ndarray, predicted: np.ndarray, n_params: int) -> float:
         """Compute Akaike Information Criterion.
 
         AIC = n * ln(RSS/n) + 2k

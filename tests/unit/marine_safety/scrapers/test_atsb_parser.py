@@ -45,7 +45,10 @@ class TestParseDate:
 
 class TestMapStatus:
     def test_active(self):
-        assert map_status("Active investigation") == IncidentStatus.UNDER_INVESTIGATION.value
+        assert (
+            map_status("Active investigation")
+            == IncidentStatus.UNDER_INVESTIGATION.value
+        )
 
     def test_final(self):
         assert map_status("Final report published") == IncidentStatus.FINAL_REPORT.value

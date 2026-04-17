@@ -36,14 +36,21 @@ def _make_terminal(**overrides):
 # CapacityAnalysis
 # ---------------------------------------------------------------------------
 
+
 class TestCapacityAnalysisTotal:
     def test_total_capacity(self):
-        terminals = [_make_terminal(capacity_mtpa=10.0), _make_terminal(capacity_mtpa=20.0)]
+        terminals = [
+            _make_terminal(capacity_mtpa=10.0),
+            _make_terminal(capacity_mtpa=20.0),
+        ]
         ca = CapacityAnalysis(terminals)
         assert ca._total_capacity() == 30.0
 
     def test_total_capacity_with_none(self):
-        terminals = [_make_terminal(capacity_mtpa=10.0), _make_terminal(capacity_mtpa=None)]
+        terminals = [
+            _make_terminal(capacity_mtpa=10.0),
+            _make_terminal(capacity_mtpa=None),
+        ]
         ca = CapacityAnalysis(terminals)
         assert ca._total_capacity() == 10.0
 
@@ -73,7 +80,9 @@ class TestCapacityByRegion:
 
     def test_operational_count(self):
         terminals = [
-            _make_terminal(status=TerminalStatus.OPERATIONAL, region=Region.NORTH_AMERICA),
+            _make_terminal(
+                status=TerminalStatus.OPERATIONAL, region=Region.NORTH_AMERICA
+            ),
             _make_terminal(status=TerminalStatus.PLANNED, region=Region.NORTH_AMERICA),
         ]
         result = CapacityAnalysis(terminals).by_region()
@@ -145,6 +154,7 @@ class TestCapacitySummary:
 # TimelineAnalysis
 # ---------------------------------------------------------------------------
 
+
 class TestTimelineByDecade:
     def test_basic(self):
         terminals = [
@@ -180,7 +190,9 @@ class TestTimelineByYear:
 class TestUnderConstruction:
     def test_basic(self):
         terminals = [
-            _make_terminal(status=TerminalStatus.UNDER_CONSTRUCTION, terminal_name="UC1"),
+            _make_terminal(
+                status=TerminalStatus.UNDER_CONSTRUCTION, terminal_name="UC1"
+            ),
             _make_terminal(status=TerminalStatus.OPERATIONAL, terminal_name="OP1"),
         ]
         result = TimelineAnalysis(terminals).under_construction()
@@ -197,7 +209,9 @@ class TestPlannedCapacity:
     def test_basic(self):
         terminals = [
             _make_terminal(status=TerminalStatus.PLANNED, capacity_mtpa=15.0),
-            _make_terminal(status=TerminalStatus.UNDER_CONSTRUCTION, capacity_mtpa=10.0),
+            _make_terminal(
+                status=TerminalStatus.UNDER_CONSTRUCTION, capacity_mtpa=10.0
+            ),
             _make_terminal(status=TerminalStatus.OPERATIONAL, capacity_mtpa=20.0),
         ]
         result = TimelineAnalysis(terminals).planned_capacity()

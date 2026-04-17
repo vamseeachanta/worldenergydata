@@ -9,10 +9,10 @@ from worldenergydata.vessel_hull_models.rig_hulls.hull_estimator import (
     populate_estimated_dimensions,
 )
 
-
 # ---------------------------------------------------------------------------
 # HullEstimate dataclass
 # ---------------------------------------------------------------------------
+
 
 class TestHullEstimate:
     def test_defaults(self):
@@ -32,6 +32,7 @@ class TestHullEstimate:
 # ---------------------------------------------------------------------------
 # estimate_hull
 # ---------------------------------------------------------------------------
+
 
 class TestEstimateHull:
     def test_none_returns_none(self):
@@ -132,14 +133,17 @@ class TestEstimateHullDepthRefined:
 # populate_estimated_dimensions
 # ---------------------------------------------------------------------------
 
+
 class TestPopulateEstimatedDimensions:
     def test_fills_missing_dimensions(self):
-        df = pd.DataFrame({
-            "HULL_FORM_TYPE": ["drillship"],
-            "LOA_M": [None],
-            "BEAM_M": [None],
-            "DRAFT_M": [None],
-        })
+        df = pd.DataFrame(
+            {
+                "HULL_FORM_TYPE": ["drillship"],
+                "LOA_M": [None],
+                "BEAM_M": [None],
+                "DRAFT_M": [None],
+            }
+        )
         result = populate_estimated_dimensions(df)
         assert result["LOA_M"].iloc[0] == 228.0
         assert result["BEAM_M"].iloc[0] == 42.0
@@ -147,67 +151,79 @@ class TestPopulateEstimatedDimensions:
         assert result["DIMENSION_CONFIDENCE"].iloc[0] == "generic"
 
     def test_preserves_measured_dimensions(self):
-        df = pd.DataFrame({
-            "HULL_FORM_TYPE": ["drillship"],
-            "LOA_M": [250.0],
-            "BEAM_M": [45.0],
-            "DRAFT_M": [13.0],
-        })
+        df = pd.DataFrame(
+            {
+                "HULL_FORM_TYPE": ["drillship"],
+                "LOA_M": [250.0],
+                "BEAM_M": [45.0],
+                "DRAFT_M": [13.0],
+            }
+        )
         result = populate_estimated_dimensions(df)
         assert result["LOA_M"].iloc[0] == 250.0
         assert result["DIMENSION_CONFIDENCE"].iloc[0] == "measured"
 
     def test_partial_dimensions_not_overwritten(self):
         # Only fills rows where ALL of LOA_M, BEAM_M, DRAFT_M are missing
-        df = pd.DataFrame({
-            "HULL_FORM_TYPE": ["drillship"],
-            "LOA_M": [250.0],
-            "BEAM_M": [None],
-            "DRAFT_M": [None],
-        })
+        df = pd.DataFrame(
+            {
+                "HULL_FORM_TYPE": ["drillship"],
+                "LOA_M": [250.0],
+                "BEAM_M": [None],
+                "DRAFT_M": [None],
+            }
+        )
         result = populate_estimated_dimensions(df)
         # Has LOA_M, so not "missing all" — should not be filled
         assert pd.isna(result["BEAM_M"].iloc[0])
 
     def test_with_water_depth_column(self):
-        df = pd.DataFrame({
-            "HULL_FORM_TYPE": ["drillship"],
-            "LOA_M": [None],
-            "BEAM_M": [None],
-            "DRAFT_M": [None],
-            "WATER_DEPTH_RATING_FT": [4000.0],
-        })
+        df = pd.DataFrame(
+            {
+                "HULL_FORM_TYPE": ["drillship"],
+                "LOA_M": [None],
+                "BEAM_M": [None],
+                "DRAFT_M": [None],
+                "WATER_DEPTH_RATING_FT": [4000.0],
+            }
+        )
         result = populate_estimated_dimensions(df)
         assert result["LOA_M"].iloc[0] == 190.0  # shallow drillship
         assert result["DIMENSION_CONFIDENCE"].iloc[0] == "estimated"
 
     def test_unknown_hull_form_not_filled(self):
-        df = pd.DataFrame({
-            "HULL_FORM_TYPE": ["catamaran"],
-            "LOA_M": [None],
-            "BEAM_M": [None],
-            "DRAFT_M": [None],
-        })
+        df = pd.DataFrame(
+            {
+                "HULL_FORM_TYPE": ["catamaran"],
+                "LOA_M": [None],
+                "BEAM_M": [None],
+                "DRAFT_M": [None],
+            }
+        )
         result = populate_estimated_dimensions(df)
         assert pd.isna(result["LOA_M"].iloc[0])
 
     def test_original_not_modified(self):
-        df = pd.DataFrame({
-            "HULL_FORM_TYPE": ["drillship"],
-            "LOA_M": [None],
-            "BEAM_M": [None],
-            "DRAFT_M": [None],
-        })
+        df = pd.DataFrame(
+            {
+                "HULL_FORM_TYPE": ["drillship"],
+                "LOA_M": [None],
+                "BEAM_M": [None],
+                "DRAFT_M": [None],
+            }
+        )
         populate_estimated_dimensions(df)
         assert pd.isna(df["LOA_M"].iloc[0])
 
     def test_displacement_filled_when_column_exists(self):
-        df = pd.DataFrame({
-            "HULL_FORM_TYPE": ["drillship"],
-            "LOA_M": [None],
-            "BEAM_M": [None],
-            "DRAFT_M": [None],
-            "DISPLACEMENT_TONNES": [None],
-        })
+        df = pd.DataFrame(
+            {
+                "HULL_FORM_TYPE": ["drillship"],
+                "LOA_M": [None],
+                "BEAM_M": [None],
+                "DRAFT_M": [None],
+                "DISPLACEMENT_TONNES": [None],
+            }
+        )
         result = populate_estimated_dimensions(df)
         assert result["DISPLACEMENT_TONNES"].iloc[0] == 96000.0

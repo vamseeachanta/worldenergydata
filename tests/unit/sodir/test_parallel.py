@@ -281,8 +281,10 @@ class TestProcessBatch:
 
     def test_error(self):
         sp = SodirParallelProcessor()
+
         def bad_proc(data):
             raise RuntimeError("broken")
+
         result = sp._process_batch("test", [1], bad_proc)
         assert result.success is False
         assert "broken" in result.error
@@ -291,6 +293,7 @@ class TestProcessBatch:
 # ---------------------------------------------------------------------------
 # parallel_api_fetch
 # ---------------------------------------------------------------------------
+
 
 class TestParallelApiFetch:
     def test_basic_fetch(self):
@@ -320,6 +323,7 @@ class TestParallelApiFetch:
 # ---------------------------------------------------------------------------
 # parallel_process_data
 # ---------------------------------------------------------------------------
+
 
 class TestParallelProcessData:
     def test_basic_processing(self):
@@ -353,6 +357,7 @@ class TestParallelProcessData:
 # parallel_collection_workflow
 # ---------------------------------------------------------------------------
 
+
 class TestParallelCollectionWorkflow:
     def test_basic_workflow(self):
         sp = SodirParallelProcessor(max_workers=2)
@@ -381,6 +386,7 @@ class TestParallelCollectionWorkflow:
 # map_reduce_analysis
 # ---------------------------------------------------------------------------
 
+
 class TestMapReduceAnalysis:
     def test_basic_map_reduce(self):
         sp = SodirParallelProcessor(max_workers=2)
@@ -392,9 +398,7 @@ class TestMapReduceAnalysis:
 
     def test_empty_data(self):
         sp = SodirParallelProcessor(max_workers=2)
-        result = sp.map_reduce_analysis(
-            [], lambda x: x, lambda x: x, chunk_size=3
-        )
+        result = sp.map_reduce_analysis([], lambda x: x, lambda x: x, chunk_size=3)
         assert result is None
 
     def test_single_chunk(self):

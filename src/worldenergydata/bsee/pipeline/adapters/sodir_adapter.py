@@ -3,6 +3,7 @@
 Converts SODIR-native units (Sm3, million Sm3, billion Sm3) to SI (m3)
 and maps processor output into the normalised AdapterResult contract.
 """
+
 from __future__ import annotations
 
 import logging
@@ -28,16 +29,25 @@ _DEFAULT_BASE_URL = "https://factmaps.sodir.no/api/rest"
 
 # FieldProcessor outputs reserves in mmbbl / bcf (already converted from Sm3).
 # One more hop to SI m3.
-_MMBBL_TO_M3 = 1e6 * BBL_TO_M3   # ~158 987 m3 per million bbl
-_BCF_TO_M3 = BCF_TO_M3            # ~28 316 846 m3 per bcf
+_MMBBL_TO_M3 = 1e6 * BBL_TO_M3  # ~158 987 m3 per million bbl
+_BCF_TO_M3 = BCF_TO_M3  # ~28 316 846 m3 per bcf
 
 _PROD_COLS = [
-    "cumulative_oil_m3", "cumulative_gas_m3", "cumulative_ngl_m3",
-    "cumulative_condensate_m3", "recoverable_oil_m3", "recoverable_gas_m3",
+    "cumulative_oil_m3",
+    "cumulative_gas_m3",
+    "cumulative_ngl_m3",
+    "cumulative_condensate_m3",
+    "recoverable_oil_m3",
+    "recoverable_gas_m3",
 ]
 _DRILL_COLS = [
-    "wellbore_name", "spud_date", "completion_date",
-    "duration_days", "operator", "total_depth_m", "water_depth_m",
+    "wellbore_name",
+    "spud_date",
+    "completion_date",
+    "duration_days",
+    "operator",
+    "total_depth_m",
+    "water_depth_m",
 ]
 _SUMM_COLS = ["purpose", "status", "count"]
 
@@ -67,14 +77,19 @@ class SodirAdapter(AdapterInterface):
         if self._api_client is not None:
             return
         from worldenergydata.sodir.api_client import SodirAPIClient
+
         self._api_client = SodirAPIClient(base_url=_DEFAULT_BASE_URL)
 
     def _ensure_processors(self) -> None:
         if self._field_proc is None:
             from worldenergydata.sodir.processors.field_processor import FieldProcessor
+
             self._field_proc = FieldProcessor()
         if self._wb_proc is None:
-            from worldenergydata.sodir.processors.wellbore_processor import WellboreProcessor
+            from worldenergydata.sodir.processors.wellbore_processor import (
+                WellboreProcessor,
+            )
+
             self._wb_proc = WellboreProcessor()
 
     # -- public interface ----------------------------------------------------
@@ -140,7 +155,9 @@ class SodirAdapter(AdapterInterface):
     # -- internal fetchers ---------------------------------------------------
 
     def _fetch_field(
-        self, field_name: str, warnings: list[str],
+        self,
+        field_name: str,
+        warnings: list[str],
     ) -> Optional[dict[str, Any]]:
         """Fetch all fields and return the one matching *field_name*."""
         try:
@@ -159,14 +176,17 @@ class SodirAdapter(AdapterInterface):
             return None
 
     def _fetch_wellbores(
-        self, field_name: str, warnings: list[str],
+        self,
+        field_name: str,
+        warnings: list[str],
     ) -> list[dict[str, Any]]:
         """Fetch wellbores and filter to those belonging to *field_name*."""
         try:
             raw = self._api_client.get_wellbores()
             processed = self._wb_proc.process_batch(raw)
             return [
-                wb for wb in processed
+                wb
+                for wb in processed
                 if (wb.get("field") or "").lower() == field_name.lower()
             ]
         except Exception as exc:
@@ -188,7 +208,9 @@ class SodirAdapter(AdapterInterface):
         summary.columns = _SUMM_COLS
         return summary
 
-    def _build_drilling_activities(self, wellbores: list[dict[str, Any]]) -> pd.DataFrame:
+    def _build_drilling_activities(
+        self, wellbores: list[dict[str, Any]]
+    ) -> pd.DataFrame:
         """Spud date, duration, operator, depths (already in metres)."""
         if not wellbores:
             return pd.DataFrame(columns=_DRILL_COLS)
@@ -207,7 +229,9 @@ class SodirAdapter(AdapterInterface):
         return pd.DataFrame(rows)
 
     def _build_production(
-        self, field_data: Optional[dict[str, Any]], warnings: list[str],
+        self,
+        field_data: Optional[dict[str, Any]],
+        warnings: list[str],
     ) -> pd.DataFrame:
         """Single-row field-level cumulative production in SI m3."""
         if field_data is None:
@@ -226,10 +250,18 @@ class SodirAdapter(AdapterInterface):
                 return None
 
         row = {
-            "cumulative_oil_m3": _to_m3_mmbbl(field_data.get("cumulative_oil_production_mmbbl")),
-            "cumulative_gas_m3": _to_m3_bcf(field_data.get("cumulative_gas_production_bcf")),
-            "cumulative_ngl_m3": _to_m3_mmbbl(field_data.get("cumulative_ngl_production_mmbbl")),
-            "cumulative_condensate_m3": _to_m3_mmbbl(field_data.get("cumulative_condensate_production_mmbbl")),
+            "cumulative_oil_m3": _to_m3_mmbbl(
+                field_data.get("cumulative_oil_production_mmbbl")
+            ),
+            "cumulative_gas_m3": _to_m3_bcf(
+                field_data.get("cumulative_gas_production_bcf")
+            ),
+            "cumulative_ngl_m3": _to_m3_mmbbl(
+                field_data.get("cumulative_ngl_production_mmbbl")
+            ),
+            "cumulative_condensate_m3": _to_m3_mmbbl(
+                field_data.get("cumulative_condensate_production_mmbbl")
+            ),
             "recoverable_oil_m3": _to_m3_mmbbl(field_data.get("recoverable_oil_mmbbl")),
             "recoverable_gas_m3": _to_m3_bcf(field_data.get("recoverable_gas_bcf")),
         }

@@ -29,9 +29,14 @@ class TestVesselCategory:
 class TestRigType:
     def test_all_members(self):
         expected = {
-            "DRILLSHIP", "SEMI_SUBMERSIBLE", "JACK_UP",
-            "PLATFORM_RIG", "TENDER_ASSISTED", "INLAND_BARGE",
-            "SUBMERSIBLE", "LAND_RIG",
+            "DRILLSHIP",
+            "SEMI_SUBMERSIBLE",
+            "JACK_UP",
+            "PLATFORM_RIG",
+            "TENDER_ASSISTED",
+            "INLAND_BARGE",
+            "SUBMERSIBLE",
+            "LAND_RIG",
         }
         assert {m.name for m in RigType} == expected
 
@@ -39,9 +44,17 @@ class TestRigType:
 class TestVesselType:
     def test_all_members(self):
         expected = {
-            "CRANE_VESSEL", "PIPELAY_VESSEL", "HEAVY_LIFT",
-            "HEAVY_TRANSPORT", "WIND_INSTALLATION", "CABLE_LAY",
-            "SURF_VESSEL", "AHTS", "PSV", "DIVE_SUPPORT", "FPSO",
+            "CRANE_VESSEL",
+            "PIPELAY_VESSEL",
+            "HEAVY_LIFT",
+            "HEAVY_TRANSPORT",
+            "WIND_INSTALLATION",
+            "CABLE_LAY",
+            "SURF_VESSEL",
+            "AHTS",
+            "PSV",
+            "DIVE_SUPPORT",
+            "FPSO",
         }
         assert {m.name for m in VesselType} == expected
 
@@ -49,9 +62,15 @@ class TestVesselType:
 class TestVesselStatus:
     def test_all_members(self):
         expected = {
-            "ACTIVE", "UNDER_CONTRACT", "WARM_STACKED",
-            "COLD_STACKED", "UNDER_CONSTRUCTION", "IN_TRANSIT",
-            "IN_YARD", "SCRAPPED", "RETIRED",
+            "ACTIVE",
+            "UNDER_CONTRACT",
+            "WARM_STACKED",
+            "COLD_STACKED",
+            "UNDER_CONSTRUCTION",
+            "IN_TRANSIT",
+            "IN_YARD",
+            "SCRAPPED",
+            "RETIRED",
         }
         assert {m.name for m in VesselStatus} == expected
 
@@ -59,10 +78,18 @@ class TestVesselStatus:
 class TestDataSource:
     def test_all_members(self):
         expected = {
-            "XLS_HISTORICAL", "BSEE_WAR", "CONTRACTOR_FLEET_PAGE",
-            "CONTRACTOR_SPEC_PDF", "CONTRACTOR_FSR", "EQUASIS",
-            "ABS_REGISTER", "DNV_REGISTER", "LLOYD_REGISTER",
-            "BOEM", "BAKER_HUGHES", "MANUAL",
+            "XLS_HISTORICAL",
+            "BSEE_WAR",
+            "CONTRACTOR_FLEET_PAGE",
+            "CONTRACTOR_SPEC_PDF",
+            "CONTRACTOR_FSR",
+            "EQUASIS",
+            "ABS_REGISTER",
+            "DNV_REGISTER",
+            "LLOYD_REGISTER",
+            "BOEM",
+            "BAKER_HUGHES",
+            "MANUAL",
         }
         assert {m.name for m in DataSource} == expected
 

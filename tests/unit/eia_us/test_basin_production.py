@@ -4,8 +4,8 @@ import pandas as pd
 import pytest
 
 from worldenergydata.eia_us.production.basin_production import (
-    BasinProductionLoader,
     DPR_BASINS,
+    BasinProductionLoader,
     BasinRecord,
 )
 
@@ -16,14 +16,16 @@ def make_mock_dpr_response(basin: str, n_months: int = 12):
     for i in range(n_months):
         year = 2023 + i // 12
         month = (i % 12) + 1
-        records.append({
-            "period": f"{year}-{month:02d}",
-            "basin": basin,
-            "rig_count": 200 - i,
-            "new_well_ip_bopd": 800.0 - i * 2.0,
-            "legacy_decline_bopd": -50000.0 - i * 100.0,
-            "total_production_bopd": 4_500_000.0 + i * 1000.0,
-        })
+        records.append(
+            {
+                "period": f"{year}-{month:02d}",
+                "basin": basin,
+                "rig_count": 200 - i,
+                "new_well_ip_bopd": 800.0 - i * 2.0,
+                "legacy_decline_bopd": -50000.0 - i * 100.0,
+                "total_production_bopd": 4_500_000.0 + i * 1000.0,
+            }
+        )
     return records
 
 
@@ -94,8 +96,14 @@ class TestBasinProductionLoader:
     def test_load_has_required_columns(self, loader):
         raw = make_mock_dpr_response("Permian", 6)
         df = loader.load(raw)
-        for col in ["period", "basin", "rig_count", "new_well_ip_bopd",
-                    "legacy_decline_bopd", "total_production_bopd"]:
+        for col in [
+            "period",
+            "basin",
+            "rig_count",
+            "new_well_ip_bopd",
+            "legacy_decline_bopd",
+            "total_production_bopd",
+        ]:
             assert col in df.columns
 
     def test_load_empty_returns_empty_dataframe(self, loader):

@@ -4,29 +4,32 @@ from datetime import date
 
 import pytest
 
+from worldenergydata.bsee.reports.comprehensive.hierarchical_aggregator import (
+    CostStructure,
+    PriceDeck,
+)
+from worldenergydata.bsee.reports.comprehensive.models import ProductionMetrics
 from worldenergydata.bsee.reports.comprehensive.templates.economic_models import (
     CostAnalysis,
     EconomicAnalysis,
     EconomicForecast,
     NPVAnalysis,
     ProfitabilityMetrics,
-    ROIMetrics,
     RevenueBreakdown,
+    ROIMetrics,
     SensitivityAnalysis,
     WaterfallComponent,
 )
-from worldenergydata.bsee.reports.comprehensive.hierarchical_aggregator import (
-    CostStructure,
-    PriceDeck,
-)
-from worldenergydata.bsee.reports.comprehensive.models import ProductionMetrics
 
 
 class TestRevenueBreakdown:
     def test_total_revenue(self):
         r = RevenueBreakdown(
-            oil_revenue=500, gas_revenue=200, ngl_revenue=50,
-            water_revenue=10, other_revenue=40,
+            oil_revenue=500,
+            gas_revenue=200,
+            ngl_revenue=50,
+            water_revenue=10,
+            other_revenue=40,
         )
         assert r.total_revenue == 800
 
@@ -69,17 +72,27 @@ class TestRevenueBreakdown:
 class TestCostAnalysis:
     def test_total_costs(self):
         c = CostAnalysis(
-            operating_costs=100, capital_costs=200, royalties=30,
-            severance_tax=10, production_tax=5, transportation_costs=15,
-            processing_costs=20, other_costs=5,
+            operating_costs=100,
+            capital_costs=200,
+            royalties=30,
+            severance_tax=10,
+            production_tax=5,
+            transportation_costs=15,
+            processing_costs=20,
+            other_costs=5,
         )
         assert c.total_costs == 385
 
     def test_variable_costs(self):
         c = CostAnalysis(
-            operating_costs=100, capital_costs=200, royalties=30,
-            severance_tax=10, production_tax=5, transportation_costs=15,
-            processing_costs=20, other_costs=5,
+            operating_costs=100,
+            capital_costs=200,
+            royalties=30,
+            severance_tax=10,
+            production_tax=5,
+            transportation_costs=15,
+            processing_costs=20,
+            other_costs=5,
         )
         # Variable = total - capital - other
         assert c.variable_costs == 180
@@ -99,7 +112,8 @@ class TestProfitabilityMetrics:
     def test_from_components(self):
         rev = RevenueBreakdown(oil_revenue=1000000, gas_revenue=500000)
         cost = CostAnalysis(
-            operating_costs=300000, capital_costs=200000,
+            operating_costs=300000,
+            capital_costs=200000,
             royalties=100000,
         )
         prof = ProfitabilityMetrics.from_components(rev, cost)
@@ -258,28 +272,33 @@ class TestEconomicForecast:
 class TestWaterfallComponent:
     def test_positive(self):
         w = WaterfallComponent(
-            name="Oil Revenue", value=1000000,
+            name="Oil Revenue",
+            value=1000000,
             component_type="revenue",
         )
         assert w.is_positive() is True
 
     def test_negative(self):
         w = WaterfallComponent(
-            name="OPEX", value=-500000,
+            name="OPEX",
+            value=-500000,
             component_type="cost",
         )
         assert w.is_positive() is False
 
     def test_zero(self):
         w = WaterfallComponent(
-            name="Break Even", value=0,
+            name="Break Even",
+            value=0,
             component_type="profit",
         )
         assert w.is_positive() is True
 
     def test_category_default(self):
         w = WaterfallComponent(
-            name="Test", value=100, component_type="revenue",
+            name="Test",
+            value=100,
+            component_type="revenue",
         )
         assert w.category == "general"
 
@@ -333,7 +352,9 @@ class TestCostAnalysisFromProduction:
         assert ca.royalties == 0.0
 
     def test_from_production_sets_cost_per_boe(self):
-        cs = CostStructure(operating_cost_per_bbl=10.0, royalty_rate=0, severance_tax_rate=0)
+        cs = CostStructure(
+            operating_cost_per_bbl=10.0, royalty_rate=0, severance_tax_rate=0
+        )
         production = {"oil_bbls": 1000, "gas_mcf": 0}
         revenue_data = {"total_revenue": 0}
         ca = CostAnalysis.from_production(production, revenue_data, cs)
@@ -484,7 +505,10 @@ class TestEconomicAnalysisFromProductionMetrics:
         pd_obj = PriceDeck(oil_price=75.0, gas_price=3.50)
         cs = CostStructure(operating_cost_per_bbl=12.50, royalty_rate=0.1875)
         analysis = EconomicAnalysis.from_production_metrics(
-            metrics, pd_obj, cs, entity_id="FIELD-001",
+            metrics,
+            pd_obj,
+            cs,
+            entity_id="FIELD-001",
         )
         assert analysis.entity_id == "FIELD-001"
         assert analysis.entity_type == "field"
@@ -499,7 +523,9 @@ class TestEconomicAnalysisFromProductionMetrics:
         pd_obj = PriceDeck()
         cs = CostStructure()
         analysis = EconomicAnalysis.from_production_metrics(
-            metrics, pd_obj, cs,
+            metrics,
+            pd_obj,
+            cs,
         )
         assert analysis.entity_id == "WELL-X"
 
@@ -508,6 +534,8 @@ class TestEconomicAnalysisFromProductionMetrics:
         pd_obj = PriceDeck()
         cs = CostStructure()
         analysis = EconomicAnalysis.from_production_metrics(
-            metrics, pd_obj, cs,
+            metrics,
+            pd_obj,
+            cs,
         )
         assert analysis.entity_id == "unknown"

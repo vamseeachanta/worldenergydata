@@ -1,16 +1,17 @@
 """Tests for scheduler CLI: start | stop | status | run-job <name>."""
-import pytest
+
 import json
-import tempfile
 import os
-from pathlib import Path
-from unittest.mock import patch, MagicMock
-from datetime import datetime
 
 # Use subprocess to invoke CLI as module
 import subprocess
 import sys
+import tempfile
+from datetime import datetime
+from pathlib import Path
+from unittest.mock import MagicMock, patch
 
+import pytest
 
 MINIMAL_CONFIG = """
 jobs:
@@ -45,22 +46,27 @@ def _write_config(tmp_path) -> str:
 class TestCLIImports:
     def test_cli_module_importable(self):
         from worldenergydata.scheduler import cli
+
         assert cli is not None
 
     def test_cli_has_main_entry_point(self):
         from worldenergydata.scheduler.cli import main
+
         assert callable(main)
 
     def test_cli_has_status_command(self):
         from worldenergydata.scheduler.cli import cmd_status
+
         assert callable(cmd_status)
 
     def test_cli_has_run_job_command(self):
         from worldenergydata.scheduler.cli import cmd_run_job
+
         assert callable(cmd_run_job)
 
     def test_cli_has_stop_command(self):
         from worldenergydata.scheduler.cli import cmd_stop
+
         assert callable(cmd_stop)
 
     def test_cli_all_jobs_includes_lng_terminals_job(self):
@@ -83,7 +89,9 @@ class TestCLIStatusCommand:
         config_path = _write_config(tmp_path)
         from worldenergydata.scheduler.cli import cmd_status
         from worldenergydata.scheduler.jobs.bsee_refresh import BseeRefreshJob
-        from worldenergydata.scheduler.jobs.lng_terminals_refresh import LngTerminalsRefreshJob
+        from worldenergydata.scheduler.jobs.lng_terminals_refresh import (
+            LngTerminalsRefreshJob,
+        )
 
         result = cmd_status(
             config_path=config_path,
@@ -105,8 +113,8 @@ class TestCLIRunJobCommand:
     def test_run_job_executes_and_returns_result(self, tmp_path):
         config_path = _write_config(tmp_path)
         from worldenergydata.scheduler.cli import cmd_run_job
-        from worldenergydata.scheduler.jobs.bsee_refresh import BseeRefreshJob
         from worldenergydata.scheduler.jobs.base import JobResult
+        from worldenergydata.scheduler.jobs.bsee_refresh import BseeRefreshJob
 
         result = cmd_run_job(
             job_name="bsee_refresh",

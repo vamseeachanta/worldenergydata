@@ -19,16 +19,16 @@ class PipelineDefect:
     """Characterizes a pipeline defect from PHMSA incident data."""
 
     incident_id: str
-    location: str            # pipeline segment or milepost
-    defect_type: str         # "corrosion"|"mechanical"|"material"|"weld"|"third_party"
-    depth_pct_wall: float    # defect depth as % of wall thickness (0-100)
-    length_mm: float         # axial defect length
-    pipe_od_mm: float        # outer diameter
+    location: str  # pipeline segment or milepost
+    defect_type: str  # "corrosion"|"mechanical"|"material"|"weld"|"third_party"
+    depth_pct_wall: float  # defect depth as % of wall thickness (0-100)
+    length_mm: float  # axial defect length
+    pipe_od_mm: float  # outer diameter
     wall_thickness_mm: float
-    smys_mpa: float          # specified minimum yield strength
-    maop_mpa: float          # maximum allowable operating pressure
+    smys_mpa: float  # specified minimum yield strength
+    maop_mpa: float  # maximum allowable operating pressure
     year: int
-    source: str              # "phmsa"
+    source: str  # "phmsa"
 
 
 @dataclass
@@ -36,11 +36,11 @@ class FFSResult:
     """Fitness-for-Service assessment result (ASME B31G / Modified B31G)."""
 
     incident_id: str
-    method: str                       # "b31g" | "modified_b31g"
+    method: str  # "b31g" | "modified_b31g"
     failure_pressure_mpa: float
-    safe_pressure_mpa: float          # failure_pressure / safety_factor
-    safety_factor: float              # 1.39 gas, 1.25 liquid
-    verdict: str                      # "accept"|"monitor"|"repair"|"replace"
+    safe_pressure_mpa: float  # failure_pressure / safety_factor
+    safety_factor: float  # 1.39 gas, 1.25 liquid
+    verdict: str  # "accept"|"monitor"|"repair"|"replace"
     remaining_life_years: Optional[float]
     notes: str
 
@@ -48,30 +48,37 @@ class FFSResult:
 # --- constants ---------------------------------------------------------------
 
 _DEFECT_TYPE_MAP = {
-    "corrosion": "corrosion", "external corrosion": "corrosion",
-    "internal corrosion": "corrosion", "mechanical": "mechanical",
-    "material": "material", "weld": "weld", "welding/weld": "weld",
-    "third party": "third_party", "third_party": "third_party",
-    "other outside force": "third_party", "excavation damage": "third_party",
+    "corrosion": "corrosion",
+    "external corrosion": "corrosion",
+    "internal corrosion": "corrosion",
+    "mechanical": "mechanical",
+    "material": "material",
+    "weld": "weld",
+    "welding/weld": "weld",
+    "third party": "third_party",
+    "third_party": "third_party",
+    "other outside force": "third_party",
+    "excavation damage": "third_party",
 }
-_DEFAULT_OD_MM = 323.85        # NPS 12
-_DEFAULT_WT_MM = 9.53          # std wall
-_DEFAULT_SMYS_MPA = 358.53     # X52
+_DEFAULT_OD_MM = 323.85  # NPS 12
+_DEFAULT_WT_MM = 9.53  # std wall
+_DEFAULT_SMYS_MPA = 358.53  # X52
 _DEFAULT_MAOP_GAS_MPA = 6.895  # 1000 psi
 _DEFAULT_MAOP_LIQ_MPA = 5.516  # 800 psi
 _DEFAULT_LENGTH_MM = 150.0
 _DEFAULT_DEPTH_PCT = 30.0
 _SF_GAS = 1.39
-_CORROSION_GROWTH_RATE = 0.2   # mm/year
+_CORROSION_GROWTH_RATE = 0.2  # mm/year
 
 
 # --- FFS helpers -------------------------------------------------------------
 
+
 def _folias_factor(L_mm: float, OD_mm: float, t_mm: float) -> float:
     """Folias bulging factor M (Modified B31G piecewise formula)."""
-    A = (L_mm ** 2) / (OD_mm * t_mm)
+    A = (L_mm**2) / (OD_mm * t_mm)
     if A <= 50.0:
-        return math.sqrt(1.0 + 0.6275 * A - 0.003375 * A ** 2)
+        return math.sqrt(1.0 + 0.6275 * A - 0.003375 * A**2)
     return 0.032 * A + 3.3
 
 
@@ -124,6 +131,7 @@ def _remaining_life(depth_pct: float, t_mm: float) -> Optional[float]:
 
 # --- Public workflow class ---------------------------------------------------
 
+
 class PipelineSafetyWorkflow:
     """
     Orchestrates the full PHMSA -> FFS -> verdict pipeline.
@@ -140,9 +148,14 @@ class PipelineSafetyWorkflow:
             incident.get("incident_id") or incident.get("report_number") or "UNKNOWN"
         )
         location = str(
-            incident.get("location") or incident.get("state") or incident.get("city") or "unknown"
+            incident.get("location")
+            or incident.get("state")
+            or incident.get("city")
+            or "unknown"
         )
-        raw_type = incident.get("defect_type") or incident.get("cause_category") or "corrosion"
+        raw_type = (
+            incident.get("defect_type") or incident.get("cause_category") or "corrosion"
+        )
         defect_type = _DEFECT_TYPE_MAP.get(str(raw_type).lower(), "corrosion")
         pipeline_type = incident.get("pipeline_type", "gas_transmission")
         if incident.get("maop_mpa"):
@@ -158,7 +171,9 @@ class PipelineSafetyWorkflow:
             depth_pct_wall=float(incident.get("depth_pct_wall") or _DEFAULT_DEPTH_PCT),
             length_mm=float(incident.get("length_mm") or _DEFAULT_LENGTH_MM),
             pipe_od_mm=float(incident.get("pipe_od_mm") or _DEFAULT_OD_MM),
-            wall_thickness_mm=float(incident.get("wall_thickness_mm") or _DEFAULT_WT_MM),
+            wall_thickness_mm=float(
+                incident.get("wall_thickness_mm") or _DEFAULT_WT_MM
+            ),
             smys_mpa=float(incident.get("smys_mpa") or _DEFAULT_SMYS_MPA),
             maop_mpa=maop_mpa,
             year=int(incident.get("year") or incident.get("incident_year") or 2020),
@@ -183,15 +198,21 @@ class PipelineSafetyWorkflow:
         sf = float(safety_factor) if safety_factor is not None else _SF_GAS
         if method == "b31g":
             pf = _failure_pressure_b31g(
-                defect.depth_pct_wall, defect.length_mm,
-                defect.pipe_od_mm, defect.wall_thickness_mm, defect.smys_mpa,
+                defect.depth_pct_wall,
+                defect.length_mm,
+                defect.pipe_od_mm,
+                defect.wall_thickness_mm,
+                defect.smys_mpa,
             )
             notes = "ASME B31G original criterion"
         else:
             method = "modified_b31g"
             pf = _failure_pressure_modified_b31g(
-                defect.depth_pct_wall, defect.length_mm,
-                defect.pipe_od_mm, defect.wall_thickness_mm, defect.smys_mpa,
+                defect.depth_pct_wall,
+                defect.length_mm,
+                defect.pipe_od_mm,
+                defect.wall_thickness_mm,
+                defect.smys_mpa,
             )
             notes = "Modified B31G (Kiefner-Vieth)"
         safe_p = pf / sf
@@ -224,15 +245,17 @@ class PipelineSafetyWorkflow:
         for _, row in incidents_df.iterrows():
             defect = self.characterize(row.to_dict())
             result = self.assess_ffs(defect, method=method)
-            rows.append({
-                "incident_id": result.incident_id,
-                "defect_type": defect.defect_type,
-                "failure_pressure_mpa": result.failure_pressure_mpa,
-                "safe_pressure_mpa": result.safe_pressure_mpa,
-                "safety_factor": result.safety_factor,
-                "verdict": result.verdict,
-                "remaining_life_years": result.remaining_life_years,
-            })
+            rows.append(
+                {
+                    "incident_id": result.incident_id,
+                    "defect_type": defect.defect_type,
+                    "failure_pressure_mpa": result.failure_pressure_mpa,
+                    "safe_pressure_mpa": result.safe_pressure_mpa,
+                    "safety_factor": result.safety_factor,
+                    "verdict": result.verdict,
+                    "remaining_life_years": result.remaining_life_years,
+                }
+            )
         return pd.DataFrame(rows)
 
     def verdict_summary(self, report_df: pd.DataFrame) -> dict:
@@ -257,7 +280,8 @@ class PipelineSafetyWorkflow:
         lines = [
             "=" * 60,
             "PHMSA PIPELINE SAFETY — FFS CASE STUDY",
-            "=" * 60, "",
+            "=" * 60,
+            "",
             "1. DATASET SUMMARY",
             f"   Total incidents assessed : {n}",
             f"   Defect types present     : {types_str}",

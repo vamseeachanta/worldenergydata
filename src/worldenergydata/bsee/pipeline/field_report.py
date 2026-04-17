@@ -25,6 +25,7 @@ _PLOTLY_CDN = "https://cdn.plot.ly/plotly-basic-2.35.2.min.js"
 # Public API
 # ---------------------------------------------------------------------------
 
+
 def render_html(report: FieldReport) -> str:
     """Render a self-contained HTML report from a :class:`FieldReport`.
 
@@ -77,6 +78,7 @@ def save_report(report: FieldReport, path: Path) -> None:
 # Section builders (private)
 # ---------------------------------------------------------------------------
 
+
 def _header_section(report: FieldReport) -> str:
     ctx = report.context
     field_name = html.escape(ctx.field_name)
@@ -86,7 +88,7 @@ def _header_section(report: FieldReport) -> str:
 
     return (
         '<div class="header">\n'
-        f'  <h1>BSEE Field Report \u2014 {field_name}</h1>\n'
+        f"  <h1>BSEE Field Report \u2014 {field_name}</h1>\n"
         f'  <p class="subtitle">'
         f"Field Code: {field_code} | "
         f"Era: {era} | "
@@ -138,8 +140,7 @@ def _production_section(report: FieldReport) -> str:
 def _production_chart(df: pd.DataFrame) -> str:
     """Build an inline Plotly bar chart for production metrics."""
     metric_cols = [
-        c for c in ("CUM_OIL_MMBBL", "CUM_GAS_BCF", "PEAK_OIL_BOPD")
-        if c in df.columns
+        c for c in ("CUM_OIL_MMBBL", "CUM_GAS_BCF", "PEAK_OIL_BOPD") if c in df.columns
     ]
     if not metric_cols:
         return ""
@@ -220,14 +221,12 @@ def _activity_section(report: FieldReport) -> str:
                 if isinstance(sub_val, pd.DataFrame) and not sub_val.empty:
                     parts.append(f"    {_dataframe_to_html(sub_val)}")
                 else:
-                    parts.append(
-                        f'    <p>{html.escape(str(sub_val))}</p>'
-                    )
+                    parts.append(f"    <p>{html.escape(str(sub_val))}</p>")
         elif isinstance(module_data, pd.DataFrame):
             if not module_data.empty:
                 parts.append(f"    {_dataframe_to_html(module_data)}")
         else:
-            parts.append(f'    <p>{html.escape(str(module_data))}</p>')
+            parts.append(f"    <p>{html.escape(str(module_data))}</p>")
 
         parts.append("  </div>")
 
@@ -239,9 +238,7 @@ def _warnings_section(report: FieldReport) -> str:
     if not report.warnings:
         return ""
 
-    items = "\n".join(
-        f"  <li>{html.escape(w)}</li>" for w in report.warnings
-    )
+    items = "\n".join(f"  <li>{html.escape(w)}</li>" for w in report.warnings)
     return (
         '<div class="section warnings">\n'
         "  <h2>Warnings</h2>\n"
@@ -253,6 +250,7 @@ def _warnings_section(report: FieldReport) -> str:
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _dataframe_to_html(df: pd.DataFrame) -> str:
     """Convert a DataFrame to an HTML table with escaped cell values."""

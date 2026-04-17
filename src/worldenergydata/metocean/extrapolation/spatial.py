@@ -21,7 +21,7 @@ from worldenergydata.metocean.extrapolation.source_catalog import (
 CORRECTION_DISTANCE_KM = 50.0
 
 # Depth ratio threshold beyond which shoaling corrections matter
-CORRECTION_DEPTH_RATIO = 0.2   # 20% relative difference
+CORRECTION_DEPTH_RATIO = 0.2  # 20% relative difference
 
 # Approximate coastline proximity thresholds for sheltering heuristic
 _COASTAL_LAT_BANDS = [

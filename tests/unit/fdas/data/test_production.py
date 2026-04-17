@@ -14,10 +14,10 @@ from worldenergydata.fdas.data.production import (
     identify_first_oil_date,
 )
 
-
 # ---------------------------------------------------------------------------
 # ProductionProcessingError
 # ---------------------------------------------------------------------------
+
 
 class TestProductionProcessingError:
     def test_is_exception(self):
@@ -28,6 +28,7 @@ class TestProductionProcessingError:
 # ---------------------------------------------------------------------------
 # ProductionProcessor
 # ---------------------------------------------------------------------------
+
 
 def _make_prod_df(**overrides):
     defaults = {
@@ -125,6 +126,7 @@ class TestCreatePivotTable:
 # Convenience functions
 # ---------------------------------------------------------------------------
 
+
 class TestConvenienceFunctions:
     def test_aggregate_monthly_production(self):
         df = _make_prod_df()
@@ -140,6 +142,7 @@ class TestConvenienceFunctions:
 # ---------------------------------------------------------------------------
 # ProductionForecaster
 # ---------------------------------------------------------------------------
+
 
 class TestExponentialDecline:
     def test_basic(self):

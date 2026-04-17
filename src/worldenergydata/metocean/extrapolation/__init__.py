@@ -37,8 +37,8 @@ _DEFAULT_PARAMETERS = ["Hs", "Tp", "wind_speed", "current_speed"]
 # These represent typical open-ocean conditions for each parameter and are
 # used as starting points before spatial corrections are applied.
 _BASELINE = {
-    "Hs": 2.5,           # m   (moderate sea state)
-    "Tp": 9.0,           # s   (moderate swell / wind sea)
+    "Hs": 2.5,  # m   (moderate sea state)
+    "Tp": 9.0,  # s   (moderate swell / wind sea)
     "wind_speed": 10.0,  # m/s (Beaufort 5)
     "current_speed": 0.3,  # m/s (typical background)
 }
@@ -234,6 +234,7 @@ def _nearest_extrapolation(lat: float, lon: float) -> "ExtrapolationResult":
 # ---------------------------------------------------------------------------
 # Public extrapolate() function
 # ---------------------------------------------------------------------------
+
 
 def extrapolate(
     lat: float,

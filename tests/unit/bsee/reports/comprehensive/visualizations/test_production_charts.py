@@ -10,10 +10,10 @@ from worldenergydata.bsee.reports.comprehensive.visualizations.production_charts
     ProductionChart,
 )
 
-
 # ---------------------------------------------------------------------------
 # ChartConfig dataclass
 # ---------------------------------------------------------------------------
+
 
 class TestChartConfig:
     def test_defaults(self):
@@ -36,6 +36,7 @@ class TestChartConfig:
 # ProductionChart init
 # ---------------------------------------------------------------------------
 
+
 class TestProductionChartInit:
     def test_default(self):
         chart = ProductionChart()
@@ -51,18 +52,23 @@ class TestProductionChartInit:
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _make_production_df():
     idx = pd.date_range("2024-01-01", periods=12, freq="MS")
-    return pd.DataFrame({
-        "oil": np.linspace(1000, 800, 12),
-        "gas": np.linspace(5000, 4000, 12),
-        "water": np.linspace(200, 400, 12),
-    }, index=idx)
+    return pd.DataFrame(
+        {
+            "oil": np.linspace(1000, 800, 12),
+            "gas": np.linspace(5000, 4000, 12),
+            "water": np.linspace(200, 400, 12),
+        },
+        index=idx,
+    )
 
 
 # ---------------------------------------------------------------------------
 # create_production_trend
 # ---------------------------------------------------------------------------
+
 
 class TestCreateProductionTrend:
     def test_basic(self):
@@ -85,6 +91,7 @@ class TestCreateProductionTrend:
 # create_cumulative_production
 # ---------------------------------------------------------------------------
 
+
 class TestCreateCumulativeProduction:
     def test_basic(self):
         chart = ProductionChart()
@@ -103,6 +110,7 @@ class TestCreateCumulativeProduction:
 # create_production_forecast
 # ---------------------------------------------------------------------------
 
+
 class TestCreateProductionForecast:
     def test_basic(self):
         chart = ProductionChart()
@@ -114,19 +122,29 @@ class TestCreateProductionForecast:
 
     def test_with_confidence_intervals(self):
         chart = ProductionChart()
-        historical = pd.DataFrame({"oil": [1000, 950, 900, 850, 800, 750]}, index=range(6))
-        forecast = pd.DataFrame({"oil": [700, 650, 600, 550, 500, 450]}, index=range(6, 12))
+        historical = pd.DataFrame(
+            {"oil": [1000, 950, 900, 850, 800, 750]}, index=range(6)
+        )
+        forecast = pd.DataFrame(
+            {"oil": [700, 650, 600, 550, 500, 450]}, index=range(6, 12)
+        )
         ci = {
             "upper": [750, 700, 660, 620, 580, 540],
             "lower": [650, 600, 540, 480, 420, 360],
         }
-        fig = chart.create_production_forecast(historical, forecast, confidence_intervals=ci)
+        fig = chart.create_production_forecast(
+            historical, forecast, confidence_intervals=ci
+        )
         assert isinstance(fig, go.Figure)
 
     def test_non_oil_column(self):
         chart = ProductionChart()
-        historical = pd.DataFrame({"gas": [5000, 4800, 4600, 4400, 4200, 4000]}, index=range(6))
-        forecast = pd.DataFrame({"gas": [3800, 3600, 3400, 3200, 3000, 2800]}, index=range(6, 12))
+        historical = pd.DataFrame(
+            {"gas": [5000, 4800, 4600, 4400, 4200, 4000]}, index=range(6)
+        )
+        forecast = pd.DataFrame(
+            {"gas": [3800, 3600, 3400, 3200, 3000, 2800]}, index=range(6, 12)
+        )
         fig = chart.create_production_forecast(historical, forecast)
         assert isinstance(fig, go.Figure)
 
@@ -134,6 +152,7 @@ class TestCreateProductionForecast:
 # ---------------------------------------------------------------------------
 # create_well_comparison
 # ---------------------------------------------------------------------------
+
 
 class TestCreateWellComparison:
     def test_basic(self):
@@ -160,6 +179,7 @@ class TestCreateWellComparison:
 # create_production_efficiency
 # ---------------------------------------------------------------------------
 
+
 class TestCreateProductionEfficiency:
     def test_basic(self):
         chart = ProductionChart()
@@ -180,16 +200,22 @@ class TestCreateProductionEfficiency:
 # create_monthly_summary
 # ---------------------------------------------------------------------------
 
+
 class TestCreateMonthlySummary:
-    @pytest.mark.skip(reason="Source uses resample('M') removed in pandas 2.x; needs 'ME'")
+    @pytest.mark.skip(
+        reason="Source uses resample('M') removed in pandas 2.x; needs 'ME'"
+    )
     def test_basic(self):
         chart = ProductionChart()
         idx = pd.date_range("2024-01-01", periods=90, freq="D")
-        data = pd.DataFrame({
-            "oil": np.random.default_rng(42).uniform(800, 1200, 90),
-            "gas": np.random.default_rng(42).uniform(4000, 6000, 90),
-            "water": np.random.default_rng(42).uniform(100, 500, 90),
-        }, index=idx)
+        data = pd.DataFrame(
+            {
+                "oil": np.random.default_rng(42).uniform(800, 1200, 90),
+                "gas": np.random.default_rng(42).uniform(4000, 6000, 90),
+                "water": np.random.default_rng(42).uniform(100, 500, 90),
+            },
+            index=idx,
+        )
         fig = chart.create_monthly_summary(data)
         assert isinstance(fig, go.Figure)
 
@@ -197,6 +223,7 @@ class TestCreateMonthlySummary:
 # ---------------------------------------------------------------------------
 # create_decline_curve
 # ---------------------------------------------------------------------------
+
 
 class TestCreateDeclineCurve:
     def test_without_params(self):

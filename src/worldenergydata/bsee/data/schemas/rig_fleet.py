@@ -118,7 +118,8 @@ class RigFleetSchema(BaseModel):
     )
     @classmethod
     def _validate_non_negative_floats(
-        cls, v: Optional[float],
+        cls,
+        v: Optional[float],
     ) -> Optional[float]:
         """Float measurements must be non-negative when provided."""
         if v is not None and v < 0:

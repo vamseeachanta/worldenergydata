@@ -12,10 +12,10 @@ from typing import List, Optional
 import pandas as pd
 
 from worldenergydata.marine_safety.analysis.incidents.incident_taxonomy import (
+    MAIB_COLUMN_MAP,
     IncidentDataFrameNormaliser,
     IncidentTaxonomyClassifier,
     TaxonomyRecord,
-    MAIB_COLUMN_MAP,
 )
 
 logger = logging.getLogger(__name__)
@@ -115,9 +115,7 @@ class MAIBLoader:
 
         if year_filter is not None and "incident_date" in df.columns:
             df = _filter_by_year(df, year_filter)
-            logger.info(
-                "After year filter (%d): %d rows remain", year_filter, len(df)
-            )
+            logger.info("After year filter (%d): %d rows remain", year_filter, len(df))
 
         return df
 
@@ -235,9 +233,7 @@ def _filter_by_year(df: pd.DataFrame, year: int) -> pd.DataFrame:
         mask = dates.dt.year == year
         return df[mask].copy()
     except Exception as exc:
-        logger.warning(
-            "Year filtering failed: %s — returning unfiltered data", exc
-        )
+        logger.warning("Year filtering failed: %s — returning unfiltered data", exc)
         return df
 
 

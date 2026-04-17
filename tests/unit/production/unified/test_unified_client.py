@@ -4,7 +4,11 @@ import pandas as pd
 import pytest
 
 from worldenergydata.production.unified import UnifiedProductionClient
-from worldenergydata.production.unified.query import ProductionQuery, ProductionResult, STANDARD_COLUMNS
+from worldenergydata.production.unified.query import (
+    STANDARD_COLUMNS,
+    ProductionQuery,
+    ProductionResult,
+)
 
 
 class TestUnifiedProductionClientQuery:
@@ -27,7 +31,16 @@ class TestUnifiedProductionClientQuery:
 
     def test_query_all_eight_regions(self):
         q = ProductionQuery(
-            regions=["ncs", "gom", "brazil", "ukcs", "eia_us", "mexico", "texas", "canada"]
+            regions=[
+                "ncs",
+                "gom",
+                "brazil",
+                "ukcs",
+                "eia_us",
+                "mexico",
+                "texas",
+                "canada",
+            ]
         )
         result = self.client.query(q)
         assert not result.is_empty()
@@ -108,5 +121,14 @@ class TestUnifiedProductionClientListRegions:
 
     def test_list_regions_contains_all_canonical(self):
         regions = self.client.list_regions()
-        for expected in ["ncs", "gom", "brazil", "ukcs", "eia_us", "mexico", "texas", "canada"]:
+        for expected in [
+            "ncs",
+            "gom",
+            "brazil",
+            "ukcs",
+            "eia_us",
+            "mexico",
+            "texas",
+            "canada",
+        ]:
             assert expected in regions

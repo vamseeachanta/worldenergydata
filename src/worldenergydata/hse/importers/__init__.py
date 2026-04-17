@@ -21,7 +21,9 @@ All importers support:
 from worldenergydata.hse.importers.base_importer import BaseImporter
 from worldenergydata.hse.importers.bsee_incidents_importer import BSEEIncidentsImporter
 from worldenergydata.hse.importers.bsee_penalties_importer import BSEEPenaltiesImporter
-from worldenergydata.hse.importers.bsee_statistics_importer import BSEEStatisticsImporter
+from worldenergydata.hse.importers.bsee_statistics_importer import (
+    BSEEStatisticsImporter,
+)
 from worldenergydata.hse.importers.data_quality_validator import DataQualityValidator
 
 __all__ = [

@@ -4,15 +4,15 @@ import numpy as np
 import pytest
 
 from worldenergydata.eia_us.analysis.basin_decline import (
+    TERMINAL_B_FACTOR,
     HyperbolicDeclineModel,
     ShaleDeclineAnalyzer,
     ShaleDeclineResult,
     arps_hyperbolic,
-    TERMINAL_B_FACTOR,
 )
 
-
 # ── Arps hyperbolic equation ───────────────────────────────────────────────────
+
 
 class TestArpsHyperbolic:
     def test_at_t0_equals_qi(self):
@@ -50,6 +50,7 @@ class TestArpsHyperbolic:
 
 # ── Terminal b-factor ──────────────────────────────────────────────────────────
 
+
 class TestTerminalBFactor:
     def test_terminal_b_factor_in_range(self):
         assert 0.4 <= TERMINAL_B_FACTOR <= 0.6
@@ -59,6 +60,7 @@ class TestTerminalBFactor:
 
 
 # ── HyperbolicDeclineModel ─────────────────────────────────────────────────────
+
 
 class TestHyperbolicDeclineModel:
     def test_model_stores_parameters(self):
@@ -84,7 +86,9 @@ class TestHyperbolicDeclineModel:
 
     def test_terminal_switch_reduces_late_decline(self):
         """With terminal switch, rate decays slower than pure b=1.5."""
-        model_with_switch = HyperbolicDeclineModel(qi=5000.0, di=0.08, b=1.5, terminal_b=0.5)
+        model_with_switch = HyperbolicDeclineModel(
+            qi=5000.0, di=0.08, b=1.5, terminal_b=0.5
+        )
         model_pure = HyperbolicDeclineModel(qi=5000.0, di=0.08, b=1.5, terminal_b=None)
         forecast_switch = model_with_switch.predict(120)
         forecast_pure = model_pure.predict(120)
@@ -95,6 +99,7 @@ class TestHyperbolicDeclineModel:
 
 
 # ── ShaleDeclineResult ─────────────────────────────────────────────────────────
+
 
 class TestShaleDeclineResult:
     def test_result_stores_model(self):
@@ -110,12 +115,15 @@ class TestShaleDeclineResult:
 
     def test_result_predict_delegates_to_model(self):
         model = HyperbolicDeclineModel(qi=3000.0, di=0.12, b=1.8)
-        result = ShaleDeclineResult(basin="Bakken", model=model, r_squared=0.88, rmse=30.0)
+        result = ShaleDeclineResult(
+            basin="Bakken", model=model, r_squared=0.88, rmse=30.0
+        )
         forecast = result.predict(12)
         assert len(forecast) == 12
 
 
 # ── ShaleDeclineAnalyzer ───────────────────────────────────────────────────────
+
 
 def make_synthetic_shale_production(qi=5000.0, di=0.10, b=1.6, n=36, seed=42):
     """Synthetic shale production with b>1 hyperbolic decline."""
@@ -167,7 +175,9 @@ class TestShaleDeclineAnalyzer:
             "Permian": make_synthetic_shale_production(qi=8000.0, di=0.09, b=1.8),
             "Bakken": make_synthetic_shale_production(qi=3000.0, di=0.12, b=1.5),
         }
-        results = {name: analyzer.fit(data, basin=name) for name, data in basins.items()}
+        results = {
+            name: analyzer.fit(data, basin=name) for name, data in basins.items()
+        }
         assert len(results) == 2
         for name, res in results.items():
             assert res.r_squared >= 0.0

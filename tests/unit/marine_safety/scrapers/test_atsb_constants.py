@@ -88,7 +88,10 @@ class TestIncidentTypeMapping:
         assert INCIDENT_TYPE_MAPPING["flooding"] == IncidentType.FLOODING
 
     def test_structural_failure(self):
-        assert INCIDENT_TYPE_MAPPING["structural failure"] == IncidentType.STRUCTURAL_FAILURE
+        assert (
+            INCIDENT_TYPE_MAPPING["structural failure"]
+            == IncidentType.STRUCTURAL_FAILURE
+        )
 
     def test_pollution(self):
         assert INCIDENT_TYPE_MAPPING["pollution"] == IncidentType.POLLUTION

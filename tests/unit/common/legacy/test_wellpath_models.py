@@ -22,7 +22,10 @@ class TestBASEEXT:
 class TestWellSurface:
     def test_fields(self):
         ws = WellSurface(
-            name="Well A", latitude=29.5, longitude=-93.8, altitude=10.0,
+            name="Well A",
+            latitude=29.5,
+            longitude=-93.8,
+            altitude=10.0,
         )
         assert ws.name == "Well A"
         assert ws.latitude == 29.5
@@ -217,8 +220,12 @@ class TestWellDbMethods:
             "TVD REAL, North REAL, East REAL, Closure, DLS)"
         )
         cursor.execute("INSERT INTO geosurvey VALUES(0, 0, 0, 0, 0, 0, 0, 0)")
-        cursor.execute("INSERT INTO geosurvey VALUES(100, 2.5, 45.0, 99.9, 1.0, 0.5, 0, 0)")
-        cursor.execute("INSERT INTO geosurvey VALUES(200, 5.0, 90.0, 199.5, 3.0, 2.0, 0, 0)")
+        cursor.execute(
+            "INSERT INTO geosurvey VALUES(100, 2.5, 45.0, 99.9, 1.0, 0.5, 0, 0)"
+        )
+        cursor.execute(
+            "INSERT INTO geosurvey VALUES(200, 5.0, 90.0, 199.5, 3.0, 2.0, 0, 0)"
+        )
         conn.commit()
         conn.close()
 

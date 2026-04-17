@@ -76,14 +76,18 @@ class BasinProductionLoader:
 
         rows = []
         for rec in records:
-            rows.append({
-                "period": rec.get("period", ""),
-                "basin": rec.get("basin", ""),
-                "rig_count": float(rec.get("rig_count", 0)),
-                "new_well_ip_bopd": float(rec.get("new_well_ip_bopd", 0.0)),
-                "legacy_decline_bopd": float(rec.get("legacy_decline_bopd", 0.0)),
-                "total_production_bopd": float(rec.get("total_production_bopd", 0.0)),
-            })
+            rows.append(
+                {
+                    "period": rec.get("period", ""),
+                    "basin": rec.get("basin", ""),
+                    "rig_count": float(rec.get("rig_count", 0)),
+                    "new_well_ip_bopd": float(rec.get("new_well_ip_bopd", 0.0)),
+                    "legacy_decline_bopd": float(rec.get("legacy_decline_bopd", 0.0)),
+                    "total_production_bopd": float(
+                        rec.get("total_production_bopd", 0.0)
+                    ),
+                }
+            )
 
         return pd.DataFrame(rows)[self._REQUIRED_COLS].reset_index(drop=True)
 
@@ -99,12 +103,14 @@ class BasinProductionLoader:
         """Convert DataFrame rows to BasinRecord dataclass instances."""
         result = []
         for _, row in df.iterrows():
-            result.append(BasinRecord(
-                period=row["period"],
-                basin=row["basin"],
-                rig_count=row["rig_count"],
-                new_well_ip_bopd=row["new_well_ip_bopd"],
-                legacy_decline_bopd=row["legacy_decline_bopd"],
-                total_production_bopd=row["total_production_bopd"],
-            ))
+            result.append(
+                BasinRecord(
+                    period=row["period"],
+                    basin=row["basin"],
+                    rig_count=row["rig_count"],
+                    new_well_ip_bopd=row["new_well_ip_bopd"],
+                    legacy_decline_bopd=row["legacy_decline_bopd"],
+                    total_production_bopd=row["total_production_bopd"],
+                )
+            )
         return result

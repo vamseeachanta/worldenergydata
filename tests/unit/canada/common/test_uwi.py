@@ -22,7 +22,10 @@ class TestParseUwi:
     def test_valid_uwi_returns_dict(self):
         mock_components = MagicMock()
         mock_components.is_valid = True
-        mock_components.to_dict.return_value = {"province": "AB", "raw": "100/06-01-001-01W4/0"}
+        mock_components.to_dict.return_value = {
+            "province": "AB",
+            "raw": "100/06-01-001-01W4/0",
+        }
         mock_parser = MagicMock()
         mock_parser.parse.return_value = mock_components
 

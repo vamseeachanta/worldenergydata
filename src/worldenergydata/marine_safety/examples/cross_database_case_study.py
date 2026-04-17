@@ -18,13 +18,11 @@ or directly:
     python cross_database_case_study.py
 """
 
+from worldenergydata.common.logging import get_logger
 from worldenergydata.marine_safety.cross_database import (
     CrossDatabaseAnalyzer,
     CrossDatabaseQuery,
 )
-
-
-from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
 
@@ -72,7 +70,9 @@ def main() -> None:
 
     _subsection("Source cross-reporting overlap rate")
     overlap = corrs["source_overlap_rate"]
-    logger.info(f"  Incidents in same type/year/region across 2+ sources: {overlap:.1%}")
+    logger.info(
+        f"  Incidents in same type/year/region across 2+ sources: {overlap:.1%}"
+    )
 
     _subsection("Year-over-year trend (all sources, last 5 years)")
     trend = corrs["trend_yoy"]
@@ -112,12 +112,13 @@ def main() -> None:
         else 0
     )
     global_ground_rate = (
-        (global_tankers["incident_type"] == "grounding").sum()
-        / len(global_tankers)
+        (global_tankers["incident_type"] == "grounding").sum() / len(global_tankers)
         if len(global_tankers) > 0
         else 0
     )
-    ratio = ns_ground_rate / global_ground_rate if global_ground_rate > 0 else float("inf")
+    ratio = (
+        ns_ground_rate / global_ground_rate if global_ground_rate > 0 else float("inf")
+    )
     logger.info(
         f"\n[Finding 1] Tankers in North Sea have a {ratio:.1f}x higher grounding"
         f" rate ({ns_ground_rate:.1%}) than the global tanker average"
@@ -125,9 +126,9 @@ def main() -> None:
     )
 
     # Finding 2: Fishing vessels — highest fatal severity share
-    fatal_by_type = result.data[result.data["severity"] == "fatal"].groupby(
-        "vessel_type"
-    ).size()
+    fatal_by_type = (
+        result.data[result.data["severity"] == "fatal"].groupby("vessel_type").size()
+    )
     total_by_type = result.data.groupby("vessel_type").size()
     fatal_rate = (fatal_by_type / total_by_type).sort_values(ascending=False)
     top_fatal_vessel = fatal_rate.index[0]

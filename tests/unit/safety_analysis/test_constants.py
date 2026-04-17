@@ -20,8 +20,12 @@ from worldenergydata.safety_analysis.constants import (
 class TestSeverityLevel:
     def test_all_members(self):
         expected = {
-            "NO_HURT", "MINOR", "MODERATE",
-            "SEVERE", "FATALITY", "MULTIPLE_FATALITIES",
+            "NO_HURT",
+            "MINOR",
+            "MODERATE",
+            "SEVERE",
+            "FATALITY",
+            "MULTIPLE_FATALITIES",
         }
         assert {m.name for m in SeverityLevel} == expected
 
@@ -34,7 +38,9 @@ class TestSeverityLevel:
         assert SeverityLevel.MULTIPLE_FATALITIES.numeric_value == 5
 
     def test_ordering(self):
-        assert SeverityLevel.NO_HURT.numeric_value < SeverityLevel.FATALITY.numeric_value
+        assert (
+            SeverityLevel.NO_HURT.numeric_value < SeverityLevel.FATALITY.numeric_value
+        )
 
     def test_string_enum(self):
         assert isinstance(SeverityLevel.MINOR, str)
@@ -59,8 +65,12 @@ class TestSeverityLabelMap:
 class TestObservationType:
     def test_all_members(self):
         expected = {
-            "SAFE", "AT_RISK", "NEAR_MISS",
-            "POSITIVE", "CORRECTIVE", "UNKNOWN",
+            "SAFE",
+            "AT_RISK",
+            "NEAR_MISS",
+            "POSITIVE",
+            "CORRECTIVE",
+            "UNKNOWN",
         }
         assert {m.name for m in ObservationType} == expected
 
@@ -68,9 +78,15 @@ class TestObservationType:
 class TestIncidentType:
     def test_all_members(self):
         expected = {
-            "INJURY", "SPILL", "EQUIPMENT_FAILURE",
-            "NEAR_MISS", "PROPERTY_DAMAGE", "ENVIRONMENTAL",
-            "FIRE", "VIOLATION", "OTHER",
+            "INJURY",
+            "SPILL",
+            "EQUIPMENT_FAILURE",
+            "NEAR_MISS",
+            "PROPERTY_DAMAGE",
+            "ENVIRONMENTAL",
+            "FIRE",
+            "VIOLATION",
+            "OTHER",
         }
         assert {m.name for m in IncidentType} == expected
 

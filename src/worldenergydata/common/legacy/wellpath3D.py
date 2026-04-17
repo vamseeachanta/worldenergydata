@@ -94,8 +94,6 @@ from worldenergydata.common.legacy.wellpath_visualization import (
     plot_multiple_wells,
     plot_single_well,
 )
-
-
 from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)

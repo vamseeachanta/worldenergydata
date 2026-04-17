@@ -7,9 +7,8 @@ from typing import Any, Dict, List
 
 import pandas as pd
 
-from worldenergydata.modules.hse.importers.base_importer import BaseImporter
-
 from worldenergydata.common.logging import get_logger
+from worldenergydata.modules.hse.importers.base_importer import BaseImporter
 
 logger = get_logger(__name__)
 

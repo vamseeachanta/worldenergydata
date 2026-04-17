@@ -391,7 +391,9 @@ class TestPerformance:
 
         elapsed = time.time() - start
 
-        assert len(cashflows) >= 360  # Engine may produce extra pre-production CAPEX periods
+        assert (
+            len(cashflows) >= 360
+        )  # Engine may produce extra pre-production CAPEX periods
         assert elapsed < 5.0  # Should complete in under 5 seconds
 
 

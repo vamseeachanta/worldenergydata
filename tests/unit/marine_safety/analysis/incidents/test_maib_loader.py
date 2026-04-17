@@ -22,6 +22,10 @@ from typing import List
 import pandas as pd
 import pytest
 
+from worldenergydata.marine_safety.analysis.incidents.incident_taxonomy import (
+    RootCauseType,
+    TaxonomyRecord,
+)
 from worldenergydata.marine_safety.analysis.incidents.maib_loader import (
     MAIBLoader,
     describe_maib_dataset,
@@ -29,27 +33,26 @@ from worldenergydata.marine_safety.analysis.incidents.maib_loader import (
     load_maib_csv,
     load_maib_csv_to_records,
 )
-from worldenergydata.marine_safety.analysis.incidents.incident_taxonomy import (
-    RootCauseType,
-    TaxonomyRecord,
-)
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
 
-MAIB_CSV_CONTENT = textwrap.dedent("""\
+MAIB_CSV_CONTENT = textwrap.dedent(
+    """\
     Occurrence_Id;Date;Main_Event;Vessel_Name;Vessel_Type;Latitude;Longitude;Deaths;Injuries;Abstract
     2020-001;2020-03-15;Collision;MV Searoamer;Cargo Ship;56.5;-2.1;0;2;Two vessels collided in fog
     2021-002;2021-08-19;Grounding;FV Argyll;Fishing Vessel;59.2;-1.5;1;3;Fishing vessel grounded on rocks
     2022-003;2022-11-05;Fire;MT Nordic Carrier;Tanker;53.6;-0.2;0;0;Engine room fire
-""")
+"""
+)
 
-MAIB_CSV_WITH_HUMAN_ERROR_CONTENT = textwrap.dedent("""\
+MAIB_CSV_WITH_HUMAN_ERROR_CONTENT = textwrap.dedent(
+    """\
     Occurrence_Id;Date;Main_Event;Vessel_Name;Vessel_Type;Latitude;Longitude;Deaths;Injuries;Abstract
     2023-010;2023-06-01;Collision;SS Navigator;Cargo Ship;51.5;0.1;0;0;Collision due to watchkeeping failure
-""")
+"""
+)
 
 
 @pytest.fixture()
@@ -92,17 +95,23 @@ class TestMAIBLoaderLoad:
         assert "report_id" in df.columns
         assert set(df["report_id"]) == {"2020-001", "2021-002", "2022-003"}
 
-    def test_incident_date_column_mapped(self, loader: MAIBLoader, maib_csv: Path) -> None:
+    def test_incident_date_column_mapped(
+        self, loader: MAIBLoader, maib_csv: Path
+    ) -> None:
         df = loader.load(maib_csv)
         assert "incident_date" in df.columns
         assert "2020-03-15" in df["incident_date"].values
 
-    def test_vessel_name_column_mapped(self, loader: MAIBLoader, maib_csv: Path) -> None:
+    def test_vessel_name_column_mapped(
+        self, loader: MAIBLoader, maib_csv: Path
+    ) -> None:
         df = loader.load(maib_csv)
         assert "vessel_name" in df.columns
         assert "MV Searoamer" in df["vessel_name"].values
 
-    def test_vessel_type_column_mapped(self, loader: MAIBLoader, maib_csv: Path) -> None:
+    def test_vessel_type_column_mapped(
+        self, loader: MAIBLoader, maib_csv: Path
+    ) -> None:
         df = loader.load(maib_csv)
         assert "vessel_type" in df.columns
         assert "Cargo Ship" in df["vessel_type"].values

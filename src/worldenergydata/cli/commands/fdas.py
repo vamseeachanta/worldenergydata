@@ -13,16 +13,16 @@ Examples:
     worldenergydata fdas analyze --field "Thunder Horse" --discount-rate 0.10
 """
 
-import typer
-from typing import Optional, List
-from pathlib import Path
-from enum import Enum
 import json
+from enum import Enum
+from pathlib import Path
+from typing import List, Optional
 
+import typer
 from rich.console import Console
-from rich.table import Table
-from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.panel import Panel
+from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.table import Table
 
 # Initialize console
 console = Console()
@@ -37,6 +37,7 @@ app = typer.Typer(
 
 class DepthClassification(str, Enum):
     """Water depth classification."""
+
     shelf = "shelf"
     deepwater = "deepwater"
     ultra_deepwater = "ultra_deepwater"
@@ -44,6 +45,7 @@ class DepthClassification(str, Enum):
 
 class Period(str, Enum):
     """Cashflow period options."""
+
     monthly = "monthly"
     annual = "annual"
 
@@ -62,17 +64,16 @@ def parse_cashflows(cashflows_str: str) -> List[float]:
 @app.command("calculate-npv")
 def calculate_npv(
     cashflows: str = typer.Option(
-        ..., "--cashflows", "-c",
-        help="Cashflows as JSON array (e.g., '[-1000,100,200,300,400,500]')"
+        ...,
+        "--cashflows",
+        "-c",
+        help="Cashflows as JSON array (e.g., '[-1000,100,200,300,400,500]')",
     ),
     discount_rate: float = typer.Option(
-        0.10, "--discount-rate", "-r",
-        help="Annual discount rate (e.g., 0.10 for 10%)"
+        0.10, "--discount-rate", "-r", help="Annual discount rate (e.g., 0.10 for 10%)"
     ),
     period: Period = typer.Option(
-        Period.monthly,
-        "--period", "-p",
-        help="Cashflow period"
+        Period.monthly, "--period", "-p", help="Cashflow period"
     ),
 ) -> None:
     """
@@ -92,17 +93,17 @@ def calculate_npv(
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
-            console=console
+            console=console,
         ) as progress:
             task = progress.add_task("[cyan]Calculating NPV...", total=None)
 
             try:
-                from worldenergydata.fdas.core.financial import calculate_npv as calc_npv
+                from worldenergydata.fdas.core.financial import (
+                    calculate_npv as calc_npv,
+                )
 
                 npv = calc_npv(
-                    __import__("numpy").array(cf_list),
-                    discount_rate,
-                    period.value
+                    __import__("numpy").array(cf_list), discount_rate, period.value
                 )
 
                 progress.update(task, completed=True)
@@ -111,7 +112,7 @@ def calculate_npv(
                 results_table = Table(
                     title="NPV Calculation Results",
                     show_header=True,
-                    header_style="bold cyan"
+                    header_style="bold cyan",
                 )
                 results_table.add_column("Metric", style="dim")
                 results_table.add_column("Value", justify="right")
@@ -122,13 +123,15 @@ def calculate_npv(
                 results_table.add_row("Net Present Value", f"${npv:,.2f}")
                 results_table.add_row(
                     "Investment",
-                    f"${abs(min(cf_list)):,.2f}" if min(cf_list) < 0 else "N/A"
+                    f"${abs(min(cf_list)):,.2f}" if min(cf_list) < 0 else "N/A",
                 )
 
                 console.print(results_table)
 
             except ImportError as e:
-                console.print(f"[yellow]Warning:[/yellow] Could not import FDAS module: {e}")
+                console.print(
+                    f"[yellow]Warning:[/yellow] Could not import FDAS module: {e}"
+                )
                 console.print(f"[dim]Cashflows: {cf_list}[/dim]")
                 console.print(f"[dim]Discount Rate: {discount_rate}[/dim]")
                 progress.update(task, completed=True)
@@ -144,16 +147,18 @@ def calculate_npv(
 @app.command("calculate-mirr")
 def calculate_mirr(
     cashflows: str = typer.Option(
-        ..., "--cashflows", "-c",
-        help="Cashflows as JSON array (e.g., '[-1000,100,200,300,400,500]')"
+        ...,
+        "--cashflows",
+        "-c",
+        help="Cashflows as JSON array (e.g., '[-1000,100,200,300,400,500]')",
     ),
     discount_rate: float = typer.Option(
-        0.10, "--discount-rate", "-r",
-        help="Annual discount rate (e.g., 0.10 for 10%)"
+        0.10, "--discount-rate", "-r", help="Annual discount rate (e.g., 0.10 for 10%)"
     ),
     reinvestment_rate: Optional[float] = typer.Option(
-        None, "--reinvestment-rate",
-        help="Annual reinvestment rate (defaults to discount rate)"
+        None,
+        "--reinvestment-rate",
+        help="Annual reinvestment rate (defaults to discount rate)",
     ),
 ) -> None:
     """
@@ -172,19 +177,17 @@ def calculate_mirr(
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
-            console=console
+            console=console,
         ) as progress:
             task = progress.add_task("[cyan]Calculating MIRR...", total=None)
 
             try:
-                from worldenergydata.fdas.core.financial import excel_like_mirr
-
                 import numpy as np
 
+                from worldenergydata.fdas.core.financial import excel_like_mirr
+
                 mirr_monthly, mirr_annual = excel_like_mirr(
-                    np.array(cf_list),
-                    discount_rate,
-                    reinvestment_rate
+                    np.array(cf_list), discount_rate, reinvestment_rate
                 )
 
                 progress.update(task, completed=True)
@@ -193,7 +196,7 @@ def calculate_mirr(
                 results_table = Table(
                     title="MIRR Calculation Results",
                     show_header=True,
-                    header_style="bold cyan"
+                    header_style="bold cyan",
                 )
                 results_table.add_column("Metric", style="dim")
                 results_table.add_column("Value", justify="right")
@@ -202,7 +205,11 @@ def calculate_mirr(
                 results_table.add_row("Discount Rate", f"{discount_rate:.2%}")
                 results_table.add_row(
                     "Reinvestment Rate",
-                    f"{reinvestment_rate:.2%}" if reinvestment_rate else "Same as discount"
+                    (
+                        f"{reinvestment_rate:.2%}"
+                        if reinvestment_rate
+                        else "Same as discount"
+                    ),
                 )
 
                 if not np.isnan(mirr_annual):
@@ -214,7 +221,9 @@ def calculate_mirr(
                 console.print(results_table)
 
             except ImportError as e:
-                console.print(f"[yellow]Warning:[/yellow] Could not import FDAS module: {e}")
+                console.print(
+                    f"[yellow]Warning:[/yellow] Could not import FDAS module: {e}"
+                )
                 console.print(f"[dim]Cashflows: {cf_list}[/dim]")
                 progress.update(task, completed=True)
 
@@ -229,13 +238,10 @@ def calculate_mirr(
 @app.command("calculate-irr")
 def calculate_irr(
     cashflows: str = typer.Option(
-        ..., "--cashflows", "-c",
-        help="Cashflows as JSON array"
+        ..., "--cashflows", "-c", help="Cashflows as JSON array"
     ),
     period: Period = typer.Option(
-        Period.monthly,
-        "--period", "-p",
-        help="Cashflow period"
+        Period.monthly, "--period", "-p", help="Cashflow period"
     ),
 ) -> None:
     """
@@ -251,14 +257,16 @@ def calculate_irr(
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
-            console=console
+            console=console,
         ) as progress:
             task = progress.add_task("[cyan]Calculating IRR...", total=None)
 
             try:
-                from worldenergydata.fdas.core.financial import calculate_irr as calc_irr
-
                 import numpy as np
+
+                from worldenergydata.fdas.core.financial import (
+                    calculate_irr as calc_irr,
+                )
 
                 irr_period, irr_annual = calc_irr(np.array(cf_list), period.value)
 
@@ -268,20 +276,24 @@ def calculate_irr(
                 results_table = Table(
                     title="IRR Calculation Results",
                     show_header=True,
-                    header_style="bold cyan"
+                    header_style="bold cyan",
                 )
                 results_table.add_column("Metric", style="dim")
                 results_table.add_column("Value", justify="right")
 
                 results_table.add_row("Cashflows", f"{len(cf_list)} periods")
                 results_table.add_row("Period", period.value)
-                results_table.add_row(f"{period.value.title()} IRR", f"{irr_period:.4%}")
+                results_table.add_row(
+                    f"{period.value.title()} IRR", f"{irr_period:.4%}"
+                )
                 results_table.add_row("Annual IRR", f"{irr_annual:.2%}")
 
                 console.print(results_table)
 
             except ImportError as e:
-                console.print(f"[yellow]Warning:[/yellow] Could not import FDAS module: {e}")
+                console.print(
+                    f"[yellow]Warning:[/yellow] Could not import FDAS module: {e}"
+                )
                 progress.update(task, completed=True)
 
     except typer.BadParameter as e:
@@ -295,17 +307,13 @@ def calculate_irr(
 @app.command("calculate-all")
 def calculate_all(
     cashflows: str = typer.Option(
-        ..., "--cashflows", "-c",
-        help="Cashflows as JSON array"
+        ..., "--cashflows", "-c", help="Cashflows as JSON array"
     ),
     discount_rate: float = typer.Option(
-        0.10, "--discount-rate", "-r",
-        help="Annual discount rate"
+        0.10, "--discount-rate", "-r", help="Annual discount rate"
     ),
     period: Period = typer.Option(
-        Period.monthly,
-        "--period", "-p",
-        help="Cashflow period"
+        Period.monthly, "--period", "-p", help="Cashflow period"
     ),
 ) -> None:
     """
@@ -323,19 +331,17 @@ def calculate_all(
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
-            console=console
+            console=console,
         ) as progress:
             task = progress.add_task("[cyan]Calculating all metrics...", total=None)
 
             try:
-                from worldenergydata.fdas.core.financial import calculate_all_metrics
-
                 import numpy as np
 
+                from worldenergydata.fdas.core.financial import calculate_all_metrics
+
                 results = calculate_all_metrics(
-                    np.array(cf_list),
-                    discount_rate,
-                    period.value
+                    np.array(cf_list), discount_rate, period.value
                 )
 
                 progress.update(task, completed=True)
@@ -344,7 +350,7 @@ def calculate_all(
                 results_table = Table(
                     title="Financial Metrics Summary",
                     show_header=True,
-                    header_style="bold cyan"
+                    header_style="bold cyan",
                 )
                 results_table.add_column("Metric", style="dim")
                 results_table.add_column("Value", justify="right")
@@ -359,8 +365,12 @@ def calculate_all(
                 else:
                     results_table.add_row("NPV", "[red]Error[/red]")
 
-                if results.get("mirr_annual") is not None and not np.isnan(results["mirr_annual"]):
-                    results_table.add_row("Annual MIRR", f"{results['mirr_annual']:.2%}")
+                if results.get("mirr_annual") is not None and not np.isnan(
+                    results["mirr_annual"]
+                ):
+                    results_table.add_row(
+                        "Annual MIRR", f"{results['mirr_annual']:.2%}"
+                    )
                 else:
                     results_table.add_row("Annual MIRR", "[yellow]N/A[/yellow]")
 
@@ -373,12 +383,16 @@ def calculate_all(
                     if results["payback_years"] == float("inf"):
                         results_table.add_row("Payback Period", "[red]Never[/red]")
                     else:
-                        results_table.add_row("Payback Period", f"{results['payback_years']:.1f} years")
+                        results_table.add_row(
+                            "Payback Period", f"{results['payback_years']:.1f} years"
+                        )
 
                 console.print(results_table)
 
             except ImportError as e:
-                console.print(f"[yellow]Warning:[/yellow] Could not import FDAS module: {e}")
+                console.print(
+                    f"[yellow]Warning:[/yellow] Could not import FDAS module: {e}"
+                )
                 progress.update(task, completed=True)
 
     except typer.BadParameter as e:
@@ -392,40 +406,30 @@ def calculate_all(
 @app.command()
 def analyze(
     field: Optional[str] = typer.Option(
-        None, "--field", "-f",
-        help="Field name to analyze (e.g., 'Thunder Horse')"
+        None, "--field", "-f", help="Field name to analyze (e.g., 'Thunder Horse')"
     ),
     lease: Optional[str] = typer.Option(
-        None, "--lease", "-l",
-        help="Lease number to analyze"
+        None, "--lease", "-l", help="Lease number to analyze"
     ),
     dev_system: str = typer.Option(
-        "subsea15", "--dev-system", "-d",
-        help="Development system type (dry, subsea15, subsea20)"
+        "subsea15",
+        "--dev-system",
+        "-d",
+        help="Development system type (dry, subsea15, subsea20)",
     ),
     discount_rate: float = typer.Option(
-        0.10, "--discount-rate", "-r",
-        help="Annual discount rate for analysis"
+        0.10, "--discount-rate", "-r", help="Annual discount rate for analysis"
     ),
-    oil_price: float = typer.Option(
-        75.00, "--oil-price",
-        help="Oil price per barrel"
-    ),
-    gas_price: float = typer.Option(
-        3.50, "--gas-price",
-        help="Gas price per MCF"
-    ),
+    oil_price: float = typer.Option(75.00, "--oil-price", help="Oil price per barrel"),
+    gas_price: float = typer.Option(3.50, "--gas-price", help="Gas price per MCF"),
     royalty_rate: float = typer.Option(
-        0.188, "--royalty-rate",
-        help="Royalty rate (e.g., 0.188 for 18.8%)"
+        0.188, "--royalty-rate", help="Royalty rate (e.g., 0.188 for 18.8%)"
     ),
     output: Optional[Path] = typer.Option(
-        None, "--output", "-o",
-        help="Output file path for analysis results"
+        None, "--output", "-o", help="Output file path for analysis results"
     ),
     verbose: bool = typer.Option(
-        False, "--verbose", "-v",
-        help="Enable verbose output"
+        False, "--verbose", "-v", help="Enable verbose output"
     ),
 ) -> None:
     """
@@ -453,36 +457,46 @@ def analyze(
                 f"Oil Price: ${oil_price:.2f}/bbl\n"
                 f"Gas Price: ${gas_price:.2f}/MCF\n"
                 f"Royalty Rate: {royalty_rate:.2%}",
-                border_style="cyan"
+                border_style="cyan",
             )
         )
 
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
-            console=console
+            console=console,
         ) as progress:
-            task = progress.add_task("[cyan]Running field development analysis...", total=100)
+            task = progress.add_task(
+                "[cyan]Running field development analysis...", total=100
+            )
 
             analysis_results = {}
 
             try:
-                progress.update(task, advance=20, description="[cyan]Loading FDAS modules...")
+                progress.update(
+                    task, advance=20, description="[cyan]Loading FDAS modules..."
+                )
 
-                from worldenergydata.fdas.core.config import AssumptionsManager
                 from worldenergydata.fdas.analysis.cashflow import CashflowEngine
+                from worldenergydata.fdas.core.config import AssumptionsManager
 
-                progress.update(task, advance=20, description="[cyan]Loading assumptions...")
+                progress.update(
+                    task, advance=20, description="[cyan]Loading assumptions..."
+                )
 
                 # Initialize assumptions manager
                 assumptions_mgr = AssumptionsManager()
 
-                progress.update(task, advance=20, description="[cyan]Creating cashflow engine...")
+                progress.update(
+                    task, advance=20, description="[cyan]Creating cashflow engine..."
+                )
 
                 # Initialize cashflow engine
                 cashflow_engine = CashflowEngine(assumptions_mgr, dev_system)
 
-                progress.update(task, advance=20, description="[cyan]Building analysis results...")
+                progress.update(
+                    task, advance=20, description="[cyan]Building analysis results..."
+                )
 
                 # Build analysis summary
                 analysis_results = {
@@ -496,29 +510,46 @@ def analyze(
                         "royalty_rate": royalty_rate,
                     },
                     "assumptions": {
-                        "royalty_rate": assumptions_mgr.get(dev_system, 'ROYALTY_RATE', royalty_rate),
-                        "variable_opex_per_bbl": assumptions_mgr.get(dev_system, 'VARIABLE_OPEX_$/BBL', 12.0),
-                        "fixed_opex_mm_per_year": assumptions_mgr.get(dev_system, 'FIXED_OPEX_MM_PER_YEAR', 25.0),
+                        "royalty_rate": assumptions_mgr.get(
+                            dev_system, "ROYALTY_RATE", royalty_rate
+                        ),
+                        "variable_opex_per_bbl": assumptions_mgr.get(
+                            dev_system, "VARIABLE_OPEX_$/BBL", 12.0
+                        ),
+                        "fixed_opex_mm_per_year": assumptions_mgr.get(
+                            dev_system, "FIXED_OPEX_MM_PER_YEAR", 25.0
+                        ),
                     },
                     "status": "analysis_ready",
-                    "notes": "Cashflow engine initialized. Use with production data for full analysis."
+                    "notes": "Cashflow engine initialized. Use with production data for full analysis.",
                 }
 
-                progress.update(task, advance=20, description="[cyan]Completing analysis...")
+                progress.update(
+                    task, advance=20, description="[cyan]Completing analysis..."
+                )
 
                 # Display results
                 results_table = Table(
                     title="Field Development Analysis",
                     show_header=True,
-                    header_style="bold cyan"
+                    header_style="bold cyan",
                 )
                 results_table.add_column("Parameter", style="dim")
                 results_table.add_column("Value", justify="right")
 
                 results_table.add_row("Development System", dev_system)
-                results_table.add_row("Royalty Rate", f"{analysis_results['assumptions']['royalty_rate']:.2%}")
-                results_table.add_row("Variable OPEX", f"${analysis_results['assumptions']['variable_opex_per_bbl']:.2f}/bbl")
-                results_table.add_row("Fixed OPEX", f"${analysis_results['assumptions']['fixed_opex_mm_per_year']:.1f}M/year")
+                results_table.add_row(
+                    "Royalty Rate",
+                    f"{analysis_results['assumptions']['royalty_rate']:.2%}",
+                )
+                results_table.add_row(
+                    "Variable OPEX",
+                    f"${analysis_results['assumptions']['variable_opex_per_bbl']:.2f}/bbl",
+                )
+                results_table.add_row(
+                    "Fixed OPEX",
+                    f"${analysis_results['assumptions']['fixed_opex_mm_per_year']:.1f}M/year",
+                )
                 results_table.add_row("", "")
                 results_table.add_row("Status", "[green]Analysis Ready[/green]")
 
@@ -527,16 +558,20 @@ def analyze(
                 # Save output if specified
                 if output:
                     import json
+
                     output.parent.mkdir(parents=True, exist_ok=True)
-                    with open(output, 'w') as f:
+                    with open(output, "w") as f:
                         json.dump(analysis_results, f, indent=2, default=str)
                     console.print(f"\n[dim]Analysis saved to: {output}[/dim]")
 
             except ImportError as e:
                 progress.update(task, completed=100)
-                console.print(f"[yellow]Warning:[/yellow] Could not import FDAS modules: {e}")
+                console.print(
+                    f"[yellow]Warning:[/yellow] Could not import FDAS modules: {e}"
+                )
                 if verbose:
                     import traceback
+
                     console.print(f"[dim]{traceback.format_exc()}[/dim]")
 
         console.print("\n[green]Analysis completed[/green]")
@@ -547,16 +582,14 @@ def analyze(
         console.print(f"[red]Error:[/red] {str(e)}")
         if verbose:
             import traceback
+
             console.print(f"[dim]{traceback.format_exc()}[/dim]")
         raise typer.Exit(1)
 
 
 @app.command()
 def classify(
-    water_depth: float = typer.Argument(
-        ...,
-        help="Water depth in feet"
-    ),
+    water_depth: float = typer.Argument(..., help="Water depth in feet"),
 ) -> None:
     """
     Classify development system by water depth.
@@ -579,7 +612,7 @@ def classify(
                 f"[bold]Water Depth Classification[/bold]\n\n"
                 f"Water Depth: [cyan]{water_depth:,.0f} ft[/cyan]\n"
                 f"Classification: [green]{classification}[/green]",
-                border_style="cyan"
+                border_style="cyan",
             )
         )
 
@@ -597,7 +630,7 @@ def classify(
                 f"[bold]Water Depth Classification[/bold]\n\n"
                 f"Water Depth: [cyan]{water_depth:,.0f} ft[/cyan]\n"
                 f"Classification: [green]{classification}[/green]",
-                border_style="cyan"
+                border_style="cyan",
             )
         )
 
@@ -641,7 +674,7 @@ with BSEE data sources.
 
 [yellow]Documentation:[/yellow]
 See FDAS module documentation for detailed usage""",
-        border_style="cyan"
+        border_style="cyan",
     )
     console.print(info_panel)
 

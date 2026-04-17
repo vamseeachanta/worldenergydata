@@ -100,9 +100,7 @@ class TestBaseReportTemplateInit:
         assert t.version == "2.0.0"
 
     def test_with_parent_template(self):
-        t = BaseReportTemplate(
-            "child", "economic", parent_template="parent_template"
-        )
+        t = BaseReportTemplate("child", "economic", parent_template="parent_template")
         assert t.parent_template == "parent_template"
 
     def test_supported_template_types(self):

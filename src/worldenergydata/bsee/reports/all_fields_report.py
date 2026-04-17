@@ -67,9 +67,7 @@ class AllFieldsReport:
             lines.append("")
             era_summary = self.get_era_summary()
             if not era_summary.empty:
-                lines.append(
-                    "| Era | Fields | Oil (MMBBL) | Gas (BCF) | Wells |"
-                )
+                lines.append("| Era | Fields | Oil (MMBBL) | Gas (BCF) | Wells |")
                 lines.append("|-----|--------|-------------|-----------|-------|")
                 for era, row in era_summary.iterrows():
                     lines.append(
@@ -113,20 +111,14 @@ class AllFieldsReport:
             if not tier2.empty:
                 lines.append("## Lower Tertiary Financial Summary")
                 lines.append("")
-                lines.append(
-                    "| Field | NPV10 ($MM) | IRR (%) | Payback (yrs) |"
-                )
-                lines.append(
-                    "|-------|-------------|---------|---------------|"
-                )
+                lines.append("| Field | NPV10 ($MM) | IRR (%) | Payback (yrs) |")
+                lines.append("|-------|-------------|---------|---------------|")
                 for _, row in tier2.iterrows():
                     name = row.get("FIELD_NAME", row.get("FIELD_CODE", ""))
                     npv = row.get("NPV10_MM_USD", 0)
                     irr = row.get("IRR_PCT", 0)
                     payback = row.get("PAYBACK_YRS", "")
-                    lines.append(
-                        f"| {name} | {npv:,.0f} | {irr:.1f} | {payback} |"
-                    )
+                    lines.append(f"| {name} | {npv:,.0f} | {irr:.1f} | {payback} |")
                 lines.append("")
 
         output_path.write_text("\n".join(lines))
@@ -137,9 +129,9 @@ class AllFieldsReport:
         output_path = Path(output_path)
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
-        df_sorted = self._df.sort_values(
-            "CUM_OIL_MMBBL", ascending=False
-        ).reset_index(drop=True)
+        df_sorted = self._df.sort_values("CUM_OIL_MMBBL", ascending=False).reset_index(
+            drop=True
+        )
         df_sorted.to_csv(output_path, index=False)
         logger.info("CSV exported to %s (%d fields)", output_path, len(df_sorted))
 

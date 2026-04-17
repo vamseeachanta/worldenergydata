@@ -45,8 +45,7 @@ class DeclineCurveResult:
                 pred = self.initial_rate * np.exp(-self.decline_rate * t)
             elif self.model_type == "hyperbolic" and self.b_factor is not None:
                 pred = self.initial_rate / (
-                    (1 + self.b_factor * self.decline_rate * t)
-                    ** (1 / self.b_factor)
+                    (1 + self.b_factor * self.decline_rate * t) ** (1 / self.b_factor)
                 )
             elif self.model_type == "harmonic":
                 pred = self.initial_rate / (1 + self.decline_rate * t)
@@ -106,7 +105,9 @@ class DeclineCurveAnalyzer:
 
         try:
             popt, _ = optimize.curve_fit(
-                exponential, time, values,
+                exponential,
+                time,
+                values,
                 p0=[qi_guess, 0.05],
                 bounds=([0, 0], [np.inf, 2.0]),
                 maxfev=5000,
@@ -138,7 +139,9 @@ class DeclineCurveAnalyzer:
 
         try:
             popt, _ = optimize.curve_fit(
-                hyperbolic, time, values,
+                hyperbolic,
+                time,
+                values,
                 p0=[qi_guess, 0.05, 0.5],
                 bounds=([0, 0, 0.01], [np.inf, 2.0, 1.0]),
                 maxfev=5000,
@@ -165,7 +168,9 @@ class DeclineCurveAnalyzer:
 
         try:
             popt, _ = optimize.curve_fit(
-                harmonic, time, values,
+                harmonic,
+                time,
+                values,
                 p0=[qi_guess, 0.05],
                 bounds=([0, 0], [np.inf, 2.0]),
                 maxfev=5000,

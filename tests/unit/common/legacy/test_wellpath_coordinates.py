@@ -10,10 +10,10 @@ from worldenergydata.common.legacy.wellpath_coordinates import (
     north2lat,
 )
 
-
 # ---------------------------------------------------------------------------
 # north2lat
 # ---------------------------------------------------------------------------
+
 
 class TestNorth2Lat:
     def test_zero_offset(self):
@@ -48,6 +48,7 @@ class TestNorth2Lat:
 # ---------------------------------------------------------------------------
 # east2lon
 # ---------------------------------------------------------------------------
+
 
 class TestEast2Lon:
     def test_zero_offset(self):
@@ -84,11 +85,16 @@ class TestEast2Lon:
 # calculate_geographic_position
 # ---------------------------------------------------------------------------
 
+
 class TestCalculateGeographicPosition:
     def test_zero_offsets(self):
         lat, lon, alt = calculate_geographic_position(
-            north=0, east=0, tvd=0,
-            surface_lat=29.0, surface_lon=-90.0, surface_alt=10.0,
+            north=0,
+            east=0,
+            tvd=0,
+            surface_lat=29.0,
+            surface_lon=-90.0,
+            surface_alt=10.0,
         )
         assert lat == 29.0
         assert lon == -90.0
@@ -96,15 +102,23 @@ class TestCalculateGeographicPosition:
 
     def test_altitude_decreases_with_tvd(self):
         _, _, alt = calculate_geographic_position(
-            north=0, east=0, tvd=1000,
-            surface_lat=29.0, surface_lon=-90.0, surface_alt=10.0,
+            north=0,
+            east=0,
+            tvd=1000,
+            surface_lat=29.0,
+            surface_lon=-90.0,
+            surface_alt=10.0,
         )
         assert alt == -990.0
 
     def test_combined_offsets(self):
         lat, lon, alt = calculate_geographic_position(
-            north=1000, east=500, tvd=500,
-            surface_lat=29.0, surface_lon=-90.0, surface_alt=50.0,
+            north=1000,
+            east=500,
+            tvd=500,
+            surface_lat=29.0,
+            surface_lon=-90.0,
+            surface_alt=50.0,
         )
         assert lat > 29.0
         assert lon > -90.0
@@ -112,7 +126,11 @@ class TestCalculateGeographicPosition:
 
     def test_returns_tuple(self):
         result = calculate_geographic_position(
-            north=0, east=0, tvd=0,
-            surface_lat=0.0, surface_lon=0.0, surface_alt=0.0,
+            north=0,
+            east=0,
+            tvd=0,
+            surface_lat=0.0,
+            surface_lon=0.0,
+            surface_alt=0.0,
         )
         assert len(result) == 3

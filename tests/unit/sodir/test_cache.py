@@ -39,6 +39,7 @@ class TestSodirCache:
     def test_get_expired_key(self):
         # Manually create an expired entry (ttl=0 is falsy so cache uses default)
         from worldenergydata.sodir.cache import CacheEntry
+
         self.cache.cache["key1"] = CacheEntry(
             data="value", timestamp=time.time() - 100, ttl=50
         )
@@ -76,6 +77,7 @@ class TestSodirCache:
 
     def test_expired_entry_removed_on_get(self):
         from worldenergydata.sodir.cache import CacheEntry
+
         self.cache.cache["key1"] = CacheEntry(
             data="value", timestamp=time.time() - 100, ttl=50
         )

@@ -3,8 +3,8 @@
 
 """Unit tests for worldenergydata.decommissioning.data_completeness."""
 
-import pytest
 import pandas as pd
+import pytest
 
 from worldenergydata.decommissioning.data_completeness import (
     CompletenessScore,
@@ -102,8 +102,8 @@ def test_overall_score_is_weighted_average(scorer):
 
 def test_partial_scores_average_correctly(scorer):
     data = {
-        "as_built_drawings": 1.0,    # weight 0.30
-        "inspection_records": 1.0,   # weight 0.25
+        "as_built_drawings": 1.0,  # weight 0.30
+        "inspection_records": 1.0,  # weight 0.25
         "well_records": 0.0,
         "mooring_documents": 0.0,
         "environmental_surveys": 0.0,

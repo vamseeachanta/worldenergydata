@@ -81,9 +81,7 @@ class EIAIngestionState:
         """
         self._data[feed_name] = period_date
         self.state_dir.mkdir(parents=True, exist_ok=True)
-        self._state_file.write_text(
-            json.dumps(self._data, indent=2), encoding="utf-8"
-        )
+        self._state_file.write_text(json.dumps(self._data, indent=2), encoding="utf-8")
 
 
 # ── Ingestion Sync ────────────────────────────────────────────────────────────
@@ -142,9 +140,7 @@ class EIAIngestionSync:
                 enriched["_schema_version"] = JSONL_SCHEMA_VERSION
                 fh.write(json.dumps(enriched, default=str) + "\n")
 
-        logger.info(
-            "Wrote %d records to %s", len(records), output_path
-        )
+        logger.info("Wrote %d records to %s", len(records), output_path)
 
     # ── Filtering ─────────────────────────────────────────────────────────────
 
@@ -166,7 +162,8 @@ class EIAIngestionSync:
             return records
 
         new_records = [
-            r for r in records
+            r
+            for r in records
             if isinstance(r.get("period"), str) and r["period"] > last_fetch_date
         ]
         return new_records
@@ -180,9 +177,7 @@ class EIAIngestionSync:
         Returns:
             Latest ISO date string, or None if records is empty.
         """
-        periods = [
-            r["period"] for r in records if isinstance(r.get("period"), str)
-        ]
+        periods = [r["period"] for r in records if isinstance(r.get("period"), str)]
         return max(periods) if periods else None
 
     # ── Sync runners ──────────────────────────────────────────────────────────
@@ -199,9 +194,7 @@ class EIAIngestionSync:
         feed = "petroleum_weekly"
         last_fetch = self.state.get_last_fetch(feed)
 
-        logger.info(
-            "Starting petroleum sync (last_fetch=%s)", last_fetch or "None"
-        )
+        logger.info("Starting petroleum sync (last_fetch=%s)", last_fetch or "None")
 
         start_date = last_fetch if last_fetch else None
         records = self.client.fetch_petroleum_weekly(start_date=start_date)
@@ -236,9 +229,7 @@ class EIAIngestionSync:
         feed = "gas_storage_weekly"
         last_fetch = self.state.get_last_fetch(feed)
 
-        logger.info(
-            "Starting gas storage sync (last_fetch=%s)", last_fetch or "None"
-        )
+        logger.info("Starting gas storage sync (last_fetch=%s)", last_fetch or "None")
 
         start_date = last_fetch if last_fetch else None
         records = self.client.fetch_gas_storage_weekly(start_date=start_date)

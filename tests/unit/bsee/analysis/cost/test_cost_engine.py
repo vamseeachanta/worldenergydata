@@ -4,9 +4,10 @@
 
 """Unit tests for worldenergydata.bsee.analysis.cost.cost_engine."""
 
-import pytest
-import pandas as pd
 from pathlib import Path
+
+import pandas as pd
+import pytest
 
 from worldenergydata.bsee.analysis.cost.cost_engine import CostEngine
 from worldenergydata.bsee.analysis.cost.models import (
@@ -17,7 +18,6 @@ from worldenergydata.bsee.analysis.cost.models import (
     WellDepthBand,
 )
 from worldenergydata.bsee.analysis.cost.regional_loader import RegionalCostLoader
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -181,14 +181,16 @@ class TestLFSStubFallback:
 
 class TestCalibrationOverride:
     def test_calibrated_engine_returns_different_rate(self, engine):
-        from worldenergydata.bsee.analysis.cost.sanctioned_dataset import (
-            SanctionedProjectDataset,
-        )
         from worldenergydata.bsee.analysis.cost.cost_calibration import (
             MultivariateCalibration,
         )
+        from worldenergydata.bsee.analysis.cost.sanctioned_dataset import (
+            SanctionedProjectDataset,
+        )
 
-        training_df = SanctionedProjectDataset().synthetic_dataset(n_records=150, seed=42)
+        training_df = SanctionedProjectDataset().synthetic_dataset(
+            n_records=150, seed=42
+        )
         calibration = MultivariateCalibration()
         calibration.fit(training_df)
 

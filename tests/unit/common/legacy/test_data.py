@@ -16,10 +16,10 @@ from worldenergydata.common.legacy.data import (
     getClosestIntegerInList,
 )
 
-
 # ---------------------------------------------------------------------------
 # get_initials_from_name
 # ---------------------------------------------------------------------------
+
 
 class TestGetInitialsFromName:
     def test_two_names(self):
@@ -38,6 +38,7 @@ class TestGetInitialsFromName:
 # ---------------------------------------------------------------------------
 # getClosestIntegerInList
 # ---------------------------------------------------------------------------
+
 
 class TestGetClosestIntegerInList:
     def test_exact_match(self):
@@ -70,6 +71,7 @@ class TestGetClosestIntegerInList:
 # AttributeDict
 # ---------------------------------------------------------------------------
 
+
 class TestAttributeDict:
     def test_access_as_attribute(self):
         d = AttributeDict({"name": "test", "value": 42})
@@ -93,6 +95,7 @@ class TestAttributeDict:
 # ---------------------------------------------------------------------------
 # DateTimeUtility
 # ---------------------------------------------------------------------------
+
 
 class TestDateTimeUtility:
     def test_last_day_of_january(self):
@@ -124,6 +127,7 @@ class TestDateTimeUtility:
 # ---------------------------------------------------------------------------
 # ReadDataFromString
 # ---------------------------------------------------------------------------
+
 
 class TestReadDataFromString:
     def setup_method(self):
@@ -207,16 +211,12 @@ class TestReadDataFromString:
 
     def test_get_first_array_row_containing_any_keyword(self):
         array = ["abc", "def", "ghi abc"]
-        result = self.reader.get_first_array_row_containing_any_keyword(
-            array, ["abc"]
-        )
+        result = self.reader.get_first_array_row_containing_any_keyword(array, ["abc"])
         assert result == 1
 
     def test_get_first_array_row_containing_any_keyword_none(self):
         array = ["abc", "def"]
-        result = self.reader.get_first_array_row_containing_any_keyword(
-            array, ["xyz"]
-        )
+        result = self.reader.get_first_array_row_containing_any_keyword(array, ["xyz"])
         assert result is None
 
     def test_get_first_array_row_containing_all_keywords(self):
@@ -292,12 +292,11 @@ class TestReadDataFromString:
 # ReadDataFromSystemFiles
 # ---------------------------------------------------------------------------
 
+
 class TestReadDataFromSystemFiles:
     def test_get_file_list_from_folder_empty(self, tmp_path):
         reader = ReadDataFromSystemFiles()
-        result = reader.get_file_list_from_folder(
-            str(tmp_path / "*.nonexistent")
-        )
+        result = reader.get_file_list_from_folder(str(tmp_path / "*.nonexistent"))
         assert result == []
 
     def test_get_file_list_with_extension(self, tmp_path):
@@ -336,6 +335,7 @@ class TestReadDataFromSystemFiles:
 
     def test_get_data_from_json(self, tmp_path):
         import json
+
         f = tmp_path / "test.json"
         f.write_text(json.dumps({"key": "value"}))
         reader = ReadDataFromSystemFiles()
@@ -363,6 +363,7 @@ class TestReadDataFromSystemFiles:
 # ---------------------------------------------------------------------------
 # RegEx
 # ---------------------------------------------------------------------------
+
 
 class TestRegEx:
     def test_replace_in_string_custom(self):
@@ -419,4 +420,3 @@ class TestRegEx:
         result = regex.get_without_html_tags(cfg)
         assert "Test" in result
         assert "<p>" not in result
-

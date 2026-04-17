@@ -8,7 +8,8 @@ Uses pydantic-settings for environment-based configuration with validation.
 """
 
 from pathlib import Path
-from typing import Optional, Any
+from typing import Any, Optional
+
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 

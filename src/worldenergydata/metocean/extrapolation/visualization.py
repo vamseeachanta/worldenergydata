@@ -42,8 +42,7 @@ def plot_source_map(
         import plotly.graph_objects as go
     except ImportError as exc:
         raise ImportError(
-            "plotly is required for visualization. "
-            "Install with: pip install plotly"
+            "plotly is required for visualization. " "Install with: pip install plotly"
         ) from exc
 
     fig = go.Figure()
@@ -53,8 +52,7 @@ def plot_source_map(
     src_lons = [s.lon for s in sources]
     src_names = [s.name for s in sources]
     src_text = [
-        f"{s.name}<br>Type: {s.source_type}<br>Priority: {s.priority}"
-        for s in sources
+        f"{s.name}<br>Type: {s.source_type}<br>Priority: {s.priority}" for s in sources
     ]
 
     fig.add_trace(
@@ -119,8 +117,7 @@ def plot_correction_breakdown(result) -> "go.Figure":
         import plotly.graph_objects as go
     except ImportError as exc:
         raise ImportError(
-            "plotly is required for visualization. "
-            "Install with: pip install plotly"
+            "plotly is required for visualization. " "Install with: pip install plotly"
         ) from exc
 
     # Baseline values (before corrections)
@@ -154,9 +151,7 @@ def plot_correction_breakdown(result) -> "go.Figure":
     )
 
     corrections_text = (
-        ", ".join(result.corrections_applied)
-        if result.corrections_applied
-        else "none"
+        ", ".join(result.corrections_applied) if result.corrections_applied else "none"
     )
 
     fig.update_layout(

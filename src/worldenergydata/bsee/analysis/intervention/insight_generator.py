@@ -82,17 +82,13 @@ class InsightGenerator:
         wd = self._results.get("well_depth", {})
         max_md = wd.get("max_total_md", 0.0)
         if max_md > 0:
-            findings.append(
-                f"Deepest well reaches {max_md:.1f} ft measured depth."
-            )
+            findings.append(f"Deepest well reaches {max_md:.1f} ft measured depth.")
 
         # 5. Completion rate
         wl = self._results.get("well_lifecycle", {})
         comp_rate = wl.get("completion_rate", 0.0)
         if comp_rate > 0:
-            findings.append(
-                f"Well completion rate is {comp_rate * 100:.1f}%."
-            )
+            findings.append(f"Well completion rate is {comp_rate * 100:.1f}%.")
 
         return findings[:5]
 
@@ -118,9 +114,7 @@ class InsightGenerator:
                 f" {last_yr} (year-over-year change of {delta:.1f} days)."
             )
         else:
-            trends.append(
-                "Insufficient years for drilling duration trend analysis."
-            )
+            trends.append("Insufficient years for drilling duration trend analysis.")
 
         # Year-over-year depth trend
         wd = self._results.get("well_depth", {})
@@ -141,9 +135,7 @@ class InsightGenerator:
                 f" (year-over-year change of {delta:.1f} ft)."
             )
         else:
-            trends.append(
-                "Insufficient years for well depth trend analysis."
-            )
+            trends.append("Insufficient years for well depth trend analysis.")
 
         return trends
 
@@ -202,8 +194,12 @@ class InsightGenerator:
         by_area = ca.get("by_area", pd.DataFrame())
         op = self._results.get("operator_portfolio", {})
         top_ops = op.get("top_operators", pd.DataFrame())
-        if (isinstance(by_area, pd.DataFrame) and not by_area.empty
-                and isinstance(top_ops, pd.DataFrame) and not top_ops.empty):
+        if (
+            isinstance(by_area, pd.DataFrame)
+            and not by_area.empty
+            and isinstance(top_ops, pd.DataFrame)
+            and not top_ops.empty
+        ):
             if "AREA_CODE" in by_area.columns:
                 total_operators = len(top_ops)
                 if total_operators > 0:
@@ -283,8 +279,7 @@ class InsightGenerator:
             i_count = ca.get("intervention_count", 0)
             if d_count + i_count > 0:
                 risks.append(
-                    "No significant risk factors identified in current"
-                    " dataset."
+                    "No significant risk factors identified in current" " dataset."
                 )
 
         return risks

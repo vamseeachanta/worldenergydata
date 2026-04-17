@@ -25,6 +25,7 @@ logger = logging.getLogger(__name__)
 # Data structures
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class FieldReport:
     """Consolidated analysis results for a BSEE field.
@@ -57,6 +58,7 @@ class FieldReport:
 # ---------------------------------------------------------------------------
 # Pipeline runner
 # ---------------------------------------------------------------------------
+
 
 class PipelineRunner:
     """Orchestrates all BSEE field analysis stages.
@@ -126,26 +128,20 @@ class PipelineRunner:
 
         # 1. Load production data and filter to resolved field
         raw_production_df = self._load_production_data(warnings)
-        production_df = self._filter_to_field(
-            raw_production_df, context, warnings
-        )
+        production_df = self._filter_to_field(raw_production_df, context, warnings)
 
         # 2. Run AllFieldsRunner for production summary
-        production_summary = self._run_production_analysis(
-            production_df, warnings
-        )
+        production_summary = self._run_production_analysis(production_df, warnings)
 
         # 3. Compute wellbore count from field-scoped production data
-        wellbore_count = self._compute_wellbore_count(
-            production_df, context
-        )
+        wellbore_count = self._compute_wellbore_count(production_df, context)
 
         # 4. Load activity data and run intervention analysis
         activity_analysis = self._run_activity_analysis(warnings)
 
         # 5. Load casing data for wells
-        casing_strings, casing_matrices, casing_svgs = (
-            self._run_casing_analysis(context, production_df, warnings)
+        casing_strings, casing_matrices, casing_svgs = self._run_casing_analysis(
+            context, production_df, warnings
         )
 
         # 6. Build consolidated FieldReport
@@ -217,14 +213,10 @@ class PipelineRunner:
         for path in candidates:
             df = _load_pickle_safe(path)
             if not df.empty:
-                logger.info(
-                    "Loaded production data from %s (%d rows)", path, len(df)
-                )
+                logger.info("Loaded production data from %s (%d rows)", path, len(df))
                 return df
 
-        warnings.append(
-            "No production data found — production summary will be empty"
-        )
+        warnings.append("No production data found — production summary will be empty")
         return pd.DataFrame()
 
     # ------------------------------------------------------------------
@@ -242,17 +234,13 @@ class PipelineRunner:
 
         runner = self._get_all_fields_runner()
         if runner is None:
-            warnings.append(
-                "AllFieldsRunner unavailable — production summary skipped"
-            )
+            warnings.append("AllFieldsRunner unavailable — production summary skipped")
             return pd.DataFrame()
 
         try:
             return runner.run(production_df)
         except Exception as exc:
-            warnings.append(
-                f"AllFieldsRunner failed: {exc} — production summary empty"
-            )
+            warnings.append(f"AllFieldsRunner failed: {exc} — production summary empty")
             logger.warning("AllFieldsRunner error: %s", exc)
             return pd.DataFrame()
 
@@ -283,18 +271,14 @@ class PipelineRunner:
 
         cls = self._get_activity_analyzer_cls()
         if cls is None:
-            warnings.append(
-                "Activity analyzer unavailable — activity analysis skipped"
-            )
+            warnings.append("Activity analyzer unavailable — activity analysis skipped")
             return {}
 
         try:
             analyzer = cls(activity_df)
             return analyzer.analyze()
         except Exception as exc:
-            warnings.append(
-                f"Activity analysis failed: {exc}"
-            )
+            warnings.append(f"Activity analysis failed: {exc}")
             logger.warning("Activity analyzer error: %s", exc)
             return {}
 
@@ -309,14 +293,10 @@ class PipelineRunner:
         for path in candidates:
             df = _load_pickle_safe(path)
             if not df.empty:
-                logger.info(
-                    "Loaded activity data from %s (%d rows)", path, len(df)
-                )
+                logger.info("Loaded activity data from %s (%d rows)", path, len(df))
                 return df
 
-        warnings.append(
-            "No activity data found — activity analysis will be empty"
-        )
+        warnings.append("No activity data found — activity analysis will be empty")
         return pd.DataFrame()
 
     def _get_activity_analyzer_cls(self) -> type | None:
@@ -331,9 +311,7 @@ class PipelineRunner:
 
             return ComprehensiveActivityAnalyzer
         except Exception as exc:
-            logger.warning(
-                "Cannot import ComprehensiveActivityAnalyzer: %s", exc
-            )
+            logger.warning("Cannot import ComprehensiveActivityAnalyzer: %s", exc)
             return None
 
     # ------------------------------------------------------------------
@@ -352,18 +330,14 @@ class PipelineRunner:
         svgs_map: dict[str, str] = {}
 
         if self._tubulars_path is None:
-            warnings.append(
-                "No tubulars path configured — casing analysis skipped"
-            )
+            warnings.append("No tubulars path configured — casing analysis skipped")
             return strings_map, matrices_map, svgs_map
 
         # Gather unique API12s from production data
         api12s = self._collect_api12s(context, production_df)
 
         if not api12s:
-            warnings.append(
-                "No well APIs found — casing analysis skipped"
-            )
+            warnings.append("No well APIs found — casing analysis skipped")
             return strings_map, matrices_map, svgs_map
 
         try:
@@ -382,13 +356,9 @@ class PipelineRunner:
                 strings_map[api12] = strings
                 if strings:
                     matrices_map[api12] = casing_matrix(strings)
-                    svgs_map[api12] = render_casing_svg(
-                        strings, well_name=api12
-                    )
+                    svgs_map[api12] = render_casing_svg(strings, well_name=api12)
             except Exception as exc:
-                warnings.append(
-                    f"Casing analysis failed for {api12}: {exc}"
-                )
+                warnings.append(f"Casing analysis failed for {api12}: {exc}")
                 logger.warning("Casing error for %s: %s", api12, exc)
 
         return strings_map, matrices_map, svgs_map
@@ -413,7 +383,9 @@ class PipelineRunner:
 
         # Try field code columns
         field_col_candidates = [
-            "FIELD_NAME_CODE", "BOTM_FLD_NAME_CD", "FIELD_CODE",
+            "FIELD_NAME_CODE",
+            "BOTM_FLD_NAME_CD",
+            "FIELD_CODE",
         ]
         for col in field_col_candidates:
             if col in df.columns:
@@ -439,12 +411,7 @@ class PipelineRunner:
     ) -> list[str]:
         """Gather unique well API12 numbers from field-scoped production data."""
         if not production_df.empty and "API_WELL_NUMBER" in production_df.columns:
-            return (
-                production_df["API_WELL_NUMBER"]
-                .astype(str)
-                .unique()
-                .tolist()
-            )
+            return production_df["API_WELL_NUMBER"].astype(str).unique().tolist()
         return []
 
     @staticmethod
@@ -462,6 +429,7 @@ class PipelineRunner:
 # Module-level helpers
 # ---------------------------------------------------------------------------
 
+
 def _load_pickle_safe(file_path: Path) -> pd.DataFrame:
     """Load a pickle file, returning empty DataFrame for LFS stubs or errors."""
     if not file_path.exists():
@@ -472,9 +440,7 @@ def _load_pickle_safe(file_path: Path) -> pd.DataFrame:
         with open(file_path, "rb") as f:
             header = f.read(40)
         if b"version https://git-lfs" in header:
-            logger.warning(
-                "LFS stub detected (not materialized): %s", file_path
-            )
+            logger.warning("LFS stub detected (not materialized): %s", file_path)
             return pd.DataFrame()
 
         with open(file_path, "rb") as f:

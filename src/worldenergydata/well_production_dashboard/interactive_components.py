@@ -16,6 +16,12 @@ NOTE: This module has been refactored into smaller, focused modules:
 This file re-exports all public names for backward compatibility.
 """
 
+# Re-export anomaly components
+from .components_anomaly import AnomalyHighlighter
+
+# Re-export audit components
+from .components_audit import AuditTrailDrilldown
+
 # Re-export base types and configuration
 from .components_base import (
     DASH_AVAILABLE,
@@ -31,6 +37,9 @@ from .components_base import (
     make_subplots,
 )
 
+# Re-export chart components
+from .components_charts import WellChartLibrary
+
 # Re-export filter components
 from .components_filters import (
     DataFreshnessIndicator,
@@ -39,21 +48,11 @@ from .components_filters import (
     QualityFilter,
 )
 
-# Re-export chart components
-from .components_charts import WellChartLibrary
-
-# Re-export audit components
-from .components_audit import AuditTrailDrilldown
-
-# Re-export anomaly components
-from .components_anomaly import AnomalyHighlighter
-
 # Re-export interaction components
 from .components_interactions import ChartInteractions
 
 # Re-export orchestrator
 from .components_orchestrator import InteractiveDashboardComponents
-
 
 # Export main components (backward compatible)
 __all__ = [

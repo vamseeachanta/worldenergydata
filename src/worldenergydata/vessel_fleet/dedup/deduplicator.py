@@ -82,7 +82,8 @@ def deduplicate_fleet(
 
     logger.info(
         "Dedup: %d records → %d unique vessels",
-        len(records), len(merged),
+        len(records),
+        len(merged),
     )
     return merged
 
@@ -100,7 +101,8 @@ def _merge_records(records: list[dict[str, Any]]) -> dict[str, Any]:
     sorted_records = sorted(
         records,
         key=lambda r: _SOURCE_PRIORITY.get(
-            r.get("DATA_SOURCE", ""), 0,
+            r.get("DATA_SOURCE", ""),
+            0,
         ),
     )
 

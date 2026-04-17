@@ -11,16 +11,19 @@ from worldenergydata.bsee.reports.comprehensive.visualizations.geographic_charts
     WellLocation,
 )
 
-
 # ---------------------------------------------------------------------------
 # Dataclass tests
 # ---------------------------------------------------------------------------
 
+
 class TestWellLocation:
     def test_required_fields(self):
         wl = WellLocation(
-            well_name="Well-A", latitude=28.5, longitude=-88.5,
-            field="Field-1", status="Active",
+            well_name="Well-A",
+            latitude=28.5,
+            longitude=-88.5,
+            field="Field-1",
+            status="Active",
         )
         assert wl.well_name == "Well-A"
         assert wl.production is None
@@ -28,8 +31,13 @@ class TestWellLocation:
 
     def test_optional_fields(self):
         wl = WellLocation(
-            well_name="Well-B", latitude=29.0, longitude=-89.0,
-            field="Field-2", status="Producing", production=500.0, depth=10000.0,
+            well_name="Well-B",
+            latitude=29.0,
+            longitude=-89.0,
+            field="Field-2",
+            status="Producing",
+            production=500.0,
+            depth=10000.0,
         )
         assert wl.production == 500.0
         assert wl.depth == 10000.0
@@ -52,6 +60,7 @@ class TestFieldBoundary:
 # GeographicChart init
 # ---------------------------------------------------------------------------
 
+
 class TestGeographicChartInit:
     def test_no_token(self):
         chart = GeographicChart()
@@ -65,6 +74,7 @@ class TestGeographicChartInit:
 # ---------------------------------------------------------------------------
 # create_well_location_map
 # ---------------------------------------------------------------------------
+
 
 class TestCreateWellLocationMap:
     def _make_wells(self):
@@ -109,37 +119,52 @@ class TestCreateWellLocationMap:
 # create_production_density_map
 # ---------------------------------------------------------------------------
 
+
 class TestCreateProductionDensityMap:
-    @pytest.mark.skip(reason="Source uses deprecated 'titleside' colorbar param in newer plotly")
+    @pytest.mark.skip(
+        reason="Source uses deprecated 'titleside' colorbar param in newer plotly"
+    )
     def test_basic(self):
         chart = GeographicChart()
-        data = pd.DataFrame({
-            "latitude": [28.5, 28.6, 28.7, 28.8],
-            "longitude": [-88.5, -88.6, -88.7, -88.8],
-            "production": [500, 800, 300, 600],
-        })
+        data = pd.DataFrame(
+            {
+                "latitude": [28.5, 28.6, 28.7, 28.8],
+                "longitude": [-88.5, -88.6, -88.7, -88.8],
+                "production": [500, 800, 300, 600],
+            }
+        )
         fig = chart.create_production_density_map(data)
         assert isinstance(fig, go.Figure)
 
-    @pytest.mark.skip(reason="Source uses deprecated 'titleside' colorbar param in newer plotly")
+    @pytest.mark.skip(
+        reason="Source uses deprecated 'titleside' colorbar param in newer plotly"
+    )
     def test_custom_columns(self):
         chart = GeographicChart()
-        data = pd.DataFrame({
-            "lat": [28.5, 28.6],
-            "lon": [-88.5, -88.6],
-            "output": [500, 800],
-        })
+        data = pd.DataFrame(
+            {
+                "lat": [28.5, 28.6],
+                "lon": [-88.5, -88.6],
+                "output": [500, 800],
+            }
+        )
         fig = chart.create_production_density_map(
             data, lat_col="lat", lon_col="lon", value_col="output"
         )
         assert isinstance(fig, go.Figure)
 
-    @pytest.mark.skip(reason="Source uses deprecated 'titleside' colorbar param in newer plotly")
+    @pytest.mark.skip(
+        reason="Source uses deprecated 'titleside' colorbar param in newer plotly"
+    )
     def test_custom_title(self):
         chart = GeographicChart()
-        data = pd.DataFrame({
-            "latitude": [28.5], "longitude": [-88.5], "production": [500],
-        })
+        data = pd.DataFrame(
+            {
+                "latitude": [28.5],
+                "longitude": [-88.5],
+                "production": [500],
+            }
+        )
         fig = chart.create_production_density_map(data, title="Density Map")
         assert isinstance(fig, go.Figure)
 
@@ -147,6 +172,7 @@ class TestCreateProductionDensityMap:
 # ---------------------------------------------------------------------------
 # create_field_comparison_map
 # ---------------------------------------------------------------------------
+
 
 class TestCreateFieldComparisonMap:
     def test_basic(self):
@@ -194,6 +220,7 @@ class TestCreateFieldComparisonMap:
 # create_3d_subsurface_view
 # ---------------------------------------------------------------------------
 
+
 class TestCreate3dSubsurfaceView:
     def test_basic(self):
         chart = GeographicChart()
@@ -208,7 +235,10 @@ class TestCreate3dSubsurfaceView:
         chart = GeographicChart()
         wells = [
             {
-                "name": "W1", "x": 100, "y": 200, "depth": 5000,
+                "name": "W1",
+                "x": 100,
+                "y": 200,
+                "depth": 5000,
                 "trajectory": {
                     "x": [100, 110, 120],
                     "y": [200, 210, 220],
@@ -229,6 +259,7 @@ class TestCreate3dSubsurfaceView:
 # ---------------------------------------------------------------------------
 # create_trajectory_comparison
 # ---------------------------------------------------------------------------
+
 
 class TestCreateTrajectoryComparison:
     def test_basic(self):
@@ -268,6 +299,7 @@ class TestCreateTrajectoryComparison:
 # ---------------------------------------------------------------------------
 # create_field_infrastructure_map
 # ---------------------------------------------------------------------------
+
 
 class TestCreateFieldInfrastructureMap:
     def test_basic(self):

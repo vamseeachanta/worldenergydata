@@ -2,13 +2,13 @@
 Template system for comprehensive reporting
 """
 
-from .base import BaseReportTemplate, TemplateType, TemplateContext
-from .loaders import TemplateLoader, TemplateConfig
+from .base import BaseReportTemplate, TemplateContext, TemplateType
+from .loaders import TemplateConfig, TemplateLoader
 
 __all__ = [
     "BaseReportTemplate",
-    "TemplateType", 
+    "TemplateType",
     "TemplateContext",
     "TemplateLoader",
-    "TemplateConfig"
+    "TemplateConfig",
 ]

@@ -1,21 +1,21 @@
 """Tests for WellPlanningRiskAnalyzer — risk_analyzer module."""
 
-import pytest
 import pandas as pd
+import pytest
 
+from worldenergydata.well_planning.risk_analyzer import WellPlanningRiskAnalyzer
 from worldenergydata.well_planning.risk_model import (
     RiskAuthority,
     RiskCategory,
     RiskSeverity,
     WellPlanningRisk,
 )
-from worldenergydata.well_planning.risk_analyzer import WellPlanningRiskAnalyzer
 from worldenergydata.well_planning.risk_registry import WELL_PLANNING_RISKS
-
 
 # ------------------------------------------------------------------ #
 # Fixtures                                                            #
 # ------------------------------------------------------------------ #
+
 
 def _make_risk(
     risk_id: str,
@@ -44,16 +44,44 @@ def _make_risk(
 @pytest.fixture
 def custom_risks() -> list[WellPlanningRisk]:
     return [
-        _make_risk("C-001", RiskAuthority.OPERATIONAL, RiskCategory.PRESSURE_MANAGEMENT,
-                   RiskSeverity.HIGH, 0.8, mpd_mitigation=True),
-        _make_risk("C-002", RiskAuthority.TACTICAL, RiskCategory.WELLBORE_INTEGRITY,
-                   RiskSeverity.MEDIUM, 0.5),
-        _make_risk("C-003", RiskAuthority.STRATEGIC, RiskCategory.RIG_CAPABILITY,
-                   RiskSeverity.CRITICAL, 0.4, mpd_mitigation=True),
-        _make_risk("C-004", RiskAuthority.OPERATIONAL, RiskCategory.HOLE_CLEANING,
-                   RiskSeverity.LOW, 0.3),
-        _make_risk("C-005", RiskAuthority.STRATEGIC, RiskCategory.REGULATORY,
-                   RiskSeverity.MEDIUM, 0.6, mpd_mitigation=True),
+        _make_risk(
+            "C-001",
+            RiskAuthority.OPERATIONAL,
+            RiskCategory.PRESSURE_MANAGEMENT,
+            RiskSeverity.HIGH,
+            0.8,
+            mpd_mitigation=True,
+        ),
+        _make_risk(
+            "C-002",
+            RiskAuthority.TACTICAL,
+            RiskCategory.WELLBORE_INTEGRITY,
+            RiskSeverity.MEDIUM,
+            0.5,
+        ),
+        _make_risk(
+            "C-003",
+            RiskAuthority.STRATEGIC,
+            RiskCategory.RIG_CAPABILITY,
+            RiskSeverity.CRITICAL,
+            0.4,
+            mpd_mitigation=True,
+        ),
+        _make_risk(
+            "C-004",
+            RiskAuthority.OPERATIONAL,
+            RiskCategory.HOLE_CLEANING,
+            RiskSeverity.LOW,
+            0.3,
+        ),
+        _make_risk(
+            "C-005",
+            RiskAuthority.STRATEGIC,
+            RiskCategory.REGULATORY,
+            RiskSeverity.MEDIUM,
+            0.6,
+            mpd_mitigation=True,
+        ),
     ]
 
 
@@ -71,6 +99,7 @@ def custom_analyzer(custom_risks) -> WellPlanningRiskAnalyzer:
 # Constructor                                                         #
 # ------------------------------------------------------------------ #
 
+
 class TestConstructor:
     def test_default_uses_registry(self, default_analyzer):
         assert len(default_analyzer._risks) == len(WELL_PLANNING_RISKS)
@@ -86,6 +115,7 @@ class TestConstructor:
 # ------------------------------------------------------------------ #
 # get_by_authority                                                    #
 # ------------------------------------------------------------------ #
+
 
 class TestGetByAuthority:
     def test_strategic_returns_non_empty_from_default(self, default_analyzer):
@@ -114,6 +144,7 @@ class TestGetByAuthority:
 # get_by_category                                                     #
 # ------------------------------------------------------------------ #
 
+
 class TestGetByCategory:
     def test_pressure_management_non_empty_from_default(self, default_analyzer):
         result = default_analyzer.get_by_category(RiskCategory.PRESSURE_MANAGEMENT)
@@ -137,6 +168,7 @@ class TestGetByCategory:
 # get_by_severity                                                     #
 # ------------------------------------------------------------------ #
 
+
 class TestGetBySeverity:
     def test_returns_all_for_low_threshold(self, custom_analyzer):
         result = custom_analyzer.get_by_severity(RiskSeverity.LOW)
@@ -156,6 +188,7 @@ class TestGetBySeverity:
 # ------------------------------------------------------------------ #
 # high_priority_risks                                                 #
 # ------------------------------------------------------------------ #
+
 
 class TestHighPriorityRisks:
     def test_default_threshold_filters_correctly(self, custom_analyzer):
@@ -186,6 +219,7 @@ class TestHighPriorityRisks:
 # mpd_mitigable_risks                                                 #
 # ------------------------------------------------------------------ #
 
+
 class TestMPDMitigableRisks:
     def test_returns_at_least_three_from_default(self, default_analyzer):
         result = default_analyzer.mpd_mitigable_risks()
@@ -204,6 +238,7 @@ class TestMPDMitigableRisks:
 # ------------------------------------------------------------------ #
 # risk_matrix                                                         #
 # ------------------------------------------------------------------ #
+
 
 class TestRiskMatrix:
     def test_returns_dataframe(self, default_analyzer):
@@ -232,6 +267,7 @@ class TestRiskMatrix:
 # ------------------------------------------------------------------ #
 # escalation_report                                                   #
 # ------------------------------------------------------------------ #
+
 
 class TestEscalationReport:
     def test_strategic_returns_non_empty_string(self, default_analyzer):
@@ -263,6 +299,7 @@ class TestEscalationReport:
 # summary                                                             #
 # ------------------------------------------------------------------ #
 
+
 class TestSummary:
     def test_returns_dataframe(self, default_analyzer):
         result = default_analyzer.summary()
@@ -270,8 +307,14 @@ class TestSummary:
 
     def test_has_required_columns(self, default_analyzer):
         result = default_analyzer.summary()
-        required = {"risk_id", "title", "authority", "severity", "risk_score",
-                    "mitigation_owner"}
+        required = {
+            "risk_id",
+            "title",
+            "authority",
+            "severity",
+            "risk_score",
+            "mitigation_owner",
+        }
         assert required.issubset(set(result.columns))
 
     def test_sorted_by_risk_score_descending(self, default_analyzer):

@@ -22,17 +22,33 @@ class CanadaAdapter(AbstractProductionAdapter):
     # (field_name, peak_oil_bbl, peak_gas_mcf, peak_water_bbl,
     #  peak_cond_bbl, start_year, start_month, n_months)
     _FIELDS = [
-        ("Hibernia",   6_200_000, 2_500_000, 3_000_000, 100_000, 1997,  1, 336),
-        ("Terra Nova", 2_400_000,   900_000, 1_100_000,  40_000, 2002,  1, 276),
-        ("White Rose", 1_900_000,   700_000,   800_000,  30_000, 2005, 11, 230),
+        ("Hibernia", 6_200_000, 2_500_000, 3_000_000, 100_000, 1997, 1, 336),
+        ("Terra Nova", 2_400_000, 900_000, 1_100_000, 40_000, 2002, 1, 276),
+        ("White Rose", 1_900_000, 700_000, 800_000, 30_000, 2005, 11, 230),
     ]
 
     def fetch(self, query: ProductionQuery) -> pd.DataFrame:
         rows = []
-        for field_name, peak_oil, peak_gas, peak_water, peak_cond, sy, sm, n_months in self._FIELDS:
+        for (
+            field_name,
+            peak_oil,
+            peak_gas,
+            peak_water,
+            peak_cond,
+            sy,
+            sm,
+            n_months,
+        ) in self._FIELDS:
             rows.extend(
                 self._generate_field_rows(
-                    field_name, peak_oil, peak_gas, peak_water, peak_cond, sy, sm, n_months
+                    field_name,
+                    peak_oil,
+                    peak_gas,
+                    peak_water,
+                    peak_cond,
+                    sy,
+                    sm,
+                    n_months,
                 )
             )
 

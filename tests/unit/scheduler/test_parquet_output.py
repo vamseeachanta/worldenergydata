@@ -59,6 +59,6 @@ class TestWriteParquet:
         row_group = pf.metadata.row_group(0)
         for i in range(row_group.num_columns):
             col = row_group.column(i)
-            assert col.compression == "SNAPPY", (
-                f"Column {i} uses {col.compression}, expected SNAPPY"
-            )
+            assert (
+                col.compression == "SNAPPY"
+            ), f"Column {i} uses {col.compression}, expected SNAPPY"

@@ -168,9 +168,11 @@ class TestSodirCacheOptimizer:
 # warm_cache
 # ---------------------------------------------------------------------------
 
+
 class TestWarmCache:
     def test_warms_blocks_and_fields(self):
         from unittest.mock import MagicMock
+
         cache = SodirCacheOptimizer()
         client = MagicMock()
         client.get_blocks.return_value = [{"id": 1}, {"id": 2}]
@@ -185,6 +187,7 @@ class TestWarmCache:
 
     def test_warm_cache_api_error(self):
         from unittest.mock import MagicMock
+
         cache = SodirCacheOptimizer()
         client = MagicMock()
         client.get_blocks.side_effect = Exception("network error")
@@ -200,6 +203,7 @@ class TestWarmCache:
 # ---------------------------------------------------------------------------
 # optimize_ttl with data
 # ---------------------------------------------------------------------------
+
 
 class TestOptimizeTtlWithData:
     def test_high_access_rate(self):
@@ -227,6 +231,7 @@ class TestOptimizeTtlWithData:
 # ---------------------------------------------------------------------------
 # _evict and _evict_lfu
 # ---------------------------------------------------------------------------
+
 
 class TestEviction:
     def test_evict_existing_key(self):
@@ -274,6 +279,7 @@ class TestEviction:
 # _determine_ttl with size factor
 # ---------------------------------------------------------------------------
 
+
 class TestDetermineTtlSizeFactor:
     def test_large_data_longer_ttl(self):
         cache = SodirCacheOptimizer()
@@ -292,6 +298,7 @@ class TestDetermineTtlSizeFactor:
 # ---------------------------------------------------------------------------
 # Statistics efficiency score
 # ---------------------------------------------------------------------------
+
 
 class TestStatisticsEfficiencyScore:
     def test_efficiency_score_with_hits(self):

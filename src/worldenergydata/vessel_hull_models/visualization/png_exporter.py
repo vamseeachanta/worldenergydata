@@ -20,14 +20,12 @@ try:
 except ImportError:
     MATPLOTLIB_AVAILABLE = False
 
+from worldenergydata.common.logging import get_logger
 from worldenergydata.vessel_hull_models.exceptions import VisualizationError
 from worldenergydata.vessel_hull_models.geometry.obj_parser import (
     OBJMesh,
     parse_obj_file,
 )
-
-
-from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
 

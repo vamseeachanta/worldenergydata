@@ -87,9 +87,7 @@ class PlanetsweLoader:
             f"PlanetsweLoader(dataset_name={self.dataset_name!r}, split={self.split!r})"
         )
 
-    def stream_sample(
-        self, n_steps: int = 10
-    ) -> Generator[Dict[str, Any], None, None]:
+    def stream_sample(self, n_steps: int = 10) -> Generator[Dict[str, Any], None, None]:
         """Yield up to *n_steps* snapshots from the planetswe dataset via HF streaming.
 
         Parameters
@@ -121,9 +119,7 @@ class PlanetsweLoader:
             raise ImportError(_INSTALL_HINT)
         return self._generate(n_steps)
 
-    def _generate(
-        self, n_steps: int
-    ) -> Generator[Dict[str, Any], None, None]:
+    def _generate(self, n_steps: int) -> Generator[Dict[str, Any], None, None]:
         """Internal generator — only called after WELL_AVAILABLE is confirmed."""
         dataset = WellDataset(self.dataset_name, split=self.split)
         yield from islice(dataset, n_steps)

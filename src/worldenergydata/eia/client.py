@@ -103,9 +103,7 @@ class EIAFeedClient:
             List of record dicts. Each record preserves all original fields
             from the API response, with 'value' coerced to float (or None).
         """
-        data_items: List[Dict[str, Any]] = (
-            raw.get("response", {}).get("data", [])
-        )
+        data_items: List[Dict[str, Any]] = raw.get("response", {}).get("data", [])
         records: List[Dict[str, Any]] = []
         for item in data_items:
             record = dict(item)
@@ -167,9 +165,7 @@ class EIAFeedClient:
                 raise EIAFeedError(f"EIA API request failed: {exc}") from exc
 
             if response.status_code == 429:
-                raise EIAFeedError(
-                    "EIA API rate limit exceeded. Retry after backoff."
-                )
+                raise EIAFeedError("EIA API rate limit exceeded. Retry after backoff.")
             if response.status_code != 200:
                 raise EIAFeedError(
                     f"EIA API returned status {response.status_code}: "

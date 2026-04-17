@@ -266,7 +266,12 @@ def prepare_casing_tubular_summary_all_wells(
     )
     casing_hole_sizes = sorted(casing_hole_sizes, reverse=True)
     tubular_summary = tubular_summary_based_on_api12_and_hole(
-        casing_tubulars, API12_list, casing_hole_sizes, "PRODUCERS", cfg, tubular_summary
+        casing_tubulars,
+        API12_list,
+        casing_hole_sizes,
+        "PRODUCERS",
+        cfg,
+        tubular_summary,
     )
     logging.info("Tubular data Summary is prepared for producing wells")
 

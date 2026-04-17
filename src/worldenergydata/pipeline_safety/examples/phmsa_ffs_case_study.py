@@ -14,9 +14,8 @@ Run:
 
 import pandas as pd
 
-from worldenergydata.pipeline_safety.workflow import PipelineSafetyWorkflow
-
 from worldenergydata.common.logging import get_logger
+from worldenergydata.pipeline_safety.workflow import PipelineSafetyWorkflow
 
 logger = get_logger(__name__)
 
@@ -294,7 +293,9 @@ def main() -> None:
     """Run the PHMSA FFS case study and print results."""
     logger.info("Loading PHMSA synthetic incident dataset...")
     df = pd.DataFrame(_INCIDENTS)
-    logger.info(f"  {len(df)} incidents loaded, years {df['year'].min()}-{df['year'].max()}")
+    logger.info(
+        f"  {len(df)} incidents loaded, years {df['year'].min()}-{df['year'].max()}"
+    )
 
     workflow = PipelineSafetyWorkflow()
 

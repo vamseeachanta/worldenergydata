@@ -8,6 +8,7 @@ from enum import Enum, unique
 @unique
 class VesselCategory(str, Enum):
     """Top-level vessel category."""
+
     DRILLING_RIG = "drilling_rig"
     CONSTRUCTION_VESSEL = "construction_vessel"
     SERVICE_VESSEL = "service_vessel"
@@ -16,6 +17,7 @@ class VesselCategory(str, Enum):
 @unique
 class RigType(str, Enum):
     """Drilling rig sub-types."""
+
     DRILLSHIP = "drillship"
     SEMI_SUBMERSIBLE = "semi_submersible"
     JACK_UP = "jack_up"
@@ -29,6 +31,7 @@ class RigType(str, Enum):
 @unique
 class VesselType(str, Enum):
     """Construction/service vessel sub-types."""
+
     CRANE_VESSEL = "crane_vessel"
     PIPELAY_VESSEL = "pipelay_vessel"
     HEAVY_LIFT = "heavy_lift"
@@ -45,6 +48,7 @@ class VesselType(str, Enum):
 @unique
 class VesselStatus(str, Enum):
     """Operational status."""
+
     ACTIVE = "active"
     UNDER_CONTRACT = "under_contract"
     WARM_STACKED = "warm_stacked"
@@ -59,6 +63,7 @@ class VesselStatus(str, Enum):
 @unique
 class DataSource(str, Enum):
     """Provenance for each collected record."""
+
     XLS_HISTORICAL = "xls_historical"
     BSEE_WAR = "bsee_war"
     CONTRACTOR_FLEET_PAGE = "contractor_fleet_page"
@@ -76,6 +81,7 @@ class DataSource(str, Enum):
 @unique
 class PipelayMethod(str, Enum):
     """Pipelay installation method."""
+
     S_LAY = "s_lay"
     J_LAY = "j_lay"
     REEL_LAY = "reel_lay"
@@ -85,6 +91,7 @@ class PipelayMethod(str, Enum):
 @unique
 class PowerType(str, Enum):
     """Rig power system type."""
+
     AC = "ac"
     SCR = "scr"
     MECHANICAL = "mechanical"
@@ -93,12 +100,14 @@ class PowerType(str, Enum):
 
 # --- Static constants ---
 
-INACTIVE_STATUSES: frozenset[str] = frozenset({
-    VesselStatus.WARM_STACKED.value,
-    VesselStatus.COLD_STACKED.value,
-    VesselStatus.SCRAPPED.value,
-    VesselStatus.RETIRED.value,
-})
+INACTIVE_STATUSES: frozenset[str] = frozenset(
+    {
+        VesselStatus.WARM_STACKED.value,
+        VesselStatus.COLD_STACKED.value,
+        VesselStatus.SCRAPPED.value,
+        VesselStatus.RETIRED.value,
+    }
+)
 
 DEEPWATER_THRESHOLD_FT: float = 4000.0
 ULTRA_DEEPWATER_THRESHOLD_FT: float = 7500.0

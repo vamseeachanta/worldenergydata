@@ -20,10 +20,10 @@ from worldenergydata.bsee.pipeline.pipeline_runner import (
     PipelineRunner,
 )
 
-
 # ---------------------------------------------------------------------------
 # Lightweight stubs — duck-typed replacements for real analyzers
 # ---------------------------------------------------------------------------
+
 
 class StubFieldResolver:
     """Minimal stub replicating FieldNameResolver's public interface."""
@@ -137,6 +137,7 @@ class ErrorActivityAnalyzer:
 # Fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture()
 def field_resolver():
     return StubFieldResolver({"001": "BUCKSKIN", "002": "THUNDER HORSE"})
@@ -200,6 +201,7 @@ def tubulars_csv(tmp_path):
 # ---------------------------------------------------------------------------
 # Tests: FieldReport dataclass
 # ---------------------------------------------------------------------------
+
 
 class TestFieldReport:
     def test_field_report_creation(self, sample_context):
@@ -265,6 +267,7 @@ class TestFieldReport:
 # Tests: PipelineRunner creation
 # ---------------------------------------------------------------------------
 
+
 class TestPipelineRunnerCreation:
     def test_pipeline_runner_creation(self, field_resolver, era_classifier, tmp_path):
         """PipelineRunner can be instantiated with DI stubs."""
@@ -292,6 +295,7 @@ class TestPipelineRunnerCreation:
 # ---------------------------------------------------------------------------
 # Tests: PipelineRunner.run — production analysis
 # ---------------------------------------------------------------------------
+
 
 class TestPipelineRunnerProduction:
     def test_pipeline_runner_run_empty_data(
@@ -363,12 +367,15 @@ class TestPipelineRunnerProduction:
         report = runner.run(sample_context)
         # Should not crash; production_summary should be empty
         assert report.production_summary.empty
-        assert any("AllFieldsRunner" in w or "production" in w.lower() for w in report.warnings)
+        assert any(
+            "AllFieldsRunner" in w or "production" in w.lower() for w in report.warnings
+        )
 
 
 # ---------------------------------------------------------------------------
 # Tests: PipelineRunner.run — casing analysis
 # ---------------------------------------------------------------------------
+
 
 class TestPipelineRunnerCasing:
     def test_pipeline_runner_run_with_casing(
@@ -412,7 +419,9 @@ class TestPipelineRunnerCasing:
         assert report.casing_strings == {}
         assert report.casing_matrices == {}
         assert report.casing_svgs == {}
-        assert any("casing" in w.lower() or "tubulars" in w.lower() for w in report.warnings)
+        assert any(
+            "casing" in w.lower() or "tubulars" in w.lower() for w in report.warnings
+        )
 
     def test_pipeline_runner_handles_casing_error(
         self,
@@ -442,6 +451,7 @@ class TestPipelineRunnerCasing:
 # ---------------------------------------------------------------------------
 # Tests: PipelineRunner.run — activity analysis
 # ---------------------------------------------------------------------------
+
 
 class TestPipelineRunnerActivity:
     def test_pipeline_runner_run_activity_analysis(
@@ -534,6 +544,7 @@ class TestPipelineRunnerActivity:
 # ---------------------------------------------------------------------------
 # Tests: PipelineRunner.run — metadata and counts
 # ---------------------------------------------------------------------------
+
 
 class TestPipelineRunnerMetadata:
     def test_pipeline_runner_wellbore_count(
@@ -629,6 +640,7 @@ class TestPipelineRunnerMetadata:
 # Tests: LFS stub handling
 # ---------------------------------------------------------------------------
 
+
 class TestPipelineRunnerLFSStubs:
     def test_pipeline_runner_lfs_stub_production(
         self, field_resolver, era_classifier, tmp_path, sample_context
@@ -650,7 +662,9 @@ class TestPipelineRunnerLFSStubs:
         )
         report = runner.run(sample_context)
         assert report.production_summary.empty
-        assert any("production" in w.lower() or "lfs" in w.lower() for w in report.warnings)
+        assert any(
+            "production" in w.lower() or "lfs" in w.lower() for w in report.warnings
+        )
 
     def test_pipeline_runner_lfs_stub_activity(
         self, field_resolver, era_classifier, tmp_path, sample_context

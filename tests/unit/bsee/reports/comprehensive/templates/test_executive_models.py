@@ -75,7 +75,10 @@ class TestExecutiveKPI:
 
     def test_decimal_value(self):
         kpi = ExecutiveKPI(
-            name="P", value=Decimal("95.5"), unit="%", target=Decimal("90"),
+            name="P",
+            value=Decimal("95.5"),
+            unit="%",
+            target=Decimal("90"),
         )
         d = kpi.to_dict()
         assert d["value"] == 95.5
@@ -146,29 +149,41 @@ class TestPerformanceScore:
 class TestTrafficLightIndicator:
     def test_green_color(self):
         t = TrafficLightIndicator(
-            metric_name="T", value=100, status="green",
-            threshold_green=90, threshold_yellow=70,
+            metric_name="T",
+            value=100,
+            status="green",
+            threshold_green=90,
+            threshold_yellow=70,
         )
         assert t.get_color_code() == "#28a745"
 
     def test_yellow_color(self):
         t = TrafficLightIndicator(
-            metric_name="T", value=80, status="yellow",
-            threshold_green=90, threshold_yellow=70,
+            metric_name="T",
+            value=80,
+            status="yellow",
+            threshold_green=90,
+            threshold_yellow=70,
         )
         assert t.get_color_code() == "#ffc107"
 
     def test_red_color(self):
         t = TrafficLightIndicator(
-            metric_name="T", value=50, status="red",
-            threshold_green=90, threshold_yellow=70,
+            metric_name="T",
+            value=50,
+            status="red",
+            threshold_green=90,
+            threshold_yellow=70,
         )
         assert t.get_color_code() == "#dc3545"
 
     def test_unknown_status(self):
         t = TrafficLightIndicator(
-            metric_name="T", value=0, status="unknown",
-            threshold_green=90, threshold_yellow=70,
+            metric_name="T",
+            value=0,
+            status="unknown",
+            threshold_green=90,
+            threshold_yellow=70,
         )
         assert t.get_color_code() == "#6c757d"
 
@@ -187,33 +202,48 @@ class TestDataclasses:
 
     def test_business_highlight(self):
         h = BusinessHighlight(
-            title="Record", description="Record production",
-            impact="Revenue up", metric="oil_bbl", value=10000,
+            title="Record",
+            description="Record production",
+            impact="Revenue up",
+            metric="oil_bbl",
+            value=10000,
         )
         assert h.title == "Record"
 
     def test_risk_indicator(self):
         r = RiskIndicator(
-            category="Weather", risk_level="high",
-            description="Hurricane season", mitigation="Evac plan",
+            category="Weather",
+            risk_level="high",
+            description="Hurricane season",
+            mitigation="Evac plan",
         )
         assert r.risk_level == "high"
 
     def test_strategic_initiative(self):
         s = StrategicInitiative(
-            name="Digitalization", status="in-progress", progress=45.0,
-            target_date=datetime(2025, 12, 31), owner="CTO", impact="high",
+            name="Digitalization",
+            status="in-progress",
+            progress=45.0,
+            target_date=datetime(2025, 12, 31),
+            owner="CTO",
+            impact="high",
         )
         assert s.progress == 45.0
 
     def test_executive_chart(self):
         c = ExecutiveChart(
-            type="bar", data={"x": [1]}, layout={}, config={},
+            type="bar",
+            data={"x": [1]},
+            layout={},
+            config={},
         )
         assert c.type == "bar"
 
     def test_executive_dashboard(self):
         d = ExecutiveDashboard(
-            layout={"cols": 2}, charts=[], components={}, export_config={},
+            layout={"cols": 2},
+            charts=[],
+            components={},
+            export_config={},
         )
         assert d.layout["cols"] == 2

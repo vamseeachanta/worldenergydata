@@ -3,32 +3,33 @@ ABOUTME: Comprehensive tests for schemas.py validation schema classes
 ABOUTME: Tests DataType enum, FieldSchema, FieldValidator, ValidationSchema hierarchy
 """
 
-import pytest
-import pandas as pd
 from datetime import datetime
-from typing import List, Any
+from typing import Any, List
 
-from worldenergydata.validation.schemas import (
-    DataType,
-    FieldSchema,
-    FieldValidator,
-    ValidationSchema,
-    BSEEProductionSchema,
-    BSEEWellSchema,
-    BSEELeaseSchema,
-    FinancialDataSchema,
-    ConfigurationSchema,
-)
+import pandas as pd
+import pytest
+
 from worldenergydata.validation.base import ValidationResult
 from worldenergydata.validation.exceptions import ValidationError
 from worldenergydata.validation.rules import (
-    ValidationRules,
-    CrossFieldRules,
     CrossFieldRule,
+    CrossFieldRules,
     CustomValidators,
     DataTypeRule,
     RangeRule,
     RequiredFieldRule,
+    ValidationRules,
+)
+from worldenergydata.validation.schemas import (
+    BSEELeaseSchema,
+    BSEEProductionSchema,
+    BSEEWellSchema,
+    ConfigurationSchema,
+    DataType,
+    FieldSchema,
+    FieldValidator,
+    FinancialDataSchema,
+    ValidationSchema,
 )
 
 
@@ -40,47 +41,47 @@ class TestDataTypeEnum:
 
     def test_data_type_enum_has_integer(self):
         """Test DataType.INTEGER exists."""
-        assert hasattr(DataType, 'INTEGER')
+        assert hasattr(DataType, "INTEGER")
         assert DataType.INTEGER is not None
 
     def test_data_type_enum_has_string(self):
         """Test DataType.STRING exists."""
-        assert hasattr(DataType, 'STRING')
+        assert hasattr(DataType, "STRING")
         assert DataType.STRING is not None
 
     def test_data_type_enum_has_float(self):
         """Test DataType.FLOAT exists."""
-        assert hasattr(DataType, 'FLOAT')
+        assert hasattr(DataType, "FLOAT")
         assert DataType.FLOAT is not None
 
     def test_data_type_enum_has_decimal(self):
         """Test DataType.DECIMAL exists."""
-        assert hasattr(DataType, 'DECIMAL')
+        assert hasattr(DataType, "DECIMAL")
         assert DataType.DECIMAL is not None
 
     def test_data_type_enum_has_boolean(self):
         """Test DataType.BOOLEAN exists."""
-        assert hasattr(DataType, 'BOOLEAN')
+        assert hasattr(DataType, "BOOLEAN")
         assert DataType.BOOLEAN is not None
 
     def test_data_type_enum_has_date(self):
         """Test DataType.DATE exists."""
-        assert hasattr(DataType, 'DATE')
+        assert hasattr(DataType, "DATE")
         assert DataType.DATE is not None
 
     def test_data_type_enum_has_datetime(self):
         """Test DataType.DATETIME exists."""
-        assert hasattr(DataType, 'DATETIME')
+        assert hasattr(DataType, "DATETIME")
         assert DataType.DATETIME is not None
 
     def test_data_type_enum_has_array(self):
         """Test DataType.ARRAY exists."""
-        assert hasattr(DataType, 'ARRAY')
+        assert hasattr(DataType, "ARRAY")
         assert DataType.ARRAY is not None
 
     def test_data_type_enum_has_object(self):
         """Test DataType.OBJECT exists."""
-        assert hasattr(DataType, 'OBJECT')
+        assert hasattr(DataType, "OBJECT")
         assert DataType.OBJECT is not None
 
 
@@ -139,13 +140,17 @@ class TestFieldSchema:
 
     def test_field_schema_date_format_parameter(self):
         """Test FieldSchema date_format parameter."""
-        schema = FieldSchema(name="test", data_type=DataType.DATE, date_format="%Y-%m-%d")
+        schema = FieldSchema(
+            name="test", data_type=DataType.DATE, date_format="%Y-%m-%d"
+        )
         assert schema.date_format == "%Y-%m-%d"
 
     def test_field_schema_allowed_values_parameter(self):
         """Test FieldSchema allowed_values parameter."""
         allowed = ["active", "inactive", "pending"]
-        schema = FieldSchema(name="test", data_type=DataType.STRING, allowed_values=allowed)
+        schema = FieldSchema(
+            name="test", data_type=DataType.STRING, allowed_values=allowed
+        )
         assert schema.allowed_values == allowed
 
     def test_field_schema_precision_parameter(self):
@@ -160,7 +165,9 @@ class TestFieldSchema:
 
     def test_field_schema_default_value_parameter(self):
         """Test FieldSchema default_value parameter."""
-        schema = FieldSchema(name="test", data_type=DataType.STRING, default_value="N/A")
+        schema = FieldSchema(
+            name="test", data_type=DataType.STRING, default_value="N/A"
+        )
         assert schema.default_value == "N/A"
 
     def test_field_schema_description_parameter(self):
@@ -192,7 +199,7 @@ class TestFieldSchema:
             scale=2,
             default_value=0.0,
             description="Daily production rate",
-            unit="barrels per day"
+            unit="barrels per day",
         )
         assert schema.name == "production_rate"
         assert schema.data_type == DataType.DECIMAL
@@ -214,7 +221,7 @@ class TestFieldValidator:
         """Test FieldValidator initialization."""
         validator = FieldValidator(name="test_validator")
         assert validator.name == "test_validator"
-        assert hasattr(validator, 'rules')
+        assert hasattr(validator, "rules")
 
     def test_field_validator_rules_list_initialized(self):
         """Test FieldValidator rules list is initialized."""
@@ -292,7 +299,7 @@ class TestValidationSchemaBase:
         field = FieldSchema(name="test_field", data_type=DataType.STRING)
         schema.add_field(field)
         # Verify field was added - should be stored internally
-        assert hasattr(schema, 'fields') or hasattr(schema, '_fields')
+        assert hasattr(schema, "fields") or hasattr(schema, "_fields")
 
     def test_validation_schema_add_multiple_fields(self):
         """Test ValidationSchema can add multiple fields."""
@@ -302,7 +309,7 @@ class TestValidationSchemaBase:
         schema.add_field(field1)
         schema.add_field(field2)
         # Verify both fields exist
-        assert len(schema.fields) == 2 if hasattr(schema, 'fields') else True
+        assert len(schema.fields) == 2 if hasattr(schema, "fields") else True
 
     def test_validation_schema_add_field_validator(self):
         """Test ValidationSchema add_field_validator method."""
@@ -310,28 +317,36 @@ class TestValidationSchemaBase:
         validator = FieldValidator(name="test_validator")
         schema.add_field_validator("test_field", validator)
         # Verify validator was added
-        assert hasattr(schema, 'field_validators') or hasattr(schema, '_field_validators')
+        assert hasattr(schema, "field_validators") or hasattr(
+            schema, "_field_validators"
+        )
 
     def test_validation_schema_add_cross_field_rule(self):
         """Test ValidationSchema add_cross_field_rule method."""
         schema = ValidationSchema(name="test_schema")
+
         # Create a simple cross-field rule
         def validate_cross_fields(df: pd.DataFrame) -> List[str]:
             return []  # No errors
 
         rule = CrossFieldRule(
-            validation_func=validate_cross_fields,
-            dependent_fields=["field1", "field2"]
+            validation_func=validate_cross_fields, dependent_fields=["field1", "field2"]
         )
         schema.add_cross_field_rule(rule)
         # Verify rule was added
-        assert hasattr(schema, 'cross_field_rules') or hasattr(schema, '_cross_field_rules')
+        assert hasattr(schema, "cross_field_rules") or hasattr(
+            schema, "_cross_field_rules"
+        )
 
     def test_validation_schema_get_required_fields(self):
         """Test ValidationSchema get_required_fields method."""
         schema = ValidationSchema(name="test_schema")
-        field1 = FieldSchema(name="required_field", data_type=DataType.STRING, required=True)
-        field2 = FieldSchema(name="optional_field", data_type=DataType.STRING, required=False)
+        field1 = FieldSchema(
+            name="required_field", data_type=DataType.STRING, required=True
+        )
+        field2 = FieldSchema(
+            name="optional_field", data_type=DataType.STRING, required=False
+        )
         schema.add_field(field1)
         schema.add_field(field2)
         required_fields = schema.get_required_fields()
@@ -363,14 +378,14 @@ class TestBSEEProductionSchema:
     def test_bsee_production_schema_has_field_validators(self):
         """Test BSEEProductionSchema sets up field validators."""
         schema = BSEEProductionSchema()
-        assert hasattr(schema, 'fields')
+        assert hasattr(schema, "fields")
         # fields is a dict mapping field names to FieldSchema objects
         assert len(schema.fields) > 0
 
     def test_bsee_production_schema_has_fields(self):
         """Test BSEEProductionSchema has required fields."""
         schema = BSEEProductionSchema()
-        assert hasattr(schema, 'fields')
+        assert hasattr(schema, "fields")
         # Should have fields for API number, production data, etc.
         assert len(schema.fields) > 0
 
@@ -392,13 +407,17 @@ class TestBSEEProductionSchema:
         """Test BSEEProductionSchema has production field."""
         schema = BSEEProductionSchema()
         field_names = [f.name for f in schema.fields.values()]
-        production_fields = [name for name in field_names if "production" in name.lower() or "volume" in name.lower()]
+        production_fields = [
+            name
+            for name in field_names
+            if "production" in name.lower() or "volume" in name.lower()
+        ]
         assert len(production_fields) > 0
 
     def test_bsee_production_schema_has_cross_field_rules(self):
         """Test BSEEProductionSchema sets up cross-field rules."""
         schema = BSEEProductionSchema()
-        assert hasattr(schema, 'cross_field_rules')
+        assert hasattr(schema, "cross_field_rules")
         # Should have validation rules for field consistency
         assert len(schema.cross_field_rules) > 0
 
@@ -406,17 +425,19 @@ class TestBSEEProductionSchema:
         """Test BSEEProductionSchema validation with valid data."""
         schema = BSEEProductionSchema()
         # Create valid test data matching schema
-        df = pd.DataFrame({
-            "API_WELL_NUMBER": ["123456789012"],
-            "PRODUCTION_DATE": [datetime(2025, 1, 1)],
-            "LEASE_NUMBER": ["OCS-G-12345"],
-            "FIELD_NAME": ["Test Field"],
-            "OIL_VOLUME": [1000.0],
-            "GAS_VOLUME": [5000000.0],
-            "WATER_VOLUME": [500.0],
-            "DAYS_ON_PRODUCTION": [31],
-            "WELL_STATUS": ["ACTIVE"]
-        })
+        df = pd.DataFrame(
+            {
+                "API_WELL_NUMBER": ["123456789012"],
+                "PRODUCTION_DATE": [datetime(2025, 1, 1)],
+                "LEASE_NUMBER": ["OCS-G-12345"],
+                "FIELD_NAME": ["Test Field"],
+                "OIL_VOLUME": [1000.0],
+                "GAS_VOLUME": [5000000.0],
+                "WATER_VOLUME": [500.0],
+                "DAYS_ON_PRODUCTION": [31],
+                "WELL_STATUS": ["ACTIVE"],
+            }
+        )
         result = schema.validate(df)
         assert isinstance(result, ValidationResult)
 
@@ -427,17 +448,19 @@ class TestBSEEProductionSchema:
         """
         schema = BSEEProductionSchema()
         # Create invalid test data - use UPPERCASE column names
-        df = pd.DataFrame({
-            "API_WELL_NUMBER": ["invalid"],  # Should be 12 digits
-            "PRODUCTION_DATE": ["not-a-date"],
-            "OIL_VOLUME": ["not-numeric"],
-            "GAS_VOLUME": [100],
-            "WATER_VOLUME": [50],
-            "LEASE_NUMBER": ["INVALID"],  # Should match OCS-X-##### pattern
-            "FIELD_NAME": ["Test Field"],
-            "DAYS_ON_PRODUCTION": [31],
-            "WELL_STATUS": ["ACTIVE"]
-        })
+        df = pd.DataFrame(
+            {
+                "API_WELL_NUMBER": ["invalid"],  # Should be 12 digits
+                "PRODUCTION_DATE": ["not-a-date"],
+                "OIL_VOLUME": ["not-numeric"],
+                "GAS_VOLUME": [100],
+                "WATER_VOLUME": [50],
+                "LEASE_NUMBER": ["INVALID"],  # Should match OCS-X-##### pattern
+                "FIELD_NAME": ["Test Field"],
+                "DAYS_ON_PRODUCTION": [31],
+                "WELL_STATUS": ["ACTIVE"],
+            }
+        )
         result = schema.validate(df)
         assert isinstance(result, ValidationResult)
         # Result object should indicate validation performed (may have errors or not)
@@ -458,37 +481,51 @@ class TestBSEEWellSchema:
     def test_bsee_well_schema_has_fields(self):
         """Test BSEEWellSchema has required fields."""
         schema = BSEEWellSchema()
-        assert hasattr(schema, 'fields')
+        assert hasattr(schema, "fields")
         assert len(schema.fields) > 0
 
     def test_bsee_well_schema_api_number_field(self):
         """Test BSEEWellSchema has API number field."""
         schema = BSEEWellSchema()
         field_names = [f.name for f in schema.fields.values()]
-        assert "api_well_number" in field_names or "API" in field_names or any("api" in name for name in field_names)
+        assert (
+            "api_well_number" in field_names
+            or "API" in field_names
+            or any("api" in name for name in field_names)
+        )
 
     def test_bsee_well_schema_spud_date_field(self):
         """Test BSEEWellSchema has spud date field."""
         schema = BSEEWellSchema()
         field_names = [f.name for f in schema.fields.values()]
-        spud_fields = [name for name in field_names if "spud" in name.lower() or "date" in name.lower()]
+        spud_fields = [
+            name
+            for name in field_names
+            if "spud" in name.lower() or "date" in name.lower()
+        ]
         assert len(spud_fields) > 0
 
     def test_bsee_well_schema_depth_field(self):
         """Test BSEEWellSchema has depth field."""
         schema = BSEEWellSchema()
         field_names = [f.name for f in schema.fields.values()]
-        depth_fields = [name for name in field_names if "depth" in name.lower() or "tvd" in name.lower()]
+        depth_fields = [
+            name
+            for name in field_names
+            if "depth" in name.lower() or "tvd" in name.lower()
+        ]
         assert len(depth_fields) > 0
 
     def test_bsee_well_schema_validate(self):
         """Test BSEEWellSchema validation."""
         schema = BSEEWellSchema()
-        df = pd.DataFrame({
-            "api_number": ["123456789"],
-            "spud_date": [datetime(2020, 1, 1)],
-            "total_depth": [5000.0],
-        })
+        df = pd.DataFrame(
+            {
+                "api_number": ["123456789"],
+                "spud_date": [datetime(2020, 1, 1)],
+                "total_depth": [5000.0],
+            }
+        )
         result = schema.validate(df)
         assert isinstance(result, ValidationResult)
 
@@ -508,14 +545,18 @@ class TestBSEELeaseSchema:
     def test_bsee_lease_schema_has_fields(self):
         """Test BSEELeaseSchema has required fields."""
         schema = BSEELeaseSchema()
-        assert hasattr(schema, 'fields')
+        assert hasattr(schema, "fields")
         assert len(schema.fields) > 0
 
     def test_bsee_lease_schema_lease_number_field(self):
         """Test BSEELeaseSchema has lease number field."""
         schema = BSEELeaseSchema()
         field_names = [f.name for f in schema.fields.values()]
-        lease_fields = [name for name in field_names if "lease" in name.lower() or "number" in name.lower()]
+        lease_fields = [
+            name
+            for name in field_names
+            if "lease" in name.lower() or "number" in name.lower()
+        ]
         assert len(lease_fields) > 0
 
 
@@ -534,14 +575,18 @@ class TestFinancialDataSchema:
     def test_financial_data_schema_has_fields(self):
         """Test FinancialDataSchema has required fields."""
         schema = FinancialDataSchema()
-        assert hasattr(schema, 'fields')
+        assert hasattr(schema, "fields")
         assert len(schema.fields) > 0
 
     def test_financial_data_schema_discount_rate_field(self):
         """Test FinancialDataSchema has discount rate field."""
         schema = FinancialDataSchema()
         field_names = [f.name for f in schema.fields.values()]
-        discount_fields = [name for name in field_names if "discount" in name.lower() or "rate" in name.lower()]
+        discount_fields = [
+            name
+            for name in field_names
+            if "discount" in name.lower() or "rate" in name.lower()
+        ]
         assert len(discount_fields) > 0
 
 
@@ -560,7 +605,7 @@ class TestConfigurationSchema:
     def test_configuration_schema_has_fields(self):
         """Test ConfigurationSchema has required fields."""
         schema = ConfigurationSchema()
-        assert hasattr(schema, 'fields')
+        assert hasattr(schema, "fields")
 
     def test_configuration_schema_validate_dict(self):
         """Test ConfigurationSchema validation with dictionary."""

@@ -11,7 +11,9 @@ if TYPE_CHECKING:
     from worldenergydata.bsee.visualization.field_map import FieldRecord
 
 
-def _scale_radius(value: float, max_value: float, min_r: float = 4, max_r: float = 30) -> float:
+def _scale_radius(
+    value: float, max_value: float, min_r: float = 4, max_r: float = 30
+) -> float:
     """Scale a production value to a circle radius."""
     if max_value <= 0:
         return min_r
@@ -40,6 +42,7 @@ class FoliumGomMap:
 
         if fields is None:
             from worldenergydata.bsee.visualization.field_map import GomFieldMap
+
             fields = GomFieldMap().load_fields()
 
         fmap = folium.Map(location=[27.5, -90.5], zoom_start=6, tiles="OpenStreetMap")

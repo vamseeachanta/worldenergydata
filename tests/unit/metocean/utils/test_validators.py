@@ -119,18 +119,14 @@ class TestValidateDatetimeRange:
     def test_future_not_allowed_clips_end(self):
         start = datetime(2020, 1, 1)
         future = datetime.utcnow() + timedelta(days=30)
-        s, e = validate_datetime_range(
-            start, future, allow_future=False
-        )
+        s, e = validate_datetime_range(start, future, allow_future=False)
         assert e <= datetime.utcnow() + timedelta(seconds=5)
 
     def test_future_start_not_allowed(self):
         future_start = datetime.utcnow() + timedelta(days=30)
         future_end = future_start + timedelta(days=10)
         with pytest.raises(InvalidDataError):
-            validate_datetime_range(
-                future_start, future_end, allow_future=False
-            )
+            validate_datetime_range(future_start, future_end, allow_future=False)
 
 
 class TestValidateStationId:
@@ -200,9 +196,7 @@ class TestValidateParameters:
 
     def test_not_in_allowed(self):
         with pytest.raises(InvalidDataError):
-            validate_parameters(
-                ["temperature"], allowed=["wave_height", "wind_speed"]
-            )
+            validate_parameters(["temperature"], allowed=["wave_height", "wind_speed"])
 
 
 class TestValidatePositiveNumber:

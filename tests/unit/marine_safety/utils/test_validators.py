@@ -6,10 +6,6 @@ from decimal import Decimal
 import pytest
 from pydantic import ValidationError as PydanticValidationError
 
-from worldenergydata.marine_safety.exceptions import (
-    InvalidDataError,
-    MissingRequiredFieldError,
-)
 from worldenergydata.marine_safety.constants import (
     DataSource,
     IncidentStatus,
@@ -17,6 +13,10 @@ from worldenergydata.marine_safety.constants import (
     SeverityLevel,
     VesselType,
     WeatherCondition,
+)
+from worldenergydata.marine_safety.exceptions import (
+    InvalidDataError,
+    MissingRequiredFieldError,
 )
 from worldenergydata.marine_safety.utils.validators import (
     CompanyValidator,
@@ -97,9 +97,7 @@ class TestIncidentValidator:
         assert v.severity_level >= 4
 
     def test_severity_auto_adjust_missing(self):
-        v = IncidentValidator(
-            **_base_incident(missing_persons=2, severity_level=1)
-        )
+        v = IncidentValidator(**_base_incident(missing_persons=2, severity_level=1))
         assert v.severity_level >= 4
 
     def test_no_severity_adjust_when_already_high(self):
@@ -113,9 +111,7 @@ class TestIncidentValidator:
             )
 
     def test_coordinates_both_none_ok(self):
-        v = IncidentValidator(
-            **_base_incident(latitude=None, longitude=None)
-        )
+        v = IncidentValidator(**_base_incident(latitude=None, longitude=None))
         assert v.latitude is None
 
     def test_empty_source_id_rejected(self):
@@ -141,17 +137,13 @@ class TestIncidentValidator:
     def test_latitude_out_of_range(self):
         with pytest.raises(PydanticValidationError):
             IncidentValidator(
-                **_base_incident(
-                    latitude=Decimal("100.0"), longitude=Decimal("-90.0")
-                )
+                **_base_incident(latitude=Decimal("100.0"), longitude=Decimal("-90.0"))
             )
 
 
 class TestVesselValidator:
     def test_valid_minimal(self):
-        v = VesselValidator(
-            vessel_name="Test Vessel", vessel_type=VesselType.TANKER
-        )
+        v = VesselValidator(vessel_name="Test Vessel", vessel_type=VesselType.TANKER)
         assert v.vessel_name == "Test Vessel"
         assert v.is_active is True
 
@@ -244,9 +236,7 @@ class TestLocationValidator:
         assert v.location_name == "Gulf of Mexico"
 
     def test_valid_with_coordinates(self):
-        v = LocationValidator(
-            latitude=Decimal("29.0"), longitude=Decimal("-90.0")
-        )
+        v = LocationValidator(latitude=Decimal("29.0"), longitude=Decimal("-90.0"))
         assert v.latitude == Decimal("29.0")
 
     def test_valid_with_both(self):
@@ -258,9 +248,7 @@ class TestLocationValidator:
         assert v.location_name == "GoM"
 
     def test_neither_name_nor_coords_rejected(self):
-        with pytest.raises(
-            (PydanticValidationError, MissingRequiredFieldError)
-        ):
+        with pytest.raises((PydanticValidationError, MissingRequiredFieldError)):
             LocationValidator()
 
     def test_lat_without_lon_rejected(self):
@@ -277,9 +265,7 @@ class TestLocationValidator:
 
     def test_lat_out_of_range(self):
         with pytest.raises(PydanticValidationError):
-            LocationValidator(
-                latitude=Decimal("100.0"), longitude=Decimal("-90.0")
-            )
+            LocationValidator(latitude=Decimal("100.0"), longitude=Decimal("-90.0"))
 
 
 class TestDocumentValidator:
@@ -303,9 +289,7 @@ class TestDocumentValidator:
 
     def test_invalid_url_scheme(self):
         with pytest.raises((PydanticValidationError, InvalidDataError)):
-            DocumentValidator(
-                document_type="report", document_url="file:///local/path"
-            )
+            DocumentValidator(document_type="report", document_url="file:///local/path")
 
     def test_ftp_url_accepted(self):
         v = DocumentValidator(
@@ -328,9 +312,7 @@ class TestConvenienceFunctions:
         assert isinstance(result, IncidentValidator)
 
     def test_validate_vessel(self):
-        result = validate_vessel(
-            {"vessel_name": "Test", "vessel_type": VesselType.TUG}
-        )
+        result = validate_vessel({"vessel_name": "Test", "vessel_type": VesselType.TUG})
         assert isinstance(result, VesselValidator)
 
     def test_validate_company(self):

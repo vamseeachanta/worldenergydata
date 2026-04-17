@@ -6,16 +6,16 @@ import pandas as pd
 import pytest
 
 from worldenergydata.bsee.reports.comprehensive.performance.cache import (
+    CachedAggregator,
     CacheEntry,
     CacheManager,
-    CachedAggregator,
     MetricsCache,
 )
-
 
 # ---------------------------------------------------------------------------
 # CacheEntry
 # ---------------------------------------------------------------------------
+
 
 class TestCacheEntryInit:
     def test_default_ttl(self):
@@ -47,11 +47,14 @@ class TestCacheEntryInit:
 
     def test_size_bytes_unpicklable_fallback(self):
         """Objects that fail all size paths return 0."""
+
         class Unpicklable:
             def __reduce__(self):
                 raise TypeError("nope")
+
             def __str__(self):
                 raise TypeError("nope")
+
         entry = CacheEntry.__new__(CacheEntry)
         result = entry._calculate_size(Unpicklable())
         assert result == 0
@@ -97,6 +100,7 @@ class TestCacheEntryAccess:
 # ---------------------------------------------------------------------------
 # MetricsCache
 # ---------------------------------------------------------------------------
+
 
 class TestMetricsCacheInit:
     def test_defaults(self):
@@ -151,7 +155,7 @@ class TestMetricsCacheSetGet:
     def test_stats_track_hits_and_misses(self):
         cache = MetricsCache()
         cache.set("k", "v")
-        cache.get("k")       # hit
+        cache.get("k")  # hit
         cache.get("missing")  # miss
         stats = cache.get_stats()
         assert stats["hits"] == 1
@@ -306,10 +310,12 @@ class TestMetricsCacheEviction:
 # CachedAggregator
 # ---------------------------------------------------------------------------
 
+
 class TestCachedAggregator:
     def test_aggregate_caches_result(self):
         class FakeAggregator:
             call_count = 0
+
             def aggregate(self, data, **params):
                 self.call_count += 1
                 return {"sum": data["A"].sum()}
@@ -328,6 +334,7 @@ class TestCachedAggregator:
     def test_aggregate_different_params_not_cached(self):
         class FakeAggregator:
             call_count = 0
+
             def aggregate(self, data, **params):
                 self.call_count += 1
                 return params.get("level", "default")
@@ -345,6 +352,7 @@ class TestCachedAggregator:
 # ---------------------------------------------------------------------------
 # CacheManager (singleton)
 # ---------------------------------------------------------------------------
+
 
 class TestCacheManager:
     def _reset_singleton(self):

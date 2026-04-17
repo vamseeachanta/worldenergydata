@@ -10,6 +10,10 @@ Note: cause_statistics and cause_report are in the flat namespace
 backward compatibility.
 """
 
+from worldenergydata.marine_safety.analysis.cause_report import (
+    CauseAnalysisReport,
+    ReportFilters,
+)
 from worldenergydata.marine_safety.analysis.cause_statistics import (
     CauseStatistics,
     CrossTabulation,
@@ -17,10 +21,7 @@ from worldenergydata.marine_safety.analysis.cause_statistics import (
     StatisticalSummary,
     TemporalTrend,
 )
-from worldenergydata.marine_safety.analysis.cause_report import (
-    CauseAnalysisReport,
-    ReportFilters,
-)
+
 from .incidents.hatch_maloperation_analysis import HatchMaloperationAnalyzer
 
 __all__ = [

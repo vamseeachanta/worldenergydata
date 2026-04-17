@@ -33,6 +33,11 @@ Key features:
 
 from typing import Any, Dict, List, Optional
 
+from .hatch_analysis import HatchAnalyzer
+
+# Import split module classes
+from .hatch_detection import LLM_AVAILABLE, HatchDetector
+
 # Re-export patterns for backward compatibility
 from .hatch_patterns import (
     CONSEQUENCE_PATTERNS,
@@ -43,12 +48,8 @@ from .hatch_patterns import (
     HIGH_IMPACT_CONSEQUENCES,
     SEVERITY_SCORES,
 )
-
-# Import split module classes
-from .hatch_detection import HatchDetector, LLM_AVAILABLE
-from .hatch_analysis import HatchAnalyzer
-from .hatch_statistics import HatchStatistics
 from .hatch_reports import HatchReportGenerator
+from .hatch_statistics import HatchStatistics
 
 
 class HatchMaloperationAnalyzer:
@@ -112,7 +113,9 @@ class HatchMaloperationAnalyzer:
 
         # Expose compiled patterns from detector for backward compatibility
         self.compiled_hatch_patterns = self._detector.compiled_hatch_patterns
-        self.compiled_engine_room_patterns = self._analyzer.compiled_engine_room_patterns
+        self.compiled_engine_room_patterns = (
+            self._analyzer.compiled_engine_room_patterns
+        )
         self.compiled_enclosure_patterns = self._analyzer.compiled_enclosure_patterns
 
         # Expose LLM configuration for backward compatibility

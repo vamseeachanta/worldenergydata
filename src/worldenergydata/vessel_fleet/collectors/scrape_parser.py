@@ -66,13 +66,13 @@ def parse_water_depth_string(value: Optional[str]) -> Optional[float]:
 # "{RigName}Rig Summary {Design} Currently in {Location} {WD} ft Water Depth
 #  Available: {Date} Download Summary PDF"
 _NOBLE_RIG_PATTERN = re.compile(
-    r"(?P<name>[A-Z][A-Za-z ]+?)"     # Rig name (starts with uppercase)
-    r"Rig Summary\s+"                   # Separator
-    r"(?P<design>.+?)\s+"              # Design class
+    r"(?P<name>[A-Z][A-Za-z ]+?)"  # Rig name (starts with uppercase)
+    r"Rig Summary\s+"  # Separator
+    r"(?P<design>.+?)\s+"  # Design class
     r"Currently in\s+(?P<location>.+?)\s+"  # Location
     r"(?P<wd>[\d,]+)\s*ft\s+Water Depth\s*"  # Water depth
     r"Available:\s*(?P<avail>[^\s]+(?:\s+[^\s]+)?)\s+"  # Availability
-    r"Download Summary PDF"             # Trailer
+    r"Download Summary PDF"  # Trailer
 )
 
 
@@ -86,9 +86,7 @@ def _extract_noble_pdf_links(links: list[dict[str, str]]) -> dict[str, str]:
     pdf_map: dict[str, str] = {}
     # Fleet detail page URLs contain the rig name slug
     # e.g. .../fleet-details/2024/Ocean-Apex/default.aspx
-    rig_detail_re = re.compile(
-        r"/fleet-details/\d{4}/([^/]+)/default\.aspx$"
-    )
+    rig_detail_re = re.compile(r"/fleet-details/\d{4}/([^/]+)/default\.aspx$")
 
     pending_name: Optional[str] = None
     for link in links:
@@ -195,7 +193,7 @@ def _strip_owner_prefix(name: str) -> str:
     lower = name.lower().strip()
     for prefix in prefixes:
         if lower.startswith(prefix):
-            return name[len(prefix):].strip()
+            return name[len(prefix) :].strip()
     return name.strip()
 
 

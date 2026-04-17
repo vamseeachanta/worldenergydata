@@ -68,9 +68,7 @@ class TestPipelinePermit:
         assert permit.is_deepwater is False
 
     def test_segment_key(self):
-        permit = PipelinePermit(
-            area_code="GC", block_number="640", segment_num="001"
-        )
+        permit = PipelinePermit(area_code="GC", block_number="640", segment_num="001")
         assert permit.segment_key == "GC_640_001"
 
 

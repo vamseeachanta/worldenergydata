@@ -29,9 +29,7 @@ class ANPClient:
         base_url: str = DEFAULT_BASE_URL,
     ):
         if cache_dir is None:
-            cache_dir = str(
-                Path(__file__).resolve().parents[1] / "data"
-            )
+            cache_dir = str(Path(__file__).resolve().parents[1] / "data")
         self.cache_dir = Path(cache_dir)
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         self.base_url = base_url
@@ -75,9 +73,7 @@ class ANPClient:
         cache_path = self.cache_dir / self._cache_key(year, semester)
         cache_path.write_bytes(response.content)
 
-        return pd.read_csv(
-            io.BytesIO(response.content), sep=";", encoding=encoding
-        )
+        return pd.read_csv(io.BytesIO(response.content), sep=";", encoding=encoding)
 
     def _build_url(self, year: int, semester: int) -> str:
         return f"{self.base_url}?year={year}&semester={semester}"

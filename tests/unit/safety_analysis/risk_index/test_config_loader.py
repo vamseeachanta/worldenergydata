@@ -5,8 +5,8 @@ import yaml
 
 from worldenergydata.safety_analysis.risk_index.config_loader import (
     RiskConfig,
-    load_config,
     default_config,
+    load_config,
 )
 
 
@@ -40,7 +40,11 @@ class TestLoadConfig:
     def test_load_from_yaml(self, tmp_path):
         yaml_content = {
             "composite_weights": {"acute": 0.60, "chronic": 0.20, "compliance": 0.20},
-            "acute_weights": {"fatality_rate": 0.50, "injury_rate": 0.30, "frequency": 0.20},
+            "acute_weights": {
+                "fatality_rate": 0.50,
+                "injury_rate": 0.30,
+                "frequency": 0.20,
+            },
             "chronic_weights": {"tri_carcinogen_lbs": 1.0},
             "compliance_weights": {"inc_rate": 1.0},
             "default_missing_score": 4.0,
@@ -55,7 +59,9 @@ class TestLoadConfig:
         assert cfg.default_missing_score == 4.0
 
     def test_partial_yaml_uses_defaults(self, tmp_path):
-        yaml_content = {"composite_weights": {"acute": 0.70, "chronic": 0.15, "compliance": 0.15}}
+        yaml_content = {
+            "composite_weights": {"acute": 0.70, "chronic": 0.15, "compliance": 0.15}
+        }
         cfg_path = tmp_path / "partial.yaml"
         cfg_path.write_text(yaml.dump(yaml_content))
 

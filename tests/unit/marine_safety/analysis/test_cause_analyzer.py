@@ -22,10 +22,16 @@ class TestMapToCauseCategory:
         assert map_to_cause_category("crew fatigue") == CauseCategory.HUMAN_ERROR
 
     def test_equipment_failure(self):
-        assert map_to_cause_category("equipment malfunction") == CauseCategory.EQUIPMENT_FAILURE
+        assert (
+            map_to_cause_category("equipment malfunction")
+            == CauseCategory.EQUIPMENT_FAILURE
+        )
 
     def test_maintenance_issue(self):
-        assert map_to_cause_category("inadequate maintenance") == CauseCategory.MAINTENANCE_ISSUE
+        assert (
+            map_to_cause_category("inadequate maintenance")
+            == CauseCategory.MAINTENANCE_ISSUE
+        )
 
     def test_weather(self):
         assert map_to_cause_category("severe storm conditions") == CauseCategory.WEATHER
@@ -40,19 +46,28 @@ class TestMapToCauseCategory:
         assert map_to_cause_category("training deficiency") == CauseCategory.TRAINING
 
     def test_communication(self):
-        assert map_to_cause_category("communication breakdown") == CauseCategory.COMMUNICATION
+        assert (
+            map_to_cause_category("communication breakdown")
+            == CauseCategory.COMMUNICATION
+        )
 
     def test_management(self):
         assert map_to_cause_category("management oversight") == CauseCategory.MANAGEMENT
 
     def test_environmental(self):
-        assert map_to_cause_category("environmental current") == CauseCategory.ENVIRONMENTAL
+        assert (
+            map_to_cause_category("environmental current")
+            == CauseCategory.ENVIRONMENTAL
+        )
 
     def test_external(self):
         assert map_to_cause_category("external collision") == CauseCategory.EXTERNAL
 
     def test_multiple_causes(self):
-        assert map_to_cause_category("multiple equipment and human factors") == CauseCategory.MULTIPLE
+        assert (
+            map_to_cause_category("multiple equipment and human factors")
+            == CauseCategory.MULTIPLE
+        )
 
     def test_unknown(self):
         assert map_to_cause_category("some random text") == CauseCategory.UNKNOWN
@@ -89,7 +104,9 @@ class TestDetectHatchOpeningMaloperation:
 
 class TestExtractCausesFromNarrative:
     def test_caused_by_pattern(self):
-        result = extract_causes_from_narrative("The incident was caused by engine failure")
+        result = extract_causes_from_narrative(
+            "The incident was caused by engine failure"
+        )
         assert len(result) >= 1
         assert any("engine failure" in c.lower() for c in result)
 
@@ -98,7 +115,9 @@ class TestExtractCausesFromNarrative:
         assert len(result) >= 1
 
     def test_failure_of_pattern(self):
-        result = extract_causes_from_narrative("failure of the steering mechanism led to grounding")
+        result = extract_causes_from_narrative(
+            "failure of the steering mechanism led to grounding"
+        )
         assert len(result) >= 1
 
     def test_empty_narrative(self):
@@ -163,13 +182,17 @@ class TestIncidentCauseExtractor:
 
     def test_extract_with_primary_cause(self):
         extractor = IncidentCauseExtractor()
-        df = pd.DataFrame({
-            "incident_id": [1],
-            "primary_cause": ["equipment failure"],
-        })
+        df = pd.DataFrame(
+            {
+                "incident_id": [1],
+                "primary_cause": ["equipment failure"],
+            }
+        )
         result = extractor.extract_from_dataframe(df)
         assert "primary_cause_category" in result.columns
-        assert result.iloc[0]["primary_cause_category"] == CauseCategory.EQUIPMENT_FAILURE
+        assert (
+            result.iloc[0]["primary_cause_category"] == CauseCategory.EQUIPMENT_FAILURE
+        )
 
     def test_extract_without_primary_cause(self):
         extractor = IncidentCauseExtractor()
@@ -179,10 +202,12 @@ class TestIncidentCauseExtractor:
 
     def test_extract_with_contributing_factors(self):
         extractor = IncidentCauseExtractor()
-        df = pd.DataFrame({
-            "incident_id": [1],
-            "contributing_factors": ["fatigue, poor visibility"],
-        })
+        df = pd.DataFrame(
+            {
+                "incident_id": [1],
+                "contributing_factors": ["fatigue, poor visibility"],
+            }
+        )
         result = extractor.extract_from_dataframe(df)
         assert "contributing_causes" in result.columns
         causes = result.iloc[0]["contributing_causes"]
@@ -191,10 +216,12 @@ class TestIncidentCauseExtractor:
 
     def test_extract_with_narrative(self):
         extractor = IncidentCauseExtractor()
-        df = pd.DataFrame({
-            "incident_id": [1],
-            "narrative": ["The incident was caused by equipment failure"],
-        })
+        df = pd.DataFrame(
+            {
+                "incident_id": [1],
+                "narrative": ["The incident was caused by equipment failure"],
+            }
+        )
         result = extractor.extract_from_dataframe(df)
         assert "narrative_causes" in result.columns
 
@@ -230,7 +257,9 @@ class TestCleanCauseData:
         assert "other" in result.columns
 
     def test_clean_remove_duplicates(self):
-        df = pd.DataFrame({"cause": ["equipment failure", "equipment failure", "storm"]})
+        df = pd.DataFrame(
+            {"cause": ["equipment failure", "equipment failure", "storm"]}
+        )
         result = clean_cause_data(df, "cause", remove_duplicates=True)
         assert len(result) == 2
 

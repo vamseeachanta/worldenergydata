@@ -8,10 +8,10 @@ from worldenergydata.bsee.analysis.financial.cash_flow_calculator import (
     FinancialParameters,
 )
 
-
 # ---------------------------------------------------------------------------
 # DevelopmentType enum
 # ---------------------------------------------------------------------------
+
 
 class TestDevelopmentType:
     def test_subsea(self):
@@ -27,6 +27,7 @@ class TestDevelopmentType:
 # ---------------------------------------------------------------------------
 # FinancialParameters dataclass
 # ---------------------------------------------------------------------------
+
 
 class TestFinancialParameters:
     def test_defaults(self):
@@ -95,6 +96,7 @@ class TestFinancialParameters:
 # CashFlowCalculator init
 # ---------------------------------------------------------------------------
 
+
 class TestCashFlowCalculator:
     def test_default_init(self):
         calc = CashFlowCalculator()
@@ -108,6 +110,7 @@ class TestCashFlowCalculator:
 
     def test_set_wti_prices(self):
         import pandas as pd
+
         calc = CashFlowCalculator()
         prices = {pd.Timestamp("2024-01-01"): 75.0, pd.Timestamp("2024-02-01"): 78.0}
         calc.set_wti_prices(prices)
@@ -119,29 +122,36 @@ class TestCashFlowCalculator:
 # calculate_npv standalone function
 # ---------------------------------------------------------------------------
 
+
 class TestCalculateNpv:
     def test_empty_array(self):
+        import numpy as np
+
         from worldenergydata.bsee.analysis.financial.cash_flow_calculator import (
             calculate_npv,
         )
-        import numpy as np
+
         result = calculate_npv(np.array([]), 0.01)
         assert result == 0.0
 
     def test_single_cash_flow(self):
+        import numpy as np
+
         from worldenergydata.bsee.analysis.financial.cash_flow_calculator import (
             calculate_npv,
         )
-        import numpy as np
+
         # Single cash flow at period 0 => NPV = cash_flow / 1.0
         result = calculate_npv(np.array([1000.0]), 0.01)
         assert result == pytest.approx(1000.0)
 
     def test_multiple_cash_flows(self):
+        import numpy as np
+
         from worldenergydata.bsee.analysis.financial.cash_flow_calculator import (
             calculate_npv,
         )
-        import numpy as np
+
         # -1000 at t=0, +600 at t=1, +600 at t=2 with 10% monthly rate
         flows = np.array([-1000.0, 600.0, 600.0])
         npv = calculate_npv(flows, 0.10)
@@ -149,10 +159,12 @@ class TestCalculateNpv:
         assert npv == pytest.approx(41.32, abs=0.5)
 
     def test_zero_discount_rate(self):
+        import numpy as np
+
         from worldenergydata.bsee.analysis.financial.cash_flow_calculator import (
             calculate_npv,
         )
-        import numpy as np
+
         flows = np.array([100.0, 200.0, 300.0])
         npv = calculate_npv(flows, 0.0)
         assert npv == pytest.approx(600.0)
@@ -162,38 +174,47 @@ class TestCalculateNpv:
 # calculate_mirr standalone function
 # ---------------------------------------------------------------------------
 
+
 class TestCalculateMirr:
     def test_single_period(self):
+        import numpy as np
+
         from worldenergydata.bsee.analysis.financial.cash_flow_calculator import (
             calculate_mirr,
         )
-        import numpy as np
+
         result = calculate_mirr(np.array([100.0]), 0.01, 0.01)
         assert np.isnan(result)
 
     def test_all_positive(self):
+        import numpy as np
+
         from worldenergydata.bsee.analysis.financial.cash_flow_calculator import (
             calculate_mirr,
         )
-        import numpy as np
+
         # All positive => pv_negative=0 => NaN
         result = calculate_mirr(np.array([100.0, 200.0, 300.0]), 0.01, 0.01)
         assert np.isnan(result)
 
     def test_all_negative(self):
+        import numpy as np
+
         from worldenergydata.bsee.analysis.financial.cash_flow_calculator import (
             calculate_mirr,
         )
-        import numpy as np
+
         # All negative => fv_positive=0 => NaN
         result = calculate_mirr(np.array([-100.0, -200.0]), 0.01, 0.01)
         assert np.isnan(result)
 
     def test_typical_investment(self):
+        import numpy as np
+
         from worldenergydata.bsee.analysis.financial.cash_flow_calculator import (
             calculate_mirr,
         )
-        import numpy as np
+
         # Initial investment then positive returns
         flows = np.array([-1000.0, 300.0, 400.0, 500.0])
         result = calculate_mirr(flows, 0.01, 0.01)
@@ -201,10 +222,12 @@ class TestCalculateMirr:
         assert result > 0  # Should be positive since total returns > investment
 
     def test_empty_flows(self):
+        import numpy as np
+
         from worldenergydata.bsee.analysis.financial.cash_flow_calculator import (
             calculate_mirr,
         )
-        import numpy as np
+
         result = calculate_mirr(np.array([]), 0.01, 0.01)
         assert np.isnan(result)
 
@@ -213,9 +236,11 @@ class TestCalculateMirr:
 # CashFlowCalculator._get_date_range
 # ---------------------------------------------------------------------------
 
+
 class TestGetDateRange:
     def test_empty_inputs(self):
         import pandas as pd
+
         calc = CashFlowCalculator()
         result = calc._get_date_range(pd.DataFrame(), {})
         assert len(result) == 1
@@ -223,6 +248,7 @@ class TestGetDateRange:
 
     def test_from_drilling_data(self):
         import pandas as pd
+
         calc = CashFlowCalculator()
         drilling = {
             "well1": {
@@ -242,6 +268,7 @@ class TestGetDateRange:
 
     def test_from_production_df(self):
         import pandas as pd
+
         calc = CashFlowCalculator()
         idx = pd.date_range("2024-01-01", "2024-06-01", freq="MS")
         prod_df = pd.DataFrame({"well1": range(6)}, index=idx)
@@ -254,9 +281,11 @@ class TestGetDateRange:
 # CashFlowCalculator.calculate_monthly_cash_flow (minimal)
 # ---------------------------------------------------------------------------
 
+
 class TestCalculateMonthlyCashFlow:
     def test_empty_production(self):
         import pandas as pd
+
         calc = CashFlowCalculator()
         drilling = {
             "well1": {
@@ -276,18 +305,18 @@ class TestCalculateMonthlyCashFlow:
 
     def test_with_production(self):
         import pandas as pd
+
         calc = CashFlowCalculator()
         idx = pd.date_range("2024-01-01", "2024-03-01", freq="MS")
         prod_df = pd.DataFrame({"well1": [100.0, 200.0, 300.0]}, index=idx)
         prod_df.index.name = "YearMonth"
-        result = calc.calculate_monthly_cash_flow(
-            prod_df, {}, DevelopmentType.DRY_TREE
-        )
+        result = calc.calculate_monthly_cash_flow(prod_df, {}, DevelopmentType.DRY_TREE)
         assert result["Gross_Oil_bbls"].sum() == 600.0
         assert result["Revenue_Gross"].sum() > 0
 
     def test_subsea_vs_dry_opex(self):
         import pandas as pd
+
         calc = CashFlowCalculator(
             params=FinancialParameters(subsea_opex_per_bbl=16.0, dry_opex_per_bbl=10.0)
         )
@@ -295,12 +324,8 @@ class TestCalculateMonthlyCashFlow:
         prod_df = pd.DataFrame({"well1": [1000.0]}, index=idx)
         prod_df.index.name = "YearMonth"
 
-        subsea = calc.calculate_monthly_cash_flow(
-            prod_df, {}, DevelopmentType.SUBSEA
-        )
-        dry = calc.calculate_monthly_cash_flow(
-            prod_df, {}, DevelopmentType.DRY_TREE
-        )
+        subsea = calc.calculate_monthly_cash_flow(prod_df, {}, DevelopmentType.SUBSEA)
+        dry = calc.calculate_monthly_cash_flow(prod_df, {}, DevelopmentType.DRY_TREE)
         assert subsea["OPEX_Var"].iloc[0] == 16000.0
         assert dry["OPEX_Var"].iloc[0] == 10000.0
 
@@ -309,9 +334,11 @@ class TestCalculateMonthlyCashFlow:
 # CashFlowCalculator.calculate_financial_metrics
 # ---------------------------------------------------------------------------
 
+
 class TestCalculateFinancialMetrics:
     def test_basic_metrics(self):
         import pandas as pd
+
         calc = CashFlowCalculator()
         idx = pd.date_range("2024-01-01", "2024-03-01", freq="MS")
         prod_df = pd.DataFrame({"well1": [1000.0, 2000.0, 3000.0]}, index=idx)

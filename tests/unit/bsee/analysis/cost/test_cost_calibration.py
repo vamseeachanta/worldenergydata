@@ -4,22 +4,23 @@
 
 """Unit tests for worldenergydata.bsee.analysis.cost.cost_calibration."""
 
-import pytest
-import pandas as pd
 import numpy as np
+import pandas as pd
+import pytest
 
 from worldenergydata.bsee.analysis.cost.cost_calibration import (
-    MultivariateCalibration,
     CalibrationReport,
+    MultivariateCalibration,
 )
-from worldenergydata.bsee.analysis.cost.sanctioned_dataset import SanctionedProjectDataset
 from worldenergydata.bsee.analysis.cost.models import (
     ActivityType,
+    ConfidenceLevel,
     WaterDepthBand,
     WellDepthBand,
-    ConfidenceLevel,
 )
-
+from worldenergydata.bsee.analysis.cost.sanctioned_dataset import (
+    SanctionedProjectDataset,
+)
 
 # ---------------------------------------------------------------------------
 # Fixtures

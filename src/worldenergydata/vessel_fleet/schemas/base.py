@@ -63,10 +63,20 @@ class BaseVesselSchema(BaseModel):
         return v
 
     @field_validator(
-        "VESSEL_CATEGORY", "VESSEL_TYPE", "VESSEL_SUBTYPE",
-        "OWNER", "OPERATOR", "IMO_NUMBER", "MMSI",
-        "FLAG_STATE", "CLASSIFICATION_SOCIETY", "CLASS_NOTATION",
-        "STATUS", "DATA_SOURCE", "DATA_SOURCE_URL", "COLLECTION_DATE",
+        "VESSEL_CATEGORY",
+        "VESSEL_TYPE",
+        "VESSEL_SUBTYPE",
+        "OWNER",
+        "OPERATOR",
+        "IMO_NUMBER",
+        "MMSI",
+        "FLAG_STATE",
+        "CLASSIFICATION_SOCIETY",
+        "CLASS_NOTATION",
+        "STATUS",
+        "DATA_SOURCE",
+        "DATA_SOURCE_URL",
+        "COLLECTION_DATE",
         mode="before",
     )
     @classmethod
@@ -76,8 +86,13 @@ class BaseVesselSchema(BaseModel):
         return v
 
     @field_validator(
-        "LOA_M", "BEAM_M", "DEPTH_M", "DRAFT_M",
-        "DISPLACEMENT_TONNES", "GROSS_TONNAGE", "DEADWEIGHT_TONNES",
+        "LOA_M",
+        "BEAM_M",
+        "DEPTH_M",
+        "DRAFT_M",
+        "DISPLACEMENT_TONNES",
+        "GROSS_TONNAGE",
+        "DEADWEIGHT_TONNES",
         "TRANSIT_SPEED_KNOTS",
         mode="before",
     )
@@ -93,8 +108,13 @@ class BaseVesselSchema(BaseModel):
         return v
 
     @field_validator(
-        "LOA_M", "BEAM_M", "DEPTH_M", "DRAFT_M",
-        "DISPLACEMENT_TONNES", "GROSS_TONNAGE", "DEADWEIGHT_TONNES",
+        "LOA_M",
+        "BEAM_M",
+        "DEPTH_M",
+        "DRAFT_M",
+        "DISPLACEMENT_TONNES",
+        "GROSS_TONNAGE",
+        "DEADWEIGHT_TONNES",
         "TRANSIT_SPEED_KNOTS",
     )
     @classmethod

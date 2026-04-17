@@ -7,10 +7,10 @@ from worldenergydata.fdas.reports.excel_generator import (
     ReportGenerationError,
 )
 
-
 # ---------------------------------------------------------------------------
 # ReportGenerationError
 # ---------------------------------------------------------------------------
+
 
 class TestReportGenerationError:
     def test_is_exception(self):
@@ -22,6 +22,7 @@ class TestReportGenerationError:
 # ---------------------------------------------------------------------------
 # ExcelReportGenerator constants
 # ---------------------------------------------------------------------------
+
 
 class TestExcelReportGeneratorConstants:
     def test_header_fill(self):
@@ -54,6 +55,7 @@ class TestExcelReportGeneratorConstants:
 # ---------------------------------------------------------------------------
 # ExcelReportGenerator init
 # ---------------------------------------------------------------------------
+
 
 class TestExcelReportGeneratorInit:
     def test_output_path(self, tmp_path):

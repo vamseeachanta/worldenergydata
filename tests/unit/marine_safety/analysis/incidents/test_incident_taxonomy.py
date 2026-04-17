@@ -822,9 +822,7 @@ class TestOperationPhaseClassifier:
         assert result == OperationPhase.MANOEUVRING
 
     def test_classify_anchored(self, op_classifier):
-        result = op_classifier.classify(
-            operation_text="vessel at anchor in harbour"
-        )
+        result = op_classifier.classify(operation_text="vessel at anchor in harbour")
         assert result == OperationPhase.ANCHORED
 
     def test_classify_underway(self, op_classifier):
@@ -840,9 +838,7 @@ class TestOperationPhaseClassifier:
         assert result == OperationPhase.PORT_OPERATIONS
 
     def test_classify_cargo_operations(self, op_classifier):
-        result = op_classifier.classify(
-            operation_text="loading cargo at terminal"
-        )
+        result = op_classifier.classify(operation_text="loading cargo at terminal")
         assert result == OperationPhase.CARGO_OPERATIONS
 
     def test_classify_fishing_ops(self, op_classifier):
@@ -860,9 +856,7 @@ class TestOperationPhaseClassifier:
         assert result == OperationPhase.UNKNOWN
 
     def test_classify_unrecognised_returns_unknown(self, op_classifier):
-        result = op_classifier.classify(
-            operation_text="XYZ mode zeta alpha bravo"
-        )
+        result = op_classifier.classify(operation_text="XYZ mode zeta alpha bravo")
         assert result == OperationPhase.UNKNOWN
 
     def test_classify_docking_maps_to_port_operations(self, op_classifier):
@@ -965,20 +959,24 @@ class TestMISLEColumnMap:
     def test_normaliser_extracts_misle_operation_phase(self):
         """Normaliser must handle MISLE ACTIVITY_TYPE column for op phase."""
         normaliser = IncidentDataFrameNormaliser()
-        df = pd.DataFrame([{
-            "MASTER_KEY": "MISLE-2022-001",
-            "EVENT_DATE": "2022-04-10",
-            "VESSEL_NAME": "MV PELICAN",
-            "VESSEL_TYPE": "cargo",
-            "PRIMARY_CAUSE": "operator error",
-            "NARRATIVE": "Collision while manoeuvring to berth",
-            "CASUALTY_TYPE": "collision",
-            "LATITUDE": 29.7,
-            "LONGITUDE": -95.0,
-            "INJURY_COUNT": 0,
-            "FATALITY_COUNT": 0,
-            MISLE_OPERATION_COLUMN: "manoeuvring",
-        }])
+        df = pd.DataFrame(
+            [
+                {
+                    "MASTER_KEY": "MISLE-2022-001",
+                    "EVENT_DATE": "2022-04-10",
+                    "VESSEL_NAME": "MV PELICAN",
+                    "VESSEL_TYPE": "cargo",
+                    "PRIMARY_CAUSE": "operator error",
+                    "NARRATIVE": "Collision while manoeuvring to berth",
+                    "CASUALTY_TYPE": "collision",
+                    "LATITUDE": 29.7,
+                    "LONGITUDE": -95.0,
+                    "INJURY_COUNT": 0,
+                    "FATALITY_COUNT": 0,
+                    MISLE_OPERATION_COLUMN: "manoeuvring",
+                }
+            ]
+        )
         result = normaliser.normalise(df, source="uscg")
         # Must not raise; operation_phase column should be present or mappable
         assert "report_id" in result.columns

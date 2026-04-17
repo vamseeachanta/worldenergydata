@@ -41,10 +41,10 @@ Example usage:
             logger.info(f"Downloaded to: {path}")
 """
 
+from worldenergydata.common.logging import get_logger
+
 from .mexico_cnh import MexicoCNH
 from .scrapers import SELENIUM_AVAILABLE, SIHScraper
-
-from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
 

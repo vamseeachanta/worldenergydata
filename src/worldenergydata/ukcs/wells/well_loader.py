@@ -43,8 +43,12 @@ class UKCSWellLoader:
         if raw.empty:
             return pd.DataFrame(
                 columns=[
-                    "well_name", "field", "completion_date",
-                    "status", "water_depth_m", "test_rate_bopd",
+                    "well_name",
+                    "field",
+                    "completion_date",
+                    "status",
+                    "water_depth_m",
+                    "test_rate_bopd",
                 ]
             )
 
@@ -53,9 +57,7 @@ class UKCSWellLoader:
         result["field"] = raw[_RAW_FIELD_COL].str.upper().str.strip()
         result["completion_date"] = raw[_RAW_DATE_COL].astype(str)
         result["status"] = raw[_RAW_STATUS_COL].str.upper().str.strip()
-        result["water_depth_m"] = pd.to_numeric(
-            raw[_RAW_DEPTH_COL], errors="coerce"
-        )
+        result["water_depth_m"] = pd.to_numeric(raw[_RAW_DEPTH_COL], errors="coerce")
         result["test_rate_bopd"] = pd.to_numeric(
             raw[_RAW_RATE_COL], errors="coerce"
         ).fillna(0.0)

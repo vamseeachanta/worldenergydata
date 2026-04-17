@@ -66,7 +66,9 @@ class EquasisCollector(BaseCollector):
             if self._authenticated:
                 logger.info("Equasis authentication successful")
             else:
-                logger.warning("Equasis authentication failed: %d", response.status_code)
+                logger.warning(
+                    "Equasis authentication failed: %d", response.status_code
+                )
             return self._authenticated
         except Exception as exc:
             logger.warning("Equasis authentication error: %s", exc)
@@ -125,7 +127,9 @@ class EquasisCollector(BaseCollector):
             return None
 
     def _parse_search_results(
-        self, html: str, vessel_name: str,
+        self,
+        html: str,
+        vessel_name: str,
     ) -> Optional[dict[str, Any]]:
         """Parse Equasis search results HTML."""
         try:

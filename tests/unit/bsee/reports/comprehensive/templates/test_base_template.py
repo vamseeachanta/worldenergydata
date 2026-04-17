@@ -143,10 +143,12 @@ class TestBaseReportTemplate:
 
     def test_render_basic(self):
         tmpl = BaseReportTemplate("test", "custom")
-        tmpl.update_context({
-            "report_date": "2024-01-01",
-            "entity_id": "E001",
-        })
+        tmpl.update_context(
+            {
+                "report_date": "2024-01-01",
+                "entity_id": "E001",
+            }
+        )
         result = tmpl.render()
         assert isinstance(result, str)
         assert "Template content" in result

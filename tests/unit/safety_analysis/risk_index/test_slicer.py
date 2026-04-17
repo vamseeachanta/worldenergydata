@@ -98,7 +98,14 @@ class TestSliceByEra:
     def test_groups_by_era(self):
         df = _make_incidents(
             6,
-            geological_era=["Oligocene", "Oligocene", "Eocene", "Eocene", "Paleocene", "Paleocene"],
+            geological_era=[
+                "Oligocene",
+                "Oligocene",
+                "Eocene",
+                "Eocene",
+                "Paleocene",
+                "Paleocene",
+            ],
         )
         slicer = RiskSlicer()
         result = slicer.slice_by_era(df)
@@ -130,8 +137,15 @@ class TestSliceMetrics:
         df = _make_incidents(10)
         slicer = RiskSlicer()
         result = slicer.slice_by_field(df)
-        required = {"group_key", "group_type", "total_incidents", "fatalities",
-                     "injuries", "fatality_rate", "injury_rate"}
+        required = {
+            "group_key",
+            "group_type",
+            "total_incidents",
+            "fatalities",
+            "injuries",
+            "fatality_rate",
+            "injury_rate",
+        }
         assert required.issubset(set(result.columns))
 
     def test_fatality_rate_computed(self):

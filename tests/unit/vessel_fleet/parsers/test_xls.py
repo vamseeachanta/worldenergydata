@@ -145,7 +145,10 @@ class TestXlsRealData:
 
     @pytest.fixture
     def real_xls_output(self):
-        pq = Path(__file__).resolve().parents[4] / "data/modules/vessel_fleet/raw/xls_historical/floaters.parquet"
+        pq = (
+            Path(__file__).resolve().parents[4]
+            / "data/modules/vessel_fleet/raw/xls_historical/floaters.parquet"
+        )
         if not pq.exists():
             pytest.skip("XLS ingest not run (floaters.parquet missing)")
         return pd.read_parquet(pq).to_dict("records")
@@ -167,11 +170,14 @@ class TestXlsRealData:
 
     def test_real_only_floater_types(self, real_xls_output):
         import math
+
         expected = {"semi_submersible", "drillship"}
         for r in real_xls_output:
             rig_type = r.get("RIG_TYPE")
             # Parquet round-trip turns None → NaN; allow both
-            if rig_type is None or (isinstance(rig_type, float) and math.isnan(rig_type)):
+            if rig_type is None or (
+                isinstance(rig_type, float) and math.isnan(rig_type)
+            ):
                 continue
             assert rig_type in expected, f"Unexpected type: {rig_type}"
 

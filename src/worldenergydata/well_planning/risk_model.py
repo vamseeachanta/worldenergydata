@@ -13,9 +13,13 @@ from typing import Optional
 class RiskAuthority(Enum):
     """Organisational tier with authority to mitigate the risk."""
 
-    OPERATIONAL = "operational"  # Project execution: swelling clay, mud weight, BOP testing
-    TACTICAL = "tactical"        # Cross-functional: rig procedures, casing design
-    STRATEGIC = "strategic"      # Corporate/procurement: tool contracts, rig selection, regulatory
+    OPERATIONAL = (
+        "operational"  # Project execution: swelling clay, mud weight, BOP testing
+    )
+    TACTICAL = "tactical"  # Cross-functional: rig procedures, casing design
+    STRATEGIC = (
+        "strategic"  # Corporate/procurement: tool contracts, rig selection, regulatory
+    )
 
 
 class RiskCategory(Enum):
@@ -54,10 +58,10 @@ class WellPlanningRisk:
     category: RiskCategory
     authority: RiskAuthority
     severity: RiskSeverity
-    probability: float              # 0.0–1.0
-    risk_score: float               # severity.value * probability
-    mitigation_owner: str           # role responsible e.g. "Drilling Engineer"
-    mitigation_action: str          # specific action to reduce risk
-    mpd_mitigation: bool            # True if MPD technology reduces this risk
-    escalation_template: str        # pre-written escalation message
+    probability: float  # 0.0–1.0
+    risk_score: float  # severity.value * probability
+    mitigation_owner: str  # role responsible e.g. "Drilling Engineer"
+    mitigation_action: str  # specific action to reduce risk
+    mpd_mitigation: bool  # True if MPD technology reduces this risk
+    escalation_template: str  # pre-written escalation message
     related_wrk: list[str] = field(default_factory=list)

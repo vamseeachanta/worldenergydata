@@ -12,9 +12,9 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from .ong_fd_utils import get_api10_from_well_api
-
 from worldenergydata.common.logging import get_logger
+
+from .ong_fd_utils import get_api10_from_well_api
 
 logger = get_logger(__name__)
 
@@ -209,7 +209,9 @@ def prepare_well_paths(
         # Convert to azimuth/inclination format
         api12_dir_survey_df = convert_survey_to_azimuth_inclination(api12_dir_survey_df)
 
-        logger.info("Processing Survey for api12 {} of {}".format(count, len(API12_list)))
+        logger.info(
+            "Processing Survey for api12 {} of {}".format(count, len(API12_list))
+        )
 
         # Process survey to XYZ
         survey_xyz: pd.DataFrame = process_survey_xyz(api12_dir_survey_df)

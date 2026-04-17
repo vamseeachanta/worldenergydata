@@ -67,7 +67,9 @@ class TestANPClientDownload:
         client = ANPClient(cache_dir=str(tmp_path))
         mock_response = MagicMock()
         mock_response.status_code = 200
-        mock_response.content = b"campo;poco;data;oleo_sm3\nLULA;7LL55;2023-01-01;1000.5\n"
+        mock_response.content = (
+            b"campo;poco;data;oleo_sm3\nLULA;7LL55;2023-01-01;1000.5\n"
+        )
         mock_response.raise_for_status = MagicMock()
         mock_requests.get.return_value = mock_response
 
@@ -94,7 +96,9 @@ class TestANPClientDownload:
 
         mock_response = MagicMock()
         mock_response.status_code = 200
-        mock_response.content = b"campo;poco;data;oleo_sm3\nLULA;7LL55;2023-01-01;1000.5\n"
+        mock_response.content = (
+            b"campo;poco;data;oleo_sm3\nLULA;7LL55;2023-01-01;1000.5\n"
+        )
         mock_response.raise_for_status = MagicMock()
         mock_requests.get.return_value = mock_response
 

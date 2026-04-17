@@ -1,9 +1,9 @@
 """Unit tests for the GeologicalEraClassifier module."""
 
-import pytest
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 from tests.test_markers import unit
 
@@ -28,14 +28,26 @@ class TestGeologicalEraClassifier:
                     "608054000304",
                     "608054000305",
                 ],
-                "Measured Depth": [
-                    12660, 14340, 10830, 11500, 9000, 15000, 8000, 7500
-                ],
+                "Measured Depth": [12660, 14340, 10830, 11500, 9000, 15000, 8000, 7500],
                 "True Vertical Depth": [
-                    12628, 14067, 10830, 11200, 8800, 14500, 7800, 7300
+                    12628,
+                    14067,
+                    10830,
+                    11200,
+                    8800,
+                    14500,
+                    7800,
+                    7300,
                 ],
                 "Definite/Possible": [
-                    "DEF", "DEF", "DEF", "POS", "DEF", "DEF", "DEF", "DEF"
+                    "DEF",
+                    "DEF",
+                    "DEF",
+                    "POS",
+                    "DEF",
+                    "DEF",
+                    "DEF",
+                    "DEF",
                 ],
                 "Paleo Age": [
                     "Upper Oligocene (Chattian) Discoaster woodringii",
@@ -121,9 +133,7 @@ class TestGeologicalEraClassifier:
         """Test classifying a field returns the dominant era."""
         # Well 300 = Oligocene (2 records), Well 301 = Eocene (2 records)
         # Both Oligocene and Eocene have 2 wells each in this field
-        result = classifier.classify_field(
-            ["608054000300", "608054000301"]
-        )
+        result = classifier.classify_field(["608054000300", "608054000301"])
         assert result in ("Oligocene", "Eocene")
 
     def test_classify_field_single_well(self, classifier):

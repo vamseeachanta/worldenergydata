@@ -5,10 +5,10 @@ import pytest
 
 from worldenergydata.texas_rrc.processors.well_processor import WellProcessor
 
-
 # ---------------------------------------------------------------------------
 # Init and constants
 # ---------------------------------------------------------------------------
+
 
 class TestWellProcessorInit:
     def test_defaults(self):
@@ -30,6 +30,7 @@ class TestWellProcessorInit:
 # _normalize_api_to_14_digit
 # ---------------------------------------------------------------------------
 
+
 class TestNormalizeApi14:
     def test_10_digit(self):
         proc = WellProcessor()
@@ -47,6 +48,7 @@ class TestNormalizeApi14:
 # ---------------------------------------------------------------------------
 # _extract_sidetrack_code / _extract_completion_code
 # ---------------------------------------------------------------------------
+
 
 class TestExtractCodes:
     def test_sidetrack_code(self):
@@ -78,6 +80,7 @@ class TestExtractCodes:
 # _detect_horizontal_wells
 # ---------------------------------------------------------------------------
 
+
 class TestDetectHorizontalWells:
     def test_by_profile(self):
         proc = WellProcessor()
@@ -104,6 +107,7 @@ class TestDetectHorizontalWells:
 # _detect_directional_wells
 # ---------------------------------------------------------------------------
 
+
 class TestDetectDirectionalWells:
     def test_by_profile(self):
         proc = WellProcessor()
@@ -123,6 +127,7 @@ class TestDetectDirectionalWells:
 # ---------------------------------------------------------------------------
 # _parse_date
 # ---------------------------------------------------------------------------
+
 
 class TestParseDate:
     def test_iso(self):
@@ -145,6 +150,7 @@ class TestParseDate:
 # ---------------------------------------------------------------------------
 # _process_record (dict-based)
 # ---------------------------------------------------------------------------
+
 
 class TestProcessRecord:
     def test_well_status_mapped(self):
@@ -204,6 +210,7 @@ class TestProcessRecord:
 # _process_records
 # ---------------------------------------------------------------------------
 
+
 class TestProcessRecords:
     def test_basic(self):
         proc = WellProcessor()
@@ -220,12 +227,15 @@ class TestProcessRecords:
 # filter_by_status
 # ---------------------------------------------------------------------------
 
+
 class TestFilterByStatus:
     def test_dataframe(self):
         proc = WellProcessor()
-        df = pd.DataFrame({
-            "well_status": ["active", "plugged", "active"],
-        })
+        df = pd.DataFrame(
+            {
+                "well_status": ["active", "plugged", "active"],
+            }
+        )
         result = proc.filter_by_status(df, ["active"])
         assert len(result) == 2
 
@@ -243,12 +253,15 @@ class TestFilterByStatus:
 # filter_by_well_type
 # ---------------------------------------------------------------------------
 
+
 class TestFilterByWellType:
     def test_dataframe(self):
         proc = WellProcessor()
-        df = pd.DataFrame({
-            "well_type": ["oil", "gas", "oil"],
-        })
+        df = pd.DataFrame(
+            {
+                "well_type": ["oil", "gas", "oil"],
+            }
+        )
         result = proc.filter_by_well_type(df, ["oil"])
         assert len(result) == 2
 
@@ -265,6 +278,7 @@ class TestFilterByWellType:
 # ---------------------------------------------------------------------------
 # filter_sidetracks
 # ---------------------------------------------------------------------------
+
 
 class TestFilterSidetracks:
     def test_originals_only_df(self):
@@ -302,16 +316,19 @@ class TestFilterSidetracks:
 # summarize_by_district
 # ---------------------------------------------------------------------------
 
+
 class TestSummarizeByDistrict:
     def test_basic(self):
         proc = WellProcessor()
-        df = pd.DataFrame({
-            "district": ["01", "01", "02"],
-            "well_status": ["active", "plugged", "active"],
-            "is_horizontal": [True, False, True],
-            "is_sidetrack": [False, False, True],
-            "total_depth": [10000.0, 8000.0, 12000.0],
-        })
+        df = pd.DataFrame(
+            {
+                "district": ["01", "01", "02"],
+                "well_status": ["active", "plugged", "active"],
+                "is_horizontal": [True, False, True],
+                "is_sidetrack": [False, False, True],
+                "total_depth": [10000.0, 8000.0, 12000.0],
+            }
+        )
         result = proc.summarize_by_district(df)
         assert len(result) == 2
         assert "total_wells" in result.columns
@@ -324,7 +341,13 @@ class TestSummarizeByDistrict:
     def test_from_list(self):
         proc = WellProcessor()
         records = [
-            {"district": "01", "well_status": "active", "is_horizontal": True, "is_sidetrack": False, "total_depth": 10000.0},
+            {
+                "district": "01",
+                "well_status": "active",
+                "is_horizontal": True,
+                "is_sidetrack": False,
+                "total_depth": 10000.0,
+            },
         ]
         result = proc.summarize_by_district(records)
         assert len(result) == 1
@@ -333,6 +356,7 @@ class TestSummarizeByDistrict:
 # ---------------------------------------------------------------------------
 # stats
 # ---------------------------------------------------------------------------
+
 
 class TestStats:
     def test_initial(self):

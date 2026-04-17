@@ -5,20 +5,20 @@ ABOUTME: Verifies bsee_field_pipeline(field_name) -> BseeFieldResult contract.
 
 from __future__ import annotations
 
-import pytest
 import pandas as pd
+import pytest
 
+from worldenergydata.bsee.skill import SKILL_NAME, BseeFieldResult, bsee_field_pipeline
 
 # ---------------------------------------------------------------------------
 # Import the skill (will fail until implementation is created — TDD red phase)
 # ---------------------------------------------------------------------------
 
-from worldenergydata.bsee.skill import SKILL_NAME, BseeFieldResult, bsee_field_pipeline
-
 
 # ---------------------------------------------------------------------------
 # Tests: Module-level constants
 # ---------------------------------------------------------------------------
+
 
 class TestSkillConstants:
     def test_skill_name_value(self):
@@ -33,6 +33,7 @@ class TestSkillConstants:
 # ---------------------------------------------------------------------------
 # Tests: BseeFieldResult type
 # ---------------------------------------------------------------------------
+
 
 class TestBseeFieldResultType:
     def test_result_is_dataclass_or_class(self):
@@ -75,6 +76,7 @@ class TestBseeFieldResultType:
 # Tests: field_name passthrough
 # ---------------------------------------------------------------------------
 
+
 class TestFieldNamePassthrough:
     def test_field_name_preserved(self):
         """result.field_name must match the input (case-normalized)."""
@@ -84,7 +86,10 @@ class TestFieldNamePassthrough:
     def test_field_name_thunder_horse(self):
         """Pipeline works for Thunder Horse field."""
         result = bsee_field_pipeline("Thunder Horse")
-        assert "THUNDER" in result.field_name.upper() or "HORSE" in result.field_name.upper()
+        assert (
+            "THUNDER" in result.field_name.upper()
+            or "HORSE" in result.field_name.upper()
+        )
 
     def test_field_name_mars(self):
         """Pipeline works for Mars field."""
@@ -96,6 +101,7 @@ class TestFieldNamePassthrough:
 # ---------------------------------------------------------------------------
 # Tests: data DataFrame structure
 # ---------------------------------------------------------------------------
+
 
 class TestDataFrame:
     def test_data_is_dataframe(self):
@@ -138,6 +144,7 @@ class TestDataFrame:
 # Tests: summary dict structure
 # ---------------------------------------------------------------------------
 
+
 class TestSummaryDict:
     def test_summary_has_peak_oil(self):
         """summary must contain peak_oil_bbl key."""
@@ -179,6 +186,7 @@ class TestSummaryDict:
 # Tests: optional kwargs
 # ---------------------------------------------------------------------------
 
+
 class TestOptionalKwargs:
     def test_parameters_subset_oil_only(self):
         """Passing parameters=['oil_bbl'] returns DataFrame with oil_bbl column."""
@@ -205,13 +213,16 @@ class TestOptionalKwargs:
 # Tests: export from worldenergydata.bsee
 # ---------------------------------------------------------------------------
 
+
 class TestPackageExport:
     def test_bsee_field_pipeline_importable_from_bsee(self):
         """bsee_field_pipeline must be importable from worldenergydata.bsee."""
         from worldenergydata.bsee import bsee_field_pipeline as fn
+
         assert callable(fn)
 
     def test_bsee_field_result_importable_from_bsee(self):
         """BseeFieldResult must be importable from worldenergydata.bsee."""
         from worldenergydata.bsee import BseeFieldResult as cls
+
         assert cls is not None

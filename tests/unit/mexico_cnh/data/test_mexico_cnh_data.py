@@ -73,10 +73,12 @@ class TestRouter:
     def test_cache_dir_created(self, tmp_path):
         cnh = MexicoCNHData()
         cache_dir = str(tmp_path / "cache")
-        cfg, data = cnh.router({
-            "data_types": [],
-            "cache": {"enabled": True, "directory": cache_dir},
-        })
+        cfg, data = cnh.router(
+            {
+                "data_types": [],
+                "cache": {"enabled": True, "directory": cache_dir},
+            }
+        )
         assert cnh.cache_dir is not None
 
 

@@ -6,6 +6,7 @@ Tests for worldenergydata.metocean.extrapolation.source_catalog
 """
 
 import math
+
 import pytest
 
 from worldenergydata.metocean.extrapolation.source_catalog import (
@@ -13,7 +14,6 @@ from worldenergydata.metocean.extrapolation.source_catalog import (
     NearestSourceFinder,
     _build_catalog,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -77,9 +77,11 @@ def test_catalog_contains_model_sources(catalog):
 
 def test_catalog_priorities_are_valid(catalog):
     for src in catalog:
-        assert src.priority in (1, 2, 3), (
-            f"{src.name} has unexpected priority {src.priority}"
-        )
+        assert src.priority in (
+            1,
+            2,
+            3,
+        ), f"{src.name} has unexpected priority {src.priority}"
 
 
 # ---------------------------------------------------------------------------
@@ -108,9 +110,11 @@ def test_find_nearest_gom_returns_ndbc_or_reanalysis(finder):
     # GoM location — expect NDBC buoys or reanalysis nearby
     results = finder.find_nearest(27.5, -90.0, n=5)
     source_types = {s.source_type for s in results}
-    assert source_types & {"buoy", "reanalysis", "model"}, (
-        "Expected at least one buoy/reanalysis/model for GoM location"
-    )
+    assert source_types & {
+        "buoy",
+        "reanalysis",
+        "model",
+    }, "Expected at least one buoy/reanalysis/model for GoM location"
 
 
 def test_find_nearest_north_sea_returns_relevant_sources(finder):
@@ -118,7 +122,9 @@ def test_find_nearest_north_sea_returns_relevant_sources(finder):
     results = finder.find_nearest(57.0, 2.0, n=5)
     names = [s.name for s in results]
     # Should include met_norway or era5 north_sea or open_meteo
-    relevant = [n for n in names if "north_sea" in n or "met_norway" in n or "era5" in n]
+    relevant = [
+        n for n in names if "north_sea" in n or "met_norway" in n or "era5" in n
+    ]
     assert len(relevant) > 0, f"No relevant North Sea sources found in {names}"
 
 

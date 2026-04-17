@@ -21,16 +21,16 @@ from worldenergydata.well_planning.risk_registry import WELL_PLANNING_RISKS
 
 HSE_TO_RISK_MAP: dict[tuple[str, str], list[str]] = {
     # (incident_type, sub_type) -> [risk_id, ...]
-    ("kick", "pressure_control"): ["OP-002", "OP-005"],    # narrow MW window, kick/loss
-    ("stuck_pipe", "mechanical"): ["OP-001", "OP-003"],    # clay, stuck pipe
+    ("kick", "pressure_control"): ["OP-002", "OP-005"],  # narrow MW window, kick/loss
+    ("stuck_pipe", "mechanical"): ["OP-001", "OP-003"],  # clay, stuck pipe
     ("lost_circulation", "formation"): ["OP-002", "OP-004"],  # narrow MW, hole cleaning
-    ("bop_failure", "equipment"): ["TC-001"],               # casing design / ECD
-    ("dropped_object", "crane"): ["TC-002"],                # rig trip speed / deck ops
-    ("H2S", "gas"): ["OP-006"],                             # differential sticking / toxic gas
+    ("bop_failure", "equipment"): ["TC-001"],  # casing design / ECD
+    ("dropped_object", "crane"): ["TC-002"],  # rig trip speed / deck ops
+    ("H2S", "gas"): ["OP-006"],  # differential sticking / toxic gas
     ("well_control", "blowout"): ["OP-002", "TC-001"],
-    ("casing_collapse", "wellbore"): ["TC-003"],            # wellhead pressure rating
-    ("rig_move", "marine"): ["ST-001"],                     # rig MPD capability / weather
-    ("regulatory", "compliance"): ["ST-002"],               # permit / compliance
+    ("casing_collapse", "wellbore"): ["TC-003"],  # wellhead pressure rating
+    ("rig_move", "marine"): ["ST-001"],  # rig MPD capability / weather
+    ("regulatory", "compliance"): ["ST-002"],  # permit / compliance
 }
 
 MIN_INCIDENTS_FOR_CALIBRATION = 5  # lower than ENIGMA since well events are rarer
@@ -64,7 +64,7 @@ class CalibrationRecord:
     events_per_year: float
     calibrated_probability: float
     baseline_probability: float
-    confidence: str        # "high" / "medium" / "low"
+    confidence: str  # "high" / "medium" / "low"
     data_driven: bool
 
 
@@ -178,15 +178,17 @@ class RiskCalibrator:
             baseline = baseline_map.get(rid, 0.5)
             raw_count = risk_raw.get(rid, 0)
             weighted_count = risk_weighted.get(rid, 0.0)
-            events_per_year = weighted_count / years_covered if years_covered > 0 else 0.0
+            events_per_year = (
+                weighted_count / years_covered if years_covered > 0 else 0.0
+            )
 
             if raw_count >= MIN_INCIDENTS_FOR_CALIBRATION:
-                data_prob = float(np.clip(
-                    events_per_year / NORMALIZATION_FACTOR, 0.05, 0.95
-                ))
-                calibrated = float(np.clip(
-                    0.6 * data_prob + 0.4 * baseline, 0.05, 0.95
-                ))
+                data_prob = float(
+                    np.clip(events_per_year / NORMALIZATION_FACTOR, 0.05, 0.95)
+                )
+                calibrated = float(
+                    np.clip(0.6 * data_prob + 0.4 * baseline, 0.05, 0.95)
+                )
                 data_driven = True
                 if raw_count >= 20:
                     confidence = "high"
@@ -264,9 +266,7 @@ class RiskCalibrator:
         if not self._fitted:
             baseline = baseline_map.get(risk_id, 0.5)
             return baseline, False
-        prob = self._prob_map.get(
-            risk_id, baseline_map.get(risk_id, 0.5)
-        )
+        prob = self._prob_map.get(risk_id, baseline_map.get(risk_id, 0.5))
         is_data_driven = risk_id in self._data_driven_ids
         return prob, is_data_driven
 
@@ -288,18 +288,21 @@ class RiskCalibrator:
         n_types = len(incident_keys)
 
         # Weights favour well-control and stuck_pipe events (GoM pattern)
-        weights = np.array([
-            0.12,   # kick / pressure_control
-            0.14,   # stuck_pipe / mechanical
-            0.10,   # lost_circulation / formation
-            0.08,   # bop_failure / equipment
-            0.08,   # dropped_object / crane
-            0.07,   # H2S / gas
-            0.12,   # well_control / blowout
-            0.09,   # casing_collapse / wellbore
-            0.10,   # rig_move / marine
-            0.10,   # regulatory / compliance
-        ], dtype=float)
+        weights = np.array(
+            [
+                0.12,  # kick / pressure_control
+                0.14,  # stuck_pipe / mechanical
+                0.10,  # lost_circulation / formation
+                0.08,  # bop_failure / equipment
+                0.08,  # dropped_object / crane
+                0.07,  # H2S / gas
+                0.12,  # well_control / blowout
+                0.09,  # casing_collapse / wellbore
+                0.10,  # rig_move / marine
+                0.10,  # regulatory / compliance
+            ],
+            dtype=float,
+        )
         weights = weights / weights.sum()
 
         assert len(weights) == n_types, "Weight count must match incident key count"
@@ -310,18 +313,14 @@ class RiskCalibrator:
 
         severities = ["fatality", "lost_time", "recordable", "near_miss", "minor"]
         severity_weights = [0.03, 0.12, 0.40, 0.28, 0.17]
-        chosen_severities = rng.choice(
-            severities, size=n_incidents, p=severity_weights
-        )
+        chosen_severities = rng.choice(severities, size=n_incidents, p=severity_weights)
 
         # Date range: 2014-01-01 to 2023-12-31 (~10 years)
         start_ts = pd.Timestamp("2014-01-01")
         end_ts = pd.Timestamp("2023-12-31")
         date_range_days = (end_ts - start_ts).days
         random_days = rng.integers(0, date_range_days, size=n_incidents)
-        incident_dates = [
-            start_ts + pd.Timedelta(days=int(d)) for d in random_days
-        ]
+        incident_dates = [start_ts + pd.Timedelta(days=int(d)) for d in random_days]
 
         operators = ["Shell", "BP", "Chevron", "ExxonMobil", "ConocoPhillips"]
 

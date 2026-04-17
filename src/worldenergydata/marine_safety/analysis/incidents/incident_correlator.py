@@ -322,7 +322,9 @@ def build_pattern_report(
                 "year": year,
                 "vessel_type": r.vessel_type or "unknown",
                 "root_cause": r.root_cause.value,
-                "operation_phase": op_phase.value if hasattr(op_phase, "value") else str(op_phase),
+                "operation_phase": (
+                    op_phase.value if hasattr(op_phase, "value") else str(op_phase)
+                ),
                 "source": r.source,
                 "count": 1,
                 "fatalities": r.fatality_count,

@@ -9,10 +9,10 @@ import pytest
 
 from worldenergydata.bsee.data.processors.in_memory import MemoryProcessor
 
-
 # ---------------------------------------------------------------------------
 # Init
 # ---------------------------------------------------------------------------
+
 
 class TestMemoryProcessorInit:
     def test_defaults(self):
@@ -32,6 +32,7 @@ class TestMemoryProcessorInit:
 # get_memory_usage
 # ---------------------------------------------------------------------------
 
+
 class TestGetMemoryUsage:
     def test_returns_dict(self):
         proc = MemoryProcessor(use_optimized=False)
@@ -44,6 +45,7 @@ class TestGetMemoryUsage:
 # ---------------------------------------------------------------------------
 # estimate_memory_usage
 # ---------------------------------------------------------------------------
+
 
 class TestEstimateMemoryUsage:
     def test_basic(self):
@@ -60,6 +62,7 @@ class TestEstimateMemoryUsage:
 # cleanup_memory
 # ---------------------------------------------------------------------------
 
+
 class TestCleanupMemory:
     def test_runs_without_error(self):
         proc = MemoryProcessor(use_optimized=False)
@@ -69,6 +72,7 @@ class TestCleanupMemory:
 # ---------------------------------------------------------------------------
 # check_memory_availability
 # ---------------------------------------------------------------------------
+
 
 class TestCheckMemoryAvailability:
     def test_small_estimate(self):
@@ -87,6 +91,7 @@ class TestCheckMemoryAvailability:
 # validate_data_integrity
 # ---------------------------------------------------------------------------
 
+
 class TestValidateDataIntegrity:
     def test_empty(self):
         proc = MemoryProcessor(use_optimized=False)
@@ -94,9 +99,7 @@ class TestValidateDataIntegrity:
 
     def test_valid_data(self):
         proc = MemoryProcessor(use_optimized=False)
-        data = {
-            "test.txt": {"data": pd.DataFrame({"A": [1, 2, 3]})}
-        }
+        data = {"test.txt": {"data": pd.DataFrame({"A": [1, 2, 3]})}}
         assert proc.validate_data_integrity(data) is True
 
     def test_empty_dataframe(self):
@@ -106,11 +109,7 @@ class TestValidateDataIntegrity:
 
     def test_null_columns(self):
         proc = MemoryProcessor(use_optimized=False)
-        data = {
-            "test.txt": {
-                "data": pd.DataFrame({"A": [1, 2], "B": [None, None]})
-            }
-        }
+        data = {"test.txt": {"data": pd.DataFrame({"A": [1, 2], "B": [None, None]})}}
         # Valid but with warning about null columns
         assert proc.validate_data_integrity(data) is True
 
@@ -118,6 +117,7 @@ class TestValidateDataIntegrity:
 # ---------------------------------------------------------------------------
 # save_dataframe_to_binary
 # ---------------------------------------------------------------------------
+
 
 class TestSaveDataframeToBinary:
     def test_basic(self, tmp_path):
@@ -143,6 +143,7 @@ class TestSaveDataframeToBinary:
 # save_to_binary
 # ---------------------------------------------------------------------------
 
+
 class TestSaveToBinary:
     def test_dict_with_data(self, tmp_path):
         proc = MemoryProcessor(use_optimized=False)
@@ -164,6 +165,7 @@ class TestSaveToBinary:
 # ---------------------------------------------------------------------------
 # process_zip_in_memory
 # ---------------------------------------------------------------------------
+
 
 def _make_zip_bytes(files: dict) -> bytes:
     """Helper to create a zip file in memory."""

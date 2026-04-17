@@ -47,7 +47,8 @@ class ConstructionVesselSchema(BaseVesselSchema):
     # --- Validators ---
 
     @field_validator(
-        "PIPELAY_METHOD", "FOUNDATION_TYPE",
+        "PIPELAY_METHOD",
+        "FOUNDATION_TYPE",
         mode="before",
     )
     @classmethod
@@ -57,12 +58,18 @@ class ConstructionVesselSchema(BaseVesselSchema):
         return v
 
     @field_validator(
-        "MAIN_CRANE_CAPACITY_T", "MAIN_CRANE_REACH_M",
-        "AUX_CRANE_CAPACITY_T", "AUX_CRANE_REACH_M",
-        "PIPELAY_CAPACITY_IN", "PIPELAY_TENSION_T",
-        "DECK_AREA_M2", "DECK_LOAD_CAPACITY_T",
-        "BOLLARD_PULL_T", "HEAVY_LIFT_CAPACITY_T",
-        "WATER_DEPTH_RATING_M", "TURBINE_CAPACITY_MW",
+        "MAIN_CRANE_CAPACITY_T",
+        "MAIN_CRANE_REACH_M",
+        "AUX_CRANE_CAPACITY_T",
+        "AUX_CRANE_REACH_M",
+        "PIPELAY_CAPACITY_IN",
+        "PIPELAY_TENSION_T",
+        "DECK_AREA_M2",
+        "DECK_LOAD_CAPACITY_T",
+        "BOLLARD_PULL_T",
+        "HEAVY_LIFT_CAPACITY_T",
+        "WATER_DEPTH_RATING_M",
+        "TURBINE_CAPACITY_MW",
         mode="before",
     )
     @classmethod
@@ -77,16 +84,23 @@ class ConstructionVesselSchema(BaseVesselSchema):
         return v
 
     @field_validator(
-        "MAIN_CRANE_CAPACITY_T", "MAIN_CRANE_REACH_M",
-        "AUX_CRANE_CAPACITY_T", "AUX_CRANE_REACH_M",
-        "PIPELAY_CAPACITY_IN", "PIPELAY_TENSION_T",
-        "DECK_AREA_M2", "DECK_LOAD_CAPACITY_T",
-        "BOLLARD_PULL_T", "HEAVY_LIFT_CAPACITY_T",
-        "WATER_DEPTH_RATING_M", "TURBINE_CAPACITY_MW",
+        "MAIN_CRANE_CAPACITY_T",
+        "MAIN_CRANE_REACH_M",
+        "AUX_CRANE_CAPACITY_T",
+        "AUX_CRANE_REACH_M",
+        "PIPELAY_CAPACITY_IN",
+        "PIPELAY_TENSION_T",
+        "DECK_AREA_M2",
+        "DECK_LOAD_CAPACITY_T",
+        "BOLLARD_PULL_T",
+        "HEAVY_LIFT_CAPACITY_T",
+        "WATER_DEPTH_RATING_M",
+        "TURBINE_CAPACITY_MW",
     )
     @classmethod
     def _validate_non_negative_cv_floats(
-        cls, v: Optional[float],
+        cls,
+        v: Optional[float],
     ) -> Optional[float]:
         if v is not None and v < 0:
             raise ValueError("Value must be >= 0")

@@ -4,21 +4,21 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from worldenergydata.common.exceptions import ConfigError
 from worldenergydata.fdas.core.config import (
+    DEFAULT_ASSUMPTIONS,
     AssumptionsManager,
     ConfigurationError,
-    DEFAULT_ASSUMPTIONS,
     PriceDeckManager,
     classify_dev_system_by_depth,
     load_configuration,
     normalize_dev_system,
 )
-from worldenergydata.common.exceptions import ConfigError
-
 
 # ---------------------------------------------------------------------------
 # ConfigurationError
 # ---------------------------------------------------------------------------
+
 
 class TestConfigurationError:
     def test_inherits_from_config_error(self):
@@ -33,6 +33,7 @@ class TestConfigurationError:
 # ---------------------------------------------------------------------------
 # normalize_dev_system
 # ---------------------------------------------------------------------------
+
 
 class TestNormalizeDevSystem:
     def test_none(self):
@@ -70,6 +71,7 @@ class TestNormalizeDevSystem:
 # classify_dev_system_by_depth
 # ---------------------------------------------------------------------------
 
+
 class TestClassifyDevSystemByDepth:
     def test_none_depth(self):
         assert classify_dev_system_by_depth(None) == "unknown"
@@ -100,6 +102,7 @@ class TestClassifyDevSystemByDepth:
 # AssumptionsManager
 # ---------------------------------------------------------------------------
 
+
 class TestAssumptionsManagerInit:
     def test_default_assumptions(self):
         mgr = AssumptionsManager()
@@ -111,10 +114,12 @@ class TestAssumptionsManagerInit:
         assert "default" in systems
 
     def test_custom_dataframe(self):
-        df = pd.DataFrame({
-            "DEV_SYSTEM": ["DRY TREE", "Subsea 15"],
-            "HOST_CAPEX_MM": [0.0, 300.0],
-        })
+        df = pd.DataFrame(
+            {
+                "DEV_SYSTEM": ["DRY TREE", "Subsea 15"],
+                "HOST_CAPEX_MM": [0.0, 300.0],
+            }
+        )
         mgr = AssumptionsManager(df)
         # Names should be normalized
         systems = list(mgr.assumptions["DEV_SYSTEM"])
@@ -189,10 +194,12 @@ class TestAssumptionsManagerGetAllForSystem:
         assert len(params) > 0
 
     def test_completely_missing_returns_empty(self):
-        df = pd.DataFrame({
-            "DEV_SYSTEM": ["dry"],
-            "HOST_CAPEX_MM": [0.0],
-        })
+        df = pd.DataFrame(
+            {
+                "DEV_SYSTEM": ["dry"],
+                "HOST_CAPEX_MM": [0.0],
+            }
+        )
         mgr = AssumptionsManager(df)
         params = mgr.get_all_for_system("subsea20")
         # No "default" system either
@@ -213,38 +220,44 @@ class TestAssumptionsManagerValidate:
         assert "subsea15" in result["systems_found"]
 
     def test_missing_systems_warning(self):
-        df = pd.DataFrame({
-            "DEV_SYSTEM": ["dry"],
-            "HOST_CAPEX_MM": [0.0],
-            "SURF_PER_WELL_MM": [0.0],
-            "ROYALTY_RATE": [0.125],
-            "VARIABLE_OPEX_$/BBL": [8.0],
-            "DISCOUNT_RATE_ANNUAL": [0.10],
-        })
+        df = pd.DataFrame(
+            {
+                "DEV_SYSTEM": ["dry"],
+                "HOST_CAPEX_MM": [0.0],
+                "SURF_PER_WELL_MM": [0.0],
+                "ROYALTY_RATE": [0.125],
+                "VARIABLE_OPEX_$/BBL": [8.0],
+                "DISCOUNT_RATE_ANNUAL": [0.10],
+            }
+        )
         mgr = AssumptionsManager(df)
         result = mgr.validate()
         assert len(result["warnings"]) > 0
         assert any("Missing development systems" in w for w in result["warnings"])
 
     def test_missing_params_error(self):
-        df = pd.DataFrame({
-            "DEV_SYSTEM": ["dry"],
-            "HOST_CAPEX_MM": [0.0],
-        })
+        df = pd.DataFrame(
+            {
+                "DEV_SYSTEM": ["dry"],
+                "HOST_CAPEX_MM": [0.0],
+            }
+        )
         mgr = AssumptionsManager(df)
         result = mgr.validate()
         assert result["valid"] is False
         assert any("Missing required parameters" in e for e in result["errors"])
 
     def test_negative_values_error(self):
-        df = pd.DataFrame({
-            "DEV_SYSTEM": ["dry", "subsea15", "subsea20", "default"],
-            "HOST_CAPEX_MM": [-100.0, 300.0, 450.0, 300.0],
-            "SURF_PER_WELL_MM": [0.0, 8.0, 12.0, 8.0],
-            "ROYALTY_RATE": [0.125, 0.188, 0.188, 0.188],
-            "VARIABLE_OPEX_$/BBL": [8.0, 12.0, 15.0, 12.0],
-            "DISCOUNT_RATE_ANNUAL": [0.10, 0.10, 0.10, 0.10],
-        })
+        df = pd.DataFrame(
+            {
+                "DEV_SYSTEM": ["dry", "subsea15", "subsea20", "default"],
+                "HOST_CAPEX_MM": [-100.0, 300.0, 450.0, 300.0],
+                "SURF_PER_WELL_MM": [0.0, 8.0, 12.0, 8.0],
+                "ROYALTY_RATE": [0.125, 0.188, 0.188, 0.188],
+                "VARIABLE_OPEX_$/BBL": [8.0, 12.0, 15.0, 12.0],
+                "DISCOUNT_RATE_ANNUAL": [0.10, 0.10, 0.10, 0.10],
+            }
+        )
         mgr = AssumptionsManager(df)
         result = mgr.validate()
         assert result["valid"] is False
@@ -260,6 +273,7 @@ class TestAssumptionsManagerValidate:
 # ---------------------------------------------------------------------------
 # PriceDeckManager
 # ---------------------------------------------------------------------------
+
 
 class TestPriceDeckManagerInit:
     def test_none_wti_df(self):
@@ -277,26 +291,32 @@ class TestPriceDeckManagerGetPrice:
         assert mgr.get_price("2024-01", default=80.0) == 80.0
 
     def test_exact_match(self):
-        df = pd.DataFrame({
-            "year_month": ["2024-01", "2024-02", "2024-03"],
-            "wti_price": [72.5, 78.0, 80.5],
-        })
+        df = pd.DataFrame(
+            {
+                "year_month": ["2024-01", "2024-02", "2024-03"],
+                "wti_price": [72.5, 78.0, 80.5],
+            }
+        )
         mgr = PriceDeckManager(df)
         assert mgr.get_price("2024-02") == 78.0
 
     def test_no_match_returns_default(self):
-        df = pd.DataFrame({
-            "year_month": ["2024-01"],
-            "wti_price": [72.5],
-        })
+        df = pd.DataFrame(
+            {
+                "year_month": ["2024-01"],
+                "wti_price": [72.5],
+            }
+        )
         mgr = PriceDeckManager(df)
         assert mgr.get_price("2025-06") == 75.0
 
     def test_nan_price_returns_default(self):
-        df = pd.DataFrame({
-            "year_month": ["2024-01"],
-            "wti_price": [float("nan")],
-        })
+        df = pd.DataFrame(
+            {
+                "year_month": ["2024-01"],
+                "wti_price": [float("nan")],
+            }
+        )
         mgr = PriceDeckManager(df)
         assert mgr.get_price("2024-01") == 75.0
 
@@ -304,6 +324,7 @@ class TestPriceDeckManagerGetPrice:
 # ---------------------------------------------------------------------------
 # load_configuration
 # ---------------------------------------------------------------------------
+
 
 class TestLoadConfiguration:
     def test_missing_dir_raises(self, tmp_path):

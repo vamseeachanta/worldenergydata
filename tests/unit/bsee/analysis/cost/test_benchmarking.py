@@ -4,9 +4,18 @@
 
 """Unit tests for worldenergydata.bsee.analysis.cost.benchmarking."""
 
-import pytest
 import pandas as pd
+import pytest
 
+from worldenergydata.bsee.analysis.cost.benchmarking import (
+    BenchmarkResult,
+    build_comparison_dataframe,
+    compare_fields_to_regional_average,
+    detect_outliers,
+)
+from worldenergydata.bsee.analysis.cost.cost_summary import (
+    FieldCostSummary,
+)
 from worldenergydata.bsee.analysis.cost.models import (
     ActivityType,
     ConfidenceLevel,
@@ -14,16 +23,6 @@ from worldenergydata.bsee.analysis.cost.models import (
     WaterDepthBand,
     WellDepthBand,
 )
-from worldenergydata.bsee.analysis.cost.cost_summary import (
-    FieldCostSummary,
-)
-from worldenergydata.bsee.analysis.cost.benchmarking import (
-    BenchmarkResult,
-    compare_fields_to_regional_average,
-    detect_outliers,
-    build_comparison_dataframe,
-)
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -108,8 +107,12 @@ class TestBenchmarkResult:
         )
         d = result.to_dict()
         required = {
-            "field_name", "region", "total_cost_usd_mm",
-            "regional_avg_usd_mm", "deviation_pct", "is_outlier",
+            "field_name",
+            "region",
+            "total_cost_usd_mm",
+            "regional_avg_usd_mm",
+            "deviation_pct",
+            "is_outlier",
         }
         assert required.issubset(set(d.keys()))
 
@@ -221,7 +224,11 @@ class TestBuildComparisonDataframe:
         summaries = [_make_summary("Field A", "gom", 200.0)]
         df = build_comparison_dataframe(summaries)
         required_cols = {
-            "field_name", "region", "total_cost_usd_mm", "deviation_pct", "is_outlier",
+            "field_name",
+            "region",
+            "total_cost_usd_mm",
+            "deviation_pct",
+            "is_outlier",
         }
         assert required_cols.issubset(set(df.columns))
 

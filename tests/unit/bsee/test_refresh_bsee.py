@@ -20,8 +20,8 @@ from refresh_bsee_all import (
 
 from worldenergydata.bsee.data.refresh.url_registry import DatasetSpec
 
-
 # -- helpers -----------------------------------------------------------------
+
 
 def _make_lfs_stub(path: Path) -> None:
     """Write a realistic Git LFS pointer stub to *path*."""
@@ -57,6 +57,7 @@ def _make_project_tree(tmp_path: Path, bin_dir_name: str) -> Path:
 
 # -- LFS stub detection ------------------------------------------------------
 
+
 class TestIsLfsStub:
     def test_is_lfs_stub_true(self, tmp_path: Path):
         stub = tmp_path / "stub.bin"
@@ -74,6 +75,7 @@ class TestIsLfsStub:
 
 
 # -- ZIP-to-bin processing ---------------------------------------------------
+
 
 class TestProcessZipToBins:
     def test_process_zip_to_bins(self, tmp_path: Path):
@@ -122,6 +124,7 @@ class TestProcessZipToBins:
 
 # -- dry-run mode ------------------------------------------------------------
 
+
 class TestDryRun:
     def test_dry_run_no_files_written(self, tmp_path: Path):
         bin_dir = _make_project_tree(tmp_path, "dry_bins")
@@ -143,6 +146,7 @@ class TestDryRun:
 
 
 # -- RefreshResult summary ----------------------------------------------------
+
 
 class TestRefreshResultSummary:
     def test_refresh_result_summary(self):

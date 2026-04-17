@@ -2,6 +2,7 @@
 """
 Final comparison between Excel and Manual NPV analysis
 """
+
 import os
 
 import pandas as pd

@@ -6,6 +6,7 @@ All external HTTP calls are mocked. This tests the wiring, not the data sources.
 Note: D-04 symlink (data/modules/ -> /mnt/ace/worldenergydata/data/modules/)
 is set up at deployment time, not during tests. Tests use tmp_path.
 """
+
 import json
 import os
 from datetime import datetime, timedelta
@@ -19,11 +20,12 @@ from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
 from worldenergydata.scheduler.scheduler import DataScheduler
 from worldenergydata.scheduler.staleness import STALENESS_THRESHOLDS
 
-
 FROZEN_NOW = datetime(2026, 3, 25, 12, 0, 0)
 
 
-def _write_config(tmp_path: Path, jobs: list, monitoring_overrides: dict | None = None) -> str:
+def _write_config(
+    tmp_path: Path, jobs: list, monitoring_overrides: dict | None = None
+) -> str:
     """Write a minimal scheduler config YAML to tmp_path and return its path."""
     monitoring = {
         "log_dir": str(tmp_path / "logs"),
@@ -102,9 +104,24 @@ class TestFullCycleSuccess:
     def test_full_cycle_success(self, tmp_path):
         """Register EIA, BSEE, SODIR jobs. Run each. Verify status.json."""
         jobs_config = [
-            {"name": "eia_us_refresh", "interval": "monthly", "time": "04:00", "enabled": True},
-            {"name": "bsee_refresh", "interval": "weekly", "time": "02:00", "enabled": True},
-            {"name": "sodir_refresh", "interval": "daily", "time": "03:00", "enabled": True},
+            {
+                "name": "eia_us_refresh",
+                "interval": "monthly",
+                "time": "04:00",
+                "enabled": True,
+            },
+            {
+                "name": "bsee_refresh",
+                "interval": "weekly",
+                "time": "02:00",
+                "enabled": True,
+            },
+            {
+                "name": "sodir_refresh",
+                "interval": "daily",
+                "time": "03:00",
+                "enabled": True,
+            },
         ]
         config_path = _write_config(tmp_path, jobs_config)
         scheduler = DataScheduler(config_path)
@@ -148,9 +165,24 @@ class TestFullCycleWithFailure:
     def test_full_cycle_with_failure(self, tmp_path):
         """One failed job triggers alert, others succeed."""
         jobs_config = [
-            {"name": "eia_us_refresh", "interval": "monthly", "time": "04:00", "enabled": True},
-            {"name": "bsee_refresh", "interval": "weekly", "time": "02:00", "enabled": True},
-            {"name": "sodir_refresh", "interval": "daily", "time": "03:00", "enabled": True},
+            {
+                "name": "eia_us_refresh",
+                "interval": "monthly",
+                "time": "04:00",
+                "enabled": True,
+            },
+            {
+                "name": "bsee_refresh",
+                "interval": "weekly",
+                "time": "02:00",
+                "enabled": True,
+            },
+            {
+                "name": "sodir_refresh",
+                "interval": "daily",
+                "time": "03:00",
+                "enabled": True,
+            },
         ]
         config_path = _write_config(tmp_path, jobs_config)
         scheduler = DataScheduler(config_path)
@@ -171,12 +203,11 @@ class TestFullCycleWithFailure:
         # Verify alert was sent for BSEE failure
         alert_calls = scheduler._alert_sender.send_alert.call_args_list
         failure_alerts = [
-            c for c in alert_calls
-            if "FAILED" in str(c) and "bsee_refresh" in str(c)
+            c for c in alert_calls if "FAILED" in str(c) and "bsee_refresh" in str(c)
         ]
-        assert len(failure_alerts) >= 1, (
-            f"Expected at least one failure alert for bsee_refresh, got: {alert_calls}"
-        )
+        assert (
+            len(failure_alerts) >= 1
+        ), f"Expected at least one failure alert for bsee_refresh, got: {alert_calls}"
 
         # Verify enriched status shows correct results
         enriched = scheduler.status()
@@ -196,8 +227,18 @@ class TestStalenessDetection:
         mock_dt.fromisoformat = datetime.fromisoformat
 
         jobs_config = [
-            {"name": "sodir_refresh", "interval": "daily", "time": "03:00", "enabled": True},
-            {"name": "bsee_refresh", "interval": "weekly", "time": "02:00", "enabled": True},
+            {
+                "name": "sodir_refresh",
+                "interval": "daily",
+                "time": "03:00",
+                "enabled": True,
+            },
+            {
+                "name": "bsee_refresh",
+                "interval": "weekly",
+                "time": "02:00",
+                "enabled": True,
+            },
         ]
         config_path = _write_config(tmp_path, jobs_config)
         scheduler = DataScheduler(config_path)
@@ -230,8 +271,18 @@ class TestTier2StubsSkip:
     def test_tier2_stubs_skip(self, tmp_path):
         """Tier 2 jobs return skipped, no alerts fired."""
         jobs_config = [
-            {"name": "brazil_anp_refresh", "interval": "monthly", "time": "05:00", "enabled": True},
-            {"name": "metocean_refresh", "interval": "daily", "time": "01:00", "enabled": True},
+            {
+                "name": "brazil_anp_refresh",
+                "interval": "monthly",
+                "time": "05:00",
+                "enabled": True,
+            },
+            {
+                "name": "metocean_refresh",
+                "interval": "daily",
+                "time": "01:00",
+                "enabled": True,
+            },
         ]
         config_path = _write_config(tmp_path, jobs_config)
         scheduler = DataScheduler(config_path)
@@ -251,9 +302,10 @@ class TestTier2StubsSkip:
 
         # No failure alerts should have been sent (skipped != failure)
         failure_alerts = [
-            c for c in scheduler._alert_sender.send_alert.call_args_list
+            c
+            for c in scheduler._alert_sender.send_alert.call_args_list
             if "FAILED" in str(c)
         ]
-        assert len(failure_alerts) == 0, (
-            f"No failure alerts expected for skipped jobs, got: {failure_alerts}"
-        )
+        assert (
+            len(failure_alerts) == 0
+        ), f"No failure alerts expected for skipped jobs, got: {failure_alerts}"

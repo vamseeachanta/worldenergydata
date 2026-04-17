@@ -1,9 +1,9 @@
 """Unit tests for the all_fields_report module."""
 
-import pytest
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 from tests.test_markers import unit
 
@@ -139,8 +139,11 @@ class TestAllFieldsReport:
 
         empty_df = pd.DataFrame(
             columns=[
-                "FIELD_CODE", "FIELD_NAME", "GEOLOGICAL_ERA",
-                "CUM_OIL_MMBBL", "CUM_GAS_BCF",
+                "FIELD_CODE",
+                "FIELD_NAME",
+                "GEOLOGICAL_ERA",
+                "CUM_OIL_MMBBL",
+                "CUM_GAS_BCF",
             ]
         )
         rpt = AllFieldsReport(empty_df)

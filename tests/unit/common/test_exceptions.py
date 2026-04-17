@@ -317,9 +317,23 @@ class TestModuleError:
         assert err.context["module"] == "mexico_cnh"
 
     def test_all_inherit_from_module_error(self):
-        for cls in [BSEEError, SODIRError, EIAError, TexasRRCError, CanadaError, MexicoCNHError]:
+        for cls in [
+            BSEEError,
+            SODIRError,
+            EIAError,
+            TexasRRCError,
+            CanadaError,
+            MexicoCNHError,
+        ]:
             assert issubclass(cls, ModuleError)
 
     def test_all_inherit_from_base(self):
-        for cls in [BSEEError, SODIRError, EIAError, TexasRRCError, CanadaError, MexicoCNHError]:
+        for cls in [
+            BSEEError,
+            SODIRError,
+            EIAError,
+            TexasRRCError,
+            CanadaError,
+            MexicoCNHError,
+        ]:
             assert issubclass(cls, WorldEnergyDataError)

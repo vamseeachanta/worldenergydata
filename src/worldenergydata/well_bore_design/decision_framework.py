@@ -56,7 +56,7 @@ _BASE_RISK: dict[str, str] = {
 
 # Minimum pressure window (ppg) required for each bore type
 _MIN_WINDOW_PPG: dict[str, float] = {
-    BoreType.SLIM_HOLE.value: 0.3,    # smaller annulus → higher ECD → needs margin
+    BoreType.SLIM_HOLE.value: 0.3,  # smaller annulus → higher ECD → needs margin
     BoreType.STANDARD.value: 0.5,
     BoreType.LARGE_BORE.value: 0.6,
 }
@@ -75,8 +75,8 @@ class BoreTypeRecommendation:
     rationale: str
     pressure_window_compatible: bool
     hole_cleaning_adequate: bool
-    capital_cost_factor: float      # relative to standard (1.0), < 1.0 = cheaper
-    operational_risk_level: str     # "low" | "medium" | "high"
+    capital_cost_factor: float  # relative to standard (1.0), < 1.0 = cheaper
+    operational_risk_level: str  # "low" | "medium" | "high"
     caveats: list[str] = field(default_factory=list)
 
 
@@ -147,15 +147,22 @@ class BoreTypeDecision:
 
         risk = self._risk_level(candidate, deviation_deg, completion_type)
 
-        if completion_type in {"gravel_pack", "intelligent"} and candidate == BoreType.SLIM_HOLE:
+        if (
+            completion_type in {"gravel_pack", "intelligent"}
+            and candidate == BoreType.SLIM_HOLE
+        ):
             caveats.append(
                 f"Completion type '{completion_type}' is poorly suited to slim-hole; "
                 "consider upgrading to STANDARD."
             )
 
         rationale = self._build_rationale(
-            candidate, well_type, total_depth_m, target_flow_rate_bopd,
-            pressure_window_ppg, completion_type
+            candidate,
+            well_type,
+            total_depth_m,
+            target_flow_rate_bopd,
+            pressure_window_ppg,
+            completion_type,
         )
 
         return BoreTypeRecommendation(
@@ -260,7 +267,10 @@ class BoreTypeDecision:
 
         if deviation_deg > 60:
             idx = min(idx + 1, 2)
-        if completion_type in {"gravel_pack", "intelligent"} and bore_type == BoreType.SLIM_HOLE:
+        if (
+            completion_type in {"gravel_pack", "intelligent"}
+            and bore_type == BoreType.SLIM_HOLE
+        ):
             idx = min(idx + 1, 2)
 
         return risk_order[idx]

@@ -27,7 +27,11 @@ class TestDecomposeSignalMissing:
     @pytest.mark.skipif(_HAS_STATSMODELS, reason="statsmodels is installed")
     def test_decompose_raises_without_statsmodels(self):
         import pandas as pd
-        from worldenergydata.safety_analysis.analysis.decomposition import decompose_signal
+
+        from worldenergydata.safety_analysis.analysis.decomposition import (
+            decompose_signal,
+        )
+
         ts = pd.DataFrame({"value": range(24)})
         with pytest.raises(OptionalDependencyError):
             decompose_signal(ts, "value", period=12)
@@ -35,7 +39,11 @@ class TestDecomposeSignalMissing:
     @pytest.mark.skipif(_HAS_STATSMODELS, reason="statsmodels is installed")
     def test_remove_trend_raises_without_statsmodels(self):
         import pandas as pd
-        from worldenergydata.safety_analysis.analysis.decomposition import remove_trend_and_seasonality
+
+        from worldenergydata.safety_analysis.analysis.decomposition import (
+            remove_trend_and_seasonality,
+        )
+
         ts = pd.DataFrame({"datetime": range(24), "value": range(24)})
         with pytest.raises(OptionalDependencyError):
             remove_trend_and_seasonality(ts, periods=[12])
