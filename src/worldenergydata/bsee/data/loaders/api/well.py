@@ -416,21 +416,21 @@ class WellData:
     def get_eWellAPMRawData_from_zip(self, cfg):
 
         columns = [
-            MMS_COMPANY_NUM,
-            API_WELL_NUMBER,
-            WATER_DEPTH,
-            WELL_NM_BP_SFIX,
-            WELL_NM_ST_SFIX,
-            SURF_AREA_CODE,
-            SURF_BLOCK_NUM,
-            SURF_LEASE_NUM,
-            BOTM_AREA_CODE,
-            BOTM_BLOCK_NUM,
-            BOTM_LEASE_NUM,
-            RIG_ID_NUM,
-            BOREHOLE_STAT_CD,
-            WELL_TYPE_CODE,
-            BUS_ASC_NAME,
+            "MMS_COMPANY_NUM",
+            "API_WELL_NUMBER",
+            "WATER_DEPTH",
+            "WELL_NM_BP_SFIX",
+            "WELL_NM_ST_SFIX",
+            "SURF_AREA_CODE",
+            "SURF_BLOCK_NUM",
+            "SURF_LEASE_NUM",
+            "BOTM_AREA_CODE",
+            "BOTM_BLOCK_NUM",
+            "BOTM_LEASE_NUM",
+            "RIG_ID_NUM",
+            "BOREHOLE_STAT_CD",
+            "WELL_TYPE_CODE",
+            "BUS_ASC_NAME",
         ]
 
         # TODO
