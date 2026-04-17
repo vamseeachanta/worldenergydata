@@ -8,12 +8,15 @@ import json
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from worldenergydata.common import get_logger
 from worldenergydata.validation.base import ValidationError, ValidationResult
 from worldenergydata.validation.schema import ValidationSchema
 from worldenergydata.validation.validators import DataValidator
+
+if TYPE_CHECKING:
+    from .config import VerificationConfig
 
 logger = get_logger(__name__)
 

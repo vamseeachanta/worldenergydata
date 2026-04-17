@@ -29,7 +29,7 @@ from urllib.parse import urljoin
 import pdfplumber
 import requests
 from bs4 import BeautifulSoup
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, ValidationError, field_validator
 from tenacity import (
     retry,
     retry_if_exception_type,

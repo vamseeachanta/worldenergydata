@@ -5,6 +5,7 @@ Provides easy access to hierarchical reporting functionality
 
 import argparse
 import json
+import logging
 import sys
 from datetime import datetime
 from pathlib import Path

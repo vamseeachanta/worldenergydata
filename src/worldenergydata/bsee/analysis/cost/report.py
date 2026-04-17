@@ -21,9 +21,12 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 import pandas as pd
+
+if TYPE_CHECKING:
+    import plotly.graph_objects as go
 
 logger = logging.getLogger(__name__)
 
