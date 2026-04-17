@@ -20,7 +20,7 @@ from worldenergydata.marine_safety.scrapers.uscg_scraper import (
 @pytest.fixture
 def scraper():
     """Create a USCG scraper instance for testing."""
-    return USCGScraper(
+    return USCGMarineCasualtyScraper(
         rate_limit_delay=0.1, max_retries=3, timeout=5  # Short delay for tests
     )
 
