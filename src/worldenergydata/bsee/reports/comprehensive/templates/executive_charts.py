@@ -353,7 +353,7 @@ def create_multi_panel_dashboard(panels: List[Dict], data: Dict) -> Optional[Any
         rows=max_row,
         cols=max_col,
         subplot_titles=[p.get("title", "") for p in panels],
-        specs=[[{"type": p.get("type", "scatter")}] * max_col for _ in range(max_row)],
+        specs=[[{"type": "scatter"}] * max_col for _ in range(max_row)],
     )
 
     # Add panels
