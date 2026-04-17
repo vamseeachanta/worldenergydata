@@ -18,8 +18,17 @@ class ProductionAPI10Analysis:
     def router(self, cfg, api12_production_data):
         self.prepare_production_data(cfg, api12_production_data)
 
-        self.prepare_field_production_rate(df_temp, completion_name)
-        self.prepare_field_production(df_temp, completion_name)
+        # Iterate over completions in the provided production data and build
+        # per-completion field-production summaries. Mirrors the legacy
+        # ong_fd_components.prepare_production_data loop: for each completion
+        # name, slice the DataFrame and feed it to the per-field aggregators.
+        completion_name_list = api12_production_data.COMPLETION_NAME.unique()
+        for completion_name in completion_name_list:
+            df_temp = api12_production_data[
+                api12_production_data.COMPLETION_NAME == completion_name
+            ].copy()
+            self.prepare_field_production_rate(df_temp, completion_name)
+            self.prepare_field_production(df_temp, completion_name)
 
         # api12_analysis.sort_values(by=['O_PROD_STATUS', 'WELL_LABEL'],
         #                                     ascending=[False, True],
