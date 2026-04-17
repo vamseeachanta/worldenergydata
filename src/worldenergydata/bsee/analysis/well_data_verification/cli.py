@@ -5,6 +5,7 @@ Provides CLI access to verification workflows, data quality checks, and report g
 """
 
 import argparse
+import logging
 import sys
 from datetime import datetime
 from pathlib import Path
