@@ -491,7 +491,7 @@ class TestVisualization:
         assert len(dashboard.charts) >= 3
         assert dashboard.layout is not None
 
-    @patch("sodir_module.visualization.plt")
+    @patch("worldenergydata.sodir.visualization.plt")
     def test_export_charts(self, mock_plt, visualizer, tmp_path):
         """Test chart export functionality"""
         # Create dummy chart

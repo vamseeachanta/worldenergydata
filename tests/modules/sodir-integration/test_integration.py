@@ -15,25 +15,25 @@ from pathlib import Path
 from typing import Any, Dict, List
 from unittest.mock import MagicMock, Mock, patch
 
-from sodir_module.analysis import SodirAnalysis
-from sodir_module.api_client import SodirAPIClient
-from sodir_module.batch import BatchConfig, SodirBatchProcessor
-from sodir_module.cache import SodirCache
-from sodir_module.cache_optimizer import SodirCacheOptimizer
-from sodir_module.cross_regional import CrossRegionalAnalyzer
-from sodir_module.data import SodirData
-from sodir_module.datasets import DatasetGenerator
-from sodir_module.parallel import SodirParallelProcessor
-from sodir_module.processors.block_processor import BlockProcessor
-from sodir_module.processors.discovery_processor import DiscoveryProcessor
-from sodir_module.processors.field_processor import FieldProcessor
-from sodir_module.processors.survey_processor import SurveyProcessor
-from sodir_module.processors.wellbore_processor import WellboreProcessor
+from worldenergydata.sodir.analysis import SodirAnalysis
+from worldenergydata.sodir.api_client import SodirAPIClient
+from worldenergydata.sodir.batch import BatchConfig, SodirBatchProcessor
+from worldenergydata.sodir.cache import SodirCache
+from worldenergydata.sodir.cache_optimizer import SodirCacheOptimizer
+from worldenergydata.sodir.cross_regional import CrossRegionalAnalyzer
+from worldenergydata.sodir.data import SodirData
+from worldenergydata.sodir.datasets import DatasetGenerator
+from worldenergydata.sodir.parallel import SodirParallelProcessor
+from worldenergydata.sodir.processors.block_processor import BlockProcessor
+from worldenergydata.sodir.processors.discovery_processor import DiscoveryProcessor
+from worldenergydata.sodir.processors.field_processor import FieldProcessor
+from worldenergydata.sodir.processors.survey_processor import SurveyProcessor
+from worldenergydata.sodir.processors.wellbore_processor import WellboreProcessor
 
 # Import all SODIR module components
-from sodir_module.sodir import Sodir
-from sodir_module.storage import DataStorage
-from sodir_module.workflows.collection import CollectionWorkflow
+from worldenergydata.sodir.sodir import Sodir
+from worldenergydata.sodir.storage import DataStorage
+from worldenergydata.sodir.workflows.collection import CollectionWorkflow
 
 
 class TestSodirIntegration(unittest.TestCase):
@@ -447,9 +447,9 @@ class TestSodirIntegration(unittest.TestCase):
 
     def test_performance_optimization_integration(self):
         """Test that performance optimizations work together."""
-        from sodir_module.batch import SodirBatchProcessor
-        from sodir_module.cache_optimizer import SodirCacheOptimizer
-        from sodir_module.parallel import SodirParallelProcessor
+        from worldenergydata.sodir.batch import SodirBatchProcessor
+        from worldenergydata.sodir.cache_optimizer import SodirCacheOptimizer
+        from worldenergydata.sodir.parallel import SodirParallelProcessor
 
         # Initialize optimized components
         cache = SodirCacheOptimizer(max_size_mb=50)

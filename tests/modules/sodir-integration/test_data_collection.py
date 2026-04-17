@@ -28,7 +28,7 @@ class TestSodirDataRouter(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures."""
-        from sodir_module.data import SodirData
+        from worldenergydata.sodir.data import SodirData
 
         # Mock configuration
         self.config = {
@@ -214,7 +214,7 @@ class TestDataCollectionWorkflow(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures."""
-        from sodir_module.workflows.collection import CollectionWorkflow
+        from worldenergydata.sodir.workflows.collection import CollectionWorkflow
 
         self.workflow_config = {
             "name": "daily_collection",
@@ -295,7 +295,7 @@ class TestDataStorage(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures."""
-        from sodir_module.storage import DataStorage
+        from worldenergydata.sodir.storage import DataStorage
 
         self.storage_config = {
             "base_path": "tests/modules/sodir-integration/data",
@@ -400,7 +400,7 @@ class TestDatasetGeneration(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures."""
-        from sodir_module.datasets import DatasetGenerator
+        from worldenergydata.sodir.datasets import DatasetGenerator
 
         self.generator = DatasetGenerator()
 
@@ -491,8 +491,8 @@ class TestDataValidationIntegration(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures."""
-        from sodir_module.data import SodirData
-        from sodir_module.validators import DataValidator
+        from worldenergydata.sodir.data import SodirData
+        from worldenergydata.sodir.validators import DataValidator
 
         self.validator = DataValidator()
         config = {

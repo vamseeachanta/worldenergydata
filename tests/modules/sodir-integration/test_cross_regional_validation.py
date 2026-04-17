@@ -14,14 +14,14 @@ from unittest.mock import MagicMock, Mock, patch
 
 import numpy as np
 import pandas as pd
-from sodir_module.analysis import SodirAnalysis
+from worldenergydata.sodir.analysis import SodirAnalysis
 
 # Import SODIR components
-from sodir_module.cross_regional import CrossRegionalAnalyzer
-from sodir_module.datasets import DatasetGenerator
-from sodir_module.processors.block_processor import BlockProcessor
-from sodir_module.processors.field_processor import FieldProcessor
-from sodir_module.processors.wellbore_processor import WellboreProcessor
+from worldenergydata.sodir.cross_regional import CrossRegionalAnalyzer
+from worldenergydata.sodir.datasets import DatasetGenerator
+from worldenergydata.sodir.processors.block_processor import BlockProcessor
+from worldenergydata.sodir.processors.field_processor import FieldProcessor
+from worldenergydata.sodir.processors.wellbore_processor import WellboreProcessor
 
 
 class TestCrossRegionalValidation(unittest.TestCase):

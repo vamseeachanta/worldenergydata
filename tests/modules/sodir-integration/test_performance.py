@@ -21,18 +21,18 @@ import numpy as np
 
 # import memory_profiler  # Not installed in current environment
 import pandas as pd
-from sodir_module.analysis import SodirAnalysis
+from worldenergydata.sodir.analysis import SodirAnalysis
 
 # Import SODIR components
-from sodir_module.api_client import SodirAPIClient
-from sodir_module.batch import BatchConfig, SodirBatchProcessor
-from sodir_module.cache import SodirCache
-from sodir_module.cache_optimizer import SodirCacheOptimizer
-from sodir_module.parallel import SodirParallelProcessor
-from sodir_module.processors.block_processor import BlockProcessor
-from sodir_module.processors.field_processor import FieldProcessor
-from sodir_module.processors.wellbore_processor import WellboreProcessor
-from sodir_module.storage import DataStorage
+from worldenergydata.sodir.api_client import SodirAPIClient
+from worldenergydata.sodir.batch import BatchConfig, SodirBatchProcessor
+from worldenergydata.sodir.cache import SodirCache
+from worldenergydata.sodir.cache_optimizer import SodirCacheOptimizer
+from worldenergydata.sodir.parallel import SodirParallelProcessor
+from worldenergydata.sodir.processors.block_processor import BlockProcessor
+from worldenergydata.sodir.processors.field_processor import FieldProcessor
+from worldenergydata.sodir.processors.wellbore_processor import WellboreProcessor
+from worldenergydata.sodir.storage import DataStorage
 
 
 class TestPerformance(unittest.TestCase):

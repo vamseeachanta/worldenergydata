@@ -58,6 +58,8 @@ dependencies = [
     "schedule>=1.2.0,<2.0",
     "pyarrow>=14.0.0,<20.0",
     "scikit-learn>=1.6.1,<2.0",
+    # Financial calculations (runtime dep for fdas/core/financial.py)
+    "numpy-financial>=1.0.0",
 ]
 
 [project.optional-dependencies]
@@ -222,7 +224,6 @@ dev = [
     "faker>=37.8.0",
     "hypothesis>=6.141.1",
     "mypy>=1.18.2",
-    "numpy-financial>=1.0.0",
     "pytest-asyncio>=1.2.0",
     "pytest-cov>=7.0.0",
     "pytest-timeout>=2.4.0",
