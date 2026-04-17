@@ -1,12 +1,13 @@
 """Tests for EITI Data Explorer API client."""
 
-import pytest
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 from worldenergydata.west_africa.eiti.eiti_api import (
+    EITI_BASE_URL,
     EitiApiClient,
     EitiApiError,
-    EITI_BASE_URL,
 )
 
 
@@ -30,7 +31,10 @@ class TestEitiApiClientInit:
 
     def test_nigeria_in_supported_countries(self):
         client = EitiApiClient()
-        assert "Nigeria" in client.supported_countries or "NG" in client.supported_countries
+        assert (
+            "Nigeria" in client.supported_countries
+            or "NG" in client.supported_countries
+        )
 
 
 class TestEitiApiClientGet:

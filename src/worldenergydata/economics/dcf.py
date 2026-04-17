@@ -21,7 +21,6 @@ from typing import List, Optional
 
 import numpy as np
 
-
 # ---------------------------------------------------------------------------
 # Data structures
 # ---------------------------------------------------------------------------
@@ -159,9 +158,7 @@ def calculate_npv(
         If *discount_rate* <= -1.
     """
     if discount_rate <= -1.0:
-        raise ValueError(
-            f"discount_rate must be > -1, got {discount_rate}"
-        )
+        raise ValueError(f"discount_rate must be > -1, got {discount_rate}")
 
     capex = np.asarray(schedule.capex, dtype=float)
     revenue = np.asarray(schedule.revenue, dtype=float)

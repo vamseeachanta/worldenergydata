@@ -32,9 +32,7 @@ class PaymentRecord:
 
     def __post_init__(self) -> None:
         if self.amount_usd < 0:
-            raise ValueError(
-                f"amount_usd cannot be negative, got {self.amount_usd}"
-            )
+            raise ValueError(f"amount_usd cannot be negative, got {self.amount_usd}")
 
 
 def aggregate_by_company(
@@ -75,9 +73,7 @@ def aggregate_by_payment_type(
     filtered = records if year is None else [r for r in records if r.year == year]
     totals: Dict[str, float] = {}
     for rec in filtered:
-        totals[rec.payment_type] = (
-            totals.get(rec.payment_type, 0.0) + rec.amount_usd
-        )
+        totals[rec.payment_type] = totals.get(rec.payment_type, 0.0) + rec.amount_usd
     return totals
 
 
@@ -114,8 +110,7 @@ def cross_validate_nuprc_eiti(
         "discrepancy_bbl": discrepancy_bbl,
         "discrepancy_pct": round(discrepancy_pct, 2),
         "note": (
-            "EITI data lags NUPRC by 18-24 months; "
-            "minor discrepancies are expected"
+            "EITI data lags NUPRC by 18-24 months; " "minor discrepancies are expected"
         ),
     }
 

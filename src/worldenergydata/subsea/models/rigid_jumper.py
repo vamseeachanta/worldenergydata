@@ -58,8 +58,6 @@ def load_rigid_jumpers(csv_path: Path) -> list[RigidJumperSpec]:
     """
     df = pd.read_csv(csv_path)
     return [
-        RigidJumperSpec(
-            **{k.lower(): v for k, v in row.items() if pd.notna(v)}
-        )
+        RigidJumperSpec(**{k.lower(): v for k, v in row.items() if pd.notna(v)})
         for _, row in df.iterrows()
     ]

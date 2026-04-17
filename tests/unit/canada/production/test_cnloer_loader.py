@@ -18,9 +18,9 @@ import pandas as pd
 import pytest
 
 from worldenergydata.canada.production.cnloer_loader import (
+    _MSM3_TO_MCF,
     CnloerLoader,
     CnloerProductionRecord,
-    _MSM3_TO_MCF,
 )
 from worldenergydata.common.units import OilUnits
 
@@ -114,9 +114,9 @@ class TestLoadFieldStructure:
     def test_load_field_all_fields_source_cnloer(self, loader):
         for field_name in loader.available_fields():
             records = loader.load_field(field_name)
-            assert all(r.source == "cnloer" for r in records), (
-                f"field {field_name}: some records have wrong source"
-            )
+            assert all(
+                r.source == "cnloer" for r in records
+            ), f"field {field_name}: some records have wrong source"
 
 
 # ---------------------------------------------------------------------------
@@ -203,9 +203,9 @@ class TestUnitConversion:
         # For 200 kbopd * 365 days * 1000 = 73,000,000 bbl/year -> sm3 = 11,606,700
         # Accept within 1% of expected range for 200 kbopd
         expected_bbl_approx = 200 * 1000 * 365  # 73 million bbl
-        assert math.isclose(rec.oil_bbl, expected_bbl_approx, rel_tol=0.02), (
-            f"Hibernia 2005 oil_bbl {rec.oil_bbl:.0f} not close to {expected_bbl_approx}"
-        )
+        assert math.isclose(
+            rec.oil_bbl, expected_bbl_approx, rel_tol=0.02
+        ), f"Hibernia 2005 oil_bbl {rec.oil_bbl:.0f} not close to {expected_bbl_approx}"
 
 
 # ---------------------------------------------------------------------------

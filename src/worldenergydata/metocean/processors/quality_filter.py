@@ -14,14 +14,12 @@ Applies quality control checks to metocean observations including:
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple
 
+from worldenergydata.common.logging import get_logger
 from worldenergydata.metocean.constants import (
     PARAMETER_RANGES,
     MetoceanParameter,
     QualityFlag,
 )
-
-
-from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
 

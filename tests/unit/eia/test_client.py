@@ -20,11 +20,10 @@ from worldenergydata.eia.client import (
     EIAKeyError,
 )
 from worldenergydata.eia.ingestion import (
+    JSONL_SCHEMA_VERSION,
     EIAIngestionState,
     EIAIngestionSync,
-    JSONL_SCHEMA_VERSION,
 )
-
 
 # ── Fixtures ────────────────────────────────────────────────────────────────
 
@@ -145,7 +144,9 @@ class TestEIAFeedClientInit:
         client = EIAFeedClient(api_key=api_key)
         assert client.api_key == api_key
 
-    def test_client_reads_api_key_from_env(self, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_client_reads_api_key_from_env(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         monkeypatch.setenv("EIA_API_KEY", "ENV_KEY_XYZ")
         client = EIAFeedClient()
         assert client.api_key == "ENV_KEY_XYZ"
@@ -234,9 +235,7 @@ class TestEIAFeedClientParsing:
         records = client.parse_response(empty_response)
         assert records == []
 
-    def test_parse_null_value_becomes_none(
-        self, client: EIAFeedClient
-    ) -> None:
+    def test_parse_null_value_becomes_none(self, client: EIAFeedClient) -> None:
         response = {
             "response": {
                 "data": [{"period": "2024-01-05", "value": None, "units": "Bcf"}]
@@ -403,8 +402,12 @@ class TestEIAIngestionSyncJsonl:
     ) -> None:
         sync = EIAIngestionSync(api_key=api_key, output_dir=tmp_path)
         records = [
-            {"period": "2024-01-05", "value": 13150.0, "units": "Thousand Barrels",
-             "_feed": "petroleum_weekly"},
+            {
+                "period": "2024-01-05",
+                "value": 13150.0,
+                "units": "Thousand Barrels",
+                "_feed": "petroleum_weekly",
+            },
         ]
         sync.write_jsonl("petroleum_weekly", records)
         jsonl_files = list(tmp_path.glob("*.jsonl"))

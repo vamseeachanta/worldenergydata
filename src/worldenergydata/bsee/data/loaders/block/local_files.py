@@ -1,11 +1,13 @@
 import os
 from copy import deepcopy
-import pandas as pd
 
+import pandas as pd
 from assetutilities.common.utilities import is_dir_valid_func
 
 from worldenergydata.bsee.data.sources.bin.block_data import BlockData
+
 block_data = BlockData()
+
 
 class DataFromLocalFiles:
 
@@ -22,14 +24,14 @@ class DataFromLocalFiles:
         cfg = self.get_block_data_from_local_files(cfg)
 
         block_data_groups = []
-        for group in cfg[cfg['basename']]['data']['groups']:
+        for group in cfg[cfg["basename"]]["data"]["groups"]:
             block_data_group = group.copy()
-            block_array = group['bottom_block']
+            block_array = group["bottom_block"]
             block_array_well_data = []
             for block in block_array:
                 block_df = self.get_cfg_df(group)
 
-            block_data_group.update({'block_df': block_df})
+            block_data_group.update({"block_df": block_df})
 
             block_array_well_data.append(block_data_group)
 
@@ -39,12 +41,12 @@ class DataFromLocalFiles:
 
     def get_cfg_df(self, group):
 
-        cfg_block_df = pd.read_csv(group['file_name'])
+        cfg_block_df = pd.read_csv(group["file_name"])
         return cfg_block_df
 
     def get_block_data_from_local_files(self, cfg):
 
-        groups = cfg[cfg['basename']]['data']['groups']
+        groups = cfg[cfg["basename"]]["data"]["groups"]
 
         block_group_data = []
         for group_idx in range(len(groups)):
@@ -53,30 +55,30 @@ class DataFromLocalFiles:
             block_metadata = self.generate_output_item(cfg, group)
 
             block_group_data.append(block_metadata)
-            block_df = pd.read_csv(block_metadata['file_name'])
-            api12_list = block_df['API Well Number'].dropna().unique().tolist()
-            block_metadata['api12'] = api12_list
+            block_df = pd.read_csv(block_metadata["file_name"])
+            api12_list = block_df["API Well Number"].dropna().unique().tolist()
+            block_metadata["api12"] = api12_list
 
-            cfg[cfg['basename']]['data']['groups'][group_idx] = block_metadata
+            cfg[cfg["basename"]]["data"]["groups"][group_idx] = block_metadata
 
         return cfg
 
     def generate_output_item(self, cfg, input_item):
 
-        bottom_block_num = str(input_item['bottom_block']['number'])
-        area = str(input_item['bottom_block']['area'])
-        label = area + '_' + bottom_block_num
-        output_path = os.path.join(cfg['Analysis']['result_folder'], 'Data')
+        bottom_block_num = str(input_item["bottom_block"]["number"])
+        area = str(input_item["bottom_block"]["area"])
+        label = area + "_" + bottom_block_num
+        output_path = os.path.join(cfg["Analysis"]["result_folder"], "Data")
         if output_path is None:
-            result_folder = cfg['Analysis']['result_folder']
-            output_path = os.path.join(result_folder, 'Data')
+            result_folder = cfg["Analysis"]["result_folder"]
+            output_path = os.path.join(result_folder, "Data")
 
-        analysis_root_folder = cfg['Analysis']['analysis_root_folder']
+        analysis_root_folder = cfg["Analysis"]["analysis_root_folder"]
         is_dir_valid, output_path = is_dir_valid_func(output_path, analysis_root_folder)
 
-        output_file = os.path.join(output_path, str(label) + '.csv')
+        output_file = os.path.join(output_path, str(label) + ".csv")
 
         input_item_csv_cfg = deepcopy(input_item)
-        input_item_csv_cfg.update({'label': label, 'file_name': output_file})
+        input_item_csv_cfg.update({"label": label, "file_name": output_file})
 
         return input_item_csv_cfg

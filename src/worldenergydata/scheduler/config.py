@@ -1,4 +1,5 @@
 """YAML config loader and validation for the data collection scheduler."""
+
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -61,9 +62,7 @@ def load_config(config_path: str) -> SchedulerConfig:
 
     for job in jobs:
         if "name" not in job:
-            raise ValueError(
-                f"Each job entry must have a 'name' field. Got: {job}"
-            )
+            raise ValueError(f"Each job entry must have a 'name' field. Got: {job}")
 
     monitoring = raw.get("monitoring", {})
     config = SchedulerConfig(jobs=jobs, monitoring=monitoring)
@@ -90,9 +89,7 @@ def validate_config(config: SchedulerConfig) -> None:
 
     retry_max = config.monitoring.get("retry_max")
     if retry_max is not None and retry_max < 0:
-        raise ValueError(
-            f"monitoring.retry_max must be >= 0, got {retry_max}."
-        )
+        raise ValueError(f"monitoring.retry_max must be >= 0, got {retry_max}.")
 
     retention = config.monitoring.get("log_retention_days")
     if retention is not None and retention < 1:

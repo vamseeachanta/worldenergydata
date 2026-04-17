@@ -3,13 +3,24 @@
 import pytest
 
 
-@pytest.fixture(params=[
-    "allseas", "boskalis", "deme", "eneti", "heerema",
-    "mcdermott", "oht", "saipem_vessels", "subsea7", "van_oord",
-])
+@pytest.fixture(
+    params=[
+        "allseas",
+        "boskalis",
+        "deme",
+        "eneti",
+        "heerema",
+        "mcdermott",
+        "oht",
+        "saipem_vessels",
+        "subsea7",
+        "van_oord",
+    ]
+)
 def config_module(request):
     """Load each construction config module."""
     import importlib
+
     mod = importlib.import_module(
         f"worldenergydata.vessel_fleet.config.construction.{request.param}"
     )
@@ -48,4 +59,6 @@ class TestConstructionConfigs:
     def test_field_mapping_has_vessel_name(self, config_module):
         mod, name = config_module
         values = mod.CONFIG.field_mapping.values()
-        assert "VESSEL_NAME" in values, f"{name}: field_mapping missing VESSEL_NAME target"
+        assert (
+            "VESSEL_NAME" in values
+        ), f"{name}: field_mapping missing VESSEL_NAME target"

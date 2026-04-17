@@ -10,6 +10,7 @@ from enum import Enum
 
 class VesselType(str, Enum):
     """Types of offshore installation vessels"""
+
     CRANE_VESSEL = "crane_vessel"
     PIPELAY_VESSEL = "pipelay_vessel"
     DERRICK_LAY_VESSEL = "derrick_lay_vessel"
@@ -26,6 +27,7 @@ class VesselType(str, Enum):
 
 class ModelSource(str, Enum):
     """Sources for 3D hull models"""
+
     CGTRADER = "cgtrader"
     SKETCHFAB = "sketchfab"
     TURBOSQUID = "turbosquid"
@@ -36,6 +38,7 @@ class ModelSource(str, Enum):
 
 class ModelQuality(str, Enum):
     """Quality levels for 3D models"""
+
     ENGINEERING = "engineering"  # CAD-grade accuracy
     PROFESSIONAL = "professional"  # High polygon, detailed
     ARTISTIC = "artistic"  # Visually appealing but not accurate
@@ -44,6 +47,7 @@ class ModelQuality(str, Enum):
 
 class HullFormType(str, Enum):
     """Standard hull form types for parametric generation"""
+
     SERIES_60 = "series_60"
     WIGLEY = "wigley"
     NPL = "npl"

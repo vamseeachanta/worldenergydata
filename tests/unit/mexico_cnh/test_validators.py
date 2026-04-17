@@ -3,8 +3,8 @@
 from worldenergydata.mexico_cnh.validators import (
     MexicoCNHValidator,
     is_valid_clave_pozo,
-    is_valid_mexico_coordinates,
     is_valid_contract_id,
+    is_valid_mexico_coordinates,
 )
 
 

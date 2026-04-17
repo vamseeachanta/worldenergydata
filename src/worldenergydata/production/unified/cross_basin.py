@@ -18,43 +18,43 @@ from worldenergydata.production.unified.query import ProductionResult
 # Sources: publicly available fiscal regime summaries (approximate).
 _FISCAL_REGIMES: dict[str, dict] = {
     "ncs": {
-        "royalty_rate": 0.0,        # Norway: no royalty since 1986
-        "tax_rate": 0.78,            # 22% corporate + 56% special petroleum tax
+        "royalty_rate": 0.0,  # Norway: no royalty since 1986
+        "tax_rate": 0.78,  # 22% corporate + 56% special petroleum tax
         "govt_take": 0.78,
     },
     "gom": {
-        "royalty_rate": 0.1875,      # US GoM: 18.75% for deep water
-        "tax_rate": 0.21,            # US federal corporate tax
+        "royalty_rate": 0.1875,  # US GoM: 18.75% for deep water
+        "tax_rate": 0.21,  # US federal corporate tax
         "govt_take": 0.36,
     },
     "brazil": {
-        "royalty_rate": 0.15,        # ANP royalty up to 15%
-        "tax_rate": 0.34,            # IRPJ + CSLL
-        "govt_take": 0.45,           # includes profit oil sharing (PSA)
+        "royalty_rate": 0.15,  # ANP royalty up to 15%
+        "tax_rate": 0.34,  # IRPJ + CSLL
+        "govt_take": 0.45,  # includes profit oil sharing (PSA)
     },
     "ukcs": {
-        "royalty_rate": 0.0,         # UK: royalty abolished 2003
-        "tax_rate": 0.40,            # Ring-fenced corporation tax + supplementary
+        "royalty_rate": 0.0,  # UK: royalty abolished 2003
+        "tax_rate": 0.40,  # Ring-fenced corporation tax + supplementary
         "govt_take": 0.40,
     },
     "eia_us": {
-        "royalty_rate": 0.125,       # onshore federal 12.5%
+        "royalty_rate": 0.125,  # onshore federal 12.5%
         "tax_rate": 0.21,
         "govt_take": 0.32,
     },
     "mexico": {
-        "royalty_rate": 0.07,        # CNH: ~7% Exploration Extraction Tax
-        "tax_rate": 0.30,            # ISR corporate
-        "govt_take": 0.65,           # includes PEMEX dividend to state
+        "royalty_rate": 0.07,  # CNH: ~7% Exploration Extraction Tax
+        "tax_rate": 0.30,  # ISR corporate
+        "govt_take": 0.65,  # includes PEMEX dividend to state
     },
     "texas": {
-        "royalty_rate": 0.25,        # typical private-land royalty
+        "royalty_rate": 0.25,  # typical private-land royalty
         "tax_rate": 0.21,
         "govt_take": 0.30,
     },
     "canada": {
-        "royalty_rate": 0.20,        # NL offshore royalty regime (~20%)
-        "tax_rate": 0.15,            # federal + NL provincial
+        "royalty_rate": 0.20,  # NL offshore royalty regime (~20%)
+        "tax_rate": 0.15,  # federal + NL provincial
         "govt_take": 0.35,
     },
 }
@@ -107,8 +107,11 @@ def compare_cumulative_eur(result: ProductionResult) -> pd.DataFrame:
     if df.empty:
         return pd.DataFrame(
             columns=[
-                "region", "field_name",
-                "cumulative_oil_bbl", "cumulative_gas_mcf", "eur_boe",
+                "region",
+                "field_name",
+                "cumulative_oil_bbl",
+                "cumulative_gas_mcf",
+                "eur_boe",
             ]
         )
 
@@ -153,8 +156,12 @@ def fiscal_sensitivity(
     if df.empty:
         return pd.DataFrame(
             columns=[
-                "region", "field_name", "total_revenue_usd",
-                "govt_take_usd", "operator_npv_usd", "effective_govt_take_pct",
+                "region",
+                "field_name",
+                "total_revenue_usd",
+                "govt_take_usd",
+                "operator_npv_usd",
+                "effective_govt_take_pct",
             ]
         )
 

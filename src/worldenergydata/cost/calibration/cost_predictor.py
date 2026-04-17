@@ -22,14 +22,13 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 import numpy as np
+from sklearn.compose import ColumnTransformer
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import cross_val_score
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
-from sklearn.compose import ColumnTransformer
 
 from worldenergydata.cost.data_collection.calibration_schema import CostDataPoint
-
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -107,7 +106,9 @@ def _extract_features(records: list[CostDataPoint]) -> tuple[np.ndarray, list[st
         rows.append(
             {
                 "water_depth_m": rec.water_depth_m,
-                "well_depth_m": rec.well_depth_m if rec.well_depth_m is not None else 0.0,
+                "well_depth_m": (
+                    rec.well_depth_m if rec.well_depth_m is not None else 0.0
+                ),
                 "year_sanction": float(rec.year_sanction),
                 "hpht": 1.0 if rec.hpht else 0.0,
                 "subsea": rec.subsea.value,
@@ -238,9 +239,11 @@ class CostPredictor:
         preprocessor = pipeline.named_steps["preprocessor"]
         num_names = ["water_depth_m", "well_depth_m", "year_sanction", "hpht"]
         cat_encoder = preprocessor.named_transformers_["cat"]
-        cat_names = list(cat_encoder.get_feature_names_out(
-            ["subsea", "region", "rig_type", "water_depth_band"]
-        ))
+        cat_names = list(
+            cat_encoder.get_feature_names_out(
+                ["subsea", "region", "rig_type", "water_depth_band"]
+            )
+        )
         self._feature_names_out = num_names + cat_names
 
         return self
@@ -363,9 +366,7 @@ class CostPredictor:
         delta = record.year_sanction - _BASE_YEAR
         return cost_base_year * ((1.0 + _ESCALATION_RATE) ** delta)
 
-    def _bootstrap_ci(
-        self, record: CostDataPoint
-    ) -> tuple[float, float]:
+    def _bootstrap_ci(self, record: CostDataPoint) -> tuple[float, float]:
         """Estimate 90 % CI via bootstrap resampling of training data."""
         rng = np.random.default_rng(seed=42)
         bootstrap_preds: list[float] = []
@@ -373,8 +374,10 @@ class CostPredictor:
         X_dicts = _extract_features(self._train_records)
         X_df = _dicts_to_array(X_dicts)
         y_raw = np.array(
-            [_inflate_to_base(r.cost_usd_mm, r.year_sanction)
-             for r in self._train_records]
+            [
+                _inflate_to_base(r.cost_usd_mm, r.year_sanction)
+                for r in self._train_records
+            ]
         )
         y = np.log(y_raw)
         n = len(self._train_records)

@@ -4,8 +4,8 @@ import pytest
 
 from worldenergydata.lng_terminals.constants import Region, TerminalStatus, TerminalType
 from worldenergydata.lng_terminals.processors.normalizer import (
-    BCM_TO_MTPA,
     BCFD_TO_MTPA,
+    BCM_TO_MTPA,
     COUNTRY_ALIASES,
     COUNTRY_TO_REGION,
     STATUS_ALIASES,
@@ -15,10 +15,10 @@ from worldenergydata.lng_terminals.processors.normalizer import (
     _normalize_unicode,
 )
 
-
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
+
 
 class TestConstants:
     def test_bcfd_to_mtpa(self):
@@ -65,6 +65,7 @@ class TestConstants:
 # Normalizer - normalize_country
 # ---------------------------------------------------------------------------
 
+
 class TestNormalizeCountry:
     def test_alias(self):
         n = Normalizer()
@@ -96,6 +97,7 @@ class TestNormalizeCountry:
 # Normalizer - normalize_status
 # ---------------------------------------------------------------------------
 
+
 class TestNormalizeStatus:
     def test_operating(self):
         n = Normalizer()
@@ -103,7 +105,10 @@ class TestNormalizeStatus:
 
     def test_under_construction(self):
         n = Normalizer()
-        assert n.normalize_status("under construction") == TerminalStatus.UNDER_CONSTRUCTION
+        assert (
+            n.normalize_status("under construction")
+            == TerminalStatus.UNDER_CONSTRUCTION
+        )
 
     def test_planned(self):
         n = Normalizer()
@@ -122,6 +127,7 @@ class TestNormalizeStatus:
 # ---------------------------------------------------------------------------
 # Normalizer - normalize_type
 # ---------------------------------------------------------------------------
+
 
 class TestNormalizeType:
     def test_fsru(self):
@@ -150,6 +156,7 @@ class TestNormalizeType:
 # Normalizer - get_region
 # ---------------------------------------------------------------------------
 
+
 class TestGetRegion:
     def test_usa(self):
         n = Normalizer()
@@ -168,6 +175,7 @@ class TestGetRegion:
 # Normalizer - unit conversion
 # ---------------------------------------------------------------------------
 
+
 class TestUnitConversion:
     def test_bcfd_to_mtpa(self):
         n = Normalizer()
@@ -183,6 +191,7 @@ class TestUnitConversion:
 # ---------------------------------------------------------------------------
 # Private helpers
 # ---------------------------------------------------------------------------
+
 
 class TestPrivateHelpers:
     def test_normalize_unicode(self):

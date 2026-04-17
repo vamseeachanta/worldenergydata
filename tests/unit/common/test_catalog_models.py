@@ -22,7 +22,6 @@ from worldenergydata.common.catalog import (
     ModuleCatalogEntry,
 )
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
@@ -168,9 +167,7 @@ class TestDatasetEntry:
 class TestModuleCatalogEntry:
     """Tests for ModuleCatalogEntry dataclass."""
 
-    def test_module_catalog_entry_total_size(
-        self, sample_module: ModuleCatalogEntry
-    ):
+    def test_module_catalog_entry_total_size(self, sample_module: ModuleCatalogEntry):
         """total_size_bytes sums datasets and binary_stores."""
         # sample_dataset: 1_048_576
         # minimal_dataset: 524_288
@@ -232,9 +229,7 @@ class TestDataCatalog:
         assert len(prod_module["datasets"]) == 2
         assert len(prod_module["binary_stores"]) == 1
 
-    def test_data_catalog_to_yaml(
-        self, sample_catalog: DataCatalog, tmp_path: Path
-    ):
+    def test_data_catalog_to_yaml(self, sample_catalog: DataCatalog, tmp_path: Path):
         """to_yaml writes a valid YAML file that round-trips."""
         yaml_path = tmp_path / "catalog" / "data_catalog.yaml"
         sample_catalog.to_yaml(yaml_path)
@@ -248,9 +243,7 @@ class TestDataCatalog:
         assert loaded["total_modules"] == 1
         assert "production" in loaded["modules"]
 
-    def test_data_catalog_to_json(
-        self, sample_catalog: DataCatalog, tmp_path: Path
-    ):
+    def test_data_catalog_to_json(self, sample_catalog: DataCatalog, tmp_path: Path):
         """to_json writes a valid JSON file that round-trips."""
         json_path = tmp_path / "catalog" / "data_catalog.json"
         sample_catalog.to_json(json_path)

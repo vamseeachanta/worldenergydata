@@ -11,12 +11,11 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Optional
 
+import metocean_stats.stats as ms
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-
-import metocean_stats.stats as ms
 
 
 @dataclass
@@ -160,12 +159,20 @@ class JointProbabilityModel:
         df = pd.DataFrame({"hs": hs.values, "tp": tp.values}, index=hs.index)
 
         if hs_bins is not None:
-            hs_step = float(hs_bins[1] - hs_bins[0]) if len(hs_bins) > 1 else self._hs_bin_size
+            hs_step = (
+                float(hs_bins[1] - hs_bins[0])
+                if len(hs_bins) > 1
+                else self._hs_bin_size
+            )
         else:
             hs_step = self._hs_bin_size
 
         if tp_bins is not None:
-            tp_step = float(tp_bins[1] - tp_bins[0]) if len(tp_bins) > 1 else self._tp_bin_size
+            tp_step = (
+                float(tp_bins[1] - tp_bins[0])
+                if len(tp_bins) > 1
+                else self._tp_bin_size
+            )
         else:
             tp_step = self._tp_bin_size
 

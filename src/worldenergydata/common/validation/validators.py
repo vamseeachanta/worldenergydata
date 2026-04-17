@@ -13,9 +13,8 @@ from typing import Any, Dict, List, Optional, Tuple, Type, Union
 from pydantic import BaseModel
 from pydantic import ValidationError as PydanticValidationError
 
-from worldenergydata.common.types import DataFrameLike
-
 from worldenergydata.common.logging import get_logger
+from worldenergydata.common.types import DataFrameLike
 
 logger = get_logger(__name__)
 

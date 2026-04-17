@@ -7,15 +7,15 @@ from worldenergydata.hse.acquirers.osha_fatalities_acquirer import (
     DOWNLOAD_TIMEOUT,
     OIL_GAS_KEYWORDS,
     OIL_GAS_NAICS_PREFIXES,
-    OSHAFatalitiesAcquirer,
     SEVERE_INJURY_URL,
+    OSHAFatalitiesAcquirer,
     build_parser,
 )
-
 
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
+
 
 class TestConstants:
     def test_naics_prefixes(self):
@@ -38,6 +38,7 @@ class TestConstants:
 # Init
 # ---------------------------------------------------------------------------
 
+
 class TestOSHAFatalitiesAcquirerInit:
     def test_defaults(self):
         acq = OSHAFatalitiesAcquirer()
@@ -56,6 +57,7 @@ class TestOSHAFatalitiesAcquirerInit:
 # ---------------------------------------------------------------------------
 # _find_column
 # ---------------------------------------------------------------------------
+
 
 class TestFindColumn:
     def test_first_match(self):
@@ -78,6 +80,7 @@ class TestFindColumn:
 # build_parser
 # ---------------------------------------------------------------------------
 
+
 class TestBuildParser:
     def test_required_args(self):
         parser = build_parser()
@@ -90,13 +93,18 @@ class TestBuildParser:
 
     def test_all_args(self):
         parser = build_parser()
-        args = parser.parse_args([
-            "--output-dir", "/tmp/test",
-            "--force",
-            "--inspection-csv", "/tmp/inspections.csv",
-            "--filter-naics",
-            "--timeout", "60",
-        ])
+        args = parser.parse_args(
+            [
+                "--output-dir",
+                "/tmp/test",
+                "--force",
+                "--inspection-csv",
+                "/tmp/inspections.csv",
+                "--filter-naics",
+                "--timeout",
+                "60",
+            ]
+        )
         assert args.force is True
         assert args.inspection_csv == "/tmp/inspections.csv"
         assert args.filter_naics is True
@@ -106,6 +114,7 @@ class TestBuildParser:
 # ---------------------------------------------------------------------------
 # download_all (file-exists skip path)
 # ---------------------------------------------------------------------------
+
 
 class TestDownloadAll:
     def test_skips_existing(self, tmp_path):
@@ -121,6 +130,7 @@ class TestDownloadAll:
 # ---------------------------------------------------------------------------
 # extract_fatality_inspections (with local CSV)
 # ---------------------------------------------------------------------------
+
 
 class TestExtractFatalityInspections:
     def test_basic(self, tmp_path):
@@ -149,6 +159,7 @@ class TestExtractFatalityInspections:
 # ---------------------------------------------------------------------------
 # filter_oil_and_gas (with local CSV)
 # ---------------------------------------------------------------------------
+
 
 class TestFilterOilAndGas:
     def test_by_naics(self, tmp_path):

@@ -108,9 +108,7 @@ class TestModuleCatalogEntry:
         assert mod.dataset_count == 2
 
     def test_empty_module(self):
-        mod = ModuleCatalogEntry(
-            name="empty", description="Empty", path="empty/"
-        )
+        mod = ModuleCatalogEntry(name="empty", description="Empty", path="empty/")
         assert mod.total_size_bytes == 0
         assert mod.dataset_count == 0
 
@@ -156,11 +154,16 @@ class TestDataCatalog:
 
     def test_to_dict(self):
         ds = DatasetEntry(
-            name="prod", path="p.csv", format="csv",
-            domain="production", size_bytes=1024,
+            name="prod",
+            path="p.csv",
+            format="csv",
+            domain="production",
+            size_bytes=1024,
         )
         mod = ModuleCatalogEntry(
-            name="bsee", description="BSEE data", path="bsee/",
+            name="bsee",
+            description="BSEE data",
+            path="bsee/",
             datasets=[ds],
         )
         cat = DataCatalog(version="1.0.0")
@@ -175,8 +178,11 @@ class TestDataCatalog:
 
     def test_to_yaml(self):
         ds = DatasetEntry(
-            name="test", path="t.csv", format="csv",
-            domain="test", size_bytes=100,
+            name="test",
+            path="t.csv",
+            format="csv",
+            domain="test",
+            size_bytes=100,
         )
         mod = ModuleCatalogEntry(
             name="test", description="Test", path="t/", datasets=[ds]
@@ -195,8 +201,11 @@ class TestDataCatalog:
 
     def test_to_json(self):
         ds = DatasetEntry(
-            name="test", path="t.csv", format="csv",
-            domain="test", size_bytes=100,
+            name="test",
+            path="t.csv",
+            format="csv",
+            domain="test",
+            size_bytes=100,
         )
         mod = ModuleCatalogEntry(
             name="test", description="Test", path="t/", datasets=[ds]

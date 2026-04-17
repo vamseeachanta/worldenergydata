@@ -24,6 +24,7 @@ plotly = pytest.importorskip("plotly")
 # Fixtures
 # ---------------------------------------------------------------------------
 
+
 def _make_ts():
     qi = 50000
     D = 0.05
@@ -71,6 +72,7 @@ def eur(comparison):
 # ---------------------------------------------------------------------------
 # Chart tests
 # ---------------------------------------------------------------------------
+
 
 class TestPlotModelFits:
     def test_returns_figure(self, ts, comparison):

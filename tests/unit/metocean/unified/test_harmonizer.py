@@ -2,13 +2,12 @@
 
 """Tests for MetoceanHarmonizer standardisation logic."""
 
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 
 import pandas as pd
 import pytest
 
 from worldenergydata.metocean.unified.harmonizer import MetoceanHarmonizer
-
 
 STANDARD_COLUMNS = ["timestamp", "parameter", "value", "source", "unit"]
 
@@ -171,12 +170,27 @@ class TestMetoceanHarmonizerAlignment:
     def test_align_to_hourly_grid(self):
         # 3 rows at non-hourly times → should produce aligned hourly grid
         rows = [
-            {"timestamp": datetime(2023, 1, 1, 0, 0), "parameter": "Hs",
-             "value": 1.0, "source": "ndbc", "unit": "m"},
-            {"timestamp": datetime(2023, 1, 1, 0, 30), "parameter": "Hs",
-             "value": 1.5, "source": "ndbc", "unit": "m"},
-            {"timestamp": datetime(2023, 1, 1, 1, 0), "parameter": "Hs",
-             "value": 2.0, "source": "ndbc", "unit": "m"},
+            {
+                "timestamp": datetime(2023, 1, 1, 0, 0),
+                "parameter": "Hs",
+                "value": 1.0,
+                "source": "ndbc",
+                "unit": "m",
+            },
+            {
+                "timestamp": datetime(2023, 1, 1, 0, 30),
+                "parameter": "Hs",
+                "value": 1.5,
+                "source": "ndbc",
+                "unit": "m",
+            },
+            {
+                "timestamp": datetime(2023, 1, 1, 1, 0),
+                "parameter": "Hs",
+                "value": 2.0,
+                "source": "ndbc",
+                "unit": "m",
+            },
         ]
         df = pd.DataFrame(rows)
         df["timestamp"] = pd.to_datetime(df["timestamp"])
@@ -187,8 +201,13 @@ class TestMetoceanHarmonizerAlignment:
 
     def test_align_does_not_return_empty_for_valid_data(self):
         rows = [
-            {"timestamp": datetime(2023, 1, 1, h, 0), "parameter": "Hs",
-             "value": float(h + 1), "source": "ndbc", "unit": "m"}
+            {
+                "timestamp": datetime(2023, 1, 1, h, 0),
+                "parameter": "Hs",
+                "value": float(h + 1),
+                "source": "ndbc",
+                "unit": "m",
+            }
             for h in range(5)
         ]
         df = pd.DataFrame(rows)
@@ -199,10 +218,20 @@ class TestMetoceanHarmonizerAlignment:
     def test_align_directional_uses_nearest_neighbour(self):
         """Wind direction should use nearest-neighbour (not interpolation)."""
         rows = [
-            {"timestamp": datetime(2023, 1, 1, 0, 0), "parameter": "wind_dir",
-             "value": 90.0, "source": "ndbc", "unit": "deg"},
-            {"timestamp": datetime(2023, 1, 1, 2, 0), "parameter": "wind_dir",
-             "value": 180.0, "source": "ndbc", "unit": "deg"},
+            {
+                "timestamp": datetime(2023, 1, 1, 0, 0),
+                "parameter": "wind_dir",
+                "value": 90.0,
+                "source": "ndbc",
+                "unit": "deg",
+            },
+            {
+                "timestamp": datetime(2023, 1, 1, 2, 0),
+                "parameter": "wind_dir",
+                "value": 180.0,
+                "source": "ndbc",
+                "unit": "deg",
+            },
         ]
         df = pd.DataFrame(rows)
         df["timestamp"] = pd.to_datetime(df["timestamp"])
@@ -214,14 +243,28 @@ class TestMetoceanHarmonizerAlignment:
                 assert v in [90.0, 180.0], f"Unexpected interpolated value: {v}"
 
     def test_merge_sources_combines_dataframes(self):
-        df1 = pd.DataFrame([
-            {"timestamp": datetime(2023, 1, 1, 0, 0), "parameter": "Hs",
-             "value": 1.0, "source": "ndbc", "unit": "m"},
-        ])
-        df2 = pd.DataFrame([
-            {"timestamp": datetime(2023, 1, 1, 0, 0), "parameter": "Hs",
-             "value": 1.2, "source": "open_meteo", "unit": "m"},
-        ])
+        df1 = pd.DataFrame(
+            [
+                {
+                    "timestamp": datetime(2023, 1, 1, 0, 0),
+                    "parameter": "Hs",
+                    "value": 1.0,
+                    "source": "ndbc",
+                    "unit": "m",
+                },
+            ]
+        )
+        df2 = pd.DataFrame(
+            [
+                {
+                    "timestamp": datetime(2023, 1, 1, 0, 0),
+                    "parameter": "Hs",
+                    "value": 1.2,
+                    "source": "open_meteo",
+                    "unit": "m",
+                },
+            ]
+        )
         merged = self.h.merge_sources([df1, df2])
         assert isinstance(merged, pd.DataFrame)
         assert len(merged) == 2

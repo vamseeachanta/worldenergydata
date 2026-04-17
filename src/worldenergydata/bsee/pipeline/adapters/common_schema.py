@@ -16,10 +16,10 @@ from typing import Any
 
 import pandas as pd
 
-
 # ---------------------------------------------------------------------------
 # Domain status — used by the data-availability matrix
 # ---------------------------------------------------------------------------
+
 
 @dataclass(frozen=True)
 class DomainStatus:
@@ -42,15 +42,9 @@ class DataAvailability:
     source_name: str
     jurisdiction: str
 
-    wellbore: DomainStatus = field(
-        default_factory=lambda: DomainStatus("unavailable")
-    )
-    well_path: DomainStatus = field(
-        default_factory=lambda: DomainStatus("unavailable")
-    )
-    casing: DomainStatus = field(
-        default_factory=lambda: DomainStatus("unavailable")
-    )
+    wellbore: DomainStatus = field(default_factory=lambda: DomainStatus("unavailable"))
+    well_path: DomainStatus = field(default_factory=lambda: DomainStatus("unavailable"))
+    casing: DomainStatus = field(default_factory=lambda: DomainStatus("unavailable"))
     drilling_completion: DomainStatus = field(
         default_factory=lambda: DomainStatus("unavailable")
     )
@@ -80,6 +74,7 @@ class SourceMetadata:
 # ---------------------------------------------------------------------------
 # Adapter result — what adapt() returns
 # ---------------------------------------------------------------------------
+
 
 @dataclass
 class AdapterResult:
@@ -117,6 +112,7 @@ class AdapterResult:
 # ---------------------------------------------------------------------------
 # Adapter interface (abstract base)
 # ---------------------------------------------------------------------------
+
 
 class AdapterInterface(abc.ABC):
     """Base class for all regulatory-source adapters.

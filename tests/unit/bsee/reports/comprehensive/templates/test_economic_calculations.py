@@ -47,8 +47,20 @@ class TestEnhancedNetbackAnalysis:
 
     def test_netback_decreasing(self):
         context = {
-            "revenue_breakdown": {"total_revenue": 1000, "oil_revenue": 800, "gas_revenue": 200, "ngl_revenue": 0},
-            "cost_analysis": {"operating_costs": 200, "royalties": 100, "severance_tax": 0, "transportation_costs": 0, "processing_costs": 0, "variable_costs": 300},
+            "revenue_breakdown": {
+                "total_revenue": 1000,
+                "oil_revenue": 800,
+                "gas_revenue": 200,
+                "ngl_revenue": 0,
+            },
+            "cost_analysis": {
+                "operating_costs": 200,
+                "royalties": 100,
+                "severance_tax": 0,
+                "transportation_costs": 0,
+                "processing_costs": 0,
+                "variable_costs": 300,
+            },
             "production_metrics": {"oil_bbls": 100, "gas_mcf": 0},
         }
         result = calculate_enhanced_netback_analysis(context)
@@ -58,8 +70,20 @@ class TestEnhancedNetbackAnalysis:
 
     def test_netback_percentages_with_revenue(self):
         context = {
-            "revenue_breakdown": {"total_revenue": 1000, "oil_revenue": 1000, "gas_revenue": 0, "ngl_revenue": 0},
-            "cost_analysis": {"operating_costs": 200, "royalties": 100, "severance_tax": 0, "transportation_costs": 0, "processing_costs": 0, "variable_costs": 300},
+            "revenue_breakdown": {
+                "total_revenue": 1000,
+                "oil_revenue": 1000,
+                "gas_revenue": 0,
+                "ngl_revenue": 0,
+            },
+            "cost_analysis": {
+                "operating_costs": 200,
+                "royalties": 100,
+                "severance_tax": 0,
+                "transportation_costs": 0,
+                "processing_costs": 0,
+                "variable_costs": 300,
+            },
             "production_metrics": {"oil_bbls": 100, "gas_mcf": 0},
         }
         result = calculate_enhanced_netback_analysis(context)
@@ -99,7 +123,11 @@ class TestCostStructureAnalysis:
 
     def test_efficiency_index(self):
         context = {
-            "cost_analysis": {"total_costs": 400, "operating_costs": 200, "variable_costs": 200},
+            "cost_analysis": {
+                "total_costs": 400,
+                "operating_costs": 200,
+                "variable_costs": 200,
+            },
             "revenue_breakdown": {"total_revenue": 1000},
         }
         result = calculate_cost_structure_analysis(context)
@@ -157,25 +185,37 @@ class TestRevenueOptimizationAnalysis:
 
 class TestIdentifyRevenueOptimizationOpportunities:
     def test_high_gas_dependency(self):
-        opp = identify_revenue_optimization_opportunities({}, {"gas_revenue_dependency": 0.7})
+        opp = identify_revenue_optimization_opportunities(
+            {}, {"gas_revenue_dependency": 0.7}
+        )
         assert any("gas dependence" in o for o in opp)
 
     def test_low_diversification(self):
-        opp = identify_revenue_optimization_opportunities({}, {"revenue_diversification_index": 0.2})
+        opp = identify_revenue_optimization_opportunities(
+            {}, {"revenue_diversification_index": 0.2}
+        )
         assert any("diversification" in o.lower() for o in opp)
 
     def test_low_ngl(self):
-        opp = identify_revenue_optimization_opportunities({"ngl_revenue_percentage": 2}, {})
+        opp = identify_revenue_optimization_opportunities(
+            {"ngl_revenue_percentage": 2}, {}
+        )
         assert any("NGL" in o for o in opp)
 
     def test_high_concentration(self):
-        opp = identify_revenue_optimization_opportunities({}, {"revenue_concentration_risk": 0.9})
+        opp = identify_revenue_optimization_opportunities(
+            {}, {"revenue_concentration_risk": 0.9}
+        )
         assert any("concentration" in o.lower() for o in opp)
 
     def test_no_issues(self):
         opp = identify_revenue_optimization_opportunities(
             {"ngl_revenue_percentage": 10},
-            {"gas_revenue_dependency": 0.3, "revenue_diversification_index": 0.5, "revenue_concentration_risk": 0.5},
+            {
+                "gas_revenue_dependency": 0.3,
+                "revenue_diversification_index": 0.5,
+                "revenue_concentration_risk": 0.5,
+            },
         )
         assert opp == []
 
@@ -183,14 +223,26 @@ class TestIdentifyRevenueOptimizationOpportunities:
 class TestGetEconomicKpis:
     def test_basic(self):
         context = {
-            "profitability_metrics": {"net_income": 500000, "profit_margin": 30, "operating_margin": 40, "ebitda": 600000},
+            "profitability_metrics": {
+                "net_income": 500000,
+                "profit_margin": 30,
+                "operating_margin": 40,
+                "ebitda": 600000,
+            },
             "npv_analysis": {"npv": 1000000, "irr": 0.15},
             "roi_metrics": {"annual_roi": 0.25, "payback_period_years": 4},
         }
         netback = {
-            "netback_calculation": {"full_netback_per_boe": 50, "operating_netback_per_boe": 60},
+            "netback_calculation": {
+                "full_netback_per_boe": 50,
+                "operating_netback_per_boe": 60,
+            },
             "revenue_per_boe_breakdown": {"total_revenue_per_boe": 80},
-            "cost_per_boe_breakdown": {"total_variable_cost_per_boe": 30, "operating_cost_per_boe": 20, "royalties_per_boe": 5},
+            "cost_per_boe_breakdown": {
+                "total_variable_cost_per_boe": 30,
+                "operating_cost_per_boe": 20,
+                "royalties_per_boe": 5,
+            },
             "netback_percentages": {"full_netback_pct": 62.5},
         }
         result = get_economic_kpis(context, netback)

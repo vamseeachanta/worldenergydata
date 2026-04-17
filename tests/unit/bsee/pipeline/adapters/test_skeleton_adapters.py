@@ -17,10 +17,10 @@ from worldenergydata.bsee.pipeline.adapters.common_schema import (
     SourceMetadata,
 )
 
-
 # -----------------------------------------------------------------------
 # CNH adapter tests
 # -----------------------------------------------------------------------
+
 
 class TestCNHAdapterAdapt:
     """Test CNHAdapter.adapt() returns correct empty results."""
@@ -120,6 +120,7 @@ class TestCNHAdapterAvailability:
 # ANP adapter tests
 # -----------------------------------------------------------------------
 
+
 class TestANPAdapterAdapt:
     """Test ANPAdapter.adapt() returns correct empty results."""
 
@@ -202,7 +203,11 @@ class TestANPAdapterAvailability:
     def test_every_domain_is_unavailable(self):
         avail = ANPAdapter().get_availability()
         for domain in (
-            "wellbore", "well_path", "casing",
-            "drilling_completion", "intervention", "production",
+            "wellbore",
+            "well_path",
+            "casing",
+            "drilling_completion",
+            "intervention",
+            "production",
         ):
             assert getattr(avail, domain).status == "unavailable"

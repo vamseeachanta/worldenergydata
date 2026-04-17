@@ -8,7 +8,6 @@ import pytest
 
 from worldenergydata.metocean.unified.coverage import MetoceanCoverage
 
-
 # ---------------------------------------------------------------------------
 # Gulf of Mexico (GoM) location — lat 28.5, lon -88.5
 # ---------------------------------------------------------------------------

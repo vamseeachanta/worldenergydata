@@ -39,9 +39,7 @@ class TestExportWarToVesselFleet:
         assert len(records) == 1
 
     def test_filters_non_rig_entries(self):
-        df = pd.DataFrame({
-            "RIG_NAME": ["Rig A", "* NON RIG UNIT OPERATION", "Rig B"]
-        })
+        df = pd.DataFrame({"RIG_NAME": ["Rig A", "* NON RIG UNIT OPERATION", "Rig B"]})
         records = export_war_to_vessel_fleet(df)
         assert len(records) == 2
         names = [r["RIG_NAME"] for r in records]
@@ -53,16 +51,16 @@ class TestExportWarToVesselFleet:
         assert records[0]["RIG_NAME"] == "Rig A"
 
     def test_preserves_extra_columns(self):
-        df = pd.DataFrame({
-            "RIG_NAME": ["Rig A"],
-            "WATER_DEPTH": [5000],
-        })
+        df = pd.DataFrame(
+            {
+                "RIG_NAME": ["Rig A"],
+                "WATER_DEPTH": [5000],
+            }
+        )
         records = export_war_to_vessel_fleet(df)
         assert records[0]["WATER_DEPTH"] == 5000
 
     def test_all_non_rig_returns_empty(self):
-        df = pd.DataFrame({
-            "RIG_NAME": ["* NON RIG UNIT", "NON RIG STUFF"]
-        })
+        df = pd.DataFrame({"RIG_NAME": ["* NON RIG UNIT", "NON RIG STUFF"]})
         records = export_war_to_vessel_fleet(df)
         assert records == []

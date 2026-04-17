@@ -27,11 +27,13 @@ _RIG_TYPE_DISPLAY_MAP: dict[str, str] = {
     "pumping_unit": "Pumping Unit",
 }
 
-_INACTIVE_STATUSES: frozenset[str] = frozenset({
-    "stacked_cold",
-    "stacked_warm",
-    "scrapped",
-})
+_INACTIVE_STATUSES: frozenset[str] = frozenset(
+    {
+        "stacked_cold",
+        "stacked_warm",
+        "scrapped",
+    }
+)
 
 _DEEPWATER_THRESHOLD_FT: float = 4000.0
 

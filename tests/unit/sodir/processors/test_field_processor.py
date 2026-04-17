@@ -236,58 +236,70 @@ class TestValidate:
 
     def test_negative_reserves(self):
         fp = FieldProcessor()
-        valid, errors = fp.validate({
-            "fldName": "Test",
-            "fldOriginalReservesOil": -10,
-        })
+        valid, errors = fp.validate(
+            {
+                "fldName": "Test",
+                "fldOriginalReservesOil": -10,
+            }
+        )
         assert valid is False
         assert any("Negative" in e for e in errors)
 
     def test_invalid_numeric_reserves(self):
         fp = FieldProcessor()
-        valid, errors = fp.validate({
-            "fldName": "Test",
-            "fldOriginalReservesOil": "not_a_number",
-        })
+        valid, errors = fp.validate(
+            {
+                "fldName": "Test",
+                "fldOriginalReservesOil": "not_a_number",
+            }
+        )
         assert valid is False
         assert any("Invalid numeric" in e for e in errors)
 
     def test_remaining_exceeds_original(self):
         fp = FieldProcessor()
-        valid, errors = fp.validate({
-            "fldName": "Test",
-            "fldOriginalReservesOil": 100,
-            "fldRemainingReservesOil": 200,
-        })
+        valid, errors = fp.validate(
+            {
+                "fldName": "Test",
+                "fldOriginalReservesOil": 100,
+                "fldRemainingReservesOil": 200,
+            }
+        )
         assert valid is False
         assert any("exceed" in e for e in errors)
 
     def test_invalid_year(self):
         fp = FieldProcessor()
-        valid, errors = fp.validate({
-            "fldName": "Test",
-            "fldDiscoveryYear": 1800,
-        })
+        valid, errors = fp.validate(
+            {
+                "fldName": "Test",
+                "fldDiscoveryYear": 1800,
+            }
+        )
         assert valid is False
         assert any("Invalid year" in e for e in errors)
 
     def test_production_before_discovery(self):
         fp = FieldProcessor()
-        valid, errors = fp.validate({
-            "fldName": "Test",
-            "fldDiscoveryYear": 2000,
-            "fldProductionStartYear": 1990,
-        })
+        valid, errors = fp.validate(
+            {
+                "fldName": "Test",
+                "fldDiscoveryYear": 2000,
+                "fldProductionStartYear": 1990,
+            }
+        )
         assert valid is False
         assert any("before discovery" in e for e in errors)
 
     def test_cessation_before_production(self):
         fp = FieldProcessor()
-        valid, errors = fp.validate({
-            "fldName": "Test",
-            "fldProductionStartYear": 2010,
-            "fldCessationYear": 2005,
-        })
+        valid, errors = fp.validate(
+            {
+                "fldName": "Test",
+                "fldProductionStartYear": 2010,
+                "fldCessationYear": 2005,
+            }
+        )
         assert valid is False
         assert any("before production" in e for e in errors)
 
@@ -295,12 +307,14 @@ class TestValidate:
 class TestProcess:
     def test_basic_field(self):
         fp = FieldProcessor()
-        result = fp.process({
-            "fldName": "Ekofisk",
-            "fldNpdidField": 12345,
-            "fldStatus": "PRODUCING",
-            "fldOperatorName": "ConocoPhillips",
-        })
+        result = fp.process(
+            {
+                "fldName": "Ekofisk",
+                "fldNpdidField": 12345,
+                "fldStatus": "PRODUCING",
+                "fldOperatorName": "ConocoPhillips",
+            }
+        )
         assert result is not None
         assert result["field_name"] == "Ekofisk"
         assert result["field_id"] == 12345
@@ -309,11 +323,13 @@ class TestProcess:
 
     def test_process_with_reserves(self):
         fp = FieldProcessor()
-        result = fp.process({
-            "fldName": "Test",
-            "fldOriginalReservesOil": 10.0,
-            "fldRemainingReservesOil": 3.0,
-        })
+        result = fp.process(
+            {
+                "fldName": "Test",
+                "fldOriginalReservesOil": 10.0,
+                "fldRemainingReservesOil": 3.0,
+            }
+        )
         assert result is not None
         assert result["original_reserves_oil_mmbbl"] == round(10.0 * 6.29, 2)
         assert result["remaining_reserves_oil_mmbbl"] == round(3.0 * 6.29, 2)

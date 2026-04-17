@@ -1,4 +1,5 @@
 import os
+
 import pandas as pd
 
 from worldenergydata.common.data_resolver import get_module_data_safe

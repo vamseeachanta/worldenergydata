@@ -21,7 +21,11 @@ class TestStepValidator:
 
     def test_validate_input_invalid(self):
         sv = StepValidator()
-        schema = {"type": "object", "properties": {"age": {"type": "integer"}}, "required": ["age"]}
+        schema = {
+            "type": "object",
+            "properties": {"age": {"type": "integer"}},
+            "required": ["age"],
+        }
         result = sv.validate_input({}, schema)
         assert result is False
         assert len(sv.errors) >= 1
@@ -34,7 +38,11 @@ class TestStepValidator:
 
     def test_validate_output_invalid(self):
         sv = StepValidator()
-        schema = {"type": "object", "properties": {"count": {"type": "integer"}}, "required": ["count"]}
+        schema = {
+            "type": "object",
+            "properties": {"count": {"type": "integer"}},
+            "required": ["count"],
+        }
         result = sv.validate_output({"count": "not_int"}, schema)
         assert result is False
         assert len(sv.errors) >= 1
@@ -201,7 +209,11 @@ class TestWorkflowDocumentationGenerator:
 
     def test_generate_workflow_summary_no_optional_config(self):
         gen = WorkflowDocumentationGenerator()
-        steps = [SimpleNamespace(name="S1", description="Test", required=True, timeout_seconds=10)]
+        steps = [
+            SimpleNamespace(
+                name="S1", description="Test", required=True, timeout_seconds=10
+            )
+        ]
         doc = gen.generate_workflow_summary("W", steps, {})
         assert "# Workflow: W" in doc
         assert "Timeout" not in doc.split("## Workflow Steps")[0]
@@ -232,7 +244,9 @@ class TestWorkflowDocumentationGenerator:
                 },
             },
         }
-        report = gen.generate_execution_report("sess-001", progress, "2024-01-01T00:00:00")
+        report = gen.generate_execution_report(
+            "sess-001", progress, "2024-01-01T00:00:00"
+        )
         assert "Session ID" in report
         assert "sess-001" in report
         assert "66.7%" in report

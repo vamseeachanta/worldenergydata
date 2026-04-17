@@ -74,18 +74,14 @@ class TestOBJMesh:
         assert mesh.face_count == 1
 
     def test_bbox(self):
-        verts = np.array(
-            [[0, 0, 0], [10, 5, 3], [5, 2, 1]], dtype=np.float32
-        )
+        verts = np.array([[0, 0, 0], [10, 5, 3], [5, 2, 1]], dtype=np.float32)
         faces = np.array([[0, 1, 2]], dtype=np.int32)
         mesh = OBJMesh(vertices=verts, faces=faces)
         np.testing.assert_array_equal(mesh.bbox_min, [0, 0, 0])
         np.testing.assert_array_equal(mesh.bbox_max, [10, 5, 3])
 
     def test_dimensions(self):
-        verts = np.array(
-            [[0, 0, 0], [10, 5, 3]], dtype=np.float32
-        )
+        verts = np.array([[0, 0, 0], [10, 5, 3]], dtype=np.float32)
         faces = np.array([[0, 1, 0]], dtype=np.int32)
         mesh = OBJMesh(vertices=verts, faces=faces)
         dims = mesh.dimensions
@@ -94,21 +90,19 @@ class TestOBJMesh:
         assert dims["height"] == pytest.approx(3.0)
 
     def test_center(self):
-        verts = np.array(
-            [[0, 0, 0], [10, 10, 10]], dtype=np.float32
-        )
+        verts = np.array([[0, 0, 0], [10, 10, 10]], dtype=np.float32)
         faces = np.array([[0, 1, 0]], dtype=np.int32)
         mesh = OBJMesh(vertices=verts, faces=faces)
         np.testing.assert_array_almost_equal(mesh.center, [5, 5, 5])
 
     def test_get_stats(self):
-        verts = np.array(
-            [[0, 0, 0], [1, 0, 0], [0, 1, 0]], dtype=np.float32
-        )
+        verts = np.array([[0, 0, 0], [1, 0, 0], [0, 1, 0]], dtype=np.float32)
         faces = np.array([[0, 1, 2]], dtype=np.int32)
         mesh = OBJMesh(
-            vertices=verts, faces=faces,
-            material_name="mat1", object_name="obj1",
+            vertices=verts,
+            faces=faces,
+            material_name="mat1",
+            object_name="obj1",
         )
         stats = mesh.get_stats()
         assert stats["vertex_count"] == 3
@@ -132,9 +126,7 @@ class TestOBJMesh:
         assert mesh.texcoords is None
 
     def test_bbox_cached(self):
-        verts = np.array(
-            [[0, 0, 0], [1, 1, 1]], dtype=np.float32
-        )
+        verts = np.array([[0, 0, 0], [1, 1, 1]], dtype=np.float32)
         faces = np.array([[0, 1, 0]], dtype=np.int32)
         mesh = OBJMesh(vertices=verts, faces=faces)
         _ = mesh.bbox_min

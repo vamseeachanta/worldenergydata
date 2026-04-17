@@ -40,9 +40,8 @@ class TestATSBDataValidationError:
 
     def test_is_validation_error(self):
         from worldenergydata.marine_safety.exceptions import ValidationError
-        err = ATSBDataValidationError(
-            field="f", value="v", reason="r"
-        )
+
+        err = ATSBDataValidationError(field="f", value="v", reason="r")
         assert isinstance(err, ValidationError)
 
 
@@ -62,5 +61,6 @@ class TestATSBConnectionError:
 
     def test_is_scraper_error(self):
         from worldenergydata.marine_safety.exceptions import ScraperError
+
         err = ATSBConnectionError()
         assert isinstance(err, ScraperError)

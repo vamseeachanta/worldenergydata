@@ -30,9 +30,7 @@ from worldenergydata.marine_safety.cross_database import (
 # Fixture paths
 # ---------------------------------------------------------------------------
 
-FIXTURES_DIR = (
-    Path(__file__).parent.parent.parent / "fixtures" / "marine_safety"
-)
+FIXTURES_DIR = Path(__file__).parent.parent.parent / "fixtures" / "marine_safety"
 
 
 @pytest.fixture
@@ -141,9 +139,9 @@ class TestLiveMAIBImporter:
         )
         result = analyzer.query(CrossDatabaseQuery(sources=["maib"]))
         actual = set(result.data["severity"].unique())
-        assert actual.issubset(valid_severities), (
-            f"Unexpected severity values: {actual - valid_severities}"
-        )
+        assert actual.issubset(
+            valid_severities
+        ), f"Unexpected severity values: {actual - valid_severities}"
 
 
 # ---------------------------------------------------------------------------
@@ -215,9 +213,7 @@ class TestGracefulFallback:
 
     def test_fallback_to_synthetic_on_missing_tsb_file(self):
         analyzer = CrossDatabaseAnalyzer(
-            importer_config={
-                "tsb": {"occurrence_file": Path("/nonexistent_tsb.csv")}
-            }
+            importer_config={"tsb": {"occurrence_file": Path("/nonexistent_tsb.csv")}}
         )
         result = analyzer.query(CrossDatabaseQuery())
         assert result.data_freshness == "synthetic"

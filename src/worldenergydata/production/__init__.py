@@ -5,7 +5,7 @@ Provides the unified cross-regional production query interface via
 via `worldenergydata.production.forecast`.
 """
 
-from worldenergydata.production.unified import UnifiedProductionClient
 from worldenergydata.production.forecast import ArpsDeclineCurve, ForecastResult
+from worldenergydata.production.unified import UnifiedProductionClient
 
 __all__ = ["UnifiedProductionClient", "ArpsDeclineCurve", "ForecastResult"]

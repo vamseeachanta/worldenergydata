@@ -6,10 +6,10 @@ from worldenergydata.bsee.reports.comprehensive.templates.executive_benchmarks i
     ExecutiveBenchmarking,
 )
 
-
 # ---------------------------------------------------------------------------
 # ExecutiveBenchmarking init
 # ---------------------------------------------------------------------------
+
 
 class TestExecutiveBenchmarkingInit:
     def test_default_benchmarks(self):
@@ -27,6 +27,7 @@ class TestExecutiveBenchmarkingInit:
 # ---------------------------------------------------------------------------
 # analyze_competitive_position
 # ---------------------------------------------------------------------------
+
 
 class TestAnalyzeCompetitivePosition:
     def test_empty_data(self):
@@ -93,12 +94,16 @@ class TestAnalyzeCompetitivePosition:
         }
         result = eb.analyze_competitive_position(data)
         assert "PeerA" in result["peer_comparison"]
-        assert result["peer_comparison"]["PeerA"]["production_efficiency"]["difference"] == 5.0
+        assert (
+            result["peer_comparison"]["PeerA"]["production_efficiency"]["difference"]
+            == 5.0
+        )
 
 
 # ---------------------------------------------------------------------------
 # generate_peer_ranking_table
 # ---------------------------------------------------------------------------
+
 
 class TestGeneratePeerRankingTable:
     def test_empty_peers(self):
@@ -121,7 +126,11 @@ class TestGeneratePeerRankingTable:
 
     def test_custom_company_data(self):
         eb = ExecutiveBenchmarking()
-        company = {"name": "MyCompany", "production_efficiency": 99.0, "safety_score": 100.0}
+        company = {
+            "name": "MyCompany",
+            "production_efficiency": 99.0,
+            "safety_score": 100.0,
+        }
         result = eb.generate_peer_ranking_table([], company_data=company)
         assert result[0]["name"] == "MyCompany"
 
@@ -129,6 +138,7 @@ class TestGeneratePeerRankingTable:
 # ---------------------------------------------------------------------------
 # calculate_benchmark_gaps
 # ---------------------------------------------------------------------------
+
 
 class TestCalculateBenchmarkGaps:
     def test_above_benchmark(self):
@@ -164,6 +174,7 @@ class TestCalculateBenchmarkGaps:
 # identify_improvement_opportunities
 # ---------------------------------------------------------------------------
 
+
 class TestIdentifyImprovementOpportunities:
     def test_no_gaps(self):
         eb = ExecutiveBenchmarking()
@@ -181,8 +192,20 @@ class TestIdentifyImprovementOpportunities:
     def test_sorted_by_priority(self):
         eb = ExecutiveBenchmarking()
         gaps = {
-            "efficiency": {"status": "below", "company_value": 70, "benchmark": 85, "gap": -15, "gap_percentage": -17.6},
-            "uptime": {"status": "below", "company_value": 80, "benchmark": 92, "gap": -12, "gap_percentage": -13.0},
+            "efficiency": {
+                "status": "below",
+                "company_value": 70,
+                "benchmark": 85,
+                "gap": -15,
+                "gap_percentage": -17.6,
+            },
+            "uptime": {
+                "status": "below",
+                "company_value": 80,
+                "benchmark": 92,
+                "gap": -12,
+                "gap_percentage": -13.0,
+            },
         }
         opps = eb.identify_improvement_opportunities(gaps)
         # Both should be medium or high priority
@@ -192,6 +215,7 @@ class TestIdentifyImprovementOpportunities:
 # ---------------------------------------------------------------------------
 # _calculate_priority
 # ---------------------------------------------------------------------------
+
 
 class TestCalculatePriority:
     def test_critical_metric_is_high(self):
@@ -216,6 +240,7 @@ class TestCalculatePriority:
 # ---------------------------------------------------------------------------
 # _get_ranking_label
 # ---------------------------------------------------------------------------
+
 
 class TestGetRankingLabel:
     def test_leader(self):
@@ -243,6 +268,7 @@ class TestGetRankingLabel:
 # generate_competitive_summary
 # ---------------------------------------------------------------------------
 
+
 class TestGenerateCompetitiveSummary:
     def test_basic(self):
         eb = ExecutiveBenchmarking()
@@ -269,6 +295,7 @@ class TestGenerateCompetitiveSummary:
 # ---------------------------------------------------------------------------
 # create_radar_chart (delegates to create_benchmark_radar_chart)
 # ---------------------------------------------------------------------------
+
 
 class TestCreateRadarChart:
     def test_basic_radar_chart(self):

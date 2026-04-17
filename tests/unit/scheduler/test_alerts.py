@@ -1,6 +1,7 @@
 """Tests for email alerting and StatusReporter integration."""
+
 from datetime import datetime
-from unittest.mock import MagicMock, patch, call
+from unittest.mock import MagicMock, call, patch
 
 import pytest
 

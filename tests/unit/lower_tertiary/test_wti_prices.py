@@ -12,10 +12,10 @@ from worldenergydata.lower_tertiary.wti_prices import (
     get_wti_source_summary,
 )
 
-
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
+
 
 class TestConstants:
     def test_v30_last_price(self):
@@ -28,6 +28,7 @@ class TestConstants:
 # ---------------------------------------------------------------------------
 # _covered_periods
 # ---------------------------------------------------------------------------
+
 
 class TestCoveredPeriods:
     def test_none(self):
@@ -48,6 +49,7 @@ class TestCoveredPeriods:
 # ---------------------------------------------------------------------------
 # _needed_months
 # ---------------------------------------------------------------------------
+
 
 class TestNeededMonths:
     def test_basic(self):
@@ -70,6 +72,7 @@ class TestNeededMonths:
 # ---------------------------------------------------------------------------
 # _append
 # ---------------------------------------------------------------------------
+
 
 class TestAppend:
     def test_none_base(self):
@@ -94,11 +97,21 @@ class TestAppend:
 # get_wti_source_summary
 # ---------------------------------------------------------------------------
 
+
 class TestGetWtiSourceSummary:
     def test_all_sources(self):
-        df = pd.DataFrame({
-            "source": ["v30_xlsx", "v30_xlsx", "eia_github", "fred_api", "flat_forward", "flat_forward"],
-        })
+        df = pd.DataFrame(
+            {
+                "source": [
+                    "v30_xlsx",
+                    "v30_xlsx",
+                    "eia_github",
+                    "fred_api",
+                    "flat_forward",
+                    "flat_forward",
+                ],
+            }
+        )
         result = get_wti_source_summary(df)
         assert result["v30_xlsx"] == 2
         assert result["eia_github"] == 1
@@ -115,4 +128,9 @@ class TestGetWtiSourceSummary:
     def test_includes_all_keys(self):
         df = pd.DataFrame({"source": []})
         result = get_wti_source_summary(df)
-        assert set(result.keys()) == {"v30_xlsx", "eia_github", "fred_api", "flat_forward"}
+        assert set(result.keys()) == {
+            "v30_xlsx",
+            "eia_github",
+            "fred_api",
+            "flat_forward",
+        }

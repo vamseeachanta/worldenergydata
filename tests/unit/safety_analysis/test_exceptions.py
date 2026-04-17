@@ -28,7 +28,9 @@ class TestSafetyDataError:
 
     def test_load_failed(self):
         cause = FileNotFoundError("not found")
-        err = SafetyDataError.load_failed("/data/incidents.csv", "file missing", cause=cause)
+        err = SafetyDataError.load_failed(
+            "/data/incidents.csv", "file missing", cause=cause
+        )
         assert err.code == "SAFETY_LOAD_FAILED"
         assert err.cause is cause
         assert err.context["path"] == "/data/incidents.csv"
@@ -43,7 +45,9 @@ class TestSafetyClassificationError:
 
     def test_training_failed(self):
         cause = RuntimeError("GPU error")
-        err = SafetyClassificationError.training_failed("convergence failed", cause=cause)
+        err = SafetyClassificationError.training_failed(
+            "convergence failed", cause=cause
+        )
         assert err.code == "SAFETY_TRAINING_FAILED"
         assert err.cause is cause
 

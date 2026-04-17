@@ -25,7 +25,9 @@ class TestRiserJointSchema:
 
     def test_float_coercion(self):
         s = RiserJointSchema(
-            COMPONENT_ID="RJ-001", OD_IN="21.0", LENGTH_FT=" 75.0 ",
+            COMPONENT_ID="RJ-001",
+            OD_IN="21.0",
+            LENGTH_FT=" 75.0 ",
         )
         assert s.OD_IN == 21.0
         assert s.LENGTH_FT == 75.0
@@ -40,7 +42,9 @@ class TestRiserJointSchema:
 
     def test_empty_str_to_none(self):
         s = RiserJointSchema(
-            COMPONENT_ID="RJ-001", MANUFACTURER="  ", GRADE="",
+            COMPONENT_ID="RJ-001",
+            MANUFACTURER="  ",
+            GRADE="",
         )
         assert s.MANUFACTURER is None
         assert s.GRADE is None
@@ -48,9 +52,13 @@ class TestRiserJointSchema:
     def test_all_fields(self):
         s = RiserJointSchema(
             COMPONENT_ID="RJ-001",
-            OD_IN=21.0, ID_IN=19.5, WALL_THICKNESS_IN=0.75,
-            LENGTH_FT=75.0, WEIGHT_AIR_KIPS=24.5,
-            BUOYANCY_COVERAGE_PCT=90.0, PRESSURE_RATING_PSI=15000,
+            OD_IN=21.0,
+            ID_IN=19.5,
+            WALL_THICKNESS_IN=0.75,
+            LENGTH_FT=75.0,
+            WEIGHT_AIR_KIPS=24.5,
+            BUOYANCY_COVERAGE_PCT=90.0,
+            PRESSURE_RATING_PSI=15000,
         )
         assert s.WALL_THICKNESS_IN == 0.75
 
@@ -63,7 +71,8 @@ class TestBOPSchema:
     def test_float_coercion(self):
         s = BOPSchema(
             COMPONENT_ID="BOP-001",
-            BORE_SIZE_IN="18.75", PRESSURE_RATING_PSI="15000",
+            BORE_SIZE_IN="18.75",
+            PRESSURE_RATING_PSI="15000",
         )
         assert s.BORE_SIZE_IN == 18.75
         assert s.PRESSURE_RATING_PSI == 15000.0
@@ -75,14 +84,17 @@ class TestBOPSchema:
     def test_int_coercion(self):
         s = BOPSchema(
             COMPONENT_ID="BOP-001",
-            ANNULAR_COUNT="2", SHEAR_RAM_COUNT=3.0,
+            ANNULAR_COUNT="2",
+            SHEAR_RAM_COUNT=3.0,
         )
         assert s.ANNULAR_COUNT == 2
         assert s.SHEAR_RAM_COUNT == 3
 
     def test_empty_str_to_none(self):
         s = BOPSchema(
-            COMPONENT_ID="BOP-001", BOP_TYPE="  ", MANUFACTURER="",
+            COMPONENT_ID="BOP-001",
+            BOP_TYPE="  ",
+            MANUFACTURER="",
         )
         assert s.BOP_TYPE is None
         assert s.MANUFACTURER is None
@@ -95,7 +107,8 @@ class TestLMRPSchema:
 
     def test_float_coercion(self):
         s = LMRPSchema(
-            COMPONENT_ID="LMRP-001", BORE_SIZE_IN="18.75",
+            COMPONENT_ID="LMRP-001",
+            BORE_SIZE_IN="18.75",
         )
         assert s.BORE_SIZE_IN == 18.75
 
@@ -116,7 +129,8 @@ class TestFlexJointSchema:
     def test_float_coercion(self):
         s = FlexJointSchema(
             COMPONENT_ID="FJ-001",
-            MAX_ANGLE_DEG="10.0", BORE_SIZE_IN="21",
+            MAX_ANGLE_DEG="10.0",
+            BORE_SIZE_IN="21",
         )
         assert s.MAX_ANGLE_DEG == 10.0
         assert s.BORE_SIZE_IN == 21.0
@@ -127,7 +141,9 @@ class TestFlexJointSchema:
 
     def test_empty_str_to_none(self):
         s = FlexJointSchema(
-            COMPONENT_ID="FJ-001", POSITION="  ", MANUFACTURER="",
+            COMPONENT_ID="FJ-001",
+            POSITION="  ",
+            MANUFACTURER="",
         )
         assert s.POSITION is None
 
@@ -140,7 +156,8 @@ class TestTelescopicJointSchema:
     def test_float_coercion(self):
         s = TelescopicJointSchema(
             COMPONENT_ID="TJ-001",
-            STROKE_FT="50.0", OD_IN="24",
+            STROKE_FT="50.0",
+            OD_IN="24",
         )
         assert s.STROKE_FT == 50.0
         assert s.OD_IN == 24.0
@@ -151,6 +168,7 @@ class TestTelescopicJointSchema:
 
     def test_empty_str_to_none(self):
         s = TelescopicJointSchema(
-            COMPONENT_ID="TJ-001", MANUFACTURER="  ",
+            COMPONENT_ID="TJ-001",
+            MANUFACTURER="  ",
         )
         assert s.MANUFACTURER is None

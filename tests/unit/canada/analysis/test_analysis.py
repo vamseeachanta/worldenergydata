@@ -34,7 +34,11 @@ class TestRouter:
 
     def test_custom_basename(self):
         ca = CanadaAnalysis()
-        cfg = {"basename": "my_canada", "my_canada": {}, "analysis": {"type": "summary"}}
+        cfg = {
+            "basename": "my_canada",
+            "my_canada": {},
+            "analysis": {"type": "summary"},
+        }
         data = {}
         result = ca.router(cfg, data)
         assert "analysis_results" in result["my_canada"]

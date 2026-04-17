@@ -16,11 +16,17 @@ from typing import Any, Optional
 import pandas as pd
 
 from worldenergydata.bsee.pipeline.adapters.common_schema import (
-    AdapterInterface, AdapterResult, DataAvailability, SourceMetadata,
+    AdapterInterface,
+    AdapterResult,
+    DataAvailability,
+    SourceMetadata,
 )
 from worldenergydata.bsee.pipeline.adapters.data_availability import RRC_AVAILABILITY
 from worldenergydata.bsee.pipeline.adapters.units import (
-    barrels_to_m3, convert_column, feet_to_metres, mcf_to_m3,
+    barrels_to_m3,
+    convert_column,
+    feet_to_metres,
+    mcf_to_m3,
 )
 
 logger = logging.getLogger(__name__)
@@ -34,11 +40,22 @@ _META = SourceMetadata(
 )
 
 _KEEP_DRILL = [
-    "permit_number", "permit_type", "approved_date", "total_depth",
-    "horizontal_length", "is_horizontal", "well_purpose", "api_number",
+    "permit_number",
+    "permit_type",
+    "approved_date",
+    "total_depth",
+    "horizontal_length",
+    "is_horizontal",
+    "well_purpose",
+    "api_number",
 ]
-_KEEP_COMP = ["api_number", "completion_date", "total_depth", "well_type",
-              "is_horizontal"]
+_KEEP_COMP = [
+    "api_number",
+    "completion_date",
+    "total_depth",
+    "well_type",
+    "is_horizontal",
+]
 _WORKOVER_TYPES = ["workover", "recompletion", "plug_back", "reenter"]
 
 
@@ -60,16 +77,22 @@ class RRCAdapter(AdapterInterface):
         leases = self._extract_leases(fw)
 
         w.append("Casing data unavailable from Texas RRC PDQ bulk downloads.")
-        w.append("Well path survey data (MD/inc/azi) not available from "
-                 "Texas RRC PDQ public dumps.")
+        w.append(
+            "Well path survey data (MD/inc/azi) not available from "
+            "Texas RRC PDQ public dumps."
+        )
 
         return AdapterResult(
-            source=self.get_metadata(), field_code=field_name,
-            field_name=field_name, leases=leases,
+            source=self.get_metadata(),
+            field_code=field_name,
+            field_name=field_name,
+            leases=leases,
             area_code=str(district) if district else "",
-            well_count=len(fw), query_type="field_name",
+            well_count=len(fw),
+            query_type="field_name",
             wellbore_summary=self._wellbore_summary(fw, w),
-            well_paths=pd.DataFrame(), casing_strings=pd.DataFrame(),
+            well_paths=pd.DataFrame(),
+            casing_strings=pd.DataFrame(),
             drilling_activities=self._drilling(field_name, district, w),
             completion_activities=self._completions(fw, w),
             intervention_activities=self._interventions(field_name, district, fw, w),
@@ -89,8 +112,9 @@ class RRCAdapter(AdapterInterface):
         try:
             files = sorted(self._data_dir.glob(pat))
             if not files:
-                w.append(f"No {label} files found matching "
-                         f"'{self._data_dir / pat}'.")
+                w.append(
+                    f"No {label} files found matching " f"'{self._data_dir / pat}'."
+                )
                 return pd.DataFrame()
             frames = []
             for f in files:
@@ -108,7 +132,10 @@ class RRCAdapter(AdapterInterface):
         if df.empty:
             return df
         try:
-            from worldenergydata.texas_rrc.processors.well_processor import WellProcessor
+            from worldenergydata.texas_rrc.processors.well_processor import (
+                WellProcessor,
+            )
+
             return WellProcessor().process(df, validate=False)
         except Exception as e:
             w.append(f"WellProcessor failed, using raw columns: {e}")
@@ -123,6 +150,7 @@ class RRCAdapter(AdapterInterface):
         }
         try:
             import importlib
+
             mod = importlib.import_module(mod_map[proc_cls])
             return getattr(mod, proc_cls)().process(df, validate=False)
         except Exception as e:
@@ -138,18 +166,24 @@ class RRCAdapter(AdapterInterface):
         return d.zfill(2) if d.isdigit() and len(d) == 1 else d
 
     def _field_district_filter(
-        self, df: pd.DataFrame, field: str, district: Any,
+        self,
+        df: pd.DataFrame,
+        field: str,
+        district: Any,
     ) -> pd.DataFrame:
         if "field_name" in df.columns:
             df = df[df["field_name"].str.upper().str.strip() == field]
         if district is not None and "district" in df.columns:
-            df = df[df["district"].astype(str).str.strip() == self._norm_district(district)]
+            df = df[
+                df["district"].astype(str).str.strip() == self._norm_district(district)
+            ]
         return df.copy()
 
     # -- field / lease helpers -----------------------------------------------
 
-    def _filter_field(self, wells: pd.DataFrame, field: str, district: Any,
-                      w: list[str]) -> pd.DataFrame:
+    def _filter_field(
+        self, wells: pd.DataFrame, field: str, district: Any, w: list[str]
+    ) -> pd.DataFrame:
         if wells.empty:
             w.append(f"No well data available; cannot filter for field '{field}'.")
             return pd.DataFrame()
@@ -160,9 +194,13 @@ class RRCAdapter(AdapterInterface):
             w.append("Well data missing 'field_name' column; returning all wells.")
         if district is not None:
             if "district" in wells.columns:
-                mask &= wells["district"].astype(str).str.strip() == self._norm_district(district)
+                mask &= wells["district"].astype(
+                    str
+                ).str.strip() == self._norm_district(district)
             else:
-                w.append("Well data missing 'district' column; district filter ignored.")
+                w.append(
+                    "Well data missing 'district' column; district filter ignored."
+                )
         result = wells[mask].copy()
         if result.empty:
             suffix = f" in district {district}." if district else "."
@@ -183,13 +221,23 @@ class RRCAdapter(AdapterInterface):
         try:
             s = fw.get("well_status", pd.Series())
             avg_ft = fw.get("total_depth", pd.Series()).mean()
-            return pd.DataFrame([{
-                "total_wells": len(fw),
-                "active_wells": int((s == "active").sum()),
-                "plugged_wells": int(s.isin(["plugged", "plugged_and_abandoned"]).sum()),
-                "horizontal_wells": int(fw.get("is_horizontal", pd.Series(dtype=bool)).sum()),
-                "avg_depth_m": feet_to_metres(avg_ft) if pd.notna(avg_ft) else None,
-            }])
+            return pd.DataFrame(
+                [
+                    {
+                        "total_wells": len(fw),
+                        "active_wells": int((s == "active").sum()),
+                        "plugged_wells": int(
+                            s.isin(["plugged", "plugged_and_abandoned"]).sum()
+                        ),
+                        "horizontal_wells": int(
+                            fw.get("is_horizontal", pd.Series(dtype=bool)).sum()
+                        ),
+                        "avg_depth_m": (
+                            feet_to_metres(avg_ft) if pd.notna(avg_ft) else None
+                        ),
+                    }
+                ]
+            )
         except Exception as e:
             w.append(f"Error building wellbore summary: {e}")
             return pd.DataFrame()
@@ -222,12 +270,15 @@ class RRCAdapter(AdapterInterface):
         convert_column(result, "total_depth", feet_to_metres)
         return result.reset_index(drop=True)
 
-    def _interventions(self, field: str, district: Any,
-                       fw: pd.DataFrame, w: list[str]) -> pd.DataFrame:
+    def _interventions(
+        self, field: str, district: Any, fw: pd.DataFrame, w: list[str]
+    ) -> pd.DataFrame:
         parts: list[pd.DataFrame] = []
 
         # Workover permits
-        perm = self._load_csvs("texas_rrc_drilling_permits*.csv", w, "permit (workover)")
+        perm = self._load_csvs(
+            "texas_rrc_drilling_permits*.csv", w, "permit (workover)"
+        )
         if not perm.empty:
             perm = self._run_processor(perm, "PermitProcessor", w)
             perm = self._field_district_filter(perm, field, district)
@@ -236,9 +287,16 @@ class RRCAdapter(AdapterInterface):
                 if not wo.empty:
                     wo["intervention_type"] = wo["permit_type"]
                     convert_column(wo, "total_depth", feet_to_metres)
-                    keep = [c for c in ["api_number", "approved_date",
-                                        "intervention_type", "total_depth"]
-                            if c in wo.columns]
+                    keep = [
+                        c
+                        for c in [
+                            "api_number",
+                            "approved_date",
+                            "intervention_type",
+                            "total_depth",
+                        ]
+                        if c in wo.columns
+                    ]
                     parts.append(wo[keep])
 
         # Plug dates from well data
@@ -246,13 +304,20 @@ class RRCAdapter(AdapterInterface):
             plugged = fw[fw["plug_date"].notna()].copy()
             if not plugged.empty:
                 plugged["intervention_type"] = "plug_and_abandon"
-                keep = [c for c in ["api_number", "plug_date", "intervention_type"]
-                        if c in plugged.columns]
-                parts.append(plugged[keep].rename(columns={"plug_date": "approved_date"}))
+                keep = [
+                    c
+                    for c in ["api_number", "plug_date", "intervention_type"]
+                    if c in plugged.columns
+                ]
+                parts.append(
+                    plugged[keep].rename(columns={"plug_date": "approved_date"})
+                )
 
         if not parts:
-            w.append("Intervention data is partial: no workover job records "
-                     "or W-12 plugging reports available from RRC PDQ dumps.")
+            w.append(
+                "Intervention data is partial: no workover job records "
+                "or W-12 plugging reports available from RRC PDQ dumps."
+            )
             return pd.DataFrame()
         return pd.concat(parts, ignore_index=True)
 
@@ -265,8 +330,13 @@ class RRCAdapter(AdapterInterface):
         if df.empty:
             return pd.DataFrame()
 
-        vol_cols = ["oil_production", "gas_production", "water_production",
-                    "condensate", "boe_total"]
+        vol_cols = [
+            "oil_production",
+            "gas_production",
+            "water_production",
+            "condensate",
+            "boe_total",
+        ]
         agg = {c: "sum" for c in vol_cols if c in df.columns}
         if "production_date" in df.columns and agg:
             df = df.groupby("production_date", as_index=False).agg(agg)

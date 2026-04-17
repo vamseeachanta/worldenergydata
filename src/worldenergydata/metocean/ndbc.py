@@ -31,8 +31,8 @@ from typing import Any, Dict, List, Optional
 
 import pandas as pd
 
+from worldenergydata.metocean.clients.ndbc_client import NDBCClient as _BaseNDBCClient
 from worldenergydata.metocean.clients.ndbc_client import (
-    NDBCClient as _BaseNDBCClient,
     NDBCObservation,
     NDBCStation,
 )
@@ -169,23 +169,25 @@ class NDBCClient(_BaseNDBCClient):
 
         rows = []
         for obs in observations:
-            rows.append({
-                "observation_time": obs.observation_time,
-                "wdir": obs.wind_direction_deg,
-                "wspd": obs.wind_speed_ms,
-                "gst": obs.wind_gust_ms,
-                "hs": obs.wave_height_m,
-                "dpd": obs.dominant_wave_period_s,
-                "apd": obs.average_wave_period_s,
-                "mwd": obs.wave_direction_deg,
-                "pres": obs.pressure_hpa,
-                "atmp": obs.air_temp_c,
-                "wtmp": obs.sea_surface_temp_c,
-                "dewp": obs.dew_point_c,
-                "vis": obs.visibility_nm,
-                "ptdy": obs.pressure_tendency_hpa,
-                "tide": obs.water_level_ft,
-            })
+            rows.append(
+                {
+                    "observation_time": obs.observation_time,
+                    "wdir": obs.wind_direction_deg,
+                    "wspd": obs.wind_speed_ms,
+                    "gst": obs.wind_gust_ms,
+                    "hs": obs.wave_height_m,
+                    "dpd": obs.dominant_wave_period_s,
+                    "apd": obs.average_wave_period_s,
+                    "mwd": obs.wave_direction_deg,
+                    "pres": obs.pressure_hpa,
+                    "atmp": obs.air_temp_c,
+                    "wtmp": obs.sea_surface_temp_c,
+                    "dewp": obs.dew_point_c,
+                    "vis": obs.visibility_nm,
+                    "ptdy": obs.pressure_tendency_hpa,
+                    "tide": obs.water_level_ft,
+                }
+            )
         return pd.DataFrame(rows)
 
 

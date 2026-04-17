@@ -13,7 +13,6 @@ from worldenergydata.metocean.extrapolation import (
 )
 from worldenergydata.metocean.extrapolation.source_catalog import MetoceanSource
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------

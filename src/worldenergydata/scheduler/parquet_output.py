@@ -4,8 +4,9 @@ All adapters that produce tabular output use this helper to write
 Parquet snapshots with consistent compression and directory handling.
 """
 
-import pandas as pd
 from pathlib import Path
+
+import pandas as pd
 
 
 def write_parquet(df: pd.DataFrame, output_dir: Path, filename: str) -> Path:

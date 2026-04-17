@@ -41,11 +41,13 @@ class TestAddSummaryStat:
 
 class TestAddPlots:
     def _sample_df(self):
-        return pd.DataFrame({
-            "x": [1, 2, 3],
-            "y": [10, 20, 30],
-            "cat": ["A", "B", "A"],
-        })
+        return pd.DataFrame(
+            {
+                "x": [1, 2, 3],
+                "y": [10, 20, 30],
+                "cat": ["A", "B", "A"],
+            }
+        )
 
     def test_add_line_plot(self):
         gen = PlotlyReportGenerator("T", "M", "R")

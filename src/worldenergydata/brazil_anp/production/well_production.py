@@ -46,8 +46,13 @@ class WellProductionLoader:
         if raw_df.empty:
             return pd.DataFrame(
                 columns=[
-                    "field", "well", "date",
-                    "oil_bbl", "condensate_bbl", "gas_m3", "water_bbl",
+                    "field",
+                    "well",
+                    "date",
+                    "oil_bbl",
+                    "condensate_bbl",
+                    "gas_m3",
+                    "water_bbl",
                     "oil_bbl_per_day",
                 ]
             )
@@ -66,8 +71,13 @@ class WellProductionLoader:
         )
 
         keep = [
-            "field", "well", "date",
-            "oil_bbl", "condensate_bbl", "gas_m3", "water_bbl",
+            "field",
+            "well",
+            "date",
+            "oil_bbl",
+            "condensate_bbl",
+            "gas_m3",
+            "water_bbl",
             "oil_bbl_per_day",
         ]
         return df[keep].reset_index(drop=True)

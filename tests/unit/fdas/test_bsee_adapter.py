@@ -11,10 +11,10 @@ from worldenergydata.fdas.adapters.bsee_adapter import (
     WellDataAdapter,
 )
 
-
 # ---------------------------------------------------------------------------
 # LeaseMapping
 # ---------------------------------------------------------------------------
+
 
 class TestLeaseMapping:
     def test_init(self):
@@ -40,6 +40,7 @@ class TestLeaseMapping:
 # WellDataAdapter
 # ---------------------------------------------------------------------------
 
+
 class TestWellDataAdapter:
     def test_init(self):
         adapter = WellDataAdapter("/tmp/fake.csv")
@@ -47,7 +48,9 @@ class TestWellDataAdapter:
 
     def test_load_success(self, tmp_path):
         csv = tmp_path / "well_data.csv"
-        csv.write_text("LEASE_NUMBER,COMPLEX_ID_NUMBER,WATER_DEPTH\nG001,C001,3000\nG002,C001,5000\n")
+        csv.write_text(
+            "LEASE_NUMBER,COMPLEX_ID_NUMBER,WATER_DEPTH\nG001,C001,3000\nG002,C001,5000\n"
+        )
         adapter = WellDataAdapter(str(csv))
         df = adapter.load()
         assert len(df) == 2
@@ -65,7 +68,9 @@ class TestWellDataAdapter:
 
     def test_add_dev_system(self, tmp_path):
         csv = tmp_path / "well_data.csv"
-        csv.write_text("LEASE_NUMBER,COMPLEX_ID_NUMBER,WATER_DEPTH\nG001,C001,3000\nG002,C001,5000\n")
+        csv.write_text(
+            "LEASE_NUMBER,COMPLEX_ID_NUMBER,WATER_DEPTH\nG001,C001,3000\nG002,C001,5000\n"
+        )
         adapter = WellDataAdapter(str(csv))
         adapter.load()
         result = adapter.add_dev_system_classification()
@@ -78,7 +83,9 @@ class TestWellDataAdapter:
 
     def test_create_lease_mapping(self, tmp_path):
         csv = tmp_path / "well_data.csv"
-        csv.write_text("LEASE_NUMBER,COMPLEX_ID_NUMBER,WATER_DEPTH\nG001,C001,3000\nG002,C001,5000\n")
+        csv.write_text(
+            "LEASE_NUMBER,COMPLEX_ID_NUMBER,WATER_DEPTH\nG001,C001,3000\nG002,C001,5000\n"
+        )
         adapter = WellDataAdapter(str(csv))
         adapter.load()
         adapter.add_dev_system_classification()
@@ -116,6 +123,7 @@ class TestWellDataAdapter:
 # ---------------------------------------------------------------------------
 # ProductionAdapter
 # ---------------------------------------------------------------------------
+
 
 class TestProductionAdapter:
     def _make_csv(self, tmp_path):
@@ -180,6 +188,7 @@ class TestProductionAdapter:
 # ---------------------------------------------------------------------------
 # BseeAdapter
 # ---------------------------------------------------------------------------
+
 
 class TestBseeAdapter:
     def test_init(self):

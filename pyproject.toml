@@ -71,6 +71,7 @@ dev = [
     "psutil>=5.9.0",
     "black>=23.0",
     "flake8>=6.0",
+    "isort>=5.0",
     "mypy>=1.0",
     "pre-commit>=3.0",
     "types-requests>=2.31",

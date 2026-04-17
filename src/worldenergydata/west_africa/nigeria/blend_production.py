@@ -30,17 +30,11 @@ class BlendRecord:
 
     def __post_init__(self) -> None:
         if self.volume_kbd < 0:
-            raise ValueError(
-                f"volume_kbd cannot be negative, got {self.volume_kbd}"
-            )
+            raise ValueError(f"volume_kbd cannot be negative, got {self.volume_kbd}")
         if not MIN_MONTH <= self.month <= MAX_MONTH:
-            raise ValueError(
-                f"month must be 1-12, got {self.month}"
-            )
+            raise ValueError(f"month must be 1-12, got {self.month}")
         if self.year < MIN_VALID_YEAR:
-            raise ValueError(
-                f"year must be >= {MIN_VALID_YEAR}, got {self.year}"
-            )
+            raise ValueError(f"year must be >= {MIN_VALID_YEAR}, got {self.year}")
 
 
 def aggregate_by_blend(records: List[BlendRecord]) -> Dict[str, float]:
@@ -160,8 +154,19 @@ class BlendProductionLoader:
         best-guess URL that may not exist. Callers must handle failures.
         """
         month_names = [
-            "", "january", "february", "march", "april", "may", "june",
-            "july", "august", "september", "october", "november", "december",
+            "",
+            "january",
+            "february",
+            "march",
+            "april",
+            "may",
+            "june",
+            "july",
+            "august",
+            "september",
+            "october",
+            "november",
+            "december",
         ]
         month_name = month_names[month]
         return (

@@ -5,8 +5,8 @@ ABOUTME: Uses synthetic Hs-Tp data — no live API calls.
 
 import numpy as np
 import pandas as pd
-import pytest
 import plotly.graph_objects as go
+import pytest
 
 from worldenergydata.metocean.statistics.joint_probability import (
     JointModel,

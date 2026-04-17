@@ -6,8 +6,8 @@ import pytest
 
 from worldenergydata.ukcs.production.decline_curves import (
     DeclineCurveAnalyzer,
-    DeclineModel,
     DeclineCurveResult,
+    DeclineModel,
 )
 
 

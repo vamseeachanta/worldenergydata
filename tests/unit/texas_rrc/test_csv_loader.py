@@ -4,10 +4,10 @@ import pytest
 
 from worldenergydata.texas_rrc.data.loaders.csv_loader import CSVLoader
 
-
 # ---------------------------------------------------------------------------
 # Init
 # ---------------------------------------------------------------------------
+
 
 class TestCSVLoaderInit:
     def test_defaults(self):
@@ -26,6 +26,7 @@ class TestCSVLoaderInit:
 # ---------------------------------------------------------------------------
 # _normalize_field_name
 # ---------------------------------------------------------------------------
+
 
 class TestNormalizeFieldName:
     def test_basic(self):
@@ -59,6 +60,7 @@ class TestNormalizeFieldName:
 # ---------------------------------------------------------------------------
 # _convert_value
 # ---------------------------------------------------------------------------
+
 
 class TestConvertValue:
     def test_empty_string(self):
@@ -103,6 +105,7 @@ class TestConvertValue:
 # load_from_string
 # ---------------------------------------------------------------------------
 
+
 class TestLoadFromString:
     def test_basic(self):
         loader = CSVLoader()
@@ -137,6 +140,7 @@ class TestLoadFromString:
 # load from file
 # ---------------------------------------------------------------------------
 
+
 class TestLoadFromFile:
     def test_basic(self, tmp_path):
         f = tmp_path / "test.csv"
@@ -163,6 +167,7 @@ class TestLoadFromFile:
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
+
 
 class TestConstants:
     def test_numeric_fields(self):

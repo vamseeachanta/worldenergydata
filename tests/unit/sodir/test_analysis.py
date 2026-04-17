@@ -19,10 +19,10 @@ from worldenergydata.sodir.analysis import (
     TemporalAnalyzer,
 )
 
-
 # ---------------------------------------------------------------------------
 # AnalysisConfig dataclass
 # ---------------------------------------------------------------------------
+
 
 class TestAnalysisConfig:
     def test_defaults(self):
@@ -56,6 +56,7 @@ class TestAnalysisConfig:
 # FieldAnalysisResult dataclass
 # ---------------------------------------------------------------------------
 
+
 class TestFieldAnalysisResult:
     def test_summary(self):
         r = FieldAnalysisResult(
@@ -82,6 +83,7 @@ class TestFieldAnalysisResult:
 # CrossRegionalComparison dataclass
 # ---------------------------------------------------------------------------
 
+
 class TestCrossRegionalComparison:
     def test_init(self):
         c = CrossRegionalComparison(
@@ -96,6 +98,7 @@ class TestCrossRegionalComparison:
 # ---------------------------------------------------------------------------
 # SodirDataLoader
 # ---------------------------------------------------------------------------
+
 
 class TestSodirDataLoader:
     def test_init(self, tmp_path):
@@ -124,6 +127,7 @@ class TestSodirDataLoader:
 # SodirAnalysis - init
 # ---------------------------------------------------------------------------
 
+
 class TestSodirAnalysisInit:
     def test_from_config(self, tmp_path):
         config = AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path))
@@ -131,10 +135,12 @@ class TestSodirAnalysisInit:
         assert analysis.config.analysis_type == "comprehensive"
 
     def test_from_dict(self, tmp_path):
-        analysis = SodirAnalysis({
-            "input_path": str(tmp_path),
-            "output_path": str(tmp_path),
-        })
+        analysis = SodirAnalysis(
+            {
+                "input_path": str(tmp_path),
+                "output_path": str(tmp_path),
+            }
+        )
         assert analysis.config.analysis_type == "comprehensive"
 
     def test_from_dict_with_output_dir(self, tmp_path):
@@ -152,33 +158,42 @@ class TestSodirAnalysisInit:
 # SodirAnalysis - analyze_field
 # ---------------------------------------------------------------------------
 
+
 def _make_field_data():
-    return pd.DataFrame({
-        "field_name": ["Troll"],
-        "recoverable_oil_mmbbl": [1000.0],
-        "recoverable_gas_bcf": [5000.0],
-        "water_depth_m": [300.0],
-        "recovery_factor": [0.5],
-        "discovery_year": [1979],
-        "status": ["PRODUCING"],
-        "production_start": [1995],
-    })
+    return pd.DataFrame(
+        {
+            "field_name": ["Troll"],
+            "recoverable_oil_mmbbl": [1000.0],
+            "recoverable_gas_bcf": [5000.0],
+            "water_depth_m": [300.0],
+            "recovery_factor": [0.5],
+            "discovery_year": [1979],
+            "status": ["PRODUCING"],
+            "production_start": [1995],
+        }
+    )
 
 
 class TestSodirAnalysisField:
     def test_no_data_raises(self, tmp_path):
-        analysis = SodirAnalysis(AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path)))
+        analysis = SodirAnalysis(
+            AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path))
+        )
         with pytest.raises(ValueError, match="No data loaded"):
             analysis.analyze_field("Troll")
 
     def test_field_not_found_raises(self, tmp_path):
-        analysis = SodirAnalysis(AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path)))
+        analysis = SodirAnalysis(
+            AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path))
+        )
         analysis.data = {"fields": _make_field_data()}
         with pytest.raises(KeyError, match="Field not found"):
             analysis.analyze_field("NonExistent")
 
     def test_analyze_field_basic(self, tmp_path):
-        analysis = SodirAnalysis(AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path)))
+        analysis = SodirAnalysis(
+            AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path))
+        )
         analysis.data = {"fields": _make_field_data()}
         result = analysis.analyze_field("Troll")
         assert result.field_name == "Troll"
@@ -189,22 +204,31 @@ class TestSodirAnalysisField:
 # SodirAnalysis - analyze_portfolio
 # ---------------------------------------------------------------------------
 
+
 class TestSodirAnalysisPortfolio:
     def test_no_data_raises(self, tmp_path):
-        analysis = SodirAnalysis(AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path)))
+        analysis = SodirAnalysis(
+            AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path))
+        )
         with pytest.raises(ValueError, match="No field data loaded"):
             analysis.analyze_portfolio()
 
     def test_portfolio_basic(self, tmp_path):
-        analysis = SodirAnalysis(AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path)))
-        analysis.data = {"fields": pd.DataFrame({
-            "field_name": ["Troll", "Ekofisk"],
-            "recoverable_oil_mmbbl": [1000.0, 500.0],
-            "recoverable_gas_bcf": [5000.0, 2000.0],
-            "water_depth_m": [300.0, 70.0],
-            "recovery_factor": [0.5, 0.45],
-            "status": ["PRODUCING", "PRODUCING"],
-        })}
+        analysis = SodirAnalysis(
+            AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path))
+        )
+        analysis.data = {
+            "fields": pd.DataFrame(
+                {
+                    "field_name": ["Troll", "Ekofisk"],
+                    "recoverable_oil_mmbbl": [1000.0, 500.0],
+                    "recoverable_gas_bcf": [5000.0, 2000.0],
+                    "water_depth_m": [300.0, 70.0],
+                    "recovery_factor": [0.5, 0.45],
+                    "status": ["PRODUCING", "PRODUCING"],
+                }
+            )
+        }
         result = analysis.analyze_portfolio()
         assert result["total_fields"] == 2
         assert result["total_recoverable_oil"] == 1500.0
@@ -214,30 +238,41 @@ class TestSodirAnalysisPortfolio:
 # SodirAnalysis - analyze_temporal_trends
 # ---------------------------------------------------------------------------
 
+
 class TestSodirAnalysisTemporal:
     def test_no_data_raises(self, tmp_path):
-        analysis = SodirAnalysis(AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path)))
+        analysis = SodirAnalysis(
+            AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path))
+        )
         with pytest.raises(ValueError, match="No data loaded"):
             analysis.analyze_temporal_trends()
 
     def test_with_production(self, tmp_path):
-        analysis = SodirAnalysis(AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path)))
+        analysis = SodirAnalysis(
+            AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path))
+        )
         analysis.data = {
-            "production": pd.DataFrame({
-                "year": [2020, 2021, 2022],
-                "oil_production_mmbbl": [100, 95, 90],
-                "gas_production_bcf": [200, 210, 220],
-            })
+            "production": pd.DataFrame(
+                {
+                    "year": [2020, 2021, 2022],
+                    "oil_production_mmbbl": [100, 95, 90],
+                    "gas_production_bcf": [200, 210, 220],
+                }
+            )
         }
         result = analysis.analyze_temporal_trends()
         assert "production_trends" in result
 
     def test_with_discovery_timeline(self, tmp_path):
-        analysis = SodirAnalysis(AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path)))
+        analysis = SodirAnalysis(
+            AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path))
+        )
         analysis.data = {
-            "fields": pd.DataFrame({
-                "discovery_year": [1990, 1990, 2000, 2010],
-            })
+            "fields": pd.DataFrame(
+                {
+                    "discovery_year": [1990, 1990, 2000, 2010],
+                }
+            )
         }
         result = analysis.analyze_temporal_trends()
         assert result["discovery_timeline"][1990] == 2
@@ -247,14 +282,17 @@ class TestSodirAnalysisTemporal:
 # FieldAnalyzer
 # ---------------------------------------------------------------------------
 
+
 class TestFieldAnalyzer:
     def test_analyze_characteristics(self):
         analyzer = FieldAnalyzer()
-        field_data = pd.DataFrame({
-            "water_depth_m": [300.0],
-            "discovery_year": [1979],
-            "status": ["PRODUCING"],
-        })
+        field_data = pd.DataFrame(
+            {
+                "water_depth_m": [300.0],
+                "discovery_year": [1979],
+                "status": ["PRODUCING"],
+            }
+        )
         chars = analyzer._analyze_characteristics(field_data)
         assert chars["water_depth_m"] == 300.0
 
@@ -276,11 +314,13 @@ class TestFieldAnalyzer:
 
     def test_analyze_production_with_data(self):
         analyzer = FieldAnalyzer()
-        prod = pd.DataFrame({
-            "year": [2020, 2021],
-            "oil_production_mmbbl": [100, 95],
-            "gas_production_bcf": [200, 210],
-        })
+        prod = pd.DataFrame(
+            {
+                "year": [2020, 2021],
+                "oil_production_mmbbl": [100, 95],
+                "gas_production_bcf": [200, 210],
+            }
+        )
         result = analyzer._analyze_production(prod)
         assert result["peak_oil_rate"] == 100
         assert result["years_producing"] == 2
@@ -290,16 +330,19 @@ class TestFieldAnalyzer:
 # PortfolioAnalyzer
 # ---------------------------------------------------------------------------
 
+
 def _portfolio_fields():
-    return pd.DataFrame({
-        "field_name": ["F1", "F2", "F3"],
-        "recoverable_oil_mmbbl": [100, 500, 1000],
-        "recoverable_gas_bcf": [200, 1000, 3000],
-        "water_depth_m": [80, 600, 1800],
-        "recovery_factor": [0.2, 0.45, 0.6],
-        "status": ["PRODUCING", "IDLE", "PRODUCING"],
-        "production_start": [1990, 2000, 2010],
-    })
+    return pd.DataFrame(
+        {
+            "field_name": ["F1", "F2", "F3"],
+            "recoverable_oil_mmbbl": [100, 500, 1000],
+            "recoverable_gas_bcf": [200, 1000, 3000],
+            "water_depth_m": [80, 600, 1800],
+            "recovery_factor": [0.2, 0.45, 0.6],
+            "status": ["PRODUCING", "IDLE", "PRODUCING"],
+            "production_start": [1990, 2000, 2010],
+        }
+    )
 
 
 class TestPortfolioAnalyzer:
@@ -315,18 +358,22 @@ class TestPortfolioAnalyzer:
 
     def test_concentration_zero_total(self):
         analyzer = PortfolioAnalyzer()
-        df = pd.DataFrame({
-            "recoverable_oil_mmbbl": [0, 0],
-            "recoverable_gas_bcf": [0, 0],
-        })
+        df = pd.DataFrame(
+            {
+                "recoverable_oil_mmbbl": [0, 0],
+                "recoverable_gas_bcf": [0, 0],
+            }
+        )
         assert analyzer._calculate_concentration(df) == 0
 
     def test_risk_profile_deep_water(self):
         analyzer = PortfolioAnalyzer()
-        fields = pd.DataFrame({
-            "water_depth_m": [1500, 2000],
-            "production_start": [2010, 2015],
-        })
+        fields = pd.DataFrame(
+            {
+                "water_depth_m": [1500, 2000],
+                "production_start": [2010, 2015],
+            }
+        )
         risk = analyzer._assess_risk_profile(fields)
         assert risk["water_depth_risk"] == "high"
 
@@ -351,6 +398,7 @@ class TestPortfolioAnalyzer:
 # TemporalAnalyzer
 # ---------------------------------------------------------------------------
 
+
 class TestTemporalAnalyzer:
     def test_production_trends_empty(self):
         analyzer = TemporalAnalyzer()
@@ -359,11 +407,13 @@ class TestTemporalAnalyzer:
 
     def test_production_trends_declining(self):
         analyzer = TemporalAnalyzer()
-        prod = pd.DataFrame({
-            "year": [2020, 2021, 2022, 2023],
-            "oil_production_mmbbl": [100, 90, 80, 70],
-            "gas_production_bcf": [200, 210, 220, 230],
-        })
+        prod = pd.DataFrame(
+            {
+                "year": [2020, 2021, 2022, 2023],
+                "oil_production_mmbbl": [100, 90, 80, 70],
+                "gas_production_bcf": [200, 210, 220, 230],
+            }
+        )
         result = analyzer._analyze_production_trends(prod)
         assert result["oil_trend"] == "declining"
         assert result["gas_trend"] == "stable"
@@ -397,14 +447,17 @@ class TestTemporalAnalyzer:
 # MetricsCalculator
 # ---------------------------------------------------------------------------
 
+
 class TestMetricsCalculator:
     def test_field_metrics_recovery(self):
         calc = MetricsCalculator()
-        field = pd.DataFrame({
-            "recovery_factor": [0.5],
-            "production_start": [2000],
-            "recoverable_oil_mmbbl": [500],
-        })
+        field = pd.DataFrame(
+            {
+                "recovery_factor": [0.5],
+                "production_start": [2000],
+                "recoverable_oil_mmbbl": [500],
+            }
+        )
         result = calc.calculate_field_metrics(field, pd.DataFrame(), pd.DataFrame())
         assert result["recovery_efficiency"] == 0.5
         assert result["economic_viability"] == 0.5
@@ -430,12 +483,14 @@ class TestMetricsCalculator:
 
     def test_portfolio_metrics(self):
         calc = MetricsCalculator()
-        fields = pd.DataFrame({
-            "recoverable_oil_mmbbl": [100, 200],
-            "recoverable_gas_bcf": [300, 600],
-            "water_depth_m": [100, 500],
-            "recovery_factor": [0.3, 0.5],
-        })
+        fields = pd.DataFrame(
+            {
+                "recoverable_oil_mmbbl": [100, 200],
+                "recoverable_gas_bcf": [300, 600],
+                "water_depth_m": [100, 500],
+                "recovery_factor": [0.3, 0.5],
+            }
+        )
         result = calc.calculate_portfolio_metrics(fields)
         assert result["total_oil_reserves_mmbbl"] == 300
         assert result["total_gas_reserves_bcf"] == 900
@@ -461,9 +516,12 @@ class TestMetricsCalculator:
 # SodirAnalysis - _calculate_reserves
 # ---------------------------------------------------------------------------
 
+
 class TestCalculateReserves:
     def test_without_production(self, tmp_path):
-        analysis = SodirAnalysis(AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path)))
+        analysis = SodirAnalysis(
+            AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path))
+        )
         analysis.data = {"fields": _make_field_data()}
         result = analysis.analyze_field("Troll")
         assert result.reserves["original_oil_mmbbl"] == 1000.0
@@ -471,14 +529,18 @@ class TestCalculateReserves:
         assert "cumulative_oil_mmbbl" not in result.reserves
 
     def test_with_production(self, tmp_path):
-        analysis = SodirAnalysis(AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path)))
+        analysis = SodirAnalysis(
+            AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path))
+        )
         fields = _make_field_data()
-        production = pd.DataFrame({
-            "field_name": ["Troll", "Troll", "Troll"],
-            "oil_production_mmbbl": [100.0, 150.0, 120.0],
-            "gas_production_bcf": [500.0, 600.0, 400.0],
-            "year": [2020, 2021, 2022],
-        })
+        production = pd.DataFrame(
+            {
+                "field_name": ["Troll", "Troll", "Troll"],
+                "oil_production_mmbbl": [100.0, 150.0, 120.0],
+                "gas_production_bcf": [500.0, 600.0, 400.0],
+                "year": [2020, 2021, 2022],
+            }
+        )
         analysis.data = {"fields": fields, "production": production}
         result = analysis.analyze_field("Troll")
         assert result.reserves["cumulative_oil_mmbbl"] == 370.0
@@ -491,47 +553,66 @@ class TestCalculateReserves:
 # SodirAnalysis - _calculate_economics
 # ---------------------------------------------------------------------------
 
+
 class TestCalculateEconomics:
     def test_economics_mid_price(self, tmp_path):
-        analysis = SodirAnalysis(AnalysisConfig(
-            input_path=str(tmp_path), output_path=str(tmp_path),
-            include_npv=True, oil_price_scenario="mid",
-        ))
+        analysis = SodirAnalysis(
+            AnalysisConfig(
+                input_path=str(tmp_path),
+                output_path=str(tmp_path),
+                include_npv=True,
+                oil_price_scenario="mid",
+            )
+        )
         analysis.data = {"fields": _make_field_data()}
         result = analysis.analyze_field("Troll")
         assert result.economics is not None
         assert result.economics["oil_price_assumption"] == 80
 
     def test_economics_low_price(self, tmp_path):
-        analysis = SodirAnalysis(AnalysisConfig(
-            input_path=str(tmp_path), output_path=str(tmp_path),
-            include_npv=True, oil_price_scenario="low",
-        ))
+        analysis = SodirAnalysis(
+            AnalysisConfig(
+                input_path=str(tmp_path),
+                output_path=str(tmp_path),
+                include_npv=True,
+                oil_price_scenario="low",
+            )
+        )
         analysis.data = {"fields": _make_field_data()}
         result = analysis.analyze_field("Troll")
         assert result.economics["oil_price_assumption"] == 60
 
     def test_economics_high_price(self, tmp_path):
-        analysis = SodirAnalysis(AnalysisConfig(
-            input_path=str(tmp_path), output_path=str(tmp_path),
-            include_npv=True, oil_price_scenario="high",
-        ))
+        analysis = SodirAnalysis(
+            AnalysisConfig(
+                input_path=str(tmp_path),
+                output_path=str(tmp_path),
+                include_npv=True,
+                oil_price_scenario="high",
+            )
+        )
         analysis.data = {"fields": _make_field_data()}
         result = analysis.analyze_field("Troll")
         assert result.economics["oil_price_assumption"] == 100
 
     def test_economics_with_production(self, tmp_path):
-        analysis = SodirAnalysis(AnalysisConfig(
-            input_path=str(tmp_path), output_path=str(tmp_path),
-            include_npv=True, oil_price_scenario="mid",
-        ))
+        analysis = SodirAnalysis(
+            AnalysisConfig(
+                input_path=str(tmp_path),
+                output_path=str(tmp_path),
+                include_npv=True,
+                oil_price_scenario="mid",
+            )
+        )
         fields = _make_field_data()
-        production = pd.DataFrame({
-            "field_name": ["Troll"],
-            "oil_production_mmbbl": [200.0],
-            "gas_production_bcf": [500.0],
-            "year": [2022],
-        })
+        production = pd.DataFrame(
+            {
+                "field_name": ["Troll"],
+                "oil_production_mmbbl": [200.0],
+                "gas_production_bcf": [500.0],
+                "year": [2022],
+            }
+        )
         analysis.data = {"fields": fields, "production": production}
         result = analysis.analyze_field("Troll")
         assert result.economics["future_revenue_mmusd"] == pytest.approx(800.0 * 80)
@@ -541,15 +622,20 @@ class TestCalculateEconomics:
 # SodirAnalysis - _summarize_results and router
 # ---------------------------------------------------------------------------
 
+
 class TestSummarizeResults:
     def test_empty_results(self, tmp_path):
-        analysis = SodirAnalysis(AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path)))
+        analysis = SodirAnalysis(
+            AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path))
+        )
         summary = analysis._summarize_results({})
         assert summary["fields_analyzed"] == 0
         assert "analysis_timestamp" in summary
 
     def test_with_portfolio(self, tmp_path):
-        analysis = SodirAnalysis(AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path)))
+        analysis = SodirAnalysis(
+            AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path))
+        )
         results = {
             "Troll": "field_result",
             "portfolio": {
@@ -566,7 +652,9 @@ class TestSummarizeResults:
 
 class TestRouter:
     def test_router_with_fields(self, tmp_path):
-        analysis = SodirAnalysis(AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path)))
+        analysis = SodirAnalysis(
+            AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path))
+        )
         analysis.data = {"fields": _make_field_data()}
         cfg = {
             "basename": "sodir",
@@ -577,15 +665,21 @@ class TestRouter:
         assert result["sodir"]["analysis"]["completed"] is True
 
     def test_router_with_portfolio(self, tmp_path):
-        analysis = SodirAnalysis(AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path)))
-        analysis.data = {"fields": pd.DataFrame({
-            "field_name": ["F1", "F2"],
-            "recoverable_oil_mmbbl": [100, 200],
-            "recoverable_gas_bcf": [500, 1000],
-            "water_depth_m": [100, 300],
-            "recovery_factor": [0.3, 0.5],
-            "status": ["PRODUCING", "PRODUCING"],
-        })}
+        analysis = SodirAnalysis(
+            AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path))
+        )
+        analysis.data = {
+            "fields": pd.DataFrame(
+                {
+                    "field_name": ["F1", "F2"],
+                    "recoverable_oil_mmbbl": [100, 200],
+                    "recoverable_gas_bcf": [500, 1000],
+                    "water_depth_m": [100, 300],
+                    "recovery_factor": [0.3, 0.5],
+                    "status": ["PRODUCING", "PRODUCING"],
+                }
+            )
+        }
         cfg = {
             "basename": "sodir",
             "sodir": {},
@@ -595,12 +689,17 @@ class TestRouter:
         assert result["sodir"]["analysis"]["completed"] is True
 
     def test_router_with_temporal(self, tmp_path):
-        analysis = SodirAnalysis(AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path)))
+        analysis = SodirAnalysis(
+            AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path))
+        )
         analysis.data = {
-            "production": pd.DataFrame({
-                "year": [2020, 2021], "oil_production_mmbbl": [100, 90],
-                "gas_production_bcf": [200, 210],
-            })
+            "production": pd.DataFrame(
+                {
+                    "year": [2020, 2021],
+                    "oil_production_mmbbl": [100, 90],
+                    "gas_production_bcf": [200, 210],
+                }
+            )
         }
         cfg = {
             "basename": "sodir",
@@ -615,19 +714,24 @@ class TestRouter:
 # SodirAnalysis - maturity_progression
 # ---------------------------------------------------------------------------
 
+
 class TestMaturityProgression:
     def test_with_production_start(self, tmp_path):
-        analysis = SodirAnalysis(AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path)))
+        analysis = SodirAnalysis(
+            AnalysisConfig(input_path=str(tmp_path), output_path=str(tmp_path))
+        )
         current_year = datetime.now().year
         analysis.data = {
-            "fields": pd.DataFrame({
-                "discovery_year": [1990, 2000, 2020],
-                "production_start": [
-                    current_year - 5,
-                    current_year - 20,
-                    current_year - 35,
-                ],
-            })
+            "fields": pd.DataFrame(
+                {
+                    "discovery_year": [1990, 2000, 2020],
+                    "production_start": [
+                        current_year - 5,
+                        current_year - 20,
+                        current_year - 35,
+                    ],
+                }
+            )
         }
         result = analysis.analyze_temporal_trends()
         assert "maturity_progression" in result
@@ -640,14 +744,17 @@ class TestMaturityProgression:
 # SodirAnalysis - from_dict with optional fields
 # ---------------------------------------------------------------------------
 
+
 class TestSodirAnalysisFromDictExtended:
     def test_with_start_and_end_date(self, tmp_path):
-        analysis = SodirAnalysis({
-            "input_path": str(tmp_path),
-            "output_path": str(tmp_path),
-            "start_date": "2022-01-01",
-            "end_date": "2023-12-31",
-        })
+        analysis = SodirAnalysis(
+            {
+                "input_path": str(tmp_path),
+                "output_path": str(tmp_path),
+                "start_date": "2022-01-01",
+                "end_date": "2023-12-31",
+            }
+        )
         assert analysis.config.start_date == "2022-01-01"
         assert analysis.config.end_date == "2023-12-31"
 
@@ -666,33 +773,40 @@ class TestSodirAnalysisFromDictExtended:
 # PortfolioAnalyzer - maturity risk variants
 # ---------------------------------------------------------------------------
 
+
 class TestPortfolioAnalyzerMaturityRisk:
     def test_low_maturity(self):
         analyzer = PortfolioAnalyzer()
         current_year = datetime.now().year
-        fields = pd.DataFrame({
-            "water_depth_m": [100],
-            "production_start": [current_year - 5],
-        })
+        fields = pd.DataFrame(
+            {
+                "water_depth_m": [100],
+                "production_start": [current_year - 5],
+            }
+        )
         risk = analyzer._assess_maturity_risk(fields)
         assert risk == "low"
 
     def test_moderate_maturity(self):
         analyzer = PortfolioAnalyzer()
         current_year = datetime.now().year
-        fields = pd.DataFrame({
-            "water_depth_m": [100],
-            "production_start": [current_year - 20],
-        })
+        fields = pd.DataFrame(
+            {
+                "water_depth_m": [100],
+                "production_start": [current_year - 20],
+            }
+        )
         risk = analyzer._assess_maturity_risk(fields)
         assert risk == "moderate"
 
     def test_high_maturity(self):
         analyzer = PortfolioAnalyzer()
         current_year = datetime.now().year
-        fields = pd.DataFrame({
-            "water_depth_m": [100],
-            "production_start": [current_year - 40],
-        })
+        fields = pd.DataFrame(
+            {
+                "water_depth_m": [100],
+                "production_start": [current_year - 40],
+            }
+        )
         risk = analyzer._assess_maturity_risk(fields)
         assert risk == "high"

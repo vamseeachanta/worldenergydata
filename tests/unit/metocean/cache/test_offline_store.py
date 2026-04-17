@@ -18,6 +18,7 @@ def store(tmp_path):
 # Init
 # ---------------------------------------------------------------------------
 
+
 class TestOfflineStoreInit:
     def test_creates_directory(self, tmp_path):
         store_dir = tmp_path / "new_store"
@@ -31,6 +32,7 @@ class TestOfflineStoreInit:
 # ---------------------------------------------------------------------------
 # store / retrieve
 # ---------------------------------------------------------------------------
+
 
 class TestStoreAndRetrieve:
     def test_store_creates_file(self, store):
@@ -81,6 +83,7 @@ class TestStoreAndRetrieve:
 # has_data
 # ---------------------------------------------------------------------------
 
+
 class TestHasData:
     def test_has_data_true(self, store):
         dt = datetime(2024, 6, 15)
@@ -95,6 +98,7 @@ class TestHasData:
 # ---------------------------------------------------------------------------
 # delete
 # ---------------------------------------------------------------------------
+
 
 class TestDelete:
     def test_delete_existing(self, store):
@@ -122,6 +126,7 @@ class TestDelete:
 # ---------------------------------------------------------------------------
 # list_available / list_stations
 # ---------------------------------------------------------------------------
+
 
 class TestListMethods:
     def test_list_available_empty(self, store):
@@ -171,6 +176,7 @@ class TestListMethods:
 # ---------------------------------------------------------------------------
 # status / compact
 # ---------------------------------------------------------------------------
+
 
 class TestStatusAndCompact:
     def test_status_empty(self, store):

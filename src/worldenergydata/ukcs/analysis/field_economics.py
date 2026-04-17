@@ -23,12 +23,13 @@ logger = logging.getLogger(__name__)
 
 # ── Rate constants ────────────────────────────────────────────────────────────
 RFCT_RATE: float = 0.30  # Ring Fence Corporation Tax
-SC_RATE: float = 0.10    # Supplementary Charge
-EPL_RATE: float = 0.35   # Energy Profits Levy (windfall tax)
-IA_RATE: float = 0.29    # Investment Allowance (offsets EPL)
+SC_RATE: float = 0.10  # Supplementary Charge
+EPL_RATE: float = 0.35  # Energy Profits Levy (windfall tax)
+IA_RATE: float = 0.29  # Investment Allowance (offsets EPL)
 
 
 # ── Helper functions ──────────────────────────────────────────────────────────
+
 
 def calculate_rfct(ring_fenced_profit: float) -> float:
     """Return Ring Fence Corporation Tax on taxable ring-fenced profit."""
@@ -73,6 +74,7 @@ def calculate_epl(
 
 # ── Result dataclass ──────────────────────────────────────────────────────────
 
+
 @dataclass
 class UKFiscalResult:
     gross_revenue: float
@@ -86,6 +88,7 @@ class UKFiscalResult:
 
 
 # ── Regime class ─────────────────────────────────────────────────────────────
+
 
 class UKFiscalRegime:
     """UK fiscal regime: RFCT + Supplementary Charge + EPL (with IA)."""

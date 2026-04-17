@@ -149,14 +149,18 @@ class TestQualityScore:
 
     def test_compute_no_optional_or_engineering(self):
         field_presence = {"name": True, "country": True}
-        score = QualityScore.compute(field_presence, required_fields=["name", "country"])
+        score = QualityScore.compute(
+            field_presence, required_fields=["name", "country"]
+        )
         assert score.required_fields_score == 100.0
         assert score.optional_fields_score == 100.0
         assert score.engineering_score == 100.0
 
     def test_field_scores_preserved(self):
         field_presence = {"name": True, "country": False}
-        score = QualityScore.compute(field_presence, required_fields=["name", "country"])
+        score = QualityScore.compute(
+            field_presence, required_fields=["name", "country"]
+        )
         assert score.field_scores == {"name": True, "country": False}
 
     def test_weights_sum_to_one(self):

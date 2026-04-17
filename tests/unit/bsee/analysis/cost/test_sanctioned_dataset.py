@@ -4,18 +4,17 @@
 
 """Unit tests for worldenergydata.bsee.analysis.cost.sanctioned_dataset."""
 
-import pytest
 import pandas as pd
+import pytest
 
-from worldenergydata.bsee.analysis.cost.sanctioned_dataset import (
-    SanctionedProjectDataset,
-)
 from worldenergydata.bsee.analysis.cost.models import (
     ConfidenceLevel,
     WaterDepthBand,
     WellDepthBand,
 )
-
+from worldenergydata.bsee.analysis.cost.sanctioned_dataset import (
+    SanctionedProjectDataset,
+)
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -115,9 +114,9 @@ class TestInflationAdjust:
             orig_costs = synthetic_df.loc[mask, "cost_usd_mm"].values
             adj_costs = adjusted.loc[mask, "cost_usd_mm_real"].values
             for orig, adj in zip(orig_costs, adj_costs):
-                assert abs(orig - adj) < 1e-6, (
-                    f"Base-year cost should be unchanged: {orig} vs {adj}"
-                )
+                assert (
+                    abs(orig - adj) < 1e-6
+                ), f"Base-year cost should be unchanged: {orig} vs {adj}"
 
     def test_older_costs_adjusted_upward(self, dataset):
         rows = [

@@ -10,8 +10,8 @@ point-in-polygon ray-casting algorithm.
 
 from __future__ import annotations
 
-import math
 import logging
+import math
 from typing import Optional
 
 import pandas as pd
@@ -208,9 +208,7 @@ class VesselGIS:
         )
         return self._df[mask].copy().reset_index(drop=True)
 
-    def get_vessel_map_data(
-        self, vessel_ids: Optional[list[str]] = None
-    ) -> dict:
+    def get_vessel_map_data(self, vessel_ids: Optional[list[str]] = None) -> dict:
         """Return a GeoJSON FeatureCollection for map visualisation.
 
         Args:
@@ -274,9 +272,7 @@ class VesselGIS:
         if bsee_fields_df is not None and not bsee_fields_df.empty:
             col = "field_name" if "field_name" in bsee_fields_df.columns else None
             if col is not None:
-                match = bsee_fields_df[
-                    bsee_fields_df[col].str.upper() == upper_name
-                ]
+                match = bsee_fields_df[bsee_fields_df[col].str.upper() == upper_name]
                 if not match.empty:
                     row = match.iloc[0]
                     return float(row["lat"]), float(row["lon"])

@@ -5,10 +5,10 @@ import pytest
 
 from worldenergydata.texas_rrc.processors.permit_processor import PermitProcessor
 
-
 # ---------------------------------------------------------------------------
 # Init and constants
 # ---------------------------------------------------------------------------
+
 
 class TestPermitProcessorInit:
     def test_defaults(self):
@@ -29,6 +29,7 @@ class TestPermitProcessorInit:
 # ---------------------------------------------------------------------------
 # _normalize_api_to_14_digit
 # ---------------------------------------------------------------------------
+
 
 class TestNormalizeApi14:
     def test_10_digit(self):
@@ -53,6 +54,7 @@ class TestNormalizeApi14:
 # ---------------------------------------------------------------------------
 # _parse_date
 # ---------------------------------------------------------------------------
+
 
 class TestParseDate:
     def test_iso(self):
@@ -85,6 +87,7 @@ class TestParseDate:
 # _calculate_permit_age
 # ---------------------------------------------------------------------------
 
+
 class TestCalculatePermitAge:
     def test_basic(self):
         proc = PermitProcessor()
@@ -104,6 +107,7 @@ class TestCalculatePermitAge:
 # ---------------------------------------------------------------------------
 # _detect_horizontal_wells
 # ---------------------------------------------------------------------------
+
 
 class TestDetectHorizontalWells:
     def test_by_profile(self):
@@ -130,6 +134,7 @@ class TestDetectHorizontalWells:
 # ---------------------------------------------------------------------------
 # _process_record (dict-based)
 # ---------------------------------------------------------------------------
+
 
 class TestProcessRecord:
     def test_permit_type_mapped(self):
@@ -203,6 +208,7 @@ class TestProcessRecord:
 # _process_records
 # ---------------------------------------------------------------------------
 
+
 class TestProcessRecords:
     def test_basic(self):
         proc = PermitProcessor()
@@ -219,12 +225,15 @@ class TestProcessRecords:
 # filter_by_permit_type
 # ---------------------------------------------------------------------------
 
+
 class TestFilterByPermitType:
     def test_dataframe(self):
         proc = PermitProcessor()
-        df = pd.DataFrame({
-            "permit_type": ["new_drill", "recompletion", "new_drill"],
-        })
+        df = pd.DataFrame(
+            {
+                "permit_type": ["new_drill", "recompletion", "new_drill"],
+            }
+        )
         result = proc.filter_by_permit_type(df, ["new_drill"])
         assert len(result) == 2
 
@@ -248,12 +257,15 @@ class TestFilterByPermitType:
 # filter_by_status
 # ---------------------------------------------------------------------------
 
+
 class TestFilterByStatus:
     def test_dataframe(self):
         proc = PermitProcessor()
-        df = pd.DataFrame({
-            "permit_status": ["approved", "pending", "approved"],
-        })
+        df = pd.DataFrame(
+            {
+                "permit_status": ["approved", "pending", "approved"],
+            }
+        )
         result = proc.filter_by_status(df, ["approved"])
         assert len(result) == 2
 
@@ -271,12 +283,15 @@ class TestFilterByStatus:
 # filter_by_date_range
 # ---------------------------------------------------------------------------
 
+
 class TestFilterByDateRange:
     def test_dataframe(self):
         proc = PermitProcessor()
-        df = pd.DataFrame({
-            "approved_date": ["2023-01-15", "2023-06-15", "2024-01-15"],
-        })
+        df = pd.DataFrame(
+            {
+                "approved_date": ["2023-01-15", "2023-06-15", "2024-01-15"],
+            }
+        )
         result = proc.filter_by_date_range(df, "2023-01-01", "2023-12-31")
         assert len(result) == 2
 
@@ -294,12 +309,15 @@ class TestFilterByDateRange:
 # filter_horizontal_wells
 # ---------------------------------------------------------------------------
 
+
 class TestFilterHorizontalWells:
     def test_horizontal_only_df(self):
         proc = PermitProcessor()
-        df = pd.DataFrame({
-            "is_horizontal": [True, False, True],
-        })
+        df = pd.DataFrame(
+            {
+                "is_horizontal": [True, False, True],
+            }
+        )
         result = proc.filter_horizontal_wells(df, horizontal_only=True)
         assert len(result) == 2
 
@@ -338,16 +356,19 @@ class TestFilterHorizontalWells:
 # summarize_by_district
 # ---------------------------------------------------------------------------
 
+
 class TestSummarizeByDistrict:
     def test_basic(self):
         proc = PermitProcessor()
-        df = pd.DataFrame({
-            "district": ["01", "01", "02"],
-            "permit_type": ["new_drill", "recompletion", "new_drill"],
-            "permit_status": ["approved", "pending", "approved"],
-            "is_horizontal": [True, False, True],
-            "total_depth": [10000.0, 8000.0, 12000.0],
-        })
+        df = pd.DataFrame(
+            {
+                "district": ["01", "01", "02"],
+                "permit_type": ["new_drill", "recompletion", "new_drill"],
+                "permit_status": ["approved", "pending", "approved"],
+                "is_horizontal": [True, False, True],
+                "total_depth": [10000.0, 8000.0, 12000.0],
+            }
+        )
         result = proc.summarize_by_district(df)
         assert len(result) == 2
         assert "total_permits" in result.columns
@@ -362,16 +383,19 @@ class TestSummarizeByDistrict:
 # summarize_by_operator
 # ---------------------------------------------------------------------------
 
+
 class TestSummarizeByOperator:
     def test_basic(self):
         proc = PermitProcessor()
-        df = pd.DataFrame({
-            "operator_name": ["Exxon", "Exxon", "Chevron"],
-            "permit_type": ["new_drill", "recompletion", "new_drill"],
-            "permit_status": ["approved", "pending", "approved"],
-            "is_horizontal": [True, False, True],
-            "district": ["01", "01", "02"],
-        })
+        df = pd.DataFrame(
+            {
+                "operator_name": ["Exxon", "Exxon", "Chevron"],
+                "permit_type": ["new_drill", "recompletion", "new_drill"],
+                "permit_status": ["approved", "pending", "approved"],
+                "is_horizontal": [True, False, True],
+                "district": ["01", "01", "02"],
+            }
+        )
         result = proc.summarize_by_operator(df)
         assert len(result) == 2
         assert "district_count" in result.columns
@@ -385,6 +409,7 @@ class TestSummarizeByOperator:
 # ---------------------------------------------------------------------------
 # stats
 # ---------------------------------------------------------------------------
+
 
 class TestStats:
     def test_initial(self):

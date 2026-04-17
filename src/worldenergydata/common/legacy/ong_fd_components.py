@@ -14,8 +14,6 @@ from worldenergydata.common.legacy.data import (
     DateTimeUtility,
     transform_df_datetime_to_str,
 )
-
-
 from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
@@ -1444,7 +1442,9 @@ class ONGFDComponents:
                 api12_dir_survey_df["az"].iloc[df_row] = Azimuth
                 api12_dir_survey_df["inc"].iloc[df_row] = Inclination
 
-            logger.info("Processing Survey for api12 {} of {}".format(count, len(API12_list)))
+            logger.info(
+                "Processing Survey for api12 {} of {}".format(count, len(API12_list))
+            )
             survey_xyz: pd.DataFrame = self.process_survey_xyz(api12_dir_survey_df)
             survey_xyz_wh_adjusted: pd.DataFrame = self.add_relative_WH_positions(
                 api12, survey_xyz

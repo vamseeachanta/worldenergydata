@@ -28,7 +28,7 @@ def get_project_root() -> Path:
     return Path(__file__).parent.parent.parent.parent.parent
 
 
-def get_data_path(filename: str, data_type: str = 'processed') -> Path:
+def get_data_path(filename: str, data_type: str = "processed") -> Path:
     """
     Get path to data file relative to project root.
 
@@ -44,15 +44,15 @@ def get_data_path(filename: str, data_type: str = 'processed') -> Path:
         >>> print(path)
         /path/to/project/data/processed/measurements.csv
     """
-    valid_types = ['raw', 'processed', 'results']
+    valid_types = ["raw", "processed", "results"]
     if data_type not in valid_types:
         raise ValueError(f"data_type must be one of {valid_types}")
 
     project_root = get_project_root()
-    return project_root / 'data' / data_type / filename
+    return project_root / "data" / data_type / filename
 
 
-def get_report_path(filename: str, subfolder: str = '') -> Path:
+def get_report_path(filename: str, subfolder: str = "") -> Path:
     """
     Get path to report file relative to project root.
 
@@ -70,11 +70,11 @@ def get_report_path(filename: str, subfolder: str = '') -> Path:
     """
     project_root = get_project_root()
     if subfolder:
-        return project_root / 'reports' / subfolder / filename
-    return project_root / 'reports' / filename
+        return project_root / "reports" / subfolder / filename
+    return project_root / "reports" / filename
 
 
-def ensure_report_dir(subfolder: str = '') -> Path:
+def ensure_report_dir(subfolder: str = "") -> Path:
     """
     Ensure report directory exists, create if needed.
 
@@ -84,13 +84,14 @@ def ensure_report_dir(subfolder: str = '') -> Path:
     Returns:
         Path object to the report directory
     """
-    report_dir = get_report_path('', subfolder).parent
+    report_dir = get_report_path("", subfolder).parent
     report_dir.mkdir(parents=True, exist_ok=True)
     return report_dir
 
 
-def relative_path_from_report(data_file: Union[str, Path],
-                               report_file: Union[str, Path]) -> str:
+def relative_path_from_report(
+    data_file: Union[str, Path], report_file: Union[str, Path]
+) -> str:
     """
     Calculate relative path from report to data file.
 
@@ -133,12 +134,12 @@ def relative_path_from_report(data_file: Union[str, Path],
 
         # Go up from report to common, then down to data
         up_levels = len(report_rel.parts)
-        rel_parts = ['..'] * up_levels + list(data_rel.parts)
-        return '/'.join(rel_parts)
+        rel_parts = [".."] * up_levels + list(data_rel.parts)
+        return "/".join(rel_parts)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Example usage
     logger.info("Project root:", get_project_root())
-    logger.info("Data path:", get_data_path('example.csv'))
-    logger.info("Report path:", get_report_path('report.html'))
+    logger.info("Data path:", get_data_path("example.csv"))
+    logger.info("Report path:", get_report_path("report.html"))

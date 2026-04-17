@@ -18,7 +18,6 @@ from unittest.mock import MagicMock
 import pandas as pd
 import pytest
 
-
 # ---------------------------------------------------------------------------
 # Severity mapping tests
 # ---------------------------------------------------------------------------
@@ -94,9 +93,7 @@ class TestLookupTableLoading:
             _load_accident_lookups,
         )
 
-        lookup_path = Path(
-            "data/modules/hse/raw/osha/osha_accident_lookup2.csv"
-        )
+        lookup_path = Path("data/modules/hse/raw/osha/osha_accident_lookup2.csv")
         if not lookup_path.exists():
             pytest.skip("Lookup file not available")
 
@@ -122,18 +119,14 @@ class TestLookupTableLoading:
             _load_accident_lookups,
         )
 
-        lookup_path = Path(
-            "data/modules/hse/raw/osha/osha_accident_lookup2.csv"
-        )
+        lookup_path = Path("data/modules/hse/raw/osha/osha_accident_lookup2.csv")
         if not lookup_path.exists():
             pytest.skip("Lookup file not available")
 
         lookups = _load_accident_lookups(lookup_path)
         expected_codes = {"DEGR", "IN", "BD", "SO", "OCC", "HU"}
         found = set(lookups.keys())
-        assert expected_codes.issubset(found), (
-            f"Missing: {expected_codes - found}"
-        )
+        assert expected_codes.issubset(found), f"Missing: {expected_codes - found}"
 
 
 # ---------------------------------------------------------------------------
@@ -203,21 +196,23 @@ class TestNormalizeAccidentInjurySeverity:
         return importer
 
     def _make_row(self, degree_of_inj="1"):
-        return pd.Series({
-            "summary_nr": "100001",
-            "rel_insp_nr": "200001",
-            "age": "35",
-            "sex": "M",
-            "nature_of_inj": "5",
-            "part_of_body": "1",
-            "src_of_injury": "16",
-            "event_type": "14",
-            "evn_factor": "7",
-            "hum_factor": "1",
-            "occ_code": "585",
-            "degree_of_inj": degree_of_inj,
-            "event_date": "2020-01-15 00:00:00",
-        })
+        return pd.Series(
+            {
+                "summary_nr": "100001",
+                "rel_insp_nr": "200001",
+                "age": "35",
+                "sex": "M",
+                "nature_of_inj": "5",
+                "part_of_body": "1",
+                "src_of_injury": "16",
+                "event_type": "14",
+                "evn_factor": "7",
+                "hum_factor": "1",
+                "occ_code": "585",
+                "degree_of_inj": degree_of_inj,
+                "event_date": "2020-01-15 00:00:00",
+            }
+        )
 
     def test_degree_1_maps_to_fatality(self):
         importer = self._make_importer()

@@ -40,6 +40,7 @@ _MIN_WEIBULL_SAMPLES = 3
 # Parsing
 # ---------------------------------------------------------------------------
 
+
 def parse_stdmet_line(line: str) -> Optional[Dict[str, Any]]:
     """
     Parse one line from an NDBC standard meteorological text file.
@@ -158,6 +159,7 @@ def parse_stdmet_file(
 # Scatter matrix
 # ---------------------------------------------------------------------------
 
+
 def build_scatter_matrix(
     records: Sequence[Dict[str, Any]],
     hs_bins: Optional[Sequence[float]] = None,
@@ -215,6 +217,7 @@ def build_scatter_matrix(
 # Seasonal filtering
 # ---------------------------------------------------------------------------
 
+
 def filter_by_season(
     df: pd.DataFrame,
     months: List[int],
@@ -241,6 +244,7 @@ def filter_by_season(
 # ---------------------------------------------------------------------------
 # Weibull distribution fit
 # ---------------------------------------------------------------------------
+
 
 def fit_weibull_hs(
     hs_values: Sequence[float],
@@ -287,6 +291,7 @@ def fit_weibull_hs(
 # ---------------------------------------------------------------------------
 # Directional wave rose
 # ---------------------------------------------------------------------------
+
 
 def _build_sector_labels(n_sectors: int) -> List[str]:
     """Build evenly-spaced directional sector labels (e.g. '0-45deg')."""

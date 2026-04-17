@@ -83,9 +83,7 @@ class FieldCostSummary:
         )
         self.n_wells = len(self.drilling_estimates)
         self.avg_well_cost_usd_mm = (
-            self.total_drilling_cost_usd_mm / self.n_wells
-            if self.n_wells > 0
-            else 0.0
+            self.total_drilling_cost_usd_mm / self.n_wells if self.n_wells > 0 else 0.0
         )
         self.confidence_summary = self._build_confidence_summary()
 
@@ -94,12 +92,8 @@ class FieldCostSummary:
         return {
             "field_name": self.field_name,
             "region": self.region,
-            "total_drilling_cost_usd_mm": round(
-                self.total_drilling_cost_usd_mm, 4
-            ),
-            "total_completion_cost_usd_mm": round(
-                self.total_completion_cost_usd_mm, 4
-            ),
+            "total_drilling_cost_usd_mm": round(self.total_drilling_cost_usd_mm, 4),
+            "total_completion_cost_usd_mm": round(self.total_completion_cost_usd_mm, 4),
             "total_intervention_cost_usd_mm": round(
                 self.total_intervention_cost_usd_mm, 4
             ),

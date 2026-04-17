@@ -5,8 +5,8 @@ ABOUTME: Uses synthetic Hs-Tp data — no live API calls.
 
 import numpy as np
 import pandas as pd
-import pytest
 import plotly.graph_objects as go
+import pytest
 
 from worldenergydata.metocean.statistics.environmental_contours import (
     ContourResult,
@@ -58,7 +58,9 @@ class TestContourResult:
     def test_contour_result_arrays_equal_length(self):
         hs = np.array([3.0, 4.0, 5.0])
         tp = np.array([10.0, 12.0, 14.0])
-        contour = ContourResult(method="ISORM", return_period=100, hs_values=hs, tp_values=tp)
+        contour = ContourResult(
+            method="ISORM", return_period=100, hs_values=hs, tp_values=tp
+        )
         assert len(contour.hs_values) == len(contour.tp_values)
 
 

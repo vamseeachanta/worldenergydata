@@ -40,14 +40,12 @@ from scipy import stats as scipy_stats
 from sqlalchemy import Integer, and_, extract, func, or_
 from sqlalchemy.orm import Session
 
+from worldenergydata.common.logging import get_logger
 from worldenergydata.marine_safety.constants import CauseCategory, SeverityLevel
 from worldenergydata.marine_safety.database.models import (
     Incident,
     IncidentCause,
 )
-
-
-from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
 

@@ -24,6 +24,7 @@ logger = logging.getLogger(__name__)
 
 try:
     import plotly  # noqa: F401
+
     _HAS_PLOTLY = True
 except ImportError:
     _HAS_PLOTLY = False
@@ -113,7 +114,8 @@ class BuckskinReport:
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         html_parts: list[str] = [
-            self._head(), self._header(now),
+            self._head(),
+            self._header(now),
             '<div class="content">',
             self._executive_summary(inv, prod),
             self._boem_lease_section(boem_df),
@@ -198,13 +200,16 @@ class BuckskinReport:
             '<div class="stats-grid">\n'
             + _card("Cumulative Oil", f"{prod['cumulative_oil_mmbbl']:,.2f}", "MMBBL")
             + _card("Cumulative Gas", f"{prod['cumulative_gas_bcf']:,.2f}", "BCF")
-            + _card("Cumulative Water", f"{prod['cumulative_water_mmbbl']:,.2f}", "MMBBL")
+            + _card(
+                "Cumulative Water", f"{prod['cumulative_water_mmbbl']:,.2f}", "MMBBL"
+            )
             + "</div>\n"
             + '<div class="data-note"><strong>Peak Annual Rate:</strong> '
             + f"~{prod['peak_oil_rate_bopd']:,.0f} bopd</div>\n"
             + "<table><thead><tr><th>Block</th><th>Oil (MMBBL)</th>"
             + "<th>Gas (BCF)</th><th>Water (MMBBL)</th></tr></thead><tbody>\n"
-            + rows + "</tbody></table></div>"
+            + rows
+            + "</tbody></table></div>"
         )
 
     # -- Production chart (Plotly or fallback) -----------------------------
@@ -212,9 +217,13 @@ class BuckskinReport:
     def _production_chart_section(self) -> str:
         chart = self._production_chart_html()
         return (
-            f'<div class="section"><h2>Annual Production by Year</h2>\n'
-            f"{chart}\n</div>"
-        ) if chart else ""
+            (
+                f'<div class="section"><h2>Annual Production by Year</h2>\n'
+                f"{chart}\n</div>"
+            )
+            if chart
+            else ""
+        )
 
     def _production_chart_html(self) -> str:
         """Generate Plotly bar chart of annual production."""
@@ -249,7 +258,9 @@ class BuckskinReport:
     @staticmethod
     def _wellbore_table(wdf: pd.DataFrame) -> str:
         if wdf.empty:
-            return '<div class="section"><h2>Wellbore Inventory</h2><p>No data.</p></div>'
+            return (
+                '<div class="section"><h2>Wellbore Inventory</h2><p>No data.</p></div>'
+            )
         ac = _col(wdf, ["API_WELL_NUMBER", "API"])
         nc = _col(wdf, ["WELL_NAME", "WELL_NM"])
         tc = _col(wdf, ["WELL_TYPE_CODE", "TYPE_CODE"])
@@ -283,7 +294,9 @@ class BuckskinReport:
     @staticmethod
     def _drilling_timeline_section(tdf: pd.DataFrame) -> str:
         if tdf.empty:
-            return '<div class="section"><h2>Drilling Timeline</h2><p>No data.</p></div>'
+            return (
+                '<div class="section"><h2>Drilling Timeline</h2><p>No data.</p></div>'
+            )
         ac = _col(tdf, ["API_WELL_NUMBER", "API"])
         nc = _col(tdf, ["WELL_NAME", "WELL_NM"])
         sc = _col(tdf, ["WELL_SPUD_DATE", "SPUD_DATE"])
@@ -301,7 +314,8 @@ class BuckskinReport:
             '<div class="section"><h2>Drilling Timeline</h2>\n'
             "<table><thead><tr><th>Spud Date</th><th>API Number</th>"
             "<th>Well Name</th><th>Type</th></tr></thead><tbody>\n"
-            + rows + "</tbody></table></div>"
+            + rows
+            + "</tbody></table></div>"
         )
 
     # -- WAR Activity Summary ----------------------------------------------
@@ -360,10 +374,16 @@ class BuckskinReport:
         return (
             '<div class="section"><h2>Benchmark Validation</h2>\n'
             '<div class="stats-grid">\n'
-            + _card("Expected First Oil", str(bm.get("expected_first_oil_year", 2019)), "")
+            + _card(
+                "Expected First Oil", str(bm.get("expected_first_oil_year", 2019)), ""
+            )
             + _card("Actual First Oil", str(bm.get("first_oil_year", "N/A")), "")
             + _card("Year Match", match, "")
-            + _card("Expected Peak Rate", f"{bm.get('expected_peak_rate_bopd', 30_000):,}", "bopd")
+            + _card(
+                "Expected Peak Rate",
+                f"{bm.get('expected_peak_rate_bopd', 30_000):,}",
+                "bopd",
+            )
             + _card("Producing Wells", str(bm.get("producing_well_count", 0)), "")
             + _card("Formation", str(bm.get("geological_era", _FORMATION)), "")
             + "</div></div>"
@@ -385,7 +405,8 @@ class BuckskinReport:
             '<div class="section"><h2>BOEM OCS Lease Mapping</h2>\n'
             "<table><thead><tr><th>BOEM OCS Lease</th>"
             "<th>Keathley Canyon Blocks</th></tr></thead><tbody>\n"
-            + rows + "</tbody></table></div>"
+            + rows
+            + "</tbody></table></div>"
         )
 
     # -- Well Count Over Time ----------------------------------------------
@@ -399,18 +420,26 @@ class BuckskinReport:
         counts = wc_df["cumulative_wells"].tolist()
 
         if _HAS_PLOTLY:
-            trace = json.dumps([{
-                "x": years, "y": counts,
-                "type": "scatter", "mode": "lines+markers",
-                "name": "Cumulative Wells",
-                "line": {"color": "#667eea", "width": 3},
-                "marker": {"size": 8},
-            }])
-            layout = json.dumps({
-                "title": "Cumulative Well Count Over Time",
-                "xaxis": {"title": "Year", "dtick": 1},
-                "yaxis": {"title": "Cumulative Wells"},
-            })
+            trace = json.dumps(
+                [
+                    {
+                        "x": years,
+                        "y": counts,
+                        "type": "scatter",
+                        "mode": "lines+markers",
+                        "name": "Cumulative Wells",
+                        "line": {"color": "#667eea", "width": 3},
+                        "marker": {"size": 8},
+                    }
+                ]
+            )
+            layout = json.dumps(
+                {
+                    "title": "Cumulative Well Count Over Time",
+                    "xaxis": {"title": "Year", "dtick": 1},
+                    "yaxis": {"title": "Cumulative Wells"},
+                }
+            )
             div_id = "buckskin-well-count"
             chart = (
                 f'<div id="{div_id}" style="width:100%;height:400px;"></div>\n'
@@ -418,19 +447,16 @@ class BuckskinReport:
             )
         else:
             rows = "".join(
-                f"<tr><td>{y}</td><td>{c}</td></tr>\n"
-                for y, c in zip(years, counts)
+                f"<tr><td>{y}</td><td>{c}</td></tr>\n" for y, c in zip(years, counts)
             )
             chart = (
                 "<table><thead><tr><th>Year</th>"
                 "<th>Cumulative Wells</th></tr></thead><tbody>\n"
-                + rows + "</tbody></table>"
+                + rows
+                + "</tbody></table>"
             )
 
-        return (
-            '<div class="section"><h2>Well Count Over Time</h2>\n'
-            f"{chart}\n</div>"
-        )
+        return '<div class="section"><h2>Well Count Over Time</h2>\n' f"{chart}\n</div>"
 
     # -- Decline Curve Analysis --------------------------------------------
 
@@ -484,9 +510,7 @@ class BuckskinReport:
             parts.append('<div class="stats-grid">\n')
             for model, value in eur.items():
                 esc_model = html_mod.escape(model)
-                parts.append(
-                    _card(f"EUR ({esc_model})", f"{value:,.0f}", "units")
-                )
+                parts.append(_card(f"EUR ({esc_model})", f"{value:,.0f}", "units"))
             parts.append("</div>\n")
 
         # Forecast summary
@@ -519,6 +543,7 @@ class BuckskinReport:
 # ---------------------------------------------------------------------------
 # Module-level helpers
 # ---------------------------------------------------------------------------
+
 
 def _col(df: pd.DataFrame, candidates: list[str]) -> str | None:
     """Return the first column name present in *df*, or ``None``."""
@@ -554,14 +579,27 @@ def _fmt_date(value: Any) -> str:
 
 def _plotly_div(years: list[Any], annual: pd.DataFrame) -> str:
     """Return a Plotly ``<div>`` + ``<script>`` for the production chart."""
+
     def _trace(col: str, name: str, color: str) -> dict[str, Any]:
-        return {"x": years, "y": annual[col].tolist(),
-                "type": "bar", "name": name, "marker": {"color": color}}
-    traces = [_trace("oil", "Oil (BBL)", "#2ca02c"),
-              _trace("gas", "Gas (MCF)", "#d62728"),
-              _trace("water", "Water (BBL)", "#1f77b4")]
-    layout = {"title": "Annual Production by Year", "barmode": "group",
-              "xaxis": {"title": "Year"}, "yaxis": {"title": "Volume"}}
+        return {
+            "x": years,
+            "y": annual[col].tolist(),
+            "type": "bar",
+            "name": name,
+            "marker": {"color": color},
+        }
+
+    traces = [
+        _trace("oil", "Oil (BBL)", "#2ca02c"),
+        _trace("gas", "Gas (MCF)", "#d62728"),
+        _trace("water", "Water (BBL)", "#1f77b4"),
+    ]
+    layout = {
+        "title": "Annual Production by Year",
+        "barmode": "group",
+        "xaxis": {"title": "Year"},
+        "yaxis": {"title": "Volume"},
+    }
     d = "buckskin-prod-chart"
     return (
         '<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>\n'
@@ -582,5 +620,6 @@ def _fallback_prod_table(years: list[Any], annual: pd.DataFrame) -> str:
     return (
         "<table><thead><tr><th>Year</th><th>Oil (BBL)</th>"
         "<th>Gas (MCF)</th><th>Water (BBL)</th></tr></thead><tbody>\n"
-        + rows + "</tbody></table>"
+        + rows
+        + "</tbody></table>"
     )

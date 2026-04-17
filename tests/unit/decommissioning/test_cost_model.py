@@ -140,7 +140,12 @@ def test_subsea_tree_flat_cost(estimator):
 
 def test_estimate_campaign_same_length(estimator):
     assets = [
-        {"asset_type": "jacket", "water_depth_m": 100, "weight_tonnes": 800, "region": "gom"},
+        {
+            "asset_type": "jacket",
+            "water_depth_m": 100,
+            "weight_tonnes": 800,
+            "region": "gom",
+        },
         {"asset_type": "well_p_and_a", "water_depth_m": 2000, "region": "gom"},
         {"asset_type": "pipeline_km", "water_depth_m": 15, "region": "ukcs"},
     ]
@@ -150,7 +155,12 @@ def test_estimate_campaign_same_length(estimator):
 
 def test_estimate_campaign_returns_estimates(estimator):
     assets = [
-        {"asset_type": "fpso", "water_depth_m": 800, "weight_tonnes": 30000, "region": "brazil"},
+        {
+            "asset_type": "fpso",
+            "water_depth_m": 800,
+            "weight_tonnes": 30000,
+            "region": "brazil",
+        },
     ]
     results = estimator.estimate_campaign(assets)
     assert isinstance(results[0], DecommissioningCostEstimate)
@@ -158,7 +168,12 @@ def test_estimate_campaign_returns_estimates(estimator):
 
 def test_total_cost_musd_equals_sum(estimator):
     assets = [
-        {"asset_type": "jacket", "water_depth_m": 100, "weight_tonnes": 1000, "region": "gom"},
+        {
+            "asset_type": "jacket",
+            "water_depth_m": 100,
+            "weight_tonnes": 1000,
+            "region": "gom",
+        },
         {"asset_type": "well_p_and_a", "water_depth_m": 1500, "region": "ncs"},
     ]
     estimates = estimator.estimate_campaign(assets)
@@ -168,8 +183,18 @@ def test_total_cost_musd_equals_sum(estimator):
 
 def test_cost_by_region_returns_dict(estimator):
     assets = [
-        {"asset_type": "jacket", "water_depth_m": 100, "weight_tonnes": 1000, "region": "gom"},
-        {"asset_type": "jacket", "water_depth_m": 100, "weight_tonnes": 1000, "region": "ukcs"},
+        {
+            "asset_type": "jacket",
+            "water_depth_m": 100,
+            "weight_tonnes": 1000,
+            "region": "gom",
+        },
+        {
+            "asset_type": "jacket",
+            "water_depth_m": 100,
+            "weight_tonnes": 1000,
+            "region": "ukcs",
+        },
     ]
     estimates = estimator.estimate_campaign(assets)
     breakdown = estimator.cost_by_region(estimates)
@@ -180,14 +205,26 @@ def test_cost_by_region_returns_dict(estimator):
 
 def test_cost_by_region_values_match_sum(estimator):
     assets = [
-        {"asset_type": "jacket", "water_depth_m": 100, "weight_tonnes": 1000, "region": "gom"},
-        {"asset_type": "jacket", "water_depth_m": 100, "weight_tonnes": 1000, "region": "gom"},
+        {
+            "asset_type": "jacket",
+            "water_depth_m": 100,
+            "weight_tonnes": 1000,
+            "region": "gom",
+        },
+        {
+            "asset_type": "jacket",
+            "water_depth_m": 100,
+            "weight_tonnes": 1000,
+            "region": "gom",
+        },
         {"asset_type": "well_p_and_a", "water_depth_m": 2000, "region": "ukcs"},
     ]
     estimates = estimator.estimate_campaign(assets)
     breakdown = estimator.cost_by_region(estimates)
     total_from_regions = sum(breakdown.values())
-    assert total_from_regions == pytest.approx(estimator.total_cost_musd(estimates), rel=1e-5)
+    assert total_from_regions == pytest.approx(
+        estimator.total_cost_musd(estimates), rel=1e-5
+    )
 
 
 def test_invalid_asset_type_raises(estimator):

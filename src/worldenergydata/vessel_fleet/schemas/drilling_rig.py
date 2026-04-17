@@ -73,7 +73,9 @@ class DrillingRigSchema(BaseVesselSchema):
     COLUMN_COUNT: Optional[int] = None
     GM_M: Optional[float] = None  # Metacentric height
     VCG_M: Optional[float] = None  # Vertical centre of gravity
-    HULL_LIBRARY_REF: Optional[str] = None  # Cross-ref to digitalmodel hull_library catalog
+    HULL_LIBRARY_REF: Optional[str] = (
+        None  # Cross-ref to digitalmodel hull_library catalog
+    )
 
     # Onshore rig-specific
     MAST_HEIGHT_FT: Optional[float] = None
@@ -96,10 +98,20 @@ class DrillingRigSchema(BaseVesselSchema):
     # --- Validators ---
 
     @field_validator(
-        "RIG_TYPE", "RIG_STATUS", "RIG_DESIGN", "BOP_MANUFACTURER",
-        "LEG_TYPE", "JU_DESIGN", "AC_SCR_POWER", "RIG_MODEL",
-        "LAST_WAR_DATE", "FIRST_WAR_DATE", "LAST_AREA_CODE", "LAST_BLOCK_NUMBER",
-        "HULL_FORM_TYPE", "HULL_LIBRARY_REF",
+        "RIG_TYPE",
+        "RIG_STATUS",
+        "RIG_DESIGN",
+        "BOP_MANUFACTURER",
+        "LEG_TYPE",
+        "JU_DESIGN",
+        "AC_SCR_POWER",
+        "RIG_MODEL",
+        "LAST_WAR_DATE",
+        "FIRST_WAR_DATE",
+        "LAST_AREA_CODE",
+        "LAST_BLOCK_NUMBER",
+        "HULL_FORM_TYPE",
+        "HULL_LIBRARY_REF",
         mode="before",
     )
     @classmethod
@@ -109,19 +121,38 @@ class DrillingRigSchema(BaseVesselSchema):
         return v
 
     @field_validator(
-        "WATER_DEPTH_RATING_FT", "DRILLING_DEPTH_RATING_FT", "MAX_WATER_DEPTH_FT",
-        "DERRICK_HEIGHT_FT", "HOOKLOAD_RATING_KIPS", "DRAWWORKS_HP",
-        "ROTARY_TABLE_SIZE_IN", "TOP_DRIVE_CAPACITY_ST", "MUD_PUMP_HP",
-        "BOP_PRESSURE_PSI", "BOP_SIZE_IN",
-        "RISER_SIZE_IN", "RISER_LENGTH_FT",
-        "MOONPOOL_LENGTH_M", "MOONPOOL_WIDTH_M", "MOONPOOL_DIAMETER_M",
-        "VARIABLE_DECK_LOAD_ST", "DECK_AREA_SQ_FT",
-        "LEG_LENGTH_FT", "CANTILEVER_REACH_FT", "CANTILEVER_CAPACITY_KIPS",
-        "PRELOAD_CAPACITY_ST", "SPUD_CAN_DIAMETER_FT",
-        "PONTOON_LENGTH_M", "PONTOON_WIDTH_M", "PONTOON_HEIGHT_M",
-        "COLUMN_DIAMETER_M", "COLUMN_SPACING_M",
-        "GM_M", "VCG_M",
-        "MAST_HEIGHT_FT", "SETBACK_CAPACITY_KIPS",
+        "WATER_DEPTH_RATING_FT",
+        "DRILLING_DEPTH_RATING_FT",
+        "MAX_WATER_DEPTH_FT",
+        "DERRICK_HEIGHT_FT",
+        "HOOKLOAD_RATING_KIPS",
+        "DRAWWORKS_HP",
+        "ROTARY_TABLE_SIZE_IN",
+        "TOP_DRIVE_CAPACITY_ST",
+        "MUD_PUMP_HP",
+        "BOP_PRESSURE_PSI",
+        "BOP_SIZE_IN",
+        "RISER_SIZE_IN",
+        "RISER_LENGTH_FT",
+        "MOONPOOL_LENGTH_M",
+        "MOONPOOL_WIDTH_M",
+        "MOONPOOL_DIAMETER_M",
+        "VARIABLE_DECK_LOAD_ST",
+        "DECK_AREA_SQ_FT",
+        "LEG_LENGTH_FT",
+        "CANTILEVER_REACH_FT",
+        "CANTILEVER_CAPACITY_KIPS",
+        "PRELOAD_CAPACITY_ST",
+        "SPUD_CAN_DIAMETER_FT",
+        "PONTOON_LENGTH_M",
+        "PONTOON_WIDTH_M",
+        "PONTOON_HEIGHT_M",
+        "COLUMN_DIAMETER_M",
+        "COLUMN_SPACING_M",
+        "GM_M",
+        "VCG_M",
+        "MAST_HEIGHT_FT",
+        "SETBACK_CAPACITY_KIPS",
         mode="before",
     )
     @classmethod
@@ -136,19 +167,38 @@ class DrillingRigSchema(BaseVesselSchema):
         return v
 
     @field_validator(
-        "WATER_DEPTH_RATING_FT", "DRILLING_DEPTH_RATING_FT", "MAX_WATER_DEPTH_FT",
-        "DERRICK_HEIGHT_FT", "HOOKLOAD_RATING_KIPS", "DRAWWORKS_HP",
-        "ROTARY_TABLE_SIZE_IN", "TOP_DRIVE_CAPACITY_ST", "MUD_PUMP_HP",
-        "BOP_PRESSURE_PSI", "BOP_SIZE_IN",
-        "RISER_SIZE_IN", "RISER_LENGTH_FT",
-        "MOONPOOL_LENGTH_M", "MOONPOOL_WIDTH_M", "MOONPOOL_DIAMETER_M",
-        "VARIABLE_DECK_LOAD_ST", "DECK_AREA_SQ_FT",
-        "LEG_LENGTH_FT", "CANTILEVER_REACH_FT", "CANTILEVER_CAPACITY_KIPS",
-        "PRELOAD_CAPACITY_ST", "SPUD_CAN_DIAMETER_FT",
-        "PONTOON_LENGTH_M", "PONTOON_WIDTH_M", "PONTOON_HEIGHT_M",
-        "COLUMN_DIAMETER_M", "COLUMN_SPACING_M",
-        "GM_M", "VCG_M",
-        "MAST_HEIGHT_FT", "SETBACK_CAPACITY_KIPS",
+        "WATER_DEPTH_RATING_FT",
+        "DRILLING_DEPTH_RATING_FT",
+        "MAX_WATER_DEPTH_FT",
+        "DERRICK_HEIGHT_FT",
+        "HOOKLOAD_RATING_KIPS",
+        "DRAWWORKS_HP",
+        "ROTARY_TABLE_SIZE_IN",
+        "TOP_DRIVE_CAPACITY_ST",
+        "MUD_PUMP_HP",
+        "BOP_PRESSURE_PSI",
+        "BOP_SIZE_IN",
+        "RISER_SIZE_IN",
+        "RISER_LENGTH_FT",
+        "MOONPOOL_LENGTH_M",
+        "MOONPOOL_WIDTH_M",
+        "MOONPOOL_DIAMETER_M",
+        "VARIABLE_DECK_LOAD_ST",
+        "DECK_AREA_SQ_FT",
+        "LEG_LENGTH_FT",
+        "CANTILEVER_REACH_FT",
+        "CANTILEVER_CAPACITY_KIPS",
+        "PRELOAD_CAPACITY_ST",
+        "SPUD_CAN_DIAMETER_FT",
+        "PONTOON_LENGTH_M",
+        "PONTOON_WIDTH_M",
+        "PONTOON_HEIGHT_M",
+        "COLUMN_DIAMETER_M",
+        "COLUMN_SPACING_M",
+        "GM_M",
+        "VCG_M",
+        "MAST_HEIGHT_FT",
+        "SETBACK_CAPACITY_KIPS",
     )
     @classmethod
     def _validate_non_negative_rig_floats(cls, v: Optional[float]) -> Optional[float]:
@@ -156,7 +206,9 @@ class DrillingRigSchema(BaseVesselSchema):
             raise ValueError("Value must be >= 0")
         return v
 
-    @field_validator("MUD_PUMP_COUNT", "WELLS_DRILLED_COUNT", "COLUMN_COUNT", mode="before")
+    @field_validator(
+        "MUD_PUMP_COUNT", "WELLS_DRILLED_COUNT", "COLUMN_COUNT", mode="before"
+    )
     @classmethod
     def _coerce_rig_int_fields(cls, v: object) -> object:
         if v is None:

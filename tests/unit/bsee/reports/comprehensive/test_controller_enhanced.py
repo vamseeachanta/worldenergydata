@@ -126,19 +126,23 @@ class TestReportConfiguration:
         assert len(rc.output_formats) == 4
 
     def test_from_dict_basic(self):
-        rc = ReportConfiguration.from_dict({
-            "report_type": "field",
-            "entity_name": "Test Field",
-        })
+        rc = ReportConfiguration.from_dict(
+            {
+                "report_type": "field",
+                "entity_name": "Test Field",
+            }
+        )
         assert rc.report_type == ReportType.FIELD
         assert rc.entity_name == "Test Field"
 
     def test_from_dict_with_dates(self):
-        rc = ReportConfiguration.from_dict({
-            "report_type": "well",
-            "entity_name": "W001",
-            "date_range": ["2023-01-01", "2024-12-31"],
-        })
+        rc = ReportConfiguration.from_dict(
+            {
+                "report_type": "well",
+                "entity_name": "W001",
+                "date_range": ["2023-01-01", "2024-12-31"],
+            }
+        )
         assert rc.date_range[0] == date(2023, 1, 1)
         assert rc.date_range[1] == date(2024, 12, 31)
 
@@ -279,11 +283,15 @@ class TestReportController:
         import json
 
         config_file = tmp_path / "config.json"
-        config_file.write_text(json.dumps({
-            "data_source": {"type": "test"},
-            "templates": {"path": "templates/"},
-            "cache": {"enabled": False},
-        }))
+        config_file.write_text(
+            json.dumps(
+                {
+                    "data_source": {"type": "test"},
+                    "templates": {"path": "templates/"},
+                    "cache": {"enabled": False},
+                }
+            )
+        )
         rc = ReportController(config_file=config_file)
         assert rc.config["data_source"]["type"] == "test"
 

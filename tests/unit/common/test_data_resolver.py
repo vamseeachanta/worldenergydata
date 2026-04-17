@@ -8,9 +8,9 @@ import pytest
 
 from worldenergydata.common.data_resolver import (
     DataNotFoundError,
+    _clear_cache,
     get_data_root,
     get_module_data,
-    _clear_cache,
 )
 
 
@@ -37,7 +37,9 @@ def test_get_data_root_from_symlink(tmp_path, monkeypatch):
     data_link.symlink_to(actual_data)
 
     monkeypatch.delenv("WED_DATA_ROOT", raising=False)
-    with patch("worldenergydata.common.data_resolver._get_project_root", return_value=project):
+    with patch(
+        "worldenergydata.common.data_resolver._get_project_root", return_value=project
+    ):
         result = get_data_root()
         assert result == actual_data
 
@@ -49,7 +51,9 @@ def test_get_data_root_fallback(tmp_path, monkeypatch):
     data_dir.mkdir()
 
     monkeypatch.delenv("WED_DATA_ROOT", raising=False)
-    with patch("worldenergydata.common.data_resolver._get_project_root", return_value=project):
+    with patch(
+        "worldenergydata.common.data_resolver._get_project_root", return_value=project
+    ):
         assert get_data_root() == data_dir
 
 
@@ -58,7 +62,9 @@ def test_get_data_root_raises_when_missing(tmp_path, monkeypatch):
     project.mkdir()
 
     monkeypatch.delenv("WED_DATA_ROOT", raising=False)
-    with patch("worldenergydata.common.data_resolver._get_project_root", return_value=project):
+    with patch(
+        "worldenergydata.common.data_resolver._get_project_root", return_value=project
+    ):
         with pytest.raises(DataNotFoundError, match="No data directory found"):
             get_data_root()
 
@@ -77,5 +83,7 @@ def test_get_module_data_missing_module(tmp_path):
     data_dir.mkdir()
 
     with patch.dict(os.environ, {"WED_DATA_ROOT": str(data_dir)}):
-        with pytest.raises(DataNotFoundError, match="Module data not found: nonexistent"):
+        with pytest.raises(
+            DataNotFoundError, match="Module data not found: nonexistent"
+        ):
             get_module_data("nonexistent")

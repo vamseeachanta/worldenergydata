@@ -13,11 +13,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Generator, Optional
 
+from worldenergydata.common.logging import get_logger
+
 from ..constants import IncidentType, VesselType
 from ..database.models import Incident, Location, Vessel
 from .base_importer import BaseImporter
-
-from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
 

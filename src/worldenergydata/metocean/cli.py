@@ -157,11 +157,11 @@ def unified(
             --start 2023-06-01 --end 2023-06-30
             --dashboard /tmp/north_sea.html
     """
+    from worldenergydata.metocean.unified.dashboard import MetoceanDashboard
     from worldenergydata.metocean.unified.unified_query import (
         MetoceanQuery,
         UnifiedMetoceanClient,
     )
-    from worldenergydata.metocean.unified.dashboard import MetoceanDashboard
 
     # Parse dates
     try:

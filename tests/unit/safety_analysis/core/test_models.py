@@ -124,15 +124,19 @@ class TestClassificationResult:
     def test_confidence_bounds(self):
         with pytest.raises(ValidationError):
             ClassificationResult(
-                text="T", predicted_label="x",
-                confidence=1.5, model_name="m",
+                text="T",
+                predicted_label="x",
+                confidence=1.5,
+                model_name="m",
             )
 
     def test_confidence_negative(self):
         with pytest.raises(ValidationError):
             ClassificationResult(
-                text="T", predicted_label="x",
-                confidence=-0.1, model_name="m",
+                text="T",
+                predicted_label="x",
+                confidence=-0.1,
+                model_name="m",
             )
 
 

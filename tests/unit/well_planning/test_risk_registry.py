@@ -41,9 +41,9 @@ class TestAuthorityRepresentation:
 class TestRiskIdFormat:
     def test_all_risk_ids_start_with_a_letter(self):
         for risk in WELL_PLANNING_RISKS:
-            assert risk.risk_id[0].isalpha(), (
-                f"risk_id '{risk.risk_id}' does not start with a letter"
-            )
+            assert risk.risk_id[
+                0
+            ].isalpha(), f"risk_id '{risk.risk_id}' does not start with a letter"
 
     def test_all_risk_ids_are_non_empty(self):
         for risk in WELL_PLANNING_RISKS:
@@ -67,16 +67,14 @@ class TestMPDMitigation:
 class TestStrategicRisks:
     def test_strategic_risks_include_rig_capability(self):
         strategic = [
-            r for r in WELL_PLANNING_RISKS
-            if r.authority == RiskAuthority.STRATEGIC
+            r for r in WELL_PLANNING_RISKS if r.authority == RiskAuthority.STRATEGIC
         ]
         categories = {r.category for r in strategic}
         assert RiskCategory.RIG_CAPABILITY in categories
 
     def test_strategic_risks_include_regulatory(self):
         strategic = [
-            r for r in WELL_PLANNING_RISKS
-            if r.authority == RiskAuthority.STRATEGIC
+            r for r in WELL_PLANNING_RISKS if r.authority == RiskAuthority.STRATEGIC
         ]
         categories = {r.category for r in strategic}
         assert RiskCategory.REGULATORY in categories
@@ -85,9 +83,9 @@ class TestStrategicRisks:
 class TestRiskScores:
     def test_all_risk_scores_are_positive(self):
         for risk in WELL_PLANNING_RISKS:
-            assert risk.risk_score > 0, (
-                f"risk {risk.risk_id} has non-positive score {risk.risk_score}"
-            )
+            assert (
+                risk.risk_score > 0
+            ), f"risk {risk.risk_id} has non-positive score {risk.risk_score}"
 
     def test_risk_scores_match_severity_times_probability(self):
         for risk in WELL_PLANNING_RISKS:
@@ -99,27 +97,26 @@ class TestRiskScores:
 
     def test_probabilities_in_valid_range(self):
         for risk in WELL_PLANNING_RISKS:
-            assert 0.0 <= risk.probability <= 1.0, (
-                f"risk {risk.risk_id} probability {risk.probability} out of range"
-            )
+            assert (
+                0.0 <= risk.probability <= 1.0
+            ), f"risk {risk.risk_id} probability {risk.probability} out of range"
 
 
 class TestEscalationTemplates:
     def test_all_escalation_templates_non_empty(self):
         for risk in WELL_PLANNING_RISKS:
-            assert len(risk.escalation_template) > 0, (
-                f"risk {risk.risk_id} has empty escalation_template"
-            )
+            assert (
+                len(risk.escalation_template) > 0
+            ), f"risk {risk.risk_id} has empty escalation_template"
 
     def test_strategic_escalation_templates_mention_escalation(self):
         strategic = [
-            r for r in WELL_PLANNING_RISKS
-            if r.authority == RiskAuthority.STRATEGIC
+            r for r in WELL_PLANNING_RISKS if r.authority == RiskAuthority.STRATEGIC
         ]
         for risk in strategic:
-            assert "ESCALATION" in risk.escalation_template.upper(), (
-                f"strategic risk {risk.risk_id} template lacks ESCALATION keyword"
-            )
+            assert (
+                "ESCALATION" in risk.escalation_template.upper()
+            ), f"strategic risk {risk.risk_id} template lacks ESCALATION keyword"
 
 
 class TestMitigationOwners:

@@ -21,23 +21,25 @@ _RIG_TYPE_TO_HULL_FORM: dict[str, str] = {
     "semi_submersible": "semi_sub",
     "jack_up": "jackup",
     "inland_barge": "barge",
-    "submersible": "semi_sub",      # submersible rigs are semi-sub hull forms
+    "submersible": "semi_sub",  # submersible rigs are semi-sub hull forms
     "tender_assisted": "semi_sub",  # tender-assisted drilling on semi-sub hulls
-    "lift_boat": "jackup",          # lift boats are self-elevating (jackup family)
+    "lift_boat": "jackup",  # lift boats are self-elevating (jackup family)
 }
 
 # These rig types don't have a meaningful offshore hull form
-_NON_VESSEL_TYPES: frozenset[str] = frozenset({
-    "platform_rig",
-    "land_rig",
-    "wireline_unit",
-    "coil_tubing_unit",
-    "snubbing_unit",
-    "workover_rig",
-    "pumping_unit",
-    "support_vessel",
-    "unknown",
-})
+_NON_VESSEL_TYPES: frozenset[str] = frozenset(
+    {
+        "platform_rig",
+        "land_rig",
+        "wireline_unit",
+        "coil_tubing_unit",
+        "snubbing_unit",
+        "workover_rig",
+        "pumping_unit",
+        "support_vessel",
+        "unknown",
+    }
+)
 
 
 def map_hull_form(rig_type: Optional[str]) -> Optional[str]:
@@ -102,16 +104,16 @@ def refresh_hull_library_refs(df: pd.DataFrame) -> pd.DataFrame:
     Should be called after any operation that changes LOA_M or HULL_FORM_TYPE
     (e.g. after populate_estimated_dimensions).
     """
-    result = df if "HULL_LIBRARY_REF" in df.columns else df.assign(HULL_LIBRARY_REF=None)
-    mask = (
-        result["HULL_FORM_TYPE"].notna()
-        & (
-            result["HULL_LIBRARY_REF"].isna()
-            | result["HULL_LIBRARY_REF"].str.endswith("_generic", na=False)
-        )
+    result = (
+        df if "HULL_LIBRARY_REF" in df.columns else df.assign(HULL_LIBRARY_REF=None)
+    )
+    mask = result["HULL_FORM_TYPE"].notna() & (
+        result["HULL_LIBRARY_REF"].isna()
+        | result["HULL_LIBRARY_REF"].str.endswith("_generic", na=False)
     )
     result.loc[mask, "HULL_LIBRARY_REF"] = result.loc[mask].apply(
-        _make_hull_library_ref, axis=1,
+        _make_hull_library_ref,
+        axis=1,
     )
     return result
 

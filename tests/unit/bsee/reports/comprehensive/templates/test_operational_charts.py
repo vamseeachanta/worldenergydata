@@ -13,10 +13,10 @@ from worldenergydata.bsee.reports.comprehensive.templates.operational_charts imp
     generate_operational_visualizations,
 )
 
-
 # ---------------------------------------------------------------------------
 # create_well_status_chart
 # ---------------------------------------------------------------------------
+
 
 class TestCreateWellStatusChart:
     def test_basic(self):
@@ -51,6 +51,7 @@ class TestCreateWellStatusChart:
 # create_efficiency_gauge
 # ---------------------------------------------------------------------------
 
+
 class TestCreateEfficiencyGauge:
     def test_basic(self):
         efficiency = {"efficiency_percentage": 85.5}
@@ -71,6 +72,7 @@ class TestCreateEfficiencyGauge:
 # ---------------------------------------------------------------------------
 # create_reliability_chart
 # ---------------------------------------------------------------------------
+
 
 class TestCreateReliabilityChart:
     def test_with_equipment(self):
@@ -97,12 +99,31 @@ class TestCreateReliabilityChart:
 # create_kpi_dashboard
 # ---------------------------------------------------------------------------
 
+
 class TestCreateKpiDashboard:
     def test_with_kpis(self):
         kpis = [
-            {"name": "Uptime", "actual": 95, "target": 90, "status": "good", "unit": "%"},
-            {"name": "Cost", "actual": 28, "target": 30, "status": "good", "unit": "$/bbl"},
-            {"name": "Safety", "actual": 1.2, "target": 0.5, "status": "critical", "unit": "TRIR"},
+            {
+                "name": "Uptime",
+                "actual": 95,
+                "target": 90,
+                "status": "good",
+                "unit": "%",
+            },
+            {
+                "name": "Cost",
+                "actual": 28,
+                "target": 30,
+                "status": "good",
+                "unit": "$/bbl",
+            },
+            {
+                "name": "Safety",
+                "actual": 1.2,
+                "target": 0.5,
+                "status": "critical",
+                "unit": "TRIR",
+            },
         ]
         result = create_kpi_dashboard(kpis)
         parsed = json.loads(result)
@@ -114,7 +135,13 @@ class TestCreateKpiDashboard:
 
     def test_single_kpi(self):
         kpis = [
-            {"name": "Uptime", "actual": 95, "target": 90, "status": "warning", "unit": "%"},
+            {
+                "name": "Uptime",
+                "actual": 95,
+                "target": 90,
+                "status": "warning",
+                "unit": "%",
+            },
         ]
         result = create_kpi_dashboard(kpis)
         parsed = json.loads(result)
@@ -124,6 +151,7 @@ class TestCreateKpiDashboard:
 # ---------------------------------------------------------------------------
 # create_failure_chart
 # ---------------------------------------------------------------------------
+
 
 class TestCreateFailureChart:
     def test_with_failures(self):
@@ -145,6 +173,7 @@ class TestCreateFailureChart:
 # generate_operational_visualizations
 # ---------------------------------------------------------------------------
 
+
 class TestGenerateOperationalVisualizations:
     def test_full_context(self):
         context = {
@@ -161,7 +190,13 @@ class TestGenerateOperationalVisualizations:
                 ]
             },
             "operational_kpis": [
-                {"name": "Uptime", "actual": 95, "target": 90, "status": "good", "unit": "%"},
+                {
+                    "name": "Uptime",
+                    "actual": 95,
+                    "target": 90,
+                    "status": "good",
+                    "unit": "%",
+                },
             ],
             "failure_analysis": {"by_type": {"Mechanical": 3}},
         }

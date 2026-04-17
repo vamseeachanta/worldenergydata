@@ -23,16 +23,32 @@ class TexasRrcAdapter(AbstractProductionAdapter):
     # (play_name, peak_oil_bbl, peak_gas_mcf, peak_water_bbl,
     #  peak_cond_bbl, start_year, start_month, n_months)
     _FIELDS = [
-        ("Wolfcamp",     130_000_000, 180_000_000, 50_000_000, 3_000_000, 2013,  1, 144),
-        ("Bone Spring",   70_000_000,  90_000_000, 28_000_000, 1_500_000, 2013,  1, 144),
+        ("Wolfcamp", 130_000_000, 180_000_000, 50_000_000, 3_000_000, 2013, 1, 144),
+        ("Bone Spring", 70_000_000, 90_000_000, 28_000_000, 1_500_000, 2013, 1, 144),
     ]
 
     def fetch(self, query: ProductionQuery) -> pd.DataFrame:
         rows = []
-        for field_name, peak_oil, peak_gas, peak_water, peak_cond, sy, sm, n_months in self._FIELDS:
+        for (
+            field_name,
+            peak_oil,
+            peak_gas,
+            peak_water,
+            peak_cond,
+            sy,
+            sm,
+            n_months,
+        ) in self._FIELDS:
             rows.extend(
                 self._generate_field_rows(
-                    field_name, peak_oil, peak_gas, peak_water, peak_cond, sy, sm, n_months
+                    field_name,
+                    peak_oil,
+                    peak_gas,
+                    peak_water,
+                    peak_cond,
+                    sy,
+                    sm,
+                    n_months,
                 )
             )
 

@@ -11,27 +11,31 @@ from worldenergydata.marine.vessel_gis import VesselGIS, haversine_nm
 # Mock data
 # ---------------------------------------------------------------------------
 
-MOCK_VESSELS = pd.DataFrame([
-    {
-        "vessel_id": "V001",
-        "name": "Balder",
-        "lat": 27.97,
-        "lon": -90.55,
-        "type": "crane_vessel",
-    },
-    {
-        "vessel_id": "V002",
-        "name": "Saipem 7000",
-        "lat": 52.0,
-        "lon": 4.0,
-        "type": "crane_vessel",
-    },
-])
+MOCK_VESSELS = pd.DataFrame(
+    [
+        {
+            "vessel_id": "V001",
+            "name": "Balder",
+            "lat": 27.97,
+            "lon": -90.55,
+            "type": "crane_vessel",
+        },
+        {
+            "vessel_id": "V002",
+            "name": "Saipem 7000",
+            "lat": 52.0,
+            "lon": 4.0,
+            "type": "crane_vessel",
+        },
+    ]
+)
 
-MOCK_BSEE_FIELDS = pd.DataFrame([
-    {"field_name": "MARS", "lat": 27.97, "lon": -90.55},
-    {"field_name": "THUNDER HORSE", "lat": 28.18, "lon": -88.47},
-])
+MOCK_BSEE_FIELDS = pd.DataFrame(
+    [
+        {"field_name": "MARS", "lat": 27.97, "lon": -90.55},
+        {"field_name": "THUNDER HORSE", "lat": 28.18, "lon": -88.47},
+    ]
+)
 
 
 # ---------------------------------------------------------------------------
@@ -190,9 +194,7 @@ class TestVesselGISGetMapData:
         """Passing vessel_ids filters the output."""
         gis = VesselGIS(MOCK_VESSELS)
         result = gis.get_vessel_map_data(vessel_ids=["V001"])
-        ids_in_result = [
-            f["properties"]["vessel_id"] for f in result["features"]
-        ]
+        ids_in_result = [f["properties"]["vessel_id"] for f in result["features"]]
         assert "V001" in ids_in_result
         assert "V002" not in ids_in_result
 

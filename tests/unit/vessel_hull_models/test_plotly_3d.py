@@ -14,22 +14,39 @@ from worldenergydata.vessel_hull_models.visualization.plotly_3d import (
 
 def _make_mock_mesh():
     """Create a simple box mesh for testing."""
-    vertices = np.array([
-        [0, 0, 0], [10, 0, 0], [10, 5, 0], [0, 5, 0],
-        [0, 0, -3], [10, 0, -3], [10, 5, -3], [0, 5, -3],
-    ], dtype=float)
-    faces = np.array([
-        [0, 1, 2], [0, 2, 3],  # top
-        [4, 5, 6], [4, 6, 7],  # bottom
-        [0, 1, 5], [0, 5, 4],  # front
-        [2, 3, 7], [2, 7, 6],  # back
-    ], dtype=int)
+    vertices = np.array(
+        [
+            [0, 0, 0],
+            [10, 0, 0],
+            [10, 5, 0],
+            [0, 5, 0],
+            [0, 0, -3],
+            [10, 0, -3],
+            [10, 5, -3],
+            [0, 5, -3],
+        ],
+        dtype=float,
+    )
+    faces = np.array(
+        [
+            [0, 1, 2],
+            [0, 2, 3],  # top
+            [4, 5, 6],
+            [4, 6, 7],  # bottom
+            [0, 1, 5],
+            [0, 5, 4],  # front
+            [2, 3, 7],
+            [2, 7, 6],  # back
+        ],
+        dtype=int,
+    )
     return OBJMesh(vertices=vertices, faces=faces)
 
 
 # ---------------------------------------------------------------------------
 # create_hull_figure
 # ---------------------------------------------------------------------------
+
 
 class TestCreateHullFigure:
     def test_basic(self):
@@ -86,6 +103,7 @@ class TestCreateHullFigure:
 # ---------------------------------------------------------------------------
 # create_fleet_comparison
 # ---------------------------------------------------------------------------
+
 
 class TestCreateFleetComparison:
     def test_empty_raises(self):

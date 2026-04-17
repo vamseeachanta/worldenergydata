@@ -6,9 +6,9 @@ import pandas as pd
 import pytest
 
 from worldenergydata.sodir.production.monthly_loader import (
-    MonthlyProductionLoader,
-    SM3_TO_BBL,
     MSM3_TO_MCF,
+    SM3_TO_BBL,
+    MonthlyProductionLoader,
 )
 
 
@@ -80,10 +80,14 @@ class TestMonthlyProductionLoader:
     def test_loader_instantiation_default(self, loader):
         assert loader is not None
 
-    def test_loader_instantiation_with_client(self, loader_with_client, mock_api_client):
+    def test_loader_instantiation_with_client(
+        self, loader_with_client, mock_api_client
+    ):
         assert loader_with_client.api_client is mock_api_client
 
-    def test_parse_raw_record_extracts_field_name(self, loader, sample_raw_production_data):
+    def test_parse_raw_record_extracts_field_name(
+        self, loader, sample_raw_production_data
+    ):
         record = loader.parse_raw_record(sample_raw_production_data[0])
         assert record["field_name"] == "EDVARD GRIEG"
 
@@ -95,25 +99,35 @@ class TestMonthlyProductionLoader:
         record = loader.parse_raw_record(sample_raw_production_data[0])
         assert record["month"] == 1
 
-    def test_parse_raw_record_converts_oil_to_sm3(self, loader, sample_raw_production_data):
+    def test_parse_raw_record_converts_oil_to_sm3(
+        self, loader, sample_raw_production_data
+    ):
         record = loader.parse_raw_record(sample_raw_production_data[0])
         # Input is in million Sm3, output is Sm3
         assert record["oil_sm3"] == pytest.approx(0.85 * 1e6)
 
-    def test_parse_raw_record_converts_gas_to_sm3(self, loader, sample_raw_production_data):
+    def test_parse_raw_record_converts_gas_to_sm3(
+        self, loader, sample_raw_production_data
+    ):
         record = loader.parse_raw_record(sample_raw_production_data[0])
         # Input is in billion Sm3, output is Sm3
         assert record["gas_sm3"] == pytest.approx(0.12 * 1e9)
 
-    def test_parse_raw_record_converts_ngl_to_sm3(self, loader, sample_raw_production_data):
+    def test_parse_raw_record_converts_ngl_to_sm3(
+        self, loader, sample_raw_production_data
+    ):
         record = loader.parse_raw_record(sample_raw_production_data[0])
         assert record["ngl_sm3"] == pytest.approx(0.05 * 1e6)
 
-    def test_parse_raw_record_converts_condensate_to_sm3(self, loader, sample_raw_production_data):
+    def test_parse_raw_record_converts_condensate_to_sm3(
+        self, loader, sample_raw_production_data
+    ):
         record = loader.parse_raw_record(sample_raw_production_data[0])
         assert record["condensate_sm3"] == pytest.approx(0.02 * 1e6)
 
-    def test_parse_raw_record_extracts_water_injected(self, loader, sample_raw_production_data):
+    def test_parse_raw_record_extracts_water_injected(
+        self, loader, sample_raw_production_data
+    ):
         record = loader.parse_raw_record(sample_raw_production_data[0])
         assert record["water_injected_sm3"] == pytest.approx(0.30 * 1e6)
 
@@ -130,42 +144,74 @@ class TestMonthlyProductionLoader:
     def test_convert_sm3_to_bbl_zero(self, loader):
         assert loader.convert_sm3_to_bbl(0.0) == 0.0
 
-    def test_load_field_production_returns_dataframe(self, loader_with_client, sample_raw_production_data):
-        loader_with_client.api_client.get.return_value = {"data": sample_raw_production_data}
+    def test_load_field_production_returns_dataframe(
+        self, loader_with_client, sample_raw_production_data
+    ):
+        loader_with_client.api_client.get.return_value = {
+            "data": sample_raw_production_data
+        }
         df = loader_with_client.load_field_production("EDVARD GRIEG")
         assert isinstance(df, pd.DataFrame)
 
-    def test_load_field_production_filters_by_field(self, loader_with_client, sample_raw_production_data):
-        loader_with_client.api_client.get.return_value = {"data": sample_raw_production_data}
+    def test_load_field_production_filters_by_field(
+        self, loader_with_client, sample_raw_production_data
+    ):
+        loader_with_client.api_client.get.return_value = {
+            "data": sample_raw_production_data
+        }
         df = loader_with_client.load_field_production("EDVARD GRIEG")
         assert all(df["field_name"] == "EDVARD GRIEG")
 
-    def test_load_field_production_has_required_columns(self, loader_with_client, sample_raw_production_data):
-        loader_with_client.api_client.get.return_value = {"data": sample_raw_production_data}
+    def test_load_field_production_has_required_columns(
+        self, loader_with_client, sample_raw_production_data
+    ):
+        loader_with_client.api_client.get.return_value = {
+            "data": sample_raw_production_data
+        }
         df = loader_with_client.load_field_production("EDVARD GRIEG")
-        required = ["field_name", "year", "month", "oil_sm3", "gas_sm3", "ngl_sm3",
-                     "condensate_sm3", "water_injected_sm3"]
+        required = [
+            "field_name",
+            "year",
+            "month",
+            "oil_sm3",
+            "gas_sm3",
+            "ngl_sm3",
+            "condensate_sm3",
+            "water_injected_sm3",
+        ]
         for col in required:
             assert col in df.columns, f"Missing column: {col}"
 
-    def test_load_all_production_returns_dataframe(self, loader_with_client, sample_raw_production_data):
-        loader_with_client.api_client.get.return_value = {"data": sample_raw_production_data}
+    def test_load_all_production_returns_dataframe(
+        self, loader_with_client, sample_raw_production_data
+    ):
+        loader_with_client.api_client.get.return_value = {
+            "data": sample_raw_production_data
+        }
         df = loader_with_client.load_all_production()
         assert isinstance(df, pd.DataFrame)
 
-    def test_load_all_production_includes_all_fields(self, loader_with_client, sample_raw_production_data):
-        loader_with_client.api_client.get.return_value = {"data": sample_raw_production_data}
+    def test_load_all_production_includes_all_fields(
+        self, loader_with_client, sample_raw_production_data
+    ):
+        loader_with_client.api_client.get.return_value = {
+            "data": sample_raw_production_data
+        }
         df = loader_with_client.load_all_production()
         assert set(df["field_name"].unique()) == {"EDVARD GRIEG", "VALHALL"}
 
     def test_get_oil_bbl_column(self, loader_with_client, sample_raw_production_data):
-        loader_with_client.api_client.get.return_value = {"data": sample_raw_production_data}
+        loader_with_client.api_client.get.return_value = {
+            "data": sample_raw_production_data
+        }
         df = loader_with_client.load_field_production("EDVARD GRIEG")
         assert "oil_bbl" in df.columns
         assert df["oil_bbl"].iloc[0] == pytest.approx(0.85 * 1e6 * SM3_TO_BBL)
 
     def test_get_gas_mcf_column(self, loader_with_client, sample_raw_production_data):
-        loader_with_client.api_client.get.return_value = {"data": sample_raw_production_data}
+        loader_with_client.api_client.get.return_value = {
+            "data": sample_raw_production_data
+        }
         df = loader_with_client.load_field_production("EDVARD GRIEG")
         assert "gas_mcf" in df.columns
 
@@ -176,7 +222,9 @@ class TestMonthlyProductionLoader:
         assert len(df) == 0
 
     def test_parse_raw_record_handles_missing_fields(self, loader):
-        record = loader.parse_raw_record({"fldName": "TEST", "prfYear": 2020, "prfMonth": 1})
+        record = loader.parse_raw_record(
+            {"fldName": "TEST", "prfYear": 2020, "prfMonth": 1}
+        )
         assert record["oil_sm3"] == 0.0
         assert record["gas_sm3"] == 0.0
 
@@ -184,8 +232,12 @@ class TestMonthlyProductionLoader:
         key = loader_with_client._cache_key("EDVARD GRIEG")
         assert "EDVARD GRIEG" in key or isinstance(key, str)
 
-    def test_cached_results_are_returned(self, loader_with_client, sample_raw_production_data):
-        loader_with_client.api_client.get.return_value = {"data": sample_raw_production_data}
+    def test_cached_results_are_returned(
+        self, loader_with_client, sample_raw_production_data
+    ):
+        loader_with_client.api_client.get.return_value = {
+            "data": sample_raw_production_data
+        }
         df1 = loader_with_client.load_field_production("EDVARD GRIEG")
         df2 = loader_with_client.load_field_production("EDVARD GRIEG")
         # API should only be called once due to caching

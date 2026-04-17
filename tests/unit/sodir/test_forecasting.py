@@ -25,8 +25,15 @@ class TestForecastModel:
         assert ForecastModel.HARMONIC.value == "harmonic"
 
     def test_all_models_defined(self):
-        expected = {"exponential", "hyperbolic", "harmonic", "arima",
-                    "linear", "polynomial", "moving_average"}
+        expected = {
+            "exponential",
+            "hyperbolic",
+            "harmonic",
+            "arima",
+            "linear",
+            "polynomial",
+            "moving_average",
+        }
         actual = {m.value for m in ForecastModel}
         assert actual == expected
 
@@ -290,10 +297,15 @@ class TestEnsembleForecast:
         data = pd.DataFrame({"oil_production": self._make_declining()})
         weights = {"exponential": 0.7, "moving_average": 0.3}
         result = forecaster.ensemble_forecast(
-            data, models=["exponential", "moving_average"],
-            forecast_years=3, weights=weights,
+            data,
+            models=["exponential", "moving_average"],
+            forecast_years=3,
+            weights=weights,
         )
-        assert result["model_weights"]["exponential"] > result["model_weights"]["moving_average"]
+        assert (
+            result["model_weights"]["exponential"]
+            > result["model_weights"]["moving_average"]
+        )
 
 
 class TestScenarioForecast:

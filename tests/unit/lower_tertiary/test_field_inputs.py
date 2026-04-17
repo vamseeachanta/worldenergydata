@@ -4,19 +4,17 @@ Tests for Lower Tertiary NPV field configuration loading and financial calculati
 
 from __future__ import annotations
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import pytest
 
-
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
 from tests.test_markers import unit  # noqa: E402
-
 from worldenergydata.lower_tertiary.npv import (  # noqa: E402
     calculate_monthly_financials,
     load_field_inputs,
@@ -32,7 +30,9 @@ class TestLowerTertiaryFieldInputs:
     @pytest.fixture(scope="class")
     def config_paths(cls):  # type: ignore[override]
         fields_dir = PROJECT_ROOT / "config/analysis/lower_tertiary/fields"
-        lease_mapping_path = PROJECT_ROOT / "config/analysis/lower_tertiary/lease_mapping_fdas.yml"
+        lease_mapping_path = (
+            PROJECT_ROOT / "config/analysis/lower_tertiary/lease_mapping_fdas.yml"
+        )
         return fields_dir, lease_mapping_path
 
     @pytest.fixture(scope="class")
@@ -55,7 +55,9 @@ class TestLowerTertiaryFieldInputs:
         fields_dir, lease_mapping_path = config_paths
         lease_mapping = load_lease_mapping(lease_mapping_path)
 
-        field_inputs = load_field_inputs(fields_dir, lease_mapping, status_filter="producing")
+        field_inputs = load_field_inputs(
+            fields_dir, lease_mapping, status_filter="producing"
+        )
 
         assert "jack_st_malo" in field_inputs
         leases = field_inputs["jack_st_malo"]["leases"]
@@ -73,13 +75,17 @@ class TestLowerTertiaryFieldInputs:
         fields_dir, lease_mapping_path = config_paths
         lease_mapping = load_lease_mapping(lease_mapping_path)
 
-        field_inputs = load_field_inputs(fields_dir, lease_mapping, status_filter="producing")
+        field_inputs = load_field_inputs(
+            fields_dir, lease_mapping, status_filter="producing"
+        )
 
         assert "kaskida" not in field_inputs
         assert "tiber" not in field_inputs
         assert "shenandoah" not in field_inputs
 
-    def test_calculate_monthly_financials_returns_expected_components(self, econ_config):
+    def test_calculate_monthly_financials_returns_expected_components(
+        self, econ_config
+    ):
         monthly = pd.DataFrame(
             {
                 "field": ["Sample", "Sample"],
@@ -91,12 +97,20 @@ class TestLowerTertiaryFieldInputs:
 
         result = calculate_monthly_financials(monthly, econ_config, opex_per_boe=15.0)
 
-        assert {"oil_revenue", "gas_revenue", "total_revenue", "royalty", "operating_cash_flow"}.issubset(result.columns)
+        assert {
+            "oil_revenue",
+            "gas_revenue",
+            "total_revenue",
+            "royalty",
+            "operating_cash_flow",
+        }.issubset(result.columns)
         total_revenue = result["total_revenue"].sum()
         expected_revenue = (1500.0 * 75.0) + (9000.0 * 3.50)
         assert total_revenue == pytest.approx(expected_revenue)
 
-    def test_summarize_field_financials_computes_discounted_cash_flow(self, econ_config):
+    def test_summarize_field_financials_computes_discounted_cash_flow(
+        self, econ_config
+    ):
         monthly = pd.DataFrame(
             {
                 "field": ["Sample", "Sample"],
@@ -119,11 +133,20 @@ class TestLowerTertiaryFieldInputs:
 
         summary = summarize_field_financials(monthly, field_info, econ_config)
 
-        monthly_discount = (1 + econ_config["financial_metrics"]["discount_rates"]["primary_discount_rate"]) ** (1 / 12) - 1
+        monthly_discount = (
+            1
+            + econ_config["financial_metrics"]["discount_rates"][
+                "primary_discount_rate"
+            ]
+        ) ** (1 / 12) - 1
         expected_pv = 120_000_000.0 + (100_000_000.0 / (1 + monthly_discount))
         expected_npv_ops = expected_pv / 1_000_000.0
         expected_project_npv = expected_npv_ops - 150.0
 
-        assert summary["NPV Operations ($MM)"] == pytest.approx(expected_npv_ops, rel=1e-6)
-        assert summary["NPV Project ($MM)"] == pytest.approx(expected_project_npv, rel=1e-6)
+        assert summary["NPV Operations ($MM)"] == pytest.approx(
+            expected_npv_ops, rel=1e-6
+        )
+        assert summary["NPV Project ($MM)"] == pytest.approx(
+            expected_project_npv, rel=1e-6
+        )
         assert summary["Field"] == "Sample Field"

@@ -187,9 +187,7 @@ class BseeDeclineAdapter:
             shut_in_periods=int(shut_in_count),
         )
 
-    def _resolve_volume_column(
-        self, df: pd.DataFrame, product: str
-    ) -> Tuple[str, str]:
+    def _resolve_volume_column(self, df: pd.DataFrame, product: str) -> Tuple[str, str]:
         """Resolve volume column name based on product type."""
         if product == "oil":
             col = _pick_col(df, _OIL_VOL_CANDIDATES)
@@ -210,9 +208,7 @@ class BseeDeclineAdapter:
             )
         return col, unit
 
-    def load_production_binary(
-        self, bin_path: Path
-    ) -> Optional[pd.DataFrame]:
+    def load_production_binary(self, bin_path: Path) -> Optional[pd.DataFrame]:
         """Load a BSEE production .bin file, handling LFS stubs.
 
         Returns None if the file is an LFS stub.

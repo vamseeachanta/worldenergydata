@@ -3,12 +3,12 @@
 import pytest
 
 from worldenergydata.ukcs.analysis.cross_basin_example import (
-    CrossBasinComparator,
+    MOCK_EDVARD_GRIEG_PROFILE,
+    MOCK_FORTIES_PROFILE,
+    MOCK_GOM_FIELD_PROFILE,
     BasinProfile,
     ComparisonResult,
-    MOCK_FORTIES_PROFILE,
-    MOCK_EDVARD_GRIEG_PROFILE,
-    MOCK_GOM_FIELD_PROFILE,
+    CrossBasinComparator,
 )
 
 

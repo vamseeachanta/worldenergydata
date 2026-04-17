@@ -3,12 +3,12 @@
 
 """Unit tests for worldenergydata.bsee.analysis.cost.regional_loader."""
 
-import pytest
 from pathlib import Path
 
-from worldenergydata.bsee.analysis.cost.regional_loader import RegionalCostLoader
-from worldenergydata.bsee.analysis.cost.models import ActivityType, WaterDepthBand
+import pytest
 
+from worldenergydata.bsee.analysis.cost.models import ActivityType, WaterDepthBand
+from worldenergydata.bsee.analysis.cost.regional_loader import RegionalCostLoader
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -23,9 +23,7 @@ def loader() -> RegionalCostLoader:
     test file is at: <repo_root>/tests/unit/bsee/analysis/cost/test_*.py
     parents[5] = <repo_root>
     """
-    config_root = (
-        Path(__file__).parents[5] / "config" / "analysis" / "cost_data"
-    )
+    config_root = Path(__file__).parents[5] / "config" / "analysis" / "cost_data"
     return RegionalCostLoader(config_dir=config_root)
 
 

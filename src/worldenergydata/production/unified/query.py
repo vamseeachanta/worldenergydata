@@ -12,7 +12,6 @@ from typing import List, Optional
 
 import pandas as pd
 
-
 # Standard columns that every adapter must return.
 STANDARD_COLUMNS: tuple[str, ...] = (
     "region",

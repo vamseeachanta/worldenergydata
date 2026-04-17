@@ -36,7 +36,6 @@ from worldenergydata.cost.data_collection.calibration_schema import (
     WellDepthBand,
 )
 
-
 # ---------------------------------------------------------------------------
 # Raw data records
 # ---------------------------------------------------------------------------
@@ -264,8 +263,7 @@ _RAW_RECORDS: list[dict] = [
         "cost_usd_mm": 325.0,
         "cost_type": CostType.TOTAL_CAPEX,
         "source": (
-            "Aker BP PDO submission 2022; "
-            "NPD field approvals register — Tyrving"
+            "Aker BP PDO submission 2022; " "NPD field approvals register — Tyrving"
         ),
         "confidence": Confidence.HIGH,
     },
@@ -285,9 +283,7 @@ _RAW_RECORDS: list[dict] = [
         "subsea": SubseaType.SUBSEA,
         "cost_usd_mm": 175.0,
         "cost_type": CostType.TOTAL_CAPEX,
-        "source": (
-            "Aker BP FID 2021; NPD PDO approval — Frosk development"
-        ),
+        "source": ("Aker BP FID 2021; NPD PDO approval — Frosk development"),
         "confidence": Confidence.HIGH,
     },
     # ---- UK Continental Shelf (UKCS) ----
@@ -863,9 +859,7 @@ _RAW_RECORDS: list[dict] = [
         "subsea": SubseaType.SUBSEA,
         "cost_usd_mm": 420.0,
         "cost_type": CostType.TOTAL_CAPEX,
-        "source": (
-            "Aker BP PDO 2022; NPD field approvals — Verdande development"
-        ),
+        "source": ("Aker BP PDO 2022; NPD field approvals — Verdande development"),
         "confidence": Confidence.HIGH,
     },
     {
@@ -1327,9 +1321,7 @@ _RAW_RECORDS: list[dict] = [
         "subsea": SubseaType.SUBSEA,
         "cost_usd_mm": 320.0,
         "cost_type": CostType.TOTAL_CAPEX,
-        "source": (
-            "Medco Energi Annual Report 2019 — Sangkuriang development ~$320MM"
-        ),
+        "source": ("Medco Energi Annual Report 2019 — Sangkuriang development ~$320MM"),
         "confidence": Confidence.MEDIUM,
     },
     {

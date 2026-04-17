@@ -131,10 +131,12 @@ class TestValidateFinancialAssumptions:
 
 class TestValidateProductionData:
     def test_valid(self):
-        df = pd.DataFrame({
-            "YearMonth": pd.to_datetime(["2024-01-01", "2024-02-01"]),
-            "OIL": [1000, 2000],
-        })
+        df = pd.DataFrame(
+            {
+                "YearMonth": pd.to_datetime(["2024-01-01", "2024-02-01"]),
+                "OIL": [1000, 2000],
+            }
+        )
         is_valid, errors = validate_production_data(df)
         assert is_valid is True
         assert errors == []
@@ -146,10 +148,12 @@ class TestValidateProductionData:
         assert any("YearMonth" in e for e in errors)
 
     def test_negative_production(self):
-        df = pd.DataFrame({
-            "YearMonth": pd.to_datetime(["2024-01-01"]),
-            "OIL": [-100],
-        })
+        df = pd.DataFrame(
+            {
+                "YearMonth": pd.to_datetime(["2024-01-01"]),
+                "OIL": [-100],
+            }
+        )
         is_valid, errors = validate_production_data(df)
         assert is_valid is False
         assert any("negative" in e for e in errors)
@@ -173,19 +177,23 @@ class TestValidateDrillingData:
         assert is_valid is False
 
     def test_td_before_spud(self):
-        df = pd.DataFrame({
-            "WELL_SPUD_DATE": ["2024-06-01"],
-            "TOTAL_DEPTH_DATE": ["2024-01-01"],
-        })
+        df = pd.DataFrame(
+            {
+                "WELL_SPUD_DATE": ["2024-06-01"],
+                "TOTAL_DEPTH_DATE": ["2024-01-01"],
+            }
+        )
         is_valid, errors = validate_drilling_data(df)
         assert is_valid is False
         assert any("total depth date before spud" in e for e in errors)
 
     def test_valid_dates(self):
-        df = pd.DataFrame({
-            "WELL_SPUD_DATE": ["2024-01-01"],
-            "TOTAL_DEPTH_DATE": ["2024-06-01"],
-        })
+        df = pd.DataFrame(
+            {
+                "WELL_SPUD_DATE": ["2024-01-01"],
+                "TOTAL_DEPTH_DATE": ["2024-06-01"],
+            }
+        )
         is_valid, errors = validate_drilling_data(df)
         assert is_valid is True
 
@@ -233,7 +241,8 @@ class TestDataValidator:
         df = pd.DataFrame({"A": [1, 2, 3], "B": ["x", "y", "z"]})
         actual_b_type = str(df["B"].dtype)
         is_valid, mismatches = v.validate_data_types(
-            df, {"A": "int64", "B": actual_b_type},
+            df,
+            {"A": "int64", "B": actual_b_type},
         )
         assert is_valid is True
         assert mismatches == {}
@@ -321,10 +330,12 @@ class TestValidateNumericColumns:
 class TestDataValidatorProduction:
     def test_validate_production_valid(self):
         v = DataValidator()
-        df = pd.DataFrame({
-            "YearMonth": pd.to_datetime(["2024-01-01"]),
-            "OIL": [1000],
-        })
+        df = pd.DataFrame(
+            {
+                "YearMonth": pd.to_datetime(["2024-01-01"]),
+                "OIL": [1000],
+            }
+        )
         is_valid, errors = v.validate_production_data(df)
         assert is_valid is True
         report = v.get_validation_report()
@@ -358,20 +369,24 @@ class TestDataValidatorDrilling:
 class TestDataValidatorConsistency:
     def test_matching_wells(self):
         v = DataValidator()
-        prod_df = pd.DataFrame({
-            "YearMonth": pd.to_datetime(["2024-01-01"]),
-            "WELL_A": [1000],
-        })
+        prod_df = pd.DataFrame(
+            {
+                "YearMonth": pd.to_datetime(["2024-01-01"]),
+                "WELL_A": [1000],
+            }
+        )
         drill_df = pd.DataFrame({"WELL_NAME": ["WELL_A"]})
         warnings = v.check_data_consistency(prod_df, drill_df)
         assert warnings == []
 
     def test_mismatched_wells(self):
         v = DataValidator()
-        prod_df = pd.DataFrame({
-            "YearMonth": pd.to_datetime(["2024-01-01"]),
-            "WELL_A": [1000],
-        })
+        prod_df = pd.DataFrame(
+            {
+                "YearMonth": pd.to_datetime(["2024-01-01"]),
+                "WELL_A": [1000],
+            }
+        )
         drill_df = pd.DataFrame({"WELL_NAME": ["WELL_B"]})
         warnings = v.check_data_consistency(prod_df, drill_df)
         assert len(warnings) > 0
@@ -386,10 +401,12 @@ class TestDataValidatorComprehensive:
     def test_all_valid(self):
         v = DataValidator()
         data = {
-            "production": pd.DataFrame({
-                "YearMonth": pd.to_datetime(["2024-01-01"]),
-                "OIL": [1000],
-            }),
+            "production": pd.DataFrame(
+                {
+                    "YearMonth": pd.to_datetime(["2024-01-01"]),
+                    "OIL": [1000],
+                }
+            ),
             "drilling": pd.DataFrame({"DRILL_DAYS": [30]}),
             "assumptions": {
                 "NPV_Discount_Rate": 0.10,

@@ -15,15 +15,14 @@ from typing import List
 
 import pandas as pd
 
+from worldenergydata.common.logging import get_logger
+from worldenergydata.production.unified.normalizer import Normalizer
 from worldenergydata.production.unified.query import (
+    STANDARD_COLUMNS,
     ProductionQuery,
     ProductionResult,
-    STANDARD_COLUMNS,
 )
 from worldenergydata.production.unified.router import RegionRouter
-from worldenergydata.production.unified.normalizer import Normalizer
-
-from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
 

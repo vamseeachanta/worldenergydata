@@ -114,9 +114,7 @@ class TestCostCalculation:
         production = {"oil_bbls": 1000, "gas_mcf": 6000}
         gross_revenue = 100000.0
 
-        op_cost = cs.get_operating_cost(
-            production["oil_bbls"], production["gas_mcf"]
-        )
+        op_cost = cs.get_operating_cost(production["oil_bbls"], production["gas_mcf"])
         royalties = cs.get_royalties(gross_revenue)
         sev_tax = cs.get_severance_tax(gross_revenue)
         total_costs = op_cost + royalties + sev_tax
@@ -140,11 +138,13 @@ class TestCostCalculation:
 # BaseAggregator (actual class instance)
 # ---------------------------------------------------------------------------
 
+
 class TestBaseAggregatorInstance:
     def test_default_init(self):
         from worldenergydata.bsee.reports.comprehensive.hierarchical_aggregator import (
             BaseAggregator,
         )
+
         agg = BaseAggregator()
         assert isinstance(agg.price_deck, PriceDeck)
         assert isinstance(agg.cost_structure, CostStructure)
@@ -153,6 +153,7 @@ class TestBaseAggregatorInstance:
         from worldenergydata.bsee.reports.comprehensive.hierarchical_aggregator import (
             BaseAggregator,
         )
+
         pd_custom = PriceDeck(oil_price=80.0)
         cs_custom = CostStructure(royalty_rate=0.20)
         agg = BaseAggregator(price_deck=pd_custom, cost_structure=cs_custom)
@@ -163,6 +164,7 @@ class TestBaseAggregatorInstance:
         from worldenergydata.bsee.reports.comprehensive.hierarchical_aggregator import (
             BaseAggregator,
         )
+
         agg = BaseAggregator(
             price_deck=PriceDeck(oil_price=75.0, gas_price=3.5, ngl_price=30.0)
         )
@@ -177,6 +179,7 @@ class TestBaseAggregatorInstance:
         from worldenergydata.bsee.reports.comprehensive.hierarchical_aggregator import (
             BaseAggregator,
         )
+
         agg = BaseAggregator()
         rev = agg.calculate_revenue({})
         assert rev["oil_revenue"] == 0.0
@@ -186,6 +189,7 @@ class TestBaseAggregatorInstance:
         from worldenergydata.bsee.reports.comprehensive.hierarchical_aggregator import (
             BaseAggregator,
         )
+
         agg = BaseAggregator(
             cost_structure=CostStructure(
                 operating_cost_per_bbl=10.0,
@@ -206,6 +210,7 @@ class TestBaseAggregatorInstance:
         from worldenergydata.bsee.reports.comprehensive.hierarchical_aggregator import (
             BaseAggregator,
         )
+
         agg = BaseAggregator()
         with pytest.raises(NotImplementedError):
             agg.aggregate(None)
@@ -215,11 +220,13 @@ class TestBaseAggregatorInstance:
 # HierarchicalAggregator._generate_summary
 # ---------------------------------------------------------------------------
 
+
 class TestGenerateSummary:
     def test_empty_data(self):
         from worldenergydata.bsee.reports.comprehensive.hierarchical_aggregator import (
             HierarchicalAggregator,
         )
+
         ha = HierarchicalAggregator()
         result = ha._generate_summary({})
         assert result == {}
@@ -228,6 +235,7 @@ class TestGenerateSummary:
         from worldenergydata.bsee.reports.comprehensive.hierarchical_aggregator import (
             HierarchicalAggregator,
         )
+
         ha = HierarchicalAggregator()
         data = {
             "block1": {
@@ -252,6 +260,7 @@ class TestGenerateSummary:
         from worldenergydata.bsee.reports.comprehensive.hierarchical_aggregator import (
             HierarchicalAggregator,
         )
+
         ha = HierarchicalAggregator()
         data = {
             "b1": {
@@ -281,6 +290,7 @@ class TestGenerateSummary:
         from worldenergydata.bsee.reports.comprehensive.hierarchical_aggregator import (
             HierarchicalAggregator,
         )
+
         ha = HierarchicalAggregator()
         data = {
             "b1": {
@@ -299,6 +309,7 @@ class TestGenerateSummary:
         from worldenergydata.bsee.reports.comprehensive.hierarchical_aggregator import (
             HierarchicalAggregator,
         )
+
         ha = HierarchicalAggregator()
         with pytest.raises(ValueError, match="Invalid aggregation level"):
             ha.aggregate_hierarchy({}, level="invalid")

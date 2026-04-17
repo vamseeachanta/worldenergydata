@@ -123,5 +123,12 @@ class TestSummaryTable:
     def test_all_domains_present(self):
         rows = summary_table()
         domains = {r["domain"] for r in rows}
-        expected = {"wellbore", "well_path", "casing", "drilling_completion", "intervention", "production"}
+        expected = {
+            "wellbore",
+            "well_path",
+            "casing",
+            "drilling_completion",
+            "intervention",
+            "production",
+        }
         assert domains == expected

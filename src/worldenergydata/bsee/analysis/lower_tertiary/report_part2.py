@@ -48,10 +48,7 @@ def _card(title: str, value: str, unit: str = "") -> str:
 def _tbl(hdr: list[str], rows: list[list[Any]]) -> str:
     """Render a data-table with header and body rows."""
     h = "".join(f"<th>{x}</th>" for x in hdr)
-    b = "".join(
-        "<tr>" + "".join(f"<td>{c}</td>" for c in r) + "</tr>"
-        for r in rows
-    )
+    b = "".join("<tr>" + "".join(f"<td>{c}</td>" for c in r) + "</tr>" for r in rows)
     return (
         f'<table class="data-table"><thead><tr>{h}</tr></thead>'
         f"<tbody>{b}</tbody></table>"
@@ -163,8 +160,7 @@ class Part2Report:
                 text=z,
                 texttemplate="%{text}",
                 hovertemplate=(
-                    "System: %{y}<br>Criteria: %{x}<br>"
-                    "Rating: %{z}<extra></extra>"
+                    "System: %{y}<br>Criteria: %{x}<br>" "Rating: %{z}<extra></extra>"
                 ),
             )
         )
@@ -217,9 +213,7 @@ class Part2Report:
                 orientation="h",
                 name="Depth Range",
                 marker_color=_PAL[: len(systems)],
-                text=[
-                    f"{mn:,}-{mx:,} ft" for mn, mx in zip(mins, maxs)
-                ],
+                text=[f"{mn:,}-{mx:,} ft" for mn, mx in zip(mins, maxs)],
                 textposition="inside",
             )
         )
@@ -370,21 +364,13 @@ class Part2Report:
         rows: list[list[str]] = []
         for system, data in pc.items():
             pros_html = (
-                "<ul>"
-                + "".join(f"<li>{p}</li>" for p in data["pros"])
-                + "</ul>"
+                "<ul>" + "".join(f"<li>{p}</li>" for p in data["pros"]) + "</ul>"
             )
             cons_html = (
-                "<ul>"
-                + "".join(f"<li>{c}</li>" for c in data["cons"])
-                + "</ul>"
+                "<ul>" + "".join(f"<li>{c}</li>" for c in data["cons"]) + "</ul>"
             )
-            rows.append(
-                [f"<strong>{system}</strong>", pros_html, cons_html]
-            )
-        table = _tbl(
-            ["Architecture", "Advantages", "Disadvantages"], rows
-        )
+            rows.append([f"<strong>{system}</strong>", pros_html, cons_html])
+        table = _tbl(["Architecture", "Advantages", "Disadvantages"], rows)
         return {"title": "Architecture Pros & Cons", "content": table}
 
     # -- Section 8: Conclusions ------------------------------------------------
@@ -420,10 +406,7 @@ class Part2Report:
         for i, s in enumerate(sections, 1):
             aid = f"section-{i}"
             toc += f'<li><a href="#{aid}">{s["title"]}</a></li>'
-            body += (
-                f'<div class="section" id="{aid}">'
-                f"<h2>{i}. {s['title']}</h2>"
-            )
+            body += f'<div class="section" id="{aid}">' f"<h2>{i}. {s['title']}</h2>"
             for c in s.get("charts", []):
                 body += f'<div class="chart-container">{c}</div>'
             body += s.get("content", "") + "</div>"

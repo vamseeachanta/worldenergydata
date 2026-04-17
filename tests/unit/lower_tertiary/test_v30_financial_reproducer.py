@@ -13,18 +13,20 @@ from worldenergydata.lower_tertiary.v30_financial_reproducer import (
     _norm_name,
 )
 
-
 # ---------------------------------------------------------------------------
 # _get_assumption
 # ---------------------------------------------------------------------------
 
+
 class TestGetAssumption:
     def setup_method(self):
-        self.assumptions = pd.DataFrame({
-            "DEV_SYSTEM": ["subsea15", "subsea20", "dry", "default"],
-            "MODU_LOADED_DAYRATE_MM": [0.8, 1.0, 0.6, 0.5],
-            "HOST_CAPEX_MM": [100.0, 120.0, 80.0, 50.0],
-        })
+        self.assumptions = pd.DataFrame(
+            {
+                "DEV_SYSTEM": ["subsea15", "subsea20", "dry", "default"],
+                "MODU_LOADED_DAYRATE_MM": [0.8, 1.0, 0.6, 0.5],
+                "HOST_CAPEX_MM": [100.0, 120.0, 80.0, 50.0],
+            }
+        )
 
     def test_exact_match(self):
         result = _get_assumption(self.assumptions, "subsea15", "MODU_LOADED_DAYRATE_MM")
@@ -39,26 +41,32 @@ class TestGetAssumption:
         assert result == 99.0
 
     def test_nan_returns_default(self):
-        df = pd.DataFrame({
-            "DEV_SYSTEM": ["test"],
-            "METRIC_A": [float("nan")],
-        })
+        df = pd.DataFrame(
+            {
+                "DEV_SYSTEM": ["test"],
+                "METRIC_A": [float("nan")],
+            }
+        )
         result = _get_assumption(df, "test", "METRIC_A", 42.0)
         assert result == 42.0
 
     def test_non_numeric_returns_default(self):
-        df = pd.DataFrame({
-            "DEV_SYSTEM": ["test"],
-            "METRIC_A": ["not_a_number"],
-        })
+        df = pd.DataFrame(
+            {
+                "DEV_SYSTEM": ["test"],
+                "METRIC_A": ["not_a_number"],
+            }
+        )
         result = _get_assumption(df, "test", "METRIC_A", 10.0)
         assert result == 10.0
 
     def test_no_matching_row_no_default_row(self):
-        df = pd.DataFrame({
-            "DEV_SYSTEM": ["subsea15"],
-            "METRIC_A": [1.0],
-        })
+        df = pd.DataFrame(
+            {
+                "DEV_SYSTEM": ["subsea15"],
+                "METRIC_A": [1.0],
+            }
+        )
         result = _get_assumption(df, "unknown", "METRIC_A", 5.0)
         assert result == 5.0
 
@@ -70,6 +78,7 @@ class TestGetAssumption:
 # ---------------------------------------------------------------------------
 # _month_floor
 # ---------------------------------------------------------------------------
+
 
 class TestMonthFloor:
     def test_mid_month(self):
@@ -96,6 +105,7 @@ class TestMonthFloor:
 # _norm_name
 # ---------------------------------------------------------------------------
 
+
 class TestNormName:
     def test_strips(self):
         assert _norm_name("  Hello  ") == "Hello"
@@ -119,6 +129,7 @@ class TestNormName:
 # ---------------------------------------------------------------------------
 # _excel_like_mirr
 # ---------------------------------------------------------------------------
+
 
 class TestExcelLikeMirr:
     def test_simple_investment(self):

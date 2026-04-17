@@ -14,8 +14,6 @@ Example usage:
     logger.info(settings.bsee_api_base_url)
 """
 
-from worldenergydata.common.data_resolver import get_data_root_safe
-
 import os
 from functools import lru_cache
 from pathlib import Path
@@ -24,6 +22,7 @@ from typing import Any, Dict
 from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from worldenergydata.common.data_resolver import get_data_root_safe
 from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)

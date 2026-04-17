@@ -43,7 +43,9 @@ class TestMPDConfigurationDataclass:
 
     def test_all_configs_have_typical_applications(self):
         for cfg in MPD_CONFIGURATIONS:
-            assert cfg.typical_applications, f"{cfg.config_type} has empty typical_applications"
+            assert (
+                cfg.typical_applications
+            ), f"{cfg.config_type} has empty typical_applications"
 
     def test_all_configs_have_key_equipment(self):
         for cfg in MPD_CONFIGURATIONS:

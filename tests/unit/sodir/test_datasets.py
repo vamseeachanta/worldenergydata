@@ -33,18 +33,21 @@ def _make_production_df(**overrides):
 
 
 def _make_field_df():
-    return pd.DataFrame({
-        "field_id": ["F1", "F2"],
-        "field_name": ["Troll", "Ekofisk"],
-        "operator": ["Equinor", "ConocoPhillips"],
-        "discovery_year": [1979, 1969],
-        "recoverable_oil": [1000.0, 500.0],
-    })
+    return pd.DataFrame(
+        {
+            "field_id": ["F1", "F2"],
+            "field_name": ["Troll", "Ekofisk"],
+            "operator": ["Equinor", "ConocoPhillips"],
+            "discovery_year": [1979, 1969],
+            "recoverable_oil": [1000.0, 500.0],
+        }
+    )
 
 
 # ---------------------------------------------------------------------------
 # DatasetGenerator init
 # ---------------------------------------------------------------------------
+
 
 class TestDatasetGeneratorInit:
     def test_init(self):
@@ -62,6 +65,7 @@ class TestDatasetGeneratorInit:
 # ---------------------------------------------------------------------------
 # create_wellbore_dataset
 # ---------------------------------------------------------------------------
+
 
 class TestCreateWellboreDataset:
     def test_basic(self):
@@ -84,8 +88,8 @@ class TestCreateWellboreDataset:
         df = _make_wellbore_df()
         result = gen.create_wellbore_dataset(df)
         assert "is_successful" in result.columns
-        assert result.loc[0, "is_successful"] == True   # PRODUCING
-        assert result.loc[2, "is_successful"] == False   # ABANDONED
+        assert result.loc[0, "is_successful"] == True  # PRODUCING
+        assert result.loc[2, "is_successful"] == False  # ABANDONED
 
     def test_water_depth_category(self):
         gen = DatasetGenerator()
@@ -119,6 +123,7 @@ class TestCreateWellboreDataset:
 # generate_wellbore_dataset
 # ---------------------------------------------------------------------------
 
+
 class TestGenerateWellboreDataset:
     def test_from_dataframe(self):
         gen = DatasetGenerator()
@@ -138,6 +143,7 @@ class TestGenerateWellboreDataset:
 # ---------------------------------------------------------------------------
 # create_production_dataset
 # ---------------------------------------------------------------------------
+
 
 class TestCreateProductionDataset:
     def test_basic(self):
@@ -167,7 +173,14 @@ class TestCreateProductionDataset:
 class TestGenerateProductionDataset:
     def test_from_list(self):
         gen = DatasetGenerator()
-        data = [{"field_id": "F1", "production_date": "2020-01-01", "oil_production": 100, "gas_production": 6000}]
+        data = [
+            {
+                "field_id": "F1",
+                "production_date": "2020-01-01",
+                "oil_production": 100,
+                "gas_production": 6000,
+            }
+        ]
         fields = _make_field_df()
         result = gen.generate_production_dataset(data, fields)
         assert len(result) >= 1
@@ -183,27 +196,34 @@ class TestGenerateProductionDataset:
 # create_cross_regional_dataset
 # ---------------------------------------------------------------------------
 
+
 class TestCreateCrossRegionalDataset:
     def test_sodir_only(self):
         gen = DatasetGenerator()
-        sodir = pd.DataFrame({
-            "field_id": ["F1"],
-            "water_depth_m": [300.0],
-        })
+        sodir = pd.DataFrame(
+            {
+                "field_id": ["F1"],
+                "water_depth_m": [300.0],
+            }
+        )
         result = gen.create_cross_regional_dataset(sodir)
         assert result["region"].iloc[0] == "Norway_NCS"
         assert result["regulatory_body"].iloc[0] == "SODIR"
 
     def test_with_bsee(self):
         gen = DatasetGenerator()
-        sodir = pd.DataFrame({
-            "field_id": ["F1"],
-            "water_depth_m": [300.0],
-        })
-        bsee = pd.DataFrame({
-            "field_id": ["F2"],
-            "water_depth_m": [1500.0],
-        })
+        sodir = pd.DataFrame(
+            {
+                "field_id": ["F1"],
+                "water_depth_m": [300.0],
+            }
+        )
+        bsee = pd.DataFrame(
+            {
+                "field_id": ["F2"],
+                "water_depth_m": [1500.0],
+            }
+        )
         result = gen.create_cross_regional_dataset(sodir, bsee)
         assert set(result["region"].unique()) == {"Norway_NCS", "US_GOM"}
 
@@ -212,23 +232,28 @@ class TestCreateCrossRegionalDataset:
 # create_summary_statistics
 # ---------------------------------------------------------------------------
 
+
 class TestCreateSummaryStatistics:
     def test_basic(self):
         gen = DatasetGenerator()
-        df = pd.DataFrame({
-            "region": ["A", "A", "B"],
-            "oil": [100.0, 200.0, 300.0],
-        })
+        df = pd.DataFrame(
+            {
+                "region": ["A", "A", "B"],
+                "oil": [100.0, 200.0, 300.0],
+            }
+        )
         result = gen.create_summary_statistics(df, ["region"], ["oil"])
         assert "oil_mean" in result.columns
         assert len(result) == 2
 
     def test_non_numeric(self):
         gen = DatasetGenerator()
-        df = pd.DataFrame({
-            "region": ["A", "A", "B"],
-            "status": ["active", "active", "idle"],
-        })
+        df = pd.DataFrame(
+            {
+                "region": ["A", "A", "B"],
+                "status": ["active", "active", "idle"],
+            }
+        )
         result = gen.create_summary_statistics(df, ["region"], ["status"])
         assert "status_count" in result.columns
 
@@ -237,17 +262,20 @@ class TestCreateSummaryStatistics:
 # validate_dataset
 # ---------------------------------------------------------------------------
 
+
 class TestValidateDataset:
     def test_valid(self):
         gen = DatasetGenerator()
-        df = pd.DataFrame({
-            "wellbore_id": ["W1"],
-            "field_id": ["F1"],
-            "status": ["PRODUCING"],
-            "depth_meters": [3000],
-            "coordinates": ["(60,5)"],
-            "spud_date": ["2020-01-01"],
-        })
+        df = pd.DataFrame(
+            {
+                "wellbore_id": ["W1"],
+                "field_id": ["F1"],
+                "status": ["PRODUCING"],
+                "depth_meters": [3000],
+                "coordinates": ["(60,5)"],
+                "spud_date": ["2020-01-01"],
+            }
+        )
         result = gen.validate_dataset(df, "wellbore_analysis")
         assert result["valid"] is True
         assert result["record_count"] == 1
@@ -261,14 +289,16 @@ class TestValidateDataset:
 
     def test_low_completeness_warning(self):
         gen = DatasetGenerator()
-        df = pd.DataFrame({
-            "wellbore_id": ["W1", "W2", "W3", "W4"],
-            "field_id": [None, None, None, "F1"],
-            "status": ["A", "B", "C", "D"],
-            "depth_meters": [1, 2, 3, 4],
-            "coordinates": ["a", "b", "c", "d"],
-            "spud_date": ["2020", "2021", "2022", "2023"],
-        })
+        df = pd.DataFrame(
+            {
+                "wellbore_id": ["W1", "W2", "W3", "W4"],
+                "field_id": [None, None, None, "F1"],
+                "status": ["A", "B", "C", "D"],
+                "depth_meters": [1, 2, 3, 4],
+                "coordinates": ["a", "b", "c", "d"],
+                "spud_date": ["2020", "2021", "2022", "2023"],
+            }
+        )
         result = gen.validate_dataset(df, "wellbore_analysis")
         assert any("Low completeness" in w for w in result["warnings"])
 
@@ -280,9 +310,11 @@ class TestValidateDataset:
 
     def test_duplicate_warning(self):
         gen = DatasetGenerator()
-        df = pd.DataFrame({
-            "wellbore_id": ["W1", "W1"],
-            "field_id": ["F1", "F1"],
-        })
+        df = pd.DataFrame(
+            {
+                "wellbore_id": ["W1", "W1"],
+                "field_id": ["F1", "F1"],
+            }
+        )
         result = gen.validate_dataset(df, "wellbore_analysis")
         assert any("duplicate" in w.lower() for w in result["warnings"])

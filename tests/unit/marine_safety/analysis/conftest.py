@@ -1,9 +1,10 @@
 # ABOUTME: Pytest configuration and shared fixtures for marine safety analysis tests
 # ABOUTME: Configures test options, markers, and provides reusable test fixtures
 
-import pytest
 import warnings
 from typing import Generator
+
+import pytest
 
 
 def pytest_addoption(parser):
@@ -12,13 +13,13 @@ def pytest_addoption(parser):
         "--runslow",
         action="store_true",
         default=False,
-        help="run slow tests (performance, memory tests)"
+        help="run slow tests (performance, memory tests)",
     )
     parser.addoption(
         "--with-llm",
         action="store_true",
         default=False,
-        help="run LLM integration tests (requires transformers and torch)"
+        help="run LLM integration tests (requires transformers and torch)",
     )
 
 
@@ -27,12 +28,8 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "slow: mark test as slow (deselect with '-m \"not slow\"')"
     )
-    config.addinivalue_line(
-        "markers", "llm: mark test as requiring LLM dependencies"
-    )
-    config.addinivalue_line(
-        "markers", "integration: mark test as integration test"
-    )
+    config.addinivalue_line("markers", "llm: mark test as requiring LLM dependencies")
+    config.addinivalue_line("markers", "integration: mark test as integration test")
 
 
 def pytest_collection_modifyitems(config, items):
@@ -67,8 +64,9 @@ def suppress_warnings():
 def check_llm_dependencies():
     """Check if LLM dependencies are available."""
     try:
-        import transformers
         import torch
+        import transformers
+
         return True
     except ImportError:
         return False
@@ -79,6 +77,7 @@ def check_performance_dependencies():
     """Check if performance testing dependencies are available."""
     try:
         import psutil
+
         return True
     except ImportError:
         return False
@@ -88,7 +87,7 @@ def check_performance_dependencies():
 def sample_hatch_narratives():
     """Provide sample hatch maloperation narratives for testing."""
     return {
-        'positive': [
+        "positive": [
             "hatch cover not properly secured before departure",
             "engine room access hatch left unsecured",
             "watertight door to engine room found open",
@@ -98,7 +97,7 @@ def sample_hatch_narratives():
             "quick-acting watertight door mechanism malfunction",
             "access hatch to void space discovered unsealed",
         ],
-        'negative': [
+        "negative": [
             "collision with another vessel in restricted waters",
             "fire in engine room due to fuel line rupture",
             "grounding on uncharted reef in shallow water",
@@ -107,20 +106,23 @@ def sample_hatch_narratives():
             "main engine breakdown in heavy seas",
             "cargo shift in rough weather conditions",
             "flooding due to hull breach from container strike",
-        ]
+        ],
     }
 
 
 @pytest.fixture
 def sample_incident_dataframe():
     """Provide sample incident DataFrame for testing."""
-    import pandas as pd
     from datetime import datetime, timedelta
 
+    import pandas as pd
+
     data = {
-        'INCIDENT_ID': range(1, 11),
-        'DATE': [(datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d') for i in range(10)],
-        'NARRATIVE': [
+        "INCIDENT_ID": range(1, 11),
+        "DATE": [
+            (datetime.now() - timedelta(days=i)).strftime("%Y-%m-%d") for i in range(10)
+        ],
+        "NARRATIVE": [
             "hatch cover not properly secured before departure",
             "collision with another vessel",
             "engine room access hatch left unsecured",
@@ -132,9 +134,19 @@ def sample_incident_dataframe():
             "escape hatch from engine room ajar",
             "equipment failure",
         ],
-        'SEVERITY': ['MINOR', 'SERIOUS', 'MINOR', 'CRITICAL', 'SERIOUS',
-                    'SERIOUS', 'MINOR', 'MINOR', 'SERIOUS', 'MINOR'],
-        'VESSEL_TYPE': ['BULK CARRIER'] * 10,
+        "SEVERITY": [
+            "MINOR",
+            "SERIOUS",
+            "MINOR",
+            "CRITICAL",
+            "SERIOUS",
+            "SERIOUS",
+            "MINOR",
+            "MINOR",
+            "SERIOUS",
+            "MINOR",
+        ],
+        "VESSEL_TYPE": ["BULK CARRIER"] * 10,
     }
 
     return pd.DataFrame(data)
@@ -144,23 +156,24 @@ def sample_incident_dataframe():
 def edge_case_narratives():
     """Provide edge case narratives for testing."""
     return {
-        'empty': "",
-        'none': None,
-        'whitespace': "   \t\n  ",
-        'very_long': "The hatch was not closed properly. " * 500,
-        'special_chars': "hatch #12 not secured!!! [critical]",
-        'multilingual': {
-            'spanish': "La escotilla no estaba cerrada correctamente",
-            'french': "L'écoutille n'était pas correctement fermée",
-            'german': "Die Luke war nicht richtig geschlossen",
-            'chinese': "艙口蓋未正確關閉",
-        }
+        "empty": "",
+        "none": None,
+        "whitespace": "   \t\n  ",
+        "very_long": "The hatch was not closed properly. " * 500,
+        "special_chars": "hatch #12 not secured!!! [critical]",
+        "multilingual": {
+            "spanish": "La escotilla no estaba cerrada correctamente",
+            "french": "L'écoutille n'était pas correctement fermée",
+            "german": "Die Luke war nicht richtig geschlossen",
+            "chinese": "艙口蓋未正確關閉",
+        },
     }
 
 
 @pytest.fixture(scope="session")
 def mock_llm_classifier():
     """Provide a mock LLM classifier for testing without real model."""
+
     class MockLLMClassifier:
         """Mock classifier that simulates LLM behavior without loading model."""
 
@@ -172,22 +185,22 @@ def mock_llm_classifier():
             self.call_count += 1
 
             if text is None or text.strip() == "":
-                return {'label': 'other', 'confidence': 0.3}
+                return {"label": "other", "confidence": 0.3}
 
             # Simple keyword-based mock classification
-            hatch_keywords = ['hatch', 'door', 'cover', 'opening', 'access', 'manhole']
+            hatch_keywords = ["hatch", "door", "cover", "opening", "access", "manhole"]
             text_lower = text.lower()
 
             has_hatch_keyword = any(kw in text_lower for kw in hatch_keywords)
-            not_keywords = ['not', 'un', 'failed', 'left', 'found']
+            not_keywords = ["not", "un", "failed", "left", "found"]
             has_negative = any(kw in text_lower for kw in not_keywords)
 
             if has_hatch_keyword and has_negative:
-                return {'label': 'hatch_maloperation', 'confidence': 0.85}
+                return {"label": "hatch_maloperation", "confidence": 0.85}
             elif has_hatch_keyword:
-                return {'label': 'hatch_maloperation', 'confidence': 0.65}
+                return {"label": "hatch_maloperation", "confidence": 0.65}
             else:
-                return {'label': 'other', 'confidence': 0.75}
+                return {"label": "other", "confidence": 0.75}
 
         def classify_batch(self, texts: list) -> list:
             """Mock batch classify method."""
@@ -200,8 +213,9 @@ def mock_llm_classifier():
 def performance_monitor():
     """Provide performance monitoring utilities."""
     try:
-        import psutil
         import os
+
+        import psutil
 
         class PerformanceMonitor:
             """Monitor performance metrics during tests."""
@@ -215,6 +229,7 @@ def performance_monitor():
                 """Start monitoring."""
                 import gc
                 import time
+
                 gc.collect()
                 self.start_memory = self.process.memory_info().rss / 1024 / 1024  # MB
                 self.start_time = time.time()
@@ -223,13 +238,14 @@ def performance_monitor():
                 """Stop monitoring and return metrics."""
                 import gc
                 import time
+
                 gc.collect()
                 end_memory = self.process.memory_info().rss / 1024 / 1024  # MB
                 end_time = time.time()
 
                 return {
-                    'memory_increase_mb': end_memory - self.start_memory,
-                    'elapsed_time_seconds': end_time - self.start_time,
+                    "memory_increase_mb": end_memory - self.start_memory,
+                    "elapsed_time_seconds": end_time - self.start_time,
                 }
 
         return PerformanceMonitor()
@@ -244,6 +260,7 @@ def cleanup_after_tests():
 
     # Force garbage collection
     import gc
+
     gc.collect()
 
 
@@ -251,15 +268,15 @@ def cleanup_after_tests():
 def assert_valid_classification_result(result: dict):
     """Assert that a classification result has valid structure."""
     assert result is not None
-    assert 'label' in result
-    assert 'confidence' in result
-    assert isinstance(result['confidence'], float)
-    assert 0.0 <= result['confidence'] <= 1.0
+    assert "label" in result
+    assert "confidence" in result
+    assert isinstance(result["confidence"], float)
+    assert 0.0 <= result["confidence"] <= 1.0
 
 
 def assert_valid_batch_results(results: list, expected_count: int):
     """Assert that batch results are valid."""
     assert len(results) == expected_count
-    assert all('label' in r for r in results)
-    assert all('confidence' in r for r in results)
-    assert all(0.0 <= r['confidence'] <= 1.0 for r in results)
+    assert all("label" in r for r in results)
+    assert all("confidence" in r for r in results)
+    assert all(0.0 <= r["confidence"] <= 1.0 for r in results)

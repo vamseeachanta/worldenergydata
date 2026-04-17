@@ -213,9 +213,11 @@ def _normalise_platform_columns(df: pd.DataFrame) -> pd.DataFrame:
 def _normalise_incident_columns(df: pd.DataFrame) -> pd.DataFrame:
     """Standardise incident CSV column names."""
     if "INCIDENT_DATE" in df.columns:
-        df["INCIDENT_YEAR"] = pd.to_datetime(
-            df["INCIDENT_DATE"], errors="coerce"
-        ).dt.year.fillna(0).astype(int)
+        df["INCIDENT_YEAR"] = (
+            pd.to_datetime(df["INCIDENT_DATE"], errors="coerce")
+            .dt.year.fillna(0)
+            .astype(int)
+        )
     severity_map = {
         "low": "LOW",
         "medium": "MEDIUM",
@@ -318,14 +320,11 @@ def _sample_incident_data(n_records: int = 150) -> pd.DataFrame:
     months = rng.integers(1, 13, size=n_records)
 
     dates = [
-        pd.Timestamp(year=int(y), month=int(m), day=1)
-        for y, m in zip(years, months)
+        pd.Timestamp(year=int(y), month=int(m), day=1) for y, m in zip(years, months)
     ]
 
     severity_weights = [0.35, 0.35, 0.20, 0.10]
-    severities = rng.choice(
-        _VALID_SEVERITIES, size=n_records, p=severity_weights
-    )
+    severities = rng.choice(_VALID_SEVERITIES, size=n_records, p=severity_weights)
     types = rng.choice(_INCIDENT_TYPES, size=n_records)
     areas = rng.choice(
         ["Mississippi Canyon", "Green Canyon", "Keathley Canyon", "Garden Banks"],

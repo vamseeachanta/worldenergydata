@@ -560,7 +560,9 @@ class WellAPI12:
                 api12_dir_survey_df.loc[df_row, "az"] = Azimuth
                 api12_dir_survey_df.loc[df_row, "inc"] = Inclination
 
-            logger.info("Processing Survey for api12 {} of {}".format(count, len(API12_list)))
+            logger.info(
+                "Processing Survey for api12 {} of {}".format(count, len(API12_list))
+            )
             survey_xyz = self.process_survey_xyz(api12_dir_survey_df)
             survey_xyz_wh_adjusted = self.add_relative_WH_positions(api12, survey_xyz)
             self.output_data_well_path.update({api12: survey_xyz_wh_adjusted})

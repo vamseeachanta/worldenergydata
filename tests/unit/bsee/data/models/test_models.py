@@ -2,12 +2,12 @@
 
 import pytest
 
+from worldenergydata.bsee.data.models.deepwater_structure import DeepwaterStructure
 from worldenergydata.bsee.data.models.pipeline import (
     PipelineLocation,
     PipelinePermit,
 )
 from worldenergydata.bsee.data.models.platform import PlatformStructure
-from worldenergydata.bsee.data.models.deepwater_structure import DeepwaterStructure
 from worldenergydata.bsee.data.models.rig_fleet import RigFleetEntry
 
 
@@ -55,7 +55,9 @@ class TestPipelinePermit:
 
     def test_segment_key(self):
         p = PipelinePermit(
-            area_code="MC", block_number="100", segment_num="SEG001",
+            area_code="MC",
+            block_number="100",
+            segment_num="SEG001",
         )
         assert p.segment_key == "MC_100_SEG001"
 
@@ -68,9 +70,13 @@ class TestPipelineLocation:
 
     def test_all_fields(self):
         loc = PipelineLocation(
-            segment_num="SEG001", point_num=1,
-            latitude=29.5, longitude=-90.0,
-            water_depth=500.0, area_code="MC", block_number="100",
+            segment_num="SEG001",
+            point_num=1,
+            latitude=29.5,
+            longitude=-90.0,
+            water_depth=500.0,
+            area_code="MC",
+            block_number="100",
         )
         assert loc.point_num == 1
         assert loc.water_depth == 500.0
@@ -79,60 +85,78 @@ class TestPipelineLocation:
 class TestPlatformStructure:
     def test_required_fields(self):
         p = PlatformStructure(
-            area_code="MC", block_number="100", structure_number="A001",
+            area_code="MC",
+            block_number="100",
+            structure_number="A001",
         )
         assert p.area_code == "MC"
 
     def test_is_active_no_removal(self):
         p = PlatformStructure(
-            area_code="MC", block_number="100", structure_number="A001",
+            area_code="MC",
+            block_number="100",
+            structure_number="A001",
         )
         assert p.is_active is True
 
     def test_is_active_with_removal(self):
         p = PlatformStructure(
-            area_code="MC", block_number="100", structure_number="A001",
+            area_code="MC",
+            block_number="100",
+            structure_number="A001",
             removal_date="2020-01-15",
         )
         assert p.is_active is False
 
     def test_structure_key(self):
         p = PlatformStructure(
-            area_code="MC", block_number="100", structure_number="A001",
+            area_code="MC",
+            block_number="100",
+            structure_number="A001",
         )
         assert p.structure_key == "MC_100_A001"
 
     def test_structure_type_known(self):
         p = PlatformStructure(
-            area_code="MC", block_number="100", structure_number="A001",
+            area_code="MC",
+            block_number="100",
+            structure_number="A001",
             struc_type_code="FP",
         )
         assert p.structure_type == "Fixed Platform"
 
     def test_structure_type_tlp(self):
         p = PlatformStructure(
-            area_code="MC", block_number="100", structure_number="A001",
+            area_code="MC",
+            block_number="100",
+            structure_number="A001",
             struc_type_code="TLP",
         )
         assert p.structure_type == "Tension Leg Platform"
 
     def test_structure_type_spar(self):
         p = PlatformStructure(
-            area_code="MC", block_number="100", structure_number="A001",
+            area_code="MC",
+            block_number="100",
+            structure_number="A001",
             struc_type_code="SPAR",
         )
         assert p.structure_type == "Spar"
 
     def test_structure_type_unknown(self):
         p = PlatformStructure(
-            area_code="MC", block_number="100", structure_number="A001",
+            area_code="MC",
+            block_number="100",
+            structure_number="A001",
             struc_type_code="XYZ",
         )
         assert p.structure_type == "Unknown"
 
     def test_structure_type_none(self):
         p = PlatformStructure(
-            area_code="MC", block_number="100", structure_number="A001",
+            area_code="MC",
+            block_number="100",
+            structure_number="A001",
         )
         assert p.structure_type == "Unknown"
 
@@ -140,54 +164,71 @@ class TestPlatformStructure:
 class TestDeepwaterStructure:
     def test_required_fields(self):
         d = DeepwaterStructure(
-            area_code="GC", block_number="200", structure_number="B002",
+            area_code="GC",
+            block_number="200",
+            structure_number="B002",
         )
         assert d.area_code == "GC"
 
     def test_permit_fields(self):
         d = DeepwaterStructure(
-            area_code="GC", block_number="200", structure_number="B002",
-            permit_number="P12345", bus_asc_name="Shell",
+            area_code="GC",
+            block_number="200",
+            structure_number="B002",
+            permit_number="P12345",
+            bus_asc_name="Shell",
         )
         assert d.permit_number == "P12345"
         assert d.bus_asc_name == "Shell"
 
     def test_is_active(self):
         d = DeepwaterStructure(
-            area_code="GC", block_number="200", structure_number="B002",
+            area_code="GC",
+            block_number="200",
+            structure_number="B002",
         )
         assert d.is_active is True
 
     def test_is_active_removed(self):
         d = DeepwaterStructure(
-            area_code="GC", block_number="200", structure_number="B002",
+            area_code="GC",
+            block_number="200",
+            structure_number="B002",
             removal_date="2023-06-01",
         )
         assert d.is_active is False
 
     def test_structure_key(self):
         d = DeepwaterStructure(
-            area_code="GC", block_number="200", structure_number="B002",
+            area_code="GC",
+            block_number="200",
+            structure_number="B002",
         )
         assert d.structure_key == "GC_200_B002"
 
     def test_structure_type_fps(self):
         d = DeepwaterStructure(
-            area_code="GC", block_number="200", structure_number="B002",
+            area_code="GC",
+            block_number="200",
+            structure_number="B002",
             struc_type_code="FPS",
         )
         assert d.structure_type == "Floating Production System"
 
     def test_structure_type_fpso(self):
         d = DeepwaterStructure(
-            area_code="GC", block_number="200", structure_number="B002",
+            area_code="GC",
+            block_number="200",
+            structure_number="B002",
             struc_type_code="FPSO",
         )
         assert d.structure_type == "FPSO"
 
     def test_structure_type_subsea(self):
         d = DeepwaterStructure(
-            area_code="GC", block_number="200", structure_number="B002",
+            area_code="GC",
+            block_number="200",
+            structure_number="B002",
             struc_type_code="SS",
         )
         assert d.structure_type == "Subsea Structure"

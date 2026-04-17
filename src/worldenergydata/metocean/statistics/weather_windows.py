@@ -11,11 +11,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional
 
+import metocean_stats.stats as ms
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-
-import metocean_stats.stats as ms
 
 
 @dataclass
@@ -87,7 +86,9 @@ class WeatherWindowAnalysis:
         # Sum across all years, divide by total hours for percentage
         total_hours = len(series) * timestep_hours
         hours_below = float(nbhr[0].sum())
-        operability_pct = min(100.0, hours_below / total_hours * 100.0) if total_hours > 0 else 0.0
+        operability_pct = (
+            min(100.0, hours_below / total_hours * 100.0) if total_hours > 0 else 0.0
+        )
 
         # Weather window lengths for the full series (all year)
         try:
@@ -189,8 +190,7 @@ class WeatherWindowAnalysis:
             month_labels = monthly_df["month_name"].tolist()
         else:
             month_labels = [
-                pd.Timestamp(2000, m, 1).strftime("%b")
-                for m in monthly_df.index
+                pd.Timestamp(2000, m, 1).strftime("%b") for m in monthly_df.index
             ]
 
         if "operability_pct" in monthly_df.columns:

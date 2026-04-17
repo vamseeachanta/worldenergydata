@@ -151,6 +151,4 @@ def get_basin(name: str) -> EmergingBasinStub:
         if stub.basin_name == name:
             return stub
     available = ", ".join(s.basin_name for s in EMERGING_BASINS)
-    raise KeyError(
-        f"Basin {name!r} not found in watch list. Available: {available}"
-    )
+    raise KeyError(f"Basin {name!r} not found in watch list. Available: {available}")

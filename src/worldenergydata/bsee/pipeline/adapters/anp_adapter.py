@@ -24,9 +24,7 @@ from worldenergydata.bsee.pipeline.adapters.data_availability import (
     ANP_AVAILABILITY,
 )
 
-_ANP_OPEN_DATA_URL = (
-    "https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos"
-)
+_ANP_OPEN_DATA_URL = "https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos"
 
 
 class ANPAdapter(AdapterInterface):
@@ -49,8 +47,7 @@ class ANPAdapter(AdapterInterface):
             "by ANP in open data.",
             "Drilling/completion: ANP open data has well metadata "
             "(spud dates, depths) but no loader is implemented.",
-            "Intervention: intervention data is not available from "
-            "ANP open data.",
+            "Intervention: intervention data is not available from " "ANP open data.",
             "Production: ANP publishes monthly production by field/well "
             f"on its open data portal ({_ANP_OPEN_DATA_URL}) but no "
             "loader is implemented.",
@@ -70,12 +67,10 @@ class ANPAdapter(AdapterInterface):
         return SourceMetadata(
             source_id="anp",
             source_name=(
-                "Agencia Nacional do Petroleo, "
-                "Gas Natural e Biocombustiveis"
+                "Agencia Nacional do Petroleo, " "Gas Natural e Biocombustiveis"
             ),
             jurisdiction=(
-                "Brazilian offshore and onshore "
-                "(pre-salt and conventional)"
+                "Brazilian offshore and onshore " "(pre-salt and conventional)"
             ),
             api_base_url=_ANP_OPEN_DATA_URL,
             update_cadence="monthly",

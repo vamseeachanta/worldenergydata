@@ -109,15 +109,17 @@ class TestClassifyProductionCleanup:
 
 class TestSummarizeClassification:
     def test_single_development(self):
-        df = pd.DataFrame({
-            "oil_bbl": [100, 200, 0],
-            "production_class": [
-                ProductionClass.COMMERCIAL,
-                ProductionClass.WELL_TEST,
-                ProductionClass.NON_PRODUCING,
-            ],
-            "development": ["Dev1", "Dev1", "Dev1"],
-        })
+        df = pd.DataFrame(
+            {
+                "oil_bbl": [100, 200, 0],
+                "production_class": [
+                    ProductionClass.COMMERCIAL,
+                    ProductionClass.WELL_TEST,
+                    ProductionClass.NON_PRODUCING,
+                ],
+                "development": ["Dev1", "Dev1", "Dev1"],
+            }
+        )
         summary = summarize_classification(df)
         assert "Dev1" in summary
         assert summary["Dev1"]["commercial_oil_bbl"] == 100.0
@@ -127,14 +129,16 @@ class TestSummarizeClassification:
         assert summary["Dev1"]["non_producing_count"] == 1
 
     def test_multiple_developments(self):
-        df = pd.DataFrame({
-            "oil_bbl": [100, 200],
-            "production_class": [
-                ProductionClass.COMMERCIAL,
-                ProductionClass.COMMERCIAL,
-            ],
-            "development": ["Dev1", "Dev2"],
-        })
+        df = pd.DataFrame(
+            {
+                "oil_bbl": [100, 200],
+                "production_class": [
+                    ProductionClass.COMMERCIAL,
+                    ProductionClass.COMMERCIAL,
+                ],
+                "development": ["Dev1", "Dev2"],
+            }
+        )
         summary = summarize_classification(df)
         assert "Dev1" in summary
         assert "Dev2" in summary

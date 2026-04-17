@@ -107,10 +107,15 @@ class TestFleetCompletenessReport:
         records = [
             {"VESSEL_NAME": "A"},
             {
-                "VESSEL_NAME": "B", "RIG_TYPE": "drillship",
-                "OWNER": "Co", "WATER_DEPTH_RATING_FT": 10000,
-                "DRILLING_DEPTH_RATING_FT": 35000, "YEAR_BUILT": 2015,
-                "DP_CLASS": "3", "LOA_M": 230, "BEAM_M": 42,
+                "VESSEL_NAME": "B",
+                "RIG_TYPE": "drillship",
+                "OWNER": "Co",
+                "WATER_DEPTH_RATING_FT": 10000,
+                "DRILLING_DEPTH_RATING_FT": 35000,
+                "YEAR_BUILT": 2015,
+                "DP_CLASS": "3",
+                "LOA_M": 230,
+                "BEAM_M": 42,
                 "IMO_NUMBER": "1234567",
             },
         ]

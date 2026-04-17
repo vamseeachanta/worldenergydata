@@ -59,13 +59,14 @@ def generate_cost_report(
         ) from exc
 
     required_cols = {
-        "field_name", "region", "total_cost_usd_mm", "deviation_pct",
+        "field_name",
+        "region",
+        "total_cost_usd_mm",
+        "deviation_pct",
     }
     missing = required_cols - set(comparison_df.columns)
     if missing:
-        raise ValueError(
-            f"comparison_df missing required columns: {sorted(missing)}"
-        )
+        raise ValueError(f"comparison_df missing required columns: {sorted(missing)}")
 
     fig = make_subplots(
         rows=2,
@@ -206,9 +207,7 @@ def build_regional_comparison_chart(
     required = {"field_name", "region", "total_cost_usd_mm"}
     missing = required - set(comparison_df.columns)
     if missing:
-        raise ValueError(
-            f"comparison_df missing required columns: {sorted(missing)}"
-        )
+        raise ValueError(f"comparison_df missing required columns: {sorted(missing)}")
 
     fig = px.bar(
         comparison_df,

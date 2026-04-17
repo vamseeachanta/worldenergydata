@@ -19,7 +19,6 @@ from worldenergydata.bsee.analysis.cost.models import (
     classify_well_depth_band,
 )
 
-
 # ---------------------------------------------------------------------------
 # TestCostRecord
 # ---------------------------------------------------------------------------
@@ -128,10 +127,23 @@ class TestCostRecord:
         )
         d = record.to_dict()
         required_keys = {
-            "project_name", "region", "water_depth_m", "water_depth_band",
-            "well_depth_m", "well_depth_band", "operator", "year_sanction",
-            "year_drilling", "rig_type", "activity_type", "hpht", "subsea",
-            "cost_usd_mm", "cost_type", "source", "confidence",
+            "project_name",
+            "region",
+            "water_depth_m",
+            "water_depth_band",
+            "well_depth_m",
+            "well_depth_band",
+            "operator",
+            "year_sanction",
+            "year_drilling",
+            "rig_type",
+            "activity_type",
+            "hpht",
+            "subsea",
+            "cost_usd_mm",
+            "cost_type",
+            "source",
+            "confidence",
         }
         assert required_keys.issubset(set(d.keys()))
 
@@ -226,29 +238,35 @@ class TestCalibrationComparison:
 
 
 class TestClassifyDepthBand:
-    @pytest.mark.parametrize("depth_m, expected", [
-        # Boundaries: SHALLOW <=300, MID <=1524, DEEP <=3048, ULTRA_DEEP >3048
-        (0.0, WaterDepthBand.SHALLOW),
-        (150.0, WaterDepthBand.SHALLOW),
-        (300.0, WaterDepthBand.SHALLOW),
-        (301.0, WaterDepthBand.MID),
-        (1524.0, WaterDepthBand.MID),    # exact boundary → MID
-        (1525.0, WaterDepthBand.DEEP),
-        (3048.0, WaterDepthBand.DEEP),
-        (3049.0, WaterDepthBand.ULTRA_DEEP),
-    ])
+    @pytest.mark.parametrize(
+        "depth_m, expected",
+        [
+            # Boundaries: SHALLOW <=300, MID <=1524, DEEP <=3048, ULTRA_DEEP >3048
+            (0.0, WaterDepthBand.SHALLOW),
+            (150.0, WaterDepthBand.SHALLOW),
+            (300.0, WaterDepthBand.SHALLOW),
+            (301.0, WaterDepthBand.MID),
+            (1524.0, WaterDepthBand.MID),  # exact boundary → MID
+            (1525.0, WaterDepthBand.DEEP),
+            (3048.0, WaterDepthBand.DEEP),
+            (3049.0, WaterDepthBand.ULTRA_DEEP),
+        ],
+    )
     def test_water_depth_band(self, depth_m, expected):
         assert classify_water_depth_band(depth_m) == expected
 
-    @pytest.mark.parametrize("depth_m, expected", [
-        # Boundaries: SHALLOW <=3048, MEDIUM <=6096, DEEP <=7620, ULTRA_DEEP >7620
-        (1000.0, WellDepthBand.SHALLOW),
-        (3048.0, WellDepthBand.SHALLOW),   # exact boundary → SHALLOW
-        (3049.0, WellDepthBand.MEDIUM),
-        (6096.0, WellDepthBand.MEDIUM),    # exact boundary → MEDIUM
-        (6097.0, WellDepthBand.DEEP),
-        (7620.0, WellDepthBand.DEEP),      # exact boundary → DEEP
-        (7621.0, WellDepthBand.ULTRA_DEEP),
-    ])
+    @pytest.mark.parametrize(
+        "depth_m, expected",
+        [
+            # Boundaries: SHALLOW <=3048, MEDIUM <=6096, DEEP <=7620, ULTRA_DEEP >7620
+            (1000.0, WellDepthBand.SHALLOW),
+            (3048.0, WellDepthBand.SHALLOW),  # exact boundary → SHALLOW
+            (3049.0, WellDepthBand.MEDIUM),
+            (6096.0, WellDepthBand.MEDIUM),  # exact boundary → MEDIUM
+            (6097.0, WellDepthBand.DEEP),
+            (7620.0, WellDepthBand.DEEP),  # exact boundary → DEEP
+            (7621.0, WellDepthBand.ULTRA_DEEP),
+        ],
+    )
     def test_well_depth_band(self, depth_m, expected):
         assert classify_well_depth_band(depth_m) == expected

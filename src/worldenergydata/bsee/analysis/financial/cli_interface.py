@@ -338,7 +338,9 @@ def print_results_summary(result: AnalysisResult):
 
         if result.metrics_summary:
             logger.info("\n📊 Summary Metrics:")
-            logger.info(f"   Total NPV: ${result.metrics_summary.get('total_npv', 0):,.0f}")
+            logger.info(
+                f"   Total NPV: ${result.metrics_summary.get('total_npv', 0):,.0f}"
+            )
             logger.info(
                 f"   Total Oil: {result.metrics_summary.get('total_oil_bbls', 0):,.0f} bbls"
             )

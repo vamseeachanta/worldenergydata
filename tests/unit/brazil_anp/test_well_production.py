@@ -6,10 +6,9 @@ import pytest
 from worldenergydata.brazil_anp.production.well_production import (
     SM3_TO_BBL,
     WellProductionLoader,
-    convert_sm3_to_bbl,
     convert_mm3_to_m3,
+    convert_sm3_to_bbl,
 )
-
 
 MOCK_WELL_DATA = pd.DataFrame(
     {
@@ -100,7 +99,15 @@ class TestWellProductionLoader:
 
     def test_empty_dataframe(self, loader):
         empty = pd.DataFrame(
-            columns=["campo", "poco", "data", "oleo_sm3", "condensado_sm3", "gas_mm3", "agua_sm3"]
+            columns=[
+                "campo",
+                "poco",
+                "data",
+                "oleo_sm3",
+                "condensado_sm3",
+                "gas_mm3",
+                "agua_sm3",
+            ]
         )
         result = loader.load(empty)
         assert isinstance(result, pd.DataFrame)

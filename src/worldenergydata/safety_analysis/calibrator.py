@@ -94,7 +94,7 @@ class CalibrationRecord:
     incident_count: int
     incidents_per_year: float
     calibrated_score: float
-    confidence: str   # "high" (>=50), "medium" (10-49), "low" (<10 rule-based)
+    confidence: str  # "high" (>=50), "medium" (10-49), "low" (<10 rule-based)
     data_driven: bool
 
 
@@ -195,7 +195,9 @@ class EnigmaCalibrator:
         # Derive coverage percentage
         data_driven_count = sum(1 for r in records if r.data_driven)
         total_combos = len(_VALID_ASSET_TYPES) * len(_VALID_SCENARIOS)
-        coverage_pct = (data_driven_count / total_combos) * 100.0 if total_combos else 0.0
+        coverage_pct = (
+            (data_driven_count / total_combos) * 100.0 if total_combos else 0.0
+        )
 
         # Store calibrated matrix
         self._calibrated_matrix = {
@@ -297,9 +299,7 @@ class EnigmaCalibrator:
         chosen_incident_types = rng.choice(
             incident_types, size=n_incidents, p=incident_weights
         )
-        chosen_severities = rng.choice(
-            severities, size=n_incidents, p=severity_weights
-        )
+        chosen_severities = rng.choice(severities, size=n_incidents, p=severity_weights)
 
         equipment_type_col = []
         spill_location_col = []
@@ -321,9 +321,7 @@ class EnigmaCalibrator:
             elif inc_type == "injury":
                 equipment_type_col.append(None)
                 spill_location_col.append(None)
-                injury_type_col.append(
-                    str(rng.choice(injury_types, p=injury_weights))
-                )
+                injury_type_col.append(str(rng.choice(injury_types, p=injury_weights)))
             else:
                 equipment_type_col.append(None)
                 spill_location_col.append(None)
@@ -457,9 +455,7 @@ class EnigmaCalibrator:
                 return rec.confidence
         return "low"
 
-    def _parse_date_range(
-        self, hse_df: pd.DataFrame
-    ) -> tuple[float, tuple[str, str]]:
+    def _parse_date_range(self, hse_df: pd.DataFrame) -> tuple[float, tuple[str, str]]:
         """Parse incident_date column; return (years_covered, (min_date, max_date))."""
         if "incident_date" not in hse_df.columns:
             return 1.0, ("", "")

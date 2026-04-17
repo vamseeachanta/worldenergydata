@@ -17,7 +17,9 @@ class TestQualityCheckResult:
         assert r.reason is None
 
     def test_failed_with_reason(self):
-        r = QualityCheckResult(passed=False, flag=QualityFlag.BAD, reason="out of range")
+        r = QualityCheckResult(
+            passed=False, flag=QualityFlag.BAD, reason="out of range"
+        )
         assert r.passed is False
         assert r.reason == "out of range"
 
@@ -118,7 +120,9 @@ class TestCheckSpike:
 
     def test_no_limit_defined(self):
         # WAVE_DIRECTION has no spike limit
-        r = QualityFilter.check_spike(MetoceanParameter.WAVE_DIRECTION, 180.0, 10.0, 1.0)
+        r = QualityFilter.check_spike(
+            MetoceanParameter.WAVE_DIRECTION, 180.0, 10.0, 1.0
+        )
         assert r.passed is True
 
     def test_wind_speed_spike(self):
@@ -219,7 +223,9 @@ class TestFilterObservations:
             SimpleNamespace(quality_flag=QualityFlag.BAD, value=2),
             SimpleNamespace(quality_flag=QualityFlag.SUSPECT, value=3),
         ]
-        result = QualityFilter.filter_observations(obs, exclude_bad=True, exclude_suspect=True)
+        result = QualityFilter.filter_observations(
+            obs, exclude_bad=True, exclude_suspect=True
+        )
         assert len(result) == 1
 
     def test_no_flag_defaults_good(self):

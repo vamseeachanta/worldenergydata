@@ -381,7 +381,9 @@ class DrillingTimelineExtractor:
                 timelines.append(timeline)
             except Exception as e:
                 # Log error and continue
-                logger.warning(f"Warning: Failed to extract timeline for {api_well_number}: {e}")
+                logger.warning(
+                    f"Warning: Failed to extract timeline for {api_well_number}: {e}"
+                )
 
         if not timelines:
             raise DrillingDataError("No timelines extracted")

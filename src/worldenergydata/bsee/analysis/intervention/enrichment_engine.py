@@ -76,20 +76,28 @@ class ActivityEnrichmentEngine:
         mask = df["RIG_TYPE"].isna()
         if mask.any():
             df.loc[mask, "RIG_TYPE"] = df.loc[mask, "RIG_NAME"].apply(
-                lambda name: classify_rig_type(str(name)).value
-                if pd.notna(name)
-                else RigType.UNKNOWN.value
+                lambda name: (
+                    classify_rig_type(str(name)).value
+                    if pd.notna(name)
+                    else RigType.UNKNOWN.value
+                )
             )
 
         df["ACTIVITY_CATEGORY"] = df["RIG_TYPE"].map(classify_activity)
 
         # Parse YEAR from WAR_START_DT with WAR_END_DT fallback.
         dt = pd.to_datetime(
-            df["WAR_START_DT"], format="mixed", dayfirst=False, errors="coerce",
+            df["WAR_START_DT"],
+            format="mixed",
+            dayfirst=False,
+            errors="coerce",
         )
         if "WAR_END_DT" in df.columns:
             fallback = pd.to_datetime(
-                df["WAR_END_DT"], format="mixed", dayfirst=False, errors="coerce",
+                df["WAR_END_DT"],
+                format="mixed",
+                dayfirst=False,
+                errors="coerce",
             )
             dt = dt.fillna(fallback)
         df["YEAR"] = dt.dt.year.astype("Int64")
@@ -102,11 +110,17 @@ class ActivityEnrichmentEngine:
     # to prevent pandas _x/_y suffix collision.  The WAR zip's
     # mv_war_boreholes_view.txt already contains these columns; the
     # borehole download is the authoritative source.
-    _BH_JOIN_COLS = frozenset({
-        "WELL_SPUD_DATE", "TOTAL_DEPTH_DATE", "BH_TOTAL_MD",
-        "WELL_NAME_SUFFIX", "DRILLING_DAYS", "BOREHOLE_STAT_CD",
-        "WELL_BORE_TVD",
-    })
+    _BH_JOIN_COLS = frozenset(
+        {
+            "WELL_SPUD_DATE",
+            "TOTAL_DEPTH_DATE",
+            "BH_TOTAL_MD",
+            "WELL_NAME_SUFFIX",
+            "DRILLING_DAYS",
+            "BOREHOLE_STAT_CD",
+            "WELL_BORE_TVD",
+        }
+    )
 
     def _join_borehole(self, df: pd.DataFrame) -> pd.DataFrame:
         """Left-join borehole data, compute drilling days and coalesce depth."""
@@ -133,9 +147,14 @@ class ActivityEnrichmentEngine:
         bh["_api_norm"] = normalize_api_well_number(bh["API_WELL_NUMBER"])
 
         bh_cols = [
-            "_api_norm", "WELL_SPUD_DATE", "TOTAL_DEPTH_DATE",
-            "BH_TOTAL_MD", "BH_WATER_DEPTH", "BOREHOLE_STAT_CD",
-            "WELL_NAME_SUFFIX", "DRILLING_DAYS",
+            "_api_norm",
+            "WELL_SPUD_DATE",
+            "TOTAL_DEPTH_DATE",
+            "BH_TOTAL_MD",
+            "BH_WATER_DEPTH",
+            "BOREHOLE_STAT_CD",
+            "WELL_NAME_SUFFIX",
+            "DRILLING_DAYS",
         ]
         df = df.merge(bh[bh_cols], on="_api_norm", how="left")
         df.drop(columns=["_api_norm"], inplace=True)
@@ -150,7 +169,9 @@ class ActivityEnrichmentEngine:
 
     def _classify_depth(self, df: pd.DataFrame) -> pd.DataFrame:
         """Add WATER_DEPTH_CLASS based on WATER_DEPTH_FINAL or WATER_DEPTH."""
-        depth_col = "WATER_DEPTH_FINAL" if "WATER_DEPTH_FINAL" in df.columns else "WATER_DEPTH"
+        depth_col = (
+            "WATER_DEPTH_FINAL" if "WATER_DEPTH_FINAL" in df.columns else "WATER_DEPTH"
+        )
         df["WATER_DEPTH_CLASS"] = df[depth_col].map(_classify_water_depth)
         return df
 
@@ -217,7 +238,9 @@ class ActivityEnrichmentEngine:
         if "GEOLOGICAL_ERA" in df.columns and n:
             era_rate = float(df["GEOLOGICAL_ERA"].notna().sum() / n)
 
-        depth_col = "WATER_DEPTH_FINAL" if "WATER_DEPTH_FINAL" in df.columns else "WATER_DEPTH"
+        depth_col = (
+            "WATER_DEPTH_FINAL" if "WATER_DEPTH_FINAL" in df.columns else "WATER_DEPTH"
+        )
         depth_rate = float(df[depth_col].notna().sum() / n) if n else 0.0
 
         return {

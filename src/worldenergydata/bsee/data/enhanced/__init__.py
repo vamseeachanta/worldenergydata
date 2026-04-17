@@ -7,4 +7,4 @@ with optimizations for performance and bandwidth efficiency.
 
 from .data_refresh_chunked import DataRefreshChunked
 
-__all__ = ['DataRefreshChunked']
+__all__ = ["DataRefreshChunked"]

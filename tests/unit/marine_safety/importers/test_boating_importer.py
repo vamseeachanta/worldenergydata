@@ -22,6 +22,7 @@ def importer(tmp_path):
 # Constants
 # ---------------------------------------------------------------------------
 
+
 class TestBoatingConstants:
     def test_field_mappings(self):
         m = BoatingImporter.FIELD_MAPPINGS
@@ -51,6 +52,7 @@ class TestBoatingConstants:
 # Init
 # ---------------------------------------------------------------------------
 
+
 class TestBoatingImporterInit:
     def test_defaults(self, tmp_path):
         source = tmp_path / "acc.csv"
@@ -69,7 +71,9 @@ class TestBoatingImporterInit:
         vessels = tmp_path / "vessels.csv"
         vessels.write_text("header\n")
         imp = BoatingImporter(
-            accidents_file=acc, vessels_file=vessels, session=MagicMock(),
+            accidents_file=acc,
+            vessels_file=vessels,
+            session=MagicMock(),
         )
         assert imp.vessels_file == vessels
 
@@ -77,6 +81,7 @@ class TestBoatingImporterInit:
 # ---------------------------------------------------------------------------
 # _extract_incident_id
 # ---------------------------------------------------------------------------
+
 
 class TestExtractIncidentId:
     def test_normal(self, importer):
@@ -99,6 +104,7 @@ class TestExtractIncidentId:
 # _clean_field_value
 # ---------------------------------------------------------------------------
 
+
 class TestCleanFieldValue:
     def test_normal(self, importer):
         assert importer._clean_field_value("hello") == "hello"
@@ -120,6 +126,7 @@ class TestCleanFieldValue:
 # _is_valid_field_value
 # ---------------------------------------------------------------------------
 
+
 class TestIsValidFieldValue:
     def test_normal(self, importer):
         assert importer._is_valid_field_value("hello") is True
@@ -140,6 +147,7 @@ class TestIsValidFieldValue:
 # ---------------------------------------------------------------------------
 # _parse_date
 # ---------------------------------------------------------------------------
+
 
 class TestParseDate:
     def test_mm_dd_yy(self, importer):
@@ -172,6 +180,7 @@ class TestParseDate:
 # _parse_length
 # ---------------------------------------------------------------------------
 
+
 class TestParseLength:
     def test_normal(self, importer):
         result = importer._parse_length("10")
@@ -197,6 +206,7 @@ class TestParseLength:
 # ---------------------------------------------------------------------------
 # _parse_year
 # ---------------------------------------------------------------------------
+
 
 class TestParseYear:
     def test_four_digit(self, importer):
@@ -228,6 +238,7 @@ class TestParseYear:
 # _parse_int_safely
 # ---------------------------------------------------------------------------
 
+
 class TestParseIntSafely:
     def test_normal(self, importer):
         assert importer._parse_int_safely("42") == 42
@@ -248,6 +259,7 @@ class TestParseIntSafely:
 # ---------------------------------------------------------------------------
 # _map_vessel_type
 # ---------------------------------------------------------------------------
+
 
 class TestMapVesselType:
     def test_known(self, importer):
@@ -271,6 +283,7 @@ class TestMapVesselType:
 # _build_base_record
 # ---------------------------------------------------------------------------
 
+
 class TestBuildBaseRecord:
     def test_basic(self, importer):
         raw = {"BARDID": "123", "State": "FL", "Date": "01/15/05"}
@@ -288,6 +301,7 @@ class TestBuildBaseRecord:
 # ---------------------------------------------------------------------------
 # _add_incident_type
 # ---------------------------------------------------------------------------
+
 
 class TestAddIncidentType:
     def test_known_event(self, importer):
@@ -312,6 +326,7 @@ class TestAddIncidentType:
 # ---------------------------------------------------------------------------
 # _add_damage_estimate
 # ---------------------------------------------------------------------------
+
 
 class TestAddDamageEstimate:
     def test_normal(self, importer):
@@ -339,6 +354,7 @@ class TestAddDamageEstimate:
 # _add_location_data
 # ---------------------------------------------------------------------------
 
+
 class TestAddLocationData:
     def test_full(self, importer):
         parsed = {}
@@ -364,6 +380,7 @@ class TestAddLocationData:
 # ---------------------------------------------------------------------------
 # _build_vessel_record
 # ---------------------------------------------------------------------------
+
 
 class TestBuildVesselRecord:
     def test_basic(self, importer):
@@ -394,6 +411,7 @@ class TestBuildVesselRecord:
 # _load_related_data
 # ---------------------------------------------------------------------------
 
+
 class TestLoadRelatedData:
     def test_loads_vessels(self, tmp_path):
         acc = tmp_path / "acc.csv"
@@ -401,7 +419,9 @@ class TestLoadRelatedData:
         vessels = tmp_path / "vessels.csv"
         vessels.write_text("BARDID,VesselName\n1,Test Boat\n")
         imp = BoatingImporter(
-            accidents_file=acc, vessels_file=vessels, session=MagicMock(),
+            accidents_file=acc,
+            vessels_file=vessels,
+            session=MagicMock(),
         )
         imp._load_related_data()
         assert "1" in imp.vessels_by_bardid
@@ -413,7 +433,9 @@ class TestLoadRelatedData:
         deaths = tmp_path / "deaths.csv"
         deaths.write_text("BARDID,Name\n1,John\n1,Jane\n")
         imp = BoatingImporter(
-            accidents_file=acc, deaths_file=deaths, session=MagicMock(),
+            accidents_file=acc,
+            deaths_file=deaths,
+            session=MagicMock(),
         )
         imp._load_related_data()
         assert len(imp.deaths_by_bardid["1"]) == 2
@@ -424,7 +446,9 @@ class TestLoadRelatedData:
         injuries = tmp_path / "injuries.csv"
         injuries.write_text("BARDID,InjuryType\n1,Bruise\n1,Cut\n1,Burn\n")
         imp = BoatingImporter(
-            accidents_file=acc, injuries_file=injuries, session=MagicMock(),
+            accidents_file=acc,
+            injuries_file=injuries,
+            session=MagicMock(),
         )
         imp._load_related_data()
         assert imp.injuries_by_bardid["1"] == 3

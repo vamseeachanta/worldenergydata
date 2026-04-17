@@ -2,6 +2,7 @@
 Validation exceptions for data quality checks.
 """
 
+
 class ValidationError(Exception):
     """Base exception for validation errors."""
 
@@ -12,7 +13,7 @@ class ValidationError(Exception):
         self.rule = rule
         self.row_index = row_index
         super().__init__(self.format_message())
-    
+
     def format_message(self):
         """Format error message with context."""
         parts = [self.message]
@@ -27,41 +28,47 @@ class ValidationError(Exception):
 
 class SchemaValidationError(ValidationError):
     """Exception for schema validation failures."""
+
     pass
 
 
 class DataTypeError(ValidationError):
     """Exception for data type validation failures."""
+
     pass
 
 
 class RangeValidationError(ValidationError):
     """Exception for value range validation failures."""
+
     pass
 
 
 class RequiredFieldError(ValidationError):
     """Exception for missing required fields."""
+
     pass
 
 
 class DateFormatError(ValidationError):
     """Exception for date format validation failures."""
+
     pass
 
 
 class ConsistencyError(ValidationError):
     """Exception for data consistency validation failures."""
+
     pass
 
 
 class CrossFieldValidationError(ValidationError):
     """Exception for cross-field dependency failures."""
-    
+
     def __init__(self, message, fields=None, **kwargs):
         self.fields = fields or []
         super().__init__(message, **kwargs)
-    
+
     def format_message(self):
         """Format error message with multiple fields."""
         parts = [self.message]

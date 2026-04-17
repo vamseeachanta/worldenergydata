@@ -4,13 +4,15 @@
 """Unit tests for worldenergydata.drilling.batch_economics (WRK-219)."""
 
 import math
+
 import pandas as pd
 import pytest
 
-from worldenergydata.drilling.batch_economics.models import DrillingSite, DrillCampaign
+from worldenergydata.drilling.batch_economics.bsee_batch_detector import (
+    BSEEBatchDetector,
+)
 from worldenergydata.drilling.batch_economics.economics import BatchDrillingEconomics
-from worldenergydata.drilling.batch_economics.bsee_batch_detector import BSEEBatchDetector
-
+from worldenergydata.drilling.batch_economics.models import DrillCampaign, DrillingSite
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -53,10 +55,7 @@ class TestLearningCurve:
     def test_learning_curve_monotonic_decrease(self):
         """Later wells should take progressively less time than earlier wells."""
         base = 60.0
-        times = [
-            self.calc.learning_curve_time(base, pos)
-            for pos in range(1, 6)
-        ]
+        times = [self.calc.learning_curve_time(base, pos) for pos in range(1, 6)]
         for i in range(len(times) - 1):
             assert times[i] > times[i + 1], (
                 f"Expected time to decrease from position {i+1} to {i+2}: "
@@ -67,9 +66,9 @@ class TestLearningCurve:
         """Position 1 (first well) must equal base time regardless of LC factor."""
         base = 60.0
         result = self.calc.learning_curve_time(base, 1, lc_factor=0.85)
-        assert math.isclose(result, base, rel_tol=1e-9), (
-            f"Expected {base}, got {result}"
-        )
+        assert math.isclose(
+            result, base, rel_tol=1e-9
+        ), f"Expected {base}, got {result}"
 
     def test_learning_curve_position_1_unchanged_factor_90(self):
         """Position 1 must equal base time with 0.90 factor as well."""
@@ -82,9 +81,9 @@ class TestLearningCurve:
         base = 60.0
         for pos in range(1, 5):
             t = self.calc.learning_curve_time(base, pos, lc_factor=1.0)
-            assert math.isclose(t, base, rel_tol=1e-9), (
-                f"Position {pos}: expected {base}, got {t}"
-            )
+            assert math.isclose(
+                t, base, rel_tol=1e-9
+            ), f"Position {pos}: expected {base}, got {t}"
 
 
 # ---------------------------------------------------------------------------
@@ -101,9 +100,9 @@ class TestMobilizationSavings:
         mob = 20_000_000.0
         standalone = self.calc.mobilization_savings(mob, n_wells_batch=1)
         batch_2 = self.calc.mobilization_savings(mob, n_wells_batch=2)
-        assert math.isclose(batch_2, standalone / 2.0, rel_tol=1e-9), (
-            f"Expected {standalone/2.0}, got {batch_2}"
-        )
+        assert math.isclose(
+            batch_2, standalone / 2.0, rel_tol=1e-9
+        ), f"Expected {standalone/2.0}, got {batch_2}"
 
     def test_mobilization_savings_4_wells(self):
         """Per-well mob cost in a 4-well batch should be a quarter of standalone."""
@@ -154,9 +153,9 @@ class TestBreakEven:
             day_rate=350_000.0,
             base_well_days=60.0,
         )
-        assert n_high >= n_low, (
-            f"Higher mob cost should need >= wells: got n_low={n_low}, n_high={n_high}"
-        )
+        assert (
+            n_high >= n_low
+        ), f"Higher mob cost should need >= wells: got n_low={n_low}, n_high={n_high}"
 
     def test_break_even_positive_integer(self):
         """Break-even result must be a positive integer."""
@@ -192,9 +191,9 @@ class TestBatchVsStandaloneNPV:
         """batch_savings must be positive for a multi-well campaign."""
         campaign = _make_campaign(n_wells=4, lc_factor=0.85)
         result = self.calc.batch_vs_standalone_npv(campaign, discount_rate=0.10)
-        assert result["batch_savings"] > 0.0, (
-            f"Expected positive savings, got {result['batch_savings']}"
-        )
+        assert (
+            result["batch_savings"] > 0.0
+        ), f"Expected positive savings, got {result['batch_savings']}"
 
     def test_single_well_no_mob_savings(self):
         """Single-well campaign: batch NPV should equal standalone (no mob savings)."""
@@ -249,9 +248,9 @@ class TestCampaignTotalCost:
         campaign = _make_campaign(n_wells=3)
         total = self.calc.campaign_total_cost(campaign, base_days_per_well=60.0)
         min_day_rate_cost = campaign.rig_day_rate_usd * 60.0 * 3
-        assert total > min_day_rate_cost, (
-            "Total cost should include mobilization on top of day-rate cost"
-        )
+        assert (
+            total > min_day_rate_cost
+        ), "Total cost should include mobilization on top of day-rate cost"
 
 
 # ---------------------------------------------------------------------------
@@ -270,50 +269,54 @@ class TestBSEEBatchDetector:
 
     def test_detect_batches_same_rig_same_field(self):
         """Same rig drilling same field within 12 months → detected as batch."""
-        df = _make_bsee_df([
-            {
-                "well_id": "W001",
-                "rig_name": "DEEP OCEAN ASCENSION",
-                "field_name": "JULIA",
-                "spud_date": pd.Timestamp("2022-01-15"),
-            },
-            {
-                "well_id": "W002",
-                "rig_name": "DEEP OCEAN ASCENSION",
-                "field_name": "JULIA",
-                "spud_date": pd.Timestamp("2022-04-20"),
-            },
-            {
-                "well_id": "W003",
-                "rig_name": "DEEP OCEAN ASCENSION",
-                "field_name": "JULIA",
-                "spud_date": pd.Timestamp("2022-08-10"),
-            },
-        ])
+        df = _make_bsee_df(
+            [
+                {
+                    "well_id": "W001",
+                    "rig_name": "DEEP OCEAN ASCENSION",
+                    "field_name": "JULIA",
+                    "spud_date": pd.Timestamp("2022-01-15"),
+                },
+                {
+                    "well_id": "W002",
+                    "rig_name": "DEEP OCEAN ASCENSION",
+                    "field_name": "JULIA",
+                    "spud_date": pd.Timestamp("2022-04-20"),
+                },
+                {
+                    "well_id": "W003",
+                    "rig_name": "DEEP OCEAN ASCENSION",
+                    "field_name": "JULIA",
+                    "spud_date": pd.Timestamp("2022-08-10"),
+                },
+            ]
+        )
         result = self.detector.detect_batches(df, time_window_months=12)
         assert len(result) > 0, "Expected at least one detected batch"
         # All three wells should be in the same batch
         max_batch_size = result["batch_size"].max()
-        assert max_batch_size >= 3, (
-            f"Expected batch of >=3 wells, got max_batch_size={max_batch_size}"
-        )
+        assert (
+            max_batch_size >= 3
+        ), f"Expected batch of >=3 wells, got max_batch_size={max_batch_size}"
 
     def test_detect_batches_separate_rigs(self):
         """Different rigs drilling the same field must NOT be one batch."""
-        df = _make_bsee_df([
-            {
-                "well_id": "W001",
-                "rig_name": "DEEP OCEAN ASCENSION",
-                "field_name": "JULIA",
-                "spud_date": pd.Timestamp("2022-01-15"),
-            },
-            {
-                "well_id": "W002",
-                "rig_name": "DISCOVERER CLEAR LEADER",
-                "field_name": "JULIA",
-                "spud_date": pd.Timestamp("2022-04-20"),
-            },
-        ])
+        df = _make_bsee_df(
+            [
+                {
+                    "well_id": "W001",
+                    "rig_name": "DEEP OCEAN ASCENSION",
+                    "field_name": "JULIA",
+                    "spud_date": pd.Timestamp("2022-01-15"),
+                },
+                {
+                    "well_id": "W002",
+                    "rig_name": "DISCOVERER CLEAR LEADER",
+                    "field_name": "JULIA",
+                    "spud_date": pd.Timestamp("2022-04-20"),
+                },
+            ]
+        )
         result = self.detector.detect_batches(df, time_window_months=12)
         # Each rig is a separate batch; no batch should contain both wells
         if len(result) > 0:
@@ -325,20 +328,22 @@ class TestBSEEBatchDetector:
 
     def test_detect_batches_outside_time_window(self):
         """Wells drilled more than time_window_months apart are not a batch."""
-        df = _make_bsee_df([
-            {
-                "well_id": "W001",
-                "rig_name": "DEEP OCEAN ASCENSION",
-                "field_name": "JULIA",
-                "spud_date": pd.Timestamp("2020-01-01"),
-            },
-            {
-                "well_id": "W002",
-                "rig_name": "DEEP OCEAN ASCENSION",
-                "field_name": "JULIA",
-                "spud_date": pd.Timestamp("2022-03-01"),
-            },
-        ])
+        df = _make_bsee_df(
+            [
+                {
+                    "well_id": "W001",
+                    "rig_name": "DEEP OCEAN ASCENSION",
+                    "field_name": "JULIA",
+                    "spud_date": pd.Timestamp("2020-01-01"),
+                },
+                {
+                    "well_id": "W002",
+                    "rig_name": "DEEP OCEAN ASCENSION",
+                    "field_name": "JULIA",
+                    "spud_date": pd.Timestamp("2022-03-01"),
+                },
+            ]
+        )
         result = self.detector.detect_batches(df, time_window_months=12)
         if len(result) > 0:
             max_batch_size = result["batch_size"].max()
@@ -349,23 +354,27 @@ class TestBSEEBatchDetector:
 
     def test_detect_batches_returns_dataframe(self):
         """detect_batches must return a pandas DataFrame."""
-        df = _make_bsee_df([
-            {
-                "well_id": "W001",
-                "rig_name": "RIG_A",
-                "field_name": "FIELD_X",
-                "spud_date": pd.Timestamp("2022-01-01"),
-            },
-        ])
+        df = _make_bsee_df(
+            [
+                {
+                    "well_id": "W001",
+                    "rig_name": "RIG_A",
+                    "field_name": "FIELD_X",
+                    "spud_date": pd.Timestamp("2022-01-01"),
+                },
+            ]
+        )
         result = self.detector.detect_batches(df)
         assert isinstance(result, pd.DataFrame)
 
     def test_fit_learning_curve_returns_float(self):
         """fit_learning_curve must return a float in a valid range."""
-        campaign_df = pd.DataFrame({
-            "well_position": [1, 2, 3, 4],
-            "days_to_drill": [60.0, 52.0, 48.0, 45.0],
-        })
+        campaign_df = pd.DataFrame(
+            {
+                "well_position": [1, 2, 3, 4],
+                "days_to_drill": [60.0, 52.0, 48.0, 45.0],
+            }
+        )
         lc = self.detector.fit_learning_curve(campaign_df)
         assert isinstance(lc, float)
         assert 0.5 < lc <= 1.0, f"LC factor should be in (0.5, 1.0], got {lc}"

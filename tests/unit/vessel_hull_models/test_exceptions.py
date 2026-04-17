@@ -1,8 +1,8 @@
 """Tests for Vessel Hull Models module exception hierarchy."""
 
 from worldenergydata.vessel_hull_models.exceptions import (
-    APIClientError,
     AcquisitionError,
+    APIClientError,
     DimensionValidationError,
     FormatConversionError,
     MeshOperationError,

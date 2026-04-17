@@ -72,8 +72,8 @@ def sync(
         worldenergydata eia sync --feed gas-storage --output ./data/eia
     """
     try:
-        from worldenergydata.eia.ingestion import EIAIngestionSync
         from worldenergydata.eia.client import EIAKeyError
+        from worldenergydata.eia.ingestion import EIAIngestionSync
     except ImportError as exc:
         console.print(f"[red]Import error:[/red] {exc}")
         raise typer.Exit(1)
@@ -94,9 +94,7 @@ def sync(
     params_table.add_column("Value")
     params_table.add_row("Feed", feed.value)
     params_table.add_row("Output Directory", str(output))
-    params_table.add_row(
-        "State Directory", str(resolved_state_dir)
-    )
+    params_table.add_row("State Directory", str(resolved_state_dir))
     console.print(Panel(params_table, title="EIA Sync Parameters", border_style="cyan"))
 
     results = []
@@ -111,6 +109,7 @@ def sync(
         console.print(f"[red]Sync error:[/red] {exc}")
         if verbose:
             import traceback
+
             console.print(f"[dim]{traceback.format_exc()}[/dim]")
         raise typer.Exit(1)
 

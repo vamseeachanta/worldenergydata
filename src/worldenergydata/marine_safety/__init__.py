@@ -79,12 +79,14 @@ __all__: List[str] = [
 ]
 
 # Module-level exports
-from worldenergydata.marine_safety import config
-from worldenergydata.marine_safety import constants
-from worldenergydata.marine_safety import exceptions
-from worldenergydata.marine_safety import database
-from worldenergydata.marine_safety import scrapers
-from worldenergydata.marine_safety import utils
+from worldenergydata.marine_safety import (
+    config,
+    constants,
+    database,
+    exceptions,
+    scrapers,
+    utils,
+)
 from worldenergydata.marine_safety.cross_database import (
     CrossDatabaseAnalyzer,
     CrossDatabaseQuery,

@@ -11,11 +11,9 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Optional
 
+import metocean_stats.stats.spec_funcs as spec_funcs
 import numpy as np
 import plotly.graph_objects as go
-
-import metocean_stats.stats.spec_funcs as spec_funcs
-
 
 # Default frequency vector (Hz): 0.02–0.5 Hz in 200 steps
 _DEFAULT_FREQUENCIES = np.linspace(0.02, 0.5, 200)
@@ -195,15 +193,11 @@ class WaveSpectra:
         hs_check = 4.0 * np.sqrt(m0) if not np.isnan(m0) else float("nan")
 
         annotation = (
-            f"m₀={m0:.4f} m², Hs_check={hs_check:.2f} m"
-            if not np.isnan(m0)
-            else ""
+            f"m₀={m0:.4f} m², Hs_check={hs_check:.2f} m" if not np.isnan(m0) else ""
         )
 
         fig.update_layout(
-            title=dict(
-                text=f"{result.spectrum_type} Wave Spectrum — {annotation}"
-            ),
+            title=dict(text=f"{result.spectrum_type} Wave Spectrum — {annotation}"),
             xaxis=dict(title="Frequency (Hz)"),
             yaxis=dict(title="Spectral Energy Density (m²/Hz)"),
             legend=dict(x=0.7, y=0.99),

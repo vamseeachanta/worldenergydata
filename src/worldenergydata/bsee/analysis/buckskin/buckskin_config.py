@@ -23,24 +23,36 @@ class BuckskinConfig:
 
     # BOEM OCS lease numbers (from BOEM serial register)
     # KC 871 and KC 872 share the same lease number OCS-G 25823
-    boem_leases: Dict[str, str] = field(default_factory=lambda: {
-        "OCS-G 25806": "KC 785",
-        "OCS-G 25813": "KC 828",
-        "OCS-G 25814": "KC 829",
-        "OCS-G 25815": "KC 830",
-        "OCS-G 25823": "KC 871 / KC 872",
-    })
+    boem_leases: Dict[str, str] = field(
+        default_factory=lambda: {
+            "OCS-G 25806": "KC 785",
+            "OCS-G 25813": "KC 828",
+            "OCS-G 25814": "KC 829",
+            "OCS-G 25815": "KC 830",
+            "OCS-G 25823": "KC 871 / KC 872",
+        }
+    )
 
     # Lease numbers as found in BSEE data (without "OCS-" prefix)
     # The data may use trimmed format like "G25806" or with space "G 25806"
     lease_numbers: Tuple[str, ...] = (
-        "G25806", "G25813", "G25814", "G25815", "G25823",
+        "G25806",
+        "G25813",
+        "G25814",
+        "G25815",
+        "G25823",
     )
 
     # Additional leases discovered in BSEE LAB data (8 total)
     all_lease_numbers: Tuple[str, ...] = (
-        "G19645", "G20979", "G25806", "G25813",
-        "G25814", "G25815", "G25823", "G32650",
+        "G19645",
+        "G20979",
+        "G25806",
+        "G25813",
+        "G25814",
+        "G25815",
+        "G25823",
+        "G32650",
     )
 
     # Operator history (chronological)

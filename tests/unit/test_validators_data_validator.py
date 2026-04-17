@@ -1,16 +1,17 @@
 # ABOUTME: Tests for DataValidator in src/validators/data_validator.py
 # ABOUTME: Covers validate_dataframe quality scoring, missing data, and report generation
 
-import pytest
-import pandas as pd
+import os
+import sys
+import tempfile
 from pathlib import Path
 from unittest.mock import MagicMock, patch
-import tempfile
+
+import pandas as pd
+import pytest
 import yaml
 
-import sys
-import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../src"))
 
 from validators.data_validator import DataValidator
 
@@ -22,11 +23,13 @@ def validator():
 
 @pytest.fixture
 def clean_df():
-    return pd.DataFrame({
-        "id": [1, 2, 3],
-        "name": ["a", "b", "c"],
-        "value": [10.0, 20.0, 30.0],
-    })
+    return pd.DataFrame(
+        {
+            "id": [1, 2, 3],
+            "name": ["a", "b", "c"],
+            "value": [10.0, 20.0, 30.0],
+        }
+    )
 
 
 class TestDataValidatorInit:
@@ -65,7 +68,9 @@ class TestValidateDataframe:
         assert not any("Missing required" in i for i in result["issues"])
 
     def test_missing_required_field_reduces_score(self, validator, clean_df):
-        result = validator.validate_dataframe(clean_df, required_fields=["id", "missing_col"])
+        result = validator.validate_dataframe(
+            clean_df, required_fields=["id", "missing_col"]
+        )
         assert result["valid"] is False
         assert result["quality_score"] <= 80.0
         assert any("Missing required" in i for i in result["issues"])
@@ -80,10 +85,12 @@ class TestValidateDataframe:
         assert any("duplicate" in i for i in result["issues"])
 
     def test_high_missing_data_marks_invalid(self, validator):
-        df = pd.DataFrame({
-            "a": [None, None, None, None, 1.0],  # 80% missing
-            "b": [None, None, None, None, 1.0],
-        })
+        df = pd.DataFrame(
+            {
+                "a": [None, None, None, None, 1.0],  # 80% missing
+                "b": [None, None, None, None, 1.0],
+            }
+        )
         result = validator.validate_dataframe(df)
         assert result["valid"] is False
         assert any("missing" in i.lower() for i in result["issues"])

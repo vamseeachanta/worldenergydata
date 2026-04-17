@@ -12,8 +12,8 @@ from assetutilities.common.visualization.visualization_templates_plotly import (
 from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
 from loguru import logger
 
-from worldenergydata.common.legacy.data import DateTimeUtility
 from worldenergydata.bsee.data.bsee_data import BSEEData
+from worldenergydata.common.legacy.data import DateTimeUtility
 
 wwy = WorkingWithYAML()
 viz_templates_plotly = VisualizationTemplatesPlotly()

@@ -1,4 +1,5 @@
 """Scheduler monitoring: job execution logging, retry, status reporting, webhook."""
+
 import json
 import logging
 import time
@@ -71,7 +72,7 @@ class RetryManager:
 
         Delays double each attempt: backoff_seconds * 2^attempt.
         """
-        return self.backoff_seconds * (2 ** attempt)
+        return self.backoff_seconds * (2**attempt)
 
     def run_with_retry(self, job_fn: Callable[[], JobResult]) -> JobResult:
         """Call job_fn up to max_retries times; return last result.

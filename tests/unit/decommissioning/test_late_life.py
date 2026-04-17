@@ -3,14 +3,13 @@
 
 """Unit tests for worldenergydata.decommissioning.late_life."""
 
-import pytest
 import pandas as pd
+import pytest
 
 from worldenergydata.decommissioning.late_life import (
     LateLifeAssessment,
     LateLifeIdentifier,
 )
-
 
 # ---------------------------------------------------------------------------
 # Helpers to build production DataFrames
@@ -49,8 +48,17 @@ def _declining_field() -> pd.DataFrame:
     return _make_production_df(
         years=list(range(2015, 2026)),
         bopd_by_year={
-            2015: 10000, 2016: 10000, 2017: 10000, 2018: 10000, 2019: 10000,
-            2020: 10000, 2021: 5000,  2022: 3000,  2023: 2000,  2024: 1500, 2025: 1000,
+            2015: 10000,
+            2016: 10000,
+            2017: 10000,
+            2018: 10000,
+            2019: 10000,
+            2020: 10000,
+            2021: 5000,
+            2022: 3000,
+            2023: 2000,
+            2024: 1500,
+            2025: 1000,
         },
     )
 

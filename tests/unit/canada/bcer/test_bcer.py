@@ -45,23 +45,17 @@ class TestBuildArcgisUrl:
 
     def test_return_geometry_false(self):
         b = BCER()
-        url = b._build_arcgis_url(
-            "/arcgis/rest/test/query", return_geometry=False
-        )
+        url = b._build_arcgis_url("/arcgis/rest/test/query", return_geometry=False)
         assert "returnGeometry=false" in url
 
     def test_result_offset(self):
         b = BCER()
-        url = b._build_arcgis_url(
-            "/arcgis/rest/test/query", result_offset=500
-        )
+        url = b._build_arcgis_url("/arcgis/rest/test/query", result_offset=500)
         assert "resultOffset=500" in url
 
     def test_result_record_count(self):
         b = BCER()
-        url = b._build_arcgis_url(
-            "/arcgis/rest/test/query", result_record_count=200
-        )
+        url = b._build_arcgis_url("/arcgis/rest/test/query", result_record_count=200)
         assert "resultRecordCount=200" in url
 
     def test_no_result_record_count_when_none(self):
@@ -100,9 +94,9 @@ class TestRouter:
 
     def test_all_known_data_types(self):
         b = BCER()
-        result = b.router({
-            "data_types": ["wells", "production", "facilities", "pipelines", "pools"]
-        })
+        result = b.router(
+            {"data_types": ["wells", "production", "facilities", "pipelines", "pools"]}
+        )
         assert isinstance(result, dict)
 
 

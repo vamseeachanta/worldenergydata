@@ -47,13 +47,9 @@ class ProductionRecord:
 
     def __post_init__(self) -> None:
         if self.volume_bbl < 0:
-            raise ValueError(
-                f"volume_bbl cannot be negative, got {self.volume_bbl}"
-            )
+            raise ValueError(f"volume_bbl cannot be negative, got {self.volume_bbl}")
         if self.year < MIN_VALID_YEAR:
-            raise ValueError(
-                f"year must be >= {MIN_VALID_YEAR}, got {self.year}"
-            )
+            raise ValueError(f"year must be >= {MIN_VALID_YEAR}, got {self.year}")
 
     @property
     def volume_kbd(self) -> float:

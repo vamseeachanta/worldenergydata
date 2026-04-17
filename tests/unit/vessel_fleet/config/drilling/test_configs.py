@@ -3,14 +3,27 @@
 import pytest
 
 
-@pytest.fixture(params=[
-    "ades", "borr", "cosl", "helmerich_payne", "nabors",
-    "noble", "patterson_uti", "saipem", "seadrill", "stena",
-    "transocean", "valaris", "vantage",
-])
+@pytest.fixture(
+    params=[
+        "ades",
+        "borr",
+        "cosl",
+        "helmerich_payne",
+        "nabors",
+        "noble",
+        "patterson_uti",
+        "saipem",
+        "seadrill",
+        "stena",
+        "transocean",
+        "valaris",
+        "vantage",
+    ]
+)
 def config_module(request):
     """Load each drilling config module."""
     import importlib
+
     mod = importlib.import_module(
         f"worldenergydata.vessel_fleet.config.drilling.{request.param}"
     )
@@ -49,4 +62,6 @@ class TestDrillingConfigs:
     def test_field_mapping_has_vessel_name(self, config_module):
         mod, name = config_module
         values = mod.CONFIG.field_mapping.values()
-        assert "VESSEL_NAME" in values, f"{name}: field_mapping missing VESSEL_NAME target"
+        assert (
+            "VESSEL_NAME" in values
+        ), f"{name}: field_mapping missing VESSEL_NAME target"

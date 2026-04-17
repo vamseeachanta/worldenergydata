@@ -16,7 +16,7 @@ from typing import Optional
 
 import pandas as pd
 
-from worldenergydata.common.units import OilUnits, GasUnits
+from worldenergydata.common.units import GasUnits, OilUnits
 
 logger = logging.getLogger(__name__)
 
@@ -62,21 +62,15 @@ class UKCSFieldProductionLoader:
         result["month"] = raw[_RAW_MONTH_COL].astype(int)
 
         # Thousand tonnes → bbl
-        result["oil_bbl"] = (
-            raw[_RAW_OIL_COL].fillna(0.0) * 1000.0 * TONNES_TO_BBL
-        )
+        result["oil_bbl"] = raw[_RAW_OIL_COL].fillna(0.0) * 1000.0 * TONNES_TO_BBL
         # MMscf → Mcf
         result["gas_mcf"] = raw[_RAW_GAS_COL].fillna(0.0) * MMSCF_TO_MCF
         # Thousand tonnes → bbl
-        result["water_bbl"] = (
-            raw[_RAW_WATER_COL].fillna(0.0) * 1000.0 * TONNES_TO_BBL
-        )
+        result["water_bbl"] = raw[_RAW_WATER_COL].fillna(0.0) * 1000.0 * TONNES_TO_BBL
 
         return result.reset_index(drop=True)
 
-    def filter_field(
-        self, df: pd.DataFrame, field_name: str
-    ) -> pd.DataFrame:
+    def filter_field(self, df: pd.DataFrame, field_name: str) -> pd.DataFrame:
         """Return rows for a specific field (case-insensitive)."""
         return df[df["field"] == field_name.upper().strip()].copy()
 
@@ -98,9 +92,5 @@ class UKCSFieldProductionLoader:
             )
 
         numeric = ["oil_bbl", "gas_mcf", "water_bbl"]
-        annual = (
-            df.groupby(["field", "year"])[numeric]
-            .sum()
-            .reset_index()
-        )
+        annual = df.groupby(["field", "year"])[numeric].sum().reset_index()
         return annual

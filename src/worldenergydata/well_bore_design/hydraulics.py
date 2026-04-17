@@ -81,16 +81,18 @@ class WellBoreHydraulics:
         av_fpm = av * 60.0  # ft/min
 
         # Bingham Plastic annular Reynolds number (Bourgoyne form)
-        re = (109.0 * mud_weight_ppg * av_fpm * dh_in) / (
-            plastic_viscosity_cp + (6.0 * yield_point_lbf_100ft2 * dh_in / av_fpm)
-        ) if av_fpm > 0 else 0.0
+        re = (
+            (109.0 * mud_weight_ppg * av_fpm * dh_in)
+            / (plastic_viscosity_cp + (6.0 * yield_point_lbf_100ft2 * dh_in / av_fpm))
+            if av_fpm > 0
+            else 0.0
+        )
 
         if re < 2100:
             # Laminar — simplified Bingham Plastic formula (psi/100ft)
-            dP = (
-                plastic_viscosity_cp * av_fpm / (300.0 * dh_in**2)
-                + yield_point_lbf_100ft2 / (225.0 * dh_in)
-            )
+            dP = plastic_viscosity_cp * av_fpm / (
+                300.0 * dh_in**2
+            ) + yield_point_lbf_100ft2 / (225.0 * dh_in)
         else:
             # Turbulent — Fanning friction factor (Dodge-Metzner approximation)
             f = 0.046 / (re**0.2)

@@ -1,11 +1,11 @@
 """Tests for status enricher and scheduler alerting integration."""
+
 from datetime import datetime, timedelta
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 from worldenergydata.scheduler.staleness import STALENESS_THRESHOLDS
-
 
 FROZEN_NOW = datetime(2026, 3, 25, 12, 0, 0)
 
@@ -19,7 +19,9 @@ def _job_entry(start_time: datetime | None, status: str = "success") -> dict:
     return {
         "status": status,
         "start_time": start_time.isoformat() if start_time else None,
-        "end_time": (start_time + timedelta(minutes=5)).isoformat() if start_time else None,
+        "end_time": (
+            (start_time + timedelta(minutes=5)).isoformat() if start_time else None
+        ),
         "records_updated": 10,
         "error_msg": None,
     }
@@ -36,11 +38,13 @@ class TestEnrichStatus:
 
         from worldenergydata.scheduler.status_enricher import enrich_status
 
-        status = _make_status({
-            "sodir_refresh": _job_entry(FROZEN_NOW - timedelta(hours=12)),
-            "bsee_refresh": _job_entry(FROZEN_NOW - timedelta(days=5)),
-            "eia_us_refresh": _job_entry(FROZEN_NOW - timedelta(days=20)),
-        })
+        status = _make_status(
+            {
+                "sodir_refresh": _job_entry(FROZEN_NOW - timedelta(hours=12)),
+                "bsee_refresh": _job_entry(FROZEN_NOW - timedelta(days=5)),
+                "eia_us_refresh": _job_entry(FROZEN_NOW - timedelta(days=20)),
+            }
+        )
         result = enrich_status(status)
         assert "staleness" in result
         # Should have per-source details
@@ -56,11 +60,13 @@ class TestEnrichStatus:
 
         from worldenergydata.scheduler.status_enricher import enrich_status
 
-        status = _make_status({
-            "sodir_refresh": _job_entry(FROZEN_NOW - timedelta(hours=40)),
-            "bsee_refresh": _job_entry(FROZEN_NOW - timedelta(days=1)),
-            "eia_us_refresh": _job_entry(FROZEN_NOW - timedelta(days=1)),
-        })
+        status = _make_status(
+            {
+                "sodir_refresh": _job_entry(FROZEN_NOW - timedelta(hours=40)),
+                "bsee_refresh": _job_entry(FROZEN_NOW - timedelta(days=1)),
+                "eia_us_refresh": _job_entry(FROZEN_NOW - timedelta(days=1)),
+            }
+        )
         result = enrich_status(status)
         sodir = result["staleness"]["sodir_refresh"]
         assert "threshold_hours" in sodir
@@ -78,9 +84,11 @@ class TestEnrichStatus:
 
         from worldenergydata.scheduler.status_enricher import enrich_status
 
-        status = _make_status({
-            "sodir_refresh": _job_entry(FROZEN_NOW - timedelta(hours=12)),
-        })
+        status = _make_status(
+            {
+                "sodir_refresh": _job_entry(FROZEN_NOW - timedelta(hours=12)),
+            }
+        )
         result = enrich_status(status)
         assert "alerts" in result
         assert result["alerts"] == []
@@ -91,8 +99,8 @@ class TestEnrichStatus:
         mock_dt.now.return_value = FROZEN_NOW
         mock_dt.fromisoformat = datetime.fromisoformat
 
-        import tempfile
         import os
+        import tempfile
 
         import yaml
 
@@ -103,7 +111,12 @@ class TestEnrichStatus:
             config_path = os.path.join(tmp, "config.yml")
             config = {
                 "jobs": [
-                    {"name": "test_job", "interval": "daily", "time": "00:00", "enabled": True}
+                    {
+                        "name": "test_job",
+                        "interval": "daily",
+                        "time": "00:00",
+                        "enabled": True,
+                    }
                 ],
                 "monitoring": {
                     "log_dir": os.path.join(tmp, "logs"),

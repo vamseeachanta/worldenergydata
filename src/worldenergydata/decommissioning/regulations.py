@@ -19,12 +19,13 @@ Public API::
 
 import pandas as pd
 
+from worldenergydata.decommissioning._regulations_data import (
+    ALL_REGULATIONS as DECOMMISSIONING_REGULATIONS,
+)
+
 # Re-export the dataclass so callers only need to import from this module
 from worldenergydata.decommissioning._regulations_model import (
     DecommissioningRegulation,
-)
-from worldenergydata.decommissioning._regulations_data import (
-    ALL_REGULATIONS as DECOMMISSIONING_REGULATIONS,
 )
 
 __all__ = [

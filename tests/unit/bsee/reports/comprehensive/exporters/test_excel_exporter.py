@@ -6,10 +6,10 @@ from worldenergydata.bsee.reports.comprehensive.exporters.excel_exporter import 
     ExcelExporter,
 )
 
-
 # ---------------------------------------------------------------------------
 # _init_styles
 # ---------------------------------------------------------------------------
+
 
 class TestInitStyles:
     def test_styles_created(self):
@@ -35,6 +35,7 @@ class TestInitStyles:
 # ---------------------------------------------------------------------------
 # validate_data
 # ---------------------------------------------------------------------------
+
 
 class TestValidateData:
     def test_empty_data(self):
@@ -82,6 +83,7 @@ class TestValidateData:
 # get_supported_features
 # ---------------------------------------------------------------------------
 
+
 class TestGetSupportedFeatures:
     def test_returns_list(self):
         exporter = ExcelExporter()
@@ -105,10 +107,12 @@ class TestGetSupportedFeatures:
 # create_sheets
 # ---------------------------------------------------------------------------
 
+
 class TestCreateSheets:
     def test_summary_sheet(self):
         exporter = ExcelExporter()
         from openpyxl import Workbook
+
         exporter.workbook = Workbook()
         exporter.workbook.remove(exporter.workbook.active)
         sheets = exporter.create_sheets({"summary": {"total": 100}})
@@ -117,6 +121,7 @@ class TestCreateSheets:
     def test_production_sheet(self):
         exporter = ExcelExporter()
         from openpyxl import Workbook
+
         exporter.workbook = Workbook()
         exporter.workbook.remove(exporter.workbook.active)
         sheets = exporter.create_sheets({"production_data": [{"oil": 1000}]})
@@ -125,6 +130,7 @@ class TestCreateSheets:
     def test_empty_data(self):
         exporter = ExcelExporter()
         from openpyxl import Workbook
+
         exporter.workbook = Workbook()
         exporter.workbook.remove(exporter.workbook.active)
         sheets = exporter.create_sheets({})
@@ -134,6 +140,7 @@ class TestCreateSheets:
 # ---------------------------------------------------------------------------
 # supported_format
 # ---------------------------------------------------------------------------
+
 
 class TestSupportedFormat:
     def test_is_excel(self):

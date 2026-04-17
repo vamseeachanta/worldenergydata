@@ -7,11 +7,11 @@ from worldenergydata.well_bore_design.decision_framework import (
 )
 from worldenergydata.well_bore_design.hydraulics import WellBoreHydraulics
 from worldenergydata.well_bore_design.schemas import (
+    LARGE_BORE_MIN_BIT_SIZE_IN,
+    SLIM_HOLE_MAX_BIT_SIZE_IN,
     BoreType,
     CasingString,
     EcdProfile,
-    LARGE_BORE_MIN_BIT_SIZE_IN,
-    SLIM_HOLE_MAX_BIT_SIZE_IN,
     WellBoreDesign,
     bore_type_from_bit_size,
 )

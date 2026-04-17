@@ -1,13 +1,13 @@
 """Tests for LNG terminal queryable API (LngTerminalClient / LngTerminalQuery)."""
-import pytest
+
 import pandas as pd
+import pytest
 
 from worldenergydata.lng_terminals.query import (
     LngTerminalClient,
     LngTerminalQuery,
     LngTerminalResult,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -116,9 +116,7 @@ def test_filter_by_region_excludes_others(client: LngTerminalClient) -> None:
 
 
 def test_filter_by_multiple_regions(client: LngTerminalClient) -> None:
-    result = client.query(
-        LngTerminalQuery(region=["north_america", "middle_east"])
-    )
+    result = client.query(LngTerminalQuery(region=["north_america", "middle_east"]))
     assert result.total_count > 0
     assert set(result.data["region"]).issubset({"north_america", "middle_east"})
 

@@ -107,9 +107,7 @@ class TestCrossFieldValidationError:
         assert "Fields: start_date, end_date" in str(err)
 
     def test_with_rule(self):
-        err = CrossFieldValidationError(
-            "fail", fields=["a", "b"], rule="date_order"
-        )
+        err = CrossFieldValidationError("fail", fields=["a", "b"], rule="date_order")
         assert "Rule: date_order" in str(err)
 
     def test_format_message_overrides_parent(self):

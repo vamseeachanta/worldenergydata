@@ -18,11 +18,11 @@ class OilUnits:
         API MPMS Ch. 11 (Measurement of Petroleum and Petroleum Products)
     """
 
-    SM3_TO_BBL: float = 6.2898      # 1 standard m³ crude → barrels (API MPMS Ch.11)
-    TONNE_TO_BBL: float = 7.33      # 1 metric tonne crude → barrels (API ~35°API)
-    BBL_TO_SM3: float = 0.158987    # exact inverse of SM3_TO_BBL
+    SM3_TO_BBL: float = 6.2898  # 1 standard m³ crude → barrels (API MPMS Ch.11)
+    TONNE_TO_BBL: float = 7.33  # 1 metric tonne crude → barrels (API ~35°API)
+    BBL_TO_SM3: float = 0.158987  # exact inverse of SM3_TO_BBL
     BBL_TO_TONNE: float = 0.136428  # exact inverse of TONNE_TO_BBL
-    M3_TO_BBL: float = 6.2898       # m³ == Sm³ at standard conditions
+    M3_TO_BBL: float = 6.2898  # m³ == Sm³ at standard conditions
 
 
 class GasUnits:
@@ -35,13 +35,13 @@ class GasUnits:
         GPA 2145 (Physical Constants for Natural Gas and Gas Processing)
     """
 
-    SM3_TO_SCF: float = 35.3147         # 1 Sm³ → standard cubic feet
-    SM3_TO_MMSCF: float = 35.3147e-6   # 1 Sm³ → million standard cubic feet
-    MSM3_TO_BCF: float = 0.0353147     # 1 MSm³ → BCF
-    MSM3_TO_MMSCF: float = 35.3147     # 1 MSm³ → MMscf
-    MMSCF_TO_MCF: float = 1000.0       # 1 MMscf → Mcf (thousand cubic feet)
-    MCF_TO_MMSCF: float = 0.001        # 1 Mcf → MMscf
-    BCF_TO_TCF: float = 0.001          # 1 BCF → TCF
+    SM3_TO_SCF: float = 35.3147  # 1 Sm³ → standard cubic feet
+    SM3_TO_MMSCF: float = 35.3147e-6  # 1 Sm³ → million standard cubic feet
+    MSM3_TO_BCF: float = 0.0353147  # 1 MSm³ → BCF
+    MSM3_TO_MMSCF: float = 35.3147  # 1 MSm³ → MMscf
+    MMSCF_TO_MCF: float = 1000.0  # 1 MMscf → Mcf (thousand cubic feet)
+    MCF_TO_MMSCF: float = 0.001  # 1 Mcf → MMscf
+    BCF_TO_TCF: float = 0.001  # 1 BCF → TCF
 
 
 class WaterUnits:
@@ -50,8 +50,8 @@ class WaterUnits:
     Note: water density ≈ 1.0 tonne/m³ at surface conditions.
     """
 
-    M3_TO_BBL: float = 6.2898      # 1 m³ water → barrels
-    TONNE_TO_BBL: float = 6.2898   # 1 tonne water → barrels (density ≈ 1 t/m³)
+    M3_TO_BBL: float = 6.2898  # 1 m³ water → barrels
+    TONNE_TO_BBL: float = 6.2898  # 1 tonne water → barrels (density ≈ 1 t/m³)
 
 
 class PressureUnits:
@@ -62,8 +62,8 @@ class PressureUnits:
     """
 
     PSI_TO_BAR: float = 0.0689476  # 1 psi → bar
-    BAR_TO_PSI: float = 14.5038    # 1 bar → psi
-    KPA_TO_PSI: float = 0.145038   # 1 kPa → psi
+    BAR_TO_PSI: float = 14.5038  # 1 bar → psi
+    KPA_TO_PSI: float = 0.145038  # 1 kPa → psi
 
 
 class EnergyUnits:
@@ -73,9 +73,9 @@ class EnergyUnits:
         SPE guide — 1 BOE = 5.8 MMBTU; ~6 MCF/BOE rule of thumb
     """
 
-    BBL_TO_BOE: float = 1.0        # 1 bbl crude oil = 1 BOE (by definition)
-    MCF_TO_BOE: float = 0.178      # 1 MCF gas ≈ 0.178 BOE (6 MCF/BOE rule of thumb)
-    MWH_TO_BOE: float = 0.5883     # 1 MWh ≈ 0.5883 BOE (based on 5.8 MMBTU/BOE)
+    BBL_TO_BOE: float = 1.0  # 1 bbl crude oil = 1 BOE (by definition)
+    MCF_TO_BOE: float = 0.178  # 1 MCF gas ≈ 0.178 BOE (6 MCF/BOE rule of thumb)
+    MWH_TO_BOE: float = 0.5883  # 1 MWh ≈ 0.5883 BOE (based on 5.8 MMBTU/BOE)
 
 
 # ---------------------------------------------------------------------------
@@ -84,29 +84,26 @@ class EnergyUnits:
 
 UNIT_REGISTRY: dict[tuple[str, str], float] = {
     # Oil — liquid volume
-    ("sm3", "bbl"):        OilUnits.SM3_TO_BBL,
-    ("bbl", "sm3"):        OilUnits.BBL_TO_SM3,
-    ("tonne_oil", "bbl"):  OilUnits.TONNE_TO_BBL,
-    ("bbl", "tonne_oil"):  OilUnits.BBL_TO_TONNE,
-    ("m3", "bbl"):         OilUnits.M3_TO_BBL,
-
+    ("sm3", "bbl"): OilUnits.SM3_TO_BBL,
+    ("bbl", "sm3"): OilUnits.BBL_TO_SM3,
+    ("tonne_oil", "bbl"): OilUnits.TONNE_TO_BBL,
+    ("bbl", "tonne_oil"): OilUnits.BBL_TO_TONNE,
+    ("m3", "bbl"): OilUnits.M3_TO_BBL,
     # Gas — volume
-    ("msm3", "bcf"):       GasUnits.MSM3_TO_BCF,
-    ("msm3", "mmscf"):     GasUnits.MSM3_TO_MMSCF,
-    ("mmscf", "mcf"):      GasUnits.MMSCF_TO_MCF,
-    ("mcf", "mmscf"):      GasUnits.MCF_TO_MMSCF,
-    ("sm3_gas", "scf"):    GasUnits.SM3_TO_SCF,
-    ("bcf", "tcf"):        GasUnits.BCF_TO_TCF,
-
+    ("msm3", "bcf"): GasUnits.MSM3_TO_BCF,
+    ("msm3", "mmscf"): GasUnits.MSM3_TO_MMSCF,
+    ("mmscf", "mcf"): GasUnits.MMSCF_TO_MCF,
+    ("mcf", "mmscf"): GasUnits.MCF_TO_MMSCF,
+    ("sm3_gas", "scf"): GasUnits.SM3_TO_SCF,
+    ("bcf", "tcf"): GasUnits.BCF_TO_TCF,
     # Pressure
-    ("psi", "bar"):        PressureUnits.PSI_TO_BAR,
-    ("bar", "psi"):        PressureUnits.BAR_TO_PSI,
-    ("kpa", "psi"):        PressureUnits.KPA_TO_PSI,
-
+    ("psi", "bar"): PressureUnits.PSI_TO_BAR,
+    ("bar", "psi"): PressureUnits.BAR_TO_PSI,
+    ("kpa", "psi"): PressureUnits.KPA_TO_PSI,
     # Energy / BOE
-    ("bbl", "boe"):        EnergyUnits.BBL_TO_BOE,
-    ("mcf", "boe"):        EnergyUnits.MCF_TO_BOE,
-    ("mwh", "boe"):        EnergyUnits.MWH_TO_BOE,
+    ("bbl", "boe"): EnergyUnits.BBL_TO_BOE,
+    ("mcf", "boe"): EnergyUnits.MCF_TO_BOE,
+    ("mwh", "boe"): EnergyUnits.MWH_TO_BOE,
 }
 
 

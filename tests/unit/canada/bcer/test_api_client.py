@@ -4,10 +4,10 @@ import pytest
 
 from worldenergydata.canada.bcer.api_client import BCERClient
 
-
 # ---------------------------------------------------------------------------
 # Init and defaults
 # ---------------------------------------------------------------------------
+
 
 class TestBCERClientInit:
     def test_default_values(self):
@@ -59,6 +59,7 @@ class TestBCERClientInit:
 # Constants
 # ---------------------------------------------------------------------------
 
+
 class TestBCERClientConstants:
     def test_base_url(self):
         assert "bcer.gov.bc.ca" in BCERClient.BASE_URL
@@ -85,6 +86,7 @@ class TestBCERClientConstants:
 # _setup_headers
 # ---------------------------------------------------------------------------
 
+
 class TestSetupHeaders:
     def test_default_headers(self):
         client = BCERClient()
@@ -110,6 +112,7 @@ class TestSetupHeaders:
 # ---------------------------------------------------------------------------
 # _generate_cache_key
 # ---------------------------------------------------------------------------
+
 
 class TestGenerateCacheKey:
     def test_without_params(self):
@@ -144,6 +147,7 @@ class TestGenerateCacheKey:
 # ---------------------------------------------------------------------------
 # _build_arcgis_params
 # ---------------------------------------------------------------------------
+
 
 class TestBuildArcgisParams:
     def test_defaults(self):
@@ -199,6 +203,7 @@ class TestBuildArcgisParams:
 # ---------------------------------------------------------------------------
 # Context manager
 # ---------------------------------------------------------------------------
+
 
 class TestContextManager:
     def test_enter_exit(self):

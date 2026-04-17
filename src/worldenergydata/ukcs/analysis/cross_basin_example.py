@@ -21,15 +21,16 @@ logger = logging.getLogger(__name__)
 
 # ── Norwegian fiscal constants ────────────────────────────────────────────────
 NCS_CORPORATE_TAX_RATE: float = 0.22
-NCS_SPECIAL_TAX_RATE: float = 0.56   # Special petroleum tax
-NCS_UPLIFT_RATE: float = 0.718       # Uplift allowance offsets special tax base
+NCS_SPECIAL_TAX_RATE: float = 0.56  # Special petroleum tax
+NCS_UPLIFT_RATE: float = 0.718  # Uplift allowance offsets special tax base
 
 # ── GoM fiscal constants ──────────────────────────────────────────────────────
-GOM_ROYALTY_RATE: float = 0.1875    # 18.75% standard deepwater royalty
+GOM_ROYALTY_RATE: float = 0.1875  # 18.75% standard deepwater royalty
 GOM_FEDERAL_TAX_RATE: float = 0.21  # US federal corporate tax
 
 
 # ── Data classes ─────────────────────────────────────────────────────────────
+
 
 @dataclass
 class BasinProfile:
@@ -62,13 +63,13 @@ class ComparisonResult:
         for basin, npv in self.npv_by_basin.items():
             gov_take = self.government_take_by_basin.get(basin, 0.0)
             lines.append(
-                f"  {basin:<20} NPV: {npv/1e6:>8.1f} MM  "
-                f"Gov take: {gov_take:.1%}"
+                f"  {basin:<20} NPV: {npv/1e6:>8.1f} MM  " f"Gov take: {gov_take:.1%}"
             )
         return "\n".join(lines)
 
 
 # ── Mock profiles ─────────────────────────────────────────────────────────────
+
 
 def _make_exponential_profile(
     qi_bbl_per_month: float, d: float, n_months: int
@@ -115,6 +116,7 @@ MOCK_GOM_FIELD_PROFILE = BasinProfile(
 
 
 # ── Comparator ────────────────────────────────────────────────────────────────
+
 
 class CrossBasinComparator:
     """Compute post-fiscal NPV and government-take for multiple basins."""
@@ -208,7 +210,9 @@ class CrossBasinComparator:
         elif profile.fiscal_regime == "ncs":
             taxable = max(0.0, revenue - opex)
             # Uplift reduces special tax base
-            uplift_allowance = capex_usd / 36.0 * NCS_UPLIFT_RATE if month <= 36 else 0.0
+            uplift_allowance = (
+                capex_usd / 36.0 * NCS_UPLIFT_RATE if month <= 36 else 0.0
+            )
             special_tax_base = max(0.0, taxable - uplift_allowance)
             corp_tax = taxable * NCS_CORPORATE_TAX_RATE
             special_tax = special_tax_base * NCS_SPECIAL_TAX_RATE

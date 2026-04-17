@@ -13,16 +13,16 @@ Nigeria deepwater uses Production Sharing Contracts (PSC):
 import pytest
 
 from worldenergydata.west_africa.analysis.field_economics import (
-    NigeriaDeepwaterPSC,
-    PSCFiscalResult,
-    calculate_royalty_deepwater,
-    calculate_cost_oil_recovery,
-    calculate_profit_oil_split,
-    DEEPWATER_ROYALTY_TABLE,
-    PPT_RATE_PSC,
     CITA_RATE,
+    DEEPWATER_ROYALTY_TABLE,
     NDDC_LEVY_RATE,
     NIGERIA_DEEPWATER_FIELDS,
+    PPT_RATE_PSC,
+    NigeriaDeepwaterPSC,
+    PSCFiscalResult,
+    calculate_cost_oil_recovery,
+    calculate_profit_oil_split,
+    calculate_royalty_deepwater,
 )
 
 
@@ -203,12 +203,12 @@ class TestNigeriaDeepwaterFields:
     def test_fields_have_required_keys(self):
         required = {"name", "operator", "water_depth_m", "status"}
         for field in NIGERIA_DEEPWATER_FIELDS:
-            assert required.issubset(field.keys()), (
-                f"Field {field.get('name')} missing keys"
-            )
+            assert required.issubset(
+                field.keys()
+            ), f"Field {field.get('name')} missing keys"
 
     def test_all_fields_deepwater(self):
         for field in NIGERIA_DEEPWATER_FIELDS:
-            assert field["water_depth_m"] >= 300, (
-                f"Field {field['name']} is not deepwater"
-            )
+            assert (
+                field["water_depth_m"] >= 300
+            ), f"Field {field['name']} is not deepwater"

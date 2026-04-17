@@ -5,12 +5,12 @@ These templates are used by the AI test generator to create
 appropriate test cases based on the code being tested.
 """
 
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 
 
 class TestTemplates:
     """Collection of test generation templates."""
-    
+
     @staticmethod
     def get_unit_test_template() -> str:
         """Template for unit tests."""
@@ -76,7 +76,7 @@ class Test{class_name}Integration:
     def get_test_method_template(test_type: str) -> str:
         """Get template for specific test method type."""
         templates = {
-            'basic': '''
+            "basic": '''
     def test_{function_name}_basic(self):
         """Test basic functionality of {function_name}."""
         # Arrange
@@ -88,7 +88,7 @@ class Test{class_name}Integration:
         # Assert
         {assert_code}
 ''',
-            'edge_case': '''
+            "edge_case": '''
     def test_{function_name}_edge_cases(self):
         """Test edge cases for {function_name}."""
         # Test with None
@@ -100,7 +100,7 @@ class Test{class_name}Integration:
         # Test with boundary values
         {boundary_test}
 ''',
-            'exception': '''
+            "exception": '''
     def test_{function_name}_raises_{exception_type}(self):
         """Test that {function_name} raises {exception_type}."""
         # Arrange
@@ -110,7 +110,7 @@ class Test{class_name}Integration:
         with self.assertRaises({exception_type}):
             {act_code}
 ''',
-            'return_value': '''
+            "return_value": '''
     def test_{function_name}_return_value(self):
         """Test return value of {function_name}."""
         # Arrange
@@ -123,7 +123,7 @@ class Test{class_name}Integration:
         self.assertIsNotNone(result)
         {specific_assertions}
 ''',
-            'parameterized': '''
+            "parameterized": '''
     @pytest.mark.parametrize("input_data,expected", [
         {test_cases}
     ])
@@ -132,7 +132,7 @@ class Test{class_name}Integration:
         result = {function_call}
         assert result == expected
 ''',
-            'mock': '''
+            "mock": '''
     @patch('{mock_target}')
     def test_{function_name}_with_mock(self, mock_{mock_name}):
         """Test {function_name} with mocked dependencies."""
@@ -146,7 +146,7 @@ class Test{class_name}Integration:
         mock_{mock_name}.assert_called_once_with({expected_args})
         {result_assertions}
 ''',
-            'async': '''
+            "async": '''
     async def test_{function_name}_async(self):
         """Test async functionality of {function_name}."""
         # Arrange
@@ -158,7 +158,7 @@ class Test{class_name}Integration:
         # Assert
         {assert_code}
 ''',
-            'performance': '''
+            "performance": '''
     @pytest.mark.benchmark
     def test_{function_name}_performance(self, benchmark):
         """Test performance of {function_name}."""
@@ -168,11 +168,11 @@ class Test{class_name}Integration:
         # Act & Assert
         result = benchmark({function_call})
         assert result is not None
-'''
+''',
         }
-        
-        return templates.get(test_type, templates['basic'])
-    
+
+        return templates.get(test_type, templates["basic"])
+
     @staticmethod
     def get_fixture_template() -> str:
         """Template for test fixtures."""
@@ -183,12 +183,12 @@ class Test{class_name}Integration:
         {fixture_code}
         return {return_value}
 '''
-    
+
     @staticmethod
     def get_data_fixture_templates() -> Dict[str, str]:
         """Templates for common data fixtures."""
         return {
-            'dataframe': '''
+            "dataframe": '''
     @pytest.fixture
     def sample_dataframe(self):
         """Create sample DataFrame for testing."""
@@ -199,7 +199,7 @@ class Test{class_name}Integration:
         }}
         return pd.DataFrame(data)
 ''',
-            'config': '''
+            "config": '''
     @pytest.fixture
     def test_config(self, tmp_path):
         """Create test configuration."""
@@ -212,7 +212,7 @@ class Test{class_name}Integration:
             }}
         }}
 ''',
-            'file': '''
+            "file": '''
     @pytest.fixture
     def test_file(self, tmp_path):
         """Create temporary test file."""
@@ -220,7 +220,7 @@ class Test{class_name}Integration:
         test_file.write_text("test content\\nline 2\\nline 3")
         return test_file
 ''',
-            'mock_api': '''
+            "mock_api": '''
     @pytest.fixture
     def mock_api_response(self):
         """Create mock API response."""
@@ -231,70 +231,70 @@ class Test{class_name}Integration:
                 'value': 'test_value'
             }}
         }}
-'''
+''',
         }
-    
+
     @staticmethod
     def generate_assertion(value_type: str, variable_name: str) -> str:
         """Generate appropriate assertion based on value type."""
         assertions = {
-            'int': f'self.assertIsInstance({variable_name}, int)',
-            'float': f'self.assertIsInstance({variable_name}, (int, float))',
-            'str': f'self.assertIsInstance({variable_name}, str)',
-            'list': f'self.assertIsInstance({variable_name}, list)',
-            'dict': f'self.assertIsInstance({variable_name}, dict)',
-            'DataFrame': f'self.assertIsInstance({variable_name}, pd.DataFrame)',
-            'None': f'self.assertIsNone({variable_name})',
-            'bool': f'self.assertIsInstance({variable_name}, bool)',
-            'default': f'self.assertIsNotNone({variable_name})'
+            "int": f"self.assertIsInstance({variable_name}, int)",
+            "float": f"self.assertIsInstance({variable_name}, (int, float))",
+            "str": f"self.assertIsInstance({variable_name}, str)",
+            "list": f"self.assertIsInstance({variable_name}, list)",
+            "dict": f"self.assertIsInstance({variable_name}, dict)",
+            "DataFrame": f"self.assertIsInstance({variable_name}, pd.DataFrame)",
+            "None": f"self.assertIsNone({variable_name})",
+            "bool": f"self.assertIsInstance({variable_name}, bool)",
+            "default": f"self.assertIsNotNone({variable_name})",
         }
-        
-        return assertions.get(value_type, assertions['default'])
-    
+
+        return assertions.get(value_type, assertions["default"])
+
     @staticmethod
     def generate_mock_setup(dependency: str, return_value: Any = None) -> str:
         """Generate mock setup code."""
         if return_value is None:
             return_value = "MagicMock()"
-        
+
         return f"""
         mock_{dependency.split('.')[-1]} = MagicMock()
         mock_{dependency.split('.')[-1]}.return_value = {return_value}
 """
-    
+
     @staticmethod
-    def generate_test_data(data_type: str, size: str = 'small') -> str:
+    def generate_test_data(data_type: str, size: str = "small") -> str:
         """Generate test data creation code."""
         data_generators = {
-            'dataframe_small': '''pd.DataFrame({
+            "dataframe_small": """pd.DataFrame({
             'col1': [1, 2, 3],
             'col2': ['a', 'b', 'c']
-        })''',
-            'dataframe_large': '''pd.DataFrame({
+        })""",
+            "dataframe_large": """pd.DataFrame({
             'col1': np.random.randint(0, 100, 1000),
             'col2': np.random.choice(['a', 'b', 'c', 'd'], 1000)
-        })''',
-            'array_small': 'np.array([1, 2, 3, 4, 5])',
-            'array_large': 'np.random.rand(1000, 100)',
-            'dict_simple': "{'key1': 'value1', 'key2': 'value2'}",
-            'dict_nested': '''{
+        })""",
+            "array_small": "np.array([1, 2, 3, 4, 5])",
+            "array_large": "np.random.rand(1000, 100)",
+            "dict_simple": "{'key1': 'value1', 'key2': 'value2'}",
+            "dict_nested": """{
             'level1': {
                 'level2': {
                     'data': [1, 2, 3]
                 }
             }
-        }''',
-            'list_simple': '[1, 2, 3, 4, 5]',
-            'list_complex': '[[i, i**2] for i in range(10)]'
+        }""",
+            "list_simple": "[1, 2, 3, 4, 5]",
+            "list_complex": "[[i, i**2] for i in range(10)]",
         }
-        
+
         key = f"{data_type}_{size}"
         return data_generators.get(key, "None")
 
 
 class PromptTemplates:
     """Templates for AI prompts to generate specific test types."""
-    
+
     @staticmethod
     def get_test_generation_prompt(code: str, test_type: str) -> str:
         """Generate prompt for AI to create tests."""
@@ -315,7 +315,7 @@ Requirements:
 
 Generate comprehensive tests that achieve at least 90% code coverage.
 """
-    
+
     @staticmethod
     def get_fixture_generation_prompt(code: str) -> str:
         """Generate prompt for creating test fixtures."""
@@ -335,7 +335,7 @@ Create fixtures for:
 
 Ensure fixtures are reusable and properly scoped.
 """
-    
+
     @staticmethod
     def get_mock_generation_prompt(dependencies: List[str]) -> str:
         """Generate prompt for creating mock objects."""

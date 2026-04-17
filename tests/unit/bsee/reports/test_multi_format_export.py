@@ -32,6 +32,7 @@ class TestBSEEDataExport(unittest.TestCase):
     def tearDownClass(cls):
         """Clean up temp directory."""
         import shutil
+
         if Path(cls.temp_dir).exists():
             shutil.rmtree(cls.temp_dir)
 
@@ -40,19 +41,27 @@ class TestBSEEDataExport(unittest.TestCase):
         """Load real BSEE production data from pickle."""
         try:
             # Try to load production sum data
-            bin_file = Path(__file__).parents[4] / 'data' / 'modules' / 'bsee' / 'bin' / 'production_raw' / 'mv_productionsum.bin'
+            bin_file = (
+                Path(__file__).parents[4]
+                / "data"
+                / "modules"
+                / "bsee"
+                / "bin"
+                / "production_raw"
+                / "mv_productionsum.bin"
+            )
 
             if not bin_file.exists():
                 return cls._create_synthetic_data()
 
             # Check if LFS stub
-            with open(bin_file, 'rb') as f:
+            with open(bin_file, "rb") as f:
                 header = f.read(40)
-                if b'version https://git-lfs' in header:
+                if b"version https://git-lfs" in header:
                     return cls._create_synthetic_data()
 
             # Load pickle
-            with open(bin_file, 'rb') as f:
+            with open(bin_file, "rb") as f:
                 df = pickle.load(f)
 
             return df
@@ -64,22 +73,29 @@ class TestBSEEDataExport(unittest.TestCase):
     def _create_synthetic_data():
         """Create synthetic BSEE-style production data."""
         import numpy as np
+
         years = list(range(1985, 2025))
-        return pd.DataFrame({
-            'PROD_YEAR': years,
-            'OIL_STB': np.random.randint(10000000, 50000000, len(years)),
-            'GAS_MCF': np.random.randint(50000000, 200000000, len(years))
-        })
+        return pd.DataFrame(
+            {
+                "PROD_YEAR": years,
+                "OIL_STB": np.random.randint(10000000, 50000000, len(years)),
+                "GAS_MCF": np.random.randint(50000000, 200000000, len(years)),
+            }
+        )
 
     def test_excel_export_available(self):
         """Test Excel exporter is available with openpyxl."""
         try:
             import openpyxl
+
             self.assertTrue(True, "openpyxl available")
         except ImportError:
             self.skipTest("openpyxl not installed")
 
-        from worldenergydata.bsee.reports.comprehensive.exporters.excel_exporter import ExcelExporter
+        from worldenergydata.bsee.reports.comprehensive.exporters.excel_exporter import (
+            ExcelExporter,
+        )
+
         exporter = ExcelExporter()
         self.assertIsNotNone(exporter)
 
@@ -90,31 +106,44 @@ class TestBSEEDataExport(unittest.TestCase):
         except ImportError:
             self.skipTest("openpyxl not installed")
 
-        from worldenergydata.bsee.reports.comprehensive.exporters.excel_exporter import ExcelExporter
-        from worldenergydata.bsee.reports.comprehensive.exporters.base import ExportConfig, ExportFormat
+        from worldenergydata.bsee.reports.comprehensive.exporters.base import (
+            ExportConfig,
+            ExportFormat,
+        )
+        from worldenergydata.bsee.reports.comprehensive.exporters.excel_exporter import (
+            ExcelExporter,
+        )
 
         exporter = ExcelExporter()
 
         test_data = {
-            'report_metadata': {
-                'title': 'BSEE Production Export Test',
-                'date': datetime.now().strftime('%Y-%m-%d'),
-                'organization': 'WRK-083'
+            "report_metadata": {
+                "title": "BSEE Production Export Test",
+                "date": datetime.now().strftime("%Y-%m-%d"),
+                "organization": "WRK-083",
             },
-            'production_data': self.test_df.to_dict('records'),
-            'summary': {
-                'total_records': len(self.test_df),
-                'total_oil_stb': int(self.test_df['OIL_STB'].sum()) if 'OIL_STB' in self.test_df.columns else 0,
-                'total_gas_mcf': int(self.test_df['GAS_MCF'].sum()) if 'GAS_MCF' in self.test_df.columns else 0
-            }
+            "production_data": self.test_df.to_dict("records"),
+            "summary": {
+                "total_records": len(self.test_df),
+                "total_oil_stb": (
+                    int(self.test_df["OIL_STB"].sum())
+                    if "OIL_STB" in self.test_df.columns
+                    else 0
+                ),
+                "total_gas_mcf": (
+                    int(self.test_df["GAS_MCF"].sum())
+                    if "GAS_MCF" in self.test_df.columns
+                    else 0
+                ),
+            },
         }
 
-        output_path = Path(self.temp_dir) / 'bsee_production.xlsx'
+        output_path = Path(self.temp_dir) / "bsee_production.xlsx"
         config = ExportConfig(
             format=ExportFormat.EXCEL,
             output_path=output_path,
             include_charts=False,
-            include_raw_data=False
+            include_raw_data=False,
         )
 
         result = exporter.export(test_data, config)
@@ -126,7 +155,9 @@ class TestBSEEDataExport(unittest.TestCase):
 
     def test_pdf_export_available(self):
         """Test PDF exporter availability (may fail without weasyprint)."""
-        from worldenergydata.bsee.reports.comprehensive.exporters.pdf_exporter import PDFExporter
+        from worldenergydata.bsee.reports.comprehensive.exporters.pdf_exporter import (
+            PDFExporter,
+        )
 
         exporter = PDFExporter()
         self.assertIsNotNone(exporter)
@@ -134,6 +165,7 @@ class TestBSEEDataExport(unittest.TestCase):
         # Check if weasyprint is available
         try:
             import weasyprint
+
             self.assertTrue(True, "weasyprint available")
         except ImportError:
             self.skipTest("weasyprint not installed (expected)")
@@ -145,10 +177,10 @@ class TestBSEEDataExport(unittest.TestCase):
         except ImportError:
             self.skipTest("pyarrow not installed")
 
-        output_path = Path(self.temp_dir) / 'bsee_production.parquet'
+        output_path = Path(self.temp_dir) / "bsee_production.parquet"
 
         # Export
-        self.test_df.to_parquet(output_path, engine='pyarrow', index=False)
+        self.test_df.to_parquet(output_path, engine="pyarrow", index=False)
 
         # Verify file exists
         self.assertTrue(output_path.exists())
@@ -161,20 +193,20 @@ class TestBSEEDataExport(unittest.TestCase):
 
     def test_json_export_with_metadata(self):
         """Test JSON export with BSEE metadata."""
-        output_path = Path(self.temp_dir) / 'bsee_production.json'
+        output_path = Path(self.temp_dir) / "bsee_production.json"
 
         export_data = {
-            'metadata': {
-                'title': 'BSEE Production Data',
-                'source': 'Bureau of Safety and Environmental Enforcement',
-                'exported_at': datetime.now().isoformat(),
-                'record_count': len(self.test_df),
-                'columns': list(self.test_df.columns)
+            "metadata": {
+                "title": "BSEE Production Data",
+                "source": "Bureau of Safety and Environmental Enforcement",
+                "exported_at": datetime.now().isoformat(),
+                "record_count": len(self.test_df),
+                "columns": list(self.test_df.columns),
             },
-            'records': self.test_df.to_dict('records')
+            "records": self.test_df.to_dict("records"),
         }
 
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             json.dump(export_data, f, indent=2, default=str)
 
         # Verify
@@ -182,15 +214,15 @@ class TestBSEEDataExport(unittest.TestCase):
         self.assertGreater(output_path.stat().st_size, 0)
 
         # Verify can be read back
-        with open(output_path, 'r') as f:
+        with open(output_path, "r") as f:
             loaded = json.load(f)
 
-        self.assertEqual(loaded['metadata']['record_count'], len(self.test_df))
-        self.assertEqual(len(loaded['records']), len(self.test_df))
+        self.assertEqual(loaded["metadata"]["record_count"], len(self.test_df))
+        self.assertEqual(len(loaded["records"]), len(self.test_df))
 
     def test_csv_export_basic(self):
         """Test CSV export with pandas."""
-        output_path = Path(self.temp_dir) / 'bsee_production.csv'
+        output_path = Path(self.temp_dir) / "bsee_production.csv"
 
         # Export
         self.test_df.to_csv(output_path, index=False)
@@ -211,41 +243,43 @@ class TestBSEEDataExport(unittest.TestCase):
         # Excel
         try:
             import openpyxl
-            formats_to_test.append(('xlsx', lambda p: pd.read_excel(p)))
+
+            formats_to_test.append(("xlsx", lambda p: pd.read_excel(p)))
         except ImportError:
             pass
 
         # Parquet
         try:
             import pyarrow
-            formats_to_test.append(('parquet', lambda p: pd.read_parquet(p)))
+
+            formats_to_test.append(("parquet", lambda p: pd.read_parquet(p)))
         except ImportError:
             pass
 
         # CSV (always available)
-        formats_to_test.append(('csv', lambda p: pd.read_csv(p)))
+        formats_to_test.append(("csv", lambda p: pd.read_csv(p)))
 
         # JSON (always available)
         def read_json_records(path):
-            with open(path, 'r') as f:
+            with open(path, "r") as f:
                 data = json.load(f)
             return pd.DataFrame(data)
 
-        formats_to_test.append(('json', read_json_records))
+        formats_to_test.append(("json", read_json_records))
 
         for ext, reader_func in formats_to_test:
             with self.subTest(format=ext):
-                output_path = Path(self.temp_dir) / f'roundtrip.{ext}'
+                output_path = Path(self.temp_dir) / f"roundtrip.{ext}"
 
                 # Export
-                if ext == 'xlsx':
+                if ext == "xlsx":
                     self.test_df.to_excel(output_path, index=False)
-                elif ext == 'parquet':
+                elif ext == "parquet":
                     self.test_df.to_parquet(output_path, index=False)
-                elif ext == 'csv':
+                elif ext == "csv":
                     self.test_df.to_csv(output_path, index=False)
-                elif ext == 'json':
-                    self.test_df.to_json(output_path, orient='records', indent=2)
+                elif ext == "json":
+                    self.test_df.to_json(output_path, orient="records", indent=2)
 
                 # Import and verify
                 df_verify = reader_func(output_path)
@@ -256,30 +290,32 @@ class TestBSEEDataExport(unittest.TestCase):
         size_comparison = {}
 
         # CSV baseline
-        csv_path = Path(self.temp_dir) / 'compare.csv'
+        csv_path = Path(self.temp_dir) / "compare.csv"
         self.test_df.to_csv(csv_path, index=False)
-        size_comparison['CSV'] = csv_path.stat().st_size
+        size_comparison["CSV"] = csv_path.stat().st_size
 
         # JSON
-        json_path = Path(self.temp_dir) / 'compare.json'
-        self.test_df.to_json(json_path, orient='records', indent=2)
-        size_comparison['JSON'] = json_path.stat().st_size
+        json_path = Path(self.temp_dir) / "compare.json"
+        self.test_df.to_json(json_path, orient="records", indent=2)
+        size_comparison["JSON"] = json_path.stat().st_size
 
         # Parquet (if available)
         try:
             import pyarrow
-            parquet_path = Path(self.temp_dir) / 'compare.parquet'
+
+            parquet_path = Path(self.temp_dir) / "compare.parquet"
             self.test_df.to_parquet(parquet_path, index=False)
-            size_comparison['Parquet'] = parquet_path.stat().st_size
+            size_comparison["Parquet"] = parquet_path.stat().st_size
         except ImportError:
             pass
 
         # Excel (if available)
         try:
             import openpyxl
-            xlsx_path = Path(self.temp_dir) / 'compare.xlsx'
+
+            xlsx_path = Path(self.temp_dir) / "compare.xlsx"
             self.test_df.to_excel(xlsx_path, index=False)
-            size_comparison['Excel'] = xlsx_path.stat().st_size
+            size_comparison["Excel"] = xlsx_path.stat().st_size
         except ImportError:
             pass
 
@@ -289,13 +325,13 @@ class TestBSEEDataExport(unittest.TestCase):
 
         # Parquet should typically be smaller than CSV for large datasets
         # For small datasets (like our test data), compression overhead can make it larger
-        if 'Parquet' in size_comparison and 'CSV' in size_comparison:
+        if "Parquet" in size_comparison and "CSV" in size_comparison:
             # Parquet is columnar and compressed
             # For small datasets, either format is acceptable
             self.assertLess(
-                size_comparison['Parquet'],
-                size_comparison['CSV'] * 5,  # Allow up to 5x for small datasets
-                "Parquet should not be excessively large"
+                size_comparison["Parquet"],
+                size_comparison["CSV"] * 5,  # Allow up to 5x for small datasets
+                "Parquet should not be excessively large",
             )
 
 
@@ -309,30 +345,34 @@ class TestExporterInterfaces(unittest.TestCase):
         except ImportError:
             self.skipTest("openpyxl not installed")
 
-        from worldenergydata.bsee.reports.comprehensive.exporters.excel_exporter import ExcelExporter
+        from worldenergydata.bsee.reports.comprehensive.exporters.excel_exporter import (
+            ExcelExporter,
+        )
 
         exporter = ExcelExporter()
 
         # Check required methods
-        self.assertTrue(hasattr(exporter, 'export'))
-        self.assertTrue(hasattr(exporter, 'validate_data'))
-        self.assertTrue(hasattr(exporter, 'get_supported_features'))
+        self.assertTrue(hasattr(exporter, "export"))
+        self.assertTrue(hasattr(exporter, "validate_data"))
+        self.assertTrue(hasattr(exporter, "get_supported_features"))
         self.assertTrue(callable(exporter.export))
         self.assertTrue(callable(exporter.validate_data))
 
     def test_bsee_pdf_exporter_interface(self):
         """Test BSEE PDF exporter has required methods."""
-        from worldenergydata.bsee.reports.comprehensive.exporters.pdf_exporter import PDFExporter
+        from worldenergydata.bsee.reports.comprehensive.exporters.pdf_exporter import (
+            PDFExporter,
+        )
 
         exporter = PDFExporter()
 
         # Check required methods
-        self.assertTrue(hasattr(exporter, 'export'))
-        self.assertTrue(hasattr(exporter, 'validate_data'))
-        self.assertTrue(hasattr(exporter, 'get_supported_features'))
+        self.assertTrue(hasattr(exporter, "export"))
+        self.assertTrue(hasattr(exporter, "validate_data"))
+        self.assertTrue(hasattr(exporter, "get_supported_features"))
         self.assertTrue(callable(exporter.export))
         self.assertTrue(callable(exporter.validate_data))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

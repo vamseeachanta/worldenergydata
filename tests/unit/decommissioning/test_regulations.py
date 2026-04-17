@@ -3,8 +3,8 @@
 
 """Unit tests for worldenergydata.decommissioning.regulations."""
 
-import pytest
 import pandas as pd
+import pytest
 
 from worldenergydata.decommissioning.regulations import (
     DECOMMISSIONING_REGULATIONS,

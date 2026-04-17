@@ -139,7 +139,7 @@ class WaveExtrapolator:
             d_target = d_source * depth_ratio
             Hs_out = self.shoaling_correction(Hs_out, d_source, d_target)
             # Tp shoaling: Tp scales weakly with depth; use (d_target/d_source)^0.1
-            Tp_out = Tp_out * (depth_ratio ** 0.1)
+            Tp_out = Tp_out * (depth_ratio**0.1)
 
         # Fetch: source assumed open ocean (sheltering=1.0), target sheltered
         shelter_target = max(context.sheltering_factor, 1e-3)

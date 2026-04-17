@@ -4,39 +4,41 @@ import os
 import zipfile
 from urllib.parse import urlparse
 
+import pandas as pd
+
 # Third party imports
 import requests
-import pandas as pd
 
 from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
 
+
 class DownloadFromZipUrl:
     """
     A Focused Module for downloading raw data (delimit files) from zip urls.
     """
-    
+
     def __init__(self):
         pass
 
-    def router(self,cfg):
-        
-        urls = cfg['input']['urls']
-        
+    def router(self, cfg):
+
+        urls = cfg["input"]["urls"]
+
         for url in urls:
-            self.download_and_process_zip_url_data(url ,cfg)
+            self.download_and_process_zip_url_data(url, cfg)
 
         return cfg
-    
-    def download_and_process_zip_url_data(self, url ,cfg):
+
+    def download_and_process_zip_url_data(self, url, cfg):
 
         nrows = None
         # Extract the name from the URL
-        base_name = os.path.basename(urlparse(url).path).replace('.zip', '')
+        base_name = os.path.basename(urlparse(url).path).replace(".zip", "")
 
         try:
-            r = requests.get(url,timeout=60)
+            r = requests.get(url, timeout=60)
             r.raise_for_status()  # Check if the download was successful
 
             z = zipfile.ZipFile(io.BytesIO(r.content))
@@ -49,25 +51,35 @@ class DownloadFromZipUrl:
 
         extracted_files = z.namelist()
 
-        result_folder = cfg['Analysis']['result_folder'] , 'Data' , 'online_query_raw_data'
+        result_folder = (
+            cfg["Analysis"]["result_folder"],
+            "Data",
+            "online_query_raw_data",
+        )
 
         for file in extracted_files:
-            if file.endswith('/'):
+            if file.endswith("/"):
                 continue
-            csv_filename = f"{base_name}_{os.path.splitext(os.path.basename(file))[0]}"+'.csv'
-            with z.open(file) as file:   
+            csv_filename = (
+                f"{base_name}_{os.path.splitext(os.path.basename(file))[0]}" + ".csv"
+            )
+            with z.open(file) as file:
                 try:
                     if nrows is None:
-                        df = pd.read_csv(file, sep=',', encoding='ISO-8859-1', low_memory=False)
+                        df = pd.read_csv(
+                            file, sep=",", encoding="ISO-8859-1", low_memory=False
+                        )
                     else:
-                        df = pd.read_csv(file, sep=',', encoding='ISO-8859-1', low_memory=False, nrows=100)
-                        
+                        df = pd.read_csv(
+                            file,
+                            sep=",",
+                            encoding="ISO-8859-1",
+                            low_memory=False,
+                            nrows=100,
+                        )
+
                 except Exception as e:
                     logger.info(f"Could not read {file} as CSV: {e}")
                     continue
 
                 df.to_csv(os.path.join(result_folder, csv_filename), index=False)
-    
-        
-
-

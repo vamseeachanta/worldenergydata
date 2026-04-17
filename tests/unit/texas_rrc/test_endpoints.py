@@ -15,10 +15,10 @@ from worldenergydata.texas_rrc.endpoints import (
     get_pdq_endpoint,
 )
 
-
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
+
 
 class TestConstants:
     def test_pdq_endpoints_has_production(self):
@@ -53,6 +53,7 @@ class TestConstants:
 # get_pdq_endpoint
 # ---------------------------------------------------------------------------
 
+
 class TestGetPdqEndpoint:
     def test_production(self):
         result = get_pdq_endpoint("production")
@@ -75,6 +76,7 @@ class TestGetPdqEndpoint:
 # ---------------------------------------------------------------------------
 # get_district_info
 # ---------------------------------------------------------------------------
+
 
 class TestGetDistrictInfo:
     def test_district_1(self):
@@ -105,6 +107,7 @@ class TestGetDistrictInfo:
 # ---------------------------------------------------------------------------
 # build_api_number
 # ---------------------------------------------------------------------------
+
 
 class TestBuildApiNumber:
     def test_basic(self):

@@ -4,10 +4,10 @@ import pytest
 
 from worldenergydata.common.legacy.visualization import Visualization
 
-
 # ---------------------------------------------------------------------------
 # Init
 # ---------------------------------------------------------------------------
+
 
 class TestVisualizationInit:
     def test_default_init(self):
@@ -34,6 +34,7 @@ class TestVisualizationInit:
 # Colors
 # ---------------------------------------------------------------------------
 
+
 class TestColors:
     def test_colors_populated(self):
         v = Visualization()
@@ -53,6 +54,7 @@ class TestColors:
 # ---------------------------------------------------------------------------
 # Default config structure
 # ---------------------------------------------------------------------------
+
 
 class TestDefaultCfg:
     def test_cfg_keys(self):

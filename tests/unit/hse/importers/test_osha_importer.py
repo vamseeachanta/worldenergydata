@@ -9,23 +9,23 @@ import pytest
 
 from worldenergydata.hse.importers.osha_importer import (
     DEGREE_SEVERITY,
-    INSPECTION_TYPE_SEVERITY,
     INJURY_FIELD_LABELS,
     INJURY_FIELD_LOOKUP_CODES,
+    INSPECTION_TYPE_SEVERITY,
     VIOLATION_TYPE_MAP,
+    OSHAImporter,
     _decode_field,
     _load_accident_lookups,
     _parse_date,
     _safe_float,
     _safe_str,
     build_parser,
-    OSHAImporter,
 )
-
 
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
+
 
 class TestConstants:
     def test_inspection_severity_fatality(self):
@@ -58,6 +58,7 @@ class TestConstants:
 # _safe_str
 # ---------------------------------------------------------------------------
 
+
 class TestSafeStr:
     def test_normal(self):
         assert _safe_str("hello") == "hello"
@@ -85,6 +86,7 @@ class TestSafeStr:
 # _safe_float
 # ---------------------------------------------------------------------------
 
+
 class TestSafeFloat:
     def test_normal(self):
         assert _safe_float("3.14") == 3.14
@@ -105,6 +107,7 @@ class TestSafeFloat:
 # ---------------------------------------------------------------------------
 # _parse_date
 # ---------------------------------------------------------------------------
+
 
 class TestParseDate:
     def test_string(self):
@@ -135,6 +138,7 @@ class TestParseDate:
 # _decode_field
 # ---------------------------------------------------------------------------
 
+
 class TestDecodeField:
     def test_with_lookup(self):
         lookups = {"IN": {"1": "Burn"}}
@@ -160,6 +164,7 @@ class TestDecodeField:
 # _load_accident_lookups
 # ---------------------------------------------------------------------------
 
+
 class TestLoadAccidentLookups:
     def test_missing_file(self, tmp_path):
         result = _load_accident_lookups(tmp_path / "nonexistent.csv")
@@ -179,6 +184,7 @@ class TestLoadAccidentLookups:
 # build_parser
 # ---------------------------------------------------------------------------
 
+
 class TestBuildParser:
     def test_required_args(self):
         parser = build_parser()
@@ -188,11 +194,15 @@ class TestBuildParser:
 
     def test_all_args(self):
         parser = build_parser()
-        args = parser.parse_args([
-            "--data-dir", "/tmp/osha",
-            "--db-url", "sqlite:///test.db",
-            "--no-filtered",
-        ])
+        args = parser.parse_args(
+            [
+                "--data-dir",
+                "/tmp/osha",
+                "--db-url",
+                "sqlite:///test.db",
+                "--no-filtered",
+            ]
+        )
         assert args.db_url == "sqlite:///test.db"
         assert args.no_filtered is True
 
@@ -200,6 +210,7 @@ class TestBuildParser:
 # ---------------------------------------------------------------------------
 # OSHAImporter._resolve_path
 # ---------------------------------------------------------------------------
+
 
 class TestResolvePath:
     def _make_importer(self, tmp_path):
@@ -235,6 +246,7 @@ class TestResolvePath:
 # OSHAImporter._normalize_inspection
 # ---------------------------------------------------------------------------
 
+
 class TestNormalizeInspection:
     def _make_importer(self, tmp_path):
         mock_session = MagicMock()
@@ -242,15 +254,17 @@ class TestNormalizeInspection:
 
     def test_basic(self, tmp_path):
         importer = self._make_importer(tmp_path)
-        row = pd.Series({
-            "activity_nr": "12345",
-            "open_date": "2023-06-15",
-            "estab_name": "Acme Oil",
-            "insp_type": "A",
-            "site_city": "Houston",
-            "site_state": "TX",
-            "naics_code": "211120",
-        })
+        row = pd.Series(
+            {
+                "activity_nr": "12345",
+                "open_date": "2023-06-15",
+                "estab_name": "Acme Oil",
+                "insp_type": "A",
+                "site_city": "Houston",
+                "site_state": "TX",
+                "naics_code": "211120",
+            }
+        )
         result = importer._normalize_inspection(row)
         assert result["bsee_incident_id"] == "OSHA-INSP-12345"
         assert result["severity"] == "fatality"
@@ -271,6 +285,7 @@ class TestNormalizeInspection:
 # OSHAImporter._normalize_accident
 # ---------------------------------------------------------------------------
 
+
 class TestNormalizeAccident:
     def _make_importer(self, tmp_path):
         mock_session = MagicMock()
@@ -278,12 +293,14 @@ class TestNormalizeAccident:
 
     def test_basic(self, tmp_path):
         importer = self._make_importer(tmp_path)
-        row = pd.Series({
-            "summary_nr": "99999",
-            "event_date": "2023-06-15",
-            "estab_name": "Oil Co",
-            "event_desc": "Explosion at rig",
-        })
+        row = pd.Series(
+            {
+                "summary_nr": "99999",
+                "event_date": "2023-06-15",
+                "estab_name": "Oil Co",
+                "event_desc": "Explosion at rig",
+            }
+        )
         result = importer._normalize_accident(row)
         assert result["bsee_incident_id"] == "OSHA-ACC-99999"
         assert result["incident_type"] == "injury"
@@ -291,10 +308,12 @@ class TestNormalizeAccident:
 
     def test_falls_back_to_activity_nr(self, tmp_path):
         importer = self._make_importer(tmp_path)
-        row = pd.Series({
-            "activity_nr": "88888",
-            "event_date": "2023-01-01",
-        })
+        row = pd.Series(
+            {
+                "activity_nr": "88888",
+                "event_date": "2023-01-01",
+            }
+        )
         result = importer._normalize_accident(row)
         assert "88888" in result["bsee_incident_id"]
 
@@ -303,6 +322,7 @@ class TestNormalizeAccident:
 # OSHAImporter._normalize_accident_injury
 # ---------------------------------------------------------------------------
 
+
 class TestNormalizeAccidentInjury:
     def _make_importer(self, tmp_path):
         mock_session = MagicMock()
@@ -310,14 +330,16 @@ class TestNormalizeAccidentInjury:
 
     def test_basic(self, tmp_path):
         importer = self._make_importer(tmp_path)
-        row = pd.Series({
-            "rel_insp_nr": "77777",
-            "event_date": "2023-06-15",
-            "age": "35",
-            "sex": "M",
-            "degree_of_inj": "1",
-            "nature_of_inj": "5",
-        })
+        row = pd.Series(
+            {
+                "rel_insp_nr": "77777",
+                "event_date": "2023-06-15",
+                "age": "35",
+                "sex": "M",
+                "degree_of_inj": "1",
+                "nature_of_inj": "5",
+            }
+        )
         result = importer._normalize_accident_injury(row)
         assert "77777" in result["bsee_incident_id"]
         assert result["severity"] == "fatality"

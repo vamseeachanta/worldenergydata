@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 # Data structures
 # ---------------------------------------------------------------------------
 
+
 @dataclass(frozen=True)
 class FieldContext:
     """Immutable context describing a resolved BSEE field.
@@ -53,6 +54,7 @@ class FieldQueryError(ValueError):
 # Public API
 # ---------------------------------------------------------------------------
 
+
 def resolve_field(
     query: str,
     field_resolver,
@@ -84,17 +86,23 @@ def resolve_field(
     all_fields = field_resolver.get_all_field_names()
 
     # 1. Lease number lookup
-    ctx = _try_lease_lookup(query, lease_field_map, field_resolver, era_classifier, all_fields)
+    ctx = _try_lease_lookup(
+        query, lease_field_map, field_resolver, era_classifier, all_fields
+    )
     if ctx is not None:
         return ctx
 
     # 2. Field code match
-    ctx = _try_field_code(query, field_resolver, era_classifier, all_fields, lease_field_map)
+    ctx = _try_field_code(
+        query, field_resolver, era_classifier, all_fields, lease_field_map
+    )
     if ctx is not None:
         return ctx
 
     # 3. Field name match (case-insensitive)
-    ctx = _try_field_name(query, field_resolver, era_classifier, all_fields, lease_field_map)
+    ctx = _try_field_name(
+        query, field_resolver, era_classifier, all_fields, lease_field_map
+    )
     if ctx is not None:
         return ctx
 
@@ -139,6 +147,7 @@ def build_lease_field_map(data_dir: Path) -> pd.DataFrame:
 # ---------------------------------------------------------------------------
 # Resolution helpers (private)
 # ---------------------------------------------------------------------------
+
 
 def _try_lease_lookup(
     query: str,
@@ -268,6 +277,7 @@ def _try_era(
 # Utility helpers (private)
 # ---------------------------------------------------------------------------
 
+
 def _leases_for_field(
     field_code: str, lease_field_map: pd.DataFrame | None
 ) -> list[str]:
@@ -280,9 +290,7 @@ def _leases_for_field(
     return matched["LEASE_NUMBER"].tolist()
 
 
-def _area_for_field(
-    field_code: str, lease_field_map: pd.DataFrame | None
-) -> str:
+def _area_for_field(field_code: str, lease_field_map: pd.DataFrame | None) -> str:
     """Return the first area code for *field_code*, or empty string."""
     if lease_field_map is None or lease_field_map.empty:
         return ""

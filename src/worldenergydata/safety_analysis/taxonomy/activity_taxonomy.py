@@ -1,4 +1,5 @@
 """Deprecated: import from activity_definitions or activity_registry directly."""
+
 import warnings
 
 warnings.warn(

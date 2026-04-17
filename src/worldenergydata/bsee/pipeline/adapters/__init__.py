@@ -11,6 +11,9 @@ Adapters:
     - anp: Brazilian pre-salt and conventional (Agência Nacional do Petróleo)
 """
 
+from worldenergydata.bsee.pipeline.adapters.benchmarking import (
+    CrossSourceBenchmark,
+)
 from worldenergydata.bsee.pipeline.adapters.common_schema import (
     AdapterInterface,
     AdapterResult,
@@ -20,9 +23,6 @@ from worldenergydata.bsee.pipeline.adapters.common_schema import (
 )
 from worldenergydata.bsee.pipeline.adapters.multi_source_query import (
     MultiSourceQuery,
-)
-from worldenergydata.bsee.pipeline.adapters.benchmarking import (
-    CrossSourceBenchmark,
 )
 
 __all__ = [

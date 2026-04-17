@@ -40,6 +40,7 @@ def _make_obs(
 # Initialization
 # ---------------------------------------------------------------------------
 
+
 class TestJSONExporterInit:
     def test_defaults(self):
         e = JSONExporter()
@@ -55,6 +56,7 @@ class TestJSONExporterInit:
 # ---------------------------------------------------------------------------
 # Export
 # ---------------------------------------------------------------------------
+
 
 class TestJSONExporterExport:
     def test_empty_raises(self, tmp_path):
@@ -90,7 +92,8 @@ class TestJSONExporterExport:
         ]
         out = tmp_path / "out.json"
         count = e.export(
-            obs, out,
+            obs,
+            out,
             start_date=datetime(2024, 3, 1),
             end_date=datetime(2024, 9, 30),
         )
@@ -122,6 +125,7 @@ class TestJSONExporterExport:
 # ---------------------------------------------------------------------------
 # Export GeoJSON
 # ---------------------------------------------------------------------------
+
 
 class TestJSONExporterGeoJSON:
     def test_no_coordinates_raises(self, tmp_path):
@@ -175,6 +179,7 @@ class TestJSONExporterGeoJSON:
 # Export by station
 # ---------------------------------------------------------------------------
 
+
 class TestJSONExporterByStation:
     def test_empty_raises(self, tmp_path):
         e = JSONExporter()
@@ -217,6 +222,7 @@ class TestJSONExporterByStation:
 # ---------------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------------
+
 
 class TestJSONExporterHelpers:
     def test_filter_by_date_no_filters(self):

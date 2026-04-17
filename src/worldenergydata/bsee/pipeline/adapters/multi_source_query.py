@@ -30,9 +30,7 @@ class MultiSourceQuery:
         Pass ``None`` (the default) to start with an empty registry.
     """
 
-    def __init__(
-        self, adapters: dict[str, AdapterInterface] | None = None
-    ) -> None:
+    def __init__(self, adapters: dict[str, AdapterInterface] | None = None) -> None:
         self._adapters: dict[str, AdapterInterface] = dict(adapters or {})
 
     # -- registration -------------------------------------------------------
@@ -73,15 +71,11 @@ class MultiSourceQuery:
             try:
                 results[sid] = adapter.adapt(field_name, **kwargs)
             except Exception:
-                logger.exception(
-                    "Adapter '%s' failed for query '%s'", sid, field_name
-                )
+                logger.exception("Adapter '%s' failed for query '%s'", sid, field_name)
 
         return results
 
-    def query_all(
-        self, field_name: str, **kwargs: Any
-    ) -> dict[str, AdapterResult]:
+    def query_all(self, field_name: str, **kwargs: Any) -> dict[str, AdapterResult]:
         """Convenience wrapper — query every registered adapter."""
         return self.query(field_name, sources=None, **kwargs)
 

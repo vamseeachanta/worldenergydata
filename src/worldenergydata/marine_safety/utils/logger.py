@@ -6,7 +6,7 @@ New code should import directly from worldenergydata.common.
 """
 
 from worldenergydata.common import get_logger as _get_logger
-from worldenergydata.common.logging import get_module_logger, configure_logging
+from worldenergydata.common.logging import configure_logging, get_module_logger
 
 
 def get_logger(name: str):

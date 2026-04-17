@@ -175,7 +175,8 @@ def resolve_blend(blend_name: Optional[str]) -> Optional[FieldInfo]:
 
     # Partial match — only return if exactly one candidate
     candidates = [
-        fi for key, fi in BLEND_TO_FIELD_MAP.items()
+        fi
+        for key, fi in BLEND_TO_FIELD_MAP.items()
         if normalised in key or key in normalised
     ]
     if len(candidates) == 1:

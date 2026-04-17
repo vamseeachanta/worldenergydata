@@ -13,10 +13,10 @@ from worldenergydata.lower_tertiary.v30_financial_reproducer import (
     _norm_name,
 )
 
-
 # ---------------------------------------------------------------------------
 # _get_assumption
 # ---------------------------------------------------------------------------
+
 
 class TestGetAssumption:
     def _make_assumptions(self, data=None):
@@ -35,7 +35,9 @@ class TestGetAssumption:
 
     def test_fallback_to_default(self):
         assumptions = self._make_assumptions()
-        result = _get_assumption(assumptions, "unknown_system", "MODU_LOADED_DAYRATE_MM")
+        result = _get_assumption(
+            assumptions, "unknown_system", "MODU_LOADED_DAYRATE_MM"
+        )
         assert result == 0.75
 
     def test_missing_metric_returns_default(self):
@@ -49,26 +51,32 @@ class TestGetAssumption:
         assert result == 0.8
 
     def test_nan_value_returns_default(self):
-        assumptions = pd.DataFrame({
-            "DEV_SYSTEM": ["subsea15"],
-            "METRIC_A": [float("nan")],
-        })
+        assumptions = pd.DataFrame(
+            {
+                "DEV_SYSTEM": ["subsea15"],
+                "METRIC_A": [float("nan")],
+            }
+        )
         result = _get_assumption(assumptions, "subsea15", "METRIC_A", 42.0)
         assert result == 42.0
 
     def test_no_default_row_and_no_match(self):
-        assumptions = pd.DataFrame({
-            "DEV_SYSTEM": ["subsea15"],
-            "RATE": [0.5],
-        })
+        assumptions = pd.DataFrame(
+            {
+                "DEV_SYSTEM": ["subsea15"],
+                "RATE": [0.5],
+            }
+        )
         result = _get_assumption(assumptions, "unknown", "RATE", 0.0)
         assert result == 0.0
 
     def test_non_numeric_value(self):
-        assumptions = pd.DataFrame({
-            "DEV_SYSTEM": ["subsea15"],
-            "LABEL": ["text_value"],
-        })
+        assumptions = pd.DataFrame(
+            {
+                "DEV_SYSTEM": ["subsea15"],
+                "LABEL": ["text_value"],
+            }
+        )
         result = _get_assumption(assumptions, "subsea15", "LABEL", -1.0)
         assert result == -1.0
 
@@ -76,6 +84,7 @@ class TestGetAssumption:
 # ---------------------------------------------------------------------------
 # _excel_like_mirr
 # ---------------------------------------------------------------------------
+
 
 class TestExcelLikeMirr:
     def test_basic_mirr(self):
@@ -123,6 +132,7 @@ class TestExcelLikeMirr:
 # _month_floor
 # ---------------------------------------------------------------------------
 
+
 class TestMonthFloor:
     def test_basic(self):
         ts = pd.Timestamp("2024-06-15 14:30:00")
@@ -147,6 +157,7 @@ class TestMonthFloor:
 # ---------------------------------------------------------------------------
 # _norm_name
 # ---------------------------------------------------------------------------
+
 
 class TestNormName:
     def test_basic(self):

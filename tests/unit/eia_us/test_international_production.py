@@ -4,9 +4,9 @@ import pandas as pd
 import pytest
 
 from worldenergydata.eia_us.international.country_production import (
-    CountryProductionLoader,
     MOCK_COUNTRY_PRODUCTION,
     TOP_PRODUCERS,
+    CountryProductionLoader,
 )
 
 
@@ -87,8 +87,10 @@ class TestCountryProductionLoader:
         top5 = loader.top_producers(df, n=5)
         assert len(top5) == 5
         # Verify sorted descending
-        assert top5["production_kbd"].is_monotonic_decreasing or \
-               top5["production_kbd"].iloc[0] >= top5["production_kbd"].iloc[-1]
+        assert (
+            top5["production_kbd"].is_monotonic_decreasing
+            or top5["production_kbd"].iloc[0] >= top5["production_kbd"].iloc[-1]
+        )
 
     def test_usa_among_top_3(self, loader):
         df = loader.load(MOCK_COUNTRY_PRODUCTION)

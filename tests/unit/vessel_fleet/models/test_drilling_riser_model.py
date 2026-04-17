@@ -61,7 +61,8 @@ class TestBOPEntry:
     def test_total_ram_count(self):
         bop = BOPEntry(
             component_id="BOP-1",
-            shear_ram_count=1, pipe_ram_count=3,
+            shear_ram_count=1,
+            pipe_ram_count=3,
         )
         assert bop.total_ram_count == 4
 
@@ -117,7 +118,8 @@ class TestTelescopicJointEntry:
 
     def test_total_length_ft_outer_only(self):
         tj = TelescopicJointEntry(
-            component_id="TJ-1", outer_barrel_length_ft=65.0,
+            component_id="TJ-1",
+            outer_barrel_length_ft=65.0,
         )
         assert tj.total_length_ft == 65.0
 

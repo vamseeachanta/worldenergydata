@@ -10,10 +10,10 @@ from worldenergydata.lng_terminals.config import (
     SourceConfig,
 )
 
-
 # ---------------------------------------------------------------------------
 # ScraperConfig
 # ---------------------------------------------------------------------------
+
 
 class TestScraperConfig:
     def test_defaults(self):
@@ -32,6 +32,7 @@ class TestScraperConfig:
 # SourceConfig
 # ---------------------------------------------------------------------------
 
+
 class TestSourceConfig:
     def test_defaults(self):
         c = SourceConfig(name="test_source")
@@ -48,6 +49,7 @@ class TestSourceConfig:
 # CacheConfig
 # ---------------------------------------------------------------------------
 
+
 class TestCacheConfig:
     def test_defaults(self):
         c = CacheConfig()
@@ -59,6 +61,7 @@ class TestCacheConfig:
 # ---------------------------------------------------------------------------
 # ProcessingConfig
 # ---------------------------------------------------------------------------
+
 
 class TestProcessingConfig:
     def test_defaults(self):
@@ -72,6 +75,7 @@ class TestProcessingConfig:
 # LNGTerminalsConfig
 # ---------------------------------------------------------------------------
 
+
 class TestLNGTerminalsConfig:
     def test_defaults(self):
         c = LNGTerminalsConfig()
@@ -81,8 +85,6 @@ class TestLNGTerminalsConfig:
         assert c.output_formats == ["csv", "parquet"]
 
     def test_with_sources(self):
-        c = LNGTerminalsConfig(
-            sources={"giignl": SourceConfig(name="GIIGNL")}
-        )
+        c = LNGTerminalsConfig(sources={"giignl": SourceConfig(name="GIIGNL")})
         assert "giignl" in c.sources
         assert c.sources["giignl"].name == "GIIGNL"

@@ -12,7 +12,6 @@ NearestSourceFinder that locates the best source(s) for a target (lat, lon).
 import math
 from dataclasses import dataclass, field
 
-
 EARTH_RADIUS_KM = 6371.0
 
 
@@ -62,9 +61,7 @@ class NearestSourceFinder:
         """Return all sources in the catalog."""
         return list(self._catalog)
 
-    def find_nearest(
-        self, lat: float, lon: float, n: int = 3
-    ) -> list[MetoceanSource]:
+    def find_nearest(self, lat: float, lon: float, n: int = 3) -> list[MetoceanSource]:
         """
         Return the n nearest sources sorted by great-circle distance.
 
@@ -106,9 +103,7 @@ class NearestSourceFinder:
         )
 
     @staticmethod
-    def distance_km(
-        lat1: float, lon1: float, lat2: float, lon2: float
-    ) -> float:
+    def distance_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
         """
         Haversine great-circle distance between two coordinates.
 
@@ -272,8 +267,8 @@ def _build_catalog() -> list[MetoceanSource]:
     # CO-OPS tide gauge stations
     # ------------------------------------------------------------------
     sources += [
-        _tide_gauge("coops_8771341", 29.37, -94.79, "gom"),    # Galveston
-        _tide_gauge("coops_8760922", 29.11, -89.41, "gom"),    # Port Fourchon
+        _tide_gauge("coops_8771341", 29.37, -94.79, "gom"),  # Galveston
+        _tide_gauge("coops_8760922", 29.11, -89.41, "gom"),  # Port Fourchon
         _tide_gauge("coops_8724580", 24.55, -81.81, "us_coastal"),  # Key West
         _tide_gauge("coops_8443970", 42.36, -71.05, "ne_atlantic"),  # Boston
         _tide_gauge("coops_8518750", 40.70, -74.01, "ne_atlantic"),  # New York

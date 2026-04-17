@@ -11,8 +11,12 @@ from unittest.mock import MagicMock, Mock
 
 import pytest
 
+from worldenergydata.marine_safety.constants import (
+    IncidentStatus,
+    IncidentType,
+    VesselType,
+)
 from worldenergydata.marine_safety.importers.emsa_importer import EMSAImporter
-from worldenergydata.marine_safety.constants import IncidentType, VesselType, IncidentStatus
 
 
 @pytest.fixture
@@ -38,7 +42,7 @@ def test_emsa_importer_initialization(emsa_csv_path, mock_session):
         session=mock_session,
         batch_size=10,
         file_format="csv",
-        member_state="all"
+        member_state="all",
     )
 
     assert importer.source_path == emsa_csv_path
@@ -106,7 +110,10 @@ def test_emsa_casualty_category_mappings(emsa_csv_path, mock_session):
     """Test EMSA casualty category to severity mappings"""
     importer = EMSAImporter(emsa_csv_path, mock_session)
 
-    assert importer.CASUALTY_CATEGORY_MAPPINGS["very serious marine casualty"] == "catastrophic"
+    assert (
+        importer.CASUALTY_CATEGORY_MAPPINGS["very serious marine casualty"]
+        == "catastrophic"
+    )
     assert importer.CASUALTY_CATEGORY_MAPPINGS["serious marine casualty"] == "serious"
     assert importer.CASUALTY_CATEGORY_MAPPINGS["marine casualty"] == "moderate"
     assert importer.CASUALTY_CATEGORY_MAPPINGS["marine incident"] == "minor"
@@ -116,12 +123,20 @@ def test_emsa_occurrence_type_mappings(emsa_csv_path, mock_session):
     """Test EMSA occurrence type to incident type mappings"""
     importer = EMSAImporter(emsa_csv_path, mock_session)
 
-    assert importer.OCCURRENCE_TYPE_MAPPINGS["collision"] == IncidentType.COLLISION.value
-    assert importer.OCCURRENCE_TYPE_MAPPINGS["grounding"] == IncidentType.GROUNDING.value
+    assert (
+        importer.OCCURRENCE_TYPE_MAPPINGS["collision"] == IncidentType.COLLISION.value
+    )
+    assert (
+        importer.OCCURRENCE_TYPE_MAPPINGS["grounding"] == IncidentType.GROUNDING.value
+    )
     assert importer.OCCURRENCE_TYPE_MAPPINGS["fire"] == IncidentType.FIRE.value
-    assert importer.OCCURRENCE_TYPE_MAPPINGS["explosion"] == IncidentType.EXPLOSION.value
+    assert (
+        importer.OCCURRENCE_TYPE_MAPPINGS["explosion"] == IncidentType.EXPLOSION.value
+    )
     assert importer.OCCURRENCE_TYPE_MAPPINGS["flooding"] == IncidentType.FLOODING.value
-    assert importer.OCCURRENCE_TYPE_MAPPINGS["capsizing"] == IncidentType.CAPSIZING.value
+    assert (
+        importer.OCCURRENCE_TYPE_MAPPINGS["capsizing"] == IncidentType.CAPSIZING.value
+    )
 
 
 def test_emsa_ship_type_mappings(emsa_csv_path, mock_session):
@@ -131,7 +146,10 @@ def test_emsa_ship_type_mappings(emsa_csv_path, mock_session):
     # Check offshore vessel types
     assert importer.SHIP_TYPE_MAPPINGS["drilling rig"] == VesselType.DRILLING_RIG.value
     assert importer.SHIP_TYPE_MAPPINGS["fpso"] == VesselType.FPSO.value
-    assert importer.SHIP_TYPE_MAPPINGS["offshore supply vessel"] == VesselType.SUPPLY_VESSEL.value
+    assert (
+        importer.SHIP_TYPE_MAPPINGS["offshore supply vessel"]
+        == VesselType.SUPPLY_VESSEL.value
+    )
     assert importer.SHIP_TYPE_MAPPINGS["ahts"] == VesselType.ANCHOR_HANDLING.value
 
     # Check tanker types
@@ -140,7 +158,9 @@ def test_emsa_ship_type_mappings(emsa_csv_path, mock_session):
 
     # Check cargo types
     assert importer.SHIP_TYPE_MAPPINGS["bulk carrier"] == VesselType.CARGO_VESSEL.value
-    assert importer.SHIP_TYPE_MAPPINGS["container ship"] == VesselType.CARGO_VESSEL.value
+    assert (
+        importer.SHIP_TYPE_MAPPINGS["container ship"] == VesselType.CARGO_VESSEL.value
+    )
 
 
 def test_emsa_status_mappings(emsa_csv_path, mock_session):
@@ -148,8 +168,14 @@ def test_emsa_status_mappings(emsa_csv_path, mock_session):
     importer = EMSAImporter(emsa_csv_path, mock_session)
 
     assert importer.STATUS_MAPPINGS["reported"] == IncidentStatus.REPORTED.value
-    assert importer.STATUS_MAPPINGS["under investigation"] == IncidentStatus.UNDER_INVESTIGATION.value
-    assert importer.STATUS_MAPPINGS["preliminary"] == IncidentStatus.PRELIMINARY_REPORT.value
+    assert (
+        importer.STATUS_MAPPINGS["under investigation"]
+        == IncidentStatus.UNDER_INVESTIGATION.value
+    )
+    assert (
+        importer.STATUS_MAPPINGS["preliminary"]
+        == IncidentStatus.PRELIMINARY_REPORT.value
+    )
     assert importer.STATUS_MAPPINGS["final report"] == IncidentStatus.FINAL_REPORT.value
     assert importer.STATUS_MAPPINGS["closed"] == IncidentStatus.CLOSED.value
 
@@ -159,7 +185,10 @@ def test_emsa_map_occurrence_type(emsa_csv_path, mock_session):
     importer = EMSAImporter(emsa_csv_path, mock_session)
 
     assert importer._map_occurrence_type("collision") == IncidentType.COLLISION.value
-    assert importer._map_occurrence_type("Collision with vessel") == IncidentType.COLLISION.value
+    assert (
+        importer._map_occurrence_type("Collision with vessel")
+        == IncidentType.COLLISION.value
+    )
     assert importer._map_occurrence_type("grounding") == IncidentType.GROUNDING.value
     assert importer._map_occurrence_type("fire") == IncidentType.FIRE.value
     assert importer._map_occurrence_type("unknown type") == IncidentType.OTHER.value
@@ -180,7 +209,10 @@ def test_emsa_map_casualty_category(emsa_csv_path, mock_session):
     """Test EMSA casualty category mapping helper method"""
     importer = EMSAImporter(emsa_csv_path, mock_session)
 
-    assert importer._map_casualty_category("very serious marine casualty") == "catastrophic"
+    assert (
+        importer._map_casualty_category("very serious marine casualty")
+        == "catastrophic"
+    )
     assert importer._map_casualty_category("VSMC") == "catastrophic"
     assert importer._map_casualty_category("serious marine casualty") == "serious"
     assert importer._map_casualty_category("marine casualty") == "moderate"
@@ -192,9 +224,17 @@ def test_emsa_map_investigation_status(emsa_csv_path, mock_session):
     """Test EMSA investigation status mapping helper method"""
     importer = EMSAImporter(emsa_csv_path, mock_session)
 
-    assert importer._map_investigation_status("reported") == IncidentStatus.REPORTED.value
-    assert importer._map_investigation_status("under investigation") == IncidentStatus.UNDER_INVESTIGATION.value
-    assert importer._map_investigation_status("final report") == IncidentStatus.FINAL_REPORT.value
+    assert (
+        importer._map_investigation_status("reported") == IncidentStatus.REPORTED.value
+    )
+    assert (
+        importer._map_investigation_status("under investigation")
+        == IncidentStatus.UNDER_INVESTIGATION.value
+    )
+    assert (
+        importer._map_investigation_status("final report")
+        == IncidentStatus.FINAL_REPORT.value
+    )
     assert importer._map_investigation_status("") == IncidentStatus.REPORTED.value
 
 

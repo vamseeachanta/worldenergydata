@@ -1,14 +1,14 @@
 # ABOUTME: Concrete importer for BSEE incident investigation database CSV data
 # ABOUTME: Implements CSV parsing and field normalization for HSE incident records
 
-from typing import List, Dict, Any
 from datetime import datetime
 from pathlib import Path
+from typing import Any, Dict, List
+
 import pandas as pd
 
-from worldenergydata.hse.importers.base_importer import BaseImporter
-
 from worldenergydata.common.logging import get_logger
+from worldenergydata.hse.importers.base_importer import BaseImporter
 
 logger = get_logger(__name__)
 
@@ -76,7 +76,7 @@ class BSEEIncidentsImporter(BaseImporter):
             df = pd.read_csv(csv_path)
 
             # Convert DataFrame to list of dictionaries
-            records = df.to_dict('records')
+            records = df.to_dict("records")
 
             return records
 
@@ -116,91 +116,95 @@ class BSEEIncidentsImporter(BaseImporter):
         normalized = {}
 
         # Required field: bsee_incident_id
-        if 'incident_id' in raw_data:
-            normalized['bsee_incident_id'] = raw_data['incident_id']
+        if "incident_id" in raw_data:
+            normalized["bsee_incident_id"] = raw_data["incident_id"]
 
         # Required field: incident_date (convert string to datetime)
-        if 'incident_date' in raw_data:
-            date_str = raw_data['incident_date']
+        if "incident_date" in raw_data:
+            date_str = raw_data["incident_date"]
             if isinstance(date_str, str):
                 # Try parsing with time component first
                 try:
-                    normalized['incident_date'] = datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')
+                    normalized["incident_date"] = datetime.strptime(
+                        date_str, "%Y-%m-%d %H:%M:%S"
+                    )
                 except ValueError:
                     # Fall back to date-only format
                     try:
-                        normalized['incident_date'] = datetime.strptime(date_str, '%Y-%m-%d')
+                        normalized["incident_date"] = datetime.strptime(
+                            date_str, "%Y-%m-%d"
+                        )
                     except ValueError:
                         # If parsing fails, keep original (will fail validation)
-                        normalized['incident_date'] = date_str
+                        normalized["incident_date"] = date_str
             else:
                 # Already datetime object
-                normalized['incident_date'] = date_str
+                normalized["incident_date"] = date_str
 
         # Required field: operator
-        if 'operator_name' in raw_data:
-            normalized['operator'] = raw_data['operator_name']
+        if "operator_name" in raw_data:
+            normalized["operator"] = raw_data["operator_name"]
 
         # Required field: incident_type
-        if 'incident_type' in raw_data:
-            normalized['incident_type'] = raw_data['incident_type']
+        if "incident_type" in raw_data:
+            normalized["incident_type"] = raw_data["incident_type"]
 
         # Required field: severity
-        if 'severity' in raw_data:
-            normalized['severity'] = raw_data['severity']
+        if "severity" in raw_data:
+            normalized["severity"] = raw_data["severity"]
 
         # Optional field: facility_name
-        if 'facility' in raw_data:
-            normalized['facility_name'] = raw_data['facility']
+        if "facility" in raw_data:
+            normalized["facility_name"] = raw_data["facility"]
         else:
-            normalized['facility_name'] = None
+            normalized["facility_name"] = None
 
         # Optional field: lease_number
-        if 'lease' in raw_data:
-            normalized['lease_number'] = raw_data['lease']
+        if "lease" in raw_data:
+            normalized["lease_number"] = raw_data["lease"]
         else:
-            normalized['lease_number'] = None
+            normalized["lease_number"] = None
 
         # Optional field: block_number
-        if 'block' in raw_data:
-            normalized['block_number'] = raw_data['block']
+        if "block" in raw_data:
+            normalized["block_number"] = raw_data["block"]
         else:
-            normalized['block_number'] = None
+            normalized["block_number"] = None
 
         # Optional field: field_name
-        if 'field' in raw_data:
-            normalized['field_name'] = raw_data['field']
+        if "field" in raw_data:
+            normalized["field_name"] = raw_data["field"]
         else:
-            normalized['field_name'] = None
+            normalized["field_name"] = None
 
         # Optional field: latitude (convert string to float)
-        if 'lat' in raw_data and raw_data['lat'] is not None:
+        if "lat" in raw_data and raw_data["lat"] is not None:
             try:
-                if isinstance(raw_data['lat'], str):
-                    normalized['latitude'] = float(raw_data['lat'])
+                if isinstance(raw_data["lat"], str):
+                    normalized["latitude"] = float(raw_data["lat"])
                 else:
-                    normalized['latitude'] = raw_data['lat']
+                    normalized["latitude"] = raw_data["lat"]
             except (ValueError, TypeError):
-                normalized['latitude'] = None
+                normalized["latitude"] = None
         else:
-            normalized['latitude'] = None
+            normalized["latitude"] = None
 
         # Optional field: longitude (convert string to float)
-        if 'lon' in raw_data and raw_data['lon'] is not None:
+        if "lon" in raw_data and raw_data["lon"] is not None:
             try:
-                if isinstance(raw_data['lon'], str):
-                    normalized['longitude'] = float(raw_data['lon'])
+                if isinstance(raw_data["lon"], str):
+                    normalized["longitude"] = float(raw_data["lon"])
                 else:
-                    normalized['longitude'] = raw_data['lon']
+                    normalized["longitude"] = raw_data["lon"]
             except (ValueError, TypeError):
-                normalized['longitude'] = None
+                normalized["longitude"] = None
         else:
-            normalized['longitude'] = None
+            normalized["longitude"] = None
 
         # Optional field: description
-        if 'description' in raw_data:
-            normalized['description'] = raw_data['description']
+        if "description" in raw_data:
+            normalized["description"] = raw_data["description"]
         else:
-            normalized['description'] = None
+            normalized["description"] = None
 
         return normalized

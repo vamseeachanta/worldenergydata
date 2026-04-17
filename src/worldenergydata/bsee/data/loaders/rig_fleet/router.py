@@ -17,9 +17,7 @@ class RigFleetRouter:
     def __init__(self):
         self.rig_fleet_loader = RigFleetLoader()
 
-    def router(
-        self, cfg: Dict[str, Any]
-    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def router(self, cfg: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Route rig fleet data requests.
 
         When ``cfg["data"]["rig_fleet"]`` is truthy the loader is

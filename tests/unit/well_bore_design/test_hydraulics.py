@@ -25,7 +25,9 @@ class TestAnnularVelocity:
     def test_known_value(self, hydro):
         # AV = 0.408 * 500 / (8.5^2 - 5.0^2) = 204 / (72.25 - 25) = 204/47.25
         expected = 0.408 * 500.0 / (8.5**2 - 5.0**2)
-        assert hydro.annular_velocity_fps(500, 8.5, 5.0) == pytest.approx(expected, rel=1e-4)
+        assert hydro.annular_velocity_fps(500, 8.5, 5.0) == pytest.approx(
+            expected, rel=1e-4
+        )
 
     def test_larger_annular_gap_gives_lower_velocity(self, hydro):
         # Wider annulus → lower velocity for the same flow rate
@@ -83,8 +85,12 @@ class TestPressureLoss:
             plastic_viscosity_cp=20,
             yield_point_lbf_100ft2=15,
         )
-        dp_slim = hydro.pressure_loss_psi_per_100ft(hole_od_in=6.0, pipe_od_in=3.5, **common)
-        dp_std = hydro.pressure_loss_psi_per_100ft(hole_od_in=8.5, pipe_od_in=5.0, **common)
+        dp_slim = hydro.pressure_loss_psi_per_100ft(
+            hole_od_in=6.0, pipe_od_in=3.5, **common
+        )
+        dp_std = hydro.pressure_loss_psi_per_100ft(
+            hole_od_in=8.5, pipe_od_in=5.0, **common
+        )
         assert dp_slim > dp_std
 
     def test_pipe_od_equal_to_hole_od_raises(self, hydro):
@@ -100,7 +106,9 @@ class TestPressureLoss:
             pipe_od_in=5.0,
         )
         dp_low_pv = hydro.pressure_loss_psi_per_100ft(plastic_viscosity_cp=10, **common)
-        dp_high_pv = hydro.pressure_loss_psi_per_100ft(plastic_viscosity_cp=40, **common)
+        dp_high_pv = hydro.pressure_loss_psi_per_100ft(
+            plastic_viscosity_cp=40, **common
+        )
         assert dp_high_pv > dp_low_pv
 
 

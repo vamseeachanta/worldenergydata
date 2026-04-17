@@ -24,75 +24,93 @@ class TestValidationResult:
 
 class TestValidateDrillingRig:
     def test_valid_record(self):
-        r = validate_drilling_rig({
-            "VESSEL_NAME": "Rig A",
-            "RIG_TYPE": "drillship",
-            "WATER_DEPTH_RATING_FT": 12000.0,
-            "YEAR_BUILT": 2015,
-            "IMO_NUMBER": "1234567",
-        })
+        r = validate_drilling_rig(
+            {
+                "VESSEL_NAME": "Rig A",
+                "RIG_TYPE": "drillship",
+                "WATER_DEPTH_RATING_FT": 12000.0,
+                "YEAR_BUILT": 2015,
+                "IMO_NUMBER": "1234567",
+            }
+        )
         assert r.is_valid is True
         assert len(r.warnings) == 0
 
     def test_jackup_high_dp_warning(self):
-        r = validate_drilling_rig({
-            "VESSEL_NAME": "JU-01",
-            "RIG_TYPE": "jack_up",
-            "DP_CLASS": 3,
-        })
+        r = validate_drilling_rig(
+            {
+                "VESSEL_NAME": "JU-01",
+                "RIG_TYPE": "jack_up",
+                "DP_CLASS": 3,
+            }
+        )
         assert r.is_valid is True
         assert any("Jack-up" in w for w in r.warnings)
 
     def test_land_rig_displacement_warning(self):
-        r = validate_drilling_rig({
-            "VESSEL_NAME": "LR-01",
-            "RIG_TYPE": "land_rig",
-            "DISPLACEMENT_TONNES": 5000.0,
-        })
+        r = validate_drilling_rig(
+            {
+                "VESSEL_NAME": "LR-01",
+                "RIG_TYPE": "land_rig",
+                "DISPLACEMENT_TONNES": 5000.0,
+            }
+        )
         assert any("Land rig" in w for w in r.warnings)
 
     def test_negative_water_depth_error(self):
-        r = validate_drilling_rig({
-            "VESSEL_NAME": "R-01",
-            "WATER_DEPTH_RATING_FT": -100.0,
-        })
+        r = validate_drilling_rig(
+            {
+                "VESSEL_NAME": "R-01",
+                "WATER_DEPTH_RATING_FT": -100.0,
+            }
+        )
         assert r.is_valid is False
         assert any("Negative" in e for e in r.errors)
 
     def test_excessive_water_depth_error(self):
-        r = validate_drilling_rig({
-            "VESSEL_NAME": "R-01",
-            "WATER_DEPTH_RATING_FT": 50000.0,
-        })
+        r = validate_drilling_rig(
+            {
+                "VESSEL_NAME": "R-01",
+                "WATER_DEPTH_RATING_FT": 50000.0,
+            }
+        )
         assert r.is_valid is False
 
     def test_year_built_old_warning(self):
-        r = validate_drilling_rig({
-            "VESSEL_NAME": "R-01",
-            "YEAR_BUILT": 1940,
-        })
+        r = validate_drilling_rig(
+            {
+                "VESSEL_NAME": "R-01",
+                "YEAR_BUILT": 1940,
+            }
+        )
         assert any("1950" in w for w in r.warnings)
 
     def test_year_built_future_error(self):
-        r = validate_drilling_rig({
-            "VESSEL_NAME": "R-01",
-            "YEAR_BUILT": 2035,
-        })
+        r = validate_drilling_rig(
+            {
+                "VESSEL_NAME": "R-01",
+                "YEAR_BUILT": 2035,
+            }
+        )
         assert r.is_valid is False
 
     def test_invalid_imo_error(self):
-        r = validate_drilling_rig({
-            "VESSEL_NAME": "R-01",
-            "IMO_NUMBER": "ABC",
-        })
+        r = validate_drilling_rig(
+            {
+                "VESSEL_NAME": "R-01",
+                "IMO_NUMBER": "ABC",
+            }
+        )
         assert r.is_valid is False
         assert any("IMO" in e for e in r.errors)
 
     def test_imo_wrong_length_error(self):
-        r = validate_drilling_rig({
-            "VESSEL_NAME": "R-01",
-            "IMO_NUMBER": "12345",
-        })
+        r = validate_drilling_rig(
+            {
+                "VESSEL_NAME": "R-01",
+                "IMO_NUMBER": "12345",
+            }
+        )
         assert r.is_valid is False
 
     def test_unknown_name_default(self):
@@ -102,40 +120,50 @@ class TestValidateDrillingRig:
 
 class TestValidateConstructionVessel:
     def test_valid_record(self):
-        r = validate_construction_vessel({
-            "VESSEL_NAME": "Sleipnir",
-            "MAIN_CRANE_CAPACITY_T": 10000.0,
-            "YEAR_BUILT": 2019,
-            "IMO_NUMBER": "9781478",
-        })
+        r = validate_construction_vessel(
+            {
+                "VESSEL_NAME": "Sleipnir",
+                "MAIN_CRANE_CAPACITY_T": 10000.0,
+                "YEAR_BUILT": 2019,
+                "IMO_NUMBER": "9781478",
+            }
+        )
         assert r.is_valid is True
 
     def test_crane_capacity_warning(self):
-        r = validate_construction_vessel({
-            "VESSEL_NAME": "V-01",
-            "MAIN_CRANE_CAPACITY_T": 30000.0,
-        })
+        r = validate_construction_vessel(
+            {
+                "VESSEL_NAME": "V-01",
+                "MAIN_CRANE_CAPACITY_T": 30000.0,
+            }
+        )
         assert any("25,000" in w for w in r.warnings)
 
     def test_negative_water_depth_error(self):
-        r = validate_construction_vessel({
-            "VESSEL_NAME": "V-01",
-            "WATER_DEPTH_RATING_M": -10.0,
-        })
+        r = validate_construction_vessel(
+            {
+                "VESSEL_NAME": "V-01",
+                "WATER_DEPTH_RATING_M": -10.0,
+            }
+        )
         assert r.is_valid is False
 
     def test_deep_water_warning(self):
-        r = validate_construction_vessel({
-            "VESSEL_NAME": "V-01",
-            "WATER_DEPTH_RATING_M": 6000.0,
-        })
+        r = validate_construction_vessel(
+            {
+                "VESSEL_NAME": "V-01",
+                "WATER_DEPTH_RATING_M": 6000.0,
+            }
+        )
         assert any("5,000" in w for w in r.warnings)
 
     def test_year_built_future_error(self):
-        r = validate_construction_vessel({
-            "VESSEL_NAME": "V-01",
-            "YEAR_BUILT": 2035,
-        })
+        r = validate_construction_vessel(
+            {
+                "VESSEL_NAME": "V-01",
+                "YEAR_BUILT": 2035,
+            }
+        )
         assert r.is_valid is False
 
 

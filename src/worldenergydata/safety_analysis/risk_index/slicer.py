@@ -55,7 +55,9 @@ class RiskSlicer:
         if len(incidents) == 0:
             return self._empty_result()
         df = incidents.copy()
-        depth_col = pd.to_numeric(df.get("water_depth_ft", pd.Series(dtype=float)), errors="coerce")
+        depth_col = pd.to_numeric(
+            df.get("water_depth_ft", pd.Series(dtype=float)), errors="coerce"
+        )
         df["_group"] = depth_col.apply(
             lambda d: self._config.get_water_depth_band(d) if pd.notna(d) else "unknown"
         )
@@ -71,7 +73,9 @@ class RiskSlicer:
 
     def _aggregate(self, df: pd.DataFrame, group_type: str) -> pd.DataFrame:
         """Aggregate incidents by the _group column."""
-        df["fatalities"] = pd.to_numeric(df.get("fatalities", 0), errors="coerce").fillna(0)
+        df["fatalities"] = pd.to_numeric(
+            df.get("fatalities", 0), errors="coerce"
+        ).fillna(0)
         df["injuries"] = pd.to_numeric(df.get("injuries", 0), errors="coerce").fillna(0)
 
         grouped = df.groupby("_group", sort=True)
@@ -81,15 +85,17 @@ class RiskSlicer:
             total = len(group)
             fatalities = int(group["fatalities"].sum())
             injuries = int(group["injuries"].sum())
-            rows.append({
-                "group_key": str(key),
-                "group_type": group_type,
-                "total_incidents": total,
-                "fatalities": fatalities,
-                "injuries": injuries,
-                "fatality_rate": fatalities / total if total > 0 else 0.0,
-                "injury_rate": injuries / total if total > 0 else 0.0,
-            })
+            rows.append(
+                {
+                    "group_key": str(key),
+                    "group_type": group_type,
+                    "total_incidents": total,
+                    "fatalities": fatalities,
+                    "injuries": injuries,
+                    "fatality_rate": fatalities / total if total > 0 else 0.0,
+                    "injury_rate": injuries / total if total > 0 else 0.0,
+                }
+            )
 
         return pd.DataFrame(rows, columns=SLICE_COLUMNS)
 

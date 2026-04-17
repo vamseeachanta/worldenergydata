@@ -6,7 +6,6 @@ import re
 
 import pandas as pd
 
-
 _TRAILING_DOT_ZERO = re.compile(r"\.0$")
 
 

@@ -13,10 +13,9 @@ from typing import Any
 
 import pandas as pd
 
-from .ong_fd_utils import get_api10_from_well_api
-
 # Re-export for backward compatibility
 from .ong_fd_summary import calculate_drilling_completion_summary
+from .ong_fd_utils import get_api10_from_well_api
 
 __all__ = [
     "get_rig_days_and_drilling_wt",
@@ -108,7 +107,9 @@ def get_rig_days_and_drilling_wt(
     rig_str: str = ", ".join(rigs_for_string)
 
     api12_war_days: pd.DataFrame = (
-        well_war.groupby(["API12", "BOREHOLE_STAT_DESC"])["Rig_days"].sum().reset_index()
+        well_war.groupby(["API12", "BOREHOLE_STAT_DESC"])["Rig_days"]
+        .sum()
+        .reset_index()
     )
 
     well_war_npt_days: int = well_war["npt"].sum()

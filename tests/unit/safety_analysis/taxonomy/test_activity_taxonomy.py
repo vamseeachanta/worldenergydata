@@ -92,9 +92,20 @@ class TestActivityTaxonomy:
     def test_all_expected_codes(self):
         t = ActivityTaxonomy()
         expected = {
-            "DRILL", "PROD", "CONST", "MARINE", "PIPE",
-            "DIVE", "CRANE", "MAINT", "ENV", "ELEC",
-            "PSAFE", "PERS", "HELI", "OTHER",
+            "DRILL",
+            "PROD",
+            "CONST",
+            "MARINE",
+            "PIPE",
+            "DIVE",
+            "CRANE",
+            "MAINT",
+            "ENV",
+            "ELEC",
+            "PSAFE",
+            "PERS",
+            "HELI",
+            "OTHER",
         }
         assert set(t.get_activity_codes()) == expected
 

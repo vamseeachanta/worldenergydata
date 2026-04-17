@@ -6,7 +6,8 @@ Abstract base class for bulk data importers.
 
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Generator
+from typing import Any, Dict, Generator, List, Optional
+
 from sqlalchemy.orm import Session
 
 from worldenergydata.common import get_logger
@@ -38,11 +39,11 @@ class BaseImporter(ABC):
         self.batch_size = batch_size
 
         self.stats = {
-            'total_records': 0,
-            'imported': 0,
-            'skipped': 0,
-            'errors': 0,
-            'duplicates': 0
+            "total_records": 0,
+            "imported": 0,
+            "skipped": 0,
+            "errors": 0,
+            "duplicates": 0,
         }
 
         logger.info(f"Initialized {self.__class__.__name__}")
@@ -94,7 +95,9 @@ class BaseImporter(ABC):
         """
         raise NotImplementedError("Subclasses must implement map_to_model()")
 
-    def import_data(self, limit: Optional[int] = None, skip_duplicates: bool = True) -> Dict[str, int]:
+    def import_data(
+        self, limit: Optional[int] = None, skip_duplicates: bool = True
+    ) -> Dict[str, int]:
         """
         Import data from source to database.
 
@@ -112,24 +115,24 @@ class BaseImporter(ABC):
 
         try:
             for raw_record in self.read_source():
-                self.stats['total_records'] += 1
+                self.stats["total_records"] += 1
                 records_processed += 1
 
                 # Parse record
                 parsed = self.parse_record(raw_record)
                 if not parsed:
-                    self.stats['skipped'] += 1
+                    self.stats["skipped"] += 1
                     continue
 
                 # Map to model
                 model_instance = self.map_to_model(parsed)
                 if not model_instance:
-                    self.stats['errors'] += 1
+                    self.stats["errors"] += 1
                     continue
 
                 # Check for duplicates
                 if skip_duplicates and self.is_duplicate(model_instance):
-                    self.stats['duplicates'] += 1
+                    self.stats["duplicates"] += 1
                     continue
 
                 # Add to batch
@@ -146,7 +149,7 @@ class BaseImporter(ABC):
                     break
 
                 # Progress logging
-                if self.stats['total_records'] % 1000 == 0:
+                if self.stats["total_records"] % 1000 == 0:
                     logger.info(f"Processed {self.stats['total_records']} records...")
 
             # Commit remaining records
@@ -171,12 +174,12 @@ class BaseImporter(ABC):
         try:
             self.session.add_all(batch)
             self.session.commit()
-            self.stats['imported'] += len(batch)
+            self.stats["imported"] += len(batch)
             logger.debug(f"Committed batch of {len(batch)} records")
         except Exception as e:
             logger.error(f"Batch commit failed: {e}")
             self.session.rollback()
-            self.stats['errors'] += len(batch)
+            self.stats["errors"] += len(batch)
 
     def is_duplicate(self, model_instance: Any) -> bool:
         """

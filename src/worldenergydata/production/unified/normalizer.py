@@ -69,9 +69,9 @@ class Normalizer:
         for col in _NUMERIC_COLS:
             out[col] = pd.to_numeric(out[col], errors="coerce").astype("float64")
 
-        out = out.sort_values(
-            ["region", "field_name", "year", "month"]
-        ).reset_index(drop=True)
+        out = out.sort_values(["region", "field_name", "year", "month"]).reset_index(
+            drop=True
+        )
 
         return out
 

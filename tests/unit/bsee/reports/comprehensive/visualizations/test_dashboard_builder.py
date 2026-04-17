@@ -10,10 +10,10 @@ from worldenergydata.bsee.reports.comprehensive.visualizations.dashboard_builder
     DashboardConfig,
 )
 
-
 # ---------------------------------------------------------------------------
 # DashboardConfig dataclass
 # ---------------------------------------------------------------------------
+
 
 class TestDashboardConfig:
     def test_defaults(self):
@@ -28,8 +28,11 @@ class TestDashboardConfig:
 
     def test_custom(self):
         cfg = DashboardConfig(
-            title="Custom", theme="plotly_dark", auto_refresh=True,
-            refresh_interval=30000, enable_export=False,
+            title="Custom",
+            theme="plotly_dark",
+            auto_refresh=True,
+            refresh_interval=30000,
+            enable_export=False,
         )
         assert cfg.theme == "plotly_dark"
         assert cfg.auto_refresh is True
@@ -40,11 +43,14 @@ class TestDashboardConfig:
 # ChartConfig dataclass
 # ---------------------------------------------------------------------------
 
+
 class TestChartConfig:
     def test_required_fields(self):
         cc = ChartConfig(
-            chart_id="chart1", chart_type="line",
-            title="Test Chart", data_source="production",
+            chart_id="chart1",
+            chart_type="line",
+            title="Test Chart",
+            data_source="production",
         )
         assert cc.chart_id == "chart1"
         assert cc.update_callback is None
@@ -52,8 +58,10 @@ class TestChartConfig:
 
     def test_with_filters(self):
         cc = ChartConfig(
-            chart_id="chart2", chart_type="bar",
-            title="Bar", data_source="revenue",
+            chart_id="chart2",
+            chart_type="bar",
+            title="Bar",
+            data_source="revenue",
             filters=["field", "year"],
         )
         assert cc.filters == ["field", "year"]
@@ -62,6 +70,7 @@ class TestChartConfig:
 # ---------------------------------------------------------------------------
 # DashboardBuilder init
 # ---------------------------------------------------------------------------
+
 
 class TestDashboardBuilderInit:
     def test_default(self):
@@ -81,6 +90,7 @@ class TestDashboardBuilderInit:
 # ---------------------------------------------------------------------------
 # add_chart / add_filter / set_data_source
 # ---------------------------------------------------------------------------
+
 
 class TestBuilderMethods:
     def test_add_chart(self):
@@ -124,6 +134,7 @@ class TestBuilderMethods:
 # create_kpi_cards
 # ---------------------------------------------------------------------------
 
+
 class TestCreateKpiCards:
     @pytest.mark.skip(reason="Requires Dash installed; MockHtml returns None")
     def test_basic_kpis(self):
@@ -146,6 +157,7 @@ class TestCreateKpiCards:
 # ---------------------------------------------------------------------------
 # create_filter_panel
 # ---------------------------------------------------------------------------
+
 
 class TestCreateFilterPanel:
     @pytest.mark.skip(reason="Requires Dash installed; MockHtml missing Label")
@@ -173,6 +185,7 @@ class TestCreateFilterPanel:
 # export_dashboard
 # ---------------------------------------------------------------------------
 
+
 class TestExportDashboard:
     def test_no_app_returns_false(self):
         builder = DashboardBuilder()
@@ -193,6 +206,7 @@ class TestExportDashboard:
 # ---------------------------------------------------------------------------
 # add_drill_down / enable_cross_filtering (no app)
 # ---------------------------------------------------------------------------
+
 
 class TestDrillDownAndCrossFilter:
     def test_drill_down_no_app(self):

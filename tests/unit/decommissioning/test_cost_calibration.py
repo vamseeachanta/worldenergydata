@@ -3,9 +3,9 @@
 
 """Unit tests for worldenergydata.decommissioning.cost_calibration."""
 
-import pytest
-import pandas as pd
 import numpy as np
+import pandas as pd
+import pytest
 
 from worldenergydata.decommissioning.cost_calibration import (
     CalibrationFit,
@@ -16,7 +16,6 @@ from worldenergydata.decommissioning.cost_model import (
     _COST_FACTORS,
     DecommissioningCostEstimator,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -90,7 +89,13 @@ class TestFit:
 
     def test_fit_empty_df_does_not_raise(self, calibrator):
         empty = pd.DataFrame(
-            columns=["asset_type", "water_depth_m", "weight_tonnes", "cost_musd", "year"]
+            columns=[
+                "asset_type",
+                "water_depth_m",
+                "weight_tonnes",
+                "cost_musd",
+                "year",
+            ]
         )
         calibrator.fit(empty)
         assert calibrator._fitted is True
@@ -131,9 +136,9 @@ class TestCalibrationResult:
     def test_r_squared_in_valid_range(self, fitted_calibrator):
         result = fitted_calibrator.calibration_result()
         for f in result.fits:
-            assert -1.0 <= f.r_squared <= 1.0, (
-                f"r_squared out of range for {f.asset_type}: {f.r_squared}"
-            )
+            assert (
+                -1.0 <= f.r_squared <= 1.0
+            ), f"r_squared out of range for {f.asset_type}: {f.r_squared}"
 
     def test_to_dataframe_returns_dataframe(self, fitted_calibrator):
         result = fitted_calibrator.calibration_result()
@@ -177,9 +182,9 @@ class TestFittedFactors:
             if atype in _COST_FACTORS:
                 baseline_base = _COST_FACTORS[atype]["base_musd"]
                 fitted_base = fdict["base_musd"]
-                assert fitted_base >= baseline_base * 0.5 - 1e-9, (
-                    f"{atype}: fitted_base {fitted_base} below 0.5x baseline {baseline_base}"
-                )
+                assert (
+                    fitted_base >= baseline_base * 0.5 - 1e-9
+                ), f"{atype}: fitted_base {fitted_base} below 0.5x baseline {baseline_base}"
 
     def test_fitted_base_clamped_below_double_of_baseline(self, fitted_calibrator):
         factors = fitted_calibrator.fitted_factors()
@@ -187,9 +192,9 @@ class TestFittedFactors:
             if atype in _COST_FACTORS:
                 baseline_base = _COST_FACTORS[atype]["base_musd"]
                 fitted_base = fdict["base_musd"]
-                assert fitted_base <= baseline_base * 2.0 + 1e-9, (
-                    f"{atype}: fitted_base {fitted_base} above 2.0x baseline {baseline_base}"
-                )
+                assert (
+                    fitted_base <= baseline_base * 2.0 + 1e-9
+                ), f"{atype}: fitted_base {fitted_base} above 2.0x baseline {baseline_base}"
 
 
 # ---------------------------------------------------------------------------

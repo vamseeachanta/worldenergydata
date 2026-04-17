@@ -63,12 +63,16 @@ class SpecPdfCollector(BaseCollector):
             except Exception as exc:
                 logger.warning(
                     "Failed to collect %s from %s: %s",
-                    vessel_name, url, exc,
+                    vessel_name,
+                    url,
+                    exc,
                 )
         return records
 
     def _collect_single(
-        self, vessel_name: str, url: str,
+        self,
+        vessel_name: str,
+        url: str,
     ) -> Optional[dict[str, Any]]:
         """Download and parse a single spec PDF."""
         logger.info("Downloading spec PDF for %s", vessel_name)

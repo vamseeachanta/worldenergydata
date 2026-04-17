@@ -22,10 +22,12 @@ class TestLegacyColumns:
 
 class TestConvertCuratedToRigFleet:
     def test_basic_conversion(self):
-        df = pd.DataFrame({
-            "RIG_NAME": ["Rig A", "Rig B"],
-            "RIG_TYPE": ["Drillship", "Semi"],
-        })
+        df = pd.DataFrame(
+            {
+                "RIG_NAME": ["Rig A", "Rig B"],
+                "RIG_TYPE": ["Drillship", "Semi"],
+            }
+        )
         result = convert_curated_to_rig_fleet(df)
         assert len(result) == 2
         assert "RIG_NAME" in result.columns
@@ -37,33 +39,41 @@ class TestConvertCuratedToRigFleet:
         assert result["OWNER"].iloc[0] is None
 
     def test_vessel_name_fallback(self):
-        df = pd.DataFrame({
-            "RIG_NAME": [None, "Rig B"],
-            "VESSEL_NAME": ["Vessel A", "Vessel B"],
-        })
+        df = pd.DataFrame(
+            {
+                "RIG_NAME": [None, "Rig B"],
+                "VESSEL_NAME": ["Vessel A", "Vessel B"],
+            }
+        )
         result = convert_curated_to_rig_fleet(df)
         assert len(result) == 2
         assert result.iloc[0]["RIG_NAME"] == "Vessel A"
 
     def test_drops_null_rig_name(self):
-        df = pd.DataFrame({
-            "RIG_NAME": [None, "Rig B"],
-        })
+        df = pd.DataFrame(
+            {
+                "RIG_NAME": [None, "Rig B"],
+            }
+        )
         result = convert_curated_to_rig_fleet(df)
         assert len(result) == 1
 
     def test_drops_empty_rig_name(self):
-        df = pd.DataFrame({
-            "RIG_NAME": ["", "  ", "Rig C"],
-        })
+        df = pd.DataFrame(
+            {
+                "RIG_NAME": ["", "  ", "Rig C"],
+            }
+        )
         result = convert_curated_to_rig_fleet(df)
         assert len(result) == 1
 
     def test_only_legacy_columns_returned(self):
-        df = pd.DataFrame({
-            "RIG_NAME": ["Rig A"],
-            "EXTRA_COL": ["extra"],
-        })
+        df = pd.DataFrame(
+            {
+                "RIG_NAME": ["Rig A"],
+                "EXTRA_COL": ["extra"],
+            }
+        )
         result = convert_curated_to_rig_fleet(df)
         assert "EXTRA_COL" not in result.columns
 

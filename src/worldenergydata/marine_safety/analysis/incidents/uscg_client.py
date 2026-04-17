@@ -12,10 +12,10 @@ from typing import List, Optional
 import pandas as pd
 
 from worldenergydata.marine_safety.analysis.incidents.incident_taxonomy import (
+    USCG_COLUMN_MAP,
     IncidentDataFrameNormaliser,
     IncidentTaxonomyClassifier,
     TaxonomyRecord,
-    USCG_COLUMN_MAP,
 )
 
 logger = logging.getLogger(__name__)
@@ -131,7 +131,9 @@ def load_dataframe_as_uscg(
     """
     normaliser = IncidentDataFrameNormaliser()
     normalised = normaliser.normalise(df, source="uscg")
-    return normaliser.to_taxonomy_records(normalised, source="uscg", classifier=classifier)
+    return normaliser.to_taxonomy_records(
+        normalised, source="uscg", classifier=classifier
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -161,13 +163,21 @@ def describe_uscg_dataset(df: pd.DataFrame) -> dict:
         Dict with keys: total_records, date_range, vessel_types, columns_present.
     """
     if df.empty:
-        return {"total_records": 0, "date_range": None, "vessel_types": [], "columns_present": []}
+        return {
+            "total_records": 0,
+            "date_range": None,
+            "vessel_types": [],
+            "columns_present": [],
+        }
 
     date_range = None
     if "incident_date" in df.columns:
         dates = pd.to_datetime(df["incident_date"], errors="coerce").dropna()
         if not dates.empty:
-            date_range = (dates.min().date().isoformat(), dates.max().date().isoformat())
+            date_range = (
+                dates.min().date().isoformat(),
+                dates.max().date().isoformat(),
+            )
 
     vessel_types: List[str] = []
     if "vessel_type" in df.columns:

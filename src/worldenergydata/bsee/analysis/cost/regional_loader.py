@@ -27,9 +27,7 @@ from worldenergydata.bsee.analysis.cost.models import (
 
 logger = logging.getLogger(__name__)
 
-_DEFAULT_CONFIG_DIR = (
-    Path(__file__).parents[7] / "config" / "analysis" / "cost_data"
-)
+_DEFAULT_CONFIG_DIR = Path(__file__).parents[7] / "config" / "analysis" / "cost_data"
 
 _HPHT_PREMIUM_DEFAULT = 1.30
 
@@ -176,9 +174,7 @@ class RegionalCostLoader:
             meta.get("hpht_premium_factor", _HPHT_PREMIUM_DEFAULT)
         )
         self._rates = data.get("regions", {})
-        logger.debug(
-            "Loaded %d regions from %s", len(self._rates), path
-        )
+        logger.debug("Loaded %d regions from %s", len(self._rates), path)
 
     @staticmethod
     def _interpolate_year(cell: dict, year: int) -> float:

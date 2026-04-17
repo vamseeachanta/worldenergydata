@@ -57,8 +57,7 @@ class CNHAdapter(AdapterInterface):
             "MexicoCNHData collectors are stubs.",
             "Wellbore: SIHScraper.export_well_data() exists but "
             "_collect_wells() returns []. No data on disk.",
-            "Well path: SIH portal does not expose directional "
-            "survey station data.",
+            "Well path: SIH portal does not expose directional " "survey station data.",
             "Casing: SIH portal does not publish casing program data.",
             "Drilling/completion: scraper infrastructure exists "
             "(fecha_inicio, profundidad_total) but collector not wired.",
@@ -70,8 +69,7 @@ class CNHAdapter(AdapterInterface):
 
         if region and region not in _VALID_REGIONS:
             warnings.append(
-                f"Unrecognised region '{region}'. "
-                f"Valid: {_VALID_REGIONS}"
+                f"Unrecognised region '{region}'. " f"Valid: {_VALID_REGIONS}"
             )
         if contract_round and contract_round not in _VALID_CONTRACT_ROUNDS:
             warnings.append(

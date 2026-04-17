@@ -1,6 +1,5 @@
 """Tests for Canada module exception hierarchy."""
 
-from worldenergydata.common.exceptions import ModuleError
 from worldenergydata.canada.errors import (
     CanadaAERError,
     CanadaAPIError,
@@ -12,6 +11,7 @@ from worldenergydata.canada.errors import (
     CanadaUWIError,
     CanadaValidationError,
 )
+from worldenergydata.common.exceptions import ModuleError
 
 
 class TestCanadaError:

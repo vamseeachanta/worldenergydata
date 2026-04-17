@@ -58,7 +58,7 @@ See Also:
     - docs/MIGRATION_GUIDE.md: Migration from old import paths
 """
 
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 __version__ = "1.0.0"
 __all__ = [
@@ -93,31 +93,29 @@ __all__ = [
 
 # Type checking imports for IDE support
 if TYPE_CHECKING:
-    from worldenergydata.bsee.skill import bsee_field_pipeline as bsee_field_pipeline
-    from worldenergydata.bsee.skill import BseeFieldResult as BseeFieldResult
+    from worldenergydata.bsee.analysis.bsee_analysis import BSEEAnalysis as BSEEAnalysis
+    from worldenergydata.bsee.analysis.production_api10 import (
+        ProductionAPI10Analysis as ProductionAPI10Analysis,
+    )
+    from worldenergydata.bsee.analysis.production_api12 import (
+        ProductionAPI12Analysis as ProductionAPI12Analysis,
+    )
+    from worldenergydata.bsee.analysis.well_api10 import WellAPI10 as WellAPI10
+    from worldenergydata.bsee.analysis.well_api12 import WellAPI12 as WellAPI12
     from worldenergydata.bsee.bsee import bsee as bsee
     from worldenergydata.bsee.data.bsee_data import BSEEData as BSEEData
-    from worldenergydata.bsee.analysis.bsee_analysis import BSEEAnalysis as BSEEAnalysis
     from worldenergydata.bsee.data.loaders.api.well import WellData as WellData
-    from worldenergydata.bsee.data.production.router import (
-        ProductionRouter as ProductionRouter,
-    )
     from worldenergydata.bsee.data.loaders.block.router import (
         BlockRouter as BlockRouter,
     )
     from worldenergydata.bsee.data.loaders.lease.router import (
         LeaseRouter as LeaseRouter,
     )
+    from worldenergydata.bsee.data.production.router import (
+        ProductionRouter as ProductionRouter,
+    )
     from worldenergydata.bsee.data.refresh.data_refresh import (
         DataRefresh as DataRefresh,
-    )
-    from worldenergydata.bsee.analysis.well_api12 import WellAPI12 as WellAPI12
-    from worldenergydata.bsee.analysis.well_api10 import WellAPI10 as WellAPI10
-    from worldenergydata.bsee.analysis.production_api12 import (
-        ProductionAPI12Analysis as ProductionAPI12Analysis,
-    )
-    from worldenergydata.bsee.analysis.production_api10 import (
-        ProductionAPI10Analysis as ProductionAPI10Analysis,
     )
     from worldenergydata.bsee.paleowells import (
         PaleowellsDataProcessor as PaleowellsDataProcessor,
@@ -125,6 +123,8 @@ if TYPE_CHECKING:
     from worldenergydata.bsee.paleowells import (
         PaleowellsVisualizer as PaleowellsVisualizer,
     )
+    from worldenergydata.bsee.skill import BseeFieldResult as BseeFieldResult
+    from worldenergydata.bsee.skill import bsee_field_pipeline as bsee_field_pipeline
 
 
 def __getattr__(name: str) -> Any:

@@ -36,9 +36,7 @@ def validate_drilling_rig(record: dict[str, Any]) -> ValidationResult:
 
     # Jackups should not have DP > 1 (most are moored)
     if rig_type == "jack_up" and dp_class is not None and dp_class > 1:
-        result.warnings.append(
-            f"Jack-up with DP class {dp_class} is unusual"
-        )
+        result.warnings.append(f"Jack-up with DP class {dp_class} is unusual")
 
     # Onshore/land rigs should not have displacement
     if rig_type == "land_rig" and displacement is not None:
@@ -116,7 +114,8 @@ def validate_fleet(
     valid = sum(1 for r in results if r.is_valid)
     logger.info(
         "Validation: %d/%d records valid (%d errors, %d warnings)",
-        valid, len(results),
+        valid,
+        len(results),
         sum(len(r.errors) for r in results),
         sum(len(r.warnings) for r in results),
     )

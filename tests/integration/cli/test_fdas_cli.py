@@ -10,7 +10,6 @@ from typer.testing import CliRunner
 
 from worldenergydata.cli.main import app
 
-
 runner = CliRunner()
 
 
@@ -34,7 +33,11 @@ class TestFDASCLIHelp:
         result = runner.invoke(app, ["fdas", "--help"])
         # Should include FDAS-related description
         output_lower = result.output.lower()
-        assert "fdas" in output_lower or "field" in output_lower or "development" in output_lower
+        assert (
+            "fdas" in output_lower
+            or "field" in output_lower
+            or "development" in output_lower
+        )
 
 
 class TestFDASCalculateNPV:
@@ -43,16 +46,14 @@ class TestFDASCalculateNPV:
     def test_fdas_calculate_npv_exits_successfully(self):
         """Test that fdas calculate-npv with valid cashflows exits with code 0."""
         result = runner.invoke(
-            app,
-            ["fdas", "calculate-npv", "--cashflows", "[-1000,100,200,300]"]
+            app, ["fdas", "calculate-npv", "--cashflows", "[-1000,100,200,300]"]
         )
         assert result.exit_code == 0
 
     def test_fdas_calculate_npv_shows_result(self):
         """Test that calculate-npv displays NPV result."""
         result = runner.invoke(
-            app,
-            ["fdas", "calculate-npv", "--cashflows", "[-1000,100,200,300]"]
+            app, ["fdas", "calculate-npv", "--cashflows", "[-1000,100,200,300]"]
         )
         # Should show NPV-related output
         output_lower = result.output.lower()
@@ -63,10 +64,13 @@ class TestFDASCalculateNPV:
         result = runner.invoke(
             app,
             [
-                "fdas", "calculate-npv",
-                "--cashflows", "[-1000,100,200,300,400,500]",
-                "--discount-rate", "0.08"
-            ]
+                "fdas",
+                "calculate-npv",
+                "--cashflows",
+                "[-1000,100,200,300,400,500]",
+                "--discount-rate",
+                "0.08",
+            ],
         )
         assert result.exit_code == 0
 
@@ -75,10 +79,13 @@ class TestFDASCalculateNPV:
         result = runner.invoke(
             app,
             [
-                "fdas", "calculate-npv",
-                "--cashflows", "[-5000,1000,1500,2000]",
-                "--period", "annual"
-            ]
+                "fdas",
+                "calculate-npv",
+                "--cashflows",
+                "[-5000,1000,1500,2000]",
+                "--period",
+                "annual",
+            ],
         )
         assert result.exit_code == 0
 
@@ -98,8 +105,7 @@ class TestFDASCalculateNPV:
     def test_fdas_calculate_npv_invalid_json_fails(self):
         """Test that calculate-npv with invalid JSON fails gracefully."""
         result = runner.invoke(
-            app,
-            ["fdas", "calculate-npv", "--cashflows", "invalid-json"]
+            app, ["fdas", "calculate-npv", "--cashflows", "invalid-json"]
         )
         # Should fail for invalid JSON
         assert result.exit_code != 0
@@ -111,16 +117,14 @@ class TestFDASCalculateMIRR:
     def test_fdas_calculate_mirr_exits_successfully(self):
         """Test that fdas calculate-mirr with valid cashflows exits with code 0."""
         result = runner.invoke(
-            app,
-            ["fdas", "calculate-mirr", "--cashflows", "[-1000,100,200,300]"]
+            app, ["fdas", "calculate-mirr", "--cashflows", "[-1000,100,200,300]"]
         )
         assert result.exit_code == 0
 
     def test_fdas_calculate_mirr_shows_result(self):
         """Test that calculate-mirr displays MIRR result."""
         result = runner.invoke(
-            app,
-            ["fdas", "calculate-mirr", "--cashflows", "[-1000,100,200,300]"]
+            app, ["fdas", "calculate-mirr", "--cashflows", "[-1000,100,200,300]"]
         )
         # Should show MIRR-related output
         output_lower = result.output.lower()
@@ -131,10 +135,13 @@ class TestFDASCalculateMIRR:
         result = runner.invoke(
             app,
             [
-                "fdas", "calculate-mirr",
-                "--cashflows", "[-1000,100,200,300,400,500]",
-                "--discount-rate", "0.12"
-            ]
+                "fdas",
+                "calculate-mirr",
+                "--cashflows",
+                "[-1000,100,200,300,400,500]",
+                "--discount-rate",
+                "0.12",
+            ],
         )
         assert result.exit_code == 0
 
@@ -143,10 +150,13 @@ class TestFDASCalculateMIRR:
         result = runner.invoke(
             app,
             [
-                "fdas", "calculate-mirr",
-                "--cashflows", "[-5000,1000,1500,2000]",
-                "--reinvestment-rate", "0.05"
-            ]
+                "fdas",
+                "calculate-mirr",
+                "--cashflows",
+                "[-5000,1000,1500,2000]",
+                "--reinvestment-rate",
+                "0.05",
+            ],
         )
         assert result.exit_code == 0
 
@@ -181,7 +191,9 @@ class TestFDASClassify:
         assert result.exit_code == 0
         # Should show classification
         output_lower = result.output.lower()
-        assert any(cls in output_lower for cls in ["deepwater", "deep", "5000", "5,000"])
+        assert any(
+            cls in output_lower for cls in ["deepwater", "deep", "5000", "5,000"]
+        )
 
     def test_fdas_classify_ultra_deepwater(self):
         """Test classify command for ultra-deepwater depth."""
@@ -217,14 +229,19 @@ class TestFDASInfo:
         result = runner.invoke(app, ["fdas", "info"])
         # Should display FDAS-related information
         output_lower = result.output.lower()
-        assert any(term in output_lower for term in ["fdas", "field", "development", "analysis", "npv", "mirr"])
+        assert any(
+            term in output_lower
+            for term in ["fdas", "field", "development", "analysis", "npv", "mirr"]
+        )
 
     def test_fdas_info_shows_available_metrics(self):
         """Test that info shows available financial metrics."""
         result = runner.invoke(app, ["fdas", "info"])
         output_lower = result.output.lower()
         # Should mention financial metrics
-        assert any(metric in output_lower for metric in ["npv", "mirr", "irr", "payback"])
+        assert any(
+            metric in output_lower for metric in ["npv", "mirr", "irr", "payback"]
+        )
 
 
 class TestFDASCalculateIRR:
@@ -233,8 +250,7 @@ class TestFDASCalculateIRR:
     def test_fdas_calculate_irr_exits_successfully(self):
         """Test that fdas calculate-irr with valid cashflows exits with code 0."""
         result = runner.invoke(
-            app,
-            ["fdas", "calculate-irr", "--cashflows", "[-1000,100,200,300,400,500]"]
+            app, ["fdas", "calculate-irr", "--cashflows", "[-1000,100,200,300,400,500]"]
         )
         assert result.exit_code == 0
 
@@ -250,8 +266,7 @@ class TestFDASCalculateAll:
     def test_fdas_calculate_all_exits_successfully(self):
         """Test that fdas calculate-all with valid cashflows exits with code 0."""
         result = runner.invoke(
-            app,
-            ["fdas", "calculate-all", "--cashflows", "[-1000,100,200,300,400,500]"]
+            app, ["fdas", "calculate-all", "--cashflows", "[-1000,100,200,300,400,500]"]
         )
         assert result.exit_code == 0
 
@@ -293,20 +308,14 @@ class TestFDASCLIEdgeCases:
 
     def test_fdas_calculate_npv_empty_cashflows(self):
         """Test that empty cashflows list is handled."""
-        result = runner.invoke(
-            app,
-            ["fdas", "calculate-npv", "--cashflows", "[]"]
-        )
+        result = runner.invoke(app, ["fdas", "calculate-npv", "--cashflows", "[]"])
         # Should handle empty cashflows gracefully
         # Either succeed with 0 or fail with error
         assert result.exit_code in [0, 1]
 
     def test_fdas_calculate_npv_single_cashflow(self):
         """Test that single cashflow is handled."""
-        result = runner.invoke(
-            app,
-            ["fdas", "calculate-npv", "--cashflows", "[-1000]"]
-        )
+        result = runner.invoke(app, ["fdas", "calculate-npv", "--cashflows", "[-1000]"])
         # Should handle single cashflow
         assert result.exit_code == 0
 
@@ -318,23 +327,13 @@ class TestFDASCLIEdgeCases:
     def test_fdas_calculate_npv_abbreviated_flags(self):
         """Test that abbreviated flags work for calculate-npv."""
         result = runner.invoke(
-            app,
-            [
-                "fdas", "calculate-npv",
-                "-c", "[-1000,100,200,300]",
-                "-r", "0.10"
-            ]
+            app, ["fdas", "calculate-npv", "-c", "[-1000,100,200,300]", "-r", "0.10"]
         )
         assert result.exit_code == 0
 
     def test_fdas_calculate_mirr_abbreviated_flags(self):
         """Test that abbreviated flags work for calculate-mirr."""
         result = runner.invoke(
-            app,
-            [
-                "fdas", "calculate-mirr",
-                "-c", "[-1000,100,200,300]",
-                "-r", "0.10"
-            ]
+            app, ["fdas", "calculate-mirr", "-c", "[-1000,100,200,300]", "-r", "0.10"]
         )
         assert result.exit_code == 0

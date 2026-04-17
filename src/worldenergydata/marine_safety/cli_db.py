@@ -41,7 +41,8 @@ def _resolve_db_path(db_url: Optional[str]) -> Path:
 def _create_schema(conn: sqlite3.Connection) -> None:
     """Create all tables from scratch."""
     cur = conn.cursor()
-    cur.executescript("""
+    cur.executescript(
+        """
         CREATE TABLE IF NOT EXISTS schema_version (
             version INTEGER NOT NULL,
             applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -147,7 +148,8 @@ def _create_schema(conn: sqlite3.Connection) -> None:
             created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             UNIQUE(incident_id_1, incident_id_2)
         );
-        """)
+        """
+    )
 
     # Record schema version
     cur.execute("DELETE FROM schema_version")

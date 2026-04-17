@@ -29,6 +29,7 @@ def _make_analysis(**overrides):
 # QuotaVarianceAnalysis
 # ---------------------------------------------------------------------------
 
+
 class TestQuotaVarianceAnalysisPostInit:
     def test_oil_variance(self):
         a = _make_analysis(oil_quota_bbls=100000, oil_actual_bbls=95000)
@@ -102,7 +103,9 @@ class TestGetVarianceStatus:
 class TestCalculatePenaltyExposure:
     def test_over_quota_penalty(self):
         a = _make_analysis(oil_actual_bbls=110000, gas_actual_mcf=600000)
-        penalties = a.calculate_penalty_exposure(oil_penalty_rate=25.0, gas_penalty_rate=5.0)
+        penalties = a.calculate_penalty_exposure(
+            oil_penalty_rate=25.0, gas_penalty_rate=5.0
+        )
         assert penalties["oil_penalty_usd"] == 10000 * 25.0
         assert penalties["gas_penalty_usd"] == 100000 * 5.0
         assert penalties["total_penalty_usd"] == 250000 + 500000
@@ -142,6 +145,7 @@ class TestGetSummaryMetrics:
 # ---------------------------------------------------------------------------
 # ProductionQuotaAnalyzer
 # ---------------------------------------------------------------------------
+
 
 class TestProductionQuotaAnalyzerInit:
     def test_init(self):
@@ -207,16 +211,22 @@ class TestCalculateComplianceTrend:
         analyzer = ProductionQuotaAnalyzer()
         analyses = [
             _make_analysis(
-                period_start=date(2024, 1, 1), period_end=date(2024, 3, 31),
-                oil_actual_bbls=80000, gas_actual_mcf=400000,
+                period_start=date(2024, 1, 1),
+                period_end=date(2024, 3, 31),
+                oil_actual_bbls=80000,
+                gas_actual_mcf=400000,
             ),
             _make_analysis(
-                period_start=date(2024, 4, 1), period_end=date(2024, 6, 30),
-                oil_actual_bbls=95000, gas_actual_mcf=490000,
+                period_start=date(2024, 4, 1),
+                period_end=date(2024, 6, 30),
+                oil_actual_bbls=95000,
+                gas_actual_mcf=490000,
             ),
             _make_analysis(
-                period_start=date(2024, 7, 1), period_end=date(2024, 9, 30),
-                oil_actual_bbls=100000, gas_actual_mcf=500000,
+                period_start=date(2024, 7, 1),
+                period_end=date(2024, 9, 30),
+                oil_actual_bbls=100000,
+                gas_actual_mcf=500000,
             ),
         ]
         result = analyzer.calculate_compliance_trend(analyses)

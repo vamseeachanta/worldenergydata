@@ -112,7 +112,9 @@ class TestDeepwaterStructureSchema:
         assert schema.SLOT_COUNT is None
 
     def test_latitude_out_of_range(self):
-        with pytest.raises(ValidationError, match="LATITUDE must be between -90 and 90"):
+        with pytest.raises(
+            ValidationError, match="LATITUDE must be between -90 and 90"
+        ):
             DeepwaterStructureSchema(
                 AREA_CODE="GC",
                 BLOCK_NUMBER="640",

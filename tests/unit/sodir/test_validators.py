@@ -170,7 +170,9 @@ class TestDataValidator:
 
     def test_validate_numeric_range_with_bounds(self):
         assert self.validator.validate_numeric_range(5.0, min_val=0, max_val=10) is True
-        assert self.validator.validate_numeric_range(15.0, min_val=0, max_val=10) is False
+        assert (
+            self.validator.validate_numeric_range(15.0, min_val=0, max_val=10) is False
+        )
 
     def test_validate_numeric_range_invalid_type(self):
         assert self.validator.validate_numeric_range("not_a_number") is False

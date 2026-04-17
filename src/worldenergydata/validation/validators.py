@@ -48,8 +48,12 @@ class DataValidator:
         self.errors = []
         self.warnings = []
 
-        logger.info(f"\n[DEBUG] validate() called with data type: {type(data).__name__}")
-        logger.info(f"[DEBUG] Schema name: {self.schema.name}, strict mode: {self.strict}")
+        logger.info(
+            f"\n[DEBUG] validate() called with data type: {type(data).__name__}"
+        )
+        logger.info(
+            f"[DEBUG] Schema name: {self.schema.name}, strict mode: {self.strict}"
+        )
 
         # Convert data to consistent format
         if isinstance(data, pd.DataFrame):
@@ -135,7 +139,10 @@ class DataValidator:
         field_name = field_schema.name
         logger.debug(
             "Validating field=%s, value=%s (type=%s), expected=%s",
-            field_name, value, type(value).__name__, field_schema.data_type
+            field_name,
+            value,
+            type(value).__name__,
+            field_schema.data_type,
         )
 
         # Guard: Required field validation (early return on failure)

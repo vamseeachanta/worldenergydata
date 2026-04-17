@@ -140,9 +140,7 @@ def build_feature_matrix(
             features.append(1.0 if act == a else 0.0)
 
         # One-hot: water_depth_band
-        band = classify_water_depth_band(
-            float(row.get("water_depth_m", 0.0))
-        ).value
+        band = classify_water_depth_band(float(row.get("water_depth_m", 0.0))).value
         for b in bands_all:
             features.append(1.0 if band == b else 0.0)
 
@@ -155,8 +153,14 @@ def build_feature_matrix(
         y_vals.append(float(row.get("cost_usd_mm", 0.0)))
 
     feature_names: list[str] = (
-        ["intercept", "water_depth_m", "well_depth_m", "year_drilling",
-         "hpht", "subsea"]
+        [
+            "intercept",
+            "water_depth_m",
+            "well_depth_m",
+            "year_drilling",
+            "hpht",
+            "subsea",
+        ]
         + [f"region_{r}" for r in regions_all]
         + [f"activity_{a}" for a in activities_all]
         + [f"band_{b}" for b in bands_all]

@@ -9,10 +9,10 @@ from worldenergydata.safety_analysis.nlp.classification_pipeline import (
     _require_sklearn,
 )
 
-
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
+
 
 class TestConstants:
     def test_int_param_keys(self):
@@ -27,6 +27,7 @@ class TestConstants:
 # ---------------------------------------------------------------------------
 # _cast_int_params
 # ---------------------------------------------------------------------------
+
 
 class TestCastIntParams:
     def test_casts_known_keys(self):
@@ -60,6 +61,7 @@ class TestCastIntParams:
 # _load_model_params
 # ---------------------------------------------------------------------------
 
+
 class TestLoadModelParams:
     def test_returns_dict(self):
         result = _load_model_params()
@@ -69,6 +71,7 @@ class TestLoadModelParams:
 # ---------------------------------------------------------------------------
 # _require_sklearn
 # ---------------------------------------------------------------------------
+
 
 class TestRequireSklearn:
     def test_does_not_raise(self):

@@ -73,11 +73,13 @@ class TestNorwayNPVCalculator:
         """Create synthetic production profile."""
         oil = [0, 0, 10, 15, 12, 10, 8, 6, 4, 2][:years]
         gas = [0, 0, 50, 80, 60, 50, 40, 30, 20, 10][:years]
-        return pd.DataFrame({
-            "year": list(range(years)),
-            "oil_production_mmbbl": oil,
-            "gas_production_bcf": gas,
-        })
+        return pd.DataFrame(
+            {
+                "year": list(range(years)),
+                "oil_production_mmbbl": oil,
+                "gas_production_bcf": gas,
+            }
+        )
 
     def test_calculate_taxes_positive_income(self):
         taxes = self.calculator.calculate_taxes(1000000)
@@ -105,27 +107,33 @@ class TestNorwayNPVCalculator:
         assert revenue["gas_revenue"].iloc[0] == 0
 
     def test_calculate_revenue_gas(self):
-        profile = pd.DataFrame({
-            "oil_production_mmbbl": [0, 0, 0],
-            "gas_production_bcf": [50, 40, 30],
-        })
+        profile = pd.DataFrame(
+            {
+                "oil_production_mmbbl": [0, 0, 0],
+                "gas_production_bcf": [50, 40, 30],
+            }
+        )
         revenue = self.calculator.calculate_revenue(profile)
         assert revenue["gas_revenue"].iloc[0] > 0
         assert revenue["oil_revenue"].iloc[0] == 0
 
     def test_calculate_revenue_both(self):
-        profile = pd.DataFrame({
-            "oil_production_mmbbl": [10, 8],
-            "gas_production_bcf": [50, 40],
-        })
+        profile = pd.DataFrame(
+            {
+                "oil_production_mmbbl": [10, 8],
+                "gas_production_bcf": [50, 40],
+            }
+        )
         revenue = self.calculator.calculate_revenue(profile)
         assert revenue["total_revenue"].iloc[0] > 0
 
     def test_calculate_opex(self):
-        profile = pd.DataFrame({
-            "oil_production_mmbbl": [10, 8],
-            "gas_production_bcf": [50, 40],
-        })
+        profile = pd.DataFrame(
+            {
+                "oil_production_mmbbl": [10, 8],
+                "gas_production_bcf": [50, 40],
+            }
+        )
         opex = self.calculator.calculate_opex(profile)
         assert "total_opex" in opex.columns
         assert opex["total_opex"].iloc[0] > 0

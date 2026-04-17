@@ -15,13 +15,25 @@ class FieldProductionAggregator:
         if well_df.empty:
             return pd.DataFrame(
                 columns=[
-                    "field", "date",
-                    "oil_bbl", "condensate_bbl", "gas_m3", "water_bbl",
-                    "oil_bbl_per_day", "well_count", "water_cut",
+                    "field",
+                    "date",
+                    "oil_bbl",
+                    "condensate_bbl",
+                    "gas_m3",
+                    "water_bbl",
+                    "oil_bbl_per_day",
+                    "well_count",
+                    "water_cut",
                 ]
             )
 
-        numeric_cols = ["oil_bbl", "condensate_bbl", "gas_m3", "water_bbl", "oil_bbl_per_day"]
+        numeric_cols = [
+            "oil_bbl",
+            "condensate_bbl",
+            "gas_m3",
+            "water_bbl",
+            "oil_bbl_per_day",
+        ]
         grouped = well_df.groupby(["field", "date"])
 
         agg = grouped[numeric_cols].sum().reset_index()

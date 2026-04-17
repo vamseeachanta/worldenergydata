@@ -2,18 +2,19 @@
 
 import os
 import time
+
 import pytest
 
 from worldenergydata.eia_us.client.eia_api import (
-    EIAApiClient,
-    EIACache,
-    EIAApiError,
-    EIARateLimitError,
     RATE_LIMIT_PER_HOUR,
+    EIAApiClient,
+    EIAApiError,
+    EIACache,
+    EIARateLimitError,
 )
 
-
 # ── Cache tests ────────────────────────────────────────────────────────────────
+
 
 class TestEIACache:
     def test_cache_miss_returns_none(self):
@@ -48,12 +49,14 @@ class TestEIACache:
 
 # ── Rate limit constant ────────────────────────────────────────────────────────
 
+
 class TestRateLimitConstant:
     def test_rate_limit_per_hour_is_500(self):
         assert RATE_LIMIT_PER_HOUR == 500
 
 
 # ── EIAApiClient initialisation ───────────────────────────────────────────────
+
 
 class TestEIAApiClientInit:
     def test_client_defaults_to_v2_base_url(self):
@@ -88,6 +91,7 @@ class TestEIAApiClientInit:
 
 
 # ── Mock-based fetch tests ─────────────────────────────────────────────────────
+
 
 class TestEIAApiClientFetch:
     """All tests use mock responses — no live HTTP."""
@@ -132,7 +136,9 @@ class TestEIAApiClientFetch:
     def test_parse_series_response_handles_null_value(self, mock_client):
         raw = {
             "response": {
-                "data": [{"period": "2024-01", "value": None, "unit": "Thousand Barrels"}]
+                "data": [
+                    {"period": "2024-01", "value": None, "unit": "Thousand Barrels"}
+                ]
             }
         }
         records = mock_client.parse_series_response(raw)
@@ -159,6 +165,7 @@ class TestEIAApiClientFetch:
 
 
 # ── Error classes ──────────────────────────────────────────────────────────────
+
 
 class TestEIAErrors:
     def test_eia_api_error_is_exception(self):

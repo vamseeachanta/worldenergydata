@@ -156,8 +156,9 @@ class TestAPISettings:
 
     def test_eia_api_key_validation_short(self):
         """Test EIA API key validation rejects short keys."""
-        from worldenergydata.common.config import APISettings
         from pydantic import ValidationError
+
+        from worldenergydata.common.config import APISettings
 
         with pytest.raises(ValidationError) as exc_info:
             APISettings(eia_api_key="short")
@@ -202,7 +203,12 @@ class TestSettings:
 
     def test_nested_settings(self):
         """Test nested settings objects are created."""
-        from worldenergydata.common.config import Settings, DatabaseSettings, CacheSettings, APISettings
+        from worldenergydata.common.config import (
+            APISettings,
+            CacheSettings,
+            DatabaseSettings,
+            Settings,
+        )
 
         settings = Settings()
 
@@ -228,8 +234,9 @@ class TestSettings:
 
     def test_log_level_validation_invalid(self):
         """Test invalid log level is rejected."""
-        from worldenergydata.common.config import Settings
         from pydantic import ValidationError
+
+        from worldenergydata.common.config import Settings
 
         with pytest.raises(ValidationError) as exc_info:
             Settings(log_level="INVALID")
@@ -254,8 +261,9 @@ class TestSettings:
 
     def test_environment_validation_invalid(self):
         """Test invalid environment is rejected."""
-        from worldenergydata.common.config import Settings
         from pydantic import ValidationError
+
+        from worldenergydata.common.config import Settings
 
         with pytest.raises(ValidationError) as exc_info:
             Settings(environment="invalid")
@@ -321,7 +329,7 @@ class TestGetSettings:
 
     def test_returns_settings_instance(self):
         """Test get_settings returns Settings instance."""
-        from worldenergydata.common.config import get_settings, Settings, clear_settings
+        from worldenergydata.common.config import Settings, clear_settings, get_settings
 
         clear_settings()
         settings = get_settings()
@@ -330,7 +338,7 @@ class TestGetSettings:
 
     def test_returns_cached_singleton(self):
         """Test get_settings returns the same instance (singleton)."""
-        from worldenergydata.common.config import get_settings, clear_settings
+        from worldenergydata.common.config import clear_settings, get_settings
 
         clear_settings()
         settings1 = get_settings()
@@ -340,7 +348,7 @@ class TestGetSettings:
 
     def test_clear_settings_resets_cache(self):
         """Test clear_settings allows new instance creation."""
-        from worldenergydata.common.config import get_settings, clear_settings
+        from worldenergydata.common.config import clear_settings, get_settings
 
         clear_settings()
         settings1 = get_settings()

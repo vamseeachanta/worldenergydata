@@ -81,7 +81,9 @@ class TestMexicoCNHTimeoutError:
         assert err.timeout_seconds == 60
 
     def test_element_timeout_factory(self):
-        err = MexicoCNHTimeoutError.element_timeout("#table", 30, url="https://test.com")
+        err = MexicoCNHTimeoutError.element_timeout(
+            "#table", 30, url="https://test.com"
+        )
         assert err.code == "MEXICO_CNH_ELEMENT_TIMEOUT"
         assert err.timeout_seconds == 30
 
@@ -155,7 +157,9 @@ class TestMexicoCNHValidationError:
         assert err.has_errors() is True
 
     def test_invalid_coordinates(self):
-        err = MexicoCNHValidationError.invalid_coordinates(10.0, -120.0, "outside Mexico")
+        err = MexicoCNHValidationError.invalid_coordinates(
+            10.0, -120.0, "outside Mexico"
+        )
         assert err.code == "MEXICO_CNH_INVALID_COORDINATES"
 
 
@@ -167,7 +171,9 @@ class TestMexicoCNHConfigurationError:
         assert err.code == "MEXICO_CNH_CONFIG_MISSING"
 
     def test_invalid_value(self):
-        err = MexicoCNHConfigurationError.invalid_value("timeout", -1, "must be positive")
+        err = MexicoCNHConfigurationError.invalid_value(
+            "timeout", -1, "must be positive"
+        )
         assert err.code == "MEXICO_CNH_CONFIG_INVALID"
 
     def test_selenium_not_configured(self):

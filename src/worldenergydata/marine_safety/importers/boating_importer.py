@@ -16,11 +16,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Generator, Optional
 
+from worldenergydata.common.logging import get_logger
+
 from ..constants import IncidentType, VesselType
 from ..database.models import Incident, Location, Vessel
 from .base_importer import BaseImporter
-
-from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
 
@@ -162,7 +162,9 @@ class BoatingImporter(BaseImporter):
                         self.injuries_by_bardid[bardid] = (
                             self.injuries_by_bardid.get(bardid, 0) + 1
                         )
-            logger.info(f"Loaded {sum(self.injuries_by_bardid.values())} injury records")
+            logger.info(
+                f"Loaded {sum(self.injuries_by_bardid.values())} injury records"
+            )
 
     def read_source(self) -> Generator[Dict[str, Any], None, None]:
         """Read records from Accidents CSV file."""

@@ -70,12 +70,14 @@ def create_mock_field_production(field_name: str) -> pd.DataFrame:
         oil_sm3 = qi * np.exp(-d * i)
         # Gas proportional to oil (simplified GOR)
         gas_sm3 = oil_sm3 * 150
-        records.append({
-            "year": year,
-            "month": month,
-            "oil_sm3": oil_sm3,
-            "gas_sm3": gas_sm3,
-        })
+        records.append(
+            {
+                "year": year,
+                "month": month,
+                "oil_sm3": oil_sm3,
+                "gas_sm3": gas_sm3,
+            }
+        )
 
     return pd.DataFrame(records)
 
@@ -104,7 +106,9 @@ def run_edvard_grieg_decline_curve() -> Dict[str, Any]:
     result = _fit_field_decline("EDVARD GRIEG")
     logger.info(
         "Edvard Grieg decline: qi=%.0f, D=%.4f, R2=%.3f",
-        result["initial_rate"], result["decline_rate"], result["r_squared"],
+        result["initial_rate"],
+        result["decline_rate"],
+        result["r_squared"],
     )
     return result
 
@@ -118,7 +122,9 @@ def run_valhall_decline_curve() -> Dict[str, Any]:
     result = _fit_field_decline("VALHALL")
     logger.info(
         "Valhall decline: qi=%.0f, D=%.4f, R2=%.3f",
-        result["initial_rate"], result["decline_rate"], result["r_squared"],
+        result["initial_rate"],
+        result["decline_rate"],
+        result["r_squared"],
     )
     return result
 
@@ -132,6 +138,8 @@ def run_ivar_aasen_decline_curve() -> Dict[str, Any]:
     result = _fit_field_decline("IVAR AASEN")
     logger.info(
         "Ivar Aasen decline: qi=%.0f, D=%.4f, R2=%.3f",
-        result["initial_rate"], result["decline_rate"], result["r_squared"],
+        result["initial_rate"],
+        result["decline_rate"],
+        result["r_squared"],
     )
     return result

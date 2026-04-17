@@ -1,21 +1,21 @@
 """Tests for EPA TRI acquirer module."""
 
-import pytest
 import pandas as pd
+import pytest
 
 from worldenergydata.hse.acquirers.epa_tri_acquirer import (
     DEFAULT_END_YEAR,
     DEFAULT_START_YEAR,
-    EPATRIAcquirer,
     OIL_GAS_NAICS_PREFIXES,
     OIL_GAS_SIC_CODES,
+    EPATRIAcquirer,
     parse_years,
 )
-
 
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
+
 
 class TestConstants:
     def test_sic_codes(self):
@@ -35,6 +35,7 @@ class TestConstants:
 # ---------------------------------------------------------------------------
 # parse_years
 # ---------------------------------------------------------------------------
+
 
 class TestParseYears:
     def test_single_year(self):
@@ -69,6 +70,7 @@ class TestParseYears:
 # EPATRIAcquirer init
 # ---------------------------------------------------------------------------
 
+
 class TestEPATRIAcquirerInit:
     def test_defaults(self, tmp_path):
         acq = EPATRIAcquirer(output_dir=tmp_path)
@@ -90,13 +92,16 @@ class TestEPATRIAcquirerInit:
 # _filter_oil_gas
 # ---------------------------------------------------------------------------
 
+
 class TestFilterOilGas:
     def test_filter_by_sic(self, tmp_path):
         acq = EPATRIAcquirer(output_dir=tmp_path)
-        df = pd.DataFrame({
-            "PRIMARY SIC": ["1311", "9999", "2911", "3333"],
-            "FACILITY_NAME": ["Oil Co", "Unrelated", "Refinery", "Other"],
-        })
+        df = pd.DataFrame(
+            {
+                "PRIMARY SIC": ["1311", "9999", "2911", "3333"],
+                "FACILITY_NAME": ["Oil Co", "Unrelated", "Refinery", "Other"],
+            }
+        )
         result = acq._filter_oil_gas(df, 2023)
         assert len(result) == 2
         assert "Oil Co" in result["FACILITY_NAME"].values
@@ -104,36 +109,48 @@ class TestFilterOilGas:
 
     def test_filter_by_naics(self, tmp_path):
         acq = EPATRIAcquirer(output_dir=tmp_path)
-        df = pd.DataFrame({
-            "PRIMARY NAICS": ["211120", "999999", "324110"],
-            "FACILITY_NAME": ["Extraction", "Unrelated", "Petroleum"],
-        })
+        df = pd.DataFrame(
+            {
+                "PRIMARY NAICS": ["211120", "999999", "324110"],
+                "FACILITY_NAME": ["Extraction", "Unrelated", "Petroleum"],
+            }
+        )
         result = acq._filter_oil_gas(df, 2023)
         assert len(result) == 2
 
     def test_filter_by_industry_desc(self, tmp_path):
         acq = EPATRIAcquirer(output_dir=tmp_path)
-        df = pd.DataFrame({
-            "INDUSTRY SECTOR": ["Petroleum Refining", "Chemical Manufacturing", "Oil and Gas Extraction"],
-            "FACILITY_NAME": ["Refinery", "Chemical", "Driller"],
-        })
+        df = pd.DataFrame(
+            {
+                "INDUSTRY SECTOR": [
+                    "Petroleum Refining",
+                    "Chemical Manufacturing",
+                    "Oil and Gas Extraction",
+                ],
+                "FACILITY_NAME": ["Refinery", "Chemical", "Driller"],
+            }
+        )
         result = acq._filter_oil_gas(df, 2023)
         assert len(result) == 2
 
     def test_no_matching_columns(self, tmp_path):
         acq = EPATRIAcquirer(output_dir=tmp_path)
-        df = pd.DataFrame({
-            "RANDOM_COL": ["A", "B"],
-        })
+        df = pd.DataFrame(
+            {
+                "RANDOM_COL": ["A", "B"],
+            }
+        )
         result = acq._filter_oil_gas(df, 2023)
         assert len(result) == 0
 
     def test_case_insensitive_column_matching(self, tmp_path):
         acq = EPATRIAcquirer(output_dir=tmp_path)
-        df = pd.DataFrame({
-            "primary sic": ["1311", "9999"],
-            "FACILITY_NAME": ["Oil Co", "Other"],
-        })
+        df = pd.DataFrame(
+            {
+                "primary sic": ["1311", "9999"],
+                "FACILITY_NAME": ["Oil Co", "Other"],
+            }
+        )
         result = acq._filter_oil_gas(df, 2023)
         assert len(result) == 1
 
@@ -141,6 +158,7 @@ class TestFilterOilGas:
 # ---------------------------------------------------------------------------
 # _combine_years
 # ---------------------------------------------------------------------------
+
 
 class TestCombineYears:
     def test_basic(self, tmp_path):
@@ -168,6 +186,7 @@ class TestCombineYears:
 # ---------------------------------------------------------------------------
 # _acquire_year (skip existing)
 # ---------------------------------------------------------------------------
+
 
 class TestAcquireYear:
     def test_skips_existing(self, tmp_path):
