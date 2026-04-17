@@ -159,7 +159,9 @@ disallow_untyped_defs = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py", "*_test.py"]
-addopts = "--cov=src/worldenergydata --cov-report=term-missing --cov-report=html:reports/coverage/htmlcov --cov-report=xml:reports/coverage/coverage.xml --cov-report=json:reports/coverage/coverage.json"
+# Use importlib mode so duplicate test file names (e.g. multiple test_end_to_end.py)
+# in different dirs don't collide in sys.modules during collection.
+addopts = "--import-mode=importlib --cov=src/worldenergydata --cov-report=term-missing --cov-report=html:reports/coverage/htmlcov --cov-report=xml:reports/coverage/coverage.xml --cov-report=json:reports/coverage/coverage.json"
 
 [tool.coverage.run]
 source = ["src/worldenergydata"]
