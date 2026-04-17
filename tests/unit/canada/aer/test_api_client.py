@@ -5,10 +5,10 @@ import pytest
 from worldenergydata.canada.aer.api_client import AERClient
 from worldenergydata.canada.errors import CanadaValidationError
 
-
 # ---------------------------------------------------------------------------
 # Init and defaults
 # ---------------------------------------------------------------------------
+
 
 class TestAERClientInit:
     def test_default_values(self):
@@ -59,6 +59,7 @@ class TestAERClientInit:
 # Constants
 # ---------------------------------------------------------------------------
 
+
 class TestAERClientConstants:
     def test_base_urls(self):
         assert "aer.ca" in AERClient.AER_BASE_URL
@@ -81,6 +82,7 @@ class TestAERClientConstants:
 # ---------------------------------------------------------------------------
 # _setup_headers
 # ---------------------------------------------------------------------------
+
 
 class TestSetupHeaders:
     def test_default_headers(self):
@@ -106,6 +108,7 @@ class TestSetupHeaders:
 # ---------------------------------------------------------------------------
 # _generate_cache_key
 # ---------------------------------------------------------------------------
+
 
 class TestGenerateCacheKey:
     def test_without_params(self):
@@ -141,6 +144,7 @@ class TestGenerateCacheKey:
 # _validate_uwi
 # ---------------------------------------------------------------------------
 
+
 class TestValidateUWI:
     def test_valid_uwi(self):
         client = AERClient()
@@ -170,6 +174,7 @@ class TestValidateUWI:
 # ---------------------------------------------------------------------------
 # Context manager
 # ---------------------------------------------------------------------------
+
 
 class TestContextManager:
     def test_enter_exit(self):

@@ -9,10 +9,10 @@ from worldenergydata.well_planning.risk_model import (
     WellPlanningRisk,
 )
 
-
 # ------------------------------------------------------------------ #
 # Fixtures                                                            #
 # ------------------------------------------------------------------ #
+
 
 @pytest.fixture
 def sample_risk() -> WellPlanningRisk:
@@ -37,6 +37,7 @@ def sample_risk() -> WellPlanningRisk:
 # RiskAuthority enum                                                  #
 # ------------------------------------------------------------------ #
 
+
 class TestRiskAuthority:
     def test_has_operational(self):
         assert RiskAuthority.OPERATIONAL.value == "operational"
@@ -54,6 +55,7 @@ class TestRiskAuthority:
 # ------------------------------------------------------------------ #
 # RiskSeverity enum                                                   #
 # ------------------------------------------------------------------ #
+
 
 class TestRiskSeverity:
     def test_low_is_1(self):
@@ -81,6 +83,7 @@ class TestRiskSeverity:
 # RiskCategory enum                                                   #
 # ------------------------------------------------------------------ #
 
+
 class TestRiskCategory:
     def test_has_wellbore_integrity(self):
         assert RiskCategory.WELLBORE_INTEGRITY.value == "wellbore_integrity"
@@ -107,6 +110,7 @@ class TestRiskCategory:
 # ------------------------------------------------------------------ #
 # WellPlanningRisk dataclass                                          #
 # ------------------------------------------------------------------ #
+
 
 class TestWellPlanningRisk:
     def test_risk_id_stored(self, sample_risk):

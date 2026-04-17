@@ -19,6 +19,10 @@ scatter_diagram        2D Hs-Tp occurrence tables
 reporting              Combined Plotly HTML report
 """
 
+from worldenergydata.metocean.statistics.environmental_contours import (
+    ContourResult,
+    EnvironmentalContour,
+)
 from worldenergydata.metocean.statistics.eva import (
     EVAResult,
     ExtremeValueAnalysis,
@@ -27,20 +31,16 @@ from worldenergydata.metocean.statistics.joint_probability import (
     JointModel,
     JointProbabilityModel,
 )
-from worldenergydata.metocean.statistics.environmental_contours import (
-    ContourResult,
-    EnvironmentalContour,
+from worldenergydata.metocean.statistics.reporting import MetoceanReport
+from worldenergydata.metocean.statistics.scatter_diagram import ScatterDiagram
+from worldenergydata.metocean.statistics.wave_spectra import (
+    SpectralResult,
+    WaveSpectra,
 )
 from worldenergydata.metocean.statistics.weather_windows import (
     OperabilityResult,
     WeatherWindowAnalysis,
 )
-from worldenergydata.metocean.statistics.wave_spectra import (
-    SpectralResult,
-    WaveSpectra,
-)
-from worldenergydata.metocean.statistics.scatter_diagram import ScatterDiagram
-from worldenergydata.metocean.statistics.reporting import MetoceanReport
 
 __all__ = [
     # EVA

@@ -5,7 +5,6 @@ import pytest
 
 from worldenergydata.ukcs.wells.well_loader import UKCSWellLoader
 
-
 MOCK_WELL_DATA = {
     "WellName": ["14/19-F1", "14/19-F2", "16/26-B1", "9/23-A1", "21/30-G1"],
     "FieldName": ["FORTIES", "FORTIES", "BUZZARD", "MARINER", "CLAIR RIDGE"],
@@ -54,8 +53,14 @@ class TestUKCSWellLoaderLoad:
 
     def test_load_empty_returns_empty(self, loader):
         empty = pd.DataFrame(
-            columns=["WellName", "FieldName", "CompletionDate",
-                     "Status", "WaterDepth_m", "TestRate_bopd"]
+            columns=[
+                "WellName",
+                "FieldName",
+                "CompletionDate",
+                "Status",
+                "WaterDepth_m",
+                "TestRate_bopd",
+            ]
         )
         result = loader.load(empty)
         assert result.empty

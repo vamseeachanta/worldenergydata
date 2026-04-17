@@ -22,19 +22,20 @@ logger = logging.getLogger(__name__)
 
 # ── Rate constants ─────────────────────────────────────────────────────────────
 
-FEDERAL_ONSHORE_ROYALTY_RATE: float = 0.1667   # 16.67% — 30 CFR 1206.101
+FEDERAL_ONSHORE_ROYALTY_RATE: float = 0.1667  # 16.67% — 30 CFR 1206.101
 
-TEXAS_OIL_SEVERANCE_RATE: float = 0.046         # 4.6% — TX Tax Code §202.052
-TEXAS_GAS_SEVERANCE_RATE: float = 0.075         # 7.5% — TX Tax Code §201.052
+TEXAS_OIL_SEVERANCE_RATE: float = 0.046  # 4.6% — TX Tax Code §202.052
+TEXAS_GAS_SEVERANCE_RATE: float = 0.075  # 7.5% — TX Tax Code §201.052
 
-ND_OIL_EXTRACTION_RATE: float = 0.05            # 5.0% — ND CC 57-51
-ND_OIL_PRODUCTION_RATE: float = 0.065           # 6.5% — ND CC 57-51.1
+ND_OIL_EXTRACTION_RATE: float = 0.05  # 5.0% — ND CC 57-51
+ND_OIL_PRODUCTION_RATE: float = 0.065  # 6.5% — ND CC 57-51.1
 
 # GoM crosscheck tolerance: within 5% is considered acceptable agreement
 _GOM_TOLERANCE_PCT: float = 0.05
 
 
 # ── Result dataclass ───────────────────────────────────────────────────────────
+
 
 @dataclass
 class USFiscalResult:
@@ -44,13 +45,14 @@ class USFiscalResult:
     opex: float
     royalty: float = 0.0
     severance_tax: float = 0.0
-    extraction_tax: float = 0.0   # ND-specific component
-    production_tax: float = 0.0   # ND-specific component
+    extraction_tax: float = 0.0  # ND-specific component
+    production_tax: float = 0.0  # ND-specific component
     net_income: float = 0.0
     total_government_take: float = 0.0
 
 
 # ── Federal Onshore Fiscal ─────────────────────────────────────────────────────
+
 
 class FederalOnshoreFiscal:
     """Federal onshore fiscal regime: royalty on gross production value.
@@ -90,6 +92,7 @@ class FederalOnshoreFiscal:
 
 
 # ── Texas Fiscal ───────────────────────────────────────────────────────────────
+
 
 class TexasFiscal:
     """Texas Railroad Commission fiscal regime: oil and gas severance taxes.
@@ -156,6 +159,7 @@ class TexasFiscal:
 
 # ── North Dakota Fiscal ────────────────────────────────────────────────────────
 
+
 class NorthDakotaFiscal:
     """North Dakota Bakken fiscal regime: oil extraction + oil production taxes.
 
@@ -198,6 +202,7 @@ class NorthDakotaFiscal:
 
 
 # ── GoM Crosscheck ─────────────────────────────────────────────────────────────
+
 
 class GoMCrosscheck:
     """Cross-validate EIA GoM production against BSEE OGOR-A aggregates.

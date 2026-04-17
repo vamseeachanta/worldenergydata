@@ -17,7 +17,6 @@ from worldenergydata.well_planning.risk_calibrator import (
 )
 from worldenergydata.well_planning.risk_registry import WELL_PLANNING_RISKS
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
@@ -76,9 +75,7 @@ class TestCalibrate:
         result = cal.calibrate(synthetic_df)
         assert result is cal
 
-    def test_fitted_flag_set_after_calibrate(
-        self, synthetic_df: pd.DataFrame
-    ) -> None:
+    def test_fitted_flag_set_after_calibrate(self, synthetic_df: pd.DataFrame) -> None:
         """Internal _fitted flag is True after calibrate()."""
         cal = RiskCalibrator()
         assert not cal._fitted
@@ -172,23 +169,19 @@ class TestCalibrationReport:
 
 
 class TestRiskProbability:
-    def test_return_type_is_float_bool(
-        self, fitted_calibrator: RiskCalibrator
-    ) -> None:
+    def test_return_type_is_float_bool(self, fitted_calibrator: RiskCalibrator) -> None:
         """risk_probability() returns (float, bool)."""
         prob, is_data_driven = fitted_calibrator.risk_probability("OP-002")
         assert isinstance(prob, float)
         assert isinstance(is_data_driven, bool)
 
-    def test_probability_in_range(
-        self, fitted_calibrator: RiskCalibrator
-    ) -> None:
+    def test_probability_in_range(self, fitted_calibrator: RiskCalibrator) -> None:
         """All calibrated probabilities are in [0.05, 0.95]."""
         for risk in WELL_PLANNING_RISKS:
             prob, _ = fitted_calibrator.risk_probability(risk.risk_id)
-            assert 0.05 <= prob <= 0.95, (
-                f"{risk.risk_id} probability {prob} out of range"
-            )
+            assert (
+                0.05 <= prob <= 0.95
+            ), f"{risk.risk_id} probability {prob} out of range"
 
     def test_unfitted_fallback_returns_baseline(self) -> None:
         """Unfitted calibrator returns baseline probability and is_data_driven=False."""
@@ -198,9 +191,7 @@ class TestRiskProbability:
         assert not is_data_driven
         assert prob == pytest.approx(0.6)
 
-    def test_data_driven_detection(
-        self, synthetic_df: pd.DataFrame
-    ) -> None:
+    def test_data_driven_detection(self, synthetic_df: pd.DataFrame) -> None:
         """Risks with enough incidents are flagged as data_driven=True."""
         cal = RiskCalibrator().calibrate(synthetic_df)
         any_data_driven = False
@@ -209,11 +200,11 @@ class TestRiskProbability:
             if is_dd:
                 any_data_driven = True
                 break
-        assert any_data_driven, "Expected at least one data-driven risk after calibration"
+        assert (
+            any_data_driven
+        ), "Expected at least one data-driven risk after calibration"
 
-    def test_unknown_risk_id_fallback(
-        self, fitted_calibrator: RiskCalibrator
-    ) -> None:
+    def test_unknown_risk_id_fallback(self, fitted_calibrator: RiskCalibrator) -> None:
         """Unknown risk_id returns (0.5, False) from baseline fallback."""
         prob, is_data_driven = fitted_calibrator.risk_probability("XX-999")
         assert not is_data_driven
@@ -249,9 +240,9 @@ class TestCalibrateRegistry:
         """All updated probability values are within [0.05, 0.95]."""
         result = fitted_calibrator.calibrate_registry()
         for risk in result:
-            assert 0.05 <= risk.probability <= 0.95, (
-                f"{risk.risk_id} probability {risk.probability} out of range"
-            )
+            assert (
+                0.05 <= risk.probability <= 0.95
+            ), f"{risk.risk_id} probability {risk.probability} out of range"
 
     def test_risk_score_consistent_with_probability(
         self, fitted_calibrator: RiskCalibrator

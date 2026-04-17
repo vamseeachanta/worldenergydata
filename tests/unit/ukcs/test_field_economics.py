@@ -3,16 +3,16 @@
 import pytest
 
 from worldenergydata.ukcs.analysis.field_economics import (
-    UKFiscalRegime,
-    UKFiscalResult,
-    RFCT_RATE,
-    SC_RATE,
     EPL_RATE,
     IA_RATE,
-    calculate_rfct,
-    calculate_supplementary_charge,
+    RFCT_RATE,
+    SC_RATE,
+    UKFiscalRegime,
+    UKFiscalResult,
     calculate_epl,
     calculate_investment_allowance,
+    calculate_rfct,
+    calculate_supplementary_charge,
 )
 
 

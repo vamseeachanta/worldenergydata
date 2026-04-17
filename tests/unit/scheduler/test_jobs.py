@@ -1,17 +1,18 @@
 """Tests for all scheduler job adapters, including LNG terminals."""
-import pytest
+
 from datetime import datetime
 from pathlib import Path
 
-from worldenergydata.scheduler.jobs.base import JobResult, AbstractJob
-from worldenergydata.scheduler.jobs.bsee_refresh import BseeRefreshJob
-from worldenergydata.scheduler.jobs.sodir_refresh import SodirRefreshJob
-from worldenergydata.scheduler.jobs.eia_us_refresh import EiaUsRefreshJob
-from worldenergydata.scheduler.jobs.brazil_anp_refresh import BrazilAnpRefreshJob
-from worldenergydata.scheduler.jobs.ukcs_refresh import UkcsRefreshJob
-from worldenergydata.scheduler.jobs.metocean_refresh import MetoceanRefreshJob
-from worldenergydata.scheduler.jobs.lng_terminals_refresh import LngTerminalsRefreshJob
+import pytest
 
+from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
+from worldenergydata.scheduler.jobs.brazil_anp_refresh import BrazilAnpRefreshJob
+from worldenergydata.scheduler.jobs.bsee_refresh import BseeRefreshJob
+from worldenergydata.scheduler.jobs.eia_us_refresh import EiaUsRefreshJob
+from worldenergydata.scheduler.jobs.lng_terminals_refresh import LngTerminalsRefreshJob
+from worldenergydata.scheduler.jobs.metocean_refresh import MetoceanRefreshJob
+from worldenergydata.scheduler.jobs.sodir_refresh import SodirRefreshJob
+from worldenergydata.scheduler.jobs.ukcs_refresh import UkcsRefreshJob
 
 ALL_JOB_CLASSES = [
     BseeRefreshJob,
@@ -39,7 +40,9 @@ class TestJobAdapterInterface:
     def test_job_is_abstract_subclass(self, JobClass):
         assert issubclass(JobClass, AbstractJob)
 
-    @pytest.mark.parametrize("JobClass,expected_name", zip(ALL_JOB_CLASSES, ALL_JOB_NAMES))
+    @pytest.mark.parametrize(
+        "JobClass,expected_name", zip(ALL_JOB_CLASSES, ALL_JOB_NAMES)
+    )
     def test_job_has_correct_name(self, JobClass, expected_name):
         job = JobClass()
         assert job.name == expected_name

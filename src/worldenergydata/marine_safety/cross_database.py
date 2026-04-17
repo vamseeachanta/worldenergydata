@@ -41,9 +41,7 @@ class CrossDatabaseQuery:
     Multiple filters are combined with AND logic.
     """
 
-    sources: list[str] = field(
-        default_factory=lambda: ["maib", "imo", "emsa", "tsb"]
-    )
+    sources: list[str] = field(default_factory=lambda: ["maib", "imo", "emsa", "tsb"])
     incident_types: Optional[list[str]] = None
     vessel_types: Optional[list[str]] = None
     start_year: Optional[int] = None
@@ -69,8 +67,16 @@ class CrossDatabaseResult:
 
 # Known incident types in the unified schema
 _KNOWN_INCIDENT_TYPES = {
-    "collision", "grounding", "fire", "flooding", "capsizing",
-    "man_overboard", "machinery_failure", "structural", "explosion", "other",
+    "collision",
+    "grounding",
+    "fire",
+    "flooding",
+    "capsizing",
+    "man_overboard",
+    "machinery_failure",
+    "structural",
+    "explosion",
+    "other",
 }
 
 # Map from importer-produced types to schema types
@@ -124,16 +130,41 @@ _VESSEL_TYPE_MAP = {
 
 # Regions used in unified schema
 _NORTH_SEA_STATES = {
-    "united kingdom", "uk", "norway", "denmark", "netherlands", "germany",
-    "belgium", "scotland", "england", "wales", "north sea",
+    "united kingdom",
+    "uk",
+    "norway",
+    "denmark",
+    "netherlands",
+    "germany",
+    "belgium",
+    "scotland",
+    "england",
+    "wales",
+    "north sea",
 }
 _ATLANTIC_STATES = {
-    "ireland", "france", "portugal", "spain", "bay of biscay", "atlantic",
-    "newfoundland", "nova scotia", "maritime", "maritimes",
+    "ireland",
+    "france",
+    "portugal",
+    "spain",
+    "bay of biscay",
+    "atlantic",
+    "newfoundland",
+    "nova scotia",
+    "maritime",
+    "maritimes",
 }
 _MEDITERRANEAN_STATES = {
-    "spain", "france", "italy", "greece", "turkey", "malta", "croatia",
-    "mediterranean", "adriatic", "aegean",
+    "spain",
+    "france",
+    "italy",
+    "greece",
+    "turkey",
+    "malta",
+    "croatia",
+    "mediterranean",
+    "adriatic",
+    "aegean",
 }
 
 
@@ -214,12 +245,24 @@ def _normalize_region_tsb(province: str, region: str = "") -> str:
     if any(s in combined for s in ["nunavut", "northwest", "arctic", "(nu)", "(nt)"]):
         return "arctic"
     # Atlantic provinces
-    if any(s in combined for s in [
-        "nova scotia", "new brunswick", "newfoundland", "prince edward",
-        "(ns)", "(nb)", "(nl)", "(pe)", "atlantic",
-    ]):
+    if any(
+        s in combined
+        for s in [
+            "nova scotia",
+            "new brunswick",
+            "newfoundland",
+            "prince edward",
+            "(ns)",
+            "(nb)",
+            "(nl)",
+            "(pe)",
+            "atlantic",
+        ]
+    ):
         return "atlantic"
-    if any(s in combined for s in ["quebec", "ontario", "(qc)", "(on)", "st. lawrence"]):
+    if any(
+        s in combined for s in ["quebec", "ontario", "(qc)", "(on)", "st. lawrence"]
+    ):
         return "atlantic"
     return "atlantic"
 
@@ -248,17 +291,14 @@ def _normalize_maib(parsed: dict) -> dict:
     location = parsed.get("location") or {}
     fat = int(parsed.get("fatalities") or 0)
     inj = int(parsed.get("injuries") or 0)
-    coastal_state = (
-        location.get("coastal_state", "")
-        or location.get("national_location_l1", "")
+    coastal_state = location.get("coastal_state", "") or location.get(
+        "national_location_l1", ""
     )
     return {
         "source": "maib",
         "incident_id": str(parsed.get("source_incident_id", "")),
         "date": str(parsed.get("incident_date", ""))[:10],
-        "incident_type": _normalize_incident_type(
-            parsed.get("incident_type", "")
-        ),
+        "incident_type": _normalize_incident_type(parsed.get("incident_type", "")),
         "vessel_type": _normalize_vessel_type(
             vessel.get("ship_type_l1", "") or vessel.get("vessel_type", "")
         ),
@@ -279,12 +319,8 @@ def _normalize_imo(parsed: dict) -> dict:
         "source": "imo",
         "incident_id": str(parsed.get("source_incident_id", "")),
         "date": str(parsed.get("incident_date", ""))[:10],
-        "incident_type": _normalize_incident_type(
-            str(parsed.get("incident_type", ""))
-        ),
-        "vessel_type": _normalize_vessel_type(
-            str(parsed.get("vessel_type", ""))
-        ),
+        "incident_type": _normalize_incident_type(str(parsed.get("incident_type", ""))),
+        "vessel_type": _normalize_vessel_type(str(parsed.get("vessel_type", ""))),
         "region": _normalize_region_imo(location_desc),
         "fatalities": fat,
         "injuries": inj,
@@ -304,9 +340,7 @@ def _normalize_tsb(parsed: dict) -> dict:
         "source": "tsb",
         "incident_id": str(parsed.get("source_incident_id", "")),
         "date": str(parsed.get("incident_date", ""))[:10],
-        "incident_type": _normalize_incident_type(
-            parsed.get("incident_type", "")
-        ),
+        "incident_type": _normalize_incident_type(parsed.get("incident_type", "")),
         "vessel_type": _normalize_vessel_type(
             str((parsed.get("vessel") or {}).get("vessel_type", ""))
         ),
@@ -361,9 +395,7 @@ class CrossDatabaseAnalyzer:
         "description",
     ]
 
-    def __init__(
-        self, importer_config: Optional[Dict[str, Any]] = None
-    ) -> None:
+    def __init__(self, importer_config: Optional[Dict[str, Any]] = None) -> None:
         self.importer_config = importer_config or {}
         self._data: Optional[pd.DataFrame] = None
 
@@ -573,11 +605,7 @@ class CrossDatabaseAnalyzer:
         )
 
         # Vessel type × region occurrence matrix
-        vt_region = (
-            df.groupby(["vessel_type", "region"])
-            .size()
-            .unstack(fill_value=0)
-        )
+        vt_region = df.groupby(["vessel_type", "region"]).size().unstack(fill_value=0)
 
         # Source overlap rate — groups where 2+ sources report the same
         # incident_type / year / region combination
@@ -585,9 +613,7 @@ class CrossDatabaseAnalyzer:
         grouped = df.groupby(overlap_key)["source"].nunique()
         overlap_count = int((grouped >= 2).sum())
         total_groups = len(grouped)
-        overlap_rate = (
-            overlap_count / total_groups if total_groups > 0 else 0.0
-        )
+        overlap_rate = overlap_count / total_groups if total_groups > 0 else 0.0
 
         # Year-over-year totals by source
         trend = (
@@ -621,9 +647,7 @@ class CrossDatabaseAnalyzer:
             .sort_values(["year", "source", "incident_type"])
         )
 
-    def top_incident_types(
-        self, data: pd.DataFrame, n: int = 10
-    ) -> pd.DataFrame:
+    def top_incident_types(self, data: pd.DataFrame, n: int = 10) -> pd.DataFrame:
         """
         Top-n incident types by total count across all sources.
 
@@ -650,8 +674,4 @@ class CrossDatabaseAnalyzer:
         DataFrame indexed by region with incident_type columns.
         Cell values are incident counts (int, zero-filled).
         """
-        return (
-            data.groupby(["region", "incident_type"])
-            .size()
-            .unstack(fill_value=0)
-        )
+        return data.groupby(["region", "incident_type"]).size().unstack(fill_value=0)

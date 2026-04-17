@@ -13,7 +13,6 @@ from worldenergydata.scheduler.jobs.sodir_refresh import (
 )
 from worldenergydata.sodir.errors import SodirAPIError
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------

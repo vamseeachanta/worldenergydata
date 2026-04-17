@@ -80,6 +80,7 @@ def _make_equip(**overrides):
 # add_operational_summary
 # ---------------------------------------------------------------------------
 
+
 class TestAddOperationalSummary:
     def test_empty_wells(self):
         ctx = {}
@@ -117,6 +118,7 @@ class TestAddOperationalSummary:
 # add_well_performance_analysis
 # ---------------------------------------------------------------------------
 
+
 class TestAddWellPerformance:
     def test_basic(self):
         ctx = {}
@@ -144,6 +146,7 @@ class TestAddWellPerformance:
 # add_production_efficiency_analysis
 # ---------------------------------------------------------------------------
 
+
 class TestAddProductionEfficiency:
     def test_basic(self):
         ctx = {}
@@ -159,6 +162,7 @@ class TestAddProductionEfficiency:
 # ---------------------------------------------------------------------------
 # add_equipment_reliability_analysis
 # ---------------------------------------------------------------------------
+
 
 class TestAddEquipmentReliability:
     def test_basic(self):
@@ -181,21 +185,30 @@ class TestAddEquipmentReliability:
 # add_maintenance_schedule
 # ---------------------------------------------------------------------------
 
+
 class TestAddMaintenanceSchedule:
     def test_basic(self):
         ctx = {}
         records = [
             MaintenanceRecord(
-                maintenance_id="M001", equipment_id="E001",
-                maintenance_date=date(2024, 1, 1), maintenance_type="preventive",
-                description="Quarterly check", duration_hours=4, cost=5000,
+                maintenance_id="M001",
+                equipment_id="E001",
+                maintenance_date=date(2024, 1, 1),
+                maintenance_type="preventive",
+                description="Quarterly check",
+                duration_hours=4,
+                cost=5000,
                 performed_by="tech",
                 next_scheduled_date=date(2099, 4, 1),
             ),
             MaintenanceRecord(
-                maintenance_id="M002", equipment_id="E001",
-                maintenance_date=date(2024, 1, 1), maintenance_type="corrective",
-                description="Repair", duration_hours=8, cost=15000,
+                maintenance_id="M002",
+                equipment_id="E001",
+                maintenance_date=date(2024, 1, 1),
+                maintenance_type="corrective",
+                description="Repair",
+                duration_hours=8,
+                cost=15000,
                 performed_by="tech",
             ),
         ]
@@ -212,19 +225,28 @@ class TestAddMaintenanceSchedule:
 # add_failure_analysis
 # ---------------------------------------------------------------------------
 
+
 class TestAddFailureAnalysis:
     def test_basic(self):
         ctx = {}
         failures = [
             FailureAnalysis(
-                failure_id="F001", failure_type="mechanical",
-                severity="high", downtime_hours=48, repair_cost=50000,
-                preventable=True, failure_date=datetime(2024, 6, 1),
+                failure_id="F001",
+                failure_type="mechanical",
+                severity="high",
+                downtime_hours=48,
+                repair_cost=50000,
+                preventable=True,
+                failure_date=datetime(2024, 6, 1),
             ),
             FailureAnalysis(
-                failure_id="F002", failure_type="electrical",
-                severity="low", downtime_hours=4, repair_cost=2000,
-                preventable=False, failure_date=datetime(2024, 5, 1),
+                failure_id="F002",
+                failure_type="electrical",
+                severity="low",
+                downtime_hours=4,
+                repair_cost=2000,
+                preventable=False,
+                failure_date=datetime(2024, 5, 1),
             ),
         ]
         add_failure_analysis(ctx, failures)
@@ -242,15 +264,22 @@ class TestAddFailureAnalysis:
 # format_kpis
 # ---------------------------------------------------------------------------
 
+
 class TestFormatKPIs:
     def test_empty(self):
         assert format_kpis([]) == []
 
     def test_format_single(self):
         kpi = OperationalKPI(
-            kpi_id="K001", kpi_name="Uptime", kpi_category="reliability",
-            target_value=90, actual_value=95, unit="percent",
-            measurement_date=date(2024, 6, 1), status="good", trend="improving",
+            kpi_id="K001",
+            kpi_name="Uptime",
+            kpi_category="reliability",
+            target_value=90,
+            actual_value=95,
+            unit="percent",
+            measurement_date=date(2024, 6, 1),
+            status="good",
+            trend="improving",
         )
         result = format_kpis([kpi])
         assert len(result) == 1

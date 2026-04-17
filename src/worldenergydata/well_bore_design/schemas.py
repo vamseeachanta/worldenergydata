@@ -11,9 +11,9 @@ from typing import Optional
 
 
 class BoreType(Enum):
-    SLIM_HOLE = "slim_hole"      # < 8.5" nominal bit size
-    STANDARD = "standard"        # 8.5"–12.25"
-    LARGE_BORE = "large_bore"    # > 12.25"
+    SLIM_HOLE = "slim_hole"  # < 8.5" nominal bit size
+    STANDARD = "standard"  # 8.5"–12.25"
+    LARGE_BORE = "large_bore"  # > 12.25"
 
 
 class CasingString(Enum):
@@ -69,8 +69,8 @@ class WellBoreDesign:
 
     # Mud system
     mud_weight_ppg: float = 9.0
-    max_mud_weight_ppg: float = 0.0   # fracture gradient limit
-    min_mud_weight_ppg: float = 0.0   # pore pressure equivalent
+    max_mud_weight_ppg: float = 0.0  # fracture gradient limit
+    min_mud_weight_ppg: float = 0.0  # pore pressure equivalent
 
     formation_type: str = "mixed"  # "shale"|"carbonate"|"sandstone"|"mixed"
     notes: str = ""
@@ -97,12 +97,14 @@ class EcdProfile:
     well_id: str
     bore_type: BoreType
     depths_m: list[float]
-    ecd_ppg: list[float]              # ECD at each depth
+    ecd_ppg: list[float]  # ECD at each depth
     mud_weight_ppg: float
     flow_rate_gpm: float
     annular_velocity_fps: list[float]
-    pressure_window_ppg: list[float]  # fracture_gradient_ppg - ecd_ppg (positive = safe)
-    bottleneck_depth_m: Optional[float]     # depth of minimum pressure window
+    pressure_window_ppg: list[
+        float
+    ]  # fracture_gradient_ppg - ecd_ppg (positive = safe)
+    bottleneck_depth_m: Optional[float]  # depth of minimum pressure window
     min_pressure_window_ppg: float
     notes: str = ""
 

@@ -8,12 +8,12 @@ This module provides:
 """
 
 import os
-import sys
 import shutil
+import sys
 import tempfile
-from pathlib import Path
 from datetime import datetime, timedelta
-from typing import Dict, Any, Callable
+from pathlib import Path
+from typing import Any, Callable, Dict
 
 import numpy as np
 import pandas as pd
@@ -30,10 +30,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from worldenergydata.testing.performance import TestPerformanceTracker
 
-
 # ==============================================================================
 # COMMON FIXTURES - Available to all tests
 # ==============================================================================
+
 
 @pytest.fixture
 def project_root() -> Path:
@@ -67,7 +67,7 @@ def sample_production_data() -> pd.DataFrame:
     # Generate 36 months of data
     n_months = 36
     base_date = datetime(2022, 1, 1)
-    dates = [base_date + timedelta(days=30*i) for i in range(n_months)]
+    dates = [base_date + timedelta(days=30 * i) for i in range(n_months)]
 
     # Simulate declining production
     initial_oil = 10000  # bbls/month
@@ -80,25 +80,30 @@ def sample_production_data() -> pd.DataFrame:
     oil_production = [max(0, p) for p in oil_production]
 
     # Gas production with GOR ~ 2000 scf/bbl
-    gas_production = [oil * 2000 + np.random.normal(0, 100000) for oil in oil_production]
+    gas_production = [
+        oil * 2000 + np.random.normal(0, 100000) for oil in oil_production
+    ]
     gas_production = [max(0, g) for g in gas_production]
 
     # Water production increases over time
     water_production = [
-        1000 * (1.02 ** i) + np.random.normal(0, 200)
-        for i in range(n_months)
+        1000 * (1.02**i) + np.random.normal(0, 200) for i in range(n_months)
     ]
     water_production = [max(0, w) for w in water_production]
 
-    df = pd.DataFrame({
-        'production_date': dates,
-        'api_well_number': '608124003301',
-        'oil_production_bbl': oil_production,
-        'gas_production_mcf': gas_production,
-        'water_production_bbl': water_production,
-        'days_on_production': [28 + np.random.randint(-3, 4) for _ in range(n_months)],
-        'status': ['PRODUCING'] * n_months
-    })
+    df = pd.DataFrame(
+        {
+            "production_date": dates,
+            "api_well_number": "608124003301",
+            "oil_production_bbl": oil_production,
+            "gas_production_mcf": gas_production,
+            "water_production_bbl": water_production,
+            "days_on_production": [
+                28 + np.random.randint(-3, 4) for _ in range(n_months)
+            ],
+            "status": ["PRODUCING"] * n_months,
+        }
+    )
 
     return df
 
@@ -110,21 +115,21 @@ def sample_well_data() -> Dict[str, Any]:
     Returns a dictionary mimicking BSEE well header data.
     """
     return {
-        'api_well_number': '608124003301',
-        'well_name': 'JULIA A-001',
-        'field': 'JULIA',
-        'block': 'GC 627',
-        'area': 'GREEN CANYON',
-        'water_depth_ft': 7087.0,
-        'total_depth_ft': 23500.0,
-        'spud_date': datetime(2021, 3, 15),
-        'completion_date': datetime(2021, 11, 20),
-        'operator': 'SHELL OFFSHORE INC',
-        'well_status': 'PRODUCING',
-        'well_type': 'OIL',
-        'reservoir': 'MIOCENE',
-        'latitude': 27.8501,
-        'longitude': -90.3422
+        "api_well_number": "608124003301",
+        "well_name": "JULIA A-001",
+        "field": "JULIA",
+        "block": "GC 627",
+        "area": "GREEN CANYON",
+        "water_depth_ft": 7087.0,
+        "total_depth_ft": 23500.0,
+        "spud_date": datetime(2021, 3, 15),
+        "completion_date": datetime(2021, 11, 20),
+        "operator": "SHELL OFFSHORE INC",
+        "well_status": "PRODUCING",
+        "well_type": "OIL",
+        "reservoir": "MIOCENE",
+        "latitude": 27.8501,
+        "longitude": -90.3422,
     }
 
 
@@ -148,8 +153,13 @@ def assert_dataframe_equal() -> Callable:
 
     Returns a callable that compares two DataFrames with detailed error messages.
     """
-    def _assert_equal(df1: pd.DataFrame, df2: pd.DataFrame,
-                      check_dtype: bool = True, check_index: bool = True) -> None:
+
+    def _assert_equal(
+        df1: pd.DataFrame,
+        df2: pd.DataFrame,
+        check_dtype: bool = True,
+        check_index: bool = True,
+    ) -> None:
         """Assert two DataFrames are equal.
 
         Args:
@@ -165,14 +175,16 @@ def assert_dataframe_equal() -> Callable:
         assert df1.shape == df2.shape, f"Shape mismatch: {df1.shape} vs {df2.shape}"
 
         # Check columns
-        assert list(df1.columns) == list(df2.columns), \
-            f"Column mismatch: {list(df1.columns)} vs {list(df2.columns)}"
+        assert list(df1.columns) == list(
+            df2.columns
+        ), f"Column mismatch: {list(df1.columns)} vs {list(df2.columns)}"
 
         # Check dtypes
         if check_dtype:
             for col in df1.columns:
-                assert df1[col].dtype == df2[col].dtype, \
-                    f"Dtype mismatch for column {col}: {df1[col].dtype} vs {df2[col].dtype}"
+                assert (
+                    df1[col].dtype == df2[col].dtype
+                ), f"Dtype mismatch for column {col}: {df1[col].dtype} vs {df2[col].dtype}"
 
         # Check index
         if check_index:
@@ -193,11 +205,13 @@ def mock_excel_file(tmp_path: Path) -> Path:
     excel_path = tmp_path / "test_data.xlsx"
 
     # Create sample data
-    df = pd.DataFrame({
-        'api_well_number': ['608124003301', '608124003302'],
-        'oil_bbls': [10000.0, 8000.0],
-        'gas_mcf': [20000000.0, 16000000.0]
-    })
+    df = pd.DataFrame(
+        {
+            "api_well_number": ["608124003301", "608124003302"],
+            "oil_bbls": [10000.0, 8000.0],
+            "gas_mcf": [20000000.0, 16000000.0],
+        }
+    )
 
     df.to_excel(excel_path, index=False)
     return excel_path
@@ -210,23 +224,16 @@ def mock_yaml_config(tmp_path: Path) -> Path:
 
     yaml_path = tmp_path / "config.yml"
     config = {
-        'meta': {
-            'library': 'worldenergydata',
-            'basename': 'test_config',
-            'mode': 'enhanced'
+        "meta": {
+            "library": "worldenergydata",
+            "basename": "test_config",
+            "mode": "enhanced",
         },
-        'data': {
-            'well': True,
-            'production': True,
-            'war': False
-        },
-        'processing': {
-            'in_memory': True,
-            'chunk_size': 10000
-        }
+        "data": {"well": True, "production": True, "war": False},
+        "processing": {"in_memory": True, "chunk_size": 10000},
     }
 
-    with open(yaml_path, 'w') as f:
+    with open(yaml_path, "w") as f:
         yaml.dump(config, f)
 
     return yaml_path
@@ -251,13 +258,13 @@ _performance_tracker = None
 def pytest_configure(config):
     """Configure pytest with performance tracking."""
     global _performance_tracker
-    
+
     # Initialize performance tracker
     db_path = Path(".test_performance.db")
     _performance_tracker = TestPerformanceTracker(db_path)
-    
+
     # Register as plugin
-    config.pluginmanager.register(_performance_tracker, 'performance_tracker')
+    config.pluginmanager.register(_performance_tracker, "performance_tracker")
 
 
 @pytest.hookimpl(tryfirst=True)
@@ -272,9 +279,9 @@ def pytest_runtest_makereport(item, call):
     """Called to create test report."""
     outcome = yield
     report = outcome.get_result()
-    
+
     # Only record on test call (not setup/teardown)
-    if report.when == 'call' and _performance_tracker:
+    if report.when == "call" and _performance_tracker:
         _performance_tracker.end_test(item.nodeid, report)
 
 
@@ -283,26 +290,27 @@ def pytest_sessionfinish(session, exitstatus):
     """Called after test session finishes."""
     if _performance_tracker:
         summary = _performance_tracker.get_session_summary()
-        
-        print("\n" + "="*60)
+
+        print("\n" + "=" * 60)
         print("Test Performance Summary")
-        print("="*60)
+        print("=" * 60)
         print(f"Total Tests: {summary['total_tests']}")
         print(f"Total Duration: {summary['total_duration']:.2f}s")
         print(f"Average Duration: {summary['avg_duration']:.3f}s")
         print(f"Success Rate: {summary['success_rate']:.1f}%")
-        
+
         # Check for regressions
         from worldenergydata.testing.performance import PerformanceAnalyzer
+
         analyzer = PerformanceAnalyzer(_performance_tracker.db)
         regressions = analyzer.detect_regressions(lookback_days=7)
-        
+
         if regressions:
             print("\n⚠️  Performance Regressions Detected:")
             for reg in regressions[:3]:
                 print(f"  - {reg['test_name']}: {reg['regression_factor']:.2f}x slower")
-        
-        print("="*60)
+
+        print("=" * 60)
 
 
 # Skip collection of experimental/archived test files
@@ -329,6 +337,7 @@ def pytest_ignore_collect(collection_path, config):
             └── validation_runs/
     """
     import re
+
     path_str = str(collection_path)
     basename = collection_path.name
 

@@ -49,8 +49,7 @@ class DeclineCurveResult:
                 value = self.initial_rate * np.exp(-self.decline_rate * t)
             elif self.model_type == "hyperbolic" and self.b_factor is not None:
                 value = self.initial_rate / (
-                    (1 + self.b_factor * self.decline_rate * t)
-                    ** (1.0 / self.b_factor)
+                    (1 + self.b_factor * self.decline_rate * t) ** (1.0 / self.b_factor)
                 )
             elif self.model_type == "harmonic":
                 value = self.initial_rate / (1 + self.decline_rate * t)

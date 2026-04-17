@@ -36,10 +36,14 @@ def run_solveig_npv_analysis() -> Dict[str, Any]:
 
     # Aggregate monthly to annual oil production in MMbbl
     proxy_df["year_group"] = proxy_df["year"]
-    annual = proxy_df.groupby("year_group").agg(
-        oil_sm3=("oil_sm3", "sum"),
-        gas_sm3=("gas_sm3", "sum"),
-    ).reset_index()
+    annual = (
+        proxy_df.groupby("year_group")
+        .agg(
+            oil_sm3=("oil_sm3", "sum"),
+            gas_sm3=("gas_sm3", "sum"),
+        )
+        .reset_index()
+    )
 
     # Convert Sm3 to MMbbl/BCF for NPV model
     sm3_to_bbl = 6.2898
@@ -56,11 +60,15 @@ def run_solveig_npv_analysis() -> Dict[str, Any]:
     forecast_values = curve.predict(forecast_years)
 
     # Build production profile for NPV (historical + forecast)
-    production_profile = pd.DataFrame({
-        "year": list(range(len(annual) + forecast_years)),
-        "oil_production_mmbbl": list(annual["oil_production_mmbbl"]) + list(forecast_values),
-        "gas_production_bcf": list(annual["gas_production_bcf"]) + [0.0] * forecast_years,
-    })
+    production_profile = pd.DataFrame(
+        {
+            "year": list(range(len(annual) + forecast_years)),
+            "oil_production_mmbbl": list(annual["oil_production_mmbbl"])
+            + list(forecast_values),
+            "gas_production_bcf": list(annual["gas_production_bcf"])
+            + [0.0] * forecast_years,
+        }
+    )
 
     # Configure financial parameters for Solveig-style development
     params = NorwegianFinancialParameters(

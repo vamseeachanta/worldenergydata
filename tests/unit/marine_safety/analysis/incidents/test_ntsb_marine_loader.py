@@ -23,6 +23,10 @@ from unittest.mock import MagicMock, patch
 import pandas as pd
 import pytest
 
+from worldenergydata.marine_safety.analysis.incidents.incident_taxonomy import (
+    RootCauseType,
+    TaxonomyRecord,
+)
 from worldenergydata.marine_safety.analysis.incidents.ntsb_marine_loader import (
     NTSBMarineLoader,
     _extract_results,
@@ -34,11 +38,6 @@ from worldenergydata.marine_safety.analysis.incidents.ntsb_marine_loader import 
     fetch_ntsb_marine,
     load_dataframe_as_ntsb,
 )
-from worldenergydata.marine_safety.analysis.incidents.incident_taxonomy import (
-    RootCauseType,
-    TaxonomyRecord,
-)
-
 
 # ---------------------------------------------------------------------------
 # Mock helpers
@@ -81,9 +80,7 @@ def _make_session(records: List[Dict], total: int = None, status_code: int = 200
     if status_code != 200:
         from requests.exceptions import HTTPError
 
-        mock_resp.raise_for_status.side_effect = HTTPError(
-            response=mock_resp
-        )
+        mock_resp.raise_for_status.side_effect = HTTPError(response=mock_resp)
     else:
         mock_resp.raise_for_status.return_value = None
 
@@ -254,9 +251,7 @@ class TestFetchToRecords:
 
     def test_human_error_classified_from_probable_cause(self) -> None:
         records = [
-            _make_carol_record(
-                probable_cause="Operator error and watchkeeping failure"
-            )
+            _make_carol_record(probable_cause="Operator error and watchkeeping failure")
         ]
         loader = NTSBMarineLoader(session=_make_session(records, total=1))
         result = loader.fetch_to_records(2020, 2020)
@@ -264,9 +259,7 @@ class TestFetchToRecords:
 
     def test_equipment_failure_classified(self) -> None:
         records = [
-            _make_carol_record(
-                probable_cause="Steering failure caused loss of control"
-            )
+            _make_carol_record(probable_cause="Steering failure caused loss of control")
         ]
         loader = NTSBMarineLoader(session=_make_session(records, total=1))
         result = loader.fetch_to_records(2020, 2020)

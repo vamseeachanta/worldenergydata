@@ -11,10 +11,10 @@ from typing import Any, Dict, List, Optional
 import pandas as pd
 
 from worldenergydata.marine_safety.analysis.incidents.incident_taxonomy import (
+    NTSB_COLUMN_MAP,
     IncidentDataFrameNormaliser,
     IncidentTaxonomyClassifier,
     TaxonomyRecord,
-    NTSB_COLUMN_MAP,
 )
 
 logger = logging.getLogger(__name__)
@@ -445,9 +445,7 @@ def _map_carol_record(raw: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     return {k: v for k, v in mapped.items() if v is not None}
 
 
-def _first_value(
-    record: Dict[str, Any], keys: List[str]
-) -> Optional[str]:
+def _first_value(record: Dict[str, Any], keys: List[str]) -> Optional[str]:
     """Return the first non-empty string value for any of the given keys."""
     for key in keys:
         val = record.get(key)
@@ -456,9 +454,7 @@ def _first_value(
     return None
 
 
-def _first_float(
-    record: Dict[str, Any], keys: List[str]
-) -> Optional[float]:
+def _first_float(record: Dict[str, Any], keys: List[str]) -> Optional[float]:
     """Return the first parseable float for any of the given keys."""
     for key in keys:
         val = record.get(key)
@@ -470,9 +466,7 @@ def _first_float(
     return None
 
 
-def _first_int(
-    record: Dict[str, Any], keys: List[str]
-) -> Optional[int]:
+def _first_int(record: Dict[str, Any], keys: List[str]) -> Optional[int]:
     """Return the first parseable integer for any of the given keys."""
     for key in keys:
         val = record.get(key)

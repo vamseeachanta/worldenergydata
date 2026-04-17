@@ -103,7 +103,9 @@ class TestArpsDeclineCurveFit:
             self.fitter.fit(df, model="invalid")
 
     def test_empty_input_raises(self):
-        df = pd.DataFrame({"month": pd.Series([], dtype=int), "rate_bbl": pd.Series([], dtype=float)})
+        df = pd.DataFrame(
+            {"month": pd.Series([], dtype=int), "rate_bbl": pd.Series([], dtype=float)}
+        )
         with pytest.raises(ValueError, match="empty"):
             self.fitter.fit(df, model="hyperbolic")
 

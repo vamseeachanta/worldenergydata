@@ -1,17 +1,36 @@
 """Tests for FleetRouter query filtering and fleet summary."""
 
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 from worldenergydata.vessel_fleet.router import FleetRouter
 
-
 MOCK_RIGS = [
-    {"RIG_TYPE": "Drillship", "OWNER": "Transocean", "WATER_DEPTH_RATING_FT": 10000, "STATUS": "Active"},
-    {"RIG_TYPE": "Semi", "OWNER": "Diamond Offshore", "WATER_DEPTH_RATING_FT": 5000, "STATUS": "Active"},
-    {"RIG_TYPE": "Drillship", "OWNER": "Valaris", "WATER_DEPTH_RATING_FT": 8000, "STATUS": "Stacked"},
-    {"RIG_TYPE": "Jackup", "OWNER": "Borr Drilling", "WATER_DEPTH_RATING_FT": 400, "STATUS": "Active"},
+    {
+        "RIG_TYPE": "Drillship",
+        "OWNER": "Transocean",
+        "WATER_DEPTH_RATING_FT": 10000,
+        "STATUS": "Active",
+    },
+    {
+        "RIG_TYPE": "Semi",
+        "OWNER": "Diamond Offshore",
+        "WATER_DEPTH_RATING_FT": 5000,
+        "STATUS": "Active",
+    },
+    {
+        "RIG_TYPE": "Drillship",
+        "OWNER": "Valaris",
+        "WATER_DEPTH_RATING_FT": 8000,
+        "STATUS": "Stacked",
+    },
+    {
+        "RIG_TYPE": "Jackup",
+        "OWNER": "Borr Drilling",
+        "WATER_DEPTH_RATING_FT": 400,
+        "STATUS": "Active",
+    },
 ]
 
 MOCK_VESSELS = [
@@ -25,10 +44,12 @@ MOCK_VESSELS = [
 def router():
     with patch("worldenergydata.vessel_fleet.router.ParquetStore") as MockStore:
         instance = MockStore.return_value
-        instance.load = MagicMock(side_effect=lambda name: {
-            "drilling_rigs.parquet": MOCK_RIGS,
-            "construction_vessels.parquet": MOCK_VESSELS,
-        }.get(name, []))
+        instance.load = MagicMock(
+            side_effect=lambda name: {
+                "drilling_rigs.parquet": MOCK_RIGS,
+                "construction_vessels.parquet": MOCK_VESSELS,
+            }.get(name, [])
+        )
         r = FleetRouter(data_dir=None)
         yield r
 
@@ -58,9 +79,7 @@ class TestQueryDrillingRigs:
         assert results[0]["OWNER"] == "Valaris"
 
     def test_combined_filters(self, router):
-        results = router.query_drilling_rigs(
-            rig_type="Drillship", status="Active"
-        )
+        results = router.query_drilling_rigs(rig_type="Drillship", status="Active")
         assert len(results) == 1
         assert results[0]["OWNER"] == "Transocean"
 

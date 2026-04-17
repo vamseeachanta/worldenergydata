@@ -16,8 +16,11 @@ from worldenergydata.lng_terminals.constants import (
 class TestTerminalType:
     def test_all_members(self):
         expected = {
-            "ONSHORE_IMPORT", "ONSHORE_EXPORT", "FSRU",
-            "FLNG", "ONSHORE_LIQUEFACTION",
+            "ONSHORE_IMPORT",
+            "ONSHORE_EXPORT",
+            "FSRU",
+            "FLNG",
+            "ONSHORE_LIQUEFACTION",
         }
         assert {m.name for m in TerminalType} == expected
 
@@ -35,8 +38,12 @@ class TestTerminalFunction:
 class TestTerminalStatus:
     def test_all_members(self):
         expected = {
-            "OPERATIONAL", "UNDER_CONSTRUCTION", "PLANNED",
-            "PROPOSED", "DECOMMISSIONED", "MOTHBALLED",
+            "OPERATIONAL",
+            "UNDER_CONSTRUCTION",
+            "PLANNED",
+            "PROPOSED",
+            "DECOMMISSIONED",
+            "MOTHBALLED",
         }
         assert {m.name for m in TerminalStatus} == expected
 
@@ -44,8 +51,13 @@ class TestTerminalStatus:
 class TestPipelineType:
     def test_all_members(self):
         expected = {
-            "FEED_GAS", "LNG_TRANSFER", "LNG_LOADING",
-            "BOIL_OFF_GAS", "SEND_OUT", "PROCESS", "CONDENSATE",
+            "FEED_GAS",
+            "LNG_TRANSFER",
+            "LNG_LOADING",
+            "BOIL_OFF_GAS",
+            "SEND_OUT",
+            "PROCESS",
+            "CONDENSATE",
         }
         assert {m.name for m in PipelineType} == expected
 
@@ -59,8 +71,13 @@ class TestSourceReliability:
 class TestRegion:
     def test_all_members(self):
         expected = {
-            "NORTH_AMERICA", "SOUTH_AMERICA", "EUROPE",
-            "MIDDLE_EAST", "AFRICA", "ASIA_PACIFIC", "OCEANIA",
+            "NORTH_AMERICA",
+            "SOUTH_AMERICA",
+            "EUROPE",
+            "MIDDLE_EAST",
+            "AFRICA",
+            "ASIA_PACIFIC",
+            "OCEANIA",
         }
         assert {m.name for m in Region} == expected
 

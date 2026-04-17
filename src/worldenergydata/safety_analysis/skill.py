@@ -227,8 +227,7 @@ def _validate_inputs(asset_type: str, scenario: str) -> None:
         )
     if scenario not in _VALID_SCENARIOS:
         raise ValueError(
-            f"Unknown scenario '{scenario}'. "
-            f"Valid values: {list(_VALID_SCENARIOS)}"
+            f"Unknown scenario '{scenario}'. " f"Valid values: {list(_VALID_SCENARIOS)}"
         )
 
 

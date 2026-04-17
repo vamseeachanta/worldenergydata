@@ -39,9 +39,7 @@ class TestSodirAPIError:
         assert err.context["endpoint"] == "/api/test"
 
     def test_create_with_response_data(self):
-        err = SodirAPIError(
-            "API failed", response_data={"error": "bad request"}
-        )
+        err = SodirAPIError("API failed", response_data={"error": "bad request"})
         assert err.response_data == {"error": "bad request"}
 
     def test_request_failed_factory(self):

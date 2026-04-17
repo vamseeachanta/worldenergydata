@@ -4,9 +4,9 @@ import pandas as pd
 import pytest
 
 from worldenergydata.eia_us.production.state_production import (
-    StateProductionLoader,
     MAJOR_PRODUCING_STATES,
     STATE_SERIES_ID,
+    StateProductionLoader,
 )
 
 
@@ -16,13 +16,15 @@ def make_mock_state_response(state: str, n_months: int = 12):
     for i in range(n_months):
         year = 2023 + i // 12
         month = (i % 12) + 1
-        records.append({
-            "period": f"{year}-{month:02d}",
-            "value": 1000.0 + i * 10,
-            "series-description": f"{state} Field Production of Crude Oil",
-            "unit": "Thousand Barrels",
-            "state": state,
-        })
+        records.append(
+            {
+                "period": f"{year}-{month:02d}",
+                "value": 1000.0 + i * 10,
+                "series-description": f"{state} Field Production of Crude Oil",
+                "unit": "Thousand Barrels",
+                "state": state,
+            }
+        )
     return records
 
 
@@ -86,7 +88,14 @@ class TestStateProductionLoader:
         assert df["state"].iloc[0] == "TX"
 
     def test_load_converts_thousand_barrels_to_bbl(self, loader):
-        raw = [{"period": "2024-01", "value": 10.0, "state": "TX", "unit": "Thousand Barrels"}]
+        raw = [
+            {
+                "period": "2024-01",
+                "value": 10.0,
+                "state": "TX",
+                "unit": "Thousand Barrels",
+            }
+        ]
         df = loader.load(raw, state="TX")
         assert df["crude_bbl"].iloc[0] == pytest.approx(10_000.0)
 
@@ -96,7 +105,14 @@ class TestStateProductionLoader:
         assert "crude_bbl" in df.columns
 
     def test_load_handles_null_values(self, loader):
-        raw = [{"period": "2024-01", "value": None, "state": "TX", "unit": "Thousand Barrels"}]
+        raw = [
+            {
+                "period": "2024-01",
+                "value": None,
+                "state": "TX",
+                "unit": "Thousand Barrels",
+            }
+        ]
         df = loader.load(raw, state="TX")
         assert pd.isna(df["crude_bbl"].iloc[0]) or df["crude_bbl"].iloc[0] == 0.0
 

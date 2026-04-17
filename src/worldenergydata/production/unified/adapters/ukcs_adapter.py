@@ -22,18 +22,34 @@ class UkcsAdapter(AbstractProductionAdapter):
     # (field_name, peak_oil_bbl, peak_gas_mcf, peak_water_bbl,
     #  peak_cond_bbl, start_year, start_month, n_months)
     _FIELDS = [
-        ("Forties",    12_000_000,  5_000_000, 8_000_000,  200_000, 1975,  9, 588),
-        ("Buzzard",     8_000_000,  1_800_000, 3_500_000,  100_000, 2007,  1, 216),
-        ("Mariner",     1_800_000,    600_000,   900_000,   30_000, 2019,  6,  66),
-        ("Clair Ridge", 2_500_000,    900_000, 1_200_000,   50_000, 2018, 11,  74),
+        ("Forties", 12_000_000, 5_000_000, 8_000_000, 200_000, 1975, 9, 588),
+        ("Buzzard", 8_000_000, 1_800_000, 3_500_000, 100_000, 2007, 1, 216),
+        ("Mariner", 1_800_000, 600_000, 900_000, 30_000, 2019, 6, 66),
+        ("Clair Ridge", 2_500_000, 900_000, 1_200_000, 50_000, 2018, 11, 74),
     ]
 
     def fetch(self, query: ProductionQuery) -> pd.DataFrame:
         rows = []
-        for field_name, peak_oil, peak_gas, peak_water, peak_cond, sy, sm, n_months in self._FIELDS:
+        for (
+            field_name,
+            peak_oil,
+            peak_gas,
+            peak_water,
+            peak_cond,
+            sy,
+            sm,
+            n_months,
+        ) in self._FIELDS:
             rows.extend(
                 self._generate_field_rows(
-                    field_name, peak_oil, peak_gas, peak_water, peak_cond, sy, sm, n_months
+                    field_name,
+                    peak_oil,
+                    peak_gas,
+                    peak_water,
+                    peak_cond,
+                    sy,
+                    sm,
+                    n_months,
                 )
             )
 

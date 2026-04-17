@@ -17,11 +17,11 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 import pandas as pd
-import plotly.graph_objects as go
 import plotly.express as px
+import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 if TYPE_CHECKING:
@@ -172,9 +172,7 @@ class MetoceanDashboard:
         for row_idx, param in enumerate(params, start=1):
             param_df = df[df["parameter"] == param]
             for source in param_df["source"].unique():
-                src_df = param_df[param_df["source"] == source].sort_values(
-                    "timestamp"
-                )
+                src_df = param_df[param_df["source"] == source].sort_values("timestamp")
                 colour = _SOURCE_COLOURS.get(source, "#888888")
                 unit = src_df["unit"].iloc[0] if len(src_df) > 0 else ""
                 fig.add_trace(

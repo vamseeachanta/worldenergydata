@@ -13,10 +13,10 @@ from worldenergydata.metocean.clients.coops_client import (
 )
 from worldenergydata.metocean.constants import StationType
 
-
 # ---------------------------------------------------------------------------
 # COOPSStation dataclass
 # ---------------------------------------------------------------------------
+
 
 class TestCOOPSStation:
     def test_init(self):
@@ -70,6 +70,7 @@ class TestCOOPSStation:
 # COOPSWaterLevel dataclass
 # ---------------------------------------------------------------------------
 
+
 class TestCOOPSWaterLevel:
     def test_init(self):
         obs = COOPSWaterLevel(
@@ -100,6 +101,7 @@ class TestCOOPSWaterLevel:
 # COOPSCurrent dataclass
 # ---------------------------------------------------------------------------
 
+
 class TestCOOPSCurrent:
     def test_init(self):
         current = COOPSCurrent(
@@ -128,6 +130,7 @@ class TestCOOPSCurrent:
 # COOPSTidePrediction dataclass
 # ---------------------------------------------------------------------------
 
+
 class TestCOOPSTidePrediction:
     def test_init(self):
         pred = COOPSTidePrediction(
@@ -155,6 +158,7 @@ class TestCOOPSTidePrediction:
 # COOPSClient constants
 # ---------------------------------------------------------------------------
 
+
 class TestCOOPSClientConstants:
     def test_data_url(self):
         assert "tidesandcurrents" in COOPSClient.DATA_URL
@@ -180,6 +184,7 @@ class TestCOOPSClientConstants:
 # ---------------------------------------------------------------------------
 # COOPSClient._parse_station
 # ---------------------------------------------------------------------------
+
 
 class TestParseStation:
     def test_basic(self):

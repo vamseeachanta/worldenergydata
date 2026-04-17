@@ -183,9 +183,7 @@ def populate_estimated_dimensions(df: pd.DataFrame) -> pd.DataFrame:
 
     # Mark existing dimensions as measured
     has_dims = (
-        result["LOA_M"].notna()
-        & result["BEAM_M"].notna()
-        & result["DRAFT_M"].notna()
+        result["LOA_M"].notna() & result["BEAM_M"].notna() & result["DRAFT_M"].notna()
     )
     result.loc[
         has_dims & result["DIMENSION_CONFIDENCE"].isna(),
@@ -194,9 +192,7 @@ def populate_estimated_dimensions(df: pd.DataFrame) -> pd.DataFrame:
 
     # Estimate for rows missing all dimensions
     missing_all = (
-        result["LOA_M"].isna()
-        & result["BEAM_M"].isna()
-        & result["DRAFT_M"].isna()
+        result["LOA_M"].isna() & result["BEAM_M"].isna() & result["DRAFT_M"].isna()
     )
 
     water_depth_col = None
@@ -212,9 +208,7 @@ def populate_estimated_dimensions(df: pd.DataFrame) -> pd.DataFrame:
             if "HULL_FORM_TYPE" in result.columns
             else None
         )
-        water_depth = (
-            result.at[idx, water_depth_col] if water_depth_col else None
-        )
+        water_depth = result.at[idx, water_depth_col] if water_depth_col else None
 
         estimate = estimate_hull(hull_form, water_depth)
         if estimate:
@@ -239,6 +233,7 @@ def populate_estimated_dimensions(df: pd.DataFrame) -> pd.DataFrame:
         from worldenergydata.vessel_hull_models.rig_hulls.hull_form_mapper import (
             refresh_hull_library_refs,
         )
+
         result = refresh_hull_library_refs(result)
 
     return result

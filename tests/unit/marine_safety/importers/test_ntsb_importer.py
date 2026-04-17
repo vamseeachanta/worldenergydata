@@ -27,6 +27,7 @@ def importer(tmp_path):
 # Constants
 # ---------------------------------------------------------------------------
 
+
 class TestNTSBConstants:
     def test_field_mappings_not_empty(self):
         assert len(NTSBImporter.FIELD_MAPPINGS) > 20
@@ -54,6 +55,7 @@ class TestNTSBConstants:
 # Init
 # ---------------------------------------------------------------------------
 
+
 class TestNTSBImporterInit:
     def test_defaults(self, tmp_path):
         source = tmp_path / "data.csv"
@@ -66,7 +68,9 @@ class TestNTSBImporterInit:
         source = tmp_path / "data.csv"
         source.write_text("header\n")
         imp = NTSBImporter(
-            source_path=source, session=MagicMock(), marine_only=False,
+            source_path=source,
+            session=MagicMock(),
+            marine_only=False,
         )
         assert imp.marine_only is False
 
@@ -74,6 +78,7 @@ class TestNTSBImporterInit:
 # ---------------------------------------------------------------------------
 # _get_ntsb_id
 # ---------------------------------------------------------------------------
+
 
 class TestGetNTSBId:
     def test_ntsb_id_field(self, importer):
@@ -109,6 +114,7 @@ class TestGetNTSBId:
 # _map_accident_type
 # ---------------------------------------------------------------------------
 
+
 class TestMapAccidentType:
     def test_exact_match(self, importer):
         assert importer._map_accident_type("grounding") == IncidentType.GROUNDING.value
@@ -136,11 +142,14 @@ class TestMapAccidentType:
 # _map_vessel_type
 # ---------------------------------------------------------------------------
 
+
 class TestMapVesselType:
     def test_exact_match(self, importer):
         assert importer._map_vessel_type("tanker") == VesselType.TANKER.value
         assert importer._map_vessel_type("tug") == VesselType.TUG.value
-        assert importer._map_vessel_type("cargo vessel") == VesselType.CARGO_VESSEL.value
+        assert (
+            importer._map_vessel_type("cargo vessel") == VesselType.CARGO_VESSEL.value
+        )
 
     def test_case_insensitive(self, importer):
         assert importer._map_vessel_type("TANKER") == VesselType.TANKER.value
@@ -162,18 +171,25 @@ class TestMapVesselType:
 # _map_status
 # ---------------------------------------------------------------------------
 
+
 class TestMapStatus:
     def test_exact_match(self, importer):
         assert importer._map_status("final") == IncidentStatus.FINAL_REPORT.value
         assert importer._map_status("closed") == IncidentStatus.CLOSED.value
         assert importer._map_status("open") == IncidentStatus.UNDER_INVESTIGATION.value
-        assert importer._map_status("preliminary") == IncidentStatus.PRELIMINARY_REPORT.value
+        assert (
+            importer._map_status("preliminary")
+            == IncidentStatus.PRELIMINARY_REPORT.value
+        )
 
     def test_case_insensitive(self, importer):
         assert importer._map_status("FINAL") == IncidentStatus.FINAL_REPORT.value
 
     def test_partial_match(self, importer):
-        assert importer._map_status("probable cause determined") == IncidentStatus.FINAL_REPORT.value
+        assert (
+            importer._map_status("probable cause determined")
+            == IncidentStatus.FINAL_REPORT.value
+        )
 
     def test_unknown(self, importer):
         assert importer._map_status("xyz") == IncidentStatus.REPORTED.value
@@ -188,6 +204,7 @@ class TestMapStatus:
 # ---------------------------------------------------------------------------
 # _build_location_description
 # ---------------------------------------------------------------------------
+
 
 class TestBuildLocationDescription:
     def test_all_parts(self, importer):
@@ -219,6 +236,7 @@ class TestBuildLocationDescription:
 # _generate_title
 # ---------------------------------------------------------------------------
 
+
 class TestGenerateTitle:
     def test_with_all_fields(self, importer):
         parsed = {
@@ -240,6 +258,7 @@ class TestGenerateTitle:
 # ---------------------------------------------------------------------------
 # _calculate_severity
 # ---------------------------------------------------------------------------
+
 
 class TestCalculateSeverity:
     def test_catastrophic(self, importer):
@@ -265,6 +284,7 @@ class TestCalculateSeverity:
 # ---------------------------------------------------------------------------
 # clear_caches
 # ---------------------------------------------------------------------------
+
 
 class TestClearCaches:
     def test_clears(self, importer):

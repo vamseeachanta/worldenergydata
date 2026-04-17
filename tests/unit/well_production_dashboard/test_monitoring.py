@@ -143,7 +143,8 @@ class TestAuditAction:
         }
         mon = DashboardMonitor(config=config)
         entry = mon.audit_action(
-            "query", "field_XYZ",
+            "query",
+            "field_XYZ",
             details={"filter": "active"},
             verification_score=0.95,
         )
@@ -241,6 +242,7 @@ class TestDetectAnomaly:
         mon = DashboardMonitor(config=config)
         # Add values with natural variance so 101 is within 3 std devs
         import random
+
         random.seed(42)
         for _ in range(20):
             mon.detect_anomaly("metric1", 100.0 + random.uniform(-5, 5))

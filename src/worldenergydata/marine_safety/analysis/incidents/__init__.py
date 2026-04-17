@@ -15,20 +15,22 @@ WRK-320 additions:
 from worldenergydata.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
     HatchMaloperationAnalyzer,
 )
+from worldenergydata.marine_safety.analysis.incidents.incident_correlator import (
+    CorrelationConfig,
+    CorrelationMatch,
+    IncidentCorrelator,
+    build_correlation_summary,
+    build_pattern_report,
+)
 from worldenergydata.marine_safety.analysis.incidents.incident_taxonomy import (
+    MISLE_OPERATION_COLUMN,
     IncidentDataFrameNormaliser,
     IncidentTaxonomyClassifier,
-    MISLE_OPERATION_COLUMN,
     OperationPhase,
     OperationPhaseClassifier,
     RootCauseType,
     TaxonomyRecord,
     build_taxonomy_summary,
-)
-from worldenergydata.marine_safety.analysis.incidents.uscg_client import (
-    load_dataframe_as_uscg,
-    load_uscg_csv,
-    load_uscg_csv_to_records,
 )
 from worldenergydata.marine_safety.analysis.incidents.maib_loader import (
     MAIBLoader,
@@ -42,12 +44,10 @@ from worldenergydata.marine_safety.analysis.incidents.ntsb_marine_loader import 
     fetch_ntsb_marine,
     load_dataframe_as_ntsb,
 )
-from worldenergydata.marine_safety.analysis.incidents.incident_correlator import (
-    CorrelationConfig,
-    CorrelationMatch,
-    IncidentCorrelator,
-    build_correlation_summary,
-    build_pattern_report,
+from worldenergydata.marine_safety.analysis.incidents.uscg_client import (
+    load_dataframe_as_uscg,
+    load_uscg_csv,
+    load_uscg_csv_to_records,
 )
 
 __all__ = [

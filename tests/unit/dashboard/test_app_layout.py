@@ -6,9 +6,9 @@ correct Plotly figure types.  Dash server is NOT started — callbacks are
 invoked as plain Python functions.
 """
 
-import pytest
-import plotly.graph_objects as go
 import pandas as pd
+import plotly.graph_objects as go
+import pytest
 
 
 class TestAppLayout:
@@ -28,8 +28,9 @@ class TestAppLayout:
 
     def test_layout_contains_main_tabs(self):
         """Layout must have an element with id='main-tabs'."""
+        from dash import dcc, html
+
         from worldenergydata.dashboard.app import app
-        from dash import html, dcc
 
         # Walk component tree looking for main-tabs
         def find_id(component, target_id: str) -> bool:
@@ -58,9 +59,9 @@ class TestAppLayout:
                 return any(find_value(c, target) for c in children)
             return find_value(children, target)
 
-        assert find_value(app.layout, "tab-production"), (
-            "tab-production value not found in layout"
-        )
+        assert find_value(
+            app.layout, "tab-production"
+        ), "tab-production value not found in layout"
 
 
 class TestProductionCallbacks:

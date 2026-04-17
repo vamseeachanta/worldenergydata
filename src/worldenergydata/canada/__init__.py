@@ -55,8 +55,6 @@ from worldenergydata.canada.production.cnloer_loader import (
     CnloerLoader,
     CnloerProductionRecord,
 )
-
-
 from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)

@@ -2,48 +2,51 @@ from worldenergydata.bsee.data.sources.zip.production_data import GetProdDataFro
 
 production_from_zip = GetProdDataFromZip()
 
+
 class ProductionDataFromSources:
-    
+
     def __init__(self):
         pass
+
     def router(self, cfg):
 
-       pass
+        pass
 
     def get_data(self, cfg):
 
         # cfg = self.get_groups_data(cfg)
         production_data_groups = []
-        if 'by' in cfg['data'] and cfg['data']['by'] == 'zip':
-            api12 = cfg['data']['groups'][0]['api12'][0]
+        if "by" in cfg["data"] and cfg["data"]["by"] == "zip":
+            api12 = cfg["data"]["groups"][0]["api12"][0]
             cfg = self.get_production_from_zip(cfg, api12)
 
-        for group_idx in range(0, len(cfg['data']['groups'])):
-            production_data_group = cfg['data']['groups'][group_idx].copy()
-            api12_array = production_data_group['api12']
+        for group_idx in range(0, len(cfg["data"]["groups"])):
+            production_data_group = cfg["data"]["groups"][group_idx].copy()
+            api12_array = production_data_group["api12"]
 
-            df_api12_array = production_from_zip.get_data_by_api12_array(cfg, api12_array)
+            df_api12_array = production_from_zip.get_data_by_api12_array(
+                cfg, api12_array
+            )
             production_data_groups.append(df_api12_array)
 
         return cfg, production_data_groups
-    
-    def get_production_from_zip(self, cfg,api12):
 
-        production_from_zip.get_production_data_by_wellapi12(cfg,api12)
+    def get_production_from_zip(self, cfg, api12):
+
+        production_from_zip.get_production_data_by_wellapi12(cfg, api12)
         return cfg
 
-    
     # Old methods that are not used anymore but kept for reference
-    
+
     # def get_groups_data(self, cfg):
 
     #     production_data_flag = cfg['data'].get('production_data', False)
-        
+
     #     output_data = []
-    #     if production_data_flag: 
+    #     if production_data_flag:
     #         input_items = cfg['data']['groups']
     #         for input in input_items:
-    #             api12_array = input.get('api12', []) 
+    #             api12_array = input.get('api12', [])
     #             for api12 in api12_array:
     #                 input_item = {'api12': [api12], 'label': str(api12)}
     #                 output_data = self.generate_output_item(cfg, output_data, input_item)
@@ -51,7 +54,7 @@ class ProductionDataFromSources:
     #     production_data = {'type': 'csv', 'groups': output_data }
     #     cfg[cfg['basename']].update({'production_data': production_data})
 
-    #     return cfg     
+    #     return cfg
 
     # def generate_output_item(self, cfg, output_data, input_item):
 
@@ -69,5 +72,5 @@ class ProductionDataFromSources:
     #     input_item_csv_cfg = deepcopy(input_item)
     #     input_item_csv_cfg.update({'label': label, 'file_name': output_file})
     #     output_data.append(input_item_csv_cfg)
-        
+
     #     return output_data

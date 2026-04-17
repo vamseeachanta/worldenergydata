@@ -90,12 +90,16 @@ def _parse_table(table: Any) -> list[dict[str, str]]:
     rows_data: list[dict[str, str]] = []
     header_row = table.find("thead")
     if header_row:
-        headers = [_clean_text(th.get_text()) for th in header_row.find_all(["th", "td"])]
+        headers = [
+            _clean_text(th.get_text()) for th in header_row.find_all(["th", "td"])
+        ]
     else:
         first_row = table.find("tr")
         if first_row is None:
             return []
-        headers = [_clean_text(th.get_text()) for th in first_row.find_all(["th", "td"])]
+        headers = [
+            _clean_text(th.get_text()) for th in first_row.find_all(["th", "td"])
+        ]
 
     if not headers:
         return []

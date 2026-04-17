@@ -13,15 +13,14 @@ from typing import Optional
 
 import pandas as pd
 
-
 # ---------------------------------------------------------------------------
 # Thresholds
 # ---------------------------------------------------------------------------
 
-_DECLINE_THRESHOLD_PCT = 80.0   # flag if production fell by this much over 5 yr
-_IDLE_THRESHOLD_MONTHS = 12     # flag if idle (near-zero) for this many months
-_NEAR_ZERO_BOPD = 10.0          # bopd considered "idle"
-_CESSATION_LOOKBACK_YEARS = 5   # how many years of history to assess decline
+_DECLINE_THRESHOLD_PCT = 80.0  # flag if production fell by this much over 5 yr
+_IDLE_THRESHOLD_MONTHS = 12  # flag if idle (near-zero) for this many months
+_NEAR_ZERO_BOPD = 10.0  # bopd considered "idle"
+_CESSATION_LOOKBACK_YEARS = 5  # how many years of history to assess decline
 
 
 # ---------------------------------------------------------------------------
@@ -37,10 +36,10 @@ class LateLifeAssessment:
     region: str
     peak_production_bopd: float
     current_production_bopd: float
-    decline_pct_5yr: float         # % decline over last 5 years
-    months_idle: int               # consecutive months of near-zero production
+    decline_pct_5yr: float  # % decline over last 5 years
+    months_idle: int  # consecutive months of near-zero production
     late_life_flag: bool
-    trigger: str                   # "decline_>80pct" | "idle_>12mo" | "both" | "none"
+    trigger: str  # "decline_>80pct" | "idle_>12mo" | "both" | "none"
     estimated_cessation_year: int  # 0 if not applicable
 
 
@@ -76,7 +75,7 @@ def _compute_decline_pct(prod_df: pd.DataFrame, lookback_years: int) -> float:
     if past_rows.empty or recent_rows.empty:
         return 0.0
 
-    past_avg = past_rows["oil_bbl"].mean() / 30.0   # convert monthly bbl → bopd
+    past_avg = past_rows["oil_bbl"].mean() / 30.0  # convert monthly bbl → bopd
     recent_avg = recent_rows["oil_bbl"].mean() / 30.0
 
     if past_avg <= 0:
@@ -146,7 +145,7 @@ def _estimate_cessation_year(
     years_remaining = 0
     projected = current_bopd
     while projected > _NEAR_ZERO_BOPD and years_remaining < 50:
-        projected *= (1.0 - annual_decline_rate)
+        projected *= 1.0 - annual_decline_rate
         years_remaining += 1
 
     return latest_year + years_remaining
@@ -248,10 +247,7 @@ class LateLifeIdentifier:
         Returns:
             List of LateLifeAssessment, one per field.
         """
-        return [
-            self.assess_field(name, df, region)
-            for name, df in fields.items()
-        ]
+        return [self.assess_field(name, df, region) for name, df in fields.items()]
 
     def late_life_fields(
         self, assessments: list[LateLifeAssessment]

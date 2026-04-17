@@ -34,35 +34,35 @@ class EnergyUnits(str, Enum):
     """
 
     # Energy units
-    BTU = "BTU"                      # British Thermal Units (base unit)
-    MMBTU = "MMBTU"                  # Million BTU
-    THERM = "THERM"                  # 100,000 BTU
-    GJ = "GJ"                        # Gigajoules
-    MWH = "MWH"                      # Megawatt-hours
-    KWH = "KWH"                      # Kilowatt-hours
-    TOE = "TOE"                      # Tonnes of Oil Equivalent
-    BOE = "BOE"                      # Barrels of Oil Equivalent
+    BTU = "BTU"  # British Thermal Units (base unit)
+    MMBTU = "MMBTU"  # Million BTU
+    THERM = "THERM"  # 100,000 BTU
+    GJ = "GJ"  # Gigajoules
+    MWH = "MWH"  # Megawatt-hours
+    KWH = "KWH"  # Kilowatt-hours
+    TOE = "TOE"  # Tonnes of Oil Equivalent
+    BOE = "BOE"  # Barrels of Oil Equivalent
 
     # Oil volume units
-    BARREL = "BBL"                   # Barrel (42 US gallons)
-    BARREL_OIL = "BBL_OIL"           # Barrel of crude oil
-    GALLON = "GAL"                   # US Gallon
-    LITER = "L"                      # Liter
-    CUBIC_METER = "M3"               # Cubic meter
+    BARREL = "BBL"  # Barrel (42 US gallons)
+    BARREL_OIL = "BBL_OIL"  # Barrel of crude oil
+    GALLON = "GAL"  # US Gallon
+    LITER = "L"  # Liter
+    CUBIC_METER = "M3"  # Cubic meter
 
     # Gas volume units
-    MCF = "MCF"                      # Thousand cubic feet
-    MMCF = "MMCF"                    # Million cubic feet
-    BCF = "BCF"                      # Billion cubic feet
-    TCF = "TCF"                      # Trillion cubic feet
-    SCF = "SCF"                      # Standard cubic feet
+    MCF = "MCF"  # Thousand cubic feet
+    MMCF = "MMCF"  # Million cubic feet
+    BCF = "BCF"  # Billion cubic feet
+    TCF = "TCF"  # Trillion cubic feet
+    SCF = "SCF"  # Standard cubic feet
 
     # Mass units
-    TONNE = "TONNE"                  # Metric tonne
-    SHORT_TON = "SHORT_TON"          # US short ton (2000 lbs)
-    LONG_TON = "LONG_TON"            # Imperial long ton (2240 lbs)
-    KILOGRAM = "KG"                  # Kilogram
-    POUND = "LB"                     # Pound
+    TONNE = "TONNE"  # Metric tonne
+    SHORT_TON = "SHORT_TON"  # US short ton (2000 lbs)
+    LONG_TON = "LONG_TON"  # Imperial long ton (2240 lbs)
+    KILOGRAM = "KG"  # Kilogram
+    POUND = "LB"  # Pound
 
 
 # Conversion factors to base units
@@ -107,7 +107,6 @@ UNIT_CONVERSIONS: Dict[EnergyUnits, Dict[EnergyUnits, float]] = {
         EnergyUnits.MWH: 0.2778,
         EnergyUnits.KWH: 277.78,
     },
-
     # Oil volume conversions
     EnergyUnits.BARREL: {
         EnergyUnits.BARREL: 1.0,
@@ -125,7 +124,7 @@ UNIT_CONVERSIONS: Dict[EnergyUnits, Dict[EnergyUnits, float]] = {
     },
     EnergyUnits.GALLON: {
         EnergyUnits.GALLON: 1.0,
-        EnergyUnits.BARREL: 1/42,
+        EnergyUnits.BARREL: 1 / 42,
         EnergyUnits.LITER: 3.785,
         EnergyUnits.CUBIC_METER: 0.003785,
     },
@@ -141,7 +140,6 @@ UNIT_CONVERSIONS: Dict[EnergyUnits, Dict[EnergyUnits, float]] = {
         EnergyUnits.GALLON: 264.172,
         EnergyUnits.LITER: 1000.0,
     },
-
     # Gas volume conversions
     EnergyUnits.MCF: {
         EnergyUnits.MCF: 1.0,
@@ -185,7 +183,6 @@ UNIT_CONVERSIONS: Dict[EnergyUnits, Dict[EnergyUnits, float]] = {
         EnergyUnits.SCF: 1e12,
         EnergyUnits.BOE: 1.77e8,
     },
-
     # BOE (Barrel of Oil Equivalent) conversions
     EnergyUnits.BOE: {
         EnergyUnits.BOE: 1.0,
@@ -195,7 +192,6 @@ UNIT_CONVERSIONS: Dict[EnergyUnits, Dict[EnergyUnits, float]] = {
         EnergyUnits.BTU: 5.8e6,
         EnergyUnits.GJ: 6.12,
     },
-
     # TOE (Tonne of Oil Equivalent) conversions
     EnergyUnits.TOE: {
         EnergyUnits.TOE: 1.0,
@@ -205,7 +201,6 @@ UNIT_CONVERSIONS: Dict[EnergyUnits, Dict[EnergyUnits, float]] = {
         EnergyUnits.BTU: 3.968e7,
         EnergyUnits.MWH: 11.63,
     },
-
     # Mass conversions
     EnergyUnits.TONNE: {
         EnergyUnits.TONNE: 1.0,
@@ -315,20 +310,20 @@ class DataConstants:
     """Common constants used in energy data processing."""
 
     # API number formats
-    API_10_PATTERN = r"^\d{10}$"        # 10-digit API (state + county + sequence)
-    API_12_PATTERN = r"^\d{12}$"        # 12-digit API (includes sidetrack)
-    API_14_PATTERN = r"^\d{14}$"        # 14-digit API (includes completion)
+    API_10_PATTERN = r"^\d{10}$"  # 10-digit API (state + county + sequence)
+    API_12_PATTERN = r"^\d{12}$"  # 12-digit API (includes sidetrack)
+    API_14_PATTERN = r"^\d{14}$"  # 14-digit API (includes completion)
 
     # Date formats commonly used in energy data
-    DATE_FORMAT_YYYYMM = "%Y%m"          # BSEE production month format
-    DATE_FORMAT_YYYYMMDD = "%Y%m%d"      # Compact date format
-    DATE_FORMAT_ISO = "%Y-%m-%d"         # ISO 8601 date format
-    DATE_FORMAT_US = "%m/%d/%Y"          # US date format
+    DATE_FORMAT_YYYYMM = "%Y%m"  # BSEE production month format
+    DATE_FORMAT_YYYYMMDD = "%Y%m%d"  # Compact date format
+    DATE_FORMAT_ISO = "%Y-%m-%d"  # ISO 8601 date format
+    DATE_FORMAT_US = "%m/%d/%Y"  # US date format
 
     # Coordinate system constants
-    NAD27_EPSG = 4267                    # NAD27 coordinate system
-    NAD83_EPSG = 4269                    # NAD83 coordinate system
-    WGS84_EPSG = 4326                    # WGS84 coordinate system
+    NAD27_EPSG = 4267  # NAD27 coordinate system
+    NAD83_EPSG = 4269  # NAD83 coordinate system
+    WGS84_EPSG = 4326  # WGS84 coordinate system
 
     # OCS area codes
     OCS_AREAS = {
@@ -345,14 +340,14 @@ class DataConstants:
     WELL_STATUS_ABANDONED = ["ABANDONED", "ABN"]
 
     # Production data thresholds
-    MAX_REASONABLE_OIL_BBL_DAY = 100000      # Max 100k bbl/day per well
-    MAX_REASONABLE_GAS_MCF_DAY = 500000      # Max 500k MCF/day per well
-    MAX_REASONABLE_WATER_BBL_DAY = 500000    # Max 500k bbl/day water per well
+    MAX_REASONABLE_OIL_BBL_DAY = 100000  # Max 100k bbl/day per well
+    MAX_REASONABLE_GAS_MCF_DAY = 500000  # Max 500k MCF/day per well
+    MAX_REASONABLE_WATER_BBL_DAY = 500000  # Max 500k bbl/day water per well
 
     # Financial constants
-    DEFAULT_DISCOUNT_RATE = 0.10             # 10% default discount rate
-    DEFAULT_ROYALTY_RATE = 0.125             # 12.5% federal royalty
-    DEFAULT_SEVERANCE_TAX = 0.05             # 5% typical severance tax
+    DEFAULT_DISCOUNT_RATE = 0.10  # 10% default discount rate
+    DEFAULT_ROYALTY_RATE = 0.125  # 12.5% federal royalty
+    DEFAULT_SEVERANCE_TAX = 0.05  # 5% typical severance tax
 
 
 # Aliases for common unit conversions

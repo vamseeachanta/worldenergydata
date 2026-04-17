@@ -347,11 +347,13 @@ class TestProcess:
 
     def test_no_line_density_when_area_zero(self):
         sp = SurveyProcessor()
-        result = sp.process({
-            "srvName": "Test",
-            "srvLineKm": "100",
-            "srvAreaKm2": "0",
-        })
+        result = sp.process(
+            {
+                "srvName": "Test",
+                "srvLineKm": "100",
+                "srvAreaKm2": "0",
+            }
+        )
         assert result["line_density_km_per_km2"] is None
 
 
@@ -406,11 +408,13 @@ class TestValidate:
 
     def test_end_before_start(self):
         sp = SurveyProcessor()
-        is_valid, errors = sp.validate({
-            "srvName": "Test",
-            "srvAcquisitionStartDate": "2024-06-01",
-            "srvAcquisitionEndDate": "2024-01-01",
-        })
+        is_valid, errors = sp.validate(
+            {
+                "srvName": "Test",
+                "srvAcquisitionStartDate": "2024-06-01",
+                "srvAcquisitionEndDate": "2024-01-01",
+            }
+        )
         assert is_valid is False
         assert any("before start" in e for e in errors)
 

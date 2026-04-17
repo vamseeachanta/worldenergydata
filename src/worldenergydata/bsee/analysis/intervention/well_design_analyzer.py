@@ -28,9 +28,13 @@ class WellDesignAnalyzer:
         bop_df: pd.DataFrame | None = None,
     ) -> None:
         self._tubulars = tubulars_df.copy() if tubulars_df is not None else None
-        self._perforations = perforations_df.copy() if perforations_df is not None else None
+        self._perforations = (
+            perforations_df.copy() if perforations_df is not None else None
+        )
         self._geology = geology_df.copy() if geology_df is not None else None
-        self._hc_intervals = hc_intervals_df.copy() if hc_intervals_df is not None else None
+        self._hc_intervals = (
+            hc_intervals_df.copy() if hc_intervals_df is not None else None
+        )
         self._bop = bop_df.copy() if bop_df is not None else None
 
     def analyze(self) -> dict:
@@ -101,8 +105,12 @@ class WellDesignAnalyzer:
             "casing_size_distribution": casing_sizes,
             "grade_distribution": grades,
             "depth_stats": {
-                "mean_setting_depth": float(valid_depths.mean()) if len(valid_depths) else 0.0,
-                "max_setting_depth": float(valid_depths.max()) if len(valid_depths) else 0.0,
+                "mean_setting_depth": (
+                    float(valid_depths.mean()) if len(valid_depths) else 0.0
+                ),
+                "max_setting_depth": (
+                    float(valid_depths.max()) if len(valid_depths) else 0.0
+                ),
             },
         }
 
@@ -155,7 +163,13 @@ class WellDesignAnalyzer:
                     "max_depth": 0.0,
                 },
                 "by_well": _empty_df(
-                    ["API_WELL_NUMBER", "perf_count", "min_top", "max_base", "interval_ft"]
+                    [
+                        "API_WELL_NUMBER",
+                        "perf_count",
+                        "min_top",
+                        "max_base",
+                        "interval_ft",
+                    ]
                 ),
             }
 
@@ -163,13 +177,10 @@ class WellDesignAnalyzer:
         top_col = "PERF_TOP_MD"
         base_col = "PERF_BASE_MD"
 
-        by_well = (
-            df.groupby("API_WELL_NUMBER", as_index=False)
-            .agg(
-                perf_count=("API_WELL_NUMBER", "size"),
-                min_top=(top_col, "min"),
-                max_base=(base_col, "max"),
-            )
+        by_well = df.groupby("API_WELL_NUMBER", as_index=False).agg(
+            perf_count=("API_WELL_NUMBER", "size"),
+            min_top=(top_col, "min"),
+            max_base=(base_col, "max"),
         )
         by_well["interval_ft"] = by_well["max_base"] - by_well["min_top"]
 
@@ -213,11 +224,7 @@ class WellDesignAnalyzer:
         hc_summary = None
         if self._hc_intervals is not None and not self._hc_intervals.empty:
             hc_df = self._hc_intervals
-            by_type = (
-                hc_df["HYDROCARBON_TYPE_CD"]
-                .value_counts()
-                .to_dict()
-            )
+            by_type = hc_df["HYDROCARBON_TYPE_CD"].value_counts().to_dict()
             hc_summary = {
                 "total_intervals": len(hc_df),
                 "by_type": by_type,

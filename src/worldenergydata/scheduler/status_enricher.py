@@ -3,6 +3,7 @@
 Called by StatusReporter to add structured staleness data
 for the monitoring dashboard (per D-14).
 """
+
 import logging
 from typing import Any, Dict
 

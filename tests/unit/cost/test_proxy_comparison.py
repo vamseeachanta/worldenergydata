@@ -8,14 +8,13 @@ from __future__ import annotations
 
 import pytest
 
-from worldenergydata.cost.data_collection.public_dataset import load_public_dataset
 from worldenergydata.cost.calibration.cost_predictor import CostPredictor
 from worldenergydata.cost.calibration.proxy_comparison import (
     ProxyComparisonResult,
     ProxyRateComparison,
     compare_calibrated_to_proxy,
 )
-
+from worldenergydata.cost.data_collection.public_dataset import load_public_dataset
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -109,7 +108,9 @@ class TestProxyRateComparison:
         results = comparator.compare(public_dataset)
         assert len(results) > 0
 
-    def test_all_results_are_proxy_comparison_result(self, fitted_predictor, public_dataset):
+    def test_all_results_are_proxy_comparison_result(
+        self, fitted_predictor, public_dataset
+    ):
         """Every entry returned is a ProxyComparisonResult instance."""
         comparator = ProxyRateComparison(predictor=fitted_predictor)
         results = comparator.compare(public_dataset)
@@ -123,7 +124,9 @@ class TestProxyRateComparison:
         for r in results:
             assert r.proxy_rate_usd_day > 0.0
 
-    def test_results_have_positive_calibrated_rates(self, fitted_predictor, public_dataset):
+    def test_results_have_positive_calibrated_rates(
+        self, fitted_predictor, public_dataset
+    ):
         """All calibrated_rate_usd_day values are positive."""
         comparator = ProxyRateComparison(predictor=fitted_predictor)
         results = comparator.compare(public_dataset)
@@ -155,9 +158,9 @@ class TestProxyRateComparison:
                 / r.proxy_rate_usd_day
                 * 100.0
             )
-            assert abs(r.bias_pct - expected) < 0.01, (
-                f"bias_pct mismatch: {r.bias_pct} vs {expected}"
-            )
+            assert (
+                abs(r.bias_pct - expected) < 0.01
+            ), f"bias_pct mismatch: {r.bias_pct} vs {expected}"
 
 
 # ---------------------------------------------------------------------------
@@ -178,15 +181,18 @@ class TestCompareFunction:
         """All results from the convenience function have required fields."""
         results = compare_calibrated_to_proxy(public_dataset)
         required_fields = {
-            "region", "water_depth_band", "activity_type",
-            "proxy_rate_usd_day", "calibrated_rate_usd_day",
-            "bias_pct", "n_data_points", "rmse_usd_mm", "confidence",
+            "region",
+            "water_depth_band",
+            "activity_type",
+            "proxy_rate_usd_day",
+            "calibrated_rate_usd_day",
+            "bias_pct",
+            "n_data_points",
+            "rmse_usd_mm",
+            "confidence",
         }
         for r in results:
-            result_fields = {
-                f for f in required_fields
-                if hasattr(r, f)
-            }
+            result_fields = {f for f in required_fields if hasattr(r, f)}
             assert result_fields == required_fields
 
     def test_function_unfitted_predictor_trains_on_data(self, public_dataset):

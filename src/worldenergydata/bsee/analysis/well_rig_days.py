@@ -2,6 +2,7 @@ import pandas as pd
 from dateutil.parser import parse
 from loguru import logger
 
+
 class WellRigDays:
     """
     Class for calculating the number of days a rig is on a well.
@@ -10,41 +11,74 @@ class WellRigDays:
     def __init__(self):
         pass
 
-    def rig_analysis(self, cfg, api12_df, api12_eWellWARRawData_mv_war_main, api12_eWellWARRawData_mv_war_main_prop):
+    def rig_analysis(
+        self,
+        cfg,
+        api12_df,
+        api12_eWellWARRawData_mv_war_main,
+        api12_eWellWARRawData_mv_war_main_prop,
+    ):
 
-        war_data = pd.merge(api12_eWellWARRawData_mv_war_main, api12_eWellWARRawData_mv_war_main_prop, how='left' ,
-                                    left_on=['SN_WAR'], right_on=['SN_WAR'])
+        war_data = pd.merge(
+            api12_eWellWARRawData_mv_war_main,
+            api12_eWellWARRawData_mv_war_main_prop,
+            how="left",
+            left_on=["SN_WAR"],
+            right_on=["SN_WAR"],
+        )
 
         spud_date = None
-        if not api12_df['WELL_SPUD_DATE'].empty and pd.notna(api12_df['WELL_SPUD_DATE'].iloc[0]):
-            spud_value = str(api12_df['WELL_SPUD_DATE'].iloc[0]).strip()
-            if spud_value and spud_value != 'nan':
+        if not api12_df["WELL_SPUD_DATE"].empty and pd.notna(
+            api12_df["WELL_SPUD_DATE"].iloc[0]
+        ):
+            spud_value = str(api12_df["WELL_SPUD_DATE"].iloc[0]).strip()
+            if spud_value and spud_value != "nan":
                 spud_date = parse(spud_value)
 
         td_date = None
-        if not api12_df['TOTAL_DEPTH_DATE'].empty and pd.notna(api12_df['TOTAL_DEPTH_DATE'].iloc[0]):
-            td_value = str(api12_df['TOTAL_DEPTH_DATE'].iloc[0]).strip()
-            if td_value and td_value != 'nan':
+        if not api12_df["TOTAL_DEPTH_DATE"].empty and pd.notna(
+            api12_df["TOTAL_DEPTH_DATE"].iloc[0]
+        ):
+            td_value = str(api12_df["TOTAL_DEPTH_DATE"].iloc[0]).strip()
+            if td_value and td_value != "nan":
                 td_date = parse(td_value)
 
-        war_data['WAR_START_DT'] = [parse(str(item)) if item is not None and pd.notna(item) and str(item).strip() != '' else None for item in war_data['WAR_START_DT']]
-        war_data['WAR_END_DT'] = [parse(str(item)) if item is not None and pd.notna(item) and str(item).strip() != '' else None for item in war_data['WAR_END_DT']]
-        war_data.sort_values(by=['WAR_START_DT'], inplace=True)
+        war_data["WAR_START_DT"] = [
+            (
+                parse(str(item))
+                if item is not None and pd.notna(item) and str(item).strip() != ""
+                else None
+            )
+            for item in war_data["WAR_START_DT"]
+        ]
+        war_data["WAR_END_DT"] = [
+            (
+                parse(str(item))
+                if item is not None and pd.notna(item) and str(item).strip() != ""
+                else None
+            )
+            for item in war_data["WAR_END_DT"]
+        ]
+        war_data.sort_values(by=["WAR_START_DT"], inplace=True)
 
         war_summary = self.get_war_days(cfg, war_data, td_date)
 
         try:
-            rig_str, api12_war_days = self.get_rig_info_and_rig_days_from_war(cfg, spud_date, td_date, war_summary)
-            rig_days_from_milestone = self.rig_days_from_milestone(cfg, spud_date, td_date, war_data)
+            rig_str, api12_war_days = self.get_rig_info_and_rig_days_from_war(
+                cfg, spud_date, td_date, war_summary
+            )
+            rig_days_from_milestone = self.rig_days_from_milestone(
+                cfg, spud_date, td_date, war_data
+            )
         except Exception as e:
             logger.error(e)
             rig_str = None
             api12_war_days = None
 
         rig_analysis_dict = {
-            'rig_str': rig_str,
-            'api12_war_days': api12_war_days,
-            'rig_days_from_milestone': rig_days_from_milestone
+            "rig_str": rig_str,
+            "api12_war_days": api12_war_days,
+            "rig_days_from_milestone": rig_days_from_milestone,
         }
 
         return rig_analysis_dict
@@ -52,14 +86,12 @@ class WellRigDays:
     def rig_days_from_milestone(self, cfg, spud_date, td_date, war_data):
 
         if not spud_date or not td_date:
-            return {
-                'drilling_days': 0,
-                'completion_days': 0,
-                'rig_days': 0
-            }
+            return {"drilling_days": 0, "completion_days": 0, "rig_days": 0}
         drilling_days = (td_date - spud_date).days + 1
 
-        war_end_date = war_data['WAR_END_DT'].max() if not war_data['WAR_END_DT'].empty else None
+        war_end_date = (
+            war_data["WAR_END_DT"].max() if not war_data["WAR_END_DT"].empty else None
+        )
         if war_end_date is not None and td_date is not None:
             completion_days = (war_end_date - td_date).days + 1
         # WAR_data_COM_start_date = war_data[war_data['WELL_ACTIVITY_CD']=='COM']['WAR_END_DT'].min()
@@ -70,13 +102,13 @@ class WellRigDays:
             completion_days = 0
 
         rig_days_by_milestone = {
-            'drilling_days': drilling_days,
-            'completion_days': completion_days,
-            'rig_days': drilling_days + completion_days
+            "drilling_days": drilling_days,
+            "completion_days": completion_days,
+            "rig_days": drilling_days + completion_days,
         }
         return rig_days_by_milestone
 
-    def get_rig_info_and_rig_days_from_war(self, cfg,spud_date, td_date, war_summary):
+    def get_rig_info_and_rig_days_from_war(self, cfg, spud_date, td_date, war_summary):
         try:
             rigs = list(war_summary.RIG_NAME.unique())
 
@@ -90,24 +122,33 @@ class WellRigDays:
                 rigdays_list.append(rig_days)
                 total_rigdays = total_rigdays + rig_days
                 if rig_days > 0:
-                    rigdays_dict.append({'rig': rig, 'days': int(rig_days)})
+                    rigdays_dict.append({"rig": rig, "days": int(rig_days)})
                     if rig is not None:
                         rigdays_str_array.append(rig + " (" + str(rig_days) + ")")
                     else:
-                        rigdays_str_array.append('unknown rig' + " (" + str(rig_days) + ")")
+                        rigdays_str_array.append(
+                            "unknown rig" + " (" + str(rig_days) + ")"
+                        )
 
             # rigdays_str = ', '.join(rigdays_str_array)
-            rigs_for_string = [str(rig) if rig is not None and not pd.isna(rig) else 'unknown rig' for rig in rigs]
-            rig_str = ', '.join(rigs_for_string)
+            rigs_for_string = [
+                str(rig) if rig is not None and not pd.isna(rig) else "unknown rig"
+                for rig in rigs
+            ]
+            rig_str = ", ".join(rigs_for_string)
 
-            api12_war_days_df = war_summary.groupby(['WELL_ACTIVITY_CD'])['rig_days'].sum().reset_index()
-            api12_war_days_df_records = api12_war_days_df.to_dict('records')
+            api12_war_days_df = (
+                war_summary.groupby(["WELL_ACTIVITY_CD"])["rig_days"]
+                .sum()
+                .reset_index()
+            )
+            api12_war_days_df_records = api12_war_days_df.to_dict("records")
 
             api12_war_days_dict = {}
             for item in api12_war_days_df_records:
-                api12_war_days_dict.update({item['WELL_ACTIVITY_CD']: item['rig_days']})
-            rig_days = sum([item['rig_days'] for item in api12_war_days_df_records])
-            api12_war_days_dict.update({'total_rig_days': rig_days})
+                api12_war_days_dict.update({item["WELL_ACTIVITY_CD"]: item["rig_days"]})
+            rig_days = sum([item["rig_days"] for item in api12_war_days_df_records])
+            api12_war_days_dict.update({"total_rig_days": rig_days})
 
         except Exception as e:
             logger.error(e)
@@ -118,27 +159,30 @@ class WellRigDays:
 
     def get_war_days(self, cfg, war_data, td_date):
 
-        max_allowed_npt = cfg['parameters']['max_allowed_npt']
-        columns = ['rig_days', 'war_gap_days', 'npt', 'war_drilling_days_flag']
+        max_allowed_npt = cfg["parameters"]["max_allowed_npt"]
+        columns = ["rig_days", "war_gap_days", "npt", "war_drilling_days_flag"]
         war_summary = pd.DataFrame(columns=columns, index=range(0, len(war_data)))
-        war_summary['RIG_NAME'] = war_data['RIG_NAME']
-        war_summary['WELL_ACTIVITY_CD'] = war_data['WELL_ACTIVITY_CD']
+        war_summary["RIG_NAME"] = war_data["RIG_NAME"]
+        war_summary["WELL_ACTIVITY_CD"] = war_data["WELL_ACTIVITY_CD"]
 
         for df_row in range(0, len(war_data)):
             war_drilling_days_flag = False
             rig_days = 0
             war_gap_days = 0
             npt = 0
-            
-            war_days = (war_data['WAR_END_DT'].iloc[df_row] - war_data['WAR_START_DT'].iloc[df_row]).days
+
+            war_days = (
+                war_data["WAR_END_DT"].iloc[df_row]
+                - war_data["WAR_START_DT"].iloc[df_row]
+            ).days
 
             rig_days = war_days + 1 if war_days > 0 else war_days
 
             if df_row > 0:
-                gap_start_date = war_data['WAR_START_DT'].iloc[df_row]
-                gap_end_date = war_data['WAR_END_DT'].iloc[df_row - 1]
+                gap_start_date = war_data["WAR_START_DT"].iloc[df_row]
+                gap_end_date = war_data["WAR_END_DT"].iloc[df_row - 1]
                 war_gap_days = (gap_start_date - gap_end_date).days - 1
-                if (war_gap_days > max_allowed_npt):
+                if war_gap_days > max_allowed_npt:
                     war_gap_days = 0
                 elif td_date is not None and td_date > gap_start_date:
                     war_drilling_days_flag = True
@@ -151,11 +195,10 @@ class WellRigDays:
                     npt = (gap_start_date - gap_end_date).days - 1
 
                     if (gap_start_date > td_date) and (npt <= max_allowed_npt):
-                        if (npt <= 0):
+                        if npt <= 0:
                             npt = 0
 
             values = [rig_days, war_gap_days, npt, war_drilling_days_flag]
             war_summary.loc[df_row, columns] = values
 
         return war_summary
-

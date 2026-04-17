@@ -16,11 +16,10 @@ from worldenergydata.bsee.pipeline.adapters.common_schema import (
     SourceMetadata,
 )
 from worldenergydata.bsee.pipeline.adapters.sodir_adapter import (
-    SodirAdapter,
     _BCF_TO_M3,
     _MMBBL_TO_M3,
+    SodirAdapter,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixture data
@@ -137,6 +136,7 @@ _RAW_WELLBORE_OTHER_FIELD = {
 # Stub API client
 # ---------------------------------------------------------------------------
 
+
 class StubSodirAPIClient:
     """Returns fixture data without network calls."""
 
@@ -145,15 +145,23 @@ class StubSodirAPIClient:
         fields: list[dict] | None = None,
         wellbores: list[dict] | None = None,
     ):
-        self.fields = fields if fields is not None else [
-            _RAW_FIELD_TROLL,
-            _RAW_FIELD_EKOFISK,
-        ]
-        self.wellbores = wellbores if wellbores is not None else [
-            _RAW_WELLBORE_1,
-            _RAW_WELLBORE_2,
-            _RAW_WELLBORE_OTHER_FIELD,
-        ]
+        self.fields = (
+            fields
+            if fields is not None
+            else [
+                _RAW_FIELD_TROLL,
+                _RAW_FIELD_EKOFISK,
+            ]
+        )
+        self.wellbores = (
+            wellbores
+            if wellbores is not None
+            else [
+                _RAW_WELLBORE_1,
+                _RAW_WELLBORE_2,
+                _RAW_WELLBORE_OTHER_FIELD,
+            ]
+        )
 
     def get_fields(self, **kwargs) -> list[dict]:
         return self.fields
@@ -196,6 +204,7 @@ class WellboreOnlyFailClient:
 # Fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
 def adapter() -> SodirAdapter:
     """Adapter wired to the stub client with default fixture data."""
@@ -210,6 +219,7 @@ def failing_adapter() -> SodirAdapter:
 # ---------------------------------------------------------------------------
 # Tests — adapt() with known field
 # ---------------------------------------------------------------------------
+
 
 class TestAdaptKnownField:
     def test_returns_adapter_result(self, adapter: SodirAdapter):
@@ -252,6 +262,7 @@ class TestAdaptKnownField:
 # Tests — unknown field
 # ---------------------------------------------------------------------------
 
+
 class TestAdaptUnknownField:
     def test_unknown_field_returns_result(self, adapter: SodirAdapter):
         result = adapter.adapt("NONEXISTENT_FIELD")
@@ -273,6 +284,7 @@ class TestAdaptUnknownField:
 # ---------------------------------------------------------------------------
 # Tests — unavailable domains
 # ---------------------------------------------------------------------------
+
 
 class TestUnavailableDomains:
     def test_casing_empty(self, adapter: SodirAdapter):
@@ -306,6 +318,7 @@ class TestUnavailableDomains:
 # Tests — wellbore summary DataFrame
 # ---------------------------------------------------------------------------
 
+
 class TestWellboreSummary:
     def test_summary_has_columns(self, adapter: SodirAdapter):
         result = adapter.adapt("TROLL")
@@ -337,6 +350,7 @@ class TestWellboreSummary:
 # ---------------------------------------------------------------------------
 # Tests — drilling activities DataFrame
 # ---------------------------------------------------------------------------
+
 
 class TestDrillingActivities:
     def test_has_expected_columns(self, adapter: SodirAdapter):
@@ -371,6 +385,7 @@ class TestDrillingActivities:
 # ---------------------------------------------------------------------------
 # Tests — production DataFrame and unit conversions
 # ---------------------------------------------------------------------------
+
 
 class TestProduction:
     def test_production_has_rows(self, adapter: SodirAdapter):
@@ -430,6 +445,7 @@ class TestProduction:
 # Tests — get_metadata()
 # ---------------------------------------------------------------------------
 
+
 class TestGetMetadata:
     def test_returns_source_metadata(self, adapter: SodirAdapter):
         meta = adapter.get_metadata()
@@ -448,6 +464,7 @@ class TestGetMetadata:
 # ---------------------------------------------------------------------------
 # Tests — get_availability()
 # ---------------------------------------------------------------------------
+
 
 class TestGetAvailability:
     def test_returns_data_availability(self, adapter: SodirAdapter):
@@ -479,6 +496,7 @@ class TestGetAvailability:
 # ---------------------------------------------------------------------------
 # Tests — error resilience
 # ---------------------------------------------------------------------------
+
 
 class TestErrorResilience:
     def test_api_failure_no_crash(self, failing_adapter: SodirAdapter):
@@ -517,6 +535,7 @@ class TestErrorResilience:
 # Tests — available_domains (inherited from AdapterInterface)
 # ---------------------------------------------------------------------------
 
+
 class TestAvailableDomains:
     def test_available_domains_list(self, adapter: SodirAdapter):
         domains = adapter.available_domains()
@@ -536,6 +555,7 @@ class TestAvailableDomains:
 # Tests — leases tuple (SODIR doesn't use leases)
 # ---------------------------------------------------------------------------
 
+
 class TestLeases:
     def test_leases_empty_tuple(self, adapter: SodirAdapter):
         result = adapter.adapt("TROLL")
@@ -545,6 +565,7 @@ class TestLeases:
 # ---------------------------------------------------------------------------
 # Tests — whitespace handling in query
 # ---------------------------------------------------------------------------
+
 
 class TestQueryNormalisation:
     def test_leading_trailing_spaces(self, adapter: SodirAdapter):

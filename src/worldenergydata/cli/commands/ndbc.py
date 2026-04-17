@@ -93,6 +93,10 @@ def ndbc_main(
     if ctx.invoked_subcommand is not None:
         return
 
+    import json
+
+    import numpy as np
+
     from worldenergydata.metocean.ndbc import (
         build_scatter_matrix,
         fit_weibull_hs,
@@ -100,15 +104,12 @@ def ndbc_main(
         parse_stdmet_line,
         wave_rose,
     )
-    import json
-    import numpy as np
 
     try:
         year_start, year_end = _parse_years(years)
     except (ValueError, IndexError):
         console.print(
-            f"[red]Invalid --years value '{years}'. "
-            "Use 'YYYY-YYYY' or 'YYYY'.[/red]"
+            f"[red]Invalid --years value '{years}'. " "Use 'YYYY-YYYY' or 'YYYY'.[/red]"
         )
         raise typer.Exit(1)
 
@@ -135,8 +136,9 @@ def ndbc_main(
         all_records = parse_stdmet_file(sample_file)
     else:
         try:
-            from worldenergydata.metocean.ndbc import NDBCClient
             from datetime import datetime
+
+            from worldenergydata.metocean.ndbc import NDBCClient
 
             client = NDBCClient()
             with console.status(
@@ -187,8 +189,12 @@ def ndbc_main(
 
     import pandas as pd
 
-    hs_labels = [f"{hs_bins[i]:.1f}-{hs_bins[i+1]:.1f}" for i in range(len(hs_bins) - 1)]
-    tp_labels = [f"{tp_bins[j]:.1f}-{tp_bins[j+1]:.1f}" for j in range(len(tp_bins) - 1)]
+    hs_labels = [
+        f"{hs_bins[i]:.1f}-{hs_bins[i+1]:.1f}" for i in range(len(hs_bins) - 1)
+    ]
+    tp_labels = [
+        f"{tp_bins[j]:.1f}-{tp_bins[j+1]:.1f}" for j in range(len(tp_bins) - 1)
+    ]
     scatter_df = pd.DataFrame(matrix, index=hs_labels, columns=tp_labels)
     scatter_pct_df = pd.DataFrame(
         matrix_pct * 100.0, index=hs_labels, columns=tp_labels
@@ -248,9 +254,7 @@ def ndbc_main(
         )
     if hs_values:
         summary_table.add_row("Mean Hs (m)", f"{np.mean(hs_values):.2f}")
-        summary_table.add_row(
-            "Max Hs (m)", f"{np.max(hs_values):.2f}"
-        )
+        summary_table.add_row("Max Hs (m)", f"{np.max(hs_values):.2f}")
 
     console.print(summary_table)
 

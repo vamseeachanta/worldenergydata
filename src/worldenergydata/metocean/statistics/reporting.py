@@ -8,16 +8,19 @@ at render time (all assets inlined via plotly.io.to_html with full_html=True).
 
 from __future__ import annotations
 
+import datetime
 from dataclasses import dataclass, field
 from typing import Optional
-import datetime
 
 import plotly.graph_objects as go
 import plotly.io as pio
 
+from worldenergydata.metocean.statistics.environmental_contours import (
+    ContourResult,
+    EnvironmentalContour,
+)
 from worldenergydata.metocean.statistics.eva import EVAResult, ExtremeValueAnalysis
 from worldenergydata.metocean.statistics.joint_probability import JointModel
-from worldenergydata.metocean.statistics.environmental_contours import ContourResult, EnvironmentalContour
 from worldenergydata.metocean.statistics.weather_windows import OperabilityResult
 
 
@@ -55,8 +58,8 @@ class MetoceanReport:
         self.lat = lat
         self.lon = lon
         self._sections: list[_ReportSection] = []
-        self._generated_at = (
-            datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds")
+        self._generated_at = datetime.datetime.now(datetime.timezone.utc).isoformat(
+            timespec="seconds"
         )
 
     # ------------------------------------------------------------------
@@ -114,8 +117,11 @@ class MetoceanReport:
             {
                 "n_samples": model.n_samples,
                 "marginal_hs_distribution": model.marginal_hs.get("distribution", ""),
-                **{f"marginal_hs_{k}": v for k, v in model.marginal_hs.items()
-                   if k != "distribution"},
+                **{
+                    f"marginal_hs_{k}": v
+                    for k, v in model.marginal_hs.items()
+                    if k != "distribution"
+                },
                 "conditional_tp_model": model.conditional_tp.get("model", ""),
                 "mu_tp": model.conditional_tp.get("mu", ""),
                 "sigma_tp": model.conditional_tp.get("sigma", ""),

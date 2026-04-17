@@ -29,7 +29,10 @@ class TestBaseVesselSchema:
 
     def test_empty_str_to_none(self):
         s = BaseVesselSchema(
-            VESSEL_NAME="T", OWNER="  ", OPERATOR="", FLAG_STATE=" ",
+            VESSEL_NAME="T",
+            OWNER="  ",
+            OPERATOR="",
+            FLAG_STATE=" ",
         )
         assert s.OWNER is None
         assert s.OPERATOR is None
@@ -37,7 +40,9 @@ class TestBaseVesselSchema:
 
     def test_float_coercion(self):
         s = BaseVesselSchema(
-            VESSEL_NAME="T", LOA_M="201.5", BEAM_M=" 36.0 ",
+            VESSEL_NAME="T",
+            LOA_M="201.5",
+            BEAM_M=" 36.0 ",
         )
         assert s.LOA_M == 201.5
         assert s.BEAM_M == 36.0
@@ -84,7 +89,9 @@ class TestBaseVesselSchema:
         assert s.IMO_NUMBER == "1234567"
 
     def test_imo_too_short(self):
-        with pytest.raises(ValidationError, match="IMO_NUMBER must be exactly 7 digits"):
+        with pytest.raises(
+            ValidationError, match="IMO_NUMBER must be exactly 7 digits"
+        ):
             BaseVesselSchema(VESSEL_NAME="T", IMO_NUMBER="12345")
 
     def test_imo_non_digit(self):
@@ -109,7 +116,8 @@ class TestConstructionVesselSchema:
 
     def test_float_coercion(self):
         s = ConstructionVesselSchema(
-            VESSEL_NAME="T", MAIN_CRANE_CAPACITY_T="5000",
+            VESSEL_NAME="T",
+            MAIN_CRANE_CAPACITY_T="5000",
             DECK_AREA_M2=" 4500.5 ",
         )
         assert s.MAIN_CRANE_CAPACITY_T == 5000.0
@@ -117,19 +125,23 @@ class TestConstructionVesselSchema:
 
     def test_float_empty_to_none(self):
         s = ConstructionVesselSchema(
-            VESSEL_NAME="T", MAIN_CRANE_CAPACITY_T="",
+            VESSEL_NAME="T",
+            MAIN_CRANE_CAPACITY_T="",
         )
         assert s.MAIN_CRANE_CAPACITY_T is None
 
     def test_negative_crane_raises(self):
         with pytest.raises(ValidationError, match="Value must be >= 0"):
             ConstructionVesselSchema(
-                VESSEL_NAME="T", MAIN_CRANE_CAPACITY_T=-100.0,
+                VESSEL_NAME="T",
+                MAIN_CRANE_CAPACITY_T=-100.0,
             )
 
     def test_empty_method_to_none(self):
         s = ConstructionVesselSchema(
-            VESSEL_NAME="T", PIPELAY_METHOD="  ", FOUNDATION_TYPE="",
+            VESSEL_NAME="T",
+            PIPELAY_METHOD="  ",
+            FOUNDATION_TYPE="",
         )
         assert s.PIPELAY_METHOD is None
         assert s.FOUNDATION_TYPE is None
@@ -165,7 +177,9 @@ class TestDrillingRigSchema:
 
     def test_empty_rig_strings_to_none(self):
         s = DrillingRigSchema(
-            VESSEL_NAME="T", RIG_TYPE="  ", RIG_STATUS="",
+            VESSEL_NAME="T",
+            RIG_TYPE="  ",
+            RIG_STATUS="",
             BOP_MANUFACTURER=" ",
         )
         assert s.RIG_TYPE is None
@@ -184,13 +198,15 @@ class TestDrillingRigSchema:
     def test_negative_float_raises(self):
         with pytest.raises(ValidationError, match="Value must be >= 0"):
             DrillingRigSchema(
-                VESSEL_NAME="T", WATER_DEPTH_RATING_FT=-100.0,
+                VESSEL_NAME="T",
+                WATER_DEPTH_RATING_FT=-100.0,
             )
 
     def test_int_coercion(self):
         s = DrillingRigSchema(
             VESSEL_NAME="T",
-            MUD_PUMP_COUNT="4", WELLS_DRILLED_COUNT="250",
+            MUD_PUMP_COUNT="4",
+            WELLS_DRILLED_COUNT="250",
         )
         assert s.MUD_PUMP_COUNT == 4
         assert s.WELLS_DRILLED_COUNT == 250

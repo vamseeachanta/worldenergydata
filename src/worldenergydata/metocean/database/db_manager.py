@@ -23,10 +23,11 @@ from sqlalchemy.pool import QueuePool
 
 from worldenergydata.metocean.config import get_config
 from worldenergydata.metocean.database.models import Base
+from worldenergydata.metocean.exceptions import ConnectionError as DBConnectionError
 from worldenergydata.metocean.exceptions import (
-    ConnectionError as DBConnectionError,
+    DatabaseError,
+    QueryError,
 )
-from worldenergydata.metocean.exceptions import DatabaseError, QueryError
 
 T = TypeVar("T", bound=Base)
 

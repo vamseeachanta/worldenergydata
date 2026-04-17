@@ -12,17 +12,18 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from worldenergydata.bsee.reports.comprehensive.visualizations.dashboard_builder import (
+    ChartConfig,
+    DashboardBuilder,
+    DashboardConfig,
+)
+
 # Import the modules we're testing
 from worldenergydata.modules.analysis.dashboard.well_production import (
     FieldAggregator,
     WellDashboardConfig,
     WellMetrics,
     WellProductionDashboard,
-)
-from worldenergydata.bsee.reports.comprehensive.visualizations.dashboard_builder import (
-    ChartConfig,
-    DashboardBuilder,
-    DashboardConfig,
 )
 
 

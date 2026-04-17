@@ -3,8 +3,13 @@
 from worldenergydata.common.exceptions import ModuleError
 from worldenergydata.marine_safety.exceptions import (
     ConfigurationError,
-    DataTransformationError,
+)
+from worldenergydata.marine_safety.exceptions import (
+    ConnectionError as MSConnectionError,
+)
+from worldenergydata.marine_safety.exceptions import (
     DatabaseError,
+    DataTransformationError,
     DuplicateRecordError,
     EnrichmentError,
     FileAccessError,
@@ -26,9 +31,6 @@ from worldenergydata.marine_safety.exceptions import (
     StorageError,
     TimeoutError,
     ValidationError,
-)
-from worldenergydata.marine_safety.exceptions import (
-    ConnectionError as MSConnectionError,
 )
 
 
@@ -126,9 +128,7 @@ class TestValidationErrors:
         assert err.context["reason"] == "out of range"
 
     def test_invalid_data_custom_message(self):
-        err = InvalidDataError(
-            field="f", value="v", reason="r", message="Custom"
-        )
+        err = InvalidDataError(field="f", value="v", reason="r", message="Custom")
         assert "Custom" in str(err)
 
     def test_missing_required_field_default(self):
@@ -156,9 +156,7 @@ class TestScraperErrors:
         assert err.context["status_code"] == 404
 
     def test_http_error_custom(self):
-        err = HTTPError(
-            url="https://x.com", status_code=500, message="Server error"
-        )
+        err = HTTPError(url="https://x.com", status_code=500, message="Server error")
         assert "Server error" in str(err)
 
     def test_parsing_error_default(self):

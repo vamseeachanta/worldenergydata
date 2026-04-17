@@ -15,7 +15,6 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
-
 # ---------------------------------------------------------------------------
 # Enumerations
 # ---------------------------------------------------------------------------
@@ -24,18 +23,18 @@ from typing import Any
 class WaterDepthBand(str, Enum):
     """Water depth classification (metres)."""
 
-    SHALLOW = "shallow"      # <=300 m (~1 000 ft)
-    MID = "mid"              # 301–1 524 m (~1 000–5 000 ft)
-    DEEP = "deep"            # 1 525–3 048 m (~5 000–10 000 ft)
+    SHALLOW = "shallow"  # <=300 m (~1 000 ft)
+    MID = "mid"  # 301–1 524 m (~1 000–5 000 ft)
+    DEEP = "deep"  # 1 525–3 048 m (~5 000–10 000 ft)
     ULTRA_DEEP = "ultra_deep"  # >3 048 m (>10 000 ft)
 
 
 class WellDepthBand(str, Enum):
     """Total well depth classification (TVD metres)."""
 
-    SHALLOW = "shallow"      # <=3 048 m (~10 000 ft)
-    MEDIUM = "medium"        # 3 049–6 096 m (~10 000–20 000 ft)
-    DEEP = "deep"            # 6 097–7 620 m (~20 000–25 000 ft)
+    SHALLOW = "shallow"  # <=3 048 m (~10 000 ft)
+    MEDIUM = "medium"  # 3 049–6 096 m (~10 000–20 000 ft)
+    DEEP = "deep"  # 6 097–7 620 m (~20 000–25 000 ft)
     ULTRA_DEEP = "ultra_deep"  # >7 620 m (>25 000 ft)
 
 
@@ -68,9 +67,9 @@ class CostType(str, Enum):
 class ConfidenceLevel(str, Enum):
     """Data quality / estimation confidence."""
 
-    HIGH = "high"      # Calibrated model, >=5 data points per cell
+    HIGH = "high"  # Calibrated model, >=5 data points per cell
     MEDIUM = "medium"  # Proxy estimate or sparse calibration (1–4 points)
-    LOW = "low"        # Extrapolated or benchmark-only
+    LOW = "low"  # Extrapolated or benchmark-only
 
 
 # ---------------------------------------------------------------------------
@@ -144,9 +143,7 @@ class CostRecord:
 
     def __post_init__(self) -> None:
         if self.cost_usd_mm <= 0.0:
-            raise ValueError(
-                f"cost_usd_mm must be positive, got {self.cost_usd_mm}"
-            )
+            raise ValueError(f"cost_usd_mm must be positive, got {self.cost_usd_mm}")
         self.water_depth_band = classify_water_depth_band(self.water_depth_m)
         self.well_depth_band = classify_well_depth_band(self.well_depth_m)
 

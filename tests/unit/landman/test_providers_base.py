@@ -10,10 +10,10 @@ from worldenergydata.landman.providers.base import (
     MemoryCache,
 )
 
-
 # ---------------------------------------------------------------------------
 # CacheEntry
 # ---------------------------------------------------------------------------
+
 
 class TestCacheEntry:
     def test_init(self):
@@ -25,6 +25,7 @@ class TestCacheEntry:
         entry = CacheEntry("data", ttl_seconds=1)
         # Manually set expires_at to the past
         from datetime import datetime, timedelta
+
         entry.expires_at = datetime.utcnow() - timedelta(seconds=1)
         assert entry.is_expired()
 
@@ -32,6 +33,7 @@ class TestCacheEntry:
 # ---------------------------------------------------------------------------
 # MemoryCache
 # ---------------------------------------------------------------------------
+
 
 class TestMemoryCache:
     def test_get_miss(self):
@@ -52,6 +54,7 @@ class TestMemoryCache:
         # Manually expire by patching the entry
         hashed = cache._make_key("key1")
         from datetime import datetime, timedelta
+
         cache._cache[hashed].expires_at = datetime.utcnow() - timedelta(seconds=1)
         assert cache.get("key1") is None
 
@@ -110,6 +113,7 @@ class TestMemoryCache:
 # ---------------------------------------------------------------------------
 # BaseProvider (abstract, test via concrete subclass)
 # ---------------------------------------------------------------------------
+
 
 class ConcreteProvider(BaseProvider):
     PROVIDER_NAME = "test_provider"

@@ -12,7 +12,7 @@ from typing import Any, Dict, List
 
 import pandas as pd
 
-from .basin_production import BasinProductionLoader, DPR_BASINS
+from .basin_production import DPR_BASINS, BasinProductionLoader
 
 logger = logging.getLogger(__name__)
 
@@ -23,9 +23,7 @@ class DrillingProductivityReport:
     def __init__(self) -> None:
         self._loader = BasinProductionLoader()
 
-    def load_all_basins(
-        self, records: List[Dict[str, Any]]
-    ) -> pd.DataFrame:
+    def load_all_basins(self, records: List[Dict[str, Any]]) -> pd.DataFrame:
         """Load DPR records for all basins into a single DataFrame.
 
         Args:
@@ -65,7 +63,5 @@ class DrillingProductivityReport:
             return pd.DataFrame(columns=["basin", "period", "net_change_bopd"])
 
         result = df[["basin", "period"]].copy()
-        result["net_change_bopd"] = (
-            df["new_well_ip_bopd"] + df["legacy_decline_bopd"]
-        )
+        result["net_change_bopd"] = df["new_well_ip_bopd"] + df["legacy_decline_bopd"]
         return result.reset_index(drop=True)

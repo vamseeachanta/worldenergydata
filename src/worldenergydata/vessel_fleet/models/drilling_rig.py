@@ -22,15 +22,17 @@ _RIG_TYPE_DISPLAY_MAP: dict[str, str] = {
     "land_rig": "Land Rig",
 }
 
-_OFFSHORE_RIG_TYPES: frozenset[str] = frozenset({
-    "drillship",
-    "semi_submersible",
-    "jack_up",
-    "platform_rig",
-    "tender_assisted",
-    "inland_barge",
-    "submersible",
-})
+_OFFSHORE_RIG_TYPES: frozenset[str] = frozenset(
+    {
+        "drillship",
+        "semi_submersible",
+        "jack_up",
+        "platform_rig",
+        "tender_assisted",
+        "inland_barge",
+        "submersible",
+    }
+)
 
 
 @dataclass

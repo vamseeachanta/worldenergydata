@@ -83,9 +83,11 @@ class WARActivityAggregator:
         mask = df["RIG_TYPE"].isna()
         if mask.any():
             df.loc[mask, "RIG_TYPE"] = df.loc[mask, "RIG_NAME"].apply(
-                lambda name: classify_rig_type(str(name)).value
-                if pd.notna(name)
-                else RigType.UNKNOWN.value
+                lambda name: (
+                    classify_rig_type(str(name)).value
+                    if pd.notna(name)
+                    else RigType.UNKNOWN.value
+                )
             )
 
         # Activity category.
@@ -114,9 +116,7 @@ class WARActivityAggregator:
         """Group WAR data by ``[YEAR, RIG_TYPE]``."""
         enriched = self._join_rig_types()
         if enriched.empty:
-            return pd.DataFrame(
-                columns=["YEAR", "RIG_TYPE", *_AGG_SPEC.keys()]
-            )
+            return pd.DataFrame(columns=["YEAR", "RIG_TYPE", *_AGG_SPEC.keys()])
         result = (
             enriched.groupby(["YEAR", "RIG_TYPE"], dropna=False)
             .agg(**_AGG_SPEC)

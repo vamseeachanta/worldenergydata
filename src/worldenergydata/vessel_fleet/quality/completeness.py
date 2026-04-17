@@ -9,15 +9,29 @@ logger = logging.getLogger(__name__)
 
 # Core fields that should be populated for a complete record
 _DRILLING_RIG_CORE_FIELDS: tuple[str, ...] = (
-    "VESSEL_NAME", "RIG_TYPE", "OWNER", "WATER_DEPTH_RATING_FT",
-    "DRILLING_DEPTH_RATING_FT", "YEAR_BUILT", "DP_CLASS",
-    "LOA_M", "BEAM_M", "IMO_NUMBER",
+    "VESSEL_NAME",
+    "RIG_TYPE",
+    "OWNER",
+    "WATER_DEPTH_RATING_FT",
+    "DRILLING_DEPTH_RATING_FT",
+    "YEAR_BUILT",
+    "DP_CLASS",
+    "LOA_M",
+    "BEAM_M",
+    "IMO_NUMBER",
 )
 
 _CONSTRUCTION_VESSEL_CORE_FIELDS: tuple[str, ...] = (
-    "VESSEL_NAME", "VESSEL_TYPE", "OWNER", "YEAR_BUILT",
-    "LOA_M", "BEAM_M", "DP_CLASS", "IMO_NUMBER",
-    "MAIN_CRANE_CAPACITY_T", "QUARTERS_CAPACITY",
+    "VESSEL_NAME",
+    "VESSEL_TYPE",
+    "OWNER",
+    "YEAR_BUILT",
+    "LOA_M",
+    "BEAM_M",
+    "DP_CLASS",
+    "IMO_NUMBER",
+    "MAIN_CRANE_CAPACITY_T",
+    "QUARTERS_CAPACITY",
 )
 
 
@@ -31,10 +45,7 @@ def completeness_score(
     """
     if not core_fields:
         return 0.0
-    filled = sum(
-        1 for f in core_fields
-        if record.get(f) is not None
-    )
+    filled = sum(1 for f in core_fields if record.get(f) is not None)
     return filled / len(core_fields)
 
 
@@ -73,9 +84,7 @@ def fleet_completeness_report(
         "avg_completeness": round(avg, 4),
         "min_completeness": round(min(scores), 4) if scores else 0.0,
         "max_completeness": round(max(scores), 4) if scores else 0.0,
-        "field_coverage": {
-            k: round(v, 4) for k, v in field_coverage.items()
-        },
+        "field_coverage": {k: round(v, 4) for k, v in field_coverage.items()},
     }
 
     logger.info(

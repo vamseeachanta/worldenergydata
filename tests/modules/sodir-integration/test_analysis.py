@@ -413,7 +413,9 @@ class TestNorwayNPVCalculations:
 
         assert isinstance(result, CashFlowResult)
         assert result.npv is not None
-        assert result.irr is None or isinstance(result.irr, float)  # IRR may be None if no sign change in cashflows
+        assert result.irr is None or isinstance(
+            result.irr, float
+        )  # IRR may be None if no sign change in cashflows
         assert result.payback_period is not None
         assert len(result.cash_flows) == len(production_profile)
 

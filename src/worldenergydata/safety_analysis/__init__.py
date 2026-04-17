@@ -44,6 +44,15 @@ from worldenergydata.safety_analysis.adapters import (
     CSVAdapter,
     HSEAdapter,
 )
+
+# Calibrator
+from worldenergydata.safety_analysis.calibrator import (
+    HSE_TO_ENIGMA_MAP,
+    MIN_INCIDENTS_FOR_CALIBRATION,
+    CalibrationRecord,
+    CalibrationReport,
+    EnigmaCalibrator,
+)
 from worldenergydata.safety_analysis.config import AnalysisConfig
 from worldenergydata.safety_analysis.constants import (
     ClassifierType,
@@ -112,15 +121,6 @@ from worldenergydata.safety_analysis.risk_index import (
     normalize_to_scale,
     percentile_rank,
     risk_index_app,
-)
-
-# Calibrator
-from worldenergydata.safety_analysis.calibrator import (
-    CalibrationRecord,
-    CalibrationReport,
-    EnigmaCalibrator,
-    HSE_TO_ENIGMA_MAP,
-    MIN_INCIDENTS_FOR_CALIBRATION,
 )
 
 # Skill

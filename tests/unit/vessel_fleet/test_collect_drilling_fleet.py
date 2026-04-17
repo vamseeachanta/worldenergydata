@@ -5,25 +5,24 @@ Verifies the fallback chain: web scrape → scrape JSON → KNOWN_VESSELS.
 
 from __future__ import annotations
 
+# Import will be from the module-level function, not the script
+# The testable logic is extracted into collect_operator_fleet()
+import importlib
 import json
+import sys
 from pathlib import Path
 from typing import Any
 from unittest.mock import patch
 
 import pytest
 
-# Import will be from the module-level function, not the script
-# The testable logic is extracted into collect_operator_fleet()
-import importlib
-import sys
-
 _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(_PROJECT_ROOT / "scripts" / "vessel_fleet"))
 
 # Re-import after path setup
 from collect_drilling_fleet import (
-    _load_known_vessels,
     _collect_from_scrape_json,
+    _load_known_vessels,
     collect_operator_fleet,
 )
 
@@ -111,20 +110,14 @@ class TestCollectFromScrapeJson:
     """Scrape JSON parsing as intermediate source."""
 
     def test_noble_real_json(self):
-        scrape_dir = (
-            _PROJECT_ROOT
-            / "data/modules/vessel_fleet/raw/contractor_scrape"
-        )
+        scrape_dir = _PROJECT_ROOT / "data/modules/vessel_fleet/raw/contractor_scrape"
         if not (scrape_dir / "noble.json").exists():
             pytest.skip("Noble scrape JSON not found")
         records = _collect_from_scrape_json("noble", scrape_dir)
         assert len(records) == 31
 
     def test_seadrill_real_json(self):
-        scrape_dir = (
-            _PROJECT_ROOT
-            / "data/modules/vessel_fleet/raw/contractor_scrape"
-        )
+        scrape_dir = _PROJECT_ROOT / "data/modules/vessel_fleet/raw/contractor_scrape"
         if not (scrape_dir / "seadrill.json").exists():
             pytest.skip("Seadrill scrape JSON not found")
         records = _collect_from_scrape_json("seadrill", scrape_dir)
@@ -174,10 +167,7 @@ class TestCollectOperatorFleet:
         (insertion order: scrape_json before known_vessels). Verify by
         checking a field that only the scrape parser produces.
         """
-        scrape_dir = (
-            _PROJECT_ROOT
-            / "data/modules/vessel_fleet/raw/contractor_scrape"
-        )
+        scrape_dir = _PROJECT_ROOT / "data/modules/vessel_fleet/raw/contractor_scrape"
         if not (scrape_dir / "noble.json").exists():
             pytest.skip("Noble scrape JSON not found")
 
@@ -220,9 +210,7 @@ class TestCollectOperatorFleet:
 
     def test_web_scrape_disabled_by_default(self, sample_config_module):
         """Web scraping should not be attempted when try_web=False."""
-        with patch(
-            "collect_drilling_fleet.FleetPageCollector"
-        ) as mock_collector:
+        with patch("collect_drilling_fleet.FleetPageCollector") as mock_collector:
             collect_operator_fleet(
                 config_path=sample_config_module,
                 scrape_dir=Path("/nonexistent"),
@@ -232,9 +220,7 @@ class TestCollectOperatorFleet:
 
     def test_web_scrape_failure_falls_back(self, sample_config_module):
         """Failed web scrape should fall back to KNOWN_VESSELS."""
-        with patch(
-            "collect_drilling_fleet.FleetPageCollector"
-        ) as mock_cls:
+        with patch("collect_drilling_fleet.FleetPageCollector") as mock_cls:
             mock_cls.return_value.collect.side_effect = Exception("403 Forbidden")
             records = collect_operator_fleet(
                 config_path=sample_config_module,

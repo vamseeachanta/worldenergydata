@@ -12,7 +12,6 @@ from typing import Union
 
 import pandas as pd
 
-
 # ---------------------------------------------------------------------------
 # Weights per documentation category
 # ---------------------------------------------------------------------------
@@ -45,14 +44,14 @@ class CompletenessScore:
     """Completeness assessment for a single field's documentation."""
 
     field_name: str
-    as_built_drawings: float       # 0.0–1.0
-    inspection_records: float      # 0.0–1.0
-    well_records: float            # 0.0–1.0
-    mooring_documents: float       # 0.0–1.0 (0.0 if not applicable)
-    environmental_surveys: float   # 0.0–1.0
-    overall_score: float           # weighted average
-    gaps: list[str]                # list of missing/incomplete items
-    risk_level: str                # "low" | "medium" | "high"
+    as_built_drawings: float  # 0.0–1.0
+    inspection_records: float  # 0.0–1.0
+    well_records: float  # 0.0–1.0
+    mooring_documents: float  # 0.0–1.0 (0.0 if not applicable)
+    environmental_surveys: float  # 0.0–1.0
+    overall_score: float  # weighted average
+    gaps: list[str]  # list of missing/incomplete items
+    risk_level: str  # "low" | "medium" | "high"
 
 
 # ---------------------------------------------------------------------------
@@ -149,9 +148,7 @@ class DataCompletenessScorer:
             raw_scores[cat] = _normalise_score(raw_value)
 
         # Weighted overall score
-        overall = sum(
-            raw_scores[cat] * weights[cat] for cat in _ALL_CATEGORIES
-        )
+        overall = sum(raw_scores[cat] * weights[cat] for cat in _ALL_CATEGORIES)
         overall = round(min(1.0, max(0.0, overall)), 4)
 
         gaps = _identify_gaps(raw_scores)

@@ -4,9 +4,9 @@ import pandas as pd
 import pytest
 
 from worldenergydata.eia_us.production.alaska_production import (
-    AlaskaProductionLoader,
     ALASKA_FIELDS,
     AlaskaFieldRecord,
+    AlaskaProductionLoader,
 )
 
 
@@ -18,12 +18,14 @@ def make_mock_alaska_response(field: str, n_months: int = 12):
     for i in range(n_months):
         year = 2023 + i // 12
         month = (i % 12) + 1
-        records.append({
-            "period": f"{year}-{month:02d}",
-            "field": field,
-            "crude_bopd": rate - i * 500,
-            "ngl_bopd": rate * 0.05,
-        })
+        records.append(
+            {
+                "period": f"{year}-{month:02d}",
+                "field": field,
+                "crude_bopd": rate - i * 500,
+                "ngl_bopd": rate * 0.05,
+            }
+        )
     return records
 
 

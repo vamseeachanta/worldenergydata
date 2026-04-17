@@ -144,7 +144,9 @@ class ArpsDeclineCurve:
         pd.DataFrame
             Columns: ``month``, ``rate_bbl``, ``cumulative_bbl``.
         """
-        return self._build_forecast_df(result.qi, result.Di, result.b, result.model, months)
+        return self._build_forecast_df(
+            result.qi, result.Di, result.b, result.model, months
+        )
 
     def plot(self, historical: pd.DataFrame, result: ForecastResult) -> go.Figure:
         """Plot historical production and fitted decline curve / forecast.
@@ -258,14 +260,20 @@ class ArpsDeclineCurve:
     def _rate_fn(self, model: str) -> Callable:
         """Return unified rate function ``f(t, qi, Di, b)`` for *model*."""
         if model == "exponential":
+
             def fn(t, qi, Di, b):  # b unused
                 return qi * np.exp(-Di * t)
+
         elif model == "harmonic":
+
             def fn(t, qi, Di, b):  # b=1 enforced by math
                 return qi / (1.0 + Di * t)
+
         else:  # hyperbolic
+
             def fn(t, qi, Di, b):
                 return qi * (1.0 + b * Di * t) ** (-1.0 / b)
+
         return fn
 
     def _compute_eur(

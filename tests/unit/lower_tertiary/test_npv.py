@@ -14,10 +14,10 @@ from worldenergydata.lower_tertiary.npv import (
     summarize_field_financials,
 )
 
-
 # ---------------------------------------------------------------------------
 # _normalize_lease
 # ---------------------------------------------------------------------------
+
 
 class TestNormalizeLease:
     def test_strips_whitespace(self):
@@ -33,6 +33,7 @@ class TestNormalizeLease:
 # ---------------------------------------------------------------------------
 # _resolve_first_oil
 # ---------------------------------------------------------------------------
+
 
 class TestResolveFirstOil:
     def test_none(self):
@@ -53,6 +54,7 @@ class TestResolveFirstOil:
 # _read_yaml
 # ---------------------------------------------------------------------------
 
+
 class TestReadYaml:
     def test_reads_yaml(self, tmp_path):
         yml = tmp_path / "test.yml"
@@ -71,6 +73,7 @@ class TestReadYaml:
 # ---------------------------------------------------------------------------
 # load_lease_mapping
 # ---------------------------------------------------------------------------
+
 
 class TestLoadLeaseMapping:
     def test_basic(self, tmp_path):
@@ -114,6 +117,7 @@ class TestLoadLeaseMapping:
 # load_field_inputs
 # ---------------------------------------------------------------------------
 
+
 class TestLoadFieldInputs:
     def _make_lease_mapping(self):
         return {
@@ -128,16 +132,20 @@ class TestLoadFieldInputs:
 
     def test_basic(self, tmp_path):
         field_yml = tmp_path / "kaskida.yml"
-        field_yml.write_text(yaml.dump({
-            "field": {
-                "field_id": "kaskida",
-                "display_name": "Kaskida Field",
-                "status": "producing",
-                "first_oil": "2020-06-01",
-                "capex": {"total_mm_usd": 500},
-                "opex_per_boe": 18.0,
-            }
-        }))
+        field_yml.write_text(
+            yaml.dump(
+                {
+                    "field": {
+                        "field_id": "kaskida",
+                        "display_name": "Kaskida Field",
+                        "status": "producing",
+                        "first_oil": "2020-06-01",
+                        "capex": {"total_mm_usd": 500},
+                        "opex_per_boe": 18.0,
+                    }
+                }
+            )
+        )
         result = load_field_inputs(tmp_path, self._make_lease_mapping())
         assert "kaskida" in result
         assert result["kaskida"]["display_name"] == "Kaskida Field"
@@ -145,9 +153,9 @@ class TestLoadFieldInputs:
 
     def test_status_filter(self, tmp_path):
         for name, status in [("f1", "producing"), ("f2", "abandoned")]:
-            (tmp_path / f"{name}.yml").write_text(yaml.dump({
-                "field": {"field_id": name, "status": status}
-            }))
+            (tmp_path / f"{name}.yml").write_text(
+                yaml.dump({"field": {"field_id": name, "status": status}})
+            )
         result = load_field_inputs(
             tmp_path, self._make_lease_mapping(), status_filter="producing"
         )
@@ -160,32 +168,48 @@ class TestLoadFieldInputs:
 
     def test_leases_from_mapping(self, tmp_path):
         field_yml = tmp_path / "kaskida.yml"
-        field_yml.write_text(yaml.dump({
-            "field": {
-                "field_id": "kaskida",
-                "status": "producing",
-                "leases_key": "kaskida",
-            }
-        }))
+        field_yml.write_text(
+            yaml.dump(
+                {
+                    "field": {
+                        "field_id": "kaskida",
+                        "status": "producing",
+                        "leases_key": "kaskida",
+                    }
+                }
+            )
+        )
         result = load_field_inputs(tmp_path, self._make_lease_mapping())
         assert result["kaskida"]["leases"] == ["G12345"]
 
     def test_display_name_fallbacks(self, tmp_path):
         # Test name fallback
-        (tmp_path / "f1.yml").write_text(yaml.dump({
-            "field": {"field_id": "f1", "name": "Field One", "status": "producing"}
-        }))
+        (tmp_path / "f1.yml").write_text(
+            yaml.dump(
+                {
+                    "field": {
+                        "field_id": "f1",
+                        "name": "Field One",
+                        "status": "producing",
+                    }
+                }
+            )
+        )
         result = load_field_inputs(tmp_path, {"fields": {}})
         assert result["f1"]["display_name"] == "Field One"
 
     def test_data_through(self, tmp_path):
-        (tmp_path / "f1.yml").write_text(yaml.dump({
-            "field": {
-                "field_id": "f1",
-                "status": "producing",
-                "data_through": "2024-12-01",
-            }
-        }))
+        (tmp_path / "f1.yml").write_text(
+            yaml.dump(
+                {
+                    "field": {
+                        "field_id": "f1",
+                        "status": "producing",
+                        "data_through": "2024-12-01",
+                    }
+                }
+            )
+        )
         result = load_field_inputs(tmp_path, {"fields": {}})
         assert result["f1"]["data_through"] == pd.Timestamp("2024-12-01")
 
@@ -193,6 +217,7 @@ class TestLoadFieldInputs:
 # ---------------------------------------------------------------------------
 # calculate_monthly_financials
 # ---------------------------------------------------------------------------
+
 
 class TestCalculateMonthlyFinancials:
     def _make_econ_config(self):
@@ -208,10 +233,12 @@ class TestCalculateMonthlyFinancials:
         }
 
     def test_basic(self):
-        df = pd.DataFrame({
-            "oil_bbl": [10000, 9500, 9000],
-            "gas_mcf": [50000, 48000, 45000],
-        })
+        df = pd.DataFrame(
+            {
+                "oil_bbl": [10000, 9500, 9000],
+                "gas_mcf": [50000, 48000, 45000],
+            }
+        )
         result = calculate_monthly_financials(df, self._make_econ_config(), 18.0)
         assert "oil_revenue" in result.columns
         assert "gas_revenue" in result.columns
@@ -237,18 +264,21 @@ class TestCalculateMonthlyFinancials:
 # summarize_field_financials
 # ---------------------------------------------------------------------------
 
+
 class TestSummarizeFieldFinancials:
     def _make_monthly(self):
         dates = pd.date_range("2022-01-01", periods=12, freq="MS")
-        return pd.DataFrame({
-            "date": dates,
-            "oil_bbl": [10000] * 12,
-            "gas_mcf": [50000] * 12,
-            "total_revenue": [925000] * 12,
-            "royalty": [173437.5] * 12,
-            "opex": [180000] * 12,
-            "operating_cash_flow": [400000] * 12,
-        })
+        return pd.DataFrame(
+            {
+                "date": dates,
+                "oil_bbl": [10000] * 12,
+                "gas_mcf": [50000] * 12,
+                "total_revenue": [925000] * 12,
+                "royalty": [173437.5] * 12,
+                "opex": [180000] * 12,
+                "operating_cash_flow": [400000] * 12,
+            }
+        )
 
     def _make_profile(self):
         return {

@@ -6,12 +6,24 @@ import re
 from typing import Optional
 
 _PREFIXES: tuple[str, ...] = (
-    "M/V ", "MV ", "S/V ", "SV ", "T.O. ", "SS ",
-    "MT ", "FPSO ", "FSO ", "AHTS ",
+    "M/V ",
+    "MV ",
+    "S/V ",
+    "SV ",
+    "T.O. ",
+    "SS ",
+    "MT ",
+    "FPSO ",
+    "FSO ",
+    "AHTS ",
 )
 
 _SUFFIXES: tuple[str, ...] = (
-    " I", " II", " III", " IV", " V",
+    " I",
+    " II",
+    " III",
+    " IV",
+    " V",
 )
 
 _WHITESPACE_RE = re.compile(r"\s+")
@@ -36,7 +48,7 @@ def normalize_vessel_name(name: Optional[str]) -> str:
 
     for prefix in _PREFIXES:
         if s.startswith(prefix):
-            s = s[len(prefix):]
+            s = s[len(prefix) :]
             break
 
     s = _NON_ALNUM_RE.sub(" ", s)

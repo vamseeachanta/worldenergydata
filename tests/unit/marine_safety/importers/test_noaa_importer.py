@@ -22,6 +22,7 @@ def importer(tmp_path):
 # Constants
 # ---------------------------------------------------------------------------
 
+
 class TestNOAAConstants:
     def test_threat_type_mappings(self):
         assert NOAAImporter.THREAT_TYPE_MAPPINGS["oil"] == IncidentType.POLLUTION
@@ -44,6 +45,7 @@ class TestNOAAConstants:
 # _extract_incident_id
 # ---------------------------------------------------------------------------
 
+
 class TestExtractIncidentId:
     def test_valid(self, importer):
         assert importer._extract_incident_id({"id": "12345"}) == "12345"
@@ -62,24 +64,35 @@ class TestExtractIncidentId:
 # _parse_release_gallons
 # ---------------------------------------------------------------------------
 
+
 class TestParseReleaseGallons:
     def test_valid_number(self, importer):
-        assert importer._parse_release_gallons({"max_ptl_release_gallons": "5000"}) == 5000.0
+        assert (
+            importer._parse_release_gallons({"max_ptl_release_gallons": "5000"})
+            == 5000.0
+        )
 
     def test_float_number(self, importer):
-        assert importer._parse_release_gallons({"max_ptl_release_gallons": "1234.5"}) == 1234.5
+        assert (
+            importer._parse_release_gallons({"max_ptl_release_gallons": "1234.5"})
+            == 1234.5
+        )
 
     def test_zero_returns_none(self, importer):
         assert importer._parse_release_gallons({"max_ptl_release_gallons": "0"}) is None
 
     def test_none_string_returns_none(self, importer):
-        assert importer._parse_release_gallons({"max_ptl_release_gallons": "None"}) is None
+        assert (
+            importer._parse_release_gallons({"max_ptl_release_gallons": "None"}) is None
+        )
 
     def test_empty_returns_none(self, importer):
         assert importer._parse_release_gallons({"max_ptl_release_gallons": ""}) is None
 
     def test_invalid_returns_none(self, importer):
-        assert importer._parse_release_gallons({"max_ptl_release_gallons": "abc"}) is None
+        assert (
+            importer._parse_release_gallons({"max_ptl_release_gallons": "abc"}) is None
+        )
 
     def test_missing_key_returns_none(self, importer):
         assert importer._parse_release_gallons({}) is None
@@ -88,6 +101,7 @@ class TestParseReleaseGallons:
 # ---------------------------------------------------------------------------
 # _parse_coordinates
 # ---------------------------------------------------------------------------
+
 
 class TestParseCoordinates:
     def test_valid_coords(self, importer):
@@ -117,6 +131,7 @@ class TestParseCoordinates:
 # _build_base_record
 # ---------------------------------------------------------------------------
 
+
 class TestBuildBaseRecord:
     def test_oil_threat(self, importer):
         dt = datetime(2024, 1, 15)
@@ -135,6 +150,7 @@ class TestBuildBaseRecord:
 # ---------------------------------------------------------------------------
 # _add_title_and_description
 # ---------------------------------------------------------------------------
+
 
 class TestAddTitleAndDescription:
     def test_with_name_and_description(self, importer):
@@ -155,7 +171,9 @@ class TestAddTitleAndDescription:
     def test_truncates_name(self, importer):
         parsed = {}
         long_name = "X" * 600
-        importer._add_title_and_description(parsed, {"name": long_name, "description": ""})
+        importer._add_title_and_description(
+            parsed, {"name": long_name, "description": ""}
+        )
         assert len(parsed["title"]) == 500
 
     def test_empty(self, importer):
@@ -168,6 +186,7 @@ class TestAddTitleAndDescription:
 # ---------------------------------------------------------------------------
 # _add_estimated_damage
 # ---------------------------------------------------------------------------
+
 
 class TestAddEstimatedDamage:
     def test_with_gallons(self, importer):
@@ -184,6 +203,7 @@ class TestAddEstimatedDamage:
 # ---------------------------------------------------------------------------
 # _add_location_data
 # ---------------------------------------------------------------------------
+
 
 class TestAddLocationData:
     def test_with_coords_and_name(self, importer):

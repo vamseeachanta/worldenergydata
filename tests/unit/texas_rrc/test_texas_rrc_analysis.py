@@ -4,10 +4,10 @@ import pytest
 
 from worldenergydata.texas_rrc.analysis.texas_rrc_analysis import TexasRRCAnalysis
 
-
 # ---------------------------------------------------------------------------
 # Init
 # ---------------------------------------------------------------------------
+
 
 class TestTexasRRCAnalysisInit:
     def test_defaults(self):
@@ -39,6 +39,7 @@ class TestTexasRRCAnalysisInit:
 # ---------------------------------------------------------------------------
 # _summary_analysis
 # ---------------------------------------------------------------------------
+
 
 class TestSummaryAnalysis:
     def test_empty_data(self):
@@ -75,6 +76,7 @@ class TestSummaryAnalysis:
 # _trend_analysis
 # ---------------------------------------------------------------------------
 
+
 class TestTrendAnalysis:
     def test_returns_not_implemented(self):
         analysis = TexasRRCAnalysis()
@@ -85,6 +87,7 @@ class TestTrendAnalysis:
 # ---------------------------------------------------------------------------
 # _run_analysis
 # ---------------------------------------------------------------------------
+
 
 class TestRunAnalysis:
     def test_summary(self):
@@ -142,6 +145,7 @@ class TestRunAnalysis:
 # ---------------------------------------------------------------------------
 # router
 # ---------------------------------------------------------------------------
+
 
 class TestRouter:
     def test_default_summary(self):

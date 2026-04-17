@@ -66,6 +66,7 @@ class TestTypeAliases:
     def test_date_like_type(self):
         """Test DateLike type alias accepts multiple date types."""
         from datetime import date, datetime
+
         from worldenergydata.common.types import DateLike
 
         d1: DateLike = "2023-12-15"
@@ -79,6 +80,7 @@ class TestTypeAliases:
     def test_date_range_type(self):
         """Test DateRange type alias."""
         from datetime import date
+
         from worldenergydata.common.types import DateRange
 
         range1: DateRange = ("2023-01-01", "2023-12-31")
@@ -159,7 +161,7 @@ class TestDataSourceProtocol:
 
     def test_protocol_can_be_implemented(self):
         """Test DataSourceProtocol can be implemented by a class."""
-        from worldenergydata.common.types import DataSourceProtocol, DataFrameLike
+        from worldenergydata.common.types import DataFrameLike, DataSourceProtocol
 
         class TestDataSource:
             @property
@@ -214,7 +216,7 @@ class TestValidatorProtocol:
 
     def test_protocol_can_be_implemented(self):
         """Test ValidatorProtocol can be implemented."""
-        from worldenergydata.common.types import ValidatorProtocol, DataFrameLike
+        from worldenergydata.common.types import DataFrameLike, ValidatorProtocol
 
         class TestValidator:
             def validate(
@@ -247,10 +249,12 @@ class TestValidatorProtocol:
                 for i, record in enumerate(data):
                     value = record.get("value", 0)
                     if value < self.min_val or value > self.max_val:
-                        errors.append({
-                            "row": i,
-                            "message": f"Value {value} out of range",
-                        })
+                        errors.append(
+                            {
+                                "row": i,
+                                "message": f"Value {value} out of range",
+                            }
+                        )
                 return len(errors) == 0, errors
 
             def get_schema(self) -> Dict[str, Any]:
@@ -357,7 +361,7 @@ class TestProcessorProtocol:
 
     def test_protocol_can_be_implemented(self):
         """Test ProcessorProtocol can be implemented."""
-        from worldenergydata.common.types import ProcessorProtocol, DataFrameLike
+        from worldenergydata.common.types import DataFrameLike, ProcessorProtocol
 
         class UppercaseProcessor:
             @property
@@ -367,7 +371,10 @@ class TestProcessorProtocol:
             def process(self, data: DataFrameLike, **kwargs: Any) -> DataFrameLike:
                 if isinstance(data, list):
                     return [
-                        {k: v.upper() if isinstance(v, str) else v for k, v in d.items()}
+                        {
+                            k: v.upper() if isinstance(v, str) else v
+                            for k, v in d.items()
+                        }
                         for d in data
                     ]
                 return data
@@ -405,8 +412,13 @@ class TestExporterProtocol:
 
     def test_protocol_can_be_implemented(self):
         """Test ExporterProtocol can be implemented."""
-        from worldenergydata.common.types import ExporterProtocol, DataFrameLike, PathLike
         import json
+
+        from worldenergydata.common.types import (
+            DataFrameLike,
+            ExporterProtocol,
+            PathLike,
+        )
 
         class JSONExporter:
             @property
@@ -435,7 +447,11 @@ class TestReporterProtocol:
 
     def test_protocol_can_be_implemented(self):
         """Test ReporterProtocol can be implemented."""
-        from worldenergydata.common.types import ReporterProtocol, DataFrameLike, PathLike
+        from worldenergydata.common.types import (
+            DataFrameLike,
+            PathLike,
+            ReporterProtocol,
+        )
 
         class SimpleReporter:
             @property
@@ -567,22 +583,34 @@ class TestPaginatedResult:
 
         # 100 items, 10 per page = 10 pages
         result1 = PaginatedResult(
-            data=[], page=1, page_size=10, total_count=100,
-            has_next=True, has_previous=False
+            data=[],
+            page=1,
+            page_size=10,
+            total_count=100,
+            has_next=True,
+            has_previous=False,
         )
         assert result1.total_pages == 10
 
         # 101 items, 10 per page = 11 pages
         result2 = PaginatedResult(
-            data=[], page=1, page_size=10, total_count=101,
-            has_next=True, has_previous=False
+            data=[],
+            page=1,
+            page_size=10,
+            total_count=101,
+            has_next=True,
+            has_previous=False,
         )
         assert result2.total_pages == 11
 
         # 99 items, 10 per page = 10 pages
         result3 = PaginatedResult(
-            data=[], page=1, page_size=10, total_count=99,
-            has_next=True, has_previous=False
+            data=[],
+            page=1,
+            page_size=10,
+            total_count=99,
+            has_next=True,
+            has_previous=False,
         )
         assert result3.total_pages == 10
 
@@ -591,8 +619,12 @@ class TestPaginatedResult:
         from worldenergydata.common.types import PaginatedResult
 
         result = PaginatedResult(
-            data=[], page=1, page_size=0, total_count=100,
-            has_next=False, has_previous=False
+            data=[],
+            page=1,
+            page_size=0,
+            total_count=100,
+            has_next=False,
+            has_previous=False,
         )
 
         assert result.total_pages == 0

@@ -5,8 +5,8 @@ ABOUTME: Uses synthetic data — no live API calls.
 
 import numpy as np
 import pandas as pd
-import pytest
 import plotly.graph_objects as go
+import pytest
 
 from worldenergydata.metocean.statistics.eva import (
     EVAResult,
@@ -74,9 +74,9 @@ class TestExtremeValueAnalysisPOT:
         values = [result.return_levels[p] for p in periods]
         # Longer return periods must yield higher values
         for i in range(len(values) - 1):
-            assert values[i] <= values[i + 1], (
-                f"Return levels not monotonic: {result.return_levels}"
-            )
+            assert (
+                values[i] <= values[i + 1]
+            ), f"Return levels not monotonic: {result.return_levels}"
 
     def test_fit_pot_custom_threshold(self):
         result = self.eva.fit_pot(self.hs, threshold=3.0)

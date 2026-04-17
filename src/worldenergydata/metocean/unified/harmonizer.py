@@ -27,7 +27,6 @@ from typing import Any, Dict, List, Optional
 
 import pandas as pd
 
-
 # Directional parameters — use nearest-neighbour interpolation
 _DIRECTIONAL_PARAMS = {"wind_dir", "current_dir", "wave_dir"}
 
@@ -164,9 +163,7 @@ class MetoceanHarmonizer:
     # Public harmonisation methods
     # ------------------------------------------------------------------
 
-    def harmonize_ndbc(
-        self, observations: List[Dict[str, Any]]
-    ) -> pd.DataFrame:
+    def harmonize_ndbc(self, observations: List[Dict[str, Any]]) -> pd.DataFrame:
         """
         Harmonize NDBC NDBCObservation dicts into long-format DataFrame.
 
@@ -183,9 +180,7 @@ class MetoceanHarmonizer:
             source_label="ndbc",
         )
 
-    def harmonize_open_meteo(
-        self, observations: List[Dict[str, Any]]
-    ) -> pd.DataFrame:
+    def harmonize_open_meteo(self, observations: List[Dict[str, Any]]) -> pd.DataFrame:
         """
         Harmonize OpenMeteoForecast dicts into long-format DataFrame.
 
@@ -202,9 +197,7 @@ class MetoceanHarmonizer:
             source_label="open_meteo",
         )
 
-    def harmonize_met_norway(
-        self, observations: List[Dict[str, Any]]
-    ) -> pd.DataFrame:
+    def harmonize_met_norway(self, observations: List[Dict[str, Any]]) -> pd.DataFrame:
         """
         Harmonize MetNorwayForecast dicts into long-format DataFrame.
 
@@ -259,9 +252,7 @@ class MetoceanHarmonizer:
             source_label="coops",
         )
 
-    def harmonize_erddap(
-        self, observations: List[Dict[str, Any]]
-    ) -> pd.DataFrame:
+    def harmonize_erddap(self, observations: List[Dict[str, Any]]) -> pd.DataFrame:
         """
         Harmonize ERDDAP observation dicts into long-format DataFrame.
 

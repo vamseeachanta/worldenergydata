@@ -122,6 +122,7 @@ class TestStructuredFormatter:
             raise ValueError("Test error")
         except ValueError:
             import sys
+
             exc_info = sys.exc_info()
 
         record = logging.LogRecord(
@@ -150,6 +151,7 @@ class TestStructuredFormatter:
             raise ValueError("Test error")
         except ValueError:
             import sys
+
             exc_info = sys.exc_info()
 
         record = logging.LogRecord(
@@ -212,13 +214,14 @@ class TestConfigureLogging:
     def setup_method(self):
         """Reset logging configuration before each test."""
         from worldenergydata.common import logging as wed_logging
+
         wed_logging._log_config["configured"] = False
         wed_logging._log_config["level"] = None
         wed_logging._log_config["json_output"] = False
 
     def test_configure_logging_default_level(self):
         """Test default log level is INFO."""
-        from worldenergydata.common.logging import configure_logging, _log_config
+        from worldenergydata.common.logging import _log_config, configure_logging
 
         with patch.dict(os.environ, {}, clear=True):
             configure_logging()
@@ -228,7 +231,7 @@ class TestConfigureLogging:
 
     def test_configure_logging_explicit_level(self):
         """Test explicit log level setting."""
-        from worldenergydata.common.logging import configure_logging, _log_config
+        from worldenergydata.common.logging import _log_config, configure_logging
 
         configure_logging(level="DEBUG")
 
@@ -236,7 +239,7 @@ class TestConfigureLogging:
 
     def test_configure_logging_from_environment(self):
         """Test log level from environment variable."""
-        from worldenergydata.common.logging import configure_logging, _log_config
+        from worldenergydata.common.logging import _log_config, configure_logging
 
         with patch.dict(os.environ, {"LOG_LEVEL": "WARNING"}):
             configure_logging()
@@ -245,7 +248,7 @@ class TestConfigureLogging:
 
     def test_configure_logging_json_output_explicit(self):
         """Test JSON output can be enabled explicitly."""
-        from worldenergydata.common.logging import configure_logging, _log_config
+        from worldenergydata.common.logging import _log_config, configure_logging
 
         configure_logging(json_output=True)
 
@@ -253,7 +256,7 @@ class TestConfigureLogging:
 
     def test_configure_logging_json_from_environment(self):
         """Test JSON output from environment variable."""
-        from worldenergydata.common.logging import configure_logging, _log_config
+        from worldenergydata.common.logging import _log_config, configure_logging
 
         with patch.dict(os.environ, {"LOG_JSON": "true"}):
             configure_logging()
@@ -262,7 +265,7 @@ class TestConfigureLogging:
 
     def test_configure_logging_json_env_values(self):
         """Test various environment values for LOG_JSON."""
-        from worldenergydata.common.logging import configure_logging, _log_config
+        from worldenergydata.common.logging import _log_config, configure_logging
 
         for value in ["true", "1", "yes"]:
             _log_config["configured"] = False
@@ -301,11 +304,12 @@ class TestGetLogger:
     def setup_method(self):
         """Reset logging configuration before each test."""
         from worldenergydata.common import logging as wed_logging
+
         wed_logging._log_config["configured"] = False
 
     def test_get_logger_returns_adapter(self):
         """Test get_logger returns LoggerAdapter instance."""
-        from worldenergydata.common.logging import get_logger, LoggerAdapter
+        from worldenergydata.common.logging import LoggerAdapter, get_logger
 
         logger = get_logger("test.module")
 
@@ -321,7 +325,7 @@ class TestGetLogger:
 
     def test_get_logger_auto_configures(self):
         """Test get_logger automatically configures logging if needed."""
-        from worldenergydata.common.logging import get_logger, _log_config
+        from worldenergydata.common.logging import _log_config, get_logger
 
         _log_config["configured"] = False
         _ = get_logger("test.module")
@@ -372,9 +376,9 @@ class TestLoggingIntegration:
     def test_log_message_captured(self):
         """Test log messages are captured with correct format."""
         from worldenergydata.common.logging import (
+            StructuredFormatter,
             configure_logging,
             get_logger,
-            StructuredFormatter,
         )
 
         stream = StringIO()
@@ -396,9 +400,9 @@ class TestLoggingIntegration:
     def test_json_log_output(self):
         """Test JSON log output is valid JSON."""
         from worldenergydata.common.logging import (
+            StructuredFormatter,
             configure_logging,
             get_logger,
-            StructuredFormatter,
         )
 
         stream = StringIO()

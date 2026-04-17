@@ -106,7 +106,10 @@ class TestMapAccidentType:
 
     def test_partial_match_works(self, importer):
         """Keyword matching should work for substrings."""
-        assert importer._map_accident_type("major fire and explosion") == "equipment_failure"
+        assert (
+            importer._map_accident_type("major fire and explosion")
+            == "equipment_failure"
+        )
 
     def test_all_mapped_types_are_valid(self, importer):
         """All mapped values should be valid HSEIncident incident_type enums."""
@@ -146,15 +149,17 @@ class TestNormalizeRow:
 
     def test_normalize_pollution_row(self, importer):
         """Should normalize a pollution incident row."""
-        row = pd.Series({
-            "DATE_OCCURRED": "12/19/2009",
-            "MILITARY_TIME": "8:05",
-            "LEASE_NUMBER": "G15610",
-            "AREA_BLOCK": "GC 782",
-            "ACCIDENT_TYPE": "- Pollution ",
-            "PANEL_DISTRICT": "DISTRICT",
-            "STATUS": "Complete",
-        })
+        row = pd.Series(
+            {
+                "DATE_OCCURRED": "12/19/2009",
+                "MILITARY_TIME": "8:05",
+                "LEASE_NUMBER": "G15610",
+                "AREA_BLOCK": "GC 782",
+                "ACCIDENT_TYPE": "- Pollution ",
+                "PANEL_DISTRICT": "DISTRICT",
+                "STATUS": "Complete",
+            }
+        )
         result = importer._normalize_row(row, 0)
         assert result is not None
         assert result["bsee_incident_id"] == "INCINV-20091219-G15610-0"
@@ -164,15 +169,17 @@ class TestNormalizeRow:
 
     def test_normalize_fatality_row(self, importer):
         """Should normalize a fatality incident row."""
-        row = pd.Series({
-            "DATE_OCCURRED": "3/15/2020",
-            "MILITARY_TIME": "14:30",
-            "LEASE_NUMBER": "G99999",
-            "AREA_BLOCK": "MC 100",
-            "ACCIDENT_TYPE": "- Fatality ",
-            "PANEL_DISTRICT": "DISTRICT",
-            "STATUS": "Complete",
-        })
+        row = pd.Series(
+            {
+                "DATE_OCCURRED": "3/15/2020",
+                "MILITARY_TIME": "14:30",
+                "LEASE_NUMBER": "G99999",
+                "AREA_BLOCK": "MC 100",
+                "ACCIDENT_TYPE": "- Fatality ",
+                "PANEL_DISTRICT": "DISTRICT",
+                "STATUS": "Complete",
+            }
+        )
         result = importer._normalize_row(row, 5)
         assert result is not None
         assert result["incident_type"] == "injury"
@@ -181,29 +188,33 @@ class TestNormalizeRow:
 
     def test_normalize_row_with_bad_date_returns_none(self, importer):
         """Should return None for row with unparseable date."""
-        row = pd.Series({
-            "DATE_OCCURRED": "invalid",
-            "MILITARY_TIME": "",
-            "LEASE_NUMBER": "G15610",
-            "AREA_BLOCK": "GC 782",
-            "ACCIDENT_TYPE": "- Pollution ",
-            "PANEL_DISTRICT": "DISTRICT",
-            "STATUS": "Complete",
-        })
+        row = pd.Series(
+            {
+                "DATE_OCCURRED": "invalid",
+                "MILITARY_TIME": "",
+                "LEASE_NUMBER": "G15610",
+                "AREA_BLOCK": "GC 782",
+                "ACCIDENT_TYPE": "- Pollution ",
+                "PANEL_DISTRICT": "DISTRICT",
+                "STATUS": "Complete",
+            }
+        )
         result = importer._normalize_row(row, 0)
         assert result is None
 
     def test_normalize_row_with_missing_fields(self, importer):
         """Should handle missing optional fields gracefully."""
-        row = pd.Series({
-            "DATE_OCCURRED": "12/19/2009",
-            "MILITARY_TIME": "",
-            "LEASE_NUMBER": "",
-            "AREA_BLOCK": "",
-            "ACCIDENT_TYPE": "- Fire ",
-            "PANEL_DISTRICT": "",
-            "STATUS": "",
-        })
+        row = pd.Series(
+            {
+                "DATE_OCCURRED": "12/19/2009",
+                "MILITARY_TIME": "",
+                "LEASE_NUMBER": "",
+                "AREA_BLOCK": "",
+                "ACCIDENT_TYPE": "- Fire ",
+                "PANEL_DISTRICT": "",
+                "STATUS": "",
+            }
+        )
         result = importer._normalize_row(row, 0)
         assert result is not None
         assert result["lease_number"] is None

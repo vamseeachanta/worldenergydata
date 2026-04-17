@@ -156,7 +156,7 @@ class BSEEBatchDetector:
         slope, _ = np.polyfit(log_n, log_t, 1)
 
         # Convert slope b back to LC factor: LC = 2^b
-        lc = float(2.0 ** slope)
+        lc = float(2.0**slope)
 
         # Clip to a sensible range for drilling learning curves
         lc = max(0.5, min(lc, 1.0))
@@ -170,9 +170,7 @@ class BSEEBatchDetector:
         """Raise ValueError if required columns are missing."""
         missing = _REQUIRED_COLUMNS - set(df.columns)
         if missing:
-            raise ValueError(
-                f"bsee_df missing required columns: {sorted(missing)}"
-            )
+            raise ValueError(f"bsee_df missing required columns: {sorted(missing)}")
 
     @staticmethod
     def _empty_result() -> pd.DataFrame:

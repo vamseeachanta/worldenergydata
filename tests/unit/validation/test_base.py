@@ -1,18 +1,19 @@
 # ABOUTME: Test suite for validation base classes (ValidationError, ValidationResult)
 # ABOUTME: Foundation tests covering error representation, result aggregation, and state management
 
-import pytest
-import pandas as pd
 from datetime import datetime
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 from unittest.mock import MagicMock, patch
 
+import pandas as pd
+import pytest
+
 from worldenergydata.validation.base import (
-    ValidationError,
-    ValidationResult,
     BaseValidator,
     FieldValidator,
     SchemaValidator,
+    ValidationError,
+    ValidationResult,
     ValidationRule,
     ValidationSchema,
 )
@@ -472,7 +473,13 @@ class TestValidationResultSerialization:
     def test_to_dict_with_errors(self):
         """to_dict() includes error details."""
         result = ValidationResult()
-        result.add_error(field="api_number", message="Invalid", value="TEST", rule="Rule1", row_index=5)
+        result.add_error(
+            field="api_number",
+            message="Invalid",
+            value="TEST",
+            rule="Rule1",
+            row_index=5,
+        )
 
         data = result.to_dict()
 
@@ -636,6 +643,7 @@ class TestBaseValidatorAbstractClass:
 
     def test_base_validator_with_subclass(self):
         """Subclass of BaseValidator can be instantiated."""
+
         class ConcreteValidator(BaseValidator):
             def validate(self, data):
                 return ValidationResult()
@@ -645,6 +653,7 @@ class TestBaseValidatorAbstractClass:
 
     def test_base_validator_add_rule(self):
         """BaseValidator.add_rule() adds validation rule."""
+
         class ConcreteValidator(BaseValidator):
             def validate(self, data):
                 return ValidationResult()
@@ -664,6 +673,7 @@ class TestBaseValidatorAbstractClass:
 
     def test_base_validator_create_result_includes_metadata(self):
         """_create_result() creates result with validator metadata."""
+
         class ConcreteValidator(BaseValidator):
             def validate(self, data):
                 return self._create_result()

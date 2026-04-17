@@ -45,8 +45,7 @@ def _sample_production() -> pd.DataFrame:
     """Generate a representative synthetic production profile."""
     t = range(1, _SAMPLE_MONTHS_HIST + 1)
     rates = [
-        _SAMPLE_QI * (1.0 + _SAMPLE_B * _SAMPLE_DI * m) ** (-1.0 / _SAMPLE_B)
-        for m in t
+        _SAMPLE_QI * (1.0 + _SAMPLE_B * _SAMPLE_DI * m) ** (-1.0 / _SAMPLE_B) for m in t
     ]
     return pd.DataFrame({"month": list(t), "rate_bbl": rates})
 
@@ -107,7 +106,9 @@ def run(
     console.print(f"\nFitting [bold cyan]{model}[/bold cyan] decline curve …")
     adc = ArpsDeclineCurve()
     try:
-        result = adc.fit(production, model=model, economic_limit=econ_limit, months=months)
+        result = adc.fit(
+            production, model=model, economic_limit=econ_limit, months=months
+        )
     except ValueError as exc:
         console.print(f"[red]Fit error:[/red] {exc}")
         raise typer.Exit(code=1) from exc

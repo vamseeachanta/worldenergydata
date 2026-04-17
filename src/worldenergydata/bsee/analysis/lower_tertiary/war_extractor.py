@@ -117,9 +117,7 @@ class LTWarExtractor:
                 continue
             counts = df.groupby("RIG_NAME").size()
             for rig, cnt in counts.items():
-                rows.append(
-                    {"rig_name": rig, "field": name, "records": int(cnt)}
-                )
+                rows.append({"rig_name": rig, "field": name, "records": int(cnt)})
         return pd.DataFrame(rows)
 
     def subsea_vs_drytree_activity(self) -> dict[str, pd.DataFrame]:
@@ -155,9 +153,7 @@ class LTWarExtractor:
                 else pd.DataFrame()
             ),
             "dry_tree": (
-                pd.concat(dt_frames, ignore_index=True)
-                if dt_frames
-                else pd.DataFrame()
+                pd.concat(dt_frames, ignore_index=True) if dt_frames else pd.DataFrame()
             ),
         }
 

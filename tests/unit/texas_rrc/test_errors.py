@@ -84,7 +84,9 @@ class TestTexasRRCConfigurationError:
         assert err.code == "TEXAS_RRC_CONFIG_MISSING"
 
     def test_invalid_value(self):
-        err = TexasRRCConfigurationError.invalid_value("timeout", -1, "must be positive")
+        err = TexasRRCConfigurationError.invalid_value(
+            "timeout", -1, "must be positive"
+        )
         assert err.code == "TEXAS_RRC_CONFIG_INVALID"
 
 

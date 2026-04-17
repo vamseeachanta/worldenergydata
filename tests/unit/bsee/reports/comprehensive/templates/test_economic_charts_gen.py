@@ -13,10 +13,10 @@ from worldenergydata.bsee.reports.comprehensive.templates.economic_models import
     WaterfallComponent,
 )
 
-
 # ---------------------------------------------------------------------------
 # create_empty_chart
 # ---------------------------------------------------------------------------
+
 
 class TestCreateEmptyChart:
     def test_default_message(self):
@@ -32,6 +32,7 @@ class TestCreateEmptyChart:
 # ---------------------------------------------------------------------------
 # generate_waterfall_chart
 # ---------------------------------------------------------------------------
+
 
 class TestGenerateWaterfallChart:
     def test_empty_components(self):
@@ -102,6 +103,7 @@ class TestGenerateWaterfallChart:
 # generate_economic_dashboard
 # ---------------------------------------------------------------------------
 
+
 class TestGenerateEconomicDashboard:
     def _make_context(self):
         return {
@@ -156,6 +158,7 @@ class TestGenerateEconomicDashboard:
 # generate_sensitivity_tornado_chart
 # ---------------------------------------------------------------------------
 
+
 class TestGenerateSensitivityTornadoChart:
     def test_empty_data(self):
         result = generate_sensitivity_tornado_chart([])
@@ -175,13 +178,16 @@ class TestGenerateSensitivityTornadoChart:
         tornado_data = [
             {"variable": "Oil Price", "low_case": 2000000, "high_case": 8000000},
         ]
-        result = generate_sensitivity_tornado_chart(tornado_data, title="Custom Tornado")
+        result = generate_sensitivity_tornado_chart(
+            tornado_data, title="Custom Tornado"
+        )
         assert isinstance(result, str)
 
 
 # ---------------------------------------------------------------------------
 # generate_production_economics_time_series
 # ---------------------------------------------------------------------------
+
 
 class TestGenerateProductionEconomicsTimeSeries:
     def test_basic(self):

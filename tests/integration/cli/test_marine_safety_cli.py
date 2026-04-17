@@ -10,7 +10,6 @@ from typer.testing import CliRunner
 
 from worldenergydata.cli.main import app
 
-
 runner = CliRunner()
 
 
@@ -27,14 +26,20 @@ class TestMarineSafetyCLIHelp:
         result = runner.invoke(app, ["marine-safety", "--help"])
         # Should list available marine safety commands
         output_lower = result.output.lower()
-        assert "stats" in output_lower or "scrape" in output_lower or "db" in output_lower
+        assert (
+            "stats" in output_lower or "scrape" in output_lower or "db" in output_lower
+        )
 
     def test_marine_safety_help_shows_description(self):
         """Test that marine-safety --help shows module description."""
         result = runner.invoke(app, ["marine-safety", "--help"])
         # Should include marine safety related description
         output_lower = result.output.lower()
-        assert "marine" in output_lower or "safety" in output_lower or "incident" in output_lower
+        assert (
+            "marine" in output_lower
+            or "safety" in output_lower
+            or "incident" in output_lower
+        )
 
 
 class TestMarineSafetyStats:
@@ -49,7 +54,11 @@ class TestMarineSafetyStats:
         """Test that marine-safety stats displays statistics information."""
         result = runner.invoke(app, ["marine-safety", "stats"])
         # Should show some statistics-related output
-        assert "Statistics" in result.output or "Incidents" in result.output or "USCG" in result.output
+        assert (
+            "Statistics" in result.output
+            or "Incidents" in result.output
+            or "USCG" in result.output
+        )
 
     def test_marine_safety_stats_verbose_flag(self):
         """Test that marine-safety stats accepts --verbose flag."""
@@ -86,14 +95,19 @@ class TestMarineSafetyInfo:
         result = runner.invoke(app, ["marine-safety", "info"])
         # Should display module-related information
         output_lower = result.output.lower()
-        assert any(term in output_lower for term in ["marine", "safety", "incident", "uscg", "ntsb"])
+        assert any(
+            term in output_lower
+            for term in ["marine", "safety", "incident", "uscg", "ntsb"]
+        )
 
     def test_marine_safety_info_shows_data_sources(self):
         """Test that marine-safety info lists data sources."""
         result = runner.invoke(app, ["marine-safety", "info"])
         output_lower = result.output.lower()
         # Should mention at least one data source
-        assert any(source in output_lower for source in ["uscg", "ntsb", "bsee", "maib"])
+        assert any(
+            source in output_lower for source in ["uscg", "ntsb", "bsee", "maib"]
+        )
 
 
 class TestMarineSafetyScrape:
@@ -172,7 +186,11 @@ class TestMarineSafetyAnalyze:
         result = runner.invoke(app, ["marine-safety", "analyze", "--help"])
         output_lower = result.output.lower()
         # Should show analysis options
-        assert "type" in output_lower or "region" in output_lower or "output" in output_lower
+        assert (
+            "type" in output_lower
+            or "region" in output_lower
+            or "output" in output_lower
+        )
 
 
 class TestMarineSafetyCLIEdgeCases:
@@ -191,7 +209,9 @@ class TestMarineSafetyCLIEdgeCases:
 
     def test_marine_safety_stats_invalid_source(self):
         """Test that invalid source handling is graceful."""
-        result = runner.invoke(app, ["marine-safety", "stats", "--source", "invalid-source"])
+        result = runner.invoke(
+            app, ["marine-safety", "stats", "--source", "invalid-source"]
+        )
         # Should return error for invalid source
         assert result.exit_code != 0
 
@@ -202,5 +222,7 @@ class TestMarineSafetyCLIEdgeCases:
 
     def test_marine_safety_stats_combined_flags(self):
         """Test stats with multiple flags combined."""
-        result = runner.invoke(app, ["marine-safety", "stats", "--source", "uscg", "--verbose"])
+        result = runner.invoke(
+            app, ["marine-safety", "stats", "--source", "uscg", "--verbose"]
+        )
         assert result.exit_code == 0

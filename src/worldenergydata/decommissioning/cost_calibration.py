@@ -28,7 +28,13 @@ _CALIBRATION_ASSET_TYPES = {
     "fpso",
 }
 
-_REQUIRED_COLUMNS = {"asset_type", "water_depth_m", "weight_tonnes", "cost_musd", "year"}
+_REQUIRED_COLUMNS = {
+    "asset_type",
+    "water_depth_m",
+    "weight_tonnes",
+    "cost_musd",
+    "year",
+}
 
 # Blend weight: fitted vs baseline for base_musd
 _FIT_BLEND_WEIGHT = 0.7
@@ -55,7 +61,7 @@ class CalibrationFit:
     base_musd_baseline: float
     rmse_musd: float
     r_squared: float
-    confidence: str   # "high" (n>=20), "medium" (n>=5), "low" (n<5)
+    confidence: str  # "high" (n>=20), "medium" (n>=5), "low" (n<5)
     data_driven: bool
 
 
@@ -139,15 +145,15 @@ class CostModelCalibration:
 
         missing = _REQUIRED_COLUMNS - set(removal_df.columns)
         if missing:
-            raise ValueError(
-                f"removal_df missing required columns: {sorted(missing)}"
-            )
+            raise ValueError(f"removal_df missing required columns: {sorted(missing)}")
 
         years_covered = self._compute_years_covered(removal_df)
         total_records = len(removal_df)
 
         fits: list[CalibrationFit] = []
-        updated_factors: dict[str, dict] = {k: dict(v) for k, v in _COST_FACTORS.items()}
+        updated_factors: dict[str, dict] = {
+            k: dict(v) for k, v in _COST_FACTORS.items()
+        }
 
         for asset_type in _CALIBRATION_ASSET_TYPES:
             subset = removal_df[removal_df["asset_type"] == asset_type].copy()
@@ -294,11 +300,13 @@ class CostModelCalibration:
             )
 
         # Build design matrix: [1, weight_tonnes, water_depth_m]
-        X = np.column_stack([
-            np.ones(n),
-            subset["weight_tonnes"].to_numpy(dtype=float),
-            subset["water_depth_m"].to_numpy(dtype=float),
-        ])
+        X = np.column_stack(
+            [
+                np.ones(n),
+                subset["weight_tonnes"].to_numpy(dtype=float),
+                subset["water_depth_m"].to_numpy(dtype=float),
+            ]
+        )
         y = subset["cost_musd"].to_numpy(dtype=float)
 
         # Least-squares regression (ignoring rank warnings)
@@ -348,7 +356,9 @@ class CostModelCalibration:
         """Build fully baseline fits (used when DataFrame is empty)."""
         fits = []
         for asset_type in _CALIBRATION_ASSET_TYPES:
-            baseline_base = float(_COST_FACTORS.get(asset_type, {}).get("base_musd", 1.0))
+            baseline_base = float(
+                _COST_FACTORS.get(asset_type, {}).get("base_musd", 1.0)
+            )
             fits.append(
                 CalibrationFit(
                     asset_type=asset_type,

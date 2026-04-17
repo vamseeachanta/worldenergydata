@@ -3,15 +3,15 @@
 import pytest
 
 from worldenergydata.lng_terminals.processors.deduplicator import (
-    Deduplicator,
     _MANUAL_ALIASES,
     _STRIP_WORDS,
+    Deduplicator,
 )
-
 
 # ---------------------------------------------------------------------------
 # Static helper methods (no LNGTerminal needed)
 # ---------------------------------------------------------------------------
+
 
 class TestNormalizeName:
     def test_basic(self):
@@ -59,7 +59,9 @@ class TestStringSimilarity:
 
 class TestAliasMatch:
     def test_known_alias(self):
-        assert Deduplicator._alias_match("sabine pass", "sabine pass liquefaction") is True
+        assert (
+            Deduplicator._alias_match("sabine pass", "sabine pass liquefaction") is True
+        )
 
     def test_no_match(self):
         assert Deduplicator._alias_match("cameron", "driftwood") is False

@@ -6,15 +6,15 @@ from worldenergydata.mexico_cnh.scrapers.sih_scraper import (
     DownloadTimeoutError,
     ExportError,
     NavigationError,
+    SeleniumNotInstalledError,
     SIHScraper,
     SIHScraperError,
-    SeleniumNotInstalledError,
 )
-
 
 # ---------------------------------------------------------------------------
 # Exception classes
 # ---------------------------------------------------------------------------
+
 
 class TestSeleniumNotInstalledError:
     def test_is_import_error(self):
@@ -61,6 +61,7 @@ class TestDownloadTimeoutError:
 # ---------------------------------------------------------------------------
 # SIHScraper constants
 # ---------------------------------------------------------------------------
+
 
 class TestSIHScraperConstants:
     def test_sih_url(self):

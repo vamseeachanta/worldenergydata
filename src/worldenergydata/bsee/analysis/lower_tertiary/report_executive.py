@@ -42,10 +42,7 @@ def _card(title: str, value: str, unit: str = "") -> str:
 
 def _tbl(hdr: list[str], rows: list[list[Any]]) -> str:
     h = "".join(f"<th>{x}</th>" for x in hdr)
-    b = "".join(
-        "<tr>" + "".join(f"<td>{c}</td>" for c in r) + "</tr>"
-        for r in rows
-    )
+    b = "".join("<tr>" + "".join(f"<td>{c}</td>" for c in r) + "</tr>" for r in rows)
     return (
         '<table class="data-table"><thead><tr>'
         f"{h}</tr></thead><tbody>{b}</tbody></table>"
@@ -103,9 +100,7 @@ class ExecutiveReport:
         rf = self._a.recovery_factors
         econ = self._a.economics
         content = '<div class="stats-grid">\n'
-        content += _card(
-            "Total Investment", f"${m['total_investment_billion']}B"
-        )
+        content += _card("Total Investment", f"${m['total_investment_billion']}B")
         content += _card("D&C Cost", f"${m['total_dc_cost_billion']}B")
         content += _card("MODU Days", f"{m['total_modu_days']:,}")
         content += _card(
@@ -114,8 +109,7 @@ class ExecutiveReport:
         )
         content += _card(
             "Dry-Tree Recovery",
-            f"{rf['dry_tree']['range_pct'][0]}-"
-            f"{rf['dry_tree']['range_pct'][1]}%",
+            f"{rf['dry_tree']['range_pct'][0]}-" f"{rf['dry_tree']['range_pct'][1]}%",
         )
         content += _card(
             "Mean Subsea NPV",
@@ -201,26 +195,26 @@ class ExecutiveReport:
                 fo = str(int(fo_val))
             else:
                 fo = "TBD"
-            rows.append([
-                r["field"],
-                r["area"],
-                r["operator"],
-                r["category"].replace("_", " ").title(),
-                fo,
-                f"{r['records']:,}",
-            ])
+            rows.append(
+                [
+                    r["field"],
+                    r["area"],
+                    r["operator"],
+                    r["category"].replace("_", " ").title(),
+                    fo,
+                    f"{r['records']:,}",
+                ]
+            )
 
         table = _tbl(
-            ["Field", "Area", "Operator", "Category", "First Oil",
-             "WAR Records"],
+            ["Field", "Area", "Operator", "Category", "First Oil", "WAR Records"],
             rows,
         )
         total = summary["records"].sum()
         content = (
             '<div class="data-note">'
             f"<strong>Total WAR Records:</strong> {total:,} "
-            f"across {len(summary)} Lower Tertiary fields</div>"
-            + table
+            f"across {len(summary)} Lower Tertiary fields</div>" + table
         )
         return {"title": "Live WAR Data Snapshot", "content": content}
 
@@ -302,10 +296,7 @@ class ExecutiveReport:
         for i, s in enumerate(sections, 1):
             aid = f"section-{i}"
             toc += f'<li><a href="#{aid}">{s["title"]}</a></li>'
-            body += (
-                f'<div class="section" id="{aid}">'
-                f"<h2>{i}. {s['title']}</h2>"
-            )
+            body += f'<div class="section" id="{aid}">' f"<h2>{i}. {s['title']}</h2>"
             for c in s.get("charts", []):
                 body += f'<div class="chart-container">{c}</div>'
             body += s.get("content", "")

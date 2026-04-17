@@ -21,14 +21,20 @@ class TestValidationError:
 
     def test_create_with_all_fields(self):
         err = ValidationError(
-            field="lat", message="Out of range", value=200.0, code="COORD_RANGE", severity="warning"
+            field="lat",
+            message="Out of range",
+            value=200.0,
+            code="COORD_RANGE",
+            severity="warning",
         )
         assert err.value == 200.0
         assert err.code == "COORD_RANGE"
         assert err.severity == "warning"
 
     def test_to_dict(self):
-        err = ValidationError(field="uwi", message="Invalid", value="BAD", code="UWI_ERR")
+        err = ValidationError(
+            field="uwi", message="Invalid", value="BAD", code="UWI_ERR"
+        )
         d = err.to_dict()
         assert d["field"] == "uwi"
         assert d["message"] == "Invalid"
@@ -223,8 +229,16 @@ class TestCanadaDataValidatorWellStatus:
         assert result.errors[0].code == "STATUS_INVALID"
 
     def test_all_valid_statuses(self):
-        for status in ["ACTIVE", "SUSPENDED", "ABANDONED", "COMPLETED", "DRILLING",
-                        "LICENSED", "CANCELLED", "RE-ENTERED"]:
+        for status in [
+            "ACTIVE",
+            "SUSPENDED",
+            "ABANDONED",
+            "COMPLETED",
+            "DRILLING",
+            "LICENSED",
+            "CANCELLED",
+            "RE-ENTERED",
+        ]:
             result = self.v.validate_well_status(status)
             assert result.is_valid is True, f"Status {status} should be valid"
 

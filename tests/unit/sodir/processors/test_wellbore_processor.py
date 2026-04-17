@@ -225,24 +225,28 @@ class TestValidate:
 
     def test_valid_coordinates(self):
         wp = WellboreProcessor()
-        valid, errors = wp.validate({
-            "wlbName": "35/11-1",
-            "wlbNsDecDeg": 60.0,
-            "wlbEwDecDeg": 5.0,
-        })
+        valid, errors = wp.validate(
+            {
+                "wlbName": "35/11-1",
+                "wlbNsDecDeg": 60.0,
+                "wlbEwDecDeg": 5.0,
+            }
+        )
         assert valid is True
 
 
 class TestProcess:
     def test_basic_wellbore(self):
         wp = WellboreProcessor()
-        result = wp.process({
-            "wlbName": "35/11-1",
-            "wlbNpdidWellbore": 12345,
-            "wlbStatus": "P&A",
-            "wlbPurpose": "EXPLORATION",
-            "wlbTotalDepth": 3000,
-        })
+        result = wp.process(
+            {
+                "wlbName": "35/11-1",
+                "wlbNpdidWellbore": 12345,
+                "wlbStatus": "P&A",
+                "wlbPurpose": "EXPLORATION",
+                "wlbTotalDepth": 3000,
+            }
+        )
         assert result is not None
         assert result["wellbore_name"] == "35/11-1"
         assert result["status_normalized"] == "PLUGGED_AND_ABANDONED"
@@ -253,21 +257,25 @@ class TestProcess:
 
     def test_process_with_temperature(self):
         wp = WellboreProcessor()
-        result = wp.process({
-            "wlbName": "35/11-1",
-            "wlbBottomHoleTemperature": 120,
-        })
+        result = wp.process(
+            {
+                "wlbName": "35/11-1",
+                "wlbBottomHoleTemperature": 120,
+            }
+        )
         assert result is not None
         assert result["bottom_hole_temperature_c"] == 120
         assert result["bottom_hole_temperature_f"] == 248.0
 
     def test_process_with_drilling_dates(self):
         wp = WellboreProcessor()
-        result = wp.process({
-            "wlbName": "35/11-1",
-            "wlbDrillingStartDate": "2024-01-01",
-            "wlbDrillingEndDate": "2024-02-01",
-        })
+        result = wp.process(
+            {
+                "wlbName": "35/11-1",
+                "wlbDrillingStartDate": "2024-01-01",
+                "wlbDrillingEndDate": "2024-02-01",
+            }
+        )
         assert result is not None
         assert result["drilling_duration_days"] == 31
 
@@ -280,10 +288,12 @@ class TestProcess:
 class TestProcessBatch:
     def test_batch(self):
         wp = WellboreProcessor()
-        results = wp.process_batch([
-            {"wlbName": "35/11-1"},
-            {"wlbName": "35/11-2"},
-        ])
+        results = wp.process_batch(
+            [
+                {"wlbName": "35/11-1"},
+                {"wlbName": "35/11-2"},
+            ]
+        )
         assert len(results) == 2
 
     def test_batch_empty(self):

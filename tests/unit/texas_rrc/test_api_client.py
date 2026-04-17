@@ -5,10 +5,10 @@ import pytest
 from worldenergydata.texas_rrc.api_client import TexasRRCClient
 from worldenergydata.texas_rrc.errors import TexasRRCValidationError
 
-
 # ---------------------------------------------------------------------------
 # Init and defaults
 # ---------------------------------------------------------------------------
+
 
 class TestTexasRRCClientInit:
     def test_default_values(self):
@@ -51,6 +51,7 @@ class TestTexasRRCClientInit:
 # Constants
 # ---------------------------------------------------------------------------
 
+
 class TestTexasRRCClientConstants:
     def test_base_url(self):
         assert "rrc.texas.gov" in TexasRRCClient.BASE_URL
@@ -74,6 +75,7 @@ class TestTexasRRCClientConstants:
 # ---------------------------------------------------------------------------
 # _setup_headers
 # ---------------------------------------------------------------------------
+
 
 class TestSetupHeaders:
     def test_default_headers(self):
@@ -99,6 +101,7 @@ class TestSetupHeaders:
 # ---------------------------------------------------------------------------
 # _generate_cache_key
 # ---------------------------------------------------------------------------
+
 
 class TestGenerateCacheKey:
     def test_without_params(self):
@@ -133,6 +136,7 @@ class TestGenerateCacheKey:
 # ---------------------------------------------------------------------------
 # _validate_api_number
 # ---------------------------------------------------------------------------
+
 
 class TestValidateApiNumber:
     def test_valid_with_dashes(self):
@@ -176,6 +180,7 @@ class TestValidateApiNumber:
 # _parse_well_response
 # ---------------------------------------------------------------------------
 
+
 class TestParseWellResponse:
     def test_basic_structure(self):
         client = TexasRRCClient()
@@ -211,6 +216,7 @@ class TestParseWellResponse:
 # ---------------------------------------------------------------------------
 # Context manager
 # ---------------------------------------------------------------------------
+
 
 class TestContextManager:
     def test_enter_exit(self):

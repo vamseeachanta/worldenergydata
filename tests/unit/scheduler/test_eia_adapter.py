@@ -22,14 +22,24 @@ class TestEiaUsRefreshJob:
 
         mock_instance = MagicMock()
         mock_instance.run_all.return_value = [
-            {"feed": "petroleum_weekly", "records_written": 10, "latest_period": "2024-01-01"},
-            {"feed": "gas_storage_weekly", "records_written": 5, "latest_period": "2024-01-08"},
+            {
+                "feed": "petroleum_weekly",
+                "records_written": 10,
+                "latest_period": "2024-01-01",
+            },
+            {
+                "feed": "gas_storage_weekly",
+                "records_written": 5,
+                "latest_period": "2024-01-08",
+            },
         ]
         mock_instance.output_dir = tmp_path
         mock_sync_cls.return_value = mock_instance
 
         job = EiaUsRefreshJob()
-        result = job.run({"api_key": "test-key-1234567890", "output_dir": str(tmp_path)})
+        result = job.run(
+            {"api_key": "test-key-1234567890", "output_dir": str(tmp_path)}
+        )
 
         mock_instance.run_all.assert_called_once()
         assert isinstance(result, JobResult)
@@ -51,7 +61,10 @@ class TestEiaUsRefreshJob:
 
         mock_sync_cls.assert_called_once()
         call_kwargs = mock_sync_cls.call_args
-        assert call_kwargs[1]["api_key"] == "my-secret-key-12345" or call_kwargs[0][0] == "my-secret-key-12345"
+        assert (
+            call_kwargs[1]["api_key"] == "my-secret-key-12345"
+            or call_kwargs[0][0] == "my-secret-key-12345"
+        )
 
     @patch("worldenergydata.scheduler.jobs.eia_us_refresh.EIAIngestionSync")
     def test_run_returns_failure_on_exception(self, mock_sync_cls, tmp_path):
@@ -64,7 +77,9 @@ class TestEiaUsRefreshJob:
         mock_sync_cls.return_value = mock_instance
 
         job = EiaUsRefreshJob()
-        result = job.run({"api_key": "test-key-1234567890", "output_dir": str(tmp_path)})
+        result = job.run(
+            {"api_key": "test-key-1234567890", "output_dir": str(tmp_path)}
+        )
 
         assert result.status == "failure"
         assert "Connection timed out" in result.error_msg
@@ -87,18 +102,26 @@ class TestEiaUsRefreshJob:
 
         mock_instance = MagicMock()
         mock_instance.run_all.return_value = [
-            {"feed": "petroleum_weekly", "records_written": 2, "latest_period": "2024-01-08"},
+            {
+                "feed": "petroleum_weekly",
+                "records_written": 2,
+                "latest_period": "2024-01-08",
+            },
         ]
         mock_instance.output_dir = tmp_path
         mock_sync_cls.return_value = mock_instance
 
         job = EiaUsRefreshJob()
-        result = job.run({"api_key": "test-key-1234567890", "output_dir": str(tmp_path)})
+        result = job.run(
+            {"api_key": "test-key-1234567890", "output_dir": str(tmp_path)}
+        )
 
         assert result.status == "success"
         # Check that a parquet file was created
         parquet_files = list(tmp_path.glob("*.parquet"))
-        assert len(parquet_files) >= 1, f"Expected parquet files, found: {parquet_files}"
+        assert (
+            len(parquet_files) >= 1
+        ), f"Expected parquet files, found: {parquet_files}"
         # Verify the parquet content
         df = pd.read_parquet(parquet_files[0])
         assert len(df) == 2

@@ -17,6 +17,7 @@ from __future__ import annotations
 # Length
 # ---------------------------------------------------------------------------
 
+
 def feet_to_metres(ft: float) -> float:
     """Convert feet to metres."""
     return ft * 0.3048
@@ -136,6 +137,7 @@ def gas_mcf_to_boe(mcf: float) -> float:
 # ---------------------------------------------------------------------------
 # DataFrame helpers
 # ---------------------------------------------------------------------------
+
 
 def convert_column(
     df,

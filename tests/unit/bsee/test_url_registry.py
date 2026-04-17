@@ -12,12 +12,34 @@ from worldenergydata.bsee.data.refresh.url_registry import (
 )
 
 EXPECTED_DIRS = {
-    "apichanges", "apiraw", "approvals", "assignments", "companydetails",
-    "decomcost", "deepqual", "dsptsdelimit", "fmp",
-    "historical_production_yearly", "incinv", "incs", "lab", "leaseowner",
-    "mcpflow", "nonrequired", "ocsprod", "offshorestats", "osfr",
-    "permstruc", "pipeloc", "platstruc", "production_plan_area",
-    "production_raw", "rowdesc", "royaltyref", "scanneddocs", "serialreg",
+    "apichanges",
+    "apiraw",
+    "approvals",
+    "assignments",
+    "companydetails",
+    "decomcost",
+    "deepqual",
+    "dsptsdelimit",
+    "fmp",
+    "historical_production_yearly",
+    "incinv",
+    "incs",
+    "lab",
+    "leaseowner",
+    "mcpflow",
+    "nonrequired",
+    "ocsprod",
+    "offshorestats",
+    "osfr",
+    "permstruc",
+    "pipeloc",
+    "platstruc",
+    "production_plan_area",
+    "production_raw",
+    "rowdesc",
+    "royaltyref",
+    "scanneddocs",
+    "serialreg",
     "Well_APD_Default",
 }
 
@@ -34,21 +56,23 @@ def test_total_expected_bins_is_130():
 
 def test_all_urls_use_bsee_base():
     for spec in get_all_specs():
-        assert spec.zip_url.startswith(BSEE_BASE_URL), (
-            f"{spec.bin_dir}: url {spec.zip_url!r} does not start with {BSEE_BASE_URL}"
-        )
+        assert spec.zip_url.startswith(
+            BSEE_BASE_URL
+        ), f"{spec.bin_dir}: url {spec.zip_url!r} does not start with {BSEE_BASE_URL}"
 
 
 def test_ogor_a_specs_count():
     ogor_a = get_ogor_a_specs()
-    assert len(ogor_a) == 30, f"Expected 30 OGOR-A specs (1996-2024 + current), got {len(ogor_a)}"
+    assert (
+        len(ogor_a) == 30
+    ), f"Expected 30 OGOR-A specs (1996-2024 + current), got {len(ogor_a)}"
 
 
 def test_regular_specs_have_no_ogor_a():
     for spec in get_regular_specs():
-        assert spec.is_ogor_a is False, (
-            f"Regular spec {spec.bin_dir!r} has is_ogor_a=True"
-        )
+        assert (
+            spec.is_ogor_a is False
+        ), f"Regular spec {spec.bin_dir!r} has is_ogor_a=True"
 
 
 def test_get_specs_for_dir():

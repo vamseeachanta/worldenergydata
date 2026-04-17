@@ -1,8 +1,8 @@
 """Tests for compliance calculations."""
 
 from worldenergydata.bsee.reports.comprehensive.templates.compliance_calculations import (
-    assess_environmental_risks,
     analyze_environmental_trends,
+    assess_environmental_risks,
     calculate_environmental_kpis,
     calculate_performance_percentile,
     calculate_risk_score,
@@ -35,9 +35,12 @@ class TestGetEnvironmentalThresholds:
     def test_has_all_keys(self):
         t = get_environmental_thresholds()
         expected = {
-            "spill_incidents_monthly", "spill_volume_monthly_bbls",
-            "air_emissions_annual_tons", "water_discharge_monthly_bbls",
-            "waste_monthly_tons", "violation_tolerance",
+            "spill_incidents_monthly",
+            "spill_volume_monthly_bbls",
+            "air_emissions_annual_tons",
+            "water_discharge_monthly_bbls",
+            "waste_monthly_tons",
+            "violation_tolerance",
         }
         assert set(t.keys()) == expected
 
@@ -234,7 +237,8 @@ class TestAnalyzeEnvironmentalTrends:
 
     def test_poor(self):
         m = EnvironmentalMetrics(
-            spill_incidents=5, environmental_violations=5,
+            spill_incidents=5,
+            environmental_violations=5,
             air_emissions_tons=500.0,
         )
         result = analyze_environmental_trends(m)
@@ -287,7 +291,8 @@ class TestCalculateEnvironmentalKPIs:
 
     def test_with_incidents(self):
         m = EnvironmentalMetrics(
-            spill_incidents=2, total_spill_volume_bbls=10.0,
+            spill_incidents=2,
+            total_spill_volume_bbls=10.0,
             environmental_violations=1,
         )
         kpis = calculate_environmental_kpis(m)
@@ -319,7 +324,11 @@ class TestGetComplianceStatusColor:
 
 class TestGenerateRecommendations:
     def test_all_good(self):
-        summary = {"production_compliance": 100, "environmental_score": 1.0, "safety_score": 1.0}
+        summary = {
+            "production_compliance": 100,
+            "environmental_score": 1.0,
+            "safety_score": 1.0,
+        }
         recs = generate_recommendations(summary)
         assert len(recs) == 1
         assert "Continue" in recs[0]

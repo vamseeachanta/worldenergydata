@@ -39,6 +39,7 @@ _MIN_DATA_POINTS: int = 6
 
 # ── Arps hyperbolic equation ───────────────────────────────────────────────────
 
+
 def arps_hyperbolic(t: float, qi: float, di: float, b: float) -> float:
     """Compute Arps hyperbolic production rate at time t.
 
@@ -60,6 +61,7 @@ def arps_hyperbolic(t: float, qi: float, di: float, b: float) -> float:
 
 
 # ── Model ──────────────────────────────────────────────────────────────────────
+
 
 class HyperbolicDeclineModel:
     """Arps hyperbolic decline model with optional terminal decline switch.
@@ -101,9 +103,7 @@ class HyperbolicDeclineModel:
 
         return np.maximum(rates, 0.0)
 
-    def _apply_terminal_switch(
-        self, t: np.ndarray, rates: np.ndarray
-    ) -> np.ndarray:
+    def _apply_terminal_switch(self, t: np.ndarray, rates: np.ndarray) -> np.ndarray:
         """Switch to exponential when effective b approaches terminal_b.
 
         The switch-over month is where the instantaneous b-effective
@@ -133,6 +133,7 @@ class HyperbolicDeclineModel:
 
 # ── Result ─────────────────────────────────────────────────────────────────────
 
+
 @dataclass
 class ShaleDeclineResult:
     """Fitted shale hyperbolic decline result for a basin."""
@@ -148,6 +149,7 @@ class ShaleDeclineResult:
 
 
 # ── Analyzer ───────────────────────────────────────────────────────────────────
+
 
 class ShaleDeclineAnalyzer:
     """Fit Arps hyperbolic decline curve to shale basin production data."""
@@ -198,7 +200,9 @@ class ShaleDeclineAnalyzer:
             )
             qi_fit, di_fit, b_fit = popt
         except (RuntimeError, ValueError) as exc:
-            logger.warning("curve_fit failed for %s: %s — using initial guess", basin, exc)
+            logger.warning(
+                "curve_fit failed for %s: %s — using initial guess", basin, exc
+            )
             qi_fit, di_fit, b_fit = qi_guess, di_guess, b_guess
 
         model = HyperbolicDeclineModel(qi=qi_fit, di=di_fit, b=b_fit)

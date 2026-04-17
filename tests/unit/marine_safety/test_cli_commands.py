@@ -15,7 +15,7 @@ from pathlib import Path
 import pytest
 from click.testing import CliRunner
 
-from worldenergydata.marine_safety.cli_db import db, _create_schema
+from worldenergydata.marine_safety.cli_db import _create_schema, db
 from worldenergydata.marine_safety.cli_export import export
 
 runner = CliRunner()

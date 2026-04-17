@@ -3,15 +3,21 @@
 import pandas as pd
 import pytest
 
-from worldenergydata.production.unified.query import ProductionQuery, STANDARD_COLUMNS
-from worldenergydata.production.unified.adapters.sodir_adapter import SodirAdapter
+from worldenergydata.production.unified.adapters.brazil_anp_adapter import (
+    BrazilAnpAdapter,
+)
 from worldenergydata.production.unified.adapters.bsee_adapter import BseeAdapter
-from worldenergydata.production.unified.adapters.brazil_anp_adapter import BrazilAnpAdapter
-from worldenergydata.production.unified.adapters.ukcs_adapter import UkcsAdapter
-from worldenergydata.production.unified.adapters.eia_us_adapter import EiaUsAdapter
-from worldenergydata.production.unified.adapters.mexico_cnh_adapter import MexicoCnhAdapter
-from worldenergydata.production.unified.adapters.texas_rrc_adapter import TexasRrcAdapter
 from worldenergydata.production.unified.adapters.canada_adapter import CanadaAdapter
+from worldenergydata.production.unified.adapters.eia_us_adapter import EiaUsAdapter
+from worldenergydata.production.unified.adapters.mexico_cnh_adapter import (
+    MexicoCnhAdapter,
+)
+from worldenergydata.production.unified.adapters.sodir_adapter import SodirAdapter
+from worldenergydata.production.unified.adapters.texas_rrc_adapter import (
+    TexasRrcAdapter,
+)
+from worldenergydata.production.unified.adapters.ukcs_adapter import UkcsAdapter
+from worldenergydata.production.unified.query import STANDARD_COLUMNS, ProductionQuery
 
 _ALL_ADAPTERS = [
     SodirAdapter,
@@ -37,9 +43,7 @@ class TestAdapterSchemaCompliance:
         adapter = AdapterClass()
         df = adapter.fetch(_default_query(adapter))
         for col in STANDARD_COLUMNS:
-            assert col in df.columns, (
-                f"{AdapterClass.__name__} missing column '{col}'"
-            )
+            assert col in df.columns, f"{AdapterClass.__name__} missing column '{col}'"
 
     @pytest.mark.parametrize("AdapterClass", _ALL_ADAPTERS)
     def test_fetch_returns_dataframe(self, AdapterClass):
@@ -64,9 +68,9 @@ class TestAdapterSchemaCompliance:
         adapter = AdapterClass()
         df = adapter.fetch(_default_query(adapter))
         for col in ("oil_bbl", "gas_mcf", "water_bbl", "condensate_bbl"):
-            assert (df[col] >= 0).all(), (
-                f"{AdapterClass.__name__}: negative values in '{col}'"
-            )
+            assert (
+                df[col] >= 0
+            ).all(), f"{AdapterClass.__name__}: negative values in '{col}'"
 
     @pytest.mark.parametrize("AdapterClass", _ALL_ADAPTERS)
     def test_year_and_month_are_integers(self, AdapterClass):
@@ -119,7 +123,9 @@ class TestAdapterDateFiltering:
         adapter = SodirAdapter()
         q = ProductionQuery(regions=["ncs"], end="2018-12")
         df = adapter.fetch(q)
-        assert ((df["year"] < 2019) | ((df["year"] == 2018) & (df["month"] <= 12))).all()
+        assert (
+            (df["year"] < 2019) | ((df["year"] == 2018) & (df["month"] <= 12))
+        ).all()
 
     def test_bsee_date_filter_range(self):
         adapter = BseeAdapter()

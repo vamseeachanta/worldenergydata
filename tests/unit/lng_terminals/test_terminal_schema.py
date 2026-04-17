@@ -333,9 +333,7 @@ class TestTerminalLoader:
         terminals = loader.load()
 
         # Find Sabine Pass
-        sabine = next(
-            (t for t in terminals if "Sabine Pass" in t.terminal_name), None
-        )
+        sabine = next((t for t in terminals if "Sabine Pass" in t.terminal_name), None)
 
         assert sabine is not None, "Sabine Pass LNG not found in dataset"
         assert sabine.country == "USA"
@@ -368,9 +366,7 @@ class TestTerminalLoader:
         terminals = loader.load()
 
         # Find Gorgon
-        gorgon = next(
-            (t for t in terminals if "Gorgon" in t.terminal_name), None
-        )
+        gorgon = next((t for t in terminals if "Gorgon" in t.terminal_name), None)
 
         assert gorgon is not None, "Gorgon LNG not found in dataset"
         assert gorgon.country == "AUS"
@@ -483,4 +479,6 @@ class TestTerminalLoader:
 
         # At least 80% should have coordinates
         coverage = with_coords / len(terminals)
-        assert coverage >= 0.8, f"Expected >= 80% coordinate coverage, got {coverage:.1%}"
+        assert (
+            coverage >= 0.8
+        ), f"Expected >= 80% coordinate coverage, got {coverage:.1%}"

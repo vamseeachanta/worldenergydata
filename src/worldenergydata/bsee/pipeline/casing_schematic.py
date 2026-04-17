@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 # Data structures
 # ---------------------------------------------------------------------------
 
+
 @dataclass(frozen=True)
 class CasingString:
     """Immutable representation of a single casing/liner/drive-pipe interval.
@@ -72,6 +73,7 @@ _TYPE_COLORS: dict[str, str] = {
 # ---------------------------------------------------------------------------
 # Public API — data loading
 # ---------------------------------------------------------------------------
+
 
 def load_well_casing(api12: str, tubulars_path: Path) -> list[CasingString]:
     """Load casing data for a single well from ``well_tubulars.csv``.
@@ -132,6 +134,7 @@ def _row_to_casing_string(row: pd.Series) -> CasingString:
 # Public API — tabular matrix
 # ---------------------------------------------------------------------------
 
+
 def casing_matrix(strings: list[CasingString]) -> pd.DataFrame:
     """Build a tabular casing program matrix from casing strings.
 
@@ -167,6 +170,7 @@ def casing_matrix(strings: list[CasingString]) -> pd.DataFrame:
 # ---------------------------------------------------------------------------
 # Public API — SVG rendering
 # ---------------------------------------------------------------------------
+
 
 def render_casing_svg(
     strings: list[CasingString],
@@ -227,7 +231,9 @@ def render_casing_svg(
     )
 
     # Depth axis
-    parts.extend(_depth_axis(margin_left, margin_top, draw_height, min_depth, max_depth))
+    parts.extend(
+        _depth_axis(margin_left, margin_top, draw_height, min_depth, max_depth)
+    )
 
     # Draw casing strings (outermost first for correct layering)
     for cs in sorted_strings:
@@ -237,11 +243,23 @@ def render_casing_svg(
         color = _TYPE_COLORS.get(cs.interval_type, "#666")
 
         # Left wall
-        parts.append(_svg_line(center_x - half_w, y_top, center_x - half_w, y_bot, color, width=2.0))
+        parts.append(
+            _svg_line(
+                center_x - half_w, y_top, center_x - half_w, y_bot, color, width=2.0
+            )
+        )
         # Right wall
-        parts.append(_svg_line(center_x + half_w, y_top, center_x + half_w, y_bot, color, width=2.0))
+        parts.append(
+            _svg_line(
+                center_x + half_w, y_top, center_x + half_w, y_bot, color, width=2.0
+            )
+        )
         # Bottom shoe line
-        parts.append(_svg_line(center_x - half_w, y_bot, center_x + half_w, y_bot, color, width=1.5))
+        parts.append(
+            _svg_line(
+                center_x - half_w, y_bot, center_x + half_w, y_bot, color, width=1.5
+            )
+        )
 
         # Annotation at shoe depth
         label = f'{cs.casing_size}" {cs.casing_grade}'
@@ -263,6 +281,7 @@ def render_casing_svg(
 # ---------------------------------------------------------------------------
 # SVG primitives (self-contained — no external dependency)
 # ---------------------------------------------------------------------------
+
 
 def _svg_header(width: int, height: int) -> str:
     return (
@@ -319,13 +338,16 @@ def _svg_text(
 # Internal helpers
 # ---------------------------------------------------------------------------
 
+
 def _empty_svg(width: int, height: int, well_name: str) -> str:
     """Return a minimal SVG with a 'no data' message."""
     title = f"Casing Program \u2014 {well_name}" if well_name else "Casing Program"
     parts = [
         _svg_header(width, height),
         _svg_text(width / 2, 30, title, color="#222", size=16, anchor="middle"),
-        _svg_text(width / 2, height / 2, "No casing data available", color="#999", size=14),
+        _svg_text(
+            width / 2, height / 2, "No casing data available", color="#999", size=14
+        ),
         _svg_footer(),
     ]
     return "\n".join(parts)
@@ -371,7 +393,14 @@ def _depth_axis(
         y = margin_top + frac * draw_height
         parts.append(_svg_line(x_line, y, margin_left, y, "#999", 0.5))
         parts.append(
-            _svg_text(x_line - 5, y + 4, f"{int(tick_depth)}", color="#555", size=10, anchor="end")
+            _svg_text(
+                x_line - 5,
+                y + 4,
+                f"{int(tick_depth)}",
+                color="#555",
+                size=10,
+                anchor="end",
+            )
         )
         tick_depth += nice
 

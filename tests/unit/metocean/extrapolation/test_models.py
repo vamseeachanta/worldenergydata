@@ -6,6 +6,7 @@ Tests for worldenergydata.metocean.extrapolation.models
 """
 
 import math
+
 import pytest
 
 from worldenergydata.metocean.extrapolation.models import (
@@ -13,8 +14,10 @@ from worldenergydata.metocean.extrapolation.models import (
     WaveExtrapolator,
 )
 from worldenergydata.metocean.extrapolation.source_catalog import MetoceanSource
-from worldenergydata.metocean.extrapolation.spatial import SpatialAssessor, SpatialContext
-
+from worldenergydata.metocean.extrapolation.spatial import (
+    SpatialAssessor,
+    SpatialContext,
+)
 
 # ---------------------------------------------------------------------------
 # Fixtures

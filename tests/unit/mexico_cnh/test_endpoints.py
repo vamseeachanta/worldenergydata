@@ -1,11 +1,11 @@
 """Tests for Mexico CNH endpoints configuration."""
 
 from worldenergydata.mexico_cnh.endpoints import (
+    DEFAULT_RATE_LIMITS,
+    DEFAULT_TIMEOUTS,
     CNHEndpoint,
     CNHEndpoints,
     CNHPortal,
-    DEFAULT_RATE_LIMITS,
-    DEFAULT_TIMEOUTS,
 )
 
 

@@ -7,10 +7,10 @@ from worldenergydata.landman.landman import (
     LandmanValidationError,
 )
 
-
 # ---------------------------------------------------------------------------
 # LandmanValidationError
 # ---------------------------------------------------------------------------
+
 
 class TestLandmanValidationError:
     def test_invalid_state_code(self):
@@ -31,6 +31,7 @@ class TestLandmanValidationError:
 # ---------------------------------------------------------------------------
 # Landman constants
 # ---------------------------------------------------------------------------
+
 
 class TestLandmanConstants:
     def test_valid_data_types(self):
@@ -58,6 +59,7 @@ class TestLandmanConstants:
 # Landman init
 # ---------------------------------------------------------------------------
 
+
 class TestLandmanInit:
     def test_module_name(self):
         lm = Landman()
@@ -70,5 +72,3 @@ class TestLandmanInit:
     def test_providers_empty(self):
         lm = Landman()
         assert lm._providers == {}
-
-

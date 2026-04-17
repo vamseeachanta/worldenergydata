@@ -7,16 +7,27 @@ from worldenergydata.bsee.reports.comprehensive.templates.economic_goby import (
     integrate_goby_field_economics,
 )
 
-
 # ---------------------------------------------------------------------------
 # calculate_goby_14_row_structure
 # ---------------------------------------------------------------------------
 
+
 class TestCalculateGoby14RowStructure:
     def test_basic(self):
         prod = {"oil_bbls": 10000, "gas_mcf": 60000, "water_bbls": 5000}
-        rev = {"oil_revenue": 750000, "gas_revenue": 180000, "ngl_revenue": 0, "gross_revenue": 930000}
-        costs = {"operating_cost": 200000, "royalties": 100000, "severance_tax": 50000, "total_costs": 350000, "net_income": 580000}
+        rev = {
+            "oil_revenue": 750000,
+            "gas_revenue": 180000,
+            "ngl_revenue": 0,
+            "gross_revenue": 930000,
+        }
+        costs = {
+            "operating_cost": 200000,
+            "royalties": 100000,
+            "severance_tax": 50000,
+            "total_costs": 350000,
+            "net_income": 580000,
+        }
 
         result = calculate_goby_14_row_structure(prod, rev, costs)
 
@@ -44,7 +55,12 @@ class TestCalculateGoby14RowStructure:
     def test_per_boe_calculations(self):
         prod = {"oil_bbls": 10000, "gas_mcf": 0}
         rev = {"gross_revenue": 750000}
-        costs = {"operating_cost": 200000, "royalties": 50000, "net_income": 500000, "total_costs": 250000}
+        costs = {
+            "operating_cost": 200000,
+            "royalties": 50000,
+            "net_income": 500000,
+            "total_costs": 250000,
+        }
         result = calculate_goby_14_row_structure(prod, rev, costs)
         assert result["revenue_per_boe"] == pytest.approx(75.0)
         assert result["operating_cost_per_boe"] == pytest.approx(20.0)
@@ -75,6 +91,7 @@ class TestCalculateGoby14RowStructure:
 # integrate_goby_field_economics
 # ---------------------------------------------------------------------------
 
+
 class TestIntegrateGobyFieldEconomics:
     def test_basic(self):
         metrics = {
@@ -95,7 +112,9 @@ class TestIntegrateGobyFieldEconomics:
         result = integrate_goby_field_economics(metrics)
         assert result["field_summary"]["total_wells"] == 10
         assert result["field_economics"]["gross_revenue"] == 5000000
-        assert result["field_performance"]["avg_revenue_per_well"] == pytest.approx(500000.0)
+        assert result["field_performance"]["avg_revenue_per_well"] == pytest.approx(
+            500000.0
+        )
 
     def test_empty_metrics(self):
         result = integrate_goby_field_economics({})

@@ -87,12 +87,14 @@ class StateProductionLoader:
             else:
                 crude_bbl = float(raw_value) * self._KBBL_TO_BBL
 
-            rows.append({
-                "state": state_upper,
-                "year": year,
-                "month": month,
-                "crude_bbl": crude_bbl,
-            })
+            rows.append(
+                {
+                    "state": state_upper,
+                    "year": year,
+                    "month": month,
+                    "crude_bbl": crude_bbl,
+                }
+            )
 
         if not rows:
             return pd.DataFrame(columns=_cols)
@@ -108,11 +110,7 @@ class StateProductionLoader:
         if df.empty:
             return pd.DataFrame(columns=["state", "year", "crude_bbl"])
 
-        return (
-            df.groupby(["state", "year"])["crude_bbl"]
-            .sum()
-            .reset_index()
-        )
+        return df.groupby(["state", "year"])["crude_bbl"].sum().reset_index()
 
     def filter_year(self, df: pd.DataFrame, year: int) -> pd.DataFrame:
         """Return rows for a specific calendar year."""

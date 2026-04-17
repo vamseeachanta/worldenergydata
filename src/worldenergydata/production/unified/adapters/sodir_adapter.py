@@ -11,7 +11,7 @@ from typing import List, Tuple
 
 import pandas as pd
 
-from worldenergydata.common.units import OilUnits, GasUnits
+from worldenergydata.common.units import GasUnits, OilUnits
 from worldenergydata.production.unified.adapters.base import AbstractProductionAdapter
 from worldenergydata.production.unified.query import ProductionQuery
 
@@ -27,18 +27,34 @@ class SodirAdapter(AbstractProductionAdapter):
     # Each entry: (field_name, peak_oil_bbl_mo, peak_gas_mcf_mo, peak_water_bbl_mo,
     #               condensate_bbl_mo, start_year, start_month, n_months)
     _FIELDS = [
-        ("Edvard Grieg",  5_800_000,  2_100_000,   420_000,  180_000, 2015, 11, 96),
-        ("Valhall",       4_200_000,  1_500_000,   650_000,   90_000, 1982,  1, 504),
-        ("Ivar Aasen",    1_600_000,    520_000,   190_000,   40_000, 2016, 12, 88),
-        ("Solveig",         900_000,    310_000,    80_000,   30_000, 2019,  5, 60),
+        ("Edvard Grieg", 5_800_000, 2_100_000, 420_000, 180_000, 2015, 11, 96),
+        ("Valhall", 4_200_000, 1_500_000, 650_000, 90_000, 1982, 1, 504),
+        ("Ivar Aasen", 1_600_000, 520_000, 190_000, 40_000, 2016, 12, 88),
+        ("Solveig", 900_000, 310_000, 80_000, 30_000, 2019, 5, 60),
     ]
 
     def fetch(self, query: ProductionQuery) -> pd.DataFrame:
         rows = []
-        for field_name, peak_oil, peak_gas, peak_water, peak_cond, sy, sm, n_months in self._FIELDS:
+        for (
+            field_name,
+            peak_oil,
+            peak_gas,
+            peak_water,
+            peak_cond,
+            sy,
+            sm,
+            n_months,
+        ) in self._FIELDS:
             rows.extend(
                 self._generate_field_rows(
-                    field_name, peak_oil, peak_gas, peak_water, peak_cond, sy, sm, n_months
+                    field_name,
+                    peak_oil,
+                    peak_gas,
+                    peak_water,
+                    peak_cond,
+                    sy,
+                    sm,
+                    n_months,
                 )
             )
 

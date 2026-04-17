@@ -1,16 +1,16 @@
 """Tests for Nigeria NUPRC PDF downloader and table extractor."""
 
 import io
+from unittest.mock import MagicMock, PropertyMock, patch
+
 import pytest
-from unittest.mock import MagicMock, patch, PropertyMock
 
 from worldenergydata.west_africa.nigeria.nuprc_client import (
-    NuprcClient,
     NuprcAPIError,
-    parse_blend_table_from_pdf,
+    NuprcClient,
     list_report_urls,
+    parse_blend_table_from_pdf,
 )
-
 
 NUPRC_PORTAL = "https://www.nuprc.gov.ng/oil-production-status-report/"
 

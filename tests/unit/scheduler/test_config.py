@@ -1,12 +1,17 @@
 """Tests for scheduler config loader and validation."""
-import pytest
-import yaml
-import tempfile
+
 import os
+import tempfile
 from pathlib import Path
 
-from worldenergydata.scheduler.config import SchedulerConfig, load_config, validate_config
+import pytest
+import yaml
 
+from worldenergydata.scheduler.config import (
+    SchedulerConfig,
+    load_config,
+    validate_config,
+)
 
 VALID_YAML = """
 jobs:

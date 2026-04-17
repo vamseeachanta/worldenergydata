@@ -1,6 +1,7 @@
 """Tests for well data verification configuration."""
 
 import os
+
 import pytest
 
 from worldenergydata.bsee.analysis.well_data_verification.config import (

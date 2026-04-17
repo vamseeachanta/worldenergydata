@@ -62,22 +62,22 @@ _AREA_CODE_REGION_MAP = {
 # ---------------------------------------------------------------------------
 
 _REGION_WATER_DEPTH_DEFAULTS: dict[str, float] = {
-    "gom": 1500.0,          # representative deepwater GOM
-    "north_sea": 150.0,      # representative UKCS / NCS mid-water
-    "brazil": 2000.0,        # pre-salt deepwater
-    "west_africa": 1200.0,   # typical deepwater West Africa
-    "asia_pacific": 80.0,    # mostly shallow / jackup
-    "permian": 0.0,          # onshore
-    "eagle_ford": 0.0,       # onshore
+    "gom": 1500.0,  # representative deepwater GOM
+    "north_sea": 150.0,  # representative UKCS / NCS mid-water
+    "brazil": 2000.0,  # pre-salt deepwater
+    "west_africa": 1200.0,  # typical deepwater West Africa
+    "asia_pacific": 80.0,  # mostly shallow / jackup
+    "permian": 0.0,  # onshore
+    "eagle_ford": 0.0,  # onshore
 }
 
 _REGION_WELL_DEPTH_DEFAULTS: dict[str, float] = {
-    "gom": 7500.0,           # representative deepwater TD ~25 000 ft
-    "north_sea": 4000.0,     # typical NCS well depth
-    "brazil": 6000.0,        # pre-salt well depth
+    "gom": 7500.0,  # representative deepwater TD ~25 000 ft
+    "north_sea": 4000.0,  # typical NCS well depth
+    "brazil": 6000.0,  # pre-salt well depth
     "west_africa": 5000.0,
     "asia_pacific": 3000.0,
-    "permian": 3500.0,       # typical Permian lateral/TVD
+    "permian": 3500.0,  # typical Permian lateral/TVD
     "eagle_ford": 3000.0,
 }
 
@@ -205,9 +205,7 @@ class FieldPipelineCostIntegrator:
         ctx = report.context
         region = _infer_region(ctx.area_code, ctx.field_name)
 
-        water_depth_m = self._resolve_water_depth(
-            report.production_summary, region
-        )
+        water_depth_m = self._resolve_water_depth(report.production_summary, region)
         well_depth_m = _default_well_depth_m(region)
         n_wells = max(report.wellbore_count, 0)
 
@@ -281,7 +279,10 @@ class FieldPipelineCostIntegrator:
         Returns:
             Water depth in metres.
         """
-        if not production_summary.empty and "WATER_DEPTH_AVG" in production_summary.columns:
+        if (
+            not production_summary.empty
+            and "WATER_DEPTH_AVG" in production_summary.columns
+        ):
             value = production_summary["WATER_DEPTH_AVG"].iloc[0]
             try:
                 depth = float(value)

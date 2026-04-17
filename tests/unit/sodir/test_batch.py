@@ -169,8 +169,15 @@ class TestGetBatchStatus:
 
     def test_multiple_batches(self):
         bp = SodirBatchProcessor()
-        br1 = BatchResult(batch_id="b1", status=BatchStatus.COMPLETED, total_items=1, processed_items=1)
-        br2 = BatchResult(batch_id="b2", status=BatchStatus.FAILED, total_items=2, processed_items=0)
+        br1 = BatchResult(
+            batch_id="b1",
+            status=BatchStatus.COMPLETED,
+            total_items=1,
+            processed_items=1,
+        )
+        br2 = BatchResult(
+            batch_id="b2", status=BatchStatus.FAILED, total_items=2, processed_items=0
+        )
         bp.batch_history.extend([br1, br2])
         assert bp.get_batch_status("b2") is br2
 
@@ -182,7 +189,12 @@ class TestGetCurrentStatus:
 
     def test_returns_current(self):
         bp = SodirBatchProcessor()
-        br = BatchResult(batch_id="c1", status=BatchStatus.PROCESSING, total_items=5, processed_items=0)
+        br = BatchResult(
+            batch_id="c1",
+            status=BatchStatus.PROCESSING,
+            total_items=5,
+            processed_items=0,
+        )
         bp.current_batch = br
         assert bp.get_current_status() is br
 
@@ -198,9 +210,27 @@ class TestGetStatistics:
     def test_with_history(self):
         bp = SodirBatchProcessor()
         bp.batch_history = [
-            BatchResult(batch_id="b1", status=BatchStatus.COMPLETED, total_items=10, processed_items=10, processing_time=5.0),
-            BatchResult(batch_id="b2", status=BatchStatus.FAILED, total_items=5, processed_items=0, processing_time=2.0),
-            BatchResult(batch_id="b3", status=BatchStatus.PARTIAL, total_items=8, processed_items=4, processing_time=3.0),
+            BatchResult(
+                batch_id="b1",
+                status=BatchStatus.COMPLETED,
+                total_items=10,
+                processed_items=10,
+                processing_time=5.0,
+            ),
+            BatchResult(
+                batch_id="b2",
+                status=BatchStatus.FAILED,
+                total_items=5,
+                processed_items=0,
+                processing_time=2.0,
+            ),
+            BatchResult(
+                batch_id="b3",
+                status=BatchStatus.PARTIAL,
+                total_items=8,
+                processed_items=4,
+                processing_time=3.0,
+            ),
         ]
         stats = bp.get_statistics()
         assert stats["total_batches"] == 3
@@ -438,6 +468,7 @@ class TestProcessDataTransformation:
         bp = SodirBatchProcessor(config=cfg)
 
         call_count = 0
+
         def flaky_transform(items):
             nonlocal call_count
             call_count += 1
@@ -486,6 +517,7 @@ class TestProcessMultiFormatExport:
 # process_incremental_sync
 # ---------------------------------------------------------------------------
 
+
 class TestProcessIncrementalSync:
     def test_basic_sync(self, tmp_path):
         cfg = BatchConfig(batch_size=10)
@@ -513,9 +545,7 @@ class TestProcessIncrementalSync:
             [{"id": 3}],
         ]
         last_sync = datetime(2024, 1, 1)
-        result = bp.process_incremental_sync(
-            client, last_sync, ["blocks"], tmp_path
-        )
+        result = bp.process_incremental_sync(client, last_sync, ["blocks"], tmp_path)
         assert result.status == BatchStatus.COMPLETED
         assert result.metadata.get("blocks_count") == 3
 
@@ -539,9 +569,7 @@ class TestProcessIncrementalSync:
         client = MagicMock()
         client.get_blocks.side_effect = Exception("down")
         last_sync = datetime(2024, 1, 1)
-        result = bp.process_incremental_sync(
-            client, last_sync, ["blocks"], tmp_path
-        )
+        result = bp.process_incremental_sync(client, last_sync, ["blocks"], tmp_path)
         assert result.status == BatchStatus.FAILED
 
     def test_sync_unknown_data_type(self, tmp_path):
@@ -562,9 +590,7 @@ class TestProcessIncrementalSync:
         client = MagicMock()
         client.get_fields.return_value = []
         last_sync = datetime(2024, 1, 1)
-        result = bp.process_incremental_sync(
-            client, last_sync, ["fields"], tmp_path
-        )
+        result = bp.process_incremental_sync(client, last_sync, ["fields"], tmp_path)
         assert result.status == BatchStatus.COMPLETED
         # No data to save but still counts as processed
         assert result.processed_items == 1
@@ -573,6 +599,7 @@ class TestProcessIncrementalSync:
 # ---------------------------------------------------------------------------
 # process_multi_format_export - parallel path
 # ---------------------------------------------------------------------------
+
 
 class TestParallelMultiFormatExport:
     def test_parallel_json_csv(self, tmp_path):
@@ -588,9 +615,7 @@ class TestParallelMultiFormatExport:
         cfg = BatchConfig(use_parallel=True, max_workers=2)
         bp = SodirBatchProcessor(config=cfg)
         data = [{"x": 1}]
-        result = bp.process_multi_format_export(
-            data, ["json", "parquet"], tmp_path
-        )
+        result = bp.process_multi_format_export(data, ["json", "parquet"], tmp_path)
         assert result.status == BatchStatus.PARTIAL
         assert result.processed_items == 1
         assert result.failed_items == 1
@@ -599,6 +624,7 @@ class TestParallelMultiFormatExport:
 # ---------------------------------------------------------------------------
 # process_data_collection - with save_intermediate
 # ---------------------------------------------------------------------------
+
 
 class TestProcessDataCollectionSaveIntermediate:
     def test_save_intermediate(self, tmp_path):

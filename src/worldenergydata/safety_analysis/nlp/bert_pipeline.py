@@ -12,6 +12,7 @@ Install with::
     pip install worldenergydata[safety-bert]   # torch, transformers
     pip install worldenergydata[safety-ml]     # scikit-learn
 """
+
 from __future__ import annotations
 
 from datetime import datetime, timezone

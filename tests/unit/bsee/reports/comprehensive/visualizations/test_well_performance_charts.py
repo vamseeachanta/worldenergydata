@@ -10,10 +10,10 @@ from worldenergydata.bsee.reports.comprehensive.visualizations.well_performance_
     WellPerformanceChart,
 )
 
-
 # ---------------------------------------------------------------------------
 # PerformanceMetrics dataclass
 # ---------------------------------------------------------------------------
+
 
 class TestPerformanceMetrics:
     def test_init(self):
@@ -39,6 +39,7 @@ class TestPerformanceMetrics:
 # WellPerformanceChart init
 # ---------------------------------------------------------------------------
 
+
 class TestWellPerformanceChartInit:
     def test_default_theme(self):
         chart = WellPerformanceChart()
@@ -53,21 +54,25 @@ class TestWellPerformanceChartInit:
 # Helper data
 # ---------------------------------------------------------------------------
 
+
 def _sample_df():
-    return pd.DataFrame({
-        "well_name": ["W1", "W2", "W3", "W4", "W5"],
-        "production_rate": [500, 300, 700, 400, 600],
-        "water_cut": [25, 40, 15, 35, 20],
-        "efficiency": [85, 75, 90, 70, 88],
-        "operating_cost": [12, 18, 10, 20, 14],
-        "gas_oil_ratio": [800, 1200, 600, 1000, 700],
-        "uptime": [92, 85, 95, 80, 90],
-    })
+    return pd.DataFrame(
+        {
+            "well_name": ["W1", "W2", "W3", "W4", "W5"],
+            "production_rate": [500, 300, 700, 400, 600],
+            "water_cut": [25, 40, 15, 35, 20],
+            "efficiency": [85, 75, 90, 70, 88],
+            "operating_cost": [12, 18, 10, 20, 14],
+            "gas_oil_ratio": [800, 1200, 600, 1000, 700],
+            "uptime": [92, 85, 95, 80, 90],
+        }
+    )
 
 
 # ---------------------------------------------------------------------------
 # create_scatter_plot
 # ---------------------------------------------------------------------------
+
 
 class TestCreateScatterPlot:
     def test_basic_scatter(self):
@@ -88,8 +93,11 @@ class TestCreateScatterPlot:
         chart = WellPerformanceChart()
         df = _sample_df()
         fig = chart.create_scatter_plot(
-            df, "production_rate", "water_cut",
-            color_column="well_name", size_column="efficiency",
+            df,
+            "production_rate",
+            "water_cut",
+            color_column="well_name",
+            size_column="efficiency",
         )
         assert isinstance(fig, go.Figure)
 
@@ -113,6 +121,7 @@ class TestCreateScatterPlot:
 # create_heat_map
 # ---------------------------------------------------------------------------
 
+
 class TestCreateHeatMap:
     def test_basic_heatmap(self):
         chart = WellPerformanceChart()
@@ -134,7 +143,9 @@ class TestCreateHeatMap:
             },
             index=["W1", "W2", "W3"],
         )
-        fig = chart.create_heat_map(df, wells=["W1", "W2"], metrics=["efficiency", "uptime"])
+        fig = chart.create_heat_map(
+            df, wells=["W1", "W2"], metrics=["efficiency", "uptime"]
+        )
         assert isinstance(fig, go.Figure)
 
     def test_with_metrics_filter(self):
@@ -151,6 +162,7 @@ class TestCreateHeatMap:
 # create_bubble_chart
 # ---------------------------------------------------------------------------
 
+
 class TestCreateBubbleChart:
     def test_basic_bubble(self):
         chart = WellPerformanceChart()
@@ -164,7 +176,10 @@ class TestCreateBubbleChart:
         chart = WellPerformanceChart()
         df = _sample_df()
         fig = chart.create_bubble_chart(
-            df, "production_rate", "water_cut", "efficiency",
+            df,
+            "production_rate",
+            "water_cut",
+            "efficiency",
             color_metric="operating_cost",
         )
         assert isinstance(fig, go.Figure)
@@ -174,12 +189,17 @@ class TestCreateBubbleChart:
 # create_performance_radar
 # ---------------------------------------------------------------------------
 
+
 class TestCreatePerformanceRadar:
     def test_basic_radar(self):
         chart = WellPerformanceChart()
         pm = PerformanceMetrics(
-            well_name="W1", efficiency=85, uptime=92,
-            production_rate=500, water_cut=25, gas_oil_ratio=800,
+            well_name="W1",
+            efficiency=85,
+            uptime=92,
+            production_rate=500,
+            water_cut=25,
+            gas_oil_ratio=800,
             operating_cost=15,
         )
         fig = chart.create_performance_radar(pm)
@@ -188,8 +208,12 @@ class TestCreatePerformanceRadar:
     def test_with_targets(self):
         chart = WellPerformanceChart()
         pm = PerformanceMetrics(
-            well_name="W1", efficiency=85, uptime=92,
-            production_rate=500, water_cut=25, gas_oil_ratio=800,
+            well_name="W1",
+            efficiency=85,
+            uptime=92,
+            production_rate=500,
+            water_cut=25,
+            gas_oil_ratio=800,
             operating_cost=15,
         )
         targets = {"efficiency": 90, "uptime": 95, "water_cut": 20}
@@ -199,8 +223,12 @@ class TestCreatePerformanceRadar:
     def test_custom_title(self):
         chart = WellPerformanceChart()
         pm = PerformanceMetrics(
-            well_name="W1", efficiency=85, uptime=92,
-            production_rate=500, water_cut=25, gas_oil_ratio=800,
+            well_name="W1",
+            efficiency=85,
+            uptime=92,
+            production_rate=500,
+            water_cut=25,
+            gas_oil_ratio=800,
             operating_cost=15,
         )
         fig = chart.create_performance_radar(pm, title="Custom Radar")
@@ -210,6 +238,7 @@ class TestCreatePerformanceRadar:
 # ---------------------------------------------------------------------------
 # create_well_ranking
 # ---------------------------------------------------------------------------
+
 
 class TestCreateWellRanking:
     def test_basic_ranking(self):
@@ -228,6 +257,7 @@ class TestCreateWellRanking:
 # ---------------------------------------------------------------------------
 # create_time_series_comparison
 # ---------------------------------------------------------------------------
+
 
 class TestCreateTimeSeriesComparison:
     def test_basic_time_series(self):
@@ -254,14 +284,17 @@ class TestCreateTimeSeriesComparison:
 # create_efficiency_matrix
 # ---------------------------------------------------------------------------
 
+
 class TestCreateEfficiencyMatrix:
     def test_basic_matrix(self):
         chart = WellPerformanceChart()
-        data = pd.DataFrame({
-            "production_efficiency": [85, 90],
-            "uptime": [92, 88],
-            "cost_index": [25, 30],
-        })
+        data = pd.DataFrame(
+            {
+                "production_efficiency": [85, 90],
+                "uptime": [92, 88],
+                "cost_index": [25, 30],
+            }
+        )
         fig = chart.create_efficiency_matrix(data)
         assert isinstance(fig, go.Figure)
 

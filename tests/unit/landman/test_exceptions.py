@@ -58,9 +58,7 @@ class TestStateNotSupportedError:
         assert "OK" in str(err)
 
     def test_custom_message(self):
-        err = StateNotSupportedError(
-            state="X", provider="P", message="Custom msg"
-        )
+        err = StateNotSupportedError(state="X", provider="P", message="Custom msg")
         assert "Custom msg" in str(err)
 
 
@@ -72,9 +70,7 @@ class TestCountyNotFoundError:
         assert err.code == "COUNTY_NOT_FOUND"
 
     def test_custom_message(self):
-        err = CountyNotFoundError(
-            county="C", state="S", message="Custom msg"
-        )
+        err = CountyNotFoundError(county="C", state="S", message="Custom msg")
         assert "Custom msg" in str(err)
 
 
@@ -140,9 +136,7 @@ class TestRecordNotFoundError:
         assert err.code == "RECORD_NOT_FOUND"
 
     def test_custom_message(self):
-        err = RecordNotFoundError(
-            record_type="T", identifier="I", message="Not here"
-        )
+        err = RecordNotFoundError(record_type="T", identifier="I", message="Not here")
         assert "Not here" in str(err)
 
 

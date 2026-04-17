@@ -4,6 +4,7 @@ Per D-15: SMTP configured via .env (SMTP_HOST, SMTP_USER, SMTP_PASS).
 Per D-16: Alert on (1) job failure after all retries, (2) staleness threshold breached.
 Partial success (0 records) does NOT trigger alerts.
 """
+
 import logging
 import smtplib
 from email.mime.multipart import MIMEMultipart

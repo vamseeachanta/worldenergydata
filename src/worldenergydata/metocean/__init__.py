@@ -35,16 +35,6 @@ from worldenergydata.metocean.clients import (
     OpenMeteoForecast,
 )
 
-# NDBC facade — scatter matrix, seasonal filtering, Weibull, wave rose (WRK-316)
-from worldenergydata.metocean.ndbc import (
-    build_scatter_matrix,
-    filter_by_season,
-    fit_weibull_hs,
-    parse_stdmet_file,
-    parse_stdmet_line,
-    wave_rose,
-)
-
 # Configuration
 from worldenergydata.metocean.config import (
     MetoceanConfig,
@@ -93,6 +83,16 @@ from worldenergydata.metocean.exceptions import (
     RateLimitError,
     TimeoutError,
     ValidationError,
+)
+
+# NDBC facade — scatter matrix, seasonal filtering, Weibull, wave rose (WRK-316)
+from worldenergydata.metocean.ndbc import (
+    build_scatter_matrix,
+    filter_by_season,
+    fit_weibull_hs,
+    parse_stdmet_file,
+    parse_stdmet_line,
+    wave_rose,
 )
 
 # Processors

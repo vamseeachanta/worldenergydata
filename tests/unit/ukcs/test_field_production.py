@@ -4,11 +4,10 @@ import pandas as pd
 import pytest
 
 from worldenergydata.ukcs.production.field_production import (
-    UKCSFieldProductionLoader,
-    TONNES_TO_BBL,
     MMSCF_TO_MCF,
+    TONNES_TO_BBL,
+    UKCSFieldProductionLoader,
 )
-
 
 MOCK_CSV_DATA = {
     "FieldName": ["FORTIES", "FORTIES", "BUZZARD", "MARINER", "MARINER"],
@@ -47,9 +46,7 @@ class TestUKCSFieldProductionLoaderLoad:
         result = loader.load(raw)
         # 450.3 thousand tonnes * 1000 * TONNES_TO_BBL
         expected_bbl = 450.3 * 1000 * TONNES_TO_BBL
-        forties_jan = result[
-            (result["field"] == "FORTIES") & (result["month"] == 1)
-        ]
+        forties_jan = result[(result["field"] == "FORTIES") & (result["month"] == 1)]
         assert len(forties_jan) == 1
         assert forties_jan.iloc[0]["oil_bbl"] == pytest.approx(expected_bbl, rel=1e-3)
 
@@ -57,18 +54,14 @@ class TestUKCSFieldProductionLoaderLoad:
         raw = make_mock_df()
         result = loader.load(raw)
         expected_mcf = 12.5 * MMSCF_TO_MCF
-        forties_jan = result[
-            (result["field"] == "FORTIES") & (result["month"] == 1)
-        ]
+        forties_jan = result[(result["field"] == "FORTIES") & (result["month"] == 1)]
         assert forties_jan.iloc[0]["gas_mcf"] == pytest.approx(expected_mcf, rel=1e-3)
 
     def test_load_converts_water_to_bbl(self, loader):
         raw = make_mock_df()
         result = loader.load(raw)
         expected_bbl = 310.2 * 1000 * TONNES_TO_BBL
-        forties_jan = result[
-            (result["field"] == "FORTIES") & (result["month"] == 1)
-        ]
+        forties_jan = result[(result["field"] == "FORTIES") & (result["month"] == 1)]
         assert forties_jan.iloc[0]["water_bbl"] == pytest.approx(expected_bbl, rel=1e-3)
 
     def test_load_output_has_required_columns(self, loader):
@@ -86,7 +79,9 @@ class TestUKCSFieldProductionLoaderLoad:
     def test_load_empty_dataframe_returns_empty(self, loader):
         empty = pd.DataFrame(
             columns=[
-                "FieldName", "Year", "Month",
+                "FieldName",
+                "Year",
+                "Month",
                 "OilProduction (Thousand Tonnes)",
                 "GasProduction (MMscf)",
                 "WaterProduction (Thousand Tonnes)",
@@ -141,9 +136,7 @@ class TestUKCSFieldProductionLoaderAnnual:
         raw = make_mock_df()
         df = loader.load(raw)
         annual = loader.annual_aggregate(df)
-        forties_2022 = annual[
-            (annual["field"] == "FORTIES") & (annual["year"] == 2022)
-        ]
+        forties_2022 = annual[(annual["field"] == "FORTIES") & (annual["year"] == 2022)]
         assert len(forties_2022) == 1
         expected = (450.3 + 430.0) * 1000 * TONNES_TO_BBL
         assert forties_2022.iloc[0]["oil_bbl"] == pytest.approx(expected, rel=1e-3)

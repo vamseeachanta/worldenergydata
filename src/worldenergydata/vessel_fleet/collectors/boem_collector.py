@@ -16,7 +16,9 @@ from worldenergydata.vessel_fleet.collectors.base import BaseCollector
 
 logger = logging.getLogger(__name__)
 
-_BOEM_PLATFORM_URL = "https://www.data.boem.gov/Platform/PlatformStructures/Default.aspx"
+_BOEM_PLATFORM_URL = (
+    "https://www.data.boem.gov/Platform/PlatformStructures/Default.aspx"
+)
 _BOEM_DRILLING_PERMIT_URL = "https://www.data.boem.gov/Permit/APD/Default.aspx"
 
 

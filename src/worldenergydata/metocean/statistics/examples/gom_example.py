@@ -23,16 +23,14 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
+from worldenergydata.common.logging import get_logger
 from worldenergydata.metocean.statistics import (
+    EnvironmentalContour,
     ExtremeValueAnalysis,
     JointProbabilityModel,
-    EnvironmentalContour,
     MetoceanReport,
     WeatherWindowAnalysis,
 )
-
-
-from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
 
@@ -40,17 +38,17 @@ logger = get_logger(__name__)
 # ---------------------------------------------------------------------------
 # GoM synthetic data parameters (typical NDBC 42035, West Cameron Block)
 # ---------------------------------------------------------------------------
-_GoM_HS_WEIBULL_SCALE = 0.85   # metres  (light sea state, Gulf swell dominated)
+_GoM_HS_WEIBULL_SCALE = 0.85  # metres  (light sea state, Gulf swell dominated)
 _GoM_HS_WEIBULL_SHAPE = 1.2
-_GoM_HS_MIN = 0.1               # metres
-_GoM_TP_COEFF = 4.3             # Tp ~ a * sqrt(Hs) + noise
-_GoM_TP_NOISE_STD = 1.2         # seconds
-_GoM_TP_CLIP_MIN = 3.0          # seconds
-_GoM_TP_CLIP_MAX = 18.0         # seconds
+_GoM_HS_MIN = 0.1  # metres
+_GoM_TP_COEFF = 4.3  # Tp ~ a * sqrt(Hs) + noise
+_GoM_TP_NOISE_STD = 1.2  # seconds
+_GoM_TP_CLIP_MIN = 3.0  # seconds
+_GoM_TP_CLIP_MAX = 18.0  # seconds
 _GoM_LAT = 29.232
 _GoM_LON = -94.413
 _GoM_N_YEARS = 10
-_GoM_TIMESTEP_H = 1             # hourly
+_GoM_TIMESTEP_H = 1  # hourly
 
 
 def _generate_gom_data(seed: int = 42) -> tuple[pd.Series, pd.Series]:
@@ -98,7 +96,9 @@ def run_gom_example(output_path: str = "gom_report.html") -> None:
     # 1. Generate synthetic data
     logger.info("\n[1/5] Generating synthetic GoM data...")
     hs, tp = _generate_gom_data()
-    logger.info(f"      {len(hs):,} hourly records | Hs range: {hs.min():.2f}–{hs.max():.2f} m")
+    logger.info(
+        f"      {len(hs):,} hourly records | Hs range: {hs.min():.2f}–{hs.max():.2f} m"
+    )
     logger.info(f"      Tp range: {tp.min():.2f}–{tp.max():.2f} s")
 
     # 2. EVA
@@ -114,7 +114,9 @@ def run_gom_example(output_path: str = "gom_report.html") -> None:
     jpm = JointProbabilityModel()
     joint_model = jpm.fit(hs, tp, periods=[50])
     scatter = jpm.scatter_diagram(hs, tp)
-    logger.info(f"      Scatter diagram: {scatter.shape[0]} Hs bins × {scatter.shape[1]} Tp bins")
+    logger.info(
+        f"      Scatter diagram: {scatter.shape[0]} Hs bins × {scatter.shape[1]} Tp bins"
+    )
     logger.info(f"      Total occurrence sum: {scatter.values.sum():.2f}%")
 
     # 4. IFORM contour

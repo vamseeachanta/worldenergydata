@@ -24,12 +24,11 @@ from worldenergydata.safety_analysis.calibrator import (
     EnigmaCalibrator,
 )
 from worldenergydata.safety_analysis.skill import (
-    EnigmaResult,
     _VALID_ASSET_TYPES,
     _VALID_SCENARIOS,
+    EnigmaResult,
     enigma_safety_analysis,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -147,9 +146,7 @@ class TestCalibrationReport:
         report = fitted_calibrator.calibration_report()
         assert report.total_incidents_used > 0
 
-    def test_years_covered_positive(
-        self, fitted_calibrator: EnigmaCalibrator
-    ) -> None:
+    def test_years_covered_positive(self, fitted_calibrator: EnigmaCalibrator) -> None:
         report = fitted_calibrator.calibration_report()
         assert report.years_covered > 0.0
 
@@ -217,9 +214,7 @@ class TestRiskScore:
         assert isinstance(score, float)
         assert isinstance(is_driven, bool)
 
-    def test_score_in_valid_range(
-        self, fitted_calibrator: EnigmaCalibrator
-    ) -> None:
+    def test_score_in_valid_range(self, fitted_calibrator: EnigmaCalibrator) -> None:
         score, _ = fitted_calibrator.risk_score("riser", "corrosion")
         assert 0.0 <= score <= 1.0
 
@@ -265,9 +260,7 @@ class TestAssess:
         result = fitted_calibrator.assess("platform", "fire_explosion")
         assert isinstance(result, dict)
 
-    def test_dict_has_required_keys(
-        self, fitted_calibrator: EnigmaCalibrator
-    ) -> None:
+    def test_dict_has_required_keys(self, fitted_calibrator: EnigmaCalibrator) -> None:
         result = fitted_calibrator.assess("platform", "fire_explosion")
         required = {
             "asset_type",
@@ -279,9 +272,7 @@ class TestAssess:
         }
         assert required.issubset(set(result.keys()))
 
-    def test_data_driven_key_present(
-        self, fitted_calibrator: EnigmaCalibrator
-    ) -> None:
+    def test_data_driven_key_present(self, fitted_calibrator: EnigmaCalibrator) -> None:
         result = fitted_calibrator.assess("riser", "overpressure")
         assert "data_driven" in result
 
@@ -306,9 +297,7 @@ class TestAssess:
 
 
 class TestCalibratedMatrix:
-    def test_returns_dataframe(
-        self, fitted_calibrator: EnigmaCalibrator
-    ) -> None:
+    def test_returns_dataframe(self, fitted_calibrator: EnigmaCalibrator) -> None:
         df = fitted_calibrator.calibrated_matrix_df()
         assert isinstance(df, pd.DataFrame)
 
@@ -318,9 +307,7 @@ class TestCalibratedMatrix:
         df = fitted_calibrator.calibrated_matrix_df()
         assert set(df.index) == set(_VALID_ASSET_TYPES)
 
-    def test_columns_are_scenarios(
-        self, fitted_calibrator: EnigmaCalibrator
-    ) -> None:
+    def test_columns_are_scenarios(self, fitted_calibrator: EnigmaCalibrator) -> None:
         df = fitted_calibrator.calibrated_matrix_df()
         assert set(df.columns) == set(_VALID_SCENARIOS)
 

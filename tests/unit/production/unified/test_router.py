@@ -2,15 +2,21 @@
 
 import pytest
 
-from worldenergydata.production.unified.router import RegionRouter
-from worldenergydata.production.unified.adapters.sodir_adapter import SodirAdapter
+from worldenergydata.production.unified.adapters.brazil_anp_adapter import (
+    BrazilAnpAdapter,
+)
 from worldenergydata.production.unified.adapters.bsee_adapter import BseeAdapter
-from worldenergydata.production.unified.adapters.brazil_anp_adapter import BrazilAnpAdapter
-from worldenergydata.production.unified.adapters.ukcs_adapter import UkcsAdapter
-from worldenergydata.production.unified.adapters.eia_us_adapter import EiaUsAdapter
-from worldenergydata.production.unified.adapters.mexico_cnh_adapter import MexicoCnhAdapter
-from worldenergydata.production.unified.adapters.texas_rrc_adapter import TexasRrcAdapter
 from worldenergydata.production.unified.adapters.canada_adapter import CanadaAdapter
+from worldenergydata.production.unified.adapters.eia_us_adapter import EiaUsAdapter
+from worldenergydata.production.unified.adapters.mexico_cnh_adapter import (
+    MexicoCnhAdapter,
+)
+from worldenergydata.production.unified.adapters.sodir_adapter import SodirAdapter
+from worldenergydata.production.unified.adapters.texas_rrc_adapter import (
+    TexasRrcAdapter,
+)
+from worldenergydata.production.unified.adapters.ukcs_adapter import UkcsAdapter
+from worldenergydata.production.unified.router import RegionRouter
 
 
 class TestRegionRouter:

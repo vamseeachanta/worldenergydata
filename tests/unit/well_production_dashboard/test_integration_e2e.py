@@ -372,9 +372,7 @@ class TestCLIIntegration(unittest.TestCase):
         self.assertTrue(hasattr(cli, "cache"))
         self.assertTrue(hasattr(cli, "monitor"))
 
-    @patch(
-        "src.worldenergydata.well_production_dashboard.cli.WellProductionDashboard"
-    )
+    @patch("src.worldenergydata.well_production_dashboard.cli.WellProductionDashboard")
     def test_cli_report_generation(self, mock_dashboard):
         """Test CLI report generation."""
         from worldenergydata.well_production_dashboard.cli import DashboardCLI

@@ -15,8 +15,15 @@ from worldenergydata.validation.schema import (
 class TestDataType:
     def test_all_members(self):
         expected = {
-            "STRING", "INTEGER", "FLOAT", "DECIMAL",
-            "DATE", "DATETIME", "BOOLEAN", "ARRAY", "OBJECT",
+            "STRING",
+            "INTEGER",
+            "FLOAT",
+            "DECIMAL",
+            "DATE",
+            "DATETIME",
+            "BOOLEAN",
+            "ARRAY",
+            "OBJECT",
         }
         assert {m.name for m in DataType} == expected
 
@@ -29,8 +36,12 @@ class TestDataType:
 class TestDateFormat:
     def test_all_members(self):
         expected = {
-            "YYYYMM", "YYYY_MM_DD", "MM_DD_YYYY",
-            "DD_MM_YYYY", "YYYYMMDD", "ISO8601",
+            "YYYYMM",
+            "YYYY_MM_DD",
+            "MM_DD_YYYY",
+            "DD_MM_YYYY",
+            "YYYYMMDD",
+            "ISO8601",
         }
         assert {m.name for m in DateFormat} == expected
 
@@ -63,8 +74,11 @@ class TestFieldSchema:
 
     def test_with_range(self):
         fs = FieldSchema(
-            name="depth", data_type=DataType.FLOAT,
-            min_value=0, max_value=50000, unit="feet",
+            name="depth",
+            data_type=DataType.FLOAT,
+            min_value=0,
+            max_value=50000,
+            unit="feet",
         )
         assert fs.min_value == 0
         assert fs.max_value == 50000
@@ -72,7 +86,8 @@ class TestFieldSchema:
 
     def test_with_pattern(self):
         fs = FieldSchema(
-            name="api", data_type=DataType.STRING,
+            name="api",
+            data_type=DataType.STRING,
             pattern=r"^\d{12}$",
         )
         assert fs.pattern == r"^\d{12}$"
@@ -84,20 +99,25 @@ class TestFieldSchema:
     def test_min_greater_than_max_raises(self):
         with pytest.raises(ValueError, match="min_value cannot be greater"):
             FieldSchema(
-                name="bad", data_type=DataType.FLOAT,
-                min_value=100, max_value=50,
+                name="bad",
+                data_type=DataType.FLOAT,
+                min_value=100,
+                max_value=50,
             )
 
     def test_min_length_greater_than_max_length_raises(self):
         with pytest.raises(ValueError, match="min_length cannot be greater"):
             FieldSchema(
-                name="bad", data_type=DataType.STRING,
-                min_length=10, max_length=5,
+                name="bad",
+                data_type=DataType.STRING,
+                min_length=10,
+                max_length=5,
             )
 
     def test_with_allowed_values(self):
         fs = FieldSchema(
-            name="status", data_type=DataType.STRING,
+            name="status",
+            data_type=DataType.STRING,
             allowed_values=["ACTIVE", "INACTIVE"],
         )
         assert fs.allowed_values == ["ACTIVE", "INACTIVE"]
@@ -134,8 +154,12 @@ class TestValidationSchema:
 
     def test_get_required_fields(self):
         schema = ValidationSchema(name="s")
-        schema.add_field(FieldSchema(name="req", data_type=DataType.STRING, required=True))
-        schema.add_field(FieldSchema(name="opt", data_type=DataType.STRING, required=False))
+        schema.add_field(
+            FieldSchema(name="req", data_type=DataType.STRING, required=True)
+        )
+        schema.add_field(
+            FieldSchema(name="opt", data_type=DataType.STRING, required=False)
+        )
         required = schema.get_required_fields()
         assert "req" in required
         assert "opt" not in required
@@ -149,8 +173,10 @@ class TestValidationSchema:
     def test_to_dict(self):
         schema = ValidationSchema(name="test", version="1.0.0")
         fs = FieldSchema(
-            name="depth", data_type=DataType.FLOAT,
-            min_value=0, max_value=50000,
+            name="depth",
+            data_type=DataType.FLOAT,
+            min_value=0,
+            max_value=50000,
         )
         schema.add_field(fs)
         d = schema.to_dict()
@@ -164,7 +190,8 @@ class TestValidationSchema:
     def test_to_dict_with_date_format(self):
         schema = ValidationSchema(name="s")
         fs = FieldSchema(
-            name="date", data_type=DataType.DATE,
+            name="date",
+            data_type=DataType.DATE,
             date_format=DateFormat.YYYY_MM_DD,
         )
         schema.add_field(fs)

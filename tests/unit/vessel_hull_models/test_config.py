@@ -12,10 +12,10 @@ from worldenergydata.vessel_hull_models.config import (
     reload_config,
 )
 
-
 # ---------------------------------------------------------------------------
 # StorageConfig
 # ---------------------------------------------------------------------------
+
 
 class TestStorageConfig:
     def test_defaults(self):
@@ -34,6 +34,7 @@ class TestStorageConfig:
 # ---------------------------------------------------------------------------
 # AcquisitionConfig
 # ---------------------------------------------------------------------------
+
 
 class TestAcquisitionConfig:
     def test_defaults(self):
@@ -59,6 +60,7 @@ class TestAcquisitionConfig:
 # GeometryConfig
 # ---------------------------------------------------------------------------
 
+
 class TestGeometryConfig:
     def test_defaults(self):
         config = GeometryConfig()
@@ -72,6 +74,7 @@ class TestGeometryConfig:
 # VisualizationConfig
 # ---------------------------------------------------------------------------
 
+
 class TestVisualizationConfig:
     def test_defaults(self):
         config = VisualizationConfig()
@@ -83,6 +86,7 @@ class TestVisualizationConfig:
 # ---------------------------------------------------------------------------
 # VesselHullModelsConfig (main)
 # ---------------------------------------------------------------------------
+
 
 class TestVesselHullModelsConfig:
     def test_defaults(self):
@@ -101,6 +105,7 @@ class TestVesselHullModelsConfig:
 # ---------------------------------------------------------------------------
 # Module-level functions
 # ---------------------------------------------------------------------------
+
 
 class TestGetConfig:
     def test_returns_config(self):

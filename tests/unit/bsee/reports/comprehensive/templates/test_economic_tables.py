@@ -101,7 +101,9 @@ class TestNPVValues:
 
     def test_low_production_negative_npv(self):
         result = generate_sensitivity_analysis_tables(
-            _make_context(annual_oil_bbl=1000, annual_gas_mcf=1000, initial_capex=50000000)
+            _make_context(
+                annual_oil_bbl=1000, annual_gas_mcf=1000, initial_capex=50000000
+            )
         )
         html = result["oil_price_sensitivity"]
         # Very low production + high capex = negative NPV, shown in red

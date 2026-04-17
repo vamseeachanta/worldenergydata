@@ -5,16 +5,18 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from worldenergydata.subsea.models.rigid_jumper import (
-    RigidJumperSpec,
-    load_rigid_jumpers,
-)
 from worldenergydata.subsea.models.mooring import (
     MooringComponentSpec,
     load_mooring_components,
 )
+from worldenergydata.subsea.models.rigid_jumper import (
+    RigidJumperSpec,
+    load_rigid_jumpers,
+)
 
-DATA_DIR = Path(__file__).resolve().parents[3] / "data" / "modules" / "subsea" / "curated"
+DATA_DIR = (
+    Path(__file__).resolve().parents[3] / "data" / "modules" / "subsea" / "curated"
+)
 RIGID_JUMPER_CSV = DATA_DIR / "rigid_jumper_specs.csv"
 MOORING_CSV = DATA_DIR / "mooring_components.csv"
 

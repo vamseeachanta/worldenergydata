@@ -5,25 +5,24 @@ ABOUTME: Verifies training, prediction, cross-validation, and feature importance
 
 from __future__ import annotations
 
-import pytest
 import numpy as np
+import pytest
 
+from worldenergydata.cost.calibration.cost_predictor import (
+    CostPredictor,
+    PredictionResult,
+)
 from worldenergydata.cost.data_collection.calibration_schema import (
     ActivityType,
+    Confidence,
     CostDataPoint,
     CostType,
-    Confidence,
     RigType,
     SubseaType,
     WaterDepthBand,
     WellDepthBand,
 )
 from worldenergydata.cost.data_collection.public_dataset import load_public_dataset
-from worldenergydata.cost.calibration.cost_predictor import (
-    CostPredictor,
-    PredictionResult,
-)
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -115,7 +114,9 @@ class TestCostPredictorPredict:
         result = trained_predictor.predict(public_dataset[0])
         assert result.cost_usd_mm > 0.0
 
-    def test_prediction_includes_confidence_interval(self, trained_predictor, public_dataset):
+    def test_prediction_includes_confidence_interval(
+        self, trained_predictor, public_dataset
+    ):
         """PredictionResult includes lower and upper confidence bounds."""
         result = trained_predictor.predict(public_dataset[0])
         assert result.ci_lower_usd_mm is not None
@@ -138,12 +139,13 @@ class TestCostPredictorPredict:
         """
         # Find shallow and deep records from the public dataset
         shallow = next(
-            r for r in public_dataset
-            if r.water_depth_band == WaterDepthBand.SHALLOW
-            and r.cost_usd_mm < 1000.0
+            r
+            for r in public_dataset
+            if r.water_depth_band == WaterDepthBand.SHALLOW and r.cost_usd_mm < 1000.0
         )
         deep = next(
-            r for r in public_dataset
+            r
+            for r in public_dataset
             if r.water_depth_band == WaterDepthBand.ULTRA_DEEP
             and r.cost_usd_mm > 3000.0
         )

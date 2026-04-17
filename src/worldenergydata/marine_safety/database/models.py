@@ -391,8 +391,6 @@ class IncidentLink(Base, TimestampMixin):
 # ---------------------------------------------------------------------------
 
 
-
-
 # ---------------------------------------------------------------------------
 # Additional models added for backward compatibility (#2003)
 # ---------------------------------------------------------------------------
@@ -443,6 +441,4 @@ class Investigation(Base, TimestampMixin):
     recommendations: Mapped[Optional[str]] = mapped_column(Text)
 
     # Relationships
-    incident: Mapped["Incident"] = relationship(
-        "Incident", backref="investigations"
-    )
+    incident: Mapped["Incident"] = relationship("Incident", backref="investigations")

@@ -10,10 +10,10 @@ from worldenergydata.bsee.analysis.forecasting.bsee_decline_adapter import (
     _pick_col,
 )
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture
 def adapter():
@@ -24,21 +24,23 @@ def adapter():
 def sample_production_df():
     """Realistic BSEE production DataFrame with monthly data."""
     dates = list(range(202001, 202013))  # Jan–Dec 2020
-    return pd.DataFrame({
-        "PRODUCTION_DATE": dates * 2,
-        "FIELD_NAME_CODE": ["FIELD_A"] * 12 + ["FIELD_B"] * 12,
-        "LEASE_NUMBER": ["OCS-G-30409"] * 12 + ["OCS-G-36543"] * 12,
-        "MON_O_PROD_VOL": np.random.default_rng(42).uniform(
-            10000, 100000, 24
-        ).tolist(),
-        "MON_G_PROD_VOL": np.random.default_rng(43).uniform(
-            50000, 500000, 24
-        ).tolist(),
-        "MON_WTR_PROD_VOL": np.random.default_rng(44).uniform(
-            1000, 10000, 24
-        ).tolist(),
-        "DAYS_ON_PROD": [28, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31] * 2,
-    })
+    return pd.DataFrame(
+        {
+            "PRODUCTION_DATE": dates * 2,
+            "FIELD_NAME_CODE": ["FIELD_A"] * 12 + ["FIELD_B"] * 12,
+            "LEASE_NUMBER": ["OCS-G-30409"] * 12 + ["OCS-G-36543"] * 12,
+            "MON_O_PROD_VOL": np.random.default_rng(42)
+            .uniform(10000, 100000, 24)
+            .tolist(),
+            "MON_G_PROD_VOL": np.random.default_rng(43)
+            .uniform(50000, 500000, 24)
+            .tolist(),
+            "MON_WTR_PROD_VOL": np.random.default_rng(44)
+            .uniform(1000, 10000, 24)
+            .tolist(),
+            "DAYS_ON_PROD": [28, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31] * 2,
+        }
+    )
 
 
 @pytest.fixture
@@ -49,17 +51,20 @@ def declining_production_df():
     n = 20
     rng = np.random.default_rng(99)
     rates = [qi * np.exp(-D * t) + rng.normal(0, 500) for t in range(n)]
-    return pd.DataFrame({
-        "PRODUCTION_DATE": list(range(200001, 200001 + n)),
-        "FIELD_NAME_CODE": ["DECLINE_FIELD"] * n,
-        "MON_O_PROD_VOL": rates,
-        "DAYS_ON_PROD": [30] * n,
-    })
+    return pd.DataFrame(
+        {
+            "PRODUCTION_DATE": list(range(200001, 200001 + n)),
+            "FIELD_NAME_CODE": ["DECLINE_FIELD"] * n,
+            "MON_O_PROD_VOL": rates,
+            "DAYS_ON_PROD": [30] * n,
+        }
+    )
 
 
 # ---------------------------------------------------------------------------
 # _pick_col tests
 # ---------------------------------------------------------------------------
+
 
 class TestPickCol:
     def test_finds_first_match(self):
@@ -78,6 +83,7 @@ class TestPickCol:
 # ---------------------------------------------------------------------------
 # BseeDeclineAdapter.extract_field_production tests
 # ---------------------------------------------------------------------------
+
 
 class TestExtractFieldProduction:
     def test_extracts_oil_for_field(self, adapter, sample_production_df):
@@ -99,9 +105,7 @@ class TestExtractFieldProduction:
 
     def test_unknown_field_raises(self, adapter, sample_production_df):
         with pytest.raises(ValueError, match="No data found"):
-            adapter.extract_field_production(
-                sample_production_df, "NONEXISTENT"
-            )
+            adapter.extract_field_production(sample_production_df, "NONEXISTENT")
 
     def test_no_field_column_raises(self, adapter):
         df = pd.DataFrame({"some_col": [1, 2], "MON_O_PROD_VOL": [100, 200]})
@@ -130,30 +134,32 @@ class TestExtractLeaseProduction:
 
     def test_unknown_lease_raises(self, adapter, sample_production_df):
         with pytest.raises(ValueError, match="No data found"):
-            adapter.extract_lease_production(
-                sample_production_df, "FAKE-LEASE"
-            )
+            adapter.extract_lease_production(sample_production_df, "FAKE-LEASE")
 
 
 class TestShutInExclusion:
     def test_excludes_shut_in_periods(self, adapter):
-        df = pd.DataFrame({
-            "PRODUCTION_DATE": [202001, 202002, 202003, 202004, 202005],
-            "FIELD_NAME_CODE": ["F"] * 5,
-            "MON_O_PROD_VOL": [100000, 500, 80000, 70000, 60000],
-            "DAYS_ON_PROD": [30, 2, 31, 30, 31],  # period 2 is shut-in
-        })
+        df = pd.DataFrame(
+            {
+                "PRODUCTION_DATE": [202001, 202002, 202003, 202004, 202005],
+                "FIELD_NAME_CODE": ["F"] * 5,
+                "MON_O_PROD_VOL": [100000, 500, 80000, 70000, 60000],
+                "DAYS_ON_PROD": [30, 2, 31, 30, 31],  # period 2 is shut-in
+            }
+        )
         ts = adapter.extract_field_production(df, "F", product="oil")
         assert ts.shut_in_periods == 1
         assert ts.n_after_filter == 4  # 5 - 1 shut-in
 
     def test_insufficient_data_after_filter(self, adapter):
-        df = pd.DataFrame({
-            "PRODUCTION_DATE": [202001, 202002],
-            "FIELD_NAME_CODE": ["F"] * 2,
-            "MON_O_PROD_VOL": [100, 200],
-            "DAYS_ON_PROD": [1, 1],  # both shut-in (< 5 days)
-        })
+        df = pd.DataFrame(
+            {
+                "PRODUCTION_DATE": [202001, 202002],
+                "FIELD_NAME_CODE": ["F"] * 2,
+                "MON_O_PROD_VOL": [100, 200],
+                "DAYS_ON_PROD": [1, 1],  # both shut-in (< 5 days)
+            }
+        )
         with pytest.raises(ValueError, match="Insufficient data"):
             adapter.extract_field_production(df, "F")
 
@@ -190,9 +196,7 @@ class TestLoadProductionBinary:
 
 class TestProductionTimeSeries:
     def test_dataclass_fields(self, adapter, declining_production_df):
-        ts = adapter.extract_field_production(
-            declining_production_df, "DECLINE_FIELD"
-        )
+        ts = adapter.extract_field_production(declining_production_df, "DECLINE_FIELD")
         assert hasattr(ts, "time_indices")
         assert hasattr(ts, "rates")
         assert hasattr(ts, "dates")

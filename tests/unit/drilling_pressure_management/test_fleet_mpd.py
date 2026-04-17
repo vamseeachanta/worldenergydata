@@ -1,7 +1,7 @@
 """Tests for fleet MPD capability flags — fleet_mpd module."""
 
-import pytest
 import pandas as pd
+import pytest
 
 from worldenergydata.drilling_pressure_management.fleet_mpd import (
     FLEET_MPD_DATA,
@@ -38,30 +38,30 @@ class TestFleetMPDData:
     def test_non_mpd_rigs_have_null_system(self):
         for rig in FLEET_MPD_DATA:
             if not rig.mpd_capable:
-                assert rig.mpd_system is None, (
-                    f"{rig.rig_name} is not MPD capable but has mpd_system={rig.mpd_system!r}"
-                )
+                assert (
+                    rig.mpd_system is None
+                ), f"{rig.rig_name} is not MPD capable but has mpd_system={rig.mpd_system!r}"
 
     def test_non_mpd_rigs_have_null_manufacturer(self):
         for rig in FLEET_MPD_DATA:
             if not rig.mpd_capable:
-                assert rig.mpd_manufacturer is None, (
-                    f"{rig.rig_name} is not MPD capable but has mpd_manufacturer set"
-                )
+                assert (
+                    rig.mpd_manufacturer is None
+                ), f"{rig.rig_name} is not MPD capable but has mpd_manufacturer set"
 
     def test_mpd_capable_rigs_have_system_set(self):
         for rig in FLEET_MPD_DATA:
             if rig.mpd_capable:
-                assert rig.mpd_system is not None, (
-                    f"{rig.rig_name} is MPD capable but mpd_system is None"
-                )
+                assert (
+                    rig.mpd_system is not None
+                ), f"{rig.rig_name} is MPD capable but mpd_system is None"
 
     def test_mpd_capable_rigs_have_manufacturer_set(self):
         for rig in FLEET_MPD_DATA:
             if rig.mpd_capable:
-                assert rig.mpd_manufacturer is not None, (
-                    f"{rig.rig_name} is MPD capable but mpd_manufacturer is None"
-                )
+                assert (
+                    rig.mpd_manufacturer is not None
+                ), f"{rig.rig_name} is MPD capable but mpd_manufacturer is None"
 
     def test_rig_names_are_unique(self):
         names = [r.rig_name for r in FLEET_MPD_DATA]
@@ -70,9 +70,9 @@ class TestFleetMPDData:
     def test_all_rig_types_are_valid(self):
         valid_types = {"drillship", "semisubmersible", "jackup"}
         for rig in FLEET_MPD_DATA:
-            assert rig.rig_type in valid_types, (
-                f"{rig.rig_name} has unknown rig_type={rig.rig_type!r}"
-            )
+            assert (
+                rig.rig_type in valid_types
+            ), f"{rig.rig_name} has unknown rig_type={rig.rig_type!r}"
 
 
 class TestGetMPDCapableRigs:
@@ -110,9 +110,9 @@ class TestGetContractorFleet:
     def test_each_contractor_has_at_least_three_rigs(self):
         for contractor in ("Valaris", "Transocean", "Noble"):
             fleet = get_contractor_fleet(contractor)
-            assert len(fleet) >= 3, (
-                f"{contractor} fleet has only {len(fleet)} rigs (need >= 3)"
-            )
+            assert (
+                len(fleet) >= 3
+            ), f"{contractor} fleet has only {len(fleet)} rigs (need >= 3)"
 
     def test_unknown_contractor_returns_empty_list(self):
         assert get_contractor_fleet("Nonexistent Corp") == []

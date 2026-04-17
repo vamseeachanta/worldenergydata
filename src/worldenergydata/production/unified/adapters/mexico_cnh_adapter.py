@@ -22,17 +22,33 @@ class MexicoCnhAdapter(AbstractProductionAdapter):
     # (field_name, peak_oil_bbl, peak_gas_mcf, peak_water_bbl,
     #  peak_cond_bbl, start_year, start_month, n_months)
     _FIELDS = [
-        ("Zama",   2_000_000, 1_500_000,  300_000, 60_000, 2023,  1,  24),
-        ("Trion",    800_000,   600_000,  100_000, 20_000, 2024,  6,  12),
-        ("Ixachi", 1_200_000, 2_800_000,  200_000, 80_000, 2019,  1,  72),
+        ("Zama", 2_000_000, 1_500_000, 300_000, 60_000, 2023, 1, 24),
+        ("Trion", 800_000, 600_000, 100_000, 20_000, 2024, 6, 12),
+        ("Ixachi", 1_200_000, 2_800_000, 200_000, 80_000, 2019, 1, 72),
     ]
 
     def fetch(self, query: ProductionQuery) -> pd.DataFrame:
         rows = []
-        for field_name, peak_oil, peak_gas, peak_water, peak_cond, sy, sm, n_months in self._FIELDS:
+        for (
+            field_name,
+            peak_oil,
+            peak_gas,
+            peak_water,
+            peak_cond,
+            sy,
+            sm,
+            n_months,
+        ) in self._FIELDS:
             rows.extend(
                 self._generate_field_rows(
-                    field_name, peak_oil, peak_gas, peak_water, peak_cond, sy, sm, n_months
+                    field_name,
+                    peak_oil,
+                    peak_gas,
+                    peak_water,
+                    peak_cond,
+                    sy,
+                    sm,
+                    n_months,
                 )
             )
 

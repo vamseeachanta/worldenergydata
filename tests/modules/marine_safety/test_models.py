@@ -12,6 +12,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
+from worldenergydata.marine_safety.constants import IncidentType, SeverityLevel
 from worldenergydata.modules.marine_safety.database.models import (
     Base,
     Company,
@@ -20,7 +21,6 @@ from worldenergydata.modules.marine_safety.database.models import (
     Personnel,
     Vessel,
 )
-from worldenergydata.marine_safety.constants import IncidentType, SeverityLevel
 
 # Alias: Incident model is the canonical model; MarineIncident is used in tests
 MarineIncident = Incident
@@ -43,7 +43,10 @@ def db_session():
 def sample_company(db_session):
     """Create a sample company for testing."""
     company = Company(
-        company_name="Test Energy Corp", imo_number="1234567", country_of_registration="USA", active=True
+        company_name="Test Energy Corp",
+        imo_number="1234567",
+        country_of_registration="USA",
+        active=True,
     )
     db_session.add(company)
     db_session.commit()
@@ -69,7 +72,7 @@ def sample_vessel(db_session, sample_company):
 
 @pytest.mark.skip(
     reason="PostgreSQL-specific ENUM types (PgEnum) are incompatible with SQLite in-memory DB. "
-           "Run with --database marker against a real PostgreSQL instance."
+    "Run with --database marker against a real PostgreSQL instance."
 )
 class TestMarineIncidentModel:
     """Test suite for MarineIncident model."""
@@ -227,7 +230,7 @@ class TestMarineIncidentModel:
 
 @pytest.mark.skip(
     reason="PostgreSQL-specific ENUM types (PgEnum) and schema-qualified fields are incompatible with SQLite in-memory DB. "
-           "Run with --database marker against a real PostgreSQL instance."
+    "Run with --database marker against a real PostgreSQL instance."
 )
 class TestVesselModel:
     """Test suite for Vessel model."""
@@ -323,7 +326,7 @@ class TestVesselModel:
 
 @pytest.mark.skip(
     reason="Company model fields (company_name, country_of_registration) differ from test expectations. "
-           "Requires PostgreSQL schema — skip until schema-compatible fixtures are written."
+    "Requires PostgreSQL schema — skip until schema-compatible fixtures are written."
 )
 class TestCompanyModel:
     """Test suite for Company model."""

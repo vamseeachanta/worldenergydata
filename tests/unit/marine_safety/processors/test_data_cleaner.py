@@ -248,10 +248,12 @@ class TestProcess:
 class TestBatchProcess:
     def test_batch(self):
         dc = DataCleaner()
-        results = dc.batch_process([
-            {"title": "First"},
-            {"title": "Second"},
-        ])
+        results = dc.batch_process(
+            [
+                {"title": "First"},
+                {"title": "Second"},
+            ]
+        )
         assert len(results) == 2
         assert results[0]["title"] == "First"
 

@@ -161,10 +161,12 @@ class TestAssessCommerciality:
 class TestValidate:
     def test_valid_with_resources(self):
         dp = DiscoveryProcessor()
-        valid, errors = dp.validate({
-            "dscName": "TestDisc",
-            "dscRecoverableOil": 10.0,
-        })
+        valid, errors = dp.validate(
+            {
+                "dscName": "TestDisc",
+                "dscRecoverableOil": 10.0,
+            }
+        )
         assert valid is True
         assert errors == []
 
@@ -182,20 +184,24 @@ class TestValidate:
 
     def test_negative_resources(self):
         dp = DiscoveryProcessor()
-        valid, errors = dp.validate({
-            "dscName": "Test",
-            "dscRecoverableOil": -5,
-        })
+        valid, errors = dp.validate(
+            {
+                "dscName": "Test",
+                "dscRecoverableOil": -5,
+            }
+        )
         assert valid is False
         assert any("Negative" in e for e in errors)
 
     def test_invalid_year(self):
         dp = DiscoveryProcessor()
-        valid, errors = dp.validate({
-            "dscName": "Test",
-            "dscRecoverableOil": 10.0,
-            "dscDiscoveryYear": 1900,
-        })
+        valid, errors = dp.validate(
+            {
+                "dscName": "Test",
+                "dscRecoverableOil": 10.0,
+                "dscDiscoveryYear": 1900,
+            }
+        )
         assert valid is False
         assert any("Invalid discovery year" in e for e in errors)
 
@@ -203,12 +209,14 @@ class TestValidate:
 class TestProcess:
     def test_basic_discovery(self):
         dp = DiscoveryProcessor()
-        result = dp.process({
-            "dscName": "TestDisc",
-            "dscNpdidDiscovery": 12345,
-            "dscHcType": "OIL",
-            "dscRecoverableOil": 10.0,
-        })
+        result = dp.process(
+            {
+                "dscName": "TestDisc",
+                "dscNpdidDiscovery": 12345,
+                "dscHcType": "OIL",
+                "dscRecoverableOil": 10.0,
+            }
+        )
         assert result is not None
         assert result["discovery_name"] == "TestDisc"
         assert result["discovery_id"] == 12345
@@ -223,10 +231,12 @@ class TestProcess:
 
     def test_process_batch(self):
         dp = DiscoveryProcessor()
-        results = dp.process_batch([
-            {"dscName": "D1", "dscStatus": ""},
-            {"dscName": "D2", "dscStatus": ""},
-        ])
+        results = dp.process_batch(
+            [
+                {"dscName": "D1", "dscStatus": ""},
+                {"dscName": "D2", "dscStatus": ""},
+            ]
+        )
         assert len(results) == 2
 
     def test_process_batch_empty(self):

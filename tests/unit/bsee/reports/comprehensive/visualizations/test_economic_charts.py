@@ -9,16 +9,22 @@ from worldenergydata.bsee.reports.comprehensive.visualizations.economic_charts i
     EconomicMetrics,
 )
 
-
 # ---------------------------------------------------------------------------
 # EconomicMetrics dataclass
 # ---------------------------------------------------------------------------
 
+
 class TestEconomicMetrics:
     def test_init(self):
         em = EconomicMetrics(
-            revenue=1000000, operating_costs=400000, capital_costs=200000,
-            net_income=400000, roi=20.0, payback_period=3.5, npv=500000, irr=18.0,
+            revenue=1000000,
+            operating_costs=400000,
+            capital_costs=200000,
+            net_income=400000,
+            roi=20.0,
+            payback_period=3.5,
+            npv=500000,
+            irr=18.0,
         )
         assert em.revenue == 1000000
         assert em.roi == 20.0
@@ -28,6 +34,7 @@ class TestEconomicMetrics:
 # ---------------------------------------------------------------------------
 # EconomicChart init
 # ---------------------------------------------------------------------------
+
 
 class TestEconomicChartInit:
     def test_default(self):
@@ -43,6 +50,7 @@ class TestEconomicChartInit:
 # ---------------------------------------------------------------------------
 # create_waterfall_chart
 # ---------------------------------------------------------------------------
+
 
 class TestCreateWaterfallChart:
     def test_basic(self):
@@ -62,9 +70,7 @@ class TestCreateWaterfallChart:
 
     def test_custom_title(self):
         chart = EconomicChart()
-        fig = chart.create_waterfall_chart(
-            ["A", "B"], [100, -50], title="Custom Title"
-        )
+        fig = chart.create_waterfall_chart(["A", "B"], [100, -50], title="Custom Title")
         assert isinstance(fig, go.Figure)
 
 
@@ -72,13 +78,19 @@ class TestCreateWaterfallChart:
 # create_roi_analysis
 # ---------------------------------------------------------------------------
 
+
 class TestCreateRoiAnalysis:
     def test_basic(self):
         chart = EconomicChart()
         metrics = EconomicMetrics(
-            revenue=10_000_000, operating_costs=4_000_000,
-            capital_costs=2_000_000, net_income=4_000_000,
-            roi=20.0, payback_period=3.5, npv=5_000_000, irr=22.0,
+            revenue=10_000_000,
+            operating_costs=4_000_000,
+            capital_costs=2_000_000,
+            net_income=4_000_000,
+            roi=20.0,
+            payback_period=3.5,
+            npv=5_000_000,
+            irr=22.0,
         )
         fig = chart.create_roi_analysis(metrics)
         assert isinstance(fig, go.Figure)
@@ -86,9 +98,14 @@ class TestCreateRoiAnalysis:
     def test_with_benchmarks(self):
         chart = EconomicChart()
         metrics = EconomicMetrics(
-            revenue=5_000_000, operating_costs=2_000_000,
-            capital_costs=1_000_000, net_income=2_000_000,
-            roi=12.0, payback_period=4.5, npv=2_000_000, irr=16.0,
+            revenue=5_000_000,
+            operating_costs=2_000_000,
+            capital_costs=1_000_000,
+            net_income=2_000_000,
+            roi=12.0,
+            payback_period=4.5,
+            npv=2_000_000,
+            irr=16.0,
         )
         benchmarks = {"roi": 15, "npv": 3_000_000, "irr": 18, "payback": 3}
         fig = chart.create_roi_analysis(metrics, benchmarks=benchmarks)
@@ -97,9 +114,14 @@ class TestCreateRoiAnalysis:
     def test_low_performance(self):
         chart = EconomicChart()
         metrics = EconomicMetrics(
-            revenue=2_000_000, operating_costs=1_500_000,
-            capital_costs=1_000_000, net_income=-500_000,
-            roi=5.0, payback_period=7.0, npv=-1_000_000, irr=8.0,
+            revenue=2_000_000,
+            operating_costs=1_500_000,
+            capital_costs=1_000_000,
+            net_income=-500_000,
+            roi=5.0,
+            payback_period=7.0,
+            npv=-1_000_000,
+            irr=8.0,
         )
         fig = chart.create_roi_analysis(metrics)
         assert isinstance(fig, go.Figure)
@@ -109,14 +131,30 @@ class TestCreateRoiAnalysis:
 # create_cashflow_projection
 # ---------------------------------------------------------------------------
 
+
 class TestCreateCashflowProjection:
     def test_basic(self):
         chart = EconomicChart()
         idx = pd.date_range("2024-01-01", periods=12, freq="MS")
-        data = pd.DataFrame({
-            "net_cashflow": [-500000, -200000, 100000, 200000, 300000, 350000,
-                            400000, 380000, 360000, 340000, 320000, 300000],
-        }, index=idx)
+        data = pd.DataFrame(
+            {
+                "net_cashflow": [
+                    -500000,
+                    -200000,
+                    100000,
+                    200000,
+                    300000,
+                    350000,
+                    400000,
+                    380000,
+                    360000,
+                    340000,
+                    320000,
+                    300000,
+                ],
+            },
+            index=idx,
+        )
         fig = chart.create_cashflow_projection(data)
         assert isinstance(fig, go.Figure)
 
@@ -131,6 +169,7 @@ class TestCreateCashflowProjection:
 # ---------------------------------------------------------------------------
 # create_cost_breakdown
 # ---------------------------------------------------------------------------
+
 
 class TestCreateCostBreakdown:
     def test_pie_chart(self):

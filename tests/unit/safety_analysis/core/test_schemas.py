@@ -116,12 +116,14 @@ class TestSchemaRegistry:
 
     def test_load_from_dict(self):
         reg = SchemaRegistry()
-        reg.load_from_dict({
-            "name": "from_dict",
-            "asset_id_column": "ID",
-            "datetime_column": "DT",
-            "description_column": "DESC",
-        })
+        reg.load_from_dict(
+            {
+                "name": "from_dict",
+                "asset_id_column": "ID",
+                "datetime_column": "DT",
+                "description_column": "DESC",
+            }
+        )
         schema = reg.get("from_dict")
         assert schema.name == "from_dict"
 
@@ -140,6 +142,7 @@ class TestSchemaRegistry:
 
     def test_load_from_yaml(self, tmp_path):
         import yaml
+
         yaml_data = {
             "schemas": [
                 {
@@ -161,6 +164,7 @@ class TestSchemaRegistry:
 
     def test_load_from_yaml_list_format(self, tmp_path):
         import yaml
+
         yaml_data = [
             {
                 "name": "list_schema",

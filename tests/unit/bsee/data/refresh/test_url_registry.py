@@ -13,14 +13,16 @@ from worldenergydata.bsee.data.refresh.url_registry import (
 class TestDatasetSpec:
     def test_frozen(self):
         spec = DatasetSpec(
-            bin_dir="test", zip_url="http://example.com/test.zip",
+            bin_dir="test",
+            zip_url="http://example.com/test.zip",
             expected_bins=["test.bin"],
         )
         assert spec.bin_dir == "test"
 
     def test_defaults(self):
         spec = DatasetSpec(
-            bin_dir="test", zip_url="http://example.com/test.zip",
+            bin_dir="test",
+            zip_url="http://example.com/test.zip",
             expected_bins=["test.bin"],
         )
         assert spec.timeout_s == 600
@@ -28,8 +30,10 @@ class TestDatasetSpec:
 
     def test_custom_timeout(self):
         spec = DatasetSpec(
-            bin_dir="test", zip_url="http://example.com",
-            expected_bins=["a.bin"], timeout_s=1200,
+            bin_dir="test",
+            zip_url="http://example.com",
+            expected_bins=["a.bin"],
+            timeout_s=1200,
         )
         assert spec.timeout_s == 1200
 

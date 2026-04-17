@@ -44,7 +44,10 @@ class TestMapIncidentType:
         assert map_incident_type("fire") == IncidentType.FIRE.value
 
     def test_partial_match(self):
-        assert map_incident_type("ship collision with dock") == IncidentType.COLLISION.value
+        assert (
+            map_incident_type("ship collision with dock")
+            == IncidentType.COLLISION.value
+        )
 
     def test_unknown(self):
         assert map_incident_type("unknown_type") == IncidentType.OTHER.value

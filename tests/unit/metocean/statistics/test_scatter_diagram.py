@@ -5,8 +5,8 @@ ABOUTME: Uses synthetic data — no live API calls.
 
 import numpy as np
 import pandas as pd
-import pytest
 import plotly.graph_objects as go
+import pytest
 
 from worldenergydata.metocean.statistics.scatter_diagram import ScatterDiagram
 
@@ -41,7 +41,9 @@ class TestScatterDiagramCompute:
         assert df.values.sum() == pytest.approx(100.0, rel=0.01)
 
     def test_compute_custom_step(self):
-        df = self.sd.compute(self.data, var1="hs", var2="tp", step_var1=0.5, step_var2=1.0)
+        df = self.sd.compute(
+            self.data, var1="hs", var2="tp", step_var1=0.5, step_var2=1.0
+        )
         assert isinstance(df, pd.DataFrame)
         assert df.shape[0] > 0
 

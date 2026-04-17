@@ -23,18 +23,34 @@ class BseeAdapter(AbstractProductionAdapter):
     # (field_name, peak_oil_bbl, peak_gas_mcf, peak_water_bbl,
     #  condensate_bbl, start_year, start_month, n_months)
     _FIELDS = [
-        ("Atlantis",      8_000_000, 10_000_000, 1_200_000, 200_000, 2007,  2, 216),
-        ("Thunder Horse", 9_500_000, 14_000_000, 1_500_000, 300_000, 2008,  6, 200),
-        ("Mars-Ursa",     7_200_000,  9_000_000, 2_100_000, 150_000, 1997,  1, 324),
-        ("Na Kika",       3_800_000,  5_500_000,   800_000,  80_000, 2003,  6, 254),
+        ("Atlantis", 8_000_000, 10_000_000, 1_200_000, 200_000, 2007, 2, 216),
+        ("Thunder Horse", 9_500_000, 14_000_000, 1_500_000, 300_000, 2008, 6, 200),
+        ("Mars-Ursa", 7_200_000, 9_000_000, 2_100_000, 150_000, 1997, 1, 324),
+        ("Na Kika", 3_800_000, 5_500_000, 800_000, 80_000, 2003, 6, 254),
     ]
 
     def fetch(self, query: ProductionQuery) -> pd.DataFrame:
         rows = []
-        for field_name, peak_oil, peak_gas, peak_water, peak_cond, sy, sm, n_months in self._FIELDS:
+        for (
+            field_name,
+            peak_oil,
+            peak_gas,
+            peak_water,
+            peak_cond,
+            sy,
+            sm,
+            n_months,
+        ) in self._FIELDS:
             rows.extend(
                 self._generate_field_rows(
-                    field_name, peak_oil, peak_gas, peak_water, peak_cond, sy, sm, n_months
+                    field_name,
+                    peak_oil,
+                    peak_gas,
+                    peak_water,
+                    peak_cond,
+                    sy,
+                    sm,
+                    n_months,
                 )
             )
 

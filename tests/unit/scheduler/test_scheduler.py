@@ -1,15 +1,16 @@
 """Tests for DataScheduler: registration, start/stop, status, run_once."""
-import pytest
-import tempfile
+
 import os
-import yaml
+import tempfile
 from datetime import datetime, timedelta
-from unittest.mock import MagicMock, patch, call
 from pathlib import Path
+from unittest.mock import MagicMock, call, patch
 
-from worldenergydata.scheduler.jobs.base import JobResult, AbstractJob
+import pytest
+import yaml
+
+from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
 from worldenergydata.scheduler.scheduler import DataScheduler
-
 
 MINIMAL_CONFIG = """
 jobs:
@@ -199,6 +200,7 @@ class TestDataSchedulerStartStop:
 
         def stop_after_start():
             import time
+
             time.sleep(0.05)
             scheduler.stop()
 

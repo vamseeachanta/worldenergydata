@@ -746,9 +746,7 @@ def status(
 
         # Module status
         if status_data["module_loaded"]:
-            table.add_row(
-                "Module", "[green]Loaded[/green]", "worldenergydata.landman"
-            )
+            table.add_row("Module", "[green]Loaded[/green]", "worldenergydata.landman")
         else:
             table.add_row(
                 "Module",

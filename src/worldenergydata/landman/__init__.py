@@ -53,9 +53,13 @@ from .exceptions import (
     ParsingError,
 )
 from .exceptions import ProviderError as LandmanProviderError
-from .exceptions import RateLimitError
+from .exceptions import (
+    RateLimitError,
+)
 from .exceptions import RecordNotFoundError as LandmanRecordNotFoundError
-from .exceptions import StateNotSupportedError
+from .exceptions import (
+    StateNotSupportedError,
+)
 from .exceptions import TimeoutError as LandmanTimeoutError
 from .landman import Landman, LandmanValidationError
 

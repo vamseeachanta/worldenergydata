@@ -139,8 +139,16 @@ class TestCalculateRiskScore:
 
     def test_damage_increases_score(self):
         ha = HatchAnalyzer()
-        low = {"description": "Issue", "severity": "Minor", "estimated_damage_usd": 1000}
-        high = {"description": "Issue", "severity": "Minor", "estimated_damage_usd": 2000000}
+        low = {
+            "description": "Issue",
+            "severity": "Minor",
+            "estimated_damage_usd": 1000,
+        }
+        high = {
+            "description": "Issue",
+            "severity": "Minor",
+            "estimated_damage_usd": 2000000,
+        }
         assert ha.calculate_risk_score(high) > ha.calculate_risk_score(low)
 
     def test_engine_room_adds_score(self):
@@ -209,15 +217,28 @@ class TestIsSignificantIncident:
 
     def test_high_damage_significant(self):
         ha = HatchAnalyzer()
-        assert ha.is_significant_incident({"description": "", "estimated_damage_usd": 1000000}) is True
+        assert (
+            ha.is_significant_incident(
+                {"description": "", "estimated_damage_usd": 1000000}
+            )
+            is True
+        )
 
     def test_catastrophic_severity_significant(self):
         ha = HatchAnalyzer()
-        assert ha.is_significant_incident({"description": "", "severity": "Catastrophic"}) is True
+        assert (
+            ha.is_significant_incident({"description": "", "severity": "Catastrophic"})
+            is True
+        )
 
     def test_minor_not_significant(self):
         ha = HatchAnalyzer()
-        assert ha.is_significant_incident({"description": "Minor issue", "severity": "Minor"}) is False
+        assert (
+            ha.is_significant_incident(
+                {"description": "Minor issue", "severity": "Minor"}
+            )
+            is False
+        )
 
 
 class TestExtractCaseStudy:
@@ -275,7 +296,9 @@ class TestExtractLessonsLearned:
         ha = HatchAnalyzer()
         incident = {"description": "Crew failed to secure the hatch"}
         lessons = ha._extract_lessons_learned(incident)
-        assert any("training" in l.lower() or "procedures" in l.lower() for l in lessons)
+        assert any(
+            "training" in l.lower() or "procedures" in l.lower() for l in lessons
+        )
 
     def test_maintenance_lesson(self):
         ha = HatchAnalyzer()

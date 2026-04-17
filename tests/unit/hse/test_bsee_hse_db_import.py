@@ -25,18 +25,18 @@ project_root = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(project_root / "src"))
 sys.path.insert(0, str(project_root / "scripts"))
 
-from worldenergydata.hse.database.models import (
-    Base,
-    HSEIncident,
-    ViolationIncident,
-)
-
 # Import functions from the bridge script
 from import_bsee_hse_to_db import (
     import_incinv_records,
     import_incs_records,
     load_existing_ids,
     validate_record,
+)
+
+from worldenergydata.hse.database.models import (
+    Base,
+    HSEIncident,
+    ViolationIncident,
 )
 
 
@@ -175,9 +175,7 @@ class TestImportIncinvRecords:
     def test_import_single_record(self, db_session, sample_incinv_record):
         """Single valid record should be imported successfully."""
         existing_ids = set()
-        stats = import_incinv_records(
-            db_session, [sample_incinv_record], existing_ids
-        )
+        stats = import_incinv_records(db_session, [sample_incinv_record], existing_ids)
         assert stats["imported"] == 1
         assert stats["validation_errors"] == 0
         assert stats["skipped_duplicate"] == 0
@@ -217,9 +215,7 @@ class TestImportIncinvRecords:
         # First import
         import_incinv_records(db_session, [sample_incinv_record], existing_ids)
         # Second import with same record
-        stats = import_incinv_records(
-            db_session, [sample_incinv_record], existing_ids
-        )
+        stats = import_incinv_records(db_session, [sample_incinv_record], existing_ids)
         assert stats["imported"] == 0
         assert stats["skipped_duplicate"] == 1
         assert db_session.query(HSEIncident).count() == 1
@@ -266,9 +262,7 @@ class TestImportIncsRecords:
     def test_import_single_inc_record(self, db_session, sample_inc_record):
         """Single INC record should create HSEIncident + ViolationIncident."""
         existing_ids = set()
-        stats = import_incs_records(
-            db_session, [sample_inc_record], existing_ids
-        )
+        stats = import_incs_records(db_session, [sample_inc_record], existing_ids)
         assert stats["imported"] == 1
         assert stats["violation_records"] == 1
         assert stats["validation_errors"] == 0
@@ -330,9 +324,7 @@ class TestImportIncsRecords:
         """Duplicate INC records should be skipped."""
         existing_ids = set()
         import_incs_records(db_session, [sample_inc_record], existing_ids)
-        stats = import_incs_records(
-            db_session, [sample_inc_record], existing_ids
-        )
+        stats = import_incs_records(db_session, [sample_inc_record], existing_ids)
         assert stats["imported"] == 0
         assert stats["skipped_duplicate"] == 1
         assert db_session.query(HSEIncident).count() == 1

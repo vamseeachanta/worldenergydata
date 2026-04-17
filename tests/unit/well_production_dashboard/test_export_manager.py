@@ -143,9 +143,7 @@ class TestWellDashboardExportManager(unittest.TestCase):
         self.assertIsNotNone(self.export_manager.batch_exporter)
         self.assertIsInstance(self.export_manager.config, dict)
 
-    @patch(
-        "src.worldenergydata.well_production_dashboard.export_manager.ExcelExporter"
-    )
+    @patch("src.worldenergydata.well_production_dashboard.export_manager.ExcelExporter")
     def test_export_to_excel(self, mock_excel_exporter):
         """Test Excel export functionality"""
         # Setup mock
@@ -165,9 +163,7 @@ class TestWellDashboardExportManager(unittest.TestCase):
         self.assertEqual(result.format, "excel")
         self.assertIn(".xlsx", result.file_path)
 
-    @patch(
-        "src.worldenergydata.well_production_dashboard.export_manager.PDFExporter"
-    )
+    @patch("src.worldenergydata.well_production_dashboard.export_manager.PDFExporter")
     def test_export_to_pdf(self, mock_pdf_exporter):
         """Test PDF export functionality"""
         # Setup mock
@@ -245,9 +241,7 @@ class TestWellDashboardExportManager(unittest.TestCase):
         self.assertNotIn("raw_data", prepared_data)
         self.assertIn("charts", prepared_data)
 
-    @patch(
-        "src.worldenergydata.well_production_dashboard.export_manager.BatchExporter"
-    )
+    @patch("src.worldenergydata.well_production_dashboard.export_manager.BatchExporter")
     def test_batch_export(self, mock_batch_exporter):
         """Test batch export functionality"""
         # Setup mock

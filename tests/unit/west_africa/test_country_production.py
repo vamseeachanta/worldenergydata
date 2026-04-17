@@ -1,15 +1,15 @@
 """Tests for EITI multi-country production data loader."""
 
-import pytest
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 from worldenergydata.west_africa.eiti.country_production import (
+    SUPPORTED_EITI_COUNTRIES,
     CountryProductionLoader,
     ProductionRecord,
     aggregate_annual_production,
-    SUPPORTED_EITI_COUNTRIES,
 )
-
 
 SAMPLE_PRODUCTION = [
     ProductionRecord(
@@ -157,7 +157,5 @@ class TestCountryProductionLoader:
         mock_cls.return_value = mock_client
 
         loader = CountryProductionLoader()
-        result = loader.load_multiple(
-            countries=["Nigeria", "Ghana"], year=2022
-        )
+        result = loader.load_multiple(countries=["Nigeria", "Ghana"], year=2022)
         assert isinstance(result, list)

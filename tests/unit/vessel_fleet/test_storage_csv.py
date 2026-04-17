@@ -37,10 +37,12 @@ class TestExportRecordsToCsv:
         outpath = tmp_path / "out.csv"
         result = export_records_to_csv([{"a": 1}], outpath)
         from pathlib import Path
+
         assert isinstance(result, Path)
 
     def test_string_path(self, tmp_path):
         outpath = str(tmp_path / "str_out.csv")
         result = export_records_to_csv([{"a": 1}], outpath)
         from pathlib import Path
+
         assert Path(outpath).exists()

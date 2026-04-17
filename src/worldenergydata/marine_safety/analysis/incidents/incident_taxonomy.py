@@ -340,7 +340,9 @@ class IncidentDataFrameNormaliser:
 
         records: List[TaxonomyRecord] = []
         for _, row in df.iterrows():
-            cause_text = row.get("primary_cause") if "primary_cause" in row.index else None
+            cause_text = (
+                row.get("primary_cause") if "primary_cause" in row.index else None
+            )
             narrative_text = row.get("narrative") if "narrative" in row.index else None
 
             root_cause = classifier.classify(

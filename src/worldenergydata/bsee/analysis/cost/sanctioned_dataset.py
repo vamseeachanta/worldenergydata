@@ -121,9 +121,7 @@ class SanctionedProjectDataset:
         rows = []
 
         region_weights = [0.30, 0.25, 0.20, 0.15, 0.10]  # matches _VALID_REGIONS order
-        regions = rng.choice(
-            _VALID_REGIONS, size=n_records, p=region_weights
-        )
+        regions = rng.choice(_VALID_REGIONS, size=n_records, p=region_weights)
 
         for i, region in enumerate(regions):
             row = self._generate_record(rng, region, i)
@@ -176,9 +174,7 @@ class SanctionedProjectDataset:
 
         if "cost_usd_mm" in df.columns:
             if (df["cost_usd_mm"] <= 0).any():
-                errors.append(
-                    "cost_usd_mm contains non-positive values"
-                )
+                errors.append("cost_usd_mm contains non-positive values")
 
         if "water_depth_m" in df.columns:
             if (df["water_depth_m"] < 0).any():
@@ -211,8 +207,10 @@ class SanctionedProjectDataset:
         if hpht:
             cost_usd_mm *= float(rng.uniform(1.1, 1.4))
 
-        confidence = ConfidenceLevel.HIGH if rng.random() < 0.4 else (
-            ConfidenceLevel.MEDIUM if rng.random() < 0.6 else ConfidenceLevel.LOW
+        confidence = (
+            ConfidenceLevel.HIGH
+            if rng.random() < 0.4
+            else (ConfidenceLevel.MEDIUM if rng.random() < 0.6 else ConfidenceLevel.LOW)
         )
 
         return {
@@ -242,29 +240,52 @@ class SanctionedProjectDataset:
         """Sample water depth, well depth, rig type, activity type, and cost."""
         # Water depth distribution varies by region
         if region == "gom":
-            water_depth_m = float(rng.choice(
-                [rng.uniform(50, 300), rng.uniform(300, 1524),
-                 rng.uniform(1524, 3048), rng.uniform(3048, 3600)],
-                p=[0.20, 0.25, 0.35, 0.20],
-            ))
+            water_depth_m = float(
+                rng.choice(
+                    [
+                        rng.uniform(50, 300),
+                        rng.uniform(300, 1524),
+                        rng.uniform(1524, 3048),
+                        rng.uniform(3048, 3600),
+                    ],
+                    p=[0.20, 0.25, 0.35, 0.20],
+                )
+            )
         elif region == "brazil":
-            water_depth_m = float(rng.choice(
-                [rng.uniform(100, 500), rng.uniform(500, 1524),
-                 rng.uniform(1524, 3000), rng.uniform(3000, 3500)],
-                p=[0.10, 0.20, 0.45, 0.25],
-            ))
+            water_depth_m = float(
+                rng.choice(
+                    [
+                        rng.uniform(100, 500),
+                        rng.uniform(500, 1524),
+                        rng.uniform(1524, 3000),
+                        rng.uniform(3000, 3500),
+                    ],
+                    p=[0.10, 0.20, 0.45, 0.25],
+                )
+            )
         elif region == "north_sea":
-            water_depth_m = float(rng.choice(
-                [rng.uniform(50, 300), rng.uniform(300, 1524),
-                 rng.uniform(1524, 2000), rng.uniform(2000, 2500)],
-                p=[0.35, 0.35, 0.20, 0.10],
-            ))
+            water_depth_m = float(
+                rng.choice(
+                    [
+                        rng.uniform(50, 300),
+                        rng.uniform(300, 1524),
+                        rng.uniform(1524, 2000),
+                        rng.uniform(2000, 2500),
+                    ],
+                    p=[0.35, 0.35, 0.20, 0.10],
+                )
+            )
         else:
-            water_depth_m = float(rng.choice(
-                [rng.uniform(50, 300), rng.uniform(300, 1524),
-                 rng.uniform(1524, 2500)],
-                p=[0.25, 0.40, 0.35],
-            ))
+            water_depth_m = float(
+                rng.choice(
+                    [
+                        rng.uniform(50, 300),
+                        rng.uniform(300, 1524),
+                        rng.uniform(1524, 2500),
+                    ],
+                    p=[0.25, 0.40, 0.35],
+                )
+            )
 
         # Well depth: deeper in deeper water
         if water_depth_m > 1524:
@@ -288,9 +309,7 @@ class SanctionedProjectDataset:
             ActivityType.COMPLETION,
             ActivityType.INTERVENTION,
         ]
-        activity_idx = int(
-            rng.choice(len(_activity_choices), p=[0.55, 0.35, 0.10])
-        )
+        activity_idx = int(rng.choice(len(_activity_choices), p=[0.55, 0.35, 0.10]))
         activity_type = _activity_choices[activity_idx]
 
         # Cost based on depth/region

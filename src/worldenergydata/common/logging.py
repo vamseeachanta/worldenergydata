@@ -14,12 +14,12 @@ Example usage:
     logger.info("Processing data", extra={"record_count": 1000, "source": "BSEE"})
 """
 
+import json
 import logging
 import os
 import sys
 from datetime import datetime, timezone
-from typing import Any, Optional, Dict
-import json
+from typing import Any, Dict, Optional
 
 
 class StructuredFormatter(logging.Formatter):
@@ -46,11 +46,28 @@ class StructuredFormatter(logging.Formatter):
         super().__init__(fmt, datefmt)
         self.json_output = json_output
         self.default_keys = {
-            "name", "msg", "args", "created", "filename", "funcName",
-            "levelname", "levelno", "lineno", "module", "msecs",
-            "pathname", "process", "processName", "relativeCreated",
-            "stack_info", "exc_info", "exc_text", "thread", "threadName",
-            "message", "asctime",
+            "name",
+            "msg",
+            "args",
+            "created",
+            "filename",
+            "funcName",
+            "levelname",
+            "levelno",
+            "lineno",
+            "module",
+            "msecs",
+            "pathname",
+            "process",
+            "processName",
+            "relativeCreated",
+            "stack_info",
+            "exc_info",
+            "exc_text",
+            "thread",
+            "threadName",
+            "message",
+            "asctime",
         }
 
     def format(self, record: logging.LogRecord) -> str:
@@ -125,9 +142,7 @@ class LoggerAdapter(logging.LoggerAdapter):
     Allows setting context that will be included in all log messages.
     """
 
-    def process(
-        self, msg: str, kwargs: Dict[str, Any]
-    ) -> tuple[str, Dict[str, Any]]:
+    def process(self, msg: str, kwargs: Dict[str, Any]) -> tuple[str, Dict[str, Any]]:
         """Process the logging call to add context."""
         # Merge adapter's extra with call-specific extra
         extra = kwargs.get("extra", {})

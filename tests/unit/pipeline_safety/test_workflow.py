@@ -385,9 +385,7 @@ class TestGenerateReport:
         valid = {"accept", "monitor", "repair", "replace"}
         assert set(report["verdict"].unique()).issubset(valid)
 
-    def test_deep_incident_verdict_replace_in_report(
-        self, workflow, sample_df
-    ):
+    def test_deep_incident_verdict_replace_in_report(self, workflow, sample_df):
         report = workflow.generate_report(sample_df)
         deep_row = report[report["incident_id"] == "DEEP-001"]
         assert len(deep_row) == 1

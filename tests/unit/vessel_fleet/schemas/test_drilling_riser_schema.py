@@ -15,8 +15,11 @@ class TestRiserJointSchema:
     def test_valid_riser_joint(self):
         rj = RiserJointSchema(
             COMPONENT_ID="RJ-21-75",
-            OD_IN=21.0, ID_IN=19.5, WALL_THICKNESS_IN=0.75,
-            LENGTH_FT=75.0, WEIGHT_AIR_KIPS=22.5,
+            OD_IN=21.0,
+            ID_IN=19.5,
+            WALL_THICKNESS_IN=0.75,
+            LENGTH_FT=75.0,
+            WEIGHT_AIR_KIPS=22.5,
         )
         assert rj.OD_IN == 21.0
         assert rj.COMPONENT_TYPE == "riser_joint"

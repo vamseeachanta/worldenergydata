@@ -1,7 +1,8 @@
 """Tests for EITI government revenue and company payment data."""
 
-import pytest
 from unittest.mock import MagicMock, patch
+
+import pytest
 
 from worldenergydata.west_africa.eiti.payment_data import (
     PaymentDataLoader,
@@ -10,7 +11,6 @@ from worldenergydata.west_africa.eiti.payment_data import (
     aggregate_by_payment_type,
     cross_validate_nuprc_eiti,
 )
-
 
 SAMPLE_PAYMENTS = [
     PaymentRecord(

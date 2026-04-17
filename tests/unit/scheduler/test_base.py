@@ -1,9 +1,11 @@
 """Tests for scheduler base module: JobResult and AbstractJob."""
-import pytest
+
 from datetime import datetime, timedelta
 from unittest.mock import MagicMock
 
-from worldenergydata.scheduler.jobs.base import JobResult, AbstractJob
+import pytest
+
+from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
 
 
 class ConcreteJob(AbstractJob):
@@ -95,6 +97,7 @@ class TestJobResult:
     def test_job_result_is_dataclass(self):
         """JobResult must be a dataclass."""
         import dataclasses
+
         assert dataclasses.is_dataclass(JobResult)
 
 

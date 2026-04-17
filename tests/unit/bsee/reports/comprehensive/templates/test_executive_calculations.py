@@ -13,10 +13,10 @@ from worldenergydata.bsee.reports.comprehensive.templates.executive_models impor
     StrategicMetric,
 )
 
-
 # ---------------------------------------------------------------------------
 # Init
 # ---------------------------------------------------------------------------
+
 
 class TestExecutiveCalculationsInit:
     def test_defaults(self):
@@ -38,6 +38,7 @@ class TestExecutiveCalculationsInit:
 # ---------------------------------------------------------------------------
 # calculate_trend
 # ---------------------------------------------------------------------------
+
 
 class TestCalculateTrend:
     def test_empty_history(self):
@@ -88,6 +89,7 @@ class TestCalculateTrend:
 # determine_kpi_status / determine_traffic_light_status
 # ---------------------------------------------------------------------------
 
+
 class TestDetermineKpiStatus:
     def test_green(self):
         calc = ExecutiveCalculations()
@@ -120,6 +122,7 @@ class TestDetermineTrafficLightStatus:
 # calculate_performance_score
 # ---------------------------------------------------------------------------
 
+
 class TestCalculatePerformanceScore:
     def test_empty_kpis(self):
         calc = ExecutiveCalculations()
@@ -130,7 +133,11 @@ class TestCalculatePerformanceScore:
     def test_single_kpi_meeting_target(self):
         calc = ExecutiveCalculations()
         kpi = ExecutiveKPI(
-            name="Revenue", value=100, unit="$", target=100, category="Financial",
+            name="Revenue",
+            value=100,
+            unit="$",
+            target=100,
+            category="Financial",
         )
         score = calc.calculate_performance_score([kpi])
         assert score.overall == 100.0
@@ -139,7 +146,11 @@ class TestCalculatePerformanceScore:
     def test_single_kpi_below_target(self):
         calc = ExecutiveCalculations()
         kpi = ExecutiveKPI(
-            name="Revenue", value=50, unit="$", target=100, category="Financial",
+            name="Revenue",
+            value=50,
+            unit="$",
+            target=100,
+            category="Financial",
         )
         score = calc.calculate_performance_score([kpi])
         assert score.overall == 50.0
@@ -147,8 +158,12 @@ class TestCalculatePerformanceScore:
     def test_multiple_categories(self):
         calc = ExecutiveCalculations()
         kpis = [
-            ExecutiveKPI(name="Revenue", value=100, unit="$", target=100, category="Financial"),
-            ExecutiveKPI(name="Uptime", value=80, unit="%", target=100, category="Operational"),
+            ExecutiveKPI(
+                name="Revenue", value=100, unit="$", target=100, category="Financial"
+            ),
+            ExecutiveKPI(
+                name="Uptime", value=80, unit="%", target=100, category="Operational"
+            ),
         ]
         score = calc.calculate_performance_score(kpis)
         assert "Financial" in score.category_scores
@@ -159,7 +174,9 @@ class TestCalculatePerformanceScore:
     def test_no_target_kpi_skipped(self):
         calc = ExecutiveCalculations()
         kpis = [
-            ExecutiveKPI(name="Revenue", value=100, unit="$", target=None, category="Financial"),
+            ExecutiveKPI(
+                name="Revenue", value=100, unit="$", target=None, category="Financial"
+            ),
         ]
         score = calc.calculate_performance_score(kpis)
         assert score.overall == 0.0
@@ -167,7 +184,9 @@ class TestCalculatePerformanceScore:
     def test_trend_up_for_high_score(self):
         calc = ExecutiveCalculations()
         kpis = [
-            ExecutiveKPI(name="Revenue", value=100, unit="$", target=100, category="Financial"),
+            ExecutiveKPI(
+                name="Revenue", value=100, unit="$", target=100, category="Financial"
+            ),
         ]
         score = calc.calculate_performance_score(kpis)
         assert score.trend == "up"  # overall >= 85
@@ -175,7 +194,9 @@ class TestCalculatePerformanceScore:
     def test_trend_down_for_low_score(self):
         calc = ExecutiveCalculations()
         kpis = [
-            ExecutiveKPI(name="Revenue", value=50, unit="$", target=100, category="Financial"),
+            ExecutiveKPI(
+                name="Revenue", value=50, unit="$", target=100, category="Financial"
+            ),
         ]
         score = calc.calculate_performance_score(kpis)
         assert score.trend == "down"  # overall < 70
@@ -183,7 +204,9 @@ class TestCalculatePerformanceScore:
     def test_trend_stable_for_mid_score(self):
         calc = ExecutiveCalculations()
         kpis = [
-            ExecutiveKPI(name="Revenue", value=75, unit="$", target=100, category="Financial"),
+            ExecutiveKPI(
+                name="Revenue", value=75, unit="$", target=100, category="Financial"
+            ),
         ]
         score = calc.calculate_performance_score(kpis)
         assert score.trend == "stable"  # 70 <= overall < 85
@@ -193,6 +216,7 @@ class TestCalculatePerformanceScore:
 # rank_kpis_by_priority
 # ---------------------------------------------------------------------------
 
+
 class TestRankKpisByPriority:
     def test_empty(self):
         calc = ExecutiveCalculations()
@@ -201,8 +225,12 @@ class TestRankKpisByPriority:
     def test_revenue_first(self):
         calc = ExecutiveCalculations()
         kpis = [
-            ExecutiveKPI(name="Efficiency", value=80, unit="%", target=100, status="yellow"),
-            ExecutiveKPI(name="Revenue", value=1000, unit="$", target=2000, status="red"),
+            ExecutiveKPI(
+                name="Efficiency", value=80, unit="%", target=100, status="yellow"
+            ),
+            ExecutiveKPI(
+                name="Revenue", value=1000, unit="$", target=2000, status="red"
+            ),
         ]
         ranked = calc.rank_kpis_by_priority(kpis)
         assert ranked[0].name == "Revenue"
@@ -220,6 +248,7 @@ class TestRankKpisByPriority:
 # ---------------------------------------------------------------------------
 # calculate_strategic_metrics
 # ---------------------------------------------------------------------------
+
 
 class TestCalculateStrategicMetrics:
     def test_empty_data(self):
@@ -260,6 +289,7 @@ class TestCalculateStrategicMetrics:
 # compare_with_benchmarks
 # ---------------------------------------------------------------------------
 
+
 class TestCompareWithBenchmarks:
     def test_empty(self):
         calc = ExecutiveCalculations()
@@ -292,6 +322,7 @@ class TestCompareWithBenchmarks:
 # ---------------------------------------------------------------------------
 # analyze_year_over_year
 # ---------------------------------------------------------------------------
+
 
 class TestAnalyzeYearOverYear:
     def test_insufficient_data(self):
@@ -346,6 +377,7 @@ class TestAnalyzeYearOverYear:
 # generate_strategic_forecast
 # ---------------------------------------------------------------------------
 
+
 class TestGenerateStrategicForecast:
     def test_revenue_forecast(self):
         calc = ExecutiveCalculations()
@@ -380,6 +412,7 @@ class TestGenerateStrategicForecast:
 # track_strategic_goals
 # ---------------------------------------------------------------------------
 
+
 class TestTrackStrategicGoals:
     def test_empty_goals(self):
         calc = ExecutiveCalculations()
@@ -387,12 +420,14 @@ class TestTrackStrategicGoals:
 
     def test_single_goal(self):
         calc = ExecutiveCalculations()
-        goals = [{
-            "name": "Revenue Target",
-            "current": 800000,
-            "target": 1000000,
-            "deadline": "2027-12-31",
-        }]
+        goals = [
+            {
+                "name": "Revenue Target",
+                "current": 800000,
+                "target": 1000000,
+                "deadline": "2027-12-31",
+            }
+        ]
         results = calc.track_strategic_goals(goals)
         assert len(results) == 1
         assert results[0]["name"] == "Revenue Target"
@@ -402,12 +437,14 @@ class TestTrackStrategicGoals:
 
     def test_zero_target(self):
         calc = ExecutiveCalculations()
-        goals = [{
-            "name": "Test",
-            "current": 500,
-            "target": 0,
-            "deadline": "2027-12-31",
-        }]
+        goals = [
+            {
+                "name": "Test",
+                "current": 500,
+                "target": 0,
+                "deadline": "2027-12-31",
+            }
+        ]
         results = calc.track_strategic_goals(goals)
         assert results[0]["progress_percentage"] == 0
 
@@ -415,6 +452,7 @@ class TestTrackStrategicGoals:
 # ---------------------------------------------------------------------------
 # generate_executive_kpis (integration through ExecutiveCalculations)
 # ---------------------------------------------------------------------------
+
 
 class TestGenerateExecutiveKpis:
     def test_financial_kpis(self):

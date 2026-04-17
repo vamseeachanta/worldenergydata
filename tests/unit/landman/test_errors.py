@@ -27,7 +27,9 @@ class TestLandmanProviderError:
     """Tests for LandmanProviderError."""
 
     def test_create_with_provider(self):
-        err = LandmanProviderError("Failed", provider_name="County GIS", status_code=500)
+        err = LandmanProviderError(
+            "Failed", provider_name="County GIS", status_code=500
+        )
         assert err.provider_name == "County GIS"
         assert err.status_code == 500
 

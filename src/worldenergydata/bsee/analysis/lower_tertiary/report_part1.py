@@ -27,14 +27,24 @@ logger = logging.getLogger(__name__)
 _CLR_SUBSEA = "#EF4444"
 _CLR_DRYTREE = "#3B82F6"
 _FIELD_COLORS = [
-    "#3B82F6", "#EF4444", "#10B981", "#F59E0B",
-    "#8B5CF6", "#EC4899", "#06B6D4", "#84CC16",
-    "#F97316", "#6366F1", "#14B8A6", "#E11D48",
+    "#3B82F6",
+    "#EF4444",
+    "#10B981",
+    "#F59E0B",
+    "#8B5CF6",
+    "#EC4899",
+    "#06B6D4",
+    "#84CC16",
+    "#F97316",
+    "#6366F1",
+    "#14B8A6",
+    "#E11D48",
     "#0EA5E9",
 ]
 
 
 # -- Module-level helpers -----------------------------------------------------
+
 
 def _fhtml(fig: go.Figure, idx: int) -> str:
     """Convert Plotly figure to an HTML div.
@@ -60,10 +70,7 @@ def _card(title: str, value: str, unit: str = "") -> str:
 def _tbl(hdr: list[str], rows: list[list[Any]]) -> str:
     """Return a styled HTML data table."""
     h = "".join(f"<th>{x}</th>" for x in hdr)
-    b = "".join(
-        "<tr>" + "".join(f"<td>{c}</td>" for c in r) + "</tr>"
-        for r in rows
-    )
+    b = "".join("<tr>" + "".join(f"<td>{c}</td>" for c in r) + "</tr>" for r in rows)
     return (
         '<table class="data-table">'
         f"<thead><tr>{h}</tr></thead>"
@@ -72,6 +79,7 @@ def _tbl(hdr: list[str], rows: list[list[Any]]) -> str:
 
 
 # -- Report class -------------------------------------------------------------
+
 
 class Part1Report:
     """Generate the Part 1 -- LT Performance Analysis HTML report."""
@@ -120,7 +128,11 @@ class Part1Report:
             ("Total MODU Days", f"{m['total_modu_days']:,}", "days"),
             ("D&C Cost", f"${m['total_dc_cost_billion']}B", "USD"),
             ("Subsea Uptime", f"{m['subsea_uptime_pct']}%", ""),
-            ("Intervention Cost/Well", f"${m['intervention_cost_per_well_million']}M", "USD"),
+            (
+                "Intervention Cost/Well",
+                f"${m['intervention_cost_per_well_million']}M",
+                "USD",
+            ),
             ("Zones Perforated", f"{zr[0]}-{zr[1]}%", "of pay"),
         ]
         grid = "".join(_card(t, v, u) for t, v, u in cards)
@@ -131,12 +143,15 @@ class Part1Report:
 
     def _validation_metrics(self) -> dict:
         rows = [
-            [f["name"], f["appraisal_wells"],
-             f"{f['discovery_to_fo_years']}", f"{f['recovery_factor_pct']}%"]
+            [
+                f["name"],
+                f["appraisal_wells"],
+                f"{f['discovery_to_fo_years']}",
+                f"{f['recovery_factor_pct']}%",
+            ]
             for f in self._a.validation_table
         ]
-        hdr = ["Field", "Appraisal Wells", "Discovery to FO (years)",
-               "Recovery Factor"]
+        hdr = ["Field", "Appraisal Wells", "Discovery to FO (years)", "Recovery Factor"]
         return {"title": "Validation Metrics", "content": _tbl(hdr, rows)}
 
     # -- Section 3: Recovery Factor Comparison --------------------------------
@@ -146,14 +161,22 @@ class Part1Report:
         sub, dt = rf["subsea"], rf["dry_tree"]
         fig = go.Figure()
         for data, clr in [(sub, _CLR_SUBSEA), (dt, _CLR_DRYTREE)]:
-            fig.add_trace(go.Bar(
-                x=["Low", "High"], y=data["range_pct"],
-                name=data["label"], marker_color=clr,
-            ))
-        fig.update_layout(title="Recovery Factor: Subsea vs Dry-Tree",
-                          yaxis_title="Recovery Factor (%)",
-                          barmode="group", height=400)
-        chart = _fhtml(fig, self._fi); self._fi += 1
+            fig.add_trace(
+                go.Bar(
+                    x=["Low", "High"],
+                    y=data["range_pct"],
+                    name=data["label"],
+                    marker_color=clr,
+                )
+            )
+        fig.update_layout(
+            title="Recovery Factor: Subsea vs Dry-Tree",
+            yaxis_title="Recovery Factor (%)",
+            barmode="group",
+            height=400,
+        )
+        chart = _fhtml(fig, self._fi)
+        self._fi += 1
         content = (
             '<div class="highlight"><strong>Key Finding:</strong> '
             f"Subsea developments recover only "
@@ -161,8 +184,11 @@ class Part1Report:
             f"STOIIP vs {dt['range_pct'][0]}-{dt['range_pct'][1]}% "
             f"for dry-tree platforms.</div>"
         )
-        return {"title": "Recovery Factor Comparison",
-                "content": content, "charts": [chart]}
+        return {
+            "title": "Recovery Factor Comparison",
+            "content": content,
+            "charts": [chart],
+        }
 
     # -- Section 4: Julia Deep-Dive -------------------------------------------
 
@@ -173,46 +199,68 @@ class Part1Report:
         cats = ["OIP (Bn BBL)", "Sanctioned (Bn BBL)", "Actual Recovery (MMBBL)"]
         vals = [oip, sanc, actual_bn]
 
-        fig = go.Figure(go.Bar(
-            x=cats, y=vals, marker_color=["#94A3B8", "#60A5FA", _CLR_SUBSEA],
-            text=[f"{v:.2f}" for v in vals], textposition="outside",
-        ))
-        fig.update_layout(title="Julia Field: OIP vs Sanctioned vs Actual Recovery",
-                          yaxis_title="Billion Barrels", height=400)
-        fig.add_annotation(
-            x="Actual Recovery (MMBBL)", y=actual_bn,
-            text=f"Only {jdd['actual_recovery_mmbbl']} MMBBL<br>of {oip}B OIP",
-            showarrow=True, arrowhead=2, yshift=30,
+        fig = go.Figure(
+            go.Bar(
+                x=cats,
+                y=vals,
+                marker_color=["#94A3B8", "#60A5FA", _CLR_SUBSEA],
+                text=[f"{v:.2f}" for v in vals],
+                textposition="outside",
+            )
         )
-        chart = _fhtml(fig, self._fi); self._fi += 1
+        fig.update_layout(
+            title="Julia Field: OIP vs Sanctioned vs Actual Recovery",
+            yaxis_title="Billion Barrels",
+            height=400,
+        )
+        fig.add_annotation(
+            x="Actual Recovery (MMBBL)",
+            y=actual_bn,
+            text=f"Only {jdd['actual_recovery_mmbbl']} MMBBL<br>of {oip}B OIP",
+            showarrow=True,
+            arrowhead=2,
+            yshift=30,
+        )
+        chart = _fhtml(fig, self._fi)
+        self._fi += 1
         content = (
             f'<div class="data-note"><strong>Julia:</strong> '
             f"{oip}B bbl OIP, {sanc}B sanctioned, "
             f"only {jdd['actual_recovery_mmbbl']} MMBBL actually recovered "
             f"(legacy CSV: {jdd['legacy_csv_mmbbl']} MMBBL).</div>"
         )
-        return {"title": "Julia Field Deep-Dive",
-                "content": content, "charts": [chart]}
+        return {"title": "Julia Field Deep-Dive", "content": content, "charts": [chart]}
 
     # -- Section 5: WAR Drilling Activity by Field ----------------------------
 
     def _war_activity(self) -> dict:
         df = self._a.drilling_activity_by_year()
         if df.empty:
-            return {"title": "WAR Drilling Activity by Field",
-                    "content": "<p>No WAR data available.</p>"}
+            return {
+                "title": "WAR Drilling Activity by Field",
+                "content": "<p>No WAR data available.</p>",
+            }
         fig = go.Figure()
         for i, field in enumerate(sorted(df["field"].unique())):
             fdf = df[df["field"] == field]
-            fig.add_trace(go.Bar(
-                x=fdf["year"].tolist(), y=fdf["records"].tolist(),
-                name=field, marker_color=_FIELD_COLORS[i % len(_FIELD_COLORS)],
-            ))
-        fig.update_layout(title="WAR Records by Field and Year",
-                          xaxis_title="Year", yaxis_title="WAR Records",
-                          barmode="stack", height=500,
-                          legend=dict(orientation="h", yanchor="bottom", y=1.02))
-        chart = _fhtml(fig, self._fi); self._fi += 1
+            fig.add_trace(
+                go.Bar(
+                    x=fdf["year"].tolist(),
+                    y=fdf["records"].tolist(),
+                    name=field,
+                    marker_color=_FIELD_COLORS[i % len(_FIELD_COLORS)],
+                )
+            )
+        fig.update_layout(
+            title="WAR Records by Field and Year",
+            xaxis_title="Year",
+            yaxis_title="WAR Records",
+            barmode="stack",
+            height=500,
+            legend=dict(orientation="h", yanchor="bottom", y=1.02),
+        )
+        chart = _fhtml(fig, self._fi)
+        self._fi += 1
         return {"title": "WAR Drilling Activity by Field", "charts": [chart]}
 
     # -- Section 6: Rig Utilization -------------------------------------------
@@ -220,19 +268,31 @@ class Part1Report:
     def _rig_utilization(self) -> dict:
         df = self._a.rig_utilization()
         if df.empty:
-            return {"title": "Rig Utilization",
-                    "content": "<p>No rig data available.</p>"}
-        top = (df.groupby("rig_name")["records"].sum()
-               .sort_values(ascending=True).tail(20))
-        fig = go.Figure(go.Bar(
-            y=top.index.tolist(), x=top.values.tolist(), orientation="h",
-            marker_color=_CLR_DRYTREE,
-            text=[f"{v:,}" for v in top.values], textposition="outside",
-        ))
-        fig.update_layout(title="Top 20 Rigs by WAR Records (LT Fields)",
-                          xaxis_title="WAR Records", height=600,
-                          margin=dict(l=250))
-        chart = _fhtml(fig, self._fi); self._fi += 1
+            return {
+                "title": "Rig Utilization",
+                "content": "<p>No rig data available.</p>",
+            }
+        top = (
+            df.groupby("rig_name")["records"].sum().sort_values(ascending=True).tail(20)
+        )
+        fig = go.Figure(
+            go.Bar(
+                y=top.index.tolist(),
+                x=top.values.tolist(),
+                orientation="h",
+                marker_color=_CLR_DRYTREE,
+                text=[f"{v:,}" for v in top.values],
+                textposition="outside",
+            )
+        )
+        fig.update_layout(
+            title="Top 20 Rigs by WAR Records (LT Fields)",
+            xaxis_title="WAR Records",
+            height=600,
+            margin=dict(l=250),
+        )
+        chart = _fhtml(fig, self._fi)
+        self._fi += 1
         return {"title": "Rig Utilization", "charts": [chart]}
 
     # -- Section 7: Subsea Production Curves ----------------------------------
@@ -240,20 +300,30 @@ class Part1Report:
     def _production_curves(self) -> dict:
         rates = self._a.production_comparison()
         if not rates:
-            return {"title": "Subsea Production Curves",
-                    "content": "<p>No legacy production data available.</p>"}
+            return {
+                "title": "Subsea Production Curves",
+                "content": "<p>No legacy production data available.</p>",
+            }
         fig = go.Figure()
         for i, (field, df) in enumerate(sorted(rates.items())):
-            fig.add_trace(go.Scatter(
-                x=df["date"].tolist(), y=df["total_rate"].tolist(),
-                mode="lines", name=field.title(),
-                line=dict(color=_FIELD_COLORS[i % len(_FIELD_COLORS)], width=2),
-            ))
-        fig.update_layout(title="Subsea Field Production Rates",
-                          xaxis_title="Date", yaxis_title="Total Rate (BOPD)",
-                          height=450,
-                          legend=dict(orientation="h", yanchor="bottom", y=1.02))
-        chart = _fhtml(fig, self._fi); self._fi += 1
+            fig.add_trace(
+                go.Scatter(
+                    x=df["date"].tolist(),
+                    y=df["total_rate"].tolist(),
+                    mode="lines",
+                    name=field.title(),
+                    line=dict(color=_FIELD_COLORS[i % len(_FIELD_COLORS)], width=2),
+                )
+            )
+        fig.update_layout(
+            title="Subsea Field Production Rates",
+            xaxis_title="Date",
+            yaxis_title="Total Rate (BOPD)",
+            height=450,
+            legend=dict(orientation="h", yanchor="bottom", y=1.02),
+        )
+        chart = _fhtml(fig, self._fi)
+        self._fi += 1
         return {"title": "Subsea Production Curves", "charts": [chart]}
 
     # -- Section 8: Cumulative Production -------------------------------------
@@ -261,20 +331,30 @@ class Part1Report:
     def _cumulative_production(self) -> dict:
         cumul = self._a.cumulative_comparison()
         if not cumul:
-            return {"title": "Cumulative Production",
-                    "content": "<p>No cumulative data available.</p>"}
+            return {
+                "title": "Cumulative Production",
+                "content": "<p>No cumulative data available.</p>",
+            }
         fig = go.Figure()
         for i, (field, df) in enumerate(sorted(cumul.items())):
-            fig.add_trace(go.Scatter(
-                x=df["date"].tolist(), y=df["cumulative_mmbbl"].tolist(),
-                mode="lines", name=field.title(),
-                line=dict(color=_FIELD_COLORS[i % len(_FIELD_COLORS)], width=2),
-            ))
-        fig.update_layout(title="Cumulative Oil Production",
-                          xaxis_title="Date", yaxis_title="Cumulative (MMBBL)",
-                          height=450,
-                          legend=dict(orientation="h", yanchor="bottom", y=1.02))
-        chart = _fhtml(fig, self._fi); self._fi += 1
+            fig.add_trace(
+                go.Scatter(
+                    x=df["date"].tolist(),
+                    y=df["cumulative_mmbbl"].tolist(),
+                    mode="lines",
+                    name=field.title(),
+                    line=dict(color=_FIELD_COLORS[i % len(_FIELD_COLORS)], width=2),
+                )
+            )
+        fig.update_layout(
+            title="Cumulative Oil Production",
+            xaxis_title="Date",
+            yaxis_title="Cumulative (MMBBL)",
+            height=450,
+            legend=dict(orientation="h", yanchor="bottom", y=1.02),
+        )
+        chart = _fhtml(fig, self._fi)
+        self._fi += 1
         return {"title": "Cumulative Production", "charts": [chart]}
 
     # -- Section 9: Well Summary ----------------------------------------------
@@ -282,18 +362,29 @@ class Part1Report:
     def _well_summary(self) -> dict:
         inventory = self._a.well_inventory()
         if not inventory:
-            return {"title": "Well Summary",
-                    "content": "<p>No well data available.</p>"}
-        hdr = ["API12", "Completion", "Cumulative (MMBBL)",
-               "Mean Rate (BOPD)", "Start Date", "Last Date"]
+            return {
+                "title": "Well Summary",
+                "content": "<p>No well data available.</p>",
+            }
+        hdr = [
+            "API12",
+            "Completion",
+            "Cumulative (MMBBL)",
+            "Mean Rate (BOPD)",
+            "Start Date",
+            "Last Date",
+        ]
         tables = ""
         for field, df in sorted(inventory.items()):
             rows = [
-                [r.get("API12", ""), r.get("COMPLETION_NAME", ""),
-                 f"{r.get('O_CUMMULATIVE_PROD_MMBBL', 0):.2f}",
-                 f"{r.get('O_MEAN_PROD_RATE_BOPD', 0):,.0f}",
-                 r.get("START_PRODUCTION_DATE", ""),
-                 r.get("LAST_PRODUCTION_DATE", "")]
+                [
+                    r.get("API12", ""),
+                    r.get("COMPLETION_NAME", ""),
+                    f"{r.get('O_CUMMULATIVE_PROD_MMBBL', 0):.2f}",
+                    f"{r.get('O_MEAN_PROD_RATE_BOPD', 0):,.0f}",
+                    r.get("START_PRODUCTION_DATE", ""),
+                    r.get("LAST_PRODUCTION_DATE", ""),
+                ]
                 for _, r in df.iterrows()
             ]
             tables += f"<h3>{field.title()}</h3>" + _tbl(hdr, rows)
@@ -325,10 +416,7 @@ class Part1Report:
         for i, s in enumerate(sections, 1):
             aid = f"section-{i}"
             toc += f'<li><a href="#{aid}">{s["title"]}</a></li>'
-            body += (
-                f'<div class="section" id="{aid}">'
-                f"<h2>{i}. {s['title']}</h2>"
-            )
+            body += f'<div class="section" id="{aid}">' f"<h2>{i}. {s['title']}</h2>"
             for c in s.get("charts", []):
                 body += f'<div class="chart-container">{c}</div>'
             body += s.get("content", "") + "</div>"

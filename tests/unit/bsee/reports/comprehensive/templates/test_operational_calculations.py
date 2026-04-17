@@ -72,6 +72,7 @@ def _make_equip(**overrides):
 # calculate_operational_kpis
 # ---------------------------------------------------------------------------
 
+
 class TestCalculateOperationalKPIs:
     def test_empty_wells(self):
         kpis = calculate_operational_kpis([])
@@ -115,6 +116,7 @@ class TestCalculateOperationalKPIs:
 # add_drilling_performance_analysis
 # ---------------------------------------------------------------------------
 
+
 class TestAddDrillingPerformance:
     def test_empty(self):
         ctx = {}
@@ -125,8 +127,10 @@ class TestAddDrillingPerformance:
         ctx = {}
         wells = [
             _make_well(
-                actual_drilling_days=30, planned_drilling_days=28,
-                drilling_depth_ft=15000, total_depth_ft=15000,
+                actual_drilling_days=30,
+                planned_drilling_days=28,
+                drilling_depth_ft=15000,
+                total_depth_ft=15000,
                 drilling_cost=5000000,
             ),
         ]
@@ -138,8 +142,12 @@ class TestAddDrillingPerformance:
     def test_wells_on_time_count(self):
         ctx = {}
         wells = [
-            _make_well(actual_drilling_days=28, planned_drilling_days=30, drilling_depth_ft=1),
-            _make_well(actual_drilling_days=35, planned_drilling_days=30, drilling_depth_ft=1),
+            _make_well(
+                actual_drilling_days=28, planned_drilling_days=30, drilling_depth_ft=1
+            ),
+            _make_well(
+                actual_drilling_days=35, planned_drilling_days=30, drilling_depth_ft=1
+            ),
         ]
         add_drilling_performance_analysis(ctx, wells)
         assert ctx["drilling_performance"]["wells_on_time"] == 1
@@ -149,6 +157,7 @@ class TestAddDrillingPerformance:
 # ---------------------------------------------------------------------------
 # add_completion_efficiency_metrics
 # ---------------------------------------------------------------------------
+
 
 class TestAddCompletionEfficiency:
     def test_empty(self):
@@ -160,8 +169,11 @@ class TestAddCompletionEfficiency:
         ctx = {}
         wells = [
             _make_well(
-                actual_completion_days=20, planned_completion_days=18,
-                completion_cost=2000000, frac_stages=30, proppant_lbs=500000,
+                actual_completion_days=20,
+                planned_completion_days=18,
+                completion_cost=2000000,
+                frac_stages=30,
+                proppant_lbs=500000,
             ),
         ]
         add_completion_efficiency_metrics(ctx, wells)
@@ -173,6 +185,7 @@ class TestAddCompletionEfficiency:
 # ---------------------------------------------------------------------------
 # add_production_optimization_tracking
 # ---------------------------------------------------------------------------
+
 
 class TestAddProductionOptimization:
     def test_basic(self):
@@ -186,10 +199,14 @@ class TestAddProductionOptimization:
 
     def test_low_efficiency_recommendation(self):
         ctx = {}
-        prod = _make_prod(design_capacity_boe=1000, actual_production_boe=100, production_days=1)
+        prod = _make_prod(
+            design_capacity_boe=1000, actual_production_boe=100, production_days=1
+        )
         add_production_optimization_tracking(ctx, prod)
         opt = ctx["production_optimization"]
-        assert any("debottlenecking" in opp for opp in opt["optimization_opportunities"])
+        assert any(
+            "debottlenecking" in opp for opp in opt["optimization_opportunities"]
+        )
 
     def test_high_water_cut_recommendation(self):
         ctx = {}
@@ -203,12 +220,15 @@ class TestAddProductionOptimization:
         prod = _make_prod(wells_producing=5, total_wells=10)
         add_production_optimization_tracking(ctx, prod)
         opt = ctx["production_optimization"]
-        assert any("availability" in opp.lower() for opp in opt["optimization_opportunities"])
+        assert any(
+            "availability" in opp.lower() for opp in opt["optimization_opportunities"]
+        )
 
 
 # ---------------------------------------------------------------------------
 # add_equipment_utilization_analysis
 # ---------------------------------------------------------------------------
+
 
 class TestAddEquipmentUtilization:
     def test_empty(self):
@@ -218,7 +238,10 @@ class TestAddEquipmentUtilization:
 
     def test_with_data(self):
         ctx = {}
-        equips = [_make_equip(), _make_equip(equipment_id="ESP-002", equipment_type="compressor")]
+        equips = [
+            _make_equip(),
+            _make_equip(equipment_id="ESP-002", equipment_type="compressor"),
+        ]
         add_equipment_utilization_analysis(ctx, equips)
         analysis = ctx["equipment_analysis"]
         assert analysis["total_equipment"] == 2

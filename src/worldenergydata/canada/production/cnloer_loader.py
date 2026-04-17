@@ -29,9 +29,8 @@ from typing import Dict, List, Optional
 
 import pandas as pd
 
-from worldenergydata.common.units import GasUnits, OilUnits, WaterUnits
-
 from worldenergydata.common.logging import get_logger
+from worldenergydata.common.units import GasUnits, OilUnits, WaterUnits
 
 logger = get_logger(__name__)
 
@@ -96,13 +95,14 @@ def _water_ratio(oil_sm3: float, wor: float = 0.5) -> float:
 # GOR (gas:oil ratio) approx 100 scf/bbl for Hibernia/Terra Nova/White Rose.
 # WOR starts low and rises with field maturity.
 
+
 def _build_hibernia() -> List[tuple]:
     """
     Hibernia: first oil 1997, peaked ~200 kbopd ~2005, gradual decline.
     ExxonMobil operated; 33 production wells.
     """
     profile = [
-        (1997, 50),   # ramp-up year
+        (1997, 50),  # ramp-up year
         (1998, 110),
         (1999, 145),
         (2000, 160),
@@ -125,7 +125,7 @@ def _build_hibernia() -> List[tuple]:
         (2017, 103),
         (2018, 96),
         (2019, 88),
-        (2020, 75),   # COVID impact
+        (2020, 75),  # COVID impact
         (2021, 82),
         (2022, 78),
         (2023, 72),
@@ -165,10 +165,10 @@ def _build_terra_nova() -> List[tuple]:
         (2016, 44),
         (2017, 41),
         (2018, 38),
-        (2019, 10),   # safety shutdown
-        (2020, 0),    # full shutdown
-        (2021, 0),    # refurb
-        (2022, 15),   # restart
+        (2019, 10),  # safety shutdown
+        (2020, 0),  # full shutdown
+        (2021, 0),  # refurb
+        (2022, 15),  # restart
         (2023, 30),
     ]
     rows = []
@@ -286,7 +286,7 @@ _FIELD_BUILDERS: Dict[str, callable] = {
 }
 
 _SM3_TO_MCF = GasUnits.SM3_TO_SCF / 1_000.0  # sm3 -> Mcf (1 sm3 = 0.0353147 Mcf)
-_MSM3_TO_MCF = 1_000_000 * _SM3_TO_MCF         # MSm3 -> Mcf
+_MSM3_TO_MCF = 1_000_000 * _SM3_TO_MCF  # MSm3 -> Mcf
 
 
 def _build_records(field_name: str, rows: List[tuple]) -> List[CnloerProductionRecord]:
@@ -369,18 +369,14 @@ class CnloerLoader:
         """
         if field_name not in _FIELD_BUILDERS:
             available = ", ".join(sorted(_FIELD_BUILDERS.keys()))
-            raise ValueError(
-                f"Unknown field {field_name!r}. Available: {available}"
-            )
+            raise ValueError(f"Unknown field {field_name!r}. Available: {available}")
 
         if end_year is None:
             end_year = date.today().year
 
         raw_rows = _FIELD_BUILDERS[field_name]()
         records = _build_records(field_name, raw_rows)
-        return [
-            r for r in records if start_year <= r.year <= end_year
-        ]
+        return [r for r in records if start_year <= r.year <= end_year]
 
     def load_all_fields(
         self,
@@ -404,9 +400,7 @@ class CnloerLoader:
             )
         return sorted(all_records, key=lambda r: (r.field_name, r.year))
 
-    def to_dataframe(
-        self, records: List[CnloerProductionRecord]
-    ) -> pd.DataFrame:
+    def to_dataframe(self, records: List[CnloerProductionRecord]) -> pd.DataFrame:
         """Convert a list of production records to a pandas DataFrame.
 
         Args:

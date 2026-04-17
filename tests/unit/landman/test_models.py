@@ -5,8 +5,8 @@ from datetime import date, datetime
 from worldenergydata.landman.models import (
     CountyClerkInfo,
     FluidMineralLease,
-    FluidMineralType,
     FluidMineralSearchResult,
+    FluidMineralType,
     InterestType,
     LeaseRecord,
     LeaseStatus,
@@ -252,35 +252,60 @@ class TestLeaseRecord:
         assert l.status == LeaseStatus.UNKNOWN
 
     def test_is_active(self):
-        for status in [LeaseStatus.ACTIVE, LeaseStatus.HBP, LeaseStatus.POOLED, LeaseStatus.UNITIZED]:
+        for status in [
+            LeaseStatus.ACTIVE,
+            LeaseStatus.HBP,
+            LeaseStatus.POOLED,
+            LeaseStatus.UNITIZED,
+        ]:
             l = LeaseRecord(
-                lease_id="L", state="TX", county="C",
-                legal_description="S", lessor="O", lessee="L",
+                lease_id="L",
+                state="TX",
+                county="C",
+                legal_description="S",
+                lessor="O",
+                lessee="L",
                 status=status,
             )
             assert l.is_active() is True
 
     def test_is_not_active(self):
-        for status in [LeaseStatus.EXPIRED, LeaseStatus.TERMINATED, LeaseStatus.UNKNOWN]:
+        for status in [
+            LeaseStatus.EXPIRED,
+            LeaseStatus.TERMINATED,
+            LeaseStatus.UNKNOWN,
+        ]:
             l = LeaseRecord(
-                lease_id="L", state="TX", county="C",
-                legal_description="S", lessor="O", lessee="L",
+                lease_id="L",
+                state="TX",
+                county="C",
+                legal_description="S",
+                lessor="O",
+                lessee="L",
                 status=status,
             )
             assert l.is_active() is False
 
     def test_is_expired_by_status(self):
         l = LeaseRecord(
-            lease_id="L", state="TX", county="C",
-            legal_description="S", lessor="O", lessee="L",
+            lease_id="L",
+            state="TX",
+            county="C",
+            legal_description="S",
+            lessor="O",
+            lessee="L",
             status=LeaseStatus.EXPIRED,
         )
         assert l.is_expired() is True
 
     def test_is_expired_by_date(self):
         l = LeaseRecord(
-            lease_id="L", state="TX", county="C",
-            legal_description="S", lessor="O", lessee="L",
+            lease_id="L",
+            state="TX",
+            county="C",
+            legal_description="S",
+            lessor="O",
+            lessee="L",
             status=LeaseStatus.ACTIVE,
             expiration_date=date(2020, 1, 1),
         )
@@ -288,8 +313,12 @@ class TestLeaseRecord:
 
     def test_not_expired_hbp(self):
         l = LeaseRecord(
-            lease_id="L", state="TX", county="C",
-            legal_description="S", lessor="O", lessee="L",
+            lease_id="L",
+            state="TX",
+            county="C",
+            legal_description="S",
+            lessor="O",
+            lessee="L",
             status=LeaseStatus.HBP,
             expiration_date=date(2020, 1, 1),
         )
@@ -297,9 +326,14 @@ class TestLeaseRecord:
 
     def test_to_dict(self):
         l = LeaseRecord(
-            lease_id="L-001", state="TX", county="Harris",
-            legal_description="SEC 12", lessor="O", lessee="Co",
-            royalty_rate=0.1875, status=LeaseStatus.HBP,
+            lease_id="L-001",
+            state="TX",
+            county="Harris",
+            legal_description="SEC 12",
+            lessor="O",
+            lessee="Co",
+            royalty_rate=0.1875,
+            status=LeaseStatus.HBP,
         )
         d = l.to_dict()
         assert d["royalty_rate"] == 0.1875
@@ -349,8 +383,11 @@ class TestOwnerSearchResult:
 
     def test_with_records(self):
         ownership = MineralOwnershipRecord(
-            record_id="MO-1", state="TX", county="Harris",
-            legal_description="S12", owner_name="Smith",
+            record_id="MO-1",
+            state="TX",
+            county="Harris",
+            legal_description="S12",
+            owner_name="Smith",
         )
         r = OwnerSearchResult(
             search_id="S-001",
@@ -369,21 +406,32 @@ class TestOwnerSearchResult:
         )
         r.add_ownership_record(
             MineralOwnershipRecord(
-                record_id="MO-1", state="TX", county="C",
-                legal_description="S", owner_name="N",
+                record_id="MO-1",
+                state="TX",
+                county="C",
+                legal_description="S",
+                owner_name="N",
             )
         )
         r.add_lease_record(
             LeaseRecord(
-                lease_id="L-1", state="TX", county="C",
-                legal_description="S", lessor="O", lessee="L",
+                lease_id="L-1",
+                state="TX",
+                county="C",
+                legal_description="S",
+                lessor="O",
+                lessee="L",
             )
         )
         r.add_title_record(
             TitleRecord(
-                document_id="D-1", record_type=RecordType.DEED,
-                state="TX", county="C", legal_description="S",
-                grantor="G", grantee="G2",
+                document_id="D-1",
+                record_type=RecordType.DEED,
+                state="TX",
+                county="C",
+                legal_description="S",
+                grantor="G",
+                grantee="G2",
             )
         )
         assert r.total_records == 3

@@ -13,22 +13,48 @@ import re
 from typing import Optional, Union
 
 _UNIT_SUFFIXES: tuple[str, ...] = (
-    " ft.", " ft", " feet",
-    " m.", " m", " metres", " meters",
-    " tonnes", " tons", " t",
-    " kips", " klbs",
-    " hp", " HP",
-    " psi", " PSI",
-    " in.", " in", " inches",
-    " st", " ST",
-    " knots", " kn",
-    " MW", " mw",
+    " ft.",
+    " ft",
+    " feet",
+    " m.",
+    " m",
+    " metres",
+    " meters",
+    " tonnes",
+    " tons",
+    " t",
+    " kips",
+    " klbs",
+    " hp",
+    " HP",
+    " psi",
+    " PSI",
+    " in.",
+    " in",
+    " inches",
+    " st",
+    " ST",
+    " knots",
+    " kn",
+    " MW",
+    " mw",
 )
 
-_NON_NUMERIC_VALUES: frozenset[str] = frozenset({
-    "n/a", "na", "nil", "none", "-", "--", "---",
-    "tbd", "tba", "unknown", "varies",
-})
+_NON_NUMERIC_VALUES: frozenset[str] = frozenset(
+    {
+        "n/a",
+        "na",
+        "nil",
+        "none",
+        "-",
+        "--",
+        "---",
+        "tbd",
+        "tba",
+        "unknown",
+        "varies",
+    }
+)
 
 _BOOL_TRUE: frozenset[str] = frozenset({"y", "yes", "true", "1"})
 _BOOL_FALSE: frozenset[str] = frozenset({"n", "no", "false", "0"})

@@ -22,7 +22,10 @@ from worldenergydata.marine_safety.database.models import Base
 from worldenergydata.marine_safety.exceptions import (
     ConnectionError as DBConnectionError,
 )
-from worldenergydata.marine_safety.exceptions import DatabaseError, QueryError
+from worldenergydata.marine_safety.exceptions import (
+    DatabaseError,
+    QueryError,
+)
 
 T = TypeVar("T", bound=Base)
 

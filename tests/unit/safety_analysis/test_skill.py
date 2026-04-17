@@ -228,9 +228,9 @@ def test_all_scenarios_return_result(scenario):
 
 
 def test_package_namespace_import():
-    from worldenergydata.safety_analysis import enigma_safety_analysis as fn
-    from worldenergydata.safety_analysis import EnigmaResult as ER
     from worldenergydata.safety_analysis import SKILL_NAME as SN
+    from worldenergydata.safety_analysis import EnigmaResult as ER
+    from worldenergydata.safety_analysis import enigma_safety_analysis as fn
 
     result = fn("subsea_pipeline", "fatigue")
     assert isinstance(result, ER)

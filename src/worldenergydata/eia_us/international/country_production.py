@@ -47,30 +47,30 @@ TOP_PRODUCERS: List[str] = [
 # Built-in mock data for 25 countries (2023 annual, kbd)
 MOCK_COUNTRY_PRODUCTION: List[Dict[str, Any]] = [
     {"country": "United States", "year": 2023, "production_kbd": 12900},
-    {"country": "Saudi Arabia",  "year": 2023, "production_kbd": 11900},
-    {"country": "Russia",        "year": 2023, "production_kbd": 10800},
-    {"country": "Canada",        "year": 2023, "production_kbd": 5600},
-    {"country": "Iraq",          "year": 2023, "production_kbd": 4400},
-    {"country": "China",         "year": 2023, "production_kbd": 4200},
-    {"country": "UAE",           "year": 2023, "production_kbd": 4000},
-    {"country": "Brazil",        "year": 2023, "production_kbd": 3700},
-    {"country": "Iran",          "year": 2023, "production_kbd": 3400},
-    {"country": "Kuwait",        "year": 2023, "production_kbd": 2700},
-    {"country": "Norway",        "year": 2023, "production_kbd": 1900},
-    {"country": "Mexico",        "year": 2023, "production_kbd": 1900},
-    {"country": "Kazakhstan",    "year": 2023, "production_kbd": 1900},
-    {"country": "Libya",         "year": 2023, "production_kbd": 1200},
-    {"country": "Nigeria",       "year": 2023, "production_kbd": 1200},
-    {"country": "Venezuela",     "year": 2023, "production_kbd": 800},
-    {"country": "Algeria",       "year": 2023, "production_kbd": 1000},
-    {"country": "Angola",        "year": 2023, "production_kbd": 1100},
-    {"country": "Oman",          "year": 2023, "production_kbd": 1000},
-    {"country": "UK",            "year": 2023, "production_kbd": 700},
-    {"country": "Ecuador",       "year": 2023, "production_kbd": 480},
-    {"country": "Malaysia",      "year": 2023, "production_kbd": 560},
-    {"country": "Argentina",     "year": 2023, "production_kbd": 640},
-    {"country": "Colombia",      "year": 2023, "production_kbd": 750},
-    {"country": "Azerbaijan",    "year": 2023, "production_kbd": 680},
+    {"country": "Saudi Arabia", "year": 2023, "production_kbd": 11900},
+    {"country": "Russia", "year": 2023, "production_kbd": 10800},
+    {"country": "Canada", "year": 2023, "production_kbd": 5600},
+    {"country": "Iraq", "year": 2023, "production_kbd": 4400},
+    {"country": "China", "year": 2023, "production_kbd": 4200},
+    {"country": "UAE", "year": 2023, "production_kbd": 4000},
+    {"country": "Brazil", "year": 2023, "production_kbd": 3700},
+    {"country": "Iran", "year": 2023, "production_kbd": 3400},
+    {"country": "Kuwait", "year": 2023, "production_kbd": 2700},
+    {"country": "Norway", "year": 2023, "production_kbd": 1900},
+    {"country": "Mexico", "year": 2023, "production_kbd": 1900},
+    {"country": "Kazakhstan", "year": 2023, "production_kbd": 1900},
+    {"country": "Libya", "year": 2023, "production_kbd": 1200},
+    {"country": "Nigeria", "year": 2023, "production_kbd": 1200},
+    {"country": "Venezuela", "year": 2023, "production_kbd": 800},
+    {"country": "Algeria", "year": 2023, "production_kbd": 1000},
+    {"country": "Angola", "year": 2023, "production_kbd": 1100},
+    {"country": "Oman", "year": 2023, "production_kbd": 1000},
+    {"country": "UK", "year": 2023, "production_kbd": 700},
+    {"country": "Ecuador", "year": 2023, "production_kbd": 480},
+    {"country": "Malaysia", "year": 2023, "production_kbd": 560},
+    {"country": "Argentina", "year": 2023, "production_kbd": 640},
+    {"country": "Colombia", "year": 2023, "production_kbd": 750},
+    {"country": "Azerbaijan", "year": 2023, "production_kbd": 680},
 ]
 
 
@@ -95,11 +95,13 @@ class CountryProductionLoader:
 
         rows = []
         for rec in records:
-            rows.append({
-                "country": rec.get("country", ""),
-                "year": int(rec.get("year", 0)),
-                "production_kbd": float(rec.get("production_kbd", 0.0)),
-            })
+            rows.append(
+                {
+                    "country": rec.get("country", ""),
+                    "year": int(rec.get("year", 0)),
+                    "production_kbd": float(rec.get("production_kbd", 0.0)),
+                }
+            )
 
         return pd.DataFrame(rows)[self._REQUIRED_COLS].reset_index(drop=True)
 

@@ -4,24 +4,25 @@ ABOUTME: Uses synthetic results — no live API calls.
 """
 
 import os
+import tempfile
+
 import numpy as np
 import pandas as pd
 import pytest
-import tempfile
 
-from worldenergydata.metocean.statistics.eva import EVAResult, ExtremeValueAnalysis
-from worldenergydata.metocean.statistics.joint_probability import (
-    JointProbabilityModel,
-)
 from worldenergydata.metocean.statistics.environmental_contours import (
     ContourResult,
     EnvironmentalContour,
 )
+from worldenergydata.metocean.statistics.eva import EVAResult, ExtremeValueAnalysis
+from worldenergydata.metocean.statistics.joint_probability import (
+    JointProbabilityModel,
+)
+from worldenergydata.metocean.statistics.reporting import MetoceanReport
 from worldenergydata.metocean.statistics.weather_windows import (
     OperabilityResult,
     WeatherWindowAnalysis,
 )
-from worldenergydata.metocean.statistics.reporting import MetoceanReport
 
 
 def _make_hs_series(n_years: int = 5, seed: int = 42) -> pd.Series:
@@ -89,9 +90,7 @@ class TestMetoceanReportInit:
 
 class TestMetoceanReportAddSections:
     def setup_method(self):
-        self.report = MetoceanReport(
-            location_name="GoM Test Site", lat=29.0, lon=-94.0
-        )
+        self.report = MetoceanReport(location_name="GoM Test Site", lat=29.0, lon=-94.0)
 
     def test_add_eva_increases_sections(self, eva_result):
         count_before = len(self.report._sections)
@@ -128,11 +127,11 @@ class TestMetoceanReportSaveHTML:
             os.unlink(path)
 
     def test_save_html_contains_location_name(self, eva_result):
-        report = MetoceanReport(location_name="Gulf of Mexico Site", lat=29.0, lon=-94.0)
+        report = MetoceanReport(
+            location_name="Gulf of Mexico Site", lat=29.0, lon=-94.0
+        )
         report.add_eva(eva_result)
-        with tempfile.NamedTemporaryFile(
-            suffix=".html", delete=False, mode="w"
-        ) as f:
+        with tempfile.NamedTemporaryFile(suffix=".html", delete=False, mode="w") as f:
             path = f.name
         try:
             report.save_html(path)

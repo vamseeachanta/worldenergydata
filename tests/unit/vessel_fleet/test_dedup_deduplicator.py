@@ -8,10 +8,10 @@ from worldenergydata.vessel_fleet.dedup.deduplicator import (
     deduplicate_fleet,
 )
 
-
 # ---------------------------------------------------------------------------
 # _SOURCE_PRIORITY constant
 # ---------------------------------------------------------------------------
+
 
 class TestSourcePriority:
     def test_manual_highest(self):
@@ -32,6 +32,7 @@ class TestSourcePriority:
 # ---------------------------------------------------------------------------
 # _merge_records
 # ---------------------------------------------------------------------------
+
 
 class TestMergeRecords:
     def test_single_record(self):
@@ -80,6 +81,7 @@ class TestMergeRecords:
 # deduplicate_fleet
 # ---------------------------------------------------------------------------
 
+
 class TestDeduplicateFleet:
     def test_empty_list(self):
         result = deduplicate_fleet([])
@@ -93,14 +95,26 @@ class TestDeduplicateFleet:
 
     def test_dedup_by_imo(self):
         a = {"IMO_NUMBER": "9001", "VESSEL_NAME": "Ship A", "DATA_SOURCE": "bsee_war"}
-        b = {"IMO_NUMBER": "9001", "VESSEL_NAME": "Ship A Updated", "DATA_SOURCE": "manual"}
+        b = {
+            "IMO_NUMBER": "9001",
+            "VESSEL_NAME": "Ship A Updated",
+            "DATA_SOURCE": "manual",
+        }
         result = deduplicate_fleet([a, b])
         assert len(result) == 1
         assert result[0]["VESSEL_NAME"] == "Ship A Updated"
 
     def test_dedup_by_name(self):
-        a = {"VESSEL_NAME": "OCEAN RIG CORCOVADO", "DATA_SOURCE": "equasis", "YEAR": 2020}
-        b = {"VESSEL_NAME": "ocean rig corcovado", "DATA_SOURCE": "manual", "YEAR": 2024}
+        a = {
+            "VESSEL_NAME": "OCEAN RIG CORCOVADO",
+            "DATA_SOURCE": "equasis",
+            "YEAR": 2020,
+        }
+        b = {
+            "VESSEL_NAME": "ocean rig corcovado",
+            "DATA_SOURCE": "manual",
+            "YEAR": 2024,
+        }
         result = deduplicate_fleet([a, b])
         assert len(result) == 1
 
@@ -117,7 +131,11 @@ class TestDeduplicateFleet:
         assert len(result) == 2
 
     def test_name_match_merges_with_imo_group(self):
-        by_imo = {"IMO_NUMBER": "9001", "VESSEL_NAME": "Test Ship", "DATA_SOURCE": "bsee_war"}
+        by_imo = {
+            "IMO_NUMBER": "9001",
+            "VESSEL_NAME": "Test Ship",
+            "DATA_SOURCE": "bsee_war",
+        }
         by_name = {"VESSEL_NAME": "test ship", "DATA_SOURCE": "manual", "EXTRA": "data"}
         result = deduplicate_fleet([by_imo, by_name])
         # Name-only record should merge into the IMO record
@@ -127,12 +145,20 @@ class TestDeduplicateFleet:
 
     def test_large_dedup(self):
         records = [
-            {"IMO_NUMBER": f"900{i}", "VESSEL_NAME": f"Ship {i}", "DATA_SOURCE": "bsee_war"}
+            {
+                "IMO_NUMBER": f"900{i}",
+                "VESSEL_NAME": f"Ship {i}",
+                "DATA_SOURCE": "bsee_war",
+            }
             for i in range(50)
         ]
         # Add duplicates
         dupes = [
-            {"IMO_NUMBER": f"900{i}", "VESSEL_NAME": f"Ship {i} Updated", "DATA_SOURCE": "manual"}
+            {
+                "IMO_NUMBER": f"900{i}",
+                "VESSEL_NAME": f"Ship {i} Updated",
+                "DATA_SOURCE": "manual",
+            }
             for i in range(25)
         ]
         result = deduplicate_fleet(records + dupes)

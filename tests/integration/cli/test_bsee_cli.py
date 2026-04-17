@@ -10,7 +10,6 @@ from typer.testing import CliRunner
 
 from worldenergydata.cli.main import app
 
-
 runner = CliRunner()
 
 
@@ -27,7 +26,11 @@ class TestBSEECLIHelp:
         result = runner.invoke(app, ["bsee", "--help"])
         # Should list available BSEE commands
         output_lower = result.output.lower()
-        assert "analyze" in output_lower or "report" in output_lower or "stats" in output_lower
+        assert (
+            "analyze" in output_lower
+            or "report" in output_lower
+            or "stats" in output_lower
+        )
 
     def test_bsee_help_shows_description(self):
         """Test that bsee --help shows module description."""
@@ -48,7 +51,11 @@ class TestBSEEStats:
         """Test that bsee stats displays statistics information."""
         result = runner.invoke(app, ["bsee", "stats"])
         # Should show some statistics-related output
-        assert "Statistics" in result.output or "Data" in result.output or "Module" in result.output
+        assert (
+            "Statistics" in result.output
+            or "Data" in result.output
+            or "Module" in result.output
+        )
 
     def test_bsee_stats_verbose_flag(self):
         """Test that bsee stats accepts --verbose flag."""
@@ -75,13 +82,19 @@ class TestBSEEAnalyze:
         result = runner.invoke(app, ["bsee", "analyze", "--help"])
         # Should list analysis options
         output_lower = result.output.lower()
-        assert "block" in output_lower or "field" in output_lower or "api" in output_lower
+        assert (
+            "block" in output_lower or "field" in output_lower or "api" in output_lower
+        )
 
     def test_bsee_analyze_requires_parameter(self):
         """Test that bsee analyze requires at least one parameter."""
         result = runner.invoke(app, ["bsee", "analyze"])
         # Should exit with error when no parameters provided
-        assert result.exit_code != 0 or "error" in result.output.lower() or "required" in result.output.lower()
+        assert (
+            result.exit_code != 0
+            or "error" in result.output.lower()
+            or "required" in result.output.lower()
+        )
 
 
 class TestBSEEReport:
@@ -97,7 +110,9 @@ class TestBSEEReport:
         result = runner.invoke(app, ["bsee", "report", "--help"])
         # Should list report options
         output_lower = result.output.lower()
-        assert "type" in output_lower or "format" in output_lower or "id" in output_lower
+        assert (
+            "type" in output_lower or "format" in output_lower or "id" in output_lower
+        )
 
     def test_bsee_report_shows_format_options(self):
         """Test that bsee report --help shows output format options."""
@@ -120,7 +135,9 @@ class TestBSEEData:
         result = runner.invoke(app, ["bsee", "data", "--help"])
         # Should list data retrieval options
         output_lower = result.output.lower()
-        assert "api" in output_lower or "block" in output_lower or "lease" in output_lower
+        assert (
+            "api" in output_lower or "block" in output_lower or "lease" in output_lower
+        )
 
 
 class TestBSEERefresh:

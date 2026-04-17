@@ -15,10 +15,10 @@ from worldenergydata.bsee.analysis.forecasting.decline_analysis import (
 )
 from worldenergydata.sodir.forecasting import DeclineCurve, ForecastResult
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture
 def adapter():
@@ -82,6 +82,7 @@ def hyp_ts():
 # fit_all_models tests
 # ---------------------------------------------------------------------------
 
+
 class TestFitAllModels:
     def test_fits_three_models(self, analysis, exp_ts):
         comparison = analysis.fit_all_models(exp_ts)
@@ -111,9 +112,9 @@ class TestFitAllModels:
     def test_r_squared_positive(self, analysis, exp_ts):
         comparison = analysis.fit_all_models(exp_ts)
         for fit in comparison.fits.values():
-            assert fit.curve.r_squared > 0.5, (
-                f"{fit.curve.model_type} R² too low: {fit.curve.r_squared}"
-            )
+            assert (
+                fit.curve.r_squared > 0.5
+            ), f"{fit.curve.model_type} R² too low: {fit.curve.r_squared}"
 
     def test_model_fit_has_residuals(self, analysis, exp_ts):
         comparison = analysis.fit_all_models(exp_ts)
@@ -176,6 +177,7 @@ class TestCountParams:
 # Forecast tests
 # ---------------------------------------------------------------------------
 
+
 class TestForecast:
     def test_forecast_returns_result(self, analysis, exp_ts):
         comparison = analysis.fit_all_models(exp_ts)
@@ -231,6 +233,7 @@ class TestForecast:
 # EUR tests
 # ---------------------------------------------------------------------------
 
+
 class TestEUR:
     def test_eur_returns_dict(self, analysis, exp_ts):
         comparison = analysis.fit_all_models(exp_ts)
@@ -263,6 +266,7 @@ class TestEUR:
 # Integration: adapter → analysis pipeline
 # ---------------------------------------------------------------------------
 
+
 class TestIntegrationPipeline:
     def test_full_pipeline(self, adapter, analysis):
         """End-to-end: DataFrame → adapter → analysis → forecast → EUR."""
@@ -271,14 +275,16 @@ class TestIntegrationPipeline:
         D = 0.03
         n = 30
         rng = np.random.default_rng(77)
-        df = pd.DataFrame({
-            "PRODUCTION_DATE": list(range(200001, 200001 + n)),
-            "FIELD_NAME_CODE": ["TEST_FIELD"] * n,
-            "MON_O_PROD_VOL": [
-                qi * np.exp(-D * t) * 30 + rng.normal(0, 5000) for t in range(n)
-            ],
-            "DAYS_ON_PROD": [30] * n,
-        })
+        df = pd.DataFrame(
+            {
+                "PRODUCTION_DATE": list(range(200001, 200001 + n)),
+                "FIELD_NAME_CODE": ["TEST_FIELD"] * n,
+                "MON_O_PROD_VOL": [
+                    qi * np.exp(-D * t) * 30 + rng.normal(0, 5000) for t in range(n)
+                ],
+                "DAYS_ON_PROD": [30] * n,
+            }
+        )
 
         ts = adapter.extract_field_production(df, "TEST_FIELD")
         comparison = analysis.fit_all_models(ts)

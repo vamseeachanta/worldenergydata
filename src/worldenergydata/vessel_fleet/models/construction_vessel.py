@@ -50,7 +50,9 @@ class ConstructionVesselEntry(BaseVesselEntry):
     @property
     def is_pipelay(self) -> bool:
         """Whether this vessel has pipelay capability."""
-        return self.pipelay_capacity_in is not None or self.pipelay_tension_t is not None
+        return (
+            self.pipelay_capacity_in is not None or self.pipelay_tension_t is not None
+        )
 
     @property
     def is_crane_vessel(self) -> bool:

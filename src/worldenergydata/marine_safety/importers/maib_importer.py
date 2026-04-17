@@ -12,11 +12,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Generator, Optional
 
+from worldenergydata.common.logging import get_logger
+
 from ..constants import IncidentType, VesselType
 from ..database.models import Incident, Location, Vessel
 from .base_importer import BaseImporter
-
-from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
 
@@ -173,7 +173,9 @@ class MAIBImporter(BaseImporter):
             return parsed
 
         except Exception as e:
-            logger.error(f"Error parsing MAIB record {raw_record.get('Occurrence_Id')}: {e}")
+            logger.error(
+                f"Error parsing MAIB record {raw_record.get('Occurrence_Id')}: {e}"
+            )
             return None
 
     def _extract_incident_id(self, raw_record: Dict[str, Any]) -> Optional[str]:

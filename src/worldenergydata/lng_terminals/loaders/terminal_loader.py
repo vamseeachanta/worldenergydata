@@ -127,9 +127,7 @@ class TerminalLoader:
             source_url=self._get_optional_str(row, "source_url"),
             access_date=date.today(),
             fields_sourced=sourced_fields,
-            reliability=self._parse_reliability(
-                row.get("data_confidence", "medium")
-            ),
+            reliability=self._parse_reliability(row.get("data_confidence", "medium")),
         )
 
         # Build marine infrastructure if water depth is provided
@@ -157,9 +155,7 @@ class TerminalLoader:
             terminal_type=self._parse_terminal_type(
                 self._get_required_str(row, "terminal_type")
             ),
-            function=self._parse_function(
-                self._get_required_str(row, "function")
-            ),
+            function=self._parse_function(self._get_required_str(row, "function")),
             status=self._parse_status(self._get_required_str(row, "status")),
             capacity_mtpa=self._get_optional_float(row, "capacity_mtpa"),
             year_commissioned=self._get_optional_int(row, "year_commissioned"),

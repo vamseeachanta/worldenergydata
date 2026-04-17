@@ -7,9 +7,8 @@ from typing import Any, Dict, List
 
 from sqlalchemy.orm import Session
 
-from worldenergydata.hse.database.models import HSEIncident
-
 from worldenergydata.common.logging import get_logger
+from worldenergydata.hse.database.models import HSEIncident
 
 logger = get_logger(__name__)
 

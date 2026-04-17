@@ -105,11 +105,17 @@ class TestStripOwnerPrefix:
 class TestMatchPdfLink:
     def test_direct_match(self):
         pdf_links = {"Noble Resolve": "http://example.com/resolve.pdf"}
-        assert _match_pdf_link("Noble Resolve", pdf_links) == "http://example.com/resolve.pdf"
+        assert (
+            _match_pdf_link("Noble Resolve", pdf_links)
+            == "http://example.com/resolve.pdf"
+        )
 
     def test_case_insensitive(self):
         pdf_links = {"noble resolve": "http://example.com/resolve.pdf"}
-        assert _match_pdf_link("Noble Resolve", pdf_links) == "http://example.com/resolve.pdf"
+        assert (
+            _match_pdf_link("Noble Resolve", pdf_links)
+            == "http://example.com/resolve.pdf"
+        )
 
     def test_owner_prefix_mismatch(self):
         pdf_links = {"Ocean Apex": "http://example.com/apex.pdf"}
@@ -117,7 +123,10 @@ class TestMatchPdfLink:
 
     def test_partial_match(self):
         pdf_links = {"Noble Resolve X": "http://example.com/resolve.pdf"}
-        assert _match_pdf_link("Noble Resolve", pdf_links) == "http://example.com/resolve.pdf"
+        assert (
+            _match_pdf_link("Noble Resolve", pdf_links)
+            == "http://example.com/resolve.pdf"
+        )
 
     def test_no_match(self):
         pdf_links = {"Something Else": "http://example.com/other.pdf"}
@@ -130,7 +139,10 @@ class TestMatchPdfLink:
 class TestExtractNoblePdfLinks:
     def test_basic(self):
         links = [
-            {"href": "http://noble.com/fleet-details/2024/Ocean-Apex/default.aspx", "text": "Rig Summary"},
+            {
+                "href": "http://noble.com/fleet-details/2024/Ocean-Apex/default.aspx",
+                "text": "Rig Summary",
+            },
             {"href": "http://noble.com/apex.pdf", "text": "Download Summary PDF"},
         ]
         result = _extract_noble_pdf_links(links)
@@ -146,9 +158,15 @@ class TestExtractNoblePdfLinks:
 
     def test_multiple_rigs(self):
         links = [
-            {"href": "http://noble.com/fleet-details/2024/Ocean-Apex/default.aspx", "text": "Rig Summary"},
+            {
+                "href": "http://noble.com/fleet-details/2024/Ocean-Apex/default.aspx",
+                "text": "Rig Summary",
+            },
             {"href": "http://noble.com/apex.pdf", "text": "Download Summary PDF"},
-            {"href": "http://noble.com/fleet-details/2024/Noble-Resolve/default.aspx", "text": "Rig Summary"},
+            {
+                "href": "http://noble.com/fleet-details/2024/Noble-Resolve/default.aspx",
+                "text": "Rig Summary",
+            },
             {"href": "http://noble.com/resolve.pdf", "text": "Download Summary PDF"},
         ]
         result = _extract_noble_pdf_links(links)
@@ -158,7 +176,10 @@ class TestExtractNoblePdfLinks:
 
     def test_rig_summary_without_pdf(self):
         links = [
-            {"href": "http://noble.com/fleet-details/2024/Ocean-Apex/default.aspx", "text": "Rig Summary"},
+            {
+                "href": "http://noble.com/fleet-details/2024/Ocean-Apex/default.aspx",
+                "text": "Rig Summary",
+            },
             {"href": "http://noble.com/other", "text": "Other"},
         ]
         result = _extract_noble_pdf_links(links)

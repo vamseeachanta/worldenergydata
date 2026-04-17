@@ -61,8 +61,7 @@ class _RedirectLoader(importlib.abc.Loader):
         if self.old_name not in _warned:
             _warned.add(self.old_name)
             warnings.warn(
-                f"{self.old_name} is deprecated. "
-                f"Use {self.new_name} instead.",
+                f"{self.old_name} is deprecated. " f"Use {self.new_name} instead.",
                 DeprecationWarning,
                 stacklevel=2,
             )
@@ -94,7 +93,7 @@ class _ModulesRedirectFinder(importlib.abc.MetaPathFinder):
             return None
 
         # Extract the part after "worldenergydata.modules."
-        suffix = fullname[len(self._PREFIX):]
+        suffix = fullname[len(self._PREFIX) :]
         parts = suffix.split(".")
         top_module = parts[0]
 

@@ -87,7 +87,9 @@ def load_config(path: Union[str, Path]) -> RiskConfig:
     try:
         raw = yaml.safe_load(path.read_text(encoding="utf-8"))
     except Exception:
-        logger.warning("Failed to parse config: %s — using defaults", path, exc_info=True)
+        logger.warning(
+            "Failed to parse config: %s — using defaults", path, exc_info=True
+        )
         return default_config()
 
     if not isinstance(raw, dict):
@@ -98,8 +100,14 @@ def load_config(path: Union[str, Path]) -> RiskConfig:
         composite_weights=raw.get("composite_weights", defaults["composite_weights"]),
         acute_weights=raw.get("acute_weights", defaults["acute_weights"]),
         chronic_weights=raw.get("chronic_weights", defaults["chronic_weights"]),
-        compliance_weights=raw.get("compliance_weights", defaults["compliance_weights"]),
-        default_missing_score=raw.get("default_missing_score", defaults["default_missing_score"]),
-        normalization_method=raw.get("normalization_method", defaults["normalization_method"]),
+        compliance_weights=raw.get(
+            "compliance_weights", defaults["compliance_weights"]
+        ),
+        default_missing_score=raw.get(
+            "default_missing_score", defaults["default_missing_score"]
+        ),
+        normalization_method=raw.get(
+            "normalization_method", defaults["normalization_method"]
+        ),
         water_depth_bands=raw.get("water_depth_bands", defaults["water_depth_bands"]),
     )

@@ -3,8 +3,8 @@
 # # # Third party imports
 import pandas as pd
 
-from worldenergydata.common.legacy.data import DateTimeUtility
 from worldenergydata.bsee.data.bsee_data import BSEEData
+from worldenergydata.common.legacy.data import DateTimeUtility
 
 bsee_data = BSEEData()
 dtu = DateTimeUtility()

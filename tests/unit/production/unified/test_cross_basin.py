@@ -3,12 +3,12 @@
 import pandas as pd
 import pytest
 
-from worldenergydata.production.unified.query import ProductionQuery, ProductionResult
 from worldenergydata.production.unified.cross_basin import (
-    compare_peak_rates,
     compare_cumulative_eur,
+    compare_peak_rates,
     fiscal_sensitivity,
 )
+from worldenergydata.production.unified.query import ProductionQuery, ProductionResult
 
 
 def _make_result(rows):
@@ -27,24 +27,48 @@ def _make_result(rows):
 
 _SAMPLE_ROWS = [
     {
-        "region": "ncs", "field_name": "Edvard Grieg", "year": 2020, "month": 1,
-        "oil_bbl": 5_800_000.0, "gas_mcf": 2_100_000.0,
-        "water_bbl": 420_000.0, "condensate_bbl": 180_000.0, "source": "sodir_mock",
+        "region": "ncs",
+        "field_name": "Edvard Grieg",
+        "year": 2020,
+        "month": 1,
+        "oil_bbl": 5_800_000.0,
+        "gas_mcf": 2_100_000.0,
+        "water_bbl": 420_000.0,
+        "condensate_bbl": 180_000.0,
+        "source": "sodir_mock",
     },
     {
-        "region": "ncs", "field_name": "Edvard Grieg", "year": 2020, "month": 2,
-        "oil_bbl": 5_200_000.0, "gas_mcf": 1_900_000.0,
-        "water_bbl": 450_000.0, "condensate_bbl": 160_000.0, "source": "sodir_mock",
+        "region": "ncs",
+        "field_name": "Edvard Grieg",
+        "year": 2020,
+        "month": 2,
+        "oil_bbl": 5_200_000.0,
+        "gas_mcf": 1_900_000.0,
+        "water_bbl": 450_000.0,
+        "condensate_bbl": 160_000.0,
+        "source": "sodir_mock",
     },
     {
-        "region": "gom", "field_name": "Atlantis", "year": 2020, "month": 1,
-        "oil_bbl": 8_000_000.0, "gas_mcf": 10_000_000.0,
-        "water_bbl": 1_200_000.0, "condensate_bbl": 200_000.0, "source": "bsee_mock",
+        "region": "gom",
+        "field_name": "Atlantis",
+        "year": 2020,
+        "month": 1,
+        "oil_bbl": 8_000_000.0,
+        "gas_mcf": 10_000_000.0,
+        "water_bbl": 1_200_000.0,
+        "condensate_bbl": 200_000.0,
+        "source": "bsee_mock",
     },
     {
-        "region": "gom", "field_name": "Atlantis", "year": 2020, "month": 2,
-        "oil_bbl": 7_500_000.0, "gas_mcf": 9_500_000.0,
-        "water_bbl": 1_300_000.0, "condensate_bbl": 190_000.0, "source": "bsee_mock",
+        "region": "gom",
+        "field_name": "Atlantis",
+        "year": 2020,
+        "month": 2,
+        "oil_bbl": 7_500_000.0,
+        "gas_mcf": 9_500_000.0,
+        "water_bbl": 1_300_000.0,
+        "condensate_bbl": 190_000.0,
+        "source": "bsee_mock",
     },
 ]
 
@@ -76,9 +100,19 @@ class TestComparePeakRates:
         q = ProductionQuery(regions=["ncs"])
         result = ProductionResult(
             query=q,
-            data=pd.DataFrame(columns=["region", "field_name", "year", "month",
-                                        "oil_bbl", "gas_mcf", "water_bbl",
-                                        "condensate_bbl", "source"]),
+            data=pd.DataFrame(
+                columns=[
+                    "region",
+                    "field_name",
+                    "year",
+                    "month",
+                    "oil_bbl",
+                    "gas_mcf",
+                    "water_bbl",
+                    "condensate_bbl",
+                    "source",
+                ]
+            ),
             summary=pd.DataFrame(),
             sources_used=[],
             coverage_gaps=[],
@@ -122,9 +156,19 @@ class TestCompareCumulativeEur:
         q = ProductionQuery(regions=["ncs"])
         result = ProductionResult(
             query=q,
-            data=pd.DataFrame(columns=["region", "field_name", "year", "month",
-                                        "oil_bbl", "gas_mcf", "water_bbl",
-                                        "condensate_bbl", "source"]),
+            data=pd.DataFrame(
+                columns=[
+                    "region",
+                    "field_name",
+                    "year",
+                    "month",
+                    "oil_bbl",
+                    "gas_mcf",
+                    "water_bbl",
+                    "condensate_bbl",
+                    "source",
+                ]
+            ),
             summary=pd.DataFrame(),
             sources_used=[],
             coverage_gaps=[],
@@ -171,9 +215,19 @@ class TestFiscalSensitivity:
         q = ProductionQuery(regions=["ncs"])
         result = ProductionResult(
             query=q,
-            data=pd.DataFrame(columns=["region", "field_name", "year", "month",
-                                        "oil_bbl", "gas_mcf", "water_bbl",
-                                        "condensate_bbl", "source"]),
+            data=pd.DataFrame(
+                columns=[
+                    "region",
+                    "field_name",
+                    "year",
+                    "month",
+                    "oil_bbl",
+                    "gas_mcf",
+                    "water_bbl",
+                    "condensate_bbl",
+                    "source",
+                ]
+            ),
             summary=pd.DataFrame(),
             sources_used=[],
             coverage_gaps=[],

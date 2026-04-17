@@ -91,8 +91,7 @@ _BSEE: list[DecommissioningRegulation] = [
         requirement_type="site_clearance",
         lead_time_months=12,
         key_threshold=(
-            "Site must be cleared to within 3 m of seabed after "
-            "structure removal"
+            "Site must be cleared to within 3 m of seabed after " "structure removal"
         ),
         reference_doc="30 CFR 250.1743",
         notes="Debris survey required post-clearance",
@@ -433,8 +432,7 @@ _ANP: list[DecommissioningRegulation] = [
         requirement_type="well_plugging",
         lead_time_months=12,
         key_threshold=(
-            "Wells must be plugged per ABNT NBR 15544 and "
-            "ANP technical requirements"
+            "Wells must be plugged per ABNT NBR 15544 and " "ANP technical requirements"
         ),
         reference_doc="ANP Portaria 25/2002 updated by Resolution 817/2020",
         notes="IBAMA environmental license required before P&A of complex wells",

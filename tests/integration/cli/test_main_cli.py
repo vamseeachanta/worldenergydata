@@ -10,7 +10,6 @@ from typer.testing import CliRunner
 
 from worldenergydata.cli.main import app
 
-
 runner = CliRunner()
 
 
@@ -68,7 +67,12 @@ class TestMainCLI:
         """Test that status command displays system status information."""
         result = runner.invoke(app, ["status"])
         # Should display some status-related content
-        assert "Status" in result.output or "Component" in result.output or "Available" in result.output or "Not Found" in result.output
+        assert (
+            "Status" in result.output
+            or "Component" in result.output
+            or "Available" in result.output
+            or "Not Found" in result.output
+        )
 
     def test_no_args_shows_help_or_exits_cleanly(self):
         """Test that running with no arguments shows help or exits cleanly."""

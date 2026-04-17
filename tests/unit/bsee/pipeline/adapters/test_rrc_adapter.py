@@ -23,7 +23,6 @@ from worldenergydata.bsee.pipeline.adapters.units import (
     MCF_TO_M3,
 )
 
-
 # ---------------------------------------------------------------------------
 # Fixtures — stub CSV data
 # ---------------------------------------------------------------------------
@@ -44,11 +43,76 @@ WELL_COLUMNS = [
 ]
 
 WELL_ROWS = [
-    ["4210100001", "EAGLE FORD", "1", "A", "O", "12000", "L001", "2020-01-15", None, "HORIZONTAL", "28.5", "-97.5"],
-    ["4210100002", "EAGLE FORD", "1", "P", "G", "10000", "L002", "2019-05-20", "2023-01-10", "VERTICAL", "28.6", "-97.6"],
-    ["4210100003", "EAGLE FORD", "1", "A", "O", "14000", "L001", "2021-03-01", None, "HORIZONTAL", "28.55", "-97.55"],
-    ["4210100004", "EAGLE FORD", "2", "A", "G", "11000", "L003", "2022-06-10", None, "DIRECTIONAL", "29.0", "-98.0"],
-    ["4210100005", "PERMIAN BASIN", "8", "A", "O", "8000", "L010", "2018-11-01", None, "VERTICAL", "31.5", "-102.0"],
+    [
+        "4210100001",
+        "EAGLE FORD",
+        "1",
+        "A",
+        "O",
+        "12000",
+        "L001",
+        "2020-01-15",
+        None,
+        "HORIZONTAL",
+        "28.5",
+        "-97.5",
+    ],
+    [
+        "4210100002",
+        "EAGLE FORD",
+        "1",
+        "P",
+        "G",
+        "10000",
+        "L002",
+        "2019-05-20",
+        "2023-01-10",
+        "VERTICAL",
+        "28.6",
+        "-97.6",
+    ],
+    [
+        "4210100003",
+        "EAGLE FORD",
+        "1",
+        "A",
+        "O",
+        "14000",
+        "L001",
+        "2021-03-01",
+        None,
+        "HORIZONTAL",
+        "28.55",
+        "-97.55",
+    ],
+    [
+        "4210100004",
+        "EAGLE FORD",
+        "2",
+        "A",
+        "G",
+        "11000",
+        "L003",
+        "2022-06-10",
+        None,
+        "DIRECTIONAL",
+        "29.0",
+        "-98.0",
+    ],
+    [
+        "4210100005",
+        "PERMIAN BASIN",
+        "8",
+        "A",
+        "O",
+        "8000",
+        "L010",
+        "2018-11-01",
+        None,
+        "VERTICAL",
+        "31.5",
+        "-102.0",
+    ],
 ]
 
 PERMIT_COLUMNS = [
@@ -101,13 +165,15 @@ def stub_data_dir(tmp_path: Path) -> Path:
     # Permits CSV
     permit_df = pd.DataFrame(PERMIT_ROWS, columns=PERMIT_COLUMNS)
     permit_df.to_csv(
-        tmp_path / "texas_rrc_drilling_permits_20260101.csv", index=False,
+        tmp_path / "texas_rrc_drilling_permits_20260101.csv",
+        index=False,
     )
 
     # Production CSV
     prod_df = pd.DataFrame(PRODUCTION_ROWS, columns=PRODUCTION_COLUMNS)
     prod_df.to_csv(
-        tmp_path / "texas_rrc_og_production_20260101.csv", index=False,
+        tmp_path / "texas_rrc_og_production_20260101.csv",
+        index=False,
     )
 
     return tmp_path

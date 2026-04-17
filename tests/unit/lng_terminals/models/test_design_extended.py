@@ -27,7 +27,10 @@ class TestHullDesign:
     def test_with_dimensions(self):
         h = HullDesign(
             hull_type="ship-shaped",
-            loa_m=350.0, beam_m=55.0, depth_m=30.0, draft_m=12.0,
+            loa_m=350.0,
+            beam_m=55.0,
+            depth_m=30.0,
+            draft_m=12.0,
             displacement_tonnes=120000.0,
         )
         assert h.loa_m == 350.0
@@ -51,7 +54,8 @@ class TestHullDesign:
 
     def test_mooring_type(self):
         h = HullDesign(
-            hull_type="ship-shaped", mooring_type="internal_turret",
+            hull_type="ship-shaped",
+            mooring_type="internal_turret",
         )
         assert h.mooring_type == "internal_turret"
 

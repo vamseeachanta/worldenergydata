@@ -9,13 +9,15 @@ from typing import Any, Dict, List, Optional
 
 import pandas as pd
 
-from worldenergydata.common.units import OilUnits, GasUnits
+from worldenergydata.common.units import GasUnits, OilUnits
 
 logger = logging.getLogger(__name__)
 
 # Backward-compatible module-level aliases (sourced from common.units)
 SM3_TO_BBL = OilUnits.SM3_TO_BBL
-MSM3_TO_MCF = GasUnits.MSM3_TO_MMSCF  # 1 million Sm3 = 35.3147 thousand cubic feet (Mcf)
+MSM3_TO_MCF = (
+    GasUnits.MSM3_TO_MMSCF
+)  # 1 million Sm3 = 35.3147 thousand cubic feet (Mcf)
 
 # SODIR monthly production endpoint
 PRODUCTION_ENDPOINT = "/field/production/monthly"
@@ -152,9 +154,16 @@ class MonthlyProductionLoader:
         """Return an empty DataFrame with the expected schema."""
         return pd.DataFrame(
             columns=[
-                "field_name", "year", "month", "oil_sm3", "gas_sm3",
-                "ngl_sm3", "condensate_sm3", "water_injected_sm3",
-                "oil_bbl", "gas_mcf",
+                "field_name",
+                "year",
+                "month",
+                "oil_sm3",
+                "gas_sm3",
+                "ngl_sm3",
+                "condensate_sm3",
+                "water_injected_sm3",
+                "oil_bbl",
+                "gas_mcf",
             ]
         )
 

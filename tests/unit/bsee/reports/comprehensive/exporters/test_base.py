@@ -25,7 +25,9 @@ class TestExportFormat:
 
 class TestExportConfig:
     def test_basic(self):
-        cfg = ExportConfig(format=ExportFormat.EXCEL, output_path=Path("/tmp/report.xlsx"))
+        cfg = ExportConfig(
+            format=ExportFormat.EXCEL, output_path=Path("/tmp/report.xlsx")
+        )
         assert cfg.format == ExportFormat.EXCEL
         assert cfg.output_path == Path("/tmp/report.xlsx")
         assert cfg.template_name is None
@@ -59,7 +61,9 @@ class TestExportConfig:
 
 class TestExportResult:
     def test_success(self):
-        r = ExportResult(success=True, file_path=Path("/tmp/report.xlsx"), file_size=1024)
+        r = ExportResult(
+            success=True, file_path=Path("/tmp/report.xlsx"), file_size=1024
+        )
         assert r.success is True
         assert r.file_path == Path("/tmp/report.xlsx")
         assert r.file_size == 1024

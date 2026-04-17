@@ -13,8 +13,8 @@ Key economic concepts implemented:
 
 from __future__ import annotations
 
-import math
 import logging
+import math
 from typing import Optional
 
 from worldenergydata.drilling.batch_economics.models import DrillCampaign
@@ -60,7 +60,7 @@ class BatchDrillingEconomics:
             return float(base_time_days)
 
         exponent = math.log(lc_factor) / math.log(2.0)
-        return float(base_time_days * (well_position ** exponent))
+        return float(base_time_days * (well_position**exponent))
 
     # ------------------------------------------------------------------
     # Mobilization savings

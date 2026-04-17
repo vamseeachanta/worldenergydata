@@ -151,7 +151,7 @@ def analyze_individual_well_economics(
 
 
 def compare_wells_economic_performance(
-    wells_data: Dict[str, Dict[str, Any]]
+    wells_data: Dict[str, Dict[str, Any]],
 ) -> Dict[str, Any]:
     """Compare economic performance across multiple wells"""
     well_comparisons = []

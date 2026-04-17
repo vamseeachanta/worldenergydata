@@ -244,8 +244,7 @@ def get_availability(source_id: str) -> DataAvailability:
     """Return data availability for a given source."""
     if source_id not in AVAILABILITY_MATRIX:
         raise ValueError(
-            f"Unknown source '{source_id}'. "
-            f"Available: {list(AVAILABILITY_MATRIX)}"
+            f"Unknown source '{source_id}'. " f"Available: {list(AVAILABILITY_MATRIX)}"
         )
     return AVAILABILITY_MATRIX[source_id]
 

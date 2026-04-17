@@ -1,10 +1,9 @@
 # Standard library imports
-import os
 import logging
+import os
 
 # Third party imports
 import pandas as pd
-
 from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
 
 from worldenergydata.common.logging import get_logger
@@ -13,60 +12,75 @@ logger = get_logger(__name__)
 
 wwy = WorkingWithYAML()
 
+
 class DataFromFiles:
-    
+
     def __init__(self):
         pass
 
     def router(self, cfg):
 
-        if cfg['data_from_files']['production']:
+        if cfg["data_from_files"]["production"]:
             self.get_production_data_by_api12(cfg)
 
         return cfg
 
     def get_production_data_by_api12(self, cfg):
 
-        folder_path = cfg['settings']['files_folder']
+        folder_path = cfg["settings"]["files_folder"]
 
-        library_name = 'energydata'
-        library_file_cfg = {
-            'filepath': folder_path,
-            'library_name': library_name
-        }
+        library_name = "energydata"
+        library_file_cfg = {"filepath": folder_path, "library_name": library_name}
 
-        folder_path = wwy.get_library_filepath(library_file_cfg, src_relative_location_flag=False)
+        folder_path = wwy.get_library_filepath(
+            library_file_cfg, src_relative_location_flag=False
+        )
 
-        api12 = cfg['settings']['api12']
+        api12 = cfg["settings"]["api12"]
         logging.info(f"Getting production data for API12: {api12} ... START")
-        output_file = os.path.join(cfg['Analysis']['result_folder'], 'Data', 'production_data_' + str(api12) + '.csv')
+        output_file = os.path.join(
+            cfg["Analysis"]["result_folder"],
+            "Data",
+            "production_data_" + str(api12) + ".csv",
+        )
 
-        api12_dataframes= {}
+        api12_dataframes = {}
         for file_name in os.listdir(folder_path):
             if file_name.endswith(".csv"):
                 file_path = os.path.join(folder_path, file_name)
                 try:
                     df = pd.read_csv(file_path)
-                    
-                    if 'API_WELL_NUMBER' not in df.columns:
-                        logger.info(f"Skipping {file_name}: 'API_WELL_NUMBER' column not found.")
+
+                    if "API_WELL_NUMBER" not in df.columns:
+                        logger.info(
+                            f"Skipping {file_name}: 'API_WELL_NUMBER' column not found."
+                        )
                         continue
-                    
+
                     # Find matching rows for the current api12
-                    matching_rows = df[df['API_WELL_NUMBER'] == api12]
+                    matching_rows = df[df["API_WELL_NUMBER"] == api12]
 
                     if not matching_rows.empty:
                         # Move 'API_WELL_NUMBER' column to the first position
-                        columns = ['API_WELL_NUMBER'] + [col for col in matching_rows.columns if col != 'API_WELL_NUMBER']
+                        columns = ["API_WELL_NUMBER"] + [
+                            col
+                            for col in matching_rows.columns
+                            if col != "API_WELL_NUMBER"
+                        ]
                         matching_rows = matching_rows[columns]
 
                         # Append matching rows to the corresponding api12 DataFrame
                         if api12 not in api12_dataframes:
                             api12_dataframes[api12] = matching_rows
                         else:
-                            api12_dataframes[api12] = pd.concat([api12_dataframes[api12], matching_rows], ignore_index=True)
+                            api12_dataframes[api12] = pd.concat(
+                                [api12_dataframes[api12], matching_rows],
+                                ignore_index=True,
+                            )
                     else:
-                        logger.info(f"No matching rows found for API {api12} in {file_name}.")
+                        logger.info(
+                            f"No matching rows found for API {api12} in {file_name}."
+                        )
 
                 except FileNotFoundError:
                     logger.info(f"File not found: {file_path}")

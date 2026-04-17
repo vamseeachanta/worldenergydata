@@ -8,15 +8,18 @@ Shared utilities, console instance, and helper functions used across CLI modules
 """
 
 import sys
+
+# import click  # noqa: F401
+from rich.console import Console
+
+# from rich.panel import Panel  # noqa: F401
+from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.table import Table
+
 # from datetime import datetime  # noqa: F401
 # from pathlib import Path  # noqa: F401
 # from typing import Optional  # noqa: F401
 
-# import click  # noqa: F401
-from rich.console import Console
-# from rich.panel import Panel  # noqa: F401
-from rich.progress import Progress, SpinnerColumn, TextColumn
-from rich.table import Table
 
 # Initialize Rich console - shared across all CLI modules
 console = Console()

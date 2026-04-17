@@ -6,10 +6,10 @@ import pytest
 
 from worldenergydata.sodir.workflows.collection import CollectionWorkflow
 
-
 # ---------------------------------------------------------------------------
 # Init
 # ---------------------------------------------------------------------------
+
 
 class TestCollectionWorkflowInit:
     def test_default_config(self):
@@ -51,6 +51,7 @@ class TestCollectionWorkflowInit:
 # _get_datasets_to_collect
 # ---------------------------------------------------------------------------
 
+
 class TestGetDatasetsToCollect:
     def test_configured_datasets(self):
         wf = CollectionWorkflow({"datasets": ["blocks", "fields"]})
@@ -70,6 +71,7 @@ class TestGetDatasetsToCollect:
 # ---------------------------------------------------------------------------
 # _prepare_filters
 # ---------------------------------------------------------------------------
+
 
 class TestPrepareFilters:
     def test_static_filters(self):
@@ -101,6 +103,7 @@ class TestPrepareFilters:
 # get_execution_history
 # ---------------------------------------------------------------------------
 
+
 class TestGetExecutionHistory:
     def test_empty_history(self):
         wf = CollectionWorkflow({})
@@ -115,6 +118,7 @@ class TestGetExecutionHistory:
 # ---------------------------------------------------------------------------
 # get_next_execution_time
 # ---------------------------------------------------------------------------
+
 
 class TestGetNextExecutionTime:
     def test_no_last_execution(self):

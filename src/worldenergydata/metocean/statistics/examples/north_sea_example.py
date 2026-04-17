@@ -24,18 +24,16 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
+from worldenergydata.common.logging import get_logger
 from worldenergydata.metocean.statistics import (
+    EnvironmentalContour,
     ExtremeValueAnalysis,
     JointProbabilityModel,
-    EnvironmentalContour,
     MetoceanReport,
-    WeatherWindowAnalysis,
-    WaveSpectra,
     ScatterDiagram,
+    WaveSpectra,
+    WeatherWindowAnalysis,
 )
-
-
-from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
 
@@ -43,17 +41,17 @@ logger = get_logger(__name__)
 # ---------------------------------------------------------------------------
 # NCS synthetic data parameters (typical Ekofisk area)
 # ---------------------------------------------------------------------------
-_NCS_HS_WEIBULL_SCALE = 1.8    # metres (harsher than GoM)
+_NCS_HS_WEIBULL_SCALE = 1.8  # metres (harsher than GoM)
 _NCS_HS_WEIBULL_SHAPE = 1.4
-_NCS_HS_MIN = 0.2               # metres
-_NCS_TP_COEFF = 4.8             # Tp ~ a * sqrt(Hs) + noise
-_NCS_TP_NOISE_STD = 1.5         # seconds
-_NCS_TP_CLIP_MIN = 4.0          # seconds
-_NCS_TP_CLIP_MAX = 22.0         # seconds
-_NCS_LAT = 56.533               # Ekofisk latitude
-_NCS_LON = 3.211                # Ekofisk longitude
+_NCS_HS_MIN = 0.2  # metres
+_NCS_TP_COEFF = 4.8  # Tp ~ a * sqrt(Hs) + noise
+_NCS_TP_NOISE_STD = 1.5  # seconds
+_NCS_TP_CLIP_MIN = 4.0  # seconds
+_NCS_TP_CLIP_MAX = 22.0  # seconds
+_NCS_LAT = 56.533  # Ekofisk latitude
+_NCS_LON = 3.211  # Ekofisk longitude
 _NCS_N_YEARS = 20
-_NCS_TIMESTEP_H = 3             # 3-hourly hindcast
+_NCS_TIMESTEP_H = 3  # 3-hourly hindcast
 
 
 def _generate_ncs_data(seed: int = 7) -> tuple[pd.Series, pd.Series]:
@@ -102,7 +100,9 @@ def run_north_sea_example(output_path: str = "north_sea_report.html") -> None:
     # 1. Generate synthetic data
     logger.info("\n[1/6] Generating synthetic NCS data (3-hourly)...")
     hs, tp = _generate_ncs_data()
-    logger.info(f"      {len(hs):,} records | Hs range: {hs.min():.2f}–{hs.max():.2f} m")
+    logger.info(
+        f"      {len(hs):,} records | Hs range: {hs.min():.2f}–{hs.max():.2f} m"
+    )
     logger.info(f"      Tp range: {tp.min():.2f}–{tp.max():.2f} s")
 
     # 2. Weather windows
@@ -111,11 +111,15 @@ def run_north_sea_example(output_path: str = "north_sea_report.html") -> None:
 
     # Installation vessel: Hs < 2.5 m, 12-hour minimum window
     ww_install = wwa.operability(hs, threshold=2.5, min_window_hours=12)
-    logger.info(f"      Installation (Hs<2.5m, 12h): {ww_install.operability_pct:.1f}% operable")
+    logger.info(
+        f"      Installation (Hs<2.5m, 12h): {ww_install.operability_pct:.1f}% operable"
+    )
 
     # Diving operations: Hs < 1.5 m
     ww_dive = wwa.operability(hs, threshold=1.5, min_window_hours=6)
-    logger.info(f"      Diving (Hs<1.5m, 6h):        {ww_dive.operability_pct:.1f}% operable")
+    logger.info(
+        f"      Diving (Hs<1.5m, 6h):        {ww_dive.operability_pct:.1f}% operable"
+    )
 
     # 3. Monthly operability heatmap
     logger.info("\n[3/6] Monthly Operability...")
@@ -131,8 +135,10 @@ def run_north_sea_example(output_path: str = "north_sea_report.html") -> None:
 
     jonswap = ws.jonswap(hs=design_hs, tp=design_tp)
     torse = ws.torsethaugen(hs=design_hs, tp=design_tp)
-    logger.info(f"      JONSWAP m0 = {jonswap.spectral_moments['m0']:.4f} m²"
-          f" → Hs_check = {4*jonswap.spectral_moments['m0']**0.5:.2f} m")
+    logger.info(
+        f"      JONSWAP m0 = {jonswap.spectral_moments['m0']:.4f} m²"
+        f" → Hs_check = {4*jonswap.spectral_moments['m0']**0.5:.2f} m"
+    )
     logger.info(f"      Torsethaugen m0 = {torse.spectral_moments['m0']:.4f} m²")
 
     # 5. Scatter diagram

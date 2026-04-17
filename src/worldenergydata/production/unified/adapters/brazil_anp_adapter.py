@@ -10,7 +10,7 @@ from typing import List, Tuple
 
 import pandas as pd
 
-from worldenergydata.common.units import OilUnits, GasUnits
+from worldenergydata.common.units import GasUnits, OilUnits
 from worldenergydata.production.unified.adapters.base import AbstractProductionAdapter
 from worldenergydata.production.unified.query import ProductionQuery
 
@@ -27,18 +27,34 @@ class BrazilAnpAdapter(AbstractProductionAdapter):
     # (field_name, peak_oil_sm3, peak_gas_sm3, peak_water_sm3,
     #  peak_cond_sm3, start_year, start_month, n_months)
     _FIELDS = [
-        ("Lula",   1_400_000, 2_000_000, 300_000,  80_000, 2010, 10, 170),
-        ("Búzios", 1_800_000, 2_800_000, 200_000, 120_000, 2018,  4,  80),
-        ("Mero",     900_000, 1_200_000, 150_000,  60_000, 2021, 11,  38),
-        ("Marlim",   600_000,   700_000, 800_000,  20_000, 1994,  9, 363),
+        ("Lula", 1_400_000, 2_000_000, 300_000, 80_000, 2010, 10, 170),
+        ("Búzios", 1_800_000, 2_800_000, 200_000, 120_000, 2018, 4, 80),
+        ("Mero", 900_000, 1_200_000, 150_000, 60_000, 2021, 11, 38),
+        ("Marlim", 600_000, 700_000, 800_000, 20_000, 1994, 9, 363),
     ]
 
     def fetch(self, query: ProductionQuery) -> pd.DataFrame:
         rows = []
-        for field_name, peak_oil, peak_gas, peak_water, peak_cond, sy, sm, n_months in self._FIELDS:
+        for (
+            field_name,
+            peak_oil,
+            peak_gas,
+            peak_water,
+            peak_cond,
+            sy,
+            sm,
+            n_months,
+        ) in self._FIELDS:
             rows.extend(
                 self._generate_field_rows(
-                    field_name, peak_oil, peak_gas, peak_water, peak_cond, sy, sm, n_months
+                    field_name,
+                    peak_oil,
+                    peak_gas,
+                    peak_water,
+                    peak_cond,
+                    sy,
+                    sm,
+                    n_months,
                 )
             )
 
@@ -80,7 +96,9 @@ class BrazilAnpAdapter(AbstractProductionAdapter):
                     "month": month,
                     "oil_bbl": round(peak_oil_sm3 * _SM3_TO_BBL * factor, 0),
                     "gas_mcf": round(peak_gas_sm3 * _SM3_GAS_TO_MCF * factor, 0),
-                    "water_bbl": round(peak_water_sm3 * _SM3_TO_BBL * min(factor * 1.8, 3.5), 0),
+                    "water_bbl": round(
+                        peak_water_sm3 * _SM3_TO_BBL * min(factor * 1.8, 3.5), 0
+                    ),
                     "condensate_bbl": round(peak_cond_sm3 * _SM3_TO_BBL * factor, 0),
                     "source": "brazil_anp_mock",
                 }

@@ -34,17 +34,23 @@ class TestFieldProcessorWaterInjection:
             "fldStatus": "PRODUCING",
         }
 
-    def test_process_extracts_water_injected_sm3(self, processor, field_data_with_water_injection):
+    def test_process_extracts_water_injected_sm3(
+        self, processor, field_data_with_water_injection
+    ):
         result = processor.process(field_data_with_water_injection)
         assert result is not None
         assert "cumulative_water_injected_sm3" in result
 
-    def test_water_injected_value_is_correct(self, processor, field_data_with_water_injection):
+    def test_water_injected_value_is_correct(
+        self, processor, field_data_with_water_injection
+    ):
         result = processor.process(field_data_with_water_injection)
         # Input is in million Sm3 from SODIR, stored as-is
         assert result["cumulative_water_injected_sm3"] == pytest.approx(120.5)
 
-    def test_water_injected_none_when_missing(self, processor, field_data_without_water_injection):
+    def test_water_injected_none_when_missing(
+        self, processor, field_data_without_water_injection
+    ):
         result = processor.process(field_data_without_water_injection)
         assert result is not None
         assert result["cumulative_water_injected_sm3"] is None

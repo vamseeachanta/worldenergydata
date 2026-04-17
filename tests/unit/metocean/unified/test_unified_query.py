@@ -14,7 +14,6 @@ from worldenergydata.metocean.unified.unified_query import (
     UnifiedMetoceanClient,
 )
 
-
 # ---------------------------------------------------------------------------
 # Test fixtures
 # ---------------------------------------------------------------------------
@@ -37,9 +36,7 @@ NORTH_SEA_QUERY = MetoceanQuery(
 
 
 def _make_empty_df():
-    return pd.DataFrame(
-        columns=["timestamp", "parameter", "value", "source", "unit"]
-    )
+    return pd.DataFrame(columns=["timestamp", "parameter", "value", "source", "unit"])
 
 
 def _make_sample_df(source="ndbc", n=5):
@@ -77,7 +74,8 @@ class TestMetoceanQuery:
 
     def test_query_default_parameters(self):
         q = MetoceanQuery(
-            lat=0.0, lon=0.0,
+            lat=0.0,
+            lon=0.0,
             start_date=datetime(2023, 1, 1),
             end_date=datetime(2023, 1, 2),
         )
@@ -194,9 +192,7 @@ class TestUnifiedMetoceanClientNorthSea:
 
     def test_north_sea_does_not_select_ndbc(self):
         client = UnifiedMetoceanClient()
-        with patch.object(
-            client, "_fetch_from_source", return_value=_make_empty_df()
-        ):
+        with patch.object(client, "_fetch_from_source", return_value=_make_empty_df()):
             result = client.query(NORTH_SEA_QUERY)
         assert "ndbc" not in result.sources_used
 
@@ -242,9 +238,7 @@ class TestUnifiedMetoceanClientCoverageGaps:
     def test_empty_data_produces_coverage_gap(self):
         """When all fetches return empty, result should indicate a gap."""
         client = UnifiedMetoceanClient()
-        with patch.object(
-            client, "_fetch_from_source", return_value=_make_empty_df()
-        ):
+        with patch.object(client, "_fetch_from_source", return_value=_make_empty_df()):
             result = client.query(GOM_QUERY)
         # coverage_gaps should be a list (may be empty or not, both OK)
         assert isinstance(result.coverage_gaps, list)

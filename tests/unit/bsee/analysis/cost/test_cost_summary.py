@@ -4,10 +4,17 @@
 
 """Unit tests for worldenergydata.bsee.analysis.cost.cost_summary."""
 
-import pytest
-import pandas as pd
 from pathlib import Path
 
+import pandas as pd
+import pytest
+
+from worldenergydata.bsee.analysis.cost.cost_summary import (
+    FieldCostSummary,
+    summarize_field_costs,
+    summarize_lease_costs,
+    summarize_region_costs,
+)
 from worldenergydata.bsee.analysis.cost.models import (
     ActivityType,
     ConfidenceLevel,
@@ -15,13 +22,6 @@ from worldenergydata.bsee.analysis.cost.models import (
     WaterDepthBand,
     WellDepthBand,
 )
-from worldenergydata.bsee.analysis.cost.cost_summary import (
-    FieldCostSummary,
-    summarize_field_costs,
-    summarize_lease_costs,
-    summarize_region_costs,
-)
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -139,12 +139,8 @@ class TestFieldCostSummary:
         assert abs(summary.avg_well_cost_usd_mm - 100.0) < 0.001
 
     def test_confidence_summary_present(self):
-        high = _make_estimate(
-            ActivityType.DRILLING, "gom", 100.0, ConfidenceLevel.HIGH
-        )
-        low = _make_estimate(
-            ActivityType.DRILLING, "gom", 80.0, ConfidenceLevel.LOW
-        )
+        high = _make_estimate(ActivityType.DRILLING, "gom", 100.0, ConfidenceLevel.HIGH)
+        low = _make_estimate(ActivityType.DRILLING, "gom", 80.0, ConfidenceLevel.LOW)
         summary = FieldCostSummary(
             field_name="Mixed Confidence",
             region="gom",
@@ -153,7 +149,9 @@ class TestFieldCostSummary:
             intervention_estimates=[],
         )
         assert summary.confidence_summary is not None
-        assert "high" in summary.confidence_summary or "low" in summary.confidence_summary
+        assert (
+            "high" in summary.confidence_summary or "low" in summary.confidence_summary
+        )
 
     def test_to_dict_has_required_keys(self):
         drilling = _make_estimate(ActivityType.DRILLING, "gom", 100.0)
@@ -166,9 +164,13 @@ class TestFieldCostSummary:
         )
         d = summary.to_dict()
         required = {
-            "field_name", "region", "total_drilling_cost_usd_mm",
-            "total_completion_cost_usd_mm", "total_intervention_cost_usd_mm",
-            "total_capex_usd_mm", "n_wells",
+            "field_name",
+            "region",
+            "total_drilling_cost_usd_mm",
+            "total_completion_cost_usd_mm",
+            "total_intervention_cost_usd_mm",
+            "total_capex_usd_mm",
+            "n_wells",
         }
         assert required.issubset(set(d.keys()))
 
@@ -261,7 +263,9 @@ class TestSummarizeRegionCosts:
             FieldCostSummary(
                 field_name="Field B",
                 region="gom",
-                drilling_estimates=[_make_estimate(ActivityType.DRILLING, "gom", 100.0)],
+                drilling_estimates=[
+                    _make_estimate(ActivityType.DRILLING, "gom", 100.0)
+                ],
                 completion_estimates=[],
                 intervention_estimates=[],
             ),

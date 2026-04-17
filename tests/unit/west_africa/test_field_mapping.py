@@ -4,9 +4,9 @@ import pytest
 
 from worldenergydata.west_africa.nigeria.field_mapping import (
     BLEND_TO_FIELD_MAP,
+    FieldInfo,
     lookup_field,
     lookup_operator,
-    FieldInfo,
     resolve_blend,
 )
 

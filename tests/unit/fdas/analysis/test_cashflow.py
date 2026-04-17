@@ -13,10 +13,10 @@ from worldenergydata.fdas.analysis.cashflow import (
 )
 from worldenergydata.fdas.core.config import AssumptionsManager
 
-
 # ---------------------------------------------------------------------------
 # CashflowError
 # ---------------------------------------------------------------------------
+
 
 class TestCashflowError:
     def test_inherits_processing_error(self):
@@ -35,6 +35,7 @@ class TestCashflowError:
 # ---------------------------------------------------------------------------
 # MonthlyCashflowModel
 # ---------------------------------------------------------------------------
+
 
 class TestMonthlyCashflowModel:
     def test_defaults(self):
@@ -77,6 +78,7 @@ class TestMonthlyCashflowModel:
 # CashflowEngine init
 # ---------------------------------------------------------------------------
 
+
 class TestCashflowEngineInit:
     def test_default_dev_system(self):
         mgr = AssumptionsManager()
@@ -93,6 +95,7 @@ class TestCashflowEngineInit:
 # calculate_host_capex_timing
 # ---------------------------------------------------------------------------
 
+
 class TestCalculateHostCapexTiming:
     def _engine(self):
         return CashflowEngine(AssumptionsManager())
@@ -103,7 +106,9 @@ class TestCalculateHostCapexTiming:
 
     def test_distributes_evenly(self):
         result = self._engine().calculate_host_capex_timing(
-            12.0, datetime(2025, 1, 1), months_before_first_oil=12,
+            12.0,
+            datetime(2025, 1, 1),
+            months_before_first_oil=12,
         )
         assert len(result) == 12
         for val in result.values():
@@ -111,7 +116,9 @@ class TestCalculateHostCapexTiming:
 
     def test_goes_backwards_from_first_oil(self):
         result = self._engine().calculate_host_capex_timing(
-            6.0, datetime(2025, 6, 1), months_before_first_oil=3,
+            6.0,
+            datetime(2025, 6, 1),
+            months_before_first_oil=3,
         )
         assert "2025-06" in result
         assert "2025-05" in result
@@ -119,7 +126,9 @@ class TestCalculateHostCapexTiming:
 
     def test_crosses_year_boundary(self):
         result = self._engine().calculate_host_capex_timing(
-            2.0, datetime(2025, 1, 1), months_before_first_oil=2,
+            2.0,
+            datetime(2025, 1, 1),
+            months_before_first_oil=2,
         )
         assert "2025-01" in result
         assert "2024-12" in result
@@ -129,13 +138,15 @@ class TestCalculateHostCapexTiming:
 # calculate_drilling_capex
 # ---------------------------------------------------------------------------
 
+
 class TestCalculateDrillingCapex:
     def _engine(self):
         return CashflowEngine(AssumptionsManager())
 
     def test_simple_calculation(self):
         result = self._engine().calculate_drilling_capex(
-            {"2024-01": 30, "2024-02": 28}, 0.8,
+            {"2024-01": 30, "2024-02": 28},
+            0.8,
         )
         assert result["2024-01"] == pytest.approx(24.0)
         assert result["2024-02"] == pytest.approx(22.4)
@@ -153,13 +164,15 @@ class TestCalculateDrillingCapex:
 # calculate_facilities_capex
 # ---------------------------------------------------------------------------
 
+
 class TestCalculateFacilitiesCapex:
     def _engine(self):
         return CashflowEngine(AssumptionsManager())
 
     def test_simple(self):
         result = self._engine().calculate_facilities_capex(
-            {"2024-06": 2, "2024-12": 1}, 8.0,
+            {"2024-06": 2, "2024-12": 1},
+            8.0,
         )
         assert result["2024-06"] == 16.0
         assert result["2024-12"] == 8.0
@@ -173,25 +186,30 @@ class TestCalculateFacilitiesCapex:
 # calculate_revenue
 # ---------------------------------------------------------------------------
 
+
 class TestCalculateRevenue:
     def _engine(self):
         return CashflowEngine(AssumptionsManager())
 
     def test_basic_revenue(self):
         result = self._engine().calculate_revenue(
-            {"2024-01": 100000}, {"2024-01": 75.0},
+            {"2024-01": 100000},
+            {"2024-01": 75.0},
         )
         assert result["2024-01"] == pytest.approx(7500000.0)
 
     def test_with_differential(self):
         result = self._engine().calculate_revenue(
-            {"2024-01": 100000}, {"2024-01": 75.0}, oil_differential=-2.0,
+            {"2024-01": 100000},
+            {"2024-01": 75.0},
+            oil_differential=-2.0,
         )
         assert result["2024-01"] == pytest.approx(7300000.0)
 
     def test_missing_price_uses_default(self):
         result = self._engine().calculate_revenue(
-            {"2024-01": 100000}, {},
+            {"2024-01": 100000},
+            {},
         )
         # Default WTI price is 75.0
         assert result["2024-01"] == pytest.approx(7500000.0)
@@ -201,13 +219,15 @@ class TestCalculateRevenue:
 # calculate_royalty
 # ---------------------------------------------------------------------------
 
+
 class TestCalculateRoyalty:
     def _engine(self):
         return CashflowEngine(AssumptionsManager())
 
     def test_explicit_rate(self):
         result = self._engine().calculate_royalty(
-            {"2024-01": 7500000}, royalty_rate=0.188,
+            {"2024-01": 7500000},
+            royalty_rate=0.188,
         )
         assert result["2024-01"] == pytest.approx(1410000.0)
 
@@ -221,13 +241,15 @@ class TestCalculateRoyalty:
 # calculate_variable_opex
 # ---------------------------------------------------------------------------
 
+
 class TestCalculateVariableOpex:
     def _engine(self):
         return CashflowEngine(AssumptionsManager())
 
     def test_explicit_rate(self):
         result = self._engine().calculate_variable_opex(
-            {"2024-01": 100000}, opex_per_bbl=12.0,
+            {"2024-01": 100000},
+            opex_per_bbl=12.0,
         )
         assert result["2024-01"] == pytest.approx(1200000.0)
 
@@ -240,13 +262,16 @@ class TestCalculateVariableOpex:
 # calculate_fixed_opex
 # ---------------------------------------------------------------------------
 
+
 class TestCalculateFixedOpex:
     def _engine(self):
         return CashflowEngine(AssumptionsManager())
 
     def test_explicit_annual(self):
         result = self._engine().calculate_fixed_opex(
-            "2024-01", "2024-03", annual_fixed_opex_mm=12.0,
+            "2024-01",
+            "2024-03",
+            annual_fixed_opex_mm=12.0,
         )
         assert len(result) == 3
         for val in result.values():
@@ -254,7 +279,9 @@ class TestCalculateFixedOpex:
 
     def test_single_month(self):
         result = self._engine().calculate_fixed_opex(
-            "2024-06", "2024-06", annual_fixed_opex_mm=12.0,
+            "2024-06",
+            "2024-06",
+            annual_fixed_opex_mm=12.0,
         )
         assert len(result) == 1
 

@@ -13,10 +13,10 @@ from worldenergydata.bsee.analysis.financial.report_generator import (
     format_percentage,
 )
 
-
 # ---------------------------------------------------------------------------
 # format_currency
 # ---------------------------------------------------------------------------
+
 
 class TestFormatCurrency:
     def test_positive(self):
@@ -42,6 +42,7 @@ class TestFormatCurrency:
 # format_number
 # ---------------------------------------------------------------------------
 
+
 class TestFormatNumber:
     def test_normal(self):
         assert format_number(1234) == "1,234"
@@ -62,6 +63,7 @@ class TestFormatNumber:
 # ---------------------------------------------------------------------------
 # format_percentage
 # ---------------------------------------------------------------------------
+
 
 class TestFormatPercentage:
     def test_half(self):
@@ -84,6 +86,7 @@ class TestFormatPercentage:
 # ExcelFormatter
 # ---------------------------------------------------------------------------
 
+
 class TestExcelFormatter:
     def test_init_creates_styles(self):
         formatter = ExcelFormatter()
@@ -98,6 +101,7 @@ class TestExcelFormatter:
 # ---------------------------------------------------------------------------
 # ReportGenerator
 # ---------------------------------------------------------------------------
+
 
 class TestReportGenerator:
     def test_init(self):

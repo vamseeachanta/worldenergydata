@@ -65,7 +65,9 @@ class ClassificationCollector(BaseCollector):
             return None
 
     def _parse_abs_result(
-        self, html: str, imo_number: str,
+        self,
+        html: str,
+        imo_number: str,
     ) -> Optional[dict[str, Any]]:
         """Parse ABS Eagle register page."""
         try:
@@ -90,7 +92,9 @@ class ClassificationCollector(BaseCollector):
         }
 
     def _parse_dnv_result(
-        self, html: str, imo_number: str,
+        self,
+        html: str,
+        imo_number: str,
     ) -> Optional[dict[str, Any]]:
         """Parse DNV Vessel Register page."""
         try:

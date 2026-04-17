@@ -4,9 +4,9 @@ import pandas as pd
 import pytest
 
 from worldenergydata.production.unified.query import (
+    STANDARD_COLUMNS,
     ProductionQuery,
     ProductionResult,
-    STANDARD_COLUMNS,
 )
 
 

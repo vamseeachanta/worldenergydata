@@ -6,10 +6,10 @@ from worldenergydata.bsee.reports.comprehensive.templates.executive_template imp
     ExecutiveTemplate,
 )
 
-
 # ---------------------------------------------------------------------------
 # Init
 # ---------------------------------------------------------------------------
+
 
 class TestExecutiveTemplateInit:
     def test_default(self):
@@ -35,6 +35,7 @@ class TestExecutiveTemplateInit:
 # KPI threshold loading
 # ---------------------------------------------------------------------------
 
+
 class TestKpiThresholds:
     def test_default_thresholds(self):
         tpl = ExecutiveTemplate()
@@ -56,6 +57,7 @@ class TestKpiThresholds:
 # ---------------------------------------------------------------------------
 # Delegation methods
 # ---------------------------------------------------------------------------
+
 
 class TestDelegationMethods:
     def test_determine_kpi_status(self):
@@ -81,9 +83,7 @@ class TestDelegationMethods:
 
     def test_compare_with_benchmarks(self):
         tpl = ExecutiveTemplate()
-        result = tpl.compare_with_benchmarks(
-            {"uptime": 95}, {"uptime": 92}
-        )
+        result = tpl.compare_with_benchmarks({"uptime": 95}, {"uptime": 92})
         assert isinstance(result, dict)
 
     def test_rank_kpis_empty(self):
@@ -122,6 +122,7 @@ class TestDelegationMethods:
 # Dashboard generation
 # ---------------------------------------------------------------------------
 
+
 class TestDashboardGeneration:
     def test_generate_empty_dashboard(self):
         tpl = ExecutiveTemplate()
@@ -143,12 +144,16 @@ class TestDashboardGeneration:
 # Benchmarking delegation
 # ---------------------------------------------------------------------------
 
+
 class TestBenchmarkingDelegation:
     def test_analyze_competitive_position(self):
         tpl = ExecutiveTemplate()
-        result = tpl.analyze_competitive_position({
-            "uptime": 95, "efficiency": 88,
-        })
+        result = tpl.analyze_competitive_position(
+            {
+                "uptime": 95,
+                "efficiency": 88,
+            }
+        )
         assert isinstance(result, dict)
 
     def test_generate_peer_ranking_empty(self):

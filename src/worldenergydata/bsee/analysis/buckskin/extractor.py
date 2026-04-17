@@ -183,7 +183,9 @@ class BuckskinExtractor:
         try:
             df = pd.read_pickle(path)
         except Exception as exc:
-            logger.warning("Cannot unpickle %s: %s (file may be a Git LFS pointer)", path, exc)
+            logger.warning(
+                "Cannot unpickle %s: %s (file may be a Git LFS pointer)", path, exc
+            )
             return pd.DataFrame()
         if not isinstance(df, pd.DataFrame):
             logger.warning("%s is not a DataFrame", path)

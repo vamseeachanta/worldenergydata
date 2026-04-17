@@ -15,10 +15,10 @@ from typing import Dict, List, Optional
 import pandas as pd
 import pytest
 
-
 # ---------------------------------------------------------------------------
 # Lightweight stubs for FieldNameResolver and GeologicalEraClassifier
 # ---------------------------------------------------------------------------
+
 
 class StubFieldNameResolver:
     """Minimal stub replicating FieldNameResolver's public interface."""
@@ -73,6 +73,7 @@ class StubEraClassifier:
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture()
 def field_resolver():
@@ -130,10 +131,10 @@ from worldenergydata.bsee.pipeline.field_query import (
     resolve_field,
 )
 
-
 # ---------------------------------------------------------------------------
 # Tests
 # ---------------------------------------------------------------------------
+
 
 class TestFieldContext:
     """Tests for the FieldContext dataclass."""

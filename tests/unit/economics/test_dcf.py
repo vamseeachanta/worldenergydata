@@ -14,17 +14,19 @@ from worldenergydata.economics.dcf import (
     CashFlowSchedule,
     MIRRResult,
     NPVResult,
+    build_cash_flow_schedule,
     calculate_mirr,
     calculate_npv,
-    build_cash_flow_schedule,
 )
-
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _simple_schedule(capex: float, revenues: list[float], opex_per_year: float) -> CashFlowSchedule:
+
+def _simple_schedule(
+    capex: float, revenues: list[float], opex_per_year: float
+) -> CashFlowSchedule:
     """Build a minimal CashFlowSchedule with zero carbon costs."""
     n = len(revenues)
     return CashFlowSchedule(
@@ -39,6 +41,7 @@ def _simple_schedule(capex: float, revenues: list[float], opex_per_year: float) 
 # ---------------------------------------------------------------------------
 # NPV tests
 # ---------------------------------------------------------------------------
+
 
 class TestNPVCalculation:
     """Tests for calculate_npv with known textbook results."""
@@ -140,6 +143,7 @@ class TestNPVCalculation:
 # MIRR tests
 # ---------------------------------------------------------------------------
 
+
 class TestMIRRCalculation:
     """Tests for calculate_mirr with known results."""
 
@@ -236,6 +240,7 @@ class TestMIRRCalculation:
 # ---------------------------------------------------------------------------
 # build_cash_flow_schedule helper
 # ---------------------------------------------------------------------------
+
 
 class TestBuildCashFlowSchedule:
     """Tests for the convenience constructor from production volumes."""

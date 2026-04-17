@@ -19,7 +19,6 @@ import pandas as pd
 # Import comprehensive report exporters
 try:
     # Import verification components
-    from worldenergydata.modules.analysis.verification.models import VerificationResult
     from worldenergydata.bsee.reports.comprehensive.exporters.base import (
         ExportConfig,
         ExportFormat,
@@ -44,6 +43,7 @@ try:
     from worldenergydata.bsee.reports.comprehensive.report_builder import (
         GoByReportBuilder,
     )
+    from worldenergydata.modules.analysis.verification.models import VerificationResult
 except (ImportError, ModuleNotFoundError):
     # Create mock classes if imports fail
     class ReportExporter:

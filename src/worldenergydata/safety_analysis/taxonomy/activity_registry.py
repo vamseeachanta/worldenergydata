@@ -26,9 +26,7 @@ class ActivityTaxonomy:
         self._activities: Tuple[Activity, ...] = tuple(
             builder() for builder in ALL_BUILDERS
         )
-        self._code_index: Dict[str, Activity] = {
-            a.code: a for a in self._activities
-        }
+        self._code_index: Dict[str, Activity] = {a.code: a for a in self._activities}
         self._bsee_index = self._build_bsee_index()
         self._marine_index = self._build_marine_index()
         self._phmsa_index = self._build_phmsa_index()

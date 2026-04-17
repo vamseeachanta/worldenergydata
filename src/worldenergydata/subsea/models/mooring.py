@@ -50,8 +50,6 @@ def load_mooring_components(csv_path: Path) -> list[MooringComponentSpec]:
     """
     df = pd.read_csv(csv_path)
     return [
-        MooringComponentSpec(
-            **{k.lower(): v for k, v in row.items() if pd.notna(v)}
-        )
+        MooringComponentSpec(**{k.lower(): v for k, v in row.items() if pd.notna(v)})
         for _, row in df.iterrows()
     ]

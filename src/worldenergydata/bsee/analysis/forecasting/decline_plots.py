@@ -179,10 +179,7 @@ def plot_forecast(
             )
 
     fig.update_layout(
-        title=(
-            f"Production Forecast — {ts.field_name} "
-            f"({comparison.best_model})"
-        ),
+        title=(f"Production Forecast — {ts.field_name} " f"({comparison.best_model})"),
         xaxis_title="Time Period",
         yaxis_title=f"Rate ({ts.unit})",
         height=500,

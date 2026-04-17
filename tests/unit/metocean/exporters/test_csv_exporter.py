@@ -36,6 +36,7 @@ def _make_obs(
 # Initialization
 # ---------------------------------------------------------------------------
 
+
 class TestCSVExporterInit:
     def test_defaults(self):
         e = CSVExporter()
@@ -55,6 +56,7 @@ class TestCSVExporterInit:
 # ---------------------------------------------------------------------------
 # Export
 # ---------------------------------------------------------------------------
+
 
 class TestCSVExporterExport:
     def test_empty_raises(self, tmp_path):
@@ -90,7 +92,8 @@ class TestCSVExporterExport:
         ]
         out = tmp_path / "out.csv"
         count = e.export(
-            obs, out,
+            obs,
+            out,
             start_date=datetime(2024, 3, 1),
             end_date=datetime(2024, 9, 30),
         )
@@ -119,6 +122,7 @@ class TestCSVExporterExport:
 # ---------------------------------------------------------------------------
 # Export summary
 # ---------------------------------------------------------------------------
+
 
 class TestCSVExporterSummary:
     def test_empty_raises(self, tmp_path):
@@ -169,6 +173,7 @@ class TestCSVExporterSummary:
 # ---------------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------------
+
 
 class TestCSVExporterHelpers:
     def test_filter_by_date_no_filters(self):

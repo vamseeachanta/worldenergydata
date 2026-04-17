@@ -32,6 +32,7 @@ DEFAULT_CACHE_TTL: float = 86400.0
 
 # ── Error classes ──────────────────────────────────────────────────────────────
 
+
 class EIAApiError(Exception):
     """Raised when EIA API requests fail or configuration is invalid."""
 
@@ -41,6 +42,7 @@ class EIARateLimitError(EIAApiError):
 
 
 # ── Cache ──────────────────────────────────────────────────────────────────────
+
 
 class _CacheEntry:
     """In-memory cache entry with TTL."""
@@ -146,7 +148,9 @@ class EIAApiClient:
         self.cache = EIACache(default_ttl=cache_ttl)
 
         # Token bucket: allow up to rate_limit_per_hour / 3600 per second
-        self._min_interval = 3600.0 / rate_limit_per_hour if rate_limit_per_hour > 0 else 0.0
+        self._min_interval = (
+            3600.0 / rate_limit_per_hour if rate_limit_per_hour > 0 else 0.0
+        )
         self._last_request_time: float = 0.0
 
     # ── URL + cache key helpers ───────────────────────────────────────────────
@@ -165,9 +169,7 @@ class EIAApiClient:
 
     # ── Response parsing ──────────────────────────────────────────────────────
 
-    def parse_series_response(
-        self, raw: Dict[str, Any]
-    ) -> List[Dict[str, Any]]:
+    def parse_series_response(self, raw: Dict[str, Any]) -> List[Dict[str, Any]]:
         """
         Extract data records from an EIA API v2 JSON response.
 
@@ -189,11 +191,13 @@ class EIAApiClient:
                 except (TypeError, ValueError):
                     value = None
 
-            result.append({
-                "period": rec.get("period"),
-                "value": value,
-                "unit": rec.get("unit", ""),
-            })
+            result.append(
+                {
+                    "period": rec.get("period"),
+                    "value": value,
+                    "unit": rec.get("unit", ""),
+                }
+            )
         return result
 
     # ── Main fetch interface ──────────────────────────────────────────────────
@@ -236,11 +240,13 @@ class EIAApiClient:
             parsed = []
             for rec in mock_records:
                 val = rec.get("value")
-                parsed.append({
-                    "period": rec.get("period"),
-                    "value": float(val) if val is not None else None,
-                    "unit": rec.get("unit", ""),
-                })
+                parsed.append(
+                    {
+                        "period": rec.get("period"),
+                        "value": float(val) if val is not None else None,
+                        "unit": rec.get("unit", ""),
+                    }
+                )
             if self.cache_enabled:
                 self.cache.set(cache_key, parsed)
             return parsed

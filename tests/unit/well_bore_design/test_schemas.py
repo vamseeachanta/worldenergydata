@@ -3,15 +3,14 @@
 import pytest
 
 from worldenergydata.well_bore_design.schemas import (
+    LARGE_BORE_MIN_BIT_SIZE_IN,
+    SLIM_HOLE_MAX_BIT_SIZE_IN,
     BoreType,
     CasingString,
     EcdProfile,
-    LARGE_BORE_MIN_BIT_SIZE_IN,
-    SLIM_HOLE_MAX_BIT_SIZE_IN,
     WellBoreDesign,
     bore_type_from_bit_size,
 )
-
 
 # ---------------------------------------------------------------------------
 # BoreType enum
@@ -74,7 +73,10 @@ class TestBoreTypeFromBitSize:
         assert bore_type_from_bit_size(6.0) == BoreType.SLIM_HOLE
 
     def test_bit_size_below_threshold_returns_slim_hole(self):
-        assert bore_type_from_bit_size(SLIM_HOLE_MAX_BIT_SIZE_IN - 0.01) == BoreType.SLIM_HOLE
+        assert (
+            bore_type_from_bit_size(SLIM_HOLE_MAX_BIT_SIZE_IN - 0.01)
+            == BoreType.SLIM_HOLE
+        )
 
     def test_bit_size_at_slim_threshold_returns_standard(self):
         # 8.5" is exactly the boundary — classified as STANDARD
@@ -86,7 +88,10 @@ class TestBoreTypeFromBitSize:
         assert bore_type_from_bit_size(12.25) == BoreType.STANDARD
 
     def test_large_bore_returns_large_bore(self):
-        assert bore_type_from_bit_size(LARGE_BORE_MIN_BIT_SIZE_IN + 0.01) == BoreType.LARGE_BORE
+        assert (
+            bore_type_from_bit_size(LARGE_BORE_MIN_BIT_SIZE_IN + 0.01)
+            == BoreType.LARGE_BORE
+        )
 
     def test_large_bit_size_returns_large_bore(self):
         assert bore_type_from_bit_size(17.5) == BoreType.LARGE_BORE

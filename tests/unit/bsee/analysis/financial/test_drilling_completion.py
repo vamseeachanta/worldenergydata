@@ -11,17 +11,19 @@ from worldenergydata.bsee.analysis.financial.drilling_completion import (
     calculate_drilling_costs,
 )
 
-
 # ---------------------------------------------------------------------------
 # calculate_drilling_costs
 # ---------------------------------------------------------------------------
 
+
 class TestCalculateDrillingCosts:
     def test_basic(self):
-        df = pd.DataFrame({
-            "WELL_NAME": ["Well_A", "Well_B"],
-            "DRILL_DAYS": [10, 20],
-        })
+        df = pd.DataFrame(
+            {
+                "WELL_NAME": ["Well_A", "Well_B"],
+                "DRILL_DAYS": [10, 20],
+            }
+        )
         result = calculate_drilling_costs(df, cost_per_day=100000)
         assert result["Well_A"] == 1_000_000.0
         assert result["Well_B"] == 2_000_000.0
@@ -43,12 +45,15 @@ class TestCalculateDrillingCosts:
 # calculate_completion_costs
 # ---------------------------------------------------------------------------
 
+
 class TestCalculateCompletionCosts:
     def test_basic(self):
-        df = pd.DataFrame({
-            "WELL_NAME": ["Well_A"],
-            "COMP_DAYS": [15],
-        })
+        df = pd.DataFrame(
+            {
+                "WELL_NAME": ["Well_A"],
+                "COMP_DAYS": [15],
+            }
+        )
         result = calculate_completion_costs(df, cost_per_day=75000)
         assert result["Well_A"] == 1_125_000.0
 
@@ -64,13 +69,16 @@ class TestCalculateCompletionCosts:
 # build_dc_day_maps
 # ---------------------------------------------------------------------------
 
+
 class TestBuildDcDayMaps:
     def test_from_totals(self):
-        totals = pd.DataFrame({
-            "WELL_NAME": ["Well_A"],
-            "DRILL_DAYS": [30],
-            "COMP_DAYS": [15],
-        })
+        totals = pd.DataFrame(
+            {
+                "WELL_NAME": ["Well_A"],
+                "DRILL_DAYS": [30],
+                "COMP_DAYS": [15],
+            }
+        )
         drill_map, comp_map, input_totals = build_dc_day_maps(totals, pd.DataFrame())
         assert "Well_A" in input_totals
         assert input_totals["Well_A"][0] == 30.0  # drill days
@@ -85,15 +93,15 @@ class TestBuildDcDayMaps:
         assert input_totals == {}
 
     def test_from_monthly(self):
-        monthly = pd.DataFrame({
-            "WELL_NAME": ["Well_A", "Well_A"],
-            "DRILL_DAYS": [10, 20],
-            "COMP_DAYS": [5, 10],
-            "YearMonth": pd.to_datetime(["2023-01-01", "2023-02-01"]),
-        })
-        drill_map, comp_map, input_totals = build_dc_day_maps(
-            pd.DataFrame(), monthly
+        monthly = pd.DataFrame(
+            {
+                "WELL_NAME": ["Well_A", "Well_A"],
+                "DRILL_DAYS": [10, 20],
+                "COMP_DAYS": [5, 10],
+                "YearMonth": pd.to_datetime(["2023-01-01", "2023-02-01"]),
+            }
         )
+        drill_map, comp_map, input_totals = build_dc_day_maps(pd.DataFrame(), monthly)
         assert "Well_A" in input_totals
         assert "2023-01" in drill_map
         assert "2023-02" in drill_map
@@ -103,12 +111,15 @@ class TestBuildDcDayMaps:
 # allocate_dc_costs_monthly
 # ---------------------------------------------------------------------------
 
+
 class TestAllocateDcCostsMonthly:
     def test_basic(self):
-        df = pd.DataFrame({
-            "DRILL_DAYS": [10, 20],
-            "COMP_DAYS": [5, 10],
-        })
+        df = pd.DataFrame(
+            {
+                "DRILL_DAYS": [10, 20],
+                "COMP_DAYS": [5, 10],
+            }
+        )
         result = allocate_dc_costs_monthly(df, {})
         assert "DRILL_COST" in result.columns
         assert "COMP_COST" in result.columns
@@ -130,6 +141,7 @@ class TestAllocateDcCostsMonthly:
 # DrillingCompletionProcessor init
 # ---------------------------------------------------------------------------
 
+
 class TestDrillingCompletionProcessorInit:
     def test_defaults(self):
         proc = DrillingCompletionProcessor()
@@ -146,6 +158,7 @@ class TestDrillingCompletionProcessorInit:
 # ---------------------------------------------------------------------------
 # DrillingCompletionProcessor.calculate_*
 # ---------------------------------------------------------------------------
+
 
 class TestProcessorCalculate:
     def test_drilling(self):
@@ -165,13 +178,16 @@ class TestProcessorCalculate:
 # _filter_by_development
 # ---------------------------------------------------------------------------
 
+
 class TestFilterByDevelopment:
     def test_with_dev_name(self):
         proc = DrillingCompletionProcessor()
-        df = pd.DataFrame({
-            "DEV_NAME": ["Alpha", "Beta", "Alpha"],
-            "DRILL_DAYS": [10, 20, 30],
-        })
+        df = pd.DataFrame(
+            {
+                "DEV_NAME": ["Alpha", "Beta", "Alpha"],
+                "DRILL_DAYS": [10, 20, 30],
+            }
+        )
         result = proc._filter_by_development(df, "alpha")
         assert len(result) == 2
 
@@ -189,6 +205,7 @@ class TestFilterByDevelopment:
 # ---------------------------------------------------------------------------
 # allocate_costs_monthly
 # ---------------------------------------------------------------------------
+
 
 class TestAllocateCostsMonthly:
     def test_uses_instance_costs(self):
@@ -208,22 +225,27 @@ class TestAllocateCostsMonthly:
 # validate_dates
 # ---------------------------------------------------------------------------
 
+
 class TestValidateDates:
     def test_valid_dates(self):
         proc = DrillingCompletionProcessor()
-        df = pd.DataFrame({
-            "WELL_SPUD_DATE": ["2023-01-01"],
-            "TOTAL_DEPTH_DATE": ["2023-02-01"],
-        })
+        df = pd.DataFrame(
+            {
+                "WELL_SPUD_DATE": ["2023-01-01"],
+                "TOTAL_DEPTH_DATE": ["2023-02-01"],
+            }
+        )
         proc.validate_dates(df)  # No exception
 
     def test_invalid_dates(self):
         proc = DrillingCompletionProcessor()
-        df = pd.DataFrame({
-            "WELL_NAME": ["Well_A"],
-            "WELL_SPUD_DATE": ["2023-06-01"],
-            "TOTAL_DEPTH_DATE": ["2023-01-01"],  # Before spud
-        })
+        df = pd.DataFrame(
+            {
+                "WELL_NAME": ["Well_A"],
+                "WELL_SPUD_DATE": ["2023-06-01"],
+                "TOTAL_DEPTH_DATE": ["2023-01-01"],  # Before spud
+            }
+        )
         with pytest.raises(ValueError, match="Total depth date before spud date"):
             proc.validate_dates(df)
 
@@ -236,27 +258,35 @@ class TestValidateDates:
 # calculate_system_specific_costs
 # ---------------------------------------------------------------------------
 
+
 class TestCalculateSystemSpecificCosts:
     def test_subsea(self):
         proc = DrillingCompletionProcessor()
-        df = pd.DataFrame({
-            "WELL_NAME": ["A"],
-            "DRILL_DAYS": [10],
-            "COMP_DAYS": [5],
-            "DEV_TYPE": ["subsea"],
-        })
-        costs = {"SUBSEA_DRILL_COST_PER_DAY": 150000, "SUBSEA_COMP_COST_PER_DAY": 100000}
+        df = pd.DataFrame(
+            {
+                "WELL_NAME": ["A"],
+                "DRILL_DAYS": [10],
+                "COMP_DAYS": [5],
+                "DEV_TYPE": ["subsea"],
+            }
+        )
+        costs = {
+            "SUBSEA_DRILL_COST_PER_DAY": 150000,
+            "SUBSEA_COMP_COST_PER_DAY": 100000,
+        }
         result = proc.calculate_system_specific_costs(df, costs)
         assert result["A"] == (10 * 150000) + (5 * 100000)
 
     def test_dry_tree(self):
         proc = DrillingCompletionProcessor()
-        df = pd.DataFrame({
-            "WELL_NAME": ["A"],
-            "DRILL_DAYS": [10],
-            "COMP_DAYS": [5],
-            "DEV_TYPE": ["dry tree"],
-        })
+        df = pd.DataFrame(
+            {
+                "WELL_NAME": ["A"],
+                "DRILL_DAYS": [10],
+                "COMP_DAYS": [5],
+                "DEV_TYPE": ["dry tree"],
+            }
+        )
         costs = {"DRILL_COST_PER_DAY": 100000, "COMP_COST_PER_DAY": 75000}
         result = proc.calculate_system_specific_costs(df, costs)
         assert result["A"] == (10 * 100000) + (5 * 75000)
@@ -266,14 +296,17 @@ class TestCalculateSystemSpecificCosts:
 # calculate_efficiency_metrics
 # ---------------------------------------------------------------------------
 
+
 class TestCalculateEfficiencyMetrics:
     def test_basic(self):
         proc = DrillingCompletionProcessor()
-        df = pd.DataFrame({
-            "WELL_NAME": ["A", "B", "C"],
-            "DRILL_DAYS": [10, 20, 30],
-            "COMP_DAYS": [5, 10, 15],
-        })
+        df = pd.DataFrame(
+            {
+                "WELL_NAME": ["A", "B", "C"],
+                "DRILL_DAYS": [10, 20, 30],
+                "COMP_DAYS": [5, 10, 15],
+            }
+        )
         metrics = proc.calculate_efficiency_metrics(df)
         assert metrics["avg_drill_days"] == 20.0
         assert metrics["total_drill_days"] == 60.0
@@ -288,6 +321,7 @@ class TestCalculateEfficiencyMetrics:
 # generate_capex_schedule
 # ---------------------------------------------------------------------------
 
+
 class TestGenerateCapexSchedule:
     def test_empty_monthly(self):
         proc = DrillingCompletionProcessor()
@@ -299,14 +333,14 @@ class TestGenerateCapexSchedule:
 
     def test_with_data(self):
         proc = DrillingCompletionProcessor()
-        monthly = pd.DataFrame({
-            "DRILL_DAYS": [10],
-            "COMP_DAYS": [5],
-            "YearMonth": pd.to_datetime(["2023-01-01"]),
-        })
-        result = proc.generate_capex_schedule(
-            monthly, {}, "2023-01-01", "2023-03-01"
+        monthly = pd.DataFrame(
+            {
+                "DRILL_DAYS": [10],
+                "COMP_DAYS": [5],
+                "YearMonth": pd.to_datetime(["2023-01-01"]),
+            }
         )
+        result = proc.generate_capex_schedule(monthly, {}, "2023-01-01", "2023-03-01")
         assert len(result) == 3
 
 
@@ -314,16 +348,19 @@ class TestGenerateCapexSchedule:
 # aggregate_dc_by_lease
 # ---------------------------------------------------------------------------
 
+
 class TestAggregateDcByLease:
     def test_basic(self):
         proc = DrillingCompletionProcessor()
-        df = pd.DataFrame({
-            "LEASE_NUM": ["L1", "L1", "L2"],
-            "DRILL_DAYS": [10, 20, 15],
-            "COMP_DAYS": [5, 10, 8],
-            "DRILL_COST": [1e6, 2e6, 1.5e6],
-            "COMP_COST": [375e3, 750e3, 600e3],
-        })
+        df = pd.DataFrame(
+            {
+                "LEASE_NUM": ["L1", "L1", "L2"],
+                "DRILL_DAYS": [10, 20, 15],
+                "COMP_DAYS": [5, 10, 8],
+                "DRILL_COST": [1e6, 2e6, 1.5e6],
+                "COMP_COST": [375e3, 750e3, 600e3],
+            }
+        )
         result = proc.aggregate_dc_by_lease(df)
         assert len(result) == 2
         assert "TOTAL_DC_COST" in result.columns

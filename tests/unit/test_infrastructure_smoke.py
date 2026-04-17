@@ -9,21 +9,22 @@ These tests ensure all test infrastructure components are working correctly:
 - Parallel execution works
 """
 
-import pytest
-import pandas as pd
-import numpy as np
 from pathlib import Path
 
+import numpy as np
+import pandas as pd
+import pytest
+
 # Import markers
-from tests.test_markers import unit, smoke, integration
+from tests.test_markers import integration, smoke, unit
 
 # Define test config locally since test_config was archived
 TEST_CONFIG = {
-    'test_data_dir': Path(__file__).parent.parent / 'fixtures',
-    'timeout': 30,
-    'parallel': False
+    "test_data_dir": Path(__file__).parent.parent / "fixtures",
+    "timeout": 30,
+    "parallel": False,
 }
-TEST_DATA = Path(__file__).parent.parent / 'fixtures'
+TEST_DATA = Path(__file__).parent.parent / "fixtures"
 
 
 @smoke
@@ -34,28 +35,30 @@ class TestInfrastructureSmoke:
     def test_pytest_installed(self):
         """Verify pytest is installed and importable."""
         import pytest
+
         assert pytest.__version__
 
     def test_plugins_installed(self):
         """Verify all required pytest plugins are installed."""
         required_plugins = [
-            'pytest_cov',
-            'pytest_benchmark',
-            'pytest_timeout',
-            'pytest_mock',
-            'pytest_html',
-            'pytest_json_report',
-            'xdist'
+            "pytest_cov",
+            "pytest_benchmark",
+            "pytest_timeout",
+            "pytest_mock",
+            "pytest_html",
+            "pytest_json_report",
+            "xdist",
         ]
 
         import pkg_resources
+
         installed_packages = {pkg.key for pkg in pkg_resources.working_set}
 
         for plugin in required_plugins:
-            plugin_name = plugin.replace('_', '-')
+            plugin_name = plugin.replace("_", "-")
             # Special case for xdist which is installed as pytest-xdist
-            if plugin == 'xdist':
-                plugin_name = 'pytest-xdist'
+            if plugin == "xdist":
+                plugin_name = "pytest-xdist"
             assert plugin_name in installed_packages, f"Plugin {plugin} not installed"
 
     def test_fixtures_available(self, project_root, test_data_dir, temp_dir):
@@ -69,20 +72,20 @@ class TestInfrastructureSmoke:
         # Check production data
         assert isinstance(sample_production_data, pd.DataFrame)
         assert len(sample_production_data) == 36
-        assert 'oil_production_bbl' in sample_production_data.columns
+        assert "oil_production_bbl" in sample_production_data.columns
 
         # Check well data
         assert isinstance(sample_well_data, dict)
-        assert sample_well_data['api_well_number'] == '608124003301'
-        assert 'field' in sample_well_data
+        assert sample_well_data["api_well_number"] == "608124003301"
+        assert "field" in sample_well_data
 
     def test_mock_file_fixtures(self, mock_excel_file, mock_yaml_config):
         """Verify mock file fixtures create files."""
         assert mock_excel_file.exists()
-        assert mock_excel_file.suffix == '.xlsx'
+        assert mock_excel_file.suffix == ".xlsx"
 
         assert mock_yaml_config.exists()
-        assert mock_yaml_config.suffix == '.yml'
+        assert mock_yaml_config.suffix == ".yml"
 
     @pytest.mark.skip(reason="TEST_CONFIG is a dict, not an object with attributes")
     def test_configuration_loaded(self):
@@ -110,6 +113,7 @@ class TestInfrastructureSmoke:
     def test_timeout_works(self):
         """Verify timeout marker works."""
         import time
+
         # Should complete within timeout
         time.sleep(0.1)
         assert True
@@ -119,15 +123,18 @@ class TestInfrastructureSmoke:
         # Check that xdist plugin is available
         try:
             import xdist
+
             assert xdist.__version__
         except ImportError:
             # Try alternate import
             import pytest_xdist
+
             assert pytest_xdist.__version__
 
     def test_coverage_configured(self):
         """Verify coverage is configured."""
         import coverage
+
         assert coverage.__version__
 
         # Check coverage config in pytest.ini
@@ -142,22 +149,23 @@ class TestInfrastructureSmoke:
         import os
 
         # Set a test variable
-        os.environ['TEST_VAR'] = 'test_value'
-        assert os.environ.get('TEST_VAR') == 'test_value'
+        os.environ["TEST_VAR"] = "test_value"
+        assert os.environ.get("TEST_VAR") == "test_value"
 
         # After test, fixture should reset environment
         # (verified by fixture cleanup)
 
     def test_assertion_helpers(self, assert_dataframe_equal):
         """Verify custom assertion helpers work."""
-        df1 = pd.DataFrame({'a': [1, 2], 'b': [3, 4]})
-        df2 = pd.DataFrame({'a': [1, 2], 'b': [3, 4]})
+        df1 = pd.DataFrame({"a": [1, 2], "b": [3, 4]})
+        df2 = pd.DataFrame({"a": [1, 2], "b": [3, 4]})
 
         # Should not raise
         assert_dataframe_equal(df1, df2)
 
     def test_benchmark_available(self, benchmark):
         """Verify benchmark fixture is available."""
+
         def sample_function():
             return sum(range(100))
 
@@ -189,7 +197,7 @@ class TestInfrastructureIntegration:
     def test_config_and_data_integration(self):
         """Test configuration and data management integration."""
         # Load config
-        assert TEST_CONFIG.test_fields == ['JULIA', 'JACK', 'ST_MALO']
+        assert TEST_CONFIG.test_fields == ["JULIA", "JACK", "ST_MALO"]
 
         # Access test data
         assert TEST_DATA.base_dir.exists()
@@ -211,7 +219,7 @@ def test_smoke_suite_executable():
     result = subprocess.run(
         [sys.executable, "-m", "pytest", "-m", "smoke", "--co", "-q"],
         capture_output=True,
-        text=True
+        text=True,
     )
 
     # Should find smoke tests

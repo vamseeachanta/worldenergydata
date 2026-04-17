@@ -10,8 +10,8 @@ from worldenergydata.pipeline_safety.importers.phmsa_importer import (
     FATALITY_COLUMNS,
     FILE_MANIFEST,
     INJURY_COLUMNS,
-    LOCATION_COLUMNS,
     LNG_COLUMN_OVERRIDES,
+    LOCATION_COLUMNS,
     MID_COLUMN_MAP,
     MID_LOCATION_COLUMNS,
     MODERN_COLUMN_MAP,
@@ -26,10 +26,10 @@ from worldenergydata.pipeline_safety.importers.phmsa_importer import (
     _sum_columns,
 )
 
-
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
+
 
 class TestPHMSAConstants:
     def test_file_manifest_count(self):
@@ -41,7 +41,12 @@ class TestPHMSAConstants:
 
     def test_file_manifest_pipeline_types(self):
         types = {f[2] for f in FILE_MANIFEST}
-        assert types == {"gas_distribution", "gas_transmission", "hazardous_liquid", "lng"}
+        assert types == {
+            "gas_distribution",
+            "gas_transmission",
+            "hazardous_liquid",
+            "lng",
+        }
 
     def test_modern_column_map_keys(self):
         assert "report_number" in MODERN_COLUMN_MAP
@@ -86,6 +91,7 @@ class TestPHMSAConstants:
 # _safe_int
 # ---------------------------------------------------------------------------
 
+
 class TestSafeInt:
     def test_normal_int(self):
         assert _safe_int(42) == 42
@@ -113,6 +119,7 @@ class TestSafeInt:
 # _safe_float
 # ---------------------------------------------------------------------------
 
+
 class TestSafeFloat:
     def test_normal(self):
         assert _safe_float(3.14) == pytest.approx(3.14)
@@ -137,6 +144,7 @@ class TestSafeFloat:
 # _safe_str
 # ---------------------------------------------------------------------------
 
+
 class TestSafeStr:
     def test_normal(self):
         assert _safe_str("hello") == "hello"
@@ -160,6 +168,7 @@ class TestSafeStr:
 # ---------------------------------------------------------------------------
 # _parse_bool_indicator
 # ---------------------------------------------------------------------------
+
 
 class TestParseBoolIndicator:
     def test_yes(self):
@@ -204,6 +213,7 @@ class TestParseBoolIndicator:
 # _parse_datetime
 # ---------------------------------------------------------------------------
 
+
 class TestParseDatetime:
     def test_datetime_passthrough(self):
         dt = datetime(2024, 1, 15)
@@ -235,6 +245,7 @@ class TestParseDatetime:
 # _sum_columns
 # ---------------------------------------------------------------------------
 
+
 class TestSumColumns:
     def test_all_present(self):
         row = pd.Series({"A": 1, "B": 2, "C": 3})
@@ -257,6 +268,7 @@ class TestSumColumns:
 # _get_col
 # ---------------------------------------------------------------------------
 
+
 class TestGetCol:
     def test_normal(self):
         row = pd.Series({"A": 42})
@@ -274,6 +286,7 @@ class TestGetCol:
 # ---------------------------------------------------------------------------
 # PHMSAImporter init
 # ---------------------------------------------------------------------------
+
 
 class TestPHMSAImporterInit:
     def test_defaults(self, tmp_path):
@@ -297,6 +310,7 @@ class TestPHMSAImporterInit:
 # ---------------------------------------------------------------------------
 # _validate
 # ---------------------------------------------------------------------------
+
 
 class TestValidate:
     def setup_method(self, tmp_path=None):
@@ -339,39 +353,46 @@ class TestValidate:
 # _normalize_row routing
 # ---------------------------------------------------------------------------
 
+
 class TestNormalizeRow:
     def test_routes_modern(self):
         imp = PHMSAImporter(db_session=MagicMock(), data_dir="/tmp")
-        row = pd.Series({
-            "REPORT_NUMBER": "20240001",
-            "NAME": "Acme Gas",
-            "LOCAL_DATETIME": pd.Timestamp("2024-01-15"),
-            "SUPPLEMENTAL_NUMBER": "0",
-        })
+        row = pd.Series(
+            {
+                "REPORT_NUMBER": "20240001",
+                "NAME": "Acme Gas",
+                "LOCAL_DATETIME": pd.Timestamp("2024-01-15"),
+                "SUPPLEMENTAL_NUMBER": "0",
+            }
+        )
         result = imp._normalize_row(row, "gas_distribution", "2010_present")
         assert result["report_number"] == "gas_distribution_20240001"
         assert result["pipeline_type"] == "gas_distribution"
 
     def test_routes_mid(self):
         imp = PHMSAImporter(db_session=MagicMock(), data_dir="/tmp")
-        row = pd.Series({
-            "RPTID": "200500001",
-            "NAME": "Test Op",
-            "IDATE": pd.Timestamp("2005-06-15"),
-            "OPERATOR_ID": "OP123",
-        })
+        row = pd.Series(
+            {
+                "RPTID": "200500001",
+                "NAME": "Test Op",
+                "IDATE": pd.Timestamp("2005-06-15"),
+                "OPERATOR_ID": "OP123",
+            }
+        )
         result = imp._normalize_row(row, "gas_distribution", "2004_2009")
         assert result["report_number"] == "gas_distribution_200500001"
 
     def test_routes_legacy(self):
         imp = PHMSAImporter(db_session=MagicMock(), data_dir="/tmp")
-        row = pd.Series({
-            "RPTID": "199500001",
-            "NAME": "Old Op",
-            "IDATE": pd.Timestamp("1995-03-10"),
-            "FAT": 0,
-            "INJ": 1,
-        })
+        row = pd.Series(
+            {
+                "RPTID": "199500001",
+                "NAME": "Old Op",
+                "IDATE": pd.Timestamp("1995-03-10"),
+                "FAT": 0,
+                "INJ": 1,
+            }
+        )
         result = imp._normalize_row(row, "gas_distribution", "pre2004")
         assert result["report_number"] == "gas_distribution_199500001"
         assert result["fatalities"] == 0
@@ -382,15 +403,18 @@ class TestNormalizeRow:
 # _extract_release_quantity
 # ---------------------------------------------------------------------------
 
+
 class TestExtractReleaseQuantity:
     def setup_method(self):
         self.imp = PHMSAImporter(db_session=MagicMock(), data_dir="/tmp")
 
     def test_hazardous_liquid(self):
-        row = pd.Series({
-            "UNINTENTIONAL_RELEASE_BBLS": 100.0,
-            "INTENTIONAL_RELEASE_BBLS": 50.0,
-        })
+        row = pd.Series(
+            {
+                "UNINTENTIONAL_RELEASE_BBLS": 100.0,
+                "INTENTIONAL_RELEASE_BBLS": 50.0,
+            }
+        )
         qty, unit = self.imp._extract_release_quantity(row, "hazardous_liquid")
         assert qty == pytest.approx(150.0)
         assert unit == "barrels"
@@ -402,10 +426,12 @@ class TestExtractReleaseQuantity:
         assert unit is None
 
     def test_lng(self):
-        row = pd.Series({
-            "UNINTENTIONAL_RELEASE": 200.0,
-            "INTENTIONAL_RELEASE": 0.0,
-        })
+        row = pd.Series(
+            {
+                "UNINTENTIONAL_RELEASE": 200.0,
+                "INTENTIONAL_RELEASE": 0.0,
+            }
+        )
         qty, unit = self.imp._extract_release_quantity(row, "lng")
         assert qty == pytest.approx(200.0)
         assert unit == "MCF"

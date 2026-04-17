@@ -61,12 +61,14 @@ class AlaskaProductionLoader:
         rows = []
         for rec in records:
             crude = float(rec.get("crude_bopd", 0.0))
-            rows.append({
-                "period": rec.get("period", ""),
-                "field": rec.get("field", ""),
-                "crude_bopd": max(crude, 0.0),
-                "ngl_bopd": float(rec.get("ngl_bopd", 0.0)),
-            })
+            rows.append(
+                {
+                    "period": rec.get("period", ""),
+                    "field": rec.get("field", ""),
+                    "crude_bopd": max(crude, 0.0),
+                    "ngl_bopd": float(rec.get("ngl_bopd", 0.0)),
+                }
+            )
 
         return pd.DataFrame(rows)[self._REQUIRED_COLS].reset_index(drop=True)
 
@@ -99,10 +101,12 @@ class AlaskaProductionLoader:
         """Convert DataFrame rows to AlaskaFieldRecord dataclass instances."""
         result = []
         for _, row in df.iterrows():
-            result.append(AlaskaFieldRecord(
-                period=row["period"],
-                field=row["field"],
-                crude_bopd=row["crude_bopd"],
-                ngl_bopd=row["ngl_bopd"],
-            ))
+            result.append(
+                AlaskaFieldRecord(
+                    period=row["period"],
+                    field=row["field"],
+                    crude_bopd=row["crude_bopd"],
+                    ngl_bopd=row["ngl_bopd"],
+                )
+            )
         return result

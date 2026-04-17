@@ -3,6 +3,7 @@
 Compares last-run timestamps against configured thresholds to identify
 data sources that are overdue for refresh (per D-13/D-14 requirements).
 """
+
 import logging
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional
@@ -75,33 +76,39 @@ def get_staleness_details(status: dict) -> List[Dict[str, Any]]:
         start_time_iso = entry.get("start_time") or entry.get("last_run")
 
         if start_time_iso is None:
-            details.append({
-                "job_name": job_name,
-                "threshold_hours": threshold_hours,
-                "is_stale": True,
-                "hours_since_last_run": None,
-            })
+            details.append(
+                {
+                    "job_name": job_name,
+                    "threshold_hours": threshold_hours,
+                    "is_stale": True,
+                    "hours_since_last_run": None,
+                }
+            )
             continue
 
         try:
             last_run = datetime.fromisoformat(start_time_iso)
         except (ValueError, TypeError):
-            details.append({
-                "job_name": job_name,
-                "threshold_hours": threshold_hours,
-                "is_stale": True,
-                "hours_since_last_run": None,
-            })
+            details.append(
+                {
+                    "job_name": job_name,
+                    "threshold_hours": threshold_hours,
+                    "is_stale": True,
+                    "hours_since_last_run": None,
+                }
+            )
             continue
 
         elapsed = now - last_run
         hours_since = elapsed.total_seconds() / 3600.0
 
-        details.append({
-            "job_name": job_name,
-            "threshold_hours": threshold_hours,
-            "is_stale": elapsed > threshold,
-            "hours_since_last_run": hours_since,
-        })
+        details.append(
+            {
+                "job_name": job_name,
+                "threshold_hours": threshold_hours,
+                "is_stale": elapsed > threshold,
+                "hours_since_last_run": hours_since,
+            }
+        )
 
     return details

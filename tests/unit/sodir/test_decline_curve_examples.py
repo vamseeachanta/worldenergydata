@@ -7,8 +7,8 @@ import pytest
 from worldenergydata.sodir.examples.decline_curve_examples import (
     create_mock_field_production,
     run_edvard_grieg_decline_curve,
-    run_valhall_decline_curve,
     run_ivar_aasen_decline_curve,
+    run_valhall_decline_curve,
 )
 
 

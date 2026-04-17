@@ -62,7 +62,8 @@ class TestWellOperationalMetrics:
 
     def test_completion_efficiency(self):
         w = self._make_well(
-            planned_completion_days=10, actual_completion_days=12,
+            planned_completion_days=10,
+            actual_completion_days=12,
         )
         assert w.completion_efficiency() == pytest.approx(83.333, rel=1e-2)
 
@@ -95,7 +96,8 @@ class TestWellOperationalMetrics:
 
     def test_cost_per_foot(self):
         w = self._make_well(
-            drilling_cost=1000000, completion_cost=500000,
+            drilling_cost=1000000,
+            completion_cost=500000,
             total_depth_ft=15000,
         )
         assert w.cost_per_foot_drilled() == pytest.approx(100.0)
@@ -175,13 +177,15 @@ class TestProductionEfficiencyMetrics:
 
     def test_water_cut(self):
         m = self._make_metrics(
-            production_oil_bbl=800, production_water_bbl=200,
+            production_oil_bbl=800,
+            production_water_bbl=200,
         )
         assert m.water_cut_percentage() == pytest.approx(20.0)
 
     def test_gas_oil_ratio(self):
         m = self._make_metrics(
-            production_oil_bbl=1000, production_gas_mcf=5000,
+            production_oil_bbl=1000,
+            production_gas_mcf=5000,
         )
         assert m.gas_oil_ratio() == pytest.approx(5.0)
 
@@ -215,7 +219,8 @@ class TestEquipmentMetrics:
 
     def test_utilization(self):
         e = self._make_equip(
-            total_runtime_hours=450, planned_runtime_hours=500,
+            total_runtime_hours=450,
+            planned_runtime_hours=500,
         )
         assert e.equipment_utilization() == pytest.approx(90.0)
 
@@ -233,7 +238,8 @@ class TestEquipmentMetrics:
 
     def test_cost_effectiveness(self):
         e = self._make_equip(
-            maintenance_cost=50000, replacement_cost=500000,
+            maintenance_cost=50000,
+            replacement_cost=500000,
         )
         assert e.cost_effectiveness_ratio() == pytest.approx(0.1)
 
@@ -294,14 +300,16 @@ class TestFailureAnalysis:
 
     def test_total_impact_cost(self):
         f = self._make_failure(
-            production_impact_boe=100, repair_cost=10000,
+            production_impact_boe=100,
+            repair_cost=10000,
         )
         cost = f.total_impact_cost(oil_price=80)
         assert cost == pytest.approx(18000.0)
 
     def test_total_impact_cost_custom_price(self):
         f = self._make_failure(
-            production_impact_boe=50, repair_cost=5000,
+            production_impact_boe=50,
+            repair_cost=5000,
         )
         assert f.total_impact_cost(oil_price=100) == pytest.approx(10000.0)
 

@@ -130,19 +130,27 @@ class TestPipelineLocationSchema:
         assert schema.WATER_DEPTH == 3000.0
 
     def test_latitude_out_of_range_raises(self):
-        with pytest.raises(ValidationError, match="LATITUDE must be between -90 and 90"):
+        with pytest.raises(
+            ValidationError, match="LATITUDE must be between -90 and 90"
+        ):
             PipelineLocationSchema(LATITUDE=91.0)
 
     def test_latitude_negative_boundary(self):
-        with pytest.raises(ValidationError, match="LATITUDE must be between -90 and 90"):
+        with pytest.raises(
+            ValidationError, match="LATITUDE must be between -90 and 90"
+        ):
             PipelineLocationSchema(LATITUDE=-91.0)
 
     def test_longitude_out_of_range_raises(self):
-        with pytest.raises(ValidationError, match="LONGITUDE must be between -180 and 180"):
+        with pytest.raises(
+            ValidationError, match="LONGITUDE must be between -180 and 180"
+        ):
             PipelineLocationSchema(LONGITUDE=181.0)
 
     def test_longitude_negative_boundary(self):
-        with pytest.raises(ValidationError, match="LONGITUDE must be between -180 and 180"):
+        with pytest.raises(
+            ValidationError, match="LONGITUDE must be between -180 and 180"
+        ):
             PipelineLocationSchema(LONGITUDE=-181.0)
 
     def test_valid_boundary_coordinates(self):
