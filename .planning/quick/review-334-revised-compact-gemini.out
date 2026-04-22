@@ -1,0 +1,387 @@
+Attempt 1 failed with status 429. Retrying with backoff... _GaxiosError: [{
+  "error": {
+    "code": 429,
+    "message": "No capacity available for model gemini-3.1-pro-preview on the server",
+    "errors": [
+      {
+        "message": "No capacity available for model gemini-3.1-pro-preview on the server",
+        "domain": "global",
+        "reason": "rateLimitExceeded"
+      }
+    ],
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "MODEL_CAPACITY_EXHAUSTED",
+        "domain": "cloudcode-pa.googleapis.com",
+        "metadata": {
+          "model": "gemini-3.1-pro-preview"
+        }
+      }
+    ]
+  }
+}
+]
+    at Gaxios._request (file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:8578:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async _OAuth2Client.requestAsync (file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:10541:16)
+    at async CodeAssistServer.requestStreamingPost (file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:277484:17)
+    at async CodeAssistServer.generateContentStream (file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:277284:23)
+    at async file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:278125:19
+    at async file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:255118:23
+    at async retryWithBackoff (file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:275082:23)
+    at async GeminiChat.makeApiCallAndProcessStream (file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:310999:28)
+    at async GeminiChat.streamWithRetries (file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:310837:29) {
+  config: {
+    url: 'https://cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse',
+    method: 'POST',
+    params: { alt: 'sse' },
+    headers: {
+      'Content-Type': 'application/json',
+      'User-Agent': 'GeminiCLI/0.38.2/gemini-3.1-pro-preview (linux; x64; terminal) google-api-nodejs-client/9.15.1',
+      Authorization: '<<REDACTED> - See `errorRedactor` option in `gaxios` for configuration>.',
+      'x-goog-api-client': 'gl-node/24.14.1'
+    },
+    responseType: 'stream',
+    body: '<<REDACTED> - See `errorRedactor` option in `gaxios` for configuration>.',
+    signal: AbortSignal { aborted: false },
+    retry: false,
+    paramsSerializer: [Function: paramsSerializer],
+    validateStatus: [Function: validateStatus],
+    errorRedactor: [Function: defaultErrorRedactor]
+  },
+  response: {
+    config: {
+      url: 'https://cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse',
+      method: 'POST',
+      params: [Object],
+      headers: [Object],
+      responseType: 'stream',
+      body: '<<REDACTED> - See `errorRedactor` option in `gaxios` for configuration>.',
+      signal: [AbortSignal],
+      retry: false,
+      paramsSerializer: [Function: paramsSerializer],
+      validateStatus: [Function: validateStatus],
+      errorRedactor: [Function: defaultErrorRedactor]
+    },
+    data: '[{\n' +
+      '  "error": {\n' +
+      '    "code": 429,\n' +
+      '    "message": "No capacity available for model gemini-3.1-pro-preview on the server",\n' +
+      '    "errors": [\n' +
+      '      {\n' +
+      '        "message": "No capacity available for model gemini-3.1-pro-preview on the server",\n' +
+      '        "domain": "global",\n' +
+      '        "reason": "rateLimitExceeded"\n' +
+      '      }\n' +
+      '    ],\n' +
+      '    "status": "RESOURCE_EXHAUSTED",\n' +
+      '    "details": [\n' +
+      '      {\n' +
+      '        "@type": "type.googleapis.com/google.rpc.ErrorInfo",\n' +
+      '        "reason": "MODEL_CAPACITY_EXHAUSTED",\n' +
+      '        "domain": "cloudcode-pa.googleapis.com",\n' +
+      '        "metadata": {\n' +
+      '          "model": "gemini-3.1-pro-preview"\n' +
+      '        }\n' +
+      '      }\n' +
+      '    ]\n' +
+      '  }\n' +
+      '}\n' +
+      ']',
+    headers: {
+      'alt-svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000',
+      'content-length': '630',
+      'content-type': 'application/json; charset=UTF-8',
+      date: 'Wed, 22 Apr 2026 02:47:39 GMT',
+      server: 'ESF',
+      'server-timing': 'gfet4t7; dur=5980',
+      vary: 'Origin, X-Origin, Referer',
+      'x-cloudaicompanion-trace-id': '3b520720485b7e8',
+      'x-content-type-options': 'nosniff',
+      'x-frame-options': 'SAMEORIGIN',
+      'x-xss-protection': '0'
+    },
+    status: 429,
+    statusText: 'Too Many Requests',
+    request: {
+      responseURL: 'https://cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse'
+    }
+  },
+  error: undefined,
+  status: 429,
+  Symbol(gaxios-gaxios-error): '6.7.1'
+}
+Attempt 2 failed with status 429. Retrying with backoff... _GaxiosError: [{
+  "error": {
+    "code": 429,
+    "message": "No capacity available for model gemini-3.1-pro-preview on the server",
+    "errors": [
+      {
+        "message": "No capacity available for model gemini-3.1-pro-preview on the server",
+        "domain": "global",
+        "reason": "rateLimitExceeded"
+      }
+    ],
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "MODEL_CAPACITY_EXHAUSTED",
+        "domain": "cloudcode-pa.googleapis.com",
+        "metadata": {
+          "model": "gemini-3.1-pro-preview"
+        }
+      }
+    ]
+  }
+}
+]
+    at Gaxios._request (file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:8578:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async _OAuth2Client.requestAsync (file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:10541:16)
+    at async CodeAssistServer.requestStreamingPost (file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:277484:17)
+    at async CodeAssistServer.generateContentStream (file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:277284:23)
+    at async file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:278125:19
+    at async file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:255118:23
+    at async retryWithBackoff (file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:275082:23)
+    at async GeminiChat.makeApiCallAndProcessStream (file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:310999:28)
+    at async GeminiChat.streamWithRetries (file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:310837:29) {
+  config: {
+    url: 'https://cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse',
+    method: 'POST',
+    params: { alt: 'sse' },
+    headers: {
+      'Content-Type': 'application/json',
+      'User-Agent': 'GeminiCLI/0.38.2/gemini-3.1-pro-preview (linux; x64; terminal) google-api-nodejs-client/9.15.1',
+      Authorization: '<<REDACTED> - See `errorRedactor` option in `gaxios` for configuration>.',
+      'x-goog-api-client': 'gl-node/24.14.1'
+    },
+    responseType: 'stream',
+    body: '<<REDACTED> - See `errorRedactor` option in `gaxios` for configuration>.',
+    signal: AbortSignal { aborted: false },
+    retry: false,
+    paramsSerializer: [Function: paramsSerializer],
+    validateStatus: [Function: validateStatus],
+    errorRedactor: [Function: defaultErrorRedactor]
+  },
+  response: {
+    config: {
+      url: 'https://cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse',
+      method: 'POST',
+      params: [Object],
+      headers: [Object],
+      responseType: 'stream',
+      body: '<<REDACTED> - See `errorRedactor` option in `gaxios` for configuration>.',
+      signal: [AbortSignal],
+      retry: false,
+      paramsSerializer: [Function: paramsSerializer],
+      validateStatus: [Function: validateStatus],
+      errorRedactor: [Function: defaultErrorRedactor]
+    },
+    data: '[{\n' +
+      '  "error": {\n' +
+      '    "code": 429,\n' +
+      '    "message": "No capacity available for model gemini-3.1-pro-preview on the server",\n' +
+      '    "errors": [\n' +
+      '      {\n' +
+      '        "message": "No capacity available for model gemini-3.1-pro-preview on the server",\n' +
+      '        "domain": "global",\n' +
+      '        "reason": "rateLimitExceeded"\n' +
+      '      }\n' +
+      '    ],\n' +
+      '    "status": "RESOURCE_EXHAUSTED",\n' +
+      '    "details": [\n' +
+      '      {\n' +
+      '        "@type": "type.googleapis.com/google.rpc.ErrorInfo",\n' +
+      '        "reason": "MODEL_CAPACITY_EXHAUSTED",\n' +
+      '        "domain": "cloudcode-pa.googleapis.com",\n' +
+      '        "metadata": {\n' +
+      '          "model": "gemini-3.1-pro-preview"\n' +
+      '        }\n' +
+      '      }\n' +
+      '    ]\n' +
+      '  }\n' +
+      '}\n' +
+      ']',
+    headers: {
+      'alt-svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000',
+      'content-length': '630',
+      'content-type': 'application/json; charset=UTF-8',
+      date: 'Wed, 22 Apr 2026 02:47:52 GMT',
+      server: 'ESF',
+      'server-timing': 'gfet4t7; dur=7012',
+      vary: 'Origin, X-Origin, Referer',
+      'x-cloudaicompanion-trace-id': 'ce0729a9558879b8',
+      'x-content-type-options': 'nosniff',
+      'x-frame-options': 'SAMEORIGIN',
+      'x-xss-protection': '0'
+    },
+    status: 429,
+    statusText: 'Too Many Requests',
+    request: {
+      responseURL: 'https://cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse'
+    }
+  },
+  error: undefined,
+  status: 429,
+  Symbol(gaxios-gaxios-error): '6.7.1'
+}
+Attempt 3 failed with status 429. Retrying with backoff... _GaxiosError: [{
+  "error": {
+    "code": 429,
+    "message": "No capacity available for model gemini-3.1-pro-preview on the server",
+    "errors": [
+      {
+        "message": "No capacity available for model gemini-3.1-pro-preview on the server",
+        "domain": "global",
+        "reason": "rateLimitExceeded"
+      }
+    ],
+    "status": "RESOURCE_EXHAUSTED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "MODEL_CAPACITY_EXHAUSTED",
+        "domain": "cloudcode-pa.googleapis.com",
+        "metadata": {
+          "model": "gemini-3.1-pro-preview"
+        }
+      }
+    ]
+  }
+}
+]
+    at Gaxios._request (file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:8578:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async _OAuth2Client.requestAsync (file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:10541:16)
+    at async CodeAssistServer.requestStreamingPost (file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:277484:17)
+    at async CodeAssistServer.generateContentStream (file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:277284:23)
+    at async file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:278125:19
+    at async file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:255118:23
+    at async retryWithBackoff (file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:275082:23)
+    at async GeminiChat.makeApiCallAndProcessStream (file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:310999:28)
+    at async GeminiChat.streamWithRetries (file:///home/vamsee/.npm-global/lib/node_modules/@google/gemini-cli/bundle/chunk-IWSCP2GY.js:310837:29) {
+  config: {
+    url: 'https://cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse',
+    method: 'POST',
+    params: { alt: 'sse' },
+    headers: {
+      'Content-Type': 'application/json',
+      'User-Agent': 'GeminiCLI/0.38.2/gemini-3.1-pro-preview (linux; x64; terminal) google-api-nodejs-client/9.15.1',
+      Authorization: '<<REDACTED> - See `errorRedactor` option in `gaxios` for configuration>.',
+      'x-goog-api-client': 'gl-node/24.14.1'
+    },
+    responseType: 'stream',
+    body: '<<REDACTED> - See `errorRedactor` option in `gaxios` for configuration>.',
+    signal: AbortSignal { aborted: false },
+    retry: false,
+    paramsSerializer: [Function: paramsSerializer],
+    validateStatus: [Function: validateStatus],
+    errorRedactor: [Function: defaultErrorRedactor]
+  },
+  response: {
+    config: {
+      url: 'https://cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse',
+      method: 'POST',
+      params: [Object],
+      headers: [Object],
+      responseType: 'stream',
+      body: '<<REDACTED> - See `errorRedactor` option in `gaxios` for configuration>.',
+      signal: [AbortSignal],
+      retry: false,
+      paramsSerializer: [Function: paramsSerializer],
+      validateStatus: [Function: validateStatus],
+      errorRedactor: [Function: defaultErrorRedactor]
+    },
+    data: '[{\n' +
+      '  "error": {\n' +
+      '    "code": 429,\n' +
+      '    "message": "No capacity available for model gemini-3.1-pro-preview on the server",\n' +
+      '    "errors": [\n' +
+      '      {\n' +
+      '        "message": "No capacity available for model gemini-3.1-pro-preview on the server",\n' +
+      '        "domain": "global",\n' +
+      '        "reason": "rateLimitExceeded"\n' +
+      '      }\n' +
+      '    ],\n' +
+      '    "status": "RESOURCE_EXHAUSTED",\n' +
+      '    "details": [\n' +
+      '      {\n' +
+      '        "@type": "type.googleapis.com/google.rpc.ErrorInfo",\n' +
+      '        "reason": "MODEL_CAPACITY_EXHAUSTED",\n' +
+      '        "domain": "cloudcode-pa.googleapis.com",\n' +
+      '        "metadata": {\n' +
+      '          "model": "gemini-3.1-pro-preview"\n' +
+      '        }\n' +
+      '      }\n' +
+      '    ]\n' +
+      '  }\n' +
+      '}\n' +
+      ']',
+    headers: {
+      'alt-svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000',
+      'content-length': '630',
+      'content-type': 'application/json; charset=UTF-8',
+      date: 'Wed, 22 Apr 2026 02:48:10 GMT',
+      server: 'ESF',
+      'server-timing': 'gfet4t7; dur=5582',
+      vary: 'Origin, X-Origin, Referer',
+      'x-cloudaicompanion-trace-id': 'fdfc093d75514f9d',
+      'x-content-type-options': 'nosniff',
+      'x-frame-options': 'SAMEORIGIN',
+      'x-xss-protection': '0'
+    },
+    status: 429,
+    statusText: 'Too Many Requests',
+    request: {
+      responseURL: 'https://cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse'
+    }
+  },
+  error: undefined,
+  status: 429,
+  Symbol(gaxios-gaxios-error): '6.7.1'
+}
+**Verdict: APPROVE**
+
+The revised plan successfully bounds the scope of Issue #334 to a true foundational layer. By enforcing a strict record limit (<=12), explicit deferrals to child issues, and strong row-level provenance, the plan mitigates the previously high risks of data sprawl and premature integration.
+
+**Retrieval adequacy:** adequate (The provided context and revised plan details are sufficient to evaluate the architectural boundaries and risks).
+
+**Strengths:**
+- **Aggressive Scoping:** The hard limit of <=12 curated seed records is an excellent mechanism to force schema validation without falling into a data-entry rabbit hole.
+- **Explicit Deferrals:** Clearly pushing linkage hardening, normalization, and automated ingestion to #335–#338 protects this foundational PR from scope creep.
+- **Strict Provenance:** Requiring `source_title`, `source_url`, `page_reference`, `quoted_text`, and `confidence` on every record ensures the foundation is auditable from day one.
+- **Scope Differentiation:** Explicitly typing `operator` vs. `project` scope prevents the dangerous conflation of corporate-level CapEx with asset-level costs.
+
+**Findings by severity:**
+
+*   **Critical:** None. The architectural boundaries are now safe for a T2 foundation issue.
+*   **High:** None.
+*   **Medium:** **Handling of "Net vs. Gross" and Currency.** While the plan specifies "typed monetary fields", public disclosures frequently mix Gross Project Cost and Net to Operator Cost, as well as different currencies/scales (Millions vs. Billions). The schema (`operator_disclosures_schema.py`) must explicitly include fields for `currency`, `scale`, and `equity_share_basis` (or a similar flag indicating gross/net) to prevent garbage-in-garbage-out during future normalization (#336).
+*   **Medium:** **Restatement / Temporal Ambiguity.** The "Open Risks" correctly identify restatements as a problem. The schema needs at least a minimal temporal anchor—distinguishing between `fiscal_year` (the period the cost applies to) and `report_date` (when it was published)—so that future issues can resolve restatement conflicts based on the newer `report_date`.
+*   **Low:** **Linkage Mechanism.** The plan claims an "exact (operator, project_name) linkage strategy to existing CostDataPoint". It should be explicitly stated whether this is a method on the schema (e.g., `.to_cost_data_point()`) or a standalone adapter function, to ensure it is covered in the planned `test_operator_disclosures.py`.
+
+**Missing tests:**
+- **Unhappy Path Validation:** Tests verifying that the schema strictly rejects records missing mandatory provenance fields (e.g., `quoted_text` or `page_reference`).
+- **Scope-Specific Linkage Rejection:** Tests verifying that attempting to link an `operator`-scoped record to a `CostDataPoint` (which is project-centric) raises an explicit, typed error.
+- **Currency/Scale Validation:** Tests ensuring negative costs or unsupported currency formats fail schema validation.
+
+**Scope creep concerns:**
+- Extremely low, provided the `<=12 records` constraint is strictly enforced during code review. The temptation to "just add one more operator" to prove the schema must be resisted.
+
+**Weakest assumption:**
+- The assumption that an *exact* `(operator, project_name)` string match will be sufficient for linkage (even for a seed dataset). Operator disclosures often use abbreviations (e.g., "Shenzi N." vs "Shenzi North") that may immediately break exact linkage, forcing premature work on alias mapping (Issue #335).
+
+**Most likely implementation failure mode:**
+- The schema is implemented using generic `float` fields for monetary values without enforcing a standard scale (e.g., one record uses `1.5` for $1.5B, another uses `1500000000`), making the seed dataset internally inconsistent.
+
+**Most likely test gap:**
+- Testing only the "happy path" of valid seed records without asserting that the schema actually catches and rejects poorly-formed or un-provenanced data.
+
+**Future issues suggested (Beyond #335-#338):**
+- **Equity/Working Interest Resolution Engine:** A specific issue to handle the conversion of "Net to Operator" reported costs back to "Gross Project" costs using working interest reference tables.
+- **Currency & Inflation Normalization Pipeline:** Handling historical disclosures requires not just currency conversion, but inflation adjustment to a standard reference year.
+
+**Review confidence:** High. The revision directly addresses the critical flaws of open-ended data collection and weak schemas.

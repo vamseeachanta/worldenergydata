@@ -1,141 +1,34 @@
-# Plan for #334: annual operator disclosures dataset for year-over-year project cost tracking
+# Adversarial Re-Review Request: Issue #334 (artifact-inline)
 
-> **Status:** draft
-> **Complexity:** T2
-> **Date:** 2026-04-21
-> **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/334
-> **Review artifacts:** scripts/review/results/2026-04-21-plan-334-codex.md | scripts/review/results/2026-04-21-plan-334-gemini.md
+Review ONLY the exact inline artifact below. Do not substitute any remote/main-branch version of the plan. The local plan was revised after the earlier review.
 
----
+Goal:
+Determine whether the REVISED local plan is approval-ready for a bounded T2 foundation issue.
 
-## Resource Intelligence Summary
+Key concerns from prior review already addressed in this local revision:
+- no package-root API expansion in files-to-change
+- no generic metric_value in v1
+- no helper query APIs in scope
+- typed monetary fields only
+- explicit operator vs project scope
+- explicit exact linkage strategy to existing CostDataPoint for project rows only
+- explicit deferral of normalization, ingestion, analytics, and downstream integrations
+- seed dataset cap <= 12 records
 
-### Existing repo code
-- Found: `src/worldenergydata/cost/data_collection/public_dataset.py` — current cost dataset is a curated list of sanctioned-project cost points sourced from annual reports, SEC filings, press releases, NPD/NSTA filings, and BOEM studies; records are keyed to one project cost datapoint at sanction/FID time.
-- Found: `src/worldenergydata/cost/data_collection/calibration_schema.py` — `CostDataPoint` models one project cost datapoint with sanction/drilling year, source string, and confidence, but no recurring annual disclosure structure.
-- Found: `src/worldenergydata/cost/calibration/cost_predictor.py` — current model consumes `CostDataPoint` records and extracts features from sanction-oriented fields (`water_depth_m`, `well_depth_m`, `year_sanction`, `hpht`, `subsea`, `region`, `rig_type`, `water_depth_band`).
-- Found: `src/worldenergydata/cost/data_collection/__init__.py` — current public exports for the data-collection layer are limited to `CostDataPoint` and `load_public_dataset()`.
-- Found: `tests/unit/cost/test_cost_predictor.py` and `tests/unit/cost/test_proxy_comparison.py` — existing cost tests assume the sanction-point dataset and predictor workflow.
-- Found: `src/worldenergydata/fdas/__init__.py` and `src/worldenergydata/lower_tertiary/npv.py` — downstream economics surfaces already exist, but no actual disclosure-layer consumer exists yet; integration claims must therefore be documented as future-facing, not implemented in this issue.
-- Gap: no annual disclosure schema, no annual operator/project time-series dataset, no explicit linkage model from recurring disclosures to `CostDataPoint`, and no dedicated tests for disclosure-style cost tracking.
+Required output:
+- Verdict: APPROVE | MINOR | MAJOR
+- Retrieval adequacy: adequate | insufficient
+- Strengths
+- Findings by severity: critical, high, medium, low
+- Missing tests
+- Scope creep concerns
+- Weakest assumption
+- Most likely implementation failure mode
+- Most likely test gap
+- Future issues suggested
+- Review confidence
 
-### Standards
-- Not applicable — this is a repository data-modeling and provenance issue rather than an engineering standards-transfer issue.
-
-### LLM Wiki pages consulted
-- No relevant wiki pages in this repo were found for cost disclosure schema design; the implementation surface is localized to the `worldenergydata.cost` package.
-
-### Documents consulted
-- Issue `#334` — defines the requested outcome: annual-statement-driven year-over-year operator/project cost tracking.
-- Issue `#143` (`WRK-261: BSEE field economics case study — rebuild on calibrated cost data`) — confirms there is already downstream demand for richer cost/calibration inputs.
-- `README.md` — confirms WorldEnergyData positions economics/reporting as core capabilities and already exposes BSEE/FDAS economic workflows.
-- Prior review artifacts `scripts/review/results/2026-04-21-plan-334-codex.md` and `...-gemini.md` — identify the main blockers: overly generic value typing, weak provenance/testing, unclear operator-vs-project row separation, missing linkage/defer strategy, and over-broad v1 scope.
-
-### Gaps identified
-- No schema exists for annual disclosure records with explicit `scope`, typed monetary values, source URL/title, page references, quoted text, and as-reported metric labeling.
-- No curated seed dataset exists for project cost revisions across multiple years for the same project.
-- No curated operator-level annual capex series exists adjacent to the current sanctioned project dataset.
-- No tests currently prove a project can be represented as a true time series while preserving operator/project row separation, as-reported currency, and provenance quality.
-- No explicit linkage strategy is documented for connecting disclosure rows to existing `CostDataPoint` records.
-
-### Evidence (embedded verification)
-
-**Issue statuses** (verified 2026-04-21T19:37:19-05:00 via `gh issue view`):
-- `#334` — OPEN — `feat(cost): annual operator disclosures dataset for year-over-year project cost tracking`
-- `#143` — OPEN — `WRK-261: BSEE field economics case study — rebuild on calibrated cost data (WRK-019 + WRK-171)`
-
-**File existence** (verified during planning):
-- EXISTS: `src/worldenergydata/cost/data_collection/public_dataset.py`
-- EXISTS: `src/worldenergydata/cost/data_collection/calibration_schema.py`
-- EXISTS: `src/worldenergydata/cost/calibration/cost_predictor.py`
-- EXISTS: `src/worldenergydata/fdas/__init__.py`
-- EXISTS: `src/worldenergydata/lower_tertiary/npv.py`
-- EXISTS: `tests/unit/cost/test_cost_predictor.py`
-- MISSING (new — this plan creates): `src/worldenergydata/cost/data_collection/operator_disclosures_schema.py`
-- MISSING (new — this plan creates): `src/worldenergydata/cost/data_collection/operator_disclosures_dataset.py`
-- MISSING (new — this plan creates): `tests/unit/cost/test_operator_disclosures.py`
-
-**Line excerpts**
-```text
-public_dataset.py:1-23
-ABOUTME: Curated public dataset of sanctioned project cost data points.
-ABOUTME: All entries sourced from publicly disclosed operator reports and announcements.
-Every entry cites a specific public source (operator annual report, SEC filing,
-press release, NPD/NSTA filing, or BOEM study).
-...
-- Company 10-K / 20-F filings (SEC EDGAR, publicly accessible)
-```
-
-```text
-public_dataset.py:42-67
-# Each entry is a dict ready to unpack into CostDataPoint(**entry).
-# Costs are as-reported USD MM at time of FID announcement.
-...
-"year_sanction": 2017,
-...
-"source": (
-    "BP FID press release Jan 2017; BP Annual Report 2017 p.38 — "
-    "'Mad Dog Phase 2 sanctioned at ~$9B revised down from ~$20B'"
-),
-```
-
-```text
-calibration_schema.py:85-153
-class CostDataPoint(BaseModel):
-    project_name: str
-    region: str
-    water_depth_m: float
-    water_depth_band: WaterDepthBand
-    well_depth_m: Optional[float]
-    well_depth_band: Optional[WellDepthBand]
-    operator: str
-    year_sanction: int
-    year_drilling: Optional[int]
-    rig_type: RigType
-    activity_type: ActivityType
-    hpht: bool
-    subsea: SubseaType
-    cost_usd_mm: float
-    cost_type: CostType
-    source: str
-    confidence: Confidence
-```
-
-```text
-cost_predictor.py:96-126
-_extract_features(records: list[CostDataPoint])
-    rows.append({
-        "water_depth_m": rec.water_depth_m,
-        "well_depth_m": ...,
-        "year_sanction": float(rec.year_sanction),
-        "hpht": 1.0 if rec.hpht else 0.0,
-        "subsea": rec.subsea.value,
-        "region": rec.region,
-        "rig_type": rec.rig_type.value,
-        "water_depth_band": rec.water_depth_band.value,
-    })
-```
-
-**Gap proofs**
-- `test -f tests/unit/cost/test_operator_disclosures.py || echo missing` → `missing`
-- `test -f src/worldenergydata/cost/data_collection/operator_disclosures_schema.py || echo missing` → `missing`
-- `test -f src/worldenergydata/cost/data_collection/operator_disclosures_dataset.py || echo missing` → `missing`
-
----
-
-## Artifact Map
-
-| Artifact | Path |
-|---|---|
-| This plan | `docs/plans/2026-04-21-issue-334-annual-operator-disclosures-dataset.md` |
-| Tests | `tests/unit/cost/test_operator_disclosures.py` |
-| Implementation | `src/worldenergydata/cost/data_collection/operator_disclosures_schema.py` |
-| Implementation | `src/worldenergydata/cost/data_collection/operator_disclosures_dataset.py` |
-| Implementation | `src/worldenergydata/cost/data_collection/__init__.py` |
-| Plan review — Codex | `scripts/review/results/2026-04-21-plan-334-codex.md` |
-| Plan review — Gemini | `scripts/review/results/2026-04-21-plan-334-gemini.md` |
-
----
+## Exact revised local artifact under review
 
 ## Deliverable
 
@@ -279,16 +172,16 @@ update data_collection exports:
 
 | Provider | Verdict | Key findings |
 |---|---|---|
-| Codex | MINOR | Approval is close, but v1 must choose one linkage representation (stored vs derived-only) and one restatement contract (explicit representation vs explicit deferral) |
-| Gemini | APPROVE | Revised foundation-only scope is now safely bounded; remaining notes are strengthening suggestions around gross/net basis, report date, and validation tests |
+| Codex | MAJOR on prior draft | Prior draft was too broad, used an underspecified generic value model, and lacked explicit linkage/integration-defer language |
+| Gemini | MINOR on prior draft | Prior draft needed explicit operator-vs-project separation, a firm v1 scope cap, and stronger edge-case tests |
 
-**Overall result:** near-pass; one final tightening pass recommended before moving to approval stage
+**Overall result:** revised after review; re-review required before approval stage
 
 Revisions made based on review:
-- reran review against the narrowed local artifact instead of the stale earlier draft
-- confirmed package-root export expansion, helper-query APIs, and non-monetary metrics are out of scope for v1
-- confirmed child issues #335–#338 successfully hold deferred linkage hardening, normalization, ingestion, and analytics/integration work
-- remaining blockers are now limited to two contract decisions: linkage representation and restatement treatment in v1
+- narrowed v1 to a foundation-only disclosure data layer
+- removed package-root export changes and helper-query API ideas from v1
+- added explicit scope typing, stronger provenance requirements, capped seed dataset size, and deterministic linkage strategy
+- added explicit defer boundaries for normalization, automation, and downstream consumer integration
 
 ---
 
