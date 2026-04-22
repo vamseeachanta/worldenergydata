@@ -1,47 +1,34 @@
-# Plan for #336: currency normalization and comparability policy for annual disclosures
+# Adversarial Re-Review Request: Issue #336 (revised compact)
 
-> **Status:** draft
-> **Complexity:** T2
-> **Date:** 2026-04-22
-> **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/336
-> **Review artifacts:** scripts/review/results/2026-04-22-plan-336-codex.md | scripts/review/results/2026-04-22-plan-336-gemini.md
+You are an independent adversarial reviewer. Findings only. Do not praise or restate.
 
----
+Target
+- Repo: vamseeachanta/worldenergydata
+- Issue #336: currency normalization and comparability policy for annual disclosures
+- Stage: revised draft plan review before any plan-review move
 
-## Resource Intelligence Summary
+What was revised to address prior review findings:
+- fixed deterministic v1 policy in-plan: static in-repo FX table, normalized USD, base year 2020, 3% annual escalation/de-escalation; corrected repo-grounding to real current tests: test_cost_predictor.py, test_proxy_comparison.py, test_calibration_schema.py; preserve magnitude_scale and as_reported_metric_name explicitly; kept #336 bounded to normalization only; no linkage work (#335) and no analytics/views (#338); named concrete new files: disclosure_normalization.py and fx_policy_v1.py
 
-### Existing repo code
-- `src/worldenergydata/cost/data_collection/public_dataset.py` preserves as-reported cost data and does not normalize annual disclosure rows.
-- `src/worldenergydata/cost/data_collection/calibration_schema.py` uses a single normalized money field for sanction-era points, not annual disclosure comparability.
-- `src/worldenergydata/cost/calibration/cost_predictor.py` already contains one deterministic comparability precedent: inflation/base-year adjustment to 2020 via a fixed 3% escalation rate.
-- `tests/unit/cost/test_cost_predictor.py` is the current predictor guardrail around the existing 2020-base-year / 3% escalation precedent.
-- `tests/unit/cost/test_proxy_comparison.py` is a current downstream cost-calibration regression boundary that must remain unaffected.
-- `tests/unit/cost/test_calibration_schema.py` is an existing schema validation boundary for the sanction-side dataset and should remain unchanged.
+Review questions
+1. Is the revised plan now sufficiently grounded and bounded for this child issue?
+2. Are files-to-change, tests, and acceptance criteria internally consistent with current repo surfaces?
+3. Any remaining blockers that should prevent moving this plan to plan-review later?
 
-### Documents consulted
-- Issue #336 — normalization/comparability while preserving as-reported values.
-- Parent issue #334 and approved plan — v1 disclosure layer intentionally preserves as-reported values only and defers normalization.
+Required output
+- Verdict: APPROVE | MINOR | MAJOR
+- Retrieval adequacy: adequate | insufficient
+- Strengths
+- Findings by severity: critical, high, medium, low
+- Missing tests
+- Scope creep concerns
+- Weakest assumption
+- Most likely implementation failure mode
+- Most likely test gap
+- Future issues suggested
+- Review confidence
 
-### Gaps identified
-- No annual-disclosure normalization policy exists.
-- No explicit comparable-money output shape exists that preserves raw values.
-- No tests define how non-comparable rows should be represented.
-
----
-
-## Artifact Map
-
-| Artifact | Path |
-|---|---|
-| This plan | `docs/plans/2026-04-22-issue-336-currency-normalization-and-comparability-policy-for-annual-disclosures.md` |
-| Existing as-reported sanction dataset | `src/worldenergydata/cost/data_collection/public_dataset.py` |
-| Existing comparability precedent | `src/worldenergydata/cost/calibration/cost_predictor.py` |
-| Existing data-collection exports | `src/worldenergydata/cost/data_collection/__init__.py` |
-| Predictor guardrails | `tests/unit/cost/test_cost_predictor.py` |
-| Sanction schema regression boundary | `tests/unit/cost/test_calibration_schema.py` |
-| Downstream regression boundary | `tests/unit/cost/test_proxy_comparison.py` |
-
----
+## Exact revised plan sections under review
 
 ## Deliverable
 

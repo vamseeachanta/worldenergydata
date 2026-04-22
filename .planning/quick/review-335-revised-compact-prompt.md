@@ -1,51 +1,38 @@
-# Plan for #335: disclosure-to-CostDataPoint linkage model
+# Adversarial Re-Review Request: Issue #335 (revised compact)
 
-> **Status:** draft
-> **Complexity:** T2
-> **Date:** 2026-04-22
-> **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/335
-> **Review artifacts:** scripts/review/results/2026-04-22-plan-335-codex.md | scripts/review/results/2026-04-22-plan-335-gemini.md
+You are an independent adversarial reviewer. Findings only. Do not praise or restate.
 
----
+Target
+- Repo: vamseeachanta/worldenergydata
+- Issue #335: disclosure-to-CostDataPoint linkage model
+- Stage: revised draft plan review before any plan-review move
 
-## Resource Intelligence Summary
+What was revised to address prior MAJOR findings:
+- made dependency on #334 explicit
+- carried parent invariant explicitly: only project-scope disclosure rows participate in linkage; operator-scope rows are never linkable
+- fixed pseudocode fallback bug by distinguishing `sanctioned_records is None` from an intentionally injected empty list
+- moved proposed linkage contract/helper into dedicated module `src/worldenergydata/cost/data_collection/linkage.py`
+- strengthened tests for empty-list behavior, operator-row non-linkability, negative exactness, and unchanged sanctioned loader behavior
 
-### Existing repo code
-- `src/worldenergydata/cost/data_collection/public_dataset.py` is the current sanction-record corpus and exposes `load_public_dataset()` returning `list[CostDataPoint]`; no linkage helper exists today.
-- `src/worldenergydata/cost/data_collection/calibration_schema.py` defines `CostDataPoint` and supporting enums but no linkage status/result model or stable linkage contract.
-- `src/worldenergydata/cost/data_collection/__init__.py` exports only `CostDataPoint` and `load_public_dataset()`.
-- `tests/unit/cost/test_calibration_schema.py` validates schema/data loading only; it does not test exact-match linkage, no-match, or ambiguity handling.
-- `tests/unit/cost/test_proxy_comparison.py` is a regression boundary that depends on current `load_public_dataset()` behavior and should remain unchanged.
-- Parent plan `docs/plans/2026-04-21-issue-334-annual-operator-disclosures-dataset.md` fixes the disclosure-side invariant that only project-scope disclosure rows are linkable and linkage remains derived-only exact `(operator, project_name)`.
+Review questions
+1. Is the revised plan now sufficiently grounded and bounded for a child issue?
+2. Are module placement, files-to-change, and tests now internally consistent?
+3. Any remaining blockers that should prevent moving this plan to plan-review later?
 
-### Documents consulted
-- Issue #335 — linkage hardening between annual disclosure rows and sanction-point records.
-- Parent issue #334 and approved plan — disclosure linkage in v1 is derived-only exact-match for project rows only; operator rows never link; no stored foreign-key-style `CostDataPoint` reference field is allowed.
-- Review artifacts `scripts/review/results/2026-04-22-plan-335-codex.md` and `...-gemini.md` — current blockers are missing #334 dependency framing, weak operator-row non-linkability coverage, empty-list fallback bug risk, and questionable module placement.
+Required output
+- Verdict: APPROVE | MINOR | MAJOR
+- Retrieval adequacy: adequate | insufficient
+- Strengths
+- Findings by severity: critical, high, medium, low
+- Missing tests
+- Scope creep concerns
+- Weakest assumption
+- Most likely implementation failure mode
+- Most likely test gap
+- Future issues suggested
+- Review confidence
 
-### Gaps identified
-- No canonical `linked` / `unlinked` / `ambiguous` result contract exists.
-- No deterministic helper exists for exact-match resolution.
-- No tests define how ambiguity must be surfaced rather than guessed.
-- No disclosure-side helper currently consumes the approved invariant that operator rows are never linkable.
-
----
-
-## Artifact Map
-
-| Artifact | Path |
-|---|---|
-| This plan | `docs/plans/2026-04-22-issue-335-disclosure-to-costdatapoint-linkage-model.md` |
-| Existing sanction schema | `src/worldenergydata/cost/data_collection/calibration_schema.py` |
-| Existing sanction dataset loader | `src/worldenergydata/cost/data_collection/public_dataset.py` |
-| Public data-collection exports | `src/worldenergydata/cost/data_collection/__init__.py` |
-| New linkage helper/result module | `src/worldenergydata/cost/data_collection/linkage.py` |
-| Primary test target | `tests/unit/cost/test_linkage.py` |
-| Regression boundary | `tests/unit/cost/test_calibration_schema.py` |
-| Regression boundary | `tests/unit/cost/test_proxy_comparison.py` |
-| Parent dependency | `docs/plans/2026-04-21-issue-334-annual-operator-disclosures-dataset.md` |
-
----
+## Exact revised plan sections under review
 
 ## Deliverable
 
@@ -73,8 +60,7 @@ A derived-only linkage contract in `worldenergydata.cost.data_collection.linkage
 
 ### Dependency boundary
 - This issue depends on #334 landing the disclosure-side schema/loader surface first.
-- #335 defines the sanction-side primitive linkage helper/result contract and the disclosure-side linkage invariants that future consumers must respect.
-- Callers must gate through #334 disclosure-side scope logic before invoking the sanction-side resolver; #335 does not make the public API itself scope-aware.
+- #335 defines the sanction-side linkage helper/result contract and the disclosure-side linkage invariants that future consumers must respect.
 - #335 must not attempt to implement the disclosure schema itself.
 
 ---
@@ -113,8 +99,7 @@ function resolve_cost_datapoint_link(operator, project_name, sanctioned_records=
     return AMBIGUOUS result with matched_record=None, matched_count=len(exact_candidates), candidates=exact_candidates
 
 function disclosure_row_is_linkable(scope_type):
-    # use the actual ScopeType/DisclosureScope enum from #334 once available
-    return scope_type == PROJECT
+    return scope_type == "project"
 ```
 
 ---
@@ -146,10 +131,7 @@ function disclosure_row_is_linkable(scope_type):
 | `test_helper_respects_injected_empty_record_list` | injected empty list does not fall back to loader | `sanctioned_records=[]` | unlinked result |
 | `test_helper_accepts_injected_records_for_testing` | deterministic injectable behavior | custom sanctioned list | valid result |
 | `test_negative_exactness_case_changes_stay_unlinked` | no hidden case/whitespace normalization sneaks in | case/spacing variant names | unlinked result |
-| `test_operator_scope_rows_are_never_linkable` | parent invariant is carried explicitly using the actual #334 scope enum/type | operator-scope row metadata | false / rejected from linkage path |
-| `test_operator_scope_bypass_attempt_does_not_link` | direct resolver usage cannot be treated as a valid operator-scope linkage path by consumer-facing code | operator-scope row routed incorrectly | rejected / false linkage outcome |
-| `test_ambiguous_result_preserves_full_candidate_set` | ambiguous outputs retain full candidate payload, not just counts | duplicated exact key set | full candidate list preserved |
-| `test_none_or_empty_operator_or_project_returns_unlinked` | invalid string inputs fail safely | None/empty operator or project | unlinked result |
+| `test_operator_scope_rows_are_never_linkable` | parent invariant is carried explicitly | operator-scope row metadata | false / rejected from linkage path |
 | `test_data_collection_exports_linkage_contract` | public API exists | import check | names resolve |
 | `test_load_public_dataset_shape_is_unchanged` | sanction dataset loader remains unchanged | current loader | same shape/type semantics |
 
@@ -168,7 +150,6 @@ function disclosure_row_is_linkable(scope_type):
 - [ ] Existing sanction dataset loading behavior remains unchanged
 - [ ] Existing calibration/proxy regression tests still pass unchanged
 - [ ] Plan and comments explicitly state this issue depends on #334 landing first
-- [ ] Plan explicitly states the resolver is a sanction-side primitive and that scope gating remains a caller responsibility inherited from #334
 
 ---
 
@@ -176,7 +157,7 @@ function disclosure_row_is_linkable(scope_type):
 
 - `CostDataPoint` has no stronger stable identifier than domain fields, so ambiguous exact-key collisions cannot be disambiguated here.
 - Exact `(operator, project_name)` may still be fragile for selected seed rows if naming variants exist; alias handling remains future work.
-- `disclosure_row_is_linkable()` is a disclosure-side gate owned conceptually by #334; #335 may reference it in tests/contracts but should not redefine the disclosure schema or take over the public disclosure API.
+- Need to decide whether `disclosure_row_is_linkable()` lives in the linkage module or only in disclosure-side adapter code after #334 lands.
 - If future consumers need stronger keys than `(operator, project_name)`, a later identifier/uniqueness issue will be required.
 
 ---

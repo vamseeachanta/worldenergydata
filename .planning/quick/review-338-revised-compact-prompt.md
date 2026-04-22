@@ -1,51 +1,34 @@
-# Plan for #338: annual disclosure analytics views and consumer integration
+# Adversarial Re-Review Request: Issue #338 (revised compact)
 
-> **Status:** draft
-> **Complexity:** T2
-> **Date:** 2026-04-22
-> **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/338
-> **Review artifacts:** scripts/review/results/2026-04-22-plan-338-codex.md | scripts/review/results/2026-04-22-plan-338-gemini.md
+You are an independent adversarial reviewer. Findings only. Do not praise or restate.
 
----
+Target
+- Repo: vamseeachanta/worldenergydata
+- Issue #338: annual disclosure analytics views and consumer integration
+- Stage: revised draft plan review before any plan-review move
 
-## Resource Intelligence Summary
+What was revised to address prior review findings:
+- grounded FDAS seam explicitly in fdas/api.py and fdas/__init__.py; deferred lower-tertiary mapping/consumption contract; lower-tertiary behavior remains unchanged in this issue; bounded cost-side benchmark behavior to rows already comparable under #336 outputs; aligned files/tests/acceptance criteria with explicit FDAS API seam and no lower-tertiary implementation changes; kept raw schema/ingestion/linkage/currency-methodology out of scope
 
-### Existing repo code
-- `src/worldenergydata/cost/calibration/cost_predictor.py` is the current cost-side consumer of sanctioned data and should remain stable.
-- `src/worldenergydata/cost/__init__.py` exposes cost-side public exports and suggests a cost-adapter pattern rather than schema mutation.
-- `src/worldenergydata/fdas/__init__.py` currently lazy-loads only `economics`, so any FDAS disclosure surface must name the exact `fdas` API seam explicitly.
-- `src/worldenergydata/fdas/api.py` is the actual query-style consumer surface that would need to host any new FDAS disclosure namespace or query object.
-- `src/worldenergydata/lower_tertiary/npv.py` consumes field-oriented economics inputs and cannot safely consume disclosure views without an explicit mapping contract.
-- `tests/unit/cost/test_field_integration.py` and `tests/unit/cost/test_cost_predictor.py` are current integration/regression boundaries.
-- No annual-disclosure module exists in the current checkout yet, so #338 must depend on the raw foundation from #334.
+Review questions
+1. Is the revised plan now sufficiently grounded and bounded for this child issue?
+2. Are files-to-change, tests, and acceptance criteria internally consistent with current repo surfaces?
+3. Any remaining blockers that should prevent moving this plan to plan-review later?
 
-### Documents consulted
-- Issue #338 — derived analytics views and integration surface.
-- Parent issue #334 and approved plan — downstream integration and analytics are explicitly deferred to later work.
+Required output
+- Verdict: APPROVE | MINOR | MAJOR
+- Retrieval adequacy: adequate | insufficient
+- Strengths
+- Findings by severity: critical, high, medium, low
+- Missing tests
+- Scope creep concerns
+- Weakest assumption
+- Most likely implementation failure mode
+- Most likely test gap
+- Future issues suggested
+- Review confidence
 
-### Gaps identified
-- No project annual cost revision view exists.
-- No operator annual capex series view exists.
-- No downstream consumer surface exists for disclosure analytics in cost/fdas/lower_tertiary.
-- No tests define raw-vs-derived separation.
-
----
-
-## Artifact Map
-
-| Artifact | Path |
-|---|---|
-| This plan | `docs/plans/2026-04-22-issue-338-annual-disclosure-analytics-views-and-consumer-integration.md` |
-| Current cost consumer | `src/worldenergydata/cost/calibration/cost_predictor.py` |
-| Current cost public exports | `src/worldenergydata/cost/__init__.py` |
-| Current FDAS export surface | `src/worldenergydata/fdas/__init__.py` |
-| Current FDAS API pattern | `src/worldenergydata/fdas/api.py` |
-| Current lower tertiary economics helper | `src/worldenergydata/lower_tertiary/npv.py` |
-| Current cost integration tests | `tests/unit/cost/test_field_integration.py` |
-| Current cost regression tests | `tests/unit/cost/test_cost_predictor.py` |
-| Package-level API regression | `tests/test_query_api.py` |
-
----
+## Exact revised plan sections under review
 
 ## Deliverable
 
@@ -115,7 +98,7 @@ lower_tertiary integration:
 | Create | `tests/unit/cost/test_disclosure_analytics.py` | unit tests for derived view construction and raw-vs-derived separation |
 | Modify | `tests/unit/cost/test_field_integration.py` | integration-style tests for cost-side consumer access |
 | Create | `tests/unit/fdas/test_disclosure_api.py` | FDAS integration/export tests |
-| Modify | `tests/test_query_api.py` | package-level FDAS API/export regression for the new public disclosure namespace |
+| Modify if needed | `tests/test_query_api.py` | package-level FDAS API/export regression if disclosure namespace is public there |
 | Do not change in this issue | `src/worldenergydata/lower_tertiary/npv.py` | lower-tertiary consumption deferred until mapping contract exists |
 
 ---
@@ -132,7 +115,6 @@ lower_tertiary integration:
 | `test_raw_records_are_not_mutated_by_view_generation` | raw-vs-derived separation | raw dataset | unchanged raw rows |
 | `test_cost_consumer_can_compare_predictor_output_to_latest_disclosed_capex_when_rows_are_comparable` | cost-side consumer hook works only on same-basis comparable rows | revision view + predictor input | comparison payload |
 | `test_cost_consumer_refuses_mixed_basis_or_non_comparable_rows` | #338 does not steal comparability policy from #336 | non-comparable rows | no benchmark payload |
-| `test_cost_consumer_refuses_rows_with_missing_comparability_metadata` | benchmark hook needs explicit comparable/not-comparable inputs from #336 | insufficient metadata row | no benchmark payload |
 | `test_fdas_exposes_disclosure_analytics_namespace` | FDAS lazy export surface works | package import | namespace/query resolves |
 | `test_fdas_query_object_returns_project_revision_view` | FDAS API seam is explicit and grounded | FDAS disclosure query object | project view |
 | `test_fdas_query_object_returns_operator_capex_view` | FDAS API seam is explicit and grounded | FDAS disclosure query object | operator view |
@@ -145,7 +127,7 @@ lower_tertiary integration:
 - [ ] Derived layer provides a project annual cost revision view
 - [ ] Derived layer provides an operator annual capex series view
 - [ ] Cost-side consumer hook can use project revision view only when rows are already comparable under #336 outputs, without changing `CostDataPoint` semantics
-- [ ] FDAS exposes a consumer-facing disclosure analytics surface through an explicitly grounded API/export pattern (`fdas/api.py` + `fdas/__init__.py`) and package-level query API regression is covered in `tests/test_query_api.py`
+- [ ] FDAS exposes a consumer-facing disclosure analytics surface through an explicitly grounded API/export pattern (`fdas/api.py` + `fdas/__init__.py`)
 - [ ] Lower-tertiary direct consumption is explicitly deferred, and existing lower-tertiary behavior remains unchanged in this issue
 - [ ] Tests prove raw-vs-derived separation and unchanged non-disclosure workflows
 - [ ] #338 does not redefine raw schema, ingestion rules, linkage rules, currency methodology, or lower-tertiary mapping contracts from prior/sibling issues
