@@ -1,0 +1,364 @@
+OpenAI Codex v0.122.0 (research preview)
+--------
+workdir: /mnt/local-analysis/workspace-hub/worldenergydata
+model: gpt-5.4
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR, /home/vamsee/.codex/memories]
+reasoning effort: medium
+reasoning summaries: none
+session id: 019db57a-6a94-7881-add6-d3f25f6a7f9e
+--------
+user
+# Adversarial Plan Review Request: Issue #336
+
+You are an independent adversarial reviewer. Findings only. Do not praise or restate.
+
+Target
+- Repo: vamseeachanta/worldenergydata
+- Issue #336: currency normalization and comparability policy for annual disclosures
+- Stage: draft canonical plan review before any approval-stage move
+
+Review questions
+1. Is the plan correctly grounded in the current repo surfaces named in the plan?
+2. Is scope properly bounded for this child issue, without stealing work from sibling issues?
+3. Are the files-to-change, tests, and acceptance criteria internally consistent?
+4. Are there any hidden blockers, missing tests, or likely failure modes that should block plan-review?
+
+Required output
+- Verdict: APPROVE | MINOR | MAJOR
+- Retrieval adequacy: adequate | insufficient
+- Strengths
+- Findings by severity: critical, high, medium, low
+- Missing tests
+- Scope creep concerns
+- Weakest assumption
+- Most likely implementation failure mode
+- Most likely test gap
+- Future issues suggested
+- Review confidence
+
+## Exact plan sections under review
+
+## Deliverable
+
+An additive annual-disclosure normalization/comparability contract that preserves original amount/currency/unit fields unchanged, emits separate normalized comparable money fields when policy prerequisites are satisfied, and leaves the existing sanctioned-project dataset and downstream field-cost integrations unchanged.
+
+---
+
+## Scope Boundaries
+
+### In scope now
+- Define normalization policy for annual disclosure monetary rows
+- Preserve original as-reported values alongside normalized comparable values
+- Define minimum metadata for comparability: currency, amount, scale, fiscal year, normalization method/version
+- Add deterministic utility/view behavior for normalization and comparability
+- Add focused tests proving reproducible normalization and explicit non-comparable outcomes
+
+### Explicitly out of scope for this issue
+- Changing meaning of `CostDataPoint.cost_usd_mm`
+- Rewriting sanctioned public dataset into mixed sanction/disclosure store
+- Broad automated FX ingestion or live rate pipelines
+- Dashboards, benchmark products, or consumer redesign
+- Linkage-model redesign from #335
+
+---
+
+## Pseudocode
+
+```text
+function normalize_disclosure_money(record):
+    preserve raw amount/currency/unit fields unchanged
+    if missing required comparability inputs:
+        return not_comparable result with normalized fields None
+    usd_nominal = convert reported amount using deterministic FX policy for fiscal year
+    usd_base_year = adjust to base year using deterministic policy
+    return record + normalized_amount, normalized_currency, normalized_base_year, normalization_method, comparability_status
+
+function load_normalized_annual_disclosures():
+    raw = load annual disclosure records from #334
+    return [normalize_disclosure_money(r) for r in raw]
+```
+
+---
+
+## Files to Change
+
+| Action | Path | Reason |
+|---|---|---|
+| Modify | `src/worldenergydata/cost/data_collection/__init__.py` | export normalization/comparability surface |
+| Add/modify | `src/worldenergydata/cost/data_collection/` | host annual-disclosure normalization schema/utility/view beside disclosure layer |
+| Avoid/minimal | `src/worldenergydata/cost/data_collection/public_dataset.py` | sanctioned as-reported dataset should remain unchanged |
+| Avoid/minimal | `src/worldenergydata/cost/calibration/cost_predictor.py` | reuse as policy precedent, not main implementation home |
+| Add tests | `tests/unit/cost/` | normalization/comparability tests |
+| Verify only | `tests/unit/cost/test_dataset_size.py` | sanctioned dataset unchanged |
+| Verify only | `tests/unit/cost/test_field_integration.py` | downstream behavior unchanged |
+
+---
+
+## TDD Test List
+
+| Test name | What it verifies | Expected input | Expected output |
+|---|---|---|---|
+| `test_as_reported_values_are_preserved_after_normalization` | raw values are untouched | comparable disclosure row | raw preserved |
+| `test_normalized_value_is_stored_in_separate_fields` | additive comparable layer only | comparable disclosure row | normalized fields populated separately |
+| `test_same_input_produces_same_normalized_output` | deterministic behavior | repeated same row | same normalized output |
+| `test_normalization_method_metadata_is_recorded` | comparable output is auditable | comparable row | method/base year present |
+| `test_missing_currency_marks_record_not_comparable` | incomplete row stays valid but unnormalized | row missing currency | not comparable |
+| `test_missing_fiscal_year_marks_record_not_comparable` | no silent year assumptions | row missing fiscal_year | not comparable |
+| `test_scale_is_applied_before_normalization` | million/billion scale handled explicitly | scaled row | expected normalized amount |
+| `test_cross_currency_rows_can_be_compared_when_policy_inputs_exist` | policy can compare currencies deterministically | two rows different currencies | comparable normalized outputs |
+| `test_existing_public_dataset_loader_behavior_is_unchanged` | sanctioned dataset unaffected | current loader | unchanged |
+
+---
+
+## Acceptance Criteria
+
+- [ ] Normalization is additive, not destructive of as-reported values
+- [ ] Every normalized record preserves original amount/currency/unit fields
+- [ ] Comparable outputs use separate named normalized fields and include method metadata
+- [ ] Missing policy inputs produce explicit non-comparable rows rather than silent coercion
+- [ ] Existing sanctioned dataset tests still pass without weakened assertions
+- [ ] Existing field integration behavior remains unchanged
+
+---
+
+## Risks and Open Questions
+
+- #336 depends on #334 disclosure schema/loader being present first.
+- Need explicit decision on whether normalization adopts the same 2020 base year / 3% escalation rule as `cost_predictor.py` or a separately versioned rule.
+- Need deterministic baseline FX source/table location for v1.
+- Must avoid drifting into metric-comparability or dashboard logic.
+
+---
+
+## Complexity: T2
+
+**T2** — bounded schema/policy/test work if implemented as an additive layer isolated from the existing sanction calibration path.
+warning: Codex's Linux sandbox uses bubblewrap and needs access to create user namespaces.
+codex
+Reviewing the current cost/disclosure surfaces first so I can test whether this plan matches the repo as it exists, then I’ll check the proposed tests and boundaries against those surfaces.
+exec
+/bin/bash -lc "rg --files src/worldenergydata tests | rg 'cost|disclosure|public_dataset|cost_predictor|dataset_size|field_integration'" in /mnt/local-analysis/workspace-hub/worldenergydata
+exec
+/bin/bash -lc 'git status --short' in /mnt/local-analysis/workspace-hub/worldenergydata
+ exited 1 in 3478ms:
+bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted
+
+ exited 1 in 3451ms:
+bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted
+
+codex
+I’m locating the actual modules and tests the plan names. If those paths or contracts do not exist yet, that alone can block approval.
+codex
+The shell wrapper tripped over the sandbox networking setup, so I’m rerunning the repo inspection with a plain non-login shell.
+exec
+/bin/bash -c "rg --files src/worldenergydata tests | rg 'cost|disclosure|public_dataset|cost_predictor|dataset_size|field_integration'" in /mnt/local-analysis/workspace-hub/worldenergydata
+exec
+/bin/bash -c 'git status --short' in /mnt/local-analysis/workspace-hub/worldenergydata
+ exited 1 in 2901ms:
+bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted
+
+ exited 1 in 2897ms:
+bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted
+
+codex
+I’m switching to the Node REPL to inspect the filesystem directly instead of the shell wrapper. Next step is to confirm whether the named cost modules and tests exist at all.
+exec
+js_repl in /mnt/local-analysis/workspace-hub/worldenergydata
+2026-04-22T13:57:11.859817Z ERROR codex_core::tools::router: error=js_repl kernel exited unexpectedly
+
+js_repl diagnostics: {"reason":"stdout_eof","stream_error":null,"kernel_pid":861708,"kernel_status":"exited(code=1)","kernel_stderr_tail":"bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted"}
+ exited 1 in 310ms:
+js_repl kernel exited unexpectedly
+
+js_repl diagnostics: {"reason":"stdout_eof","stream_error":null,"kernel_pid":861708,"kernel_status":"exited(code=1)","kernel_stderr_tail":"bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted"}
+codex
+Local execution is blocked by the sandbox wrapper, so I’m validating against the GitHub repo surfaces directly instead. That’s enough for a draft plan review if the repo view is complete.
+mcp: codex_apps/github_search_installed_repositories_v2 started
+mcp: codex_apps/github_search_installed_repositories_v2 (completed)
+mcp: codex_apps/github_search_repositories started
+mcp: codex_apps/github_search_repositories (completed)
+mcp: codex_apps/github_list_repositories started
+mcp: codex_apps/github_list_repositories (completed)
+mcp: codex_apps/github_get_user_login started
+mcp: codex_apps/github_get_user_login (completed)
+mcp: codex_apps/github_fetch_issue started
+mcp: codex_apps/github_fetch_issue (completed)
+mcp: codex_apps/github_search started
+mcp: codex_apps/github_search (completed)
+mcp: codex_apps/github_search started
+mcp: codex_apps/github_search (completed)
+codex
+The repo search is already showing a mismatch: most hits are planning artifacts, not implementation surfaces. I’m drilling into exact file paths now to see which proposed paths are real and which are speculative.
+mcp: codex_apps/github_search started
+mcp: codex_apps/github_search (completed)
+mcp: codex_apps/github_search started
+mcp: codex_apps/github_search (completed)
+mcp: codex_apps/github_search started
+mcp: codex_apps/github_search (completed)
+mcp: codex_apps/github_search started
+mcp: codex_apps/github_search (completed)
+mcp: codex_apps/github_search started
+mcp: codex_apps/github_search (completed)
+mcp: codex_apps/github_search started
+mcp: codex_apps/github_search (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_search started
+mcp: codex_apps/github_search (completed)
+mcp: codex_apps/github_search started
+mcp: codex_apps/github_search (completed)
+mcp: codex_apps/github_search started
+mcp: codex_apps/github_search (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+codex
+I have enough repo context to judge grounding. One more pass: checking the sibling issues and whether this plan is still trying to test or change surfaces that parent/siblings own.
+mcp: codex_apps/github_fetch_issue started
+mcp: codex_apps/github_fetch_issue (completed)
+mcp: codex_apps/github_fetch_issue started
+mcp: codex_apps/github_fetch_issue (completed)
+mcp: codex_apps/github_fetch_issue started
+mcp: codex_apps/github_fetch_issue (completed)
+codex
+Verdict: MAJOR
+
+Retrieval adequacy: adequate
+
+Strengths
+- The plan keeps `CostDataPoint.cost_usd_mm` and the sanctioned dataset nominally out of scope, which matches the current separation between `src/worldenergydata/cost/data_collection/public_dataset.py` and `src/worldenergydata/cost/calibration/cost_predictor.py`.
+- The additive-field direction is compatible with the current `data_collection` package export pattern in `src/worldenergydata/cost/data_collection/__init__.py`.
+
+Findings by severity
+
+Critical
+- The plan is not implementable as written because its core policy inputs are still undecided. Pseudocode requires a deterministic fiscal-year FX rule, a base year, and a normalization method/version, but the “Risks and Open Questions” section still leaves both the base-year/escalation rule and the FX table/source unresolved. This blocks TDD because expected normalized outputs cannot be fixed.
+- The plan steals work from sibling issue `#335`. `#335` explicitly owns the linkage/matching contract between disclosure records and `CostDataPoint`, including representation of unmatched relationships. This plan’s “deterministic utility/view behavior” and cross-record comparability contract implicitly depend on approved disclosure-row linkage semantics, but those semantics are not yet settled upstream.
+- The acceptance/test story assumes repo surfaces that do not currently exist. The repo currently has `tests/unit/cost/test_calibration_schema.py` and `tests/unit/cost/test_cost_predictor.py`; the plan names `tests/unit/cost/test_dataset_size.py` and `tests/unit/cost/test_field_integration.py`, which are absent. “Verify only” against nonexistent tests is not a valid approval surface.
+
+High
+- The files-to-change section is under-specified relative to the actual parent design. Parent plan `docs/plans/2026-04-21-issue-334-annual-operator-disclosures-dataset.md` introduces `operator_disclosures_schema.py` and `operator_disclosures_dataset.py`, but this child plan only says “Add/modify `src/worldenergydata/cost/data_collection/`”. That is not grounded enough to review impact or avoid overlap with `#334`.
+- “Existing field integration behavior remains unchanged” is not grounded in current repo reality. Parent planning explicitly says no real disclosure-layer consumer exists yet, and sibling `#338` owns downstream analytics/integration. This acceptance criterion is therefore untestable or scope-creeping.
+- The plan says “load annual disclosure records from #334” but does not identify whether normalization is applied in the dataset loader, a derived view, or a separate utility. That matters because `#334` is foundation-only and `#338` owns consumer-facing derived views. Without a precise home, this can bleed into sibling work.
+
+Medium
+- The plan’s preservation contract is incomplete. It says preserve original amount/currency/unit fields, but parent `#334` also introduced `magnitude_scale` and `as_reported_metric_name`. The normalization plan only tests “scale” indirectly and does not require preservation of the original metric label, so it risks dropping parent-layer provenance/context.
+- “test_cross_currency_rows_can_be_compared_when_policy_inputs_exist” is too weak. It proves only that two outputs exist, not that same-year/same-source normalization is comparable under the chosen policy version and that mixed missing-input rows are explicitly excluded.
+- The plan never addresses same-currency non-comparability cases, such as missing scale, missing unit, unsupported currency code, duplicate/restated fiscal-year rows, or records where fiscal year exists but the FX table does not cover that year.
+- The plan references `cost_predictor.py` as precedent. That file’s 2020/3% rule is a training-time simplification for sanctioned USD records, not a disclosure normalization contract. Reusing it without an explicit reason risks importing a model-training heuristic into a disclosure-policy layer.
+
+Low
+- “normalization_method/version” is mentioned in scope, but the files/tests do not require a machine-readable versioned policy object or enum.
+- The plan does not say whether normalized output is per-row only or whether any batch/view-level guarantees exist for reproducibility across load order and duplicate rows.
+
+Missing tests
+- Unsupported or unknown currency code returns explicit non-comparable status.
+- Missing or unknown `magnitude_scale` returns non-comparable status.
+- Missing or incompatible unit returns non-comparable status.
+- Fiscal year outside supported FX table range returns non-comparable status.
+- Same-currency, same-scale rows normalize without FX conversion but still record method/version.
+- Restated/duplicate disclosure rows are either rejected or explicitly deferred rather than silently normalized twice.
+- Parent-field preservation includes `as_reported_metric_name` and any parent provenance fields, not just amount/currency/unit.
+- Public exports are updated correctly once, without changing `worldenergydata.cost` package-root API.
+- Sanctioned dataset regression should target current existing tests, not nonexistent `test_dataset_size.py` / `test_field_integration.py`.
+
+Scope creep concerns
+- Any linkage representation, ambiguous-match handling, or unmatched-row semantics belong to `#335`.
+- Any consumer-facing “view” that promises downstream behavior belongs to `#338`.
+- Any provenance-rule expansion beyond what `#334` already defines trends into `#337`.
+- Reusing or modifying `cost_predictor.py` policy would broaden this issue into calibration-model behavior.
+
+Weakest assumption
+- That a deterministic normalization contract can be approved before the repo has fixed v1 decisions for FX table source, year coverage, and base-year/escalation policy.
+
+Most likely implementation failure mode
+- Implementing normalization against ad hoc constants borrowed from `cost_predictor.py`, then later finding the chosen FX/base-year policy conflicts with the disclosure-layer contract and forces schema/test churn.
+
+Most likely test gap
+- Tests passing on a happy-path comparable row while silently accepting unsupported currencies, missing scale/unit, or uncovered fiscal years as comparable.
+
+Future issues suggested
+- Narrow issue for selecting and versioning the v1 FX table/source and year coverage policy.
+- Narrow issue for disclosure restatement/duplicate-row handling, unless that is explicitly folded into `#337`.
+- Narrow issue for defining normalized field names and package export surface precisely once `#334` lands.
+
+Review confidence
+- High on repo-grounding and scope-boundary findings.
+- Medium on parent-child dependency timing because `#334` artifacts are planned but not yet present on `main`.
+tokens used
+83,840
+Verdict: MAJOR
+
+Retrieval adequacy: adequate
+
+Strengths
+- The plan keeps `CostDataPoint.cost_usd_mm` and the sanctioned dataset nominally out of scope, which matches the current separation between `src/worldenergydata/cost/data_collection/public_dataset.py` and `src/worldenergydata/cost/calibration/cost_predictor.py`.
+- The additive-field direction is compatible with the current `data_collection` package export pattern in `src/worldenergydata/cost/data_collection/__init__.py`.
+
+Findings by severity
+
+Critical
+- The plan is not implementable as written because its core policy inputs are still undecided. Pseudocode requires a deterministic fiscal-year FX rule, a base year, and a normalization method/version, but the “Risks and Open Questions” section still leaves both the base-year/escalation rule and the FX table/source unresolved. This blocks TDD because expected normalized outputs cannot be fixed.
+- The plan steals work from sibling issue `#335`. `#335` explicitly owns the linkage/matching contract between disclosure records and `CostDataPoint`, including representation of unmatched relationships. This plan’s “deterministic utility/view behavior” and cross-record comparability contract implicitly depend on approved disclosure-row linkage semantics, but those semantics are not yet settled upstream.
+- The acceptance/test story assumes repo surfaces that do not currently exist. The repo currently has `tests/unit/cost/test_calibration_schema.py` and `tests/unit/cost/test_cost_predictor.py`; the plan names `tests/unit/cost/test_dataset_size.py` and `tests/unit/cost/test_field_integration.py`, which are absent. “Verify only” against nonexistent tests is not a valid approval surface.
+
+High
+- The files-to-change section is under-specified relative to the actual parent design. Parent plan `docs/plans/2026-04-21-issue-334-annual-operator-disclosures-dataset.md` introduces `operator_disclosures_schema.py` and `operator_disclosures_dataset.py`, but this child plan only says “Add/modify `src/worldenergydata/cost/data_collection/`”. That is not grounded enough to review impact or avoid overlap with `#334`.
+- “Existing field integration behavior remains unchanged” is not grounded in current repo reality. Parent planning explicitly says no real disclosure-layer consumer exists yet, and sibling `#338` owns downstream analytics/integration. This acceptance criterion is therefore untestable or scope-creeping.
+- The plan says “load annual disclosure records from #334” but does not identify whether normalization is applied in the dataset loader, a derived view, or a separate utility. That matters because `#334` is foundation-only and `#338` owns consumer-facing derived views. Without a precise home, this can bleed into sibling work.
+
+Medium
+- The plan’s preservation contract is incomplete. It says preserve original amount/currency/unit fields, but parent `#334` also introduced `magnitude_scale` and `as_reported_metric_name`. The normalization plan only tests “scale” indirectly and does not require preservation of the original metric label, so it risks dropping parent-layer provenance/context.
+- “test_cross_currency_rows_can_be_compared_when_policy_inputs_exist” is too weak. It proves only that two outputs exist, not that same-year/same-source normalization is comparable under the chosen policy version and that mixed missing-input rows are explicitly excluded.
+- The plan never addresses same-currency non-comparability cases, such as missing scale, missing unit, unsupported currency code, duplicate/restated fiscal-year rows, or records where fiscal year exists but the FX table does not cover that year.
+- The plan references `cost_predictor.py` as precedent. That file’s 2020/3% rule is a training-time simplification for sanctioned USD records, not a disclosure normalization contract. Reusing it without an explicit reason risks importing a model-training heuristic into a disclosure-policy layer.
+
+Low
+- “normalization_method/version” is mentioned in scope, but the files/tests do not require a machine-readable versioned policy object or enum.
+- The plan does not say whether normalized output is per-row only or whether any batch/view-level guarantees exist for reproducibility across load order and duplicate rows.
+
+Missing tests
+- Unsupported or unknown currency code returns explicit non-comparable status.
+- Missing or unknown `magnitude_scale` returns non-comparable status.
+- Missing or incompatible unit returns non-comparable status.
+- Fiscal year outside supported FX table range returns non-comparable status.
+- Same-currency, same-scale rows normalize without FX conversion but still record method/version.
+- Restated/duplicate disclosure rows are either rejected or explicitly deferred rather than silently normalized twice.
+- Parent-field preservation includes `as_reported_metric_name` and any parent provenance fields, not just amount/currency/unit.
+- Public exports are updated correctly once, without changing `worldenergydata.cost` package-root API.
+- Sanctioned dataset regression should target current existing tests, not nonexistent `test_dataset_size.py` / `test_field_integration.py`.
+
+Scope creep concerns
+- Any linkage representation, ambiguous-match handling, or unmatched-row semantics belong to `#335`.
+- Any consumer-facing “view” that promises downstream behavior belongs to `#338`.
+- Any provenance-rule expansion beyond what `#334` already defines trends into `#337`.
+- Reusing or modifying `cost_predictor.py` policy would broaden this issue into calibration-model behavior.
+
+Weakest assumption
+- That a deterministic normalization contract can be approved before the repo has fixed v1 decisions for FX table source, year coverage, and base-year/escalation policy.
+
+Most likely implementation failure mode
+- Implementing normalization against ad hoc constants borrowed from `cost_predictor.py`, then later finding the chosen FX/base-year policy conflicts with the disclosure-layer contract and forces schema/test churn.
+
+Most likely test gap
+- Tests passing on a happy-path comparable row while silently accepting unsupported currencies, missing scale/unit, or uncovered fiscal years as comparable.
+
+Future issues suggested
+- Narrow issue for selecting and versioning the v1 FX table/source and year coverage policy.
+- Narrow issue for disclosure restatement/duplicate-row handling, unless that is explicitly folded into `#337`.
+- Narrow issue for defining normalized field names and package export surface precisely once `#334` lands.
+
+Review confidence
+- High on repo-grounding and scope-boundary findings.
+- Medium on parent-child dependency timing because `#334` artifacts are planned but not yet present on `main`.

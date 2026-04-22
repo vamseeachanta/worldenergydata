@@ -1,0 +1,302 @@
+OpenAI Codex v0.122.0 (research preview)
+--------
+workdir: /mnt/local-analysis/workspace-hub/worldenergydata
+model: gpt-5.4
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR, /home/vamsee/.codex/memories]
+reasoning effort: medium
+reasoning summaries: none
+session id: 019db57b-9dc0-72f0-bb5c-5abbcd250f2f
+--------
+user
+# Adversarial Plan Review Request: Issue #337
+
+You are an independent adversarial reviewer. Findings only. Do not praise or restate.
+
+Target
+- Repo: vamseeachanta/worldenergydata
+- Issue #337: citation quality and automated ingestion contracts for annual disclosures
+- Stage: draft canonical plan review before any approval-stage move
+
+Review questions
+1. Is the plan correctly grounded in the current repo surfaces named in the plan?
+2. Is scope properly bounded for this child issue, without stealing work from sibling issues?
+3. Are the files-to-change, tests, and acceptance criteria internally consistent?
+4. Are there any hidden blockers, missing tests, or likely failure modes that should block plan-review?
+
+Required output
+- Verdict: APPROVE | MINOR | MAJOR
+- Retrieval adequacy: adequate | insufficient
+- Strengths
+- Findings by severity: critical, high, medium, low
+- Missing tests
+- Scope creep concerns
+- Weakest assumption
+- Most likely implementation failure mode
+- Most likely test gap
+- Future issues suggested
+- Review confidence
+
+## Exact plan sections under review
+
+## Deliverable
+
+A contract-first enhancement in `worldenergydata.cost.data_collection` that standardizes row-level citation/provenance requirements and defines a future annual-disclosure ingestion contract, including validation outcomes and duplicate/conflict handling, without implementing automated ingestion itself.
+
+---
+
+## Scope Boundaries
+
+### In scope now
+- Define minimum row-level citation requirements
+- Define source-priority hierarchy for future ingest
+- Define ingest-contract rules for required fields, validation outcomes, duplicate detection key, and conflict behavior
+- Add tests for citation completeness and failure modes
+- Keep work inside `cost.data_collection`
+
+### Explicitly out of scope for this issue
+- Scraper/parser/SEC/XBRL implementation
+- Broad dataset backfill
+- Downstream analytics or economics integration
+- Currency normalization or linkage redesign
+- Package-root API expansion
+
+---
+
+## Pseudocode
+
+```text
+function validate_citation(row):
+    require source_title
+    require source_url
+    require page_reference
+    require quoted_text
+    require confidence
+    require absolute source_url
+    return validated row
+
+function ingestion_business_key(row):
+    return (operator, fiscal_year, scope, normalized_metric_name, optional project_name)
+
+function classify_ingest(existing_rows, new_row):
+    if same business_key and same value/citation payload: duplicate
+    elif same business_key and different value/citation payload: conflict
+    else: new
+
+function ingest_contract(raw_rows):
+    validate required disclosure fields
+    validate citation contract
+    partition rows into accepted, duplicate, conflict, invalid
+```
+
+---
+
+## Files to Change
+
+| Action | Path | Reason |
+|---|---|---|
+| Modify | `src/worldenergydata/cost/data_collection/calibration_schema.py` | add or host reusable provenance/citation validators and ingest-contract primitives |
+| Modify | `src/worldenergydata/cost/data_collection/public_dataset.py` | align representative source rows/docs with stricter provenance contract if needed |
+| Modify | `src/worldenergydata/cost/data_collection/__init__.py` | export new contract primitives from existing boundary |
+| Modify | `tests/unit/cost/test_calibration_schema.py` | validator tests for citation completeness and failures |
+| Modify | `tests/unit/cost/test_dataset_size.py` | dataset-level provenance and duplicate/conflict guardrails |
+
+---
+
+## TDD Test List
+
+| Test name | What it verifies | Expected input | Expected output |
+|---|---|---|---|
+| `test_source_string_alone_is_not_enough_for_disclosure_ingest_contract` | freeform provenance is insufficient | legacy-like row | validation failure |
+| `test_citation_contract_requires_title_url_page_quote_and_confidence` | minimum citation fields are mandatory | missing fields | validation failure |
+| `test_citation_contract_rejects_blank_fields` | whitespace-only values fail | blank citation values | validation failure |
+| `test_citation_contract_requires_absolute_source_url` | malformed URLs fail | relative/invalid URL | validation failure |
+| `test_confidence_must_use_declared_enum` | confidence stays typed | invalid confidence | validation failure |
+| `test_source_priority_values_are_explicit_and_ordered` | ingest can reason about preferred source classes | priority enum/order | deterministic contract |
+| `test_duplicate_detection_returns_duplicate_for_identical_payload` | exact duplicates are recognized | same business key + same payload | duplicate |
+| `test_conflict_detection_returns_conflict_for_same_business_key_different_value` | conflicting values surface | same key, different value | conflict |
+| `test_conflict_detection_returns_conflict_for_same_business_key_different_citation` | citation disagreement surfaces | same key, different citation | conflict |
+| `test_ingest_contract_returns_partitioned_result_sets` | ingest outcome is structured | mixed rows | accepted/duplicate/conflict/invalid |
+
+---
+
+## Acceptance Criteria
+
+- [ ] Reusable citation/provenance contract exists in `worldenergydata.cost.data_collection`
+- [ ] Contract requires row-level `source_title`, `source_url`, `page_reference`, `quoted_text`, and `confidence`
+- [ ] Source-priority hierarchy is explicitly defined
+- [ ] Duplicate and conflict handling behavior is explicitly defined and unit-tested
+- [ ] Tests cover both success and rejection cases for citation validation
+- [ ] Existing sanction-dataset tests continue to pass unchanged
+- [ ] Work remains contract-definition only; no automation implementation is added
+
+---
+
+## Risks and Open Questions
+
+- Current repo only has freeform `source`, so there is a schema-shape gap to bridge carefully.
+- Need to decide whether citation validators belong directly on current cost schema objects or a disclosure-specific contract.
+- Duplicate business keys depend on annual-disclosure fields that do not yet exist in current code, so this issue must stay contract-first.
+
+---
+
+## Complexity: T2
+
+**T2** — moderate because file count is small but the contract must be precise enough to support later automation without accidentally implementing it now.
+warning: Codex's Linux sandbox uses bubblewrap and needs access to create user namespaces.
+codex
+I’m checking the current `cost.data_collection` surfaces and related tests to see whether this plan is grounded, bounded, and internally consistent before evaluating the failure modes.
+codex
+The shell wrapper is failing in this sandbox, so I’m retrying with a non-login shell to inspect the repo surfaces directly.
+codex
+I’m switching to the GitHub repo connector since local shell access is blocked; that’s enough to verify whether the plan matches the current code and test surfaces.
+mcp: codex_apps/github_search started
+mcp: codex_apps/github_search (completed)
+mcp: codex_apps/github_search started
+mcp: codex_apps/github_search (completed)
+mcp: codex_apps/github_get_repo started
+mcp: codex_apps/github_get_repo (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+codex
+I’ve confirmed the cited files exist. Now I’m checking adjacent plan and issue surfaces to see whether this child issue is trying to define contracts that belong to a sibling or parent deliverable instead.
+mcp: codex_apps/github_search started
+mcp: codex_apps/github_search (completed)
+mcp: codex_apps/github_search started
+mcp: codex_apps/github_search (completed)
+mcp: codex_apps/github_search_issues started
+mcp: codex_apps/github_search_issues (completed)
+mcp: codex_apps/github_fetch_issue started
+mcp: codex_apps/github_fetch_issue (completed)
+mcp: codex_apps/github_fetch_issue started
+mcp: codex_apps/github_fetch_issue (completed)
+mcp: codex_apps/github_fetch_issue started
+mcp: codex_apps/github_fetch_issue (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+codex
+Verdict: MAJOR  
+Retrieval adequacy: adequate
+
+Strengths
+- The plan correctly recognizes the current schema gap: annual-disclosure contracts need row-level provenance fields that do not exist in the current sanction-point `CostDataPoint` surface.
+- The plan keeps automation implementation itself out of scope and frames duplicate/conflict handling as contract-only work.
+
+Findings by severity
+
+Critical
+- The proposed implementation surface is mis-grounded in current repo files. `src/worldenergydata/cost/data_collection/calibration_schema.py` and `src/worldenergydata/cost/data_collection/public_dataset.py` are sanction-point artifacts built around `CostDataPoint(project_name, year_sanction, source, confidence, ...)`, not annual disclosure records with `fiscal_year`, `scope`, `normalized_metric_name`, `source_title`, `source_url`, `page_reference`, and `quoted_text`. The plan’s own pseudocode depends on fields that do not exist on the named target model. This should not pass plan review unless it either targets the disclosure-layer files from `#334` or explicitly creates disclosure-specific contract surfaces.
+- The plan steals parent/sibling work. Parent `#334` already includes “minimum row-level provenance and citation rules” in the disclosure schema and seed dataset. This child plan redefines core row-level provenance inside current sanction-dataset files instead of building on the disclosure-layer boundary. That is overlap with `#334`, not a bounded child follow-up.
+- The plan’s file list and acceptance criteria are internally inconsistent with its own scope. It says “annual disclosures” and “future ingest contract,” but its only listed data file change is `public_dataset.py`, which is the existing sanctioned-project dataset. No disclosure-specific schema/dataset/test file is named, so there is no concrete surface where annual-disclosure ingest contracts would live.
+
+High
+- `tests/unit/cost/test_dataset_size.py` is the wrong test surface for “dataset-level provenance and duplicate/conflict guardrails.” That file currently enforces size, regional coverage, year span, HPHT presence, and confidence distribution for the sanction dataset. Adding annual-disclosure duplicate/conflict semantics there would couple unrelated datasets and create false failures as the sanction corpus evolves.
+- “Modify `public_dataset.py` to align representative source rows/docs with stricter provenance contract if needed” is scope creep into broad backfill. The current dataset has a single freeform `source` string across many records. Converting even representative rows to a row-level structured citation contract inside the sanction dataset is not a narrow annual-disclosure contract task.
+- The duplicate key in pseudocode uses `fiscal_year`, `scope`, and `normalized_metric_name`, but the plan does not identify any schema object or fixture source that will supply those fields. Without the disclosure schema from `#334`, duplicate/conflict tests are synthetic-only and disconnected from the intended repo surface.
+
+Medium
+- The source-priority hierarchy is underspecified. The plan says priority must be “explicit and ordered,” but no acceptance criterion says how that ordering affects duplicate/conflict classification, invalidation, or tie-breaking. That makes the hierarchy easy to add as an enum and impossible to validate meaningfully.
+- The plan exports new primitives through `src/worldenergydata/cost/data_collection/__init__.py`, but it never defines whether those primitives are disclosure-specific or generic. If they are generic, they risk contaminating the sanction-point boundary; if disclosure-specific, the missing disclosure module/file list becomes a blocker.
+- “Existing sanction-dataset tests continue to pass unchanged” conflicts with the proposed willingness to modify sanction dataset rows/docs. If the sanction schema remains unchanged, disclosure citation requirements cannot be enforced there; if the sanction schema changes, unchanged tests are not a meaningful acceptance signal.
+
+Low
+- The plan does not specify whether `page_reference` must support non-page locators used in web-native disclosures, appendices, or tables. That omission may force a brittle validator.
+- “absolute source_url” is too vague without scheme restrictions. `mailto:` and other absolute URIs are technically absolute but not valid source documents.
+
+Missing tests
+- A positive-path test for a valid disclosure row satisfying the full citation contract.
+- A test proving sanction-point `CostDataPoint` records remain valid and unaffected if this issue is truly bounded away from sanction-schema redesign.
+- A test defining how source-priority ordering changes behavior when two rows with the same business key conflict.
+- A test covering duplicate classification when non-key metadata differs but value/citation payload is identical.
+- A test for invalid partition reasons or error payload shape from `ingest_contract`, not just bucket membership.
+
+Scope creep concerns
+- Reworking `public_dataset.py` provenance beyond documentation/examples is parent-level or separate migration work.
+- Putting annual-disclosure ingest rules into `calibration_schema.py` mixes disclosure-layer concerns into the sanction-point calibration model.
+- Using `test_dataset_size.py` for disclosure guardrails expands this child issue into sanction-dataset governance.
+
+Weakest assumption
+- That annual-disclosure citation and ingest contracts can be cleanly defined inside the current sanction-point `cost.data_collection` files without first landing or targeting the disclosure-layer files introduced by `#334`.
+
+Most likely implementation failure mode
+- The implementer adds disclosure-only validators and enums into `calibration_schema.py`, then either has to retrofit `CostDataPoint`/`public_dataset.py` to satisfy them or creates parallel unused primitives that are not exercised by any real disclosure dataset.
+
+Most likely test gap
+- Tests pass against fabricated dicts for `ingest_contract`, but no real disclosure-layer schema/dataset exists in the named files, so the contract is unproven against the actual intended repo surface.
+
+Future issues suggested
+- A narrow migration issue, if desired later, to upgrade the legacy sanction dataset from freeform `source` strings to structured row-level citations.
+- A separate restatement/versioning issue if annual disclosures will eventually need prior-year restatement handling.
+- A follow-up clarifying source-priority semantics beyond ordering alone: tie-breaking, override rules, and conflict adjudication.
+
+Review confidence
+- High
+tokens used
+63,469
+Verdict: MAJOR  
+Retrieval adequacy: adequate
+
+Strengths
+- The plan correctly recognizes the current schema gap: annual-disclosure contracts need row-level provenance fields that do not exist in the current sanction-point `CostDataPoint` surface.
+- The plan keeps automation implementation itself out of scope and frames duplicate/conflict handling as contract-only work.
+
+Findings by severity
+
+Critical
+- The proposed implementation surface is mis-grounded in current repo files. `src/worldenergydata/cost/data_collection/calibration_schema.py` and `src/worldenergydata/cost/data_collection/public_dataset.py` are sanction-point artifacts built around `CostDataPoint(project_name, year_sanction, source, confidence, ...)`, not annual disclosure records with `fiscal_year`, `scope`, `normalized_metric_name`, `source_title`, `source_url`, `page_reference`, and `quoted_text`. The plan’s own pseudocode depends on fields that do not exist on the named target model. This should not pass plan review unless it either targets the disclosure-layer files from `#334` or explicitly creates disclosure-specific contract surfaces.
+- The plan steals parent/sibling work. Parent `#334` already includes “minimum row-level provenance and citation rules” in the disclosure schema and seed dataset. This child plan redefines core row-level provenance inside current sanction-dataset files instead of building on the disclosure-layer boundary. That is overlap with `#334`, not a bounded child follow-up.
+- The plan’s file list and acceptance criteria are internally inconsistent with its own scope. It says “annual disclosures” and “future ingest contract,” but its only listed data file change is `public_dataset.py`, which is the existing sanctioned-project dataset. No disclosure-specific schema/dataset/test file is named, so there is no concrete surface where annual-disclosure ingest contracts would live.
+
+High
+- `tests/unit/cost/test_dataset_size.py` is the wrong test surface for “dataset-level provenance and duplicate/conflict guardrails.” That file currently enforces size, regional coverage, year span, HPHT presence, and confidence distribution for the sanction dataset. Adding annual-disclosure duplicate/conflict semantics there would couple unrelated datasets and create false failures as the sanction corpus evolves.
+- “Modify `public_dataset.py` to align representative source rows/docs with stricter provenance contract if needed” is scope creep into broad backfill. The current dataset has a single freeform `source` string across many records. Converting even representative rows to a row-level structured citation contract inside the sanction dataset is not a narrow annual-disclosure contract task.
+- The duplicate key in pseudocode uses `fiscal_year`, `scope`, and `normalized_metric_name`, but the plan does not identify any schema object or fixture source that will supply those fields. Without the disclosure schema from `#334`, duplicate/conflict tests are synthetic-only and disconnected from the intended repo surface.
+
+Medium
+- The source-priority hierarchy is underspecified. The plan says priority must be “explicit and ordered,” but no acceptance criterion says how that ordering affects duplicate/conflict classification, invalidation, or tie-breaking. That makes the hierarchy easy to add as an enum and impossible to validate meaningfully.
+- The plan exports new primitives through `src/worldenergydata/cost/data_collection/__init__.py`, but it never defines whether those primitives are disclosure-specific or generic. If they are generic, they risk contaminating the sanction-point boundary; if disclosure-specific, the missing disclosure module/file list becomes a blocker.
+- “Existing sanction-dataset tests continue to pass unchanged” conflicts with the proposed willingness to modify sanction dataset rows/docs. If the sanction schema remains unchanged, disclosure citation requirements cannot be enforced there; if the sanction schema changes, unchanged tests are not a meaningful acceptance signal.
+
+Low
+- The plan does not specify whether `page_reference` must support non-page locators used in web-native disclosures, appendices, or tables. That omission may force a brittle validator.
+- “absolute source_url” is too vague without scheme restrictions. `mailto:` and other absolute URIs are technically absolute but not valid source documents.
+
+Missing tests
+- A positive-path test for a valid disclosure row satisfying the full citation contract.
+- A test proving sanction-point `CostDataPoint` records remain valid and unaffected if this issue is truly bounded away from sanction-schema redesign.
+- A test defining how source-priority ordering changes behavior when two rows with the same business key conflict.
+- A test covering duplicate classification when non-key metadata differs but value/citation payload is identical.
+- A test for invalid partition reasons or error payload shape from `ingest_contract`, not just bucket membership.
+
+Scope creep concerns
+- Reworking `public_dataset.py` provenance beyond documentation/examples is parent-level or separate migration work.
+- Putting annual-disclosure ingest rules into `calibration_schema.py` mixes disclosure-layer concerns into the sanction-point calibration model.
+- Using `test_dataset_size.py` for disclosure guardrails expands this child issue into sanction-dataset governance.
+
+Weakest assumption
+- That annual-disclosure citation and ingest contracts can be cleanly defined inside the current sanction-point `cost.data_collection` files without first landing or targeting the disclosure-layer files introduced by `#334`.
+
+Most likely implementation failure mode
+- The implementer adds disclosure-only validators and enums into `calibration_schema.py`, then either has to retrofit `CostDataPoint`/`public_dataset.py` to satisfy them or creates parallel unused primitives that are not exercised by any real disclosure dataset.
+
+Most likely test gap
+- Tests pass against fabricated dicts for `ingest_contract`, but no real disclosure-layer schema/dataset exists in the named files, so the contract is unproven against the actual intended repo surface.
+
+Future issues suggested
+- A narrow migration issue, if desired later, to upgrade the legacy sanction dataset from freeform `source` strings to structured row-level citations.
+- A separate restatement/versioning issue if annual disclosures will eventually need prior-year restatement handling.
+- A follow-up clarifying source-priority semantics beyond ordering alone: tie-breaking, override rules, and conflict adjudication.
+
+Review confidence
+- High
