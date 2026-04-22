@@ -70,8 +70,9 @@ class TestCurrentNPVImplementation:
         """Test current NPV calculation with known inputs - establishes baseline"""
 
         # Mock file operations to avoid creating actual files
-        with patch("pandas.DataFrame.to_csv"), patch(
-            "os.path.join", return_value="mock_path"
+        with (
+            patch("pandas.DataFrame.to_csv"),
+            patch("os.path.join", return_value="mock_path"),
         ):
 
             npv_result = self.analyzer.perform_npv_calculation(
@@ -226,9 +227,11 @@ class TestCurrentNPVImplementation:
         """Test the complete current NPV workflow to document behavior"""
 
         # Create a more complete test scenario
-        with patch("pandas.DataFrame.to_csv"), patch(
-            "os.path.join", return_value="mock_path"
-        ), patch("pandas.read_excel") as mock_excel:
+        with (
+            patch("pandas.DataFrame.to_csv"),
+            patch("os.path.join", return_value="mock_path"),
+            patch("pandas.read_excel") as mock_excel,
+        ):
 
             # Mock Excel price data reading
             mock_excel.return_value = pd.DataFrame(
@@ -281,8 +284,9 @@ class TestCurrentNPVImplementation:
         ] = excel_discount_rate
         excel_aligned_cfg["economics"]["cost"]["CAPEX"] = excel_capex
 
-        with patch("pandas.DataFrame.to_csv"), patch(
-            "os.path.join", return_value="mock_path"
+        with (
+            patch("pandas.DataFrame.to_csv"),
+            patch("os.path.join", return_value="mock_path"),
         ):
 
             current_npv = self.analyzer.perform_npv_calculation(

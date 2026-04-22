@@ -120,12 +120,16 @@ class TestSodirIntegration(unittest.TestCase):
         self.assertIsNotNone(module)
 
         # Mock API client responses
-        with patch.object(
-            SodirAPIClient, "get_blocks", return_value=self.mock_blocks_data
-        ), patch.object(
-            SodirAPIClient, "get_wellbores", return_value=self.mock_wellbores_data
-        ), patch.object(
-            SodirAPIClient, "get_fields", return_value=self.mock_fields_data
+        with (
+            patch.object(
+                SodirAPIClient, "get_blocks", return_value=self.mock_blocks_data
+            ),
+            patch.object(
+                SodirAPIClient, "get_wellbores", return_value=self.mock_wellbores_data
+            ),
+            patch.object(
+                SodirAPIClient, "get_fields", return_value=self.mock_fields_data
+            ),
         ):
 
             # Create data collection workflow
@@ -534,6 +538,7 @@ class TestModuleIntegration(unittest.TestCase):
         # Verify communication occurred
         mock_api.get_blocks.assert_called_once()
         mock_storage.save_raw_data.assert_called()
+
 
 if __name__ == "__main__":
     unittest.main()

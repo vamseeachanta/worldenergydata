@@ -84,11 +84,14 @@ class TestBSEEPenaltiesImporterURL:
         """Test fetch_data downloads from BSEE WAR URL with longest timeout."""
         importer = BSEEPenaltiesImporterURL(db_session)
 
-        with patch.object(
-            importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
-        ) as mock_download, patch.object(
-            importer.processor, "process_war_data", return_value=mock_processed_data
-        ) as mock_process:
+        with (
+            patch.object(
+                importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
+            ) as mock_download,
+            patch.object(
+                importer.processor, "process_war_data", return_value=mock_processed_data
+            ) as mock_process,
+        ):
 
             result = importer.fetch_data()
 
@@ -125,10 +128,13 @@ class TestBSEEPenaltiesImporterURL:
         """Test fetch_data uses WAR data type for longest timeout (2400s = 40 minutes)."""
         importer = BSEEPenaltiesImporterURL(db_session)
 
-        with patch.object(
-            importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
-        ) as mock_download, patch.object(
-            importer.processor, "process_war_data", return_value=mock_processed_data
+        with (
+            patch.object(
+                importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
+            ) as mock_download,
+            patch.object(
+                importer.processor, "process_war_data", return_value=mock_processed_data
+            ),
         ):
 
             importer.fetch_data()
@@ -143,10 +149,13 @@ class TestBSEEPenaltiesImporterURL:
         """Test normalize_data converts string penalty_amount to float."""
         importer = BSEEPenaltiesImporterURL(db_session)
 
-        with patch.object(
-            importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
-        ), patch.object(
-            importer.processor, "process_war_data", return_value=mock_processed_data
+        with (
+            patch.object(
+                importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
+            ),
+            patch.object(
+                importer.processor, "process_war_data", return_value=mock_processed_data
+            ),
         ):
 
             raw_data_list = importer.fetch_data()
@@ -166,10 +175,13 @@ class TestBSEEPenaltiesImporterURL:
         """Test normalize_data converts compliance_deadline string to datetime."""
         importer = BSEEPenaltiesImporterURL(db_session)
 
-        with patch.object(
-            importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
-        ), patch.object(
-            importer.processor, "process_war_data", return_value=mock_processed_data
+        with (
+            patch.object(
+                importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
+            ),
+            patch.object(
+                importer.processor, "process_war_data", return_value=mock_processed_data
+            ),
         ):
 
             raw_data_list = importer.fetch_data()
@@ -188,10 +200,13 @@ class TestBSEEPenaltiesImporterURL:
         """Test normalize_data converts compliance_achieved string to boolean."""
         importer = BSEEPenaltiesImporterURL(db_session)
 
-        with patch.object(
-            importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
-        ), patch.object(
-            importer.processor, "process_war_data", return_value=mock_processed_data
+        with (
+            patch.object(
+                importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
+            ),
+            patch.object(
+                importer.processor, "process_war_data", return_value=mock_processed_data
+            ),
         ):
 
             raw_data_list = importer.fetch_data()
@@ -212,10 +227,13 @@ class TestBSEEPenaltiesImporterURL:
         """Test normalize_data hardcodes incident_type to 'violation' for penalties."""
         importer = BSEEPenaltiesImporterURL(db_session)
 
-        with patch.object(
-            importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
-        ), patch.object(
-            importer.processor, "process_war_data", return_value=mock_processed_data
+        with (
+            patch.object(
+                importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
+            ),
+            patch.object(
+                importer.processor, "process_war_data", return_value=mock_processed_data
+            ),
         ):
 
             raw_data_list = importer.fetch_data()
@@ -230,10 +248,13 @@ class TestBSEEPenaltiesImporterURL:
         """Test complete import workflow from WAR URL download to database persistence."""
         importer = BSEEPenaltiesImporterURL(db_session)
 
-        with patch.object(
-            importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
-        ), patch.object(
-            importer.processor, "process_war_data", return_value=mock_processed_data
+        with (
+            patch.object(
+                importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
+            ),
+            patch.object(
+                importer.processor, "process_war_data", return_value=mock_processed_data
+            ),
         ):
 
             stats = importer.import_data()
@@ -272,9 +293,14 @@ class TestBSEEPenaltiesImporterURL:
             ),
         }
 
-        with patch.object(
-            importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
-        ), patch.object(importer.processor, "process_war_data", return_value=mock_data):
+        with (
+            patch.object(
+                importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
+            ),
+            patch.object(
+                importer.processor, "process_war_data", return_value=mock_data
+            ),
+        ):
 
             result = importer.fetch_data()
 
@@ -319,10 +345,13 @@ class TestBSEEPenaltiesImporterURLPerformance:
             )
         }
 
-        with patch.object(
-            importer.scraper, "download_zip_to_memory", return_value=b"mock"
-        ), patch.object(
-            importer.processor, "process_war_data", return_value=large_data
+        with (
+            patch.object(
+                importer.scraper, "download_zip_to_memory", return_value=b"mock"
+            ),
+            patch.object(
+                importer.processor, "process_war_data", return_value=large_data
+            ),
         ):
 
             result = importer.fetch_data()

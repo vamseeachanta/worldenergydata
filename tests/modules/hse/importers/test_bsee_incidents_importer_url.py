@@ -88,11 +88,16 @@ class TestBSEEIncidentsImporterURL:
         importer = BSEEIncidentsImporterURL(db_session)
 
         # Mock scraper and processor
-        with patch.object(
-            importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
-        ) as mock_download, patch.object(
-            importer.processor, "process_well_data", return_value=mock_processed_data
-        ) as mock_process:
+        with (
+            patch.object(
+                importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
+            ) as mock_download,
+            patch.object(
+                importer.processor,
+                "process_well_data",
+                return_value=mock_processed_data,
+            ) as mock_process,
+        ):
 
             result = importer.fetch_data()
 
@@ -131,10 +136,13 @@ class TestBSEEIncidentsImporterURL:
             }
         }
 
-        with patch.object(
-            importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
-        ), patch.object(
-            importer.processor, "process_well_data", return_value=mock_output
+        with (
+            patch.object(
+                importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
+            ),
+            patch.object(
+                importer.processor, "process_well_data", return_value=mock_output
+            ),
         ):
 
             result = importer.fetch_data()
@@ -149,10 +157,13 @@ class TestBSEEIncidentsImporterURL:
 
         mock_output = {"file1.csv": pd.DataFrame([{"id": "2", "value": "direct"}])}
 
-        with patch.object(
-            importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
-        ), patch.object(
-            importer.processor, "process_well_data", return_value=mock_output
+        with (
+            patch.object(
+                importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
+            ),
+            patch.object(
+                importer.processor, "process_well_data", return_value=mock_output
+            ),
         ):
 
             result = importer.fetch_data()
@@ -171,10 +182,13 @@ class TestBSEEIncidentsImporterURL:
             "file3.csv": pd.DataFrame([{"id": "3"}]),
         }
 
-        with patch.object(
-            importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
-        ), patch.object(
-            importer.processor, "process_well_data", return_value=mock_output
+        with (
+            patch.object(
+                importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
+            ),
+            patch.object(
+                importer.processor, "process_well_data", return_value=mock_output
+            ),
         ):
 
             result = importer.fetch_data()
@@ -191,10 +205,15 @@ class TestBSEEIncidentsImporterURL:
         importer = BSEEIncidentsImporterURL(db_session)
 
         # Get raw data via fetch
-        with patch.object(
-            importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
-        ), patch.object(
-            importer.processor, "process_well_data", return_value=mock_processed_data
+        with (
+            patch.object(
+                importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
+            ),
+            patch.object(
+                importer.processor,
+                "process_well_data",
+                return_value=mock_processed_data,
+            ),
         ):
 
             raw_data_list = importer.fetch_data()
@@ -216,10 +235,15 @@ class TestBSEEIncidentsImporterURL:
         """Test complete import workflow from URL download to database persistence."""
         importer = BSEEIncidentsImporterURL(db_session)
 
-        with patch.object(
-            importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
-        ), patch.object(
-            importer.processor, "process_well_data", return_value=mock_processed_data
+        with (
+            patch.object(
+                importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
+            ),
+            patch.object(
+                importer.processor,
+                "process_well_data",
+                return_value=mock_processed_data,
+            ),
         ):
 
             stats = importer.import_data()
@@ -282,10 +306,13 @@ class TestBSEEIncidentsImporterURLIntegration:
             )
         }
 
-        with patch.object(
-            importer.scraper, "download_zip_to_memory", return_value=b"mock"
-        ), patch.object(
-            importer.processor, "process_well_data", return_value=mock_data
+        with (
+            patch.object(
+                importer.scraper, "download_zip_to_memory", return_value=b"mock"
+            ),
+            patch.object(
+                importer.processor, "process_well_data", return_value=mock_data
+            ),
         ):
 
             stats = importer.import_data()
@@ -299,10 +326,13 @@ class TestBSEEIncidentsImporterURLIntegration:
 
         mock_data = {"file1.csv": pd.DataFrame()}  # Empty DataFrame
 
-        with patch.object(
-            importer.scraper, "download_zip_to_memory", return_value=b"mock"
-        ), patch.object(
-            importer.processor, "process_well_data", return_value=mock_data
+        with (
+            patch.object(
+                importer.scraper, "download_zip_to_memory", return_value=b"mock"
+            ),
+            patch.object(
+                importer.processor, "process_well_data", return_value=mock_data
+            ),
         ):
 
             result = importer.fetch_data()

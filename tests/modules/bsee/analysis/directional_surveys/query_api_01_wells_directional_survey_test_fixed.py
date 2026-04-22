@@ -185,9 +185,10 @@ def run_application_fixed():
         # Test 3D plotting (with mock to avoid display issues)
         from unittest.mock import Mock, patch
 
-        with patch("matplotlib.pyplot.figure") as mock_figure, patch(
-            "matplotlib.pyplot.close"
-        ) as mock_close:
+        with (
+            patch("matplotlib.pyplot.figure") as mock_figure,
+            patch("matplotlib.pyplot.close") as mock_close,
+        ):
 
             mock_fig = Mock()
             mock_ax = Mock()

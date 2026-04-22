@@ -95,13 +95,11 @@ class TestSodirDataRouter(unittest.TestCase):
 
     def test_collect_multiple_datasets(self):
         """Test collecting multiple datasets."""
-        with patch.object(
-            self.sodir_data.api_client, "get_blocks"
-        ) as mock_blocks, patch.object(
-            self.sodir_data.api_client, "get_wellbores"
-        ) as mock_wellbores, patch.object(
-            self.sodir_data.api_client, "get_fields"
-        ) as mock_fields:
+        with (
+            patch.object(self.sodir_data.api_client, "get_blocks") as mock_blocks,
+            patch.object(self.sodir_data.api_client, "get_wellbores") as mock_wellbores,
+            patch.object(self.sodir_data.api_client, "get_fields") as mock_fields,
+        ):
 
             mock_blocks.return_value = [self.sample_block]
             mock_wellbores.return_value = [self.sample_wellbore]
@@ -235,9 +233,11 @@ class TestDataCollectionWorkflow(unittest.TestCase):
 
     def test_workflow_execution(self):
         """Test complete workflow execution."""
-        with patch.object(self.workflow, "collect_data") as mock_collect, patch.object(
-            self.workflow, "validate_data"
-        ) as mock_validate, patch.object(self.workflow, "store_data") as mock_store:
+        with (
+            patch.object(self.workflow, "collect_data") as mock_collect,
+            patch.object(self.workflow, "validate_data") as mock_validate,
+            patch.object(self.workflow, "store_data") as mock_store,
+        ):
 
             mock_collect.return_value = {"data": [], "count": 10}
             mock_validate.return_value = {"valid": True, "errors": []}

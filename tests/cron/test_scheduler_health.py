@@ -43,26 +43,35 @@ def _run(tmp_path: Path, jobs: dict[str, dict], env_extra: dict | None = None):
         env.update(env_extra)
     r = subprocess.run(
         ["bash", str(SCRIPT)],
-        env=env, capture_output=True, text=True, timeout=15,
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=15,
     )
     return r, out_dir / "scheduler-health-2026-W16.md"
 
 
 def test_scheduler_green_when_all_fresh(tmp_path):
-    r, report = _run(tmp_path, {
-        "eia_weekly": {"age": 2, "interval": 7},
-        "bsee_incidents": {"age": 1, "interval": 7},
-    })
+    r, report = _run(
+        tmp_path,
+        {
+            "eia_weekly": {"age": 2, "interval": 7},
+            "bsee_incidents": {"age": 1, "interval": 7},
+        },
+    )
     assert r.returncode == 0, r.stderr
     body = report.read_text()
     assert "Status:** GREEN" in body
 
 
 def test_scheduler_yellow_on_one_stale(tmp_path):
-    r, report = _run(tmp_path, {
-        "eia_weekly": {"age": 2, "interval": 7},
-        "bsee_incidents": {"age": 10, "interval": 7},  # 10d > 7d interval
-    })
+    r, report = _run(
+        tmp_path,
+        {
+            "eia_weekly": {"age": 2, "interval": 7},
+            "bsee_incidents": {"age": 10, "interval": 7},  # 10d > 7d interval
+        },
+    )
     assert r.returncode == 0, r.stderr
     body = report.read_text()
     assert "Status:** YELLOW" in body
@@ -70,7 +79,9 @@ def test_scheduler_yellow_on_one_stale(tmp_path):
 
 
 def test_scheduler_red_on_multiple_stale(tmp_path):
-    r, report = _run(tmp_path, {f"job_{i}": {"age": 20, "interval": 7} for i in range(4)})
+    r, report = _run(
+        tmp_path, {f"job_{i}": {"age": 20, "interval": 7} for i in range(4)}
+    )
     assert r.returncode == 0, r.stderr
     body = report.read_text()
     assert "Status:** RED" in body

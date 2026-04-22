@@ -221,5 +221,3 @@ class TestCrossFieldValidation:
 
         result = validator.validate_vessel_incident_consistency(vessel, incident)
         assert result.is_valid
-
-
