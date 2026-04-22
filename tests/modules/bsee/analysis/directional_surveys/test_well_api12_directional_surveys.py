@@ -83,11 +83,12 @@ class TestWellAPI12DirectionalSurveys:
     def test_prepare_well_paths_parameter_structure(self):
         """Test that prepare_well_paths handles well_data parameter correctly"""
         # Mock the process_survey_xyz and add_relative_WH_positions methods
-        with patch.object(
-            self.well_api12, "process_survey_xyz"
-        ) as mock_process, patch.object(
-            self.well_api12, "add_relative_WH_positions"
-        ) as mock_add_relative:
+        with (
+            patch.object(self.well_api12, "process_survey_xyz") as mock_process,
+            patch.object(
+                self.well_api12, "add_relative_WH_positions"
+            ) as mock_add_relative,
+        ):
 
             # Setup mocks
             mock_survey_xyz = pd.DataFrame(
@@ -121,11 +122,12 @@ class TestWellAPI12DirectionalSurveys:
     def test_prepare_well_paths_api12_extraction(self):
         """Test that prepare_well_paths correctly extracts unique API12 values"""
         # Mock the downstream methods
-        with patch.object(
-            self.well_api12, "process_survey_xyz"
-        ) as mock_process, patch.object(
-            self.well_api12, "add_relative_WH_positions"
-        ) as mock_add_relative:
+        with (
+            patch.object(self.well_api12, "process_survey_xyz") as mock_process,
+            patch.object(
+                self.well_api12, "add_relative_WH_positions"
+            ) as mock_add_relative,
+        ):
 
             # Setup mocks
             mock_survey_xyz = pd.DataFrame(
@@ -154,11 +156,12 @@ class TestWellAPI12DirectionalSurveys:
     def test_prepare_well_paths_data_storage(self):
         """Test that prepare_well_paths stores results in correct data structures"""
         # Mock the downstream methods
-        with patch.object(
-            self.well_api12, "process_survey_xyz"
-        ) as mock_process, patch.object(
-            self.well_api12, "add_relative_WH_positions"
-        ) as mock_add_relative:
+        with (
+            patch.object(self.well_api12, "process_survey_xyz") as mock_process,
+            patch.object(
+                self.well_api12, "add_relative_WH_positions"
+            ) as mock_add_relative,
+        ):
 
             # Setup mocks
             mock_survey_xyz = pd.DataFrame(
@@ -206,11 +209,12 @@ class TestWellAPI12DirectionalSurveys:
         """Test that prepare_well_paths uses correct attribute names"""
         # This test specifically checks for the attribute reference fixes
         # Mock the downstream methods to avoid their execution
-        with patch.object(
-            self.well_api12, "process_survey_xyz"
-        ) as mock_process, patch.object(
-            self.well_api12, "add_relative_WH_positions"
-        ) as mock_add_relative:
+        with (
+            patch.object(self.well_api12, "process_survey_xyz") as mock_process,
+            patch.object(
+                self.well_api12, "add_relative_WH_positions"
+            ) as mock_add_relative,
+        ):
 
             # Setup mocks
             mock_survey_xyz = pd.DataFrame(
@@ -598,9 +602,10 @@ class TestWellAPI12DirectionalSurveys:
         self.well_api12.cfg = self.mock_cfg
 
         # Mock matplotlib to avoid actually creating plots during testing
-        with patch("matplotlib.pyplot.figure") as mock_figure, patch(
-            "matplotlib.pyplot.close"
-        ) as mock_close:
+        with (
+            patch("matplotlib.pyplot.figure") as mock_figure,
+            patch("matplotlib.pyplot.close") as mock_close,
+        ):
 
             # Setup mock figure and axes
             mock_fig = Mock()
@@ -627,9 +632,10 @@ class TestWellAPI12DirectionalSurveys:
         self.well_api12.cfg = self.mock_cfg
 
         # Mock matplotlib
-        with patch("matplotlib.pyplot.figure") as mock_figure, patch(
-            "matplotlib.pyplot.close"
-        ) as mock_close:
+        with (
+            patch("matplotlib.pyplot.figure") as mock_figure,
+            patch("matplotlib.pyplot.close") as mock_close,
+        ):
 
             # Call the method - should not crash
             self.well_api12.plot_field_wells()
@@ -645,9 +651,10 @@ class TestWellAPI12DirectionalSurveys:
         self.well_api12.cfg = self.mock_cfg
 
         # Mock matplotlib
-        with patch("matplotlib.pyplot.figure") as mock_figure, patch(
-            "matplotlib.pyplot.close"
-        ) as mock_close:
+        with (
+            patch("matplotlib.pyplot.figure") as mock_figure,
+            patch("matplotlib.pyplot.close") as mock_close,
+        ):
 
             # Call the method - should not crash
             self.well_api12.plot_field_wells()
@@ -674,9 +681,10 @@ class TestWellAPI12DirectionalSurveys:
         self.well_api12.cfg = self.mock_cfg
 
         # Mock matplotlib components
-        with patch("matplotlib.pyplot.figure") as mock_figure, patch(
-            "matplotlib.pyplot.close"
-        ) as mock_close:
+        with (
+            patch("matplotlib.pyplot.figure") as mock_figure,
+            patch("matplotlib.pyplot.close") as mock_close,
+        ):
 
             # Setup mock figure and axes
             mock_fig = Mock()
@@ -718,9 +726,10 @@ class TestWellAPI12DirectionalSurveys:
         self.well_api12.cfg = self.mock_cfg
 
         # Mock matplotlib components
-        with patch("matplotlib.pyplot.figure") as mock_figure, patch(
-            "matplotlib.pyplot.close"
-        ) as mock_close:
+        with (
+            patch("matplotlib.pyplot.figure") as mock_figure,
+            patch("matplotlib.pyplot.close") as mock_close,
+        ):
 
             # Setup mock figure and axes with realistic limits
             mock_fig = Mock()
@@ -757,9 +766,10 @@ class TestWellAPI12DirectionalSurveys:
         self.well_api12.cfg = self.mock_cfg
 
         # Mock matplotlib components
-        with patch("matplotlib.pyplot.figure") as mock_figure, patch(
-            "matplotlib.pyplot.close"
-        ) as mock_close:
+        with (
+            patch("matplotlib.pyplot.figure") as mock_figure,
+            patch("matplotlib.pyplot.close") as mock_close,
+        ):
 
             # Setup mock figure and axes
             mock_fig = Mock()
@@ -798,9 +808,10 @@ class TestWellAPI12DirectionalSurveys:
         self.well_api12.cfg = self.mock_cfg
 
         # Mock matplotlib components
-        with patch("matplotlib.pyplot.figure") as mock_figure, patch(
-            "matplotlib.pyplot.close"
-        ) as mock_close:
+        with (
+            patch("matplotlib.pyplot.figure") as mock_figure,
+            patch("matplotlib.pyplot.close") as mock_close,
+        ):
 
             # Setup mock figure and axes
             mock_fig = Mock()
@@ -873,9 +884,10 @@ class TestWellAPI12DirectionalSurveys:
         self.well_api12.cfg = self.mock_cfg
 
         # Mock matplotlib components
-        with patch("matplotlib.pyplot.figure") as mock_figure, patch(
-            "matplotlib.pyplot.close"
-        ) as mock_close:
+        with (
+            patch("matplotlib.pyplot.figure") as mock_figure,
+            patch("matplotlib.pyplot.close") as mock_close,
+        ):
 
             # Setup mock figure and axes
             mock_fig = Mock()
@@ -917,9 +929,10 @@ class TestWellAPI12DirectionalSurveys:
         self.well_api12.cfg = self.mock_cfg
 
         # Mock matplotlib components
-        with patch("matplotlib.pyplot.figure") as mock_figure, patch(
-            "matplotlib.pyplot.close"
-        ) as mock_close:
+        with (
+            patch("matplotlib.pyplot.figure") as mock_figure,
+            patch("matplotlib.pyplot.close") as mock_close,
+        ):
 
             # Setup mock figure and axes
             mock_fig = Mock()

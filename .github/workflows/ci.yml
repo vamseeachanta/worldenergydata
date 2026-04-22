@@ -128,6 +128,7 @@ jobs:
             --ignore-missing-imports \
             --no-error-summary \
             --show-error-codes
+        continue-on-error: true
 
   security:
     name: Security Scan

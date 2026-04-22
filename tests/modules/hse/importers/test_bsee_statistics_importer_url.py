@@ -86,13 +86,16 @@ class TestBSEEStatisticsImporterURL:
         """Test fetch_data downloads from BSEE production URL with BOE calculation."""
         importer = BSEEStatisticsImporterURL(db_session)
 
-        with patch.object(
-            importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
-        ) as mock_download, patch.object(
-            importer.processor,
-            "process_production_data",
-            return_value=mock_processed_data,
-        ) as mock_process:
+        with (
+            patch.object(
+                importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
+            ) as mock_download,
+            patch.object(
+                importer.processor,
+                "process_production_data",
+                return_value=mock_processed_data,
+            ) as mock_process,
+        ):
 
             result = importer.fetch_data()
 
@@ -129,12 +132,15 @@ class TestBSEEStatisticsImporterURL:
         """Test fetch_data uses production data type for longer timeout (1200s)."""
         importer = BSEEStatisticsImporterURL(db_session)
 
-        with patch.object(
-            importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
-        ) as mock_download, patch.object(
-            importer.processor,
-            "process_production_data",
-            return_value=mock_processed_data,
+        with (
+            patch.object(
+                importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
+            ) as mock_download,
+            patch.object(
+                importer.processor,
+                "process_production_data",
+                return_value=mock_processed_data,
+            ),
         ):
 
             importer.fetch_data()
@@ -149,12 +155,15 @@ class TestBSEEStatisticsImporterURL:
         """Test normalize_data converts string count fields to integers."""
         importer = BSEEStatisticsImporterURL(db_session)
 
-        with patch.object(
-            importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
-        ), patch.object(
-            importer.processor,
-            "process_production_data",
-            return_value=mock_processed_data,
+        with (
+            patch.object(
+                importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
+            ),
+            patch.object(
+                importer.processor,
+                "process_production_data",
+                return_value=mock_processed_data,
+            ),
         ):
 
             raw_data_list = importer.fetch_data()
@@ -179,12 +188,15 @@ class TestBSEEStatisticsImporterURL:
         """Test normalize_data hardcodes incident_type to 'equipment_failure'."""
         importer = BSEEStatisticsImporterURL(db_session)
 
-        with patch.object(
-            importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
-        ), patch.object(
-            importer.processor,
-            "process_production_data",
-            return_value=mock_processed_data,
+        with (
+            patch.object(
+                importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
+            ),
+            patch.object(
+                importer.processor,
+                "process_production_data",
+                return_value=mock_processed_data,
+            ),
         ):
 
             raw_data_list = importer.fetch_data()
@@ -201,12 +213,15 @@ class TestBSEEStatisticsImporterURL:
         """Test normalize_data maps report_date to incident_date."""
         importer = BSEEStatisticsImporterURL(db_session)
 
-        with patch.object(
-            importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
-        ), patch.object(
-            importer.processor,
-            "process_production_data",
-            return_value=mock_processed_data,
+        with (
+            patch.object(
+                importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
+            ),
+            patch.object(
+                importer.processor,
+                "process_production_data",
+                return_value=mock_processed_data,
+            ),
         ):
 
             raw_data_list = importer.fetch_data()
@@ -222,12 +237,15 @@ class TestBSEEStatisticsImporterURL:
         """Test complete import workflow from URL download to database persistence."""
         importer = BSEEStatisticsImporterURL(db_session)
 
-        with patch.object(
-            importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
-        ), patch.object(
-            importer.processor,
-            "process_production_data",
-            return_value=mock_processed_data,
+        with (
+            patch.object(
+                importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
+            ),
+            patch.object(
+                importer.processor,
+                "process_production_data",
+                return_value=mock_processed_data,
+            ),
         ):
 
             stats = importer.import_data()
@@ -276,10 +294,13 @@ class TestBSEEStatisticsImporterURL:
             ),
         }
 
-        with patch.object(
-            importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
-        ), patch.object(
-            importer.processor, "process_production_data", return_value=mock_data
+        with (
+            patch.object(
+                importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
+            ),
+            patch.object(
+                importer.processor, "process_production_data", return_value=mock_data
+            ),
         ):
 
             result = importer.fetch_data()
@@ -335,10 +356,13 @@ class TestBSEEStatisticsImporterURLPerformance:
             )
         }
 
-        with patch.object(
-            importer.scraper, "download_zip_to_memory", return_value=b"mock"
-        ), patch.object(
-            importer.processor, "process_production_data", return_value=large_data
+        with (
+            patch.object(
+                importer.scraper, "download_zip_to_memory", return_value=b"mock"
+            ),
+            patch.object(
+                importer.processor, "process_production_data", return_value=large_data
+            ),
         ):
 
             result = importer.fetch_data()

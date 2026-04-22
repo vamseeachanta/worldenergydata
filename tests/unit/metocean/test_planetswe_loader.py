@@ -139,8 +139,9 @@ class TestStreamSampleWithMock:
 
         mock_well_dataset_cls = MagicMock(return_value=mock_dataset)
 
-        with patch.object(pl_module, "WELL_AVAILABLE", True), patch.object(
-            pl_module, "WellDataset", mock_well_dataset_cls, create=True
+        with (
+            patch.object(pl_module, "WELL_AVAILABLE", True),
+            patch.object(pl_module, "WellDataset", mock_well_dataset_cls, create=True),
         ):
             from worldenergydata.metocean.well_datasets.planetswe_loader import (
                 PlanetsweLoader,
@@ -181,8 +182,9 @@ class TestStreamSampleWithMock:
         mock_dataset.__iter__ = MagicMock(side_effect=fake_iter)
         mock_well_dataset_cls = MagicMock(return_value=mock_dataset)
 
-        with patch.object(pl_module, "WELL_AVAILABLE", True), patch.object(
-            pl_module, "WellDataset", mock_well_dataset_cls, create=True
+        with (
+            patch.object(pl_module, "WELL_AVAILABLE", True),
+            patch.object(pl_module, "WellDataset", mock_well_dataset_cls, create=True),
         ):
             from worldenergydata.metocean.well_datasets.planetswe_loader import (
                 PlanetsweLoader,
@@ -206,8 +208,9 @@ class TestStreamSampleWithMock:
         mock_dataset.__iter__ = MagicMock(side_effect=fake_iter)
         mock_well_dataset_cls = MagicMock(return_value=mock_dataset)
 
-        with patch.object(pl_module, "WELL_AVAILABLE", True), patch.object(
-            pl_module, "WellDataset", mock_well_dataset_cls, create=True
+        with (
+            patch.object(pl_module, "WELL_AVAILABLE", True),
+            patch.object(pl_module, "WellDataset", mock_well_dataset_cls, create=True),
         ):
             from worldenergydata.metocean.well_datasets.planetswe_loader import (
                 PlanetsweLoader,
@@ -231,8 +234,9 @@ class TestStreamSampleWithMock:
         mock_dataset.__iter__ = MagicMock(side_effect=fake_iter)
         mock_well_dataset_cls = MagicMock(return_value=mock_dataset)
 
-        with patch.object(pl_module, "WELL_AVAILABLE", True), patch.object(
-            pl_module, "WellDataset", mock_well_dataset_cls, create=True
+        with (
+            patch.object(pl_module, "WELL_AVAILABLE", True),
+            patch.object(pl_module, "WellDataset", mock_well_dataset_cls, create=True),
         ):
             from worldenergydata.metocean.well_datasets.planetswe_loader import (
                 PlanetsweLoader,

@@ -239,8 +239,9 @@ class TestDirectionalSurveysWorkflow:
         self.well_api12.prepare_well_paths(self.directional_surveys, self.well_data)
 
         # Test with mocked matplotlib to avoid file creation issues
-        with patch("matplotlib.pyplot.figure") as mock_figure, patch(
-            "matplotlib.pyplot.close"
+        with (
+            patch("matplotlib.pyplot.figure") as mock_figure,
+            patch("matplotlib.pyplot.close"),
         ):
 
             mock_fig = Mock()
