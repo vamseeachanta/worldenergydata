@@ -154,8 +154,9 @@ A foundation-only v1 disclosure data layer in `worldenergydata.cost.data_collect
   - at least one multi-year project series
   - at least one multi-year operator annual capex series
   - both operator-level and project-level rows
+  - no restated prior-year records in v1 seed scope
 - Strong per-record provenance: `source_title`, `source_url`, `page_reference`, `quoted_text`, `confidence`
-- A documented v1 linkage strategy for project-scope rows to existing `CostDataPoint` records via exact `(operator, project_name)` matching
+- A documented derived-only v1 linkage strategy for project-scope rows to existing `CostDataPoint` records via exact `(operator, project_name)` matching
 - Public loader/schema exports from `worldenergydata.cost.data_collection`
 
 ### Explicitly out of scope for this issue
@@ -171,11 +172,13 @@ A foundation-only v1 disclosure data layer in `worldenergydata.cost.data_collect
 
 ## Linkage Strategy
 
-- V1 project-scope disclosure rows may include a nullable linkage field or derived linkage rule targeting existing `CostDataPoint` records.
-- The supported join surface in v1 is exact `(operator, project_name)` matching against the existing `load_public_dataset()` corpus.
+- V1 uses a derived-only linkage rule; the disclosure schema does not store a nullable `CostDataPoint` reference field.
+- The only supported join surface in v1 is exact `(operator, project_name)` matching against the existing `load_public_dataset()` corpus for project-scope rows.
+- Operator-scope rows are never linkable to `CostDataPoint` records and must not expose linkage fields.
 - V1 does not attempt fuzzy matching, alias reconciliation, or backfilling all historical projects.
-- Rows that cannot be linked deterministically remain valid disclosure records but must not claim a `CostDataPoint` link.
-- Downstream consumer integration is deferred; this issue only defines and tests the linkage contract.
+- Project rows that do not match exactly remain valid disclosure records but are treated as unlinked.
+- Restatements are explicitly out of v1 seed/schema scope: the seed dataset must not include restated prior-year records, and no restatement/versioning fields are introduced in this issue.
+- Downstream consumer integration is deferred; this issue only defines and tests the derived linkage contract.
 
 ---
 
@@ -214,7 +217,8 @@ function load_operator_disclosures_dataset():
 
 function linkable_to_cost_datapoint(record, sanctioned_records):
     if record.scope_type != PROJECT return false
-    return exact (record.operator, record.project_name) match exists in sanctioned_records
+    if exact (record.operator, record.project_name) match exists in sanctioned_records return true
+    return false
 
 update data_collection exports:
     expose ScopeType, FilingType, NormalizedMetricName, OperatorDisclosureRecord, load_operator_disclosures_dataset
@@ -242,12 +246,14 @@ update data_collection exports:
 | `test_as_reported_metric_name_is_preserved` | reported disclosure labels are retained beside normalized metric identifiers | seed dataset record | exact reported label preserved |
 | `test_currency_and_magnitude_scale_are_required_for_money_metrics` | monetary disclosures must preserve as-reported value context | seed dataset record | required typed fields present |
 | `test_loader_returns_validated_records_from_capped_seed_dataset` | loader returns a tiny validated seed corpus only | seed dataset | non-empty list with <= 12 records |
-| `test_project_scope_rows_link_to_existing_cost_datapoint_by_exact_operator_project_match` | v1 linkage strategy is deterministic and narrow | project-scope rows + `load_public_dataset()` | exact matches only |
+| `test_project_scope_rows_link_to_existing_cost_datapoint_by_exact_operator_project_match` | v1 linkage strategy is deterministic and derived-only | project-scope rows + `load_public_dataset()` | exact matches only |
+| `test_operator_scope_rows_cannot_link_to_cost_datapoint` | operator rows are structurally excluded from sanction-record linkage | operator-scope rows | linkage result is always false |
+| `test_unmatched_project_rows_remain_valid_but_unlinked` | unmatched project disclosures remain valid records without false linkage | non-matching project row | valid record + false linkage result |
 | `test_every_seed_record_has_source_url_page_reference_and_quote` | provenance minimum is enforced row by row | all seed records | all required provenance fields populated |
 | `test_seed_dataset_contains_one_multi_year_project_series` | at least one project has >1 fiscal year record | filtered project rows | two or more years represented |
 | `test_seed_dataset_contains_one_multi_year_operator_capex_series` | at least one operator annual capex series exists | filtered operator rows | two or more years represented |
 | `test_gap_years_are_not_imputed_by_loader` | loader does not silently fill missing years | sparse time-series example | only explicit records returned |
-| `test_restated_prior_year_values_are_flagged_or_modeled_explicitly` | restatement handling is documented in the schema/dataset shape | restated year example | explicit separate record or explicit flag |
+| `test_seed_dataset_excludes_restated_prior_year_records` | v1 explicitly defers restatements out of schema/seed scope | seed dataset | no restated prior-year rows present |
 | `test_public_exports_exist_in_cost_data_collection_only` | v1 remains a data_collection-level API, not a package-root expansion | import check | disclosure names resolve from `worldenergydata.cost.data_collection` |
 
 ---
@@ -258,11 +264,11 @@ update data_collection exports:
 - [ ] New schema exists for annual as-reported monetary disclosure records with explicit operator-vs-project scope typing
 - [ ] Generic untyped `metric_value` is not used in v1; the schema uses typed monetary fields and preserves `as_reported_metric_name`
 - [ ] Curated seed dataset exists, loads successfully, and contains <= 12 records
-- [ ] Seed dataset includes at least one project-scope multi-year series linked by exact `(operator, project_name)` match to an existing `CostDataPoint`
+- [ ] Seed dataset includes at least one project-scope multi-year series whose linkage is evaluated via the derived-only exact `(operator, project_name)` rule against an existing `CostDataPoint`
 - [ ] Seed dataset includes at least one operator-scope multi-year annual capex series
 - [ ] Every seed record includes minimum provenance: `source_title`, `source_url`, `page_reference`, `quoted_text`, and `confidence`
 - [ ] Disclosure layer is exported from `worldenergydata.cost.data_collection` without changing the package-root `worldenergydata.cost` API
-- [ ] Plan clearly documents the linkage strategy and explicitly defers downstream consumer integration, comparability normalization, and automated ingestion to follow-up issues
+- [ ] Plan clearly documents the derived-only linkage strategy and explicitly defers restatements, downstream consumer integration, comparability normalization, and automated ingestion to follow-up issues
 
 ---
 
@@ -288,7 +294,7 @@ Revisions made based on review:
 - reran review against the narrowed local artifact instead of the stale earlier draft
 - confirmed package-root export expansion, helper-query APIs, and non-monetary metrics are out of scope for v1
 - confirmed child issues #335–#338 successfully hold deferred linkage hardening, normalization, ingestion, and analytics/integration work
-- remaining blockers are now limited to two contract decisions: linkage representation and restatement treatment in v1
+- remaining blocker is now limited to restatement treatment in v1; linkage representation is fixed as a derived-only exact-match rule
 
 ---
 
@@ -296,9 +302,10 @@ Revisions made based on review:
 
 - **Risk:** even a tiny hand-curated seed dataset can sprawl if source selection is not capped aggressively.
 - **Risk:** operator disclosures vary in wording; preserving both normalized and as-reported metric names is necessary but may still require future mapping rules.
-- **Risk:** restated prior-year values need a consistent v1 representation to avoid hidden ambiguity.
-- **Open:** should the linkage field be a stored explicit reference field or a documented exact-match rule only in v1?
-- **Open:** should restatements be modeled as separate records with a restatement flag, or only documented as an allowed future extension if the capped seed set does not include one?
+- **Risk:** selected seed records may still surface naming variation that breaks exact-match linkage and must therefore be curated conservatively.
+- **Decision:** v1 uses a derived-only exact-match linkage rule; no stored linkage field is added to the disclosure schema.
+- **Decision:** restatements are explicitly deferred out of v1 seed/schema scope; no restatement/versioning fields are introduced in this issue, and the seed dataset must exclude restated prior-year records.
+- **Open:** should a future restatement model live with ingestion/provenance hardening (#337) or as a separate narrow follow-up?
 
 ---
 

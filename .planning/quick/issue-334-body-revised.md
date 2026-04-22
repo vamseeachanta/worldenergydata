@@ -66,6 +66,7 @@ Deliver a new disclosure-layer v1 with the following bounded scope:
      - at least one multi-year project disclosure series
      - at least one operator-level annual series
      - both `operator` and `project` scope rows
+   - Exclude restated prior-year records from the v1 seed dataset
    - Do not target broad operator coverage in v1
 
 4. Provenance rules
@@ -75,8 +76,11 @@ Deliver a new disclosure-layer v1 with the following bounded scope:
    - If a record is as-reported and not normalized, keep it as-reported rather than silently transforming it
 
 5. Explicit linkage strategy
-   - Document how project-scope disclosure records may link to existing `CostDataPoint` records
-   - V1 may use exact `(operator, project_name)` matching only
+   - Document a derived-only linkage rule for how project-scope disclosure records may relate to existing `CostDataPoint` records
+   - V1 uses exact `(operator, project_name)` matching only
+   - The disclosure schema does not store a nullable `CostDataPoint` reference field in v1
+   - Operator-scope rows are never linkable to `CostDataPoint` records
+   - Restatements are explicitly out of v1 seed/schema scope; no restatement/versioning fields are introduced in this issue
    - This issue defines the linkage contract only; it does not require broad backfill or downstream consumer integration
 
 ## Acceptance criteria
@@ -88,7 +92,7 @@ Deliver a new disclosure-layer v1 with the following bounded scope:
 - Every seed record meets the minimum provenance standard with source identification and row-level citation support
 - As-reported currency/unit values are preserved in the seed dataset
 - The disclosure layer is clearly separated from the existing sanction-point calibration dataset
-- The issue/output documents an explicit linkage strategy to `CostDataPoint`, while leaving downstream integrations deferred
+- The issue/output documents an explicit derived-only exact-match linkage strategy to `CostDataPoint`, explicitly excludes restatements from the v1 seed/schema scope, and leaves downstream integrations deferred
 
 ## Out of scope / Follow-ups
 Out of scope for this issue:
