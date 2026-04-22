@@ -447,6 +447,10 @@ class TestCashFlowComponents:
 class TestProductionAPI12CashFlowMethods:
     """Test ProductionAPI12Analysis class methods for cash flow calculations."""
 
+    pytestmark = pytest.mark.skip(
+        "legacy NPV API removed/refactored; deferred by workspace-hub#2451 and worldenergydata#339 pending re-enable/delete decision"
+    )
+
     @pytest.fixture
     def analyzer(self):
         """Create ProductionAPI12Analysis instance."""

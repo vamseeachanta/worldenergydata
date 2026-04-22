@@ -20,6 +20,11 @@ sys.path.insert(
     0, os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "src")
 )
 
+pytest.skip(
+    "legacy NPV API removed/refactored; deferred by workspace-hub#2451 and worldenergydata#339 pending re-enable/delete decision",
+    allow_module_level=True,
+)
+
 from worldenergydata.modules.bsee.analysis.production_api12 import (
     ProductionAPI12Analysis,
 )
