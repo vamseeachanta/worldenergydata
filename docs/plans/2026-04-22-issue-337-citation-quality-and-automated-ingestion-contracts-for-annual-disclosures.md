@@ -65,6 +65,7 @@ A disclosure-layer contract module in `worldenergydata.cost.data_collection` tha
   - `quoted_text`
   - `confidence`
 - Define source-priority hierarchy for annual disclosure ingest
+- Define an explicit conflict-reason payload contract using enumerated reason codes
 - Define annual-disclosure ingest contract rules for:
   - required fields
   - validation outcomes
@@ -106,6 +107,11 @@ class DisclosureIngestStatus(Enum):
     CONFLICT
     INVALID
 
+class ConflictReasonCode(Enum):
+    VALUE_MISMATCH
+    CITATION_MISMATCH
+    SOURCE_PRIORITY_CONFLICT
+
 function validate_disclosure_citation(row):
     require source_title
     require source_url
@@ -124,18 +130,19 @@ function disclosure_business_key(row):
         optional row.project_name,
     )
 
-function classify_disclosure_row(existing_rows, new_row):
-    if same business_key and same value/citation payload:
-        return DUPLICATE
-    if same business_key and different value or citation payload:
-        return CONFLICT
+function classify_disclosure_row(existing_rows, batch_seen_rows, new_row):
+    compare against both existing_rows and earlier rows in the same ingest batch
+    if same business_key and same defined payload fields:
+        return DUPLICATE with reason_code=None
+    if same business_key and different value/citation payload:
+        return CONFLICT with reason_code in {VALUE_MISMATCH, CITATION_MISMATCH, SOURCE_PRIORITY_CONFLICT}
     return ACCEPTED
 
 function ingest_contract(raw_rows, existing_rows):
     validate required disclosure fields
     validate citation contract
-    classify each row as accepted/duplicate/conflict/invalid
-    return partitioned result with reasons
+    classify each row against existing_rows and within-batch prior rows
+    return partitioned result with explicit reason codes and conflict annotations
 ```
 
 ---
@@ -161,14 +168,17 @@ function ingest_contract(raw_rows, existing_rows):
 |---|---|---|---|
 | `test_citation_contract_requires_title_url_page_quote_and_confidence` | disclosure citation minimum is mandatory | missing citation fields | invalid result |
 | `test_citation_contract_rejects_blank_fields` | whitespace-only values fail | blank citation values | invalid result |
+| `test_valid_disclosure_row_is_accepted` | a fully populated disclosure row passes validation | complete disclosure row | accepted |
 | `test_citation_contract_requires_absolute_http_source_url` | malformed or unsupported URLs fail | relative/non-http URL | invalid result |
 | `test_confidence_must_use_declared_enum` | confidence remains typed | invalid confidence | invalid result |
 | `test_source_priority_values_are_explicit_and_ordered` | source priority is deterministic | source priority enum | expected order |
 | `test_duplicate_classification_for_identical_business_key_and_payload` | exact duplicates are recognized | same key + same payload | duplicate |
-| `test_conflict_classification_for_same_business_key_different_value` | value conflicts surface | same key + different value | conflict |
-| `test_conflict_classification_for_same_business_key_different_citation` | citation conflicts surface | same key + different citation | conflict |
+| `test_conflict_classification_for_same_business_key_different_value` | value conflicts surface | same key + different value | conflict with reason code |
+| `test_conflict_classification_for_same_business_key_different_citation` | citation conflicts surface | same key + different citation | conflict with reason code |
 | `test_ingest_contract_returns_partitioned_result_sets` | ingest result is structured | mixed rows | accepted/duplicate/conflict/invalid |
 | `test_source_priority_affects_conflict_reasoning` | priority order is not just decorative | conflicting higher/lower priority rows | deterministic conflict annotation |
+| `test_within_batch_duplicate_and_conflict_behavior_is_defined` | batch-internal classification is explicit | repeated rows in same batch | duplicate/conflict as defined |
+| `test_non_pdf_locators_are_accepted_in_page_reference` | general locators are valid | section/table locator | accepted |
 | `test_parent_disclosure_surface_remains_compatible` | contract fits the disclosure-layer schema rather than sanction schema | disclosure row shape | valid contract behavior |
 | `test_legacy_sanction_schema_is_unchanged` | #337 does not contaminate sanction schema | current sanction schema path | unchanged behavior |
 
@@ -190,9 +200,10 @@ function ingest_contract(raw_rows, existing_rows):
 ## Risks and Open Questions
 
 - #337 depends on #334 disclosure files landing first; until then this plan is a dependent child plan, not immediately executable.
-- Need to define how conflict reasons are encoded in the ingest result (enum, string code, structured payload) without over-designing the future ingestion pipeline.
-- Need to decide whether source-priority affects only conflict annotation or also final row selection in future automation; this issue should keep that behavior explicit and bounded.
-- Web-native disclosures may use non-page locators (section/table identifiers), so `page_reference` should be treated as a general locator field, not strictly a PDF page number.
+- Conflict reasons are encoded in v1 as explicit reason codes; future automation may add richer payloads without changing the base enum contract.
+- Source-priority affects conflict annotation in this issue, not automatic winner selection.
+- Duplicate/conflict classification applies both against existing rows and within the incoming batch.
+- Web-native disclosures may use non-page locators (section/table identifiers), so `page_reference` is treated as a general locator field, not strictly a PDF page number.
 
 ---
 
