@@ -1,0 +1,360 @@
+OpenAI Codex v0.122.0 (research preview)
+--------
+workdir: /mnt/local-analysis/workspace-hub/worldenergydata
+model: gpt-5.4
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR, /home/vamsee/.codex/memories]
+reasoning effort: medium
+reasoning summaries: none
+session id: 019db31a-b78a-7543-bae4-196d72e20360
+--------
+user
+# Adversarial Re-Review Request: Issue #334 (artifact-inline)
+
+Review ONLY the exact inline artifact below. Do not substitute any remote/main-branch version of the plan. The local plan was revised after the earlier review.
+
+Goal:
+Determine whether the REVISED local plan is approval-ready for a bounded T2 foundation issue.
+
+Key concerns from prior review already addressed in this local revision:
+- no package-root API expansion in files-to-change
+- no generic metric_value in v1
+- no helper query APIs in scope
+- typed monetary fields only
+- explicit operator vs project scope
+- explicit exact linkage strategy to existing CostDataPoint for project rows only
+- explicit deferral of normalization, ingestion, analytics, and downstream integrations
+- seed dataset cap <= 12 records
+
+Required output:
+- Verdict: APPROVE | MINOR | MAJOR
+- Retrieval adequacy: adequate | insufficient
+- Strengths
+- Findings by severity: critical, high, medium, low
+- Missing tests
+- Scope creep concerns
+- Weakest assumption
+- Most likely implementation failure mode
+- Most likely test gap
+- Future issues suggested
+- Review confidence
+
+## Exact revised local artifact under review
+
+## Deliverable
+
+A foundation-only v1 disclosure data layer in `worldenergydata.cost.data_collection` that models annual as-reported monetary disclosures with explicit operator-vs-project scope, strong row-level provenance, a tiny curated seed dataset, and a documented linkage strategy to `CostDataPoint` without changing downstream economics consumers yet.
+
+---
+
+## Scope Boundaries
+
+### In scope now
+- A typed disclosure schema for annual as-reported monetary records
+- An explicit `scope`/`scope_type` field distinguishing `operator` rows from `project` rows
+- Preservation of `as_reported_metric_name` alongside a normalized metric identifier
+- Typed monetary value fields (`amount`, `currency`, `magnitude_scale`, `unit`) rather than one generic `metric_value`
+- A tiny hand-curated seed dataset proving:
+  - at least one multi-year project series
+  - at least one multi-year operator annual capex series
+  - both operator-level and project-level rows
+- Strong per-record provenance: `source_title`, `source_url`, `page_reference`, `quoted_text`, `confidence`
+- A documented v1 linkage strategy for project-scope rows to existing `CostDataPoint` records via exact `(operator, project_name)` matching
+- Public loader/schema exports from `worldenergydata.cost.data_collection`
+
+### Explicitly out of scope for this issue
+- Any changes to `cost_predictor.py`
+- Any integration into `fdas`, `lower_tertiary`, or field-economics consumers
+- Currency normalization, inflation adjustment, rebasing, or cross-currency comparability logic
+- Derived analytics/views such as re-baselining, unit-cost metrics, or benchmarking dashboards
+- Helper query APIs like `get_project_timeseries()` or `get_operator_annual_metrics()`
+- Automated ingestion, XBRL/SEC pipelines, or scraper workflows
+- Broad operator coverage; v1 remains a minimal proof dataset only
+
+---
+
+## Linkage Strategy
+
+- V1 project-scope disclosure rows may include a nullable linkage field or derived linkage rule targeting existing `CostDataPoint` records.
+- The supported join surface in v1 is exact `(operator, project_name)` matching against the existing `load_public_dataset()` corpus.
+- V1 does not attempt fuzzy matching, alias reconciliation, or backfilling all historical projects.
+- Rows that cannot be linked deterministically remain valid disclosure records but must not claim a `CostDataPoint` link.
+- Downstream consumer integration is deferred; this issue only defines and tests the linkage contract.
+
+---
+
+## Downstream Integration Surface
+
+- After this issue, downstream consumers in `cost`, `fdas`, and field-economics modules can rely on a stable disclosure schema/loader existing in `worldenergydata.cost.data_collection`.
+- The only supported relationship to the current sanction-point model is the exact `(operator, project_name)` linkage contract for project-scope rows.
+- No downstream consumer code changes are part of this issue.
+- Follow-up issues will separately cover linkage expansion, normalization/comparability, ingestion hardening, and consumer analytics/integration.
+
+---
+
+## Pseudocode
+
+```text
+class ScopeType(Enum):
+    define OPERATOR and PROJECT
+
+class FilingType(Enum):
+    define annual_report, ten_k, twenty_f, investor_presentation, regulator_pdo, regulator_fdp, press_release
+
+class NormalizedMetricName(Enum):
+    define operator_upstream_capex_reported, project_total_capex_reported, project_remaining_capex_reported
+
+class OperatorDisclosureRecord(BaseModel):
+    validate operator, fiscal_year, scope_type, filing_type
+    validate as_reported_metric_name and normalized_metric_name
+    validate typed monetary fields: amount, currency, magnitude_scale, unit
+    validate provenance fields: source_title, source_url, page_reference, quoted_text, confidence
+    if scope_type == PROJECT require project_name
+    if scope_type == OPERATOR forbid project_name linkage claims
+
+function load_operator_disclosures_dataset():
+    instantiate validated OperatorDisclosureRecord items from a tiny curated raw list
+    return records
+
+function linkable_to_cost_datapoint(record, sanctioned_records):
+    if record.scope_type != PROJECT return false
+    return exact (record.operator, record.project_name) match exists in sanctioned_records
+
+update data_collection exports:
+    expose ScopeType, FilingType, NormalizedMetricName, OperatorDisclosureRecord, load_operator_disclosures_dataset
+```
+
+---
+
+## Files to Change
+
+| Action | Path | Reason |
+|---|---|---|
+| Create | `src/worldenergydata/cost/data_collection/operator_disclosures_schema.py` | schema for annual as-reported monetary disclosure records |
+| Create | `src/worldenergydata/cost/data_collection/operator_disclosures_dataset.py` | tiny curated disclosure-oriented seed dataset + loader |
+| Modify | `src/worldenergydata/cost/data_collection/__init__.py` | export new disclosure schema/loader alongside current sanction-point dataset |
+| Create | `tests/unit/cost/test_operator_disclosures.py` | TDD coverage for schema, loader, provenance, scope separation, linkage rules, and time-series behavior |
+
+---
+
+## TDD Test List
+
+| Test name | What it verifies | Expected input | Expected output |
+|---|---|---|---|
+| `test_disclosure_record_requires_money_fields_and_provenance` | schema rejects records missing typed monetary or provenance fields | record missing `amount`, `currency`, `source_url`, or `page_reference` | validation error |
+| `test_scope_type_enforces_project_name_rules` | operator rows and project rows are structurally separated | `scope_type=project` without `project_name`; `scope_type=operator` with linkage-only project fields | validation error / rejection |
+| `test_as_reported_metric_name_is_preserved` | reported disclosure labels are retained beside normalized metric identifiers | seed dataset record | exact reported label preserved |
+| `test_currency_and_magnitude_scale_are_required_for_money_metrics` | monetary disclosures must preserve as-reported value context | seed dataset record | required typed fields present |
+| `test_loader_returns_validated_records_from_capped_seed_dataset` | loader returns a tiny validated seed corpus only | seed dataset | non-empty list with <= 12 records |
+| `test_project_scope_rows_link_to_existing_cost_datapoint_by_exact_operator_project_match` | v1 linkage strategy is deterministic and narrow | project-scope rows + `load_public_dataset()` | exact matches only |
+| `test_every_seed_record_has_source_url_page_reference_and_quote` | provenance minimum is enforced row by row | all seed records | all required provenance fields populated |
+| `test_seed_dataset_contains_one_multi_year_project_series` | at least one project has >1 fiscal year record | filtered project rows | two or more years represented |
+| `test_seed_dataset_contains_one_multi_year_operator_capex_series` | at least one operator annual capex series exists | filtered operator rows | two or more years represented |
+| `test_gap_years_are_not_imputed_by_loader` | loader does not silently fill missing years | sparse time-series example | only explicit records returned |
+| `test_restated_prior_year_values_are_flagged_or_modeled_explicitly` | restatement handling is documented in the schema/dataset shape | restated year example | explicit separate record or explicit flag |
+| `test_public_exports_exist_in_cost_data_collection_only` | v1 remains a data_collection-level API, not a package-root expansion | import check | disclosure names resolve from `worldenergydata.cost.data_collection` |
+
+---
+
+## Acceptance Criteria
+
+- [ ] `tests/unit/cost/test_operator_disclosures.py` passes under the repo test command
+- [ ] New schema exists for annual as-reported monetary disclosure records with explicit operator-vs-project scope typing
+- [ ] Generic untyped `metric_value` is not used in v1; the schema uses typed monetary fields and preserves `as_reported_metric_name`
+- [ ] Curated seed dataset exists, loads successfully, and contains <= 12 records
+- [ ] Seed dataset includes at least one project-scope multi-year series linked by exact `(operator, project_name)` match to an existing `CostDataPoint`
+- [ ] Seed dataset includes at least one operator-scope multi-year annual capex series
+- [ ] Every seed record includes minimum provenance: `source_title`, `source_url`, `page_reference`, `quoted_text`, and `confidence`
+- [ ] Disclosure layer is exported from `worldenergydata.cost.data_collection` without changing the package-root `worldenergydata.cost` API
+- [ ] Plan clearly documents the linkage strategy and explicitly defers downstream consumer integration, comparability normalization, and automated ingestion to follow-up issues
+
+---
+
+## Follow-up Issues
+
+- Child issue #335: linkage model hardening between annual disclosure records and `CostDataPoint` sanction records
+- Child issue #336: currency normalization and comparability policy for annual disclosures
+- Child issue #337: citation standards and automated ingestion for annual operator disclosures
+- Child issue #338: downstream analytics views and integration surface for `cost`, `fdas`, and `lower_tertiary`
+
+---
+
+## Adversarial Review Summary
+
+| Provider | Verdict | Key findings |
+|---|---|---|
+| Codex | MAJOR on prior draft | Prior draft was too broad, used an underspecified generic value model, and lacked explicit linkage/integration-defer language |
+| Gemini | MINOR on prior draft | Prior draft needed explicit operator-vs-project separation, a firm v1 scope cap, and stronger edge-case tests |
+
+**Overall result:** revised after review; re-review required before approval stage
+
+Revisions made based on review:
+- narrowed v1 to a foundation-only disclosure data layer
+- removed package-root export changes and helper-query API ideas from v1
+- added explicit scope typing, stronger provenance requirements, capped seed dataset size, and deterministic linkage strategy
+- added explicit defer boundaries for normalization, automation, and downstream consumer integration
+
+---
+
+## Risks and Open Questions
+
+- **Risk:** even a tiny hand-curated seed dataset can sprawl if source selection is not capped aggressively.
+- **Risk:** operator disclosures vary in wording; preserving both normalized and as-reported metric names is necessary but may still require future mapping rules.
+- **Risk:** restated prior-year values need a consistent v1 representation to avoid hidden ambiguity.
+- **Open:** should the linkage field be a stored explicit reference field or a documented exact-match rule only in v1?
+- **Open:** should restatements be modeled as separate records with a restatement flag, or only documented as an allowed future extension if the capped seed set does not include one?
+
+---
+
+## Complexity: T2
+
+**T2** — this is a bounded multi-file data-model addition with new tests and a tiny curated dataset, but it avoids immediate cross-module integration, automation, and analytics work.
+warning: Codex's Linux sandbox uses bubblewrap and needs access to create user namespaces.
+codex
+Verdict: MINOR
+
+Retrieval adequacy: adequate
+
+Strengths
+
+- Scope is materially tighter than the prior draft and now fits a bounded T2 foundation issue.
+- The plan cleanly avoids package-root API expansion, helper query APIs, downstream consumer changes, and normalization work.
+- The schema direction is stronger: explicit `scope_type`, typed monetary fields, retained `as_reported_metric_name`, and row-level provenance are all appropriate.
+- The linkage contract is now narrow and testable: exact `(operator, project_name)` for project rows only.
+- The seed dataset cap `<= 12` is a good anti-sprawl control.
+
+Findings by severity
+
+Critical
+
+- None.
+
+High
+
+- The plan still leaves one schema-contract decision unresolved: whether linkage is a stored nullable field or only a derived rule. That is not just an implementation detail because it affects schema shape, validation, exports, and tests. Approval should require choosing one for v1.
+- Restatement handling is also still unresolved in a way that can change the model shape. The tests mention “flagged or modeled explicitly,” but those are two different contracts. For approval-ready scope, v1 should pick one representation or explicitly defer restatement support out of the seed dataset and schema.
+
+Medium
+
+- The pseudocode says “if `scope_type == OPERATOR` forbid project_name linkage claims,” but the actual field set for those claims is not named. The schema should specify the exact prohibited fields so tests are not forced to infer intent.
+- `NormalizedMetricName` currently mixes operator and project concepts in one enum, which is fine for v1, but the plan does not define whether every record must map to one of those three values or whether unmapped reported metrics are invalid. That validation boundary should be explicit.
+- `unit` is required in the typed money bundle, but the plan does not define the expected value class for annual monetary disclosures. If the intent is always currency-denominated annual disclosures, `unit` may become redundant or inconsistently populated unless constrained.
+- “time-series behavior” appears in the test file reason, but the plan correctly avoids query APIs. That is acceptable, but the test language should stay narrowly about record presence/order/non-imputation, not imply a series abstraction.
+
+Low
+
+- The document alternates between `scope` and `scope_type`; approval-ready text should use one name consistently.
+- “operator annual capex series” is clear enough, but “project_total_capex_reported” vs “project_remaining_capex_reported” would benefit from one sentence clarifying that v1 permits both but does not normalize between them.
+
+Missing tests
+
+- A test that operator-scope rows cannot produce a positive linkage result even if `project_name` is accidentally present in raw input.
+- A test that unmatched project rows remain valid disclosure records and do not receive a false linkage.
+- A test that `confidence` is range-validated.
+- A test that `normalized_metric_name` is required and must be one of the allowed enum values.
+- If linkage is a stored field in v1, a test that it cannot be populated for operator rows. If linkage is derived-only, a test that no stored linkage field exists on the model.
+
+Scope creep concerns
+
+- The main remaining creep vector is restatement support. If implemented too broadly, it can drag in versioning/history semantics.
+- A second creep vector is over-designing linkage beyond exact match, especially alias handling or reconciliation logic.
+- Otherwise the revision is well bounded.
+
+Weakest assumption
+
+- Exact `(operator, project_name)` matching against the current `load_public_dataset()` corpus will be sufficiently stable to prove the contract with a tiny seed set. That is plausible for a proof dataset, but fragile if naming discrepancies exist in even one selected project.
+
+Most likely implementation failure mode
+
+- The implementer tries to “future-proof” the schema by adding optional linkage helpers, restatement abstractions, or broader metric support, which quietly expands v1 beyond the stated foundation-only boundary.
+
+Most likely test gap
+
+- Tests may confirm that at least one seed project links successfully, but fail to verify the negative path that non-matching project disclosures remain valid yet unlinked.
+
+Future issues suggested
+
+- A short child issue to freeze the v1 contract for linkage representation and restatement representation before implementation, if those are not resolved in this plan text.
+- A follow-up issue for negative-linkage coverage and naming-governance rules for seed record selection.
+- The listed child issues `#335` to `#338` remain appropriate.
+
+Review confidence
+
+- High
+
+This is close to approval-ready. I would approve after tightening the two unresolved contract points: choose derived-only vs stored linkage for v1, and choose one explicit restatement representation or explicitly defer restatements out of v1 seed scope.
+tokens used
+26,820
+Verdict: MINOR
+
+Retrieval adequacy: adequate
+
+Strengths
+
+- Scope is materially tighter than the prior draft and now fits a bounded T2 foundation issue.
+- The plan cleanly avoids package-root API expansion, helper query APIs, downstream consumer changes, and normalization work.
+- The schema direction is stronger: explicit `scope_type`, typed monetary fields, retained `as_reported_metric_name`, and row-level provenance are all appropriate.
+- The linkage contract is now narrow and testable: exact `(operator, project_name)` for project rows only.
+- The seed dataset cap `<= 12` is a good anti-sprawl control.
+
+Findings by severity
+
+Critical
+
+- None.
+
+High
+
+- The plan still leaves one schema-contract decision unresolved: whether linkage is a stored nullable field or only a derived rule. That is not just an implementation detail because it affects schema shape, validation, exports, and tests. Approval should require choosing one for v1.
+- Restatement handling is also still unresolved in a way that can change the model shape. The tests mention “flagged or modeled explicitly,” but those are two different contracts. For approval-ready scope, v1 should pick one representation or explicitly defer restatement support out of the seed dataset and schema.
+
+Medium
+
+- The pseudocode says “if `scope_type == OPERATOR` forbid project_name linkage claims,” but the actual field set for those claims is not named. The schema should specify the exact prohibited fields so tests are not forced to infer intent.
+- `NormalizedMetricName` currently mixes operator and project concepts in one enum, which is fine for v1, but the plan does not define whether every record must map to one of those three values or whether unmapped reported metrics are invalid. That validation boundary should be explicit.
+- `unit` is required in the typed money bundle, but the plan does not define the expected value class for annual monetary disclosures. If the intent is always currency-denominated annual disclosures, `unit` may become redundant or inconsistently populated unless constrained.
+- “time-series behavior” appears in the test file reason, but the plan correctly avoids query APIs. That is acceptable, but the test language should stay narrowly about record presence/order/non-imputation, not imply a series abstraction.
+
+Low
+
+- The document alternates between `scope` and `scope_type`; approval-ready text should use one name consistently.
+- “operator annual capex series” is clear enough, but “project_total_capex_reported” vs “project_remaining_capex_reported” would benefit from one sentence clarifying that v1 permits both but does not normalize between them.
+
+Missing tests
+
+- A test that operator-scope rows cannot produce a positive linkage result even if `project_name` is accidentally present in raw input.
+- A test that unmatched project rows remain valid disclosure records and do not receive a false linkage.
+- A test that `confidence` is range-validated.
+- A test that `normalized_metric_name` is required and must be one of the allowed enum values.
+- If linkage is a stored field in v1, a test that it cannot be populated for operator rows. If linkage is derived-only, a test that no stored linkage field exists on the model.
+
+Scope creep concerns
+
+- The main remaining creep vector is restatement support. If implemented too broadly, it can drag in versioning/history semantics.
+- A second creep vector is over-designing linkage beyond exact match, especially alias handling or reconciliation logic.
+- Otherwise the revision is well bounded.
+
+Weakest assumption
+
+- Exact `(operator, project_name)` matching against the current `load_public_dataset()` corpus will be sufficiently stable to prove the contract with a tiny seed set. That is plausible for a proof dataset, but fragile if naming discrepancies exist in even one selected project.
+
+Most likely implementation failure mode
+
+- The implementer tries to “future-proof” the schema by adding optional linkage helpers, restatement abstractions, or broader metric support, which quietly expands v1 beyond the stated foundation-only boundary.
+
+Most likely test gap
+
+- Tests may confirm that at least one seed project links successfully, but fail to verify the negative path that non-matching project disclosures remain valid yet unlinked.
+
+Future issues suggested
+
+- A short child issue to freeze the v1 contract for linkage representation and restatement representation before implementation, if those are not resolved in this plan text.
+- A follow-up issue for negative-linkage coverage and naming-governance rules for seed record selection.
+- The listed child issues `#335` to `#338` remain appropriate.
+
+Review confidence
+
+- High
+
+This is close to approval-ready. I would approve after tightening the two unresolved contract points: choose derived-only vs stored linkage for v1, and choose one explicit restatement representation or explicitly defer restatements out of v1 seed scope.
