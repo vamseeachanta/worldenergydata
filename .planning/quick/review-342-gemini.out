@@ -1,0 +1,4 @@
+Agent loading error: Failed to load agent from /mnt/local-analysis/workspace-hub/.gemini/agents/gsd-debugger.md: Validation failed: Agent Definition:
+Unrecognized key(s) in object: 'permissionMode'Agent loading error: Failed to load agent from /mnt/local-analysis/workspace-hub/.gemini/agents/gsd-executor.md: Validation failed: Agent Definition:
+Unrecognized key(s) in object: 'permissionMode'Error during GrepLogic execution: Error: Operation timed out after 30000ms. In large repositories, consider narrowing your search scope by specifying a 'dir_path' or an 'include_pattern'.
+Error during GrepLogic execution: Error: Operation timed out after 30000ms. In large repositories, consider narrowing your search scope by specifying a 'dir_path' or an 'include_pattern'.
