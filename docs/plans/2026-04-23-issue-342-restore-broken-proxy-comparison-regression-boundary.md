@@ -44,20 +44,25 @@
 
 ## Deliverable
 
-A repaired and explicit proxy-comparison regression boundary in the `worldenergydata.cost.calibration` namespace that either restores the missing `proxy_comparison.py` public contract or truthfully retargets the regression test to the surviving supported module, with tests passing from import through comparison behavior.
+A restored compatibility module at `src/worldenergydata/cost/calibration/proxy_comparison.py` that preserves the existing public import contract used by `tests/unit/cost/test_proxy_comparison.py`, adapts current `CostPredictor` + sanctioned `CostDataPoint` inputs into the tested proxy-comparison result surface, and documents that this is the supported sanction-layer regression boundary.
 
 ---
 
 ## Scope Boundaries
 
 ### In scope now
-- Decide whether `worldenergydata.cost.calibration.proxy_comparison` is the canonical supported surface
-- Restore or retarget the public proxy-comparison contract to match reality
-- Keep the fix narrow and limited to the broken regression boundary
-- Add or adjust tests so importability, return types, and bias/RMSE semantics are grounded on the chosen supported module
-- Document the chosen ownership boundary in code comments/module docs
+- Restore `worldenergydata.cost.calibration.proxy_comparison` as the canonical supported import path for this regression boundary
+- Build a narrow compatibility adapter around the current sanction-layer predictor/data surfaces instead of retargeting the test to an unrelated BSEE-only module
+- Make region-name normalization explicit between sanctioned dataset labels (`GOM`, `NCS`, `UKCS`, `West Africa`, `Asia-Pacific`, `Middle East`) and any proxy-rate lookup keys used internally
+- Preserve the existing tested public contract:
+  - `ProxyComparisonResult`
+  - `ProxyRateComparison`
+  - `compare_calibrated_to_proxy`
+- Add or retain tests that ground behavior on the existing regression assertions, not just importability
+- Document the ownership boundary in code comments/module docs so future callers know this is a compatibility surface over the current sanction-layer predictor
 
 ### Explicitly out of scope for this issue
+- Retargeting the test away from `cost.calibration.proxy_comparison` as the primary fix path
 - Redesigning the broader BSEE cost calibration stack
 - Expanding annual disclosure analytics or linkage behavior
 - Reworking the sanctioned public dataset schema
@@ -68,16 +73,16 @@ A repaired and explicit proxy-comparison regression boundary in the `worldenergy
 ## Pseudocode
 
 ```text
-inspect failing test import contract
-inspect current cost.calibration and bsee.analysis.cost surfaces
-if missing module is still intended public API:
-    create cost/calibration/proxy_comparison.py
-    expose ProxyComparisonResult, ProxyRateComparison, compare_calibrated_to_proxy
-    implement via current predictor + sanctioned dataset semantics
-else:
-    retarget test to the supported replacement surface
-    preserve all behavior assertions with truthful module ownership
-run targeted tests for proxy comparison + adjacent sanction boundaries
+inspect existing regression contract in tests/unit/cost/test_proxy_comparison.py
+create src/worldenergydata/cost/calibration/proxy_comparison.py
+within the module:
+    define ProxyComparisonResult dataclass compatible with existing tests
+    define ProxyRateComparison adapter that accepts the current CostPredictor
+    load sanctioned CostDataPoint dataset and normalize region names to proxy keys
+    compute proxy_rate_usd_day and calibrated_rate_usd_day for covered cells
+    preserve bias_pct, rmse_usd_mm, confidence, and list-return behavior expected by tests
+    expose compare_calibrated_to_proxy convenience function
+run targeted proxy-comparison tests plus adjacent sanction boundary tests
 ```
 
 ---
@@ -86,11 +91,11 @@ run targeted tests for proxy comparison + adjacent sanction boundaries
 
 | Action | Path | Reason |
 |---|---|---|
-| Modify or create | `src/worldenergydata/cost/calibration/proxy_comparison.py` | restore supported public contract if this is the intended namespace |
-| Verify or modify | `src/worldenergydata/cost/calibration/__init__.py` | export proxy-comparison surface if needed |
-| Verify only | `src/worldenergydata/cost/calibration/cost_predictor.py` | ensure predictor behavior remains compatible |
-| Verify only | `src/worldenergydata/bsee/analysis/cost/cost_calibration.py` | use only as reference unless ownership intentionally shifts |
-| Modify | `tests/unit/cost/test_proxy_comparison.py` | align regression boundary with truthful supported surface |
+| Create | `src/worldenergydata/cost/calibration/proxy_comparison.py` | restore the missing supported public import path |
+| Verify or modify | `src/worldenergydata/cost/calibration/__init__.py` | export the compatibility surface if package exports require it |
+| Verify only | `src/worldenergydata/cost/calibration/cost_predictor.py` | ensure predictor behavior remains compatible with the adapter |
+| Verify only | `src/worldenergydata/bsee/analysis/cost/cost_calibration.py` | reference only for proxy-rate concepts; do not make it the new public surface |
+| Modify minimally if needed | `tests/unit/cost/test_proxy_comparison.py` | only if assertions need truthful tightening after restoring the contract |
 | Verify only | `tests/unit/cost/test_calibration_schema.py` | ensure adjacent sanction-layer boundary still passes |
 
 ---
@@ -101,10 +106,16 @@ run targeted tests for proxy comparison + adjacent sanction boundaries
 |---|---|---|---|
 | `test_proxy_comparison_module_imports` | supported import path exists again | module import | success |
 | `test_compare_returns_list` | compare surface remains callable | fitted predictor + public dataset | list result |
+| `test_compare_returns_non_empty_list` | restored adapter produces substantive output | fitted predictor + public dataset | length > 0 |
 | `test_all_results_are_proxy_comparison_result` | typed result contract is explicit | comparison output | all typed instances |
-| `test_bias_pct_calculated` | bias sign/math semantics remain stable | comparison output | expected bias formula |
+| `test_results_have_positive_proxy_rates` | proxy-rate semantics survive the restore | comparison output | all values > 0 |
+| `test_results_have_positive_calibrated_rates` | calibrated-rate semantics survive the restore | comparison output | all values > 0 |
+| `test_results_cover_multiple_regions` | restored adapter handles the sanctioned dataset’s region spread | comparison output | multiple normalized regions covered |
 | `test_confidence_levels_present` | output classification remains bounded | comparison output | valid confidence values |
+| `test_bias_pct_sign_convention` | positive/negative bias semantics remain stable | constructed result rows | expected sign behavior |
+| `test_bias_pct_calculated` | bias formula remains stable | comparison output | expected bias formula |
 | `test_compare_calibrated_to_proxy_trains_unfitted_predictor` | convenience path still works | unfitted predictor | non-empty results |
+| `test_function_results_have_required_fields` | convenience path preserves the expected public fields | function output | required fields present |
 | `test_calibration_schema_boundary_unchanged` | adjacent sanction schema remains unaffected | current schema tests | pass |
 
 ---
@@ -112,9 +123,10 @@ run targeted tests for proxy comparison + adjacent sanction boundaries
 ## Acceptance Criteria
 
 - [ ] `tests/unit/cost/test_proxy_comparison.py` no longer fails at import/collection on current `main`
-- [ ] The chosen module/test ownership boundary is explicit and truthful in code
-- [ ] Proxy-comparison return types and bias semantics remain covered by targeted tests
-- [ ] The fix is narrow and does not reopen unrelated disclosure or BSEE calibration redesign work
+- [ ] `worldenergydata.cost.calibration.proxy_comparison` is restored as the supported compatibility import path for this regression boundary
+- [ ] The restored module preserves the public names `ProxyComparisonResult`, `ProxyRateComparison`, and `compare_calibrated_to_proxy`
+- [ ] Targeted proxy-comparison tests cover non-empty output, positive rates, multi-region coverage, required fields, and bias semantics
+- [ ] Any required region-name normalization between the sanctioned dataset and proxy-rate lookup keys is implemented explicitly in code, not left implicit in tests
 - [ ] Adjacent sanction-layer regression checks still pass
 
 ---
