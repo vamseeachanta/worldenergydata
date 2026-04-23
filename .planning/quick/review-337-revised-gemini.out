@@ -1,0 +1,41 @@
+**Verdict:** APPROVE
+**Retrieval adequacy:** adequate
+
+**Strengths:**
+- Successfully decouples the disclosure ingestion logic from the legacy sanction dataset, directly resolving the previous major structural issues.
+- Establishes a clear, testable contract for source priority and conflict resolution rather than relying on decorative enums.
+- Explicitly defines strict dependency boundaries (waiting on #334), preventing out-of-order execution and merge conflicts.
+- Scope boundaries are rigorously defined, preventing accidental expansion into web scraping, XBRL parsing, or legacy backfilling.
+
+**Findings by severity:**
+- **Critical:** None.
+- **High:** None.
+- **Medium:**
+  - **Exact Matching Vulnerability:** The pseudocode for `classify_disclosure_row` relies on checking for "same value/citation payload". Strict equality checks (`==`) on `quoted_text` or floating-point values will likely result in false conflicts during actual ingestion due to minor whitespace variations, unicode differences, or float precision issues.
+  - **Locator Terminology:** As correctly noted in the plan's risks, `page_reference` is overly specific to PDFs. If #334 hasn't locked this field name in, this contract should advocate for a broader term like `reference_locator` or `source_locator` to cleanly handle HTML anchors, table IDs, or section headers.
+- **Low:**
+  - **Missing Temporal Provenance:** The citation contract mandates URLs and titles but omits `publication_date` or `access_date`. For web-sourced financial data, URLs can rot or update, making temporal markers important for long-term provenance validity.
+
+**Missing tests:**
+- Tests handling minor variations in `quoted_text` or `value` (e.g., whitespace padding, casing) to ensure robust duplicate vs. conflict classification.
+- Tests validating behavior when mandatory business key fields (like `operator` or `fiscal_year`) are malformed or missing before reaching the citation validation layer.
+- Tests verifying how the contract handles non-standard but valid URLs (e.g., complex query parameters, deeply nested paths).
+
+**Scope creep concerns:**
+- None significant. The plan is exceptionally tightly scoped. The only minor risk is over-engineering the conflict annotation payload (e.g., returning complex diff objects) before the future ingestion pipeline actually needs it. Keep the structured payload simple.
+
+**Weakest assumption:**
+- Assuming that duplicate/conflict classification can be purely deterministic based on strict equality of the business key and payload, without needing string normalization or fuzzy matching for the quoted text.
+
+**Most likely implementation failure mode:**
+- Implementing naïve equality checks for duplicate detection on strings and numbers, leading to an explosion of "conflict" classifications during future data ingestion due to trivial formatting or encoding differences in the source material.
+
+**Most likely test gap:**
+- Failing to test edge cases around URL validation and missing test coverage for business key composition when optional fields (like `project_name`) are blank vs. explicitly `None`.
+
+**Future issues suggested:**
+- Implement string normalization and fuzzy matching strategies for robust disclosure duplicate/conflict detection.
+- Implement the first automated ingestion pipeline (e.g., a specific operator's annual report) consuming this contract.
+- Expand the citation schema to include temporal provenance (`access_date`, `publication_date`) if not addressed in #334.
+
+**Review confidence:** High
