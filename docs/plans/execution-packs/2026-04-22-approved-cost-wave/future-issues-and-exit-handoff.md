@@ -47,32 +47,44 @@ Grounding
 - URL: https://github.com/vamseeachanta/worldenergydata/issues/342
 - Title: `bug(cost): restore broken proxy comparison regression boundary`
 - Current planning state:
-  - draft plan exists at `docs/plans/2026-04-23-issue-342-restore-broken-proxy-comparison-regression-boundary.md`
-  - Codex adversarial review artifact exists:
+  - current draft plan: `docs/plans/2026-04-23-issue-342-restore-broken-proxy-comparison-regression-boundary.md`
+  - first review artifacts:
     - `scripts/review/results/2026-04-23-plan-342-codex.md`
-  - Gemini artifact recorded as unavailable:
     - `scripts/review/results/2026-04-23-plan-342-gemini.md`
-  - issue comment with review/update:
+  - rerun review artifacts:
+    - `scripts/review/results/2026-04-23-plan-342-codex-rerun.md`
+    - `scripts/review/results/2026-04-23-plan-342-gemini-rerun.md`
+  - latest issue comments:
     - https://github.com/vamseeachanta/worldenergydata/issues/342#issuecomment-4301355205
-- Current status: revised after Codex MAJOR findings; needs fresh rerun review before `status:plan-review`
+    - https://github.com/vamseeachanta/worldenergydata/issues/342#issuecomment-4302933474
+- Current status: revised twice after repeated MAJOR findings; still draft; needs another rerun review before `status:plan-review`
 
 ### #343 — operator annual statement source registry
 - URL: https://github.com/vamseeachanta/worldenergydata/issues/343
 - Title: `feat(cost): build major-operator annual statement source registry and yearly coverage tracker`
-- Draft plan exists at:
-  - `docs/plans/2026-04-23-issue-343-major-operator-annual-statement-source-registry-and-yearly-coverage-tracker.md`
-- Planning comment posted:
-  - https://github.com/vamseeachanta/worldenergydata/issues/343#issuecomment-4301223324
-- Current status: review wave was started but intentionally stopped for exit preparation; no canonical review artifact saved yet
+- Current planning state:
+  - current draft plan: `docs/plans/2026-04-23-issue-343-major-operator-annual-statement-source-registry-and-yearly-coverage-tracker.md`
+  - first review artifacts:
+    - `scripts/review/results/2026-04-23-plan-343-codex.md`
+    - `scripts/review/results/2026-04-23-plan-343-gemini.md`
+  - rerun artifact saved:
+    - `scripts/review/results/2026-04-23-plan-343-gemini-rerun.md`
+  - latest issue comments:
+    - https://github.com/vamseeachanta/worldenergydata/issues/343#issuecomment-4302728798
+    - https://github.com/vamseeachanta/worldenergydata/issues/343#issuecomment-4303627633
+- Current status: revised after first MAJOR review wave; rerun Gemini still returned MAJOR; Codex rerun did not yield a usable verdict in this session; plan remains draft and needs another revision + rerun
 
 ### #344 — disclosure restatement/version lineage
 - URL: https://github.com/vamseeachanta/worldenergydata/issues/344
 - Title: `feat(cost): add restatement/version lineage for annual disclosure records`
-- Draft plan exists at:
-  - `docs/plans/2026-04-23-issue-344-restatement-version-lineage-for-annual-disclosure-records.md`
-- Planning comment posted:
-  - https://github.com/vamseeachanta/worldenergydata/issues/344#issuecomment-4301223635
-- Current status: drafted, not yet adversarially reviewed
+- Current planning state:
+  - current draft plan: `docs/plans/2026-04-23-issue-344-restatement-version-lineage-for-annual-disclosure-records.md`
+  - review artifacts:
+    - `scripts/review/results/2026-04-23-plan-344-codex.md`
+    - `scripts/review/results/2026-04-23-plan-344-gemini.md`
+  - latest issue comment:
+    - https://github.com/vamseeachanta/worldenergydata/issues/344#issuecomment-4302836484
+- Current status: revised once after MAJOR findings; still draft; needs rerun review before `status:plan-review`
 
 ### #348 — planning index governance
 - URL: https://github.com/vamseeachanta/worldenergydata/issues/348
@@ -92,9 +104,9 @@ Grounding
 
 ## Recommended next order from this exit point
 
-1. Rerun adversarial review for the revised #342 draft and only move it to `status:plan-review` if the next review wave is clean enough.
-2. Run the first full adversarial review wave for #343 and save canonical Codex/Gemini artifacts (or explicit unavailable artifact if Gemini fails again).
-3. Run the first adversarial review wave for #344.
+1. Revise #343 again to store per-year verified document URLs, remove or derive redundant year-bound fields, and clean up filing-channel semantics; then rerun Codex + Gemini.
+2. Rerun #344 on the revised draft and only move it to `status:plan-review` if the next review wave is clean enough.
+3. Rerun #342 once more on the newly tightened draft and only move it to `status:plan-review` if that review wave is clean enough.
 4. Add `docs/plans/README.md` via #348 so future planning waves can update a canonical local index.
 5. Keep #336 in planning/revision state until the #334 foundation dependency is truly in place for implementation.
 
