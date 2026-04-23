@@ -110,15 +110,21 @@ __all__ = [
     "AdapterError",
     # Query API (issue #288)
     "economics",
+    # Disclosure analytics (issue #338)
+    "disclosure_analytics",
     # Metadata
     "__version__",
 ]
 
 
 def __getattr__(name: str):
-    """Lazy import of query API singletons (issue #288)."""
+    """Lazy import of query API singletons (issue #288, #338)."""
     if name == "economics":
         from worldenergydata.fdas.api import economics
 
         return economics
+    if name == "disclosure_analytics":
+        from worldenergydata.fdas.api import disclosure_analytics
+
+        return disclosure_analytics
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
