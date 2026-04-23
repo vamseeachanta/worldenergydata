@@ -402,6 +402,98 @@ class TestFDASEconomicsQuery:
 
 
 # ==========================================================================
+# FDAS Disclosure Analytics Query API Tests (issue #338)
+# ==========================================================================
+
+
+class TestFDASDisclosureAnalyticsQuery:
+    """Tests for worldenergydata.fdas.api.DisclosureAnalyticsQuery (issue #338)."""
+
+    def test_import_disclosure_analytics_query(self):
+        """DisclosureAnalyticsQuery is importable from fdas.api."""
+        from worldenergydata.fdas.api import DisclosureAnalyticsQuery
+
+        assert DisclosureAnalyticsQuery is not None
+
+    def test_project_revision_method_signature(self):
+        """DisclosureAnalyticsQuery.project_revision accepts a records iterable."""
+        from worldenergydata.fdas.api import DisclosureAnalyticsQuery
+
+        sig = inspect.signature(DisclosureAnalyticsQuery.project_revision)
+        params = list(sig.parameters.keys())
+        assert "records" in params
+
+    def test_operator_capex_method_signature(self):
+        from worldenergydata.fdas.api import DisclosureAnalyticsQuery
+
+        sig = inspect.signature(DisclosureAnalyticsQuery.operator_capex)
+        params = list(sig.parameters.keys())
+        assert "records" in params
+
+    def test_benchmark_method_signature(self):
+        from worldenergydata.fdas.api import DisclosureAnalyticsQuery
+
+        sig = inspect.signature(DisclosureAnalyticsQuery.benchmark)
+        params = list(sig.parameters.keys())
+        assert "project_revision_view" in params
+        assert "predictor_cost_usd_mm" in params
+        assert "operator" in params
+        assert "project_name" in params
+
+    def test_project_revision_returns_derived_rows(self):
+        """End-to-end: FDAS seam delegates to cost.disclosure_analytics."""
+        from worldenergydata.cost.disclosure_analytics import (
+            DisclosureRecord,
+            ProjectRevisionRow,
+            SCOPE_PROJECT,
+        )
+        from worldenergydata.fdas.api import DisclosureAnalyticsQuery
+
+        records = [
+            DisclosureRecord(
+                operator="AcmeCorp",
+                fiscal_year=2022,
+                reported_capex_usd_mm=900.0,
+                scope=SCOPE_PROJECT,
+                project_name="Mariner-A",
+                provenance={"source": "10-K"},
+            ),
+        ]
+        view = DisclosureAnalyticsQuery.project_revision(records)
+        assert len(view) == 1
+        assert isinstance(view[0], ProjectRevisionRow)
+        assert view[0].yoy_delta_usd_mm is None
+
+    def test_benchmark_refuses_non_comparable_rows(self):
+        """Comparability gating is enforced at the FDAS seam too."""
+        from worldenergydata.cost.disclosure_analytics import (
+            DisclosureRecord,
+            SCOPE_PROJECT,
+        )
+        from worldenergydata.fdas.api import DisclosureAnalyticsQuery
+
+        records = [
+            DisclosureRecord(
+                operator="AcmeCorp",
+                fiscal_year=2022,
+                reported_capex_usd_mm=900.0,
+                scope=SCOPE_PROJECT,
+                project_name="Mariner-A",
+                provenance={"source": "10-K"},
+                comparability_status=None,  # missing -> must refuse
+            ),
+        ]
+        view = DisclosureAnalyticsQuery.project_revision(records)
+        result = DisclosureAnalyticsQuery.benchmark(
+            view,
+            predictor_cost_usd_mm=1000.0,
+            operator="AcmeCorp",
+            project_name="Mariner-A",
+        )
+        assert result is None
+
+
+# ==========================================================================
 # Marine Safety Query API Tests
 # ==========================================================================
 
@@ -546,6 +638,18 @@ class TestPackageLevelImports:
         # Lazy-loaded via fdas/__init__.py __getattr__
         assert fdas_mod.economics is not None
 
+    def test_fdas_disclosure_analytics_accessible(self):
+        """wed.fdas.disclosure_analytics should be accessible (issue #338)."""
+        import worldenergydata as wed
+
+        fdas_mod = wed.fdas
+        # Lazy-loaded via fdas/__init__.py __getattr__
+        assert fdas_mod.disclosure_analytics is not None
+        # Must be the same class as defined in fdas.api — no divergent surface.
+        from worldenergydata.fdas.api import DisclosureAnalyticsQuery
+
+        assert isinstance(fdas_mod.disclosure_analytics, DisclosureAnalyticsQuery)
+
     def test_marine_safety_api_accessible(self):
         """wed.marine_safety_api should resolve to marine_safety.api module."""
         import worldenergydata as wed
@@ -564,6 +668,15 @@ class TestPackageLevelImports:
         import worldenergydata as wed
 
         assert callable(wed.fdas.economics.npv)
+
+    def test_fdas_disclosure_analytics_callables(self):
+        """wed.fdas.disclosure_analytics exposes project_revision/operator_capex/benchmark."""
+        import worldenergydata as wed
+
+        ns = wed.fdas.disclosure_analytics
+        assert callable(ns.project_revision)
+        assert callable(ns.operator_capex)
+        assert callable(ns.benchmark)
 
     def test_marine_safety_incidents_query_callable(self):
         """wed.marine_safety_api.incidents.query is callable."""

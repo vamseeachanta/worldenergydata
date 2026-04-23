@@ -272,3 +272,76 @@ class EconomicsQuery:
 
 # Module-level singleton instance for convenience attribute access
 economics = EconomicsQuery()
+
+
+# --------------------------------------------------------------------------
+# Disclosure analytics (issue #338)
+# --------------------------------------------------------------------------
+
+
+class DisclosureAnalyticsQuery:
+    """FDAS consumer-facing surface for annual disclosure analytics.
+
+    Thin delegator over :mod:`worldenergydata.cost.disclosure_analytics`. All
+    semantics (scope separation, YoY math, comparability gating) live in the
+    cost-side module — this class is the explicit FDAS API seam called for
+    by issue #338.
+
+    Examples
+    --------
+    >>> from worldenergydata.fdas.api import disclosure_analytics
+    >>> view = disclosure_analytics.project_revision(raw_records)
+    >>> op_view = disclosure_analytics.operator_capex(raw_records)
+    >>> benchmark = disclosure_analytics.benchmark(
+    ...     view, predictor_cost_usd_mm=1100.0,
+    ...     operator="AcmeCorp", project_name="Mariner-A",
+    ... )
+    """
+
+    @staticmethod
+    def project_revision(records: Sequence[Any]) -> List[Any]:
+        """Return the project annual cost revision view."""
+        from worldenergydata.cost.disclosure_analytics import (
+            load_project_cost_revision_view,
+        )
+
+        return load_project_cost_revision_view(records)
+
+    @staticmethod
+    def operator_capex(records: Sequence[Any]) -> List[Any]:
+        """Return the operator annual capex series view."""
+        from worldenergydata.cost.disclosure_analytics import (
+            load_operator_annual_capex_view,
+        )
+
+        return load_operator_annual_capex_view(records)
+
+    @staticmethod
+    def benchmark(
+        project_revision_view: Sequence[Any],
+        predictor_cost_usd_mm: float,
+        *,
+        operator: str,
+        project_name: str,
+        fiscal_year: Optional[int] = None,
+    ) -> Optional[Any]:
+        """Compare a predictor output to the latest comparable disclosed capex.
+
+        Returns ``None`` unless at least one matching row is flagged
+        same-basis/comparable under #336 outputs. See
+        :func:`worldenergydata.cost.disclosure_analytics.build_cost_disclosure_benchmark`.
+        """
+        from worldenergydata.cost.disclosure_analytics import (
+            build_cost_disclosure_benchmark,
+        )
+
+        return build_cost_disclosure_benchmark(
+            project_revision_view,
+            predictor_cost_usd_mm,
+            operator=operator,
+            project_name=project_name,
+            fiscal_year=fiscal_year,
+        )
+
+
+disclosure_analytics = DisclosureAnalyticsQuery()
