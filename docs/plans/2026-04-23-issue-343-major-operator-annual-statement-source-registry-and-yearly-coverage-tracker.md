@@ -4,7 +4,7 @@
 > **Complexity:** T2
 > **Date:** 2026-04-23
 > **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/343
-> **Review artifacts:** pending
+> **Review artifacts:** scripts/review/results/2026-04-23-plan-343-codex.md | scripts/review/results/2026-04-23-plan-343-gemini.md
 
 ---
 
@@ -19,6 +19,9 @@
 - Issue #343 body
 - Parent/foundation issues #334, #337, #338
 - Existing sanction dataset source inventory embedded in `public_dataset.py`
+- Adversarial review artifacts:
+  - `scripts/review/results/2026-04-23-plan-343-codex.md`
+  - `scripts/review/results/2026-04-23-plan-343-gemini.md`
 
 ### Gaps identified
 - No machine-readable operator source registry exists for annual statements, filing channels, or year coverage.
@@ -35,23 +38,45 @@
 | Existing sanction source evidence | `src/worldenergydata/cost/data_collection/public_dataset.py` |
 | Existing disclosure provenance contract | `src/worldenergydata/cost/data_collection/disclosure_ingest_contract.py` |
 | Existing derived YoY analytics | `src/worldenergydata/cost/disclosure_analytics.py` |
+| Codex review artifact | `scripts/review/results/2026-04-23-plan-343-codex.md` |
+| Gemini review artifact | `scripts/review/results/2026-04-23-plan-343-gemini.md` |
 
 ---
 
 ## Deliverable
 
-An additive, machine-readable registry of major operators and their annual-statement discovery surfaces, including bounded seed coverage by fiscal year, validation tests, and enough metadata for future annual disclosure backfill work to discover and track statement availability year over year.
+An additive, machine-readable registry of major operators and their annual-statement discovery surfaces, using a fixed seed operator set and a fixed 2020–2024 operator-year coverage window, with typed filing-channel metadata, explicit operator-year status semantics (`verified`, `missing`, `known_unavailable`), validation tests, and enough metadata for future annual disclosure backfill work to discover and track statement availability year over year.
 
 ---
 
 ## Scope Boundaries
 
 ### In scope now
-- Define a typed registry contract for operator annual-statement sources and yearly coverage metadata
-- Seed a bounded high-value operator set already represented in the cost evidence base (for example BP, Chevron, Shell, Equinor, Aker BP, TotalEnergies, ExxonMobil, Murphy Oil, Hess)
-- Track per-operator discovery metadata: investor-relations / annual-report landing page, filing channels, URL pattern/discovery notes, earliest covered year, latest verified year, and per-year coverage status
-- Add validation tests to ensure registry completeness and stable required fields
-- Document how downstream ingestion/backfill workflows should consume the registry
+- Define a typed registry contract for operator annual-statement sources and yearly coverage metadata.
+- Seed this exact initial operator set, bounded to names already represented in the current cost evidence base:
+  - BP
+  - Chevron
+  - Shell
+  - Equinor
+  - Aker BP
+  - TotalEnergies
+  - ExxonMobil
+  - Murphy Oil
+  - Hess
+- Track year coverage at the operator-year level, not the per-channel-year level, using this fixed vocabulary:
+  - `verified` = at least one primary annual-statement source URL for that operator-year has been manually verified and recorded in the registry
+  - `missing` = the operator-year is within the bounded seed window but no qualifying source has yet been verified
+  - `known_unavailable` = the operator-year is intentionally recorded as not publicly available or not found after bounded manual review
+- Bound the initial year-coverage window to fiscal years 2020–2024 only; broader historical backfill is out of scope.
+- Represent filing channels as a typed list drawn from this fixed allowed set:
+  - `annual_report`
+  - `sec_10k`
+  - `sec_20f`
+  - `investor_relations`
+  - `sustainability_report`
+- Track per-operator discovery metadata: investor-relations / annual-report landing page, filing-channel list, URL pattern/discovery notes, earliest covered year, latest verified year, and operator-year coverage status map.
+- Add validation tests to ensure registry completeness and stable required fields.
+- Document how downstream ingestion/backfill workflows should consume the registry.
 
 ### Explicitly out of scope for this issue
 - Downloading or scraping every annual report automatically
@@ -59,20 +84,25 @@ An additive, machine-readable registry of major operators and their annual-state
 - FX normalization and comparability policy (#336)
 - Restatement/version lineage (#344)
 - Consumer-facing dashboards or benchmark products
+- Broad historical backfill outside the bounded 2020–2024 seed window
 
 ---
 
 ## Pseudocode
 
 ```text
-define typed registry row for operator annual-statement source metadata
-for each seeded operator:
-    record canonical operator name
-    record primary annual-report / investor-relations source
-    record filing channels and discovery notes
-    record earliest/latest verified fiscal year
-    record per-year coverage status map
-validate registry rows for required fields and bounded status vocabulary
+define typed registry row with:
+    canonical_operator_name
+    primary_landing_page_url
+    filing_channels: list[allowed channel enum values]
+    discovery_notes
+    earliest_covered_year
+    latest_verified_year
+    coverage_by_year: dict[int, coverage_status enum]
+for each seeded operator in the fixed initial set:
+    record annual-report / investor-relations source metadata
+    record bounded 2020-2024 operator-year coverage statuses
+validate registry rows for required fields, bounded filing-channel values, absolute URLs, and bounded status vocabulary
 expose loader/accessor for future ingest workflows
 ```
 
@@ -84,8 +114,8 @@ expose loader/accessor for future ingest workflows
 |---|---|---|
 | Create | `src/worldenergydata/cost/data_collection/operator_statement_registry.py` | machine-readable registry contract + seed data |
 | Modify | `src/worldenergydata/cost/data_collection/__init__.py` | export registry loader/types |
-| Create | `tests/unit/cost/test_operator_statement_registry.py` | validate required fields, coverage map shape, and seed operator set |
-| Create or modify | `docs/research/fdas-quick-reference.md` or a new nearby cost/disclosure doc | short operator-facing usage note for future backfill workflows |
+| Create | `tests/unit/cost/test_operator_statement_registry.py` | validate required fields, coverage map shape, bounded vocabulary, and exact seed operator set |
+| Create | `docs/research/annual-statement-source-registry.md` | operator-facing usage note for future disclosure backfill workflows |
 
 ---
 
@@ -94,30 +124,33 @@ expose loader/accessor for future ingest workflows
 | Test name | What it verifies | Expected input | Expected output |
 |---|---|---|---|
 | `test_registry_loader_returns_seed_rows` | registry is loadable and non-empty | no input | seeded rows |
+| `test_registry_uses_exact_seed_operator_set` | initial scope is exact and bounded | loaded registry | exact expected operator set |
 | `test_registry_rows_require_discovery_fields` | required source metadata is present | each row | valid required fields |
 | `test_registry_tracks_year_coverage_bounds` | earliest/latest year align with year-status map | each row | consistent bounds |
-| `test_registry_coverage_status_values_are_bounded` | per-year statuses stay machine-usable | year map | allowed vocabulary only |
-| `test_registry_includes_high_value_operator_seed_set` | initial scope is meaningful | loaded registry | expected operator subset present |
+| `test_registry_coverage_status_values_are_bounded` | per-year statuses stay machine-usable | year map | only `verified`, `missing`, `known_unavailable` |
+| `test_registry_year_window_is_bounded_to_2020_2024` | historical scope cannot silently expand | coverage map | only years 2020–2024 |
+| `test_registry_filing_channels_are_bounded` | filing channel plurality is typed and constrained | channel list | allowed values only |
 | `test_registry_urls_are_absolute_http_sources` | discovery links are valid web sources | row URLs | absolute http(s) |
 | `test_registry_notes_do_not_replace_required_urls` | notes are additive, not substitutes | rows with notes | required URLs still present |
+| `test_registry_operator_names_are_unique` | canonical naming avoids duplicate operator rows | loaded registry | unique operator names |
 
 ---
 
 ## Acceptance Criteria
 
-- [ ] A machine-readable annual-statement source registry exists for a bounded major-operator set
-- [ ] Registry rows include stable discovery metadata and year coverage information
-- [ ] Per-year coverage status is explicit enough to support year-over-year tracking
-- [ ] Validation tests cover required fields, URL shape, and coverage-map consistency
-- [ ] Documentation explains how future ingestion/backfill issues should use the registry
+- [ ] A machine-readable annual-statement source registry exists for exactly the nine seeded operators listed in this plan
+- [ ] Registry rows include typed filing-channel metadata and bounded operator-year coverage statuses
+- [ ] Coverage tracking is explicitly defined at the operator-year level for the 2020–2024 seed window
+- [ ] Validation tests cover required fields, URL shape, bounded filing-channel values, bounded status vocabulary, exact seed set, and coverage-map consistency
+- [ ] Documentation exists at `docs/research/annual-statement-source-registry.md` and explains how future ingestion/backfill issues should use the registry
 
 ---
 
 ## Risks and Open Questions
 
-- Need to choose a coverage-status vocabulary that is specific enough for operations (`verified`, `missing`, `known-unavailable`, etc.) without overfitting future automation.
-- Some operators publish annual reports across different IR, SEC, and sustainability channels; the registry should capture that plurality without becoming a full crawler specification.
-- Seed scope must stay bounded; broad historical backfill belongs to later execution issues.
+- The initial operator-year semantics intentionally collapse multiple filing channels into one operator-year status; future work may need a lower-level channel-year inventory if operational needs grow.
+- Some operators publish annual reports across IR, SEC, and sustainability channels; this issue records channel metadata but does not attempt full cross-channel coverage auditing.
+- Broad historical backfill and automated report discovery remain deliberately deferred.
 
 ---
 
