@@ -1,10 +1,11 @@
-# Flake8 Inventory — worldenergydata main — 2026-04-23
+# Flake8 Inventory — worldenergydata main — captured 2026-04-23
 
 ## Provenance
 
 - Parent issue: `workspace-hub#2452`
 - Child owner for this durable inventory: `workspace-hub#2468`
-- Generated: `2026-04-24T01:27:42Z`
+- Inventory capture date: `2026-04-23` local session date
+- Report regenerated: `2026-04-24T01:35:12Z` UTC
 - Repository root: `worldenergydata` nested repo
 - Command: `uv run flake8 src/ --max-line-length=100 --extend-ignore=E203,W503 --exclude=__pycache__,*.egg-info,.git,.venv`
 - Exit code: `1` (expected before remediation)
@@ -98,33 +99,35 @@ This file is intentionally split to `workspace-hub#2467`. It should not be mixed
 
 ## Top module areas
 
-| Rank | Area | Findings |
+Module areas are directory paths, not individual file paths.
+
+| Rank | Directory area | Findings |
 |---:|---|---:|
-| 1 | `src/worldenergydata/marine_safety/_cross_database_data.py` | 4060 |
-| 2 | `src/worldenergydata/bsee/reports` | 99 |
-| 3 | `src/worldenergydata/bsee/analysis` | 65 |
-| 4 | `src/worldenergydata/bsee/data` | 45 |
-| 5 | `src/worldenergydata/marine_safety/analysis` | 42 |
-| 6 | `src/worldenergydata/cli/commands` | 33 |
-| 7 | `src/worldenergydata/common/legacy` | 31 |
-| 8 | `src/worldenergydata/modules/well_production_dashboard` | 31 |
-| 9 | `src/worldenergydata/marine_safety/importers` | 17 |
-| 10 | `src/worldenergydata/common/validation` | 13 |
-| 11 | `src/worldenergydata/canada/aer` | 12 |
-| 12 | `src/worldenergydata/well_production_dashboard/well_production.py` | 11 |
-| 13 | `src/worldenergydata/marine_safety/reports` | 10 |
-| 14 | `src/worldenergydata/marine_safety/scrapers` | 9 |
-| 15 | `src/worldenergydata/metocean/clients` | 9 |
-| 16 | `src/worldenergydata/testing/performance` | 9 |
-| 17 | `src/worldenergydata/well_production_dashboard/interactive_components.py` | 8 |
-| 18 | `src/worldenergydata/bsee/pipeline` | 6 |
-| 19 | `src/worldenergydata/canada/common` | 6 |
-| 20 | `src/worldenergydata/metocean/statistics` | 6 |
-| 21 | `src/worldenergydata/bsee/paleowells` | 5 |
-| 22 | `src/worldenergydata/canada/bcer` | 5 |
-| 23 | `src/worldenergydata/hse/importers` | 5 |
-| 24 | `src/worldenergydata/landman/providers` | 5 |
-| 25 | `src/worldenergydata/marine_safety/cli_import.py` | 5 |
+| 1 | `src/worldenergydata/marine_safety` | 4075 |
+| 2 | `src/worldenergydata/bsee/reports/comprehensive/templates` | 53 |
+| 3 | `src/worldenergydata/well_production_dashboard` | 43 |
+| 4 | `src/worldenergydata/sodir` | 35 |
+| 5 | `src/worldenergydata/cli/commands` | 33 |
+| 6 | `src/worldenergydata/modules/well_production_dashboard` | 31 |
+| 7 | `src/worldenergydata/common/legacy` | 29 |
+| 8 | `src/worldenergydata/marine_safety/analysis` | 26 |
+| 9 | `src/worldenergydata/bsee/reports/comprehensive` | 25 |
+| 10 | `src/worldenergydata/bsee/data/_legacy` | 24 |
+| 11 | `src/worldenergydata/marine_safety/importers` | 17 |
+| 12 | `src/worldenergydata/bsee/analysis` | 15 |
+| 13 | `src/worldenergydata/bsee/analysis/financial` | 13 |
+| 14 | `src/worldenergydata/common/validation` | 13 |
+| 15 | `src/worldenergydata/canada/aer` | 12 |
+| 16 | `src/worldenergydata/marine_safety/analysis/correlation` | 11 |
+| 17 | `src/worldenergydata/marine_safety/reports` | 10 |
+| 18 | `src/worldenergydata/bsee/analysis/cost` | 9 |
+| 19 | `src/worldenergydata/landman` | 9 |
+| 20 | `src/worldenergydata/marine_safety/scrapers` | 9 |
+| 21 | `src/worldenergydata/metocean/clients` | 9 |
+| 22 | `src/worldenergydata/testing/performance` | 9 |
+| 23 | `src/worldenergydata/bsee/reports/comprehensive/exporters` | 8 |
+| 24 | `src/worldenergydata/bsee/reports/comprehensive/visualizations` | 8 |
+| 25 | `src/worldenergydata/texas_rrc` | 8 |
 
 ## First safe-rule cleanup guidance for #2468
 
