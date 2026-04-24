@@ -378,7 +378,7 @@ class WellAPI12:
                 float(api12_analysis["Total Measured Depth"].iloc[df_row])
                 - api12_analysis["Water Depth (feet)"].iloc[df_row]
             )
-        except:
+        except Exception:
             drilling_footage_ft = None
         api12_analysis.loc[df_row, "drilling_footage_ft"] = drilling_footage_ft
 
@@ -583,7 +583,7 @@ class WellAPI12:
                     ]["Sidetrack and Bypass"].values[0]
                 )
                 label = label.strip()
-            except:
+            except Exception:
                 label = str(api12)
             output_well_path_for_db = {
                 "data": survey_for_db.to_dict(orient="records"),
@@ -780,8 +780,8 @@ class WellAPI12:
             labels_plotted = []
             for api12 in api12_list:
                 api10 = self.get_API10_from_well_API(api12)
-                # stones_custom_list = [6081240095, 6081240099, 6081240117, 6081240104, 6081240123, 6081240112, 6081240110]
-                # custom_list = [6081240095, 6081240099, 6081240117, 6081240104, 6081240123, 6081240112, 6081240110]
+                # stones_custom_list = [6081240095, 6081240099, 6081240117, 6081240104, 6081240123, 6081240112, 6081240110]  # noqa: E501
+                # custom_list = [6081240095, 6081240099, 6081240117, 6081240104, 6081240123, 6081240112, 6081240110]  # noqa: E501
                 # if api10 in custom_list:
                 custom_list = []
                 if api10 not in custom_list:
@@ -803,7 +803,7 @@ class WellAPI12:
                             ]["Sidetrack and Bypass"].values[0]
                         )
                         label = label.strip()
-                    except:
+                    except Exception:
                         label = str(api12)
                     if label not in labels_plotted:
                         labels_plotted.append(label)
@@ -861,7 +861,7 @@ class WellAPI12:
     def add_currently_producing_count(self, well_timeline_df, well_summary_df_groups):
         """
         Calculate the number of wells currently producing at each date in the timeline.
-        A well is considered producing if the current date is between START_PRODUCTION_DATE and LAST_PRODUCTION_DATE.
+        A well is considered producing if the current date is between START_PRODUCTION_DATE and LAST_PRODUCTION_DATE.  # noqa: E501
         """
         import pandas as pd
 

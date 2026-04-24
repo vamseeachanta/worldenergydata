@@ -5,7 +5,6 @@ for the monitoring dashboard (per D-14).
 """
 
 import logging
-from typing import Any, Dict
 
 from worldenergydata.scheduler.staleness import get_staleness_details
 

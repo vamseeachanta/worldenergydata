@@ -17,7 +17,7 @@ from typing import Any, Dict, Generic, Optional, TypeVar
 
 from ..config import get_config
 from ..constants import DataSource
-from ..exceptions import CacheReadError, CacheWriteError
+from ..exceptions import CacheWriteError
 
 T = TypeVar("T")
 

@@ -20,29 +20,24 @@ the web interface with JSON export as a workaround.
 
 import json
 import re
-import time
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
-from urllib.parse import urlencode, urljoin
+from urllib.parse import urlencode
 
 from worldenergydata.marine_safety.config import get_config
 from worldenergydata.marine_safety.constants import (
     DataSource,
     IncidentStatus,
     IncidentType,
-    SeverityLevel,
 )
 from worldenergydata.marine_safety.exceptions import (
     HTTPError,
     ParsingError,
-    RateLimitError,
     ScraperError,
-    TimeoutError,
     ValidationError,
 )
 from worldenergydata.marine_safety.scrapers.base_scraper import BaseScraper
-from worldenergydata.marine_safety.utils.logger import get_logger
 
 
 class NTSBDataValidationError(ValidationError):

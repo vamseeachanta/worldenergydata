@@ -100,7 +100,7 @@ class BaseImporter(ABC):
 
         Validation checks:
         - Data type is dictionary
-        - Required fields present: bsee_incident_id, incident_date, operator, incident_type, severity
+        - Required fields present: bsee_incident_id, incident_date, operator, incident_type, severity  # noqa: E501
         - incident_type in valid enum values
         - severity in valid enum values
         - incident_date is datetime object
@@ -174,7 +174,7 @@ class BaseImporter(ABC):
         ):
             if not isinstance(normalized_data["incident_date"], datetime):
                 self.validation_errors.append(
-                    f"incident_date must be datetime object, got {type(normalized_data['incident_date']).__name__}"
+                    f"incident_date must be datetime object, got {type(normalized_data['incident_date']).__name__}"  # noqa: E501
                 )
                 valid = False
 

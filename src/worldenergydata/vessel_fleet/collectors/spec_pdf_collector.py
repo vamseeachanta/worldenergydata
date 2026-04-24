@@ -12,7 +12,6 @@ from pathlib import Path
 from typing import Any, Optional
 
 from worldenergydata.vessel_fleet.collectors.base import BaseCollector
-from worldenergydata.vessel_fleet.parsers.numeric import parse_numeric
 from worldenergydata.vessel_fleet.parsers.pdf import (
     extract_key_value_from_text,
     extract_text_from_pdf,

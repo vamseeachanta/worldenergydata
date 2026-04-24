@@ -6,7 +6,7 @@ data sources that are overdue for refresh (per D-13/D-14 requirements).
 
 import logging
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 logger = logging.getLogger(__name__)
 

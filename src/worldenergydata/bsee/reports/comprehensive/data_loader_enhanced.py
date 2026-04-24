@@ -569,8 +569,10 @@ class HierarchicalDataLoader:
         if field_name:
             data["fields"] = [f for f in data["fields"] if f["name"] == field_name]
             field_ids = {f["id"] for f in data["fields"]}
-            data["leases"] = [l for l in data["leases"] if l["field_id"] in field_ids]
-            lease_ids = {l["id"] for l in data["leases"]}
+            data["leases"] = [
+                l for l in data["leases"] if l["field_id"] in field_ids  # noqa: E741
+            ]  # noqa: E741
+            lease_ids = {l["id"] for l in data["leases"]}  # noqa: E741
             data["wells"] = [w for w in data["wells"] if w["lease_id"] in lease_ids]
 
         return data
@@ -890,7 +892,6 @@ class HierarchicalDataLoader:
             }
 
         # Create input for API fetcher
-        input_api = {"api": api_number}
 
         # Fetch well data
         try:

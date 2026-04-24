@@ -1,5 +1,6 @@
 # ABOUTME: European Maritime Safety Agency (EMSA) EMCIP data importer stub.
-# ABOUTME: Placeholder for importing marine casualty data from the European Marine Casualty Information Platform.
+# ABOUTME: Placeholder for importing marine casualty data from the
+# European Marine Casualty Information Platform.
 
 """
 EMSA EMCIP Data Importer (Stub)
@@ -52,7 +53,6 @@ SUPPORTED IMPORT FORMATS (when implemented):
 
 import logging
 from datetime import datetime
-from decimal import Decimal
 from pathlib import Path
 from typing import Any, Dict, Generator, List, Optional
 

@@ -21,7 +21,6 @@ For backward compatibility, all public names are re-exported here.
 
 from __future__ import annotations
 
-import os
 import sqlite3
 import tkinter as tk
 import tkinter.scrolledtext
@@ -29,11 +28,7 @@ from tkinter import END, E, N, S, Tk, W, mainloop, ttk
 from tkinter.filedialog import askopenfilename
 from typing import Any
 
-import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
-from mpl_toolkits.mplot3d.art3d import Poly3DCollection
-from scipy.interpolate import griddata
 
 # Re-export coordinate transformation functions
 from worldenergydata.common.legacy.wellpath_coordinates import (
@@ -313,7 +308,7 @@ class myApplication:
             curItem: str = tab1Tree.focus()
             try:
                 ow: str = tab1Tree.item(curItem)["values"][0]
-                openWell: well = well(ow, 0, 0, 0)
+                well(ow, 0, 0, 0)
                 currentwell: str = ow
                 wellactual.append(currentwell)
                 self.infoLabel["text"] = "Well loaded from database"

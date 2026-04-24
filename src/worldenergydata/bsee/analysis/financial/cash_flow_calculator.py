@@ -116,7 +116,7 @@ class CashFlowCalculator:
 
         Args:
             production_df: DataFrame with production volumes by well and month
-            drilling_data: Nested dict of well -> {'drill_days': {month: days}, 'comp_days': {month: days}}
+            drilling_data: Nested dict of well -> {'drill_days': {month: days}, 'comp_days': {month: days}}  # noqa: E501
             development_type: Type of development (subsea or dry tree)
             first_oil_date: Date of first oil production
             producer_count: Number of producing wells

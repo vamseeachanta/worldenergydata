@@ -169,7 +169,7 @@ class BaseScraper(ABC):
         self.session = requests.Session()
         self.session.headers.update(
             {
-                "User-Agent": "WorldEnergyData-Scraper/1.0 (Research Project; +https://github.com/worldenergydata)",
+                "User-Agent": "WorldEnergyData-Scraper/1.0 (Research Project; +https://github.com/worldenergydata)",  # noqa: E501
                 "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
                 "Accept-Language": "en-US,en;q=0.5",
             }
@@ -684,7 +684,7 @@ class USCGMarineCasualtyScraper(BaseScraper):
         # Extract incident date
         date_patterns = [
             r"(?:date|occurred|incident).*?(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})",
-            r"(\d{1,2}\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4})",
+            r"(\d{1,2}\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4})",  # noqa: E501
         ]
         for pattern in date_patterns:
             match = re.search(pattern, text, re.IGNORECASE)
@@ -833,7 +833,7 @@ def main():
     )
 
     # Run scraping
-    incidents = scraper.scrape()
+    scraper.scrape()
 
     # Export results
     scraper.export_to_json(args.output)

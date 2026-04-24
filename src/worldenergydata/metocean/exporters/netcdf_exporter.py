@@ -12,7 +12,7 @@ CF conventions: https://cfconventions.org/
 
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from worldenergydata.metocean.exceptions import ExportError, ExportWriteError
 from worldenergydata.metocean.processors.data_harmonizer import (

@@ -74,7 +74,7 @@ def collect(
         [DataType.wellbores],
         "--types",
         "-t",
-        help="Data types to collect: wellbores, fields, discoveries, blocks, surveys, facilities, all",
+        help="Data types to collect: wellbores, fields, discoveries, blocks, surveys, facilities, all",  # noqa: E501
     ),
     output: Path = typer.Option(
         Path("./data/sodir"),
@@ -223,9 +223,7 @@ def collect(
                         results_table.add_row(dt, "[yellow]Pending[/yellow]", "-")
 
                 console.print(results_table)
-                console.print(
-                    f"\n[green]Data collection completed successfully[/green]"
-                )
+                console.print("\n[green]Data collection completed successfully[/green]")
                 console.print(f"[dim]Data saved to: {output}[/dim]")
 
             except ImportError as e:
@@ -416,7 +414,7 @@ def analyze(
                 if verbose:
                     console.print(f"\n[dim]Results: {serializable_results}[/dim]")
 
-                console.print(f"\n[green]Analysis completed successfully[/green]")
+                console.print("\n[green]Analysis completed successfully[/green]")
                 console.print(f"[dim]Results saved to: {results_file}[/dim]")
 
                 # Display summary
@@ -686,7 +684,7 @@ def clear_cache(
         entries_before = len(cache.cache)
         cache.clear()
 
-        console.print(f"[green]Cache cleared successfully[/green]")
+        console.print("[green]Cache cleared successfully[/green]")
         console.print(f"[dim]Removed {entries_before} cached entries[/dim]")
 
     except ImportError as e:

@@ -7,7 +7,7 @@ and total production calculation utilities.
 """
 
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Dict, List, Optional
 
 from .nuprc_client import NuprcAPIError, NuprcClient, parse_blend_table_from_pdf

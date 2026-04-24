@@ -443,9 +443,9 @@ class TestFDASDisclosureAnalyticsQuery:
     def test_project_revision_returns_derived_rows(self):
         """End-to-end: FDAS seam delegates to cost.disclosure_analytics."""
         from worldenergydata.cost.disclosure_analytics import (
+            SCOPE_PROJECT,
             DisclosureRecord,
             ProjectRevisionRow,
-            SCOPE_PROJECT,
         )
         from worldenergydata.fdas.api import DisclosureAnalyticsQuery
 
@@ -467,8 +467,8 @@ class TestFDASDisclosureAnalyticsQuery:
     def test_benchmark_refuses_non_comparable_rows(self):
         """Comparability gating is enforced at the FDAS seam too."""
         from worldenergydata.cost.disclosure_analytics import (
-            DisclosureRecord,
             SCOPE_PROJECT,
+            DisclosureRecord,
         )
         from worldenergydata.fdas.api import DisclosureAnalyticsQuery
 

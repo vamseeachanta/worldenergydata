@@ -437,5 +437,5 @@ class AuditDatabase:
         try:
             self.get_connection().execute("SELECT 1")
             return True
-        except:
+        except Exception:
             return False

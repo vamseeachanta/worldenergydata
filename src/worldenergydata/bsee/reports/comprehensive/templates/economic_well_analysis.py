@@ -53,7 +53,7 @@ def analyze_individual_well_economics(
 
     try:
         irr = npf.irr(cash_flows)
-    except:
+    except Exception:
         irr = 0.0
 
     # Calculate payback period

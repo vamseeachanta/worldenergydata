@@ -7,7 +7,6 @@ This module provides shared types and configuration used across all component mo
 import logging
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any
 
 # Optional imports with fallback
 try:
@@ -21,7 +20,7 @@ except ImportError:
     make_subplots = None
 
 try:
-    import dash
+    import dash  # noqa: F401
     import dash_bootstrap_components as dbc
     from dash import Input, Output, State, callback_context, dcc, html
 

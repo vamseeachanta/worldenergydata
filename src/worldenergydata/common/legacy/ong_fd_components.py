@@ -736,10 +736,9 @@ class ONGFDComponents:
             else:
                 self.field_summary.wellhead_distances.append(
                     {
-                        "Description": "All Wellheads, Max Distance (ft)",
+                        "Description": "All Wellheads, Max Distance (ft)",  # noqa: F601
                         "Value": 0,
-                        "Description": "All Wellheads, Min Distance (ft)",
-                        "Value": 0,
+                        "Description": "All Wellheads, Min Distance (ft)",  # noqa: F601
                     }
                 )
 
@@ -784,10 +783,9 @@ class ONGFDComponents:
                 else:
                     self.field_summary.wellhead_distances.append(
                         {
-                            "Description": "Producing Wellheads, Max Distance (ft)",
+                            "Description": "Producing Wellheads, Max Distance (ft)",  # noqa: F601
                             "Value": 0,
-                            "Description": "Producing Wellheads, Min Distance (ft)",
-                            "Value": 0,
+                            "Description": "Producing Wellheads, Min Distance (ft)",  # noqa: F601
                         }
                     )
 
@@ -1125,7 +1123,7 @@ class ONGFDComponents:
             self.output_data_well_df["Well Name"] = new_list
 
     def get_drilling_completion_summary(self) -> list[dict[str, Any]]:
-        development_wells_df: pd.DataFrame = self.output_data_api12_df[
+        self.output_data_api12_df[
             self.output_data_api12_df["Well Purpose"] == "D"
         ].copy()
 
@@ -1583,8 +1581,8 @@ class ONGFDComponents:
             labels_plotted: list[str] = []
             for api12 in api12_list:
                 api10: int | str = self.get_API10_from_well_API(api12)
-                # stones_custom_list = [6081240095, 6081240099, 6081240117, 6081240104, 6081240123, 6081240112, 6081240110]
-                # custom_list = [6081240095, 6081240099, 6081240117, 6081240104, 6081240123, 6081240112, 6081240110]
+                # stones_custom_list = [6081240095, 6081240099, 6081240117, 6081240104, 6081240123, 6081240112, 6081240110]  # noqa: E501
+                # custom_list = [6081240095, 6081240099, 6081240117, 6081240104, 6081240123, 6081240112, 6081240110]  # noqa: E501
                 # if api10 in custom_list:
                 custom_list: list[int] = []
                 if api10 not in custom_list:

@@ -1,5 +1,6 @@
 # ABOUTME: Australian Transport Safety Bureau (ATSB) marine incident data importer.
-# ABOUTME: Imports marine accident investigation data from ATSB exports with Australian location normalization.
+# ABOUTME: Imports marine accident investigation data from ATSB exports
+# with Australian location normalization.
 
 """
 ATSB Data Importer

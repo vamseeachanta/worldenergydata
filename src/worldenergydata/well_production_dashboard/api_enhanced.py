@@ -44,7 +44,9 @@ except ImportError:
         def __init__(self, *args, **kwargs):
             pass
 
-    jsonify = lambda x: x
+    def jsonify(x):
+        return x
+
     request = None
     send_file = None
 
@@ -903,7 +905,7 @@ class EnhancedDashboardAPI(DashboardAPI):
             "quality_threshold": quality_threshold,
             "filtered_count": len(filtered_wells),
             "total_count": len(self.dashboard.verification_results),
-            "export_url": f'/downloads/dashboard_{datetime.now().strftime("%Y%m%d_%H%M%S")}.{format}',
+            "export_url": f'/downloads/dashboard_{datetime.now().strftime("%Y%m%d_%H%M%S")}.{format}',  # noqa: E501
         }
 
     def get_verified_wells_cached(self, token: str) -> Dict[str, Any]:

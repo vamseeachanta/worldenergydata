@@ -532,7 +532,7 @@ class GoByReportBuilder:
             for row in detail_rows:
                 if len(row) != len(self.GOBY_ROW_STRUCTURE):
                     logger.warning(
-                        f"Row length mismatch: expected {len(self.GOBY_ROW_STRUCTURE)}, got {len(row)}"
+                        f"Row length mismatch: expected {len(self.GOBY_ROW_STRUCTURE)}, got {len(row)}"  # noqa: E501
                     )
 
     def _apply_goby_formatting(self, report: Dict[str, Any]) -> Dict[str, Any]:

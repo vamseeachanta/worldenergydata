@@ -12,9 +12,8 @@ import threading
 import time
 from collections import OrderedDict, defaultdict
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from datetime import datetime
+from typing import Any, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -471,7 +470,7 @@ class SodirCacheOptimizer:
         try:
             json_str = json.dumps(value, default=str)
             return len(json_str.encode("utf-8"))
-        except:
+        except Exception:
             # Fallback to string representation
             return len(str(value).encode("utf-8"))
 

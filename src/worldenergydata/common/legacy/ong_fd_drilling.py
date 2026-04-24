@@ -8,14 +8,12 @@ For drilling completion summaries, see ong_fd_summary.py.
 
 from __future__ import annotations
 
-import json
 from typing import Any
 
 import pandas as pd
 
 # Re-export for backward compatibility
 from .ong_fd_summary import calculate_drilling_completion_summary
-from .ong_fd_utils import get_api10_from_well_api
 
 __all__ = [
     "get_rig_days_and_drilling_wt",

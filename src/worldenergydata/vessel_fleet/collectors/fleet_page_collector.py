@@ -15,7 +15,6 @@ from worldenergydata.vessel_fleet.parsers.html import (
     extract_key_value_pairs,
     extract_tables,
 )
-from worldenergydata.vessel_fleet.parsers.numeric import parse_numeric
 
 logger = logging.getLogger(__name__)
 

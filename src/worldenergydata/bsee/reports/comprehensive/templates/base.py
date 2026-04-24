@@ -376,4 +376,4 @@ class BaseReportTemplate:
 
     def __repr__(self) -> str:
         """String representation of template"""
-        return f"BaseReportTemplate(name='{self.template_name}', type='{self.template_type}', version='{self.version}')"
+        return f"BaseReportTemplate(name='{self.template_name}', type='{self.template_type}', version='{self.version}')"  # noqa: E501

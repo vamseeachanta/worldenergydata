@@ -1,5 +1,6 @@
 # ABOUTME: Drilling permit processor for Texas RRC permit data with DataFrame support
-# ABOUTME: Handles permit type classification, date parsing, horizontal well data, and field/lease linking
+# ABOUTME: Handles permit type classification, date parsing, horizontal
+# well data, and field/lease linking
 
 """
 Drilling Permit Processor for Texas RRC.

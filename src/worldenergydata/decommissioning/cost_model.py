@@ -8,7 +8,6 @@ asset types across GoM, NCS, UKCS, Brazil, and West Africa regions.
 """
 
 from dataclasses import dataclass
-from typing import Optional
 
 # ---------------------------------------------------------------------------
 # Internal cost factor constants (all costs in MUSD)

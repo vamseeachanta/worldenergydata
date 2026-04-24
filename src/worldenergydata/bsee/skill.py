@@ -5,7 +5,7 @@ ABOUTME: Exposes bsee_field_pipeline(field_name) -> BseeFieldResult.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Optional
 
 import pandas as pd

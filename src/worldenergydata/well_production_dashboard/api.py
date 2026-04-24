@@ -30,7 +30,9 @@ except ImportError:
         def __init__(self, *args, **kwargs):
             pass
 
-    jsonify = lambda x: x
+    def jsonify(x):
+        return x
+
     request = None
     send_file = None
 

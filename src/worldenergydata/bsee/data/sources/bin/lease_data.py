@@ -167,7 +167,7 @@ class LeaseData:
         """
         if self.bin_folder_path is None:
             raise ValueError(
-                "bin_folder_path not initialized. Call router method first or provide cfg in __init__."
+                "bin_folder_path not initialized. Call router method first or provide cfg in __init__."  # noqa: E501
             )
 
         bin_files = []
@@ -189,7 +189,7 @@ class LeaseData:
                 )
 
         logger.success(
-            f"Found {len(bin_files)} .bin files across {len(self.lease_data_folders)} lease data folders"
+            f"Found {len(bin_files)} .bin files across {len(self.lease_data_folders)} lease data folders"  # noqa: E501
         )
         return bin_files
 

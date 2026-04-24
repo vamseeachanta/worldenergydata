@@ -229,7 +229,7 @@ class FinancialAnalyzer:
         drilling_data = self.drilling_loader.load_drilling_data()
 
         logger.info(
-            f"Loaded {len(production_data)} production records and {len(drilling_data)} drilling records"
+            f"Loaded {len(production_data)} production records and {len(drilling_data)} drilling records"  # noqa: E501
         )
 
         return production_data, drilling_data

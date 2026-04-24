@@ -1,5 +1,5 @@
 """
-ABOUTME: Data collection sub-package — schema, public dataset, linkage primitives, and disclosure ingest contract.
+ABOUTME: Data collection sub-package — schema, public dataset, linkage primitives, and disclosure ingest contract.  # noqa: E501
 ABOUTME: Provides CostDataPoint schema, curated public sanctioned-project cost data,
 ABOUTME: plus disclosure-layer linkage and ingest contracts for annual disclosure workflows.
 """

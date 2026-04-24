@@ -9,7 +9,6 @@ Generates structured reports from AllFieldsRunner output:
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 import pandas as pd
 
@@ -142,7 +141,7 @@ class AllFieldsReport:
 
         try:
             import plotly.graph_objects as go
-            from plotly.subplots import make_subplots
+            from plotly.subplots import make_subplots  # noqa: F401
 
             html_parts = []
             html_parts.append(

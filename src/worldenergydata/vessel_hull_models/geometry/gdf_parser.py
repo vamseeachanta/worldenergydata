@@ -329,7 +329,7 @@ def _apply_symmetry(
     all_vertices = list(vertices)
     all_faces = list(faces)
 
-    vertex_offset = len(vertices)
+    len(vertices)
 
     if symmetry_y:
         # Mirror across Y=0 plane (Y -> -Y)

@@ -135,7 +135,7 @@ def scrape_uscg(
                 )
 
                 # Run scraping
-                incidents = scraper.scrape()
+                scraper.scrape()
 
                 progress.update(task, advance=30, description="[cyan]Saving results...")
 
@@ -170,7 +170,7 @@ def scrape_uscg(
                 if stats.get("date_range"):
                     results_table.add_row(
                         "Date Range",
-                        f"{stats['date_range'].get('start', 'N/A')} to {stats['date_range'].get('end', 'N/A')}",
+                        f"{stats['date_range'].get('start', 'N/A')} to {stats['date_range'].get('end', 'N/A')}",  # noqa: E501
                     )
 
                 console.print(results_table)
@@ -279,7 +279,7 @@ def scrape_maib(
             task = progress.add_task("[cyan]Scraping MAIB data...", total=None)
 
             try:
-                from worldenergydata.marine_safety.importers.maib_importer import (
+                from worldenergydata.marine_safety.importers.maib_importer import (  # noqa: F401
                     MAIBImporter,
                 )
 
@@ -461,7 +461,7 @@ def db_migrate(
                 cur = conn.cursor()
                 try:
                     cur.execute(
-                        "SELECT name FROM sqlite_master WHERE type='table' AND name='schema_version'"
+                        "SELECT name FROM sqlite_master WHERE type='table' AND name='schema_version'"  # noqa: E501
                     )
                     has_table = cur.fetchone() is not None
                     current = 0
@@ -645,7 +645,7 @@ def stats(
 
         if stats_data["total_incidents"] == 0:
             console.print(
-                "\n[yellow]Note:[/yellow] No incidents found. Use 'marine-safety scrape' to collect data."
+                "\n[yellow]Note:[/yellow] No incidents found. Use 'marine-safety scrape' to collect data."  # noqa: E501
             )
 
     except Exception as e:
@@ -849,7 +849,7 @@ def analyze(
             task = progress.add_task("[cyan]Analyzing incident data...", total=None)
 
             try:
-                from worldenergydata.marine_safety.analysis.cause_analyzer import (
+                from worldenergydata.marine_safety.analysis.cause_analyzer import (  # noqa: F401
                     CauseAnalyzer,
                 )
 

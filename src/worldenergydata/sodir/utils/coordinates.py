@@ -10,7 +10,7 @@ Norwegian Continental Shelf typically uses UTM zones 31-35.
 
 import logging
 import math
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 
 logger = logging.getLogger(__name__)
 

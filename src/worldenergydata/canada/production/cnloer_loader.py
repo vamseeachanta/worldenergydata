@@ -22,8 +22,7 @@ All volumetric data stored internally in sm3; converted to bbl on output via
 
 from __future__ import annotations
 
-import math
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import date
 from typing import Dict, List, Optional
 

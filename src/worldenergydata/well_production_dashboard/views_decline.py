@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 from scipy.stats import linregress
 
-from .views_utils import PLOTLY_AVAILABLE, logger
+from .views_utils import PLOTLY_AVAILABLE
 
 # Import plotly components if available
 if PLOTLY_AVAILABLE:

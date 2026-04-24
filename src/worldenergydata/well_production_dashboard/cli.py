@@ -311,9 +311,9 @@ def field(ctx, field_name, compare_to, metric, output):
 
     # Create dashboard
     if config_path:
-        dashboard = WellProductionDashboard.from_yaml(config_path)
+        WellProductionDashboard.from_yaml(config_path)
     else:
-        dashboard = WellProductionDashboard()
+        WellProductionDashboard()
 
     click.echo(f"Analyzing field: {field_name}")
 
@@ -323,7 +323,7 @@ def field(ctx, field_name, compare_to, metric, output):
     # Perform field analysis
     from .well_production import FieldAggregator
 
-    aggregator = FieldAggregator()
+    FieldAggregator()
 
     # Display field summary
     click.echo(f"Field: {field_name}")
@@ -498,7 +498,7 @@ def verification_report(ctx, output, format, wells, quality_threshold):
     click.echo("Generating verification report...")
 
     # Configure export for verification focus
-    export_config = ExportConfiguration(
+    ExportConfiguration(
         formats=[format] if format != "all" else ["pdf", "excel", "json"],
         include_verification=True,
         include_charts=True,

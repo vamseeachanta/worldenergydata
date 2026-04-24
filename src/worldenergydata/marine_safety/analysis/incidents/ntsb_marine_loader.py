@@ -221,7 +221,6 @@ class NTSBMarineLoader:
             payload["ResultsPage"]["PageNumber"] = page
 
             try:
-                import requests
 
                 response = session.post(
                     CAROL_SEARCH_URL,

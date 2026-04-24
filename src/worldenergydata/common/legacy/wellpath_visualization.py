@@ -128,7 +128,7 @@ def plot_single_well(
     eastmin: float = min(east)
 
     # Create figure
-    fig = plt.figure()
+    plt.figure()
     plt.style.use("seaborn-v0_8")
     ax = plt.axes(projection="3d")
 
@@ -230,7 +230,7 @@ def plot_multiple_wells(
         nodes_file: Path to nodes file for polygon data.
         attributes_file: Path to attributes file for polygon data.
     """
-    model = plt.figure()
+    plt.figure()
     plt.style.use("fivethirtyeight")
     ax = plt.axes(projection="3d")
 

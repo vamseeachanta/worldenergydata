@@ -452,6 +452,6 @@ class ProductionQuotaAnalyzer:
         elif compliance_rate >= 0.80:
             return "Good quota compliance with room for improvement in production planning."
         elif compliance_rate >= 0.60:
-            return "Fair quota compliance. Review production forecasting and quota management processes."
+            return "Fair quota compliance. Review production forecasting and quota management processes."  # noqa: E501
         else:
-            return "Poor quota compliance. Immediate action required to improve production planning and regulatory compliance."
+            return "Poor quota compliance. Immediate action required to improve production planning and regulatory compliance."  # noqa: E501

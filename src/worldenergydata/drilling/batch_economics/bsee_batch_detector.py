@@ -13,8 +13,6 @@ Also provides a learning curve fitting utility for historical batch sequences.
 from __future__ import annotations
 
 import logging
-import math
-from typing import Optional
 
 import numpy as np
 import pandas as pd

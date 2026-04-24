@@ -518,7 +518,7 @@ class UWIParser:
         )
         if dls_slash_pattern:
             groups = dls_slash_pattern.groups()
-            cleaned = f"{groups[0]}.{groups[1]}-{groups[2]}-{groups[3]}-{groups[4]}{groups[5]}.{groups[6]}"
+            cleaned = f"{groups[0]}.{groups[1]}-{groups[2]}-{groups[3]}-{groups[4]}{groups[5]}.{groups[6]}"  # noqa: E501
 
         return cleaned
 

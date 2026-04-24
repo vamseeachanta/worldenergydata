@@ -24,7 +24,7 @@ from worldenergydata.metocean.constants import (
     DataSource,
     StationType,
 )
-from worldenergydata.metocean.exceptions import DataNotFoundError, ParsingError
+from worldenergydata.metocean.exceptions import DataNotFoundError
 
 
 @dataclass
@@ -169,7 +169,7 @@ class COOPSClient(BaseClient):
     STATIONS_URL = (
         "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json"
     )
-    STATION_DETAIL_URL = "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations/{station_id}.json"
+    STATION_DETAIL_URL = "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations/{station_id}.json"  # noqa: E501
 
     # Valid products for the API
     PRODUCTS = {
@@ -799,7 +799,7 @@ class COOPSClient(BaseClient):
         Returns:
             Dictionary mapping datum names to elevations in meters
         """
-        url = f"https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations/{station_id}/datums.json"
+        url = f"https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations/{station_id}/datums.json"  # noqa: E501
 
         response = self._get_json(url)
 

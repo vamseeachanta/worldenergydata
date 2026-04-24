@@ -313,7 +313,7 @@ class BSEEProductionSchema(ValidationSchema):
                 if high_oil_rate.any():
                     high_count = high_oil_rate.sum()
                     errors.append(
-                        f"Found {high_count} records with unrealistically high oil production rates (>10,000 bbl/day)"
+                        f"Found {high_count} records with unrealistically high oil production rates (>10,000 bbl/day)"  # noqa: E501
                     )
 
             return errors

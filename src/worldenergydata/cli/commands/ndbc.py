@@ -16,7 +16,6 @@ Usage examples::
 from __future__ import annotations
 
 import pathlib
-import sys
 from typing import Optional
 
 import typer
@@ -101,7 +100,6 @@ def ndbc_main(
         build_scatter_matrix,
         fit_weibull_hs,
         parse_stdmet_file,
-        parse_stdmet_line,
         wave_rose,
     )
 
@@ -136,7 +134,6 @@ def ndbc_main(
         all_records = parse_stdmet_file(sample_file)
     else:
         try:
-            from datetime import datetime
 
             from worldenergydata.metocean.ndbc import NDBCClient
 

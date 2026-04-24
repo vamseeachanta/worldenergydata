@@ -5,7 +5,7 @@ with unit conversions (Sm3 to bbl, MSm3 to Mcf) and local caching.
 """
 
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 import pandas as pd
 

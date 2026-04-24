@@ -183,7 +183,7 @@ def _casing_section(report: FieldReport) -> str:
 
     for api12, svg_str in report.casing_svgs.items():
         api_esc = html.escape(api12)
-        parts.append(f'  <div class="well-casing">')
+        parts.append('  <div class="well-casing">')
         parts.append(f"    <h3>Well {api_esc}</h3>")
 
         # Inline SVG
@@ -211,7 +211,7 @@ def _activity_section(report: FieldReport) -> str:
 
     for module_name, module_data in report.activity_analysis.items():
         module_esc = html.escape(str(module_name))
-        parts.append(f'  <div class="activity-module">')
+        parts.append('  <div class="activity-module">')
         parts.append(f"    <h3>{module_esc}</h3>")
 
         if isinstance(module_data, dict):

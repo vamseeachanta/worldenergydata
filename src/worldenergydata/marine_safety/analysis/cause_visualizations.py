@@ -1,5 +1,6 @@
 # ABOUTME: Interactive visualization module for marine safety incident cause analysis
-# ABOUTME: Provides Plotly-based interactive charts for HTML reports with comprehensive cause analysis
+# ABOUTME: Provides Plotly-based interactive charts for HTML reports with
+# comprehensive cause analysis
 
 """
 Cause Visualization Module
@@ -244,7 +245,7 @@ class CauseVisualizer:
                     name=str(cause).replace("_", " ").title(),
                     line=dict(color=color, width=2),
                     marker=dict(size=6, symbol="circle"),
-                    hovertemplate="<b>%{fullData.name}</b><br>Date: %{x}<br>Count: %{y}<extra></extra>",
+                    hovertemplate="<b>%{fullData.name}</b><br>Date: %{x}<br>Count: %{y}<extra></extra>",  # noqa: E501
                 )
             )
 
@@ -311,7 +312,7 @@ class CauseVisualizer:
                     marker=dict(colors=colors, line=dict(color="white", width=2)),
                     textinfo="label+percent",
                     textposition="auto",
-                    hovertemplate="<b>%{label}</b><br>Count: %{value}<br>Percentage: %{percent}<extra></extra>",
+                    hovertemplate="<b>%{label}</b><br>Count: %{value}<br>Percentage: %{percent}<extra></extra>",  # noqa: E501
                     pull=[
                         0.05 if v == max(values) else 0 for v in values
                     ],  # Pull out largest slice
@@ -569,7 +570,7 @@ class CauseVisualizer:
                     values=values,
                     marker=dict(colors=colors_list, line=dict(color="white", width=2)),
                     branchvalues="total",
-                    hovertemplate="<b>%{label}</b><br>Count: %{value}<br>Percentage: %{percentParent}<extra></extra>",
+                    hovertemplate="<b>%{label}</b><br>Count: %{value}<br>Percentage: %{percentParent}<extra></extra>",  # noqa: E501
                 )
             ]
         )

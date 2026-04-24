@@ -10,7 +10,7 @@ from typing import Any, Dict
 import numpy as np
 from scipy import optimize
 
-from .views_utils import PLOTLY_AVAILABLE, logger
+from .views_utils import PLOTLY_AVAILABLE
 
 # Import plotly components if available
 if PLOTLY_AVAILABLE:

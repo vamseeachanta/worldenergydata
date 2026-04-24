@@ -15,7 +15,7 @@ All measurements are converted to SI units:
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 from worldenergydata.metocean.clients.ndbc_client import NDBCObservation
 from worldenergydata.metocean.constants import DataSource, QualityFlag

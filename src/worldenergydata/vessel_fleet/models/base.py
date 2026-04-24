@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from typing import Optional
 
 from worldenergydata.vessel_fleet.constants import (
-    FT_TO_M,
     INACTIVE_STATUSES,
     M_TO_FT,
 )

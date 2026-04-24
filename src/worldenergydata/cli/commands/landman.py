@@ -105,8 +105,8 @@ def search(
     Examples:
         worldenergydata landman search --state TX --county MIDLAND
         worldenergydata landman search --state TX --county REEVES --owner "SMITH"
-        worldenergydata landman search --state NM --county LEA --section 12 --township 24S --range 36E
-        worldenergydata landman search --state TX --county MIDLAND --format json --output results.json
+        worldenergydata landman search --state NM --county LEA --section 12 --township 24S --range 36E  # noqa: E501
+        worldenergydata landman search --state TX --county MIDLAND --format json --output results.json  # noqa: E501
     """
     try:
         # Display search parameters
@@ -262,7 +262,7 @@ def lookup(
     Examples:
         worldenergydata landman lookup --state TX --county MIDLAND --document-number 2024-12345
         worldenergydata landman lookup --state TX --county REEVES --book 123 --page 456
-        worldenergydata landman lookup --state TX --county MIDLAND --legal-description "Section 12, T1S, R1E"
+        worldenergydata landman lookup --state TX --county MIDLAND --legal-description "Section 12, T1S, R1E"  # noqa: E501
     """
     try:
         # Validate that at least one lookup method is provided
@@ -573,11 +573,11 @@ def providers(
                     console.print(providers_table)
 
                     # Display supported states
-                    console.print(f"\n[bold]Supported States:[/bold]")
+                    console.print("\n[bold]Supported States:[/bold]")
                     console.print(f"[dim]{', '.join(supported_states)}[/dim]")
 
                     # Display data types
-                    console.print(f"\n[bold]Available Data Types:[/bold]")
+                    console.print("\n[bold]Available Data Types:[/bold]")
                     console.print(f"[dim]{', '.join(valid_data_types)}[/dim]")
 
                     # Display counties with reference data
@@ -829,12 +829,12 @@ def status(
 
         # Show supported states if verbose
         if verbose and status_data.get("supported_states"):
-            console.print(f"\n[bold]Supported States:[/bold]")
+            console.print("\n[bold]Supported States:[/bold]")
             console.print(f"[dim]{', '.join(status_data['supported_states'])}[/dim]")
 
         # Show data types if verbose
         if verbose and status_data.get("data_types"):
-            console.print(f"\n[bold]Available Data Types:[/bold]")
+            console.print("\n[bold]Available Data Types:[/bold]")
             console.print(f"[dim]{', '.join(status_data['data_types'])}[/dim]")
 
         console.print(
@@ -1008,7 +1008,7 @@ def _display_county_info(info) -> None:
         lines.append("")
 
         if info.address:
-            lines.append(f"[dim]Address:[/dim]")
+            lines.append("[dim]Address:[/dim]")
             lines.append(f"  {info.address}")
             if info.city and info.zip_code:
                 lines.append(f"  {info.city}, {info.state} {info.zip_code}")

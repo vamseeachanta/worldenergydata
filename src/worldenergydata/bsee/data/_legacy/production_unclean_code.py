@@ -2,10 +2,6 @@
 # Third party imports
 import pandas as pd
 
-from worldenergydata.common.bsee.retrieve_data_templates import RetrieveDataTemplates
-from worldenergydata.common.data_resolver import get_module_data_safe
-
-_BSEE_DATA = str(get_module_data_safe("bsee"))
 from worldenergydata.bsee.data._legacy.prepare_data_for_analysis import (
     PrepareBseeData,
 )
@@ -16,6 +12,10 @@ from worldenergydata.bsee.data.well import WellData
 from worldenergydata.bsee.zip_data_dwnld.dwnld_from_zipurl import (
     DownloadFromZipUrl,
 )
+from worldenergydata.common.bsee.retrieve_data_templates import RetrieveDataTemplates
+from worldenergydata.common.data_resolver import get_module_data_safe
+
+_BSEE_DATA = str(get_module_data_safe("bsee"))
 
 # Initialize instances of imported classes
 block_data_website = BlockData()
@@ -38,7 +38,7 @@ class ProductionUncleanCode:
     def get_production_data(self, cfg):
 
         if "block" in cfg and cfg["analysis"]["production"]["block"]:
-            bottom_lease_array = self.get_bottom_leases_by_block(cfg)
+            self.get_bottom_leases_by_block(cfg)
 
             if "prod_by_lease" in cfg and cfg["prod_by_lease"]["flag"]:
                 production_data = self.get_production_data_for_each_lease(cfg)

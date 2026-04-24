@@ -1,5 +1,6 @@
-# ABOUTME: Data quality dashboard module for marine safety incidents with coverage, completeness, and duplicate analysis
-# ABOUTME: Provides metrics by source, year, field completeness percentages, geographic coverage, and JSON/CLI exports
+# ABOUTME: Data quality dashboard module for marine safety incidents with coverage, completeness, and duplicate analysis  # noqa: E501
+# ABOUTME: Provides metrics by source, year, field completeness
+# percentages, geographic coverage, and JSON/CLI exports
 
 """
 Data Quality Dashboard for Marine Safety Module
@@ -37,9 +38,6 @@ from sqlalchemy.orm import Session
 
 from worldenergydata.marine_safety.constants import (
     OFFSHORE_REGIONS,
-    DataSource,
-    IncidentType,
-    SeverityLevel,
 )
 from worldenergydata.marine_safety.database.models import (
     Incident,
@@ -258,7 +256,7 @@ class QualitySummary:
                 Panel(
                     f"[bold blue]Marine Safety Data Quality Dashboard[/bold blue]\n"
                     f"Generated: {self.generated_at.strftime('%Y-%m-%d %H:%M:%S')}\n"
-                    f"Overall Quality Score: [bold green]{self.overall_quality_score:.1f}/100[/bold green]",
+                    f"Overall Quality Score: [bold green]{self.overall_quality_score:.1f}/100[/bold green]",  # noqa: E501
                     box=box.DOUBLE,
                 )
             )
@@ -586,7 +584,7 @@ class DataQualityDashboard:
 
         Example:
             >>> completeness = dashboard.generate_completeness_report()
-            >>> print(f"Vessel name completeness: {completeness.field_completeness.get('vessel_name', 0)}%")
+            >>> print(f"Vessel name completeness: {completeness.field_completeness.get('vessel_name', 0)}%")  # noqa: E501
         """
         logger.info("Generating completeness report")
 
@@ -766,7 +764,7 @@ class DataQualityDashboard:
         # Verified duplicates
         verified_count = (
             self.session.query(func.count(IncidentLink.link_id))
-            .filter(IncidentLink.verified == True)
+            .filter(IncidentLink.verified)
             .scalar()
             or 0
         )
@@ -774,7 +772,7 @@ class DataQualityDashboard:
         # Potential (unverified) duplicates
         potential_count = (
             self.session.query(func.count(IncidentLink.link_id))
-            .filter(IncidentLink.verified == False)
+            .filter(not IncidentLink.verified)
             .scalar()
             or 0
         )

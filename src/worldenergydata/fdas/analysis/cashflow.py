@@ -363,7 +363,7 @@ class CashflowEngine:
         """
         # Extract parameters from assumptions
         host_capex_mm = self.assumptions.get(self.dev_system, "HOST_CAPEX_MM")
-        surf_per_well_mm = self.assumptions.get(self.dev_system, "SURF_PER_WELL_MM")
+        self.assumptions.get(self.dev_system, "SURF_PER_WELL_MM")
         rig_rate_mm = self.assumptions.get(self.dev_system, "MODU_LOADED_DAYRATE_MM")
 
         # Calculate CAPEX timing

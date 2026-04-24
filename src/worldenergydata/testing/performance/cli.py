@@ -62,7 +62,7 @@ def slowest(limit, days):
     for idx, row in slow_tests.iterrows():
         click.echo(f"{idx + 1}. {row['test_name'][:60]}")
         click.echo(
-            f"   Avg: {row['avg_duration']:.3f}s | Max: {row['max_duration']:.3f}s | Runs: {row['execution_count']}"
+            f"   Avg: {row['avg_duration']:.3f}s | Max: {row['max_duration']:.3f}s | Runs: {row['execution_count']}"  # noqa: E501
         )
 
 
@@ -93,7 +93,7 @@ def regressions(threshold, days):
             f"   Recent: {reg['recent_avg']:.3f}s | Historical: {reg['historical_avg']:.3f}s"
         )
         click.echo(
-            f"   Regression: {reg['regression_factor']:.2f}x slower ({reg['std_deviations']:.1f} std devs)"
+            f"   Regression: {reg['regression_factor']:.2f}x slower ({reg['std_deviations']:.1f} std devs)"  # noqa: E501
         )
 
 

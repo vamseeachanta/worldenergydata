@@ -32,7 +32,7 @@ def validate_drilling_rig(record: dict[str, Any]) -> ValidationResult:
     dp_class = record.get("DP_CLASS")
     year_built = record.get("YEAR_BUILT")
     displacement = record.get("DISPLACEMENT_TONNES")
-    is_offshore = record.get("IS_OFFSHORE")
+    record.get("IS_OFFSHORE")
 
     # Jackups should not have DP > 1 (most are moored)
     if rig_type == "jack_up" and dp_class is not None and dp_class > 1:

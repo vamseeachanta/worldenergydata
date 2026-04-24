@@ -169,7 +169,7 @@ def calculate_mirr(
 
     Examples:
         worldenergydata fdas calculate-mirr --cashflows "[-1000,100,200,300,400,500]"
-        worldenergydata fdas calculate-mirr --cashflows "[-5000,1000,1500,2000]" --discount-rate 0.12
+        worldenergydata fdas calculate-mirr --cashflows "[-5000,1000,1500,2000]" --discount-rate 0.12  # noqa: E501
     """
     try:
         cf_list = parse_cashflows(cashflows)
@@ -492,7 +492,7 @@ def analyze(
                 )
 
                 # Initialize cashflow engine
-                cashflow_engine = CashflowEngine(assumptions_mgr, dev_system)
+                CashflowEngine(assumptions_mgr, dev_system)
 
                 progress.update(
                     task, advance=20, description="[cyan]Building analysis results..."
@@ -521,7 +521,7 @@ def analyze(
                         ),
                     },
                     "status": "analysis_ready",
-                    "notes": "Cashflow engine initialized. Use with production data for full analysis.",
+                    "notes": "Cashflow engine initialized. Use with production data for full analysis.",  # noqa: E501
                 }
 
                 progress.update(

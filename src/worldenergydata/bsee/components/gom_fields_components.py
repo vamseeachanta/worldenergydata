@@ -133,7 +133,7 @@ class GoMFieldsComponents:
         try:
             df = self.dbe.executeScriptsFromFile(filename)
             gom_field_list_from_db = df["Field NickName"].to_list()
-        except:
+        except Exception:
             logging.error(
                 "Could not get GoM field list using query: {}".format(filename)
             )
@@ -153,7 +153,7 @@ class GoMFieldsComponents:
 
     def get_gom_field_plot_cfg(self, data_dict):
 
-        ticker = data_dict.get("ticker", None)
+        data_dict.get("ticker", None)
         daily_data = data_dict.get("daily_data", None)
 
         plot_cfg = {

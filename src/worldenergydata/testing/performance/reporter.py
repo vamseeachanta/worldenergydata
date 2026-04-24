@@ -54,7 +54,7 @@ class PerformanceReporter:
             lines.append(f"Average daily tests: {trends['avg_daily_tests']:.0f}")
             lines.append(f"Average test duration: {trends['avg_test_duration']:.3f}s")
             lines.append(
-                f"Duration trend: {trends['duration_trend']} ({trends['duration_trend_rate']:.4f}s/day)"
+                f"Duration trend: {trends['duration_trend']} ({trends['duration_trend_rate']:.4f}s/day)"  # noqa: E501
             )
             lines.append(
                 f"Recent performance change: {trends['recent_performance_change']:+.1f}%"
@@ -71,7 +71,7 @@ class PerformanceReporter:
             for idx, row in slow_tests.iterrows():
                 lines.append(f"{idx + 1}. {row['test_name'][:50]}")
                 lines.append(
-                    f"   Avg: {row['avg_duration']:.3f}s | Max: {row['max_duration']:.3f}s | Runs: {row['execution_count']}"
+                    f"   Avg: {row['avg_duration']:.3f}s | Max: {row['max_duration']:.3f}s | Runs: {row['execution_count']}"  # noqa: E501
                 )
         else:
             lines.append("No test execution data available")
@@ -88,7 +88,7 @@ class PerformanceReporter:
             for idx, reg in enumerate(regressions[:5], 1):
                 lines.append(f"{idx}. {reg['test_name'][:50]}")
                 lines.append(
-                    f"   Recent: {reg['recent_avg']:.3f}s | Historical: {reg['historical_avg']:.3f}s"
+                    f"   Recent: {reg['recent_avg']:.3f}s | Historical: {reg['historical_avg']:.3f}s"  # noqa: E501
                 )
                 lines.append(f"   Regression: {reg['regression_factor']:.2f}x slower")
         else:

@@ -21,13 +21,17 @@ from typing import Any, Dict
 from loguru import logger
 
 from worldenergydata.bsee.data.config import ConfigRouter
+from worldenergydata.bsee.data.processors import MemoryProcessor
+from worldenergydata.bsee.data.scrapers import BSEEWebScraper
+from worldenergydata.bsee.data.sources.zip.production_data import (
+    GetProdDataFromZip,
+)
+from worldenergydata.bsee.data.sources.zip.well_data import WellDataFromZip
 from worldenergydata.common.data_resolver import get_module_data_safe
 
 _BSEE_BIN = str(get_module_data_safe("bsee") / "bin")
-from worldenergydata.bsee.data.processors import MemoryProcessor
 
 # Import the new components
-from worldenergydata.bsee.data.scrapers import BSEEWebScraper
 
 # Import chunk manager for intelligent downloads
 try:
@@ -39,10 +43,6 @@ except ImportError:
     CHUNK_MANAGER_AVAILABLE = False
 
 # Import existing processors for binary generation compatibility
-from worldenergydata.bsee.data.sources.zip.production_data import (
-    GetProdDataFromZip,
-)
-from worldenergydata.bsee.data.sources.zip.well_data import WellDataFromZip
 
 
 class DataRefreshEnhanced:

@@ -253,7 +253,7 @@ class Field(OrganizationalUnit):
 
     def get_lease_count(self) -> int:
         """Get number of leases in field"""
-        return len([l for l in self.children if isinstance(l, Lease)])
+        return len([l for l in self.children if isinstance(l, Lease)])  # noqa: E741
 
 
 class Block(OrganizationalUnit):

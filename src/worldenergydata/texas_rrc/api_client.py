@@ -22,9 +22,8 @@ import hashlib
 import logging
 import re
 import time
-from io import BytesIO
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional
 from urllib.parse import urlencode, urljoin
 
 try:
@@ -70,7 +69,7 @@ class TexasRRCClient:
     # Base URLs for Texas RRC services
     BASE_URL = "https://mft.rrc.texas.gov"
     PDQ_URL = "https://webapps2.rrc.texas.gov/EWA"
-    PUBLIC_DATA_URL = "https://www.rrc.texas.gov/resource-center/research/data-sets-available-for-download/"
+    PUBLIC_DATA_URL = "https://www.rrc.texas.gov/resource-center/research/data-sets-available-for-download/"  # noqa: E501
 
     # PDQ download endpoints
     PDQ_ENDPOINTS = {
@@ -325,7 +324,7 @@ class TexasRRCClient:
                         delay = self.retry_delay * (2**attempt)
                         logger.warning(
                             f"Server error {response.status_code}, "
-                            f"retrying in {delay} seconds (attempt {attempt + 1}/{self.max_retries})"
+                            f"retrying in {delay} seconds (attempt {attempt + 1}/{self.max_retries})"  # noqa: E501
                         )
                         time.sleep(delay)
                         continue

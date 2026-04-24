@@ -14,11 +14,12 @@ from worldenergydata.common import get_logger
 from worldenergydata.common.data_resolver import get_module_data_safe
 from worldenergydata.common.logging import configure_logging
 
-_BSEE_DATA = str(get_module_data_safe("bsee"))
-
 from .data_downloader import BSEEDataDownloader
 from .data_processor import PaleowellsDataProcessor
 from .visualizer import PaleowellsVisualizer
+
+_BSEE_DATA = str(get_module_data_safe("bsee"))
+
 
 logger = get_logger(__name__)
 
@@ -106,7 +107,7 @@ def visualize_command(args):
         default_csv = Path(args.data_directory) / "paleowells.csv"
         if not default_csv.exists():
             logger.info(
-                "Error: No CSV file found. Please specify with --csv-file or run process command first."
+                "Error: No CSV file found. Please specify with --csv-file or run process command first."  # noqa: E501
             )
             sys.exit(1)
         df = pd.read_csv(default_csv)
@@ -130,11 +131,11 @@ def visualize_command(args):
     else:
         # Generate individual plots based on options
         if args.epochs:
-            fig = visualizer.plot_wells_by_epoch(df, output_dir / "wells_by_epoch.png")
+            visualizer.plot_wells_by_epoch(df, output_dir / "wells_by_epoch.png")
             logger.info("Created epoch distribution plot")
 
         if args.depth:
-            fig = visualizer.plot_depth_distribution(
+            visualizer.plot_depth_distribution(
                 df,
                 depth_type=args.depth_type,
                 save_path=output_dir
@@ -143,9 +144,7 @@ def visualize_command(args):
             logger.info("Created depth distribution plot")
 
         if args.classification:
-            fig = visualizer.plot_classification_pie(
-                df, output_dir / "classification.png"
-            )
+            visualizer.plot_classification_pie(df, output_dir / "classification.png")
             logger.info("Created classification pie chart")
 
 

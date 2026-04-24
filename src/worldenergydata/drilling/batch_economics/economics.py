@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import logging
 import math
-from typing import Optional
 
 from worldenergydata.drilling.batch_economics.models import DrillCampaign
 

@@ -6,9 +6,7 @@ confidence envelope, residual analysis, and EUR comparison bar chart.
 
 import html as html_mod
 import logging
-from typing import Dict, Optional
-
-import numpy as np
+from typing import Dict
 
 from worldenergydata.bsee.analysis.forecasting.bsee_decline_adapter import (
     ProductionTimeSeries,
@@ -171,7 +169,7 @@ def plot_forecast(
                     x=periods + periods[::-1],
                     y=list(upper) + list(lower[::-1]),
                     fill="toself",
-                    fillcolor=f"rgba(59,130,246,0.15)",
+                    fillcolor="rgba(59,130,246,0.15)",
                     line=dict(width=0),
                     name="95% CI",
                     hoverinfo="skip",

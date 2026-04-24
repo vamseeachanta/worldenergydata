@@ -9,8 +9,8 @@ Rules can be used standalone or as part of a validation pipeline.
 
 import re
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional, Set, Type, Union
+from dataclasses import dataclass
+from typing import Any, Callable, Dict, List, Optional, Set
 
 
 @dataclass

@@ -9,12 +9,10 @@ for federal land records including mining claims, fluid mineral leases, and
 land patents.
 """
 
-from datetime import date
 from typing import Any, Dict, List, Optional
 from urllib.parse import urljoin
 
 from worldenergydata.landman.exceptions import (
-    ParsingError,
     RecordNotFoundError,
     StateNotSupportedError,
 )

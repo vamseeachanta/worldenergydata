@@ -1,7 +1,6 @@
 # ABOUTME: URL-based BSEE incident importer using public APDRawData.zip
 # ABOUTME: Downloads from BSEE public API and processes well/incident data in memory
 
-from pathlib import Path
 from typing import Any, Dict, List
 
 from worldenergydata.bsee.data.processors.in_memory import MemoryProcessor

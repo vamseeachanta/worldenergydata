@@ -248,7 +248,7 @@ class DatabaseInitializer:
                 alt_path = self.schema_path.parent / "database-schema-optimized.sql"
                 if alt_path.exists():
                     error_msg += f"\nPostgreSQL schema found at: {alt_path}\n"
-                    error_msg += "Create schema_sqlite.sql or use PostgreSQL mode (remove --dev-mode)"
+                    error_msg += "Create schema_sqlite.sql or use PostgreSQL mode (remove --dev-mode)"  # noqa: E501
 
             raise FileNotFoundError(error_msg)
 
@@ -269,7 +269,6 @@ class DatabaseInitializer:
         statements = []
         current_statement = []
         current_description = ""
-        in_comment = False
 
         for line in sql_content.split("\n"):
             stripped = line.strip()
@@ -342,7 +341,7 @@ class DatabaseInitializer:
 
         logger.info("=" * 80)
         logger.info(
-            f"Schema deployment complete: {success_count} success, {skip_count} skipped, {error_count} errors"
+            f"Schema deployment complete: {success_count} success, {skip_count} skipped, {error_count} errors"  # noqa: E501
         )
         logger.info("=" * 80)
 

@@ -8,7 +8,7 @@ and US Gulf of Mexico (BSEE) offshore petroleum operations.
 import logging
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 import pandas as pd
@@ -440,7 +440,8 @@ class CrossRegionalAnalyzer:
             - bsee_metrics.production_efficiency,
         }
 
-        # Calculate percentage differences (iterate over a snapshot to avoid mutating dict during iteration)
+        # Calculate percentage differences (iterate over a snapshot to avoid
+        # mutating dict during iteration)
         for key in list(metrics_diff):
             base_metric = (
                 key.replace("_diff", "").replace("_m", "").replace("_mmboe", "")
@@ -537,12 +538,12 @@ class CrossRegionalAnalyzer:
         # Recovery factor insights
         if metrics_diff.get("recovery_factor_diff", 0) > 0.1:
             insights.append(
-                f"Norwegian fields show {metrics_diff['recovery_factor_diff']:.1%} higher recovery factors, "
+                f"Norwegian fields show {metrics_diff['recovery_factor_diff']:.1%} higher recovery factors, "  # noqa: E501
                 "potentially due to advanced EOR techniques or reservoir characteristics"
             )
         elif metrics_diff.get("recovery_factor_diff", 0) < -0.1:
             insights.append(
-                f"US Gulf fields show {abs(metrics_diff['recovery_factor_diff']):.1%} higher recovery factors"
+                f"US Gulf fields show {abs(metrics_diff['recovery_factor_diff']):.1%} higher recovery factors"  # noqa: E501
             )
 
         # Water depth insights

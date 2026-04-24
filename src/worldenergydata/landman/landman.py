@@ -15,8 +15,7 @@ from typing import Any, Dict, List, Optional
 
 from .exceptions import LandmanError
 from .exceptions import ProviderError as LandmanProviderError
-from .exceptions import RecordNotFoundError as LandmanRecordNotFoundError
-from .models import LeaseRecord, MineralOwnershipRecord, OwnerSearchResult, TitleRecord
+from .models import LeaseRecord, OwnerSearchResult, TitleRecord
 from .validators import US_STATE_CODES, LandmanDataValidator
 
 
@@ -192,7 +191,7 @@ class Landman:
             ]
             if invalid_types:
                 raise LandmanValidationError(
-                    message=f"Invalid data types: {invalid_types}. Valid types: {self.VALID_DATA_TYPES}",
+                    message=f"Invalid data types: {invalid_types}. Valid types: {self.VALID_DATA_TYPES}",  # noqa: E501
                     code="LANDMAN_INVALID_DATA_TYPES",
                     context={"invalid_types": invalid_types},
                 )
@@ -200,7 +199,7 @@ class Landman:
         # Validate provider if specified
         if "provider" in cfg and cfg["provider"] not in self.VALID_PROVIDERS:
             raise LandmanValidationError(
-                message=f"Invalid provider: {cfg['provider']}. Valid providers: {self.VALID_PROVIDERS}",
+                message=f"Invalid provider: {cfg['provider']}. Valid providers: {self.VALID_PROVIDERS}",  # noqa: E501
                 code="LANDMAN_INVALID_PROVIDER",
                 context={"provider": cfg["provider"]},
             )

@@ -24,7 +24,6 @@ from typing import Any, Iterable, Mapping, Optional, Sequence, Tuple
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
-
 # ---------------------------------------------------------------------------
 # Enums
 # ---------------------------------------------------------------------------
@@ -383,9 +382,7 @@ def ingest_disclosure_rows(
         try:
             row = _coerce_row(raw)
         except (ValidationError, TypeError, ValueError) as exc:
-            invalid.append(
-                InvalidRecord(index=index, raw=raw, errors=(str(exc),))
-            )
+            invalid.append(InvalidRecord(index=index, raw=raw, errors=(str(exc),)))
             continue
 
         citation_check = validate_disclosure_citation(row)
@@ -404,13 +401,9 @@ def ingest_disclosure_rows(
             accepted.append(AcceptedRecord(index=index, row=row))
             accepted_rows.append(row)
         elif decision.status == DisclosureIngestStatus.DUPLICATE:
-            duplicates.append(
-                DuplicateRecord(index=index, row=row, decision=decision)
-            )
+            duplicates.append(DuplicateRecord(index=index, row=row, decision=decision))
         else:
-            conflicts.append(
-                ConflictRecord(index=index, row=row, decision=decision)
-            )
+            conflicts.append(ConflictRecord(index=index, row=row, decision=decision))
 
     return IngestResult(
         accepted=tuple(accepted),

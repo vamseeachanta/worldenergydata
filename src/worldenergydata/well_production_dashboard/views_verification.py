@@ -8,8 +8,6 @@ and verification summary formatting.
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from .views_utils import logger
-
 
 class VerificationStatusBadge:
     """Creates verification status badges."""

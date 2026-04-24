@@ -450,7 +450,7 @@ class LandmanAuthError(LandmanError):
     ) -> "LandmanAuthError":
         """Create error for insufficient permissions."""
         return cls(
-            message=f"Insufficient permissions for '{provider_name}': requires {required_permission}",
+            message=f"Insufficient permissions for '{provider_name}': requires {required_permission}",  # noqa: E501
             provider_name=provider_name,
             code="LANDMAN_AUTH_INSUFFICIENT_PERMISSIONS",
             context={"required_permission": required_permission},

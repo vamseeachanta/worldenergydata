@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional
 
 from worldenergydata.metocean.clients.base_client import BaseClient, FetchResult
-from worldenergydata.metocean.constants import ERDDAP_BASE_URL, DataSource
+from worldenergydata.metocean.constants import DataSource
 
 
 @dataclass

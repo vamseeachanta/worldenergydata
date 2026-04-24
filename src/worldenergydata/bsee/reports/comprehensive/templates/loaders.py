@@ -440,4 +440,4 @@ class TemplateLoader:
 
     def __repr__(self) -> str:
         """String representation of loader"""
-        return f"TemplateLoader(paths={len(self.template_paths)}, cached={len(self.template_cache)})"
+        return f"TemplateLoader(paths={len(self.template_paths)}, cached={len(self.template_cache)})"  # noqa: E501

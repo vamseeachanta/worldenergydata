@@ -11,7 +11,6 @@ from __future__ import annotations
 from typing import Optional
 
 import metocean_stats.stats as ms
-import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 

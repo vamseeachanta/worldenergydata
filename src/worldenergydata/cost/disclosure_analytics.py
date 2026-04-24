@@ -33,7 +33,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from dataclasses import dataclass, field
-from typing import Any, Iterable, Mapping, Optional, Sequence
+from typing import Any, Iterable, Mapping, Optional
 
 __all__ = [
     "DisclosureRecord",
@@ -141,11 +141,7 @@ def load_project_cost_revision_view(
     Operator-scope rows and rows missing ``project_name`` are excluded — they
     belong to the operator view, never this one.
     """
-    project_rows = [
-        r
-        for r in records
-        if r.scope == SCOPE_PROJECT and r.project_name
-    ]
+    project_rows = [r for r in records if r.scope == SCOPE_PROJECT and r.project_name]
     groups: dict[tuple[str, str], list[DisclosureRecord]] = {}
     for r in project_rows:
         groups.setdefault((r.operator, r.project_name), []).append(r)

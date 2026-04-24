@@ -1,5 +1,6 @@
 # ABOUTME: Decommissioning analytics package for offshore assets.
-# ABOUTME: Exports cost estimation, regulatory database, late-life identification, and data completeness scoring.
+# ABOUTME: Exports cost estimation, regulatory database, late-life
+# identification, and data completeness scoring.
 
 """Decommissioning analytics for offshore oil and gas assets.
 

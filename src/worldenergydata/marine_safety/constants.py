@@ -264,7 +264,7 @@ DEFAULT_PRIORITY = InvestigationPriority.MEDIUM
 # API endpoints (configurable, these are examples)
 DATA_SOURCE_URLS: Dict[str, str] = {
     "BSEE": "https://www.bsee.gov/stats-facts/offshore-incident-statistics",
-    "USCG": "https://www.dco.uscg.mil/Our-Organization/Assistant-Commandant-for-Prevention-Policy-CG-5P/Inspections-Compliance-CG-5PC-/Office-of-Investigations-Casualty-Analysis/",
+    "USCG": "https://www.dco.uscg.mil/Our-Organization/Assistant-Commandant-for-Prevention-Policy-CG-5P/Inspections-Compliance-CG-5PC-/Office-of-Investigations-Casualty-Analysis/",  # noqa: E501
     "NTSB": "https://data.ntsb.gov/carol-main-public",
     "MAIB": "https://www.gov.uk/maib-reports",
 }

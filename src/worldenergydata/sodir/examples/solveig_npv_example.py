@@ -9,7 +9,6 @@ Demonstrates a full workflow:
 import logging
 from typing import Any, Dict
 
-import numpy as np
 import pandas as pd
 
 from worldenergydata.sodir.examples.decline_curve_examples import (

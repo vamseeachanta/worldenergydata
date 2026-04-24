@@ -22,8 +22,8 @@ Reference: Arps, J.J. (1945). SPE-945228-G.
 """
 
 import logging
-from dataclasses import dataclass, field
-from typing import List, Optional
+from dataclasses import dataclass
+from typing import Optional
 
 import numpy as np
 from scipy.optimize import curve_fit

@@ -7,8 +7,8 @@ used independently or in conjunction with the schema classes.
 
 import re
 from dataclasses import dataclass, field
-from datetime import date, datetime
-from typing import Any, Dict, List, Optional, Tuple, Type, Union
+from datetime import datetime
+from typing import Any, Dict, List, Optional, Tuple, Type
 
 from pydantic import BaseModel
 from pydantic import ValidationError as PydanticValidationError
@@ -256,7 +256,7 @@ def validate_production_record(
                 value = float(record[vol_field])
                 if value < 0:
                     result.add_error(
-                        vol_field, "range", f"Volume cannot be negative", value
+                        vol_field, "range", "Volume cannot be negative", value
                     )
                 elif strict and value > 10000000:
                     result.add_warning(
@@ -264,7 +264,7 @@ def validate_production_record(
                     )
             except (ValueError, TypeError):
                 result.add_error(
-                    vol_field, "type", f"Volume must be numeric", record[vol_field]
+                    vol_field, "type", "Volume must be numeric", record[vol_field]
                 )
 
     # Validate days on production

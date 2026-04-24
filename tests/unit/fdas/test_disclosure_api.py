@@ -121,9 +121,7 @@ class TestFDASDisclosureQueryBehavior:
         from worldenergydata.fdas.api import disclosure_analytics
 
         view = disclosure_analytics.project_revision(sample_records)
-        assert all(
-            isinstance(row, analytics_module.ProjectRevisionRow) for row in view
-        )
+        assert all(isinstance(row, analytics_module.ProjectRevisionRow) for row in view)
         mariner = sorted(
             [r for r in view if r.project_name == "Mariner-A"],
             key=lambda r: r.fiscal_year,
@@ -138,9 +136,7 @@ class TestFDASDisclosureQueryBehavior:
         from worldenergydata.fdas.api import disclosure_analytics
 
         view = disclosure_analytics.operator_capex(sample_records)
-        assert all(
-            isinstance(row, analytics_module.OperatorCapexRow) for row in view
-        )
+        assert all(isinstance(row, analytics_module.OperatorCapexRow) for row in view)
         acme = sorted(
             [r for r in view if r.operator == "AcmeCorp"], key=lambda r: r.fiscal_year
         )

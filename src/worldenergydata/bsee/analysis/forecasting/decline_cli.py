@@ -10,8 +10,6 @@ import logging
 import sys
 from pathlib import Path
 
-import pandas as pd
-
 from worldenergydata.bsee.analysis.forecasting.bsee_decline_adapter import (
     BseeDeclineAdapter,
 )
@@ -138,7 +136,7 @@ def main(argv=None):
     forecast = analysis.forecast(comparison)
     eur = analysis.calculate_eur(comparison)
 
-    logger.info(f"\nEUR by model:")
+    logger.info("\nEUR by model:")
     for model, value in eur.items():
         logger.info(f"  {model}: {value:,.0f}")
 

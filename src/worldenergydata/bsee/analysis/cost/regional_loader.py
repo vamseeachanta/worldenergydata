@@ -21,7 +21,6 @@ import yaml
 
 from worldenergydata.bsee.analysis.cost.models import (
     ActivityType,
-    ConfidenceLevel,
     WaterDepthBand,
 )
 

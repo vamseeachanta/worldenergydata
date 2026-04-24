@@ -66,7 +66,7 @@ class BSEEDataSpider(scrapy.Spider):
             )
         else:
             logger.error(
-                f"{Fore.RED}Data request failed to webpage{Style.RESET_ALL}. Status code: {response.status}"
+                f"{Fore.RED}Data request failed to webpage{Style.RESET_ALL}. Status code: {response.status}"  # noqa: E501
             )
 
         # Extract API number from input item
@@ -96,7 +96,7 @@ class BSEEDataSpider(scrapy.Spider):
 
             if response_csv.empty:
                 logger.warning(
-                    f"{Fore.RED}Empty DataFrame for API {api_label}. Skipping CSV file.{Style.RESET_ALL}"
+                    f"{Fore.RED}Empty DataFrame for API {api_label}. Skipping CSV file.{Style.RESET_ALL}"  # noqa: E501
                 )
             else:
                 with open(output_file_name, "wb") as f:
@@ -105,7 +105,7 @@ class BSEEDataSpider(scrapy.Spider):
 
         else:
             logger.error(
-                f"{Fore.RED}Failed to get the data for API .{api_label}. Status code: {response.status} {Style.RESET_ALL}"
+                f"{Fore.RED}Failed to get the data for API .{api_label}. Status code: {response.status} {Style.RESET_ALL}"  # noqa: E501
             )
             self.data_store["data"] = pd.DataFrame()
 

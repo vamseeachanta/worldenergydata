@@ -9,7 +9,6 @@ data source to decide whether physics-based corrections are required.
 Provides simplified fetch estimation and a sheltering heuristic.
 """
 
-import math
 from dataclasses import dataclass
 
 from worldenergydata.metocean.extrapolation.source_catalog import (

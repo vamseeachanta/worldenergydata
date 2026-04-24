@@ -18,7 +18,7 @@ from worldenergydata.vessel_fleet.collectors.base import BaseCollector
 logger = logging.getLogger(__name__)
 
 _BH_NA_URL = "https://rigcount.bakerhughes.com/static-files/na-702b0e93-5e46-4a5c-8ba2-e11cd1e14d49"
-_BH_INTL_URL = "https://rigcount.bakerhughes.com/static-files/intl-a0e5dc74-c07b-4c84-a93e-a8f12a3dce80"
+_BH_INTL_URL = "https://rigcount.bakerhughes.com/static-files/intl-a0e5dc74-c07b-4c84-a93e-a8f12a3dce80"  # noqa: E501
 
 
 class BakerHughesCollector(BaseCollector):

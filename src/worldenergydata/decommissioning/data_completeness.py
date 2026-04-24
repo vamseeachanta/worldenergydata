@@ -1,5 +1,6 @@
 # ABOUTME: Data completeness scoring for late-life assets prior to decommissioning.
-# ABOUTME: Scores presence/quality of as-built drawings, inspection records, well records, mooring docs.
+# ABOUTME: Scores presence/quality of as-built drawings, inspection
+# records, well records, mooring docs.
 
 """Data completeness scorer for late-life offshore asset documentation.
 
@@ -7,7 +8,7 @@ Provides structured scoring against five documentation categories and
 derives an overall weighted score with risk classification.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Union
 
 import pandas as pd

@@ -93,7 +93,7 @@ class AllFieldsRunner:
         gas_col = self._pick_col(field_df, ["MON_G_PROD_VOL", "GAS_MCF"])
         water_col = self._pick_col(field_df, ["MON_WTR_PROD_VOL"])
         year_col = self._pick_col(field_df, ["PROD_YEAR", "PRODUCTION_DATE"])
-        days_col = self._pick_col(field_df, ["DAYS_ON_PROD"])
+        self._pick_col(field_df, ["DAYS_ON_PROD"])
         api_col = self._pick_col(field_df, ["API_WELL_NUMBER"])
 
         cum_oil = field_df[oil_col].sum() if oil_col else 0.0

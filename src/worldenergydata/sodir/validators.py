@@ -90,7 +90,7 @@ class DataValidator:
                         expected_type(data[field])
                     except (ValueError, TypeError):
                         logger.error(
-                            f"Type validation failed for {field}: expected {expected_type}, got {type(data[field])}"
+                            f"Type validation failed for {field}: expected {expected_type}, got {type(data[field])}"  # noqa: E501
                         )
                         return False
         return True
@@ -288,7 +288,7 @@ class DataValidator:
             try:
                 if float(remaining_oil) > float(original_oil):
                     errors.append(
-                        f"Remaining reserves ({remaining_oil}) exceed original reserves ({original_oil})"
+                        f"Remaining reserves ({remaining_oil}) exceed original reserves ({original_oil})"  # noqa: E501
                     )
             except (ValueError, TypeError):
                 pass

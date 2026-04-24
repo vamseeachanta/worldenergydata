@@ -1,5 +1,6 @@
 # ABOUTME: Pattern definitions for hatch, door, and opening maloperation detection in marine safety.
-# ABOUTME: Contains regex patterns for detection, location classification, consequences, and contributing factors.
+# ABOUTME: Contains regex patterns for detection, location classification,
+# consequences, and contributing factors.
 
 """
 Hatch Maloperation Pattern Definitions

@@ -1,6 +1,4 @@
 # Standard library imports
-import datetime
-import os
 
 # Third party imports
 import numpy as np
@@ -207,9 +205,7 @@ class ProductionAPI12Analysis:
             )
         )
 
-        prod_cumulative_mmbbl_groups_by_field = self._aggregator.convert_block_to_field(
-            prod_cumulative_mmbbl_groups_by_block
-        )
+        self._aggregator.convert_block_to_field(prod_cumulative_mmbbl_groups_by_block)
 
         if "economics" in cfg and cfg["economics"]["flag"]:
             revenue_df = self._revenue_calculator.generate_revenue_table(cfg, api12_df)

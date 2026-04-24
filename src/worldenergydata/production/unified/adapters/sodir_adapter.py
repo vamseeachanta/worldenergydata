@@ -11,7 +11,7 @@ from typing import List, Tuple
 
 import pandas as pd
 
-from worldenergydata.common.units import GasUnits, OilUnits
+from worldenergydata.common.units import GasUnits
 from worldenergydata.production.unified.adapters.base import AbstractProductionAdapter
 from worldenergydata.production.unified.query import ProductionQuery
 

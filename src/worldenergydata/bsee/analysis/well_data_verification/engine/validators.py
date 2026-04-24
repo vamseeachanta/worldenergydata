@@ -8,7 +8,7 @@ from loguru import logger
 
 try:
     import jsonschema
-    from jsonschema import Draft7Validator
+    from jsonschema import Draft7Validator  # noqa: F401
 
     HAS_JSONSCHEMA = True
 except ImportError:
@@ -321,7 +321,7 @@ class WorkflowDocumentationGenerator:
             report += f"- Elapsed Time: {self._format_duration(progress['elapsed_seconds'])}\n"
 
             if "total_duration_seconds" in progress:
-                report += f"- Total Duration: {self._format_duration(progress['total_duration_seconds'])}\n"
+                report += f"- Total Duration: {self._format_duration(progress['total_duration_seconds'])}\n"  # noqa: E501
 
         return report
 

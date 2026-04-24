@@ -265,7 +265,7 @@ class NPVAnalysis:
             return 0.0
         try:
             return npf.irr(self.cash_flows)
-        except:
+        except Exception:
             return 0.0  # IRR calculation failed
 
     def sensitivity_analysis(self, discount_rates: List[float]) -> Dict[float, float]:

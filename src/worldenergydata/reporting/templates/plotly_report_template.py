@@ -232,7 +232,7 @@ class PlotlyReportGenerator:
             box-sizing: border-box;
         }}
         body {{
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;  # noqa: E501
             background-color: #f5f7fa;
             padding: 20px;
             color: #2d3748;
@@ -351,7 +351,7 @@ class PlotlyReportGenerator:
             for label, stat in self.summary_stats.items():
                 html += f"""            <div class="stat-card">
                 <div class="stat-label">{label}</div>
-                <div class="stat-value">{stat['value']}<span class="stat-unit">{stat['unit']}</span></div>
+                <div class="stat-value">{stat['value']}<span class="stat-unit">{stat['unit']}</span></div>  # noqa: E501
             </div>
 """
             html += "        </div>\n"
@@ -367,7 +367,7 @@ class PlotlyReportGenerator:
         # Add footer
         html += f"""        <div class="footer">
             <p>Interactive HTML Report | {self.module_name} | Generated with Plotly</p>
-            <p>All plots are interactive: hover for details, click and drag to zoom, double-click to reset</p>
+            <p>All plots are interactive: hover for details, click and drag to zoom, double-click to reset</p>  # noqa: E501
         </div>
     </div>
 

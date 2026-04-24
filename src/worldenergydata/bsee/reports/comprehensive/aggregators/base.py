@@ -388,7 +388,7 @@ class DataAggregator(ABC):
 
         logger.info(
             f"Streaming aggregation complete: {total_results['chunks_processed']} chunks, "
-            f"{total_results['record_count']} records in {total_results['processing_time_sec']:.1f}s"
+            f"{total_results['record_count']} records in {total_results['processing_time_sec']:.1f}s"  # noqa: E501
         )
 
         return total_results

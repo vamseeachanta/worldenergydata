@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Optional
+from typing import Any
 
 from worldenergydata.vessel_fleet.dedup.normalizer import normalize_vessel_name
 
