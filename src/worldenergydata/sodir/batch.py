@@ -8,7 +8,6 @@ batch exporters for handling large-scale data operations.
 import concurrent.futures
 import json
 import logging
-import time
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from enum import Enum

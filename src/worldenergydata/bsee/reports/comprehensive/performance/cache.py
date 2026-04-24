@@ -36,7 +36,7 @@ class CacheEntry:
                 return len(pickle.dumps(obj))
             else:
                 return len(str(obj).encode("utf-8"))
-        except:
+        except Exception:
             return 0
 
     def is_expired(self) -> bool:

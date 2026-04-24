@@ -1,5 +1,6 @@
 # ABOUTME: Incident matching engine for identifying related incidents across data sources.
-# ABOUTME: Implements fuzzy matching using Levenshtein distance, geographic proximity, and temporal analysis.
+# ABOUTME: Implements fuzzy matching using Levenshtein distance,
+# geographic proximity, and temporal analysis.
 
 """
 Incident Matcher Module
@@ -11,7 +12,7 @@ across multiple data sources using various matching strategies.
 import logging
 import math
 from dataclasses import dataclass, field
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 from decimal import Decimal
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple, Union

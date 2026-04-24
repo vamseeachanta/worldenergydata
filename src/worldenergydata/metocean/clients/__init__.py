@@ -1,5 +1,6 @@
 # ABOUTME: Client module for metocean data sources
-# ABOUTME: Provides base client and source-specific implementations for NDBC, CO-OPS, Open-Meteo, MET Norway, ERDDAP
+# ABOUTME: Provides base client and source-specific implementations for
+# NDBC, CO-OPS, Open-Meteo, MET Norway, ERDDAP
 
 """
 Clients for Metocean Data Sources

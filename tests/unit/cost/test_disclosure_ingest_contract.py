@@ -29,7 +29,6 @@ from worldenergydata.cost.data_collection.disclosure_ingest_contract import (
     validate_disclosure_citation,
 )
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -107,7 +106,12 @@ def test_valid_disclosure_row_is_accepted():
 def test_citation_contract_requires_absolute_http_source_url():
     """Relative or non-http(s) source_urls fail validation."""
     base = _valid_citation_kwargs()
-    for bad_url in ("/relative/path.pdf", "ftp://example.com/file.pdf", "example.com/file.pdf", ""):
+    for bad_url in (
+        "/relative/path.pdf",
+        "ftp://example.com/file.pdf",
+        "example.com/file.pdf",
+        "",
+    ):
         kwargs = dict(base)
         kwargs["source_url"] = bad_url
         with pytest.raises(ValidationError):
@@ -216,7 +220,10 @@ def test_conflict_classification_for_same_business_key_different_citation():
     """Same key + same value, different citation (different source_url) → CITATION_MISMATCH."""
     existing = _valid_row()
     differing_citation = DisclosureCitation(
-        **{**_valid_citation_kwargs(), "source_url": "https://www.bp.com/another-2024.pdf"}
+        **{
+            **_valid_citation_kwargs(),
+            "source_url": "https://www.bp.com/another-2024.pdf",
+        }
     )
     incoming = _valid_row(citation=differing_citation)
     decision = classify_disclosure_row(
@@ -256,7 +263,10 @@ def test_source_priority_does_not_auto_select_winner():
     """
     lower_priority_existing = _valid_row(
         citation=DisclosureCitation(
-            **{**_valid_citation_kwargs(), "source_priority": SourcePriority.PRESS_RELEASE}
+            **{
+                **_valid_citation_kwargs(),
+                "source_priority": SourcePriority.PRESS_RELEASE,
+            }
         )
     )
     higher_priority_incoming = _valid_row()  # OPERATOR_ANNUAL_REPORT (rank 0)
@@ -382,4 +392,6 @@ def test_legacy_sanction_schema_is_unchanged():
     field_names = set(CostDataPoint.model_fields.keys())
     forbidden = {"source_title", "source_url", "page_reference", "quoted_text"}
     leaked = field_names & forbidden
-    assert not leaked, f"sanction schema must not carry disclosure-citation fields: {leaked}"
+    assert (
+        not leaked
+    ), f"sanction schema must not carry disclosure-citation fields: {leaked}"

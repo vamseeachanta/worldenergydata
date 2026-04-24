@@ -62,9 +62,6 @@ from .exceptions import (
 )
 from .exceptions import TimeoutError as LandmanTimeoutError
 from .landman import Landman, LandmanValidationError
-
-# Alias for backward compatibility
-LandmanAuthError = ConfigurationError
 from .models import (
     CountyClerkInfo,
     FluidMineralLease,
@@ -94,6 +91,9 @@ from .providers import (
     StateGISProvider,
 )
 from .validators import LandmanDataValidator
+
+# Alias for backward compatibility
+LandmanAuthError = ConfigurationError
 
 __version__ = "1.0.0"
 __all__ = [

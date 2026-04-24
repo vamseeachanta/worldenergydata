@@ -354,7 +354,7 @@ class FluidMineralSearchResult(SearchResult):
 
     def __init__(self, **data):
         super().__init__(**data)
-        self.results = [l.to_dict() for l in self.leases]
+        self.results = [l.to_dict() for l in self.leases]  # noqa: E741
         self.returned_count = len(self.leases)
 
 

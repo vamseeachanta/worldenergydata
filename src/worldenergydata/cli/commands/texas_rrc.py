@@ -239,9 +239,7 @@ def collect(
                         results_table.add_row(dt, "[yellow]Pending[/yellow]", "-")
 
                 console.print(results_table)
-                console.print(
-                    f"\n[green]Data collection completed successfully[/green]"
-                )
+                console.print("\n[green]Data collection completed successfully[/green]")
                 console.print(f"[dim]Data saved to: {output}[/dim]")
 
             except ImportError as e:
@@ -383,7 +381,7 @@ def analyze(
                 if verbose:
                     console.print(f"\n[dim]Results: {results}[/dim]")
 
-                console.print(f"\n[green]Analysis completed successfully[/green]")
+                console.print("\n[green]Analysis completed successfully[/green]")
                 console.print(f"[dim]Results saved to: {results_file}[/dim]")
 
             except ImportError as e:

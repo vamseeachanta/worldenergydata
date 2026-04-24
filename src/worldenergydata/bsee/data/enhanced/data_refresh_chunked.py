@@ -13,14 +13,14 @@ from loguru import logger
 
 # Import chunk manager from cache module
 from worldenergydata.bsee.data.cache import ChunkManager
+from worldenergydata.bsee.data.config import ConfigRouter
+from worldenergydata.bsee.data.processors import MemoryProcessor
+from worldenergydata.bsee.data.scrapers import BSEEWebScraper
 from worldenergydata.common.data_resolver import get_module_data_safe
 
 _BSEE_BIN = str(get_module_data_safe("bsee") / "bin")
-from worldenergydata.bsee.data.config import ConfigRouter
-from worldenergydata.bsee.data.processors import MemoryProcessor
 
 # Import existing components
-from worldenergydata.bsee.data.scrapers import BSEEWebScraper
 
 
 class DataRefreshChunked:

@@ -166,7 +166,7 @@ def validate_production_data(df: pd.DataFrame) -> Tuple[bool, List[str]]:
     if not pd.api.types.is_datetime64_any_dtype(df["YearMonth"]):
         try:
             df["YearMonth"] = pd.to_datetime(df["YearMonth"])
-        except:
+        except Exception:
             errors.append("YearMonth column contains invalid dates")
 
     return len(errors) == 0, errors

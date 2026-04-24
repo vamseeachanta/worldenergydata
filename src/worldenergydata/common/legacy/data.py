@@ -26,7 +26,6 @@ class ReadDataFromSystemFiles:
         with_path: bool = True,
         with_extension: bool = True,
     ) -> list[str]:
-        folder_with_file_type_example = "Q:\\projects\\Mole\\log_files\\*.log"
 
         import glob
         import os
@@ -405,7 +404,6 @@ def getClosestIntegerInList(
 def transform_df_datetime_to_str(
     df: Any, date_format: str = "%Y-%m-%d %H:%M:%S"
 ) -> Any:
-    import pandas as pd
 
     df = df.copy()
     if len(df) > 0:

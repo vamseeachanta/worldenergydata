@@ -133,7 +133,7 @@ class TSBImporter(BaseImporter):
                         self.injuries_by_occno[occno].append(cleaned_row)
                         count += 1
             logger.info(
-                f"Loaded {count} injury records for {len(self.injuries_by_occno)} unique occurrences"
+                f"Loaded {count} injury records for {len(self.injuries_by_occno)} unique occurrences"  # noqa: E501
             )
 
         # Load equipment data (stored in metadata, not loaded upfront due to size)
@@ -371,7 +371,7 @@ class TSBImporter(BaseImporter):
             # Remove time portion and microseconds
             date_part = date_str.split(" ")[0]
             return datetime.strptime(date_part, "%Y-%m-%d")
-        except:
+        except Exception:
             return None
 
     def _parse_int(self, value: str) -> int:
@@ -380,7 +380,7 @@ class TSBImporter(BaseImporter):
             return 0
         try:
             return int(float(value))
-        except:
+        except Exception:
             return 0
 
     def _parse_float(self, value: str) -> Optional[float]:
@@ -389,7 +389,7 @@ class TSBImporter(BaseImporter):
             return None
         try:
             return float(value)
-        except:
+        except Exception:
             return None
 
     def _map_vessel_type(self, vessel_type_str: str) -> str:

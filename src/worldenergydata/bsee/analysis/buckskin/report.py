@@ -18,7 +18,6 @@ from typing import Any, Dict, Optional
 import pandas as pd
 
 from .analyzer import BuckskinAnalyzer
-from .buckskin_config import BUCKSKIN
 
 logger = logging.getLogger(__name__)
 

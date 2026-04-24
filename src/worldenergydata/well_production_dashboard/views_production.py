@@ -5,16 +5,13 @@ Contains chart builders for time series, stacked production,
 and production-related visualizations.
 """
 
-from datetime import datetime
 from typing import Any, Dict, List
 
-import numpy as np
 import pandas as pd
 
 from .views_utils import (
     PLOTLY_AVAILABLE,
     ChartQualityIndicator,
-    logger,
 )
 
 # Import plotly components if available

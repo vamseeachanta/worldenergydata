@@ -18,13 +18,11 @@ fallback) return LOW-confidence estimates.
 from __future__ import annotations
 
 import logging
-from typing import Optional
 
 from worldenergydata.bsee.analysis.cost.models import (
     ActivityType,
     ConfidenceLevel,
     CostEstimate,
-    WaterDepthBand,
     WellDepthBand,
     classify_water_depth_band,
     classify_well_depth_band,

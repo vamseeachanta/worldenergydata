@@ -4,8 +4,11 @@ Validation rules engine for energy data.
 
 import re
 from datetime import datetime
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Union
 
+import pandas as pd
+
+from .base import ValidationResult
 from .exceptions import (
     ConsistencyError,
     CrossFieldValidationError,
@@ -461,12 +464,6 @@ class CustomValidators:
 # These classes wrap the static validation methods to provide instantiable
 # rule objects that can be added to field validators.
 # ============================================================================
-
-from typing import List, Optional, Union
-
-import pandas as pd
-
-from .base import ValidationResult
 
 
 class APINumberRule:

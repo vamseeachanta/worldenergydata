@@ -22,7 +22,6 @@ import inspect
 
 import pytest
 
-
 # --------------------------------------------------------------------------
 # Fixtures
 # --------------------------------------------------------------------------
@@ -147,7 +146,9 @@ class TestProjectRevisionView:
         """Project rows create a derived revision view with YoY deltas."""
         view = analytics_module.load_project_cost_revision_view(project_dataset)
         mariner = [
-            r for r in view if r.operator == "AcmeCorp" and r.project_name == "Mariner-A"
+            r
+            for r in view
+            if r.operator == "AcmeCorp" and r.project_name == "Mariner-A"
         ]
         assert len(mariner) == 3
         mariner_sorted = sorted(mariner, key=lambda r: r.fiscal_year)

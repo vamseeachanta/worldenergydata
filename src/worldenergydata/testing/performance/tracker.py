@@ -140,7 +140,7 @@ class TestPerformanceTracker:
             Dictionary with session metrics
         """
         # Get recent executions from this session
-        now = datetime.now()
+        datetime.now()
 
         # This would typically filter by session ID
         # For now, get tests from last hour

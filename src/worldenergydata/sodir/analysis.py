@@ -405,7 +405,7 @@ class SodirAnalysis:
 
         # Perform configured analyses
         if analysis_config.get("fields"):
-            for field in analysis_config["fields"]:
+            for field in analysis_config["fields"]:  # noqa: F402
                 try:
                     results[field] = self.analyze_field(field)
                     logger.info(f"Completed analysis for field: {field}")

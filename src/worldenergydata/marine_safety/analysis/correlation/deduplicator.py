@@ -12,13 +12,12 @@ import logging
 from dataclasses import dataclass, field
 from datetime import datetime
 from decimal import Decimal
-from typing import Any, Dict, Generator, Iterator, List, Optional, Set, Tuple
+from typing import Any, Dict, Generator, List, Optional, Set, Tuple
 
-from sqlalchemy import and_, func, or_, select
+from sqlalchemy import and_, select
 from sqlalchemy.orm import Session, joinedload
 
 from worldenergydata.marine_safety.analysis.correlation.matcher import (
-    IncidentData,
     IncidentMatcher,
     MatchConfig,
     MatchResult,
@@ -27,11 +26,8 @@ from worldenergydata.marine_safety.analysis.correlation.matcher import (
 from worldenergydata.marine_safety.constants import DataSource
 from worldenergydata.marine_safety.database.models import (
     Incident,
-    Location,
-    Vessel,
 )
 from worldenergydata.marine_safety.exceptions import (
-    DatabaseError,
     RecordNotFoundError,
 )
 
@@ -247,7 +243,6 @@ class IncidentDeduplicator:
             logger.info("Processing cross-source matches for %d sources", len(sources))
 
             # Process each source against all others
-            processed_pairs: Set[Tuple[str, str]] = set()
 
             for source in sources:
                 # Get incidents from this source
@@ -508,7 +503,7 @@ class IncidentDeduplicator:
             "investigation_priority",
         ]
 
-        for field in fields_to_check:
+        for field in fields_to_check:  # noqa: F402
             primary_val = getattr(primary, field, None)
             secondary_val = getattr(secondary, field, None)
 

@@ -6,7 +6,6 @@ interface for SODIR data collection and analysis within the WorldEnergyData fram
 """
 
 import logging
-from pathlib import Path
 from typing import Any, Dict
 
 logger = logging.getLogger(__name__)

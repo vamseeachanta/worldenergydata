@@ -458,4 +458,3 @@ def _nearest_station(
 
 
 # Make Optional importable from this module (used in type hints above)
-from typing import Optional  # noqa: E402 — already imported at top via __future__

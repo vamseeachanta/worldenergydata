@@ -790,7 +790,7 @@ class InterventionDashboard:
             '</style></head><body><div class="container">'
             '<div class="header">'
             "<h1>GOM Intervention &amp; Workover Services &mdash; Market Intelligence Report</h1>"
-            f'<div class="subtitle">Source: BSEE Well Activity Reports | {n:,} records | {y0}-{y1}</div>'
+            f'<div class="subtitle">Source: BSEE Well Activity Reports | {n:,} records | {y0}-{y1}</div>'  # noqa: E501
             "</div>"
             f'<div class="toc"><h3>Table of Contents</h3><ul>{toc}</ul></div>'
             '<div class="related-reports" style="background:#EFF6FF;border:1px solid #3B82F6;'

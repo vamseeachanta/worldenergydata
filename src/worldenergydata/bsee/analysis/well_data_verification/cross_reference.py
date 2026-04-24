@@ -825,7 +825,7 @@ class DiscrepancyReporter:
         for disc in result.discrepancies:
             field_counts[disc.field] = field_counts.get(disc.field, 0) + 1
 
-        for field, count in field_counts.items():
+        for field, count in field_counts.items():  # noqa: F402
             if count > result.total_comparisons * 0.2:
                 recommendations.append(
                     f"Field '{field}' has high discrepancy rate. Check mapping and data quality."

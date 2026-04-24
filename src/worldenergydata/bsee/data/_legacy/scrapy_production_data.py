@@ -1,6 +1,10 @@
 import warnings
 
 import scrapy
+from colorama import Fore, Style
+from colorama import init as colorama_init
+from crochet import setup, wait_for
+from loguru import logger
 from scrapy import FormRequest  # noqa
 from scrapy.crawler import CrawlerRunner  # noqa
 from scrapy.utils.response import (  # noqa useful while program is running
@@ -15,10 +19,6 @@ import os  # noqa
 from io import BytesIO  # noqa
 
 import pandas as pd  # noqa
-from colorama import Fore, Style
-from colorama import init as colorama_init
-from crochet import setup, wait_for
-from loguru import logger
 
 colorama_init()
 
@@ -66,7 +66,7 @@ class SpiderBsee(scrapy.Spider):
             )
         else:
             logger.error(
-                f"{Fore.RED}Data request failed to webpage{Style.RESET_ALL}. Status code: {response.status}"
+                f"{Fore.RED}Data request failed to webpage{Style.RESET_ALL}. Status code: {response.status}"  # noqa: E501
             )
 
         lease_num = str(self.input_item["lease_number"])
@@ -98,7 +98,7 @@ class SpiderBsee(scrapy.Spider):
 
             if response_csv.empty:
                 logger.warning(
-                    f"{Fore.RED}Empty DataFrame for lease {lease_num}. Skipping CSV file.{Style.RESET_ALL}"
+                    f"{Fore.RED}Empty DataFrame for lease {lease_num}. Skipping CSV file.{Style.RESET_ALL}"  # noqa: E501
                 )
             else:
                 with open(output_file, "wb") as f:
@@ -110,7 +110,7 @@ class SpiderBsee(scrapy.Spider):
 
         else:
             logger.error(
-                f"{Fore.RED}Failed to get the data for lease.{lease_num}. Status code: {response.status} {Style.RESET_ALL}"
+                f"{Fore.RED}Failed to get the data for lease.{lease_num}. Status code: {response.status} {Style.RESET_ALL}"  # noqa: E501
             )
             self.data_store["data"] = pd.DataFrame()
 

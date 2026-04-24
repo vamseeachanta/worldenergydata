@@ -1,5 +1,6 @@
 # ABOUTME: IMO GISIS (Global Integrated Shipping Information System) marine casualty data importer.
-# ABOUTME: Imports marine casualties and incidents from IMO GISIS CSV exports per MSC-MEPC.3/Circ.4/Rev.1.
+# ABOUTME: Imports marine casualties and incidents from IMO GISIS CSV
+# exports per MSC-MEPC.3/Circ.4/Rev.1.
 
 """
 IMO GISIS Data Importer

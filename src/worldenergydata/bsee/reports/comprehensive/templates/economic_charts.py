@@ -1,9 +1,9 @@
 """
 Economic chart generation for comprehensive financial reports
-Contains Plotly-based visualization functions for waterfall, dashboard, tornado, and time series charts
+Contains Plotly-based visualization functions for waterfall, dashboard, tornado, and time series charts  # noqa: E501
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 import plotly.graph_objects as go
 import plotly.io as pio

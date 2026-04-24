@@ -80,7 +80,7 @@ class AnomalyHighlighter:
 
         # Get anomaly points
         anomaly_data = (
-            data[data[anomaly_column] == True]
+            data[data[anomaly_column]]
             if anomaly_column in data.columns
             else pd.DataFrame()
         )
@@ -115,7 +115,7 @@ class AnomalyHighlighter:
         if "is_anomaly" not in data.columns:
             return {"total_anomalies": 0, "anomaly_rate": 0.0, "recent_anomalies": []}
 
-        anomaly_data = data[data["is_anomaly"] == True]
+        anomaly_data = data[data["is_anomaly"]]
 
         return {
             "total_anomalies": len(anomaly_data),

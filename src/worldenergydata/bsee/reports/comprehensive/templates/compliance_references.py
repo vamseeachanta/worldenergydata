@@ -17,7 +17,7 @@ def get_regulatory_references() -> List[Dict[str, Any]]:
             "category": "Production Reporting",
             "title": "BSEE Production Reporting Requirements",
             "regulation": "30 CFR 250.1160",
-            "url": "https://www.bsee.gov/guidance-and-regulations/regulations/30-cfr-250-oil-and-gas-and-sulphur-operations-in-the-ocs/subpart-l-oil-and-gas-production-measurement-surface-commingling-and-security",
+            "url": "https://www.bsee.gov/guidance-and-regulations/regulations/30-cfr-250-oil-and-gas-and-sulphur-operations-in-the-ocs/subpart-l-oil-and-gas-production-measurement-surface-commingling-and-security",  # noqa: E501
             "description": "Requirements for monthly production reporting to BSEE",
             "compliance_area": "production",
             "frequency": "monthly",
@@ -27,7 +27,7 @@ def get_regulatory_references() -> List[Dict[str, Any]]:
             "category": "Production Reporting",
             "title": "Well Production Casing Pressure Requirements",
             "regulation": "30 CFR 250.804",
-            "url": "https://www.ecfr.gov/current/title-30/chapter-II/subchapter-B/part-250/subpart-H/section-250.804",
+            "url": "https://www.ecfr.gov/current/title-30/chapter-II/subchapter-B/part-250/subpart-H/section-250.804",  # noqa: E501
             "description": "Requirements for monitoring and reporting well casing pressures",
             "compliance_area": "production",
             "frequency": "continuous_monitoring",
@@ -38,7 +38,7 @@ def get_regulatory_references() -> List[Dict[str, Any]]:
             "category": "Environmental Compliance",
             "title": "Environmental Compliance Requirements",
             "regulation": "30 CFR 250.300",
-            "url": "https://www.ecfr.gov/current/title-30/chapter-II/subchapter-B/part-250/subpart-C",
+            "url": "https://www.ecfr.gov/current/title-30/chapter-II/subchapter-B/part-250/subpart-C",  # noqa: E501
             "description": "Environmental compliance and pollution prevention requirements",
             "compliance_area": "environmental",
             "frequency": "ongoing",
@@ -58,7 +58,7 @@ def get_regulatory_references() -> List[Dict[str, Any]]:
             "category": "Environmental Compliance",
             "title": "Air Quality Requirements",
             "regulation": "40 CFR 60 Subpart OOOO",
-            "url": "https://www.ecfr.gov/current/title-40/chapter-I/subchapter-C/part-60/subpart-OOOO",
+            "url": "https://www.ecfr.gov/current/title-40/chapter-I/subchapter-C/part-60/subpart-OOOO",  # noqa: E501
             "description": "Standards of performance for crude oil and natural gas facilities",
             "compliance_area": "environmental",
             "frequency": "ongoing_monitoring",
@@ -79,7 +79,7 @@ def get_regulatory_references() -> List[Dict[str, Any]]:
             "category": "Safety Management",
             "title": "Incident Reporting Requirements",
             "regulation": "30 CFR 250.188",
-            "url": "https://www.ecfr.gov/current/title-30/chapter-II/subchapter-B/part-250/subpart-B/section-250.188",
+            "url": "https://www.ecfr.gov/current/title-30/chapter-II/subchapter-B/part-250/subpart-B/section-250.188",  # noqa: E501
             "description": "Requirements for reporting incidents and accidents",
             "compliance_area": "safety",
             "frequency": "immediate_reporting",
@@ -90,7 +90,7 @@ def get_regulatory_references() -> List[Dict[str, Any]]:
             "category": "Financial Assurance",
             "title": "Supplemental Bonding Requirements",
             "regulation": "30 CFR 250.1700",
-            "url": "https://www.ecfr.gov/current/title-30/chapter-II/subchapter-B/part-250/subpart-Q",
+            "url": "https://www.ecfr.gov/current/title-30/chapter-II/subchapter-B/part-250/subpart-Q",  # noqa: E501
             "description": "Financial assurance requirements for offshore operations",
             "compliance_area": "financial",
             "frequency": "periodic_review",
@@ -101,7 +101,7 @@ def get_regulatory_references() -> List[Dict[str, Any]]:
             "category": "Inspection and Enforcement",
             "title": "Inspection Requirements and Procedures",
             "regulation": "30 CFR 250.130",
-            "url": "https://www.ecfr.gov/current/title-30/chapter-II/subchapter-B/part-250/subpart-B/section-250.130",
+            "url": "https://www.ecfr.gov/current/title-30/chapter-II/subchapter-B/part-250/subpart-B/section-250.130",  # noqa: E501
             "description": "BSEE inspection authority and facility access requirements",
             "compliance_area": "operational",
             "frequency": "unscheduled",
@@ -111,7 +111,7 @@ def get_regulatory_references() -> List[Dict[str, Any]]:
             "category": "Inspection and Enforcement",
             "title": "Civil Penalty Procedures",
             "regulation": "30 CFR 550.1400",
-            "url": "https://www.ecfr.gov/current/title-30/chapter-II/subchapter-B/part-550/subpart-N",
+            "url": "https://www.ecfr.gov/current/title-30/chapter-II/subchapter-B/part-550/subpart-N",  # noqa: E501
             "description": "Civil penalty assessment and appeal procedures",
             "compliance_area": "enforcement",
             "frequency": "as_needed",
@@ -127,7 +127,7 @@ def get_quick_references() -> List[Dict[str, Any]]:
             "category": "Quick Reference",
             "title": "BSEE Compliance Checklist",
             "regulation": "BSEE Guidance",
-            "url": "https://www.bsee.gov/sites/bsee.gov/files/guidance-and-regulations/guidance/notices-to-lessees-ntl/bsee-compliance-checklist.pdf",
+            "url": "https://www.bsee.gov/sites/bsee.gov/files/guidance-and-regulations/guidance/notices-to-lessees-ntl/bsee-compliance-checklist.pdf",  # noqa: E501
             "description": "Comprehensive compliance checklist for offshore operations",
             "compliance_area": "all",
             "frequency": "reference_document",
@@ -164,7 +164,7 @@ def get_reference_metadata(references: List[Dict[str, Any]]) -> Dict[str, Any]:
             )
         ),
         "last_updated": datetime.now().isoformat(),
-        "disclaimer": "Regulatory references are provided for guidance only. Always consult current CFR text and legal counsel for authoritative interpretation.",
+        "disclaimer": "Regulatory references are provided for guidance only. Always consult current CFR text and legal counsel for authoritative interpretation.",  # noqa: E501
     }
 
 

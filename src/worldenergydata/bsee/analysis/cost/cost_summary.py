@@ -24,8 +24,6 @@ from typing import Any
 import pandas as pd
 
 from worldenergydata.bsee.analysis.cost.models import (
-    ActivityType,
-    ConfidenceLevel,
     CostEstimate,
 )
 

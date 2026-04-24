@@ -25,7 +25,6 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 from worldenergydata.canada.common.uwi_parser import (
     UWIComponents,
     UWIParser,
-    UWISurveySystem,
 )
 
 logger = logging.getLogger(__name__)
@@ -497,7 +496,7 @@ class CanadaDataValidator:
         if province_upper not in self.VALID_PROVINCE_CODES:
             result.add_error(
                 "province",
-                f"Invalid province code: '{province}'. Valid codes: {', '.join(sorted(self.VALID_PROVINCE_CODES.keys()))}",
+                f"Invalid province code: '{province}'. Valid codes: {', '.join(sorted(self.VALID_PROVINCE_CODES.keys()))}",  # noqa: E501
                 province,
                 "PROVINCE_INVALID",
             )
@@ -507,7 +506,7 @@ class CanadaDataValidator:
         if province_upper not in self.OIL_GAS_PROVINCES:
             result.add_warning(
                 "province",
-                f"Province {province_upper} ({self.VALID_PROVINCE_CODES[province_upper]}) has limited oil/gas activity",
+                f"Province {province_upper} ({self.VALID_PROVINCE_CODES[province_upper]}) has limited oil/gas activity",  # noqa: E501
                 province,
                 "PROVINCE_NO_OG",
             )
@@ -542,7 +541,7 @@ class CanadaDataValidator:
         if status_upper not in self.VALID_WELL_STATUSES:
             result.add_error(
                 "status",
-                f"Invalid well status: '{status}'. Valid statuses: {', '.join(sorted(self.VALID_WELL_STATUSES.keys()))}",
+                f"Invalid well status: '{status}'. Valid statuses: {', '.join(sorted(self.VALID_WELL_STATUSES.keys()))}",  # noqa: E501
                 status,
                 "STATUS_INVALID",
             )
@@ -578,7 +577,7 @@ class CanadaDataValidator:
         if fluid_upper not in self.VALID_FLUID_TYPES:
             result.add_error(
                 "fluid_type",
-                f"Invalid fluid type: '{fluid_type}'. Valid types: {', '.join(sorted(self.VALID_FLUID_TYPES.keys()))}",
+                f"Invalid fluid type: '{fluid_type}'. Valid types: {', '.join(sorted(self.VALID_FLUID_TYPES.keys()))}",  # noqa: E501
                 fluid_type,
                 "FLUID_INVALID",
             )

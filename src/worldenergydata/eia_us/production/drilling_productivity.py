@@ -12,7 +12,7 @@ from typing import Any, Dict, List
 
 import pandas as pd
 
-from .basin_production import DPR_BASINS, BasinProductionLoader
+from .basin_production import BasinProductionLoader
 
 logger = logging.getLogger(__name__)
 

@@ -134,7 +134,7 @@ def assignContextData():
 
     read_data = ReadDataFromSystemFiles()
     context["FieldName"] = context["form_submitted_value"]
-    project = context["FieldName"]
+    context["FieldName"]
     filename = os.path.join(
         os.getcwd(),
         "services",

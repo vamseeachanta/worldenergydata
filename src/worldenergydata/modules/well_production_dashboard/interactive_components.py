@@ -7,9 +7,9 @@ with the verification system for data quality indicators.
 
 import logging
 from dataclasses import dataclass
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -26,7 +26,7 @@ except ImportError:
     make_subplots = None
 
 try:
-    import dash
+    import dash  # noqa: F401
     import dash_bootstrap_components as dbc
     from dash import Input, Output, State, callback_context, dcc, html
 
@@ -663,7 +663,7 @@ class AnomalyHighlighter:
 
         # Get anomaly points
         anomaly_data = (
-            data[data[anomaly_column] == True]
+            data[data[anomaly_column]]
             if anomaly_column in data.columns
             else pd.DataFrame()
         )
@@ -698,7 +698,7 @@ class AnomalyHighlighter:
         if "is_anomaly" not in data.columns:
             return {"total_anomalies": 0, "anomaly_rate": 0.0, "recent_anomalies": []}
 
-        anomaly_data = data[data["is_anomaly"] == True]
+        anomaly_data = data[data["is_anomaly"]]
 
         return {
             "total_anomalies": len(anomaly_data),

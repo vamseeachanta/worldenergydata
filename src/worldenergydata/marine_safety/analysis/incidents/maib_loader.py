@@ -12,7 +12,6 @@ from typing import List, Optional
 import pandas as pd
 
 from worldenergydata.marine_safety.analysis.incidents.incident_taxonomy import (
-    MAIB_COLUMN_MAP,
     IncidentDataFrameNormaliser,
     IncidentTaxonomyClassifier,
     TaxonomyRecord,

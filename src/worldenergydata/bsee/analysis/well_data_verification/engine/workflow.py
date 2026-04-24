@@ -149,7 +149,7 @@ class WorkflowStep:
 
         # Simple validation - in real implementation would use jsonschema
         required_fields = self.input_schema.get("required", [])
-        for field in required_fields:
+        for field in required_fields:  # noqa: F402
             if field not in data:
                 return False
 
@@ -169,7 +169,7 @@ class WorkflowStep:
             return True
 
         required_fields = self.output_schema.get("required", [])
-        for field in required_fields:
+        for field in required_fields:  # noqa: F402
             if field not in data:
                 return False
 

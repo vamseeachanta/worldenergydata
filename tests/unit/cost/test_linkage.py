@@ -293,11 +293,11 @@ class TestExactnessIsStrict:
     @pytest.mark.parametrize(
         "operator,project_name",
         [
-            ("bp", "Mad Dog Phase 2"),            # lowercased operator
-            ("BP", "mad dog phase 2"),            # lowercased project
-            ("  BP  ", "Mad Dog Phase 2"),        # padded operator
-            ("BP", "Mad Dog Phase 2 "),           # trailing space on project
-            ("BP", "Mad-Dog Phase 2"),            # punctuation variant
+            ("bp", "Mad Dog Phase 2"),  # lowercased operator
+            ("BP", "mad dog phase 2"),  # lowercased project
+            ("  BP  ", "Mad Dog Phase 2"),  # padded operator
+            ("BP", "Mad Dog Phase 2 "),  # trailing space on project
+            ("BP", "Mad-Dog Phase 2"),  # punctuation variant
         ],
     )
     def test_negative_exactness_case_changes_stay_unlinked(

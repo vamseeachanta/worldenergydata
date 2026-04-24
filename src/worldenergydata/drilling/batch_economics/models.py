@@ -9,8 +9,6 @@ DrillCampaign — rig campaign grouping multiple wells with economics parameters
 
 from __future__ import annotations
 
-from typing import Optional
-
 from pydantic import BaseModel, Field
 
 

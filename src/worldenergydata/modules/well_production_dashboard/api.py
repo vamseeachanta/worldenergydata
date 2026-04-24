@@ -30,19 +30,19 @@ except ImportError:
         def __init__(self, *args, **kwargs):
             pass
 
-    jsonify = lambda x: x
+    def jsonify(x):
+        return x
+
     request = None
     send_file = None
 
 import io
 from datetime import datetime
-from typing import Any, Dict, Optional
-
-import pandas as pd
+from typing import Optional
 
 from worldenergydata.common import get_logger
 
-from .well_production import WellDashboardConfig, WellProductionDashboard
+from .well_production import WellProductionDashboard
 
 logger = get_logger(__name__)
 

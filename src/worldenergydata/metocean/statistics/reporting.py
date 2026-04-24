@@ -9,8 +9,7 @@ at render time (all assets inlined via plotly.io.to_html with full_html=True).
 from __future__ import annotations
 
 import datetime
-from dataclasses import dataclass, field
-from typing import Optional
+from dataclasses import dataclass
 
 import plotly.graph_objects as go
 import plotly.io as pio
@@ -88,7 +87,7 @@ class MetoceanReport:
 
         content = f"""
         <h2>Extreme Value Analysis</h2>
-        <p>Method: <strong>{result.method}</strong> | Distribution: <strong>{result.distribution}</strong></p>
+        <p>Method: <strong>{result.method}</strong> | Distribution: <strong>{result.distribution}</strong></p>  # noqa: E501
         {("" if result.threshold is None else f"<p>Threshold: {result.threshold:.3f}</p>")}
         <h3>Return Period Table</h3>
         {table_html}
@@ -157,7 +156,7 @@ class MetoceanReport:
 
         content = f"""
         <h2>Environmental Contour</h2>
-        <p>Method: <strong>{result.method}</strong> | Return period: <strong>{result.return_period} years</strong></p>
+        <p>Method: <strong>{result.method}</strong> | Return period: <strong>{result.return_period} years</strong></p>  # noqa: E501
         <p>Contour points: {len(result.hs_values)}</p>
         {fig_html}
         """

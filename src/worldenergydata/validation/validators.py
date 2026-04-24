@@ -116,7 +116,7 @@ class DataValidator:
             field_name = field_schema.name
             value = record.get(field_name)
             logger.info(
-                f"[DEBUG] Validating field: {field_name}, value: {value} (type: {type(value).__name__})"
+                f"[DEBUG] Validating field: {field_name}, value: {value} (type: {type(value).__name__})"  # noqa: E501
             )
 
             try:

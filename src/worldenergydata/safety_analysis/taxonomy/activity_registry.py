@@ -11,7 +11,6 @@ from typing import Dict, List, Optional, Tuple
 from .activity_definitions import (
     ALL_BUILDERS,
     Activity,
-    Subactivity,
 )
 
 

@@ -13,11 +13,6 @@ import numpy as np
 import pandas as pd
 import yaml
 
-from worldenergydata.common import get_logger
-
-logger = get_logger(__name__)
-
-# Import verification system components
 from worldenergydata.bsee.analysis.well_data_verification import (
     VerificationConfig,
     VerificationResult,
@@ -33,36 +28,41 @@ from worldenergydata.bsee.analysis.well_data_verification.quality import (
 from worldenergydata.bsee.reports.comprehensive.exporters.excel_exporter import (
     ExcelExporter,
 )
-
-# Import comprehensive report components for export
 from worldenergydata.bsee.reports.comprehensive.exporters.pdf_exporter import (
     PDFExporter,
 )
-
-# Import base dashboard builder
 from worldenergydata.bsee.reports.comprehensive.visualizations.dashboard_builder import (
     ChartConfig,
     DashboardBuilder,
     DashboardConfig,
 )
-
-# Import cache configuration
+from worldenergydata.common import get_logger
 from worldenergydata.well_production_dashboard.cache_config import (
     DashboardCacheManager,
 )
-
-# Import export manager for dashboard exports
 from worldenergydata.well_production_dashboard.export_manager import (
     ExportConfiguration,
     ExportResult,
     VerificationMetadata,
     WellDashboardExportManager,
 )
-
-# Import query optimizer for BSEE data loader integration
 from worldenergydata.well_production_dashboard.query_optimizer import (
     QueryOptimizer,
 )
+
+logger = get_logger(__name__)
+
+# Import verification system components
+
+# Import comprehensive report components for export
+
+# Import base dashboard builder
+
+# Import cache configuration
+
+# Import export manager for dashboard exports
+
+# Import query optimizer for BSEE data loader integration
 
 # Import visualization components
 # Note: logger is already defined at line 18 using get_logger
@@ -898,7 +898,7 @@ class WellProductionDashboard(DashboardBuilder):
         self.cache_hits = 0
 
     # Export functionality methods
-    def export_dashboard(
+    def export_dashboard(  # noqa: F811
         self, output_path: str, export_config: Optional[ExportConfiguration] = None
     ) -> List[ExportResult]:
         """
@@ -948,7 +948,7 @@ class WellProductionDashboard(DashboardBuilder):
 
         return results
 
-    def get_dashboard_data(self) -> Dict[str, Any]:
+    def get_dashboard_data(self) -> Dict[str, Any]:  # noqa: F811
         """
         Get all dashboard data for export.
 

@@ -41,7 +41,7 @@ Examples:
   %(prog)s --input-directory /data/bsee --output-file analysis.xlsx
 
   # Specify date range and developments
-  %(prog)s -d /data/bsee -o output.xlsx --start-date 2020-01-01 --end-date 2023-12-31 --developments Stones,Anchor
+  %(prog)s -d /data/bsee -o output.xlsx --start-date 2020-01-01 --end-date 2023-12-31 --developments Stones,Anchor  # noqa: E501
 
   # Use configuration file
   %(prog)s --config config.yaml

@@ -613,7 +613,7 @@ class QueryOptimizer:
             self.lazy_config.cache_ttl = cache_ttl
             self.lazy_config.enable_compression = True
             logger.info(
-                f"Optimized for dashboard: lazy={enable_lazy}, prefetch={prefetch}, cache_ttl={cache_ttl}s"
+                f"Optimized for dashboard: lazy={enable_lazy}, prefetch={prefetch}, cache_ttl={cache_ttl}s"  # noqa: E501
             )
 
     def get_memory_usage(self) -> Dict[str, float]:

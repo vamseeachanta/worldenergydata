@@ -3,8 +3,7 @@ ABOUTME: Interactive Gulf of Mexico field production map using Plotly scatter_ma
 ABOUTME: GomFieldMap renders field bubbles sized by cumulative production, colored by era.
 """
 
-from dataclasses import dataclass, field
-from typing import Optional
+from dataclasses import dataclass
 
 import pandas as pd
 import plotly.graph_objects as go

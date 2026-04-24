@@ -5,14 +5,11 @@ Provides detailed well visualizations with production charts, economic metrics,
 decline curves, and verification status integration.
 """
 
-import json
 import logging
 import warnings
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
-from functools import lru_cache
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from datetime import datetime
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 import pandas as pd
@@ -21,26 +18,12 @@ from scipy import optimize
 from scipy.stats import linregress
 
 # Import verification components
-from worldenergydata.bsee.analysis.well_data_verification import (
-    VerificationResult,
-    VerificationWorkflow,
-)
-from worldenergydata.bsee.analysis.well_data_verification.audit import (
-    AuditLogger,
-)
-from worldenergydata.bsee.analysis.well_data_verification.quality import (
-    DataQualityFramework,
-)
 
 # Import base components
-from worldenergydata.modules.well_production_dashboard.well_production import (
-    WellMetrics,
-    WellProductionDashboard,
-)
 
 # Try to import plotly, handle if not available
 try:
-    import plotly.express as px
+    import plotly.express as px  # noqa: F401
     import plotly.graph_objects as go
     from plotly.subplots import make_subplots
 
@@ -50,10 +33,6 @@ except ImportError:
     warnings.warn("Plotly not available, chart functionality will be limited")
 
 # Import export components
-from worldenergydata.bsee.reports.comprehensive.exporters import (
-    ExportFormat,
-    ReportExporter,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -498,7 +477,7 @@ class EconomicMetricsCalculator:
             # Use numpy's IRR calculation
             irr = np.irr(cash_flows)
             return irr if not np.isnan(irr) else 0.0
-        except:
+        except Exception:
             # Fallback to manual calculation
             def npv_func(rate):
                 return self.calculate_npv(cash_flows, rate)
@@ -506,7 +485,7 @@ class EconomicMetricsCalculator:
             try:
                 result = optimize.brentq(npv_func, -0.99, 10.0)
                 return result
-            except:
+            except Exception:
                 return 0.0
 
     def calculate_payback_period(self, cash_flows: np.ndarray) -> float:
@@ -663,7 +642,6 @@ class DeclineCurveAnalyzer:
 
         if decline_type == "exponential":
             # Start from last known production
-            last_time = 0  # Assuming we're continuing from present
             future_time = np.arange(1, periods + 1)
             forecast = qi * np.exp(-D * future_time)
         else:  # hyperbolic
@@ -838,7 +816,7 @@ class AuditTrailLink:
             "failed": failed,
             "pending": pending,
             "success_rate": success_rate,
-            "summary_text": f"Verifications: {passed}/{total_verifications} passed ({success_rate:.1%})",
+            "summary_text": f"Verifications: {passed}/{total_verifications} passed ({success_rate:.1%})",  # noqa: E501
         }
 
 

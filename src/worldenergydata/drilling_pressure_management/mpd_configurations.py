@@ -5,7 +5,7 @@ ABOUTME: CBHP, PMCD, dual gradient, RFC configurations with ECD management.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 @dataclass

@@ -136,7 +136,7 @@ class MAIBImporter(BaseImporter):
                         self.persons_by_occid[occid].append(row)
                         count += 1
             logger.info(
-                f"Loaded {count} affected person records for {len(self.persons_by_occid)} unique occurrences"
+                f"Loaded {count} affected person records for {len(self.persons_by_occid)} unique occurrences"  # noqa: E501
             )
 
     def read_source(self) -> Generator[Dict[str, Any], None, None]:
@@ -414,7 +414,7 @@ class MAIBImporter(BaseImporter):
 
         try:
             return datetime.strptime(date_str, "%Y-%m-%d")
-        except:
+        except Exception:
             return None
 
     def _parse_int(self, value: str) -> int:
@@ -423,7 +423,7 @@ class MAIBImporter(BaseImporter):
             return 0
         try:
             return int(float(value))
-        except:
+        except Exception:
             return 0
 
     def _parse_float(self, value: str) -> Optional[float]:
@@ -432,7 +432,7 @@ class MAIBImporter(BaseImporter):
             return None
         try:
             return float(value)
-        except:
+        except Exception:
             return None
 
     def _map_vessel_type(self, ship_type_l1: str, ship_type_l2: str) -> str:
@@ -510,7 +510,7 @@ class MAIBImporter(BaseImporter):
         try:
             # MAIB doesn't include IMO or official numbers in the provided data
             # Use a composite key for caching
-            cache_key = f"maib_{vessel_data.get('flag_state', '')}_{vessel_data.get('ship_type_l1', '')}_{vessel_data.get('gross_tonnage', '')}"
+            cache_key = f"maib_{vessel_data.get('flag_state', '')}_{vessel_data.get('ship_type_l1', '')}_{vessel_data.get('gross_tonnage', '')}"  # noqa: E501
 
             # Check cache
             if cache_key in self._vessel_cache:

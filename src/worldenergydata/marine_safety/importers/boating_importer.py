@@ -398,11 +398,11 @@ class BoatingImporter(BaseImporter):
             date_part = date_str.split(" ")[0]
             # Try MM/DD/YY format
             return datetime.strptime(date_part, "%m/%d/%y")
-        except:
+        except Exception:
             try:
                 # Try MM/DD/YYYY format
                 return datetime.strptime(date_part, "%m/%d/%Y")
-            except:
+            except Exception:
                 return None
 
     def _parse_length(self, length_str: str) -> Optional[float]:
@@ -413,7 +413,7 @@ class BoatingImporter(BaseImporter):
         try:
             feet = float(length_str)
             return round(feet * 0.3048, 2)  # Convert feet to meters
-        except:
+        except Exception:
             return None
 
     def _parse_year(self, year_str: str) -> Optional[int]:
@@ -427,7 +427,7 @@ class BoatingImporter(BaseImporter):
             if year < 100:
                 year += 1900 if year > 50 else 2000
             return year if 1900 <= year <= 2030 else None
-        except:
+        except Exception:
             return None
 
     def _map_vessel_type(self, vessel_type_str: str) -> str:

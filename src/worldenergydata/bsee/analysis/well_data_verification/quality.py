@@ -263,7 +263,7 @@ class ProductionVolumeValidator:
 
                     result.add_warning(
                         "oil_volume",
-                        f"Unusual production change of {change:.0f} BBL at {date_str}{well_context}",
+                        f"Unusual production change of {change:.0f} BBL at {date_str}{well_context}",  # noqa: E501
                         value=change,
                         rule="consistency_check",
                     )
@@ -370,7 +370,7 @@ class CompletenessChecker:
         result.metadata["validator"] = "CompletenessChecker"
         result.metadata["check"] = "required_fields"
 
-        for field in required_fields:
+        for field in required_fields:  # noqa: F402
             if field not in data.columns:
                 result.add_error(field, f"Required field {field} not found in data")
                 continue

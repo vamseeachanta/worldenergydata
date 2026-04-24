@@ -284,10 +284,10 @@ def stats(
             panel_content.append("")
             panel_content.append("[bold cyan]Bounding Box[/bold cyan]")
             panel_content.append(
-                f"  Min: ({stats_data['bbox_min'][0]:.2f}, {stats_data['bbox_min'][1]:.2f}, {stats_data['bbox_min'][2]:.2f})"
+                f"  Min: ({stats_data['bbox_min'][0]:.2f}, {stats_data['bbox_min'][1]:.2f}, {stats_data['bbox_min'][2]:.2f})"  # noqa: E501
             )
             panel_content.append(
-                f"  Max: ({stats_data['bbox_max'][0]:.2f}, {stats_data['bbox_max'][1]:.2f}, {stats_data['bbox_max'][2]:.2f})"
+                f"  Max: ({stats_data['bbox_max'][0]:.2f}, {stats_data['bbox_max'][1]:.2f}, {stats_data['bbox_max'][2]:.2f})"  # noqa: E501
             )
 
             if stats_data.get("object_name"):
@@ -434,7 +434,7 @@ def convert_gdf(
 
         dims = mesh.dimensions
         console.print(
-            f"  [dim]Dimensions:[/dim] {dims['length']:.1f} × {dims['width']:.1f} × {dims['height']:.1f} m\n"
+            f"  [dim]Dimensions:[/dim] {dims['length']:.1f} × {dims['width']:.1f} × {dims['height']:.1f} m\n"  # noqa: E501
         )
 
         # Convert to OBJ

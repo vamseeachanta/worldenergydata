@@ -6,10 +6,9 @@ including rate limiting, caching, retry logic, and error handling.
 """
 
 import hashlib
-import json
 import logging
 import time
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 from urllib.parse import urlencode
 
 try:
@@ -250,7 +249,7 @@ class SodirAPIClient:
                         delay = self.retry_delay * (2**attempt)
                         logger.warning(
                             f"Server error {response.status_code}, "
-                            f"retrying in {delay} seconds (attempt {attempt + 1}/{self.max_retries})"
+                            f"retrying in {delay} seconds (attempt {attempt + 1}/{self.max_retries})"  # noqa: E501
                         )
                         time.sleep(delay)
                         continue

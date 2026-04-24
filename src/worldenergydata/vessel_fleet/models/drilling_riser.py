@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional
 
-from worldenergydata.vessel_fleet.constants import FT_TO_M, M_TO_FT
+from worldenergydata.vessel_fleet.constants import FT_TO_M
 
 
 @dataclass

@@ -20,7 +20,6 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from worldenergydata.metocean.clients.base_client import BaseClient, FetchResult
 from worldenergydata.metocean.constants import DataSource
-from worldenergydata.metocean.exceptions import ParsingError
 
 # Open-Meteo base URL without the endpoint path
 OPEN_METEO_MARINE_BASE_URL = "https://marine-api.open-meteo.com"

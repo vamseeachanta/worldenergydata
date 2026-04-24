@@ -9,7 +9,7 @@ Total expected stubs across all specs: 129.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Sequence
 
 BSEE_BASE_URL = "https://www.data.bsee.gov"

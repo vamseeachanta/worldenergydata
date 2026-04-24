@@ -23,8 +23,7 @@ import hashlib
 import json
 import logging
 import time
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 from urllib.parse import urlencode, urljoin
 
 try:
@@ -41,12 +40,12 @@ except ImportError:
 
 try:
     import geopandas as gpd
-    from shapely.geometry import Point, Polygon, shape
+    from shapely.geometry import Point, Polygon, shape  # noqa: F401
 except ImportError:
     gpd = None
 
 from worldenergydata.canada.cache import CanadaCache
-from worldenergydata.canada.endpoints import BCER_API_DEFAULTS, BCER_ENDPOINTS
+from worldenergydata.canada.endpoints import BCER_API_DEFAULTS
 from worldenergydata.canada.errors import (
     CanadaAPIError,
     CanadaBCERError,
@@ -366,7 +365,7 @@ class BCERClient:
                         delay = self.retry_delay * (2**attempt)
                         logger.warning(
                             f"Server error {response.status_code}, "
-                            f"retrying in {delay} seconds (attempt {attempt + 1}/{self.max_retries})"
+                            f"retrying in {delay} seconds (attempt {attempt + 1}/{self.max_retries})"  # noqa: E501
                         )
                         time.sleep(delay)
                         continue

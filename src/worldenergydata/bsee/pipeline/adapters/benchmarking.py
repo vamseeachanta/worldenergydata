@@ -15,7 +15,6 @@ import pandas as pd
 
 from worldenergydata.bsee.pipeline.adapters.common_schema import (
     AdapterResult,
-    DomainStatus,
 )
 
 # Six canonical domains on AdapterResult / DataAvailability
@@ -71,7 +70,6 @@ class CrossSourceBenchmark:
         """
         rows: list[dict] = []
         for sid, result in self._results.items():
-            avail = result.source
             availability = self._count_available_domains(result)
             rows.append(
                 {

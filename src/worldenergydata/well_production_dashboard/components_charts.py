@@ -6,7 +6,7 @@ bubble maps, waterfall charts, gauges, and 3D surfaces.
 """
 
 import logging
-from typing import Any, Dict, List
+from typing import Any
 
 import numpy as np
 import pandas as pd

@@ -11,9 +11,9 @@ from typing import Any, Dict, List, Union
 
 try:
     from openpyxl import Workbook
-    from openpyxl.chart import BarChart, LineChart, PieChart, Reference
-    from openpyxl.drawing.image import Image
-    from openpyxl.styles import (
+    from openpyxl.chart import BarChart, LineChart, PieChart, Reference  # noqa: F401
+    from openpyxl.drawing.image import Image  # noqa: F401
+    from openpyxl.styles import (  # noqa: F401
         Alignment,
         Border,
         Fill,
@@ -482,7 +482,7 @@ class ExcelExporter(ReportExporter):
                 try:
                     if len(str(cell.value)) > max_length:
                         max_length = len(str(cell.value))
-                except:
+                except Exception:
                     pass
 
             # Set width with some padding

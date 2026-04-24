@@ -9,7 +9,7 @@ based on configuration settings.
 """
 
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from ..processors import PermitProcessor, ProductionProcessor, WellProcessor
 

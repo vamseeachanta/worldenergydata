@@ -103,7 +103,7 @@ class WellData:
         api12_eWellWARRawData_mv_war_main = eWellWARRawData_mv_war_main_df[
             eWellWARRawData_mv_war_main_df["API_WELL_NUMBER"] == api12
         ].copy()
-        # api12_eWellWARRawData_mv_war_main_prop = eWellWARRawData_mv_war_main_prop_df[eWellWARRawData_mv_war_main_prop_df['API_WELL_NUMBER'] == api12].copy()
+        # api12_eWellWARRawData_mv_war_main_prop = eWellWARRawData_mv_war_main_prop_df[eWellWARRawData_mv_war_main_prop_df['API_WELL_NUMBER'] == api12].copy()  # noqa: E501
 
         Borehole_apd_df = self.get_Borehole_apd_for_all_wells(
             BoreholeRawData_df, eWellAPDRawData_df
@@ -174,7 +174,8 @@ class WellData:
             filtered_df = df[df["API_WELL_NUMBER"] == api12].copy()
             data[key] = filtered_df
 
-        # Handling api12_eWellWARRawData_mv_war_main_prop separately since it depends on another dataset
+        # Handling api12_eWellWARRawData_mv_war_main_prop separately since it
+        # depends on another dataset
         if "api12_eWellWARRawData_mv_war_main" in data:
             api12_eWellWARRawData_mv_war_main_prop = (
                 eWellWARRawData_mv_war_main_prop_df[
@@ -415,22 +416,6 @@ class WellData:
 
     def get_eWellAPMRawData_from_zip(self, cfg):
 
-        columns = [
-            "MMS_COMPANY_NUM",
-            "API_WELL_NUMBER",
-            "WATER_DEPTH",
-            "WELL_NM_BP_SFIX",
-            "WELL_NM_ST_SFIX",
-            "SURF_AREA_CODE",
-            "SURF_BLOCK_NUM",
-            "SURF_LEASE_NUM",
-            "BOTM_AREA_CODE",
-            "BOTM_BLOCK_NUM",
-            "BOTM_LEASE_NUM",
-            "RIG_ID_NUM",
-            "BOREHOLE_STAT_CD",
-            "WELL_TYPE_CODE",
-            "BUS_ASC_NAME",
-        ]
+        pass
 
         # TODO

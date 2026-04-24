@@ -32,23 +32,7 @@ class WellDataFromZip:
 
     def get_eWellAPMRawData_from_zip(self, cfg):
 
-        columns = [
-            "MMS_COMPANY_NUM",
-            "API_WELL_NUMBER",
-            "WATER_DEPTH",
-            "WELL_NM_BP_SFIX",
-            "WELL_NM_ST_SFIX",
-            "SURF_AREA_CODE",
-            "SURF_BLOCK_NUM",
-            "SURF_LEASE_NUM",
-            "BOTM_AREA_CODE",
-            "BOTM_BLOCK_NUM",
-            "BOTM_LEASE_NUM",
-            "RIG_ID_NUM",
-            "BOREHOLE_STAT_CD",
-            "WELL_TYPE_CODE",
-            "BUS_ASC_NAME",
-        ]
+        pass
 
         # TODO
 
@@ -147,14 +131,16 @@ class WellDataFromZip:
                     # Headers usually contain alphabetic characters and underscores
                     first_line_values = first_line.split(",")
 
-                    # If most values in first line are non-numeric and contain letters, likely headers
+                    # If most values in first line are non-numeric and contain letters, likely
+                    # headers
                     header_indicators = 0
                     for value in first_line_values[:5]:  # Check first 5 columns
                         value = value.strip().strip("\"'")
                         if value and any(c.isalpha() or c == "_" for c in value):
                             header_indicators += 1
 
-                    # If more than half of the first values look like headers, assume file has headers
+                    # If more than half of the first values look like headers, assume file has
+                    # headers
                     if header_indicators > len(first_line_values):
                         logger.debug(f"Headers detected in zip file: {file_path}")
                         return None  # Let pandas infer headers

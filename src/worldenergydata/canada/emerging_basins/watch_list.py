@@ -15,7 +15,7 @@ investment reports (2023-2025), and Rystad Energy frontier basin tracking.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import List
 
 

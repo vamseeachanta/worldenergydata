@@ -2,10 +2,10 @@ import logging
 import os
 
 import pandas as pd
+from assetutilities.common.yml_utilities import WorkingWithYAML
 
 logger = logging.getLogger(__name__)
 
-from assetutilities.common.yml_utilities import WorkingWithYAML
 
 wwy = WorkingWithYAML()
 
@@ -65,7 +65,7 @@ class WARDataFromBin:
     def read_file(self, filepath):
         try:
             df = pd.read_pickle(filepath)
-        except (FileNotFoundError, OSError) as e:
+        except (FileNotFoundError, OSError):
             logger.warning(
                 "BSEE data not found: %s. Run: python3 scripts/refresh_bsee_all.py",
                 filepath,

@@ -1,6 +1,6 @@
 """
 ABOUTME: Cost calibration module — sanctioned project benchmarking and multivariate prediction.
-ABOUTME: Entry point for the cost sub-package (data collection + calibration + disclosure analytics).
+ABOUTME: Entry point for the cost sub-package (data collection + calibration + disclosure analytics).  # noqa: E501
 """
 
 from worldenergydata.cost.calibration.cost_predictor import (

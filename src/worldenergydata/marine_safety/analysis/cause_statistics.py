@@ -1,5 +1,7 @@
-# ABOUTME: Statistical analysis module for marine safety incident causes including frequency distributions, temporal trends, and cross-tabulations
-# ABOUTME: Provides comprehensive statistical methods with numpy/scipy calculations, pandas DataFrames for visualization, and CSV export capabilities
+# ABOUTME: Statistical analysis module for marine safety incident causes including frequency distributions, temporal trends, and cross-tabulations  # noqa: E501
+# ABOUTME: Provides comprehensive statistical methods with numpy/scipy
+# calculations, pandas DataFrames for visualization, and CSV export
+# capabilities
 
 """
 Statistical Analysis Module for Incident Causes
@@ -254,10 +256,10 @@ class StatisticalSummary:
         logger.info(f"Total Cause Records: {self.total_causes}")
         logger.info(f"Date Range: {self.date_range[0]} to {self.date_range[1]}")
         logger.info(
-            f"\nMost Common Cause: {self.most_common_cause} ({self.cause_distribution[self.most_common_cause]} occurrences)"
+            f"\nMost Common Cause: {self.most_common_cause} ({self.cause_distribution[self.most_common_cause]} occurrences)"  # noqa: E501
         )
         logger.info(
-            f"Least Common Cause: {self.least_common_cause} ({self.cause_distribution[self.least_common_cause]} occurrences)"
+            f"Least Common Cause: {self.least_common_cause} ({self.cause_distribution[self.least_common_cause]} occurrences)"  # noqa: E501
         )
 
         logger.info("\n--- Cause Category Distribution ---")
@@ -376,7 +378,7 @@ class CauseStatistics:
         if min_severity:
             filters.append(Incident.severity_level >= min_severity)
         if primary_only:
-            filters.append(IncidentCause.is_primary == True)
+            filters.append(IncidentCause.is_primary)
 
         if filters:
             query = query.filter(and_(*filters))
@@ -516,7 +518,7 @@ class CauseStatistics:
         if end_date:
             filters.append(Incident.incident_date <= end_date)
         if primary_only:
-            filters.append(IncidentCause.is_primary == True)
+            filters.append(IncidentCause.is_primary)
 
         if filters:
             query = query.filter(and_(*filters))
@@ -640,7 +642,7 @@ class CauseStatistics:
         if end_date:
             filters.append(Incident.incident_date <= end_date)
         if primary_only:
-            filters.append(IncidentCause.is_primary == True)
+            filters.append(IncidentCause.is_primary)
 
         if filters:
             query = query.filter(and_(*filters))

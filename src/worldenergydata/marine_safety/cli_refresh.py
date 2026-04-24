@@ -67,7 +67,7 @@ def _refresh_source_with_scraper(
         console.print(
             Panel(
                 f"[cyan]Would refresh {source_name.upper()} data[/cyan]\n\n"
-                f"Date range: {since.strftime('%Y-%m-%d')} - {datetime.now().strftime('%Y-%m-%d')}\n"
+                f"Date range: {since.strftime('%Y-%m-%d')} - {datetime.now().strftime('%Y-%m-%d')}\n"  # noqa: E501
                 f"Output: {output_file}\n"
                 f"Keep files: {keep_files}",
                 title="Dry Run",
@@ -94,7 +94,7 @@ def _refresh_source_with_scraper(
         console.print(f"[green]v Scraped {len(data)} records to {output_file}[/green]")
 
         # Step 2: Import
-        console.print(f"\n[bold cyan]Step 2/2: Importing to database...[/bold cyan]")
+        console.print("\n[bold cyan]Step 2/2: Importing to database...[/bold cyan]")
         from worldenergydata.marine_safety.database.db_manager import (
             get_session,
         )
@@ -329,7 +329,7 @@ def refresh_maib(since: Optional[datetime], db_url: Optional[str], verbose: bool
     """
     _show_manual_download_info(
         source_name="maib",
-        download_url="https://www.gov.uk/government/organisations/marine-accident-investigation-branch",
+        download_url="https://www.gov.uk/government/organisations/marine-accident-investigation-branch",  # noqa: E501
     )
 
 
@@ -542,7 +542,7 @@ def refresh_all(
                 # Show manual download info
                 manual_urls = {
                     "tsb": "https://www.tsb.gc.ca/eng/stats/marine/index.html",
-                    "maib": "https://www.gov.uk/government/organisations/marine-accident-investigation-branch",
+                    "maib": "https://www.gov.uk/government/organisations/marine-accident-investigation-branch",  # noqa: E501
                     "noaa": "https://incidentnews.noaa.gov/",
                     "boating": "https://uscgboating.org/statistics/accident_statistics.php",
                     "imo": "https://gisis.imo.org/Public/MCI/Default.aspx",

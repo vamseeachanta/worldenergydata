@@ -228,7 +228,7 @@ class EnvironmentalContour:
             import virocon
 
             a1, b1 = joint_model.marginal_hs["params"]
-            n_years = joint_model.n_samples / (365.25 * 24.0 / self._state_duration)
+            joint_model.n_samples / (365.25 * 24.0 / self._state_duration)
 
             dist_hs = virocon.WeibullDistribution(alpha=float(a1), beta=float(b1))
             dist_tp = virocon.LogNormalDistribution(

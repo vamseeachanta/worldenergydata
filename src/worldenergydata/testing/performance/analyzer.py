@@ -267,7 +267,7 @@ class PerformanceAnalyzer:
                     "type": "slow_tests",
                     "priority": "high",
                     "title": "Optimize Slow Tests",
-                    "description": f"Found {len(slow_tests)} tests in the 95th percentile for duration",
+                    "description": f"Found {len(slow_tests)} tests in the 95th percentile for duration",  # noqa: E501
                     "tests": top_slow["test_name"].tolist(),
                     "potential_time_saved": float(
                         top_slow["avg_duration"].sum() * 0.3
@@ -308,7 +308,7 @@ class PerformanceAnalyzer:
                         "type": "parallelization",
                         "priority": "medium",
                         "title": "Enable Parallel Execution",
-                        "description": f"Found {len(independent_tests)} medium-duration tests suitable for parallelization",
+                        "description": f"Found {len(independent_tests)} medium-duration tests suitable for parallelization",  # noqa: E501
                         "potential_time_saved": float(
                             independent_tests["avg_duration"].sum() * 0.5
                         ),  # Assume 50% improvement
@@ -340,7 +340,7 @@ class PerformanceAnalyzer:
                         "type": "categorization",
                         "priority": "low",
                         "title": "Implement Test Categories",
-                        "description": "Consider categorizing tests into smoke, integration, and full suites",
+                        "description": "Consider categorizing tests into smoke, integration, and full suites",  # noqa: E501
                         "impact": "Faster feedback loops for developers",
                     }
                 )

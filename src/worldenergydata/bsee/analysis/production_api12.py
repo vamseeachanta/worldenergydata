@@ -163,7 +163,7 @@ class ProductionAPI12Analysis:
 
             prod_cumulative_mmbbl_groups.reset_index(inplace=True, drop=True)
 
-        api12_df = production_analysis_dict_api12["api12_df"]
+        production_analysis_dict_api12["api12_df"]
 
         self.save_result_groups(
             cfg,
@@ -182,9 +182,7 @@ class ProductionAPI12Analysis:
         )
         # self.plot_prod_cumulative_mmbbl_by_block(cfg, prod_cumulative_mmbbl_groups_by_block)
 
-        prod_cumulative_mmbbl_groups_by_field = self.convert_block_to_field(
-            prod_cumulative_mmbbl_groups_by_block
-        )
+        self.convert_block_to_field(prod_cumulative_mmbbl_groups_by_block)
         # self.plot_prod_cumulative_mmbbl_by_field(cfg, prod_cumulative_mmbbl_groups_by_field)
 
         groups_dict["production_df_api12s"] = production_df_api12s
@@ -382,7 +380,7 @@ class ProductionAPI12Analysis:
                         last_production_date
                     )
                     logger.info(
-                        f"Calculated production dates for API12 {well_api12}: {start_production_date} to {last_production_date}"
+                        f"Calculated production dates for API12 {well_api12}: {start_production_date} to {last_production_date}"  # noqa: E501
                     )
                 except Exception as e:
                     logger.error(

@@ -34,9 +34,7 @@ def calculate_drilling_completion_summary(
     Returns:
         List of summary dictionaries with Description and Value keys
     """
-    development_wells_df: pd.DataFrame = output_data_api12_df[
-        output_data_api12_df["Well Purpose"] == "D"
-    ].copy()
+    output_data_api12_df[output_data_api12_df["Well Purpose"] == "D"].copy()
 
     total_wellbores: int = (
         len(output_data_well_df) + output_data_well_df["Side Tracks"].sum()

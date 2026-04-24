@@ -108,20 +108,21 @@ class BSEEAnalysis:
                 if last_date and last_date != "":
                     well_summary_df.loc[well_mask, "LAST_PRODUCTION_DATE"] = last_date
                 logger.info(
-                    f"Updated production dates for API12 {api12}: start={start_date}, last={last_date}"
+                    f"Updated production dates for API12 {api12}: start={start_date}, last={last_date}"  # noqa: E501
                 )
                 matches_found += 1
             else:
                 logger.warning(f"No matching well found for production API12: {api12}")
 
         logger.info(
-            f"Total matches found: {matches_found} out of {len(production_summary_df)} production records"
+            f"Total matches found: {matches_found} out of {len(production_summary_df)} production records"  # noqa: E501
         )
 
-        # If no matches were found, add some test production dates to demonstrate the timeline functionality
+        # If no matches were found, add some test production dates to demonstrate
+        # the timeline functionality
         if matches_found == 0:
             logger.info(
-                "No API12 matches found. Adding test production dates to first few wells for timeline demonstration..."
+                "No API12 matches found. Adding test production dates to first few wells for timeline demonstration..."  # noqa: E501
             )
 
             # Add test production dates to the first few wells

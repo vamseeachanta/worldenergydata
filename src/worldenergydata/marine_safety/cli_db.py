@@ -382,8 +382,8 @@ def _load_csv_seed(conn: sqlite3.Connection, csv_path: Path) -> int:
             description = row.get("description", "")
             vessel_name = row.get("vessel_name", "")
             fatalities = int(row.get("fatalities", 0) or 0)
-            location = row.get("location", "")
-            severity = row.get("severity", "")
+            row.get("location", "")
+            row.get("severity", "")
             incident_type = _detect_type(csv_path.stem)
 
             title = f"{vessel_name} - {incident_type}" if vessel_name else incident_type

@@ -24,17 +24,9 @@ from .components_audit import AuditTrailDrilldown
 
 # Re-export base types and configuration
 from .components_base import (
-    DASH_AVAILABLE,
-    PLOTLY_AVAILABLE,
     FilterConfig,
     FreshnessStatus,
     QualityLevel,
-    dbc,
-    dcc,
-    go,
-    html,
-    logger,
-    make_subplots,
 )
 
 # Re-export chart components

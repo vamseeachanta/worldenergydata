@@ -50,7 +50,7 @@ def plot_source_map(
     # ---- Source markers ----
     src_lats = [s.lat for s in sources]
     src_lons = [s.lon for s in sources]
-    src_names = [s.name for s in sources]
+    [s.name for s in sources]
     src_text = [
         f"{s.name}<br>Type: {s.source_type}<br>Priority: {s.priority}" for s in sources
     ]

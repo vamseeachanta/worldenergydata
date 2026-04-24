@@ -22,8 +22,6 @@ from worldenergydata.bsee.analysis.cost.models import (
     ConfidenceLevel,
     CostType,
     RigType,
-    WaterDepthBand,
-    WellDepthBand,
     classify_water_depth_band,
     classify_well_depth_band,
 )

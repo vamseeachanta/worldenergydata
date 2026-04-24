@@ -72,10 +72,9 @@ def evaluate_well_distances(
         else:
             field_summary.wellhead_distances.append(
                 {
-                    "Description": "All Wellheads, Max Distance (ft)",
+                    "Description": "All Wellheads, Max Distance (ft)",  # noqa: F601
                     "Value": 0,
-                    "Description": "All Wellheads, Min Distance (ft)",
-                    "Value": 0,
+                    "Description": "All Wellheads, Min Distance (ft)",  # noqa: F601
                 }
             )
 
@@ -122,10 +121,9 @@ def evaluate_well_distances(
             else:
                 field_summary.wellhead_distances.append(
                     {
-                        "Description": "Producing Wellheads, Max Distance (ft)",
+                        "Description": "Producing Wellheads, Max Distance (ft)",  # noqa: F601
                         "Value": 0,
-                        "Description": "Producing Wellheads, Min Distance (ft)",
-                        "Value": 0,
+                        "Description": "Producing Wellheads, Min Distance (ft)",  # noqa: F601
                     }
                 )
 

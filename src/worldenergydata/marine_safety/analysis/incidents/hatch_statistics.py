@@ -1,5 +1,6 @@
 # ABOUTME: Statistical analysis module for hatch, door, and opening maloperation incidents.
-# ABOUTME: Provides location stats, consequence stats, severity distribution, trends, and time series.
+# ABOUTME: Provides location stats, consequence stats, severity
+# distribution, trends, and time series.
 
 """
 Hatch Maloperation Statistics Module

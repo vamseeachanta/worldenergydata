@@ -6,12 +6,6 @@ Contains netback analysis, cost structure analysis, revenue optimization, and KP
 from typing import Any, Dict, List
 
 # Re-export well analysis functions for backward compatibility
-from .economic_well_analysis import (
-    analyze_individual_well_economics,
-    compare_wells_economic_performance,
-    determine_well_investment_grade,
-    generate_well_investment_recommendations,
-)
 
 
 def calculate_enhanced_netback_analysis(context: Dict[str, Any]) -> Dict[str, Any]:

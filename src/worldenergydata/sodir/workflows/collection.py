@@ -8,7 +8,6 @@ including scheduling, filtering, validation, and storage.
 import concurrent.futures
 import logging
 from datetime import datetime, timedelta
-from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
@@ -120,7 +119,7 @@ class CollectionWorkflow:
             )
 
             logger.info(
-                f"Workflow completed: {self.name}, collected {len(result['datasets_collected'])} datasets"
+                f"Workflow completed: {self.name}, collected {len(result['datasets_collected'])} datasets"  # noqa: E501
             )
 
         except Exception as e:

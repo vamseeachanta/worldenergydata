@@ -4,11 +4,10 @@
 
 from __future__ import annotations
 
-import json
 import logging
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple
 
 import typer
 from rich.console import Console
@@ -56,8 +55,6 @@ def _load_and_score(
         DataAssembler,
     )
     from worldenergydata.safety_analysis.risk_index.models import (
-        ActivityRiskScore,
-        DimensionScore,
         RiskCategory,
     )
     from worldenergydata.safety_analysis.risk_index.normalizer import (

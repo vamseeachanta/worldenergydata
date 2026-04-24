@@ -8,9 +8,8 @@ depreciation rules.
 
 import logging
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 import numpy_financial as npf
@@ -225,7 +224,7 @@ class NorwayNPVCalculator:
                     irr = None
             else:
                 irr = None
-        except Exception as e:
+        except Exception:
             irr = None
 
         # Calculate payback period

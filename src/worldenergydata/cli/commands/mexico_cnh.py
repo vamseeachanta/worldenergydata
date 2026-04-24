@@ -265,7 +265,7 @@ def scrape(
                         )
 
                 console.print(results_table)
-                console.print(f"\n[green]Data scraping completed successfully[/green]")
+                console.print("\n[green]Data scraping completed successfully[/green]")
                 console.print(f"[dim]Data saved to: {output}[/dim]")
 
             except ImportError as e:
@@ -441,7 +441,7 @@ def download_open_data(
                         )
 
                 console.print(results_table)
-                console.print(f"\n[green]Download completed successfully[/green]")
+                console.print("\n[green]Download completed successfully[/green]")
                 console.print(f"[dim]Data saved to: {output}[/dim]")
 
             except ImportError as e:
@@ -767,8 +767,8 @@ def status(
             # Check Selenium availability if requested
             if check_selenium:
                 try:
-                    from selenium import webdriver
-                    from selenium.webdriver.chrome.service import Service
+                    from selenium import webdriver  # noqa: F401
+                    from selenium.webdriver.chrome.service import Service  # noqa: F401
 
                     status_data["selenium_available"] = True
                 except ImportError:

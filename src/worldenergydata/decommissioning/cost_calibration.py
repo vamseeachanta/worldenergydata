@@ -13,7 +13,6 @@ import pandas as pd
 
 from worldenergydata.decommissioning.cost_model import (
     _COST_FACTORS,
-    DecommissioningCostEstimator,
 )
 
 # ---------------------------------------------------------------------------

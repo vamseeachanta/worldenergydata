@@ -14,7 +14,6 @@ from typing import Any, Dict, List, Optional
 from urllib.parse import urljoin
 
 from worldenergydata.landman.exceptions import (
-    ParsingError,
     RecordNotFoundError,
     StateNotSupportedError,
 )

@@ -58,7 +58,7 @@ class AER:
                 if data:
                     collected_data[data_type] = data
                     logger.info(
-                        f"Collected {len(data) if isinstance(data, list) else 1} {data_type} records"
+                        f"Collected {len(data) if isinstance(data, list) else 1} {data_type} records"  # noqa: E501
                     )
             except Exception as e:
                 logger.error(f"Error collecting AER {data_type}: {e}")

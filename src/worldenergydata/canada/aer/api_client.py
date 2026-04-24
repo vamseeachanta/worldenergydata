@@ -23,10 +23,9 @@ import hashlib
 import logging
 import re
 import time
-from io import BytesIO, StringIO
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
-from urllib.parse import urlencode, urljoin
+from typing import Any, Dict, List, Optional
+from urllib.parse import urlencode
 
 try:
     import requests
@@ -43,14 +42,10 @@ except ImportError:
 from worldenergydata.canada.cache import CanadaCache, FileDownloadCache
 from worldenergydata.canada.endpoints import (
     AER_API_DEFAULTS,
-    AER_ENDPOINTS,
-    AER_PETRINEX_ENDPOINTS,
-    PETRINEX_API_DEFAULTS,
 )
 from worldenergydata.canada.errors import (
     CanadaAERError,
     CanadaAPIError,
-    CanadaDataError,
     CanadaRateLimitError,
     CanadaValidationError,
 )
@@ -176,7 +171,7 @@ class AERClient:
         """
         headers = {
             "User-Agent": "WorldEnergyData AER Client/1.0",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,text/csv;q=0.8,*/*;q=0.7",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,text/csv;q=0.8,*/*;q=0.7",  # noqa: E501
             "Accept-Encoding": "gzip, deflate",
             "Accept-Language": "en-US,en;q=0.5",
             "Connection": "keep-alive",
@@ -357,7 +352,7 @@ class AERClient:
                         delay = self.retry_delay * (2**attempt)
                         logger.warning(
                             f"Server error {response.status_code}, "
-                            f"retrying in {delay} seconds (attempt {attempt + 1}/{self.max_retries})"
+                            f"retrying in {delay} seconds (attempt {attempt + 1}/{self.max_retries})"  # noqa: E501
                         )
                         time.sleep(delay)
                         continue

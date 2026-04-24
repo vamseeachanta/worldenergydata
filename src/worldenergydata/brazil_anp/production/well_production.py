@@ -12,7 +12,6 @@ Output units:
 
 import calendar
 import logging
-from typing import Optional
 
 import pandas as pd
 

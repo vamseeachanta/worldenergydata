@@ -1,5 +1,6 @@
 # ABOUTME: Well data processor for Texas RRC wellbore records with DataFrame support
-# ABOUTME: Handles API number normalization, coordinate conversion, status mapping, and sidetrack wells
+# ABOUTME: Handles API number normalization, coordinate conversion, status
+# mapping, and sidetrack wells
 
 """
 Well Data Processor for Texas RRC.
@@ -12,7 +13,7 @@ well status classification, and sidetrack/directional well handling.
 import logging
 import re
 from datetime import datetime
-from typing import Any, Dict, Iterator, List, Optional, Tuple, Union
+from typing import Any, Dict, Iterator, List, Optional, Union
 
 import pandas as pd
 

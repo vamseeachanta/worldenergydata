@@ -327,22 +327,32 @@ class FieldAggregator(BaseAggregator):
             lease_metrics.append(lease_data)
 
         # Sum production volumes
-        total_oil = sum(l["oil_production_bbls"] for l in lease_metrics)
-        total_gas = sum(l["gas_production_mcf"] for l in lease_metrics)
-        total_water = sum(l["water_production_bbls"] for l in lease_metrics)
-        total_ngl = sum(l.get("ngl_production_bbls", 0) for l in lease_metrics)
+        total_oil = sum(l["oil_production_bbls"] for l in lease_metrics)  # noqa: E741
+        total_gas = sum(l["gas_production_mcf"] for l in lease_metrics)  # noqa: E741
+        total_water = sum(
+            l["water_production_bbls"] for l in lease_metrics  # noqa: E741
+        )  # noqa: E741
+        total_ngl = sum(
+            l.get("ngl_production_bbls", 0) for l in lease_metrics  # noqa: E741
+        )  # noqa: E741
 
         # Sum economic metrics
-        total_gross_revenue = sum(l["gross_revenue"] for l in lease_metrics)
-        total_operating_cost = sum(l["operating_cost"] for l in lease_metrics)
-        total_royalties = sum(l["royalties"] for l in lease_metrics)
-        total_severance_tax = sum(l["severance_tax"] for l in lease_metrics)
-        total_costs = sum(l["total_costs"] for l in lease_metrics)
-        total_net_income = sum(l["net_income"] for l in lease_metrics)
+        total_gross_revenue = sum(
+            l["gross_revenue"] for l in lease_metrics  # noqa: E741
+        )  # noqa: E741
+        total_operating_cost = sum(
+            l["operating_cost"] for l in lease_metrics  # noqa: E741
+        )  # noqa: E741
+        total_royalties = sum(l["royalties"] for l in lease_metrics)  # noqa: E741
+        total_severance_tax = sum(
+            l["severance_tax"] for l in lease_metrics  # noqa: E741
+        )  # noqa: E741
+        total_costs = sum(l["total_costs"] for l in lease_metrics)  # noqa: E741
+        total_net_income = sum(l["net_income"] for l in lease_metrics)  # noqa: E741
 
         # Aggregate well counts
-        total_wells = sum(l["total_wells"] for l in lease_metrics)
-        active_wells = sum(l["active_wells"] for l in lease_metrics)
+        total_wells = sum(l["total_wells"] for l in lease_metrics)  # noqa: E741
+        active_wells = sum(l["active_wells"] for l in lease_metrics)  # noqa: E741
         total_leases = len(lease_metrics)
 
         # Build field metrics

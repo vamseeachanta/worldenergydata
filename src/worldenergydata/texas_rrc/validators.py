@@ -94,7 +94,7 @@ class TexasDataValidator:
         if county_code < self.COUNTY_CODE_MIN or county_code > self.COUNTY_CODE_MAX:
             return (
                 False,
-                f"Invalid county code: {county_code}. Must be between {self.COUNTY_CODE_MIN} and {self.COUNTY_CODE_MAX}",
+                f"Invalid county code: {county_code}. Must be between {self.COUNTY_CODE_MIN} and {self.COUNTY_CODE_MAX}",  # noqa: E501
             )
 
         return True, None
@@ -122,7 +122,7 @@ class TexasDataValidator:
         if normalized not in self.VALID_DISTRICTS:
             return (
                 False,
-                f"Invalid district: '{district}'. Valid districts: {', '.join(self.VALID_DISTRICTS)}",
+                f"Invalid district: '{district}'. Valid districts: {', '.join(self.VALID_DISTRICTS)}",  # noqa: E501
             )
 
         return True, None
@@ -152,13 +152,13 @@ class TexasDataValidator:
             if lat < self.TEXAS_LAT_MIN or lat > self.TEXAS_LAT_MAX:
                 return (
                     False,
-                    f"Latitude {lat} is outside Texas bounds ({self.TEXAS_LAT_MIN} to {self.TEXAS_LAT_MAX})",
+                    f"Latitude {lat} is outside Texas bounds ({self.TEXAS_LAT_MIN} to {self.TEXAS_LAT_MAX})",  # noqa: E501
                 )
 
             if lon < self.TEXAS_LON_MIN or lon > self.TEXAS_LON_MAX:
                 return (
                     False,
-                    f"Longitude {lon} is outside Texas bounds ({self.TEXAS_LON_MIN} to {self.TEXAS_LON_MAX})",
+                    f"Longitude {lon} is outside Texas bounds ({self.TEXAS_LON_MIN} to {self.TEXAS_LON_MAX})",  # noqa: E501
                 )
 
             return True, None

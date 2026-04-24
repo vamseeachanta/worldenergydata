@@ -43,4 +43,4 @@ class APMData:
                 logger.warning("Failed to load %s: %s", file_name_with_path, e)
 
     def get_apm_data(self, cfg, api12_metadata):
-        api12 = api12_metadata["api12"][0]
+        api12_metadata["api12"][0]

@@ -81,7 +81,7 @@ def uscg(
 
         with create_progress_spinner("Scraping") as progress:
             task = progress.add_task("[cyan]Scraping USCG MISLE data...", total=None)
-            incidents = scraper.scrape()
+            scraper.scrape()
             progress.update(task, completed=True)
 
         # Export results

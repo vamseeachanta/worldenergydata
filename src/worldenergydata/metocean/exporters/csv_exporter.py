@@ -285,11 +285,13 @@ class CSVExporter:
 
         key_func: Callable[[HarmonizedObservation], str]
         if group_by == "hour":
-            key_func = lambda o: o.observation_time.strftime("%Y-%m-%d %H:00")
+            key_func = lambda o: o.observation_time.strftime(  # noqa: E731
+                "%Y-%m-%d %H:00"
+            )  # noqa: E731
         elif group_by == "day":
-            key_func = lambda o: o.observation_time.strftime("%Y-%m-%d")
+            key_func = lambda o: o.observation_time.strftime("%Y-%m-%d")  # noqa: E731
         else:  # station
-            key_func = lambda o: o.station_id or "unknown"
+            key_func = lambda o: o.station_id or "unknown"  # noqa: E731
 
         for obs in observations:
             key = key_func(obs)

@@ -246,11 +246,6 @@ def test_excel_data_extraction(excel_type):
         output_dir.mkdir(parents=True, exist_ok=True)
 
         # Get redundant tests from analysis
-        redundant_tests = [
-            "test_init",
-            "test_application",
-            "test_excel_data_extraction",
-        ]
 
         # Generate consolidated suite
         consolidated_files = {

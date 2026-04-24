@@ -3,7 +3,7 @@
 The distinction between RIG_TYPE (operational) and HULL_FORM_TYPE (hydrodynamic)
 is intentional:
 - RIG_TYPE: how the rig is operated (semi_submersible, drillship, jack_up, etc.)
-- HULL_FORM_TYPE: hydrodynamic form for RAO/diffraction analysis (semi_sub, drillship, jackup, barge, spar)
+- HULL_FORM_TYPE: hydrodynamic form for RAO/diffraction analysis (semi_sub, drillship, jackup, barge, spar)  # noqa: E501
 """
 
 from __future__ import annotations

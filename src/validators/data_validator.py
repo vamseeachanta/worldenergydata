@@ -202,12 +202,12 @@ class DataValidator:
         )
         report.append(f"Quality Score: {validation_results['quality_score']:.1f}/100.0")
 
-        report.append(f"\nDataset Size:")
+        report.append("\nDataset Size:")
         report.append(f"  - Rows: {validation_results['total_rows']}")
         report.append(f"  - Columns: {validation_results['total_columns']}")
 
         if validation_results.get("missing_data"):
-            report.append(f"\nMissing Data:")
+            report.append("\nMissing Data:")
             for col, pct in sorted(
                 validation_results["missing_data"].items(),
                 key=lambda x: x[1],

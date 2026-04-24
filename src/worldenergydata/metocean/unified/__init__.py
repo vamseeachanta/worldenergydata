@@ -1,5 +1,6 @@
 # ABOUTME: Unified metocean query interface — combines all data sources.
-# ABOUTME: Provides MetoceanQuery, MetoceanResult, UnifiedMetoceanClient, harmonizer, coverage, dashboard.
+# ABOUTME: Provides MetoceanQuery, MetoceanResult, UnifiedMetoceanClient,
+# harmonizer, coverage, dashboard.
 
 """
 Unified Metocean Query Interface

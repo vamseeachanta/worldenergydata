@@ -1,7 +1,6 @@
 # ABOUTME: URL-based BSEE statistics importer using public ProductionRawData.zip
 # ABOUTME: Downloads from BSEE public API and processes aggregated production statistics in memory
 
-from pathlib import Path
 from typing import Any, Dict, List
 
 from worldenergydata.bsee.data.processors.in_memory import MemoryProcessor

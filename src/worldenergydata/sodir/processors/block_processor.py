@@ -204,13 +204,17 @@ class BlockProcessor:
             List of licensee names
         """
         if isinstance(licensees, list):
-            return [str(l) for l in licensees if l]
+            return [str(l) for l in licensees if l]  # noqa: E741
         elif isinstance(licensees, str):
             # Handle comma-separated or semicolon-separated strings
             if "," in licensees:
-                return [l.strip() for l in licensees.split(",") if l.strip()]
+                return [
+                    l.strip() for l in licensees.split(",") if l.strip()  # noqa: E741
+                ]  # noqa: E741
             elif ";" in licensees:
-                return [l.strip() for l in licensees.split(";") if l.strip()]
+                return [
+                    l.strip() for l in licensees.split(";") if l.strip()  # noqa: E741
+                ]  # noqa: E741
             else:
                 return [licensees.strip()] if licensees.strip() else []
         else:
@@ -274,7 +278,7 @@ class BlockProcessor:
             if isinstance(coords, dict):
                 northing = coords.get("northing")
                 easting = coords.get("easting")
-                zone = coords.get("utmZone", 31)
+                coords.get("utmZone", 31)
 
                 if northing and easting:
                     # Convert UTM to WGS84 (simplified calculation)

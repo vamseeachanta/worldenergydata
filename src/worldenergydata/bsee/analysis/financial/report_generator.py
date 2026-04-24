@@ -14,7 +14,7 @@ import pandas as pd
 
 try:
     from openpyxl import Workbook, load_workbook
-    from openpyxl.styles import (
+    from openpyxl.styles import (  # noqa: F401
         Alignment,
         Border,
         Fill,
@@ -24,7 +24,7 @@ try:
         Side,
     )
     from openpyxl.utils import get_column_letter
-    from openpyxl.worksheet.table import Table, TableStyleInfo
+    from openpyxl.worksheet.table import Table, TableStyleInfo  # noqa: F401
 
     OPENPYXL_AVAILABLE = True
 except ImportError:
@@ -266,9 +266,9 @@ class ReportGenerator:
         # Overview
         ws["A5"] = "Overview"
         ws["B5"] = (
-            f"This workbook contains per-development financial results produced by the {version} engine. "
-            "It aggregates monthly oil production, drilling & completion (D&C) day allocations, facilities CAPEX, and OPEX "
-            "to construct after-tax cash flows per development. Economics (NPV and MIRR) are computed from those monthly cash flows."
+            f"This workbook contains per-development financial results produced by the {version} engine. "  # noqa: E501
+            "It aggregates monthly oil production, drilling & completion (D&C) day allocations, facilities CAPEX, and OPEX "  # noqa: E501
+            "to construct after-tax cash flows per development. Economics (NPV and MIRR) are computed from those monthly cash flows."  # noqa: E501
         )
 
         # Inputs
@@ -289,7 +289,7 @@ class ReportGenerator:
         ws["B10"] = (
             "• Revenue: monthly gross oil barrels × WTI, minus royalty & severance.\n"
             "• OPEX: variable per-barrel + fixed monthly.\n"
-            "• CAPEX: D&C days × dayrate (MODU or DRY per system/FO timing), plus facilities allocations.\n"
+            "• CAPEX: D&C days × dayrate (MODU or DRY per system/FO timing), plus facilities allocations.\n"  # noqa: E501
             "• Taxes: corporate tax savings applied to CAPEX in-month.\n"
             "• Net Cash Flow: Revenue_Net − OPEX − CAPEX + Tax_Savings.\n"
             "• NPV10 & MIRR: computed from monthly cash flows."
@@ -299,7 +299,7 @@ class ReportGenerator:
         ws["A15"] = "Outputs (tabs)"
         ws["B15"] = (
             f"- Executive Summary ({version}): high-level per-development metrics with NPV/MIRR.\n"
-            f"- Project Summary ({version}): detailed CAPEX/OPEX breakdown, wells & equipment counts.\n"
+            f"- Project Summary ({version}): detailed CAPEX/OPEX breakdown, wells & equipment counts.\n"  # noqa: E501
             "- QC sheets: reconciliation tables of input vs allocated D&C days.\n"
             "- <DEV_NAME> tabs: month-by-month cash flow build and cumulative cash flow."
         )

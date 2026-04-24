@@ -251,13 +251,13 @@ def stations_info(
         )
 
     if hasattr(station, "has_water_level"):
-        panel_content += f"[bold cyan]Water Level Data:[/bold cyan] {'Yes' if station.has_water_level else 'No'}\n"
+        panel_content += f"[bold cyan]Water Level Data:[/bold cyan] {'Yes' if station.has_water_level else 'No'}\n"  # noqa: E501
 
     if hasattr(station, "has_currents"):
-        panel_content += f"[bold cyan]Currents Data:[/bold cyan] {'Yes' if station.has_currents else 'No'}\n"
+        panel_content += f"[bold cyan]Currents Data:[/bold cyan] {'Yes' if station.has_currents else 'No'}\n"  # noqa: E501
 
     if hasattr(station, "has_predictions"):
-        panel_content += f"[bold cyan]Tide Predictions:[/bold cyan] {'Yes' if station.has_predictions else 'No'}\n"
+        panel_content += f"[bold cyan]Tide Predictions:[/bold cyan] {'Yes' if station.has_predictions else 'No'}\n"  # noqa: E501
 
     if hasattr(station, "metadata") and station.metadata:
         panel_content += "\n[bold cyan]Metadata:[/bold cyan]\n"

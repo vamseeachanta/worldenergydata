@@ -24,14 +24,29 @@ except ImportError:
     class MockHtml:
         """Mock html module with required attributes."""
 
-        Div = lambda *args, **kwargs: None
-        H1 = lambda *args, **kwargs: None
-        H2 = lambda *args, **kwargs: None
-        H3 = lambda *args, **kwargs: None
-        H4 = lambda *args, **kwargs: None
-        P = lambda *args, **kwargs: None
-        Span = lambda *args, **kwargs: None
-        Button = lambda *args, **kwargs: None
+        def Div(*args, **kwargs):
+            return None
+
+        def H1(*args, **kwargs):
+            return None
+
+        def H2(*args, **kwargs):
+            return None
+
+        def H3(*args, **kwargs):
+            return None
+
+        def H4(*args, **kwargs):
+            return None
+
+        def P(*args, **kwargs):
+            return None
+
+        def Span(*args, **kwargs):
+            return None
+
+        def Button(*args, **kwargs):
+            return None
 
     html = MockHtml()
 

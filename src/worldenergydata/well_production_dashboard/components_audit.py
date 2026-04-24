@@ -7,7 +7,7 @@ data changes and verification history.
 
 import logging
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from .components_base import DASH_AVAILABLE, dbc
 

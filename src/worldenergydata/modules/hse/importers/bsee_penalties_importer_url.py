@@ -1,7 +1,6 @@
 # ABOUTME: URL-based BSEE penalties importer using public eWellWARRawData.zip
 # ABOUTME: Downloads from BSEE public API and processes well activity reports for violation data
 
-from pathlib import Path
 from typing import Any, Dict, List
 
 from worldenergydata.bsee.data.processors.in_memory import MemoryProcessor

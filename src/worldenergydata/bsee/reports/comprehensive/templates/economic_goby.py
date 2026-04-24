@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING, Any, Dict
 if TYPE_CHECKING:
     from ..hierarchical_aggregator import (
         CostStructure,
-        HierarchicalAggregator,
         PriceDeck,
     )
     from ..models import ProductionMetrics

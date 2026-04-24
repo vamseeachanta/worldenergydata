@@ -5,8 +5,6 @@ ABOUTME: Annular pressure loss, ECD, annular velocity, hole cleaning index.
 
 from __future__ import annotations
 
-import math
-
 from worldenergydata.well_bore_design.schemas import BoreType
 
 # Typical bit-size (hole OD) and drill-pipe OD for each bore type (inches)

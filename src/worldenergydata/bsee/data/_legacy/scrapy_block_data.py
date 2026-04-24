@@ -61,7 +61,7 @@ class BSEESpider(scrapy.Spider):
             )
         else:
             logger.error(
-                f"{Fore.RED}Data request failed to webpage {Style.RESET_ALL}. Status code: {response.status}"
+                f"{Fore.RED}Data request failed to webpage {Style.RESET_ALL}. Status code: {response.status}"  # noqa: E501
             )
 
         bottom_block_num = str(self.input_item["bottom_block"]["number"])
@@ -99,14 +99,14 @@ class BSEESpider(scrapy.Spider):
 
             if response_csv.empty:
                 logger.warning(
-                    f"{Fore.RED}Empty dataframe for BLOCK {bottom_block_num}. Skipping CSV file.{Style.RESET_ALL}"
+                    f"{Fore.RED}Empty dataframe for BLOCK {bottom_block_num}. Skipping CSV file.{Style.RESET_ALL}"  # noqa: E501
                 )
             else:
                 with open(output_file, "wb") as f:
                     f.write(response.body)
         else:
             logger.error(
-                f"{Fore.RED}Failed to get the data for block {bottom_block_num}. Status code: {response.status} {Style.RESET_ALL}"
+                f"{Fore.RED}Failed to get the data for block {bottom_block_num}. Status code: {response.status} {Style.RESET_ALL}"  # noqa: E501
             )
             self.data_store["data"] = pd.DataFrame()
 

@@ -13,8 +13,7 @@ import json
 import time
 from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Any, Dict, List, Optional, TypeVar
+from typing import Any, Dict, Optional, TypeVar
 
 import httpx
 from loguru import logger

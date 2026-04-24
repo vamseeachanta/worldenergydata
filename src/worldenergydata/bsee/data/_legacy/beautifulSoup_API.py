@@ -64,7 +64,7 @@ class BSEEDataScrapper:
             )
         else:
             logger.info(
-                f"{Fore.RED}Failed to submit the form data{Style.RESET_ALL}. Status code: {response.status_code}"
+                f"{Fore.RED}Failed to submit the form data{Style.RESET_ALL}. Status code: {response.status_code}"  # noqa: E501
             )
 
         viewstate = soup.find("input", {"name": "__VIEWSTATE"})["value"]
@@ -98,5 +98,5 @@ class BSEEDataScrapper:
                 logger.info(df)
         else:
             logger.info(
-                f"{Fore.RED}Failed to export CSV file.{Style.RESET_ALL} Status code: {csv_response.status_code}"
+                f"{Fore.RED}Failed to export CSV file.{Style.RESET_ALL} Status code: {csv_response.status_code}"  # noqa: E501
             )

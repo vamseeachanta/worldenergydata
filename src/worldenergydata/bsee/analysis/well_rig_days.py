@@ -94,7 +94,7 @@ class WellRigDays:
         )
         if war_end_date is not None and td_date is not None:
             completion_days = (war_end_date - td_date).days + 1
-        # WAR_data_COM_start_date = war_data[war_data['WELL_ACTIVITY_CD']=='COM']['WAR_END_DT'].min()
+        # WAR_data_COM_start_date = war_data[war_data['WELL_ACTIVITY_CD']=='COM']['WAR_END_DT'].min()  # noqa: E501
         # WAR_data_COM_end_date = war_data[war_data['WELL_ACTIVITY_CD']=='COM']['WAR_END_DT'].max()
         # completion_days = (WAR_data_COM_end_date - WAR_data_COM_start_date).days + 1
 

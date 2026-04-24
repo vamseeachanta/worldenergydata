@@ -5,7 +5,7 @@ This module provides dashboard layout, component creation, and export
 configuration for executive reporting dashboards.
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Dict, List
 
 from .executive_charts import (
     PLOTLY_AVAILABLE,

@@ -7,7 +7,7 @@ contribute rows that are assembled into ProductionResult.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import List, Optional
 
 import pandas as pd

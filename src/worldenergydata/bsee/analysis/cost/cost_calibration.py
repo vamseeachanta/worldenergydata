@@ -36,7 +36,6 @@ from worldenergydata.bsee.analysis.cost.models import (
     CalibrationComparison,
     ConfidenceLevel,
     WaterDepthBand,
-    classify_water_depth_band,
 )
 
 logger = logging.getLogger(__name__)

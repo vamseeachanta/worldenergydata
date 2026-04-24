@@ -521,7 +521,7 @@ def import_tsb(
 
     Examples:
         marine-safety import tsb --occurrence-file data/occurrence.csv
-        marine-safety import tsb --occurrence-file data/occurrence.csv --vessels-file data/vessel.csv
+        marine-safety import tsb --occurrence-file data/occurrence.csv --vessels-file data/vessel.csv  # noqa: E501
         marine-safety import tsb --occurrence-file data/occurrence.csv --limit 100 --preview 5
     """
     try:
@@ -636,8 +636,8 @@ def import_maib(
 
     Examples:
         marine-safety import maib --occurrences-file data/maib_occurrences.csv
-        marine-safety import maib --occurrences-file data/maib_occurrences.csv --vessels-file data/maib_vessels.csv
-        marine-safety import maib --occurrences-file data/maib_occurrences.csv --limit 100 --preview 5
+        marine-safety import maib --occurrences-file data/maib_occurrences.csv --vessels-file data/maib_vessels.csv  # noqa: E501
+        marine-safety import maib --occurrences-file data/maib_occurrences.csv --limit 100 --preview 5  # noqa: E501
     """
     try:
         from worldenergydata.marine_safety.database.db_manager import (
@@ -847,8 +847,8 @@ def import_boating(
 
     Examples:
         marine-safety import boating --accidents-file data/Accidents.csv
-        marine-safety import boating --accidents-file data/Accidents.csv --vessels-file data/Vessels.csv
-        marine-safety import boating --accidents-file data/Accidents.csv --deaths-file data/Deaths.csv --injuries-file data/Injuries.csv
+        marine-safety import boating --accidents-file data/Accidents.csv --vessels-file data/Vessels.csv  # noqa: E501
+        marine-safety import boating --accidents-file data/Accidents.csv --deaths-file data/Deaths.csv --injuries-file data/Injuries.csv  # noqa: E501
         marine-safety import boating --accidents-file data/Accidents.csv --limit 100 --preview 5
     """
     try:

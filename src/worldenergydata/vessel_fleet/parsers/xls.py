@@ -14,7 +14,6 @@ from typing import Any, Optional
 import pandas as pd
 
 from worldenergydata.vessel_fleet.parsers.numeric import (
-    parse_bool,
     parse_dimension_pair,
     parse_int_from_label,
     parse_numeric,

@@ -714,7 +714,6 @@ def stats(
             }
 
             try:
-                from pathlib import Path
 
                 progress.update(
                     task, advance=30, description="[cyan]Checking data directories..."

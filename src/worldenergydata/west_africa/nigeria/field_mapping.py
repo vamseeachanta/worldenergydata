@@ -9,7 +9,7 @@ Deepwater threshold: water depth >= 300m (standard industry definition).
 """
 
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Optional
 
 logger = logging.getLogger(__name__)
