@@ -11,6 +11,7 @@
 - Exit code: `1` (expected before remediation)
 - Parsed flake8 findings: `4752`
 - Raw transient source: `/tmp/2452-flake8-current.txt` in the execution session only; not a durable artifact
+- Prior draft source: `/tmp/2452-flake8.txt` was transient draft evidence only; not a durable artifact
 
 ## Summary
 
