@@ -1,0 +1,1042 @@
+version: "1.0"
+issue: 349
+generated_at: "2026-04-26"
+generated_by: "overnight-batch worker A (planning/audit only)"
+companion_markdown: "docs/reports/2026-04-26-worldenergydata-capability-readiness-matrix.md"
+methodology: "Filesystem inspection of README.md, MODULE_INDEX.md, module-manifest.yaml, data/catalog.yaml, pyproject.toml, src/worldenergydata/, src/worldenergydata/cli/, src/worldenergydata/scheduler/, config/scheduler/scheduler_config.yml, tests/unit/. No subprocess execution; no live network calls; no gh issue listing."
+totals:
+  src_packages_observed: ~40
+  manifest_modules: 27
+  catalog_modules: 12
+  catalog_datasets: 44
+  catalog_size_bytes: 10505037
+  cli_subapps_registered: 15
+  scheduler_jobs_enabled: 7
+  test_files_on_disk: 522
+modules:
+
+  # ── Manifest data-source modules (18) ──────────────────────────────────────
+
+  - module: bsee
+    source_paths:
+      - src/worldenergydata/bsee/
+      - src/worldenergydata/bsee/analysis/
+      - src/worldenergydata/bsee/data/
+      - src/worldenergydata/bsee/paleowells/
+      - src/worldenergydata/bsee/reports/
+      - src/worldenergydata/bsee/sql/
+      - src/worldenergydata/bsee/visualization/
+      - src/worldenergydata/bsee/zip_data_dwnld/
+    cli_entrypoints:
+      - "worldenergydata bsee (registered: cli/main.py:84)"
+      - file: src/worldenergydata/cli/commands/bsee.py
+    tests:
+      directory: tests/unit/bsee/
+      test_file_count_on_disk: 100
+    data_catalog:
+      module_present: true
+      datasets: 19
+      sample_only: true
+      notable: "well_data.csv 57281 rows; Paleowells.csv 6362 rows; most other CSVs 100-row samples"
+    scheduler:
+      manifest_in_scheduler: true
+      job_file: src/worldenergydata/scheduler/jobs/bsee_refresh.py
+      scheduler_config_enabled: true
+      cadence: weekly
+    docs_examples:
+      - notebooks/quickstart_bsee.py
+      - docs/modules/bsee/
+      - examples/fdas_complete_workflow.py (consumer)
+    related_issues: [266, 267, 326, 313, 327, 328, 124, 128]
+    readiness_lane: execution-ready
+    evidence_notes: "Largest test count in repo. CLI most fully fleshed out (28 KB). Catalog data is mostly samples — full BSEE drop requires `make data`."
+
+  - module: sodir
+    source_paths:
+      - src/worldenergydata/sodir/
+      - src/worldenergydata/sodir/processors/
+      - src/worldenergydata/sodir/production/
+    cli_entrypoints:
+      - "worldenergydata sodir (registered)"
+      - file: src/worldenergydata/cli/commands/sodir.py
+    tests:
+      directory: tests/unit/sodir/
+      test_file_count_on_disk: 26
+      integration: tests/sodir-integration/
+    data_catalog:
+      module_present: false
+      notes: "Not in data/catalog.yaml; data is fetched live via REST."
+    scheduler:
+      manifest_in_scheduler: true
+      job_file: src/worldenergydata/scheduler/jobs/sodir_refresh.py
+      scheduler_config_enabled: true
+      cadence: daily
+    docs_examples:
+      - notebooks/quickstart_sodir.py
+    related_issues: [273, 269]
+    readiness_lane: execution-ready
+
+  - module: ukcs
+    source_paths:
+      - src/worldenergydata/ukcs/analysis/
+      - src/worldenergydata/ukcs/data/
+      - src/worldenergydata/ukcs/production/
+      - src/worldenergydata/ukcs/wells/
+    cli_entrypoints: []
+    tests:
+      directory: tests/unit/ukcs/
+      test_file_count_on_disk: 6
+    data_catalog:
+      module_present: false
+    scheduler:
+      manifest_in_scheduler: true
+      job_file: src/worldenergydata/scheduler/jobs/ukcs_refresh.py
+      scheduler_config_enabled: true
+      cadence: monthly
+    docs_examples: []
+    related_issues: [269, 151]
+    readiness_lane: planning-needed
+    evidence_notes: "Source layered for production/wells, but no CLI sub-app registered in cli/main.py. NSTA NDR ingest (#151) blocked separately."
+
+  - module: brazil_anp
+    source_paths:
+      - src/worldenergydata/brazil_anp/analysis/
+      - src/worldenergydata/brazil_anp/data/
+      - src/worldenergydata/brazil_anp/production/
+    cli_entrypoints: []
+    tests:
+      directory: tests/unit/brazil_anp/
+      test_file_count_on_disk: 5
+    data_catalog:
+      module_present: false
+    scheduler:
+      manifest_in_scheduler: true
+      job_file: src/worldenergydata/scheduler/jobs/brazil_anp_refresh.py
+      scheduler_config_enabled: true
+      cadence: monthly
+    docs_examples: []
+    related_issues: [269]
+    readiness_lane: planning-needed
+    evidence_notes: "No CLI sub-app; programmatic only."
+
+  - module: mexico_cnh
+    source_paths:
+      - src/worldenergydata/mexico_cnh/
+      - src/worldenergydata/mexico_cnh/scrapers/
+      - src/worldenergydata/mexico_cnh/processors/
+    cli_entrypoints:
+      - "worldenergydata mexico-cnh (registered)"
+      - file: src/worldenergydata/cli/commands/mexico_cnh.py
+    tests:
+      directory: tests/unit/mexico_cnh/
+      test_file_count_on_disk: 5
+    data_catalog:
+      module_present: false
+    scheduler:
+      manifest_in_scheduler: true_per_manifest_via_config_yml
+      job_file: null
+      scheduler_config_enabled: false
+      cadence: not_in_scheduler_config
+      drift: "manifest implies scheduled via config/mexico_cnh.yml, but scheduler_config.yml has no entry"
+    docs_examples: []
+    related_issues: []
+    readiness_lane: docs-stale
+    evidence_notes: "Manifest scheduler claim is misleading — clarify intent."
+
+  - module: canada
+    source_paths:
+      - src/worldenergydata/canada/aer/
+      - src/worldenergydata/canada/bcer/
+      - src/worldenergydata/canada/common/
+      - src/worldenergydata/canada/production/
+      - src/worldenergydata/canada/emerging_basins/
+      - src/worldenergydata/canada/processors/
+    cli_entrypoints:
+      - "worldenergydata canada (registered)"
+      - file: src/worldenergydata/cli/commands/canada.py
+    tests:
+      directory: tests/unit/canada/
+      test_file_count_on_disk: 12
+    data_catalog:
+      module_present: false
+    scheduler:
+      manifest_in_scheduler: false
+      job_file: null
+      scheduler_config_enabled: false
+      cadence: null
+      notes: "config/canada.yml exists but no scheduler job adapter."
+    docs_examples: []
+    related_issues: []
+    readiness_lane: execution-ready
+    evidence_notes: "Most-developed regional source after BSEE/sodir; only scheduler hook is missing."
+
+  - module: texas_rrc
+    source_paths:
+      - src/worldenergydata/texas_rrc/
+      - src/worldenergydata/texas_rrc/processors/
+    cli_entrypoints:
+      - "worldenergydata texas-rrc (registered)"
+      - file: src/worldenergydata/cli/commands/texas_rrc.py
+    tests:
+      directory: tests/unit/texas_rrc/
+      test_file_count_on_disk: 10
+    data_catalog:
+      module_present: false
+    scheduler:
+      manifest_in_scheduler: true_per_manifest_via_config_yml
+      job_file: null
+      scheduler_config_enabled: false
+      cadence: not_in_scheduler_config
+      drift: "manifest implies scheduled via config/texas_rrc.yml, but scheduler_config.yml has no entry"
+    docs_examples: []
+    related_issues: []
+    readiness_lane: docs-stale
+    evidence_notes: "Same drift pattern as mexico_cnh."
+
+  - module: eia_us
+    source_paths:
+      - src/worldenergydata/eia_us/
+      - src/worldenergydata/eia_us/client/
+      - src/worldenergydata/eia_us/data/
+      - src/worldenergydata/eia_us/production/
+      - src/worldenergydata/eia_us/international/
+      - src/worldenergydata/eia_us/analysis/
+    cli_entrypoints: []
+    tests:
+      directory: tests/unit/eia_us/
+      test_file_count_on_disk: 7
+    data_catalog:
+      module_present: false
+    scheduler:
+      manifest_in_scheduler: true
+      job_file: src/worldenergydata/scheduler/jobs/eia_us_refresh.py
+      scheduler_config_enabled: true
+      cadence: monthly
+    docs_examples:
+      - notebooks/quickstart_eia.py
+    related_issues: [266]
+    readiness_lane: docs-stale
+    evidence_notes: "CLI is registered for sibling `eia` package, not `eia_us`. Quickstart notebook label says `eia` but loads what?"
+
+  - module: lower_tertiary
+    source_paths:
+      - src/worldenergydata/lower_tertiary/
+    cli_entrypoints: []
+    tests:
+      directory: tests/unit/lower_tertiary/
+      test_file_count_on_disk: 10
+    data_catalog:
+      module_present: false
+      notes: "Consumes BSEE/FDAS-derived enhanced well data."
+    scheduler:
+      manifest_in_scheduler: false
+    docs_examples: []
+    related_issues: []
+    readiness_lane: planning-needed
+    evidence_notes: "Programmatic only; downstream consumer of bsee + fdas."
+
+  - module: hse
+    source_paths:
+      - src/worldenergydata/hse/
+      - src/worldenergydata/hse/acquirers/
+      - src/worldenergydata/hse/database/
+      - src/worldenergydata/hse/importers/
+    cli_entrypoints: []
+    tests:
+      directory: tests/unit/hse/
+      test_file_count_on_disk: 17
+    data_catalog:
+      module_present: true
+      datasets: 0
+      empty: true
+      notes: "data/catalog.yaml lists hse module with empty datasets list."
+    scheduler:
+      manifest_in_scheduler: false
+    docs_examples:
+      - docs/hse/
+    related_issues: []
+    readiness_lane: data-missing
+    evidence_notes: "10 importers + 6 hse-root tests + 1 database test, but no data file shipped. Manifest tag `stable` is misleading."
+
+  - module: pipeline_safety
+    source_paths:
+      - src/worldenergydata/pipeline_safety/
+      - src/worldenergydata/pipeline_safety/database/
+      - src/worldenergydata/pipeline_safety/examples/
+      - src/worldenergydata/pipeline_safety/importers/
+    cli_entrypoints: []
+    tests:
+      directory: tests/unit/pipeline_safety/
+      test_file_count_on_disk: 3
+    data_catalog:
+      module_present: true
+      datasets: 0
+      empty: true
+    scheduler:
+      manifest_in_scheduler: false
+    docs_examples: []
+    related_issues: []
+    readiness_lane: data-missing
+    evidence_notes: "Stable per manifest, but catalog empty. Examples present in src tree."
+
+  - module: marine_safety
+    source_paths:
+      - src/worldenergydata/marine_safety/
+      - src/worldenergydata/marine_safety/scrapers/ (USCG, NTSB, ATSB pipeline)
+      - src/worldenergydata/marine_safety/acquirers/
+      - src/worldenergydata/marine_safety/analysis/
+      - src/worldenergydata/marine_safety/database/
+      - src/worldenergydata/marine_safety/processors/
+      - src/worldenergydata/marine_safety/reports/
+    cli_entrypoints:
+      - "worldenergydata marine-safety (registered)"
+      - file: src/worldenergydata/cli/commands/marine_safety.py
+      - module-internal: src/worldenergydata/marine_safety/cli.py + cli_*.py x7
+    tests:
+      directory: tests/unit/marine_safety/
+      test_file_count_on_disk: 51
+      breakdown:
+        root: 17
+        importers: 11
+        scrapers: 8
+        analysis: 5
+        analysis_incidents: 5
+        processors: 3
+        utils: 1
+        reports: 1
+    data_catalog:
+      module_present: true
+      datasets: 14
+      sample_only: true
+      notable: "fatality_incidents.csv 20 rows; foundering_incidents.csv 15 rows; hatch_incidents.csv 30 rows; plus JSON manifests"
+    scheduler:
+      manifest_in_scheduler: false
+      notes: "WRK-076 Phase 2 explicit gap"
+    docs_examples:
+      - examples/marine_safety/
+      - notebooks/quickstart_marine_safety.py
+      - docs/marine-safety-data-sources-comprehensive.md
+      - examples/marine_safety_cause_visualization_demo.py
+      - examples/llm_classification_demo.py
+    related_issues: [153, 327]
+    readiness_lane: execution-ready
+    evidence_notes: "Largest non-bsee surface. ATSB scraper has 8 dedicated files. Manifest claims only `USCGMarineCasualtyScraper` as key class — drift. #327 conftest may block test collection."
+
+  - module: safety_analysis
+    source_paths:
+      - src/worldenergydata/safety_analysis/adapters/
+      - src/worldenergydata/safety_analysis/analysis/
+      - src/worldenergydata/safety_analysis/core/
+      - src/worldenergydata/safety_analysis/nlp/
+      - src/worldenergydata/safety_analysis/risk_index/
+      - src/worldenergydata/safety_analysis/taxonomy/
+    cli_entrypoints:
+      - "worldenergydata safety-analysis (registered via worldenergydata.safety_analysis.cli)"
+    tests:
+      directory: tests/unit/safety_analysis/
+      test_file_count_on_disk: 38
+      breakdown:
+        root: 23
+        risk_index: 9
+        taxonomy: 3
+        core: 2
+        nlp: 1
+    data_catalog:
+      module_present: false
+    scheduler:
+      manifest_in_scheduler: false
+    docs_examples: []
+    related_issues: []
+    readiness_lane: execution-ready
+
+  - module: fdas
+    source_paths:
+      - src/worldenergydata/fdas/
+      - src/worldenergydata/fdas/core/
+      - src/worldenergydata/fdas/analysis/
+      - src/worldenergydata/fdas/adapters/
+      - src/worldenergydata/fdas/data/
+      - src/worldenergydata/fdas/reports/
+    cli_entrypoints:
+      - "worldenergydata fdas (registered)"
+      - file: src/worldenergydata/cli/commands/fdas.py
+    tests:
+      directory: tests/unit/fdas/
+      test_file_count_on_disk: 13
+    data_catalog:
+      module_present: true
+      datasets: 1
+      notable: "well_data_enhanced.csv 57281 rows derived from bsee"
+    scheduler:
+      manifest_in_scheduler: false
+      notes: "Consumes bsee output."
+    docs_examples:
+      - notebooks/quickstart_fdas.py
+      - examples/fdas_complete_workflow.py
+    related_issues: []
+    readiness_lane: execution-ready
+
+  - module: metocean
+    source_paths:
+      - src/worldenergydata/metocean/clients/
+      - src/worldenergydata/metocean/cache/
+      - src/worldenergydata/metocean/database/
+      - src/worldenergydata/metocean/extrapolation/
+      - src/worldenergydata/metocean/processors/
+      - src/worldenergydata/metocean/statistics/
+      - src/worldenergydata/metocean/unified/
+      - src/worldenergydata/metocean/well_datasets/
+    cli_entrypoints:
+      - "worldenergydata metocean (registered)"
+      - "worldenergydata ndbc (registered separately)"
+      - file: src/worldenergydata/cli/commands/metocean.py
+      - file: src/worldenergydata/cli/commands/ndbc.py
+    tests:
+      directory: tests/unit/metocean/
+      test_file_count_on_disk: 34
+      breakdown:
+        root: 11
+        statistics: 7
+        unified: 4
+        extrapolation: 4
+        utils: 2
+        processors: 2
+        exporters: 2
+        clients: 1
+        cache: 1
+    data_catalog:
+      module_present: false
+      notes: "Live-fetched"
+    scheduler:
+      manifest_in_scheduler: true
+      job_file: src/worldenergydata/scheduler/jobs/metocean_refresh.py
+      scheduler_config_enabled: true
+      cadence: daily
+      configured_locations: ["GOM", "NCS"]
+    docs_examples: []
+    related_issues: [268]
+    readiness_lane: execution-ready
+
+  - module: lng_terminals
+    source_paths:
+      - src/worldenergydata/lng_terminals/
+      - src/worldenergydata/lng_terminals/collectors/
+      - src/worldenergydata/lng_terminals/loaders/
+      - src/worldenergydata/lng_terminals/processors/
+      - src/worldenergydata/lng_terminals/exporters/
+      - src/worldenergydata/lng_terminals/models/
+    cli_entrypoints:
+      - "worldenergydata lng-terminals (registered)"
+      - file: src/worldenergydata/cli/commands/lng_terminals.py (small wrapper)
+      - module-internal: src/worldenergydata/lng_terminals/cli.py
+    tests:
+      directory: tests/unit/lng_terminals/
+      test_file_count_on_disk: 26
+      breakdown:
+        root: 21
+        models: 4
+        reports: 1
+    data_catalog:
+      module_present: true
+      datasets: 1
+      notable: "terminals_seed.csv 227 rows"
+    scheduler:
+      manifest_in_scheduler: false
+      job_file: src/worldenergydata/scheduler/jobs/lng_terminals_refresh.py
+      scheduler_config_enabled: true
+      cadence: weekly
+      drift: "manifest says false; reality is enabled"
+    docs_examples: []
+    related_issues: [270]
+    readiness_lane: execution-ready
+    evidence_notes: "Manifest scheduler flag is the most actionable single-line drift fix."
+
+  - module: vessel_fleet
+    source_paths:
+      - src/worldenergydata/vessel_fleet/
+      - src/worldenergydata/vessel_fleet/collectors/
+      - src/worldenergydata/vessel_fleet/loaders/
+      - src/worldenergydata/vessel_fleet/parsers/
+      - src/worldenergydata/vessel_fleet/dedup/
+      - src/worldenergydata/vessel_fleet/quality/
+      - src/worldenergydata/vessel_fleet/schemas/
+      - src/worldenergydata/vessel_fleet/storage/
+      - src/worldenergydata/vessel_fleet/bridge/
+    cli_entrypoints: []
+    tests:
+      directory: tests/unit/vessel_fleet/
+      test_file_count_on_disk: 34
+      breakdown:
+        root: 8
+        schemas: 6
+        models: 5
+        loaders: 4
+        quality: 2
+        parsers: 2
+        dedup: 2
+        collectors: 2
+        storage: 1
+        config_drilling: 1
+        config_construction: 1
+    data_catalog:
+      module_present: true
+      datasets: 7
+      notable: "drilling_rigs.csv 2210 rows; construction_vessels CSV+parquet 17 rows; drilling_riser_components 36 rows"
+    scheduler:
+      manifest_in_scheduler: false
+    docs_examples: []
+    related_issues: []
+    readiness_lane: execution-ready
+    evidence_notes: "Best-instrumented off-CLI module. Wiring CLI is the only blocker."
+
+  - module: vessel_hull_models
+    source_paths:
+      - src/worldenergydata/vessel_hull_models/
+      - src/worldenergydata/vessel_hull_models/acquisition/
+      - src/worldenergydata/vessel_hull_models/geometry/
+      - src/worldenergydata/vessel_hull_models/rig_hulls/
+      - src/worldenergydata/vessel_hull_models/visualization/
+    cli_entrypoints:
+      - file_present: src/worldenergydata/vessel_hull_models/cli.py
+      - registered_in_main: false
+    tests:
+      directory: tests/unit/vessel_hull_models/
+      test_file_count_on_disk: 9
+      breakdown:
+        root: 4
+        rig_hulls: 3
+        geometry: 1
+        data: 1
+    data_catalog:
+      module_present: true
+      datasets: 1
+      notable: "sample_rigs.csv 5 rows"
+    scheduler:
+      manifest_in_scheduler: false
+    docs_examples: []
+    related_issues: []
+    readiness_lane: planning-needed
+    evidence_notes: "cli.py exists but not wired into worldenergydata.cli.main:app — single-line fix."
+
+  - module: well_production_dashboard
+    source_paths:
+      - src/worldenergydata/well_production_dashboard/
+      - "24 files including api.py, api_enhanced.py, cli.py, views_*, components_*"
+    cli_entrypoints:
+      - file_present: src/worldenergydata/well_production_dashboard/cli.py
+      - registered_in_main: false
+    tests:
+      directory: tests/unit/well_production_dashboard/
+      test_file_count_on_disk: 11
+    data_catalog:
+      module_present: false
+      notes: "Consumer of bsee data."
+    scheduler:
+      manifest_in_scheduler: false
+    docs_examples:
+      - docs/modules/well-production-dashboard/
+    related_issues: []
+    readiness_lane: planning-needed
+
+  - module: landman
+    source_paths:
+      - src/worldenergydata/landman/
+      - src/worldenergydata/landman/providers/
+    cli_entrypoints:
+      - "worldenergydata landman (registered)"
+      - file: src/worldenergydata/cli/commands/landman.py
+    tests:
+      directory: tests/unit/landman/
+      test_file_count_on_disk: 8
+      breakdown:
+        root: 6
+        providers: 2
+    data_catalog:
+      module_present: false
+    scheduler:
+      manifest_in_scheduler: false
+    docs_examples: []
+    related_issues: []
+    readiness_lane: execution-ready
+
+  # ── Manifest infrastructure modules (7) ────────────────────────────────────
+
+  - module: production
+    source_paths:
+      - src/worldenergydata/production/unified/
+      - src/worldenergydata/production/forecast/
+    cli_entrypoints:
+      - "worldenergydata forecast (registered as production_forecast)"
+    tests:
+      directory: tests/unit/production/
+      test_file_count_on_disk: 7
+      breakdown:
+        unified: 6
+        forecast: 1
+    data_catalog:
+      module_present: false
+    scheduler:
+      manifest_in_scheduler: false
+    docs_examples: []
+    related_issues: []
+    readiness_lane: planning-needed
+    evidence_notes: "UnifiedProductionClient/ProductionQuery layer; only forecast subcommand exposed via CLI."
+
+  - module: common
+    source_paths:
+      - src/worldenergydata/common/
+      - src/worldenergydata/common/legacy/
+      - src/worldenergydata/common/validation/
+    cli_entrypoints: []
+    tests:
+      directory: tests/unit/common/
+      test_file_count_on_disk: 17
+      breakdown:
+        root: 11
+        legacy: 6
+    data_catalog:
+      module_present: false
+    scheduler:
+      manifest_in_scheduler: false
+    docs_examples: []
+    related_issues: []
+    readiness_lane: execution-ready
+    evidence_notes: "Infra. data_resolver.py underwrites `worldenergydata status` data root resolution."
+
+  - module: validation
+    source_paths:
+      - src/worldenergydata/validation/
+    cli_entrypoints: []
+    tests:
+      directory: tests/unit/validation/
+      test_file_count_on_disk: 6
+    data_catalog:
+      module_present: false
+    scheduler:
+      manifest_in_scheduler: false
+    docs_examples:
+      - examples/validation_examples.py
+    related_issues: []
+    readiness_lane: execution-ready
+
+  - module: scheduler
+    source_paths:
+      - src/worldenergydata/scheduler/
+      - src/worldenergydata/scheduler/jobs/
+    cli_entrypoints:
+      - module-internal: src/worldenergydata/scheduler/cli.py
+    tests:
+      directory: tests/unit/scheduler/
+      test_file_count_on_disk: 14
+    data_catalog:
+      module_present: false
+    scheduler:
+      self: true
+      jobs_files:
+        - bsee_refresh.py
+        - brazil_anp_refresh.py
+        - eia_us_refresh.py
+        - lng_terminals_refresh.py
+        - metocean_refresh.py
+        - sodir_refresh.py
+        - ukcs_refresh.py
+      config_file: config/scheduler/scheduler_config.yml
+    docs_examples: []
+    related_issues: [266, 267, 268, 269, 270, 271, 273]
+    readiness_lane: execution-ready
+
+  - module: reporting
+    source_paths:
+      - src/worldenergydata/reporting/
+      - src/worldenergydata/reporting/templates/
+      - src/worldenergydata/reporting/utils/
+      - src/worldenergydata/reporting/examples/
+    cli_entrypoints: []
+    tests:
+      directory: tests/unit/reporting/
+      test_file_count_on_disk: 3
+    data_catalog:
+      module_present: false
+    scheduler:
+      manifest_in_scheduler: false
+    docs_examples: []
+    related_issues: []
+    readiness_lane: execution-ready
+
+  - module: analysis
+    source_paths:
+      - src/worldenergydata/analysis/ (empty)
+    cli_entrypoints: []
+    tests: {test_file_count_on_disk: 0}
+    data_catalog: {module_present: false}
+    scheduler: {manifest_in_scheduler: false}
+    docs_examples: []
+    related_issues: []
+    readiness_lane: stub
+    evidence_notes: "Manifest acknowledges as stub; lower_tertiary content migrated out per WRK-096."
+
+  - module: testing
+    source_paths:
+      - src/worldenergydata/testing/ (empty per ls)
+    cli_entrypoints: []
+    tests:
+      directory: tests/unit/  (root-level fixtures)
+      test_file_count_on_disk: 0
+    data_catalog: {module_present: false}
+    scheduler: {manifest_in_scheduler: false}
+    docs_examples: []
+    related_issues: [313, 327]
+    readiness_lane: blocked/test-infra-risk
+    evidence_notes: "tests/conftest.py:31 imports `worldenergydata.testing.performance` but on-disk testing/ is empty. Either an installed-package indirection or a real import gap."
+
+  # ── Off-manifest source packages (16) ──────────────────────────────────────
+
+  - module: baker_hughes
+    source_paths: [src/worldenergydata/baker_hughes/]
+    cli_entrypoints: []
+    tests: {file: tests/test_baker_hughes_loader.py, test_file_count_on_disk: 1}
+    data_catalog: {module_present: false}
+    scheduler: {manifest_in_scheduler: false}
+    docs_examples: []
+    related_issues: []
+    readiness_lane: planning-needed
+    evidence_notes: "Off-manifest data source loader."
+
+  - module: cost
+    source_paths:
+      - src/worldenergydata/cost/
+      - src/worldenergydata/cost/calibration/
+      - src/worldenergydata/cost/data_collection/
+    cli_entrypoints: []
+    tests: {directory: tests/unit/cost/, test_file_count_on_disk: 8}
+    data_catalog: {module_present: false}
+    scheduler: {manifest_in_scheduler: false}
+    docs_examples: []
+    related_issues: [334, 343, 344, 336, 342]
+    readiness_lane: planning-needed
+    evidence_notes: "Off-manifest. cost_calibration, cost_model, data_completeness, disclosure_analytics modules. Likely tied to disclosure issue family."
+
+  - module: dashboard
+    source_paths: [src/worldenergydata/dashboard/]
+    cli_entrypoints: ["worldenergydata dashboard (registered)"]
+    tests: {directory: tests/unit/dashboard/, test_file_count_on_disk: 2}
+    data_catalog: {module_present: false}
+    scheduler: {manifest_in_scheduler: false}
+    docs_examples: []
+    related_issues: []
+    readiness_lane: planning-needed
+    evidence_notes: "Off-manifest but CLI-registered. app.py + data_loader.py — Plotly Dash."
+
+  - module: decommissioning
+    source_paths: [src/worldenergydata/decommissioning/]
+    cli_entrypoints: []
+    tests: {directory: tests/unit/decommissioning/, test_file_count_on_disk: 5}
+    data_catalog: {module_present: false}
+    scheduler: {manifest_in_scheduler: false}
+    docs_examples: []
+    related_issues: []
+    readiness_lane: planning-needed
+    evidence_notes: "Off-manifest; late-life economics + regulations data."
+
+  - module: drilling
+    source_paths: [src/worldenergydata/drilling/ (empty)]
+    cli_entrypoints: []
+    tests: {test_file_count_on_disk: 0}
+    data_catalog: {module_present: false}
+    scheduler: {manifest_in_scheduler: false}
+    docs_examples: []
+    related_issues: []
+    readiness_lane: stub
+
+  - module: drilling_pressure_management
+    source_paths: [src/worldenergydata/drilling_pressure_management/]
+    cli_entrypoints: []
+    tests: {directory: tests/unit/drilling_pressure_management/, test_file_count_on_disk: 3}
+    data_catalog: {module_present: false}
+    scheduler: {manifest_in_scheduler: false}
+    docs_examples: []
+    related_issues: []
+    readiness_lane: planning-needed
+    evidence_notes: "Off-manifest; fleet_mpd, mpd_systems, mpd_configurations."
+
+  - module: economics
+    source_paths: [src/worldenergydata/economics/]
+    cli_entrypoints: []
+    tests: {directory: tests/unit/economics/, test_file_count_on_disk: 2}
+    data_catalog: {module_present: false}
+    scheduler: {manifest_in_scheduler: false}
+    docs_examples: []
+    related_issues: []
+    readiness_lane: planning-needed
+    evidence_notes: "Off-manifest; carbon.py, dcf.py."
+
+  - module: eia
+    source_paths: [src/worldenergydata/eia/]
+    cli_entrypoints: ["worldenergydata eia (registered)"]
+    tests: {directory: tests/unit/eia/, test_file_count_on_disk: 1}
+    data_catalog: {module_present: false}
+    scheduler: {manifest_in_scheduler: false, notes: "Distinct from eia_us scheduler job."}
+    docs_examples: [notebooks/quickstart_eia.py]
+    related_issues: [266]
+    readiness_lane: planning-needed
+    evidence_notes: "Off-manifest; client.py + ingestion.py + ingestion_runner.py. Name collision with manifest `eia_us`. Resolve before scheduler operationalization."
+
+  - module: marine
+    source_paths: [src/worldenergydata/marine/]
+    cli_entrypoints: []
+    tests: {test_file_count_on_disk: 0}
+    data_catalog: {module_present: false}
+    scheduler: {manifest_in_scheduler: false}
+    docs_examples: []
+    related_issues: []
+    readiness_lane: planning-needed
+    evidence_notes: "Off-manifest. Single file `vessel_gis.py` only. Possibly orphan; may belong under marine_safety."
+
+  - module: modules
+    source_paths:
+      - src/worldenergydata/modules/
+      - src/worldenergydata/modules/bsee/
+      - src/worldenergydata/modules/hse/
+      - src/worldenergydata/modules/marine_safety/
+      - src/worldenergydata/modules/well_production_dashboard/
+    cli_entrypoints: []
+    tests: {test_file_count_on_disk: 0}
+    data_catalog: {module_present: false}
+    scheduler: {manifest_in_scheduler: false}
+    docs_examples: []
+    related_issues: [278]
+    readiness_lane: blocked/test-infra-risk
+    evidence_notes: "Back-compat shim namespace. #278 flags broken `modules.*` shims after consolidation."
+
+  - module: reservoir
+    source_paths: [src/worldenergydata/reservoir/]
+    cli_entrypoints: []
+    tests: {directory: tests/reservoir/}
+    data_catalog: {module_present: false}
+    scheduler: {manifest_in_scheduler: false}
+    docs_examples: []
+    related_issues: []
+    readiness_lane: planning-needed
+    evidence_notes: "Off-manifest; resource_estimation.py + models/."
+
+  - module: subsea
+    source_paths: [src/worldenergydata/subsea/ (empty)]
+    cli_entrypoints: []
+    tests: {test_file_count_on_disk: 0}
+    data_catalog:
+      module_present: true
+      datasets: 2
+      notable: "mooring_components.csv 14 rows; rigid_jumper_specs.csv 14 rows"
+      orphan: true
+    scheduler: {manifest_in_scheduler: false}
+    docs_examples: []
+    related_issues: []
+    readiness_lane: docs-stale
+    evidence_notes: "Catalog has data, but src/worldenergydata/subsea/ is empty. Orphan."
+
+  - module: well_bore_design
+    source_paths: [src/worldenergydata/well_bore_design/]
+    cli_entrypoints: []
+    tests: {directory: tests/unit/well_bore_design/, test_file_count_on_disk: 3}
+    data_catalog: {module_present: false}
+    scheduler: {manifest_in_scheduler: false}
+    docs_examples: []
+    related_issues: []
+    readiness_lane: planning-needed
+    evidence_notes: "Off-manifest; decision_framework.py, hydraulics.py, schemas.py."
+
+  - module: well_planning
+    source_paths:
+      - src/worldenergydata/well_planning/
+      - src/worldenergydata/well_planning/batch_economics/
+      - src/worldenergydata/well_planning/models/
+    cli_entrypoints: []
+    tests: {directory: tests/unit/well_planning/, test_file_count_on_disk: 4}
+    data_catalog: {module_present: false}
+    scheduler: {manifest_in_scheduler: false}
+    docs_examples: []
+    related_issues: []
+    readiness_lane: planning-needed
+
+  - module: west_africa
+    source_paths:
+      - src/worldenergydata/west_africa/
+      - src/worldenergydata/west_africa/analysis/
+      - src/worldenergydata/west_africa/eiti/
+      - src/worldenergydata/west_africa/nigeria/
+    cli_entrypoints: []
+    tests: {directory: tests/unit/west_africa/, test_file_count_on_disk: 7}
+    data_catalog: {module_present: false}
+    scheduler: {manifest_in_scheduler: false}
+    docs_examples: []
+    related_issues: [334, 343, 344]
+    readiness_lane: planning-needed
+    evidence_notes: "Off-manifest. EITI + Nigeria + disclosure_analytics + report.py. Strong signal this ties to the disclosure issue family."
+
+  - module: base_configs
+    source_paths: [src/worldenergydata/base_configs/ (empty)]
+    cli_entrypoints: []
+    tests: {test_file_count_on_disk: 0}
+    data_catalog: {module_present: false}
+    scheduler: {manifest_in_scheduler: false}
+    docs_examples: []
+    related_issues: []
+    readiness_lane: stub
+
+  # ── Catalog-only / orphan stubs ────────────────────────────────────────────
+
+  - module: pipeline
+    source_paths: []
+    cli_entrypoints: []
+    tests: {test_file_count_on_disk: 0}
+    data_catalog:
+      module_present: true
+      datasets: 1
+      notable: "api_5l_pipe_schedule.csv 43 rows reference data"
+      orphan: true
+    scheduler: {manifest_in_scheduler: false}
+    docs_examples: []
+    related_issues: []
+    readiness_lane: docs-stale
+    evidence_notes: "Catalog-only; not in manifest, no src package. Reference-data orphan."
+
+  - module: oil_price
+    source_paths: []
+    cli_entrypoints: []
+    tests: {test_file_count_on_disk: 0}
+    data_catalog:
+      module_present: true
+      datasets: 0
+      empty: true
+      orphan: true
+    scheduler: {manifest_in_scheduler: false}
+    docs_examples: []
+    related_issues: []
+    readiness_lane: data-missing
+    evidence_notes: "Catalog stub. No src, no data, no manifest entry."
+
+  - module: wind
+    source_paths: []
+    cli_entrypoints: []
+    tests: {test_file_count_on_disk: 0}
+    data_catalog:
+      module_present: true
+      datasets: 0
+      empty: true
+      orphan: true
+    scheduler: {manifest_in_scheduler: false}
+    docs_examples: []
+    related_issues: []
+    readiness_lane: data-missing
+    evidence_notes: "Catalog stub."
+
+# ── Cross-cutting findings ────────────────────────────────────────────────────
+
+manifest_drift_summary:
+  scheduler_flag_drift:
+    - module: lng_terminals
+      manifest_says: false
+      reality: enabled_weekly_in_scheduler_config
+      action: flip manifest flag to true
+    - module: texas_rrc
+      manifest_says: true_via_config
+      reality: not_in_scheduler_config
+      action: clarify or wire job
+    - module: mexico_cnh
+      manifest_says: true_via_config
+      reality: not_in_scheduler_config
+      action: clarify or wire job
+  cli_subapp_gap:
+    manifest_modules_without_cli:
+      - ukcs
+      - brazil_anp
+      - eia_us
+      - hse
+      - pipeline_safety
+      - vessel_fleet
+      - vessel_hull_models  # cli.py exists but unwired
+      - well_production_dashboard  # cli.py exists but unwired
+      - lower_tertiary
+  catalog_empty_stable_modules:
+    - hse
+    - pipeline_safety
+  catalog_orphans_no_manifest:
+    - pipeline
+    - subsea
+    - oil_price
+    - wind
+  off_manifest_src_packages:
+    - baker_hughes
+    - cost
+    - dashboard
+    - decommissioning
+    - drilling (empty)
+    - drilling_pressure_management
+    - economics
+    - eia
+    - marine
+    - modules (compat shim)
+    - reservoir
+    - subsea (empty src)
+    - well_bore_design
+    - well_planning
+    - west_africa
+    - base_configs (empty)
+
+top_capability_gaps:
+  - "MODULE_INDEX.md ↔ source tree drift (27 manifest vs ~40 src)"
+  - "manifest `stable` modules without CLI sub-apps (9 modules)"
+  - "catalog-empty modules tagged stable (`hse`, `pipeline_safety`)"
+  - "scheduler-flag drift (`lng_terminals`, `texas_rrc`, `mexico_cnh`)"
+  - "`eia` vs `eia_us` namespace collision; only one is CLI-registered"
+  - "off-manifest src packages with material tests (`west_africa`, `cost`, `vessel_fleet`-tested but no CLI)"
+  - "README under-claims by ~12 sub-apps and ~25 modules"
+  - "tests/conftest.py:31 imports empty `worldenergydata.testing` namespace"
+  - "BSEE catalog is sample-only; runtime `make data` required for production work"
+
+execution_ready_modules_top_5:
+  - bsee
+  - metocean
+  - marine_safety
+  - safety_analysis
+  - lng_terminals
+
+planning_ready_modules_top_5:
+  - vessel_fleet           # only CLI wiring is missing; tests + data already strong
+  - well_production_dashboard  # cli.py exists, unwired; consumer of bsee
+  - vessel_hull_models     # cli.py exists, unwired
+  - lower_tertiary         # CLI gap; downstream consumer
+  - west_africa            # off-manifest; ties to disclosure issues #334/#343/#344
+
+followup_issue_candidates:
+  - title: "MODULE_INDEX/manifest/catalog reconciliation parent issue"
+    rationale: "Single tracker for the three drift surfaces"
+    safe_to_file: requires_dup_search_against_open_issues
+  - title: "Manifest scheduler-flag fixes (lng_terminals/texas_rrc/mexico_cnh)"
+    rationale: "Mechanical edit; misleads agents downstream"
+    safe_to_file: requires_dup_search
+  - title: "Off-manifest src packages: classify + index"
+    rationale: "16 packages; some production-grade (`west_africa`, `cost`)"
+    safe_to_file: requires_dup_search
+  - title: "CLI sub-app coverage for unregistered manifest stable modules"
+    rationale: "9 modules; 2 have ready cli.py files awaiting registration"
+    safe_to_file: requires_dup_search
+  - title: "`eia` vs `eia_us` namespace decision"
+    rationale: "Affects #266 EIA scheduler operationalization"
+    safe_to_file: requires_dup_search; coordinate with #266
+  - title: "`worldenergydata.testing` namespace import contract"
+    rationale: "tests/conftest.py:31 risk; pairs with #313/#327"
+    safe_to_file: pair_with_existing_pytest_blockers
+  - title: "Catalog stub flagging or removal (hse/oil_price/pipeline_safety/wind)"
+    rationale: "Coordinate with #350 data-completeness scorecard"
+    safe_to_file: coordinate_with_350
+  - title: "README rewrite to reflect 15 CLI sub-apps + ~27/40 modules"
+    rationale: "Marketing-copy drift; lowest-risk fix"
+    safe_to_file: yes
+
+risks:
+  - "Test counts are file-presence only; #313/#327 may invalidate collection. Validate at #352."
+  - "BSEE `well_data.csv` 57k rows is the only large dataset in catalog; rest are 100-row samples."
+  - "Manifest header says 2026-02-20 generation; src tree has changed in 2 months."
+  - "No live `gh issue list` was performed — relies on orchestrator brief's pre-classification."
+  - "tests/conftest.py imports `worldenergydata.testing.performance`; src dir appears empty."
