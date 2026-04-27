@@ -29,10 +29,19 @@ _JOB_SPECS: tuple[tuple[str, str], ...] = (
     ("bsee_refresh", "worldenergydata.scheduler.jobs.bsee_refresh.BseeRefreshJob"),
     ("sodir_refresh", "worldenergydata.scheduler.jobs.sodir_refresh.SodirRefreshJob"),
     ("eia_us_refresh", "worldenergydata.scheduler.jobs.eia_us_refresh.EiaUsRefreshJob"),
-    ("brazil_anp_refresh", "worldenergydata.scheduler.jobs.brazil_anp_refresh.BrazilAnpRefreshJob"),
+    (
+        "brazil_anp_refresh",
+        "worldenergydata.scheduler.jobs.brazil_anp_refresh.BrazilAnpRefreshJob",
+    ),
     ("ukcs_refresh", "worldenergydata.scheduler.jobs.ukcs_refresh.UkcsRefreshJob"),
-    ("metocean_refresh", "worldenergydata.scheduler.jobs.metocean_refresh.MetoceanRefreshJob"),
-    ("lng_terminals_refresh", "worldenergydata.scheduler.jobs.lng_terminals_refresh.LngTerminalsRefreshJob"),
+    (
+        "metocean_refresh",
+        "worldenergydata.scheduler.jobs.metocean_refresh.MetoceanRefreshJob",
+    ),
+    (
+        "lng_terminals_refresh",
+        "worldenergydata.scheduler.jobs.lng_terminals_refresh.LngTerminalsRefreshJob",
+    ),
 )
 
 

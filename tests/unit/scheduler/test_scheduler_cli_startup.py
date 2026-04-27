@@ -14,9 +14,7 @@ from contextlib import contextmanager
 
 import pytest
 
-SCHEDULER_CLI_MODULES = (
-    "worldenergydata.scheduler.cli",
-)
+SCHEDULER_CLI_MODULES = ("worldenergydata.scheduler.cli",)
 
 HEAVY_JOB_MODULE_PREFIXES = (
     "worldenergydata.scheduler.jobs.bsee_refresh",
@@ -35,7 +33,8 @@ def _fresh_modules(prefixes: tuple[str, ...]) -> Iterator[None]:
     saved = {
         name: module
         for name, module in list(sys.modules.items())
-        if name == prefixes or any(name == prefix or name.startswith(f"{prefix}.") for prefix in prefixes)
+        if name == prefixes
+        or any(name == prefix or name.startswith(f"{prefix}.") for prefix in prefixes)
     }
     for name in saved:
         sys.modules.pop(name, None)
@@ -43,7 +42,9 @@ def _fresh_modules(prefixes: tuple[str, ...]) -> Iterator[None]:
         yield
     finally:
         for name in list(sys.modules):
-            if any(name == prefix or name.startswith(f"{prefix}.") for prefix in prefixes):
+            if any(
+                name == prefix or name.startswith(f"{prefix}.") for prefix in prefixes
+            ):
                 sys.modules.pop(name, None)
         sys.modules.update(saved)
 
