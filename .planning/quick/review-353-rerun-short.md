@@ -1,0 +1,1 @@
+Adversarial re-review ONLY. Do not edit files. Review plan file docs/plans/2026-04-26-issue-353-diagnose-uv-scheduler-noop-timeouts.md for issue #353. Prior MAJOR concerns were: import-sentinel tests, lazy factory design, timing test flakiness, uv probes. Return exactly: Verdict APPROVE|MINOR|MAJOR; Findings; Missing Tests; Scope Creep; Approval Readiness.
