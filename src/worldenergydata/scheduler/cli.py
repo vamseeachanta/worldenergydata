@@ -7,38 +7,95 @@ Usage:
     python -m worldenergydata.scheduler run-job bsee_refresh
 """
 
+from __future__ import annotations
+
 import json
 import logging
 import sys
-from typing import List, Optional
+from collections.abc import Iterator, Sequence
+from importlib import import_module
+from typing import TYPE_CHECKING, Optional
 
 from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
-from worldenergydata.scheduler.jobs.brazil_anp_refresh import BrazilAnpRefreshJob
-from worldenergydata.scheduler.jobs.bsee_refresh import BseeRefreshJob
-from worldenergydata.scheduler.jobs.eia_us_refresh import EiaUsRefreshJob
-from worldenergydata.scheduler.jobs.lng_terminals_refresh import LngTerminalsRefreshJob
-from worldenergydata.scheduler.jobs.metocean_refresh import MetoceanRefreshJob
-from worldenergydata.scheduler.jobs.sodir_refresh import SodirRefreshJob
-from worldenergydata.scheduler.jobs.ukcs_refresh import UkcsRefreshJob
-from worldenergydata.scheduler.scheduler import DataScheduler
+
+if TYPE_CHECKING:
+    from worldenergydata.scheduler.scheduler import DataScheduler
 
 logger = logging.getLogger(__name__)
 
 DEFAULT_CONFIG = "config/scheduler/scheduler_config.yml"
 
-ALL_JOBS: List[AbstractJob] = [
-    BseeRefreshJob(),
-    SodirRefreshJob(),
-    EiaUsRefreshJob(),
-    BrazilAnpRefreshJob(),
-    UkcsRefreshJob(),
-    MetoceanRefreshJob(),
-    LngTerminalsRefreshJob(),
-]
+_JOB_SPECS: tuple[tuple[str, str], ...] = (
+    ("bsee_refresh", "worldenergydata.scheduler.jobs.bsee_refresh.BseeRefreshJob"),
+    ("sodir_refresh", "worldenergydata.scheduler.jobs.sodir_refresh.SodirRefreshJob"),
+    ("eia_us_refresh", "worldenergydata.scheduler.jobs.eia_us_refresh.EiaUsRefreshJob"),
+    ("brazil_anp_refresh", "worldenergydata.scheduler.jobs.brazil_anp_refresh.BrazilAnpRefreshJob"),
+    ("ukcs_refresh", "worldenergydata.scheduler.jobs.ukcs_refresh.UkcsRefreshJob"),
+    ("metocean_refresh", "worldenergydata.scheduler.jobs.metocean_refresh.MetoceanRefreshJob"),
+    ("lng_terminals_refresh", "worldenergydata.scheduler.jobs.lng_terminals_refresh.LngTerminalsRefreshJob"),
+)
 
 
-def _build_scheduler(config_path: str, jobs: List[AbstractJob]) -> DataScheduler:
+class LazyRefreshJob(AbstractJob):
+    """Scheduler job proxy that imports the concrete adapter only on execution."""
+
+    def __init__(self, name: str, class_path: str) -> None:
+        self.name = name
+        self._class_path = class_path
+
+    def _load(self) -> AbstractJob:
+        job_cls = _load_job_class(self._class_path)
+        return job_cls()
+
+    def run(self, config: dict) -> JobResult:
+        """Execute the concrete job adapter after lazy import."""
+        return self._load().run(config)
+
+
+class LazyJobRegistry(Sequence[AbstractJob]):
+    """Backwards-compatible lazy view over the default scheduler jobs.
+
+    Older tests and callers import ``ALL_JOBS`` and iterate over job instances.
+    The previous list eagerly instantiated every job at module import time,
+    which made no-op/help paths pay data-source import costs. This sequence
+    keeps the public iteration behavior while deferring imports until the
+    registry is actually consumed by status/start/run-job paths.
+    """
+
+    def __iter__(self) -> Iterator[AbstractJob]:
+        return iter(get_all_jobs())
+
+    def __len__(self) -> int:
+        return len(_JOB_SPECS)
+
+    def __getitem__(self, index):
+        return get_all_jobs()[index]
+
+
+def _load_job_class(class_path: str) -> type[AbstractJob]:
+    module_name, class_name = class_path.rsplit(".", 1)
+    module = import_module(module_name)
+    return getattr(module, class_name)
+
+
+def get_all_jobs() -> list[AbstractJob]:
+    """Create lazy proxies for the default scheduler job adapters."""
+    return [LazyRefreshJob(name, class_path) for name, class_path in _JOB_SPECS]
+
+
+ALL_JOBS: Sequence[AbstractJob] = LazyJobRegistry()
+
+
+def _coerce_jobs(jobs: Optional[Sequence[AbstractJob]]) -> list[AbstractJob]:
+    if jobs is None:
+        return get_all_jobs()
+    return list(jobs)
+
+
+def _build_scheduler(config_path: str, jobs: Sequence[AbstractJob]) -> "DataScheduler":
     """Construct and register all jobs on a DataScheduler."""
+    from worldenergydata.scheduler.scheduler import DataScheduler
+
     scheduler = DataScheduler(config_path=config_path)
     for job in jobs:
         scheduler.register_job(job)
@@ -47,34 +104,32 @@ def _build_scheduler(config_path: str, jobs: List[AbstractJob]) -> DataScheduler
 
 def cmd_status(
     config_path: str = DEFAULT_CONFIG,
-    jobs: Optional[List[AbstractJob]] = None,
+    jobs: Optional[Sequence[AbstractJob]] = None,
 ) -> dict:
     """Return the current scheduler status dict.
 
     Args:
         config_path: Path to YAML config file.
-        jobs: Job adapters to register (defaults to ALL_JOBS).
+        jobs: Job adapters to register (defaults to lazy default jobs).
 
     Returns:
         Status dict with per-job last_run, next_run, last_result.
     """
-    if jobs is None:
-        jobs = ALL_JOBS
-    scheduler = _build_scheduler(config_path, jobs)
+    scheduler = _build_scheduler(config_path, _coerce_jobs(jobs))
     return scheduler.status()
 
 
 def cmd_run_job(
     job_name: str,
     config_path: str = DEFAULT_CONFIG,
-    jobs: Optional[List[AbstractJob]] = None,
+    jobs: Optional[Sequence[AbstractJob]] = None,
 ) -> JobResult:
     """Manually trigger a single job by name.
 
     Args:
         job_name: Name of the job to execute.
         config_path: Path to YAML config file.
-        jobs: Job adapters to register (defaults to ALL_JOBS).
+        jobs: Job adapters to register (defaults to lazy default jobs).
 
     Returns:
         JobResult from the execution.
@@ -82,9 +137,7 @@ def cmd_run_job(
     Raises:
         ValueError: If job_name is not among registered jobs.
     """
-    if jobs is None:
-        jobs = ALL_JOBS
-    scheduler = _build_scheduler(config_path, jobs)
+    scheduler = _build_scheduler(config_path, _coerce_jobs(jobs))
     return scheduler.run_once(job_name)
 
 
@@ -104,7 +157,7 @@ def cmd_stop(config_path: str = DEFAULT_CONFIG) -> dict:
     return {"message": "Scheduler stop signal sent (or not running in this process)."}
 
 
-def main(argv: Optional[List[str]] = None) -> None:
+def main(argv: Optional[list[str]] = None) -> None:
     """Entry point for CLI invocation.
 
     Dispatches to cmd_status, cmd_run_job, or cmd_stop based on argv.
@@ -136,8 +189,8 @@ def main(argv: Optional[List[str]] = None) -> None:
             config_path = args[idx + 1]
 
     if command == "start":
-        logger.info(f"Starting scheduler with config: {config_path}")
-        scheduler = _build_scheduler(config_path, ALL_JOBS)
+        logger.info("Starting scheduler with config: %s", config_path)
+        scheduler = _build_scheduler(config_path, get_all_jobs())
         scheduler.start()
 
     elif command == "stop":
@@ -155,16 +208,16 @@ def main(argv: Optional[List[str]] = None) -> None:
         job_name = args[1]
         try:
             result = cmd_run_job(job_name=job_name, config_path=config_path)
-            logger.info(f"Job '{job_name}' completed with status: {result.status}")
-            logger.info(f"  records_updated: {result.records_updated}")
+            logger.info("Job '%s' completed with status: %s", job_name, result.status)
+            logger.info("  records_updated: %s", result.records_updated)
             if result.error_msg:
-                logger.info(f"  error: {result.error_msg}")
+                logger.info("  error: %s", result.error_msg)
         except ValueError as exc:
-            logger.error(f"Error: {exc}")
+            logger.error("Error: %s", exc)
             sys.exit(1)
 
     else:
-        logger.info(f"Unknown command: '{command}'")
+        logger.info("Unknown command: '%s'", command)
         sys.exit(1)
 
 

@@ -27,10 +27,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from worldenergydata.bsee.data.refresh.url_registry import DatasetSpec
+    import pandas as pd
 
-import pandas as pd
-import requests
+    from worldenergydata.bsee.data.refresh.url_registry import DatasetSpec
 
 LOG_FORMAT = "%(asctime)s [%(levelname)s] %(message)s"
 logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
@@ -41,6 +40,13 @@ CHUNK_SIZE = 32 * 1024  # 32 KB download chunks
 MAX_RETRIES = 3
 INITIAL_BACKOFF_S = 10
 LFS_SIGNATURE = b"version https://git-lfs"
+
+
+def _get_requests():
+    """Import requests lazily so --help/module import stays lightweight."""
+    import requests
+
+    return requests
 
 
 # ── Result dataclass ──────────────────────────────────────────────
@@ -83,6 +89,7 @@ class BSEERefreshOrchestrator:
         self.bin_root = project_root / self.BIN_ROOT
         self.workers = workers
         self.dry_run = dry_run
+        requests = _get_requests()
         self.session = requests.Session()
         self.session.headers.update({
             "User-Agent": "WorldEnergyData/1.0 (BSEE Data Refresh)",
@@ -100,6 +107,7 @@ class BSEERefreshOrchestrator:
         backoff = INITIAL_BACKOFF_S
         current_timeout = timeout_s
 
+        requests = _get_requests()
         for attempt in range(1, MAX_RETRIES + 1):
             try:
                 log.info(
@@ -232,8 +240,10 @@ class BSEERefreshOrchestrator:
         )
 
     @staticmethod
-    def _read_csv_text(text: str) -> pd.DataFrame | None:
+    def _read_csv_text(text: str) -> "pd.DataFrame | None":
         """Parse CSV text, trying comma then pipe delimiter."""
+        import pandas as pd
+
         for sep in (",", "|"):
             try:
                 df = pd.read_csv(
