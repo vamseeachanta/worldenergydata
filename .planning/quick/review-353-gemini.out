@@ -1,0 +1,43 @@
+Agent loading error: Failed to load agent from /mnt/local-analysis/workspace-hub/.gemini/agents/gsd-debugger.md: Validation failed: Agent Definition:
+Unrecognized key(s) in object: 'permissionMode'Agent loading error: Failed to load agent from /mnt/local-analysis/workspace-hub/.gemini/agents/gsd-executor.md: Validation failed: Agent Definition:
+Unrecognized key(s) in object: 'permissionMode'Error executing tool read_file: File path '/mnt/local-analysis/workspace-hub/src/worldenergydata/scheduler/cli.py' is ignored by configured ignore patterns.
+Error executing tool run_shell_command: Tool "run_shell_command" not found. Did you mean one of: "grep_search", "invoke_agent", "read_file"?
+```markdown
+# Adversarial Plan Review — worldenergydata Issue #353
+
+## Verdict
+**MAJOR**
+
+## Findings Table
+
+| Severity | Section Cited | Claim/Assertion | Risk/Flaw | Required Change |
+|---|---|---|---|---|
+| MAJOR | Phase 2 / TDD Test List | "add scheduler CLI startup tests using subprocess with timeout", `test_scheduler_module_no_args_completes_quickly` | **Flaky test anti-pattern.** Wall-clock timing tests (e.g., `< 10s`) are notoriously unreliable. A fast CI runner will pass the test even if the code remains eager (false negative), and a loaded CI runner will fail the test even if the code is lazy (false positive). | Replace timing-based subprocess tests with deterministic state assertions. Use `sys.modules` checks or `builtins.__import__` mocking to explicitly assert that `pandas` and job modules are **not loaded** during `--help` or no-arg paths. |
+| MAJOR | Scope Boundaries / Phase 3 | "evaluate lazy job registry metadata vs instantiated job objects while preserving run-job behavior" | **Architectural contradiction.** `status` typically needs job metadata (name, schedule, next run). If this metadata is defined inside the heavy job modules (e.g. `bsee_refresh.py`), `status` will STILL trigger the heavy imports when gathering the metadata to print. | Define a concrete mechanism for how job metadata will be accessed without importing the job execution modules (e.g., reading schedules from config only, or separating registry metadata classes from execution logic). If `status` must import jobs, explicitly exclude `status` from the `<10s` requirement. |
+| MINOR | Phase 3 | "move pandas import into parsing/execution path after help handling, or into functions" | Moving imports locally inside `refresh_bsee_all.py` will break type hinting (e.g., `def fn(df: pd.DataFrame):`) and static analysis tools like `mypy` or `ruff`. | Specify that deferred imports must be paired with `from typing import TYPE_CHECKING` and `if TYPE_CHECKING: import pandas as pd` to preserve static analysis and avoid NameErrors. |
+| MINOR | Acceptance Criteria | "uv run python -c \"print('hello')\" either completes under 10s or a documented operational workaround/classification is attached" | If `uv run` is failing, overnight batches that rely on it will still timeout. Documenting a workaround doesn't fix the batch execution. | The plan must explicitly mandate replacing `uv run` invocations with `.venv/bin/python` direct invocations in any affected cron/batch scripts, rather than just "attaching a classification to #353". |
+
+## Missing tests
+- A test explicitly asserting that `sys.modules` does not contain `pandas` after `python -m worldenergydata.scheduler --help` completes.
+- A test explicitly asserting that `sys.modules` does not contain `BSEEWebScraper` or `SODIR` API clients after `refresh_bsee_all.py --help` completes.
+
+## Scope creep concerns
+- **Job Registry Refactor:** Attempting to make `status` fast by decoupling metadata from implementation ("evaluate lazy job registry metadata") is a massive rabbit hole. If jobs dynamically compute their state or schedules at import time, untangling this just for the `status` command will explode the scope of this T3 diagnostic issue.
+
+## Weakest assumption and what breaks if false
+- **Assumption:** The `status` command can fulfill its contract without instantiating or importing the jobs.
+- **What breaks:** If the current architecture relies on jobs registering themselves via decorators at module-import time (a very common pattern), lazy-loading the modules will result in an empty job registry, breaking the `status` command entirely. 
+
+## Most likely implementation failure mode
+- Moving imports to local scope (e.g., inside functions) will cause runtime `NameError` exceptions on edge case paths that assume the import is global, or it will introduce linting/mypy failures that block the PR.
+
+## Most likely test gap
+- The subprocess timing tests will pass locally but fail on CI, or pass on CI without actually verifying lazy-loading behavior. They measure environment health rather than code correctness.
+
+## Future issues suggested
+- **Architectural decouple:** Separate job configuration (schedule, name, dependencies) from job execution logic globally.
+- **Environment root cause:** Investigate why `import pandas` takes an egregious 11 seconds locally (indicative of severe IO issues, network-mounted drives, or aggressive antivirus scanning), which is the true root cause making eager imports so painful.
+
+## Review confidence
+**High**. Wall-clock timing assertions in unit tests are a guaranteed source of CI flake, and lazy-loading a self-registering registry without addressing the registration mechanism is a classic architectural trap.
+```
