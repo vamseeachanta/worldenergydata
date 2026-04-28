@@ -28,7 +28,14 @@ SCRIPT_PATH = PROJECT_ROOT / "scripts" / "generate_catalog.py"
 def generate_catalog():
     """Run the catalog generator once before all tests in this module."""
     result = subprocess.run(
-        [sys.executable, str(SCRIPT_PATH), "--project-root", str(PROJECT_ROOT)],
+        [
+            sys.executable,
+            str(SCRIPT_PATH),
+            "--project-root",
+            str(PROJECT_ROOT),
+            "--external-data-root",
+            str(PROJECT_ROOT / "data"),
+        ],
         capture_output=True,
         text=True,
         timeout=120,

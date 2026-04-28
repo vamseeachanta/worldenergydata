@@ -30,7 +30,7 @@ class TestBlockProcessor(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures."""
-        from sodir_module.processors.block_processor import BlockProcessor
+        from worldenergydata.sodir.processors.block_processor import BlockProcessor
 
         self.processor = BlockProcessor()
 
@@ -117,7 +117,9 @@ class TestWellboreProcessor(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures."""
-        from sodir_module.processors.wellbore_processor import WellboreProcessor
+        from worldenergydata.sodir.processors.wellbore_processor import (
+            WellboreProcessor,
+        )
 
         self.processor = WellboreProcessor()
 
@@ -200,7 +202,7 @@ class TestFieldProcessor(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures."""
-        from sodir_module.processors.field_processor import FieldProcessor
+        from worldenergydata.sodir.processors.field_processor import FieldProcessor
 
         self.processor = FieldProcessor()
 
@@ -296,7 +298,9 @@ class TestDiscoveryProcessor(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures."""
-        from sodir_module.processors.discovery_processor import DiscoveryProcessor
+        from worldenergydata.sodir.processors.discovery_processor import (
+            DiscoveryProcessor,
+        )
 
         self.processor = DiscoveryProcessor()
 
@@ -344,7 +348,7 @@ class TestSurveyProcessor(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures."""
-        from sodir_module.processors.survey_processor import SurveyProcessor
+        from worldenergydata.sodir.processors.survey_processor import SurveyProcessor
 
         self.processor = SurveyProcessor()
 
@@ -393,7 +397,7 @@ class TestCoordinateTransformation(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures."""
-        from sodir_module.utils.coordinates import CoordinateTransformer
+        from worldenergydata.sodir.utils.coordinates import CoordinateTransformer
 
         self.transformer = CoordinateTransformer()
 
@@ -465,7 +469,7 @@ class TestDataValidation(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures."""
-        from sodir_module.validators import DataValidator
+        from worldenergydata.sodir.validators import DataValidator
 
         self.validator = DataValidator()
 

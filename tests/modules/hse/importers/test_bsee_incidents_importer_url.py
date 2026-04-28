@@ -68,8 +68,8 @@ class TestBSEEIncidentsImporterURL:
         assert importer is not None
         assert importer.db_session == db_session
         assert (
-            importer.BSEE_WELL_DATA_URL
-            == "https://www.data.bsee.gov/Well/Files/APDRawData.zip"
+            importer.BSEE_INCIDENT_DATA_URL
+            == "https://www.data.bsee.gov/Other/Files/IncidentInvestigationsRawData.zip"
         )
         assert importer.use_optimized is True
         assert hasattr(importer, "scraper")
@@ -94,8 +94,11 @@ class TestBSEEIncidentsImporterURL:
             ) as mock_download,
             patch.object(
                 importer.processor,
-                "process_well_data",
-                return_value=mock_processed_data,
+                "process_zip_in_memory",
+                return_value={
+                    name: payload["data"] if isinstance(payload, dict) else payload
+                    for name, payload in mock_processed_data.items()
+                },
             ) as mock_process,
         ):
 
@@ -103,11 +106,12 @@ class TestBSEEIncidentsImporterURL:
 
             # Verify scraper was called with correct URL
             mock_download.assert_called_once_with(
-                "https://www.data.bsee.gov/Well/Files/APDRawData.zip", data_type="well"
+                "https://www.data.bsee.gov/Other/Files/IncidentInvestigationsRawData.zip",
+                data_type="default",
             )
 
             # Verify processor was called with ZIP data
-            mock_process.assert_called_once_with(mock_zip_data, config={})
+            mock_process.assert_called_once_with(mock_zip_data)
 
             # Verify result is list of dicts
             assert isinstance(result, list)
@@ -141,7 +145,7 @@ class TestBSEEIncidentsImporterURL:
                 importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
             ),
             patch.object(
-                importer.processor, "process_well_data", return_value=mock_output
+                importer.processor, "process_zip_in_memory", return_value=mock_output
             ),
         ):
 
@@ -162,7 +166,7 @@ class TestBSEEIncidentsImporterURL:
                 importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
             ),
             patch.object(
-                importer.processor, "process_well_data", return_value=mock_output
+                importer.processor, "process_zip_in_memory", return_value=mock_output
             ),
         ):
 
@@ -187,7 +191,7 @@ class TestBSEEIncidentsImporterURL:
                 importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
             ),
             patch.object(
-                importer.processor, "process_well_data", return_value=mock_output
+                importer.processor, "process_zip_in_memory", return_value=mock_output
             ),
         ):
 
@@ -211,7 +215,7 @@ class TestBSEEIncidentsImporterURL:
             ),
             patch.object(
                 importer.processor,
-                "process_well_data",
+                "process_zip_in_memory",
                 return_value=mock_processed_data,
             ),
         ):
@@ -241,7 +245,7 @@ class TestBSEEIncidentsImporterURL:
             ),
             patch.object(
                 importer.processor,
-                "process_well_data",
+                "process_zip_in_memory",
                 return_value=mock_processed_data,
             ),
         ):
@@ -311,7 +315,7 @@ class TestBSEEIncidentsImporterURLIntegration:
                 importer.scraper, "download_zip_to_memory", return_value=b"mock"
             ),
             patch.object(
-                importer.processor, "process_well_data", return_value=mock_data
+                importer.processor, "process_zip_in_memory", return_value=mock_data
             ),
         ):
 
@@ -331,7 +335,7 @@ class TestBSEEIncidentsImporterURLIntegration:
                 importer.scraper, "download_zip_to_memory", return_value=b"mock"
             ),
             patch.object(
-                importer.processor, "process_well_data", return_value=mock_data
+                importer.processor, "process_zip_in_memory", return_value=mock_data
             ),
         ):
 
