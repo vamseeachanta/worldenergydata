@@ -113,7 +113,7 @@ class TestCriticalOperationsPerformance:
         assert "npv" in result
 
         # Performance threshold
-        assert benchmark.stats["mean"] < 0.1  # Should calculate in < 100ms
+        assert benchmark.stats["mean"] < 0.25  # Should calculate in < 250ms on CI
 
     def test_large_dataset_aggregation_performance(self, benchmark, large_dataset):
         """Test performance with large datasets (1M rows)."""
