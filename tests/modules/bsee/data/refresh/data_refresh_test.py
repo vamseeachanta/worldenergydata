@@ -2,6 +2,8 @@
 import os
 import sys
 
+import pytest
+
 # Reader imports
 from worldenergydata.engine import engine
 
@@ -28,6 +30,8 @@ def get_valid_pytest_output_file(pytest_output_file):
 def test_run_process():
     input_file = "data_refresh.yml"
     input_file = get_valid_pytest_output_file(input_file)
+    if not os.path.isfile(input_file):
+        pytest.skip(f"data refresh fixture not available: {input_file}")
 
     pytest_output_file = None
 

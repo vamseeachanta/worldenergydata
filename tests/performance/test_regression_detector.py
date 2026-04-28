@@ -2,6 +2,7 @@
 Tests for Performance Regression Detection System
 """
 
+import importlib.util
 import json
 import time
 from pathlib import Path
@@ -235,6 +236,10 @@ class TestRegressionMonitor:
 
 
 @pytest.mark.benchmark
+@pytest.mark.skipif(
+    importlib.util.find_spec("pytest_benchmark") is None,
+    reason="pytest-benchmark plugin is not installed",
+)
 class TestRegressionDetectorIntegration:
     """Integration tests with pytest-benchmark"""
 
