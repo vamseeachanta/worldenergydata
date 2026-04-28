@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
+import numpy_financial as npf
 import pandas as pd
 import pytest
 
@@ -98,7 +99,7 @@ class TestCriticalOperationsPerformance:
 
             # Calculate IRR (simplified)
             cash_flows = df["cash_flow"].values
-            irr = np.irr(cash_flows) if len(cash_flows) > 0 else 0
+            irr = npf.irr(cash_flows) if len(cash_flows) > 0 else 0
 
             return {
                 "npv": npv,
@@ -118,7 +119,7 @@ class TestCriticalOperationsPerformance:
         """Test performance with large datasets (1M rows)."""
 
         def aggregate_large_dataset():
-            df = large_dataset
+            df = large_dataset.copy()
 
             # Multiple aggregations
             result = df.groupby("category").agg(
