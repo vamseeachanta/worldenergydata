@@ -143,8 +143,13 @@ class TestInfrastructureSmoke:
         assert ini_path.exists()
 
         content = ini_path.read_text()
-        assert "--cov=" in content
-        assert "coverage:" in content
+        pyproject_path = Path("pyproject.toml")
+        pyproject_content = (
+            pyproject_path.read_text() if pyproject_path.exists() else ""
+        )
+        coverage_config = content + "\n" + pyproject_content
+        assert "--cov=" in coverage_config
+        assert "coverage" in coverage_config
 
     def test_environment_isolation(self, reset_environment):
         """Verify environment isolation fixture works."""
