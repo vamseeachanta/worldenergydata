@@ -452,7 +452,7 @@ class TestProductionAPI12CashFlowMethods:
         """Create ProductionAPI12Analysis instance."""
         return ProductionAPI12Analysis()
 
-    def test_revenue_table_generation_structure(self, analyzer, config_with_economics):
+    def test_revenue_table_generation_structure(self, analyzer):
         """Test that generate_revenue_table creates proper structure."""
         # Create mock production data
         production_df = pd.DataFrame(
