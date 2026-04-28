@@ -12,6 +12,10 @@ from assetutilities.common.visualization.visualization_templates_plotly import (
 from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
 from loguru import logger
 
+from worldenergydata.bsee.analysis.legacy.api12_economics import (
+    NPVCalculator,
+    RevenueCalculator,
+)
 from worldenergydata.bsee.data.bsee_data import BSEEData
 from worldenergydata.common.legacy.data import DateTimeUtility
 
@@ -39,7 +43,8 @@ class ProductionAPI12Analysis:
     """
 
     def __init__(self):
-        pass
+        self._revenue_calculator = RevenueCalculator()
+        self._npv_calculator = NPVCalculator()
 
     def router(self, cfg):
         return cfg
@@ -630,6 +635,22 @@ class ProductionAPI12Analysis:
 
         plot_yml["settings"].update(settings)
         au_engine(inputfile=None, cfg=plot_yml, config_flag=False)
+
+    def generate_revenue_table(self, cfg, api12_df):
+        """Generate revenue table using the legacy API12 economics contract."""
+        revenue_df = self._revenue_calculator.generate_revenue_table(cfg, api12_df)
+        self._npv_calculator.perform_npv_calculation(cfg, revenue_df)
+        return revenue_df
+
+    def perform_npv_calculation(self, cfg, revenue_df):
+        """Perform legacy API12 NPV calculation for backward compatibility."""
+        return self._npv_calculator.perform_npv_calculation(cfg, revenue_df)
+
+    def perform_excel_aligned_npv_calculation(self, cfg, revenue_df):
+        """Perform Excel-aligned legacy API12 NPV calculation."""
+        return self._npv_calculator.perform_excel_aligned_npv_calculation(
+            cfg, revenue_df
+        )
 
     def perform_decline_analysis_api12(self, cfg, api12_df):
         """
