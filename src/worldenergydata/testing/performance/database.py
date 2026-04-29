@@ -258,7 +258,8 @@ class PerformanceDatabase:
         ).fetchone()
 
         if result:
-            std_duration = result["variance"] ** 0.5 if result["variance"] else 0
+            variance = result["variance"] or 0.0
+            std_duration = float(max(variance, 0.0) ** 0.5)
 
             conn.execute(
                 """
