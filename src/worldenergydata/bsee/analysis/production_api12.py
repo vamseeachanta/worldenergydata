@@ -49,7 +49,7 @@ class ProductionAPI12Analysis:
         self._npv_calculator = NPVCalculator()
 
     def router(self, cfg):
-        return None
+        return cfg
 
     def run_production_analysis(self, cfg, data):
         """
