@@ -117,23 +117,32 @@ class BSEEStatisticsImporter(BaseImporter):
         """
         normalized = {}
 
-        # Required field: report_date (convert string to datetime)
+        # Optional identifier retained for traceability to BSEE source records.
+        if "incident_id" in raw_data:
+            normalized["bsee_incident_id"] = raw_data["incident_id"]
+
+        # Required field: report_date (convert string to datetime).  The
+        # SafetyStatistic schema stores the aggregate reporting period in
+        # report_date; legacy consumers/tests also expect the same value under
+        # incident_date for compatibility with incident-style HSE records.
         if "report_date" in raw_data:
             date_str = raw_data["report_date"]
             if isinstance(date_str, str):
                 try:
-                    normalized["report_date"] = datetime.strptime(
-                        date_str, "%Y-%m-%d %H:%M:%S"
-                    )
+                    report_date = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
                 except ValueError:
                     try:
-                        normalized["report_date"] = datetime.strptime(
-                            date_str, "%Y-%m-%d"
-                        )
+                        report_date = datetime.strptime(date_str, "%Y-%m-%d")
                     except ValueError:
-                        normalized["report_date"] = date_str
+                        report_date = date_str
             else:
-                normalized["report_date"] = date_str
+                report_date = date_str
+
+            normalized["report_date"] = report_date
+            normalized["incident_date"] = report_date
+
+        if "severity" in raw_data:
+            normalized["severity"] = raw_data["severity"]
 
         # Required field: operator
         if "operator_name" in raw_data:
@@ -314,7 +323,25 @@ class BSEEStatisticsImporter(BaseImporter):
         else:
             query = query.filter(SafetyStatistic.facility_name.is_(None))
 
-        return query.first() is not None
+        if query.first() is not None:
+            return True
+
+        # Legacy tests and historical imports stored statistics-like rows in
+        # HSEIncident keyed by bsee_incident_id.  Preserve duplicate detection
+        # for those records while the canonical persistence path remains
+        # SafetyStatistic.
+        bsee_id = data.get("bsee_incident_id")
+        if bsee_id is None:
+            return False
+
+        from worldenergydata.hse.database.models import HSEIncident
+
+        return (
+            self.db_session.query(HSEIncident)
+            .filter(HSEIncident.bsee_incident_id == bsee_id)
+            .first()
+            is not None
+        )
 
     def import_record(self, data: Dict[str, Any]):
         """

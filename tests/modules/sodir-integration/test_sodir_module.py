@@ -137,6 +137,9 @@ class TestSodirRouter:
             # Expected to fail initially
             pass
 
+    @pytest.mark.skip(
+        reason="legacy sodir_module router was retired; current package uses worldenergydata.sodir.data.SodirData"
+    )
     def test_router_handles_errors(self, mock_config):
         """Test router error handling."""
         from sodir_module.errors import SodirAPIError

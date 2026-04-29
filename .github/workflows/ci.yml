@@ -137,6 +137,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -212,5 +214,8 @@ jobs:
 
       - name: Build documentation
         run: |
-          cd docs && uv run sphinx-build -b html . _build/html
-        continue-on-error: true
+          if [ -f docs/conf.py ]; then
+            cd docs && uv run sphinx-build -b html . _build/html
+          else
+            echo "Skipping Sphinx build: docs/conf.py is not present"
+          fi

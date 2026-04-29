@@ -12,7 +12,42 @@ try:
 
     HAS_JSONSCHEMA = True
 except ImportError:
+    jsonschema = None
     HAS_JSONSCHEMA = False
+
+
+def _fallback_validate(
+    instance: Dict[str, Any], schema: Dict[str, Any]
+) -> Optional[str]:
+    """Minimal JSON-schema validation fallback for CI environments.
+
+    The workflow validators only need object required-field and primitive type
+    checks when the optional jsonschema dependency is unavailable.
+    """
+
+    required = schema.get("required", [])
+    for field in required:
+        if field not in instance:
+            return f"'{field}' is a required property"
+
+    type_map = {
+        "integer": int,
+        "number": (int, float),
+        "string": str,
+        "object": dict,
+        "array": list,
+        "boolean": bool,
+    }
+    for field, field_schema in schema.get("properties", {}).items():
+        if field not in instance:
+            continue
+        expected_type = field_schema.get("type")
+        expected_python_type = type_map.get(expected_type)
+        if expected_python_type and not isinstance(
+            instance[field], expected_python_type
+        ):
+            return f"{instance[field]!r} is not of type '{expected_type}'"
+    return None
 
 
 class StepValidator:
@@ -34,8 +69,16 @@ class StepValidator:
             True if valid, False otherwise
         """
         try:
-            jsonschema.validate(instance=data, schema=schema)
-            return True
+            if HAS_JSONSCHEMA:
+                jsonschema.validate(instance=data, schema=schema)
+                return True
+
+            message = _fallback_validate(data, schema)
+            if message is None:
+                return True
+            self.errors.append(f"Input validation failed: {message}")
+            logger.error(f"Input validation error: {message}")
+            return False
         except jsonschema.ValidationError as e:
             self.errors.append(f"Input validation failed: {e.message}")
             logger.error(f"Input validation error: {e.message}")
@@ -53,8 +96,16 @@ class StepValidator:
             True if valid, False otherwise
         """
         try:
-            jsonschema.validate(instance=data, schema=schema)
-            return True
+            if HAS_JSONSCHEMA:
+                jsonschema.validate(instance=data, schema=schema)
+                return True
+
+            message = _fallback_validate(data, schema)
+            if message is None:
+                return True
+            self.errors.append(f"Output validation failed: {message}")
+            logger.error(f"Output validation error: {message}")
+            return False
         except jsonschema.ValidationError as e:
             self.errors.append(f"Output validation failed: {e.message}")
             logger.error(f"Output validation error: {e.message}")

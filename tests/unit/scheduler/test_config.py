@@ -96,8 +96,11 @@ def _write_temp_yaml(content: str) -> str:
 
 class TestLoadConfig:
     def test_repo_scheduler_config_includes_lng_and_modules_output_dirs(self):
-        repo_config = Path(
-            "/mnt/local-analysis/workspace-hub/worldenergydata/config/scheduler/scheduler_config.yml"
+        repo_config = (
+            Path(__file__).resolve().parents[3]
+            / "config"
+            / "scheduler"
+            / "scheduler_config.yml"
         )
 
         config = load_config(str(repo_config))

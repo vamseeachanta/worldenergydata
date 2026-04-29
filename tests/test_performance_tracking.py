@@ -16,7 +16,9 @@ from worldenergydata.testing.performance import (
     PerformanceDatabase,
     PerformanceReporter,
     TestExecutionRecord,
-    TestPerformanceTracker,
+)
+from worldenergydata.testing.performance import (
+    TestPerformanceTracker as PerformanceTrackerPlugin,
 )
 
 
@@ -301,7 +303,7 @@ class TestPerformanceTracker:
     def test_tracker_initialization(self):
         """Test tracker initialization."""
         with tempfile.TemporaryDirectory() as tmpdir:
-            tracker = TestPerformanceTracker(Path(tmpdir) / "test.db")
+            tracker = PerformanceTrackerPlugin(Path(tmpdir) / "test.db")
 
             assert tracker.db is not None
             assert len(tracker.test_start_times) == 0
@@ -309,7 +311,7 @@ class TestPerformanceTracker:
     def test_track_test_execution(self):
         """Test tracking test execution."""
         with tempfile.TemporaryDirectory() as tmpdir:
-            tracker = TestPerformanceTracker(Path(tmpdir) / "test.db")
+            tracker = PerformanceTrackerPlugin(Path(tmpdir) / "test.db")
 
             # Mock test report
             class MockReport:

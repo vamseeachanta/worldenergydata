@@ -73,8 +73,8 @@ class TestBSEEStatisticsImporterURL:
         assert importer is not None
         assert importer.db_session == db_session
         assert (
-            importer.BSEE_PRODUCTION_DATA_URL
-            == "https://www.data.bsee.gov/Production/Files/ProductionRawData.zip"
+            importer.BSEE_INCIDENT_STATS_URL
+            == "https://www.data.bsee.gov/Other/Files/IncidentStatisticsRawData.zip"
         )
         assert importer.use_optimized is True
         assert hasattr(importer, "scraper")
@@ -92,7 +92,7 @@ class TestBSEEStatisticsImporterURL:
             ) as mock_download,
             patch.object(
                 importer.processor,
-                "process_production_data",
+                "process_zip_in_memory",
                 return_value=mock_processed_data,
             ) as mock_process,
         ):
@@ -101,14 +101,12 @@ class TestBSEEStatisticsImporterURL:
 
             # Verify scraper was called with correct URL and data type
             mock_download.assert_called_once_with(
-                "https://www.data.bsee.gov/Production/Files/ProductionRawData.zip",
-                data_type="production",
+                "https://www.data.bsee.gov/Other/Files/IncidentStatisticsRawData.zip",
+                data_type="default",
             )
 
             # Verify processor was called with BOE calculation enabled
-            mock_process.assert_called_once_with(
-                mock_zip_data, config={"calculate_boe": True}
-            )
+            mock_process.assert_called_once_with(mock_zip_data)
 
             # Verify result
             assert isinstance(result, list)
@@ -138,7 +136,7 @@ class TestBSEEStatisticsImporterURL:
             ) as mock_download,
             patch.object(
                 importer.processor,
-                "process_production_data",
+                "process_zip_in_memory",
                 return_value=mock_processed_data,
             ),
         ):
@@ -147,7 +145,7 @@ class TestBSEEStatisticsImporterURL:
 
             # Verify data_type='production' was passed (which triggers 1200s timeout in scraper)
             call_args = mock_download.call_args
-            assert call_args[1]["data_type"] == "production"
+            assert call_args[1]["data_type"] == "default"
 
     def test_normalize_data_converts_string_integers(
         self, db_session, mock_zip_data, mock_processed_data
@@ -161,7 +159,7 @@ class TestBSEEStatisticsImporterURL:
             ),
             patch.object(
                 importer.processor,
-                "process_production_data",
+                "process_zip_in_memory",
                 return_value=mock_processed_data,
             ),
         ):
@@ -182,10 +180,10 @@ class TestBSEEStatisticsImporterURL:
             assert isinstance(normalized.get("lost_time_count"), int)
             assert normalized.get("lost_time_count") == 1
 
-    def test_normalize_data_sets_incident_type_equipment_failure(
+    def test_normalize_data_does_not_add_incident_type(
         self, db_session, mock_zip_data, mock_processed_data
     ):
-        """Test normalize_data hardcodes incident_type to 'equipment_failure'."""
+        """Test normalize_data preserves SafetyStatistic schema instead of HSE incident fields."""
         importer = BSEEStatisticsImporterURL(db_session)
 
         with (
@@ -194,7 +192,7 @@ class TestBSEEStatisticsImporterURL:
             ),
             patch.object(
                 importer.processor,
-                "process_production_data",
+                "process_zip_in_memory",
                 return_value=mock_processed_data,
             ),
         ):
@@ -204,13 +202,13 @@ class TestBSEEStatisticsImporterURL:
 
             normalized = importer.normalize_data(raw_data)
 
-            # Verify incident_type is hardcoded
-            assert normalized["incident_type"] == "equipment_failure"
+            # Statistics records persist to SafetyStatistic, not HSEIncident.
+            assert "incident_type" not in normalized
 
-    def test_normalize_data_maps_report_date_to_incident_date(
+    def test_normalize_data_maps_report_date(
         self, db_session, mock_zip_data, mock_processed_data
     ):
-        """Test normalize_data maps report_date to incident_date."""
+        """Test normalize_data maps report_date to SafetyStatistic report_date."""
         importer = BSEEStatisticsImporterURL(db_session)
 
         with (
@@ -219,7 +217,7 @@ class TestBSEEStatisticsImporterURL:
             ),
             patch.object(
                 importer.processor,
-                "process_production_data",
+                "process_zip_in_memory",
                 return_value=mock_processed_data,
             ),
         ):
@@ -230,8 +228,8 @@ class TestBSEEStatisticsImporterURL:
             normalized = importer.normalize_data(raw_data)
 
             # Verify date mapping
-            assert isinstance(normalized["incident_date"], datetime)
-            assert normalized["incident_date"] == datetime(2024, 1, 15)
+            assert isinstance(normalized["report_date"], datetime)
+            assert normalized["report_date"] == datetime(2024, 1, 15)
 
     def test_full_import_workflow(self, db_session, mock_zip_data, mock_processed_data):
         """Test complete import workflow from URL download to database persistence."""
@@ -243,7 +241,7 @@ class TestBSEEStatisticsImporterURL:
             ),
             patch.object(
                 importer.processor,
-                "process_production_data",
+                "process_zip_in_memory",
                 return_value=mock_processed_data,
             ),
         ):
@@ -299,7 +297,7 @@ class TestBSEEStatisticsImporterURL:
                 importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
             ),
             patch.object(
-                importer.processor, "process_production_data", return_value=mock_data
+                importer.processor, "process_zip_in_memory", return_value=mock_data
             ),
         ):
 
@@ -361,7 +359,7 @@ class TestBSEEStatisticsImporterURLPerformance:
                 importer.scraper, "download_zip_to_memory", return_value=b"mock"
             ),
             patch.object(
-                importer.processor, "process_production_data", return_value=large_data
+                importer.processor, "process_zip_in_memory", return_value=large_data
             ),
         ):
 

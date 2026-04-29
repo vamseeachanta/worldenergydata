@@ -69,7 +69,9 @@ class TestCorrelationConfig:
 class TestAnalysisConfig:
     def test_defaults(self):
         c = AnalysisConfig()
-        assert c.data_dir == Path("data/safety_analysis")
+        assert c.data_dir.is_absolute()
+        assert c.data_dir.name == "safety_analysis"
+        assert c.data_dir.parent.name == "data"
         assert c.model_dir == Path("models/safety_analysis")
         assert c.default_frequency == "D"
         assert c.window_size == 10

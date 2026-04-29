@@ -63,8 +63,8 @@ class TestBSEEPenaltiesImporterURL:
         assert importer is not None
         assert importer.db_session == db_session
         assert (
-            importer.BSEE_WAR_DATA_URL
-            == "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip"
+            importer.BSEE_INC_DATA_URL
+            == "https://www.data.bsee.gov/Company/Files/INCSRawData.zip"
         )
         assert importer.use_optimized is True
         assert hasattr(importer, "scraper")
@@ -89,7 +89,9 @@ class TestBSEEPenaltiesImporterURL:
                 importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
             ) as mock_download,
             patch.object(
-                importer.processor, "process_war_data", return_value=mock_processed_data
+                importer.processor,
+                "process_zip_in_memory",
+                return_value=mock_processed_data,
             ) as mock_process,
         ):
 
@@ -97,14 +99,12 @@ class TestBSEEPenaltiesImporterURL:
 
             # Verify scraper was called with correct URL and data type (uses 2400s timeout)
             mock_download.assert_called_once_with(
-                "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip",
-                data_type="war",
+                "https://www.data.bsee.gov/Company/Files/INCSRawData.zip",
+                data_type="default",
             )
 
-            # Verify processor was called with year/month extraction enabled
-            mock_process.assert_called_once_with(
-                mock_zip_data, config={"extract_year_month": True}
-            )
+            # Verify processor was called with ZIP data
+            mock_process.assert_called_once_with(mock_zip_data)
 
             # Verify result
             assert isinstance(result, list)
@@ -133,15 +133,17 @@ class TestBSEEPenaltiesImporterURL:
                 importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
             ) as mock_download,
             patch.object(
-                importer.processor, "process_war_data", return_value=mock_processed_data
+                importer.processor,
+                "process_zip_in_memory",
+                return_value=mock_processed_data,
             ),
         ):
 
             importer.fetch_data()
 
-            # Verify data_type='war' was passed (which triggers 2400s timeout in scraper)
+            # Verify default data type was passed for INC raw data
             call_args = mock_download.call_args
-            assert call_args[1]["data_type"] == "war"
+            assert call_args[1]["data_type"] == "default"
 
     def test_normalize_data_converts_penalty_amount_to_float(
         self, db_session, mock_zip_data, mock_processed_data
@@ -154,7 +156,9 @@ class TestBSEEPenaltiesImporterURL:
                 importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
             ),
             patch.object(
-                importer.processor, "process_war_data", return_value=mock_processed_data
+                importer.processor,
+                "process_zip_in_memory",
+                return_value=mock_processed_data,
             ),
         ):
 
@@ -180,7 +184,9 @@ class TestBSEEPenaltiesImporterURL:
                 importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
             ),
             patch.object(
-                importer.processor, "process_war_data", return_value=mock_processed_data
+                importer.processor,
+                "process_zip_in_memory",
+                return_value=mock_processed_data,
             ),
         ):
 
@@ -205,7 +211,9 @@ class TestBSEEPenaltiesImporterURL:
                 importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
             ),
             patch.object(
-                importer.processor, "process_war_data", return_value=mock_processed_data
+                importer.processor,
+                "process_zip_in_memory",
+                return_value=mock_processed_data,
             ),
         ):
 
@@ -232,7 +240,9 @@ class TestBSEEPenaltiesImporterURL:
                 importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
             ),
             patch.object(
-                importer.processor, "process_war_data", return_value=mock_processed_data
+                importer.processor,
+                "process_zip_in_memory",
+                return_value=mock_processed_data,
             ),
         ):
 
@@ -253,7 +263,9 @@ class TestBSEEPenaltiesImporterURL:
                 importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
             ),
             patch.object(
-                importer.processor, "process_war_data", return_value=mock_processed_data
+                importer.processor,
+                "process_zip_in_memory",
+                return_value=mock_processed_data,
             ),
         ):
 
@@ -298,7 +310,7 @@ class TestBSEEPenaltiesImporterURL:
                 importer.scraper, "download_zip_to_memory", return_value=mock_zip_data
             ),
             patch.object(
-                importer.processor, "process_war_data", return_value=mock_data
+                importer.processor, "process_zip_in_memory", return_value=mock_data
             ),
         ):
 
@@ -350,7 +362,7 @@ class TestBSEEPenaltiesImporterURLPerformance:
                 importer.scraper, "download_zip_to_memory", return_value=b"mock"
             ),
             patch.object(
-                importer.processor, "process_war_data", return_value=large_data
+                importer.processor, "process_zip_in_memory", return_value=large_data
             ),
         ):
 

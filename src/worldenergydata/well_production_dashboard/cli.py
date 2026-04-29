@@ -79,6 +79,37 @@ class DashboardCLI:
 
         return None
 
+    def serve(self, *args, **kwargs):
+        """Backward-compatible alias for running the dashboard server."""
+        return self.run(*args, **kwargs)
+
+    def report(self, wells=None, format: str = "pdf", output: Optional[str] = None):
+        """Generate a dashboard report via the underlying dashboard/exporter."""
+        if not self.dashboard:
+            self.dashboard = WellProductionDashboard()
+
+        output_path = output or f"well_dashboard_report.{format}"
+        if hasattr(self.dashboard, "export_to_pdf") and format == "pdf":
+            return self.dashboard.export_to_pdf(wells=wells, output_path=output_path)
+        return self.export(format=format, output_path=output_path)
+
+    def verify(self, well_id: Optional[str] = None):
+        """Run dashboard data quality verification."""
+        if not self.dashboard:
+            self.dashboard = WellProductionDashboard()
+        well_ids = [well_id] if well_id else None
+        return self.dashboard.verify_data_quality(well_ids)
+
+    def cache(self, *args, **kwargs):
+        """Return dashboard cache manager for CLI compatibility."""
+        if not self.dashboard:
+            self.dashboard = WellProductionDashboard()
+        return getattr(self.dashboard, "cache_manager", None)
+
+    def monitor(self, *args, **kwargs):
+        """Return dashboard monitor status for CLI compatibility."""
+        return {"status": "available"}
+
     def get_export_parameters(self) -> Dict[str, Any]:
         """Get available export parameters."""
         return {

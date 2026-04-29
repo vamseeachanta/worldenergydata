@@ -104,7 +104,9 @@ class TestJobAdapterInterface:
     def test_job_default_output_dir_matches_modules_convention(
         self, JobClass, expected_path
     ):
-        assert Path(JobClass.default_output_dir) == Path(expected_path)
+        output_dir = Path(JobClass.default_output_dir)
+        assert output_dir.is_absolute()
+        assert output_dir.parts[-3:] == tuple(Path(expected_path).parts)
 
 
 class TestMetoceanJobLocations:

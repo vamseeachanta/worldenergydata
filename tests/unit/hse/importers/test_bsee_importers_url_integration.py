@@ -40,7 +40,7 @@ API-002,Well B,INC-002,2024-01-16,BP America,spill,minor,Platform B,29.1,-88.7,1
         # Create ZIP in memory
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
-            zip_file.writestr("well_data.csv", csv_content)
+            zip_file.writestr("well_data.txt", csv_content)
 
         return zip_buffer.getvalue()
 
@@ -50,7 +50,7 @@ API-002,Well B,INC-002,2024-01-16,BP America,spill,minor,Platform B,29.1,-88.7,1
         # Mock HTTP response from BSEE server
         responses.add(
             responses.GET,
-            "https://www.data.bsee.gov/Well/Files/APDRawData.zip",
+            "https://www.data.bsee.gov/Other/Files/IncidentInvestigationsRawData.zip",
             body=mock_well_zip,
             status=200,
             headers={"Content-Type": "application/zip"},
@@ -63,7 +63,7 @@ API-002,Well B,INC-002,2024-01-16,BP America,spill,minor,Platform B,29.1,-88.7,1
         assert len(responses.calls) == 1
         assert (
             responses.calls[0].request.url
-            == "https://www.data.bsee.gov/Well/Files/APDRawData.zip"
+            == "https://www.data.bsee.gov/Other/Files/IncidentInvestigationsRawData.zip"
         )
 
         # Verify data was processed correctly
@@ -78,7 +78,7 @@ API-002,Well B,INC-002,2024-01-16,BP America,spill,minor,Platform B,29.1,-88.7,1
         # Mock timeout exception
         responses.add(
             responses.GET,
-            "https://www.data.bsee.gov/Well/Files/APDRawData.zip",
+            "https://www.data.bsee.gov/Other/Files/IncidentInvestigationsRawData.zip",
             body=Exception("Connection timeout"),
         )
 
@@ -93,7 +93,7 @@ API-002,Well B,INC-002,2024-01-16,BP America,spill,minor,Platform B,29.1,-88.7,1
         # Mock 404 response
         responses.add(
             responses.GET,
-            "https://www.data.bsee.gov/Well/Files/APDRawData.zip",
+            "https://www.data.bsee.gov/Other/Files/IncidentInvestigationsRawData.zip",
             status=404,
             body="Not Found",
         )
@@ -109,7 +109,7 @@ API-002,Well B,INC-002,2024-01-16,BP America,spill,minor,Platform B,29.1,-88.7,1
         # First attempt: 500 error
         responses.add(
             responses.GET,
-            "https://www.data.bsee.gov/Well/Files/APDRawData.zip",
+            "https://www.data.bsee.gov/Other/Files/IncidentInvestigationsRawData.zip",
             status=500,
             body="Internal Server Error",
         )
@@ -117,7 +117,7 @@ API-002,Well B,INC-002,2024-01-16,BP America,spill,minor,Platform B,29.1,-88.7,1
         # Second attempt: Success
         responses.add(
             responses.GET,
-            "https://www.data.bsee.gov/Well/Files/APDRawData.zip",
+            "https://www.data.bsee.gov/Other/Files/IncidentInvestigationsRawData.zip",
             body=mock_well_zip,
             status=200,
         )
@@ -150,7 +150,7 @@ STAT-002,2024-01-16,BP America,minor,30,3,0,0,1,1,1"""
 
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
-            zip_file.writestr("production_data.csv", csv_content)
+            zip_file.writestr("production_data.txt", csv_content)
 
         return zip_buffer.getvalue()
 
@@ -162,7 +162,7 @@ STAT-002,2024-01-16,BP America,minor,30,3,0,0,1,1,1"""
         # Mock HTTP response
         responses.add(
             responses.GET,
-            "https://www.data.bsee.gov/Production/Files/ProductionRawData.zip",
+            "https://www.data.bsee.gov/Other/Files/IncidentStatisticsRawData.zip",
             body=mock_production_zip,
             status=200,
         )
@@ -174,7 +174,7 @@ STAT-002,2024-01-16,BP America,minor,30,3,0,0,1,1,1"""
         assert len(responses.calls) == 1
         assert (
             responses.calls[0].request.url
-            == "https://www.data.bsee.gov/Production/Files/ProductionRawData.zip"
+            == "https://www.data.bsee.gov/Other/Files/IncidentStatisticsRawData.zip"
         )
 
         # Verify data processing
@@ -197,12 +197,12 @@ STAT-002,2024-01-16,BP America,minor,30,3,0,0,1,1,1"""
 
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
-            zip_file.writestr("production.csv", csv_content)
+            zip_file.writestr("production.txt", csv_content)
 
         # Mock large file response
         responses.add(
             responses.GET,
-            "https://www.data.bsee.gov/Production/Files/ProductionRawData.zip",
+            "https://www.data.bsee.gov/Other/Files/IncidentStatisticsRawData.zip",
             body=zip_buffer.getvalue(),
             status=200,
         )
@@ -231,7 +231,7 @@ PEN-002,2024-01-20,BP America,25000.00,2024-07-20,False"""
 
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
-            zip_file.writestr("war_data.csv", csv_content)
+            zip_file.writestr("war_data.txt", csv_content)
 
         return zip_buffer.getvalue()
 
@@ -241,7 +241,7 @@ PEN-002,2024-01-20,BP America,25000.00,2024-07-20,False"""
         # Mock HTTP response
         responses.add(
             responses.GET,
-            "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip",
+            "https://www.data.bsee.gov/Company/Files/INCSRawData.zip",
             body=mock_war_zip,
             status=200,
         )
@@ -253,7 +253,7 @@ PEN-002,2024-01-20,BP America,25000.00,2024-07-20,False"""
         assert len(responses.calls) == 1
         assert (
             responses.calls[0].request.url
-            == "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip"
+            == "https://www.data.bsee.gov/Company/Files/INCSRawData.zip"
         )
 
         # Verify data processing
@@ -277,12 +277,12 @@ PEN-002,2024-01-20,BP America,25000.00,2024-07-20,False"""
 
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
-            zip_file.writestr("war.csv", csv_content)
+            zip_file.writestr("war.txt", csv_content)
 
         # Mock large file response
         responses.add(
             responses.GET,
-            "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip",
+            "https://www.data.bsee.gov/Company/Files/INCSRawData.zip",
             body=zip_buffer.getvalue(),
             status=200,
         )
@@ -305,7 +305,7 @@ PEN-002,2024-01-20,BP America,25000.00,2024-07-20,False"""
         # First attempt: Network error via callback
         responses.add_callback(
             responses.GET,
-            "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip",
+            "https://www.data.bsee.gov/Company/Files/INCSRawData.zip",
             callback=callback_network_error,
             content_type="application/zip",
         )
@@ -313,7 +313,7 @@ PEN-002,2024-01-20,BP America,25000.00,2024-07-20,False"""
         # Second attempt: Success
         responses.add(
             responses.GET,
-            "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip",
+            "https://www.data.bsee.gov/Company/Files/INCSRawData.zip",
             body=mock_war_zip,
             status=200,
         )
@@ -342,11 +342,11 @@ class TestCrossImporterIntegration:
         well_csv = "API_WELL_NUMBER,well_name,incident_id,incident_date,operator_name,incident_type,severity,facility,lat,lon,surface_area_code,bottom_area_code,well_type_code,status_code\nAPI-001,Well A,INC-001,2024-01-15,Shell,injury,recordable,Platform A,28.5,-89.2,1,1,1,1"
         well_zip = io.BytesIO()
         with zipfile.ZipFile(well_zip, "w", zipfile.ZIP_DEFLATED) as zf:
-            zf.writestr("well.csv", well_csv)
+            zf.writestr("well.txt", well_csv)
 
         responses.add(
             responses.GET,
-            "https://www.data.bsee.gov/Well/Files/APDRawData.zip",
+            "https://www.data.bsee.gov/Other/Files/IncidentInvestigationsRawData.zip",
             body=well_zip.getvalue(),
             status=200,
         )
@@ -355,11 +355,11 @@ class TestCrossImporterIntegration:
         prod_csv = "incident_id,report_date,operator_name,severity,operational_period,total_incidents,fatality_count,lost_time_count,recordable_count,near_miss_count,minor_count\nSTAT-001,2024-01-15,Shell,recordable,30,5,0,1,2,1,1"
         prod_zip = io.BytesIO()
         with zipfile.ZipFile(prod_zip, "w", zipfile.ZIP_DEFLATED) as zf:
-            zf.writestr("production.csv", prod_csv)
+            zf.writestr("production.txt", prod_csv)
 
         responses.add(
             responses.GET,
-            "https://www.data.bsee.gov/Production/Files/ProductionRawData.zip",
+            "https://www.data.bsee.gov/Other/Files/IncidentStatisticsRawData.zip",
             body=prod_zip.getvalue(),
             status=200,
         )
@@ -368,11 +368,11 @@ class TestCrossImporterIntegration:
         war_csv = "incident_id,incident_date,operator_name,penalty_amount,compliance_deadline,compliance_achieved\nPEN-001,2024-01-15,Shell,50000.00,2024-06-15,True"
         war_zip = io.BytesIO()
         with zipfile.ZipFile(war_zip, "w", zipfile.ZIP_DEFLATED) as zf:
-            zf.writestr("war.csv", war_csv)
+            zf.writestr("war.txt", war_csv)
 
         responses.add(
             responses.GET,
-            "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip",
+            "https://www.data.bsee.gov/Company/Files/INCSRawData.zip",
             body=war_zip.getvalue(),
             status=200,
         )

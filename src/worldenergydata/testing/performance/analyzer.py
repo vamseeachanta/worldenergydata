@@ -41,15 +41,19 @@ class PerformanceAnalyzer:
         # Calculate trend metrics
         trends = trends.sort_values("date")
 
-        # Duration trend
-        duration_trend = np.polyfit(
-            range(len(trends)), trends["avg_duration"].values, 1
-        )[0]
+        if len(trends) < 2:
+            duration_trend = 0.0
+            success_trend = 0.0
+        else:
+            # Duration trend
+            duration_trend = np.polyfit(
+                range(len(trends)), trends["avg_duration"].values, 1
+            )[0]
 
-        # Success rate trend
-        success_trend = np.polyfit(
-            range(len(trends)), trends["success_rate"].values, 1
-        )[0]
+            # Success rate trend
+            success_trend = np.polyfit(
+                range(len(trends)), trends["success_rate"].values, 1
+            )[0]
 
         # Identify performance changes
         recent_avg = trends.tail(7)["avg_duration"].mean()

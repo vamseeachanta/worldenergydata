@@ -17,7 +17,7 @@ from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
 
-PROJECT_ROOT = Path(__file__).resolve().parents[4]
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
 FDAS_V30_DIR = PROJECT_ROOT / "docs/modules/bsee/analysis/production/FDAS_V30"
 OGOR_ZIP_DIR = get_module_data_safe("bsee") / "zip" / "historical_production_yearly"
 GOLDEN_BASELINE_PATH = (

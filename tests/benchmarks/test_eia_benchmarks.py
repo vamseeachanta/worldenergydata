@@ -10,6 +10,8 @@ import random
 
 import pytest
 
+pytest.importorskip("pytest_benchmark")
+
 from worldenergydata.eia_us.production.basin_production import BasinProductionLoader
 from worldenergydata.eia_us.production.state_production import StateProductionLoader
 
