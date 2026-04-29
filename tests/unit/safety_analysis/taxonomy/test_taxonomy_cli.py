@@ -1,6 +1,7 @@
 """Tests for safety_analysis.taxonomy.cli argument parsing and CSV loading."""
 
 import csv
+import logging
 
 import pytest
 
@@ -124,7 +125,7 @@ class TestLoadCsvRecords:
 
 
 class TestPrintDistribution:
-    def test_print_distribution(self, capsys):
+    def test_print_distribution(self, caplog):
         class MockResult:
             def __init__(self, activity, activity_name, match_method):
                 self.activity = activity
@@ -136,8 +137,9 @@ class TestPrintDistribution:
             MockResult("A01", "Drilling", "keyword"),
             MockResult("A02", "Production", "regex"),
         ]
-        _print_distribution(results)
-        captured = capsys.readouterr()
-        assert "Activity Distribution" in captured.out
-        assert "Match Method Distribution" in captured.out
-        assert "Drilling" in captured.out
+        with caplog.at_level(logging.INFO):
+            _print_distribution(results)
+        output = caplog.text
+        assert "Activity Distribution" in output
+        assert "Match Method Distribution" in output
+        assert "Drilling" in output
