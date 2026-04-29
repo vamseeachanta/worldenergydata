@@ -125,24 +125,36 @@ def main(argv=None):
     comparison = analysis.fit_all_models(ts)
 
     # Print summary
-    logger.info(f"\n{'=' * 60}")
-    logger.info(f"Decline Curve Analysis: {ts.field_name}")
-    logger.info(f"Product: {ts.product_type} | Points: {ts.n_after_filter}")
-    logger.info(f"Best model: {comparison.best_model}")
-    logger.info(f"{'=' * 60}")
-    logger.info(comparison.summary_table().to_string(index=False))
+    summary_lines = [
+        f"{'=' * 60}",
+        f"Decline Curve Analysis: {ts.field_name}",
+        f"Product: {ts.product_type} | Points: {ts.n_after_filter}",
+        f"Best model: {comparison.best_model}",
+        f"{'=' * 60}",
+        comparison.summary_table().to_string(index=False),
+    ]
+    for line in summary_lines:
+        print(line)
+        logger.info(line)
 
     # Forecast
     forecast = analysis.forecast(comparison)
     eur = analysis.calculate_eur(comparison)
 
+    print("\nEUR by model:")
     logger.info("\nEUR by model:")
     for model, value in eur.items():
-        logger.info(f"  {model}: {value:,.0f}")
+        line = f"  {model}: {value:,.0f}"
+        print(line)
+        logger.info(line)
 
-    logger.info(f"\nForecast ({args.forecast_periods} periods):")
+    forecast_header = f"\nForecast ({args.forecast_periods} periods):"
+    print(forecast_header)
+    logger.info(forecast_header)
     forecast_df = forecast.to_dataframe()
-    logger.info(forecast_df.to_string(index=False))
+    forecast_text = forecast_df.to_string(index=False)
+    print(forecast_text)
+    logger.info(forecast_text)
 
     # Generate HTML report
     if args.output:
