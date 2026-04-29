@@ -16,6 +16,10 @@ NOTE: This module has been refactored into smaller, focused modules:
 This file re-exports all public names for backward compatibility.
 """
 
+# Re-export chart components. Keep ``go`` on this compatibility module because
+# legacy tests/callers patch ``interactive_components.go`` directly.
+from . import components_charts as _components_charts
+
 # Re-export anomaly components
 from .components_anomaly import AnomalyHighlighter
 
@@ -26,11 +30,45 @@ from .components_audit import AuditTrailDrilldown
 from .components_base import (
     FilterConfig,
     FreshnessStatus,
+    Input,
+    Output,
     QualityLevel,
+    dcc,
+    go,
+    html,
 )
 
-# Re-export chart components
-from .components_charts import WellChartLibrary
+
+class WellChartLibrary(_components_charts.WellChartLibrary):
+    """Compatibility wrapper for chart methods that patch Plotly via this module."""
+
+    @staticmethod
+    def _sync_plotly_graph_objects():
+        _components_charts.go = go
+
+    def create_type_curve(self, *args, **kwargs):
+        self._sync_plotly_graph_objects()
+        return super().create_type_curve(*args, **kwargs)
+
+    def create_bubble_map(self, *args, **kwargs):
+        self._sync_plotly_graph_objects()
+        return super().create_bubble_map(*args, **kwargs)
+
+    def create_waterfall_chart(self, *args, **kwargs):
+        self._sync_plotly_graph_objects()
+        return super().create_waterfall_chart(*args, **kwargs)
+
+    def create_gauge_chart(self, *args, **kwargs):
+        self._sync_plotly_graph_objects()
+        return super().create_gauge_chart(*args, **kwargs)
+
+    def create_3d_surface(self, *args, **kwargs):
+        self._sync_plotly_graph_objects()
+        return super().create_3d_surface(*args, **kwargs)
+
+
+# Re-export orchestrator. Keep Dash objects patch-compatible through this module.
+from . import components_orchestrator as _components_orchestrator
 
 # Re-export filter components
 from .components_filters import (
@@ -43,8 +81,27 @@ from .components_filters import (
 # Re-export interaction components
 from .components_interactions import ChartInteractions
 
-# Re-export orchestrator
-from .components_orchestrator import InteractiveDashboardComponents
+
+class InteractiveDashboardComponents(
+    _components_orchestrator.InteractiveDashboardComponents
+):
+    """Compatibility wrapper for layout/callback methods patched via this module."""
+
+    @staticmethod
+    def _sync_dash_components():
+        _components_orchestrator.dcc = dcc
+        _components_orchestrator.html = html
+        _components_orchestrator.Input = Input
+        _components_orchestrator.Output = Output
+
+    def create_interactive_layout(self, *args, **kwargs):
+        self._sync_dash_components()
+        return super().create_interactive_layout(*args, **kwargs)
+
+    def register_callbacks(self, *args, **kwargs):
+        self._sync_dash_components()
+        return super().register_callbacks(*args, **kwargs)
+
 
 # Export main components (backward compatible)
 __all__ = [
