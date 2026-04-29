@@ -91,7 +91,9 @@ class MemoryProcessor:
 
                 for filename in file_list:
                     # Skip directories and non-CSV files
-                    if filename.endswith("/") or not filename.lower().endswith(".txt"):
+                    if filename.endswith("/") or not filename.lower().endswith(
+                        (".txt", ".csv")
+                    ):
                         continue
 
                     logger.info(f"Processing file: {filename}")
