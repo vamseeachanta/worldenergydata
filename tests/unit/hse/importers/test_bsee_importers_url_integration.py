@@ -50,7 +50,7 @@ API-002,Well B,INC-002,2024-01-16,BP America,spill,minor,Platform B,29.1,-88.7,1
         # Mock HTTP response from BSEE server
         responses.add(
             responses.GET,
-            "https://www.data.bsee.gov/Well/Files/APDRawData.zip",
+            "https://www.data.bsee.gov/Other/Files/IncidentInvestigationsRawData.zip",
             body=mock_well_zip,
             status=200,
             headers={"Content-Type": "application/zip"},
@@ -63,7 +63,7 @@ API-002,Well B,INC-002,2024-01-16,BP America,spill,minor,Platform B,29.1,-88.7,1
         assert len(responses.calls) == 1
         assert (
             responses.calls[0].request.url
-            == "https://www.data.bsee.gov/Well/Files/APDRawData.zip"
+            == "https://www.data.bsee.gov/Other/Files/IncidentInvestigationsRawData.zip"
         )
 
         # Verify data was processed correctly
@@ -78,7 +78,7 @@ API-002,Well B,INC-002,2024-01-16,BP America,spill,minor,Platform B,29.1,-88.7,1
         # Mock timeout exception
         responses.add(
             responses.GET,
-            "https://www.data.bsee.gov/Well/Files/APDRawData.zip",
+            "https://www.data.bsee.gov/Other/Files/IncidentInvestigationsRawData.zip",
             body=Exception("Connection timeout"),
         )
 
@@ -93,7 +93,7 @@ API-002,Well B,INC-002,2024-01-16,BP America,spill,minor,Platform B,29.1,-88.7,1
         # Mock 404 response
         responses.add(
             responses.GET,
-            "https://www.data.bsee.gov/Well/Files/APDRawData.zip",
+            "https://www.data.bsee.gov/Other/Files/IncidentInvestigationsRawData.zip",
             status=404,
             body="Not Found",
         )
@@ -109,7 +109,7 @@ API-002,Well B,INC-002,2024-01-16,BP America,spill,minor,Platform B,29.1,-88.7,1
         # First attempt: 500 error
         responses.add(
             responses.GET,
-            "https://www.data.bsee.gov/Well/Files/APDRawData.zip",
+            "https://www.data.bsee.gov/Other/Files/IncidentInvestigationsRawData.zip",
             status=500,
             body="Internal Server Error",
         )
@@ -117,7 +117,7 @@ API-002,Well B,INC-002,2024-01-16,BP America,spill,minor,Platform B,29.1,-88.7,1
         # Second attempt: Success
         responses.add(
             responses.GET,
-            "https://www.data.bsee.gov/Well/Files/APDRawData.zip",
+            "https://www.data.bsee.gov/Other/Files/IncidentInvestigationsRawData.zip",
             body=mock_well_zip,
             status=200,
         )
@@ -162,7 +162,7 @@ STAT-002,2024-01-16,BP America,minor,30,3,0,0,1,1,1"""
         # Mock HTTP response
         responses.add(
             responses.GET,
-            "https://www.data.bsee.gov/Production/Files/ProductionRawData.zip",
+            "https://www.data.bsee.gov/Other/Files/IncidentStatisticsRawData.zip",
             body=mock_production_zip,
             status=200,
         )
@@ -174,7 +174,7 @@ STAT-002,2024-01-16,BP America,minor,30,3,0,0,1,1,1"""
         assert len(responses.calls) == 1
         assert (
             responses.calls[0].request.url
-            == "https://www.data.bsee.gov/Production/Files/ProductionRawData.zip"
+            == "https://www.data.bsee.gov/Other/Files/IncidentStatisticsRawData.zip"
         )
 
         # Verify data processing
@@ -202,7 +202,7 @@ STAT-002,2024-01-16,BP America,minor,30,3,0,0,1,1,1"""
         # Mock large file response
         responses.add(
             responses.GET,
-            "https://www.data.bsee.gov/Production/Files/ProductionRawData.zip",
+            "https://www.data.bsee.gov/Other/Files/IncidentStatisticsRawData.zip",
             body=zip_buffer.getvalue(),
             status=200,
         )
@@ -346,7 +346,7 @@ class TestCrossImporterIntegration:
 
         responses.add(
             responses.GET,
-            "https://www.data.bsee.gov/Well/Files/APDRawData.zip",
+            "https://www.data.bsee.gov/Other/Files/IncidentInvestigationsRawData.zip",
             body=well_zip.getvalue(),
             status=200,
         )
@@ -359,7 +359,7 @@ class TestCrossImporterIntegration:
 
         responses.add(
             responses.GET,
-            "https://www.data.bsee.gov/Production/Files/ProductionRawData.zip",
+            "https://www.data.bsee.gov/Other/Files/IncidentStatisticsRawData.zip",
             body=prod_zip.getvalue(),
             status=200,
         )
