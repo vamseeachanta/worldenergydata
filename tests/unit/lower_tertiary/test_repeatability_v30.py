@@ -48,7 +48,10 @@ def reproduced_production():
     """Run the V30 reproducer to get production from BSEE OGOR."""
     if not REPRODUCER_AVAILABLE:
         pytest.skip("V30 reproducer not available")
-    return reproduce_v30_production()
+    try:
+        return reproduce_v30_production()
+    except FileNotFoundError as exc:
+        pytest.skip(f"V30 production source data not available in this checkout: {exc}")
 
 
 # Golden baseline project IDs mapped to V30 development display names.
@@ -106,7 +109,12 @@ class TestProductionDiagnostics:
         """BSEE OGOR data can be loaded for a sample year range."""
         if not REPRODUCER_AVAILABLE:
             pytest.skip("V30 reproducer not available")
-        ogor_df = load_ogor_production(start_year=2014, end_year=2015)
+        try:
+            ogor_df = load_ogor_production(start_year=2014, end_year=2015)
+        except FileNotFoundError as exc:
+            pytest.skip(
+                f"OGOR production source data not available in this checkout: {exc}"
+            )
         assert len(ogor_df) > 0, "No OGOR data loaded"
 
     def test_v30_leases_load(self):
@@ -123,7 +131,12 @@ class TestProductionDiagnostics:
         if not REPRODUCER_AVAILABLE:
             pytest.skip("V30 reproducer not available")
         leases_df = load_v30_leases()
-        ogor_df = load_ogor_production(start_year=2014, end_year=2015)
+        try:
+            ogor_df = load_ogor_production(start_year=2014, end_year=2015)
+        except FileNotFoundError as exc:
+            pytest.skip(
+                f"OGOR production source data not available in this checkout: {exc}"
+            )
 
         v30_leases = set(leases_df["LEASE_NUM"])
         ogor_leases = set(ogor_df["LEASE_NUMBER"].unique())
