@@ -306,26 +306,33 @@ class WellDashboardExportManager:
         try:
             # Prepare Excel-specific data structure
             excel_data = self._prepare_excel_data(dashboard_data, config)
+            if not excel_data:
+                return ExportResult(
+                    success=False,
+                    format="excel",
+                    error_message="No exportable dashboard data found",
+                )
 
             # Create export configuration for comprehensive exporter
             export_config = ExportConfig(
                 format=ExportFormat.EXCEL,
+                output_path=Path(output_path),
                 include_charts=config.include_charts,
-                include_metadata=config.include_verification,
+                include_raw_data=config.include_raw_data,
             )
 
             # Use comprehensive Excel exporter
-            base_result = self.excel_exporter.export(
-                data=excel_data, output_path=output_path, config=export_config
-            )
+            base_result = self.excel_exporter.export(excel_data, export_config)
 
             # Convert to our result format
             return ExportResult(
                 success=base_result.success,
                 format="excel",
-                file_path=base_result.file_path,
-                file_size=base_result.file_size,
-                error_message=base_result.error_message,
+                file_path=str(getattr(base_result, "file_path", output_path)),
+                file_size=getattr(base_result, "file_size", 0),
+                error_message=getattr(
+                    base_result, "error_message", getattr(base_result, "message", "")
+                ),
                 metadata={"sheets": list(excel_data.keys())},
             )
 
@@ -357,21 +364,22 @@ class WellDashboardExportManager:
             # Create export configuration
             export_config = ExportConfig(
                 format=ExportFormat.PDF,
+                output_path=Path(output_path),
                 include_charts=config.include_charts,
-                include_metadata=config.include_verification,
+                include_raw_data=config.include_raw_data,
             )
 
             # Use comprehensive PDF exporter
-            base_result = self.pdf_exporter.export(
-                data=pdf_data, output_path=output_path, config=export_config
-            )
+            base_result = self.pdf_exporter.export(pdf_data, export_config)
 
             return ExportResult(
                 success=base_result.success,
                 format="pdf",
-                file_path=base_result.file_path,
-                file_size=base_result.file_size,
-                error_message=base_result.error_message,
+                file_path=str(getattr(base_result, "file_path", output_path)),
+                file_size=getattr(base_result, "file_size", 0),
+                error_message=getattr(
+                    base_result, "error_message", getattr(base_result, "message", "")
+                ),
                 metadata={"pages": pdf_data.get("total_pages", 0)},
             )
 
@@ -644,22 +652,27 @@ class WellDashboardExportManager:
             excel_sheets["Summary"] = pd.DataFrame([dashboard_data["summary"]])
 
         # Production data sheet
-        if "production_data" in dashboard_data:
-            excel_sheets["Production Data"] = pd.DataFrame(
-                dashboard_data["production_data"]
-            )
+        production_data = dashboard_data.get(
+            "production_data", dashboard_data.get("well_data")
+        )
+        if production_data is not None:
+            excel_sheets["Production Data"] = pd.DataFrame(production_data)
 
         # Economic metrics sheet
-        if "economic_data" in dashboard_data:
-            excel_sheets["Economic Metrics"] = pd.DataFrame(
-                [dashboard_data["economic_data"]]
-            )
+        economic_data = dashboard_data.get(
+            "economic_data", dashboard_data.get("economic_metrics")
+        )
+        if economic_data is not None:
+            excel_sheets["Economic Metrics"] = pd.DataFrame([economic_data])
 
         # Verification sheet
-        if config.include_verification and "verification_data" in dashboard_data:
-            excel_sheets["Verification"] = pd.DataFrame(
-                [dashboard_data["verification_data"]]
-            )
+        verification_data = dashboard_data.get(
+            "verification_data", dashboard_data.get("verification_metadata")
+        )
+        if config.include_verification and verification_data is not None:
+            if hasattr(verification_data, "to_dict"):
+                verification_data = verification_data.to_dict()
+            excel_sheets["Verification"] = pd.DataFrame([verification_data])
 
         # Raw data sheet
         if config.include_raw_data and "raw_data" in dashboard_data:
