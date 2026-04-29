@@ -180,6 +180,7 @@ class AssumptionsManager:
                         clean_param = (
                             str(param_name).replace(" ", "_").replace("/", "_").upper()
                         )
+                        clean_param = clean_param.replace("$_", "$/")
                         value = df.loc[idx, dev_sys]
                         if pd.notna(value):
                             row_data[clean_param] = value

@@ -11,10 +11,13 @@ class bsee:
         pass
 
     def router(self, cfg):
+        basename = cfg.get("basename")
+        if basename != "bsee":
+            return cfg
 
-        cfg[cfg["basename"]] = {}
-        cfg[cfg["basename"]].update({"data": cfg.get("data", {}).copy()})
-        cfg[cfg["basename"]].update({"analysis": cfg.get("analysis", {}).copy()})
+        cfg[basename] = {}
+        cfg[basename].update({"data": cfg.get("data", {}).copy()})
+        cfg[basename].update({"analysis": cfg.get("analysis", {}).copy()})
 
         cfg, data = bsee_data.router(cfg)
 

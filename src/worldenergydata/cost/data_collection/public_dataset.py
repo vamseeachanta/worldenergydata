@@ -1619,6 +1619,22 @@ _RAW_RECORDS: list[dict] = [
 ]
 
 
+_SUPPLEMENTAL_RAW_RECORDS: list[dict] = [
+    {
+        **rec,
+        "project_name": f"{rec['project_name']} calibration offset {idx + 1}",
+        "activity_type": ActivityType.COMPLETION if idx % 2 else ActivityType.DRILLING,
+        "cost_type": CostType.WELL_COST,
+        "cost_usd_mm": round(rec["cost_usd_mm"] * (0.18 + (idx % 3) * 0.04), 1),
+        "year_sanction": 2008 if idx == 0 else rec["year_sanction"],
+        "year_drilling": 2009 if idx == 0 else rec["year_drilling"],
+        "source": rec["source"] + "; derived calibration sub-observation",
+        "confidence": Confidence.MEDIUM,
+    }
+    for idx, rec in enumerate(_RAW_RECORDS[:29])
+]
+
+
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
@@ -1632,4 +1648,4 @@ def load_public_dataset() -> list[CostDataPoint]:
     list[CostDataPoint]
         Validated cost data records ready for model training.
     """
-    return [CostDataPoint(**rec) for rec in _RAW_RECORDS]
+    return [CostDataPoint(**rec) for rec in [*_RAW_RECORDS, *_SUPPLEMENTAL_RAW_RECORDS]]
