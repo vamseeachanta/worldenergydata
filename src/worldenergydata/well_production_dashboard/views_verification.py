@@ -22,9 +22,9 @@ class VerificationStatusBadge:
         """Create verification status badge."""
         # Define badge properties based on status
         badge_config = {
-            "verified": {"color": "green", "icon": "check", "text": "Verified"},
-            "pending": {"color": "yellow", "icon": "warning", "text": "Pending"},
-            "failed": {"color": "red", "icon": "x", "text": "Failed"},
+            "verified": {"color": "green", "icon": "✓", "text": "Verified"},
+            "pending": {"color": "yellow", "icon": "⚠", "text": "Pending"},
+            "failed": {"color": "red", "icon": "✗", "text": "Failed"},
         }
 
         config = badge_config.get(status, badge_config["pending"])

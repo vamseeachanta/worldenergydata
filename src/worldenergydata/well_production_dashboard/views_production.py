@@ -191,6 +191,20 @@ class ProductionChartBuilder:
             "figure": fig,
         }
 
+    def create_decline_curve_chart(
+        self, production, dates, well_name: str
+    ) -> Dict[str, Any]:
+        """Create decline curve chart via the decline analyzer.
+
+        This method preserves the legacy ``ProductionChartBuilder`` API after
+        decline-curve functionality was split into ``views_decline``.
+        """
+        from .views_decline import DeclineCurveAnalyzer
+
+        return DeclineCurveAnalyzer().create_decline_curve_chart(
+            production, dates, well_name
+        )
+
     def add_annotations(
         self, chart: Dict[str, Any], annotations: List[Dict[str, str]]
     ) -> Dict[str, Any]:
