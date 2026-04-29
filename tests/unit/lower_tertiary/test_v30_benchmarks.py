@@ -78,7 +78,10 @@ def leases_df():
 def financials():
     if not DATA_AVAILABLE:
         pytest.skip("V30 data not available")
-    return reproduce_v30_financials()
+    try:
+        return reproduce_v30_financials()
+    except FileNotFoundError as exc:
+        pytest.skip(f"V30 financial source data not available in this checkout: {exc}")
 
 
 # -----------------------------------------------------------------------
