@@ -144,10 +144,6 @@ class BSEEStatisticsImporter(BaseImporter):
         if "severity" in raw_data:
             normalized["severity"] = raw_data["severity"]
 
-        # Aggregated statistics are categorized under equipment_failure for
-        # compatibility with the incident-oriented HSE normalization contract.
-        normalized["incident_type"] = "equipment_failure"
-
         # Required field: operator
         if "operator_name" in raw_data:
             normalized["operator"] = raw_data["operator_name"]
@@ -327,7 +323,25 @@ class BSEEStatisticsImporter(BaseImporter):
         else:
             query = query.filter(SafetyStatistic.facility_name.is_(None))
 
-        return query.first() is not None
+        if query.first() is not None:
+            return True
+
+        # Legacy tests and historical imports stored statistics-like rows in
+        # HSEIncident keyed by bsee_incident_id.  Preserve duplicate detection
+        # for those records while the canonical persistence path remains
+        # SafetyStatistic.
+        bsee_id = data.get("bsee_incident_id")
+        if bsee_id is None:
+            return False
+
+        from worldenergydata.hse.database.models import HSEIncident
+
+        return (
+            self.db_session.query(HSEIncident)
+            .filter(HSEIncident.bsee_incident_id == bsee_id)
+            .first()
+            is not None
+        )
 
     def import_record(self, data: Dict[str, Any]):
         """
