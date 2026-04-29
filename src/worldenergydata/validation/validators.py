@@ -214,17 +214,17 @@ class DataValidator:
         self, value: Any, field_name: str, field_schema: FieldSchema
     ) -> None:
         """Validate optional field constraints (pattern, allowed values, date format)."""
+        if field_schema.date_format:
+            ValidationRules.validate_date_format(
+                value, field_name, field_schema.date_format
+            )
+
         if field_schema.pattern:
             ValidationRules.validate_pattern(value, field_name, field_schema.pattern)
 
         if field_schema.allowed_values:
             ValidationRules.validate_allowed_values(
                 value, field_name, field_schema.allowed_values
-            )
-
-        if field_schema.date_format:
-            ValidationRules.validate_date_format(
-                value, field_name, field_schema.date_format
             )
 
     def _validate_bsee_custom(self, value: Any, field_name: str) -> None:

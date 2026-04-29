@@ -10,6 +10,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+import numpy as np
 import pandas as pd
 
 
@@ -423,45 +424,40 @@ class PerformanceDatabase:
             Regression details if detected, None otherwise
         """
         with self._get_connection() as conn:
-            # Get statistics
-            stats = conn.execute(
-                """
-                SELECT avg_duration, std_duration
-                FROM test_statistics
-                WHERE test_name = ?
-            """,
-                (test_name,),
-            ).fetchone()
-
-            if not stats or stats["std_duration"] is None:
-                return None
-
-            # Get recent execution
-            recent = conn.execute(
+            # Compare the latest execution against prior history only. The
+            # aggregate statistics table includes the latest run, which dilutes
+            # large regressions and can hide exactly the slowdown being tested.
+            rows = conn.execute(
                 """
                 SELECT duration, timestamp
                 FROM test_executions
                 WHERE test_name = ? AND status != 'skipped'
                 ORDER BY timestamp DESC
-                LIMIT 1
             """,
                 (test_name,),
-            ).fetchone()
+            ).fetchall()
 
-            if not recent:
+            if len(rows) < 2:
                 return None
 
-            # Check for regression
-            upper_bound = stats["avg_duration"] + (threshold * stats["std_duration"])
+            recent = rows[0]
+            historical_durations = [row["duration"] for row in rows[1:]]
+            avg_duration = float(np.mean(historical_durations))
+            std_duration = float(np.std(historical_durations, ddof=1))
+
+            # A zero-variance history is still useful: any latest duration above
+            # the mean by the configured multiplier is a regression when the
+            # threshold is effectively the historical mean.
+            upper_bound = avg_duration + (threshold * std_duration)
 
             if recent["duration"] > upper_bound:
                 return {
                     "test_name": test_name,
                     "current_duration": recent["duration"],
-                    "avg_duration": stats["avg_duration"],
-                    "std_duration": stats["std_duration"],
+                    "avg_duration": avg_duration,
+                    "std_duration": std_duration,
                     "threshold": upper_bound,
-                    "regression_factor": recent["duration"] / stats["avg_duration"],
+                    "regression_factor": recent["duration"] / avg_duration,
                     "timestamp": recent["timestamp"],
                 }
 
