@@ -16,17 +16,12 @@ NOTE: This module has been refactored into smaller, focused modules:
 This file re-exports all public names for backward compatibility.
 """
 
-# Re-export chart components. Keep ``go`` on this compatibility module because
-# legacy tests/callers patch ``interactive_components.go`` directly.
+# Re-export chart/orchestrator compatibility targets. Keep ``go``/Dash objects on
+# this module because legacy tests/callers patch ``interactive_components.*``.
 from . import components_charts as _components_charts
-
-# Re-export anomaly components
+from . import components_orchestrator as _components_orchestrator
 from .components_anomaly import AnomalyHighlighter
-
-# Re-export audit components
 from .components_audit import AuditTrailDrilldown
-
-# Re-export base types and configuration
 from .components_base import (
     FilterConfig,
     FreshnessStatus,
@@ -37,6 +32,13 @@ from .components_base import (
     go,
     html,
 )
+from .components_filters import (
+    DataFreshnessIndicator,
+    DateRangeSelector,
+    FilterChain,
+    QualityFilter,
+)
+from .components_interactions import ChartInteractions
 
 
 class WellChartLibrary(_components_charts.WellChartLibrary):
@@ -65,21 +67,6 @@ class WellChartLibrary(_components_charts.WellChartLibrary):
     def create_3d_surface(self, *args, **kwargs):
         self._sync_plotly_graph_objects()
         return super().create_3d_surface(*args, **kwargs)
-
-
-# Re-export orchestrator. Keep Dash objects patch-compatible through this module.
-from . import components_orchestrator as _components_orchestrator
-
-# Re-export filter components
-from .components_filters import (
-    DataFreshnessIndicator,
-    DateRangeSelector,
-    FilterChain,
-    QualityFilter,
-)
-
-# Re-export interaction components
-from .components_interactions import ChartInteractions
 
 
 class InteractiveDashboardComponents(
