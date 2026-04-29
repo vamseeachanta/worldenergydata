@@ -305,11 +305,15 @@ class BSEEProductionSchema(ValidationSchema):
                     f"Found {zero_count} records with zero production in all categories"
                 )
 
-            # Check for unrealistic production rates
+            # Check for unrealistic production rates. Invalid numeric values are
+            # reported by field validators; cross-field checks should not raise.
             if "DAYS_ON_PRODUCTION" in df.columns:
-                high_oil_rate = (
-                    df["OIL_VOLUME"] / df["DAYS_ON_PRODUCTION"].fillna(1)
-                ) > 10000
+                oil_volume = pd.to_numeric(df["OIL_VOLUME"], errors="coerce")
+                days_on_production = pd.to_numeric(
+                    df["DAYS_ON_PRODUCTION"], errors="coerce"
+                ).fillna(1)
+                days_on_production = days_on_production.replace(0, 1)
+                high_oil_rate = (oil_volume / days_on_production) > 10000
                 if high_oil_rate.any():
                     high_count = high_oil_rate.sum()
                     errors.append(

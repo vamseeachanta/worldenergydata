@@ -32,6 +32,26 @@ _DATE_RE = [
         r"^\d{1,2}-[A-Za-z]{3}-\d{4}$",
     ]
 ]
+
+
+def _normalize_type_hint(type_text: str) -> str:
+    """Normalize external dictionary type labels to catalog schema types."""
+    text = (type_text or "").strip().lower()
+    if not text:
+        return "string"
+    if any(
+        token in text for token in ("numeric", "decimal", "number", "double", "real")
+    ):
+        return "float"
+    if any(token in text for token in ("integer", "int")):
+        return "integer"
+    if any(token in text for token in ("date", "time")):
+        return "datetime"
+    if any(token in text for token in ("bool", "yes/no")):
+        return "boolean"
+    return "string"
+
+
 _UNIT_HINTS = {
     "depth": "feet",
     "md": "feet",
@@ -418,7 +438,7 @@ def _scan_tree(
                         if info.get("definition"):
                             col["description"] = info["definition"]
                         if info.get("datatype"):
-                            col["type"] = info["datatype"]
+                            col["type"] = _normalize_type_hint(info["datatype"])
             datasets.append(entry)
         elif s == ".parquet":
             datasets.append(scan_parquet(fp, root))
@@ -554,7 +574,8 @@ def generate_catalog(
         "version": "2.1.0",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "total_modules": len(mods),
-        "total_datasets": tot_ds + tot_bs,
+        "total_datasets": tot_ds,
+        "total_binary_stores": tot_bs,
         "total_size_bytes": tot_sz,
         "modules": mods,
     }

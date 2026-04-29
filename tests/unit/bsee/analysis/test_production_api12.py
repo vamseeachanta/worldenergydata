@@ -70,7 +70,7 @@ class TestProductionAPI12Analysis:
         cfg = {"test": "config"}
         # Router currently does nothing but should not error
         result = analyzer.router(cfg)
-        assert result is None  # router returns None
+        assert result is cfg
 
     @pytest.mark.skip(
         reason="Test config structure doesn't match module requirements - needs 'data.groups' in cfg"

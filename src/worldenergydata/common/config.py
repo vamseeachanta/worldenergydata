@@ -128,7 +128,7 @@ class APISettings(BaseSettings):
 
     # SODIR (Norwegian) API settings
     sodir_base_url: str = Field(
-        default="https://factmaps.sodir.no", description="SODIR data portal base URL"
+        default="https://factpages.sodir.no", description="SODIR data portal base URL"
     )
 
     # General API settings

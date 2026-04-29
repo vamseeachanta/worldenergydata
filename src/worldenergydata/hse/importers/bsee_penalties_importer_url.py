@@ -79,7 +79,11 @@ class BSEEPenaltiesImporterURL(BSEEPenaltiesImporter):
 
         # Convert DataFrames to list of dictionaries for BaseImporter compatibility
         records = []
-        for _filename, df in processed_data.items():
+        for _filename, file_data in processed_data.items():
+            if isinstance(file_data, dict) and "data" in file_data:
+                df = file_data["data"]
+            else:
+                df = file_data
             file_records = df.to_dict("records")
             records.extend(file_records)
 

@@ -4,6 +4,7 @@ This module validates that oil price data matches Excel analysis source exactly.
 """
 
 import os
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -16,7 +17,13 @@ class TestOilPriceExtraction:
     @pytest.fixture
     def excel_file_path(self):
         """Path to the Excel NPV analysis file."""
-        return r"docs\modules\bsee\data\NPV_JStM-WELL-Production-Data-thru-2019.xlsx"
+        return str(
+            Path("docs")
+            / "modules"
+            / "bsee"
+            / "data"
+            / "NPV_JStM-WELL-Production-Data-thru-2019.xlsx"
+        )
 
     def test_excel_file_exists(self, excel_file_path):
         """Test that the Excel file exists and is accessible."""

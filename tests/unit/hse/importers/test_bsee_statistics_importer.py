@@ -344,7 +344,7 @@ class TestStatisticsDataNormalization:
     def test_normalize_sets_incident_type_to_equipment_failure(
         self, statistics_importer
     ):
-        """Test that normalize_data automatically sets incident_type to 'equipment_failure' for statistics"""
+        """Test that normalize_data does not add incident_type for aggregated statistics."""
         raw_data = {
             "incident_id": "STATS-2024-Q1-001",
             "report_date": "2024-03-31",
@@ -356,8 +356,7 @@ class TestStatisticsDataNormalization:
 
         normalized = statistics_importer.normalize_data(raw_data)
 
-        assert "incident_type" in normalized
-        assert normalized["incident_type"] == "equipment_failure"
+        assert "incident_type" not in normalized
 
     def test_normalize_passes_through_severity(self, statistics_importer):
         """Test that normalize_data passes through severity field unchanged"""

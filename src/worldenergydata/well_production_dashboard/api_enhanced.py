@@ -86,7 +86,7 @@ class CacheManager:
             redis_port: Redis port
             redis_db: Redis database number
         """
-        self.cache_enabled = REDIS_AVAILABLE
+        self.cache_enabled = True
         self.default_ttl = 300  # 5 minutes
         self.cache_store = {}  # In-memory fallback
 
@@ -100,7 +100,6 @@ class CacheManager:
                 logger.info("Redis cache connected successfully")
             except Exception as e:
                 logger.warning(f"Redis connection failed, using in-memory cache: {e}")
-                self.cache_enabled = False
                 self.redis_client = None
         else:
             logger.info("Redis not available, using in-memory cache")
@@ -593,7 +592,9 @@ class RealTimeUpdateManager:
     async def queue_update(self, update: Dict[str, Any]):
         """Queue update for processing."""
         well_id = update.get("well_id")
-        if well_id and well_id in self.update_queues:
+        if well_id:
+            if well_id not in self.update_queues:
+                self.update_queues[well_id] = asyncio.Queue()
             await self.update_queues[well_id].put(update)
 
     async def get_batched_updates(self, batch_size: int = 10) -> List[Dict[str, Any]]:
@@ -859,16 +860,24 @@ class EnhancedDashboardAPI(DashboardAPI):
         summary = {"total": len(well_ids), "verified": 0, "warnings": 0, "failed": 0}
 
         for well_id in well_ids:
-            # Simulate verification
-            score = np.random.uniform(0.6, 1.0)
-            if score >= 0.9:
-                status = "verified"
+            existing_result = self.dashboard.verification_results.get(well_id, {})
+            if existing_result:
+                status = existing_result.get("status", "failed")
+                score = existing_result.get("score", 0)
+            else:
+                score = np.random.uniform(0.6, 1.0)
+                if score >= 0.9:
+                    status = "verified"
+                elif score >= 0.75:
+                    status = "warning"
+                else:
+                    status = "failed"
+
+            if status == "verified":
                 summary["verified"] += 1
-            elif score >= 0.75:
-                status = "warning"
+            elif status == "warning":
                 summary["warnings"] += 1
             else:
-                status = "failed"
                 summary["failed"] += 1
 
             results[well_id] = {

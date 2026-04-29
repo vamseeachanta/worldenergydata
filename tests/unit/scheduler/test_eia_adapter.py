@@ -142,4 +142,5 @@ class TestEiaUsRefreshJob:
         call_kwargs = mock_sync_cls.call_args[1]
         output_dir = call_kwargs.get("output_dir", None)
         assert output_dir is not None
-        assert str(output_dir) == "data/modules/eia"
+        assert Path(output_dir).is_absolute()
+        assert Path(output_dir).parts[-3:] == ("data", "modules", "eia")

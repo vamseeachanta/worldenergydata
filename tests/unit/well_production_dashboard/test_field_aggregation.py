@@ -106,6 +106,7 @@ class TestFieldAggregationDashboard(unittest.TestCase):
             "well_count": 5,
             "active_wells": 4,
         }
+        self.dashboard.bsee_aggregator = mock_aggregator_instance
 
         # Test aggregation
         result = self.dashboard.aggregate_field_data(self.sample_wells)

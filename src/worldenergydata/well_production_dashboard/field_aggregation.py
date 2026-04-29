@@ -130,6 +130,18 @@ class FieldAggregationDashboard:
         # Use BSEE aggregator
         aggregated_data = self.bsee_aggregator.aggregate({"field": field_obj})
 
+        # Add compatibility aliases expected by dashboard consumers/tests while
+        # preserving the BSEE aggregator's canonical field names.
+        aggregated_data.setdefault("total_oil", aggregated_data.get("oil_bbls", 0))
+        aggregated_data.setdefault("total_gas", aggregated_data.get("gas_mcf", 0))
+        aggregated_data.setdefault("total_water", aggregated_data.get("water_bbls", 0))
+        aggregated_data.setdefault(
+            "well_count", aggregated_data.get("total_well_count", len(wells))
+        )
+        aggregated_data.setdefault(
+            "active_wells", aggregated_data.get("active_well_count", 0)
+        )
+
         # Add custom field metrics
         aggregated_data.update(self.calculate_field_metrics(wells))
 
@@ -179,8 +191,8 @@ class FieldAggregationDashboard:
             well_name = well_data.get("well_name", f"Well_{i}")
             well = Well(
                 id=f"well_{api_number}",
+                name=well_name,
                 api_number=api_number,
-                well_name=well_name,
                 lease_id=leases[lease_name].id,
             )
 
