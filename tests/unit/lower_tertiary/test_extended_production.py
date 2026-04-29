@@ -51,7 +51,14 @@ def v30_production():
     """V30 default (no end_date) -- identical to WRK-009."""
     if not REPRODUCER_AVAILABLE:
         pytest.skip("V30 reproducer not available")
-    return reproduce_v30_production()
+    if not (
+        PROJECT_ROOT / "docs/modules/bsee/analysis/production/FDAS_V30/leases.xlsx"
+    ).exists():
+        pytest.skip("V30 leases workbook not available in this checkout")
+    try:
+        return reproduce_v30_production()
+    except FileNotFoundError as exc:
+        pytest.skip(f"V30 production source data not available in this checkout: {exc}")
 
 
 @pytest.fixture(scope="module")
@@ -59,7 +66,14 @@ def extended_production():
     """Extended production through Oct 2025."""
     if not REPRODUCER_AVAILABLE:
         pytest.skip("V30 reproducer not available")
-    return reproduce_v30_production(end_date="2025-10-31")
+    if not (
+        PROJECT_ROOT / "docs/modules/bsee/analysis/production/FDAS_V30/leases.xlsx"
+    ).exists():
+        pytest.skip("V30 leases workbook not available in this checkout")
+    try:
+        return reproduce_v30_production(end_date="2025-10-31")
+    except FileNotFoundError as exc:
+        pytest.skip(f"V30 production source data not available in this checkout: {exc}")
 
 
 class TestExtendedProduction:
