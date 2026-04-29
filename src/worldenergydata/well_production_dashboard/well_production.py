@@ -235,6 +235,26 @@ class FieldAggregator:
 
         return field_data.reset_index()
 
+    def aggregate_field_production(self, field_name: str) -> pd.DataFrame:
+        """Backward-compatible field production aggregation helper."""
+        field_payload = (
+            self.get_field_data(field_name) if hasattr(self, "get_field_data") else None
+        )
+        if isinstance(field_payload, dict):
+            field_entry = field_payload.get(field_name, field_payload)
+            if isinstance(field_entry, dict):
+                production_data = field_entry.get("production")
+            else:
+                production_data = field_entry
+        else:
+            production_data = field_payload
+
+        if production_data is None:
+            return pd.DataFrame()
+        if not isinstance(production_data, pd.DataFrame):
+            production_data = pd.DataFrame(production_data)
+        return self.aggregate_field_data(production_data, field_name)
+
     @staticmethod
     def rollup_field_data(well_data: pd.DataFrame, field_name: str) -> pd.DataFrame:
         """
@@ -315,13 +335,23 @@ class WellProductionDashboard(DashboardBuilder):
     Integrates with verification system and provides well-specific functionality.
     """
 
-    def __init__(self, config: Optional[WellDashboardConfig] = None):
+    def __init__(
+        self,
+        config: Optional[WellDashboardConfig] = None,
+        config_path: Optional[str] = None,
+    ):
         """
         Initialize well production dashboard.
 
         Args:
             config: Dashboard configuration
+            config_path: Optional YAML configuration path. Preserved for
+                backward-compatible callers that construct the dashboard
+                directly instead of using ``from_yaml``.
         """
+        if config is None and config_path:
+            config = self._load_dashboard_config(config_path)
+
         # Initialize base dashboard
         super().__init__(
             config or WellDashboardConfig(title="Well Production Dashboard")
@@ -382,6 +412,26 @@ class WellProductionDashboard(DashboardBuilder):
         except Exception as e:
             logger.error(f"Failed to initialize verification: {e}")
             self.verification_enabled = False
+
+    @staticmethod
+    def _load_dashboard_config(config_path: str) -> WellDashboardConfig:
+        """Load dashboard configuration from a YAML file."""
+        with open(config_path, "r") as f:
+            config_dict = yaml.safe_load(f) or {}
+
+        dashboard_config = config_dict.get("dashboard", {}) or {}
+        verification_config = config_dict.get("verification", {}) or {}
+
+        return WellDashboardConfig(
+            title=dashboard_config.get("title", "Well Production Dashboard"),
+            enable_verification=verification_config.get(
+                "enabled", dashboard_config.get("enable_verification", True)
+            ),
+            cache_ttl=dashboard_config.get("cache_ttl", 300),
+            quality_threshold=verification_config.get(
+                "quality_threshold", dashboard_config.get("quality_threshold", 0.8)
+            ),
+        )
 
     @classmethod
     def from_yaml(cls, config_path: str) -> "WellProductionDashboard":
@@ -488,6 +538,46 @@ class WellProductionDashboard(DashboardBuilder):
         self._clear_cache()
 
         logger.info(f"Loaded {len(data)} rows of well data")
+
+    def get_well_data(self, well_id: str) -> pd.DataFrame:
+        """Return cached production data for a well, if available."""
+        if self.well_data is None:
+            return pd.DataFrame()
+        if "well_id" not in self.well_data.columns:
+            return self.well_data.copy()
+        return self.well_data[self.well_data["well_id"] == well_id].copy()
+
+    def verify_data_quality(
+        self, well_ids: Optional[List[str]] = None
+    ) -> Dict[str, Any]:
+        """Backward-compatible quality verification entrypoint."""
+        if self.well_data is None:
+            return {"status": "no_data", "quality_score": 0, "results": {}}
+
+        target_ids = well_ids or sorted(
+            self.well_data.get("well_id", pd.Series()).dropna().unique()
+        )
+        results: Dict[str, Any] = {}
+        for well_id in target_ids:
+            data = self.get_well_data(well_id)
+            if data.empty:
+                results[well_id] = {"status": "missing", "quality_score": 0}
+                continue
+            results[well_id] = self.verify_well_data(data)
+
+        quality_scores = [
+            result.get("quality_score", 0)
+            for result in results.values()
+            if isinstance(result, dict)
+        ]
+        average_quality = (
+            sum(quality_scores) / len(quality_scores) if quality_scores else 0
+        )
+        return {
+            "status": "verified" if results else "no_data",
+            "quality_score": average_quality,
+            "results": results,
+        }
 
     def verify_well_data(self, data: pd.DataFrame) -> Dict[str, Any]:
         """
