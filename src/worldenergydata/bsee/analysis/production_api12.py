@@ -5,6 +5,8 @@ import os
 # Third party imports
 import numpy as np
 import pandas as pd
+import plotly.express as px  # noqa: F401
+import plotly.graph_objects as go  # noqa: F401
 from assetutilities.common.data import SaveData
 from assetutilities.common.visualization.visualization_templates_plotly import (
     VisualizationTemplatesPlotly,
@@ -47,7 +49,7 @@ class ProductionAPI12Analysis:
         self._npv_calculator = NPVCalculator()
 
     def router(self, cfg):
-        return cfg
+        return None
 
     def run_production_analysis(self, cfg, data):
         """
