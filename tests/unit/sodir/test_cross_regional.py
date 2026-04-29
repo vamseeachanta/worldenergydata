@@ -323,14 +323,18 @@ class TestCalculateMetrics:
 
 
 class TestCompareRegions:
-    def test_compare_regions_has_dict_mutation_bug(self):
-        """Source code mutates metrics_diff during iteration (line 444).
-        Verifying the bug exists so we can track when it's fixed."""
+    def test_compare_regions_includes_differences_after_mutation_bug_fix(self):
+        """compare_regions should not mutate metrics_diff during iteration."""
         analyzer = CrossRegionalAnalyzer()
         sodir = _make_metrics(region="NCS", average_recovery_factor=0.5)
         bsee = _make_metrics(region="GoM", average_recovery_factor=0.3)
-        with pytest.raises(RuntimeError, match="dictionary changed size"):
-            analyzer.compare_regions(sodir, bsee)
+
+        result = analyzer.compare_regions(sodir, bsee)
+
+        assert result.metrics_diff["recovery_factor_diff"] == pytest.approx(0.2)
+        assert "discovery_rate_diff_pct" in result.metrics_diff
+        assert result.sodir_region == "Norwegian Continental Shelf"
+        assert result.bsee_region == "US Gulf of Mexico"
 
     def test_statistical_significance_direct(self):
         """Test _calculate_statistical_significance directly (bypasses bugged method)."""
