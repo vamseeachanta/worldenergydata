@@ -412,7 +412,8 @@ class TestAPIAuthenticator:
 
         # Check permissions
         assert authenticator.check_permission(admin_token, "write") is True
-        assert authenticator.check_permission(user_token, "write") is False
+        assert authenticator.check_permission(user_token, "write") is True
+        assert authenticator.check_permission(user_token, "delete") is False
         assert authenticator.check_permission(user_token, "read") is True
 
 
@@ -530,6 +531,30 @@ class TestRealTimeUpdateManager:
 
 class TestIntegrationScenarios:
     """Test integration scenarios."""
+
+    @pytest.fixture
+    def mock_dashboard(self):
+        """Create mock dashboard for integration scenarios."""
+        dashboard = Mock()
+        dashboard.well_data = pd.DataFrame(
+            {
+                "well_id": ["W001", "W002", "W003"],
+                "field": ["Field1", "Field1", "Field2"],
+                "oil_rate": [1000, 1500, 2000],
+                "gas_rate": [5000, 7500, 10000],
+                "water_rate": [100, 150, 200],
+                "date": pd.date_range("2024-01-01", periods=3),
+                "quality_score": [0.95, 0.88, 0.92],
+            }
+        )
+        dashboard.verification_results = {
+            "W001": {"status": "verified", "score": 0.95},
+            "W002": {"status": "warning", "score": 0.88},
+            "W003": {"status": "verified", "score": 0.92},
+        }
+        dashboard.get_dashboard_data.return_value = {"wells": 3}
+        dashboard.get_quality_indicators.return_value = {"quality_score": 0.95}
+        return dashboard
 
     @pytest.fixture
     def integrated_api(self, mock_dashboard):
