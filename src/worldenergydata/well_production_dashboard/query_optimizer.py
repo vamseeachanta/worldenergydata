@@ -97,13 +97,19 @@ class LazyDataLoader:
             Data chunks
         """
         total_rows = self._get_total_rows(filters)
-        chunks_needed = (
-            total_rows + self.config.chunk_size - 1
-        ) // self.config.chunk_size
+        # Historical callers often overrode ``page_size`` only and expected
+        # chunked iteration to follow the same page-sized batches. Preserve
+        # the documented default chunk size unless page_size was explicitly
+        # customized without a matching chunk_size override.
+        effective_chunk_size = self.config.chunk_size
+        if self.config.chunk_size == LazyLoadConfig().chunk_size:
+            effective_chunk_size = min(self.config.chunk_size, self.config.page_size)
+
+        chunks_needed = (total_rows + effective_chunk_size - 1) // effective_chunk_size
 
         for chunk_idx in range(chunks_needed):
-            offset = chunk_idx * self.config.chunk_size
-            limit = min(self.config.chunk_size, total_rows - offset)
+            offset = chunk_idx * effective_chunk_size
+            limit = min(effective_chunk_size, total_rows - offset)
 
             chunk = self._fetch_data(offset, limit, filters)
 
