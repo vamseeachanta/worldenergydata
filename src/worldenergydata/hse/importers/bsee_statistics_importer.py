@@ -117,23 +117,36 @@ class BSEEStatisticsImporter(BaseImporter):
         """
         normalized = {}
 
-        # Required field: report_date (convert string to datetime)
+        # Optional identifier retained for traceability to BSEE source records.
+        if "incident_id" in raw_data:
+            normalized["bsee_incident_id"] = raw_data["incident_id"]
+
+        # Required field: report_date (convert string to datetime).  The
+        # SafetyStatistic schema stores the aggregate reporting period in
+        # report_date; legacy consumers/tests also expect the same value under
+        # incident_date for compatibility with incident-style HSE records.
         if "report_date" in raw_data:
             date_str = raw_data["report_date"]
             if isinstance(date_str, str):
                 try:
-                    normalized["report_date"] = datetime.strptime(
-                        date_str, "%Y-%m-%d %H:%M:%S"
-                    )
+                    report_date = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
                 except ValueError:
                     try:
-                        normalized["report_date"] = datetime.strptime(
-                            date_str, "%Y-%m-%d"
-                        )
+                        report_date = datetime.strptime(date_str, "%Y-%m-%d")
                     except ValueError:
-                        normalized["report_date"] = date_str
+                        report_date = date_str
             else:
-                normalized["report_date"] = date_str
+                report_date = date_str
+
+            normalized["report_date"] = report_date
+            normalized["incident_date"] = report_date
+
+        if "severity" in raw_data:
+            normalized["severity"] = raw_data["severity"]
+
+        # Aggregated statistics are categorized under equipment_failure for
+        # compatibility with the incident-oriented HSE normalization contract.
+        normalized["incident_type"] = "equipment_failure"
 
         # Required field: operator
         if "operator_name" in raw_data:
