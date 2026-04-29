@@ -188,13 +188,21 @@ class ExportResult:
 class WellDashboardExportManager:
     """Manager for well production dashboard exports"""
 
-    def __init__(self, config_path: Optional[str] = None):
+    def __init__(self, config_path: Optional[str] = None, dashboard: Any = None):
         """
         Initialize export manager
 
         Args:
-            config_path: Optional path to configuration file
+            config_path: Optional path to configuration file. For backward
+                compatibility, callers may pass a dashboard object as the first
+                positional argument.
+            dashboard: Optional dashboard instance associated with the export.
         """
+        if config_path is not None and not isinstance(config_path, (str, Path)):
+            dashboard = config_path
+            config_path = None
+
+        self.dashboard = dashboard
         self.config = self._load_config(config_path)
 
         # Initialize exporters
