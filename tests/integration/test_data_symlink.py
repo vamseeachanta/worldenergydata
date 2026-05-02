@@ -33,8 +33,28 @@ from worldenergydata.common.data_resolver import (
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = PROJECT_ROOT / "data"
 SETUP_SCRIPT = PROJECT_ROOT / "scripts" / "setup-data-link.sh"
+ACE_MOUNT = Path("/mnt/ace/worldenergydata")
 
 _is_symlink = DATA_DIR.is_symlink()
+_ace_mount_exists = ACE_MOUNT.exists()
+
+
+def _require_symlink_or_skip():
+    """Distinguish legitimate skip from deployment drift.
+
+    Skip when /mnt/ace isn't mounted on this host (e.g., CI without the mount).
+    FAIL when /mnt/ace IS present but data/ isn't a symlink — that's the bug
+    pattern from #298/#359/#368: precondition-skipif silently masking a broken
+    deployment. /mnt/ace data exists, the catalog claims it's reachable, but
+    the symlink wiring was never done.
+    """
+    if not _ace_mount_exists:
+        pytest.skip("/mnt/ace mount not present on this host")
+    if not _is_symlink:
+        pytest.fail(
+            f"Drift detected: {ACE_MOUNT} exists but {DATA_DIR} is not a symlink. "
+            f"Run scripts/setup-data-link.sh. See #359 for context."
+        )
 
 
 @pytest.fixture(autouse=True)
@@ -62,10 +82,10 @@ def test_setup_data_link_script_exists():
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.skipif(not _is_symlink, reason="requires data symlink to /mnt/ace")
 @pytest.mark.integration
 def test_data_resolver_follows_symlink():
     """When data/ is a symlink, DataResolver resolves through it."""
+    _require_symlink_or_skip()
     root = get_data_root()
     assert root.is_dir()
     # The resolved path should NOT be the symlink itself
@@ -90,10 +110,10 @@ def test_data_resolver_with_env_var_override(monkeypatch, tmp_path):
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.skipif(not _is_symlink, reason="requires data symlink to /mnt/ace")
 @pytest.mark.integration
 def test_bsee_bin_accessible_via_symlink():
     """BSEE binary data is reachable through the symlink."""
+    _require_symlink_or_skip()
     bsee_path = get_module_data("bsee")
     assert bsee_path.is_dir(), f"BSEE module dir missing: {bsee_path}"
     # Sanity: directory should contain files
@@ -106,10 +126,10 @@ def test_bsee_bin_accessible_via_symlink():
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.skipif(not _is_symlink, reason="requires data symlink to /mnt/ace")
 @pytest.mark.integration
 def test_hse_raw_accessible_via_symlink():
     """HSE OSHA CSVs are reachable through the symlink."""
+    _require_symlink_or_skip()
     hse_path = get_module_data("hse")
     assert hse_path.is_dir(), f"HSE module dir missing: {hse_path}"
     children = list(hse_path.iterdir())
