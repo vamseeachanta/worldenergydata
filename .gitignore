@@ -155,6 +155,12 @@ coordination/orchestration/*
 # Pipeline-regenerable data (see DATA_RESIDENCE_POLICY.md)
 # ============================================================
 
+# Per-host relocation symlinks created by scripts/setup-data-link.sh (#359).
+# These point to /mnt/ace bulk data and are host-specific — never commit.
+/data/modules/bsee/bin
+/data/modules/bsee/zip
+/data/modules/hse/raw
+
 # OSHA raw data (regenerate: osha_acquirer.py)
 data/modules/hse/raw/osha/*.csv
 data/modules/hse/raw/osha/*.csv.zip
