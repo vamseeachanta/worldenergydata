@@ -11,6 +11,7 @@ Percent-format Python scripts (`# %%` cells) that work in VS Code, JupyterLab, o
 | `quickstart_marine_safety.py` | Marine Safety | Fatality, foundering, and hatch incident analysis |
 | `quickstart_sodir.py` | SODIR | Norwegian Continental Shelf API and field data |
 | `quickstart_eia.py` | EIA | US petroleum production and state-level trends |
+| `lease_npv_walkthrough.py` | BSEE + FDAS | End-to-end: real BSEE lease → dev-system classification → cashflow → NPV/IRR/MIRR/payback → citations panel (#358) |
 
 ## How to run
 
