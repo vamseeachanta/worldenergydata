@@ -12,15 +12,17 @@ Datasets:
     - INCs: Incidents of Non-Compliance (~51K operator-level records)
 
 Usage:
-    # As module
+    # As module — use DataResolver so the path resolves correctly whether
+    # data/ is in-repo or symlinked to /mnt/ace per #359.
+    from worldenergydata.common.data_resolver import get_module_data
     from worldenergydata.hse.acquirers.bsee_acquirer import BSEEAcquirer
 
     acquirer = BSEEAcquirer()
-    results = acquirer.download_all("data/modules/hse/raw/bsee")
+    results = acquirer.download_all(get_module_data("hse") / "raw/bsee")
 
     # CLI
     uv run python -m worldenergydata.hse.acquirers.bsee_acquirer \\
-        --output-dir data/modules/hse/raw/bsee --force
+        --output-dir "$(get_module_data hse)/raw/bsee" --force
 """
 
 import argparse

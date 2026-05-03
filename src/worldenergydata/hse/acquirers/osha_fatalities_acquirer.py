@@ -13,16 +13,19 @@ Datasets:
     - Fatality Inspections: Extracted from main inspection dataset (type 'A')
 
 Usage:
+    # Use DataResolver so the path resolves correctly whether data/ is in-repo
+    # or symlinked to /mnt/ace per #359.
+    from worldenergydata.common.data_resolver import get_module_data
     from worldenergydata.hse.acquirers.osha_fatalities_acquirer import (
         OSHAFatalitiesAcquirer,
     )
 
     acquirer = OSHAFatalitiesAcquirer()
-    results = acquirer.download_all("data/modules/hse/raw/osha/fatalities")
+    results = acquirer.download_all(get_module_data("hse") / "raw/osha/fatalities")
 
     # CLI
     uv run python -m worldenergydata.hse.acquirers.osha_fatalities_acquirer \\
-        --output-dir data/modules/hse/raw/osha/fatalities --force
+        --output-dir "$(get_module_data hse)/raw/osha/fatalities" --force
 """
 
 import argparse
