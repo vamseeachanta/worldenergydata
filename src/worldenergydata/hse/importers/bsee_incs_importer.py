@@ -13,16 +13,18 @@ Primary file columns (mv_incs_by_oper.txt):
     WARNING_INCS, COMP_SHUTIN_INCS, FAC_SHUTIN_INCS
 
 Usage:
-    # As module
+    # As module — use DataResolver so the path resolves correctly whether
+    # data/ is in-repo or symlinked to /mnt/ace per #359.
+    from worldenergydata.common.data_resolver import get_module_data
     from worldenergydata.hse.importers.bsee_incs_importer import BSEEINCSImporter
 
-    importer = BSEEINCSImporter(data_dir="data/modules/hse/raw/bsee")
+    importer = BSEEINCSImporter(data_dir=get_module_data("hse") / "raw/bsee")
     records = importer.load()
     logger.info(f"Loaded {len(records)} INC records")
 
     # CLI
     uv run python -m worldenergydata.hse.importers.bsee_incs_importer \\
-        --data-dir data/modules/hse/raw/bsee
+        --data-dir "$(get_module_data hse)/raw/bsee"
 """
 
 import argparse
