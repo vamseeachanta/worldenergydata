@@ -12,16 +12,18 @@ a tab-delimited text file with columns:
 Maps records to the HSEIncident database model.
 
 Usage:
-    # As module
+    # As module — use DataResolver so the path resolves correctly whether
+    # data/ is in-repo or symlinked to /mnt/ace per #359.
+    from worldenergydata.common.data_resolver import get_module_data
     from worldenergydata.hse.importers.bsee_incinv_importer import BSEEIncInvImporter
 
-    importer = BSEEIncInvImporter(data_dir="data/modules/hse/raw/bsee")
+    importer = BSEEIncInvImporter(data_dir=get_module_data("hse") / "raw/bsee")
     records = importer.load()
     logger.info(f"Loaded {len(records)} incident investigation records")
 
     # CLI
     uv run python -m worldenergydata.hse.importers.bsee_incinv_importer \\
-        --data-dir data/modules/hse/raw/bsee
+        --data-dir "$(get_module_data hse)/raw/bsee"
 """
 
 import argparse

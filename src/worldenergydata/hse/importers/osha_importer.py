@@ -17,14 +17,20 @@ Column mappings:
     - Inspection type mapped to incident_type and severity
 
 Usage:
+    # Use DataResolver so the path resolves correctly whether data/ is in-repo
+    # or symlinked to /mnt/ace per #359.
+    from worldenergydata.common.data_resolver import get_module_data
     from worldenergydata.hse.importers.osha_importer import OSHAImporter
 
-    importer = OSHAImporter(db_session=session, data_dir="data/modules/hse/raw/osha")
+    importer = OSHAImporter(
+        db_session=session,
+        data_dir=get_module_data("hse") / "raw/osha",
+    )
     stats = importer.import_data()
 
     # CLI
     uv run python -m worldenergydata.hse.importers.osha_importer \\
-        --data-dir data/modules/hse/raw/osha
+        --data-dir "$(get_module_data hse)/raw/osha"
 """
 
 import argparse

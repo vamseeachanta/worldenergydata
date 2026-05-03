@@ -14,15 +14,17 @@ Datasets:
     - Accident Injuries: Individual injury details from accidents
 
 Usage:
-    # As module
+    # As module — use DataResolver so the path resolves correctly whether
+    # data/ is in-repo or symlinked to /mnt/ace per #359.
+    from worldenergydata.common.data_resolver import get_module_data
     from worldenergydata.hse.acquirers.osha_acquirer import OSHAAcquirer
 
     acquirer = OSHAAcquirer()
-    results = acquirer.download_all("data/modules/hse/raw/osha")
+    results = acquirer.download_all(get_module_data("hse") / "raw/osha")
 
     # CLI
     uv run python -m worldenergydata.hse.acquirers.osha_acquirer \\
-        --output-dir data/modules/hse/raw/osha --force --filter-naics
+        --output-dir "$(get_module_data hse)/raw/osha" --force --filter-naics
 """
 
 import argparse
