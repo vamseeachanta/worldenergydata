@@ -44,9 +44,18 @@ ACE_MOUNT = Path("/mnt/ace/worldenergydata")
 # Each (repo_path, ace_path) pair: repo_path is where the symlink lives,
 # ace_path is what it should point at.
 RELOCATED_SUBTREES = [
-    (DATA_DIR / "modules" / "bsee" / "bin", ACE_MOUNT / "data" / "modules" / "bsee" / "bin"),
-    (DATA_DIR / "modules" / "bsee" / "zip", ACE_MOUNT / "data" / "modules" / "bsee" / "zip"),
-    (DATA_DIR / "modules" / "hse" / "raw", ACE_MOUNT / "data" / "modules" / "hse" / "raw"),
+    (
+        DATA_DIR / "modules" / "bsee" / "bin",
+        ACE_MOUNT / "data" / "modules" / "bsee" / "bin",
+    ),
+    (
+        DATA_DIR / "modules" / "bsee" / "zip",
+        ACE_MOUNT / "data" / "modules" / "bsee" / "zip",
+    ),
+    (
+        DATA_DIR / "modules" / "hse" / "raw",
+        ACE_MOUNT / "data" / "modules" / "hse" / "raw",
+    ),
 ]
 
 _ace_mount_exists = ACE_MOUNT.exists()
@@ -104,9 +113,9 @@ def test_relocated_subtrees_resolve_to_ace():
     _require_symlink_or_skip()
     for link, expected_target in RELOCATED_SUBTREES:
         assert link.is_symlink(), f"{link} is not a symlink"
-        assert link.resolve() == expected_target.resolve(), (
-            f"{link} resolves to {link.resolve()} (expected {expected_target})"
-        )
+        assert (
+            link.resolve() == expected_target.resolve()
+        ), f"{link} resolves to {link.resolve()} (expected {expected_target})"
         # The resolved path should be a real, populated directory.
         assert link.is_dir(), f"{link} target is not a directory"
         assert any(link.iterdir()), f"{link} target is empty"
