@@ -58,6 +58,7 @@ from worldenergydata.cli.commands import (
     fdas,
     landman,
     lng_terminals,
+    lower_tertiary,
     marine_safety,
     metocean,
     mexico_cnh,
@@ -98,6 +99,11 @@ app.add_typer(
     help="Marine safety incident data management",
 )
 app.add_typer(fdas.app, name="fdas", help="Field Development Analysis System")
+app.add_typer(
+    lower_tertiary.app,
+    name="lower-tertiary",
+    help="Lower Tertiary portfolio analyses (10 GoM fields)",
+)
 app.add_typer(
     sodir.app,
     name="sodir",
