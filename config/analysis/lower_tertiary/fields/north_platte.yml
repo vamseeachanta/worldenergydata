@@ -1,0 +1,21 @@
+# ABOUTME: Field-level configuration for the North Platte pre-FID Lower Tertiary appraisal case
+# ABOUTME: Pre-FID; capex figures are preliminary public estimates, to be tightened in #375 review.
+# Provenance:
+#   - Operator: TotalEnergies (took over operatorship from Equinor in 2022 after Cobalt-era handover)
+#   - Lease: Garden Banks 957/958 per public disclosure
+#   - Status: Pre-FID per reports/lower_tertiary_field_summary.md
+#   - Capex: preliminary industry estimate (~$5-7B development concept range); exact value pending FID
+
+field:
+  field_id: north_platte
+  display_name: "North Platte"
+  status: pre_fid
+  leases_key: north_platte
+  first_oil: "2030-01-01"
+  data_through: "2024-12-31"
+  operator: "TotalEnergies"
+  capex:
+    total_mm_usd: 6000
+  production_profile:
+    plateau_rate_mbopd: 75
+    gor_scf_per_bbl: 1100
