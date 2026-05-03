@@ -14,6 +14,10 @@ from typing import Optional
 import typer
 from rich.console import Console
 
+from worldenergydata.lower_tertiary.comprehensive_report import (
+    assemble_comprehensive_report,
+    render_all,
+)
 from worldenergydata.lower_tertiary.portfolio_analytics import (
     portfolio_analytics_to_csv,
     portfolio_analytics_to_html,
@@ -105,4 +109,23 @@ def portfolio_analytics(
     console.print(
         f"[bold]Sections rendered:[/] {section} &middot; "
         f"[bold]Fields:[/] {len(run.field_ids)}"
+    )
+
+
+@app.command("comprehensive-report")
+def comprehensive_report(
+    output_dir: Path = typer.Option(
+        Path("reports/lower_tertiary"),
+        "--output-dir",
+        help="Directory to write the report outputs (MD + HTML + PDF)",
+    ),
+) -> None:
+    """Assemble the LT comprehensive report (#377): MD + HTML + PDF."""
+    result = assemble_comprehensive_report()
+    paths = render_all(result, output_dir)
+    for name, path in paths.items():
+        console.print(f"[green]Wrote {name}:[/] {path}")
+    console.print(
+        f"[bold]Fields covered:[/] {len(result.economics_run.results)} &middot; "
+        f"[bold]Executive findings:[/] {len(result.executive_summary)}"
     )

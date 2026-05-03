@@ -1,5 +1,11 @@
 # Lower Tertiary Field Summary - Gulf of Mexico
 
+> **⚠️ SUPERSEDED 2026-05-03 by `reports/lower_tertiary/comprehensive_2026.md` (#377).**
+> This summary remains the **roster source-of-record** (10 GoM Lower Tertiary fields)
+> but is no longer the canonical narrative report. Generate the comprehensive
+> replacement via `uv run worldenergydata lower-tertiary comprehensive-report`
+> or `python scripts/reporting/assemble_lt_comprehensive.py`.
+
 **Generated:** January 19, 2026
 **Data Through:** July 2025
 
