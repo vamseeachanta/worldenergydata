@@ -1,0 +1,30 @@
+# ABOUTME: Field-level configuration for the Big Foot Lower Tertiary development
+# ABOUTME: Capex/partner figures sourced from public Chevron disclosures and BSEE records.
+# Provenance:
+#   - Operator + working interests: Chevron operator with Equinor and Marubeni Oil & Gas as partners
+#     per Chevron public project announcements
+#   - First oil: Chevron press release (Big Foot project sanctioned 2010, first oil 2018)
+#   - Lease: Walker Ridge 29 (G16942) per BSEE lease records and reports/lower_tertiary_field_summary.md
+#   - Capex aggregate: industry estimate (~$5.2B) — exact breakdown to be tightened in #375 review.
+
+field:
+  field_id: big_foot
+  display_name: "Big Foot"
+  status: producing
+  leases_key: big_foot
+  first_oil: "2018-11-01"
+  data_through: "2024-12-31"
+  operator: "Chevron"
+  partners:
+    - name: "Chevron"
+      working_interest: 0.60
+    - name: "Equinor"
+      working_interest: 0.275
+    - name: "Marubeni Oil & Gas"
+      working_interest: 0.125
+  capex:
+    total_mm_usd: 5200
+  production_profile:
+    plateau_rate_mbopd: 75
+    gor_scf_per_bbl: 1100
+  opex_per_boe: 15.0
