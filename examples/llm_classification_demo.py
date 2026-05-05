@@ -456,4 +456,8 @@ def main():
 
 
 if __name__ == '__main__':
+    import os
+    if not os.environ.get("WORLDENERGYDATA_RUN_LLM_EXAMPLES"):
+        print("Skipped: set WORLDENERGYDATA_RUN_LLM_EXAMPLES=1 to run LLM examples (downloads ~1.6 GB).")
+        raise SystemExit(0)
     main()
