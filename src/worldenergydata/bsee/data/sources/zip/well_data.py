@@ -8,16 +8,12 @@ from loguru import logger
 
 from worldenergydata.bsee.data.loaders.block.local_files import DataFromLocalFiles
 
-wwy = WorkingWithYAML()
-zip_files_to_df = ZipFilestoDf()
-
-block_data = DataFromLocalFiles()
-
-
 class WellDataFromZip:
 
     def __init__(self):
-        pass
+        self._wwy = WorkingWithYAML()
+        self._zip_files_to_df = ZipFilestoDf()
+        self._block_data = DataFromLocalFiles()
 
     def router(self, cfg):
 
@@ -40,7 +36,7 @@ class WellDataFromZip:
         folder_path_zip = cfg["parameters"]["filepath"]["apm"]["zip"]
         library_name = "worldenergydata"
         library_file_cfg = {"filepath": folder_path_zip, "library_name": library_name}
-        folder_path_zip = wwy.get_library_filepath(
+        folder_path_zip = self._wwy.get_library_filepath(
             library_file_cfg, src_relative_location_flag=False
         )
         if not os.path.exists(folder_path_zip):
@@ -48,7 +44,7 @@ class WellDataFromZip:
 
         folder_path_bin = cfg["parameters"]["filepath"]["apm"]["bin"]
         library_file_cfg = {"filepath": folder_path_bin, "library_name": library_name}
-        folder_path_bin = wwy.get_library_filepath(
+        folder_path_bin = self._wwy.get_library_filepath(
             library_file_cfg, src_relative_location_flag=False
         )
         if not os.path.exists(folder_path_zip):
@@ -73,7 +69,7 @@ class WellDataFromZip:
                 "nrows": None,
             }
 
-            dfs = zip_files_to_df.zip_file_to_dataframe(cfg_zip_utilities)
+            dfs = self._zip_files_to_df.zip_file_to_dataframe(cfg_zip_utilities)
 
             for key, df in dfs.items():
                 if len(df) > 0:

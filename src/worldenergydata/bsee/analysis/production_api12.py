@@ -21,14 +21,6 @@ from worldenergydata.bsee.analysis.legacy.api12_economics import (
 from worldenergydata.bsee.data.bsee_data import BSEEData
 from worldenergydata.common.legacy.data import DateTimeUtility
 
-wwy = WorkingWithYAML()
-viz_templates_plotly = VisualizationTemplatesPlotly()
-
-bsee_data = BSEEData()
-dtu = DateTimeUtility()
-save_data = SaveData()
-
-
 class ProductionAPI12Analysis:
     """
     Production analysis for BSEE API12 well data.
@@ -45,6 +37,11 @@ class ProductionAPI12Analysis:
     """
 
     def __init__(self):
+        self._wwy = WorkingWithYAML()
+        self._viz_templates_plotly = VisualizationTemplatesPlotly()
+        self._bsee_data = BSEEData()
+        self._dtu = DateTimeUtility()
+        self._save_data = SaveData()
         self._revenue_calculator = RevenueCalculator()
         self._npv_calculator = NPVCalculator()
 
@@ -247,7 +244,7 @@ class ProductionAPI12Analysis:
             "SheetNames": sheet_names,
             "thin_border": True,
         }
-        save_data.DataFrameArray_To_xlsx_openpyxl(production_df_api12s, cfg_xlsx)
+        self._save_data.DataFrameArray_To_xlsx_openpyxl(production_df_api12s, cfg_xlsx)
 
         file_label = "prod_summ_" + groups_label
         file_name = os.path.join(result_folder, file_label + ".csv")
@@ -416,7 +413,7 @@ class ProductionAPI12Analysis:
             year = int(api12_df.PRODUCTION_DATE.iloc[df_row] / 100)
             month = api12_df.PRODUCTION_DATE.iloc[df_row] % year
             date_time = datetime.datetime(year, month, 1)
-            date_time = dtu.last_day_of_month(date_time.date())
+            date_time = self._dtu.last_day_of_month(date_time.date())
             if api12_df.DAYS_ON_PROD.iloc[df_row] != 0:
                 rate = (
                     api12_df.MON_O_PROD_VOL.iloc[df_row]
@@ -514,7 +511,7 @@ class ProductionAPI12Analysis:
         """Plot production rates by well."""
         from assetutilities.engine import engine as au_engine
 
-        plot_yml = viz_templates_plotly.get_xy_line_df(cfg["Analysis"].copy())
+        plot_yml = self._viz_templates_plotly.get_xy_line_df(cfg["Analysis"].copy())
 
         plot_yml["data"]["groups"][0]["file_name"] = prod_rates_df
         groups_label = cfg["meta"].get("label", None)
@@ -544,7 +541,7 @@ class ProductionAPI12Analysis:
         """Plot cumulative production by well."""
         from assetutilities.engine import engine as au_engine
 
-        plot_yml = viz_templates_plotly.get_xy_line_df(cfg["Analysis"].copy())
+        plot_yml = self._viz_templates_plotly.get_xy_line_df(cfg["Analysis"].copy())
 
         plot_yml["data"]["groups"][0]["file_name"] = prod_cumulative_mmbbl_groups
         groups_label = cfg["meta"].get("label", None)
@@ -576,7 +573,7 @@ class ProductionAPI12Analysis:
         """Plot cumulative production by block."""
         from assetutilities.engine import engine as au_engine
 
-        plot_yml = viz_templates_plotly.get_xy_line_df(cfg["Analysis"].copy())
+        plot_yml = self._viz_templates_plotly.get_xy_line_df(cfg["Analysis"].copy())
 
         plot_yml["data"]["groups"][0][
             "file_name"
@@ -610,7 +607,7 @@ class ProductionAPI12Analysis:
         """Plot cumulative production by field."""
         from assetutilities.engine import engine as au_engine
 
-        plot_yml = viz_templates_plotly.get_xy_line_df(cfg["Analysis"].copy())
+        plot_yml = self._viz_templates_plotly.get_xy_line_df(cfg["Analysis"].copy())
 
         plot_yml["data"]["groups"][0][
             "file_name"

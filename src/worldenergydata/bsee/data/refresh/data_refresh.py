@@ -11,12 +11,6 @@ from worldenergydata.bsee.data.sources.zip.production_data import (
 )
 from worldenergydata.bsee.data.sources.zip.well_data import WellDataFromZip
 
-prod_zip = GetProdDataFromZip()
-well_zip = WellDataFromZip()
-data_refresh_enhanced = None  # Will be initialized only when needed
-config_router = ConfigRouter()
-
-
 class DataRefresh:
     """
     This class is responsible for refreshing data in the BSEE module.
@@ -24,7 +18,10 @@ class DataRefresh:
     """
 
     def __init__(self):
-        pass
+        self._prod_zip = GetProdDataFromZip()
+        self._well_zip = WellDataFromZip()
+        self._data_refresh_enhanced = None  # Will be initialized only when needed
+        self._config_router = ConfigRouter()
 
     def router(self, cfg):
         """
@@ -38,10 +35,9 @@ class DataRefresh:
             logger.info(
                 "Enhanced mode detected - routing to enhanced data refresh system"
             )
-            global data_refresh_enhanced
-            if data_refresh_enhanced is None:
-                data_refresh_enhanced = DataRefreshEnhanced()
-            return data_refresh_enhanced.router(cfg)
+            if self._data_refresh_enhanced is None:
+                self._data_refresh_enhanced = DataRefreshEnhanced()
+            return self._data_refresh_enhanced.router(cfg)
 
         # Legacy mode - check for refresh flag
         logger.info("Legacy mode - checking for refresh flag")
@@ -65,7 +61,7 @@ class DataRefresh:
         """
         data_refresh_apm_flag = cfg.get("data", {}).get("apm", False)
         if data_refresh_apm_flag:
-            well_zip.save_eWellAPMRawData_to_binary(cfg)
+            self._well_zip.save_eWellAPMRawData_to_binary(cfg)
 
     def refresh_production_data(self, cfg):
         """
@@ -73,4 +69,4 @@ class DataRefresh:
         """
         data_refresh_prod_flag = cfg.get("data", {}).get("production", False)
         if data_refresh_prod_flag:
-            prod_zip.save_zip_data_to_binary(cfg)
+            self._prod_zip.save_zip_data_to_binary(cfg)

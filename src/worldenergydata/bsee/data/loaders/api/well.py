@@ -13,14 +13,11 @@ from worldenergydata.common.data_resolver import get_module_data_safe
 
 _BSEE_BIN = str(get_module_data_safe("bsee") / "bin")
 
-wwy = WorkingWithYAML()
-zip_files_to_df = ZipFilestoDf()
-
-
 class WellData:
 
     def __init__(self):
-        pass
+        self._wwy = WorkingWithYAML()
+        self._zip_files_to_df = ZipFilestoDf()
 
     def router(self, cfg):
         self.apm_data = APMData(cfg)

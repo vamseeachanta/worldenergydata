@@ -6,13 +6,11 @@ from assetutilities.common.utilities import is_dir_valid_func
 
 from worldenergydata.bsee.data.sources.bin.block_data import BlockData
 
-block_data = BlockData()
-
 
 class DataFromLocalFiles:
 
     def __init__(self):
-        pass
+        self._block_data = BlockData()
 
     def router(self, cfg):
         cfg, block_data_groups = self.get_block_data_groups(cfg)
@@ -51,7 +49,7 @@ class DataFromLocalFiles:
         block_group_data = []
         for group_idx in range(len(groups)):
             group = groups[group_idx]
-            block_data.router(cfg, group)
+            self._block_data.router(cfg, group)
             block_metadata = self.generate_output_item(cfg, group)
 
             block_group_data.append(block_metadata)

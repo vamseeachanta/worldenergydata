@@ -1,12 +1,10 @@
 from worldenergydata.bsee.data.loaders.lease.local_files import DataFromLocalFiles
 
-lease_data_from_local_files = DataFromLocalFiles()
-
 
 class LeaseRouter:
 
     def __init__(self):
-        pass
+        self._lease_data_from_local_files = DataFromLocalFiles()
 
     def router(self, cfg):
 
@@ -20,6 +18,6 @@ class LeaseRouter:
 
     def get_lease_data_groups(self, cfg):
 
-        cfg, lease_data_groups = lease_data_from_local_files.router(cfg)
+        cfg, lease_data_groups = self._lease_data_from_local_files.router(cfg)
 
         return cfg

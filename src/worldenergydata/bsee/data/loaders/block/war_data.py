@@ -7,13 +7,10 @@ from assetutilities.common.yml_utilities import WorkingWithYAML
 logger = logging.getLogger(__name__)
 
 
-wwy = WorkingWithYAML()
-
-
 class WARDataFromBin:
 
     def __init__(self):
-        pass
+        self._wwy = WorkingWithYAML()
 
     def router(self, cfg):
         cfg, block_data_groups = self.get_block_data_groups(cfg)
@@ -42,7 +39,7 @@ class WARDataFromBin:
 
         library_name = "worldenergydata"
         library_file_cfg = {"filepath": mv_war_path, "library_name": library_name}
-        mv_war_path = wwy.get_library_filepath(
+        mv_war_path = self._wwy.get_library_filepath(
             library_file_cfg, src_relative_location_flag=False
         )
         mv_war_path = os.path.join(mv_war_path, "mv_war_main.bin")

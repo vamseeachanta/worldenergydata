@@ -1,14 +1,12 @@
 from worldenergydata.bsee.analysis.bsee_analysis import BSEEAnalysis
 from worldenergydata.bsee.data.bsee_data import BSEEData
 
-bsee_data = BSEEData()
-bsee_analysis = BSEEAnalysis()
-
 
 class bsee:
 
     def __init__(self):
-        pass
+        self._bsee_data = BSEEData()
+        self._bsee_analysis = BSEEAnalysis()
 
     def router(self, cfg):
         basename = cfg["basename"]
@@ -17,7 +15,7 @@ class bsee:
         cfg[basename].update({"data": cfg.get("data", {}).copy()})
         cfg[basename].update({"analysis": cfg.get("analysis", {}).copy()})
 
-        cfg, data = bsee_data.router(cfg)
-        cfg = bsee_analysis.router(cfg, data)
+        cfg, data = self._bsee_data.router(cfg)
+        cfg = self._bsee_analysis.router(cfg, data)
 
         return cfg
