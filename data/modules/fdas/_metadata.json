@@ -1,17 +1,48 @@
 {
   "module": "fdas",
-  "last_refresh": "2025-10-04T00:00:00Z",
-  "record_count": 57281,
-  "file_count": 1,
-  "total_size_bytes": 4593879,
-  "source_url": "",
-  "format": "csv",
+  "generated_at": "2026-05-05T01:06:51.076150+00:00",
+  "last_refresh": "2026-05-05",
+  "record_count": 0,
+  "file_count": 3,
+  "total_size_bytes": 4596765,
+  "total_size_human": "4.4 MB",
+  "source_url": null,
+  "format": ".csv,.json,.yaml",
+  "format_breakdown": {
+    ".csv": {
+      "count": 1,
+      "size_bytes": 4593879
+    },
+    ".json": {
+      "count": 1,
+      "size_bytes": 1023
+    },
+    ".yaml": {
+      "count": 1,
+      "size_bytes": 1863
+    }
+  },
+  "has_external_data": false,
+  "external_data_root": null,
   "files": [
     {
-      "name": "enhanced/wells/well_data_enhanced.csv",
+      "name": "_metadata.json",
+      "path": "_metadata.json",
+      "size_bytes": 1023,
+      "modified": "2026-05-05"
+    },
+    {
+      "name": "well_data_enhanced.csv",
+      "path": "enhanced/wells/well_data_enhanced.csv",
       "size_bytes": 4593879,
-      "modified": "2025-10-04",
-      "rows": 57281
+      "modified": "2025-10-04"
+    },
+    {
+      "name": "schema.yaml",
+      "path": "schema.yaml",
+      "size_bytes": 1863,
+      "modified": "2026-05-05"
     }
-  ]
+  ],
+  "files_truncated": false
 }

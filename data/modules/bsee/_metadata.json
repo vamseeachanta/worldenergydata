@@ -1,168 +1,1428 @@
 {
   "module": "bsee",
-  "last_refresh": "2026-03-15T00:00:00Z",
-  "record_count": 65045,
-  "file_count": 28,
-  "total_size_bytes": 157257578,
-  "source_url": "",
-  "format": "csv",
+  "generated_at": "2026-05-05T01:06:51.070554+00:00",
+  "last_refresh": "2026-05-05",
+  "record_count": 0,
+  "file_count": 200,
+  "total_size_bytes": 2833542101,
+  "total_size_human": "2.6 GB",
+  "source_url": null,
+  "format": "(no ext),.bin,.csv,.json,.md,.txt,.yaml,.zip",
+  "format_breakdown": {
+    "(no ext)": {
+      "count": 30,
+      "size_bytes": 0
+    },
+    ".bin": {
+      "count": 145,
+      "size_bytes": 2586780317
+    },
+    ".csv": {
+      "count": 18,
+      "size_bytes": 4993394
+    },
+    ".json": {
+      "count": 1,
+      "size_bytes": 38809
+    },
+    ".md": {
+      "count": 2,
+      "size_bytes": 18338
+    },
+    ".txt": {
+      "count": 1,
+      "size_bytes": 890680
+    },
+    ".yaml": {
+      "count": 1,
+      "size_bytes": 22424
+    },
+    ".zip": {
+      "count": 2,
+      "size_bytes": 240798139
+    }
+  },
+  "has_external_data": true,
+  "external_data_root": "/mnt/ace/worldenergydata/data/modules/bsee",
   "files": [
     {
-      "name": ".local/borehole/BoreholeRawData.zip",
-      "size_bytes": 3480073,
-      "modified": "2026-02-09"
+      "name": "DATA_DICTIONARY.md",
+      "path": "DATA_DICTIONARY.md",
+      "size_bytes": 10597,
+      "modified": "2026-03-15"
     },
     {
-      "name": ".local/borehole/BoreholeRawData/mv_boreholes_all.txt",
-      "size_bytes": 13587325,
-      "modified": "2026-02-09"
+      "name": "README.md",
+      "path": "README.md",
+      "size_bytes": 7741,
+      "modified": "2026-03-15"
     },
     {
-      "name": ".local/borehole/download_metadata.json",
-      "size_bytes": 393,
-      "modified": "2026-02-09"
+      "name": "_metadata.json",
+      "path": "_metadata.json",
+      "size_bytes": 38809,
+      "modified": "2026-05-05"
     },
     {
-      "name": ".local/data_index.json",
-      "size_bytes": 316,
-      "modified": "2026-02-09"
-    },
-    {
-      "name": ".local/rig_fleet/rig_fleet_full.bin",
-      "size_bytes": 422385,
-      "modified": "2026-02-13"
-    },
-    {
-      "name": ".local/rig_fleet/rig_fleet_metadata.json",
-      "size_bytes": 584,
-      "modified": "2026-02-09"
-    },
-    {
-      "name": ".local/rig_fleet/subsets/rig_fleet.bin",
-      "size_bytes": 5149,
-      "modified": "2026-02-13"
-    },
-    {
-      "name": ".local/war/download_metadata.json",
-      "size_bytes": 249,
-      "modified": "2026-02-09"
-    },
-    {
-      "name": ".local/war/eWellWARRawData.zip",
-      "size_bytes": 127933804,
-      "modified": "2026-02-09"
-    },
-    {
-      "name": ".local/war/war_borehole_view.pkl",
-      "size_bytes": 6020228,
-      "modified": "2026-02-09"
-    },
-    {
-      "name": "current/completions/completion_perforations.csv",
+      "name": "completion_perforations.csv",
+      "path": "current/completions/completion_perforations.csv",
       "size_bytes": 3997,
-      "modified": "2025-07-31",
-      "rows": 100
+      "modified": "2025-07-31"
     },
     {
-      "name": "current/completions/completion_properties.csv",
+      "name": "completion_properties.csv",
+      "path": "current/completions/completion_properties.csv",
       "size_bytes": 5825,
-      "modified": "2025-07-31",
-      "rows": 100
+      "modified": "2025-07-31"
     },
     {
-      "name": "current/completions/completion_summary.csv",
+      "name": "completion_summary.csv",
+      "path": "current/completions/completion_summary.csv",
       "size_bytes": 4048,
-      "modified": "2025-07-31",
-      "rows": 100
+      "modified": "2025-07-31"
     },
     {
-      "name": "current/geology/geology_markers.csv",
+      "name": "geology_markers.csv",
+      "path": "current/geology/geology_markers.csv",
       "size_bytes": 3335,
-      "modified": "2025-07-31",
-      "rows": 100
+      "modified": "2025-07-31"
     },
     {
-      "name": "current/geology/hydrocarbon_bearing_interval.csv",
+      "name": "hydrocarbon_bearing_interval.csv",
+      "path": "current/geology/hydrocarbon_bearing_interval.csv",
       "size_bytes": 5477,
-      "modified": "2025-07-31",
-      "rows": 100
+      "modified": "2025-07-31"
     },
     {
-      "name": "current/infrastructure/all_bsee_blocks.csv",
+      "name": "all_bsee_blocks.csv",
+      "path": "current/infrastructure/all_bsee_blocks.csv",
       "size_bytes": 607,
-      "modified": "2025-07-31",
-      "rows": 100
+      "modified": "2025-07-31"
     },
     {
-      "name": "current/operations/ST_BP_and_tree_height.csv",
+      "name": "ST_BP_and_tree_height.csv",
+      "path": "current/operations/ST_BP_and_tree_height.csv",
       "size_bytes": 2706,
-      "modified": "2025-07-31",
-      "rows": 100
+      "modified": "2025-07-31"
     },
     {
-      "name": "current/operations/cut_casings.csv",
+      "name": "cut_casings.csv",
+      "path": "current/operations/cut_casings.csv",
       "size_bytes": 4497,
-      "modified": "2025-07-31",
-      "rows": 100
+      "modified": "2025-07-31"
     },
     {
-      "name": "current/operations/well_activity_bop_tests.csv",
+      "name": "well_activity_bop_tests.csv",
+      "path": "current/operations/well_activity_bop_tests.csv",
       "size_bytes": 5180,
-      "modified": "2025-07-31",
-      "rows": 100
+      "modified": "2025-07-31"
     },
     {
-      "name": "current/operations/well_activity_open_hole.csv",
+      "name": "well_activity_open_hole.csv",
+      "path": "current/operations/well_activity_open_hole.csv",
       "size_bytes": 6583,
-      "modified": "2025-07-31",
-      "rows": 100
+      "modified": "2025-07-31"
     },
     {
-      "name": "current/operations/well_activity_remarks.csv",
+      "name": "well_activity_remarks.csv",
+      "path": "current/operations/well_activity_remarks.csv",
       "size_bytes": 68237,
-      "modified": "2026-03-15",
-      "rows": 100
+      "modified": "2026-03-15"
     },
     {
-      "name": "current/operations/well_activity_summary.csv",
+      "name": "well_activity_summary.csv",
+      "path": "current/operations/well_activity_summary.csv",
       "size_bytes": 9431,
-      "modified": "2025-07-31",
-      "rows": 100
+      "modified": "2025-07-31"
     },
     {
-      "name": "current/production/production.csv",
+      "name": "production.csv",
+      "path": "current/production/production.csv",
       "size_bytes": 2361,
-      "modified": "2025-07-31",
-      "rows": 100
+      "modified": "2025-07-31"
     },
     {
-      "name": "current/wells/well_data.csv",
+      "name": "well_data.csv",
+      "path": "current/wells/well_data.csv",
       "size_bytes": 4135645,
-      "modified": "2025-07-31",
-      "rows": 57281
+      "modified": "2025-07-31"
     },
     {
-      "name": "current/wells/well_directional_surveys.csv",
+      "name": "well_directional_surveys.csv",
+      "path": "current/wells/well_directional_surveys.csv",
       "size_bytes": 129,
-      "modified": "2025-07-31",
-      "rows": 2
+      "modified": "2025-07-31"
     },
     {
-      "name": "current/wells/well_tubulars.csv",
+      "name": "well_tubulars.csv",
+      "path": "current/wells/well_tubulars.csv",
       "size_bytes": 12155,
-      "modified": "2025-07-31",
-      "rows": 100
+      "modified": "2025-07-31"
     },
     {
-      "name": "paleowells/Lower Tertiary Wells.txt",
+      "name": "Lower Tertiary Wells.txt",
+      "path": "paleowells/Lower Tertiary Wells.txt",
       "size_bytes": 890680,
       "modified": "2026-03-15"
     },
     {
-      "name": "paleowells/Paleowells.csv",
+      "name": "Paleowells.csv",
+      "path": "paleowells/Paleowells.csv",
       "size_bytes": 646179,
-      "modified": "2026-03-15",
-      "rows": 6362
+      "modified": "2026-03-15"
+    },
+    {
+      "name": "schema.yaml",
+      "path": "schema.yaml",
+      "size_bytes": 22424,
+      "modified": "2026-05-05"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/Well_APD_Default/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_apd_main_all.bin",
+      "path": "bin/Well_APD_Default/mv_apd_main_all.bin",
+      "size_bytes": 15527227,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_apddata_all.bin",
+      "path": "bin/Well_APD_Default/mv_apddata_all.bin",
+      "size_bytes": 4598899,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_apd_main_all.bin",
+      "path": "bin/apd/mv_apd_main_all.bin",
+      "size_bytes": 6585432,
+      "modified": "2026-02-20",
+      "source": "external"
+    },
+    {
+      "name": "mv_apddata_all.bin",
+      "path": "bin/apd/mv_apddata_all.bin",
+      "size_bytes": 2036240,
+      "modified": "2026-02-20",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/apichanges/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_apichanges_all.bin",
+      "path": "bin/apichanges/mv_apichanges_all.bin",
+      "size_bytes": 117734,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/apiraw/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_api_list_all.bin",
+      "path": "bin/apiraw/mv_api_list_all.bin",
+      "size_bytes": 14110621,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_api_wellcomps_all.bin",
+      "path": "bin/apiraw/mv_api_wellcomps_all.bin",
+      "size_bytes": 7727311,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/approvals/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_approval_info.bin",
+      "path": "bin/approvals/mv_approval_info.bin",
+      "size_bytes": 13083807,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/assignments/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_assignments.bin",
+      "path": "bin/assignments/mv_assignments.bin",
+      "size_bytes": 12441982,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/companydetails/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_companies_active.bin",
+      "path": "bin/companydetails/mv_companies_active.bin",
+      "size_bytes": 913082,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_companies_all.bin",
+      "path": "bin/companydetails/mv_companies_all.bin",
+      "size_bytes": 1201628,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/decomcost/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_decom_cost_estimates.bin",
+      "path": "bin/decomcost/mv_decom_cost_estimates.bin",
+      "size_bytes": 5767696,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_decom_cost_inst_pipe.bin",
+      "path": "bin/decomcost/mv_decom_cost_inst_pipe.bin",
+      "size_bytes": 1034545,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_decom_cost_inst_plat.bin",
+      "path": "bin/decomcost/mv_decom_cost_inst_plat.bin",
+      "size_bytes": 230990,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_decom_cost_prop_pipe.bin",
+      "path": "bin/decomcost/mv_decom_cost_prop_pipe.bin",
+      "size_bytes": 65226,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_decom_cost_prop_plat.bin",
+      "path": "bin/decomcost/mv_decom_cost_prop_plat.bin",
+      "size_bytes": 3088,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_decom_cost_prop_well.bin",
+      "path": "bin/decomcost/mv_decom_cost_prop_well.bin",
+      "size_bytes": 10283,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_decom_cost_spud_well.bin",
+      "path": "bin/decomcost/mv_decom_cost_spud_well.bin",
+      "size_bytes": 1083417,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_decom_cost_totals.bin",
+      "path": "bin/decomcost/mv_decom_cost_totals.bin",
+      "size_bytes": 375021,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/deepqual/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_deep_water_field_leases.bin",
+      "path": "bin/deepqual/mv_deep_water_field_leases.bin",
+      "size_bytes": 125294,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/dsptsdelimit/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "dsptsdelimit.bin",
+      "path": "bin/dsptsdelimit/dsptsdelimit.bin",
+      "size_bytes": 522172468,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/fmp/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_fmp_meas_locations.bin",
+      "path": "bin/fmp/mv_fmp_meas_locations.bin",
+      "size_bytes": 174063,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_fmplist.bin",
+      "path": "bin/fmp/mv_fmplist.bin",
+      "size_bytes": 70322,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/historical_production_yearly/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora1996delimit.bin",
+      "path": "bin/historical_production_yearly/ogora1996delimit.bin",
+      "size_bytes": 42222379,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora1997delimit.bin",
+      "path": "bin/historical_production_yearly/ogora1997delimit.bin",
+      "size_bytes": 42587556,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora1998delimit.bin",
+      "path": "bin/historical_production_yearly/ogora1998delimit.bin",
+      "size_bytes": 42918610,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora1999delimit.bin",
+      "path": "bin/historical_production_yearly/ogora1999delimit.bin",
+      "size_bytes": 42626789,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora2000delimit.bin",
+      "path": "bin/historical_production_yearly/ogora2000delimit.bin",
+      "size_bytes": 42461297,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora2001delimit.bin",
+      "path": "bin/historical_production_yearly/ogora2001delimit.bin",
+      "size_bytes": 42499351,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora2002delimit.bin",
+      "path": "bin/historical_production_yearly/ogora2002delimit.bin",
+      "size_bytes": 42199640,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora2003delimit.bin",
+      "path": "bin/historical_production_yearly/ogora2003delimit.bin",
+      "size_bytes": 41506382,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora2004delimit.bin",
+      "path": "bin/historical_production_yearly/ogora2004delimit.bin",
+      "size_bytes": 41046145,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora2005delimit.bin",
+      "path": "bin/historical_production_yearly/ogora2005delimit.bin",
+      "size_bytes": 40653955,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora2006delimit.bin",
+      "path": "bin/historical_production_yearly/ogora2006delimit.bin",
+      "size_bytes": 39778287,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora2007delimit.bin",
+      "path": "bin/historical_production_yearly/ogora2007delimit.bin",
+      "size_bytes": 38591838,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora2008delimit.bin",
+      "path": "bin/historical_production_yearly/ogora2008delimit.bin",
+      "size_bytes": 37443751,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora2009delimit.bin",
+      "path": "bin/historical_production_yearly/ogora2009delimit.bin",
+      "size_bytes": 35083530,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora2010delimit.bin",
+      "path": "bin/historical_production_yearly/ogora2010delimit.bin",
+      "size_bytes": 32710039,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora2011delimit.bin",
+      "path": "bin/historical_production_yearly/ogora2011delimit.bin",
+      "size_bytes": 30455627,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora2012delimit.bin",
+      "path": "bin/historical_production_yearly/ogora2012delimit.bin",
+      "size_bytes": 28438815,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora2013delimit.bin",
+      "path": "bin/historical_production_yearly/ogora2013delimit.bin",
+      "size_bytes": 26731374,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora2014delimit.bin",
+      "path": "bin/historical_production_yearly/ogora2014delimit.bin",
+      "size_bytes": 25016925,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora2015delimit.bin",
+      "path": "bin/historical_production_yearly/ogora2015delimit.bin",
+      "size_bytes": 23792817,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora2016delimit.bin",
+      "path": "bin/historical_production_yearly/ogora2016delimit.bin",
+      "size_bytes": 22639951,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora2017delimit.bin",
+      "path": "bin/historical_production_yearly/ogora2017delimit.bin",
+      "size_bytes": 21803670,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora2018delimit.bin",
+      "path": "bin/historical_production_yearly/ogora2018delimit.bin",
+      "size_bytes": 21182531,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora2019delimit.bin",
+      "path": "bin/historical_production_yearly/ogora2019delimit.bin",
+      "size_bytes": 20675188,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora2020delimit.bin",
+      "path": "bin/historical_production_yearly/ogora2020delimit.bin",
+      "size_bytes": 19668958,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora2021delimit.bin",
+      "path": "bin/historical_production_yearly/ogora2021delimit.bin",
+      "size_bytes": 17391342,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora2022delimit.bin",
+      "path": "bin/historical_production_yearly/ogora2022delimit.bin",
+      "size_bytes": 15359604,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora2023delimit.bin",
+      "path": "bin/historical_production_yearly/ogora2023delimit.bin",
+      "size_bytes": 14836004,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogora2024delimit.bin",
+      "path": "bin/historical_production_yearly/ogora2024delimit.bin",
+      "size_bytes": 12460702,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ogoradelimit.bin",
+      "path": "bin/historical_production_yearly/ogoradelimit.bin",
+      "size_bytes": 10801360,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/incinv/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_acc_investigations.bin",
+      "path": "bin/incinv/mv_acc_investigations.bin",
+      "size_bytes": 244776,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/incs/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_incs_by_oper.bin",
+      "path": "bin/incs/mv_incs_by_oper.bin",
+      "size_bytes": 4812760,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_incs_fac_shutins_alaska.bin",
+      "path": "bin/incs/mv_incs_fac_shutins_alaska.bin",
+      "size_bytes": 2647,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_incs_fac_shutins_gulf.bin",
+      "path": "bin/incs/mv_incs_fac_shutins_gulf.bin",
+      "size_bytes": 342102,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_incs_fac_shutins_pacific.bin",
+      "path": "bin/incs/mv_incs_fac_shutins_pacific.bin",
+      "size_bytes": 14976,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_incs_inspections_alaska.bin",
+      "path": "bin/incs/mv_incs_inspections_alaska.bin",
+      "size_bytes": 490052,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_incs_inspections_gulf.bin",
+      "path": "bin/incs/mv_incs_inspections_gulf.bin",
+      "size_bytes": 13973795,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_incs_inspections_pacific.bin",
+      "path": "bin/incs/mv_incs_inspections_pacific.bin",
+      "size_bytes": 1374885,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_incs_shutins_alaska.bin",
+      "path": "bin/incs/mv_incs_shutins_alaska.bin",
+      "size_bytes": 2098,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_incs_shutins_gulf.bin",
+      "path": "bin/incs/mv_incs_shutins_gulf.bin",
+      "size_bytes": 1727341,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_incs_shutins_pacific.bin",
+      "path": "bin/incs/mv_incs_shutins_pacific.bin",
+      "size_bytes": 118128,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_incs_warnings_alaska.bin",
+      "path": "bin/incs/mv_incs_warnings_alaska.bin",
+      "size_bytes": 11924,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_incs_warnings_gulf.bin",
+      "path": "bin/incs/mv_incs_warnings_gulf.bin",
+      "size_bytes": 1995722,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_incs_warnings_pacific.bin",
+      "path": "bin/incs/mv_incs_warnings_pacific.bin",
+      "size_bytes": 94418,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_insp_by_oper.bin",
+      "path": "bin/incs/mv_insp_by_oper.bin",
+      "size_bytes": 14031595,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/lab/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_lease_area_block.bin",
+      "path": "bin/lab/mv_lease_area_block.bin",
+      "size_bytes": 2827226,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/leaseowner/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_lease_owners_main.bin",
+      "path": "bin/leaseowner/mv_lease_owners_main.bin",
+      "size_bytes": 635678,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/mcpflow/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_mcpflowareablock.bin",
+      "path": "bin/mcpflow/mv_mcpflowareablock.bin",
+      "size_bytes": 1867380,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_mcpflowleaseunits.bin",
+      "path": "bin/mcpflow/mv_mcpflowleaseunits.bin",
+      "size_bytes": 1857655,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_mcpflowluoper.bin",
+      "path": "bin/mcpflow/mv_mcpflowluoper.bin",
+      "size_bytes": 1652335,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_mcpflowmeaslocations.bin",
+      "path": "bin/mcpflow/mv_mcpflowmeaslocations.bin",
+      "size_bytes": 1859995,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_mcpflowsubops.bin",
+      "path": "bin/mcpflow/mv_mcpflowsubops.bin",
+      "size_bytes": 1264,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_mcpflowsystems.bin",
+      "path": "bin/mcpflow/mv_mcpflowsystems.bin",
+      "size_bytes": 32195,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_mcpflowunits.bin",
+      "path": "bin/mcpflow/mv_mcpflowunits.bin",
+      "size_bytes": 38874,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/nonrequired/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_nonrequired.bin",
+      "path": "bin/nonrequired/mv_nonrequired.bin",
+      "size_bytes": 17890206,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/ocsprod/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ocsprod_gasmonth.bin",
+      "path": "bin/ocsprod/ocsprod_gasmonth.bin",
+      "size_bytes": 1756,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ocsprod_gasyear.bin",
+      "path": "bin/ocsprod/ocsprod_gasyear.bin",
+      "size_bytes": 1510,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ocsprod_oilmonth.bin",
+      "path": "bin/ocsprod/ocsprod_oilmonth.bin",
+      "size_bytes": 1756,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "ocsprod_oilyear.bin",
+      "path": "bin/ocsprod/ocsprod_oilyear.bin",
+      "size_bytes": 1510,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/offshorestats/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_sbwd_apds.bin",
+      "path": "bin/offshorestats/mv_sbwd_apds.bin",
+      "size_bytes": 1782226,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_sbwd_leases.bin",
+      "path": "bin/offshorestats/mv_sbwd_leases.bin",
+      "size_bytes": 2167834,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_sbwd_platforms.bin",
+      "path": "bin/offshorestats/mv_sbwd_platforms.bin",
+      "size_bytes": 349646,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_sbwd_wells.bin",
+      "path": "bin/offshorestats/mv_sbwd_wells.bin",
+      "size_bytes": 103253975,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_sbwd_wells2.bin",
+      "path": "bin/offshorestats/mv_sbwd_wells2.bin",
+      "size_bytes": 1825306,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/osfr/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_osfr_companies.bin",
+      "path": "bin/osfr/mv_osfr_companies.bin",
+      "size_bytes": 902496,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_osfr_information.bin",
+      "path": "bin/osfr/mv_osfr_information.bin",
+      "size_bytes": 532412,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_osfr_segments.bin",
+      "path": "bin/osfr/mv_osfr_segments.bin",
+      "size_bytes": 19106,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/permstruc/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_perm_platforms.bin",
+      "path": "bin/permstruc/mv_perm_platforms.bin",
+      "size_bytes": 8146,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_subsea_boreholes.bin",
+      "path": "bin/permstruc/mv_subsea_boreholes.bin",
+      "size_bytes": 44868,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/pipeloc/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_pipelinelocation.bin",
+      "path": "bin/pipeloc/mv_pipelinelocation.bin",
+      "size_bytes": 248243935,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/platstruc/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_platstruc_authorityhist.bin",
+      "path": "bin/platstruc/mv_platstruc_authorityhist.bin",
+      "size_bytes": 449559,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_platstruc_cgrefcodes.bin",
+      "path": "bin/platstruc/mv_platstruc_cgrefcodes.bin",
+      "size_bytes": 1148,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_platstruc_inccount.bin",
+      "path": "bin/platstruc/mv_platstruc_inccount.bin",
+      "size_bytes": 132302,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_platstruc_leases.bin",
+      "path": "bin/platstruc/mv_platstruc_leases.bin",
+      "size_bytes": 873199,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_platstruc_platformincs.bin",
+      "path": "bin/platstruc/mv_platstruc_platformincs.bin",
+      "size_bytes": 12972285,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_platstruc_removaldisp.bin",
+      "path": "bin/platstruc/mv_platstruc_removaldisp.bin",
+      "size_bytes": 171935,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_platstruc_rightofways.bin",
+      "path": "bin/platstruc/mv_platstruc_rightofways.bin",
+      "size_bytes": 359037,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_platstruc_ruers.bin",
+      "path": "bin/platstruc/mv_platstruc_ruers.bin",
+      "size_bytes": 51893,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_platstruc_structures.bin",
+      "path": "bin/platstruc/mv_platstruc_structures.bin",
+      "size_bytes": 2145433,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/production_plan_area/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_pbpadata.bin",
+      "path": "bin/production_plan_area/mv_pbpadata.bin",
+      "size_bytes": 164618,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/production_raw/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_production_waterdepth.bin",
+      "path": "bin/production_raw/mv_production_waterdepth.bin",
+      "size_bytes": 348856,
+      "modified": "2026-02-20",
+      "source": "external"
+    },
+    {
+      "name": "mv_productiondata.bin",
+      "path": "bin/production_raw/mv_productiondata.bin",
+      "size_bytes": 30600523,
+      "modified": "2026-02-20",
+      "source": "external"
+    },
+    {
+      "name": "mv_productionsum.bin",
+      "path": "bin/production_raw/mv_productionsum.bin",
+      "size_bytes": 1387,
+      "modified": "2026-02-20",
+      "source": "external"
+    },
+    {
+      "name": "mv_productionsumwd.bin",
+      "path": "bin/production_raw/mv_productionsumwd.bin",
+      "size_bytes": 1197,
+      "modified": "2026-02-20",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/rig_fleet/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "rig_fleet.bin",
+      "path": "bin/rig_fleet/rig_fleet.bin",
+      "size_bytes": 1975,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "rig_type_overrides.csv",
+      "path": "bin/rig_fleet/rig_type_overrides.csv",
+      "size_bytes": 77002,
+      "modified": "2026-02-09",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/rowdesc/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_rowdescriptions.bin",
+      "path": "bin/rowdesc/mv_rowdescriptions.bin",
+      "size_bytes": 1564573,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/royaltyref/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_preact.bin",
+      "path": "bin/royaltyref/mv_preact.bin",
+      "size_bytes": 2722,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/scanneddocs/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "scan_active_inactive_leases.bin",
+      "path": "bin/scanneddocs/scan_active_inactive_leases.bin",
+      "size_bytes": 36577528,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "scan_adjudication_files.bin",
+      "path": "bin/scanneddocs/scan_adjudication_files.bin",
+      "size_bytes": 12328053,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "scan_collateral_files.bin",
+      "path": "bin/scanneddocs/scan_collateral_files.bin",
+      "size_bytes": 2451311,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "scan_company_files.bin",
+      "path": "bin/scanneddocs/scan_company_files.bin",
+      "size_bytes": 3536128,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "scan_dir_surveys.bin",
+      "path": "bin/scanneddocs/scan_dir_surveys.bin",
+      "size_bytes": 11678567,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "scan_expired_leases.bin",
+      "path": "bin/scanneddocs/scan_expired_leases.bin",
+      "size_bytes": 192755,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "scan_gg_permits.bin",
+      "path": "bin/scanneddocs/scan_gg_permits.bin",
+      "size_bytes": 2579222,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "scan_pipeline_maps.bin",
+      "path": "bin/scanneddocs/scan_pipeline_maps.bin",
+      "size_bytes": 3668115,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "scan_plans.bin",
+      "path": "bin/scanneddocs/scan_plans.bin",
+      "size_bytes": 5376336,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "scan_renleases.bin",
+      "path": "bin/scanneddocs/scan_renleases.bin",
+      "size_bytes": 66089,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "scan_row.bin",
+      "path": "bin/scanneddocs/scan_row.bin",
+      "size_bytes": 4127053,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "scan_sop_soo.bin",
+      "path": "bin/scanneddocs/scan_sop_soo.bin",
+      "size_bytes": 620011,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "scan_units.bin",
+      "path": "bin/scanneddocs/scan_units.bin",
+      "size_bytes": 227344,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "scan_well_files.bin",
+      "path": "bin/scanneddocs/scan_well_files.bin",
+      "size_bytes": 7033273,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "scan_well_potential_tests.bin",
+      "path": "bin/scanneddocs/scan_well_potential_tests.bin",
+      "size_bytes": 163289,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": ".gitkeep",
+      "path": "bin/serialreg/.gitkeep",
+      "size_bytes": 0,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_serreg_companies.bin",
+      "path": "bin/serialreg/mv_serreg_companies.bin",
+      "size_bytes": 455740,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_serreg_descriptions.bin",
+      "path": "bin/serialreg/mv_serreg_descriptions.bin",
+      "size_bytes": 4683807,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_serreg_high_bids.bin",
+      "path": "bin/serialreg/mv_serreg_high_bids.bin",
+      "size_bytes": 10621972,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_serreg_lease_owner_assigns.bin",
+      "path": "bin/serialreg/mv_serreg_lease_owner_assigns.bin",
+      "size_bytes": 11733748,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_serreg_lease_owner_groups.bin",
+      "path": "bin/serialreg/mv_serreg_lease_owner_groups.bin",
+      "size_bytes": 3367932,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_serreg_lease_owner_remarks.bin",
+      "path": "bin/serialreg/mv_serreg_lease_owner_remarks.bin",
+      "size_bytes": 26128679,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_serreg_lease_owners.bin",
+      "path": "bin/serialreg/mv_serreg_lease_owners.bin",
+      "size_bytes": 5700938,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_serreg_leases.bin",
+      "path": "bin/serialreg/mv_serreg_leases.bin",
+      "size_bytes": 6028615,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_serreg_portion_aliquots.bin",
+      "path": "bin/serialreg/mv_serreg_portion_aliquots.bin",
+      "size_bytes": 414675,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_serreg_rates.bin",
+      "path": "bin/serialreg/mv_serreg_rates.bin",
+      "size_bytes": 191094,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_serreg_remarks.bin",
+      "path": "bin/serialreg/mv_serreg_remarks.bin",
+      "size_bytes": 44870639,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_serreg_xys.bin",
+      "path": "bin/serialreg/mv_serreg_xys.bin",
+      "size_bytes": 833712,
+      "modified": "2026-02-11",
+      "source": "external"
+    },
+    {
+      "name": "mv_war_boreholes_view.bin",
+      "path": "bin/war/mv_war_boreholes_view.bin",
+      "size_bytes": 2676045,
+      "modified": "2026-02-20",
+      "source": "external"
+    },
+    {
+      "name": "mv_war_main.bin",
+      "path": "bin/war/mv_war_main.bin",
+      "size_bytes": 40332568,
+      "modified": "2026-02-20",
+      "source": "external"
+    },
+    {
+      "name": "mv_war_main_prop.bin",
+      "path": "bin/war/mv_war_main_prop.bin",
+      "size_bytes": 27197147,
+      "modified": "2026-02-20",
+      "source": "external"
+    },
+    {
+      "name": "mv_war_main_prop_remark.bin",
+      "path": "bin/war/mv_war_main_prop_remark.bin",
+      "size_bytes": 286851398,
+      "modified": "2026-02-20",
+      "source": "external"
+    },
+    {
+      "name": "mv_war_open_hole_runs.bin",
+      "path": "bin/war/mv_war_open_hole_runs.bin",
+      "size_bytes": 948911,
+      "modified": "2026-02-20",
+      "source": "external"
+    },
+    {
+      "name": "mv_war_open_hole_tools.bin",
+      "path": "bin/war/mv_war_open_hole_tools.bin",
+      "size_bytes": 462523,
+      "modified": "2026-02-20",
+      "source": "external"
+    },
+    {
+      "name": "mv_war_tubular_summaries.bin",
+      "path": "bin/war/mv_war_tubular_summaries.bin",
+      "size_bytes": 15276443,
+      "modified": "2026-02-20",
+      "source": "external"
+    },
+    {
+      "name": "mv_war_tubular_summaries_prop.bin",
+      "path": "bin/war/mv_war_tubular_summaries_prop.bin",
+      "size_bytes": 5458713,
+      "modified": "2026-02-20",
+      "source": "external"
+    },
+    {
+      "name": "directdelimit.zip",
+      "path": "zip/directional_survey/directdelimit.zip",
+      "size_bytes": 101166278,
+      "modified": "2026-01-18",
+      "source": "external"
+    },
+    {
+      "name": "dsptsdelimit.zip",
+      "path": "zip/directional_survey/dsptsdelimit.zip",
+      "size_bytes": 139631861,
+      "modified": "2026-01-18",
+      "source": "external"
     }
-  ]
+  ],
+  "files_truncated": false
 }

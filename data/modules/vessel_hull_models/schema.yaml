@@ -1,5 +1,5 @@
 module: vessel_hull_models
-description: 3D vessel hull geometry models
+description: 3D vessel hull geometry models [1.0 KB]
 datasets:
 - name: sample_rigs.csv
   path: data/modules/vessel_hull_models/csv/rig_hulls/sample_rigs.csv
@@ -84,3 +84,4 @@ datasets:
   row_count: 5
   size_bytes: 1024
   last_modified: '2026-02-13T14:10:59.743552+00:00'
+binary_stores: []

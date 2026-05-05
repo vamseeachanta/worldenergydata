@@ -1,5 +1,5 @@
 module: subsea
-description: Subsea equipment and mooring component data
+description: Subsea equipment and mooring component data [3.0 KB]
 datasets:
 - name: mooring_components.csv
   path: data/modules/subsea/curated/mooring_components.csv
@@ -99,3 +99,4 @@ datasets:
   row_count: 14
   size_bytes: 1612
   last_modified: '2026-03-26T04:19:51.247253+00:00'
+binary_stores: []
