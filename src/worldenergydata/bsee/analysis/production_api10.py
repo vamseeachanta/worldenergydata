@@ -6,14 +6,12 @@ import pandas as pd
 from worldenergydata.bsee.data.bsee_data import BSEEData
 from worldenergydata.common.legacy.data import DateTimeUtility
 
-bsee_data = BSEEData()
-dtu = DateTimeUtility()
-
 
 class ProductionAPI10Analysis:
 
     def __init__(self):
-        pass
+        self._bsee_data = BSEEData()
+        self._dtu = DateTimeUtility()
 
     def router(self, cfg, api12_production_data):
         self.prepare_production_data(cfg, api12_production_data)

@@ -1,17 +1,48 @@
 {
   "module": "pipeline",
-  "last_refresh": "2026-03-03T00:00:00Z",
-  "record_count": 43,
-  "file_count": 1,
-  "total_size_bytes": 3861,
-  "source_url": "",
-  "format": "csv",
+  "generated_at": "2026-05-05T01:06:51.142579+00:00",
+  "last_refresh": "2026-05-05",
+  "record_count": 0,
+  "file_count": 3,
+  "total_size_bytes": 5847,
+  "total_size_human": "5.7 KB",
+  "source_url": null,
+  "format": ".csv,.json,.yaml",
+  "format_breakdown": {
+    ".csv": {
+      "count": 1,
+      "size_bytes": 3861
+    },
+    ".json": {
+      "count": 1,
+      "size_bytes": 1005
+    },
+    ".yaml": {
+      "count": 1,
+      "size_bytes": 981
+    }
+  },
+  "has_external_data": false,
+  "external_data_root": null,
   "files": [
     {
+      "name": "_metadata.json",
+      "path": "_metadata.json",
+      "size_bytes": 1005,
+      "modified": "2026-05-05"
+    },
+    {
       "name": "api_5l_pipe_schedule.csv",
+      "path": "api_5l_pipe_schedule.csv",
       "size_bytes": 3861,
-      "modified": "2026-03-03",
-      "rows": 43
+      "modified": "2026-03-03"
+    },
+    {
+      "name": "schema.yaml",
+      "path": "schema.yaml",
+      "size_bytes": 981,
+      "modified": "2026-05-05"
     }
-  ]
+  ],
+  "files_truncated": false
 }

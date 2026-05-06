@@ -1,5 +1,5 @@
 module: pipeline
-description: Pipeline engineering reference data
+description: Pipeline engineering reference data [3.8 KB]
 datasets:
 - name: api_5l_pipe_schedule.csv
   path: data/modules/pipeline/api_5l_pipe_schedule.csv
@@ -48,3 +48,4 @@ datasets:
   row_count: 43
   size_bytes: 3861
   last_modified: '2026-03-03T22:30:40.761917+00:00'
+binary_stores: []

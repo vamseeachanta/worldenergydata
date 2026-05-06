@@ -182,6 +182,16 @@ def info() -> None:
         "bsee", "BSEE data operations and analysis", "analyze, report, data, refresh"
     )
     table.add_row(
+        "dashboard",
+        "Plotly Dash BSEE/FDAS web dashboard (server)",
+        "launch",
+    )
+    table.add_row(
+        "eia",
+        "EIA API v2 weekly petroleum and gas feed ingestion",
+        "fetch, status",
+    )
+    table.add_row(
         "marine-safety", "Marine safety incident data", "scrape, stats, export, db"
     )
     table.add_row(
@@ -190,12 +200,27 @@ def info() -> None:
         "calculate-npv, calculate-mirr, analyze",
     )
     table.add_row(
+        "lower-tertiary",
+        "Lower Tertiary portfolio analyses (10 GoM fields)",
+        "analyze, report, economics",
+    )
+    table.add_row(
+        "forecast",
+        "Arps decline curve — fit, EUR, production forecast",
+        "fit, forecast, report",
+    )
+    table.add_row(
         "sodir", "SODIR (Norwegian Offshore Directorate)", "collect, analyze, status"
     )
     table.add_row(
         "metocean",
         "Metocean data (buoys, tides, weather)",
         "stations, fetch, forecast, cache, db",
+    )
+    table.add_row(
+        "ndbc",
+        "NDBC buoy data: scatter matrices, Weibull fits, wave roses",
+        "fetch, scatter, weibull, wave-rose",
     )
     table.add_row(
         "texas-rrc",

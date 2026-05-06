@@ -1,12 +1,13 @@
-version: 2.0.0
-generated_at: '2026-04-16T15:21:25.490431+00:00'
+version: 2.1.0
+generated_at: '2026-05-05T01:05:32.977537+00:00'
 total_modules: 12
 total_datasets: 44
-total_size_bytes: 10505037
+total_binary_stores: 37
+total_size_bytes: 2845501372
 modules:
   bsee:
     module: bsee
-    description: Bureau of Safety and Environmental Enforcement - GOM data
+    description: Bureau of Safety and Environmental Enforcement - GOM data [2.6 GB]
     datasets:
     - name: completion_perforations.csv
       path: data/modules/bsee/current/completions/completion_perforations.csv
@@ -607,9 +608,281 @@ modules:
       row_count: 6362
       size_bytes: 646179
       last_modified: '2026-03-15T13:06:39.668970+00:00'
+    binary_stores:
+    - name: Well_APD_Default
+      path: data/modules/bsee/bin/Well_APD_Default
+      format: binary_directory
+      file_count: 3
+      size_bytes: 20126126
+      description: 'Binary data directory: 3 files, 19.2 MB. .bin: 2 files (19.2 MB);
+        (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.437772+00:00'
+    - name: apd
+      path: data/modules/bsee/bin/apd
+      format: binary_directory
+      file_count: 2
+      size_bytes: 8621672
+      description: 'Binary data directory: 2 files, 8.2 MB. .bin: 2 files (8.2 MB)'
+      last_modified: '2026-02-20T04:25:10.130406+00:00'
+    - name: apichanges
+      path: data/modules/bsee/bin/apichanges
+      format: binary_directory
+      file_count: 2
+      size_bytes: 117734
+      description: 'Binary data directory: 2 files, 115.0 KB. (no ext): 1 files (0
+        B); .bin: 1 files (115.0 KB)'
+      last_modified: '2026-02-11T17:02:56.378424+00:00'
+    - name: apiraw
+      path: data/modules/bsee/bin/apiraw
+      format: binary_directory
+      file_count: 3
+      size_bytes: 21837932
+      description: 'Binary data directory: 3 files, 20.8 MB. .bin: 2 files (20.8 MB);
+        (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.380835+00:00'
+    - name: approvals
+      path: data/modules/bsee/bin/approvals
+      format: binary_directory
+      file_count: 2
+      size_bytes: 13083807
+      description: 'Binary data directory: 2 files, 12.5 MB. .bin: 1 files (12.5 MB);
+        (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.383030+00:00'
+    - name: assignments
+      path: data/modules/bsee/bin/assignments
+      format: binary_directory
+      file_count: 2
+      size_bytes: 12441982
+      description: 'Binary data directory: 2 files, 11.9 MB. (no ext): 1 files (0
+        B); .bin: 1 files (11.9 MB)'
+      last_modified: '2026-02-11T17:02:56.384841+00:00'
+    - name: companydetails
+      path: data/modules/bsee/bin/companydetails
+      format: binary_directory
+      file_count: 3
+      size_bytes: 2114710
+      description: 'Binary data directory: 3 files, 2.0 MB. .bin: 2 files (2.0 MB);
+        (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.386743+00:00'
+    - name: decomcost
+      path: data/modules/bsee/bin/decomcost
+      format: binary_directory
+      file_count: 9
+      size_bytes: 8570266
+      description: 'Binary data directory: 9 files, 8.2 MB. .bin: 8 files (8.2 MB);
+        (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.388678+00:00'
+    - name: deepqual
+      path: data/modules/bsee/bin/deepqual
+      format: binary_directory
+      file_count: 2
+      size_bytes: 125294
+      description: 'Binary data directory: 2 files, 122.4 KB. (no ext): 1 files (0
+        B); .bin: 1 files (122.4 KB)'
+      last_modified: '2026-02-11T17:02:56.390577+00:00'
+    - name: dsptsdelimit
+      path: data/modules/bsee/bin/dsptsdelimit
+      format: binary_directory
+      file_count: 2
+      size_bytes: 522172468
+      description: 'Binary data directory: 2 files, 498.0 MB. (no ext): 1 files (0
+        B); .bin: 1 files (498.0 MB)'
+      last_modified: '2026-02-11T17:02:56.392608+00:00'
+    - name: fmp
+      path: data/modules/bsee/bin/fmp
+      format: binary_directory
+      file_count: 3
+      size_bytes: 244385
+      description: 'Binary data directory: 3 files, 238.7 KB. .bin: 2 files (238.7
+        KB); (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.394696+00:00'
+    - name: historical_production_yearly
+      path: data/modules/bsee/bin/historical_production_yearly
+      format: binary_directory
+      file_count: 31
+      size_bytes: 915584417
+      description: 'Binary data directory: 31 files, 873.2 MB. .bin: 30 files (873.2
+        MB); (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.396541+00:00'
+    - name: incinv
+      path: data/modules/bsee/bin/incinv
+      format: binary_directory
+      file_count: 2
+      size_bytes: 244776
+      description: 'Binary data directory: 2 files, 239.0 KB. .bin: 1 files (239.0
+        KB); (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.398606+00:00'
+    - name: incs
+      path: data/modules/bsee/bin/incs
+      format: binary_directory
+      file_count: 15
+      size_bytes: 38992443
+      description: 'Binary data directory: 15 files, 37.2 MB. .bin: 14 files (37.2
+        MB); (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.400440+00:00'
+    - name: lab
+      path: data/modules/bsee/bin/lab
+      format: binary_directory
+      file_count: 2
+      size_bytes: 2827226
+      description: 'Binary data directory: 2 files, 2.7 MB. .bin: 1 files (2.7 MB);
+        (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.402516+00:00'
+    - name: leaseowner
+      path: data/modules/bsee/bin/leaseowner
+      format: binary_directory
+      file_count: 2
+      size_bytes: 635678
+      description: 'Binary data directory: 2 files, 620.8 KB. (no ext): 1 files (0
+        B); .bin: 1 files (620.8 KB)'
+      last_modified: '2026-02-11T17:02:56.404488+00:00'
+    - name: mcpflow
+      path: data/modules/bsee/bin/mcpflow
+      format: binary_directory
+      file_count: 8
+      size_bytes: 7309698
+      description: 'Binary data directory: 8 files, 7.0 MB. .bin: 7 files (7.0 MB);
+        (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.406395+00:00'
+    - name: nonrequired
+      path: data/modules/bsee/bin/nonrequired
+      format: binary_directory
+      file_count: 2
+      size_bytes: 17890206
+      description: 'Binary data directory: 2 files, 17.1 MB. .bin: 1 files (17.1 MB);
+        (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.408501+00:00'
+    - name: ocsprod
+      path: data/modules/bsee/bin/ocsprod
+      format: binary_directory
+      file_count: 5
+      size_bytes: 6532
+      description: 'Binary data directory: 5 files, 6.4 KB. .bin: 4 files (6.4 KB);
+        (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.410455+00:00'
+    - name: offshorestats
+      path: data/modules/bsee/bin/offshorestats
+      format: binary_directory
+      file_count: 6
+      size_bytes: 109378987
+      description: 'Binary data directory: 6 files, 104.3 MB. .bin: 5 files (104.3
+        MB); (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.412567+00:00'
+    - name: osfr
+      path: data/modules/bsee/bin/osfr
+      format: binary_directory
+      file_count: 4
+      size_bytes: 1454014
+      description: 'Binary data directory: 4 files, 1.4 MB. .bin: 3 files (1.4 MB);
+        (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.414771+00:00'
+    - name: permstruc
+      path: data/modules/bsee/bin/permstruc
+      format: binary_directory
+      file_count: 3
+      size_bytes: 53014
+      description: 'Binary data directory: 3 files, 51.8 KB. .bin: 2 files (51.8 KB);
+        (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.416751+00:00'
+    - name: pipeloc
+      path: data/modules/bsee/bin/pipeloc
+      format: binary_directory
+      file_count: 2
+      size_bytes: 248243935
+      description: 'Binary data directory: 2 files, 236.7 MB. .bin: 1 files (236.7
+        MB); (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.418605+00:00'
+    - name: platstruc
+      path: data/modules/bsee/bin/platstruc
+      format: binary_directory
+      file_count: 10
+      size_bytes: 17156791
+      description: 'Binary data directory: 10 files, 16.4 MB. .bin: 9 files (16.4
+        MB); (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.420607+00:00'
+    - name: production_plan_area
+      path: data/modules/bsee/bin/production_plan_area
+      format: binary_directory
+      file_count: 2
+      size_bytes: 164618
+      description: 'Binary data directory: 2 files, 160.8 KB. .bin: 1 files (160.8
+        KB); (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.422461+00:00'
+    - name: production_raw
+      path: data/modules/bsee/bin/production_raw
+      format: binary_directory
+      file_count: 5
+      size_bytes: 30951963
+      description: 'Binary data directory: 5 files, 29.5 MB. .bin: 4 files (29.5 MB);
+        (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.424644+00:00'
+    - name: rig_fleet
+      path: data/modules/bsee/bin/rig_fleet
+      format: binary_directory
+      file_count: 3
+      size_bytes: 78977
+      description: 'Binary data directory: 3 files, 77.1 KB. (no ext): 1 files (0
+        B); .csv: 1 files (75.2 KB); .bin: 1 files (1.9 KB)'
+      last_modified: '2026-02-11T17:02:56.427203+00:00'
+    - name: rowdesc
+      path: data/modules/bsee/bin/rowdesc
+      format: binary_directory
+      file_count: 2
+      size_bytes: 1564573
+      description: 'Binary data directory: 2 files, 1.5 MB. .bin: 1 files (1.5 MB);
+        (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.429833+00:00'
+    - name: royaltyref
+      path: data/modules/bsee/bin/royaltyref
+      format: binary_directory
+      file_count: 2
+      size_bytes: 2722
+      description: 'Binary data directory: 2 files, 2.7 KB. (no ext): 1 files (0 B);
+        .bin: 1 files (2.7 KB)'
+      last_modified: '2026-02-11T17:02:56.431865+00:00'
+    - name: scanneddocs
+      path: data/modules/bsee/bin/scanneddocs
+      format: binary_directory
+      file_count: 16
+      size_bytes: 90625074
+      description: 'Binary data directory: 16 files, 86.4 MB. .bin: 15 files (86.4
+        MB); (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.433891+00:00'
+    - name: serialreg
+      path: data/modules/bsee/bin/serialreg
+      format: binary_directory
+      file_count: 13
+      size_bytes: 115031551
+      description: 'Binary data directory: 13 files, 109.7 MB. .bin: 12 files (109.7
+        MB); (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.435854+00:00'
+    - name: war
+      path: data/modules/bsee/bin/war
+      format: binary_directory
+      file_count: 8
+      size_bytes: 379203748
+      description: 'Binary data directory: 8 files, 361.6 MB. .bin: 8 files (361.6
+        MB)'
+      last_modified: '2026-02-20T04:26:26.549038+00:00'
+    - name: directdelimit.zip
+      path: data/modules/bsee/zip/directional_survey/directdelimit.zip
+      format: zip
+      size_bytes: 101166278
+      contents:
+      - directdelimit.txt
+      contents_count: 1
+      last_modified: '2026-01-18T14:05:14+00:00'
+    - name: dsptsdelimit.zip
+      path: data/modules/bsee/zip/directional_survey/dsptsdelimit.zip
+      format: zip
+      size_bytes: 139631861
+      contents:
+      - dsptsdelimit.txt
+      contents_count: 1
+      last_modified: '2026-01-18T13:52:22+00:00'
   fdas:
     module: fdas
-    description: Field Development Analysis System - enhanced well data
+    description: Field Development Analysis System - enhanced well data [4.4 MB]
     datasets:
     - name: well_data_enhanced.csv
       path: data/modules/fdas/enhanced/wells/well_data_enhanced.csv
@@ -698,14 +971,16 @@ modules:
       row_count: 57281
       size_bytes: 4593879
       last_modified: '2025-10-04T04:09:56.944525+00:00'
+    binary_stores: []
   hse:
     module: hse
     description: "Health, Safety and Environment incident data (no data files present\
       \ \u2014 run 'make data' to populate)"
     datasets: []
+    binary_stores: []
   lng_terminals:
     module: lng_terminals
-    description: Global LNG terminal infrastructure data
+    description: Global LNG terminal infrastructure data [31.5 KB]
     datasets:
     - name: terminals_seed.csv
       path: data/modules/lng_terminals/curated/terminals_seed.csv
@@ -786,9 +1061,10 @@ modules:
       row_count: 227
       size_bytes: 32265
       last_modified: '2026-02-16T18:47:05.739990+00:00'
+    binary_stores: []
   marine_safety:
     module: marine_safety
-    description: Maritime casualty and safety incident data
+    description: Maritime casualty and safety incident data [663.1 KB]
     datasets:
     - name: fatality_incidents.csv
       path: data/modules/marine_safety/input/fatality_incidents.csv
@@ -1117,14 +1393,16 @@ modules:
         unit: ''
       size_bytes: 3227
       last_modified: '2026-02-08T17:12:15.619128+00:00'
+    binary_stores: []
   oil_price:
     module: oil_price
     description: "Historical oil price data (no data files present \u2014 run 'make\
       \ data' to populate)"
     datasets: []
+    binary_stores: []
   pipeline:
     module: pipeline
-    description: Pipeline engineering reference data
+    description: Pipeline engineering reference data [3.8 KB]
     datasets:
     - name: api_5l_pipe_schedule.csv
       path: data/modules/pipeline/api_5l_pipe_schedule.csv
@@ -1173,14 +1451,16 @@ modules:
       row_count: 43
       size_bytes: 3861
       last_modified: '2026-03-03T22:30:40.761917+00:00'
+    binary_stores: []
   pipeline_safety:
     module: pipeline_safety
     description: "PHMSA pipeline safety incident data (no data files present \u2014\
       \ run 'make data' to populate)"
     datasets: []
+    binary_stores: []
   subsea:
     module: subsea
-    description: Subsea equipment and mooring component data
+    description: Subsea equipment and mooring component data [3.0 KB]
     datasets:
     - name: mooring_components.csv
       path: data/modules/subsea/curated/mooring_components.csv
@@ -1280,9 +1560,10 @@ modules:
       row_count: 14
       size_bytes: 1612
       last_modified: '2026-03-26T04:19:51.247253+00:00'
+    binary_stores: []
   vessel_fleet:
     module: vessel_fleet
-    description: Offshore vessel fleet specifications
+    description: Offshore vessel fleet specifications [269.0 KB]
     datasets:
     - name: construction_vessels.csv
       path: data/modules/vessel_fleet/curated/construction_vessels.csv
@@ -1962,9 +2243,10 @@ modules:
         unit: ''
       size_bytes: 18509
       last_modified: '2026-02-13T03:55:47.349638+00:00'
+    binary_stores: []
   vessel_hull_models:
     module: vessel_hull_models
-    description: 3D vessel hull geometry models
+    description: 3D vessel hull geometry models [1.0 KB]
     datasets:
     - name: sample_rigs.csv
       path: data/modules/vessel_hull_models/csv/rig_hulls/sample_rigs.csv
@@ -2049,8 +2331,42 @@ modules:
       row_count: 5
       size_bytes: 1024
       last_modified: '2026-02-13T14:10:59.743552+00:00'
+    binary_stores: []
   wind:
     module: wind
-    description: "Wind energy resource and turbine data (no data files present \u2014\
-      \ run 'make data' to populate)"
+    description: Wind energy resource and turbine data [7.0 MB]
     datasets: []
+    binary_stores:
+    - name: uswtdbCSV.zip
+      path: data/modules/wind/uswtdbCSV.zip
+      format: zip
+      size_bytes: 1458710
+      contents:
+      - CHANGELOG.txt
+      - uswtdb_v3_2_20201014.csv
+      contents_count: 2
+      last_modified: '2025-07-31T11:24:57.639597+00:00'
+    - name: uswtdbGeoJSON.zip
+      path: data/modules/wind/uswtdbGeoJSON.zip
+      format: zip
+      size_bytes: 1430239
+      contents:
+      - CHANGELOG.txt
+      - uswtdb_v3_2_20201014.geojson
+      contents_count: 2
+      last_modified: '2025-07-31T11:24:57.674809+00:00'
+    - name: uswtdbSHP.zip
+      path: data/modules/wind/uswtdbSHP.zip
+      format: zip
+      size_bytes: 4451928
+      contents:
+      - CHANGELOG.txt
+      - uswtdb_v3_2_20201014.dbf
+      - uswtdb_v3_2_20201014.prj
+      - uswtdb_v3_2_20201014.sbn
+      - uswtdb_v3_2_20201014.sbx
+      - uswtdb_v3_2_20201014.shp
+      - uswtdb_v3_2_20201014.shx
+      - uswtdb_v3_2_20201014.xml
+      contents_count: 8
+      last_modified: '2025-07-31T11:24:57.775445+00:00'

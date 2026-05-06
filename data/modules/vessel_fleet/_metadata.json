@@ -1,49 +1,88 @@
 {
   "module": "vessel_fleet",
-  "last_refresh": "2026-03-03T00:00:00Z",
-  "record_count": 2263,
-  "file_count": 7,
-  "total_size_bytes": 275460,
-  "source_url": "",
-  "format": "csv",
+  "generated_at": "2026-05-05T01:06:51.159950+00:00",
+  "last_refresh": "2026-05-05",
+  "record_count": 0,
+  "file_count": 9,
+  "total_size_bytes": 290513,
+  "total_size_human": "283.7 KB",
+  "source_url": null,
+  "format": ".csv,.json,.parquet,.yaml",
+  "format_breakdown": {
+    ".csv": {
+      "count": 3,
+      "size_bytes": 212720
+    },
+    ".json": {
+      "count": 4,
+      "size_bytes": 41409
+    },
+    ".parquet": {
+      "count": 1,
+      "size_bytes": 23402
+    },
+    ".yaml": {
+      "count": 1,
+      "size_bytes": 12982
+    }
+  },
+  "has_external_data": false,
+  "external_data_root": null,
   "files": [
     {
-      "name": "curated/construction_vessels.csv",
-      "size_bytes": 4860,
-      "modified": "2026-03-03",
-      "rows": 17
+      "name": "_metadata.json",
+      "path": "_metadata.json",
+      "size_bytes": 2071,
+      "modified": "2026-05-05"
     },
     {
-      "name": "curated/construction_vessels.parquet",
+      "name": "construction_vessels.csv",
+      "path": "curated/construction_vessels.csv",
+      "size_bytes": 4860,
+      "modified": "2026-03-03"
+    },
+    {
+      "name": "construction_vessels.parquet",
+      "path": "curated/construction_vessels.parquet",
       "size_bytes": 23402,
       "modified": "2026-03-03"
     },
     {
-      "name": "curated/drilling_rigs.csv",
+      "name": "drilling_rigs.csv",
+      "path": "curated/drilling_rigs.csv",
       "size_bytes": 201262,
-      "modified": "2026-03-03",
-      "rows": 2210
+      "modified": "2026-03-03"
     },
     {
-      "name": "curated/drilling_riser_components.csv",
+      "name": "drilling_riser_components.csv",
+      "path": "curated/drilling_riser_components.csv",
       "size_bytes": 6598,
-      "modified": "2026-03-03",
-      "rows": 36
+      "modified": "2026-03-03"
     },
     {
-      "name": "raw/contractor_scrape/noble.json",
+      "name": "noble.json",
+      "path": "raw/contractor_scrape/noble.json",
       "size_bytes": 19507,
       "modified": "2026-02-13"
     },
     {
-      "name": "raw/contractor_scrape/scrape_summary.json",
+      "name": "scrape_summary.json",
+      "path": "raw/contractor_scrape/scrape_summary.json",
       "size_bytes": 1322,
       "modified": "2026-02-13"
     },
     {
-      "name": "raw/contractor_scrape/seadrill.json",
+      "name": "seadrill.json",
+      "path": "raw/contractor_scrape/seadrill.json",
       "size_bytes": 18509,
       "modified": "2026-02-13"
+    },
+    {
+      "name": "schema.yaml",
+      "path": "schema.yaml",
+      "size_bytes": 12982,
+      "modified": "2026-05-05"
     }
-  ]
+  ],
+  "files_truncated": false
 }

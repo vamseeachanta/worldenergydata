@@ -406,6 +406,257 @@ worldenergydata fdas info
 
 ---
 
+## Dashboard Module (`worldenergydata dashboard`)
+
+Interactive well/field production dashboards.
+
+| Command | Safety | Description |
+|---------|--------|-------------|
+| `worldenergydata dashboard --help` | `bounded-safe` | Show available commands |
+| `worldenergydata dashboard serve` | `server-starting` | Launch local web server |
+
+```bash
+# Safety: bounded-safe — no data or network required
+worldenergydata dashboard --help
+
+# Safety: server-starting — starts a local HTTP server
+worldenergydata dashboard serve --port 8050
+```
+
+---
+
+## EIA Module (`worldenergydata eia`)
+
+U.S. Energy Information Administration data feed.
+
+| Command | Safety | Description |
+|---------|--------|-------------|
+| `worldenergydata eia --help` | `bounded-safe` | Show available commands |
+| `worldenergydata eia fetch` | `credential-required` | Fetch EIA data (requires API key) |
+
+```bash
+# Safety: bounded-safe
+worldenergydata eia --help
+
+# Safety: credential-required — requires EIA_API_KEY env var
+worldenergydata eia fetch
+```
+
+---
+
+## Lower Tertiary Module (`worldenergydata lower-tertiary`)
+
+Gulf of Mexico Lower Tertiary field economics and production forecasting.
+
+| Command | Safety | Description |
+|---------|--------|-------------|
+| `worldenergydata lower-tertiary --help` | `bounded-safe` | Show available commands |
+| `worldenergydata lower-tertiary analyze` | `fixture-only` | Run portfolio economics |
+| `worldenergydata lower-tertiary report` | `fixture-only` | Generate HTML report |
+
+```bash
+# Safety: bounded-safe
+worldenergydata lower-tertiary --help
+
+# Safety: fixture-only — uses bundled YAML configs, no live data
+worldenergydata lower-tertiary analyze
+worldenergydata lower-tertiary report --output reports/lt_portfolio.html
+```
+
+---
+
+## Forecast Module (`worldenergydata forecast`)
+
+Production decline curve analysis and forecasting.
+
+| Command | Safety | Description |
+|---------|--------|-------------|
+| `worldenergydata forecast --help` | `bounded-safe` | Show available commands |
+| `worldenergydata forecast run` | `data-required` | Run decline forecast |
+
+```bash
+# Safety: bounded-safe
+worldenergydata forecast --help
+
+# Safety: data-required — requires local BSEE dataset
+worldenergydata forecast run --field "Thunder Horse"
+```
+
+---
+
+## SODIR Module (`worldenergydata sodir`)
+
+Norwegian Continental Shelf data from the Norwegian Offshore Directorate.
+
+| Command | Safety | Description |
+|---------|--------|-------------|
+| `worldenergydata sodir --help` | `bounded-safe` | Show available commands |
+| `worldenergydata sodir fetch` | `network-required` | Download NCS data |
+
+```bash
+# Safety: bounded-safe
+worldenergydata sodir --help
+
+# Safety: network-required
+worldenergydata sodir fetch --dataset wellbore
+```
+
+---
+
+## Metocean Module (`worldenergydata metocean`)
+
+Marine environmental and metocean data (NDBC, NOAA CO-OPS, Open-Meteo).
+
+| Command | Safety | Description |
+|---------|--------|-------------|
+| `worldenergydata metocean --help` | `bounded-safe` | Show available commands |
+| `worldenergydata metocean fetch` | `network-required` | Fetch metocean observations |
+
+```bash
+# Safety: bounded-safe
+worldenergydata metocean --help
+
+# Safety: network-required
+worldenergydata metocean fetch --station 42001
+```
+
+---
+
+## NDBC Module (`worldenergydata ndbc`)
+
+NOAA National Data Buoy Center buoy data.
+
+| Command | Safety | Description |
+|---------|--------|-------------|
+| `worldenergydata ndbc --help` | `bounded-safe` | Show available commands |
+| `worldenergydata ndbc fetch` | `network-required` | Fetch buoy observations |
+
+```bash
+# Safety: bounded-safe
+worldenergydata ndbc --help
+
+# Safety: network-required
+worldenergydata ndbc fetch --buoy 42001
+```
+
+---
+
+## Texas RRC Module (`worldenergydata texas-rrc`)
+
+Texas Railroad Commission production and permit data.
+
+| Command | Safety | Description |
+|---------|--------|-------------|
+| `worldenergydata texas-rrc --help` | `bounded-safe` | Show available commands |
+| `worldenergydata texas-rrc fetch` | `network-required` | Download RRC data |
+
+```bash
+# Safety: bounded-safe
+worldenergydata texas-rrc --help
+
+# Safety: network-required
+worldenergydata texas-rrc fetch
+```
+
+---
+
+## Canada Module (`worldenergydata canada`)
+
+Alberta, BC, and Saskatchewan well and production data.
+
+| Command | Safety | Description |
+|---------|--------|-------------|
+| `worldenergydata canada --help` | `bounded-safe` | Show available commands |
+| `worldenergydata canada fetch` | `network-required` | Download provincial data |
+
+```bash
+# Safety: bounded-safe
+worldenergydata canada --help
+
+# Safety: network-required
+worldenergydata canada fetch --province alberta
+```
+
+---
+
+## Mexico CNH Module (`worldenergydata mexico-cnh`)
+
+Mexico National Hydrocarbons Commission data.
+
+| Command | Safety | Description |
+|---------|--------|-------------|
+| `worldenergydata mexico-cnh --help` | `bounded-safe` | Show available commands |
+| `worldenergydata mexico-cnh fetch` | `network-required` | Download CNH data |
+
+```bash
+# Safety: bounded-safe
+worldenergydata mexico-cnh --help
+
+# Safety: network-required
+worldenergydata mexico-cnh fetch
+```
+
+---
+
+## Landman Module (`worldenergydata landman`)
+
+U.S. mineral ownership, lease records, and BLM claims.
+
+| Command | Safety | Description |
+|---------|--------|-------------|
+| `worldenergydata landman --help` | `bounded-safe` | Show available commands |
+| `worldenergydata landman search` | `data-required` | Search mineral records |
+
+```bash
+# Safety: bounded-safe
+worldenergydata landman --help
+
+# Safety: data-required
+worldenergydata landman search --county "Midland" --state TX
+```
+
+---
+
+## LNG Terminals Module (`worldenergydata lng-terminals`)
+
+Global LNG terminal locations and capacities.
+
+| Command | Safety | Description |
+|---------|--------|-------------|
+| `worldenergydata lng-terminals --help` | `bounded-safe` | Show available commands |
+| `worldenergydata lng-terminals list` | `fixture-only` | List all terminals |
+
+```bash
+# Safety: bounded-safe
+worldenergydata lng-terminals --help
+
+# Safety: fixture-only — uses bundled reference data
+worldenergydata lng-terminals list --region global
+```
+
+---
+
+## Safety Analysis Module (`worldenergydata safety-analysis`)
+
+Cross-source safety observation classification and risk scoring.
+
+| Command | Safety | Description |
+|---------|--------|-------------|
+| `worldenergydata safety-analysis --help` | `bounded-safe` | Show available commands |
+| `worldenergydata safety-analysis classify` | `data-required` | Classify incidents |
+| `worldenergydata safety-analysis score` | `data-required` | Compute risk scores |
+
+```bash
+# Safety: bounded-safe
+worldenergydata safety-analysis --help
+
+# Safety: data-required
+worldenergydata safety-analysis classify --source hse
+worldenergydata safety-analysis score --output reports/risk_scores.csv
+```
+
+---
+
 ## Configuration
 
 ### Environment Variables

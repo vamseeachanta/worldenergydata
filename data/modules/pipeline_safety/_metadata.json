@@ -1,91 +1,180 @@
 {
   "module": "pipeline_safety",
-  "last_refresh": "2026-02-08T00:00:00Z",
+  "generated_at": "2026-05-05T01:06:51.152854+00:00",
+  "last_refresh": "2026-05-05",
   "record_count": 0,
-  "file_count": 16,
-  "total_size_bytes": 21068858,
-  "source_url": "",
-  "format": "xlsx",
+  "file_count": 23,
+  "total_size_bytes": 25658046,
+  "total_size_human": "24.5 MB",
+  "source_url": null,
+  "format": ".json,.md,.pdf,.txt,.xlsx,.yaml",
+  "format_breakdown": {
+    ".json": {
+      "count": 1,
+      "size_bytes": 4756
+    },
+    ".md": {
+      "count": 1,
+      "size_bytes": 1724
+    },
+    ".pdf": {
+      "count": 7,
+      "size_bytes": 4582874
+    },
+    ".txt": {
+      "count": 1,
+      "size_bytes": 1031
+    },
+    ".xlsx": {
+      "count": 12,
+      "size_bytes": 21067491
+    },
+    ".yaml": {
+      "count": 1,
+      "size_bytes": 170
+    }
+  },
+  "has_external_data": false,
+  "external_data_root": null,
   "files": [
     {
-      "name": "raw/phmsa/.claude-flow/metrics/agent-metrics.json",
-      "size_bytes": 2,
-      "modified": "2026-02-08"
+      "name": "_metadata.json",
+      "path": "_metadata.json",
+      "size_bytes": 4756,
+      "modified": "2026-05-05"
     },
     {
-      "name": "raw/phmsa/.claude-flow/metrics/performance.json",
-      "size_bytes": 157,
-      "modified": "2026-02-08"
-    },
-    {
-      "name": "raw/phmsa/.claude-flow/metrics/task-metrics.json",
-      "size_bytes": 177,
-      "modified": "2026-02-08"
-    },
-    {
-      "name": "raw/phmsa/extracted/EightCauseMappingMethods.xlsx",
+      "name": "EightCauseMappingMethods.xlsx",
+      "path": "raw/phmsa/extracted/EightCauseMappingMethods.xlsx",
       "size_bytes": 28187,
       "modified": "2026-02-08"
     },
     {
-      "name": "raw/phmsa/extracted/Index Data Sources.txt",
+      "name": "Index Data Sources.txt",
+      "path": "raw/phmsa/extracted/Index Data Sources.txt",
       "size_bytes": 1031,
       "modified": "2026-02-08"
     },
     {
-      "name": "raw/phmsa/extracted/SevenCauseMappingMethods.xlsx",
+      "name": "README.md",
+      "path": "raw/phmsa/extracted/README.md",
+      "size_bytes": 1724,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "SevenCauseMappingMethods.xlsx",
+      "path": "raw/phmsa/extracted/SevenCauseMappingMethods.xlsx",
       "size_bytes": 28314,
       "modified": "2026-02-08"
     },
     {
-      "name": "raw/phmsa/extracted/gd1986tofeb2004.xlsx",
+      "name": "gd1986tofeb2004.xlsx",
+      "path": "raw/phmsa/extracted/gd1986tofeb2004.xlsx",
       "size_bytes": 1362003,
       "modified": "2026-02-08"
     },
     {
-      "name": "raw/phmsa/extracted/gd2010toPresent.xlsx",
+      "name": "gd2010toPresent.xlsx",
+      "path": "raw/phmsa/extracted/gd2010toPresent.xlsx",
       "size_bytes": 2083538,
       "modified": "2026-02-08"
     },
     {
-      "name": "raw/phmsa/extracted/gdmar2004to2009.xlsx",
+      "name": "gd2010toPresentFormFields.pdf",
+      "path": "raw/phmsa/extracted/gd2010toPresentFormFields.pdf",
+      "size_bytes": 499768,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "gdmar2004to2009.xlsx",
+      "path": "raw/phmsa/extracted/gdmar2004to2009.xlsx",
       "size_bytes": 756015,
       "modified": "2026-02-08"
     },
     {
-      "name": "raw/phmsa/extracted/gtgg1986to2001.xlsx",
+      "name": "gdmar2004to2009FormFields.pdf",
+      "path": "raw/phmsa/extracted/gdmar2004to2009FormFields.pdf",
+      "size_bytes": 730723,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "gtgg1986to2001.xlsx",
+      "path": "raw/phmsa/extracted/gtgg1986to2001.xlsx",
       "size_bytes": 778945,
       "modified": "2026-02-08"
     },
     {
-      "name": "raw/phmsa/extracted/gtgg2002to2009.xlsx",
+      "name": "gtgg2002to2009.xlsx",
+      "path": "raw/phmsa/extracted/gtgg2002to2009.xlsx",
       "size_bytes": 897606,
       "modified": "2026-02-08"
     },
     {
-      "name": "raw/phmsa/extracted/gtggungs2010toPresent.xlsx",
+      "name": "gtgg2002to2009FormFields.pdf",
+      "path": "raw/phmsa/extracted/gtgg2002to2009FormFields.pdf",
+      "size_bytes": 717353,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "gtggungs2010toPresent.xlsx",
+      "path": "raw/phmsa/extracted/gtggungs2010toPresent.xlsx",
       "size_bytes": 3025658,
       "modified": "2026-02-08"
     },
     {
-      "name": "raw/phmsa/extracted/hl1986to2001.xlsx",
+      "name": "gtggungs2010toPresentFormFields.pdf",
+      "path": "raw/phmsa/extracted/gtggungs2010toPresentFormFields.pdf",
+      "size_bytes": 686296,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "hl1986to2001.xlsx",
+      "path": "raw/phmsa/extracted/hl1986to2001.xlsx",
       "size_bytes": 1964564,
       "modified": "2026-02-08"
     },
     {
-      "name": "raw/phmsa/extracted/hl2002to2009.xlsx",
+      "name": "hl2002to2009.xlsx",
+      "path": "raw/phmsa/extracted/hl2002to2009.xlsx",
       "size_bytes": 2427297,
       "modified": "2026-02-08"
     },
     {
-      "name": "raw/phmsa/extracted/hl2010toPresent.xlsx",
+      "name": "hl2002to2009FormFields.pdf",
+      "path": "raw/phmsa/extracted/hl2002to2009FormFields.pdf",
+      "size_bytes": 843527,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "hl2010toPresent.xlsx",
+      "path": "raw/phmsa/extracted/hl2010toPresent.xlsx",
       "size_bytes": 7627417,
       "modified": "2026-02-08"
     },
     {
-      "name": "raw/phmsa/extracted/lng2011toPresent.xlsx",
+      "name": "hl2010toPresentFormFields.pdf",
+      "path": "raw/phmsa/extracted/hl2010toPresentFormFields.pdf",
+      "size_bytes": 692779,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "lng2011toPresent.xlsx",
+      "path": "raw/phmsa/extracted/lng2011toPresent.xlsx",
       "size_bytes": 87947,
       "modified": "2026-02-08"
+    },
+    {
+      "name": "lng2011toPresentFormFields.pdf",
+      "path": "raw/phmsa/extracted/lng2011toPresentFormFields.pdf",
+      "size_bytes": 412428,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "schema.yaml",
+      "path": "schema.yaml",
+      "size_bytes": 170,
+      "modified": "2026-05-05"
     }
-  ]
+  ],
+  "files_truncated": false
 }

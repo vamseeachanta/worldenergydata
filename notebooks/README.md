@@ -30,3 +30,9 @@ pip install pandas matplotlib numpy numpy-financial
 BSEE and Marine Safety notebooks load CSV files from `data/modules/` and work without additional setup.
 FDAS is purely computational and needs no data files.
 SODIR and EIA fetch from public APIs and require network access (or cached data).
+
+## GTM Demos
+
+| File | Description |
+|------|-------------|
+| `gtm_production_decline_forecast.ipynb` | GTM demo: Arps decline curve + EUR + FDAS economics |

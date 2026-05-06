@@ -1,6 +1,6 @@
 # worldenergydata module manifest
 # Machine-readable index for agent discovery
-# Generated: 2026-02-20 | WRK-252 (regenerated — all 27 packages)
+# Generated: 2026-02-20 | WRK-252 (regenerated — all 27 packages) | Updated: 2026-05-04 | plan #354 (new fields)
 # Usage: agents query this to find data sources by region, type, or domain
 #
 # Fields:
@@ -14,11 +14,14 @@
 #   status          — stable | beta | stub
 #   entry_point     — canonical import statement
 #   notes           — one-sentence summary
-#   in_scheduler    — true if wired into WRK-076 automated refresh scheduler
-#   related_wrk     — relevant WRK work items
+#   in_scheduler       — true if wired into WRK-076 automated refresh scheduler
+#   public_cli         — true if registered as a CLI sub-app in cli/main.py
+#   catalog_status     — full | sample | empty | runtime_fetched | reference_data | not_applicable | unknown
+#   capability_source  — manifest | source_tree | catalog_only | back_compat
+#   related_wrk        — relevant WRK work items
 
 version: "1.0"
-generated_at: "2026-02-20"
+generated_at: "2026-05-04"
 total_modules: 27
 
 modules:
@@ -52,6 +55,9 @@ modules:
     entry_point: "from worldenergydata.bsee import bsee, BSEEData, BSEEAnalysis"
     notes: "Comprehensive GOM offshore data — wells, production, casing, completions, financial analysis, and paleowells via BSEE public datasets."
     in_scheduler: true   # jobs/bsee_refresh.py
+    public_cli: true
+    catalog_status: sample
+    capability_source: manifest
     related_wrk: [WRK-017, WRK-111, WRK-239, WRK-254, WRK-261]
 
   - id: hse
@@ -78,6 +84,9 @@ modules:
     entry_point: "from worldenergydata.hse import HSEIncident, BSEEIncidentsImporter"
     notes: "BSEE HSE incident management — injuries, spills, violations, equipment failures, penalties, and EPA TRI toxic releases for GOM offshore."
     in_scheduler: false
+    public_cli: false
+    catalog_status: sample
+    capability_source: manifest
     related_wrk: [WRK-163, WRK-198, WRK-249]
 
   - id: fdas
@@ -105,6 +114,9 @@ modules:
     entry_point: "from worldenergydata.fdas import calculate_npv, excel_like_mirr, calculate_all_metrics"
     notes: "NPV, MIRR, IRR, and payback calculations for deepwater GOM fields with BSEE production data integration and water-depth-based development classification."
     in_scheduler: false
+    public_cli: true
+    catalog_status: not_applicable
+    capability_source: manifest
     related_wrk: [WRK-081, WRK-111, WRK-171, WRK-191, WRK-219, WRK-254, WRK-261]
 
   - id: lower_tertiary
@@ -126,6 +138,9 @@ modules:
     entry_point: "from worldenergydata.lower_tertiary import calculate_monthly_financials, load_field_inputs"
     notes: "Economic analysis and NPV for Ultra-Deepwater Lower Tertiary (Wilcox) fields — Anchor, Cascade/Chinook, Jack/St. Malo, Julia, Kaskida, Shenandoah, Stones, Tiber."
     in_scheduler: false
+    public_cli: true
+    catalog_status: sample
+    capability_source: manifest
     related_wrk: [WRK-019, WRK-085, WRK-111, WRK-137, WRK-146, WRK-163, WRK-219, WRK-221]
 
   - id: pipeline_safety
@@ -146,6 +161,9 @@ modules:
     entry_point: "from worldenergydata.pipeline_safety import PipelineIncident, PHMSAImporter"
     notes: "PHMSA pipeline safety incident data — gas distribution, gas transmission/gathering, hazardous liquid, and LNG facility incidents spanning 1986 to present (~21,000 records)."
     in_scheduler: false
+    public_cli: false
+    catalog_status: empty
+    capability_source: manifest
     related_wrk: [WRK-248]
 
   # ── US ONSHORE ─────────────────────────────────────────────────────────────
@@ -163,7 +181,10 @@ modules:
     status: stable
     entry_point: "from worldenergydata.texas_rrc import ..."
     notes: "Texas RRC oil and gas data — production (PDQ data dump), wellbore records, drilling permits organized by RRC API number (42-XXX-XXXXX)."
-    in_scheduler: true   # config/texas_rrc.yml present
+    in_scheduler: false   # config/texas_rrc.yml present but no scheduler job in scheduler_config.yml
+    public_cli: true
+    catalog_status: runtime_fetched
+    capability_source: manifest
     related_wrk: [WRK-018, WRK-019, WRK-260]
 
   - id: eia_us
@@ -181,6 +202,9 @@ modules:
     entry_point: "from worldenergydata.eia_us import ..."
     notes: "EIA API v2 — state-level crude/NGL production, DPR basin drilling productivity (Permian, Bakken, Eagle Ford), Alaska field breakdowns, and international country production series."
     in_scheduler: true   # jobs/eia_us_refresh.py
+    public_cli: true
+    catalog_status: runtime_fetched
+    capability_source: manifest
     related_wrk: [WRK-019, WRK-218, WRK-260]
 
   - id: landman
@@ -204,6 +228,9 @@ modules:
     entry_point: "from worldenergydata.landman import Landman, StateGISProvider"
     notes: "Mineral ownership and lease data from US county clerk records, BLM federal land records, and state GIS — supporting STR title chain and lease expiration tracking."
     in_scheduler: false
+    public_cli: true
+    catalog_status: not_applicable
+    capability_source: manifest
     related_wrk: []
 
   # ── NORWAY / NCS ────────────────────────────────────────────────────────────
@@ -227,6 +254,9 @@ modules:
     entry_point: "from worldenergydata.sodir import Sodir"
     notes: "Norwegian Offshore Directorate REST API — blocks, wellbores, fields, discoveries, surveys, production data, and NPV models for NCS fields."
     in_scheduler: true   # jobs/sodir_refresh.py
+    public_cli: true
+    catalog_status: runtime_fetched
+    capability_source: manifest
     related_wrk: [WRK-018, WRK-191, WRK-196, WRK-197, WRK-260]
 
   # ── UK / NORTH SEA ──────────────────────────────────────────────────────────
@@ -246,6 +276,9 @@ modules:
     entry_point: "from worldenergydata.ukcs import ..."
     notes: "NSTA open production data, well completions, decline curve analysis, and UK fiscal regime models (RFCT, SC, EPL, IA)."
     in_scheduler: true   # jobs/ukcs_refresh.py
+    public_cli: false
+    catalog_status: runtime_fetched
+    capability_source: manifest
     related_wrk: [WRK-018, WRK-080, WRK-170, WRK-171, WRK-191, WRK-196, WRK-197, WRK-260]
 
   # ── BRAZIL ──────────────────────────────────────────────────────────────────
@@ -265,6 +298,9 @@ modules:
     entry_point: "from worldenergydata.brazil_anp import ..."
     notes: "Brazilian ANP public production data — well-level and field-level production, decline curve analysis, and fiscal regime models for concession and PSA regimes."
     in_scheduler: true   # jobs/brazil_anp_refresh.py
+    public_cli: false
+    catalog_status: runtime_fetched
+    capability_source: manifest
     related_wrk: [WRK-018, WRK-019, WRK-171, WRK-196, WRK-197, WRK-220, WRK-260]
 
   # ── MEXICO ──────────────────────────────────────────────────────────────────
@@ -286,7 +322,10 @@ modules:
     status: stable
     entry_point: "from worldenergydata.mexico_cnh import MexicoCNH, SIHScraper"
     notes: "CNH data via SIH dashboard scraping — production reports, well data (Clave del Pozo format), field/block info, and Round 1/2 contract tracking."
-    in_scheduler: true   # config/mexico_cnh.yml present
+    in_scheduler: false   # config/mexico_cnh.yml present but no scheduler job in scheduler_config.yml
+    public_cli: true
+    catalog_status: runtime_fetched
+    capability_source: manifest
     related_wrk: [WRK-018, WRK-019, WRK-085, WRK-111, WRK-170, WRK-260]
 
   # ── CANADA ──────────────────────────────────────────────────────────────────
@@ -309,6 +348,9 @@ modules:
     entry_point: "from worldenergydata.canada import AERClient, BCERClient, UWIParser"
     notes: "AER (Alberta) and BCER (British Columbia) API clients with UWI parsing/validation and province-specific coordinate validation (NAD83, DLS/NTS survey systems)."
     in_scheduler: false   # config/canada.yml exists, no scheduler job adapter yet
+    public_cli: true
+    catalog_status: runtime_fetched
+    capability_source: manifest
     related_wrk: [WRK-076, WRK-196, WRK-260]
 
   # ── METOCEAN ────────────────────────────────────────────────────────────────
@@ -336,6 +378,9 @@ modules:
     entry_point: "from worldenergydata.metocean import NDBCClient, COOPSClient, OpenMeteoClient"
     notes: "NOAA NDBC buoys, CO-OPS tidal/current stations, Open-Meteo marine forecasts, ERDDAP, and MET Norway — with unified caching, QC, and database storage."
     in_scheduler: true   # jobs/metocean_refresh.py
+    public_cli: true
+    catalog_status: runtime_fetched
+    capability_source: manifest
     related_wrk: [WRK-015, WRK-020, WRK-046, WRK-165, WRK-170, WRK-175, WRK-177, WRK-178]
 
   # ── MARINE SAFETY ────────────────────────────────────────────────────────────
@@ -357,6 +402,9 @@ modules:
     entry_point: "from worldenergydata.marine_safety.scrapers.uscg_scraper import USCGMarineCasualtyScraper"
     notes: "Multi-authority marine safety incident tracking — scraping from USCG MISLE, NTSB, MAIB, TSB, EMSA, IMO, ATSB, and NOAA."
     in_scheduler: false   # WRK-076 Phase 2 deliverable; job file not yet created
+    public_cli: true
+    catalog_status: full
+    capability_source: manifest
     related_wrk: [WRK-076, WRK-249, WRK-250]
 
   # ── SAFETY ANALYSIS ─────────────────────────────────────────────────────────
@@ -386,6 +434,9 @@ modules:
     entry_point: "from worldenergydata.safety_analysis import SafetyDataLoader, ObservationProcessor, RiskScorer"
     notes: "Configurable safety analysis toolkit — NLP classification (TF-IDF + BERT), observation-incident lag correlation, time series features, risk index computation, and Plotly dashboards."
     in_scheduler: false
+    public_cli: true
+    catalog_status: not_applicable
+    capability_source: manifest
     related_wrk: [WRK-198]
 
   # ── LNG ─────────────────────────────────────────────────────────────────────
@@ -403,7 +454,10 @@ modules:
     status: beta
     entry_point: "from worldenergydata.lng_terminals import ..."
     notes: "Global LNG terminal dataset with engineering design data — terminal locations, capacities, and infrastructure specifications queryable by region and operator."
-    in_scheduler: false
+    in_scheduler: true   # lng_terminals_refresh in scheduler_config.yml
+    public_cli: true
+    catalog_status: full
+    capability_source: manifest
     related_wrk: [WRK-050, WRK-246, WRK-255]
 
   # ── VESSEL ──────────────────────────────────────────────────────────────────
@@ -428,6 +482,9 @@ modules:
     entry_point: "from worldenergydata.vessel_fleet import ConstructionVesselLoader, DrillingRiserLoader"
     notes: "Global offshore vessel fleet data — construction vessel specs (DP class, crane capacity) and drilling riser component inventory (BOP, flex joints, LMRP, riser joints)."
     in_scheduler: false
+    public_cli: false
+    catalog_status: sample
+    capability_source: manifest
     related_wrk: [WRK-046, WRK-137, WRK-163, WRK-165, WRK-254]
 
   - id: vessel_hull_models
@@ -444,6 +501,9 @@ modules:
     entry_point: "from worldenergydata.vessel_hull_models import ..."
     notes: "3D hull geometry acquisition and visualization for offshore installation barges — OBJ format hull models for hydrodynamic analysis and structural assessment."
     in_scheduler: false
+    public_cli: false
+    catalog_status: reference_data
+    capability_source: manifest
     related_wrk: [WRK-126, WRK-137, WRK-163, WRK-255]
 
   # ── DASHBOARDS ──────────────────────────────────────────────────────────────
@@ -468,6 +528,9 @@ modules:
     entry_point: "from worldenergydata.well_production_dashboard import WellProductionDashboard, DashboardAPI"
     notes: "Interactive Plotly dashboards for well production analysis wrapping BSEE production data with verification integration."
     in_scheduler: false
+    public_cli: true
+    catalog_status: not_applicable
+    capability_source: manifest
     related_wrk: [WRK-019, WRK-021, WRK-042]
 
   # ── INFRASTRUCTURE MODULES ───────────────────────────────────────────────────
@@ -488,6 +551,9 @@ modules:
     entry_point: "from worldenergydata.production import UnifiedProductionClient"
     notes: "Cross-regional production query interface — wraps BSEE, SODIR, UKCS, Brazil ANP, EIA, and Texas RRC behind a single normalized query API."
     in_scheduler: false
+    public_cli: true
+    catalog_status: not_applicable
+    capability_source: manifest
     related_wrk: []
 
   - id: common
@@ -510,6 +576,9 @@ modules:
     entry_point: "from worldenergydata.common import get_logger, Settings, EnergyUnits"
     notes: "Shared utilities — logging, settings, exceptions, energy unit constants, and type definitions used across all modules."
     in_scheduler: false
+    public_cli: false
+    catalog_status: not_applicable
+    capability_source: manifest
     related_wrk: []
 
   - id: validation
@@ -527,6 +596,9 @@ modules:
     entry_point: "from worldenergydata.validation import DataValidator, ValidationSchema"
     notes: "Comprehensive data validation framework — schemas, rules, and validators used across all data-source modules."
     in_scheduler: false
+    public_cli: false
+    catalog_status: not_applicable
+    capability_source: manifest
     related_wrk: []
 
   - id: scheduler
@@ -544,6 +616,9 @@ modules:
     entry_point: "from worldenergydata.scheduler import DataScheduler, SchedulerConfig"
     notes: "Automated data refresh scheduler (WRK-076) — orchestrates periodic collection jobs for bsee, sodir, ukcs, brazil_anp, eia_us, metocean, and texas_rrc."
     in_scheduler: false  # is the scheduler itself
+    public_cli: false
+    catalog_status: not_applicable
+    capability_source: manifest
     related_wrk: [WRK-076]
 
   - id: reporting
@@ -557,6 +632,9 @@ modules:
     entry_point: "from worldenergydata.reporting import ..."
     notes: "Shared report generation infrastructure — HTML/Excel/JSON templates and utility functions used by bsee, fdas, marine_safety, and safety_analysis."
     in_scheduler: false
+    public_cli: false
+    catalog_status: not_applicable
+    capability_source: manifest
     related_wrk: []
 
   - id: safety_analysis_infra
@@ -570,6 +648,9 @@ modules:
     entry_point: "from worldenergydata.analysis import ..."
     notes: "Placeholder analysis package — lower_tertiary content migrated to worldenergydata.lower_tertiary (WRK-096); currently empty."
     in_scheduler: false
+    public_cli: false
+    catalog_status: not_applicable
+    capability_source: manifest
     related_wrk: [WRK-096]
 
   - id: testing
@@ -583,6 +664,9 @@ modules:
     entry_point: "from worldenergydata.testing import ..."
     notes: "Shared test utilities — cleanup helpers, data fixtures, and performance test support used across all module test suites."
     in_scheduler: false
+    public_cli: false
+    catalog_status: not_applicable
+    capability_source: manifest
     related_wrk: []
 
 # ─── SCHEDULER GAPS (WRK-076 candidates) ──────────────────────────────────────

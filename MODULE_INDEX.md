@@ -146,15 +146,18 @@ settings = get_settings()
 
 Modules wired into the WRK-076 automated refresh scheduler:
 
-| Module | Scheduler Job |
-|--------|--------------|
-| `bsee` | `jobs/bsee_refresh.py` |
-| `sodir` | `jobs/sodir_refresh.py` |
-| `ukcs` | `jobs/ukcs_refresh.py` |
-| `brazil_anp` | `jobs/brazil_anp_refresh.py` |
-| `eia_us` | `jobs/eia_us_refresh.py` |
-| `metocean` | `jobs/metocean_refresh.py` |
-| `texas_rrc` | via `config/texas_rrc.yml` |
+| Module | Scheduler Job | Authority |
+|--------|--------------|-----------|
+| `bsee` | `bsee_refresh` | `config/scheduler/scheduler_config.yml` |
+| `sodir` | `sodir_refresh` | `config/scheduler/scheduler_config.yml` |
+| `ukcs` | `ukcs_refresh` | `config/scheduler/scheduler_config.yml` |
+| `brazil_anp` | `brazil_anp_refresh` | `config/scheduler/scheduler_config.yml` |
+| `eia_us` | `eia_us_refresh` | `config/scheduler/scheduler_config.yml` |
+| `metocean` | `metocean_refresh` | `config/scheduler/scheduler_config.yml` |
+| `lng_terminals` | `lng_terminals_refresh` | `config/scheduler/scheduler_config.yml` |
 
-Scheduler gaps (monthly/daily cadence, not yet wired):
-`canada`, `hse`, `marine_safety`, `pipeline_safety`, `lng_terminals`
+Config-only, no active scheduler job (config present but not wired):
+`texas_rrc` (config/texas_rrc.yml), `mexico_cnh` (config/mexico_cnh.yml)
+
+Not yet scheduled:
+`canada`, `hse`, `marine_safety`, `pipeline_safety`

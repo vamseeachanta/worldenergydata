@@ -1,12 +1,10 @@
 from worldenergydata.bsee.data.sources.zip.production_data import GetProdDataFromZip
 
-production_from_zip = GetProdDataFromZip()
-
 
 class ProductionDataFromSources:
 
     def __init__(self):
-        pass
+        self._production_from_zip = GetProdDataFromZip()
 
     def router(self, cfg):
 
@@ -24,7 +22,7 @@ class ProductionDataFromSources:
             production_data_group = cfg["data"]["groups"][group_idx].copy()
             api12_array = production_data_group["api12"]
 
-            df_api12_array = production_from_zip.get_data_by_api12_array(
+            df_api12_array = self._production_from_zip.get_data_by_api12_array(
                 cfg, api12_array
             )
             production_data_groups.append(df_api12_array)
@@ -33,7 +31,7 @@ class ProductionDataFromSources:
 
     def get_production_from_zip(self, cfg, api12):
 
-        production_from_zip.get_production_data_by_wellapi12(cfg, api12)
+        self._production_from_zip.get_production_data_by_wellapi12(cfg, api12)
         return cfg
 
     # Old methods that are not used anymore but kept for reference
