@@ -3,14 +3,11 @@ from worldenergydata.bsee.data.loaders.api.well import WellData
 # from worldenergydata.bsee.data.prepare_data_for_analysis import PrepareBseeData
 
 
-well = WellData()
-# prep_bsee_data = PrepareBseeData()
-
-
 class WellRouter:
 
     def __init__(self):
-        pass
+        self._well = WellData()
+        # self._prep_bsee_data = PrepareBseeData()
 
     def router(self, cfg):
 
@@ -25,9 +22,9 @@ class WellRouter:
             "preparation_for_analysis" in cfg["data"]
             and cfg["data"]["preparation_for_analysis"]
         ):
-            # prep_bsee_data.router(cfg)
+            # self._prep_bsee_data.router(cfg)
             pass
         else:
-            cfg, well_data_groups = well.router(cfg)
+            cfg, well_data_groups = self._well.router(cfg)
 
         return cfg

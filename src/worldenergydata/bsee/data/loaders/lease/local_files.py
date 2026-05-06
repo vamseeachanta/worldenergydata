@@ -6,13 +6,11 @@ from assetutilities.common.utilities import is_dir_valid_func
 
 from worldenergydata.bsee.data.sources.bin.lease_data import LeaseData
 
-lease_data = LeaseData()
-
 
 class DataFromLocalFiles:
 
     def __init__(self):
-        pass
+        self._lease_data = LeaseData()
 
     def router(self, cfg):
         cfg, lease_data_groups = self.get_lease_data_groups(cfg)
@@ -51,7 +49,7 @@ class DataFromLocalFiles:
         lease_group_data = []
         for group_idx in range(len(groups)):
             group = groups[group_idx]
-            lease_data.router(cfg, group)
+            self._lease_data.router(cfg, group)
             lease_metadata = self.generate_output_item(cfg, group)
 
             lease_group_data.append(lease_metadata)

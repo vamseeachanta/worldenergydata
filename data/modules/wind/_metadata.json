@@ -1,31 +1,70 @@
 {
   "module": "wind",
-  "last_refresh": "2025-07-31T00:00:00Z",
+  "generated_at": "2026-05-05T01:06:51.296484+00:00",
+  "last_refresh": "2026-05-05",
   "record_count": 0,
-  "file_count": 4,
-  "total_size_bytes": 7356656,
-  "source_url": "",
-  "format": "zip",
+  "file_count": 6,
+  "total_size_bytes": 7359143,
+  "total_size_human": "7.0 MB",
+  "source_url": null,
+  "format": ".json,.xlsx,.yaml,.zip",
+  "format_breakdown": {
+    ".json": {
+      "count": 1,
+      "size_bytes": 1513
+    },
+    ".xlsx": {
+      "count": 1,
+      "size_bytes": 15779
+    },
+    ".yaml": {
+      "count": 1,
+      "size_bytes": 974
+    },
+    ".zip": {
+      "count": 3,
+      "size_bytes": 7340877
+    }
+  },
+  "has_external_data": false,
+  "external_data_root": null,
   "files": [
     {
+      "name": "_metadata.json",
+      "path": "_metadata.json",
+      "size_bytes": 1513,
+      "modified": "2026-05-05"
+    },
+    {
+      "name": "schema.yaml",
+      "path": "schema.yaml",
+      "size_bytes": 974,
+      "modified": "2026-05-05"
+    },
+    {
       "name": "uswtdbCSV.zip",
+      "path": "uswtdbCSV.zip",
       "size_bytes": 1458710,
       "modified": "2025-07-31"
     },
     {
       "name": "uswtdbGeoJSON.zip",
+      "path": "uswtdbGeoJSON.zip",
       "size_bytes": 1430239,
       "modified": "2025-07-31"
     },
     {
       "name": "uswtdbSHP.zip",
+      "path": "uswtdbSHP.zip",
       "size_bytes": 4451928,
       "modified": "2025-07-31"
     },
     {
       "name": "uswtdb_v3_2_20201014_codebook.xlsx",
+      "path": "uswtdb_v3_2_20201014_codebook.xlsx",
       "size_bytes": 15779,
       "modified": "2025-07-31"
     }
-  ]
+  ],
+  "files_truncated": false
 }

@@ -1,5 +1,5 @@
 module: marine_safety
-description: Maritime casualty and safety incident data
+description: Maritime casualty and safety incident data [663.1 KB]
 datasets:
 - name: fatality_incidents.csv
   path: data/modules/marine_safety/input/fatality_incidents.csv
@@ -328,3 +328,4 @@ datasets:
     unit: ''
   size_bytes: 3227
   last_modified: '2026-02-08T17:12:15.619128+00:00'
+binary_stores: []

@@ -37,22 +37,44 @@ uv run worldenergydata --help
 
 ### Basic Usage
 
+**Safe first commands — no data or network required:**
+
 ```bash
-# Show available modules
+# Discover all modules and commands
+uv run worldenergydata --help
 uv run worldenergydata info
+uv run worldenergydata version
 
-# BSEE data analysis
-uv run worldenergydata bsee analyze --field "Jack"
-uv run worldenergydata bsee report --type block --id 759 --format excel
-
-# Marine safety operations
-uv run worldenergydata marine-safety scrape uscg --start-year 2020
-uv run worldenergydata marine-safety stats --source all
-
-# Financial calculations
+# Financial calculations (no data required)
 uv run worldenergydata fdas calculate-npv --cashflows "[-1000,100,200,300]" --discount-rate 0.10
 uv run worldenergydata fdas calculate-all --cashflows "[-5000,1000,1500,2000]"
+uv run worldenergydata forecast --help
 ```
+
+**Data-required commands** (run `make data` first):
+
+```bash
+# BSEE data analysis — requires local BSEE dataset (~300 MB)
+uv run worldenergydata bsee analyze --field "Jack"
+uv run worldenergydata bsee report --type block --id 759 --format excel
+```
+
+**Network/credential-required commands:**
+
+```bash
+# Marine safety — requires network access
+uv run worldenergydata marine-safety scrape uscg --start-year 2020  # ⚠ network
+uv run worldenergydata marine-safety stats --source all
+
+# EIA data feed — requires EIA API key
+uv run worldenergydata eia fetch  # ⚠ credential-required
+```
+
+> **Note:** `bsee refresh`, `marine-safety scrape`, and scheduler commands download large datasets.
+> See [MODULE_INDEX.md](MODULE_INDEX.md) for the full module list and data prerequisites.
+> See [docs/CLI.md](docs/CLI.md) for complete CLI reference with safety classifications.
+
+For full module discovery: **[MODULE_INDEX.md](MODULE_INDEX.md)** covers all 16 CLI sub-apps and data readiness status.
 
 ## Modules
 

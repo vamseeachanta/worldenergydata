@@ -3,14 +3,12 @@ from worldenergydata.bsee.data.loaders.block.local_files import (
 )
 from worldenergydata.bsee.data.loaders.block.war_data import WARDataFromBin
 
-block_data_from_local_files = DataFromLocalFiles()
-WAR_data_from_bin = WARDataFromBin()
-
 
 class BlockRouter:
 
     def __init__(self):
-        pass
+        self._block_data_from_local_files = DataFromLocalFiles()
+        self._WAR_data_from_bin = WARDataFromBin()
 
     def router(self, cfg):
 
@@ -26,8 +24,8 @@ class BlockRouter:
 
         # utilized for temporary data retrieval
         if "by_bin" in cfg["data"] and cfg["data"]["by_bin"]:
-            cfg, block_data_groups = WAR_data_from_bin.router(cfg)
+            cfg, block_data_groups = self._WAR_data_from_bin.router(cfg)
         else:
-            cfg, block_data_groups = block_data_from_local_files.router(cfg)
+            cfg, block_data_groups = self._block_data_from_local_files.router(cfg)
 
         return cfg

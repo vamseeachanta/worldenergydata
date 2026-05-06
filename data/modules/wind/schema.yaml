@@ -1,4 +1,37 @@
 module: wind
-description: "Wind energy resource and turbine data (no data files present \u2014\
-  \ run 'make data' to populate)"
+description: Wind energy resource and turbine data [7.0 MB]
 datasets: []
+binary_stores:
+- name: uswtdbCSV.zip
+  path: data/modules/wind/uswtdbCSV.zip
+  format: zip
+  size_bytes: 1458710
+  contents:
+  - CHANGELOG.txt
+  - uswtdb_v3_2_20201014.csv
+  contents_count: 2
+  last_modified: '2025-07-31T11:24:57.639597+00:00'
+- name: uswtdbGeoJSON.zip
+  path: data/modules/wind/uswtdbGeoJSON.zip
+  format: zip
+  size_bytes: 1430239
+  contents:
+  - CHANGELOG.txt
+  - uswtdb_v3_2_20201014.geojson
+  contents_count: 2
+  last_modified: '2025-07-31T11:24:57.674809+00:00'
+- name: uswtdbSHP.zip
+  path: data/modules/wind/uswtdbSHP.zip
+  format: zip
+  size_bytes: 4451928
+  contents:
+  - CHANGELOG.txt
+  - uswtdb_v3_2_20201014.dbf
+  - uswtdb_v3_2_20201014.prj
+  - uswtdb_v3_2_20201014.sbn
+  - uswtdb_v3_2_20201014.sbx
+  - uswtdb_v3_2_20201014.shp
+  - uswtdb_v3_2_20201014.shx
+  - uswtdb_v3_2_20201014.xml
+  contents_count: 8
+  last_modified: '2025-07-31T11:24:57.775445+00:00'

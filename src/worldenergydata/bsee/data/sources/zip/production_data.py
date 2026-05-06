@@ -10,14 +10,11 @@ from loguru import logger
 
 from worldenergydata.bsee.data.scrapers.bsee_web import BSEEWebScraper
 
-wwy = WorkingWithYAML()
-zip_files_to_df = ZipFilestoDf()
-
-
 class GetProdDataFromZip:
 
     def __init__(self):
-        pass
+        self._wwy = WorkingWithYAML()
+        self._zip_files_to_df = ZipFilestoDf()
 
     def router(self, cfg):
         """Orchestrate the production data pipeline: download → extract → convert.
@@ -107,7 +104,7 @@ class GetProdDataFromZip:
                 "filepath": raw_path,
                 "library_name": "worldenergydata",
             }
-            resolved = wwy.get_library_filepath(
+            resolved = self._wwy.get_library_filepath(
                 library_file_cfg, src_relative_location_flag=False
             )
             return resolved
@@ -156,7 +153,7 @@ class GetProdDataFromZip:
                 }
             }
 
-            df_dict = zip_files_to_df.zip_file_to_dataframe(cfg_zip_utilities)
+            df_dict = self._zip_files_to_df.zip_file_to_dataframe(cfg_zip_utilities)
             _, df = list(df_dict.items())[0]
 
             file_label = file_name.split(".")[0]
@@ -272,7 +269,7 @@ class GetProdDataFromZip:
                 "nrows": None,
             }
         }
-        df_dict = zip_files_to_df.zip_file_to_dataframe(cfg_zip_utilities)
+        df_dict = self._zip_files_to_df.zip_file_to_dataframe(cfg_zip_utilities)
         _, df = list(df_dict.items())[0]
         return df
 
@@ -302,7 +299,7 @@ class GetProdDataFromZip:
         ]
         library_name = "worldenergydata"
         library_file_cfg = {"filepath": folder_path_bin, "library_name": library_name}
-        folder_path_bin = wwy.get_library_filepath(
+        folder_path_bin = self._wwy.get_library_filepath(
             library_file_cfg, src_relative_location_flag=False
         )
 

@@ -1,17 +1,1234 @@
 {
   "module": "vessel_hull_models",
-  "last_refresh": "2026-02-13T00:00:00Z",
-  "record_count": 5,
-  "file_count": 1,
-  "total_size_bytes": 1024,
-  "source_url": "",
-  "format": "csv",
+  "generated_at": "2026-05-05T01:06:51.292407+00:00",
+  "last_refresh": "2026-05-05",
+  "record_count": 0,
+  "file_count": 198,
+  "total_size_bytes": 38880004,
+  "total_size_human": "37.1 MB",
+  "source_url": null,
+  "format": ".csv,.json,.md,.msh,.obj,.png,.yaml",
+  "format_breakdown": {
+    ".csv": {
+      "count": 1,
+      "size_bytes": 1024
+    },
+    ".json": {
+      "count": 1,
+      "size_bytes": 43215
+    },
+    ".md": {
+      "count": 2,
+      "size_bytes": 3234
+    },
+    ".msh": {
+      "count": 86,
+      "size_bytes": 18018174
+    },
+    ".obj": {
+      "count": 92,
+      "size_bytes": 15469200
+    },
+    ".png": {
+      "count": 15,
+      "size_bytes": 5343437
+    },
+    ".yaml": {
+      "count": 1,
+      "size_bytes": 1720
+    }
+  },
+  "has_external_data": false,
+  "external_data_root": null,
   "files": [
     {
-      "name": "csv/rig_hulls/sample_rigs.csv",
+      "name": "INVENTORY.md",
+      "path": "INVENTORY.md",
+      "size_bytes": 2971,
+      "modified": "2026-02-08"
+    },
+    {
+      "name": "_metadata.json",
+      "path": "_metadata.json",
+      "size_bytes": 43215,
+      "modified": "2026-05-05"
+    },
+    {
+      "name": "sample_rigs.csv",
+      "path": "csv/rig_hulls/sample_rigs.csv",
       "size_bytes": 1024,
-      "modified": "2026-02-13",
-      "rows": 5
+      "modified": "2026-02-13"
+    },
+    {
+      "name": "hub.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/K_renewables/K02 10MW fixed-bottom OWT/hub.msh",
+      "size_bytes": 123724,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "hub.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/K_renewables/K02 10MW fixed-bottom OWT/hub.obj",
+      "size_bytes": 76421,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "nacelle.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/K_renewables/K02 10MW fixed-bottom OWT/nacelle.msh",
+      "size_bytes": 178310,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "nacelle.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/K_renewables/K02 10MW fixed-bottom OWT/nacelle.obj",
+      "size_bytes": 115986,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "hub.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/K_renewables/K02%2010MW%20fixed-bottom%20OWT/hub.msh",
+      "size_bytes": 123724,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "hub.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/K_renewables/K02%2010MW%20fixed-bottom%20OWT/hub.obj",
+      "size_bytes": 76421,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "nacelle.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/K_renewables/K02%2010MW%20fixed-bottom%20OWT/nacelle.msh",
+      "size_bytes": 178310,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "nacelle.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/K_renewables/K02%2010MW%20fixed-bottom%20OWT/nacelle.obj",
+      "size_bytes": 115986,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "Control surface mesh.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/K_renewables/K03 15MW semi-sub FOWT/Control surface mesh.msh",
+      "size_bytes": 2079493,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "Control surface mesh.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/K_renewables/K03 15MW semi-sub FOWT/Control surface mesh.obj",
+      "size_bytes": 1511167,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "UMaineSemi.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/K_renewables/K03 15MW semi-sub FOWT/UMaineSemi.msh",
+      "size_bytes": 639390,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "UMaineSemi.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/K_renewables/K03 15MW semi-sub FOWT/UMaineSemi.obj",
+      "size_bytes": 461116,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "hub.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/K_renewables/K03 15MW semi-sub FOWT/hub.msh",
+      "size_bytes": 217125,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "hub.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/K_renewables/K03 15MW semi-sub FOWT/hub.obj",
+      "size_bytes": 141192,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "nacelle.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/K_renewables/K03 15MW semi-sub FOWT/nacelle.msh",
+      "size_bytes": 124516,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "nacelle.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/K_renewables/K03 15MW semi-sub FOWT/nacelle.obj",
+      "size_bytes": 81001,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "Control surface mesh.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/K_renewables/K03%2015MW%20semi-sub%20FOWT/Control surface mesh.msh",
+      "size_bytes": 2079493,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "Control surface mesh.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/K_renewables/K03%2015MW%20semi-sub%20FOWT/Control surface mesh.obj",
+      "size_bytes": 1511167,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "UMaineSemi.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/K_renewables/K03%2015MW%20semi-sub%20FOWT/UMaineSemi.msh",
+      "size_bytes": 639390,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "UMaineSemi.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/K_renewables/K03%2015MW%20semi-sub%20FOWT/UMaineSemi.obj",
+      "size_bytes": 461116,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "hub.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/K_renewables/K03%2015MW%20semi-sub%20FOWT/hub.msh",
+      "size_bytes": 217125,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "hub.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/K_renewables/K03%2015MW%20semi-sub%20FOWT/hub.obj",
+      "size_bytes": 141192,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "nacelle.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/K_renewables/K03%2015MW%20semi-sub%20FOWT/nacelle.msh",
+      "size_bytes": 124516,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "nacelle.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/K_renewables/K03%2015MW%20semi-sub%20FOWT/nacelle.obj",
+      "size_bytes": 81001,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L01 Control surface mesh.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L01 Default vessel/L01 Control surface mesh.msh",
+      "size_bytes": 75213,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L01 Control surface mesh.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L01 Default vessel/L01 Control surface mesh.obj",
+      "size_bytes": 67424,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L01 Vessel mesh.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L01 Default vessel/L01 Vessel mesh.msh",
+      "size_bytes": 68783,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L01 Vessel mesh.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L01 Default vessel/L01 Vessel mesh.obj",
+      "size_bytes": 49885,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L01 Control surface mesh.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L01%20Default%20vessel/L01 Control surface mesh.msh",
+      "size_bytes": 75213,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L01 Control surface mesh.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L01%20Default%20vessel/L01 Control surface mesh.obj",
+      "size_bytes": 67424,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L01 Vessel mesh.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L01%20Default%20vessel/L01 Vessel mesh.msh",
+      "size_bytes": 68783,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L01 Vessel mesh.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L01%20Default%20vessel/L01 Vessel mesh.obj",
+      "size_bytes": 49885,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L02 OC4 Semi-sub mesh.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L02 OC4 Semi-sub/L02 OC4 Semi-sub mesh.msh",
+      "size_bytes": 502511,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L02 OC4 Semi-sub mesh.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L02 OC4 Semi-sub/L02 OC4 Semi-sub mesh.obj",
+      "size_bytes": 353911,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L02 OC4 Semi-sub mesh.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L02%20OC4%20Semi-sub/L02 OC4 Semi-sub mesh.msh",
+      "size_bytes": 502511,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L02 OC4 Semi-sub mesh.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L02%20OC4%20Semi-sub/L02 OC4 Semi-sub mesh.obj",
+      "size_bytes": 353911,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L03 Centre column CS.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L03 Semi-sub multibody analysis/L03 Centre column CS.msh",
+      "size_bytes": 127336,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L03 Centre column CS.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L03 Semi-sub multibody analysis/L03 Centre column CS.obj",
+      "size_bytes": 96408,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L03 Centre column.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L03 Semi-sub multibody analysis/L03 Centre column.msh",
+      "size_bytes": 28215,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L03 Centre column.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L03 Semi-sub multibody analysis/L03 Centre column.obj",
+      "size_bytes": 19447,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L03 Outer column CS.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L03 Semi-sub multibody analysis/L03 Outer column CS.msh",
+      "size_bytes": 397560,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L03 Outer column CS.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L03 Semi-sub multibody analysis/L03 Outer column CS.obj",
+      "size_bytes": 306889,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L03 Outer column.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L03 Semi-sub multibody analysis/L03 Outer column.msh",
+      "size_bytes": 100817,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L03 Outer column.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L03 Semi-sub multibody analysis/L03 Outer column.obj",
+      "size_bytes": 70897,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L03 Centre column CS.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L03%20Semi-sub%20multibody%20analysis/L03 Centre column CS.msh",
+      "size_bytes": 127336,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L03 Centre column CS.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L03%20Semi-sub%20multibody%20analysis/L03 Centre column CS.obj",
+      "size_bytes": 96408,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L03 Centre column.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L03%20Semi-sub%20multibody%20analysis/L03 Centre column.msh",
+      "size_bytes": 28215,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L03 Centre column.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L03%20Semi-sub%20multibody%20analysis/L03 Centre column.obj",
+      "size_bytes": 19447,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L03 Outer column CS.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L03%20Semi-sub%20multibody%20analysis/L03 Outer column CS.msh",
+      "size_bytes": 397560,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L03 Outer column CS.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L03%20Semi-sub%20multibody%20analysis/L03 Outer column CS.obj",
+      "size_bytes": 306889,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L03 Outer column.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L03%20Semi-sub%20multibody%20analysis/L03 Outer column.msh",
+      "size_bytes": 100817,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L03 Outer column.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L03%20Semi-sub%20multibody%20analysis/L03 Outer column.obj",
+      "size_bytes": 70897,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L04 Column.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L04 Sectional bodies/L04 Column.msh",
+      "size_bytes": 87222,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L04 Column.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L04 Sectional bodies/L04 Column.obj",
+      "size_bytes": 61223,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L04 Keystone.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L04 Sectional bodies/L04 Keystone.msh",
+      "size_bytes": 139190,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L04 Keystone.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L04 Sectional bodies/L04 Keystone.obj",
+      "size_bytes": 100354,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L04 Pontoon.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L04 Sectional bodies/L04 Pontoon.msh",
+      "size_bytes": 60871,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L04 Pontoon.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L04 Sectional bodies/L04 Pontoon.obj",
+      "size_bytes": 46395,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L04 Column.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L04%20Sectional%20bodies/L04 Column.msh",
+      "size_bytes": 87222,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L04 Column.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L04%20Sectional%20bodies/L04 Column.obj",
+      "size_bytes": 61223,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L04 Keystone.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L04%20Sectional%20bodies/L04 Keystone.msh",
+      "size_bytes": 139190,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L04 Keystone.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L04%20Sectional%20bodies/L04 Keystone.obj",
+      "size_bytes": 100354,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L04 Pontoon.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L04%20Sectional%20bodies/L04 Pontoon.msh",
+      "size_bytes": 60871,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L04 Pontoon.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L04%20Sectional%20bodies/L04 Pontoon.obj",
+      "size_bytes": 46395,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L05 Column.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L05 Panel pressures/L05 Column.msh",
+      "size_bytes": 87222,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L05 Column.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L05 Panel pressures/L05 Column.obj",
+      "size_bytes": 61223,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L05 Keystone.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L05 Panel pressures/L05 Keystone.msh",
+      "size_bytes": 139190,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L05 Keystone.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L05 Panel pressures/L05 Keystone.obj",
+      "size_bytes": 100354,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L05 Pontoon.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L05 Panel pressures/L05 Pontoon.msh",
+      "size_bytes": 60871,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L05 Pontoon.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L05 Panel pressures/L05 Pontoon.obj",
+      "size_bytes": 46395,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L05 Column.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L05%20Panel%20pressures/L05 Column.msh",
+      "size_bytes": 87222,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L05 Column.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L05%20Panel%20pressures/L05 Column.obj",
+      "size_bytes": 61223,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L05 Keystone.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L05%20Panel%20pressures/L05 Keystone.msh",
+      "size_bytes": 139190,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L05 Keystone.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L05%20Panel%20pressures/L05 Keystone.obj",
+      "size_bytes": 100354,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L05 Pontoon.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L05%20Panel%20pressures/L05 Pontoon.msh",
+      "size_bytes": 60871,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L05 Pontoon.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L05%20Panel%20pressures/L05 Pontoon.obj",
+      "size_bytes": 46395,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L06 ISSC TLP 1.25m panels.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L06 Full QTF diffraction analysis/L06 ISSC TLP 1.25m panels.msh",
+      "size_bytes": 1538986,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L06 ISSC TLP 1.25m panels.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L06 Full QTF diffraction analysis/L06 ISSC TLP 1.25m panels.obj",
+      "size_bytes": 1109424,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L06 ISSC TLP 1.25m panels.msh",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L06%20Full%20QTF%20diffraction%20analysis/L06 ISSC TLP 1.25m panels.msh",
+      "size_bytes": 1538986,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L06 ISSC TLP 1.25m panels.obj",
+      "path": "hulls/converted_gdf/data/orcaflex_examples/L_diffraction/L06%20Full%20QTF%20diffraction%20analysis/L06 ISSC TLP 1.25m panels.obj",
+      "size_bytes": 1109424,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "Body_1.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcaflex/aqwa/to_orcawave/multibody_test1/output/Body_1.msh",
+      "size_bytes": 12736,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "Body_1.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcaflex/aqwa/to_orcawave/multibody_test1/output/Body_1.obj",
+      "size_bytes": 9937,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "Body_2.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcaflex/aqwa/to_orcawave/multibody_test1/output/Body_2.msh",
+      "size_bytes": 27598,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "Body_2.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcaflex/aqwa/to_orcawave/multibody_test1/output/Body_2.obj",
+      "size_bytes": 21460,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test01.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.1/OrcaWave v11.0 files/test01.msh",
+      "size_bytes": 85931,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test01.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.1/OrcaWave v11.0 files/test01.obj",
+      "size_bytes": 59682,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test01.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.1/Wamit v7.3 files/test01.msh",
+      "size_bytes": 85931,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test01.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.1/Wamit v7.3 files/test01.obj",
+      "size_bytes": 59682,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test01.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.2/OrcaWave v11.0 files/test01.msh",
+      "size_bytes": 85931,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test01.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.2/OrcaWave v11.0 files/test01.obj",
+      "size_bytes": 59682,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test02.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.2/Wamit v7.3 files/test02.msh",
+      "size_bytes": 85935,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test02.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.2/Wamit v7.3 files/test02.obj",
+      "size_bytes": 59690,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test02.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.2/Wamit v7.3 files without IRR/test02.msh",
+      "size_bytes": 85935,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test02.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.2/Wamit v7.3 files without IRR/test02.obj",
+      "size_bytes": 59690,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test01.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.3/OrcaWave v11.0 files/test01.msh",
+      "size_bytes": 85931,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test01.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.3/OrcaWave v11.0 files/test01.obj",
+      "size_bytes": 59682,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test01.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.3/Wamit v7.3 files/test01.msh",
+      "size_bytes": 85931,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test01.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.3/Wamit v7.3 files/test01.obj",
+      "size_bytes": 59682,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test06.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.5/OrcaWave v11.0 files/test06.msh",
+      "size_bytes": 47225,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test06.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.5/OrcaWave v11.0 files/test06.obj",
+      "size_bytes": 33807,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test07.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.5/OrcaWave v11.0 files/test07.msh",
+      "size_bytes": 400232,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test07.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.5/OrcaWave v11.0 files/test07.obj",
+      "size_bytes": 277517,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test06.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.5/Wamit v7.3 files/Coarse/test06.msh",
+      "size_bytes": 47225,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test06.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.5/Wamit v7.3 files/Coarse/test06.obj",
+      "size_bytes": 33807,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test07.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.5/Wamit v7.3 files/Fine/test07.msh",
+      "size_bytes": 400232,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test07.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.5/Wamit v7.3 files/Fine/test07.obj",
+      "size_bytes": 277517,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test05c.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.6/OrcaWave v11.0 files/test05c.msh",
+      "size_bytes": 36650,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test05c.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.6/OrcaWave v11.0 files/test05c.obj",
+      "size_bytes": 25716,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test05s.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.6/OrcaWave v11.0 files/test05s.msh",
+      "size_bytes": 23353,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test05s.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.6/OrcaWave v11.0 files/test05s.obj",
+      "size_bytes": 15647,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test05c.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.6/Wamit v7.3 files/test05c.msh",
+      "size_bytes": 36650,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test05c.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.6/Wamit v7.3 files/test05c.obj",
+      "size_bytes": 25716,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test05s.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.6/Wamit v7.3 files/test05s.msh",
+      "size_bytes": 23353,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test05s.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.6/Wamit v7.3 files/test05s.obj",
+      "size_bytes": 15647,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "PyramidZC08.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.7/OrcaWave v11.0 files/PyramidZC08.msh",
+      "size_bytes": 49930,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "PyramidZC08.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.7/OrcaWave v11.0 files/PyramidZC08.obj",
+      "size_bytes": 35404,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "PyramidZC08.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.7/Wamit v7.3 files/PyramidZC08.msh",
+      "size_bytes": 49930,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "PyramidZC08.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.7/Wamit v7.3 files/PyramidZC08.obj",
+      "size_bytes": 35404,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "Ellipsoid0096.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.8/OrcaWave v11.0 files/Ellipsoid0096.msh",
+      "size_bytes": 33907,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "Ellipsoid0096.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.8/OrcaWave v11.0 files/Ellipsoid0096.obj",
+      "size_bytes": 22186,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "Ellipsoid0096.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.8/Wall sided variant/OrcaWave v11.0 files/Ellipsoid0096.msh",
+      "size_bytes": 33054,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "Ellipsoid0096.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.8/Wall sided variant/OrcaWave v11.0 files/Ellipsoid0096.obj",
+      "size_bytes": 22154,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "OWBody.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.9/OrcaWave v11.0 files/OWBody.msh",
+      "size_bytes": 130618,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "OWBody.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.9/OrcaWave v11.0 files/OWBody.obj",
+      "size_bytes": 93940,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "OWLid.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.9/OrcaWave v11.0 files/OWLid.msh",
+      "size_bytes": 9655,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "OWLid.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.9/OrcaWave v11.0 files/OWLid.obj",
+      "size_bytes": 7253,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test02.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.9/Wamit v7.3 files/no damping lid/test02.msh",
+      "size_bytes": 130595,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test02.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.9/Wamit v7.3 files/no damping lid/test02.obj",
+      "size_bytes": 93894,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test02a.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.9/Wamit v7.3 files/with damping lid/test02a.msh",
+      "size_bytes": 140906,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "test02a.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/2.9/Wamit v7.3 files/with damping lid/test02a.obj",
+      "size_bytes": 101247,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "BMC.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/3.1/OrcaWave v11.0 files/BMC.msh",
+      "size_bytes": 36488,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "BMC.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/3.1/OrcaWave v11.0 files/BMC.obj",
+      "size_bytes": 24986,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "bmc.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/3.1/Wamit v6.4S files/bmc.msh",
+      "size_bytes": 36488,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "bmc.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/3.1/Wamit v6.4S files/bmc.obj",
+      "size_bytes": 24986,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "SphereWithLid.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/3.2/OrcaWave v11.0 files/SphereWithLid.msh",
+      "size_bytes": 81194,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "SphereWithLid.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/3.2/OrcaWave v11.0 files/SphereWithLid.obj",
+      "size_bytes": 54276,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "SphereWithLid.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/3.2/Wamit v6.4S files/SphereWithLid.msh",
+      "size_bytes": 81194,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "SphereWithLid.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/3.2/Wamit v6.4S files/SphereWithLid.obj",
+      "size_bytes": 54276,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "Cylinder.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/3.3/OrcaWave v11.0 files/Cylinder.msh",
+      "size_bytes": 150790,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "Cylinder.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/3.3/OrcaWave v11.0 files/Cylinder.obj",
+      "size_bytes": 100960,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "Ellipsoid.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/3.3/OrcaWave v11.0 files/Ellipsoid.msh",
+      "size_bytes": 75921,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "Ellipsoid.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/3.3/OrcaWave v11.0 files/Ellipsoid.obj",
+      "size_bytes": 49942,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "Cylinder.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/3.3/Wamit v6.4S files/Cylinder.msh",
+      "size_bytes": 150790,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "Cylinder.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/3.3/Wamit v6.4S files/Cylinder.obj",
+      "size_bytes": 100960,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "Ellipsoid.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/3.3/Wamit v6.4S files/Ellipsoid.msh",
+      "size_bytes": 75921,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "Ellipsoid.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/L00_validation_wamit/3.3/Wamit v6.4S files/Ellipsoid.obj",
+      "size_bytes": 49942,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L01 Control surface mesh.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/examples/L01_default_vessel/L01 Control surface mesh.msh",
+      "size_bytes": 75213,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L01 Control surface mesh.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/examples/L01_default_vessel/L01 Control surface mesh.obj",
+      "size_bytes": 67424,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L01 Vessel mesh.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/examples/L01_default_vessel/L01 Vessel mesh.msh",
+      "size_bytes": 68783,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L01 Vessel mesh.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/examples/L01_default_vessel/L01 Vessel mesh.obj",
+      "size_bytes": 49885,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L02 OC4 Semi-sub mesh.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/examples/L02 OC4 Semi-sub/L02 OC4 Semi-sub mesh.msh",
+      "size_bytes": 168434,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L02 OC4 Semi-sub mesh.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/examples/L02 OC4 Semi-sub/L02 OC4 Semi-sub mesh.obj",
+      "size_bytes": 122724,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L03 Centre column CS.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/examples/L03 Semi-sub multibody analysis/L03 Centre column CS.msh",
+      "size_bytes": 127336,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L03 Centre column CS.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/examples/L03 Semi-sub multibody analysis/L03 Centre column CS.obj",
+      "size_bytes": 96408,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L03 Centre column.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/examples/L03 Semi-sub multibody analysis/L03 Centre column.msh",
+      "size_bytes": 28215,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L03 Centre column.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/examples/L03 Semi-sub multibody analysis/L03 Centre column.obj",
+      "size_bytes": 19447,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L03 Outer column CS.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/examples/L03 Semi-sub multibody analysis/L03 Outer column CS.msh",
+      "size_bytes": 397560,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L03 Outer column CS.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/examples/L03 Semi-sub multibody analysis/L03 Outer column CS.obj",
+      "size_bytes": 306889,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L03 Outer column.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/examples/L03 Semi-sub multibody analysis/L03 Outer column.msh",
+      "size_bytes": 100817,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L03 Outer column.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/examples/L03 Semi-sub multibody analysis/L03 Outer column.obj",
+      "size_bytes": 70897,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L04 Column.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/examples/L04 Sectional bodies/L04 Column.msh",
+      "size_bytes": 87222,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L04 Column.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/examples/L04 Sectional bodies/L04 Column.obj",
+      "size_bytes": 61223,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L04 Keystone.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/examples/L04 Sectional bodies/L04 Keystone.msh",
+      "size_bytes": 139190,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L04 Keystone.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/examples/L04 Sectional bodies/L04 Keystone.obj",
+      "size_bytes": 100354,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L04 Pontoon.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/examples/L04 Sectional bodies/L04 Pontoon.msh",
+      "size_bytes": 60871,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L04 Pontoon.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/examples/L04 Sectional bodies/L04 Pontoon.obj",
+      "size_bytes": 46395,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L05 Column.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/examples/L05 Panel pressures/L05 Column.msh",
+      "size_bytes": 87222,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L05 Column.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/examples/L05 Panel pressures/L05 Column.obj",
+      "size_bytes": 61223,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L05 Keystone.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/examples/L05 Panel pressures/L05 Keystone.msh",
+      "size_bytes": 139190,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L05 Keystone.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/examples/L05 Panel pressures/L05 Keystone.obj",
+      "size_bytes": 100354,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L05 Pontoon.msh",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/examples/L05 Panel pressures/L05 Pontoon.msh",
+      "size_bytes": 60871,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L05 Pontoon.obj",
+      "path": "hulls/converted_gdf/docs/modules/orcawave/examples/L05 Panel pressures/L05 Pontoon.obj",
+      "size_bytes": 46395,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "BMC.png",
+      "path": "hulls/converted_gdf/previews/BMC.png",
+      "size_bytes": 357409,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "Body_1.png",
+      "path": "hulls/converted_gdf/previews/Body_1.png",
+      "size_bytes": 156013,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "Body_2.png",
+      "path": "hulls/converted_gdf/previews/Body_2.png",
+      "size_bytes": 183520,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "Control surface mesh.png",
+      "path": "hulls/converted_gdf/previews/Control surface mesh.png",
+      "size_bytes": 641457,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "Cylinder.png",
+      "path": "hulls/converted_gdf/previews/Cylinder.png",
+      "size_bytes": 574535,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "Ellipsoid.png",
+      "path": "hulls/converted_gdf/previews/Ellipsoid.png",
+      "size_bytes": 252837,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L01 Vessel mesh.png",
+      "path": "hulls/converted_gdf/previews/L01 Vessel mesh.png",
+      "size_bytes": 219017,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L02 OC4 Semi-sub mesh.png",
+      "path": "hulls/converted_gdf/previews/L02 OC4 Semi-sub mesh.png",
+      "size_bytes": 399691,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "L06 ISSC TLP 1.25m panels.png",
+      "path": "hulls/converted_gdf/previews/L06 ISSC TLP 1.25m panels.png",
+      "size_bytes": 464116,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "UMaineSemi.png",
+      "path": "hulls/converted_gdf/previews/UMaineSemi.png",
+      "size_bytes": 309323,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "barge.png",
+      "path": "hulls/converted_gdf/previews/barge.png",
+      "size_bytes": 202617,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "hub.png",
+      "path": "hulls/converted_gdf/previews/hub.png",
+      "size_bytes": 400323,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "hull_comparison_grid.png",
+      "path": "hulls/converted_gdf/previews/hull_comparison_grid.png",
+      "size_bytes": 520787,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "nacelle.png",
+      "path": "hulls/converted_gdf/previews/nacelle.png",
+      "size_bytes": 424803,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "simple_semisub.png",
+      "path": "hulls/converted_gdf/previews/simple_semisub.png",
+      "size_bytes": 236989,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "README.md",
+      "path": "hulls/converted_gdf/specs/README.md",
+      "size_bytes": 263,
+      "modified": "2026-02-17"
+    },
+    {
+      "name": "sea_cypress.obj",
+      "path": "hulls/sea_cypress.obj",
+      "size_bytes": 2538068,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "anchor.obj",
+      "path": "marine_components/anchor.obj",
+      "size_bytes": 151,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "buoy.obj",
+      "path": "marine_components/buoy.obj",
+      "size_bytes": 268,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "chain_link.obj",
+      "path": "marine_components/chain_link.obj",
+      "size_bytes": 191,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "manifold.obj",
+      "path": "marine_components/manifold.obj",
+      "size_bytes": 164,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "valve.obj",
+      "path": "marine_components/valve.obj",
+      "size_bytes": 145,
+      "modified": "2026-01-19"
+    },
+    {
+      "name": "schema.yaml",
+      "path": "schema.yaml",
+      "size_bytes": 1720,
+      "modified": "2026-05-05"
     }
-  ]
+  ],
+  "files_truncated": false
 }

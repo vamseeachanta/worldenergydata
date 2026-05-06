@@ -1,5 +1,5 @@
 module: lng_terminals
-description: Global LNG terminal infrastructure data
+description: Global LNG terminal infrastructure data [31.5 KB]
 datasets:
 - name: terminals_seed.csv
   path: data/modules/lng_terminals/curated/terminals_seed.csv
@@ -80,3 +80,4 @@ datasets:
   row_count: 227
   size_bytes: 32265
   last_modified: '2026-02-16T18:47:05.739990+00:00'
+binary_stores: []
