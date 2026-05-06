@@ -33,10 +33,22 @@ _SAFETY_CLASSES = {
 
 # Sub-apps registered in CLI — must each have a section in CLI.md
 _EXPECTED_CLI_SUBAPPS = {
-    "bsee", "dashboard", "eia", "marine-safety", "fdas",
-    "lower-tertiary", "sodir", "metocean", "ndbc", "texas-rrc",
-    "canada", "mexico-cnh", "landman", "lng-terminals",
-    "safety-analysis", "forecast",
+    "bsee",
+    "dashboard",
+    "eia",
+    "marine-safety",
+    "fdas",
+    "lower-tertiary",
+    "sodir",
+    "metocean",
+    "ndbc",
+    "texas-rrc",
+    "canada",
+    "mexico-cnh",
+    "landman",
+    "lng-terminals",
+    "safety-analysis",
+    "forecast",
 }
 
 
@@ -62,9 +74,7 @@ class TestCliDocSubappCoverage:
             pattern = rf"worldenergydata {re.escape(app)}"
             if not re.search(pattern, text):
                 missing.add(app)
-        assert not missing, (
-            f"Sub-apps missing from CLI.md documentation: {missing}"
-        )
+        assert not missing, f"Sub-apps missing from CLI.md documentation: {missing}"
 
     def test_safety_classes_present_in_cli_doc(self):
         text = _CLI_DOC.read_text()
@@ -73,9 +83,9 @@ class TestCliDocSubappCoverage:
 
     def test_bounded_safe_commands_documented(self):
         text = _CLI_DOC.read_text()
-        assert "bounded-safe" in text, (
-            "CLI.md must mark at least one command as bounded-safe"
-        )
+        assert (
+            "bounded-safe" in text
+        ), "CLI.md must mark at least one command as bounded-safe"
 
 
 class TestExamplesReadmeSafetyMatrix:
@@ -86,26 +96,25 @@ class TestExamplesReadmeSafetyMatrix:
 
     def test_readme_has_safety_table(self):
         text = _EXAMPLES_README.read_text()
-        assert "Safety Class" in text or "safety" in text.lower(), (
-            "examples/README.md must contain a safety classification table"
-        )
+        assert (
+            "Safety Class" in text or "safety" in text.lower()
+        ), "examples/README.md must contain a safety classification table"
 
     def test_all_py_examples_listed(self):
         text = _EXAMPLES_README.read_text()
         py_files = [
-            f for f in _EXAMPLES_DIR.rglob("*.py")
-            if "__pycache__" not in str(f)
+            f for f in _EXAMPLES_DIR.rglob("*.py") if "__pycache__" not in str(f)
         ]
         missing = [f.name for f in py_files if f.name not in text]
-        assert not missing, (
-            f"Example Python files not listed in examples/README.md: {missing}"
-        )
+        assert (
+            not missing
+        ), f"Example Python files not listed in examples/README.md: {missing}"
 
     def test_llm_guardrail_env_var_mentioned(self):
         text = _EXAMPLES_README.read_text()
-        assert "WORLDENERGYDATA_RUN_LLM_EXAMPLES" in text, (
-            "examples/README.md must document the WORLDENERGYDATA_RUN_LLM_EXAMPLES guard"
-        )
+        assert (
+            "WORLDENERGYDATA_RUN_LLM_EXAMPLES" in text
+        ), "examples/README.md must document the WORLDENERGYDATA_RUN_LLM_EXAMPLES guard"
 
 
 class TestLlmExamplesGuardrails:
@@ -133,7 +142,7 @@ class TestLlmExamplesGuardrails:
                 continue
             text = path.read_text()
             # Find the position of __main__ and the guard
-            main_pos = text.find('if __name__')
+            main_pos = text.find("if __name__")
             guard_pos = text.find("WORLDENERGYDATA_RUN_LLM_EXAMPLES")
             if main_pos == -1 or guard_pos == -1:
                 bad.append(path.name)
@@ -143,6 +152,6 @@ class TestLlmExamplesGuardrails:
                 guard_after = text.find("WORLDENERGYDATA_RUN_LLM_EXAMPLES", main_pos)
                 if guard_after == -1:
                     bad.append(path.name)
-        assert not bad, (
-            f"WORLDENERGYDATA_RUN_LLM_EXAMPLES guard not found in __main__ block: {bad}"
-        )
+        assert (
+            not bad
+        ), f"WORLDENERGYDATA_RUN_LLM_EXAMPLES guard not found in __main__ block: {bad}"
