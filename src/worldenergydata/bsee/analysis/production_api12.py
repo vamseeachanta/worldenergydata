@@ -21,6 +21,11 @@ from worldenergydata.bsee.analysis.legacy.api12_economics import (
 from worldenergydata.bsee.data.bsee_data import BSEEData
 from worldenergydata.common.legacy.data import DateTimeUtility
 
+# Backward-compatible module-level handle used by legacy tests and callers that
+# patch ``worldenergydata.bsee.analysis.production_api12.save_data`` directly.
+save_data = SaveData()
+
+
 class ProductionAPI12Analysis:
     """
     Production analysis for BSEE API12 well data.

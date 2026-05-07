@@ -64,7 +64,17 @@ class BseeRefreshJob(AbstractJob):
             JobResult with total records across all successful datasets.
         """
         start = datetime.now()
-        output_dir = Path(config.get("output_dir", self.default_output_dir))
+        if "output_dir" not in config:
+            return JobResult(
+                job_name=self.name,
+                start_time=start,
+                end_time=datetime.now(),
+                status="skipped",
+                records_updated=0,
+                error_msg="BSEE live refresh requires an explicit output_dir",
+            )
+
+        output_dir = Path(config["output_dir"])
         output_dir.mkdir(parents=True, exist_ok=True)
 
         scraper = BSEEWebScraper()

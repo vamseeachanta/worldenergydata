@@ -26,9 +26,7 @@ class ProductionAPI10Analysis:
         if api12_production_data is None or api12_production_data.empty:
             return
         if "COMPLETION_NAME" not in api12_production_data.columns:
-            raise ValueError(
-                "api12_production_data missing COMPLETION_NAME column"
-            )
+            raise ValueError("api12_production_data missing COMPLETION_NAME column")
 
         # Iterate over completions in the provided production data and build
         # per-completion field-production summaries. Mirrors the legacy

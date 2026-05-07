@@ -77,7 +77,7 @@ class TestFieldAggregationDashboard(unittest.TestCase):
                 "lease_name": f"Lease-{i//2+1}",
                 "production_data": pd.DataFrame(
                     {
-                        "date": pd.date_range("2023-01-01", periods=12, freq="M"),
+                        "date": pd.date_range("2023-01-01", periods=12, freq="ME"),
                         "oil_bbls": np.random.uniform(1000, 5000, 12),
                         "gas_mcf": np.random.uniform(500, 2000, 12),
                         "water_bbls": np.random.uniform(100, 500, 12),
@@ -318,7 +318,7 @@ class TestFieldProductionChart(unittest.TestCase):
 
     def _create_production_data(self):
         """Create sample production data."""
-        dates = pd.date_range("2023-01-01", periods=24, freq="M")
+        dates = pd.date_range("2023-01-01", periods=24, freq="ME")
         return pd.DataFrame(
             {
                 "date": dates,

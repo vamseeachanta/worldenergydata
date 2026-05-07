@@ -63,11 +63,10 @@ class TestProductionAPI10Analysis:
         self, analyzer, two_completion_df
     ):
         """For 2 unique completions, each delegate is called twice."""
-        with patch.object(
-            analyzer, "prepare_field_production_rate"
-        ) as mock_rate, patch.object(
-            analyzer, "prepare_field_production"
-        ) as mock_prod:
+        with (
+            patch.object(analyzer, "prepare_field_production_rate") as mock_rate,
+            patch.object(analyzer, "prepare_field_production") as mock_prod,
+        ):
             analyzer.prepare_production_data({}, two_completion_df)
             assert mock_rate.call_count == 2
             assert mock_prod.call_count == 2
@@ -76,22 +75,20 @@ class TestProductionAPI10Analysis:
         self, analyzer, single_completion_df
     ):
         """For 1 unique completion, each delegate is called exactly once."""
-        with patch.object(
-            analyzer, "prepare_field_production_rate"
-        ) as mock_rate, patch.object(
-            analyzer, "prepare_field_production"
-        ) as mock_prod:
+        with (
+            patch.object(analyzer, "prepare_field_production_rate") as mock_rate,
+            patch.object(analyzer, "prepare_field_production") as mock_prod,
+        ):
             analyzer.prepare_production_data({}, single_completion_df)
             assert mock_rate.call_count == 1
             assert mock_prod.call_count == 1
 
     def test_prepare_production_data_empty_dataframe(self, analyzer):
         """Empty DataFrame must short-circuit without calling delegates."""
-        with patch.object(
-            analyzer, "prepare_field_production_rate"
-        ) as mock_rate, patch.object(
-            analyzer, "prepare_field_production"
-        ) as mock_prod:
+        with (
+            patch.object(analyzer, "prepare_field_production_rate") as mock_rate,
+            patch.object(analyzer, "prepare_field_production") as mock_prod,
+        ):
             analyzer.prepare_production_data({}, pd.DataFrame())
             mock_rate.assert_not_called()
             mock_prod.assert_not_called()

@@ -11,6 +11,7 @@ from worldenergydata.bsee.data.sources.zip.production_data import (
 )
 from worldenergydata.bsee.data.sources.zip.well_data import WellDataFromZip
 
+
 class DataRefresh:
     """
     This class is responsible for refreshing data in the BSEE module.
