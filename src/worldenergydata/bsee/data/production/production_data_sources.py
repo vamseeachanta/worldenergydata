@@ -1,10 +1,19 @@
 from worldenergydata.bsee.data.sources.zip.production_data import GetProdDataFromZip
 
+# Backward-compatible module-level handle used by legacy tests and callers that
+# patch ``worldenergydata.bsee.data.production.production_data_sources.production_from_zip``.
+production_from_zip = GetProdDataFromZip()
+
 
 class ProductionDataFromSources:
 
     def __init__(self):
-        self._production_from_zip = GetProdDataFromZip()
+        pass
+
+    @property
+    def _production_from_zip(self):
+        """Return the active zip source, honoring module-level monkeypatches."""
+        return production_from_zip
 
     def router(self, cfg):
 
