@@ -288,13 +288,19 @@ The test file `tests/modules/bsee/analysis/test_type_curves.py` already exists (
 
 ## Adversarial Review Summary
 
-| Provider | Verdict | Key findings |
+| Provider | Verdict (r1 → r2) | Key findings |
 |---|---|---|
-| Claude | _pending_ | _to be filled after r1_ |
-| Codex | _pending_ | _to be filled after r1_ |
-| Gemini | _pending_ | _to be filled after r1_ |
+| Claude | MAJOR (r1) → APPROVE (r2) | r1: 2× blockers (P1 source-SHA freshness unverified; P2 pytest warnings config unverified). Both addressed in r2 with verified evidence. r2: 9× P3 polish (line-number drift, conditional Files-to-Change row, `28 tests` literal vs collect-only, SPE citation-contract justification, regression-gate path existence) + 5× author questions — none blocking. |
+| Codex | UNAVAILABLE — INCOMPATIBLE_VERSION (both rounds) | CLI 0.128.0 in known-bad range (>= 0.124.0), upstream `openai/codex#19945`, see workspace-hub#2479. Remediation: `scripts/install/pin-codex.sh` to downgrade. |
+| Gemini | NO_OUTPUT (both rounds) | Wrapper returned no review content (likely related to `feedback_gemini_sandbox_overlay_blindness.md`). |
 
-**Overall result:** _PENDING — adversarial review not yet run_
+**Overall result:** Single-provider Claude APPROVE on r2 with documented Codex/Gemini unavailability across both rounds. Per `feedback_permission_gate_blocks_cross_review.md`, treat as r2-complete with transparent provenance; user-approval surface accepts the documented provider gaps.
+
+**Review artifacts:**
+- r1 (2026-05-07T03:30:48Z): `scripts/review/results/20260507T033048Z-2026-05-04-issue-278-compatibility-shims.md-plan-{claude,codex,gemini}.md`
+- r2 (2026-05-07T03:36:08Z): `scripts/review/results/20260507T033608Z-2026-05-04-issue-278-compatibility-shims.md-plan-{claude,codex,gemini}.md`
+
+**P3 polish deferred to implementation review:** the r2 P3 findings (re-anchor conftest edit on textual marker not line numbers, replace literal `28 tests` with dynamic-N from `--collect-only`, add SPE-citation-contract justification, verify `tests/unit/bsee/` and `tests/integration/bsee/` directory existence before referencing them in regression gates) are non-blocking refinements to fold in at implementation time.
 
 | Iteration | Verdict | Resolution |
 |---|---|---|
