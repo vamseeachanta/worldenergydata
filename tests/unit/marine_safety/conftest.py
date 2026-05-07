@@ -13,7 +13,7 @@ from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from tests.modules.marine_safety.fixtures.sample_data import (
+from tests.unit.marine_safety.fixtures.sample_data import (
     SAMPLE_INCIDENT_DATA,
     SAMPLE_USCG_PDF_TEXT,
     SAMPLE_USCG_REPORT,
