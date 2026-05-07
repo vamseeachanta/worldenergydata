@@ -1,17 +1,74 @@
-# Issue Plans
+# worldenergydata Plans Index
 
-Canonical GitHub issue planning artifacts for `worldenergydata`.
+This directory contains issue-plan artifacts created during the issue-planning-mode workflow. Each plan is named `YYYY-MM-DD-issue-{N}-{slug}.md` and references its GitHub issue in the header.
 
-| Issue | Plan | Status | Notes |
-|---|---|---|---|
-| [#353](https://github.com/vamseeachanta/worldenergydata/issues/353) | [2026-04-26-issue-353-diagnose-uv-scheduler-noop-timeouts.md](2026-04-26-issue-353-diagnose-uv-scheduler-noop-timeouts.md) | plan-review | Diagnostic-first plan for uv/scheduler no-op timeout branch classification before implementation; revised after adversarial review. |
-| [#354](https://github.com/vamseeachanta/worldenergydata/issues/354) | [2026-04-27-issue-354-reconcile-capability-indexes.md](2026-04-27-issue-354-reconcile-capability-indexes.md) | plan-review | Reconcile manifest, module index, catalog, CLI info, scheduler/data readiness claims. |
-| [#355](https://github.com/vamseeachanta/worldenergydata/issues/355) | [2026-04-27-issue-355-align-cli-docs-examples.md](2026-04-27-issue-355-align-cli-docs-examples.md) | plan-review | Align public CLI docs/examples with smoke matrix and safety classifications. |
-| [#374](https://github.com/vamseeachanta/worldenergydata/issues/374) | [2026-05-03-issue-374-backfill-lt-field-configs-big-foot-north-platte.md](2026-05-03-issue-374-backfill-lt-field-configs-big-foot-north-platte.md) | plan-review | Phase 1 of #373 — backfill yamls for Big Foot + North Platte; add 10-field roster completeness test. |
-| [#375](https://github.com/vamseeachanta/worldenergydata/issues/375) | [2026-05-03-issue-375-per-field-economics-10-lt-fields.md](2026-05-03-issue-375-per-field-economics-10-lt-fields.md) | plan-review | Phase 2 of #373 — per-field NPV/IRR/MIRR/payback + 5-point oil-price sensitivity for all 10 LT fields with citations. |
-| [#376](https://github.com/vamseeachanta/worldenergydata/issues/376) | [2026-05-03-issue-376-cross-field-analytics-lt.md](2026-05-03-issue-376-cross-field-analytics-lt.md) | plan-review | Phase 3 of #373 — cross-field analytics: technology generation, operator concentration, HSE overlay, cost benchmarking. |
-| [#377](https://github.com/vamseeachanta/worldenergydata/issues/377) | [2026-05-03-issue-377-lt-comprehensive-report-assembly.md](2026-05-03-issue-377-lt-comprehensive-report-assembly.md) | plan-review | Phase 4 of #373 — Markdown + HTML + PDF comprehensive report with embedded citations; supersedes existing summary. |
-| [#274](https://github.com/vamseeachanta/worldenergydata/issues/274) | [2026-05-04-issue-274-bandit-remove-or-true.md](2026-05-04-issue-274-bandit-remove-or-true.md) | plan-review | T2 — triage 173 bandit findings, fix real High-severity issues, annotate FPs, then remove `\|\| true` from ci.yml. |
-| [#326](https://github.com/vamseeachanta/worldenergydata/issues/326) | [2026-05-04-issue-326-prepare-production-data-missing.md](2026-05-04-issue-326-prepare-production-data-missing.md) | plan-review | T2 bug — implement missing `prepare_production_data()` orchestration method on `ProductionAPI10Analysis`. |
-| [#339](https://github.com/vamseeachanta/worldenergydata/issues/339) | [2026-05-04-issue-339-legacy-npv-test-resolution.md](2026-05-04-issue-339-legacy-npv-test-resolution.md) | plan-review | T2 — repoint or delete 4 legacy NPV comparison tests; migrate to `EconomicsQuery.npv()` post-refactor API. |
-| [#349](https://github.com/vamseeachanta/worldenergydata/issues/349) | [2026-05-04-issue-349-capability-inventory-audit.md](2026-05-04-issue-349-capability-inventory-audit.md) | plan-review | T2 audit — script comparing src/ tree vs MODULE_INDEX, module-manifest.yaml, data/catalog.yaml; output to docs/gtm/capability-inventory.md. |
+## Active plans
+
+> Sorted by GitHub issue number ascending. Status reflects the `Status:` line in each plan header at the time of indexing.
+
+| Issue | Plan File | Status | Date |
+|-------|-----------|--------|------|
+| [#129](https://github.com/vamseeachanta/worldenergydata/issues/129) | [boem-bsee-cli-refresh](2026-05-04-issue-129-boem-bsee-cli-refresh.md) | plan-review | 2026-05-04 |
+| [#143](https://github.com/vamseeachanta/worldenergydata/issues/143) | [bsee-field-econ-calibrated](2026-05-04-issue-143-bsee-field-econ-calibrated.md) | plan-review | 2026-05-04 |
+| [#153](https://github.com/vamseeachanta/worldenergydata/issues/153) | [uscg-misle-dataset](2026-05-04-issue-153-uscg-misle-dataset.md) | plan-review | 2026-05-04 |
+| [#172](https://github.com/vamseeachanta/worldenergydata/issues/172) | [lt-rev30-reproducibility](2026-05-04-issue-172-lt-rev30-reproducibility.md) | plan-review | 2026-05-04 |
+| [#266](https://github.com/vamseeachanta/worldenergydata/issues/266) | [eia-scheduler-operationalize](2026-05-04-issue-266-eia-scheduler-operationalize.md) | plan-review | 2026-05-04 |
+| [#267](https://github.com/vamseeachanta/worldenergydata/issues/267) | [bsee-scheduler-compat](2026-05-04-issue-267-bsee-scheduler-compat.md) | plan-review | 2026-05-04 |
+| [#268](https://github.com/vamseeachanta/worldenergydata/issues/268) | [metocean-adapter](2026-05-04-issue-268-metocean-adapter.md) | plan-review | 2026-05-04 |
+| [#269](https://github.com/vamseeachanta/worldenergydata/issues/269) | [sodir-brazil-ukcs-adapters](2026-05-04-issue-269-sodir-brazil-ukcs-adapters.md) | plan-review | 2026-05-04 |
+| [#270](https://github.com/vamseeachanta/worldenergydata/issues/270) | [lng-terminals-scheduler-wire](2026-05-04-issue-270-lng-terminals-scheduler-wire.md) | plan-review | 2026-05-04 |
+| [#271](https://github.com/vamseeachanta/worldenergydata/issues/271) | [scheduler-output-dir](2026-05-04-issue-271-scheduler-output-dir.md) | plan-review | 2026-05-04 |
+| [#273](https://github.com/vamseeachanta/worldenergydata/issues/273) | [sodir-endpoint-fix](2026-05-04-issue-273-sodir-endpoint-fix.md) | plan-review | 2026-05-04 |
+| [#274](https://github.com/vamseeachanta/worldenergydata/issues/274) | [bandit-remove-or-true](2026-05-04-issue-274-bandit-remove-or-true.md) | plan-review | 2026-05-04 |
+| [#275](https://github.com/vamseeachanta/worldenergydata/issues/275) | [ast-aware-logger-script](2026-05-04-issue-275-ast-aware-logger-script.md) | plan-review | 2026-05-04 |
+| [#276](https://github.com/vamseeachanta/worldenergydata/issues/276) | [data-validator-integration-test](2026-05-04-issue-276-data-validator-integration-test.md) | plan-review | 2026-05-04 |
+| [#277](https://github.com/vamseeachanta/worldenergydata/issues/277) | [test-perf-regression](2026-05-04-issue-277-test-perf-regression.md) | plan-review | 2026-05-04 |
+| [#278](https://github.com/vamseeachanta/worldenergydata/issues/278) | [compatibility-shims](2026-05-04-issue-278-compatibility-shims.md) | plan-review | 2026-05-04 |
+| [#313](https://github.com/vamseeachanta/worldenergydata/issues/313) | [test-infra-cleanup](2026-05-04-issue-313-test-infra-cleanup.md) | plan-review | 2026-05-04 |
+| [#315](https://github.com/vamseeachanta/worldenergydata/issues/315) | [ruff-migration](2026-05-04-issue-315-ruff-migration.md) | plan-review | 2026-05-04 |
+| [#316](https://github.com/vamseeachanta/worldenergydata/issues/316) | [mypy-incremental](2026-05-04-issue-316-mypy-incremental.md) | plan-review | 2026-05-04 |
+| [#325](https://github.com/vamseeachanta/worldenergydata/issues/325) | [xfail-bugs](2026-05-04-issue-325-xfail-bugs.md) | plan-review | 2026-05-04 |
+| [#326](https://github.com/vamseeachanta/worldenergydata/issues/326) | [prepare-production-data-missing](2026-05-04-issue-326-prepare-production-data-missing.md) | plan-review | 2026-05-04 |
+| [#327](https://github.com/vamseeachanta/worldenergydata/issues/327) | [conftest-marine-safety-fix](2026-05-04-issue-327-conftest-marine-safety-fix.md) | plan-review | 2026-05-04 |
+| [#328](https://github.com/vamseeachanta/worldenergydata/issues/328) | [flake8-race](2026-05-04-issue-328-flake8-race.md) | plan-review | 2026-05-04 |
+| [#334](https://github.com/vamseeachanta/worldenergydata/issues/334) | [annual-operator-disclosures-dataset](2026-04-21-issue-334-annual-operator-disclosures-dataset.md) | draft | 2026-04-21 |
+| [#335](https://github.com/vamseeachanta/worldenergydata/issues/335) | [disclosure-to-costdatapoint-linkage-model](2026-04-22-issue-335-disclosure-to-costdatapoint-linkage-model.md) | draft | 2026-04-22 |
+| [#336](https://github.com/vamseeachanta/worldenergydata/issues/336) | [currency-normalization-and-comparability-policy-for-annual-disclosures](2026-04-22-issue-336-currency-normalization-and-comparability-policy-for-annual-disclosures.md) | draft | 2026-04-22 |
+| [#337](https://github.com/vamseeachanta/worldenergydata/issues/337) | [citation-quality-and-automated-ingestion-contracts-for-annual-disclosures](2026-04-22-issue-337-citation-quality-and-automated-ingestion-contracts-for-annual-disclosures.md) | draft | 2026-04-22 |
+| [#338](https://github.com/vamseeachanta/worldenergydata/issues/338) | [annual-disclosure-analytics-views-and-consumer-integration](2026-04-22-issue-338-annual-disclosure-analytics-views-and-consumer-integration.md) | draft | 2026-04-22 |
+| [#339](https://github.com/vamseeachanta/worldenergydata/issues/339) | [legacy-npv-test-resolution](2026-05-04-issue-339-legacy-npv-test-resolution.md) | plan-review | 2026-05-04 |
+| [#341](https://github.com/vamseeachanta/worldenergydata/issues/341) | [npv-suite-drift](2026-05-04-issue-341-npv-suite-drift.md) | plan-review | 2026-05-04 |
+| [#342](https://github.com/vamseeachanta/worldenergydata/issues/342) | [restore-broken-proxy-comparison-regression-boundary](2026-04-23-issue-342-restore-broken-proxy-comparison-regression-boundary.md) | draft | 2026-04-23 |
+| [#342](https://github.com/vamseeachanta/worldenergydata/issues/342) | [proxy-comparison-fix](2026-05-04-issue-342-proxy-comparison-fix.md) | plan-review | 2026-05-04 |
+| [#343](https://github.com/vamseeachanta/worldenergydata/issues/343) | [major-operator-annual-statement-source-registry-and-yearly-coverage-tracker](2026-04-23-issue-343-major-operator-annual-statement-source-registry-and-yearly-coverage-tracker.md) | draft | 2026-04-23 |
+| [#344](https://github.com/vamseeachanta/worldenergydata/issues/344) | [restatement-version-lineage-for-annual-disclosure-records](2026-04-23-issue-344-restatement-version-lineage-for-annual-disclosure-records.md) | draft | 2026-04-23 |
+| [#348](https://github.com/vamseeachanta/worldenergydata/issues/348) | [plans-readme-index](2026-05-04-issue-348-plans-readme-index.md) | plan-review | 2026-05-04 |
+| [#349](https://github.com/vamseeachanta/worldenergydata/issues/349) | [capability-inventory-audit](2026-05-04-issue-349-capability-inventory-audit.md) | plan-review | 2026-05-04 |
+| [#350](https://github.com/vamseeachanta/worldenergydata/issues/350) | [data-freshness-scorecard](2026-05-04-issue-350-data-freshness-scorecard.md) | plan-review | 2026-05-04 |
+| [#351](https://github.com/vamseeachanta/worldenergydata/issues/351) | [scheduler-readiness-matrix](2026-05-04-issue-351-scheduler-readiness-matrix.md) | plan-review | 2026-05-04 |
+| [#352](https://github.com/vamseeachanta/worldenergydata/issues/352) | [cli-smoke-verification](2026-05-04-issue-352-cli-smoke-verification.md) | plan-review | 2026-05-04 |
+| [#353](https://github.com/vamseeachanta/worldenergydata/issues/353) | [diagnose-uv-scheduler-noop-timeouts](2026-04-26-issue-353-diagnose-uv-scheduler-noop-timeouts.md) | plan-review | 2026-04-26 |
+| [#354](https://github.com/vamseeachanta/worldenergydata/issues/354) | [reconcile-capability-indexes](2026-04-27-issue-354-reconcile-capability-indexes.md) | plan-review | 2026-04-27 |
+| [#355](https://github.com/vamseeachanta/worldenergydata/issues/355) | [align-cli-docs-examples](2026-04-27-issue-355-align-cli-docs-examples.md) | plan-review | 2026-04-27 |
+| [#360](https://github.com/vamseeachanta/worldenergydata/issues/360) | [scheduler-health](2026-05-04-issue-360-scheduler-health.md) | plan-review | 2026-05-04 |
+| [#361](https://github.com/vamseeachanta/worldenergydata/issues/361) | [calc-citation-contract](2026-05-04-issue-361-calc-citation-contract.md) | plan-review | 2026-05-04 |
+| [#362](https://github.com/vamseeachanta/worldenergydata/issues/362) | [operator-cost-benchmarking-report](2026-05-04-issue-362-operator-cost-benchmarking-report.md) | plan-review | 2026-05-04 |
+| [#363](https://github.com/vamseeachanta/worldenergydata/issues/363) | [hse-query-api](2026-05-04-issue-363-hse-query-api.md) | plan-review | 2026-05-04 |
+| [#364](https://github.com/vamseeachanta/worldenergydata/issues/364) | [gtm-capability-matrix](2026-05-04-issue-364-gtm-capability-matrix.md) | plan-review | 2026-05-04 |
+| [#365](https://github.com/vamseeachanta/worldenergydata/issues/365) | [bsee-binary-ingest](2026-05-04-issue-365-bsee-binary-ingest.md) | plan-review | 2026-05-04 |
+| [#366](https://github.com/vamseeachanta/worldenergydata/issues/366) | [hse-bulk-dedup-ingest](2026-05-04-issue-366-hse-bulk-dedup-ingest.md) | plan-review | 2026-05-04 |
+| [#367](https://github.com/vamseeachanta/worldenergydata/issues/367) | [api12-npv-migration](2026-05-04-issue-367-api12-npv-migration.md) | plan-review | 2026-05-04 |
+| [#368](https://github.com/vamseeachanta/worldenergydata/issues/368) | [closed-issue-verifier](2026-05-04-issue-368-closed-issue-verifier.md) | plan-review | 2026-05-04 |
+| [#374](https://github.com/vamseeachanta/worldenergydata/issues/374) | [backfill-lt-field-configs-big-foot-north-platte](2026-05-03-issue-374-backfill-lt-field-configs-big-foot-north-platte.md) | draft | 2026-05-03 |
+| [#375](https://github.com/vamseeachanta/worldenergydata/issues/375) | [per-field-economics-10-lt-fields](2026-05-03-issue-375-per-field-economics-10-lt-fields.md) | draft | 2026-05-03 |
+| [#376](https://github.com/vamseeachanta/worldenergydata/issues/376) | [cross-field-analytics-lt](2026-05-03-issue-376-cross-field-analytics-lt.md) | draft | 2026-05-03 |
+| [#377](https://github.com/vamseeachanta/worldenergydata/issues/377) | [lt-comprehensive-report-assembly](2026-05-03-issue-377-lt-comprehensive-report-assembly.md) | draft | 2026-05-03 |
+| [#387](https://github.com/vamseeachanta/worldenergydata/issues/387) | [pywasp-evaluation](2026-05-06-issue-387-pywasp-evaluation.md) | plan-review | 2026-05-06 |
+
+## Closed / superseded plans
+
+_None yet — list plans here once their issue is closed or the plan is superseded by another revision._
+
+## Maintenance
+
+Update this index when creating, approving, or implementing a plan. Also list closed/superseded plans below the active set.
