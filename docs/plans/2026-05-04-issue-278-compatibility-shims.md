@@ -130,7 +130,43 @@ ok
 - Reproduced at: 2026-05-07T03:24Z
 - Implication: do NOT touch `_compat.py`. The compatibility layer is functioning. The single broken package surface is at the canonical path, not the redirect path.
 
-<!-- Source count: issue #278 body, prior plan, _compat.py, type_curves/__init__.py, marine_safety __init__.py files, conftest.py:382, commit 2c385bd8, commit 3c048030, PR #390/#327 = 9 distinct sources -->
+**Source-SHA freshness proofs** (verifies that `2c385bd8` is the most-recent commit that touched each restoration target before the deletion at `3c048030`; rules out a hidden interim commit that would silently regress on restore):
+
+```
+$ git log --follow --all --oneline -- src/worldenergydata/modules/bsee/analysis/type_curves/blasingame.py
+3c048030 refactor(modules): consolidate bsee and marine_safety to canonical locations
+2c385bd8 chore(sync): auto-sync 2026-03-25
+
+$ git log --follow --all --oneline -- src/worldenergydata/modules/bsee/analysis/type_curves/fetkovich.py
+3c048030 refactor(modules): consolidate bsee and marine_safety to canonical locations
+2c385bd8 chore(sync): auto-sync 2026-03-25
+
+$ git log --follow --all --oneline -- src/worldenergydata/modules/bsee/analysis/type_curves/models.py
+3c048030 refactor(modules): consolidate bsee and marine_safety to canonical locations
+2c385bd8 chore(sync): auto-sync 2026-03-25
+```
+
+- Reproduced at: 2026-05-07T03:32Z
+- Result: each of the 3 files has exactly two history entries — `2c385bd8` (creation/last-modify) and `3c048030` (deletion). No interim commit exists between 2026-03-25 and 2026-04-10 that touched these files at the legacy path. **Single-SHA extraction from `2c385bd8` is safe for all 3 files** (per-file SHA pinning collapses to the same SHA).
+
+**Warnings configuration proof** (verifies whether pytest promotes `DeprecationWarning` to errors, which would force migrating the test-file imports off the `modules.*` redirect path):
+
+```
+$ grep -nE 'filterwarnings|error::DeprecationWarning' pyproject.toml pytest.ini tests/conftest.py 2>&1
+pytest.ini:41:filterwarnings =
+
+# Full block (pytest.ini lines 41-44):
+filterwarnings =
+    error
+    ignore::UserWarning
+    ignore::DeprecationWarning
+```
+
+- Reproduced at: 2026-05-07T03:32Z
+- Interpretation: `error` IS the default rule, but `ignore::DeprecationWarning` follows it on a later line. pytest applies `filterwarnings` last-match-wins, so `DeprecationWarning` is **explicitly ignored, not promoted to error**. The existing test imports via `from worldenergydata.modules.bsee.analysis.type_curves import (...)` (verified at `tests/modules/bsee/analysis/test_type_curves.py:9`) will run cleanly through the `_compat.py` redirect — the `DeprecationWarning` they emit is suppressed by line 44.
+- Implication: **no test-import migration required in this PR**. The existing Risk-LOW note (test imports via `modules.*` redirect) stands as-written; migration to the canonical path remains an optional follow-up, not a gating change.
+
+<!-- Source count: issue #278 body, prior plan, _compat.py, type_curves/__init__.py, marine_safety __init__.py files, conftest.py:382, commit 2c385bd8, commit 3c048030, PR #390/#327, pytest.ini:41-44, git log --follow per-file (3) = 12 distinct sources -->
 
 ---
 
@@ -260,8 +296,12 @@ The test file `tests/modules/bsee/analysis/test_type_curves.py` already exists (
 
 **Overall result:** _PENDING — adversarial review not yet run_
 
+| Iteration | Verdict | Resolution |
+|---|---|---|
+| r1 → r2 | Claude MAJOR (2026-05-07T03:30:48Z) | Addressed P1 + P2 with verified evidence (`Source-SHA freshness proofs` and `Warnings configuration proof` evidence sub-blocks added under Resource Intelligence Summary > Evidence). P1: confirmed all 3 files share last-touched SHA `2c385bd8` — no interim commit, single-SHA extraction safe. P2: `pytest.ini` has `filterwarnings = error` followed by `ignore::DeprecationWarning` — DeprecationWarnings NOT promoted, no test-import migration required. P3s deferred to implementation review. |
+
 Revisions made based on review:
-- _(none yet — this is the first revised draft following Step-1.5 reproduction)_
+- r1 → r2: added `Source-SHA freshness proofs` (3x `git log --follow --all --oneline`) and `Warnings configuration proof` (grep of pyproject.toml/pytest.ini/tests/conftest.py) evidence blocks; verified Pseudocode and Files-to-Change rows correctly extract from `2c385bd8` for all 3 files (no per-file SHA divergence found).
 
 ---
 
