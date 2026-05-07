@@ -21,6 +21,7 @@ from worldenergydata.bsee.analysis.legacy.api12_economics import (
 from worldenergydata.bsee.data.bsee_data import BSEEData
 from worldenergydata.common.legacy.data import DateTimeUtility
 
+
 class ProductionAPI12Analysis:
     """
     Production analysis for BSEE API12 well data.

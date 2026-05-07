@@ -534,7 +534,9 @@ class WellAPI12:
             ].copy()
             api12_dir_survey_df["az"] = 0.0
             api12_dir_survey_df["inc"] = 0.0
-            api12_dir_survey_df["md"] = api12_dir_survey_df["SURVEY_POINT_MD"].astype(float)
+            api12_dir_survey_df["md"] = api12_dir_survey_df["SURVEY_POINT_MD"].astype(
+                float
+            )
 
             for df_row in range(0, len(api12_dir_survey_df)):
                 WELL_N_S_CODE = api12_dir_survey_df.iloc[df_row]["WELL_N_S_CODE"]

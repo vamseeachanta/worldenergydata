@@ -10,8 +10,8 @@ import ast
 import re
 from pathlib import Path
 
-import yaml
 import pytest
+import yaml
 
 _REPO = Path(__file__).resolve().parents[3]
 _MANIFEST = _REPO / "module-manifest.yaml"
@@ -23,6 +23,7 @@ _MODULE_INDEX = _REPO / "MODULE_INDEX.md"
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _load_manifest() -> dict:
     with _MANIFEST.open() as f:
@@ -92,10 +93,16 @@ def _module_index_scheduler_wired() -> set[str]:
 # Tests
 # ---------------------------------------------------------------------------
 
+
 class TestManifestSchemaComplete:
     """Every manifest module must carry the four new required fields."""
 
-    REQUIRED_FIELDS = {"in_scheduler", "public_cli", "catalog_status", "capability_source"}
+    REQUIRED_FIELDS = {
+        "in_scheduler",
+        "public_cli",
+        "catalog_status",
+        "capability_source",
+    }
 
     def test_all_modules_have_required_fields(self):
         data = _load_manifest()
@@ -106,14 +113,17 @@ class TestManifestSchemaComplete:
             absent = self.REQUIRED_FIELDS - set(m.keys())
             if absent:
                 missing[m.get("id", "unknown")] = absent
-        assert not missing, (
-            f"Modules missing required schema fields: {missing}"
-        )
+        assert not missing, f"Modules missing required schema fields: {missing}"
 
     def test_catalog_status_values_are_valid(self):
         valid = {
-            "full", "sample", "empty", "runtime_fetched",
-            "reference_data", "not_applicable", "unknown",
+            "full",
+            "sample",
+            "empty",
+            "runtime_fetched",
+            "reference_data",
+            "not_applicable",
+            "unknown",
         }
         data = _load_manifest()
         bad = {

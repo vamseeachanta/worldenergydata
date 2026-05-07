@@ -1,7 +1,6 @@
 from worldenergydata.bsee.analysis.bsee_analysis import BSEEAnalysis
 from worldenergydata.bsee.data.bsee_data import BSEEData
 
-
 bsee_data = BSEEData()
 bsee_analysis = BSEEAnalysis()
 
