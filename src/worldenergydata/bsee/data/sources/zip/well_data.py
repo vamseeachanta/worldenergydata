@@ -8,6 +8,7 @@ from loguru import logger
 
 from worldenergydata.bsee.data.loaders.block.local_files import DataFromLocalFiles
 
+
 class WellDataFromZip:
 
     def __init__(self):

@@ -53,8 +53,18 @@ class SodirRefreshJob(AbstractJob):
             JobResult indicating success or failure.
         """
         start = datetime.now()
+        if "output_dir" not in config:
+            return JobResult(
+                job_name=self.name,
+                start_time=start,
+                end_time=datetime.now(),
+                status="skipped",
+                records_updated=0,
+                error_msg="SODIR live refresh requires an explicit output_dir",
+            )
+
         base_url = config.get("base_url", "https://factmaps.sodir.no")
-        output_dir = Path(config.get("output_dir", self.default_output_dir))
+        output_dir = Path(config["output_dir"])
         output_dir.mkdir(parents=True, exist_ok=True)
 
         client = SodirAPIClient(base_url=base_url)

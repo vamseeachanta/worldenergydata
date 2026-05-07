@@ -10,6 +10,7 @@ from loguru import logger
 
 from worldenergydata.bsee.data.scrapers.bsee_web import BSEEWebScraper
 
+
 class GetProdDataFromZip:
 
     def __init__(self):

@@ -13,6 +13,7 @@ from worldenergydata.common.data_resolver import get_module_data_safe
 
 _BSEE_BIN = str(get_module_data_safe("bsee") / "bin")
 
+
 class WellData:
 
     def __init__(self):
