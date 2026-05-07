@@ -4,7 +4,7 @@ This package provides sample data generators and fixtures for testing
 marine safety incident database operations and parsers.
 """
 
-from tests.modules.marine_safety.fixtures.sample_data import (
+from tests.unit.marine_safety.fixtures.sample_data import (
     SAMPLE_INCIDENT_DATA,
     SAMPLE_USCG_PDF_TEXT,
     SAMPLE_USCG_REPORT,
