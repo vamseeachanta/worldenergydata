@@ -16,6 +16,20 @@ class ProductionAPI10Analysis:
     def router(self, cfg, api12_production_data):
         self.prepare_production_data(cfg, api12_production_data)
 
+        # api12_analysis.sort_values(by=['O_PROD_STATUS', 'WELL_LABEL'],
+        #                                     ascending=[False, True],
+        #                                     inplace=True)
+        # api12_analysis.reset_index(inplace=True, drop=True)
+
+    def prepare_production_data(self, cfg, api12_production_data):
+        # Guard: if DataFrame is empty or None, return early without iterating.
+        if api12_production_data is None or api12_production_data.empty:
+            return
+        if "COMPLETION_NAME" not in api12_production_data.columns:
+            raise ValueError(
+                "api12_production_data missing COMPLETION_NAME column"
+            )
+
         # Iterate over completions in the provided production data and build
         # per-completion field-production summaries. Mirrors the legacy
         # ong_fd_components.prepare_production_data loop: for each completion
@@ -27,11 +41,6 @@ class ProductionAPI10Analysis:
             ].copy()
             self.prepare_field_production_rate(df_temp, completion_name)
             self.prepare_field_production(df_temp, completion_name)
-
-        # api12_analysis.sort_values(by=['O_PROD_STATUS', 'WELL_LABEL'],
-        #                                     ascending=[False, True],
-        #                                     inplace=True)
-        # api12_analysis.reset_index(inplace=True, drop=True)
 
     def add_production_from_all_wells(self):
         # Third party imports
