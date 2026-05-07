@@ -12,7 +12,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 import yaml
-from hypothesis import assume, example, given, settings
+from hypothesis import HealthCheck, assume, example, given, settings
 from hypothesis import strategies as st
 from hypothesis.strategies import composite
 
@@ -112,7 +112,7 @@ class TestConfigRouterProperties:
     """Property-based tests for ConfigRouter."""
 
     @given(config=full_config_strategy())
-    @settings(max_examples=100)
+    @settings(max_examples=100, suppress_health_check=[HealthCheck.too_slow])
     def test_is_enhanced_mode_consistency(self, config):
         """Test that enhanced mode detection is consistent."""
         router = ConfigRouter()

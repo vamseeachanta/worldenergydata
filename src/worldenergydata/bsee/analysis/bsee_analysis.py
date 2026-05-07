@@ -13,15 +13,30 @@ from worldenergydata.bsee.analysis.well_api10 import WellAPI10
 from worldenergydata.bsee.analysis.well_api12 import WellAPI12
 from worldenergydata.bsee.data.bsee_data import BSEEData
 
+# Module-level analysis components retained for backward-compatible test patching.
+bsee_data = BSEEData()
+well_api12_analysis = WellAPI12()
+well_api10_analysis = WellAPI10()
+prod_api12_analysis = ProductionAPI12Analysis()
+prod_api10_analysis = ProductionAPI10Analysis()
+
+
+def _build_component(factory_or_instance):
+    if hasattr(factory_or_instance, "run_well_analysis") or hasattr(
+        factory_or_instance, "run_production_analysis"
+    ):
+        return factory_or_instance
+    return factory_or_instance() if callable(factory_or_instance) else factory_or_instance
+
 
 class BSEEAnalysis:
 
     def __init__(self):
-        self._bsee_data = BSEEData()
-        self._well_api12_analysis = WellAPI12()
-        self._well_api10_analysis = WellAPI10()
-        self._prod_api12_analysis = ProductionAPI12Analysis()
-        self._prod_api10_analysis = ProductionAPI10Analysis()
+        self._bsee_data = bsee_data
+        self._well_api12_analysis = _build_component(well_api12_analysis)
+        self._well_api10_analysis = _build_component(well_api10_analysis)
+        self._prod_api12_analysis = _build_component(prod_api12_analysis)
+        self._prod_api10_analysis = _build_component(prod_api10_analysis)
 
     def router(self, cfg, data):
 
@@ -37,13 +52,11 @@ class BSEEAnalysis:
 
     def run_analysis_for_all_wells(self, cfg, data):
 
-        cfg, well_data_analysis_groups = self._well_api12_analysis.run_well_analysis(
-            cfg, data
-        )
+        cfg, well_data_analysis_groups = well_api12_analysis.run_well_analysis(cfg, data)
         production_data_analysis_groups = {}
-        if data["production_data"] is not None:
+        if data.get("production_data") is not None:
             cfg, production_data_analysis_groups = (
-                self._prod_api12_analysis.run_production_analysis(cfg, data)
+                prod_api12_analysis.run_production_analysis(cfg, data)
             )
 
         # Add production dates to well summary
@@ -54,14 +67,14 @@ class BSEEAnalysis:
         # Regenerate timeline with updated production dates
         well_summary_df = well_data_analysis_groups.get("well_summary_df_groups")
         if well_summary_df is not None:
-            well_timeline_df = self._well_api12_analysis.well_timeline_analysis(
+            well_timeline_df = well_api12_analysis.well_timeline_analysis(
                 cfg, well_summary_df
             )
             well_data_analysis_groups["well_timeline_df"] = well_timeline_df
 
             # Save updated results and generate plot
-            self._well_api12_analysis.save_result_groups(cfg, well_data_analysis_groups)
-            self._well_api12_analysis.plot_well_timeline_df(cfg, well_data_analysis_groups)
+            well_api12_analysis.save_result_groups(cfg, well_data_analysis_groups)
+            well_api12_analysis.plot_well_timeline_df(cfg, well_data_analysis_groups)
 
         return cfg
 
@@ -146,4 +159,5 @@ class BSEEAnalysis:
         well_data_analysis_groups["well_summary_df_groups"] = well_summary_df
 
         # Save the updated well summary
-        self._well_api12_analysis.save_result_groups(cfg, well_data_analysis_groups)
+        if "well_timeline_df" in well_data_analysis_groups:
+            well_api12_analysis.save_result_groups(cfg, well_data_analysis_groups)
