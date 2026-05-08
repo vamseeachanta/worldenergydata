@@ -35,7 +35,17 @@ class RepoStructureViolation:
 
 
 @dataclass(frozen=True)
+class WorktreeStatusEntry:
+    """A parsed non-ignored worktree status entry."""
+
+    status: str
+    path: str
+    old_path: str | None = None
+
+
+@dataclass(frozen=True)
 class RepoStructureContract:
+
     """Parsed repo-structure contract."""
 
     allowed_roots: frozenset[str]
@@ -183,33 +193,89 @@ def git_tracked_paths(repo_root: Path) -> list[str]:
     return [line for line in result.stdout.splitlines() if line]
 
 
-def parse_git_status_paths(output: str) -> list[str]:
-    """Parse porcelain-like ``git status --short`` output into paths.
+def _parse_status_path(raw_path: str) -> str:
+    """Unquote a porcelain path while tolerating odd shell-like input."""
 
-    This deliberately includes untracked, modified, deleted, and renamed paths
-    that are visible in the working tree without reading ignored cache/output
-    directories. For renames, validate the destination path because that is the
-    root shape that would be committed.
+    try:
+        parsed = shlex.split(raw_path)
+    except ValueError:
+        parsed = []
+    return parsed[0] if len(parsed) == 1 else raw_path
+
+
+def parse_git_status_entries(output: str) -> list[WorktreeStatusEntry]:
+    """Parse porcelain-like ``git status --short`` output into status entries.
+
+    Status codes are preserved so Phase-1 policy can reject deletion/relocation
+    of generated-looking tracked artifacts instead of treating them like normal
+    path classification.
     """
 
-    paths: list[str] = []
+    entries: list[WorktreeStatusEntry] = []
     for raw_line in output.splitlines():
         if not raw_line or raw_line.startswith("## ") or len(raw_line) < 4:
             continue
+        status = raw_line[:2]
         path = raw_line[3:]
+        old_path: str | None = None
         if " -> " in path:
-            path = path.rsplit(" -> ", 1)[1]
+            old_raw, new_raw = path.rsplit(" -> ", 1)
+            old_path = _parse_status_path(old_raw)
+            path = new_raw
+        path = _parse_status_path(path)
         if path:
-            try:
-                parsed = shlex.split(path)
-            except ValueError:
-                parsed = []
-            paths.append(parsed[0] if len(parsed) == 1 else path)
-    return paths
+            entries.append(WorktreeStatusEntry(status=status, path=path, old_path=old_path))
+    return entries
 
 
-def git_worktree_paths(repo_root: Path) -> list[str]:
-    """Return non-ignored working-tree paths visible to git status."""
+def parse_git_status_paths(output: str) -> list[str]:
+    """Parse porcelain-like ``git status --short`` output into destination paths."""
+
+    return [entry.path for entry in parse_git_status_entries(output)]
+
+
+def validate_worktree_status_entries(
+    entries: Iterable[WorktreeStatusEntry], contract: RepoStructureContract
+) -> list[RepoStructureViolation]:
+    """Validate status-specific Phase-1 constraints for worktree entries."""
+
+    violations: list[RepoStructureViolation] = []
+    emitted: set[RepoStructureViolation] = set()
+
+    def add(violation: RepoStructureViolation) -> None:
+        if violation not in emitted:
+            emitted.add(violation)
+            violations.append(violation)
+
+    for entry in entries:
+        status = entry.status
+        path_root = root_for(entry.path)
+        old_root = root_for(entry.old_path) if entry.old_path else ""
+        touches_generated_root = (
+            path_root in contract.generated_artifact_roots
+            or old_root in contract.generated_artifact_roots
+        )
+        if not touches_generated_root:
+            continue
+        if "D" in status or "R" in status:
+            if entry.old_path and "R" in status:
+                violation_path = f"{entry.old_path} -> {entry.path}"
+                violation_root = old_root or path_root
+            else:
+                violation_path = entry.path
+                violation_root = path_root or old_root
+            add(
+                RepoStructureViolation(
+                    "generated-artifact-deletion-or-relocation",
+                    violation_root,
+                    violation_path,
+                )
+            )
+    return violations
+
+
+def git_worktree_status_entries(repo_root: Path) -> list[WorktreeStatusEntry]:
+    """Return non-ignored working-tree status entries visible to git status."""
 
     result = subprocess.run(
         ["git", "status", "--short", "--untracked-files=all"],
@@ -218,7 +284,13 @@ def git_worktree_paths(repo_root: Path) -> list[str]:
         text=True,
         stdout=subprocess.PIPE,
     )
-    return parse_git_status_paths(result.stdout)
+    return parse_git_status_entries(result.stdout)
+
+
+def git_worktree_paths(repo_root: Path) -> list[str]:
+    """Return non-ignored working-tree paths visible to git status."""
+
+    return [entry.path for entry in git_worktree_status_entries(repo_root)]
 
 
 def repository_paths(repo_root: Path) -> list[str]:
@@ -258,8 +330,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
     repo_root = Path.cwd()
     contract = load_contract(args.config)
-    paths = args.paths if args.paths is not None else repository_paths(repo_root)
-    violations = validate_paths(paths, contract)
+    if args.paths is not None:
+        paths = args.paths
+        violations = validate_paths(paths, contract)
+    else:
+        tracked_paths = git_tracked_paths(repo_root)
+        worktree_entries = git_worktree_status_entries(repo_root)
+        paths = tracked_paths + [entry.path for entry in worktree_entries]
+        violations = validate_paths(paths, contract)
+        violations.extend(validate_worktree_status_entries(worktree_entries, contract))
     if violations:
         print(format_violations(violations))
         return 1

@@ -203,8 +203,10 @@ def test_default_cli_includes_nonignored_worktree_paths(
     )
     monkeypatch.setattr(
         verify_repo_structure,
-        "git_worktree_paths",
-        lambda repo_root: ["scratch/file.txt"],
+        "git_worktree_status_entries",
+        lambda repo_root: [
+            verify_repo_structure.WorktreeStatusEntry("??", "scratch/file.txt")
+        ],
     )
 
     result = main(["--config", str(contract)])
@@ -213,3 +215,81 @@ def test_default_cli_includes_nonignored_worktree_paths(
     assert result == 1
     assert "unknown-root" in captured.out
     assert "scratch/file.txt" in captured.out
+
+
+def test_deleted_generated_artifact_is_rejected_even_when_classified(
+    tmp_path: Path,
+) -> None:
+    contract = load_contract(
+        _contract(
+            tmp_path,
+            {
+                "temporary_exceptions": {
+                    "reports": {
+                        "category": "durable-evidence",
+                        "owner": "worldenergydata maintainers",
+                        "review_date": "2026-06-30",
+                        "follow_up": "https://github.com/vamseeachanta/worldenergydata/issues/394",
+                        "justification": (
+                            "Tracked report artifacts require explicit path-level "
+                            "classification before relocation or deletion."
+                        ),
+                        "allowed_paths": ["reports/REPORT_SUMMARY.md"],
+                    }
+                }
+            },
+        )
+    )
+
+    violations = verify_repo_structure.validate_worktree_status_entries(
+        [verify_repo_structure.WorktreeStatusEntry(" D", "reports/REPORT_SUMMARY.md")],
+        contract,
+    )
+
+    assert (
+        RepoStructureViolation(
+            "generated-artifact-deletion-or-relocation",
+            "reports",
+            "reports/REPORT_SUMMARY.md",
+        )
+        in violations
+    )
+
+
+def test_renamed_generated_artifact_is_rejected_as_relocation(tmp_path: Path) -> None:
+    contract = load_contract(
+        _contract(
+            tmp_path,
+            {
+                "temporary_exceptions": {
+                    "reports": {
+                        "category": "durable-evidence",
+                        "owner": "worldenergydata maintainers",
+                        "review_date": "2026-06-30",
+                        "follow_up": "https://github.com/vamseeachanta/worldenergydata/issues/394",
+                        "justification": (
+                            "Tracked report artifacts require explicit path-level "
+                            "classification before relocation or deletion."
+                        ),
+                        "allowed_paths": ["reports/old.md", "reports/new.md"],
+                    }
+                }
+            },
+        )
+    )
+
+    entries = verify_repo_structure.parse_git_status_entries(
+        'R  "reports/old.md" -> "reports/new.md"\n'
+    )
+    violations = verify_repo_structure.validate_worktree_status_entries(
+        entries, contract
+    )
+
+    assert (
+        RepoStructureViolation(
+            "generated-artifact-deletion-or-relocation",
+            "reports",
+            "reports/old.md -> reports/new.md",
+        )
+        in violations
+    )
