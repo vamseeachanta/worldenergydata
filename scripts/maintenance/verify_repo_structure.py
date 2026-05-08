@@ -66,7 +66,9 @@ def load_contract(path: Path | str) -> RepoStructureContract:
     normalized_exceptions: dict[str, dict[str, object]] = {}
     for root, metadata in exceptions.items():
         if not isinstance(root, str) or not isinstance(metadata, dict):
-            raise ValueError("temporary_exceptions entries must map roots to metadata mappings")
+            raise ValueError(
+                "temporary_exceptions entries must map roots to metadata mappings"
+            )
         normalized_exceptions[root] = dict(metadata)
 
     return RepoStructureContract(
@@ -103,7 +105,10 @@ def _metadata_value(metadata: dict[str, object], key: str) -> str:
 
 def _exception_metadata_valid(metadata: dict[str, object]) -> bool:
     required = ("category", "owner", "review_date", "follow_up", "justification")
-    if any(key not in metadata or _is_placeholder(_metadata_value(metadata, key)) for key in required):
+    if any(
+        key not in metadata or _is_placeholder(_metadata_value(metadata, key))
+        for key in required
+    ):
         return False
     if not _DATE_RE.match(_metadata_value(metadata, "review_date").strip()):
         return False
@@ -112,7 +117,9 @@ def _exception_metadata_valid(metadata: dict[str, object]) -> bool:
     if len(_metadata_value(metadata, "justification").strip()) < 30:
         return False
     allowed_paths = metadata.get("allowed_paths")
-    if not isinstance(allowed_paths, list) or not all(isinstance(item, str) and item for item in allowed_paths):
+    if not isinstance(allowed_paths, list) or not all(
+        isinstance(item, str) and item for item in allowed_paths
+    ):
         return False
     return True
 
@@ -124,7 +131,9 @@ def _path_allowed_by_exception(path: str, metadata: dict[str, object]) -> bool:
     return path in set(allowed_paths)
 
 
-def validate_paths(paths: Iterable[str], contract: RepoStructureContract) -> list[RepoStructureViolation]:
+def validate_paths(
+    paths: Iterable[str], contract: RepoStructureContract
+) -> list[RepoStructureViolation]:
     """Validate repository-relative paths against the root contract."""
 
     violations: list[RepoStructureViolation] = []
@@ -143,7 +152,11 @@ def validate_paths(paths: Iterable[str], contract: RepoStructureContract) -> lis
         if root in contract.generated_artifact_roots:
             metadata = contract.temporary_exceptions.get(root)
             if metadata is None:
-                add(RepoStructureViolation("generated-root-missing-exception", root, path))
+                add(
+                    RepoStructureViolation(
+                        "generated-root-missing-exception", root, path
+                    )
+                )
             elif not _exception_metadata_valid(metadata):
                 add(RepoStructureViolation("invalid-exception-metadata", root, root))
             elif not _path_allowed_by_exception(path, metadata):

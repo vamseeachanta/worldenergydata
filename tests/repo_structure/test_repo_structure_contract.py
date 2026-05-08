@@ -20,7 +20,15 @@ from scripts.maintenance.verify_repo_structure import (
 
 def _contract(tmp_path: Path, overrides: dict | None = None) -> Path:
     payload = {
-        "allowed_roots": ["src", "tests", "docs", "config", "scripts", "README.md", "pyproject.toml"],
+        "allowed_roots": [
+            "src",
+            "tests",
+            "docs",
+            "config",
+            "scripts",
+            "README.md",
+            "pyproject.toml",
+        ],
         "ignored_roots": [".git", ".venv", "__pycache__"],
         "generated_artifact_roots": ["reports", "results", "output", "logs"],
         "temporary_exceptions": {
@@ -29,7 +37,10 @@ def _contract(tmp_path: Path, overrides: dict | None = None) -> Path:
                 "owner": "worldenergydata maintainers",
                 "review_date": "2026-06-30",
                 "follow_up": "https://github.com/vamseeachanta/worldenergydata/issues/394",
-                "justification": "Tracked report artifacts require a dedicated generated-evidence migration issue before relocation or deletion.",
+                "justification": (
+                    "Tracked report artifacts require a dedicated generated-evidence "
+                    "migration issue before relocation or deletion."
+                ),
             }
         },
     }
@@ -43,19 +54,27 @@ def _contract(tmp_path: Path, overrides: dict | None = None) -> Path:
 def test_checker_rejects_unapproved_root_entry(tmp_path: Path) -> None:
     contract = load_contract(_contract(tmp_path))
 
-    violations = validate_paths(["src/worldenergydata/__init__.py", "scratch.txt"], contract)
+    violations = validate_paths(
+        ["src/worldenergydata/__init__.py", "scratch.txt"], contract
+    )
 
-    assert RepoStructureViolation("unknown-root", "scratch.txt", "scratch.txt") in violations
+    assert (
+        RepoStructureViolation("unknown-root", "scratch.txt", "scratch.txt")
+        in violations
+    )
 
 
 def test_checker_rejects_generated_root_without_exception(tmp_path: Path) -> None:
-    contract = load_contract(
-        _contract(tmp_path, {"temporary_exceptions": {}})
-    )
+    contract = load_contract(_contract(tmp_path, {"temporary_exceptions": {}}))
 
     violations = validate_paths(["reports/demo.html"], contract)
 
-    assert RepoStructureViolation("generated-root-missing-exception", "reports", "reports/demo.html") in violations
+    assert (
+        RepoStructureViolation(
+            "generated-root-missing-exception", "reports", "reports/demo.html"
+        )
+        in violations
+    )
 
 
 def test_checker_rejects_placeholder_exception_metadata(tmp_path: Path) -> None:
@@ -78,7 +97,10 @@ def test_checker_rejects_placeholder_exception_metadata(tmp_path: Path) -> None:
 
     violations = validate_paths(["reports/demo.html"], contract)
 
-    assert RepoStructureViolation("invalid-exception-metadata", "reports", "reports") in violations
+    assert (
+        RepoStructureViolation("invalid-exception-metadata", "reports", "reports")
+        in violations
+    )
 
 
 def test_checker_rejects_generated_path_not_listed_in_exception(tmp_path: Path) -> None:
@@ -92,7 +114,10 @@ def test_checker_rejects_generated_path_not_listed_in_exception(tmp_path: Path) 
                         "owner": "worldenergydata maintainers",
                         "review_date": "2026-06-30",
                         "follow_up": "https://github.com/vamseeachanta/worldenergydata/issues/394",
-                        "justification": "Tracked report artifacts require explicit path-level classification before relocation or deletion.",
+                        "justification": (
+                            "Tracked report artifacts require explicit path-level "
+                            "classification before relocation or deletion."
+                        ),
                         "allowed_paths": ["reports/REPORT_SUMMARY.md"],
                     }
                 }
@@ -102,7 +127,12 @@ def test_checker_rejects_generated_path_not_listed_in_exception(tmp_path: Path) 
 
     violations = validate_paths(["reports/new-report.html"], contract)
 
-    assert RepoStructureViolation("generated-path-not-classified", "reports", "reports/new-report.html") in violations
+    assert (
+        RepoStructureViolation(
+            "generated-path-not-classified", "reports", "reports/new-report.html"
+        )
+        in violations
+    )
 
 
 def test_current_contract_accepts_approved_roots_and_exceptions() -> None:
@@ -168,8 +198,14 @@ def test_default_cli_includes_nonignored_worktree_paths(
     capsys,
 ) -> None:
     contract = _contract(tmp_path)
-    monkeypatch.setattr(verify_repo_structure, "git_tracked_paths", lambda repo_root: [])
-    monkeypatch.setattr(verify_repo_structure, "git_worktree_paths", lambda repo_root: ["scratch/file.txt"])
+    monkeypatch.setattr(
+        verify_repo_structure, "git_tracked_paths", lambda repo_root: []
+    )
+    monkeypatch.setattr(
+        verify_repo_structure,
+        "git_worktree_paths",
+        lambda repo_root: ["scratch/file.txt"],
+    )
 
     result = main(["--config", str(contract)])
 
