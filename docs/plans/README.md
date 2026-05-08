@@ -72,3 +72,4 @@ _None yet — list plans here once their issue is closed or the plan is supersed
 ## Maintenance
 
 Update this index when creating, approving, or implementing a plan. Also list closed/superseded plans below the active set.
+| 394 | repo-structure-normalization | `docs/plans/2026-05-08-issue-394-repo-structure-normalization.md` | 2026-05-08 | plan-review | T3 | Repo-specific folder/file structure normalization plan; implementation blocked pending user approval. |
