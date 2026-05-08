@@ -107,7 +107,7 @@ repos:
       - id: commitizen
         stages: [commit-msg]
 
-  # Guard: reject Windows-path directory artifacts (WRK-364)
+  # Local repository structure guards
   - repo: local
     hooks:
       - id: no-windows-path-dirs
@@ -116,6 +116,14 @@ repos:
         entry: python scripts/hooks/check-no-windows-paths.py
         pass_filenames: false
         stages: [pre-commit]
+      - id: repo-structure-contract
+        name: Repository structure contract
+        language: python
+        entry: python scripts/maintenance/verify_repo_structure.py
+        pass_filenames: false
+        stages: [pre-commit]
+        additional_dependencies:
+          - PyYAML
 
 # CI configuration
 ci:
