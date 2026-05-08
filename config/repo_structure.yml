@@ -1,0 +1,137 @@
+# worldenergydata repository structure contract
+# Issue: https://github.com/vamseeachanta/worldenergydata/issues/394
+# Scope: Phase 1 contract/checker only; no broad moves or deletion authorized.
+
+allowed_roots:
+  # Standard project roots
+  - src
+  - tests
+  - docs
+  - config
+  - scripts
+  - data
+  - examples
+  - notebooks
+  - subseaiq
+  - systemd
+  - _archive
+
+  # Agent/tooling and repo metadata roots intentionally tracked today
+  - .ai
+  - .claude
+  - .codex
+  - .common
+  - .gemini
+  - .git-commands
+  - .github
+  - .github_workflows_backup
+  - .planning
+  - .slash-commands
+
+  # Approved root files
+  - AGENTS.md
+  - CLAUDE.md
+  - .command-registry.json
+  - coverage.json
+  - .coveragerc
+  - .coverage_report.json
+  - .flake8
+  - .gitattributes
+  - .gitignore
+  - .legal-deny-list.yaml
+  - LICENSE
+  - Makefile
+  - mkdocs.yml
+  - MODULE_INDEX.md
+  - module-manifest.yaml
+  - .pre-commit-config.yaml
+  - pyproject.toml
+  - pytest.ini
+  - .radon.cfg
+  - README.md
+  - uv.lock
+  - uv.toml
+  - vulture_whitelist.py
+
+ignored_roots:
+  - .git
+  - .venv
+  - __pycache__
+  - .mypy_cache
+  - .pytest_cache
+  - .ruff_cache
+  - .hypothesis
+  - .agent-os
+  - .archived
+  - .benchmarks
+  - .claude-flow
+  - .hive-mind
+  - .swarm
+  - backups
+
+generated_artifact_roots:
+  - logs
+  - reports
+  - output
+  - results
+  - site
+  - test_output
+
+temporary_exceptions:
+  logs:
+    category: durable-evidence
+    owner: worldenergydata maintainers
+    review_date: "2026-06-30"
+    follow_up: https://github.com/vamseeachanta/worldenergydata/issues/394
+    justification: Tracked scheduler log JSON files are preserved as existing durable evidence until a dedicated generated-evidence migration classifies retention, relocation, or deletion.
+    allowed_paths:
+      - logs/scheduler/20260325_214434_eia_us_refresh.json
+      - logs/scheduler/20260325_214511_bsee_refresh.json
+      - logs/scheduler/20260325_214601_sodir_refresh.json
+      - logs/scheduler/20260325_214643_brazil_anp_refresh.json
+      - logs/scheduler/20260325_214746_ukcs_refresh.json
+      - logs/scheduler/20260325_214826_metocean_refresh.json
+  reports:
+    category: durable-evidence
+    owner: worldenergydata maintainers
+    review_date: "2026-06-30"
+    follow_up: https://github.com/vamseeachanta/worldenergydata/issues/394
+    justification: Tracked HTML, Markdown, Python, and JSON report artifacts are preserved as existing durable evidence until a dedicated generated-evidence migration classifies retention, relocation, or deletion.
+    allowed_paths:
+      - reports/.gitkeep
+      - reports/IMO_GISIS_Executive_Report.html
+      - reports/REPORT_SUMMARY.md
+      - reports/anchor_field_demo_report.html
+      - reports/compliance/module_compliance_report.json
+      - reports/field_analysis_report.html
+      - reports/gtm/2026-05-04-bsee-field-analysis-comprehensive.html
+      - reports/gtm/2026-05-04-fdas-field-development-economics.html
+      - reports/gtm/2026-05-04-gtm-production-decline-forecast.html
+      - reports/hse/wrk012_hse_data_audit.md
+      - reports/hse/wrk013_hse_mishap_analysis.md
+      - reports/imo_gisis_analysis_report.py
+      - reports/lower_tertiary/v30_repeatability_report.md
+      - reports/lower_tertiary/wrk010_latest_data_report.md
+      - reports/lower_tertiary_field_summary.html
+      - reports/lower_tertiary_field_summary.md
+      - reports/marine_safety/README.md
+      - reports/marine_safety/executive_summary.html
+      - reports/marine_safety/fatality_analysis.html
+      - reports/marine_safety/foundering_analysis.html
+      - reports/marine_safety/hatch_analysis.html
+      - reports/marine_safety_cause_analysis_demo.html
+      - reports/metocean/test_wave_rose.html
+      - reports/modules/marketing/COMPLETION_SUMMARY.md
+      - reports/modules/marketing/DECISION_IMPLEMENTATION_GUIDE.md
+      - reports/modules/marketing/GENERATION_SUMMARY.md
+      - reports/modules/marketing/PDF_GENERATION_CHECKLIST.md
+      - reports/modules/marketing/PREREQUISITES_VALIDATION_SUMMARY.md
+      - reports/modules/marketing/QUICK_START.md
+      - reports/modules/marketing/VALIDATION_REPORT.md
+      - reports/modules/marketing/marketing_brochure_bsee_data_integration.md
+      - reports/modules/marketing/marketing_brochure_economic_evaluation_npv_analysis.md
+      - reports/modules/marketing/marketing_brochure_fdas_field_data_analysis_system.md
+      - reports/modules/marketing/marketing_brochure_field-specific_analysis.md
+      - reports/modules/marketing/marketing_brochure_marine_safety_incident_analysis.md
+      - reports/modules/marketing/marketing_brochure_web_scraping_infrastructure.md
+      - reports/modules/marketing/marketing_brochure_well_production_dashboard.md
