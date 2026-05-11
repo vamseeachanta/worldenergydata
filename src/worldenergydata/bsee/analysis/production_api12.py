@@ -14,16 +14,37 @@ from assetutilities.common.visualization.visualization_templates_plotly import (
 from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
 from loguru import logger
 
-from worldenergydata.bsee.analysis.legacy.api12_economics import (
-    NPVCalculator,
-    RevenueCalculator,
-)
 from worldenergydata.bsee.data.bsee_data import BSEEData
 from worldenergydata.common.legacy.data import DateTimeUtility
+from worldenergydata.fdas.core.config import AssumptionsManager
+from worldenergydata.fdas.core.financial import calculate_npv as fdas_calculate_npv
+from worldenergydata.lower_tertiary.wti_prices import load_extended_wti_prices
 
 # Backward-compatible module-level handle used by legacy tests and callers that
 # patch ``worldenergydata.bsee.analysis.production_api12.save_data`` directly.
 save_data = SaveData()
+
+
+def _currency_to_float(value) -> float:
+    """Parse currency-like values used by legacy API12 revenue tables."""
+    if pd.isna(value) or value == "":
+        return 0.0
+    if isinstance(value, (int, float)):
+        return float(value)
+    return float(str(value).replace("$", "").replace(",", "").strip() or 0.0)
+
+
+def _production_month(value) -> pd.Timestamp:
+    """Normalize BSEE PRODUCTION_DATE values such as 202401 to month start."""
+    if isinstance(value, pd.Timestamp):
+        return value.to_period("M").to_timestamp()
+    if isinstance(value, datetime.datetime):
+        return pd.Timestamp(value).to_period("M").to_timestamp()
+    text = str(int(value)) if isinstance(value, (int, float)) else str(value)
+    text = text.strip()
+    if len(text) == 6 and text.isdigit():
+        return pd.Timestamp(year=int(text[:4]), month=int(text[4:6]), day=1)
+    return pd.to_datetime(text).to_period("M").to_timestamp()
 
 
 class ProductionAPI12Analysis:
@@ -47,8 +68,6 @@ class ProductionAPI12Analysis:
         self._bsee_data = BSEEData()
         self._dtu = DateTimeUtility()
         self._save_data = SaveData()
-        self._revenue_calculator = RevenueCalculator()
-        self._npv_calculator = NPVCalculator()
 
     def router(self, cfg):
         return cfg
@@ -414,7 +433,6 @@ class ProductionAPI12Analysis:
         production_rate = []
         O_CUMMULATIVE_PROD_MMBBL_array = []
         for df_row in range(0, len(api12_df)):
-
             year = int(api12_df.PRODUCTION_DATE.iloc[df_row] / 100)
             month = api12_df.PRODUCTION_DATE.iloc[df_row] % year
             date_time = datetime.datetime(year, month, 1)
@@ -580,9 +598,9 @@ class ProductionAPI12Analysis:
 
         plot_yml = self._viz_templates_plotly.get_xy_line_df(cfg["Analysis"].copy())
 
-        plot_yml["data"]["groups"][0][
-            "file_name"
-        ] = prod_cumulative_mmbbl_groups_by_block
+        plot_yml["data"]["groups"][0]["file_name"] = (
+            prod_cumulative_mmbbl_groups_by_block
+        )
         groups_label = cfg["meta"].get("label", None)
         if groups_label is None:
             groups_label = cfg["Analysis"]["file_name_for_overwrite"]
@@ -614,9 +632,9 @@ class ProductionAPI12Analysis:
 
         plot_yml = self._viz_templates_plotly.get_xy_line_df(cfg["Analysis"].copy())
 
-        plot_yml["data"]["groups"][0][
-            "file_name"
-        ] = prod_cumulative_mmbbl_groups_by_field
+        plot_yml["data"]["groups"][0]["file_name"] = (
+            prod_cumulative_mmbbl_groups_by_field
+        )
         groups_label = cfg["meta"].get("label", None)
         if groups_label is None:
             groups_label = cfg["Analysis"]["file_name_for_overwrite"]
@@ -641,20 +659,138 @@ class ProductionAPI12Analysis:
         au_engine(inputfile=None, cfg=plot_yml, config_flag=False)
 
     def generate_revenue_table(self, cfg, api12_df):
-        """Generate revenue table using the legacy API12 economics contract."""
-        revenue_df = self._revenue_calculator.generate_revenue_table(cfg, api12_df)
-        self._npv_calculator.perform_npv_calculation(cfg, revenue_df)
+        """Generate API12 revenue from production and Lower Tertiary WTI prices."""
+        revenue_df = self._generate_revenue_table_from_wti(cfg, api12_df)
+        self.calculate_npv(cfg, revenue_df)
         return revenue_df
 
+    def _generate_revenue_table_from_wti(self, cfg, api12_df):
+        """Build a revenue table using the Lower Tertiary WTI price deck."""
+        if api12_df.empty:
+            return pd.DataFrame()
+
+        production_df = api12_df.copy()
+        production_df["Month_Timestamp"] = production_df["PRODUCTION_DATE"].apply(
+            _production_month
+        )
+        max_month = production_df["Month_Timestamp"].max().strftime("%Y-%m-%d")
+        prices_df = load_extended_wti_prices(through_date=max_month).copy()
+        prices_df["Month_Timestamp"] = (
+            prices_df["Month"].dt.to_period("M").dt.to_timestamp()
+        )
+        price_by_month = prices_df.set_index("Month_Timestamp")["WTI_USD"].to_dict()
+
+        production_df["Monthly Oil Production"] = pd.to_numeric(
+            production_df["MON_O_PROD_VOL"], errors="coerce"
+        ).fillna(0.0)
+        production_df["Avg Price (USD/bbl)"] = production_df["Month_Timestamp"].map(
+            price_by_month
+        )
+        if production_df["Avg Price (USD/bbl)"].isna().any():
+            missing = production_df.loc[
+                production_df["Avg Price (USD/bbl)"].isna(), "Month_Timestamp"
+            ]
+            missing_months = ", ".join(item.strftime("%Y-%m") for item in missing)
+            raise ValueError(
+                f"Missing WTI prices for production months: {missing_months}"
+            )
+
+        production_df["Revenue (USD)"] = (
+            production_df["Monthly Oil Production"]
+            * production_df["Avg Price (USD/bbl)"]
+        )
+
+        df = pd.DataFrame(
+            {
+                "Month": production_df["PRODUCTION_DATE"].tolist(),
+                "Monthly Oil Production": production_df[
+                    "Monthly Oil Production"
+                ].tolist(),
+                "Avg Price (USD/bbl)": [
+                    f"${price:,.2f}"
+                    for price in production_df["Avg Price (USD/bbl)"].tolist()
+                ],
+                "Revenue (USD)": [
+                    f"${revenue:,.2f}"
+                    for revenue in production_df["Revenue (USD)"].tolist()
+                ],
+            }
+        )
+
+        total_row = {
+            "Month": "",
+            "Monthly Oil Production": "",
+            "Avg Price (USD/bbl)": "",
+            "Revenue (USD)": f"${production_df['Revenue (USD)'].sum():,.2f}",
+        }
+        df = pd.concat([df, pd.DataFrame([total_row])], ignore_index=True)
+
+        result_folder = cfg.get("Analysis", {}).get("result_folder")
+        if result_folder:
+            file_name = os.path.join(result_folder, "revenues_table.csv")
+            df.to_csv(file_name, index=False)
+
+        return df
+
+    def _economic_assumptions(self, cfg, dev_system="default"):
+        """Resolve FDAS assumptions plus legacy config overrides."""
+        assumptions_df = cfg.get("fdas_assumptions")
+        assumptions = (
+            AssumptionsManager.from_dict(assumptions_df)
+            if assumptions_df is not None
+            else AssumptionsManager()
+        )
+        cost_cfg = cfg.get("economics", {}).get("cost", {})
+        discount_rate = float(
+            cost_cfg.get(
+                "discount_rate_annual",
+                assumptions.get(dev_system, "DISCOUNT_RATE_ANNUAL"),
+            )
+        )
+        capex = float(
+            cost_cfg.get(
+                "CAPEX",
+                assumptions.get(dev_system, "HOST_CAPEX_MM") * 1_000_000,
+            )
+        )
+        opex = float(
+            cost_cfg.get(
+                "OPEX",
+                assumptions.get(dev_system, "VARIABLE_OPEX_$/BBL"),
+            )
+        )
+        return capex, opex, discount_rate
+
+    def calculate_npv(self, cfg, revenue_df, dev_system="default", period="monthly"):
+        """Calculate API12 NPV through the FDAS financial layer."""
+        capex, opex_per_bbl, discount_rate = self._economic_assumptions(
+            cfg, dev_system=dev_system
+        )
+        working = revenue_df.copy()
+        if "Month" in working.columns:
+            working = working[working["Month"].astype(str).str.strip() != ""]
+
+        revenues = (
+            working["Revenue (USD)"].apply(_currency_to_float).to_numpy(dtype=float)
+        )
+        production = pd.to_numeric(
+            working["Monthly Oil Production"], errors="coerce"
+        ).fillna(0.0)
+        operating_cashflows = revenues - (
+            production.to_numpy(dtype=float) * opex_per_bbl
+        )
+        cashflows = np.concatenate(
+            (np.array([-capex], dtype=float), operating_cashflows)
+        )
+        return fdas_calculate_npv(cashflows, discount_rate, period=period)
+
     def perform_npv_calculation(self, cfg, revenue_df):
-        """Perform legacy API12 NPV calculation for backward compatibility."""
-        return self._npv_calculator.perform_npv_calculation(cfg, revenue_df)
+        """Backward-compatible wrapper around the FDAS API12 NPV path."""
+        return self.calculate_npv(cfg, revenue_df)
 
     def perform_excel_aligned_npv_calculation(self, cfg, revenue_df):
-        """Perform Excel-aligned legacy API12 NPV calculation."""
-        return self._npv_calculator.perform_excel_aligned_npv_calculation(
-            cfg, revenue_df
-        )
+        """Backward-compatible wrapper around the FDAS API12 NPV path."""
+        return self.calculate_npv(cfg, revenue_df)
 
     def perform_decline_analysis_api12(self, cfg, api12_df):
         """
