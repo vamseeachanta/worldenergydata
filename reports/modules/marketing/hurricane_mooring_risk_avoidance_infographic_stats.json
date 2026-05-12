@@ -8,11 +8,8 @@
   "denominators": {
     "critical_high_hatch_all_hatch_pct": "12 critical/high hatch events / 30 all hatch CSV records including controls",
     "critical_high_hatch_event_pct": "12 critical/high hatch events / 20 hatch event rows excluding severity=None controls",
-    "direct_weather_or_water_exposure_pct_of_event_records": "26 direct weather/water exposure events / 55 incident/event rows excluding hatch controls"
+    "explicit_weather_wave_water_ingress_pathway_pct_of_event_records": "21 explicit weather/wave/water-ingress pathway events / 55 incident/event rows excluding hatch controls"
   },
-  "direct_weather_or_water_exposure_events": 26,
-  "direct_weather_or_water_exposure_fatalities": 43,
-  "direct_weather_or_water_exposure_pct_of_event_records": 47.3,
   "document_provenance": {
     "filename": "Hurricane Planning and Mooring R0-4revisions.docx",
     "path_role": "external user-provided DOCX; filename cited, original document not committed",
@@ -135,7 +132,7 @@
         "vessel_name": "Oil Tanker Sovereign"
       }
     ],
-    "direct_weather_or_water_exposure_events": [
+    "explicit_weather_wave_water_ingress_pathway_events": [
       {
         "dataset": "fatality",
         "description": "Crew member swept overboard during storm, lost at sea despite search efforts",
@@ -156,30 +153,12 @@
       },
       {
         "dataset": "fatality",
-        "description": "Crew member entangled in fishing gear, dragged overboard and drowned",
-        "fatalities": 1,
-        "incident_id": "FA013",
-        "severity": "",
-        "source_file": "fatality_incidents.csv",
-        "vessel_name": "Fishing Vessel Endeavor"
-      },
-      {
-        "dataset": "fatality",
         "description": "Deck crew struck by loose cargo during rough weather, blunt force trauma",
         "fatalities": 1,
         "incident_id": "FA014",
         "severity": "",
         "source_file": "fatality_incidents.csv",
         "vessel_name": "Container Ship Dynasty"
-      },
-      {
-        "dataset": "fatality",
-        "description": "Crew member fell overboard during mooring operations, body not recovered",
-        "fatalities": 1,
-        "incident_id": "FA016",
-        "severity": "",
-        "source_file": "fatality_incidents.csv",
-        "vessel_name": "Bulk Carrier Olympus"
       },
       {
         "dataset": "foundering",
@@ -198,6 +177,15 @@
         "severity": "",
         "source_file": "foundering_incidents.csv",
         "vessel_name": "Fishing Vessel Mariner"
+      },
+      {
+        "dataset": "foundering",
+        "description": "Progressive flooding after grounding, vessel broke apart and sank, crew evacuated successfully",
+        "fatalities": 0,
+        "incident_id": "F003",
+        "severity": "",
+        "source_file": "foundering_incidents.csv",
+        "vessel_name": "Bulk Carrier Titan Express"
       },
       {
         "dataset": "foundering",
@@ -237,33 +225,6 @@
       },
       {
         "dataset": "foundering",
-        "description": "Structural failure in severe storm, hull cracked amidships, vessel broke up and sank",
-        "fatalities": 6,
-        "incident_id": "F008",
-        "severity": "",
-        "source_file": "foundering_incidents.csv",
-        "vessel_name": "Bulk Carrier Freedom"
-      },
-      {
-        "dataset": "foundering",
-        "description": "Fire in engine room led to loss of power, vessel drifted and eventually sank, crew evacuated",
-        "fatalities": 1,
-        "incident_id": "F009",
-        "severity": "",
-        "source_file": "foundering_incidents.csv",
-        "vessel_name": "Chemical Tanker Pacific"
-      },
-      {
-        "dataset": "foundering",
-        "description": "Collision with reef in poor visibility, massive hull breach, foundered within 2 hours",
-        "fatalities": 3,
-        "incident_id": "F010",
-        "severity": "",
-        "source_file": "foundering_incidents.csv",
-        "vessel_name": "MV Northern Star"
-      },
-      {
-        "dataset": "foundering",
         "description": "Encountered typhoon, cargo shifted causing severe list, vessel capsized and sank",
         "fatalities": 7,
         "incident_id": "F011",
@@ -299,15 +260,6 @@
         "vessel_name": "Container Ship Horizon"
       },
       {
-        "dataset": "foundering",
-        "description": "Grounding led to hull breach and oil spill, vessel refloated but sank during tow",
-        "fatalities": 1,
-        "incident_id": "F015",
-        "severity": "",
-        "source_file": "foundering_incidents.csv",
-        "vessel_name": "Oil Tanker Prosperity"
-      },
-      {
         "dataset": "hatch",
         "description": "Engine room hatch left open during rough seas, water ingress caused flooding in machinery spaces",
         "fatalities": "",
@@ -324,6 +276,15 @@
         "severity": "Critical",
         "source_file": "hatch_incidents.csv",
         "vessel_name": "Tanker Horizon"
+      },
+      {
+        "dataset": "hatch",
+        "description": "Engine room access door seal degraded, water entered through improper closure",
+        "fatalities": "",
+        "incident_id": "H004",
+        "severity": "Medium",
+        "source_file": "hatch_incidents.csv",
+        "vessel_name": "Bulk Carrier Neptune"
       },
       {
         "dataset": "hatch",
@@ -351,15 +312,6 @@
         "severity": "Critical",
         "source_file": "hatch_incidents.csv",
         "vessel_name": "Fishing Trawler Discovery"
-      },
-      {
-        "dataset": "hatch",
-        "description": "Weather deck hatch seal deteriorated, routine maintenance overlooked",
-        "fatalities": "",
-        "incident_id": "H016",
-        "severity": "High",
-        "source_file": "hatch_incidents.csv",
-        "vessel_name": "Bulk Carrier Olympus"
       },
       {
         "dataset": "hatch",
@@ -523,7 +475,6 @@
       "NI010"
     ],
     "preventive_or_control_rows": [
-      "F003",
       "NI001",
       "NI002",
       "NI003",
@@ -536,9 +487,12 @@
       "NI010"
     ]
   },
+  "explicit_weather_wave_water_ingress_pathway_events": 21,
+  "explicit_weather_wave_water_ingress_pathway_fatalities": 30,
+  "explicit_weather_wave_water_ingress_pathway_pct_of_event_records": 38.2,
   "foundering_pathway_fatalities": 38,
   "foundering_pathway_records": 15,
-  "generated_utc": "2026-05-12T12:07:46Z",
+  "generated_utc": "2026-05-12T14:20:14Z",
   "hatch_control_records": 10,
   "hatch_severity_counts": {
     "Critical": 6,
@@ -550,39 +504,32 @@
   "hatch_watertight_event_records": 20,
   "issue": "https://github.com/vamseeachanta/worldenergydata/issues/403",
   "keyword_group_matches": {
-    "exposure": [
-      "FA008",
+    "storm_weather": [
+      "FA003",
       "FA014",
       "F001",
       "F002",
       "F005",
-      "F012",
-      "H001",
-      "H008",
-      "H015"
-    ],
-    "overboard": [
-      "FA013",
-      "FA016"
-    ],
-    "storm": [
-      "FA003",
-      "F007",
-      "F008",
       "F011",
       "F013",
       "F014",
       "H003",
-      "H016",
+      "H008",
       "H017"
     ],
     "water_ingress": [
+      "F003",
       "F004",
       "F006",
-      "F009",
-      "F010",
-      "F015",
+      "H004",
       "H011"
+    ],
+    "wave_sea_state": [
+      "FA008",
+      "F007",
+      "F012",
+      "H001",
+      "H015"
     ]
   },
   "matched_incident_ids": {
@@ -600,32 +547,27 @@
       "H018",
       "H020"
     ],
-    "direct_weather_or_water_exposure_events": [
+    "explicit_weather_wave_water_ingress_pathway_events": [
       "FA003",
       "FA008",
-      "FA013",
       "FA014",
-      "FA016",
       "F001",
       "F002",
+      "F003",
       "F004",
       "F005",
       "F006",
       "F007",
-      "F008",
-      "F009",
-      "F010",
       "F011",
       "F012",
       "F013",
       "F014",
-      "F015",
       "H001",
       "H003",
+      "H004",
       "H008",
       "H011",
       "H015",
-      "H016",
       "H017"
     ],
     "foundering_pathway": [

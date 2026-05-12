@@ -20,7 +20,7 @@ from typing import Any
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_INPUT_DIR = REPO_ROOT / "data" / "modules" / "marine_safety" / "input"
 DEFAULT_OUTPUT_DIR = REPO_ROOT / "reports" / "modules" / "marketing"
-DEFAULT_DOCX_PATH = Path("/home/vamsee/Downloads/Hurricane Planning and Mooring R0-4revisions.docx")
+DEFAULT_DOCX_NAME = "Hurricane Planning and Mooring R0-4revisions.docx"
 
 OUTPUT_HTML_NAME = "hurricane_mooring_risk_avoidance_infographic.html"
 OUTPUT_STATS_NAME = "hurricane_mooring_risk_avoidance_infographic_stats.json"
@@ -36,20 +36,28 @@ CAVEAT = (
 )
 
 WEATHER_WATER_KEYWORDS = {
-    "exposure": ["rough seas", "heavy seas", "heavy weather", "severe weather", "rough weather"],
-    "storm": ["storm", "typhoon", "rogue wave", "weather"],
-    "water_ingress": ["water ingress", "flooding", "sank", "capsized", "foundered", "founder"],
-    "overboard": ["overboard", "drowned", "drowning"],
+    "storm_weather": [
+        "storm conditions",
+        "severe weather",
+        "heavy weather",
+        "rough weather",
+        "freezing weather",
+        "during storm",
+        "typhoon",
+        "icing conditions",
+    ],
+    "wave_sea_state": ["rough seas", "heavy seas", "rogue wave", "beam seas"],
+    "water_ingress": [
+        "progressive flooding",
+        "cargo hold flooding",
+        "flooding",
+        "rapid water ingress",
+        "water ingress",
+        "water entry",
+        "water infiltration",
+        "water entered",
+    ],
 }
-CONTROL_TERMS = [
-    "successfully",
-    "successful",
-    "verified secure",
-    "avoid severe storm",
-    "without incident",
-    "no safety incidents",
-    "all safety checks passed",
-]
 
 
 def _rel(path: Path) -> str:
@@ -87,15 +95,18 @@ def load_incident_sources(input_dir: Path = DEFAULT_INPUT_DIR) -> dict[str, list
 
 
 def _matches_weather_or_water(row: dict[str, Any]) -> tuple[bool, str | None]:
-    """Classify direct weather/water exposure while excluding controls."""
+    """Classify explicit weather/wave/water-ingress pathway evidence.
+
+    The classifier is intentionally narrow: generic outcomes such as "sank",
+    "foundered", and "overboard" are not enough. Those outcomes can follow
+    fire, grounding, routine mooring work, or other non-hurricane mechanisms.
+    """
 
     text = " ".join(
         str(row.get(field, ""))
         for field in ("description", "cause_of_death", "severity")
     ).lower()
     if str(row.get("severity", "")).lower() == "none":
-        return False, "control"
-    if any(term in text for term in CONTROL_TERMS):
         return False, "control"
     for group, terms in WEATHER_WATER_KEYWORDS.items():
         if any(term in text for term in terms):
@@ -124,7 +135,7 @@ def _evidence_rows(rows: list[dict[str, Any]], ids: list[str]) -> list[dict[str,
     return evidence
 
 
-def build_stats(input_dir: Path = DEFAULT_INPUT_DIR, docx_path: Path = DEFAULT_DOCX_PATH) -> dict[str, Any]:
+def build_stats(input_dir: Path = DEFAULT_INPUT_DIR, docx_name: str = DEFAULT_DOCX_NAME) -> dict[str, Any]:
     """Recompute all infographic statistics from source CSVs."""
 
     sources = load_incident_sources(Path(input_dir))
@@ -161,7 +172,7 @@ def build_stats(input_dir: Path = DEFAULT_INPUT_DIR, docx_path: Path = DEFAULT_D
         "issue": "https://github.com/vamseeachanta/worldenergydata/issues/403",
         "source_files": [_rel(path) for path in source_paths],
         "document_provenance": {
-            "filename": Path(docx_path).name,
+            "filename": docx_name,
             "path_role": "external user-provided DOCX; filename cited, original document not committed",
             "themes": [
                 "hurricane preparation planning",
@@ -190,9 +201,9 @@ def build_stats(input_dir: Path = DEFAULT_INPUT_DIR, docx_path: Path = DEFAULT_D
         "critical_high_hatch_events": len(critical_high_hatch_events),
         "critical_high_hatch_event_pct": round(len(critical_high_hatch_events) / len(hatch_events) * 100, 1),
         "critical_high_hatch_all_hatch_pct": round(len(critical_high_hatch_events) / len(hatch_rows) * 100, 1),
-        "direct_weather_or_water_exposure_events": len(weather_rows),
-        "direct_weather_or_water_exposure_fatalities": weather_fatalities,
-        "direct_weather_or_water_exposure_pct_of_event_records": round(
+        "explicit_weather_wave_water_ingress_pathway_events": len(weather_rows),
+        "explicit_weather_wave_water_ingress_pathway_fatalities": weather_fatalities,
+        "explicit_weather_wave_water_ingress_pathway_pct_of_event_records": round(
             len(weather_rows) / (len(fatality_rows) + len(foundering_rows) + len(hatch_events)) * 100,
             1,
         ),
@@ -201,7 +212,7 @@ def build_stats(input_dir: Path = DEFAULT_INPUT_DIR, docx_path: Path = DEFAULT_D
             "foundering_pathway": [row["incident_id"] for row in foundering_rows],
             "hatch_watertight_events": [row["incident_id"] for row in hatch_events],
             "critical_high_hatch_events": [row["incident_id"] for row in critical_high_hatch_events],
-            "direct_weather_or_water_exposure_events": [row["incident_id"] for row in weather_rows],
+            "explicit_weather_wave_water_ingress_pathway_events": [row["incident_id"] for row in weather_rows],
         },
         "excluded_incident_ids": {
             "hatch_controls": [row["incident_id"] for row in hatch_controls],
@@ -211,13 +222,13 @@ def build_stats(input_dir: Path = DEFAULT_INPUT_DIR, docx_path: Path = DEFAULT_D
         "denominators": {
             "critical_high_hatch_event_pct": "12 critical/high hatch events / 20 hatch event rows excluding severity=None controls",
             "critical_high_hatch_all_hatch_pct": "12 critical/high hatch events / 30 all hatch CSV records including controls",
-            "direct_weather_or_water_exposure_pct_of_event_records": (
-                f"{len(weather_rows)} direct weather/water exposure events / "
+            "explicit_weather_wave_water_ingress_pathway_pct_of_event_records": (
+                f"{len(weather_rows)} explicit weather/wave/water-ingress pathway events / "
                 f"{len(fatality_rows) + len(foundering_rows) + len(hatch_events)} incident/event rows excluding hatch controls"
             ),
         },
         "evidence_rows": {
-            "direct_weather_or_water_exposure_events": _evidence_rows(all_rows, [row["incident_id"] for row in weather_rows]),
+            "explicit_weather_wave_water_ingress_pathway_events": _evidence_rows(all_rows, [row["incident_id"] for row in weather_rows]),
             "critical_high_hatch_events": _evidence_rows(all_rows, [row["incident_id"] for row in critical_high_hatch_events]),
             "foundering_pathway": _evidence_rows(all_rows, [row["incident_id"] for row in foundering_rows]),
         },
@@ -394,7 +405,7 @@ def render_html(stats: dict[str, Any]) -> str:
   <div class=\"grid two\">
     <section>
       <h2>Statistics that support the risk story</h2>
-      <div class=\"bar\"><div class=\"bar-label\"><span>Direct weather/water exposure events</span><span>{stats['direct_weather_or_water_exposure_events']} / 55 event rows</span></div><div class=\"track\"><div class=\"fill\" style=\"width:{stats['direct_weather_or_water_exposure_pct_of_event_records']}%\"></div></div><p>{escape(stats['denominators']['direct_weather_or_water_exposure_pct_of_event_records'])}; {stats['direct_weather_or_water_exposure_fatalities']} fatalities in matched rows.</p></div>
+      <div class=\"bar\"><div class=\"bar-label\"><span>Explicit storm/wave/water-ingress pathway events</span><span>{stats['explicit_weather_wave_water_ingress_pathway_events']} / 55 event rows</span></div><div class=\"track\"><div class=\"fill\" style=\"width:{stats['explicit_weather_wave_water_ingress_pathway_pct_of_event_records']}%\"></div></div><p>{escape(stats['denominators']['explicit_weather_wave_water_ingress_pathway_pct_of_event_records'])}; {stats['explicit_weather_wave_water_ingress_pathway_fatalities']} fatalities in matched rows.</p></div>
       <div class=\"bar\"><div class=\"bar-label\"><span>Critical/high hatch integrity events</span><span>{stats['critical_high_hatch_event_pct']}%</span></div><div class=\"track\"><div class=\"fill\" style=\"width:{stats['critical_high_hatch_event_pct']}%\"></div></div><p>{escape(stats['denominators']['critical_high_hatch_event_pct'])}; {escape(stats['denominators']['critical_high_hatch_all_hatch_pct'])}.</p></div>
       <p><strong>Severity counts:</strong> Critical {severity.get('Critical', 0)}, High {severity.get('High', 0)}, Medium {severity.get('Medium', 0)}, Low {severity.get('Low', 0)}, None/control {severity.get('None', 0)}.</p>
     </section>
@@ -424,10 +435,10 @@ def render_html(stats: dict[str, Any]) -> str:
   <section style=\"margin-top:18px\">
     <h2>Interactive evidence panels</h2>
     <p>Open each panel to audit the matched source rows behind the headline counts.</p>
-    {_evidence_details('Direct weather/water exposure matched IDs', stats['evidence_rows']['direct_weather_or_water_exposure_events'])}
+    {_evidence_details('Explicit storm/wave/water-ingress pathway matched IDs', stats['evidence_rows']['explicit_weather_wave_water_ingress_pathway_events'])}
     {_evidence_details('Critical/high hatch and watertight integrity IDs', stats['evidence_rows']['critical_high_hatch_events'])}
     {_evidence_details('Foundering/loss-of-vessel pathway IDs', stats['evidence_rows']['foundering_pathway'])}
-    <details class=\"evidence\"><summary>Keyword groups used for direct weather/water exposure</summary><ul>{keyword_groups}</ul></details>
+    <details class=\"evidence\"><summary>Keyword groups used for explicit pathway matching</summary><ul>{keyword_groups}</ul></details>
   </section>
 
   <section style=\"margin-top:18px\">
@@ -448,14 +459,14 @@ def render_html(stats: dict[str, Any]) -> str:
 def generate_artifacts(
     output_dir: Path = DEFAULT_OUTPUT_DIR,
     input_dir: Path = DEFAULT_INPUT_DIR,
-    docx_path: Path = DEFAULT_DOCX_PATH,
+    docx_name: str = DEFAULT_DOCX_NAME,
 ) -> dict[str, Any]:
     """Generate stats JSON and self-contained HTML into *output_dir*."""
 
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     preservation = preserve_prior_draft(output_dir)
-    stats = build_stats(Path(input_dir), Path(docx_path))
+    stats = build_stats(Path(input_dir), docx_name)
     html = render_html(stats)
 
     stats_path = output_dir / OUTPUT_STATS_NAME
@@ -475,10 +486,10 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--input-dir", type=Path, default=DEFAULT_INPUT_DIR)
-    parser.add_argument("--docx-path", type=Path, default=DEFAULT_DOCX_PATH)
+    parser.add_argument("--docx-name", default=DEFAULT_DOCX_NAME)
     args = parser.parse_args()
 
-    result = generate_artifacts(output_dir=args.output_dir, input_dir=args.input_dir, docx_path=args.docx_path)
+    result = generate_artifacts(output_dir=args.output_dir, input_dir=args.input_dir, docx_name=args.docx_name)
     print(json.dumps({key: str(value) for key, value in result.items() if key.endswith("_path")}, indent=2))
     return 0
 

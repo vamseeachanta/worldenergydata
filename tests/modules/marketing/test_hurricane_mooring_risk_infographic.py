@@ -6,8 +6,6 @@ import json
 import re
 from pathlib import Path
 
-import pytest
-
 from scripts.marketing.generate_hurricane_mooring_risk_infographic import (
     CAVEAT,
     build_stats,
@@ -19,13 +17,11 @@ from scripts.marketing.generate_hurricane_mooring_risk_infographic import (
 REPO_ROOT = Path(__file__).resolve().parents[3]
 INPUT_DIR = REPO_ROOT / "data" / "modules" / "marine_safety" / "input"
 REPORT_DIR = REPO_ROOT / "reports" / "modules" / "marketing"
-DOCX_PATH = Path(
-    "/home/vamsee/Downloads/Hurricane Planning and Mooring R0-4revisions.docx"
-)
+DOCX_NAME = "Hurricane Planning and Mooring R0-4revisions.docx"
 
 
 def test_stats_recomputed_from_source_csvs():
-    stats = build_stats(INPUT_DIR, DOCX_PATH)
+    stats = build_stats(INPUT_DIR, DOCX_NAME)
 
     assert stats["dataset_total_records"] == 65
     assert stats["dataset_total_fatalities"] == 60
@@ -41,37 +37,89 @@ def test_stats_recomputed_from_source_csvs():
 
 
 def test_metric_contract_separates_pathways():
-    stats = build_stats(INPUT_DIR, DOCX_PATH)
+    stats = build_stats(INPUT_DIR, DOCX_NAME)
 
     assert stats["foundering_pathway_records"] == 15
     assert stats["foundering_pathway_fatalities"] == 38
     assert len(stats["matched_incident_ids"]["foundering_pathway"]) == 15
     assert stats["hatch_watertight_event_records"] == 20
     assert len(stats["matched_incident_ids"]["hatch_watertight_events"]) == 20
+    assert stats["explicit_weather_wave_water_ingress_pathway_events"] == 21
+    assert stats["explicit_weather_wave_water_ingress_pathway_fatalities"] == 30
+    assert stats["explicit_weather_wave_water_ingress_pathway_pct_of_event_records"] == 38.2
+    assert (
+        stats["denominators"][
+            "explicit_weather_wave_water_ingress_pathway_pct_of_event_records"
+        ]
+        == "21 explicit weather/wave/water-ingress pathway events / 55 incident/event rows excluding hatch controls"
+    )
+    assert len(
+        stats["matched_incident_ids"]["explicit_weather_wave_water_ingress_pathway_events"]
+    ) == 21
     assert not set(stats["matched_incident_ids"]["foundering_pathway"]) & set(
         stats["matched_incident_ids"]["hatch_watertight_events"]
     )
 
 
+def test_legacy_direct_exposure_contract_removed():
+    stats = build_stats(INPUT_DIR, DOCX_NAME)
+    html = render_html(stats)
+    serialized_stats = json.dumps(stats)
+
+    legacy_tokens = [
+        "direct_weather_or_water_exposure",
+        "Direct weather/water exposure",
+    ]
+    for token in legacy_tokens:
+        assert token not in serialized_stats
+        assert token not in html
+
+
+def test_committed_infographic_artifacts_remove_legacy_direct_exposure_claims():
+    html_path = REPORT_DIR / "hurricane_mooring_risk_avoidance_infographic.html"
+    stats_path = REPORT_DIR / "hurricane_mooring_risk_avoidance_infographic_stats.json"
+    html = html_path.read_text(encoding="utf-8")
+    stats_text = stats_path.read_text(encoding="utf-8")
+
+    assert "Explicit storm/wave/water-ingress pathway events" in html
+    assert "21 / 55 event rows" in html
+    assert "explicit_weather_wave_water_ingress_pathway_events" in stats_text
+    legacy_tokens = [
+        "direct_weather_or_water_exposure",
+        "Direct weather/water exposure",
+        "26 / 55 event rows",
+    ]
+    for token in legacy_tokens:
+        assert token not in html
+        assert token not in stats_text
+
+
 def test_weather_water_false_positive_controls_excluded():
-    stats = build_stats(INPUT_DIR, DOCX_PATH)
+    stats = build_stats(INPUT_DIR, DOCX_NAME)
+
+    matched_ids = set(
+        stats["matched_incident_ids"][
+            "explicit_weather_wave_water_ingress_pathway_events"
+        ]
+    )
+    generic_outcome_false_positives = {
+        "FA013",  # overboard/drowning without storm or water-ingress pathway
+        "FA016",  # mooring-operation overboard outcome, not weather exposure
+        "F009",  # fire/power-loss vessel sinking outcome
+        "F010",  # reef collision/foundered outcome
+        "F015",  # grounding/tow sinking outcome
+        "H016",  # Weather deck hatch seal text; not weather-driven incident
+    }
 
     assert stats["hatch_control_records"] == 10
     assert "NI002" in stats["excluded_incident_ids"]["hatch_controls"]
     assert "NI010" in stats["excluded_incident_ids"]["hatch_controls"]
-    assert (
-        "NI002"
-        not in stats["matched_incident_ids"]["direct_weather_or_water_exposure_events"]
-    )
-    assert (
-        "NI010"
-        not in stats["matched_incident_ids"]["direct_weather_or_water_exposure_events"]
-    )
     assert "NI010" in stats["excluded_incident_ids"]["preventive_or_control_rows"]
+    assert not generic_outcome_false_positives & matched_ids
 
 
 def test_hatch_severity_counts_are_exact():
-    stats = build_stats(INPUT_DIR, DOCX_PATH)
+    stats = build_stats(INPUT_DIR, DOCX_NAME)
 
     assert stats["hatch_severity_counts"] == {
         "Critical": 6,
@@ -95,7 +143,7 @@ def test_hatch_severity_counts_are_exact():
 
 def test_stats_json_has_traceability_and_timestamp(tmp_path: Path):
     result = generate_artifacts(
-        output_dir=tmp_path, input_dir=INPUT_DIR, docx_path=DOCX_PATH
+        output_dir=tmp_path, input_dir=INPUT_DIR, docx_name=DOCX_NAME
     )
     stats = json.loads(result["stats_path"].read_text(encoding="utf-8"))
 
@@ -110,12 +158,12 @@ def test_stats_json_has_traceability_and_timestamp(tmp_path: Path):
         == "Hurricane Planning and Mooring R0-4revisions.docx"
     )
     assert stats["caveat"] == CAVEAT
-    assert stats["matched_incident_ids"]["direct_weather_or_water_exposure_events"]
+    assert stats["matched_incident_ids"]["explicit_weather_wave_water_ingress_pathway_events"]
     assert stats["excluded_incident_ids"]["hatch_controls"]
 
 
 def test_rendered_html_contains_required_positioning():
-    html = render_html(build_stats(INPUT_DIR, DOCX_PATH))
+    html = render_html(build_stats(INPUT_DIR, DOCX_NAME))
 
     assert (
         "Hurricane mooring analysis turns marine incident pathways into avoidable planning decisions"
@@ -130,7 +178,7 @@ def test_rendered_html_contains_required_positioning():
 
 def test_rendered_html_is_interactive_and_provenanced(tmp_path: Path):
     result = generate_artifacts(
-        output_dir=tmp_path, input_dir=INPUT_DIR, docx_path=DOCX_PATH
+        output_dir=tmp_path, input_dir=INPUT_DIR, docx_name=DOCX_NAME
     )
     html = result["html_path"].read_text(encoding="utf-8")
 
@@ -207,7 +255,7 @@ def test_binary_exports_are_policy_gated(tmp_path: Path):
     (assets / "hurricane_mooring_safety_infographic.pdf").write_bytes(b"PDF")
 
     result = generate_artifacts(
-        output_dir=tmp_path, input_dir=INPUT_DIR, docx_path=DOCX_PATH
+        output_dir=tmp_path, input_dir=INPUT_DIR, docx_name=DOCX_NAME
     )
 
     assert result["binary_exports"] == "skipped"
@@ -222,7 +270,7 @@ def test_binary_exports_are_policy_gated(tmp_path: Path):
 
 
 def test_html_avoids_hurricane_causation_claims():
-    html = render_html(build_stats(INPUT_DIR, DOCX_PATH)).lower()
+    html = render_html(build_stats(INPUT_DIR, DOCX_NAME)).lower()
 
     banned_phrases = [
         "65 hurricane incidents",
