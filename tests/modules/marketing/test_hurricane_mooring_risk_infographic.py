@@ -46,16 +46,24 @@ def test_metric_contract_separates_pathways():
     assert len(stats["matched_incident_ids"]["hatch_watertight_events"]) == 20
     assert stats["explicit_weather_wave_water_ingress_pathway_events"] == 21
     assert stats["explicit_weather_wave_water_ingress_pathway_fatalities"] == 30
-    assert stats["explicit_weather_wave_water_ingress_pathway_pct_of_event_records"] == 38.2
+    assert (
+        stats["explicit_weather_wave_water_ingress_pathway_pct_of_event_records"]
+        == 38.2
+    )
     assert (
         stats["denominators"][
             "explicit_weather_wave_water_ingress_pathway_pct_of_event_records"
         ]
         == "21 explicit weather/wave/water-ingress pathway events / 55 incident/event rows excluding hatch controls"
     )
-    assert len(
-        stats["matched_incident_ids"]["explicit_weather_wave_water_ingress_pathway_events"]
-    ) == 21
+    assert (
+        len(
+            stats["matched_incident_ids"][
+                "explicit_weather_wave_water_ingress_pathway_events"
+            ]
+        )
+        == 21
+    )
     assert not set(stats["matched_incident_ids"]["foundering_pathway"]) & set(
         stats["matched_incident_ids"]["hatch_watertight_events"]
     )
@@ -158,7 +166,9 @@ def test_stats_json_has_traceability_and_timestamp(tmp_path: Path):
         == "Hurricane Planning and Mooring R0-4revisions.docx"
     )
     assert stats["caveat"] == CAVEAT
-    assert stats["matched_incident_ids"]["explicit_weather_wave_water_ingress_pathway_events"]
+    assert stats["matched_incident_ids"][
+        "explicit_weather_wave_water_ingress_pathway_events"
+    ]
     assert stats["excluded_incident_ids"]["hatch_controls"]
 
 
