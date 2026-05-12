@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hurricane Mooring Risk Avoidance Infographic</title>
+  <style>
+    :root { --navy:#081827; --blue:#1e88e5; --cyan:#67e8f9; --amber:#f59e0b; --red:#ef4444; --ink:#e5edf5; --muted:#9fb2c6; --panel:#10263b; --line:#28445e; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, Segoe UI, Roboto, Arial, sans-serif; color:var(--ink); background: radial-gradient(circle at top left, #123a5a 0, var(--navy) 42%, #050b12 100%); }
+    main { max-width: 1180px; margin: 0 auto; padding: 40px 24px 56px; }
+    .hero { border:1px solid var(--line); border-radius:28px; padding:36px; background:linear-gradient(135deg, rgba(30,136,229,.22), rgba(8,24,39,.9)); box-shadow:0 24px 80px rgba(0,0,0,.35); }
+    h1 { margin:0; max-width:920px; font-size: clamp(34px, 5vw, 68px); line-height:.95; letter-spacing:-.05em; }
+    h2 { margin:0 0 12px; font-size:30px; letter-spacing:-.03em; }
+    h3 { margin:0 0 8px; font-size:18px; }
+    p { color:var(--muted); line-height:1.55; }
+    .kicker { color:var(--cyan); text-transform:uppercase; letter-spacing:.18em; font-size:13px; font-weight:800; }
+    .caveat { margin-top:24px; border-left:5px solid var(--amber); padding:14px 18px; background:rgba(245,158,11,.11); color:#ffe3a7; border-radius:10px; }
+    .grid { display:grid; gap:18px; }
+    .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); margin:24px 0; }
+    .stat-card, section { background:rgba(16,38,59,.82); border:1px solid var(--line); border-radius:22px; padding:22px; }
+    .stat-value { font-size:44px; line-height:1; font-weight:900; color:white; }
+    .stat-label { margin-top:8px; font-weight:800; color:var(--cyan); }
+    .two { grid-template-columns: 1.1fr .9fr; }
+    .bar { margin:12px 0 18px; }
+    .bar-label { display:flex; justify-content:space-between; color:#cfe4f9; font-weight:700; }
+    .track { height:15px; background:#07131f; border-radius:999px; overflow:hidden; border:1px solid var(--line); }
+    .fill { height:100%; background:linear-gradient(90deg, var(--blue), var(--cyan)); border-radius:999px; }
+    .decision { display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; }
+    .node { border:1px solid var(--line); border-radius:18px; padding:16px; background:#0b1d2d; }
+    .node strong { display:block; color:#fff; margin-bottom:6px; }
+    .node.warn { border-color:rgba(239,68,68,.55); }
+    .node.go { border-color:rgba(103,232,249,.55); }
+    details { margin-top:14px; border:1px solid var(--line); border-radius:16px; padding:14px 16px; background:#0a1724; }
+    summary { cursor:pointer; color:var(--cyan); font-weight:800; }
+    li { margin:7px 0; color:#c9d8e8; }
+    footer { margin-top:24px; color:var(--muted); font-size:13px; }
+    code { color:#dbeafe; }
+    @media (max-width: 900px) { .stats, .two, .decision { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<main>
+  <div class="hero">
+    <div class="kicker">Marine safety incident pathways → hurricane readiness controls</div>
+    <h1>Hurricane mooring analysis turns marine incident pathways into avoidable planning decisions.</h1>
+    <p>The source document calls for hurricane preparation before the storm: mooring analysis, dock-side geometry, bollard and fender capacity, surge exposure, changing wind/wave/current directions, crew readiness, and a port/refuge decision tree. The incident data below quantifies pathways that the planning process is designed to avoid.</p>
+    <div class="caveat"><strong>Dataset caveat:</strong> These marine-safety records show incident pathways relevant to hurricane mooring readiness. They are not a hurricane-only or hurricane-caused incident sample.</div>
+  </div>
+
+  <div class="grid stats">
+    
+      <article class="stat-card">
+        <div class="stat-value">65</div>
+        <div class="stat-label">source CSV records</div>
+        <p>20 fatality rows + 15 foundering rows + 30 hatch/watertight rows</p>
+      </article>
+    
+    
+      <article class="stat-card">
+        <div class="stat-value">60</div>
+        <div class="stat-label">fatalities represented</div>
+        <p>From fatality and foundering CSV fatality fields</p>
+      </article>
+    
+    
+      <article class="stat-card">
+        <div class="stat-value">15</div>
+        <div class="stat-label">foundering pathway records</div>
+        <p>38 fatalities in loss-of-vessel pathway rows</p>
+      </article>
+    
+    
+      <article class="stat-card">
+        <div class="stat-value">12</div>
+        <div class="stat-label">critical/high hatch events</div>
+        <p>12 critical/high hatch events / 20 hatch event rows excluding severity=None controls</p>
+      </article>
+    
+  </div>
+
+  <div class="grid two">
+    <section>
+      <h2>Statistics that support the risk story</h2>
+      <div class="bar"><div class="bar-label"><span>Direct weather/water exposure events</span><span>26 / 55 event rows</span></div><div class="track"><div class="fill" style="width:47.3%"></div></div><p>26 direct weather/water exposure events / 55 incident/event rows excluding hatch controls; 43 fatalities in matched rows.</p></div>
+      <div class="bar"><div class="bar-label"><span>Critical/high hatch integrity events</span><span>60.0%</span></div><div class="track"><div class="fill" style="width:60.0%"></div></div><p>12 critical/high hatch events / 20 hatch event rows excluding severity=None controls; 12 critical/high hatch events / 30 all hatch CSV records including controls.</p></div>
+      <p><strong>Severity counts:</strong> Critical 6, High 6, Medium 7, Low 1, None/control 10.</p>
+    </section>
+
+    <section>
+      <h2>Avoidable failure modes → planning controls</h2>
+      <ul>
+        <li><strong>Foundering / capsizing / sinking:</strong> verify storm-category survivability before choosing stay/relocate/refuge.</li>
+        <li><strong>Flooding and water ingress:</strong> close hatch, door, ventilator, and access-cover weak points before surge and wave exposure.</li>
+        <li><strong>Severe-weather exposure:</strong> use track proximity and forecast category thresholds to leave early enough.</li>
+        <li><strong>Mooring operation exposure:</strong> reduce last-minute deck work through pre-planned line layout and crew readiness.</li>
+      </ul>
+      <p>Control rows excluded from incident counts include NI001, NI002, NI003, NI004, NI005, NI006, NI007, NI008, NI009, NI010. NI010 is a positive/control row: weather routing helped avoid severe storm; it is not counted as a loss event.</p>
+    </section>
+  </div>
+
+  <section style="margin-top:18px">
+    <h2>Port / refuge decision tree</h2>
+    <p>This is the decision lever from the DOCX: convert site and vessel constraints into a category-by-category action rule before the hurricane season.</p>
+    <div class="decision">
+      <div class="node go"><strong>1. Pre-season engineering check</strong> Bollard, fender, and mooring-line capacity checks; bulkhead geometry; vessel particulars; survivability by storm category.</div>
+      <div class="node"><strong>2. Forecast trigger</strong> Track proximity, surge window, changing wind/current directions, port closure timing, and crew availability.</div>
+      <div class="node warn"><strong>3. Action before lock-in</strong> Stay with engineered mooring plan, shift berth, move to refuge, or evacuate before conditions make movement unsafe.</div>
+    </div>
+  </section>
+
+  <section style="margin-top:18px">
+    <h2>Interactive evidence panels</h2>
+    <p>Open each panel to audit the matched source rows behind the headline counts.</p>
+    
+      <details class="evidence">
+        <summary>Direct weather/water exposure matched IDs (26 rows)</summary>
+        <ul><li><strong>FA003</strong> — Fishing Vessel Atlantic: Crew member swept overboard during storm, lost at sea despite search efforts <span>(fatality_incidents.csv; fatalities=1)</span></li><li><strong>FA008</strong> — Fishing Trawler Discovery: Heavy equipment shifted in rough seas, crew member crushed against bulkhead <span>(fatality_incidents.csv; fatalities=1)</span></li><li><strong>FA013</strong> — Fishing Vessel Endeavor: Crew member entangled in fishing gear, dragged overboard and drowned <span>(fatality_incidents.csv; fatalities=1)</span></li><li><strong>FA014</strong> — Container Ship Dynasty: Deck crew struck by loose cargo during rough weather, blunt force trauma <span>(fatality_incidents.csv; fatalities=1)</span></li><li><strong>FA016</strong> — Bulk Carrier Olympus: Crew member fell overboard during mooring operations, body not recovered <span>(fatality_incidents.csv; fatalities=1)</span></li><li><strong>F001</strong> — Cargo Ship Atlantis: Vessel foundered in severe weather, hull breach from cargo shift, complete loss of vessel, all crew rescued <span>(foundering_incidents.csv; fatalities=0)</span></li><li><strong>F002</strong> — Fishing Vessel Mariner: Boat capsized and sank in storm conditions, inadequate stability for heavy seas, 3 crew members lost <span>(foundering_incidents.csv; fatalities=3)</span></li><li><strong>F004</strong> — MV Ocean Pride: Foundered after collision with submerged object, rapid water ingress through hull damage <span>(foundering_incidents.csv; fatalities=2)</span></li><li><strong>F005</strong> — Tanker Sea Star: Engine failure in heavy weather led to beam seas position, vessel rolled and sank, partial crew rescue <span>(foundering_incidents.csv; fatalities=5)</span></li><li><strong>F006</strong> — Container Ship Navigator: Cargo hold flooding from hatch failure, progressive list, vessel foundered, all crew saved <span>(foundering_incidents.csv; fatalities=0)</span></li><li><strong>F007</strong> — Fishing Trawler Hope: Vessel overwhelmed by rogue wave, capsized and sank rapidly, 4 crew lost at sea <span>(foundering_incidents.csv; fatalities=4)</span></li><li><strong>F008</strong> — Bulk Carrier Freedom: Structural failure in severe storm, hull cracked amidships, vessel broke up and sank <span>(foundering_incidents.csv; fatalities=6)</span></li><li><strong>F009</strong> — Chemical Tanker Pacific: Fire in engine room led to loss of power, vessel drifted and eventually sank, crew evacuated <span>(foundering_incidents.csv; fatalities=1)</span></li><li><strong>F010</strong> — MV Northern Star: Collision with reef in poor visibility, massive hull breach, foundered within 2 hours <span>(foundering_incidents.csv; fatalities=3)</span></li><li><strong>F011</strong> — Cargo Ship Enterprise: Encountered typhoon, cargo shifted causing severe list, vessel capsized and sank <span>(foundering_incidents.csv; fatalities=7)</span></li><li><strong>F012</strong> — Bulk Carrier Destiny: Ballast system failure, loss of stability in rough seas, vessel rolled over and foundered <span>(foundering_incidents.csv; fatalities=4)</span></li><li><strong>F013</strong> — Fishing Vessel Explorer: Icing conditions caused top-heavy stability, capsized in freezing weather <span>(foundering_incidents.csv; fatalities=2)</span></li><li><strong>F014</strong> — Container Ship Horizon: Hatch cover failure during storm, progressive flooding of multiple cargo holds, sank <span>(foundering_incidents.csv; fatalities=0)</span></li><li><strong>F015</strong> — Oil Tanker Prosperity: Grounding led to hull breach and oil spill, vessel refloated but sank during tow <span>(foundering_incidents.csv; fatalities=1)</span></li><li><strong>H001</strong> — MV Atlantic Star: Engine room hatch left open during rough seas, water ingress caused flooding in machinery spaces <span>(hatch_incidents.csv; severity=Critical)</span></li><li><strong>H003</strong> — Tanker Horizon: Access hatch to cargo hold not secured, discovered open during storm conditions <span>(hatch_incidents.csv; severity=Critical)</span></li><li><strong>H008</strong> — Fishing Vessel Endeavor: Deck hatch seal worn, water infiltration during heavy weather operation <span>(hatch_incidents.csv; severity=Critical)</span></li><li><strong>H011</strong> — Bulk Carrier Titan: Collision caused damage to cargo hold hatches, water ingress through compromised seals <span>(hatch_incidents.csv; severity=Critical)</span></li><li><strong>H015</strong> — Fishing Trawler Discovery: Fish hold hatch cover bolts not tightened, cover displaced in rough seas <span>(hatch_incidents.csv; severity=Critical)</span></li><li><strong>H016</strong> — Bulk Carrier Olympus: Weather deck hatch seal deteriorated, routine maintenance overlooked <span>(hatch_incidents.csv; severity=High)</span></li><li><strong>H017</strong> — MV Southern Cross: Cargo hold ventilator not secured, damage during storm caused water entry <span>(hatch_incidents.csv; severity=Medium)</span></li></ul>
+      </details>
+    
+    
+      <details class="evidence">
+        <summary>Critical/high hatch and watertight integrity IDs (12 rows)</summary>
+        <ul><li><strong>H001</strong> — MV Atlantic Star: Engine room hatch left open during rough seas, water ingress caused flooding in machinery spaces <span>(hatch_incidents.csv; severity=Critical)</span></li><li><strong>H002</strong> — SS Pacific Dawn: Watertight door to engine room failed to close properly, crew discovered malfunction during inspection <span>(hatch_incidents.csv; severity=High)</span></li><li><strong>H003</strong> — Tanker Horizon: Access hatch to cargo hold not secured, discovered open during storm conditions <span>(hatch_incidents.csv; severity=Critical)</span></li><li><strong>H005</strong> — Container Ship Meridian: Hatch cover locking mechanism jammed, unable to secure properly before departure <span>(hatch_incidents.csv; severity=High)</span></li><li><strong>H007</strong> — Chemical Tanker Aurora: Access portal to engine compartment inadvertently left open during maintenance <span>(hatch_incidents.csv; severity=High)</span></li><li><strong>H008</strong> — Fishing Vessel Endeavor: Deck hatch seal worn, water infiltration during heavy weather operation <span>(hatch_incidents.csv; severity=Critical)</span></li><li><strong>H009</strong> — Cargo Ship Constellation: Watertight door automatic closing system failed, manual override not engaged <span>(hatch_incidents.csv; severity=High)</span></li><li><strong>H011</strong> — Bulk Carrier Titan: Collision caused damage to cargo hold hatches, water ingress through compromised seals <span>(hatch_incidents.csv; severity=Critical)</span></li><li><strong>H015</strong> — Fishing Trawler Discovery: Fish hold hatch cover bolts not tightened, cover displaced in rough seas <span>(hatch_incidents.csv; severity=Critical)</span></li><li><strong>H016</strong> — Bulk Carrier Olympus: Weather deck hatch seal deteriorated, routine maintenance overlooked <span>(hatch_incidents.csv; severity=High)</span></li><li><strong>H018</strong> — Chemical Carrier Polaris: Tank access hatch gasket failed, improper replacement during last maintenance <span>(hatch_incidents.csv; severity=High)</span></li><li><strong>H020</strong> — Oil Tanker Sovereign: Pump room access door hydraulic closure malfunctioned, manual securing attempted but incomplete <span>(hatch_incidents.csv; severity=Critical)</span></li></ul>
+      </details>
+    
+    
+      <details class="evidence">
+        <summary>Foundering/loss-of-vessel pathway IDs (15 rows)</summary>
+        <ul><li><strong>F001</strong> — Cargo Ship Atlantis: Vessel foundered in severe weather, hull breach from cargo shift, complete loss of vessel, all crew rescued <span>(foundering_incidents.csv; fatalities=0)</span></li><li><strong>F002</strong> — Fishing Vessel Mariner: Boat capsized and sank in storm conditions, inadequate stability for heavy seas, 3 crew members lost <span>(foundering_incidents.csv; fatalities=3)</span></li><li><strong>F003</strong> — Bulk Carrier Titan Express: Progressive flooding after grounding, vessel broke apart and sank, crew evacuated successfully <span>(foundering_incidents.csv; fatalities=0)</span></li><li><strong>F004</strong> — MV Ocean Pride: Foundered after collision with submerged object, rapid water ingress through hull damage <span>(foundering_incidents.csv; fatalities=2)</span></li><li><strong>F005</strong> — Tanker Sea Star: Engine failure in heavy weather led to beam seas position, vessel rolled and sank, partial crew rescue <span>(foundering_incidents.csv; fatalities=5)</span></li><li><strong>F006</strong> — Container Ship Navigator: Cargo hold flooding from hatch failure, progressive list, vessel foundered, all crew saved <span>(foundering_incidents.csv; fatalities=0)</span></li><li><strong>F007</strong> — Fishing Trawler Hope: Vessel overwhelmed by rogue wave, capsized and sank rapidly, 4 crew lost at sea <span>(foundering_incidents.csv; fatalities=4)</span></li><li><strong>F008</strong> — Bulk Carrier Freedom: Structural failure in severe storm, hull cracked amidships, vessel broke up and sank <span>(foundering_incidents.csv; fatalities=6)</span></li><li><strong>F009</strong> — Chemical Tanker Pacific: Fire in engine room led to loss of power, vessel drifted and eventually sank, crew evacuated <span>(foundering_incidents.csv; fatalities=1)</span></li><li><strong>F010</strong> — MV Northern Star: Collision with reef in poor visibility, massive hull breach, foundered within 2 hours <span>(foundering_incidents.csv; fatalities=3)</span></li><li><strong>F011</strong> — Cargo Ship Enterprise: Encountered typhoon, cargo shifted causing severe list, vessel capsized and sank <span>(foundering_incidents.csv; fatalities=7)</span></li><li><strong>F012</strong> — Bulk Carrier Destiny: Ballast system failure, loss of stability in rough seas, vessel rolled over and foundered <span>(foundering_incidents.csv; fatalities=4)</span></li><li><strong>F013</strong> — Fishing Vessel Explorer: Icing conditions caused top-heavy stability, capsized in freezing weather <span>(foundering_incidents.csv; fatalities=2)</span></li><li><strong>F014</strong> — Container Ship Horizon: Hatch cover failure during storm, progressive flooding of multiple cargo holds, sank <span>(foundering_incidents.csv; fatalities=0)</span></li><li><strong>F015</strong> — Oil Tanker Prosperity: Grounding led to hull breach and oil spill, vessel refloated but sank during tow <span>(foundering_incidents.csv; fatalities=1)</span></li></ul>
+      </details>
+    
+    <details class="evidence"><summary>Keyword groups used for direct weather/water exposure</summary><ul><li><strong>Exposure</strong>: FA008, FA014, F001, F002, F005, F012, H001, H008, H015</li><li><strong>Storm</strong>: FA003, F007, F008, F011, F013, F014, H003, H016, H017</li><li><strong>Water Ingress</strong>: F004, F006, F009, F010, F015, H011</li><li><strong>Overboard</strong>: FA013, FA016</li></ul></details>
+  </section>
+
+  <section style="margin-top:18px">
+    <h2>Provenance</h2>
+    <p><strong>Generated UTC:</strong> 2026-05-12T12:07:46Z</p>
+    <p><strong>DOCX reviewed:</strong> Hurricane Planning and Mooring R0-4revisions.docx</p>
+    <p><strong>CSV sources:</strong></p>
+    <ul><li>data/modules/marine_safety/input/fatality_incidents.csv</li><li>data/modules/marine_safety/input/foundering_incidents.csv</li><li>data/modules/marine_safety/input/hatch_incidents.csv</li></ul>
+    <p><strong>Issue:</strong> <a style="color:var(--cyan)" href="https://github.com/vamseeachanta/worldenergydata/issues/403">https://github.com/vamseeachanta/worldenergydata/issues/403</a></p>
+  </section>
+  <footer>Default deliverables are HTML + JSON only. PNG/PDF exports are intentionally policy-gated to avoid duplicate binary artifact growth.</footer>
+</main>
+</body>
+</html>
