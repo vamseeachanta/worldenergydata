@@ -16,11 +16,12 @@ from scripts.marketing.generate_hurricane_mooring_risk_infographic import (
     render_html,
 )
 
-
 REPO_ROOT = Path(__file__).resolve().parents[3]
 INPUT_DIR = REPO_ROOT / "data" / "modules" / "marine_safety" / "input"
 REPORT_DIR = REPO_ROOT / "reports" / "modules" / "marketing"
-DOCX_PATH = Path("/home/vamsee/Downloads/Hurricane Planning and Mooring R0-4revisions.docx")
+DOCX_PATH = Path(
+    "/home/vamsee/Downloads/Hurricane Planning and Mooring R0-4revisions.docx"
+)
 
 
 def test_stats_recomputed_from_source_csvs():
@@ -58,8 +59,14 @@ def test_weather_water_false_positive_controls_excluded():
     assert stats["hatch_control_records"] == 10
     assert "NI002" in stats["excluded_incident_ids"]["hatch_controls"]
     assert "NI010" in stats["excluded_incident_ids"]["hatch_controls"]
-    assert "NI002" not in stats["matched_incident_ids"]["direct_weather_or_water_exposure_events"]
-    assert "NI010" not in stats["matched_incident_ids"]["direct_weather_or_water_exposure_events"]
+    assert (
+        "NI002"
+        not in stats["matched_incident_ids"]["direct_weather_or_water_exposure_events"]
+    )
+    assert (
+        "NI010"
+        not in stats["matched_incident_ids"]["direct_weather_or_water_exposure_events"]
+    )
     assert "NI010" in stats["excluded_incident_ids"]["preventive_or_control_rows"]
 
 
@@ -76,12 +83,20 @@ def test_hatch_severity_counts_are_exact():
     assert stats["critical_high_hatch_events"] == 12
     assert stats["critical_high_hatch_event_pct"] == 60.0
     assert stats["critical_high_hatch_all_hatch_pct"] == 40.0
-    assert stats["denominators"]["critical_high_hatch_event_pct"] == "12 critical/high hatch events / 20 hatch event rows excluding severity=None controls"
-    assert stats["denominators"]["critical_high_hatch_all_hatch_pct"] == "12 critical/high hatch events / 30 all hatch CSV records including controls"
+    assert (
+        stats["denominators"]["critical_high_hatch_event_pct"]
+        == "12 critical/high hatch events / 20 hatch event rows excluding severity=None controls"
+    )
+    assert (
+        stats["denominators"]["critical_high_hatch_all_hatch_pct"]
+        == "12 critical/high hatch events / 30 all hatch CSV records including controls"
+    )
 
 
 def test_stats_json_has_traceability_and_timestamp(tmp_path: Path):
-    result = generate_artifacts(output_dir=tmp_path, input_dir=INPUT_DIR, docx_path=DOCX_PATH)
+    result = generate_artifacts(
+        output_dir=tmp_path, input_dir=INPUT_DIR, docx_path=DOCX_PATH
+    )
     stats = json.loads(result["stats_path"].read_text(encoding="utf-8"))
 
     assert re.match(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", stats["generated_utc"])
@@ -90,7 +105,10 @@ def test_stats_json_has_traceability_and_timestamp(tmp_path: Path):
         "data/modules/marine_safety/input/foundering_incidents.csv",
         "data/modules/marine_safety/input/hatch_incidents.csv",
     ]
-    assert stats["document_provenance"]["filename"] == "Hurricane Planning and Mooring R0-4revisions.docx"
+    assert (
+        stats["document_provenance"]["filename"]
+        == "Hurricane Planning and Mooring R0-4revisions.docx"
+    )
     assert stats["caveat"] == CAVEAT
     assert stats["matched_incident_ids"]["direct_weather_or_water_exposure_events"]
     assert stats["excluded_incident_ids"]["hatch_controls"]
@@ -99,7 +117,10 @@ def test_stats_json_has_traceability_and_timestamp(tmp_path: Path):
 def test_rendered_html_contains_required_positioning():
     html = render_html(build_stats(INPUT_DIR, DOCX_PATH))
 
-    assert "Hurricane mooring analysis turns marine incident pathways into avoidable planning decisions" in html
+    assert (
+        "Hurricane mooring analysis turns marine incident pathways into avoidable planning decisions"
+        in html
+    )
     assert "Port / refuge decision tree" in html
     assert "Bollard, fender, and mooring-line capacity checks" in html
     assert "storm-category survivability" in html
@@ -108,7 +129,9 @@ def test_rendered_html_contains_required_positioning():
 
 
 def test_rendered_html_is_interactive_and_provenanced(tmp_path: Path):
-    result = generate_artifacts(output_dir=tmp_path, input_dir=INPUT_DIR, docx_path=DOCX_PATH)
+    result = generate_artifacts(
+        output_dir=tmp_path, input_dir=INPUT_DIR, docx_path=DOCX_PATH
+    )
     html = result["html_path"].read_text(encoding="utf-8")
 
     assert "<details" in html
@@ -129,8 +152,13 @@ def test_reference_artifact_preservation_is_idempotent(tmp_path: Path):
     first = preserve_prior_draft(tmp_path)
     second = preserve_prior_draft(tmp_path)
 
-    reference_html = tmp_path / "reference_hurricane_mooring_safety_infographic_prior_draft.html"
-    reference_stats = tmp_path / "reference_hurricane_mooring_safety_infographic_prior_draft_stats.json"
+    reference_html = (
+        tmp_path / "reference_hurricane_mooring_safety_infographic_prior_draft.html"
+    )
+    reference_stats = (
+        tmp_path
+        / "reference_hurricane_mooring_safety_infographic_prior_draft_stats.json"
+    )
     assert reference_html.read_text(encoding="utf-8") == "<html>prior</html>"
     preserved_stats = json.loads(reference_stats.read_text(encoding="utf-8"))
     assert preserved_stats["prior"] is True
@@ -157,12 +185,18 @@ def test_reference_stats_sanitizes_absolute_paths(tmp_path: Path):
     preserve_prior_draft(tmp_path)
 
     reference_stats = json.loads(
-        (tmp_path / "reference_hurricane_mooring_safety_infographic_prior_draft_stats.json").read_text(
-            encoding="utf-8"
-        )
+        (
+            tmp_path
+            / "reference_hurricane_mooring_safety_infographic_prior_draft_stats.json"
+        ).read_text(encoding="utf-8")
     )
-    assert reference_stats["output"] == "reports/modules/marketing/hurricane_mooring_safety_infographic.html"
-    assert reference_stats["source_files"] == ["data/modules/marine_safety/input/fatality_incidents.csv"]
+    assert (
+        reference_stats["output"]
+        == "reports/modules/marketing/hurricane_mooring_safety_infographic.html"
+    )
+    assert reference_stats["source_files"] == [
+        "data/modules/marine_safety/input/fatality_incidents.csv"
+    ]
     assert "local absolute paths were sanitized" in reference_stats["reference_note"]
 
 
@@ -172,13 +206,19 @@ def test_binary_exports_are_policy_gated(tmp_path: Path):
     (assets / "hurricane_mooring_safety_infographic.png").write_bytes(b"PNG")
     (assets / "hurricane_mooring_safety_infographic.pdf").write_bytes(b"PDF")
 
-    result = generate_artifacts(output_dir=tmp_path, input_dir=INPUT_DIR, docx_path=DOCX_PATH)
+    result = generate_artifacts(
+        output_dir=tmp_path, input_dir=INPUT_DIR, docx_path=DOCX_PATH
+    )
 
     assert result["binary_exports"] == "skipped"
     assert result["html_path"].exists()
     assert result["stats_path"].exists()
-    assert not (assets / "reference_hurricane_mooring_safety_infographic_prior_draft.png").exists()
-    assert not (assets / "reference_hurricane_mooring_safety_infographic_prior_draft.pdf").exists()
+    assert not (
+        assets / "reference_hurricane_mooring_safety_infographic_prior_draft.png"
+    ).exists()
+    assert not (
+        assets / "reference_hurricane_mooring_safety_infographic_prior_draft.pdf"
+    ).exists()
 
 
 def test_html_avoids_hurricane_causation_claims():
