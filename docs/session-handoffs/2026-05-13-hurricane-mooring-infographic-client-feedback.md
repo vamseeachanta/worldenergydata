@@ -77,4 +77,13 @@ No external send/action was performed in this closeout. The client-facing links 
 
 ## Final exit proof
 
-Pending: this section must be updated after the handoff commit is pushed and re-fetched.
+After the first handoff commit was pushed and re-fetched at 2026-05-13 06:09 CDT:
+
+- Handoff commit: `e685d103ebc929b2f98119e8c71a473299538d74`
+- Branch: `issue-403-hurricane-infographic-implementation`
+- Local HEAD: `e685d103ebc929b2f98119e8c71a473299538d74`
+- Upstream HEAD: `e685d103ebc929b2f98119e8c71a473299538d74`
+- Ahead/behind: `0/0`
+- Dirty/untracked count: `0`
+
+Note: this final proof section was then updated in a follow-up documentation commit, so the authoritative final synced commit is the post-proof-update commit reported in the exit response.
