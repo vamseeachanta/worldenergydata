@@ -1,29 +1,29 @@
 {
   "module": "vessel_fleet",
-  "generated_at": "2026-05-05T01:06:51.159950+00:00",
-  "last_refresh": "2026-05-05",
+  "generated_at": "2026-05-15T03:45:14.652985+00:00",
+  "last_refresh": "2026-05-15",
   "record_count": 0,
-  "file_count": 9,
-  "total_size_bytes": 290513,
-  "total_size_human": "283.7 KB",
+  "file_count": 12,
+  "total_size_bytes": 126162,
+  "total_size_human": "123.2 KB",
   "source_url": null,
   "format": ".csv,.json,.parquet,.yaml",
   "format_breakdown": {
     ".csv": {
       "count": 3,
-      "size_bytes": 212720
+      "size_bytes": 22685
     },
     ".json": {
       "count": 4,
-      "size_bytes": 41409
+      "size_bytes": 41869
     },
     ".parquet": {
-      "count": 1,
-      "size_bytes": 23402
+      "count": 4,
+      "size_bytes": 46664
     },
     ".yaml": {
       "count": 1,
-      "size_bytes": 12982
+      "size_bytes": 14944
     }
   },
   "has_external_data": false,
@@ -32,8 +32,8 @@
     {
       "name": "_metadata.json",
       "path": "_metadata.json",
-      "size_bytes": 2071,
-      "modified": "2026-05-05"
+      "size_bytes": 2531,
+      "modified": "2026-05-15"
     },
     {
       "name": "construction_vessels.csv",
@@ -50,8 +50,14 @@
     {
       "name": "drilling_rigs.csv",
       "path": "curated/drilling_rigs.csv",
-      "size_bytes": 201262,
-      "modified": "2026-03-03"
+      "size_bytes": 11227,
+      "modified": "2026-05-15"
+    },
+    {
+      "name": "drilling_rigs.parquet",
+      "path": "curated/drilling_rigs.parquet",
+      "size_bytes": 11308,
+      "modified": "2026-05-15"
     },
     {
       "name": "drilling_riser_components.csv",
@@ -78,10 +84,22 @@
       "modified": "2026-02-13"
     },
     {
+      "name": "noble.parquet",
+      "path": "raw/spec_details/noble.parquet",
+      "size_bytes": 7010,
+      "modified": "2026-05-15"
+    },
+    {
+      "name": "seadrill.parquet",
+      "path": "raw/spec_details/seadrill.parquet",
+      "size_bytes": 4944,
+      "modified": "2026-05-15"
+    },
+    {
       "name": "schema.yaml",
       "path": "schema.yaml",
-      "size_bytes": 12982,
-      "modified": "2026-05-05"
+      "size_bytes": 14944,
+      "modified": "2026-05-15"
     }
   ],
   "files_truncated": false

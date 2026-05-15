@@ -1,17 +1,17 @@
 {
   "module": "oil_price",
-  "generated_at": "2026-05-05T01:06:51.140643+00:00",
-  "last_refresh": "2026-05-05",
+  "generated_at": "2026-05-15T03:45:14.626363+00:00",
+  "last_refresh": "2026-05-15",
   "record_count": 0,
   "file_count": 4,
-  "total_size_bytes": 87811,
+  "total_size_bytes": 87813,
   "total_size_human": "85.8 KB",
   "source_url": null,
   "format": ".json,.xls,.yaml",
   "format_breakdown": {
     ".json": {
       "count": 1,
-      "size_bytes": 1129
+      "size_bytes": 1131
     },
     ".xls": {
       "count": 2,
@@ -40,14 +40,14 @@
     {
       "name": "_metadata.json",
       "path": "_metadata.json",
-      "size_bytes": 1129,
-      "modified": "2026-05-05"
+      "size_bytes": 1131,
+      "modified": "2026-05-15"
     },
     {
       "name": "schema.yaml",
       "path": "schema.yaml",
       "size_bytes": 154,
-      "modified": "2026-05-05"
+      "modified": "2026-05-15"
     }
   ],
   "files_truncated": false

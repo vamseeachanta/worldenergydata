@@ -1,21 +1,25 @@
 {
   "module": "pipeline_safety",
-  "generated_at": "2026-05-05T01:06:51.152854+00:00",
-  "last_refresh": "2026-05-05",
+  "generated_at": "2026-05-15T03:45:14.643688+00:00",
+  "last_refresh": "2026-05-15",
   "record_count": 0,
-  "file_count": 23,
-  "total_size_bytes": 25658046,
-  "total_size_human": "24.5 MB",
+  "file_count": 25,
+  "total_size_bytes": 26573871,
+  "total_size_human": "25.3 MB",
   "source_url": null,
-  "format": ".json,.md,.pdf,.txt,.xlsx,.yaml",
+  "format": ".csv,.json,.md,.pdf,.txt,.xlsx,.yaml",
   "format_breakdown": {
+    ".csv": {
+      "count": 1,
+      "size_bytes": 908056
+    },
     ".json": {
       "count": 1,
-      "size_bytes": 4756
+      "size_bytes": 5137
     },
     ".md": {
-      "count": 1,
-      "size_bytes": 1724
+      "count": 2,
+      "size_bytes": 5113
     },
     ".pdf": {
       "count": 7,
@@ -31,7 +35,7 @@
     },
     ".yaml": {
       "count": 1,
-      "size_bytes": 170
+      "size_bytes": 4169
     }
   },
   "has_external_data": false,
@@ -40,8 +44,20 @@
     {
       "name": "_metadata.json",
       "path": "_metadata.json",
-      "size_bytes": 4756,
-      "modified": "2026-05-05"
+      "size_bytes": 5137,
+      "modified": "2026-05-15"
+    },
+    {
+      "name": "README.md",
+      "path": "raw/kaggle_usdot_pipeline/README.md",
+      "size_bytes": 3389,
+      "modified": "2026-05-06"
+    },
+    {
+      "name": "database.csv",
+      "path": "raw/kaggle_usdot_pipeline/database.csv",
+      "size_bytes": 908056,
+      "modified": "2026-05-06"
     },
     {
       "name": "EightCauseMappingMethods.xlsx",
@@ -172,8 +188,8 @@
     {
       "name": "schema.yaml",
       "path": "schema.yaml",
-      "size_bytes": 170,
-      "modified": "2026-05-05"
+      "size_bytes": 4169,
+      "modified": "2026-05-15"
     }
   ],
   "files_truncated": false
