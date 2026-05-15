@@ -1,0 +1,811 @@
+{
+  "module": "hse",
+  "generated_at": "2026-05-15T03:45:14.543382+00:00",
+  "last_refresh": "2026-05-15",
+  "record_count": 0,
+  "file_count": 108,
+  "total_size_bytes": 7242152466,
+  "total_size_human": "6.7 GB",
+  "source_url": null,
+  "format": "(no ext),.csv,.db,.json,.md,.png,.sh,.txt,.yaml,.zip",
+  "format_breakdown": {
+    "(no ext)": {
+      "count": 2,
+      "size_bytes": 0
+    },
+    ".csv": {
+      "count": 66,
+      "size_bytes": 6273470087
+    },
+    ".db": {
+      "count": 1,
+      "size_bytes": 59928576
+    },
+    ".json": {
+      "count": 1,
+      "size_bytes": 22763
+    },
+    ".md": {
+      "count": 5,
+      "size_bytes": 13527
+    },
+    ".png": {
+      "count": 1,
+      "size_bytes": 109296
+    },
+    ".sh": {
+      "count": 1,
+      "size_bytes": 3739
+    },
+    ".txt": {
+      "count": 15,
+      "size_bytes": 29289203
+    },
+    ".yaml": {
+      "count": 1,
+      "size_bytes": 167
+    },
+    ".zip": {
+      "count": 15,
+      "size_bytes": 879315108
+    }
+  },
+  "has_external_data": true,
+  "external_data_root": "/mnt/ace/worldenergydata/data/modules/hse",
+  "files": [
+    {
+      "name": "_metadata.json",
+      "path": "_metadata.json",
+      "size_bytes": 22763,
+      "modified": "2026-05-15"
+    },
+    {
+      "name": "hse_incidents.db",
+      "path": "hse_incidents.db",
+      "size_bytes": 59928576,
+      "modified": "2026-02-10"
+    },
+    {
+      "name": "schema.yaml",
+      "path": "schema.yaml",
+      "size_bytes": 167,
+      "modified": "2026-05-15"
+    },
+    {
+      "name": "INCSRawData",
+      "path": "raw/bsee/INCSRawData/INCSRawData",
+      "size_bytes": 0,
+      "modified": "2026-02-16",
+      "source": "external"
+    },
+    {
+      "name": "mv_incs_by_oper.txt",
+      "path": "raw/bsee/INCSRawData/mv_incs_by_oper.txt",
+      "size_bytes": 3361421,
+      "modified": "2026-02-16",
+      "source": "external"
+    },
+    {
+      "name": "mv_incs_fac_shutins_alaska.txt",
+      "path": "raw/bsee/INCSRawData/mv_incs_fac_shutins_alaska.txt",
+      "size_bytes": 1162,
+      "modified": "2026-02-16",
+      "source": "external"
+    },
+    {
+      "name": "mv_incs_fac_shutins_gulf.txt",
+      "path": "raw/bsee/INCSRawData/mv_incs_fac_shutins_gulf.txt",
+      "size_bytes": 265630,
+      "modified": "2026-02-16",
+      "source": "external"
+    },
+    {
+      "name": "mv_incs_fac_shutins_pacific.txt",
+      "path": "raw/bsee/INCSRawData/mv_incs_fac_shutins_pacific.txt",
+      "size_bytes": 10660,
+      "modified": "2026-02-16",
+      "source": "external"
+    },
+    {
+      "name": "mv_incs_inspections_alaska.txt",
+      "path": "raw/bsee/INCSRawData/mv_incs_inspections_alaska.txt",
+      "size_bytes": 384024,
+      "modified": "2026-02-16",
+      "source": "external"
+    },
+    {
+      "name": "mv_incs_inspections_gulf.txt",
+      "path": "raw/bsee/INCSRawData/mv_incs_inspections_gulf.txt",
+      "size_bytes": 11127806,
+      "modified": "2026-02-16",
+      "source": "external"
+    },
+    {
+      "name": "mv_incs_inspections_pacific.txt",
+      "path": "raw/bsee/INCSRawData/mv_incs_inspections_pacific.txt",
+      "size_bytes": 1082989,
+      "modified": "2026-02-16",
+      "source": "external"
+    },
+    {
+      "name": "mv_incs_shutins_alaska.txt",
+      "path": "raw/bsee/INCSRawData/mv_incs_shutins_alaska.txt",
+      "size_bytes": 733,
+      "modified": "2026-02-16",
+      "source": "external"
+    },
+    {
+      "name": "mv_incs_shutins_gulf.txt",
+      "path": "raw/bsee/INCSRawData/mv_incs_shutins_gulf.txt",
+      "size_bytes": 1336562,
+      "modified": "2026-02-16",
+      "source": "external"
+    },
+    {
+      "name": "mv_incs_shutins_pacific.txt",
+      "path": "raw/bsee/INCSRawData/mv_incs_shutins_pacific.txt",
+      "size_bytes": 89942,
+      "modified": "2026-02-16",
+      "source": "external"
+    },
+    {
+      "name": "mv_incs_warnings_alaska.txt",
+      "path": "raw/bsee/INCSRawData/mv_incs_warnings_alaska.txt",
+      "size_bytes": 8259,
+      "modified": "2026-02-16",
+      "source": "external"
+    },
+    {
+      "name": "mv_incs_warnings_gulf.txt",
+      "path": "raw/bsee/INCSRawData/mv_incs_warnings_gulf.txt",
+      "size_bytes": 1550458,
+      "modified": "2026-02-16",
+      "source": "external"
+    },
+    {
+      "name": "mv_incs_warnings_pacific.txt",
+      "path": "raw/bsee/INCSRawData/mv_incs_warnings_pacific.txt",
+      "size_bytes": 71846,
+      "modified": "2026-02-16",
+      "source": "external"
+    },
+    {
+      "name": "mv_insp_by_oper.txt",
+      "path": "raw/bsee/INCSRawData/mv_insp_by_oper.txt",
+      "size_bytes": 9826312,
+      "modified": "2026-02-16",
+      "source": "external"
+    },
+    {
+      "name": "INCSRawData.zip",
+      "path": "raw/bsee/INCSRawData.zip",
+      "size_bytes": 5041831,
+      "modified": "2026-02-16",
+      "source": "external"
+    },
+    {
+      "name": "IncInvRawData",
+      "path": "raw/bsee/IncInvRawData/IncInvRawData",
+      "size_bytes": 0,
+      "modified": "2026-02-16",
+      "source": "external"
+    },
+    {
+      "name": "mv_acc_investigations.txt",
+      "path": "raw/bsee/IncInvRawData/mv_acc_investigations.txt",
+      "size_bytes": 171399,
+      "modified": "2026-02-16",
+      "source": "external"
+    },
+    {
+      "name": "IncInvRawData.zip",
+      "path": "raw/bsee/IncInvRawData.zip",
+      "size_bytes": 35177,
+      "modified": "2026-02-16",
+      "source": "external"
+    },
+    {
+      "name": "README.md",
+      "path": "raw/epa_tri/README.md",
+      "size_bytes": 2170,
+      "modified": "2026-02-10",
+      "source": "external"
+    },
+    {
+      "name": "tri_basic_2020-2024_oil_gas_combined.csv",
+      "path": "raw/epa_tri/tri_basic_2020-2024_oil_gas_combined.csv",
+      "size_bytes": 23611977,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "tri_basic_2020_oil_gas.csv",
+      "path": "raw/epa_tri/tri_basic_2020_oil_gas.csv",
+      "size_bytes": 7735583,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "tri_basic_2021_oil_gas.csv",
+      "path": "raw/epa_tri/tri_basic_2021_oil_gas.csv",
+      "size_bytes": 7461115,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "tri_basic_2022-2023_oil_gas_combined.csv",
+      "path": "raw/epa_tri/tri_basic_2022-2023_oil_gas_combined.csv",
+      "size_bytes": 9502985,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "tri_basic_2022_oil_gas.csv",
+      "path": "raw/epa_tri/tri_basic_2022_oil_gas.csv",
+      "size_bytes": 6644435,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "tri_basic_2023_oil_gas.csv",
+      "path": "raw/epa_tri/tri_basic_2023_oil_gas.csv",
+      "size_bytes": 2853237,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "tri_basic_2024_oil_gas.csv",
+      "path": "raw/epa_tri/tri_basic_2024_oil_gas.csv",
+      "size_bytes": 8409837,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "Accidents_Storyline_example.png",
+      "path": "raw/kaggle_ihm_stefanini/Accidents_Storyline_example.png",
+      "size_bytes": 109296,
+      "modified": "2026-05-06",
+      "source": "external"
+    },
+    {
+      "name": "IHMStefanini_industrial_safety_and_health_database.csv",
+      "path": "raw/kaggle_ihm_stefanini/IHMStefanini_industrial_safety_and_health_database.csv",
+      "size_bytes": 35695,
+      "modified": "2026-05-06",
+      "source": "external"
+    },
+    {
+      "name": "IHMStefanini_industrial_safety_and_health_database_with_accidents_description.csv",
+      "path": "raw/kaggle_ihm_stefanini/IHMStefanini_industrial_safety_and_health_database_with_accidents_description.csv",
+      "size_bytes": 193631,
+      "modified": "2026-05-06",
+      "source": "external"
+    },
+    {
+      "name": "README.md",
+      "path": "raw/kaggle_ihm_stefanini/README.md",
+      "size_bytes": 2016,
+      "modified": "2026-05-06",
+      "source": "external"
+    },
+    {
+      "name": "README.md",
+      "path": "raw/kaggle_oil_facility_accidents/README.md",
+      "size_bytes": 2800,
+      "modified": "2026-05-06",
+      "source": "external"
+    },
+    {
+      "name": "accident_hazardous_liquid_jan2010_present.csv",
+      "path": "raw/kaggle_oil_facility_accidents/accident_hazardous_liquid_jan2010_present.csv",
+      "size_bytes": 3361059,
+      "modified": "2026-05-06",
+      "source": "external"
+    },
+    {
+      "name": "README.md",
+      "path": "raw/kaggle_osha_fatalities/README.md",
+      "size_bytes": 1876,
+      "modified": "2026-05-06",
+      "source": "external"
+    },
+    {
+      "name": "osha_fatalities.csv",
+      "path": "raw/kaggle_osha_fatalities/osha_fatalities.csv",
+      "size_bytes": 1826283,
+      "modified": "2026-05-06",
+      "source": "external"
+    },
+    {
+      "name": "README.md",
+      "path": "raw/osha/README.md",
+      "size_bytes": 4665,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "download_osha_data.sh",
+      "path": "raw/osha/download_osha_data.sh",
+      "size_bytes": 3739,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_fatality_inspections_oil_gas.csv",
+      "path": "raw/osha/fatalities/osha_fatality_inspections_oil_gas.csv",
+      "size_bytes": 812982,
+      "modified": "2026-02-16",
+      "source": "external"
+    },
+    {
+      "name": "osha_severe_injury_oil_gas.csv",
+      "path": "raw/osha/fatalities/osha_severe_injury_oil_gas.csv",
+      "size_bytes": 1918075,
+      "modified": "2026-02-16",
+      "source": "external"
+    },
+    {
+      "name": "osha_accident_injury_oil_gas.csv",
+      "path": "raw/osha/filtered/osha_accident_injury_oil_gas.csv",
+      "size_bytes": 271641,
+      "modified": "2026-02-10",
+      "source": "external"
+    },
+    {
+      "name": "osha_accident_oil_gas.csv",
+      "path": "raw/osha/filtered/osha_accident_oil_gas.csv",
+      "size_bytes": 376223,
+      "modified": "2026-02-10",
+      "source": "external"
+    },
+    {
+      "name": "osha_inspection_oil_gas.csv",
+      "path": "raw/osha/filtered/osha_inspection_oil_gas.csv",
+      "size_bytes": 5716955,
+      "modified": "2026-02-10",
+      "source": "external"
+    },
+    {
+      "name": "osha_accident.csv",
+      "path": "raw/osha/osha_accident.csv",
+      "size_bytes": 38070344,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_accident_20260201.csv.zip",
+      "path": "raw/osha/osha_accident_20260201.csv.zip",
+      "size_bytes": 8247490,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_accident_abstract0.csv",
+      "path": "raw/osha/osha_accident_abstract0.csv",
+      "size_bytes": 118471083,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_accident_abstract1.csv",
+      "path": "raw/osha/osha_accident_abstract1.csv",
+      "size_bytes": 17467268,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_accident_abstract_20260201.csv.zip",
+      "path": "raw/osha/osha_accident_abstract_20260201.csv.zip",
+      "size_bytes": 36250675,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_accident_injury.csv",
+      "path": "raw/osha/osha_accident_injury.csv",
+      "size_bytes": 28114228,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_accident_injury_20260201.csv.zip",
+      "path": "raw/osha/osha_accident_injury_20260201.csv.zip",
+      "size_bytes": 4192517,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_accident_lookup2.csv",
+      "path": "raw/osha/osha_accident_lookup2.csv",
+      "size_bytes": 59809,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_accident_lookup2_20260201.csv.zip",
+      "path": "raw/osha/osha_accident_lookup2_20260201.csv.zip",
+      "size_bytes": 12471,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_data_dictionary.csv",
+      "path": "raw/osha/osha_data_dictionary.csv",
+      "size_bytes": 19003,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_data_dictionary_20260201.csv.zip",
+      "path": "raw/osha/osha_data_dictionary_20260201.csv.zip",
+      "size_bytes": 4803,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_inspection0.csv",
+      "path": "raw/osha/osha_inspection0.csv",
+      "size_bytes": 265694158,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_inspection1.csv",
+      "path": "raw/osha/osha_inspection1.csv",
+      "size_bytes": 290794799,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_inspection2.csv",
+      "path": "raw/osha/osha_inspection2.csv",
+      "size_bytes": 289908802,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_inspection3.csv",
+      "path": "raw/osha/osha_inspection3.csv",
+      "size_bytes": 309676151,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_inspection4.csv",
+      "path": "raw/osha/osha_inspection4.csv",
+      "size_bytes": 315799743,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_inspection5.csv",
+      "path": "raw/osha/osha_inspection5.csv",
+      "size_bytes": 49168295,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_inspection_20260201.csv.zip",
+      "path": "raw/osha/osha_inspection_20260201.csv.zip",
+      "size_bytes": 309330850,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_metadata.csv",
+      "path": "raw/osha/osha_metadata.csv",
+      "size_bytes": 2676,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_metadata_20260201.csv.zip",
+      "path": "raw/osha/osha_metadata_20260201.csv.zip",
+      "size_bytes": 1322,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_optional_info0.csv",
+      "path": "raw/osha/osha_optional_info0.csv",
+      "size_bytes": 60173927,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_optional_info1.csv",
+      "path": "raw/osha/osha_optional_info1.csv",
+      "size_bytes": 41826095,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_optional_info_20260201.csv.zip",
+      "path": "raw/osha/osha_optional_info_20260201.csv.zip",
+      "size_bytes": 10319734,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_related_activity0.csv",
+      "path": "raw/osha/osha_related_activity0.csv",
+      "size_bytes": 59900771,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_related_activity1.csv",
+      "path": "raw/osha/osha_related_activity1.csv",
+      "size_bytes": 59742085,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_related_activity2.csv",
+      "path": "raw/osha/osha_related_activity2.csv",
+      "size_bytes": 26857981,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_related_activity_20260201.csv.zip",
+      "path": "raw/osha/osha_related_activity_20260201.csv.zip",
+      "size_bytes": 19833855,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_strategic_codes0.csv",
+      "path": "raw/osha/osha_strategic_codes0.csv",
+      "size_bytes": 52843503,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_strategic_codes1.csv",
+      "path": "raw/osha/osha_strategic_codes1.csv",
+      "size_bytes": 54123756,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_strategic_codes2.csv",
+      "path": "raw/osha/osha_strategic_codes2.csv",
+      "size_bytes": 44754468,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_strategic_codes_20260201.csv.zip",
+      "path": "raw/osha/osha_strategic_codes_20260201.csv.zip",
+      "size_bytes": 14305637,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation0.csv",
+      "path": "raw/osha/osha_violation0.csv",
+      "size_bytes": 162714355,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation1.csv",
+      "path": "raw/osha/osha_violation1.csv",
+      "size_bytes": 163044513,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation10.csv",
+      "path": "raw/osha/osha_violation10.csv",
+      "size_bytes": 171230616,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation11.csv",
+      "path": "raw/osha/osha_violation11.csv",
+      "size_bytes": 180143131,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation12.csv",
+      "path": "raw/osha/osha_violation12.csv",
+      "size_bytes": 183868299,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation13.csv",
+      "path": "raw/osha/osha_violation13.csv",
+      "size_bytes": 33855978,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation2.csv",
+      "path": "raw/osha/osha_violation2.csv",
+      "size_bytes": 165806171,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation3.csv",
+      "path": "raw/osha/osha_violation3.csv",
+      "size_bytes": 168169026,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation4.csv",
+      "path": "raw/osha/osha_violation4.csv",
+      "size_bytes": 170061380,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation5.csv",
+      "path": "raw/osha/osha_violation5.csv",
+      "size_bytes": 169075371,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation6.csv",
+      "path": "raw/osha/osha_violation6.csv",
+      "size_bytes": 169518181,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation7.csv",
+      "path": "raw/osha/osha_violation7.csv",
+      "size_bytes": 167010563,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation8.csv",
+      "path": "raw/osha/osha_violation8.csv",
+      "size_bytes": 170455488,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation9.csv",
+      "path": "raw/osha/osha_violation9.csv",
+      "size_bytes": 170259916,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation_20260201.csv.zip",
+      "path": "raw/osha/osha_violation_20260201.csv.zip",
+      "size_bytes": 220599186,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation_event0.csv",
+      "path": "raw/osha/osha_violation_event0.csv",
+      "size_bytes": 93051404,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation_event1.csv",
+      "path": "raw/osha/osha_violation_event1.csv",
+      "size_bytes": 94529839,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation_event10.csv",
+      "path": "raw/osha/osha_violation_event10.csv",
+      "size_bytes": 90508378,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation_event11.csv",
+      "path": "raw/osha/osha_violation_event11.csv",
+      "size_bytes": 46408521,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation_event2.csv",
+      "path": "raw/osha/osha_violation_event2.csv",
+      "size_bytes": 94391574,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation_event3.csv",
+      "path": "raw/osha/osha_violation_event3.csv",
+      "size_bytes": 94656778,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation_event4.csv",
+      "path": "raw/osha/osha_violation_event4.csv",
+      "size_bytes": 94525529,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation_event5.csv",
+      "path": "raw/osha/osha_violation_event5.csv",
+      "size_bytes": 94629083,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation_event6.csv",
+      "path": "raw/osha/osha_violation_event6.csv",
+      "size_bytes": 94776346,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation_event7.csv",
+      "path": "raw/osha/osha_violation_event7.csv",
+      "size_bytes": 94792329,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation_event8.csv",
+      "path": "raw/osha/osha_violation_event8.csv",
+      "size_bytes": 91405664,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation_event9.csv",
+      "path": "raw/osha/osha_violation_event9.csv",
+      "size_bytes": 90598049,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation_event_20260201.csv.zip",
+      "path": "raw/osha/osha_violation_event_20260201.csv.zip",
+      "size_bytes": 92915660,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation_gen_duty_std0.csv",
+      "path": "raw/osha/osha_violation_gen_duty_std0.csv",
+      "size_bytes": 102030007,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation_gen_duty_std1.csv",
+      "path": "raw/osha/osha_violation_gen_duty_std1.csv",
+      "size_bytes": 515248276,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation_gen_duty_std2.csv",
+      "path": "raw/osha/osha_violation_gen_duty_std2.csv",
+      "size_bytes": 132504664,
+      "modified": "2026-02-08",
+      "source": "external"
+    },
+    {
+      "name": "osha_violation_gen_duty_std_20260201.csv.zip",
+      "path": "raw/osha/osha_violation_gen_duty_std_20260201.csv.zip",
+      "size_bytes": 158223900,
+      "modified": "2026-02-08",
+      "source": "external"
+    }
+  ],
+  "files_truncated": false
+}
