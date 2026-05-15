@@ -1,25 +1,33 @@
 {
   "module": "pipeline",
-  "generated_at": "2026-05-05T01:06:51.142579+00:00",
-  "last_refresh": "2026-05-05",
+  "generated_at": "2026-05-15T03:45:14.630094+00:00",
+  "last_refresh": "2026-05-15",
   "record_count": 0,
-  "file_count": 3,
-  "total_size_bytes": 5847,
-  "total_size_human": "5.7 KB",
+  "file_count": 6,
+  "total_size_bytes": 83030,
+  "total_size_human": "81.1 KB",
   "source_url": null,
-  "format": ".csv,.json,.yaml",
+  "format": "(no ext),.csv,.json,.md,.yaml",
   "format_breakdown": {
-    ".csv": {
+    "(no ext)": {
       "count": 1,
-      "size_bytes": 3861
+      "size_bytes": 1223
+    },
+    ".csv": {
+      "count": 2,
+      "size_bytes": 74589
     },
     ".json": {
       "count": 1,
-      "size_bytes": 1005
+      "size_bytes": 1676
+    },
+    ".md": {
+      "count": 1,
+      "size_bytes": 3482
     },
     ".yaml": {
       "count": 1,
-      "size_bytes": 981
+      "size_bytes": 2060
     }
   },
   "has_external_data": false,
@@ -28,8 +36,8 @@
     {
       "name": "_metadata.json",
       "path": "_metadata.json",
-      "size_bytes": 1005,
-      "modified": "2026-05-05"
+      "size_bytes": 1676,
+      "modified": "2026-05-15"
     },
     {
       "name": "api_5l_pipe_schedule.csv",
@@ -38,10 +46,28 @@
       "modified": "2026-03-03"
     },
     {
+      "name": "LICENSE",
+      "path": "raw/kaggle_pipe_thickness_loss/LICENSE",
+      "size_bytes": 1223,
+      "modified": "2026-05-06"
+    },
+    {
+      "name": "README.md",
+      "path": "raw/kaggle_pipe_thickness_loss/README.md",
+      "size_bytes": 3482,
+      "modified": "2026-05-06"
+    },
+    {
+      "name": "market_pipe_thickness_loss_dataset.csv",
+      "path": "raw/kaggle_pipe_thickness_loss/market_pipe_thickness_loss_dataset.csv",
+      "size_bytes": 70728,
+      "modified": "2026-05-06"
+    },
+    {
       "name": "schema.yaml",
       "path": "schema.yaml",
-      "size_bytes": 981,
-      "modified": "2026-05-05"
+      "size_bytes": 2060,
+      "modified": "2026-05-15"
     }
   ],
   "files_truncated": false

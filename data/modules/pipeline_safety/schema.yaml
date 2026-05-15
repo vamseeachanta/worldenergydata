@@ -1,5 +1,203 @@
 module: pipeline_safety
-description: "PHMSA pipeline safety incident data (no data files present \u2014 run\
-  \ 'make data' to populate)"
-datasets: []
+description: PHMSA pipeline safety incident data [886.8 KB]
+datasets:
+- name: database.csv
+  path: data/modules/pipeline_safety/raw/kaggle_usdot_pipeline/database.csv
+  format: csv
+  columns:
+  - name: Report Number
+    type: integer
+    description: ''
+    unit: ''
+  - name: Supplemental Number
+    type: integer
+    description: ''
+    unit: ''
+  - name: Accident Year
+    type: integer
+    description: ''
+    unit: ''
+  - name: Accident Date/Time
+    type: string
+    description: ''
+    unit: ''
+  - name: Operator ID
+    type: integer
+    description: ''
+    unit: ''
+  - name: Operator Name
+    type: string
+    description: ''
+    unit: ''
+  - name: Pipeline/Facility Name
+    type: string
+    description: ''
+    unit: ''
+  - name: Pipeline Location
+    type: string
+    description: ''
+    unit: ''
+  - name: Pipeline Type
+    type: string
+    description: ''
+    unit: ''
+  - name: Liquid Type
+    type: string
+    description: ''
+    unit: ''
+  - name: Liquid Subtype
+    type: string
+    description: ''
+    unit: ''
+  - name: Liquid Name
+    type: string
+    description: ''
+    unit: ''
+  - name: Accident City
+    type: string
+    description: ''
+    unit: ''
+  - name: Accident County
+    type: string
+    description: ''
+    unit: ''
+  - name: Accident State
+    type: string
+    description: ''
+    unit: ''
+  - name: Accident Latitude
+    type: float
+    description: ''
+    unit: degrees
+  - name: Accident Longitude
+    type: float
+    description: ''
+    unit: degrees
+  - name: Cause Category
+    type: string
+    description: ''
+    unit: ''
+  - name: Cause Subcategory
+    type: string
+    description: ''
+    unit: ''
+  - name: Unintentional Release (Barrels)
+    type: float
+    description: ''
+    unit: ''
+  - name: Intentional Release (Barrels)
+    type: float
+    description: ''
+    unit: ''
+  - name: Liquid Recovery (Barrels)
+    type: float
+    description: ''
+    unit: ''
+  - name: Net Loss (Barrels)
+    type: float
+    description: ''
+    unit: ''
+  - name: Liquid Ignition
+    type: boolean
+    description: ''
+    unit: ''
+  - name: Liquid Explosion
+    type: boolean
+    description: ''
+    unit: ''
+  - name: Pipeline Shutdown
+    type: boolean
+    description: ''
+    unit: ''
+  - name: Shutdown Date/Time
+    type: string
+    description: ''
+    unit: ''
+  - name: Restart Date/Time
+    type: string
+    description: ''
+    unit: ''
+  - name: Public Evacuations
+    type: integer
+    description: ''
+    unit: ''
+  - name: Operator Employee Injuries
+    type: string
+    description: ''
+    unit: ''
+  - name: Operator Contractor Injuries
+    type: string
+    description: ''
+    unit: ''
+  - name: Emergency Responder Injuries
+    type: string
+    description: ''
+    unit: ''
+  - name: Other Injuries
+    type: string
+    description: ''
+    unit: ''
+  - name: Public Injuries
+    type: string
+    description: ''
+    unit: ''
+  - name: All Injuries
+    type: string
+    description: ''
+    unit: ''
+  - name: Operator Employee Fatalities
+    type: string
+    description: ''
+    unit: ''
+  - name: Operator Contractor Fatalities
+    type: string
+    description: ''
+    unit: ''
+  - name: Emergency Responder Fatalities
+    type: string
+    description: ''
+    unit: ''
+  - name: Other Fatalities
+    type: string
+    description: ''
+    unit: ''
+  - name: Public Fatalities
+    type: string
+    description: ''
+    unit: ''
+  - name: All Fatalities
+    type: string
+    description: ''
+    unit: ''
+  - name: Property Damage Costs
+    type: integer
+    description: ''
+    unit: ''
+  - name: Lost Commodity Costs
+    type: integer
+    description: ''
+    unit: ''
+  - name: Public/Private Property Damage Costs
+    type: integer
+    description: ''
+    unit: ''
+  - name: Emergency Response Costs
+    type: integer
+    description: ''
+    unit: ''
+  - name: Environmental Remediation Costs
+    type: integer
+    description: ''
+    unit: ''
+  - name: Other Costs
+    type: integer
+    description: ''
+    unit: ''
+  - name: All Costs
+    type: integer
+    description: ''
+    unit: ''
+  row_count: 2795
+  size_bytes: 908056
+  last_modified: '2026-05-06T09:46:22.894119+00:00'
 binary_stores: []
