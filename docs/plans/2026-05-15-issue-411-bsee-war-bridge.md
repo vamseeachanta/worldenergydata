@@ -168,9 +168,15 @@ function project_war_to_parquet(war_pkl_path, out_parquet_path):
 
 ## Adversarial review summary
 
-PENDING — fill in after Step 4 completes. Cross-review depth target: **T2 = 2 providers** (Claude + Codex) per `feedback_always_adversarial_review_scale_depth`.
+**Round 1 — 2026-05-15** (single-author Claude fallback per [[feedback_permission_gate_blocks_cross_review]])
 
 | Provider | Verdict | Key findings |
 |---|---|---|
-| Claude | — | — |
-| Codex | — | — |
+| Claude | **MAJOR** | (1) **Wrong source-data file:** plan assumes `war_borehole_view.pkl` contains rig metadata. Live inspection shows it's per-borehole data (54,701 × 7 cols: `API_WELL_NUMBER, BOTM_LEASE_NUM, WELL_SPUD_DATE, TOTAL_DEPTH_DATE, BOREHOLE_STAT_DT, BH_TOTAL_MD, WELL_BORE_TVD`) — NO rig name, NO operator, NO water depth. Correct source: `data/modules/bsee/.local/rig_fleet/rig_fleet_full.bin`. (2) **Scripts already exist:** `scripts/vessel_fleet/export_war_to_vessel_fleet.py` + `scripts/build_rig_fleet_from_war.py` + `src/worldenergydata/vessel_fleet/exporters/war_export.py` — plan proposed creating `project_war_to_parquet.py` from scratch. (3) **Dedup precedence already encoded:** `deduplicator.py:14` has `"bsee_war": 1` rank — vendor sources win on collision by existing design. (4) **Prior-bug surface not flagged:** WRK-104 review documents RIG_NAME bug and `pickle.load` no-try/except in the existing scripts; plan's risk section doesn't mention. |
+| Codex | — | not run (plan needs revision before second-provider review is worth running) |
+
+**Overall result:** NOT APPROVAL-READY. Plan must be substantially revised. Local plan-file status STAYS at `draft` per `issue-planning-mode` skill §"For new or recovered plan drafts, keep the local plan file status conservative as `draft` until actual provider artifacts exist."
+
+**Revision direction:** Scope shrinks from T2 ("build new bridge") to T1 ("wire/execute existing bridge"). Five-step concrete revision: (a) run `scripts/build_rig_fleet_from_war.py` if `rig_fleet_full.bin` stale; (b) run `scripts/vessel_fleet/export_war_to_vessel_fleet.py` to populate `raw/bsee_war/war_fleet.parquet`; (c) run `scripts/vessel_fleet/fuse_and_deduplicate.py` to regenerate curated CSV; (d) verify 48 vendor rows persist + observe BSEE row count (don't pre-commit a target); (e) address WRK-104 RIG_NAME int-input bug if it fires, otherwise defer to follow-up.
+
+Review artifact: [scripts/review/results/2026-05-15-plan-411-claude.md](https://github.com/vamseeachanta/workspace-hub/blob/main/scripts/review/results/2026-05-15-plan-411-claude.md) (in workspace-hub repo).

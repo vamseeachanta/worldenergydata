@@ -58,7 +58,7 @@ This directory contains issue-plan artifacts created during the issue-planning-m
 | [#365](https://github.com/vamseeachanta/worldenergydata/issues/365) | [bsee-binary-ingest](2026-05-04-issue-365-bsee-binary-ingest.md) | plan-review | 2026-05-04 |
 | [#366](https://github.com/vamseeachanta/worldenergydata/issues/366) | [hse-bulk-dedup-ingest](2026-05-04-issue-366-hse-bulk-dedup-ingest.md) | plan-review | 2026-05-04 |
 | [#367](https://github.com/vamseeachanta/worldenergydata/issues/367) | [api12-npv-migration](2026-05-04-issue-367-api12-npv-migration.md) | plan-review | 2026-05-04 |
-| [#411](https://github.com/vamseeachanta/worldenergydata/issues/411) | [bsee-war-bridge](2026-05-15-issue-411-bsee-war-bridge.md) | draft | 2026-05-15 |
+| [#411](https://github.com/vamseeachanta/worldenergydata/issues/411) | [bsee-war-bridge](2026-05-15-issue-411-bsee-war-bridge.md) | draft (MAJOR review — needs revision; bridge code already exists) | 2026-05-15 |
 | [#368](https://github.com/vamseeachanta/worldenergydata/issues/368) | [closed-issue-verifier](2026-05-04-issue-368-closed-issue-verifier.md) | plan-review | 2026-05-04 |
 | [#374](https://github.com/vamseeachanta/worldenergydata/issues/374) | [backfill-lt-field-configs-big-foot-north-platte](2026-05-03-issue-374-backfill-lt-field-configs-big-foot-north-platte.md) | draft | 2026-05-03 |
 | [#375](https://github.com/vamseeachanta/worldenergydata/issues/375) | [per-field-economics-10-lt-fields](2026-05-03-issue-375-per-field-economics-10-lt-fields.md) | draft | 2026-05-03 |
