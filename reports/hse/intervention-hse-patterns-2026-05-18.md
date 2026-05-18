@@ -131,6 +131,37 @@ Phase 1B should NOT be planned in detail until #366 (HSE bulk dedup) is closer t
 | `reports/hse/intervention-hse-patterns-2026-05-18-explore.json` | Inventory JSON (4 KB) — full data shapes |
 | `reports/hse/intervention-hse-patterns-2026-05-18.md` (this file) | Phase 0 findings + re-scope recommendation |
 
+## Update 2026-05-18 (post-initial-write): source-prefix discovery
+
+A second exploration pass on the `bsee_incident_id` column (which turns out to be misnamed — it holds external IDs from multiple sources) reveals the actual source breakdown:
+
+| Source prefix | Count | % | Interpretation |
+|---|---:|---:|---|
+| `INC-YYYYMMDD-NNNNN-WARNING` | 66,561 | 67.9% | BSEE Incidents of Non-Compliance (regulatory bookkeeping) |
+| `OSHA-INSP-*` | 24,966 | 25.5% | OSHA inspections (mostly onshore — not GoM-relevant) |
+| `OSHA-INJ-*` | 2,604 | 2.7% | OSHA injuries |
+| `OSHA-ACC-*` | 1,878 | 1.9% | OSHA accidents |
+| `INCINV-*` | 312 | 0.3% | **BSEE Incident Investigations (the deep operational incident records)** |
+| Other | ~1,672 | 1.7% | Miscellaneous |
+
+### Refined picture
+
+- **BSEE-relevant subset is ~67K rows** (66,561 INC + 312 INCINV), not the 1,932 I cited above. The earlier 1,932 figure was because OSHA records lack `lease_number` (they use NAICS/SIC codes instead).
+- **The 312 INCINV records are the gold** — these are the deep accident investigations where WRK-013's 89.2% BSEE classification confidence likely came from. Rich free-text. Small sample but per-record analytical value is high.
+- **The 66.5K INC notices** are regulatory bookkeeping — terser text but high volume, suitable for INC-pattern analysis (option C of the re-scope menu, which intersects with this finding).
+- **OSHA's ~29K rows are mostly onshore** — not relevant to GoM offshore intervention work. Should be filtered out at source-prefix level.
+
+### Revised Phase 1A approach
+
+The Option D → A path from above is still recommended, but now refined:
+
+1. **Source-prefix filter** to BSEE subset (~67K rows) before any analysis
+2. **Re-classify ONLY the INCINV subset (312 rows)** for operational-incident patterns — this is what WRK-013's classifier was probably built for
+3. **Separately, descriptive analysis of INC notices** (~66K rows) for regulatory non-compliance patterns during intervention-relevant violation types
+4. **Run 4-pattern Phase 1A on INCINV + WAR join** — small sample (312 incidents × WAR overlap) but defensible per-pattern
+
+This is a smaller-output Phase 1A but a credible one — exactly the kind of "honest about what data lets us say" memo that earns trust.
+
 ## Cross-references
 
 - Plan: [`docs/plans/2026-05-18-issue-416-intervention-hse-patterns.md`](../../docs/plans/2026-05-18-issue-416-intervention-hse-patterns.md) — needs revision per this findings doc
