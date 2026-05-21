@@ -7,6 +7,7 @@ two unresolved conflict blocks in the file. Resolution landed via issue #414.
 
 Refs: worldenergydata#414, workspace-hub#2719 (audit that surfaced the bug).
 """
+
 from __future__ import annotations
 
 import re
@@ -36,9 +37,9 @@ def test_agent_doc_no_conflict_markers():
 def test_agent_doc_starts_with_canonical_header():
     """The agents.md must lead with the documented title — guards against accidental truncation."""
     body = AGENTS_DOC.read_text(encoding="utf-8")
-    assert body.startswith("# Available Agents Reference"), (
-        f"{AGENTS_DOC.relative_to(REPO_ROOT)} missing canonical title — file may be corrupted"
-    )
+    assert body.startswith(
+        "# Available Agents Reference"
+    ), f"{AGENTS_DOC.relative_to(REPO_ROOT)} missing canonical title — file may be corrupted"
 
 
 def test_agent_doc_has_no_empty_section_headers():
