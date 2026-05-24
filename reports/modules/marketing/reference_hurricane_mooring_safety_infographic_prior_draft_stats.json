@@ -1,0 +1,17 @@
+{
+  "critical_high_hatch": 12,
+  "critical_high_hatch_pct": 40,
+  "fatalities": 60,
+  "foundering_fatalities": 38,
+  "output": "reports/modules/marketing/hurricane_mooring_safety_infographic.html",
+  "reference_note": "Prior draft stats preserved for comparison; local absolute paths were sanitized to repo-relative paths.",
+  "source_files": [
+    "data/modules/marine_safety/input/fatality_incidents.csv",
+    "data/modules/marine_safety/input/foundering_incidents.csv",
+    "data/modules/marine_safety/input/hatch_incidents.csv"
+  ],
+  "total_incidents": 65,
+  "weather_water_related": 24,
+  "weather_water_related_fatalities": 40,
+  "weather_water_related_pct": 37
+}

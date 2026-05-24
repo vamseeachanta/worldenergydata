@@ -1,5 +1,5 @@
 module: pipeline
-description: Pipeline engineering reference data [3.8 KB]
+description: Pipeline engineering reference data [72.8 KB]
 datasets:
 - name: api_5l_pipe_schedule.csv
   path: data/modules/pipeline/api_5l_pipe_schedule.csv
@@ -48,4 +48,55 @@ datasets:
   row_count: 43
   size_bytes: 3861
   last_modified: '2026-03-03T22:30:40.761917+00:00'
+- name: market_pipe_thickness_loss_dataset.csv
+  path: data/modules/pipeline/raw/kaggle_pipe_thickness_loss/market_pipe_thickness_loss_dataset.csv
+  format: csv
+  columns:
+  - name: Pipe_Size_mm
+    type: integer
+    description: ''
+    unit: mm
+  - name: Thickness_mm
+    type: float
+    description: ''
+    unit: ''
+  - name: Material
+    type: string
+    description: ''
+    unit: ''
+  - name: Grade
+    type: string
+    description: ''
+    unit: ''
+  - name: Max_Pressure_psi
+    type: integer
+    description: ''
+    unit: ''
+  - name: Temperature_C
+    type: float
+    description: ''
+    unit: ''
+  - name: Corrosion_Impact_Percent
+    type: float
+    description: ''
+    unit: ''
+  - name: Thickness_Loss_mm
+    type: float
+    description: ''
+    unit: ''
+  - name: Material_Loss_Percent
+    type: float
+    description: ''
+    unit: ''
+  - name: Time_Years
+    type: integer
+    description: ''
+    unit: ''
+  - name: Condition
+    type: string
+    description: ''
+    unit: ''
+  row_count: 1000
+  size_bytes: 70728
+  last_modified: '2026-05-06T09:46:22.871670+00:00'
 binary_stores: []
