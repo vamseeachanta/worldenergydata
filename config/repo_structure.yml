@@ -126,6 +126,9 @@ temporary_exceptions:
       - reports/modules/marketing/DECISION_IMPLEMENTATION_GUIDE.md
       - reports/modules/marketing/GENERATION_SUMMARY.md
       - reports/modules/marketing/hurricane_mooring_risk_avoidance_infographic.html
+      - reports/modules/marketing/hurricane_mooring_risk_avoidance_infographic_client_dark.png
+      - reports/modules/marketing/hurricane_mooring_risk_avoidance_infographic_client_markup_white.html
+      - reports/modules/marketing/hurricane_mooring_risk_avoidance_infographic_client_markup_white.png
       - reports/modules/marketing/hurricane_mooring_risk_avoidance_infographic_stats.json
       - reports/modules/marketing/PDF_GENERATION_CHECKLIST.md
       - reports/modules/marketing/PREREQUISITES_VALIDATION_SUMMARY.md
