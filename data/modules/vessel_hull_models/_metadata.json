@@ -1,10 +1,10 @@
 {
   "module": "vessel_hull_models",
-  "generated_at": "2026-05-05T01:06:51.292407+00:00",
-  "last_refresh": "2026-05-05",
+  "generated_at": "2026-05-15T03:45:14.814778+00:00",
+  "last_refresh": "2026-05-15",
   "record_count": 0,
   "file_count": 198,
-  "total_size_bytes": 38880004,
+  "total_size_bytes": 38880008,
   "total_size_human": "37.1 MB",
   "source_url": null,
   "format": ".csv,.json,.md,.msh,.obj,.png,.yaml",
@@ -15,7 +15,7 @@
     },
     ".json": {
       "count": 1,
-      "size_bytes": 43215
+      "size_bytes": 43219
     },
     ".md": {
       "count": 2,
@@ -50,8 +50,8 @@
     {
       "name": "_metadata.json",
       "path": "_metadata.json",
-      "size_bytes": 43215,
-      "modified": "2026-05-05"
+      "size_bytes": 43219,
+      "modified": "2026-05-15"
     },
     {
       "name": "sample_rigs.csv",
@@ -1227,7 +1227,7 @@
       "name": "schema.yaml",
       "path": "schema.yaml",
       "size_bytes": 1720,
-      "modified": "2026-05-05"
+      "modified": "2026-05-15"
     }
   ],
   "files_truncated": false

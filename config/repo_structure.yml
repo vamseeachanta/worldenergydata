@@ -85,6 +85,7 @@ temporary_exceptions:
     follow_up: https://github.com/vamseeachanta/worldenergydata/issues/394
     justification: Tracked scheduler log JSON files are preserved as existing durable evidence until a dedicated generated-evidence migration classifies retention, relocation, or deletion.
     allowed_paths:
+      - logs/dashboard_audit.jsonl
       - logs/scheduler/20260325_214434_eia_us_refresh.json
       - logs/scheduler/20260325_214511_bsee_refresh.json
       - logs/scheduler/20260325_214601_sodir_refresh.json
