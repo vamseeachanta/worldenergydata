@@ -108,6 +108,8 @@ temporary_exceptions:
       - reports/gtm/2026-05-04-bsee-field-analysis-comprehensive.html
       - reports/gtm/2026-05-04-fdas-field-development-economics.html
       - reports/gtm/2026-05-04-gtm-production-decline-forecast.html
+      - reports/hse/intervention-hse-patterns-2026-05-18-explore.json
+      - reports/hse/intervention-hse-patterns-2026-05-18.md
       - reports/hse/wrk012_hse_data_audit.md
       - reports/hse/wrk013_hse_mishap_analysis.md
       - reports/imo_gisis_analysis_report.py
