@@ -66,6 +66,7 @@ This directory contains issue-plan artifacts created during the issue-planning-m
 | [#377](https://github.com/vamseeachanta/worldenergydata/issues/377) | [lt-comprehensive-report-assembly](2026-05-03-issue-377-lt-comprehensive-report-assembly.md) | draft | 2026-05-03 |
 | [#387](https://github.com/vamseeachanta/worldenergydata/issues/387) | [pywasp-evaluation](2026-05-06-issue-387-pywasp-evaluation.md) | plan-review | 2026-05-06 |
 | [#403](https://github.com/vamseeachanta/worldenergydata/issues/403) | [hurricane-mooring-risk-infographic](2026-05-12-issue-403-hurricane-mooring-risk-infographic.md) | plan-review | 2026-05-12 |
+| [#416](https://github.com/vamseeachanta/worldenergydata/issues/416) | [intervention-hse-patterns](2026-05-18-issue-416-intervention-hse-patterns.md) | plan-review | 2026-05-18 |
 | [#423](https://github.com/vamseeachanta/worldenergydata/issues/423) | [marketing-pipeline-umbrella](2026-05-18-issue-423-marketing-pipeline-umbrella.md) | plan-review | 2026-05-18 |
 | [#424](https://github.com/vamseeachanta/worldenergydata/issues/424) | [decommissioning-market-outlook](2026-05-18-issue-424-decommissioning-market-outlook.md) | plan-review | 2026-05-18 |
 | [#425](https://github.com/vamseeachanta/worldenergydata/issues/425) | [operator-hse-benchmarking](2026-05-18-issue-425-operator-hse-benchmarking.md) | plan-review | 2026-05-18 |
