@@ -175,8 +175,17 @@ def populate_estimated_dimensions(df: pd.DataFrame) -> pd.DataFrame:
     "estimated" for depth-refined estimates, "generic" for type averages.
 
     Only fills rows where ALL of LOA_M, BEAM_M, DRAFT_M are missing.
+
+    Defensive against sparse-data input frames that may lack the dimension
+    columns entirely (e.g., vendor-only spec-details fusion without BSEE
+    WAR enrichment).
     """
     result = df.copy()
+
+    # Sparse-data guard: ensure dimension columns exist before access (#408)
+    for col in ("LOA_M", "BEAM_M", "DRAFT_M"):
+        if col not in result.columns:
+            result[col] = pd.NA
 
     if "DIMENSION_CONFIDENCE" not in result.columns:
         result["DIMENSION_CONFIDENCE"] = None

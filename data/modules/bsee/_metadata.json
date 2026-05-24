@@ -1,10 +1,10 @@
 {
   "module": "bsee",
-  "generated_at": "2026-05-05T01:06:51.070554+00:00",
-  "last_refresh": "2026-05-05",
+  "generated_at": "2026-05-15T03:45:14.528416+00:00",
+  "last_refresh": "2026-05-15",
   "record_count": 0,
   "file_count": 200,
-  "total_size_bytes": 2833542101,
+  "total_size_bytes": 2833542103,
   "total_size_human": "2.6 GB",
   "source_url": null,
   "format": "(no ext),.bin,.csv,.json,.md,.txt,.yaml,.zip",
@@ -23,7 +23,7 @@
     },
     ".json": {
       "count": 1,
-      "size_bytes": 38809
+      "size_bytes": 38811
     },
     ".md": {
       "count": 2,
@@ -60,8 +60,8 @@
     {
       "name": "_metadata.json",
       "path": "_metadata.json",
-      "size_bytes": 38809,
-      "modified": "2026-05-05"
+      "size_bytes": 38811,
+      "modified": "2026-05-15"
     },
     {
       "name": "completion_perforations.csv",
@@ -175,7 +175,7 @@
       "name": "schema.yaml",
       "path": "schema.yaml",
       "size_bytes": 22424,
-      "modified": "2026-05-05"
+      "modified": "2026-05-15"
     },
     {
       "name": ".gitkeep",

@@ -1,5 +1,5 @@
 module: vessel_fleet
-description: Offshore vessel fleet specifications [269.0 KB]
+description: Offshore vessel fleet specifications [106.1 KB]
 datasets:
 - name: construction_vessels.csv
   path: data/modules/vessel_fleet/curated/construction_vessels.csv
@@ -299,15 +299,11 @@ datasets:
   path: data/modules/vessel_fleet/curated/drilling_rigs.csv
   format: csv
   columns:
-  - name: RIG_NAME
+  - name: VESSEL_NAME
     type: string
     description: ''
     unit: ''
-  - name: RIG_TYPE
-    type: string
-    description: ''
-    unit: ''
-  - name: RIG_STATUS
+  - name: VESSEL_CATEGORY
     type: string
     description: ''
     unit: ''
@@ -315,71 +311,66 @@ datasets:
     type: string
     description: ''
     unit: ''
-  - name: OPERATOR
+  - name: DATA_SOURCE
     type: string
     description: ''
     unit: ''
-  - name: IMO_NUMBER
-    type: string
-    description: ''
-    unit: ''
-  - name: FLAG_STATE
+  - name: RIG_DESIGN
     type: string
     description: ''
     unit: ''
   - name: WATER_DEPTH_RATING_FT
-    type: string
-    description: ''
-    unit: feet
-  - name: DRILLING_DEPTH_RATING_FT
-    type: string
-    description: ''
-    unit: feet
-  - name: MAX_WATER_DEPTH_FT
     type: float
     description: ''
     unit: feet
-  - name: LOA_M
+  - name: RIG_TYPE
     type: string
+    description: ''
+    unit: ''
+  - name: DATA_SOURCE_URL
+    type: string
+    description: ''
+    unit: ''
+  - name: HULL_FORM_TYPE
+    type: string
+    description: ''
+    unit: ''
+  - name: HULL_LIBRARY_REF
+    type: string
+    description: ''
+    unit: ''
+  - name: LOA_M
+    type: float
     description: ''
     unit: m
   - name: BEAM_M
-    type: string
-    description: ''
-    unit: m
-  - name: DISPLACEMENT_TONNES
-    type: string
-    description: ''
-    unit: tonnes
-  - name: MOONPOOL_DIAMETER_M
-    type: string
-    description: ''
-    unit: ''
-  - name: DP_CLASS
-    type: string
-    description: ''
-    unit: ''
-  - name: YEAR_BUILT
-    type: string
-    description: ''
-    unit: ''
-  - name: WELLS_DRILLED_COUNT
     type: float
     description: ''
-    unit: ''
-  - name: LAST_WAR_DATE
+    unit: m
+  - name: DRAFT_M
+    type: float
+    description: ''
+    unit: m
+  - name: DIMENSION_CONFIDENCE
     type: string
     description: ''
     unit: ''
-  - name: FIRST_WAR_DATE
-    type: datetime
-    description: ''
-    unit: ''
-  - name: LAST_AREA_CODE
+  row_count: 48
+  size_bytes: 11227
+  last_modified: '2026-05-15T02:51:58.859721+00:00'
+- name: drilling_rigs.parquet
+  path: data/modules/vessel_fleet/curated/drilling_rigs.parquet
+  format: parquet
+  columns:
+  - name: VESSEL_NAME
     type: string
     description: ''
     unit: ''
-  - name: LAST_BLOCK_NUMBER
+  - name: VESSEL_CATEGORY
+    type: string
+    description: ''
+    unit: ''
+  - name: OWNER
     type: string
     description: ''
     unit: ''
@@ -387,13 +378,49 @@ datasets:
     type: string
     description: ''
     unit: ''
-  - name: IS_OFFSHORE
-    type: boolean
+  - name: RIG_DESIGN
+    type: string
     description: ''
     unit: ''
-  row_count: 2210
-  size_bytes: 201262
-  last_modified: '2026-03-03T22:30:40.769989+00:00'
+  - name: WATER_DEPTH_RATING_FT
+    type: float
+    description: ''
+    unit: feet
+  - name: RIG_TYPE
+    type: string
+    description: ''
+    unit: ''
+  - name: DATA_SOURCE_URL
+    type: string
+    description: ''
+    unit: ''
+  - name: HULL_FORM_TYPE
+    type: string
+    description: ''
+    unit: ''
+  - name: HULL_LIBRARY_REF
+    type: string
+    description: ''
+    unit: ''
+  - name: LOA_M
+    type: float
+    description: ''
+    unit: m
+  - name: BEAM_M
+    type: float
+    description: ''
+    unit: m
+  - name: DRAFT_M
+    type: float
+    description: ''
+    unit: m
+  - name: DIMENSION_CONFIDENCE
+    type: string
+    description: ''
+    unit: ''
+  row_count: 48
+  size_bytes: 11308
+  last_modified: '2026-05-15T02:51:58.860572+00:00'
 - name: drilling_riser_components.csv
   path: data/modules/vessel_fleet/curated/drilling_riser_components.csv
   format: csv
@@ -679,4 +706,74 @@ datasets:
     unit: ''
   size_bytes: 18509
   last_modified: '2026-02-13T03:55:47.349638+00:00'
+- name: noble.parquet
+  path: data/modules/vessel_fleet/raw/spec_details/noble.parquet
+  format: parquet
+  columns:
+  - name: VESSEL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: VESSEL_CATEGORY
+    type: string
+    description: ''
+    unit: ''
+  - name: OWNER
+    type: string
+    description: ''
+    unit: ''
+  - name: DATA_SOURCE
+    type: string
+    description: ''
+    unit: ''
+  - name: RIG_DESIGN
+    type: string
+    description: ''
+    unit: ''
+  - name: WATER_DEPTH_RATING_FT
+    type: float
+    description: ''
+    unit: feet
+  - name: RIG_TYPE
+    type: string
+    description: ''
+    unit: ''
+  - name: DATA_SOURCE_URL
+    type: string
+    description: ''
+    unit: ''
+  row_count: 31
+  size_bytes: 7010
+  last_modified: '2026-05-15T02:51:58.861881+00:00'
+- name: seadrill.parquet
+  path: data/modules/vessel_fleet/raw/spec_details/seadrill.parquet
+  format: parquet
+  columns:
+  - name: VESSEL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: VESSEL_CATEGORY
+    type: string
+    description: ''
+    unit: ''
+  - name: OWNER
+    type: string
+    description: ''
+    unit: ''
+  - name: DATA_SOURCE
+    type: string
+    description: ''
+    unit: ''
+  - name: RIG_TYPE
+    type: string
+    description: ''
+    unit: ''
+  - name: DATA_SOURCE_URL
+    type: string
+    description: ''
+    unit: ''
+  row_count: 17
+  size_bytes: 4944
+  last_modified: '2026-05-15T02:51:58.862804+00:00'
 binary_stores: []

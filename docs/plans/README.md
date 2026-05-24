@@ -58,12 +58,20 @@ This directory contains issue-plan artifacts created during the issue-planning-m
 | [#365](https://github.com/vamseeachanta/worldenergydata/issues/365) | [bsee-binary-ingest](2026-05-04-issue-365-bsee-binary-ingest.md) | plan-review | 2026-05-04 |
 | [#366](https://github.com/vamseeachanta/worldenergydata/issues/366) | [hse-bulk-dedup-ingest](2026-05-04-issue-366-hse-bulk-dedup-ingest.md) | plan-review | 2026-05-04 |
 | [#367](https://github.com/vamseeachanta/worldenergydata/issues/367) | [api12-npv-migration](2026-05-04-issue-367-api12-npv-migration.md) | plan-review | 2026-05-04 |
+| [#411](https://github.com/vamseeachanta/worldenergydata/issues/411) | [bsee-war-bridge](2026-05-15-issue-411-bsee-war-bridge.md) | draft | 2026-05-15 |
 | [#368](https://github.com/vamseeachanta/worldenergydata/issues/368) | [closed-issue-verifier](2026-05-04-issue-368-closed-issue-verifier.md) | plan-review | 2026-05-04 |
 | [#374](https://github.com/vamseeachanta/worldenergydata/issues/374) | [backfill-lt-field-configs-big-foot-north-platte](2026-05-03-issue-374-backfill-lt-field-configs-big-foot-north-platte.md) | draft | 2026-05-03 |
 | [#375](https://github.com/vamseeachanta/worldenergydata/issues/375) | [per-field-economics-10-lt-fields](2026-05-03-issue-375-per-field-economics-10-lt-fields.md) | draft | 2026-05-03 |
 | [#376](https://github.com/vamseeachanta/worldenergydata/issues/376) | [cross-field-analytics-lt](2026-05-03-issue-376-cross-field-analytics-lt.md) | draft | 2026-05-03 |
 | [#377](https://github.com/vamseeachanta/worldenergydata/issues/377) | [lt-comprehensive-report-assembly](2026-05-03-issue-377-lt-comprehensive-report-assembly.md) | draft | 2026-05-03 |
 | [#387](https://github.com/vamseeachanta/worldenergydata/issues/387) | [pywasp-evaluation](2026-05-06-issue-387-pywasp-evaluation.md) | plan-review | 2026-05-06 |
+| [#403](https://github.com/vamseeachanta/worldenergydata/issues/403) | [hurricane-mooring-risk-infographic](2026-05-12-issue-403-hurricane-mooring-risk-infographic.md) | plan-review | 2026-05-12 |
+| [#416](https://github.com/vamseeachanta/worldenergydata/issues/416) | [intervention-hse-patterns](2026-05-18-issue-416-intervention-hse-patterns.md) | plan-review | 2026-05-18 |
+| [#423](https://github.com/vamseeachanta/worldenergydata/issues/423) | [marketing-pipeline-umbrella](2026-05-18-issue-423-marketing-pipeline-umbrella.md) | plan-review | 2026-05-18 |
+| [#424](https://github.com/vamseeachanta/worldenergydata/issues/424) | [decommissioning-market-outlook](2026-05-18-issue-424-decommissioning-market-outlook.md) | plan-review | 2026-05-18 |
+| [#425](https://github.com/vamseeachanta/worldenergydata/issues/425) | [operator-hse-benchmarking](2026-05-18-issue-425-operator-hse-benchmarking.md) | plan-review | 2026-05-18 |
+| [#426](https://github.com/vamseeachanta/worldenergydata/issues/426) | [drilling-hse-patterns](2026-05-18-issue-426-drilling-hse-patterns.md) | plan-review | 2026-05-18 |
+| [#427](https://github.com/vamseeachanta/worldenergydata/issues/427) | [seasonal-intervention-risk](2026-05-18-issue-427-seasonal-intervention-risk.md) | plan-review | 2026-05-18 |
 
 ## Closed / superseded plans
 
