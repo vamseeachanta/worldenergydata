@@ -1,0 +1,193 @@
+{
+  "generated_at": "2026-05-18T21:28:35.901813Z",
+  "issue": "https://github.com/vamseeachanta/worldenergydata/issues/416",
+  "branch": "feat/issue-416-phase1a-intervention-hse-service-type",
+  "hse_db_inventory": {
+    "path": "data/modules/hse/hse_incidents.db",
+    "size_bytes": 59928576,
+    "tables": {
+      "equipment_failures": {
+        "row_count": 0,
+        "columns": [
+          "id",
+          "hse_incident_id",
+          "equipment_type",
+          "equipment_description",
+          "failure_mode",
+          "failure_cause",
+          "downtime_hours",
+          "repair_cost",
+          "preventive_actions"
+        ]
+      }
+    }
+  },
+  "hse_incidents_profile": {
+    "total_rows": 97993,
+    "date_range": {
+      "min": "1948-01-03 00:00:00.000000",
+      "max": "2026-01-29 00:00:00.000000"
+    },
+    "rows_per_year": {
+      "1948": 1,
+      "1972": 27,
+      "1973": 157,
+      "1974": 262,
+      "1975": 624,
+      "1976": 685,
+      "1977": 418,
+      "1978": 415,
+      "1979": 587,
+      "1980": 728,
+      "1981": 736,
+      "1982": 609,
+      "1983": 612,
+      "1984": 949,
+      "1985": 1192,
+      "1986": 1986,
+      "1987": 2060,
+      "1988": 2231,
+      "1989": 2485,
+      "1990": 2536,
+      "1991": 2700,
+      "1992": 2359,
+      "1993": 2493,
+      "1994": 2417,
+      "1995": 2284,
+      "1996": 2583,
+      "1997": 2661,
+      "1998": 2363,
+      "1999": 2325,
+      "2000": 2579,
+      "2001": 2647,
+      "2002": 2314,
+      "2003": 2308,
+      "2004": 2258,
+      "2005": 2150,
+      "2006": 2531,
+      "2007": 2429,
+      "2008": 2263,
+      "2009": 1980,
+      "2010": 2549,
+      "2011": 2592,
+      "2012": 2541,
+      "2013": 2712,
+      "2014": 2679,
+      "2015": 2667,
+      "2016": 2208,
+      "2017": 1973,
+      "2018": 1765,
+      "2019": 1908,
+      "2020": 949,
+      "2021": 1739,
+      "2022": 1802,
+      "2023": 1892,
+      "2024": 1728,
+      "2025": 1265,
+      "2026": 80
+    },
+    "distinct_operators": 16200,
+    "distinct_fields": 0,
+    "distinct_leases": 946,
+    "top_30_incident_types": [
+      {
+        "type": "violation",
+        "count": 91527
+      },
+      {
+        "type": "injury",
+        "count": 4709
+      },
+      {
+        "type": "equipment_failure",
+        "count": 1293
+      },
+      {
+        "type": "spill",
+        "count": 464
+      }
+    ],
+    "severity_distribution": [
+      {
+        "severity": "minor",
+        "count": 85235
+      },
+      {
+        "severity": "recordable",
+        "count": 8130
+      },
+      {
+        "severity": "fatality",
+        "count": 3765
+      },
+      {
+        "severity": "near_miss",
+        "count": 829
+      },
+      {
+        "severity": "lost_time",
+        "count": 34
+      }
+    ],
+    "rows_with_full_join_keys": 1932,
+    "rows_with_lat_lon": 0,
+    "intervention_keyword_hits": {
+      "workover": 9,
+      "intervention": 0,
+      "wireline": 4,
+      "coil tubing": 0,
+      "snubbing": 1,
+      "well control": 11,
+      "well work": 6,
+      "P&A": 3,
+      "plug and abandon": 0
+    }
+  },
+  "war_data": {
+    "path": "data/modules/bsee/.local/war",
+    "exists": true,
+    "files": [
+      {
+        "name": "download_metadata.json",
+        "size_bytes": 249,
+        "is_file": true,
+        "is_dir": false
+      },
+      {
+        "name": "eWellWARRawData.zip",
+        "size_bytes": 127933804,
+        "is_file": true,
+        "is_dir": false
+      },
+      {
+        "name": "war_borehole_view.pkl",
+        "size_bytes": 6020228,
+        "is_file": true,
+        "is_dir": false
+      }
+    ]
+  },
+  "rig_fleet_data": {
+    "path": "data/modules/bsee/.local/rig_fleet",
+    "exists": true,
+    "file_count": 4,
+    "files_sample": [
+      {
+        "name": "rig_fleet_full.bin",
+        "size_bytes": 422385
+      },
+      {
+        "name": "rig_fleet_metadata.json",
+        "size_bytes": 584
+      },
+      {
+        "name": "subsets",
+        "size_bytes": 0
+      },
+      {
+        "name": "subsets/rig_fleet.bin",
+        "size_bytes": 5149
+      }
+    ]
+  }
+}
