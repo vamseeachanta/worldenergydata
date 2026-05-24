@@ -1,10 +1,10 @@
 {
   "module": "marine_safety",
-  "generated_at": "2026-05-05T01:06:51.137914+00:00",
-  "last_refresh": "2026-05-05",
+  "generated_at": "2026-05-15T03:45:14.622314+00:00",
+  "last_refresh": "2026-05-15",
   "record_count": 0,
   "file_count": 84,
-  "total_size_bytes": 112370800,
+  "total_size_bytes": 112370801,
   "total_size_human": "107.2 MB",
   "source_url": null,
   "format": ".csv,.db,.html,.json,.md,.py,.txt,.yaml",
@@ -23,7 +23,7 @@
     },
     ".json": {
       "count": 12,
-      "size_bytes": 683014
+      "size_bytes": 683015
     },
     ".md": {
       "count": 30,
@@ -48,8 +48,8 @@
     {
       "name": "_metadata.json",
       "path": "_metadata.json",
-      "size_bytes": 14339,
-      "modified": "2026-05-05"
+      "size_bytes": 14340,
+      "modified": "2026-05-15"
     },
     {
       "name": "marine_safety.db",
@@ -547,7 +547,7 @@
       "name": "schema.yaml",
       "path": "schema.yaml",
       "size_bytes": 7168,
-      "modified": "2026-05-05"
+      "modified": "2026-05-15"
     }
   ],
   "files_truncated": false

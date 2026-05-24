@@ -227,3 +227,32 @@ class TestPopulateEstimatedDimensions:
         )
         result = populate_estimated_dimensions(df)
         assert result["DISPLACEMENT_TONNES"].iloc[0] == 96000.0
+
+    def test_sparse_input_missing_dimension_columns_does_not_crash(self):
+        """Regression test for #408: vendor-only fusion input lacks LOA_M/BEAM_M/DRAFT_M.
+
+        When ``fuse_and_deduplicate.py`` runs against ONLY vendor-spec-details
+        parquet (no BSEE WAR enrichment), the input frame's schema does not
+        include the three dimension columns. The function must add them as
+        NA-filled columns and still produce estimates from HULL_FORM_TYPE.
+        """
+        df = pd.DataFrame(
+            {
+                "VESSEL_NAME": ["Noble BlackHawk", "West Capella"],
+                "RIG_TYPE": ["drillship", "drillship"],
+                "HULL_FORM_TYPE": ["drillship", "drillship"],
+                "WATER_DEPTH_RATING_FT": [12000.0, 10000.0],
+            }
+        )
+        result = populate_estimated_dimensions(df)
+        # Columns added by the defensive guard
+        assert "LOA_M" in result.columns
+        assert "BEAM_M" in result.columns
+        assert "DRAFT_M" in result.columns
+        # Dimensions estimated for both rows (HULL_FORM_TYPE=drillship)
+        assert result["LOA_M"].notna().all()
+        assert result["BEAM_M"].notna().all()
+        assert result["DRAFT_M"].notna().all()
+        # Confidence column populated as estimated/generic, not measured
+        assert result["DIMENSION_CONFIDENCE"].notna().all()
+        assert "measured" not in result["DIMENSION_CONFIDENCE"].values
