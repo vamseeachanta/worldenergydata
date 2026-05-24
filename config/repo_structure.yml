@@ -85,6 +85,7 @@ temporary_exceptions:
     follow_up: https://github.com/vamseeachanta/worldenergydata/issues/394
     justification: Tracked scheduler log JSON files are preserved as existing durable evidence until a dedicated generated-evidence migration classifies retention, relocation, or deletion.
     allowed_paths:
+      - logs/dashboard_audit.jsonl
       - logs/scheduler/20260325_214434_eia_us_refresh.json
       - logs/scheduler/20260325_214511_bsee_refresh.json
       - logs/scheduler/20260325_214601_sodir_refresh.json
@@ -124,6 +125,11 @@ temporary_exceptions:
       - reports/modules/marketing/COMPLETION_SUMMARY.md
       - reports/modules/marketing/DECISION_IMPLEMENTATION_GUIDE.md
       - reports/modules/marketing/GENERATION_SUMMARY.md
+      - reports/modules/marketing/hurricane_mooring_risk_avoidance_infographic.html
+      - reports/modules/marketing/hurricane_mooring_risk_avoidance_infographic_client_dark.png
+      - reports/modules/marketing/hurricane_mooring_risk_avoidance_infographic_client_markup_white.html
+      - reports/modules/marketing/hurricane_mooring_risk_avoidance_infographic_client_markup_white.png
+      - reports/modules/marketing/hurricane_mooring_risk_avoidance_infographic_stats.json
       - reports/modules/marketing/PDF_GENERATION_CHECKLIST.md
       - reports/modules/marketing/PREREQUISITES_VALIDATION_SUMMARY.md
       - reports/modules/marketing/QUICK_START.md
@@ -135,3 +141,5 @@ temporary_exceptions:
       - reports/modules/marketing/marketing_brochure_marine_safety_incident_analysis.md
       - reports/modules/marketing/marketing_brochure_web_scraping_infrastructure.md
       - reports/modules/marketing/marketing_brochure_well_production_dashboard.md
+      - reports/modules/marketing/reference_hurricane_mooring_safety_infographic_prior_draft.html
+      - reports/modules/marketing/reference_hurricane_mooring_safety_infographic_prior_draft_stats.json
