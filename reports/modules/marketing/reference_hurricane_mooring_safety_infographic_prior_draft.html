@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>Hurricane Mooring Safety Infographic — Incident-backed risk controls</title>
+<style>
+:root { --navy:#071b2f; --blue:#0a5f8f; --cyan:#55d6ff; --foam:#eaf8ff; --orange:#ff9f1c; --red:#ff4d4d; --green:#40c97b; --ink:#122033; --muted:#557086; }
+* { box-sizing:border-box }
+body { margin:0; font-family:Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Arial, sans-serif; background:#dcecf4; color:var(--ink); }
+.page { width:1400px; margin:0 auto; background:linear-gradient(180deg,#06182b 0%,#0b3152 34%,#f4fbff 34.2%,#f8fcff 100%); min-height:1900px; box-shadow:0 20px 80px rgba(0,0,0,.25); position:relative; overflow:hidden; }
+.wave { position:absolute; inset:0 0 auto 0; height:560px; opacity:.25; background:radial-gradient(circle at 15% 30%, #55d6ff55 0 9%, transparent 10%), radial-gradient(circle at 80% 5%, #ff9f1c55 0 8%, transparent 9%); }
+.header { position:relative; padding:58px 76px 36px; color:white; display:grid; grid-template-columns:1.3fr .7fr; gap:36px; align-items:center; }
+.kicker { letter-spacing:.18em; text-transform:uppercase; color:#9ee8ff; font-weight:800; font-size:18px; }
+h1 { font-size:70px; line-height:.98; margin:14px 0 18px; letter-spacing:-.055em; max-width:850px; }
+.subtitle { font-size:25px; line-height:1.35; color:#d8f3ff; max-width:790px; }
+.storm-card { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.22); backdrop-filter:blur(10px); border-radius:30px; padding:30px; }
+.storm-eye { width:260px; height:260px; border-radius:50%; margin:0 auto 20px; background:conic-gradient(from 35deg,#55d6ff,#fff 10%,#0a5f8f 23%,#071b2f 37%,#ff9f1c 47%,#fff 53%,#55d6ff 64%,#071b2f 80%,#55d6ff); display:grid; place-items:center; box-shadow:0 0 60px #55d6ff55; }
+.storm-eye:after { content:''; width:86px; height:86px; background:#06182b; border:10px solid white; border-radius:50%; }
+.main { position:relative; padding:24px 64px 64px; }
+.stats { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-top:-42px; }
+.stat { background:white; border-radius:24px; padding:26px 24px; box-shadow:0 12px 35px rgba(6,24,43,.16); border:1px solid #d7e9f4; min-height:166px; }
+.stat .num { font-size:62px; font-weight:900; letter-spacing:-.06em; color:var(--navy); }
+.stat .label { color:var(--muted); font-size:17px; line-height:1.28; font-weight:700; }
+.stat.red .num { color:var(--red) } .stat.orange .num { color:var(--orange) } .stat.blue .num { color:var(--blue) }
+.grid { display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:24px; }
+.panel { background:white; border-radius:28px; padding:30px; box-shadow:0 10px 30px rgba(7,27,47,.12); border:1px solid #dcecf4; }
+.panel.dark { background:#071b2f; color:white; }
+.panel h2 { margin:0 0 18px; font-size:30px; letter-spacing:-.035em; }
+.panel p { font-size:18px; line-height:1.45; color:#48667a; }
+.panel.dark p { color:#cceeff; }
+.bar-row { display:grid; grid-template-columns:210px 1fr 42px; gap:14px; align-items:center; margin:18px 0; font-size:18px; font-weight:750; }
+.bar-track { height:24px; background:#e9f3f9; border-radius:999px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,var(--cyan),var(--blue)); }
+.bar-fill.danger { background:linear-gradient(90deg,#ffb066,var(--red)); } .bar-fill.warn { background:linear-gradient(90deg,#ffe08a,var(--orange)); }
+.months { height:175px; display:flex; align-items:end; gap:14px; padding-top:14px; border-bottom:2px solid #d5e7f0; }
+.month { width:46px; text-align:center; position:relative; } .mbar { width:100%; border-radius:12px 12px 0 0; background:linear-gradient(180deg,#55d6ff,#0a5f8f); min-height:18px; } .month span { display:block; margin-top:8px; font-weight:800; color:#49697d; } .month b { position:absolute; top:-28px; left:0; right:0; color:#071b2f; }
+.severity-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-top:15px; } .sev { padding:18px 12px; border-radius:18px; color:white; text-align:center; font-weight:900; } .sev span { display:block; font-size:14px; opacity:.86; text-transform:uppercase; letter-spacing:.08em } .sev b { font-size:38px; } .sev-critical{background:#cf2e2e} .sev-high{background:#ff7a1a} .sev-medium{background:#f5b934;color:#17222c} .sev-low{background:#40c97b;color:#071b2f} .sev-none,.sev-unspecified{background:#8ca7b8}
+.controls { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:24px; }
+.control { background:linear-gradient(180deg,#ffffff,#eef8ff); border:1px solid #d7e9f4; border-radius:24px; padding:22px; min-height:210px; }
+.control .icon { font-size:42px; } .control h3 { margin:10px 0 8px; font-size:23px; } .control p { margin:0; color:#526f82; font-size:16.5px; line-height:1.38; }
+.callout { margin-top:24px; background:linear-gradient(135deg,#071b2f,#0a5f8f); color:white; border-radius:30px; padding:34px 42px; display:grid; grid-template-columns:1fr 360px; gap:26px; align-items:center; }
+.callout h2 { margin:0 0 10px; font-size:38px; letter-spacing:-.04em; } .callout p { color:#ddf6ff; font-size:20px; line-height:1.42; }
+.decision { background:white; color:#071b2f; border-radius:22px; padding:22px; } .decision div { padding:12px 0; border-bottom:1px solid #d8e8f0; font-size:17px; font-weight:800; } .decision div:last-child { border-bottom:0 }
+.examples { margin-top:16px; padding-left:20px; } .examples li { margin:10px 0; line-height:1.34; color:#dff6ff; } .examples em { color:#ffc66d; font-style:normal; }
+.footer { padding:24px 64px 50px; font-size:14px; color:#577184; display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+.badge { display:inline-block; background:#e6f7ff; color:#0a5f8f; border:1px solid #bdeeff; padding:8px 12px; border-radius:999px; font-weight:800; margin:4px 6px 4px 0; }
+</style>
+</head>
+<body><div class='page'>
+<div class='wave'></div>
+<header class='header'>
+  <div><div class='kicker'>Incident-backed hurricane readiness</div><h1>Prevent the avoidable before tropical weather arrives.</h1><div class='subtitle'>WorldEnergyData marine incident records show that heavy weather, water ingress, foundering, and unsecured openings are recurring failure paths. Hurricane mooring plans convert those lessons into action: analyze, decide, secure, and recover.</div></div>
+  <div class='storm-card'><div class='storm-eye'></div><p><b>Core message:</b> if a vessel cannot safely remain at a site under the forecast category, the relocation decision must already be made before port restrictions, tow availability, surge, or crew workload remove the option.</p></div>
+</header>
+<main class='main'>
+<section class='stats'>
+  <div class='stat blue'><div class='num'>65</div><div class='label'>incident records reviewed from WorldEnergyData marine safety CSVs</div></div>
+  <div class='stat red'><div class='num'>60</div><div class='label'>fatalities captured across fatality and foundering records</div></div>
+  <div class='stat orange'><div class='num'>24</div><div class='label'>records flagged as storm / water-ingress / heavy-weather related</div></div>
+  <div class='stat red'><div class='num'>40</div><div class='label'>fatalities in weather- and water-related records</div></div>
+</section>
+<section class='grid'>
+  <div class='panel'><h2>Incident categories in the dataset</h2>
+  <div class='bar-row'><span>Fatality</span><div class='bar-track'><div class='bar-fill accent' style='width:66.7%'></div></div><b>20</b></div>
+  <div class='bar-row'><span>Foundering</span><div class='bar-track'><div class='bar-fill danger' style='width:50.0%'></div></div><b>15</b></div>
+  <div class='bar-row'><span>Hatch / watertight integrity</span><div class='bar-track'><div class='bar-fill warn' style='width:100.0%'></div></div><b>30</b></div><p>Foundering and watertight-integrity events are the closest incident classes to hurricane mooring risk because they represent loss-of-control paths: flooding, capsizing, sinking, unsecured openings, and heavy-weather exposure.</p></div>
+  <div class='panel'><h2>2024 incident cadence by month</h2><div class='months'><div class='month'><div class='mbar' style='height:69px'></div><span>Jan</span><b>5</b></div><div class='month'><div class='mbar' style='height:82px'></div><span>Feb</span><b>6</b></div><div class='month'><div class='mbar' style='height:82px'></div><span>Mar</span><b>6</b></div><div class='month'><div class='mbar' style='height:96px'></div><span>Apr</span><b>7</b></div><div class='month'><div class='mbar' style='height:82px'></div><span>May</span><b>6</b></div><div class='month'><div class='mbar' style='height:96px'></div><span>Jun</span><b>7</b></div><div class='month'><div class='mbar' style='height:82px'></div><span>Jul</span><b>6</b></div><div class='month'><div class='mbar' style='height:96px'></div><span>Aug</span><b>7</b></div><div class='month'><div class='mbar' style='height:110px'></div><span>Sep</span><b>8</b></div><div class='month'><div class='mbar' style='height:96px'></div><span>Oct</span><b>7</b></div></div><p>The sample spans January–October 2024. A planning infographic should not rely on storm season alone; readiness gaps accumulate before June and become operational constraints during the tropical window.</p></div>
+  <div class='panel'><h2>Hatch / watertight integrity severity</h2><div class='severity-grid'><div class='sev sev-critical'><span>Critical</span><b>6</b></div><div class='sev sev-high'><span>High</span><b>6</b></div><div class='sev sev-medium'><span>Medium</span><b>7</b></div><div class='sev sev-low'><span>Low</span><b>1</b></div><div class='sev sev-none'><span>None</span><b>10</b></div></div><p><b>12 of 30 hatch-related records (40%)</b> are Critical or High severity. This supports pre-storm closure checklists, seal inspection, hatch-cover verification, and crew drills before heavy weather.</p></div>
+  <div class='panel dark'><h2>Weather and water-related examples</h2><ul class='examples'><li><b>Fatality</b> — 2024-02-15: Crew member swept overboard during storm, lost at sea despite search efforts <em>(1 fatalities)</em></li><li><b>Fatality</b> — 2024-05-15: Heavy equipment shifted in rough seas, crew member crushed against bulkhead <em>(1 fatalities)</em></li><li><b>Foundering</b> — 2024-01-22: Vessel foundered in severe weather, hull breach from cargo shift, complete loss of vessel, all crew rescued <em>(0 fatalities)</em></li><li><b>Foundering</b> — 2024-02-10: Boat capsized and sank in storm conditions, inadequate stability for heavy seas, 3 crew members lost <em>(3 fatalities)</em></li><li><b>Foundering</b> — 2024-03-15: Progressive flooding after grounding, vessel broke apart and sank, crew evacuated successfully <em>(0 fatalities)</em></li><li><b>Foundering</b> — 2024-04-08: Foundered after collision with submerged object, rapid water ingress through hull damage <em>(2 fatalities)</em></li></ul></div>
+</section>
+<section class='controls'>
+  <div class='control'><div class='icon'>⚓</div><h3>Engineer the mooring plan</h3><p>Model bollard geometry, line lengths, fender loads, storm surge, changing vessel elevation, wind direction, waves, and current. Analyze Category 1–5 intensity, not a single design case.</p></div>
+  <div class='control'><div class='icon'>🌊</div><h3>Close water-ingress paths</h3><p>Prioritize watertight doors, hatches, ventilation openings, deck seals, and cargo openings. The dataset’s critical/high hatch records show why closure discipline is a survivability control.</p></div>
+  <div class='control'><div class='icon'>🚢</div><h3>Decide relocation early</h3><p>Ports of refuge, tow vessels, dock agreements, USCG/Port Authority restrictions, and travel time must be resolved before the forecast cone tightens and movement becomes unsafe or prohibited.</p></div>
+  <div class='control'><div class='icon'>🧰</div><h3>Stage hardware before season</h3><p>Additional mooring lines, pneumatic fenders, shackles, chafing gear, and verified bollard capacities need procurement and inspection lead time. Storm week is too late.</p></div>
+  <div class='control'><div class='icon'>👷</div><h3>Train the crew</h3><p>Captain and crew need a deployable Hurricane Mooring Guidance plan: line layout, sequence, hazards, communications, and stop-work triggers under deteriorating conditions.</p></div>
+  <div class='control'><div class='icon'>📈</div><h3>Use a survivability decision tree</h3><p>Translate OrcaFlex/mooring-analysis outputs into go/no-go thresholds by storm category, arrival time, model agreement, site exposure, and repair status.</p></div>
+</section>
+<section class='callout'>
+  <div><h2>Risk avoided = fewer preventable loss-of-control pathways.</h2><p>In this incident set, <b>37%</b> of records are weather/water related and account for <b>40</b> fatalities. A hurricane response plan targets the mechanisms behind those outcomes: flooding, foundering, unsecured openings, cargo or equipment shift, beam-sea exposure, and delayed relocation.</p><span class='badge'>Mooring analysis</span><span class='badge'>Watertight integrity</span><span class='badge'>Decision tree</span><span class='badge'>Crew readiness</span></div>
+  <div class='decision'><div>1. Forecast threat appears</div><div>2. Check category + track + arrival time</div><div>3. Compare site survivability plot</div><div>4. Secure in place or relocate</div><div>5. Execute crew guidance plan</div></div>
+</section>
+</main>
+<footer class='footer'><div><b>Data source:</b><br>worldenergydata/data/modules/marine_safety/input/fatality_incidents.csv<br>worldenergydata/data/modules/marine_safety/input/foundering_incidents.csv<br>worldenergydata/data/modules/marine_safety/input/hatch_incidents.csv<br><br><b>Document reviewed:</b> Hurricane Planning and Mooring R0-4revisions.docx. Key themes used: hurricane season planning, mooring analysis, port/refuge decision tree, bollard/fender capacity, watertight integrity, crew readiness, USCG/Port Authority coordination.</div><div><b>Interpretation note:</b> Repository CSVs are curated marine-safety incident examples, not a complete hurricane-only casualty database. Weather/water-related records were classified by description keywords: storm, rough seas, severe/heavy weather, rogue wave, water ingress, flood/flooding, capsized, sank, foundered, surge, wave(s). Use this as a stakeholder infographic and augment with client/site-specific incident history for final publication.</div></footer>
+</div></body></html>
