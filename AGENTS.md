@@ -7,6 +7,6 @@ maturity: beta
 ---
 # worldenergydata
 
-Contract: ../AGENTS.md | Source: src/worldenergydata/
+Contract: ../workspace-hub/AGENTS.md | Source: src/worldenergydata/
 Key modules: bsee/, eia/, drilling/, economics/, analysis/, cli/
 Note: BSEE binary data (~300 MB) not in git — run scripts/refresh_bsee_all.py after clone
