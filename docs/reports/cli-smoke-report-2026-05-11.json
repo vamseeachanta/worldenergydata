@@ -1,0 +1,222 @@
+{
+  "date": "2026-05-11",
+  "issue": 352,
+  "results": [
+    {
+      "command": "worldenergydata --help",
+      "safety": "bounded-safe",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_snippet": "Usage: worldenergydata [OPTIONS] COMMAND [ARGS]...                             \n                                                                                \n World Energy Data - Global energy market data platform                         \n                                                                                \n\u256d\u2500 Options \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 --verbose             -v        Enable verbose output                        \u2502\n\u2502 --install-com...",
+      "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
+      "source": "README.md"
+    },
+    {
+      "command": "worldenergydata version",
+      "safety": "bounded-safe",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_snippet": "\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 About \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 WorldEnergyData                                                              \u2502\n\u2502 Version: 0.1.0                                                               \u2502\n\u2502 Global energy market data aggregation platform                               \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f",
+      "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
+      "source": "README.md"
+    },
+    {
+      "command": "worldenergydata info",
+      "safety": "bounded-safe",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_snippet": "WorldEnergyData Modules                             \n\u250f\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2533\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2533\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2513\n\u2503 Module          \u2503 Description                  \u2503 Key Commands                \u2503\n\u2521\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2547\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2547\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2529\n\u2502 bsee            \u2502 BSEE data operations and     \u2502 analyze, report, data,      \u2502\n\u2502                 \u2502 analysis                     \u2502 refresh                     \u2502\n\u2502 dashboard       \u2502 Plotly Dash BSEE/FDAS ...",
+      "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
+      "source": "README.md"
+    },
+    {
+      "command": "worldenergydata status",
+      "safety": "bounded-safe",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_snippet": "\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 Data Freshness Status                                                        \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\n                               Module Freshness                                \n\u250f\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2533\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2533\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2533\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2533\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2533\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2513\n\u2503 Module             \u2503 Last Refresh \u2503 Age (days) \u2503 Records \u2503 Files \u2503     Size \u2503\n\u2521\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501...",
+      "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
+      "source": "docs/CLI.md"
+    },
+    {
+      "command": "worldenergydata bsee --help",
+      "safety": "bounded-safe",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_snippet": "Usage: worldenergydata bsee [OPTIONS] COMMAND [ARGS]...                        \n                                                                                \n BSEE data operations and analysis                                              \n                                                                                \n\u256d\u2500 Options \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 --help          Show this message and exit.                                  \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500...",
+      "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
+      "source": "docs/CLI.md"
+    },
+    {
+      "command": "worldenergydata dashboard --help",
+      "safety": "bounded-safe",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_snippet": "Usage: worldenergydata dashboard [OPTIONS] COMMAND [ARGS]...                   \n                                                                                \n Launch the Plotly Dash BSEE/FDAS web dashboard                                 \n                                                                                \n\u256d\u2500 Options \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 --port   -p      INTEGER  TCP port to listen on [default: 8050]              \u2502\n\u2502 --host       ...",
+      "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
+      "source": "docs/CLI.md"
+    },
+    {
+      "command": "worldenergydata eia --help",
+      "safety": "bounded-safe",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_snippet": "Usage: worldenergydata eia [OPTIONS] COMMAND [ARGS]...                         \n                                                                                \n EIA API v2 weekly petroleum and gas feed ingestion                             \n                                                                                \n\u256d\u2500 Options \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 --help          Show this message and exit.                                  \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500...",
+      "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
+      "source": "docs/CLI.md"
+    },
+    {
+      "command": "worldenergydata marine-safety --help",
+      "safety": "bounded-safe",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_snippet": "Usage: worldenergydata marine-safety [OPTIONS] COMMAND [ARGS]...               \n                                                                                \n Marine safety incident data management                                         \n                                                                                \n\u256d\u2500 Options \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 --help          Show this message and exit.                                  \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500...",
+      "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
+      "source": "docs/CLI.md"
+    },
+    {
+      "command": "worldenergydata fdas --help",
+      "safety": "bounded-safe",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_snippet": "Usage: worldenergydata fdas [OPTIONS] COMMAND [ARGS]...                        \n                                                                                \n Field Development Analysis System                                              \n                                                                                \n\u256d\u2500 Options \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 --help          Show this message and exit.                                  \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500...",
+      "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
+      "source": "docs/CLI.md"
+    },
+    {
+      "command": "worldenergydata lower-tertiary --help",
+      "safety": "bounded-safe",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_snippet": "Usage: worldenergydata lower-tertiary [OPTIONS] COMMAND [ARGS]...              \n                                                                                \n Lower Tertiary portfolio analyses (10 GoM fields)                              \n                                                                                \n\u256d\u2500 Options \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 --help          Show this message and exit.                                  \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500...",
+      "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
+      "source": "docs/CLI.md"
+    },
+    {
+      "command": "worldenergydata forecast --help",
+      "safety": "bounded-safe",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_snippet": "Usage: worldenergydata forecast [OPTIONS] COMMAND [ARGS]...                    \n                                                                                \n Arps decline curve analysis \u2014 fit, EUR, and production forecast                \n                                                                                \n\u256d\u2500 Options \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 --model       -m      TEXT     Decline model: exponential | hyperbolic |     \u2502\n\u2502              ...",
+      "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
+      "source": "docs/CLI.md"
+    },
+    {
+      "command": "worldenergydata sodir --help",
+      "safety": "bounded-safe",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_snippet": "Usage: worldenergydata sodir [OPTIONS] COMMAND [ARGS]...                       \n                                                                                \n SODIR (Norwegian Offshore Directorate) data operations                         \n                                                                                \n\u256d\u2500 Options \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 --help          Show this message and exit.                                  \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500...",
+      "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
+      "source": "docs/CLI.md"
+    },
+    {
+      "command": "worldenergydata metocean --help",
+      "safety": "bounded-safe",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_snippet": "Usage: worldenergydata metocean [OPTIONS] COMMAND [ARGS]...                    \n                                                                                \n Metocean data - buoys, tides, marine weather                                   \n                                                                                \n\u256d\u2500 Options \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 --help          Show this message and exit.                                  \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500...",
+      "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
+      "source": "docs/CLI.md"
+    },
+    {
+      "command": "worldenergydata ndbc --help",
+      "safety": "bounded-safe",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_snippet": "Usage: worldenergydata ndbc [OPTIONS] COMMAND [ARGS]...                        \n                                                                                \n NDBC buoy data: scatter matrices, Weibull fits, wave roses                     \n                                                                                \n\u256d\u2500 Options \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 *  --station         -s      TEXT     NDBC station ID (e.g. 42001)           \u2502\n\u2502              ...",
+      "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
+      "source": "docs/CLI.md"
+    },
+    {
+      "command": "worldenergydata texas-rrc --help",
+      "safety": "bounded-safe",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_snippet": "Usage: worldenergydata texas-rrc [OPTIONS] COMMAND [ARGS]...                   \n                                                                                \n Texas Railroad Commission oil & gas data                                       \n                                                                                \n\u256d\u2500 Options \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 --help          Show this message and exit.                                  \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500...",
+      "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
+      "source": "docs/CLI.md"
+    },
+    {
+      "command": "worldenergydata canada --help",
+      "safety": "bounded-safe",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_snippet": "Usage: worldenergydata canada [OPTIONS] COMMAND [ARGS]...                      \n                                                                                \n Canadian oil & gas data (AER/BCER)                                             \n                                                                                \n\u256d\u2500 Options \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 --help          Show this message and exit.                                  \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500...",
+      "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
+      "source": "docs/CLI.md"
+    },
+    {
+      "command": "worldenergydata mexico-cnh --help",
+      "safety": "bounded-safe",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_snippet": "Usage: worldenergydata mexico-cnh [OPTIONS] COMMAND [ARGS]...                  \n                                                                                \n Mexico CNH oil & gas data (SIH dashboard)                                      \n                                                                                \n\u256d\u2500 Options \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 --help          Show this message and exit.                                  \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500...",
+      "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
+      "source": "docs/CLI.md"
+    },
+    {
+      "command": "worldenergydata landman --help",
+      "safety": "bounded-safe",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_snippet": "Usage: worldenergydata landman [OPTIONS] COMMAND [ARGS]...                     \n                                                                                \n Mineral ownership and lease data operations                                    \n                                                                                \n\u256d\u2500 Options \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 --help          Show this message and exit.                                  \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500...",
+      "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
+      "source": "docs/CLI.md"
+    },
+    {
+      "command": "worldenergydata lng-terminals --help",
+      "safety": "bounded-safe",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_snippet": "Usage: worldenergydata lng-terminals [OPTIONS] COMMAND [ARGS]...               \n                                                                                \n Global LNG terminal dataset with engineering design data                       \n                                                                                \n\u256d\u2500 Options \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 --help          Show this message and exit.                                  \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500...",
+      "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
+      "source": "docs/CLI.md"
+    },
+    {
+      "command": "worldenergydata safety-analysis --help",
+      "safety": "bounded-safe",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_snippet": "Usage: worldenergydata safety-analysis [OPTIONS] COMMAND [ARGS]...             \n                                                                                \n Safety analysis and HSE data processing                                        \n                                                                                \n\u256d\u2500 Options \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 --help          Show this message and exit.                                  \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500...",
+      "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
+      "source": "docs/CLI.md"
+    },
+    {
+      "command": "worldenergydata fdas calculate-npv --cashflows [-1000,100,200,300] --discount-rate 0.10",
+      "safety": "fixture-only",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_snippet": "NPV Calculation Results     \n\u250f\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2533\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2513\n\u2503 Metric            \u2503     Value \u2503\n\u2521\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2547\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2529\n\u2502 Cashflows         \u2502 4 periods \u2502\n\u2502 Discount Rate     \u2502    10.00% \u2502\n\u2502 Period            \u2502   monthly \u2502\n\u2502 Net Present Value \u2502  $-411.01 \u2502\n\u2502 Investment        \u2502 $1,000.00 \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n\u280b Calculating NPV...",
+      "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
+      "source": "README.md"
+    },
+    {
+      "command": "worldenergydata fdas calculate-all --cashflows [-5000,1000,1500,2000]",
+      "safety": "fixture-only",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_snippet": "Financial Metrics Summary   \n\u250f\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2533\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2513\n\u2503 Metric         \u2503     Value \u2503\n\u2521\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2547\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2529\n\u2502 Cashflows      \u2502 4 periods \u2502\n\u2502 Discount Rate  \u2502    10.00% \u2502\n\u2502 Period         \u2502   monthly \u2502\n\u2502                \u2502           \u2502\n\u2502 NPV            \u2502  $-578.64 \u2502\n\u2502 Annual MIRR    \u2502   -32.74% \u2502\n\u2502 Annual IRR     \u2502   -43.18% \u2502\n\u2502 Payback Period \u2502     Never \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n\u280b Calculating all metrics...",
+      "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
+      "source": "README.md"
+    },
+    {
+      "command": "worldenergydata fdas classify 5000",
+      "safety": "fixture-only",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_snippet": "\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 Water Depth Classification                                                   \u2502\n\u2502                                                                              \u2502\n\u2502 Water Depth: 5,000 ft                                                        \u2502\n\u2502 Classification: subsea15                                                     \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f",
+      "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
+      "source": "README.md"
+    },
+    {
+      "command": "worldenergydata marine-safety db init --dev-mode --dry-run",
+      "safety": "bounded-safe",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_snippet": "\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 Database Initialization                                                      \u2502\n\u2502 Database URL: sqlite:///marine_safety.db                                     \u2502\n\u2502 Dev Mode: True                                                               \u2502\n\u2502 Force: False                                                                 \u2502\n\u2502 Dry Run: True                                                                \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500...",
+      "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(\n/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
+      "source": "docs/CLI.md"
+    }
+  ]
+}
