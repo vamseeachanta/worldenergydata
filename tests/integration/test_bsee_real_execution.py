@@ -241,26 +241,69 @@ class TestBSEERealExecution:
         assert "regular" in result.columns
         assert "col_x" not in result.columns
 
-    @pytest.mark.skip(
-        reason="generate_revenue_table moved to legacy/api12_economics module"
-    )
-    def test_generate_revenue_table(self):
-        """Test revenue calculation"""
-        pass
+    def test_generate_revenue_table(self, tmp_path):
+        """Revenue table builds from lower_tertiary WTI prices (FDAS forward path, #367)."""
+        analyzer = ProductionAPI12Analysis()
+        prices = pd.DataFrame(
+            {
+                "Month": pd.to_datetime(["2024-01-01", "2024-02-01"]),
+                "WTI_USD": [71.25, 73.50],
+                "source": ["test", "test"],
+            }
+        )
+        api12_df = pd.DataFrame(
+            {"PRODUCTION_DATE": [202401, 202402], "MON_O_PROD_VOL": [100.0, 200.0]}
+        )
+        cfg = {"Analysis": {"result_folder": str(tmp_path)}}
+        with patch(
+            "worldenergydata.bsee.analysis.production_api12.load_extended_wti_prices",
+            lambda **_: prices,
+        ):
+            revenue_df = analyzer.generate_revenue_table(cfg, api12_df)
+        for col in [
+            "Month",
+            "Monthly Oil Production",
+            "Avg Price (USD/bbl)",
+            "Revenue (USD)",
+        ]:
+            assert col in revenue_df.columns
 
-    @pytest.mark.skip(
-        reason="perform_npv_calculation moved to legacy/api12_economics module"
-    )
     def test_perform_npv_calculation(self):
-        """Test NPV calculation"""
-        pass
+        """perform_npv_calculation returns a finite NPV via the FDAS layer (#367)."""
+        analyzer = ProductionAPI12Analysis()
+        cfg = {
+            "economics": {
+                "cost": {"discount_rate_annual": 0.12, "CAPEX": 1000.0, "OPEX": 2.0}
+            }
+        }
+        revenue_df = pd.DataFrame(
+            {
+                "Month": [202401, 202402, ""],
+                "Monthly Oil Production": [100.0, 200.0, ""],
+                "Revenue (USD)": ["$1,000.00", "$3,000.00", "$4,000.00"],
+            }
+        )
+        npv = analyzer.perform_npv_calculation(cfg, revenue_df)
+        assert np.isfinite(npv)
 
-    @pytest.mark.skip(
-        reason="perform_excel_aligned_npv_calculation moved to legacy/api12_economics module"
-    )
     def test_perform_excel_aligned_npv(self):
-        """Test Excel-aligned NPV calculation"""
-        pass
+        """Excel-aligned wrapper delegates to the same FDAS path as perform_npv_calculation (#367)."""
+        analyzer = ProductionAPI12Analysis()
+        cfg = {
+            "economics": {
+                "cost": {"discount_rate_annual": 0.12, "CAPEX": 1000.0, "OPEX": 2.0}
+            }
+        }
+        revenue_df = pd.DataFrame(
+            {
+                "Month": [202401, 202402, ""],
+                "Monthly Oil Production": [100.0, 200.0, ""],
+                "Revenue (USD)": ["$1,000.00", "$3,000.00", "$4,000.00"],
+            }
+        )
+        assert analyzer.perform_excel_aligned_npv_calculation(
+            cfg, revenue_df
+        ) == pytest.approx(analyzer.perform_npv_calculation(cfg, revenue_df))
 
     def test_perform_decline_analysis(self, analyzer, real_config, real_production_df):
         """Test decline analysis"""
