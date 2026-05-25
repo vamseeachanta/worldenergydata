@@ -151,19 +151,48 @@ class TestProductionWithCorrectFormat:
         # Should complete without error
         assert True
 
-    @pytest.mark.skip(
-        reason="generate_revenue_table moved to legacy/api12_economics module"
-    )
-    def test_generate_revenue_table(self, analyzer, valid_config, bsee_data):
-        """Test revenue generation"""
-        pass
+    def test_generate_revenue_table(self, analyzer, tmp_path):
+        """Revenue table builds from lower_tertiary WTI prices (FDAS forward path, #367)."""
+        prices = pd.DataFrame(
+            {
+                "Month": pd.to_datetime(["2024-01-01", "2024-02-01"]),
+                "WTI_USD": [71.25, 73.50],
+                "source": ["test", "test"],
+            }
+        )
+        api12_df = pd.DataFrame(
+            {"PRODUCTION_DATE": [202401, 202402], "MON_O_PROD_VOL": [100.0, 200.0]}
+        )
+        cfg = {"Analysis": {"result_folder": str(tmp_path)}}
+        with patch(
+            "worldenergydata.bsee.analysis.production_api12.load_extended_wti_prices",
+            lambda **_: prices,
+        ):
+            revenue_df = analyzer.generate_revenue_table(cfg, api12_df)
+        for col in [
+            "Month",
+            "Monthly Oil Production",
+            "Avg Price (USD/bbl)",
+            "Revenue (USD)",
+        ]:
+            assert col in revenue_df.columns
 
-    @pytest.mark.skip(
-        reason="perform_npv_calculation moved to legacy/api12_economics module"
-    )
-    def test_perform_npv_calculation(self, analyzer, valid_config):
-        """Test NPV calculation"""
-        pass
+    def test_perform_npv_calculation(self, analyzer):
+        """perform_npv_calculation returns a finite NPV via the FDAS layer (#367)."""
+        cfg = {
+            "economics": {
+                "cost": {"discount_rate_annual": 0.12, "CAPEX": 1000.0, "OPEX": 2.0}
+            }
+        }
+        revenue_df = pd.DataFrame(
+            {
+                "Month": [202401, 202402, ""],
+                "Monthly Oil Production": [100.0, 200.0, ""],
+                "Revenue (USD)": ["$1,000.00", "$3,000.00", "$4,000.00"],
+            }
+        )
+        npv = analyzer.perform_npv_calculation(cfg, revenue_df)
+        assert np.isfinite(npv)
 
     def test_full_analysis_pipeline(self, analyzer, valid_config, bsee_data, tmp_path):
         """Test complete analysis pipeline with correct data"""
