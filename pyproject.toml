@@ -24,7 +24,7 @@ classifiers = [
 
 dependencies = [
     "assetutilities>=0.1.0,<1.0",
-    "scrapy>=2.12.0,<3.0",
+    "scrapy>=2.16.0,<3.0",
     "selenium>=4.15.0,<5.0",
     "beautifulsoup4>=4.12.0,<5.0",
     "pdfplumber>=0.10.0,<1.0",
