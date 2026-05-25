@@ -598,9 +598,9 @@ class ProductionAPI12Analysis:
 
         plot_yml = self._viz_templates_plotly.get_xy_line_df(cfg["Analysis"].copy())
 
-        plot_yml["data"]["groups"][0]["file_name"] = (
-            prod_cumulative_mmbbl_groups_by_block
-        )
+        plot_yml["data"]["groups"][0][
+            "file_name"
+        ] = prod_cumulative_mmbbl_groups_by_block
         groups_label = cfg["meta"].get("label", None)
         if groups_label is None:
             groups_label = cfg["Analysis"]["file_name_for_overwrite"]
@@ -632,9 +632,9 @@ class ProductionAPI12Analysis:
 
         plot_yml = self._viz_templates_plotly.get_xy_line_df(cfg["Analysis"].copy())
 
-        plot_yml["data"]["groups"][0]["file_name"] = (
-            prod_cumulative_mmbbl_groups_by_field
-        )
+        plot_yml["data"]["groups"][0][
+            "file_name"
+        ] = prod_cumulative_mmbbl_groups_by_field
         groups_label = cfg["meta"].get("label", None)
         if groups_label is None:
             groups_label = cfg["Analysis"]["file_name_for_overwrite"]
