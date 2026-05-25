@@ -7,7 +7,6 @@ import sys
 from pathlib import Path
 from subprocess import CompletedProcess
 
-
 REPO_ROOT = Path(__file__).resolve().parents[3]
 SCRIPT_PATH = REPO_ROOT / "scripts" / "audit" / "cli_smoke_verify.py"
 
