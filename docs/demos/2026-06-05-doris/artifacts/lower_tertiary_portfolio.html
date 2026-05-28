@@ -1,0 +1,1215 @@
+<!DOCTYPE html><html><head><meta charset='utf-8'><title>Lower Tertiary Portfolio Economics</title><style>body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:1200px;margin:2em auto;padding:0 1em;color:#222;}h1{border-bottom:2px solid #333;padding-bottom:0.4em;}h2{margin-top:2em;color:#003366;}table{border-collapse:collapse;margin:1em 0;font-size:0.92em;}th,td{border:1px solid #ccc;padding:0.4em 0.7em;text-align:left;}th{background:#f4f4f4;}.meta{color:#666;font-size:0.9em;margin-bottom:1em;}.cite-table{font-size:0.85em;}</style></head><body><h1>Lower Tertiary Portfolio Economics</h1><div class='meta'>Run: 2026-05-28T19:43:42.362416+00:00 &middot; discount_rate=10.0% &middot; oil_price=$70/bbl &middot; project_years=20 &middot; plateau_years=3 &middot; annual_decline=8.0%</div><h2>Portfolio summary</h2><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>field_id</th>
+      <th>display_name</th>
+      <th>status</th>
+      <th>operator</th>
+      <th>capex_mm_usd</th>
+      <th>plateau_mbopd</th>
+      <th>npv_mm_usd</th>
+      <th>irr_annual</th>
+      <th>mirr_annual</th>
+      <th>payback_years</th>
+      <th>breakeven_oil_usd_per_bbl</th>
+      <th>cashflow_basis</th>
+      <th>npv_mm_usd_at_$50</th>
+      <th>npv_mm_usd_at_$60</th>
+      <th>npv_mm_usd_at_$70</th>
+      <th>npv_mm_usd_at_$80</th>
+      <th>npv_mm_usd_at_$100</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>anchor</td>
+      <td>Anchor</td>
+      <td>producing</td>
+      <td>Chevron</td>
+      <td>5,600.00</td>
+      <td>75.00</td>
+      <td>2,177.37</td>
+      <td>0.17</td>
+      <td>0.86</td>
+      <td>5.00</td>
+      <td>55.20</td>
+      <td>documented_decline_curve_v1</td>
+      <td>-765.42</td>
+      <td>705.97</td>
+      <td>2,177.37</td>
+      <td>3,648.76</td>
+      <td>6,591.55</td>
+    </tr>
+    <tr>
+      <td>big_foot</td>
+      <td>Big Foot</td>
+      <td>producing</td>
+      <td>Chevron</td>
+      <td>5,200.00</td>
+      <td>75.00</td>
+      <td>2,577.37</td>
+      <td>0.19</td>
+      <td>0.94</td>
+      <td>5.00</td>
+      <td>52.48</td>
+      <td>documented_decline_curve_v1</td>
+      <td>-365.42</td>
+      <td>1,105.97</td>
+      <td>2,577.37</td>
+      <td>4,048.76</td>
+      <td>6,991.55</td>
+    </tr>
+    <tr>
+      <td>cascade_chinook</td>
+      <td>Cascade/Chinook</td>
+      <td>producing</td>
+      <td>TotalEnergies</td>
+      <td>2,900.00</td>
+      <td>75.00</td>
+      <td>4,372.89</td>
+      <td>0.37</td>
+      <td>1.65</td>
+      <td>3.00</td>
+      <td>40.28</td>
+      <td>documented_decline_curve_v1</td>
+      <td>1,430.10</td>
+      <td>2,901.50</td>
+      <td>4,372.89</td>
+      <td>5,844.28</td>
+      <td>8,787.07</td>
+    </tr>
+    <tr>
+      <td>jack_st_malo</td>
+      <td>Jack/St. Malo</td>
+      <td>producing</td>
+      <td>Chevron</td>
+      <td>7,500.00</td>
+      <td>94.00</td>
+      <td>2,247.63</td>
+      <td>0.16</td>
+      <td>0.79</td>
+      <td>5.00</td>
+      <td>57.81</td>
+      <td>documented_decline_curve_v1</td>
+      <td>-1,440.66</td>
+      <td>403.49</td>
+      <td>2,247.63</td>
+      <td>4,091.78</td>
+      <td>7,780.07</td>
+    </tr>
+    <tr>
+      <td>julia</td>
+      <td>Julia</td>
+      <td>producing</td>
+      <td>Equinor</td>
+      <td>4,700.00</td>
+      <td>34.00</td>
+      <td>-1,402.96</td>
+      <td>0.04</td>
+      <td>0.23</td>
+      <td>12.00</td>
+      <td>91.03</td>
+      <td>documented_decline_curve_v1</td>
+      <td>-2,737.02</td>
+      <td>-2,069.99</td>
+      <td>-1,402.96</td>
+      <td>-735.93</td>
+      <td>598.14</td>
+    </tr>
+    <tr>
+      <td>kaskida</td>
+      <td>Kaskida</td>
+      <td>pre_fid</td>
+      <td>BP</td>
+      <td>10,000.00</td>
+      <td>120.00</td>
+      <td>2,443.79</td>
+      <td>0.15</td>
+      <td>0.74</td>
+      <td>6.00</td>
+      <td>59.62</td>
+      <td>documented_decline_curve_v1</td>
+      <td>-2,264.67</td>
+      <td>89.56</td>
+      <td>2,443.79</td>
+      <td>4,798.02</td>
+      <td>9,506.48</td>
+    </tr>
+    <tr>
+      <td>north_platte</td>
+      <td>North Platte</td>
+      <td>pre_fid</td>
+      <td>TotalEnergies</td>
+      <td>6,000.00</td>
+      <td>75.00</td>
+      <td>1,777.37</td>
+      <td>0.16</td>
+      <td>0.78</td>
+      <td>5.00</td>
+      <td>57.92</td>
+      <td>documented_decline_curve_v1</td>
+      <td>-1,165.42</td>
+      <td>305.97</td>
+      <td>1,777.37</td>
+      <td>3,248.76</td>
+      <td>6,191.55</td>
+    </tr>
+    <tr>
+      <td>shenandoah</td>
+      <td>Shenandoah</td>
+      <td>under_development</td>
+      <td>Beacon Offshore Energy</td>
+      <td>1,800.00</td>
+      <td>100.00</td>
+      <td>8,569.82</td>
+      <td>0.92</td>
+      <td>3.36</td>
+      <td>2.00</td>
+      <td>26.32</td>
+      <td>documented_decline_curve_v1</td>
+      <td>4,646.11</td>
+      <td>6,607.96</td>
+      <td>8,569.82</td>
+      <td>10,531.68</td>
+      <td>14,455.40</td>
+    </tr>
+    <tr>
+      <td>stones</td>
+      <td>Stones</td>
+      <td>producing</td>
+      <td>Shell</td>
+      <td>3,800.00</td>
+      <td>50.00</td>
+      <td>1,384.91</td>
+      <td>0.17</td>
+      <td>0.84</td>
+      <td>5.00</td>
+      <td>55.88</td>
+      <td>documented_decline_curve_v1</td>
+      <td>-576.95</td>
+      <td>403.98</td>
+      <td>1,384.91</td>
+      <td>2,365.84</td>
+      <td>4,327.70</td>
+    </tr>
+    <tr>
+      <td>tiber</td>
+      <td>Tiber</td>
+      <td>pre_fid</td>
+      <td>BP</td>
+      <td>8,000.00</td>
+      <td>80.00</td>
+      <td>295.86</td>
+      <td>0.11</td>
+      <td>0.56</td>
+      <td>7.00</td>
+      <td>68.11</td>
+      <td>documented_decline_curve_v1</td>
+      <td>-2,843.12</td>
+      <td>-1,273.63</td>
+      <td>295.86</td>
+      <td>1,865.34</td>
+      <td>5,004.32</td>
+    </tr>
+  </tbody>
+</table><h2>Anchor (anchor)</h2><div class='meta'>Status: <b>producing</b> &middot; Operator: <b>Chevron</b> &middot; Capex: <b>$5,600 M</b> &middot; Plateau: <b>75 mbopd</b> &middot; Cashflow basis: <code>documented_decline_curve_v1</code></div><h3>Sensitivity</h3><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>oil_price_usd_per_bbl</th>
+      <th>npv_mm_usd</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>50.00</td>
+      <td>-765.42</td>
+    </tr>
+    <tr>
+      <td>60.00</td>
+      <td>705.97</td>
+    </tr>
+    <tr>
+      <td>70.00</td>
+      <td>2,177.37</td>
+    </tr>
+    <tr>
+      <td>80.00</td>
+      <td>3,648.76</td>
+    </tr>
+    <tr>
+      <td>100.00</td>
+      <td>6,591.55</td>
+    </tr>
+  </tbody>
+</table><h3>Citations</h3><table border="1" class="dataframe cite-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>input</th>
+      <th>publisher</th>
+      <th>code_id</th>
+      <th>revision</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Field config (anchor.yml)</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/anchor.yml</td>
+      <td>tracked-in-git</td>
+    </tr>
+    <tr>
+      <td>Capex $5,600 M total</td>
+      <td>Chevron</td>
+      <td>yaml: field.capex.total_mm_usd (anchor)</td>
+      <td>2024-12-31</td>
+    </tr>
+    <tr>
+      <td>Plateau 75 mbopd</td>
+      <td>Chevron</td>
+      <td>yaml: field.production_profile.plateau_rate_mbopd (anchor)</td>
+      <td>2024-12-31</td>
+    </tr>
+    <tr>
+      <td>Opex $15.00/boe</td>
+      <td>FDAS / yaml override</td>
+      <td>yaml: field.opex_per_boe (anchor) or default</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Royalty 12.5%</td>
+      <td>BSEE / Department of the Interior</td>
+      <td>30 CFR § 250 (federal offshore royalty)</td>
+      <td>current</td>
+    </tr>
+    <tr>
+      <td>Oil price $70/bbl</td>
+      <td>EIA</td>
+      <td>STEO Q1 2026 reference</td>
+      <td>2026-01</td>
+    </tr>
+    <tr>
+      <td>Annual decline 8.0%</td>
+      <td>FDAS</td>
+      <td>deepwater_default_decline (lower_tertiary.portfolio_economics)</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Plateau duration 3 years</td>
+      <td>FDAS</td>
+      <td>DEFAULT_PLATEAU_YEARS</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Discount rate 10.0%</td>
+      <td>FDAS</td>
+      <td>evaluation_default</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Cashflow basis: documented_decline_curve_v1</td>
+      <td>lower_tertiary.portfolio_economics</td>
+      <td>documented decline-curve fallback per #375 plan</td>
+      <td>v1</td>
+    </tr>
+  </tbody>
+</table><h2>Big Foot (big_foot)</h2><div class='meta'>Status: <b>producing</b> &middot; Operator: <b>Chevron</b> &middot; Capex: <b>$5,200 M</b> &middot; Plateau: <b>75 mbopd</b> &middot; Cashflow basis: <code>documented_decline_curve_v1</code></div><h3>Sensitivity</h3><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>oil_price_usd_per_bbl</th>
+      <th>npv_mm_usd</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>50.00</td>
+      <td>-365.42</td>
+    </tr>
+    <tr>
+      <td>60.00</td>
+      <td>1,105.97</td>
+    </tr>
+    <tr>
+      <td>70.00</td>
+      <td>2,577.37</td>
+    </tr>
+    <tr>
+      <td>80.00</td>
+      <td>4,048.76</td>
+    </tr>
+    <tr>
+      <td>100.00</td>
+      <td>6,991.55</td>
+    </tr>
+  </tbody>
+</table><h3>Citations</h3><table border="1" class="dataframe cite-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>input</th>
+      <th>publisher</th>
+      <th>code_id</th>
+      <th>revision</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Field config (big_foot.yml)</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/big_foot.yml</td>
+      <td>tracked-in-git</td>
+    </tr>
+    <tr>
+      <td>Capex $5,200 M total</td>
+      <td>Chevron</td>
+      <td>yaml: field.capex.total_mm_usd (big_foot)</td>
+      <td>2024-12-31</td>
+    </tr>
+    <tr>
+      <td>Plateau 75 mbopd</td>
+      <td>Chevron</td>
+      <td>yaml: field.production_profile.plateau_rate_mbopd (big_foot)</td>
+      <td>2024-12-31</td>
+    </tr>
+    <tr>
+      <td>Opex $15.00/boe</td>
+      <td>FDAS / yaml override</td>
+      <td>yaml: field.opex_per_boe (big_foot) or default</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Royalty 12.5%</td>
+      <td>BSEE / Department of the Interior</td>
+      <td>30 CFR § 250 (federal offshore royalty)</td>
+      <td>current</td>
+    </tr>
+    <tr>
+      <td>Oil price $70/bbl</td>
+      <td>EIA</td>
+      <td>STEO Q1 2026 reference</td>
+      <td>2026-01</td>
+    </tr>
+    <tr>
+      <td>Annual decline 8.0%</td>
+      <td>FDAS</td>
+      <td>deepwater_default_decline (lower_tertiary.portfolio_economics)</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Plateau duration 3 years</td>
+      <td>FDAS</td>
+      <td>DEFAULT_PLATEAU_YEARS</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Discount rate 10.0%</td>
+      <td>FDAS</td>
+      <td>evaluation_default</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Cashflow basis: documented_decline_curve_v1</td>
+      <td>lower_tertiary.portfolio_economics</td>
+      <td>documented decline-curve fallback per #375 plan</td>
+      <td>v1</td>
+    </tr>
+  </tbody>
+</table><h2>Cascade/Chinook (cascade_chinook)</h2><div class='meta'>Status: <b>producing</b> &middot; Operator: <b>TotalEnergies</b> &middot; Capex: <b>$2,900 M</b> &middot; Plateau: <b>75 mbopd</b> &middot; Cashflow basis: <code>documented_decline_curve_v1</code></div><h3>Sensitivity</h3><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>oil_price_usd_per_bbl</th>
+      <th>npv_mm_usd</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>50.00</td>
+      <td>1,430.10</td>
+    </tr>
+    <tr>
+      <td>60.00</td>
+      <td>2,901.50</td>
+    </tr>
+    <tr>
+      <td>70.00</td>
+      <td>4,372.89</td>
+    </tr>
+    <tr>
+      <td>80.00</td>
+      <td>5,844.28</td>
+    </tr>
+    <tr>
+      <td>100.00</td>
+      <td>8,787.07</td>
+    </tr>
+  </tbody>
+</table><h3>Citations</h3><table border="1" class="dataframe cite-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>input</th>
+      <th>publisher</th>
+      <th>code_id</th>
+      <th>revision</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Field config (cascade_chinook.yml)</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/cascade_chinook.yml</td>
+      <td>tracked-in-git</td>
+    </tr>
+    <tr>
+      <td>Capex $2,900 M total</td>
+      <td>TotalEnergies</td>
+      <td>yaml: field.capex.total_mm_usd (cascade_chinook)</td>
+      <td>2024-12-31</td>
+    </tr>
+    <tr>
+      <td>Plateau 75 mbopd</td>
+      <td>TotalEnergies</td>
+      <td>yaml: field.production_profile.plateau_rate_mbopd (cascade_chinook)</td>
+      <td>2024-12-31</td>
+    </tr>
+    <tr>
+      <td>Opex $18.00/boe</td>
+      <td>FDAS / yaml override</td>
+      <td>yaml: field.opex_per_boe (cascade_chinook) or default</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Royalty 12.5%</td>
+      <td>BSEE / Department of the Interior</td>
+      <td>30 CFR § 250 (federal offshore royalty)</td>
+      <td>current</td>
+    </tr>
+    <tr>
+      <td>Oil price $70/bbl</td>
+      <td>EIA</td>
+      <td>STEO Q1 2026 reference</td>
+      <td>2026-01</td>
+    </tr>
+    <tr>
+      <td>Annual decline 8.0%</td>
+      <td>FDAS</td>
+      <td>deepwater_default_decline (lower_tertiary.portfolio_economics)</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Plateau duration 3 years</td>
+      <td>FDAS</td>
+      <td>DEFAULT_PLATEAU_YEARS</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Discount rate 10.0%</td>
+      <td>FDAS</td>
+      <td>evaluation_default</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Cashflow basis: documented_decline_curve_v1</td>
+      <td>lower_tertiary.portfolio_economics</td>
+      <td>documented decline-curve fallback per #375 plan</td>
+      <td>v1</td>
+    </tr>
+  </tbody>
+</table><h2>Jack/St. Malo (jack_st_malo)</h2><div class='meta'>Status: <b>producing</b> &middot; Operator: <b>Chevron</b> &middot; Capex: <b>$7,500 M</b> &middot; Plateau: <b>94 mbopd</b> &middot; Cashflow basis: <code>documented_decline_curve_v1</code></div><h3>Sensitivity</h3><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>oil_price_usd_per_bbl</th>
+      <th>npv_mm_usd</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>50.00</td>
+      <td>-1,440.66</td>
+    </tr>
+    <tr>
+      <td>60.00</td>
+      <td>403.49</td>
+    </tr>
+    <tr>
+      <td>70.00</td>
+      <td>2,247.63</td>
+    </tr>
+    <tr>
+      <td>80.00</td>
+      <td>4,091.78</td>
+    </tr>
+    <tr>
+      <td>100.00</td>
+      <td>7,780.07</td>
+    </tr>
+  </tbody>
+</table><h3>Citations</h3><table border="1" class="dataframe cite-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>input</th>
+      <th>publisher</th>
+      <th>code_id</th>
+      <th>revision</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Field config (jack_st_malo.yml)</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/jack_st_malo.yml</td>
+      <td>tracked-in-git</td>
+    </tr>
+    <tr>
+      <td>Capex $7,500 M total</td>
+      <td>Chevron</td>
+      <td>yaml: field.capex.total_mm_usd (jack_st_malo)</td>
+      <td>2024-12-31</td>
+    </tr>
+    <tr>
+      <td>Plateau 94 mbopd</td>
+      <td>Chevron</td>
+      <td>yaml: field.production_profile.plateau_rate_mbopd (jack_st_malo)</td>
+      <td>2024-12-31</td>
+    </tr>
+    <tr>
+      <td>Opex $15.00/boe</td>
+      <td>FDAS / yaml override</td>
+      <td>yaml: field.opex_per_boe (jack_st_malo) or default</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Royalty 12.5%</td>
+      <td>BSEE / Department of the Interior</td>
+      <td>30 CFR § 250 (federal offshore royalty)</td>
+      <td>current</td>
+    </tr>
+    <tr>
+      <td>Oil price $70/bbl</td>
+      <td>EIA</td>
+      <td>STEO Q1 2026 reference</td>
+      <td>2026-01</td>
+    </tr>
+    <tr>
+      <td>Annual decline 8.0%</td>
+      <td>FDAS</td>
+      <td>deepwater_default_decline (lower_tertiary.portfolio_economics)</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Plateau duration 3 years</td>
+      <td>FDAS</td>
+      <td>DEFAULT_PLATEAU_YEARS</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Discount rate 10.0%</td>
+      <td>FDAS</td>
+      <td>evaluation_default</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Cashflow basis: documented_decline_curve_v1</td>
+      <td>lower_tertiary.portfolio_economics</td>
+      <td>documented decline-curve fallback per #375 plan</td>
+      <td>v1</td>
+    </tr>
+  </tbody>
+</table><h2>Julia (julia)</h2><div class='meta'>Status: <b>producing</b> &middot; Operator: <b>Equinor</b> &middot; Capex: <b>$4,700 M</b> &middot; Plateau: <b>34 mbopd</b> &middot; Cashflow basis: <code>documented_decline_curve_v1</code></div><h3>Sensitivity</h3><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>oil_price_usd_per_bbl</th>
+      <th>npv_mm_usd</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>50.00</td>
+      <td>-2,737.02</td>
+    </tr>
+    <tr>
+      <td>60.00</td>
+      <td>-2,069.99</td>
+    </tr>
+    <tr>
+      <td>70.00</td>
+      <td>-1,402.96</td>
+    </tr>
+    <tr>
+      <td>80.00</td>
+      <td>-735.93</td>
+    </tr>
+    <tr>
+      <td>100.00</td>
+      <td>598.14</td>
+    </tr>
+  </tbody>
+</table><h3>Citations</h3><table border="1" class="dataframe cite-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>input</th>
+      <th>publisher</th>
+      <th>code_id</th>
+      <th>revision</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Field config (julia.yml)</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/julia.yml</td>
+      <td>tracked-in-git</td>
+    </tr>
+    <tr>
+      <td>Capex $4,700 M total</td>
+      <td>Equinor</td>
+      <td>yaml: field.capex.total_mm_usd (julia)</td>
+      <td>2024-12-31</td>
+    </tr>
+    <tr>
+      <td>Plateau 34 mbopd</td>
+      <td>Equinor</td>
+      <td>yaml: field.production_profile.plateau_rate_mbopd (julia)</td>
+      <td>2024-12-31</td>
+    </tr>
+    <tr>
+      <td>Opex $18.00/boe</td>
+      <td>FDAS / yaml override</td>
+      <td>yaml: field.opex_per_boe (julia) or default</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Royalty 12.5%</td>
+      <td>BSEE / Department of the Interior</td>
+      <td>30 CFR § 250 (federal offshore royalty)</td>
+      <td>current</td>
+    </tr>
+    <tr>
+      <td>Oil price $70/bbl</td>
+      <td>EIA</td>
+      <td>STEO Q1 2026 reference</td>
+      <td>2026-01</td>
+    </tr>
+    <tr>
+      <td>Annual decline 8.0%</td>
+      <td>FDAS</td>
+      <td>deepwater_default_decline (lower_tertiary.portfolio_economics)</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Plateau duration 3 years</td>
+      <td>FDAS</td>
+      <td>DEFAULT_PLATEAU_YEARS</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Discount rate 10.0%</td>
+      <td>FDAS</td>
+      <td>evaluation_default</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Cashflow basis: documented_decline_curve_v1</td>
+      <td>lower_tertiary.portfolio_economics</td>
+      <td>documented decline-curve fallback per #375 plan</td>
+      <td>v1</td>
+    </tr>
+  </tbody>
+</table><h2>Kaskida (kaskida)</h2><div class='meta'>Status: <b>pre_fid</b> &middot; Operator: <b>BP</b> &middot; Capex: <b>$10,000 M</b> &middot; Plateau: <b>120 mbopd</b> &middot; Cashflow basis: <code>documented_decline_curve_v1</code></div><h3>Sensitivity</h3><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>oil_price_usd_per_bbl</th>
+      <th>npv_mm_usd</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>50.00</td>
+      <td>-2,264.67</td>
+    </tr>
+    <tr>
+      <td>60.00</td>
+      <td>89.56</td>
+    </tr>
+    <tr>
+      <td>70.00</td>
+      <td>2,443.79</td>
+    </tr>
+    <tr>
+      <td>80.00</td>
+      <td>4,798.02</td>
+    </tr>
+    <tr>
+      <td>100.00</td>
+      <td>9,506.48</td>
+    </tr>
+  </tbody>
+</table><h3>Citations</h3><table border="1" class="dataframe cite-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>input</th>
+      <th>publisher</th>
+      <th>code_id</th>
+      <th>revision</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Field config (kaskida.yml)</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/kaskida.yml</td>
+      <td>tracked-in-git</td>
+    </tr>
+    <tr>
+      <td>Capex $10,000 M total</td>
+      <td>BP</td>
+      <td>yaml: field.capex.total_mm_usd (kaskida)</td>
+      <td>2024-12-31</td>
+    </tr>
+    <tr>
+      <td>Plateau 120 mbopd</td>
+      <td>BP</td>
+      <td>yaml: field.production_profile.plateau_rate_mbopd (kaskida)</td>
+      <td>2024-12-31</td>
+    </tr>
+    <tr>
+      <td>Opex $15.00/boe</td>
+      <td>FDAS / yaml override</td>
+      <td>yaml: field.opex_per_boe (kaskida) or default</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Royalty 12.5%</td>
+      <td>BSEE / Department of the Interior</td>
+      <td>30 CFR § 250 (federal offshore royalty)</td>
+      <td>current</td>
+    </tr>
+    <tr>
+      <td>Oil price $70/bbl</td>
+      <td>EIA</td>
+      <td>STEO Q1 2026 reference</td>
+      <td>2026-01</td>
+    </tr>
+    <tr>
+      <td>Annual decline 8.0%</td>
+      <td>FDAS</td>
+      <td>deepwater_default_decline (lower_tertiary.portfolio_economics)</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Plateau duration 3 years</td>
+      <td>FDAS</td>
+      <td>DEFAULT_PLATEAU_YEARS</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Discount rate 10.0%</td>
+      <td>FDAS</td>
+      <td>evaluation_default</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Cashflow basis: documented_decline_curve_v1</td>
+      <td>lower_tertiary.portfolio_economics</td>
+      <td>documented decline-curve fallback per #375 plan</td>
+      <td>v1</td>
+    </tr>
+  </tbody>
+</table><h2>North Platte (north_platte)</h2><div class='meta'>Status: <b>pre_fid</b> &middot; Operator: <b>TotalEnergies</b> &middot; Capex: <b>$6,000 M</b> &middot; Plateau: <b>75 mbopd</b> &middot; Cashflow basis: <code>documented_decline_curve_v1</code></div><h3>Sensitivity</h3><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>oil_price_usd_per_bbl</th>
+      <th>npv_mm_usd</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>50.00</td>
+      <td>-1,165.42</td>
+    </tr>
+    <tr>
+      <td>60.00</td>
+      <td>305.97</td>
+    </tr>
+    <tr>
+      <td>70.00</td>
+      <td>1,777.37</td>
+    </tr>
+    <tr>
+      <td>80.00</td>
+      <td>3,248.76</td>
+    </tr>
+    <tr>
+      <td>100.00</td>
+      <td>6,191.55</td>
+    </tr>
+  </tbody>
+</table><h3>Citations</h3><table border="1" class="dataframe cite-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>input</th>
+      <th>publisher</th>
+      <th>code_id</th>
+      <th>revision</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Field config (north_platte.yml)</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/north_platte.yml</td>
+      <td>tracked-in-git</td>
+    </tr>
+    <tr>
+      <td>Capex $6,000 M total</td>
+      <td>TotalEnergies</td>
+      <td>yaml: field.capex.total_mm_usd (north_platte)</td>
+      <td>2024-12-31</td>
+    </tr>
+    <tr>
+      <td>Plateau 75 mbopd</td>
+      <td>TotalEnergies</td>
+      <td>yaml: field.production_profile.plateau_rate_mbopd (north_platte)</td>
+      <td>2024-12-31</td>
+    </tr>
+    <tr>
+      <td>Opex $15.00/boe</td>
+      <td>FDAS / yaml override</td>
+      <td>yaml: field.opex_per_boe (north_platte) or default</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Royalty 12.5%</td>
+      <td>BSEE / Department of the Interior</td>
+      <td>30 CFR § 250 (federal offshore royalty)</td>
+      <td>current</td>
+    </tr>
+    <tr>
+      <td>Oil price $70/bbl</td>
+      <td>EIA</td>
+      <td>STEO Q1 2026 reference</td>
+      <td>2026-01</td>
+    </tr>
+    <tr>
+      <td>Annual decline 8.0%</td>
+      <td>FDAS</td>
+      <td>deepwater_default_decline (lower_tertiary.portfolio_economics)</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Plateau duration 3 years</td>
+      <td>FDAS</td>
+      <td>DEFAULT_PLATEAU_YEARS</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Discount rate 10.0%</td>
+      <td>FDAS</td>
+      <td>evaluation_default</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Cashflow basis: documented_decline_curve_v1</td>
+      <td>lower_tertiary.portfolio_economics</td>
+      <td>documented decline-curve fallback per #375 plan</td>
+      <td>v1</td>
+    </tr>
+  </tbody>
+</table><h2>Shenandoah (shenandoah)</h2><div class='meta'>Status: <b>under_development</b> &middot; Operator: <b>Beacon Offshore Energy</b> &middot; Capex: <b>$1,800 M</b> &middot; Plateau: <b>100 mbopd</b> &middot; Cashflow basis: <code>documented_decline_curve_v1</code></div><h3>Sensitivity</h3><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>oil_price_usd_per_bbl</th>
+      <th>npv_mm_usd</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>50.00</td>
+      <td>4,646.11</td>
+    </tr>
+    <tr>
+      <td>60.00</td>
+      <td>6,607.96</td>
+    </tr>
+    <tr>
+      <td>70.00</td>
+      <td>8,569.82</td>
+    </tr>
+    <tr>
+      <td>80.00</td>
+      <td>10,531.68</td>
+    </tr>
+    <tr>
+      <td>100.00</td>
+      <td>14,455.40</td>
+    </tr>
+  </tbody>
+</table><h3>Citations</h3><table border="1" class="dataframe cite-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>input</th>
+      <th>publisher</th>
+      <th>code_id</th>
+      <th>revision</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Field config (shenandoah.yml)</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/shenandoah.yml</td>
+      <td>tracked-in-git</td>
+    </tr>
+    <tr>
+      <td>Capex $1,800 M total</td>
+      <td>Beacon Offshore Energy</td>
+      <td>yaml: field.capex.total_mm_usd (shenandoah)</td>
+      <td>2024-12-31</td>
+    </tr>
+    <tr>
+      <td>Plateau 100 mbopd</td>
+      <td>Beacon Offshore Energy</td>
+      <td>yaml: field.production_profile.plateau_rate_mbopd (shenandoah)</td>
+      <td>2024-12-31</td>
+    </tr>
+    <tr>
+      <td>Opex $15.00/boe</td>
+      <td>FDAS / yaml override</td>
+      <td>yaml: field.opex_per_boe (shenandoah) or default</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Royalty 12.5%</td>
+      <td>BSEE / Department of the Interior</td>
+      <td>30 CFR § 250 (federal offshore royalty)</td>
+      <td>current</td>
+    </tr>
+    <tr>
+      <td>Oil price $70/bbl</td>
+      <td>EIA</td>
+      <td>STEO Q1 2026 reference</td>
+      <td>2026-01</td>
+    </tr>
+    <tr>
+      <td>Annual decline 8.0%</td>
+      <td>FDAS</td>
+      <td>deepwater_default_decline (lower_tertiary.portfolio_economics)</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Plateau duration 3 years</td>
+      <td>FDAS</td>
+      <td>DEFAULT_PLATEAU_YEARS</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Discount rate 10.0%</td>
+      <td>FDAS</td>
+      <td>evaluation_default</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Cashflow basis: documented_decline_curve_v1</td>
+      <td>lower_tertiary.portfolio_economics</td>
+      <td>documented decline-curve fallback per #375 plan</td>
+      <td>v1</td>
+    </tr>
+  </tbody>
+</table><h2>Stones (stones)</h2><div class='meta'>Status: <b>producing</b> &middot; Operator: <b>Shell</b> &middot; Capex: <b>$3,800 M</b> &middot; Plateau: <b>50 mbopd</b> &middot; Cashflow basis: <code>documented_decline_curve_v1</code></div><h3>Sensitivity</h3><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>oil_price_usd_per_bbl</th>
+      <th>npv_mm_usd</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>50.00</td>
+      <td>-576.95</td>
+    </tr>
+    <tr>
+      <td>60.00</td>
+      <td>403.98</td>
+    </tr>
+    <tr>
+      <td>70.00</td>
+      <td>1,384.91</td>
+    </tr>
+    <tr>
+      <td>80.00</td>
+      <td>2,365.84</td>
+    </tr>
+    <tr>
+      <td>100.00</td>
+      <td>4,327.70</td>
+    </tr>
+  </tbody>
+</table><h3>Citations</h3><table border="1" class="dataframe cite-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>input</th>
+      <th>publisher</th>
+      <th>code_id</th>
+      <th>revision</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Field config (stones.yml)</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/stones.yml</td>
+      <td>tracked-in-git</td>
+    </tr>
+    <tr>
+      <td>Capex $3,800 M total</td>
+      <td>Shell</td>
+      <td>yaml: field.capex.total_mm_usd (stones)</td>
+      <td>2024-12-31</td>
+    </tr>
+    <tr>
+      <td>Plateau 50 mbopd</td>
+      <td>Shell</td>
+      <td>yaml: field.production_profile.plateau_rate_mbopd (stones)</td>
+      <td>2024-12-31</td>
+    </tr>
+    <tr>
+      <td>Opex $15.00/boe</td>
+      <td>FDAS / yaml override</td>
+      <td>yaml: field.opex_per_boe (stones) or default</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Royalty 12.5%</td>
+      <td>BSEE / Department of the Interior</td>
+      <td>30 CFR § 250 (federal offshore royalty)</td>
+      <td>current</td>
+    </tr>
+    <tr>
+      <td>Oil price $70/bbl</td>
+      <td>EIA</td>
+      <td>STEO Q1 2026 reference</td>
+      <td>2026-01</td>
+    </tr>
+    <tr>
+      <td>Annual decline 8.0%</td>
+      <td>FDAS</td>
+      <td>deepwater_default_decline (lower_tertiary.portfolio_economics)</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Plateau duration 3 years</td>
+      <td>FDAS</td>
+      <td>DEFAULT_PLATEAU_YEARS</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Discount rate 10.0%</td>
+      <td>FDAS</td>
+      <td>evaluation_default</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Cashflow basis: documented_decline_curve_v1</td>
+      <td>lower_tertiary.portfolio_economics</td>
+      <td>documented decline-curve fallback per #375 plan</td>
+      <td>v1</td>
+    </tr>
+  </tbody>
+</table><h2>Tiber (tiber)</h2><div class='meta'>Status: <b>pre_fid</b> &middot; Operator: <b>BP</b> &middot; Capex: <b>$8,000 M</b> &middot; Plateau: <b>80 mbopd</b> &middot; Cashflow basis: <code>documented_decline_curve_v1</code></div><h3>Sensitivity</h3><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>oil_price_usd_per_bbl</th>
+      <th>npv_mm_usd</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>50.00</td>
+      <td>-2,843.12</td>
+    </tr>
+    <tr>
+      <td>60.00</td>
+      <td>-1,273.63</td>
+    </tr>
+    <tr>
+      <td>70.00</td>
+      <td>295.86</td>
+    </tr>
+    <tr>
+      <td>80.00</td>
+      <td>1,865.34</td>
+    </tr>
+    <tr>
+      <td>100.00</td>
+      <td>5,004.32</td>
+    </tr>
+  </tbody>
+</table><h3>Citations</h3><table border="1" class="dataframe cite-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>input</th>
+      <th>publisher</th>
+      <th>code_id</th>
+      <th>revision</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Field config (tiber.yml)</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/tiber.yml</td>
+      <td>tracked-in-git</td>
+    </tr>
+    <tr>
+      <td>Capex $8,000 M total</td>
+      <td>BP</td>
+      <td>yaml: field.capex.total_mm_usd (tiber)</td>
+      <td>2024-12-31</td>
+    </tr>
+    <tr>
+      <td>Plateau 80 mbopd</td>
+      <td>BP</td>
+      <td>yaml: field.production_profile.plateau_rate_mbopd (tiber)</td>
+      <td>2024-12-31</td>
+    </tr>
+    <tr>
+      <td>Opex $15.00/boe</td>
+      <td>FDAS / yaml override</td>
+      <td>yaml: field.opex_per_boe (tiber) or default</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Royalty 12.5%</td>
+      <td>BSEE / Department of the Interior</td>
+      <td>30 CFR § 250 (federal offshore royalty)</td>
+      <td>current</td>
+    </tr>
+    <tr>
+      <td>Oil price $70/bbl</td>
+      <td>EIA</td>
+      <td>STEO Q1 2026 reference</td>
+      <td>2026-01</td>
+    </tr>
+    <tr>
+      <td>Annual decline 8.0%</td>
+      <td>FDAS</td>
+      <td>deepwater_default_decline (lower_tertiary.portfolio_economics)</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Plateau duration 3 years</td>
+      <td>FDAS</td>
+      <td>DEFAULT_PLATEAU_YEARS</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Discount rate 10.0%</td>
+      <td>FDAS</td>
+      <td>evaluation_default</td>
+      <td>embedded</td>
+    </tr>
+    <tr>
+      <td>Cashflow basis: documented_decline_curve_v1</td>
+      <td>lower_tertiary.portfolio_economics</td>
+      <td>documented decline-curve fallback per #375 plan</td>
+      <td>v1</td>
+    </tr>
+  </tbody>
+</table></body></html>
