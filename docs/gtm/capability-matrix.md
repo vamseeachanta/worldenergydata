@@ -23,13 +23,14 @@ artifact with no blocking dependency*:
 | | Production-ready | Sample-only | Roadmap | Total |
 |---|---:|---:|---:|---:|
 | worldenergydata | 11 | 8 | 1 | 20 |
-| digitalmodel | 6 | 12 | 4 | 22 |
-| **Combined** | **17** | **20** | **5** | **42** |
+| digitalmodel | 8 | 10 | 4 | 22 |
+| **Combined** | **19** | **18** | **5** | **42** |
 
-Lead with the 17 Production-ready capabilities. The strongest offshore/subsea-fit lead for a live
+Lead with the 19 Production-ready capabilities. The strongest offshore/subsea-fit lead for a live
 demo: **bsee** (real GoM wells) · **sodir** (live Norwegian shelf) · **metocean** (live design
 conditions) · **fdas + lower_tertiary** (economics) · digitalmodel **structural / fatigue /
-cathodic_protection / asset_integrity** (subsea integrity engineering).
+cathodic_protection / asset_integrity** (subsea integrity engineering) · and the **GTM demo pack**
+(5 branded client-ready reports — see callout below), the single strongest visual asset.
 
 ---
 
@@ -66,9 +67,19 @@ Run env: `PYTHONPATH=src:../assetutilities/src MPLBACKEND=Agg MPLCONFIGDIR=/tmp/
 
 ## digitalmodel (engineering analysis product)
 
-Run env: `PYTHONPATH=src .venv/bin/python`. Most engineering domains are evidenced by passing test
-suites; a domain reaches Production-ready only when it **also** ships a committed worked
-example/artifact and has no commercial-solver dependency for the showable part.
+Run env: `PYTHONPATH=examples/demos/gtm:src PYTHONUNBUFFERED=1 .venv/bin/python`. Most engineering
+domains are evidenced by passing test suites; a domain reaches Production-ready only when it
+**also** ships a committed worked example/artifact and has no commercial-solver dependency for the
+showable part.
+
+> **★ GTM demo pack — `examples/demos/gtm/` (verified-runnable, the strongest visual asset).** Five
+> branded, client-ready HTML reports that run end-to-end in seconds (demo_01 DNV freespan VIV 2.4s,
+> demo_02 multi-code wall thickness ~43s, demo_03 deepwater mudmat install 1.6s, demo_04
+> shallow-water pipelay 1.7s, demo_05 deepwater rigid jumper install 1.4s), plus pre-built client
+> PDF packs under `examples/demos/gtm/output/`. All five verified exit 0 + report written on
+> 2026-05-28. For instant live regeneration use the `--from-cache` flag (per the harness README).
+> These reports are the showable artifacts behind the subsea / structural / geotechnical
+> Production-ready tiers below.
 
 | Domain | Tier | Capability | Basis | Evidence / artifact | Caveat |
 |---|---|---|---|---|---|
@@ -78,12 +89,12 @@ example/artifact and has no commercial-solver dependency for the showable part.
 | asset_integrity | Production-ready | FFS / API 579 RSF assessment with examples | tested + example | 28 passed; `examples/asset_integrity/example_api579_*.py` | — |
 | hydrodynamics | Production-ready | Wave spectra + RAO analysis with chart output | tested + example | 59+69 passed; `examples/domains/hydrodynamics/generate_hydro_charts.py` | — |
 | naval_architecture | Production-ready | Seakeeping with packaged vessel library | tested + data | 15 passed; packaged vessel YAML under `naval_architecture/data/` | — |
-| subsea | Sample-only | Subsea cross-section design report | showable-artifact | `docs/subsea/cross_sections/offshore_cross_section_report.html` | **VIV/pipeline compute broken** (missing `on_bottom_stability`, 6 failed/20 errors) — roadmap slice |
+| subsea | Production-ready | Freespan VIV + pipelay + jumper-install branded demo reports | running-demo-artifact | gtm demo_01/04/05 run + write reports (`examples/demos/gtm/output/`); also `docs/subsea/cross_sections/offshore_cross_section_report.html` | legacy `subsea.pipeline.on_bottom_stability` import still broken — the GTM demos are the showable path |
+| geotechnical | Production-ready | Deepwater mudmat installation branded demo report | running-demo-artifact | gtm demo_03 runs + writes report (`examples/demos/gtm/output/demo_03_mudmat_installation_report.html`); 9 tests passed | — |
 | field_development | Sample-only | Concept selection / tieback / FPSO / platform workflow | tested-only | 30 passed | tested logic; no committed worked-example artifact yet |
 | drilling_riser | Sample-only | Riser stack-up and operability | tested-fixtures | 15 passed (doc-verified test vectors) | test vectors, not a showable artifact |
 | orcaflex | Sample-only | Riser/mooring/installation model library | needs-licensed-solver | 14 passed; `docs/domains/orcaflex/library/`, `examples/domains/orcaflex/complete_orcaflex_workflow.py` | live solve needs OrcaFlex license |
 | solvers/openfoam | Sample-only | Marine CFD case generation | framework-only | 26+25 passed | case-gen framework, not a turnkey result |
-| geotechnical | Sample-only | Pile capacity / scour for foundations | tested-only | 9 passed | no committed worked-example artifact |
 | signal_processing | Sample-only | Time-history / FFT / fatigue-input processing | tested-only | 1 passed; `examples/domains/signal_processing/` | single test; thin coverage |
 | gis | Sample-only | Spatial layers for offshore assets/wells | sample-fixtures | 39 passed on sample GeoJSON/KML fixtures | fixtures, not real asset data |
 | well | Sample-only | Drilling hydraulics / tubular design | tested-only | 34 passed | no worked-example artifact |
@@ -95,7 +106,7 @@ example/artifact and has no commercial-solver dependency for the showable part.
 | nde | Roadmap | Subsea acoustic inspection | broken-or-setup | optional `the_well` dependency not installed | needs data dependency |
 | reservoir | Roadmap | Stratigraphic analysis | broken-or-setup | 7 passed, 1 failed (pandas FutureWarning→error) | warning-as-error fix |
 
-**digitalmodel: Production-ready 6 · Sample-only 12 · Roadmap 4.**
+**digitalmodel: Production-ready 8 · Sample-only 10 · Roadmap 4.**
 
 ---
 
@@ -111,13 +122,16 @@ example/artifact and has no commercial-solver dependency for the showable part.
 - **Correction vs. the readiness docs:** those docs marked `sodir` RED — that was fixed this
   session (now Production-ready). Adversarial reviewers working from the stale doc flagged sodir for
   demotion; overridden on verified ground truth.
-- **Flagship-asset gap — `digitalmodel/examples/demos/gtm/`:** a polished prospect-facing demo
-  harness exists (5 demos: DNV freespan VIV, multi-code wall thickness, deepwater mudmat install,
-  shallow-water pipelay, rigid jumper install; branded reports + GIF generators). It is **not** tiered
-  Production-ready here because it **hangs in this environment** (demo_01 produced no output in 80s;
-  the test suite ran 4+ min without completing). Fixing it is the single highest-leverage GTM upgrade —
-  it would move several digitalmodel Sample-only rows (subsea installation, structural multi-code) into
-  Production-ready with client-grade visuals. Tracked as a follow-up.
+- **Flagship asset — `digitalmodel/examples/demos/gtm/` (verified-runnable 2026-05-28):** a polished
+  prospect-facing demo harness — 5 demos (DNV freespan VIV, multi-code wall thickness, deepwater
+  mudmat install, shallow-water pipelay, rigid jumper install) + pre-built client PDF packs. **All
+  five run to completion (exit 0) and write branded HTML reports** in seconds (demo_02 ~43s, the rest
+  1.4–2.4s). This backs the subsea / geotechnical Production-ready upgrades.
+  **Correction:** an earlier note in this file (and an earlier #2859 comment) called this harness
+  "hangs locally" — that was wrong. It was a stdout block-buffering artifact: under `>` redirection
+  Python fully buffers stdout, so a `timeout` SIGKILL discarded the buffer and produced an empty log
+  that looked like a hang (compounded by CPU contention from a stray pytest and a wrong `PYTHONPATH`).
+  Re-run unbuffered (`PYTHONUNBUFFERED=1`) with `PYTHONPATH=examples/demos/gtm:src`, it completes fine.
 
 ## How this was built
 
