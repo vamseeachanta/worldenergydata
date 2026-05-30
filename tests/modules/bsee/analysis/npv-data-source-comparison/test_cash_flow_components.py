@@ -18,7 +18,7 @@ sys.path.insert(
 )
 
 try:
-    from worldenergydata.modules.bsee.analysis.production_api12 import (
+    from worldenergydata.bsee.analysis.production_api12 import (
         ProductionAPI12Analysis,
     )
 
