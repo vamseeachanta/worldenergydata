@@ -158,7 +158,7 @@ jobs:
           uv run bandit -r src/ -ll -ii -x tests/ || true
 
       - name: Check for secrets with gitleaks
-        uses: gitleaks/gitleaks-action@v2
+        uses: gitleaks/gitleaks-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
