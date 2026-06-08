@@ -27,6 +27,23 @@ SODIR_DATASETS: Dict[str, str] = {
 }
 
 _DEFAULT_OUTPUT_DIR = get_module_data_safe("sodir")
+_DEFAULT_RECORD_LIMIT = 1000
+
+
+def _rows_from_response(response: dict) -> list[dict]:
+    """Extract tabular rows from current and legacy SODIR responses."""
+    if not response:
+        return []
+    if isinstance(response.get("data"), list):
+        return response["data"]
+    features = response.get("features")
+    if isinstance(features, list):
+        return [
+            feature.get("attributes", feature)
+            for feature in features
+            if isinstance(feature, dict)
+        ]
+    return []
 
 
 class SodirRefreshJob(AbstractJob):
@@ -74,12 +91,19 @@ class SodirRefreshJob(AbstractJob):
 
         for dataset_key, output_file in SODIR_DATASETS.items():
             try:
-                endpoint_cfg = SODIR_ENDPOINTS[dataset_key]
-                endpoint_path = endpoint_cfg["endpoint"]
-                table_id = endpoint_cfg["table_id"]
-
-                response = client.get(endpoint_path, params={"table": table_id})
-                rows = response.get("data", [])
+                endpoint_path = SODIR_ENDPOINTS[dataset_key]["endpoint"]
+                max_records = int(config.get("max_records", _DEFAULT_RECORD_LIMIT))
+                response = client.get(
+                    endpoint_path,
+                    params={
+                        "where": "1=1",
+                        "outFields": "*",
+                        "returnGeometry": "false",
+                        "resultRecordCount": max_records,
+                        "f": "json",
+                    },
+                )
+                rows = _rows_from_response(response)
 
                 if rows:
                     df = pd.DataFrame(rows)

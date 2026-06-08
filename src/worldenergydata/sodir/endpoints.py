@@ -6,12 +6,12 @@ Migrated from factpages.sodir.no to factmaps.sodir.no (May 2025).
 """
 
 # SODIR dataset endpoint definitions
-# New API uses /api/rest/services/DataService/data with table ID as query parameter
+# Current API uses ArcGIS FeatureServer layer query endpoints.
 SODIR_ENDPOINTS = {
     "blocks": {
         "id": "1001",
         "table_id": "1001",
-        "endpoint": "/api/rest/services/DataService/data",
+        "endpoint": "/api/rest/services/DataService/Data/FeatureServer/1001/query",
         "description": "Norwegian Continental Shelf block information",
         "fields": [
             "npdidBlock",
@@ -26,7 +26,7 @@ SODIR_ENDPOINTS = {
     "wellbores": {
         "id": "5000",
         "table_id": "5000",
-        "endpoint": "/api/rest/services/DataService/data",
+        "endpoint": "/api/rest/services/DataService/Data/FeatureServer/5000/query",
         "description": "Wellbore drilling and completion data",
         "fields": [
             "npdidWellbore",
@@ -46,7 +46,7 @@ SODIR_ENDPOINTS = {
     "fields": {
         "id": "7100",
         "table_id": "7100",
-        "endpoint": "/api/rest/services/DataService/data",
+        "endpoint": "/api/rest/services/DataService/Data/FeatureServer/7100/query",
         "description": "Field information including reserves and production",
         "fields": [
             "npdidField",
@@ -64,7 +64,7 @@ SODIR_ENDPOINTS = {
     "discoveries": {
         "id": "7000",
         "table_id": "7000",
-        "endpoint": "/api/rest/services/DataService/data",
+        "endpoint": "/api/rest/services/DataService/Data/FeatureServer/7000/query",
         "description": "Discovery information and reserve classifications",
         "fields": [
             "npdidDiscovery",
@@ -80,7 +80,7 @@ SODIR_ENDPOINTS = {
     "surveys": {
         "id": "4000",
         "table_id": "4000",
-        "endpoint": "/api/rest/services/DataService/data",
+        "endpoint": "/api/rest/services/DataService/Data/FeatureServer/4000/query",
         "description": "Seismic surveys and geological studies",
         "fields": [
             "npdidSurvey",
@@ -95,7 +95,7 @@ SODIR_ENDPOINTS = {
     "facilities": {
         "id": "3000",
         "table_id": "3000",
-        "endpoint": "/api/rest/services/DataService/data",
+        "endpoint": "/api/rest/services/DataService/Data/FeatureServer/3000/query",
         "description": "Offshore facilities and infrastructure",
         "fields": [
             "npdidFacility",
