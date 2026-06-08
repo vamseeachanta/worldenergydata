@@ -3,6 +3,7 @@
 import logging
 import time
 from datetime import datetime
+from pathlib import Path
 from typing import Dict, Optional
 
 import schedule
@@ -13,7 +14,11 @@ from worldenergydata.scheduler.config import (
     load_config,
     validate_config,
 )
-from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
+from worldenergydata.scheduler.jobs.base import (
+    AbstractJob,
+    JobResult,
+    write_success_manifest,
+)
 from worldenergydata.scheduler.monitor import JobLogger, RetryManager, StatusReporter
 from worldenergydata.scheduler.status_enricher import enrich_status
 
@@ -33,6 +38,7 @@ class DataScheduler:
     def __init__(self, config_path: str) -> None:
         self._config: SchedulerConfig = load_config(config_path)
         validate_config(self._config)
+        self._repo_root = Path(config_path).resolve().parents[2]
         self._jobs: Dict[str, AbstractJob] = {}
         self._job_state: Dict[str, dict] = {}
         self._running: bool = False
@@ -136,6 +142,7 @@ class DataScheduler:
 
         result = self._retry_manager.run_with_retry(_run)
         self._record_result(job_name, result)
+        self._write_success_manifest(job, job_cfg, result)
         self._job_logger.log_result(result)
         # Trigger alerting and enriched status write
         self._status_reporter.check_and_alert([result], self._alert_sender)
@@ -151,6 +158,29 @@ class DataScheduler:
         """Update in-memory state with job result."""
         self._job_state[job_name]["last_run"] = result.start_time.isoformat()
         self._job_state[job_name]["last_result"] = result.status
+
+    def _write_success_manifest(
+        self, job: AbstractJob, job_cfg: dict, result: JobResult
+    ) -> None:
+        """Persist the successful-run manifest consumed by scheduler health."""
+        if result.status != "success":
+            return
+
+        output_dir_value = job_cfg.get("output_dir")
+        if output_dir_value is None:
+            output_dir_value = getattr(job, "default_output_dir", None)
+        if output_dir_value is None:
+            logger.debug(
+                "Job '%s' has no output_dir; skipping scheduler manifest write.",
+                job.name,
+            )
+            return
+
+        output_dir = Path(output_dir_value)
+        if not output_dir.is_absolute():
+            output_dir = self._repo_root / output_dir
+        interval = job_cfg.get("interval", "weekly")
+        write_success_manifest(job.name, output_dir, result, interval)
 
     def status(self) -> dict:
         """Return per-job status summary enriched with staleness details.

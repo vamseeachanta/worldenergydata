@@ -1,5 +1,6 @@
 """Tests for DataScheduler: registration, start/stop, status, run_once."""
 
+import json
 import os
 import tempfile
 from datetime import datetime, timedelta
@@ -18,10 +19,12 @@ jobs:
     interval: daily
     time: "02:00"
     enabled: true
+    output_dir: {mock_output_dir}
   - name: disabled_job
     interval: daily
     time: "03:00"
     enabled: false
+    output_dir: {disabled_output_dir}
 
 monitoring:
   log_dir: {log_dir}
@@ -66,7 +69,12 @@ class DisabledJob(AbstractJob):
 def _write_config(tmp_path) -> str:
     log_dir = str(tmp_path / "logs")
     status_file = str(tmp_path / "status.json")
-    content = MINIMAL_CONFIG.format(log_dir=log_dir, status_file=status_file)
+    content = MINIMAL_CONFIG.format(
+        log_dir=log_dir,
+        status_file=status_file,
+        mock_output_dir=str(tmp_path / "data" / "mock_job"),
+        disabled_output_dir=str(tmp_path / "data" / "disabled_job"),
+    )
     config_file = tmp_path / "scheduler_config.yml"
     config_file.write_text(content)
     return str(config_file)
@@ -146,6 +154,57 @@ class TestDataSchedulerRunOnce:
         scheduler.register_job(DisabledJob())
         result = scheduler.run_once("disabled_job")
         assert result.status == "skipped"
+
+    def test_run_once_success_writes_scheduler_manifest(self, tmp_path):
+        config_path = _write_config(tmp_path)
+        scheduler = DataScheduler(config_path=config_path)
+        scheduler.register_job(MockJob())
+
+        result = scheduler.run_once("mock_job")
+
+        manifest_path = tmp_path / "data" / "mock_job" / "manifest.json"
+        assert manifest_path.exists()
+        manifest = json.loads(manifest_path.read_text())
+        assert manifest["job_name"] == "mock_job"
+        assert manifest["status"] == "success"
+        assert manifest["records_updated"] == result.records_updated
+        assert manifest["refresh_interval_days"] == 1
+        assert manifest["last_success_ts"]
+
+    def test_run_once_skipped_job_does_not_write_success_manifest(self, tmp_path):
+        config_path = _write_config(tmp_path)
+        scheduler = DataScheduler(config_path=config_path)
+        scheduler.register_job(DisabledJob())
+
+        scheduler.run_once("disabled_job")
+
+        manifest_path = tmp_path / "data" / "disabled_job" / "manifest.json"
+        assert not manifest_path.exists()
+
+    def test_run_once_relative_output_dir_resolves_from_config_dir(self, tmp_path):
+        config_dir = tmp_path / "config" / "scheduler"
+        config_dir.mkdir(parents=True)
+        config_path = config_dir / "scheduler_config.yml"
+        config_path.write_text(
+            MINIMAL_CONFIG.format(
+                log_dir=str(tmp_path / "logs"),
+                status_file=str(tmp_path / "status.json"),
+                mock_output_dir="data/modules/mock_job",
+                disabled_output_dir="data/modules/disabled_job",
+            )
+        )
+        scheduler = DataScheduler(config_path=str(config_path))
+        scheduler.register_job(MockJob())
+
+        original_cwd = Path.cwd()
+        try:
+            os.chdir(tmp_path.parent)
+            scheduler.run_once("mock_job")
+        finally:
+            os.chdir(original_cwd)
+
+        manifest_path = tmp_path / "data" / "modules" / "mock_job" / "manifest.json"
+        assert manifest_path.exists()
 
 
 class TestDataSchedulerStatus:

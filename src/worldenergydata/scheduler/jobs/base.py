@@ -16,6 +16,12 @@ INTERVAL_THRESHOLDS = {
     "monthly": timedelta(days=30),
 }
 
+INTERVAL_DAYS = {
+    "daily": 1,
+    "weekly": 7,
+    "monthly": 30,
+}
+
 
 @dataclass
 class JobResult:
@@ -113,3 +119,32 @@ def write_refresh_metadata(
         logger.info("Wrote %s", meta_path)
     except Exception as exc:
         logger.warning("Failed to write _metadata.json for %s: %s", module_name, exc)
+
+
+def write_success_manifest(
+    job_name: str,
+    output_dir: Path,
+    result: JobResult,
+    interval: str,
+) -> None:
+    """Write scheduler health manifest for a successful refresh."""
+    if result.status != "success":
+        return
+
+    try:
+        output_dir.mkdir(parents=True, exist_ok=True)
+        manifest = {
+            "job_name": job_name,
+            "status": result.status,
+            "last_success_ts": result.end_time.astimezone(timezone.utc).isoformat(),
+            "refresh_interval_days": INTERVAL_DAYS.get(interval, 7),
+            "records_updated": result.records_updated,
+            "start_time": result.start_time.astimezone(timezone.utc).isoformat(),
+            "end_time": result.end_time.astimezone(timezone.utc).isoformat(),
+            "error_msg": result.error_msg,
+        }
+        manifest_path = output_dir / "manifest.json"
+        manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")
+        logger.info("Wrote %s", manifest_path)
+    except Exception as exc:
+        logger.warning("Failed to write manifest.json for %s: %s", job_name, exc)

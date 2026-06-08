@@ -104,8 +104,97 @@ def test_scheduler_handles_missing_manifest(tmp_path):
     assert "never ran" in body.lower() or "never" in body.lower()
 
 
+def test_scheduler_missing_manifest_counts_as_stale(tmp_path):
+    out_dir = tmp_path / "out"
+    missing_manifest = tmp_path / "jobs" / "missing" / "manifest.json"
+
+    env = os.environ.copy()
+    env["SCHEDULER_HEALTH_OUT_DIR"] = str(out_dir)
+    env["SCHEDULER_HEALTH_WEEK"] = "2026-W16"
+    env["SCHEDULER_HEALTH_JOBS"] = f"missing:{missing_manifest}"
+    env["REPO_ROOT"] = str(tmp_path)
+
+    r = subprocess.run(
+        ["bash", str(SCRIPT)],
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=15,
+    )
+
+    assert r.returncode == 0, r.stderr
+    body = (out_dir / "scheduler-health-2026-W16.md").read_text()
+    assert "Status:** YELLOW" in body
+    assert "1 stale of 1 scheduler jobs" in body
+
+
 def test_scheduler_handles_first_run(tmp_path):
     """First run (no baseline) → cadence renders and exits 0."""
     r, report = _run(tmp_path, {"eia_weekly": {"age": 1, "interval": 7}})
     assert r.returncode == 0, r.stderr
     assert report.exists()
+
+
+def test_scheduler_default_jobs_come_from_scheduler_config(tmp_path):
+    config_dir = tmp_path / "config" / "scheduler"
+    config_dir.mkdir(parents=True)
+    output_dir = tmp_path / "data" / "modules" / "sodir"
+    _mk_manifest(output_dir / "manifest.json", last_success_days_ago=1, refresh_days=1)
+    (config_dir / "scheduler_config.yml").write_text(
+        """
+jobs:
+  - name: sodir_refresh
+    interval: daily
+    enabled: true
+    output_dir: data/modules/sodir
+  - name: disabled_refresh
+    interval: weekly
+    enabled: false
+    output_dir: data/modules/disabled
+""".strip()
+    )
+
+    out_dir = tmp_path / "out"
+    env = os.environ.copy()
+    env["REPO_ROOT"] = str(tmp_path)
+    env["SCHEDULER_HEALTH_OUT_DIR"] = str(out_dir)
+    env["SCHEDULER_HEALTH_WEEK"] = "2026-W16"
+    env.pop("SCHEDULER_HEALTH_JOBS", None)
+
+    r = subprocess.run(
+        ["bash", str(SCRIPT)],
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=15,
+    )
+
+    assert r.returncode == 0, r.stderr
+    body = (out_dir / "scheduler-health-2026-W16.md").read_text()
+    assert "sodir_refresh" in body
+    assert "disabled_refresh" not in body
+    assert "Status:** GREEN" in body
+
+
+def test_scheduler_default_config_parse_failure_fails_loud(tmp_path):
+    config_dir = tmp_path / "config" / "scheduler"
+    config_dir.mkdir(parents=True)
+    (config_dir / "scheduler_config.yml").write_text("jobs:\n  - name: [broken\n")
+
+    out_dir = tmp_path / "out"
+    env = os.environ.copy()
+    env["REPO_ROOT"] = str(tmp_path)
+    env["SCHEDULER_HEALTH_OUT_DIR"] = str(out_dir)
+    env["SCHEDULER_HEALTH_WEEK"] = "2026-W16"
+    env.pop("SCHEDULER_HEALTH_JOBS", None)
+
+    r = subprocess.run(
+        ["bash", str(SCRIPT)],
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=15,
+    )
+
+    assert r.returncode != 0
+    assert "failed to derive scheduler jobs" in r.stderr
