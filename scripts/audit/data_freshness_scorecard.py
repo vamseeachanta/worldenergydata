@@ -59,6 +59,9 @@ def _freshness_status(
     report_date: str,
 ) -> str:
     if scheduler_manifest:
+        scheduler_status = scheduler_manifest.get("status", "success")
+        if scheduler_status != "success":
+            return "stale"
         last_success = _parse_datetime(scheduler_manifest.get("last_success_ts"))
         interval_days = int(scheduler_manifest.get("refresh_interval_days") or 7)
         report_dt = _parse_datetime(f"{report_date}T00:00:00+00:00")

@@ -10,7 +10,12 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = REPO_ROOT / "scripts" / "cron" / "scheduler-health.sh"
 
 
-def _mk_manifest(path: Path, last_success_days_ago: int | None, refresh_days: int = 7):
+def _mk_manifest(
+    path: Path,
+    last_success_days_ago: int | None,
+    refresh_days: int = 7,
+    status: str = "success",
+):
     path.parent.mkdir(parents=True, exist_ok=True)
     if last_success_days_ago is None:
         data = {"refresh_interval_days": refresh_days}
@@ -19,6 +24,7 @@ def _mk_manifest(path: Path, last_success_days_ago: int | None, refresh_days: in
         data = {
             "last_success_ts": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(ts)),
             "refresh_interval_days": refresh_days,
+            "status": status,
         }
     path.write_text(json.dumps(data))
 
@@ -31,7 +37,12 @@ def _run(tmp_path: Path, jobs: dict[str, dict], env_extra: dict | None = None):
     job_specs = []
     for name, spec in jobs.items():
         mpath = jobs_root / name / "manifest.json"
-        _mk_manifest(mpath, spec.get("age"), spec.get("interval", 7))
+        _mk_manifest(
+            mpath,
+            spec.get("age"),
+            spec.get("interval", 7),
+            spec.get("status", "success"),
+        )
         job_specs.append(f"{name}:{mpath}")
 
     env = os.environ.copy()
@@ -126,6 +137,19 @@ def test_scheduler_missing_manifest_counts_as_stale(tmp_path):
     body = (out_dir / "scheduler-health-2026-W16.md").read_text()
     assert "Status:** YELLOW" in body
     assert "1 stale of 1 scheduler jobs" in body
+
+
+def test_scheduler_non_success_manifest_counts_as_stale(tmp_path):
+    r, report = _run(
+        tmp_path,
+        {"failed_recently": {"age": 1, "interval": 7, "status": "failure"}},
+    )
+
+    assert r.returncode == 0, r.stderr
+    body = report.read_text()
+    assert "Status:** YELLOW" in body
+    assert "failed_recently" in body
+    assert "status failure" in body
 
 
 def test_scheduler_handles_first_run(tmp_path):
