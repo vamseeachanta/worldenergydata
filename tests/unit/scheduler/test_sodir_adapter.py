@@ -34,8 +34,10 @@ FAKE_FIELDS = [
 
 
 def _mock_client_get(endpoint, params=None):
-    """Return fake data based on table_id query parameter."""
+    """Return fake data based on FeatureServer layer or legacy table_id parameter."""
     table = params.get("table") if params else None
+    if table is None:
+        table = endpoint.rstrip("/").split("/")[-2]
     data_map = {
         "1001": FAKE_BLOCKS,
         "5000": FAKE_WELLBORES,
@@ -78,6 +80,54 @@ def test_creates_client_and_fetches_endpoints(mock_cls, job, config):
     assert mock_instance.get.call_count == len(SODIR_DATASETS)
 
 
+@patch("worldenergydata.scheduler.jobs.sodir_refresh.SodirAPIClient")
+def test_fetches_current_sodir_featureserver_contract(mock_cls, job, config):
+    """SodirRefreshJob.run() uses current FeatureServer query endpoints."""
+    mock_instance = MagicMock()
+    mock_instance.get.side_effect = _mock_client_get
+    mock_cls.return_value = mock_instance
+
+    job.run(config)
+
+    mock_instance.get.assert_any_call(
+        "/api/rest/services/DataService/Data/FeatureServer/1001/query",
+        params={
+            "where": "1=1",
+            "outFields": "*",
+            "returnGeometry": "false",
+            "resultRecordCount": 1000,
+            "f": "json",
+        },
+    )
+
+
+@patch("worldenergydata.scheduler.jobs.sodir_refresh.SodirAPIClient")
+def test_parses_current_sodir_featureserver_attributes(mock_cls, job, config, tmp_path):
+    """SodirRefreshJob.run() writes FeatureServer attributes as rows."""
+
+    def _featureserver_response(endpoint, params=None):
+        return {
+            "features": [
+                {"attributes": {"blcName": "1/2", "blcNpdidBlock": 3382}},
+                {"attributes": {"blcName": "1/3", "blcNpdidBlock": 3383}},
+            ]
+        }
+
+    mock_instance = MagicMock()
+    mock_instance.get.side_effect = _featureserver_response
+    mock_cls.return_value = mock_instance
+
+    result = job.run(config)
+
+    assert result.status == "success"
+    assert result.records_updated == len(SODIR_DATASETS) * 2
+    df = pd.read_parquet(tmp_path / "sodir_blocks.parquet")
+    assert df.to_dict("records") == [
+        {"blcName": "1/2", "blcNpdidBlock": 3382},
+        {"blcName": "1/3", "blcNpdidBlock": 3383},
+    ]
+
+
 # ---------------------------------------------------------------------------
 # Test 2: Converts fetched data to DataFrames and writes Parquet files
 # ---------------------------------------------------------------------------
@@ -110,6 +160,8 @@ def test_partial_failure_continues(mock_cls, job, config, tmp_path):
 
     def _partial_fail(endpoint, params=None):
         table = params.get("table") if params else None
+        if table is None:
+            table = endpoint.rstrip("/").split("/")[-2]
         if table == "5000":
             raise SodirAPIError("Connection timeout for wellbores")
         return _mock_client_get(endpoint, params)
