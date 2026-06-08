@@ -2,9 +2,12 @@
 
 from datetime import datetime
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 import pytest
 
+from worldenergydata.metocean.clients.base_client import FetchResult
+from worldenergydata.metocean.constants import DataSource
 from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
 from worldenergydata.scheduler.jobs.brazil_anp_refresh import BrazilAnpRefreshJob
 from worldenergydata.scheduler.jobs.bsee_refresh import BseeRefreshJob
@@ -112,13 +115,26 @@ class TestJobAdapterInterface:
 class TestMetoceanJobLocations:
     def test_metocean_accepts_locations_in_config(self):
         job = MetoceanRefreshJob()
+        client = MagicMock()
+        client.fetch_forecast.return_value = FetchResult(
+            data=[],
+            source=DataSource.OPEN_METEO,
+            fetch_time=datetime.now(),
+            records_count=0,
+            had_errors=True,
+            error_messages=["offline test"],
+        )
         config = {
             "locations": [
                 {"lat": 28.5, "lon": -88.5, "name": "GOM"},
                 {"lat": 60.0, "lon": 2.0, "name": "NCS"},
             ]
         }
-        result = job.run(config=config)
+        with patch(
+            "worldenergydata.scheduler.jobs.metocean_refresh.OpenMeteoClient",
+            return_value=client,
+        ):
+            result = job.run(config=config)
         assert isinstance(result, JobResult)
 
     def test_metocean_empty_locations_does_not_crash(self):
@@ -126,14 +142,10 @@ class TestMetoceanJobLocations:
         result = job.run(config={"locations": []})
         assert result is not None
 
-    def test_metocean_tier2_stub_returns_skipped(self):
-        """Tier 2 stub returns skipped status with zero records."""
+    def test_metocean_empty_locations_returns_skipped(self):
+        """Metocean job skips cleanly when no locations are configured."""
         job = MetoceanRefreshJob()
-        locations = [
-            {"lat": 28.5, "lon": -88.5, "name": "GOM"},
-            {"lat": 60.0, "lon": 2.0, "name": "NCS"},
-        ]
-        result = job.run(config={"locations": locations})
+        result = job.run(config={"locations": []})
         assert result.status == "skipped"
         assert result.records_updated == 0
 
