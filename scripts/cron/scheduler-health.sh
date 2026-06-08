@@ -39,10 +39,39 @@ if [[ -n "${SCHEDULER_HEALTH_JOBS:-}" ]]; then
         JOB_MANIFESTS+=("${p#*:}")
     done
 else
-    for j in eia_weekly bsee_incidents sodir anp ukcs; do
-        JOB_NAMES+=("$j")
-        JOB_MANIFESTS+=("${REPO_ROOT}/data/${j}/manifest.json")
-    done
+    CONFIG_PATH="${REPO_ROOT}/config/scheduler/scheduler_config.yml"
+    if [[ -f "$CONFIG_PATH" ]]; then
+        derived_jobs="$(python3 - "$REPO_ROOT" "$CONFIG_PATH" <<'PY'
+import sys
+from pathlib import Path
+
+import yaml
+
+repo_root = Path(sys.argv[1])
+config_path = Path(sys.argv[2])
+config = yaml.safe_load(config_path.read_text()) or {}
+
+for job in config.get("jobs", []):
+    if not job.get("enabled", True):
+        continue
+    name = job.get("name")
+    if not name:
+        continue
+    output_dir = Path(job.get("output_dir") or f"data/modules/{name}")
+    if not output_dir.is_absolute():
+        output_dir = repo_root / output_dir
+    print(f"{name}|{output_dir / 'manifest.json'}")
+PY
+        )" || {
+            echo "scheduler-health: failed to derive scheduler jobs from $CONFIG_PATH" >&2
+            exit 1
+        }
+        while IFS='|' read -r name manifest; do
+            [[ -z "$name" || -z "$manifest" ]] && continue
+            JOB_NAMES+=("$name")
+            JOB_MANIFESTS+=("$manifest")
+        done <<< "$derived_jobs"
+    fi
 fi
 
 mkdir -p "$OUT_DIR"
@@ -61,6 +90,8 @@ for i in "${!JOB_NAMES[@]}"; do
 
     if [[ ! -f "$manifest" ]]; then
         printf "| %s | _(never ran)_ | — | — | ❌ manifest missing |\n" "$name" >> "$TMP_ROWS"
+        printf "| %s | _(never ran)_ | — | — | ❌ manifest missing |\n" "$name" >> "$TMP_STALE"
+        stale_count=$((stale_count + 1))
         continue
     fi
 
@@ -81,12 +112,16 @@ except Exception:
 
     if [[ -z "$last_ts" ]]; then
         printf "| %s | never | %sd | n/a | ❌ never ran |\n" "$name" "$refresh_days" >> "$TMP_ROWS"
+        printf "| %s | never | %sd | n/a | ❌ never ran |\n" "$name" "$refresh_days" >> "$TMP_STALE"
+        stale_count=$((stale_count + 1))
         continue
     fi
 
     last_epoch=$(date -d "$last_ts" +%s 2>/dev/null || echo 0)
     if (( last_epoch == 0 )); then
         printf "| %s | %s | %sd | unparseable | ❌ ts format error |\n" "$name" "$last_ts" "$refresh_days" >> "$TMP_ROWS"
+        printf "| %s | %s | %sd | unparseable | ❌ ts format error |\n" "$name" "$last_ts" "$refresh_days" >> "$TMP_STALE"
+        stale_count=$((stale_count + 1))
         continue
     fi
 
