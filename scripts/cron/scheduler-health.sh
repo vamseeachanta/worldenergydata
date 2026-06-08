@@ -7,7 +7,7 @@
 # by workspace-hub's pre-push via scripts/sync/sync-cadence-helper.sh.
 #
 # Each scheduler job writes a manifest.json containing:
-#   { "last_success_ts": "ISO8601", "refresh_interval_days": N }
+#   { "status": "success", "last_success_ts": "ISO8601", "refresh_interval_days": N }
 # This cadence scans all configured job manifests and flags any where the
 # data age exceeds the declared refresh interval.
 #
@@ -95,24 +95,36 @@ for i in "${!JOB_NAMES[@]}"; do
         continue
     fi
 
-    parsed=$(python3 -c "
-import json, sys
+    parsed=$(python3 - "$manifest" <<'PY'
+import json
+import sys
+
+manifest = sys.argv[1]
 try:
-    with open('$manifest') as f:
+    with open(manifest) as f:
         d = json.load(f)
     lt = d.get('last_success_ts', '')
     ri = d.get('refresh_interval_days', 7)
-    print(f'{lt}|{ri}')
+    st = d.get('status', 'success')
+    print(f'{lt}|{ri}|{st}')
 except Exception:
-    print('|')
-")
-    last_ts="${parsed%|*}"
-    refresh_days="${parsed#*|}"
+    print('||')
+PY
+    )
+    IFS='|' read -r last_ts refresh_days manifest_status <<< "$parsed"
     [[ -z "$refresh_days" ]] && refresh_days=7
+    [[ -z "$manifest_status" ]] && manifest_status=success
 
     if [[ -z "$last_ts" ]]; then
         printf "| %s | never | %sd | n/a | ❌ never ran |\n" "$name" "$refresh_days" >> "$TMP_ROWS"
         printf "| %s | never | %sd | n/a | ❌ never ran |\n" "$name" "$refresh_days" >> "$TMP_STALE"
+        stale_count=$((stale_count + 1))
+        continue
+    fi
+
+    if [[ "$manifest_status" != "success" ]]; then
+        printf "| %s | %s | %sd | status %s | ❌ status %s |\n" "$name" "$last_ts" "$refresh_days" "$manifest_status" "$manifest_status" >> "$TMP_ROWS"
+        printf "| %s | %s | %sd | status %s | ❌ status %s |\n" "$name" "$last_ts" "$refresh_days" "$manifest_status" "$manifest_status" >> "$TMP_STALE"
         stale_count=$((stale_count + 1))
         continue
     fi
