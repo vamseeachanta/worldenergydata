@@ -16,6 +16,34 @@ MOCK_PRODUCTION_CSV = (
     "FORTIES,2022,2,430.0,11.0,295.7\n"
 )
 
+MOCK_PPRS_JSON = {
+    "features": [
+        {
+            "attributes": {
+                "FIELDNAME": "ABIGAIL",
+                "PERIODYR": "2022",
+                "PERIODMNTH": "10",
+                "OILPRODMAS": 6948.1176,
+                "AGASPROKSM": 2787.0,
+                "DGASPROKSM": 0.0,
+                "WATPRODVOL": 1393.0,
+            }
+        },
+        {
+            "attributes": {
+                "FIELDNAME": "ABIGAIL",
+                "PERIODYR": "2022",
+                "PERIODMNTH": "11",
+                "OILPRODMAS": 16983.0378,
+                "AGASPROKSM": 6390.0,
+                "DGASPROKSM": 0.0,
+                "WATPRODVOL": 2599.0,
+            }
+        },
+    ],
+    "exceededTransferLimit": False,
+}
+
 
 class TestNSTAClientInit:
     def test_default_cache_dir_created(self, tmp_path):
@@ -27,9 +55,9 @@ class TestNSTAClientInit:
         NSTAClient(cache_dir=str(cache))
         assert cache.exists()
 
-    def test_default_base_url_contains_nsta(self, tmp_path):
+    def test_default_base_url_contains_ukcs_service(self, tmp_path):
         client = NSTAClient(cache_dir=str(tmp_path))
-        assert "nstauthority" in client.base_url or "nsta" in client.base_url.lower()
+        assert "UKCS_hydrocarbon_field_production_reports" in client.base_url
 
 
 class TestNSTAClientCacheKey:
@@ -55,12 +83,13 @@ class TestNSTAClientCacheKey:
 
 
 class TestNSTAClientUrl:
-    def test_build_url_uses_current_hub_csv_download(self, tmp_path):
+    def test_build_url_uses_official_arcgis_query_endpoint(self, tmp_path):
         client = NSTAClient(cache_dir=str(tmp_path))
         url = client._build_url(year=2026, dataset="monthly")
         assert (
-            url == "https://opendata-nstauthority.hub.arcgis.com/api/download/v1/"
-            "items/ba8b7b78d3a74edc88293011981ce2d7/csv?layers=0"
+            url == "https://services-eu1.arcgis.com/OZMfUznmLTnWccBc/arcgis/rest/"
+            "services/UKCS_hydrocarbon_field_production_reports_PPRS_points_(WGS84)/"
+            "FeatureServer/0/query"
         )
 
 
@@ -93,8 +122,70 @@ class TestNSTAClientCache:
 
 class TestNSTAClientDownload:
     @patch("worldenergydata.ukcs.production.nsta_client.requests")
-    def test_download_saves_to_cache(self, mock_requests, tmp_path):
+    def test_download_queries_official_arcgis_endpoint(self, mock_requests, tmp_path):
         client = NSTAClient(cache_dir=str(tmp_path))
+        mock_response = MagicMock()
+        mock_response.json.return_value = MOCK_PPRS_JSON
+        mock_response.raise_for_status = MagicMock()
+        mock_requests.get.return_value = mock_response
+
+        df = client.download(year=2022, max_records=2, force_refresh=True)
+
+        assert df.to_dict("records") == [
+            feature["attributes"] for feature in MOCK_PPRS_JSON["features"]
+        ]
+        mock_requests.get.assert_called_once_with(
+            client._build_url(2022, "monthly"),
+            params={
+                "where": "PERIODYR = '2022'",
+                "outFields": "*",
+                "returnGeometry": "false",
+                "resultOffset": 0,
+                "resultRecordCount": 2,
+                "f": "json",
+            },
+            timeout=60,
+        )
+
+    @patch("worldenergydata.ukcs.production.nsta_client.requests")
+    def test_download_paginates_official_arcgis_endpoint(self, mock_requests, tmp_path):
+        client = NSTAClient(cache_dir=str(tmp_path))
+        first_response = MagicMock()
+        first_response.json.return_value = {
+            "features": [MOCK_PPRS_JSON["features"][0]],
+            "exceededTransferLimit": True,
+        }
+        first_response.raise_for_status = MagicMock()
+        second_response = MagicMock()
+        second_response.json.return_value = {
+            "features": [MOCK_PPRS_JSON["features"][1]],
+            "exceededTransferLimit": False,
+        }
+        second_response.raise_for_status = MagicMock()
+        mock_requests.get.side_effect = [first_response, second_response]
+
+        df = client.download(year=2022, force_refresh=True)
+
+        assert len(df) == 2
+        assert mock_requests.get.call_args_list[0].kwargs["params"]["resultOffset"] == 0
+        assert (
+            mock_requests.get.call_args_list[0].kwargs["params"]["resultRecordCount"]
+            == 2000
+        )
+        assert (
+            mock_requests.get.call_args_list[1].kwargs["params"]["resultOffset"] == 2000
+        )
+        assert (
+            mock_requests.get.call_args_list[1].kwargs["params"]["resultRecordCount"]
+            == 2000
+        )
+
+    @patch("worldenergydata.ukcs.production.nsta_client.requests")
+    def test_download_saves_to_cache(self, mock_requests, tmp_path):
+        client = NSTAClient(
+            cache_dir=str(tmp_path),
+            base_url="https://example.test/nsta_{year}_{dataset}.csv",
+        )
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.content = MOCK_PRODUCTION_CSV.encode("utf-8")
@@ -117,7 +208,10 @@ class TestNSTAClientDownload:
 
     @patch("worldenergydata.ukcs.production.nsta_client.requests")
     def test_download_force_refresh_ignores_cache(self, mock_requests, tmp_path):
-        client = NSTAClient(cache_dir=str(tmp_path))
+        client = NSTAClient(
+            cache_dir=str(tmp_path),
+            base_url="https://example.test/nsta_{year}_{dataset}.csv",
+        )
         cache_path = tmp_path / client._cache_key(year=2022)
         cache_path.write_text("old,data\n1,2\n")
 
