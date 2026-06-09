@@ -20,7 +20,6 @@ from validate_source_refresh_contract import (  # noqa: E402
     validate_contract,
 )
 
-
 FRESHNESS_VALUES = (
     "fresh stale missing blocked unknown reference_data not_applicable".split()
 )
