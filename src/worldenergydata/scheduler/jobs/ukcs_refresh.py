@@ -1,54 +1,94 @@
-"""UK Continental Shelf (UKCS) data refresh job -- Tier 2 (scaffolding only).
-
-TODO: Implement data fetching for UKCS production data.
-- Identify NSTA (North Sea Transition Authority) data endpoints
-- Add HTTP client for production/well data retrieval
-- Write Parquet output to data/ukcs/ directory
-- Add tests in tests/unit/scheduler/test_ukcs_adapter.py
-"""
+"""UK Continental Shelf (UKCS) data refresh job."""
 
 import logging
 from datetime import datetime
 from pathlib import Path
 
 from worldenergydata.common.data_resolver import get_module_data_safe
-from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
+from worldenergydata.scheduler.jobs.base import (
+    AbstractJob,
+    JobResult,
+    write_refresh_metadata,
+)
+from worldenergydata.scheduler.parquet_output import write_parquet
+from worldenergydata.ukcs.production.field_production import UKCSFieldProductionLoader
+from worldenergydata.ukcs.production.nsta_client import NSTAClient
 
 logger = logging.getLogger(__name__)
 
 _DEFAULT_OUTPUT_DIR = get_module_data_safe("ukcs")
+_DEFAULT_DATASET = "monthly"
 
 
 class UkcsRefreshJob(AbstractJob):
-    """Refresh UK Continental Shelf production data -- Tier 2 stub.
-
-    This adapter follows the standard pattern (D-17) but data
-    fetching is not yet implemented. Returns a skipped result
-    until implementation is complete.
-    """
+    """Refresh one NSTA UKCS production dataset into raw and normalized snapshots."""
 
     name = "ukcs_refresh"
     default_output_dir = _DEFAULT_OUTPUT_DIR
 
     def run(self, config: dict) -> JobResult:
-        """Return skipped result until UKCS fetching is implemented.
-
-        Args:
-            config: Reserved for future use (e.g., nsta_api_url, output_dir).
-
-        Returns:
-            JobResult with status="skipped".
-        """
+        """Download a configured NSTA production year/dataset."""
         start = datetime.now()
-        output_dir = Path(config.get("output_dir", self.default_output_dir))
-        # Scaffolded for future adapter implementation; path is intentionally resolved now.
-        logger.info("%s: Tier 2 stub -- not yet implemented.", self.name)
-        logger.debug("%s output directory: %s", self.name, output_dir)
-        return JobResult(
-            job_name=self.name,
-            start_time=start,
-            end_time=datetime.now(),
-            status="skipped",
-            records_updated=0,
-            error_msg=None,
-        )
+        if "output_dir" not in config:
+            return JobResult(
+                job_name=self.name,
+                start_time=start,
+                end_time=datetime.now(),
+                status="skipped",
+                records_updated=0,
+                error_msg="UKCS live refresh requires an explicit output_dir",
+            )
+
+        output_dir = Path(config["output_dir"])
+        year = int(config.get("year", datetime.now().year))
+        dataset = str(config.get("dataset", _DEFAULT_DATASET))
+        force_refresh = bool(config.get("force_refresh", False))
+
+        try:
+            client_kwargs = {"cache_dir": str(output_dir / "raw")}
+            download_url = config.get("download_url") or config.get("base_url")
+            if download_url:
+                client_kwargs["base_url"] = str(download_url)
+            client = NSTAClient(**client_kwargs)
+            raw_df = client.download(
+                year=year,
+                dataset=dataset,
+                force_refresh=force_refresh,
+            )
+            if "max_records" in config:
+                raw_df = raw_df.head(int(config["max_records"]))
+            raw_records = len(raw_df)
+            raw_dir = output_dir / "raw"
+            raw_dir.mkdir(parents=True, exist_ok=True)
+            raw_df.to_parquet(
+                raw_dir / f"nsta_production_{year}_{dataset}.parquet",
+                engine="pyarrow",
+                index=False,
+                compression="snappy",
+            )
+
+            normalized = UKCSFieldProductionLoader().load(raw_df)
+            write_parquet(
+                normalized,
+                output_dir,
+                f"ukcs_production_{year}_{dataset}.parquet",
+            )
+            write_refresh_metadata("ukcs", output_dir, raw_records)
+            return JobResult(
+                job_name=self.name,
+                start_time=start,
+                end_time=datetime.now(),
+                status="success",
+                records_updated=raw_records,
+                error_msg=None,
+            )
+        except Exception as exc:
+            logger.warning("UKCS refresh failed: %s", exc)
+            return JobResult(
+                job_name=self.name,
+                start_time=start,
+                end_time=datetime.now(),
+                status="failure",
+                records_updated=0,
+                error_msg=str(exc),
+            )
