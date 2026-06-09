@@ -95,6 +95,30 @@ class TestUKCSFieldProductionLoaderLoad:
         result = loader.load(raw)
         assert len(result) == len(raw)
 
+    def test_load_accepts_current_pprs_schema_columns(self, loader):
+        raw = pd.DataFrame(
+            [
+                {
+                    "FIELDNAME": "Forties",
+                    "PERIODYR": 2026,
+                    "PERIODMNTH": 1,
+                    "OILPRODMAS": 450.3,
+                    "AGASPROKSM": 12.5,
+                    "DGASPROKSM": 1.5,
+                    "WATPRODVOL": 310.2,
+                }
+            ]
+        )
+
+        result = loader.load(raw)
+
+        assert result.loc[0, "field"] == "FORTIES"
+        assert result.loc[0, "year"] == 2026
+        assert result.loc[0, "month"] == 1
+        assert result.loc[0, "oil_bbl"] == pytest.approx(450.3 * TONNES_TO_BBL)
+        assert result.loc[0, "gas_mcf"] == pytest.approx((12.5 + 1.5) * 35.3147)
+        assert result.loc[0, "water_bbl"] == pytest.approx(310.2 * 6.2898)
+
 
 class TestUKCSFieldProductionLoaderFilter:
     @pytest.fixture
