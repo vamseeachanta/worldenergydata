@@ -72,6 +72,7 @@ This directory contains issue-plan artifacts created during the issue-planning-m
 | [#425](https://github.com/vamseeachanta/worldenergydata/issues/425) | [operator-hse-benchmarking](2026-05-18-issue-425-operator-hse-benchmarking.md) | plan-review | 2026-05-18 |
 | [#426](https://github.com/vamseeachanta/worldenergydata/issues/426) | [drilling-hse-patterns](2026-05-18-issue-426-drilling-hse-patterns.md) | plan-review | 2026-05-18 |
 | [#427](https://github.com/vamseeachanta/worldenergydata/issues/427) | [seasonal-intervention-risk](2026-05-18-issue-427-seasonal-intervention-risk.md) | plan-review | 2026-05-18 |
+| [#462](https://github.com/vamseeachanta/worldenergydata/issues/462) | [source-refresh-acceptance-contract](2026-06-09-issue-462-source-refresh-acceptance-contract.md) | plan-review | 2026-06-09 |
 
 ## Closed / superseded plans
 
