@@ -58,6 +58,7 @@ def test_ukcs_downloads_configured_year_and_writes_outputs(tmp_path: Path):
         year=2026,
         dataset="monthly",
         force_refresh=True,
+        max_records=None,
     )
     assert (tmp_path / "raw" / "nsta_production_2026_monthly.parquet").exists()
     normalized_path = tmp_path / "ukcs_production_2026_monthly.parquet"
@@ -85,6 +86,12 @@ def test_ukcs_max_records_bounds_written_outputs(tmp_path: Path):
 
     assert result.status == "success"
     assert result.records_updated == 1
+    client.download.assert_called_once_with(
+        year=2026,
+        dataset="monthly",
+        force_refresh=False,
+        max_records=1,
+    )
     normalized = pd.read_parquet(tmp_path / "ukcs_production_2026_monthly.parquet")
     assert normalized["field"].tolist() == ["FORTIES"]
 
