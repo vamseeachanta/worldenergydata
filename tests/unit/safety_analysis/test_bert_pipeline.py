@@ -1,7 +1,9 @@
 # ABOUTME: Tests for BERT embedding extraction and classification pipeline.
 """Tests for BERT-based embedding and classification in safety analysis."""
 
+import hashlib
 import random
+from types import SimpleNamespace
 from unittest.mock import patch
 
 import numpy as np
@@ -71,6 +73,54 @@ _ATRISK_PHRASES = [
 ]
 
 
+class _FakeTokenizer:
+    """Deterministic tokenizer stub for BERT unit tests."""
+
+    def __call__(
+        self,
+        texts,
+        return_tensors,
+        truncation,
+        max_length,
+        padding,
+    ):
+        del return_tensors, truncation, max_length, padding
+        token_rows = []
+        for text in texts:
+            tokens = text.split()[:8] or [""]
+            token_rows.append([_stable_token_id(token) for token in tokens])
+        width = max(len(row) for row in token_rows)
+        padded = [row + [0] * (width - len(row)) for row in token_rows]
+        mask = [[1] * len(row) + [0] * (width - len(row)) for row in token_rows]
+        return {
+            "input_ids": torch.tensor(padded, dtype=torch.long),
+            "attention_mask": torch.tensor(mask, dtype=torch.long),
+        }
+
+
+class _FakeModel:
+    """Deterministic transformer stub with a BERT-sized hidden state."""
+
+    config = SimpleNamespace(hidden_size=768)
+
+    def eval(self):
+        return self
+
+    def cuda(self):
+        return self
+
+    def __call__(self, **inputs):
+        input_ids = inputs["input_ids"].float()
+        dims = torch.arange(self.config.hidden_size, dtype=torch.float32)
+        hidden = ((input_ids.unsqueeze(-1) + dims) % 97) / 97.0
+        return SimpleNamespace(last_hidden_state=hidden)
+
+
+def _stable_token_id(token: str) -> int:
+    digest = hashlib.sha1(token.encode("utf-8")).hexdigest()
+    return int(digest[:8], 16) % 1000 + 1
+
+
 @pytest.fixture
 def bert_config():
     """BertConfig with small max_length for faster testing."""
@@ -80,6 +130,22 @@ def bert_config():
         batch_size=4,
         device="cpu",
         pooling_strategy="cls",
+    )
+
+
+@pytest.fixture(autouse=True)
+def fake_huggingface_model(monkeypatch):
+    """Keep BERT unit tests deterministic and offline-safe."""
+    if not _HAS_BERT:
+        return
+    monkeypatch.setattr(
+        "worldenergydata.safety_analysis.nlp.bert_pipeline."
+        "AutoTokenizer.from_pretrained",
+        lambda model_name: _FakeTokenizer(),
+    )
+    monkeypatch.setattr(
+        "worldenergydata.safety_analysis.nlp.bert_pipeline.AutoModel.from_pretrained",
+        lambda model_name: _FakeModel(),
     )
 
 
