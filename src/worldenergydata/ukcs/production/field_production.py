@@ -15,7 +15,7 @@ import logging
 
 import pandas as pd
 
-from worldenergydata.common.units import GasUnits, OilUnits
+from worldenergydata.common.units import GasUnits, OilUnits, WaterUnits
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +31,14 @@ _RAW_WATER_COL = "WaterProduction (Thousand Tonnes)"
 _RAW_FIELD_COL = "FieldName"
 _RAW_YEAR_COL = "Year"
 _RAW_MONTH_COL = "Month"
+
+_PPRS_FIELD_COL = "FIELDNAME"
+_PPRS_YEAR_COL = "PERIODYR"
+_PPRS_MONTH_COL = "PERIODMNTH"
+_PPRS_OIL_TONNES_COL = "OILPRODMAS"
+_PPRS_ASSOC_GAS_KSM3_COL = "AGASPROKSM"
+_PPRS_DRY_GAS_KSM3_COL = "DGASPROKSM"
+_PPRS_WATER_M3_COL = "WATPRODVOL"
 
 
 class UKCSFieldProductionLoader:
@@ -56,16 +64,38 @@ class UKCSFieldProductionLoader:
             )
 
         result = pd.DataFrame()
-        result["field"] = raw[_RAW_FIELD_COL].str.upper().str.strip()
-        result["year"] = raw[_RAW_YEAR_COL].astype(int)
-        result["month"] = raw[_RAW_MONTH_COL].astype(int)
+        result["field"] = (
+            _column(raw, _RAW_FIELD_COL, _PPRS_FIELD_COL).str.upper().str.strip()
+        )
+        result["year"] = _column(raw, _RAW_YEAR_COL, _PPRS_YEAR_COL).astype(int)
+        result["month"] = _column(raw, _RAW_MONTH_COL, _PPRS_MONTH_COL).astype(int)
 
-        # Thousand tonnes → bbl
-        result["oil_bbl"] = raw[_RAW_OIL_COL].fillna(0.0) * 1000.0 * TONNES_TO_BBL
-        # MMscf → Mcf
-        result["gas_mcf"] = raw[_RAW_GAS_COL].fillna(0.0) * MMSCF_TO_MCF
-        # Thousand tonnes → bbl
-        result["water_bbl"] = raw[_RAW_WATER_COL].fillna(0.0) * 1000.0 * TONNES_TO_BBL
+        if _RAW_OIL_COL in raw.columns:
+            # Legacy fixture: thousand tonnes → bbl
+            result["oil_bbl"] = raw[_RAW_OIL_COL].fillna(0.0) * 1000.0 * TONNES_TO_BBL
+        else:
+            # Current PPRS schema: tonnes → bbl
+            result["oil_bbl"] = raw[_PPRS_OIL_TONNES_COL].fillna(0.0) * TONNES_TO_BBL
+
+        if _RAW_GAS_COL in raw.columns:
+            # Legacy fixture: MMscf → Mcf
+            result["gas_mcf"] = raw[_RAW_GAS_COL].fillna(0.0) * MMSCF_TO_MCF
+        else:
+            # Current PPRS schema: associated + dry gas KSm3 → Mcf
+            gas_ksm3 = raw.get(_PPRS_ASSOC_GAS_KSM3_COL, 0.0).fillna(0.0)
+            gas_ksm3 += raw.get(_PPRS_DRY_GAS_KSM3_COL, 0.0).fillna(0.0)
+            result["gas_mcf"] = gas_ksm3 * GasUnits.SM3_TO_SCF
+
+        if _RAW_WATER_COL in raw.columns:
+            # Legacy fixture: thousand tonnes → bbl
+            result["water_bbl"] = (
+                raw[_RAW_WATER_COL].fillna(0.0) * 1000.0 * TONNES_TO_BBL
+            )
+        else:
+            # Current PPRS schema: m3 → bbl
+            result["water_bbl"] = (
+                raw[_PPRS_WATER_M3_COL].fillna(0.0) * WaterUnits.M3_TO_BBL
+            )
 
         return result.reset_index(drop=True)
 
@@ -93,3 +123,10 @@ class UKCSFieldProductionLoader:
         numeric = ["oil_bbl", "gas_mcf", "water_bbl"]
         annual = df.groupby(["field", "year"])[numeric].sum().reset_index()
         return annual
+
+
+def _column(raw: pd.DataFrame, *names: str) -> pd.Series:
+    for name in names:
+        if name in raw.columns:
+            return raw[name]
+    raise KeyError(names[0])

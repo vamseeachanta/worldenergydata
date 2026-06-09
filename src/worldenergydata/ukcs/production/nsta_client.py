@@ -1,7 +1,7 @@
 """NSTA CSV downloader with local cache and year/field parameters.
 
-Data source: NSTA Open Data Centre
-  https://www.nstauthority.co.uk/data-centre/
+Data source: NSTA Open Data / data.gov.uk
+  https://opendata-nstauthority.hub.arcgis.com/datasets/NSTAUTHORITY::nsta-field-production-pprs-wgs84
 
 Field production CSVs are freely downloadable with no authentication.
 CSV format: FieldName, Year, Month, OilProduction (Thousand Tonnes),
@@ -22,7 +22,10 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_BASE_URL = "https://www.nstauthority.co.uk/data-centre/nsta-open-data/"
+DEFAULT_BASE_URL = (
+    "https://opendata-nstauthority.hub.arcgis.com/api/download/v1/"
+    "items/ba8b7b78d3a74edc88293011981ce2d7/csv?layers=0"
+)
 
 
 class NSTAClient:
@@ -84,4 +87,4 @@ class NSTAClient:
         return pd.read_csv(io.BytesIO(response.content), encoding=encoding)
 
     def _build_url(self, year: int, dataset: str) -> str:
-        return f"{self.base_url}?year={year}&type={dataset}"
+        return self.base_url.format(year=year, dataset=dataset)

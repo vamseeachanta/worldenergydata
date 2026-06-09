@@ -54,6 +54,16 @@ class TestNSTAClientCacheKey:
         assert k1 != k2
 
 
+class TestNSTAClientUrl:
+    def test_build_url_uses_current_hub_csv_download(self, tmp_path):
+        client = NSTAClient(cache_dir=str(tmp_path))
+        url = client._build_url(year=2026, dataset="monthly")
+        assert (
+            url == "https://opendata-nstauthority.hub.arcgis.com/api/download/v1/"
+            "items/ba8b7b78d3a74edc88293011981ce2d7/csv?layers=0"
+        )
+
+
 class TestNSTAClientCache:
     def test_is_cached_false_when_missing(self, tmp_path):
         client = NSTAClient(cache_dir=str(tmp_path))
