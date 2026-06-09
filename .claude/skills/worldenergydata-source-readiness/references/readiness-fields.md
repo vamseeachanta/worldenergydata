@@ -18,6 +18,20 @@
 | `size` | Human-readable module size from metadata. |
 | `scheduler_last_success` | Last successful scheduler manifest timestamp. |
 
+## Contract Fields
+
+The acceptance contract adds fields that are intentionally stricter than the readiness summary output:
+
+| Field | Meaning |
+|---|---|
+| `source_data_latest_date` | Newest accepted business/source-data date, or JSON `null` if not inspected. |
+| `source_data_latest_date_basis` | Accepted basis for source vintage: `dataset_field`, `source_api_metadata`, `source_publication_date`, `source_version`, or `unknown`. |
+| `last_successful_refresh` | Local refresh/proof timestamp; never substitute this for source-data vintage. |
+| `materialized_module_id` | Actual repo module directory when it differs from the contract source ID. |
+| `aliases` | Alternate module IDs agents may encounter, such as `eia` for `eia_us`. |
+| `freshness_status` | Contract freshness lane from `docs/data/source-refresh-acceptance-criteria.md`. |
+| `completeness_status` | Contract completeness lane from `docs/data/source-refresh-acceptance-criteria.md`. |
+
 ## Interpretation
 
 - `runtime_fetched` plus `missing` usually means the source is configured or planned but lacks a repo-visible success manifest.
@@ -25,11 +39,14 @@
 - `full` means catalog declares full coverage, but still verify data vintage before making buyer-facing freshness claims.
 - `unknown` needs classification before acceptance criteria can be closed.
 - `not_applicable` modules are infrastructure or analytical modules unless the issue explicitly scopes them as data products.
+- Metadata refresh dates, newest file modified dates, scheduler success timestamps, and manifest timestamps are local evidence clocks. Do not report them as `source_data_latest_date`.
+- Report `data_location` and `scheduler_output_dir` together when both exist; mismatches such as `eia_us` materializing under `data/modules/eia` are acceptance-relevant.
 
 ## Fast Commands
 
 ```bash
 python .claude/skills/worldenergydata-source-readiness/scripts/source_readiness_summary.py
+python scripts/audit/validate_source_refresh_contract.py
 python scripts/audit/data_freshness_scorecard.py --project-root . --check --max-unknown 999
 bash scripts/cron/scheduler-health.sh
 ```
