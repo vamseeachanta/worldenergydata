@@ -43,6 +43,7 @@ class UkcsRefreshJob(AbstractJob):
         year = int(config.get("year", datetime.now().year))
         dataset = str(config.get("dataset", _DEFAULT_DATASET))
         force_refresh = bool(config.get("force_refresh", False))
+        max_records = int(config["max_records"]) if "max_records" in config else None
 
         try:
             client_kwargs = {"cache_dir": str(output_dir / "raw")}
@@ -54,9 +55,10 @@ class UkcsRefreshJob(AbstractJob):
                 year=year,
                 dataset=dataset,
                 force_refresh=force_refresh,
+                max_records=max_records,
             )
-            if "max_records" in config:
-                raw_df = raw_df.head(int(config["max_records"]))
+            if max_records is not None:
+                raw_df = raw_df.head(max_records)
             raw_records = len(raw_df)
             raw_dir = output_dir / "raw"
             raw_dir.mkdir(parents=True, exist_ok=True)
