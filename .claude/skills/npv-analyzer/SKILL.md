@@ -1,37 +1,23 @@
 ---
 name: npv-analyzer
-<<<<<<< HEAD
 description: Perform NPV analysis and economic evaluation for oil & gas assets. Use for cash flow modeling, price scenario analysis, Monte Carlo simulation, P10/P50/P90 probabilistic analysis, working interest calculations, and financial metrics (IRR, payback, NPV) for field development projects.
-=======
-description: Perform NPV analysis and economic evaluation for oil & gas assets. Use for cash flow modeling, price scenario analysis, working interest calculations, and financial metrics (IRR, payback, NPV) for field development projects.
->>>>>>> origin/main
 ---
 
 # NPV Analyzer
 
-<<<<<<< HEAD
 Perform comprehensive Net Present Value (NPV) analysis and economic evaluation for oil & gas development projects, including cash flow modeling, price scenarios, Monte Carlo simulation for probabilistic analysis, and financial metrics.
-=======
-Perform comprehensive Net Present Value (NPV) analysis and economic evaluation for oil & gas development projects, including cash flow modeling, price scenarios, and financial metrics.
->>>>>>> origin/main
 
 ## When to Use
 
 - Calculating NPV for field development projects
 - Modeling cash flows with production forecasts
 - Running oil/gas price scenario analysis (low/mid/high)
-<<<<<<< HEAD
 - **Monte Carlo simulation for P10/P50/P90 NPV estimates**
 - **Probabilistic risk analysis with multiple input distributions**
 - Applying working interest and royalty calculations
 - Evaluating different development types (subsea, platform, FPSO)
 - Computing IRR, payback period, and profitability index
 - **Calculating Value at Risk (VaR) and Expected Shortfall**
-=======
-- Applying working interest and royalty calculations
-- Evaluating different development types (subsea, platform, FPSO)
-- Computing IRR, payback period, and profitability index
->>>>>>> origin/main
 - Comparing economic outcomes across multiple scenarios
 
 ## Core Pattern
@@ -671,7 +657,6 @@ class ScenarioAnalyzer:
         return pd.DataFrame(results).sort_values('range', ascending=False)
 ```
 
-<<<<<<< HEAD
 ### Monte Carlo Simulator
 
 ```python
@@ -1051,8 +1036,6 @@ class MonteCarloSimulator:
         return np.mean(result.npv_values[result.npv_values <= var])
 ```
 
-=======
->>>>>>> origin/main
 ### Report Generator
 
 ```python
@@ -1064,7 +1047,6 @@ class NPVReportGenerator:
     """Generate interactive HTML reports for NPV analysis."""
 
     def __init__(self, calculator: NPVCalculator,
-<<<<<<< HEAD
                  scenario_analyzer: ScenarioAnalyzer = None,
                  monte_carlo_result: MonteCarloResult = None):
         """Initialize report generator."""
@@ -1104,27 +1086,6 @@ class NPVReportGenerator:
                 ),
                 vertical_spacing=0.10
             )
-=======
-                 scenario_analyzer: ScenarioAnalyzer = None):
-        """Initialize report generator."""
-        self.calculator = calculator
-        self.analyzer = scenario_analyzer
-
-    def generate_report(self, output_path: Path, project_name: str = "Project"):
-        """Generate comprehensive NPV analysis report."""
-        fig = make_subplots(
-            rows=3, cols=2,
-            subplot_titles=(
-                'Annual Cash Flows',
-                'Cumulative Cash Flow',
-                'Price Scenario NPV',
-                'Sensitivity Analysis',
-                'Production Profile',
-                'Revenue Breakdown'
-            ),
-            vertical_spacing=0.10
-        )
->>>>>>> origin/main
 
         cf_df = self.calculator.to_dataframe()
 
@@ -1185,7 +1146,6 @@ class NPVReportGenerator:
                     row=2, col=2
                 )
 
-<<<<<<< HEAD
         # Monte Carlo visualization (if available)
         mc_row = 3 if self.mc_result else None
         prod_row = 4 if self.mc_result else 3
@@ -1246,8 +1206,6 @@ class NPVReportGenerator:
                 bordercolor='gray'
             )
 
-=======
->>>>>>> origin/main
         # Production profile
         prod_df = pd.DataFrame([
             {'year': p.year, 'oil': p.oil_mbbls, 'gas': p.gas_mmcf/6, 'ngl': p.ngl_mbbls}
@@ -1257,20 +1215,12 @@ class NPVReportGenerator:
         fig.add_trace(
             go.Bar(x=prod_df['year'], y=prod_df['oil'],
                    name='Oil (Mbbls)', marker_color='green'),
-<<<<<<< HEAD
             row=prod_row, col=1
-=======
-            row=3, col=1
->>>>>>> origin/main
         )
         fig.add_trace(
             go.Bar(x=prod_df['year'], y=prod_df['gas'],
                    name='Gas (BOE Mbbls)', marker_color='red'),
-<<<<<<< HEAD
             row=prod_row, col=1
-=======
-            row=3, col=1
->>>>>>> origin/main
         )
 
         # Revenue breakdown
@@ -1285,11 +1235,7 @@ class NPVReportGenerator:
                 values=[total_oil_rev, total_gas_rev, total_ngl_rev],
                 marker_colors=['green', 'red', 'orange']
             ),
-<<<<<<< HEAD
             row=prod_row, col=2
-=======
-            row=3, col=2
->>>>>>> origin/main
         )
 
         # Summary metrics annotation
@@ -1314,13 +1260,8 @@ class NPVReportGenerator:
         )
 
         fig.update_layout(
-<<<<<<< HEAD
             height=1400 if self.mc_result else 1100,
             title_text=f"{project_name} - NPV Analysis" + (" (Monte Carlo)" if self.mc_result else ""),
-=======
-            height=1100,
-            title_text=f"{project_name} - NPV Analysis",
->>>>>>> origin/main
             showlegend=True,
             barmode='relative'
         )
@@ -1445,7 +1386,6 @@ output:
   report_html: "reports/scenario_comparison.html"
 ```
 
-<<<<<<< HEAD
 ### Monte Carlo Configuration
 
 ```yaml
@@ -1502,8 +1442,6 @@ output:
   report_html: "reports/monte_carlo_analysis.html"
 ```
 
-=======
->>>>>>> origin/main
 ## CLI Usage
 
 ```bash
@@ -1525,7 +1463,6 @@ python -m npv_analyzer breakeven --config config/npv_analysis.yaml --commodity o
 
 # Generate sensitivity tornado
 python -m npv_analyzer sensitivity --config config/npv_analysis.yaml --range 0.30
-<<<<<<< HEAD
 
 # Run Monte Carlo simulation
 python -m npv_analyzer montecarlo --config config/monte_carlo_analysis.yaml
@@ -1538,8 +1475,6 @@ python -m npv_analyzer montecarlo --config config/npv_analysis.yaml \
 
 # Get P10/P50/P90 summary
 python -m npv_analyzer percentiles --config config/monte_carlo_analysis.yaml
-=======
->>>>>>> origin/main
 ```
 
 ## Usage Examples
@@ -1601,7 +1536,6 @@ reporter.generate_report(
 )
 ```
 
-<<<<<<< HEAD
 ### Example 3: Monte Carlo Simulation
 
 ```python
@@ -1670,8 +1604,6 @@ reporter.generate_report(
 )
 ```
 
-=======
->>>>>>> origin/main
 ## Best Practices
 
 ### Model Setup
@@ -1692,7 +1624,6 @@ reporter.generate_report(
 - Compare against investment criteria (hurdle rate, payback limits)
 - Archive analysis with assumptions
 
-<<<<<<< HEAD
 ### Monte Carlo Analysis
 - Use 5,000-10,000 iterations for stable P10/P50/P90
 - Choose appropriate distributions (PERT for expert estimates, triangular for simple ranges)
@@ -1708,10 +1639,3 @@ reporter.generate_report(
 - [hse-risk-analyzer](../hse-risk-analyzer/SKILL.md) - Risk-adjusted NPV with safety data
 - [production-forecaster](../production-forecaster/SKILL.md) - Decline curve production forecasts
 - [engineering-report-generator](/mnt/github/workspace-hub/.claude/skills/development/engineering-report-generator/SKILL.md) - Report generation
-=======
-## Related Skills
-
-- [bsee-data-extractor](../bsee-data-extractor/SKILL.md) - Production data for forecasts
-- [engineering-report-generator](/mnt/github/workspace-hub/.claude/skills/development/engineering-report-generator/SKILL.md) - Report generation
-- [data-pipeline-processor](/mnt/github/workspace-hub/.claude/skills/development/data-pipeline-processor/SKILL.md) - Data processing
->>>>>>> origin/main
