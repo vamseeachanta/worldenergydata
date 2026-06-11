@@ -1,11 +1,18 @@
-"""Asserts that .claude/docs/agents.md remains free of git merge-conflict markers
-and renders as valid Markdown.
+"""Asserts that live agent instruction docs (root CLAUDE.md + the .claude tree)
+exist and are free of git merge-conflict markers.
 
-Filed as durable enforcement against a recurring failure mode. The conflict-
-introducing commit was 7493f543 ("chore: fresh repo after slimming") which left
-two unresolved conflict blocks in the file. Resolution landed via issue #414.
+Filed as durable enforcement against a recurring failure mode: unresolved
+conflict blocks committed into agent docs. First seen in .claude/docs/agents.md
+(commit 7493f543, resolved via issue #414); recurred 2026-06 in
+.claude/skills/bsee-data-extractor/SKILL.md (resolved via #467/#468).
 
-Refs: worldenergydata#414, workspace-hub#2719 (audit that surfaced the bug).
+The claude-flow-era agents.md this test originally guarded was archived to
+.claude/_archive/claude-flow-era/ in the 2026-06-11 provider rework
+(workspace-hub#3040), so the guard now covers every live agent-doc surface
+instead of that single file. Archived content is exempt by design.
+
+Refs: worldenergydata#414, worldenergydata#467, workspace-hub#2719,
+workspace-hub#3040.
 """
 
 from __future__ import annotations
@@ -14,41 +21,39 @@ import re
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-AGENTS_DOC = REPO_ROOT / ".claude" / "docs" / "agents.md"
+CLAUDE_DIR = REPO_ROOT / ".claude"
+ROOT_ADAPTER = REPO_ROOT / "CLAUDE.md"
+NESTED_POINTER = CLAUDE_DIR / "CLAUDE.md"
 
-CONFLICT_MARKER_PATTERN = re.compile(r"^(<<<<<<< |=======$|>>>>>>> )", re.MULTILINE)
+# `<<<<<<< ` / `>>>>>>> ` always carry a trailing space + ref label in real
+# conflicts; bare `=======` is excluded because it is also a valid Markdown
+# setext-header underline.
+CONFLICT_MARKER_PATTERN = re.compile(r"^(<<<<<<< |>>>>>>> )", re.MULTILINE)
 
 
-def test_agent_doc_exists():
-    """The agents.md reference doc must exist."""
-    assert AGENTS_DOC.exists(), f"{AGENTS_DOC} missing"
+def _live_agent_docs() -> list[Path]:
+    docs = [ROOT_ADAPTER]
+    if CLAUDE_DIR.is_dir():
+        docs.extend(
+            p for p in sorted(CLAUDE_DIR.rglob("*.md")) if "_archive" not in p.parts
+        )
+    return [p for p in docs if p.is_file()]
 
 
-def test_agent_doc_no_conflict_markers():
-    """The agents.md must not contain git merge-conflict markers."""
-    body = AGENTS_DOC.read_text(encoding="utf-8")
-    matches = CONFLICT_MARKER_PATTERN.findall(body)
-    assert not matches, (
-        f"{AGENTS_DOC.relative_to(REPO_ROOT)} contains {len(matches)} conflict marker(s); "
-        f"unresolved merge conflict regression"
+def test_adapter_docs_exist():
+    """Root adapter and the nested .claude pointer must both exist."""
+    assert ROOT_ADAPTER.is_file(), f"{ROOT_ADAPTER} missing"
+    assert NESTED_POINTER.is_file(), f"{NESTED_POINTER} missing"
+
+
+def test_live_agent_docs_have_no_conflict_markers():
+    """No live agent doc may contain committed merge-conflict markers."""
+    offenders: dict[str, int] = {}
+    for doc in _live_agent_docs():
+        body = doc.read_text(encoding="utf-8", errors="replace")
+        matches = CONFLICT_MARKER_PATTERN.findall(body)
+        if matches:
+            offenders[str(doc.relative_to(REPO_ROOT))] = len(matches)
+    assert not offenders, (
+        f"unresolved merge-conflict markers committed in agent docs: {offenders}"
     )
-
-
-def test_agent_doc_starts_with_canonical_header():
-    """The agents.md must lead with the documented title — guards against accidental truncation."""
-    body = AGENTS_DOC.read_text(encoding="utf-8")
-    assert body.startswith(
-        "# Available Agents Reference"
-    ), f"{AGENTS_DOC.relative_to(REPO_ROOT)} missing canonical title — file may be corrupted"
-
-
-def test_agent_doc_has_no_empty_section_headers():
-    """No `## ...` line followed immediately by another `## ...` (sign of dropped content during conflict resolution)."""
-    body = AGENTS_DOC.read_text(encoding="utf-8")
-    lines = body.splitlines()
-    for i, line in enumerate(lines[:-1]):
-        if line.startswith("## ") and lines[i + 1].startswith("## "):
-            raise AssertionError(
-                f"{AGENTS_DOC.relative_to(REPO_ROOT)}:{i + 1} — section header '{line}' "
-                f"is followed immediately by another header; section body is missing"
-            )
