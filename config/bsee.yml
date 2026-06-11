@@ -1,0 +1,83 @@
+# BSEE Module Configuration — scheduler refresh source catalog
+# ---------------------------------------------------------------
+# Re-encodes the BSEE data-source knowledge from closed issues #9
+# (master data-source catalog), #11 (scraping-method hierarchy), and
+# #12 (additional platform/pipeline/lease datasets) as reviewable
+# config. Serves the bsee_refresh scheduler job (#267, epic #423).
+#
+# Authoritative upstream index of every bulk zip download:
+#   https://www.data.bsee.gov/Main/RawData.aspx
+# The FULL raw-data catalog (29 regular datasets + OGOR-A yearly
+# files, with expected archive members) lives in
+#   src/worldenergydata/bsee/data/refresh/url_registry.py
+# This file selects and parameterizes the subset refreshed by the
+# scheduler. A unit test cross-checks URLs here against the registry
+# and BSEEWebScraper so they cannot drift apart silently.
+#
+# Scraping-method hierarchy (issue #11), preferred first:
+#   1. Plain HTTP request/POST downloads (this file: bulk zip files)
+#   2. Background Selenium  3. Foreground Selenium (last resort)
+#
+# Gotchas (issue #267 runtime findings, live-verified 2026-06-10):
+#   - Stale dataset URLs return HTTP 200 + an HTML page (~28 KB), not
+#     a 404. Payloads must be content-classified before zip parsing.
+#   - Archive members are quoted CSV with CRLF line endings but a
+#     .txt extension, behind a leading directory entry.
+#   - Healthy responses use Content-Type: application/x-zip-compressed
+#     and carry Last-Modified (BSEE regenerates files daily ~09:45 UTC).
+
+module: bsee
+version: 1.0.0
+description: BSEE Gulf of Mexico bulk raw-data refresh catalog
+
+portal:
+  raw_data_index: https://www.data.bsee.gov/Main/RawData.aspx
+  tutorials: https://www.data.bsee.gov/Main/Tutorials/Default.aspx
+
+# Datasets refreshed by the bsee_refresh scheduler job.
+# url_key must exist in BSEEWebScraper.URLS; registry_dir must match a
+# DatasetSpec.bin_dir in url_registry.py (drift-guarded by tests).
+scheduler_datasets:
+  platform:
+    url: https://www.data.bsee.gov/Platform/Files/PlatStrucRawData.zip
+    url_key: platform
+    registry_dir: platstruc
+    output_file: bsee_platform_structures.parquet
+    primary_member_patterns:
+      - mv_platstruc_structures.txt
+    timeout_s: 600
+    approx_size_mb: 2
+
+  pipeline_permit:
+    url: https://www.data.bsee.gov/Pipeline/Files/PipePermRawData.zip
+    url_key: pipeline_permit
+    registry_dir: ~  # not in url_registry.py regular specs
+    output_file: bsee_pipeline_permits.parquet
+    primary_member_patterns:
+      - mv_pipeperm_applications.txt
+    timeout_s: 600
+    approx_size_mb: 9
+
+  pipeline_location:
+    # Corrected 2026-06-10: PipeLocAllRawData.zip went stale (serves
+    # HTML); the live file is PipeLocRawData.zip per Main/RawData.aspx.
+    url: https://www.data.bsee.gov/Pipeline/Files/PipeLocRawData.zip
+    url_key: pipeline_location
+    registry_dir: pipeloc
+    output_file: bsee_pipeline_locations.parquet
+    primary_member_patterns:
+      - mv_pipelinelocation*.txt
+    timeout_s: 900
+    approx_size_mb: 28
+
+  deepwater_structure:
+    # Corrected 2026-06-10: moved from /Platform/Files/ to
+    # /Other/Files/ upstream; old path serves HTML.
+    url: https://www.data.bsee.gov/Other/Files/PermStrucRawData.zip
+    url_key: deepwater_structure
+    registry_dir: permstruc
+    output_file: bsee_deepwater_structures.parquet
+    primary_member_patterns:
+      - mv_perm_platforms.txt
+    timeout_s: 600
+    approx_size_mb: 0.01  # 8.5 KB zip, live-measured 2026-06-10
