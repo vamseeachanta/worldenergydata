@@ -54,6 +54,6 @@ def test_live_agent_docs_have_no_conflict_markers():
         matches = CONFLICT_MARKER_PATTERN.findall(body)
         if matches:
             offenders[str(doc.relative_to(REPO_ROOT))] = len(matches)
-    assert not offenders, (
-        f"unresolved merge-conflict markers committed in agent docs: {offenders}"
-    )
+    assert (
+        not offenders
+    ), f"unresolved merge-conflict markers committed in agent docs: {offenders}"
