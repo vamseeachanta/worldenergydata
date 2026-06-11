@@ -20,7 +20,17 @@ class BSEEWebScraper:
     storing them on disk, solving the GitHub file size limit issue.
     """
 
-    # BSEE data source URLs
+    # BSEE data source URLs.
+    #
+    # The authoritative index of every bulk download is the "portal"
+    # page (issue #9 / #12); when BSEE relocates a file the old URL
+    # returns HTTP 200 with an HTML page instead of a 404, so callers
+    # must classify payload content before zip parsing (issue #267,
+    # see worldenergydata.bsee.data.refresh.payload).
+    #
+    # 2026-06-10 live-verified corrections (issue #267):
+    #   deepwater_structure moved /Platform/Files/ -> /Other/Files/
+    #   pipeline_location:  PipeLocAllRawData.zip -> PipeLocRawData.zip
     URLS = {
         "well": "https://www.data.bsee.gov/Well/Files/APDRawData.zip",
         "production": "https://www.data.bsee.gov/Production/Files/ProductionRawData.zip",
@@ -28,8 +38,8 @@ class BSEEWebScraper:
         "portal": "https://www.data.bsee.gov/Main/RawData.aspx",
         "platform": "https://www.data.bsee.gov/Platform/Files/PlatStrucRawData.zip",
         "pipeline_permit": "https://www.data.bsee.gov/Pipeline/Files/PipePermRawData.zip",
-        "deepwater_structure": "https://www.data.bsee.gov/Platform/Files/PermStrucRawData.zip",
-        "pipeline_location": "https://www.data.bsee.gov/Pipeline/Files/PipeLocAllRawData.zip",
+        "deepwater_structure": "https://www.data.bsee.gov/Other/Files/PermStrucRawData.zip",
+        "pipeline_location": "https://www.data.bsee.gov/Pipeline/Files/PipeLocRawData.zip",
     }
 
     # Request configuration
