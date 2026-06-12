@@ -1,0 +1,4 @@
+incident_id,location,defect_type,depth_pct_wall,length_mm,pipe_od_mm,wall_thickness_mm,smys_mpa,maop_mpa,year
+PS-001,Segment A,corrosion,20,50,323.85,9.53,358.53,5.0,2024
+PS-002,Segment B,corrosion,60,200,323.85,9.53,358.53,5.0,2024
+PS-003,Segment C,corrosion,85,200,323.85,9.53,358.53,5.0,2024

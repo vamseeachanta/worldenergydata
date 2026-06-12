@@ -6,12 +6,15 @@ from assetutilities.common.ApplicationManager import ConfigureApplicationInputs
 
 # Third party imports
 from assetutilities.common.data import AttributeDict  # noqa
-from assetutilities.common.data import SaveData
+from assetutilities.common.data import (
+    SaveData,
+)
 from assetutilities.common.file_management import FileManagement
 from assetutilities.common.yml_utilities import WorkingWithYAML
 from loguru import logger
 
-# Reader imports
+# Reader imports — module-level so test doubles can patch
+# worldenergydata.engine.bsee / worldenergydata.engine.zip
 from worldenergydata.bsee.bsee import bsee
 from worldenergydata.bsee.zip_data_dwnld.zip import zip
 
@@ -39,7 +42,6 @@ def _configure_argv_inputfile(inputfile):
 
 
 def engine(inputfile: str = None, cfg: dict = None, config_flag: bool = True) -> dict:
-
     cfg_argv_dict = {}
     if cfg is None:
         inputfile, cfg_argv_dict = app_manager.validate_arguments_run_methods(inputfile)
@@ -107,6 +109,30 @@ def engine(inputfile: str = None, cfg: dict = None, config_flag: bool = True) ->
 
         landman_app = Landman()
         cfg_base = landman_app.router(cfg_base)
+
+    elif basename in ["fdas"]:
+        from worldenergydata.fdas.fdas import FDAS
+
+        fdas_app = FDAS()
+        cfg_base = fdas_app.router(cfg_base)
+
+    elif basename in ["pipeline_safety"]:
+        from worldenergydata.pipeline_safety.pipeline_safety import PipelineSafety
+
+        pipeline_safety_app = PipelineSafety()
+        cfg_base = pipeline_safety_app.router(cfg_base)
+
+    elif basename in ["production_forecast"]:
+        from worldenergydata.production.forecast.router import ProductionForecast
+
+        production_forecast_app = ProductionForecast()
+        cfg_base = production_forecast_app.router(cfg_base)
+
+    elif basename in ["marine_safety"]:
+        from worldenergydata.marine_safety.marine_safety import MarineSafety
+
+        marine_safety_app = MarineSafety()
+        cfg_base = marine_safety_app.router(cfg_base)
 
     elif basename in ["dwnld_from_zipurl"]:
         dwnld_from_zipurl = zip()
