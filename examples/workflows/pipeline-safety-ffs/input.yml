@@ -1,0 +1,17 @@
+basename: pipeline_safety
+
+meta:
+  label: pipeline_safety_ffs
+
+file_management:
+  flag: false
+  output_directory: outputs
+
+data:
+  source: csv
+  file: defects.csv
+
+analysis:
+  flag: true
+  type: ffs
+  method: modified_b31g

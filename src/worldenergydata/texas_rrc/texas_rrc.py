@@ -8,7 +8,9 @@ This module follows the SODIR architectural pattern to provide a consistent
 interface for Texas RRC data collection and analysis within the WorldEnergyData framework.
 """
 
+import json
 import logging
+from pathlib import Path
 from typing import Any, Dict
 
 logger = logging.getLogger(__name__)
@@ -116,6 +118,9 @@ class TexasRRC:
                 logger.info("Running Texas RRC analysis")
                 cfg = self.analysis_instance.router(cfg, data)
 
+            if cfg.get("data", {}).get("source") == "csv":
+                cfg = self._write_csv_workflow_outputs(cfg, data)
+
             # Add status information
             cfg[cfg["basename"]]["status"] = "completed"
             cfg[cfg["basename"]]["data_collected"] = list(data.keys()) if data else []
@@ -202,3 +207,37 @@ class TexasRRC:
     def get_valid_districts(self) -> list:
         """Return list of valid Texas RRC districts."""
         return self.VALID_DISTRICTS.copy()
+
+    def _write_csv_workflow_outputs(
+        self,
+        cfg: Dict[str, Any],
+        data: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """Persist deterministic outputs for local CSV registry workflows."""
+        from .processors import ProductionProcessor
+
+        production_records = data.get("production", {}).get("records", [])
+        processor = ProductionProcessor()
+        processed = processor.process(production_records, validate=False)
+        districts = processor.aggregate_by_district(processed)
+
+        label = cfg.get("meta", {}).get("label", "texas_rrc_production_summary")
+        result_folder = Path(cfg["Analysis"]["result_folder"])
+        result_folder.mkdir(parents=True, exist_ok=True)
+        districts_path = result_folder / f"{label}_districts.csv"
+        summary_path = result_folder / f"{label}_summary.json"
+
+        districts.to_csv(districts_path, index=False)
+        summary = {
+            "total_records": len(processed),
+            "district_count": int(len(districts)),
+            "oil_production_total": float(districts["oil_production"].sum()),
+            "gas_production_total": float(districts["gas_production"].sum()),
+        }
+        summary_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
+
+        cfg[cfg["basename"]]["outputs"] = {
+            "districts_csv": str(districts_path),
+            "summary_json": str(summary_path),
+        }
+        return cfg
