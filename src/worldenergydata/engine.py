@@ -5,8 +5,8 @@ from contextlib import contextmanager
 from assetutilities.common.ApplicationManager import ConfigureApplicationInputs
 
 # Third party imports
+from assetutilities.common.data import AttributeDict  # noqa
 from assetutilities.common.data import (
-    AttributeDict,  # noqa
     SaveData,
 )
 from assetutilities.common.file_management import FileManagement
