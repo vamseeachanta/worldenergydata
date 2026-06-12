@@ -673,8 +673,10 @@ class DataRefreshEnhanced:
                 "Processing deepwater structure data with enhanced optimizations"
             )
             try:
+                # Corrected 2026-06-10 (#267): moved from
+                # /Platform/Files/ to /Other/Files/ upstream.
                 deepwater_url = (
-                    "https://www.data.bsee.gov/Platform/Files/PermStrucRawData.zip"
+                    "https://www.data.bsee.gov/Other/Files/PermStrucRawData.zip"
                 )
                 if self.use_chunked_downloads:
                     logger.info("Using chunk-based download with change detection")
@@ -724,8 +726,10 @@ class DataRefreshEnhanced:
         if pipeline_loc_flag:
             logger.info("Processing pipeline location data with enhanced optimizations")
             try:
+                # Corrected 2026-06-10 (#267): PipeLocAllRawData went
+                # stale; live file is PipeLocRawData.zip.
                 pipeline_loc_url = (
-                    "https://www.data.bsee.gov/Pipeline/Files/PipeLocAllRawData.zip"
+                    "https://www.data.bsee.gov/Pipeline/Files/PipeLocRawData.zip"
                 )
                 if self.use_chunked_downloads:
                     logger.info("Using chunk-based download with change detection")

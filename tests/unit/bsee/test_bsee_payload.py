@@ -89,15 +89,32 @@ class TestSelectPrimaryMember:
         )
         assert chosen.filename.endswith("mv_platstruc_structures.txt")
 
-    def test_falls_back_to_largest_member(self):
+    def test_no_patterns_falls_back_to_largest_member(self):
+        """Largest-member fallback applies ONLY when patterns are omitted."""
         data = _bsee_style_zip(
             {"mv_small.txt": "a,b\n1,2\n", "mv_big.txt": "a,b\n" + "1,2\n" * 1000}
         )
-        chosen = select_primary_member(self._members(data), ["no_match_*.txt"])
-        assert chosen.filename.endswith("mv_big.txt")
+        for patterns in (None, []):
+            chosen = select_primary_member(self._members(data), patterns)
+            assert chosen.filename.endswith("mv_big.txt")
+
+    def test_pattern_miss_raises_lookup_error(self):
+        """Fail-closed: configured patterns that match nothing must raise,
+        not silently write the largest member (member rename / typo is a
+        deterministic contract failure, issue #460)."""
+        data = _bsee_style_zip(
+            {"mv_small.txt": "a,b\n1,2\n", "mv_big.txt": "a,b\n" + "1,2\n" * 1000}
+        )
+        with pytest.raises(LookupError, match="primary_member_patterns"):
+            select_primary_member(self._members(data), ["no_match_*.txt"])
 
     def test_empty_members_returns_none(self):
         assert select_primary_member([], ["x"]) is None
+
+    def test_extract_with_unmatched_patterns_raises(self):
+        data = _bsee_style_zip({"mv_other.txt": BSEE_TXT_CONTENT})
+        with pytest.raises(LookupError):
+            extract_primary_table(data, ["mv_renamed_member.txt"])
 
 
 class TestExtractPrimaryTable:
