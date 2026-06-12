@@ -129,17 +129,32 @@ def select_primary_member(
     """Pick the member holding the dataset's primary table.
 
     Tries each glob pattern in priority order against the member
-    basename (e.g. ``mv_platstruc_structures.txt``); falls back to the
-    largest data member, which for BSEE archives is the main entity
-    table in all observed datasets.
+    basename (e.g. ``mv_platstruc_structures.txt``). Pattern selection
+    is **fail-closed**: when patterns are configured and none match,
+    a ``LookupError`` is raised -- silently writing the largest member
+    after a member rename or a pattern typo would be data corruption
+    masquerading as success (deterministic contract failure, #460).
+
+    The largest-member fallback applies only when ``patterns`` is
+    omitted/empty; for BSEE archives the largest data member is the
+    main entity table in all observed datasets.
+
+    Raises:
+        LookupError: If ``patterns`` is non-empty and no member matches.
     """
     if not members:
         return None
-    for pattern in patterns or []:
-        for info in members:
-            basename = info.filename.rsplit("/", 1)[-1].lower()
-            if fnmatch(basename, pattern.lower()):
-                return info
+    if patterns:
+        for pattern in patterns:
+            for info in members:
+                basename = info.filename.rsplit("/", 1)[-1].lower()
+                if fnmatch(basename, pattern.lower()):
+                    return info
+        raise LookupError(
+            "no archive member matches configured primary_member_patterns "
+            f"{patterns}; members: {[i.filename for i in members][:10]} "
+            "-- upstream member rename or pattern typo (contract drift)"
+        )
     return max(members, key=lambda info: info.file_size)
 
 
@@ -173,7 +188,8 @@ def extract_primary_table(
 
     Raises:
         zipfile.BadZipFile: If the bytes are not a readable archive.
-        LookupError: If the archive holds no data members
+        LookupError: If the archive holds no data members, or if
+            ``member_patterns`` is non-empty and matches no member
             (deterministic failure -- the upstream contract changed).
     """
     with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf:
