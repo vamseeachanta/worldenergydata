@@ -57,10 +57,13 @@ def engine(inputfile: str = None, cfg: dict = None, config_flag: bool = True) ->
 
     if config_flag:
         fm = FileManagement()
-        with _configure_argv_inputfile(inputfile):
-            cfg_base = app_manager.configure(
-                cfg, library_name, basename, cfg_argv_dict, inputfile=inputfile
-            )
+        if inputfile is None:
+            cfg_base = app_manager.configure(cfg, library_name, basename, cfg_argv_dict)
+        else:
+            with _configure_argv_inputfile(inputfile):
+                cfg_base = app_manager.configure(
+                    cfg, library_name, basename, cfg_argv_dict, inputfile=inputfile
+                )
         cfg_base = fm.router(cfg_base)
         result_folder_dict, cfg_base = app_manager.configure_result_folder(
             None, cfg_base

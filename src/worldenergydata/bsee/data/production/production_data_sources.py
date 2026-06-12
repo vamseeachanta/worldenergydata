@@ -1,8 +1,8 @@
-from worldenergydata.bsee.data.sources.zip.production_data import GetProdDataFromZip
-
 from pathlib import Path
 
 import pandas as pd
+
+from worldenergydata.bsee.data.sources.zip.production_data import GetProdDataFromZip
 
 # Backward-compatible module-level handle used by legacy tests and callers that
 # patch ``worldenergydata.bsee.data.production.production_data_sources.production_from_zip``.
