@@ -296,8 +296,7 @@ class TestBseeAdapterUnknownPayload:
         assert "transient" in result.error_msg
         # Transient => bounded in-job retry per dataset.
         assert (
-            scraper.download_zip_to_memory.call_count
-            == 4 * TRANSIENT_DATASET_ATTEMPTS
+            scraper.download_zip_to_memory.call_count == 4 * TRANSIENT_DATASET_ATTEMPTS
         )
 
 
@@ -571,9 +570,7 @@ class TestBseeCatalogValidation:
         out_dir = tmp_path / "out"
 
         job = BseeRefreshJob()
-        result = job.run(
-            {"output_dir": str(out_dir), "catalog_path": str(catalog)}
-        )
+        result = job.run({"output_dir": str(out_dir), "catalog_path": str(catalog)})
 
         assert result.status == "failure"
         assert result.retryable is False
