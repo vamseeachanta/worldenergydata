@@ -325,9 +325,7 @@ class BseeRefreshJob(AbstractJob):
         outcome = None
         for attempt in range(1, TRANSIENT_DATASET_ATTEMPTS + 1):
             try:
-                outcome = self._process_dataset(
-                    scraper, dataset_name, info, output_dir
-                )
+                outcome = self._process_dataset(scraper, dataset_name, info, output_dir)
             except Exception as exc:  # e.g. parquet write / disk errors
                 outcome = DatasetFailure(
                     dataset_name,
