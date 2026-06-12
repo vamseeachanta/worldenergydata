@@ -45,8 +45,13 @@ class BSEEAnalysis:
         logger.info(f"Analysis config: {cfg.get('analysis', {})}")
 
         if "analysis" in cfg and cfg["analysis"].get("flag", False):
-            logger.info("Running analysis for all wells...")
-            cfg = self.run_analysis_for_all_wells(cfg, data)
+            analysis_type = cfg["analysis"].get("type", "all")
+            if analysis_type == "production":
+                logger.info("Running production analysis...")
+                cfg, _ = prod_api12_analysis.run_production_analysis(cfg, data)
+            else:
+                logger.info("Running analysis for all wells...")
+                cfg = self.run_analysis_for_all_wells(cfg, data)
         else:
             logger.info("Analysis not enabled or flag is False")
 

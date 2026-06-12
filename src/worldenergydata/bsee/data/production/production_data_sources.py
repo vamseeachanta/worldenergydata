@@ -1,5 +1,9 @@
 from worldenergydata.bsee.data.sources.zip.production_data import GetProdDataFromZip
 
+from pathlib import Path
+
+import pandas as pd
+
 # Backward-compatible module-level handle used by legacy tests and callers that
 # patch ``worldenergydata.bsee.data.production.production_data_sources.production_from_zip``.
 production_from_zip = GetProdDataFromZip()
@@ -21,6 +25,9 @@ class ProductionDataFromSources:
 
     def get_data(self, cfg):
 
+        if cfg["data"].get("source") == "csv":
+            return cfg, self.get_production_from_csv(cfg)
+
         # cfg = self.get_groups_data(cfg)
         production_data_groups = []
         if "by" in cfg["data"] and cfg["data"]["by"] == "zip":
@@ -37,6 +44,98 @@ class ProductionDataFromSources:
             production_data_groups.append(df_api12_array)
 
         return cfg, production_data_groups
+
+    def get_production_from_csv(self, cfg):
+        """Load grouped API12 production frames from local workflow CSV files."""
+        production_data_groups = []
+        analysis_root = Path(cfg["Analysis"]["analysis_root_folder"])
+
+        for group in cfg["data"].get("groups", []):
+            api12_array = [str(api12) for api12 in group.get("api12", [])]
+            frames = []
+            for file_name in group.get("production", {}).get("files", []):
+                file_path = Path(file_name)
+                if not file_path.is_absolute():
+                    file_path = analysis_root / file_path
+                df = pd.read_csv(file_path, dtype={"API_WELL_NUMBER": str})
+                frames.append(self._normalize_production_csv(df))
+
+            if frames:
+                group_df = pd.concat(frames, ignore_index=True)
+            else:
+                group_df = pd.DataFrame()
+
+            api12_dataframes = {}
+            for api12 in api12_array:
+                if group_df.empty:
+                    api12_dataframes[api12] = pd.DataFrame()
+                else:
+                    api12_dataframes[api12] = group_df[
+                        group_df["API_WELL_NUMBER"].astype(str) == api12
+                    ].copy()
+            production_data_groups.append(api12_dataframes)
+
+        return production_data_groups
+
+    def _normalize_production_csv(self, df):
+        rename_map = {
+            "PROD_DATE": "PRODUCTION_DATE",
+            "OIL_PRODUCTION": "MON_O_PROD_VOL",
+            "GAS_PRODUCTION": "MON_G_PROD_VOL",
+            "WATER_PRODUCTION": "MON_WTR_PROD_VOL",
+        }
+        normalized = df.rename(columns=rename_map).copy()
+
+        defaults = {
+            "LEASE_NUMBER": "",
+            "COMPLETION_NAME": "",
+            "DAYS_ON_PROD": 0,
+            "PRODUCT_CODE": "O",
+            "MON_O_PROD_VOL": 0,
+            "MON_G_PROD_VOL": 0,
+            "MON_WTR_PROD_VOL": 0,
+            "API_WELL_NUMBER": "",
+            "WELL_STAT_CD": "",
+            "AREA_CODE_BLOCK_NUM": "",
+            "OPERATOR_NUM": "",
+            "SORT_NAME": "",
+            "BOEM_FIELD": "",
+            "INJECTION_VOLUME": 0,
+            "PROD_INTERVAL_CD": "",
+            "FIRST_PROD_DATE": "",
+            "UNIT_AGT_NUMBER": "",
+            "UNIT_ALOC_SUFFIX": "",
+        }
+        for column, default in defaults.items():
+            if column not in normalized.columns:
+                normalized[column] = default
+
+        normalized["API_WELL_NUMBER"] = normalized["API_WELL_NUMBER"].astype(str)
+        normalized["PRODUCTION_DATE"] = normalized["PRODUCTION_DATE"].apply(
+            self._production_month
+        )
+        for column in [
+            "DAYS_ON_PROD",
+            "MON_O_PROD_VOL",
+            "MON_G_PROD_VOL",
+            "MON_WTR_PROD_VOL",
+            "INJECTION_VOLUME",
+        ]:
+            normalized[column] = pd.to_numeric(normalized[column], errors="coerce")
+            normalized[column] = normalized[column].fillna(0)
+
+        return normalized
+
+    def _production_month(self, value):
+        if pd.isna(value):
+            return 0
+        text = str(value).strip()
+        if text.endswith(".0"):
+            text = text[:-2]
+        if len(text) == 6 and text.isdigit():
+            return int(text)
+        timestamp = pd.to_datetime(text, errors="raise")
+        return int(timestamp.strftime("%Y%m"))
 
     def get_production_from_zip(self, cfg, api12):
 
