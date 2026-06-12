@@ -12,8 +12,8 @@ This catalog documents 4 infrastructure datasets from data.bsee.gov that supplem
 |---------|-----|----------|-----|-----------------|-------------|
 | Platform Structures | `platform` | PlatStrucRawData.zip | data.bsee.gov/Platform/Files/PlatStrucRawData.zip | Daily | ~2 MB |
 | Pipeline Permits | `pipeline_permit` | PipePermRawData.zip | data.bsee.gov/Pipeline/Files/PipePermRawData.zip | Daily | ~5 MB |
-| Deepwater Structures | `deepwater_structure` | PermStrucRawData.zip | data.bsee.gov/Platform/Files/PermStrucRawData.zip | Daily | ~1 MB |
-| Pipeline Locations | `pipeline_location` | PipeLocAllRawData.zip | data.bsee.gov/Pipeline/Files/PipeLocAllRawData.zip | Daily | ~15 MB |
+| Deepwater Structures | `deepwater_structure` | PermStrucRawData.zip | data.bsee.gov/Other/Files/PermStrucRawData.zip | Daily | ~1 MB |
+| Pipeline Locations | `pipeline_location` | PipeLocRawData.zip | data.bsee.gov/Pipeline/Files/PipeLocRawData.zip | Daily | ~15 MB |
 
 ---
 
@@ -180,7 +180,7 @@ Similar to Platform Structures with additional fields:
 
 ---
 
-## 4. Pipeline Locations (PipeLocAllRawData)
+## 4. Pipeline Locations (PipeLocRawData)
 
 Geographic coordinate points for all OCS pipeline segments.
 
