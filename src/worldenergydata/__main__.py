@@ -1,6 +1,10 @@
-"""WorldEnergyData CLI Entry Point
+"""WorldEnergyData module entry point.
 
-Unified command-line interface for global energy market data operations.
+Supports two invocation modes:
+
+- ``python -m worldenergydata path/to/input.yml`` routes YAML files through
+  ``worldenergydata.engine.engine`` for durable workflow execution.
+- All other invocations fall through to the Typer command-line interface.
 
 Usage:
 ------
@@ -22,7 +26,7 @@ Examples:
     worldenergydata fdas calculate-npv --cashflows "[-1000,100,200,300]"
 
 For legacy YAML-based engine usage:
-    python -m worldenergydata.engine <config.yaml>
+    python -m worldenergydata <config.yaml>
 
 Contact:
 --------
@@ -35,7 +39,26 @@ Version:
 - worldenergydata v0.1.0
 """
 
-from worldenergydata.cli.main import app
+import sys
+from pathlib import Path
+
+
+def _is_yaml_input(argument: str) -> bool:
+    path = Path(argument)
+    return path.suffix.lower() in {".yml", ".yaml"} and path.is_file()
+
+
+def main():
+    if len(sys.argv) > 1 and _is_yaml_input(sys.argv[1]):
+        from worldenergydata.engine import engine
+
+        engine()
+        return
+
+    from worldenergydata.cli.main import app
+
+    app()
+
 
 if __name__ == "__main__":
-    app()
+    main()

@@ -18,11 +18,19 @@ class BSEEData:
 
         cfg, _ = self._data_refresh.router(cfg)
 
-        cfg = self._block.router(cfg)
+        data_cfg = cfg.get("data", {})
 
-        cfg, well_data = self._well.router(cfg)
+        if data_cfg.get("block_data", True):
+            cfg = self._block.router(cfg)
+
+        well_data = []
+        if data_cfg.get("well_data", True):
+            cfg, well_data = self._well.router(cfg)
+
         cfg, production_data = self._production.router(cfg)
-        cfg = self._lease.router(cfg)
+
+        if data_cfg.get("lease_data", True):
+            cfg = self._lease.router(cfg)
 
         data = {"well_data": well_data, "production_data": production_data}
 

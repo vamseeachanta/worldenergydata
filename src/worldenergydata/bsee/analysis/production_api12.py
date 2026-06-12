@@ -1,5 +1,6 @@
 # Standard library imports
 import datetime
+import json
 import os
 
 # Third party imports
@@ -273,6 +274,20 @@ class ProductionAPI12Analysis:
         file_label = "prod_summ_" + groups_label
         file_name = os.path.join(result_folder, file_label + ".csv")
         production_summary_df_groups.to_csv(file_name, index=False)
+        json_file_name = os.path.join(result_folder, file_label + ".json")
+        payload = {
+            "records": production_summary_df_groups.to_dict(orient="records"),
+            "totals": {
+                "oil_bbl": float(
+                    production_summary_df_groups["O_CUMMULATIVE_PROD_MMBBL"].sum()
+                    * 1_000_000
+                ),
+                "days_on_prod": int(production_summary_df_groups["DAYS_ON_PROD"].sum()),
+                "well_count": int(production_summary_df_groups["API12"].nunique()),
+            },
+        }
+        with open(json_file_name, "w") as fp:
+            json.dump(payload, fp, indent=2, default=str)
 
         file_label = "prod_rate_bopd_" + groups_label
         file_name = os.path.join(result_folder, file_label + ".csv")

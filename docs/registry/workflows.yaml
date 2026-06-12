@@ -1,0 +1,29 @@
+schema_version: 1
+invocation: "uv run python -m worldenergydata {input}"
+workflows:
+  - id: bsee-production-summary
+    basename: bsee
+    title: BSEE production summary from bundled CSV data
+    input: examples/workflows/bsee-production-summary/input.yml
+    outputs:
+      - examples/workflows/bsee-production-summary/outputs/prod_summ_bsee_production_summary.csv
+      - examples/workflows/bsee-production-summary/outputs/prod_summ_bsee_production_summary.json
+      - examples/workflows/bsee-production-summary/outputs/prod_rate_bopd_bsee_production_summary.csv
+      - examples/workflows/bsee-production-summary/outputs/prod_cumulative_mmbbl_bsee_production_summary.csv
+      - examples/workflows/bsee-production-summary/outputs/prod_all_block_WR_718.csv
+      - examples/workflows/bsee-production-summary/outputs/prod_raw_bsee_production_summary.xlsx
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[bsee-production-summary]
+    runtime: offline
+  - id: bsee-well-comparison
+    basename: bsee
+    title: BSEE well comparison from bundled CSV data
+    input: examples/workflows/bsee-well-comparison/input.yml
+    outputs:
+      - examples/workflows/bsee-well-comparison/outputs/prod_summ_bsee_well_comparison.csv
+      - examples/workflows/bsee-well-comparison/outputs/prod_summ_bsee_well_comparison.json
+      - examples/workflows/bsee-well-comparison/outputs/prod_rate_bopd_bsee_well_comparison.csv
+      - examples/workflows/bsee-well-comparison/outputs/prod_cumulative_mmbbl_bsee_well_comparison.csv
+      - examples/workflows/bsee-well-comparison/outputs/prod_all_block_MC_778.csv
+      - examples/workflows/bsee-well-comparison/outputs/prod_raw_bsee_well_comparison.xlsx
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[bsee-well-comparison]
+    runtime: offline
