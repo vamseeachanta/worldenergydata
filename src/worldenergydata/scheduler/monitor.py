@@ -78,13 +78,26 @@ class RetryManager:
         """Call job_fn up to max_retries times; return last result.
 
         If job_fn raises an exception it is caught and treated as a failure.
-        Retries stop early on success.
+        Retries stop early on success, and stop immediately (no backoff
+        sleep) when the result is marked non-retryable -- deterministic
+        failures such as a stale upstream URL cannot succeed on retry
+        (issue #460).
         """
         last_result: Optional[JobResult] = None
         for attempt in range(self.max_retries):
             try:
                 result = job_fn()
                 if result.status == "success":
+                    return result
+                if not getattr(result, "retryable", True):
+                    logger.warning(
+                        "Job '%s' failed deterministically (retryable=False); "
+                        "skipping remaining %d retr%s: %s",
+                        result.job_name,
+                        self.max_retries - attempt - 1,
+                        "y" if self.max_retries - attempt - 1 == 1 else "ies",
+                        result.error_msg,
+                    )
                     return result
                 last_result = result
             except Exception as exc:

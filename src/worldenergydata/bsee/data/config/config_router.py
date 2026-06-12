@@ -141,11 +141,15 @@ class ConfigRouter:
                     "update_frequency": "daily",
                 },
                 "deepwater_structure": {
-                    "url": "https://www.data.bsee.gov/Platform/Files/PermStrucRawData.zip",
+                    # Corrected 2026-06-10 (#267): moved from
+                    # /Platform/Files/ to /Other/Files/ upstream.
+                    "url": "https://www.data.bsee.gov/Other/Files/PermStrucRawData.zip",
                     "update_frequency": "daily",
                 },
                 "pipeline_location": {
-                    "url": "https://www.data.bsee.gov/Pipeline/Files/PipeLocAllRawData.zip",
+                    # Corrected 2026-06-10 (#267): PipeLocAll went
+                    # stale; live file is PipeLocRawData.zip.
+                    "url": "https://www.data.bsee.gov/Pipeline/Files/PipeLocRawData.zip",
                     "update_frequency": "daily",
                 },
             },

@@ -25,7 +25,15 @@ INTERVAL_DAYS = {
 
 @dataclass
 class JobResult:
-    """Result of a single job execution."""
+    """Result of a single job execution.
+
+    Attributes:
+        retryable: Whether the scheduler retry layer may re-run the job
+            after a non-success result. Jobs set this to False for
+            deterministic failures (e.g. a stale upstream URL serving
+            HTML) that cannot succeed on immediate retry (issue #460).
+            Ignored when status is "success".
+    """
 
     job_name: str
     start_time: datetime
@@ -33,6 +41,7 @@ class JobResult:
     status: str  # "success", "failure", "skipped"
     records_updated: int
     error_msg: Optional[str]
+    retryable: bool = True
 
 
 class AbstractJob(ABC):

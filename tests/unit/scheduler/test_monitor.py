@@ -17,7 +17,9 @@ from worldenergydata.scheduler.monitor import (
 )
 
 
-def make_result(name="bsee_refresh", status="success", records=10, error=None):
+def make_result(
+    name="bsee_refresh", status="success", records=10, error=None, retryable=True
+):
     now = datetime.now()
     return JobResult(
         job_name=name,
@@ -26,6 +28,7 @@ def make_result(name="bsee_refresh", status="success", records=10, error=None):
         status=status,
         records_updated=records,
         error_msg=error,
+        retryable=retryable,
     )
 
 
@@ -152,6 +155,41 @@ class TestRetryManager:
         assert result.status == "failure"
         assert "Unexpected crash" in result.error_msg
         assert call_count == 2
+
+    def test_non_retryable_failure_runs_once_with_zero_sleeps(self):
+        """Deterministic failures (retryable=False) must stop the retry
+        loop immediately, with no backoff sleep (issue #460)."""
+        call_count = 0
+
+        def job_fn():
+            nonlocal call_count
+            call_count += 1
+            return make_result(
+                status="failure",
+                error="[deterministic] stale URL",
+                retryable=False,
+            )
+
+        manager = RetryManager(max_retries=3, backoff_seconds=60)
+        with patch("worldenergydata.scheduler.monitor.time.sleep") as mock_sleep:
+            result = manager.run_with_retry(job_fn)
+
+        assert result.status == "failure"
+        assert call_count == 1
+        mock_sleep.assert_not_called()
+
+    def test_retryable_failure_still_retries(self):
+        """Default retryable=True keeps the existing retry behavior."""
+        call_count = 0
+
+        def job_fn():
+            nonlocal call_count
+            call_count += 1
+            return make_result(status="failure", error="transient")
+
+        manager = RetryManager(max_retries=3, backoff_seconds=0)
+        manager.run_with_retry(job_fn)
+        assert call_count == 3
 
     def test_retry_uses_exponential_backoff(self):
         """Backoff doubles: 60s -> 120s -> 240s."""
