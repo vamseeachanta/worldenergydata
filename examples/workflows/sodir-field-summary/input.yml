@@ -1,0 +1,16 @@
+basename: sodir
+
+meta:
+  label: sodir_field_summary
+
+file_management:
+  flag: false
+  output_directory: outputs
+
+data:
+  source: csv
+  input_path: data
+
+analysis:
+  enabled: true
+  type: field_summary

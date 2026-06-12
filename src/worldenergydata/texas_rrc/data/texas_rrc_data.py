@@ -68,6 +68,9 @@ class TexasRRCData:
         Raises:
             TexasRRCDataError: If data collection fails
         """
+        if cfg.get("data", {}).get("source") == "csv":
+            return self._router_from_csv(cfg)
+
         data_types = cfg.get("data_types", ["production"])
         output_cfg = cfg.get("output", {})
         output_dir = Path(output_cfg.get("directory", "./data/texas_rrc"))
@@ -94,6 +97,42 @@ class TexasRRCData:
                 "collected": list(collected_data.keys()),
                 "errors": errors,
                 "output_dir": str(output_dir),
+            }
+
+        return cfg, collected_data
+
+    def _router_from_csv(
+        self,
+        cfg: Dict[str, Any],
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+        """Load configured Texas RRC data types from local CSV files."""
+        from worldenergydata.texas_rrc.data.loaders.csv_loader import CSVLoader
+
+        input_root = Path(cfg["Analysis"]["analysis_root_folder"])
+        files = cfg.get("data", {}).get("files", {})
+        collected_data: Dict[str, Any] = {}
+        errors: Dict[str, str] = {}
+
+        for data_type in cfg.get("data_types", ["production"]):
+            if data_type not in files:
+                errors[data_type] = "No CSV file configured"
+                continue
+            try:
+                file_path = input_root / files[data_type]
+                records = CSVLoader().load(file_path)
+                collected_data[data_type] = {
+                    "records": records,
+                    "file_path": str(file_path),
+                    "status": "loaded",
+                }
+            except Exception as exc:
+                errors[data_type] = str(exc)
+
+        if cfg.get("basename"):
+            cfg[cfg["basename"]]["data"] = {
+                "collected": list(collected_data.keys()),
+                "errors": errors,
+                "source": "csv",
             }
 
         return cfg, collected_data
