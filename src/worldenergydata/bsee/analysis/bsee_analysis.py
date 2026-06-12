@@ -46,7 +46,8 @@ class BSEEAnalysis:
 
         if "analysis" in cfg and cfg["analysis"].get("flag", False):
             analysis_type = cfg["analysis"].get("type", "all")
-            if analysis_type == "production":
+            has_production_groups = bool(cfg.get("data", {}).get("groups"))
+            if analysis_type == "production" and has_production_groups:
                 logger.info("Running production analysis...")
                 cfg, _ = prod_api12_analysis.run_production_analysis(cfg, data)
             else:

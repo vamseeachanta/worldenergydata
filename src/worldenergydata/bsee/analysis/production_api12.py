@@ -279,9 +279,7 @@ class ProductionAPI12Analysis:
             "records": production_summary_df_groups.to_dict(orient="records"),
             "totals": {
                 "oil_bbl": float(
-                    production_summary_df_groups[
-                        "O_CUMMULATIVE_PROD_MMBBL"
-                    ].sum()
+                    production_summary_df_groups["O_CUMMULATIVE_PROD_MMBBL"].sum()
                     * 1_000_000
                 ),
                 "days_on_prod": int(production_summary_df_groups["DAYS_ON_PROD"].sum()),

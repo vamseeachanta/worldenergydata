@@ -39,8 +39,8 @@ Version:
 - worldenergydata v0.1.0
 """
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 
 def _is_yaml_input(argument: str) -> bool:

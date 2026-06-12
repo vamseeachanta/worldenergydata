@@ -10,7 +10,6 @@ import yaml
 
 from worldenergydata.engine import engine
 
-
 REPO_ROOT = Path(__file__).resolve().parents[2]
 REGISTRY_PATH = REPO_ROOT / "docs" / "registry" / "workflows.yaml"
 
