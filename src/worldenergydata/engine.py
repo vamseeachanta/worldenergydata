@@ -1,4 +1,7 @@
 # Standard library imports
+import sys
+from contextlib import contextmanager
+
 from assetutilities.common.ApplicationManager import ConfigureApplicationInputs
 
 # Third party imports
@@ -17,6 +20,22 @@ save_data = SaveData()
 wwyaml = WorkingWithYAML()
 
 library_name = "worldenergydata"
+
+
+@contextmanager
+def _configure_argv_inputfile(inputfile):
+    """Expose programmatic inputfile calls to legacy argv-based config merging."""
+    if inputfile is None:
+        yield
+        return
+
+    original_argv = sys.argv[:]
+    if len(sys.argv) < 2 or sys.argv[1] != inputfile:
+        sys.argv = [sys.argv[0], inputfile, *sys.argv[1:]]
+    try:
+        yield
+    finally:
+        sys.argv = original_argv
 
 
 def engine(inputfile: str = None, cfg: dict = None, config_flag: bool = True) -> dict:
@@ -38,7 +57,13 @@ def engine(inputfile: str = None, cfg: dict = None, config_flag: bool = True) ->
 
     if config_flag:
         fm = FileManagement()
-        cfg_base = app_manager.configure(cfg, library_name, basename, cfg_argv_dict)
+        if inputfile is None:
+            cfg_base = app_manager.configure(cfg, library_name, basename, cfg_argv_dict)
+        else:
+            with _configure_argv_inputfile(inputfile):
+                cfg_base = app_manager.configure(
+                    cfg, library_name, basename, cfg_argv_dict, inputfile=inputfile
+                )
         cfg_base = fm.router(cfg_base)
         result_folder_dict, cfg_base = app_manager.configure_result_folder(
             None, cfg_base
@@ -98,3 +123,7 @@ def engine(inputfile: str = None, cfg: dict = None, config_flag: bool = True) ->
     app_manager.save_cfg(cfg_base=cfg_base)
 
     return cfg_base
+
+
+if __name__ == "__main__":
+    engine()
