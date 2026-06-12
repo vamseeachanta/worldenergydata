@@ -27,3 +27,168 @@ workflows:
       - examples/workflows/bsee-well-comparison/outputs/prod_raw_bsee_well_comparison.xlsx
     test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[bsee-well-comparison]
     runtime: offline
+  - id: fdas-field-npv
+    basename: fdas
+    title: FDAS field economics NPV from bundled cashflow CSV
+    input: examples/workflows/fdas-field-npv/input.yml
+    outputs:
+      - examples/workflows/fdas-field-npv/outputs/fdas_field_npv_metrics.csv
+      - examples/workflows/fdas-field-npv/outputs/fdas_field_npv_summary.json
+    assertions:
+      json:
+        - path: examples/workflows/fdas-field-npv/outputs/fdas_field_npv_summary.json
+          equals:
+            field.name: Synthetic Anchor
+            metrics.payback_years: 2.0
+          approx:
+            metrics.npv: 243.42599549211099
+            metrics.irr_annual: 0.23375192852825855
+      csv:
+        - path: examples/workflows/fdas-field-npv/outputs/fdas_field_npv_metrics.csv
+          row_count: 1
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[fdas-field-npv]
+    runtime: offline
+  - id: fdas-npv-sensitivity
+    basename: fdas
+    title: FDAS NPV sensitivity matrix for price and production rate
+    input: examples/workflows/fdas-npv-sensitivity/input.yml
+    outputs:
+      - examples/workflows/fdas-npv-sensitivity/outputs/fdas_npv_sensitivity_matrix.csv
+      - examples/workflows/fdas-npv-sensitivity/outputs/fdas_npv_sensitivity_summary.json
+    assertions:
+      json:
+        - path: examples/workflows/fdas-npv-sensitivity/outputs/fdas_npv_sensitivity_summary.json
+          equals:
+            best_case.price_multiplier: 1.2
+            best_case.rate_multiplier: 1.2
+          approx:
+            best_case.npv: 541.8482344102176
+            worst_case.npv: -452.8925619834712
+      csv:
+        - path: examples/workflows/fdas-npv-sensitivity/outputs/fdas_npv_sensitivity_matrix.csv
+          row_count: 4
+          column_sums:
+            npv: -21.036814425244776
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[fdas-npv-sensitivity]
+    runtime: offline
+  - id: pipeline-safety-ffs
+    basename: pipeline_safety
+    title: Pipeline safety FFS verdicts from bundled defect CSV
+    input: examples/workflows/pipeline-safety-ffs/input.yml
+    outputs:
+      - examples/workflows/pipeline-safety-ffs/outputs/pipeline_safety_ffs_report.csv
+      - examples/workflows/pipeline-safety-ffs/outputs/pipeline_safety_ffs_summary.json
+      - examples/workflows/pipeline-safety-ffs/outputs/pipeline_safety_ffs_narrative.txt
+    assertions:
+      json:
+        - path: examples/workflows/pipeline-safety-ffs/outputs/pipeline_safety_ffs_summary.json
+          equals:
+            verdict_summary.accept: 1
+            verdict_summary.monitor: 1
+            verdict_summary.replace: 1
+          approx:
+            minimum_safe_pressure_mpa: 5.0341
+      csv:
+        - path: examples/workflows/pipeline-safety-ffs/outputs/pipeline_safety_ffs_report.csv
+          row_count: 3
+          column_counts:
+            verdict:
+              accept: 1
+              monitor: 1
+              replace: 1
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[pipeline-safety-ffs]
+    runtime: offline
+  - id: production-forecast-arps
+    basename: production_forecast
+    title: Production forecast Arps decline from bundled synthetic histories
+    input: examples/workflows/production-forecast-arps/input.yml
+    outputs:
+      - examples/workflows/production-forecast-arps/outputs/production_forecast_arps_cases.csv
+      - examples/workflows/production-forecast-arps/outputs/production_forecast_arps_summary.json
+    assertions:
+      json:
+        - path: examples/workflows/production-forecast-arps/outputs/production_forecast_arps_summary.json
+          approx:
+            cases.exponential.eur_bbl: 9000.0
+            cases.exponential.r_squared: 1.0
+            cases.hyperbolic.eur_bbl: 13675.444679663216
+            cases.hyperbolic.r_squared: 1.0
+      csv:
+        - path: examples/workflows/production-forecast-arps/outputs/production_forecast_arps_cases.csv
+          row_count: 2
+          column_sums:
+            eur_bbl: 22675.444679663216
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[production-forecast-arps]
+    runtime: offline
+  - id: marine-safety-stats
+    basename: marine_safety
+    title: Marine safety incident statistics from bundled CSV data
+    input: examples/workflows/marine-safety-stats/input.yml
+    outputs:
+      - examples/workflows/marine-safety-stats/outputs/marine_safety_stats_incident_type_counts.csv
+      - examples/workflows/marine-safety-stats/outputs/marine_safety_stats_trends.csv
+      - examples/workflows/marine-safety-stats/outputs/marine_safety_stats_summary.json
+    assertions:
+      json:
+        - path: examples/workflows/marine-safety-stats/outputs/marine_safety_stats_summary.json
+          equals:
+            total_incidents: 5
+            by_source.maib: 2
+            by_source.tsb: 3
+            incident_type_counts.fire: 2
+      csv:
+        - path: examples/workflows/marine-safety-stats/outputs/marine_safety_stats_incident_type_counts.csv
+          row_count: 4
+          column_sums:
+            count: 5
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[marine-safety-stats]
+    runtime: offline
+  - id: sodir-field-summary
+    basename: sodir
+    title: SODIR field portfolio summary from bundled CSV data
+    input: examples/workflows/sodir-field-summary/input.yml
+    outputs:
+      - examples/workflows/sodir-field-summary/outputs/sodir_field_summary_portfolio.json
+      - examples/workflows/sodir-field-summary/outputs/sodir_field_summary_fields.csv
+      - examples/workflows/sodir-field-summary/outputs/sodir_field_summary_production.csv
+    assertions:
+      json:
+        - path: examples/workflows/sodir-field-summary/outputs/sodir_field_summary_portfolio.json
+          equals:
+            total_fields: 2
+            fields_by_status.PRODUCING: 1
+            fields_by_status.IDLE: 1
+          approx:
+            total_recoverable_oil: 150.0
+            average_recovery_factor: 0.4
+      csv:
+        - path: examples/workflows/sodir-field-summary/outputs/sodir_field_summary_fields.csv
+          row_count: 2
+          column_sums:
+            recoverable_oil_mmbbl: 150.0
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[sodir-field-summary]
+    runtime: offline
+  - id: texas-rrc-production-summary
+    basename: texas_rrc
+    title: Texas RRC production summary from bundled CSV data
+    input: examples/workflows/texas-rrc-production-summary/input.yml
+    outputs:
+      - examples/workflows/texas-rrc-production-summary/outputs/texas_rrc_production_summary_districts.csv
+      - examples/workflows/texas-rrc-production-summary/outputs/texas_rrc_production_summary_summary.json
+    assertions:
+      json:
+        - path: examples/workflows/texas-rrc-production-summary/outputs/texas_rrc_production_summary_summary.json
+          equals:
+            total_records: 3
+            district_count: 2
+          approx:
+            oil_production_total: 600.0
+            gas_production_total: 1700.0
+      csv:
+        - path: examples/workflows/texas-rrc-production-summary/outputs/texas_rrc_production_summary_districts.csv
+          row_count: 2
+          column_sums:
+            oil_production: 600.0
+            gas_production: 1700.0
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[texas-rrc-production-summary]
+    runtime: offline
