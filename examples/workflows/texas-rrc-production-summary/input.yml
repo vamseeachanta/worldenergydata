@@ -1,0 +1,22 @@
+basename: texas_rrc
+
+meta:
+  label: texas_rrc_production_summary
+
+file_management:
+  flag: false
+  output_directory: outputs
+
+data:
+  source: csv
+  files:
+    production: production.csv
+
+data_types:
+  - production
+
+analysis:
+  enabled: true
+  types:
+    - production
+  aggregation: district
