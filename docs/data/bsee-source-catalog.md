@@ -35,14 +35,21 @@ These are encoded as code + tests in
      `/Other/Files/PermStrucRawData.zip`
    - `pipeline_location`: `PipeLocAllRawData.zip` →
      `PipeLocRawData.zip`
-   A drift-guard test asserts `config/bsee.yml`,
-   `BSEEWebScraper.URLS`, and `url_registry.py` agree.
+   Drift guards: one test asserts `config/bsee.yml`,
+   `BSEEWebScraper.URLS`, and `url_registry.py` agree on every
+   scheduler dataset URL; a second scans the whole `bsee` + `scheduler`
+   source trees (and `config/bsee.yml`) so the two known-stale URL
+   strings cannot be reintroduced anywhere in live code (docs/tests
+   may still mention them as history).
 3. **Archives contain no `.csv`.** Each zip holds a leading directory
    entry plus quoted-CSV **`.txt`** members with CRLF endings (e.g.
    `PlatStrucRawData/mv_platstruc_structures.txt`). Extraction skips
-   directory entries, selects the primary member by configured glob
-   (fallback: largest member), and tolerates latin-1 bytes in operator
-   names.
+   directory entries and selects the primary member by configured
+   glob, **fail-closed**: when patterns are configured and none match
+   (member rename / pattern typo), extraction raises instead of
+   silently writing the largest member. The largest-member fallback
+   applies only when no patterns are configured. Latin-1 bytes in
+   operator names are tolerated.
 4. **Healthy responses** use `Content-Type:
    application/x-zip-compressed` and carry `Last-Modified` (files are
    regenerated daily). The optional live smoke test
@@ -51,11 +58,26 @@ These are encoded as code + tests in
 ## Failure classification (issue #460 interface)
 
 `DatasetFailure` carries `FailureClass.DETERMINISTIC` (stale-URL HTML,
-empty body, archive without data members, zero-row parse) vs
-`FailureClass.TRANSIENT` (timeouts, connection errors, corrupt
-payload). When *all* datasets fail deterministically, the job's
-`error_msg` is prefixed `[deterministic]` so the scheduler retry layer
-can skip backoff.
+empty body, archive without data members, unmatched member patterns,
+zero-row parse) vs `FailureClass.TRANSIENT` (timeouts, connection
+errors, corrupt payload, unrecognized non-HTML bodies). The retry
+contract is wired structurally, not by string convention:
+
+- Transient per-dataset failures are retried in-job (bounded,
+  `TRANSIENT_DATASET_ATTEMPTS = 2`).
+- `JobResult.retryable` (default `True`) tells
+  `RetryManager.run_with_retry()` whether re-running the job can help;
+  the manager returns immediately -- no backoff sleep -- on a
+  non-retryable result (covered by scheduler-level tests).
+- All datasets failing deterministically → `status="failure"`,
+  `retryable=False`, `error_msg` prefixed `[deterministic]` (the
+  prefix is kept for operators/logs; the scheduler acts on the field).
+- Partial refresh with only deterministic failures → `status="success"`
+  with an explicit `[partial:deterministic]` message (retry cannot fix
+  a stale URL; written datasets count).
+- Partial refresh with any transient failure remaining →
+  `status="failure"`, `retryable=True`, so the scheduler retry layer
+  re-runs the job rather than masking a stale dataset as success.
 
 ## Deliberately out of scope
 
