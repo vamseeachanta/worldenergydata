@@ -193,8 +193,12 @@ jobs:
         run: |
           echo "Scope: ${{ steps.targets.outputs.scope }}"
           echo "Targets: ${{ steps.targets.outputs.targets }}"
+          # tests/performance asserts wall-clock budgets and is excluded from
+          # xdist runs (workers share CPU and break timing assertions); the
+          # full matrix runs it sequentially.
           uv run --with pytest-xdist pytest ${{ steps.targets.outputs.targets }} \
             -n auto \
+            --ignore=tests/performance \
             --tb=short \
             --junitxml=test-results.xml
 
@@ -240,11 +244,15 @@ jobs:
         run: |
           uv run --with pytest-xdist pytest tests/ \
             -n auto \
+            --ignore=tests/performance \
             --tb=short \
             --cov=src \
             --cov-report=xml:coverage.xml \
             --cov-report=term-missing \
             --junitxml=test-results.xml
+
+      - name: Run performance tests (sequential — wall-clock assertions)
+        run: uv run pytest tests/performance --tb=short
 
       - name: Upload test results
         uses: actions/upload-artifact@v7
