@@ -159,9 +159,15 @@ jobs:
         run: |
           # Always-on cross-cutting set: engine contract, assetutilities
           # contracts, and the durable-workflow registry.
-          targets="tests/unit/core tests/unit/common tests/contracts tests/workflows"
-          declare -A module_dirs=(
-            [bsee]="tests/unit/bsee tests/integration/modules/bsee"
+          # Two execution buckets:
+          #   xdist — unit-style dirs, parallel-safe
+          #   seq   — tests/integration/** (a CLI edge-case test hard-exits
+          #           the process and kills xdist workers) and
+          #           tests/performance (wall-clock assertions)
+          xdist="tests/unit/core tests/unit/common tests/contracts tests/workflows"
+          seq=""
+          declare -A module_xdist=(
+            [bsee]="tests/unit/bsee"
             [fdas]="tests/unit/fdas"
             [sodir]="tests/unit/sodir"
             [texas_rrc]="tests/unit/texas_rrc"
@@ -173,41 +179,57 @@ jobs:
             [production]="tests/unit/production"
             [cli]="tests/unit/cli"
           )
+          declare -A module_seq=(
+            [bsee]="tests/integration/modules/bsee"
+          )
           if [ "$CORE" = "true" ] || echo "$UNCLASSIFIED" | grep -q true; then
             # Core or unmapped paths changed: fail safe, run the whole tree.
             echo "scope=full" >> "$GITHUB_OUTPUT"
-            echo "targets=tests/" >> "$GITHUB_OUTPUT"
+            echo "xdist_targets=tests/" >> "$GITHUB_OUTPUT"
+            echo "seq_targets=tests/integration tests/performance" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          for mod in "${!module_dirs[@]}"; do
+          for mod in "${!module_xdist[@]}"; do
             if echo "$MATCHED" | grep -q "\"$mod\""; then
-              for d in ${module_dirs[$mod]}; do
-                [ -d "$d" ] && targets="$targets $d"
+              for d in ${module_xdist[$mod]}; do
+                [ -d "$d" ] && xdist="$xdist $d"
+              done
+              for d in ${module_seq[$mod]:-}; do
+                [ -d "$d" ] && seq="$seq $d"
               done
             fi
           done
           echo "scope=modules" >> "$GITHUB_OUTPUT"
-          echo "targets=$targets" >> "$GITHUB_OUTPUT"
+          echo "xdist_targets=$xdist" >> "$GITHUB_OUTPUT"
+          echo "seq_targets=$seq" >> "$GITHUB_OUTPUT"
 
-      - name: Run module-scoped tests
+      - name: Run module-scoped tests (xdist)
         run: |
           echo "Scope: ${{ steps.targets.outputs.scope }}"
-          echo "Targets: ${{ steps.targets.outputs.targets }}"
-          # tests/performance asserts wall-clock budgets and is excluded from
-          # xdist runs (workers share CPU and break timing assertions); the
-          # full matrix runs it sequentially.
-          uv run --with pytest-xdist pytest ${{ steps.targets.outputs.targets }} \
+          echo "xdist: ${{ steps.targets.outputs.xdist_targets }}"
+          uv run --with pytest-xdist pytest ${{ steps.targets.outputs.xdist_targets }} \
             -n auto \
             --ignore=tests/performance \
+            --ignore=tests/integration \
             --tb=short \
             --junitxml=test-results.xml
+
+      - name: Run sequential tests (integration / performance)
+        if: steps.targets.outputs.seq_targets != ''
+        run: |
+          echo "seq: ${{ steps.targets.outputs.seq_targets }}"
+          uv run pytest ${{ steps.targets.outputs.seq_targets }} \
+            --tb=short \
+            --junitxml=test-results-seq.xml
 
       - name: Upload test results
         uses: actions/upload-artifact@v7
         if: always()
         with:
           name: test-results-pr-gate
-          path: test-results.xml
+          path: |
+            test-results.xml
+            test-results-seq.xml
 
   # ------------------------------------------------------------ full matrix --
   test:
@@ -242,17 +264,26 @@ jobs:
 
       - name: Run tests with coverage
         run: |
+          # tests/integration kills xdist workers (a CLI edge-case test
+          # hard-exits the process); tests/performance asserts wall-clock
+          # budgets — both run sequentially below.
           uv run --with pytest-xdist pytest tests/ \
             -n auto \
             --ignore=tests/performance \
+            --ignore=tests/integration \
             --tb=short \
             --cov=src \
             --cov-report=xml:coverage.xml \
             --cov-report=term-missing \
             --junitxml=test-results.xml
 
-      - name: Run performance tests (sequential — wall-clock assertions)
-        run: uv run pytest tests/performance --tb=short
+      - name: Run sequential tests (integration / performance)
+        run: |
+          uv run pytest tests/integration tests/performance \
+            --tb=short \
+            --cov=src \
+            --cov-append \
+            --cov-report=xml:coverage.xml
 
       - name: Upload test results
         uses: actions/upload-artifact@v7
