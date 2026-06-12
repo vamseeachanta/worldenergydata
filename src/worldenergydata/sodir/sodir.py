@@ -53,8 +53,12 @@ class Sodir:
         # Validate configuration first (outside try block for proper error propagation)
         self._validate_config(cfg)
 
-        try:
+        if cfg.get("data", {}).get("source") == "csv":
+            from worldenergydata.sodir.offline import SodirOfflineWorkflow
 
+            return SodirOfflineWorkflow().router(cfg)
+
+        try:
             # Initialize module section in config
             if "basename" not in cfg:
                 cfg["basename"] = self.module_name
