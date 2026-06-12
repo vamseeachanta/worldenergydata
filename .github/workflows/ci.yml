@@ -5,6 +5,9 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+  schedule:
+    - cron: "17 9 * * *" # nightly full matrix (~04:17 CT)
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -14,9 +17,204 @@ env:
   PYTHON_VERSION_DEFAULT: "3.11"
 
 jobs:
+  # ---------------------------------------------------------------- PR gate --
+  # Module-scoped fast gate (#474): PRs test only the modules their changed
+  # paths touch (plus the always-on cross-cutting core), on one Python, with
+  # xdist and no coverage. The full 3-Python matrix runs on push to main,
+  # nightly, manual dispatch, or PRs labeled `ci-full`.
+  changes:
+    name: Detect changed modules
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    outputs:
+      core: ${{ steps.filter.outputs.core }}
+      matched: ${{ steps.filter.outputs.changes }}
+      unclassified: ${{ steps.filter.outputs.unclassified }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Classify changed paths
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            core:
+              - 'src/worldenergydata/engine.py'
+              - 'src/worldenergydata/__main__.py'
+              - 'src/worldenergydata/base_configs/**'
+              - 'src/worldenergydata/common/**'
+              - 'pyproject.toml'
+              - 'uv.lock'
+              - 'tests/conftest.py'
+              - 'tests/pytest.ini'
+              - '.github/workflows/ci.yml'
+            bsee:
+              - 'src/worldenergydata/bsee/**'
+              - 'tests/unit/bsee/**'
+              - 'tests/integration/modules/bsee/**'
+            fdas:
+              - 'src/worldenergydata/fdas/**'
+              - 'tests/unit/fdas/**'
+            sodir:
+              - 'src/worldenergydata/sodir/**'
+              - 'tests/unit/sodir/**'
+            texas_rrc:
+              - 'src/worldenergydata/texas_rrc/**'
+              - 'tests/unit/texas_rrc/**'
+            canada:
+              - 'src/worldenergydata/canada/**'
+              - 'tests/unit/canada/**'
+            mexico_cnh:
+              - 'src/worldenergydata/mexico_cnh/**'
+              - 'tests/unit/mexico_cnh/**'
+            landman:
+              - 'src/worldenergydata/landman/**'
+              - 'tests/unit/landman/**'
+            marine_safety:
+              - 'src/worldenergydata/marine_safety/**'
+              - 'tests/unit/marine_safety/**'
+            pipeline_safety:
+              - 'src/worldenergydata/pipeline_safety/**'
+              - 'tests/unit/pipeline_safety/**'
+            production:
+              - 'src/worldenergydata/production/**'
+              - 'tests/unit/production/**'
+            cli:
+              - 'src/worldenergydata/cli/**'
+              - 'tests/unit/cli/**'
+            workflows:
+              - 'docs/registry/**'
+              - 'examples/workflows/**'
+              - 'tests/workflows/**'
+            docs_only:
+              - '**/*.md'
+              - 'docs/**'
+            unclassified:
+              - '!src/worldenergydata/engine.py'
+              - '!src/worldenergydata/__main__.py'
+              - '!src/worldenergydata/base_configs/**'
+              - '!src/worldenergydata/common/**'
+              - '!pyproject.toml'
+              - '!uv.lock'
+              - '!tests/conftest.py'
+              - '!tests/pytest.ini'
+              - '!.github/workflows/ci.yml'
+              - '!src/worldenergydata/bsee/**'
+              - '!tests/unit/bsee/**'
+              - '!tests/integration/modules/bsee/**'
+              - '!src/worldenergydata/fdas/**'
+              - '!tests/unit/fdas/**'
+              - '!src/worldenergydata/sodir/**'
+              - '!tests/unit/sodir/**'
+              - '!src/worldenergydata/texas_rrc/**'
+              - '!tests/unit/texas_rrc/**'
+              - '!src/worldenergydata/canada/**'
+              - '!tests/unit/canada/**'
+              - '!src/worldenergydata/mexico_cnh/**'
+              - '!tests/unit/mexico_cnh/**'
+              - '!src/worldenergydata/landman/**'
+              - '!tests/unit/landman/**'
+              - '!src/worldenergydata/marine_safety/**'
+              - '!tests/unit/marine_safety/**'
+              - '!src/worldenergydata/pipeline_safety/**'
+              - '!tests/unit/pipeline_safety/**'
+              - '!src/worldenergydata/production/**'
+              - '!tests/unit/production/**'
+              - '!src/worldenergydata/cli/**'
+              - '!tests/unit/cli/**'
+              - '!docs/registry/**'
+              - '!examples/workflows/**'
+              - '!tests/workflows/**'
+              - '!**/*.md'
+              - '!docs/**'
+
+  test-pr:
+    name: Test (PR gate)
+    runs-on: ubuntu-latest
+    needs: changes
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Set up Python
+        run: uv python install ${{ env.PYTHON_VERSION_DEFAULT }}
+
+      - name: Install dependencies
+        run: uv sync --all-extras
+
+      - name: Select test targets
+        id: targets
+        env:
+          CORE: ${{ needs.changes.outputs.core }}
+          MATCHED: ${{ needs.changes.outputs.matched }}
+          UNCLASSIFIED: ${{ needs.changes.outputs.unclassified }}
+        run: |
+          # Always-on cross-cutting set: engine contract, assetutilities
+          # contracts, and the durable-workflow registry.
+          targets="tests/unit/core tests/unit/common tests/contracts tests/workflows"
+          declare -A module_dirs=(
+            [bsee]="tests/unit/bsee tests/integration/modules/bsee"
+            [fdas]="tests/unit/fdas"
+            [sodir]="tests/unit/sodir"
+            [texas_rrc]="tests/unit/texas_rrc"
+            [canada]="tests/unit/canada"
+            [mexico_cnh]="tests/unit/mexico_cnh"
+            [landman]="tests/unit/landman"
+            [marine_safety]="tests/unit/marine_safety"
+            [pipeline_safety]="tests/unit/pipeline_safety"
+            [production]="tests/unit/production"
+            [cli]="tests/unit/cli"
+          )
+          if [ "$CORE" = "true" ] || echo "$UNCLASSIFIED" | grep -q true; then
+            # Core or unmapped paths changed: fail safe, run the whole tree.
+            echo "scope=full" >> "$GITHUB_OUTPUT"
+            echo "targets=tests/" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          for mod in "${!module_dirs[@]}"; do
+            if echo "$MATCHED" | grep -q "\"$mod\""; then
+              for d in ${module_dirs[$mod]}; do
+                [ -d "$d" ] && targets="$targets $d"
+              done
+            fi
+          done
+          echo "scope=modules" >> "$GITHUB_OUTPUT"
+          echo "targets=$targets" >> "$GITHUB_OUTPUT"
+
+      - name: Run module-scoped tests
+        run: |
+          echo "Scope: ${{ steps.targets.outputs.scope }}"
+          echo "Targets: ${{ steps.targets.outputs.targets }}"
+          uv run --with pytest-xdist pytest ${{ steps.targets.outputs.targets }} \
+            -n auto \
+            --tb=short \
+            --junitxml=test-results.xml
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: test-results-pr-gate
+          path: test-results.xml
+
+  # ------------------------------------------------------------ full matrix --
   test:
     name: Test Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'push' ||
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' &&
+       contains(github.event.pull_request.labels.*.name, 'ci-full'))
     strategy:
       fail-fast: false
       matrix:
@@ -40,8 +238,8 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          uv run pytest tests/ \
-            -v \
+          uv run --with pytest-xdist pytest tests/ \
+            -n auto \
             --tb=short \
             --cov=src \
             --cov-report=xml:coverage.xml \
@@ -166,7 +364,7 @@ jobs:
   build:
     name: Build Package
     runs-on: ubuntu-latest
-    needs: [test, lint]
+    needs: [lint] # test job skips on unlabeled PRs (module gate covers them)
 
     steps:
       - name: Checkout repository
