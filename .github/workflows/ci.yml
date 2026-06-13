@@ -184,8 +184,12 @@ jobs:
           )
           if [ "$CORE" = "true" ] || echo "$UNCLASSIFIED" | grep -q true; then
             # Core or unmapped paths changed: fail safe, run the whole tree.
+            # Enumerate explicit targets rather than recursing tests/ with
+            # --ignore: tests/pytest.ini makes pytest's rootdir tests/, which
+            # breaks cwd-relative --ignore matching.
+            full=$(find tests -maxdepth 1 -mindepth 1 \( -type d ! -name performance ! -name integration ! -name __pycache__ \) -o -maxdepth 1 -name 'test_*.py' | sort | tr '\n' ' ')
             echo "scope=full" >> "$GITHUB_OUTPUT"
-            echo "xdist_targets=tests/" >> "$GITHUB_OUTPUT"
+            echo "xdist_targets=$full" >> "$GITHUB_OUTPUT"
             echo "seq_targets=tests/integration tests/performance" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -209,8 +213,6 @@ jobs:
           echo "xdist: ${{ steps.targets.outputs.xdist_targets }}"
           uv run --with pytest-xdist pytest ${{ steps.targets.outputs.xdist_targets }} \
             -n auto \
-            --ignore=tests/performance \
-            --ignore=tests/integration \
             --tb=short \
             --junitxml=test-results.xml
 
@@ -266,11 +268,12 @@ jobs:
         run: |
           # tests/integration kills xdist workers (a CLI edge-case test
           # hard-exits the process); tests/performance asserts wall-clock
-          # budgets — both run sequentially below.
-          uv run --with pytest-xdist pytest tests/ \
+          # budgets — both run sequentially below. Targets are enumerated
+          # explicitly: tests/pytest.ini sets rootdir to tests/, which breaks
+          # cwd-relative --ignore matching during recursion.
+          targets=$(find tests -maxdepth 1 -mindepth 1 \( -type d ! -name performance ! -name integration ! -name __pycache__ \) -o -maxdepth 1 -name 'test_*.py' | sort | tr '\n' ' ')
+          uv run --with pytest-xdist pytest $targets \
             -n auto \
-            --ignore=tests/performance \
-            --ignore=tests/integration \
             --tb=short \
             --cov=src \
             --cov-report=xml:coverage.xml \
