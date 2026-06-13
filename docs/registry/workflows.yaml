@@ -14,6 +14,15 @@ workflows:
       - examples/workflows/bsee-production-summary/outputs/prod_raw_bsee_production_summary.xlsx
     test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[bsee-production-summary]
     runtime: offline
+    data_source:
+      # BSEE is a data-loader basename, but this example reads a committed
+      # fixture (input.yml has source: csv, refresh: false) so it needs no
+      # network. Verified offline 2026-06-13 (workspace-hub#3064) with HTTP
+      # fully blocked.
+      type: bundled-fixture
+      network_required: false
+      fixtures:
+        - examples/workflows/bsee-production-summary/sample_production.csv
   - id: bsee-well-comparison
     basename: bsee
     title: BSEE well comparison from bundled CSV data
@@ -27,6 +36,13 @@ workflows:
       - examples/workflows/bsee-well-comparison/outputs/prod_raw_bsee_well_comparison.xlsx
     test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[bsee-well-comparison]
     runtime: offline
+    data_source:
+      # See bsee-production-summary note. Committed fixture, no network.
+      # Verified offline 2026-06-13 (workspace-hub#3064).
+      type: bundled-fixture
+      network_required: false
+      fixtures:
+        - examples/workflows/bsee-well-comparison/sample_production.csv
   - id: fdas-field-npv
     basename: fdas
     title: FDAS field economics NPV from bundled cashflow CSV
@@ -168,6 +184,16 @@ workflows:
             recoverable_oil_mmbbl: 150.0
     test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[sodir-field-summary]
     runtime: offline
+    data_source:
+      # SODIR is a data-loader basename; this example reads committed CSV
+      # fixtures (input.yml has source: csv, input_path: data) so it needs no
+      # network. Verified offline 2026-06-13 (workspace-hub#3064) with HTTP
+      # fully blocked.
+      type: bundled-fixture
+      network_required: false
+      fixtures:
+        - examples/workflows/sodir-field-summary/data/sodir_fields.csv
+        - examples/workflows/sodir-field-summary/data/sodir_production.csv
   - id: texas-rrc-production-summary
     basename: texas_rrc
     title: Texas RRC production summary from bundled CSV data
@@ -192,3 +218,12 @@ workflows:
             gas_production: 1700.0
     test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[texas-rrc-production-summary]
     runtime: offline
+    data_source:
+      # Texas RRC is a data-loader basename; this example reads a committed CSV
+      # fixture (input.yml has source: csv, files.production: production.csv) so
+      # it needs no network. Verified offline 2026-06-13 (workspace-hub#3064)
+      # with HTTP fully blocked.
+      type: bundled-fixture
+      network_required: false
+      fixtures:
+        - examples/workflows/texas-rrc-production-summary/production.csv
