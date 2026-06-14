@@ -15,4 +15,4 @@ Governance: `docs/DATA_RESIDENCE_POLICY.md` | Local data: `docs/data/LOCAL_DATA_
 
 ## Dirs
 `src/` `data/{raw,processed,modules}/` `reports/` `tests/`
-> Full rules inherited from workspace-hub/CLAUDE.md | Agents: `.claude/docs/agents.md`
+> Full rules inherited from workspace-hub/CLAUDE.md | Agents: `.claude/docs/agents.md` | Memory: read THIS repo's `.claude/memory/` first; consult workspace-hub memory only for cross-repo concerns

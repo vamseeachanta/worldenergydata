@@ -136,6 +136,10 @@ dmypy.json
 .hive-mind/
 hive-mind-prompt-*.txt
 memory/
+# epic #3084: the blanket `memory/` above (claude-flow-era) also catches `.claude/memory/`.
+# Re-include repo-scoped agent memory so it travels with the repo.
+!.claude/memory/
+!.claude/memory/**
 coordination/
 memory/sessions/*
 !memory/sessions/README.md
