@@ -36,7 +36,7 @@ dependencies = [
     "tenacity>=9.1.4,<10.0",
     # Data processing and analysis
     "numpy>=2.2.6,<3.0",
-    "pandas>=2.0.0,<3.0",
+    "pandas>=2.3.3,<3.0",
     "scipy>=1.11.0,<2.0",
     # Visualization
     "plotly>=5.18.0,<6.0",
