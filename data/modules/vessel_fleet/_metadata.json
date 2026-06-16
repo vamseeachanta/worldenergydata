@@ -1,29 +1,29 @@
 {
   "module": "vessel_fleet",
-  "generated_at": "2026-05-15T03:45:14.652985+00:00",
-  "last_refresh": "2026-05-15",
+  "generated_at": "2026-06-16T12:44:33.204004+00:00",
+  "last_refresh": "2026-06-16",
   "record_count": 0,
-  "file_count": 12,
-  "total_size_bytes": 126162,
-  "total_size_human": "123.2 KB",
+  "file_count": 13,
+  "total_size_bytes": 651817,
+  "total_size_human": "636.5 KB",
   "source_url": null,
   "format": ".csv,.json,.parquet,.yaml",
   "format_breakdown": {
     ".csv": {
       "count": 3,
-      "size_bytes": 22685
+      "size_bytes": 368949
     },
     ".json": {
       "count": 4,
-      "size_bytes": 41869
+      "size_bytes": 42026
     },
     ".parquet": {
-      "count": 4,
-      "size_bytes": 46664
+      "count": 5,
+      "size_bytes": 221299
     },
     ".yaml": {
       "count": 1,
-      "size_bytes": 14944
+      "size_bytes": 19543
     }
   },
   "has_external_data": false,
@@ -32,8 +32,8 @@
     {
       "name": "_metadata.json",
       "path": "_metadata.json",
-      "size_bytes": 2531,
-      "modified": "2026-05-15"
+      "size_bytes": 2688,
+      "modified": "2026-06-16"
     },
     {
       "name": "construction_vessels.csv",
@@ -50,20 +50,26 @@
     {
       "name": "drilling_rigs.csv",
       "path": "curated/drilling_rigs.csv",
-      "size_bytes": 11227,
-      "modified": "2026-05-15"
+      "size_bytes": 357491,
+      "modified": "2026-05-24"
     },
     {
       "name": "drilling_rigs.parquet",
       "path": "curated/drilling_rigs.parquet",
-      "size_bytes": 11308,
-      "modified": "2026-05-15"
+      "size_bytes": 97881,
+      "modified": "2026-05-24"
     },
     {
       "name": "drilling_riser_components.csv",
       "path": "curated/drilling_riser_components.csv",
       "size_bytes": 6598,
       "modified": "2026-03-03"
+    },
+    {
+      "name": "war_fleet.parquet",
+      "path": "raw/bsee_war/war_fleet.parquet",
+      "size_bytes": 88062,
+      "modified": "2026-05-24"
     },
     {
       "name": "noble.json",
@@ -87,19 +93,19 @@
       "name": "noble.parquet",
       "path": "raw/spec_details/noble.parquet",
       "size_bytes": 7010,
-      "modified": "2026-05-15"
+      "modified": "2026-05-24"
     },
     {
       "name": "seadrill.parquet",
       "path": "raw/spec_details/seadrill.parquet",
       "size_bytes": 4944,
-      "modified": "2026-05-15"
+      "modified": "2026-05-24"
     },
     {
       "name": "schema.yaml",
       "path": "schema.yaml",
-      "size_bytes": 14944,
-      "modified": "2026-05-15"
+      "size_bytes": 19543,
+      "modified": "2026-06-16"
     }
   ],
   "files_truncated": false

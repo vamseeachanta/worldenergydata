@@ -1,7 +1,7 @@
 {
   "module": "hse",
-  "generated_at": "2026-05-15T03:45:14.543382+00:00",
-  "last_refresh": "2026-05-15",
+  "generated_at": "2026-06-16T12:44:33.123642+00:00",
+  "last_refresh": "2026-06-16",
   "record_count": 0,
   "file_count": 108,
   "total_size_bytes": 7242152466,
@@ -57,7 +57,7 @@
       "name": "_metadata.json",
       "path": "_metadata.json",
       "size_bytes": 22763,
-      "modified": "2026-05-15"
+      "modified": "2026-06-16"
     },
     {
       "name": "hse_incidents.db",
@@ -69,7 +69,7 @@
       "name": "schema.yaml",
       "path": "schema.yaml",
       "size_bytes": 167,
-      "modified": "2026-05-15"
+      "modified": "2026-06-16"
     },
     {
       "name": "INCSRawData",

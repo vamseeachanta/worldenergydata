@@ -1,7 +1,7 @@
 {
   "module": "oil_price",
-  "generated_at": "2026-05-15T03:45:14.626363+00:00",
-  "last_refresh": "2026-05-15",
+  "generated_at": "2026-06-16T12:44:33.177708+00:00",
+  "last_refresh": "2026-06-16",
   "record_count": 0,
   "file_count": 4,
   "total_size_bytes": 87813,
@@ -41,13 +41,13 @@
       "name": "_metadata.json",
       "path": "_metadata.json",
       "size_bytes": 1131,
-      "modified": "2026-05-15"
+      "modified": "2026-06-16"
     },
     {
       "name": "schema.yaml",
       "path": "schema.yaml",
       "size_bytes": 154,
-      "modified": "2026-05-15"
+      "modified": "2026-06-16"
     }
   ],
   "files_truncated": false

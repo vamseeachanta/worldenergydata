@@ -1,7 +1,7 @@
 {
   "module": "wind",
-  "generated_at": "2026-05-15T03:45:14.819497+00:00",
-  "last_refresh": "2026-05-15",
+  "generated_at": "2026-06-16T12:44:33.354384+00:00",
+  "last_refresh": "2026-06-16",
   "record_count": 0,
   "file_count": 6,
   "total_size_bytes": 7359145,
@@ -33,13 +33,13 @@
       "name": "_metadata.json",
       "path": "_metadata.json",
       "size_bytes": 1515,
-      "modified": "2026-05-15"
+      "modified": "2026-06-16"
     },
     {
       "name": "schema.yaml",
       "path": "schema.yaml",
       "size_bytes": 974,
-      "modified": "2026-05-15"
+      "modified": "2026-06-16"
     },
     {
       "name": "uswtdbCSV.zip",

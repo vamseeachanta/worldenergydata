@@ -1,7 +1,7 @@
 {
   "module": "fdas",
-  "generated_at": "2026-05-15T03:45:14.534537+00:00",
-  "last_refresh": "2026-05-15",
+  "generated_at": "2026-06-16T12:44:33.117752+00:00",
+  "last_refresh": "2026-06-16",
   "record_count": 0,
   "file_count": 3,
   "total_size_bytes": 4596767,
@@ -29,7 +29,7 @@
       "name": "_metadata.json",
       "path": "_metadata.json",
       "size_bytes": 1025,
-      "modified": "2026-05-15"
+      "modified": "2026-06-16"
     },
     {
       "name": "well_data_enhanced.csv",
@@ -41,7 +41,7 @@
       "name": "schema.yaml",
       "path": "schema.yaml",
       "size_bytes": 1863,
-      "modified": "2026-05-15"
+      "modified": "2026-06-16"
     }
   ],
   "files_truncated": false

@@ -1,7 +1,7 @@
 {
   "module": "lng_terminals",
-  "generated_at": "2026-05-15T03:45:14.551543+00:00",
-  "last_refresh": "2026-05-15",
+  "generated_at": "2026-06-16T12:44:33.129084+00:00",
+  "last_refresh": "2026-06-16",
   "record_count": 0,
   "file_count": 4,
   "total_size_bytes": 108019,
@@ -33,7 +33,7 @@
       "name": "_metadata.json",
       "path": "_metadata.json",
       "size_bytes": 1249,
-      "modified": "2026-05-15"
+      "modified": "2026-06-16"
     },
     {
       "name": "terminals_seed.csv",
@@ -51,7 +51,7 @@
       "name": "schema.yaml",
       "path": "schema.yaml",
       "size_bytes": 1618,
-      "modified": "2026-05-15"
+      "modified": "2026-06-16"
     }
   ],
   "files_truncated": false

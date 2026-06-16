@@ -1,7 +1,7 @@
 {
   "module": "pipeline",
-  "generated_at": "2026-05-15T03:45:14.630094+00:00",
-  "last_refresh": "2026-05-15",
+  "generated_at": "2026-06-16T12:44:33.181644+00:00",
+  "last_refresh": "2026-06-16",
   "record_count": 0,
   "file_count": 6,
   "total_size_bytes": 83030,
@@ -37,7 +37,7 @@
       "name": "_metadata.json",
       "path": "_metadata.json",
       "size_bytes": 1676,
-      "modified": "2026-05-15"
+      "modified": "2026-06-16"
     },
     {
       "name": "api_5l_pipe_schedule.csv",
@@ -67,7 +67,7 @@
       "name": "schema.yaml",
       "path": "schema.yaml",
       "size_bytes": 2060,
-      "modified": "2026-05-15"
+      "modified": "2026-06-16"
     }
   ],
   "files_truncated": false
