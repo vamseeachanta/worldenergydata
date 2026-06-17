@@ -61,3 +61,12 @@ matters for multi-block/multi-lease fields (e.g. Jack/St. Malo spans 6 leases).
   (identical column order), validated to ~0.001%.
 - Per-well NPV (≈) allocates shared CAPEX + fixed OPEX by production share — indicative, not a re-derivation of
   the field NPV (per-unit discounting is non-linear).
+
+## Well & drilling engineering sections (added)
+The report now includes well-engineering views built from the real FDAS V30 per-bore
+drilling record (`reports/lower_tertiary/data/julia_wells.json`, via `scripts/extract_julia_well_data.py`):
+- **Drilling campaign timeline** (Gantt, inline SVG) — spud→TD + completion per bore; one 2008 wildcat then the 2014–2019 development campaign.
+- **Rig days by wellbore** (inline SVG) — drilling + completion days, normalized days/10,000 ft; 9 bores, 1,687 rig-days (~$1.35B MODU time).
+- **Well trajectories** — 2D depth cross-section (always-on inline SVG) + interactive 3D (Plotly, WebGL). Indicative geometry: real MD/TVD + 7,335 ft water depth, schematic wellhead/azimuth (no public deviation survey for these Walker Ridge bores).
+- "Latest" vintage relabeled to the real data cutoff: **through Nov 2025** (Dec 2025 OGOR is partial).
+Methodology mirrors aceengineercode `ong_field_development` and worldenergydata well-analysis modules; rendered report-native (SVG/Plotly) rather than running their DB/LFS pipelines.
