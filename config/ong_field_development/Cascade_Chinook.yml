@@ -1,0 +1,51 @@
+# Auto-generated field input — scripts/gen_field_inputs.py
+# BOEM blocks mirror aceengineercode config/ong_field_development; enriched with BSEE leases + validated economics.
+field:
+  nickname: Cascade/Chinook
+  id: cascade_chinook
+  status: producing
+  dev_system: subsea15
+  water_depth_ft: 8200
+  first_oil: '2014-01-01'
+location:
+  boem_fields:
+  - WR205
+  - WR206
+  - WR469
+  - WR470
+  leases:
+  - G16965
+  - G16997
+  well_type:
+  - E
+  - D
+analysis:
+  economics: true
+  discount_rate_annual: 0.1
+  by:
+  - field
+  - block
+  - well
+  vintages:
+  - v30
+  - latest
+validated_economics:
+  total_oil_bbl: 34322807
+  revenue_usd: 2326873535.6
+  capex_usd: 3873600000
+  npv10_usd: -1474083632.85
+  mirr_annual: -0.0176
+  producers: 3
+  wellbores: 14
+public_metadata:
+  operator: Petrobras America
+  partners: 'Cascade: Petrobras 100; Chinook: Petrobras 66.67/TotalEnergies 33.33'
+  facility: FPSO BW Pioneer (first US-GoM FPSO)
+  play: Lower Tertiary Wilcox
+  reported_first_oil: 2012-02
+  reported_capex_usd: null
+  plateau_bopd: 80000
+provenance:
+  boem_source: aceengineercode/config/ong_field_development/Cascade.yml + Chinook.yml
+  lease_source: config/analysis/lower_tertiary/lease_mapping_fdas.yml
+  economics_source: config/analysis/lower_tertiary/golden_baseline_v30.yml

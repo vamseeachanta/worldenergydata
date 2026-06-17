@@ -70,3 +70,10 @@ drilling record (`reports/lower_tertiary/data/julia_wells.json`, via `scripts/ex
 - **Well trajectories** — 2D depth cross-section (always-on inline SVG) + interactive 3D (Plotly, WebGL). Indicative geometry: real MD/TVD + 7,335 ft water depth, schematic wellhead/azimuth (no public deviation survey for these Walker Ridge bores).
 - "Latest" vintage relabeled to the real data cutoff: **through Nov 2025** (Dec 2025 OGOR is partial).
 Methodology mirrors aceengineercode `ong_field_development` and worldenergydata well-analysis modules; rendered report-native (SVG/Plotly) rather than running their DB/LFS pipelines.
+
+## All-fields extension (portfolio)
+Generalized to all 10 Lower Tertiary fields:
+- **Input files**: `config/ong_field_development/<Field>.yml` (10) + `fields_registry.yml` — BOEM blocks (mirrored from aceengineercode) + BSEE leases + dev-system + validated economics + sourced public metadata (operator/partners/facility/CAPEX). Generator: `scripts/gen_field_inputs.py`.
+- **Analysis**: `scripts/all_fields_economics.py` → `reports/lower_tertiary/data/all_fields_economics.json`. Field economics = authoritative golden baseline (independently reproduced to ~0.001%, except Jack/St. Malo ~7% D&C-timing edge case); by-well/block for the 7 producing fields.
+- **Portfolio report**: `reports/gtm/2026-06-17-lower-tertiary-portfolio-economics.html` — 10 fields ranked by NPV, per-field well drilldowns.
+- **Portfolio totals**: 669 MMbbl, $43.5B revenue, $40.5B CAPEX, **−$9.96B NPV@10%** — the whole pioneering Wilcox play is full-cycle NPV-negative at historical prices. Jack/St. Malo best MIRR (8.5%, scale); Julia least-negative NPV among producers (−$531M, no-host tieback).
