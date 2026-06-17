@@ -77,3 +77,6 @@ Generalized to all 10 Lower Tertiary fields:
 - **Analysis**: `scripts/all_fields_economics.py` → `reports/lower_tertiary/data/all_fields_economics.json`. Field economics = authoritative golden baseline (independently reproduced to ~0.001%, except Jack/St. Malo ~7% D&C-timing edge case); by-well/block for the 7 producing fields.
 - **Portfolio report**: `reports/gtm/2026-06-17-lower-tertiary-portfolio-economics.html` — 10 fields ranked by NPV, per-field well drilldowns.
 - **Portfolio totals**: 669 MMbbl, $43.5B revenue, $40.5B CAPEX, **−$9.96B NPV@10%** — the whole pioneering Wilcox play is full-cycle NPV-negative at historical prices. Jack/St. Malo best MIRR (8.5%, scale); Julia least-negative NPV among producers (−$531M, no-host tieback).
+
+## Multi-field deep-dive report
+`reports/gtm/2026-06-17-lower-tertiary-field-deepdive.html` — a field **selector** over all 10 fields: pick any field to see its economics (by field/block/well) + drilling campaign timeline, rig-days per bore, depth cross-section, and 3D schematic. Data: `all_fields_economics.json` + `all_fields_wells.json` (per-bore drilling for all fields via `scripts/extract_all_well_data.py`). Three reports total: Julia flagship deep-dive, all-fields portfolio, and this multi-field selector.
