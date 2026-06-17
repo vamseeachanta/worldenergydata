@@ -291,6 +291,9 @@ code{{background:#ECEFF1;padding:1px 6px;border-radius:4px;font-size:12px}}
 .section h3{{font-size:14px;color:#37474F;margin:18px 0 4px}}
 .lead2{{font-size:12px;color:#78909C;margin-bottom:10px}}
 svg{{display:block;margin:4px 0 6px}}
+.navstrip{{background:#0D3578;display:flex;gap:4px;padding:0 32px}}
+.navstrip a{{color:rgba(255,255,255,.8);font-size:12px;font-weight:600;text-decoration:none;padding:9px 14px;border-bottom:3px solid transparent}}
+.navstrip a:hover{{color:#fff}} .navstrip a.active{{color:#fff;border-bottom-color:#64B5F6;background:rgba(255,255,255,.08)}}
 </style></head><body>
 <div class="report-header">
   <h1>Julia Field — Development Economics from Public BSEE Data</h1>
@@ -301,6 +304,11 @@ svg{{display:block;margin:4px 0 6px}}
     <span class="badge">FDAS V30 tieback15 assumptions</span>
     <span class="badge">Validated vs golden baseline</span>
   </div>
+</div>
+<div class="navstrip">
+  <a href="2026-06-17-lower-tertiary-portfolio-economics.html">▸ Portfolio (all fields)</a>
+  <a href="2026-06-17-lower-tertiary-field-deepdive.html">▸ Field deep-dive</a>
+  <a class="active">▸ Julia flagship</a>
 </div>
 <div class="kpi-row">{kpi_cards()}</div>
 <div class="content">

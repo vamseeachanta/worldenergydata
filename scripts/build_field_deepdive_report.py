@@ -164,6 +164,9 @@ body{{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;backgroun
 .report-header{{background:linear-gradient(135deg,#0D47A1,#1565C0 55%,#1976D2);color:#fff;padding:30px 48px}}
 .report-header h1{{font-size:24px;font-weight:700}}
 .report-header .subtitle{{margin-top:6px;opacity:.88;font-size:14px}}
+.navstrip{{background:#0D3578;display:flex;gap:4px;padding:0 32px}}
+.navstrip a{{color:rgba(255,255,255,.8);font-size:12px;font-weight:600;text-decoration:none;padding:9px 14px;border-bottom:3px solid transparent}}
+.navstrip a:hover{{color:#fff}} .navstrip a.active{{color:#fff;border-bottom-color:#64B5F6;background:rgba(255,255,255,.08)}}
 .selbar{{padding:16px 32px;background:#ECEFF1;border-bottom:1px solid #CFD8DC;display:flex;gap:12px;align-items:center}}
 .selbar label{{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:#607D8B;font-weight:600}}
 .selbar select{{font-size:15px;padding:8px 14px;border:1px solid #B0BEC5;border-radius:8px;background:#fff;font-weight:600;color:#1565C0;min-width:280px}}
@@ -194,6 +197,11 @@ code{{background:#ECEFF1;padding:1px 6px;border-radius:4px;font-size:12px}}
   <h1>Gulf of Mexico Lower Tertiary — Field Deep-Dive</h1>
   <div class="subtitle">Pick a field: economics by field / block / well + drilling timeline, rig days, and well schematics — all from public BSEE data</div>
 </div>
+<div class="navstrip">
+  <a href="2026-06-17-lower-tertiary-portfolio-economics.html">▸ Portfolio (all fields)</a>
+  <a class="active">▸ Field deep-dive</a>
+  <a href="2026-06-17-julia-field-economics-by-well-block-field.html">▸ Julia flagship</a>
+</div>
 <div class="selbar"><label for="fsel">Field</label><select id="fsel" onchange="pick(this.value)">{OPTIONS}</select>
   <span class="rsub">10 fields · field economics validated vs FDAS V30 golden baseline (~0.001%)</span></div>
 <div id="panels">{PANELS}</div>
@@ -213,9 +221,12 @@ function draw3d(fid){{
 }}
 function pick(fid){{
   document.querySelectorAll('.fieldpanel').forEach(p=>p.hidden = p.dataset.field!==fid);
+  if(history.replaceState) history.replaceState(null,"","#"+fid);
   draw3d(fid);
 }}
-draw3d("{ORDER[0]}");
+window.addEventListener("hashchange",()=>{{const h=location.hash.slice(1); if(TR[h]) pick(h);}});
+const _h=location.hash.slice(1);
+if(TR[_h]){{document.getElementById("fsel").value=_h; pick(_h);}} else {{draw3d("{ORDER[0]}");}}
 </script>
 </body></html>"""
 

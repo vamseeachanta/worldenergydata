@@ -56,7 +56,8 @@ def rows():
         drill = f'{bf["n_wells"]} wells · {bf["n_blocks"]} blocks' if bf else "—"
         npv = r.get("npv_usd")
         op = (r.get("public_metadata") or {}).get("operator", "")
-        h += (f'<tr><td class="name"><div>{r["field"]}</div>'
+        link = f'<a href="2026-06-17-lower-tertiary-field-deepdive.html#{fid}">{r["field"]} ↗</a>'
+        h += (f'<tr><td class="name"><div>{link}</div>'
               f'<div class="rsub">{op + " · " if op else ""}{r.get("dev_system","")} · {r.get("status","")} · FO {str(r.get("first_oil") or "—")[:7]}</div></td>'
               f'<td>{mmb(r.get("oil_bbl"))}</td><td>{b2(r.get("revenue_usd"))}</td>'
               f'<td>{b2(r.get("capex_usd"))}</td>'
@@ -95,6 +96,10 @@ body{{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;backgroun
 .report-header{{background:linear-gradient(135deg,#0D47A1,#1565C0 55%,#1976D2);color:#fff;padding:34px 48px}}
 .report-header h1{{font-size:25px;font-weight:700}}
 .report-header .subtitle{{margin-top:6px;opacity:.88;font-size:14px}}
+.navstrip{{background:#0D3578;display:flex;gap:4px;padding:0 32px}}
+.navstrip a{{color:rgba(255,255,255,.8);font-size:12px;font-weight:600;text-decoration:none;padding:9px 14px;border-bottom:3px solid transparent}}
+.navstrip a:hover{{color:#fff}} .navstrip a.active{{color:#fff;border-bottom-color:#64B5F6;background:rgba(255,255,255,.08)}}
+td.name a{{color:#1565C0;text-decoration:none}} td.name a:hover{{text-decoration:underline}}
 .kpi-row{{display:flex;gap:16px;padding:22px 32px;flex-wrap:wrap;background:#ECEFF1;border-bottom:1px solid #CFD8DC}}
 .kpi-card{{background:#fff;border-radius:10px;padding:16px 20px;flex:1;min-width:150px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-top:3px solid #1565C0}}
 .kpi-card.neg{{border-top-color:#C62828}} .kpi-card.neg .value{{color:#C62828}}
@@ -122,6 +127,11 @@ code{{background:#ECEFF1;padding:1px 6px;border-radius:4px;font-size:12px}}
 <div class="report-header">
   <h1>Gulf of Mexico Lower Tertiary — Portfolio Field Economics</h1>
   <div class="subtitle">{len(PORT)} ultra-deepwater fields · NPV/MIRR reproduced end-to-end from public BSEE OGOR-A production × WTI · FDAS V30 methodology</div>
+</div>
+<div class="navstrip">
+  <a class="active">▸ Portfolio (all fields)</a>
+  <a href="2026-06-17-lower-tertiary-field-deepdive.html">▸ Field deep-dive</a>
+  <a href="2026-06-17-julia-field-economics-by-well-block-field.html">▸ Julia flagship</a>
 </div>
 <div class="kpi-row">{kpis()}</div>
 <div class="content">
