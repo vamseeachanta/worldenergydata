@@ -74,6 +74,19 @@ def is_lfs_stub(path: Path) -> bool:
         return False
 
 
+def backup_bin(target: Path, run_tag: str) -> Path | None:
+    """Move *target* aside to <name>.bak-<run_tag> before a forced overwrite.
+
+    Returns the backup path, or None if *target* did not exist.  Keeps the
+    prior (possibly golden-baseline) data recoverable across a --force run.
+    """
+    if not target.exists():
+        return None
+    bak = target.with_name(f"{target.name}.bak-{run_tag}")
+    target.rename(bak)
+    return bak
+
+
 # ── Orchestrator ──────────────────────────────────────────────────
 
 class BSEERefreshOrchestrator:
@@ -84,11 +97,16 @@ class BSEERefreshOrchestrator:
         project_root: Path,
         workers: int = 4,
         dry_run: bool = False,
+        force: bool = False,
     ):
         self.project_root = project_root
         self.bin_root = project_root / self.BIN_ROOT
         self.workers = workers
         self.dry_run = dry_run
+        # When force=True, overwrite real data instead of skipping it, moving
+        # each replaced bin aside to <name>.bak-<run_tag> first.
+        self.force = force
+        self.run_tag = time.strftime("%Y%m%dT%H%M%S", time.gmtime())
         requests = _get_requests()
         self.session = requests.Session()
         self.session.headers.update({
@@ -184,12 +202,19 @@ class BSEERefreshOrchestrator:
                     bin_name = f"{stem}.bin"
                     target = bin_dir_path / bin_name
 
-                    # Protect real (non-stub) data — only overwrite LFS stubs
+                    # Protect real (non-stub) data — only overwrite LFS stubs,
+                    # unless --force, in which case back the file up first.
                     if target.exists() and not is_lfs_stub(target):
-                        log.info(
-                            "    skip %s (already real data)", bin_name,
-                        )
-                        continue
+                        if not self.force:
+                            log.info(
+                                "    skip %s (already real data)", bin_name,
+                            )
+                            continue
+                        bak = backup_bin(target, self.run_tag)
+                        if bak is not None:
+                            log.info(
+                                "    backed up %s -> %s", bin_name, bak.name,
+                            )
 
                     raw = zf.read(filename)
 
@@ -269,23 +294,33 @@ class BSEERefreshOrchestrator:
 
         if self.dry_run:
             bin_dir_path = self.bin_root / spec.bin_dir
-            stubs = sum(
-                1 for b in spec.expected_bins
-                if not (bin_dir_path / b).exists() or is_lfs_stub(bin_dir_path / b)
-            )
-            log.info(
-                "[%s] DRY-RUN: would download %s → %d stubs to replace",
-                spec.bin_dir, spec.zip_url, stubs,
-            )
+            if self.force:
+                n = len(spec.expected_bins)
+                log.info(
+                    "[%s] DRY-RUN(force): would download %s → rewrite %d bin(s)"
+                    " (existing real data backed up)",
+                    spec.bin_dir, spec.zip_url, n,
+                )
+            else:
+                stubs = sum(
+                    1 for b in spec.expected_bins
+                    if not (bin_dir_path / b).exists()
+                    or is_lfs_stub(bin_dir_path / b)
+                )
+                log.info(
+                    "[%s] DRY-RUN: would download %s → %d stubs to replace",
+                    spec.bin_dir, spec.zip_url, stubs,
+                )
             return RefreshResult(
                 bin_dir=spec.bin_dir,
                 status="skipped",
                 duration_s=time.monotonic() - t0,
             )
 
-        # Check if ALL expected bins are already real data
+        # Check if ALL expected bins are already real data.  With --force we
+        # want to refresh them anyway, so skip this early-out.
         bin_dir_path = self.bin_root / spec.bin_dir
-        all_real = all(
+        all_real = not self.force and all(
             (bin_dir_path / b).exists() and not is_lfs_stub(bin_dir_path / b)
             for b in spec.expected_bins
         )
@@ -448,6 +483,15 @@ def main() -> None:
         action="store_true",
         help="Skip OGOR-A yearly production files.",
     )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Refresh datasets that are already real data (not just LFS "
+        "stubs).  Each replaced bin is backed up to <name>.bak-<UTCstamp>. "
+        "NOTE: OGOR-A year mapping is stale (no ogora2025delimit entry, and "
+        "ogoradelimit now = the current in-progress year); for recent "
+        "production use scripts/refresh_bsee_ogor_recent.py instead.",
+    )
     args = parser.parse_args()
 
     project_root = _find_project_root()
@@ -484,7 +528,11 @@ def main() -> None:
         project_root=project_root,
         workers=args.workers,
         dry_run=args.dry_run,
+        force=args.force,
     )
+    if args.force and not args.dry_run:
+        log.info("FORCE mode: existing bins backed up to .bak-%s",
+                 orchestrator.run_tag)
 
     results = orchestrator.refresh_all(specs)
     orchestrator.print_summary(results)
