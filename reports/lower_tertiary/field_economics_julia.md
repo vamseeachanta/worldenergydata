@@ -35,7 +35,7 @@ Cumulative NPV path (by year): `██████▇▇▁▁▁▁▁▂▃▄
 | 2016 | -1,931.3 | -1,099.6 | Drilling (spud): JU104<br>Well online (first production): API 608124003301<br>Completion: DC101 (608124009400)<br>Well online (first production): API 608124009400<br>Drilling (spud): JU105 |
 | 2017 | -132.9 | -1,154.1 | Drilling (spud): JU105<br>Completion: JU104 (608124010800)<br>Well online (first production): API 608124010800 |
 | 2018 | 242.4 | -1,064.1 |  |
-| 2019 | 59.3 | -1,043.3 | Drilling (spud): JU106<br>Drilling (spud): JU106 |
+| 2019 | 59.3 | -1,043.3 | Drilling (spud): JU106 |
 | 2020 | 113.6 | -1,009.0 | Well online (first production): API 608124012701 |
 | 2021 | 425.1 | -890.5 |  |
 | 2022 | 623.6 | -731.7 |  |
@@ -147,6 +147,22 @@ _Source-of-record: `config/analysis/lower_tertiary/golden_baseline_v30.yml`. NPV
 
 ---
 
+## Price Sensitivity
+
+NPV is linear in the oil price deck: each **+$1/bbl** on the realized oil price moves field NPV by **$+17.2 M**. Life-to-date NPV reaches **zero at a flat-equivalent realized WTI of $95/bbl**, versus the actual volume-weighted realized **$67/bbl** over the window.
+
+| Flat-equivalent realized WTI ($/bbl) | NPV @ 10% ($MM) |
+|-------------------------------------:|------------------:|
+| 47 | -827.4 |
+| 57 | -655.1 |
+| 67  ← actual | -482.8 |
+| 77 | -310.5 |
+| 87 | -138.2 |
+
+_Exact, not sampled: NPV is affine in a uniform price multiplier (revenue and royalty scale with price; variable/fixed opex, D&C, facilities and discounting do not), so one base run plus one scaled run define the entire line. 'Flat-equivalent realized WTI' is the volume-weighted average price; the underlying deck is the historical monthly WTI path._
+
+---
+
 ## Next Steps
 
 - **Get a tailored analysis.** Want this for your own assets — a different field, a custom price deck, sensitivities, or a partner-level working-interest view? **AceEngineer** builds traceable field economics from public data. Contact **vamsee.achanta@aceengineer.com** to scope an engagement.
@@ -157,7 +173,8 @@ _Source-of-record: `config/analysis/lower_tertiary/golden_baseline_v30.yml`. NPV
   ```bash
   # 1. refresh the latest BSEE OGOR-A production (2025 + current year)
   uv run python scripts/refresh_bsee_ogor_recent.py
-  # 2. regenerate this report (latest window is the default)
-  uv run python scripts/lower_tertiary/generate_field_economics_report.py --dev Julia --lease G20351
+  # 2. regenerate this report (latest window is the default;
+  #    leases are auto-derived for the field)
+  uv run python scripts/lower_tertiary/generate_field_economics_report.py --dev Julia
   # frozen V30 reference report: add --frozen
   ```
