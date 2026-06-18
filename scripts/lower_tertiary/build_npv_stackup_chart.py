@@ -134,13 +134,177 @@ def build_figure(dev_name: str, wells: list[dict], field_npv: float | None) -> g
     return fig
 
 
+# A data row of the "NPV Timeline" yearly table:
+# | year | net cashflow | cumulative NPV | critical operations (<br>-joined) |
+_TL_ROW = re.compile(
+    r"^\|\s*(?P<year>\d{4})\s*\|\s*(?P<net>[-\d,.]+)\s*\|"
+    r"\s*(?P<cum>[-\d,.]+)\s*\|\s*(?P<ops>.*?)\s*\|\s*$"
+)
+
+# Compact event-type labels for annotations.
+_EVENT_SHORT = {
+    "Drilling (spud)": "spud",
+    "Completion": "completion",
+    "Well online (first production)": "first production",
+    "Workover": "workover",
+    "Recompletion": "recompletion",
+    "Sidetrack": "sidetrack",
+}
+
+
+def parse_timeline(md_text: str) -> list[dict]:
+    """Return the yearly rows of the '## NPV Timeline' table."""
+    start = md_text.find("## NPV Timeline")
+    if start == -1:
+        raise ValueError("No '## NPV Timeline' section found")
+    end = md_text.find("### Critical Operations Detail", start)
+    section = md_text[start : end if end != -1 else len(md_text)]
+
+    rows: list[dict] = []
+    for line in section.splitlines():
+        m = _TL_ROW.match(line)
+        if not m:
+            continue
+        ops_raw = m.group("ops").strip()
+        markers = [x.strip() for x in ops_raw.split("<br>") if x.strip()]
+        rows.append(
+            {
+                "year": int(m.group("year")),
+                "net": _f(m.group("net")),
+                "cum": _f(m.group("cum")),
+                "markers": markers,
+            }
+        )
+    if not rows:
+        raise ValueError("NPV Timeline section found but no year rows parsed")
+    return sorted(rows, key=lambda r: r["year"])
+
+
+def _event_types(markers: list[str]) -> str:
+    """Distinct, compacted operation types present in a year's markers."""
+    out: list[str] = []
+    for mk in markers:
+        head = mk.split(":")[0].strip()
+        short = _EVENT_SHORT.get(head, head)
+        if short not in out:
+            out.append(short)
+    return ", ".join(out)
+
+
+def build_timeline_figure(dev_name: str, rows: list[dict]) -> go.Figure:
+    """Over-time NPV bridge: each year's change in cumulative NPV, with the
+    most impactful years annotated by the events that drove them."""
+    years = [str(r["year"]) for r in rows]
+    deltas: list[float] = []
+    prev = 0.0
+    for r in rows:
+        deltas.append(r["cum"] - prev)
+        prev = r["cum"]
+    terminal = rows[-1]["cum"]
+
+    type_strs = [_event_types(r["markers"]) for r in rows]
+    # Plot on explicit numeric indices (not category strings) so the bars and
+    # the annotations share one coordinate system; relabel ticks to the years.
+    n = len(rows)
+    xi = list(range(n))
+    measures = ["relative"] * n + ["total"]
+    x = xi + [n]
+    y = deltas + [0.0]
+    customdata = [
+        [deltas[i], rows[i]["cum"], type_strs[i] or "production only"]
+        for i in range(n)
+    ] + [[terminal, terminal, "—"]]
+
+    hover = (
+        "<b>%{x}</b><br>"
+        "Δ NPV this year: $%{customdata[0]:,.1f} M<br>"
+        "Cumulative NPV: $%{customdata[1]:,.1f} M<br>"
+        "Events: %{customdata[2]}"
+        "<extra></extra>"
+    )
+
+    fig = go.Figure(
+        go.Waterfall(
+            orientation="v",
+            measure=measures,
+            x=x,
+            y=y,
+            customdata=customdata,
+            hovertemplate=hover,
+            connector={"line": {"color": "rgba(120,120,120,0.5)"}},
+            decreasing={"marker": {"color": "#c0392b"}},
+            increasing={"marker": {"color": "#27ae60"}},
+            totals={"marker": {"color": "#2c3e50"}},
+        )
+    )
+
+    # Annotate the most impactful years (largest |Δ NPV|), but keep at least
+    # 3 categories between annotations so adjacent boxes never collide — so a
+    # multi-year production ramp gets ONE label, not three overlapping ones.
+    order = sorted(range(len(rows)), key=lambda i: abs(deltas[i]), reverse=True)
+    chosen: list[int] = []
+    for i in order:
+        if abs(deltas[i]) < 1.0:
+            continue
+        if all(abs(i - j) >= 3 for j in chosen):
+            chosen.append(i)
+        if len(chosen) == 3:
+            break
+    for i in chosen:
+        down = deltas[i] < 0
+        label = type_strs[i] if type_strs[i] != "production only" else "production ramp"
+        fig.add_annotation(
+            x=i,
+            y=rows[i]["cum"],
+            text=f"<b>{years[i]}: ${deltas[i]:+,.0f}M</b><br>{label}",
+            showarrow=True,
+            arrowhead=2,
+            arrowcolor="rgba(80,80,80,0.8)",
+            ax=0,
+            ay=70 if down else -70,
+            font={"size": 11},
+            align="center",
+            bgcolor="rgba(255,255,255,0.92)",
+            bordercolor="rgba(120,120,120,0.6)",
+            borderwidth=1,
+        )
+
+    fig.update_layout(
+        title=(
+            f"{dev_name} — What Moved NPV Over Time<br>"
+            "<sub>change in cumulative NPV each year (discounted); the biggest "
+            "swings are annotated with the events that drove them</sub>"
+        ),
+        yaxis_title="Δ cumulative NPV ($MM)",
+        xaxis={
+            "title": "Year",
+            "tickmode": "array",
+            "tickvals": xi + [n],
+            "ticktext": years + ["Terminal"],
+            "tickangle": -45,
+        },
+        template="plotly_white",
+        showlegend=False,
+        margin={"t": 90, "l": 70, "r": 30, "b": 60},
+    )
+    fig.add_hline(y=0, line_width=1, line_color="rgba(0,0,0,0.4)")
+    return fig
+
+
 def main(argv: list[str] | None = None) -> int:
+    import plotly.io as pio
+
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--dev", default="Julia", help="Field display name")
     ap.add_argument(
         "--slug",
         default=None,
         help="Override file slug (defaults to dev name lowercased)",
+    )
+    ap.add_argument(
+        "--png",
+        action="store_true",
+        help="Also write static PNG previews (needs kaleido)",
     )
     args = ap.parse_args(argv)
 
@@ -149,13 +313,31 @@ def main(argv: list[str] | None = None) -> int:
     if not md_path.exists():
         print(f"ERROR: report not found: {md_path}")
         return 1
+    md_text = md_path.read_text()
 
-    wells, field_npv = parse_stackup(md_path.read_text())
-    fig = build_figure(args.dev, wells, field_npv)
+    wells, field_npv = parse_stackup(md_text)
+    rows = parse_timeline(md_text)
+    fig_time = build_timeline_figure(args.dev, rows)
+    fig_stack = build_figure(args.dev, wells, field_npv)
+
+    # Combine both charts into one self-contained HTML (over-time bridge first).
     out = REPORTS / f"{slug}_npv_stackup.html"
-    fig.write_html(out, include_plotlyjs="cdn", full_html=True)
-    print(f"Parsed {len(wells)} wells; field NPV ${field_npv:,.1f}M")
+    html_time = pio.to_html(fig_time, include_plotlyjs="cdn", full_html=False)
+    html_stack = pio.to_html(fig_stack, include_plotlyjs=False, full_html=False)
+    out.write_text(
+        "<!doctype html><html><head><meta charset='utf-8'>"
+        f"<title>{args.dev} — NPV waterfalls</title></head><body>"
+        f"{html_time}<hr style='margin:32px 0'>{html_stack}</body></html>"
+    )
+    print(f"Parsed {len(wells)} wells (field NPV ${field_npv:,.1f}M) "
+          f"+ {len(rows)} timeline years")
     print(f"Wrote {out} ({out.stat().st_size:,} bytes)")
+
+    if args.png:
+        for name, fig in (("over_time", fig_time), ("stackup", fig_stack)):
+            png = REPORTS / f"{slug}_npv_{name}.png"
+            fig.write_image(png, width=1100, height=600, scale=2)
+            print(f"Wrote {png} ({png.stat().st_size:,} bytes)")
     return 0
 
 

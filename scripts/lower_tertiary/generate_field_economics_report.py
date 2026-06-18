@@ -873,9 +873,11 @@ def build_report(
     _slug = dev_name.lower().replace("/", "_").replace(" ", "_")
     _dev_arg = f'"{dev_name}"' if " " in dev_name else dev_name
     lines.append(
-        f"**[Interactive NPV stackup waterfall →](./{_slug}_npv_stackup.html)** "
-        "— each well's net NPV steps down to the field total; hover a bar for "
-        "its gross / allocated-cost / net breakdown. Rebuild with "
+        f"**[Interactive NPV waterfalls →](./{_slug}_npv_stackup.html)** — two "
+        "views: an **over-time NPV bridge** (each year's change in cumulative "
+        "NPV, with the biggest swings annotated by the events that drove them) "
+        "and this **per-well stackup** (each well's net NPV stepping to the "
+        "field total). Hover any bar for detail. Rebuild with "
         f"`uv run --with plotly python scripts/lower_tertiary/"
         f"build_npv_stackup_chart.py --dev {_dev_arg}`."
     )

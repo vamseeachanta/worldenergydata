@@ -91,7 +91,7 @@ JU102      -104.8 M  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 JU106       -89.0 M  ▓▓▓▓▓▓▓▓▓▓▓▓▓
 ```
 
-**[Interactive NPV stackup waterfall →](./julia_npv_stackup.html)** — each well's net NPV steps down to the field total; hover a bar for its gross / allocated-cost / net breakdown. Rebuild with `uv run --with plotly python scripts/lower_tertiary/build_npv_stackup_chart.py --dev Julia`.
+**[Interactive NPV waterfalls →](./julia_npv_stackup.html)** — two views: an **over-time NPV bridge** (each year's change in cumulative NPV, with the biggest swings annotated by the events that drove them) and this **per-well stackup** (each well's net NPV stepping to the field total). Hover any bar for detail. Rebuild with `uv run --with plotly python scripts/lower_tertiary/build_npv_stackup_chart.py --dev Julia`.
 
 _Block scope: Single OGOR block (WR 584) for this development; block-level NPV decomposition is not applicable (identical to the field total)._
 
