@@ -777,7 +777,10 @@ def build_report(
         "**Gross well NPV** column reflects standalone operating performance; "
         "the **Net well NPV** column reflects each well's share of the "
         "fully-loaded field (which is NPV-negative overall, so every well's "
-        "net is negative)."
+        "net is negative). **Bottom line:** a negative *net* NPV here is an "
+        "allocation outcome on an NPV-negative field, not a verdict on the "
+        "well's own performance — read the **Gross well NPV** column for "
+        "standalone results."
     )
     lines.append("")
 
@@ -828,6 +831,43 @@ def build_report(
         "royalty, variable opex, and directly-resolvable D&C are attributed to "
         "it. Per-well NPVs sum to the field NPV._"
     )
+    lines.append("")
+    lines.append("---")
+    lines.append("")
+
+    # =========================== WELL GEOMETRY (3D) =========================
+    # Interactive 3D well-path renders (Plotly + Three.js) are produced
+    # separately by scripts/bsee/demo_well_path_<field>.py from BSEE
+    # directional-survey data. They are LINKED here only once the rendered well
+    # set is verified to match this report's lease-resolved producers, so the
+    # economics and the geometry never silently describe different wells.
+    slug = dev_name.lower().replace("/", "_").replace(" ", "_")
+    lines.append("## Well Geometry (3D)")
+    lines.append("")
+    lines.append(
+        "Interactive 3D well-path views — minimum-curvature trajectories from "
+        "BSEE directional surveys, rendered with Plotly and Three.js — are in "
+        "development for this field. When verified they will live at:"
+    )
+    lines.append("")
+    lines.append(f"- `reports/bsee/{slug}_well_path_plotly.html`")
+    lines.append(f"- `reports/bsee/{slug}_well_path_threejs.html`")
+    lines.append("")
+    lines.append(
+        "_They are intentionally **not linked yet**: the geometry render must "
+        "first be confirmed to cover the same lease-resolved producers shown in "
+        "the NPV stackup above (same APIs, same field), so the economics and the "
+        "well paths never describe different wells._"
+    )
+    if slug == "julia":
+        lines.append("")
+        lines.append(
+            "_Julia status: the current demo render (`scripts/bsee/"
+            "demo_well_path_julia.py`) selects wells by `WELL_NAME` prefix and "
+            "picks up unrelated shelf wells, with an API collision on "
+            "`608124009400` (DC101 here vs. JU101 in the well catalog). Tracked "
+            "in worldenergydata#493 — re-select by lease G20351, then embed._"
+        )
     lines.append("")
     lines.append("---")
     lines.append("")

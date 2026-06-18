@@ -6,8 +6,15 @@ field:
   display_name: "Julia"
   status: producing
   leases_key: julia
-  first_oil: "2019-05-01"
+  # first_oil reconciled to BSEE OGOR-A first production (well 608124003301,
+  # 2016-03), matching golden_baseline_v30.yml and the field economics report.
+  # Was "2019-05-01" (unsourced; inconsistent with the OGOR-derived 2016 date
+  # used by reports/lower_tertiary/field_economics_julia.md).
+  first_oil: "2016-03-01"
   data_through: "2024-12-31"
+  # NOTE: operator unverified from repo data and disputed — public record has
+  # Julia as ExxonMobil-operated (Equinor/Statoil a 50% partner). Confirm
+  # against an authoritative source before using downstream. See partners below.
   operator: "Equinor"
   partners:
     - name: "Equinor"
