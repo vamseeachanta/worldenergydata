@@ -73,12 +73,34 @@ FAILURE_MODES: dict[str, FailureMode] = {
             re.I,
         ),
     ),
+    "well_control": FailureMode(
+        key="well_control",
+        label="Well control / blowout",
+        sources=("bsee",),
+        include=re.compile(r"blowout|well control|loss of well|\bkick\b", re.I),
+    ),
+    "dropped_object": FailureMode(
+        key="dropped_object",
+        label="Dropped object / crane & lifting",
+        sources=("bsee",),
+        include=re.compile(
+            r"crane|lifting device|\blifting\b|dropped object|\bdropped\b|rigging|hoist",
+            re.I,
+        ),
+    ),
+    "fire_explosion": FailureMode(
+        key="fire_explosion",
+        label="Fire / explosion",
+        sources=("bsee",),
+        include=re.compile(r"\bfire\b|explosion|ignition|flash fire", re.I),
+    ),
 }
 
 # --- BSEE ACCIDENT_TYPE -> severity rank (higher = worse) ---------------------
 SEVERITY_RANK: list[tuple[re.Pattern, int, str]] = [
     (re.compile(r"fatalit", re.I), 100, "fatality"),
     (re.compile(r"capsiz|blowout|explosion", re.I), 90, "catastrophic"),
+    (re.compile(r"\bfire\b", re.I), 70, "fire"),
     (re.compile(r"\bLTA\b|lost time|required evacuation", re.I), 60, "lost_time"),
     (re.compile(r"pollution|spill|h2s|gas release", re.I), 50, "environmental"),
     (re.compile(r"injury|RW/JT", re.I), 40, "injury"),
