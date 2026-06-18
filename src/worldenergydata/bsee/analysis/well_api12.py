@@ -529,9 +529,17 @@ class WellAPI12:
         count = 0
         for api12 in API12_list:
             count = count + 1
-            api12_dir_survey_df = directional_surveys[
-                directional_surveys.API12 == api12
-            ].copy()
+            # reset_index is REQUIRED: the per-API slice below is read
+            # positionally (.iloc[df_row]) but written by label (.loc[df_row]).
+            # Without a fresh 0-based index, every well after the first keeps
+            # the slice's original (non-zero) index, so the label writes miss
+            # the real rows (leaving inc/az at 0 -> dead-vertical path) and
+            # append phantom rows. See test_prepare_well_paths_multi_well.
+            api12_dir_survey_df = (
+                directional_surveys[directional_surveys.API12 == api12]
+                .copy()
+                .reset_index(drop=True)
+            )
             api12_dir_survey_df["az"] = 0.0
             api12_dir_survey_df["inc"] = 0.0
             api12_dir_survey_df["md"] = api12_dir_survey_df["SURVEY_POINT_MD"].astype(
@@ -771,6 +779,44 @@ class WellAPI12:
         )
 
         return survey_xyz_wh_adjusted
+
+    def export_well_paths(self, output_path=None, field_name=""):
+        """Export computed well paths as a renderer-agnostic JSON payload.
+
+        Builds the shared 3D contract (consumed by the Plotly and Three.js
+        renderers in ``bsee.visualization``) from ``self.output_data_well_path``.
+        Returns the payload dict; if ``output_path`` is given, also writes it as
+        JSON. Returns ``None`` when no well paths have been prepared.
+        """
+        from worldenergydata.bsee.visualization.well_path_export import (
+            build_well_paths_payload,
+            well_paths_to_json_file,
+        )
+
+        if not getattr(self, "output_data_well_path", None):
+            return None
+
+        labels = {}
+        for api12 in self.output_data_well_path:
+            try:
+                api10 = self.get_API10_from_well_API(api12)
+                rows = self.output_data_api12_df[
+                    self.output_data_api12_df.API10 == api10
+                ]
+                labels[api12] = (
+                    rows["Well Name"].values[0]
+                    + "-"
+                    + rows["Sidetrack and Bypass"].values[0]
+                ).strip()
+            except Exception:
+                labels[api12] = str(api12)
+
+        payload = build_well_paths_payload(
+            self.output_data_well_path, labels, field_name=field_name
+        )
+        if output_path is not None:
+            well_paths_to_json_file(payload, output_path)
+        return payload
 
     def plot_field_wells(self):
         if self.output_data_well_path:
