@@ -132,17 +132,23 @@ class Grounding:
         L = [f"### Real-world precedent — {self.failure_mode}", ""]
         L.append("**Latest on record:**")
         for i in self.latest:
-            L.append(f"- **{i.date}** — {i.location} — {i.description} "
-                     f"_({i.severity}; {i.source})_")
+            L.append(
+                f"- **{i.date}** — {i.location} — {i.description} "
+                f"_({i.severity}; {i.source})_"
+            )
         L.append("")
         L.append("**Highest-consequence on record:**")
         for i in self.most_severe:
-            L.append(f"- **{i.date}** — {i.location} — {i.description} "
-                     f"_({i.severity}; {i.source})_")
+            L.append(
+                f"- **{i.date}** — {i.location} — {i.description} "
+                f"_({i.severity}; {i.source})_"
+            )
         L.append("")
         routed = ", ".join(f"{k}={v}" for k, v in self.source_counts.items())
-        L.append(f"_Sources ({routed}). Domain-routed: only on-domain sources "
-                 f"queried for this failure mode._")
+        L.append(
+            f"_Sources ({routed}). Domain-routed: only on-domain sources "
+            f"queried for this failure mode._"
+        )
         if self.vintage_note:
             L.append(f"_Data vintage: {self.vintage_note}._")
         return "\n".join(L)
@@ -164,8 +170,13 @@ def default_bsee_path() -> Optional[Path]:
     candidates = []
     root = os.environ.get("WED_HSE_DATA_ROOT")
     if root:
-        candidates.append(Path(root) / "hse/raw/bsee/IncInvRawData/mv_acc_investigations.txt")
-    repo = Path(__file__).resolve().parents[3] / "data/modules/hse/raw/bsee/IncInvRawData/mv_acc_investigations.txt"
+        candidates.append(
+            Path(root) / "hse/raw/bsee/IncInvRawData/mv_acc_investigations.txt"
+        )
+    repo = (
+        Path(__file__).resolve().parents[3]
+        / "data/modules/hse/raw/bsee/IncInvRawData/mv_acc_investigations.txt"
+    )
     candidates.append(repo)
     candidates.append(SHARE_DEFAULT)
     for c in candidates:
@@ -207,12 +218,25 @@ def load_bsee(mode: FailureMode, path: Optional[Path] = None) -> list[Incident]:
             continue
         rank, sev = severity_of(atype)
         loc = " ".join(
-            x for x in [(r.get("AREA_BLOCK") or "").strip(), (r.get("LEASE_NUMBER") or "").strip()]
+            x
+            for x in [
+                (r.get("AREA_BLOCK") or "").strip(),
+                (r.get("LEASE_NUMBER") or "").strip(),
+            ]
             if x and x != "Not Applicable"
         )
-        out.append(Incident(
-            source="BSEE (offshore)", date=d.isoformat(), location=loc or "GoM (unspecified)",
-            description=atype, severity=sev, severity_rank=rank, vintage_note=vintage, _dt=d))
+        out.append(
+            Incident(
+                source="BSEE (offshore)",
+                date=d.isoformat(),
+                location=loc or "GoM (unspecified)",
+                description=atype,
+                severity=sev,
+                severity_rank=rank,
+                vintage_note=vintage,
+                _dt=d,
+            )
+        )
     return out
 
 
@@ -229,8 +253,9 @@ def ground(failure_mode: str, *, bsee_path: Optional[Path] = None) -> Grounding:
     ``"not routed"``). Picks 2 newest + 2 highest-severity (disjoint).
     """
     if failure_mode not in FAILURE_MODES:
-        raise KeyError(f"unknown failure_mode {failure_mode!r}; "
-                       f"known: {sorted(FAILURE_MODES)}")
+        raise KeyError(
+            f"unknown failure_mode {failure_mode!r}; " f"known: {sorted(FAILURE_MODES)}"
+        )
     mode = FAILURE_MODES[failure_mode]
     pool: list[Incident] = []
     counts: dict[str, object] = {}
@@ -247,18 +272,27 @@ def ground(failure_mode: str, *, bsee_path: Optional[Path] = None) -> Grounding:
     picked = {id(i) for i in latest}
     most_severe = sorted(
         [i for i in pool if id(i) not in picked],
-        key=lambda i: (i.severity_rank, i._dt), reverse=True,
+        key=lambda i: (i.severity_rank, i._dt),
+        reverse=True,
     )[:2]
     vintage = (latest + most_severe)[0].vintage_note if (latest or most_severe) else ""
     return Grounding(
-        failure_mode=mode.label, latest=latest, most_severe=most_severe,
-        source_counts=counts, vintage_note=vintage)
+        failure_mode=mode.label,
+        latest=latest,
+        most_severe=most_severe,
+        source_counts=counts,
+        vintage_note=vintage,
+    )
 
 
 def _main(argv: Optional[list[str]] = None) -> int:
-    ap = argparse.ArgumentParser(description="HSE incident grounding for a failure mode")
+    ap = argparse.ArgumentParser(
+        description="HSE incident grounding for a failure mode"
+    )
     ap.add_argument("--mode", default="mooring_fatigue", choices=sorted(FAILURE_MODES))
-    ap.add_argument("--json", action="store_true", help="emit JSON sidecar instead of card")
+    ap.add_argument(
+        "--json", action="store_true", help="emit JSON sidecar instead of card"
+    )
     a = ap.parse_args(argv)
     g = ground(a.mode)
     print(json.dumps(g.to_dict(), indent=2) if a.json else g.render_card())
