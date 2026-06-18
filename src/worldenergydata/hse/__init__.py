@@ -41,6 +41,9 @@ from worldenergydata.hse.database import (
     ViolationIncident,
 )
 
+# Incident-grounding query (#487): failure-mode -> real precedent incidents
+from worldenergydata.hse.grounding import Grounding, ground
+
 # Importers
 from worldenergydata.hse.importers.base_importer import BaseImporter
 from worldenergydata.hse.importers.bsee_incidents_importer import (
@@ -56,9 +59,6 @@ from worldenergydata.hse.importers.data_quality_validator import (
     DataQualityValidator,
 )
 from worldenergydata.hse.importers.epa_tri_importer import EPATRIImporter
-
-# Incident-grounding query (#487): failure-mode -> real precedent incidents
-from worldenergydata.hse.grounding import Grounding, ground
 
 __version__ = "1.0.0"
 __all__ = [
