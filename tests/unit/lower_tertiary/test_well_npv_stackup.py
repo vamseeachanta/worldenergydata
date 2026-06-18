@@ -48,9 +48,7 @@ class TestWellStackupSumsToField:
         stk = build_well_npv_stackup("Julia", end_date=None)
 
         # Frozen field NPV is the sanctioned value.
-        assert field["terminal_npv_usd"] == pytest.approx(
-            JULIA_FROZEN_NPV, abs=0.01
-        )
+        assert field["terminal_npv_usd"] == pytest.approx(JULIA_FROZEN_NPV, abs=0.01)
         # Per-well net NPVs sum to the field terminal NPV (to the cent).
         assert stk["sum_well_npv_usd"] == pytest.approx(
             field["terminal_npv_usd"], abs=0.01

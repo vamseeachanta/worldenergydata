@@ -113,6 +113,21 @@ temporary_exceptions:
       - reports/hse/wrk012_hse_data_audit.md
       - reports/hse/wrk013_hse_mishap_analysis.md
       - reports/imo_gisis_analysis_report.py
+      - reports/lower_tertiary/field_economics_anchor.md
+      - reports/lower_tertiary/field_economics_anchor_v30.md
+      - reports/lower_tertiary/field_economics_big_foot.md
+      - reports/lower_tertiary/field_economics_big_foot_v30.md
+      - reports/lower_tertiary/field_economics_cascade_chinook.md
+      - reports/lower_tertiary/field_economics_cascade_chinook_v30.md
+      - reports/lower_tertiary/field_economics_jack_st_malo.md
+      - reports/lower_tertiary/field_economics_jack_st_malo_v30.md
+      - reports/lower_tertiary/field_economics_julia.md
+      - reports/lower_tertiary/field_economics_julia_v30.md
+      - reports/lower_tertiary/field_economics_shenandoah.md
+      - reports/lower_tertiary/field_economics_shenandoah_v30.md
+      - reports/lower_tertiary/field_economics_stones.md
+      - reports/lower_tertiary/field_economics_stones_v30.md
+      - reports/lower_tertiary/portfolio_economics.html
       - reports/lower_tertiary/v30_repeatability_report.md
       - reports/lower_tertiary/wrk010_latest_data_report.md
       - reports/lower_tertiary_field_summary.html

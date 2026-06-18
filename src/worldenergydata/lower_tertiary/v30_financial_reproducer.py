@@ -814,9 +814,7 @@ def build_field_npv_timeline(dev_name: str, end_date: str | None = None) -> dict
         raise ValueError(f"Unknown development: {dev_name!r}")
 
     if dev_name not in production:
-        raise ValueError(
-            f"{dev_name!r} has no production timeline (exploration-only)"
-        )
+        raise ValueError(f"{dev_name!r} has no production timeline (exploration-only)")
 
     dev_system = proj_data.get("dev_system", "")
     first_oil = first_oil_map.get(dev_name)
@@ -1073,9 +1071,11 @@ def _build_perwell_monthly_dnc(
     def _to_series(pairs: list[tuple[pd.Timestamp, float]]) -> pd.Series:
         s = pd.Series(0.0, index=date_range)
         if pairs:
-            agg = pd.DataFrame(pairs, columns=["MONTH", "COST"]).groupby("MONTH")[
-                "COST"
-            ].sum()
+            agg = (
+                pd.DataFrame(pairs, columns=["MONTH", "COST"])
+                .groupby("MONTH")["COST"]
+                .sum()
+            )
             for m, v in agg.items():
                 if m in s.index:
                     s[m] += v
@@ -1198,9 +1198,7 @@ def build_well_npv_stackup(dev_name: str, end_date: str | None = None) -> dict:
 
     # 3) Per-well monthly oil over full_range (reuses the monkeypatchable loader).
     leases_df = load_v30_leases()
-    dev_leases = set(
-        leases_df[leases_df["DEV_NAME"] == dev_name]["LEASE_NUM"]
-    )
+    dev_leases = set(leases_df[leases_df["DEV_NAME"] == dev_name]["LEASE_NUM"])
     end_year = max(2025, int(prod_end[:4]))
     ogor = load_ogor_production(start_year=2000, end_year=end_year)
     ogor = ogor[(ogor["date"] >= "2000-09-01") & (ogor["date"] <= prod_end)]
@@ -1210,7 +1208,10 @@ def build_well_npv_stackup(dev_name: str, end_date: str | None = None) -> dict:
     ogor["API"] = ogor["API_WELL_NUMBER"].astype(str).str.strip()
     ogor["wellbore"] = ogor["API"].str[:12]
     ogor["_block"] = (
-        ogor["AREA_CODE_BLOCK_NUM"].astype(str).str.replace('"', "", regex=False).str.strip()
+        ogor["AREA_CODE_BLOCK_NUM"]
+        .astype(str)
+        .str.replace('"', "", regex=False)
+        .str.strip()
     )
 
     # Producing wellbores (oil > 0 over the window).
@@ -1238,9 +1239,7 @@ def build_well_npv_stackup(dev_name: str, end_date: str | None = None) -> dict:
     oil_mat = oil_mat[well_keys]
 
     # 4) Direct operating cashflow per well (revenue - royalty - var opex).
-    wti_series = (
-        wti_df.set_index("Month")["WTI_USD"].reindex(full_range)
-    )
+    wti_series = wti_df.set_index("Month")["WTI_USD"].reindex(full_range)
     wti_fallback = _get_assumption(assumptions, sys_norm, "WTI_BASE_$/BBL", 60.0)
     wti_series = wti_series.fillna(wti_fallback)
     royalty_rate = _get_assumption(assumptions, sys_norm, "ROYALTY_RATE", 0.1875)
