@@ -4,6 +4,14 @@
 
 **Data window:** 2000-09 -> 2026-04 (latest); frozen V30 reference NPV = -$530.6M
 
+## Summary
+
+On public BSEE production + cost data, **Cascade Chinook** is **NPV-negative at 10%** life-to-date: terminal cumulative NPV **$-1,480.5 M** (frozen V30 sanctioned reference $-1,477.2 M).
+
+- **39.7 MMbbl** oil produced from **3 producing wells** (**14 total wellbores**), generating **$2,778 M** gross revenue.
+- A **high-capex, deepwater** signature: **$3,874 M** of one-time D&C + facilities capital is the dominant driver of the NPV.
+- The cumulative-NPV path bottomed at **$-1,511.1 M** in **2018** and has since recovered **$+30.6 M** as production paid back capital.
+
 > **LATEST run.** The NPV timeline is built from the V30 cashflow model extended through the latest available BSEE OGOR-A month (`build_field_npv_timeline(dev, end_date=...)`). The terminal cumulative NPV reflects the extended window and therefore differs from the frozen V30 sanctioned value (shown for reference below). The frozen V30 baseline (`golden_baseline_v30.yml`) is unchanged.
 
 ---
@@ -12,7 +20,7 @@
 
 Cumulative discounted NPV evolution over field life, with critical well operations annotated. Terminal cumulative NPV = **$-1,480.5 M** (frozen V30 reference: $-1,477.2 M; delta -3.3 M).
 
-Cumulative NPV path (by year): `█▇▇▇▇▇▇▆▆▆▄▂▁▁▁▁▁▁▁▁▁▁▁▁▁`
+Cumulative NPV path (by year): `█▇▇▇▇▇▇▆▆▆▄▂▁▁▁▁▁▁▁▁▁▁▁▁▁`  _start $-75M → trough $-1,511M (2018) → latest $-1,480M_
 
 | Year | Net Cashflow ($MM) | Cumulative NPV ($MM) | Critical Operations |
 |------|-------------------:|---------------------:|---------------------|
@@ -86,7 +94,7 @@ Field terminal NPV decomposed into per-well contributions that sum exactly to th
 | 2 | 608124008300 | CA006 | 10.43 | 28.1 | -465.9 | -437.8 | 29.6% |
 | 3 | 608124004602 | CH002 | 1.69 | 7.8 | -75.6 | -67.8 | 4.6% |
 
-> **Reading the ranking.** Under production-pro-rata allocation, the largest producer absorbs the most shared capital — so the highest-output well can show the *most negative* net NPV. The **Gross well NPV** column reflects standalone operating performance; the **Net well NPV** column reflects each well's share of the fully-loaded field (which is NPV-negative overall, so every well's net is negative).
+> **Reading the ranking.** Under production-pro-rata allocation, the largest producer absorbs the most shared capital — so the highest-output well can show the *most negative* net NPV. The **Gross well NPV** column reflects standalone operating performance; the **Net well NPV** column reflects each well's share of the fully-loaded field (which is NPV-negative overall, so every well's net is negative). **Bottom line:** a negative *net* NPV here is an allocation outcome on an NPV-negative field, not a verdict on the well's own performance — read the **Gross well NPV** column for standalone results.
 
 Per-well net NPV (signed bars; █ = value-additive, ▓ = drag):
 
@@ -95,6 +103,8 @@ CH004      -974.8 M  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓�
 CA006      -437.8 M  ▓▓▓▓▓▓▓▓▓▓▓
 CH002       -67.8 M  ▓▓
 ```
+
+**[Interactive NPV waterfalls →](./cascade_chinook_npv_stackup.html)** — two views: an **over-time NPV bridge** (each year's change in cumulative NPV, with the biggest swings annotated by the events that drove them) and this **per-well stackup** (each well's net NPV stepping to the field total). Hover any bar for detail. Rebuild with `uv run --with plotly python scripts/lower_tertiary/build_npv_stackup_chart.py --dev "Cascade Chinook"`.
 
 **By block (OGOR `AREA_CODE_BLOCK_NUM`):**
 
@@ -108,6 +118,17 @@ _Block scope: 2 OGOR blocks present; per-block oil shares shown. Per-block NPV w
 _The stackup covers the 3 producing wells. The field's 14 total wellbores also include appraisal and sidetrack/re-drill bores; their drilling & completion capital is part of the shared cost allocated pro-rata (it is not attributed to a single producer)._
 
 _**Allocation assumption.** Shared field costs (facilities, fixed opex, host) and the drilling/completion cost of non-producing bores (appraisal/sidetrack wells with no production to stand against) are pooled and allocated to the producing wells pro-rata by each well's share of total field oil production. Each producing well's own revenue, royalty, variable opex, and directly-resolvable D&C are attributed to it. Per-well NPVs sum to the field NPV._
+
+---
+
+## Well Geometry (3D)
+
+Interactive 3D well-path views — minimum-curvature trajectories from BSEE directional surveys, rendered with Plotly and Three.js — are in development for this field. When verified they will live at:
+
+- `reports/bsee/cascade_chinook_well_path_plotly.html`
+- `reports/bsee/cascade_chinook_well_path_threejs.html`
+
+_They are intentionally **not linked yet**: the geometry render must first be confirmed to cover the same lease-resolved producers shown in the NPV stackup above (same APIs, same field), so the economics and the well paths never describe different wells._
 
 ---
 
@@ -141,6 +162,22 @@ _Latest NPV from `build_field_npv_timeline(dev, end_date)`; latest revenue/oil f
 | Wellbores | 14 |
 
 _Source-of-record: `config/analysis/lower_tertiary/golden_baseline_v30.yml`. NPV reproduced within golden-baseline tolerance by `worldenergydata.lower_tertiary.v30_financial_reproducer`._
+
+---
+
+## Price Sensitivity
+
+NPV is linear in the oil price deck: each **+$1/bbl** on the realized oil price moves field NPV by **$+5.5 M**. Life-to-date NPV reaches **zero at a flat-equivalent realized WTI of $338/bbl**, versus the actual volume-weighted realized **$68/bbl** over the window.
+
+| Flat-equivalent realized WTI ($/bbl) | NPV @ 10% ($MM) |
+|-------------------------------------:|------------------:|
+| 48 | -1,590.3 |
+| 58 | -1,535.4 |
+| 68  ← actual | -1,480.5 |
+| 78 | -1,425.6 |
+| 88 | -1,370.7 |
+
+_Exact, not sampled: NPV is affine in a uniform price multiplier (revenue and royalty scale with price; variable/fixed opex, D&C, facilities and discounting do not), so one base run plus one scaled run define the entire line. 'Flat-equivalent realized WTI' is the volume-weighted average price; the underlying deck is the historical monthly WTI path._
 
 ---
 
