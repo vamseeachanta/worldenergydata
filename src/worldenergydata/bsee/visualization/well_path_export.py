@@ -196,8 +196,7 @@ def build_well_paths_payload(
         "schema_version": SCHEMA_VERSION,
         "units": units,
         "coordinate_system": (
-            "field-relative East-North-Down; x=x_coor, y=y_coor, "
-            "z=TVD positive-down"
+            "field-relative East-North-Down; x=x_coor, y=y_coor, " "z=TVD positive-down"
         ),
         "field": {"name": field_name},
         "well_count": len(wells),
@@ -263,20 +262,43 @@ def demo_payload() -> dict[str, Any]:
     shapes are physically plausible, not random.
     """
     specs = [
-        dict(api12="608124000401", label="DEMO A-001-ST00", kop=3000, azimuth=45,
-             max_inc=55, total_md=15000, surf_x=0.0, surf_y=0.0),
-        dict(api12="608124000402", label="DEMO A-002-ST00", kop=3500, azimuth=135,
-             max_inc=42, total_md=14000, surf_x=60.0, surf_y=-40.0),
-        dict(api12="608124000403", label="DEMO A-003-ST00", kop=2800, azimuth=255,
-             max_inc=68, total_md=16500, surf_x=-50.0, surf_y=50.0),
+        dict(
+            api12="608124000401",
+            label="DEMO A-001-ST00",
+            kop=3000,
+            azimuth=45,
+            max_inc=55,
+            total_md=15000,
+            surf_x=0.0,
+            surf_y=0.0,
+        ),
+        dict(
+            api12="608124000402",
+            label="DEMO A-002-ST00",
+            kop=3500,
+            azimuth=135,
+            max_inc=42,
+            total_md=14000,
+            surf_x=60.0,
+            surf_y=-40.0,
+        ),
+        dict(
+            api12="608124000403",
+            label="DEMO A-003-ST00",
+            kop=2800,
+            azimuth=255,
+            max_inc=68,
+            total_md=16500,
+            surf_x=-50.0,
+            surf_y=50.0,
+        ),
     ]
     wells = [_synthetic_well(index=i, **s) for i, s in enumerate(specs)]
     return {
         "schema_version": SCHEMA_VERSION,
         "units": "ft",
         "coordinate_system": (
-            "field-relative East-North-Down; x=x_coor, y=y_coor, "
-            "z=TVD positive-down"
+            "field-relative East-North-Down; x=x_coor, y=y_coor, " "z=TVD positive-down"
         ),
         "field": {"name": "DEMO FIELD"},
         "well_count": len(wells),
