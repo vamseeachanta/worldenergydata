@@ -619,6 +619,34 @@ def build_report(
     # Financial Summary table below). None for the frozen report.
     cmp = _read_latest_comparison(dev_name) if is_latest else None
 
+    # ---- Price sensitivity + breakeven (NPV is affine in a WTI multiplier) ----
+    # One extra scaled timeline pins the exact NPV-vs-price line; everything
+    # else (each sensitivity point, the breakeven price) follows analytically.
+    price_sens: dict | None = None
+    avg_wti = tl.get("avg_realized_wti_usd")
+    base_npv = tl["terminal_npv_usd"]
+    if avg_wti is not None and not (isinstance(avg_wti, float) and np.isnan(avg_wti)):
+        _m = 1.20
+        tl_pert = build_field_npv_timeline(
+            dev_name, end_date=end_date, wti_price_multiplier=_m
+        )
+        dnpv_dm = (tl_pert["terminal_npv_usd"] - base_npv) / (_m - 1.0)
+        if abs(dnpv_dm) > 1.0:  # sensible slope (positive: NPV rises with price)
+            dnpv_per_dollar = dnpv_dm / avg_wti  # $ NPV per +$1/bbl realized
+            m_breakeven = 1.0 - base_npv / dnpv_dm
+            wti_breakeven = avg_wti * m_breakeven
+
+            def _npv_at_wti(p: float) -> float:
+                return base_npv + ((p / avg_wti) - 1.0) * dnpv_dm
+
+            grid = [avg_wti - 20, avg_wti - 10, avg_wti, avg_wti + 10, avg_wti + 20]
+            price_sens = {
+                "avg_wti": avg_wti,
+                "dnpv_per_dollar": dnpv_per_dollar,
+                "wti_breakeven": wti_breakeven,
+                "rows": [(p, _npv_at_wti(p)) for p in grid if p > 0],
+            }
+
     # ---- Build the yearly cumulative-NPV table (compact) ----
     timeline["year"] = timeline["date"].dt.year
     yearly = (
@@ -1027,6 +1055,47 @@ def build_report(
     lines.append("")
     lines.append("---")
     lines.append("")
+
+    # ============================ PRICE SENSITIVITY =========================
+    if price_sens is not None:
+        rate_pct = f"{tl['discount_rate_annual'] * 100:.0f}"
+        avgw = price_sens["avg_wti"]
+        be = price_sens["wti_breakeven"]
+        per_mm = price_sens["dnpv_per_dollar"] / 1e6
+        lines.append("## Price Sensitivity")
+        lines.append("")
+        be_phrase = (
+            f"zero at a flat-equivalent realized WTI of ${be:,.0f}/bbl"
+            if be > 0
+            else "zero at no achievable price — non-price costs exceed oil "
+            "revenue at any positive WTI under this discount rate"
+        )
+        lines.append(
+            f"NPV is linear in the oil price deck: each **+$1/bbl** on the "
+            f"realized oil price moves field NPV by **${per_mm:+,.1f} M**. "
+            f"Life-to-date NPV reaches **{be_phrase}**, versus the actual "
+            f"volume-weighted realized **${avgw:,.0f}/bbl** over the window."
+        )
+        lines.append("")
+        lines.append(
+            f"| Flat-equivalent realized WTI ($/bbl) | NPV @ {rate_pct}% ($MM) |"
+        )
+        lines.append("|-------------------------------------:|------------------:|")
+        for p, npv in price_sens["rows"]:
+            mark = "  ← actual" if abs(p - avgw) < 1e-6 else ""
+            lines.append(f"| {p:,.0f}{mark} | {_fmt_usd_mm(npv)} |")
+        lines.append("")
+        lines.append(
+            "_Exact, not sampled: NPV is affine in a uniform price multiplier "
+            "(revenue and royalty scale with price; variable/fixed opex, D&C, "
+            "facilities and discounting do not), so one base run plus one scaled "
+            "run define the entire line. 'Flat-equivalent realized WTI' is the "
+            "volume-weighted average price; the underlying deck is the historical "
+            "monthly WTI path._"
+        )
+        lines.append("")
+        lines.append("---")
+        lines.append("")
 
     # =============================== NEXT STEPS / CTAs =======================
     dev_arg = f'"{dev_name}"' if " " in dev_name else dev_name

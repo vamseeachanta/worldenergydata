@@ -744,7 +744,11 @@ def reproduce_v30_financials() -> dict[str, dict]:
     return results
 
 
-def build_field_npv_timeline(dev_name: str, end_date: str | None = None) -> dict:
+def build_field_npv_timeline(
+    dev_name: str,
+    end_date: str | None = None,
+    wti_price_multiplier: float = 1.0,
+) -> dict:
     """Build the monthly cumulative-discounted-NPV time series for a development.
 
     This is an ADDITIVE presentation helper. It reconstructs the *same*
@@ -844,6 +848,22 @@ def build_field_npv_timeline(dev_name: str, end_date: str | None = None) -> dict
     wti_fallback = _get_assumption(assumptions, sys_norm, "WTI_BASE_$/BBL", 60.0)
     merged["WTI_USD"] = merged["WTI_USD"].fillna(wti_fallback)
 
+    # Volume-weighted average realized WTI at the BASE price deck (computed
+    # before any sensitivity multiplier) — lets callers express a price
+    # multiplier as an implied flat-equivalent $/bbl.
+    _oil_arr = merged["oil_bbl"].to_numpy(dtype=float)
+    _oil_total = float(_oil_arr.sum())
+    avg_realized_wti = (
+        float((_oil_arr * merged["WTI_USD"].to_numpy(dtype=float)).sum() / _oil_total)
+        if _oil_total > 0
+        else float("nan")
+    )
+    # Optional price-sensitivity scaling. NPV is affine in this multiplier
+    # (revenue and royalty scale; opex/D&C/facilities/discounting do not), so a
+    # base run plus one scaled run pins the exact NPV-vs-price line.
+    if wti_price_multiplier != 1.0:
+        merged["WTI_USD"] = merged["WTI_USD"] * wti_price_multiplier
+
     royalty_rate = _get_assumption(assumptions, sys_norm, "ROYALTY_RATE", 0.1875)
     var_opex_rate = _get_assumption(assumptions, sys_norm, "VARIABLE_OPEX_$/BBL", 4.0)
     fixed_opex_mm_yr = _get_assumption(
@@ -933,6 +953,9 @@ def build_field_npv_timeline(dev_name: str, end_date: str | None = None) -> dict
         "discount_rate_annual": disc_ann,
         "timeline": timeline,
         "terminal_npv_usd": terminal_npv,
+        "avg_realized_wti_usd": avg_realized_wti,
+        "oil_bbl_total": _oil_total,
+        "wti_price_multiplier": wti_price_multiplier,
     }
 
 
