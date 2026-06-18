@@ -72,7 +72,7 @@ Field terminal NPV decomposed into per-well contributions that sum exactly to th
 | 3 | 608124003301 | JU102 | 12.57 | 89.2 | -194.0 | -104.8 | 21.7% |
 | 4 | 608124012701 | JU106 | 19.37 | 209.8 | -298.8 | -89.0 | 18.4% |
 
-> **Reading the ranking.** Under production-pro-rata allocation, the largest producer absorbs the most shared capital — so the highest-output well can show the *most negative* net NPV. The **Gross well NPV** column reflects standalone operating performance; the **Net well NPV** column reflects each well's share of the fully-loaded field (which is NPV-negative overall, so every well's net is negative).
+> **Reading the ranking.** Under production-pro-rata allocation, the largest producer absorbs the most shared capital — so the highest-output well can show the *most negative* net NPV. The **Gross well NPV** column reflects standalone operating performance; the **Net well NPV** column reflects each well's share of the fully-loaded field (which is NPV-negative overall, so every well's net is negative). **Bottom line:** a negative *net* NPV here is an allocation outcome on an NPV-negative field, not a verdict on the well's own performance — read the **Gross well NPV** column for standalone results.
 
 Per-well net NPV (signed bars; █ = value-additive, ▓ = drag):
 
@@ -88,6 +88,19 @@ _Block scope: Single OGOR block (WR 584) for this development; block-level NPV d
 _The stackup covers the 4 producing wells. The field's 9 total wellbores also include appraisal and sidetrack/re-drill bores; their drilling & completion capital is part of the shared cost allocated pro-rata (it is not attributed to a single producer)._
 
 _**Allocation assumption.** Shared field costs (facilities, fixed opex, host) and the drilling/completion cost of non-producing bores (appraisal/sidetrack wells with no production to stand against) are pooled and allocated to the producing wells pro-rata by each well's share of total field oil production. Each producing well's own revenue, royalty, variable opex, and directly-resolvable D&C are attributed to it. Per-well NPVs sum to the field NPV._
+
+---
+
+## Well Geometry (3D)
+
+Interactive 3D well-path views — minimum-curvature trajectories from BSEE directional surveys, rendered with Plotly and Three.js — are in development for this field. When verified they will live at:
+
+- `reports/bsee/julia_well_path_plotly.html`
+- `reports/bsee/julia_well_path_threejs.html`
+
+_They are intentionally **not linked yet**: the geometry render must first be confirmed to cover the same lease-resolved producers shown in the NPV stackup above (same APIs, same field), so the economics and the well paths never describe different wells._
+
+_Julia status: the current demo render (`scripts/bsee/demo_well_path_julia.py`) selects wells by `WELL_NAME` prefix and picks up unrelated shelf wells, with an API collision on `608124009400` (DC101 here vs. JU101 in the well catalog). Tracked in worldenergydata#493 — re-select by lease G20351, then embed._
 
 ---
 
