@@ -4,6 +4,14 @@
 
 **Data window:** 2000-09 -> 2026-04 (latest); frozen V30 reference NPV = -$530.6M
 
+## Summary
+
+On public BSEE production + cost data, **Julia** is **NPV-negative at 10%** life-to-date: terminal cumulative NPV **$-482.8 M** (frozen V30 sanctioned reference $-530.6 M).
+
+- **77.5 MMbbl** oil produced from **4 producing wells** (**9 total wellbores**), generating **$5,168 M** gross revenue.
+- A **high-capex, deepwater** signature: **$2,725 M** of one-time D&C + facilities capital is the dominant driver of the NPV.
+- The cumulative-NPV path bottomed at **$-1,154.1 M** in **2017** and has since recovered **$+671.3 M** as production paid back capital.
+
 > **LATEST run.** The NPV timeline is built from the V30 cashflow model extended through the latest available BSEE OGOR-A month (`build_field_npv_timeline(dev, end_date=...)`). The terminal cumulative NPV reflects the extended window and therefore differs from the frozen V30 sanctioned value (shown for reference below). The frozen V30 baseline (`golden_baseline_v30.yml`) is unchanged.
 
 ---
@@ -12,7 +20,7 @@
 
 Cumulative discounted NPV evolution over field life, with critical well operations annotated. Terminal cumulative NPV = **$-482.8 M** (frozen V30 reference: $-530.6 M; delta +47.8 M).
 
-Cumulative NPV path (by year): `██████▇▇▁▁▁▁▁▂▃▄▄▅▅`
+Cumulative NPV path (by year): `██████▇▇▁▁▁▁▁▂▃▄▄▅▅`  _start $-76M → trough $-1,154M (2017) → latest $-483M_
 
 | Year | Net Cashflow ($MM) | Cumulative NPV ($MM) | Critical Operations |
 |------|-------------------:|---------------------:|---------------------|
@@ -82,6 +90,8 @@ DC101      -127.4 M  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 JU102      -104.8 M  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 JU106       -89.0 M  ▓▓▓▓▓▓▓▓▓▓▓▓▓
 ```
+
+**[Interactive NPV stackup waterfall →](./julia_npv_stackup.html)** — each well's net NPV steps down to the field total; hover a bar for its gross / allocated-cost / net breakdown. Rebuild with `uv run --with plotly python scripts/lower_tertiary/build_npv_stackup_chart.py --dev Julia`.
 
 _Block scope: Single OGOR block (WR 584) for this development; block-level NPV decomposition is not applicable (identical to the field total)._
 

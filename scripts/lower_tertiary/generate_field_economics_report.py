@@ -615,6 +615,10 @@ def build_report(
     fin = reproduce_v30_financials()
     sanctioned_npv = fin[dev_name]["npv_usd"]
 
+    # Latest revenue/oil comparison (read once; reused by the summary + the
+    # Financial Summary table below). None for the frozen report.
+    cmp = _read_latest_comparison(dev_name) if is_latest else None
+
     # ---- Build the yearly cumulative-NPV table (compact) ----
     timeline["year"] = timeline["date"].dt.year
     yearly = (
@@ -642,6 +646,15 @@ def build_report(
 
     spark = _sparkline(list(yearly["cumulative_npv_usd"]))
 
+    # Trough of the cumulative-NPV path (deepest point of capital exposure) and
+    # the recovery since — used by the summary headline and the sparkline caption.
+    _trough_idx = yearly["cumulative_npv_usd"].idxmin()
+    trough_npv = float(yearly.loc[_trough_idx, "cumulative_npv_usd"])
+    trough_year = int(yearly.loc[_trough_idx, "year"])
+    terminal_npv = float(tl["terminal_npv_usd"])
+    first_npv = float(yearly["cumulative_npv_usd"].iloc[0])
+    recovery = terminal_npv - trough_npv
+
     lines: list[str] = []
     lines.append(f"# {dev_name} Field Economics Report")
     lines.append("")
@@ -654,6 +667,64 @@ def build_report(
     lines.append("")
     lines.append(f"**Data window:** {window_label}")
     lines.append("")
+
+    # -------------------------- EXECUTIVE SUMMARY ---------------------------
+    # Verdict-first headline so a client reads the bottom line before the
+    # tables. All figures trace to the same model the detail sections use.
+    f0 = fin[dev_name]
+    sign = "NPV-negative" if terminal_npv < 0 else "NPV-positive"
+    one_time_capital = f0["dnc_total_usd"] + f0["facilities_cost_usd"]
+    oil_mm = (
+        cmp["latest_oil_bbl"] / 1e6
+        if cmp and cmp.get("latest_oil_bbl")
+        else None
+    )
+    rev_mm = (
+        cmp["latest_revenue_usd"] / 1e6
+        if cmp and cmp.get("latest_revenue_usd")
+        else f0["revenue_usd"] / 1e6
+    )
+    lines.append("## Summary")
+    lines.append("")
+    lines.append(
+        f"On public BSEE production + cost data, **{dev_name}** is "
+        f"**{sign} at {tl['discount_rate_annual'] * 100:.0f}%** life-to-date: "
+        f"terminal cumulative NPV **${terminal_npv / 1e6:,.1f} M**"
+        + (
+            f" (frozen V30 sanctioned reference ${sanctioned_npv / 1e6:,.1f} M)."
+            if is_latest
+            else " (sanctioned V30 model)."
+        )
+    )
+    lines.append("")
+    bullet_oil = (
+        f"**{oil_mm:,.1f} MMbbl** oil produced" if oil_mm is not None else None
+    )
+    summary_bullets = []
+    if bullet_oil:
+        summary_bullets.append(
+            f"- {bullet_oil} from **{f0['producers']} producing wells** "
+            f"(**{f0['wellbores']} total wellbores**), generating "
+            f"**${rev_mm:,.0f} M** gross revenue."
+        )
+    else:
+        summary_bullets.append(
+            f"- **{f0['producers']} producing wells** "
+            f"(**{f0['wellbores']} total wellbores**), generating "
+            f"**${rev_mm:,.0f} M** gross revenue."
+        )
+    summary_bullets.append(
+        f"- A **high-capex, deepwater** signature: **${one_time_capital / 1e6:,.0f} M** "
+        f"of one-time D&C + facilities capital is the dominant driver of the NPV."
+    )
+    summary_bullets.append(
+        f"- The cumulative-NPV path bottomed at **${trough_npv / 1e6:,.1f} M** "
+        f"in **{trough_year}** and has since recovered "
+        f"**${recovery / 1e6:+,.1f} M** as production paid back capital."
+    )
+    lines.extend(summary_bullets)
+    lines.append("")
+
     if is_latest:
         lines.append(
             "> **LATEST run.** The NPV timeline is built from the V30 cashflow "
@@ -695,7 +766,11 @@ def build_report(
             f"(reconciles to sanctioned baseline ${sanctioned_npv / 1e6:,.1f} M)."
         )
     lines.append("")
-    lines.append(f"Cumulative NPV path (by year): `{spark}`")
+    lines.append(
+        f"Cumulative NPV path (by year): `{spark}`  "
+        f"_start ${first_npv / 1e6:,.0f}M → trough ${trough_npv / 1e6:,.0f}M "
+        f"({trough_year}) → latest ${terminal_npv / 1e6:,.0f}M_"
+    )
     lines.append("")
     lines.append("| Year | Net Cashflow ($MM) | Cumulative NPV ($MM) | Critical Operations |")
     lines.append("|------|-------------------:|---------------------:|---------------------|")
@@ -795,6 +870,16 @@ def build_report(
         lines.append(f"{label} {w['net_npv_usd'] / 1e6:>8,.1f} M  {bar}")
     lines.append("```")
     lines.append("")
+    _slug = dev_name.lower().replace("/", "_").replace(" ", "_")
+    _dev_arg = f'"{dev_name}"' if " " in dev_name else dev_name
+    lines.append(
+        f"**[Interactive NPV stackup waterfall →](./{_slug}_npv_stackup.html)** "
+        "— each well's net NPV steps down to the field total; hover a bar for "
+        "its gross / allocated-cost / net breakdown. Rebuild with "
+        f"`uv run --with plotly python scripts/lower_tertiary/"
+        f"build_npv_stackup_chart.py --dev {_dev_arg}`."
+    )
+    lines.append("")
 
     # Block-scope grouping (if cleanly available) or a documented gap.
     if stk["blocks"]:
@@ -876,7 +961,6 @@ def build_report(
     f = fin[dev_name]
     rate_pct = f"{tl['discount_rate_annual'] * 100:.0f}"
     if is_latest:
-        cmp = _read_latest_comparison(dev_name)
         lines.append("## Financial Summary")
         lines.append("")
         lines.append(
