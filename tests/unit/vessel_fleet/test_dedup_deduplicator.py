@@ -6,6 +6,7 @@ from worldenergydata.vessel_fleet.dedup.deduplicator import (
     _SOURCE_PRIORITY,
     _merge_records,
     deduplicate_fleet,
+    deduplicate_fleet_with_report,
 )
 
 # ---------------------------------------------------------------------------
@@ -163,3 +164,61 @@ class TestDeduplicateFleet:
         ]
         result = deduplicate_fleet(records + dupes)
         assert len(result) == 50
+
+
+# ---------------------------------------------------------------------------
+# IMO-conflict reconciliation (normalized-name fallback)
+# ---------------------------------------------------------------------------
+
+
+class TestImoConflictReconciliation:
+    def test_same_name_conflicting_imo_merges_to_one(self):
+        # Thialf case: curated WED IMO vs off-repo brochure IMO.
+        wed = {
+            "VESSEL_NAME": "THIALF",
+            "IMO_NUMBER": "8803300",
+            "DATA_SOURCE": "heerema_fleet",
+            "LOA_M": 201.0,
+        }
+        offrepo = {
+            "VESSEL_NAME": "Thialf",
+            "IMO_NUMBER": "8757740",
+            "DATA_SOURCE": "frontier_heavy_lift_csv",
+            "DECK_LOAD_CAPACITY_T": 12000.0,
+        }
+        merged, conflicts = deduplicate_fleet_with_report([wed, offrepo])
+        assert len(merged) == 1
+        # Existing WED IMO is preferred (curated source out-prioritises brochure).
+        assert merged[0]["IMO_NUMBER"] == "8803300"
+        # Spec gap from off-repo still filled.
+        assert merged[0]["DECK_LOAD_CAPACITY_T"] == 12000.0
+        # Conflict flagged, not silently dropped.
+        assert len(conflicts) == 1
+        c = conflicts[0]
+        assert c["kept_imo"] == "8803300"
+        assert "8757740" in c["discarded_imos"]
+
+    def test_no_conflict_when_imos_match(self):
+        a = {"VESSEL_NAME": "Sleipnir", "IMO_NUMBER": "9781425", "DATA_SOURCE": "heerema_fleet"}
+        b = {"VESSEL_NAME": "SLEIPNIR", "IMO_NUMBER": "9781425", "DATA_SOURCE": "frontier_heavy_lift_csv"}
+        merged, conflicts = deduplicate_fleet_with_report([a, b])
+        assert len(merged) == 1
+        assert conflicts == []
+
+    def test_no_imo_invented(self):
+        # A name-only off-repo record merges into the IMO'd curated record
+        # without fabricating any IMO.
+        wed = {"VESSEL_NAME": "Amazon", "IMO_NUMBER": "9275234", "DATA_SOURCE": "mcdermott_fleet"}
+        msiv = {"VESSEL_NAME": "Amazon", "DATA_SOURCE": "acma_msiv_md", "LOA_M": 156.0}
+        merged, conflicts = deduplicate_fleet_with_report([wed, msiv])
+        assert len(merged) == 1
+        assert merged[0]["IMO_NUMBER"] == "9275234"
+        assert merged[0]["LOA_M"] == 156.0
+        assert conflicts == []
+
+    def test_distinct_vessels_not_merged(self):
+        a = {"VESSEL_NAME": "Alpha", "IMO_NUMBER": "1111111", "DATA_SOURCE": "manual"}
+        b = {"VESSEL_NAME": "Beta", "IMO_NUMBER": "2222222", "DATA_SOURCE": "manual"}
+        merged, conflicts = deduplicate_fleet_with_report([a, b])
+        assert len(merged) == 2
+        assert conflicts == []
