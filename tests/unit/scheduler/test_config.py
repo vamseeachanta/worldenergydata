@@ -107,6 +107,7 @@ class TestLoadConfig:
 
         expected_names = {
             "bsee_refresh",
+            "hse_refresh",
             "sodir_refresh",
             "eia_us_refresh",
             "metocean_refresh",
