@@ -18,125 +18,22 @@ env:
 
 jobs:
   # ---------------------------------------------------------------- PR gate --
-  # Module-scoped fast gate (#474): PRs test only the modules their changed
-  # paths touch (plus the always-on cross-cutting core), on one Python, with
-  # xdist and no coverage. The full 3-Python matrix runs on push to main,
-  # nightly, manual dispatch, or PRs labeled `ci-full`.
-  changes:
-    name: Detect changed modules
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    outputs:
-      core: ${{ steps.filter.outputs.core }}
-      matched: ${{ steps.filter.outputs.changes }}
-      unclassified: ${{ steps.filter.outputs.unclassified }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Classify changed paths
-        uses: dorny/paths-filter@v4
-        id: filter
-        with:
-          filters: |
-            core:
-              - 'src/worldenergydata/engine.py'
-              - 'src/worldenergydata/__main__.py'
-              - 'src/worldenergydata/base_configs/**'
-              - 'src/worldenergydata/common/**'
-              - 'pyproject.toml'
-              - 'uv.lock'
-              - 'tests/conftest.py'
-              - 'tests/pytest.ini'
-              - '.github/workflows/ci.yml'
-            bsee:
-              - 'src/worldenergydata/bsee/**'
-              - 'tests/unit/bsee/**'
-              - 'tests/integration/modules/bsee/**'
-            fdas:
-              - 'src/worldenergydata/fdas/**'
-              - 'tests/unit/fdas/**'
-            sodir:
-              - 'src/worldenergydata/sodir/**'
-              - 'tests/unit/sodir/**'
-            texas_rrc:
-              - 'src/worldenergydata/texas_rrc/**'
-              - 'tests/unit/texas_rrc/**'
-            canada:
-              - 'src/worldenergydata/canada/**'
-              - 'tests/unit/canada/**'
-            mexico_cnh:
-              - 'src/worldenergydata/mexico_cnh/**'
-              - 'tests/unit/mexico_cnh/**'
-            landman:
-              - 'src/worldenergydata/landman/**'
-              - 'tests/unit/landman/**'
-            marine_safety:
-              - 'src/worldenergydata/marine_safety/**'
-              - 'tests/unit/marine_safety/**'
-            pipeline_safety:
-              - 'src/worldenergydata/pipeline_safety/**'
-              - 'tests/unit/pipeline_safety/**'
-            production:
-              - 'src/worldenergydata/production/**'
-              - 'tests/unit/production/**'
-            cli:
-              - 'src/worldenergydata/cli/**'
-              - 'tests/unit/cli/**'
-            workflows:
-              - 'docs/registry/**'
-              - 'examples/workflows/**'
-              - 'tests/workflows/**'
-            docs_only:
-              - '**/*.md'
-              - 'docs/**'
-            unclassified:
-              - '!src/worldenergydata/engine.py'
-              - '!src/worldenergydata/__main__.py'
-              - '!src/worldenergydata/base_configs/**'
-              - '!src/worldenergydata/common/**'
-              - '!pyproject.toml'
-              - '!uv.lock'
-              - '!tests/conftest.py'
-              - '!tests/pytest.ini'
-              - '!.github/workflows/ci.yml'
-              - '!src/worldenergydata/bsee/**'
-              - '!tests/unit/bsee/**'
-              - '!tests/integration/modules/bsee/**'
-              - '!src/worldenergydata/fdas/**'
-              - '!tests/unit/fdas/**'
-              - '!src/worldenergydata/sodir/**'
-              - '!tests/unit/sodir/**'
-              - '!src/worldenergydata/texas_rrc/**'
-              - '!tests/unit/texas_rrc/**'
-              - '!src/worldenergydata/canada/**'
-              - '!tests/unit/canada/**'
-              - '!src/worldenergydata/mexico_cnh/**'
-              - '!tests/unit/mexico_cnh/**'
-              - '!src/worldenergydata/landman/**'
-              - '!tests/unit/landman/**'
-              - '!src/worldenergydata/marine_safety/**'
-              - '!tests/unit/marine_safety/**'
-              - '!src/worldenergydata/pipeline_safety/**'
-              - '!tests/unit/pipeline_safety/**'
-              - '!src/worldenergydata/production/**'
-              - '!tests/unit/production/**'
-              - '!src/worldenergydata/cli/**'
-              - '!tests/unit/cli/**'
-              - '!docs/registry/**'
-              - '!examples/workflows/**'
-              - '!tests/workflows/**'
-              - '!**/*.md'
-              - '!docs/**'
+  # Module-scoped fast gate (#474, #496): a PR tests only the modules its changed
+  # paths touch (+ the always-on cross-cutting core), on one Python, xdist, no
+  # coverage. Targets come from scripts/ci/select_test_targets.py — the single
+  # source of truth (a module is mapped iff tests/unit/<module>/ exists; new
+  # modules auto-map, guarded by tests/ci/test_select_test_targets.py). The full
+  # 3-Python matrix runs on push to main, nightly, dispatch, or `ci-full` PRs.
 
   test-pr:
     name: Test (PR gate)
     runs-on: ubuntu-latest
-    needs: changes
     if: github.event_name == 'pull_request'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  # need the base commit to diff changed files
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -153,59 +50,15 @@ jobs:
       - name: Select test targets
         id: targets
         env:
-          CORE: ${{ needs.changes.outputs.core }}
-          MATCHED: ${{ needs.changes.outputs.matched }}
-          UNCLASSIFIED: ${{ needs.changes.outputs.unclassified }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
-          # Always-on cross-cutting set: engine contract, assetutilities
-          # contracts, and the durable-workflow registry.
-          # Two execution buckets:
-          #   xdist — unit-style dirs, parallel-safe
-          #   seq   — tests/integration/** (a CLI edge-case test hard-exits
-          #           the process and kills xdist workers) and
-          #           tests/performance (wall-clock assertions)
-          xdist="tests/unit/core tests/unit/common tests/contracts tests/workflows"
-          seq=""
-          declare -A module_xdist=(
-            [bsee]="tests/unit/bsee"
-            [fdas]="tests/unit/fdas"
-            [sodir]="tests/unit/sodir"
-            [texas_rrc]="tests/unit/texas_rrc"
-            [canada]="tests/unit/canada"
-            [mexico_cnh]="tests/unit/mexico_cnh"
-            [landman]="tests/unit/landman"
-            [marine_safety]="tests/unit/marine_safety"
-            [pipeline_safety]="tests/unit/pipeline_safety"
-            [production]="tests/unit/production"
-            [cli]="tests/unit/cli"
-          )
-          declare -A module_seq=(
-            [bsee]="tests/integration/modules/bsee"
-          )
-          if [ "$CORE" = "true" ] || echo "$UNCLASSIFIED" | grep -q true; then
-            # Core or unmapped paths changed: fail safe, run the whole tree.
-            # Enumerate explicit targets rather than recursing tests/ with
-            # --ignore: tests/pytest.ini makes pytest's rootdir tests/, which
-            # breaks cwd-relative --ignore matching.
-            full=$(find tests -maxdepth 1 -mindepth 1 \( -type d ! -name performance ! -name integration ! -name __pycache__ \) -o -maxdepth 1 -name 'test_*.py' | sort | tr '\n' ' ')
-            echo "scope=full" >> "$GITHUB_OUTPUT"
-            echo "xdist_targets=$full" >> "$GITHUB_OUTPUT"
-            echo "seq_targets=tests/integration tests/performance" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          for mod in "${!module_xdist[@]}"; do
-            if echo "$MATCHED" | grep -q "\"$mod\""; then
-              for d in ${module_xdist[$mod]}; do
-                [ -d "$d" ] && xdist="$xdist $d"
-              done
-              for d in ${module_seq[$mod]:-}; do
-                [ -d "$d" ] && seq="$seq $d"
-              done
-            fi
-          done
-          echo "scope=modules" >> "$GITHUB_OUTPUT"
-          echo "xdist_targets=$xdist" >> "$GITHUB_OUTPUT"
-          echo "seq_targets=$seq" >> "$GITHUB_OUTPUT"
+          # Single source of truth: scripts/ci/select_test_targets.py maps the
+          # changed files to pytest targets (auto-discovers modules from the
+          # filesystem; core paths -> full tree; docs/reports-only -> just the
+          # always-on cross-cutting set). Stdlib only — no uv sync needed.
+          git diff --name-only "$BASE_SHA"...HEAD > changed-files.txt
+          echo "Changed files:"; cat changed-files.txt
+          python3 scripts/ci/select_test_targets.py --files-from changed-files.txt >> "$GITHUB_OUTPUT"
 
       - name: Run module-scoped tests (xdist)
         run: |
