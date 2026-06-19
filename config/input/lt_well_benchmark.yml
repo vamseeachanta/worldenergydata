@@ -1,0 +1,36 @@
+# Saved analytic: Lower-Tertiary well benchmarking (worldenergydata#499).
+#
+# Per-well benchmark table for a play + spud-year range, run on actual BSEE
+# OGOR-A / WAR / drilling data. Same inputs -> same output (deterministic).
+#
+# Run via the engine convention:
+#     uv run python -m worldenergydata config/input/lt_well_benchmark.yml
+# or the guaranteed CLI entry:
+#     uv run python scripts/lower_tertiary/build_well_benchmark.py \
+#         --config config/input/lt_well_benchmark.yml
+meta:
+  library: worldenergydata
+  basename: bsee
+  label: lt_well_benchmark
+
+basename: bsee
+
+benchmark:
+  play: lower_tertiary
+  spud_year_min: 2010
+  spud_year_max: null        # open-ended (through latest)
+  fields: null               # null -> all producing LT fields; else ["Anchor", "Stones"]
+  end_date: null             # null -> auto-latest OGOR-A month
+  metrics:
+    - drilling_days
+    - completion_days
+    - first_oil
+    - cumulative_oil
+    - uptime
+    - decline
+    - est_revenue
+    - interventions
+
+analysis:
+  flag: true
+  type: well_benchmark
