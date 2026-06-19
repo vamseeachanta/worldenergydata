@@ -43,7 +43,7 @@ def test_card_carries_interactive_plot():
 
 
 def test_vintage_stamp_present():
-    assert "current to 2020-01-29" in _doc()  # fixture's newest record
+    assert "current to 2026-01-08" in _doc()  # corpus-wide newest record
 
 
 def test_analysis_panel_rendered():
