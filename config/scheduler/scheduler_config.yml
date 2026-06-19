@@ -11,6 +11,14 @@ jobs:
     output_dir: data/modules/bsee
     # data_path: /path/to/local/bsee/data  # optional: override default BSEE data location
 
+  - name: hse_refresh
+    interval: weekly
+    time: "02:30"
+    enabled: true
+    output_dir: data/modules/hse
+    # Downloads BSEE incident/INC raw archives to data/modules/hse/raw/bsee;
+    # keeps the grounded-analysis incident corpus (#486/#489) fresh.
+
   - name: sodir_refresh
     interval: daily
     time: "03:00"
