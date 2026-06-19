@@ -143,6 +143,8 @@ _Latest NPV from `build_field_npv_timeline(dev, end_date)`; latest revenue/oil f
 | Injectors | 0 |
 | Wellbores | 9 |
 
+_Return metric: **MIRR** is the sanctioned return measure for these developments, not IRR. Deepwater Lower-Tertiary cashflows are heavily front-loaded (large D&C + facilities outflows, then a long production tail), so the net-cashflow sign changes more than once and the IRR polynomial can have multiple — or no — real roots; MIRR (single reinvestment/finance rate at the 10% discount rate) is well-defined and unambiguous. NPV @ 10% remains the primary value metric._
+
 _Source-of-record: `config/analysis/lower_tertiary/golden_baseline_v30.yml`. NPV reproduced within golden-baseline tolerance by `worldenergydata.lower_tertiary.v30_financial_reproducer`._
 
 ---
