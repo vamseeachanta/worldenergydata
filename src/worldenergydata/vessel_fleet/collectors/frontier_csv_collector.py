@@ -71,7 +71,8 @@ def _map_heavy_lift_row(row: dict[str, str]) -> Optional[dict[str, Any]]:
         "VESSEL_CATEGORY": _VESSEL_CATEGORY,
         "VESSEL_TYPE": "heavy_lift",
         "VESSEL_SUBTYPE": _clean_str(row.get("vessel_type")),
-        "OWNER": _clean_str(row.get("current_owner")) or _clean_str(row.get("contractor")),
+        "OWNER": _clean_str(row.get("current_owner"))
+        or _clean_str(row.get("contractor")),
         "OPERATOR": _clean_str(row.get("contractor")),
         "IMO_NUMBER": _clean_str(row.get("imo_number")),
         "CLASSIFICATION_SOCIETY": _clean_str(row.get("classification")),
@@ -109,7 +110,8 @@ def _map_pipelay_row(row: dict[str, str]) -> Optional[dict[str, Any]]:
         "VESSEL_CATEGORY": _VESSEL_CATEGORY,
         "VESSEL_TYPE": "pipelay_vessel",
         "VESSEL_SUBTYPE": _clean_str(row.get("vessel_type")),
-        "OWNER": _clean_str(row.get("current_owner")) or _clean_str(row.get("contractor")),
+        "OWNER": _clean_str(row.get("current_owner"))
+        or _clean_str(row.get("contractor")),
         "OPERATOR": _clean_str(row.get("contractor")),
         "IMO_NUMBER": _clean_str(row.get("imo_number")),
         "STATUS": _clean_str(row.get("current_status")),

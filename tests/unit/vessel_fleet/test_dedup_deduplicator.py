@@ -199,8 +199,16 @@ class TestImoConflictReconciliation:
         assert "8757740" in c["discarded_imos"]
 
     def test_no_conflict_when_imos_match(self):
-        a = {"VESSEL_NAME": "Sleipnir", "IMO_NUMBER": "9781425", "DATA_SOURCE": "heerema_fleet"}
-        b = {"VESSEL_NAME": "SLEIPNIR", "IMO_NUMBER": "9781425", "DATA_SOURCE": "frontier_heavy_lift_csv"}
+        a = {
+            "VESSEL_NAME": "Sleipnir",
+            "IMO_NUMBER": "9781425",
+            "DATA_SOURCE": "heerema_fleet",
+        }
+        b = {
+            "VESSEL_NAME": "SLEIPNIR",
+            "IMO_NUMBER": "9781425",
+            "DATA_SOURCE": "frontier_heavy_lift_csv",
+        }
         merged, conflicts = deduplicate_fleet_with_report([a, b])
         assert len(merged) == 1
         assert conflicts == []
@@ -208,7 +216,11 @@ class TestImoConflictReconciliation:
     def test_no_imo_invented(self):
         # A name-only off-repo record merges into the IMO'd curated record
         # without fabricating any IMO.
-        wed = {"VESSEL_NAME": "Amazon", "IMO_NUMBER": "9275234", "DATA_SOURCE": "mcdermott_fleet"}
+        wed = {
+            "VESSEL_NAME": "Amazon",
+            "IMO_NUMBER": "9275234",
+            "DATA_SOURCE": "mcdermott_fleet",
+        }
         msiv = {"VESSEL_NAME": "Amazon", "DATA_SOURCE": "acma_msiv_md", "LOA_M": 156.0}
         merged, conflicts = deduplicate_fleet_with_report([wed, msiv])
         assert len(merged) == 1

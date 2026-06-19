@@ -139,13 +139,17 @@ class TestCollectFrontierVessels:
             tmp_path,
             "heavy-lift-vessels-current.csv",
             _HEAVY_LIFT_HEADER,
-            ["BIGLIFT,HAPPY BUCCANEER,Heavylift,WW,479,93,,,,,675.0,,2755.0,,300.0,8 Point,,,False,8300389,BigLift,scrapped,2024,,https://x,2010"],
+            [
+                "BIGLIFT,HAPPY BUCCANEER,Heavylift,WW,479,93,,,,,675.0,,2755.0,,300.0,8 Point,,,False,8300389,BigLift,scrapped,2024,,https://x,2010"
+            ],
         )
         _write(
             tmp_path,
             "pipelay-contractors-current.csv",
             _PIPELAY_HEADER,
-            ["ALLSEAS,SOLITAIRE,DP pipelay,,984.0,131.0,79.0,28.0,420,,DP3,S-lay,,60.0,10000.0,True,,False,7129049,Allseas,active,2024,,https://y,2011"],
+            [
+                "ALLSEAS,SOLITAIRE,DP pipelay,,984.0,131.0,79.0,28.0,420,,DP3,S-lay,,60.0,10000.0,True,,False,7129049,Allseas,active,2024,,https://y,2011"
+            ],
         )
         out = fc.collect_frontier_vessels(tmp_path)
         names = {r["VESSEL_NAME"] for r in out}
@@ -156,7 +160,9 @@ class TestCollectFrontierVessels:
             tmp_path,
             "heavy-lift-vessels-current.csv",
             _HEAVY_LIFT_HEADER,
-            ["C,VESSEL X,Heavylift,WW,100,30,,,,,500.0,,,,,,DP2,,False,1234567,Owner,active,2024,,https://z,2010"],
+            [
+                "C,VESSEL X,Heavylift,WW,100,30,,,,,500.0,,,,,,DP2,,False,1234567,Owner,active,2024,,https://z,2010"
+            ],
         )
         monkeypatch.setenv(fc.FRONTIER_ENV_VAR, str(tmp_path))
         out = fc.collect_frontier_vessels()
