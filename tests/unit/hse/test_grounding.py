@@ -61,9 +61,10 @@ def test_severity_ranking():
 
 def test_vintage_stamp_computed_from_data_not_mtime():
     g = _g()
-    # newest DATE_OCCURRED in the fixture is 2020-01-29
-    assert "current to 2020-01-29" in g.vintage_note
-    assert "current to 2020-01-29" in g.render_card()
+    # vintage = newest DATE_OCCURRED across the whole corpus (2026-01-08),
+    # independent of the queried failure mode.
+    assert "current to 2026-01-08" in g.vintage_note
+    assert "current to 2026-01-08" in g.render_card()
 
 
 def test_per_mode_source_routing_offshore_is_bsee_only():
@@ -92,3 +93,38 @@ def test_card_and_dict_shapes():
 def test_unknown_mode_raises():
     with pytest.raises(KeyError):
         ground("does_not_exist", bsee_path=FIXTURE)
+
+
+# --- coverage: additional failure modes (#488) -------------------------------
+
+
+def test_severity_ranking_includes_fire():
+    assert severity_of("Fire")[1] == "fire"  # was "minor" before #488
+    assert severity_of("Fire - Injury")[1] == "fire"  # fire(70) > injury(40)
+    assert severity_of("Explosion - Fire")[1] == "catastrophic"  # explosion(90) wins
+
+
+@pytest.mark.parametrize(
+    "mode,expected_latest,expected_severe",
+    [
+        ("well_control", ["2017-11-12", "2016-06-05"], {"2006-02-20", "2001-07-13"}),
+        ("dropped_object", ["2025-08-27", "2025-08-24"], {"2015-10-20", "2011-08-16"}),
+        ("fire_explosion", ["2026-01-08", "2025-11-26"], {"2021-05-15", "2014-11-20"}),
+    ],
+)
+def test_new_modes_pick_latest_and_severe(mode, expected_latest, expected_severe):
+    g = ground(mode, bsee_path=FIXTURE)
+    assert [i.date for i in g.latest] == expected_latest
+    assert {i.date for i in g.most_severe} == expected_severe
+    # the severe picks are the catastrophic/fatal records
+    assert all(i.severity in ("fatality", "catastrophic") for i in g.most_severe)
+
+
+def test_all_modes_route_bsee_only_and_no_operator_names():
+    for key in FAILURE_MODES:
+        g = ground(key, bsee_path=FIXTURE)
+        assert "not routed" in str(g.source_counts["OSHA"])
+        assert "not routed" in str(g.source_counts["EPA_TRI"])
+        blob = g.render_card().lower()
+        for banned in ("chevron", "shell", "apache", "exxon"):
+            assert banned not in blob
