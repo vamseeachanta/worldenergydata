@@ -81,8 +81,16 @@ def compute_uptime(
     penalised for the years before first oil. Months with zero oil inside the
     window still count toward the calendar denominator (they are real downtime).
     """
-    cols = ["API_WELL_NUMBER", "producing_days", "calendar_days", "online_months",
-            "missing_days_months", "uptime", "uptime_pct", "low_confidence"]
+    cols = [
+        "API_WELL_NUMBER",
+        "producing_days",
+        "calendar_days",
+        "online_months",
+        "missing_days_months",
+        "uptime",
+        "uptime_pct",
+        "low_confidence",
+    ]
     if prod_df is None or prod_df.empty:
         return pd.DataFrame(columns=cols)
 

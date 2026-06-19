@@ -31,11 +31,11 @@ def _ensure_ogor_or_skip() -> None:
 
     try:
         ops_timeline.ensure_ogor_loader()
-        ops_timeline.v30_reproducer.load_ogor_production(
-            start_year=2016, end_year=2016
-        )
+        ops_timeline.v30_reproducer.load_ogor_production(start_year=2016, end_year=2016)
     except FileNotFoundError:
-        pytest.skip("BSEE OGOR-A data not present (set WED_DATA_ROOT / run `make data`)")
+        pytest.skip(
+            "BSEE OGOR-A data not present (set WED_DATA_ROOT / run `make data`)"
+        )
 
 
 # A small, fast subset: one single-lease producing field with a fixed window so
@@ -111,12 +111,16 @@ class TestWellBenchmarkRealData:
         for _, r in df.iterrows():
             flag = r["decline_flag"] or ""
             if flag == "insufficient_history" or flag.startswith("fit_failed"):
-                assert r["decline_annual_pct"] is None or pd.isna(r["decline_annual_pct"])
+                assert r["decline_annual_pct"] is None or pd.isna(
+                    r["decline_annual_pct"]
+                )
             # cumulative oil is always real (the well is producing).
             assert r["cum_oil_mmbbl"] is not None and r["cum_oil_mmbbl"] >= 0
 
     def test_select_play_wells_field_filter(self):
         _ensure_ogor_or_skip()
-        wells = select_play_wells("lower_tertiary", fields=["Julia"], end_date="2025-05-31")
+        wells = select_play_wells(
+            "lower_tertiary", fields=["Julia"], end_date="2025-05-31"
+        )
         assert not wells.empty
         assert set(wells["field"].unique()) == {"Julia"}

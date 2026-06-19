@@ -111,9 +111,7 @@ def select_play_wells(
 
     field_leases = _lt_field_leases(fields)
     all_leases = sorted({lz for leases in field_leases.values() for lz in leases})
-    lease_to_field = {
-        lz: dev for dev, leases in field_leases.items() for lz in leases
-    }
+    lease_to_field = {lz: dev for dev, leases in field_leases.items() for lz in leases}
     if not all_leases:
         return pd.DataFrame(
             columns=["API_WELL_NUMBER", "field", "lease", "spud", "first_oil"]
@@ -129,7 +127,9 @@ def select_play_wells(
     ogor = ogor[(ogor["date"] >= "2000-09-01") & (ogor["date"] <= eff_end)].copy()
     ogor["LEASE_NUMBER"] = ogor["LEASE_NUMBER"].astype(str).str.strip().str.upper()
     ogor = ogor[ogor["LEASE_NUMBER"].isin(all_leases)]
-    ogor["MON_O_PROD_VOL"] = pd.to_numeric(ogor["MON_O_PROD_VOL"], errors="coerce").fillna(0.0)
+    ogor["MON_O_PROD_VOL"] = pd.to_numeric(
+        ogor["MON_O_PROD_VOL"], errors="coerce"
+    ).fillna(0.0)
     ogor = ogor[ogor["MON_O_PROD_VOL"] > 0]
     ogor["API_WELL_NUMBER"] = ogor["API_WELL_NUMBER"].astype(str).str.strip()
     if ogor.empty:
@@ -151,7 +151,9 @@ def select_play_wells(
     for dev in field_leases:
         sp = ops_timeline.derive_spud_milestones(dev, eff_end)
         if not sp.empty:
-            spud_rows.append(sp[["API_WELL_NUMBER", "date"]].rename(columns={"date": "spud"}))
+            spud_rows.append(
+                sp[["API_WELL_NUMBER", "date"]].rename(columns={"date": "spud"})
+            )
     if spud_rows:
         spud = pd.concat(spud_rows, ignore_index=True)
         spud["API_WELL_NUMBER"] = spud["API_WELL_NUMBER"].astype(str).str.strip()
@@ -171,9 +173,11 @@ def select_play_wells(
     if spud_year_max is not None:
         first = first[(spud_year <= spud_year_max) | spud_year.isna()]
 
-    return first[["API_WELL_NUMBER", "field", "lease", "spud", "first_oil"]].sort_values(
-        "API_WELL_NUMBER"
-    ).reset_index(drop=True)
+    return (
+        first[["API_WELL_NUMBER", "field", "lease", "spud", "first_oil"]]
+        .sort_values("API_WELL_NUMBER")
+        .reset_index(drop=True)
+    )
 
 
 def _well_monthly_oil(ogor_well: pd.DataFrame) -> pd.DataFrame:
@@ -197,8 +201,14 @@ def _decline_for_well(ogor_well: pd.DataFrame) -> dict:
         DeclineAnalysis,
     )
 
-    out = {"decline_annual": np.nan, "b_factor": np.nan, "eur_mmbbl": np.nan,
-           "decline_model": None, "decline_r2": np.nan, "decline_flag": None}
+    out = {
+        "decline_annual": np.nan,
+        "b_factor": np.nan,
+        "eur_mmbbl": np.nan,
+        "decline_model": None,
+        "decline_r2": np.nan,
+        "decline_flag": None,
+    }
     # Need a minimum of monthly points for a meaningful fit.
     monthly = _well_monthly_oil(ogor_well).reset_index()
     monthly = monthly[monthly["oil_bbl"] > 0]
@@ -213,8 +223,12 @@ def _decline_for_well(ogor_well: pd.DataFrame) -> dict:
         curve = cmp.best_fit.curve
         d_month = float(curve.decline_rate)
         # Monthly nominal -> effective annual decline.
-        out["decline_annual"] = 1.0 - (1.0 - min(d_month, 0.999)) ** 12 if d_month < 1 else float("nan")
-        out["b_factor"] = float(curve.b_factor) if curve.b_factor is not None else np.nan
+        out["decline_annual"] = (
+            1.0 - (1.0 - min(d_month, 0.999)) ** 12 if d_month < 1 else float("nan")
+        )
+        out["b_factor"] = (
+            float(curve.b_factor) if curve.b_factor is not None else np.nan
+        )
         out["decline_model"] = cmp.best_model
         out["decline_r2"] = float(curve.r_squared)
         eur = DeclineAnalysis().calculate_eur(cmp).get(cmp.best_model)
@@ -266,7 +280,9 @@ def benchmark_well(
     )
     completion_days = (
         int((pd.to_datetime(first_oil) - comp_dt).days)
-        if pd.notna(comp_dt) and first_oil is not None and pd.notna(first_oil)
+        if pd.notna(comp_dt)
+        and first_oil is not None
+        and pd.notna(first_oil)
         and pd.to_datetime(first_oil) >= comp_dt
         else None
     )
@@ -279,11 +295,7 @@ def benchmark_well(
         if price is not None and np.isfinite(price):
             rev += float(vol) * float(price)
             matched_months += 1
-    revenue_flag = (
-        "partial_wti_coverage"
-        if matched_months < len(monthly)
-        else None
-    )
+    revenue_flag = "partial_wti_coverage" if matched_months < len(monthly) else None
 
     # Interventions (post-completion workover/recompletion/sidetrack/re-entry).
     intr = well_ops[well_ops["operation"].isin(_INTERVENTION_OPS)]
@@ -302,9 +314,18 @@ def benchmark_well(
         "spud": spud_dt.date() if pd.notna(spud_dt) else None,
         "drilling_days": drilling_days,
         "completion_days": completion_days,
-        "first_oil": pd.to_datetime(first_oil).date() if first_oil is not None and pd.notna(first_oil) else None,
+        "first_oil": (
+            pd.to_datetime(first_oil).date()
+            if first_oil is not None and pd.notna(first_oil)
+            else None
+        ),
         "cum_oil_mmbbl": round(cum_oil / 1e6, 4),
-        "uptime_pct": round(upt.get("uptime_pct"), 1) if upt.get("uptime_pct") is not None and np.isfinite(upt.get("uptime_pct", np.nan)) else None,
+        "uptime_pct": (
+            round(upt.get("uptime_pct"), 1)
+            if upt.get("uptime_pct") is not None
+            and np.isfinite(upt.get("uptime_pct", np.nan))
+            else None
+        ),
         "uptime_flag": "low_confidence" if upt.get("low_confidence") else None,
         "est_revenue_mm": round(rev / 1e6, 1),
         "revenue_flag": revenue_flag,
@@ -341,7 +362,9 @@ def run_well_benchmark(cfg: BenchmarkConfig) -> pd.DataFrame:
     ogor["LEASE_NUMBER"] = ogor["LEASE_NUMBER"].astype(str).str.strip().str.upper()
     ogor = ogor[ogor["LEASE_NUMBER"].isin(all_leases)]
     ogor["API_WELL_NUMBER"] = ogor["API_WELL_NUMBER"].astype(str).str.strip()
-    ogor["MON_O_PROD_VOL"] = pd.to_numeric(ogor["MON_O_PROD_VOL"], errors="coerce").fillna(0.0)
+    ogor["MON_O_PROD_VOL"] = pd.to_numeric(
+        ogor["MON_O_PROD_VOL"], errors="coerce"
+    ).fillna(0.0)
 
     # Uptime for every well in one pass (DAYS_ON_PROD-based).
     uptime_df = compute_uptime(ogor)
@@ -353,8 +376,10 @@ def run_well_benchmark(cfg: BenchmarkConfig) -> pd.DataFrame:
         t = ops_timeline.build_operations_timeline(leases, eff_end, dev_name=dev)
         if not t.empty:
             ops_all.append(t)
-    ops = pd.concat(ops_all, ignore_index=True) if ops_all else pd.DataFrame(
-        columns=["API_WELL_NUMBER", "date", "operation", "detail"]
+    ops = (
+        pd.concat(ops_all, ignore_index=True)
+        if ops_all
+        else pd.DataFrame(columns=["API_WELL_NUMBER", "date", "operation", "detail"])
     )
 
     wti = _wti_lookup(load_extended_wti_prices(through_date=eff_end))
@@ -379,13 +404,17 @@ def run_well_benchmark(cfg: BenchmarkConfig) -> pd.DataFrame:
         decl = _decline_for_well(ogor_well)
         row.update(
             {
-                "decline_annual_pct": round(decl["decline_annual"] * 100, 1)
-                if decl["decline_annual"] == decl["decline_annual"]
-                else None,
+                "decline_annual_pct": (
+                    round(decl["decline_annual"] * 100, 1)
+                    if decl["decline_annual"] == decl["decline_annual"]
+                    else None
+                ),
                 "decline_model": decl["decline_model"],
-                "eur_mmbbl": round(decl["eur_mmbbl"], 3)
-                if decl["eur_mmbbl"] == decl["eur_mmbbl"]
-                else None,
+                "eur_mmbbl": (
+                    round(decl["eur_mmbbl"], 3)
+                    if decl["eur_mmbbl"] == decl["eur_mmbbl"]
+                    else None
+                ),
                 "decline_flag": decl["decline_flag"],
             }
         )

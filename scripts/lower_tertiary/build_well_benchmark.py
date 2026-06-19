@@ -183,8 +183,11 @@ def main(argv: list[str] | None = None) -> int:
 
     print(f"Wrote {md_path}", flush=True)
     print(f"Wrote {csv_path}", flush=True)
-    print(f"{len(df)} wells; top cum-oil: {df.iloc[0]['well']} "
-          f"({df.iloc[0]['cum_oil_mmbbl']} MMbbl, {df.iloc[0]['field']})", flush=True)
+    print(
+        f"{len(df)} wells; top cum-oil: {df.iloc[0]['well']} "
+        f"({df.iloc[0]['cum_oil_mmbbl']} MMbbl, {df.iloc[0]['field']})",
+        flush=True,
+    )
     return 0
 
 

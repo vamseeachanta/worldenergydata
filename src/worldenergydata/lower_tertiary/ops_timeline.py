@@ -285,9 +285,7 @@ def derive_first_production_dates(
     return first[["API_WELL_NUMBER", "date", "operation", "detail"]]
 
 
-def derive_war_operations(
-    lease_num: str, end_date: str = "2025-05-31"
-) -> pd.DataFrame:
+def derive_war_operations(lease_num: str, end_date: str = "2025-05-31") -> pd.DataFrame:
     """Critical well operations from WAR data for a lease.
 
     Returns drilling/completion spud-style milestones plus interventions
@@ -338,7 +336,9 @@ def derive_war_operations(
                     "detail": f"{well} ({r['API_WELL_NUMBER']})",
                 }
             )
-    return pd.DataFrame(rows, columns=["API_WELL_NUMBER", "date", "operation", "detail"])
+    return pd.DataFrame(
+        rows, columns=["API_WELL_NUMBER", "date", "operation", "detail"]
+    )
 
 
 def detect_reentries(lease_num: str, end_date: str = "2025-05-31") -> pd.DataFrame:
@@ -378,12 +378,12 @@ def detect_reentries(lease_num: str, end_date: str = "2025-05-31") -> pd.DataFra
                     "detail": f"{well} ({api}, suffix {sfx})",
                 }
             )
-    return pd.DataFrame(rows, columns=["API_WELL_NUMBER", "date", "operation", "detail"])
+    return pd.DataFrame(
+        rows, columns=["API_WELL_NUMBER", "date", "operation", "detail"]
+    )
 
 
-def derive_spud_milestones(
-    dev_name: str, end_date: str = "2025-05-31"
-) -> pd.DataFrame:
+def derive_spud_milestones(dev_name: str, end_date: str = "2025-05-31") -> pd.DataFrame:
     """Drilling (spud) milestones from the V30 drilling data for a development.
 
     The WAR feed only reaches back to ~2014, so it misses early appraisal
@@ -421,7 +421,9 @@ def derive_spud_milestones(
                 "detail": well or api,
             }
         )
-    return pd.DataFrame(rows, columns=["API_WELL_NUMBER", "date", "operation", "detail"])
+    return pd.DataFrame(
+        rows, columns=["API_WELL_NUMBER", "date", "operation", "detail"]
+    )
 
 
 def leases_for_dev(dev_name: str) -> list[str]:

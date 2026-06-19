@@ -37,10 +37,9 @@ import re
 import warnings
 from pathlib import Path
 
-import yaml
-
 import numpy as np
 import pandas as pd
+import yaml
 
 warnings.filterwarnings("ignore")
 
@@ -61,21 +60,24 @@ from worldenergydata.lower_tertiary.ops_timeline import (  # noqa: E402,F401
     INTERVENTION_CODES,
     OGOR_COLUMNS,
     WAR_ACTIVITY_LABELS,
+    _read_war_bin,
     build_operations_timeline,
     derive_first_production_dates,
     derive_spud_milestones,
     derive_war_operations,
     detect_latest_ogor_month,
     detect_reentries,
-    leases_for_dev,
 )
 from worldenergydata.lower_tertiary.ops_timeline import (  # noqa: E402,F401
-    _read_war_bin,
     ensure_ogor_loader as _ensure_ogor_loader,
-    load_ogor_from_bin as _load_ogor_from_bin,
-    month_end_str as _month_end_str,
 )
-
+from worldenergydata.lower_tertiary.ops_timeline import (  # noqa: E402,F401
+    leases_for_dev,
+)
+from worldenergydata.lower_tertiary.ops_timeline import (
+    load_ogor_from_bin as _load_ogor_from_bin,
+)
+from worldenergydata.lower_tertiary.ops_timeline import month_end_str as _month_end_str
 
 # ---------------------------------------------------------------------------
 # Report assembly
@@ -95,11 +97,7 @@ def _read_latest_comparison(dev_name: str) -> dict | None:
     absent. Used only to render the latest financial summary; never fabricated.
     """
     path = (
-        PROJECT_ROOT
-        / "config"
-        / "analysis"
-        / "lower_tertiary"
-        / "latest_baseline.yml"
+        PROJECT_ROOT / "config" / "analysis" / "lower_tertiary" / "latest_baseline.yml"
     )
     if not path.exists():
         return None
@@ -163,9 +161,7 @@ def build_report(
     # auto-derive every lease mapped to the development (multi-lease fields).
     leases = [lease_num.upper()] if lease_num else leases_for_dev(dev_name)
     lease_label = (
-        leases[0]
-        if len(leases) == 1
-        else f"{len(leases)} leases ({', '.join(leases)})"
+        leases[0] if len(leases) == 1 else f"{len(leases)} leases ({', '.join(leases)})"
     )
 
     # Window: None => frozen V30 (through 2025-05-31); else the latest end_date.
@@ -179,9 +175,7 @@ def build_report(
             f"frozen V30 reference NPV = -$530.6M"
         )
     else:
-        window_label = (
-            f"{start_label} -> {end_label} (V30 frozen window)"
-        )
+        window_label = f"{start_label} -> {end_label} (V30 frozen window)"
 
     tl = build_field_npv_timeline(dev_name, end_date=end_date)
     timeline: pd.DataFrame = tl["timeline"].copy()
@@ -291,11 +285,7 @@ def build_report(
     f0 = fin[dev_name]
     sign = "NPV-negative" if terminal_npv < 0 else "NPV-positive"
     one_time_capital = f0["dnc_total_usd"] + f0["facilities_cost_usd"]
-    oil_mm = (
-        cmp["latest_oil_bbl"] / 1e6
-        if cmp and cmp.get("latest_oil_bbl")
-        else None
-    )
+    oil_mm = cmp["latest_oil_bbl"] / 1e6 if cmp and cmp.get("latest_oil_bbl") else None
     rev_mm = (
         cmp["latest_revenue_usd"] / 1e6
         if cmp and cmp.get("latest_revenue_usd")
@@ -314,9 +304,7 @@ def build_report(
         )
     )
     lines.append("")
-    bullet_oil = (
-        f"**{oil_mm:,.1f} MMbbl** oil produced" if oil_mm is not None else None
-    )
+    bullet_oil = f"**{oil_mm:,.1f} MMbbl** oil produced" if oil_mm is not None else None
     summary_bullets = []
     if bullet_oil:
         summary_bullets.append(
@@ -389,8 +377,12 @@ def build_report(
         f"({trough_year}) → latest ${terminal_npv / 1e6:,.0f}M_"
     )
     lines.append("")
-    lines.append("| Year | Net Cashflow ($MM) | Cumulative NPV ($MM) | Critical Operations |")
-    lines.append("|------|-------------------:|---------------------:|---------------------|")
+    lines.append(
+        "| Year | Net Cashflow ($MM) | Cumulative NPV ($MM) | Critical Operations |"
+    )
+    lines.append(
+        "|------|-------------------:|---------------------:|---------------------|"
+    )
     for _, row in yearly.iterrows():
         yr = int(row["year"])
         markers = ops_by_year.get(yr, [])
@@ -450,9 +442,7 @@ def build_report(
     )
     field_npv = stk["field_terminal_npv_usd"]
     for i, w in enumerate(stk["wells"], start=1):
-        pct = (
-            100.0 * w["net_npv_usd"] / field_npv if field_npv else 0.0
-        )
+        pct = 100.0 * w["net_npv_usd"] / field_npv if field_npv else 0.0
         lines.append(
             f"| {i} | {w['api']} | {w['well_name']} "
             f"| {w['oil_bbl'] / 1e6:,.2f} "
@@ -627,8 +617,12 @@ def build_report(
     lines.append(f"| Fixed opex | ${_fmt_usd_mm(f['fixed_opex_usd'])} M |")
     lines.append(f"| D&C cost | ${_fmt_usd_mm(f['dnc_total_usd'])} M |")
     lines.append(f"| Facilities cost | ${_fmt_usd_mm(f['facilities_cost_usd'])} M |")
-    lines.append(f"| Net cashflow (undiscounted) | ${_fmt_usd_mm(f['net_cashflow_usd'])} M |")
-    lines.append(f"| **NPV @ {tl['discount_rate_annual'] * 100:.0f}%** | **${_fmt_usd_mm(f['npv_usd'])} M** |")
+    lines.append(
+        f"| Net cashflow (undiscounted) | ${_fmt_usd_mm(f['net_cashflow_usd'])} M |"
+    )
+    lines.append(
+        f"| **NPV @ {tl['discount_rate_annual'] * 100:.0f}%** | **${_fmt_usd_mm(f['npv_usd'])} M** |"
+    )
     mirr = f.get("mirr_annual")
     if mirr is not None and not (isinstance(mirr, float) and np.isnan(mirr)):
         lines.append(f"| MIRR (annual) | {mirr * 100:.2f}% |")
@@ -721,12 +715,12 @@ def build_report(
         "`.bin` → V30 NPV) is reproducible end-to-end and reconciles to the frozen "
         "golden baseline."
     )
-    lines.append(
-        f"- **Run it yourself.** Refresh the data and regenerate this report:"
-    )
+    lines.append(f"- **Run it yourself.** Refresh the data and regenerate this report:")
     lines.append("")
     lines.append("  ```bash")
-    lines.append("  # 1. refresh the latest BSEE OGOR-A production (2025 + current year)")
+    lines.append(
+        "  # 1. refresh the latest BSEE OGOR-A production (2025 + current year)"
+    )
     lines.append("  uv run python scripts/refresh_bsee_ogor_recent.py")
     lines.append("  # 2. regenerate this report (latest window is the default;")
     lines.append("  #    leases are auto-derived for the field)")
@@ -734,9 +728,7 @@ def build_report(
         f"  uv run python scripts/lower_tertiary/generate_field_economics_report.py "
         f"--dev {dev_arg}"
     )
-    lines.append(
-        "  # frozen V30 reference report: add --frozen"
-    )
+    lines.append("  # frozen V30 reference report: add --frozen")
     lines.append("  ```")
     lines.append("")
 
@@ -789,10 +781,14 @@ def main(argv: list[str] | None = None) -> None:
     if is_latest and end_date is None:
         latest_month = detect_latest_ogor_month()
         end_date = _month_end_str(latest_month)
-        print(f"Auto-detected latest OGOR-A month: {latest_month.strftime('%Y-%m')} "
-              f"-> end_date {end_date}")
+        print(
+            f"Auto-detected latest OGOR-A month: {latest_month.strftime('%Y-%m')} "
+            f"-> end_date {end_date}"
+        )
 
-    report = build_report(args.dev, args.lease, end_date=end_date if is_latest else None)
+    report = build_report(
+        args.dev, args.lease, end_date=end_date if is_latest else None
+    )
 
     if args.out:
         out_path = Path(args.out)
@@ -801,7 +797,9 @@ def main(argv: list[str] | None = None) -> None:
         # Frozen V30 -> *_v30.md; latest -> the canonical unsuffixed report.
         suffix = "" if is_latest else "_v30"
         out_path = (
-            PROJECT_ROOT / "reports" / "lower_tertiary"
+            PROJECT_ROOT
+            / "reports"
+            / "lower_tertiary"
             / f"field_economics_{slug}{suffix}.md"
         )
     out_path.parent.mkdir(parents=True, exist_ok=True)
