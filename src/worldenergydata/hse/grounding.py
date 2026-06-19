@@ -216,6 +216,22 @@ def _parse_date(s: str) -> Optional[dt.date]:
     return None
 
 
+def corpus_vintage(bsee_path: Optional[Path] = None) -> Optional[str]:
+    """Newest incident business-date in the BSEE corpus, as an ISO string.
+
+    Derived from the ``DATE_OCCURRED`` dataset field — a provable source-data
+    vintage (basis ``dataset_field``), not a file mtime or refresh timestamp.
+    Single source for both the card vintage stamp and the source-refresh
+    acceptance contract (#489). Returns None if the corpus is unavailable.
+    """
+    path = bsee_path or default_bsee_path()
+    if path is None or not Path(path).exists():
+        return None
+    rows = list(csv.DictReader(open(path, encoding="latin-1")))
+    dates = [d for d in (_parse_date(r.get("DATE_OCCURRED", "")) for r in rows) if d]
+    return max(dates).isoformat() if dates else None
+
+
 def load_bsee(mode: FailureMode, path: Optional[Path] = None) -> list[Incident]:
     """Load BSEE incident-investigation records matching ``mode``.
 
@@ -228,8 +244,8 @@ def load_bsee(mode: FailureMode, path: Optional[Path] = None) -> list[Incident]:
     rows = list(csv.DictReader(open(path, encoding="latin-1")))
     if not rows:
         return []
-    newest = max((_parse_date(r.get("DATE_OCCURRED", "")) or dt.date.min) for r in rows)
-    vintage = f"BSEE incident investigations; corpus current to {newest.isoformat()}"
+    newest = corpus_vintage(path) or dt.date.min.isoformat()
+    vintage = f"BSEE incident investigations; corpus current to {newest}"
     out: list[Incident] = []
     for r in rows:
         atype = (r.get("ACCIDENT_TYPE") or "").strip(" -")
