@@ -23,7 +23,6 @@ from typing import Any, Optional
 
 from worldenergydata.vessel_fleet.constants import FT_TO_M
 from worldenergydata.vessel_fleet.parsers.numeric import (
-    parse_bool,
     parse_int_from_label,
     parse_numeric,
 )
