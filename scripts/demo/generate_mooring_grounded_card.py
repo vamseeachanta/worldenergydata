@@ -25,8 +25,8 @@ import argparse
 import datetime as dt
 from pathlib import Path
 
-from worldenergydata.hse.grounding import ground
 from worldenergydata.hse.grounding_card import AnalysisSummary, render_html
+from worldenergydata.hse.grounding_demand import ground_and_log
 
 # Representative mooring_fatigue result (illustrative; from the workflow pilot).
 ANALYSIS = AnalysisSummary(
@@ -49,7 +49,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--out", default="reports/hse/mooring-fatigue-grounded-card.html")
     a = ap.parse_args(argv)
 
-    g = ground("mooring_fatigue")
+    # ground_and_log: produce the grounding AND record the request in the demand
+    # signal (#491), so this live demo path feeds the coverage-gap rollup.
+    g = ground_and_log("mooring_fatigue")
     generated_on = dt.date.today().isoformat()
     html_doc = render_html(g.to_dict(), ANALYSIS, generated_on)
 

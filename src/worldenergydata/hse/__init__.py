@@ -44,6 +44,10 @@ from worldenergydata.hse.database import (
 # Incident-grounding query (#487): failure-mode -> real precedent incidents
 from worldenergydata.hse.grounding import Grounding, ground
 
+# Demand-logging entry point (#491): the canonical call for bots/agents — logs
+# which failure modes get requested so coverage gaps surface as the next build.
+from worldenergydata.hse.grounding_demand import ground_and_log
+
 # Importers
 from worldenergydata.hse.importers.base_importer import BaseImporter
 from worldenergydata.hse.importers.bsee_incidents_importer import (
@@ -78,9 +82,10 @@ __all__ = [
     "EPATRIImporter",
     # Validation
     "DataQualityValidator",
-    # Incident grounding (#487)
+    # Incident grounding (#487) + demand logging (#491)
     "ground",
     "Grounding",
+    "ground_and_log",
 ]
 
 _logger = get_logger(__name__)
