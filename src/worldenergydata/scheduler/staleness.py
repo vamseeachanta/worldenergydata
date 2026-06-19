@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 STALENESS_THRESHOLDS: Dict[str, timedelta] = {
     "sodir_refresh": timedelta(hours=36),
     "bsee_refresh": timedelta(days=10),
+    "hse_refresh": timedelta(days=10),
     "eia_us_refresh": timedelta(days=45),
 }
 

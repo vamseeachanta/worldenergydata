@@ -42,6 +42,7 @@ class TestCheckStaleness:
         # EIA ran 20 days ago (threshold 45d) — OK
         status = _make_status(
             {
+                "hse_refresh": _job_entry((FROZEN_NOW - timedelta(days=5)).isoformat()),
                 "sodir_refresh": _job_entry(
                     (FROZEN_NOW - timedelta(hours=12)).isoformat()
                 ),
@@ -64,6 +65,7 @@ class TestCheckStaleness:
 
         status = _make_status(
             {
+                "hse_refresh": _job_entry((FROZEN_NOW - timedelta(days=5)).isoformat()),
                 "sodir_refresh": _job_entry(
                     (FROZEN_NOW - timedelta(hours=40)).isoformat()
                 ),
@@ -86,6 +88,7 @@ class TestCheckStaleness:
 
         status = _make_status(
             {
+                "hse_refresh": _job_entry((FROZEN_NOW - timedelta(days=5)).isoformat()),
                 "sodir_refresh": _job_entry(
                     (FROZEN_NOW - timedelta(hours=1)).isoformat()
                 ),
@@ -108,6 +111,7 @@ class TestCheckStaleness:
 
         status = _make_status(
             {
+                "hse_refresh": _job_entry((FROZEN_NOW - timedelta(days=5)).isoformat()),
                 "sodir_refresh": _job_entry(
                     (FROZEN_NOW - timedelta(hours=1)).isoformat()
                 ),
@@ -130,6 +134,7 @@ class TestCheckStaleness:
 
         status = _make_status(
             {
+                "hse_refresh": _job_entry((FROZEN_NOW - timedelta(days=5)).isoformat()),
                 "sodir_refresh": _job_entry(None),
                 "bsee_refresh": _job_entry(
                     (FROZEN_NOW - timedelta(days=1)).isoformat()
@@ -151,6 +156,7 @@ class TestCheckStaleness:
         # Only tracked jobs present, plus an untracked one
         status = _make_status(
             {
+                "hse_refresh": _job_entry((FROZEN_NOW - timedelta(days=5)).isoformat()),
                 "sodir_refresh": _job_entry(
                     (FROZEN_NOW - timedelta(hours=1)).isoformat()
                 ),
@@ -176,6 +182,7 @@ class TestCheckStaleness:
 
         status = _make_status(
             {
+                "hse_refresh": _job_entry((FROZEN_NOW - timedelta(days=5)).isoformat()),
                 "sodir_refresh": _job_entry(
                     (FROZEN_NOW - timedelta(hours=40)).isoformat()
                 ),
@@ -186,7 +193,7 @@ class TestCheckStaleness:
             }
         )
         details = get_staleness_details(status)
-        assert len(details) == 3
+        assert len(details) == 4  # sodir, bsee, hse, eia
 
         # Check structure
         for d in details:
@@ -219,6 +226,9 @@ class TestStalenessThresholds:
 
     def test_bsee_threshold_10_days(self):
         assert STALENESS_THRESHOLDS["bsee_refresh"] == timedelta(days=10)
+
+    def test_hse_threshold_10_days(self):
+        assert STALENESS_THRESHOLDS["hse_refresh"] == timedelta(days=10)
 
     def test_eia_threshold_45_days(self):
         assert STALENESS_THRESHOLDS["eia_us_refresh"] == timedelta(days=45)
