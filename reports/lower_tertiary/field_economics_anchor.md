@@ -4,6 +4,14 @@
 
 **Data window:** 2000-09 -> 2026-04 (latest); frozen V30 reference NPV = -$530.6M
 
+## Summary
+
+On public BSEE production + cost data, **Anchor** is **NPV-negative at 10%** life-to-date: terminal cumulative NPV **$-1,586.9 M** (frozen V30 sanctioned reference $-1,732.8 M).
+
+- **18.6 MMbbl** oil produced from **2 producing wells** (**15 total wellbores**), generating **$1,279 M** gross revenue.
+- A **high-capex, deepwater** signature: **$4,161 M** of one-time D&C + facilities capital is the dominant driver of the NPV.
+- The cumulative-NPV path bottomed at **$-1,797.0 M** in **2024** and has since recovered **$+210.1 M** as production paid back capital.
+
 > **LATEST run.** The NPV timeline is built from the V30 cashflow model extended through the latest available BSEE OGOR-A month (`build_field_npv_timeline(dev, end_date=...)`). The terminal cumulative NPV reflects the extended window and therefore differs from the frozen V30 sanctioned value (shown for reference below). The frozen V30 baseline (`golden_baseline_v30.yml`) is unchanged.
 
 ---
@@ -12,7 +20,7 @@
 
 Cumulative discounted NPV evolution over field life, with critical well operations annotated. Terminal cumulative NPV = **$-1,586.9 M** (frozen V30 reference: $-1,732.8 M; delta +145.9 M).
 
-Cumulative NPV path (by year): `█▇▇▇▇▇▇▇▆▄▁▁▁`
+Cumulative NPV path (by year): `█▇▇▇▇▇▇▇▆▄▁▁▁`  _start $-145M → trough $-1,797M (2024) → latest $-1,587M_
 
 | Year | Net Cashflow ($MM) | Cumulative NPV ($MM) | Critical Operations |
 |------|-------------------:|---------------------:|---------------------|
@@ -71,7 +79,7 @@ Field terminal NPV decomposed into per-well contributions that sum exactly to th
 | 2 | 608114075000 | AP001 | 8.43 | -2.4 | -758.3 | -760.7 | 47.9% |
 | 3 | 608114076101 |  | 0.25 | 6.0 | -22.5 | -16.6 | 1.0% |
 
-> **Reading the ranking.** Under production-pro-rata allocation, the largest producer absorbs the most shared capital — so the highest-output well can show the *most negative* net NPV. The **Gross well NPV** column reflects standalone operating performance; the **Net well NPV** column reflects each well's share of the fully-loaded field (which is NPV-negative overall, so every well's net is negative).
+> **Reading the ranking.** Under production-pro-rata allocation, the largest producer absorbs the most shared capital — so the highest-output well can show the *most negative* net NPV. The **Gross well NPV** column reflects standalone operating performance; the **Net well NPV** column reflects each well's share of the fully-loaded field (which is NPV-negative overall, so every well's net is negative). **Bottom line:** a negative *net* NPV here is an allocation outcome on an NPV-negative field, not a verdict on the well's own performance — read the **Gross well NPV** column for standalone results.
 
 Per-well net NPV (signed bars; █ = value-additive, ▓ = drag):
 
@@ -81,11 +89,24 @@ AP001      -760.7 M  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓�
 608114076101    -16.6 M  ▓
 ```
 
+**[Interactive NPV waterfalls →](./anchor_npv_stackup.html)** — two views: an **over-time NPV bridge** (each year's change in cumulative NPV, with the biggest swings annotated by the events that drove them) and this **per-well stackup** (each well's net NPV stepping to the field total). Hover any bar for detail. Rebuild with `uv run --with plotly python scripts/lower_tertiary/build_npv_stackup_chart.py --dev Anchor`.
+
 _Block scope: Single OGOR block (GC 807) for this development; block-level NPV decomposition is not applicable (identical to the field total)._
 
 _The stackup covers the 2 producing wells. The field's 15 total wellbores also include appraisal and sidetrack/re-drill bores; their drilling & completion capital is part of the shared cost allocated pro-rata (it is not attributed to a single producer)._
 
 _**Allocation assumption.** Shared field costs (facilities, fixed opex, host) and the drilling/completion cost of non-producing bores (appraisal/sidetrack wells with no production to stand against) are pooled and allocated to the producing wells pro-rata by each well's share of total field oil production. Each producing well's own revenue, royalty, variable opex, and directly-resolvable D&C are attributed to it. Per-well NPVs sum to the field NPV._
+
+---
+
+## Well Geometry (3D)
+
+Interactive 3D well-path views — minimum-curvature trajectories from BSEE directional surveys, rendered with Plotly and Three.js — are in development for this field. When verified they will live at:
+
+- `reports/bsee/anchor_well_path_plotly.html`
+- `reports/bsee/anchor_well_path_threejs.html`
+
+_They are intentionally **not linked yet**: the geometry render must first be confirmed to cover the same lease-resolved producers shown in the NPV stackup above (same APIs, same field), so the economics and the well paths never describe different wells._
 
 ---
 
@@ -119,6 +140,22 @@ _Latest NPV from `build_field_npv_timeline(dev, end_date)`; latest revenue/oil f
 | Wellbores | 15 |
 
 _Source-of-record: `config/analysis/lower_tertiary/golden_baseline_v30.yml`. NPV reproduced within golden-baseline tolerance by `worldenergydata.lower_tertiary.v30_financial_reproducer`._
+
+---
+
+## Price Sensitivity
+
+NPV is linear in the oil price deck: each **+$1/bbl** on the realized oil price moves field NPV by **$+5.1 M**. Life-to-date NPV reaches **zero at a flat-equivalent realized WTI of $380/bbl**, versus the actual volume-weighted realized **$69/bbl** over the window.
+
+| Flat-equivalent realized WTI ($/bbl) | NPV @ 10% ($MM) |
+|-------------------------------------:|------------------:|
+| 49 | -1,688.8 |
+| 59 | -1,637.9 |
+| 69  ← actual | -1,586.9 |
+| 79 | -1,535.9 |
+| 89 | -1,485.0 |
+
+_Exact, not sampled: NPV is affine in a uniform price multiplier (revenue and royalty scale with price; variable/fixed opex, D&C, facilities and discounting do not), so one base run plus one scaled run define the entire line. 'Flat-equivalent realized WTI' is the volume-weighted average price; the underlying deck is the historical monthly WTI path._
 
 ---
 

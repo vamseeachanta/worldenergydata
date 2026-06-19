@@ -615,6 +615,38 @@ def build_report(
     fin = reproduce_v30_financials()
     sanctioned_npv = fin[dev_name]["npv_usd"]
 
+    # Latest revenue/oil comparison (read once; reused by the summary + the
+    # Financial Summary table below). None for the frozen report.
+    cmp = _read_latest_comparison(dev_name) if is_latest else None
+
+    # ---- Price sensitivity + breakeven (NPV is affine in a WTI multiplier) ----
+    # One extra scaled timeline pins the exact NPV-vs-price line; everything
+    # else (each sensitivity point, the breakeven price) follows analytically.
+    price_sens: dict | None = None
+    avg_wti = tl.get("avg_realized_wti_usd")
+    base_npv = tl["terminal_npv_usd"]
+    if avg_wti is not None and not (isinstance(avg_wti, float) and np.isnan(avg_wti)):
+        _m = 1.20
+        tl_pert = build_field_npv_timeline(
+            dev_name, end_date=end_date, wti_price_multiplier=_m
+        )
+        dnpv_dm = (tl_pert["terminal_npv_usd"] - base_npv) / (_m - 1.0)
+        if abs(dnpv_dm) > 1.0:  # sensible slope (positive: NPV rises with price)
+            dnpv_per_dollar = dnpv_dm / avg_wti  # $ NPV per +$1/bbl realized
+            m_breakeven = 1.0 - base_npv / dnpv_dm
+            wti_breakeven = avg_wti * m_breakeven
+
+            def _npv_at_wti(p: float) -> float:
+                return base_npv + ((p / avg_wti) - 1.0) * dnpv_dm
+
+            grid = [avg_wti - 20, avg_wti - 10, avg_wti, avg_wti + 10, avg_wti + 20]
+            price_sens = {
+                "avg_wti": avg_wti,
+                "dnpv_per_dollar": dnpv_per_dollar,
+                "wti_breakeven": wti_breakeven,
+                "rows": [(p, _npv_at_wti(p)) for p in grid if p > 0],
+            }
+
     # ---- Build the yearly cumulative-NPV table (compact) ----
     timeline["year"] = timeline["date"].dt.year
     yearly = (
@@ -642,6 +674,15 @@ def build_report(
 
     spark = _sparkline(list(yearly["cumulative_npv_usd"]))
 
+    # Trough of the cumulative-NPV path (deepest point of capital exposure) and
+    # the recovery since — used by the summary headline and the sparkline caption.
+    _trough_idx = yearly["cumulative_npv_usd"].idxmin()
+    trough_npv = float(yearly.loc[_trough_idx, "cumulative_npv_usd"])
+    trough_year = int(yearly.loc[_trough_idx, "year"])
+    terminal_npv = float(tl["terminal_npv_usd"])
+    first_npv = float(yearly["cumulative_npv_usd"].iloc[0])
+    recovery = terminal_npv - trough_npv
+
     lines: list[str] = []
     lines.append(f"# {dev_name} Field Economics Report")
     lines.append("")
@@ -654,6 +695,64 @@ def build_report(
     lines.append("")
     lines.append(f"**Data window:** {window_label}")
     lines.append("")
+
+    # -------------------------- EXECUTIVE SUMMARY ---------------------------
+    # Verdict-first headline so a client reads the bottom line before the
+    # tables. All figures trace to the same model the detail sections use.
+    f0 = fin[dev_name]
+    sign = "NPV-negative" if terminal_npv < 0 else "NPV-positive"
+    one_time_capital = f0["dnc_total_usd"] + f0["facilities_cost_usd"]
+    oil_mm = (
+        cmp["latest_oil_bbl"] / 1e6
+        if cmp and cmp.get("latest_oil_bbl")
+        else None
+    )
+    rev_mm = (
+        cmp["latest_revenue_usd"] / 1e6
+        if cmp and cmp.get("latest_revenue_usd")
+        else f0["revenue_usd"] / 1e6
+    )
+    lines.append("## Summary")
+    lines.append("")
+    lines.append(
+        f"On public BSEE production + cost data, **{dev_name}** is "
+        f"**{sign} at {tl['discount_rate_annual'] * 100:.0f}%** life-to-date: "
+        f"terminal cumulative NPV **${terminal_npv / 1e6:,.1f} M**"
+        + (
+            f" (frozen V30 sanctioned reference ${sanctioned_npv / 1e6:,.1f} M)."
+            if is_latest
+            else " (sanctioned V30 model)."
+        )
+    )
+    lines.append("")
+    bullet_oil = (
+        f"**{oil_mm:,.1f} MMbbl** oil produced" if oil_mm is not None else None
+    )
+    summary_bullets = []
+    if bullet_oil:
+        summary_bullets.append(
+            f"- {bullet_oil} from **{f0['producers']} producing wells** "
+            f"(**{f0['wellbores']} total wellbores**), generating "
+            f"**${rev_mm:,.0f} M** gross revenue."
+        )
+    else:
+        summary_bullets.append(
+            f"- **{f0['producers']} producing wells** "
+            f"(**{f0['wellbores']} total wellbores**), generating "
+            f"**${rev_mm:,.0f} M** gross revenue."
+        )
+    summary_bullets.append(
+        f"- A **high-capex, deepwater** signature: **${one_time_capital / 1e6:,.0f} M** "
+        f"of one-time D&C + facilities capital is the dominant driver of the NPV."
+    )
+    summary_bullets.append(
+        f"- The cumulative-NPV path bottomed at **${trough_npv / 1e6:,.1f} M** "
+        f"in **{trough_year}** and has since recovered "
+        f"**${recovery / 1e6:+,.1f} M** as production paid back capital."
+    )
+    lines.extend(summary_bullets)
+    lines.append("")
+
     if is_latest:
         lines.append(
             "> **LATEST run.** The NPV timeline is built from the V30 cashflow "
@@ -695,7 +794,11 @@ def build_report(
             f"(reconciles to sanctioned baseline ${sanctioned_npv / 1e6:,.1f} M)."
         )
     lines.append("")
-    lines.append(f"Cumulative NPV path (by year): `{spark}`")
+    lines.append(
+        f"Cumulative NPV path (by year): `{spark}`  "
+        f"_start ${first_npv / 1e6:,.0f}M → trough ${trough_npv / 1e6:,.0f}M "
+        f"({trough_year}) → latest ${terminal_npv / 1e6:,.0f}M_"
+    )
     lines.append("")
     lines.append("| Year | Net Cashflow ($MM) | Cumulative NPV ($MM) | Critical Operations |")
     lines.append("|------|-------------------:|---------------------:|---------------------|")
@@ -777,7 +880,10 @@ def build_report(
         "**Gross well NPV** column reflects standalone operating performance; "
         "the **Net well NPV** column reflects each well's share of the "
         "fully-loaded field (which is NPV-negative overall, so every well's "
-        "net is negative)."
+        "net is negative). **Bottom line:** a negative *net* NPV here is an "
+        "allocation outcome on an NPV-negative field, not a verdict on the "
+        "well's own performance — read the **Gross well NPV** column for "
+        "standalone results."
     )
     lines.append("")
 
@@ -791,6 +897,18 @@ def build_report(
         label = f"{w['well_name'] or w['api']:<8}"
         lines.append(f"{label} {w['net_npv_usd'] / 1e6:>8,.1f} M  {bar}")
     lines.append("```")
+    lines.append("")
+    _slug = dev_name.lower().replace("/", "_").replace(" ", "_")
+    _dev_arg = f'"{dev_name}"' if " " in dev_name else dev_name
+    lines.append(
+        f"**[Interactive NPV waterfalls →](./{_slug}_npv_stackup.html)** — two "
+        "views: an **over-time NPV bridge** (each year's change in cumulative "
+        "NPV, with the biggest swings annotated by the events that drove them) "
+        "and this **per-well stackup** (each well's net NPV stepping to the "
+        "field total). Hover any bar for detail. Rebuild with "
+        f"`uv run --with plotly python scripts/lower_tertiary/"
+        f"build_npv_stackup_chart.py --dev {_dev_arg}`."
+    )
     lines.append("")
 
     # Block-scope grouping (if cleanly available) or a documented gap.
@@ -832,11 +950,47 @@ def build_report(
     lines.append("---")
     lines.append("")
 
+    # =========================== WELL GEOMETRY (3D) =========================
+    # Interactive 3D well-path renders (Plotly + Three.js) are produced
+    # separately by scripts/bsee/demo_well_path_<field>.py from BSEE
+    # directional-survey data. They are LINKED here only once the rendered well
+    # set is verified to match this report's lease-resolved producers, so the
+    # economics and the geometry never silently describe different wells.
+    slug = dev_name.lower().replace("/", "_").replace(" ", "_")
+    lines.append("## Well Geometry (3D)")
+    lines.append("")
+    lines.append(
+        "Interactive 3D well-path views — minimum-curvature trajectories from "
+        "BSEE directional surveys, rendered with Plotly and Three.js — are in "
+        "development for this field. When verified they will live at:"
+    )
+    lines.append("")
+    lines.append(f"- `reports/bsee/{slug}_well_path_plotly.html`")
+    lines.append(f"- `reports/bsee/{slug}_well_path_threejs.html`")
+    lines.append("")
+    lines.append(
+        "_They are intentionally **not linked yet**: the geometry render must "
+        "first be confirmed to cover the same lease-resolved producers shown in "
+        "the NPV stackup above (same APIs, same field), so the economics and the "
+        "well paths never describe different wells._"
+    )
+    if slug == "julia":
+        lines.append("")
+        lines.append(
+            "_Julia status: the current demo render (`scripts/bsee/"
+            "demo_well_path_julia.py`) selects wells by `WELL_NAME` prefix and "
+            "picks up unrelated shelf wells, with an API collision on "
+            "`608124009400` (DC101 here vs. JU101 in the well catalog). Tracked "
+            "in worldenergydata#493 — re-select by lease G20351, then embed._"
+        )
+    lines.append("")
+    lines.append("---")
+    lines.append("")
+
     # =========================== FINANCIAL SUMMARY ==========================
     f = fin[dev_name]
     rate_pct = f"{tl['discount_rate_annual'] * 100:.0f}"
     if is_latest:
-        cmp = _read_latest_comparison(dev_name)
         lines.append("## Financial Summary")
         lines.append("")
         lines.append(
@@ -901,6 +1055,47 @@ def build_report(
     lines.append("")
     lines.append("---")
     lines.append("")
+
+    # ============================ PRICE SENSITIVITY =========================
+    if price_sens is not None:
+        rate_pct = f"{tl['discount_rate_annual'] * 100:.0f}"
+        avgw = price_sens["avg_wti"]
+        be = price_sens["wti_breakeven"]
+        per_mm = price_sens["dnpv_per_dollar"] / 1e6
+        lines.append("## Price Sensitivity")
+        lines.append("")
+        be_phrase = (
+            f"zero at a flat-equivalent realized WTI of ${be:,.0f}/bbl"
+            if be > 0
+            else "zero at no achievable price — non-price costs exceed oil "
+            "revenue at any positive WTI under this discount rate"
+        )
+        lines.append(
+            f"NPV is linear in the oil price deck: each **+$1/bbl** on the "
+            f"realized oil price moves field NPV by **${per_mm:+,.1f} M**. "
+            f"Life-to-date NPV reaches **{be_phrase}**, versus the actual "
+            f"volume-weighted realized **${avgw:,.0f}/bbl** over the window."
+        )
+        lines.append("")
+        lines.append(
+            f"| Flat-equivalent realized WTI ($/bbl) | NPV @ {rate_pct}% ($MM) |"
+        )
+        lines.append("|-------------------------------------:|------------------:|")
+        for p, npv in price_sens["rows"]:
+            mark = "  ← actual" if abs(p - avgw) < 1e-6 else ""
+            lines.append(f"| {p:,.0f}{mark} | {_fmt_usd_mm(npv)} |")
+        lines.append("")
+        lines.append(
+            "_Exact, not sampled: NPV is affine in a uniform price multiplier "
+            "(revenue and royalty scale with price; variable/fixed opex, D&C, "
+            "facilities and discounting do not), so one base run plus one scaled "
+            "run define the entire line. 'Flat-equivalent realized WTI' is the "
+            "volume-weighted average price; the underlying deck is the historical "
+            "monthly WTI path._"
+        )
+        lines.append("")
+        lines.append("---")
+        lines.append("")
 
     # =============================== NEXT STEPS / CTAs =======================
     dev_arg = f'"{dev_name}"' if " " in dev_name else dev_name

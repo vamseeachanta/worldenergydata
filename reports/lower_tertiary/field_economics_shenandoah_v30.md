@@ -4,6 +4,14 @@
 
 **Data window:** 2000-09 -> 2025-05 (V30 frozen window)
 
+## Summary
+
+On public BSEE production + cost data, **Shenandoah** is **NPV-negative at 10%** life-to-date: terminal cumulative NPV **$-1,166.4 M** (sanctioned V30 model).
+
+- **1 producing wells** (**23 total wellbores**), generating **$0 M** gross revenue.
+- A **high-capex, deepwater** signature: **$3,866 M** of one-time D&C + facilities capital is the dominant driver of the NPV.
+- The cumulative-NPV path bottomed at **$-1,166.4 M** in **2025** and has since recovered **$-0.0 M** as production paid back capital.
+
 > Generated from the sanctioned V30 financial model (`build_field_npv_timeline` reuses the same monthly cashflow + trimmed-discount formula as `reproduce_v30_financials`). The NPV timeline below is an additive presentation layer; it does not alter the computed final NPV.
 
 ---
@@ -12,7 +20,7 @@
 
 Cumulative discounted NPV evolution over field life, with critical well operations annotated. Terminal cumulative NPV = **$-1,166.4 M** (reconciles to sanctioned baseline $-1,166.4 M).
 
-Cumulative NPV path (by year): `█▇▇▇▇▇▆▆▅▅▅▅▅▅▅▄▂▁`
+Cumulative NPV path (by year): `█▇▇▇▇▇▆▆▅▅▅▅▅▅▅▄▂▁`  _start $-140M → trough $-1,166M (2025) → latest $-1,166M_
 
 | Year | Net Cashflow ($MM) | Cumulative NPV ($MM) | Critical Operations |
 |------|-------------------:|---------------------:|---------------------|
@@ -77,7 +85,7 @@ Field terminal NPV decomposed into per-well contributions that sum exactly to th
 |-----:|-----------|------|------------:|---------------------:|----------------------------:|-------------------:|-----------:|
 | 1 | 608124014400 | SA009 | 0.00 | -75.2 | -1,091.1 | -1,166.4 | 100.0% |
 
-> **Reading the ranking.** Under production-pro-rata allocation, the largest producer absorbs the most shared capital — so the highest-output well can show the *most negative* net NPV. The **Gross well NPV** column reflects standalone operating performance; the **Net well NPV** column reflects each well's share of the fully-loaded field (which is NPV-negative overall, so every well's net is negative).
+> **Reading the ranking.** Under production-pro-rata allocation, the largest producer absorbs the most shared capital — so the highest-output well can show the *most negative* net NPV. The **Gross well NPV** column reflects standalone operating performance; the **Net well NPV** column reflects each well's share of the fully-loaded field (which is NPV-negative overall, so every well's net is negative). **Bottom line:** a negative *net* NPV here is an allocation outcome on an NPV-negative field, not a verdict on the well's own performance — read the **Gross well NPV** column for standalone results.
 
 Per-well net NPV (signed bars; █ = value-additive, ▓ = drag):
 
@@ -85,11 +93,24 @@ Per-well net NPV (signed bars; █ = value-additive, ▓ = drag):
 SA009    -1,166.4 M  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 ```
 
+**[Interactive NPV waterfalls →](./shenandoah_npv_stackup.html)** — two views: an **over-time NPV bridge** (each year's change in cumulative NPV, with the biggest swings annotated by the events that drove them) and this **per-well stackup** (each well's net NPV stepping to the field total). Hover any bar for detail. Rebuild with `uv run --with plotly python scripts/lower_tertiary/build_npv_stackup_chart.py --dev Shenandoah`.
+
 _Block scope: Single OGOR block (WR 51) for this development; block-level NPV decomposition is not applicable (identical to the field total)._
 
 _The stackup covers the 1 producing wells. The field's 23 total wellbores also include appraisal and sidetrack/re-drill bores; their drilling & completion capital is part of the shared cost allocated pro-rata (it is not attributed to a single producer)._
 
 _**Allocation assumption.** Shared field costs (facilities, fixed opex, host) and the drilling/completion cost of non-producing bores (appraisal/sidetrack wells with no production to stand against) are pooled and allocated to the producing wells pro-rata by each well's share of total field oil production. Each producing well's own revenue, royalty, variable opex, and directly-resolvable D&C are attributed to it. Per-well NPVs sum to the field NPV._
+
+---
+
+## Well Geometry (3D)
+
+Interactive 3D well-path views — minimum-curvature trajectories from BSEE directional surveys, rendered with Plotly and Three.js — are in development for this field. When verified they will live at:
+
+- `reports/bsee/shenandoah_well_path_plotly.html`
+- `reports/bsee/shenandoah_well_path_threejs.html`
+
+_They are intentionally **not linked yet**: the geometry render must first be confirmed to cover the same lease-resolved producers shown in the NPV stackup above (same APIs, same field), so the economics and the well paths never describe different wells._
 
 ---
 
@@ -110,6 +131,22 @@ _**Allocation assumption.** Shared field costs (facilities, fixed opex, host) an
 | Wellbores | 23 |
 
 _Source-of-record: `config/analysis/lower_tertiary/golden_baseline_v30.yml`. NPV reproduced within golden-baseline tolerance by `worldenergydata.lower_tertiary.v30_financial_reproducer`._
+
+---
+
+## Price Sensitivity
+
+NPV is linear in the oil price deck: each **+$1/bbl** on the realized oil price moves field NPV by **$+0.0 M**. Life-to-date NPV reaches **zero at a flat-equivalent realized WTI of $1,857,610/bbl**, versus the actual volume-weighted realized **$72/bbl** over the window.
+
+| Flat-equivalent realized WTI ($/bbl) | NPV @ 10% ($MM) |
+|-------------------------------------:|------------------:|
+| 52 | -1,166.4 |
+| 62 | -1,166.4 |
+| 72  ← actual | -1,166.4 |
+| 82 | -1,166.4 |
+| 92 | -1,166.4 |
+
+_Exact, not sampled: NPV is affine in a uniform price multiplier (revenue and royalty scale with price; variable/fixed opex, D&C, facilities and discounting do not), so one base run plus one scaled run define the entire line. 'Flat-equivalent realized WTI' is the volume-weighted average price; the underlying deck is the historical monthly WTI path._
 
 ---
 
