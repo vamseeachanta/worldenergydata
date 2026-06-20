@@ -397,7 +397,8 @@ class PerformanceReportController(ReportController):
             "entity": config.entity_name,
             "date_range": f"{config.date_range[0]}_{config.date_range[1]}",
             "params_hash": hashlib.md5(
-                json.dumps(params.__dict__, sort_keys=True).encode()
+                json.dumps(params.__dict__, sort_keys=True).encode(),
+                usedforsecurity=False,
             ).hexdigest()[:8],
         }
 

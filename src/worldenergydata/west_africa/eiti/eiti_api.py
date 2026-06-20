@@ -71,7 +71,7 @@ class EitiApiClient:
 
     def _cache_key(self, endpoint: str, params: Optional[Dict]) -> str:
         raw = endpoint + json.dumps(params or {}, sort_keys=True)
-        return hashlib.md5(raw.encode()).hexdigest()
+        return hashlib.md5(raw.encode(), usedforsecurity=False).hexdigest()
 
     def _get(self, endpoint: str, params: Optional[Dict] = None) -> Any:
         """

@@ -219,7 +219,7 @@ class MetricsCache:
             Hashed cache key
         """
         key_str = json.dumps(params, sort_keys=True)
-        key_hash = hashlib.md5(key_str.encode()).hexdigest()
+        key_hash = hashlib.md5(key_str.encode(), usedforsecurity=False).hexdigest()
 
         # Include readable prefix
         prefix_parts = []
@@ -334,7 +334,8 @@ class CachedAggregator:
             "aggregator": self.aggregator.__class__.__name__,
             "data_shape": str(data.shape),
             "data_hash": hashlib.md5(
-                pd.util.hash_pandas_object(data).values
+                pd.util.hash_pandas_object(data).values,
+                usedforsecurity=False,
             ).hexdigest()[:8],
             **params,
         }

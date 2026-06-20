@@ -66,7 +66,9 @@ class ReadDataFromSystemFiles:
 
         if os.path.isfile(filename):
             with open(filename, "r") as fp:
-                data: dict[str, Any] = yaml.load(fp, Loader=yaml.Loader)
+                # safe_load: config files are trusted YAML mappings, not
+                # arbitrary Python object graphs (avoids unsafe yaml.Loader)
+                data: dict[str, Any] = yaml.safe_load(fp)
         else:
             data = None
 

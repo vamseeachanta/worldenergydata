@@ -101,7 +101,7 @@ class DashboardCacheManager:
             # Sort params for consistent key generation
             sorted_params = sorted(params.items())
             param_str = json.dumps(sorted_params, sort_keys=True)
-            param_hash = hashlib.md5(param_str.encode()).hexdigest()[:8]
+            param_hash = hashlib.md5(param_str.encode(), usedforsecurity=False).hexdigest()[:8]
             key_parts.append(param_hash)
 
         return ":".join(key_parts)

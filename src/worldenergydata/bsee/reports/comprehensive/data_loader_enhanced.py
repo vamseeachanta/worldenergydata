@@ -225,7 +225,7 @@ class HierarchicalDataLoader:
         well_file = binary_path / "wells.bin"
         if well_file.exists():
             with open(well_file, "rb") as f:
-                wells_data = pickle.load(f)
+                wells_data = pickle.load(f)  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
 
                 for well_record in wells_data:
                     # Filter by field if specified
@@ -274,7 +274,7 @@ class HierarchicalDataLoader:
         prod_file = binary_path / "production.bin"
         if prod_file.exists():
             with open(prod_file, "rb") as f:
-                prod_data = pickle.load(f)
+                prod_data = pickle.load(f)  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
                 data["production"] = prod_data
 
         return data
@@ -424,7 +424,7 @@ class HierarchicalDataLoader:
 
         for well_file in well_files:
             with open(well_file, "rb") as f:
-                wells_chunk = pickle.load(f)
+                wells_chunk = pickle.load(f)  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
 
                 # Process in chunks
                 for i in range(0, len(wells_chunk), chunk_size):
@@ -833,7 +833,7 @@ class HierarchicalDataLoader:
         if prod_file.exists():
             try:
                 with open(prod_file, "rb") as f:
-                    all_production = pickle.load(f)
+                    all_production = pickle.load(f)  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
 
                     for prod_record in all_production:
                         # Apply filters

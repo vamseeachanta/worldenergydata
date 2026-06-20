@@ -425,7 +425,7 @@ class DataRefreshChunked:
 
             if bin_files:
                 with open(bin_files[0], "rb") as f:
-                    return pickle.load(f)
+                    return pickle.load(f)  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
 
             return None
 

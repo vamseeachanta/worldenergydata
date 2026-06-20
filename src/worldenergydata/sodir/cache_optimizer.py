@@ -491,7 +491,7 @@ class SodirCacheOptimizer:
 
         # Hash if too long
         if len(key_string) > 100:
-            key_hash = hashlib.md5(key_string.encode()).hexdigest()
+            key_hash = hashlib.md5(key_string.encode(), usedforsecurity=False).hexdigest()
             return f"{endpoint}_{key_hash}"
 
         return key_string

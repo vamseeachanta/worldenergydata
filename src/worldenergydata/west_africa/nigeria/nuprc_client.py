@@ -80,7 +80,7 @@ class NuprcClient:
         self._cache: Dict[str, bytes] = {}
 
     def _cache_key(self, url: str) -> str:
-        return hashlib.md5(url.encode()).hexdigest()
+        return hashlib.md5(url.encode(), usedforsecurity=False).hexdigest()
 
     def download_pdf(self, url: str) -> bytes:
         """

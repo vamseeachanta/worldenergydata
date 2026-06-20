@@ -183,7 +183,7 @@ class FileDownloadCache:
         Returns:
             Path to cached file
         """
-        url_hash = hashlib.md5(url.encode()).hexdigest()[:16]
+        url_hash = hashlib.md5(url.encode(), usedforsecurity=False).hexdigest()[:16]
         filename = f"{url_hash}{suffix}"
         return self.cache_dir / filename
 
@@ -237,7 +237,7 @@ class FileDownloadCache:
         """
         cache_path = self.get_cache_path(url, suffix)
         cache_path.write_bytes(content)
-        self._file_hashes[url] = hashlib.md5(content).hexdigest()
+        self._file_hashes[url] = hashlib.md5(content, usedforsecurity=False).hexdigest()
         logger.debug(f"Saved to cache: {cache_path}")
         return cache_path
 

@@ -430,7 +430,7 @@ class LeaseAggregator(DataAggregator):
                 import pickle
 
                 with open(binary_path, "rb") as f:
-                    all_production = pickle.load(f)
+                    all_production = pickle.load(f)  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
 
                     # Filter for specific lease
                     lease_production = [

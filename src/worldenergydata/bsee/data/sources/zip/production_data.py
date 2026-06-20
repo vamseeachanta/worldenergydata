@@ -309,7 +309,7 @@ class GetProdDataFromZip:
 
             file_name_with_path = os.path.join(folder_path_bin, file_name)
             with open(file_name_with_path, "rb") as file:
-                df = pickle.load(file)
+                df = pickle.load(file)  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
 
                 # if column_names and not all(col.replace(' ', '').isalpha() for col in df.columns):
                 if column_names:

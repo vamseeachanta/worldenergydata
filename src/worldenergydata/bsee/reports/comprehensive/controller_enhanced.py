@@ -431,7 +431,7 @@ class ReportController:
     def generate_cache_key(self, config: ReportConfiguration) -> str:
         """Generate cache key for configuration"""
         key_data = f"{config.report_type.value}_{config.entity_name}_{config.date_range[0]}_{config.date_range[1]}"  # noqa: E501
-        return hashlib.md5(key_data.encode()).hexdigest()
+        return hashlib.md5(key_data.encode(), usedforsecurity=False).hexdigest()
 
     def cache_set(self, key: str, value: Any):
         """Set cache value"""

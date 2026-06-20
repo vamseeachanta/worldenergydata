@@ -248,7 +248,7 @@ jobs:
       - name: Run bandit security scan
         run: |
           uv pip install bandit
-          uv run bandit -r src/ -ll -ii -x tests/ || true
+          uv run bandit -r src/ -ll -ii -x tests/
 
       - name: Check for secrets with gitleaks
         uses: gitleaks/gitleaks-action@v3

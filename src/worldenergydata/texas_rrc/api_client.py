@@ -211,7 +211,7 @@ class TexasRRCClient:
         else:
             key_str = endpoint
 
-        return hashlib.md5(key_str.encode()).hexdigest()
+        return hashlib.md5(key_str.encode(), usedforsecurity=False).hexdigest()
 
     def _make_request(
         self,

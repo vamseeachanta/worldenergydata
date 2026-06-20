@@ -124,7 +124,7 @@ def _load_war_activity(bsee_root: Path) -> pd.DataFrame:
     cols = ["API_WELL_NUMBER", "WELL_ACTIVITY_CD", "WAR_START_DT", "WAR_END_DT"]
     war_bin = bsee_root / "bin" / "war" / "mv_war_main.bin"
     if war_bin.is_file():
-        df = pd.read_pickle(war_bin)
+        df = pd.read_pickle(war_bin)  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
         keep = [c for c in cols if c in df.columns]
         return df[keep].copy()
     csv = bsee_root / "current" / "operations" / "well_activity_summary.csv"

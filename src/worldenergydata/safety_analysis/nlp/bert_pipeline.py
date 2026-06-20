@@ -119,8 +119,11 @@ class BertEmbedder:
     def __init__(self, config: Optional[BertConfig] = None) -> None:
         _require_bert()
         self.config = config or BertConfig()
-        self._tokenizer = AutoTokenizer.from_pretrained(self.config.model_name)
-        self._model = AutoModel.from_pretrained(self.config.model_name)
+        # nosec B615 - model_name is an operator-controlled config value
+        # (trusted default), not untrusted input; revision pinning is left to
+        # the deployment-configured model identifier.
+        self._tokenizer = AutoTokenizer.from_pretrained(self.config.model_name)  # nosec B615
+        self._model = AutoModel.from_pretrained(self.config.model_name)  # nosec B615
         self._model.eval()
         if self.config.device == "cuda" and torch.cuda.is_available():
             self._model = self._model.cuda()

@@ -189,7 +189,7 @@ class FileDownloadCache:
 
     def _generate_key(self, url: str) -> str:
         """Generate cache key from URL."""
-        return hashlib.md5(url.encode()).hexdigest()
+        return hashlib.md5(url.encode(), usedforsecurity=False).hexdigest()
 
     def is_cached(self, url: str, max_age: Optional[int] = None) -> bool:
         """

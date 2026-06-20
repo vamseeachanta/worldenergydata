@@ -189,7 +189,7 @@ class SodirAPIClient:
             key_str = endpoint
 
         # Create hash for shorter cache keys
-        return hashlib.md5(key_str.encode()).hexdigest()
+        return hashlib.md5(key_str.encode(), usedforsecurity=False).hexdigest()
 
     def _rate_limit(self):
         """Implement rate limiting with minimum interval between requests."""

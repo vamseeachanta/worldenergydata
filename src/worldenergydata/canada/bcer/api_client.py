@@ -257,7 +257,7 @@ class BCERClient:
         else:
             key_str = f"bcer:{endpoint}"
 
-        return hashlib.md5(key_str.encode()).hexdigest()
+        return hashlib.md5(key_str.encode(), usedforsecurity=False).hexdigest()
 
     def _make_request(
         self,

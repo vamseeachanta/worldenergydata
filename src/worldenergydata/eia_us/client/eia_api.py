@@ -165,7 +165,7 @@ class EIAApiClient:
         sorted_params = sorted(params.items())
         param_str = urlencode(sorted_params)
         raw = f"{series_id}?{param_str}"
-        return hashlib.md5(raw.encode()).hexdigest()
+        return hashlib.md5(raw.encode(), usedforsecurity=False).hexdigest()
 
     # ── Response parsing ──────────────────────────────────────────────────────
 

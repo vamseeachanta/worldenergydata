@@ -43,7 +43,7 @@ class CacheKey:
             f"{self.source.value}:{self.endpoint}:"
             f"{json.dumps(self.params, sort_keys=True, default=str)}"
         )
-        return hashlib.md5(key_str.encode()).hexdigest()
+        return hashlib.md5(key_str.encode(), usedforsecurity=False).hexdigest()
 
     def __str__(self) -> str:
         return f"{self.source.value}/{self.endpoint}"

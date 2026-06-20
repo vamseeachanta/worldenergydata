@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import logging
+import tempfile
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -17,7 +18,9 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 
 DEFAULT_FORMATS = ["xlsx", "parquet"]
-DEFAULT_OUTPUT_DIR = "/tmp/worldenergydata_exports"
+# Derive from the platform temp dir rather than a hardcoded "/tmp" path
+# (portable + avoids B108 predictable-temp-path warning).
+DEFAULT_OUTPUT_DIR = str(Path(tempfile.gettempdir()) / "worldenergydata_exports")
 
 # ---------------------------------------------------------------------------
 # Data structure

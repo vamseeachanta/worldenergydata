@@ -239,7 +239,7 @@ class AERClient:
         else:
             key_str = f"aer:{endpoint}"
 
-        return hashlib.md5(key_str.encode()).hexdigest()
+        return hashlib.md5(key_str.encode(), usedforsecurity=False).hexdigest()
 
     def _make_request(
         self,

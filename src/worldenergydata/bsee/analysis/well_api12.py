@@ -213,7 +213,7 @@ class WellAPI12:
             library_file_cfg, src_relative_location_flag=False
         )
         file = os.path.join(library_path, "dsptsdelimit.bin")
-        survey_df = pd.read_pickle(file)
+        survey_df = pd.read_pickle(file)  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
 
         api12_survey_df = survey_df[survey_df["API_WELL_NUMBER"] == API12_num].copy()
         if api12_survey_df.empty:

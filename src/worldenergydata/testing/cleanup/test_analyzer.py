@@ -98,7 +98,7 @@ class TestAnalyzer:
                         body_normalized = re.sub(
                             r"name=\'[^\']+\'", "name=''", body_dump
                         )
-                        signature = hashlib.md5(body_normalized.encode()).hexdigest()
+                        signature = hashlib.md5(body_normalized.encode(), usedforsecurity=False).hexdigest()
 
                         test_id = f"{file_path}::{node.name}"
 
