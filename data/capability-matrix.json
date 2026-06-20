@@ -1,0 +1,175 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-06-19",
+  "issue": 364,
+  "source_audit": "docs/reports/2026-04-26-worldenergydata-capability-readiness-matrix.md",
+  "companion_review": "docs/reports/gtm/2026-05-04-worldenergydata-gtm-candidate-review.md",
+  "tier_legend": {
+    "Production-Ready": "Working code + real data or self-contained client-grade demo today.",
+    "Sample-Only": "Code path works but shipped data is sample/seed/live-on-demand, or a known import/CLI blocker exists.",
+    "Roadmap": "Stub, empty data catalog with no wired source, or off-manifest/unindexed. Not a GTM asset today."
+  },
+  "tier_counts": {
+    "Production-Ready": 7,
+    "Sample-Only": 10,
+    "Roadmap": 9
+  },
+  "capabilities": [
+    {
+      "capability": "FDAS field-development economics (NPV/IRR/MIRR/payback)",
+      "tier": "Production-Ready",
+      "evidence": "worldenergydata.fdas.api.EconomicsQuery; reports/gtm/2026-05-04-fdas-field-development-economics.html (63 KB, 4 scenarios)",
+      "note": "Self-contained economics engine with a client-grade interactive report today. No external data required."
+    },
+    {
+      "capability": "Production forecasting - Arps decline (hyperbolic fit, EUR, 240-month forecast)",
+      "tier": "Production-Ready",
+      "evidence": "worldenergydata.production.forecast.decline.ArpsDeclineCurve; GTM review sec.1, sec.3",
+      "note": "Full fit -> forecast -> plot cycle works standalone. Pairs with FDAS for a complete economics demo."
+    },
+    {
+      "capability": "Marine safety / IMO GISIS incident analytics",
+      "tier": "Production-Ready",
+      "evidence": "worldenergydata.marine_safety (51 tests; cli registered as marine-safety); reports/IMO_GISIS_Executive_Report.html (133 KB, 13,160 records)",
+      "note": "Real loaded dataset (13,160 casualties) plus finished interactive HTML. Strongest demo-ready data product. Caveat: USCG MISLE live feed gap (#153)."
+    },
+    {
+      "capability": "FDAS enhanced well dataset (Gulf of Mexico)",
+      "tier": "Production-Ready",
+      "evidence": "data/modules/fdas/enhanced/wells/well_data_enhanced.csv (~57,281 wells, derived from BSEE); worldenergydata.fdas (13 tests, CLI registered)",
+      "note": "One genuinely full-size shipped dataset that feeds the economics engine, without the BSEE import blocker."
+    },
+    {
+      "capability": "Safety analysis engine (taxonomy / NLP / risk index)",
+      "tier": "Production-Ready",
+      "evidence": "worldenergydata.safety_analysis (adapters/, nlp/, risk_index/, taxonomy/, cli.py; 38 tests; safety-analysis registered)",
+      "note": "Mature analysis surface with CLI. Code maturity is high; downstream HSE data is the gating item (see HSE in Sample-Only)."
+    },
+    {
+      "capability": "SODIR (Norway) production data extractor",
+      "tier": "Production-Ready",
+      "evidence": "worldenergydata.sodir (api_client.py, processors/, production/, npv_norway.py; 26 tests; CLI registered; daily scheduler)",
+      "note": "Wired end-to-end (live API + scheduler). Data fetched at runtime rather than shipped, but the path is operational."
+    },
+    {
+      "capability": "Metocean data + statistics (NDBC / CO-OPS / Open-Meteo / extreme-value)",
+      "tier": "Production-Ready",
+      "evidence": "worldenergydata.metocean (clients/, statistics/, extrapolation/, cli.py; 34 tests; metocean + ndbc registered; daily scheduler)",
+      "note": "Live multi-source fetch + design-criteria statistics, scheduled. Demo runs live rather than from shipped data."
+    },
+    {
+      "capability": "BSEE current GoM well/production data",
+      "tier": "Sample-Only",
+      "evidence": "worldenergydata.bsee (cli/commands/bsee.py; 100 tests; CLI registered). 19 datasets in data/modules/bsee/, most 100-row samples; only well_data.csv (~57k) and Paleowells.csv (6,362) are full",
+      "note": "Headline asset, but most git-shipped CSVs are samples - full BSEE bulk needs make data. Issue #364 listed as Tier A; downgraded on sample rows. Also has import-hang blocker."
+    },
+    {
+      "capability": "BSEE field-analysis module (programmatic)",
+      "tier": "Sample-Only",
+      "evidence": "worldenergydata.bsee field analysis; GTM review sec.4: import hangs 30+s when 300 MB binary absent (blocker #384)",
+      "note": "Works with full data present but module-level import hang blocks turnkey demos. Fix tracked (#384/#359)."
+    },
+    {
+      "capability": "Vessel Fleet (offshore rigs / drilling-rig registry)",
+      "tier": "Sample-Only",
+      "evidence": "worldenergydata.vessel_fleet (loaders/, parsers/, dedup/, quality/; 34 tests). Catalog: 7 datasets incl. drilling_rigs.csv (2,210 rows). No CLI registered",
+      "note": "Real 2,210-row data and a strong pipeline, but no CLI surface - programmatic only. Issue #364 listed as Tier A; downgraded on CLI gap. One-line fix unblocks promotion."
+    },
+    {
+      "capability": "LNG terminals registry",
+      "tier": "Sample-Only",
+      "evidence": "worldenergydata.lng_terminals (collectors/, loaders/, exporters/; 26 tests; CLI registered; weekly scheduler). data/modules/lng_terminals/curated/terminals_seed.csv (227 rows)",
+      "note": "227-row curated seed + working pipeline; manifest flag drift (in_scheduler false vs enabled). Demo-able; seed-scale coverage."
+    },
+    {
+      "capability": "Lower Tertiary portfolio analytics (NPV / classifier)",
+      "tier": "Sample-Only",
+      "evidence": "worldenergydata.lower_tertiary (npv.py, production_classifier.py; 10 tests). No CLI; depends on BSEE/FDAS data. reports/lower_tertiary_field_summary.html (25 KB)",
+      "note": "Finished interactive HTML exists, but a live re-run depends on BSEE data and there is no CLI. Demo from existing HTML; not turnkey."
+    },
+    {
+      "capability": "Pipeline reference data (API 5L pipe schedule)",
+      "tier": "Sample-Only",
+      "evidence": "data/modules/pipeline/api_5l_pipe_schedule.csv (43 rows). Catalog-only; not in module manifest; no source package",
+      "note": "Stable 43-row reference table - useful but tiny and unindexed. Reference data, not a data product. Issue #364 listed as Tier A; downgraded."
+    },
+    {
+      "capability": "Subsea component specs (mooring / rigid jumpers)",
+      "tier": "Sample-Only",
+      "evidence": "data/modules/subsea/ (2 datasets, ~14 rows each). Catalog-only; src/.../subsea/ is empty; not in manifest",
+      "note": "Small curated spec tables with no backing source code. Reference seeds, not a maintained pipeline. Downgraded from issue #364's Tier A."
+    },
+    {
+      "capability": "HSE raw incident analytics",
+      "tier": "Sample-Only",
+      "evidence": "worldenergydata.hse (importers/ 10 files, acquirers/, database/; 17 tests). data/catalog.yaml datasets: [] (empty); no CLI (only via safety-analysis)",
+      "note": "Substantial importer code but the data catalog is empty - needs a bulk load. Per #364, 6.8 GB raw at /mnt/ace blocked on #359. Code-ready, data-pending."
+    },
+    {
+      "capability": "Canada (AER / BCER) production collection",
+      "tier": "Sample-Only",
+      "evidence": "worldenergydata.canada (aer/, bcer/, production/; 12 tests; CLI registered). No scheduler job (config only); no catalog data",
+      "note": "Collection path exists and is CLI-exposed, but unscheduled and no shipped data. Runs on demand."
+    },
+    {
+      "capability": "Texas RRC / Mexico CNH production collectors",
+      "tier": "Sample-Only",
+      "evidence": "worldenergydata.texas_rrc, worldenergydata.mexico_cnh (full scrapers/processors; 10 / 5 tests; CLI registered). Manifest implies scheduled but not in scheduler_config.yml",
+      "note": "Collectors work via CLI but are not actually scheduled despite manifest claims (docs-stale). On-demand only."
+    },
+    {
+      "capability": "BSEE binary tier (2.7 GB)",
+      "tier": "Roadmap",
+      "evidence": "Issue #364 init; blocked on #359 catalog wiring + decompression pipeline; binary not in git (make data)",
+      "note": "Raw bulk exists off-repo but no working ingest pipeline yet. Not consumable."
+    },
+    {
+      "capability": "HSE raw bulk (6.8 GB)",
+      "tier": "Roadmap",
+      "evidence": "Issue #364 init; 6.8 GB at /mnt/ace, blocked on #359 + dedup pipeline",
+      "note": "Same as HSE analytics' data gap, at bulk scale. Pipeline is the roadmap item."
+    },
+    {
+      "capability": "Oil price series",
+      "tier": "Roadmap",
+      "evidence": "data/catalog.yaml oil_price - empty datasets:; audit sec.4 no source API wired; ~244 days stale",
+      "note": "No source wired, no data. Not GTM."
+    },
+    {
+      "capability": "Wind resource data",
+      "tier": "Roadmap",
+      "evidence": "data/catalog.yaml wind - empty datasets:; audit sec.4 no NREL/AWS wiring; ~244 days stale",
+      "note": "No source wired (NREL/AWS), no data. Not GTM."
+    },
+    {
+      "capability": "Pipeline safety (PHMSA)",
+      "tier": "Roadmap",
+      "evidence": "worldenergydata.pipeline_safety (importers/, workflow.py; 3 tests). Empty catalog; no CLI; GTM review sec.3 no standalone demo",
+      "note": "Importer scaffold exists but never imported real PHMSA data and no demo. Roadmap until a load lands."
+    },
+    {
+      "capability": "Vessel hull models (3D rig geometry)",
+      "tier": "Roadmap",
+      "evidence": "worldenergydata.vessel_hull_models (geometry/, cli.py present but unregistered; 9 tests). Data: 5-row sample_rigs.csv",
+      "note": "CLI file exists but unwired; only 5 sample rows. Promising but pre-product."
+    },
+    {
+      "capability": "Well production dashboard",
+      "tier": "Roadmap",
+      "evidence": "worldenergydata.well_production_dashboard (api.py, cli.py present but unregistered; 11 tests). Consumes BSEE; no own data",
+      "note": "Rich code, but no wired CLI and depends on BSEE data. Internal tool today, not a sold capability."
+    },
+    {
+      "capability": "Off-manifest analysis packages (cost, economics, decommissioning, well_planning, well_bore_design, drilling_pressure_management, reservoir, west_africa, baker_hughes)",
+      "tier": "Roadmap",
+      "evidence": "Audit sec.3 Drift A: live src/ packages with tests but absent from module-manifest.yaml; no CLI",
+      "note": "Real, tested code invisible to the manifest - needs classification before any buyer-facing claim. west_africa/cost/economics are the likeliest promotions."
+    },
+    {
+      "capability": "Empty / stub namespaces (drilling, base_configs, analysis, subsea src, testing, modules compat shim)",
+      "tier": "Roadmap",
+      "evidence": "Audit sec.3/sec.4: empty dirs or back-compat shims; analysis is stub; modules shim flagged broken (#278)",
+      "note": "Reserved or deprecated namespaces. Not capabilities."
+    }
+  ]
+}
