@@ -1,0 +1,47 @@
+name: Deploy Data Outputs to Pages
+
+# Publishes deterministic, unit-tested analysis outputs as a static site.
+# The site is REBUILT from frozen report artifacts on every run — no committed
+# HTML build output — so what ships always matches the source reports.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'reports/**'
+      - 'scripts/build_pages.py'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Build static site (stdlib only)
+        run: python scripts/build_pages.py
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment
