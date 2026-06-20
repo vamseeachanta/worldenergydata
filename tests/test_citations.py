@@ -16,11 +16,11 @@ import json
 import pytest
 
 from worldenergydata.citations import (
+    FIRST_WAVE,
     Citation,
     CitationResolutionError,
     CitationValidationError,
     CitedValue,
-    FIRST_WAVE,
     build_sidecar,
     emit_sidecar,
     get_bsee_royalty_rate,

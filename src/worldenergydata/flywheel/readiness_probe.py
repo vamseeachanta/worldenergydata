@@ -39,7 +39,7 @@ import json
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Iterable, Mapping, Optional, Sequence
+from typing import Any, Iterable, Optional, Sequence
 
 # --------------------------------------------------------------------------- #
 # #462 acceptance-contract enums (reused, not reinvented).

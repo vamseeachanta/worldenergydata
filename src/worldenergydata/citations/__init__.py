@@ -10,18 +10,24 @@ Contract: workspace-hub ``.claude/rules/calc-citation-contract.md``
 
 from __future__ import annotations
 
-from worldenergydata.citations.schema import (
-    Citation,
-    CitedValue,
-    CitationResolutionError,
-    CitationValidationError,
-    validate_citation,
+from worldenergydata.citations.registry import (
+    FIRST_WAVE,
+    get_bsee_royalty_rate,
+    get_depth_breakpoint,
+    get_wti_price_base,
 )
 from worldenergydata.citations.resolver import (
-    WIKI_REPO_URL,
     ROUTING_RULE_URL,
+    WIKI_REPO_URL,
     resolve_wiki_base,
     resolve_wiki_path,
+)
+from worldenergydata.citations.schema import (
+    Citation,
+    CitationResolutionError,
+    CitationValidationError,
+    CitedValue,
+    validate_citation,
 )
 from worldenergydata.citations.sidecar import (
     SIDECAR_SCHEMA_VERSION,
@@ -29,12 +35,6 @@ from worldenergydata.citations.sidecar import (
     build_sidecar,
     emit_sidecar,
     load_sidecar,
-)
-from worldenergydata.citations.registry import (
-    FIRST_WAVE,
-    get_bsee_royalty_rate,
-    get_wti_price_base,
-    get_depth_breakpoint,
 )
 
 __all__ = [

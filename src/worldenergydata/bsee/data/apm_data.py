@@ -39,7 +39,7 @@ class APMData:
                 with open(file_name_with_path, "rb") as file:
                     df = pickle.load(
                         file
-                    )  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
+                    )  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input  # noqa: E501
                     self.apm_data[file_name_without_extension] = df
             except (FileNotFoundError, OSError) as e:
                 logger.warning("Failed to load %s: %s", file_name_with_path, e)

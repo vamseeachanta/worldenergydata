@@ -436,7 +436,7 @@ class DataAggregator(ABC):
                 try:
                     data = pickle.load(
                         f
-                    )  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
+                    )  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input  # noqa: E501
                     if isinstance(data, list):
                         for i in range(0, len(data), chunk_size):
                             yield {"chunk": data[i : i + chunk_size]}

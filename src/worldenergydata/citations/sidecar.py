@@ -16,7 +16,7 @@ from __future__ import annotations
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Iterable, Mapping, Union
+from typing import Iterable, Union
 
 from worldenergydata.citations.schema import Citation, CitedValue
 

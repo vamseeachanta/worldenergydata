@@ -311,7 +311,7 @@ class GetProdDataFromZip:
             with open(file_name_with_path, "rb") as file:
                 df = pickle.load(
                     file
-                )  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
+                )  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input  # noqa: E501
 
                 # if column_names and not all(col.replace(' ', '').isalpha() for col in df.columns):
                 if column_names:

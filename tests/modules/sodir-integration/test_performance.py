@@ -21,6 +21,7 @@ import numpy as np
 
 # import memory_profiler  # Not installed in current environment
 import pandas as pd
+
 from worldenergydata.sodir.analysis import SodirAnalysis
 
 # Import SODIR components

@@ -152,8 +152,6 @@ def match_fetkovich(
         dp = np.full_like(data.rate, params.pi - params.pwf)
     q_norm = data.rate / dp
 
-    tDd_model = np.logspace(-2, 2, 300)
-
     def objective(x):
         log_Ct, log_Cq, b, reD = x
         if reD <= 1.0 or b < 0 or b > 1:
