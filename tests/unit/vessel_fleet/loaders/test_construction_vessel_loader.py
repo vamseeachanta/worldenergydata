@@ -21,7 +21,11 @@ def sample_construction_fleet(tmp_path):
             "PIONEERING SPIRIT",
             "THIALF",
             "SAIPEM 7000",
-            "AEGIR",
+            # Synthetic wind-installation fixture — NOT a real vessel. (Do not
+            # reuse a real ship name here: a fabricated "AEGIR" jack-up once
+            # leaked into the curated fleet from this fixture. Aegir is the
+            # 211.5 m Heerema DCV, not a 169 m jack-up.)
+            "TEST WTIV (SYNTHETIC)",
         ],
         "VESSEL_TYPE": [
             "crane_vessel",
@@ -32,7 +36,7 @@ def sample_construction_fleet(tmp_path):
         ],
         "OWNER": ["Heerema", "Allseas", "Heerema", "Saipem", "Heerema"],
         "OPERATOR": ["Heerema", "Allseas", "Heerema", "Saipem", "Heerema"],
-        "IMO_NUMBER": ["9781425", "9593505", "8803300", "7392610", "9918390"],
+        "IMO_NUMBER": ["9781425", "9593505", "8803300", "7392610", "0000001"],
         "MAIN_CRANE_CAPACITY_T": [10000.0, None, 14200.0, 14000.0, 5000.0],
         "MAIN_CRANE_REACH_M": [48.0, None, 31.2, None, None],
         "AUX_CRANE_CAPACITY_T": [None, None, None, 7000.0, None],
@@ -175,3 +179,23 @@ class TestConstructionVesselLoaderDomainLogic:
         heavy_lift = loader.get_heavy_lift_vessels()
         # Vessels with crane >= 10000t
         assert len(heavy_lift) >= 2
+
+
+class TestAegirRegression:
+    """Guard against the fabricated 'Aegir wind-installation jack-up' regression.
+
+    The real Aegir is Heerema's deepwater construction vessel (DCV) — a 211.5 m
+    monohull, IMO 9605396 — not a 169 m jack-up. A synthetic test fixture once
+    leaked a fabricated jack-up 'AEGIR' (IMO 9918390) into the curated fleet.
+    """
+
+    def test_curated_aegir_is_dcv_not_jackup(self):
+        loader = ConstructionVesselLoader()  # real committed curated data
+        v = loader.get_by_name("Aegir")
+        assert v is not None, "Aegir missing from curated construction fleet"
+        assert v["VESSEL_TYPE"] == "crane_vessel"
+        assert v.get("VESSEL_SUBTYPE") != "jack_up"
+        assert str(v["IMO_NUMBER"]) == "9605396"
+        assert abs(float(v["LOA_M"]) - 211.5) < 1.0
+        # the fabricated 169 m / IMO 9918390 values must be gone
+        assert str(v["IMO_NUMBER"]) != "9918390"
