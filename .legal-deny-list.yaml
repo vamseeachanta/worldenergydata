@@ -42,5 +42,11 @@ exclusions:
   - "*.csv"
   - "*.json"
   - "data/"
+  # Regenerable pytest-cov HTML build output (#422). The scan runs with
+  # ripgrep --no-ignore, so gitignoring it is not enough — coverage HTML is a
+  # derivative of source and re-flags source identifiers (e.g. enigma_safety_*).
+  # These dirs are gitignored (htmlcov/, reports/coverage/) and never committed.
+  - "htmlcov/"
+  - "reports/coverage/"
 
 default_severity: "block"
