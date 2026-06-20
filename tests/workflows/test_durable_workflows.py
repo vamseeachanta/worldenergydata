@@ -191,4 +191,6 @@ def test_workflow_registry_version_invariants() -> None:
         assert len(set(versions)) == len(versions), f"{wid}: duplicate versions"
         latest = [row for row in rows if row.get("latest")]
         assert len(latest) == 1, f"{wid}: need exactly one latest:true row"
-        assert latest[0].get("status", "stable") == "stable", f"{wid}: latest not stable"
+        assert (
+            latest[0].get("status", "stable") == "stable"
+        ), f"{wid}: latest not stable"
