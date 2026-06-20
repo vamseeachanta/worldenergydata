@@ -19,7 +19,7 @@ from worldenergydata.bsee.reports.comprehensive.visualizations.dashboard_builder
 )
 
 # Import the modules we're testing
-from worldenergydata.modules.analysis.dashboard.well_production import (
+from worldenergydata.well_production_dashboard.well_production import (
     FieldAggregator,
     WellDashboardConfig,
     WellMetrics,
@@ -95,7 +95,7 @@ class TestWellProductionDashboard:
     def test_verification_integration(self, dashboard, sample_well_data):
         """Test integration with verification system."""
         with patch(
-            "worldenergydata.modules.analysis.dashboard.well_production.VerificationWorkflow"
+            "worldenergydata.well_production_dashboard.well_production.VerificationWorkflow"
         ) as mock_workflow:
             mock_instance = Mock()
             mock_result = Mock()
@@ -105,7 +105,7 @@ class TestWellProductionDashboard:
             mock_workflow.return_value = mock_instance
 
             with patch(
-                "worldenergydata.modules.analysis.dashboard.well_production.DataQualityFramework"
+                "worldenergydata.well_production_dashboard.well_production.DataQualityFramework"
             ) as mock_quality:
                 mock_quality_instance = Mock()
                 mock_quality_instance.calculate_quality_score.return_value = 0.95
@@ -184,7 +184,7 @@ class TestWellProductionDashboard:
     def test_authentication_setup(self, dashboard):
         """Test authentication setup using BSEE patterns."""
         with patch(
-            "worldenergydata.modules.analysis.dashboard.well_production.BSEEAuthenticator"
+            "worldenergydata.well_production_dashboard.well_production.BSEEAuthenticator"
         ) as mock_auth:
             mock_instance = Mock()
             mock_instance.is_authenticated.return_value = True
@@ -221,7 +221,7 @@ class TestWellProductionDashboard:
         dashboard.load_well_data(sample_well_data)
 
         with patch(
-            "worldenergydata.modules.analysis.dashboard.well_production.ComprehensiveExporter"
+            "worldenergydata.well_production_dashboard.well_production.ComprehensiveExporter"
         ) as mock_exporter:
             mock_instance = Mock()
             mock_instance.export_to_pdf.return_value = b"PDF_CONTENT"
@@ -260,7 +260,7 @@ class TestWellProductionDashboard:
 
     def test_cli_interface(self):
         """Test CLI interface creation."""
-        from worldenergydata.modules.analysis.dashboard.cli import DashboardCLI
+        from worldenergydata.well_production_dashboard.cli import DashboardCLI
 
         cli = DashboardCLI()
 

@@ -45,7 +45,7 @@ class TestSodirModuleStructure:
     def test_sodir_module_imports(self):
         """Test that SODIR module can be imported."""
         try:
-            from sodir_module import sodir
+            from worldenergydata.sodir import sodir
 
             assert hasattr(sodir, "Sodir"), "Sodir class should be available"
         except ImportError:
@@ -93,7 +93,7 @@ class TestSodirRouter:
     def test_sodir_router_initialization(self, mock_config):
         """Test SODIR router initialization."""
         try:
-            from sodir_module.sodir import Sodir
+            from worldenergydata.sodir.sodir import Sodir
 
             sodir_instance = Sodir()
             assert sodir_instance is not None
@@ -105,7 +105,7 @@ class TestSodirRouter:
     def test_router_method_signature(self, mock_config):
         """Test router method accepts configuration and returns results."""
         try:
-            from sodir_module.sodir import Sodir
+            from worldenergydata.sodir.sodir import Sodir
 
             sodir_instance = Sodir()
 
@@ -121,9 +121,9 @@ class TestSodirRouter:
     def test_router_delegates_to_data_collection(self, mock_config):
         """Test that router delegates data collection properly."""
         try:
-            from sodir_module.sodir import Sodir
+            from worldenergydata.sodir.sodir import Sodir
 
-            with patch("sodir_module.data.SodirData") as MockSodirData:
+            with patch("worldenergydata.sodir.data.SodirData") as MockSodirData:
                 mock_data_instance = MockSodirData.return_value
                 mock_data_instance.router.return_value = (mock_config, {"blocks": []})
 
@@ -142,8 +142,8 @@ class TestSodirRouter:
     )
     def test_router_handles_errors(self, mock_config):
         """Test router error handling."""
-        from sodir_module.errors import SodirAPIError
-        from sodir_module.sodir import Sodir
+        from worldenergydata.sodir.errors import SodirAPIError
+        from worldenergydata.sodir.sodir import Sodir
 
         sodir_instance = Sodir()
 
@@ -197,7 +197,7 @@ class TestSodirConfiguration:
     def test_configuration_loading(self):
         """Test configuration can be loaded and used."""
         try:
-            from sodir_module.sodir import Sodir
+            from worldenergydata.sodir.sodir import Sodir
 
             sodir_instance = Sodir()
 
@@ -221,7 +221,7 @@ class TestSodirDataTypes:
     def test_blocks_endpoint(self):
         """Test blocks data endpoint configuration."""
         try:
-            from sodir_module.endpoints import SODIR_ENDPOINTS
+            from worldenergydata.sodir.endpoints import SODIR_ENDPOINTS
 
             assert "blocks" in SODIR_ENDPOINTS
             assert SODIR_ENDPOINTS["blocks"]["id"] == "1001"
@@ -233,7 +233,7 @@ class TestSodirDataTypes:
     def test_wellbores_endpoint(self):
         """Test wellbores data endpoint configuration."""
         try:
-            from sodir_module.endpoints import SODIR_ENDPOINTS
+            from worldenergydata.sodir.endpoints import SODIR_ENDPOINTS
 
             assert "wellbores" in SODIR_ENDPOINTS
             assert SODIR_ENDPOINTS["wellbores"]["id"] == "5000"
@@ -245,7 +245,7 @@ class TestSodirDataTypes:
     def test_fields_endpoint(self):
         """Test fields data endpoint configuration."""
         try:
-            from sodir_module.endpoints import SODIR_ENDPOINTS
+            from worldenergydata.sodir.endpoints import SODIR_ENDPOINTS
 
             assert "fields" in SODIR_ENDPOINTS
             assert SODIR_ENDPOINTS["fields"]["id"] == "7100"
@@ -257,7 +257,7 @@ class TestSodirDataTypes:
     def test_discoveries_endpoint(self):
         """Test discoveries data endpoint configuration."""
         try:
-            from sodir_module.endpoints import SODIR_ENDPOINTS
+            from worldenergydata.sodir.endpoints import SODIR_ENDPOINTS
 
             assert "discoveries" in SODIR_ENDPOINTS
             assert SODIR_ENDPOINTS["discoveries"]["id"] == "7000"
@@ -269,7 +269,7 @@ class TestSodirDataTypes:
     def test_surveys_endpoint(self):
         """Test surveys data endpoint configuration."""
         try:
-            from sodir_module.endpoints import SODIR_ENDPOINTS
+            from worldenergydata.sodir.endpoints import SODIR_ENDPOINTS
 
             assert "surveys" in SODIR_ENDPOINTS
             assert SODIR_ENDPOINTS["surveys"]["id"] == "4000"
@@ -285,7 +285,7 @@ class TestSodirIntegration:
     def test_follows_bsee_pattern(self):
         """Test that SODIR module follows BSEE architectural pattern."""
         try:
-            from sodir_module.sodir import Sodir
+            from worldenergydata.sodir.sodir import Sodir
 
             # Should have similar structure to BSEE module
             sodir_instance = Sodir()
@@ -306,7 +306,7 @@ class TestSodirIntegration:
     def test_compatible_with_existing_analysis(self):
         """Test that SODIR data is compatible with existing analysis tools."""
         try:
-            from sodir_module.sodir import Sodir
+            from worldenergydata.sodir.sodir import Sodir
 
             sodir_instance = Sodir()
 

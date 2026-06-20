@@ -378,29 +378,9 @@ def pytest_ignore_collect(collection_path, config):
     repo_root = Path(__file__).resolve().parent.parent
 
     # Issue #2433: skip known broken collection targets until missing modules/data are restored.
+    # Issue #313: type_curves restored, sodir/well_production_dashboard imports fixed, and
+    # duplicate-basename clashes resolved via --import-mode=importlib — entries removed below.
     broken_module_tests = {
-        # Missing worldenergydata.bsee.analysis.type_curves implementation pieces
-        Path("tests/modules/bsee/analysis/test_type_curves.py"),
-        # Duplicate basename clashes with tests/integration/workflows/test_end_to_end.py
-        Path("tests/modules/fdas/integration/test_end_to_end.py"),
-        # Missing sodir_module.* package
-        Path("tests/modules/sodir-integration/test_api_client.py"),
-        Path("tests/modules/sodir-integration/test_cross_regional_validation.py"),
-        Path("tests/modules/sodir-integration/test_integration.py"),
-        Path("tests/modules/sodir-integration/test_performance.py"),
-        # Missing well production dashboard modules
-        Path("tests/modules/well_production_dashboard/test_monitoring.py"),
-        Path(
-            "tests/modules/well_production_dashboard/test_well_production_dashboard.py"
-        ),
-        # Missing proxy comparison module
-        Path("tests/unit/cost/test_proxy_comparison.py"),
-        # Duplicate basename clash with tests/modules/marine_safety/test_models.py
-        Path("tests/unit/hse/database/test_models.py"),
-        # Duplicate basename clashes with tests/modules/hse/importers/*
-        Path("tests/unit/hse/importers/test_bsee_incidents_importer_url.py"),
-        Path("tests/unit/hse/importers/test_bsee_penalties_importer_url.py"),
-        Path("tests/unit/hse/importers/test_bsee_statistics_importer_url.py"),
         # Missing metocean_stats dependency chain
         Path("tests/unit/metocean/statistics/test_environmental_contours.py"),
         Path("tests/unit/metocean/statistics/test_eva.py"),

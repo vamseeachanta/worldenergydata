@@ -58,6 +58,8 @@ dependencies = [
     "schedule>=1.2.0,<2.0",
     "pyarrow>=14.0.0,<20.0",
     "scikit-learn>=1.7.2,<2.0",
+    # Financial calculations (imported at module load in fdas/core/financial.py)
+    "numpy-financial>=1.0.0",
 ]
 
 [project.optional-dependencies]
@@ -203,10 +205,9 @@ warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
 
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-python_files = ["test_*.py", "*_test.py"]
-addopts = "--cov=src/worldenergydata --cov-report=term-missing --cov-report=html:reports/coverage/htmlcov --cov-report=xml:reports/coverage/coverage.xml --cov-report=json:reports/coverage/coverage.json"
+# [tool.pytest.ini_options] removed (#313): pytest config is unified in the root
+# pytest.ini (single source of truth). Coverage flags are passed explicitly by CI
+# (.github/workflows/ci.yml). The [tool.coverage.*] tables below still apply.
 
 [tool.coverage.run]
 source = ["src/worldenergydata"]
@@ -271,7 +272,6 @@ dev = [
     "faker>=37.8.0",
     "hypothesis>=6.141.1",
     "mypy>=1.18.2",
-    "numpy-financial>=1.0.0",
     "pytest-asyncio>=1.2.0",
     "pytest-cov>=7.0.0",
     "pytest-timeout>=2.4.0",
