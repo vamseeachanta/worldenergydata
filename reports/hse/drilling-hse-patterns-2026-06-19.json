@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-20T03:57:24.174851Z",
+  "generated_at": "2026-06-20T04:30:57.886639Z",
   "issue": "https://github.com/vamseeachanta/worldenergydata/issues/426",
   "methodology": "Re-application of #416 Phase 1A: shared IncidentClassifier over BSEE INCINV records, cut to activity==DRILL.",
   "source_file": "/mnt/ace/worldenergydata/data/modules/hse/raw/bsee/IncInvRawData/mv_acc_investigations.txt",
