@@ -149,6 +149,54 @@ include = '\.pyi?$'
 profile = "black"
 line_length = 88
 
+# ----------------------------------------------------------------------------
+# Ruff (TRIAL / ADDITIVE — issue #315)
+# Added alongside black + isort + flake8 for evaluation. Does NOT yet replace
+# them. See docs/lint-ruff-migration-evaluation.md for the migration plan.
+# Settings replicate the existing stack:
+#   - line-length: black uses 88, flake8 uses max-line-length=100. Ruff's
+#     formatter targets 88 (black parity); the E501 line-length lint is left
+#     OFF initially (it is not in the default select set) to avoid noise from
+#     the 100-col flake8 history. Re-enable E501 later if desired.
+#   - target-version: py310 (lowest supported, matches mypy python_version).
+#   - flake8 extend-ignore E203,W503 -> E203 ignored; W503 is not a ruff rule
+#     (ruff/black never emit it) so it needs no mapping.
+#   - per-file-ignores __init__.py:F401 preserved.
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+exclude = [
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+    ".venv",
+    "venv",
+]
+
+[tool.ruff.lint]
+# Replicate current flake8 coverage (pyflakes F + pycodestyle E/W) plus isort (I).
+# Start minimal to match today's behaviour; bugbear/comprehensions/simplify can
+# be added later per the "decisions needed" checklist in #315.
+select = ["E", "F", "W", "I"]
+# E203 conflicts with black/ruff-format (per flake8 config).
+# E501 (line-too-long): the formatter already wraps at 88; flake8 historically
+#   allowed 100 cols, so the existing code has ~1800 >88-col lines. Ignore the
+#   E501 LINT during the trial to avoid noise; the formatter still enforces 88
+#   on reformat. Re-enable E501 once the codebase is ruff-formatted.
+ignore = ["E203", "E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.ruff.lint.isort]
+# Mirror isort profile = "black"; ruff's isort is black-compatible by default.
+known-first-party = ["worldenergydata"]
+
+[tool.ruff.format]
+# Black-compatible formatter (double quotes, trailing commas, 88 cols).
+quote-style = "double"
+
 [tool.mypy]
 python_version = "3.10"
 warn_return_any = true
