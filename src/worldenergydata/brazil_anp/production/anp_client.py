@@ -70,10 +70,29 @@ class ANPClient:
         response = requests.get(url, timeout=60)
         response.raise_for_status()
 
-        cache_path = self.cache_dir / self._cache_key(year, semester)
-        cache_path.write_bytes(response.content)
+        content = response.content
+        # ANP frequently returns an HTML error/maintenance page with HTTP 200.
+        # Detect it and refuse to poison the cache with a bad ".csv" file that
+        # subsequent is_cached()/load_cached() calls would keep returning.
+        leading = content[:512].lstrip().lower()
+        content_type = response.headers.get("Content-Type", "").lower()
+        if leading.startswith(b"<!doctype html") or leading.startswith(b"<html") or (
+            "html" in content_type and "csv" not in content_type
+        ):
+            raise ValueError(
+                f"ANP returned an HTML page (not CSV) for {year}-S{semester}; "
+                "refusing to cache. URL may be down or the report is unavailable."
+            )
 
-        return pd.read_csv(io.BytesIO(response.content), sep=";", encoding=encoding)
+        # Parse BEFORE caching so an unparseable body never lands in the cache.
+        df = pd.read_csv(io.BytesIO(content), sep=";", encoding=encoding)
+
+        cache_path = self.cache_dir / self._cache_key(year, semester)
+        tmp_path = cache_path.with_suffix(cache_path.suffix + ".tmp")
+        tmp_path.write_bytes(content)
+        tmp_path.replace(cache_path)
+
+        return df
 
     def _build_url(self, year: int, semester: int) -> str:
         return f"{self.base_url}?year={year}&semester={semester}"

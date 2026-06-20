@@ -214,19 +214,15 @@ class SIHScraper:
         options.add_argument("--disable-extensions")
         options.add_argument("--disable-popup-blocking")
 
-        # Language and locale for Mexican Spanish content
+        # Language and locale for Mexican Spanish content + download config.
+        # NOTE: Selenium keeps only the LAST add_experimental_option("prefs", ...)
+        # call, so language and download prefs MUST be merged into one dict —
+        # two separate calls silently drop intl.accept_languages.
         options.add_argument("--lang=es-MX")
         options.add_experimental_option(
             "prefs",
             {
                 "intl.accept_languages": "es-MX,es,en",
-            },
-        )
-
-        # Download configuration
-        options.add_experimental_option(
-            "prefs",
-            {
                 "download.default_directory": str(self.download_dir.absolute()),
                 "download.prompt_for_download": False,
                 "download.directory_upgrade": True,

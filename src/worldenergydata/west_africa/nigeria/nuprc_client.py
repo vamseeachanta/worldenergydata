@@ -78,6 +78,13 @@ class NuprcClient:
         self.cache_enabled = cache_enabled
         self.max_retries = max_retries
         self._cache: Dict[str, bytes] = {}
+        # Many regulator sites block the default ``python-requests/2.x`` UA.
+        self.headers = {
+            "User-Agent": (
+                "Mozilla/5.0 (compatible; WorldEnergyData/1.0; "
+                "+https://github.com/vamseeachanta/worldenergydata)"
+            )
+        }
 
     def _cache_key(self, url: str) -> str:
         return hashlib.md5(url.encode(), usedforsecurity=False).hexdigest()
@@ -106,12 +113,30 @@ class NuprcClient:
                 if requests is None:
                     raise NuprcAPIError("requests library not installed")
 
-                resp = requests.get(url, timeout=self.timeout)
+                resp = requests.get(
+                    url, timeout=self.timeout, headers=self.headers
+                )
                 if resp.status_code == 200:
                     data = resp.content
                     if self.cache_enabled:
                         self._cache[cache_key] = data
                     return data
+
+                # Transient server / rate-limit errors are common on
+                # nuprc.gov.ng during heavy report releases — retry those.
+                # Client errors (4xx, except 429) are terminal: raise now.
+                if resp.status_code in (429,) or resp.status_code >= 500:
+                    last_error = NuprcAPIError(
+                        f"HTTP {resp.status_code} downloading {url}",
+                        status_code=resp.status_code,
+                    )
+                    logger.warning(
+                        "Download attempt %d/%d got HTTP %d, retrying",
+                        attempt + 1,
+                        self.max_retries + 1,
+                        resp.status_code,
+                    )
+                    continue
 
                 raise NuprcAPIError(
                     f"HTTP {resp.status_code} downloading {url}",

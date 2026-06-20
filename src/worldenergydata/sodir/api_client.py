@@ -266,6 +266,12 @@ class SodirAPIClient:
                         status_code=response.status_code,
                     )
 
+            except (SodirAPIError, SodirRateLimitError):
+                # Terminal API errors (4xx, exhausted 5xx/429) carry their own
+                # status code / type — re-raise immediately so they are NOT
+                # swallowed by the broad handler below, retried, or degraded to a
+                # generic SodirAPIError with the status code lost.
+                raise
             except Exception as e:
                 # Handle both requests exceptions and other errors
                 if requests and isinstance(e, requests.exceptions.RequestException):

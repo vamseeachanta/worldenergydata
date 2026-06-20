@@ -101,7 +101,11 @@ def load_summary(
         value_name="rig_count",
     )
     melted = melted.rename(columns={state_col: "state"})
-    melted["date"] = pd.to_datetime(melted["date"])
+    # Non-date column headers (e.g. a "Total"/"Average" summary column) must not
+    # abort the load or silently coerce to NaT and pollute aggregations — coerce
+    # and drop the rows that did not parse as real dates.
+    melted["date"] = pd.to_datetime(melted["date"], errors="coerce")
+    melted = melted[melted["date"].notna()]
     melted["rig_count"] = (
         pd.to_numeric(melted["rig_count"], errors="coerce").fillna(0).astype(int)
     )
