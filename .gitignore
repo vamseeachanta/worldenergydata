@@ -315,3 +315,6 @@ archive/
 .claude/worktrees/
 examples/workflows/*/outputs/
 data/modules/hse/grounding_demand.jsonl
+
+# Built static Pages output (regenerated in CI from reports/)
+public/

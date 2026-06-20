@@ -57,4 +57,15 @@ KNOWN_VESSELS = [
         "DP_CLASS": 2,
         "QUARTERS_CAPACITY": 596,
     },
+    {
+        # DCV Aegir — deepwater construction vessel (monohull, J-lay/reel-lay).
+        # IMO/dimensions verified vs MarineTraffic/VesselFinder/Wikipedia.
+        "VESSEL_NAME": "Aegir",
+        "VESSEL_SUBTYPE": "crane_vessel",
+        "MAIN_CRANE_CAPACITY_T": 4000.0,
+        "YEAR_BUILT": 2013,
+        "LOA_M": 211.5,
+        "BEAM_M": 46.2,
+        "DP_CLASS": 3,
+    },
 ]
