@@ -246,10 +246,23 @@ def _match_pdf_link(
 # ---------------------------------------------------------------------------
 # Seadrill rawHtml pattern per rig:
 # "{RigName} TYPE {Type}AVAILABILITY {Date}OWNERSHIP {Owner} Technical Sheet"
+#
+# NOTE on RIG_DESIGN / WATER_DEPTH_RATING_FT (issue #407):
+# The Seadrill fleet *landing* page (seadrill.com/fleet) exposes ONLY four
+# fields per rig in its rawHtml: name, TYPE, AVAILABILITY, OWNERSHIP. There is
+# no design-class string and no water-depth value anywhere in the source text
+# (verified: 0 occurrences of "design", 0 of "<n> ft" in the captured rawHtml).
+# Those two attributes live only inside each rig's per-rig "Technical Sheet" PDF
+# (linked, not inlined). The earlier "regex group-name typo" hypothesis was
+# therefore incorrect: the regex cannot capture fields the source does not
+# contain. We emit them as explicit None (not silently omitted) so the gap is
+# documented and downstream merge/render logic can distinguish "absent at
+# source" from "parse failure". Populating real values requires a separate
+# Technical-Sheet-PDF extraction pass (out of scope for the landing scrape).
 _SEADRILL_RIG_PATTERN = re.compile(
     r"(?P<name>[A-Z][A-Za-z ]+?)\s+"
-    r"TYPE\s+(?P<type>[A-Za-z -]+?)"
-    r"AVAILABILITY\s+(?P<avail>[A-Za-z0-9 ]+?)"
+    r"TYPE\s+(?P<type>[A-Za-z -]+?)\s*"
+    r"AVAILABILITY\s+(?P<avail>[A-Za-z0-9 ]+?)\s*"
     r"OWNERSHIP\s+(?P<owner>[A-Za-z .]+?)\s+"
     r"Technical Sheet"
 )
@@ -323,6 +336,7 @@ def parse_seadrill_scrape(json_path: Path) -> list[dict[str, Any]]:
 
         raw_type = match.group("type").strip()
         owner = match.group("owner").strip()
+        availability = match.group("avail").strip()
         rig_type = _normalize_seadrill_rig_type(raw_type)
 
         record: dict[str, Any] = {
@@ -331,7 +345,18 @@ def parse_seadrill_scrape(json_path: Path) -> list[dict[str, Any]]:
             "OWNER": owner,
             "DATA_SOURCE": "contractor_fleet_page",
             "RIG_TYPE": rig_type,
+            # RIG_DESIGN and WATER_DEPTH_RATING_FT are not present in the
+            # Seadrill landing-page source (see _SEADRILL_RIG_PATTERN note for
+            # issue #407). Emit explicit None so the gap is documented rather
+            # than silently absent.
+            "RIG_DESIGN": None,
+            "WATER_DEPTH_RATING_FT": None,
         }
+
+        # AVAILABILITY is present in the source and was previously captured by
+        # the regex but dropped; surface it now (issue #407).
+        if availability:
+            record["RIG_AVAILABILITY"] = availability
 
         if tech_url:
             record["DATA_SOURCE_URL"] = tech_url

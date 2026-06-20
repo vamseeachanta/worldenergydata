@@ -1,15 +1,35 @@
 """Tests for vessel fleet scrape parser."""
 
-from worldenergydata.vessel_fleet.collectors.scrape_parser import (
-    _extract_noble_pdf_links,
-    _extract_seadrill_tech_sheet_links,
-    _match_pdf_link,
-    _normalize_noble_name,
-    _normalize_seadrill_rig_type,
-    _strip_owner_prefix,
-    classify_rig_type_by_water_depth,
-    parse_water_depth_string,
+import importlib.util
+import json
+from pathlib import Path
+
+# Import the parser module directly by file path. The package ``__init__``
+# eagerly imports pydantic-backed schemas, which are not needed here and may be
+# unavailable in slim CI/dev environments; loading the leaf module avoids that
+# dependency while still exercising the real parser code under test.
+_PARSER_PATH = (
+    Path(__file__).resolve().parents[4]
+    / "src"
+    / "worldenergydata"
+    / "vessel_fleet"
+    / "collectors"
+    / "scrape_parser.py"
 )
+_spec = importlib.util.spec_from_file_location("scrape_parser", _PARSER_PATH)
+_scrape_parser = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_scrape_parser)
+
+_extract_noble_pdf_links = _scrape_parser._extract_noble_pdf_links
+_extract_seadrill_tech_sheet_links = _scrape_parser._extract_seadrill_tech_sheet_links
+_match_pdf_link = _scrape_parser._match_pdf_link
+_normalize_noble_name = _scrape_parser._normalize_noble_name
+_normalize_seadrill_rig_type = _scrape_parser._normalize_seadrill_rig_type
+_strip_owner_prefix = _scrape_parser._strip_owner_prefix
+classify_rig_type_by_water_depth = _scrape_parser.classify_rig_type_by_water_depth
+parse_noble_scrape = _scrape_parser.parse_noble_scrape
+parse_seadrill_scrape = _scrape_parser.parse_seadrill_scrape
+parse_water_depth_string = _scrape_parser.parse_water_depth_string
 
 
 class TestClassifyRigTypeByWaterDepth:
@@ -239,3 +259,83 @@ class TestNormalizeSeadrillRigType:
 
     def test_case_insensitive(self):
         assert _normalize_seadrill_rig_type("DRILLSHIP") == "drillship"
+
+
+# Minimal Seadrill landing-page rawHtml shape (issue #407): the source exposes
+# only name / TYPE / AVAILABILITY / OWNERSHIP per rig — no design class, no
+# water depth. This is the exact record-text that previously yielded design/wd
+# rendered as '?'.
+_SEADRILL_RAW_HTML = (
+    "West Aquarius TYPE Semi-submersibleAVAILABILITY Available"
+    "OWNERSHIP Seadrill Limited Technical Sheet "
+    "West Neptune TYPE Drillship AVAILABILITY Apr 2026 "
+    "OWNERSHIP Seadrill Limited Technical Sheet"
+)
+
+_NOBLE_RAW_HTML = (
+    "Noble BlackHawk"
+    "Rig Summary Gusto P10000 Currently in US Gulf of Mexico "
+    "12,000 ft Water Depth Available: Q1 2026 Download Summary PDF"
+)
+
+
+class TestParseSeadrillScrapeIssue407:
+    """Regression tests for issue #407 Seadrill design/water-depth '?' bug."""
+
+    def _write(self, tmp_path, raw_html, links=None):
+        p = tmp_path / "seadrill.json"
+        p.write_text(
+            json.dumps({"rawHtml": raw_html, "links": links or []}),
+            encoding="utf-8",
+        )
+        return p
+
+    def test_records_extracted(self, tmp_path):
+        recs = parse_seadrill_scrape(self._write(tmp_path, _SEADRILL_RAW_HTML))
+        assert [r["VESSEL_NAME"] for r in recs] == [
+            "West Aquarius",
+            "West Neptune",
+        ]
+
+    def test_availability_now_captured(self, tmp_path):
+        # AVAILABILITY was matched by the regex but previously dropped from the
+        # emitted record. It must now be surfaced.
+        recs = parse_seadrill_scrape(self._write(tmp_path, _SEADRILL_RAW_HTML))
+        by_name = {r["VESSEL_NAME"]: r for r in recs}
+        assert by_name["West Aquarius"]["RIG_AVAILABILITY"] == "Available"
+        # Spaced "Apr 2026 " variant must still parse cleanly.
+        assert by_name["West Neptune"]["RIG_AVAILABILITY"] == "Apr 2026"
+
+    def test_design_and_water_depth_explicit_none(self, tmp_path):
+        # The fields the issue showed as '?' are absent at source; assert they
+        # are emitted as explicit None (documented gap) rather than missing.
+        recs = parse_seadrill_scrape(self._write(tmp_path, _SEADRILL_RAW_HTML))
+        for r in recs:
+            assert "RIG_DESIGN" in r
+            assert "WATER_DEPTH_RATING_FT" in r
+            assert r["RIG_DESIGN"] is None
+            assert r["WATER_DEPTH_RATING_FT"] is None
+
+    def test_rig_type_classified_from_label(self, tmp_path):
+        recs = parse_seadrill_scrape(self._write(tmp_path, _SEADRILL_RAW_HTML))
+        by_name = {r["VESSEL_NAME"]: r for r in recs}
+        assert by_name["West Aquarius"]["RIG_TYPE"] == "semi_submersible"
+        assert by_name["West Neptune"]["RIG_TYPE"] == "drillship"
+
+
+class TestParseNobleScrapeNoRegression:
+    """Prove the Seadrill fix did not perturb Noble design/water-depth parse."""
+
+    def test_noble_design_and_water_depth_populated(self, tmp_path):
+        p = tmp_path / "noble.json"
+        p.write_text(
+            json.dumps({"rawHtml": _NOBLE_RAW_HTML, "links": []}),
+            encoding="utf-8",
+        )
+        recs = parse_noble_scrape(p)
+        assert len(recs) == 1
+        rec = recs[0]
+        assert rec["VESSEL_NAME"] == "Noble BlackHawk"
+        assert rec["RIG_DESIGN"] == "Gusto P10000"
+        assert rec["WATER_DEPTH_RATING_FT"] == 12000.0
+        assert rec["RIG_TYPE"] == "drillship"
