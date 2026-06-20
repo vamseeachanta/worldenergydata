@@ -260,27 +260,74 @@ def build():
                 available_viz[name] = True
                 break
 
-    # --- Economics page (sanctioned V30) ---
-    econ_md = REPORTS / "lower_tertiary" / "field_economics_julia_v30.md"
-    if econ_md.exists():
-        body = md_to_html(econ_md.read_text(encoding="utf-8"))
-        (PUBLIC / "economics.html").write_text(page(
-            "Julia Field Economics",
+    # --- Economics pages (sanctioned V30), one per Lower-Tertiary field ---
+    field_names = {
+        "anchor": "Anchor", "big_foot": "Big Foot", "cascade_chinook": "Cascade&ndash;Chinook",
+        "jack_st_malo": "Jack / St. Malo", "julia": "Julia", "shenandoah": "Shenandoah",
+        "stones": "Stones",
+    }
+    npv_re = re.compile(r"Terminal cumulative NPV = \*\*([^*]+)\*\*")
+    fields = []  # (slug, display, page_filename, npv_str, npv_value)
+    for md in sorted((REPORTS / "lower_tertiary").glob("field_economics_*_v30.md")):
+        slug = md.name[len("field_economics_"):-len("_v30.md")]
+        display = field_names.get(slug, slug.replace("_", " ").title())
+        text = md.read_text(encoding="utf-8")
+        m = npv_re.search(text)
+        npv_str = m.group(1).strip() if m else "&mdash;"
+        try:
+            npv_val = float(npv_str.replace("$", "").replace(",", "").replace("M", "").strip())
+        except ValueError:
+            npv_val = 0.0
+        fname = f"economics-{slug}.html"
+        (PUBLIC / fname).write_text(page(
+            f"{display} Field Economics",
             "Per-well and field-level NPV from the sanctioned V30 financial model.",
-            body,
+            md_to_html(text),
             provenance=(
                 "Computed by the V30 cashflow model "
                 "(<code>build_field_npv_timeline</code>), which reuses the same "
                 "monthly cashflow and trimmed-discount formula as "
-                "<code>reproduce_v30_financials</code>. Terminal NPV reconciles "
-                "exactly to the sanctioned baseline (residual $0.0000)."
+                "<code>reproduce_v30_financials</code>. Terminal NPV reconciles to "
+                "the sanctioned V30 baseline."
             ),
             data_limits=(
-                "NPV is <strong>negative ($-530.6 M)</strong> &mdash; this is the "
-                "sanctioned model truth and is presented as-is, not reframed as "
-                "value-positive. Operation markers (drilling/completion dates) are "
-                "annotations only and do not feed the cashflow model. OGOR-A "
-                "production zips are pickled <code>.bin</code> DataFrames in this checkout."
+                "The NPV shown is the <strong>sanctioned V30 model truth, presented "
+                "as-is</strong> &mdash; not reframed as value-positive. Every Lower-"
+                "Tertiary field here is NPV-negative at a 10% discount rate life-to-date. "
+                "Operation markers (drilling/completion dates) are annotations only and "
+                "do not feed the cashflow model."
+            ),
+        ), encoding="utf-8")
+        fields.append((slug, display, fname, npv_str, npv_val))
+
+    # --- Benchmark page ---
+    bench_md = REPORTS / "lower_tertiary" / "lt_well_benchmark_lower_tertiary_2010_latest.md"
+    if bench_md.exists():
+        (PUBLIC / "benchmark.html").write_text(page(
+            "Lower Tertiary Well Benchmarking",
+            "Cross-field well performance benchmarking (2010&ndash;latest).",
+            md_to_html(bench_md.read_text(encoding="utf-8")),
+            provenance=(
+                "Derived deterministically from BSEE OGOR-A production across the "
+                "Lower-Tertiary fields; same frozen data window as the V30 economics."
+            ),
+            data_limits=(
+                "Benchmarks reflect only wells with reported OGOR-A production; wells "
+                "absent from the structured data are excluded rather than estimated."
+            ),
+        ), encoding="utf-8")
+
+    # --- Portfolio summary page ---
+    summ_md = REPORTS / "lower_tertiary_field_summary.md"
+    if summ_md.exists():
+        (PUBLIC / "portfolio.html").write_text(page(
+            "Lower Tertiary Portfolio Summary",
+            "Field-by-field roll-up of the Lower-Tertiary play.",
+            md_to_html(summ_md.read_text(encoding="utf-8")),
+            provenance="Aggregated from the per-field sanctioned V30 economics reports.",
+            data_limits=(
+                "Roll-up inherits each field's data limits; see the individual field "
+                "pages for per-field caveats."
             ),
         ), encoding="utf-8")
 
@@ -316,16 +363,39 @@ def build():
 
     # --- Landing page ---
     cards = []
-    if (PUBLIC / "economics.html").exists():
-        cards.append('<a class="card" href="economics.html"><h3>Julia Field Economics &rarr;</h3>'
-                     '<p>Sanctioned V30 NPV: timeline, per-well stackup, and critical-operations annotations.</p></a>')
+    if (PUBLIC / "portfolio.html").exists():
+        cards.append('<a class="card" href="portfolio.html"><h3>Portfolio Summary &rarr;</h3>'
+                     '<p>Field-by-field roll-up of the Lower-Tertiary play.</p></a>')
+    if (PUBLIC / "benchmark.html").exists():
+        cards.append('<a class="card" href="benchmark.html"><h3>Well Benchmarking &rarr;</h3>'
+                     '<p>Cross-field well performance, 2010&ndash;latest.</p></a>')
     if (PUBLIC / "well-path.html").exists():
         cards.append('<a class="card" href="well-path.html"><h3>Julia Well Paths (3D) &rarr;</h3>'
-                     '<p>Interactive 3D directional surveys, two independent renderers from one data contract.</p></a>')
+                     '<p>Interactive 3D directional surveys, two renderers from one data contract.</p></a>')
+
+    # Portfolio economics table, worst NPV first
+    rows = []
+    for slug, display, fname, npv_str, npv_val in sorted(fields, key=lambda f: f[4]):
+        rows.append(
+            f'<tr><td><a href="{fname}">{display}</a></td>'
+            f'<td style="text-align:right">{npv_str}</td></tr>'
+        )
+    econ_table = ""
+    if rows:
+        econ_table = (
+            '<h2>Field economics (sanctioned V30 NPV)</h2>'
+            '<p>Terminal life-to-date NPV at a 10% discount rate. Every field links to its '
+            'full per-well stackup, NPV timeline, and critical-operations detail.</p>'
+            '<div class="table-wrap"><table><thead><tr><th>Field</th>'
+            '<th style="text-align:right">Terminal NPV</th></tr></thead><tbody>'
+            + "".join(rows) + "</tbody></table></div>"
+        )
+
     landing = page(
         "Open Data Outputs",
         "Deterministic petroleum-engineering analyses on public US Gulf of Mexico data.",
         f'<div class="cards">{"".join(cards)}</div>'
+        + econ_table +
         '<h2>How this works</h2>'
         '<p>Every analysis here is computed by unit-tested domain code, frozen into a '
         'report artifact, and rendered to static HTML. There is no server and no API '
@@ -334,9 +404,9 @@ def build():
         'filling the gap with a guess.</p>',
         provenance="All figures trace to public BSEE filings; see each page for its specific model.",
         data_limits=(
-            "Scope is currently the Julia (G20351) Lower-Tertiary subsea development. "
-            "Water-depth and HPHT attributes are not present in the structured OGOR-A "
-            "data and are therefore not shown."
+            "Scope is the Lower-Tertiary fields of the US Gulf of Mexico. Water-depth and "
+            "HPHT attributes are not present in the structured OGOR-A data and are therefore "
+            "not shown. 3D well-path geometry is currently available for Julia (G20351) only."
         ),
     )
     (PUBLIC / "index.html").write_text(landing, encoding="utf-8")
