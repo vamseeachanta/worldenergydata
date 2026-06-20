@@ -270,7 +270,9 @@ class WellData:
         # logger.debug(f"file_name: {file_name}")
 
         if file_is_valid:
-            df = pd.read_pickle(file_name)  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
+            df = pd.read_pickle(
+                file_name
+            )  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
             borehole_codes = cfg["parameters"]["borehole_codes"]
 
             BOREHOLE_STAT_CD = df["BOREHOLE_STAT_CD"]
@@ -303,7 +305,9 @@ class WellData:
         file_is_valid, file_name = get_repository_filename(library_file_cfg)
 
         if file_is_valid:
-            df = pd.read_pickle(file_name)  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
+            df = pd.read_pickle(
+                file_name
+            )  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
         else:
             raise Exception(f"File not found: {file_name}")
 
@@ -324,7 +328,9 @@ class WellData:
         file_is_valid, file_name = get_repository_filename(library_file_cfg)
 
         if file_is_valid:
-            df = pd.read_pickle(file_name)  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
+            df = pd.read_pickle(
+                file_name
+            )  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
         else:
             raise Exception(f"File not found: {file_name}")
 
@@ -345,7 +351,9 @@ class WellData:
         file_is_valid, file_name = get_repository_filename(library_file_cfg)
 
         if file_is_valid:
-            df = pd.read_pickle(file_name)  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
+            df = pd.read_pickle(
+                file_name
+            )  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
         else:
             raise Exception(f"File not found: {file_name}")
 
@@ -366,7 +374,9 @@ class WellData:
         file_is_valid, file_name = get_repository_filename(library_file_cfg)
 
         if file_is_valid:
-            df = pd.read_pickle(file_name)  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
+            df = pd.read_pickle(
+                file_name
+            )  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
         else:
             raise Exception(f"File not found: {file_name}")
 

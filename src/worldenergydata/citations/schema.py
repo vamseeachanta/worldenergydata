@@ -17,6 +17,7 @@ Per workspace-hub #2481 decisions:
 - D3: direct file read for v1; migration to the MCP resolver (#2400) is a later
   change that does not touch this schema.
 """
+
 from __future__ import annotations
 
 import re

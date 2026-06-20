@@ -7,6 +7,7 @@ publisher / revision). Mirrors the digitalmodel pilot.
 Governing issue: worldenergydata#361
 Contract: workspace-hub ``.claude/rules/calc-citation-contract.md``
 """
+
 from __future__ import annotations
 
 from worldenergydata.citations.schema import (

@@ -4,6 +4,7 @@ Deterministic, network-free. Imports the package by file path so the suite runs
 even when the heavy ``worldenergydata.common`` __init__ is unavailable
 (--noconftest, no pydantic).
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -86,7 +87,10 @@ def _synthetic_well_data(asof="2020-06-01") -> pd.DataFrame:
     return pd.DataFrame(
         {
             "API_WELL_NUMBER": ["608114077400", "608124012300"],
-            "WELL_SPUD_DATE": [spud_a.strftime("%m/%d/%Y"), spud_b.strftime("%m/%d/%Y")],
+            "WELL_SPUD_DATE": [
+                spud_a.strftime("%m/%d/%Y"),
+                spud_b.strftime("%m/%d/%Y"),
+            ],
         }
     )
 

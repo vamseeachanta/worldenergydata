@@ -59,6 +59,7 @@ def _req(repo: Path, **over):
 
 # --- AVAILABLE --------------------------------------------------------------
 
+
 def test_available_present_and_fresh(tmp_path: Path):
     f = tmp_path / "data/modules/bsee/current/operations/well_activity_summary.csv"
     _write(f, b"api,well\n1,A\n", mtime=NOW - 5 * 86400)  # 5 days old, ttl 30
@@ -78,6 +79,7 @@ def test_available_present_and_fresh(tmp_path: Path):
 
 
 # --- MISSING ----------------------------------------------------------------
+
 
 def test_missing_absent_file(tmp_path: Path):
     # Directory may exist but the required file does not.
@@ -99,6 +101,7 @@ def test_missing_absent_file(tmp_path: Path):
 
 # --- STALE: old mtime -------------------------------------------------------
 
+
 def test_stale_old_mtime(tmp_path: Path):
     f = tmp_path / "data/modules/bsee/current/operations/well_activity_summary.csv"
     _write(f, b"api,well\n1,A\n", mtime=NOW - 90 * 86400)  # 90 days old, ttl 30
@@ -115,6 +118,7 @@ def test_stale_old_mtime(tmp_path: Path):
 
 # --- STALE: 0-byte stub -----------------------------------------------------
 
+
 def test_stale_zero_byte_stub_is_empty(tmp_path: Path):
     f = tmp_path / "data/modules/bsee/current/operations/well_activity_summary.csv"
     _write(f, b"", mtime=NOW - 1 * 86400)  # fresh mtime but 0 bytes -> stub
@@ -130,6 +134,7 @@ def test_stale_zero_byte_stub_is_empty(tmp_path: Path):
 
 
 # --- BLOCKER overrides files on disk ----------------------------------------
+
 
 def test_blocker_forces_no_go(tmp_path: Path):
     f = tmp_path / "data/modules/bsee/current/operations/well_activity_summary.csv"
@@ -149,6 +154,7 @@ def test_blocker_forces_no_go(tmp_path: Path):
 
 
 # --- Overall go/no-go aggregation across sources ----------------------------
+
 
 def test_overall_go_requires_all_sources(tmp_path: Path):
     fresh = tmp_path / "data/modules/bsee/current/operations/well_activity_summary.csv"
@@ -176,6 +182,7 @@ def test_overall_go_requires_all_sources(tmp_path: Path):
 
 # --- Contract enum validation -----------------------------------------------
 
+
 def test_emitted_statuses_are_in_462_contract(tmp_path: Path):
     """Every status the probe emits must be a real #462 contract enum value.
 
@@ -197,6 +204,7 @@ def test_emitted_statuses_are_in_462_contract(tmp_path: Path):
 
 # --- Manifest fragment shape (#450 light dependency) ------------------------
 
+
 def test_manifest_fragment_shape(tmp_path: Path):
     f = tmp_path / "data/modules/bsee/current/operations/well_activity_summary.csv"
     _write(f, b"x\n", mtime=NOW - 1 * 86400)
@@ -210,6 +218,7 @@ def test_manifest_fragment_shape(tmp_path: Path):
 
 
 # --- Default well-ops requirement set is well-formed ------------------------
+
 
 def test_default_well_operations_sources():
     reqs = probe.default_well_operations_sources()

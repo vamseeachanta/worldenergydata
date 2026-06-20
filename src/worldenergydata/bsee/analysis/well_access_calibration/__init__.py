@@ -33,6 +33,7 @@ Example::
     cal = wac.calibrate()            # from the local BSEE subset
     wac.write_calibration_yaml(cal, "calibration.yml")
 """
+
 from __future__ import annotations
 
 from .calibrator import (

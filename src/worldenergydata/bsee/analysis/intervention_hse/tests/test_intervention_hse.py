@@ -6,6 +6,7 @@ tests load the package submodules by file path — the same discipline the #416/
 exploration scripts used. The classifier itself is the repo-canonical
 ``IncidentClassifier`` reached via ``classifier.get_incident_classifier()``.
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -44,9 +45,9 @@ def test_classifier_categorizes_known_bsee_incidents():
     }
     for accident_type, expected_activity in cases.items():
         res = clf.classify({"ACCIDENT_TYPE": accident_type}, source="bsee")
-        assert res.activity == expected_activity, (
-            f"{accident_type} -> {res.activity}, expected {expected_activity}"
-        )
+        assert (
+            res.activity == expected_activity
+        ), f"{accident_type} -> {res.activity}, expected {expected_activity}"
         # direct ACCIDENT_TYPE mapping is high confidence
         assert res.confidence >= 0.90
         assert res.match_method == "bsee_accident_type"
@@ -127,14 +128,30 @@ def test_parse_year(date_str, expected):
 # ---------------------------------------------------------------------------
 def _synthetic_rows():
     return [
-        {"ACCIDENT_TYPE": "Blowout", "DATE_OCCURRED": "1/1/2015",
-         "AREA_BLOCK": "GC 123", "LEASE_NUMBER": "G01"},
-        {"ACCIDENT_TYPE": "Blowout", "DATE_OCCURRED": "1/1/2016",
-         "AREA_BLOCK": "GC 124", "LEASE_NUMBER": "G02"},
-        {"ACCIDENT_TYPE": "Fire", "DATE_OCCURRED": "1/1/2017",
-         "AREA_BLOCK": "MC 045", "LEASE_NUMBER": "G03"},
-        {"ACCIDENT_TYPE": "Crane", "DATE_OCCURRED": "1/1/2018",
-         "AREA_BLOCK": "MC 046", "LEASE_NUMBER": "G04"},
+        {
+            "ACCIDENT_TYPE": "Blowout",
+            "DATE_OCCURRED": "1/1/2015",
+            "AREA_BLOCK": "GC 123",
+            "LEASE_NUMBER": "G01",
+        },
+        {
+            "ACCIDENT_TYPE": "Blowout",
+            "DATE_OCCURRED": "1/1/2016",
+            "AREA_BLOCK": "GC 124",
+            "LEASE_NUMBER": "G02",
+        },
+        {
+            "ACCIDENT_TYPE": "Fire",
+            "DATE_OCCURRED": "1/1/2017",
+            "AREA_BLOCK": "MC 045",
+            "LEASE_NUMBER": "G03",
+        },
+        {
+            "ACCIDENT_TYPE": "Crane",
+            "DATE_OCCURRED": "1/1/2018",
+            "AREA_BLOCK": "MC 046",
+            "LEASE_NUMBER": "G04",
+        },
     ]
 
 

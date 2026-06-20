@@ -61,7 +61,9 @@ class WARDataFromBin:
 
     def read_file(self, filepath):
         try:
-            df = pd.read_pickle(filepath)  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
+            df = pd.read_pickle(
+                filepath
+            )  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
         except (FileNotFoundError, OSError):
             logger.warning(
                 "BSEE data not found: %s. Run: python3 scripts/refresh_bsee_all.py",

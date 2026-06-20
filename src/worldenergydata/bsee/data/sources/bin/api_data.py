@@ -152,7 +152,9 @@ class APIData:
         """
         try:
             with open(file_path, "rb") as f:
-                df = pickle.load(f)  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
+                df = pickle.load(
+                    f
+                )  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
 
             if isinstance(df, pd.DataFrame):
                 return df

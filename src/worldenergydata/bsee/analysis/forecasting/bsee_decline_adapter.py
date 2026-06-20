@@ -225,7 +225,9 @@ class BseeDeclineAdapter:
             return None
 
         try:
-            return pd.read_pickle(bin_path)  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
+            return pd.read_pickle(
+                bin_path
+            )  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
         except Exception as e:
             logger.error("Failed to load %s: %s", bin_path, e)
             return None

@@ -4,6 +4,7 @@ See package docstring for the design contract. Every public parameter is tagged
 ``measured`` (with a ``sample_size``) or ``needs_full_dataset`` (structure only,
 *never* a fabricated rate).
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -103,9 +104,7 @@ def _resolve_bsee_root() -> Path:
     except Exception:
         here = Path(__file__).resolve()
         # .../src/worldenergydata/bsee/analysis/well_access_calibration/calibrator.py
-        resolver_path = (
-            here.parents[3] / "common" / "data_resolver.py"
-        )
+        resolver_path = here.parents[3] / "common" / "data_resolver.py"
         spec = importlib.util.spec_from_file_location(
             "_wac_data_resolver", resolver_path
         )
@@ -124,7 +123,9 @@ def _load_war_activity(bsee_root: Path) -> pd.DataFrame:
     cols = ["API_WELL_NUMBER", "WELL_ACTIVITY_CD", "WAR_START_DT", "WAR_END_DT"]
     war_bin = bsee_root / "bin" / "war" / "mv_war_main.bin"
     if war_bin.is_file():
-        df = pd.read_pickle(war_bin)  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
+        df = pd.read_pickle(
+            war_bin
+        )  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
         keep = [c for c in cols if c in df.columns]
         return df[keep].copy()
     csv = bsee_root / "current" / "operations" / "well_activity_summary.csv"
@@ -330,9 +331,7 @@ def calibrate_from_frames(
     # --- A_facility uptime from DAYS_ON_PROD -------------------------------
     if not production.empty and "DAYS_ON_PROD" in production.columns:
         prod = production.copy()
-        prod["DAYS_ON_PROD"] = pd.to_numeric(
-            prod["DAYS_ON_PROD"], errors="coerce"
-        )
+        prod["DAYS_ON_PROD"] = pd.to_numeric(prod["DAYS_ON_PROD"], errors="coerce")
         prod = prod.dropna(subset=["DAYS_ON_PROD"])
         # uptime fraction = days_on_prod / calendar days in the month (assume 30.4)
         if not prod.empty:
@@ -344,9 +343,9 @@ def calibrate_from_frames(
                     units="fraction",
                     source="measured",
                     sample_size=int(len(frac)),
-                    confidence="low"
-                    if len(frac) < MIN_EVENTS_FOR_CONFIDENT_RATE
-                    else "high",
+                    confidence=(
+                        "low" if len(frac) < MIN_EVENTS_FOR_CONFIDENT_RATE else "high"
+                    ),
                     note="mean monthly DAYS_ON_PROD / 30.4 across production records",
                 )
             )

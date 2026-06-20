@@ -12,6 +12,7 @@ it falls back to loading the three taxonomy files by file path with a tiny loggi
 stub, exactly mirroring the inline loader that the #416 / #426 exploration scripts
 used. Behavior is preserved; this is a relocation, not a rewrite.
 """
+
 from __future__ import annotations
 
 import importlib.util

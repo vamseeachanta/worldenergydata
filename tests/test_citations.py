@@ -8,6 +8,7 @@ Covers:
   - Fail-closed resolution: a missing wiki page raises CitationResolutionError
     with code_id in the message.
 """
+
 from __future__ import annotations
 
 import json
@@ -95,7 +96,10 @@ def test_attach_citations_emits_roundtrip_sidecar(tmp_path):
 
     # Round-trip: reconstructed citations match by code_id.
     loaded = load_sidecar(sidecar_path)
-    assert {c.code_id for c in loaded} == {royalty.citation.code_id, wti.citation.code_id}
+    assert {c.code_id for c in loaded} == {
+        royalty.citation.code_id,
+        wti.citation.code_id,
+    }
     # CitedValue value survives in the sidecar payload.
     data = json.loads(sidecar_path.read_text(encoding="utf-8"))
     royalty_entry = next(e for e in data["citations"] if e["code_id"] == "30-cfr-250")

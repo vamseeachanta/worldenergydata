@@ -20,6 +20,7 @@ provenance and emit sidecars even where a wiki clone is not present, which is
 the common worldenergydata runtime; flip to ``validate=True`` in the
 defensibility/audit path.
 """
+
 from __future__ import annotations
 
 from pathlib import Path

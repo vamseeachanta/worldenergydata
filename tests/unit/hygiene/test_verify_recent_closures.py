@@ -214,9 +214,7 @@ def test_fetch_recent_closed_issues_with_injected_runner():
         '[{"number": 10, "title": "t", "body": "- [ ] x", '
         '"closedAt": "2026-06-01T00:00:00Z", "url": "http://x/10"}]'
     )
-    issues = fetch_recent_closed_issues(
-        "o/r", 30, 40, runner=lambda cmd: payload
-    )
+    issues = fetch_recent_closed_issues("o/r", 30, 40, runner=lambda cmd: payload)
     assert len(issues) == 1
     assert issues[0].number == 10
     assert issues[0].body == "- [ ] x"

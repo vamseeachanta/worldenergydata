@@ -77,7 +77,9 @@ DEFAULT_CONTRACT_RELPATH = "data/source-refresh-acceptance-contract.json"
 DEFAULT_STUB_MAX_BYTES = 1
 
 
-def load_contract_enums(contract_path: Optional[Path]) -> tuple[tuple[str, ...], tuple[str, ...]]:
+def load_contract_enums(
+    contract_path: Optional[Path],
+) -> tuple[tuple[str, ...], tuple[str, ...]]:
     """Return ``(freshness_values, completeness_values)`` from the #462 contract.
 
     Falls back to the module-level literals when the contract file is missing
@@ -89,7 +91,9 @@ def load_contract_enums(contract_path: Optional[Path]) -> tuple[tuple[str, ...],
         except (ValueError, OSError):
             return FRESHNESS_STATUS_VALUES, COMPLETENESS_STATUS_VALUES
         fresh = tuple(data.get("freshness_status_values") or FRESHNESS_STATUS_VALUES)
-        comp = tuple(data.get("completeness_status_values") or COMPLETENESS_STATUS_VALUES)
+        comp = tuple(
+            data.get("completeness_status_values") or COMPLETENESS_STATUS_VALUES
+        )
         return fresh, comp
     return FRESHNESS_STATUS_VALUES, COMPLETENESS_STATUS_VALUES
 
@@ -293,9 +297,7 @@ def probe_source(
         # from "nothing on disk".
         comp = "empty" if stub else "missing"
         reason = (
-            "required files present but stub-sized"
-            if stub
-            else "no data files present"
+            "required files present but stub-sized" if stub else "no data files present"
         )
         return SourceReadiness(
             module_id=req.module_id,

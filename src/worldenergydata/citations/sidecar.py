@@ -10,6 +10,7 @@ numeric payload").
 The sidecar round-trips: ``load_sidecar(emit_sidecar(...))`` reconstructs the
 exact ``Citation`` objects.
 """
+
 from __future__ import annotations
 
 import json
@@ -29,9 +30,7 @@ def _coerce_citation(item: Union[Citation, CitedValue]) -> tuple[str, dict]:
         return item.citation.code_id, item.to_dict()
     if isinstance(item, Citation):
         return item.code_id, {"citation": item.to_dict()}
-    raise TypeError(
-        f"Expected Citation or CitedValue, got {type(item).__name__}"
-    )
+    raise TypeError(f"Expected Citation or CitedValue, got {type(item).__name__}")
 
 
 def build_sidecar(

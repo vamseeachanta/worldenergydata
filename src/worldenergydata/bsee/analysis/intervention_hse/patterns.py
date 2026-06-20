@@ -7,6 +7,7 @@ preserving — from the #416 Phase-1A / #426 exploration scripts.
 
 Stdlib only.
 """
+
 from __future__ import annotations
 
 from collections import Counter

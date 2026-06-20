@@ -135,7 +135,9 @@ def _load_ogor_from_bin_uncached(
     current = bin_dir / "ogoradelimit.bin"
     if current.exists():
         try:
-            cur_raw = pd.read_pickle(current)  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
+            cur_raw = pd.read_pickle(
+                current
+            )  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
             periods = pd.to_numeric(
                 pd.Series([cur_raw.columns[2]] + list(cur_raw.iloc[:, 2])),
                 errors="coerce",
@@ -148,7 +150,9 @@ def _load_ogor_from_bin_uncached(
 
     frames: list[pd.DataFrame] = []
     for bin_path in bin_paths:
-        raw = pd.read_pickle(bin_path)  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
+        raw = pd.read_pickle(
+            bin_path
+        )  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
         # Headerless: column names are the first data row. Rebuild with the
         # canonical column names and prepend the header row as data.
         header_as_row = pd.DataFrame(
@@ -202,7 +206,9 @@ def detect_latest_ogor_month() -> pd.Timestamp:
     for bin_path in sorted(bin_dir.glob("ogora*delimit.bin")):
         if ".bak" in bin_path.name:
             continue
-        raw = pd.read_pickle(bin_path)  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
+        raw = pd.read_pickle(
+            bin_path
+        )  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
         periods = pd.to_numeric(
             pd.Series([raw.columns[2]] + list(raw.iloc[:, 2])),
             errors="coerce",
@@ -250,7 +256,9 @@ def _read_war_bin(name: str) -> pd.DataFrame:
     pickles dozens of times. Callers copy before mutating, so caching is safe.
     """
     war_dir = get_module_data_safe("bsee") / "bin" / "war"
-    return pd.read_pickle(war_dir / name)  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
+    return pd.read_pickle(
+        war_dir / name
+    )  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
 
 
 def _norm_lease(s: pd.Series) -> pd.Series:

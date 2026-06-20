@@ -5,6 +5,7 @@ Reads the authoritative BSEE INCINV (accident-investigation) raw source — the
 
 Extracted verbatim (behavior-preserving) from the #416 / #426 exploration scripts.
 """
+
 from __future__ import annotations
 
 import csv
@@ -17,7 +18,13 @@ _PKG_ROOT = Path(__file__).resolve().parents[3]  # src/worldenergydata
 _REPO = _PKG_ROOT.parents[1]  # repo root (src/worldenergydata -> src -> repo)
 
 DEFAULT_INCINV_CANDIDATES: Tuple[Path, ...] = (
-    _REPO / "data" / "modules" / "hse" / "raw" / "bsee" / "IncInvRawData"
+    _REPO
+    / "data"
+    / "modules"
+    / "hse"
+    / "raw"
+    / "bsee"
+    / "IncInvRawData"
     / "mv_acc_investigations.txt",
     Path(
         "/mnt/ace/worldenergydata/data/modules/hse/raw/bsee/IncInvRawData"
@@ -33,15 +40,16 @@ def resolve_incinv_source(
 
     Raises FileNotFoundError if none of the candidates resolve.
     """
-    cands = list(candidates) if candidates is not None else list(DEFAULT_INCINV_CANDIDATES)
+    cands = (
+        list(candidates) if candidates is not None else list(DEFAULT_INCINV_CANDIDATES)
+    )
     src = next(
         (p for p in cands if Path(p).exists() and Path(p).stat().st_size > 0),
         None,
     )
     if src is None:
         raise FileNotFoundError(
-            "INCINV source not found; checked: "
-            + ", ".join(str(p) for p in cands)
+            "INCINV source not found; checked: " + ", ".join(str(p) for p in cands)
         )
     return Path(src)
 

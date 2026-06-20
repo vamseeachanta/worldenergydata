@@ -181,7 +181,9 @@ class BuckskinExtractor:
     def _read_pickle_safe(self, path: Path) -> pd.DataFrame:
         """Read a pickle file, returning empty DataFrame on failure."""
         try:
-            df = pd.read_pickle(path)  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
+            df = pd.read_pickle(
+                path
+            )  # nosec B301 - trusted pipeline-generated local .bin/.pkl (BSEE), not untrusted input
         except Exception as exc:
             logger.warning(
                 "Cannot unpickle %s: %s (file may be a Git LFS pointer)", path, exc

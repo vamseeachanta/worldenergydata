@@ -27,7 +27,12 @@ def _edwardson_wed(tD: NDArray[np.float64]) -> NDArray[np.float64]:
 
     t_mid = tD[mid]
     sqrt_t = np.sqrt(t_mid)
-    num = 1.2838 * sqrt_t + 1.19328 * t_mid + 0.269872 * t_mid**1.5 + 0.00855294 * t_mid**2
+    num = (
+        1.2838 * sqrt_t
+        + 1.19328 * t_mid
+        + 0.269872 * t_mid**1.5
+        + 0.00855294 * t_mid**2
+    )
     den = 1.0 + 0.616599 * sqrt_t + 0.0413008 * t_mid
     weD[mid] = num / den
 
@@ -65,9 +70,7 @@ def fetkovich_transient(
     return tDd, qDd
 
 
-def fetkovich_boundary(
-    tDd: NDArray[np.float64], b: float
-) -> NDArray[np.float64]:
+def fetkovich_boundary(tDd: NDArray[np.float64], b: float) -> NDArray[np.float64]:
     """Arps decline for boundary-dominated flow.
 
     Args:
@@ -163,9 +166,7 @@ def match_fetkovich(
         mask = (qDd_data > 0) & (qDd_model > 0)
         if mask.sum() < 3:
             return 1e12
-        return np.sum(
-            (np.log(qDd_data[mask]) - np.log(qDd_model[mask])) ** 2
-        )
+        return np.sum((np.log(qDd_data[mask]) - np.log(qDd_model[mask])) ** 2)
 
     best = None
     for reD_init in reD_guesses:
@@ -173,7 +174,9 @@ def match_fetkovich(
             x0 = [0.0, -3.0, b_init, reD_init]
             try:
                 res = minimize(
-                    objective, x0, method="Nelder-Mead",
+                    objective,
+                    x0,
+                    method="Nelder-Mead",
                     options={"maxiter": 5000, "xatol": 1e-8, "fatol": 1e-10},
                 )
                 if best is None or res.fun < best.fun:
@@ -191,9 +194,7 @@ def match_fetkovich(
     ln_reD = np.log(max(reD, 1.01))
     bDpss = ln_reD - 0.5
     k = Cq * 141.2 * params.Bo * params.mu * bDpss / params.h
-    rwa = np.sqrt(
-        0.0002637 * k / (params.phi * params.mu * params.ct * Ct)
-    )
+    rwa = np.sqrt(0.0002637 * k / (params.phi * params.mu * params.ct * Ct))
     skin = np.log(params.rw / rwa) if rwa > 0 else 0.0
     re = reD * rwa
     area_ft2 = np.pi * re**2
@@ -203,7 +204,17 @@ def match_fetkovich(
     Di = Ct
 
     return MatchResult(
-        k=k, skin=skin, re=re, rwa=rwa, ooip=ooip,
-        qi=qi, Di=Di, b=b, reD=reD, residual=best.fun,
-        Ct=Ct, Cq=Cq, model="fetkovich",
+        k=k,
+        skin=skin,
+        re=re,
+        rwa=rwa,
+        ooip=ooip,
+        qi=qi,
+        Di=Di,
+        b=b,
+        reD=reD,
+        residual=best.fun,
+        Ct=Ct,
+        Cq=Cq,
+        model="fetkovich",
     )

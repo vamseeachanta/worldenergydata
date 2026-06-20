@@ -76,8 +76,10 @@ class ANPClient:
         # subsequent is_cached()/load_cached() calls would keep returning.
         leading = content[:512].lstrip().lower()
         content_type = response.headers.get("Content-Type", "").lower()
-        if leading.startswith(b"<!doctype html") or leading.startswith(b"<html") or (
-            "html" in content_type and "csv" not in content_type
+        if (
+            leading.startswith(b"<!doctype html")
+            or leading.startswith(b"<html")
+            or ("html" in content_type and "csv" not in content_type)
         ):
             raise ValueError(
                 f"ANP returned an HTML page (not CSV) for {year}-S{semester}; "

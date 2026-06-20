@@ -113,9 +113,7 @@ class NuprcClient:
                 if requests is None:
                     raise NuprcAPIError("requests library not installed")
 
-                resp = requests.get(
-                    url, timeout=self.timeout, headers=self.headers
-                )
+                resp = requests.get(url, timeout=self.timeout, headers=self.headers)
                 if resp.status_code == 200:
                     data = resp.content
                     if self.cache_enabled:

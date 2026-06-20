@@ -91,9 +91,7 @@ def _bDpss_radial(reD: float) -> float:
     return np.log(reD) - 0.5
 
 
-def _analytical_qDd(
-    tDd: NDArray[np.float64], reD: float
-) -> NDArray[np.float64]:
+def _analytical_qDd(tDd: NDArray[np.float64], reD: float) -> NDArray[np.float64]:
     """Analytical boundary-dominated qDd for Blasingame (harmonic)."""
     # During boundary-dominated flow, Blasingame collapses to 1/(1+tDd)
     # weighted by bDpss. For the full solution including transient,
@@ -216,7 +214,9 @@ def match_blasingame(
         x0 = [0.0, -3.0, reD_init]
         try:
             res = minimize(
-                objective, x0, method="Nelder-Mead",
+                objective,
+                x0,
+                method="Nelder-Mead",
                 options={"maxiter": 10000, "xatol": 1e-8, "fatol": 1e-10},
             )
             if best is None or res.fun < best.fun:
@@ -233,9 +233,7 @@ def match_blasingame(
 
     bDpss = _bDpss_radial(max(reD, 1.01))
     k = Cq * 141.2 * params.Bo * params.mu * bDpss / params.h
-    rwa = np.sqrt(
-        0.0002637 * k / (params.phi * params.mu * params.ct * Ct)
-    )
+    rwa = np.sqrt(0.0002637 * k / (params.phi * params.mu * params.ct * Ct))
     skin = np.log(params.rw / rwa) if rwa > 0 else 0.0
     re = reD * rwa
     ooip = np.pi * re**2 * params.h * params.phi * (1 - params.Sw) / (5.615 * params.Bo)
@@ -244,7 +242,17 @@ def match_blasingame(
     Di = Ct
 
     return MatchResult(
-        k=k, skin=skin, re=re, rwa=rwa, ooip=ooip,
-        qi=qi, Di=Di, b=1.0, reD=reD, residual=best.fun,
-        Ct=Ct, Cq=Cq, model="blasingame",
+        k=k,
+        skin=skin,
+        re=re,
+        rwa=rwa,
+        ooip=ooip,
+        qi=qi,
+        Di=Di,
+        b=1.0,
+        reD=reD,
+        residual=best.fun,
+        Ct=Ct,
+        Cq=Cq,
+        model="blasingame",
     )

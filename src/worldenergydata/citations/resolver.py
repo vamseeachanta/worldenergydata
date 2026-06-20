@@ -14,6 +14,7 @@ Handles both layouts:
 Canonical citation ``wiki_path`` form is ``wikis/<domain>/...`` (no
 ``knowledge/`` prefix). Parent walk is hard-capped to avoid an infinite loop.
 """
+
 from __future__ import annotations
 
 import logging
@@ -107,7 +108,9 @@ def resolve_wiki_base(*, override: Optional[Path] = None) -> Path:
     )
 
 
-def resolve_wiki_path(citation_wiki_path: str, *, override: Optional[Path] = None) -> Path:
+def resolve_wiki_path(
+    citation_wiki_path: str, *, override: Optional[Path] = None
+) -> Path:
     """Resolve a citation ``wiki_path`` to an absolute file path, both layouts."""
     base = resolve_wiki_base(override=override)
     standalone_join = base / citation_wiki_path

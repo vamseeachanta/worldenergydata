@@ -5,6 +5,7 @@ Regression coverage for the AST/depth-aware logging-setup injection: the
 the full import block, and must NEVER land inside an unclosed ``(`` of a
 multi-line import/call.
 """
+
 import ast
 import importlib.util
 from pathlib import Path
@@ -12,9 +13,7 @@ from pathlib import Path
 import pytest
 
 _SCRIPT = (
-    Path(__file__).resolve().parents[2]
-    / "scripts"
-    / "migrate_print_to_logging.py"
+    Path(__file__).resolve().parents[2] / "scripts" / "migrate_print_to_logging.py"
 )
 
 
@@ -38,7 +37,7 @@ def test_multiline_import_injection_is_valid_python(tmp_path: Path):
         "\n"
         "\n"
         "def run():\n"
-        "    print(f\"Loaded {BSEEIncidentsImporter}\")\n"
+        '    print(f"Loaded {BSEEIncidentsImporter}")\n'
     )
     f = tmp_path / "mod.py"
     f.write_text(src)
@@ -107,9 +106,9 @@ def test_error_and_warning_print_routing(tmp_path: Path):
         "\n"
         "\n"
         "def run():\n"
-        "    print(f\"ERROR bad: {sys.argv}\")\n"
-        "    print(f\"Warning slow\")\n"
-        "    print(f\"ok\")\n"
+        '    print(f"ERROR bad: {sys.argv}")\n'
+        '    print(f"Warning slow")\n'
+        '    print(f"ok")\n'
     )
     f = tmp_path / "mod.py"
     f.write_text(src)
@@ -140,7 +139,7 @@ def test_existing_logger_not_reinjected(tmp_path: Path):
         "\n"
         "\n"
         "def run():\n"
-        "    print(f\"hello\")\n"
+        '    print(f"hello")\n'
     )
     f = tmp_path / "mod.py"
     f.write_text(src)

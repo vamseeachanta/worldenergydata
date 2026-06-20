@@ -21,6 +21,7 @@ Example::
     activity_dist, pairs = ih.classify_records(clf, rows)
     drill = ih.compute_patterns(pairs, "DRILL", len(rows))
 """
+
 from __future__ import annotations
 
 from .classifier import get_incident_classifier
