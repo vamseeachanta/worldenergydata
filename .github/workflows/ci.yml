@@ -47,6 +47,15 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras
 
+      - name: Cache .pytest_cache (lastfailed / stepwise reuse across PR runs)
+        uses: actions/cache@v4
+        with:
+          path: tests/.pytest_cache
+          key: pytest-cache-pr-${{ runner.os }}-${{ hashFiles('uv.lock') }}-${{ github.run_id }}
+          restore-keys: |
+            pytest-cache-pr-${{ runner.os }}-${{ hashFiles('uv.lock') }}-
+            pytest-cache-pr-${{ runner.os }}-
+
       - name: Select test targets
         id: targets
         env:
@@ -60,12 +69,16 @@ jobs:
           echo "Changed files:"; cat changed-files.txt
           python3 scripts/ci/select_test_targets.py --files-from changed-files.txt >> "$GITHUB_OUTPUT"
 
-      - name: Run module-scoped tests (xdist)
+      - name: Run module-scoped tests (xdist, fast tier)
         run: |
           echo "Scope: ${{ steps.targets.outputs.scope }}"
           echo "xdist: ${{ steps.targets.outputs.xdist_targets }}"
+          # PR gate is the FAST tier: skip @pytest.mark.slow (>1s) tests — they
+          # still run in the full 3-Python matrix on push-to-main / nightly, so
+          # main coverage is unchanged. -n auto = pytest-xdist parallelism.
           uv run --with pytest-xdist pytest ${{ steps.targets.outputs.xdist_targets }} \
             -n auto \
+            -m "not slow" \
             --tb=short \
             --junitxml=test-results.xml
 
