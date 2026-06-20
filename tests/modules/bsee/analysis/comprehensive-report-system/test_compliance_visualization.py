@@ -166,12 +166,6 @@ class TestComplianceVisualizationGeneration:
         assert len(chart_html) > 0
         assert "No milestones to display" in chart_html
 
-    @pytest.mark.xfail(
-        reason="pre-existing bug surfaced after exec-hack removal (#314): "
-        "ComplianceTemplate has no attribute 'get_compliance_status_color'; "
-        "method was either renamed or never implemented — see #314 follow-up",
-        strict=False,
-    )
     def test_compliance_status_color_coding(self):
         """Test compliance status color coding"""
         # Test different score levels
@@ -190,13 +184,6 @@ class TestComplianceVisualizationGeneration:
         colors = [excellent_color, good_color, fair_color, poor_color]
         assert len(set(colors)) > 1  # Should have different colors
 
-    @pytest.mark.xfail(
-        reason="pre-existing bug surfaced after exec-hack removal (#314): "
-        "create_production_quota_chart raises KeyError 'gas_quota' when "
-        "quota_analysis context lacks gas keys — production code needs "
-        "defensive .get() lookup; see #314 follow-up",
-        strict=False,
-    )
     def test_all_chart_types_generated(self):
         """Test that all expected chart types are generated"""
         # Set up all context data
@@ -224,13 +211,6 @@ class TestComplianceVisualizationGeneration:
             assert isinstance(charts[chart_name], str)
             assert len(charts[chart_name]) > 0
 
-    @pytest.mark.xfail(
-        reason="pre-existing bug surfaced after exec-hack removal (#314): "
-        "generated chart HTML contains the literal substring 'error' (likely "
-        "from an error-handling template branch) — either assertion is too "
-        "strict or template emits stray text; see #314 follow-up",
-        strict=False,
-    )
     def test_chart_html_structure(self):
         """Test that generated charts have proper HTML structure"""
         charts = self.template.generate_compliance_visualizations(self.compliance_data)
@@ -240,8 +220,14 @@ class TestComplianceVisualizationGeneration:
             assert "<div" in chart_html or "<html" in chart_html
             # Should contain plotly CDN reference
             assert "plotly" in chart_html.lower()
-            # Should not contain script errors
-            assert "error" not in chart_html.lower()
+            # Should not contain genuine script errors. The bare substring
+            # "error" is unsafe here: plotly's embedded default template
+            # legitimately serializes the "error_x"/"error_y" trace styling
+            # keys. Check for real error indicators instead.
+            lower = chart_html.lower()
+            assert "traceback" not in lower
+            assert "exception" not in lower
+            assert "<error" not in lower
 
     def test_chart_data_integration(self):
         """Test that compliance data is properly integrated into charts"""
@@ -281,13 +267,6 @@ class TestComplianceVisualizationGeneration:
             # Charts should have titles for accessibility
             assert "title" in chart_html.lower()
 
-    @pytest.mark.xfail(
-        reason="pre-existing bug surfaced after exec-hack removal (#314): "
-        "generate_compliance_visualizations() raises plotly ValueError on "
-        "invalid/None data — production code lacks defensive coercion; "
-        "see #314 follow-up",
-        strict=False,
-    )
     def test_chart_error_handling(self):
         """Test chart generation error handling"""
         # Test with invalid compliance data
@@ -339,12 +318,6 @@ class TestComplianceDashboardSpecific:
         """Clean up test fixtures"""
         shutil.rmtree(self.temp_dir)
 
-    @pytest.mark.xfail(
-        reason="pre-existing bug surfaced after exec-hack removal (#314): "
-        "ComplianceTemplate has no attribute '_create_compliance_dashboard' "
-        "— method was refactored or renamed; see #314 follow-up",
-        strict=False,
-    )
     def test_compliance_dashboard_gauge_configuration(self):
         """Test compliance dashboard gauge chart configuration"""
         compliance_data = {
@@ -365,12 +338,6 @@ class TestComplianceDashboardSpecific:
         assert "Safety Score" in dashboard_html
         assert "Overall Compliance" in dashboard_html
 
-    @pytest.mark.xfail(
-        reason="pre-existing bug surfaced after exec-hack removal (#314): "
-        "ComplianceTemplate has no attribute '_create_compliance_dashboard' "
-        "— method was refactored or renamed; see #314 follow-up",
-        strict=False,
-    )
     def test_compliance_dashboard_threshold_visualization(self):
         """Test dashboard threshold visualization"""
         # Test data with different threshold levels
@@ -396,12 +363,6 @@ class TestComplianceDashboardSpecific:
             # Should contain gauge elements
             assert "gauge" in dashboard_html.lower()
 
-    @pytest.mark.xfail(
-        reason="pre-existing bug surfaced after exec-hack removal (#314): "
-        "ComplianceTemplate has no attribute '_create_compliance_dashboard' "
-        "— method was refactored or renamed; see #314 follow-up",
-        strict=False,
-    )
     def test_dashboard_layout_structure(self):
         """Test dashboard layout structure"""
         compliance_data = {

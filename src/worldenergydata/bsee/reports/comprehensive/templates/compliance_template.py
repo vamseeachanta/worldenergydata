@@ -313,6 +313,23 @@ class ComplianceTemplate(BaseReportTemplate):
 
         return charts
 
+    def get_compliance_status_color(self, score: float) -> str:
+        """Return the hex color code for a given compliance score.
+
+        Thin instance-level wrapper around the module-level
+        :func:`get_compliance_status_color` helper so callers can invoke it
+        as a template method.
+        """
+        return get_compliance_status_color(score)
+
+    def _create_compliance_dashboard(self, compliance_data: Dict[str, Any]) -> str:
+        """Build the compliance dashboard HTML from compliance data.
+
+        Thin instance-level wrapper around the module-level
+        :func:`create_compliance_dashboard` chart generator.
+        """
+        return create_compliance_dashboard(compliance_data)
+
     def add_regulatory_references(self):
         """Add comprehensive regulatory reference links and citations"""
         all_references = get_all_references()

@@ -14,6 +14,16 @@ from plotly.subplots import make_subplots
 from .compliance_models import RegulatoryMilestone
 
 
+def _as_number(value: Any, default: float = 0.0) -> float:
+    """Coerce a value to float, falling back to ``default`` for invalid/None input."""
+    try:
+        if value is None:
+            return default
+        return float(value)
+    except (TypeError, ValueError):
+        return default
+
+
 def create_compliance_dashboard(compliance_data: Dict[str, Any]) -> str:
     """Create compliance dashboard with gauge charts"""
     # Create subplot with gauge charts
@@ -36,7 +46,7 @@ def create_compliance_dashboard(compliance_data: Dict[str, Any]) -> str:
     fig.add_trace(
         go.Indicator(
             mode="gauge+number+delta",
-            value=compliance_data.get("production_compliance", 0),
+            value=_as_number(compliance_data.get("production_compliance", 0)),
             domain={"x": [0, 1], "y": [0, 1]},
             title={"text": "Production Compliance (%)"},
             gauge={
@@ -61,7 +71,7 @@ def create_compliance_dashboard(compliance_data: Dict[str, Any]) -> str:
     fig.add_trace(
         go.Indicator(
             mode="gauge+number",
-            value=compliance_data.get("environmental_score", 0) * 100,
+            value=_as_number(compliance_data.get("environmental_score", 0)) * 100,
             domain={"x": [0, 1], "y": [0, 1]},
             title={"text": "Environmental Score (%)"},
             gauge={
@@ -86,7 +96,7 @@ def create_compliance_dashboard(compliance_data: Dict[str, Any]) -> str:
     fig.add_trace(
         go.Indicator(
             mode="gauge+number",
-            value=compliance_data.get("safety_score", 0) * 100,
+            value=_as_number(compliance_data.get("safety_score", 0)) * 100,
             domain={"x": [0, 1], "y": [0, 1]},
             title={"text": "Safety Score (%)"},
             gauge={
@@ -111,7 +121,7 @@ def create_compliance_dashboard(compliance_data: Dict[str, Any]) -> str:
     fig.add_trace(
         go.Indicator(
             mode="gauge+number",
-            value=compliance_data.get("overall_compliance_score", 0) * 100,
+            value=_as_number(compliance_data.get("overall_compliance_score", 0)) * 100,
             domain={"x": [0, 1], "y": [0, 1]},
             title={"text": "Overall Compliance (%)"},
             gauge={
@@ -141,10 +151,13 @@ def create_production_quota_chart(quota_data: Dict[str, Any]) -> str:
     """Create production quota vs actual chart"""
     categories = ["Oil Production", "Gas Production"]
     quota_values = [
-        quota_data["oil_quota"],
-        quota_data["gas_quota"] / 1000,
+        _as_number(quota_data.get("oil_quota", 0)),
+        _as_number(quota_data.get("gas_quota", 0)) / 1000,
     ]  # Convert gas to Mcf
-    actual_values = [quota_data["oil_actual"], quota_data["gas_actual"] / 1000]
+    actual_values = [
+        _as_number(quota_data.get("oil_actual", 0)),
+        _as_number(quota_data.get("gas_actual", 0)) / 1000,
+    ]
 
     fig = go.Figure()
 
