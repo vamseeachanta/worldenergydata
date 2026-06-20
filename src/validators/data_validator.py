@@ -15,9 +15,13 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import pandas as pd
-import plotly.graph_objects as go
 import yaml
-from plotly.subplots import make_subplots
+
+# NOTE: plotly is imported lazily inside generate_interactive_report() to keep it
+# off the import/init path. It is the only consumer of plotly, and pulling
+# plotly.graph_objects in at module load added hundreds of ms to every import of
+# this module (and the DataValidator.__init__ / validate_dataframe test paths),
+# which surfaced as the Phase-2B test-suite regression (#277).
 
 
 class DataValidator:
@@ -234,6 +238,12 @@ class DataValidator:
             validation_results: Results from validate_dataframe()
             output_path: Path to save HTML report
         """
+        # Lazy import: plotly is only needed for the interactive report and is
+        # expensive to import; keeping it here avoids paying that cost on every
+        # import of this module / DataValidator init (see #277).
+        import plotly.graph_objects as go
+        from plotly.subplots import make_subplots
+
         # Create subplots
         fig = make_subplots(
             rows=2,
