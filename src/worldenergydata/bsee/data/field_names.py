@@ -30,19 +30,17 @@ class FieldNameResolver:
     directory. Handles LFS stubs and missing files gracefully.
     """
 
-    # Sources to load, in priority order (first wins for duplicate codes)
+    # Sources to load, in priority order (first wins for duplicate codes).
+    # The deep-water-leases table carries the authoritative field nickname
+    # (``FLD_NICK_NAME``, e.g. "Mars-Ursa"); the platform-structures table
+    # only has *structure* names ("A (Mars)"), so it is intentionally not
+    # used as a field-name source (it would mislabel fields).
     _SOURCES = [
         {
             "subdir": "deepqual",
             "file": "mv_deep_water_field_leases.bin",
             "code_col": "FIELD_NAME_CODE",
-            "name_col": "FIELD_NAME",
-        },
-        {
-            "subdir": "platstruc",
-            "file": "mv_platstruc_structures.bin",
-            "code_col": "FIELD_NAME_CODE",
-            "name_col": "FIELD_NAME",
+            "name_col": "FLD_NICK_NAME",
         },
     ]
 
