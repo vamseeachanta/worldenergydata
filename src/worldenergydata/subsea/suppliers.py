@@ -26,9 +26,7 @@ from worldenergydata.subsea.schemas.manifold_supplier import (
 
 logger = logging.getLogger(__name__)
 
-_DEFAULT_CSV = (
-    get_module_data_safe("subsea") / "curated" / "manifold_suppliers.csv"
-)
+_DEFAULT_CSV = get_module_data_safe("subsea") / "curated" / "manifold_suppliers.csv"
 
 
 class ManifoldSupplierLoader:
@@ -75,9 +73,7 @@ class ManifoldSupplierLoader:
         if country is not None:
             needle = country.lower()
             results = [
-                r
-                for r in results
-                if r.HQ_COUNTRY and needle in r.HQ_COUNTRY.lower()
+                r for r in results if r.HQ_COUNTRY and needle in r.HQ_COUNTRY.lower()
             ]
         if min_water_depth_m is not None:
             results = [
