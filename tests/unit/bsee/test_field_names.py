@@ -158,3 +158,40 @@ class TestFieldNameResolver:
         result = self.resolver.get_all_field_names()
         result["999"] = "New Field"
         assert "999" not in self.resolver._field_names
+
+    def test_sources_use_deepwater_field_nickname(self):
+        """The deep-water-leases nickname column is the field-name source.
+
+        Locks the fix for the materialized-data vintage: the name column is
+        ``FLD_NICK_NAME`` (not ``FIELD_NAME``), and the platform-structures
+        table is not used as a name source.
+        """
+        from worldenergydata.bsee.data.field_names import FieldNameResolver
+
+        sources = FieldNameResolver._SOURCES
+        assert len(sources) == 1
+        assert sources[0]["subdir"] == "deepqual"
+        assert sources[0]["name_col"] == "FLD_NICK_NAME"
+
+    def test_resolve_loads_from_deepqual_bin(self, tmp_path):
+        """End-to-end resolve from a synthetic deep-water-leases pickle."""
+        import pickle
+
+        from worldenergydata.bsee.data.field_names import FieldNameResolver
+
+        deepqual = tmp_path / "deepqual"
+        deepqual.mkdir()
+        df = pd.DataFrame(
+            {
+                "FIELD_NAME_CODE": ["MC807", "GC640"],
+                "FLD_NICK_NAME": ["Mars-Ursa", "K2"],
+            }
+        )
+        with open(deepqual / "mv_deep_water_field_leases.bin", "wb") as f:
+            pickle.dump(df, f)
+
+        resolver = FieldNameResolver(data_dir=tmp_path)
+        assert resolver.resolve("MC807") == "Mars-Ursa"
+        assert resolver.resolve("GC640") == "K2"
+        # Unknown (shelf) field falls back to its code — never fabricated.
+        assert resolver.resolve("ST295") == "ST295"
