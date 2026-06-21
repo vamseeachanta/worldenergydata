@@ -22,7 +22,7 @@
 
 version: "1.0"
 generated_at: "2026-05-04"
-total_modules: 27
+total_modules: 28
 
 modules:
 
@@ -459,6 +459,28 @@ modules:
     catalog_status: full
     capability_source: manifest
     related_wrk: [WRK-050, WRK-246, WRK-255]
+
+  # ── SUBSEA ──────────────────────────────────────────────────────────────────
+
+  - id: subsea
+    name: "Subsea Hardware & Suppliers"
+    package: "worldenergydata.subsea"
+    region: [global]
+    domain: [subsea, vessel_data]
+    data_types:
+      - manifold_suppliers
+      - mooring_components
+      - rigid_jumper_specs
+    key_classes:
+      - ManifoldSupplierLoader
+      - ManifoldSupplierSchema
+    status: stable
+    entry_point: "from worldenergydata.subsea import ManifoldSupplierLoader"
+    notes: "Subsea production-hardware datasets and supplier market intelligence — curated key-players database for subsea manifold OEMs / EPCI players (TechnipFMC, SLB OneSubsea, Baker Hughes, Aker Solutions, Subsea7, McDermott, Dril-Quip/Innovex, Trendsetter, plus subsystem adjacencies ABB and Halliburton), each row source-attributed."
+    in_scheduler: false
+    public_cli: false
+    catalog_status: sample
+    capability_source: manifest
 
   # ── VESSEL ──────────────────────────────────────────────────────────────────
 
