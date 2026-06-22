@@ -45,6 +45,7 @@ Total modules indexed: **27** (18 data-source + 7 infrastructure + 2 analysis/vi
 | Module | Region | Key Data Types | Status |
 |--------|--------|---------------|--------|
 | `lng_terminals` | Global | terminal locations, capacities, infrastructure | beta |
+| `subsea` | Global | manifold suppliers (key players), mooring components, rigid jumper specs | stable |
 | `vessel_fleet` | Global | construction vessels, drilling risers, BOP equipment | stable |
 | `vessel_hull_models` | Global | hull geometry (OBJ), rig hulls | stable |
 | `well_production_dashboard` | Gulf of Mexico | interactive dashboards, well metrics, field aggregation | stable |
