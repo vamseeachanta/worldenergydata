@@ -35,6 +35,53 @@ class AllFieldsReport:
         )
         return grouped.sort_values("TOTAL_OIL_MMBBL", ascending=False)
 
+    def get_operator_concentration(self) -> dict:
+        """Compute basin-level operator concentration from dominant operators.
+
+        Oil is attributed to each field's DOMINANT_OPERATOR, summed across the
+        basin.  Returns the Herfindahl-Hirschman Index (HHI, sum of squared
+        market shares as fractions in 0..1), top-1 and top-5 oil shares, and
+        the ranked operator oil totals.  Guards empty / missing-column input.
+        """
+        empty = {
+            "hhi": None,
+            "top1_share": None,
+            "top5_share": None,
+            "n_operators": 0,
+            "operator_oil": {},
+        }
+        if (
+            self._df.empty
+            or "DOMINANT_OPERATOR" not in self._df.columns
+            or "CUM_OIL_MMBBL" not in self._df.columns
+        ):
+            return empty
+
+        work = self._df[["DOMINANT_OPERATOR", "CUM_OIL_MMBBL"]].copy()
+        work = work[work["DOMINANT_OPERATOR"].notna()]
+        work["DOMINANT_OPERATOR"] = work["DOMINANT_OPERATOR"].astype(str).str.strip()
+        work = work[work["DOMINANT_OPERATOR"] != ""]
+        if work.empty:
+            return empty
+
+        by_op = (
+            work.groupby("DOMINANT_OPERATOR")["CUM_OIL_MMBBL"].sum().sort_values(
+                ascending=False
+            )
+        )
+        total = by_op.sum()
+        if total <= 0:
+            return empty
+
+        shares = by_op / total
+        return {
+            "hhi": round(float((shares**2).sum()), 4),
+            "top1_share": round(float(shares.iloc[0]), 4),
+            "top5_share": round(float(shares.iloc[:5].sum()), 4),
+            "n_operators": int(by_op.shape[0]),
+            "operator_oil": {str(k): round(float(v), 1) for k, v in by_op.items()},
+        }
+
     def generate_markdown(self, output_path: Path) -> None:
         """Generate a structured Markdown report."""
         output_path = Path(output_path)
@@ -77,18 +124,39 @@ class AllFieldsReport:
                     )
                 lines.append("")
 
+            # Operator Concentration
+            conc = self.get_operator_concentration()
+            if conc.get("hhi") is not None:
+                lines.append("## Operator Concentration")
+                lines.append("")
+                lines.append(
+                    f"- **Basin HHI (by dominant-operator oil)**: {conc['hhi']:.4f}"
+                )
+                lines.append(f"- **Top-1 operator oil share**: {conc['top1_share']:.1%}")
+                lines.append(f"- **Top-5 operator oil share**: {conc['top5_share']:.1%}")
+                lines.append(f"- **Distinct dominant operators**: {conc['n_operators']}")
+                lines.append("")
+                lines.append("| Operator | Oil (MMBBL) | Share |")
+                lines.append("|----------|-------------|-------|")
+                total_oil_conc = sum(conc["operator_oil"].values()) or 1.0
+                for op, oil in list(conc["operator_oil"].items())[:5]:
+                    lines.append(
+                        f"| {op} | {oil:,.1f} | {oil / total_oil_conc:.1%} |"
+                    )
+                lines.append("")
+
             # Top Fields Table
             lines.append("## Top Fields by Production")
             lines.append("")
             top = self._df.head(20)
             if not top.empty:
                 lines.append(
-                    "| Field | Era | Oil (MMBBL) | Gas (BCF) | "
-                    "Wells | First Prod | Water Depth (ft) |"
+                    "| Field | Era | Oil (MMBBL) | Gas (BCF) | Wells | "
+                    "Rec/Well (MMBBL) | BOPD/Well | First Prod | Water Depth (ft) |"
                 )
                 lines.append(
-                    "|-------|-----|-------------|-----------|"
-                    "-------|------------|------------------|"
+                    "|-------|-----|-------------|-----------|-------|"
+                    "------------------|-----------|------------|------------------|"
                 )
                 for _, row in top.iterrows():
                     name = row.get("FIELD_NAME", row.get("FIELD_CODE", ""))
@@ -99,9 +167,13 @@ class AllFieldsReport:
                     first = row.get("FIRST_PRODUCTION", "")
                     wd = row.get("WATER_DEPTH_AVG", "")
                     wd_str = f"{wd:,.0f}" if pd.notna(wd) else ""
+                    rpw = row.get("REC_PER_WELL_MMBBL", None)
+                    rpw_str = f"{rpw:,.3f}" if pd.notna(rpw) else ""
+                    bpw = row.get("AVG_BOPD_PER_WELL", None)
+                    bpw_str = f"{bpw:,.0f}" if pd.notna(bpw) else ""
                     lines.append(
-                        f"| {name} | {era} | {oil:,.1f} | {gas:,.1f} "
-                        f"| {wells} | {first} | {wd_str} |"
+                        f"| {name} | {era} | {oil:,.1f} | {gas:,.1f} | {wells} "
+                        f"| {rpw_str} | {bpw_str} | {first} | {wd_str} |"
                     )
                 lines.append("")
 
@@ -168,6 +240,27 @@ class AllFieldsReport:
                         yaxis_title="Cumulative Oil (MMBBL)",
                     )
                     html_parts.append(fig1.to_html(full_html=False))
+
+                # Chart 1b: Top 10 operators by cumulative oil (bar)
+                conc = self.get_operator_concentration()
+                op_oil = conc.get("operator_oil") or {}
+                if op_oil:
+                    top_ops = list(op_oil.items())[:10]
+                    figop = go.Figure(
+                        data=[
+                            go.Bar(
+                                x=[o for o, _ in top_ops],
+                                y=[v for _, v in top_ops],
+                                marker_color="#2ca02c",
+                            )
+                        ]
+                    )
+                    figop.update_layout(
+                        title="Top 10 Operators by Cumulative Oil Production",
+                        xaxis_title="Operator (dominant per field)",
+                        yaxis_title="Cumulative Oil (MMBBL)",
+                    )
+                    html_parts.append(figop.to_html(full_html=False))
 
                 # Chart 2: Top 15 fields by production (horizontal bar)
                 top15 = self._df.head(15)
