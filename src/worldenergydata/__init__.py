@@ -44,6 +44,20 @@ Backward compatibility:
 # Version of package
 __version__ = "0.1.0"
 
+# ---------------------------------------------------------------------------
+# Namespace extensibility (ADR 0001 — domain-package split, Phase 1)
+# ---------------------------------------------------------------------------
+# Extend this package's ``__path__`` so the ``worldenergydata`` namespace can
+# later be contributed to by multiple independently-built/-versioned
+# distributions (uv workspace members) that each ship ``worldenergydata/<domain>/``.
+# A plain regular-package ``__init__.py`` pins ``__path__`` to a single
+# location and blocks distributed extension (ADR POC 3 Case B); adopting
+# ``pkgutil.extend_path`` lets the namespace span every install location while
+# preserving this module's ``__version__``, the ``_compat`` legacy redirect,
+# and the lazy ``__getattr__`` below (ADR POC 3 Case C / POC 4).
+# This is a no-op today (single distribution) and introduces no behavior change.
+__path__ = __import__("pkgutil").extend_path(__path__, __name__)
+
 # Activate backward-compatibility redirect for worldenergydata.X imports
 from worldenergydata._compat import install_redirect as _install_redirect
 

@@ -166,3 +166,69 @@ This ADR is a **spike deliverable only**. Per #529, **no source move, no `pyproj
 5. the **CLI** ownership (core/meta vs. plugin discovery).
 
 Sign-off here, then implementation proceeds PR-by-PR per the phased plan, each with a `digitalmodel` downstream smoke test.
+
+---
+
+## Phase 1 implementation note (foundation — issue #529)
+
+Phase 1 lands the low-risk, reversible foundation that *enables* the split
+without moving any domain code (code-carving is Phase 2, gated on this being
+reviewed). What shipped in this PR:
+
+1. **Namespace-extensible root package.** `src/worldenergydata/__init__.py`
+   now adopts `__path__ = pkgutil.extend_path(__path__, __name__)` (ADR POC 3
+   Case C / POC 4). `__version__`, the `_compat` legacy redirect, and the lazy
+   `__getattr__` are all preserved — this is a no-op for the current single
+   distribution and introduces no behavior change. It lets the
+   `worldenergydata` namespace later be contributed to by multiple
+   independently-built/-versioned distributions (the Phase 2 uv workspace
+   members), so downstream `import worldenergydata.<domain>` stays unchanged.
+
+2. **Per-domain optional-dependency extras — DEFERRED (the (c) down-payment).**
+   Investigated whether domains have cleanly separable third-party deps.
+   They do **not** yet: the heavy deps are shared across many domains *and*
+   across shared infra, so nothing can move out of always-installed core
+   without breaking core. Measured on `main`:
+   - `bs4` → 7 domains **+ `common`** (bsee, lng_terminals, marine_safety,
+     metocean, vessel_fleet, west_africa)
+   - `plotly` → 13 areas incl. **`common`, `reporting`, `testing`, `dashboard`**
+   - `sqlalchemy` → 5 areas incl. **`cli`** (hse, marine_safety, metocean,
+     pipeline_safety)
+   - `pdfplumber` → 5 domains; `selenium` → **`cli`** + mexico_cnh
+   Because shared infra (`common`/`cli`/`reporting`/`testing`) itself pulls
+   `bs4`/`plotly`/`sqlalchemy`/`selenium`, per-domain extras would be
+   cosmetic (and option (c)'s own con notes extras gate *dependencies*, not
+   *code*). Meaningful per-domain extras require the Phase 2 package
+   boundaries to exist first, at which point each member declares its own
+   dependency set. **The (c) down-payment is deferred to Phase 2.** The
+   existing `dev`/`test`/`docs`/`llm`/`safety-ml`/`safety-bert` extras are
+   left untouched.
+
+3. **uv workspace scaffolding (prep only, no members).** `pyproject.toml`
+   carries a **commented** `[tool.uv.workspace]` / `[tool.uv.sources]` block
+   documenting the intended Phase 2 members layout. It is commented because
+   activating workspace mode requires member packages to exist; doing so now
+   would break the single-package build. No member packages created, no code
+   moved.
+
+**Validated (real commands on the fresh clone):**
+- `uv build --wheel` succeeds; the wheel still contains **all 43**
+  `worldenergydata.*` subpackages (extend_path did not break
+  `[tool.setuptools.packages.find]` discovery), and the shipped
+  `__init__.py` carries `extend_path`.
+- Installed the wheel into a clean venv: `worldenergydata.__version__` ==
+  `0.1.0`; `worldenergydata.__path__` is a real extensible list;
+  `worldenergydata.common`, `from worldenergydata import bsee`, lazy
+  `worldenergydata.marine_safety_api`, and the legacy
+  `worldenergydata.modules.bsee` → `worldenergydata.bsee` redirect (with
+  `DeprecationWarning`, identity-preserving) all work.
+- `pytest tests/unit/common tests/unit/bsee tests/contracts` →
+  3013 passed, 29 skipped (pre-existing environmental skips), 0 failures.
+  `tests/unit/test_modules_compat.py` → 3 passed.
+- `uv.lock` deliberately kept out of the diff.
+
+**Phase 2 readiness:** the namespace mechanism is live and proven on the real
+tree; downstream import path is unchanged. The gated next step is carving
+`worldenergydata-core` (the fan-in-26 shared infra) as the first uv workspace
+member, then rolling out leaf domains most-isolated-first, each as its own PR
+with a `digitalmodel` downstream smoke test — exactly the phased plan above.
