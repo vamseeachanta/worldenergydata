@@ -23,6 +23,10 @@ from collections import Counter
 from pathlib import Path
 
 from worldenergydata.bsee.analysis.all_fields_runner import AllFieldsRunner
+from worldenergydata.bsee.analysis.field_revenue import (
+    apply_field_revenue,
+    build_field_oil_revenue,
+)
 from worldenergydata.bsee.data.field_names import FieldNameResolver
 from worldenergydata.bsee.data.sources.bin.field_water_depth import (
     load_field_water_depth,
@@ -141,6 +145,25 @@ def main() -> int:
             len(result),
             unknown,
             lt,
+        )
+
+    # Gross oil revenue (economics tier): monthly oil x real monthly WTI.
+    # Oil only (no gas price deck); gross, pre-royalty, pre-cost. Fields with
+    # no priced production keep an honest null.
+    logger.info("Building gross oil revenue (oil x real WTI)...")
+    rev = build_field_oil_revenue(
+        start_year=args.start_year, end_year=args.end_year
+    )
+    result = apply_field_revenue(result, rev)
+    if "GROSS_OIL_REVENUE_MM_USD" in result.columns and not result.empty:
+        basin_rev = float(result["GROSS_OIL_REVENUE_MM_USD"].sum(skipna=True))
+        n_with_rev = int(result["GROSS_OIL_REVENUE_MM_USD"].notna().sum())
+        logger.info(
+            "Basin total gross oil revenue $%.1f MM across %d/%d fields with "
+            "a value (oil only, gross pre-royalty pre-cost)",
+            basin_rev,
+            n_with_rev,
+            len(result),
         )
 
     args.out.mkdir(parents=True, exist_ok=True)
