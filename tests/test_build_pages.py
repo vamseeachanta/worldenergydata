@@ -10,6 +10,7 @@ These verify the per-domain build isolation contract:
 The builder writes to module-level ``PUBLIC``/``ASSETS`` paths under the repo;
 we redirect those to a tmp dir so tests never touch the working tree.
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -89,4 +90,6 @@ def test_registry_keys_match_reports_dirs(bp):
     # Each registered domain key should correspond to a reports/<domain>/ dir.
     reports = Path(bp.REPORTS)
     for name in bp.DOMAINS:
-        assert (reports / name).is_dir(), f"DOMAINS key {name!r} has no reports/{name}/ dir"
+        assert (
+            reports / name
+        ).is_dir(), f"DOMAINS key {name!r} has no reports/{name}/ dir"
