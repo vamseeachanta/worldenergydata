@@ -126,7 +126,7 @@ def to_runner_schema(df: pd.DataFrame) -> pd.DataFrame:
     Produces the columns the runner detects and aggregates:
     ``FIELD_NAME_CODE``, ``LEASE_NUMBER``, ``API_WELL_NUMBER``,
     ``PROD_YEAR``, ``MON_O_PROD_VOL``, ``MON_G_PROD_VOL``,
-    ``MON_WTR_PROD_VOL``, ``DAYS_ON_PROD``.
+    ``MON_WTR_PROD_VOL``, ``DAYS_ON_PROD``, ``OPERATOR``.
     """
     out_cols = [
         "FIELD_NAME_CODE",
@@ -137,6 +137,7 @@ def to_runner_schema(df: pd.DataFrame) -> pd.DataFrame:
         "MON_G_PROD_VOL",
         "MON_WTR_PROD_VOL",
         "DAYS_ON_PROD",
+        "OPERATOR",
     ]
     if df.empty:
         return pd.DataFrame(columns=out_cols)
@@ -146,6 +147,11 @@ def to_runner_schema(df: pd.DataFrame) -> pd.DataFrame:
     # Field code (BOEM_FIELD) and identifiers — strip whitespace/quotes.
     out["FIELD_NAME_CODE"] = (
         df["BOEM_FIELD"].astype(str).str.replace('"', "", regex=False).str.strip()
+    )
+
+    # Operator name (SORT_NAME) — strip whitespace and surrounding quotes.
+    out["OPERATOR"] = (
+        df["SORT_NAME"].astype(str).str.replace('"', "", regex=False).str.strip()
     )
     out["LEASE_NUMBER"] = (
         df["LEASE_NUMBER"]

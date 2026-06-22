@@ -24,6 +24,9 @@ from pathlib import Path
 
 from worldenergydata.bsee.analysis.all_fields_runner import AllFieldsRunner
 from worldenergydata.bsee.data.field_names import FieldNameResolver
+from worldenergydata.bsee.data.sources.bin.field_water_depth import (
+    load_field_water_depth,
+)
 from worldenergydata.bsee.data.sources.bin.ogor_production_loader import (
     load_all_fields_production,
 )
@@ -101,8 +104,19 @@ def main() -> int:
     resolver = FieldNameResolver()
     era = build_era_classifier()
 
+    logger.info("Loading field water depth...")
+    field_wd = load_field_water_depth()
+    logger.info("Field water depth available for %d field codes", len(field_wd))
+
+    latest_year = None
+    if "PROD_YEAR" in prod.columns:
+        years = prod["PROD_YEAR"].dropna()
+        latest_year = int(years.max()) if not years.empty else None
+
     logger.info("Aggregating all fields...")
-    result = AllFieldsRunner(resolver, era).run(prod)
+    result = AllFieldsRunner(resolver, era).run(
+        prod, field_water_depth=field_wd, latest_year=latest_year
+    )
     logger.info("Aggregated %d fields", len(result))
 
     args.out.mkdir(parents=True, exist_ok=True)
