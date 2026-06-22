@@ -105,6 +105,19 @@ class AllFieldsReport:
         lines.append(f"- **Cumulative oil production**: {total_oil:,.1f} MMBBL")
         lines.append(f"- **Cumulative gas production**: {total_gas:,.1f} BCF")
         lines.append(f"- **Geological eras represented**: {n_eras}")
+        has_rev = not self._df.empty and "GROSS_OIL_REVENUE_MM_USD" in self._df.columns
+        if has_rev:
+            total_rev = self._df["GROSS_OIL_REVENUE_MM_USD"].sum(skipna=True)
+            n_with_rev = int(self._df["GROSS_OIL_REVENUE_MM_USD"].notna().sum())
+            lines.append(
+                f"- **Gross oil revenue (pre-royalty, pre-cost, oil only)**: "
+                f"${total_rev:,.0f} MM across {n_with_rev} fields"
+            )
+            lines.append(
+                "  - *Monthly oil production x real monthly WTI; topline "
+                "revenue only (no royalty/opex/capex, no gas). Fields without "
+                "priced production are left blank, not zeroed.*"
+            )
         lines.append("")
 
         # Era Grouping
@@ -156,11 +169,13 @@ class AllFieldsReport:
             if not top.empty:
                 lines.append(
                     "| Field | Era | Oil (MMBBL) | Gas (BCF) | Wells | "
-                    "Rec/Well (MMBBL) | BOPD/Well | First Prod | Water Depth (ft) |"
+                    "Rec/Well (MMBBL) | BOPD/Well | First Prod | "
+                    "Water Depth (ft) | Gross Oil Rev ($MM) |"
                 )
                 lines.append(
                     "|-------|-----|-------------|-----------|-------|"
-                    "------------------|-----------|------------|------------------|"
+                    "------------------|-----------|------------|"
+                    "------------------|--------------------|"
                 )
                 for _, row in top.iterrows():
                     name = row.get("FIELD_NAME", row.get("FIELD_CODE", ""))
@@ -175,9 +190,12 @@ class AllFieldsReport:
                     rpw_str = f"{rpw:,.3f}" if pd.notna(rpw) else ""
                     bpw = row.get("AVG_BOPD_PER_WELL", None)
                     bpw_str = f"{bpw:,.0f}" if pd.notna(bpw) else ""
+                    rev = row.get("GROSS_OIL_REVENUE_MM_USD", None)
+                    rev_str = f"{rev:,.0f}" if pd.notna(rev) else ""
                     lines.append(
                         f"| {name} | {era} | {oil:,.1f} | {gas:,.1f} | {wells} "
-                        f"| {rpw_str} | {bpw_str} | {first} | {wd_str} |"
+                        f"| {rpw_str} | {bpw_str} | {first} | {wd_str} "
+                        f"| {rev_str} |"
                     )
                 lines.append("")
 
