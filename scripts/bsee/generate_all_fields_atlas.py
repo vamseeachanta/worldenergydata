@@ -23,6 +23,10 @@ from collections import Counter
 from pathlib import Path
 
 from worldenergydata.bsee.analysis.all_fields_runner import AllFieldsRunner
+from worldenergydata.bsee.analysis.field_decom import (
+    apply_field_decom,
+    build_field_decom_liability,
+)
 from worldenergydata.bsee.analysis.field_revenue import (
     apply_field_revenue,
     build_field_oil_revenue,
@@ -163,6 +167,29 @@ def main() -> int:
             "a value (oil only, gross pre-royalty pre-cost)",
             basin_rev,
             n_with_rev,
+            len(result),
+        )
+
+    # Decommissioning liability (Rank-2 economics): BSEE-provided P50/P70/P90
+    # future abandonment cost estimates, summed across cost-category rows per
+    # lease and rolled up to field via the OGOR-A lease->field crosswalk. These
+    # are BSEE estimates with their own uncertainty bands, not our model; fields
+    # with no decom estimate keep an honest null.
+    logger.info("Building decommissioning liability (BSEE P50/P70/P90)...")
+    decom = build_field_decom_liability(
+        ogor_dir=args.data_dir, start_year=args.start_year, end_year=args.end_year
+    )
+    result = apply_field_decom(result, decom)
+    if "DECOM_P50_MM_USD" in result.columns and not result.empty:
+        basin_p50 = float(result["DECOM_P50_MM_USD"].sum(skipna=True))
+        basin_p90 = float(result["DECOM_P90_MM_USD"].sum(skipna=True))
+        n_with_decom = int(result["DECOM_P50_MM_USD"].notna().sum())
+        logger.info(
+            "Basin decommissioning liability (BSEE estimate): P50 $%.1f MM, "
+            "P90 $%.1f MM across %d/%d fields with a decom estimate.",
+            basin_p50,
+            basin_p90,
+            n_with_decom,
             len(result),
         )
 
