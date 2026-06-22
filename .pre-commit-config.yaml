@@ -124,6 +124,13 @@ repos:
         stages: [pre-commit]
         additional_dependencies:
           - PyYAML
+      - id: legal-sanity-scan
+        name: Legal sanity scan (deny list)
+        language: script
+        entry: ../scripts/legal/legal-sanity-scan.sh
+        args: [--repo=worldenergydata]
+        pass_filenames: false
+        stages: [pre-commit]
 
 # CI configuration
 ci:
