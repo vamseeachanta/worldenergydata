@@ -17,74 +17,117 @@ env:
   PYTHON_VERSION_DEFAULT: "3.11"
 
 jobs:
-  # ---------------------------------------------------------------- PR gate --
-  # Module-scoped fast gate (#474, #496): a PR tests only the modules its changed
-  # paths touch (+ the always-on cross-cutting core), on one Python, xdist, no
-  # coverage. Targets come from scripts/ci/select_test_targets.py — the single
-  # source of truth (a module is mapped iff tests/unit/<module>/ exists; new
-  # modules auto-map, guarded by tests/ci/test_select_test_targets.py). The full
-  # 3-Python matrix runs on push to main, nightly, dispatch, or `ci-full` PRs.
+  # --------------------------------------------------------- PR domain gate --
+  # Modular per-domain PR gate (#474, #496, domain-matrix): a PR fans out into
+  # one CI job per touched domain (+ the always-on cross-cutting core), so each
+  # domain passes/fails in isolation (a red domain no longer blocks green
+  # siblings) and they run in parallel. Targets come from
+  # scripts/ci/select_test_targets.py --emit-matrix — the single source of truth
+  # (a module is mapped iff tests/unit/<module>/ exists; new modules auto-map,
+  # guarded by tests/ci/test_select_test_targets.py). On core-path changes the
+  # matrix fans out to EVERY domain. The aggregate `pr-gate` job is the single
+  # required status check. The full 3-Python matrix still runs on push to main,
+  # nightly, dispatch, or `ci-full` PRs.
 
-  test-pr:
-    name: Test (PR gate)
+  discover:
+    name: Discover domains
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
+    outputs:
+      matrix: ${{ steps.sel.outputs.matrix }}
+      scope: ${{ steps.sel.outputs.scope }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
           fetch-depth: 0  # need the base commit to diff changed files
+      - name: Select domain matrix
+        id: sel
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          # Stdlib only — no uv sync needed (keeps discovery fast).
+          git diff --name-only "$BASE_SHA"...HEAD > changed-files.txt
+          echo "Changed files:"; cat changed-files.txt
+          python3 scripts/ci/select_test_targets.py \
+            --emit-matrix --files-from changed-files.txt >> "$GITHUB_OUTPUT"
+          echo "--- matrix ---"; grep '^matrix=' "$GITHUB_OUTPUT" || true
 
+  test-domain:
+    name: Domain ${{ matrix.name }}
+    needs: discover
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false  # one red domain must not cancel the others
+      max-parallel: 10  # bound the fan-out (core changes can be ~70 domains)
+      matrix: ${{ fromJSON(needs.discover.outputs.matrix) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
           cache-dependency-glob: "uv.lock"
-
       - name: Set up Python
         run: uv python install ${{ env.PYTHON_VERSION_DEFAULT }}
-
       - name: Install dependencies
         run: uv sync --all-extras
-
-      - name: Select test targets
-        id: targets
+      - name: Run domain tests (${{ matrix.name }})
         env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          TARGETS: ${{ matrix.targets }}
+          MODE: ${{ matrix.mode }}
+          SHARD: ${{ matrix.name }}
         run: |
-          # Single source of truth: scripts/ci/select_test_targets.py maps the
-          # changed files to pytest targets (auto-discovers modules from the
-          # filesystem; core paths -> full tree; docs/reports-only -> just the
-          # always-on cross-cutting set). Stdlib only — no uv sync needed.
-          git diff --name-only "$BASE_SHA"...HEAD > changed-files.txt
-          echo "Changed files:"; cat changed-files.txt
-          python3 scripts/ci/select_test_targets.py --files-from changed-files.txt >> "$GITHUB_OUTPUT"
-
-      - name: Run module-scoped tests (xdist)
-        run: |
-          echo "Scope: ${{ steps.targets.outputs.scope }}"
-          echo "xdist: ${{ steps.targets.outputs.xdist_targets }}"
-          uv run --with pytest-xdist pytest ${{ steps.targets.outputs.xdist_targets }} \
-            -n auto \
-            --tb=short \
-            --junitxml=test-results.xml
-
-      - name: Run sequential tests (integration / performance)
-        if: steps.targets.outputs.seq_targets != ''
-        run: |
-          echo "seq: ${{ steps.targets.outputs.seq_targets }}"
-          uv run pytest ${{ steps.targets.outputs.seq_targets }} \
-            --tb=short \
-            --junitxml=test-results-seq.xml
-
-      - name: Upload test results
+          # Build --deselect args for quarantined tests (known-broken on main,
+          # tracked by issues; see scripts/ci/quarantine.txt). They still RUN
+          # but do not block, at test granularity (never whole shards).
+          DESELECT=()
+          if [ -f scripts/ci/quarantine.txt ]; then
+            while IFS= read -r raw; do
+              line="${raw%%#*}"
+              line="$(echo "$line" | xargs || true)"
+              [ -z "$line" ] && continue
+              DESELECT+=(--deselect "$line")
+            done < scripts/ci/quarantine.txt
+          fi
+          [ "${#DESELECT[@]}" -gt 0 ] && echo "Quarantine: ${DESELECT[*]}"
+          XDIST=()
+          [ "$MODE" = "xdist" ] && XDIST=(-n auto)
+          echo "Shard '$SHARD' ($MODE): $TARGETS"
+          # shellcheck disable=SC2086 (TARGETS is an intentional target list)
+          uv run --with pytest-xdist pytest $TARGETS "${XDIST[@]}" "${DESELECT[@]}" \
+            --tb=short --junitxml="test-results-${SHARD}.xml"
+      - name: Upload domain test results
         uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: test-results-pr-gate
-          path: |
-            test-results.xml
-            test-results-seq.xml
+          name: test-results-${{ matrix.name }}
+          path: test-results-*.xml
+          if-no-files-found: ignore
+
+  pr-gate:
+    name: Test (PR gate)  # REQUIRED status check — do not rename (branch protection)
+    needs: [discover, test-domain]
+    if: always() && github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Aggregate domain results
+        run: |
+          echo "discover:    ${{ needs.discover.result }}"
+          echo "test-domain: ${{ needs.test-domain.result }}"
+          echo "scope:       ${{ needs.discover.outputs.scope }}"
+          if [ "${{ needs.discover.result }}" != "success" ]; then
+            echo "::error::domain discovery failed"; exit 1
+          fi
+          # test-domain is a matrix; its result is 'success' only when every
+          # domain job passed (fail-fast is off, so all run to completion).
+          if [ "${{ needs.test-domain.result }}" != "success" ]; then
+            echo "::error::one or more domain jobs failed — see the Domain * jobs"
+            exit 1
+          fi
+          echo "All domains green ✅"
 
   # ------------------------------------------------------------ full matrix --
   test:

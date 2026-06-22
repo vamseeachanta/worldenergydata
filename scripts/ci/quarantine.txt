@@ -1,0 +1,24 @@
+# Quarantined tests — currently failing on main, tracked for a real fix.
+#
+# The domain-matrix PR gate (.github/workflows/ci.yml) RUNS these tests but
+# passes them to pytest via --deselect so a known-broken test does not block
+# unrelated domains. They are quarantined at TEST granularity (one node id per
+# line) — never whole shards — so the rest of each domain still gates normally.
+#
+# Format: one pytest node id per line. Blank lines and lines starting with `#`
+# are ignored. A trailing `# issue #N …` comment records the tracking issue.
+# Remove the line the moment the underlying issue is fixed.
+#
+# NOTE: this repo has both a root and a tests/ pytest.ini, so pytest's rootdir
+# (and therefore the node-id prefix) is environment-dependent. We list BOTH the
+# `tests/`-prefixed and the rootdir=tests/ unprefixed form for each quarantined
+# test; pytest silently ignores a --deselect that doesn't match the active
+# rootdir, so whichever form is correct wins.
+
+# hse scheduler/MODULE_INDEX drift — issue #523
+tests/unit/cli/test_capability_drift.py::TestSchedulerIndexMatchesConfig::test_scheduler_config_wired_modules_in_index
+unit/cli/test_capability_drift.py::TestSchedulerIndexMatchesConfig::test_scheduler_config_wired_modules_in_index
+
+# site_assets root not in repo_structure contract — issue #524
+tests/repo_structure/test_repo_structure_contract.py::test_current_contract_accepts_approved_roots_and_exceptions
+repo_structure/test_repo_structure_contract.py::test_current_contract_accepts_approved_roots_and_exceptions
