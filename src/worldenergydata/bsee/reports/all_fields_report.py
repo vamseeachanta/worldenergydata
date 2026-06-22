@@ -118,6 +118,23 @@ class AllFieldsReport:
                 "revenue only (no royalty/opex/capex, no gas). Fields without "
                 "priced production are left blank, not zeroed.*"
             )
+        has_decom = not self._df.empty and "DECOM_P50_MM_USD" in self._df.columns
+        if has_decom:
+            decom_p50 = self._df["DECOM_P50_MM_USD"].sum(skipna=True)
+            decom_p90 = self._df["DECOM_P90_MM_USD"].sum(skipna=True)
+            n_with_decom = int(self._df["DECOM_P50_MM_USD"].notna().sum())
+            lines.append(
+                f"- **Decommissioning liability (BSEE estimate, P50/P90)**: "
+                f"${decom_p50:,.0f} MM / ${decom_p90:,.0f} MM across "
+                f"{n_with_decom} fields"
+            )
+            lines.append(
+                "  - *Future abandonment liability; BSEE-provided P50/P70/P90 "
+                "estimates (their own uncertainty bands), summed across cost "
+                "categories per lease and rolled up to field. Covers only "
+                "leases with a decom estimate that map to a producing field, "
+                "not all fields; fields without an estimate are left blank.*"
+            )
         lines.append("")
 
         # Era Grouping
@@ -170,12 +187,12 @@ class AllFieldsReport:
                 lines.append(
                     "| Field | Era | Oil (MMBBL) | Gas (BCF) | Wells | "
                     "Rec/Well (MMBBL) | BOPD/Well | First Prod | "
-                    "Water Depth (ft) | Gross Oil Rev ($MM) |"
+                    "Water Depth (ft) | Gross Oil Rev ($MM) | Decom P50 ($MM) |"
                 )
                 lines.append(
                     "|-------|-----|-------------|-----------|-------|"
                     "------------------|-----------|------------|"
-                    "------------------|--------------------|"
+                    "------------------|--------------------|-----------------|"
                 )
                 for _, row in top.iterrows():
                     name = row.get("FIELD_NAME", row.get("FIELD_CODE", ""))
@@ -192,10 +209,12 @@ class AllFieldsReport:
                     bpw_str = f"{bpw:,.0f}" if pd.notna(bpw) else ""
                     rev = row.get("GROSS_OIL_REVENUE_MM_USD", None)
                     rev_str = f"{rev:,.0f}" if pd.notna(rev) else ""
+                    dec = row.get("DECOM_P50_MM_USD", None)
+                    dec_str = f"{dec:,.0f}" if pd.notna(dec) else ""
                     lines.append(
                         f"| {name} | {era} | {oil:,.1f} | {gas:,.1f} | {wells} "
                         f"| {rpw_str} | {bpw_str} | {first} | {wd_str} "
-                        f"| {rev_str} |"
+                        f"| {rev_str} | {dec_str} |"
                     )
                 lines.append("")
 
