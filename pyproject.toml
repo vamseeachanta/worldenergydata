@@ -174,6 +174,33 @@ exclude_lines = [
     "raise NotImplementedError",
 ]
 
+# ---------------------------------------------------------------------------
+# uv workspace scaffolding — PREP ONLY (ADR 0001, Phase 1 → Phase 2)
+# ---------------------------------------------------------------------------
+# Intentionally COMMENTED OUT. Uncommenting this activates uv workspace mode,
+# which requires member packages to exist; doing so now would break the current
+# single-package build. It is left here as the documented Phase 2 target shape.
+#
+# Phase 2 (gated on Phase 1 sign-off) carves the shared core out first, then
+# leaf domains, each as a workspace member that publishes into the shared
+# `worldenergydata` PEP 420 / pkgutil namespace (enabled by the
+# `pkgutil.extend_path` change in src/worldenergydata/__init__.py).
+#
+# Intended members layout (per ADR 0001 phased plan):
+#   packages/core/            -> worldenergydata-core
+#                                (common, base_configs, engine, cli, reporting,
+#                                 validation, analysis, testing — fan-in core)
+#   packages/<domain>/        -> worldenergydata-<domain>, one per leaf domain,
+#                                rolled out ISOLATED -> LEAF -> COUPLED
+#   (the bsee <-> lower_tertiary/fdas cycle ships as ONE member, or the cycle
+#    is broken first — decided at Phase 2 step 4)
+#
+# [tool.uv.workspace]
+# members = ["packages/*"]
+#
+# [tool.uv.sources]
+# worldenergydata-core = { workspace = true }
+
 [tool.uv]
 # UV environment configuration
 python = "3.11"
