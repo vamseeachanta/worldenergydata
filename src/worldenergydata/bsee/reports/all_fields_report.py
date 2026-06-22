@@ -219,11 +219,55 @@ class AllFieldsReport:
             import plotly.graph_objects as go
             from plotly.subplots import make_subplots  # noqa: F401
 
+            from worldenergydata.bsee.reports.atlas_charts import (
+                access_scatter_figure,
+                access_scatter_frame,
+                rec_per_well_by_era,
+                rec_per_well_figure,
+                water_depth_figure,
+                water_depth_split,
+            )
+
             html_parts = []
             html_parts.append(
                 "<html><head><title>BSEE All-Fields Dashboard</title></head><body>"
             )
-            html_parts.append("<h1>BSEE All-Fields Analysis Dashboard</h1>")
+            html_parts.append(self._html_header())
+
+            if not self._df.empty:
+                # Headline: access / concentration scatter (Lower Tertiary thesis)
+                scatter_sub = access_scatter_frame(self._df)
+                n_shown = len(scatter_sub)
+                n_total = len(self._df)
+                logger.info(
+                    "Access scatter: %d/%d fields shown (material, >=3 wells, "
+                    "water depth present); %d dropped",
+                    n_shown,
+                    n_total,
+                    n_total - n_shown,
+                )
+                html_parts.append(
+                    access_scatter_figure(scatter_sub).to_html(full_html=False)
+                )
+                html_parts.append(
+                    f"<p style='color:#555;font-size:0.9em'>Access scatter shows "
+                    f"{n_shown} of {n_total} fields (material: cumulative oil &ge; 1 "
+                    f"MMBBL, &ge; 3 wells, water depth present); "
+                    f"{n_total - n_shown} dropped for missing/insufficient data.</p>"
+                )
+
+                # Recovery per well by era cohort
+                cohorts = rec_per_well_by_era(self._df)
+                html_parts.append(rec_per_well_figure(cohorts).to_html(full_html=False))
+
+                # Water depth distribution + deepwater/shelf split
+                split = water_depth_split(self._df)
+                html_parts.append(water_depth_figure(self._df).to_html(full_html=False))
+                html_parts.append(
+                    f"<p style='color:#555;font-size:0.9em'>{split['n_deepwater']} "
+                    f"deepwater (&gt;1000 ft) vs {split['n_shelf']} shelf fields of "
+                    f"{split['n_with_depth']} with a water-depth source.</p>"
+                )
 
             if not self._df.empty:
                 # Chart 1: Oil production by era (bar)
@@ -286,6 +330,7 @@ class AllFieldsReport:
                     )
                     html_parts.append(fig2.to_html(full_html=False))
 
+            html_parts.append(self._html_footnote())
             html_parts.append("</body></html>")
             output_path.write_text("\n".join(html_parts))
             logger.info("HTML dashboard written to %s", output_path)
@@ -294,6 +339,30 @@ class AllFieldsReport:
             # Fallback: simple HTML table without Plotly
             logger.warning("Plotly not available — generating basic HTML table")
             self._generate_html_table_fallback(output_path)
+
+    @staticmethod
+    def _html_header() -> str:
+        """Report title + data-vintage note block."""
+        return (
+            "<h1>BSEE Gulf of Mexico All-Fields Atlas</h1>"
+            "<p style='color:#444;max-width:60em'>"
+            "Visualizing the Lower-Tertiary <b>access / concentration</b> thesis "
+            "basin-wide: deepwater, high-recovery-per-well hubs (few hard-to-reach "
+            "wells) versus the shallow shelf.</p>"
+            "<p style='color:#666;font-size:0.9em'>"
+            "Data vintage: BSEE OGOR-A public production, 1996&ndash;2025.</p>"
+        )
+
+    @staticmethod
+    def _html_footnote() -> str:
+        """Honest coverage caveat footnote."""
+        return (
+            "<hr/><p style='color:#777;font-size:0.85em;max-width:60em'>"
+            "<b>Footnote.</b> Access is a composite proxy (water depth + BOPD/well "
+            "+ operator concentration); OGOR-A has no subsea/dry-tree completion "
+            "flag. Fields without a water-depth or era source are shown as "
+            "blank/Unknown, not estimated.</p>"
+        )
 
     def _generate_html_table_fallback(self, output_path: Path) -> None:
         """Generate a basic HTML table when Plotly is not available."""
