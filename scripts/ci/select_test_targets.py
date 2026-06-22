@@ -37,6 +37,7 @@ from __future__ import annotations
 
 import argparse
 import re
+import json
 import sys
 from pathlib import Path
 
@@ -84,6 +85,21 @@ _INTEGRATION_RE = re.compile(r"^tests/integration/modules/([^/]+)/")
 
 def _is_core(path: str) -> bool:
     return path in CORE_EXACT or path.startswith(CORE_PREFIXES)
+
+
+def _has_tests(directory: Path) -> bool:
+    """True if ``directory`` contains at least one pytest file.
+
+    Keeps non-test support dirs (fixtures/, helpers/, mocks/, _archive/, …)
+    out of the domain matrix so they don't become empty shards. Note: a dir
+    that *has* test files but is excluded by ``norecursedirs`` still becomes a
+    shard — the CI step treats pytest's "no tests collected" (exit 5) as a
+    pass, so such shards are harmless.
+    """
+    for pattern in ("test_*.py", "*_test.py"):
+        if next(directory.rglob(pattern), None) is not None:
+            return True
+    return False
 
 
 def select(changed: list[str], root: Path) -> dict:
@@ -158,6 +174,101 @@ def _full_tree(root: Path) -> list[str]:
     return out
 
 
+def to_matrix(changed: list[str], root: Path) -> dict:
+    """Build a GitHub-Actions matrix of per-domain shards from changed files.
+
+    Each shard is ``{"name", "targets", "mode"}`` where ``mode`` is ``xdist``
+    (parallel, ``-n auto``) or ``seq`` (sequential, for integration/perf).
+
+    Unlike :func:`select` (one big target list), this fans the work out so
+    every domain runs as its own CI job — faster wall-clock and per-domain
+    pass/fail isolation (a red domain no longer blocks green siblings).
+
+    * ``scope=full`` -> one shard per ``tests/unit/<domain>`` plus one per other
+      top-level ``tests/<dir>`` plus a ``_root`` shard for top-level test files.
+    * ``scope=modules`` -> the always-on shard + one shard per touched module +
+      one per routed contract; seq shards per touched integration module.
+    * ``scope=skip`` -> just the always-on shard (never empty).
+    """
+    result = select(changed, root)
+    scope = result["scope"]
+    shards: list[dict] = []
+
+    if scope == "full":
+        unit = root / "tests" / "unit"
+        if unit.is_dir():
+            for child in sorted(unit.iterdir()):
+                if (
+                    child.is_dir()
+                    and child.name != "__pycache__"
+                    and _has_tests(child)
+                ):
+                    shards.append(
+                        {
+                            "name": f"unit-{child.name}",
+                            "targets": f"tests/unit/{child.name}",
+                            "mode": "xdist",
+                        }
+                    )
+        tests = root / "tests"
+        root_files: list[str] = []
+        for child in sorted(tests.iterdir()):
+            if (
+                child.is_dir()
+                and child.name
+                not in {
+                    "unit",
+                    "performance",
+                    "integration",
+                    "__pycache__",
+                }
+                and _has_tests(child)
+            ):
+                shards.append(
+                    {
+                        "name": child.name,
+                        "targets": f"tests/{child.name}",
+                        "mode": "xdist",
+                    }
+                )
+            elif (
+                child.is_file()
+                and child.name.startswith("test_")
+                and child.suffix == ".py"
+            ):
+                root_files.append(f"tests/{child.name}")
+        if root_files:
+            shards.append(
+                {"name": "_root", "targets": " ".join(root_files), "mode": "xdist"}
+            )
+        for seq in ("tests/integration", "tests/performance"):
+            if (root / seq).is_dir():
+                shards.append(
+                    {
+                        "name": seq.split("/")[-1],
+                        "targets": seq,
+                        "mode": "seq",
+                    }
+                )
+    else:
+        # modules / skip: the always-on shard guarantees a non-empty matrix.
+        always = _existing_unique(list(ALWAYS_XDIST), root)
+        if always:
+            shards.append(
+                {"name": "_always", "targets": " ".join(always), "mode": "xdist"}
+            )
+        for tgt in result["xdist"]:
+            if tgt in ALWAYS_XDIST:
+                continue  # already in the always-on shard
+            name = tgt.replace("tests/unit/", "unit-").replace("tests/", "")
+            shards.append({"name": name, "targets": tgt, "mode": "xdist"})
+        for tgt in result["seq"]:
+            name = tgt.replace("tests/integration/modules/", "seq-")
+            shards.append({"name": name, "targets": tgt, "mode": "seq"})
+
+    return {"scope": scope, "include": shards}
+
+
 def _read_changed(args) -> list[str]:
     if args.files_from == "-":
         text = sys.stdin.read()
@@ -175,8 +286,20 @@ def main(argv: list[str] | None = None) -> int:
         "--files-from", help="read changed paths from FILE (or - for stdin)"
     )
     ap.add_argument("--root", default=str(Path(__file__).resolve().parents[2]))
+    ap.add_argument(
+        "--emit-matrix",
+        action="store_true",
+        help="emit a per-domain GitHub Actions matrix (matrix=<json>) instead "
+        "of the flat xdist/seq target lists",
+    )
     a = ap.parse_args(argv)
-    result = select(_read_changed(a), Path(a.root))
+    changed = _read_changed(a)
+    if a.emit_matrix:
+        matrix = to_matrix(changed, Path(a.root))
+        print(f"scope={matrix['scope']}")
+        print(f"matrix={json.dumps({'include': matrix['include']})}")
+        return 0
+    result = select(changed, Path(a.root))
     print(f"scope={result['scope']}")
     print(f"xdist_targets={' '.join(result['xdist'])}")
     print(f"seq_targets={' '.join(result['seq'])}")
