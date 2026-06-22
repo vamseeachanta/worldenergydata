@@ -16,12 +16,40 @@ never alter a sanctioned number. Run:
     uv run scripts/build_pages.py        # or: python scripts/build_pages.py
 
 Output lands in `public/`, which the Pages workflow publishes verbatim.
+
+Per-domain build isolation (P2, issue #528)
+-------------------------------------------
+Rendering is organised as a registry of per-domain builders (``DOMAINS``) plus
+a small set of shared assets (CSS + viz HTML) and an always-regenerated landing
+``index.html``. This lets CI rebuild only the domain(s) whose ``reports/<domain>/``
+content changed, instead of re-rendering the whole site on every push:
+
+    python scripts/build_pages.py                       # full build (all domains)
+    python scripts/build_pages.py --domains lower_tertiary
+    python scripts/build_pages.py --clean               # wipe public/ then full build
+
+HONEST CONSTRAINT — GitHub Pages publishes exactly ONE artifact for the whole
+site (``actions/deploy-pages`` replaces the entire published tree from a single
+``upload-pages-artifact`` tarball). There is NO native per-domain *publish*: you
+cannot deploy a partial artifact without clobbering the rest of the site.
+Therefore P2 is per-domain *build* isolation (skip re-rendering untouched
+domains) merged into ONE published tree, NOT separate per-domain Pages sites.
+CI achieves the "merge" by restoring the previously-published ``public/`` from
+the Actions cache, overwriting only the touched domain's files, and re-uploading
+the full merged tree. A change to shared chrome (this script, the CSS, the page
+template, or ``site_assets/``) affects every page and so forces a ``--clean``
+full rebuild.
+
+With no arguments the output is byte-for-byte identical to the pre-P2 monolithic
+build — the refactor is presentation-preserving.
 """
 from __future__ import annotations
 
+import argparse
 import html
 import re
 import shutil
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -243,23 +271,42 @@ hr{border:0;border-top:1px solid var(--line);margin:1.6em 0}
 """
 
 
-def build():
-    PUBLIC.mkdir(exist_ok=True)
-    ASSETS.mkdir(exist_ok=True)
+# ---------------------------------------------------------------------------
+# Shared assets — written on every build regardless of which domains are
+# selected, because they are the chrome every domain page links to.
+# ---------------------------------------------------------------------------
+
+def build_shared_assets() -> dict[str, bool]:
+    """Write the stylesheet and copy the shared viz assets. Returns the set of
+    viz assets that are available (used by domain builders that embed them)."""
+    ASSETS.mkdir(parents=True, exist_ok=True)
     (ASSETS / "style.css").write_text(STYLE, encoding="utf-8")
 
     # --- copy the self-contained viz HTML as assets ---
     # Prefer the committed site_assets/ copy (what CI publishes); fall back to the
     # gitignored reports/bsee/ scratch output for local-only rebuilds.
     viz_names = ["julia_well_path_plotly.html", "julia_well_path_threejs.html"]
-    available_viz = {}
+    available_viz: dict[str, bool] = {}
     for name in viz_names:
         for src in (SITE_ASSETS / name, REPORTS / "bsee" / name):
             if src.exists():
                 shutil.copy2(src, ASSETS / name)
                 available_viz[name] = True
                 break
+    return available_viz
 
+
+# ---------------------------------------------------------------------------
+# Per-domain builders. Each one writes ONLY its own output files into public/
+# and returns whatever the landing-page builder needs from it. A domain builder
+# never wipes public/, so it composes cleanly over a cache-restored tree.
+# ---------------------------------------------------------------------------
+
+def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
+    """Render the Lower-Tertiary surface: per-field economics, benchmark,
+    portfolio summary, and the Julia 3D well-path page. Returns the list of
+    ``(slug, display, filename, npv_str, npv_value)`` tuples the landing page
+    uses to build its economics table."""
     # --- Economics pages (sanctioned V30), one per Lower-Tertiary field ---
     field_names = {
         "anchor": "Anchor", "big_foot": "Big Foot", "cascade_chinook": "Cascade&ndash;Chinook",
@@ -361,7 +408,49 @@ def build():
             ),
         ), encoding="utf-8")
 
-    # --- Landing page ---
+    return fields
+
+
+# Registry of per-domain builders. Add new domains here (key == reports/<domain>/
+# subdir name) as their surfaces come online. ``build(domains=...)`` iterates this.
+DOMAINS = {
+    "lower_tertiary": build_lower_tertiary,
+}
+
+
+# ---------------------------------------------------------------------------
+# Landing page — ALWAYS regenerated. It indexes whatever exists in public/ (so a
+# partial build still produces a correct landing page over the restored tree)
+# and derives the economics table straight from the source reports so it stays
+# correct even when the lower_tertiary domain was not part of this build.
+# ---------------------------------------------------------------------------
+
+def _lower_tertiary_fields() -> list[tuple]:
+    """Parse per-field NPV out of the source reports — independent of whether the
+    lower_tertiary domain pages were (re)built this run. Mirrors the parse in
+    build_lower_tertiary so the landing economics table is always accurate."""
+    field_names = {
+        "anchor": "Anchor", "big_foot": "Big Foot", "cascade_chinook": "Cascade&ndash;Chinook",
+        "jack_st_malo": "Jack / St. Malo", "julia": "Julia", "shenandoah": "Shenandoah",
+        "stones": "Stones",
+    }
+    npv_re = re.compile(r"Terminal cumulative NPV = \*\*([^*]+)\*\*")
+    fields = []
+    for md in sorted((REPORTS / "lower_tertiary").glob("field_economics_*_v30.md")):
+        slug = md.name[len("field_economics_"):-len("_v30.md")]
+        display = field_names.get(slug, slug.replace("_", " ").title())
+        text = md.read_text(encoding="utf-8")
+        m = npv_re.search(text)
+        npv_str = m.group(1).strip() if m else "&mdash;"
+        try:
+            npv_val = float(npv_str.replace("$", "").replace(",", "").replace("M", "").strip())
+        except ValueError:
+            npv_val = 0.0
+        fields.append((slug, display, f"economics-{slug}.html", npv_str, npv_val))
+    return fields
+
+
+def build_index() -> None:
     cards = []
     if (PUBLIC / "portfolio.html").exists():
         cards.append('<a class="card" href="portfolio.html"><h3>Portfolio Summary &rarr;</h3>'
@@ -373,9 +462,12 @@ def build():
         cards.append('<a class="card" href="well-path.html"><h3>Julia Well Paths (3D) &rarr;</h3>'
                      '<p>Interactive 3D directional surveys, two renderers from one data contract.</p></a>')
 
-    # Portfolio economics table, worst NPV first
+    # Portfolio economics table, worst NPV first. Only list fields whose page
+    # exists on disk, so the index stays consistent with the published tree.
     rows = []
-    for slug, display, fname, npv_str, npv_val in sorted(fields, key=lambda f: f[4]):
+    for slug, display, fname, npv_str, npv_val in sorted(_lower_tertiary_fields(), key=lambda f: f[4]):
+        if not (PUBLIC / fname).exists():
+            continue
         rows.append(
             f'<tr><td><a href="{fname}">{display}</a></td>'
             f'<td style="text-align:right">{npv_str}</td></tr>'
@@ -411,10 +503,79 @@ def build():
     )
     (PUBLIC / "index.html").write_text(landing, encoding="utf-8")
 
+
+# ---------------------------------------------------------------------------
+# Orchestrator
+# ---------------------------------------------------------------------------
+
+def build(domains: list[str] | None = None, *, clean: bool = False) -> None:
+    """Build the site. ``domains=None`` (default) builds every registered domain,
+    reproducing the pre-P2 monolithic output byte-for-byte. Pass a subset to do an
+    incremental per-domain build over an existing (e.g. cache-restored) public/.
+    The shared assets and the landing index are ALWAYS regenerated.
+    ``clean=True`` wipes public/ first for a guaranteed-fresh full rebuild."""
+    if clean and PUBLIC.exists():
+        shutil.rmtree(PUBLIC)
+
+    selected = list(DOMAINS) if domains is None else domains
+    unknown = [d for d in selected if d not in DOMAINS]
+    if unknown:
+        raise SystemExit(
+            f"Unknown domain(s): {', '.join(unknown)}. "
+            f"Known domains: {', '.join(DOMAINS)}."
+        )
+
+    PUBLIC.mkdir(parents=True, exist_ok=True)
+    available_viz = build_shared_assets()
+
+    for name in selected:
+        DOMAINS[name](available_viz)
+
+    # Landing index always reflects the full on-disk tree.
+    build_index()
+
     pages = sorted(p.name for p in PUBLIC.glob("*.html"))
-    print(f"Built {len(pages)} pages into {PUBLIC.relative_to(ROOT)}/: {', '.join(pages)}")
+    scope = "all domains" if domains is None else f"domains: {', '.join(selected)}"
+    try:
+        where = f"{PUBLIC.relative_to(ROOT)}/"
+    except ValueError:  # PUBLIC redirected outside the repo (e.g. under test)
+        where = str(PUBLIC)
+    print(f"Built {len(pages)} page(s) into {where} ({scope}): {', '.join(pages)}")
     print(f"Copied {len(available_viz)} viz asset(s).")
 
 
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument(
+        "--domains",
+        help="Comma-separated list of domains to (re)build (default: all). "
+             f"Known domains: {', '.join(DOMAINS)}.",
+    )
+    parser.add_argument(
+        "--clean",
+        action="store_true",
+        help="Wipe public/ before building (full fresh rebuild).",
+    )
+    parser.add_argument(
+        "--list-domains",
+        action="store_true",
+        help="Print the known domain keys (one per line) and exit.",
+    )
+    args = parser.parse_args(argv)
+
+    if args.list_domains:
+        for name in DOMAINS:
+            print(name)
+        return
+
+    # ``--domains`` absent → None (full build). ``--domains ""`` (explicitly empty)
+    # → build no domain pages but still regenerate shared assets + landing index
+    # over the existing public/ tree.
+    domains = None
+    if args.domains is not None:
+        domains = [d.strip() for d in args.domains.split(",") if d.strip()]
+    build(domains=domains, clean=args.clean)
+
+
 if __name__ == "__main__":
-    build()
+    main(sys.argv[1:])
