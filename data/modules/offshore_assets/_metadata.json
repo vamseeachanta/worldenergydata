@@ -2,9 +2,9 @@
   "module": "offshore_assets",
   "generated_at": "2026-06-22T17:06:49.955460+00:00",
   "last_refresh": "2026-06-22",
-  "record_count": 3732,
-  "file_count": 9,
-  "total_size_bytes": 305082,
+  "record_count": 3867,
+  "file_count": 11,
+  "total_size_bytes": 312045,
   "source_url": null,
   "format": ".csv,.md,.yaml",
   "has_external_data": false,
@@ -15,6 +15,18 @@
       "name": "country_centroids.csv",
       "path": "curated/country_centroids.csv",
       "size_bytes": 6409,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "coverage_summary.csv",
+      "path": "curated/coverage_summary.csv",
+      "size_bytes": 4177,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "COVERAGE_SUMMARY.md",
+      "path": "curated/COVERAGE_SUMMARY.md",
+      "size_bytes": 2786,
       "modified": "2026-06-22"
     },
     {

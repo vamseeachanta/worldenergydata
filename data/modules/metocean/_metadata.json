@@ -2,9 +2,9 @@
   "module": "metocean",
   "generated_at": "2026-06-22T17:06:49.955460+00:00",
   "last_refresh": "2026-06-22",
-  "record_count": 34,
-  "file_count": 6,
-  "total_size_bytes": 6758,
+  "record_count": 480,
+  "file_count": 11,
+  "total_size_bytes": 39070,
   "source_url": null,
   "format": ".csv,.md,.yaml",
   "has_external_data": false,
@@ -27,6 +27,36 @@
       "name": "marine_growth_terminal_thickness.csv",
       "path": "curated/marine_growth_terminal_thickness.csv",
       "size_bytes": 141,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "api_rp2met_gom_extremes_by_region.csv",
+      "path": "curated/api_rp2met_gom_extremes_by_region.csv",
+      "size_bytes": 12577,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "metocean_regional_extremes.csv",
+      "path": "curated/metocean_regional_extremes.csv",
+      "size_bytes": 6792,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "metocean_hs_tp_occurrence.csv",
+      "path": "curated/metocean_hs_tp_occurrence.csv",
+      "size_bytes": 12039,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "metocean_temperature_ranges.csv",
+      "path": "curated/metocean_temperature_ranges.csv",
+      "size_bytes": 367,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "api_rp2met_us_zone_100yr_winds.csv",
+      "path": "curated/api_rp2met_us_zone_100yr_winds.csv",
+      "size_bytes": 537,
       "modified": "2026-06-22"
     },
     {

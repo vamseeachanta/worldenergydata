@@ -21,6 +21,31 @@ datasets:
   row_count: 205
   size_bytes: 6409
   last_modified: '2026-06-22T17:06:49.955460+00:00'
+- name: coverage_summary.csv
+  path: data/modules/offshore_assets/curated/coverage_summary.csv
+  format: csv
+  description: Derived roll-up counts over fields.csv and production_facilities.csv
+    (by country, reserve type/duty, status, host type, water-depth band, US-GoM vs ROW).
+  columns:
+  - name: CATEGORY
+    type: string
+    description: roll-up axis
+    unit: ''
+  - name: DIMENSION
+    type: string
+    description: bucket value within the axis
+    unit: ''
+  - name: FIELDS_COUNT
+    type: integer
+    description: count of fields.csv rows in the bucket
+    unit: ''
+  - name: FACILITIES_COUNT
+    type: integer
+    description: count of production_facilities.csv rows in the bucket
+    unit: ''
+  row_count: 135
+  size_bytes: 4177
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
 - name: drilling_rigs.csv
   path: data/modules/offshore_assets/curated/drilling_rigs.csv
   format: csv

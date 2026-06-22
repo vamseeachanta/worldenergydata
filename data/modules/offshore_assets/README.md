@@ -100,6 +100,13 @@ BOP_OPERATING_PRESSURE_KSI.
 Country → centroid latitude/longitude lookup (COUNTRY, LATITUDE, LONGITUDE) for
 mapping fields/facilities by country.
 
+### `coverage_summary.csv` — 135 rows  (derived roll-up)
+Analytical roll-ups computed **from `fields.csv` and `production_facilities.csv`**
+(counts by country, reserve type / duty, status, host type, water-depth band, and
+US-GoM vs rest of world). Long-form: CATEGORY, DIMENSION, FIELDS_COUNT,
+FACILITIES_COUNT. See `COVERAGE_SUMMARY.md` for the narrative breakdown. This is a
+new derived artifact, not a copy of any source.
+
 ## Parsing notes
 
 - Source attributes lived as JSON arrays of `"Key : Value"` strings inside a

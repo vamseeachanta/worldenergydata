@@ -1,0 +1,117 @@
+PARAMETER,UNIT,REGION,RP_10YR,RP_25YR,RP_50YR,RP_100YR,RP_200YR,RP_1000YR,RP_2000YR
+1 hour mean wind speed (m/s),m/s,Central Gulf of Mexico,33,40.1,44.4,48,51,60,62.4
+1 hour mean wind speed (m/s),m/s,Western Gulf of Mexico,28.4,33,35.7,38.4,40.8,48,49.9
+1 hour mean wind speed (m/s),m/s,Eastern Gulf of Mexico,28.4,33,35.7,38.4,40.8,48,49.9
+1 hour mean wind speed (m/s),m/s,"All Regions, North of 28° N",16,23,26.3,29.1,32.5,39.3,44
+10 min mean wind speed (m/s),m/s,Central Gulf of Mexico,36.5,44.9,50.1,54.5,58.2,69.5,72.5
+10 min mean wind speed (m/s),m/s,Western Gulf of Mexico,31.2,36.5,39.7,42.9,45.8,54.5,56.8
+10 min mean wind speed (m/s),m/s,Eastern Gulf of Mexico,31.2,36.5,39.7,42.9,45.8,54.5,56.8
+10 min mean wind speed (m/s),m/s,"All Regions, North of 28° N",17.2,25,28.8,32,35.9,44,49.6
+1 min mean wind speed (m/s),m/s,Central Gulf of Mexico,41,51.1,57.4,62.8,67.4,81.6,85.6
+1 min mean wind speed (m/s),m/s,Western Gulf of Mexico,34.8,41,44.8,48.7,52.1,62.8,65.7
+1 min mean wind speed (m/s),m/s,Eastern Gulf of Mexico,34.8,41,44.8,48.7,52.1,62.8,65.7
+1 min mean wind speed (m/s),m/s,"All Regions, North of 28° N",18.7,27.6,31.9,35.7,40.3,49.9,56.8
+3 sec gust (m/s),m/s,Central Gulf of Mexico,46.9,59.2,66.9,73.7,79.4,97.5,102.5
+3 sec gust (m/s),m/s,Western Gulf of Mexico,39.4,46.9,51.5,56.2,60.4,73.7,77.3
+3 sec gust (m/s),m/s,Eastern Gulf of Mexico,39.4,46.9,51.5,56.2,60.4,73.7,77.3
+3 sec gust (m/s),m/s,"All Regions, North of 28° N",20.7,31,36.1,40.5,46.1,57.7,66.2
+Significant wave height (m),m,Central Gulf of Mexico,10,13.3,14.8,15.8,16.5,19.8,20.5
+Significant wave height (m),m,Western Gulf of Mexico,8.2,10.1,11.1,12.2,12.9,15.3,15.9
+Significant wave height (m),m,Eastern Gulf of Mexico,8.2,10.1,11.1,12.2,12.9,15.3,15.9
+Significant wave height (m),m,"All Regions, North of 28° N",5,6.1,7.2,8,8.9,10.8,11.5
+Maximum wave height (m),m,Central Gulf of Mexico,17.7,23.5,26.1,27.9,29.1,34.9,36.3
+Maximum wave height (m),m,Western Gulf of Mexico,14.5,17.9,19.6,21.6,22.8,26.9,28
+Maximum wave height (m),m,Eastern Gulf of Mexico,14.5,17.9,19.6,21.6,22.8,26.9,28
+Maximum wave height (m),m,"All Regions, North of 28° N",8.8,10.8,12.7,14.1,15.7,19.1,20.3
+Maximum crest elevation (m),m,Central Gulf of Mexico,11.5,15.2,16.9,18.1,19,22.5,23.4
+Maximum crest elevation (m),m,Western Gulf of Mexico,9.5,11.7,12.8,14.1,14.8,17.4,18.1
+Maximum crest elevation (m),m,Eastern Gulf of Mexico,9.5,11.7,12.8,14.1,14.8,17.4,18.1
+Maximum crest elevation (m),m,"All Regions, North of 28° N",6,7.2,8.5,9.4,10.3,12.4,13.2
+Peak spectral period (s),s,Central Gulf of Mexico,13,14.4,15,15.4,15.7,17.2,17.5
+Peak spectral period (s),s,Western Gulf of Mexico,11.8,12.7,13.3,13.7,14.3,15.6,15.9
+Peak spectral period (s),s,Eastern Gulf of Mexico,11.8,12.7,13.3,13.7,14.3,15.6,15.9
+Peak spectral period (s),s,"All Regions, North of 28° N",10.4,11.4,11.8,12.2,13,14.2,14.5
+Period of maximum wave (s),s,Central Gulf of Mexico,11.7,13,13.5,13.9,14.1,15.5,15.8
+Period of maximum wave (s),s,Western Gulf of Mexico,10.6,11.4,12,12.3,12.9,14,14.3
+Period of maximum wave (s),s,Eastern Gulf of Mexico,10.6,11.4,12,12.3,12.9,14,14.3
+Period of maximum wave (s),s,"All Regions, North of 28° N",9.5,10.4,10.7,11,11.8,12.8,13.2
+Surface speed (m/s),m/s,Central Gulf of Mexico,1.65,2,2.22,2.4,2.55,3,3.12
+Surface speed (m/s),m/s,Western Gulf of Mexico,1.42,1.65,1.79,1.92,2.04,2.4,2.5
+Surface speed (m/s),m/s,Eastern Gulf of Mexico,1.42,1.65,1.79,1.92,2.04,2.4,2.5
+Surface speed (m/s),m/s,"All Regions, North of 28° N",0.8,1.15,1.32,1.46,1.63,1.97,2.2
+Speed at mid-profile (m/s),m/s,Central Gulf of Mexico,1.24,1.5,1.67,1.8,1.91,2.25,2.34
+Speed at mid-profile (m/s),m/s,Western Gulf of Mexico,1.07,1.24,1.34,1.44,1.53,1.8,1.87
+Speed at mid-profile (m/s),m/s,Eastern Gulf of Mexico,1.07,1.24,1.34,1.44,1.53,1.8,1.87
+Speed at mid-profile (m/s),m/s,"All Regions, North of 28° N",0.6,0.86,0.99,1.1,1.22,1.48,1.65
+Bottom of profile (m),m,Central Gulf of Mexico,69.3,84.2,93.2,100.8,107.1,126,131
+Bottom of profile (m),m,Western Gulf of Mexico,59.6,69.3,75,80.6,85.7,100.8,104.8
+Bottom of profile (m),m,Eastern Gulf of Mexico,59.6,69.3,75,80.6,85.7,100.8,104.8
+Bottom of profile (m),m,"All Regions, North of 28° N",33.5,48.2,55.1,61,68.1,82.3,92.2
+Uniform speed (m/s),m/s,Central Gulf of Mexico,1.65,2,2.22,2.4,2.55,3,3.12
+Uniform speed (m/s),m/s,Western Gulf of Mexico,1.42,1.65,1.79,1.92,2.04,2.4,2.5
+Uniform speed (m/s),m/s,Eastern Gulf of Mexico,1.42,1.65,1.79,1.92,2.04,2.4,2.5
+Uniform speed (m/s),m/s,"All Regions, North of 28° N",0.8,1.15,1.32,1.46,1.63,1.97,2.2
+Associated storm surge (m),m,Central Gulf of Mexico,0.26,0.42,0.53,0.64,0.74,0.9,0.98
+Associated storm surge (m),m,Western Gulf of Mexico,0.18,0.28,0.34,0.42,0.49,0.6,0.68
+Associated storm surge (m),m,Eastern Gulf of Mexico,0.18,0.28,0.34,0.42,0.49,0.6,0.68
+Associated storm surge (m),m,"All Regions, North of 28° N",0.15,0.24,0.3,0.34,0.39,0.48,0.56
+Tidal amplitude (m),m,Central Gulf of Mexico,0.42,0.42,0.42,0.42,0.42,0.42,0.42
+Tidal amplitude (m),m,Western Gulf of Mexico,0.42,0.42,0.42,0.42,0.42,0.42,0.42
+Tidal amplitude (m),m,Eastern Gulf of Mexico,0.42,0.42,0.42,0.42,0.42,0.42,0.42
+Tidal amplitude (m),m,"All Regions, North of 28° N",0.42,0.42,0.42,0.42,0.42,0.42,0.42
+1 hour mean wind speed (m/s),m/s,Early season (June 1 to August 1) central and western Gulf of Mexico,18.7,23.1,26.6,29.5,31.8,36.9,38.4
+1 hour mean wind speed (m/s),m/s,Late season (October 21 through November 30) central and western Gulf of Mexico,16.8,20.5,22.6,24.5,26.2,30.6,31.8
+1 hour mean wind speed (m/s),m/s,Early season (June 1 to August 1) Eastern Gulf of Mexico,23,26.7,28.9,31.1,33,38.9,40.4
+1 hour mean wind speed (m/s),m/s,Late season (October 21 through November 30) Eastern Gulf of Mexico,20.7,24.1,26.1,28,29.8,35,36.4
+10 min mean wind speed (m/s),m/s,Early season (June 1 to August 1) central and western Gulf of Mexico,20.2,25.1,29.2,32.5,35.1,41.1,42.9
+10 min mean wind speed (m/s),m/s,Late season (October 21 through November 30) central and western Gulf of Mexico,18.1,22.1,24.6,26.7,28.7,33.7,35.1
+10 min mean wind speed (m/s),m/s,Early season (June 1 to August 1) Eastern Gulf of Mexico,25,29.3,31.8,34.3,36.6,43.5,45.3
+10 min mean wind speed (m/s),m/s,Late season (October 21 through November 30) Eastern Gulf of Mexico,22.5,26.3,28.5,30.8,32.8,38.9,40.5
+1 min mean wind speed (m/s),m/s,Early season (June 1 to August 1) central and western Gulf of Mexico,22.1,27.7,32.4,36.3,39.4,46.6,48.7
+1 min mean wind speed (m/s),m/s,Late season (October 21 through November 30) central and western Gulf of Mexico,19.8,24.3,27.1,29.5,31.8,37.7,39.4
+1 min mean wind speed (m/s),m/s,Early season (June 1 to August 1) Eastern Gulf of Mexico,27.6,32.5,35.5,38.4,41.1,49.3,51.6
+1 min mean wind speed (m/s),m/s,Late season (October 21 through November 30) Eastern Gulf of Mexico,24.7,29,31.6,34.3,36.6,43.9,45.82
+3 sec gust (m/s),m/s,Early season (June 1 to August 1) central and western Gulf of Mexico,24.5,31.1,36.6,41.2,45,53.6,56.2
+3 sec gust (m/s),m/s,Late season (October 21 through November 30) central and western Gulf of Mexico,21.9,27.2,30.4,33.2,35.9,43,45
+3 sec gust (m/s),m/s,Early season (June 1 to August 1) Eastern Gulf of Mexico,31,36.8,40.2,43.8,47,57,59.7
+3 sec gust (m/s),m/s,Late season (October 21 through November 30) Eastern Gulf of Mexico,27.6,32.6,35.7,38.8,41.6,50.4,52.7
+Significant wave height (m),m,Early season (June 1 to August 1) central and western Gulf of Mexico,5.1,6.4,7.2,8.4,8.8,10.5,10.9
+Significant wave height (m),m,Late season (October 21 through November 30) central and western Gulf of Mexico,4.4,5.9,6.5,7,7.3,8.7,9
+Significant wave height (m),m,Early season (June 1 to August 1) Eastern Gulf of Mexico,5.9,7.3,8,8.8,9.3,11,11.4
+Significant wave height (m),m,Late season (October 21 through November 30) Eastern Gulf of Mexico,5.6,6.9,7.5,8.3,8.8,10.4,10.8
+Maximum wave height (m),m,Early season (June 1 to August 1) central and western Gulf of Mexico,9,11.3,12.8,14.8,15.5,18.5,19.3
+Maximum wave height (m),m,Late season (October 21 through November 30) central and western Gulf of Mexico,7.8,10.3,11.5,12.3,12.8,15.4,16
+Maximum wave height (m),m,Early season (June 1 to August 1) Eastern Gulf of Mexico,10.4,12.9,14.1,15.6,16.4,19.4,20.2
+Maximum wave height (m),m,Late season (October 21 through November 30) Eastern Gulf of Mexico,9.9,12.2,13.3,14.7,15.5,18.3,19
+Maximum crest elevation (m),m,Early season (June 1 to August 1) central and western Gulf of Mexico,6,7.6,8.5,9.7,10.2,12.1,12.5
+Maximum crest elevation (m),m,Late season (October 21 through November 30) central and western Gulf of Mexico,5.2,6.9,7.7,8.2,8.5,10.1,10.5
+Maximum crest elevation (m),m,Early season (June 1 to August 1) Eastern Gulf of Mexico,7.1,8.6,9.4,10.4,10.9,12.8,13.2
+Maximum crest elevation (m),m,Late season (October 21 through November 30) Eastern Gulf of Mexico,6.7,8.2,8.9,9.9,10.3,12.1,12.5
+Peak spectral period (s),s,Early season (June 1 to August 1) central and western Gulf of Mexico,10.5,11.4,11.9,13,13.2,14.1,14.3
+Peak spectral period (s),s,Late season (October 21 through November 30) central and western Gulf of Mexico,9,10.2,10.6,11,11.2,12.1,12.2
+Peak spectral period (s),s,Early season (June 1 to August 1) Eastern Gulf of Mexico,9.9,11,11.5,12,12.3,13.3,13.5
+Peak spectral period (s),s,Late season (October 21 through November 30) Eastern Gulf of Mexico,9.7,10.7,11.1,11.7,12,13,13.2
+Period of maximum wave (s),s,Early season (June 1 to August 1) central and western Gulf of Mexico,9.4,10.3,10.7,11.7,11.9,12.7,12.9
+Period of maximum wave (s),s,Late season (October 21 through November 30) central and western Gulf of Mexico,8.1,9.2,9.6,9.9,10.1,10.9,11
+Period of maximum wave (s),s,Early season (June 1 to August 1) Eastern Gulf of Mexico,8.9,9.9,10.3,10.8,11.1,12,12.2
+Period of maximum wave (s),s,Late season (October 21 through November 30) Eastern Gulf of Mexico,8.7,9.6,10,10.5,10.8,11.7,11.9
+Surface speed (m/s),m/s,Early season (June 1 to August 1) central and western Gulf of Mexico,0.94,1.15,1.33,1.48,1.59,1.84,1.92
+Surface speed (m/s),m/s,Late season (October 21 through November 30) central and western Gulf of Mexico,0.84,1.02,1.13,1.22,1.31,1.53,1.59
+Surface speed (m/s),m/s,Early season (June 1 to August 1) Eastern Gulf of Mexico,1.15,1.34,1.45,1.56,1.65,1.94,2.03
+Surface speed (m/s),m/s,Late season (October 21 through November 30) Eastern Gulf of Mexico,1.04,1.2,1.31,1.4,1.49,1.75,1.83
+Speed at mid-profile (m/s),m/s,Early season (June 1 to August 1) central and western Gulf of Mexico,0.7,0.87,1,1.11,1.19,1.38,1.44
+Speed at mid-profile (m/s),m/s,Late season (October 21 through November 30) central and western Gulf of Mexico,0.63,0.77,0.85,0.92,0.98,1.15,1.19
+Speed at mid-profile (m/s),m/s,Early season (June 1 to August 1) Eastern Gulf of Mexico,0.87,1,1.09,1.17,1.24,1.46,1.51
+Speed at mid-profile (m/s),m/s,Late season (October 21 through November 30) Eastern Gulf of Mexico,0.78,0.91,0.98,1.05,1.12,1.31,1.37
+Bottom of profile (m),m,Early season (June 1 to August 1) central and western Gulf of Mexico,39.2,48.5,55.9,61.3,66.8,77.5,80.6
+Bottom of profile (m),m,Late season (October 21 through November 30) central and western Gulf of Mexico,35.3,42.9,47.5,51.4,55.1,64.3,66.8
+Bottom of profile (m),m,Early season (June 1 to August 1) Eastern Gulf of Mexico,48.3,56.1,60.8,65.3,69.4,81.6,84.9
+Bottom of profile (m),m,Late season (October 21 through November 30) Eastern Gulf of Mexico,43.5,50.6,54.8,58.8,62.6,73.6,76.5
+Associated storm surge (m),m,Early season (June 1 to August 1) central and western Gulf of Mexico,0.16,0.26,0.33,0.4,0.47,0.56,0.6
+Associated storm surge (m),m,Late season (October 21 through November 30) central and western Gulf of Mexico,0.14,0.22,0.27,0.34,0.39,0.47,0.5
+Associated storm surge (m),m,Early season (June 1 to August 1) Eastern Gulf of Mexico,0.19,0.28,0.35,0.43,0.49,0.61,0.69
+Associated storm surge (m),m,Late season (October 21 through November 30) Eastern Gulf of Mexico,0.17,0.26,0.31,0.39,0.45,0.55,0.62
+Tidal amplitude (m),m,Early season (June 1 to August 1) central and western Gulf of Mexico,0.42,0.42,0.42,0.42,0.42,0.42,0.42
+Tidal amplitude (m),m,Late season (October 21 through November 30) central and western Gulf of Mexico,0.42,0.42,0.42,0.42,0.42,0.42,0.42
+Tidal amplitude (m),m,Early season (June 1 to August 1) Eastern Gulf of Mexico,0.42,0.42,0.42,0.42,0.42,0.42,0.42
+Tidal amplitude (m),m,Late season (October 21 through November 30) Eastern Gulf of Mexico,0.42,0.42,0.42,0.42,0.42,0.42,0.42
