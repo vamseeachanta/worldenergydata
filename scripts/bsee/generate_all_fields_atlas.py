@@ -31,6 +31,10 @@ from worldenergydata.bsee.data.sources.bin.ogor_production_loader import (
     load_all_fields_production,
 )
 from worldenergydata.bsee.paleowells.era_classifier import GeologicalEraClassifier
+from worldenergydata.bsee.paleowells.field_era import (
+    apply_field_era,
+    build_field_era_map,
+)
 from worldenergydata.bsee.reports.all_fields_report import AllFieldsReport
 from worldenergydata.common.data_resolver import get_module_data_safe
 
@@ -118,6 +122,26 @@ def main() -> int:
         prod, field_water_depth=field_wd, latest_year=latest_year
     )
     logger.info("Aggregated %d fields", len(result))
+
+    # Lift paleo-well eras to the field level (all paleo wells, incl.
+    # non-producing) so far more fields than the producing-well-only
+    # classifier resolves to a real era; also stamps IS_LOWER_TERTIARY.
+    logger.info("Lifting eras to field level from all paleo wells...")
+    field_era_map = build_field_era_map()
+    result = apply_field_era(result, field_era_map)
+    if "GEOLOGICAL_ERA" in result.columns and not result.empty:
+        from_map = int(result["FIELD_CODE"].astype(str).str.strip().isin(field_era_map).sum())
+        unknown = int((result["GEOLOGICAL_ERA"] == "Unknown").sum())
+        lt = int(result["IS_LOWER_TERTIARY"].sum())
+        logger.info(
+            "Field-era map covers %d field codes; %d/%d atlas fields got era "
+            "from the field-map, %d remain Unknown, %d flagged Lower Tertiary",
+            len(field_era_map),
+            from_map,
+            len(result),
+            unknown,
+            lt,
+        )
 
     args.out.mkdir(parents=True, exist_ok=True)
     report = AllFieldsReport(result)
