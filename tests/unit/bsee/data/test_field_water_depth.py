@@ -50,9 +50,7 @@ def test_deepqual_fills_gaps_only(tmp_path):
     """platstruc wins for shared codes; deepqual only fills codes it lacks."""
     _write_platstruc(
         tmp_path,
-        pd.DataFrame(
-            {"FIELD_NAME_CODE": ["MC807"], "WATER_DEPTH": [2980.0]}
-        ),
+        pd.DataFrame({"FIELD_NAME_CODE": ["MC807"], "WATER_DEPTH": [2980.0]}),
     )
     _write_deepqual(
         tmp_path,

@@ -64,15 +64,15 @@ class AllFieldsRunner:
         if latest_year is None:
             year_col = self._pick_col(production_data, ["PROD_YEAR", "PRODUCTION_DATE"])
             if year_col:
-                years = pd.to_numeric(production_data[year_col], errors="coerce").dropna()
+                years = pd.to_numeric(
+                    production_data[year_col], errors="coerce"
+                ).dropna()
                 latest_year = int(years.max()) if not years.empty else None
 
         # Group by field and compute production metrics
         rows = []
         for field_code, field_df in production_data.groupby(field_col):
-            row = self._compute_field_production(
-                str(field_code), field_df, latest_year
-            )
+            row = self._compute_field_production(str(field_code), field_df, latest_year)
 
             # Resolve field name
             row["FIELD_NAME"] = self._field_resolver.resolve(str(field_code))
@@ -181,14 +181,10 @@ class AllFieldsRunner:
             "CUM_WATER_MMBBL": round(cum_water * _BBL_TO_MMBBL, 3),
             "PEAK_OIL_BOPD": round(peak_oil_bopd, 0),
             "REC_PER_WELL_MMBBL": (
-                round(cum_oil * _BBL_TO_MMBBL / well_count, 4)
-                if well_count
-                else None
+                round(cum_oil * _BBL_TO_MMBBL / well_count, 4) if well_count else None
             ),
             "AVG_BOPD_PER_WELL": (
-                round(cum_oil / days_on_prod_sum, 1)
-                if days_on_prod_sum
-                else None
+                round(cum_oil / days_on_prod_sum, 1) if days_on_prod_sum else None
             ),
             "PROD_SPAN_YRS": prod_span,
             "WOR_CUM": round(cum_water / cum_oil, 3) if cum_oil else None,

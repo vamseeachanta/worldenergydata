@@ -284,7 +284,7 @@ class TestBenchmarkingMetrics:
         """One field, 3 wells, 2 operators, 2 years."""
         rows = []
         wells = {
-            "60805A": ("BP", 600000.0),       # BP dominant
+            "60805A": ("BP", 600000.0),  # BP dominant
             "60805B": ("BP", 300000.0),
             "60805C": ("Shell", 100000.0),
         }
@@ -357,9 +357,7 @@ class TestBenchmarkingMetrics:
 
     def test_field_water_depth_precedence_over_lease(self, runner):
         df = self._multi_well_op_df()
-        lease_wd = pd.DataFrame(
-            {"LEASE_NUMBER": ["G10001"], "MAX_WTR_DPTH": [1000.0]}
-        )
+        lease_wd = pd.DataFrame({"LEASE_NUMBER": ["G10001"], "MAX_WTR_DPTH": [1000.0]})
         row = runner.run(
             df, water_depth_data=lease_wd, field_water_depth={"100": 6200.0}
         ).iloc[0]
@@ -367,9 +365,7 @@ class TestBenchmarkingMetrics:
 
     def test_field_water_depth_falls_back_to_lease(self, runner):
         df = self._multi_well_op_df()
-        lease_wd = pd.DataFrame(
-            {"LEASE_NUMBER": ["G10001"], "MAX_WTR_DPTH": [1000.0]}
-        )
+        lease_wd = pd.DataFrame({"LEASE_NUMBER": ["G10001"], "MAX_WTR_DPTH": [1000.0]})
         # field map has no entry for "100" -> legacy lease path used.
         row = runner.run(
             df, water_depth_data=lease_wd, field_water_depth={"999": 5.0}

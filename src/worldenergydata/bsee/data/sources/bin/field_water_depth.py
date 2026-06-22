@@ -69,7 +69,10 @@ def _avg_by_field(
 
     work = pd.DataFrame(
         {
-            "field": df[field_col].astype(str).str.replace('"', "", regex=False).str.strip(),
+            "field": df[field_col]
+            .astype(str)
+            .str.replace('"', "", regex=False)
+            .str.strip(),
             "depth": pd.to_numeric(df[depth_col], errors="coerce"),
         }
     )

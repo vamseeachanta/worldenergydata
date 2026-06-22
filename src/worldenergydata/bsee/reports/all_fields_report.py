@@ -65,9 +65,9 @@ class AllFieldsReport:
             return empty
 
         by_op = (
-            work.groupby("DOMINANT_OPERATOR")["CUM_OIL_MMBBL"].sum().sort_values(
-                ascending=False
-            )
+            work.groupby("DOMINANT_OPERATOR")["CUM_OIL_MMBBL"]
+            .sum()
+            .sort_values(ascending=False)
         )
         total = by_op.sum()
         if total <= 0:
@@ -132,17 +132,21 @@ class AllFieldsReport:
                 lines.append(
                     f"- **Basin HHI (by dominant-operator oil)**: {conc['hhi']:.4f}"
                 )
-                lines.append(f"- **Top-1 operator oil share**: {conc['top1_share']:.1%}")
-                lines.append(f"- **Top-5 operator oil share**: {conc['top5_share']:.1%}")
-                lines.append(f"- **Distinct dominant operators**: {conc['n_operators']}")
+                lines.append(
+                    f"- **Top-1 operator oil share**: {conc['top1_share']:.1%}"
+                )
+                lines.append(
+                    f"- **Top-5 operator oil share**: {conc['top5_share']:.1%}"
+                )
+                lines.append(
+                    f"- **Distinct dominant operators**: {conc['n_operators']}"
+                )
                 lines.append("")
                 lines.append("| Operator | Oil (MMBBL) | Share |")
                 lines.append("|----------|-------------|-------|")
                 total_oil_conc = sum(conc["operator_oil"].values()) or 1.0
                 for op, oil in list(conc["operator_oil"].items())[:5]:
-                    lines.append(
-                        f"| {op} | {oil:,.1f} | {oil / total_oil_conc:.1%} |"
-                    )
+                    lines.append(f"| {op} | {oil:,.1f} | {oil / total_oil_conc:.1%} |")
                 lines.append("")
 
             # Top Fields Table
