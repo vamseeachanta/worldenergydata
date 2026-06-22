@@ -131,9 +131,11 @@ def test_to_runner_schema_maps_and_types():
         "MON_G_PROD_VOL",
         "MON_WTR_PROD_VOL",
         "DAYS_ON_PROD",
+        "OPERATOR",
     ]
     assert out.iloc[0]["FIELD_NAME_CODE"] == "MC807"  # from BOEM_FIELD
     assert out.iloc[0]["PROD_YEAR"] == 2024  # from 202401
+    assert out.iloc[0]["OPERATOR"] == "BP"  # from SORT_NAME
     assert out["MON_O_PROD_VOL"].sum() == pytest.approx(2_001_000.0)
 
 
@@ -160,7 +162,7 @@ def test_to_runner_schema_strips_quotes_and_whitespace():
             "PR",
             "B",
             "1",
-            "OP",
+            '" Shell "',
             " GC640 ",
             0.0,
             "Q",
@@ -173,6 +175,7 @@ def test_to_runner_schema_strips_quotes_and_whitespace():
     assert out.iloc[0]["FIELD_NAME_CODE"] == "GC640"
     assert out.iloc[0]["LEASE_NUMBER"] == "G99"
     assert out.iloc[0]["API_WELL_NUMBER"] == "60805"
+    assert out.iloc[0]["OPERATOR"] == "Shell"  # SORT_NAME quotes+ws stripped
 
 
 @unit
