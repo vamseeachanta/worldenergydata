@@ -82,6 +82,16 @@ Industry standards, best practices, and regulatory frameworks that guide energy 
 - **SODIR Guidelines**: Norwegian regulatory framework
 - **Environmental Regulations**: Emissions and environmental compliance
 
+### 🛢️ [Petroleum Domain](petroleum-domain/)
+
+Concise concept references for core reservoir / petroleum-engineering terminology
+used across the analysis modules.
+
+**Notes:**
+- **Reserves & Resources Classification** — 1P/2P/3P, P90/P50/P10, contingent 1C/2C/3C; economic limit, NPV/IRR/payout (SPE-PRMS)
+- **Well Performance: Productivity Index & IPR** — `q = PI·(Pr − Pwf)`, IPR curve, Vogel below bubble point
+- **Petrophysics Fundamentals** — porosity (effective), permeability, φ–k crossplots, compressibility
+
 ## Integration with WorldEnergyData
 
 ### Methodology Validation
