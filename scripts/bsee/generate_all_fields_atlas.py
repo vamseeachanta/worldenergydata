@@ -27,6 +27,12 @@ from worldenergydata.bsee.analysis.field_decom import (
     apply_field_decom,
     build_field_decom_liability,
 )
+from worldenergydata.bsee.analysis.field_netback import (
+    OPEX_BAND_HIGH_USD_BBL,
+    OPEX_BAND_LOW_USD_BBL,
+    ROYALTY_RATE_DEFAULT,
+    compute_field_netback,
+)
 from worldenergydata.bsee.analysis.field_revenue import (
     apply_field_revenue,
     build_field_oil_revenue,
@@ -191,6 +197,35 @@ def main() -> int:
             basin_p90,
             n_with_decom,
             len(result),
+        )
+
+    # Netback / break-even SENSITIVITY (Rank-3 economics): pure-derived from
+    # the real gross oil revenue + a labeled royalty assumption + a transparent
+    # opex band. This is a sensitivity range, NOT a point NPV (no per-field
+    # development costs exist to generalize). No new data file is loaded.
+    logger.info(
+        "Computing netback / break-even sensitivity "
+        "(royalty %.4f assumed; opex band $%.1f-$%.1f/bbl)...",
+        ROYALTY_RATE_DEFAULT,
+        OPEX_BAND_LOW_USD_BBL,
+        OPEX_BAND_HIGH_USD_BBL,
+    )
+    result = compute_field_netback(result)
+    if "NET_REVENUE_AFTER_ROYALTY_MM_USD" in result.columns and not result.empty:
+        basin_net = float(
+            result["NET_REVENUE_AFTER_ROYALTY_MM_USD"].sum(skipna=True)
+        )
+        n_with_net = int(result["NET_REVENUE_AFTER_ROYALTY_MM_USD"].notna().sum())
+        logger.info(
+            "Basin net revenue after royalty $%.1f MM across %d/%d fields "
+            "(royalty %.4f assumed [deepwater default, not per-lease]; opex band "
+            "$%.1f-$%.1f/bbl; oil only; SENSITIVITY, not NPV).",
+            basin_net,
+            n_with_net,
+            len(result),
+            ROYALTY_RATE_DEFAULT,
+            OPEX_BAND_LOW_USD_BBL,
+            OPEX_BAND_HIGH_USD_BBL,
         )
 
     args.out.mkdir(parents=True, exist_ok=True)
