@@ -1,0 +1,334 @@
+og_field_name,normalized_name,bsee_match_name,bsee_id_if_any,match_type,confidence
+Aconcagua,ACONCAGUA,,,none,0.00
+Aegean,AEGEAN,,,none,0.00
+Allegheny,ALLEGHENY,,,none,0.00
+Allegheny South,ALLEGHENY SOUTH,,,none,0.00
+Amberjack,AMBERJACK,,,none,0.00
+Amethyst,AMETHYST,,,none,0.00
+Andrew,ANDREW,,,none,0.00
+Anduin,ANDUIN,,,none,0.00
+Anduin West,ANDUIN WEST,,,none,0.00
+Angel Fire,ANGEL FIRE,,,none,0.00
+Angelica,ANGELICA,,,none,0.00
+Angostura,ANGOSTURA,,,none,0.00
+Angus,ANGUS,,,none,0.00
+Antietam,ANTIETAM,,,none,0.00
+Appaloosa,APPALOOSA,,,none,0.00
+Appomattox,APPOMATTOX,,,none,0.00
+Ardennes,ARDENNES,,,none,0.00
+Ariel,ARIEL,,,none,0.00
+Armstrong,ARMSTRONG,,,none,0.00
+Arnold,ARNOLD,Ewing Bank (EW) area,,fuzzy,0.40
+Aspen,ASPEN,,,none,0.00
+Atlantis,ATLANTIS,,,none,0.00
+Atlantis North,ATLANTIS NORTH,,,none,0.00
+Atlas NW,ATLAS NW,,,none,0.00
+Auger,AUGER,,,none,0.00
+Baccarat,BACCARAT,,,none,0.00
+Backslice,BACKSLICE,,,none,0.00
+Balboa,BALBOA,,,none,0.00
+Baldpate,BALDPATE,,,none,0.00
+Baracuda,BARACUDA,,,none,0.00
+Barataria,BARATARIA,,,none,0.00
+Barbosa,BARBOSA,,,none,0.00
+Bass Lite,BASS LITE,,,none,0.00
+Beta,BETA,,,none,0.00
+Big Bend (Noble),BIG BEND,,,none,0.00
+Big Bend (Petrobras),BIG BEND,,,none,0.00
+Big Foot,BIG FOOT,,,none,0.00
+Bimini,BIMINI,,,none,0.00
+Bioko,BIOKO,,,none,0.00
+Black Pearl,BLACK PEARL,,,none,0.00
+Blackbeard East,BLACKBEARD EAST,South Timbalier (ST) area,,fuzzy,0.40
+Blackbeard West,BLACKBEARD WEST,,,none,0.00
+Blacktail,BLACKTAIL,,,none,0.00
+Blind Faith,BLIND FAITH,,,none,0.00
+Blueberry Hill,BLUEBERRY HILL,,,none,0.00
+Bluto,BLUTO,,,none,0.00
+Bolt,BOLT,,,none,0.00
+Bonanza,BONANZA,,,none,0.00
+Bonito,BONITO,,,none,0.00
+Boomvang,BOOMVANG,,,none,0.00
+Boonville,BOONVILLE,,,none,0.00
+Boris,BORIS,,,none,0.00
+Boudin,BOUDIN,,,none,0.00
+Brisbane,BRISBANE,,,none,0.00
+Brutus,BRUTUS,,,none,0.00
+Buckskin,BUCKSKIN,,,none,0.00
+Bud,BUD,,,none,0.00
+Bullwinkle,BULLWINKLE,,,none,0.00
+Burger,BURGER,,,none,0.00
+Bushwood (Geauxpher),BUSHWOOD,,,none,0.00
+Caesar,CAESAR,,,none,0.00
+Callisto,CALLISTO,,,none,0.00
+Camden Hills,CAMDEN HILLS,,,none,0.00
+Capella,CAPELLA,,,none,0.00
+Cardamom,CARDAMOM,,,none,0.00
+Cardona,CARDONA,,,none,0.00
+Cardona South,CARDONA SOUTH,,,none,0.00
+Cascade,CASCADE,,,none,0.00
+Catalina,CATALINA,,,none,0.00
+Cheyenne,CHEYENNE,,,none,0.00
+Cheyenne East,CHEYENNE EAST,,,none,0.00
+Chimichanga,CHIMICHANGA,,,none,0.00
+Chinook,CHINOOK,,,none,0.00
+Clipper,CLIPPER,,,none,0.00
+Cobra,COBRA,,,none,0.00
+Cognac,COGNAC,,,none,0.00
+Colonial,COLONIAL,,,none,0.00
+Conger,CONGER,,,none,0.00
+Constitution,CONSTITUTION,,,none,0.00
+Coral,CORAL,,,none,0.00
+Cornelius,CORNELIUS,,,none,0.00
+Corona Del Mar,CORONA DEL MAR,,,none,0.00
+Coronado,CORONADO,,,none,0.00
+Cosmopolitan,COSMOPOLITAN,,,none,0.00
+Cottonwood,COTTONWOOD,,,none,0.00
+Coulomb,COULOMB,,,none,0.00
+Covellite,COVELLITE,,,none,0.00
+Crackerjack,CRACKERJACK,,,none,0.00
+Criollo,CRIOLLO,,,none,0.00
+Crosby,CROSBY,,,none,0.00
+Cuaba,CUABA,,,none,0.00
+Daggerboard,DAGGERBOARD,,,none,0.00
+Dalmatian North,DALMATIAN NORTH,,,none,0.00
+Dalmatian South,DALMATIAN SOUTH,,,none,0.00
+Daniel Boone,DANIEL BOONE,,,none,0.00
+Dantzler,DANTZLER,,,none,0.00
+Davy Jones,DAVY JONES,,,none,0.00
+Dawson Deep,DAWSON,,,none,0.00
+Daytona,DAYTONA,,,none,0.00
+Deep Blue,BLUE,,,none,0.00
+Deimos,DEIMOS,,,none,0.00
+Devils Island,DEVILS ISLAND,,,none,0.00
+Devils Tower,DEVILS TOWER,,,none,0.00
+Diamond,DIAMOND,,,none,0.00
+Diana,DIANA,,,none,0.00
+Diana South,DIANA SOUTH,,,none,0.00
+Don Larsen,DON LARSEN,,,none,0.00
+Dorado,DORADO,,,none,0.00
+Double Mountain,DOUBLE MOUNTAIN,,,none,0.00
+Droshky,DROSHKY,,,none,0.00
+Dulcimer,DULCIMER,,,none,0.00
+Durango,DURANGO,,,none,0.00
+East Anstey,EAST ANSTEY,,,none,0.00
+Einset,EINSET,,,none,0.00
+Enchilada,ENCHILADA,,,none,0.00
+Entrada,ENTRADA,,,none,0.00
+Europa,EUROPA,,,none,0.00
+EW 998,EW 998,Ewing Bank (EW) area,,fuzzy,0.40
+Falcon,FALCON,,,none,0.00
+Fastball,FASTBALL,,,none,0.00
+Fiji,FIJI,,,none,0.00
+Firefox,FIREFOX,,,none,0.00
+Flatrock,FLATROCK,,,none,0.00
+Flintcreek,FLINTCREEK,,,none,0.00
+Floyd,FLOYD,,,none,0.00
+Flying Dutchman,FLYING DUTCHMAN,,,none,0.00
+Fourier,FOURIER,,,none,0.00
+Friesian,FRIESIAN,,,none,0.00
+Front Runner,FRONT RUNNER,,,none,0.00
+Front Runner South,FRONT RUNNER SOUTH,,,none,0.00
+Frosa,FROSA,,,none,0.00
+Fuji Springs,FUJI SPRINGS,,,none,0.00
+Gator Bait,GATOR BAIT,,,none,0.00
+Genesis,GENESIS,,,none,0.00
+Genghis Khan,GENGHIS KHAN,,,none,0.00
+Gila,GILA,,,none,0.00
+Gladden,GLADDEN,,,none,0.00
+Glider,GLIDER,,,none,0.00
+Goldfinger,GOLDFINGER,,,none,0.00
+Gomez,GOMEZ,,,none,0.00
+Gotcha,GOTCHA,,,none,0.00
+Great White,GREAT WHITE,,,none,0.00
+Guadalupe,GUADALUPE,,,none,0.00
+Gunflint (Freedom),GUNFLINT,,,none,0.00
+Gunnison,GUNNISON,,,none,0.00
+Gutterball,GUTTERBALL,,,none,0.00
+Habanero,HABANERO,,,none,0.00
+Hadrian,HADRIAN,,,none,0.00
+Hadrian South,HADRIAN SOUTH,,,none,0.00
+Harrier,HARRIER,,,none,0.00
+Hartebeest,HARTEBEEST,,,none,0.00
+Heidelberg,HEIDELBERG,,,none,0.00
+Herschel,HERSCHEL,,,none,0.00
+High Island 22,HIGH ISLAND 22,,,none,0.00
+His Dudeness,HIS DUDENESS,,,none,0.00
+Holly,HOLLY,,,none,0.00
+Holstein,HOLSTEIN,,,none,0.00
+Holy Cross,HOLY CROSS,,,none,0.00
+Hondo,HONDO,,,none,0.00
+Hoover,HOOVER,,,none,0.00
+Horn Mountain,HORN MOUNTAIN,,,none,0.00
+"Hummingbird, EW 834",HUMMINGBIRD EW 834,Ewing Bank (EW) area,,fuzzy,0.40
+Huna,HUNA,,,none,0.00
+Innsbruck,INNSBRUCK,,,none,0.00
+Isabela,ISABELA,,,none,0.00
+Jack,JACK,,,none,0.00
+Jaguar (Buccaneer),JAGUAR,,,none,0.00
+Jason,JASON,,,none,0.00
+Jericho,JERICHO,,,none,0.00
+Jubilee,JUBILEE,,,none,0.00
+Julia,JULIA,,,none,0.00
+K2,K2,,,none,0.00
+K2 North,K2 NORTH,,,none,0.00
+Kakuna,KAKUNA,,,none,0.00
+Kaskida,KASKIDA,,,none,0.00
+Kepler,KEPLER,,,none,0.00
+Kilchurn,KILCHURN,,,none,0.00
+King,KING,,,none,0.00
+King South,KING SOUTH,,,none,0.00
+Knotty Head,KNOTTY HEAD,,,none,0.00
+Kodiak,KODIAK,,,none,0.00
+Krakatoa,KRAKATOA,,,none,0.00
+Lafitte,LAFITTE,,,none,0.00
+Leon,LEON,,,none,0.00
+Liberty,LIBERTY,,,none,0.00
+Ligurian,LIGURIAN,,,none,0.00
+Llano,LLANO,,,none,0.00
+Logan,LOGAN,,,none,0.00
+Longhorn (aka Leo),LONGHORN,,,none,0.00
+Lorien,LORIEN,,,none,0.00
+Lost Ark,LOST ARK,,,none,0.00
+Lucius,LUCIUS,,,none,0.00
+Lyell,LYELL,,,none,0.00
+Macaroni,MACARONI,,,none,0.00
+Macondo,MACONDO,,,none,0.00
+Mad Dog,MAD DOG,,,none,0.00
+Mad Dog South,MAD DOG SOUTH,,,none,0.00
+Madagascar,MADAGASCAR,,,none,0.00
+Madison,MADISON,,,none,0.00
+Magnolia,MAGNOLIA,,,none,0.00
+Mahogany,MAHOGANY,,,none,0.00
+Main Pass 108,MAIN PASS 108,,,none,0.00
+Main Pass 98,MAIN PASS 98,,,none,0.00
+Manatee,MANATEE,,,none,0.00
+Mandy,MANDY,,,none,0.00
+Marco Polo,MARCO POLO,,,none,0.00
+Marmalard,MARMALARD,,,none,0.00
+Mars,MARS,,,none,0.00
+Marshall,MARSHALL,,,none,0.00
+Maserati,MASERATI,South Timbalier (ST) area,,fuzzy,0.40
+Mastiff,MASTIFF,,,none,0.00
+Matterhorn,MATTERHORN,,,none,0.00
+Mauna Kea,MAUNA KEA,,,none,0.00
+MC 72,MC 72,,,none,0.00
+McLaren,MCLAREN,South Timbalier (ST) area,,fuzzy,0.40
+Medusa,MEDUSA,,,none,0.00
+Merganser,MERGANSER,,,none,0.00
+Mica,MICA,,,none,0.00
+Mica Deep,MICA,,,none,0.00
+Minnow,MINNOW,,,none,0.00
+Mirage,MIRAGE,,,none,0.00
+Moccasin,MOCCASIN,,,none,0.00
+Mojito,MOJITO,,,none,0.00
+Mondo NW,MONDO NW,,,none,0.00
+Morgus,MORGUS,,,none,0.00
+Morpeth,MORPETH,Ewing Bank (EW) area,,fuzzy,0.40
+Mothball,MOTHBALL,,,none,0.00
+Nansen,NANSEN,,,none,0.00
+Nautilus (GOM),NAUTILUS,,,none,0.00
+Navi,NAVI,,,none,0.00
+Neptune (Atwater Valley),NEPTUNE,,,none,0.00
+Nile,NILE,,,none,0.00
+North Boomvang,NORTH BOOMVANG,,,none,0.00
+North Platte,NORTH PLATTE,,,none,0.00
+Northstar,NORTHSTAR,,,none,0.00
+Northwest Nansen,NORTHWEST NANSEN,,,none,0.00
+Northwest Navajo,NORTHWEST NAVAJO,,,none,0.00
+Northwood,NORTHWOOD,,,none,0.00
+Oooguruk,OOOGURUK,,,none,0.00
+Oregano,OREGANO,,,none,0.00
+Owl Creek (aka Owls Nest ),OWL CREEK,,,none,0.00
+Ozona Deep,OZONA,,,none,0.00
+Pardner,PARDNER,,,none,0.00
+Parmer,PARMER,,,none,0.00
+Partagas,PARTAGAS,,,none,0.00
+Pegasus,PEGASUS,,,none,0.00
+Penn State,PENN STATE,,,none,0.00
+Perseus,PERSEUS,,,none,0.00
+Pescado,PESCADO,,,none,0.00
+Petronius,PETRONIUS,,,none,0.00
+Phinisi,PHINISI,,,none,0.00
+Phobos,PHOBOS,,,none,0.00
+Phoenix,PHOENIX,,,none,0.00
+Pompano,POMPANO,,,none,0.00
+Pony,PONY,,,none,0.00
+Power Play,POWER PLAY,,,none,0.00
+Prince,PRINCE,Ewing Bank (EW) area,,fuzzy,0.40
+Princess,PRINCESS,,,none,0.00
+Pyrenees,PYRENEES,,,none,0.00
+Pyrrho,PYRRHO,,,none,0.00
+Q,Q,,,none,0.00
+Quatrain,QUATRAIN,,,none,0.00
+Quinteros,QUINTEROS,,,none,0.00
+Ram Powell,RAM POWELL,,,none,0.00
+Raptor,RAPTOR,,,none,0.00
+Red Dog,RED DOG,,,none,0.00
+Red Hawk,RED HAWK,,,none,0.00
+Refugio,REFUGIO,,,none,0.00
+Rickenbacker (aka Dunkirk),RICKENBACKER,,,none,0.00
+Rocky Mountain,ROCKY MOUNTAIN,,,none,0.00
+Sacate,SACATE,,,none,0.00
+Sake,SAKE,,,none,0.00
+Saleen,SALEEN,South Timbalier (ST) area,,fuzzy,0.40
+Samurai,SAMURAI,,,none,0.00
+San Jacinto,SAN JACINTO,,,none,0.00
+San Marcos,SAN MARCOS,,,none,0.00
+Santa Cruz (Galapagos),SANTA CRUZ,,,none,0.00
+Santiago (Galapagos),SANTIAGO,,,none,0.00
+Screwdriver,SCREWDRIVER,South Timbalier (ST) area,,fuzzy,0.40
+Serrano,SERRANO,,,none,0.00
+Shenandoah,SHENANDOAH,,,none,0.00
+Shenzi,SHENZI,,,none,0.00
+Silvertip,SILVERTIP,,,none,0.00
+Sivulliq,SIVULLIQ,,,none,0.00
+SOB 2,SOB 2,,,none,0.00
+South Deimos,SOUTH DEIMOS,,,none,0.00
+Southeast Tahoe,SOUTHEAST TAHOE,,,none,0.00
+Southern Cross,SOUTHERN CROSS,,,none,0.00
+Spartacus,SPARTACUS,,,none,0.00
+Spiderman,SPIDERMAN,,,none,0.00
+Spitfire,SPITFIRE,,,none,0.00
+St. Malo,ST MALO,,,none,0.00
+Stones,STONES,,,none,0.00
+Sturgis,STURGIS,,,none,0.00
+SW Shoebill,SW SHOEBILL,,,none,0.00
+Swordfish,SWORDFISH,,,none,0.00
+Taggart,TAGGART,,,none,0.00
+Tahiti,TAHITI,,,none,0.00
+Tahoe,TAHOE,,,none,0.00
+Telemark,TELEMARK,,,none,0.00
+Thunder Hawk,THUNDER HAWK,,,none,0.00
+Thunder Horse,THUNDER HORSE,,,none,0.00
+Thunder Horse North,THUNDER HORSE NORTH,,,none,0.00
+Tiber,TIBER,,,none,0.00
+Ticonderoga,TICONDEROGA,,,none,0.00
+Tiger (EB494),TIGER,,,none,0.00
+Tobago,TOBAGO,,,none,0.00
+Toddy,TODDY,South Timbalier (ST) area,,fuzzy,0.40
+Tomahawk,TOMAHAWK,,,none,0.00
+Tonga,TONGA,,,none,0.00
+Tonga West,TONGA WEST,,,none,0.00
+Tornado,TORNADO,,,none,0.00
+Torpedo,TORPEDO,,,none,0.00
+Trident,TRIDENT,,,none,0.00
+Triton,TRITON,,,none,0.00
+Troubadour,TROUBADOUR,,,none,0.00
+Tubular Bells,TUBULAR BELLS,,,none,0.00
+Tucker,TUCKER,,,none,0.00
+Ursa,URSA,,,none,0.00
+Virgo,VIRGO,,,none,0.00
+Vito,VITO,,,none,0.00
+Vortex,VORTEX,,,none,0.00
+Wang,WANG,,,none,0.00
+Waylon,WAYLON,,,none,0.00
+West Boomvang,WEST BOOMVANG,,,none,0.00
+West Boreas,WEST BOREAS,,,none,0.00
+Who Dat,WHO DAT,,,none,0.00
+Whydah,WHYDAH,,,none,0.00
+Wide Berth,WIDE BERTH,,,none,0.00
+Winter,WINTER,,,none,0.00
+Wrigley,WRIGLEY,,,none,0.00
+Yosemite,YOSEMITE,,,none,0.00
+Yucatan North,YUCATAN NORTH,,,none,0.00
