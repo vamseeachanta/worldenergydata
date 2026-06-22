@@ -34,12 +34,30 @@ jobs:
   # worldenergydata#530). wed's conventions match the reusable defaults exactly
   # (selector scripts/ci/select_test_targets.py, uv sync --all-extras, quarantine
   # scripts/ci/quarantine.txt, python-setup uv, max-parallel 10), so the caller
-  # passes no `with:` overrides. The aggregate check is now surfaced as
-  # "domain-tests / Aggregate domain results" (was the inline "Test (PR gate)" —
-  # the ruleset required check must be updated to match; see the migration PR).
+  # passes no `with:` overrides.
   domain-tests:
     if: github.event_name == 'pull_request'
     uses: vamseeachanta/workspace-hub/.github/workflows/domain-matrix.yml@main
+
+  # Name-preserving gate: the reusable workflow surfaces its own aggregate as
+  # "domain-tests / Aggregate domain results", but the branch ruleset requires a
+  # check literally named "Test (PR gate)". This thin wrapper re-publishes that
+  # exact name and gates on the reusable matrix result, so the migration needs
+  # NO ruleset change and does not break in-flight PRs. (#530)
+  pr-gate:
+    name: Test (PR gate)
+    needs: [domain-tests]
+    if: always() && github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Gate on domain matrix result
+        run: |
+          echo "domain-tests result: ${{ needs.domain-tests.result }}"
+          if [ "${{ needs.domain-tests.result }}" != "success" ]; then
+            echo "::error::domain matrix failed — see the 'domain-tests / *' jobs"
+            exit 1
+          fi
+          echo "All domains green ✅"
 
   # ------------------------------------------------------------ full matrix --
   test:
