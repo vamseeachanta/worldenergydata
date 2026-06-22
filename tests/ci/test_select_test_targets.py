@@ -13,7 +13,12 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT / "scripts" / "ci"))
 
-from select_test_targets import ALWAYS_XDIST, select  # noqa: E402
+from select_test_targets import (  # noqa: E402
+    ALWAYS_XDIST,
+    _has_tests,
+    select,
+    to_matrix,
+)
 
 
 def _unit_modules() -> list[str]:
@@ -68,3 +73,71 @@ def test_integration_module_adds_seq_target():
     r = select(["tests/integration/modules/bsee/test_x.py"], REPO_ROOT)
     if (REPO_ROOT / "tests/integration/modules/bsee").is_dir():
         assert "tests/integration/modules/bsee" in r["seq"]
+
+
+# --- Matrix-emitter (domain fan-out) tests ---
+
+
+def _names(m: dict) -> set[str]:
+    return {s["name"] for s in m["include"]}
+
+
+def test_matrix_is_never_empty_on_skip():
+    """Docs-only change still yields the always-on shard (matrix never empty)."""
+    m = to_matrix(["README.md"], REPO_ROOT)
+    assert m["scope"] == "skip"
+    assert m["include"], "matrix must never be empty (CI matrix would error)"
+    assert _names(m) == {"_always"}
+
+
+def test_matrix_module_scope_one_shard_per_domain():
+    m = to_matrix(
+        ["src/worldenergydata/hse/x.py", "src/worldenergydata/sodir/y.py"],
+        REPO_ROOT,
+    )
+    assert m["scope"] == "modules"
+    names = _names(m)
+    assert "_always" in names
+    assert "unit-hse" in names and "unit-sodir" in names
+    # always-on dirs are not duplicated into their own shards
+    assert "unit-core" not in names and "unit-common" not in names
+
+
+def test_matrix_full_scope_fans_out_every_unit_domain_with_tests():
+    """A core change fans out to one shard per tests/unit/<domain> that has
+    tests; pure support dirs (no test files) are excluded to avoid empty shards."""
+    m = to_matrix(["uv.lock"], REPO_ROOT)
+    assert m["scope"] == "full"
+    names = _names(m)
+    base = REPO_ROOT / "tests" / "unit"
+    for module in _unit_modules():
+        if _has_tests(base / module):
+            assert f"unit-{module}" in names, f"{module} missing from full matrix"
+        else:
+            assert f"unit-{module}" not in names, f"{module} is an empty shard"
+
+
+def test_matrix_full_scope_excludes_non_test_support_dirs():
+    """Support dirs under tests/ (fixtures/helpers/mocks/...) must not become
+    shards when they contain no test files."""
+    m = to_matrix(["uv.lock"], REPO_ROOT)
+    names = _names(m)
+    for support in ("fixtures", "helpers", "mocks"):
+        d = REPO_ROOT / "tests" / support
+        if d.is_dir() and not _has_tests(d):
+            assert support not in names, f"{support} should not be a shard"
+
+
+def test_matrix_shards_have_required_fields():
+    m = to_matrix(["uv.lock"], REPO_ROOT)
+    for shard in m["include"]:
+        assert set(shard) >= {"name", "targets", "mode"}
+        assert shard["mode"] in {"xdist", "seq"}
+        assert shard["targets"].strip()
+
+
+def test_matrix_targets_only_existing_dirs_in_module_scope():
+    m = to_matrix(["src/worldenergydata/subsea/x.py"], REPO_ROOT)
+    for shard in m["include"]:
+        for tgt in shard["targets"].split():
+            assert (REPO_ROOT / tgt).exists(), f"{tgt} does not exist"
