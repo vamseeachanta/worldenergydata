@@ -96,9 +96,19 @@ jobs:
           XDIST=()
           [ "$MODE" = "xdist" ] && XDIST=(-n auto)
           echo "Shard '$SHARD' ($MODE): $TARGETS"
+          set +e
           # shellcheck disable=SC2086 (TARGETS is an intentional target list)
           uv run --with pytest-xdist pytest $TARGETS "${XDIST[@]}" "${DESELECT[@]}" \
             --tb=short --junitxml="test-results-${SHARD}.xml"
+          rc=$?
+          set -e
+          # exit code 5 = "no tests collected" (empty / norecursedirs-excluded
+          # shard) — not a failure for a per-domain shard.
+          if [ "$rc" -eq 5 ]; then
+            echo "::notice::shard '$SHARD' collected no tests — treating as pass"
+            rc=0
+          fi
+          exit "$rc"
       - name: Upload domain test results
         uses: actions/upload-artifact@v7
         if: always()

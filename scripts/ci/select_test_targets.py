@@ -87,6 +87,21 @@ def _is_core(path: str) -> bool:
     return path in CORE_EXACT or path.startswith(CORE_PREFIXES)
 
 
+def _has_tests(directory: Path) -> bool:
+    """True if ``directory`` contains at least one pytest file.
+
+    Keeps non-test support dirs (fixtures/, helpers/, mocks/, _archive/, …)
+    out of the domain matrix so they don't become empty shards. Note: a dir
+    that *has* test files but is excluded by ``norecursedirs`` still becomes a
+    shard — the CI step treats pytest's "no tests collected" (exit 5) as a
+    pass, so such shards are harmless.
+    """
+    for pattern in ("test_*.py", "*_test.py"):
+        if next(directory.rglob(pattern), None) is not None:
+            return True
+    return False
+
+
 def select(changed: list[str], root: Path) -> dict:
     """Return {scope, xdist, seq} for the given changed files."""
     if any(_is_core(p) for p in changed):
@@ -183,7 +198,11 @@ def to_matrix(changed: list[str], root: Path) -> dict:
         unit = root / "tests" / "unit"
         if unit.is_dir():
             for child in sorted(unit.iterdir()):
-                if child.is_dir() and child.name != "__pycache__":
+                if (
+                    child.is_dir()
+                    and child.name != "__pycache__"
+                    and _has_tests(child)
+                ):
                     shards.append(
                         {
                             "name": f"unit-{child.name}",
@@ -194,12 +213,17 @@ def to_matrix(changed: list[str], root: Path) -> dict:
         tests = root / "tests"
         root_files: list[str] = []
         for child in sorted(tests.iterdir()):
-            if child.is_dir() and child.name not in {
-                "unit",
-                "performance",
-                "integration",
-                "__pycache__",
-            }:
+            if (
+                child.is_dir()
+                and child.name
+                not in {
+                    "unit",
+                    "performance",
+                    "integration",
+                    "__pycache__",
+                }
+                and _has_tests(child)
+            ):
                 shards.append(
                     {
                         "name": child.name,
