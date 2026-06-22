@@ -1,0 +1,114 @@
+module: metocean
+description: API-RP-2MET-derived metocean extremes (GoM hurricane, US zone 100-yr
+  waves) and marine-growth terminal thickness reference tables.
+datasets:
+- name: api_rp2met_hurricane_gom_extremes.csv
+  path: data/modules/metocean/curated/api_rp2met_hurricane_gom_extremes.csv
+  format: csv
+  columns:
+  - name: PARAMETER
+    type: string
+    description: ''
+    unit: ''
+  - name: RP_10YR
+    type: float
+    description: ''
+    unit: ''
+  - name: RP_25YR
+    type: float
+    description: ''
+    unit: ''
+  - name: RP_50YR
+    type: float
+    description: ''
+    unit: ''
+  - name: RP_100YR
+    type: float
+    description: ''
+    unit: ''
+  - name: RP_200YR
+    type: float
+    description: ''
+    unit: ''
+  - name: RP_1000YR
+    type: float
+    description: ''
+    unit: ''
+  - name: RP_2000YR
+    type: float
+    description: ''
+    unit: ''
+  row_count: 16
+  size_bytes: 1018
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+- name: api_rp2met_us_zone_100yr_waves.csv
+  path: data/modules/metocean/curated/api_rp2met_us_zone_100yr_waves.csv
+  format: csv
+  columns:
+  - name: ZONE
+    type: integer
+    description: ''
+    unit: ''
+  - name: LOCATION
+    type: string
+    description: ''
+    unit: ''
+  - name: HMAX_100YR_MEAN_M
+    type: string
+    description: ''
+    unit: ''
+  - name: HMAX_100YR_RANGE_M
+    type: string
+    description: ''
+    unit: ''
+  - name: WAVE_STEEPNESS_RANGE
+    type: string
+    description: ''
+    unit: ''
+  - name: CURRENT_MEAN_MS
+    type: float
+    description: ''
+    unit: ''
+  - name: CURRENT_RANGE_MS
+    type: string
+    description: ''
+    unit: ''
+  - name: STORM_TIDE_MEAN_M
+    type: float
+    description: ''
+    unit: ''
+  - name: STORM_TIDE_RANGE_M
+    type: string
+    description: ''
+    unit: ''
+  - name: BASIS
+    type: integer
+    description: ''
+    unit: ''
+  row_count: 15
+  size_bytes: 1236
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+- name: marine_growth_terminal_thickness.csv
+  path: data/modules/metocean/curated/marine_growth_terminal_thickness.csv
+  format: csv
+  columns:
+  - name: DEPTH_BAND
+    type: string
+    description: ''
+    unit: ''
+  - name: HARD_GROWTH
+    type: string
+    description: ''
+    unit: ''
+  - name: SOFT_GROWTH
+    type: string
+    description: ''
+    unit: ''
+  - name: ALGAE_KELP
+    type: string
+    description: ''
+    unit: ''
+  row_count: 3
+  size_bytes: 141
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+binary_stores: []

@@ -1,0 +1,329 @@
+module: facility_specs
+description: Floating-facility particulars (FPSO/Spar/Semi/TLP), riser configuration
+  references, and mooring-system x facility feasibility matrix.
+datasets:
+- name: fpso_basic_info.csv
+  path: data/modules/facility_specs/curated/fpso_basic_info.csv
+  format: csv
+  columns:
+  - name: VESSEL NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: CLASSIFICATION
+    type: string
+    description: ''
+    unit: ''
+  - name: MAX OPERATING DRAFT (M)
+    type: integer
+    description: ''
+    unit: ''
+  - name: CONSTRUCTION TYPE
+    type: string
+    description: ''
+    unit: ''
+  - name: Leased or Own
+    type: string
+    description: ''
+    unit: ''
+  - name: Operating Water Depth
+    type: string
+    description: ''
+    unit: ''
+  - name: Location
+    type: string
+    description: ''
+    unit: ''
+  - name: Owner of FPSO
+    type: string
+    description: ''
+    unit: ''
+  - name: FPSO Operator
+    type: string
+    description: ''
+    unit: ''
+  row_count: 147
+  size_bytes: 11161
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+- name: fpso_riser_info.csv
+  path: data/modules/facility_specs/curated/fpso_riser_info.csv
+  format: csv
+  columns:
+  - name: VESSEL NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: TOTAL RISERS
+    type: string
+    description: ''
+    unit: ''
+  - name: PRODUCTION
+    type: integer
+    description: ''
+    unit: ''
+  - name: WATER INJECTION
+    type: integer
+    description: ''
+    unit: ''
+  - name: GAS INJECTION
+    type: string
+    description: ''
+    unit: ''
+  - name: GAS LIFT
+    type: integer
+    description: ''
+    unit: ''
+  - name: IMPORT / EXPORT RISERS
+    type: integer
+    description: ''
+    unit: ''
+  - name: OTHER
+    type: string
+    description: ''
+    unit: ''
+  - name: UMBILICALS
+    type: integer
+    description: ''
+    unit: ''
+  row_count: 147
+  size_bytes: 3995
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+- name: mooring_facility_matrix.csv
+  path: data/modules/facility_specs/curated/mooring_facility_matrix.csv
+  format: csv
+  columns:
+  - name: MOORING_SYSTEM
+    type: string
+    description: ''
+    unit: ''
+  - name: MOORING_SUBTYPE
+    type: string
+    description: ''
+    unit: ''
+  - name: MOORING_VARIANT
+    type: string
+    description: ''
+    unit: ''
+  - name: CONNECTION_MODE
+    type: string
+    description: ''
+    unit: ''
+  - name: FACILITY_TYPE
+    type: string
+    description: ''
+    unit: ''
+  - name: FEASIBILITY
+    type: string
+    description: ''
+    unit: ''
+  row_count: 21
+  size_bytes: 1370
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+- name: semisub_basic_info.csv
+  path: data/modules/facility_specs/curated/semisub_basic_info.csv
+  format: csv
+  columns:
+  - name: VESSEL NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: CURRENT STATUS
+    type: string
+    description: ''
+    unit: ''
+  - name: VESSEL TYPE
+    type: string
+    description: ''
+    unit: ''
+  - name: VESSEL OPERATOR
+    type: string
+    description: ''
+    unit: ''
+  - name: VESSEL OWNER
+    type: string
+    description: ''
+    unit: ''
+  - name: OPERATING WATER DEPTH
+    type: integer
+    description: ''
+    unit: ''
+  - name: MAX OPERATING DRAFT (M)
+    type: integer
+    description: ''
+    unit: ''
+  - name: CLASSIFICATION
+    type: string
+    description: ''
+    unit: ''
+  - name: CONVERSION or NEWBUILD
+    type: string
+    description: ''
+    unit: ''
+  row_count: 53
+  size_bytes: 3518
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+- name: semisub_riser_info.csv
+  path: data/modules/facility_specs/curated/semisub_riser_info.csv
+  format: csv
+  columns:
+  - name: VESSEL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: TOTAL_NUMBER_OF_RISERS
+    type: string
+    description: ''
+    unit: ''
+  - name: PROD_INJ_RISER_TYPE
+    type: string
+    description: ''
+    unit: ''
+  - name: PROD_INJ_MAX_SIZE_IN
+    type: string
+    description: ''
+    unit: ''
+  - name: OIL_EXPORT_SIZE_IN
+    type: string
+    description: ''
+    unit: ''
+  - name: OIL_EXPORT_RISER_TYPE
+    type: string
+    description: ''
+    unit: ''
+  - name: GAS_EXPORT_SIZE_IN
+    type: string
+    description: ''
+    unit: ''
+  - name: GAS_EXPORT_RISER_TYPE
+    type: string
+    description: ''
+    unit: ''
+  - name: QUARTERS_CAPACITY
+    type: string
+    description: ''
+    unit: ''
+  - name: TOTAL_INSTALLED_POWER_KW
+    type: integer
+    description: ''
+    unit: ''
+  row_count: 53
+  size_bytes: 2605
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+- name: spar_basic_info.csv
+  path: data/modules/facility_specs/curated/spar_basic_info.csv
+  format: csv
+  columns:
+  - name: FACILITY NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: GENERAL LOCATION
+    type: string
+    description: ''
+    unit: ''
+  - name: OPERATING WATER DEPTH(m)
+    type: integer
+    description: ''
+    unit: ''
+  - name: RESERVES(MBOE)
+    type: string
+    description: ''
+    unit: ''
+  - name: OPERATOR
+    type: string
+    description: ''
+    unit: ''
+  - name: CLASSIFICATIONS SOCIETY
+    type: string
+    description: ''
+    unit: ''
+  - name: Estimated Field Life (Years)
+    type: string
+    description: ''
+    unit: ''
+  row_count: 20
+  size_bytes: 1466
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+- name: spar_riser_info.csv
+  path: data/modules/facility_specs/curated/spar_riser_info.csv
+  format: csv
+  columns:
+  - name: FACILITY_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: PRODUCTION_RISER_NUMBER_OF_BARRIERS
+    type: string
+    description: ''
+    unit: ''
+  - name: PRODUCTION_RISER_SIZES
+    type: string
+    description: ''
+    unit: ''
+  - name: TENSIONING_METHOD
+    type: string
+    description: ''
+    unit: ''
+  - name: RISER_SYSTEM
+    type: string
+    description: ''
+    unit: ''
+  row_count: 20
+  size_bytes: 1355
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+- name: tlp_basic_info.csv
+  path: data/modules/facility_specs/curated/tlp_basic_info.csv
+  format: csv
+  columns:
+  - name: VESSEL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: TYPE
+    type: string
+    description: ''
+    unit: ''
+  - name: CURRENT_STATUS
+    type: string
+    description: ''
+    unit: ''
+  - name: OPERATOR
+    type: string
+    description: ''
+    unit: ''
+  - name: OPERATING_WATER_DEPTH_M
+    type: integer
+    description: ''
+    unit: ''
+  - name: LOCATION
+    type: string
+    description: ''
+    unit: ''
+  - name: CLASSIFICATION_ORG
+    type: string
+    description: ''
+    unit: ''
+  - name: HULL_CLASS_DESIGNATION
+    type: string
+    description: ''
+    unit: ''
+  - name: CVA_SCOPE_OF_WORK
+    type: string
+    description: ''
+    unit: ''
+  - name: RIG_TYPE
+    type: string
+    description: ''
+    unit: ''
+  - name: RIG_LEASED_OR_OWNED
+    type: string
+    description: ''
+    unit: ''
+  - name: CONTRACTOR_AND_RIG
+    type: string
+    description: ''
+    unit: ''
+  row_count: 25
+  size_bytes: 2630
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+binary_stores: []

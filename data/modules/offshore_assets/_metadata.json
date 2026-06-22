@@ -1,0 +1,64 @@
+{
+  "module": "offshore_assets",
+  "generated_at": "2026-06-22T17:06:49.955460+00:00",
+  "last_refresh": "2026-06-22",
+  "record_count": 3732,
+  "file_count": 9,
+  "total_size_bytes": 305082,
+  "source_url": null,
+  "format": ".csv,.md,.yaml",
+  "has_external_data": false,
+  "external_data_root": null,
+  "provenance": "Corpus epic llm-wiki#767; worldenergydata issue #543. Facts-only normalization of legacy reference extraction; URLs, source-site names and client-confidential annotations excluded.",
+  "files": [
+    {
+      "name": "country_centroids.csv",
+      "path": "curated/country_centroids.csv",
+      "size_bytes": 6409,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "drilling_rigs.csv",
+      "path": "curated/drilling_rigs.csv",
+      "size_bytes": 15854,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "fields.csv",
+      "path": "curated/fields.csv",
+      "size_bytes": 160020,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "host_facilities.csv",
+      "path": "curated/host_facilities.csv",
+      "size_bytes": 17398,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "jackups.csv",
+      "path": "curated/jackups.csv",
+      "size_bytes": 12332,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "production_facilities.csv",
+      "path": "curated/production_facilities.csv",
+      "size_bytes": 79624,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "README.md",
+      "path": "README.md",
+      "size_bytes": 5911,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "schema.yaml",
+      "path": "schema.yaml",
+      "size_bytes": 7534,
+      "modified": "2026-06-22"
+    }
+  ],
+  "files_truncated": false
+}

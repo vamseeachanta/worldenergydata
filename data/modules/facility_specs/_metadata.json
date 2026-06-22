@@ -1,0 +1,76 @@
+{
+  "module": "facility_specs",
+  "generated_at": "2026-06-22T17:06:49.955460+00:00",
+  "last_refresh": "2026-06-22",
+  "record_count": 486,
+  "file_count": 11,
+  "total_size_bytes": 38270,
+  "source_url": null,
+  "format": ".csv,.md,.yaml",
+  "has_external_data": false,
+  "external_data_root": null,
+  "provenance": "Corpus epic llm-wiki#767; worldenergydata issue #543. Facts-only normalization of legacy reference extraction; URLs, source-site names and client-confidential annotations excluded.",
+  "files": [
+    {
+      "name": "fpso_basic_info.csv",
+      "path": "curated/fpso_basic_info.csv",
+      "size_bytes": 11161,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "fpso_riser_info.csv",
+      "path": "curated/fpso_riser_info.csv",
+      "size_bytes": 3995,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "mooring_facility_matrix.csv",
+      "path": "curated/mooring_facility_matrix.csv",
+      "size_bytes": 1370,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "semisub_basic_info.csv",
+      "path": "curated/semisub_basic_info.csv",
+      "size_bytes": 3518,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "semisub_riser_info.csv",
+      "path": "curated/semisub_riser_info.csv",
+      "size_bytes": 2605,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "spar_basic_info.csv",
+      "path": "curated/spar_basic_info.csv",
+      "size_bytes": 1466,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "spar_riser_info.csv",
+      "path": "curated/spar_riser_info.csv",
+      "size_bytes": 1355,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "tlp_basic_info.csv",
+      "path": "curated/tlp_basic_info.csv",
+      "size_bytes": 2630,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "README.md",
+      "path": "README.md",
+      "size_bytes": 3160,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "schema.yaml",
+      "path": "schema.yaml",
+      "size_bytes": 7010,
+      "modified": "2026-06-22"
+    }
+  ],
+  "files_truncated": false
+}
