@@ -26,12 +26,48 @@ def _canonical_rows():
     return [
         # lease, comp, YYYYMM, days, prod, oil, gas, wtr, api, stat,
         # block, opnum, sortname, BOEM_FIELD, inj, interval, firstprod, unit, suffix
-        ["G12345", "E001", 202401, 30, "O", 1000.0, 5000.0, 200.0,
-         "608054010300", "PR", "MC0807", "03151", "BP", "MC807",
-         0.0, "Q01", 20100101, "", ""],
-        ["G12345", "E002", 202402, 28, "O", 2_000_000.0, 6000.0, 250.0,
-         "608054010301", "PR", "MC0807", "03151", "BP", "MC807",
-         0.0, "Q01", 20100101, "", ""],
+        [
+            "G12345",
+            "E001",
+            202401,
+            30,
+            "O",
+            1000.0,
+            5000.0,
+            200.0,
+            "608054010300",
+            "PR",
+            "MC0807",
+            "03151",
+            "BP",
+            "MC807",
+            0.0,
+            "Q01",
+            20100101,
+            "",
+            "",
+        ],
+        [
+            "G12345",
+            "E002",
+            202402,
+            28,
+            "O",
+            2_000_000.0,
+            6000.0,
+            250.0,
+            "608054010301",
+            "PR",
+            "MC0807",
+            "03151",
+            "BP",
+            "MC807",
+            0.0,
+            "Q01",
+            20100101,
+            "",
+            "",
+        ],
     ]
 
 
@@ -87,11 +123,17 @@ def test_to_runner_schema_maps_and_types():
     out = to_runner_schema(raw)
 
     assert list(out.columns) == [
-        "FIELD_NAME_CODE", "LEASE_NUMBER", "API_WELL_NUMBER", "PROD_YEAR",
-        "MON_O_PROD_VOL", "MON_G_PROD_VOL", "MON_WTR_PROD_VOL", "DAYS_ON_PROD",
+        "FIELD_NAME_CODE",
+        "LEASE_NUMBER",
+        "API_WELL_NUMBER",
+        "PROD_YEAR",
+        "MON_O_PROD_VOL",
+        "MON_G_PROD_VOL",
+        "MON_WTR_PROD_VOL",
+        "DAYS_ON_PROD",
     ]
     assert out.iloc[0]["FIELD_NAME_CODE"] == "MC807"  # from BOEM_FIELD
-    assert out.iloc[0]["PROD_YEAR"] == 2024            # from 202401
+    assert out.iloc[0]["PROD_YEAR"] == 2024  # from 202401
     assert out["MON_O_PROD_VOL"].sum() == pytest.approx(2_001_000.0)
 
 
@@ -104,9 +146,29 @@ def test_to_runner_schema_empty():
 
 @unit
 def test_to_runner_schema_strips_quotes_and_whitespace():
-    rows = [["\" G99 \"", "E", 202012, 31, "O", 10.0, 0.0, 0.0,
-             " 60805 ", "PR", "B", "1", "OP", " GC640 ",
-             0.0, "Q", 0, "", ""]]
+    rows = [
+        [
+            '" G99 "',
+            "E",
+            202012,
+            31,
+            "O",
+            10.0,
+            0.0,
+            0.0,
+            " 60805 ",
+            "PR",
+            "B",
+            "1",
+            "OP",
+            " GC640 ",
+            0.0,
+            "Q",
+            0,
+            "",
+            "",
+        ]
+    ]
     out = to_runner_schema(pd.DataFrame(rows, columns=OGOR_COLUMN_NAMES))
     assert out.iloc[0]["FIELD_NAME_CODE"] == "GC640"
     assert out.iloc[0]["LEASE_NUMBER"] == "G99"
@@ -118,9 +180,7 @@ def test_load_all_fields_production_concats_year_range(tmp_path):
     _write_corrupted_bin(tmp_path / "ogora2023delimit.bin")
     _write_corrupted_bin(tmp_path / "ogora2024delimit.bin")
 
-    df = load_all_fields_production(
-        data_dir=tmp_path, start_year=2023, end_year=2024
-    )
+    df = load_all_fields_production(data_dir=tmp_path, start_year=2023, end_year=2024)
 
     # 1 surviving row per file x 2 files
     assert len(df) == 2
@@ -138,9 +198,7 @@ def test_load_all_fields_production_no_files(tmp_path):
 def test_end_to_end_feeds_all_fields_runner(tmp_path):
     """Loader output is consumable by AllFieldsRunner without adaptation."""
     _write_corrupted_bin(tmp_path / "ogora2024delimit.bin")
-    prod = load_all_fields_production(
-        data_dir=tmp_path, start_year=2024, end_year=2024
-    )
+    prod = load_all_fields_production(data_dir=tmp_path, start_year=2024, end_year=2024)
 
     class _StubResolver:
         def resolve(self, code):
