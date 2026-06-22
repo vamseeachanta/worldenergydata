@@ -115,8 +115,40 @@ class AllFieldsReport:
             )
             lines.append(
                 "  - *Monthly oil production x real monthly WTI; topline "
-                "revenue only (no royalty/opex/capex, no gas). Fields without "
+                "revenue only (no royalty/opex/capex). Fields without "
                 "priced production are left blank, not zeroed.*"
+            )
+        has_gas_rev = (
+            not self._df.empty and "GROSS_GAS_REVENUE_MM_USD" in self._df.columns
+        )
+        if has_gas_rev:
+            total_gas_rev = self._df["GROSS_GAS_REVENUE_MM_USD"].sum(skipna=True)
+            n_with_gas_rev = int(self._df["GROSS_GAS_REVENUE_MM_USD"].notna().sum())
+            lines.append(
+                f"- **Gross gas revenue (pre-royalty, pre-cost, gas only)**: "
+                f"${total_gas_rev:,.0f} MM across {n_with_gas_rev} fields"
+            )
+            lines.append(
+                "  - *Monthly gas production x real monthly Henry Hub; gas "
+                "valued at Henry Hub x 1.037 MMBtu/Mcf; gas pre-1997 unpriced "
+                "(deck starts 1997). Topline only (no royalty/opex/capex). "
+                "Fields without priced gas are left blank, not zeroed.*"
+            )
+        has_total_rev = (
+            not self._df.empty and "GROSS_TOTAL_REVENUE_MM_USD" in self._df.columns
+        )
+        if has_total_rev:
+            total_rev_all = self._df["GROSS_TOTAL_REVENUE_MM_USD"].sum(skipna=True)
+            n_with_total = int(self._df["GROSS_TOTAL_REVENUE_MM_USD"].notna().sum())
+            lines.append(
+                f"- **Gross total revenue (oil + gas, pre-royalty, "
+                f"pre-cost)**: ${total_rev_all:,.0f} MM across "
+                f"{n_with_total} fields"
+            )
+            lines.append(
+                "  - *Sum of gross oil + gross gas revenue (gas null treated "
+                "as 0 where oil is present); fields with no priced oil are "
+                "left blank. Topline only.*"
             )
         has_decom = not self._df.empty and "DECOM_P50_MM_USD" in self._df.columns
         if has_decom:
@@ -205,13 +237,15 @@ class AllFieldsReport:
                 lines.append(
                     "| Field | Era | Oil (MMBBL) | Gas (BCF) | Wells | "
                     "Rec/Well (MMBBL) | BOPD/Well | First Prod | "
-                    "Water Depth (ft) | Gross Oil Rev ($MM) | Decom P50 ($MM) | "
+                    "Water Depth (ft) | Gross Oil Rev ($MM) | "
+                    "Gross Total Rev ($MM) | Decom P50 ($MM) | "
                     "Breakeven Opex ($/bbl) |"
                 )
                 lines.append(
                     "|-------|-----|-------------|-----------|-------|"
                     "------------------|-----------|------------|"
-                    "------------------|--------------------|-----------------|"
+                    "------------------|--------------------|"
+                    "----------------------|-----------------|"
                     "------------------------|"
                 )
                 for _, row in top.iterrows():
@@ -229,6 +263,8 @@ class AllFieldsReport:
                     bpw_str = f"{bpw:,.0f}" if pd.notna(bpw) else ""
                     rev = row.get("GROSS_OIL_REVENUE_MM_USD", None)
                     rev_str = f"{rev:,.0f}" if pd.notna(rev) else ""
+                    tot = row.get("GROSS_TOTAL_REVENUE_MM_USD", None)
+                    tot_str = f"{tot:,.0f}" if pd.notna(tot) else ""
                     dec = row.get("DECOM_P50_MM_USD", None)
                     dec_str = f"{dec:,.0f}" if pd.notna(dec) else ""
                     be = row.get("BREAKEVEN_OPEX_USD_BBL", None)
@@ -236,7 +272,7 @@ class AllFieldsReport:
                     lines.append(
                         f"| {name} | {era} | {oil:,.1f} | {gas:,.1f} | {wells} "
                         f"| {rpw_str} | {bpw_str} | {first} | {wd_str} "
-                        f"| {rev_str} | {dec_str} | {be_str} |"
+                        f"| {rev_str} | {tot_str} | {dec_str} | {be_str} |"
                     )
                 lines.append("")
 

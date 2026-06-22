@@ -34,7 +34,9 @@ from worldenergydata.bsee.analysis.field_netback import (
     compute_field_netback,
 )
 from worldenergydata.bsee.analysis.field_revenue import (
+    apply_field_gas_revenue,
     apply_field_revenue,
+    build_field_gas_revenue,
     build_field_oil_revenue,
 )
 from worldenergydata.bsee.data.field_names import FieldNameResolver
@@ -158,8 +160,8 @@ def main() -> int:
         )
 
     # Gross oil revenue (economics tier): monthly oil x real monthly WTI.
-    # Oil only (no gas price deck); gross, pre-royalty, pre-cost. Fields with
-    # no priced production keep an honest null.
+    # Gross, pre-royalty, pre-cost. Fields with no priced production keep an
+    # honest null. (Gas revenue is added separately below.)
     logger.info("Building gross oil revenue (oil x real WTI)...")
     rev = build_field_oil_revenue(
         start_year=args.start_year, end_year=args.end_year
@@ -173,6 +175,36 @@ def main() -> int:
             "a value (oil only, gross pre-royalty pre-cost)",
             basin_rev,
             n_with_rev,
+            len(result),
+        )
+
+    # Gross gas revenue (economics tier): monthly gas (Mcf) x 1.037 MMBtu/Mcf x
+    # real monthly Henry Hub ($/MMBtu). Gross, pre-royalty, pre-cost. The Henry
+    # Hub deck starts 1997-01, so 1996 gas is unpriced and dropped+logged. A
+    # derived gross total (oil + gas, gas-null treated as 0 where oil present)
+    # is added too.
+    logger.info(
+        "Building gross gas revenue (gas x 1.037 MMBtu/Mcf x real Henry Hub)..."
+    )
+    gas_rev = build_field_gas_revenue(
+        data_dir=args.data_dir, start_year=args.start_year, end_year=args.end_year
+    )
+    result = apply_field_gas_revenue(result, gas_rev)
+    if "GROSS_GAS_REVENUE_MM_USD" in result.columns and not result.empty:
+        basin_gas = float(result["GROSS_GAS_REVENUE_MM_USD"].sum(skipna=True))
+        n_with_gas = int(result["GROSS_GAS_REVENUE_MM_USD"].notna().sum())
+        basin_total = float(result["GROSS_TOTAL_REVENUE_MM_USD"].sum(skipna=True))
+        n_with_total = int(result["GROSS_TOTAL_REVENUE_MM_USD"].notna().sum())
+        logger.info(
+            "Basin total gross gas revenue $%.1f MM across %d/%d fields "
+            "(gas valued at Henry Hub x 1.037 MMBtu/Mcf; 1996 gas unpriced — "
+            "deck starts 1997; gross pre-royalty pre-cost). Gross TOTAL "
+            "(oil+gas) $%.1f MM across %d/%d fields.",
+            basin_gas,
+            n_with_gas,
+            len(result),
+            basin_total,
+            n_with_total,
             len(result),
         )
 
