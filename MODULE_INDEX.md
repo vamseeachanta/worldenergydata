@@ -156,9 +156,10 @@ Modules wired into the WRK-076 automated refresh scheduler:
 | `eia_us` | `eia_us_refresh` | `config/scheduler/scheduler_config.yml` |
 | `metocean` | `metocean_refresh` | `config/scheduler/scheduler_config.yml` |
 | `lng_terminals` | `lng_terminals_refresh` | `config/scheduler/scheduler_config.yml` |
+| `hse` | `hse_refresh` | `config/scheduler/scheduler_config.yml` |
 
 Config-only, no active scheduler job (config present but not wired):
 `texas_rrc` (config/texas_rrc.yml), `mexico_cnh` (config/mexico_cnh.yml)
 
 Not yet scheduled:
-`canada`, `hse`, `marine_safety`, `pipeline_safety`
+`canada`, `marine_safety`, `pipeline_safety`

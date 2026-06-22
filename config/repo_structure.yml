@@ -14,6 +14,7 @@ allowed_roots:
   - notebooks
   - subseaiq
   - systemd
+  - site_assets  # tracked static web assets (e.g. site_assets/julia_well_path_threejs.html)
   - _archive
 
   # Agent/tooling and repo metadata roots intentionally tracked today
@@ -133,6 +134,9 @@ temporary_exceptions:
       - reports/lower_tertiary/field_economics_stones_v30.md
       - reports/lower_tertiary/jack_st_malo_npv_stackup.html
       - reports/lower_tertiary/julia_npv_stackup.html
+      - reports/lower_tertiary/lt_field_performance_comparison.md
+      - reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.csv
+      - reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.md
       - reports/lower_tertiary/portfolio_economics.html
       - reports/lower_tertiary/shenandoah_npv_stackup.html
       - reports/lower_tertiary/stones_npv_stackup.html
@@ -168,3 +172,4 @@ temporary_exceptions:
       - reports/modules/marketing/marketing_brochure_well_production_dashboard.md
       - reports/modules/marketing/reference_hurricane_mooring_safety_infographic_prior_draft.html
       - reports/modules/marketing/reference_hurricane_mooring_safety_infographic_prior_draft_stats.json
+      - reports/subsea/subsea_manifold_market_intelligence.md
