@@ -1,0 +1,95 @@
+"""Tests for the per-domain static-site builder (scripts/build_pages.py, P2 #528).
+
+These verify the per-domain build isolation contract:
+- a full build (no args) renders the whole site;
+- ``--domains lower_tertiary`` builds just that domain + the landing index and
+  leaves a pre-seeded foreign-domain file untouched (incremental compose);
+- ``--clean`` wipes the tree;
+- the landing index is always regenerated.
+
+The builder writes to module-level ``PUBLIC``/``ASSETS`` paths under the repo;
+we redirect those to a tmp dir so tests never touch the working tree.
+"""
+
+from __future__ import annotations
+
+import importlib.util
+from pathlib import Path
+
+import pytest
+
+SCRIPT = Path(__file__).resolve().parent.parent / "scripts" / "build_pages.py"
+
+
+@pytest.fixture
+def bp(tmp_path, monkeypatch):
+    """Import build_pages with PUBLIC/ASSETS redirected to a tmp dir."""
+    spec = importlib.util.spec_from_file_location("build_pages_under_test", SCRIPT)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    public = tmp_path / "public"
+    monkeypatch.setattr(mod, "PUBLIC", public)
+    monkeypatch.setattr(mod, "ASSETS", public / "assets")
+    return mod
+
+
+def test_full_build_renders_whole_site(bp):
+    bp.build()
+    public = bp.PUBLIC
+    assert (public / "index.html").exists()
+    assert (public / "assets" / "style.css").exists()
+    # Lower-Tertiary surface present.
+    assert (public / "portfolio.html").exists()
+    assert (public / "benchmark.html").exists()
+    econ = list(public.glob("economics-*.html"))
+    assert econ, "expected per-field economics pages"
+
+
+def test_partial_build_only_touches_its_domain(bp):
+    public = bp.PUBLIC
+    # Seed a foreign domain's output as if restored from cache.
+    (public / "subsea").mkdir(parents=True)
+    seeded = public / "subsea" / "index.html"
+    seeded.write_text("<html>seeded subsea</html>", encoding="utf-8")
+
+    bp.build(domains=["lower_tertiary"])
+
+    # Foreign domain output survives the incremental build.
+    assert seeded.read_text(encoding="utf-8") == "<html>seeded subsea</html>"
+    # Lower-Tertiary + landing index were (re)built.
+    assert (public / "index.html").exists()
+    assert (public / "portfolio.html").exists()
+
+
+def test_index_always_regenerated(bp):
+    public = bp.PUBLIC
+    bp.build(domains=["lower_tertiary"])
+    first = (public / "index.html").read_text(encoding="utf-8")
+    # Rebuild with no domains: index must still be (re)written over the tree.
+    (public / "index.html").unlink()
+    bp.build(domains=[])
+    assert (public / "index.html").exists()
+    assert (public / "index.html").read_text(encoding="utf-8") == first
+
+
+def test_clean_wipes_tree(bp):
+    public = bp.PUBLIC
+    (public / "subsea").mkdir(parents=True)
+    (public / "subsea" / "index.html").write_text("stale", encoding="utf-8")
+    bp.build(clean=True)
+    assert not (public / "subsea").exists()
+    assert (public / "index.html").exists()
+
+
+def test_unknown_domain_raises(bp):
+    with pytest.raises(SystemExit):
+        bp.build(domains=["does_not_exist"])
+
+
+def test_registry_keys_match_reports_dirs(bp):
+    # Each registered domain key should correspond to a reports/<domain>/ dir.
+    reports = Path(bp.REPORTS)
+    for name in bp.DOMAINS:
+        assert (
+            reports / name
+        ).is_dir(), f"DOMAINS key {name!r} has no reports/{name}/ dir"
