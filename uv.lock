@@ -10,7 +10,19 @@ resolution-markers = [
 [manifest]
 members = [
     "worldenergydata",
+    "worldenergydata-brazil-anp",
+    "worldenergydata-canada",
     "worldenergydata-core",
+    "worldenergydata-cost",
+    "worldenergydata-decommissioning",
+    "worldenergydata-economics",
+    "worldenergydata-eia",
+    "worldenergydata-eia-us",
+    "worldenergydata-mexico-cnh",
+    "worldenergydata-sodir",
+    "worldenergydata-texas-rrc",
+    "worldenergydata-ukcs",
+    "worldenergydata-west-africa",
 ]
 
 [[package]]
@@ -5480,7 +5492,19 @@ dependencies = [
     { name = "sqlmodel" },
     { name = "tenacity" },
     { name = "typer" },
+    { name = "worldenergydata-brazil-anp" },
+    { name = "worldenergydata-canada" },
     { name = "worldenergydata-core" },
+    { name = "worldenergydata-cost" },
+    { name = "worldenergydata-decommissioning" },
+    { name = "worldenergydata-economics" },
+    { name = "worldenergydata-eia" },
+    { name = "worldenergydata-eia-us" },
+    { name = "worldenergydata-mexico-cnh" },
+    { name = "worldenergydata-sodir" },
+    { name = "worldenergydata-texas-rrc" },
+    { name = "worldenergydata-ukcs" },
+    { name = "worldenergydata-west-africa" },
     { name = "xlsxwriter" },
 ]
 
@@ -5631,7 +5655,19 @@ requires-dist = [
     { name = "types-python-dateutil", marker = "extra == 'dev'", specifier = ">=2.9" },
     { name = "types-pyyaml", marker = "extra == 'dev'", specifier = ">=6.0" },
     { name = "types-requests", marker = "extra == 'dev'", specifier = ">=2.33.0.20260518" },
+    { name = "worldenergydata-brazil-anp", editable = "packages/worldenergydata-brazil_anp" },
+    { name = "worldenergydata-canada", editable = "packages/worldenergydata-canada" },
     { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
+    { name = "worldenergydata-cost", editable = "packages/worldenergydata-cost" },
+    { name = "worldenergydata-decommissioning", editable = "packages/worldenergydata-decommissioning" },
+    { name = "worldenergydata-economics", editable = "packages/worldenergydata-economics" },
+    { name = "worldenergydata-eia", editable = "packages/worldenergydata-eia" },
+    { name = "worldenergydata-eia-us", editable = "packages/worldenergydata-eia_us" },
+    { name = "worldenergydata-mexico-cnh", editable = "packages/worldenergydata-mexico_cnh" },
+    { name = "worldenergydata-sodir", editable = "packages/worldenergydata-sodir" },
+    { name = "worldenergydata-texas-rrc", editable = "packages/worldenergydata-texas_rrc" },
+    { name = "worldenergydata-ukcs", editable = "packages/worldenergydata-ukcs" },
+    { name = "worldenergydata-west-africa", editable = "packages/worldenergydata-west_africa" },
     { name = "xgboost", marker = "extra == 'safety-ml'", specifier = ">=2.0.0" },
     { name = "xlsxwriter", specifier = ">=3.1.0,<4.0" },
 ]
@@ -5654,6 +5690,45 @@ docs = [
     { name = "mkdocs", specifier = ">=1.6.0" },
     { name = "mkdocs-material", specifier = ">=9.5.0" },
     { name = "mkdocstrings", extras = ["python"], specifier = ">=0.25.0" },
+]
+
+[[package]]
+name = "worldenergydata-brazil-anp"
+version = "0.1.0"
+source = { editable = "packages/worldenergydata-brazil_anp" }
+dependencies = [
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "numpy", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "pandas" },
+    { name = "scikit-learn", version = "1.7.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "scikit-learn", version = "1.8.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "scipy", version = "1.15.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "scipy", version = "1.17.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "worldenergydata-core" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "numpy", specifier = ">=2.2.6,<3.0" },
+    { name = "pandas", specifier = ">=2.3.3,<3.0" },
+    { name = "scikit-learn", specifier = ">=1.7.2,<2.0" },
+    { name = "scipy", specifier = ">=1.11.0,<2.0" },
+    { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
+]
+
+[[package]]
+name = "worldenergydata-canada"
+version = "0.1.0"
+source = { editable = "packages/worldenergydata-canada" }
+dependencies = [
+    { name = "pandas" },
+    { name = "worldenergydata-core" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "pandas", specifier = ">=2.3.3,<3.0" },
+    { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
 ]
 
 [[package]]
@@ -5682,6 +5757,203 @@ requires-dist = [
     { name = "pydantic-settings", specifier = ">=2.1.0,<3.0" },
     { name = "pyyaml", specifier = ">=6.0" },
     { name = "tenacity", specifier = ">=9.1.4,<10.0" },
+]
+
+[[package]]
+name = "worldenergydata-cost"
+version = "0.1.0"
+source = { editable = "packages/worldenergydata-cost" }
+dependencies = [
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "numpy", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "pydantic" },
+    { name = "scikit-learn", version = "1.7.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "scikit-learn", version = "1.8.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "worldenergydata-core" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "numpy", specifier = ">=2.2.6,<3.0" },
+    { name = "pydantic", specifier = ">=2.13.4,<3.0" },
+    { name = "scikit-learn", specifier = ">=1.7.2,<2.0" },
+    { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
+]
+
+[[package]]
+name = "worldenergydata-decommissioning"
+version = "0.1.0"
+source = { editable = "packages/worldenergydata-decommissioning" }
+dependencies = [
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "numpy", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "pandas" },
+    { name = "worldenergydata-core" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "numpy", specifier = ">=2.2.6,<3.0" },
+    { name = "pandas", specifier = ">=2.3.3,<3.0" },
+    { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
+]
+
+[[package]]
+name = "worldenergydata-economics"
+version = "0.1.0"
+source = { editable = "packages/worldenergydata-economics" }
+dependencies = [
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "numpy", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "scipy", version = "1.15.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "scipy", version = "1.17.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "worldenergydata-core" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "numpy", specifier = ">=2.2.6,<3.0" },
+    { name = "scipy", specifier = ">=1.11.0,<2.0" },
+    { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
+]
+
+[[package]]
+name = "worldenergydata-eia"
+version = "0.1.0"
+source = { editable = "packages/worldenergydata-eia" }
+dependencies = [
+    { name = "requests" },
+    { name = "worldenergydata-core" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "requests", specifier = ">=2.32.0,<3.0" },
+    { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
+]
+
+[[package]]
+name = "worldenergydata-eia-us"
+version = "0.1.0"
+source = { editable = "packages/worldenergydata-eia_us" }
+dependencies = [
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "numpy", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "pandas" },
+    { name = "scipy", version = "1.15.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "scipy", version = "1.17.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "worldenergydata-core" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "numpy", specifier = ">=2.2.6,<3.0" },
+    { name = "pandas", specifier = ">=2.3.3,<3.0" },
+    { name = "scipy", specifier = ">=1.11.0,<2.0" },
+    { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
+]
+
+[[package]]
+name = "worldenergydata-mexico-cnh"
+version = "0.1.0"
+source = { editable = "packages/worldenergydata-mexico_cnh" }
+dependencies = [
+    { name = "openpyxl" },
+    { name = "pandas" },
+    { name = "worldenergydata-core" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "openpyxl", specifier = ">=3.1.0,<4.0" },
+    { name = "pandas", specifier = ">=2.3.3,<3.0" },
+    { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
+]
+
+[[package]]
+name = "worldenergydata-sodir"
+version = "0.1.0"
+source = { editable = "packages/worldenergydata-sodir" }
+dependencies = [
+    { name = "matplotlib" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "numpy", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "numpy-financial" },
+    { name = "pandas" },
+    { name = "scikit-learn", version = "1.7.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "scikit-learn", version = "1.8.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "scipy", version = "1.15.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "scipy", version = "1.17.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "seaborn" },
+    { name = "worldenergydata-core" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "matplotlib", specifier = ">=3.7.0,<4.0" },
+    { name = "numpy", specifier = ">=2.2.6,<3.0" },
+    { name = "numpy-financial", specifier = ">=1.0.0" },
+    { name = "pandas", specifier = ">=2.3.3,<3.0" },
+    { name = "scikit-learn", specifier = ">=1.7.2,<2.0" },
+    { name = "scipy", specifier = ">=1.11.0,<2.0" },
+    { name = "seaborn", specifier = ">=0.13.0,<1.0" },
+    { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
+]
+
+[[package]]
+name = "worldenergydata-texas-rrc"
+version = "0.1.0"
+source = { editable = "packages/worldenergydata-texas_rrc" }
+dependencies = [
+    { name = "pandas" },
+    { name = "worldenergydata-core" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "pandas", specifier = ">=2.3.3,<3.0" },
+    { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
+]
+
+[[package]]
+name = "worldenergydata-ukcs"
+version = "0.1.0"
+source = { editable = "packages/worldenergydata-ukcs" }
+dependencies = [
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "numpy", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "pandas" },
+    { name = "scikit-learn", version = "1.7.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "scikit-learn", version = "1.8.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "scipy", version = "1.15.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "scipy", version = "1.17.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "worldenergydata-core" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "numpy", specifier = ">=2.2.6,<3.0" },
+    { name = "pandas", specifier = ">=2.3.3,<3.0" },
+    { name = "scikit-learn", specifier = ">=1.7.2,<2.0" },
+    { name = "scipy", specifier = ">=1.11.0,<2.0" },
+    { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
+]
+
+[[package]]
+name = "worldenergydata-west-africa"
+version = "0.1.0"
+source = { editable = "packages/worldenergydata-west_africa" }
+dependencies = [
+    { name = "pandas" },
+    { name = "pdfplumber" },
+    { name = "worldenergydata-core" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "pandas", specifier = ">=2.3.3,<3.0" },
+    { name = "pdfplumber", specifier = ">=0.11.9,<1.0" },
+    { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
 ]
 
 [[package]]
