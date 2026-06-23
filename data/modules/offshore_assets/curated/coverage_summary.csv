@@ -1,0 +1,136 @@
+CATEGORY,DIMENSION,FIELDS_COUNT,FACILITIES_COUNT
+by_country,UK,308,124
+by_country,US,333,88
+by_country,Norway,302,82
+by_country,Australia,192,50
+by_country,Brazil,98,58
+by_country,Malaysia,65,48
+by_country,Angola,75,24
+by_country,Indonesia,62,30
+by_country,China,29,32
+by_country,Thailand,30,25
+by_country,Nigeria,28,24
+by_country,Viet nam,29,21
+by_country,Egypt,29,20
+by_country,Denmark,33,15
+by_country,Ireland,39,4
+by_country,New Zealand,24,7
+by_country,Canada,22,8
+by_country,Trin. & Tobago,19,10
+by_country,Philippines,23,5
+by_country,Russian Federation,14,14
+by_country,Qatar,7,19
+by_country,Gabon,17,8
+by_country,Ghana,22,2
+by_country,Equatorial Guinea,16,7
+by_country,Tunisia,16,7
+by_country,Falkland Islands (Malvinas),21,0
+by_country,Mexico,15,6
+by_country,"Tanzania, United Republic of",20,1
+by_country,Netherlands,10,10
+by_country,Myanmar,10,9
+by_country,India,12,6
+by_country,Congo,12,5
+by_country,Israel,14,2
+by_country,UAE,7,9
+by_country,Italy,10,4
+by_country,Morocco,13,0
+by_country,Mozambique,13,0
+by_country,Azerbaijan,3,9
+by_country,South Africa,9,3
+by_country,Kenya,11,0
+by_country,Libya,5,6
+by_country,Namibia,11,0
+by_country,Bulgaria,5,3
+by_country,Liberia,8,0
+by_country,Peru,5,3
+by_country,Mauritania,6,1
+by_country,Oman,5,2
+by_country,Turkmenistan,2,5
+by_country,Argentina,3,3
+by_country,Kazakhstan,2,4
+by_country,Senegal,6,0
+by_country,Bangladesh,4,1
+by_country,Brunei Darussalam,5,0
+by_country,Greece,3,2
+by_country,Romania,5,0
+by_country,Turkey,3,2
+by_country,Cameroon,4,0
+by_country,"Congo, The Demo. Rep. of the",3,1
+by_country,Faroe Islands,4,0
+by_country,Greenland,4,0
+by_country,Papua New Guinea,4,0
+by_country,Sierra Leone,4,0
+by_country,Spain,3,1
+by_country,Croatia,1,2
+by_country,Guinea,3,0
+by_country,Guinea-Bissau,3,0
+by_country,Iran,2,1
+by_country,Sao Tome and Principe,3,0
+by_country,Venezuela,2,1
+by_country,Albania,2,0
+by_country,Colombia,2,0
+by_country,Guyana,2,0
+by_country,Japan,1,1
+by_country,Niger,1,1
+by_country,Sri Lanka,2,0
+by_country,Cuba,1,0
+by_country,Cyprus,1,0
+by_country,French Guiana,1,0
+by_country,Gambia,1,0
+by_country,Madagascar,1,0
+by_country,Malta,1,0
+by_country,Nicaragua,1,0
+by_country,"Palestinian Territory, occupied",1,0
+by_country,Saudi Arabia,1,0
+field_by_reserve_type,Oil,624,
+field_by_reserve_type,Gas,583,
+field_by_reserve_type,n/a,540,
+field_by_reserve_type,Oil/Gas,402,
+facility_by_duty,Oil,,303
+facility_by_duty,Oil/Gas,,303
+facility_by_duty,Gas,,223
+facility_by_duty,n/a,,7
+field_by_status,Producing,645,
+field_by_status,Discovery (Drilled),399,
+field_by_status,Bright Spot,319,
+field_by_status,Under Development,217,
+field_by_status,Non-Commercial,179,
+field_by_status,Discovery (Appraised),126,
+field_by_status,Producing - Under Dev.,103,
+field_by_status,Appraisal Drilling,49,
+field_by_status,Exploratory Drilling,49,
+field_by_status,Drilled (Status Unknown),28,
+field_by_status,Suspended,18,
+field_by_status,Abandoned (Ex-Producer),10,
+field_by_status,Cancelled,4,
+field_by_status,Unspecified,3,
+facility_by_status,Producing,,629
+facility_by_status,Under Construction,,136
+facility_by_status,Prospect,,48
+facility_by_status,Producing - Under Const.,,9
+facility_by_status,Suspended,,8
+facility_by_status,Abandoned,,6
+facility_by_host_type,Fixed Platform,,465
+facility_by_host_type,FPSO,,152
+facility_by_host_type,Subsea Tieback,,54
+facility_by_host_type,FSO/FSU,,42
+facility_by_host_type,FPU/FPS,,32
+facility_by_host_type,Semisub,,20
+facility_by_host_type,TLP,,20
+facility_by_host_type,SPAR,,19
+facility_by_host_type,FLNG,,8
+facility_by_host_type,MOPU,,8
+facility_by_host_type,Artificial Island,,6
+facility_by_host_type,Mini-TLP,,5
+facility_by_host_type,Compliant Tower,,4
+facility_by_host_type,DDCV,,1
+by_water_depth_band,0-100 m (shallow),526,351
+by_water_depth_band,100-500 m,590,234
+by_water_depth_band,500-1000 m,158,52
+by_water_depth_band,1000-1500 m (deepwater),217,56
+by_water_depth_band,>=1500 m (ultra-deepwater),245,45
+by_water_depth_band,Unknown,413,98
+by_region,US Gulf of Mexico (flagged),333,88
+by_region,Rest of world,1816,748
+total,All,2149,836

@@ -1,0 +1,83 @@
+REGION,NOMINAL_WATER_DEPTH,PARAMETER,UNIT,RP_1YR,RP_5YR,RP_10YR,RP_50YR,RP_100YR
+Celtic sea,,10 min mean wind speed,m/s,27,31,32,35,37
+Celtic sea,,Significant wave height,m,9.4,11.8,12.8,15.4,16.8
+Celtic sea,,Spectral peak period,s,13.9,15.6,16.3,17.9,18.7
+Celtic sea,,Surface current speed,m/s,0.89,0.92,0.94,0.98,1
+Southern North Sea,,10 min mean wind speed,m/s,27,31,32,35,36
+Southern North Sea,,Significant wave height,m,6,7.1,7.5,8.6,9
+Southern North Sea,,Spectral peak period,s,11.3,12.3,12.6,13.6,13.9
+Southern North Sea,,Surface current speed,m/s,1.17,1.23,1.25,1.31,1.33
+Central North Sea,,10 min mean wind speed,m/s,31,33,34,36,39
+Central North Sea,,Significant wave height,m,9.8,11.2,11.8,13.1,13.6
+Central North Sea,,Spectral peak period,s,13.6,14.6,15,15.7,16
+Central North Sea,,Surface current speed,m/s,0.88,0.9,1,1,1
+Northern North Sea,,10 min mean wind speed,m/s,35,39,40,43,45
+Northern North Sea,,Significant wave height,m,12,13.6,14.3,15.7,16.4
+Northern North Sea,,Spectral peak period,s,14.6,15.5,15.9,16.7,17
+Northern North Sea,,Surface current speed,m/s,0.6,0.65,0.7,0.85,0.9
+West of Shetland,,10 min mean wind speed,m/s,35,39,40,43,45
+West of Shetland,,Significant wave height,m,13.2,15,15.7,17.3,18
+West of Shetland,,Spectral peak period,s,16.2,17.1,17.4,17.9,18.2
+West of Shetland,,Surface current speed,m/s,1.64,1.78,1.8,1.95,2
+Haltenbank,,10 min mean wind speed,m/s,32,35,34,36,37
+Haltenbank,,Significant wave height,m,11.6,13.3,13.9,15.7,16.4
+Haltenbank,,Spectral peak period,s,15.9,16.8,17.2,17.9,18.2
+Haltenbank,,Surface current speed,m/s,0.8,0.85,0.95,1,1.05
+Barents Sea,,10 min mean wind speed,m/s,33,35,36,39,40
+Barents Sea,,Significant wave height,m,10,11.9,12.2,14,14.5
+Barents Sea,,Spectral peak period,s,14.7,15.9,16,17.1,17.4
+Barents Sea,,Surface current speed,m/s,0.9,0.95,0.97,1,1.05
+Shallow water sites off Nigeria,30,10 min mean wind speed,m/s,19,23,25,29,31
+Shallow water sites off Nigeria,30,3 s gust wind speed,m/s,24,29,32,37,39
+Shallow water sites off Nigeria,30,Maximum wave height,m,4.8,5.5,5.8,6.5,6.8
+Shallow water sites off Nigeria,30,Significant wave height,m,2.3,2.7,2.8,3.2,3.3
+Shallow water sites off Nigeria,30,Spectral peak period (swell),s,15 to 17,15 to 17,15 to 17,15 to 17,15 to 17
+Shallow water sites off Nigeria,30,Spectral peak period (wind sea),s,7 to 8,7 to 8,7 to 8,7 to 8,7 to 8
+Shallow water sites off Nigeria,30,Surface current speed,m/s,0.9,1,1,1.1,1.1
+Shallow water sites off Nigeria,30,Mid-depth current speed,m/s,0.8,0.9,0.9,1,1
+Shallow water sites off Nigeria,30,Current speed 1 m above sea floor,m/s,0.5,0.6,0.6,0.7,0.7
+Deep water sites off Nigeria,1 000 m,10 min mean wind speed,m/s,19,23,25,29,31
+Deep water sites off Nigeria,1 000 m,3 s gust wind speed,m/s,24,29,32,37,39
+Deep water sites off Nigeria,1 000 m,Maximum wave height,m,5.7,6.4,6.8,7.5,7.7
+Deep water sites off Nigeria,1 000 m,Significant wave height,m,2.7,3.2,3.4,3.7,3.8
+Deep water sites off Nigeria,1 000 m,Spectral peak period (swell),s,14 to 16,15 to 17,16 to 18,17 to 19,17 to 19
+Deep water sites off Nigeria,1 000 m,Spectral peak period (wind sea),s,7 to 8,7 to 8,7 to 8,7 to 8,7 to 8
+Deep water sites off Nigeria,1 000 m,Surface current speed,m/s,1.1,1.2,1.2,1.3,1.4
+Deep water sites off Nigeria,1 000 m,Mid-depth current speed,m/s,0.3,0.3,0.3,0.3,0.4
+Deep water sites off Nigeria,1 000 m,Current speed 1 m above sea floor,m/s,0.2,0.2,0.2,0.2,0.2
+Sites off northern Angola,1 400 m,10 min mean wind speed,m/s,16,20,21,25,26
+Sites off northern Angola,1 400 m,3 s gust wind speed,m/s,19,23,25,29,31
+Sites off northern Angola,1 400 m,Maximum wave height,m,7.9,8.6,8.8,9.5,9.9
+Sites off northern Angola,1 400 m,Significant wave height,m,4,4.3,4.4,4.7,4.9
+Sites off northern Angola,1 400 m,Spectral peak period (swell),s,13 to 17,13 to 17,13 to 17,13 to 17,13 to 17
+Sites off northern Angola,1 400 m,Spectral peak period (wind sea),s,7 to 8,7 to 8,7 to 8,7 to 8,7 to 8
+Sites off northern Angola,1 400 m,Surface current speed,m/s,0.9,1,1,1.2,1.2
+Sites off northern Angola,1 400 m,Mid-depth current speed,m/s,0.2,0.3,0.3,0.3,0.3
+Sites off northern Angola,1 400 m,Current speed 1 m above sea floor,m/s,0.2,0.3,0.3,0.3,0.3
+Sites off southern Namibia,200m,10 min mean wind speed,m/s,20,20,26,29,31
+Sites off southern Namibia,200m,3 s gust wind speed,m/s,25,27,32,36,39
+Sites off southern Namibia,200m,Maximum wave height,m,12.7,13.7,16,19,20
+Sites off southern Namibia,200m,Significant wave height,m,6.8,7.4,8.7,10,10.6
+Sites off southern Namibia,200m,Spectral peak period (swell),s,11 to 14,12 to 15,13 to 16,14 to 17,14 to 17
+Sites off southern Namibia,200m,Spectral peak period (wind sea),s,7 to 8,7 to 8,7 to 8,7 to 8,7 to 8
+Sites off southern Namibia,200m,Surface current speed,m/s,1.1,1.2,1.2,1.3,1.4
+Sites off southern Namibia,200m,Mid-depth current speed,m/s,0.3,0.3,0.3,0.3,0.5
+Sites off southern Namibia,200m,Current speed 1 m above sea floor,m/s,0.3,0.3,0.3,0.4,0.5
+off Newfoundland,,10 min mean wind speed,m/s,25 to 31,29 to 33,33 to 34,36 to 39,37 to 41
+off Newfoundland,,3 s gust wind speed,m/s,34 to 39,38 to 42,42 to 45,48 to 52,50 to 55
+off Newfoundland,,Maximum wave height,m,19 to 21,22 to 23,24 to 26,26 to 29,28 to 31
+off Newfoundland,,Significant wave height,m,10 to 11,11 to 12,12 to 13,14 to 15,14.5 to 16
+off Newfoundland,,Associated peak period,s,12 to 17,13 to 18,14 to 18,15 to 20,15 to 20
+off Newfoundland,,Surface current speed,m/s,0.9 to 1.0,1.0 to 1.2,1.1 to 1.3,1.2 to 1.6,1.3 to 1.7
+off Newfoundland,,Mid-depth current speed,m/s,0.5 to 0.9,0.6 to 1.0,0.7 to 1.0,0.8 to 1.1,0.9 to 1.1
+off Newfoundland,,Near-bottom current speed,m/s,0.5 to 0.7,0.6 to 0.8,0.7 to 0.8,0.8 to 1.0,0.9 to 1.0
+off Newfoundland,,Storm surge above MSL,m,0.5,0.46,0.61,—,0.7
+off Nova Scotia (Sable Island Bank),,10 min mean wind speed,m/s,25 to 30,30 to 34,35 to 38,40 to 43,41 to 45
+off Nova Scotia (Sable Island Bank),,3 s gust wind speed,m/s,34 to 37,39 to 43,45 to 48,50 to 55,50 to 58
+off Nova Scotia (Sable Island Bank),,Maximum wave height,m,15 to 26,15 to 26,16 to 26,18 to 27,19 to 27
+off Nova Scotia (Sable Island Bank),,Significant wave height,m,7 to 9,8 to 10,9 to 11,11 to 14,11 to 15
+off Nova Scotia (Sable Island Bank),,Associated peak period,s,13 to 14,13 to 15,14 to 15,15 to 17,15 to 18
+off Nova Scotia (Sable Island Bank),,Surface current speed,m/s,1.0 to 1.4,1.2 to 1.8,1.3 to 2.1,1.4 to 2.3,1.5 to 2.3
+off Nova Scotia (Sable Island Bank),,Mid-depth current speed,m/s,0.9 to 1.0,0.9 to 1.1,1.0 to 1.1,1.0 to 1.2,1.1 to 1.3
+off Nova Scotia (Sable Island Bank),,Near-bottom current speed,m/s,0.9 to 1.0,0.8 to 1.0,0.7 to 1.0,0.7 to 1.1,0.8 to 1.1
+off Nova Scotia (Sable Island Bank),,Storm surge above MSL,m,—,—,0.49,0.5 to 0.6,0.6 to 0.7

@@ -1,0 +1,191 @@
+module: metocean
+description: API-RP-2MET-derived metocean extremes (GoM hurricane single-region and
+  by-region, US-zone 100-yr waves and winds, West Africa / North Sea / NW Atlantic
+  regional extremes, Hs-Tp joint occurrence, sea-temperature ranges) and
+  marine-growth terminal thickness reference tables.
+datasets:
+- name: api_rp2met_hurricane_gom_extremes.csv
+  path: data/modules/metocean/curated/api_rp2met_hurricane_gom_extremes.csv
+  format: csv
+  columns:
+  - name: PARAMETER
+    type: string
+    description: ''
+    unit: ''
+  - name: RP_10YR
+    type: float
+    description: ''
+    unit: ''
+  - name: RP_25YR
+    type: float
+    description: ''
+    unit: ''
+  - name: RP_50YR
+    type: float
+    description: ''
+    unit: ''
+  - name: RP_100YR
+    type: float
+    description: ''
+    unit: ''
+  - name: RP_200YR
+    type: float
+    description: ''
+    unit: ''
+  - name: RP_1000YR
+    type: float
+    description: ''
+    unit: ''
+  - name: RP_2000YR
+    type: float
+    description: ''
+    unit: ''
+  row_count: 16
+  size_bytes: 1018
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+- name: api_rp2met_us_zone_100yr_waves.csv
+  path: data/modules/metocean/curated/api_rp2met_us_zone_100yr_waves.csv
+  format: csv
+  columns:
+  - name: ZONE
+    type: integer
+    description: ''
+    unit: ''
+  - name: LOCATION
+    type: string
+    description: ''
+    unit: ''
+  - name: HMAX_100YR_MEAN_M
+    type: string
+    description: ''
+    unit: ''
+  - name: HMAX_100YR_RANGE_M
+    type: string
+    description: ''
+    unit: ''
+  - name: WAVE_STEEPNESS_RANGE
+    type: string
+    description: ''
+    unit: ''
+  - name: CURRENT_MEAN_MS
+    type: float
+    description: ''
+    unit: ''
+  - name: CURRENT_RANGE_MS
+    type: string
+    description: ''
+    unit: ''
+  - name: STORM_TIDE_MEAN_M
+    type: float
+    description: ''
+    unit: ''
+  - name: STORM_TIDE_RANGE_M
+    type: string
+    description: ''
+    unit: ''
+  - name: BASIS
+    type: integer
+    description: ''
+    unit: ''
+  row_count: 15
+  size_bytes: 1236
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+- name: marine_growth_terminal_thickness.csv
+  path: data/modules/metocean/curated/marine_growth_terminal_thickness.csv
+  format: csv
+  columns:
+  - name: DEPTH_BAND
+    type: string
+    description: ''
+    unit: ''
+  - name: HARD_GROWTH
+    type: string
+    description: ''
+    unit: ''
+  - name: SOFT_GROWTH
+    type: string
+    description: ''
+    unit: ''
+  - name: ALGAE_KELP
+    type: string
+    description: ''
+    unit: ''
+  row_count: 3
+  size_bytes: 141
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+- name: api_rp2met_gom_extremes_by_region.csv
+  path: data/modules/metocean/curated/api_rp2met_gom_extremes_by_region.csv
+  format: csv
+  description: GoM hurricane extremes by sub-region and return period (long-form).
+  columns:
+  - {name: PARAMETER, type: string, description: '', unit: ''}
+  - {name: UNIT, type: string, description: '', unit: ''}
+  - {name: REGION, type: string, description: '', unit: ''}
+  - {name: RP_10YR, type: float, description: '', unit: ''}
+  - {name: RP_25YR, type: float, description: '', unit: ''}
+  - {name: RP_50YR, type: float, description: '', unit: ''}
+  - {name: RP_100YR, type: float, description: '', unit: ''}
+  - {name: RP_200YR, type: float, description: '', unit: ''}
+  - {name: RP_1000YR, type: float, description: '', unit: ''}
+  - {name: RP_2000YR, type: float, description: '', unit: ''}
+  row_count: 116
+  size_bytes: 12577
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+- name: metocean_regional_extremes.csv
+  path: data/modules/metocean/curated/metocean_regional_extremes.csv
+  format: csv
+  description: Indicative extreme metocean parameters by region & return period (West
+    Africa, North Sea/NE Atlantic, NW Atlantic). Long-form.
+  columns:
+  - {name: REGION, type: string, description: '', unit: ''}
+  - {name: NOMINAL_WATER_DEPTH, type: string, description: '', unit: ''}
+  - {name: PARAMETER, type: string, description: '', unit: ''}
+  - {name: UNIT, type: string, description: '', unit: ''}
+  - {name: RP_1YR, type: string, description: '', unit: ''}
+  - {name: RP_5YR, type: string, description: '', unit: ''}
+  - {name: RP_10YR, type: string, description: '', unit: ''}
+  - {name: RP_50YR, type: string, description: '', unit: ''}
+  - {name: RP_100YR, type: string, description: '', unit: ''}
+  row_count: 82
+  size_bytes: 6792
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+- name: metocean_hs_tp_occurrence.csv
+  path: data/modules/metocean/curated/metocean_hs_tp_occurrence.csv
+  format: csv
+  description: Joint Hs vs Tp percentage-occurrence scatter by deep-water location.
+    Long-form (zero cells dropped).
+  columns:
+  - {name: LOCATION, type: string, description: '', unit: ''}
+  - {name: HS_BAND_M, type: string, description: significant wave height band, unit: m}
+  - {name: TP_BAND_S, type: string, description: spectral peak period band, unit: s}
+  - {name: OCCURRENCE_PCT, type: float, description: percentage occurrence, unit: '%'}
+  row_count: 226
+  size_bytes: 12039
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+- name: metocean_temperature_ranges.csv
+  path: data/modules/metocean/curated/metocean_temperature_ranges.csv
+  format: csv
+  description: Air/sea-surface/sea-floor temperature ranges by North Sea / NE Atlantic
+    / Norwegian Sea area.
+  columns:
+  - {name: AREA, type: string, description: '', unit: ''}
+  - {name: AIR_TEMP_C, type: string, description: air temperature range, unit: degC}
+  - {name: SEA_TEMP_C, type: string, description: sea-surface temperature range, unit: degC}
+  - {name: SEAFLOOR_TEMP_C, type: string, description: sea-floor temperature range, unit: degC}
+  row_count: 7
+  size_bytes: 367
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+- name: api_rp2met_us_zone_100yr_winds.csv
+  path: data/modules/metocean/curated/api_rp2met_us_zone_100yr_winds.csv
+  format: csv
+  description: 100-year extreme 10m/60-min wind speeds by US offshore zone (wind
+    companion to the US-zone waves table).
+  columns:
+  - {name: ZONE, type: integer, description: '', unit: ''}
+  - {name: LOCATION, type: string, description: '', unit: ''}
+  - {name: WIND_10M_60MIN_WITH_WAVE_MS, type: float, description: '', unit: m/s}
+  - {name: WIND_10M_60MIN_MAX_MS, type: float, description: '', unit: m/s}
+  row_count: 15
+  size_bytes: 537
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+binary_stores: []

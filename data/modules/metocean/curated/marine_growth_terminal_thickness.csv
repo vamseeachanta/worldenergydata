@@ -1,0 +1,4 @@
+DEPTH_BAND,HARD_GROWTH,SOFT_GROWTH,ALGAE_KELP
+0 to 15m,0.2m,0.07m,3.0m
+15 to 30m,0.2m,0.3m,unknown
+30m to sea floor,0.01m,0.3m,no growth

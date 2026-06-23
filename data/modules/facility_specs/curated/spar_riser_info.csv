@@ -1,0 +1,21 @@
+FACILITY_NAME,PRODUCTION_RISER_NUMBER_OF_BARRIERS,PRODUCTION_RISER_SIZES,TENSIONING_METHOD,RISER_SYSTEM
+NEPTUNE,Single Cased,"9-5/8""",TTR,3 Air Cans (6.75' x 62')
+MEDUSA,Dual cased,"13-3/8"" & 9-5/8""",TTR,1 Air Can
+GENESIS,Single Cased,"13-3/8""",TTR,5 Air Cans (8' x 63')
+GUNNISON Global Producer VII,Single Cased,"10""",TTR,1 Air Can (9.6' x 175')
+FRONT RUNNER,Dual cased,"13-3/8"" & 9-5/8""",TTR,1 Air Can (9.5' x 188')
+BOOMVANG Global Producer VI,Single Cased,"9-5/8""",TTR,
+NANSEN  Global Producer V,Single Cased,"9-5/8""",TTR,1 Air Can (9.5' x 188')
+ATP TITAN Telemark Hub / Mirage,Dual cased,"10-3/4"" & 7-5/8""",TTR,hyd tensioners
+TAHITI,N/A,N/A,N/A,N/A
+AASTA HANSTEEN SPAR FPSO,Single Barrier,"12.75""",N/A,N/A
+HOLSTEIN,Dual cased,"14-7/8"" & 11-3/4""",TTR,
+KIKEH,,"9-5/8""",,104.992
+MAD DOG,Dual cased,"13-7/8"" & 10-3/4""",TTR,"13  Air Can (13', 220')"
+HOOVER / DIANA Deep Draft Cassion Vessel (DDCV),Dual cased,"10"" and 6""",TTR,Ram Style / Air Cans
+CONSTITUTION Global Producer X,Dual cased,"12""",TTR,
+RED HAWK Global Producer IX,N/A,N/A,N/A,N/A
+HORN MOUNTAIN,Dual cased,"12-3/4"" & 9-5/8""",TTR,1 Air Can (12 ' x 232')
+DEVILS TOWER,Single cased,"11-3/4""",TTR,1 Air Can (12.3 ' x 196')
+LUCIUS,N/A,N/A,N/A,N/A
+PERDIDO,Single Barrier Riser with subsea control valves,"14""",Hydro-penumatic,"5, 14 in OD x 7,817' long"
