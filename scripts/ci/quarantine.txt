@@ -24,6 +24,28 @@ unit/cli/test_capability_drift.py::TestSchedulerIndexMatchesConfig::test_schedul
 tests/repo_structure/test_repo_structure_contract.py::test_current_contract_accepts_approved_roots_and_exceptions
 repo_structure/test_repo_structure_contract.py::test_current_contract_accepts_approved_roots_and_exceptions
 
+# worldenergydata package-level lazy attribute access for bsee/fdas — issue #561
+# (pre-existing on main; surfaced by un-hiding the _root shard in #529; needs a
+# src/worldenergydata/__init__.py __getattr__ change — carve-sensitive)
+tests/test_query_api.py::TestPackageLevelImports::test_bsee_api_accessible
+test_query_api.py::TestPackageLevelImports::test_bsee_api_accessible
+tests/test_query_api.py::TestPackageLevelImports::test_bsee_production_query_callable
+test_query_api.py::TestPackageLevelImports::test_bsee_production_query_callable
+tests/test_query_api.py::TestPackageLevelImports::test_fdas_api_accessible
+test_query_api.py::TestPackageLevelImports::test_fdas_api_accessible
+tests/test_query_api.py::TestPackageLevelImports::test_fdas_disclosure_analytics_accessible
+test_query_api.py::TestPackageLevelImports::test_fdas_disclosure_analytics_accessible
+tests/test_query_api.py::TestPackageLevelImports::test_fdas_economics_npv_callable
+test_query_api.py::TestPackageLevelImports::test_fdas_economics_npv_callable
+tests/test_query_api.py::TestPackageLevelImports::test_fdas_disclosure_analytics_callables
+test_query_api.py::TestPackageLevelImports::test_fdas_disclosure_analytics_callables
+
+# perf: financial-calc wall-clock budget too tight for shared CI runners — issue #560
+# (the two sibling freq='H'/resample('M') FutureWarning errors in the same file
+# were FIXED in #529, not quarantined)
+tests/performance/test_critical_operations.py::TestCriticalOperationsPerformance::test_financial_calculation_performance
+performance/test_critical_operations.py::TestCriticalOperationsPerformance::test_financial_calculation_performance
+
 # NOTE: the well_production_dashboard lazy_loading quarantine (issue #558) was
 # REMOVED in #529 — the root cause (src.-prefixed mock.patch targets) was fixed
 # for real across the wpd test files, so the whole TestQueryOptimizerLazyLoading

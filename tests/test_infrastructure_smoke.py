@@ -138,16 +138,15 @@ class TestInfrastructureSmoke:
 
         assert coverage.__version__
 
-        # Check coverage config in pytest.ini
-        ini_path = Path("pytest.ini")
-        assert ini_path.exists()
+        # Coverage + pytest config now live SOLELY in pyproject.toml
+        # ([tool.pytest.ini_options] / [tool.coverage.*]) — the root pytest.ini
+        # and tests/pytest.ini were removed in #529. Resolve relative to the
+        # repo root so the check is cwd-independent.
+        repo_root = Path(__file__).resolve().parent.parent
+        pyproject_path = repo_root / "pyproject.toml"
+        assert pyproject_path.exists()
 
-        content = ini_path.read_text()
-        pyproject_path = Path("pyproject.toml")
-        pyproject_content = (
-            pyproject_path.read_text() if pyproject_path.exists() else ""
-        )
-        coverage_config = content + "\n" + pyproject_content
+        coverage_config = pyproject_path.read_text()
         assert "--cov=" in coverage_config
         assert "coverage" in coverage_config
 

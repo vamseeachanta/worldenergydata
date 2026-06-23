@@ -132,7 +132,7 @@ class TestCriticalOperationsPerformance:
 
             # Time-based resampling
             df.set_index("timestamp", inplace=True)
-            monthly = df.resample("M").agg(
+            monthly = df.resample("ME").agg(
                 {"value1": "mean", "value2": "sum", "value3": "std"}
             )
 

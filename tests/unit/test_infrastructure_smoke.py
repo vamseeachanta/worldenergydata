@@ -129,13 +129,16 @@ class TestInfrastructureSmoke:
 
         assert coverage.__version__
 
-        # Check coverage config in pytest.ini
-        ini_path = Path(__file__).parent.parent / "pytest.ini"
-        assert ini_path.exists()
+        # Coverage + pytest config now live SOLELY in pyproject.toml
+        # ([tool.coverage.run] etc.) — the root pytest.ini and tests/pytest.ini
+        # were removed in #529.
+        repo_root = Path(__file__).resolve().parent.parent.parent
+        pyproject_path = repo_root / "pyproject.toml"
+        assert pyproject_path.exists()
 
-        content = ini_path.read_text()
-        assert "[coverage:run]" in content
-        assert "source = src" in content
+        content = pyproject_path.read_text()
+        assert "[tool.coverage.run]" in content
+        assert "src/worldenergydata" in content
 
     def test_environment_isolation(self, reset_environment):
         """Verify environment isolation fixture works."""
