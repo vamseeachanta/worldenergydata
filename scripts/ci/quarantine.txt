@@ -9,11 +9,12 @@
 # are ignored. A trailing `# issue #N …` comment records the tracking issue.
 # Remove the line the moment the underlying issue is fixed.
 #
-# NOTE: this repo has both a root and a tests/ pytest.ini, so pytest's rootdir
-# (and therefore the node-id prefix) is environment-dependent. We list BOTH the
-# `tests/`-prefixed and the rootdir=tests/ unprefixed form for each quarantined
-# test; pytest silently ignores a --deselect that doesn't match the active
-# rootdir, so whichever form is correct wins.
+# NOTE: pytest's rootdir is now deterministically the repo root (single
+# pyproject.toml config, #529), so the canonical node-id form is `tests/`-
+# prefixed. We still list BOTH the `tests/`-prefixed and the rootdir-relative
+# (unprefixed) form for each entry as belt-and-suspenders — the reusable
+# domain-matrix workflow emits a --deselect for both forms and pytest silently
+# ignores a --deselect that doesn't match the active rootdir.
 
 # hse scheduler/MODULE_INDEX drift — issue #523
 tests/unit/cli/test_capability_drift.py::TestSchedulerIndexMatchesConfig::test_scheduler_config_wired_modules_in_index
@@ -23,17 +24,29 @@ unit/cli/test_capability_drift.py::TestSchedulerIndexMatchesConfig::test_schedul
 tests/repo_structure/test_repo_structure_contract.py::test_current_contract_accepts_approved_roots_and_exceptions
 repo_structure/test_repo_structure_contract.py::test_current_contract_accepts_approved_roots_and_exceptions
 
-# well_production_dashboard lazy_loading: fragile src.-prefixed mock.patch — issue #558
-tests/unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading::test_clear_cache_with_lazy_loader
-unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading::test_clear_cache_with_lazy_loader
-tests/unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading::test_get_data_chunked
-unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading::test_get_data_chunked
-tests/unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading::test_get_data_lazy
-unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading::test_get_data_lazy
-tests/unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading::test_get_memory_usage
-unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading::test_get_memory_usage
-tests/unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading::test_lazy_loading_context
-unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading::test_lazy_loading_context
-# (whole broken class — all use the same src.-prefixed patch — #558)
-tests/unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading
-unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading
+# worldenergydata package-level lazy attribute access for bsee/fdas — issue #561
+# (pre-existing on main; surfaced by un-hiding the _root shard in #529; needs a
+# src/worldenergydata/__init__.py __getattr__ change — carve-sensitive)
+tests/test_query_api.py::TestPackageLevelImports::test_bsee_api_accessible
+test_query_api.py::TestPackageLevelImports::test_bsee_api_accessible
+tests/test_query_api.py::TestPackageLevelImports::test_bsee_production_query_callable
+test_query_api.py::TestPackageLevelImports::test_bsee_production_query_callable
+tests/test_query_api.py::TestPackageLevelImports::test_fdas_api_accessible
+test_query_api.py::TestPackageLevelImports::test_fdas_api_accessible
+tests/test_query_api.py::TestPackageLevelImports::test_fdas_disclosure_analytics_accessible
+test_query_api.py::TestPackageLevelImports::test_fdas_disclosure_analytics_accessible
+tests/test_query_api.py::TestPackageLevelImports::test_fdas_economics_npv_callable
+test_query_api.py::TestPackageLevelImports::test_fdas_economics_npv_callable
+tests/test_query_api.py::TestPackageLevelImports::test_fdas_disclosure_analytics_callables
+test_query_api.py::TestPackageLevelImports::test_fdas_disclosure_analytics_callables
+
+# perf: financial-calc wall-clock budget too tight for shared CI runners — issue #560
+# (the two sibling freq='H'/resample('M') FutureWarning errors in the same file
+# were FIXED in #529, not quarantined)
+tests/performance/test_critical_operations.py::TestCriticalOperationsPerformance::test_financial_calculation_performance
+performance/test_critical_operations.py::TestCriticalOperationsPerformance::test_financial_calculation_performance
+
+# NOTE: the well_production_dashboard lazy_loading quarantine (issue #558) was
+# REMOVED in #529 — the root cause (src.-prefixed mock.patch targets) was fixed
+# for real across the wpd test files, so the whole TestQueryOptimizerLazyLoading
+# class now passes. Close #558.

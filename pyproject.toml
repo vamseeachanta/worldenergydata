@@ -168,14 +168,115 @@ warn_unused_configs = true
 disallow_untyped_defs = true
 
 [tool.pytest.ini_options]
+# SINGLE canonical pytest config (#529). The root `pytest.ini` and
+# `tests/pytest.ini` were DELETED so there is exactly one config and one
+# deterministic rootdir = the repo root (the dir holding this pyproject.toml).
+# Previously three configs competed and rootdir flipped between the repo root
+# and tests/ depending on the invocation cwd/args, which silently changed test
+# node-id prefixes AND (via tests/pytest.ini's norecursedirs) hid whole test
+# domains (well_production_dashboard, cost, hse, metocean, pipeline_ci_cd,
+# sodir, ukcs, brazil_anp) so they never ran and rotted. Those are now
+# un-hidden; see the triage notes on PR #529.
+minversion = "7.0"
 testpaths = ["tests"]
 python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+asyncio_mode = "strict"
+console_output_style = "progress"
+
+# norecursedirs: GENUINE non-test excludes ONLY (build/vendor/archive/legacy/
+# generated-output dirs). Test domains were removed from here on purpose — do
+# NOT re-add a `tests/unit/<domain>` entry; quarantine an individual broken
+# node-id in scripts/ci/quarantine.txt instead.
+norecursedirs = [
+    ".git",
+    ".venv",
+    "venv",
+    "__pycache__",
+    "*.egg-info",
+    ".pytest_cache",
+    "node_modules",
+    "build",
+    "dist",
+    "_archive",
+    "_archived_tests",
+    "legacy",
+    "legacy_*",
+    "custom_scripts",
+    "output",
+    "data",
+    "htmlcov",
+    ".coverage*",
+    "reports",
+    "2025-*",
+    "comprehensive-report-system",
+    "financial-analysis-sme-code",
+    "well-data-verification",
+]
+
 # Measure by import package name (not a single src/ path): the worldenergydata
 # namespace now spans the root distribution AND the worldenergydata-core
 # workspace member (ADR 0001 Phase 2 PR #1), so a path-scoped --cov would miss
 # common/. --cov=worldenergydata covers the package wherever its modules import
 # from.
-addopts = "--cov=worldenergydata --cov-report=term-missing --cov-report=html:reports/coverage/htmlcov --cov-report=xml:reports/coverage/coverage.xml --cov-report=json:reports/coverage/coverage.json"
+#
+# --ignore entries: genuinely broken / network-bound / wrong-lane test FILES
+# only (NOT whole un-hidden domains — those were triaged and now pass). Slow
+# or process-killing lanes (tests/performance, tests/integration) are driven
+# separately by CI. Individual broken node-ids go to scripts/ci/quarantine.txt.
+addopts = """\
+--strict-markers \
+--cov=worldenergydata \
+--cov-report=term-missing \
+--cov-report=html:reports/coverage/htmlcov \
+--cov-report=xml:reports/coverage/coverage.xml \
+--cov-report=json:reports/coverage/coverage.json \
+--ignore=tests/performance \
+--ignore=tests/unit/marine_safety \
+--ignore=tests/unit/safety_analysis \
+--ignore=tests/modules/bsee/analysis/test_type_curves.py \
+--ignore=tests/modules/fdas/integration/test_end_to_end.py \
+--ignore=tests/modules/sodir-integration \
+--ignore=tests/modules/well_production_dashboard/test_monitoring.py \
+--ignore=tests/modules/well_production_dashboard/test_well_production_dashboard.py \
+--ignore=tests/unit/bsee/analysis/query_api_01_wells_api12_rig_days_Tiber_test.py \
+--ignore=tests/unit/bsee/analysis/query_api_01_wells_api12_test.py \
+--ignore=tests/unit/bsee/analysis/query_api_01_wells_directional_survey_test.py \
+--ignore=tests/unit/bsee/analysis/query_api_multiple_wells_rig_days_test.py \
+--ignore=tests/unit/bsee/analysis/query_field_anchor_test.py \
+--ignore=tests/unit/bsee/analysis/query_field_jack_stmalo_npv_test.py \
+--ignore=tests/unit/bsee/analysis/query_lease_test.py\
+"""
+
+markers = [
+    "unit: Unit tests (no external dependencies)",
+    "integration: Integration tests (multiple components)",
+    "slow: Slow tests (>1 second execution)",
+    "llm: LLM/AI tests (external API calls)",
+    "scrapy: Web scraping tests",
+    "selenium: Browser automation tests",
+    "database: Database integration tests",
+    "api: API endpoint tests",
+    "etl: ETL pipeline tests",
+    "data_validation: Data validation and verification tests",
+    "performance: Performance and benchmark tests",
+    "benchmark: Benchmark performance tests",
+    "smoke: Smoke tests for quick validation",
+    "regression: Regression tests for existing functionality",
+    "network: Tests requiring network access",
+    "skip_ci: Tests to skip in CI/CD pipeline",
+    "wip: Work-in-progress tests",
+    "timeout: Tests with custom timeout settings",
+    "asyncio: Asynchronous tests using pytest-asyncio",
+    "contracts: Contract tests asserting assetutilities public API stability",
+]
+
+filterwarnings = [
+    "error",
+    "ignore::UserWarning",
+    "ignore::DeprecationWarning",
+]
 
 [tool.coverage.run]
 # Both namespace locations: root domains + the carved-out core member (common/).

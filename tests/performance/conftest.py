@@ -54,7 +54,7 @@ def large_dataset():
     # 1 million rows
     size = 1_000_000
     data = {
-        "timestamp": pd.date_range(start="2000-01-01", periods=size, freq="H"),
+        "timestamp": pd.date_range(start="2000-01-01", periods=size, freq="h"),
         "value1": np.random.randn(size),
         "value2": np.random.randn(size),
         "value3": np.random.randn(size),

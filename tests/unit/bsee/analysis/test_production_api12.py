@@ -26,7 +26,7 @@ class TestProductionAPI12Analysis:
     def sample_production_data(self):
         """Create sample production data for testing"""
         # Create realistic production data
-        dates = pd.date_range(start="2023-01-01", end="2023-12-31", freq="M")
+        dates = pd.date_range(start="2023-01-01", end="2023-12-31", freq="ME")
 
         production_data = []
         for i, date in enumerate(dates):

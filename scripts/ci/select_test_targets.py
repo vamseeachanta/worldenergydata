@@ -54,10 +54,12 @@ ALWAYS_XDIST = [
 CORE_EXACT = {
     "src/worldenergydata/engine.py",
     "src/worldenergydata/__main__.py",
+    # pyproject.toml is now the SINGLE pytest config (#529): root pytest.ini
+    # and tests/pytest.ini were deleted, so a config change here already routes
+    # to the full tree via this entry.
     "pyproject.toml",
     "uv.lock",
     "tests/conftest.py",
-    "tests/pytest.ini",
     ".github/workflows/ci.yml",
 }
 CORE_PREFIXES = (
