@@ -1,0 +1,54 @@
+VESSEL_NAME,TOTAL_NUMBER_OF_RISERS,PROD_INJ_RISER_TYPE,PROD_INJ_MAX_SIZE_IN,OIL_EXPORT_SIZE_IN,OIL_EXPORT_RISER_TYPE,GAS_EXPORT_SIZE_IN,GAS_EXPORT_RISER_TYPE,QUARTERS_CAPACITY,TOTAL_INSTALLED_POWER_KW
+AH001,8,Flexible,"15""","14""",,"8""",,120,17100
+ÅSGARD B,40,Flexible,,,,,,120,56800
+ATLANTIS,6 + 8,SCR,"9""","24""",SCR,"16""",SCR,100,70000
+BALMORAL,11,Flexible,,,,,,120,48000
+BLIND FAITH,5,SCR,"14""","16""",,"16""",,,
+BUCHAN A,18,,"4""","12""",,,,80,8000
+GJOA,8,,,,,,,,
+HELIX PRODUCER I,4,Flexible,"6""",,,"6""",Flexible,120,
+INDEPENDENCE HUB,17,SCR,"10""",,,"20""",SCR,16,
+INNOVATOR,3,Flexible,"6""","8""",Flexible,"10""",Flexible,98,15118
+JANICE,11,,,,,,,,
+KRISTIN,24,Flexible,,,,,,104,
+MOHO/BILONDO,,,,"16""",Flexible,,,80,
+NA KIKA,26,SCR,,,,,,60,
+NAN HAI TIAO ZHAN,25,,,,,,,130,13200
+NJORD A,15,Flexible,"6""","10""",Flexible,,,120,27000
+NORTHERN PRODUCER,17,Flexible,,,,,,,
+P-07,8,Flexible,,,Flexible,,Flexible,80,5000
+P-08,56,Flexible,"10""","10""",Flexible,"12""",Flexible,120,8600
+P-09,21,Flexible,,,Flexible,,Flexible,94,19300
+P-12,11,Flexible,,,Flexible,,Flexible,94,19300
+P-13,,Flexible,"9.5""","8""",Flexible,"9.5""",Flexible,100,5000
+P-14,,Flexible,,,Flexible,,Flexible,100,5000
+P-15,,Flexible,,,Flexible,"10""",Flexible,106,4500
+P-18,65,Flexible/ SCR,,"12""",Flexible,"10""",Flexible,130,25600
+P-19,,Flexible,,,Flexible,"8""",Flexible,88,
+P-20,8,Flexible,,"8""",Flexible,,Flexible,126,20000
+P-21,,Flexible,,,Flexible,,Flexible,100,2400
+P-22,6,Flexible,,"8""",Flexible,,Flexible,90,5000
+P-25,8,Flexible,"10""","16""",Flexible,,Flexible,100,6000
+P-26,24,Flexible,,,Flexible,,Flexible,88,7500
+P-27,,Flexible,,,Flexible,,Flexible,95,9000
+P-40,,Flexible,"12""",,Flexible,,Flexible,,
+P-51,89F/ 3SCR,,,,SCR,,SCR,200,
+P-52,23F/ 46 SCR,,"10""","18""",,"20""",,,
+SNORRE B,28,,,,,,,140,
+SS-11 (ATLANTIC ZEPHYR),3,Flexible,"8""","8""",Flexible,"12""",Flexible,82,4500
+TAHARA,6,,"4""",,,,,85,4200
+THUNDER HAWK,11,SCR,"8""","12""",SCR,"12""",SCR,38,5200
+THUNDER HORSE,18,SCR/ Flexible,"12""","20""/24""",SCR,,,188,
+TROLL B,13,Flexible,"16""",,Flexible,"16""",Flexible,100,42600
+TROLL C,42,Flexible,"10""","15""",Flexible,"15""",Flexible,70,42000
+VESLEFRIKK B,15,Flexible,"8""","8""",Flexible,,,159,52000
+VISUND,38,Flexible,,,Flexible,,,120,42000
+CALAUIT,5,,"8""",,,,,,
+DAI HUNG I,3,,"8""","1""",,,,88,12600
+MOLLY BROWN (x-P-24),24,Flexible,,,Flexible,,Flexible,95,4500
+CHEVIOT,,,,,,,,,
+OPTI-EX,4 + 10,Flexible,,12,Flexible,10,Flexible,32/50,15000
+GUMUSUT,,SCR,,,,,,,
+JACK/ST. MALO,,,,,,,,,
+P-55,19,SCR,"8""","12""",SCR,"12""",SCR,,
+P-56,,,,,,,,,

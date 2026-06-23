@@ -1,0 +1,76 @@
+{
+  "module": "metocean",
+  "generated_at": "2026-06-22T17:06:49.955460+00:00",
+  "last_refresh": "2026-06-22",
+  "record_count": 480,
+  "file_count": 11,
+  "total_size_bytes": 39070,
+  "source_url": null,
+  "format": ".csv,.md,.yaml",
+  "has_external_data": false,
+  "external_data_root": null,
+  "provenance": "Corpus epic llm-wiki#767; worldenergydata issue #543. Facts-only normalization of legacy reference extraction; URLs, source-site names and client-confidential annotations excluded.",
+  "files": [
+    {
+      "name": "api_rp2met_hurricane_gom_extremes.csv",
+      "path": "curated/api_rp2met_hurricane_gom_extremes.csv",
+      "size_bytes": 1018,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "api_rp2met_us_zone_100yr_waves.csv",
+      "path": "curated/api_rp2met_us_zone_100yr_waves.csv",
+      "size_bytes": 1236,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "marine_growth_terminal_thickness.csv",
+      "path": "curated/marine_growth_terminal_thickness.csv",
+      "size_bytes": 141,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "api_rp2met_gom_extremes_by_region.csv",
+      "path": "curated/api_rp2met_gom_extremes_by_region.csv",
+      "size_bytes": 12577,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "metocean_regional_extremes.csv",
+      "path": "curated/metocean_regional_extremes.csv",
+      "size_bytes": 6792,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "metocean_hs_tp_occurrence.csv",
+      "path": "curated/metocean_hs_tp_occurrence.csv",
+      "size_bytes": 12039,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "metocean_temperature_ranges.csv",
+      "path": "curated/metocean_temperature_ranges.csv",
+      "size_bytes": 367,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "api_rp2met_us_zone_100yr_winds.csv",
+      "path": "curated/api_rp2met_us_zone_100yr_winds.csv",
+      "size_bytes": 537,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "README.md",
+      "path": "README.md",
+      "size_bytes": 1901,
+      "modified": "2026-06-22"
+    },
+    {
+      "name": "schema.yaml",
+      "path": "schema.yaml",
+      "size_bytes": 2462,
+      "modified": "2026-06-22"
+    }
+  ],
+  "files_truncated": false
+}

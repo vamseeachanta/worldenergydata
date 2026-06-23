@@ -1,0 +1,54 @@
+VESSEL NAME,CURRENT STATUS,VESSEL TYPE,VESSEL OPERATOR,VESSEL OWNER,OPERATING WATER DEPTH,MAX OPERATING DRAFT (M),CLASSIFICATION,CONVERSION or NEWBUILD
+AH001,Operating,SS,Aker Kvaerner Operations,Hess,460,65,BV,Converted
+ÅSGARD B,Operating,SS,Statoil,Statoil,984,82,DNV,New Built
+ATLANTIS,Operating,SS- PQ,BP,BP & BHP,7072,85,ABS,New Built
+BALMORAL,Operating,SS,,Oilexco North Sea Ltd,470,74,DNV,New Built
+BLIND FAITH,Operating,SS,Chevron,Chevron,6494,,ABS,New Built
+BUCHAN A,Operating,SS,Talisman,Talisman,387,72,LR,Converted
+GJOA,Operating,SS,GDF Suez,GDF Suez,1181,,,New Built
+HELIX PRODUCER I,Operating,FPU,,Kommander Llc.,2099,28,LR,Converted
+INDEPENDENCE HUB,Operating,FPU,Anadarko,Enterprise Products Partners (1),7918,105,ABS,New Built
+INNOVATOR,Operating,SS-FPU,ATP,ATP,2998,47,ABS,Converted
+JANICE,Operating,FPU,Maersk,Anadarko,262,,BV,Converted
+KRISTIN,Operating,SS,Statoil,Statoil,1050,70,DNV,New Built
+MOHO/BILONDO,Operating,FPU,,,2034,,BV,New Built
+NA KIKA,Operating,SS,BP,Shell/BP,6340,90,ABS,New Built
+NAN HAI TIAO ZHAN,Operating,SS,CNOOC,CNOOC,1090,,VR,Converted
+NJORD A,Operating,SS,Statoil,Statoil,1083,76,DNV,New Built
+NORTHERN PRODUCER,Operating,FPU,Petrofac,Northern Offshore,1148,,LR,Converted
+P-07,Operating,SS,Petrobras,Petrobras,686,70,DNV,Converted
+P-08,Operating,SS,Petrobras,Petrobras,1388,67,ABS,Converted
+P-09,Operating,SS,Petrobras,Petrobras,755,70,ABS,New Built
+P-12,Operating,SS,Petrobras,Petrobras,338,67,BV,Converted
+P-13,Operating,SS,Petrobras,Queiroz Galvao Perfuracoes,2051,71,BV,New Built
+P-14,Operating,SS,Petrobras,Petrobras,640,71,BV,New Built
+P-15,Operating,SS,Petrobras,Petrobras,797,66,BV,Converted
+P-18,Operating,SS-PQ,Petrobras,Petrobras,2986,60,DNV,New Built
+P-19,Operating,SS,Petrobras,Petrobras,2526,69,BV,Converted
+P-20,Operating,SS,Petrobras,Petrobras,2051,67,DNV,Converted
+P-21,Operating,SS,Petrobras,Petrobras,367,55,ABS,Converted
+P-22,Operating,SS,Petrobras,Petrobras,374,80,ABS,Converted
+P-25,Operating,SS,Petrobras,Petrobras,827,77,ABS,Converted
+P-26,Operating,SS,Petrobras,Petrobras,1690,60,DNV,Converted
+P-27,Operating,SS,Petrobras,Petrobras,1740,70,ABS,Converted
+P-40,Operating,SS,Petrobras,Petrobras,3542,70,ABS,Converted
+P-51,Operating,SS,Petrobras,Petrobras,1225,90,DNV,New Built
+P-52,Operating,SS,Petrobras,Petrobras,5888,89,DNV,New Built
+SNORRE B,Operating,SS,Statoil,Statoil,1150,69,,New Built
+SS-11 (ATLANTIC ZEPHYR),Operating,SS,Petrobras,Petrobras,413,48,ABS,Converted
+TAHARA,Operating,FPU,Aban Offshore,Aban Offshore,270,85,ABS,Converted
+THUNDER HAWK,Operating,FPU,Murphy,SBM Offshore,6050,105,ABS,New Built
+THUNDER HORSE,Operating,SS-PDQ,BP,BP & ExxonMobil,6065,99,ABS,New Built
+TROLL B,Operating,SS,Statoil,Statoil,1050,131,DNV,New Built
+TROLL C,Operating,SS,Statoil,Statoil,1115,69,DNV,New Built
+VESLEFRIKK B,Operating,SS,Statoil,Statoil,574,85,DNV,Converted
+VISUND,Operating,SS,Statoil,Statoil,1099,69,DNV,New Built
+CALAUIT,Construction/Conversion,SS,,Frigstad Offshore,,,ABS,Converted
+DAI HUNG I,Construction/Conversion,SS,Petrovietnam,Petrovietnam,,70,ABS,Converted
+MOLLY BROWN (x-P-24),Construction/Conversion,SS,Compass Energy,Compass Energy,,70,ABS,Converted
+CHEVIOT,Ideal,FPU,ATP,ATP,394,,ABS,
+OPTI-EX,Ideal,SS,LLOG Exploration LLC,LLOG Deepwater Development Co.,,85,ABS,New Built
+GUMUSUT,Ideal,SS,Shell,MISC,3900,,,New Built
+JACK/ST. MALO,Ideal,SS,Chevron,Chevron,,,,
+P-55,Ideal,FPU,Petrobras,Petrobras,5599,112,BV,New Built
+P-56,Ideal,SS,Petrobras,Petrobras,5576,90,DNV,New Built

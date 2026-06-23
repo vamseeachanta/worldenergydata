@@ -1,0 +1,392 @@
+module: offshore_assets
+description: Global O&G fields, production facilities, host vessels, drilling rigs
+  and jackups (parsed from legacy reference extraction). Complements US-GoM BSEE.
+datasets:
+- name: country_centroids.csv
+  path: data/modules/offshore_assets/curated/country_centroids.csv
+  format: csv
+  columns:
+  - name: COUNTRY
+    type: string
+    description: ''
+    unit: ''
+  - name: LATITUDE
+    type: string
+    description: ''
+    unit: ''
+  - name: LONGITUDE
+    type: float
+    description: ''
+    unit: ''
+  row_count: 205
+  size_bytes: 6409
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+- name: coverage_summary.csv
+  path: data/modules/offshore_assets/curated/coverage_summary.csv
+  format: csv
+  description: Derived roll-up counts over fields.csv and production_facilities.csv
+    (by country, reserve type/duty, status, host type, water-depth band, US-GoM vs ROW).
+  columns:
+  - name: CATEGORY
+    type: string
+    description: roll-up axis
+    unit: ''
+  - name: DIMENSION
+    type: string
+    description: bucket value within the axis
+    unit: ''
+  - name: FIELDS_COUNT
+    type: integer
+    description: count of fields.csv rows in the bucket
+    unit: ''
+  - name: FACILITIES_COUNT
+    type: integer
+    description: count of production_facilities.csv rows in the bucket
+    unit: ''
+  row_count: 135
+  size_bytes: 4177
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+- name: drilling_rigs.csv
+  path: data/modules/offshore_assets/curated/drilling_rigs.csv
+  format: csv
+  columns:
+  - name: RIG_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: VESSEL_TYPE
+    type: string
+    description: ''
+    unit: ''
+  - name: VESSEL_DESIGN
+    type: string
+    description: ''
+    unit: ''
+  - name: CONSTRUCTION_YEAR
+    type: integer
+    description: ''
+    unit: ''
+  - name: UPGRADE_YEAR
+    type: integer
+    description: ''
+    unit: ''
+  - name: CLASSIFICATION_SOCIETY
+    type: string
+    description: ''
+    unit: ''
+  - name: MAX_WATER_DEPTH_RATING_FT
+    type: integer
+    description: ''
+    unit: ''
+  - name: MAX_DRILLING_DEPTH_FT
+    type: integer
+    description: ''
+    unit: ''
+  - name: TOTAL_VESSEL_POWER_HP
+    type: integer
+    description: ''
+    unit: ''
+  - name: QUARTERS_CAPACITY
+    type: integer
+    description: ''
+    unit: ''
+  - name: LENGTH_FT
+    type: float
+    description: ''
+    unit: ''
+  - name: WIDTH_FT
+    type: float
+    description: ''
+    unit: ''
+  - name: OPERATING_DRAFT_FT
+    type: float
+    description: ''
+    unit: ''
+  - name: MAX_VARIABLE_LOAD_ST
+    type: integer
+    description: ''
+    unit: ''
+  - name: DERRICK_RATING_KIPS
+    type: integer
+    description: ''
+    unit: ''
+  - name: DRAWWORKS_HP
+    type: float
+    description: ''
+    unit: ''
+  - name: BOP_OPERATING_PRESSURE_KSI
+    type: integer
+    description: ''
+    unit: ''
+  row_count: 163
+  size_bytes: 15854
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+- name: fields.csv
+  path: data/modules/offshore_assets/curated/fields.csv
+  format: csv
+  columns:
+  - name: FIELD_ID
+    type: integer
+    description: ''
+    unit: ''
+  - name: FIELD_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: COUNTRY
+    type: string
+    description: ''
+    unit: ''
+  - name: BLOCK
+    type: string
+    description: ''
+    unit: ''
+  - name: RESERVE_TYPE
+    type: string
+    description: ''
+    unit: ''
+  - name: CURRENT_STATUS
+    type: string
+    description: ''
+    unit: ''
+  - name: DISCOVERY_DATE
+    type: string
+    description: ''
+    unit: ''
+  - name: PRODUCTION_START
+    type: string
+    description: ''
+    unit: ''
+  - name: WATER_DEPTH_M
+    type: integer
+    description: ''
+    unit: ''
+  - name: WATER_DEPTH_FT
+    type: integer
+    description: ''
+    unit: ''
+  - name: US_GOM_FLAG
+    type: string
+    description: ''
+    unit: ''
+  row_count: 2149
+  size_bytes: 160020
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+- name: host_facilities.csv
+  path: data/modules/offshore_assets/curated/host_facilities.csv
+  format: csv
+  columns:
+  - name: FACILITY_TYPE
+    type: string
+    description: ''
+    unit: ''
+  - name: VESSEL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: CLASSIFICATION
+    type: string
+    description: ''
+    unit: ''
+  - name: LENGTH_M
+    type: integer
+    description: ''
+    unit: ''
+  - name: WIDTH_M
+    type: integer
+    description: ''
+    unit: ''
+  - name: DEPTH_M
+    type: integer
+    description: ''
+    unit: ''
+  - name: MAX_OPERATING_DRAFT_M
+    type: integer
+    description: ''
+    unit: ''
+  - name: HULL_CONSTRUCTION
+    type: string
+    description: ''
+    unit: ''
+  - name: DEADWEIGHT_DWT_TONNES
+    type: integer
+    description: ''
+    unit: ''
+  - name: CONSTRUCTION_TYPE
+    type: string
+    description: ''
+    unit: ''
+  - name: HULL_FAB_YEAR
+    type: integer
+    description: ''
+    unit: ''
+  - name: LATEST_UPGRADE_YEAR
+    type: integer
+    description: ''
+    unit: ''
+  - name: MAX_OIL_PROD_MBOPD
+    type: integer
+    description: ''
+    unit: ''
+  - name: GAS_PROCESSING_MMSCFD
+    type: float
+    description: ''
+    unit: ''
+  - name: TOTAL_THROUGHPUT_MBOED
+    type: integer
+    description: ''
+    unit: ''
+  - name: STORAGE_CAPACITY_MBBLS
+    type: integer
+    description: ''
+    unit: ''
+  - name: TOTAL_RISERS
+    type: integer
+    description: ''
+    unit: ''
+  - name: UMBILICALS
+    type: integer
+    description: ''
+    unit: ''
+  - name: QUARTERS_CAPACITY
+    type: integer
+    description: ''
+    unit: ''
+  - name: MOORING_SYSTEM_TYPE
+    type: string
+    description: ''
+    unit: ''
+  - name: PERMANENT_OR_DISCONNECTABLE
+    type: string
+    description: ''
+    unit: ''
+  - name: NUMBER_OF_ANCHOR_LEGS
+    type: integer
+    description: ''
+    unit: ''
+  row_count: 245
+  size_bytes: 17398
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+- name: jackups.csv
+  path: data/modules/offshore_assets/curated/jackups.csv
+  format: csv
+  columns:
+  - name: RIG_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: RIG_DESIGN_MODEL
+    type: string
+    description: ''
+    unit: ''
+  - name: YEAR_DELIVERED
+    type: integer
+    description: ''
+    unit: ''
+  - name: COUNTRY_BUILT
+    type: string
+    description: ''
+    unit: ''
+  - name: CLASSIFICATION_SOCIETY
+    type: string
+    description: ''
+    unit: ''
+  - name: MAX_WATER_DEPTH_RATING_FT
+    type: integer
+    description: ''
+    unit: ''
+  - name: MIN_WATER_DEPTH_FT
+    type: float
+    description: ''
+    unit: ''
+  - name: OVERALL_LEG_LENGTH_FT
+    type: integer
+    description: ''
+    unit: ''
+  - name: SPUD_CAN_DIAMETER_FT
+    type: float
+    description: ''
+    unit: ''
+  - name: MAX_DRILLING_DEPTH_FT
+    type: integer
+    description: ''
+    unit: ''
+  - name: QUARTERS_CAPACITY
+    type: integer
+    description: ''
+    unit: ''
+  - name: OVERALL_HULL_LENGTH_FT
+    type: float
+    description: ''
+    unit: ''
+  - name: DERRICK_RATING_KIPS
+    type: integer
+    description: ''
+    unit: ''
+  - name: DRAWWORKS_HP
+    type: integer
+    description: ''
+    unit: ''
+  - name: BOP_OPERATING_PRESSURE_KSI
+    type: integer
+    description: ''
+    unit: ''
+  row_count: 134
+  size_bytes: 12332
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+- name: production_facilities.csv
+  path: data/modules/offshore_assets/curated/production_facilities.csv
+  format: csv
+  columns:
+  - name: FACILITY_ID
+    type: integer
+    description: ''
+    unit: ''
+  - name: FACILITY_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: DUTY
+    type: string
+    description: ''
+    unit: ''
+  - name: OPERATOR
+    type: string
+    description: ''
+    unit: ''
+  - name: HOST_TYPE
+    type: string
+    description: ''
+    unit: ''
+  - name: CURRENT_STATUS
+    type: string
+    description: ''
+    unit: ''
+  - name: STATUS_SINCE_YEAR
+    type: integer
+    description: ''
+    unit: ''
+  - name: WATER_DEPTH_M
+    type: integer
+    description: ''
+    unit: ''
+  - name: WATER_DEPTH_FT
+    type: integer
+    description: ''
+    unit: ''
+  - name: COUNTRY
+    type: string
+    description: ''
+    unit: ''
+  - name: LOCATION
+    type: string
+    description: ''
+    unit: ''
+  - name: US_GOM_FLAG
+    type: string
+    description: ''
+    unit: ''
+  row_count: 836
+  size_bytes: 79624
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+binary_stores: []
