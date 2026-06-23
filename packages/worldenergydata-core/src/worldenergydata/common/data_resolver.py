@@ -24,11 +24,31 @@ class DataNotFoundError(FileNotFoundError):
 
 
 def _get_project_root() -> Path:
-    """Find the project root by looking for pyproject.toml."""
+    """Find the project root by looking for pyproject.toml.
+
+    This module ships in the ``worldenergydata-core`` uv workspace member
+    (ADR 0001 Phase 2), so the *nearest* ``pyproject.toml`` walking up from
+    ``__file__`` is the MEMBER's pyproject (``packages/worldenergydata-core/``),
+    not the repo root — yet ``data/`` lives at the repo/workspace root. To stay
+    correct both in the in-repo workspace and in a normal site-packages install,
+    prefer the outermost ``pyproject.toml`` that declares the uv workspace
+    (``[tool.uv.workspace]``); fall back to the nearest ``pyproject.toml`` (the
+    single-distribution / installed case) and finally to CWD.
+    """
     current = Path(__file__).resolve()
+    nearest: Path | None = None
     for parent in current.parents:
-        if (parent / "pyproject.toml").exists():
-            return parent
+        candidate = parent / "pyproject.toml"
+        if candidate.exists():
+            if nearest is None:
+                nearest = parent
+            try:
+                if "[tool.uv.workspace]" in candidate.read_text(encoding="utf-8"):
+                    return parent
+            except OSError:
+                pass
+    if nearest is not None:
+        return nearest
     return Path.cwd()
 
 

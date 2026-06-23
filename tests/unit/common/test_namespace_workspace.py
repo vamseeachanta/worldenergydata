@@ -49,15 +49,11 @@ def test_exactly_one_namespace_root_init_owner():
 def test_core_member_is_pep420_namespace_dir():
     """The core member ships common/ but NOT a root __init__.py."""
     member_ns = (
-        _REPO_ROOT
-        / "packages"
-        / "worldenergydata-core"
-        / "src"
-        / "worldenergydata"
+        _REPO_ROOT / "packages" / "worldenergydata-core" / "src" / "worldenergydata"
     )
-    assert (member_ns / "common" / "__init__.py").is_file(), (
-        "worldenergydata-core must ship worldenergydata/common/"
-    )
+    assert (
+        member_ns / "common" / "__init__.py"
+    ).is_file(), "worldenergydata-core must ship worldenergydata/common/"
     assert not (member_ns / "__init__.py").exists(), (
         "worldenergydata-core must NOT ship a root worldenergydata/__init__.py "
         "(it is a PEP 420 namespace contributor; the root distribution owns the "
