@@ -29,112 +29,32 @@ jobs:
   # required status check. The full 3-Python matrix still runs on push to main,
   # nightly, dispatch, or `ci-full` PRs.
 
-  discover:
-    name: Discover domains
-    runs-on: ubuntu-latest
+  # The discover -> test-domain (matrix) -> aggregate scaffolding now lives in
+  # the shared reusable workflow (workspace-hub#.../domain-matrix.yml, P4
+  # worldenergydata#530). wed's conventions match the reusable defaults exactly
+  # (selector scripts/ci/select_test_targets.py, uv sync --all-extras, quarantine
+  # scripts/ci/quarantine.txt, python-setup uv, max-parallel 10), so the caller
+  # passes no `with:` overrides.
+  domain-tests:
     if: github.event_name == 'pull_request'
-    outputs:
-      matrix: ${{ steps.sel.outputs.matrix }}
-      scope: ${{ steps.sel.outputs.scope }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0  # need the base commit to diff changed files
-      - name: Select domain matrix
-        id: sel
-        env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-        run: |
-          # Stdlib only — no uv sync needed (keeps discovery fast).
-          git diff --name-only "$BASE_SHA"...HEAD > changed-files.txt
-          echo "Changed files:"; cat changed-files.txt
-          python3 scripts/ci/select_test_targets.py \
-            --emit-matrix --files-from changed-files.txt >> "$GITHUB_OUTPUT"
-          echo "--- matrix ---"; grep '^matrix=' "$GITHUB_OUTPUT" || true
+    uses: vamseeachanta/workspace-hub/.github/workflows/domain-matrix.yml@main
 
-  test-domain:
-    name: Domain ${{ matrix.name }}
-    needs: discover
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false  # one red domain must not cancel the others
-      max-parallel: 10  # bound the fan-out (core changes can be ~70 domains)
-      matrix: ${{ fromJSON(needs.discover.outputs.matrix) }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: true
-          cache-dependency-glob: "uv.lock"
-      - name: Set up Python
-        run: uv python install ${{ env.PYTHON_VERSION_DEFAULT }}
-      - name: Install dependencies
-        run: uv sync --all-extras
-      - name: Run domain tests (${{ matrix.name }})
-        env:
-          TARGETS: ${{ matrix.targets }}
-          MODE: ${{ matrix.mode }}
-          SHARD: ${{ matrix.name }}
-        run: |
-          # Build --deselect args for quarantined tests (known-broken on main,
-          # tracked by issues; see scripts/ci/quarantine.txt). They still RUN
-          # but do not block, at test granularity (never whole shards).
-          DESELECT=()
-          if [ -f scripts/ci/quarantine.txt ]; then
-            while IFS= read -r raw; do
-              line="${raw%%#*}"
-              line="$(echo "$line" | xargs || true)"
-              [ -z "$line" ] && continue
-              DESELECT+=(--deselect "$line")
-            done < scripts/ci/quarantine.txt
-          fi
-          [ "${#DESELECT[@]}" -gt 0 ] && echo "Quarantine: ${DESELECT[*]}"
-          XDIST=()
-          [ "$MODE" = "xdist" ] && XDIST=(-n auto)
-          echo "Shard '$SHARD' ($MODE): $TARGETS"
-          set +e
-          # shellcheck disable=SC2086 (TARGETS is an intentional target list)
-          uv run --with pytest-xdist pytest $TARGETS "${XDIST[@]}" "${DESELECT[@]}" \
-            --tb=short --junitxml="test-results-${SHARD}.xml"
-          rc=$?
-          set -e
-          # exit code 5 = "no tests collected" (empty / norecursedirs-excluded
-          # shard) — not a failure for a per-domain shard.
-          if [ "$rc" -eq 5 ]; then
-            echo "::notice::shard '$SHARD' collected no tests — treating as pass"
-            rc=0
-          fi
-          exit "$rc"
-      - name: Upload domain test results
-        uses: actions/upload-artifact@v7
-        if: always()
-        with:
-          name: test-results-${{ matrix.name }}
-          path: test-results-*.xml
-          if-no-files-found: ignore
-
+  # Name-preserving gate: the reusable workflow surfaces its own aggregate as
+  # "domain-tests / Aggregate domain results", but the branch ruleset requires a
+  # check literally named "Test (PR gate)". This thin wrapper re-publishes that
+  # exact name and gates on the reusable matrix result, so the migration needs
+  # NO ruleset change and does not break in-flight PRs. (#530)
   pr-gate:
-    name: Test (PR gate)  # REQUIRED status check — do not rename (branch protection)
-    needs: [discover, test-domain]
+    name: Test (PR gate)
+    needs: [domain-tests]
     if: always() && github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
-      - name: Aggregate domain results
+      - name: Gate on domain matrix result
         run: |
-          echo "discover:    ${{ needs.discover.result }}"
-          echo "test-domain: ${{ needs.test-domain.result }}"
-          echo "scope:       ${{ needs.discover.outputs.scope }}"
-          if [ "${{ needs.discover.result }}" != "success" ]; then
-            echo "::error::domain discovery failed"; exit 1
-          fi
-          # test-domain is a matrix; its result is 'success' only when every
-          # domain job passed (fail-fast is off, so all run to completion).
-          if [ "${{ needs.test-domain.result }}" != "success" ]; then
-            echo "::error::one or more domain jobs failed — see the Domain * jobs"
+          echo "domain-tests result: ${{ needs.domain-tests.result }}"
+          if [ "${{ needs.domain-tests.result }}" != "success" ]; then
+            echo "::error::domain matrix failed — see the 'domain-tests / *' jobs"
             exit 1
           fi
           echo "All domains green ✅"

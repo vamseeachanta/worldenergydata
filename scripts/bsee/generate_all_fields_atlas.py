@@ -23,12 +23,21 @@ from collections import Counter
 from pathlib import Path
 
 from worldenergydata.bsee.analysis.all_fields_runner import AllFieldsRunner
+from worldenergydata.bsee.analysis.field_access_index import compute_access_index
 from worldenergydata.bsee.analysis.field_decom import (
     apply_field_decom,
     build_field_decom_liability,
 )
+from worldenergydata.bsee.analysis.field_netback import (
+    OPEX_BAND_HIGH_USD_BBL,
+    OPEX_BAND_LOW_USD_BBL,
+    ROYALTY_RATE_DEFAULT,
+    compute_field_netback,
+)
 from worldenergydata.bsee.analysis.field_revenue import (
+    apply_field_gas_revenue,
     apply_field_revenue,
+    build_field_gas_revenue,
     build_field_oil_revenue,
 )
 from worldenergydata.bsee.data.field_names import FieldNameResolver
@@ -138,7 +147,9 @@ def main() -> int:
     field_era_map = build_field_era_map()
     result = apply_field_era(result, field_era_map)
     if "GEOLOGICAL_ERA" in result.columns and not result.empty:
-        from_map = int(result["FIELD_CODE"].astype(str).str.strip().isin(field_era_map).sum())
+        from_map = int(
+            result["FIELD_CODE"].astype(str).str.strip().isin(field_era_map).sum()
+        )
         unknown = int((result["GEOLOGICAL_ERA"] == "Unknown").sum())
         lt = int(result["IS_LOWER_TERTIARY"].sum())
         logger.info(
@@ -152,12 +163,10 @@ def main() -> int:
         )
 
     # Gross oil revenue (economics tier): monthly oil x real monthly WTI.
-    # Oil only (no gas price deck); gross, pre-royalty, pre-cost. Fields with
-    # no priced production keep an honest null.
+    # Gross, pre-royalty, pre-cost. Fields with no priced production keep an
+    # honest null. (Gas revenue is added separately below.)
     logger.info("Building gross oil revenue (oil x real WTI)...")
-    rev = build_field_oil_revenue(
-        start_year=args.start_year, end_year=args.end_year
-    )
+    rev = build_field_oil_revenue(start_year=args.start_year, end_year=args.end_year)
     result = apply_field_revenue(result, rev)
     if "GROSS_OIL_REVENUE_MM_USD" in result.columns and not result.empty:
         basin_rev = float(result["GROSS_OIL_REVENUE_MM_USD"].sum(skipna=True))
@@ -167,6 +176,36 @@ def main() -> int:
             "a value (oil only, gross pre-royalty pre-cost)",
             basin_rev,
             n_with_rev,
+            len(result),
+        )
+
+    # Gross gas revenue (economics tier): monthly gas (Mcf) x 1.037 MMBtu/Mcf x
+    # real monthly Henry Hub ($/MMBtu). Gross, pre-royalty, pre-cost. The Henry
+    # Hub deck starts 1997-01, so 1996 gas is unpriced and dropped+logged. A
+    # derived gross total (oil + gas, gas-null treated as 0 where oil present)
+    # is added too.
+    logger.info(
+        "Building gross gas revenue (gas x 1.037 MMBtu/Mcf x real Henry Hub)..."
+    )
+    gas_rev = build_field_gas_revenue(
+        data_dir=args.data_dir, start_year=args.start_year, end_year=args.end_year
+    )
+    result = apply_field_gas_revenue(result, gas_rev)
+    if "GROSS_GAS_REVENUE_MM_USD" in result.columns and not result.empty:
+        basin_gas = float(result["GROSS_GAS_REVENUE_MM_USD"].sum(skipna=True))
+        n_with_gas = int(result["GROSS_GAS_REVENUE_MM_USD"].notna().sum())
+        basin_total = float(result["GROSS_TOTAL_REVENUE_MM_USD"].sum(skipna=True))
+        n_with_total = int(result["GROSS_TOTAL_REVENUE_MM_USD"].notna().sum())
+        logger.info(
+            "Basin total gross gas revenue $%.1f MM across %d/%d fields "
+            "(gas valued at Henry Hub x 1.037 MMBtu/Mcf; 1996 gas unpriced — "
+            "deck starts 1997; gross pre-royalty pre-cost). Gross TOTAL "
+            "(oil+gas) $%.1f MM across %d/%d fields.",
+            basin_gas,
+            n_with_gas,
+            len(result),
+            basin_total,
+            n_with_total,
             len(result),
         )
 
@@ -191,6 +230,44 @@ def main() -> int:
             basin_p90,
             n_with_decom,
             len(result),
+        )
+
+    # Netback / break-even SENSITIVITY (Rank-3 economics): pure-derived from
+    # the real gross oil revenue + a labeled royalty assumption + a transparent
+    # opex band. This is a sensitivity range, NOT a point NPV (no per-field
+    # development costs exist to generalize). No new data file is loaded.
+    logger.info(
+        "Computing netback / break-even sensitivity "
+        "(royalty %.4f assumed; opex band $%.1f-$%.1f/bbl)...",
+        ROYALTY_RATE_DEFAULT,
+        OPEX_BAND_LOW_USD_BBL,
+        OPEX_BAND_HIGH_USD_BBL,
+    )
+    result = compute_field_netback(result)
+    if "NET_REVENUE_AFTER_ROYALTY_MM_USD" in result.columns and not result.empty:
+        basin_net = float(result["NET_REVENUE_AFTER_ROYALTY_MM_USD"].sum(skipna=True))
+        n_with_net = int(result["NET_REVENUE_AFTER_ROYALTY_MM_USD"].notna().sum())
+        logger.info(
+            "Basin net revenue after royalty $%.1f MM across %d/%d fields "
+            "(royalty %.4f assumed [deepwater default, not per-lease]; opex band "
+            "$%.1f-$%.1f/bbl; oil only; SENSITIVITY, not NPV).",
+            basin_net,
+            n_with_net,
+            len(result),
+            ROYALTY_RATE_DEFAULT,
+            OPEX_BAND_LOW_USD_BBL,
+            OPEX_BAND_HIGH_USD_BBL,
+        )
+
+    # Composite access/concentration index (relative percentile-rank proxy).
+    result = compute_access_index(result)
+    if "ACCESS_CONCENTRATION_INDEX" in result.columns:
+        n_idx = int(result["ACCESS_CONCENTRATION_INDEX"].notna().sum())
+        logger.info(
+            "Access/concentration index for %d material fields "
+            "(equal-weight percentile rank of water depth, recovery/well, "
+            "operator concentration; relative proxy, not a measured access cost).",
+            n_idx,
         )
 
     args.out.mkdir(parents=True, exist_ok=True)
