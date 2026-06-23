@@ -22,3 +22,15 @@ unit/cli/test_capability_drift.py::TestSchedulerIndexMatchesConfig::test_schedul
 # site_assets root not in repo_structure contract — issue #524
 tests/repo_structure/test_repo_structure_contract.py::test_current_contract_accepts_approved_roots_and_exceptions
 repo_structure/test_repo_structure_contract.py::test_current_contract_accepts_approved_roots_and_exceptions
+
+# well_production_dashboard lazy_loading: fragile src.-prefixed mock.patch — issue #558
+tests/unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading::test_clear_cache_with_lazy_loader
+unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading::test_clear_cache_with_lazy_loader
+tests/unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading::test_get_data_chunked
+unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading::test_get_data_chunked
+tests/unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading::test_get_data_lazy
+unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading::test_get_data_lazy
+tests/unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading::test_get_memory_usage
+unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading::test_get_memory_usage
+tests/unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading::test_lazy_loading_context
+unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading::test_lazy_loading_context
