@@ -162,16 +162,16 @@ class TestQueryOptimizerLazyLoading(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures."""
         with patch(
-            "src.worldenergydata.well_production_dashboard.query_optimizer.HierarchicalDataLoader"
+            "worldenergydata.well_production_dashboard.query_optimizer.HierarchicalDataLoader"
         ):
             with patch(
-                "src.worldenergydata.well_production_dashboard.query_optimizer.APIData"
+                "worldenergydata.well_production_dashboard.query_optimizer.APIData"
             ):
                 with patch(
-                    "src.worldenergydata.well_production_dashboard.query_optimizer.LeaseData"
+                    "worldenergydata.well_production_dashboard.query_optimizer.LeaseData"
                 ):
                     with patch(
-                        "src.worldenergydata.well_production_dashboard.query_optimizer.BlockData"
+                        "worldenergydata.well_production_dashboard.query_optimizer.BlockData"
                     ):
                         self.optimizer = QueryOptimizer()
 

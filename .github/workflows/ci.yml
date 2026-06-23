@@ -95,8 +95,9 @@ jobs:
           # tests/integration kills xdist workers (a CLI edge-case test
           # hard-exits the process); tests/performance asserts wall-clock
           # budgets — both run sequentially below. Targets are enumerated
-          # explicitly: tests/pytest.ini sets rootdir to tests/, which breaks
-          # cwd-relative --ignore matching during recursion.
+          # explicitly so the two heavy lanes stay out of the parallel run.
+          # rootdir is now deterministically the repo root (single pyproject.toml
+          # config, #529), so node ids are stably tests/-prefixed.
           targets=$(find tests -maxdepth 1 -mindepth 1 \( -type d ! -name performance ! -name integration ! -name __pycache__ \) -o -maxdepth 1 -name 'test_*.py' | sort | tr '\n' ' ')
           uv run --with pytest-xdist pytest $targets \
             -n auto \

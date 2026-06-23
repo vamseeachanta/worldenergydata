@@ -85,7 +85,7 @@ monitoring:
         """Set up for each test."""
         # Create dashboard with mocked dependencies
         with patch(
-            "src.worldenergydata.well_production_dashboard.well_production.DashboardBuilder"
+            "worldenergydata.well_production_dashboard.well_production.DashboardBuilder"
         ):
             self.dashboard = WellProductionDashboard(config_path=str(self.config_path))
 
@@ -372,7 +372,7 @@ class TestCLIIntegration(unittest.TestCase):
         self.assertTrue(hasattr(cli, "cache"))
         self.assertTrue(hasattr(cli, "monitor"))
 
-    @patch("src.worldenergydata.well_production_dashboard.cli.WellProductionDashboard")
+    @patch("worldenergydata.well_production_dashboard.cli.WellProductionDashboard")
     def test_cli_report_generation(self, mock_dashboard):
         """Test CLI report generation."""
         from worldenergydata.well_production_dashboard.cli import DashboardCLI
