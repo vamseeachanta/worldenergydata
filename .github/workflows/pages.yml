@@ -3,12 +3,31 @@ name: Deploy Data Outputs to Pages
 # Publishes deterministic, unit-tested analysis outputs as a static site.
 # The site is REBUILT from frozen report artifacts on every run — no committed
 # HTML build output — so what ships always matches the source reports.
+#
+# Per-domain BUILD isolation (P2, issue #528)
+# -------------------------------------------
+# GitHub Pages publishes exactly ONE artifact for the whole site:
+# actions/deploy-pages replaces the entire published tree from the single
+# upload-pages-artifact tarball. There is NO per-domain *publish* — you cannot
+# deploy a partial artifact without clobbering the rest of the site. So P2 is
+# per-domain *build* isolation merged into one published tree, NOT separate
+# per-domain Pages sites.
+#
+# How the merge works without committing build output: we restore the
+# previously-published public/ from the Actions cache, rebuild ONLY the domain(s)
+# whose reports/<domain>/** changed (always regenerating the landing index over
+# the restored tree), then upload the full merged tree through the same single
+# Pages artifact and deploy step as before. Any change to shared chrome
+# (build_pages.py, the CSS/template, or site_assets/**) affects every page and so
+# forces a --clean full rebuild. A cache miss also degrades safely to a full
+# rebuild. workflow_dispatch always full-rebuilds (safety hatch).
 
 on:
   push:
     branches: [main]
     paths:
       - 'reports/**'
+      - 'site_assets/**'
       - 'scripts/build_pages.py'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
@@ -27,11 +46,111 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          # Need the previous commit so we can diff which domains changed.
+          fetch-depth: 2
+
       - uses: actions/setup-python@v6
         with:
           python-version: '3.11'
+
+      - name: Decide build scope (per-domain vs. full rebuild)
+        id: scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Known domains come straight from the build script — single source of truth.
+          mapfile -t KNOWN < <(python scripts/build_pages.py --list-domains)
+
+          full=false
+          domains=""
+
+          if [ "${{ github.event_name }}" != "push" ]; then
+            # workflow_dispatch (or anything non-push) → always full rebuild.
+            full=true
+          else
+            BEFORE='${{ github.event.before }}'
+            AFTER='${{ github.sha }}'
+            # First push to a new branch / unknown base → full rebuild.
+            if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+              full=true
+              changed="$(git show --name-only --pretty=format: "$AFTER" | grep -v '^$' || true)"
+            else
+              changed="$(git diff --name-only "$BEFORE" "$AFTER")"
+            fi
+            echo "Changed files:"; echo "$changed"
+
+            # Shared chrome / script / workflow / global assets → full rebuild.
+            if echo "$changed" | grep -Eq '^(scripts/build_pages\.py|\.github/workflows/pages\.yml|site_assets/)'; then
+              full=true
+            fi
+
+            if [ "$full" != "true" ]; then
+              # Map changed reports/<domain>/** paths to known domain keys.
+              sel=""
+              for d in "${KNOWN[@]}"; do
+                if echo "$changed" | grep -Eq "^reports/${d}/"; then
+                  sel="${sel:+$sel,}$d"
+                fi
+              done
+              # Top-level lower_tertiary_field_summary.md feeds the lower_tertiary domain.
+              if echo "$changed" | grep -Eq '^reports/lower_tertiary_field_summary\.md'; then
+                case ",$sel," in *",lower_tertiary,"*) ;; *) sel="${sel:+$sel,}lower_tertiary";; esac
+              fi
+              # A reports/** change we couldn't attribute to a known domain → full rebuild
+              # (be conservative; never silently skip changed content).
+              if echo "$changed" | grep -Eq '^reports/' && [ -z "$sel" ]; then
+                full=true
+              fi
+              domains="$sel"
+            fi
+          fi
+
+          if [ "$full" = "true" ]; then
+            echo "full=true"  >> "$GITHUB_OUTPUT"
+            echo "domains="    >> "$GITHUB_OUTPUT"
+            echo "Scope: FULL --clean rebuild (all domains)."
+          else
+            echo "full=false" >> "$GITHUB_OUTPUT"
+            echo "domains=$domains" >> "$GITHUB_OUTPUT"
+            echo "Scope: incremental rebuild of domains: ${domains:-<none>}"
+          fi
+
+      - name: Restore previously-published tree
+        # Only matters for incremental builds: seeds public/ with the last run's
+        # output so untouched domains survive into the merged upload. Full
+        # rebuilds wipe public/ via --clean regardless of what is restored.
+        if: steps.scope.outputs.full != 'true'
+        uses: actions/cache/restore@v4
+        with:
+          path: public
+          key: pages-public-${{ github.sha }}
+          restore-keys: |
+            pages-public-
+
       - name: Build static site (stdlib only)
-        run: python scripts/build_pages.py
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ steps.scope.outputs.full }}" = "true" ]; then
+            python scripts/build_pages.py --clean
+          elif [ -n "${{ steps.scope.outputs.domains }}" ]; then
+            python scripts/build_pages.py --domains "${{ steps.scope.outputs.domains }}"
+          else
+            # Nothing domain-relevant changed (e.g. a reports/ file outside any
+            # domain that also isn't shared chrome) — still regenerate the index
+            # over the restored tree so the published site stays self-consistent.
+            python scripts/build_pages.py --domains ""
+          fi
+
+      - name: Save published tree to cache
+        # Persist the freshly merged tree so the NEXT incremental run can restore
+        # it. Keyed per-commit; restore-keys above match the most recent prefix.
+        uses: actions/cache/save@v4
+        with:
+          path: public
+          key: pages-public-${{ github.sha }}
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: public

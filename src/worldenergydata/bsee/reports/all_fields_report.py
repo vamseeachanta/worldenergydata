@@ -105,6 +105,86 @@ class AllFieldsReport:
         lines.append(f"- **Cumulative oil production**: {total_oil:,.1f} MMBBL")
         lines.append(f"- **Cumulative gas production**: {total_gas:,.1f} BCF")
         lines.append(f"- **Geological eras represented**: {n_eras}")
+        has_rev = not self._df.empty and "GROSS_OIL_REVENUE_MM_USD" in self._df.columns
+        if has_rev:
+            total_rev = self._df["GROSS_OIL_REVENUE_MM_USD"].sum(skipna=True)
+            n_with_rev = int(self._df["GROSS_OIL_REVENUE_MM_USD"].notna().sum())
+            lines.append(
+                f"- **Gross oil revenue (pre-royalty, pre-cost, oil only)**: "
+                f"${total_rev:,.0f} MM across {n_with_rev} fields"
+            )
+            lines.append(
+                "  - *Monthly oil production x real monthly WTI; topline "
+                "revenue only (no royalty/opex/capex). Fields without "
+                "priced production are left blank, not zeroed.*"
+            )
+        has_gas_rev = (
+            not self._df.empty and "GROSS_GAS_REVENUE_MM_USD" in self._df.columns
+        )
+        if has_gas_rev:
+            total_gas_rev = self._df["GROSS_GAS_REVENUE_MM_USD"].sum(skipna=True)
+            n_with_gas_rev = int(self._df["GROSS_GAS_REVENUE_MM_USD"].notna().sum())
+            lines.append(
+                f"- **Gross gas revenue (pre-royalty, pre-cost, gas only)**: "
+                f"${total_gas_rev:,.0f} MM across {n_with_gas_rev} fields"
+            )
+            lines.append(
+                "  - *Monthly gas production x real monthly Henry Hub; gas "
+                "valued at Henry Hub x 1.037 MMBtu/Mcf; gas pre-1997 unpriced "
+                "(deck starts 1997). Topline only (no royalty/opex/capex). "
+                "Fields without priced gas are left blank, not zeroed.*"
+            )
+        has_total_rev = (
+            not self._df.empty and "GROSS_TOTAL_REVENUE_MM_USD" in self._df.columns
+        )
+        if has_total_rev:
+            total_rev_all = self._df["GROSS_TOTAL_REVENUE_MM_USD"].sum(skipna=True)
+            n_with_total = int(self._df["GROSS_TOTAL_REVENUE_MM_USD"].notna().sum())
+            lines.append(
+                f"- **Gross total revenue (oil + gas, pre-royalty, "
+                f"pre-cost)**: ${total_rev_all:,.0f} MM across "
+                f"{n_with_total} fields"
+            )
+            lines.append(
+                "  - *Sum of gross oil + gross gas revenue (gas null treated "
+                "as 0 where oil is present); fields with no priced oil are "
+                "left blank. Topline only.*"
+            )
+        has_decom = not self._df.empty and "DECOM_P50_MM_USD" in self._df.columns
+        if has_decom:
+            decom_p50 = self._df["DECOM_P50_MM_USD"].sum(skipna=True)
+            decom_p90 = self._df["DECOM_P90_MM_USD"].sum(skipna=True)
+            n_with_decom = int(self._df["DECOM_P50_MM_USD"].notna().sum())
+            lines.append(
+                f"- **Decommissioning liability (BSEE estimate, P50/P90)**: "
+                f"${decom_p50:,.0f} MM / ${decom_p90:,.0f} MM across "
+                f"{n_with_decom} fields"
+            )
+            lines.append(
+                "  - *Future abandonment liability; BSEE-provided P50/P70/P90 "
+                "estimates (their own uncertainty bands), summed across cost "
+                "categories per lease and rolled up to field. Covers only "
+                "leases with a decom estimate that map to a producing field, "
+                "not all fields; fields without an estimate are left blank.*"
+            )
+        has_netback = (
+            not self._df.empty
+            and "NET_REVENUE_AFTER_ROYALTY_MM_USD" in self._df.columns
+        )
+        if has_netback:
+            net_total = self._df["NET_REVENUE_AFTER_ROYALTY_MM_USD"].sum(skipna=True)
+            n_with_net = int(self._df["NET_REVENUE_AFTER_ROYALTY_MM_USD"].notna().sum())
+            lines.append(
+                f"- **Netback sensitivity (oil; SENSITIVITY, not NPV)**: "
+                f"basin net revenue after royalty ${net_total:,.0f} MM across "
+                f"{n_with_net} fields"
+            )
+            lines.append(
+                "  - *Royalty 18.75% assumed (deepwater default, not a "
+                "per-lease lookup); opex band $5-$25/bbl (assumption); oil "
+                "only; excludes capex; decommissioning shown separately. This "
+                "is a sensitivity range, not a forecast or NPV.*"
+            )
         lines.append("")
 
         # Era Grouping
@@ -156,11 +236,17 @@ class AllFieldsReport:
             if not top.empty:
                 lines.append(
                     "| Field | Era | Oil (MMBBL) | Gas (BCF) | Wells | "
-                    "Rec/Well (MMBBL) | BOPD/Well | First Prod | Water Depth (ft) |"
+                    "Rec/Well (MMBBL) | BOPD/Well | First Prod | "
+                    "Water Depth (ft) | Gross Oil Rev ($MM) | "
+                    "Gross Total Rev ($MM) | Decom P50 ($MM) | "
+                    "Breakeven Opex ($/bbl) |"
                 )
                 lines.append(
                     "|-------|-----|-------------|-----------|-------|"
-                    "------------------|-----------|------------|------------------|"
+                    "------------------|-----------|------------|"
+                    "------------------|--------------------|"
+                    "----------------------|-----------------|"
+                    "------------------------|"
                 )
                 for _, row in top.iterrows():
                     name = row.get("FIELD_NAME", row.get("FIELD_CODE", ""))
@@ -175,9 +261,18 @@ class AllFieldsReport:
                     rpw_str = f"{rpw:,.3f}" if pd.notna(rpw) else ""
                     bpw = row.get("AVG_BOPD_PER_WELL", None)
                     bpw_str = f"{bpw:,.0f}" if pd.notna(bpw) else ""
+                    rev = row.get("GROSS_OIL_REVENUE_MM_USD", None)
+                    rev_str = f"{rev:,.0f}" if pd.notna(rev) else ""
+                    tot = row.get("GROSS_TOTAL_REVENUE_MM_USD", None)
+                    tot_str = f"{tot:,.0f}" if pd.notna(tot) else ""
+                    dec = row.get("DECOM_P50_MM_USD", None)
+                    dec_str = f"{dec:,.0f}" if pd.notna(dec) else ""
+                    be = row.get("BREAKEVEN_OPEX_USD_BBL", None)
+                    be_str = f"{be:,.2f}" if pd.notna(be) else ""
                     lines.append(
                         f"| {name} | {era} | {oil:,.1f} | {gas:,.1f} | {wells} "
-                        f"| {rpw_str} | {bpw_str} | {first} | {wd_str} |"
+                        f"| {rpw_str} | {bpw_str} | {first} | {wd_str} "
+                        f"| {rev_str} | {tot_str} | {dec_str} | {be_str} |"
                     )
                 lines.append("")
 
