@@ -43,6 +43,17 @@ dependencies = [
     "worldenergydata-canada",
     "worldenergydata-mexico_cnh",
     "worldenergydata-texas_rrc",
+    # Phase 2 batch 2 (#529): next-most-isolated leaf domains carved into members.
+    "worldenergydata-landman",
+    "worldenergydata-metocean",
+    "worldenergydata-pipeline_safety",
+    "worldenergydata-production",
+    "worldenergydata-drilling_pressure_management",
+    "worldenergydata-well_bore_design",
+    "worldenergydata-well_planning",
+    "worldenergydata-dashboard",
+    "worldenergydata-reporting",
+    "worldenergydata-subsea",
     "assetutilities>=0.1.0,<1.0",
     "scrapy>=2.16.0,<3.0",
     "selenium>=4.15.0,<5.0",
@@ -191,6 +202,26 @@ exclude = [
     "worldenergydata.mexico_cnh.*",
     "worldenergydata.texas_rrc",
     "worldenergydata.texas_rrc.*",
+    "worldenergydata.landman",
+    "worldenergydata.landman.*",
+    "worldenergydata.metocean",
+    "worldenergydata.metocean.*",
+    "worldenergydata.pipeline_safety",
+    "worldenergydata.pipeline_safety.*",
+    "worldenergydata.production",
+    "worldenergydata.production.*",
+    "worldenergydata.drilling_pressure_management",
+    "worldenergydata.drilling_pressure_management.*",
+    "worldenergydata.well_bore_design",
+    "worldenergydata.well_bore_design.*",
+    "worldenergydata.well_planning",
+    "worldenergydata.well_planning.*",
+    "worldenergydata.dashboard",
+    "worldenergydata.dashboard.*",
+    "worldenergydata.reporting",
+    "worldenergydata.reporting.*",
+    "worldenergydata.subsea",
+    "worldenergydata.subsea.*",
 ]
 
 [tool.setuptools.package-data]
@@ -382,6 +413,17 @@ worldenergydata-brazil_anp = { workspace = true }
 worldenergydata-canada = { workspace = true }
 worldenergydata-mexico_cnh = { workspace = true }
 worldenergydata-texas_rrc = { workspace = true }
+# Phase 2 batch 2 (#529): next-most-isolated leaf domain members.
+worldenergydata-landman = { workspace = true }
+worldenergydata-metocean = { workspace = true }
+worldenergydata-pipeline_safety = { workspace = true }
+worldenergydata-production = { workspace = true }
+worldenergydata-drilling_pressure_management = { workspace = true }
+worldenergydata-well_bore_design = { workspace = true }
+worldenergydata-well_planning = { workspace = true }
+worldenergydata-dashboard = { workspace = true }
+worldenergydata-reporting = { workspace = true }
+worldenergydata-subsea = { workspace = true }
 
 [tool.uv]
 # UV environment configuration
