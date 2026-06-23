@@ -46,6 +46,30 @@ def test_hse_change_is_module_scoped_not_full():
     assert all(t in r["xdist"] for t in ALWAYS_XDIST)
 
 
+def test_carved_domain_member_change_routes_to_its_shard_not_full():
+    """A change under a carved uv workspace member
+    (packages/worldenergydata-<domain>/src/worldenergydata/<domain>/) is
+    module-scoped to that domain's shard, NOT the full tree (ADR 0001 Phase 2,
+    #529)."""
+    r = select(
+        ["packages/worldenergydata-sodir/src/worldenergydata/sodir/api.py"],
+        REPO_ROOT,
+    )
+    assert r["scope"] == "modules"
+    assert "tests/unit/sodir" in r["xdist"]
+    assert all(t in r["xdist"] for t in ALWAYS_XDIST)
+
+
+def test_core_member_change_still_runs_full_tree():
+    """worldenergydata-core ships worldenergydata/common (name != subpackage),
+    so it must NOT match the per-domain member regex and must stay full-tree."""
+    r = select(
+        ["packages/worldenergydata-core/src/worldenergydata/common/config.py"],
+        REPO_ROOT,
+    )
+    assert r["scope"] == "full"
+
+
 def test_noncode_only_change_skips_full_tree():
     for path in ("reports/hse/x.html", "notebooks/demo.ipynb", "README.md"):
         r = select([path], REPO_ROOT)

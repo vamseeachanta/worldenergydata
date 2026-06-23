@@ -27,6 +27,22 @@ dependencies = [
     # Phase 2 PR #1). Provides worldenergydata.common; resolved from the
     # in-repo workspace member via [tool.uv.sources] below.
     "worldenergydata-core",
+    # Isolated/leaf domains carved into workspace members (ADR 0001 Phase 2
+    # batch 1, #529). Each ships worldenergydata.<domain> from its own member;
+    # the root distribution depends on them so `import worldenergydata.<domain>`
+    # keeps working transparently. Resolved in-repo via [tool.uv.sources].
+    "worldenergydata-economics",
+    "worldenergydata-cost",
+    "worldenergydata-eia",
+    "worldenergydata-eia_us",
+    "worldenergydata-decommissioning",
+    "worldenergydata-west_africa",
+    "worldenergydata-ukcs",
+    "worldenergydata-sodir",
+    "worldenergydata-brazil_anp",
+    "worldenergydata-canada",
+    "worldenergydata-mexico_cnh",
+    "worldenergydata-texas_rrc",
     "assetutilities>=0.1.0,<1.0",
     "scrapy>=2.16.0,<3.0",
     "selenium>=4.15.0,<5.0",
@@ -142,8 +158,40 @@ include = ["worldenergydata*", "external*", "modules*"]
 # worldenergydata.common is now shipped by the worldenergydata-core workspace
 # member (ADR 0001 Phase 2 PR #1); exclude it here so the root wheel does not
 # duplicate it. The root distribution still owns the namespace root
-# (src/worldenergydata/__init__.py) and all domain subpackages.
-exclude = ["tests*", "docs*", "worldenergydata.common", "worldenergydata.common.*"]
+# (src/worldenergydata/__init__.py) and the remaining domain subpackages.
+# Phase 2 batch 1 (#529) additionally carves the isolated/leaf domains below
+# into their own members — exclude each so the root wheel does not duplicate
+# code now shipped by packages/worldenergydata-<domain>/.
+exclude = [
+    "tests*",
+    "docs*",
+    "worldenergydata.common",
+    "worldenergydata.common.*",
+    "worldenergydata.economics",
+    "worldenergydata.economics.*",
+    "worldenergydata.cost",
+    "worldenergydata.cost.*",
+    "worldenergydata.eia",
+    "worldenergydata.eia.*",
+    "worldenergydata.eia_us",
+    "worldenergydata.eia_us.*",
+    "worldenergydata.decommissioning",
+    "worldenergydata.decommissioning.*",
+    "worldenergydata.west_africa",
+    "worldenergydata.west_africa.*",
+    "worldenergydata.ukcs",
+    "worldenergydata.ukcs.*",
+    "worldenergydata.sodir",
+    "worldenergydata.sodir.*",
+    "worldenergydata.brazil_anp",
+    "worldenergydata.brazil_anp.*",
+    "worldenergydata.canada",
+    "worldenergydata.canada.*",
+    "worldenergydata.mexico_cnh",
+    "worldenergydata.mexico_cnh.*",
+    "worldenergydata.texas_rrc",
+    "worldenergydata.texas_rrc.*",
+]
 
 [tool.setuptools.package-data]
 "worldenergydata.bsee" = ["sql/*.sql", "templates/*.html"]
@@ -320,6 +368,20 @@ members = ["packages/*"]
 
 [tool.uv.sources]
 worldenergydata-core = { workspace = true }
+# Phase 2 batch 1 (#529): isolated/leaf domain members, resolved from the
+# in-repo workspace (the members glob `packages/*` already discovers them).
+worldenergydata-economics = { workspace = true }
+worldenergydata-cost = { workspace = true }
+worldenergydata-eia = { workspace = true }
+worldenergydata-eia_us = { workspace = true }
+worldenergydata-decommissioning = { workspace = true }
+worldenergydata-west_africa = { workspace = true }
+worldenergydata-ukcs = { workspace = true }
+worldenergydata-sodir = { workspace = true }
+worldenergydata-brazil_anp = { workspace = true }
+worldenergydata-canada = { workspace = true }
+worldenergydata-mexico_cnh = { workspace = true }
+worldenergydata-texas_rrc = { workspace = true }
 
 [tool.uv]
 # UV environment configuration

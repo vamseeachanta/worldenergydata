@@ -87,6 +87,18 @@ WORKFLOW_PREFIXES = (
 
 _MODULE_RE = re.compile(r"^(?:src/worldenergydata|tests/unit)/([^/]+)/")
 _INTEGRATION_RE = re.compile(r"^tests/integration/modules/([^/]+)/")
+# Domains carved into uv workspace members (ADR 0001 Phase 2, #529) live under
+# packages/worldenergydata-<domain>/src/worldenergydata/<domain>/. A change
+# there must route to that domain's own shard (tests/unit/<domain>), NOT to the
+# full tree — so this maps the member path to the domain name, mirroring
+# _MODULE_RE for the in-root layout. The backreference \1 requires the member
+# distribution name to equal the inner namespace subpackage; this holds for the
+# domain members (worldenergydata-sodir -> worldenergydata/sodir/...) but NOT
+# for worldenergydata-core (ships worldenergydata/common/), which therefore does
+# not match here and stays in CORE_PREFIXES -> full tree (fail safe).
+_PACKAGE_MEMBER_RE = re.compile(
+    r"^packages/worldenergydata-([^/]+)/src/worldenergydata/\1/"
+)
 
 
 def _is_core(path: str) -> bool:
@@ -134,6 +146,10 @@ def select(changed: list[str], root: Path) -> dict:
         m = _MODULE_RE.match(p)
         if m:
             modules.add(m.group(1))
+            relevant = True
+        pm = _PACKAGE_MEMBER_RE.match(p)
+        if pm:
+            modules.add(pm.group(1))
             relevant = True
         mi = _INTEGRATION_RE.match(p)
         if mi:
