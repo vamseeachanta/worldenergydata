@@ -23,6 +23,7 @@ from collections import Counter
 from pathlib import Path
 
 from worldenergydata.bsee.analysis.all_fields_runner import AllFieldsRunner
+from worldenergydata.bsee.analysis.field_access_index import compute_access_index
 from worldenergydata.bsee.analysis.field_decom import (
     apply_field_decom,
     build_field_decom_liability,
@@ -146,7 +147,9 @@ def main() -> int:
     field_era_map = build_field_era_map()
     result = apply_field_era(result, field_era_map)
     if "GEOLOGICAL_ERA" in result.columns and not result.empty:
-        from_map = int(result["FIELD_CODE"].astype(str).str.strip().isin(field_era_map).sum())
+        from_map = int(
+            result["FIELD_CODE"].astype(str).str.strip().isin(field_era_map).sum()
+        )
         unknown = int((result["GEOLOGICAL_ERA"] == "Unknown").sum())
         lt = int(result["IS_LOWER_TERTIARY"].sum())
         logger.info(
@@ -163,9 +166,7 @@ def main() -> int:
     # Gross, pre-royalty, pre-cost. Fields with no priced production keep an
     # honest null. (Gas revenue is added separately below.)
     logger.info("Building gross oil revenue (oil x real WTI)...")
-    rev = build_field_oil_revenue(
-        start_year=args.start_year, end_year=args.end_year
-    )
+    rev = build_field_oil_revenue(start_year=args.start_year, end_year=args.end_year)
     result = apply_field_revenue(result, rev)
     if "GROSS_OIL_REVENUE_MM_USD" in result.columns and not result.empty:
         basin_rev = float(result["GROSS_OIL_REVENUE_MM_USD"].sum(skipna=True))
@@ -244,9 +245,7 @@ def main() -> int:
     )
     result = compute_field_netback(result)
     if "NET_REVENUE_AFTER_ROYALTY_MM_USD" in result.columns and not result.empty:
-        basin_net = float(
-            result["NET_REVENUE_AFTER_ROYALTY_MM_USD"].sum(skipna=True)
-        )
+        basin_net = float(result["NET_REVENUE_AFTER_ROYALTY_MM_USD"].sum(skipna=True))
         n_with_net = int(result["NET_REVENUE_AFTER_ROYALTY_MM_USD"].notna().sum())
         logger.info(
             "Basin net revenue after royalty $%.1f MM across %d/%d fields "
@@ -258,6 +257,17 @@ def main() -> int:
             ROYALTY_RATE_DEFAULT,
             OPEX_BAND_LOW_USD_BBL,
             OPEX_BAND_HIGH_USD_BBL,
+        )
+
+    # Composite access/concentration index (relative percentile-rank proxy).
+    result = compute_access_index(result)
+    if "ACCESS_CONCENTRATION_INDEX" in result.columns:
+        n_idx = int(result["ACCESS_CONCENTRATION_INDEX"].notna().sum())
+        logger.info(
+            "Access/concentration index for %d material fields "
+            "(equal-weight percentile rank of water depth, recovery/well, "
+            "operator concentration; relative proxy, not a measured access cost).",
+            n_idx,
         )
 
     args.out.mkdir(parents=True, exist_ok=True)
