@@ -248,8 +248,7 @@ addopts = """\
 --ignore=tests/unit/bsee/analysis/query_api_multiple_wells_rig_days_test.py \
 --ignore=tests/unit/bsee/analysis/query_field_anchor_test.py \
 --ignore=tests/unit/bsee/analysis/query_field_jack_stmalo_npv_test.py \
---ignore=tests/unit/bsee/analysis/query_lease_test.py \
---ignore=tests/unit/bsee/analysis/test_production_api12.py\
+--ignore=tests/unit/bsee/analysis/query_lease_test.py\
 """
 
 markers = [
