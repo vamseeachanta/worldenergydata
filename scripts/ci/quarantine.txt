@@ -34,3 +34,6 @@ tests/unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLaz
 unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading::test_get_memory_usage
 tests/unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading::test_lazy_loading_context
 unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading::test_lazy_loading_context
+# (whole broken class — all use the same src.-prefixed patch — #558)
+tests/unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading
+unit/well_production_dashboard/test_lazy_loading.py::TestQueryOptimizerLazyLoading
