@@ -83,10 +83,9 @@ def test_move_is_import_transparent():
         assert isinstance(list(wed.__path__), list) and wed.__path__
 
         # common symbols (from the core member)
-        from worldenergydata.common import get_logger  # noqa: F401
-
         # a domain that heavily uses common still imports from the root dist
         from worldenergydata import bsee
+        from worldenergydata.common import get_logger  # noqa: F401
 
         assert "packages" not in Path(bsee.__file__).resolve().parts
 

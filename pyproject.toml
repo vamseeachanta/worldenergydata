@@ -156,6 +156,10 @@ include = '\.pyi?$'
 [tool.isort]
 profile = "black"
 line_length = 88
+# Keep all worldenergydata.* in one first-party group even though `common` now
+# ships from the separate `worldenergydata-core` workspace member (else isort
+# splits worldenergydata.common from worldenergydata.<domain>). (#529)
+known_first_party = ["worldenergydata"]
 
 [tool.mypy]
 python_version = "3.10"
