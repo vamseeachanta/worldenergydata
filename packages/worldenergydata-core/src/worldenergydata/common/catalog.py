@@ -250,7 +250,13 @@ def refresh_catalog(project_root: Path | None = None) -> bool:
         error (logged but not raised).
     """
     if project_root is None:
-        project_root = Path(__file__).resolve().parent.parent.parent.parent
+        # catalog.py now ships in the worldenergydata-core member (ADR 0001
+        # Phase 2), so a fixed parent-walk from __file__ would land on the
+        # member dir (packages/worldenergydata-core/), not the repo root where
+        # scripts/ lives. Reuse the workspace-aware resolver instead.
+        from worldenergydata.common.data_resolver import _get_project_root
+
+        project_root = _get_project_root()
     script = project_root / "scripts" / "generate_data_catalog.py"
     if not script.exists():
         logger.warning("Catalog generator not found at %s", script)

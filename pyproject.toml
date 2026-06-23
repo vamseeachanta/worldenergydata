@@ -23,6 +23,10 @@ classifiers = [
 ]
 
 dependencies = [
+    # Shared core — carved out as the first uv workspace member (ADR 0001
+    # Phase 2 PR #1). Provides worldenergydata.common; resolved from the
+    # in-repo workspace member via [tool.uv.sources] below.
+    "worldenergydata-core",
     "assetutilities>=0.1.0,<1.0",
     "scrapy>=2.16.0,<3.0",
     "selenium>=4.15.0,<5.0",
@@ -135,7 +139,11 @@ worldenergydata = "worldenergydata.cli.main:app"
 [tool.setuptools.packages.find]
 where = ["src"]
 include = ["worldenergydata*", "external*", "modules*"]
-exclude = ["tests*", "docs*"]
+# worldenergydata.common is now shipped by the worldenergydata-core workspace
+# member (ADR 0001 Phase 2 PR #1); exclude it here so the root wheel does not
+# duplicate it. The root distribution still owns the namespace root
+# (src/worldenergydata/__init__.py) and all domain subpackages.
+exclude = ["tests*", "docs*", "worldenergydata.common", "worldenergydata.common.*"]
 
 [tool.setuptools.package-data]
 "worldenergydata.bsee" = ["sql/*.sql", "templates/*.html"]
@@ -148,6 +156,10 @@ include = '\.pyi?$'
 [tool.isort]
 profile = "black"
 line_length = 88
+# Keep all worldenergydata.* in one first-party group even though `common` now
+# ships from the separate `worldenergydata-core` workspace member (else isort
+# splits worldenergydata.common from worldenergydata.<domain>). (#529)
+known_first_party = ["worldenergydata"]
 
 [tool.mypy]
 python_version = "3.10"
@@ -158,10 +170,16 @@ disallow_untyped_defs = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py", "*_test.py"]
-addopts = "--cov=src/worldenergydata --cov-report=term-missing --cov-report=html:reports/coverage/htmlcov --cov-report=xml:reports/coverage/coverage.xml --cov-report=json:reports/coverage/coverage.json"
+# Measure by import package name (not a single src/ path): the worldenergydata
+# namespace now spans the root distribution AND the worldenergydata-core
+# workspace member (ADR 0001 Phase 2 PR #1), so a path-scoped --cov would miss
+# common/. --cov=worldenergydata covers the package wherever its modules import
+# from.
+addopts = "--cov=worldenergydata --cov-report=term-missing --cov-report=html:reports/coverage/htmlcov --cov-report=xml:reports/coverage/coverage.xml --cov-report=json:reports/coverage/coverage.json"
 
 [tool.coverage.run]
-source = ["src/worldenergydata"]
+# Both namespace locations: root domains + the carved-out core member (common/).
+source = ["src/worldenergydata", "packages/worldenergydata-core/src/worldenergydata"]
 omit = ["*/tests/*", "*/test_*.py", "*/conftest.py"]
 
 [tool.coverage.report]
@@ -175,31 +193,32 @@ exclude_lines = [
 ]
 
 # ---------------------------------------------------------------------------
-# uv workspace scaffolding — PREP ONLY (ADR 0001, Phase 1 → Phase 2)
+# uv workspace (ADR 0001 — domain-package split, Phase 2 PR #1)
 # ---------------------------------------------------------------------------
-# Intentionally COMMENTED OUT. Uncommenting this activates uv workspace mode,
-# which requires member packages to exist; doing so now would break the current
-# single-package build. It is left here as the documented Phase 2 target shape.
+# ACTIVATED in Phase 2 PR #1, which carves the shared core out as the first
+# workspace member. The root `worldenergydata` distribution keeps every domain
+# subpackage and the namespace root (src/worldenergydata/__init__.py with
+# pkgutil.extend_path) and DEPENDS ON worldenergydata-core for
+# worldenergydata.common.
 #
-# Phase 2 (gated on Phase 1 sign-off) carves the shared core out first, then
-# leaf domains, each as a workspace member that publishes into the shared
-# `worldenergydata` PEP 420 / pkgutil namespace (enabled by the
-# `pkgutil.extend_path` change in src/worldenergydata/__init__.py).
-#
-# Intended members layout (per ADR 0001 phased plan):
-#   packages/core/            -> worldenergydata-core
-#                                (common, base_configs, engine, cli, reporting,
-#                                 validation, analysis, testing — fan-in core)
-#   packages/<domain>/        -> worldenergydata-<domain>, one per leaf domain,
-#                                rolled out ISOLATED -> LEAF -> COUPLED
+# Members (rolled out per the ADR phased plan):
+#   packages/worldenergydata-core/  -> worldenergydata-core  (worldenergydata.common; this PR)
+#   packages/worldenergydata-<domain>/ -> per-leaf-domain members, later PRs,
+#                                      rolled out ISOLATED -> LEAF -> COUPLED
 #   (the bsee <-> lower_tertiary/fdas cycle ships as ONE member, or the cycle
-#    is broken first — decided at Phase 2 step 4)
+#    is broken first — decided at a later Phase 2 step)
 #
-# [tool.uv.workspace]
-# members = ["packages/*"]
-#
-# [tool.uv.sources]
-# worldenergydata-core = { workspace = true }
+# Scope note (this PR): core is `common/` ONLY. base_configs/ is per-domain
+# config DATA (bsee/fdas/sodir/... yml) referenced by filename, not shared
+# infra, so it stays in the root distribution with the domains. _compat.py and
+# the namespace root __init__.py stay in the root distribution because exactly
+# one distribution may own worldenergydata/__init__.py (ADR risk note), and the
+# root is that owner.
+[tool.uv.workspace]
+members = ["packages/*"]
+
+[tool.uv.sources]
+worldenergydata-core = { workspace = true }
 
 [tool.uv]
 # UV environment configuration

@@ -102,7 +102,11 @@ jobs:
           sed -i "s/version = \".*\"/version = \"$VERSION\"/" pyproject.toml
 
       - name: Build package
-        run: uv build
+        # Workspace mode (ADR 0001 Phase 2 PR #1): build BOTH the root
+        # worldenergydata wheel and the worldenergydata-core member wheel.
+        # A bare `uv build` only builds the root package and would silently
+        # ship a release missing the carved-out core distribution.
+        run: uv build --all-packages
 
       - name: Verify package
         run: |

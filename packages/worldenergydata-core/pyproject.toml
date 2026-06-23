@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "worldenergydata-core"
+version = "0.1.0"
+description = "Shared cross-cutting core (config, logging, exceptions, constants, types, units, data resolver) for the worldenergydata namespace."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Development Team", email = "dev@example.com" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+# Core's real third-party footprint, measured from the moved ``common/`` tree
+# (ADR 0001 Phase 2 PR #1). Deliberately a SUBSET of the root package's flat
+# dependency list — this is the first step toward per-member dependency sets.
+#   - assetutilities : common.* imports it (28 references)
+#   - pydantic / pydantic-settings : common.config Settings
+#   - numpy / pandas : common.types DataFrameLike + data handling
+#   - loguru : common.logging
+#   - pyyaml : common reads YAML configs
+#   - tenacity : common retry decorators
+dependencies = [
+    "assetutilities>=0.1.0,<1.0",
+    "pydantic>=2.13.4,<3.0",
+    "pydantic-settings>=2.1.0,<3.0",
+    "numpy>=2.2.6,<3.0",
+    "pandas>=2.3.3,<3.0",
+    "loguru>=0.7.0,<1.0",
+    "pyyaml>=6.0",
+    "tenacity>=9.1.4,<10.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/vamseeachanta/worldenergydata"
+"Bug Tracker" = "https://github.com/vamseeachanta/worldenergydata/issues"
+
+# ---------------------------------------------------------------------------
+# PEP 420 namespace packaging (ADR 0001 — domain-package split)
+# ---------------------------------------------------------------------------
+# This member ships ONLY ``worldenergydata/common/`` (+ its data files). It does
+# NOT ship ``worldenergydata/__init__.py`` — the root ``worldenergydata``
+# distribution remains the SOLE owner of the namespace root ``__init__.py``
+# (which carries ``__version__``, the ``_compat`` legacy redirect, the lazy
+# ``__getattr__``, and the ``pkgutil.extend_path`` that spans both install
+# locations). ``find_namespace`` + an explicit include keeps setuptools from
+# discovering a bare ``worldenergydata`` regular package here.
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["worldenergydata.common*"]
+namespaces = true
+
+[tool.setuptools.package-data]
+"worldenergydata.common" = ["*.md", "**/*.yml", "**/*.yaml", "**/*.sql"]

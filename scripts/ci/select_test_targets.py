@@ -63,6 +63,10 @@ CORE_EXACT = {
 CORE_PREFIXES = (
     "src/worldenergydata/base_configs/",
     "src/worldenergydata/common/",
+    # Shared core carved into the worldenergydata-core workspace member
+    # (ADR 0001 Phase 2 PR #1). common/ now lives here; touching it must still
+    # fail safe to the full tree. Keep the legacy src/ path above for history.
+    "packages/worldenergydata-core/",
     "scripts/ci/",  # the selector itself / its tests -> fail safe to full
 )
 
