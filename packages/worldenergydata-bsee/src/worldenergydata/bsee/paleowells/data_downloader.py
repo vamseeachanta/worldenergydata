@@ -61,8 +61,11 @@ class BSEEDataDownloader:
             chunk_size: Chunk size for streaming downloads
         """
         if data_directory is None:
+            # Phase 2 batch-3 carve (#529): file now lives at
+            # packages/worldenergydata-bsee/src/worldenergydata/bsee/paleowells/
+            # -> 7 .parent hops reach the repo root (where data/ stays).
             data_directory = (
-                Path(__file__).parent.parent.parent.parent.parent.parent
+                Path(__file__).parent.parent.parent.parent.parent.parent.parent
                 / "data"
                 / "modules"
                 / "bsee"

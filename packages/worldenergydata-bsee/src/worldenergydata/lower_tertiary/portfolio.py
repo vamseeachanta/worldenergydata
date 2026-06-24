@@ -32,8 +32,10 @@ LT_FIELDS_2026: Tuple[str, ...] = (
 
 def fields_config_dir() -> Path:
     """Return the canonical directory holding per-field yaml configs."""
+    # Phase 2 batch-3 carve (#529): now 2 levels deeper under
+    # packages/worldenergydata-bsee/; repo root is parents[5] (was [3]).
     return (
-        Path(__file__).resolve().parents[3]
+        Path(__file__).resolve().parents[5]
         / "config"
         / "analysis"
         / "lower_tertiary"

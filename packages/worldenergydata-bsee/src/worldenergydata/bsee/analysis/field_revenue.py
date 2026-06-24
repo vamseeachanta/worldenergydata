@@ -53,9 +53,10 @@ _DEFAULT_SUBDIR = "historical_production_yearly"
 
 # Repo-relative default WTI deck (under docs/, not data/).  Resolved the same
 # way as ``field_names.py`` resolves its data dir: walk up from this file to
-# the repo root.  field_revenue.py lives at
-# ``src/worldenergydata/bsee/analysis/field_revenue.py`` -> 5 parents to root.
-_REPO_ROOT = Path(__file__).resolve().parents[4]
+# the repo root.  After the Phase 2 batch-3 carve (#529) this file lives at
+# ``packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/field_revenue.py``
+# -> 7 parents (parents[6]) to the repo root (was parents[4] pre-carve).
+_REPO_ROOT = Path(__file__).resolve().parents[6]
 _FDAS_V30_DIR = (
     _REPO_ROOT / "docs" / "modules" / "bsee" / "analysis" / "production" / "FDAS_V30"
 )

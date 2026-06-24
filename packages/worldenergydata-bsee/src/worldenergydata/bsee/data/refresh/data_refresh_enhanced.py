@@ -473,8 +473,12 @@ class DataRefreshEnhanced:
                     break
                 current_dir = current_dir.parent
             else:
-                # Fallback to assuming we're in the standard structure
-                project_root = Path(__file__).parent.parent.parent.parent.parent.parent
+                # Fallback to assuming we're in the standard structure.
+                # Phase 2 batch-3 carve (#529): file is 2 levels deeper under
+                # packages/worldenergydata-bsee/, so two extra .parent hops.
+                project_root = Path(
+                    __file__
+                ).parent.parent.parent.parent.parent.parent.parent.parent
 
             # Resolve path relative to project root
             abs_bin_path = project_root / bin_path
@@ -515,8 +519,12 @@ class DataRefreshEnhanced:
                     break
                 current_dir = current_dir.parent
             else:
-                # Fallback to assuming we're in the standard structure
-                project_root = Path(__file__).parent.parent.parent.parent.parent.parent
+                # Fallback to assuming we're in the standard structure.
+                # Phase 2 batch-3 carve (#529): file is 2 levels deeper under
+                # packages/worldenergydata-bsee/, so two extra .parent hops.
+                project_root = Path(
+                    __file__
+                ).parent.parent.parent.parent.parent.parent.parent.parent
 
             # Resolve path relative to project root
             abs_bin_path = project_root / bin_path
@@ -557,8 +565,12 @@ class DataRefreshEnhanced:
                     break
                 current_dir = current_dir.parent
             else:
-                # Fallback to assuming we're in the standard structure
-                project_root = Path(__file__).parent.parent.parent.parent.parent.parent
+                # Fallback to assuming we're in the standard structure.
+                # Phase 2 batch-3 carve (#529): file is 2 levels deeper under
+                # packages/worldenergydata-bsee/, so two extra .parent hops.
+                project_root = Path(
+                    __file__
+                ).parent.parent.parent.parent.parent.parent.parent.parent
 
             # Resolve path relative to project root
             abs_bin_path = project_root / bin_path
@@ -787,7 +799,10 @@ class DataRefreshEnhanced:
                     break
                 current_dir = current_dir.parent
             else:
-                project_root = Path(__file__).parent.parent.parent.parent.parent.parent
+                # Phase 2 batch-3 carve (#529): 2 levels deeper, +2 .parent hops.
+                project_root = Path(
+                    __file__
+                ).parent.parent.parent.parent.parent.parent.parent.parent
             abs_bin_path = project_root / bin_path
             abs_bin_path.mkdir(parents=True, exist_ok=True)
             self.memory_processor.save_to_binary(
@@ -813,7 +828,10 @@ class DataRefreshEnhanced:
                     break
                 current_dir = current_dir.parent
             else:
-                project_root = Path(__file__).parent.parent.parent.parent.parent.parent
+                # Phase 2 batch-3 carve (#529): 2 levels deeper, +2 .parent hops.
+                project_root = Path(
+                    __file__
+                ).parent.parent.parent.parent.parent.parent.parent.parent
             abs_bin_path = project_root / bin_path
             abs_bin_path.mkdir(parents=True, exist_ok=True)
             self.memory_processor.save_to_binary(
@@ -841,7 +859,10 @@ class DataRefreshEnhanced:
                     break
                 current_dir = current_dir.parent
             else:
-                project_root = Path(__file__).parent.parent.parent.parent.parent.parent
+                # Phase 2 batch-3 carve (#529): 2 levels deeper, +2 .parent hops.
+                project_root = Path(
+                    __file__
+                ).parent.parent.parent.parent.parent.parent.parent.parent
             abs_bin_path = project_root / bin_path
             abs_bin_path.mkdir(parents=True, exist_ok=True)
             self.memory_processor.save_to_binary(
@@ -869,7 +890,10 @@ class DataRefreshEnhanced:
                     break
                 current_dir = current_dir.parent
             else:
-                project_root = Path(__file__).parent.parent.parent.parent.parent.parent
+                # Phase 2 batch-3 carve (#529): 2 levels deeper, +2 .parent hops.
+                project_root = Path(
+                    __file__
+                ).parent.parent.parent.parent.parent.parent.parent.parent
             abs_bin_path = project_root / bin_path
             abs_bin_path.mkdir(parents=True, exist_ok=True)
             self.memory_processor.save_to_binary(

@@ -100,6 +100,21 @@ _PACKAGE_MEMBER_RE = re.compile(
     r"^packages/worldenergydata-([^/]+)/src/worldenergydata/\1/"
 )
 
+# Phase 2 batch 3 (#529): the coupled BSEE cluster ships FIVE subpackages in ONE
+# member (packages/worldenergydata-bsee/ contains bsee, lower_tertiary, fdas,
+# hse, well_production_dashboard — they share an import cycle and cannot be
+# split). For those, the distribution name (bsee) does NOT equal four of the
+# five inner subpackage names, so the backreferenced _PACKAGE_MEMBER_RE above
+# only routes the bsee/ subtree. This second regex routes EACH inner subpackage
+# of the cluster member to its OWN shard (tests/unit/<subpkg>). It is scoped to
+# the known cluster member name so it never matches worldenergydata-core (whose
+# `common` subpackage must stay full-tree, fail-safe), and captures the inner
+# subpackage (group 2) as the routed domain.
+_CLUSTER_MEMBER_RE = re.compile(
+    r"^packages/worldenergydata-(bsee)/src/worldenergydata/"
+    r"(bsee|lower_tertiary|fdas|hse|well_production_dashboard)/"
+)
+
 
 def _is_core(path: str) -> bool:
     return path in CORE_EXACT or path.startswith(CORE_PREFIXES)
@@ -150,6 +165,12 @@ def select(changed: list[str], root: Path) -> dict:
         pm = _PACKAGE_MEMBER_RE.match(p)
         if pm:
             modules.add(pm.group(1))
+            relevant = True
+        cm = _CLUSTER_MEMBER_RE.match(p)
+        if cm:
+            # Route to the INNER subpackage's shard (group 2), not the member
+            # distribution name (group 1) — the cluster member ships 5 domains.
+            modules.add(cm.group(2))
             relevant = True
         mi = _INTEGRATION_RE.match(p)
         if mi:

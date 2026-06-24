@@ -54,6 +54,10 @@ dependencies = [
     "worldenergydata-dashboard",
     "worldenergydata-reporting",
     "worldenergydata-subsea",
+    # Phase 2 batch 3 (#529): the coupled BSEE cluster carved as ONE member
+    # (bsee + lower_tertiary + fdas + hse + well_production_dashboard ship
+    # together — bsee<->lower_tertiary/fdas import cycle + hse/wpd import bsee).
+    "worldenergydata-bsee",
     "assetutilities>=0.1.0,<1.0",
     "scrapy>=2.16.0,<3.0",
     "selenium>=4.15.0,<5.0",
@@ -222,10 +226,24 @@ exclude = [
     "worldenergydata.reporting.*",
     "worldenergydata.subsea",
     "worldenergydata.subsea.*",
+    # Phase 2 batch 3 (#529): the coupled BSEE cluster, carved as ONE member
+    # (packages/worldenergydata-bsee/). Exclude all five subpackages so the
+    # root wheel does not duplicate code now shipped by that member.
+    "worldenergydata.bsee",
+    "worldenergydata.bsee.*",
+    "worldenergydata.lower_tertiary",
+    "worldenergydata.lower_tertiary.*",
+    "worldenergydata.fdas",
+    "worldenergydata.fdas.*",
+    "worldenergydata.hse",
+    "worldenergydata.hse.*",
+    "worldenergydata.well_production_dashboard",
+    "worldenergydata.well_production_dashboard.*",
 ]
 
-[tool.setuptools.package-data]
-"worldenergydata.bsee" = ["sql/*.sql", "templates/*.html"]
+# Phase 2 batch 3 (#529): the former "worldenergydata.bsee" package-data entry
+# moved to packages/worldenergydata-bsee/pyproject.toml along with the carved
+# subpackage. The root distribution no longer ships any bsee-cluster files.
 
 [tool.black]
 line-length = 88
@@ -424,6 +442,8 @@ worldenergydata-well_planning = { workspace = true }
 worldenergydata-dashboard = { workspace = true }
 worldenergydata-reporting = { workspace = true }
 worldenergydata-subsea = { workspace = true }
+# Phase 2 batch 3 (#529): the coupled BSEE cluster as one workspace member.
+worldenergydata-bsee = { workspace = true }
 
 [tool.uv]
 # UV environment configuration

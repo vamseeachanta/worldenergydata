@@ -11,6 +11,7 @@ resolution-markers = [
 members = [
     "worldenergydata",
     "worldenergydata-brazil-anp",
+    "worldenergydata-bsee",
     "worldenergydata-canada",
     "worldenergydata-core",
     "worldenergydata-cost",
@@ -5503,6 +5504,7 @@ dependencies = [
     { name = "tenacity" },
     { name = "typer" },
     { name = "worldenergydata-brazil-anp" },
+    { name = "worldenergydata-bsee" },
     { name = "worldenergydata-canada" },
     { name = "worldenergydata-core" },
     { name = "worldenergydata-cost" },
@@ -5676,6 +5678,7 @@ requires-dist = [
     { name = "types-pyyaml", marker = "extra == 'dev'", specifier = ">=6.0" },
     { name = "types-requests", marker = "extra == 'dev'", specifier = ">=2.33.0.20260518" },
     { name = "worldenergydata-brazil-anp", editable = "packages/worldenergydata-brazil_anp" },
+    { name = "worldenergydata-bsee", editable = "packages/worldenergydata-bsee" },
     { name = "worldenergydata-canada", editable = "packages/worldenergydata-canada" },
     { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
     { name = "worldenergydata-cost", editable = "packages/worldenergydata-cost" },
@@ -5744,6 +5747,65 @@ requires-dist = [
     { name = "scikit-learn", specifier = ">=1.7.2,<2.0" },
     { name = "scipy", specifier = ">=1.11.0,<2.0" },
     { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
+]
+
+[[package]]
+name = "worldenergydata-bsee"
+version = "0.1.0"
+source = { editable = "packages/worldenergydata-bsee" }
+dependencies = [
+    { name = "assetutilities" },
+    { name = "click" },
+    { name = "dash" },
+    { name = "httpx" },
+    { name = "loguru" },
+    { name = "matplotlib" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "numpy", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "numpy-financial" },
+    { name = "openpyxl" },
+    { name = "pandas" },
+    { name = "plotly" },
+    { name = "psutil" },
+    { name = "pydantic" },
+    { name = "reportlab" },
+    { name = "scipy", version = "1.15.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "scipy", version = "1.17.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "scrapy" },
+    { name = "seaborn" },
+    { name = "sqlalchemy" },
+    { name = "worldenergydata-core" },
+    { name = "worldenergydata-cost" },
+    { name = "worldenergydata-reporting" },
+    { name = "worldenergydata-sodir" },
+    { name = "worldenergydata-texas-rrc" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "assetutilities", specifier = ">=0.1.0,<1.0" },
+    { name = "click", specifier = ">=8.0,<9.0" },
+    { name = "dash", specifier = ">=2.14.0,<3.0" },
+    { name = "httpx", specifier = ">=0.25.0,<1.0" },
+    { name = "loguru", specifier = ">=0.7.0,<1.0" },
+    { name = "matplotlib", specifier = ">=3.7.0,<4.0" },
+    { name = "numpy", specifier = ">=2.2.6,<3.0" },
+    { name = "numpy-financial", specifier = ">=1.0.0" },
+    { name = "openpyxl", specifier = ">=3.1.0,<4.0" },
+    { name = "pandas", specifier = ">=2.3.3,<3.0" },
+    { name = "plotly", specifier = ">=5.18.0,<6.0" },
+    { name = "psutil", specifier = ">=7.2.1,<8.0" },
+    { name = "pydantic", specifier = ">=2.13.4,<3.0" },
+    { name = "reportlab", specifier = ">=4.0.0,<5.0" },
+    { name = "scipy", specifier = ">=1.11.0,<2.0" },
+    { name = "scrapy", specifier = ">=2.16.0,<3.0" },
+    { name = "seaborn", specifier = ">=0.13.0,<1.0" },
+    { name = "sqlalchemy", specifier = ">=2.0.49,<3.0" },
+    { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
+    { name = "worldenergydata-cost", editable = "packages/worldenergydata-cost" },
+    { name = "worldenergydata-reporting", editable = "packages/worldenergydata-reporting" },
+    { name = "worldenergydata-sodir", editable = "packages/worldenergydata-sodir" },
+    { name = "worldenergydata-texas-rrc", editable = "packages/worldenergydata-texas_rrc" },
 ]
 
 [[package]]
