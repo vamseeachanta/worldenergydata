@@ -83,11 +83,19 @@ def test_move_is_import_transparent():
         assert isinstance(list(wed.__path__), list) and wed.__path__
 
         # common symbols (from the core member)
-        # a domain that heavily uses common still imports from the root dist
-        from worldenergydata import bsee
+        # a domain that has NOT been carved still imports from the root dist
+        from worldenergydata import drilling
         from worldenergydata.common import get_logger  # noqa: F401
 
-        assert "packages" not in Path(bsee.__file__).resolve().parts
+        assert "packages" not in Path(drilling.__file__).resolve().parts
+
+        # a carved domain resolves transparently from its workspace member.
+        # bsee ships from packages/worldenergydata-bsee/ after the Phase 2
+        # batch-3 cluster carve (#529); `import worldenergydata.bsee` still works
+        # via the pkgutil.extend_path namespace.
+        from worldenergydata import bsee
+
+        assert "worldenergydata-bsee" in Path(bsee.__file__).resolve().parts
 
         # legacy worldenergydata.modules.X -> worldenergydata.X redirect intact
         import worldenergydata.modules.bsee as legacy_bsee

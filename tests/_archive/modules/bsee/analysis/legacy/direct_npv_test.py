@@ -9,7 +9,6 @@ import sys
 sys.path.insert(0, "../../../../")
 
 from assetutilities.common.yml_utilities import ymlInput
-
 from src.worldenergydata.bsee.analysis.production_api12 import Bsee_Production_API12
 
 
