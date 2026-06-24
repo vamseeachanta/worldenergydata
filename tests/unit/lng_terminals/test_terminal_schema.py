@@ -32,18 +32,15 @@ from worldenergydata.lng_terminals.models.terminal import LNGTerminal
 
 @pytest.fixture
 def seed_data_path():
-    """Path to the seed dataset CSV file."""
-    # Path from test file: tests/modules/lng_terminals/test_terminal_schema.py
-    # Go up 3 levels to worldenergydata root, then to data/modules/lng_terminals/curated
-    worldenergydata_root = Path(__file__).resolve().parents[3]
-    return (
-        worldenergydata_root
-        / "data"
-        / "modules"
-        / "lng_terminals"
-        / "curated"
-        / "terminals_seed.csv"
-    )
+    """Path to the seed dataset CSV file.
+
+    The seed dataset now ships INSIDE the lng_terminals member as package data
+    (#529 batch 4, option (i)); resolve it package-relative from the module's
+    ``DATA_DIR`` rather than a repo-root walk.
+    """
+    from worldenergydata.lng_terminals.config import DATA_DIR
+
+    return DATA_DIR / "curated" / "terminals_seed.csv"
 
 
 class TestTerminalSchema:

@@ -19,6 +19,19 @@ import pytest
 _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(_PROJECT_ROOT / "scripts" / "vessel_fleet"))
 
+# Curated/raw data now ships INSIDE the vessel_fleet member as package data
+# (#529 batch 4, option (i)); the contractor-scrape fixtures live under the
+# member's _data/ rather than the repo-root data/modules tree.
+_FLEET_DATA_ROOT = (
+    _PROJECT_ROOT
+    / "packages"
+    / "worldenergydata-vessel_fleet"
+    / "src"
+    / "worldenergydata"
+    / "vessel_fleet"
+    / "_data"
+)
+
 # Re-import after path setup
 from collect_drilling_fleet import (
     _collect_from_scrape_json,
@@ -110,14 +123,14 @@ class TestCollectFromScrapeJson:
     """Scrape JSON parsing as intermediate source."""
 
     def test_noble_real_json(self):
-        scrape_dir = _PROJECT_ROOT / "data/modules/vessel_fleet/raw/contractor_scrape"
+        scrape_dir = _FLEET_DATA_ROOT / "raw" / "contractor_scrape"
         if not (scrape_dir / "noble.json").exists():
             pytest.skip("Noble scrape JSON not found")
         records = _collect_from_scrape_json("noble", scrape_dir)
         assert len(records) == 31
 
     def test_seadrill_real_json(self):
-        scrape_dir = _PROJECT_ROOT / "data/modules/vessel_fleet/raw/contractor_scrape"
+        scrape_dir = _FLEET_DATA_ROOT / "raw" / "contractor_scrape"
         if not (scrape_dir / "seadrill.json").exists():
             pytest.skip("Seadrill scrape JSON not found")
         records = _collect_from_scrape_json("seadrill", scrape_dir)
@@ -167,7 +180,7 @@ class TestCollectOperatorFleet:
         (insertion order: scrape_json before known_vessels). Verify by
         checking a field that only the scrape parser produces.
         """
-        scrape_dir = _PROJECT_ROOT / "data/modules/vessel_fleet/raw/contractor_scrape"
+        scrape_dir = _FLEET_DATA_ROOT / "raw" / "contractor_scrape"
         if not (scrape_dir / "noble.json").exists():
             pytest.skip("Noble scrape JSON not found")
 

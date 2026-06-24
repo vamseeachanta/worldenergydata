@@ -58,6 +58,15 @@ dependencies = [
     # (bsee + lower_tertiary + fdas + hse + well_production_dashboard ship
     # together — bsee<->lower_tertiary/fdas import cycle + hse/wpd import bsee).
     "worldenergydata-bsee",
+    # Phase 2 batch 4 (#529): two un-ignored leaf domains (marine_safety,
+    # safety_analysis) + the data-coupled trio. vessel_fleet & lng_terminals
+    # ship their curated data inside the member (option i); vessel_hull_models
+    # keeps its ~38 MB geometry at the workspace-root data/ (option ii).
+    "worldenergydata-marine_safety",
+    "worldenergydata-safety_analysis",
+    "worldenergydata-vessel_fleet",
+    "worldenergydata-lng_terminals",
+    "worldenergydata-vessel_hull_models",
     "assetutilities>=0.1.0,<1.0",
     "scrapy>=2.16.0,<3.0",
     "selenium>=4.15.0,<5.0",
@@ -239,6 +248,21 @@ exclude = [
     "worldenergydata.hse.*",
     "worldenergydata.well_production_dashboard",
     "worldenergydata.well_production_dashboard.*",
+    # Phase 2 batch 4 (#529): two un-ignored leaf domains carved into members
+    # (packages/worldenergydata-marine_safety/, .../-safety_analysis/) plus the
+    # data-coupled trio (vessel_fleet, lng_terminals, vessel_hull_models). Each
+    # ships from its own member — exclude all so the root wheel never duplicates
+    # the carved code (or, for the option-(i) members, the carved data).
+    "worldenergydata.marine_safety",
+    "worldenergydata.marine_safety.*",
+    "worldenergydata.safety_analysis",
+    "worldenergydata.safety_analysis.*",
+    "worldenergydata.vessel_fleet",
+    "worldenergydata.vessel_fleet.*",
+    "worldenergydata.lng_terminals",
+    "worldenergydata.lng_terminals.*",
+    "worldenergydata.vessel_hull_models",
+    "worldenergydata.vessel_hull_models.*",
 ]
 
 # Phase 2 batch 3 (#529): the former "worldenergydata.bsee" package-data entry
@@ -330,8 +354,6 @@ addopts = """\
 --cov-report=xml:reports/coverage/coverage.xml \
 --cov-report=json:reports/coverage/coverage.json \
 --ignore=tests/performance \
---ignore=tests/unit/marine_safety \
---ignore=tests/unit/safety_analysis \
 --ignore=tests/modules/bsee/analysis/test_type_curves.py \
 --ignore=tests/modules/fdas/integration/test_end_to_end.py \
 --ignore=tests/modules/sodir-integration \
@@ -444,6 +466,12 @@ worldenergydata-reporting = { workspace = true }
 worldenergydata-subsea = { workspace = true }
 # Phase 2 batch 3 (#529): the coupled BSEE cluster as one workspace member.
 worldenergydata-bsee = { workspace = true }
+# Phase 2 batch 4 (#529): un-ignored leaves + the data-coupled trio.
+worldenergydata-marine_safety = { workspace = true }
+worldenergydata-safety_analysis = { workspace = true }
+worldenergydata-vessel_fleet = { workspace = true }
+worldenergydata-lng_terminals = { workspace = true }
+worldenergydata-vessel_hull_models = { workspace = true }
 
 [tool.uv]
 # UV environment configuration
