@@ -301,17 +301,14 @@ class TestDrillingRisersIntegration:
         assert df["COMPONENT_ID"].nunique() == len(df), "Duplicate COMPONENT_IDs found"
 
     def test_drilling_rigs_csv_exists(self):
-        from pathlib import Path
-
-        # parents[4] = worldenergydata/ repo root (test is at tests/unit/vessel_fleet/loaders/)
-        rigs_path = (
-            Path(__file__).resolve().parents[4]
-            / "data"
-            / "modules"
-            / "vessel_fleet"
-            / "curated"
-            / "drilling_rigs.csv"
+        # Curated data now ships INSIDE the vessel_fleet member as package data
+        # (#529 batch 4, option (i)); resolve it package-relative from the
+        # construction-vessel loader's _DATA_DIR rather than a repo-root walk.
+        from worldenergydata.vessel_fleet.loaders import (
+            construction_vessel_loader as _cvl,
         )
+
+        rigs_path = _cvl._DATA_DIR / "drilling_rigs.csv"
         assert rigs_path.exists(), f"drilling_rigs.csv not found at {rigs_path}"
         import pandas as pd
 

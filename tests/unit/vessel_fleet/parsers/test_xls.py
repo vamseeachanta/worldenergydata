@@ -145,9 +145,20 @@ class TestXlsRealData:
 
     @pytest.fixture
     def real_xls_output(self):
+        # vessel_fleet data ships INSIDE the member as package data (#529 batch
+        # 4, option (i)); the XLS-ingest output (if generated) lives under the
+        # member's _data/ tree, not the repo-root data/modules tree.
         pq = (
             Path(__file__).resolve().parents[4]
-            / "data/modules/vessel_fleet/raw/xls_historical/floaters.parquet"
+            / "packages"
+            / "worldenergydata-vessel_fleet"
+            / "src"
+            / "worldenergydata"
+            / "vessel_fleet"
+            / "_data"
+            / "raw"
+            / "xls_historical"
+            / "floaters.parquet"
         )
         if not pq.exists():
             pytest.skip("XLS ingest not run (floaters.parquet missing)")
