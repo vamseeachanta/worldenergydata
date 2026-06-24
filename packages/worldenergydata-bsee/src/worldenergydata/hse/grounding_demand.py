@@ -43,8 +43,10 @@ from worldenergydata.hse.grounding import FAILURE_MODES, ground
 # Need >= 4 matched incidents to fill 2-latest + 2-highest-severity.
 MIN_COVERAGE = 4
 
+# Phase 2 batch-3 carve (#529): now 2 levels deeper under
+# packages/worldenergydata-bsee/; repo root is parents[5] (was [3]).
 DEFAULT_LOG = (
-    Path(__file__).resolve().parents[3] / "data/modules/hse/grounding_demand.jsonl"
+    Path(__file__).resolve().parents[5] / "data/modules/hse/grounding_demand.jsonl"
 )
 
 

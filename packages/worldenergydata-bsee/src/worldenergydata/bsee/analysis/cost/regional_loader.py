@@ -26,6 +26,9 @@ from worldenergydata.bsee.analysis.cost.models import (
 
 logger = logging.getLogger(__name__)
 
+# Phase 2 batch-3 carve (#529): after the move under packages/worldenergydata-bsee/
+# this file is 2 levels deeper, so parents[7] now resolves to the repo root
+# (where config/ stays). The depth is intentional and verified post-carve.
 _DEFAULT_CONFIG_DIR = Path(__file__).parents[7] / "config" / "analysis" / "cost_data"
 
 _HPHT_PREMIUM_DEFAULT = 1.30

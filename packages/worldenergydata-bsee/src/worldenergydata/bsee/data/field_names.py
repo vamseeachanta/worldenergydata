@@ -13,9 +13,11 @@ import pandas as pd
 
 logger = logging.getLogger(__name__)
 
-# Default data directory relative to project root
+# Default data directory relative to project root.
+# Phase 2 batch-3 carve (#529): now 2 levels deeper under
+# packages/worldenergydata-bsee/, so two extra .parent hops reach the repo root.
 _DEFAULT_DATA_DIR = (
-    Path(__file__).parent.parent.parent.parent.parent
+    Path(__file__).parent.parent.parent.parent.parent.parent.parent
     / "data"
     / "modules"
     / "bsee"

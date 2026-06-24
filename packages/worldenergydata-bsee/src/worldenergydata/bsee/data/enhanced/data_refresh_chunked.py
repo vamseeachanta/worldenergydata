@@ -355,7 +355,13 @@ class DataRefreshChunked:
                 break
             current_dir = current_dir.parent
         else:
-            project_root = Path(__file__).parent.parent.parent.parent.parent.parent
+            # Phase 2 batch-3 carve (#529): file is 2 levels deeper under
+            # packages/worldenergydata-bsee/, so two extra .parent hops reach
+            # the repo root. (Only used when bin_path is relative; _BSEE_BIN is
+            # normally absolute via the core data resolver, which discards this.)
+            project_root = Path(
+                __file__
+            ).parent.parent.parent.parent.parent.parent.parent.parent
 
         # Resolve path
         abs_bin_path = project_root / bin_path

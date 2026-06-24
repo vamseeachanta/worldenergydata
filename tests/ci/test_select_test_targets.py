@@ -60,6 +60,28 @@ def test_carved_domain_member_change_routes_to_its_shard_not_full():
     assert all(t in r["xdist"] for t in ALWAYS_XDIST)
 
 
+def test_bsee_cluster_member_routes_each_subpackage_to_its_own_shard():
+    """The coupled BSEE cluster ships FIVE subpackages in one member
+    (packages/worldenergydata-bsee/ -> bsee, lower_tertiary, fdas, hse,
+    well_production_dashboard). A change to ANY inner subpackage must route to
+    THAT subpackage's shard (tests/unit/<subpkg>), not the member name's shard
+    and not the full tree (ADR 0001 Phase 2 batch 3, #529)."""
+    for subpkg in (
+        "bsee",
+        "lower_tertiary",
+        "fdas",
+        "hse",
+        "well_production_dashboard",
+    ):
+        r = select(
+            [f"packages/worldenergydata-bsee/src/worldenergydata/{subpkg}/x.py"],
+            REPO_ROOT,
+        )
+        assert r["scope"] == "modules", subpkg
+        assert f"tests/unit/{subpkg}" in r["xdist"], subpkg
+        assert all(t in r["xdist"] for t in ALWAYS_XDIST), subpkg
+
+
 def test_core_member_change_still_runs_full_tree():
     """worldenergydata-core ships worldenergydata/common (name != subpackage),
     so it must NOT match the per-domain member regex and must stay full-tree."""

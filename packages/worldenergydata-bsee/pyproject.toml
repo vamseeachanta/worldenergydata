@@ -1,0 +1,111 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "worldenergydata-bsee"
+version = "0.1.0"
+description = "BSEE Gulf-of-Mexico data cluster (bsee + lower_tertiary + fdas + hse + well_production_dashboard) for the worldenergydata namespace."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Development Team", email = "dev@example.com" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+# ---------------------------------------------------------------------------
+# Coupled-cluster member (ADR 0001 Phase 2 — domain split, batch 3, #529).
+# ---------------------------------------------------------------------------
+# Unlike batches 1 & 2 (one leaf domain per member), this single member ships
+# FIVE mutually-coupled subpackages because they cannot be split apart:
+#
+#   bsee  <-->  lower_tertiary   (import cycle)
+#   bsee  <-->  fdas             (import cycle)
+#   hse    -->  bsee
+#   well_production_dashboard --> bsee
+#
+# A uv workspace member cannot contain an import cycle that spans member
+# boundaries, so the cycle's strongly-connected component (bsee/lower_tertiary/
+# fdas) plus its in-cluster dependents (hse, well_production_dashboard) ship as
+# ONE distribution.
+#
+# Dependencies are a deliberate SUBSET of the root package's flat dependency
+# list, measured from this cluster's live (non-_legacy) import footprint, plus:
+#   * worldenergydata-core         -> worldenergydata.common (always)
+#   * worldenergydata-sodir        -> bsee imports sodir.forecasting / api_client
+#                                     / processors (decline analysis + adapters)
+#   * worldenergydata-reporting    -> bsee.pipeline imports reporting.export_report
+#   * worldenergydata-texas_rrc    -> bsee.pipeline.adapters imports texas_rrc.processors
+#   * worldenergydata-cost         -> fdas.api delegates to cost.disclosure_analytics
+#
+# Note: worldenergydata.engine (engine.py), .validation and .analysis are
+# imported by this cluster but stay in the ROOT distribution; the root depends
+# on THIS member (not vice-versa), so they resolve transparently via the
+# pkgutil.extend_path namespace at runtime — declaring them here would create a
+# member->root workspace dependency cycle.
+dependencies = [
+    "worldenergydata-core",
+    "worldenergydata-sodir",
+    "worldenergydata-reporting",
+    "worldenergydata-texas_rrc",
+    "worldenergydata-cost",
+    "assetutilities>=0.1.0,<1.0",
+    "numpy>=2.2.6,<3.0",
+    "numpy-financial>=1.0.0",
+    "pandas>=2.3.3,<3.0",
+    "scipy>=1.11.0,<2.0",
+    "matplotlib>=3.7.0,<4.0",
+    "seaborn>=0.13.0,<1.0",
+    "plotly>=5.18.0,<6.0",
+    "dash>=2.14.0,<3.0",
+    "httpx>=0.25.0,<1.0",
+    "scrapy>=2.16.0,<3.0",
+    "sqlalchemy>=2.0.49,<3.0",
+    "pydantic>=2.13.4,<3.0",
+    "openpyxl>=3.1.0,<4.0",
+    "reportlab>=4.0.0,<5.0",
+    "click>=8.0,<9.0",
+    "loguru>=0.7.0,<1.0",
+    "psutil>=7.2.1,<8.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/vamseeachanta/worldenergydata"
+"Bug Tracker" = "https://github.com/vamseeachanta/worldenergydata/issues"
+
+# ---------------------------------------------------------------------------
+# PEP 420 namespace packaging (ADR 0001 — domain-package split)
+# ---------------------------------------------------------------------------
+# This member ships the FIVE cluster subpackages (+ their data files). It does
+# NOT ship ``worldenergydata/__init__.py`` — the root ``worldenergydata``
+# distribution remains the SOLE owner of the namespace root ``__init__.py``
+# (which carries ``__version__``, the ``_compat`` legacy redirect, the lazy
+# ``__getattr__``, and the ``pkgutil.extend_path`` spanning all install
+# locations). ``find_namespace`` + an explicit per-subpackage include keeps
+# setuptools from discovering a bare ``worldenergydata`` regular package here.
+[tool.setuptools.packages.find]
+where = ["src"]
+include = [
+    "worldenergydata.bsee*",
+    "worldenergydata.lower_tertiary*",
+    "worldenergydata.fdas*",
+    "worldenergydata.hse*",
+    "worldenergydata.well_production_dashboard*",
+]
+namespaces = true
+
+[tool.setuptools.package-data]
+"worldenergydata.bsee" = ["*.md", "*.sql", "*.json", "**/*.yml", "**/*.yaml", "**/*.sql", "**/*.md", "**/*.json", "**/*.csv", "**/*.html"]
+"worldenergydata.lower_tertiary" = ["*.md", "*.json", "**/*.yml", "**/*.yaml", "**/*.json", "**/*.csv", "**/*.md"]
+"worldenergydata.fdas" = ["*.md", "*.json", "**/*.yml", "**/*.yaml", "**/*.json", "**/*.csv", "**/*.md", "**/*.html"]
+"worldenergydata.hse" = ["*.md", "*.json", "**/*.yml", "**/*.yaml", "**/*.json", "**/*.csv", "**/*.md", "**/*.sql"]
+"worldenergydata.well_production_dashboard" = ["*.md", "*.json", "**/*.yml", "**/*.yaml", "**/*.json", "**/*.csv", "**/*.md", "**/*.html"]

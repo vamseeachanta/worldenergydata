@@ -94,4 +94,25 @@ def __getattr__(name: str):
         from worldenergydata.marine_safety import api as _ms_api
 
         return _ms_api
+
+    # Lazy package-root access to domain subpackages (ADR 0001 Phase 2, #561).
+    # After the domain split the subpackages ship from independent uv workspace
+    # members and are contributed to this namespace via ``pkgutil.extend_path``.
+    # ``import worldenergydata.<domain>`` has always worked, but bare attribute
+    # access (``worldenergydata.<domain>`` without a prior submodule import — as
+    # the docstring examples ``wed.bsee.production`` / ``wed.fdas.economics``
+    # show) only resolved if something had already imported the submodule.
+    # Resolve any real subpackage on this namespace's ``__path__`` on first
+    # attribute access so behavior is identical for in-root and carved domains
+    # (e.g. the batch-3 cluster: bsee/fdas/lower_tertiary/hse/
+    # well_production_dashboard now ship from packages/worldenergydata-bsee/).
+    # This runs only for attributes that would otherwise raise AttributeError,
+    # so it never shadows a real module-level attribute.
+    import importlib.util as _ilu
+
+    if not name.startswith("_") and _ilu.find_spec(f"{__name__}.{name}") is not None:
+        import importlib as _il
+
+        return _il.import_module(f"{__name__}.{name}")
+
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

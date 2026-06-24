@@ -21,7 +21,10 @@ import pandas as pd
 
 logger = logging.getLogger(__name__)
 
-_DATA_DIR = Path(__file__).resolve().parents[4] / "data" / "modules" / "pipeline"
+# Phase 2 batch-3 carve (#529): this file is now 2 levels deeper under
+# packages/worldenergydata-bsee/, so the repo root is parents[6] (was [4]).
+# The data/ tree stays at the repo root (not moved by the carve).
+_DATA_DIR = Path(__file__).resolve().parents[6] / "data" / "modules" / "pipeline"
 _DEFAULT_FILE = "api_5l_pipe_schedule.csv"
 
 # Default tolerances for OD/WT matching (SI units, meters)

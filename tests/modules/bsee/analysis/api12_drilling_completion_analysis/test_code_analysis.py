@@ -6,15 +6,25 @@ in both drilling_and_completion_days.py and well_api12.py scripts.
 """
 
 import ast
+import importlib.util as _ilu
 import inspect
 from pathlib import Path
 from typing import Any, Dict, List
 
 import pytest
 
-# Paths to scripts under analysis
+# Paths to scripts under analysis. well_api12.py ships from the
+# worldenergydata-bsee workspace member after the Phase 2 batch-3 carve (#529),
+# so resolve it from the installed package location rather than a hard-coded
+# src/ path (which no longer exists in-tree).
 _LEASE_SCRIPT = "src/worldenergydata/modules/bsee/analysis/custom_scripts/Roy/july/drilling_and_completion_days.py"
-_API12_SCRIPT = "src/worldenergydata/bsee/analysis/well_api12.py"
+
+_bsee_spec = _ilu.find_spec("worldenergydata.bsee")
+_API12_SCRIPT = (
+    str(Path(_bsee_spec.submodule_search_locations[0]) / "analysis" / "well_api12.py")
+    if _bsee_spec is not None and _bsee_spec.submodule_search_locations
+    else "src/worldenergydata/bsee/analysis/well_api12.py"
+)
 
 _lease_missing = not Path(_LEASE_SCRIPT).exists()
 _api12_missing = not Path(_API12_SCRIPT).exists()

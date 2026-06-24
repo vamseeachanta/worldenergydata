@@ -17,7 +17,9 @@ from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
 
-PROJECT_ROOT = Path(__file__).resolve().parents[3]
+# Phase 2 batch-3 carve (#529): now 2 levels deeper under
+# packages/worldenergydata-bsee/; repo root is parents[5] (was [3]).
+PROJECT_ROOT = Path(__file__).resolve().parents[5]
 FDAS_V30_DIR = PROJECT_ROOT / "docs/modules/bsee/analysis/production/FDAS_V30"
 OGOR_ZIP_DIR = get_module_data_safe("bsee") / "zip" / "historical_production_yearly"
 GOLDEN_BASELINE_PATH = (

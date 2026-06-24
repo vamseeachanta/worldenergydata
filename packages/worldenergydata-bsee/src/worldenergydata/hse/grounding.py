@@ -195,8 +195,10 @@ def default_bsee_path() -> Optional[Path]:
         candidates.append(
             Path(root) / "hse/raw/bsee/IncInvRawData/mv_acc_investigations.txt"
         )
+    # Phase 2 batch-3 carve (#529): now 2 levels deeper under
+    # packages/worldenergydata-bsee/; repo root is parents[5] (was [3]).
     repo = (
-        Path(__file__).resolve().parents[3]
+        Path(__file__).resolve().parents[5]
         / "data/modules/hse/raw/bsee/IncInvRawData/mv_acc_investigations.txt"
     )
     candidates.append(repo)

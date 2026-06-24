@@ -1,15 +1,23 @@
 """Tests for well production dashboard monitoring module."""
 
 import importlib
+import importlib.util
 import json
 import sys
 from datetime import datetime
+from pathlib import Path
 
 # The well_production_dashboard __init__.py chains imports that require reportlab.
-# Import the monitoring module directly to avoid the chain.
+# Import the monitoring module directly to avoid the chain. Resolve the file
+# from the INSTALLED package location (the well_production_dashboard subpackage
+# ships from the worldenergydata-bsee workspace member after the Phase 2 batch-3
+# carve, #529) instead of a hard-coded src/ path, so this works regardless of
+# whether the subpackage lives in the root tree or a carved member.
+_wpd_spec = importlib.util.find_spec("worldenergydata.well_production_dashboard")
+_monitoring_path = Path(_wpd_spec.submodule_search_locations[0]) / "monitoring.py"
 _spec = importlib.util.spec_from_file_location(
     "worldenergydata.well_production_dashboard.monitoring",
-    "src/worldenergydata/well_production_dashboard/monitoring.py",
+    str(_monitoring_path),
 )
 _mod = importlib.util.module_from_spec(_spec)
 sys.modules[_spec.name] = _mod
