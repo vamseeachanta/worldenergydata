@@ -83,11 +83,17 @@ def test_move_is_import_transparent():
         assert isinstance(list(wed.__path__), list) and wed.__path__
 
         # common symbols (from the core member)
-        # a domain that has NOT been carved still imports from the root dist
-        from worldenergydata import drilling
+        # a subpackage that has NOT been carved still imports from the root
+        # dist. After Phase 2 batch 5 (#529) the final domain tail (scheduler,
+        # reservoir, drilling, baker_hughes, marine) was carved too, so what
+        # remains in the root distribution is infra + the `analysis` backward-
+        # compat shim. Use `analysis` as the representative root-owned
+        # subpackage (it re-exports from the bsee member but ships from the root
+        # ``src/`` tree, not a workspace member).
+        from worldenergydata import analysis
         from worldenergydata.common import get_logger  # noqa: F401
 
-        assert "packages" not in Path(drilling.__file__).resolve().parts
+        assert "packages" not in Path(analysis.__file__).resolve().parts
 
         # a carved domain resolves transparently from its workspace member.
         # bsee ships from packages/worldenergydata-bsee/ after the Phase 2
@@ -96,6 +102,12 @@ def test_move_is_import_transparent():
         from worldenergydata import bsee
 
         assert "worldenergydata-bsee" in Path(bsee.__file__).resolve().parts
+
+        # the final-tail carve (batch 5, #529): scheduler is the orchestrator
+        # member; it resolves from packages/worldenergydata-scheduler/.
+        from worldenergydata import scheduler
+
+        assert "worldenergydata-scheduler" in Path(scheduler.__file__).resolve().parts
 
         # legacy worldenergydata.modules.X -> worldenergydata.X redirect intact
         import worldenergydata.modules.bsee as legacy_bsee

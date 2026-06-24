@@ -67,6 +67,15 @@ dependencies = [
     "worldenergydata-vessel_fleet",
     "worldenergydata-lng_terminals",
     "worldenergydata-vessel_hull_models",
+    # Phase 2 batch 5 (#529): the final tail. scheduler is the top-level
+    # data-refresh ORCHESTRATOR (depends on the carved source domains it
+    # refreshes; no domain imports it back, so no cycle). reservoir, drilling,
+    # baker_hughes, marine are leaf source/analysis domains with smoke gates.
+    "worldenergydata-scheduler",
+    "worldenergydata-reservoir",
+    "worldenergydata-drilling",
+    "worldenergydata-baker_hughes",
+    "worldenergydata-marine",
     "assetutilities>=0.1.0,<1.0",
     "scrapy>=2.16.0,<3.0",
     "selenium>=4.15.0,<5.0",
@@ -263,6 +272,19 @@ exclude = [
     "worldenergydata.lng_terminals.*",
     "worldenergydata.vessel_hull_models",
     "worldenergydata.vessel_hull_models.*",
+    # Phase 2 batch 5 (#529): the final tail carved into members
+    # (packages/worldenergydata-{scheduler,reservoir,drilling,baker_hughes,marine}/).
+    # Exclude each so the root wheel does not duplicate the carved code.
+    "worldenergydata.scheduler",
+    "worldenergydata.scheduler.*",
+    "worldenergydata.reservoir",
+    "worldenergydata.reservoir.*",
+    "worldenergydata.drilling",
+    "worldenergydata.drilling.*",
+    "worldenergydata.baker_hughes",
+    "worldenergydata.baker_hughes.*",
+    "worldenergydata.marine",
+    "worldenergydata.marine.*",
 ]
 
 # Phase 2 batch 3 (#529): the former "worldenergydata.bsee" package-data entry
@@ -472,6 +494,12 @@ worldenergydata-safety_analysis = { workspace = true }
 worldenergydata-vessel_fleet = { workspace = true }
 worldenergydata-lng_terminals = { workspace = true }
 worldenergydata-vessel_hull_models = { workspace = true }
+# Phase 2 batch 5 (#529): the final tail — scheduler orchestrator + leaf domains.
+worldenergydata-scheduler = { workspace = true }
+worldenergydata-reservoir = { workspace = true }
+worldenergydata-drilling = { workspace = true }
+worldenergydata-baker_hughes = { workspace = true }
+worldenergydata-marine = { workspace = true }
 
 [tool.uv]
 # UV environment configuration

@@ -71,8 +71,40 @@ BSEE_DATASETS = {
     },
 }
 
+
+def _workspace_root() -> Path:
+    """Locate the repo/workspace root that owns ``config/bsee.yml``.
+
+    This module now ships in the ``worldenergydata-scheduler`` uv workspace
+    member (ADR 0001 Phase 2 batch 5, #529), so a fixed ``parents[N]`` hop off
+    ``__file__`` no longer lands on the repo root — the member adds two path
+    segments (``packages/worldenergydata-scheduler/``). Mirror
+    ``common.data_resolver._get_project_root``: prefer the outermost
+    ``pyproject.toml`` that declares the uv workspace
+    (``[tool.uv.workspace]`` = repo root), fall back to the nearest
+    ``pyproject.toml`` (installed / single-dist case), then CWD. ``config/`` is
+    a shared repo-root config tree left at the root by earlier batches, so the
+    catalog stays there (option ii) rather than moving into the member.
+    """
+    current = Path(__file__).resolve()
+    nearest: Optional[Path] = None
+    for parent in current.parents:
+        candidate = parent / "pyproject.toml"
+        if candidate.exists():
+            if nearest is None:
+                nearest = parent
+            try:
+                if "[tool.uv.workspace]" in candidate.read_text(encoding="utf-8"):
+                    return parent
+            except OSError:
+                pass
+    if nearest is not None:
+        return nearest
+    return Path.cwd()
+
+
 #: Repo-level YAML catalog (issue #9 knowledge as reviewable config).
-DEFAULT_CATALOG_PATH = Path(__file__).resolve().parents[4] / "config" / "bsee.yml"
+DEFAULT_CATALOG_PATH = _workspace_root() / "config" / "bsee.yml"
 
 #: Catalog URLs may only point at the official BSEE data portal.
 ALLOWED_URL_PREFIX = "https://www.data.bsee.gov/"
