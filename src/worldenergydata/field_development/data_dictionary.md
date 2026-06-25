@@ -85,7 +85,7 @@ lower_snake_case string `value`s shown below.
 ## Provenance
 | Field | Type | Units | Notes |
 |---|---|---|---|
-| `data_source` | str | — | Source attribution (per repo data rules). **Never** store raw SubseaIQ records in public outputs (epic #567 licensing guardrail). |
+| `data_source` | str | — | Source attribution (per repo data rules), e.g. `"SubseaIQ (og-website-db, ~2014)"` or `"BSEE OGOR-A"`. |
 
 ## Validation layers
 1. **Per-field (Pydantic, raises at construction):** required `name`, non-negative

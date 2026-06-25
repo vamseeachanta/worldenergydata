@@ -49,20 +49,26 @@ diagram-as-code pipeline. ~70 sourced references + an uncertainty-flags section.
 > Thresholds, depth bands, and scoring weights in the engine are **config, not
 > magic numbers**, and trace back to this briefing's §A3–A6.
 
-## Data sources & guardrail
+## Data sources
 
-- **Public:** BSEE asset data (`data/modules/bsee/`), vessel fleet
-  (`vessel_fleet/`), subsea hardware catalogs (`subsea/`), public FDP costs
-  (`cost/`).
-- **Private (off-repo):** the SubseaIQ-derived field/host database is used only
-  as a private reference layer (calibration, #569). **Raw SubseaIQ records are
-  never published into this public repo** — public outputs use BSEE +
-  aggregated/derived parameters only.
+- BSEE asset data (`data/modules/bsee/`), vessel fleet (`vessel_fleet/`), subsea
+  hardware catalogs (`subsea/`), public FDP costs (`cost/`).
+- **SubseaIQ-derived field catalog** (`data/modules/offshore_assets/curated/fields.csv`,
+  ~2014 vintage) — stale and freely usable; loaded via `subseaiq.py` (#569) and
+  crosswalked to BSEE on the **BOEM block key** (area+block, e.g. `GC254`), since
+  BSEE codes deepwater fields by lease block, not name.
 
 ## Roadmap
 
-See epic #567. Phase 1 (deterministic spine): #568, #570, #571, #572, #573 done;
-#574 (subsea symbol library), #575 (wire economics/vessel/jumper data), #569
-(private SubseaIQ loader) in progress. Phase 2 (flagged): #577 LLM
-concept-completion, #578 DEXPI interop, #579 layout optimization, #580
-equipment-3D.
+See epic #567. Phase 1 (deterministic spine): #568, #570, #571, #572, #573, #574,
+#575, #569 done. Phase 2 (flagged): #577 LLM concept-completion, #578 DEXPI
+interop, #579 layout optimization, #580 equipment-3D.
+
+### SubseaIQ ↔ BSEE crosswalk (#569)
+
+The join key is the **BOEM block**, not the field name. SubseaIQ `BLOCK`
+("Green Canyon 254") parses to `(GC, 254)` → BSEE OGOR-A field code `GC254`.
+Name-matching scores 0% (BSEE doesn't name deepwater fields); block-matching
+links ~22% of SubseaIQ GoM fields against ~6 OGOR years (rises with more years /
+a fuller area-abbreviation map; undeveloped discoveries never appear in OGOR
+production data). See `subseaiq.build_bsee_crosswalk`.

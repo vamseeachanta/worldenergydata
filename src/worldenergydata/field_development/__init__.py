@@ -61,6 +61,13 @@ from worldenergydata.field_development.recommendation import (
     feasible_concepts,
     recommend,
 )
+from worldenergydata.field_development.subseaiq import (
+    CrosswalkRow,
+    bsee_block_key,
+    build_bsee_crosswalk,
+    crosswalk_summary,
+    load_subseaiq_fields,
+)
 from worldenergydata.field_development.symbols import (
     available_symbols,
     has_symbol,
@@ -114,6 +121,11 @@ __all__ = [
     "VesselFeasibility",
     "HardwarePicks",
     "EnrichedConcept",
+    "load_subseaiq_fields",
+    "build_bsee_crosswalk",
+    "bsee_block_key",
+    "crosswalk_summary",
+    "CrosswalkRow",
     "sanity_check",
     "is_sane",
     "SanityViolation",

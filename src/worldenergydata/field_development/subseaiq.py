@@ -1,0 +1,190 @@
+# ABOUTME: SubseaIQ field loader + BSEE crosswalk (block-keyed join).
+# ABOUTME: Issue #569 (epic #567) — normalize SubseaIQ fields → FieldConcept + BSEE link.
+"""
+worldenergydata.field_development.subseaiq
+==========================================
+
+Loads the SubseaIQ-derived field catalog (the normalized
+``data/modules/offshore_assets/curated/fields.csv``) into the playbook's
+:class:`FieldConcept` model, and crosswalks it to BSEE.
+
+**The join key is the BOEM block, not the field name.** BSEE OGOR-A identifies
+each field by an area+block code (e.g. ``GC254`` = Green Canyon 254), so
+matching on field *name* fails (BSEE doesn't name deepwater fields). Matching on
+the SubseaIQ ``BLOCK`` column — parsed to ``(area_abbrev, block_number)`` —
+connects them. Empirically ~22%+ of SubseaIQ GoM fields match the OGOR field-code
+set (rises with more OGOR years / a fuller area map; undeveloped discoveries
+never appear in production data).
+
+The SubseaIQ data is stale (~2014) and freely usable, so this loader reads it
+directly and may surface derived data publicly — no off-repo restriction.
+"""
+
+from __future__ import annotations
+
+import csv
+import re
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Iterable, Optional
+
+from worldenergydata.field_development.enums import FluidType
+from worldenergydata.field_development.models import FieldConcept
+
+# BOEM Gulf-of-Mexico planning-area name → official abbreviation.
+AREA_ABBR: dict[str, str] = {
+    "MISSISSIPPI CANYON": "MC", "GREEN CANYON": "GC", "KEATHLEY CANYON": "KC",
+    "GARDEN BANKS": "GB", "EAST CAMERON": "EC", "WALKER RIDGE": "WR",
+    "ATWATER VALLEY": "AT", "EWING BANK": "EW", "SHIP SHOAL": "SS",
+    "SOUTH TIMBALIER": "ST", "VIOSCA KNOLL": "VK", "WEST CAMERON": "WC",
+    "ALAMINOS CANYON": "AC", "DESOTO CANYON": "DC", "WEST DELTA": "WD",
+    "SOUTH MARSH ISLAND": "SM", "EUGENE ISLAND": "EI", "GRAND ISLE": "GI",
+    "MAIN PASS": "MP", "VERMILION": "VR", "HIGH ISLAND": "HI",
+    "MUSTANG ISLAND": "MU", "MATAGORDA ISLAND": "MI", "LUND": "LU",
+    "SOUTH PASS": "SP", "SOUTH PELTO": "PL", "BRETON SOUND": "BS",
+}
+
+
+def _curated_fields_path() -> Path:
+    return (Path(__file__).parents[3] / "data" / "modules"
+            / "offshore_assets" / "curated" / "fields.csv")
+
+
+@dataclass(frozen=True)
+class CrosswalkRow:
+    """One SubseaIQ→BSEE crosswalk result."""
+
+    field_name: str
+    block: str
+    bsee_block_key: Optional[str]   # e.g. "GC254", or None if unparseable
+    matched: bool
+    match_type: str                 # "block" | "none" | "unparsed"
+
+
+def bsee_block_key(block: str) -> Optional[tuple[str, int]]:
+    """Parse a SubseaIQ BLOCK string to a BSEE ``(area_abbrev, block_number)`` key.
+
+    Handles full area names ("Green Canyon 254"), already-abbreviated codes
+    ("MC26"), and multi-block fields ("Mississippi Canyon 108, 109" → first
+    block). Zero-padding is normalized via integer block numbers. Returns None
+    if no GoM area/block can be parsed (e.g. a North Sea "PL 218" licence).
+    """
+    if not block:
+        return None
+    s = str(block).upper().split(",")[0].strip()
+    # Full area name + number.
+    m = re.match(r"([A-Z][A-Z ]+?)\s+0*(\d+)", s)
+    if m and m.group(1).strip() in AREA_ABBR:
+        return (AREA_ABBR[m.group(1).strip()], int(m.group(2)))
+    # Already-abbreviated two-letter code + number ("MC26", "GC 254").
+    m2 = re.match(r"([A-Z]{2})\s*0*(\d+)$", s)
+    if m2:
+        return (m2.group(1), int(m2.group(2)))
+    return None
+
+
+def key_to_code(key: tuple[str, int]) -> str:
+    """Render a parsed key back to a BSEE-style field code, e.g. ('GC', 254)→'GC254'."""
+    return f"{key[0]}{key[1]}"
+
+
+def _fluid_from_reserve_type(reserve_type: str) -> Optional[FluidType]:
+    s = (reserve_type or "").lower()
+    if "condensate" in s:
+        return FluidType.CONDENSATE
+    if "oil" in s and "gas" in s:
+        return FluidType.OIL          # oil-primary for mixed
+    if "oil" in s:
+        return FluidType.OIL
+    if "gas" in s:
+        return FluidType.GAS
+    return None
+
+
+def _year(text: str) -> Optional[int]:
+    m = re.search(r"(19|20)\d{2}", str(text or ""))
+    return int(m.group(0)) if m else None
+
+
+def _float(text: str) -> Optional[float]:
+    try:
+        return float(str(text).replace(",", ""))
+    except (TypeError, ValueError):
+        return None
+
+
+def load_subseaiq_fields(csv_path: Optional[Path] = None) -> list[FieldConcept]:
+    """Load the normalized SubseaIQ field catalog as :class:`FieldConcept` objects.
+
+    Args:
+        csv_path: Path to ``fields.csv``; defaults to the curated in-repo copy.
+
+    Returns:
+        One :class:`FieldConcept` per field (rows with an empty name are skipped).
+    """
+    path = csv_path or _curated_fields_path()
+    out: list[FieldConcept] = []
+    with open(path, newline="", encoding="utf-8") as fh:
+        for row in csv.DictReader(fh):
+            name = (row.get("FIELD_NAME") or "").strip()
+            if not name:
+                continue
+            out.append(FieldConcept(
+                name=name,
+                region=(row.get("COUNTRY") or None),
+                water_depth_m=_float(row.get("WATER_DEPTH_M")),
+                fluid_type=_fluid_from_reserve_type(row.get("RESERVE_TYPE", "")),
+                year_first_oil=_year(row.get("PRODUCTION_START")),
+                data_source="SubseaIQ (og-website-db, ~2014)",
+            ))
+    return out
+
+
+def build_bsee_crosswalk(
+    bsee_field_codes: Iterable[str],
+    csv_path: Optional[Path] = None,
+    gom_only: bool = True,
+) -> list[CrosswalkRow]:
+    """Crosswalk SubseaIQ fields to BSEE field codes on the BOEM block key.
+
+    Args:
+        bsee_field_codes: BSEE field codes (e.g. OGOR-A field-code column values
+            like ``"GC254"``, ``"WD030"``). Parsed to ``(area, block)`` keys.
+        csv_path: ``fields.csv`` path; defaults to the curated in-repo copy.
+        gom_only: If True (default), only crosswalk rows flagged US_GOM.
+
+    Returns:
+        One :class:`CrosswalkRow` per (GoM) SubseaIQ field.
+    """
+    path = csv_path or _curated_fields_path()
+    bsee_keys = {bsee_block_key(c) for c in bsee_field_codes}
+    bsee_keys.discard(None)
+
+    rows: list[CrosswalkRow] = []
+    with open(path, newline="", encoding="utf-8") as fh:
+        for row in csv.DictReader(fh):
+            name = (row.get("FIELD_NAME") or "").strip()
+            if not name:
+                continue
+            if gom_only and (row.get("US_GOM_FLAG") or "").strip() != "Y":
+                continue
+            block = (row.get("BLOCK") or "").strip()
+            key = bsee_block_key(block)
+            if key is None:
+                rows.append(CrosswalkRow(name, block, None, False, "unparsed"))
+                continue
+            matched = key in bsee_keys
+            rows.append(CrosswalkRow(
+                name, block, key_to_code(key), matched,
+                "block" if matched else "none",
+            ))
+    return rows
+
+
+def crosswalk_summary(rows: list[CrosswalkRow]) -> dict[str, int]:
+    """Aggregate counts for a crosswalk run (total / matched / unparsed)."""
+    return {
+        "total": len(rows),
+        "matched": sum(r.matched for r in rows),
+        "unparsed": sum(r.match_type == "unparsed" for r in rows),
+    }
