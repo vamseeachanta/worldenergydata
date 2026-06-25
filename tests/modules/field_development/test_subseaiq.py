@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 from worldenergydata.field_development import (
+    ConceptType,
     FieldConcept,
     FluidType,
     bsee_block_key,
@@ -12,7 +13,7 @@ from worldenergydata.field_development import (
     crosswalk_summary,
     load_subseaiq_fields,
 )
-from worldenergydata.field_development.subseaiq import key_to_code
+from worldenergydata.field_development.subseaiq import HOST_TYPE_MAP, key_to_code
 
 
 # --------------------------------------------------------------------------- #
@@ -69,6 +70,43 @@ def test_load_subseaiq_fields_returns_concepts():
     assert aasta.water_depth_m == 1300.0
     assert aasta.fluid_type == FluidType.GAS
     assert aasta.data_source.startswith("SubseaIQ")
+
+
+def test_unenriched_has_no_concept_type():
+    aasta = next(f for f in load_subseaiq_fields()
+                 if f.name.startswith("Aasta Hansteen"))
+    assert aasta.concept_type is None and aasta.operator is None
+
+
+# --------------------------------------------------------------------------- #
+# Facility enrichment (concept_type + operator from production_facilities.csv)
+# --------------------------------------------------------------------------- #
+def test_enrich_fills_concept_type_and_operator():
+    fields = load_subseaiq_fields(enrich_facilities=True)
+    aasta = next(f for f in fields if f.name.startswith("Aasta Hansteen"))
+    assert aasta.concept_type == ConceptType.SPAR     # HOST_TYPE=SPAR
+    assert aasta.operator                              # operator populated
+
+
+def test_enrich_picks_subsea_tieback_when_present():
+    # Aconcagua has both a Subsea Tieback and a Fixed Platform facility →
+    # the field is produced via tieback, so tieback wins.
+    fields = load_subseaiq_fields(enrich_facilities=True)
+    aconcagua = next(f for f in fields if f.name == "Aconcagua")
+    assert aconcagua.concept_type == ConceptType.SUBSEA_TIEBACK
+
+
+def test_enrich_is_opt_in():
+    # Without enrich, no facility data is attached.
+    auger = next(f for f in load_subseaiq_fields() if f.name == "Auger")
+    assert auger.concept_type is None
+    auger_e = next(f for f in load_subseaiq_fields(enrich_facilities=True)
+                   if f.name == "Auger")
+    assert auger_e.concept_type == ConceptType.TLP
+
+
+def test_host_type_map_values_are_concept_types():
+    assert all(isinstance(v, ConceptType) for v in HOST_TYPE_MAP.values())
 
 
 # --------------------------------------------------------------------------- #

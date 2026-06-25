@@ -28,7 +28,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, Optional
 
-from worldenergydata.field_development.enums import FluidType
+from worldenergydata.field_development.enums import ConceptType, FluidType
 from worldenergydata.field_development.models import FieldConcept
 
 # BOEM Gulf-of-Mexico planning-area name → official abbreviation.
@@ -48,9 +48,37 @@ AREA_ABBR: dict[str, str] = {
 }
 
 
+def _curated_dir() -> Path:
+    return Path(__file__).parents[3] / "data" / "modules" / "offshore_assets" / "curated"
+
+
 def _curated_fields_path() -> Path:
-    return (Path(__file__).parents[3] / "data" / "modules"
-            / "offshore_assets" / "curated" / "fields.csv")
+    return _curated_dir() / "fields.csv"
+
+
+# SubseaIQ production-facility HOST_TYPE → playbook ConceptType.
+HOST_TYPE_MAP: dict[str, ConceptType] = {
+    "FIXED PLATFORM": ConceptType.FIXED_JACKET,
+    "COMPLIANT TOWER": ConceptType.COMPLIANT_TOWER,
+    "TLP": ConceptType.TLP,
+    "MINI-TLP": ConceptType.TLP,
+    "SPAR": ConceptType.SPAR,
+    "DDCV": ConceptType.SPAR,           # deep-draft caisson vessel ≈ spar
+    "SEMISUB": ConceptType.SEMISUB_FPS,
+    "FPU/FPS": ConceptType.SEMISUB_FPS,
+    "FPSO": ConceptType.FPSO,
+    "FLNG": ConceptType.FLNG,
+    "SUBSEA TIEBACK": ConceptType.SUBSEA_TIEBACK,
+}
+
+# When a field has several facilities, this priority picks its concept: a
+# subsea-tieback facility means the field is *produced via tieback* (it ties
+# back to a host), so that wins over the host's own type.
+_CONCEPT_PRIORITY = [
+    ConceptType.SUBSEA_TIEBACK, ConceptType.FPSO, ConceptType.SPAR,
+    ConceptType.TLP, ConceptType.SEMISUB_FPS, ConceptType.FIXED_JACKET,
+    ConceptType.FLNG, ConceptType.COMPLIANT_TOWER,
+]
 
 
 @dataclass(frozen=True)
@@ -120,27 +148,66 @@ def _float(text: str) -> Optional[float]:
         return None
 
 
-def load_subseaiq_fields(csv_path: Optional[Path] = None) -> list[FieldConcept]:
+def _load_facility_picks(
+    facilities_csv: Optional[Path] = None,
+) -> dict[str, tuple[Optional["ConceptType"], Optional[str]]]:
+    """Map field-id → (concept_type, operator) from production_facilities.csv.
+
+    A field may have several facilities; the concept is chosen by
+    :data:`_CONCEPT_PRIORITY` (subsea-tieback wins — the field ties back to a host).
+    Returns ``{field_id: (ConceptType|None, operator|None)}``.
+    """
+    path = facilities_csv or (_curated_dir() / "production_facilities.csv")
+    picks: dict[str, tuple[Optional[ConceptType], Optional[str]]] = {}
+    by_field: dict[str, list[tuple[int, ConceptType, Optional[str]]]] = {}
+    with open(path, newline="", encoding="utf-8") as fh:
+        for row in csv.DictReader(fh):
+            fid = (row.get("FACILITY_ID") or "").strip()
+            ct = HOST_TYPE_MAP.get((row.get("HOST_TYPE") or "").strip().upper())
+            if not fid or ct is None:
+                continue
+            by_field.setdefault(fid, []).append(
+                (_CONCEPT_PRIORITY.index(ct), ct, (row.get("OPERATOR") or None))
+            )
+    for fid, cands in by_field.items():
+        _, ct, op = min(cands, key=lambda t: t[0])
+        picks[fid] = (ct, op)
+    return picks
+
+
+def load_subseaiq_fields(
+    csv_path: Optional[Path] = None,
+    enrich_facilities: bool = False,
+    facilities_csv: Optional[Path] = None,
+) -> list[FieldConcept]:
     """Load the normalized SubseaIQ field catalog as :class:`FieldConcept` objects.
 
     Args:
         csv_path: Path to ``fields.csv``; defaults to the curated in-repo copy.
+        enrich_facilities: If True, join ``production_facilities.csv`` on the
+            project id to fill ``concept_type`` (from HOST_TYPE) and ``operator``.
+        facilities_csv: Override path for the facilities file.
 
     Returns:
         One :class:`FieldConcept` per field (rows with an empty name are skipped).
     """
     path = csv_path or _curated_fields_path()
+    picks = _load_facility_picks(facilities_csv) if enrich_facilities else {}
     out: list[FieldConcept] = []
     with open(path, newline="", encoding="utf-8") as fh:
         for row in csv.DictReader(fh):
             name = (row.get("FIELD_NAME") or "").strip()
             if not name:
                 continue
+            fid = (row.get("FIELD_ID") or "").strip()
+            concept_type, operator = picks.get(fid, (None, None))
             out.append(FieldConcept(
                 name=name,
+                operator=operator,
                 region=(row.get("COUNTRY") or None),
                 water_depth_m=_float(row.get("WATER_DEPTH_M")),
                 fluid_type=_fluid_from_reserve_type(row.get("RESERVE_TYPE", "")),
+                concept_type=concept_type,
                 year_first_oil=_year(row.get("PRODUCTION_START")),
                 data_source="SubseaIQ (og-website-db, ~2014)",
             ))

@@ -27,6 +27,7 @@ import pandas as pd
 from worldenergydata.field_development.subseaiq import (
     build_bsee_crosswalk,
     crosswalk_summary,
+    load_subseaiq_fields,
 )
 
 OGOR_DIR = Path(
@@ -55,19 +56,26 @@ def ogor_field_codes() -> set[str]:
 
 def main() -> None:
     rows = build_bsee_crosswalk(ogor_field_codes())
+    # Enrich with host concept + operator from production_facilities.csv.
+    enriched = {
+        f.name: (f.concept_type.value if f.concept_type else "", f.operator or "")
+        for f in load_subseaiq_fields(enrich_facilities=True)
+    }
     OUT.parent.mkdir(parents=True, exist_ok=True)
     with open(OUT, "w", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh)
-        w.writerow(["og_field_name", "block", "bsee_block_code",
-                    "match_type", "matched"])
+        w.writerow(["og_field_name", "block", "bsee_block_code", "match_type",
+                    "matched", "host_concept", "operator"])
         for r in rows:
+            concept, operator = enriched.get(r.field_name, ("", ""))
             w.writerow([r.field_name, r.block, r.bsee_block_key or "",
-                        r.match_type, int(r.matched)])
+                        r.match_type, int(r.matched), concept, operator])
     s = crosswalk_summary(rows)
     pct = 100 * s["matched"] / s["total"] if s["total"] else 0
+    enr = sum(1 for r in rows if enriched.get(r.field_name, ("", ""))[0])
     print(f"wrote {OUT}")
     print(f"GoM fields: {s['total']} | matched: {s['matched']} ({pct:.0f}%) "
-          f"| unparsed block: {s['unparsed']}")
+          f"| unparsed block: {s['unparsed']} | with host concept: {enr}")
 
 
 if __name__ == "__main__":
