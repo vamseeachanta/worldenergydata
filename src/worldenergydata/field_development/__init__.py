@@ -29,6 +29,10 @@ from worldenergydata.field_development.loader import (
     validate_concept,
 )
 from worldenergydata.field_development.block import render_block_diagram
+from worldenergydata.field_development.calibration import (
+    CalibrationReport,
+    backtest_fields,
+)
 from worldenergydata.field_development.graph import (
     Edge,
     EdgeKind,
@@ -130,4 +134,6 @@ __all__ = [
     "is_sane",
     "SanityViolation",
     "HOST_DEPTH_ENVELOPES_M",
+    "backtest_fields",
+    "CalibrationReport",
 ]

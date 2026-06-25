@@ -37,22 +37,61 @@ from worldenergydata.field_development.enums import (
 from worldenergydata.field_development.models import FieldConcept
 from worldenergydata.field_development.sanity import HOST_DEPTH_ENVELOPES_M
 
-CRITERIA = ("capex", "opex", "schedule", "recovery", "flexibility", "risk")
+CRITERIA = ("capex", "opex", "schedule", "recovery", "flexibility", "risk",
+            "depth_fit")
 
 
 @dataclass(frozen=True)
 class CriteriaWeights:
-    """Weights for simple additive weighting. Need not sum to 1 (normalized)."""
+    """Weights for simple additive weighting. Need not sum to 1 (normalized).
 
-    capex: float = 0.25
-    opex: float = 0.15
-    schedule: float = 0.15
-    recovery: float = 0.20
-    flexibility: float = 0.10
-    risk: float = 0.15
+    ``depth_fit`` carries the most weight because water depth is the dominant
+    concept-selection gate (briefing §A2) — calibrated against real field
+    concepts (see :mod:`calibration`).
+    """
+
+    capex: float = 0.18
+    opex: float = 0.10
+    schedule: float = 0.10
+    recovery: float = 0.14
+    flexibility: float = 0.08
+    risk: float = 0.10
+    depth_fit: float = 0.30
 
     def as_dict(self) -> dict[str, float]:
         return {c: getattr(self, c) for c in CRITERIA}
+
+
+# Per-concept preferred (sweet-spot) water-depth band in m — tighter than the
+# feasibility envelope; drives the ``depth_fit`` score. Calibrated to the real
+# depth→concept distribution of the enriched SubseaIQ catalog.
+DEPTH_SWEET_M: dict[ConceptType, tuple[float, float]] = {
+    ConceptType.NUI: (0.0, 120.0),
+    ConceptType.FIXED_JACKET: (0.0, 300.0),
+    ConceptType.COMPLIANT_TOWER: (400.0, 900.0),
+    ConceptType.TLP: (400.0, 1400.0),
+    ConceptType.SPAR: (900.0, 2450.0),
+    ConceptType.SEMISUB_FPS: (1000.0, 2600.0),
+    ConceptType.FPSO: (700.0, 3000.0),
+    ConceptType.FLNG: (700.0, 3000.0),
+    ConceptType.SUBSEA_TIEBACK: (0.0, 3000.0),     # flat — depends on host
+    ConceptType.SUBSEA_TO_SHORE: (0.0, 3000.0),
+}
+_DEPTH_DECAY_M = 500.0  # linear fall-off outside the sweet-spot band
+
+
+def _depth_fit(concept: ConceptType, depth_m: float | None) -> float:
+    """1.0 inside the concept's sweet-spot band, decaying to 0 over a margin."""
+    if depth_m is None:
+        return 0.5  # neutral when depth is unknown
+    band = DEPTH_SWEET_M.get(concept)
+    if band is None:
+        return 0.5
+    lo, hi = band
+    if lo <= depth_m <= hi:
+        return 1.0
+    gap = (lo - depth_m) if depth_m < lo else (depth_m - hi)
+    return max(0.0, 1.0 - gap / _DEPTH_DECAY_M)
 
 
 @dataclass(frozen=True)
@@ -87,8 +126,8 @@ class ScoredConcept:
 _CONCEPT_PROFILES: dict[ConceptType, dict[str, float]] = {
     ConceptType.SUBSEA_TIEBACK: dict(capex=0.95, opex=0.70, schedule=0.95,
                                       recovery=0.55, flexibility=0.80, risk=0.70),
-    ConceptType.NUI:            dict(capex=0.85, opex=0.75, schedule=0.80,
-                                     recovery=0.70, flexibility=0.50, risk=0.70),
+    ConceptType.NUI:            dict(capex=0.60, opex=0.70, schedule=0.70,
+                                     recovery=0.45, flexibility=0.35, risk=0.60),
     ConceptType.FIXED_JACKET:   dict(capex=0.70, opex=0.80, schedule=0.65,
                                      recovery=0.85, flexibility=0.55, risk=0.80),
     ConceptType.COMPLIANT_TOWER: dict(capex=0.45, opex=0.70, schedule=0.45,
@@ -193,6 +232,7 @@ def _score_concept(
 ) -> ScoredConcept:
     """Score a single feasible concept and build its rationale."""
     scores = dict(_CONCEPT_PROFILES[concept])
+    scores["depth_fit"] = _depth_fit(concept, c.water_depth_m)
     rationale: list[str] = []
     warnings: list[str] = []
     is_tieback = concept == ConceptType.SUBSEA_TIEBACK

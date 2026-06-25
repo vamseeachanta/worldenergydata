@@ -97,7 +97,7 @@ def test_scores_are_bounded_and_total_present():
         assert isinstance(sc, ScoredConcept)
         assert 0.0 <= sc.total_score <= 1.0
         assert set(sc.scores) == {"capex", "opex", "schedule", "recovery",
-                                  "flexibility", "risk"}
+                                  "flexibility", "risk", "depth_fit"}
         assert all(0.0 <= v <= 1.0 for v in sc.scores.values())
 
 
