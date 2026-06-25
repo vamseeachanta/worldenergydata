@@ -36,6 +36,11 @@ from worldenergydata.field_development.graph import (
     NodeType,
     concept_to_graph,
 )
+from worldenergydata.field_development.layout import (
+    compute_pixel_positions,
+    compute_positions,
+    render_layout,
+)
 from worldenergydata.field_development.models import SCHEMA_VERSION, FieldConcept
 from worldenergydata.field_development.recommendation import (
     CriteriaWeights,
@@ -76,6 +81,9 @@ __all__ = [
     "Edge",
     "NodeType",
     "EdgeKind",
+    "render_layout",
+    "compute_positions",
+    "compute_pixel_positions",
     "sanity_check",
     "is_sane",
     "SanityViolation",
