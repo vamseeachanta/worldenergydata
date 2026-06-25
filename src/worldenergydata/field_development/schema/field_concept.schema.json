@@ -1,0 +1,589 @@
+{
+  "$defs": {
+    "ConceptType": {
+      "description": "Host / development concept options (briefing \u00a7A3).",
+      "enum": [
+        "fixed_jacket",
+        "compliant_tower",
+        "tlp",
+        "spar",
+        "semisub_fps",
+        "fpso",
+        "flng",
+        "subsea_tieback",
+        "subsea_to_shore",
+        "nui"
+      ],
+      "title": "ConceptType",
+      "type": "string"
+    },
+    "FlowlineMaterial": {
+      "description": "Flowline construction / insulation class.",
+      "enum": [
+        "rigid",
+        "flexible",
+        "pipe_in_pipe"
+      ],
+      "title": "FlowlineMaterial",
+      "type": "string"
+    },
+    "FluidType": {
+      "description": "Reservoir fluid classification.",
+      "enum": [
+        "oil",
+        "gas",
+        "condensate",
+        "gas_condensate"
+      ],
+      "title": "FluidType",
+      "type": "string"
+    },
+    "MetoceanRegime": {
+      "description": "Environmental severity class driving hull/mooring/disconnectability.",
+      "enum": [
+        "benign",
+        "harsh_persistent",
+        "hurricane_cyclone"
+      ],
+      "title": "MetoceanRegime",
+      "type": "string"
+    },
+    "ReservoirDistribution": {
+      "description": "Areal distribution of the reservoir, drives dry-vs-wet tree choice.",
+      "enum": [
+        "compact_stacked",
+        "distributed"
+      ],
+      "title": "ReservoirDistribution",
+      "type": "string"
+    },
+    "RiserType": {
+      "description": "Riser configuration (briefing \u00a7A4).",
+      "enum": [
+        "scr",
+        "slwr",
+        "flexible",
+        "hybrid_tower",
+        "ttr"
+      ],
+      "title": "RiserType",
+      "type": "string"
+    },
+    "Topology": {
+      "description": "Subsea field topology (briefing \u00a7A4).",
+      "enum": [
+        "satellite",
+        "cluster",
+        "daisy_chain",
+        "pigging_loop"
+      ],
+      "title": "Topology",
+      "type": "string"
+    },
+    "TreeType": {
+      "description": "Well completion access type.",
+      "enum": [
+        "dry",
+        "wet"
+      ],
+      "title": "TreeType",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "An offshore field-development concept \u2014 the playbook's shared contract.\n\nGroups (see ``data_dictionary.md`` for units): identity, reservoir/fluid,\nproduction, location/physical, concept/architecture, environment/regulatory,\ncommercial, timeline, provenance.",
+  "properties": {
+    "api_gravity": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Api Gravity"
+    },
+    "concept_type": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ConceptType"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "data_source": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Data Source"
+    },
+    "discount_rate": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Fraction, e.g. 0.10.",
+      "title": "Discount Rate"
+    },
+    "distance_to_host_km": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Distance To Host Km"
+    },
+    "distance_to_shore_km": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Distance To Shore Km"
+    },
+    "field_life_years": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Field Life Years"
+    },
+    "flowline_diameter_in": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Flowline Diameter In"
+    },
+    "flowline_material": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FlowlineMaterial"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "fluid_type": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FluidType"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "gas_injection": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Gas Injection"
+    },
+    "gas_price_usd_mmbtu": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Gas Price Usd Mmbtu"
+    },
+    "gor_scf_stb": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Gor Scf Stb"
+    },
+    "host_spare_capacity": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Host Spare Capacity"
+    },
+    "hpht": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "High pressure / high temperature.",
+      "title": "Hpht"
+    },
+    "metocean_regime": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MetoceanRegime"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "name": {
+      "description": "Field/project name (required).",
+      "title": "Name",
+      "type": "string"
+    },
+    "num_manifolds": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Num Manifolds"
+    },
+    "num_trees": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Num Trees"
+    },
+    "num_wells": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Num Wells"
+    },
+    "oil_price_usd_bbl": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Oil Price Usd Bbl"
+    },
+    "operator": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Operator"
+    },
+    "per_well_rate_boed": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Per Well Rate Boed"
+    },
+    "plateau_rate_boed": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Plateau Rate Boed"
+    },
+    "recoverable_reserves_mmboe": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Recoverable Reserves Mmboe"
+    },
+    "region": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Basin / geographic area.",
+      "title": "Region"
+    },
+    "reservoir_distribution": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ReservoirDistribution"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "riser_type": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RiserType"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "schema_version": {
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "seabed_terrain": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Seabed Terrain"
+    },
+    "sour": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "H2S/CO2 present.",
+      "title": "Sour"
+    },
+    "tieback_distance_km": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tieback Distance Km"
+    },
+    "topology": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Topology"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "tree_type": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TreeType"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "viscosity_cp": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Viscosity Cp"
+    },
+    "water_depth_m": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Water depth at the field (m) \u2014 dominant concept gate.",
+      "title": "Water Depth M"
+    },
+    "water_injection": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Water Injection"
+    },
+    "wax_appearance_temp_c": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Wax Appearance Temp C"
+    },
+    "year_concept": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Year Concept"
+    },
+    "year_feed": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Year Feed"
+    },
+    "year_fid": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Year Fid"
+    },
+    "year_first_oil": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Year First Oil"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "title": "FieldConcept",
+  "type": "object"
+}
