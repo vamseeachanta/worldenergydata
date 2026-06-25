@@ -33,6 +33,7 @@ from worldenergydata.field_development.calibration import (
     CalibrationReport,
     backtest_fields,
 )
+from worldenergydata.field_development.fdp_report import build_fdp_html
 from worldenergydata.field_development.graph import (
     Edge,
     EdgeKind,
@@ -136,4 +137,5 @@ __all__ = [
     "HOST_DEPTH_ENVELOPES_M",
     "backtest_fields",
     "CalibrationReport",
+    "build_fdp_html",
 ]
