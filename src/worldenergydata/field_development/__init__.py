@@ -37,6 +37,17 @@ from worldenergydata.field_development.graph import (
     NodeType,
     concept_to_graph,
 )
+from worldenergydata.field_development.integrations import (
+    Economics,
+    EnrichedConcept,
+    HardwarePicks,
+    VesselFeasibility,
+    dev_system_for,
+    enrich,
+    estimate_economics,
+    hardware_picks,
+    vessel_feasibility,
+)
 from worldenergydata.field_development.layout import (
     compute_pixel_positions,
     compute_positions,
@@ -94,6 +105,15 @@ __all__ = [
     "render_symbol",
     "available_symbols",
     "has_symbol",
+    "enrich",
+    "estimate_economics",
+    "dev_system_for",
+    "vessel_feasibility",
+    "hardware_picks",
+    "Economics",
+    "VesselFeasibility",
+    "HardwarePicks",
+    "EnrichedConcept",
     "sanity_check",
     "is_sane",
     "SanityViolation",
