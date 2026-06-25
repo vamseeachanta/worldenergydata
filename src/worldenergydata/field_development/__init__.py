@@ -28,6 +28,7 @@ from worldenergydata.field_development.loader import (
     load_concept_json,
     validate_concept,
 )
+from worldenergydata.field_development.block import render_block_diagram
 from worldenergydata.field_development.graph import (
     Edge,
     EdgeKind,
@@ -84,6 +85,7 @@ __all__ = [
     "render_layout",
     "compute_positions",
     "compute_pixel_positions",
+    "render_block_diagram",
     "sanity_check",
     "is_sane",
     "SanityViolation",
