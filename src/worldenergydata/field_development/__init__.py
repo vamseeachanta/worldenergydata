@@ -28,6 +28,14 @@ from worldenergydata.field_development.loader import (
     load_concept_json,
     validate_concept,
 )
+from worldenergydata.field_development.graph import (
+    Edge,
+    EdgeKind,
+    GraphSpec,
+    Node,
+    NodeType,
+    concept_to_graph,
+)
 from worldenergydata.field_development.models import SCHEMA_VERSION, FieldConcept
 from worldenergydata.field_development.recommendation import (
     CriteriaWeights,
@@ -62,6 +70,12 @@ __all__ = [
     "ScoredConcept",
     "CriteriaWeights",
     "Thresholds",
+    "concept_to_graph",
+    "GraphSpec",
+    "Node",
+    "Edge",
+    "NodeType",
+    "EdgeKind",
     "sanity_check",
     "is_sane",
     "SanityViolation",
