@@ -13,6 +13,11 @@ draws. Everything downstream (recommendation engine, graph-spec mapper,
 renderers, economics) consumes and produces :class:`FieldConcept`.
 """
 
+from worldenergydata.field_development.block import render_block_diagram
+from worldenergydata.field_development.calibration import (
+    CalibrationReport,
+    backtest_fields,
+)
 from worldenergydata.field_development.enums import (
     ConceptType,
     FlowlineMaterial,
@@ -22,16 +27,6 @@ from worldenergydata.field_development.enums import (
     RiserType,
     Topology,
     TreeType,
-)
-from worldenergydata.field_development.loader import (
-    load_concept,
-    load_concept_json,
-    validate_concept,
-)
-from worldenergydata.field_development.block import render_block_diagram
-from worldenergydata.field_development.calibration import (
-    CalibrationReport,
-    backtest_fields,
 )
 from worldenergydata.field_development.fdp_report import build_fdp_html
 from worldenergydata.field_development.graph import (
@@ -58,6 +53,11 @@ from worldenergydata.field_development.layout import (
     compute_positions,
     render_layout,
 )
+from worldenergydata.field_development.loader import (
+    load_concept,
+    load_concept_json,
+    validate_concept,
+)
 from worldenergydata.field_development.models import SCHEMA_VERSION, FieldConcept
 from worldenergydata.field_development.recommendation import (
     CriteriaWeights,
@@ -65,6 +65,12 @@ from worldenergydata.field_development.recommendation import (
     Thresholds,
     feasible_concepts,
     recommend,
+)
+from worldenergydata.field_development.sanity import (
+    HOST_DEPTH_ENVELOPES_M,
+    SanityViolation,
+    is_sane,
+    sanity_check,
 )
 from worldenergydata.field_development.subseaiq import (
     CrosswalkRow,
@@ -77,12 +83,6 @@ from worldenergydata.field_development.symbols import (
     available_symbols,
     has_symbol,
     render_symbol,
-)
-from worldenergydata.field_development.sanity import (
-    HOST_DEPTH_ENVELOPES_M,
-    SanityViolation,
-    is_sane,
-    sanity_check,
 )
 
 __all__ = [

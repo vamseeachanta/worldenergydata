@@ -23,8 +23,8 @@ from worldenergydata.field_development import (
     recommend,
     vessel_feasibility,
 )
-from worldenergydata.field_development.recommendation import ScoredConcept
 from worldenergydata.field_development.enums import TreeType
+from worldenergydata.field_development.recommendation import ScoredConcept
 
 
 # --------------------------------------------------------------------------- #

@@ -13,8 +13,8 @@ from worldenergydata.field_development import (
     available_symbols,
     concept_to_graph,
     has_symbol,
-    render_symbol,
     render_layout,
+    render_symbol,
 )
 from worldenergydata.field_development.symbols import SYMBOLS
 

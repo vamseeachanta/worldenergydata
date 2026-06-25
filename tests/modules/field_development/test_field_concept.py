@@ -11,10 +11,10 @@ import pytest
 from pydantic import ValidationError
 
 from worldenergydata.field_development import (
+    SCHEMA_VERSION,
     ConceptType,
     FieldConcept,
     FluidType,
-    SCHEMA_VERSION,
     TreeType,
     is_sane,
     load_concept,
