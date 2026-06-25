@@ -30,6 +30,17 @@ from dataclasses import dataclass
 
 from worldenergydata.field_development.graph import GraphSpec, NodeType, concept_to_graph
 from worldenergydata.field_development.models import FieldConcept
+from worldenergydata.field_development.symbols import render_symbol
+
+# Marker size (px) per node type for the plan-view symbols.
+_SYMBOL_SIZE = {
+    NodeType.HOST: 16.0,
+    NodeType.ONSHORE_TERMINAL: 16.0,
+    NodeType.MANIFOLD: 12.0,
+    NodeType.TREE: 8.0,
+    NodeType.WELLHEAD: 8.0,
+    NodeType.EXPORT: 10.0,
+}
 
 DEFAULT_SCALE_PX_PER_KM = 40.0
 TREE_RING_RADIUS_KM = 0.5      # subsea trees ringed around their manifold
@@ -140,16 +151,6 @@ def compute_pixel_positions(
     }
 
 
-_GLYPH = {  # placeholder markers until the #574 symbol library lands
-    NodeType.HOST: ("rect", 22.0),
-    NodeType.ONSHORE_TERMINAL: ("rect", 26.0),
-    NodeType.MANIFOLD: ("square", 16.0),
-    NodeType.TREE: ("circle", 7.0),
-    NodeType.WELLHEAD: ("circle", 7.0),
-    NodeType.EXPORT: ("triangle", 12.0),
-}
-
-
 def render_layout(
     concept: FieldConcept,
     graph: GraphSpec | None = None,
@@ -168,6 +169,7 @@ def render_layout(
     g = graph or concept_to_graph(concept)
     px = compute_pixel_positions(concept, g, scale_px_per_km)
     types = {n.id: n.type for n in g.nodes}
+    symbols = {n.id: n.symbol for n in g.nodes}
     labels = {n.id: n.label for n in g.nodes}
 
     xs = [p[0] for p in px.values()]
@@ -201,36 +203,20 @@ def render_layout(
                 f'stroke="#5a7" stroke-width="1.5"{dash}/>'
             )
 
-    # Nodes.
+    # Nodes: subsea symbol glyph + label.
     for nid, (x, y) in px.items():
-        parts.append(_marker(types[nid], tx(x), ty(y), labels.get(nid, nid)))
+        size = _SYMBOL_SIZE.get(types[nid], 9.0)
+        gx, gy = tx(x), ty(y)
+        parts.append(render_symbol(symbols[nid], gx, gy, size))
+        parts.append(
+            f'<text x="{gx + size + 3:.1f}" y="{gy + 3:.1f}" '
+            f'font-family="sans-serif" font-size="9">{_esc(labels.get(nid, nid))}</text>'
+        )
 
     parts.append(_north_arrow(width))
     parts.append(_scale_bar(scale_px_per_km, height))
     parts.append("</svg>")
     return "\n".join(parts)
-
-
-def _marker(ntype: NodeType, x: float, y: float, label: str) -> str:
-    shape, size = _GLYPH.get(ntype, ("circle", 6.0))
-    if shape == "rect":
-        body = (f'<rect x="{x - size:.1f}" y="{y - size / 1.6:.1f}" '
-                f'width="{2 * size:.1f}" height="{size * 1.25:.1f}" '
-                f'fill="#cde" stroke="#247" stroke-width="1.5"/>')
-    elif shape == "square":
-        body = (f'<rect x="{x - size:.1f}" y="{y - size:.1f}" '
-                f'width="{2 * size:.1f}" height="{2 * size:.1f}" '
-                f'fill="#fec" stroke="#a60" stroke-width="1.5"/>')
-    elif shape == "triangle":
-        body = (f'<polygon points="{x:.1f},{y - size:.1f} '
-                f'{x - size:.1f},{y + size:.1f} {x + size:.1f},{y + size:.1f}" '
-                f'fill="#ddd" stroke="#555" stroke-width="1"/>')
-    else:  # circle
-        body = (f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{size:.1f}" '
-                f'fill="#e8f" stroke="#618" stroke-width="1.5"/>')
-    text = (f'<text x="{x + size + 3:.1f}" y="{y + 3:.1f}" '
-            f'font-family="sans-serif" font-size="9">{_esc(label)}</text>')
-    return body + text
 
 
 def _north_arrow(width: float) -> str:

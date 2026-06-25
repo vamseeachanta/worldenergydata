@@ -50,6 +50,11 @@ from worldenergydata.field_development.recommendation import (
     feasible_concepts,
     recommend,
 )
+from worldenergydata.field_development.symbols import (
+    available_symbols,
+    has_symbol,
+    render_symbol,
+)
 from worldenergydata.field_development.sanity import (
     HOST_DEPTH_ENVELOPES_M,
     SanityViolation,
@@ -86,6 +91,9 @@ __all__ = [
     "compute_positions",
     "compute_pixel_positions",
     "render_block_diagram",
+    "render_symbol",
+    "available_symbols",
+    "has_symbol",
     "sanity_check",
     "is_sane",
     "SanityViolation",
