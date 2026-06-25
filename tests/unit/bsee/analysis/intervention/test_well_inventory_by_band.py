@@ -97,7 +97,9 @@ class TestAggregation:
 
     def test_reconcile_handles_empty_band(self):
         inv = subsea_inventory_by_band(pd.DataFrame({"WATER_DEPTH": [4000]}))
-        rec = reconcile(inv, well_population_by_band(pd.DataFrame({"WATER_DEPTH": [4000]})))
+        rec = reconcile(
+            inv, well_population_by_band(pd.DataFrame({"WATER_DEPTH": [4000]}))
+        )
         assert rec["shelf_lt_500"]["subsea_share"] is None  # no wells -> None, not div0
 
 

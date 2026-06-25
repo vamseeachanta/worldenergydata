@@ -154,7 +154,9 @@ def well_population_by_band(
     return band_counts(pd.to_numeric(wells[depth_col], errors="coerce"))
 
 
-def reconcile(subsea_inv: dict, population: "OrderedDict[str, int]") -> "OrderedDict[str, dict]":
+def reconcile(
+    subsea_inv: dict, population: "OrderedDict[str, int]"
+) -> "OrderedDict[str, dict]":
     """Per band: subsea registry count, total wells, and subsea share."""
     out: "OrderedDict[str, dict]" = OrderedDict()
     subsea_counts = subsea_inv["counts"]
@@ -212,9 +214,7 @@ def load_well_water_depths(data_dir: Optional[Path] = None) -> pd.DataFrame:
     df = df[["API_WELL_NUMBER", "WATER_DEPTH"]].copy()
     df["WATER_DEPTH"] = pd.to_numeric(df["WATER_DEPTH"], errors="coerce")
     df = df.dropna(subset=["WATER_DEPTH"])
-    per_well = (
-        df.groupby("API_WELL_NUMBER", as_index=False)["WATER_DEPTH"].median()
-    )
+    per_well = df.groupby("API_WELL_NUMBER", as_index=False)["WATER_DEPTH"].median()
     return per_well
 
 
