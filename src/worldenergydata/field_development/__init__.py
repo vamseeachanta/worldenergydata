@@ -29,6 +29,13 @@ from worldenergydata.field_development.loader import (
     validate_concept,
 )
 from worldenergydata.field_development.models import SCHEMA_VERSION, FieldConcept
+from worldenergydata.field_development.recommendation import (
+    CriteriaWeights,
+    ScoredConcept,
+    Thresholds,
+    feasible_concepts,
+    recommend,
+)
 from worldenergydata.field_development.sanity import (
     HOST_DEPTH_ENVELOPES_M,
     SanityViolation,
@@ -50,6 +57,11 @@ __all__ = [
     "load_concept",
     "load_concept_json",
     "validate_concept",
+    "recommend",
+    "feasible_concepts",
+    "ScoredConcept",
+    "CriteriaWeights",
+    "Thresholds",
     "sanity_check",
     "is_sane",
     "SanityViolation",
