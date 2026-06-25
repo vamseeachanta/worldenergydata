@@ -140,8 +140,11 @@ def estimate_economics(concept: FieldConcept) -> Economics:
 
 def _rough_npv(concept, capex_mm, discount_rate, mgr, sysname) -> Optional[float]:
     """A coarse annual-cashflow NPV; None if inputs are insufficient."""
-    if not (concept.plateau_rate_boed and concept.oil_price_usd_bbl
-            and concept.field_life_years):
+    if not (
+        concept.plateau_rate_boed
+        and concept.oil_price_usd_bbl
+        and concept.field_life_years
+    ):
         return None
     try:
         from worldenergydata.fdas.api import EconomicsQuery
@@ -163,7 +166,9 @@ def _rough_npv(concept, capex_mm, discount_rate, mgr, sysname) -> Optional[float
 # --------------------------------------------------------------------------- #
 # Vessel feasibility (per candidate concept)
 # --------------------------------------------------------------------------- #
-def vessel_feasibility(concept: FieldConcept, scored: ScoredConcept) -> VesselFeasibility:
+def vessel_feasibility(
+    concept: FieldConcept, scored: ScoredConcept
+) -> VesselFeasibility:
     """Which construction vessels can install this concept at this water depth."""
     vf = VesselFeasibility(needs_pipelay=scored.tree_type == TreeType.WET)
     if concept.water_depth_m is None:
@@ -194,8 +199,9 @@ def vessel_feasibility(concept: FieldConcept, scored: ScoredConcept) -> VesselFe
 # --------------------------------------------------------------------------- #
 # Subsea hardware picks (per candidate concept)
 # --------------------------------------------------------------------------- #
-def hardware_picks(concept: FieldConcept, scored: ScoredConcept,
-                   data_dir: Optional[Path] = None) -> HardwarePicks:
+def hardware_picks(
+    concept: FieldConcept, scored: ScoredConcept, data_dir: Optional[Path] = None
+) -> HardwarePicks:
     """Representative rigid-jumper (wet trees) + mooring (floating host) picks."""
     hp = HardwarePicks()
     base = data_dir or _subsea_data_dir()
@@ -212,6 +218,7 @@ def _pick_jumper(csv_path: Path) -> Optional[str]:
     """Highest pressure-rated rigid jumper as a representative pick."""
     try:
         from worldenergydata.subsea.models.rigid_jumper import load_rigid_jumpers
+
         specs = load_rigid_jumpers(csv_path)
     except Exception:
         return None
@@ -224,6 +231,7 @@ def _pick_mooring(csv_path: Path) -> Optional[str]:
     """Highest-MBL chain component as a representative mooring pick."""
     try:
         from worldenergydata.subsea.models.mooring import load_mooring_components
+
         comps = load_mooring_components(csv_path)
     except Exception:
         return None

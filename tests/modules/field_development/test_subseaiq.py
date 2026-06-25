@@ -73,8 +73,9 @@ def test_load_subseaiq_fields_returns_concepts():
 
 
 def test_unenriched_has_no_concept_type():
-    aasta = next(f for f in load_subseaiq_fields()
-                 if f.name.startswith("Aasta Hansteen"))
+    aasta = next(
+        f for f in load_subseaiq_fields() if f.name.startswith("Aasta Hansteen")
+    )
     assert aasta.concept_type is None and aasta.operator is None
 
 
@@ -84,8 +85,8 @@ def test_unenriched_has_no_concept_type():
 def test_enrich_fills_concept_type_and_operator():
     fields = load_subseaiq_fields(enrich_facilities=True)
     aasta = next(f for f in fields if f.name.startswith("Aasta Hansteen"))
-    assert aasta.concept_type == ConceptType.SPAR     # HOST_TYPE=SPAR
-    assert aasta.operator                              # operator populated
+    assert aasta.concept_type == ConceptType.SPAR  # HOST_TYPE=SPAR
+    assert aasta.operator  # operator populated
 
 
 def test_enrich_picks_subsea_tieback_when_present():
@@ -100,8 +101,9 @@ def test_enrich_is_opt_in():
     # Without enrich, no facility data is attached.
     auger = next(f for f in load_subseaiq_fields() if f.name == "Auger")
     assert auger.concept_type is None
-    auger_e = next(f for f in load_subseaiq_fields(enrich_facilities=True)
-                   if f.name == "Auger")
+    auger_e = next(
+        f for f in load_subseaiq_fields(enrich_facilities=True) if f.name == "Auger"
+    )
     assert auger_e.concept_type == ConceptType.TLP
 
 

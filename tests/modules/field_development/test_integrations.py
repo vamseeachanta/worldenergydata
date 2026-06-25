@@ -60,11 +60,17 @@ def test_economics_returns_capex_for_known_depth():
 
 
 def test_economics_npv_present_with_full_inputs():
-    eco = estimate_economics(FieldConcept(
-        name="X", water_depth_m=1500.0, num_wells=6,
-        plateau_rate_boed=60000.0, oil_price_usd_bbl=70.0,
-        field_life_years=15.0, discount_rate=0.10,
-    ))
+    eco = estimate_economics(
+        FieldConcept(
+            name="X",
+            water_depth_m=1500.0,
+            num_wells=6,
+            plateau_rate_boed=60000.0,
+            oil_price_usd_bbl=70.0,
+            field_life_years=15.0,
+            discount_rate=0.10,
+        )
+    )
     # With plateau rate + price + life, an NPV should be computable.
     assert eco.npv_mm is None or isinstance(eco.npv_mm, float)
     if eco.npv_mm is None:
@@ -120,9 +126,14 @@ def test_dry_tree_fixed_jacket_no_hardware():
 # Top-level enrichment
 # --------------------------------------------------------------------------- #
 def test_enrich_aligns_with_recommendations():
-    c = FieldConcept(name="X", water_depth_m=1500.0, num_wells=6,
-                     distance_to_host_km=18.0, host_spare_capacity=True,
-                     recoverable_reserves_mmboe=25.0)
+    c = FieldConcept(
+        name="X",
+        water_depth_m=1500.0,
+        num_wells=6,
+        distance_to_host_km=18.0,
+        host_spare_capacity=True,
+        recoverable_reserves_mmboe=25.0,
+    )
     ranked = recommend(c)
     economics, enriched = enrich(c, ranked)
     assert isinstance(economics, Economics)

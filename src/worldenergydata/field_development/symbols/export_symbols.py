@@ -15,7 +15,11 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from worldenergydata.field_development.symbols import SYMBOLS, available_symbols, render_symbol
+from worldenergydata.field_development.symbols import (
+    SYMBOLS,
+    available_symbols,
+    render_symbol,
+)
 
 OUT_DIR = Path(__file__).parent
 BOX = 80.0  # preview canvas

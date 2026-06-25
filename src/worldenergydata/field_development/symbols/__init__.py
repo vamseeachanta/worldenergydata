@@ -46,7 +46,7 @@ def _subsea_tree(cx: float, cy: float, s: float) -> str:
         y = cy + s * dy
         b += (
             f'<polygon points="{cx - s * 0.5:.1f},{y - s * 0.3:.1f} '
-            f'{cx + s * 0.5:.1f},{y + s * 0.3:.1f} {cx + s * 0.5:.1f},{y - s * 0.3:.1f} '
+            f"{cx + s * 0.5:.1f},{y + s * 0.3:.1f} {cx + s * 0.5:.1f},{y - s * 0.3:.1f} "
             f'{cx - s * 0.5:.1f},{y + s * 0.3:.1f}" fill="#eccff2" stroke="#6a1b80" '
             f'stroke-width="1.2"/>'
         )
@@ -93,8 +93,8 @@ def _plet(cx: float, cy: float, s: float) -> str:
 def _export(cx: float, cy: float, s: float) -> str:
     b = (
         f'<polygon points="{cx - s:.1f},{cy - s * 0.5:.1f} {cx + s * 0.3:.1f},'
-        f'{cy - s * 0.5:.1f} {cx + s * 0.3:.1f},{cy - s:.1f} {cx + s:.1f},{cy:.1f} '
-        f'{cx + s * 0.3:.1f},{cy + s:.1f} {cx + s * 0.3:.1f},{cy + s * 0.5:.1f} '
+        f"{cy - s * 0.5:.1f} {cx + s * 0.3:.1f},{cy - s:.1f} {cx + s:.1f},{cy:.1f} "
+        f"{cx + s * 0.3:.1f},{cy + s:.1f} {cx + s * 0.3:.1f},{cy + s * 0.5:.1f} "
         f'{cx - s:.1f},{cy + s * 0.5:.1f}" fill="#dddddd" stroke="#555" '
         f'stroke-width="1.2"/>'
     )
@@ -114,8 +114,9 @@ def _existing_host(cx: float, cy: float, s: float) -> str:
     return _wrap(cx, cy, b, "Existing host (tieback)")
 
 
-def _deck_legs(cx: float, cy: float, s: float, body_fill: str, title: str,
-               legs: str) -> str:
+def _deck_legs(
+    cx: float, cy: float, s: float, body_fill: str, title: str, legs: str
+) -> str:
     deck = (
         f'<rect x="{cx - s:.1f}" y="{cy - s:.1f}" width="{s * 2:.1f}" '
         f'height="{s * 0.7:.1f}" fill="{body_fill}" stroke="{_DARK}" '
@@ -127,7 +128,7 @@ def _deck_legs(cx: float, cy: float, s: float, body_fill: str, title: str,
 def _fixed_jacket(cx: float, cy: float, s: float) -> str:
     legs = (
         f'<polygon points="{cx - s * 0.8:.1f},{cy - s * 0.3:.1f} '
-        f'{cx + s * 0.8:.1f},{cy - s * 0.3:.1f} {cx + s * 0.4:.1f},{cy + s:.1f} '
+        f"{cx + s * 0.8:.1f},{cy - s * 0.3:.1f} {cx + s * 0.4:.1f},{cy + s:.1f} "
         f'{cx - s * 0.4:.1f},{cy + s:.1f}" fill="none" stroke="{_DARK}" '
         f'stroke-width="1.3"/>'
         f'<line x1="{cx - s * 0.6:.1f}" y1="{cy - s * 0.3:.1f}" x2="{cx + s * 0.2:.1f}" '
@@ -194,7 +195,7 @@ def _hull(cx: float, cy: float, s: float, title: str, tanks: bool) -> str:
     # Ship-shaped hull (FPSO / FLNG).
     b = (
         f'<path d="M {cx - s:.1f} {cy - s * 0.5:.1f} L {cx + s * 0.7:.1f} '
-        f'{cy - s * 0.5:.1f} L {cx + s:.1f} {cy:.1f} L {cx + s * 0.7:.1f} '
+        f"{cy - s * 0.5:.1f} L {cx + s:.1f} {cy:.1f} L {cx + s * 0.7:.1f} "
         f'{cy + s * 0.5:.1f} L {cx - s:.1f} {cy + s * 0.5:.1f} Z" '
         f'fill="#cde2f7" stroke="{_DARK}" stroke-width="1.5"/>'
     )

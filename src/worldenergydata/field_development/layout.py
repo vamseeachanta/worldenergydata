@@ -28,7 +28,11 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 
-from worldenergydata.field_development.graph import GraphSpec, NodeType, concept_to_graph
+from worldenergydata.field_development.graph import (
+    GraphSpec,
+    NodeType,
+    concept_to_graph,
+)
 from worldenergydata.field_development.models import FieldConcept
 from worldenergydata.field_development.symbols import render_symbol
 
@@ -43,10 +47,10 @@ _SYMBOL_SIZE = {
 }
 
 DEFAULT_SCALE_PX_PER_KM = 40.0
-TREE_RING_RADIUS_KM = 0.5      # subsea trees ringed around their manifold
-MANIFOLD_SPACING_KM = 1.2      # spacing between multiple manifolds (east-west)
-DEFAULT_HOST_OFFSET_KM = 1.5   # host offset when there is no explicit tieback
-EXPORT_BEYOND_HOST_KM = 1.0    # export sink placed beyond the host
+TREE_RING_RADIUS_KM = 0.5  # subsea trees ringed around their manifold
+MANIFOLD_SPACING_KM = 1.2  # spacing between multiple manifolds (east-west)
+DEFAULT_HOST_OFFSET_KM = 1.5  # host offset when there is no explicit tieback
+EXPORT_BEYOND_HOST_KM = 1.0  # export sink placed beyond the host
 MARGIN_PX = 60.0
 
 
@@ -189,7 +193,7 @@ def render_layout(
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width:.0f}" '
         f'height="{height:.0f}" viewBox="0 0 {width:.0f} {height:.0f}">',
         '<rect width="100%" height="100%" fill="white"/>',
-        f'<title>Field layout — {_esc(concept.name)}</title>',
+        f"<title>Field layout — {_esc(concept.name)}</title>",
     ]
 
     # Edges first (under nodes).
@@ -247,6 +251,4 @@ def _scale_bar(scale_px_per_km: float, height: float) -> str:
 
 
 def _esc(s: str) -> str:
-    return (
-        s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-    )
+    return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")

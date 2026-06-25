@@ -117,9 +117,7 @@ def _check_tieback_distance(c: FieldConcept) -> list[SanityViolation]:
                 SanityViolation(
                     code="tieback_missing_distance",
                     field="tieback_distance_km",
-                    message=(
-                        "subsea_tieback concept requires tieback_distance_km > 0"
-                    ),
+                    message=("subsea_tieback concept requires tieback_distance_km > 0"),
                 )
             ]
     return []

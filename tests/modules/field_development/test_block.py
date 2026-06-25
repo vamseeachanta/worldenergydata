@@ -19,7 +19,7 @@ def _box_y(svg: str, label: str) -> float:
     # Each box is "<rect ... y="Y" ...><text ...>LABEL</text>"
     m = re.search(
         r'<rect[^>]*\by="([\d.]+)"[^>]*/>'
-        r'<text[^>]*>' + re.escape(label) + r'</text>',
+        r"<text[^>]*>" + re.escape(label) + r"</text>",
         svg,
     )
     assert m, f"box for {label!r} not found"
@@ -44,8 +44,13 @@ def test_accepts_both_concept_and_graphspec():
 
 
 def test_box_per_node_with_labels():
-    c = FieldConcept(name="X", concept_type=ConceptType.SUBSEA_TIEBACK,
-                     tieback_distance_km=20.0, num_wells=3, num_manifolds=1)
+    c = FieldConcept(
+        name="X",
+        concept_type=ConceptType.SUBSEA_TIEBACK,
+        tieback_distance_km=20.0,
+        num_wells=3,
+        num_manifolds=1,
+    )
     svg = render_block_diagram(c)
     for label in ("Manifold 1", "XT 1", "XT 2", "XT 3", "Export"):
         assert f">{label}</text>" in svg
@@ -55,8 +60,13 @@ def test_box_per_node_with_labels():
 # Layering: export above host above manifold above trees
 # --------------------------------------------------------------------------- #
 def test_layer_order_top_to_bottom():
-    c = FieldConcept(name="X", concept_type=ConceptType.SUBSEA_TIEBACK,
-                     tieback_distance_km=20.0, num_wells=2, num_manifolds=1)
+    c = FieldConcept(
+        name="X",
+        concept_type=ConceptType.SUBSEA_TIEBACK,
+        tieback_distance_km=20.0,
+        num_wells=2,
+        num_manifolds=1,
+    )
     svg = render_block_diagram(c)
     y_export = _box_y(svg, "Export")
     y_host = _box_y(svg, "Existing Host (tieback)")
@@ -78,11 +88,16 @@ def test_dry_tree_has_no_manifold_and_wellheads_below_host():
 # Edge styling distinguishes kinds
 # --------------------------------------------------------------------------- #
 def test_control_edges_dashed_production_solid():
-    c = FieldConcept(name="X", concept_type=ConceptType.SUBSEA_TIEBACK,
-                     tieback_distance_km=20.0, num_wells=2, num_manifolds=1)
+    c = FieldConcept(
+        name="X",
+        concept_type=ConceptType.SUBSEA_TIEBACK,
+        tieback_distance_km=20.0,
+        num_wells=2,
+        num_manifolds=1,
+    )
     svg = render_block_diagram(c)
-    assert "stroke-dasharray" in svg            # control umbilicals dashed
-    assert 'stroke="#3a8f5a"' in svg            # production solid green
+    assert "stroke-dasharray" in svg  # control umbilicals dashed
+    assert 'stroke="#3a8f5a"' in svg  # production solid green
 
 
 def test_edges_use_arrowhead_marker():
@@ -96,6 +111,7 @@ def test_edges_use_arrowhead_marker():
 # Determinism
 # --------------------------------------------------------------------------- #
 def test_deterministic():
-    c = FieldConcept(name="X", concept_type=ConceptType.SEMISUB_FPS,
-                     num_wells=5, num_manifolds=2)
+    c = FieldConcept(
+        name="X", concept_type=ConceptType.SEMISUB_FPS, num_wells=5, num_manifolds=2
+    )
     assert render_block_diagram(c) == render_block_diagram(c)

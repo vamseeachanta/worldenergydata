@@ -23,8 +23,9 @@ def test_library_covers_every_symbol_the_mapper_can_emit():
     """Every `symbol` value concept_to_graph produces must resolve to a glyph."""
     emitted: set[str] = set()
     for ct in ConceptType:
-        g = concept_to_graph(FieldConcept(name="X", concept_type=ct,
-                                          num_wells=2, num_manifolds=1))
+        g = concept_to_graph(
+            FieldConcept(name="X", concept_type=ct, num_wells=2, num_manifolds=1)
+        )
         emitted.update(n.symbol for n in g.nodes)
     missing = {s for s in emitted if not has_symbol(s)}
     assert not missing, f"symbols missing from the library: {missing}"
@@ -53,9 +54,10 @@ def test_every_symbol_renders_nonempty_svg_group():
 
 
 def test_layout_embeds_symbol_titles():
-    svg = render_layout(FieldConcept(name="X", concept_type=ConceptType.SPAR,
-                                     num_wells=2))
-    assert "<title>Spar</title>" in svg            # host glyph
+    svg = render_layout(
+        FieldConcept(name="X", concept_type=ConceptType.SPAR, num_wells=2)
+    )
+    assert "<title>Spar</title>" in svg  # host glyph
     assert "<title>Dry tree / surface wellhead</title>" in svg
 
 
@@ -65,6 +67,7 @@ def test_export_writes_one_svg_per_symbol_and_manifest(tmp_path, monkeypatch):
         "worldenergydata.field_development.symbols.export_symbols.OUT_DIR", tmp_path
     )
     import worldenergydata.field_development.symbols.export_symbols as ex
+
     written = ex.write_all()
     svgs = list(tmp_path.glob("*.svg"))
     assert len(svgs) == len(SYMBOLS)

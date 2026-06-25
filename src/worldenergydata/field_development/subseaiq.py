@@ -33,23 +33,47 @@ from worldenergydata.field_development.models import FieldConcept
 
 # BOEM Gulf-of-Mexico planning-area name → official abbreviation.
 AREA_ABBR: dict[str, str] = {
-    "MISSISSIPPI CANYON": "MC", "GREEN CANYON": "GC", "KEATHLEY CANYON": "KC",
-    "GARDEN BANKS": "GB", "EAST CAMERON": "EC", "WALKER RIDGE": "WR",
-    "ATWATER VALLEY": "AT", "EWING BANK": "EW", "SHIP SHOAL": "SS",
-    "SOUTH TIMBALIER": "ST", "VIOSCA KNOLL": "VK", "WEST CAMERON": "WC",
-    "ALAMINOS CANYON": "AC", "DESOTO CANYON": "DC", "WEST DELTA": "WD",
-    "SOUTH MARSH ISLAND": "SM", "EUGENE ISLAND": "EI", "GRAND ISLE": "GI",
-    "MAIN PASS": "MP", "VERMILION": "VR", "HIGH ISLAND": "HI",
-    "MUSTANG ISLAND": "MU", "MATAGORDA ISLAND": "MI", "LUND": "LU",
-    "SOUTH PASS": "SP", "SOUTH PELTO": "PL", "BRETON SOUND": "BS",
-    "EAST BREAKS": "EB", "LLOYD RIDGE": "LL", "DE SOTO CANYON": "DC",
-    "GALVESTON": "GA", "SABINE PASS": "SB", "PORT ISABEL": "PI",
+    "MISSISSIPPI CANYON": "MC",
+    "GREEN CANYON": "GC",
+    "KEATHLEY CANYON": "KC",
+    "GARDEN BANKS": "GB",
+    "EAST CAMERON": "EC",
+    "WALKER RIDGE": "WR",
+    "ATWATER VALLEY": "AT",
+    "EWING BANK": "EW",
+    "SHIP SHOAL": "SS",
+    "SOUTH TIMBALIER": "ST",
+    "VIOSCA KNOLL": "VK",
+    "WEST CAMERON": "WC",
+    "ALAMINOS CANYON": "AC",
+    "DESOTO CANYON": "DC",
+    "WEST DELTA": "WD",
+    "SOUTH MARSH ISLAND": "SM",
+    "EUGENE ISLAND": "EI",
+    "GRAND ISLE": "GI",
+    "MAIN PASS": "MP",
+    "VERMILION": "VR",
+    "HIGH ISLAND": "HI",
+    "MUSTANG ISLAND": "MU",
+    "MATAGORDA ISLAND": "MI",
+    "LUND": "LU",
+    "SOUTH PASS": "SP",
+    "SOUTH PELTO": "PL",
+    "BRETON SOUND": "BS",
+    "EAST BREAKS": "EB",
+    "LLOYD RIDGE": "LL",
+    "DE SOTO CANYON": "DC",
+    "GALVESTON": "GA",
+    "SABINE PASS": "SB",
+    "PORT ISABEL": "PI",
     "CORPUS CHRISTI": "MU",
 }
 
 
 def _curated_dir() -> Path:
-    return Path(__file__).parents[3] / "data" / "modules" / "offshore_assets" / "curated"
+    return (
+        Path(__file__).parents[3] / "data" / "modules" / "offshore_assets" / "curated"
+    )
 
 
 def _curated_fields_path() -> Path:
@@ -63,7 +87,7 @@ HOST_TYPE_MAP: dict[str, ConceptType] = {
     "TLP": ConceptType.TLP,
     "MINI-TLP": ConceptType.TLP,
     "SPAR": ConceptType.SPAR,
-    "DDCV": ConceptType.SPAR,           # deep-draft caisson vessel ≈ spar
+    "DDCV": ConceptType.SPAR,  # deep-draft caisson vessel ≈ spar
     "SEMISUB": ConceptType.SEMISUB_FPS,
     "FPU/FPS": ConceptType.SEMISUB_FPS,
     "FPSO": ConceptType.FPSO,
@@ -75,9 +99,14 @@ HOST_TYPE_MAP: dict[str, ConceptType] = {
 # subsea-tieback facility means the field is *produced via tieback* (it ties
 # back to a host), so that wins over the host's own type.
 _CONCEPT_PRIORITY = [
-    ConceptType.SUBSEA_TIEBACK, ConceptType.FPSO, ConceptType.SPAR,
-    ConceptType.TLP, ConceptType.SEMISUB_FPS, ConceptType.FIXED_JACKET,
-    ConceptType.FLNG, ConceptType.COMPLIANT_TOWER,
+    ConceptType.SUBSEA_TIEBACK,
+    ConceptType.FPSO,
+    ConceptType.SPAR,
+    ConceptType.TLP,
+    ConceptType.SEMISUB_FPS,
+    ConceptType.FIXED_JACKET,
+    ConceptType.FLNG,
+    ConceptType.COMPLIANT_TOWER,
 ]
 
 
@@ -87,9 +116,9 @@ class CrosswalkRow:
 
     field_name: str
     block: str
-    bsee_block_key: Optional[str]   # e.g. "GC254", or None if unparseable
+    bsee_block_key: Optional[str]  # e.g. "GC254", or None if unparseable
     matched: bool
-    match_type: str                 # "block" | "none" | "unparsed"
+    match_type: str  # "block" | "none" | "unparsed"
 
 
 def bsee_block_key(block: str) -> Optional[tuple[str, int]]:
@@ -128,7 +157,7 @@ def _fluid_from_reserve_type(reserve_type: str) -> Optional[FluidType]:
     if "condensate" in s:
         return FluidType.CONDENSATE
     if "oil" in s and "gas" in s:
-        return FluidType.OIL          # oil-primary for mixed
+        return FluidType.OIL  # oil-primary for mixed
     if "oil" in s:
         return FluidType.OIL
     if "gas" in s:
@@ -201,16 +230,18 @@ def load_subseaiq_fields(
                 continue
             fid = (row.get("FIELD_ID") or "").strip()
             concept_type, operator = picks.get(fid, (None, None))
-            out.append(FieldConcept(
-                name=name,
-                operator=operator,
-                region=(row.get("COUNTRY") or None),
-                water_depth_m=_float(row.get("WATER_DEPTH_M")),
-                fluid_type=_fluid_from_reserve_type(row.get("RESERVE_TYPE", "")),
-                concept_type=concept_type,
-                year_first_oil=_year(row.get("PRODUCTION_START")),
-                data_source="SubseaIQ (og-website-db, ~2014)",
-            ))
+            out.append(
+                FieldConcept(
+                    name=name,
+                    operator=operator,
+                    region=(row.get("COUNTRY") or None),
+                    water_depth_m=_float(row.get("WATER_DEPTH_M")),
+                    fluid_type=_fluid_from_reserve_type(row.get("RESERVE_TYPE", "")),
+                    concept_type=concept_type,
+                    year_first_oil=_year(row.get("PRODUCTION_START")),
+                    data_source="SubseaIQ (og-website-db, ~2014)",
+                )
+            )
     return out
 
 
@@ -248,10 +279,15 @@ def build_bsee_crosswalk(
                 rows.append(CrosswalkRow(name, block, None, False, "unparsed"))
                 continue
             matched = key in bsee_keys
-            rows.append(CrosswalkRow(
-                name, block, key_to_code(key), matched,
-                "block" if matched else "none",
-            ))
+            rows.append(
+                CrosswalkRow(
+                    name,
+                    block,
+                    key_to_code(key),
+                    matched,
+                    "block" if matched else "none",
+                )
+            )
     return rows
 
 

@@ -136,9 +136,7 @@ def test_depth_outside_host_envelope_flagged():
 
 
 def test_depth_within_envelope_not_flagged():
-    c = FieldConcept(
-        name="X", concept_type=ConceptType.SPAR, water_depth_m=2400.0
-    )
+    c = FieldConcept(name="X", concept_type=ConceptType.SPAR, water_depth_m=2400.0)
     codes = {v.code for v in sanity_check(c)}
     assert "depth_outside_host_envelope" not in codes
 
@@ -177,8 +175,9 @@ def test_load_concept_from_dict():
 
 
 def test_load_concept_json_roundtrip(tmp_path: Path):
-    src = FieldConcept(name="Mensa", concept_type=ConceptType.SUBSEA_TIEBACK,
-                       tieback_distance_km=109.0)
+    src = FieldConcept(
+        name="Mensa", concept_type=ConceptType.SUBSEA_TIEBACK, tieback_distance_km=109.0
+    )
     p = tmp_path / "concept.json"
     p.write_text(src.model_dump_json(), encoding="utf-8")
     loaded = load_concept_json(p)
@@ -189,10 +188,10 @@ def test_load_concept_json_roundtrip(tmp_path: Path):
 # JSON Schema stays in sync with the model
 # --------------------------------------------------------------------------- #
 def test_committed_json_schema_matches_model():
-    assert SCHEMA_PATH.exists(), (
-        "field_concept.schema.json missing — run export_schema.py"
-    )
+    assert (
+        SCHEMA_PATH.exists()
+    ), "field_concept.schema.json missing — run export_schema.py"
     committed = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
-    assert committed == build_schema(), (
-        "Committed JSON schema is stale — re-run export_schema.py"
-    )
+    assert (
+        committed == build_schema()
+    ), "Committed JSON schema is stale — re-run export_schema.py"

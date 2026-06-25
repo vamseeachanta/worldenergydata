@@ -168,8 +168,13 @@ class FieldConcept(BaseModel):
         return v
 
     @field_validator(
-        "num_wells", "num_trees", "num_manifolds",
-        "year_concept", "year_feed", "year_fid", "year_first_oil",
+        "num_wells",
+        "num_trees",
+        "num_manifolds",
+        "year_concept",
+        "year_feed",
+        "year_fid",
+        "year_first_oil",
     )
     @classmethod
     def counts_and_years_non_negative(cls, v: Optional[int]) -> Optional[int]:

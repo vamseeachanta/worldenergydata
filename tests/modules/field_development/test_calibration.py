@@ -36,8 +36,9 @@ def test_shallow_field_back_tests_to_fixed_jacket():
     # A small synthetic sample: shallow fields should resolve to fixed_jacket
     # (the NUI over-pick that calibration fixed).
     sample = [
-        FieldConcept(name=f"shelf{i}", water_depth_m=d,
-                     concept_type=ConceptType.FIXED_JACKET)
+        FieldConcept(
+            name=f"shelf{i}", water_depth_m=d, concept_type=ConceptType.FIXED_JACKET
+        )
         for i, d in enumerate([60, 90, 120, 200, 250])
     ]
     rep = backtest_fields(sample, k=1)

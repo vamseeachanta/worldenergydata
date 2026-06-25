@@ -36,7 +36,7 @@ _RANK = {
     NodeType.ONSHORE_TERMINAL: 1,
     NodeType.MANIFOLD: 2,
     NodeType.TREE: 3,
-    NodeType.WELLHEAD: 2,   # dry trees attach directly to the host (no manifold)
+    NodeType.WELLHEAD: 2,  # dry trees attach directly to the host (no manifold)
 }
 
 _FILL = {
@@ -116,7 +116,7 @@ def render_block_diagram(source: FieldConcept | GraphSpec) -> str:
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{canvas_w:.0f}" '
         f'height="{canvas_h:.0f}" viewBox="0 0 {canvas_w:.0f} {canvas_h:.0f}">',
         '<rect width="100%" height="100%" fill="white"/>',
-        f'<title>Subsea architecture — {_esc(g.field_name)}</title>',
+        f"<title>Subsea architecture — {_esc(g.field_name)}</title>",
         _arrow_defs(),
     ]
 
@@ -146,8 +146,9 @@ def _box(ntype: NodeType, cx: float, cy: float, label: str) -> str:
     )
 
 
-def _edge(src: tuple[float, float], tgt: tuple[float, float],
-          kind: EdgeKind, label: str) -> str:
+def _edge(
+    src: tuple[float, float], tgt: tuple[float, float], kind: EdgeKind, label: str
+) -> str:
     x1, y1 = src
     x2, y2 = tgt
     if kind == EdgeKind.CONTROL:
@@ -163,8 +164,10 @@ def _edge(src: tuple[float, float], tgt: tuple[float, float],
     txt = ""
     if label:
         mx, my = (x1 + x2) / 2, (y1 + y2) / 2
-        txt = (f'<text x="{mx + 3:.1f}" y="{my:.1f}" font-family="sans-serif" '
-               f'font-size="8" fill="#444">{_esc(label)}</text>')
+        txt = (
+            f'<text x="{mx + 3:.1f}" y="{my:.1f}" font-family="sans-serif" '
+            f'font-size="8" fill="#444">{_esc(label)}</text>'
+        )
     return line + txt
 
 
@@ -172,7 +175,7 @@ def _arrow_defs() -> str:
     return (
         '<defs><marker id="ah" markerWidth="8" markerHeight="8" refX="6" '
         'refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#666"/>'
-        '</marker></defs>'
+        "</marker></defs>"
     )
 
 

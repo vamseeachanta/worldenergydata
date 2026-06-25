@@ -25,7 +25,7 @@ the same input yields the same ranking.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field, replace
+from dataclasses import dataclass, field
 
 from worldenergydata.field_development.enums import (
     ConceptType,
@@ -37,8 +37,7 @@ from worldenergydata.field_development.enums import (
 from worldenergydata.field_development.models import FieldConcept
 from worldenergydata.field_development.sanity import HOST_DEPTH_ENVELOPES_M
 
-CRITERIA = ("capex", "opex", "schedule", "recovery", "flexibility", "risk",
-            "depth_fit")
+CRITERIA = ("capex", "opex", "schedule", "recovery", "flexibility", "risk", "depth_fit")
 
 
 @dataclass(frozen=True)
@@ -74,7 +73,7 @@ DEPTH_SWEET_M: dict[ConceptType, tuple[float, float]] = {
     ConceptType.SEMISUB_FPS: (1000.0, 2600.0),
     ConceptType.FPSO: (700.0, 3000.0),
     ConceptType.FLNG: (700.0, 3000.0),
-    ConceptType.SUBSEA_TIEBACK: (0.0, 3000.0),     # flat — depends on host
+    ConceptType.SUBSEA_TIEBACK: (0.0, 3000.0),  # flat — depends on host
     ConceptType.SUBSEA_TO_SHORE: (0.0, 3000.0),
 }
 _DEPTH_DECAY_M = 500.0  # linear fall-off outside the sweet-spot band
@@ -98,12 +97,12 @@ def _depth_fit(concept: ConceptType, depth_m: float | None) -> float:
 class Thresholds:
     """Decision thresholds, sourced to the concept-selection briefing (§A5–A6)."""
 
-    tieback_max_km: float = 60.0          # practical host-vs-tieback pivot
+    tieback_max_km: float = 60.0  # practical host-vs-tieback pivot
     tieback_marginal_mmboe: float = 50.0  # below this, tieback is favoured
     flow_assurance_warn_km: float = 32.0  # ~20 mi — economics deteriorate beyond
-    hydrate_risk_km: float = 80.0         # long tiebacks need active heating/inhibition
-    tieback_hard_max_km: float = 200.0    # beyond longest field records — infeasible
-    nui_max_wells: int = 6                # NUI/minimal facility is for few wells
+    hydrate_risk_km: float = 80.0  # long tiebacks need active heating/inhibition
+    tieback_hard_max_km: float = 200.0  # beyond longest field records — infeasible
+    nui_max_wells: int = 6  # NUI/minimal facility is for few wells
 
 
 @dataclass
@@ -124,31 +123,46 @@ class ScoredConcept:
 # Sourced qualitatively from briefing §A3–A5 (relative CAPEX, intervention cost,
 # schedule, recovery, placement flexibility, baseline execution risk).
 _CONCEPT_PROFILES: dict[ConceptType, dict[str, float]] = {
-    ConceptType.SUBSEA_TIEBACK: dict(capex=0.95, opex=0.70, schedule=0.95,
-                                      recovery=0.55, flexibility=0.80, risk=0.70),
-    ConceptType.NUI:            dict(capex=0.60, opex=0.70, schedule=0.70,
-                                     recovery=0.45, flexibility=0.35, risk=0.60),
-    ConceptType.FIXED_JACKET:   dict(capex=0.70, opex=0.80, schedule=0.65,
-                                     recovery=0.85, flexibility=0.55, risk=0.80),
-    ConceptType.COMPLIANT_TOWER: dict(capex=0.45, opex=0.70, schedule=0.45,
-                                      recovery=0.80, flexibility=0.45, risk=0.55),
-    ConceptType.TLP:            dict(capex=0.45, opex=0.80, schedule=0.50,
-                                     recovery=0.90, flexibility=0.45, risk=0.65),
-    ConceptType.SPAR:           dict(capex=0.40, opex=0.80, schedule=0.45,
-                                     recovery=0.90, flexibility=0.45, risk=0.65),
-    ConceptType.SEMISUB_FPS:    dict(capex=0.50, opex=0.65, schedule=0.55,
-                                     recovery=0.70, flexibility=0.85, risk=0.70),
-    ConceptType.FPSO:           dict(capex=0.40, opex=0.55, schedule=0.50,
-                                     recovery=0.70, flexibility=0.85, risk=0.65),
-    ConceptType.FLNG:           dict(capex=0.25, opex=0.50, schedule=0.35,
-                                     recovery=0.65, flexibility=0.70, risk=0.45),
-    ConceptType.SUBSEA_TO_SHORE: dict(capex=0.55, opex=0.85, schedule=0.55,
-                                      recovery=0.60, flexibility=0.70, risk=0.55),
+    ConceptType.SUBSEA_TIEBACK: dict(
+        capex=0.95, opex=0.70, schedule=0.95, recovery=0.55, flexibility=0.80, risk=0.70
+    ),
+    ConceptType.NUI: dict(
+        capex=0.60, opex=0.70, schedule=0.70, recovery=0.45, flexibility=0.35, risk=0.60
+    ),
+    ConceptType.FIXED_JACKET: dict(
+        capex=0.70, opex=0.80, schedule=0.65, recovery=0.85, flexibility=0.55, risk=0.80
+    ),
+    ConceptType.COMPLIANT_TOWER: dict(
+        capex=0.45, opex=0.70, schedule=0.45, recovery=0.80, flexibility=0.45, risk=0.55
+    ),
+    ConceptType.TLP: dict(
+        capex=0.45, opex=0.80, schedule=0.50, recovery=0.90, flexibility=0.45, risk=0.65
+    ),
+    ConceptType.SPAR: dict(
+        capex=0.40, opex=0.80, schedule=0.45, recovery=0.90, flexibility=0.45, risk=0.65
+    ),
+    ConceptType.SEMISUB_FPS: dict(
+        capex=0.50, opex=0.65, schedule=0.55, recovery=0.70, flexibility=0.85, risk=0.70
+    ),
+    ConceptType.FPSO: dict(
+        capex=0.40, opex=0.55, schedule=0.50, recovery=0.70, flexibility=0.85, risk=0.65
+    ),
+    ConceptType.FLNG: dict(
+        capex=0.25, opex=0.50, schedule=0.35, recovery=0.65, flexibility=0.70, risk=0.45
+    ),
+    ConceptType.SUBSEA_TO_SHORE: dict(
+        capex=0.55, opex=0.85, schedule=0.55, recovery=0.60, flexibility=0.70, risk=0.55
+    ),
 }
 
 # Which concepts carry dry vs wet trees (briefing §A3).
-_DRY_TREE = {ConceptType.FIXED_JACKET, ConceptType.COMPLIANT_TOWER,
-             ConceptType.TLP, ConceptType.SPAR, ConceptType.NUI}
+_DRY_TREE = {
+    ConceptType.FIXED_JACKET,
+    ConceptType.COMPLIANT_TOWER,
+    ConceptType.TLP,
+    ConceptType.SPAR,
+    ConceptType.NUI,
+}
 
 
 def _tieback_possible(c: FieldConcept, th: Thresholds) -> bool:
@@ -216,8 +230,10 @@ def _processing_triggers(c: FieldConcept, th: Thresholds) -> list[str]:
     out: list[str] = []
     if c.distance_to_host_km and c.distance_to_host_km >= th.tieback_max_km:
         out.append("multiphase_boosting")
-    if c.fluid_type and c.fluid_type.value in ("gas", "gas_condensate") and (
-        c.distance_to_host_km and c.distance_to_host_km >= th.hydrate_risk_km
+    if (
+        c.fluid_type
+        and c.fluid_type.value in ("gas", "gas_condensate")
+        and (c.distance_to_host_km and c.distance_to_host_km >= th.hydrate_risk_km)
     ):
         out.append("subsea_compression")
     return out
@@ -304,7 +320,10 @@ def _score_concept(
 
     # --- Metocean: hurricanes penalise permanently-moored FPSO unless ---
     # --- disconnectable; harsh-persistent favours robust fixed/subsea. ---
-    if c.metocean_regime == MetoceanRegime.HURRICANE_CYCLONE and concept == ConceptType.FPSO:
+    if (
+        c.metocean_regime == MetoceanRegime.HURRICANE_CYCLONE
+        and concept == ConceptType.FPSO
+    ):
         scores["risk"] = max(0.0, scores["risk"] - 0.20)
         warnings.append("hurricane regime: FPSO needs a disconnectable turret")
 

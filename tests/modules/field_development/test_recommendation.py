@@ -65,7 +65,7 @@ def test_large_ultradeep_far_field_prefers_standalone_over_tieback():
         name="Big-Deep",
         water_depth_m=2500.0,
         recoverable_reserves_mmboe=600.0,
-        distance_to_host_km=140.0,   # far
+        distance_to_host_km=140.0,  # far
         host_spare_capacity=False,
         num_wells=20,
     )
@@ -96,8 +96,15 @@ def test_scores_are_bounded_and_total_present():
     for sc in ranked:
         assert isinstance(sc, ScoredConcept)
         assert 0.0 <= sc.total_score <= 1.0
-        assert set(sc.scores) == {"capex", "opex", "schedule", "recovery",
-                                  "flexibility", "risk", "depth_fit"}
+        assert set(sc.scores) == {
+            "capex",
+            "opex",
+            "schedule",
+            "recovery",
+            "flexibility",
+            "risk",
+            "depth_fit",
+        }
         assert all(0.0 <= v <= 1.0 for v in sc.scores.values())
 
 
@@ -145,12 +152,13 @@ def test_long_tieback_warns_on_flow_assurance():
 
 def test_hurricane_penalises_fpso():
     base = FieldConcept(name="GoM", water_depth_m=1500.0)
-    storm = FieldConcept(name="GoM", water_depth_m=1500.0,
-                         metocean_regime=MetoceanRegime.HURRICANE_CYCLONE)
-    fpso_calm = next(s for s in recommend(base)
-                     if s.concept_type == ConceptType.FPSO)
-    fpso_storm = next(s for s in recommend(storm)
-                      if s.concept_type == ConceptType.FPSO)
+    storm = FieldConcept(
+        name="GoM",
+        water_depth_m=1500.0,
+        metocean_regime=MetoceanRegime.HURRICANE_CYCLONE,
+    )
+    fpso_calm = next(s for s in recommend(base) if s.concept_type == ConceptType.FPSO)
+    fpso_storm = next(s for s in recommend(storm) if s.concept_type == ConceptType.FPSO)
     assert fpso_storm.scores["risk"] < fpso_calm.scores["risk"]
     assert any("disconnectable turret" in w for w in fpso_storm.warnings)
 
@@ -159,8 +167,13 @@ def test_hurricane_penalises_fpso():
 # Determinism + config-as-data
 # --------------------------------------------------------------------------- #
 def test_deterministic_same_input_same_ranking():
-    c = FieldConcept(name="X", water_depth_m=1300.0, num_wells=10,
-                     distance_to_host_km=25.0, host_spare_capacity=True)
+    c = FieldConcept(
+        name="X",
+        water_depth_m=1300.0,
+        num_wells=10,
+        distance_to_host_km=25.0,
+        host_spare_capacity=True,
+    )
     r1 = recommend(c)
     r2 = recommend(c)
     assert [s.concept_type for s in r1] == [s.concept_type for s in r2]
@@ -169,25 +182,39 @@ def test_deterministic_same_input_same_ranking():
 
 def test_weights_are_config_not_magic_numbers():
     # Crank CAPEX weight to the exclusion of all else -> cheapest concept wins.
-    c = FieldConcept(name="X", water_depth_m=1300.0,
-                     distance_to_host_km=15.0, host_spare_capacity=True,
-                     recoverable_reserves_mmboe=10.0)
-    capex_only = CriteriaWeights(capex=1.0, opex=0.0, schedule=0.0,
-                                 recovery=0.0, flexibility=0.0, risk=0.0)
+    c = FieldConcept(
+        name="X",
+        water_depth_m=1300.0,
+        distance_to_host_km=15.0,
+        host_spare_capacity=True,
+        recoverable_reserves_mmboe=10.0,
+    )
+    capex_only = CriteriaWeights(
+        capex=1.0, opex=0.0, schedule=0.0, recovery=0.0, flexibility=0.0, risk=0.0
+    )
     ranked = recommend(c, weights=capex_only)
     # Subsea tieback has the highest capex sub-score (0.95).
     assert ranked[0].concept_type == ConceptType.SUBSEA_TIEBACK
 
 
 def test_thresholds_override_changes_tieback_attractiveness():
-    c = FieldConcept(name="X", water_depth_m=1200.0, distance_to_host_km=50.0,
-                     host_spare_capacity=True, recoverable_reserves_mmboe=30.0)
+    c = FieldConcept(
+        name="X",
+        water_depth_m=1200.0,
+        distance_to_host_km=50.0,
+        host_spare_capacity=True,
+        recoverable_reserves_mmboe=30.0,
+    )
     # Default tieback_max_km=60 -> 50 km is attractive (no "not attractive" warn).
-    tb_default = next(s for s in recommend(c)
-                      if s.concept_type == ConceptType.SUBSEA_TIEBACK)
+    tb_default = next(
+        s for s in recommend(c) if s.concept_type == ConceptType.SUBSEA_TIEBACK
+    )
     assert not any("not clearly attractive" in w for w in tb_default.warnings)
     # Tighten the threshold below 50 km -> now flagged as not clearly attractive.
     tight = Thresholds(tieback_max_km=40.0)
-    tb_tight = next(s for s in recommend(c, thresholds=tight)
-                    if s.concept_type == ConceptType.SUBSEA_TIEBACK)
+    tb_tight = next(
+        s
+        for s in recommend(c, thresholds=tight)
+        if s.concept_type == ConceptType.SUBSEA_TIEBACK
+    )
     assert any("not clearly attractive" in w for w in tb_tight.warnings)

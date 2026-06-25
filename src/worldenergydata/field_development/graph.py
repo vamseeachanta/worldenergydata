@@ -38,21 +38,21 @@ _DRY_TREE_CONCEPTS = {
 class NodeType(str, Enum):
     """DEXPI-aligned node kinds for the subsea architecture graph."""
 
-    HOST = "host"                      # the production facility (or existing host)
+    HOST = "host"  # the production facility (or existing host)
     ONSHORE_TERMINAL = "onshore_terminal"
     MANIFOLD = "manifold"
-    TREE = "tree"                      # subsea (wet) tree
-    WELLHEAD = "wellhead"              # dry tree / surface wellhead on the host
-    PLET = "plet"                      # pipeline end termination
-    EXPORT = "export"                  # export sink (pipeline / terminal)
+    TREE = "tree"  # subsea (wet) tree
+    WELLHEAD = "wellhead"  # dry tree / surface wellhead on the host
+    PLET = "plet"  # pipeline end termination
+    EXPORT = "export"  # export sink (pipeline / terminal)
 
 
 class EdgeKind(str, Enum):
     """Connection kinds between nodes."""
 
-    PRODUCTION = "production"          # flowline / production riser
-    CONTROL = "control"               # umbilical (hydraulic/electric/chemical)
-    EXPORT = "export"                 # export line
+    PRODUCTION = "production"  # flowline / production riser
+    CONTROL = "control"  # umbilical (hydraulic/electric/chemical)
+    EXPORT = "export"  # export line
 
 
 @dataclass(frozen=True)
@@ -87,12 +87,8 @@ class GraphSpec:
         """Serialize to plain dicts (enum values as strings) for renderers."""
         return {
             "field_name": self.field_name,
-            "nodes": [
-                {**asdict(n), "type": n.type.value} for n in self.nodes
-            ],
-            "edges": [
-                {**asdict(e), "kind": e.kind.value} for e in self.edges
-            ],
+            "nodes": [{**asdict(n), "type": n.type.value} for n in self.nodes],
+            "edges": [{**asdict(e), "kind": e.kind.value} for e in self.edges],
         }
 
     def node_ids(self) -> set[str]:
@@ -111,11 +107,11 @@ def _uses_wet_trees(c: FieldConcept) -> bool:
 def _host_node(c: FieldConcept) -> Node:
     """Build the host (or existing-host / onshore-terminal) node."""
     if c.concept_type == ConceptType.SUBSEA_TO_SHORE:
-        return Node("host", NodeType.ONSHORE_TERMINAL, "Onshore Terminal",
-                    "onshore_terminal")
+        return Node(
+            "host", NodeType.ONSHORE_TERMINAL, "Onshore Terminal", "onshore_terminal"
+        )
     if c.concept_type == ConceptType.SUBSEA_TIEBACK:
-        return Node("host", NodeType.HOST, "Existing Host (tieback)",
-                    "existing_host")
+        return Node("host", NodeType.HOST, "Existing Host (tieback)", "existing_host")
     symbol = c.concept_type.value if c.concept_type else "host"
     label = c.concept_type.value.replace("_", " ").upper() if c.concept_type else "Host"
     return Node("host", NodeType.HOST, label, symbol)
@@ -173,8 +169,14 @@ def _build_subsea(g: GraphSpec, c: FieldConcept, host: Node, n_trees: int) -> No
     # Manifold -> host: production flowline + control umbilical (host -> manifold).
     pigging = c.topology == Topology.PIGGING_LOOP
     for mf in manifolds:
-        g.edges.append(Edge(mf.id, host.id, EdgeKind.PRODUCTION,
-                            "flowline loop" if pigging else "flowline"))
+        g.edges.append(
+            Edge(
+                mf.id,
+                host.id,
+                EdgeKind.PRODUCTION,
+                "flowline loop" if pigging else "flowline",
+            )
+        )
         g.edges.append(Edge(host.id, mf.id, EdgeKind.CONTROL, "umbilical"))
 
     # Trees distributed round-robin across manifolds.

@@ -66,8 +66,9 @@ def backtest_fields(
     """
     if fields is None:
         fields = load_subseaiq_fields(enrich_facilities=True)
-    eligible = [f for f in fields
-                if f.concept_type is not None and f.water_depth_m is not None]
+    eligible = [
+        f for f in fields if f.concept_type is not None and f.water_depth_m is not None
+    ]
 
     rep = CalibrationReport(n=len(eligible), k=k)
     conf: collections.Counter = collections.Counter()
