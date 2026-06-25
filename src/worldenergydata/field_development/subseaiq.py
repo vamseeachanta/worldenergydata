@@ -42,6 +42,9 @@ AREA_ABBR: dict[str, str] = {
     "MAIN PASS": "MP", "VERMILION": "VR", "HIGH ISLAND": "HI",
     "MUSTANG ISLAND": "MU", "MATAGORDA ISLAND": "MI", "LUND": "LU",
     "SOUTH PASS": "SP", "SOUTH PELTO": "PL", "BRETON SOUND": "BS",
+    "EAST BREAKS": "EB", "LLOYD RIDGE": "LL", "DE SOTO CANYON": "DC",
+    "GALVESTON": "GA", "SABINE PASS": "SB", "PORT ISABEL": "PI",
+    "CORPUS CHRISTI": "MU",
 }
 
 
@@ -72,10 +75,14 @@ def bsee_block_key(block: str) -> Optional[tuple[str, int]]:
     if not block:
         return None
     s = str(block).upper().split(",")[0].strip()
-    # Full area name + number.
+    # Full area name + number. Drop stray "BLOCK"/"AREA"/"LEASE" filler words
+    # ("Main Pass Block 123", "Galveston Area 255").
     m = re.match(r"([A-Z][A-Z ]+?)\s+0*(\d+)", s)
-    if m and m.group(1).strip() in AREA_ABBR:
-        return (AREA_ABBR[m.group(1).strip()], int(m.group(2)))
+    if m:
+        area = re.sub(r"\b(BLOCK|AREA|LEASE)\b", " ", m.group(1)).strip()
+        area = re.sub(r"\s+", " ", area)
+        if area in AREA_ABBR:
+            return (AREA_ABBR[area], int(m.group(2)))
     # Already-abbreviated two-letter code + number ("MC26", "GC 254").
     m2 = re.match(r"([A-Z]{2})\s*0*(\d+)$", s)
     if m2:

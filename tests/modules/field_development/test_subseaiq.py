@@ -38,6 +38,17 @@ def test_zero_padding_normalized_via_int():
     assert bsee_block_key("WD030") == ("WD", 30)
 
 
+def test_extended_area_names_parse():
+    assert bsee_block_key("East Breaks 602") == ("EB", 602)
+    assert bsee_block_key("Lloyd Ridge 5") == ("LL", 5)
+
+
+def test_filler_words_stripped():
+    # "BLOCK"/"AREA" filler between the area name and the block number.
+    assert bsee_block_key("Main Pass Block 299") == ("MP", 299)
+    assert bsee_block_key("Galveston Area 255") == ("GA", 255)
+
+
 def test_non_gom_block_returns_none():
     assert bsee_block_key("PL 218 - 6706/12") is None  # North Sea licence
     assert bsee_block_key("") is None

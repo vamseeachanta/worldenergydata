@@ -1,0 +1,334 @@
+og_field_name,block,bsee_block_code,match_type,matched
+Aconcagua,Mississippi Canyon 305,MC305,block,1
+Aegean,Keathley Canyon 163,KC163,none,0
+Allegheny,Green Canyon 254,GC254,block,1
+Allegheny South,Green Canyon 298,GC298,none,0
+Amberjack,"Mississippi Canyon 108, 109, 110",MC108,none,0
+Amethyst,MC26,MC26,block,1
+Andrew,Keathley Canyon 119,KC119,none,0
+Anduin,Mississippi Canyon 755,MC755,block,1
+Anduin West,Mississippi Canyon 754,MC754,none,0
+Angel Fire,"Green Canyon 370, 371, 327",GC370,none,0
+Angelica,East Cameron 115,EC115,block,1
+Angostura,Green Canyon 304,GC304,none,0
+Angus,"Green Canyon 112, 113",GC112,block,1
+Antietam,DeSoto Canyon 268,DC268,none,0
+Appaloosa,"Mississippi Canyon 459, 460 and Partial 503, 504",MC459,none,0
+Appomattox,"Mississippi Canyon 391, 392",MC391,none,0
+Ardennes,Green Canyon 896,GC896,none,0
+Ariel,Mississippi Canyon 429,MC429,block,1
+Armstrong,Mississippi Canyon 162,MC162,block,1
+Arnold,Ewing Bank 963,EW963,block,1
+Aspen,Green Canyon 243,GC243,block,1
+Atlantis,"Green Canyon 699, 742, 743",GC699,none,0
+Atlantis North,Green Canyon 743,GC743,block,1
+Atlas NW,Lloyd Ridge 5,LL5,block,1
+Auger,"Garden Banks 426, 427, 470, 471",GB426,block,1
+Baccarat,Green Canyon 178,GC178,block,1
+Backslice,Garden Banks 248,GB248,none,0
+Balboa,East Breaks 597,EB597,block,1
+Baldpate,"Garden Banks 259, 260",GB259,none,0
+Baracuda,High Island 171,HI171,none,0
+Barataria,Main Pass Block 28,MP28,none,0
+Barbosa,Ship Shoal 185,SS185,none,0
+Bass Lite,"Atwater Valley 380, 381, 425, 426",AT380,none,0
+Beta,"POCS 300, 301, 306",,unparsed,0
+Big Bend (Noble),Mississippi Canyon 698,MC698,block,1
+Big Bend (Petrobras),Mississippi Canyon 697,MC697,none,0
+Big Foot,Walker Ridge 29,WR29,block,1
+Bimini,Garden Banks 213,GB213,none,0
+Bioko,Keathley Canyon 698,KC698,none,0
+Black Pearl,Green Canyon 423,GC423,none,0
+Blackbeard East,South Timbalier 144,ST144,none,0
+Blackbeard West,Ship Shoal Block 188,SS188,none,0
+Blacktail,"Garden Banks 77, 78, 121, 122",GB77,none,0
+Blind Faith,"Mississippi Canyon 695, 696",MC695,none,0
+Blueberry Hill,Louisiana State 340,,unparsed,0
+Bluto,Mississippi 431,,unparsed,0
+Bolt,"Walker Ridge 452, 453",WR452,none,0
+Bonanza,"Keathley Canyon 626, 627",KC626,none,0
+Bonito,"High Island A5, A6",,unparsed,0
+Boomvang,"East Breaks 598, 599, 642, 643, 688",EB598,none,0
+Boonville,Green Canyon 618,GC618,none,0
+Boris,Green Canyon 282,GC282,block,1
+Boudin,Eugene Island 26,EI26,none,0
+Brisbane,Atwater Valley 187,AT187,none,0
+Brutus,"Green Canyon 158, 202",GC158,block,1
+Buckskin,Keathley Canyon 872,KC872,block,1
+Bud,"Main Pass 251, 252",MP251,none,0
+Bullwinkle,Green Canyon 65,GC65,block,1
+Burger,"6714, 6764, and 6912",,unparsed,0
+Bushwood (Geauxpher),"Garden Banks 462, 463",GB462,block,1
+Caesar,Green Canyon 683,GC683,none,0
+Callisto,Mississippi Canyon 876,MC876,block,1
+Camden Hills,Mississippi Canyon 348,MC348,block,1
+Capella,"Keathley Canyon 414, 415",KC414,none,0
+Cardamom,"Garden Banks 427, 471",GB427,none,0
+Cardona,Mississippi Canyon 29,MC29,block,1
+Cardona South,Mississippi Canyon 29,MC29,block,1
+Cascade,"Walker Ridge 205, 206, 249, 250",WR205,none,0
+Catalina,Green Canyon 996,GC996,none,0
+Cheyenne,Lloyd Ridge 399,LL399,block,1
+Cheyenne East,Lloyd Ridge 400,LL400,none,0
+Chimichanga,Garden Banks 128,GB128,none,0
+Chinook,"Walker Ridge 469, 425",WR469,block,1
+Clipper,"Green Canyon 299, 300",GC299,block,1
+Cobra,Alaminos Canyon 810,AC810,none,0
+Cognac,"Mississippi Canyon 108, 151, 194, 195",MC108,none,0
+Colonial,"Keathley Canyon 383, 384",KC383,none,0
+Conger,Garden Banks 215,GB215,none,0
+Constitution,Green Canyon 680,GC680,block,1
+Coral,DeSoto Canyon 927,DC927,none,0
+Cornelius,Mississippi Canyon 390,MC390,none,0
+Corona Del Mar,Green Canyon 949,GC949,none,0
+Coronado,"Walker Ridge 143, 98",WR143,none,0
+Cosmopolitan,"OCS-Y-01664, OCS-Y-01665",,unparsed,0
+Cottonwood,Garden Banks 244,GB244,block,1
+Coulomb,"Mississippi Canyon 657, 613",MC657,block,1
+Covellite,Mississippi Canyon 493,MC493,none,0
+Crackerjack,6864,,unparsed,0
+Criollo,Green Canyon 685,GC685,none,0
+Crosby,Mississippi Canyon 898,MC898,none,0
+Cuaba,"Main Pass 87, 96",MP87,none,0
+Daggerboard,West Cameron 245,WC245,none,0
+Dalmatian North,"DeSoto Canyon 4, 47, 48, 91",DC4,block,1
+Dalmatian South,Desoto Canyon 134,DC134,block,1
+Daniel Boone,Green Canyon 646,GC646,block,1
+Dantzler,"Mississippi Canyon 738, 782",MC738,none,0
+Davy Jones,South Marsh Island 230,SM230,none,0
+Dawson Deep,Garden Banks 625,GB625,none,0
+Daytona,"Green Canyon 872, 873",GC872,none,0
+Deep Blue,"Green Canyon 723, 724, 768",GC723,block,1
+Deimos,Mississippi Canyon 806,MC806,none,0
+Devils Island,Garden Banks 344 East,GB344,none,0
+Devils Tower,Mississippi Canyon 773,MC773,block,1
+Diamond,Lloyd Ridge 370,LL370,none,0
+Diana,"East Breaks 945, 946,988, 989",EB945,block,1
+Diana South,"Alaminos Canyon 21, 22, 65, 66",AC21,none,0
+Don Larsen,East Breaks 598,EB598,none,0
+Dorado,Viosca Knoll 915,VK915,block,1
+Double Mountain,"Green Canyon 555, 556, 600",GC555,none,0
+Droshky,Green Canyon 244,GC244,block,1
+Dulcimer,Garden Banks 367,GB367,block,1
+Durango,Garden Banks 667,GB667,none,0
+East Anstey,Mississippi Canyon 607,MC607,block,1
+Einset,"Viosca Knoll 872, 873",VK872,none,0
+Enchilada,Garden Banks 127,GB127,none,0
+Entrada,Garden Banks 782,GB782,none,0
+Europa,"Mississippi Canyon 890, 891, 934, 935",MC890,none,0
+EW 998,Ewing Bank 998,EW998,block,1
+Falcon,"East Breaks 579, 580, 623",EB579,block,1
+Fastball,Viosca Knoll 1003,VK1003,block,1
+Fiji,Mississippi Canyon 427,MC427,block,1
+Firefox,"Green Canyon 773, 817",GC773,none,0
+Flatrock,"South Marsh Island 212, Part 217",SM212,none,0
+Flintcreek,Garden Banks 171,GB171,block,1
+Floyd,Green Canyon 451,GC451,none,0
+Flying Dutchman,Green Canyon 511,GC511,block,1
+Fourier,Mississippi Canyon 522,MC522,block,1
+Friesian,"Green Canyon 599, 643",GC599,block,1
+Front Runner,"Green Canyon 338, 339",GC338,none,0
+Front Runner South,Green Canyon 339,GC339,block,1
+Frosa,"Garden Banks 904, 948",GB904,none,0
+Fuji Springs,Green Canyon 505,GC505,none,0
+Gator Bait,MC 524,MC524,none,0
+Genesis,"Green Canyon 160, 161, 205",GC160,none,0
+Genghis Khan,Green Canyon 652,GC652,none,0
+Gila,Keathley Canyon 93,KC93,none,0
+Gladden,Mississippi Canyon 800,MC800,block,1
+Glider,Green Canyon 248,GC248,none,0
+Goldfinger,Mississippi Canyon 771,MC771,none,0
+Gomez,Mississippi Canyon 711,MC711,none,0
+Gotcha,Alaminos Canyon 856,AC856,none,0
+Great White,Alaminos Canyon 857,AC857,block,1
+Guadalupe,Mississippi Canyon 555,MC555,block,1
+Gunflint (Freedom),Mississippi Canyon 948,MC948,block,1
+Gunnison,"Garden Banks 667, 668, 669",GB667,none,0
+Gutterball,East Cameron 254,EC254,none,0
+Habanero,Garden Banks 341,GB341,none,0
+Hadrian,Keathley Canyon 919,KC919,none,0
+Hadrian South,Keathley Canyon 964,KC964,block,1
+Harrier,East Breaks 759,EB759,block,1
+Hartebeest,Green Canyon 166,GC166,block,1
+Heidelberg,"Green Canyon 859, 860, 903, 904, 948",GC859,block,1
+Herschel,Mississippi Canyon 520,MC520,none,0
+High Island 22,"High Island 21, 22",HI21,none,0
+His Dudeness,Galveston Area 277L,GA277,none,0
+Holly,Garden Banks 335,GB335,none,0
+Holstein,Green Canyon 645,GC645,none,0
+Holy Cross,Lloyd Ridge 411,LL411,none,0
+Hondo,,,unparsed,0
+Hoover,"Alaminos Canyon 25, 26",AC25,block,1
+Horn Mountain,Mississippi Canyon 127,MC127,none,0
+"Hummingbird, EW 834",Ewing Bank 834,EW834,none,0
+Huna,BM-C-42,,unparsed,0
+Innsbruck,Mississippi Canyon 993,MC993,none,0
+Isabela,Mississippi Canyon 562,MC562,none,0
+Jack,"Walker Ridge 758, 759",WR758,none,0
+Jaguar (Buccaneer),Eugene Island 147,EI147,block,1
+Jason,Garden Banks 344 West,GB344,none,0
+Jericho,"Garden Banks 937, 938",GB937,none,0
+Jubilee,"Atwater Valley 305, 349 and Lloyd Ridge 265, 309",AT305,none,0
+Julia,"Walker Ridge 584, 627, 628, 540, 583",WR584,none,0
+K2,"Green Canyon 561, 562, 563, 605, 607",GC561,none,0
+K2 North,Green Canyon 518,GC518,none,0
+Kakuna,"Green Canyon 416, 460, 504, 505, 548 and 549",GC416,block,1
+Kaskida,"Keathley Canyon 291, 292",KC291,none,0
+Kepler,Mississippi Canyon 383,MC383,block,1
+Kilchurn,Green Canyon 404,GC404,none,0
+King,Mississippi Canyon 84,MC84,block,1
+King South,Mississippi Canyon 129,MC129,none,0
+Knotty Head,Green Canyon 512,GC512,none,0
+Kodiak,Mississippi Canyon 727,MC727,none,0
+Krakatoa,Mississippi Canyon 540,MC540,none,0
+Lafitte,Eugene Island Block 223,EI223,block,1
+Leon,"KC 642, 686",KC642,block,1
+Liberty,"OCS-Y1650, OCS-Y1585",,unparsed,0
+Ligurian,"Green Canyon 814, 858",GC814,none,0
+Llano,"Garden Banks 385, 386",GB385,none,0
+Logan,"Walker Ridge 925, 969",WR925,none,0
+Longhorn (aka Leo),Mississippi Canyon 546,MC546,block,1
+Lorien,Green Canyon 199,GC199,none,0
+Lost Ark,East Breaks 464,EB464,none,0
+Lucius,"Keathley Canyon 874, 875, 918 and 919",KC874,none,0
+Lyell,Green Canyon 551,GC551,none,0
+Macaroni,Garden Banks 602,GB602,block,1
+Macondo,Mississippi Canyon 252,MC252,block,1
+Mad Dog,"Green Canyon 825, 826, 738, 739, 781, 782, 783",GC825,none,0
+Mad Dog South,"Green Canyon 825, 826",GC825,none,0
+Madagascar,De Soto Canyon 757,DC757,none,0
+Madison,"Alaminos Canyon 24, 25",AC24,block,1
+Magnolia,"Garden Banks 783, 784",GB783,block,1
+Mahogany,"Ship Shoal 349, 359",SS349,block,1
+Main Pass 108,"MP 107, 108, 109",MP107,block,1
+Main Pass 98,"Main Pass 98, 180",MP98,block,1
+Manatee,Green Canyon 155,GC155,none,0
+Mandy,Mississippi Canyon 199,MC199,none,0
+Marco Polo,Green Canyon 608,GC608,block,1
+Marmalard,"MC 255, 256, 300",MC255,none,0
+Mars,"Mississippi Canyon 762, 763, 806, 807, 850, 851",MC762,none,0
+Marshall,"East Breaks 948, 949",EB948,none,0
+Maserati,South Timbalier 216,ST216,none,0
+Mastiff,"Garden Banks 381, 382",GB381,none,0
+Matterhorn,Mississippi Canyon 243,MC243,block,1
+Mauna Kea,"Atwater Valley 28, 29",AT28,none,0
+MC 72,Mississippi Canyon 72,MC72,none,0
+McLaren,South Timbalier 239,ST239,none,0
+Medusa,"Mississippi Canyon 538, 582",MC538,none,0
+Merganser,"Atwater Valley 36, 37",AT36,none,0
+Mica,"Mississippi Canyon 167, 211",MC167,none,0
+Mica Deep,Mississippi Canyon 211,MC211,block,1
+Minnow,West Cameron 497,WC497,none,0
+Mirage,Mississippi Canyon 941,MC941,none,0
+Moccasin,Keathley Canyon 736,KC736,block,1
+Mojito,"West Cameron 111, 134",WC111,none,0
+Mondo NW,Lloyd Ridge 1/2,LL1,block,1
+Morgus,Mississippi Canyon 942,MC942,none,0
+Morpeth,"Ewing Bank 921, 964, 965",EW921,block,1
+Mothball,Mississippi Canyon 801,MC801,none,0
+Nansen,"East Breaks 601, 646",EB601,none,0
+Nautilus (GOM),Ship Shoal 263,SS263,block,1
+Navi,"Keathley Canyon 613, 657",KC613,none,0
+Neptune (Atwater Valley),"Atwater Valley 573, 574, 575, 617, 618",AT573,none,0
+Nile,Viosca Knoll 914,VK914,block,1
+North Boomvang,East Breaks 643,EB643,block,1
+North Platte,"Garden Banks 915, 958, 959",GB915,none,0
+Northstar,"Beechey Point 470, 471, 515, 516",,unparsed,0
+Northwest Nansen,"East Breaks 558, 602",EB558,none,0
+Northwest Navajo,East Breaks 646,EB646,none,0
+Northwood,"Green Canyon 944, 945",GC944,block,1
+Oooguruk,,,unparsed,0
+Oregano,"Garden Banks 558, 559",GB558,none,0
+Owl Creek (aka Owls Nest ),Green Canyon 861,GC861,none,0
+Ozona Deep,Garden Banks 515,GB515,none,0
+Pardner,"Mississippi Canyon 400, 401",MC400,none,0
+Parmer,Green Canyon 823 / Green Canyon 867,GC823,block,1
+Partagas,Main Pass 105,MP105,none,0
+Pegasus,Green Canyon 385,GC385,block,1
+Penn State,Garden Banks 216,GB216,none,0
+Perseus,Viosca Knoll 830,VK830,none,0
+Pescado,,,unparsed,0
+Petronius,Viosca Knoll 786,VK786,block,1
+Phinisi,"Walker Ridge 675, 719",WR675,none,0
+Phobos,"SE 39, 40",SE39,block,1
+Phoenix,"Green Canyon 236, 237",GC236,block,1
+Pompano,Viosca Knoll 989,VK989,none,0
+Pony,Green Canyon 468,GC468,block,1
+Power Play,"Garden Banks 258, 302",GB258,none,0
+Prince,"Ewing Bank 958, 1003",EW958,block,1
+Princess,"Mississippi Canyon 765, 766",MC765,none,0
+Pyrenees,Garden Banks 293,GB293,block,1
+Pyrrho,"Green Canyon 563, 564",GC563,none,0
+Q,Mississippi Canyon 961,MC961,block,1
+Quatrain,Green Canyon 382,GC382,none,0
+Quinteros,Main Pass 268,MP268,none,0
+Ram Powell,"Viosca Knoll 911, 912, 955, 956, 957",VK911,none,0
+Raptor,East Breaks 668,EB668,block,1
+Red Dog,"DeSoto Canyon 578, 622",DC578,none,0
+Red Hawk,Garden Banks 877,GB877,block,1
+Refugio,"Atwater Valley 76, 120",AT76,none,0
+Rickenbacker (aka Dunkirk),Keathley Canyon 470,KC470,none,0
+Rocky Mountain,"Mississippi Canyon 693, 737",MC693,none,0
+Sacate,,,unparsed,0
+Sake,De Soto Canyon 726,DC726,none,0
+Saleen,South Timbalier 238,ST238,none,0
+Samurai,"Green Canyon 432, 476",GC432,block,1
+San Jacinto,"DeSoto Canyon 618, 619",DC618,block,1
+San Marcos,Mississippi Canyon 983,MC983,none,0
+Santa Cruz (Galapagos),"Mississippi Canyon 519 (Well #1), 563",MC519,none,0
+Santiago (Galapagos),Mississippi Canyon 519 (Well #2),MC519,none,0
+Screwdriver,South Timbalier 222,ST222,none,0
+Serrano,"Garden Banks 472, 516",GB472,none,0
+Shenandoah,"Walker Ridge 52, 51",WR52,none,0
+Shenzi,Green Canyon 609,GC609,none,0
+Silvertip,Alaminos Canyon 815,AC815,none,0
+Sivulliq,Flaxman Island Lease Block 6658,,unparsed,0
+SOB 2,Mississippi Canyon 387,MC387,block,1
+South Deimos,Mississippi Canyon 762,MC762,none,0
+Southeast Tahoe,Viosca Knoll 784,VK784,none,0
+Southern Cross,Southern Cross Unit,,unparsed,0
+Spartacus,Walker Ridge 793,WR793,none,0
+Spiderman,"DeSoto Canyon 620, 621",DC620,none,0
+Spitfire,East Breaks 581,EB581,none,0
+St. Malo,Walker Ridge 678,WR678,block,1
+Stones,Walker Ridge 508,WR508,block,1
+Sturgis,Atwater Valley 183,AT183,none,0
+SW Shoebill,7007,,unparsed,0
+Swordfish,"Viosca Knoll 917, 961, 962",VK917,block,1
+Taggart,"Mississippi Canyon 816, G33178",MC816,block,1
+Tahiti,"Green Canyon 640, 641, 596, 597",GC640,block,1
+Tahoe,"Viosca Knoll 783, 784",VK783,block,1
+Telemark,Atwater Valley 63,AT63,block,1
+Thunder Hawk,Mississippi Canyon 734,MC734,none,0
+Thunder Horse,"Mississippi Canyon 777, 778, 822",MC777,none,0
+Thunder Horse North,"Mississippi Canyon 775, 776",MC775,none,0
+Tiber,Keathley Canyon 102,KC102,block,1
+Ticonderoga,Green Canyon 768,GC768,block,1
+Tiger (EB494),"East Breaks 494, 538",EB494,none,0
+Tobago,Alaminos Canyon 859,AC859,block,1
+Toddy,South Timbalier 221,ST221,block,1
+Tomahawk,East Breaks 623,EB623,none,0
+Tonga,Green Canyon 727/728,GC727,none,0
+Tonga West,Green Canyon 726,GC726,none,0
+Tornado,Green Canyon 281,GC281,none,0
+Torpedo,Flaxman Island Lease Block 6610,,unparsed,0
+Trident,"Alaminos Canyon 903, 904, 947",AC903,block,1
+Triton,Mississippi Canyon 772,MC772,none,0
+Troubadour,Mississippi Canyon 699,MC699,block,1
+Tubular Bells,"Mississippi Canyon 683, 726",MC683,none,0
+Tucker,"Walker Ridge 499, 543, 544, 545, 589",WR499,none,0
+Ursa,"Mississippi Canyon 808, 809, 810, 852, 853, 854",MC808,none,0
+Virgo,"Viosca Knoll 822, 823",VK822,none,0
+Vito,"Mississippi Canyon 984, 985, 940",MC984,none,0
+Vortex,"Atwater Valley 217, 261 and Lloyd Ridge 177, 221",AT217,none,0
+Wang,Green Canyon 237,GC237,none,0
+Waylon,Garden Banks 212,GB212,none,0
+West Boomvang,East Breaks 642,EB642,block,1
+West Boreas,Mississippi Canyon 762,MC762,none,0
+Who Dat,"Mississippi Canyon 503, 547",MC503,block,1
+Whydah,Mississippi Canyon Block 600,MC600,none,0
+Wide Berth,Green Canyon 490,GC490,block,1
+Winter,Garden Banks 605,GB605,none,0
+Wrigley,Mississippi Canyon 506,MC506,block,1
+Yosemite,Green Canyon 516,GC516,none,0
+Yucatan North,Walker Ridge 95,WR95,none,0
