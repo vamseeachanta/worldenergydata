@@ -13,10 +13,17 @@ draws. Everything downstream (recommendation engine, graph-spec mapper,
 renderers, economics) consumes and produces :class:`FieldConcept`.
 """
 
+from worldenergydata.field_development.basin import (
+    BASIN_AFFINITY,
+    region_fit,
+    region_to_basin,
+)
 from worldenergydata.field_development.block import render_block_diagram
 from worldenergydata.field_development.calibration import (
     CalibrationReport,
     backtest_fields,
+    compare_enrichment,
+    concept_recall,
 )
 from worldenergydata.field_development.dexpi import (
     dexpi_mapping,
@@ -41,6 +48,15 @@ from worldenergydata.field_development.graph import (
     Node,
     NodeType,
     concept_to_graph,
+)
+from worldenergydata.field_development.host_enrichment import (
+    GOM_TYPICAL_TIEBACK_KM,
+    HostRecord,
+    correct_satellite_labels,
+    enrich_concepts,
+    load_host_registry,
+    match_host,
+    match_tieback,
 )
 from worldenergydata.field_development.integrations import (
     Economics,
@@ -152,7 +168,19 @@ __all__ = [
     "SanityViolation",
     "HOST_DEPTH_ENVELOPES_M",
     "backtest_fields",
+    "compare_enrichment",
+    "concept_recall",
     "CalibrationReport",
+    "region_fit",
+    "region_to_basin",
+    "BASIN_AFFINITY",
+    "load_host_registry",
+    "enrich_concepts",
+    "correct_satellite_labels",
+    "match_tieback",
+    "match_host",
+    "HostRecord",
+    "GOM_TYPICAL_TIEBACK_KM",
     "build_fdp_html",
     "complete_concept",
     "CompletionResult",

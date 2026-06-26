@@ -104,6 +104,7 @@ def test_scores_are_bounded_and_total_present():
             "flexibility",
             "risk",
             "depth_fit",
+            "region_fit",
         }
         assert all(0.0 <= v <= 1.0 for v in sc.scores.values())
 

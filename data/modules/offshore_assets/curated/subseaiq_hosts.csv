@@ -1,0 +1,21 @@
+host_name,host_concept,general_location,block_raw,bsee_block_key,water_depth_m,reserves_mmboe,total_wells,dry_tree_wells,wet_tree_wells,throughput_mboed,tieback_fields
+AASTA HANSTEEN SPAR FPSO,spar,Norwegian Sea,"Block 6706/12, 6707/10 and 6607/1",,1300.0,300.0,12.0,0.0,12.0,,Luva (4); Snefrid Sufffdr (1); Haklang (2)
+ATP TITAN Telemark Hub / Mirage,spar,GOM,MC 941,MC941,1219.0,400.0,4.0,3.0,1.0,42.0,Mirage; Morgus; Telemark
+BOOMVANG Global Producer VI,spar,GOM,"EB 642, 643,688, 732",EB642,1052.0,160.0,8.0,5.0,3.0,73.0,W. Boomvang (1); E. Boomvang (2); Hack Wilson (1); Balboa (1)
+CONSTITUTION Global Producer X,spar,GOM,GC 680,GC680,1515.0,110.0,8.0,6.0,2.0,103.0,Ticonderoga (2); Caesar / Tonga (3)
+DEVILS TOWER,spar,GOM,MC 773,MC773,1710.0,80.0,8.0,8.0,0.0,78.0,Triton (3); Goldfinger; Bass Lite (2)
+FRONT RUNNER,spar,GOM,"GC 338, 339",GC338,1015.0,70.0,10.0,8.0,2.0,78.0,Front Runner (1); Front Runner S. (1); Quatrain (1); Daniel Boone (1)
+GENESIS,spar,GOM,"GC 160, 161, 205",GC160,792.0,120.0,20.0,20.0,0.0,67.0,
+GUNNISON Global Producer VII,spar,GOM,"GB 667, 668, 669",GB667,960.0,175.0,10.0,7.0,3.0,73.0,Durango (1); E. & W. Gunnison (2); Dawson Deep (1)
+HOLSTEIN,spar,GOM,"GC 644, 645",GC644,1324.0,300.0,15.0,15.0,0.0,135.0,
+HOOVER / DIANA Deep Draft Cassion Vessel (DDCV),spar,GOM,"EB 945, 946, 948,949, 989, 992",EB945,1463.0,280.0,17.0,6.0,11.0,154.0,Diana (6); Marshall (2); Madison (1); South Diana (1); Rockefeller (1)
+HORN MOUNTAIN,spar,GOM,"MC 126, 127",MC126,1653.0,150.0,10.0,10.0,0.0,76.0,
+KIKEH,spar,Malaysia,"Blk K GC 781, 738, 782, 825, 826, 783, 739",,1330.0,440.0,26.0,10.0,16.0,,
+LUCIUS,spar,GOM,"KC 874, 875, 918, 919",KC874,2173.0,300.0,8.0,0.0,8.0,155.0,Lucius (6); Hadrian (2)
+MAD DOG,spar,GOM,"AC 24, 25, 26, 65;",AC24,1347.0,300.0,14.0,14.0,0.0,90.0,
+MEDUSA,spar,GOM,"MC 538, 582",MC538,678.0,90.0,14.0,8.0,6.0,58.0,
+NANSEN  Global Producer V,spar,GOM,"EB 602, 646, 690, 691",EB602,1121.0,50.0,13.0,9.0,4.0,73.0,Nansen N. (3); Navajo (1); NW Nansen (4)
+NEPTUNE,spar,GOM,"VK 825,826, 869, 870",VK825,588.0,75.0,16.0,13.0,3.0,45.0,Swordfish (3)
+PERDIDO,spar,GOM,AC 857,AC857,2383.0,,35.0,0.0,35.0,133.0,Great White (30); Tobago (1); Silvertip (2)
+RED HAWK Global Producer IX,spar,GOM,"GB 876, 877",GB876,1615.0,417.0,2.0,0.0,2.0,20.0,Red Hawk (2)
+TAHITI,spar,GOM,"GC 596, 597, 640, 641",GC596,1250.0,,6.0,0.0,6.0,137.0,
