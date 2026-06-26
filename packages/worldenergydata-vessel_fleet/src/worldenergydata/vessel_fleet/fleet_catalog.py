@@ -18,19 +18,33 @@ never the full per-vessel roster (that stays in the gitignored curated CSVs).
 Confidence labels follow the brief's convention:
 ``on_record`` (hard count), ``soft`` (estimate, wide band), ``projected``.
 
-De-duplication across sources (IMO keying) is intentionally deferred to #599;
-this catalog therefore treats the three populations as additive and flags the
-overlap as a caveat.
+De-duplication across sources (#599) is folded in here: before counting by
+class, every classified record is passed through
+:func:`identity_resolver.dedupe_catalog`, so the ``by_asset_class`` counts are
+DISTINCT HULLS rather than additive listings. This collapses the Helix Q-class
+name-spelling variants (``Q4000`` / ``MSV Q4000`` / ``HELIX Q-4000`` / ...) that
+previously inflated ``heavy_intervention_semi``. Each priced asset class is also
+decorated with an indicative public day-rate band (#596) via
+:func:`dayrate_snapshot.attach_dayrates_to_catalog`. Water-depth ranges and
+named flagships are still derived from the raw records (min/max and a name-set
+are unaffected by duplicates).
 """
 
 from __future__ import annotations
 
 import csv
 import logging
+from collections import Counter
 from pathlib import Path
 from typing import Any, Optional
 
 import yaml
+
+from worldenergydata.vessel_fleet.dayrate_snapshot import (
+    attach_dayrates_to_catalog,
+)
+from worldenergydata.vessel_fleet.identity_crosswalk import _aka_for
+from worldenergydata.vessel_fleet.identity_resolver import dedupe_catalog
 
 logger = logging.getLogger(__name__)
 
@@ -262,6 +276,11 @@ def build_fleet_catalog(
         cls: _ClassAccumulator() for cls in ASSET_CLASSES
     }
     gom_dedicated: list[dict[str, Any]] = []
+    # Parallel record list fed to the #599 identity resolver so the class counts
+    # below are DISTINCT HULLS, not additive listings. Each record carries the
+    # name/operator/owner/imo/aka the resolver keys on, plus its ``class`` so the
+    # deduped output can be re-tallied by asset class.
+    dedup_records: list[dict[str, Any]] = []
 
     # 1. Seed (dedicated intervention fleet) -- named flagship units.
     seed_vessels = _load_seed(seed_p)
@@ -271,6 +290,18 @@ def build_fleet_catalog(
         depth_m = _to_float(v.get("water_depth_rating_m"))
         depth_ft = depth_m * _FT_PER_M if depth_m is not None else None
         accumulators[cls].add(depth_ft, flagship=name)
+        dedup_records.append(
+            {
+                "name": name,
+                "operator": v.get("operator") or None,
+                "owner": v.get("operator") or None,
+                "imo": v.get("imo") or None,
+                "mmsi": v.get("mmsi") or None,
+                "aka": list(v.get("aka") or []) + _aka_for(name),
+                "source": DEFAULT_SEED_PATH.name,
+                "class": cls,
+            }
+        )
         if v.get("gom_resident") is True:
             gom_dedicated.append(
                 {
@@ -283,25 +314,56 @@ def build_fleet_catalog(
 
     # 2. Curated drilling rigs.
     for row in _read_curated_csv(curated / _DRILLING_RIGS_FILE):
-        cls = classify_asset_class(
-            rig_type=row.get("RIG_TYPE"), name=row.get("RIG_NAME")
-        )
+        name = row.get("RIG_NAME")
+        cls = classify_asset_class(rig_type=row.get("RIG_TYPE"), name=name)
         accumulators[cls].add(_to_float(row.get("WATER_DEPTH_RATING_FT")))
+        dedup_records.append(
+            {
+                "name": name,
+                "operator": row.get("OPERATOR") or None,
+                "owner": row.get("OWNER") or None,
+                "imo": row.get("IMO_NUMBER") or None,
+                "mmsi": None,
+                "aka": _aka_for(name),
+                "source": _DRILLING_RIGS_FILE,
+                "class": cls,
+            }
+        )
 
     # 3. Curated construction vessels (depth is in metres here).
     for row in _read_curated_csv(curated / _CONSTRUCTION_VESSELS_FILE):
-        cls = classify_asset_class(
-            vessel_type=row.get("VESSEL_TYPE"), name=row.get("VESSEL_NAME")
-        )
+        name = row.get("VESSEL_NAME")
+        cls = classify_asset_class(vessel_type=row.get("VESSEL_TYPE"), name=name)
         depth_m = _to_float(row.get("WATER_DEPTH_RATING_M"))
         depth_ft = depth_m * _FT_PER_M if depth_m is not None else None
         accumulators[cls].add(depth_ft)
+        dedup_records.append(
+            {
+                "name": name,
+                "operator": row.get("OPERATOR") or None,
+                "owner": row.get("OWNER") or None,
+                "imo": row.get("IMO_NUMBER") or None,
+                "mmsi": row.get("MMSI") or None,
+                "aka": _aka_for(name),
+                "source": _CONSTRUCTION_VESSELS_FILE,
+                "class": cls,
+            }
+        )
 
-    by_class = {
-        cls: accumulators[cls].summary()
-        for cls in ASSET_CLASSES
-        if accumulators[cls].count > 0
-    }
+    # --- Dedup (#599): collapse same-hull listings to distinct vessels. ------
+    deduped, dedup_report = dedupe_catalog(dedup_records)
+    distinct_by_class: Counter[str] = Counter(
+        r.get("CLASS") for r in deduped if r.get("CLASS")
+    )
+
+    by_class = {}
+    for cls in ASSET_CLASSES:
+        if accumulators[cls].count == 0:
+            continue
+        summary = accumulators[cls].summary()
+        # Replace the additive raw count with the distinct-hull count (#599).
+        summary["count"] = distinct_by_class.get(cls, 0)
+        by_class[cls] = summary
     total_units = sum(acc.count for acc in accumulators.values())
 
     catalog: dict[str, Any] = {
@@ -312,7 +374,21 @@ def build_fleet_catalog(
         "asset_class_taxonomy": list(ASSET_CLASSES),
         "totals": {
             "units_classified": total_units,
+            "distinct_hulls": dedup_report["distinct_vessels_out"],
             "seed_dedicated_units": len(seed_vessels),
+        },
+        "dedup": {
+            "applied": True,
+            "issue": 599,
+            "basis": (
+                "normalized canonical name + operator/owner compatibility + aka "
+                "list (IMO/MMSI confirm when present); collapses Helix Q-class "
+                "name-spelling variants so by_asset_class counts are distinct "
+                "hulls."
+            ),
+            "records_in": dedup_report["records_in"],
+            "distinct_out": dedup_report["distinct_vessels_out"],
+            "duplicates_collapsed": dedup_report["duplicates_collapsed"],
         },
         "by_asset_class_scope": (
             "GLOBAL available roster (curated contractor/BSEE fleet + seed), "
@@ -334,8 +410,12 @@ def build_fleet_catalog(
         "caveats": [
             "Curated CSV rosters may be stale (snapshot, not live).",
             "Drive-corpus historical fleet records date to 2010-2014.",
-            "Populations are additive: dedup vs IMO is deferred to #599, so "
-            "counts may double-count a unit present in both seed and curated.",
+            "by_asset_class counts are DISTINCT HULLS: source listings are "
+            "deduped via the #599 identity resolver (name+operator+aka, IMO when "
+            "present), so a unit present in both seed and curated is counted once.",
+            "Indicative day-rates are an attached PUBLIC snapshot (#596), not a "
+            "live subscription feed; intervention semis and RLWI monohulls have "
+            "no public per-day figure (rate_disclosed=false).",
             "Water-depth ratings are nameplate vendor figures and approximate.",
             "by_asset_class counts are GLOBAL fleet, not GoM-resident supply; "
             "MODU/jackup counts include shelf + non-GoM assets. The binding GoM "
@@ -344,6 +424,13 @@ def build_fleet_catalog(
             "the vendor-scrape ingest (#593).",
         ],
     }
+
+    # Decorate each priced asset class with an indicative public day-rate band
+    # (#596). Degrades gracefully if the snapshot file is absent (CI safety).
+    try:
+        catalog = attach_dayrates_to_catalog(catalog)
+    except FileNotFoundError:
+        logger.warning("Day-rate snapshot not found; emitting catalog without bands")
 
     out_p.parent.mkdir(parents=True, exist_ok=True)
     out_p.write_text(

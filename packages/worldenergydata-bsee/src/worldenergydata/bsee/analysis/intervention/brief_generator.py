@@ -25,9 +25,15 @@ source YAML assigns it — ``[on record]``, ``[soft]``, ``[projected]`` or
 ``[engineering judgement]`` — so a reader can see how hard each number is.
 
 The CRITICAL framing rule (see the fleet section): the global ``by_asset_class``
-counts (1,027 jackups, 308 semis, ...) are a WORLDWIDE roster and are presented
+counts (~1,018 jackups, ~305 semis, ...) are a WORLDWIDE roster and are presented
 only as background context. They are NOT GoM supply. The binding GoM figure is
 ``gom_resident_dedicated_intervention`` (~3 [soft]) plus the ~2-4 soft estimate.
+
+Two upstream refinements (#623) now flow through the fleet section: the counts
+are DEDUPED distinct hulls (#599, so the Helix Q-class spelling variants no
+longer inflate ``heavy_intervention_semi``), and each priced asset class carries
+an indicative PUBLIC day-rate band (#596) — with Helix Q-class semis and RLWI
+monohulls explicitly flagged as "dayrate not public".
 """
 
 from __future__ import annotations
@@ -106,6 +112,29 @@ def _fmt_int(value) -> str:
         return f"{int(value):,}"
     except (TypeError, ValueError):
         return str(value)
+
+
+def _fmt_dayrate(info: dict) -> str:
+    """Render an asset class's indicative public day-rate band as a cell.
+
+    Pulls the ``indicative_dayrate`` block attached by the day-rate snapshot
+    (#596). Classes the snapshot does not price render ``n/a``; classes with no
+    public per-day figure (Helix Q-class semis, RLWI monohulls) render an
+    explicit ``dayrate not public`` so the wall is never silently dropped.
+    """
+    dr = info.get("indicative_dayrate")
+    if not dr:
+        return "n/a"
+    if not dr.get("rate_disclosed"):
+        return "dayrate not public [not public]"
+    low = dr.get("band_low_usd_per_day")
+    high = dr.get("band_high_usd_per_day")
+    median = dr.get("median_usd_per_day")
+    labels = ", ".join(dr.get("confidence_labels", []) or [])
+    band = f"${_fmt_int(low)}-${_fmt_int(high)}/day"
+    med = f" (median ${_fmt_int(median)})" if median is not None else ""
+    tag = f" [{labels}]" if labels else ""
+    return f"{band}{med}{tag}"
 
 
 def _deepest_populated_band(bands: dict) -> Optional[str]:
@@ -264,16 +293,37 @@ def _section_fleet(fleet: dict) -> str:
             f" — {item.get('note', '')}"
         )
 
+    dedup = fleet.get("dedup", {}) or {}
+    as_of = fleet.get("dayrate_snapshot_as_of")
+    dedup_note = ""
+    if dedup.get("applied"):
+        dedup_note = (
+            f" Counts are DEDUPED distinct hulls (#599): "
+            f"{_fmt_int(dedup.get('records_in'))} source listings collapse to "
+            f"{_fmt_int(dedup.get('distinct_out'))} vessels "
+            f"({_fmt_int(dedup.get('duplicates_collapsed'))} duplicates removed, "
+            "e.g. the Helix Q-class name-spelling variants), so no hull is "
+            "double-counted."
+        )
+
     lines += [
         "",
         "### Global available roster (CONTEXT ONLY — NOT GoM supply)",
         "",
         "These are WORLDWIDE fleet counts. They include shelf and non-GoM assets "
         "and must NOT be read as Gulf-of-Mexico intervention supply. They show "
-        "the size of the global pool a GoM operator competes for, nothing more.",
+        "the size of the global pool a GoM operator competes for, nothing more."
+        + dedup_note,
         "",
-        "| Asset class (global) | Count | Water-depth capability (ft) |",
-        "| --- | ---: | --- |",
+        "Indicative day-rates are an attached PUBLIC snapshot (#596)"
+        + (f", as of {as_of}" if as_of else "")
+        + " — issuer FSRs / filings / dated trade press, NOT a live subscription "
+        "feed. Helix Q-class intervention semis and RLWI monohulls carry no "
+        "public per-day figure (shown as dayrate not public).",
+        "",
+        "| Asset class (global) | Count [deduped] | Water-depth capability (ft) "
+        "| Indicative day-rate |",
+        "| --- | ---: | --- | --- |",
     ]
     for klass, info in by_class.items():
         cap = info.get("water_depth_capability_ft", {}) or {}
@@ -282,7 +332,10 @@ def _section_fleet(fleet: dict) -> str:
             if cap.get("min") is not None or cap.get("max") is not None
             else "n/a"
         )
-        lines.append(f"| {klass} | {_fmt_int(info.get('count'))} | {cap_str} |")
+        lines.append(
+            f"| {klass} | {_fmt_int(info.get('count'))} | {cap_str} "
+            f"| {_fmt_dayrate(info)} |"
+        )
 
     lines += ["", ""]
     return "\n".join(lines)
