@@ -22,7 +22,7 @@
 
 version: "1.0"
 generated_at: "2026-05-04"
-total_modules: 28
+total_modules: 29
 
 modules:
 
@@ -480,6 +480,26 @@ modules:
     in_scheduler: false
     public_cli: false
     catalog_status: sample
+    capability_source: manifest
+
+  # ── FRONTIER BASINS ──────────────────────────────────────────────────────────
+
+  - id: frontier_basins
+    name: "Frontier Deepwater Basins"
+    package: "worldenergydata.canada.emerging_basins"
+    region: [guyana, suriname, namibia]
+    domain: [exploration, deepwater, discoveries]
+    data_types:
+      - frontier_discoveries
+    key_classes:
+      - FrontierDiscoveryLoader
+      - DiscoverySchema
+    status: stable
+    entry_point: "from worldenergydata.canada.emerging_basins import FrontierDiscoveryLoader"
+    notes: "Discovery-level catalog of the three frontier deepwater oil plays — Guyana (Stabroek + adjacent), Suriname (Block 58 + adjacent), Namibia (Orange Basin) — with operator, partners, year, water depth, public resource estimates, and a high/medium/low confidence tier, each row source-attributed (issue #603)."
+    in_scheduler: false
+    public_cli: false
+    catalog_status: full
     capability_source: manifest
 
   # ── VESSEL ──────────────────────────────────────────────────────────────────
