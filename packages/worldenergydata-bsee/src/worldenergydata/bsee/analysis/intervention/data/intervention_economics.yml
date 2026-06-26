@@ -1,0 +1,506 @@
+headline: 'Heavy dead-well (tubing pull / recompletion / P&A) in 5,000-10,000 ft:
+  ~$20.6M per intervention (range $9.0M-$31.8M), priced on a modu day-rate x 45 days
+  (indicative public day-rate snapshot).'
+economics:
+  shelf_lt_500:
+    light_live_well:
+      scope: light_live_well
+      eligible_asset_classes:
+      - rlwi_monohull
+      - mpsv
+      representative_asset: rlwi_monohull
+      representative_dayrate_public: false
+      dayrate_basis_asset: mpsv
+      dayrate_band:
+        asset_class: mpsv_osv
+        low_usd_per_day: 22000
+        median_usd_per_day: 37500
+        high_usd_per_day: 80000
+        source_confidence: &id002
+        - analyst
+        - reported
+      duration_days:
+        low: 5
+        median: 10
+        high: 15
+      cost_usd:
+        low: 110000
+        median: 375000
+        high: 1200000
+      confidence: proxy_mpsv
+      flag: "representative asset 'rlwi_monohull' day-rate not public \u2014 priced\
+        \ via eligible proxy 'mpsv' (mpsv_osv); indicative only, not the representative\
+        \ asset's true rate"
+      band: shelf_lt_500
+      band_label: < 500 ft (shelf)
+      scope_label: Light live-well (riserless wireline)
+      riser_required: false
+    through_tubing_ct:
+      scope: through_tubing_ct
+      eligible_asset_classes:
+      - heavy_intervention_semi
+      - modu
+      representative_asset: heavy_intervention_semi
+      representative_dayrate_public: false
+      dayrate_basis_asset: modu
+      dayrate_band:
+        asset_class: modu_drillship
+        low_usd_per_day: 300000
+        median_usd_per_day: 457000
+        high_usd_per_day: 530000
+        source_confidence: &id001
+        - analyst
+        - on_record
+        - reported
+      duration_days:
+        low: 15
+        median: 20
+        high: 30
+      cost_usd:
+        low: 4500000
+        median: 9140000
+        high: 15900000
+      confidence: proxy_modu
+      flag: "representative asset 'heavy_intervention_semi' day-rate not public \u2014\
+        \ priced via eligible proxy 'modu' (modu_drillship); indicative only, not\
+        \ the representative asset's true rate"
+      band: shelf_lt_500
+      band_label: < 500 ft (shelf)
+      scope_label: Through-tubing coiled tubing
+      riser_required: true
+    heavy_dead_well:
+      scope: heavy_dead_well
+      eligible_asset_classes:
+      - modu
+      - heavy_intervention_semi
+      representative_asset: modu
+      representative_dayrate_public: true
+      dayrate_basis_asset: modu
+      dayrate_band:
+        asset_class: modu_drillship
+        low_usd_per_day: 300000
+        median_usd_per_day: 457000
+        high_usd_per_day: 530000
+        source_confidence: *id001
+      duration_days:
+        low: 30
+        median: 45
+        high: 60
+      cost_usd:
+        low: 9000000
+        median: 20565000
+        high: 31800000
+      confidence: indicative
+      flag: ''
+      band: shelf_lt_500
+      band_label: < 500 ft (shelf)
+      scope_label: Heavy dead-well (tubing pull / recompletion / P&A)
+      riser_required: true
+  band_500_3000:
+    light_live_well:
+      scope: light_live_well
+      eligible_asset_classes:
+      - rlwi_monohull
+      - mpsv
+      representative_asset: rlwi_monohull
+      representative_dayrate_public: false
+      dayrate_basis_asset: mpsv
+      dayrate_band:
+        asset_class: mpsv_osv
+        low_usd_per_day: 22000
+        median_usd_per_day: 37500
+        high_usd_per_day: 80000
+        source_confidence: *id002
+      duration_days:
+        low: 5
+        median: 10
+        high: 15
+      cost_usd:
+        low: 110000
+        median: 375000
+        high: 1200000
+      confidence: proxy_mpsv
+      flag: "representative asset 'rlwi_monohull' day-rate not public \u2014 priced\
+        \ via eligible proxy 'mpsv' (mpsv_osv); indicative only, not the representative\
+        \ asset's true rate"
+      band: band_500_3000
+      band_label: 500-3,000 ft
+      scope_label: Light live-well (riserless wireline)
+      riser_required: false
+    through_tubing_ct:
+      scope: through_tubing_ct
+      eligible_asset_classes:
+      - heavy_intervention_semi
+      - modu
+      representative_asset: heavy_intervention_semi
+      representative_dayrate_public: false
+      dayrate_basis_asset: modu
+      dayrate_band:
+        asset_class: modu_drillship
+        low_usd_per_day: 300000
+        median_usd_per_day: 457000
+        high_usd_per_day: 530000
+        source_confidence: *id001
+      duration_days:
+        low: 15
+        median: 20
+        high: 30
+      cost_usd:
+        low: 4500000
+        median: 9140000
+        high: 15900000
+      confidence: proxy_modu
+      flag: "representative asset 'heavy_intervention_semi' day-rate not public \u2014\
+        \ priced via eligible proxy 'modu' (modu_drillship); indicative only, not\
+        \ the representative asset's true rate"
+      band: band_500_3000
+      band_label: 500-3,000 ft
+      scope_label: Through-tubing coiled tubing
+      riser_required: true
+    heavy_dead_well:
+      scope: heavy_dead_well
+      eligible_asset_classes:
+      - modu
+      - heavy_intervention_semi
+      representative_asset: modu
+      representative_dayrate_public: true
+      dayrate_basis_asset: modu
+      dayrate_band:
+        asset_class: modu_drillship
+        low_usd_per_day: 300000
+        median_usd_per_day: 457000
+        high_usd_per_day: 530000
+        source_confidence: *id001
+      duration_days:
+        low: 30
+        median: 45
+        high: 60
+      cost_usd:
+        low: 9000000
+        median: 20565000
+        high: 31800000
+      confidence: indicative
+      flag: ''
+      band: band_500_3000
+      band_label: 500-3,000 ft
+      scope_label: Heavy dead-well (tubing pull / recompletion / P&A)
+      riser_required: true
+  band_3000_5000:
+    light_live_well:
+      scope: light_live_well
+      eligible_asset_classes:
+      - rlwi_monohull
+      - mpsv
+      representative_asset: rlwi_monohull
+      representative_dayrate_public: false
+      dayrate_basis_asset: mpsv
+      dayrate_band:
+        asset_class: mpsv_osv
+        low_usd_per_day: 22000
+        median_usd_per_day: 37500
+        high_usd_per_day: 80000
+        source_confidence: *id002
+      duration_days:
+        low: 5
+        median: 10
+        high: 15
+      cost_usd:
+        low: 110000
+        median: 375000
+        high: 1200000
+      confidence: proxy_mpsv
+      flag: "representative asset 'rlwi_monohull' day-rate not public \u2014 priced\
+        \ via eligible proxy 'mpsv' (mpsv_osv); indicative only, not the representative\
+        \ asset's true rate"
+      band: band_3000_5000
+      band_label: 3,000-5,000 ft
+      scope_label: Light live-well (riserless wireline)
+      riser_required: false
+    through_tubing_ct:
+      scope: through_tubing_ct
+      eligible_asset_classes:
+      - heavy_intervention_semi
+      - modu
+      representative_asset: heavy_intervention_semi
+      representative_dayrate_public: false
+      dayrate_basis_asset: modu
+      dayrate_band:
+        asset_class: modu_drillship
+        low_usd_per_day: 300000
+        median_usd_per_day: 457000
+        high_usd_per_day: 530000
+        source_confidence: *id001
+      duration_days:
+        low: 15
+        median: 20
+        high: 30
+      cost_usd:
+        low: 4500000
+        median: 9140000
+        high: 15900000
+      confidence: proxy_modu
+      flag: "representative asset 'heavy_intervention_semi' day-rate not public \u2014\
+        \ priced via eligible proxy 'modu' (modu_drillship); indicative only, not\
+        \ the representative asset's true rate"
+      band: band_3000_5000
+      band_label: 3,000-5,000 ft
+      scope_label: Through-tubing coiled tubing
+      riser_required: true
+    heavy_dead_well:
+      scope: heavy_dead_well
+      eligible_asset_classes:
+      - modu
+      - heavy_intervention_semi
+      representative_asset: modu
+      representative_dayrate_public: true
+      dayrate_basis_asset: modu
+      dayrate_band:
+        asset_class: modu_drillship
+        low_usd_per_day: 300000
+        median_usd_per_day: 457000
+        high_usd_per_day: 530000
+        source_confidence: *id001
+      duration_days:
+        low: 30
+        median: 45
+        high: 60
+      cost_usd:
+        low: 9000000
+        median: 20565000
+        high: 31800000
+      confidence: indicative
+      flag: ''
+      band: band_3000_5000
+      band_label: 3,000-5,000 ft
+      scope_label: Heavy dead-well (tubing pull / recompletion / P&A)
+      riser_required: true
+  band_5000_10000:
+    light_live_well:
+      scope: light_live_well
+      eligible_asset_classes:
+      - rlwi_monohull
+      - mpsv
+      representative_asset: rlwi_monohull
+      representative_dayrate_public: false
+      dayrate_basis_asset: mpsv
+      dayrate_band:
+        asset_class: mpsv_osv
+        low_usd_per_day: 22000
+        median_usd_per_day: 37500
+        high_usd_per_day: 80000
+        source_confidence: *id002
+      duration_days:
+        low: 5
+        median: 10
+        high: 15
+      cost_usd:
+        low: 110000
+        median: 375000
+        high: 1200000
+      confidence: proxy_mpsv
+      flag: "representative asset 'rlwi_monohull' day-rate not public \u2014 priced\
+        \ via eligible proxy 'mpsv' (mpsv_osv); indicative only, not the representative\
+        \ asset's true rate"
+      band: band_5000_10000
+      band_label: 5,000-10,000 ft
+      scope_label: Light live-well (riserless wireline)
+      riser_required: false
+    through_tubing_ct:
+      scope: through_tubing_ct
+      eligible_asset_classes:
+      - heavy_intervention_semi
+      - modu
+      representative_asset: heavy_intervention_semi
+      representative_dayrate_public: false
+      dayrate_basis_asset: modu
+      dayrate_band:
+        asset_class: modu_drillship
+        low_usd_per_day: 300000
+        median_usd_per_day: 457000
+        high_usd_per_day: 530000
+        source_confidence: *id001
+      duration_days:
+        low: 15
+        median: 20
+        high: 30
+      cost_usd:
+        low: 4500000
+        median: 9140000
+        high: 15900000
+      confidence: proxy_modu
+      flag: "representative asset 'heavy_intervention_semi' day-rate not public \u2014\
+        \ priced via eligible proxy 'modu' (modu_drillship); indicative only, not\
+        \ the representative asset's true rate"
+      band: band_5000_10000
+      band_label: 5,000-10,000 ft
+      scope_label: Through-tubing coiled tubing
+      riser_required: true
+    heavy_dead_well:
+      scope: heavy_dead_well
+      eligible_asset_classes:
+      - modu
+      - heavy_intervention_semi
+      representative_asset: modu
+      representative_dayrate_public: true
+      dayrate_basis_asset: modu
+      dayrate_band:
+        asset_class: modu_drillship
+        low_usd_per_day: 300000
+        median_usd_per_day: 457000
+        high_usd_per_day: 530000
+        source_confidence: *id001
+      duration_days:
+        low: 30
+        median: 45
+        high: 60
+      cost_usd:
+        low: 9000000
+        median: 20565000
+        high: 31800000
+      confidence: indicative
+      flag: ''
+      band: band_5000_10000
+      band_label: 5,000-10,000 ft
+      scope_label: Heavy dead-well (tubing pull / recompletion / P&A)
+      riser_required: true
+  band_gt_10000:
+    light_live_well:
+      scope: light_live_well
+      eligible_asset_classes:
+      - rlwi_monohull
+      - mpsv
+      representative_asset: rlwi_monohull
+      representative_dayrate_public: false
+      dayrate_basis_asset: mpsv
+      dayrate_band:
+        asset_class: mpsv_osv
+        low_usd_per_day: 22000
+        median_usd_per_day: 37500
+        high_usd_per_day: 80000
+        source_confidence: *id002
+      duration_days:
+        low: 5
+        median: 10
+        high: 15
+      cost_usd:
+        low: 110000
+        median: 375000
+        high: 1200000
+      confidence: proxy_mpsv
+      flag: "representative asset 'rlwi_monohull' day-rate not public \u2014 priced\
+        \ via eligible proxy 'mpsv' (mpsv_osv); indicative only, not the representative\
+        \ asset's true rate"
+      band: band_gt_10000
+      band_label: '> 10,000 ft'
+      scope_label: Light live-well (riserless wireline)
+      riser_required: false
+    through_tubing_ct:
+      scope: through_tubing_ct
+      eligible_asset_classes:
+      - heavy_intervention_semi
+      - modu
+      representative_asset: heavy_intervention_semi
+      representative_dayrate_public: false
+      dayrate_basis_asset: modu
+      dayrate_band:
+        asset_class: modu_drillship
+        low_usd_per_day: 300000
+        median_usd_per_day: 457000
+        high_usd_per_day: 530000
+        source_confidence: *id001
+      duration_days:
+        low: 15
+        median: 20
+        high: 30
+      cost_usd:
+        low: 4500000
+        median: 9140000
+        high: 15900000
+      confidence: proxy_modu
+      flag: "representative asset 'heavy_intervention_semi' day-rate not public \u2014\
+        \ priced via eligible proxy 'modu' (modu_drillship); indicative only, not\
+        \ the representative asset's true rate"
+      band: band_gt_10000
+      band_label: '> 10,000 ft'
+      scope_label: Through-tubing coiled tubing
+      riser_required: true
+    heavy_dead_well:
+      scope: heavy_dead_well
+      eligible_asset_classes:
+      - modu
+      - heavy_intervention_semi
+      representative_asset: modu
+      representative_dayrate_public: true
+      dayrate_basis_asset: modu
+      dayrate_band:
+        asset_class: modu_drillship
+        low_usd_per_day: 300000
+        median_usd_per_day: 457000
+        high_usd_per_day: 530000
+        source_confidence: *id001
+      duration_days:
+        low: 30
+        median: 45
+        high: 60
+      cost_usd:
+        low: 9000000
+        median: 20565000
+        high: 31800000
+      confidence: indicative
+      flag: ''
+      band: band_gt_10000
+      band_label: '> 10,000 ft'
+      scope_label: Heavy dead-well (tubing pull / recompletion / P&A)
+      riser_required: true
+scopes:
+  light_live_well: Light live-well (riserless wireline)
+  through_tubing_ct: Through-tubing coiled tubing
+  heavy_dead_well: Heavy dead-well (tubing pull / recompletion / P&A)
+bands:
+  shelf_lt_500: < 500 ft (shelf)
+  band_500_3000: 500-3,000 ft
+  band_3000_5000: 3,000-5,000 ft
+  band_5000_10000: 5,000-10,000 ft
+  band_gt_10000: '> 10,000 ft'
+campaign_duration_days:
+  light_live_well:
+    low: 5
+    median: 10
+    high: 15
+  through_tubing_ct:
+    low: 15
+    median: 20
+    high: 30
+  heavy_dead_well:
+    low: 30
+    median: 45
+    high: 60
+duration_source: '[engineering-assumption] Representative subsea well-intervention
+  campaign durations (typical on-station days incl. routine contingency), by scope:
+  riserless light wireline jobs run a few days to ~2 weeks (5-15 d); riser-based through-tubing
+  coiled-tubing programs ~2-4 weeks (15-30 d); full workover-riser + subsea-BOP jobs
+  (tubing pull / recompletion / ESP change-out / P&A) ~1-2 months (30-60 d). Planning-grade
+  ranges from standard GoM deepwater intervention practice / operator AFE norms (e.g.
+  SPE intervention literature), NOT a measured BSEE dataset. Mobilization / transit
+  for deeper bands is NOT separately added. Overridable via the duration_table argument.'
+asset_dayrate_map:
+  modu: modu_drillship
+  heavy_intervention_semi: heavy_intervention_semi
+  rlwi_monohull: rlwi_monohull
+  mpsv: mpsv_osv
+method: cost_low = dayrate_band_low x duration_low; cost_median = dayrate_median x
+  duration_median; cost_high = dayrate_band_high x duration_high. Representative asset
+  = eligible_asset_classes[0]; if its day-rate is not public, price off the next eligible
+  public asset (MODU/MPSV proxy) or mark unknown.
+confidence: 'Indicative planning-grade only. Day-rates are a point-in-time PUBLIC
+  snapshot (#596), not a live subscription index; intervention-semi (Helix Q-class)
+  and RLWI-monohull day-rates are NOT public and are shown via eligible proxies or
+  left unknown, never invented. Campaign durations are an [engineering-assumption]
+  (see duration_source). Confidence labels per cell: indicative (public representative
+  rate), proxy_modu / proxy_mpsv (priced off an eligible public proxy), unknown (no
+  eligible public rate).'
+provenance:
+  serviceability_matrix: worldenergydata#586
+  dayrate_snapshot: worldenergydata#596
+  band_scheme: worldenergydata#583 (well_inventory_by_band)
+  issue: 'worldenergydata#629 (epic #582)'
