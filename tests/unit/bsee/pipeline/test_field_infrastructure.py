@@ -329,9 +329,12 @@ def test_build_bundle_exports_product_ready_field_infrastructure(tmp_path: Path)
         "documents",
         "engineering_summary",
     }
-    assert json.loads((out_dir / "engineering_summary.json").read_text())[
-        "pipeline_segment_count"
-    ] == 2
+    assert (
+        json.loads((out_dir / "engineering_summary.json").read_text())[
+            "pipeline_segment_count"
+        ]
+        == 2
+    )
     assert pd.read_csv(out_dir / "appurtenances.csv")["appurtenance_type"].tolist() == [
         "RISER",
         "PIPELINE SLED",

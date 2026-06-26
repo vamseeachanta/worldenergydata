@@ -10,7 +10,6 @@ from typer.testing import CliRunner
 
 from tests.unit.bsee.pipeline.test_field_package import _load_bsee_command_app
 
-
 PDF_BYTES = b"%PDF-1.7\nfield source document\n%%EOF\n"
 
 

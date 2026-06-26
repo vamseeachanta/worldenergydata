@@ -91,9 +91,9 @@ def render_field_package_html(
         "</head>\n"
         "<body>\n"
         '<main class="page">\n'
-        f"  <p class=\"contract\">{FIELD_PACKAGE_CONTRACT_VERSION}</p>\n"
+        f'  <p class="contract">{FIELD_PACKAGE_CONTRACT_VERSION}</p>\n'
         f"  <h1>{_esc(field_name)}</h1>\n"
-        f"  <p class=\"subtitle\">BSEE field code {_esc(field_code)}</p>\n"
+        f'  <p class="subtitle">BSEE field code {_esc(field_code)}</p>\n'
         f"{''.join(sections)}\n"
         "</main>\n"
         "</body>\n"
@@ -156,8 +156,10 @@ def _build_document_queue(documents: pd.DataFrame) -> pd.DataFrame:
         if column not in queue.columns and column != "priority_rank":
             queue[column] = ""
 
-    queue["retrieval_reason"] = queue["document_family"].map(_retrieval_reason).fillna(
-        "Review indexed document before engineering use"
+    queue["retrieval_reason"] = (
+        queue["document_family"]
+        .map(_retrieval_reason)
+        .fillna("Review indexed document before engineering use")
     )
     queue["retrieval_url"] = queue.apply(_candidate_pdf_url, axis=1)
     queue["retrieval_status"] = queue["retrieval_url"].map(
@@ -181,7 +183,9 @@ def _retrieval_reason(document_family: Any) -> str:
     if family == "row":
         return "Review ROW document for right-of-way and segment authorization context"
     if family == "plan":
-        return "Review plan document for lease-level development and installation context"
+        return (
+            "Review plan document for lease-level development and installation context"
+        )
     return "Review indexed document before engineering use"
 
 
@@ -276,7 +280,9 @@ def _asset_inventory_section(structures: pd.DataFrame) -> str:
     )
 
 
-def _pipeline_section(pipeline_segments: pd.DataFrame, appurtenances: pd.DataFrame) -> str:
+def _pipeline_section(
+    pipeline_segments: pd.DataFrame, appurtenances: pd.DataFrame
+) -> str:
     segment_table = (
         '<p class="empty">No pipeline segments matched this bundle.</p>'
         if pipeline_segments.empty
@@ -402,7 +408,9 @@ def _html_table(
     if not available:
         return '<p class="empty">No display columns available.</p>'
     rows = df[available].head(max_rows)
-    header = "".join(f"<th>{_esc(column.replace('_', ' ').title())}</th>" for column in available)
+    header = "".join(
+        f"<th>{_esc(column.replace('_', ' ').title())}</th>" for column in available
+    )
     body = []
     for _, row in rows.iterrows():
         cells = "".join(_html_cell(column, row[column]) for column in available)

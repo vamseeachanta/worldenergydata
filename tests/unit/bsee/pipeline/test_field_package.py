@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import json
 import importlib.util
+import json
 from pathlib import Path
 
 import pandas as pd
@@ -127,7 +127,9 @@ def _load_bsee_command_app():
         / "commands"
         / "bsee.py"
     )
-    spec = importlib.util.spec_from_file_location("bsee_command_under_test", module_path)
+    spec = importlib.util.spec_from_file_location(
+        "bsee_command_under_test", module_path
+    )
     assert spec and spec.loader
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)

@@ -69,7 +69,9 @@ def download_document_queue(
     _validate_queue(document_queue)
 
     owns_client = client is None
-    http_client = client or httpx.Client(headers={"User-Agent": "worldenergydata/field-documents"})
+    http_client = client or httpx.Client(
+        headers={"User-Agent": "worldenergydata/field-documents"}
+    )
     try:
         manifest_rows = [
             _retrieve_row(row, documents_dir, overwrite, timeout, http_client)
@@ -89,7 +91,9 @@ def download_document_queue(
         "attempted": int(len(manifest)),
         "downloaded": _count_status(manifest, "downloaded"),
         "cached": _count_status(manifest, "cached"),
-        "skipped": int(manifest["download_status"].astype(str).str.startswith("skipped").sum()),
+        "skipped": int(
+            manifest["download_status"].astype(str).str.startswith("skipped").sum()
+        ),
         "errors": int(
             manifest["download_status"]
             .isin(["http_error", "request_error", "non_pdf_response", "cached_non_pdf"])

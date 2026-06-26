@@ -56,7 +56,11 @@ def build_source_document_ocr_index(
         raise SourceDocumentOcrError(f"Source document index missing: {index_path}")
 
     root = Path(package_dir)
-    output = Path(output_path) if output_path is not None else root / "source_document_ocr_index.csv"
+    output = (
+        Path(output_path)
+        if output_path is not None
+        else root / "source_document_ocr_index.csv"
+    )
     output.parent.mkdir(parents=True, exist_ok=True)
 
     source_index = pd.read_csv(index_path)
@@ -92,7 +96,9 @@ def _validate_source_index(source_index: pd.DataFrame) -> None:
     }
     missing = sorted(required.difference(source_index.columns))
     if missing:
-        raise SourceDocumentOcrError(f"Source document index missing columns: {missing}")
+        raise SourceDocumentOcrError(
+            f"Source document index missing columns: {missing}"
+        )
 
 
 def _target_rows(
@@ -142,7 +148,9 @@ def _ocr_index_row(
         }
 
     matched_terms = _matched_terms(text, terms)
-    tag_terms = _matched_terms(text, _normalize_terms(DEFAULT_ENGINEERING_TERMS + terms))
+    tag_terms = _matched_terms(
+        text, _normalize_terms(DEFAULT_ENGINEERING_TERMS + terms)
+    )
     return {
         **base,
         "ocr_pages": ocr_pages,

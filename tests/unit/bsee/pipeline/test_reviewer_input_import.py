@@ -176,7 +176,8 @@ def test_bsee_import_reviewer_inputs_cli_writes_import_products(
             "updated_decision_log": updated,
             "staging_audit": output_dir_path / "reviewer_ready_input_staging_audit.csv",
             "promotion_gate_audit": output_dir_path / "promotion_gate_audit.csv",
-            "verified_register": output_dir_path / "verified_field_structure_register.csv",
+            "verified_register": output_dir_path
+            / "verified_field_structure_register.csv",
             "import_manifest": output_dir_path / "import_run_manifest.json",
             "html_report": output_dir_path / "index.html",
             "import_ready": 1,

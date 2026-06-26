@@ -605,7 +605,9 @@ def infrastructure_bundle(
         results.add_row("Field Code", str(summary["field_code"]))
         results.add_row("Contract", str(summary["product_contract_version"]))
         results.add_row("Leases", str(summary["lease_count"]))
-        results.add_row("Infrastructure Records", str(summary["infrastructure_record_count"]))
+        results.add_row(
+            "Infrastructure Records", str(summary["infrastructure_record_count"])
+        )
         results.add_row("Pipeline Segments", str(summary["pipeline_segment_count"]))
         results.add_row(
             "Pipeline Location Rows", str(summary["pipeline_location_row_count"])
@@ -671,7 +673,9 @@ def field_package(
         results.add_row("Field", str(summary.get("field_name", "")))
         results.add_row("Field Code", str(summary.get("field_code", "")))
         results.add_row("Contract", FIELD_PACKAGE_CONTRACT_VERSION)
-        results.add_row("Pipeline Segments", str(summary.get("pipeline_segment_count", 0)))
+        results.add_row(
+            "Pipeline Segments", str(summary.get("pipeline_segment_count", 0))
+        )
         results.add_row("Appurtenances", str(summary.get("appurtenance_count", 0)))
         results.add_row("Documents", str(summary.get("document_count", 0)))
         console.print(results)
@@ -988,7 +992,9 @@ def import_reviewer_inputs(
         results.add_row("Verified Rows", str(paths.get("verified_rows", 0)))
         console.print(results)
 
-        console.print(f"[green]Updated decision log:[/green] {paths['updated_decision_log']}")
+        console.print(
+            f"[green]Updated decision log:[/green] {paths['updated_decision_log']}"
+        )
         console.print(f"[green]Import manifest:[/green] {paths['import_manifest']}")
         console.print(f"[green]HTML report:[/green] {paths['html_report']}")
         if paths.get("sqlite_product"):

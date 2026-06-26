@@ -170,9 +170,15 @@ def _resolve_anchor(query: str, deepqual: pd.DataFrame) -> pd.DataFrame:
     if "LEASE_NUMBER" in deepqual.columns:
         masks.append(_norm_series(deepqual["LEASE_NUMBER"]).str.upper().eq(q_upper))
     if "FLD_NICK_NAME" in deepqual.columns:
-        masks.append(_norm_series(deepqual["FLD_NICK_NAME"]).str.upper().str.contains(q_upper, regex=False))
+        masks.append(
+            _norm_series(deepqual["FLD_NICK_NAME"])
+            .str.upper()
+            .str.contains(q_upper, regex=False)
+        )
     if not masks:
-        raise FieldInfrastructureError("Deepwater field table has no usable query columns")
+        raise FieldInfrastructureError(
+            "Deepwater field table has no usable query columns"
+        )
     mask = masks[0].copy()
     for item in masks[1:]:
         mask |= item
@@ -181,7 +187,9 @@ def _resolve_anchor(query: str, deepqual: pd.DataFrame) -> pd.DataFrame:
         raise FieldInfrastructureError(f"Cannot resolve field query: {query}")
     if "FIELD_NAME_CODE" in anchor.columns:
         field_code = _norm(anchor.iloc[0]["FIELD_NAME_CODE"])
-        anchor = deepqual[_norm_series(deepqual["FIELD_NAME_CODE"]).eq(field_code)].copy()
+        anchor = deepqual[
+            _norm_series(deepqual["FIELD_NAME_CODE"]).eq(field_code)
+        ].copy()
     return anchor.reset_index(drop=True)
 
 
@@ -189,7 +197,9 @@ def _context_from_anchor(anchor: pd.DataFrame) -> dict[str, Any]:
     row = anchor.iloc[0]
     field_name = _norm(row.get("FLD_NICK_NAME", row.get("FIELD_NAME_CODE", "")))
     field_code = _norm(row.get("FIELD_NAME_CODE", field_name))
-    leases = sorted(_norm_series(anchor["LEASE_NUMBER"]).replace("", pd.NA).dropna().unique())
+    leases = sorted(
+        _norm_series(anchor["LEASE_NUMBER"]).replace("", pd.NA).dropna().unique()
+    )
     area_blocks = [f"{a} {b}" for a, b in _anchor_area_block_pairs(anchor)]
     water_depth = None
     if "FLD_AVG_WTR_DPTH" in anchor.columns:
@@ -198,7 +208,9 @@ def _context_from_anchor(anchor: pd.DataFrame) -> dict[str, Any]:
             water_depth = float(depths.iloc[0])
     operators = []
     if "BUS_ASC_NAME" in anchor.columns:
-        operators = sorted(_norm_series(anchor["BUS_ASC_NAME"]).replace("", pd.NA).dropna().unique())
+        operators = sorted(
+            _norm_series(anchor["BUS_ASC_NAME"]).replace("", pd.NA).dropna().unique()
+        )
     return {
         "field_name": field_name,
         "field_code": field_code,
@@ -216,7 +228,9 @@ def _anchor_area_block_pairs(anchor: pd.DataFrame) -> list[tuple[str, str]]:
     pairs = sorted(
         {
             (_norm(area), _norm(block))
-            for area, block in zip(anchor["AREA_CODE"], anchor["BLOCK_NUMBER"], strict=False)
+            for area, block in zip(
+                anchor["AREA_CODE"], anchor["BLOCK_NUMBER"], strict=False
+            )
             if _norm(area) and _norm(block)
         }
     )
@@ -243,7 +257,9 @@ def _match_area_block(
         for block_col in block_cols:
             if area_col not in df.columns or block_col not in df.columns:
                 continue
-            keys = zip(_norm_series(df[area_col]), _block_series(df[block_col]), strict=False)
+            keys = zip(
+                _norm_series(df[area_col]), _block_series(df[block_col]), strict=False
+            )
             mask |= pd.Series([key in pair_set for key in keys], index=df.index)
     return mask
 
@@ -335,13 +351,19 @@ def _append_subsea_boreholes(
     )
 
 
-def _build_fmp_rows(root: Path, leases: set[str], complex_ids: set[str]) -> pd.DataFrame:
+def _build_fmp_rows(
+    root: Path, leases: set[str], complex_ids: set[str]
+) -> pd.DataFrame:
     fmp_list = _read_table(root, "fmp/mv_fmplist_all.bin")
     fmp_locations = _read_table(root, "fmp/mv_fmp_meas_locations_all.bin")
     if fmp_list.empty or fmp_locations.empty:
         return _structure_frame()
     linked = fmp_list[_match_lease(fmp_list, ["LEASE_NUMBER"], leases)]
-    meas_ids = set(_norm_series(linked["SN_MEAS_LOC_FK"])) if "SN_MEAS_LOC_FK" in linked else set()
+    meas_ids = (
+        set(_norm_series(linked["SN_MEAS_LOC_FK"]))
+        if "SN_MEAS_LOC_FK" in linked
+        else set()
+    )
     mask = pd.Series(False, index=fmp_locations.index)
     if "SN_MEAS_LOC" in fmp_locations.columns:
         mask |= _norm_series(fmp_locations["SN_MEAS_LOC"]).isin(meas_ids)
@@ -352,7 +374,8 @@ def _build_fmp_rows(root: Path, leases: set[str], complex_ids: set[str]) -> pd.D
         rows.append(
             {
                 "asset_type": "fmp_measurement_location",
-                "structure_name": _norm(row.get("FMP_NAME")) or _norm(row.get("FMP_LOC_NAME")),
+                "structure_name": _norm(row.get("FMP_NAME"))
+                or _norm(row.get("FMP_LOC_NAME")),
                 "structure_type": _norm(row.get("FMP_MEAS_TYP_CD")),
                 "operator_name": _norm(row.get("BUS_ASC_NAME")),
                 "area_code": _norm(row.get("AREA_CODE")),
@@ -377,7 +400,11 @@ def _build_mcp_rows(root: Path, leases: set[str]) -> pd.DataFrame:
     if lease_units.empty or systems.empty:
         return _structure_frame()
     linked = lease_units[_match_lease(lease_units, ["LEASE_UNIT"], leases)]
-    system_ids = set(_norm_series(linked["COMGL_SYS_NUM"])) if "COMGL_SYS_NUM" in linked else set()
+    system_ids = (
+        set(_norm_series(linked["COMGL_SYS_NUM"]))
+        if "COMGL_SYS_NUM" in linked
+        else set()
+    )
     matched = systems[_norm_series(systems["COMGL_SYS_NUM"]).isin(system_ids)]
     rows = []
     for _, row in matched.iterrows():
@@ -482,7 +509,8 @@ def _build_pipeline_segments(
                 "destination_name": _norm(row.get("DEST_ID_NAME")),
                 "product_code": _norm(row.get("PROD_CODE")),
                 "pipeline_size_code": _norm(row.get("PPL_SIZE_CODE")),
-                "status": _norm(row.get("STATUS_CODE")) or _norm(row.get("SOURCE_STATUS")),
+                "status": _norm(row.get("STATUS_CODE"))
+                or _norm(row.get("SOURCE_STATUS")),
                 "source_table": _norm(row.get("SOURCE_TABLE")),
                 "join_key": "lease|area_block",
                 "evidence_confidence": "inferred",
@@ -566,7 +594,9 @@ def _build_documents(
         )
     scan_row = _read_table(root, "scanneddocs/scan_row.bin")
     if not scan_row.empty and segment_numbers:
-        matched = scan_row[_norm_series(scan_row["SEGMENT_NUMBER"]).isin(segment_numbers)]
+        matched = scan_row[
+            _norm_series(scan_row["SEGMENT_NUMBER"]).isin(segment_numbers)
+        ]
         for _, row in matched.iterrows():
             rows.append(
                 {
@@ -602,7 +632,11 @@ def _build_documents(
                     "evidence_confidence": "document_index",
                 }
             )
-    return pd.DataFrame(rows, columns=_document_columns()).drop_duplicates().reset_index(drop=True)
+    return (
+        pd.DataFrame(rows, columns=_document_columns())
+        .drop_duplicates()
+        .reset_index(drop=True)
+    )
 
 
 def _append_platform_decom(
@@ -644,7 +678,10 @@ def _append_platform_decom(
             )
     if not rows:
         return structures
-    return pd.concat([structures, pd.DataFrame(rows, columns=_structure_columns())], ignore_index=True)
+    return pd.concat(
+        [structures, pd.DataFrame(rows, columns=_structure_columns())],
+        ignore_index=True,
+    )
 
 
 def _engineering_summary(
@@ -657,7 +694,9 @@ def _engineering_summary(
 ) -> dict[str, Any]:
     appurtenance_types = []
     if not appurtenances.empty:
-        appurtenance_types = sorted(_norm_series(appurtenances["appurtenance_type"]).unique())
+        appurtenance_types = sorted(
+            _norm_series(appurtenances["appurtenance_type"]).unique()
+        )
     latitudes = pd.to_numeric(pipeline_locations.get("latitude"), errors="coerce")
     longitudes = pd.to_numeric(pipeline_locations.get("longitude"), errors="coerce")
     route_bounds = None
@@ -672,9 +711,17 @@ def _engineering_summary(
         "field_name": context["field_name"],
         "field_code": context["field_code"],
         "lease_count": len(context["leases"]),
-        "structure_count": int((structures["asset_type"] == "platform_structure").sum()) if "asset_type" in structures else 0,
+        "structure_count": (
+            int((structures["asset_type"] == "platform_structure").sum())
+            if "asset_type" in structures
+            else 0
+        ),
         "infrastructure_record_count": len(structures),
-        "pipeline_segment_count": pipeline_segments["segment_number"].nunique() if not pipeline_segments.empty else 0,
+        "pipeline_segment_count": (
+            pipeline_segments["segment_number"].nunique()
+            if not pipeline_segments.empty
+            else 0
+        ),
         "pipeline_location_row_count": len(pipeline_locations),
         "appurtenance_count": len(appurtenances),
         "appurtenance_types": appurtenance_types,

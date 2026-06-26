@@ -94,7 +94,11 @@ def build_source_document_index(
     if not manifest.is_file():
         raise SourceDocumentIndexError(f"Manifest does not exist: {manifest}")
     root = Path(package_dir)
-    output = Path(output_path) if output_path is not None else root / "source_document_index.csv"
+    output = (
+        Path(output_path)
+        if output_path is not None
+        else root / "source_document_index.csv"
+    )
     output.parent.mkdir(parents=True, exist_ok=True)
 
     manifest_df = pd.read_csv(manifest)
@@ -114,7 +118,9 @@ def build_source_document_index(
         "attempted": int(len(index)),
         "extracted": _count_status(index, "extracted"),
         "no_text": _count_status(index, "extracted_no_text"),
-        "skipped": int(index["extraction_status"].astype(str).str.startswith("skipped").sum()),
+        "skipped": int(
+            index["extraction_status"].astype(str).str.startswith("skipped").sum()
+        ),
         "errors": _count_status(index, "extraction_error"),
     }
 
@@ -150,7 +156,11 @@ def _index_manifest_row(
             "error": f"download_status={status}",
         }
     if not local_path:
-        return {**base, "extraction_status": "skipped_missing_path", "error": "missing local_path"}
+        return {
+            **base,
+            "extraction_status": "skipped_missing_path",
+            "error": "missing local_path",
+        }
 
     source_path = package_dir / local_path
     if not source_path.is_file():
@@ -175,7 +185,9 @@ def _index_manifest_row(
         }
 
     matched_terms = _matched_terms(text, terms)
-    tag_terms = _matched_terms(text, _normalize_terms(DEFAULT_ENGINEERING_TERMS + terms))
+    tag_terms = _matched_terms(
+        text, _normalize_terms(DEFAULT_ENGINEERING_TERMS + terms)
+    )
     return {
         **base,
         "page_count": page_count,
@@ -211,7 +223,9 @@ def _extract_pdf_text(path: Path, max_pages: int) -> tuple[str, int, int]:
     try:
         import pdfplumber
     except ImportError as exc:  # pragma: no cover - dependency declared in project
-        raise SourceDocumentIndexError("pdfplumber is required for PDF text extraction") from exc
+        raise SourceDocumentIndexError(
+            "pdfplumber is required for PDF text extraction"
+        ) from exc
 
     chunks: list[str] = []
     with pdfplumber.open(path) as pdf:

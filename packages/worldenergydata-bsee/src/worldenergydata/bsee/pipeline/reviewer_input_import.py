@@ -12,7 +12,6 @@ from typing import Any
 
 import pandas as pd
 
-
 REQUIRED_GATE_FIELDS = [
     "basis_page_accepted",
     "promote_to_verified_register",
@@ -219,7 +218,9 @@ def _updated_decision_log(
 ) -> pd.DataFrame:
     updated = decision_log.copy()
     _ensure_columns(updated, REQUIRED_GATE_FIELDS + OPTIONAL_UPDATE_FIELDS)
-    ready_ids = set(staging.loc[staging["import_ready"] == 1, "basis_review_decision_id"])
+    ready_ids = set(
+        staging.loc[staging["import_ready"] == 1, "basis_review_decision_id"]
+    )
     updates = ready_input.set_index("basis_review_decision_id", drop=False)
     for row_index, target in updated.iterrows():
         decision_id = _text(target.get("basis_review_decision_id"))
@@ -265,17 +266,23 @@ def _build_verified_register(gate: pd.DataFrame) -> pd.DataFrame:
                 "verified_field_structure_id": _verified_id(row),
                 "asset_register_id": _text(row.get("asset_register_id")),
                 "basis_review_decision_id": _text(row.get("basis_review_decision_id")),
-                "verified_register_delta_id": _text(row.get("verified_register_delta_id")),
+                "verified_register_delta_id": _text(
+                    row.get("verified_register_delta_id")
+                ),
                 "review_sequence": _text(row.get("review_sequence")),
                 "field": _text(row.get("field")),
                 "field_join_key": _text(row.get("field_join_key")),
                 "verified_structure_class": _text(row.get("verified_structure_class")),
                 "verified_quantity": _text(row.get("verified_quantity")),
-                "verified_segment_or_asset_id": _text(row.get("verified_segment_or_asset_id")),
+                "verified_segment_or_asset_id": _text(
+                    row.get("verified_segment_or_asset_id")
+                ),
                 "verified_asset_name": _text(row.get("verified_asset_name")),
                 "verified_asset_role": _text(row.get("verified_asset_role")),
                 "basis_evidence_type": _text(row.get("basis_evidence_type")),
-                "basis_document_family": _text(row.get("selected_basis_document_family")),
+                "basis_document_family": _text(
+                    row.get("selected_basis_document_family")
+                ),
                 "basis_document_id": _text(row.get("selected_basis_document_id")),
                 "basis_page_number": _text(row.get("selected_basis_page_number")),
                 "basis_source": _text(row.get("selected_basis_source")),
@@ -499,7 +506,10 @@ def _field_token(row: pd.Series) -> str:
     return "-".join(
         [
             _text(row.get("field")).upper(),
-            _text(row.get("verified_structure_class") or row.get("proposed_structure_class")).upper(),
+            _text(
+                row.get("verified_structure_class")
+                or row.get("proposed_structure_class")
+            ).upper(),
             _text(row.get("verified_segment_or_asset_id") or row.get("segment_number")),
         ]
     )
