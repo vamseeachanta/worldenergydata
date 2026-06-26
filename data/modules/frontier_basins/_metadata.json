@@ -1,0 +1,58 @@
+{
+  "module": "frontier_basins",
+  "generated_at": "2026-06-26T11:34:40.274640+00:00",
+  "last_refresh": "2026-06-26",
+  "record_count": 0,
+  "file_count": 4,
+  "total_size_bytes": 26172,
+  "total_size_human": "25.6 KB",
+  "source_url": null,
+  "format": ".csv,.json,.md,.yaml",
+  "format_breakdown": {
+    ".csv": {
+      "count": 1,
+      "size_bytes": 17472
+    },
+    ".json": {
+      "count": 1,
+      "size_bytes": 1219
+    },
+    ".md": {
+      "count": 1,
+      "size_bytes": 6158
+    },
+    ".yaml": {
+      "count": 1,
+      "size_bytes": 1323
+    }
+  },
+  "has_external_data": false,
+  "external_data_root": null,
+  "files": [
+    {
+      "name": "README.md",
+      "path": "README.md",
+      "size_bytes": 6158,
+      "modified": "2026-06-26"
+    },
+    {
+      "name": "_metadata.json",
+      "path": "_metadata.json",
+      "size_bytes": 1219,
+      "modified": "2026-06-26"
+    },
+    {
+      "name": "frontier_discoveries.csv",
+      "path": "curated/frontier_discoveries.csv",
+      "size_bytes": 17472,
+      "modified": "2026-06-26"
+    },
+    {
+      "name": "schema.yaml",
+      "path": "schema.yaml",
+      "size_bytes": 1323,
+      "modified": "2026-06-26"
+    }
+  ],
+  "files_truncated": false
+}
