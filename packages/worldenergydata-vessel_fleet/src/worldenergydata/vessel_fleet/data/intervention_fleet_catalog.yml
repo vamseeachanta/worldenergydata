@@ -1,0 +1,128 @@
+catalog: unified_intervention_fleet
+issue: 598
+epic: 591
+feeds: 'Chuck brief #588'
+asset_class_taxonomy:
+- modu_drillship
+- modu_semisub
+- modu_jackup
+- heavy_intervention_semi
+- rlwi_monohull
+- mpsv_osv
+- lift_boat
+- construction_vessel
+- other
+totals:
+  units_classified: 2442
+  seed_dedicated_units: 9
+by_asset_class_scope: GLOBAL available roster (curated contractor/BSEE fleet + seed),
+  NOT GoM-resident. These are worldwide fleet counts; for GoM supply use gom_resident_dedicated_intervention
+  below.
+by_asset_class:
+  modu_drillship:
+    count: 163
+    water_depth_capability_ft:
+      min: 4900.0
+      max: 12000.0
+    named_flagship_units: []
+  modu_semisub:
+    count: 308
+    water_depth_capability_ft:
+      min: 1500.0
+      max: 12500.0
+    named_flagship_units: []
+  modu_jackup:
+    count: 1027
+    water_depth_capability_ft:
+      min: 300.0
+      max: 492.0
+    named_flagship_units: []
+  heavy_intervention_semi:
+    count: 13
+    water_depth_capability_ft:
+      min: 1197.5
+      max: 10000.0
+    named_flagship_units:
+    - Helix Q4000
+    - Helix Q5000
+    - Helix Q7000
+    - Seawell
+    - Well Enhancer
+  rlwi_monohull:
+    count: 5
+    water_depth_capability_ft:
+      min: 6561.7
+      max: 6561.7
+    named_flagship_units:
+    - Island Performer
+    - Island Wellserver
+    - Island Constructor
+    - Skandi Constructor
+  lift_boat:
+    count: 158
+    water_depth_capability_ft:
+      min: null
+      max: null
+    named_flagship_units: []
+  construction_vessel:
+    count: 162
+    water_depth_capability_ft:
+      min: 49.9
+      max: 13123.4
+    named_flagship_units: []
+  other:
+    count: 606
+    water_depth_capability_ft:
+      min: 5000.0
+      max: 5000.0
+    named_flagship_units: []
+gom_resident_dedicated_intervention:
+  count: 3
+  confidence: soft
+  units:
+  - name: Helix Q4000
+    intervention_class: heavy
+    asset_class: heavy_intervention_semi
+    water_depth_rating_m: 3048.0
+  - name: Helix Q5000
+    intervention_class: heavy
+    asset_class: heavy_intervention_semi
+    water_depth_rating_m: 3048.0
+  - name: Island Performer
+    intervention_class: light
+    asset_class: rlwi_monohull
+    water_depth_rating_m: 2000.0
+reconciliation_to_research:
+  gom_resident_dedicated_intervention_vessels:
+    figure: 2-4
+    confidence: soft
+    note: GoM-resident dedicated intervention units; small population
+  global_rlwi_fleet:
+    figure: 15-25
+    confidence: soft
+    note: global riserless light well-intervention fleet, +/-30-50%
+  helix_purpose_built_units:
+    figure: 7-8
+    confidence: soft
+    note: Helix purpose-built well-intervention units worldwide
+  rigs_rated_20k_psi_worldwide:
+    figure: '2'
+    confidence: on_record
+    note: only two rigs worldwide rated to 20,000 psi
+provenance:
+  seed: intervention_vessels_seed.yml
+  curated_dir: /mnt/local-analysis/worldenergydata/data/modules/vessel_fleet/curated
+  curated_files:
+  - drilling_rigs.csv
+  - construction_vessels.csv
+caveats:
+- Curated CSV rosters may be stale (snapshot, not live).
+- Drive-corpus historical fleet records date to 2010-2014.
+- 'Populations are additive: dedup vs IMO is deferred to #599, so counts may double-count
+  a unit present in both seed and curated.'
+- Water-depth ratings are nameplate vendor figures and approximate.
+- by_asset_class counts are GLOBAL fleet, not GoM-resident supply; MODU/jackup counts
+  include shelf + non-GoM assets. The binding GoM intervention supply is gom_resident_dedicated_intervention
+  (~2-4).
+- 'mpsv_osv is under-counted: the ~500-vessel OSV/MPSV roster awaits the vendor-scrape
+  ingest (#593).'
