@@ -1,0 +1,362 @@
+# OSV / MPSV + subsea-intervention vendor fleet roster -- named-unit roster (#593).
+#
+# A 29-vessel roster across the 6 requested intervention/OSV vendors
+# (Helix, Island Offshore/TIOS, C-Innovation/Edison Chouest, Oceaneering,
+# AKOFS, DOF). This is aggregate/named-unit REFERENCE data compiled from
+# public vendor asset pages, shipyard reference pages, classification-society
+# registers and contract news -- safe to commit.
+#
+# Rules:
+#   - Unknown specs are left null. They are NEVER guessed.
+#   - gom_resident is true ONLY where a public source ties the vessel to GoM
+#     operations; false where a non-GoM region is documented; null where the
+#     operating region is unclear.
+#   - vessel_type maps onto the asset-class enum used by fleet_catalog:
+#       heavy_intervention_semi -> Helix Q-series semis
+#       rlwi_monohull           -> light/riser-based monohull intervention
+#       mpsv                    -> multi-purpose service vessel (RLWI/IMR)
+#       osv                     -> offshore support vessel (type unconfirmed)
+#       construction            -> subsea construction / SESV / flexlay
+#
+# Confidence:
+#   vendor_spec  -> from the operator's own asset/fleet page
+#   reference    -> from shipyard (Ulstein/Vard) or trade-press spec pages
+#   register     -> from a classification-society / vessel register + news
+
+provenance:
+  source: "public vendor asset pages + shipyard reference pages + class registers + contract news"
+  confidence: medium-high
+  compiled_for: "worldenergydata #593 (child of epic #591)"
+  notes: >-
+    Water-depth ratings are nameplate figures and approximate. Helix's correct
+    public domain is helixesg.com (helixenergy.com does not resolve). Island
+    Offshore and TIOS operator fleet pages are JS-driven and expose few specs,
+    so the TIOS monohull names and C-Innovation operatorship came from news and
+    Ulstein references rather than the operators' own roster pages. De-dup
+    against IMO-keyed curated rows is deferred to #599.
+
+vessels:
+  # --- Helix Energy Solutions (helixesg.com) ---------------------------
+  - vessel_name: Q4000
+    owner: Helix Energy Solutions
+    vessel_type: heavy_intervention_semi
+    water_depth_rating_m: 3000
+    dp_class: DP3
+    year_built: 2002
+    gom_resident: true
+    confidence: vendor_spec
+    source_url: https://helixesg.com/our-assets/q4000/
+    notes: "Entered GoM service 2002; built Keppel AmFELS Brownsville TX; subsea well intervention + construction to 10,000 ft."
+
+  - vessel_name: Q5000
+    owner: Helix Energy Solutions
+    vessel_type: heavy_intervention_semi
+    water_depth_rating_m: 3000
+    dp_class: DP3
+    year_built: 2015
+    gom_resident: true
+    confidence: vendor_spec
+    source_url: https://helixesg.com/our-assets/q5000/
+    notes: "Sister ship of Q4000; multiservice DP3 semisub; GoM operations."
+
+  - vessel_name: Q7000
+    owner: Helix Energy Solutions
+    vessel_type: heavy_intervention_semi
+    water_depth_rating_m: 3000
+    dp_class: DP3
+    year_built: 2019
+    gom_resident: false
+    confidence: vendor_spec
+    source_url: https://helixesg.com/our-assets/q7000/
+    notes: "Riser-based intervention 85m-3000m; West Africa, Australasia, North Sea; not GoM-resident."
+
+  - vessel_name: Seawell
+    owner: Helix Energy Solutions
+    vessel_type: rlwi_monohull
+    water_depth_rating_m: 500
+    dp_class: DP2
+    year_built: 1987
+    gom_resident: false
+    confidence: vendor_spec
+    source_url: https://helixesg.com/our-assets/seawell/
+    notes: "Light well intervention + saturation diving monohull; UKCS/North Sea; 500m SIL deployment."
+
+  - vessel_name: Well Enhancer
+    owner: Helix Energy Solutions
+    vessel_type: rlwi_monohull
+    water_depth_rating_m: 300
+    dp_class: null
+    year_built: 2009
+    gom_resident: false
+    confidence: vendor_spec
+    source_url: https://helixesg.com/our-assets/well-enhancer/
+    notes: "World's first monohull capable of coiled-tubing intervention; North Sea; sat-diving to 300m. DP class not stated on public page."
+
+  - vessel_name: Siem Helix 1
+    owner: Helix Energy Solutions (chartered, Siem Offshore-owned)
+    vessel_type: rlwi_monohull
+    water_depth_rating_m: 3000
+    dp_class: DP3
+    year_built: 2016
+    gom_resident: false
+    confidence: vendor_spec
+    source_url: https://helixesg.com/our-assets/siem-helix-1/
+    notes: "Riser-based monohull intervention; Kongsberg K-Pos class III DP; 158m; Petrobras Brazil (Santos/Campos)."
+
+  - vessel_name: Siem Helix 2
+    owner: Helix Energy Solutions (chartered, Siem Offshore-owned)
+    vessel_type: rlwi_monohull
+    water_depth_rating_m: 3000
+    dp_class: DP3
+    year_built: 2016
+    gom_resident: false
+    confidence: vendor_spec
+    source_url: https://www.helixesg.com/downloads/Helix_Well_Ops_-_Siem_Helix_2-LTR-01.17.2020-FINAL_.pdf
+    notes: "Riser-based monohull intervention; 158m; Petrobras Brazil since 2017, 100+ interventions."
+
+  # --- Island Offshore / TIOS ------------------------------------------
+  - vessel_name: Island Constructor
+    owner: Island Offshore / TIOS (Island Offshore + TechnipFMC JV)
+    vessel_type: rlwi_monohull
+    water_depth_rating_m: 600
+    dp_class: DP3
+    year_built: null
+    gom_resident: false
+    confidence: reference
+    source_url: https://ulstein.com/references/island-constructor
+    notes: "IMO Class 3 DP; LWI + subsea construction + IMR + heave-compensated module-handling tower; North Sea TIOS operations."
+
+  - vessel_name: Island Wellserver
+    owner: Island Offshore / TIOS
+    vessel_type: rlwi_monohull
+    water_depth_rating_m: null
+    dp_class: null
+    year_built: null
+    gom_resident: false
+    confidence: reference
+    source_url: https://tiosgroup.com/en/vessel-info
+    notes: "TIOS RLWI vessel using TechnipFMC well-access systems; North Sea. Specs not on public TIOS page (JS-heavy)."
+
+  - vessel_name: Island Frontier
+    owner: Island Offshore / TIOS
+    vessel_type: rlwi_monohull
+    water_depth_rating_m: null
+    dp_class: null
+    year_built: null
+    gom_resident: false
+    confidence: reference
+    source_url: https://tiosgroup.com/en/vessel-info
+    notes: "TIOS RLWI vessel; North Sea. Detailed specs not exposed on public page."
+
+  - vessel_name: Vanguard
+    owner: Island Offshore
+    vessel_type: osv
+    water_depth_rating_m: null
+    dp_class: null
+    year_built: null
+    gom_resident: null
+    confidence: reference
+    source_url: https://www.islandoffshore.com/fleet
+    notes: "Only individually-named vessel rendered on Island Offshore public fleet page; type not stated (JS-driven page). Classified osv provisionally."
+
+  # --- C-Innovation / Edison Chouest Offshore --------------------------
+  - vessel_name: Island Venture
+    owner: C-Innovation / Edison Chouest Offshore (Island Ventures 5 LLC JV w/ Island Offshore)
+    vessel_type: mpsv
+    water_depth_rating_m: null
+    dp_class: DP3
+    year_built: 2017
+    gom_resident: true
+    confidence: reference
+    source_url: https://ulstein.com/references/island-venture
+    notes: "Ulstein SX165; 160m/524ft; RLWI for BP deepwater GoM; delivered 17 Jan 2017."
+
+  - vessel_name: Island Performer
+    owner: C-Innovation / Edison Chouest Offshore
+    vessel_type: mpsv
+    water_depth_rating_m: null
+    dp_class: DP3
+    year_built: 2014
+    gom_resident: true
+    confidence: reference
+    source_url: https://ulstein.com/references/island-performer
+    notes: "Ulstein SX121; 130m; DYNPOS AUTRO (DP3-equivalent); RLWI/IMR in GoM; delivered 8 Jul 2014."
+
+  - vessel_name: Island Intervention
+    owner: C-Innovation / Edison Chouest Offshore
+    vessel_type: mpsv
+    water_depth_rating_m: null
+    dp_class: DP3
+    year_built: null
+    gom_resident: true
+    confidence: reference
+    source_url: https://www.ship-technology.com/projects/island-intervention-multi-purpose-offshore-vessel/
+    notes: "120.2m MPSV w/ module-handling tower, moonpool, ROV hangar; operated by C-Innovation in GoM."
+
+  # --- Oceaneering International ----------------------------------------
+  - vessel_name: Ocean Evolution
+    owner: Oceaneering International
+    vessel_type: mpsv
+    water_depth_rating_m: 4000
+    dp_class: DP2
+    year_built: 2019
+    gom_resident: true
+    confidence: vendor_spec
+    source_url: https://www.oceaneering.com/subsea-projects/vessel-fleet/
+    notes: "353ft US-flagged Jones Act MSV; 250mT AHC crane to 4000m; well-stim/intervention ABS notation; GoM."
+
+  - vessel_name: Blue Sea
+    owner: Oceaneering International
+    vessel_type: mpsv
+    water_depth_rating_m: null
+    dp_class: null
+    year_built: null
+    gom_resident: true
+    confidence: vendor_spec
+    source_url: https://www.oceaneering.com/subsea-projects/vessel-fleet/
+    notes: "340ft US-flagged MSV."
+
+  - vessel_name: Normand Superior
+    owner: Oceaneering International (chartered)
+    vessel_type: mpsv
+    water_depth_rating_m: null
+    dp_class: DP2
+    year_built: null
+    gom_resident: false
+    confidence: vendor_spec
+    source_url: https://www.oceaneering.com/subsea-projects/vessel-fleet/
+    notes: "322ft Norwegian-flagged MSV, DP2."
+
+  - vessel_name: Juanita Candies
+    owner: Oceaneering International (chartered)
+    vessel_type: mpsv
+    water_depth_rating_m: null
+    dp_class: DP2
+    year_built: null
+    gom_resident: true
+    confidence: vendor_spec
+    source_url: https://www.oceaneering.com/subsea-projects/vessel-fleet/
+    notes: "302ft US-flagged MSV, DP2."
+
+  - vessel_name: Intervention
+    owner: Oceaneering International
+    vessel_type: mpsv
+    water_depth_rating_m: null
+    dp_class: null
+    year_built: null
+    gom_resident: true
+    confidence: vendor_spec
+    source_url: https://www.oceaneering.com/subsea-projects/vessel-fleet/
+    notes: "300ft US-flagged MSV."
+
+  - vessel_name: Brandon Bordelon
+    owner: Oceaneering International (chartered)
+    vessel_type: mpsv
+    water_depth_rating_m: null
+    dp_class: null
+    year_built: null
+    gom_resident: true
+    confidence: vendor_spec
+    source_url: https://www.oceaneering.com/subsea-projects/vessel-fleet/
+    notes: "257ft US-flagged MSV."
+
+  - vessel_name: Ocean Intervention II
+    owner: Oceaneering International
+    vessel_type: mpsv
+    water_depth_rating_m: null
+    dp_class: DP2
+    year_built: null
+    gom_resident: true
+    confidence: vendor_spec
+    source_url: https://www.oceaneering.com/subsea-projects/vessel-fleet/
+    notes: "254ft, DP2; listed as research/MSV on Oceaneering fleet page."
+
+  - vessel_name: Ocean Intervention
+    owner: Oceaneering International
+    vessel_type: mpsv
+    water_depth_rating_m: null
+    dp_class: DP2
+    year_built: null
+    gom_resident: true
+    confidence: vendor_spec
+    source_url: https://www.oceaneering.com/subsea-projects/vessel-fleet/
+    notes: "243ft US-flagged MSV, DP2."
+
+  # --- AKOFS Offshore --------------------------------------------------
+  - vessel_name: AKOFS Seafarer
+    owner: AKOFS Offshore
+    vessel_type: mpsv
+    water_depth_rating_m: 2500
+    dp_class: DP3
+    year_built: 2010
+    gom_resident: false
+    confidence: register
+    source_url: https://www.akofsoffshore.com/
+    notes: "Ex-Skandi Aker; 157m monohull subsea well intervention (riser intervention to 2500m); Vard-built; Equinor NCS contract to Q4 2028."
+
+  - vessel_name: AKOFS Santos
+    owner: AKOFS Offshore
+    vessel_type: mpsv
+    water_depth_rating_m: 3000
+    dp_class: DP3
+    year_built: 2009
+    gom_resident: false
+    confidence: register
+    source_url: https://www.akofsoffshore.com/
+    notes: "121m, STX OSCV 03L design; well intervention to 3000m; Petrobras Brazil ($246M contract 2025)."
+
+  - vessel_name: Aker Wayfarer
+    owner: AKOFS Offshore
+    vessel_type: construction
+    water_depth_rating_m: 3000
+    dp_class: null
+    year_built: null
+    gom_resident: false
+    confidence: register
+    source_url: https://www.akofsoffshore.com/
+    notes: "157m subsea equipment support vessel (SESV); Petrobras Brazil charter to Q3 2027; 3000m capable. DP class not confirmed on public page."
+
+  # --- DOF Group -------------------------------------------------------
+  - vessel_name: Skandi Africa
+    owner: DOF Group
+    vessel_type: construction
+    water_depth_rating_m: 3000
+    dp_class: DP3
+    year_built: 2015
+    gom_resident: false
+    confidence: vendor_spec
+    source_url: https://www.dof.com/fleet
+    notes: "160.9m harsh-environment deepwater construction/flexlay vessel; 650Te tiltable lay system; deployed W. Australia."
+
+  - vessel_name: Skandi Acergy
+    owner: DOF Group
+    vessel_type: construction
+    water_depth_rating_m: 3000
+    dp_class: DP3
+    year_built: 2008
+    gom_resident: false
+    confidence: vendor_spec
+    source_url: https://www.dof.com/fleet/skandi-acergy
+    notes: "156.9m ROV construction support vessel; 400t crane, dual ROV; to 3000m."
+
+  - vessel_name: Skandi Constructor
+    owner: DOF Group
+    vessel_type: mpsv
+    water_depth_rating_m: null
+    dp_class: null
+    year_built: 2009
+    gom_resident: false
+    confidence: vendor_spec
+    source_url: https://www.dof.com/fleet/skandi-constructor
+    notes: "120.2m; well intervention, subsea construction, IMR, ROV; ex-'Sarah', acquired by DOF 2011."
+
+  - vessel_name: Skandi Vinland
+    owner: DOF Group
+    vessel_type: mpsv
+    water_depth_rating_m: 4000
+    dp_class: null
+    year_built: 2017
+    gom_resident: false
+    confidence: vendor_spec
+    source_url: https://www.dof.com/fleet/skandi-vinland
+    notes: "Multi-purpose OSV; light intervention vessel role; subsea construction/IMR/ROV to 4000m; Vard-built."
