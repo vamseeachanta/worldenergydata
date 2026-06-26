@@ -38,6 +38,12 @@ provenance:
 vessels:
   # --- Helix Energy Solutions (helixesg.com) ---------------------------
   - vessel_name: Q4000
+    imo: 8767123
+    mmsi: 369550000
+    aka: []
+    identity_source: https://en.wikipedia.org/wiki/Q4000
+    identity_confidence: high
+    operator: Helix Energy Solutions (Helix Well Ops)
     owner: Helix Energy Solutions
     vessel_type: heavy_intervention_semi
     water_depth_rating_m: 3000
@@ -49,6 +55,12 @@ vessels:
     notes: "Entered GoM service 2002; built Keppel AmFELS Brownsville TX; subsea well intervention + construction to 10,000 ft."
 
   - vessel_name: Q5000
+    imo: 8772104
+    mmsi: 311000240
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/8772104
+    identity_confidence: high
+    operator: Helix Energy Solutions
     owner: Helix Energy Solutions
     vessel_type: heavy_intervention_semi
     water_depth_rating_m: 3000
@@ -60,6 +72,12 @@ vessels:
     notes: "Sister ship of Q4000; multiservice DP3 semisub; GoM operations."
 
   - vessel_name: Q7000
+    imo: 9710359
+    mmsi: 311000594
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/9710359
+    identity_confidence: high
+    operator: Helix Energy Solutions
     owner: Helix Energy Solutions
     vessel_type: heavy_intervention_semi
     water_depth_rating_m: 3000
@@ -71,6 +89,12 @@ vessels:
     notes: "Riser-based intervention 85m-3000m; West Africa, Australasia, North Sea; not GoM-resident."
 
   - vessel_name: Seawell
+    imo: 8324567
+    mmsi: 232159000
+    aka: [Stena Seawell, CSO Seawell]
+    identity_source: https://www.vesselfinder.com/vessels/details/8324567
+    identity_confidence: high
+    operator: Helix Well Ops
     owner: Helix Energy Solutions
     vessel_type: rlwi_monohull
     water_depth_rating_m: 500
@@ -82,6 +106,12 @@ vessels:
     notes: "Light well intervention + saturation diving monohull; UKCS/North Sea; 500m SIL deployment."
 
   - vessel_name: Well Enhancer
+    imo: 9421996
+    mmsi: 235062421
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/9421996
+    identity_confidence: high
+    operator: Helix Well Ops
     owner: Helix Energy Solutions
     vessel_type: rlwi_monohull
     water_depth_rating_m: 300
@@ -93,6 +123,12 @@ vessels:
     notes: "World's first monohull capable of coiled-tubing intervention; North Sea; sat-diving to 300m. DP class not stated on public page."
 
   - vessel_name: Siem Helix 1
+    imo: 9733454
+    mmsi: 311000363
+    aka: [Sea Helix 1]
+    identity_source: https://www.vesselfinder.com/vessels/details/9733454
+    identity_confidence: high
+    operator: Helix Energy Solutions (chartered; Petrobras Brazil)
     owner: Helix Energy Solutions (chartered, Siem Offshore-owned)
     vessel_type: rlwi_monohull
     water_depth_rating_m: 3000
@@ -104,6 +140,12 @@ vessels:
     notes: "Riser-based monohull intervention; Kongsberg K-Pos class III DP; 158m; Petrobras Brazil (Santos/Campos)."
 
   - vessel_name: Siem Helix 2
+    imo: 9733466
+    mmsi: 311000364
+    aka: [Sea Helix 2]
+    identity_source: https://www.vesselfinder.com/vessels/details/9733466
+    identity_confidence: medium
+    operator: Helix Energy Solutions (chartered; Petrobras Brazil)
     owner: Helix Energy Solutions (chartered, Siem Offshore-owned)
     vessel_type: rlwi_monohull
     water_depth_rating_m: 3000
@@ -116,6 +158,12 @@ vessels:
 
   # --- Island Offshore / TIOS ------------------------------------------
   - vessel_name: Island Constructor
+    imo: 9390678
+    mmsi: 259749000
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/9390678
+    identity_confidence: high
+    operator: Island Offshore / TIOS
     owner: Island Offshore / TIOS (Island Offshore + TechnipFMC JV)
     vessel_type: rlwi_monohull
     water_depth_rating_m: 600
@@ -127,6 +175,12 @@ vessels:
     notes: "IMO Class 3 DP; LWI + subsea construction + IMR + heave-compensated module-handling tower; North Sea TIOS operations."
 
   - vessel_name: Island Wellserver
+    imo: 9372755
+    mmsi: 257202000
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/9372755
+    identity_confidence: high
+    operator: Island Offshore / TIOS
     owner: Island Offshore / TIOS
     vessel_type: rlwi_monohull
     water_depth_rating_m: null
@@ -138,6 +192,12 @@ vessels:
     notes: "TIOS RLWI vessel using TechnipFMC well-access systems; North Sea. Specs not on public TIOS page (JS-heavy)."
 
   - vessel_name: Island Frontier
+    imo: 9249520
+    mmsi: 258866000
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/9249520
+    identity_confidence: high
+    operator: Island Offshore (mgr); chartered by Oceaneering (GoM)
     owner: Island Offshore / TIOS
     vessel_type: rlwi_monohull
     water_depth_rating_m: null
@@ -149,6 +209,12 @@ vessels:
     notes: "TIOS RLWI vessel; North Sea. Detailed specs not exposed on public page."
 
   - vessel_name: Vanguard
+    imo: 9356189
+    mmsi: 259121000
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/9356189
+    identity_confidence: medium
+    operator: Island Offshore Management
     owner: Island Offshore
     vessel_type: osv
     water_depth_rating_m: null
@@ -161,6 +227,12 @@ vessels:
 
   # --- C-Innovation / Edison Chouest Offshore --------------------------
   - vessel_name: Island Venture
+    imo: 9721786
+    mmsi: 577358000
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/9721786
+    identity_confidence: high
+    operator: C-Innovation (ECO affiliate; GoM)
     owner: C-Innovation / Edison Chouest Offshore (Island Ventures 5 LLC JV w/ Island Offshore)
     vessel_type: mpsv
     water_depth_rating_m: null
@@ -172,6 +244,12 @@ vessels:
     notes: "Ulstein SX165; 160m/524ft; RLWI for BP deepwater GoM; delivered 17 Jan 2017."
 
   - vessel_name: Island Performer
+    imo: 9682045
+    mmsi: 577305000
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/9682045
+    identity_confidence: high
+    operator: C-Innovation / FTO Services (ECO affiliate; GoM)
     owner: C-Innovation / Edison Chouest Offshore
     vessel_type: mpsv
     water_depth_rating_m: null
@@ -183,6 +261,12 @@ vessels:
     notes: "Ulstein SX121; 130m; DYNPOS AUTRO (DP3-equivalent); RLWI/IMR in GoM; delivered 8 Jul 2014."
 
   - vessel_name: Island Intervention
+    imo: 9460095
+    mmsi: 710008574
+    aka: [Karianne]
+    identity_source: https://www.vesselfinder.com/vessels/details/9460095
+    identity_confidence: high
+    operator: C-Innovation (ECO affiliate)
     owner: C-Innovation / Edison Chouest Offshore
     vessel_type: mpsv
     water_depth_rating_m: null
@@ -195,6 +279,12 @@ vessels:
 
   # --- Oceaneering International ----------------------------------------
   - vessel_name: Ocean Evolution
+    imo: 9733167
+    mmsi: 338293000
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/9733167
+    identity_confidence: high
+    operator: Oceaneering International
     owner: Oceaneering International
     vessel_type: mpsv
     water_depth_rating_m: 4000
@@ -206,6 +296,12 @@ vessels:
     notes: "353ft US-flagged Jones Act MSV; 250mT AHC crane to 4000m; well-stim/intervention ABS notation; GoM."
 
   - vessel_name: Blue Sea
+    imo: 9743057
+    mmsi: 338798000
+    aka: [Harvey Blue-Sea]
+    identity_source: https://www.vesselfinder.com/vessels/details/9743057
+    identity_confidence: high
+    operator: Oceaneering International (chartered; owner Otto Candies)
     owner: Oceaneering International
     vessel_type: mpsv
     water_depth_rating_m: null
@@ -217,6 +313,12 @@ vessels:
     notes: "340ft US-flagged MSV."
 
   - vessel_name: Normand Superior
+    imo: 9766877
+    mmsi: 257911000
+    aka: [Far Superior]
+    identity_source: https://www.vesselfinder.com/vessels/details/9766877
+    identity_confidence: high
+    operator: Oceaneering International (chartered; Solstad-managed)
     owner: Oceaneering International (chartered)
     vessel_type: mpsv
     water_depth_rating_m: null
@@ -228,6 +330,12 @@ vessels:
     notes: "322ft Norwegian-flagged MSV, DP2."
 
   - vessel_name: Juanita Candies
+    imo: 9581291
+    mmsi: 338064000
+    aka: [Deep Sea, Harvey Deep-Sea]
+    identity_source: https://www.vesselfinder.com/vessels/details/9581291
+    identity_confidence: high
+    operator: Oceaneering International (chartered; owner Otto Candies)
     owner: Oceaneering International (chartered)
     vessel_type: mpsv
     water_depth_rating_m: null
@@ -239,6 +347,12 @@ vessels:
     notes: "302ft US-flagged MSV, DP2."
 
   - vessel_name: Intervention
+    imo: 9581277
+    mmsi: 338413000
+    aka: [Harvey Intervention, Harvey Hauler, Sisuaq]
+    identity_source: https://www.vesselfinder.com/vessels/details/9581277
+    identity_confidence: high
+    operator: Oceaneering International (chartered; owner Harvey Gulf)
     owner: Oceaneering International
     vessel_type: mpsv
     water_depth_rating_m: null
@@ -250,6 +364,12 @@ vessels:
     notes: "300ft US-flagged MSV."
 
   - vessel_name: Brandon Bordelon
+    imo: 9670640
+    mmsi: 367697440
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/9670640
+    identity_confidence: high
+    operator: Oceaneering International (chartered; owner Bordelon Marine)
     owner: Oceaneering International (chartered)
     vessel_type: mpsv
     water_depth_rating_m: null
@@ -261,6 +381,12 @@ vessels:
     notes: "257ft US-flagged MSV."
 
   - vessel_name: Ocean Intervention II
+    imo: 9232125
+    mmsi: 338759000
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/9232125
+    identity_confidence: high
+    operator: Oceaneering International
     owner: Oceaneering International
     vessel_type: mpsv
     water_depth_rating_m: null
@@ -272,6 +398,12 @@ vessels:
     notes: "254ft, DP2; listed as research/MSV on Oceaneering fleet page."
 
   - vessel_name: Ocean Intervention
+    imo: 9203227
+    mmsi: 366614000
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/9203227
+    identity_confidence: high
+    operator: Oceaneering International
     owner: Oceaneering International
     vessel_type: mpsv
     water_depth_rating_m: null
@@ -284,6 +416,12 @@ vessels:
 
   # --- AKOFS Offshore --------------------------------------------------
   - vessel_name: AKOFS Seafarer
+    imo: 9387229
+    mmsi: 257089550
+    aka: [Skandi Aker]
+    identity_source: https://www.vesselfinder.com/vessels/details/9387229
+    identity_confidence: high
+    operator: AKOFS Offshore
     owner: AKOFS Offshore
     vessel_type: mpsv
     water_depth_rating_m: 2500
@@ -295,6 +433,12 @@ vessels:
     notes: "Ex-Skandi Aker; 157m monohull subsea well intervention (riser intervention to 2500m); Vard-built; Equinor NCS contract to Q4 2028."
 
   - vessel_name: AKOFS Santos
+    imo: 9423437
+    mmsi: 710005865
+    aka: [Skandi Santos]
+    identity_source: https://www.vesselfinder.com/vessels/details/9423437
+    identity_confidence: high
+    operator: AKOFS Offshore
     owner: AKOFS Offshore
     vessel_type: mpsv
     water_depth_rating_m: 3000
@@ -306,6 +450,12 @@ vessels:
     notes: "121m, STX OSCV 03L design; well intervention to 3000m; Petrobras Brazil ($246M contract 2025)."
 
   - vessel_name: Aker Wayfarer
+    imo: 9435478
+    mmsi: 710006322
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/9435478
+    identity_confidence: high
+    operator: AKOFS Offshore
     owner: AKOFS Offshore
     vessel_type: construction
     water_depth_rating_m: 3000
@@ -318,6 +468,12 @@ vessels:
 
   # --- DOF Group -------------------------------------------------------
   - vessel_name: Skandi Africa
+    imo: 9687459
+    mmsi: 311000369
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/9687459
+    identity_confidence: high
+    operator: DOF Group
     owner: DOF Group
     vessel_type: construction
     water_depth_rating_m: 3000
@@ -329,6 +485,12 @@ vessels:
     notes: "160.9m harsh-environment deepwater construction/flexlay vessel; 650Te tiltable lay system; deployed W. Australia."
 
   - vessel_name: Skandi Acergy
+    imo: 9387217
+    mmsi: 257691000
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/9387217
+    identity_confidence: high
+    operator: DOF Group
     owner: DOF Group
     vessel_type: construction
     water_depth_rating_m: 3000
@@ -340,6 +502,12 @@ vessels:
     notes: "156.9m ROV construction support vessel; 400t crane, dual ROV; to 3000m."
 
   - vessel_name: Skandi Constructor
+    imo: 9431642
+    mmsi: 257220000
+    aka: [Sarah]
+    identity_source: https://www.vesselfinder.com/vessels/details/9431642
+    identity_confidence: high
+    operator: DOF Group
     owner: DOF Group
     vessel_type: mpsv
     water_depth_rating_m: null
@@ -351,6 +519,12 @@ vessels:
     notes: "120.2m; well intervention, subsea construction, IMR, ROV; ex-'Sarah', acquired by DOF 2011."
 
   - vessel_name: Skandi Vinland
+    imo: 9817121
+    mmsi: 316033737
+    aka: [Vard Langsten 834]
+    identity_source: https://www.vesselfinder.com/vessels/details/9817121
+    identity_confidence: high
+    operator: DOF Group
     owner: DOF Group
     vessel_type: mpsv
     water_depth_rating_m: 4000
