@@ -25,9 +25,9 @@ def test_backtest_runs_over_a_large_real_sample():
 
 def test_top1_accuracy_meets_calibrated_floor():
     rep = backtest_fields()
-    # depth_fit + NUI fix took top-1 ~10%→43%; the basin prior (calibration v2)
-    # took it to ~50% on the un-enriched set. Pin a floor with margin.
-    assert rep.top1_acc >= 0.48, f"top-1 regressed to {rep.top1_acc:.0%}"
+    # depth_fit + NUI fix took top-1 ~10%→43%; the basin prior (v2) → ~50% and
+    # the v3 moored-floater depth recalibration → ~52% on the un-enriched set.
+    assert rep.top1_acc >= 0.50, f"top-1 regressed to {rep.top1_acc:.0%}"
 
 
 def test_top3_accuracy_meets_floor():
@@ -39,9 +39,17 @@ def test_host_enrichment_lifts_top1_above_baseline():
     cmp = compare_enrichment()
     base, enr = cmp["baseline"], cmp["enriched"]
     # The SubseaIQ host layer (label fix + host-proximity) must not regress, and
-    # lifts top-1 to ~52% on the enriched catalog.
+    # lifts top-1 to ~55% on the enriched catalog (with the v3 depth bands).
     assert enr.top1_acc >= base.top1_acc
-    assert enr.top1_acc >= 0.50, f"enriched top-1 regressed to {enr.top1_acc:.0%}"
+    assert enr.top1_acc >= 0.52, f"enriched top-1 regressed to {enr.top1_acc:.0%}"
+
+
+def test_v3_depth_bands_recover_spar_and_tlp():
+    # v2 left spar at 0 recall and TLP under-predicted because the moored-floater
+    # depth bands overlapped. The v3 recalibration must recover both.
+    recall = concept_recall(backtest_fields(enrich=True))
+    assert recall.get("spar", (0, 0))[0] >= 4, "spar still zero-recall"
+    assert recall.get("tlp", (0, 0))[0] >= 25, "TLP recall not recovered"
 
 
 def test_enrichment_recovers_subsea_tieback_recall():
