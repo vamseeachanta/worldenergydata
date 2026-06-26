@@ -14,7 +14,7 @@ asset_class_taxonomy:
 - other
 totals:
   units_classified: 2442
-  distinct_hulls: 2337
+  distinct_hulls: 2336
   seed_dedicated_units: 9
 dedup:
   applied: true
@@ -23,8 +23,8 @@ dedup:
     confirm when present); collapses Helix Q-class name-spelling variants so by_asset_class
     counts are distinct hulls.
   records_in: 2442
-  distinct_out: 2337
-  duplicates_collapsed: 105
+  distinct_out: 2336
+  duplicates_collapsed: 106
 by_asset_class_scope: GLOBAL available roster (curated contractor/BSEE fleet + seed),
   NOT GoM-resident. These are worldwide fleet counts; for GoM supply use gom_resident_dedicated_intervention
   below.
@@ -66,7 +66,7 @@ by_asset_class:
       max: 492.0
     named_flagship_units: []
   heavy_intervention_semi:
-    count: 6
+    count: 5
     water_depth_capability_ft:
       min: 1197.5
       max: 10000.0
@@ -155,7 +155,7 @@ reconciliation_to_research:
     note: only two rigs worldwide rated to 20,000 psi
 provenance:
   seed: intervention_vessels_seed.yml
-  curated_dir: /mnt/local-analysis/worldenergydata/data/modules/vessel_fleet/curated
+  curated_dir: packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/_data/curated
   curated_files:
   - drilling_rigs.csv
   - construction_vessels.csv

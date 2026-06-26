@@ -68,7 +68,7 @@ Triangulated against independent research:
 
 ### Global available roster (CONTEXT ONLY — NOT GoM supply)
 
-These are WORLDWIDE fleet counts. They include shelf and non-GoM assets and must NOT be read as Gulf-of-Mexico intervention supply. They show the size of the global pool a GoM operator competes for, nothing more. Counts are DEDUPED distinct hulls (#599): 2,442 source listings collapse to 2,337 vessels (105 duplicates removed, e.g. the Helix Q-class name-spelling variants), so no hull is double-counted.
+These are WORLDWIDE fleet counts. They include shelf and non-GoM assets and must NOT be read as Gulf-of-Mexico intervention supply. They show the size of the global pool a GoM operator competes for, nothing more. Counts are DEDUPED distinct hulls (#599): 2,442 source listings collapse to 2,336 vessels (106 duplicates removed, e.g. the Helix Q-class name-spelling variants), so no hull is double-counted.
 
 Indicative day-rates are an attached PUBLIC snapshot (#596), as of 2026-02-19 — issuer FSRs / filings / dated trade press, NOT a live subscription feed. Helix Q-class intervention semis and RLWI monohulls carry no public per-day figure (shown as dayrate not public).
 
@@ -77,7 +77,7 @@ Indicative day-rates are an attached PUBLIC snapshot (#596), as of 2026-02-19 �
 | modu_drillship | 161 | 4,900-12,000 | $300,000-$530,000/day (median $457,000) [analyst, on_record, reported] |
 | modu_semisub | 305 | 1,500-12,500 | $452,000-$490,000/day (median $465,000) [on_record] |
 | modu_jackup | 1,018 | 300-492 | n/a |
-| heavy_intervention_semi | 6 | 1,197-10,000 | dayrate not public [not public] |
+| heavy_intervention_semi | 5 | 1,197-10,000 | dayrate not public [not public] |
 | rlwi_monohull | 4 | 6,561-6,561 | dayrate not public [not public] |
 | lift_boat | 143 | n/a | n/a |
 | construction_vessel | 155 | 49-13,123 | n/a |
