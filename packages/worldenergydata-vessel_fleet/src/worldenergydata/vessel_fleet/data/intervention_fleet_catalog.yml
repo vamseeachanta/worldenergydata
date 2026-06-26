@@ -15,6 +15,9 @@ asset_class_taxonomy:
 totals:
   units_classified: 2442
   seed_dedicated_units: 9
+by_asset_class_scope: GLOBAL available roster (curated contractor/BSEE fleet + seed),
+  NOT GoM-resident. These are worldwide fleet counts; for GoM supply use gom_resident_dedicated_intervention
+  below.
 by_asset_class:
   modu_drillship:
     count: 163
@@ -118,3 +121,8 @@ caveats:
 - 'Populations are additive: dedup vs IMO is deferred to #599, so counts may double-count
   a unit present in both seed and curated.'
 - Water-depth ratings are nameplate vendor figures and approximate.
+- by_asset_class counts are GLOBAL fleet, not GoM-resident supply; MODU/jackup counts
+  include shelf + non-GoM assets. The binding GoM intervention supply is gom_resident_dedicated_intervention
+  (~2-4).
+- 'mpsv_osv is under-counted: the ~500-vessel OSV/MPSV roster awaits the vendor-scrape
+  ingest (#593).'

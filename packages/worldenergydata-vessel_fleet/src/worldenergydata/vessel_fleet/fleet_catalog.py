@@ -314,6 +314,11 @@ def build_fleet_catalog(
             "units_classified": total_units,
             "seed_dedicated_units": len(seed_vessels),
         },
+        "by_asset_class_scope": (
+            "GLOBAL available roster (curated contractor/BSEE fleet + seed), "
+            "NOT GoM-resident. These are worldwide fleet counts; for GoM supply "
+            "use gom_resident_dedicated_intervention below."
+        ),
         "by_asset_class": by_class,
         "gom_resident_dedicated_intervention": {
             "count": len(gom_dedicated),
@@ -332,6 +337,11 @@ def build_fleet_catalog(
             "Populations are additive: dedup vs IMO is deferred to #599, so "
             "counts may double-count a unit present in both seed and curated.",
             "Water-depth ratings are nameplate vendor figures and approximate.",
+            "by_asset_class counts are GLOBAL fleet, not GoM-resident supply; "
+            "MODU/jackup counts include shelf + non-GoM assets. The binding GoM "
+            "intervention supply is gom_resident_dedicated_intervention (~2-4).",
+            "mpsv_osv is under-counted: the ~500-vessel OSV/MPSV roster awaits "
+            "the vendor-scrape ingest (#593).",
         ],
     }
 
