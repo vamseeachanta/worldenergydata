@@ -53,6 +53,10 @@ from worldenergydata.field_development.layout import (
     compute_positions,
     render_layout,
 )
+from worldenergydata.field_development.llm_completion import (
+    CompletionResult,
+    complete_concept,
+)
 from worldenergydata.field_development.loader import (
     load_concept,
     load_concept_json,
@@ -138,4 +142,6 @@ __all__ = [
     "backtest_fields",
     "CalibrationReport",
     "build_fdp_html",
+    "complete_concept",
+    "CompletionResult",
 ]
