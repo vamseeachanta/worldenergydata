@@ -18,6 +18,11 @@ from worldenergydata.field_development.calibration import (
     CalibrationReport,
     backtest_fields,
 )
+from worldenergydata.field_development.dexpi import (
+    dexpi_mapping,
+    dexpi_to_graph,
+    graph_to_dexpi,
+)
 from worldenergydata.field_development.enums import (
     ConceptType,
     FlowlineMaterial,
@@ -144,4 +149,7 @@ __all__ = [
     "build_fdp_html",
     "complete_concept",
     "CompletionResult",
+    "graph_to_dexpi",
+    "dexpi_to_graph",
+    "dexpi_mapping",
 ]
