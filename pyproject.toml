@@ -167,6 +167,13 @@ safety-bert = [
     "transformers>=4.35.0",
     "sentencepiece>=0.1.99",
 ]
+cad = [
+    # 3D CAD (B-rep/STEP) for field_development.equipment_3d (#580).
+    # Apache-2.0 (CadQuery) over OCCT (LGPL); heavy OCCT/VTK stack — kept an
+    # extra so the 2D pipeline installs without it. CadQuery 2.8 needs py>=3.11,
+    # so the marker keeps the project's py>=3.10 range resolvable.
+    "cadquery>=2.8; python_version >= '3.11'",
+]
 
 [project.scripts]
 worldenergydata = "worldenergydata.cli.main:app"
