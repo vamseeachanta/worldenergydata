@@ -1,0 +1,158 @@
+# ABOUTME: Generate an FDP portfolio (per-field plans + index) from research JSON.
+# ABOUTME: Issue #567 — consumes the field-dev-portfolio-research workflow output.
+"""
+Build a portfolio of field development plans for deepwater GoM fields.
+
+Input: a JSON array of researched/validated field profiles (the output of the
+``field-dev-portfolio-research`` workflow). Each profile is mapped to a
+:class:`FieldConcept`, run through the playbook, and rendered to a standalone
+FDP HTML; an ``index.html`` provides a comparison table + links.
+
+Run:
+    .venv/bin/python scripts/field_development/build_fdp_portfolio.py <results.json>
+"""
+
+from __future__ import annotations
+
+import html
+import json
+import re
+import sys
+from pathlib import Path
+
+from worldenergydata.field_development import build_fdp_html
+from worldenergydata.field_development.enums import (
+    ConceptType,
+    FluidType,
+    MetoceanRegime,
+)
+from worldenergydata.field_development.models import FieldConcept
+from worldenergydata.field_development.recommendation import recommend
+
+OUT_DIR = Path(__file__).parents[2] / "reports" / "field_development" / "portfolio"
+
+_FLUID = {
+    "oil": FluidType.OIL,
+    "gas": FluidType.GAS,
+    "condensate": FluidType.CONDENSATE,
+    "gas_condensate": FluidType.GAS_CONDENSATE,
+}
+
+
+def _slug(name: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
+
+
+def _concept_type(d: dict) -> ConceptType | None:
+    v = d.get("verify") or {}
+    raw = v.get("corrected_concept_type") or d.get("concept_type")
+    try:
+        return ConceptType(raw) if raw else None
+    except ValueError:
+        return None
+
+
+def to_concept(d: dict) -> FieldConcept:
+    """Map a researched profile dict to a FieldConcept."""
+    ct = _concept_type(d)
+    is_tieback = ct == ConceptType.SUBSEA_TIEBACK
+    return FieldConcept(
+        name=d["name"],
+        operator=d.get("operator_current"),
+        region="US Gulf of Mexico",
+        water_depth_m=d.get("water_depth_m"),
+        fluid_type=_FLUID.get((d.get("fluid") or "").lower()),
+        concept_type=ct,
+        tieback_distance_km=d.get("tieback_distance_km") if is_tieback else None,
+        distance_to_host_km=d.get("tieback_distance_km") if is_tieback else None,
+        host_spare_capacity=True if is_tieback else None,
+        num_wells=d.get("num_wells") or 4,
+        recoverable_reserves_mmboe=d.get("recoverable_reserves_mmboe"),
+        plateau_rate_boed=d.get("plateau_boed"),
+        year_first_oil=d.get("first_oil_year"),
+        metocean_regime=MetoceanRegime.HURRICANE_CYCLONE,
+        data_source="SubseaIQ + web research (FDP portfolio)",
+    )
+
+
+def _actuals(d: dict) -> dict:
+    out = {}
+    if d.get("host_facility"):
+        out["Host"] = d["host_facility"]
+    if d.get("reservoir_play"):
+        out["Play"] = d["reservoir_play"]
+    if d.get("first_oil_year"):
+        out["First oil"] = d["first_oil_year"]
+    if d.get("recoverable_reserves_mmboe"):
+        out["Reserves"] = f"{d['recoverable_reserves_mmboe']:g} MMboe"
+    if d.get("bsee_code"):
+        out["BSEE code"] = d["bsee_code"]
+    out["Confidence"] = d.get("confidence", "—")
+    return out
+
+
+def _narrative(d: dict) -> str:
+    n = d.get("narrative", "")
+    if d.get("notable"):
+        n = f"{n}  Notable: {d['notable']}"
+    return n
+
+
+def build_index(profiles: list[dict]) -> str:
+    rows = []
+    for d in profiles:
+        ct = _concept_type(d)
+        concept = ct.value if ct else "—"
+        c = to_concept(d)
+        top = recommend(c, top_n=1)
+        match = "✓" if top and top[0].concept_type == ct else "✗"
+        rows.append(
+            f'<tr><td><a href="{_slug(d["name"])}.html">{html.escape(d["name"])}</a></td>'
+            f"<td>{html.escape(concept)}</td>"
+            f"<td>{html.escape(str(d.get('water_depth_m') or '—'))} m</td>"
+            f"<td>{html.escape(str(d.get('operator_current') or '—'))}</td>"
+            f"<td>{html.escape(str(d.get('host_facility') or '—'))}</td>"
+            f"<td>{html.escape(str(d.get('reservoir_play') or '—'))}</td>"
+            f"<td>{html.escape(str(d.get('first_oil_year') or '—'))}</td>"
+            f"<td>{match}</td></tr>"
+        )
+    return f"""<!doctype html><html><head><meta charset="utf-8">
+<title>Field Development Plan Portfolio — Deepwater GoM</title><style>
+body{{font-family:-apple-system,Segoe UI,Roboto,sans-serif;margin:0;background:#f4f6f9;
+color:#1a2330}}.wrap{{max-width:1000px;margin:0 auto;padding:24px}}
+h1{{font-size:24px}}table{{border-collapse:collapse;width:100%;background:#fff;
+font-size:13px}}th,td{{border:1px solid #dde4ee;padding:7px 10px;text-align:left}}
+th{{background:#eef2f7}}a{{color:#234e78}}.sub{{color:#5b6b80}}
+</style></head><body><div class="wrap">
+<h1>Field Development Plan Portfolio — Deepwater Gulf of Mexico</h1>
+<p class="sub">{len(profiles)} fields. Each plan is generated by the worldenergydata
+field-development playbook (epic #567): parameters → ranked concept → schematics +
+economics. The ✓/✗ column shows whether the engine's top recommendation matches
+the concept actually built.</p>
+<table><tr><th>Field</th><th>Concept (built)</th><th>Water depth</th><th>Operator</th>
+<th>Host</th><th>Reservoir play</th><th>First oil</th><th>Engine match</th></tr>
+{''.join(rows)}</table>
+<p class="sub" style="font-size:11px;margin-top:20px">Facts web-researched +
+skeptically verified; schematics deterministic. Concept-Select / FEL-1 fidelity,
+not sanctioned designs.</p></div></body></html>"""
+
+
+def main() -> None:
+    src = Path(sys.argv[1]) if len(sys.argv) > 1 else (OUT_DIR / "_research.json")
+    profiles = json.loads(Path(src).read_text(encoding="utf-8"))
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    for d in profiles:
+        concept = to_concept(d)
+        page = build_fdp_html(
+            concept,
+            actuals=_actuals(d),
+            narrative=_narrative(d),
+            title=f"Field Development Plan — {d['name']}",
+        )
+        (OUT_DIR / f"{_slug(d['name'])}.html").write_text(page, encoding="utf-8")
+    (OUT_DIR / "index.html").write_text(build_index(profiles), encoding="utf-8")
+    print(f"wrote {len(profiles)} FDPs + index to {OUT_DIR}")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,249 @@
+# Planned / projected US Gulf-of-Mexico new subsea wells (worldenergydata #587, epic #582).
+#
+# on_record_projects: itemised, FID-sanctioned developments from public
+#   announcements. Summed, these are a FLOOR on new subsea wells per year --
+#   later infill phases not yet itemised are deliberately excluded. First-oil
+#   years are best public estimates and may slip.
+# analyst_rate: independent projected GoM subsea tree/well installation rate
+#   used to bracket the floor (P10/P90); confidence = projected.
+#
+# Trion (Chevron) is EXCLUDED: it lies in Mexican waters, not the US GoM.
+# water_depth_ft is the host/field water depth from a cited public source where
+# findable; null + note where not, and such projects fall in deepwater_unknown.
+# water_depth_band keys come from
+#   worldenergydata.bsee.analysis.intervention.well_inventory_by_band
+# NB: "20K" in pressure_class is a 20,000-psi rating, NOT a water depth.
+
+on_record_projects:
+  - name: Anchor
+    operator: Chevron
+    wells: 7
+    first_oil_year: 2024
+    host_type: new_FPS
+    pressure_class: 20K
+    water_depth_ft: 5000
+    water_depth_band: band_5000_10000
+    confidence: on_record
+    source_url: https://www.ogj.com/drilling-production/drilling-operations/article/55233432/chevron-anchor-pioneers-20k-subsea-development
+    note: Green Canyon; first 20K psi subsea development to reach production (~5,000 ft).
+
+  - name: Whale
+    operator: Shell
+    wells: 15
+    first_oil_year: 2025
+    host_type: new_FPS
+    pressure_class: 15K
+    water_depth_ft: 8600
+    water_depth_band: band_5000_10000
+    confidence: on_record
+    source_url: https://www.offshore-mag.com/field-development/article/14207502/shell-sanctions-deepwater-whale-project-in-the-gulf-of-mexico
+    note: Alaminos Canyon 773; host in >8,600 ft; semi-submersible FPU.
+
+  - name: Ballymore
+    operator: Chevron
+    wells: 3
+    first_oil_year: 2025
+    host_type: tieback
+    pressure_class: null
+    water_depth_ft: 6600
+    water_depth_band: band_5000_10000
+    confidence: on_record
+    source_url: https://www.offshore-mag.com/regional-reports/us-gulf-of-mexico/article/14276709/chevron-sanctions-ballymore-project-in-deepwater-us-gom
+    note: Mississippi Canyon (~6,600 ft); tieback to Blind Faith.
+
+  - name: Dover
+    operator: Shell
+    wells: 2
+    first_oil_year: 2025
+    host_type: tieback
+    pressure_class: null
+    water_depth_ft: 7500
+    water_depth_band: band_5000_10000
+    confidence: on_record
+    source_url: https://www.nsenergybusiness.com/projects/dover-deepwater-project/
+    note: Mississippi Canyon 612; tieback to Appomattox; depth ~7,500 ft (regional approx).
+
+  - name: Shenandoah Phase 1
+    operator: Beacon Offshore Energy
+    wells: 4
+    first_oil_year: 2025
+    host_type: new_FPS
+    pressure_class: 20K
+    water_depth_ft: 5800
+    water_depth_band: band_5000_10000
+    confidence: on_record
+    source_url: https://www.nsenergybusiness.com/projects/shenandoah-field-development/
+    note: Walker Ridge 52; 20K psi semi-submersible FPS (~5,800 ft).
+
+  - name: Salamanca (Leon/Castile)
+    operator: LLOG Exploration
+    wells: 4
+    first_oil_year: 2025
+    host_type: new_FPS
+    pressure_class: null
+    water_depth_ft: 6400
+    water_depth_band: band_5000_10000
+    confidence: on_record
+    source_url: https://www.offshore-technology.com/projects/leon-castile-deep-water-project-gulf-of-mexico-us/
+    note: Keathley Canyon 689; redevelopment of Leon and Castile (~6,400 ft); phased.
+
+  - name: Zephyrus
+    operator: Beacon Offshore Energy
+    wells: 2
+    first_oil_year: 2025
+    host_type: tieback
+    pressure_class: null
+    water_depth_ft: 3600
+    water_depth_band: band_3000_5000
+    confidence: on_record
+    source_url: https://www.offshore-technology.com/news/beacon-offshore-energy-begins-production-at-zephyrus-field/
+    note: Mississippi Canyon 759 (sources differ vs Keathley Canyon); ~3,100-3,600 ft, deep end used.
+
+  - name: Sunspear
+    operator: Talos Energy
+    wells: 1
+    first_oil_year: 2025
+    host_type: tieback
+    pressure_class: null
+    water_depth_ft: 1640
+    water_depth_band: band_500_3000
+    confidence: on_record
+    source_url: https://www.ogj.com/exploration-development/article/55017906/talos-energy-lets-subsea-contract-for-sunspear-gom-tieback
+    note: Green Canyon 78 (~500 m / 1,640 ft); tieback to Prince.
+
+  - name: Katmai West
+    operator: Talos Energy
+    wells: 1
+    first_oil_year: 2025
+    host_type: tieback
+    pressure_class: null
+    water_depth_ft: 2100
+    water_depth_band: band_500_3000
+    confidence: on_record
+    source_url: https://www.offshore-technology.com/marketdata/oil-gas-field-profile-katmai-conventional-oil-field-us/
+    note: Green Canyon 40 (~2,100 ft).
+
+  - name: Silvertip Phase 3
+    operator: Shell
+    wells: 2
+    first_oil_year: 2026
+    host_type: tieback
+    pressure_class: null
+    water_depth_ft: 8000
+    water_depth_band: band_5000_10000
+    confidence: on_record
+    source_url: https://www.offshore-mag.com/regional-reports/us-gulf-of-mexico/news/55249632/shell-shell-proceeding-with-phase-3-of-gom-silvertip-subsea-project
+    note: Alaminos Canyon; tieback to Perdido. Depth is the Perdido host (~8,000 ft); Silvertip field likely deeper.
+
+  - name: Longclaw
+    operator: Murphy Oil
+    wells: 1
+    first_oil_year: 2026
+    host_type: tieback
+    pressure_class: null
+    water_depth_ft: null
+    water_depth_band: deepwater_unknown
+    confidence: on_record
+    source_url: https://www.offshore-mag.com/regional-reports/us-gulf-of-mexico/article/14293343/murphy-finds-more-oil-in-green-canyon-area
+    note: Green Canyon (King's Quay area); no published host depth -> not guessed.
+
+  - name: Black Pearl
+    operator: Hess
+    wells: 1
+    first_oil_year: 2026
+    host_type: tieback
+    pressure_class: null
+    water_depth_ft: 3500
+    water_depth_band: band_3000_5000
+    confidence: on_record
+    source_url: https://www.offshore-technology.com/projects/stampede-oil-gas/
+    note: Tieback to Stampede; depth is the Stampede host (~3,500 ft), Black Pearl's own block depth unpublished.
+
+  - name: Monument
+    operator: Beacon Offshore Energy
+    wells: 2
+    first_oil_year: 2026
+    host_type: tieback
+    pressure_class: null
+    water_depth_ft: 6560
+    water_depth_band: band_5000_10000
+    confidence: on_record
+    source_url: https://www.ogj.com/general-interest/article/55249256/beacon-offshore-energy-lets-monument-development-contract
+    note: Walker Ridge (~2,000 m / 6,560 ft); tieback to Shenandoah FPS; partners include Talos.
+
+  - name: String Music / Banjo / Cello
+    operator: Murphy Oil
+    wells: 3
+    first_oil_year: 2027
+    host_type: tieback
+    pressure_class: null
+    water_depth_ft: 6070
+    water_depth_band: band_5000_10000
+    confidence: on_record
+    source_url: https://worldoil.com/news/2026/6/2/murphy-awards-subsea7-contract-for-string-music-subsea-tieback/
+    note: >-
+      Mississippi Canyon; tiebacks to Delta House (not King's Quay/GC). Depth is
+      String Music (~1,850 m / 6,070 ft); Banjo and Cello (MC 385) depths unpublished.
+
+  - name: Sparta
+    operator: Shell
+    wells: 8
+    first_oil_year: 2028
+    host_type: new_FPS
+    pressure_class: 20K
+    water_depth_ft: 5365
+    water_depth_band: band_5000_10000
+    confidence: on_record
+    source_url: https://jpt.spe.org/new-neighborhood-shell-sanctions-sparta-project-in-deepwater-us-gulf-of-mexico
+    note: Garden Banks 959 (up to 5,365 ft); 20K psi development.
+
+  - name: Shenandoah South
+    operator: Beacon Offshore Energy
+    wells: 2
+    first_oil_year: 2028
+    host_type: tieback
+    pressure_class: 20K
+    water_depth_ft: 5800
+    water_depth_band: band_5000_10000
+    confidence: on_record
+    source_url: https://www.offshore-mag.com/production/news/55305650/beacon-starts-oil-and-gas-production-at-offshore-shenandoah-field-in-the-gom
+    note: Walker Ridge 52; expansion tieback to Shenandoah FPS (~5,800-6,000 ft).
+
+  - name: Kaskida
+    operator: bp
+    wells: 6
+    first_oil_year: 2029
+    host_type: new_FPS
+    pressure_class: 20K
+    water_depth_ft: 6000
+    water_depth_band: band_5000_10000
+    confidence: on_record
+    source_url: https://jpt.spe.org/bp-oks-20k-psi-kaskida-project-in-gulf-of-mexico
+    note: Keathley Canyon 292 (~6,000 ft); 20K psi Phase 1.
+
+  - name: Tiber / Guadalupe
+    operator: bp
+    wells: 8
+    first_oil_year: 2030
+    host_type: new_FPS
+    pressure_class: 20K
+    water_depth_ft: 4130
+    water_depth_band: band_3000_5000
+    confidence: on_record
+    source_url: https://en.wikipedia.org/wiki/Tiber_Oil_Field
+    note: Keathley Canyon 102; 20K psi. Depth is Tiber (~4,130 ft); Guadalupe's own depth not separately stated.
+
+analyst_rate:
+  metric: new GoM subsea trees / wells installed per year
+  trees_per_year_low: 12
+  trees_per_year_high: 20
+  central: 16
+  uncertainty_pct: 15
+  confidence: projected
+  horizon: through 2030
+  sources:
+    - Westwood Subsea Tree Tracker (GoM ~16-19 trees/yr)
+    - Rystad Energy subsea market outlook
+  note: >-
+    Independent installation-rate envelope used to bracket the on-record FID
+    floor. Not summed with the itemised counts; it informs P10/P90 only.
