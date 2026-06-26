@@ -78,6 +78,10 @@ def canonicalize_name(name: Optional[str]) -> str:
         prev = s
         s = _TRAILING_PAREN_RE.sub("", s).strip()
     s = s.upper()
+    # 2b. Strip leading non-alphanumeric noise (e.g. a malformed leading comma
+    #     from a misaligned BSEE CSV row) so the prefix check sees the real
+    #     first token: ",SV Q4000" -> "SV Q4000" -> (prefix strip) -> "Q4000".
+    s = re.sub(r"^[^A-Z0-9]+", "", s)
     # 3. Leading prefix (single pass -- only one class tag is meaningful).
     for prefix in _PREFIXES:
         if s.startswith(prefix):

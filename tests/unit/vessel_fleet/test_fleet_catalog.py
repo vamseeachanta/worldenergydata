@@ -185,17 +185,100 @@ class TestBuildFleetCatalog:
         cat = fc.build_fleet_catalog(curated_dir=curated, seed_path=seed, out_path=out)
         assert any("599" in c for c in cat["caveats"])
 
+    def test_dedup_block_present_no_duplicates(self, tmp_path):
+        # The synthetic population has no same-hull duplicates, so dedup is a
+        # no-op (records_in == distinct_out) but the block is still emitted.
+        curated, seed, out = _write_fixtures(tmp_path)
+        cat = fc.build_fleet_catalog(curated_dir=curated, seed_path=seed, out_path=out)
+        dedup = cat["dedup"]
+        assert dedup["applied"] is True
+        assert dedup["records_in"] == 9
+        assert dedup["distinct_out"] == 9
+        assert dedup["duplicates_collapsed"] == 0
+
+    def test_indicative_dayrate_attached_to_priced_classes(self, tmp_path):
+        # modu_drillship is a priced snapshot class -> indicative band attached;
+        # modu_jackup is not priced -> no band. Uses the committed real snapshot.
+        curated, seed, out = _write_fixtures(tmp_path)
+        cat = fc.build_fleet_catalog(curated_dir=curated, seed_path=seed, out_path=out)
+        by = cat["by_asset_class"]
+        assert "indicative_dayrate" in by["modu_drillship"]
+        assert by["modu_drillship"]["indicative_dayrate"]["rate_disclosed"] is True
+        # Heavy intervention semis have no public per-day figure.
+        assert (
+            by["heavy_intervention_semi"]["indicative_dayrate"]["rate_disclosed"]
+            is False
+        )
+        assert "indicative_dayrate" not in by["modu_jackup"]
+        assert cat["dayrate_snapshot_as_of"]
+
+
+class TestDedupReducesCounts:
+    """Two name-spelling variants of one hull must collapse to a single count."""
+
+    def _build(self, tmp_path, drilling_csv):
+        curated = tmp_path / "curated"
+        curated.mkdir()
+        (curated / "drilling_rigs.csv").write_text(drilling_csv, encoding="utf-8")
+        (curated / "construction_vessels.csv").write_text(
+            "VESSEL_NAME,VESSEL_TYPE,WATER_DEPTH_RATING_M\n", encoding="utf-8"
+        )
+        seed = tmp_path / "seed.yml"
+        seed.write_text(yaml.safe_dump({"vessels": []}), encoding="utf-8")
+        out = tmp_path / "catalog.yml"
+        return fc.build_fleet_catalog(curated_dir=curated, seed_path=seed, out_path=out)
+
+    def test_same_hull_variants_collapse_to_one(self, tmp_path):
+        # "Q4000" and "MSV Q4000" canonicalize to the same hull -> one heavy semi.
+        csv_text = (
+            "RIG_NAME,RIG_TYPE,WATER_DEPTH_RATING_FT\n"
+            "Q4000,semi_submersible,4000\n"
+            "MSV Q4000,semi_submersible,4000\n"
+        )
+        cat = self._build(tmp_path, csv_text)
+        assert cat["by_asset_class"]["heavy_intervention_semi"]["count"] == 1
+        assert cat["dedup"]["records_in"] == 2
+        assert cat["dedup"]["distinct_out"] == 1
+        assert cat["dedup"]["duplicates_collapsed"] == 1
+
 
 # --- Real-data integration (skipped when off-repo data not mounted) ---------
 
-_REAL_SEED = (
+_PKG_ROOT = (
     Path(__file__).resolve().parents[3]
-    / "packages/worldenergydata-vessel_fleet/src/worldenergydata"
-    / "vessel_fleet/data/intervention_vessels_seed.yml"
+    / "packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet"
 )
+_REAL_SEED = _PKG_ROOT / "data/intervention_vessels_seed.yml"
+# The committed, git-tracked curated CSVs (CI-available, not the main checkout).
+_PKG_CURATED = _PKG_ROOT / "_data/curated"
 _REAL_CURATED = Path(
     "/mnt/local-analysis/worldenergydata/data/modules/vessel_fleet/curated"
 )
+
+
+@pytest.mark.skipif(
+    not (_REAL_SEED.is_file() and (_PKG_CURATED / "drilling_rigs.csv").is_file()),
+    reason="committed seed or curated CSVs not available",
+)
+def test_real_dedup_reduces_heavy_intervention_semi(tmp_path):
+    # Folds in #599: the Helix Q-class name-spelling variants in the curated
+    # roster collapse, so heavy_intervention_semi drops from the additive 13.
+    out = tmp_path / "catalog.yml"
+    cat = fc.build_fleet_catalog(
+        curated_dir=_PKG_CURATED, seed_path=_REAL_SEED, out_path=out
+    )
+    heavy = cat["by_asset_class"]["heavy_intervention_semi"]
+    assert heavy["count"] < 13
+    assert heavy["count"] <= 6
+    assert cat["dedup"]["applied"] is True
+    assert cat["dedup"]["duplicates_collapsed"] > 0
+    assert cat["totals"]["distinct_hulls"] < cat["totals"]["units_classified"]
+    # #596 day-rate bands attach: drillship priced, intervention semi not public.
+    assert heavy["indicative_dayrate"]["rate_disclosed"] is False
+    assert (
+        cat["by_asset_class"]["modu_drillship"]["indicative_dayrate"]["rate_disclosed"]
+        is True
+    )
 
 
 @pytest.mark.skipif(
