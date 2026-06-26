@@ -18,7 +18,12 @@ from worldenergydata.vessel_fleet.constants import (
 
 class TestVesselCategory:
     def test_all_members(self):
-        expected = {"DRILLING_RIG", "CONSTRUCTION_VESSEL", "SERVICE_VESSEL"}
+        expected = {
+            "DRILLING_RIG",
+            "CONSTRUCTION_VESSEL",
+            "SERVICE_VESSEL",
+            "INTERVENTION_VESSEL",
+        }
         assert {m.name for m in VesselCategory} == expected
 
     def test_string_enum(self):
@@ -55,6 +60,9 @@ class TestVesselType:
             "PSV",
             "DIVE_SUPPORT",
             "FPSO",
+            "RLWI_MONOHULL",
+            "HEAVY_INTERVENTION_SEMI",
+            "MPSV",
         }
         assert {m.name for m in VesselType} == expected
 
