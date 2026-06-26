@@ -25,6 +25,11 @@ provenance:
 vessels:
   # --- HEAVY intervention (riser-capable) -------------------------------
   - name: Helix Q4000
+    imo: 8767123
+    mmsi: 369550000
+    aka: []
+    identity_source: https://en.wikipedia.org/wiki/Q4000
+    identity_confidence: high
     operator: Helix Energy Solutions
     intervention_class: heavy
     vessel_type: heavy_intervention_semi
@@ -35,6 +40,11 @@ vessels:
     source: "Helix Q4000 vessel specification (helixesg.com)"
 
   - name: Helix Q5000
+    imo: 8772104
+    mmsi: 311000240
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/8772104
+    identity_confidence: high
     operator: Helix Energy Solutions
     intervention_class: heavy
     vessel_type: heavy_intervention_semi
@@ -45,6 +55,11 @@ vessels:
     source: "Helix Q5000 vessel specification (helixesg.com)"
 
   - name: Helix Q7000
+    imo: 9710359
+    mmsi: 311000594
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/9710359
+    identity_confidence: high
     operator: Helix Energy Solutions
     intervention_class: heavy
     vessel_type: heavy_intervention_semi
@@ -55,6 +70,11 @@ vessels:
     source: "Helix Q7000 vessel specification (helixesg.com)"
 
   - name: Seawell
+    imo: 8324567
+    mmsi: 232159000
+    aka: [Stena Seawell, CSO Seawell]
+    identity_source: https://www.vesselfinder.com/vessels/details/8324567
+    identity_confidence: high
     operator: Helix Well Ops (North Sea)
     intervention_class: heavy
     vessel_type: heavy_intervention_semi
@@ -65,6 +85,11 @@ vessels:
     source: "Helix Seawell monohull well-intervention spec"
 
   - name: Well Enhancer
+    imo: 9421996
+    mmsi: 235062421
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/9421996
+    identity_confidence: high
     operator: Helix Well Ops (North Sea)
     intervention_class: heavy
     vessel_type: heavy_intervention_semi
@@ -76,6 +101,11 @@ vessels:
 
   # --- LIGHT intervention (RLWI monohull) -------------------------------
   - name: Island Performer
+    imo: 9682045
+    mmsi: 577305000
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/9682045
+    identity_confidence: high
     operator: Island Offshore
     intervention_class: light
     vessel_type: rlwi_monohull
@@ -86,6 +116,11 @@ vessels:
     source: "Island Offshore Island Performer RLWI spec (first US-GoM RLWI 2015)"
 
   - name: Island Wellserver
+    imo: 9372755
+    mmsi: 257202000
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/9372755
+    identity_confidence: high
     operator: Island Offshore
     intervention_class: light
     vessel_type: rlwi_monohull
@@ -96,6 +131,11 @@ vessels:
     source: "Island Offshore Island Wellserver RLWI spec"
 
   - name: Island Constructor
+    imo: 9390678
+    mmsi: 259749000
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/9390678
+    identity_confidence: high
     operator: Island Offshore
     intervention_class: light
     vessel_type: rlwi_monohull
@@ -106,6 +146,11 @@ vessels:
     source: "Island Offshore Island Constructor RLWI spec"
 
   - name: Skandi Constructor
+    imo: 9431642
+    mmsi: 257220000
+    aka: [Sarah]
+    identity_source: https://www.vesselfinder.com/vessels/details/9431642
+    identity_confidence: high
     operator: DOF Subsea / Island Offshore
     intervention_class: light
     vessel_type: rlwi_monohull
