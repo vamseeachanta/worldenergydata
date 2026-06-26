@@ -14,31 +14,59 @@ asset_class_taxonomy:
 - other
 totals:
   units_classified: 2442
+  distinct_hulls: 2337
   seed_dedicated_units: 9
+dedup:
+  applied: true
+  issue: 599
+  basis: normalized canonical name + operator/owner compatibility + aka list (IMO/MMSI
+    confirm when present); collapses Helix Q-class name-spelling variants so by_asset_class
+    counts are distinct hulls.
+  records_in: 2442
+  distinct_out: 2337
+  duplicates_collapsed: 105
 by_asset_class_scope: GLOBAL available roster (curated contractor/BSEE fleet + seed),
   NOT GoM-resident. These are worldwide fleet counts; for GoM supply use gom_resident_dedicated_intervention
   below.
 by_asset_class:
   modu_drillship:
-    count: 163
+    count: 161
     water_depth_capability_ft:
       min: 4900.0
       max: 12000.0
     named_flagship_units: []
+    indicative_dayrate:
+      rate_count: 25
+      median_usd_per_day: 457000
+      band_low_usd_per_day: 300000
+      band_high_usd_per_day: 530000
+      rate_disclosed: true
+      confidence_labels:
+      - analyst
+      - on_record
+      - reported
   modu_semisub:
-    count: 308
+    count: 305
     water_depth_capability_ft:
       min: 1500.0
       max: 12500.0
     named_flagship_units: []
+    indicative_dayrate:
+      rate_count: 3
+      median_usd_per_day: 465000
+      band_low_usd_per_day: 452000
+      band_high_usd_per_day: 490000
+      rate_disclosed: true
+      confidence_labels:
+      - on_record
   modu_jackup:
-    count: 1027
+    count: 1018
     water_depth_capability_ft:
       min: 300.0
       max: 492.0
     named_flagship_units: []
   heavy_intervention_semi:
-    count: 13
+    count: 6
     water_depth_capability_ft:
       min: 1197.5
       max: 10000.0
@@ -48,8 +76,16 @@ by_asset_class:
     - Helix Q7000
     - Seawell
     - Well Enhancer
+    indicative_dayrate:
+      rate_count: 0
+      median_usd_per_day: null
+      band_low_usd_per_day: null
+      band_high_usd_per_day: null
+      rate_disclosed: false
+      confidence_labels:
+      - not_public
   rlwi_monohull:
-    count: 5
+    count: 4
     water_depth_capability_ft:
       min: 6561.7
       max: 6561.7
@@ -58,20 +94,28 @@ by_asset_class:
     - Island Wellserver
     - Island Constructor
     - Skandi Constructor
+    indicative_dayrate:
+      rate_count: 0
+      median_usd_per_day: null
+      band_low_usd_per_day: null
+      band_high_usd_per_day: null
+      rate_disclosed: false
+      confidence_labels:
+      - not_public
   lift_boat:
-    count: 158
+    count: 143
     water_depth_capability_ft:
       min: null
       max: null
     named_flagship_units: []
   construction_vessel:
-    count: 162
+    count: 155
     water_depth_capability_ft:
       min: 49.9
       max: 13123.4
     named_flagship_units: []
   other:
-    count: 606
+    count: 545
     water_depth_capability_ft:
       min: 5000.0
       max: 5000.0
@@ -118,11 +162,15 @@ provenance:
 caveats:
 - Curated CSV rosters may be stale (snapshot, not live).
 - Drive-corpus historical fleet records date to 2010-2014.
-- 'Populations are additive: dedup vs IMO is deferred to #599, so counts may double-count
-  a unit present in both seed and curated.'
+- 'by_asset_class counts are DISTINCT HULLS: source listings are deduped via the #599
+  identity resolver (name+operator+aka, IMO when present), so a unit present in both
+  seed and curated is counted once.'
+- Indicative day-rates are an attached PUBLIC snapshot (#596), not a live subscription
+  feed; intervention semis and RLWI monohulls have no public per-day figure (rate_disclosed=false).
 - Water-depth ratings are nameplate vendor figures and approximate.
 - by_asset_class counts are GLOBAL fleet, not GoM-resident supply; MODU/jackup counts
   include shelf + non-GoM assets. The binding GoM intervention supply is gom_resident_dedicated_intervention
   (~2-4).
 - 'mpsv_osv is under-counted: the ~500-vessel OSV/MPSV roster awaits the vendor-scrape
   ingest (#593).'
+dayrate_snapshot_as_of: '2026-02-19'

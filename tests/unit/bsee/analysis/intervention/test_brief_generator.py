@@ -100,17 +100,39 @@ analyst_rate:
 """
 
 _FLEET_YML = """\
+dayrate_snapshot_as_of: 2026-02-19
+dedup:
+  applied: true
+  records_in: 4747
+  distinct_out: 4646
+  duplicates_collapsed: 101
 by_asset_class:
   modu_jackup:
     count: 4242
     water_depth_capability_ft:
       min: 300.0
       max: 492.0
+    indicative_dayrate:
+      rate_count: 3
+      median_usd_per_day: 75500
+      band_low_usd_per_day: 60500
+      band_high_usd_per_day: 95500
+      rate_disclosed: true
+      confidence_labels:
+      - reported
   rlwi_monohull:
     count: 5
     water_depth_capability_ft:
       min: 6561.0
       max: 6561.0
+    indicative_dayrate:
+      rate_count: 0
+      median_usd_per_day: null
+      band_low_usd_per_day: null
+      band_high_usd_per_day: null
+      rate_disclosed: false
+      confidence_labels:
+      - not_public
 gom_resident_dedicated_intervention:
   count: 6
   confidence: soft
@@ -229,6 +251,29 @@ class TestConfidenceLabels:
         assert gom_idx < roster_idx
 
 
+class TestDedupAndDayrates:
+    def test_deduped_count_note_renders(self, synthetic_yamls):
+        md = _brief(synthetic_yamls)
+        assert "DEDUPED distinct hulls" in md
+        # Numbers flow from the fixture dedup block.
+        assert "4,747" in md
+        assert "4,646" in md
+        assert "101 duplicates removed" in md
+
+    def test_indicative_dayrate_band_renders(self, synthetic_yamls):
+        md = _brief(synthetic_yamls)
+        # Disclosed band marker numbers from the fixture.
+        assert "$60,500-$95,500/day" in md
+        assert "median $75,500" in md
+        assert "[reported]" in md
+
+    def test_not_public_classes_flagged(self, synthetic_yamls):
+        md = _brief(synthetic_yamls)
+        # RLWI monohull carries no public per-day figure.
+        assert "dayrate not public" in md
+        assert "as of 2026-02-19" in md
+
+
 class TestWriteOut:
     def test_writes_file_when_out_path_given(self, synthetic_yamls, tmp_path):
         out = tmp_path / "sub" / "brief.generated.md"
@@ -256,6 +301,18 @@ class TestRealCommittedYamls:
 
         fleet = load_fleet_catalog()
         assert fleet["gom_resident_dedicated_intervention"]["count"] == 3
+        # #599 dedup folded in: heavy_intervention_semi is distinct hulls (<13).
+        heavy = fleet["by_asset_class"]["heavy_intervention_semi"]
+        assert heavy["count"] < 13
+        assert fleet["dedup"]["applied"] is True
+        # #596 day-rates attached to the committed catalog.
+        assert heavy["indicative_dayrate"]["rate_disclosed"] is False
+        assert (
+            fleet["by_asset_class"]["modu_drillship"]["indicative_dayrate"][
+                "rate_disclosed"
+            ]
+            is True
+        )
 
         md = generate_brief()
         assert "114" in md
@@ -263,3 +320,7 @@ class TestRealCommittedYamls:
         assert "270" in md
         assert "GoM-resident dedicated intervention units (the binding supply)" in md
         assert "NOT GoM supply" in md
+        # The refreshed fleet section shows deduped counts + day-rate bands.
+        assert "DEDUPED distinct hulls" in md
+        assert "dayrate not public" in md
+        assert "/day" in md
