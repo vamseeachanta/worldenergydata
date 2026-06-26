@@ -58,6 +58,13 @@ from worldenergydata.field_development.layout import (
     compute_positions,
     render_layout,
 )
+from worldenergydata.field_development.layout_optimization import (
+    LayoutSolution,
+    Well,
+    improvement_vs_naive,
+    naive_layout,
+    optimize_layout,
+)
 from worldenergydata.field_development.llm_completion import (
     CompletionResult,
     complete_concept,
@@ -152,4 +159,9 @@ __all__ = [
     "graph_to_dexpi",
     "dexpi_to_graph",
     "dexpi_mapping",
+    "optimize_layout",
+    "naive_layout",
+    "improvement_vs_naive",
+    "LayoutSolution",
+    "Well",
 ]
