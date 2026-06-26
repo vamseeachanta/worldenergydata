@@ -12,6 +12,7 @@ class VesselCategory(str, Enum):
     DRILLING_RIG = "drilling_rig"
     CONSTRUCTION_VESSEL = "construction_vessel"
     SERVICE_VESSEL = "service_vessel"
+    INTERVENTION_VESSEL = "intervention_vessel"
 
 
 @unique
@@ -43,6 +44,9 @@ class VesselType(str, Enum):
     PSV = "psv"
     DIVE_SUPPORT = "dive_support"
     FPSO = "fpso"
+    RLWI_MONOHULL = "rlwi_monohull"
+    HEAVY_INTERVENTION_SEMI = "heavy_intervention_semi"
+    MPSV = "mpsv"
 
 
 @unique

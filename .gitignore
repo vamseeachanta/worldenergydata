@@ -197,6 +197,10 @@ data/modules/bsee.backup*/
 data/modules/bsee/*.zip
 data/modules/bsee/bsee_*.csv
 
+# Vessel fleet curated output (regenerate via historical_xlsx_loader; raw
+# Drive-corpus xlsx are read-only inputs and never committed)
+data/modules/vessel_fleet/curated/
+
 # Local data - not synced to git (large files, downloaded on demand)
 data/modules/bsee/.local/
 
