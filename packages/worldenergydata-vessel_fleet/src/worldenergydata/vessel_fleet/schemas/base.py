@@ -34,6 +34,11 @@ class BaseVesselSchema(BaseModel):
     DATA_SOURCE: Optional[str] = None
     DATA_SOURCE_URL: Optional[str] = None
     COLLECTION_DATE: Optional[str] = None
+    # Identity-resolution fields (#599): the normalized canonical name and the
+    # list of alternate / former / spelling-variant names (aka) that resolve to
+    # the same physical vessel. Both are populated by the identity resolver.
+    CANONICAL_NAME: Optional[str] = None
+    ALTERNATE_NAMES: Optional[list[str]] = None
 
     # Optional float fields
     LOA_M: Optional[float] = None
@@ -77,12 +82,25 @@ class BaseVesselSchema(BaseModel):
         "DATA_SOURCE",
         "DATA_SOURCE_URL",
         "COLLECTION_DATE",
+        "CANONICAL_NAME",
         mode="before",
     )
     @classmethod
     def _empty_str_to_none(cls, v: object) -> object:
         if isinstance(v, str) and v.strip() == "":
             return None
+        return v
+
+    @field_validator("ALTERNATE_NAMES", mode="before")
+    @classmethod
+    def _clean_alternate_names(cls, v: object) -> object:
+        if v is None:
+            return None
+        if isinstance(v, str):
+            v = [v]
+        if isinstance(v, (list, tuple)):
+            cleaned = [str(n).strip() for n in v if str(n).strip()]
+            return cleaned or None
         return v
 
     @field_validator(
