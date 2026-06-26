@@ -157,9 +157,9 @@ def test_disclosed_volumes_have_a_basis(records) -> None:
     # If a numeric/qualitative estimate is present, basis must not be "not_disclosed".
     for r in records:
         if r.RESOURCE_ESTIMATE:
-            assert r.RESOURCE_BASIS != "not_disclosed", (
-                f"{r.DISCOVERY_NAME} has an estimate but no resource basis"
-            )
+            assert (
+                r.RESOURCE_BASIS != "not_disclosed"
+            ), f"{r.DISCOVERY_NAME} has an estimate but no resource basis"
 
 
 # --- Loader query tests ---
