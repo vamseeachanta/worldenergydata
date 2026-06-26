@@ -57,6 +57,18 @@ def test_actuals_rendered_when_given():
     assert "As built" in html and "$4,700 MM" in html
 
 
+def test_narrative_rendered_when_given():
+    html = build_fdp_html(
+        _julia(), narrative="A deepwater subsea tieback chosen for marginal reserves."
+    )
+    assert "Engineering rationale" in html
+    assert "marginal reserves" in html
+
+
+def test_no_narrative_section_when_omitted():
+    assert "Engineering rationale" not in build_fdp_html(_julia())
+
+
 def test_actual_concept_marked_in_shortlist():
     # The field's real concept should be flagged with a star in the table.
     html = build_fdp_html(_julia())
