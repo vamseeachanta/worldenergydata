@@ -13,6 +13,8 @@ from worldenergydata.field_development import (
     ConceptType,
     FieldConcept,
     backtest_fields,
+    compare_enrichment,
+    concept_recall,
 )
 
 
@@ -23,13 +25,41 @@ def test_backtest_runs_over_a_large_real_sample():
 
 def test_top1_accuracy_meets_calibrated_floor():
     rep = backtest_fields()
-    # depth_fit + NUI fix lifted top-1 from ~10% to ~43%; pin a floor with margin.
-    assert rep.top1_acc >= 0.40, f"top-1 regressed to {rep.top1_acc:.0%}"
+    # depth_fit + NUI fix took top-1 ~10%→43%; the basin prior (calibration v2)
+    # took it to ~50% on the un-enriched set. Pin a floor with margin.
+    assert rep.top1_acc >= 0.48, f"top-1 regressed to {rep.top1_acc:.0%}"
 
 
 def test_top3_accuracy_meets_floor():
     rep = backtest_fields()
-    assert rep.topk_acc >= 0.48, f"top-3 regressed to {rep.topk_acc:.0%}"
+    assert rep.topk_acc >= 0.58, f"top-3 regressed to {rep.topk_acc:.0%}"
+
+
+def test_host_enrichment_lifts_top1_above_baseline():
+    cmp = compare_enrichment()
+    base, enr = cmp["baseline"], cmp["enriched"]
+    # The SubseaIQ host layer (label fix + host-proximity) must not regress, and
+    # lifts top-1 to ~52% on the enriched catalog.
+    assert enr.top1_acc >= base.top1_acc
+    assert enr.top1_acc >= 0.50, f"enriched top-1 regressed to {enr.top1_acc:.0%}"
+
+
+def test_enrichment_recovers_subsea_tieback_recall():
+    # Baseline never predicts subsea_tieback (no host distance); enrichment must
+    # recover the og_host satellites whose host proximity is now known.
+    base = concept_recall(backtest_fields(enrich=False))
+    enr = concept_recall(backtest_fields(enrich=True))
+    assert base.get("subsea_tieback", (0, 0))[0] == 0
+    assert enr.get("subsea_tieback", (0, 0))[0] >= 15
+
+
+def test_basin_prior_cracks_fpso_recall():
+    # FPSO was structurally 0-recall without a regional signal; the basin prior
+    # (Brazil/West-Africa/North-Sea FPSO culture) must recover a large share.
+    recall = concept_recall(backtest_fields())
+    correct, total = recall.get("fpso", (0, 0))
+    assert total > 100  # FPSO is a big bucket
+    assert correct >= 50, f"basin prior failed to predict FPSO ({correct}/{total})"
 
 
 def test_shallow_field_back_tests_to_fixed_jacket():

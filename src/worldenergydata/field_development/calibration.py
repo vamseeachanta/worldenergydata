@@ -26,6 +26,10 @@ import collections
 from dataclasses import dataclass, field
 from typing import Optional
 
+from worldenergydata.field_development.host_enrichment import (
+    correct_satellite_labels,
+    enrich_concepts,
+)
 from worldenergydata.field_development.models import FieldConcept
 from worldenergydata.field_development.recommendation import recommend
 from worldenergydata.field_development.subseaiq import load_subseaiq_fields
@@ -51,7 +55,7 @@ class CalibrationReport:
 
 
 def backtest_fields(
-    fields: Optional[list[FieldConcept]] = None, k: int = 3
+    fields: Optional[list[FieldConcept]] = None, k: int = 3, enrich: bool = False
 ) -> CalibrationReport:
     """Run the engine over fields with a known real concept and score it.
 
@@ -60,12 +64,18 @@ def backtest_fields(
             enriched SubseaIQ catalog). Fields without a concept or water depth
             are skipped.
         k: Top-k cutoff for the secondary accuracy metric.
+        enrich: If True, apply the SubseaIQ host-registry layer first —
+            :func:`correct_satellite_labels` (relabel mislabeled tieback
+            satellites) then :func:`enrich_concepts` (fill host-proximity,
+            reserves, well counts). See :mod:`host_enrichment`.
 
     Returns:
         A :class:`CalibrationReport`.
     """
     if fields is None:
         fields = load_subseaiq_fields(enrich_facilities=True)
+    if enrich:
+        fields = enrich_concepts(correct_satellite_labels(fields))
     eligible = [
         f for f in fields if f.concept_type is not None and f.water_depth_m is not None
     ]
@@ -85,3 +95,27 @@ def backtest_fields(
         conf[(real.value, pred)] += 1
     rep.confusion = dict(conf)
     return rep
+
+
+def concept_recall(rep: CalibrationReport) -> dict[str, tuple[int, int]]:
+    """Per-real-concept top-1 recall as ``{concept: (correct, total)}``."""
+    out: dict[str, list[int]] = {}
+    for (real, pred), n in rep.confusion.items():
+        bucket = out.setdefault(real, [0, 0])
+        bucket[1] += n
+        if real == pred:
+            bucket[0] += n
+    return {k: (v[0], v[1]) for k, v in out.items()}
+
+
+def compare_enrichment(k: int = 3) -> dict[str, CalibrationReport]:
+    """Back-test the default catalog with and without host enrichment.
+
+    Returns ``{"baseline": ..., "enriched": ...}`` so callers can report the
+    honest side-by-side effect of the SubseaIQ host-registry layer (the basin
+    prior is part of the engine itself and applies to both).
+    """
+    return {
+        "baseline": backtest_fields(k=k, enrich=False),
+        "enriched": backtest_fields(k=k, enrich=True),
+    }
