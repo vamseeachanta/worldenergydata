@@ -39,13 +39,14 @@ from collections import OrderedDict
 from pathlib import Path
 from typing import Any, Optional
 
-# Reuse the band scheme (#583) and scope legend (#586) — DO NOT redefine here.
-from worldenergydata.bsee.analysis.intervention.well_inventory_by_band import (
-    BAND_LABELS,
-)
 from worldenergydata.bsee.analysis.intervention.serviceability_matrix import (
     SCOPE_LABELS,
     SCOPES,
+)
+
+# Reuse the band scheme (#583) and scope legend (#586) — DO NOT redefine here.
+from worldenergydata.bsee.analysis.intervention.well_inventory_by_band import (
+    BAND_LABELS,
 )
 
 _HERE = Path(__file__).resolve().parent

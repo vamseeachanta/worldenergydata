@@ -17,10 +17,10 @@ from worldenergydata.bsee.analysis.intervention.intervention_economics import (
     build_intervention_economics,
     intervention_cost,
 )
+from worldenergydata.bsee.analysis.intervention.serviceability_matrix import SCOPES
 from worldenergydata.bsee.analysis.intervention.well_inventory_by_band import (
     BAND_LABELS,
 )
-from worldenergydata.bsee.analysis.intervention.serviceability_matrix import SCOPES
 
 # --- Synthetic day-rate bands keyed by the snapshot taxonomy (#596) ----------
 SYNTH_BANDS = {
