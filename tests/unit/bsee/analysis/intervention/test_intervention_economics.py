@@ -7,12 +7,15 @@ import pytest
 
 from worldenergydata.bsee.analysis.intervention.intervention_economics import (
     ASSET_DAYRATE_MAP,
+    BAND_MOBILIZATION_DAYS,
     CONF_INDICATIVE,
+    CONF_JACKUP_NA,
     CONF_PROXY_MODU,
     CONF_PROXY_MPSV,
     CONF_UNKNOWN,
     CONFIDENCE_LABELS,
     DEFAULT_CAMPAIGN_DURATION_DAYS,
+    NULL_COST_CONFIDENCE,
     build_economics_matrix,
     build_intervention_economics,
     intervention_cost,
@@ -58,6 +61,15 @@ SYNTH_DURATIONS = {
     "light_live_well": {"low": 5, "median": 10, "high": 15},
     "through_tubing_ct": {"low": 15, "median": 20, "high": 30},
     "heavy_dead_well": {"low": 30, "median": 50, "high": 60},
+}
+
+# Synthetic per-band mobilization adder (mirrors the shipped default shape).
+SYNTH_MOBILIZATION = {
+    "shelf_lt_500": {"low": 0, "median": 0, "high": 0},
+    "band_500_3000": {"low": 2, "median": 3, "high": 5},
+    "band_3000_5000": {"low": 4, "median": 6, "high": 9},
+    "band_5000_10000": {"low": 7, "median": 10, "high": 14},
+    "band_gt_10000": {"low": 10, "median": 14, "high": 20},
 }
 
 
@@ -150,7 +162,7 @@ class TestConfidenceLabelsAndFlags:
         )
         for row in matrix.values():
             for cell in row.values():
-                if cell["confidence"] == CONF_UNKNOWN:
+                if cell["confidence"] in NULL_COST_CONFIDENCE:
                     assert cell["cost_usd"]["median"] is None
                 else:
                     assert cell["cost_usd"]["median"] is not None
@@ -193,11 +205,14 @@ class TestBuildFull:
         result = build_intervention_economics(
             dayrate_bands=SYNTH_BANDS,
             duration_table=SYNTH_DURATIONS,
+            mobilization_table=SYNTH_MOBILIZATION,
         )
         cell = result["economics"]["band_5000_10000"]["heavy_dead_well"]
-        # 400000 x 50 = 20,000,000 -> "$20.0M"
-        assert cell["cost_usd"]["median"] == 400000 * 50
-        assert "$20.0M" in result["headline"]
+        # base median 50 + band_5000_10000 mobilization +10 = 60 days
+        assert cell["duration_days"]["median"] == 60
+        # 400000 x 60 = 24,000,000 -> "$24.0M"
+        assert cell["cost_usd"]["median"] == 400000 * 60
+        assert "$24.0M" in result["headline"]
 
     def test_default_duration_table_shapes(self):
         for scope in SCOPES:
@@ -207,6 +222,118 @@ class TestBuildFull:
     def test_asset_map_defaults(self):
         assert ASSET_DAYRATE_MAP["modu"] == "modu_drillship"
         assert ASSET_DAYRATE_MAP["mpsv"] == "mpsv_osv"
+
+
+class TestBandMobilization:
+    def test_mobilization_added_to_base_duration(self):
+        rec = intervention_cost(
+            ["modu"],
+            "heavy_dead_well",
+            SYNTH_BANDS,
+            duration_table=SYNTH_DURATIONS,
+            band="band_5000_10000",
+            mobilization_table=SYNTH_MOBILIZATION,
+        )
+        assert rec["base_duration_days"]["median"] == 50
+        assert rec["mobilization_days"]["median"] == 10
+        # effective = base + mobilization
+        assert rec["duration_days"]["median"] == 60
+        assert rec["cost_usd"]["median"] == 400000 * 60
+
+    def test_no_band_means_no_mobilization(self):
+        rec = intervention_cost(
+            ["modu"],
+            "heavy_dead_well",
+            SYNTH_BANDS,
+            duration_table=SYNTH_DURATIONS,
+        )
+        assert rec["mobilization_days"] == {"low": 0, "median": 0, "high": 0}
+        assert rec["duration_days"]["median"] == 50
+
+    def test_cost_increases_with_depth_band(self):
+        result = build_intervention_economics(
+            dayrate_bands=SYNTH_BANDS,
+            duration_table=SYNTH_DURATIONS,
+            mobilization_table=SYNTH_MOBILIZATION,
+        )
+        econ = result["economics"]
+        shallow = econ["band_500_3000"]["heavy_dead_well"]["cost_usd"]["median"]
+        mid = econ["band_3000_5000"]["heavy_dead_well"]["cost_usd"]["median"]
+        deep = econ["band_5000_10000"]["heavy_dead_well"]["cost_usd"]["median"]
+        deepest = econ["band_gt_10000"]["heavy_dead_well"]["cost_usd"]["median"]
+        # The whole point of the #629 fix: deeper water costs more.
+        assert shallow < mid < deep < deepest
+
+    def test_mobilization_table_overridable_to_zero(self):
+        zero = {b: {"low": 0, "median": 0, "high": 0} for b in BAND_LABELS}
+        rec = intervention_cost(
+            ["modu"],
+            "heavy_dead_well",
+            SYNTH_BANDS,
+            duration_table=SYNTH_DURATIONS,
+            band="band_5000_10000",
+            mobilization_table=zero,
+        )
+        assert rec["duration_days"]["median"] == 50
+
+    def test_default_mobilization_median_matches_issue_spec(self):
+        assert BAND_MOBILIZATION_DAYS["shelf_lt_500"]["median"] == 0
+        assert BAND_MOBILIZATION_DAYS["band_500_3000"]["median"] == 3
+        assert BAND_MOBILIZATION_DAYS["band_3000_5000"]["median"] == 6
+        assert BAND_MOBILIZATION_DAYS["band_5000_10000"]["median"] == 10
+        assert BAND_MOBILIZATION_DAYS["band_gt_10000"]["median"] == 14
+
+
+class TestShelfJackup:
+    def test_shelf_heavy_is_jackup_na(self):
+        rec = intervention_cost(
+            ["modu", "heavy_intervention_semi"],
+            "heavy_dead_well",
+            SYNTH_BANDS,
+            duration_table=SYNTH_DURATIONS,
+            band="shelf_lt_500",
+            mobilization_table=SYNTH_MOBILIZATION,
+        )
+        assert rec["confidence"] == CONF_JACKUP_NA
+        assert rec["cost_usd"] == {"low": None, "median": None, "high": None}
+        assert rec["representative_asset"] == "jackup"
+        assert "jackup" in rec["flag"].lower()
+
+    def test_shelf_ct_is_jackup_na(self):
+        rec = intervention_cost(
+            ["heavy_intervention_semi", "modu"],
+            "through_tubing_ct",
+            SYNTH_BANDS,
+            duration_table=SYNTH_DURATIONS,
+            band="shelf_lt_500",
+            mobilization_table=SYNTH_MOBILIZATION,
+        )
+        assert rec["confidence"] == CONF_JACKUP_NA
+
+    def test_shelf_light_still_priced(self):
+        # Light riserless wireline on the shelf is NOT jackup work -> still priced.
+        rec = intervention_cost(
+            ["rlwi_monohull", "mpsv"],
+            "light_live_well",
+            SYNTH_BANDS,
+            duration_table=SYNTH_DURATIONS,
+            band="shelf_lt_500",
+            mobilization_table=SYNTH_MOBILIZATION,
+        )
+        assert rec["confidence"] == CONF_PROXY_MPSV
+        assert rec["cost_usd"]["median"] is not None
+
+    def test_deepwater_heavy_is_not_jackup_na(self):
+        rec = intervention_cost(
+            ["modu", "heavy_intervention_semi"],
+            "heavy_dead_well",
+            SYNTH_BANDS,
+            duration_table=SYNTH_DURATIONS,
+            band="band_5000_10000",
+            mobilization_table=SYNTH_MOBILIZATION,
+        )
+        assert rec["confidence"] == CONF_INDICATIVE
+        assert rec["cost_usd"]["median"] is not None
 
 
 # ---------------------------------------------------------------------------
