@@ -130,7 +130,11 @@ def md_to_html(md: str) -> str:
             continue
 
         # table block (current line and next are pipe rows, next is a separator)
-        if stripped.startswith("|") and i + 1 < n and re.match(r"^\s*\|[\s:\-|]+\|\s*$", lines[i + 1]):
+        if (
+            stripped.startswith("|")
+            and i + 1 < n
+            and re.match(r"^\s*\|[\s:\-|]+\|\s*$", lines[i + 1])
+        ):
             flush_para()
             block = [lines[i], lines[i + 1]]
             i += 2
@@ -173,7 +177,9 @@ def md_to_html(md: str) -> str:
             while i < n and re.match(r"^[-*]\s+", lines[i].strip()):
                 items.append(re.sub(r"^[-*]\s+", "", lines[i].strip()))
                 i += 1
-            out.append("<ul>" + "".join(f"<li>{_inline(it)}</li>" for it in items) + "</ul>")
+            out.append(
+                "<ul>" + "".join(f"<li>{_inline(it)}</li>" for it in items) + "</ul>"
+            )
             continue
 
         # blank line ends a paragraph
@@ -193,7 +199,10 @@ def md_to_html(md: str) -> str:
 # Page template — the "good-practice" chrome wraps every page.
 # ---------------------------------------------------------------------------
 
-def page(title: str, subtitle: str, body: str, *, provenance: str, data_limits: str) -> str:
+
+def page(
+    title: str, subtitle: str, body: str, *, provenance: str, data_limits: str
+) -> str:
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -276,6 +285,7 @@ hr{border:0;border-top:1px solid var(--line);margin:1.6em 0}
 # selected, because they are the chrome every domain page links to.
 # ---------------------------------------------------------------------------
 
+
 def build_shared_assets() -> dict[str, bool]:
     """Write the stylesheet and copy the shared viz assets. Returns the set of
     viz assets that are available (used by domain builders that embed them)."""
@@ -302,6 +312,7 @@ def build_shared_assets() -> dict[str, bool]:
 # never wipes public/, so it composes cleanly over a cache-restored tree.
 # ---------------------------------------------------------------------------
 
+
 def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
     """Render the Lower-Tertiary surface: per-field economics, benchmark,
     portfolio summary, and the Julia 3D well-path page. Returns the list of
@@ -309,112 +320,175 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
     uses to build its economics table."""
     # --- Economics pages (sanctioned V30), one per Lower-Tertiary field ---
     field_names = {
-        "anchor": "Anchor", "big_foot": "Big Foot", "cascade_chinook": "Cascade&ndash;Chinook",
-        "jack_st_malo": "Jack / St. Malo", "julia": "Julia", "shenandoah": "Shenandoah",
+        "anchor": "Anchor",
+        "big_foot": "Big Foot",
+        "cascade_chinook": "Cascade&ndash;Chinook",
+        "jack_st_malo": "Jack / St. Malo",
+        "julia": "Julia",
+        "shenandoah": "Shenandoah",
         "stones": "Stones",
     }
     npv_re = re.compile(r"Terminal cumulative NPV = \*\*([^*]+)\*\*")
     fields = []  # (slug, display, page_filename, npv_str, npv_value)
     for md in sorted((REPORTS / "lower_tertiary").glob("field_economics_*_v30.md")):
-        slug = md.name[len("field_economics_"):-len("_v30.md")]
+        slug = md.name[len("field_economics_") : -len("_v30.md")]
         display = field_names.get(slug, slug.replace("_", " ").title())
         text = md.read_text(encoding="utf-8")
         m = npv_re.search(text)
         npv_str = m.group(1).strip() if m else "&mdash;"
         try:
-            npv_val = float(npv_str.replace("$", "").replace(",", "").replace("M", "").strip())
+            npv_val = float(
+                npv_str.replace("$", "").replace(",", "").replace("M", "").strip()
+            )
         except ValueError:
             npv_val = 0.0
         fname = f"economics-{slug}.html"
-        (PUBLIC / fname).write_text(page(
-            f"{display} Field Economics",
-            "Per-well and field-level NPV from the sanctioned V30 financial model.",
-            md_to_html(text),
-            provenance=(
-                "Computed by the V30 cashflow model "
-                "(<code>build_field_npv_timeline</code>), which reuses the same "
-                "monthly cashflow and trimmed-discount formula as "
-                "<code>reproduce_v30_financials</code>. Terminal NPV reconciles to "
-                "the sanctioned V30 baseline."
+        (PUBLIC / fname).write_text(
+            page(
+                f"{display} Field Economics",
+                "Per-well and field-level NPV from the sanctioned V30 financial model.",
+                md_to_html(text),
+                provenance=(
+                    "Computed by the V30 cashflow model "
+                    "(<code>build_field_npv_timeline</code>), which reuses the same "
+                    "monthly cashflow and trimmed-discount formula as "
+                    "<code>reproduce_v30_financials</code>. Terminal NPV reconciles to "
+                    "the sanctioned V30 baseline."
+                ),
+                data_limits=(
+                    "The NPV shown is the <strong>sanctioned V30 model truth, presented "
+                    "as-is</strong> &mdash; not reframed as value-positive. Every Lower-"
+                    "Tertiary field here is NPV-negative at a 10% discount rate life-to-date. "
+                    "Operation markers (drilling/completion dates) are annotations only and "
+                    "do not feed the cashflow model."
+                ),
             ),
-            data_limits=(
-                "The NPV shown is the <strong>sanctioned V30 model truth, presented "
-                "as-is</strong> &mdash; not reframed as value-positive. Every Lower-"
-                "Tertiary field here is NPV-negative at a 10% discount rate life-to-date. "
-                "Operation markers (drilling/completion dates) are annotations only and "
-                "do not feed the cashflow model."
-            ),
-        ), encoding="utf-8")
+            encoding="utf-8",
+        )
         fields.append((slug, display, fname, npv_str, npv_val))
 
     # --- Benchmark page ---
-    bench_md = REPORTS / "lower_tertiary" / "lt_well_benchmark_lower_tertiary_2010_latest.md"
+    bench_md = (
+        REPORTS / "lower_tertiary" / "lt_well_benchmark_lower_tertiary_2010_latest.md"
+    )
     if bench_md.exists():
-        (PUBLIC / "benchmark.html").write_text(page(
-            "Lower Tertiary Well Benchmarking",
-            "Cross-field well performance benchmarking (2010&ndash;latest).",
-            md_to_html(bench_md.read_text(encoding="utf-8")),
-            provenance=(
-                "Derived deterministically from BSEE OGOR-A production across the "
-                "Lower-Tertiary fields; same frozen data window as the V30 economics."
+        (PUBLIC / "benchmark.html").write_text(
+            page(
+                "Lower Tertiary Well Benchmarking",
+                "Cross-field well performance benchmarking (2010&ndash;latest).",
+                md_to_html(bench_md.read_text(encoding="utf-8")),
+                provenance=(
+                    "Derived deterministically from BSEE OGOR-A production across the "
+                    "Lower-Tertiary fields; same frozen data window as the V30 economics."
+                ),
+                data_limits=(
+                    "Benchmarks reflect only wells with reported OGOR-A production; wells "
+                    "absent from the structured data are excluded rather than estimated."
+                ),
             ),
-            data_limits=(
-                "Benchmarks reflect only wells with reported OGOR-A production; wells "
-                "absent from the structured data are excluded rather than estimated."
-            ),
-        ), encoding="utf-8")
+            encoding="utf-8",
+        )
 
     # --- Portfolio summary page ---
     summ_md = REPORTS / "lower_tertiary_field_summary.md"
     if summ_md.exists():
-        (PUBLIC / "portfolio.html").write_text(page(
-            "Lower Tertiary Portfolio Summary",
-            "Field-by-field roll-up of the Lower-Tertiary play.",
-            md_to_html(summ_md.read_text(encoding="utf-8")),
-            provenance="Aggregated from the per-field sanctioned V30 economics reports.",
-            data_limits=(
-                "Roll-up inherits each field's data limits; see the individual field "
-                "pages for per-field caveats."
+        (PUBLIC / "portfolio.html").write_text(
+            page(
+                "Lower Tertiary Portfolio Summary",
+                "Field-by-field roll-up of the Lower-Tertiary play.",
+                md_to_html(summ_md.read_text(encoding="utf-8")),
+                provenance="Aggregated from the per-field sanctioned V30 economics reports.",
+                data_limits=(
+                    "Roll-up inherits each field's data limits; see the individual field "
+                    "pages for per-field caveats."
+                ),
             ),
-        ), encoding="utf-8")
+            encoding="utf-8",
+        )
 
     # --- Well-path page ---
     if available_viz:
         links = []
         if "julia_well_path_plotly.html" in available_viz:
-            links.append('<a href="assets/julia_well_path_plotly.html">Open Plotly version &rarr;</a>')
+            links.append(
+                '<a href="assets/julia_well_path_plotly.html">Open Plotly version &rarr;</a>'
+            )
         if "julia_well_path_threejs.html" in available_viz:
-            links.append('<a href="assets/julia_well_path_threejs.html">Open Three.js version &rarr;</a>')
-        primary = "julia_well_path_plotly.html" if "julia_well_path_plotly.html" in available_viz else next(iter(available_viz))
+            links.append(
+                '<a href="assets/julia_well_path_threejs.html">Open Three.js version &rarr;</a>'
+            )
+        primary = (
+            "julia_well_path_plotly.html"
+            if "julia_well_path_plotly.html" in available_viz
+            else next(iter(available_viz))
+        )
         wp_body = (
             f'<iframe class="viz-frame" src="assets/{primary}" title="Julia well paths"></iframe>'
             f'<p class="viz-links">{" &middot; ".join(links)}</p>'
-            '<p>3D directional surveys for the Julia (G20351) development wells, rendered '
-            'from a frozen JSON contract by two independent renderers (Plotly &amp; Three.js).</p>'
+            "<p>3D directional surveys for the Julia (G20351) development wells, rendered "
+            "from a frozen JSON contract by two independent renderers (Plotly &amp; Three.js).</p>"
         )
-        (PUBLIC / "well-path.html").write_text(page(
-            "Julia Well Paths (3D)",
-            "Directional survey geometry for the Julia subsea development.",
-            wp_body,
-            provenance=(
-                "Geometry derived deterministically from BSEE directional-survey "
-                "records via <code>prepare_well_paths</code>; both renderers consume "
-                "one shared frozen JSON contract."
+        (PUBLIC / "well-path.html").write_text(
+            page(
+                "Julia Well Paths (3D)",
+                "Directional survey geometry for the Julia subsea development.",
+                wp_body,
+                provenance=(
+                    "Geometry derived deterministically from BSEE directional-survey "
+                    "records via <code>prepare_well_paths</code>; both renderers consume "
+                    "one shared frozen JSON contract."
+                ),
+                data_limits=(
+                    "Coordinate axis convention: <code>x_coor</code> is NORTHING, not "
+                    "easting. Surveys cover Julia development wells (lease G20351); "
+                    "wells without survey records are omitted rather than interpolated."
+                ),
             ),
-            data_limits=(
-                "Coordinate axis convention: <code>x_coor</code> is NORTHING, not "
-                "easting. Surveys cover Julia development wells (lease G20351); "
-                "wells without survey records are omitted rather than interpolated."
-            ),
-        ), encoding="utf-8")
+            encoding="utf-8",
+        )
 
     return fields
+
+
+def build_field_development(available_viz: dict[str, bool]) -> list[tuple]:
+    """Publish the field-development playbook surface.
+
+    These artifacts are already **self-contained** HTML (inline SVG schematics,
+    CSS and JS — no external assets), so the playbook is published as-is: the
+    single-page surfaces are copied flat and the multi-page report sets (a landing
+    index plus one page per field) are copied as whole trees so their internal
+    links keep working. Returns ``[]`` — the landing index keys off what exists in
+    ``public/`` (see :func:`build_index`)."""
+    src = REPORTS / "field_development"
+    dst = PUBLIC / "field-development"
+    dst.mkdir(parents=True, exist_ok=True)
+
+    # Single self-contained pages.
+    for rel, out in (
+        ("showcase/index.html", "showcase.html"),
+        ("interactive/playbook.html", "playbook.html"),
+    ):
+        if (src / rel).exists():
+            shutil.copyfile(src / rel, dst / out)
+
+    # Multi-page report sets (index + per-field pages) — copy the whole tree so
+    # the relative links between the index and its field pages survive.
+    for sub, out in (("portfolio", "portfolio"), ("bsee_matched", "bsee-matched")):
+        if (src / sub).exists():
+            shutil.copytree(
+                src / sub,
+                dst / out,
+                ignore=shutil.ignore_patterns("*.json"),
+                dirs_exist_ok=True,
+            )
+    return []
 
 
 # Registry of per-domain builders. Add new domains here (key == reports/<domain>/
 # subdir name) as their surfaces come online. ``build(domains=...)`` iterates this.
 DOMAINS = {
     "lower_tertiary": build_lower_tertiary,
+    "field_development": build_field_development,
 }
 
 
@@ -425,47 +499,106 @@ DOMAINS = {
 # correct even when the lower_tertiary domain was not part of this build.
 # ---------------------------------------------------------------------------
 
+
 def _lower_tertiary_fields() -> list[tuple]:
     """Parse per-field NPV out of the source reports — independent of whether the
     lower_tertiary domain pages were (re)built this run. Mirrors the parse in
     build_lower_tertiary so the landing economics table is always accurate."""
     field_names = {
-        "anchor": "Anchor", "big_foot": "Big Foot", "cascade_chinook": "Cascade&ndash;Chinook",
-        "jack_st_malo": "Jack / St. Malo", "julia": "Julia", "shenandoah": "Shenandoah",
+        "anchor": "Anchor",
+        "big_foot": "Big Foot",
+        "cascade_chinook": "Cascade&ndash;Chinook",
+        "jack_st_malo": "Jack / St. Malo",
+        "julia": "Julia",
+        "shenandoah": "Shenandoah",
         "stones": "Stones",
     }
     npv_re = re.compile(r"Terminal cumulative NPV = \*\*([^*]+)\*\*")
     fields = []
     for md in sorted((REPORTS / "lower_tertiary").glob("field_economics_*_v30.md")):
-        slug = md.name[len("field_economics_"):-len("_v30.md")]
+        slug = md.name[len("field_economics_") : -len("_v30.md")]
         display = field_names.get(slug, slug.replace("_", " ").title())
         text = md.read_text(encoding="utf-8")
         m = npv_re.search(text)
         npv_str = m.group(1).strip() if m else "&mdash;"
         try:
-            npv_val = float(npv_str.replace("$", "").replace(",", "").replace("M", "").strip())
+            npv_val = float(
+                npv_str.replace("$", "").replace(",", "").replace("M", "").strip()
+            )
         except ValueError:
             npv_val = 0.0
         fields.append((slug, display, f"economics-{slug}.html", npv_str, npv_val))
     return fields
 
 
+def _field_development_section() -> str:
+    """Prominent landing section for the field-development playbook (cards link the
+    self-contained surfaces published by :func:`build_field_development`)."""
+    fd = PUBLIC / "field-development"
+    cards = []
+    if (fd / "showcase.html").exists():
+        cards.append(
+            '<a class="card" href="field-development/showcase.html">'
+            "<h3>Capability Showcase &rarr;</h3><p>What the playbook produces "
+            "end-to-end, with generated subsea schematics for real fields across "
+            "every major offshore region.</p></a>"
+        )
+    if (fd / "playbook.html").exists():
+        cards.append(
+            '<a class="card" href="field-development/playbook.html">'
+            "<h3>Interactive Playbook &rarr;</h3><p>Move the sliders (water depth, "
+            "reserves, tieback distance) and watch the recommended development "
+            "concept and its schematic update live.</p></a>"
+        )
+    if (fd / "portfolio" / "index.html").exists():
+        cards.append(
+            '<a class="card" href="field-development/portfolio/index.html">'
+            "<h3>Deepwater Portfolio &rarr;</h3><p>Full field-development plans for "
+            "a 10-field deepwater Gulf of Mexico portfolio.</p></a>"
+        )
+    if (fd / "bsee-matched" / "index.html").exists():
+        cards.append(
+            '<a class="card" href="field-development/bsee-matched/index.html">'
+            "<h3>BSEE-Matched Fields &rarr;</h3><p>Recommended vs as-built concept, "
+            "with schematics, across 115 BSEE-cross-referenced Gulf of Mexico "
+            "fields.</p></a>"
+        )
+    if not cards:
+        return ""
+    return (
+        "<h2>Offshore Field-Development Playbook</h2>"
+        "<p>From a field's parameters to a ranked development concept, a to-scale "
+        "subsea schematic, indicative economics, flow-assurance flags and 3D "
+        "hardware &mdash; generated deterministically. Coverage spans ~2,150 "
+        "fields across every major offshore region (333 in the Gulf of Mexico).</p>"
+        f'<div class="cards">{"".join(cards)}</div>'
+    )
+
+
 def build_index() -> None:
     cards = []
     if (PUBLIC / "portfolio.html").exists():
-        cards.append('<a class="card" href="portfolio.html"><h3>Portfolio Summary &rarr;</h3>'
-                     '<p>Field-by-field roll-up of the Lower-Tertiary play.</p></a>')
+        cards.append(
+            '<a class="card" href="portfolio.html"><h3>Portfolio Summary &rarr;</h3>'
+            "<p>Field-by-field roll-up of the Lower-Tertiary play.</p></a>"
+        )
     if (PUBLIC / "benchmark.html").exists():
-        cards.append('<a class="card" href="benchmark.html"><h3>Well Benchmarking &rarr;</h3>'
-                     '<p>Cross-field well performance, 2010&ndash;latest.</p></a>')
+        cards.append(
+            '<a class="card" href="benchmark.html"><h3>Well Benchmarking &rarr;</h3>'
+            "<p>Cross-field well performance, 2010&ndash;latest.</p></a>"
+        )
     if (PUBLIC / "well-path.html").exists():
-        cards.append('<a class="card" href="well-path.html"><h3>Julia Well Paths (3D) &rarr;</h3>'
-                     '<p>Interactive 3D directional surveys, two renderers from one data contract.</p></a>')
+        cards.append(
+            '<a class="card" href="well-path.html"><h3>Julia Well Paths (3D) &rarr;</h3>'
+            "<p>Interactive 3D directional surveys, two renderers from one data contract.</p></a>"
+        )
 
     # Portfolio economics table, worst NPV first. Only list fields whose page
     # exists on disk, so the index stays consistent with the published tree.
     rows = []
-    for slug, display, fname, npv_str, npv_val in sorted(_lower_tertiary_fields(), key=lambda f: f[4]):
+    for slug, display, fname, npv_str, npv_val in sorted(
+        _lower_tertiary_fields(), key=lambda f: f[4]
+    ):
         if not (PUBLIC / fname).exists():
             continue
         rows.append(
@@ -475,30 +608,35 @@ def build_index() -> None:
     econ_table = ""
     if rows:
         econ_table = (
-            '<h2>Field economics (sanctioned V30 NPV)</h2>'
-            '<p>Terminal life-to-date NPV at a 10% discount rate. Every field links to its '
-            'full per-well stackup, NPV timeline, and critical-operations detail.</p>'
+            "<h2>Field economics (sanctioned V30 NPV)</h2>"
+            "<p>Terminal life-to-date NPV at a 10% discount rate. Every field links to its "
+            "full per-well stackup, NPV timeline, and critical-operations detail.</p>"
             '<div class="table-wrap"><table><thead><tr><th>Field</th>'
             '<th style="text-align:right">Terminal NPV</th></tr></thead><tbody>'
-            + "".join(rows) + "</tbody></table></div>"
+            + "".join(rows)
+            + "</tbody></table></div>"
         )
 
     landing = page(
         "Open Data Outputs",
-        "Deterministic petroleum-engineering analyses on public US Gulf of Mexico data.",
-        f'<div class="cards">{"".join(cards)}</div>'
-        + econ_table +
-        '<h2>How this works</h2>'
-        '<p>Every analysis here is computed by unit-tested domain code, frozen into a '
-        'report artifact, and rendered to static HTML. There is no server and no API '
-        'key &mdash; the numbers are identical for everyone, every time. Where the '
-        'underlying data is incomplete, each page says so explicitly rather than '
-        'filling the gap with a guess.</p>',
+        "Deterministic petroleum-engineering analyses + an offshore "
+        "field-development playbook on public data.",
+        _field_development_section()
+        + f'<h2>Lower-Tertiary economics &amp; benchmarking</h2><div class="cards">'
+        f'{"".join(cards)}</div>' + econ_table + "<h2>How this works</h2>"
+        "<p>Every analysis here is computed by unit-tested domain code, frozen into a "
+        "report artifact, and rendered to static HTML. There is no server and no API "
+        "key &mdash; the numbers are identical for everyone, every time. Where the "
+        "underlying data is incomplete, each page says so explicitly rather than "
+        "filling the gap with a guess.</p>",
         provenance="All figures trace to public BSEE filings; see each page for its specific model.",
         data_limits=(
-            "Scope is the Lower-Tertiary fields of the US Gulf of Mexico. Water-depth and "
-            "HPHT attributes are not present in the structured OGOR-A data and are therefore "
-            "not shown. 3D well-path geometry is currently available for Julia (G20351) only."
+            "Two surfaces: (1) sanctioned Lower-Tertiary economics on US Gulf of "
+            "Mexico BSEE data; (2) the field-development playbook over the SubseaIQ "
+            "field catalog (~2014). Playbook concept recommendations are heuristic "
+            "(Concept-Select / FEL-1 fidelity), reported in-sample, and are not a "
+            "sanctioned design. Schematics are deterministic, generated from each "
+            "field concept."
         ),
     )
     (PUBLIC / "index.html").write_text(landing, encoding="utf-8")
@@ -507,6 +645,7 @@ def build_index() -> None:
 # ---------------------------------------------------------------------------
 # Orchestrator
 # ---------------------------------------------------------------------------
+
 
 def build(domains: list[str] | None = None, *, clean: bool = False) -> None:
     """Build the site. ``domains=None`` (default) builds every registered domain,
@@ -545,11 +684,13 @@ def build(domains: list[str] | None = None, *, clean: bool = False) -> None:
 
 
 def main(argv: list[str] | None = None) -> None:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument(
         "--domains",
         help="Comma-separated list of domains to (re)build (default: all). "
-             f"Known domains: {', '.join(DOMAINS)}.",
+        f"Known domains: {', '.join(DOMAINS)}.",
     )
     parser.add_argument(
         "--clean",
