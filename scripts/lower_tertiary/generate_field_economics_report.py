@@ -147,7 +147,10 @@ def _signed_bar(value: float, max_abs: float, width: int = 24) -> str:
 
 
 def build_report(
-    dev_name: str, lease_num: str | None = None, end_date: str | None = None
+    dev_name: str,
+    lease_num: str | None = None,
+    end_date: str | None = None,
+    first_oil_overrides: dict[str, str] | None = None,
 ) -> str:
     from worldenergydata.lower_tertiary.v30_financial_reproducer import (
         build_field_npv_timeline,
@@ -177,7 +180,9 @@ def build_report(
     else:
         window_label = f"{start_label} -> {end_label} (V30 frozen window)"
 
-    tl = build_field_npv_timeline(dev_name, end_date=end_date)
+    tl = build_field_npv_timeline(
+        dev_name, end_date=end_date, first_oil_overrides=first_oil_overrides
+    )
     timeline: pd.DataFrame = tl["timeline"].copy()
     timeline["month"] = timeline["date"].dt.to_period("M").dt.to_timestamp()
 
@@ -211,7 +216,10 @@ def build_report(
     if avg_wti is not None and not (isinstance(avg_wti, float) and np.isnan(avg_wti)):
         _m = 1.20
         tl_pert = build_field_npv_timeline(
-            dev_name, end_date=end_date, wti_price_multiplier=_m
+            dev_name,
+            end_date=end_date,
+            wti_price_multiplier=_m,
+            first_oil_overrides=first_oil_overrides,
         )
         dnpv_dm = (tl_pert["terminal_npv_usd"] - base_npv) / (_m - 1.0)
         if abs(dnpv_dm) > 1.0:  # sensible slope (positive: NPV rises with price)
@@ -759,6 +767,14 @@ def main(argv: list[str] | None = None) -> None:
         help="Build the FROZEN V30 report (production through 2025-05-31, frozen "
         "WTI). Selects the sanctioned reference window instead of the latest one.",
     )
+    win.add_argument(
+        "--v50",
+        dest="v50",
+        action="store_true",
+        help="Build the V50 gold-standard report: latest OGOR-A window + the "
+        "verified first-oil corrections, written to *_v50.md. Matches "
+        "golden_baseline_v50.yml.",
+    )
     parser.add_argument(
         "--end-date",
         default=None,
@@ -775,9 +791,19 @@ def main(argv: list[str] | None = None) -> None:
     # Ensure the .bin loader is patched before auto-detecting the latest month.
     _ensure_ogor_loader()
 
-    # Default = LATEST window. --frozen selects the V30 reference window.
+    # Default = LATEST window. --frozen selects the V30 reference window;
+    # --v50 selects the latest window WITH verified first-oil corrections.
+    is_v50 = getattr(args, "v50", False)
+    first_oil_overrides = None
+    if is_v50:
+        from worldenergydata.lower_tertiary.latest_runner import (
+            FIRST_OIL_CORRECTIONS,
+        )
+
+        first_oil_overrides = FIRST_OIL_CORRECTIONS
+
     end_date: str | None = args.end_date
-    is_latest = (not args.frozen) or args.end_date is not None
+    is_latest = (not args.frozen) or args.end_date is not None or is_v50
     if is_latest and end_date is None:
         latest_month = detect_latest_ogor_month()
         end_date = _month_end_str(latest_month)
@@ -787,15 +813,18 @@ def main(argv: list[str] | None = None) -> None:
         )
 
     report = build_report(
-        args.dev, args.lease, end_date=end_date if is_latest else None
+        args.dev,
+        args.lease,
+        end_date=end_date if is_latest else None,
+        first_oil_overrides=first_oil_overrides,
     )
 
     if args.out:
         out_path = Path(args.out)
     else:
         slug = args.dev.lower().replace(" ", "_").replace("/", "_")
-        # Frozen V30 -> *_v30.md; latest -> the canonical unsuffixed report.
-        suffix = "" if is_latest else "_v30"
+        # Frozen V30 -> *_v30.md; V50 -> *_v50.md; plain latest -> unsuffixed.
+        suffix = "_v50" if is_v50 else ("" if is_latest else "_v30")
         out_path = (
             PROJECT_ROOT
             / "reports"

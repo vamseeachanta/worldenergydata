@@ -529,25 +529,68 @@ def _build_monthly_facilities(
     return result
 
 
-def reproduce_v30_financials() -> dict[str, dict]:
-    """Reproduce full V30 financial summary for all developments.
+def reproduce_v30_financials(
+    end_date: str | None = None,
+    first_oil_overrides: dict[str, str] | None = None,
+) -> dict[str, dict]:
+    """Reproduce the full financial summary for all developments.
+
+    Parameters
+    ----------
+    end_date : str | None
+        Upper production/cashflow bound (YYYY-MM-DD). When *None* (default),
+        reproduces the exact frozen V30 baseline (window ending 2025-05-31,
+        ``g_end`` = 2025-05-01, frozen V30 WTI xlsx) — byte-for-byte identical
+        to ``golden_baseline_v30.yml``. When provided (e.g. the V50 vintage
+        ``"2026-04-30"``), the *same methodology* is run with the production
+        window, WTI cascade, and cashflow horizon all extended to ``end_date``.
+    first_oil_overrides : dict | None
+        Mapping ``development display name -> corrected first_oil`` (YYYY-MM-DD),
+        applied on top of the golden-baseline dates for BOTH the production
+        window and the D&C/facilities cashflow timing. Leave *None* for the
+        frozen V30 baseline (which must match Roy's sanctioned Excel). The V50
+        vintage passes ``latest_runner.FIRST_OIL_CORRECTIONS`` — currently the
+        verified Cascade Chinook 2012-09-01 fix (raw OGOR shows first production
+        in 2012-09; the golden 2014-01 was a carried-over error). This is the
+        single canonical financial engine; the WRK-010 ``latest_runner`` lane is
+        a thin production+revenue-only view of the same correction.
 
     Returns dict keyed by development display name with:
-      dnc_total_usd, facilities_cost_usd, revenue_usd, royalty_usd,
-      variable_opex_usd, fixed_opex_usd, net_cashflow_usd, npv_usd,
+      total_oil_bbl, dnc_total_usd, facilities_cost_usd, revenue_usd,
+      royalty_usd, variable_opex_usd, fixed_opex_usd, net_cashflow_usd, npv_usd,
       mirr_monthly, mirr_annual, producers, injectors, wellbores
     """
     baseline = load_golden_baseline()
     first_oil_map = _build_first_oil_map(baseline)
-    production = reproduce_v30_production(end_date="2025-05-31")
-    wti_df = load_v30_wti_prices()
+    if first_oil_overrides:
+        for _dev, _date in first_oil_overrides.items():
+            first_oil_map[_dev] = pd.Timestamp(_date)
+    # end_date=None preserves the exact frozen V30 behaviour; a passed end_date
+    # extends production + WTI cascade + cashflow horizon (V50 vintage).
+    prod_end = "2025-05-31" if end_date is None else end_date
+    production = reproduce_v30_production(
+        end_date=prod_end, first_oil_overrides=first_oil_overrides
+    )
+    if end_date is None:
+        wti_df = load_v30_wti_prices()
+    else:
+        from worldenergydata.lower_tertiary.wti_prices import (
+            load_extended_wti_prices,
+        )
+
+        wti_df = load_extended_wti_prices(through_date=end_date)
     assumptions = _load_assumptions_wide()
     fopw = _build_fopw_map()
 
     # Determine global timeline from D&C and production data
     dnc_all = load_v30_drilling()
     dnc_spud_min = pd.to_datetime(dnc_all["WELL_SPUD_DATE"], errors="coerce").min()
-    g_end = pd.Timestamp("2025-05-01")  # V30 end date (month-start)
+    # V30 end date (month-start) when end_date is None; otherwise extend to the
+    # month-start of the requested latest end_date (matches build_field_npv_timeline).
+    if end_date is None:
+        g_end = pd.Timestamp("2025-05-01")
+    else:
+        g_end = pd.Timestamp(end_date).to_period("M").to_timestamp()
 
     results: dict[str, dict] = {}
     for _proj_id, proj_data in baseline["projects"].items():
@@ -679,6 +722,7 @@ def reproduce_v30_financials() -> dict[str, dict]:
             )
 
             net_cashflow = float(full_cf.sum())
+            total_oil_bbl = float(merged["oil_bbl"].sum())
 
         else:
             # Exploration-only projects (no production)
@@ -686,6 +730,7 @@ def reproduce_v30_financials() -> dict[str, dict]:
             royalty = 0.0
             variable_opex = 0.0
             fixed_opex = 0.0
+            total_oil_bbl = 0.0
 
             # Build timeline for DnC-only
             dnc_df_dev = _get_dev_dnc_dates(dev_name)
@@ -724,6 +769,7 @@ def reproduce_v30_financials() -> dict[str, dict]:
             net_cashflow = float(full_cf.sum())
 
         results[dev_name] = {
+            "total_oil_bbl": total_oil_bbl,
             "dnc_total_usd": dnc["dnc_total_usd"],
             "drilling_cost_usd": dnc["drilling_cost_usd"],
             "completion_cost_usd": dnc["completion_cost_usd"],
@@ -748,6 +794,7 @@ def build_field_npv_timeline(
     dev_name: str,
     end_date: str | None = None,
     wti_price_multiplier: float = 1.0,
+    first_oil_overrides: dict[str, str] | None = None,
 ) -> dict:
     """Build the monthly cumulative-discounted-NPV time series for a development.
 
@@ -792,10 +839,15 @@ def build_field_npv_timeline(
     """
     baseline = load_golden_baseline()
     first_oil_map = _build_first_oil_map(baseline)
+    if first_oil_overrides:
+        for _dev, _date in first_oil_overrides.items():
+            first_oil_map[_dev] = pd.Timestamp(_date)
     # end_date=None preserves the exact frozen V30 behaviour; a passed end_date
     # drives both the production window and g_end (latest timeline).
     prod_end = "2025-05-31" if end_date is None else end_date
-    production = reproduce_v30_production(end_date=prod_end)
+    production = reproduce_v30_production(
+        end_date=prod_end, first_oil_overrides=first_oil_overrides
+    )
     if end_date is None:
         wti_df = load_v30_wti_prices()
     else:
