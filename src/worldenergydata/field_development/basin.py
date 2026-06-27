@@ -42,6 +42,15 @@ DISFAVOURED = 0.15
 
 # Region (the SubseaIQ ``COUNTRY`` value) → basin archetype. Lower-cased keys;
 # unmapped regions fall through to a neutral prior.
+#
+# NOTE: the only available granularity is the COUNTRY value, so ``us`` is mapped
+# to the Gulf of Mexico archetype — the overwhelming majority of US offshore
+# fields. A handful of non-GoM US fields (Pacific OCS off California; Beaufort
+# Sea / Cook Inlet in Alaska) therefore receive the GoM development-culture prior,
+# which is wrong for those regions. Impact is small (~0.3% of the catalog, mostly
+# shallow Arctic fields where depth feasibility dominates the 0.18-weight
+# region_fit) and is accepted at screening fidelity; revisit if a sub-area or
+# block signal becomes available to disambiguate US offshore basins.
 _REGION_TO_BASIN: dict[str, str] = {
     "us": "gom",
     "gulf of mexico": "gom",

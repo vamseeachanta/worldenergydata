@@ -36,7 +36,11 @@ gracefully — missing :class:`FieldConcept` fields yield a ``LOW``/neutral resu
 with an explanatory ``note`` and never raise.
 
 References (rules of thumb, public domain):
-* API RP 14E / API RP 14J — erosional velocity, ``Ve = C / sqrt(rho_mixture)``.
+* API RP 14E / API RP 14J — erosional velocity. At screening fidelity we apply a
+  fixed limiting velocity (:attr:`FlowAssuranceThresholds.erosional_velocity_fts`,
+  default 12 ft/s for carbon steel, the ``C=100`` continuous-service value) rather
+  than computing ``Ve = C / sqrt(rho_mixture)`` — there is no mixture-density model
+  at this fidelity, so the limit is set directly and overridable per call.
 * NORSOK / general deepwater practice — ~4 C seabed thermal floor below the
   thermocline; hydrate-stability envelope for natural gas at deepwater pressures.
 """
@@ -123,9 +127,10 @@ class FlowAssuranceThresholds:
     slugging_long_km: float = 15.0  # long flowline -> terrain/severe slugging
     slugging_low_rate_boed: float = 20000.0  # low turndown -> unstable flow
 
-    # Erosional velocity (API RP 14E / RP 14J).
+    # Erosional velocity (API RP 14E / RP 14J). The limit is set directly (the
+    # C=100 carbon-steel continuous-service value already baked into 12 ft/s); we
+    # do not compute Ve = C/sqrt(rho) — no mixture-density model at this fidelity.
     erosional_velocity_fts: float = 12.0  # carbon steel, continuous service (C=100)
-    erosion_c_factor: float = 100.0  # API RP 14E C-factor (carbon steel, continuous)
     erosion_high_gor_scf_stb: float = 3000.0  # high GOR -> lower mixture density
 
 
@@ -217,17 +222,24 @@ def screen_hydrate_risk(
     if subcooling >= th.hydrate_deep_subcool_c:
         points += 1
         risk.drivers.append(f"deep subcooling ({subcooling:.1f} C) into hydrate region")
-    if (
-        concept.distance_to_host_km is not None
-        and concept.distance_to_host_km >= th.hydrate_long_offset_km
-    ):
-        points += 1
-        risk.drivers.append(
-            f"long offset ({concept.distance_to_host_km:g} km) prolongs cooldown"
-        )
-    if concept.sour:
-        points += 1
-        risk.drivers.append("sour (CO2/H2S) shifts the hydrate curve / adds chemistry")
+    # Secondary drivers escalate only when the fluid actually cools into the
+    # hydrate-stability region (subcooling > 0). Below the curve no hydrate can
+    # form, so a long offset or sour gas must not raise the tier on their own —
+    # mirrors the ``margin > 0`` gating in :func:`screen_wax_risk`.
+    if subcooling > 0:
+        if (
+            concept.distance_to_host_km is not None
+            and concept.distance_to_host_km >= th.hydrate_long_offset_km
+        ):
+            points += 1
+            risk.drivers.append(
+                f"long offset ({concept.distance_to_host_km:g} km) prolongs cooldown"
+            )
+        if concept.sour:
+            points += 1
+            risk.drivers.append(
+                "sour (CO2/H2S) shifts the hydrate curve / adds chemistry"
+            )
 
     risk.severity = _severity_from_points(points)
     if points == 0:
