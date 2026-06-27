@@ -1,0 +1,962 @@
+overall_verdict:
+  headline: 'CONFIRMED: 0 light-intervention/RLWI vessels have any depth-stamped WAR
+    record in the 5,000-10,000 ft band.'
+  review_claim: '0 light-intervention assets recorded in 5,000-10,000 ft (epic #591
+    review of the subsea-intervention supply gap).'
+  review_claim_confirmed: true
+  vessels_total: 29
+  light_intervention_vessels_total: 9
+  light_in_review_band: 0
+  light_in_any_deepwater_band: 0
+  light_intervention_names:
+  - Seawell
+  - Well Enhancer
+  - Siem Helix 1
+  - Siem Helix 2
+  - Island Constructor
+  - Island Wellserver
+  - Island Frontier
+  - Island Performer
+  - Skandi Constructor
+  verdict_counts_all:
+    in_war_depth_unknown: 9
+    not_in_war: 19
+    present_deepwater: 1
+  verdict_counts_light_intervention:
+    in_war_depth_unknown: 1
+    not_in_war: 8
+  interpretation: No dedicated light-intervention/RLWI vessel is confirmed in 5,000-10,000
+    ft. Absences split into 'not_in_war' (genuine absence from GoM-only WAR -- mostly
+    North Sea/Brazil units) and 'in_war_depth_unknown' (in WAR but no depth stamp
+    -- a coverage gap, NOT proof of scarcity). Confirmed deepwater intervention presence
+    is carried by heavy semis (e.g. Helix Q4000), not the light RLWI fleet.
+depth_coverage:
+  war_records_total: 363786
+  records_with_water_depth: 22911
+  records_missing_water_depth: 340875
+  depth_coverage_fraction: 0.063
+  is_floor: true
+vessels:
+- vessel_name: Q4000
+  imo: '8767123'
+  vessel_types:
+  - heavy_intervention_semi
+  intervention_classes:
+  - heavy
+  is_light_intervention: false
+  gom_resident: true
+  aka:
+  - Helix Q4000
+  - Q4000
+  source_files:
+  - intervention_osv_roster.yml
+  - intervention_vessels_seed.yml
+  matched_war_rig_names:
+  - CAL DIVE Q4000
+  - CALDIVE Q4000
+  - CALDIVE S Q4000 DP
+  - CDI Q4000
+  - CLADIVE Q4000
+  - HELIX Q4000
+  - HELIZ Q4000
+  - Q4000
+  example_raw_rig_names:
+  - CAL-DIVE Q-4000
+  - CAL DIVE Q-4000
+  - HELIX Q-4000
+  - CALDIVE Q-4000 (SS)
+  - Q4000
+  war_records: 1244
+  records_with_water_depth: 72
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 54
+    band_3000_5000: 11
+    band_5000_10000: 7
+    band_gt_10000: 0
+  deepwater_records: 18
+  review_band_records: 7
+  date_range:
+    first_year: 2002
+    last_year: 2026
+  verdict: present_deepwater
+  is_floor: true
+- vessel_name: Q5000
+  imo: '8772104'
+  vessel_types:
+  - heavy_intervention_semi
+  intervention_classes:
+  - heavy
+  is_light_intervention: false
+  gom_resident: true
+  aka:
+  - Helix Q5000
+  - Q5000
+  source_files:
+  - intervention_osv_roster.yml
+  - intervention_vessels_seed.yml
+  matched_war_rig_names:
+  - HELIX Q5000
+  example_raw_rig_names:
+  - HELIX Q5000
+  war_records: 528
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: 2015
+    last_year: 2025
+  verdict: in_war_depth_unknown
+  is_floor: true
+- vessel_name: Q7000
+  imo: '9710359'
+  vessel_types:
+  - heavy_intervention_semi
+  intervention_classes:
+  - heavy
+  is_light_intervention: false
+  gom_resident: false
+  aka:
+  - Helix Q7000
+  - Q7000
+  source_files:
+  - intervention_osv_roster.yml
+  - intervention_vessels_seed.yml
+  matched_war_rig_names: []
+  example_raw_rig_names: []
+  war_records: 0
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: null
+    last_year: null
+  verdict: not_in_war
+  is_floor: true
+- vessel_name: Seawell
+  imo: '8324567'
+  vessel_types:
+  - heavy_intervention_semi
+  - rlwi_monohull
+  intervention_classes:
+  - heavy
+  is_light_intervention: true
+  gom_resident: false
+  aka:
+  - CSO Seawell
+  - Seawell
+  - Stena Seawell
+  source_files:
+  - intervention_osv_roster.yml
+  - intervention_vessels_seed.yml
+  matched_war_rig_names: []
+  example_raw_rig_names: []
+  war_records: 0
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: null
+    last_year: null
+  verdict: not_in_war
+  is_floor: true
+- vessel_name: Well Enhancer
+  imo: '9421996'
+  vessel_types:
+  - heavy_intervention_semi
+  - rlwi_monohull
+  intervention_classes:
+  - heavy
+  is_light_intervention: true
+  gom_resident: false
+  aka:
+  - Well Enhancer
+  source_files:
+  - intervention_osv_roster.yml
+  - intervention_vessels_seed.yml
+  matched_war_rig_names: []
+  example_raw_rig_names: []
+  war_records: 0
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: null
+    last_year: null
+  verdict: not_in_war
+  is_floor: true
+- vessel_name: Siem Helix 1
+  imo: '9733454'
+  vessel_types:
+  - rlwi_monohull
+  intervention_classes: []
+  is_light_intervention: true
+  gom_resident: false
+  aka:
+  - Sea Helix 1
+  - Siem Helix 1
+  source_files:
+  - intervention_osv_roster.yml
+  matched_war_rig_names: []
+  example_raw_rig_names: []
+  war_records: 0
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: null
+    last_year: null
+  verdict: not_in_war
+  is_floor: true
+- vessel_name: Siem Helix 2
+  imo: '9733466'
+  vessel_types:
+  - rlwi_monohull
+  intervention_classes: []
+  is_light_intervention: true
+  gom_resident: false
+  aka:
+  - Sea Helix 2
+  - Siem Helix 2
+  source_files:
+  - intervention_osv_roster.yml
+  matched_war_rig_names: []
+  example_raw_rig_names: []
+  war_records: 0
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: null
+    last_year: null
+  verdict: not_in_war
+  is_floor: true
+- vessel_name: Island Constructor
+  imo: '9390678'
+  vessel_types:
+  - rlwi_monohull
+  intervention_classes:
+  - light
+  is_light_intervention: true
+  gom_resident: false
+  aka:
+  - Island Constructor
+  source_files:
+  - intervention_osv_roster.yml
+  - intervention_vessels_seed.yml
+  matched_war_rig_names: []
+  example_raw_rig_names: []
+  war_records: 0
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: null
+    last_year: null
+  verdict: not_in_war
+  is_floor: true
+- vessel_name: Island Wellserver
+  imo: '9372755'
+  vessel_types:
+  - rlwi_monohull
+  intervention_classes:
+  - light
+  is_light_intervention: true
+  gom_resident: false
+  aka:
+  - Island Wellserver
+  source_files:
+  - intervention_osv_roster.yml
+  - intervention_vessels_seed.yml
+  matched_war_rig_names: []
+  example_raw_rig_names: []
+  war_records: 0
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: null
+    last_year: null
+  verdict: not_in_war
+  is_floor: true
+- vessel_name: Island Frontier
+  imo: '9249520'
+  vessel_types:
+  - rlwi_monohull
+  intervention_classes: []
+  is_light_intervention: true
+  gom_resident: false
+  aka:
+  - Island Frontier
+  source_files:
+  - intervention_osv_roster.yml
+  matched_war_rig_names: []
+  example_raw_rig_names: []
+  war_records: 0
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: null
+    last_year: null
+  verdict: not_in_war
+  is_floor: true
+- vessel_name: Vanguard
+  imo: '9356189'
+  vessel_types:
+  - osv
+  intervention_classes: []
+  is_light_intervention: false
+  gom_resident: null
+  aka:
+  - Vanguard
+  source_files:
+  - intervention_osv_roster.yml
+  matched_war_rig_names: []
+  example_raw_rig_names: []
+  war_records: 0
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: null
+    last_year: null
+  verdict: not_in_war
+  is_floor: true
+- vessel_name: Island Venture
+  imo: '9721786'
+  vessel_types:
+  - mpsv
+  intervention_classes: []
+  is_light_intervention: false
+  gom_resident: true
+  aka:
+  - Island Venture
+  source_files:
+  - intervention_osv_roster.yml
+  matched_war_rig_names:
+  - ISLAND VENTURE
+  example_raw_rig_names:
+  - ISLAND VENTURE
+  war_records: 149
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: 2020
+    last_year: 2025
+  verdict: in_war_depth_unknown
+  is_floor: true
+- vessel_name: Island Performer
+  imo: '9682045'
+  vessel_types:
+  - mpsv
+  - rlwi_monohull
+  intervention_classes:
+  - light
+  is_light_intervention: true
+  gom_resident: true
+  aka:
+  - Island Performer
+  source_files:
+  - intervention_osv_roster.yml
+  - intervention_vessels_seed.yml
+  matched_war_rig_names:
+  - ISLAND PERFORMER
+  example_raw_rig_names:
+  - ISLAND PERFORMER
+  war_records: 24
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: 2017
+    last_year: 2024
+  verdict: in_war_depth_unknown
+  is_floor: true
+- vessel_name: Island Intervention
+  imo: '9460095'
+  vessel_types:
+  - mpsv
+  intervention_classes: []
+  is_light_intervention: false
+  gom_resident: true
+  aka:
+  - Island Intervention
+  - Karianne
+  source_files:
+  - intervention_osv_roster.yml
+  matched_war_rig_names:
+  - ISLAND INTERVENTION
+  example_raw_rig_names:
+  - ISLAND INTERVENTION
+  war_records: 75
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: 2020
+    last_year: 2024
+  verdict: in_war_depth_unknown
+  is_floor: true
+- vessel_name: Ocean Evolution
+  imo: '9733167'
+  vessel_types:
+  - mpsv
+  intervention_classes: []
+  is_light_intervention: false
+  gom_resident: true
+  aka:
+  - Ocean Evolution
+  source_files:
+  - intervention_osv_roster.yml
+  matched_war_rig_names:
+  - OCEAN EVOLUTION
+  - OCEANEERING MSV OCEAN EVOLUTION
+  example_raw_rig_names:
+  - OCEANEERING - MSV OCEAN EVOLUTION
+  - MSV OCEAN EVOLUTION
+  war_records: 42
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: 2020
+    last_year: 2024
+  verdict: in_war_depth_unknown
+  is_floor: true
+- vessel_name: Blue Sea
+  imo: '9743057'
+  vessel_types:
+  - mpsv
+  intervention_classes: []
+  is_light_intervention: false
+  gom_resident: true
+  aka:
+  - Blue Sea
+  - Harvey Blue-Sea
+  source_files:
+  - intervention_osv_roster.yml
+  matched_war_rig_names:
+  - HARVEY BLUE SEA
+  example_raw_rig_names:
+  - MSV HARVEY BLUE SEA
+  war_records: 11
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: 2024
+    last_year: 2025
+  verdict: in_war_depth_unknown
+  is_floor: true
+- vessel_name: Normand Superior
+  imo: '9766877'
+  vessel_types:
+  - mpsv
+  intervention_classes: []
+  is_light_intervention: false
+  gom_resident: false
+  aka:
+  - Far Superior
+  - Normand Superior
+  source_files:
+  - intervention_osv_roster.yml
+  matched_war_rig_names: []
+  example_raw_rig_names: []
+  war_records: 0
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: null
+    last_year: null
+  verdict: not_in_war
+  is_floor: true
+- vessel_name: Juanita Candies
+  imo: '9581291'
+  vessel_types:
+  - mpsv
+  intervention_classes: []
+  is_light_intervention: false
+  gom_resident: true
+  aka:
+  - Deep Sea
+  - Harvey Deep-Sea
+  - Juanita Candies
+  source_files:
+  - intervention_osv_roster.yml
+  matched_war_rig_names:
+  - HARVEY DEEP SEA
+  example_raw_rig_names:
+  - Harvey Deep Sea
+  war_records: 8
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: 2025
+    last_year: 2025
+  verdict: in_war_depth_unknown
+  is_floor: true
+- vessel_name: Intervention
+  imo: '9581277'
+  vessel_types:
+  - mpsv
+  intervention_classes: []
+  is_light_intervention: false
+  gom_resident: true
+  aka:
+  - Harvey Hauler
+  - Harvey Intervention
+  - Intervention
+  - Sisuaq
+  source_files:
+  - intervention_osv_roster.yml
+  matched_war_rig_names:
+  - HARVEY INTERVENTION
+  example_raw_rig_names:
+  - HARVEY INTERVENTION
+  war_records: 5
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: 2024
+    last_year: 2024
+  verdict: in_war_depth_unknown
+  is_floor: true
+- vessel_name: Brandon Bordelon
+  imo: '9670640'
+  vessel_types:
+  - mpsv
+  intervention_classes: []
+  is_light_intervention: false
+  gom_resident: true
+  aka:
+  - Brandon Bordelon
+  source_files:
+  - intervention_osv_roster.yml
+  matched_war_rig_names:
+  - BRANDON BORDELON
+  example_raw_rig_names:
+  - MSV BRANDON BORDELON
+  war_records: 5
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: 2022
+    last_year: 2024
+  verdict: in_war_depth_unknown
+  is_floor: true
+- vessel_name: Ocean Intervention II
+  imo: '9232125'
+  vessel_types:
+  - mpsv
+  intervention_classes: []
+  is_light_intervention: false
+  gom_resident: true
+  aka:
+  - Ocean Intervention II
+  source_files:
+  - intervention_osv_roster.yml
+  matched_war_rig_names: []
+  example_raw_rig_names: []
+  war_records: 0
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: null
+    last_year: null
+  verdict: not_in_war
+  is_floor: true
+- vessel_name: Ocean Intervention
+  imo: '9203227'
+  vessel_types:
+  - mpsv
+  intervention_classes: []
+  is_light_intervention: false
+  gom_resident: true
+  aka:
+  - Ocean Intervention
+  source_files:
+  - intervention_osv_roster.yml
+  matched_war_rig_names: []
+  example_raw_rig_names: []
+  war_records: 0
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: null
+    last_year: null
+  verdict: not_in_war
+  is_floor: true
+- vessel_name: AKOFS Seafarer
+  imo: '9387229'
+  vessel_types:
+  - mpsv
+  intervention_classes: []
+  is_light_intervention: false
+  gom_resident: false
+  aka:
+  - AKOFS Seafarer
+  - Skandi Aker
+  source_files:
+  - intervention_osv_roster.yml
+  matched_war_rig_names: []
+  example_raw_rig_names: []
+  war_records: 0
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: null
+    last_year: null
+  verdict: not_in_war
+  is_floor: true
+- vessel_name: AKOFS Santos
+  imo: '9423437'
+  vessel_types:
+  - mpsv
+  intervention_classes: []
+  is_light_intervention: false
+  gom_resident: false
+  aka:
+  - AKOFS Santos
+  - Skandi Santos
+  source_files:
+  - intervention_osv_roster.yml
+  matched_war_rig_names: []
+  example_raw_rig_names: []
+  war_records: 0
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: null
+    last_year: null
+  verdict: not_in_war
+  is_floor: true
+- vessel_name: Aker Wayfarer
+  imo: '9435478'
+  vessel_types:
+  - construction
+  intervention_classes: []
+  is_light_intervention: false
+  gom_resident: false
+  aka:
+  - Aker Wayfarer
+  source_files:
+  - intervention_osv_roster.yml
+  matched_war_rig_names: []
+  example_raw_rig_names: []
+  war_records: 0
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: null
+    last_year: null
+  verdict: not_in_war
+  is_floor: true
+- vessel_name: Skandi Africa
+  imo: '9687459'
+  vessel_types:
+  - construction
+  intervention_classes: []
+  is_light_intervention: false
+  gom_resident: false
+  aka:
+  - Skandi Africa
+  source_files:
+  - intervention_osv_roster.yml
+  matched_war_rig_names: []
+  example_raw_rig_names: []
+  war_records: 0
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: null
+    last_year: null
+  verdict: not_in_war
+  is_floor: true
+- vessel_name: Skandi Acergy
+  imo: '9387217'
+  vessel_types:
+  - construction
+  intervention_classes: []
+  is_light_intervention: false
+  gom_resident: false
+  aka:
+  - Skandi Acergy
+  source_files:
+  - intervention_osv_roster.yml
+  matched_war_rig_names: []
+  example_raw_rig_names: []
+  war_records: 0
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: null
+    last_year: null
+  verdict: not_in_war
+  is_floor: true
+- vessel_name: Skandi Constructor
+  imo: '9431642'
+  vessel_types:
+  - mpsv
+  - rlwi_monohull
+  intervention_classes:
+  - light
+  is_light_intervention: true
+  gom_resident: false
+  aka:
+  - Sarah
+  - Skandi Constructor
+  source_files:
+  - intervention_osv_roster.yml
+  - intervention_vessels_seed.yml
+  matched_war_rig_names: []
+  example_raw_rig_names: []
+  war_records: 0
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: null
+    last_year: null
+  verdict: not_in_war
+  is_floor: true
+- vessel_name: Skandi Vinland
+  imo: '9817121'
+  vessel_types:
+  - mpsv
+  intervention_classes: []
+  is_light_intervention: false
+  gom_resident: false
+  aka:
+  - Skandi Vinland
+  - Vard Langsten 834
+  source_files:
+  - intervention_osv_roster.yml
+  matched_war_rig_names: []
+  example_raw_rig_names: []
+  war_records: 0
+  records_with_water_depth: 0
+  bands_depth_stamped:
+    shelf_lt_500: 0
+    band_500_3000: 0
+    band_3000_5000: 0
+    band_5000_10000: 0
+    band_gt_10000: 0
+  deepwater_records: 0
+  review_band_records: 0
+  date_range:
+    first_year: null
+    last_year: null
+  verdict: not_in_war
+  is_floor: true
+parameters:
+  max_token_df: 5
+  deepwater_bands:
+  - band_3000_5000
+  - band_5000_10000
+  - band_gt_10000
+  review_band: band_5000_10000
+  light_intervention_types:
+  - rlwi_monohull
+  band_scheme_ft:
+    shelf_lt_500: < 500 ft (shelf)
+    band_500_3000: 500-3,000 ft
+    band_3000_5000: 3,000-5,000 ft
+    band_5000_10000: 5,000-10,000 ft
+    band_gt_10000: '> 10,000 ft'
+caveats:
+- 'FLOOR: WATER_DEPTH is populated on only ~6% of WAR rows (~94% NULL); every band-resolved
+  count is a hard lower bound, not a total.'
+- Banding uses only depth-stamped records; depth-null rows are counted under records_with_water_depth,
+  never silently bucketed.
+- '''in_war_depth_unknown'' means the vessel IS in WAR but has no depth stamp -- a
+  coverage gap, NOT evidence of deepwater absence.'
+- '''not_in_war'' in GoM-only WAR means genuine absence from the recorded GoM population;
+  many dedicated units are North Sea / Brazil vessels.'
+- Name matching is canonical-name + distinctive-token-anchored subsequence; rare aliases
+  of generic vessels can still be missed or (less likely) over-matched. matched_war_rig_names
+  is shown for audit.
+- A single physical asset can appear under several RIG_NAME spellings; all spellings
+  matching a vessel are unioned before counting.
+provenance:
+  war_source: BSEE war/mv_war_main.bin (well-activity reports)
+  vessel_sources:
+  - vessel_fleet/data/intervention_osv_roster.yml (#593)
+  - vessel_fleet/data/intervention_vessels_seed.yml (#598)
+  name_normalizer: vessel_fleet.identity_resolver.canonicalize_name (#599)
+  band_scheme: bsee...well_inventory_by_band (#583)
+  issue: 'worldenergydata#628 (epic #591)'
