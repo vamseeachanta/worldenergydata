@@ -43,25 +43,25 @@ from typing import Optional
 
 import pandas as pd
 
-# Reuse the demand-axis band scheme (#583) verbatim — never redefine bands here.
-from worldenergydata.bsee.analysis.intervention.well_inventory_by_band import (
-    BAND_LABELS,
-    MODU_SERVICING_BANDS,
-    classify_modu_band,
-)
-
 # Reuse the #597 WAR loader, depth-coverage floor reporter, column names, the
 # resolved rig classifier and the placeholder-asset guard. Single source of
 # truth for WAR I/O and asset classification.
 from worldenergydata.bsee.analysis.intervention.war_vessel_crossref import (
     DEPTH_COL,
     RIG_COL,
-    RigType,
     WELL_COL,
+    RigType,
     _is_real_asset,
     classify_rig_type,
     depth_coverage,
     load_war,
+)
+
+# Reuse the demand-axis band scheme (#583) verbatim — never redefine bands here.
+from worldenergydata.bsee.analysis.intervention.well_inventory_by_band import (
+    BAND_LABELS,
+    MODU_SERVICING_BANDS,
+    classify_modu_band,
 )
 
 # ---------------------------------------------------------------------------
