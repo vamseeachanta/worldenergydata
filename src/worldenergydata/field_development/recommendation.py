@@ -78,13 +78,21 @@ class CriteriaWeights:
 # Per-concept preferred (sweet-spot) water-depth band in m — tighter than the
 # feasibility envelope; drives the ``depth_fit`` score. Calibrated to the real
 # depth→concept distribution of the enriched SubseaIQ catalog.
+#
+# Calibration v3: the moored-floater bands (TLP / spar / semisub) were nearly
+# identical, so depth_fit could not separate them and the spar/TLP picks lost to
+# the semisub's flatter, higher base profile. They are now tightened to the
+# observed GoM medians — TLP ≈ 1036 m, spar ≈ 1265 m, semisub ≈ 1958 m — so the
+# bands tile by depth (TLP shallowest, then spar, then semisub). This recovered
+# spar (0→7) and roughly doubled TLP recall (15→30) with no leakage: water depth
+# is a pure input. See ``docs/domains/field-development/calibration-v2.md``.
 DEPTH_SWEET_M: dict[ConceptType, tuple[float, float]] = {
     ConceptType.NUI: (0.0, 120.0),
     ConceptType.FIXED_JACKET: (0.0, 300.0),
     ConceptType.COMPLIANT_TOWER: (400.0, 900.0),
     ConceptType.TLP: (400.0, 1400.0),
-    ConceptType.SPAR: (900.0, 2450.0),
-    ConceptType.SEMISUB_FPS: (1000.0, 2600.0),
+    ConceptType.SPAR: (700.0, 1600.0),
+    ConceptType.SEMISUB_FPS: (1700.0, 2800.0),
     ConceptType.FPSO: (700.0, 3000.0),
     ConceptType.FLNG: (700.0, 3000.0),
     ConceptType.SUBSEA_TIEBACK: (0.0, 3000.0),  # flat — depends on host
