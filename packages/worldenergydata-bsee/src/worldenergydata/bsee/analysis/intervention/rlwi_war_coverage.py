@@ -45,18 +45,18 @@ from typing import Any, Iterable, Optional
 
 import pandas as pd
 
-# Reuse the demand-axis band scheme (#583) verbatim -- never redefine bands.
-from worldenergydata.bsee.analysis.intervention.well_inventory_by_band import (
-    BAND_LABELS,
-    classify_modu_band,
-)
-
 # Reuse the WAR loader (#597) so the binary read lives in exactly one place.
 from worldenergydata.bsee.analysis.intervention.war_vessel_crossref import (
     DATE_COL,
     DEPTH_COL,
     RIG_COL,
     load_war,
+)
+
+# Reuse the demand-axis band scheme (#583) verbatim -- never redefine bands.
+from worldenergydata.bsee.analysis.intervention.well_inventory_by_band import (
+    BAND_LABELS,
+    classify_modu_band,
 )
 
 # Canonical name normalisation (#599) -- shared with the identity resolver.
