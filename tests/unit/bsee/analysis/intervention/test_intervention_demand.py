@@ -9,13 +9,13 @@ import pandas as pd
 import pytest
 
 from worldenergydata.bsee.analysis.intervention.intervention_demand import (
+    _record_rig_days,
     build_demand,
     demand_by_band,
     duration_coverage,
     load_war,
     rig_days_by_band_year,
     summarize,
-    _record_rig_days,
 )
 
 _REAL_WAR = Path("/mnt/ace/worldenergydata/data/modules/bsee/bin/war/mv_war_main.bin")
