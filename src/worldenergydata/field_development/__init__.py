@@ -25,6 +25,13 @@ from worldenergydata.field_development.calibration import (
     compare_enrichment,
     concept_recall,
 )
+from worldenergydata.field_development.cost_estimator import (
+    PerConceptCostEstimate,
+    capex_adjustment_for,
+    estimate_field_cost_portfolio,
+    estimate_per_concept_costs,
+    opex_factor_for,
+)
 from worldenergydata.field_development.dexpi import (
     dexpi_mapping,
     dexpi_to_graph,
@@ -214,4 +221,9 @@ __all__ = [
     "improvement_vs_naive",
     "LayoutSolution",
     "Well",
+    "PerConceptCostEstimate",
+    "estimate_per_concept_costs",
+    "estimate_field_cost_portfolio",
+    "capex_adjustment_for",
+    "opex_factor_for",
 ]
