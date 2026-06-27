@@ -1,39 +1,27 @@
-# ABOUTME: Generates the Chuck-facing subsea-intervention stats brief as markdown (worldenergydata #588, child of epic #582).
-# ABOUTME: Every figure is rendered from the four committed source YAMLs (#583/#586/#587/#598) with explicit confidence labels — nothing is hard-coded.
+# ABOUTME: Generates the Chuck-facing subsea-intervention stats brief as markdown (worldenergydata #588 + access-gap capstone #638).
+# ABOUTME: Every figure is rendered from the committed source YAMLs (#583/#586/#587/#598/#629/#630/#638) with explicit confidence labels — nothing is hard-coded.
 
 """Generated intervention stats brief — the Chuck-facing supply-constraint memo.
 
-This module renders a markdown brief *from* the four committed source YAMLs so
-that every number in the brief traces back to a reviewable data file rather than
-to prose someone typed by hand:
+Renders a markdown brief *from* the committed source YAMLs so every number traces
+back to a reviewable data file, not hand-typed prose:
 
-* ``data/well_inventory_by_band.yml`` (#583) — installed subsea wells by
-  water-depth band + the subsea-share reconciliation.
-* ``data/serviceability_matrix.yml`` (#586) — band x scope -> which asset class
-  can service it, and the riser rule that actually drives the choice.
-* ``data/planned_subsea_wells.yml`` (#587) — on-record FID register of announced
-  US GoM subsea developments + an analyst installation-rate envelope.
-* ``vessel_fleet/data/intervention_fleet_catalog.yml`` (#598) — the unified
-  intervention-asset fleet, split into a GLOBAL available roster and the small
-  GoM-resident dedicated population.
+* ``well_inventory_by_band.yml`` (#583) — installed subsea wells by band.
+* ``serviceability_matrix.yml`` (#586) — band x scope -> eligible asset + riser.
+* ``planned_subsea_wells.yml`` (#587) — on-record FID register + analyst rate.
+* ``intervention_fleet_catalog.yml`` (#598) — GLOBAL roster + small GoM-resident
+  dedicated population (deduped #599, day-rates #596).
+* ``access_gap.yml`` (#638) — forward-looking demand vs supply rig-days + $
+  exposure by band (band-aware economics #629, demand cross-check #630).
 
 The central thesis is **supply-constrained**: the deepest serviceable band holds
 the most subsea wells yet sits over the thinnest dedicated-intervention fleet.
 
-Confidence is never silently mixed. Each rendered figure carries the tag the
-source YAML assigns it — ``[on record]``, ``[soft]``, ``[projected]`` or
-``[engineering judgement]`` — so a reader can see how hard each number is.
-
-The CRITICAL framing rule (see the fleet section): the global ``by_asset_class``
-counts (~1,018 jackups, ~305 semis, ...) are a WORLDWIDE roster and are presented
-only as background context. They are NOT GoM supply. The binding GoM figure is
-``gom_resident_dedicated_intervention`` (~3 [soft]) plus the ~2-4 soft estimate.
-
-Two upstream refinements (#623) now flow through the fleet section: the counts
-are DEDUPED distinct hulls (#599, so the Helix Q-class spelling variants no
-longer inflate ``heavy_intervention_semi``), and each priced asset class carries
-an indicative PUBLIC day-rate band (#596) — with Helix Q-class semis and RLWI
-monohulls explicitly flagged as "dayrate not public".
+Confidence is never silently mixed — each figure carries the source YAML's tag
+(``[on record]``, ``[soft]``, ``[projected]``, ``[engineering judgement]``,
+``[forward-looking risk]``). The CRITICAL framing rule: global ``by_asset_class``
+counts are a WORLDWIDE roster (CONTEXT only, NOT GoM supply); the binding GoM
+figure is ``gom_resident_dedicated_intervention`` (~3 [soft]).
 """
 
 from __future__ import annotations
@@ -49,6 +37,7 @@ _DATA_DIR = Path(__file__).resolve().parent / "data"
 _INVENTORY_REL = _DATA_DIR / "well_inventory_by_band.yml"
 _SERVICEABILITY_REL = _DATA_DIR / "serviceability_matrix.yml"
 _PLANNED_REL = _DATA_DIR / "planned_subsea_wells.yml"
+_ACCESS_GAP_REL = _DATA_DIR / "access_gap.yml"
 
 # The fleet catalog lives in the separate vessel_fleet package.
 _FLEET_RESOURCE = ("worldenergydata.vessel_fleet", "intervention_fleet_catalog.yml")
@@ -89,6 +78,11 @@ def load_fleet_catalog(path: Optional[Path] = None) -> dict:
     return _load_yaml(Path(path) if path is not None else _default_fleet_path())
 
 
+def load_access_gap(path: Optional[Path] = None) -> dict:
+    """Load the forward-looking access-gap synthesis (#638)."""
+    return _load_yaml(Path(path) if path is not None else _ACCESS_GAP_REL)
+
+
 # ---------------------------------------------------------------------------
 # Small rendering helpers
 # ---------------------------------------------------------------------------
@@ -110,6 +104,38 @@ def _fmt_int(value) -> str:
         return "n/a"
     try:
         return f"{int(value):,}"
+    except (TypeError, ValueError):
+        return str(value)
+
+
+def _fmt_usd_m(value) -> str:
+    """Render a USD amount as ``$X.XM`` / ``$X.XB``; ``n/a`` for None."""
+    if value is None:
+        return "n/a"
+    try:
+        v = float(value)
+    except (TypeError, ValueError):
+        return "n/a"
+    if abs(v) >= 1e9:
+        return f"${v / 1e9:.1f}B"
+    return f"${v / 1e6:.1f}M"
+
+
+def _fmt_num(value) -> str:
+    """Render a number with thousands separators, keeping a fractional part."""
+    if value is None:
+        return "n/a"
+    try:
+        return f"{float(value):,.0f}"
+    except (TypeError, ValueError):
+        return str(value)
+
+
+def _fmt_ratio(value) -> str:
+    if value is None:
+        return "n/a"
+    try:
+        return f"{float(value):.1f}x"
     except (TypeError, ValueError):
         return str(value)
 
@@ -383,6 +409,84 @@ def _section_planned(planned: dict) -> str:
     return "\n".join(lines)
 
 
+def _section_access_gap(access_gap: dict) -> str:
+    """Render the forward-looking access-gap synthesis (#638).
+
+    Leads with the binding GoM-RESIDENT view; the global roster is CONTEXT only.
+    Every figure is [forward-looking risk]; closes with the verifier caveats.
+    """
+    bands = access_gap.get("bands", {})
+    params = access_gap.get("parameters", {})
+    freq = params.get("intervention_frequency_per_well_per_yr", {}) or {}
+    util = params.get("fleet_utilization", {}) or {}
+
+    lines = [
+        "## Access gap — forward-looking demand vs supply",
+        "",
+        access_gap.get("framing", ""),
+        "",
+        f"**{access_gap.get('headline', '')}**",
+        "",
+        "Per band: intervention DEMAND rig-days/yr (subsea wells x intervention "
+        f"frequency ~{freq.get('low')}-{freq.get('high')}/well/yr [engineering "
+        "judgement] x band-effective heavy-intervention duration, #629) vs "
+        "available SUPPLY rig-days/yr (eligible fleet x utilization "
+        f"~{util.get('low')}-{util.get('high')} [engineering judgement] x 365). "
+        "The GoM-RESIDENT fleet is the binding constraint; the global roster is "
+        "CONTEXT ONLY. utilization ratio = demand / supply (>1x = forward demand "
+        "outstrips that supply pool). All figures are [forward-looking risk] — an "
+        "access-RISK indicator, NOT a measured crossover.",
+        "",
+        "| Band | Subsea wells [on record] | Demand rig-days/yr [forward] | "
+        "GoM-resident heavy units | GoM-resident supply rig-days/yr | "
+        "Demand/supply ratio (GoM-resident) [forward] | $ exposure/yr [forward] |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: |",
+    ]
+    for band in bands.values():
+        demand = (band.get("demand", {}) or {}).get("rig_days_per_yr", {}) or {}
+        supply = band.get("supply", {}) or {}
+        gom_supply = supply.get("rig_days_per_yr_gom_resident", {}) or {}
+        ratio = (
+            (band.get("gap_vs_gom_resident", {}) or {})
+            .get("utilization_ratio", {})
+            .get("central")
+        )
+        exposure = band.get("exposure_usd_per_yr") or {}
+        lines.append(
+            f"| {band.get('label', '?')} "
+            f"| {_fmt_int(band.get('subsea_wells'))} "
+            f"| {_fmt_num(demand.get('central'))} "
+            f"| {_fmt_int(supply.get('gom_resident_eligible_count'))} "
+            f"| {_fmt_num(gom_supply.get('central'))} "
+            f"| {_fmt_ratio(ratio)} "
+            f"| {_fmt_usd_m(exposure.get('central') if exposure else None)} |"
+        )
+
+    # Global-roster context (the wall): worldwide pool is large but NOT GoM supply.
+    deepest = bands.get("band_5000_10000", {})
+    glob_count = (deepest.get("supply", {}) or {}).get("global_eligible_fleet_count")
+    glob_ratio = (
+        (deepest.get("gap_vs_global", {}) or {})
+        .get("utilization_ratio", {})
+        .get("central")
+    )
+    lines += [
+        "",
+        "Global-roster context (NOT GoM supply): against the worldwide "
+        f"heavy-deepwater pool (~{_fmt_int(glob_count)} eligible units) the "
+        f"5,000-10,000 ft demand ratio is only ~{_fmt_ratio(glob_ratio)} — the "
+        "global pool is ample; the constraint is that almost none of it is "
+        "GoM-RESIDENT. This is the access wall.",
+        "",
+        "Forward-looking caveats carried with the synthesis:",
+        "",
+    ]
+    for caveat in access_gap.get("caveats", []):
+        lines.append(f"- {caveat}")
+    lines.append("")
+    return "\n".join(lines)
+
+
 def _section_notes_sources() -> str:
     return (
         "## Honest-framing notes\n\n"
@@ -393,7 +497,11 @@ def _section_notes_sources() -> str:
         "- The global by-asset-class fleet counts are CONTEXT only. The binding "
         "GoM intervention supply is ~3 resident dedicated units (~2-4 [soft]).\n"
         "- The planned-wells total is an on-record FLOOR; the analyst rate is "
-        "[projected] and brackets — never adds to — that floor.\n\n"
+        "[projected] and brackets — never adds to — that floor.\n"
+        "- The access gap is FORWARD-LOOKING access RISK, not a measured "
+        "crossover; intervention frequency and fleet utilization are cited, "
+        "overridable planning parameters, and intervention cost now varies by "
+        "depth band (#629 mobilization fix).\n\n"
         "## Sources\n\n"
         "All figures render from these committed source YAMLs:\n\n"
         "- `well_inventory_by_band.yml` — installed subsea wells by band "
@@ -404,6 +512,9 @@ def _section_notes_sources() -> str:
         "(worldenergydata #587).\n"
         "- `intervention_fleet_catalog.yml` — unified intervention fleet "
         "(worldenergydata #598).\n"
+        "- `access_gap.yml` — forward-looking demand vs supply rig-days + $ "
+        "exposure by band (worldenergydata #638, capstone of #626); economics "
+        "are now band-aware (#629) and demand cross-checks #630.\n"
     )
 
 
@@ -413,8 +524,9 @@ def _section_notes_sources() -> str:
 _HEADER = (
     "<!-- AUTO-GENERATED by "
     "worldenergydata.bsee.analysis.intervention.brief_generator.generate_brief "
-    "from the source YAMLs (#583/#586/#587/#598). Do not edit by hand: edit the "
-    "YAMLs and regenerate. worldenergydata #588 (child of epic #582). -->\n"
+    "from the source YAMLs (#583/#586/#587/#598/#629/#630/#638). Do not edit by "
+    "hand: edit the YAMLs and regenerate. worldenergydata #588 + access-gap "
+    "capstone #638 (epic #582/#626). -->\n"
 )
 
 
@@ -424,6 +536,7 @@ def generate_brief(
     serviceability_path: Optional[Path] = None,
     planned_path: Optional[Path] = None,
     fleet_path: Optional[Path] = None,
+    access_gap_path: Optional[Path] = None,
 ) -> str:
     """Render the intervention stats brief as markdown from the source YAMLs.
 
@@ -434,6 +547,7 @@ def generate_brief(
     serviceability = load_serviceability(serviceability_path)
     planned = load_planned_wells(planned_path)
     fleet = load_fleet_catalog(fleet_path)
+    access_gap = load_access_gap(access_gap_path)
 
     sections = [
         _HEADER,
@@ -444,6 +558,7 @@ def generate_brief(
         _section_serviceability(serviceability),
         _section_fleet(fleet),
         _section_planned(planned),
+        _section_access_gap(access_gap),
         _section_notes_sources(),
     ]
     markdown = "\n".join(sections).rstrip() + "\n"

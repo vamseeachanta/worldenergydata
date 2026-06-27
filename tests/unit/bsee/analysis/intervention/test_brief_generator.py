@@ -153,15 +153,64 @@ reconciliation_to_research:
 """
 
 
+_ACCESS_GAP_YML = """\
+headline: SYNTH deep-band demand ~3.7x resident supply (access-RISK, NOT a measured crossover).
+framing: FORWARD-LOOKING ACCESS RISK, not a measured crossover.
+bands:
+  band_5000_10000:
+    band: band_5000_10000
+    label: 5,000-10,000 ft
+    subsea_wells: 222
+    demand:
+      rig_days_per_yr:
+        low: 100.0
+        central: 1234.0
+        high: 4000.0
+    supply:
+      global_eligible_fleet_count: 333
+      gom_resident_eligible_count: 2
+      rig_days_per_yr_gom_resident:
+        low: 400.0
+        central: 511.0
+        high: 600.0
+    gap_vs_global:
+      utilization_ratio:
+        central: 0.022
+    gap_vs_gom_resident:
+      utilization_ratio:
+        central: 3.7
+    exposure_usd_per_yr:
+      low: 1000000
+      central: 888000000
+      high: 2000000000
+    confidence: forward_looking_risk
+parameters:
+  intervention_frequency_per_well_per_yr:
+    low: 0.1
+    central: 0.15
+    high: 0.2
+  fleet_utilization:
+    low: 0.6
+    central: 0.7
+    high: 0.8
+caveats:
+- 'FORWARD-LOOKING: this is access RISK, not a measured crossover.'
+- 'GEOGRAPHY (#628): GoM has ~0 RESIDENT dedicated LIGHT-intervention vessels.'
+- 'UNKNOWN 44.5% (#627): service-type unclassified.'
+- 'FLOOR: ~6% depth-stamped WAR subset.'
+"""
+
+
 @pytest.fixture
 def synthetic_yamls(tmp_path):
-    """Write the four synthetic source YAMLs to a tmp dir; return their paths."""
+    """Write the five synthetic source YAMLs to a tmp dir; return their paths."""
     paths = {}
     for name, body in (
         ("inventory", _INVENTORY_YML),
         ("serviceability", _SERVICEABILITY_YML),
         ("planned", _PLANNED_YML),
         ("fleet", _FLEET_YML),
+        ("access_gap", _ACCESS_GAP_YML),
     ):
         p = tmp_path / f"{name}.yml"
         p.write_text(textwrap.dedent(body))
@@ -175,6 +224,7 @@ def _brief(paths):
         serviceability_path=paths["serviceability"],
         planned_path=paths["planned"],
         fleet_path=paths["fleet"],
+        access_gap_path=paths["access_gap"],
     )
 
 
@@ -187,6 +237,7 @@ class TestSectionsPresent:
         assert "## Serviceability" in md
         assert "## Intervention-asset fleet" in md
         assert "## Planned / projected new subsea wells" in md
+        assert "## Access gap" in md
         assert "## Sources" in md
 
     def test_auto_generated_header_present(self, synthetic_yamls):
@@ -230,6 +281,7 @@ class TestNumbersComeFromYaml:
             serviceability_path=synthetic_yamls["serviceability"],
             planned_path=synthetic_yamls["planned"],
             fleet_path=synthetic_yamls["fleet"],
+            access_gap_path=synthetic_yamls["access_gap"],
         )
         assert "543" in after
 
@@ -274,6 +326,39 @@ class TestDedupAndDayrates:
         assert "as of 2026-02-19" in md
 
 
+class TestAccessGapSection:
+    def test_access_gap_section_renders_from_fixture(self, synthetic_yamls):
+        md = _brief(synthetic_yamls)
+        assert "## Access gap — forward-looking demand vs supply" in md
+        # Marker numbers unique to the access-gap fixture.
+        assert "222" in md  # subsea wells in the deepest band
+        assert "1,234" in md  # demand rig-days/yr central
+        assert "3.7x" in md  # GoM-resident demand/supply ratio
+        assert "$888.0M" in md  # $ exposure/yr central
+
+    def test_access_gap_leads_with_gom_resident_and_global_is_context(
+        self, synthetic_yamls
+    ):
+        md = _brief(synthetic_yamls)
+        # The binding GoM-resident view comes before the global-roster context.
+        gom_idx = md.index("GoM-RESIDENT fleet is the binding constraint")
+        glob_idx = md.index("Global-roster context (NOT GoM supply)")
+        assert gom_idx < glob_idx
+
+    def test_access_gap_carries_verifier_caveats(self, synthetic_yamls):
+        md = _brief(synthetic_yamls)
+        i = md.index("## Access gap")
+        section = md[i:]
+        assert "FORWARD-LOOKING" in section
+        assert "GEOGRAPHY (#628)" in section
+        assert "44.5%" in section
+        assert "NOT a measured crossover" in section
+
+    def test_access_gap_figures_confidence_labelled(self, synthetic_yamls):
+        md = _brief(synthetic_yamls)
+        assert "[forward-looking risk]" in md
+
+
 class TestWriteOut:
     def test_writes_file_when_out_path_given(self, synthetic_yamls, tmp_path):
         out = tmp_path / "sub" / "brief.generated.md"
@@ -283,6 +368,7 @@ class TestWriteOut:
             serviceability_path=synthetic_yamls["serviceability"],
             planned_path=synthetic_yamls["planned"],
             fleet_path=synthetic_yamls["fleet"],
+            access_gap_path=synthetic_yamls["access_gap"],
         )
         assert out.exists()
         assert out.read_text() == md
@@ -324,3 +410,7 @@ class TestRealCommittedYamls:
         assert "DEDUPED distinct hulls" in md
         assert "dayrate not public" in md
         assert "/day" in md
+        # The #638 access-gap section renders from the committed access_gap.yml.
+        assert "## Access gap — forward-looking demand vs supply" in md
+        assert "NOT a measured crossover" in md
+        assert "GEOGRAPHY (#628)" in md

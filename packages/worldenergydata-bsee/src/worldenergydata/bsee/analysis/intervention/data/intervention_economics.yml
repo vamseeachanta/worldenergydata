@@ -1,5 +1,5 @@
 headline: 'Heavy dead-well (tubing pull / recompletion / P&A) in 5,000-10,000 ft:
-  ~$20.6M per intervention (range $9.0M-$31.8M), priced on a modu day-rate x 45 days
+  ~$25.1M per intervention (range $11.1M-$39.2M), priced on a modu day-rate x 55 days
   (indicative public day-rate snapshot).'
 economics:
   shelf_lt_500:
@@ -16,9 +16,17 @@ economics:
         low_usd_per_day: 22000
         median_usd_per_day: 37500
         high_usd_per_day: 80000
-        source_confidence: &id002
+        source_confidence: &id001
         - analyst
         - reported
+      base_duration_days:
+        low: 5
+        median: 10
+        high: 15
+      mobilization_days:
+        low: 0
+        median: 0
+        high: 0
       duration_days:
         low: 5
         median: 10
@@ -40,30 +48,30 @@ economics:
       eligible_asset_classes:
       - heavy_intervention_semi
       - modu
-      representative_asset: heavy_intervention_semi
+      representative_asset: jackup
       representative_dayrate_public: false
-      dayrate_basis_asset: modu
-      dayrate_band:
-        asset_class: modu_drillship
-        low_usd_per_day: 300000
-        median_usd_per_day: 457000
-        high_usd_per_day: 530000
-        source_confidence: &id001
-        - analyst
-        - on_record
-        - reported
+      dayrate_basis_asset: null
+      dayrate_band: null
+      base_duration_days:
+        low: 15
+        median: 20
+        high: 30
+      mobilization_days:
+        low: 0
+        median: 0
+        high: 0
       duration_days:
         low: 15
         median: 20
         high: 30
       cost_usd:
-        low: 4500000
-        median: 9140000
-        high: 15900000
-      confidence: proxy_modu
-      flag: "representative asset 'heavy_intervention_semi' day-rate not public \u2014\
-        \ priced via eligible proxy 'modu' (modu_drillship); indicative only, not\
-        \ the representative asset's true rate"
+        low: null
+        median: null
+        high: null
+      confidence: jackup_na
+      flag: "shelf heavy/through-tubing is jackup-serviced; deepwater-MODU rate N/A\
+        \ (no public jack-up day-rate) \u2014 cost left null to avoid overstating\
+        \ shelf work on a deepwater-MODU rate"
       band: shelf_lt_500
       band_label: < 500 ft (shelf)
       scope_label: Through-tubing coiled tubing
@@ -73,25 +81,30 @@ economics:
       eligible_asset_classes:
       - modu
       - heavy_intervention_semi
-      representative_asset: modu
-      representative_dayrate_public: true
-      dayrate_basis_asset: modu
-      dayrate_band:
-        asset_class: modu_drillship
-        low_usd_per_day: 300000
-        median_usd_per_day: 457000
-        high_usd_per_day: 530000
-        source_confidence: *id001
+      representative_asset: jackup
+      representative_dayrate_public: false
+      dayrate_basis_asset: null
+      dayrate_band: null
+      base_duration_days:
+        low: 30
+        median: 45
+        high: 60
+      mobilization_days:
+        low: 0
+        median: 0
+        high: 0
       duration_days:
         low: 30
         median: 45
         high: 60
       cost_usd:
-        low: 9000000
-        median: 20565000
-        high: 31800000
-      confidence: indicative
-      flag: ''
+        low: null
+        median: null
+        high: null
+      confidence: jackup_na
+      flag: "shelf heavy/through-tubing is jackup-serviced; deepwater-MODU rate N/A\
+        \ (no public jack-up day-rate) \u2014 cost left null to avoid overstating\
+        \ shelf work on a deepwater-MODU rate"
       band: shelf_lt_500
       band_label: < 500 ft (shelf)
       scope_label: Heavy dead-well (tubing pull / recompletion / P&A)
@@ -110,15 +123,23 @@ economics:
         low_usd_per_day: 22000
         median_usd_per_day: 37500
         high_usd_per_day: 80000
-        source_confidence: *id002
-      duration_days:
+        source_confidence: *id001
+      base_duration_days:
         low: 5
         median: 10
         high: 15
+      mobilization_days:
+        low: 2
+        median: 3
+        high: 5
+      duration_days:
+        low: 7
+        median: 13
+        high: 20
       cost_usd:
-        low: 110000
-        median: 375000
-        high: 1200000
+        low: 154000
+        median: 487500
+        high: 1600000
       confidence: proxy_mpsv
       flag: "representative asset 'rlwi_monohull' day-rate not public \u2014 priced\
         \ via eligible proxy 'mpsv' (mpsv_osv); indicative only, not the representative\
@@ -140,15 +161,26 @@ economics:
         low_usd_per_day: 300000
         median_usd_per_day: 457000
         high_usd_per_day: 530000
-        source_confidence: *id001
-      duration_days:
+        source_confidence: &id002
+        - analyst
+        - on_record
+        - reported
+      base_duration_days:
         low: 15
         median: 20
         high: 30
+      mobilization_days:
+        low: 2
+        median: 3
+        high: 5
+      duration_days:
+        low: 17
+        median: 23
+        high: 35
       cost_usd:
-        low: 4500000
-        median: 9140000
-        high: 15900000
+        low: 5100000
+        median: 10511000
+        high: 18550000
       confidence: proxy_modu
       flag: "representative asset 'heavy_intervention_semi' day-rate not public \u2014\
         \ priced via eligible proxy 'modu' (modu_drillship); indicative only, not\
@@ -170,15 +202,23 @@ economics:
         low_usd_per_day: 300000
         median_usd_per_day: 457000
         high_usd_per_day: 530000
-        source_confidence: *id001
-      duration_days:
+        source_confidence: *id002
+      base_duration_days:
         low: 30
         median: 45
         high: 60
+      mobilization_days:
+        low: 2
+        median: 3
+        high: 5
+      duration_days:
+        low: 32
+        median: 48
+        high: 65
       cost_usd:
-        low: 9000000
-        median: 20565000
-        high: 31800000
+        low: 9600000
+        median: 21936000
+        high: 34450000
       confidence: indicative
       flag: ''
       band: band_500_3000
@@ -199,15 +239,23 @@ economics:
         low_usd_per_day: 22000
         median_usd_per_day: 37500
         high_usd_per_day: 80000
-        source_confidence: *id002
-      duration_days:
+        source_confidence: *id001
+      base_duration_days:
         low: 5
         median: 10
         high: 15
+      mobilization_days:
+        low: 4
+        median: 6
+        high: 9
+      duration_days:
+        low: 9
+        median: 16
+        high: 24
       cost_usd:
-        low: 110000
-        median: 375000
-        high: 1200000
+        low: 198000
+        median: 600000
+        high: 1920000
       confidence: proxy_mpsv
       flag: "representative asset 'rlwi_monohull' day-rate not public \u2014 priced\
         \ via eligible proxy 'mpsv' (mpsv_osv); indicative only, not the representative\
@@ -229,15 +277,23 @@ economics:
         low_usd_per_day: 300000
         median_usd_per_day: 457000
         high_usd_per_day: 530000
-        source_confidence: *id001
-      duration_days:
+        source_confidence: *id002
+      base_duration_days:
         low: 15
         median: 20
         high: 30
+      mobilization_days:
+        low: 4
+        median: 6
+        high: 9
+      duration_days:
+        low: 19
+        median: 26
+        high: 39
       cost_usd:
-        low: 4500000
-        median: 9140000
-        high: 15900000
+        low: 5700000
+        median: 11882000
+        high: 20670000
       confidence: proxy_modu
       flag: "representative asset 'heavy_intervention_semi' day-rate not public \u2014\
         \ priced via eligible proxy 'modu' (modu_drillship); indicative only, not\
@@ -259,15 +315,23 @@ economics:
         low_usd_per_day: 300000
         median_usd_per_day: 457000
         high_usd_per_day: 530000
-        source_confidence: *id001
-      duration_days:
+        source_confidence: *id002
+      base_duration_days:
         low: 30
         median: 45
         high: 60
+      mobilization_days:
+        low: 4
+        median: 6
+        high: 9
+      duration_days:
+        low: 34
+        median: 51
+        high: 69
       cost_usd:
-        low: 9000000
-        median: 20565000
-        high: 31800000
+        low: 10200000
+        median: 23307000
+        high: 36570000
       confidence: indicative
       flag: ''
       band: band_3000_5000
@@ -288,15 +352,23 @@ economics:
         low_usd_per_day: 22000
         median_usd_per_day: 37500
         high_usd_per_day: 80000
-        source_confidence: *id002
-      duration_days:
+        source_confidence: *id001
+      base_duration_days:
         low: 5
         median: 10
         high: 15
+      mobilization_days:
+        low: 7
+        median: 10
+        high: 14
+      duration_days:
+        low: 12
+        median: 20
+        high: 29
       cost_usd:
-        low: 110000
-        median: 375000
-        high: 1200000
+        low: 264000
+        median: 750000
+        high: 2320000
       confidence: proxy_mpsv
       flag: "representative asset 'rlwi_monohull' day-rate not public \u2014 priced\
         \ via eligible proxy 'mpsv' (mpsv_osv); indicative only, not the representative\
@@ -318,15 +390,23 @@ economics:
         low_usd_per_day: 300000
         median_usd_per_day: 457000
         high_usd_per_day: 530000
-        source_confidence: *id001
-      duration_days:
+        source_confidence: *id002
+      base_duration_days:
         low: 15
         median: 20
         high: 30
+      mobilization_days:
+        low: 7
+        median: 10
+        high: 14
+      duration_days:
+        low: 22
+        median: 30
+        high: 44
       cost_usd:
-        low: 4500000
-        median: 9140000
-        high: 15900000
+        low: 6600000
+        median: 13710000
+        high: 23320000
       confidence: proxy_modu
       flag: "representative asset 'heavy_intervention_semi' day-rate not public \u2014\
         \ priced via eligible proxy 'modu' (modu_drillship); indicative only, not\
@@ -348,15 +428,23 @@ economics:
         low_usd_per_day: 300000
         median_usd_per_day: 457000
         high_usd_per_day: 530000
-        source_confidence: *id001
-      duration_days:
+        source_confidence: *id002
+      base_duration_days:
         low: 30
         median: 45
         high: 60
+      mobilization_days:
+        low: 7
+        median: 10
+        high: 14
+      duration_days:
+        low: 37
+        median: 55
+        high: 74
       cost_usd:
-        low: 9000000
-        median: 20565000
-        high: 31800000
+        low: 11100000
+        median: 25135000
+        high: 39220000
       confidence: indicative
       flag: ''
       band: band_5000_10000
@@ -377,15 +465,23 @@ economics:
         low_usd_per_day: 22000
         median_usd_per_day: 37500
         high_usd_per_day: 80000
-        source_confidence: *id002
-      duration_days:
+        source_confidence: *id001
+      base_duration_days:
         low: 5
         median: 10
         high: 15
+      mobilization_days:
+        low: 10
+        median: 14
+        high: 20
+      duration_days:
+        low: 15
+        median: 24
+        high: 35
       cost_usd:
-        low: 110000
-        median: 375000
-        high: 1200000
+        low: 330000
+        median: 900000
+        high: 2800000
       confidence: proxy_mpsv
       flag: "representative asset 'rlwi_monohull' day-rate not public \u2014 priced\
         \ via eligible proxy 'mpsv' (mpsv_osv); indicative only, not the representative\
@@ -407,15 +503,23 @@ economics:
         low_usd_per_day: 300000
         median_usd_per_day: 457000
         high_usd_per_day: 530000
-        source_confidence: *id001
-      duration_days:
+        source_confidence: *id002
+      base_duration_days:
         low: 15
         median: 20
         high: 30
+      mobilization_days:
+        low: 10
+        median: 14
+        high: 20
+      duration_days:
+        low: 25
+        median: 34
+        high: 50
       cost_usd:
-        low: 4500000
-        median: 9140000
-        high: 15900000
+        low: 7500000
+        median: 15538000
+        high: 26500000
       confidence: proxy_modu
       flag: "representative asset 'heavy_intervention_semi' day-rate not public \u2014\
         \ priced via eligible proxy 'modu' (modu_drillship); indicative only, not\
@@ -437,15 +541,23 @@ economics:
         low_usd_per_day: 300000
         median_usd_per_day: 457000
         high_usd_per_day: 530000
-        source_confidence: *id001
-      duration_days:
+        source_confidence: *id002
+      base_duration_days:
         low: 30
         median: 45
         high: 60
+      mobilization_days:
+        low: 10
+        median: 14
+        high: 20
+      duration_days:
+        low: 40
+        median: 59
+        high: 80
       cost_usd:
-        low: 9000000
-        median: 20565000
-        high: 31800000
+        low: 12000000
+        median: 26963000
+        high: 42400000
       confidence: indicative
       flag: ''
       band: band_gt_10000
@@ -481,24 +593,59 @@ duration_source: '[engineering-assumption] Representative subsea well-interventi
   coiled-tubing programs ~2-4 weeks (15-30 d); full workover-riser + subsea-BOP jobs
   (tubing pull / recompletion / ESP change-out / P&A) ~1-2 months (30-60 d). Planning-grade
   ranges from standard GoM deepwater intervention practice / operator AFE norms (e.g.
-  SPE intervention literature), NOT a measured BSEE dataset. Mobilization / transit
-  for deeper bands is NOT separately added. Overridable via the duration_table argument.'
+  SPE intervention literature), NOT a measured BSEE dataset. These are the ON-STATION
+  SCOPE BASE durations; the per-band mobilization / riser-running adder (BAND_MOBILIZATION_DAYS)
+  is applied ON TOP so effective duration and cost vary by depth band. Overridable
+  via the duration_table argument.'
+band_mobilization_days:
+  shelf_lt_500:
+    low: 0
+    median: 0
+    high: 0
+  band_500_3000:
+    low: 2
+    median: 3
+    high: 5
+  band_3000_5000:
+    low: 4
+    median: 6
+    high: 9
+  band_5000_10000:
+    low: 7
+    median: 10
+    high: 14
+  band_gt_10000:
+    low: 10
+    median: 14
+    high: 20
+mobilization_source: '[engineering-assumption] Per-band mobilization / riser-running
+  adder (days), applied on top of the scope BASE on-station duration so effective
+  duration and cost scale with water depth. Rationale: deeper bands need more transit
+  to/from the (scarce) resident-asset base and substantially longer riser & subsea-BOP
+  running/recovery through a deeper water column. Median adder: shelf +0, 500-3,000
+  ft +3, 3,000-5,000 ft +6, 5,000-10,000 ft +10, >10,000 ft +14; low/high scale around
+  the median. Planning-grade GoM deepwater-intervention practice, NOT a measured BSEE
+  dataset. Overridable via the mobilization_table argument.'
 asset_dayrate_map:
   modu: modu_drillship
   heavy_intervention_semi: heavy_intervention_semi
   rlwi_monohull: rlwi_monohull
   mpsv: mpsv_osv
-method: cost_low = dayrate_band_low x duration_low; cost_median = dayrate_median x
-  duration_median; cost_high = dayrate_band_high x duration_high. Representative asset
-  = eligible_asset_classes[0]; if its day-rate is not public, price off the next eligible
-  public asset (MODU/MPSV proxy) or mark unknown.
+method: 'effective_duration = scope base duration + per-band mobilization adder (BAND_MOBILIZATION_DAYS).
+  cost_low = dayrate_band_low x effective_duration_low; cost_median = dayrate_median
+  x effective_duration_median; cost_high = dayrate_band_high x effective_duration_high.
+  Representative asset = eligible_asset_classes[0]; if its day-rate is not public,
+  price off the next eligible public asset (MODU/MPSV proxy) or mark unknown. Shelf
+  (<500 ft) heavy / through-tubing is jackup-serviced: priced N/A (no public jack-up
+  rate) rather than on the deepwater-MODU rate.'
 confidence: 'Indicative planning-grade only. Day-rates are a point-in-time PUBLIC
   snapshot (#596), not a live subscription index; intervention-semi (Helix Q-class)
   and RLWI-monohull day-rates are NOT public and are shown via eligible proxies or
   left unknown, never invented. Campaign durations are an [engineering-assumption]
-  (see duration_source). Confidence labels per cell: indicative (public representative
+  (see duration_source); the per-band mobilization/riser-running adder (see mobilization_source)
+  makes cost VARY BY BAND. Confidence labels per cell: indicative (public representative
   rate), proxy_modu / proxy_mpsv (priced off an eligible public proxy), unknown (no
-  eligible public rate).'
+  eligible public rate), jackup_na (shelf jackup-serviced, deepwater-MODU rate N/A).'
 provenance:
   serviceability_matrix: worldenergydata#586
   dayrate_snapshot: worldenergydata#596
