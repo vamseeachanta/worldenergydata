@@ -31,6 +31,10 @@ from pathlib import Path
 from typing import Optional
 
 from worldenergydata.field_development.enums import ConceptType, TreeType
+from worldenergydata.field_development.flow_assurance import (
+    FlowAssuranceAssessment,
+    assess_flow_assurance,
+)
 from worldenergydata.field_development.models import FieldConcept
 from worldenergydata.field_development.recommendation import ScoredConcept
 
@@ -90,6 +94,9 @@ class EnrichedConcept:
     scored: ScoredConcept
     vessel: VesselFeasibility
     hardware: HardwarePicks
+    # Flow-assurance overlay (field-level; issue #642). Optional so the existing
+    # enrichment API is unchanged for callers that ignore it.
+    flow_assurance: Optional[FlowAssuranceAssessment] = None
 
 
 # --------------------------------------------------------------------------- #
@@ -258,11 +265,15 @@ def enrich(
         enrichment list aligned with ``scored_concepts``.
     """
     economics = estimate_economics(concept)
+    # Flow assurance is depth/fluid-driven (field-level), so screen once and
+    # attach the same assessment to every candidate concept.
+    flow = assess_flow_assurance(concept)
     enriched = [
         EnrichedConcept(
             scored=sc,
             vessel=vessel_feasibility(concept, sc),
             hardware=hardware_picks(concept, sc),
+            flow_assurance=flow,
         )
         for sc in scored_concepts
     ]
