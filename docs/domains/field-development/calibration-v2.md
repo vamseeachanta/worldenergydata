@@ -59,13 +59,35 @@ on covered fields*, not a generalizing heuristic, and is reported separately.
 | **v2 (both)**                | **52.4%** | **62.7%** |
 
 FPSO recall 0 → 82 / 226; subsea_tieback 0 → 19 / 135; fixed_jacket held at
-309 / 334. Regression tests pin top-1 ≥ 0.48 (un-enriched) / ≥ 0.50 (enriched),
-FPSO ≥ 50, subsea_tieback ≥ 15.
+309 / 334.
+
+## v3 — moored-floater depth recalibration
+
+v2's residual gap was the **moored-floater family** (TLP / spar / semisub): their
+`DEPTH_SWEET_M` bands were nearly identical, so `depth_fit` could not separate
+them and spar/TLP picks lost to the semisub's flatter, higher base profile (spar
+sat at **0** recall). The observed GoM medians are distinct — TLP ≈ 1036 m, spar
+≈ 1265 m, semisub ≈ 1958 m — so the bands were tightened to **tile by depth**:
+TLP `(400, 1400)`, spar `(700, 1600)`, semisub `(1700, 2800)`. Water depth is a
+pure input, so this carries no leakage.
+
+| metric           | v2        | v3        |
+|------------------|-----------|-----------|
+| top-1 (base)     | 50.5%     | 52.6%     |
+| top-1 (enriched) | 52.4%     | 54.6%     |
+| spar recall      | 0 / 28    | 7 / 28    |
+| TLP recall       | 15 / 46   | 30 / 46   |
+
+Top-3 dips ~1 pt (a band-edge reshuffle) but stays well above the pinned floor.
+Regression tests pin top-1 ≥ 0.50 (un-enriched) / ≥ 0.52 (enriched), FPSO ≥ 50,
+subsea_tieback ≥ 15, spar ≥ 4, TLP ≥ 25.
 
 ## Honest residual gaps
 
-- **spar vs semisub** (still 0 recall) — near-identical profiles; needs a
-  dry-tree/intervention signal not cleanly available upstream.
+- **spar vs semisub** remains the weakest pair — depth now separates the bulk,
+  but the overlap band (≈1600–1800 m) still mixes them; a clean split needs a
+  dry-tree/intervention signal that is *downstream* of the concept choice (so it
+  would leak), hence not used.
 - **Per-tieback offset** is approximated by a basin median (og_host records none),
   so tieback distance is feasibility-grade, not metric-grade.
 - The basin table is coarse by design; per-operator/era signatures are out of
