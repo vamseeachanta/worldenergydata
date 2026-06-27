@@ -25,6 +25,13 @@ from worldenergydata.field_development.calibration import (
     compare_enrichment,
     concept_recall,
 )
+from worldenergydata.field_development.cost_estimator import (
+    PerConceptCostEstimate,
+    capex_adjustment_for,
+    estimate_field_cost_portfolio,
+    estimate_per_concept_costs,
+    opex_factor_for,
+)
 from worldenergydata.field_development.dexpi import (
     dexpi_mapping,
     dexpi_to_graph,
@@ -41,6 +48,18 @@ from worldenergydata.field_development.enums import (
     TreeType,
 )
 from worldenergydata.field_development.fdp_report import build_fdp_html
+from worldenergydata.field_development.flow_assurance import (
+    FlowAssuranceAssessment,
+    FlowAssuranceRisk,
+    FlowAssuranceThresholds,
+    RiskSeverity,
+    assess_flow_assurance,
+    screen_erosion_risk,
+    screen_hydrate_risk,
+    screen_slugging_risk,
+    screen_wax_risk,
+    seabed_temperature_c,
+)
 from worldenergydata.field_development.graph import (
     Edge,
     EdgeKind,
@@ -194,6 +213,16 @@ __all__ = [
     "HostRecord",
     "GOM_TYPICAL_TIEBACK_KM",
     "build_fdp_html",
+    "assess_flow_assurance",
+    "screen_hydrate_risk",
+    "screen_wax_risk",
+    "screen_slugging_risk",
+    "screen_erosion_risk",
+    "seabed_temperature_c",
+    "FlowAssuranceAssessment",
+    "FlowAssuranceRisk",
+    "FlowAssuranceThresholds",
+    "RiskSeverity",
     "complete_concept",
     "CompletionResult",
     "graph_to_dexpi",
@@ -204,4 +233,9 @@ __all__ = [
     "improvement_vs_naive",
     "LayoutSolution",
     "Well",
+    "PerConceptCostEstimate",
+    "estimate_per_concept_costs",
+    "estimate_field_cost_portfolio",
+    "capex_adjustment_for",
+    "opex_factor_for",
 ]
