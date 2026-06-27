@@ -18,9 +18,12 @@ only (no images), so the HTML/PDF are fully portable.
 from __future__ import annotations
 
 import datetime as _dt
+import re
+import subprocess
 import sys
 from pathlib import Path
 
+import figures
 import markdown
 
 HEADER_TITLE = (
@@ -131,6 +134,28 @@ th {
 }
 tbody tr:nth-child(even) { background: var(--zebra); }
 
+figure.brief-fig {
+  margin: 16px 0 18px;
+  padding: 10px 12px 8px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: #fff;
+  page-break-inside: avoid;
+}
+figure.brief-fig svg { display: block; margin: 0 auto; }
+figure.brief-fig figcaption {
+  margin-top: 8px;
+  font-size: 8.5pt;
+  color: var(--muted);
+  line-height: 1.35;
+}
+figure.brief-fig figcaption .cap { color: var(--ink); }
+figure.brief-fig figcaption .src {
+  color: var(--accent);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 @page {
   size: letter;
   margin: 14mm 12mm 14mm 12mm;
@@ -141,12 +166,98 @@ tbody tr:nth-child(even) { background: var(--zebra); }
 """
 
 
+def _figure_html(meta: dict, svg_markup: str) -> str:
+    """Wrap one figure's inline SVG with a caption + source tag."""
+    return (
+        '<figure class="brief-fig">'
+        f"{svg_markup}"
+        "<figcaption>"
+        f'<span class="cap">{meta["caption"]}</span> '
+        f'<span class="src">source: {meta["source"]}</span>'
+        "</figcaption></figure>"
+    )
+
+
+def insert_figures(body_html: str) -> str:
+    """Append each registered figure's inline SVG to the end of its anchor
+    brief section (matched on the <h2> heading text). Section-anchored so the
+    auto-generated Markdown stays the untouched source of truth.
+    """
+    svgs = figures.build_all()
+    by_section: dict[str, list[dict]] = {}
+    for meta in figures.FIGURES:
+        by_section.setdefault(meta["section"], []).append(meta)
+    for metas in by_section.values():
+        metas.sort(key=lambda m: m["order"])
+
+    # split the body into chunks that each begin with an <h2> heading
+    chunks = re.split(r"(?=<h2)", body_html)
+    out: list[str] = []
+    for chunk in chunks:
+        m = re.match(r"<h2[^>]*>(.*?)</h2>", chunk, re.S)
+        if m:
+            heading = re.sub(r"<[^>]+>", "", m.group(1)).strip()
+            for section, metas in by_section.items():
+                if section.lower() in heading.lower():
+                    blocks = "".join(
+                        _figure_html(meta, svgs[meta["key"]]) for meta in metas
+                    )
+                    chunk = chunk + blocks
+                    break
+        out.append(chunk)
+    return "".join(out)
+
+
+def write_pdf(html_path: Path) -> Path | None:
+    """Render the HTML to PDF via headless Chrome (inline SVG prints as
+    foreground vector markup, so it survives the print-to-pdf pipeline).
+    """
+    pdf_path = html_path.with_suffix(".pdf")
+    chrome = next(
+        (
+            c
+            for c in (
+                "google-chrome",
+                "google-chrome-stable",
+                "chromium",
+                "chromium-browser",
+            )
+            if _which(c)
+        ),
+        None,
+    )
+    if not chrome:
+        print("WARNING: no Chrome binary found; skipped PDF", file=sys.stderr)
+        return None
+    subprocess.run(
+        [
+            chrome,
+            "--headless=new",
+            "--disable-gpu",
+            "--no-sandbox",
+            "--no-pdf-header-footer",
+            f"--print-to-pdf={pdf_path}",
+            html_path.as_uri(),
+        ],
+        check=True,
+        capture_output=True,
+    )
+    return pdf_path
+
+
+def _which(name: str) -> bool:
+    from shutil import which
+
+    return which(name) is not None
+
+
 def render_html(md_text: str, generated_date: str) -> str:
     body = markdown.markdown(
         md_text,
         extensions=["tables", "sane_lists"],
         output_format="html5",
     )
+    body = insert_figures(body)
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -187,6 +298,11 @@ def main(argv: list[str]) -> int:
     html = render_html(md_text, generated_date)
     out.write_text(html, encoding="utf-8")
     print(f"wrote {out} ({out.stat().st_size} bytes)")
+    # refresh the standalone reusable SVG assets alongside the brief
+    figures.write_standalone(here / "figures")
+    pdf = write_pdf(out)
+    if pdf is not None:
+        print(f"wrote {pdf} ({pdf.stat().st_size} bytes)")
     return 0
 
 
