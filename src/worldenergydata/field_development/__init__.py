@@ -48,6 +48,18 @@ from worldenergydata.field_development.enums import (
     TreeType,
 )
 from worldenergydata.field_development.fdp_report import build_fdp_html
+from worldenergydata.field_development.flow_assurance import (
+    FlowAssuranceAssessment,
+    FlowAssuranceRisk,
+    FlowAssuranceThresholds,
+    RiskSeverity,
+    assess_flow_assurance,
+    screen_erosion_risk,
+    screen_hydrate_risk,
+    screen_slugging_risk,
+    screen_wax_risk,
+    seabed_temperature_c,
+)
 from worldenergydata.field_development.graph import (
     Edge,
     EdgeKind,
@@ -189,6 +201,16 @@ __all__ = [
     "HostRecord",
     "GOM_TYPICAL_TIEBACK_KM",
     "build_fdp_html",
+    "assess_flow_assurance",
+    "screen_hydrate_risk",
+    "screen_wax_risk",
+    "screen_slugging_risk",
+    "screen_erosion_risk",
+    "seabed_temperature_c",
+    "FlowAssuranceAssessment",
+    "FlowAssuranceRisk",
+    "FlowAssuranceThresholds",
+    "RiskSeverity",
     "complete_concept",
     "CompletionResult",
     "graph_to_dexpi",
