@@ -88,6 +88,13 @@ from worldenergydata.field_development.integrations import (
     hardware_picks,
     vessel_feasibility,
 )
+from worldenergydata.field_development.interactive_grid import (
+    Grid,
+    build_recommendation_grid,
+    export_grid_json,
+    grid_to_dict,
+    interpolate_nearest_recommendation,
+)
 from worldenergydata.field_development.layout import (
     compute_pixel_positions,
     compute_positions,
@@ -165,6 +172,11 @@ __all__ = [
     "compute_positions",
     "compute_pixel_positions",
     "render_block_diagram",
+    "Grid",
+    "build_recommendation_grid",
+    "interpolate_nearest_recommendation",
+    "export_grid_json",
+    "grid_to_dict",
     "render_symbol",
     "available_symbols",
     "has_symbol",
