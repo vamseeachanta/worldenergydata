@@ -1,0 +1,552 @@
+depth_coverage:
+  records_total: 363786
+  records_with_water_depth: 22911
+  records_missing_water_depth: 340875
+  depth_coverage_fraction: 0.063
+  is_floor: true
+service_type_by_band:
+  wireline_unit:
+    rollup: light
+    bands:
+      shelf_lt_500:
+        war_records: 2742
+        distinct_wells: 739
+        is_floor: true
+        label: < 500 ft (shelf)
+        modu_servicing: false
+      band_500_3000:
+        war_records: 43
+        distinct_wells: 14
+        is_floor: true
+        label: 500-3,000 ft
+        modu_servicing: true
+      band_3000_5000:
+        war_records: 10
+        distinct_wells: 1
+        is_floor: true
+        label: 3,000-5,000 ft
+        modu_servicing: true
+      band_5000_10000:
+        war_records: 0
+        distinct_wells: 0
+        is_floor: true
+        label: 5,000-10,000 ft
+        modu_servicing: true
+      band_gt_10000:
+        war_records: 0
+        distinct_wells: 0
+        is_floor: true
+        label: '> 10,000 ft'
+        modu_servicing: true
+    total:
+      war_records: 2795
+      distinct_wells: 754
+      is_floor: true
+  coil_tubing_unit:
+    rollup: light
+    bands:
+      shelf_lt_500:
+        war_records: 494
+        distinct_wells: 155
+        is_floor: true
+        label: < 500 ft (shelf)
+        modu_servicing: false
+      band_500_3000:
+        war_records: 34
+        distinct_wells: 13
+        is_floor: true
+        label: 500-3,000 ft
+        modu_servicing: true
+      band_3000_5000:
+        war_records: 3
+        distinct_wells: 2
+        is_floor: true
+        label: 3,000-5,000 ft
+        modu_servicing: true
+      band_5000_10000:
+        war_records: 0
+        distinct_wells: 0
+        is_floor: true
+        label: 5,000-10,000 ft
+        modu_servicing: true
+      band_gt_10000:
+        war_records: 0
+        distinct_wells: 0
+        is_floor: true
+        label: '> 10,000 ft'
+        modu_servicing: true
+    total:
+      war_records: 531
+      distinct_wells: 170
+      is_floor: true
+  snubbing_unit:
+    rollup: light
+    bands:
+      shelf_lt_500:
+        war_records: 151
+        distinct_wells: 39
+        is_floor: true
+        label: < 500 ft (shelf)
+        modu_servicing: false
+      band_500_3000:
+        war_records: 3
+        distinct_wells: 1
+        is_floor: true
+        label: 500-3,000 ft
+        modu_servicing: true
+      band_3000_5000:
+        war_records: 0
+        distinct_wells: 0
+        is_floor: true
+        label: 3,000-5,000 ft
+        modu_servicing: true
+      band_5000_10000:
+        war_records: 0
+        distinct_wells: 0
+        is_floor: true
+        label: 5,000-10,000 ft
+        modu_servicing: true
+      band_gt_10000:
+        war_records: 0
+        distinct_wells: 0
+        is_floor: true
+        label: '> 10,000 ft'
+        modu_servicing: true
+    total:
+      war_records: 154
+      distinct_wells: 40
+      is_floor: true
+  lift_boat:
+    rollup: light
+    bands:
+      shelf_lt_500:
+        war_records: 612
+        distinct_wells: 220
+        is_floor: true
+        label: < 500 ft (shelf)
+        modu_servicing: false
+      band_500_3000:
+        war_records: 0
+        distinct_wells: 0
+        is_floor: true
+        label: 500-3,000 ft
+        modu_servicing: true
+      band_3000_5000:
+        war_records: 0
+        distinct_wells: 0
+        is_floor: true
+        label: 3,000-5,000 ft
+        modu_servicing: true
+      band_5000_10000:
+        war_records: 0
+        distinct_wells: 0
+        is_floor: true
+        label: 5,000-10,000 ft
+        modu_servicing: true
+      band_gt_10000:
+        war_records: 0
+        distinct_wells: 0
+        is_floor: true
+        label: '> 10,000 ft'
+        modu_servicing: true
+    total:
+      war_records: 612
+      distinct_wells: 220
+      is_floor: true
+  support_vessel:
+    rollup: light
+    bands:
+      shelf_lt_500:
+        war_records: 18
+        distinct_wells: 11
+        is_floor: true
+        label: < 500 ft (shelf)
+        modu_servicing: false
+      band_500_3000:
+        war_records: 3
+        distinct_wells: 2
+        is_floor: true
+        label: 500-3,000 ft
+        modu_servicing: true
+      band_3000_5000:
+        war_records: 0
+        distinct_wells: 0
+        is_floor: true
+        label: 3,000-5,000 ft
+        modu_servicing: true
+      band_5000_10000:
+        war_records: 0
+        distinct_wells: 0
+        is_floor: true
+        label: 5,000-10,000 ft
+        modu_servicing: true
+      band_gt_10000:
+        war_records: 0
+        distinct_wells: 0
+        is_floor: true
+        label: '> 10,000 ft'
+        modu_servicing: true
+    total:
+      war_records: 21
+      distinct_wells: 13
+      is_floor: true
+  drillship:
+    rollup: heavy
+    bands:
+      shelf_lt_500:
+        war_records: 1
+        distinct_wells: 1
+        is_floor: true
+        label: < 500 ft (shelf)
+        modu_servicing: false
+      band_500_3000:
+        war_records: 59
+        distinct_wells: 8
+        is_floor: true
+        label: 500-3,000 ft
+        modu_servicing: true
+      band_3000_5000:
+        war_records: 235
+        distinct_wells: 31
+        is_floor: true
+        label: 3,000-5,000 ft
+        modu_servicing: true
+      band_5000_10000:
+        war_records: 412
+        distinct_wells: 62
+        is_floor: true
+        label: 5,000-10,000 ft
+        modu_servicing: true
+      band_gt_10000:
+        war_records: 10
+        distinct_wells: 1
+        is_floor: true
+        label: '> 10,000 ft'
+        modu_servicing: true
+    total:
+      war_records: 717
+      distinct_wells: 103
+      is_floor: true
+  semi_submersible:
+    rollup: heavy
+    bands:
+      shelf_lt_500:
+        war_records: 1046
+        distinct_wells: 207
+        is_floor: true
+        label: < 500 ft (shelf)
+        modu_servicing: false
+      band_500_3000:
+        war_records: 644
+        distinct_wells: 96
+        is_floor: true
+        label: 500-3,000 ft
+        modu_servicing: true
+      band_3000_5000:
+        war_records: 388
+        distinct_wells: 68
+        is_floor: true
+        label: 3,000-5,000 ft
+        modu_servicing: true
+      band_5000_10000:
+        war_records: 154
+        distinct_wells: 27
+        is_floor: true
+        label: 5,000-10,000 ft
+        modu_servicing: true
+      band_gt_10000:
+        war_records: 0
+        distinct_wells: 0
+        is_floor: true
+        label: '> 10,000 ft'
+        modu_servicing: true
+    total:
+      war_records: 2232
+      distinct_wells: 397
+      is_floor: true
+  jack_up:
+    rollup: heavy
+    bands:
+      shelf_lt_500:
+        war_records: 3758
+        distinct_wells: 698
+        is_floor: true
+        label: < 500 ft (shelf)
+        modu_servicing: false
+      band_500_3000:
+        war_records: 212
+        distinct_wells: 33
+        is_floor: true
+        label: 500-3,000 ft
+        modu_servicing: true
+      band_3000_5000:
+        war_records: 29
+        distinct_wells: 6
+        is_floor: true
+        label: 3,000-5,000 ft
+        modu_servicing: true
+      band_5000_10000:
+        war_records: 0
+        distinct_wells: 0
+        is_floor: true
+        label: 5,000-10,000 ft
+        modu_servicing: true
+      band_gt_10000:
+        war_records: 0
+        distinct_wells: 0
+        is_floor: true
+        label: '> 10,000 ft'
+        modu_servicing: true
+    total:
+      war_records: 3999
+      distinct_wells: 737
+      is_floor: true
+  platform_rig:
+    rollup: heavy
+    bands:
+      shelf_lt_500:
+        war_records: 733
+        distinct_wells: 162
+        is_floor: true
+        label: < 500 ft (shelf)
+        modu_servicing: false
+      band_500_3000:
+        war_records: 561
+        distinct_wells: 77
+        is_floor: true
+        label: 500-3,000 ft
+        modu_servicing: true
+      band_3000_5000:
+        war_records: 310
+        distinct_wells: 35
+        is_floor: true
+        label: 3,000-5,000 ft
+        modu_servicing: true
+      band_5000_10000:
+        war_records: 20
+        distinct_wells: 7
+        is_floor: true
+        label: 5,000-10,000 ft
+        modu_servicing: true
+      band_gt_10000:
+        war_records: 0
+        distinct_wells: 0
+        is_floor: true
+        label: '> 10,000 ft'
+        modu_servicing: true
+    total:
+      war_records: 1624
+      distinct_wells: 280
+      is_floor: true
+  inland_barge:
+    rollup: heavy
+    bands:
+      shelf_lt_500:
+        war_records: 35
+        distinct_wells: 12
+        is_floor: true
+        label: < 500 ft (shelf)
+        modu_servicing: false
+      band_500_3000:
+        war_records: 0
+        distinct_wells: 0
+        is_floor: true
+        label: 500-3,000 ft
+        modu_servicing: true
+      band_3000_5000:
+        war_records: 0
+        distinct_wells: 0
+        is_floor: true
+        label: 3,000-5,000 ft
+        modu_servicing: true
+      band_5000_10000:
+        war_records: 0
+        distinct_wells: 0
+        is_floor: true
+        label: 5,000-10,000 ft
+        modu_servicing: true
+      band_gt_10000:
+        war_records: 0
+        distinct_wells: 0
+        is_floor: true
+        label: '> 10,000 ft'
+        modu_servicing: true
+    total:
+      war_records: 35
+      distinct_wells: 12
+      is_floor: true
+  unknown:
+    rollup: other
+    bands:
+      shelf_lt_500:
+        war_records: 8097
+        distinct_wells: 1860
+        is_floor: true
+        label: < 500 ft (shelf)
+        modu_servicing: false
+      band_500_3000:
+        war_records: 949
+        distinct_wells: 150
+        is_floor: true
+        label: 500-3,000 ft
+        modu_servicing: true
+      band_3000_5000:
+        war_records: 901
+        distinct_wells: 122
+        is_floor: true
+        label: 3,000-5,000 ft
+        modu_servicing: true
+      band_5000_10000:
+        war_records: 244
+        distinct_wells: 37
+        is_floor: true
+        label: 5,000-10,000 ft
+        modu_servicing: true
+      band_gt_10000:
+        war_records: 0
+        distinct_wells: 0
+        is_floor: true
+        label: '> 10,000 ft'
+        modu_servicing: true
+    total:
+      war_records: 10191
+      distinct_wells: 2169
+      is_floor: true
+light_vs_heavy_by_band:
+  shelf_lt_500:
+    label: < 500 ft (shelf)
+    modu_servicing: false
+    rollups:
+      light:
+        war_records: 4017
+        distinct_wells: 1136
+        is_floor: true
+      heavy:
+        war_records: 5573
+        distinct_wells: 1064
+        is_floor: true
+      other:
+        war_records: 8097
+        distinct_wells: 1860
+        is_floor: true
+  band_500_3000:
+    label: 500-3,000 ft
+    modu_servicing: true
+    rollups:
+      light:
+        war_records: 83
+        distinct_wells: 30
+        is_floor: true
+      heavy:
+        war_records: 1476
+        distinct_wells: 213
+        is_floor: true
+      other:
+        war_records: 949
+        distinct_wells: 150
+        is_floor: true
+  band_3000_5000:
+    label: 3,000-5,000 ft
+    modu_servicing: true
+    rollups:
+      light:
+        war_records: 13
+        distinct_wells: 3
+        is_floor: true
+      heavy:
+        war_records: 962
+        distinct_wells: 136
+        is_floor: true
+      other:
+        war_records: 901
+        distinct_wells: 122
+        is_floor: true
+  band_5000_10000:
+    label: 5,000-10,000 ft
+    modu_servicing: true
+    rollups:
+      light:
+        war_records: 0
+        distinct_wells: 0
+        is_floor: true
+      heavy:
+        war_records: 586
+        distinct_wells: 94
+        is_floor: true
+      other:
+        war_records: 244
+        distinct_wells: 37
+        is_floor: true
+  band_gt_10000:
+    label: '> 10,000 ft'
+    modu_servicing: true
+    rollups:
+      light:
+        war_records: 0
+        distinct_wells: 0
+        is_floor: true
+      heavy:
+        war_records: 10
+        distinct_wells: 1
+        is_floor: true
+      other:
+        war_records: 0
+        distinct_wells: 0
+        is_floor: true
+totals:
+  service_types_present:
+  - wireline_unit
+  - coil_tubing_unit
+  - snubbing_unit
+  - lift_boat
+  - support_vessel
+  - drillship
+  - semi_submersible
+  - jack_up
+  - platform_rig
+  - inland_barge
+  - unknown
+  modu_band_records_floor_by_rollup:
+    light: 96
+    heavy: 3034
+    other: 2094
+  note: Rollup record sums over MODU-servicing bands only; FLOOR (depth-stamped subset).
+rollup_scheme:
+  light:
+  - coil_tubing_unit
+  - lift_boat
+  - snubbing_unit
+  - support_vessel
+  - wireline_unit
+  heavy:
+  - drillship
+  - inland_barge
+  - jack_up
+  - platform_rig
+  - semi_submersible
+  - submersible
+  - tender_assisted
+  - workover_rig
+  other: all remaining service types (e.g. pumping_unit, land_rig, unknown)
+caveats:
+- 'FLOOR: WATER_DEPTH is populated on only ~6% of WAR rows (~94% NULL); every band-resolved
+  count is a hard lower bound, not a total.'
+- "Depth-null records are excluded from bands and reported under depth_coverage.records_missing_water_depth\
+  \ \u2014 not silently bucketed."
+- Service type is heuristic (rig-name pattern match via rig_fleet.classify_rig_type);
+  'unknown' covers unmatched / placeholder names.
+- distinct_wells per cell counts API_WELL_NUMBER; a well serviced in more than one
+  band/service is counted once per cell, and rollup well counts union across the rollup's
+  service types.
+- 'Recorded deepwater intervention is flat-to-declining (epic #582 / digitalmodel
+  #890); this is operational HISTORY, NOT a forward demand trend.'
+provenance:
+  war_source: BSEE war/mv_war_main.bin (well-activity reports)
+  band_scheme_ft:
+    shelf_lt_500: < 500 ft (shelf)
+    band_500_3000: 500-3,000 ft
+    band_3000_5000: 3,000-5,000 ft
+    band_5000_10000: 5,000-10,000 ft
+    band_gt_10000: '> 10,000 ft'
+  service_classifier: worldenergydata.bsee.data.loaders.rig_fleet.classify_rig_type
+  issue: 'worldenergydata#627 (epic #591)'
