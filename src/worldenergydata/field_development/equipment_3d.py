@@ -22,9 +22,10 @@ spec (OD, wall thickness, length); multi-bend M/U spool geometry is a follow-on.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Sequence, Tuple
 
 import cadquery as cq
+from cadquery import Edge, Vector, Wire
 
 from worldenergydata.subsea.models.rigid_jumper import (
     RigidJumperSpec,
@@ -33,6 +34,9 @@ from worldenergydata.subsea.models.rigid_jumper import (
 
 _IN_TO_MM = 25.4
 _FT_TO_MM = 304.8
+_M_TO_MM = 1000.0
+
+Waypoint = Tuple[float, float, float]
 
 
 def _curated_jumper_csv() -> Path:
@@ -105,3 +109,91 @@ def build_jumper_from_catalog(
 def jumper_volume_mm3(spec: RigidJumperSpec) -> float:
     """Solid volume (mm³) of a jumper — handy for steel-weight cross-checks."""
     return float(build_jumper_solid(spec).val().Volume())
+
+
+# --------------------------------------------------------------------------- #
+# Multi-bend (M/U-spool) jumper — hollow pipe swept along a 3D polyline
+# --------------------------------------------------------------------------- #
+def _waypoints_mm(waypoints: Sequence[Waypoint]) -> list[Vector]:
+    """Validate ≥2 waypoints and convert (x, y, z) metres → mm vectors."""
+    if waypoints is None or len(waypoints) < 2:
+        raise ValueError(
+            "build_multibend_jumper needs at least 2 waypoints (got "
+            f"{0 if waypoints is None else len(waypoints)})"
+        )
+    return [
+        Vector(p[0] * _M_TO_MM, p[1] * _M_TO_MM, p[2] * _M_TO_MM) for p in waypoints
+    ]
+
+
+def multibend_jumper_bends(waypoints: Sequence[Waypoint]) -> int:
+    """Number of bends = interior vertices of the polyline (``len - 2``)."""
+    if waypoints is None or len(waypoints) < 2:
+        raise ValueError("need at least 2 waypoints to count bends")
+    return len(waypoints) - 2
+
+
+def multibend_jumper_length_mm(waypoints: Sequence[Waypoint]) -> float:
+    """Total centreline length (mm) = sum of polyline segment lengths."""
+    pts = _waypoints_mm(waypoints)
+    return float(sum((pts[i + 1] - pts[i]).Length for i in range(len(pts) - 1)))
+
+
+def build_multibend_jumper(
+    waypoints: Sequence[Waypoint], od_in: float, wall_in: float
+) -> cq.Workplane:
+    """Build a hollow pipe swept along a 3D polyline (multi-bend M/U spool).
+
+    The jumper centreline follows ``waypoints`` (``(x, y, z)`` in **metres**);
+    a circular annulus (OD ``od_in``, bore = OD − 2·``wall_in``) is swept along
+    the assembled wire, yielding a single hollow B-rep tube that turns through
+    every interior vertex.
+
+    Args:
+        waypoints: ≥2 ``(x, y, z)`` points in metres.
+        od_in: Outer diameter (inches).
+        wall_in: Wall thickness (inches).
+
+    Returns:
+        A CadQuery ``Workplane`` holding the swept hollow solid.
+
+    Raises:
+        ValueError: if <2 waypoints, or the wall is ≥ the radius (bore ≤ 0).
+    """
+    pts = _waypoints_mm(waypoints)
+    od = od_in * _IN_TO_MM
+    bore = od - 2 * wall_in * _IN_TO_MM
+    if bore <= 0:
+        raise ValueError(
+            f"wall thickness {wall_in} in >= radius for OD {od_in} in (bore <= 0)"
+        )
+
+    edges = [Edge.makeLine(pts[i], pts[i + 1]) for i in range(len(pts) - 1)]
+    path = Wire.assembleEdges(edges)
+
+    start_dir = (pts[1] - pts[0]).normalized()
+    plane = cq.Plane(
+        origin=pts[0].toTuple(), normal=(start_dir.x, start_dir.y, start_dir.z)
+    )
+    profile = cq.Workplane(plane).circle(od / 2.0).circle(bore / 2.0)
+    return profile.sweep(cq.Workplane(obj=path), isFrenet=True)
+
+
+def multibend_jumper_volume_mm3(
+    waypoints: Sequence[Waypoint], od_in: float, wall_in: float
+) -> float:
+    """Solid (steel) volume (mm³) of a swept multi-bend jumper."""
+    return float(build_multibend_jumper(waypoints, od_in, wall_in).val().Volume())
+
+
+def export_multibend_jumper_step(
+    waypoints: Sequence[Waypoint],
+    path: str | Path,
+    od_in: float,
+    wall_in: float,
+) -> Path:
+    """Build and export a multi-bend jumper to a STEP file. Returns the path."""
+    solid = build_multibend_jumper(waypoints, od_in, wall_in)
+    out = Path(path)
+    cq.exporters.export(solid, str(out))
+    return out
