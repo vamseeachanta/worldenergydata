@@ -119,6 +119,24 @@ def test_enrichment_never_overwrites_existing_inputs():
     assert out[0].distance_to_host_km == 99.0
 
 
+def test_host_branch_never_overwrites_existing_inputs():
+    # The host-match branch (not the tieback branch) has its own None-guards on
+    # reserves and well count — exercise them with a host field that already
+    # carries real values. "Holstein" matches the host HOLSTEIN (reserves 300,
+    # wells 15 in the registry); the pre-set values must survive.
+    fields = [
+        FieldConcept(
+            name="Holstein",
+            water_depth_m=1324.0,
+            recoverable_reserves_mmboe=42.0,
+            num_wells=9,
+        )
+    ]
+    out = enrich_concepts(fields, registry=_registry())
+    assert out[0].recoverable_reserves_mmboe == 42.0  # real input preserved
+    assert out[0].num_wells == 9
+
+
 def test_unknown_field_is_returned_unchanged():
     fields = [FieldConcept(name="Nowhere", water_depth_m=1000.0)]
     out = enrich_concepts(fields, registry=_registry())

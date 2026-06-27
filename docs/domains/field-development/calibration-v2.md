@@ -82,6 +82,23 @@ Top-3 dips ~1 pt (a band-edge reshuffle) but stays well above the pinned floor.
 Regression tests pin top-1 ≥ 0.50 (un-enriched) / ≥ 0.52 (enriched), FPSO ≥ 50,
 subsea_tieback ≥ 15, spar ≥ 4, TLP ≥ 25.
 
+## In-sample, not held-out (read before quoting the numbers)
+
+Every accuracy figure here is **in-sample**. The back-test scores the whole
+enriched catalog, and the `depth_fit` bands (the largest single weight) and the
+basin affinities were set from that same catalog's distribution — there is **no
+train/test holdout**. So:
+
+- There is **no feature leakage** — the engine never sees a field's label; depth,
+  region, etc. are genuine inputs.
+- But there **is in-sample optimism** — the cutoffs were fitted (by hand, from the
+  per-concept depth medians) to the fields being scored. The numbers measure how
+  well the heuristic *fits known fields*, not expected accuracy on unseen ones.
+
+Quote them as a fit/diagnostic, not a generalization estimate. A held-out or
+cross-validated figure (re-deriving the bands per fold) would be the honest next
+step before any external accuracy claim.
+
 ## Honest residual gaps
 
 - **spar vs semisub** remains the weakest pair — depth now separates the bulk,

@@ -175,5 +175,10 @@ def test_build_portfolio_over_real_data():
     # 75 fields carry a ground-truth concept (correct_satellite_labels may
     # relabel some to subsea_tieback, but never drops the count).
     assert s["n_with_actual"] == 75
-    # The engine lands a non-trivial share of top-1 picks (~40% measured).
-    assert 0.30 <= s["top1_match_rate"] <= 1.0
+    # The engine lands a non-trivial share of top-1 picks: 36/75 = 48% measured
+    # on current main. Pin n_matched exactly so an engine change that shifts the
+    # rate fails loudly instead of passing under a wide band. (GoM-only subset,
+    # the engine's hardest — spar/semisub/TLP confusion — so below the global
+    # ~55%; in-sample, see calibration-v2.md.)
+    assert s["n_matched"] == 36
+    assert s["top1_match_rate"] == 36 / 75

@@ -78,6 +78,24 @@ def test_hydrate_unknown_depth_is_low_and_noted():
     assert risk.note
 
 
+def test_hydrate_warm_gassy_field_not_escalated_by_offset_or_sour():
+    # Regression: when the seabed is warmer than the hydrate-formation temp
+    # (subcooling <= 0), hydrates cannot form. A long offset + sour gas must NOT
+    # raise the tier on their own — those secondary drivers are gated on
+    # subcooling > 0 (mirroring the wax screen's margin > 0).
+    c = FieldConcept(
+        name="WarmGas",
+        water_depth_m=50.0,  # shallow → seabed above the hydrate temp
+        fluid_type=FluidType.GAS,
+        gor_scf_stb=3000.0,
+        distance_to_host_km=60.0,  # long offset
+        sour=True,  # sour gas
+    )
+    risk = screen_hydrate_risk(c, TH)
+    assert risk.metrics["subcooling_c"] <= 0
+    assert risk.severity == RiskSeverity.LOW
+
+
 # --------------------------------------------------------------------------- #
 # Wax
 # --------------------------------------------------------------------------- #

@@ -84,8 +84,18 @@ class CriteriaWeights:
 # the semisub's flatter, higher base profile. They are now tightened to the
 # observed GoM medians — TLP ≈ 1036 m, spar ≈ 1265 m, semisub ≈ 1958 m — so the
 # bands tile by depth (TLP shallowest, then spar, then semisub). This recovered
-# spar (0→7) and roughly doubled TLP recall (15→30) with no leakage: water depth
-# is a pure input. See ``docs/domains/field-development/calibration-v2.md``.
+# spar (0→7) and roughly doubled TLP recall (15→30).
+#
+# HONEST CAVEAT (no feature leakage, but in-sample optimism): water depth is a
+# pure input — the engine never sees the label — so there is no *feature*
+# leakage. However these cutoffs were hand-set from the per-concept depth
+# distribution of the very catalog the back-test scores, with NO train/test
+# holdout. The reported recall is therefore an in-sample fit, not a held-out
+# generalization estimate; treat it as a measure of how well the heuristic fits
+# known fields, not as expected accuracy on unseen fields. (Notably semisub's
+# band starts deeper than its own median to stop it winning at TLP/spar depths —
+# a decision-boundary choice, not a published envelope.) See
+# ``docs/domains/field-development/calibration-v2.md``.
 DEPTH_SWEET_M: dict[ConceptType, tuple[float, float]] = {
     ConceptType.NUI: (0.0, 120.0),
     ConceptType.FIXED_JACKET: (0.0, 300.0),

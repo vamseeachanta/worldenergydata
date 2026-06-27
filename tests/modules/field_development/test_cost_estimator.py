@@ -44,6 +44,25 @@ def test_capex_adjustment_in_band_range():
         assert 0.8 <= adj <= 1.5
 
 
+def test_capex_adjustment_orders_by_concept_prior():
+    # Non-tautological: exercises the concept CAPEX-prior mapping (not the clamp).
+    # A cheaper concept (subsea tieback, high capex prior) must price below a
+    # costlier one (FPSO) at the same perfect depth fit, and both land strictly
+    # inside the clamp envelope so the ordering is the logic, not the boundary.
+    tieback = capex_adjustment_for(ConceptType.SUBSEA_TIEBACK, depth_fit=1.0)
+    fpso = capex_adjustment_for(ConceptType.FPSO, depth_fit=1.0)
+    assert tieback < fpso
+    assert 0.8 < tieback < fpso < 1.5  # neither pinned to the clamp
+
+
+def test_capex_clamp_actually_engages():
+    # Drive the raw multiplier past the ceiling (worst depth fit + a very long
+    # tieback) and confirm the clamp pulls it exactly to the boundary — so the
+    # clamp itself is exercised, not merely restated by the in-band assertions.
+    extreme = capex_adjustment_for(ConceptType.FPSO, depth_fit=0.0, tieback_km=400.0)
+    assert extreme == 1.5  # _CAPEX_ADJ_MAX
+
+
 def test_depth_misfit_raises_capex_adjustment():
     # A poor depth fit must add a measurable CAPEX penalty.
     good = capex_adjustment_for(ConceptType.FPSO, depth_fit=1.0)
@@ -78,6 +97,16 @@ def test_opex_factor_in_range():
     for ct in ConceptType:
         for res in (None, 10.0, 100.0, 1000.0):
             assert 0.5 <= opex_factor_for(ct, reserves_mmboe=res) <= 2.0
+
+
+def test_opex_factor_orders_by_concept_prior():
+    # Non-tautological: a concept with a stronger OPEX prior (fixed jacket, 0.80)
+    # must carry a lower OPEX factor than a costlier one (FPSO, 0.55) at the same
+    # reserves — exercises the concept mapping, not the clamp.
+    jacket = opex_factor_for(ConceptType.FIXED_JACKET, reserves_mmboe=150.0)
+    fpso = opex_factor_for(ConceptType.FPSO, reserves_mmboe=150.0)
+    assert jacket < fpso
+    assert 0.5 < jacket < fpso < 2.0  # neither pinned to the clamp
 
 
 # --------------------------------------------------------------------------- #

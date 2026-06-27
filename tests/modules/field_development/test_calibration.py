@@ -4,7 +4,9 @@
 
 Pins the engine's accuracy against the real development concepts of the enriched
 SubseaIQ catalog, so a future change that regresses the heuristics fails loudly.
-Thresholds sit below the achieved figures (top-1 ≈ 43%, top-3 ≈ 51%) with margin.
+Floors sit below the achieved figures (top-1 ≈ 53% base / ≈ 55% enriched, top-3
+≈ 61%) with margin. These are **in-sample** figures — the bands were fit to the
+same catalog the back-test scores, with no holdout (see calibration-v2.md).
 """
 
 from __future__ import annotations
@@ -15,6 +17,7 @@ from worldenergydata.field_development import (
     backtest_fields,
     compare_enrichment,
     concept_recall,
+    recommend,
 )
 
 
@@ -86,3 +89,19 @@ def test_shallow_field_back_tests_to_fixed_jacket():
 def test_report_confusion_is_populated():
     rep = backtest_fields()
     assert rep.confusion and sum(rep.confusion.values()) == rep.n
+
+
+def test_recommendation_is_invariant_to_the_input_label():
+    # No-leakage property pinned at the engine boundary: recommend() must rank
+    # identically whether the field carries its real concept_type/operator or
+    # not. backtest_fields strips them into a probe, but that only stays honest
+    # if the engine genuinely ignores the label — so assert it here rather than
+    # relying on the strip being remembered. A future change that made the engine
+    # consume concept_type would fail this and not silently inflate accuracy.
+    base = FieldConcept(
+        name="probe", water_depth_m=1500.0, recoverable_reserves_mmboe=120.0
+    )
+    blind = [r.concept_type for r in recommend(base)]
+    for label in (ConceptType.SPAR, ConceptType.FPSO, ConceptType.SUBSEA_TIEBACK):
+        labeled = base.model_copy(update={"concept_type": label, "operator": "Acme"})
+        assert [r.concept_type for r in recommend(labeled)] == blind
