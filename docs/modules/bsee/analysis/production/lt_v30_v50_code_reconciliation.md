@@ -83,3 +83,44 @@ never to an unexplained methodology change.
 matched projects; JSM NPV within its documented ~7.3% band. Gate **passed**, so
 the V50 deltas are trustworthy. See `tests/unit/lower_tertiary/test_v50_baseline.py`
 and `reports/lower_tertiary/v30_repeatability_report.md`.
+
+---
+
+## 5. Assumptions audit (basis under every number)
+
+V50 reuses the V30 assumptions **verbatim** (same `lease_assumptions.xlsx`), so
+the V30↔V50 diff is data-only. But the basis itself has open items, separate from
+the data refresh — recorded here so they are not mistaken for V50 scope.
+
+### 5.1 The engine uses ~11 of 39 assumptions; the NPV is pre-tax
+`reproduce_v30_financials` reads only the cost/price/rate inputs: discount rate
+(10%), royalty rate (18.75%), WTI fallback, variable opex ($4–6/bbl), fixed opex,
+host capex, host pre-FO months, MODU dayrate, dry-tree rig rate, SURF/well, water
+-injection pump. The remaining ~28 rows — **Corporate_Tax_Rate (21%), all
+Depreciation_\*, DnC_Intangible_Fraction (70% IDC), NOL_Carryforward,
+Severance/Ad_Valorem, MIRR reinvest/finance rates, and Royalty_Basis (50 MMbbl
+relief threshold)** — are defined in the workbook but **never applied**.
+`golden_baseline_v30.yml` confirms the basis: *"pre-tax cashflow."* An after-tax
+reference (`V30_Golden_Baseline_Reference_Full_With_AfterTax.docx`) sits beside
+the workbook but is not wired into the engine.
+
+### 5.2 Three assumption decks exist and are not consistent
+| Deck | Role | Key divergence |
+|---|---|---|
+| `docs/.../FDAS_V30/lease_assumptions.xlsx` (39×7) | Canonical — V30 & V50 gold standard | WTI fallback $60 · per-dev-system · pre-tax |
+| `config/analysis/lower_tertiary/economic_assumptions.yml` | Older (2024) deck — read by `analyze_lower_tertiary_npv.py`, `lower_tertiary_analysis.py`, `production_api12.py` | Base WTI **$75**, scenarios $50/75/100 |
+| `tests/.../financial-analysis-sme-code/scripts/leases_assumptions.xlsx` (41×3) | Test fixture | Stale — different shape |
+
+**Consistency answer:** across V30↔V50, identical (same file). Across the wider
+module, **not** consistent — two materially different economic bases feed two NPV
+code paths.
+
+### 5.3 Tiered recommendation (Tier 2/3 need explicit sign-off)
+- **Tier 1 — data refresh:** V50. Done; same basis → deltas reflect data only.
+- **Tier 2 — basis refresh:** price decks are current to 2026-05, but the *cost*
+  decks (rig dayrates, opex, capex) and the 10%/18.75% rates are original 2014-era
+  figures; rig dayrates are the most likely stale. Each updated number needs a
+  cited source — changes the answer for non-data reasons.
+- **Tier 3 — model extension:** wire in the after-tax block + 50-MMbbl royalty
+  relief the workbook already specifies, and consolidate to one assumptions deck
+  (retire/relabel the $75 YAML; refresh the stale fixture).
