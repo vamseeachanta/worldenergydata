@@ -24,6 +24,9 @@ from __future__ import annotations
 from typing import Optional
 
 from worldenergydata.field_development.block import render_block_diagram
+from worldenergydata.field_development.cost_estimator import (
+    estimate_field_cost_portfolio,
+)
 from worldenergydata.field_development.enums import ConceptType
 from worldenergydata.field_development.integrations import enrich
 from worldenergydata.field_development.layout import render_layout
@@ -146,6 +149,34 @@ def _economics_block(economics, enriched, actuals: Optional[dict]) -> str:
     return "".join(out)
 
 
+def _cost_comparison_table(concept: FieldConcept, ranked) -> str:
+    """Per-concept CAPEX/OPEX comparison (issue #643), cheapest lifecycle first."""
+    portfolio = estimate_field_cost_portfolio(concept, ranked)
+    rows = []
+    for ct, est in portfolio.items():
+        is_actual = concept.concept_type is not None and ct == concept.concept_type
+        cls = ' class="pick"' if is_actual else ""
+        rows.append(
+            f"<tr{cls}><td>{_esc(ct.value)}{' ★' if is_actual else ''}</td>"
+            f"<td>{_fmt(est.capex_mm, ' $MM')}</td>"
+            f"<td>{_fmt(est.annual_opex_mm, ' $MM/yr')}</td>"
+            f"<td>{est.capex_adjustment:g}×</td>"
+            f"<td>{est.opex_factor:g}×</td>"
+            f"<td>{_esc(est.note) if est.note else ''}</td></tr>"
+        )
+    return (
+        "<h2>Per-concept cost comparison (Concept-Select fidelity)</h2>"
+        "<table><tr><th>Concept</th><th>Est. CAPEX</th><th>Annual OPEX</th>"
+        "<th>CAPEX adj.</th><th>OPEX factor</th><th>Note</th></tr>"
+        + "".join(rows)
+        + "</table>"
+        '<p class="sub" style="font-size:12px">CAPEX layers a concept adjustment '
+        "onto the field-level FDAS estimate; OPEX scales the FDAS fixed-OPEX "
+        "assumption by concept and reserves. Qualitative priors, not a calibrated "
+        "cost model.</p>"
+    )
+
+
 def build_fdp_html(
     concept: FieldConcept,
     top_n: int = 5,
@@ -203,6 +234,7 @@ not a sanctioned design.</p>
 this field (where known).</p></div>
 </div>
 {_economics_block(economics, enriched, actuals)}
+{_cost_comparison_table(concept, ranked)}
 <h2>Architecture &amp; layout ({_esc(arch.concept_type.value if arch.concept_type else "—")})</h2>
 <div class="viz">
 <figure>{block_svg}<figcaption>Subsea architecture block diagram</figcaption></figure>
