@@ -1,5 +1,12 @@
 # WorldEnergyData
 
+> **Part of the Deckhand API — the API for real-world work.**
+> The public-domain datasets and analyses in this repo feed **Deckhand API paths** (field economics,
+> well benchmarking, basin/decom intel): one call (`POST /api/run`) returns a **standards-traceable
+> HTML report URL** — deterministic, built on real code and public federal data (same input, same
+> output, every time).
+> Live API paths → https://aceengineer.com/api-catalog.html · API reference: deckhand `docs/deckhand/API.md`
+
 A comprehensive Python data library and analysis platform for the energy industry, providing integrated access to public energy data sources with built-in economic evaluation, safety analysis, and production forecasting tools.
 
 ## Overview
