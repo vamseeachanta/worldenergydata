@@ -1,0 +1,130 @@
+depth_coverage:
+  records_total: 363786
+  records_with_water_depth: 22911
+  records_missing_water_depth: 340875
+  depth_coverage_fraction: 0.063
+  records_with_end_date: 363786
+  records_missing_end_date: 0
+  is_floor: true
+bands:
+  shelf_lt_500:
+    label: < 500 ft (shelf)
+    intervention_rig_days_by_year:
+      1997: 16
+      1999: 28
+      2000: 84
+      2001: 2337
+      2002: 789
+      2003: 27165
+      2004: 58947
+      2005: 23446
+      2006: 8295
+      2007: 371
+      2008: 45
+      2009: 122
+      2010: 30
+      2011: 10
+      2013: 7
+      2015: 42
+      2017: 4
+    total_rig_days_floor: 121738
+    distinct_wells: 3705
+    interventions: 17687
+    interventions_per_well: 4.774
+    modu_servicing: false
+    is_floor: true
+  band_500_3000:
+    label: 500-3,000 ft
+    intervention_rig_days_by_year:
+      2000: 7
+      2002: 14
+      2003: 3805
+      2004: 7772
+      2005: 4129
+      2006: 1011
+      2007: 32
+      2011: 7
+    total_rig_days_floor: 16777
+    distinct_wells: 372
+    interventions: 2508
+    interventions_per_well: 6.742
+    modu_servicing: true
+    is_floor: true
+  band_3000_5000:
+    label: 3,000-5,000 ft
+    intervention_rig_days_by_year:
+      2001: 7
+      2002: 8
+      2003: 3023
+      2004: 4649
+      2005: 3336
+      2006: 1583
+      2009: 9
+      2011: 23
+      2012: 3
+      2013: 7
+    total_rig_days_floor: 12648
+    distinct_wells: 249
+    interventions: 1876
+    interventions_per_well: 7.534
+    modu_servicing: true
+    is_floor: true
+  band_5000_10000:
+    label: 5,000-10,000 ft
+    intervention_rig_days_by_year:
+      2001: 7
+      2003: 1410
+      2004: 2994
+      2005: 629
+      2006: 353
+      2009: 27
+      2010: 3
+      2011: 16
+      2018: 56
+      2019: 14
+      2020: 2
+    total_rig_days_floor: 5511
+    distinct_wells: 129
+    interventions: 830
+    interventions_per_well: 6.434
+    modu_servicing: true
+    is_floor: true
+  band_gt_10000:
+    label: '> 10,000 ft'
+    intervention_rig_days_by_year:
+      2003: 63
+      2004: 7
+    total_rig_days_floor: 70
+    distinct_wells: 1
+    interventions: 10
+    interventions_per_well: 10.0
+    modu_servicing: true
+    is_floor: true
+totals:
+  modu_band_rig_days_floor: 35006
+  modu_band_distinct_wells_floor: 751
+  note: Sums over MODU-servicing bands only; FLOOR (depth-stamped subset).
+caveats:
+- 'FLOOR: WATER_DEPTH is populated on only ~6% of WAR rows (~94% NULL); every band-resolved
+  count is a hard lower bound, not a total.'
+- 'FLOOR: rig-days use (WAR_END_DT - WAR_START_DT).days + 1; records with a missing/zero/negative
+  span are counted as a single day (a floor), so total_rig_days_floor understates
+  true effort.'
+- "Depth-null rows are excluded from bands and reported under depth_coverage.records_missing_water_depth\
+  \ \u2014 not silently bucketed."
+- interventions_per_well counts depth-stamped WAR records as intervention events;
+  multiple WAR reports can belong to one campaign, so the rate is an upper proxy on
+  the depth-stamped subset.
+- 'intervention_rig_days_by_year is recorded operational HISTORY (deepwater workovers
+  flat-to-declining per epic #582 / digitalmodel #890), NOT a forward demand trend.'
+provenance:
+  war_source: BSEE war/mv_war_main.bin (well-activity reports)
+  rig_day_convention: (WAR_END_DT - WAR_START_DT).days + 1, inclusive; shared with
+    well_rig_days.WellRigDays
+  band_scheme_ft:
+    shelf_lt_500: < 500 ft (shelf)
+    band_500_3000: 500-3,000 ft
+    band_3000_5000: 3,000-5,000 ft
+    band_5000_10000: 5,000-10,000 ft
+    band_gt_10000: '> 10,000 ft'
+  issue: 'worldenergydata#630 (epic #591)'

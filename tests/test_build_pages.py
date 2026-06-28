@@ -86,6 +86,31 @@ def test_unknown_domain_raises(bp):
         bp.build(domains=["does_not_exist"])
 
 
+def test_field_development_domain_publishes_self_contained_surfaces(bp):
+    public = bp.PUBLIC
+    bp.build(domains=["field_development"])
+    fd = public / "field-development"
+    # Single self-contained pages copied flat.
+    assert (fd / "showcase.html").exists()
+    assert (fd / "playbook.html").exists()
+    # Multi-page report sets copied as whole trees (index + per-field pages).
+    assert (fd / "portfolio" / "index.html").exists()
+    assert (fd / "bsee-matched" / "index.html").exists()
+    assert len(list((fd / "bsee-matched").glob("*.html"))) > 50
+    # The showcase carries real generated schematics (inline SVG).
+    assert (fd / "showcase.html").read_text(encoding="utf-8").count("<svg") >= 2
+    # JSON sidecars are not published.
+    assert not list(fd.rglob("*.json"))
+
+
+def test_landing_links_the_field_development_showcase(bp):
+    bp.build()  # full build
+    index = (bp.PUBLIC / "index.html").read_text(encoding="utf-8")
+    assert "Offshore Field-Development Playbook" in index
+    assert 'href="field-development/showcase.html"' in index
+    assert 'href="field-development/playbook.html"' in index
+
+
 def test_registry_keys_match_reports_dirs(bp):
     # Each registered domain key should correspond to a reports/<domain>/ dir.
     reports = Path(bp.REPORTS)

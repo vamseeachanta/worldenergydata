@@ -13,10 +13,24 @@ draws. Everything downstream (recommendation engine, graph-spec mapper,
 renderers, economics) consumes and produces :class:`FieldConcept`.
 """
 
+from worldenergydata.field_development.basin import (
+    BASIN_AFFINITY,
+    region_fit,
+    region_to_basin,
+)
 from worldenergydata.field_development.block import render_block_diagram
 from worldenergydata.field_development.calibration import (
     CalibrationReport,
     backtest_fields,
+    compare_enrichment,
+    concept_recall,
+)
+from worldenergydata.field_development.cost_estimator import (
+    PerConceptCostEstimate,
+    capex_adjustment_for,
+    estimate_field_cost_portfolio,
+    estimate_per_concept_costs,
+    opex_factor_for,
 )
 from worldenergydata.field_development.dexpi import (
     dexpi_mapping,
@@ -34,6 +48,18 @@ from worldenergydata.field_development.enums import (
     TreeType,
 )
 from worldenergydata.field_development.fdp_report import build_fdp_html
+from worldenergydata.field_development.flow_assurance import (
+    FlowAssuranceAssessment,
+    FlowAssuranceRisk,
+    FlowAssuranceThresholds,
+    RiskSeverity,
+    assess_flow_assurance,
+    screen_erosion_risk,
+    screen_hydrate_risk,
+    screen_slugging_risk,
+    screen_wax_risk,
+    seabed_temperature_c,
+)
 from worldenergydata.field_development.graph import (
     Edge,
     EdgeKind,
@@ -41,6 +67,15 @@ from worldenergydata.field_development.graph import (
     Node,
     NodeType,
     concept_to_graph,
+)
+from worldenergydata.field_development.host_enrichment import (
+    GOM_TYPICAL_TIEBACK_KM,
+    HostRecord,
+    correct_satellite_labels,
+    enrich_concepts,
+    load_host_registry,
+    match_host,
+    match_tieback,
 )
 from worldenergydata.field_development.integrations import (
     Economics,
@@ -52,6 +87,13 @@ from worldenergydata.field_development.integrations import (
     estimate_economics,
     hardware_picks,
     vessel_feasibility,
+)
+from worldenergydata.field_development.interactive_grid import (
+    Grid,
+    build_recommendation_grid,
+    export_grid_json,
+    grid_to_dict,
+    interpolate_nearest_recommendation,
 )
 from worldenergydata.field_development.layout import (
     compute_pixel_positions,
@@ -130,6 +172,11 @@ __all__ = [
     "compute_positions",
     "compute_pixel_positions",
     "render_block_diagram",
+    "Grid",
+    "build_recommendation_grid",
+    "interpolate_nearest_recommendation",
+    "export_grid_json",
+    "grid_to_dict",
     "render_symbol",
     "available_symbols",
     "has_symbol",
@@ -152,8 +199,30 @@ __all__ = [
     "SanityViolation",
     "HOST_DEPTH_ENVELOPES_M",
     "backtest_fields",
+    "compare_enrichment",
+    "concept_recall",
     "CalibrationReport",
+    "region_fit",
+    "region_to_basin",
+    "BASIN_AFFINITY",
+    "load_host_registry",
+    "enrich_concepts",
+    "correct_satellite_labels",
+    "match_tieback",
+    "match_host",
+    "HostRecord",
+    "GOM_TYPICAL_TIEBACK_KM",
     "build_fdp_html",
+    "assess_flow_assurance",
+    "screen_hydrate_risk",
+    "screen_wax_risk",
+    "screen_slugging_risk",
+    "screen_erosion_risk",
+    "seabed_temperature_c",
+    "FlowAssuranceAssessment",
+    "FlowAssuranceRisk",
+    "FlowAssuranceThresholds",
+    "RiskSeverity",
     "complete_concept",
     "CompletionResult",
     "graph_to_dexpi",
@@ -164,4 +233,9 @@ __all__ = [
     "improvement_vs_naive",
     "LayoutSolution",
     "Well",
+    "PerConceptCostEstimate",
+    "estimate_per_concept_costs",
+    "estimate_field_cost_portfolio",
+    "capex_adjustment_for",
+    "opex_factor_for",
 ]

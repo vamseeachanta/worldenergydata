@@ -1,0 +1,813 @@
+{
+  "fields": [
+    {
+      "name": "Aconcagua",
+      "block": "MC305",
+      "actual": "subsea_tieback",
+      "recommended": "semisub_fps",
+      "match": false
+    },
+    {
+      "name": "Allegheny",
+      "block": "GC254",
+      "actual": "tlp",
+      "recommended": "tlp",
+      "match": true
+    },
+    {
+      "name": "Amethyst",
+      "block": "MC26",
+      "actual": null,
+      "recommended": "tlp",
+      "match": null
+    },
+    {
+      "name": "Anduin",
+      "block": "MC755",
+      "actual": "semisub_fps",
+      "recommended": "tlp",
+      "match": false
+    },
+    {
+      "name": "Angelica",
+      "block": "EC115",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Angus",
+      "block": "GC112",
+      "actual": "subsea_tieback",
+      "recommended": "tlp",
+      "match": false
+    },
+    {
+      "name": "Ariel",
+      "block": "MC429",
+      "actual": "semisub_fps",
+      "recommended": "semisub_fps",
+      "match": true
+    },
+    {
+      "name": "Armstrong",
+      "block": "MC162",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Arnold",
+      "block": "EW963",
+      "actual": "subsea_tieback",
+      "recommended": "tlp",
+      "match": false
+    },
+    {
+      "name": "Aspen",
+      "block": "GC243",
+      "actual": "subsea_tieback",
+      "recommended": "tlp",
+      "match": false
+    },
+    {
+      "name": "Atlantis North",
+      "block": "GC743",
+      "actual": "semisub_fps",
+      "recommended": "semisub_fps",
+      "match": true
+    },
+    {
+      "name": "Atlas NW",
+      "block": "LL5",
+      "actual": "semisub_fps",
+      "recommended": "subsea_to_shore",
+      "match": false
+    },
+    {
+      "name": "Auger",
+      "block": "GB426",
+      "actual": "tlp",
+      "recommended": "tlp",
+      "match": true
+    },
+    {
+      "name": "Baccarat",
+      "block": "GC178",
+      "actual": null,
+      "recommended": "tlp",
+      "match": null
+    },
+    {
+      "name": "Balboa",
+      "block": "EB597",
+      "actual": "subsea_tieback",
+      "recommended": "subsea_tieback",
+      "match": true
+    },
+    {
+      "name": "Big Bend (Noble)",
+      "block": "MC698",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Big Foot",
+      "block": "WR29",
+      "actual": "tlp",
+      "recommended": "semisub_fps",
+      "match": false
+    },
+    {
+      "name": "Boris",
+      "block": "GC282",
+      "actual": "semisub_fps",
+      "recommended": "tlp",
+      "match": false
+    },
+    {
+      "name": "Brutus",
+      "block": "GC158",
+      "actual": "tlp",
+      "recommended": "tlp",
+      "match": true
+    },
+    {
+      "name": "Buckskin",
+      "block": "KC872",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Bullwinkle",
+      "block": "GC65",
+      "actual": "subsea_tieback",
+      "recommended": "tlp",
+      "match": false
+    },
+    {
+      "name": "Bushwood (Geauxpher)",
+      "block": "GB462",
+      "actual": null,
+      "recommended": "tlp",
+      "match": null
+    },
+    {
+      "name": "Callisto",
+      "block": "MC876",
+      "actual": "semisub_fps",
+      "recommended": "semisub_fps",
+      "match": true
+    },
+    {
+      "name": "Camden Hills",
+      "block": "MC348",
+      "actual": "subsea_tieback",
+      "recommended": "semisub_fps",
+      "match": false
+    },
+    {
+      "name": "Cardona",
+      "block": "MC29",
+      "actual": null,
+      "recommended": "tlp",
+      "match": null
+    },
+    {
+      "name": "Cardona South",
+      "block": "MC29",
+      "actual": null,
+      "recommended": "tlp",
+      "match": null
+    },
+    {
+      "name": "Cheyenne",
+      "block": "LL399",
+      "actual": "semisub_fps",
+      "recommended": "subsea_to_shore",
+      "match": false
+    },
+    {
+      "name": "Chinook",
+      "block": "WR469",
+      "actual": "fpso",
+      "recommended": "subsea_to_shore",
+      "match": false
+    },
+    {
+      "name": "Clipper",
+      "block": "GC299",
+      "actual": "subsea_tieback",
+      "recommended": "semisub_fps",
+      "match": false
+    },
+    {
+      "name": "Constitution",
+      "block": "GC680",
+      "actual": "spar",
+      "recommended": "semisub_fps",
+      "match": false
+    },
+    {
+      "name": "Cottonwood",
+      "block": "GB244",
+      "actual": "fixed_jacket",
+      "recommended": "tlp",
+      "match": false
+    },
+    {
+      "name": "Coulomb",
+      "block": "MC657",
+      "actual": "semisub_fps",
+      "recommended": "semisub_fps",
+      "match": true
+    },
+    {
+      "name": "Dalmatian North",
+      "block": "DC4",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Dalmatian South",
+      "block": "DC134",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Daniel Boone",
+      "block": "GC646",
+      "actual": "subsea_tieback",
+      "recommended": "subsea_tieback",
+      "match": true
+    },
+    {
+      "name": "Deep Blue",
+      "block": "GC723",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Devils Tower",
+      "block": "MC773",
+      "actual": "spar",
+      "recommended": "semisub_fps",
+      "match": false
+    },
+    {
+      "name": "Diana",
+      "block": "EB945",
+      "actual": "subsea_tieback",
+      "recommended": "subsea_tieback",
+      "match": true
+    },
+    {
+      "name": "Dorado",
+      "block": "VK915",
+      "actual": "tlp",
+      "recommended": "semisub_fps",
+      "match": false
+    },
+    {
+      "name": "Droshky",
+      "block": "GC244",
+      "actual": "subsea_tieback",
+      "recommended": "tlp",
+      "match": false
+    },
+    {
+      "name": "Dulcimer",
+      "block": "GB367",
+      "actual": "fixed_jacket",
+      "recommended": "tlp",
+      "match": false
+    },
+    {
+      "name": "East Anstey",
+      "block": "MC607",
+      "actual": "semisub_fps",
+      "recommended": "semisub_fps",
+      "match": true
+    },
+    {
+      "name": "EW 998",
+      "block": "EW998",
+      "actual": "fixed_jacket",
+      "recommended": "tlp",
+      "match": false
+    },
+    {
+      "name": "Falcon",
+      "block": "EB579",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Fastball",
+      "block": "VK1003",
+      "actual": "fixed_jacket",
+      "recommended": "semisub_fps",
+      "match": false
+    },
+    {
+      "name": "Fiji",
+      "block": "MC427",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Flintcreek",
+      "block": "GB171",
+      "actual": null,
+      "recommended": "tlp",
+      "match": null
+    },
+    {
+      "name": "Flying Dutchman",
+      "block": "GC511",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Fourier",
+      "block": "MC522",
+      "actual": "semisub_fps",
+      "recommended": "semisub_fps",
+      "match": true
+    },
+    {
+      "name": "Friesian",
+      "block": "GC599",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Front Runner South",
+      "block": "GC339",
+      "actual": "spar",
+      "recommended": "semisub_fps",
+      "match": false
+    },
+    {
+      "name": "Gladden",
+      "block": "MC800",
+      "actual": "semisub_fps",
+      "recommended": "tlp",
+      "match": false
+    },
+    {
+      "name": "Great White",
+      "block": "AC857",
+      "actual": "subsea_tieback",
+      "recommended": "subsea_tieback",
+      "match": true
+    },
+    {
+      "name": "Guadalupe",
+      "block": "MC555",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Gunflint (Freedom)",
+      "block": "MC948",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Hadrian South",
+      "block": "KC964",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Harrier",
+      "block": "EB759",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Hartebeest",
+      "block": "GC166",
+      "actual": null,
+      "recommended": "tlp",
+      "match": null
+    },
+    {
+      "name": "Heidelberg",
+      "block": "GC859",
+      "actual": "spar",
+      "recommended": "semisub_fps",
+      "match": false
+    },
+    {
+      "name": "Hoover",
+      "block": "AC25",
+      "actual": "spar",
+      "recommended": "semisub_fps",
+      "match": false
+    },
+    {
+      "name": "Jaguar (Buccaneer)",
+      "block": "EI147",
+      "actual": null,
+      "recommended": "fixed_jacket",
+      "match": null
+    },
+    {
+      "name": "Kakuna",
+      "block": "GC416",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Kepler",
+      "block": "MC383",
+      "actual": "semisub_fps",
+      "recommended": "semisub_fps",
+      "match": true
+    },
+    {
+      "name": "King",
+      "block": "MC84",
+      "actual": "tlp",
+      "recommended": "semisub_fps",
+      "match": false
+    },
+    {
+      "name": "Lafitte",
+      "block": "EI223",
+      "actual": null,
+      "recommended": "fixed_jacket",
+      "match": null
+    },
+    {
+      "name": "Leon",
+      "block": "KC642",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Longhorn (aka Leo)",
+      "block": "MC546",
+      "actual": "fixed_jacket",
+      "recommended": "tlp",
+      "match": false
+    },
+    {
+      "name": "Macaroni",
+      "block": "GB602",
+      "actual": "tlp",
+      "recommended": "semisub_fps",
+      "match": false
+    },
+    {
+      "name": "Macondo",
+      "block": "MC252",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Madison",
+      "block": "AC24",
+      "actual": "subsea_tieback",
+      "recommended": "subsea_tieback",
+      "match": true
+    },
+    {
+      "name": "Magnolia",
+      "block": "GB783",
+      "actual": "tlp",
+      "recommended": "semisub_fps",
+      "match": false
+    },
+    {
+      "name": "Mahogany",
+      "block": "SS349",
+      "actual": "fixed_jacket",
+      "recommended": "fixed_jacket",
+      "match": true
+    },
+    {
+      "name": "Main Pass 108",
+      "block": "MP107",
+      "actual": "fixed_jacket",
+      "recommended": "fixed_jacket",
+      "match": true
+    },
+    {
+      "name": "Main Pass 98",
+      "block": "MP98",
+      "actual": "fixed_jacket",
+      "recommended": "fixed_jacket",
+      "match": true
+    },
+    {
+      "name": "Marco Polo",
+      "block": "GC608",
+      "actual": "subsea_tieback",
+      "recommended": "semisub_fps",
+      "match": false
+    },
+    {
+      "name": "Matterhorn",
+      "block": "MC243",
+      "actual": "tlp",
+      "recommended": "tlp",
+      "match": true
+    },
+    {
+      "name": "Mica Deep",
+      "block": "MC211",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Moccasin",
+      "block": "KC736",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Mondo NW",
+      "block": "LL1",
+      "actual": "semisub_fps",
+      "recommended": "semisub_fps",
+      "match": true
+    },
+    {
+      "name": "Morpeth",
+      "block": "EW921",
+      "actual": "tlp",
+      "recommended": "tlp",
+      "match": true
+    },
+    {
+      "name": "Nautilus (GOM)",
+      "block": "SS263",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Nile",
+      "block": "VK914",
+      "actual": "tlp",
+      "recommended": "semisub_fps",
+      "match": false
+    },
+    {
+      "name": "North Boomvang",
+      "block": "EB643",
+      "actual": "spar",
+      "recommended": "semisub_fps",
+      "match": false
+    },
+    {
+      "name": "Northwood",
+      "block": "GC944",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Parmer",
+      "block": "GC823",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Pegasus",
+      "block": "GC385",
+      "actual": "tlp",
+      "recommended": "semisub_fps",
+      "match": false
+    },
+    {
+      "name": "Petronius",
+      "block": "VK786",
+      "actual": "compliant_tower",
+      "recommended": "tlp",
+      "match": false
+    },
+    {
+      "name": "Phobos",
+      "block": "SE39",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Phoenix",
+      "block": "GC236",
+      "actual": "semisub_fps",
+      "recommended": "tlp",
+      "match": false
+    },
+    {
+      "name": "Pony",
+      "block": "GC468",
+      "actual": "semisub_fps",
+      "recommended": "semisub_fps",
+      "match": true
+    },
+    {
+      "name": "Prince",
+      "block": "EW958",
+      "actual": "tlp",
+      "recommended": "tlp",
+      "match": true
+    },
+    {
+      "name": "Pyrenees",
+      "block": "GB293",
+      "actual": "fixed_jacket",
+      "recommended": "tlp",
+      "match": false
+    },
+    {
+      "name": "Q",
+      "block": "MC961",
+      "actual": "semisub_fps",
+      "recommended": "semisub_fps",
+      "match": true
+    },
+    {
+      "name": "Raptor",
+      "block": "EB668",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Red Hawk",
+      "block": "GB877",
+      "actual": "spar",
+      "recommended": "semisub_fps",
+      "match": false
+    },
+    {
+      "name": "Samurai",
+      "block": "GC432",
+      "actual": "subsea_tieback",
+      "recommended": "semisub_fps",
+      "match": false
+    },
+    {
+      "name": "San Jacinto",
+      "block": "DC618",
+      "actual": "semisub_fps",
+      "recommended": "semisub_fps",
+      "match": true
+    },
+    {
+      "name": "SOB 2",
+      "block": "MC387",
+      "actual": "semisub_fps",
+      "recommended": "semisub_fps",
+      "match": true
+    },
+    {
+      "name": "St. Malo",
+      "block": "WR678",
+      "actual": "semisub_fps",
+      "recommended": "tlp",
+      "match": false
+    },
+    {
+      "name": "Stones",
+      "block": "WR508",
+      "actual": "fpso",
+      "recommended": "subsea_to_shore",
+      "match": false
+    },
+    {
+      "name": "Swordfish",
+      "block": "VK917",
+      "actual": "subsea_tieback",
+      "recommended": "subsea_tieback",
+      "match": true
+    },
+    {
+      "name": "Taggart",
+      "block": "MC816",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Tahiti",
+      "block": "GC640",
+      "actual": "spar",
+      "recommended": "semisub_fps",
+      "match": false
+    },
+    {
+      "name": "Tahoe",
+      "block": "VK783",
+      "actual": "fixed_jacket",
+      "recommended": "tlp",
+      "match": false
+    },
+    {
+      "name": "Telemark",
+      "block": "AT63",
+      "actual": "subsea_tieback",
+      "recommended": "subsea_tieback",
+      "match": true
+    },
+    {
+      "name": "Tiber",
+      "block": "KC102",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Ticonderoga",
+      "block": "GC768",
+      "actual": "subsea_tieback",
+      "recommended": "subsea_tieback",
+      "match": true
+    },
+    {
+      "name": "Tobago",
+      "block": "AC859",
+      "actual": "subsea_tieback",
+      "recommended": "subsea_tieback",
+      "match": true
+    },
+    {
+      "name": "Toddy",
+      "block": "ST221",
+      "actual": null,
+      "recommended": "fixed_jacket",
+      "match": null
+    },
+    {
+      "name": "Trident",
+      "block": "AC903",
+      "actual": null,
+      "recommended": "subsea_to_shore",
+      "match": null
+    },
+    {
+      "name": "Troubadour",
+      "block": "MC699",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "West Boomvang",
+      "block": "EB642",
+      "actual": "spar",
+      "recommended": "semisub_fps",
+      "match": false
+    },
+    {
+      "name": "Who Dat",
+      "block": "MC503",
+      "actual": "semisub_fps",
+      "recommended": "tlp",
+      "match": false
+    },
+    {
+      "name": "Wide Berth",
+      "block": "GC490",
+      "actual": null,
+      "recommended": "semisub_fps",
+      "match": null
+    },
+    {
+      "name": "Wrigley",
+      "block": "MC506",
+      "actual": "fixed_jacket",
+      "recommended": "semisub_fps",
+      "match": false
+    }
+  ],
+  "n_total": 115,
+  "n_with_actual": 75,
+  "n_matched": 30,
+  "top1_match_rate": 0.4
+}

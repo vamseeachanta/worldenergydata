@@ -1,0 +1,241 @@
+# Golden Baseline: FDAS V50 Financial Project Summary
+# V50 = V30 methodology re-run at the latest BSEE OGOR-A window (2026-04).
+# Source: BSEE OGOR-A (latest .bin) + frozen V30 lease mappings & assumptions
+# OGOR source: BSEE OGOR-A pickled .bin DataFrames (zip archives absent in checkout)
+# Generated: 2026-06-26
+# Frozen V30 baseline (golden_baseline_v30.yml) is NEVER modified.
+
+metadata:
+  based_on: golden_baseline_v30.yml
+  methodology: reproduce_v30_financials (identical to V30; data window extended)
+  first_oil_corrections: "Cascade Chinook 2014-01-01 -> 2012-09-01 (verified vs raw OGOR; golden V30 carried an error). V30 stays frozen; V50 adopts the fix."
+  extraction_date: "2026-06-26"
+  time_period: "2000-09 through 2026-04"
+  v30_time_period: "2000-09 through 2025-05"
+  note: "V50 extends the V30 production + WTI + cashflow window to the latest OGOR-A month. Methodology, cost assumptions, royalty/opex rates, and discounting are identical to V30 (end_date param only). Deltas vs V30 reflect new production data and the longer window."
+
+tolerances:
+  npv_relative: 0.01
+  mirr_absolute: 0.001
+  revenue_relative: 0.001
+  cashflow_relative: 0.005
+  production_relative: 0.001
+
+projects:
+  jack_st_malo:
+    display_name: "Jack St Malo"
+    dev_system: subsea15
+    first_oil: "2014-12-01"
+    total_oil_bbl: 438694081
+    facilities_cost_usd: 7400000000
+    dnc_total_usd: 5450400000
+    revenue_usd: 27890728933.84
+    royalty_usd: 5229511675.1
+    variable_opex_usd: 1754776324
+    fixed_opex_usd: 1712500000
+    net_cashflow_usd: 6343540934.74
+    npv_usd: -804483702.94
+    mirr_monthly: 0.007009
+    mirr_annual: 0.08743
+    producers: 22
+    injectors: 4
+    wellbores: 73
+    v30_comparison:
+      v30_oil_bbl: 406571771
+      delta_oil_pct: 7.9
+      v30_revenue_usd: 25648472771.59
+      delta_revenue_pct: 8.74
+      v30_npv_usd: -881064818.72
+      delta_npv_usd: 76581115.78
+
+  stones:
+    display_name: "Stones"
+    dev_system: subsea15
+    first_oil: "2016-09-01"
+    total_oil_bbl: 89038434
+    facilities_cost_usd: 4150000000
+    dnc_total_usd: 2081600000
+    revenue_usd: 5946642920.95
+    royalty_usd: 1114995547.68
+    variable_opex_usd: 356153736
+    fixed_opex_usd: 1412500000
+    net_cashflow_usd: -3168606362.73
+    npv_usd: -1460794550.96
+    mirr_monthly: 0.002618
+    mirr_annual: 0.03187
+    producers: 10
+    injectors: 2
+    wellbores: 22
+    v30_comparison:
+      v30_oil_bbl: 83657789
+      delta_oil_pct: 6.43
+      v30_revenue_usd: 5582443248.58
+      delta_revenue_pct: 6.52
+      v30_npv_usd: -1479469165.42
+      delta_npv_usd: 18674614.46
+
+  julia:
+    display_name: "Julia"
+    dev_system: tieback15
+    first_oil: "2016-03-01"
+    total_oil_bbl: 77475653
+    facilities_cost_usd: 1375000000
+    dnc_total_usd: 1349600000
+    revenue_usd: 5168375127.73
+    royalty_usd: 969070336.45
+    variable_opex_usd: 464853918
+    fixed_opex_usd: 762500000
+    net_cashflow_usd: 247350873.28
+    npv_usd: -482811817.16
+    mirr_monthly: 0.005580
+    mirr_annual: 0.06905
+    producers: 4
+    injectors: 0
+    wellbores: 9
+    v30_comparison:
+      v30_oil_bbl: 70936158
+      delta_oil_pct: 9.22
+      v30_revenue_usd: 4715155663.31
+      delta_revenue_pct: 9.61
+      v30_npv_usd: -530637776.31
+      delta_npv_usd: 47825959.15
+
+  big_foot:
+    display_name: "Big Foot"
+    dev_system: dry
+    first_oil: "2018-11-01"
+    total_oil_bbl: 78745746
+    facilities_cost_usd: 2730000000
+    dnc_total_usd: 1787300000
+    revenue_usd: 5570840432.04
+    royalty_usd: 1044532581.01
+    variable_opex_usd: 314982984
+    fixed_opex_usd: 900000000
+    net_cashflow_usd: -1205975132.97
+    npv_usd: -988976048.32
+    mirr_monthly: 0.003696
+    mirr_annual: 0.04527
+    producers: 7
+    injectors: 1
+    wellbores: 38
+    v30_comparison:
+      v30_oil_bbl: 66870656
+      delta_oil_pct: 17.76
+      v30_revenue_usd: 4737808705.76
+      delta_revenue_pct: 17.58
+      v30_npv_usd: -1063363725.61
+      delta_npv_usd: 74387677.29
+
+  cascade_chinook:
+    display_name: "Cascade Chinook"
+    dev_system: subsea15
+    first_oil: "2012-09-01"
+    total_oil_bbl: 39651847
+    facilities_cost_usd: 1900000000
+    dnc_total_usd: 1973600000
+    revenue_usd: 2778038493.28
+    royalty_usd: 520882217.49
+    variable_opex_usd: 158607388
+    fixed_opex_usd: 2037500000
+    net_cashflow_usd: -3812551112.21
+    npv_usd: -1580038592.99
+    mirr_monthly: -0.001234
+    mirr_annual: -0.01471
+    producers: 3
+    injectors: 0
+    wellbores: 14
+    v30_comparison:
+      v30_oil_bbl: 34322807
+      delta_oil_pct: 15.53
+      v30_revenue_usd: 2326873535.6
+      delta_revenue_pct: 19.39
+      v30_npv_usd: -1474083632.85
+      delta_npv_usd: -105954960.14
+
+  anchor:
+    display_name: "Anchor"
+    dev_system: subsea20
+    first_oil: "2024-08-01"
+    total_oil_bbl: 18562603
+    facilities_cost_usd: 2400000000
+    dnc_total_usd: 1761200000
+    revenue_usd: 1279176328.12
+    royalty_usd: 239845561.52
+    variable_opex_usd: 111375618
+    fixed_opex_usd: 262500000
+    net_cashflow_usd: -3495744851.4
+    npv_usd: -1586900512.07
+    mirr_monthly: -0.006649
+    mirr_annual: -0.07693
+    producers: 2
+    injectors: 0
+    wellbores: 15
+    v30_comparison:
+      v30_oil_bbl: 6912846
+      delta_oil_pct: 168.52
+      v30_revenue_usd: 476309533.77
+      delta_revenue_pct: 168.56
+      v30_npv_usd: -1732808337.14
+      delta_npv_usd: 145907825.07
+
+  shenandoah:
+    display_name: "Shenandoah"
+    dev_system: subsea20
+    first_oil: "2025-02-01"
+    total_oil_bbl: 21176508
+    facilities_cost_usd: 2050000000
+    dnc_total_usd: 1816500000
+    revenue_usd: 1459664891.82
+    royalty_usd: 273687167.22
+    variable_opex_usd: 127059048
+    fixed_opex_usd: 137500000
+    net_cashflow_usd: -2945081323.4
+    npv_usd: -991303270.57
+    mirr_monthly: -0.000886
+    mirr_annual: -0.01058
+    producers: 1
+    injectors: 0
+    wellbores: 23
+    v30_comparison:
+      v30_oil_bbl: 3784
+      delta_oil_pct: 559532.88
+      v30_revenue_usd: 270669.52
+      delta_revenue_pct: 539179.37
+      v30_npv_usd: -1166364362.66
+      delta_npv_usd: 175061092.09
+
+  north_platte:
+    display_name: "North Platte"
+    dev_system: subsea20
+    first_oil: null
+    total_oil_bbl: 0
+    dnc_total_usd: 1068100000
+    npv_usd: -783522050.82
+    wellbores: 14
+    v30_comparison:
+      v30_npv_usd: -783522050.82
+      delta_npv_usd: 0.0
+
+  kaskida:
+    display_name: "Kaskida"
+    dev_system: subsea20
+    first_oil: null
+    total_oil_bbl: 0
+    dnc_total_usd: 925100000
+    npv_usd: -625020726.74
+    wellbores: 7
+    v30_comparison:
+      v30_npv_usd: -625020726.74
+      delta_npv_usd: -0.0
+
+  tiber:
+    display_name: "Tiber"
+    dev_system: subsea20
+    first_oil: null
+    total_oil_bbl: 0
+    dnc_total_usd: 275000000
+    npv_usd: -227969015.46
+    wellbores: 2
+    v30_comparison:
+      v30_npv_usd: -227969015.46
+      delta_npv_usd: -0.0
