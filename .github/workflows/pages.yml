@@ -45,7 +45,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           # Need the previous commit so we can diff which domains changed.
           fetch-depth: 2
@@ -121,7 +121,7 @@ jobs:
         # output so untouched domains survive into the merged upload. Full
         # rebuilds wipe public/ via --clean regardless of what is restored.
         if: steps.scope.outputs.full != 'true'
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: public
           key: pages-public-${{ github.sha }}
@@ -146,12 +146,12 @@ jobs:
       - name: Save published tree to cache
         # Persist the freshly merged tree so the NEXT incremental run can restore
         # it. Keyed per-commit; restore-keys above match the most recent prefix.
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: public
           key: pages-public-${{ github.sha }}
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: public
 
@@ -162,5 +162,5 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/deploy-pages@v4
+      - uses: actions/deploy-pages@v5
         id: deployment
