@@ -41,7 +41,30 @@ def _configure_argv_inputfile(inputfile):
         sys.argv = original_argv
 
 
-def engine(inputfile: str = None, cfg: dict = None, config_flag: bool = True) -> dict:
+def engine(
+    inputfile: str = None,
+    cfg: dict = None,
+    config_flag: bool = True,
+    embed: bool = False,
+    root_folder: str = None,
+    log_to_file: bool = True,
+) -> dict:
+    """Run a worldenergydata workflow by ``basename`` dispatch.
+
+    The default (``embed=False``) path is byte-identical to before: it calls
+    ``app_manager.configure`` (cwd-coupled) and dispatches to the wed routers.
+
+    The ``embed=True`` path (workspace-hub#3286, consuming workspace-hub#3297)
+    routes ALL result + log writes under the INJECTED ``root_folder`` so a
+    workflow runs side-effect-free for ``run_workflow``. It REUSES assetutilities'
+    ``ConfigureApplicationInputs.configure_embed`` (wed imports that class
+    directly) -- it is NOT a per-repo port. The canonical embed signature is
+    ``configure_embed(cfg, basename, root_folder, log_to_file=)`` -- POSITIONAL,
+    with NO ``library_name`` (that arg belongs only to the regular
+    ``configure``; passing it here raises ``TypeError``). A per-call instance is
+    used (not the module-level ``app_manager`` singleton) to match #3297's
+    re-entrancy guarantee.
+    """
     cfg_argv_dict = {}
     if cfg is None:
         inputfile, cfg_argv_dict = app_manager.validate_arguments_run_methods(inputfile)
@@ -57,7 +80,20 @@ def engine(inputfile: str = None, cfg: dict = None, config_flag: bool = True) ->
     else:
         raise ValueError("basename not found in cfg")
 
-    if config_flag:
+    if embed:
+        # NEW embed path — honors the caller cfg, routes every write under
+        # root_folder. Per-call instance (re-entrant); canonical signature with
+        # NO library_name. wed has no config-relative router of its own, so the
+        # configure_embed cfg["_config_dir_path"]=root rebase isolates all wed
+        # router writes under root.
+        if root_folder is None:
+            raise ValueError("engine(embed=True) requires root_folder")
+        fm = FileManagement()
+        cfg_base = ConfigureApplicationInputs().configure_embed(
+            cfg, basename, root_folder, log_to_file=log_to_file
+        )
+        cfg_base = fm.router(cfg_base)
+    elif config_flag:
         fm = FileManagement()
         if inputfile is None:
             cfg_base = app_manager.configure(cfg, library_name, basename, cfg_argv_dict)

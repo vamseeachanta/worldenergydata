@@ -13,6 +13,11 @@ workflows:
     basename: bsee
     title: BSEE production summary from bundled CSV data
     input: examples/workflows/bsee-production-summary/input.yml
+    # Result location for the deterministic workflow API (workspace-hub#3286):
+    # outputs are files; run_workflow globs the injected embed root and
+    # content-hashes them (the save_cfg dump is excluded by extract_result).
+    result:
+      kind: files
     outputs:
       - examples/workflows/bsee-production-summary/outputs/prod_summ_bsee_production_summary.csv
       - examples/workflows/bsee-production-summary/outputs/prod_summ_bsee_production_summary.json
