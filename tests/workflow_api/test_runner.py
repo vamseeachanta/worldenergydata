@@ -27,6 +27,7 @@ def _dir_snapshot(path: Path) -> dict:
 
 def test_run_workflow_wed_returns_envelope():
     from assetutilities.workflow_api import ResultEnvelope
+
     from worldenergydata.workflow_api import run_workflow
 
     env = run_workflow("bsee-production-summary")
@@ -98,7 +99,9 @@ def test_engine_embed_calls_configure_embed_without_library_name():
     with patch.object(engine_mod, "ConfigureApplicationInputs", _SpyCAI):
         with pytest.raises(RuntimeError, match="stop-after-capture"):
             engine_mod.engine(
-                cfg=dict(cfg), embed=True, root_folder="/tmp/wed_embed_probe",
+                cfg=dict(cfg),
+                embed=True,
+                root_folder="/tmp/wed_embed_probe",
                 log_to_file=False,
             )
 

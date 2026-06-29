@@ -467,6 +467,10 @@ exclude_lines = [
 members = ["packages/*"]
 
 [tool.uv.sources]
+# assetutilities ships the deterministic workflow-API contract (workflow_api:
+# ResultEnvelope, run_workflow) on `main`, but the published PyPI 0.1.x does not.
+# Source it from git main so the contract module resolves in CI (workspace-hub#3286).
+assetutilities = { git = "https://github.com/vamseeachanta/assetutilities.git", branch = "main" }
 worldenergydata-core = { workspace = true }
 # Phase 2 batch 1 (#529): isolated/leaf domain members, resolved from the
 # in-repo workspace (the members glob `packages/*` already discovers them).

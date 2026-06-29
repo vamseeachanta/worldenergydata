@@ -53,8 +53,11 @@ def test_envelope_adapter_data_as_of_from_metadata(tmp_path):
     meta = tmp_path / "_metadata.json"
     meta.write_text(
         json.dumps(
-            {"module": "bsee", "last_refresh": "2026-06-28T18:30:00+00:00",
-             "record_count": 100}
+            {
+                "module": "bsee",
+                "last_refresh": "2026-06-28T18:30:00+00:00",
+                "record_count": 100,
+            }
         )
     )
     env = job_result_to_envelope(_job(), metadata_path=meta)

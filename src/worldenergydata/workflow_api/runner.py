@@ -1,5 +1,5 @@
-# ABOUTME: run_workflow() for worldenergydata — drives the wed engine embed path (workspace-hub#3286).
-# ABOUTME: Reuses assetutilities ResultEnvelope/ResultLocator/extract_result/hashing (workspace-hub#3282).
+# ABOUTME: run_workflow() for worldenergydata — drives wed engine embed (workspace-hub#3286).
+# ABOUTME: Reuses assetutilities ResultEnvelope/extract_result/hashing (workspace-hub#3282).
 
 """Deterministic, in-process worldenergydata workflow runner.
 
@@ -48,9 +48,7 @@ def _resolve_wed_registry_row(workflow_id: str) -> dict:
     for row in _load_registry().get("workflows", []):
         if row.get("id") == workflow_id:
             return row
-    raise KeyError(
-        f"unknown workflow_id '{workflow_id}' (not in {registry_path()})"
-    )
+    raise KeyError(f"unknown workflow_id '{workflow_id}' (not in {registry_path()})")
 
 
 def _lookup_row_for_cfg(cfg: dict) -> dict | None:
@@ -175,9 +173,7 @@ def run_workflow(
                 shutil.rmtree(root, ignore_errors=True)
 
         payload, warns, rhash = _run_once()
-        repro = compute_reproducible(
-            lambda: _run_once()[2], rhash, verify_reproducible
-        )
+        repro = compute_reproducible(lambda: _run_once()[2], rhash, verify_reproducible)
         return ResultEnvelope(
             workflow_id=wid,
             status="ok",
