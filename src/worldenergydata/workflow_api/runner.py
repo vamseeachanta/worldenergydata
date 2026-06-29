@@ -22,12 +22,65 @@ outputs still write under the injected root.
 from __future__ import annotations
 
 import copy
+import hashlib
+import os
 import tempfile
+import zipfile
 from pathlib import Path
 
 import yaml
 
 PACKAGE_NAME = "worldenergydata"
+
+# OOXML / ZIP-container output formats: a ZIP of XML parts whose CONTAINER bytes
+# vary every run even when the logical data is identical -- the ZIP records each
+# member's mtime as wall-clock at write time, and openpyxl stamps
+# ``docProps/core.xml`` with ``created``/``modified`` from ``datetime.now()``.
+# Hashing the raw bytes is therefore non-deterministic; we hash normalized member
+# content instead (see ``_canonical_content_digest``).
+_ZIP_CONTAINER_SUFFIXES = (".xlsx", ".xlsm", ".xltx", ".docx", ".pptx", ".zip")
+# Members whose bytes embed wall-clock timestamps; excluded from the digest.
+_VOLATILE_ZIP_MEMBERS = frozenset({"docProps/core.xml"})
+
+
+def _canonical_content_digest(path: str) -> str:
+    """Location- and timestamp-independent content digest for one output file.
+
+    Plain files hash by raw bytes (matching ``extract_result``). ZIP-container
+    formats (xlsx/docx/...) are digested over their SORTED decompressed members,
+    skipping the volatile metadata parts -- ``zipfile.read`` returns logical member
+    bytes independent of the ZIP mtime, so the actual sheet/data parts still flow
+    into the hash (content-sensitive) while the per-run timestamps do not.
+    """
+    if path.lower().endswith(_ZIP_CONTAINER_SUFFIXES) and zipfile.is_zipfile(path):
+        h = hashlib.sha256()
+        with zipfile.ZipFile(path) as zf:
+            for name in sorted(zf.namelist()):
+                if name in _VOLATILE_ZIP_MEMBERS:
+                    continue
+                h.update(name.encode("utf-8"))
+                h.update(hashlib.sha256(zf.read(name)).digest())
+        return h.hexdigest()
+    with open(path, "rb") as fh:
+        return hashlib.sha256(fh.read()).hexdigest()
+
+
+def _normalize_container_hashes(payload: dict, cfg_base: dict, root: str) -> None:
+    """Rewrite ``outputs[].sha256`` to the timestamp-independent digest in place.
+
+    ``extract_result`` hashes raw bytes, which makes ZIP-container outputs (e.g.
+    the bsee ``prod_raw_*.xlsx``) flip the determinism hash every run. We recompute
+    each file's digest canonically; for non-container files this reproduces the
+    exact raw-bytes digest, so it is a no-op there.
+    """
+    if payload.get("kind") != "files":
+        return
+    analysis = cfg_base.get("Analysis", {}) or {}
+    results_dir = analysis.get("result_folder") or os.path.join(root, "results")
+    for out in payload.get("outputs", []):
+        path = os.path.join(results_dir, out.get("basename", ""))
+        if os.path.isfile(path):
+            out["sha256"] = _canonical_content_digest(path)
 
 
 def _wed_repo_root() -> Path:
@@ -168,6 +221,9 @@ def run_workflow(
                     log_to_file=False,
                 )
                 payload, warns = extract_result(cfg_base, locator, root)
+                # extract_result hashes raw bytes; rewrite container outputs (xlsx)
+                # to a timestamp-independent digest so the hash is stable per run.
+                _normalize_container_hashes(payload, cfg_base, root)
                 return payload, warns, result_hash(payload)
             finally:
                 shutil.rmtree(root, ignore_errors=True)

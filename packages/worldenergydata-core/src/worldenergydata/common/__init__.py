@@ -14,31 +14,34 @@ Submodules:
     decorators: Shared decorators (retry, cache, timing)
 
 Example usage:
-    # Logging
-    from worldenergydata.common import get_logger, configure_logging
-    logger = get_logger(__name__)
-    logger.info("Processing data")
 
-    # Exception handling
-    from worldenergydata.common import DataError, ValidationError
-    try:
-        process_data(data)
-    except ValidationError as e:
-        logger.error(f"Validation failed: {e}")
+```python
+# Logging
+from worldenergydata.common import get_logger, configure_logging
+logger = get_logger(__name__)
+logger.info("Processing data")
 
-    # Configuration
-    from worldenergydata.common import Settings, get_settings
-    settings = get_settings()
-    data_dir = settings.data_dir
+# Exception handling
+from worldenergydata.common import DataError, ValidationError
+try:
+    process_data(data)
+except ValidationError as e:
+    logger.error(f"Validation failed: {e}")
 
-    # Constants
-    from worldenergydata.common import EnergyUnits, UNIT_CONVERSIONS
-    conversion = UNIT_CONVERSIONS[EnergyUnits.BTU][EnergyUnits.MWH]
+# Configuration
+from worldenergydata.common import Settings, get_settings
+settings = get_settings()
+data_dir = settings.data_dir
 
-    # Type hints
-    from worldenergydata.common import JSONDict, PathLike, DataFrameLike
-    def load_config(path: PathLike) -> JSONDict:
-        ...
+# Constants
+from worldenergydata.common import EnergyUnits, UNIT_CONVERSIONS
+conversion = UNIT_CONVERSIONS[EnergyUnits.BTU][EnergyUnits.MWH]
+
+# Type hints
+from worldenergydata.common import JSONDict, PathLike, DataFrameLike
+def load_config(path: PathLike) -> JSONDict:
+    ...
+```
 """
 
 from worldenergydata.common.config import Settings, get_settings
