@@ -22,6 +22,13 @@ validation and query-prototyping surfaces.
 
 ## Partial-Source Caveats
 
+Raw refresh uses official Texas RRC download links only. Entries with
+`download_strategy: official_godrive_file` or `download_strategy: direct_http`
+are eligible for `worldenergydata texas-rrc refresh`; validation-only,
+index-required, and `official_godrive_directory` entries are skipped by default.
+Directory entries are still official RRC sources, but need fanout/pagination
+handling before they can be safely refreshed as a bulk operation.
+
 Completion data is partial for lifecycle reconstruction because structured data
 does not capture every detail available in W-2/G-1 forms. Some lifecycle
 evidence remains in forms or imaged files and will need a separate document

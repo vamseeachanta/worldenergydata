@@ -25,8 +25,22 @@ REQUIRED_SOURCE_FIELDS = {
     "normalized_path",
     "curated_path",
     "availability_status",
+    "download_strategy",
     "source_of_record",
     "caveats",
+}
+
+REFRESH_SOURCE_IDS = {
+    "production_pdq",
+    "wellbore_query",
+    "drilling_permits",
+}
+
+OFFICIAL_GODRIVE_DIRECTORY_SOURCE_IDS = {
+    "completion_data",
+    "directional_surveys",
+    "well_gis_layers",
+    "pipeline_gis_layers",
 }
 
 
@@ -56,6 +70,36 @@ def test_source_catalog_entries_have_required_contract_fields():
         }
         assert isinstance(entry["source_of_record"], bool)
         assert entry["caveats"]
+
+
+def test_refresh_catalog_entries_use_official_rrc_direct_sources_only():
+    from urllib.parse import urlparse
+
+    from worldenergydata.texas_rrc.source_catalog import load_source_catalog
+
+    catalog = load_source_catalog()
+
+    for source_id in REFRESH_SOURCE_IDS:
+        entry = catalog[source_id]
+        assert entry["download_strategy"] == "official_godrive_file"
+        assert entry["download_url"]
+        assert entry["snapshot_filename"]
+        host = urlparse(entry["download_url"]).netloc
+        assert host == "mft.rrc.texas.gov"
+        assert "patchops" not in entry["download_url"].lower()
+        assert "github" not in entry["download_url"].lower()
+
+
+def test_directory_catalog_entries_require_official_godrive_fanout():
+    from worldenergydata.texas_rrc.source_catalog import load_source_catalog
+
+    catalog = load_source_catalog()
+
+    for source_id in OFFICIAL_GODRIVE_DIRECTORY_SOURCE_IDS:
+        entry = catalog[source_id]
+        assert entry["download_strategy"] == "official_godrive_directory"
+        assert entry["download_url"].startswith("https://mft.rrc.texas.gov/link/")
+        assert "snapshot_filename" not in entry
 
 
 def test_source_catalog_paths_stay_under_texas_rrc_ace_root():
@@ -88,6 +132,7 @@ def test_source_catalog_rejects_paths_outside_texas_rrc_ace_root():
             "normalized_path": "/mnt/ace/worldenergydata/data/modules/texas_rrc/normalized/bad",
             "curated_path": "/mnt/ace/worldenergydata/data/modules/texas_rrc/curated/bad",
             "availability_status": "available",
+            "download_strategy": "unsupported_live_refresh",
             "source_of_record": True,
             "caveats": "test fixture",
         }

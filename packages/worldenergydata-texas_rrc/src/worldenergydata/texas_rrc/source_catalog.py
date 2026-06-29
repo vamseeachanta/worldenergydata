@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 
 import yaml
 
@@ -18,11 +19,22 @@ REQUIRED_SOURCE_FIELDS = {
     "normalized_path",
     "curated_path",
     "availability_status",
+    "download_strategy",
     "source_of_record",
     "caveats",
 }
 
 VALID_AVAILABILITY_STATUSES = {"available", "partial", "validation_only"}
+VALID_DOWNLOAD_STRATEGIES = {
+    "direct_http",
+    "official_godrive_file",
+    "official_godrive_directory",
+    "official_index_required",
+    "unsupported_live_refresh",
+    "validation_only",
+}
+OFFICIAL_RRC_DOWNLOAD_HOSTS = {"mft.rrc.texas.gov", "www.rrc.texas.gov"}
+OFFICIAL_RRC_GODRIVE_HOST = "mft.rrc.texas.gov"
 
 
 def load_source_catalog(path: Path | None = None) -> dict[str, dict[str, Any]]:
@@ -57,6 +69,22 @@ def validate_source_catalog(catalog: dict[str, dict[str, Any]]) -> None:
                 f"{status!r}"
             )
 
+        strategy = entry["download_strategy"]
+        if strategy not in VALID_DOWNLOAD_STRATEGIES:
+            raise ValueError(
+                f"Catalog entry '{source_id}' has invalid download_strategy: "
+                f"{strategy!r}"
+            )
+        if strategy in {"direct_http", "official_godrive_file"}:
+            _validate_download_url(source_id, strategy, entry.get("download_url"))
+        if strategy == "official_godrive_file" and not entry.get("snapshot_filename"):
+            raise ValueError(
+                f"Catalog entry '{source_id}' must define snapshot_filename for "
+                "official_godrive_file"
+            )
+        if strategy == "official_godrive_directory":
+            _validate_download_url(source_id, strategy, entry.get("download_url"))
+
         if not isinstance(entry["source_of_record"], bool):
             raise ValueError(
                 f"Catalog entry '{source_id}' field 'source_of_record' must be boolean"
@@ -78,4 +106,23 @@ def _validate_catalog_path(source_id: str, field: str, path: Path) -> None:
         raise ValueError(
             f"Catalog entry '{source_id}' field '{field}' must stay under "
             f"{SOURCE_CATALOG_ROOT}"
+        )
+
+
+def _validate_download_url(source_id: str, strategy: str, url: str | None) -> None:
+    if not url:
+        raise ValueError(f"Catalog entry '{source_id}' must define download_url")
+    parsed = urlparse(url)
+    if parsed.scheme != "https":
+        raise ValueError(f"Catalog entry '{source_id}' download_url must use https")
+    if strategy.startswith("official_godrive"):
+        if parsed.netloc != OFFICIAL_RRC_GODRIVE_HOST:
+            raise ValueError(
+                f"Catalog entry '{source_id}' download_url must use an official "
+                "RRC host for GoDrive"
+            )
+        return
+    if parsed.netloc not in OFFICIAL_RRC_DOWNLOAD_HOSTS:
+        raise ValueError(
+            f"Catalog entry '{source_id}' download_url must use an official RRC host"
         )
