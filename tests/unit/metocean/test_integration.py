@@ -106,11 +106,21 @@ class TestCOOPSIntegration:
     def test_fetch_water_levels(self):
         """Test fetching water level data from a tide station."""
         from worldenergydata.metocean.clients import COOPSClient
+        from worldenergydata.metocean.exceptions import HTTPError
 
         end = datetime.utcnow()
         start = end - timedelta(days=2)
-        with COOPSClient() as client:
-            result = client.fetch_water_level("8761724", start, end)
+        try:
+            with COOPSClient() as client:
+                result = client.fetch_water_level("8761724", start, end)
+        except HTTPError as exc:
+            # The NOAA Tides & Currents API periodically returns upstream-
+            # unavailable (502/503/504) gateway errors; that is a source-data
+            # outage, not a regression, so skip rather than fail the shard (same
+            # precedent as the stale-NDBC-feed skip above).
+            if exc.status_code in (502, 503, 504):
+                pytest.skip(f"NOAA CO-OPS API unavailable (HTTP {exc.status_code})")
+            raise
 
         if result.data:  # May not have recent data
             assert result.records_count > 0

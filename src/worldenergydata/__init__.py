@@ -78,6 +78,8 @@ def __getattr__(name: str):
     Supported attributes:
 
     * ``marine_safety_api`` — :mod:`worldenergydata.marine_safety.api` (incidents)
+    * ``hse_api`` — :mod:`worldenergydata.hse.api`
+      (incidents/penalties/statistics/epa_tri)
 
     Note: ``bsee`` and ``fdas`` are real subpackages whose ``__init__.py``
     files expose query API singletons (``production``, ``wells``,
@@ -94,6 +96,11 @@ def __getattr__(name: str):
         from worldenergydata.marine_safety import api as _ms_api
 
         return _ms_api
+
+    if name == "hse_api":
+        from worldenergydata.hse import api as _hse_api
+
+        return _hse_api
 
     # Lazy package-root access to domain subpackages (ADR 0001 Phase 2, #561).
     # After the domain split the subpackages ship from independent uv workspace
