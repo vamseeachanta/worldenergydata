@@ -7526,12 +7526,14 @@ version = "0.1.0"
 source = { editable = "packages/worldenergydata-texas_rrc" }
 dependencies = [
     { name = "pandas" },
+    { name = "pyyaml" },
     { name = "worldenergydata-core" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "pandas", specifier = ">=2.3.3,<3.0" },
+    { name = "pyyaml", specifier = ">=6.0,<7.0" },
     { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
 ]
 
