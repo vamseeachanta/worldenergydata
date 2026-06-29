@@ -322,3 +322,8 @@ data/modules/hse/grounding_demand.jsonl
 
 # Built static Pages output (regenerated in CI from reports/)
 public/
+
+# AI agent session working directories (Codex, Gemini)
+# Transient per-session dirs; aggregated output lives in workspace-hub/.claude/skills/session-logs/
+.codex/Cu*/
+.gemini/Cu*/
