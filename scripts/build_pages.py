@@ -484,11 +484,30 @@ def build_field_development(available_viz: dict[str, bool]) -> list[tuple]:
     return []
 
 
+def build_capabilities(available_viz: dict[str, bool]) -> list[tuple]:
+    """Publish the self-contained capabilities overview at ``/capabilities/``.
+
+    The page is a hand-authored, fully self-contained HTML file (inline CSS, no
+    external assets) that summarises what the repo can do and links the live
+    dashboards. Like the field-development surfaces it is copied verbatim &mdash; no
+    template wrapping &mdash; so its internal ``../`` links to the sibling dashboards
+    resolve against the site root. Returns ``[]``; the landing index keys off the
+    file existing in ``public/`` (see :func:`build_index`)."""
+    src = REPORTS / "capabilities" / "index.html"
+    if not src.exists():
+        return []
+    dst = PUBLIC / "capabilities"
+    dst.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(src, dst / "index.html")
+    return []
+
+
 # Registry of per-domain builders. Add new domains here (key == reports/<domain>/
 # subdir name) as their surfaces come online. ``build(domains=...)`` iterates this.
 DOMAINS = {
     "lower_tertiary": build_lower_tertiary,
     "field_development": build_field_development,
+    "capabilities": build_capabilities,
 }
 
 
@@ -617,11 +636,26 @@ def build_index() -> None:
             + "</tbody></table></div>"
         )
 
+    capabilities_section = ""
+    if (PUBLIC / "capabilities" / "index.html").exists():
+        capabilities_section = (
+            "<h2>Capabilities overview</h2>"
+            "<p>A single-page tour of every analytical surface in this repo &mdash; "
+            "BSEE field economics, the field-development playbook, and multi-region "
+            "production &amp; safety data &mdash; with the sanctioned figures it is "
+            "validated against.</p>"
+            '<div class="cards"><a class="card" href="capabilities/">'
+            "<h3>Engineering Capabilities &rarr;</h3><p>What worldenergydata does, "
+            "the governing data source behind each surface, and the live dashboards "
+            "&mdash; in one page.</p></a></div>"
+        )
+
     landing = page(
         "Open Data Outputs",
         "Deterministic petroleum-engineering analyses + an offshore "
         "field-development playbook on public data.",
-        _field_development_section()
+        capabilities_section
+        + _field_development_section()
         + f'<h2>Lower-Tertiary economics &amp; benchmarking</h2><div class="cards">'
         f'{"".join(cards)}</div>' + econ_table + "<h2>How this works</h2>"
         "<p>Every analysis here is computed by unit-tested domain code, frozen into a "
