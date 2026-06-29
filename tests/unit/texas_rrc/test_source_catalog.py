@@ -4,7 +4,6 @@ from pathlib import Path
 
 import pytest
 
-
 REQUIRED_SOURCE_IDS = {
     "production_pdq",
     "wellbore_query",
