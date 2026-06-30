@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime
 from typing import Sequence
 
 import pandas as pd
@@ -46,7 +46,9 @@ def assess_lifecycle_quality(
         completion_without_wellbore=_count_flag(
             row_flags, "completion_without_wellbore"
         ),
-        wellbore_without_completion=_count_flag(row_flags, "wellbore_without_completion"),
+        wellbore_without_completion=_count_flag(
+            row_flags, "wellbore_without_completion"
+        ),
         source_gaps=tuple(source_gaps),
     )
 
@@ -107,8 +109,17 @@ def _impossible_dates(row: pd.Series) -> bool:
 def _to_date(value) -> date | None:
     if not _has_value(value):
         return None
+    if isinstance(value, date):
+        return value
+    text = str(value).strip()
+    if not text:
+        return None
     try:
-        return date.fromisoformat(str(value))
+        return date.fromisoformat(text)
+    except ValueError:
+        pass
+    try:
+        return datetime.strptime(text, "%m/%d/%Y").date()
     except ValueError:
         return None
 

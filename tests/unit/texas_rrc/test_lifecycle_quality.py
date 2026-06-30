@@ -58,3 +58,31 @@ def test_assess_lifecycle_quality_counts_core_gap_classes():
     assert report.source_gaps == ("directional_surveys",)
     assert "missing_field_id" in spine.loc[0, "quality_flags"]
     assert "wellbore_without_completion" in spine.loc[1, "quality_flags"]
+
+
+def test_assess_lifecycle_quality_accepts_official_completion_date_format():
+    spine = pd.DataFrame(
+        [
+            {
+                "api14": "42001000010000",
+                "field_number": "11111",
+                "lease_number": "22222",
+                "operator_number": "333333",
+                "latitude": "31.5",
+                "longitude": "-97.2",
+                "permit_issued_date": "2024-02-01",
+                "spud_date": "2024-04-01",
+                "completion_date": "03/01/2024",
+                "plug_date": "",
+                "has_wellbore": True,
+                "has_permit": True,
+                "has_completion": True,
+                "quality_flags": "",
+            },
+        ]
+    )
+
+    report = assess_lifecycle_quality(spine)
+
+    assert report.impossible_dates == 1
+    assert "impossible_dates" in spine.loc[0, "quality_flags"]
