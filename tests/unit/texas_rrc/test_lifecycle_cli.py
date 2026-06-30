@@ -24,6 +24,7 @@ def test_normalize_lifecycle_cli_writes_curated_outputs(tmp_path):
             str(raw_root),
             "--output-root",
             str(output_root),
+            "--allow-non-ace-output",
         ],
     )
 

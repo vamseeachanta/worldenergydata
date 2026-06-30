@@ -97,6 +97,7 @@ sources:
     completion_date:
       - COMPLETION_DATE
       - COMPL_DATE
+      - CMPL_OR_RECMPL_DATE
     form_type:
       - FORM_TYPE
       - FORM

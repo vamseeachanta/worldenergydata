@@ -46,13 +46,25 @@ def build_lifecycle_spine(inputs: LifecycleInputFrames) -> pd.DataFrame:
     wellbores = normalize_wellbore_frame(inputs.wellbores)
     permits = normalize_permit_frame(inputs.permits)
     completions = normalize_completion_frame(inputs.completions)
-    wellbore_rows = _by_api10(wellbores)
-    permit_rows = _by_api10(permits)
-    completion_rows = _by_api10(completions)
-    api10_values = sorted(set(wellbore_rows) | set(permit_rows) | set(completion_rows))
+
+    wellbore_exact = _by_key(wellbores, "api14")
+    permit_exact = _by_key(permits, "api14")
+    completion_exact = _by_key(completions, "api14")
+    wellbore_context = _by_key(wellbores, "api10")
+    permit_context = _by_key(permits, "api10")
+
+    api14_values = sorted(
+        set(wellbore_exact) | set(permit_exact) | set(completion_exact)
+    )
     records = [
-        _build_record(api10, wellbore_rows, permit_rows, completion_rows)
-        for api10 in api10_values
+        _build_record(
+            api14,
+            wellbore_exact.get(api14, {})
+            or wellbore_context.get(derive_api10(api14), {}),
+            permit_exact.get(api14, {}) or permit_context.get(derive_api10(api14), {}),
+            completion_exact.get(api14, {}),
+        )
+        for api14 in api14_values
     ]
     result = pd.DataFrame(records)
     for column in ("has_wellbore", "has_permit", "has_completion"):
@@ -71,35 +83,40 @@ def _normalize_source_frame(frame: pd.DataFrame) -> pd.DataFrame:
         return result
     result["api10"] = result["api14"].apply(derive_api10)
     api_segments = result["api14"].apply(split_api14).apply(pd.Series)
-    for column in ("county_code", "well_unique_number", "sidetrack_code", "completion_code"):
+    for column in (
+        "county_code",
+        "well_unique_number",
+        "sidetrack_code",
+        "completion_code",
+    ):
         result[column] = api_segments[column]
     return result
 
 
-def _by_api10(frame: pd.DataFrame) -> dict[str, dict[str, Any]]:
-    if frame.empty:
+def _by_key(frame: pd.DataFrame, key: str) -> dict[str, dict[str, Any]]:
+    if frame.empty or key not in frame.columns:
         return {}
     rows = {}
-    for api10, group in frame.groupby("api10", sort=True):
-        rows[api10] = _most_complete_row(group).to_dict()
+    for value, group in frame.groupby(key, sort=True):
+        if _has_value(value):
+            rows[str(value)] = _most_complete_row(group).to_dict()
     return rows
 
 
 def _most_complete_row(group: pd.DataFrame) -> pd.Series:
-    completeness = group.apply(lambda row: sum(_has_value(value) for value in row), axis=1)
+    completeness = group.apply(
+        lambda row: sum(_has_value(value) for value in row), axis=1
+    )
     return group.loc[completeness.idxmax()]
 
 
 def _build_record(
-    api10: str,
-    wellbores: dict[str, dict[str, Any]],
-    permits: dict[str, dict[str, Any]],
-    completions: dict[str, dict[str, Any]],
+    api14: str,
+    wellbore: dict[str, Any],
+    permit: dict[str, Any],
+    completion: dict[str, Any],
 ) -> dict[str, Any]:
-    wellbore = wellbores.get(api10, {})
-    permit = permits.get(api10, {})
-    completion = completions.get(api10, {})
-    api14 = _first_value(wellbore, permit, completion, column="api14")
+    api10 = derive_api10(api14)
     record = {"api14": api14, "api10": api10}
     record.update(split_api14(api14))
     record.update(_identifier_values(wellbore, completion, permit))

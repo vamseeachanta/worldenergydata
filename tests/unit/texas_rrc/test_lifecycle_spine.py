@@ -53,17 +53,37 @@ def test_build_lifecycle_spine_joins_sources_by_api14():
 
     spine = build_lifecycle_spine(inputs)
 
-    assert len(spine) == 1
-    row = spine.iloc[0]
-    assert row["api14"] == "42001000010000"
-    assert row["api10"] == "4200100001"
-    assert row["field_number"] == "11111"
-    assert row["lease_number"] == "22222"
-    assert row["operator_number"] == "333333"
-    assert row["permit_number"] == "999001"
-    assert row["spud_date"] == "2024-02-01"
-    assert row["completion_date"] == "2024-03-01"
-    assert row["has_wellbore"] is True
-    assert row["has_permit"] is True
-    assert row["has_completion"] is True
-    assert row["source_ids"] == "wellbore_query|drilling_permits|completion_data"
+    assert sorted(spine["api14"].tolist()) == [
+        "42001000010000",
+        "42001000010102",
+    ]
+    base_row = spine.set_index("api14").loc["42001000010000"]
+    assert base_row["api10"] == "4200100001"
+    assert base_row["field_number"] == "11111"
+    assert base_row["lease_number"] == "22222"
+    assert base_row["operator_number"] == "333333"
+    assert base_row["permit_number"] == "999001"
+    assert base_row["spud_date"] == "2024-02-01"
+    assert base_row["completion_date"] is None
+    assert base_row["has_wellbore"] is True
+    assert base_row["has_permit"] is True
+    assert base_row["has_completion"] is False
+    assert base_row["source_ids"] == "wellbore_query|drilling_permits"
+
+    completion_row = spine.set_index("api14").loc["42001000010102"]
+    assert completion_row["api10"] == "4200100001"
+    assert completion_row["sidetrack_code"] == "01"
+    assert completion_row["completion_code"] == "02"
+    assert completion_row["field_number"] == "11111"
+    assert completion_row["lease_number"] == "22222"
+    assert completion_row["operator_number"] == "333333"
+    assert completion_row["permit_number"] == "999001"
+    assert completion_row["spud_date"] == "2024-02-01"
+    assert completion_row["completion_date"] == "2024-03-01"
+    assert completion_row["has_wellbore"] is True
+    assert completion_row["has_permit"] is True
+    assert completion_row["has_completion"] is True
+    assert (
+        completion_row["source_ids"]
+        == "wellbore_query|drilling_permits|completion_data"
+    )

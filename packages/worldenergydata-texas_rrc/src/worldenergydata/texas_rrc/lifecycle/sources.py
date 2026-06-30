@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import date
 import zipfile
 from dataclasses import dataclass
 from importlib.resources import files
@@ -56,7 +57,11 @@ def _load_source(root: Path, source_id: str) -> tuple[pd.DataFrame, str | None]:
     if not source_dir.exists():
         return pd.DataFrame(), source_id
 
-    frames = [_read_table(path) for path in sorted(source_dir.rglob("*")) if path.is_file()]
+    frames = [
+        _read_table(path, source_id)
+        for path in sorted(source_dir.rglob("*"))
+        if path.is_file()
+    ]
     frames = [frame for frame in frames if not frame.empty]
     if not frames:
         return pd.DataFrame(), source_id
@@ -65,21 +70,34 @@ def _load_source(root: Path, source_id: str) -> tuple[pd.DataFrame, str | None]:
     return _normalize_columns(combined, source_id), None
 
 
-def _read_table(path: Path) -> pd.DataFrame:
+def _read_table(path: Path, source_id: str) -> pd.DataFrame:
     if path.suffix.lower() == ".zip":
-        return _read_zip_tables(path)
+        return _read_zip_tables(path, source_id)
     if path.suffix.lower() not in {".csv", ".txt", ".dat"}:
         return pd.DataFrame()
-    return _read_table_text(path.read_text(encoding="utf-8", errors="replace"))
+    text = path.read_text(encoding="utf-8", errors="replace")
+    if source_id == "drilling_permits" and path.name.lower() == "daf420.dat":
+        frame = _read_daf420_text(text)
+        if not frame.empty:
+            return frame
+    return _read_table_text(text)
 
 
-def _read_zip_tables(path: Path) -> pd.DataFrame:
+def _read_zip_tables(path: Path, source_id: str) -> pd.DataFrame:
     frames = []
     with zipfile.ZipFile(path) as archive:
         for name in sorted(archive.namelist()):
             if Path(name).suffix.lower() not in {".csv", ".txt", ".dat"}:
                 continue
             text = archive.read(name).decode("utf-8", errors="replace")
+            if (
+                source_id == "drilling_permits"
+                and Path(name).name.lower() == "daf420.dat"
+            ):
+                frame = _read_daf420_text(text)
+                if not frame.empty:
+                    frames.append(frame)
+                    continue
             frame = _read_table_text(text)
             if not frame.empty:
                 frames.append(frame)
@@ -100,6 +118,91 @@ def _read_table_text(text: str) -> pd.DataFrame:
         dtype=str,
         keep_default_na=False,
     )
+
+
+def _read_daf420_text(text: str) -> pd.DataFrame:
+    rows: list[dict[str, str]] = []
+    for raw_line in text.splitlines():
+        line = raw_line.rstrip("\r\n")
+        segment = _rrc_segment(line)
+        if segment is None:
+            continue
+        segment_type, segment_start = segment
+        if segment_type == "02":
+            row = _parse_daf420_master(line, segment_start)
+            if row:
+                rows.append(row)
+        elif segment_type == "14" and rows:
+            rows[-1].update(_parse_daf420_surface_location(line, segment_start))
+    return pd.DataFrame(rows)
+
+
+def _rrc_segment(line: str) -> tuple[str, int] | None:
+    for start in (2, 0):
+        segment_type = line[start : start + 2]
+        if segment_type in {"02", "14"}:
+            return segment_type, start + 1
+    return None
+
+
+def _parse_daf420_master(line: str, segment_start: int) -> dict[str, str]:
+    offset = segment_start - 3
+    api_number = _fixed_value(line, 505 + offset, 8)
+    if len(api_number) != 8 or not api_number.isdigit():
+        return {}
+
+    row = {
+        "api_number": api_number,
+        "permit_number": _fixed_value(line, 5 + offset, 7),
+        "permit_type": _fixed_value(line, 68 + offset, 2),
+        "district": _fixed_value(line, 49 + offset, 2),
+        "lease_name": _fixed_value(line, 17 + offset, 32),
+        "operator_number": _fixed_value(line, 62 + offset, 6),
+        "permit_issued_date": _fixed_date(line, 132 + offset),
+        "permit_amended_date": _fixed_date(line, 140 + offset),
+        "permit_extended_date": _fixed_date(line, 148 + offset),
+        "spud_date": _fixed_date(line, 156 + offset),
+        "total_depth": _fixed_value(line, 57 + offset, 5),
+    }
+    return {key: value for key, value in row.items() if value}
+
+
+def _parse_daf420_surface_location(line: str, segment_start: int) -> dict[str, str]:
+    offset = segment_start - 3
+    longitude = _fixed_coordinate(line, 5 + offset, west_longitude=True)
+    latitude = _fixed_coordinate(line, 17 + offset, west_longitude=False)
+    result = {}
+    if latitude:
+        result["latitude"] = latitude
+    if longitude:
+        result["longitude"] = longitude
+    return result
+
+
+def _fixed_value(line: str, start: int, width: int) -> str:
+    if start < 1:
+        return ""
+    return line[start - 1 : start - 1 + width].strip()
+
+
+def _fixed_date(line: str, start: int) -> str:
+    value = _fixed_value(line, start, 8)
+    if len(value) != 8 or not value.isdigit() or value == "00000000":
+        return ""
+    try:
+        return date(int(value[:4]), int(value[4:6]), int(value[6:8])).isoformat()
+    except ValueError:
+        return ""
+
+
+def _fixed_coordinate(line: str, start: int, west_longitude: bool) -> str:
+    value = _fixed_value(line, start, 12)
+    if len(value) != 12 or not value.isdigit() or value == "000000000000":
+        return ""
+    coordinate = int(value[:5]) + int(value[5:]) / 10_000_000
+    if west_longitude:
+        coordinate = -coordinate
+    return f"{coordinate:g}"
 
 
 def _normalize_columns(frame: pd.DataFrame, source_id: str) -> pd.DataFrame:

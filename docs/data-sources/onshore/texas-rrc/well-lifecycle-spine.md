@@ -38,7 +38,9 @@ The lifecycle command writes curated outputs under:
 ```
 
 Writes are staged under `.staging-well-lifecycle-spine-*` and then promoted into
-the final curated directory.
+the final curated directory. By default, lifecycle writes are rejected outside
+`/mnt/ace/worldenergydata/data/modules/texas_rrc`; the test/sandbox override is
+explicit so local runs do not weaken the durable storage contract.
 
 ## Command
 
@@ -63,7 +65,8 @@ For test or sandbox runs, override both roots:
 ```bash
 uv run worldenergydata texas-rrc normalize-lifecycle \
   --raw-root /tmp/texas_rrc \
-  --output-root /tmp/texas_rrc_out
+  --output-root /tmp/texas_rrc_out \
+  --allow-non-ace-output
 ```
 
 ## Spine Grain
@@ -78,6 +81,11 @@ Current join priority is:
 1. Wellbore Query for durable well identifiers and status.
 2. Drilling permits for intent, permit dates, spud date, and surface location.
 3. Completion data for completion milestones and completion-form evidence.
+
+Official Texas RRC drilling permits use the `daf420.dat` fixed-record product,
+not only delimited files. The lifecycle loader reads type-02 permit master
+records and the following type-14 surface-location record, then normalizes the
+official eight-digit RRC API number into the Texas API14 shape for joins.
 
 ## Quality Report
 

@@ -557,6 +557,11 @@ def normalize_lifecycle(
         "--require-sources",
         help="Fail when any lifecycle source directory is missing or empty",
     ),
+    allow_non_ace_output: bool = typer.Option(
+        False,
+        "--allow-non-ace-output",
+        help="Allow non-/mnt/ace output roots for isolated tests or sandboxes",
+    ),
 ) -> None:
     """Normalize local official Texas RRC raw snapshots into a lifecycle spine."""
     from worldenergydata.texas_rrc.lifecycle.io import write_lifecycle_outputs
@@ -586,6 +591,7 @@ def normalize_lifecycle(
             quality,
             output_root=output_root,
             input_paths=_lifecycle_input_paths(raw_root),
+            allow_non_ace_root=allow_non_ace_output,
         )
         console.print(
             "[green]Wrote lifecycle spine[/green] "

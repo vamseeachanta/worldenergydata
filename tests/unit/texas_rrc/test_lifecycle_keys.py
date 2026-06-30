@@ -12,6 +12,7 @@ from worldenergydata.texas_rrc.lifecycle.keys import (
 @pytest.mark.parametrize(
     ("raw_api", "expected"),
     [
+        ("00100001", "42001000010000"),
         ("42-001-00001", "42001000010000"),
         ("4200100001", "42001000010000"),
         ("420010000100", "42001000010000"),

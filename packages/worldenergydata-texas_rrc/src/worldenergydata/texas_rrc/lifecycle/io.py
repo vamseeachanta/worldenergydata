@@ -47,9 +47,11 @@ def write_lifecycle_outputs(
     output_root: Path | str = SOURCE_CATALOG_ROOT,
     generated_at: datetime | None = None,
     input_paths: Iterable[str | Path] = (),
+    allow_non_ace_root: bool = False,
 ) -> LifecycleOutputManifest:
     """Write lifecycle spine artifacts under the Texas RRC curated data layout."""
     root = Path(output_root)
+    _validate_output_root(root, allow_non_ace_root)
     target_dir = root / LIFECYCLE_SPINE_DIR
     stamp = _timestamp(generated_at)
     final_spine = target_dir / SPINE_FILENAME
@@ -83,6 +85,17 @@ def write_lifecycle_outputs(
 def load_lifecycle_spine(path: Path | str) -> pd.DataFrame:
     """Load a persisted lifecycle spine while preserving API key strings."""
     return pd.read_csv(path, dtype=API_KEY_DTYPES)
+
+
+def _validate_output_root(root: Path, allow_non_ace_root: bool) -> None:
+    if allow_non_ace_root:
+        return
+    if not root.resolve().is_relative_to(SOURCE_CATALOG_ROOT.resolve()):
+        raise ValueError(
+            "Lifecycle output_root must stay under "
+            f"{SOURCE_CATALOG_ROOT}; pass allow_non_ace_root=True only for "
+            "isolated tests or sandbox runs"
+        )
 
 
 def _quality_payload(quality: LifecycleQualityReport) -> dict[str, object]:

@@ -11,6 +11,9 @@ def normalize_api14(value: object) -> str | None:
         return None
 
     digits = re.sub(r"\D", "", str(value).strip())
+    if len(digits) == 8:
+        digits = f"42{digits}"
+
     if not digits.startswith("42"):
         return None
 

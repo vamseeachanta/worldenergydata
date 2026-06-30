@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 import json
 
 import pandas as pd
+import pytest
 
 from worldenergydata.texas_rrc.lifecycle.quality import LifecycleQualityReport
 
@@ -44,6 +45,7 @@ def test_write_lifecycle_outputs_persists_spine_quality_and_manifest(tmp_path):
         output_root=tmp_path,
         generated_at=datetime(2026, 6, 30, 20, 0, tzinfo=timezone.utc),
         input_paths=["raw/wellbore/query/wellbore.zip"],
+        allow_non_ace_root=True,
     )
 
     spine_path = (
@@ -66,3 +68,28 @@ def test_write_lifecycle_outputs_persists_spine_quality_and_manifest(tmp_path):
     assert manifest_payload["row_count"] == 1
     assert manifest_payload["input_paths"] == ["raw/wellbore/query/wellbore.zip"]
     assert not list(tmp_path.rglob(".staging-*"))
+
+
+def test_write_lifecycle_outputs_rejects_non_ace_root_without_override(tmp_path):
+    from worldenergydata.texas_rrc.lifecycle.io import write_lifecycle_outputs
+
+    quality = LifecycleQualityReport(
+        row_count=0,
+        duplicate_api14=0,
+        missing_field_id=0,
+        missing_lease_id=0,
+        missing_operator_id=0,
+        invalid_coordinates=0,
+        impossible_dates=0,
+        permit_without_wellbore=0,
+        completion_without_wellbore=0,
+        wellbore_without_completion=0,
+        source_gaps=(),
+    )
+
+    with pytest.raises(ValueError, match="/mnt/ace"):
+        write_lifecycle_outputs(
+            pd.DataFrame(),
+            quality,
+            output_root=tmp_path,
+        )
