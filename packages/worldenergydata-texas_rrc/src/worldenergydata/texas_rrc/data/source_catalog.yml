@@ -1,6 +1,9 @@
 sources:
   production_pdq:
     source_url: "https://www.rrc.texas.gov/media/ebxnoxbm/pdq-dump.zip"
+    download_url: "https://mft.rrc.texas.gov/link/1f5ddb8d-329a-4459-b7f8-177b4f5ee60d"
+    download_strategy: "official_godrive_file"
+    snapshot_filename: "PDQ_DSV.zip"
     format: "zip_csv"
     refresh_cadence: "monthly_last_saturday"
     raw_path: "/mnt/ace/worldenergydata/data/modules/texas_rrc/raw/production/pdq"
@@ -12,6 +15,9 @@ sources:
 
   wellbore_query:
     source_url: "https://www.rrc.texas.gov/media/kywh5qsj/wellboredump.zip"
+    download_url: "https://mft.rrc.texas.gov/link/650649b7-e019-4d77-a8e0-d118d6455381"
+    download_strategy: "official_godrive_file"
+    snapshot_filename: "OG_WELLBORE_EWA_Report.csv"
     format: "zip_ascii"
     refresh_cadence: "monthly_beginning"
     raw_path: "/mnt/ace/worldenergydata/data/modules/texas_rrc/raw/wellbore/query"
@@ -23,6 +29,9 @@ sources:
 
   drilling_permits:
     source_url: "https://www.rrc.texas.gov/resource-center/research/data-sets-available-for-download/#drilling-permit-data-table"
+    download_url: "https://mft.rrc.texas.gov/link/5f07cc72-2e79-4df8-ade1-9aeb792e03fc"
+    download_strategy: "official_godrive_file"
+    snapshot_filename: "daf420.dat"
     format: "ascii"
     refresh_cadence: "nightly"
     raw_path: "/mnt/ace/worldenergydata/data/modules/texas_rrc/raw/permits/drilling"
@@ -34,6 +43,8 @@ sources:
 
   completion_data:
     source_url: "https://www.rrc.texas.gov/resource-center/research/data-sets-available-for-download/#completion-data-table"
+    download_url: "https://mft.rrc.texas.gov/link/ed7ab066-879f-40b6-8144-2ae4b6810c04"
+    download_strategy: "official_godrive_directory"
     format: "zip_ascii_pdf"
     refresh_cadence: "nightly"
     raw_path: "/mnt/ace/worldenergydata/data/modules/texas_rrc/raw/completions"
@@ -45,6 +56,8 @@ sources:
 
   directional_surveys:
     source_url: "https://www.rrc.texas.gov/resource-center/research/data-sets-available-for-download/#directional-survey-data-table"
+    download_url: "https://mft.rrc.texas.gov/link/01769aa7-dee8-4121-bb25-e7557307f6bd"
+    download_strategy: "official_godrive_directory"
     format: "zip_pdf"
     refresh_cadence: "daily"
     raw_path: "/mnt/ace/worldenergydata/data/modules/texas_rrc/raw/directional_surveys"
@@ -56,6 +69,8 @@ sources:
 
   well_gis_layers:
     source_url: "https://www.rrc.texas.gov/resource-center/research/data-sets-available-for-download/#gis-data-table"
+    download_url: "https://mft.rrc.texas.gov/link/d551fb20-442e-4b67-84fa-ac3f23ecabb4"
+    download_strategy: "official_godrive_directory"
     format: "shapefile"
     refresh_cadence: "twice_weekly"
     raw_path: "/mnt/ace/worldenergydata/data/modules/texas_rrc/raw/gis/wells"
@@ -67,6 +82,8 @@ sources:
 
   pipeline_gis_layers:
     source_url: "https://www.rrc.texas.gov/resource-center/research/data-sets-available-for-download/#gis-data-table"
+    download_url: "https://mft.rrc.texas.gov/link/c7cbab0c-afe2-4f6f-91ae-e6ed7d3a7ab6"
+    download_strategy: "official_godrive_directory"
     format: "shapefile"
     refresh_cadence: "twice_weekly"
     raw_path: "/mnt/ace/worldenergydata/data/modules/texas_rrc/raw/gis/pipelines"
@@ -78,6 +95,7 @@ sources:
 
   field_lease_operator:
     source_url: "https://www.rrc.texas.gov/resource-center/research/data-sets-available-for-download/"
+    download_strategy: "official_index_required"
     format: "mixed_ascii_csv"
     refresh_cadence: "source_specific"
     raw_path: "/mnt/ace/worldenergydata/data/modules/texas_rrc/raw/reference/field_lease_operator"
@@ -90,6 +108,7 @@ sources:
   rrc_ewa_lease_query_validation:
     source_url: "https://webapps2.rrc.texas.gov/EWA/specificLeaseQueryAction.do"
     reference_url: "https://github.com/derrickturk/rrc-scraper/blob/6dce564695df739c43cb257472fbdb455fdd1b2e/RRCScraper.py"
+    download_strategy: "validation_only"
     format: "web_form_csv"
     refresh_cadence: "service_managed"
     raw_path: "/mnt/ace/worldenergydata/data/modules/texas_rrc/raw/validation/rrc_ewa_lease_query"
@@ -104,6 +123,7 @@ sources:
 
   patchops_rrc_validation:
     source_url: "https://patchops.ai/mcpservers/rrc"
+    download_strategy: "validation_only"
     format: "mcp_postgis_tools"
     refresh_cadence: "service_managed"
     raw_path: "/mnt/ace/worldenergydata/data/modules/texas_rrc/raw/validation/patchops_rrc"

@@ -261,6 +261,115 @@ def collect(
         raise typer.Exit(1)
 
 
+def _print_refresh_plans(plans) -> None:
+    table = Table(
+        title="Texas RRC Raw Refresh Sources",
+        show_header=True,
+        header_style="bold cyan",
+    )
+    table.add_column("Source", style="dim", no_wrap=True)
+    table.add_column("Strategy", no_wrap=True)
+    table.add_column("Status")
+    table.add_column("Target", overflow="fold")
+
+    for plan in plans:
+        status = "planned" if plan.refreshable else plan.skip_reason or "skipped"
+        table.add_row(
+            plan.source_id,
+            plan.download_strategy,
+            status,
+            str(plan.target_path),
+        )
+
+    console.print(table)
+
+
+def _validate_refresh_selection(
+    source: Optional[List[str]],
+    all_sources: bool,
+) -> None:
+    if source and all_sources:
+        console.print("[red]Error:[/red] Use either --source or --all, not both")
+        raise typer.Exit(1)
+    if not source and not all_sources:
+        console.print("[red]Error:[/red] Use --source, --all, or --list-sources")
+        raise typer.Exit(1)
+
+
+def _execute_refresh_plans(refresher, plans, explicit_sources: bool) -> None:
+    refreshed = []
+    for plan in plans:
+        if not plan.refreshable:
+            if explicit_sources:
+                console.print(
+                    f"[red]Error:[/red] {plan.source_id} is not refreshable: "
+                    f"{plan.skip_reason}"
+                )
+                raise typer.Exit(1)
+            continue
+        refreshed.append(refresher.refresh_source(plan.source_id))
+
+    if not refreshed:
+        console.print(
+            "[yellow]No refreshable direct-source snapshots selected[/yellow]"
+        )
+        return
+
+    for manifest in refreshed:
+        console.print(
+            f"[green]Downloaded[/green] {manifest.source_id}: "
+            f"{manifest.byte_size} bytes -> {manifest.raw_path}"
+        )
+
+
+@app.command()
+def refresh(
+    source: Optional[List[str]] = typer.Option(
+        None,
+        "--source",
+        "-s",
+        help="Source ID to refresh; repeat for multiple sources",
+    ),
+    all_sources: bool = typer.Option(
+        False,
+        "--all",
+        help="Refresh every direct-source catalog entry",
+    ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Plan refresh actions without downloading data",
+    ),
+    list_sources: bool = typer.Option(
+        False,
+        "--list-sources",
+        help="List configured Texas RRC refresh sources",
+    ),
+    output_root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--output-root",
+        help="Raw data output root",
+    ),
+) -> None:
+    """Refresh official Texas RRC raw snapshots into the /mnt/ace contract."""
+    from worldenergydata.texas_rrc.raw_refresh import RawSnapshotRefresher
+
+    refresher = RawSnapshotRefresher(output_root=output_root)
+
+    if list_sources:
+        _print_refresh_plans(refresher.plan_sources())
+        return
+
+    _validate_refresh_selection(source, all_sources)
+
+    plans = refresher.plan_sources(source if source else None)
+    if dry_run:
+        _print_refresh_plans(plans)
+        return
+
+    _execute_refresh_plans(refresher, plans, explicit_sources=bool(source))
+
+
 @app.command()
 def analyze(
     district: Optional[str] = typer.Option(
