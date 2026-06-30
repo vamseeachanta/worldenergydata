@@ -64,6 +64,8 @@
       <ul><li>cross-field per-well performance, 2010 &ndash; latest</li><li>normalized cumulative &amp; rate comparisons</li></ul></div>
     <div class="card"><h3>3D well paths</h3><div class="std">BSEE directional surveys</div>
       <ul><li>one frozen JSON data contract &rarr; two renderers</li><li>Plotly + Three.js, north/east-correct geometry</li></ul></div>
+    <div class="card"><h3>Drilling &amp; completion days</h3><div class="std">BSEE Well Activity Reports</div>
+      <ul><li>spud&rarr;TD drilling &amp; TD&rarr;final-activity completion spans</li><li>217 wells across 12 Lower-Tertiary fields</li><li>per-well depth / water-depth context, medians by field</li></ul></div>
   </div>
 
   <h2>Offshore field-development playbook</h2>
@@ -109,6 +111,10 @@
       <tr><td>Portfolio roll-up</td><td>producing wells / federal leases</td><td class="val">158 / 19</td><td class="der">BSEE OGOR-A (Sep&nbsp;2000&ndash;Jul&nbsp;2025)</td></tr>
       <tr><td>Playbook coverage</td><td>global offshore fields (GoM subset)</td><td class="val">~2 150 (333)</td><td class="der">SubseaIQ catalog</td></tr>
       <tr><td>BSEE-matched concepts</td><td>recommended vs as-built fields</td><td class="val">115</td><td class="der">BSEE × SubseaIQ join</td></tr>
+      <tr><td>Drilling &amp; completion days</td><td>wells / fields covered (WAR-derived)</td><td class="val">217 / 12</td><td class="der">BSEE Well Activity Reports</td></tr>
+      <tr><td>Drilling &amp; completion days</td><td>median drilling / completion span</td><td class="val">38 d / 24 d</td><td class="der">BSEE WAR (V30 day-count method)</td></tr>
+      <tr><td>Marine-safety analytics</td><td>incident records analysed / fatalities</td><td class="val">102 618 / 7 349</td><td class="der">TSB · IMO GISIS · MAIB</td></tr>
+      <tr><td>IMO GISIS casualties</td><td>marine casualties, 1900&ndash;2025</td><td class="val">13 338</td><td class="der">IMO GISIS public database</td></tr>
     </tbody>
   </table>
 
@@ -138,6 +144,24 @@
     <a class="card linkcard" href="../economics-julia.html"><h3>Julia field economics &rarr;</h3>
       <div class="std">sanctioned V30 NPV</div>
       <ul><li>per-well stackup, NPV timeline, critical-operations detail</li></ul></a>
+    <a class="card linkcard" href="../completion/"><h3>Drilling &amp; completion days &rarr;</h3>
+      <div class="std">217 wells · 12 fields</div>
+      <ul><li>WAR-derived drilling &amp; completion durations, medians by field</li></ul></a>
+  </div>
+
+  <h2>Offshore safety &amp; HSE</h2>
+  <p class="note">Public marine-casualty and offshore-incident data, normalized and analysed deterministically &mdash;
+     incident classification, cause-event breakdowns, and engineering screens anchored to real failures.</p>
+  <div class="grid">
+    <a class="card linkcard" href="../marine_safety/executive_summary.html"><h3>Marine safety analytics &rarr;</h3>
+      <div class="std">TSB · IMO GISIS · MAIB</div>
+      <ul><li>cross-database casualty analysis over 102,618 incident records &mdash; foundering, fatality &amp; hatch breakdowns</li></ul></a>
+    <a class="card linkcard" href="../IMO_GISIS_Executive_Report.html"><h3>IMO GISIS casualties &rarr;</h3>
+      <div class="std">13,338 casualties · 1900&ndash;2025</div>
+      <ul><li>marine casualties by severity, vessel type and flag state from the IMO GISIS public database</li></ul></a>
+    <a class="card linkcard" href="../hse/mooring-fatigue-grounded-card.html"><h3>Mooring-fatigue grounded card &rarr;</h3>
+      <div class="std">DNV-OS-E301 T-N curves</div>
+      <ul><li>fatigue-life screening anchored to real BSEE mooring-failure incidents (governing line 18.4-yr life vs 25-yr design)</li></ul></a>
   </div>
 
   <h2>Provenance</h2>
