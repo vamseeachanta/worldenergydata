@@ -1,0 +1,23 @@
+{
+  "schema": "deckhand.workflow_api.ResultEnvelope/2",
+  "status": "ok",
+  "repo": "worldenergydata",
+  "report_url": "https://vamseeachanta.github.io/worldenergydata/IMO_GISIS_Executive_Report.html",
+  "provenance": {
+    "basis": "IMO GISIS public database",
+    "deterministic": true,
+    "source": "public regulatory filings"
+  },
+  "request": {
+    "method": "GET",
+    "url": "https://vamseeachanta.github.io/worldenergydata/IMO_GISIS_Executive_Report.html"
+  },
+  "surface": "worldenergydata:imo",
+  "outputs": [
+    {
+      "kind": "report",
+      "url": "https://vamseeachanta.github.io/worldenergydata/IMO_GISIS_Executive_Report.html"
+    }
+  ],
+  "note": "Published report surface \u2014 the deterministic output is served as a self-contained page; GET the report_url to consume it."
+}

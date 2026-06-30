@@ -5,57 +5,66 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>worldenergydata — Open Energy-Data Capabilities</title>
 <style>
-  :root{--navy:#0B3D91;--teal:#2BB2A6;--bg:#070c16;--panel:#0e1726;--ink:#e8eef9;
-        --muted:#90a0bd;--line:#22304f;--ok:#3fb950;--warn:#d29922;--side:288px}
+  :root{--navy:#0B3D91;--teal:#0f8a7e;--bg:#eef3fa;--panel:#ffffff;--ink:#13233f;
+        --muted:#5b6b86;--line:#dbe4f0;--soft:#f4f8fc;--ok:#1f9d57;--warn:#b7791f;--side:288px}
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
   body{font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);
        color:var(--ink);line-height:1.5}
   a{color:inherit;text-decoration:none}
-  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#11203a;
-       padding:1px 5px;border-radius:5px;font-size:12px}
-  .side{position:fixed;top:0;left:0;bottom:0;width:var(--side);background:#0a1120;
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--soft);
+       border:1px solid var(--line);padding:1px 5px;border-radius:5px;font-size:12px}
+  .side{position:fixed;top:0;left:0;bottom:0;width:var(--side);background:#fff;
         border-right:1px solid var(--line);display:flex;flex-direction:column;
         padding:22px 16px;overflow-y:auto;z-index:20}
-  .side .brand{display:inline-flex;align-self:flex-start;background:#fff;border-radius:11px;
-               padding:10px 14px;margin-bottom:6px}
+  .side .brand{display:inline-flex;align-self:flex-start;background:#fff;border:1px solid var(--line);
+               border-radius:11px;padding:10px 14px;margin-bottom:6px}
   .side .brand svg{height:30px;width:auto;display:block}
   .side .tag{font-size:12px;color:var(--muted);margin:0 0 16px 3px}
   .side nav{flex:1}
-  .navgroup{margin-bottom:6px}
-  .navh{display:block;font-size:13px;font-weight:700;color:#cfe0f2;padding:7px 10px;
+  .navgroup{margin-bottom:4px}
+  .navh{display:block;font-size:13px;font-weight:700;color:var(--navy);padding:7px 10px;
         border-radius:8px;border-left:3px solid transparent}
-  .navh:hover,.navh.active{background:#11203a;border-left-color:var(--teal);color:#fff}
-  .side .start{margin-top:14px;text-align:center;font-weight:700;color:#06243b;
-               background:linear-gradient(135deg,var(--teal),#7af0c0);padding:11px;
+  .navh:hover,.navh.active{background:var(--soft);border-left-color:var(--teal)}
+  .side .start{margin-top:14px;text-align:center;font-weight:700;color:#fff;
+               background:linear-gradient(135deg,var(--teal),var(--navy));padding:11px;
                border-radius:11px}
   main{margin-left:var(--side);max-width:1200px;padding:0 30px 80px}
   .hero{padding:42px 4px 8px}
-  .hero h1{font-size:30px;font-weight:800;letter-spacing:-.4px}
+  .hero h1{font-size:30px;font-weight:800;letter-spacing:-.4px;color:var(--navy)}
   .hero p{color:var(--muted);font-size:17px;margin-top:10px;max-width:820px}
   .hero .pill{display:inline-block;margin-top:16px;padding:4px 12px;border:1px solid var(--line);
-              border-radius:20px;color:var(--muted);font-size:12.5px}
+              background:#fff;border-radius:20px;color:var(--muted);font-size:12.5px}
   .chan{margin-top:42px;scroll-margin-top:18px}
-  .chan h2{font-size:20px;border-left:4px solid var(--teal);padding-left:12px;margin-bottom:6px}
+  .chanhead{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:6px;flex-wrap:wrap}
+  .chanhead h2{font-size:20px;border-left:4px solid var(--teal);padding-left:12px;color:var(--navy)}
+  .onepager{font-size:12px;font-weight:700;color:var(--navy);border:1px solid var(--line);
+            background:#fff;border-radius:9px;padding:6px 11px;white-space:nowrap}
+  .onepager:hover{border-color:var(--teal)}
   .chan .lead{color:var(--muted);font-size:14px;padding-left:16px;margin-bottom:18px;max-width:820px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
-  a.card{display:block;background:var(--panel);border:1px solid var(--line);border-radius:16px;
-         padding:18px 18px 16px;transition:transform .15s,border-color .15s}
-  a.card:hover{transform:translateY(-3px);border-color:#3a4d74}
-  a.card h3{font-size:15.5px;font-weight:700;line-height:1.3;color:var(--ink)}
-  a.card .std{color:var(--teal);font-size:12px;font-weight:600;margin:5px 0 8px}
-  a.card p{color:var(--muted);font-size:13.5px}
-  a.card .open{display:inline-block;margin-top:12px;font-size:13px;font-weight:700;color:#06243b;
-               background:linear-gradient(135deg,#4cc2ff,#7af0c0);padding:7px 13px;border-radius:10px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:18px}
+  .card{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);
+        border-radius:16px;padding:18px 18px 16px;box-shadow:0 1px 2px rgba(16,40,80,.04);
+        transition:transform .15s,border-color .15s,box-shadow .15s}
+  .card:hover{transform:translateY(-3px);border-color:#b9cbe6;box-shadow:0 8px 22px rgba(16,40,80,.10)}
+  .card h3{font-size:15.5px;font-weight:700;line-height:1.3;color:var(--ink)}
+  .card .std{color:var(--teal);font-size:12px;font-weight:700;margin:5px 0 8px}
+  .card p{color:var(--muted);font-size:13.5px;flex:1}
+  .actions{display:flex;align-items:center;gap:8px;margin-top:14px;flex-wrap:wrap}
+  .actions .open{font-size:13px;font-weight:700;color:#fff;
+                 background:linear-gradient(135deg,var(--teal),var(--navy));padding:7px 13px;border-radius:10px}
+  .actions .sec{font-size:12.5px;font-weight:700;color:var(--navy);border:1px solid var(--line);
+                background:#fff;padding:6px 11px;border-radius:9px}
+  .actions .sec:hover{border-color:var(--teal)}
   .tablewrap{overflow-x:auto;margin-top:6px}
   table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--panel);
         border:1px solid var(--line);border-radius:14px;overflow:hidden}
   th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line)}
-  th{background:#11203a;color:var(--muted);font-weight:600;font-size:11.5px;
+  th{background:var(--soft);color:var(--muted);font-weight:700;font-size:11.5px;
      text-transform:uppercase;letter-spacing:.4px}
   tr:last-child td{border-bottom:none}
   td.val{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;text-align:right}
-  .pub{color:var(--ok);font-weight:600}.der{color:var(--warn);font-weight:600}
+  .pub{color:var(--ok);font-weight:700}.der{color:var(--warn);font-weight:700}
   .note{color:var(--muted);font-size:13px;margin:10px 0 0;padding-left:16px}
   footer{margin-left:var(--side);text-align:center;color:var(--muted);font-size:13px;
          padding:28px 30px 50px;border-top:1px solid var(--line)}
@@ -106,67 +115,68 @@
     <h1>worldenergydata — Open Energy-Data Capabilities</h1>
     <p>Deterministic offshore field economics, a field-development playbook, and offshore safety
     analytics &mdash; each result computed by unit-tested domain code on public regulatory filings,
-    frozen into a report artifact, and rendered to static HTML. Every card below opens a live page.</p>
-    <span class="pill">Public BSEE &amp; multi-region data · sanctioned V30 golden baselines · a live link for every surface</span>
+    frozen into a report artifact, and rendered to static HTML. Every work below opens a live page,
+    a 1-page client PDF, and a self-contained workflow-API call.</p>
+    <span class="pill">Live page · 1-page PDF · workflow-API call — for every capability</span>
   </header>
 
   <section class="chan" id="economics">
-    <h2>Field economics &amp; benchmarking</h2>
+    <div class="chanhead"><h2>Field economics &amp; benchmarking</h2><a class="onepager" href="pdf/sec-economics.pdf" download>Section 1-pager &darr;</a></div>
     <p class="lead">Per-well, per-block and per-field NPV / MIRR / IRR for the seven Lower-Tertiary
     deepwater fields, sanctioned against a frozen V30 golden baseline and guarded by a CI regression test.</p>
     <div class="grid">
-      <a class="card" href="../economics-anchor.html"><h3>Anchor field economics</h3><div class="std">BSEE OGOR-A · sanctioned V30</div><p>Per-well stackup, NPV timeline and critical-operations detail.</p><span class="open">Open &rarr;</span></a>
-      <a class="card" href="../economics-big_foot.html"><h3>Big Foot field economics</h3><div class="std">BSEE OGOR-A · sanctioned V30</div><p>Per-well stackup, NPV timeline and critical-operations detail.</p><span class="open">Open &rarr;</span></a>
-      <a class="card" href="../economics-cascade_chinook.html"><h3>Cascade&ndash;Chinook field economics</h3><div class="std">BSEE OGOR-A · sanctioned V30</div><p>Per-well stackup, NPV timeline and critical-operations detail.</p><span class="open">Open &rarr;</span></a>
-      <a class="card" href="../economics-jack_st_malo.html"><h3>Jack / St. Malo field economics</h3><div class="std">BSEE OGOR-A · sanctioned V30</div><p>Per-well stackup, NPV timeline and critical-operations detail.</p><span class="open">Open &rarr;</span></a>
-      <a class="card" href="../economics-julia.html"><h3>Julia field economics</h3><div class="std">BSEE OGOR-A · sanctioned V30</div><p>Per-well stackup, NPV timeline and critical-operations detail.</p><span class="open">Open &rarr;</span></a>
-      <a class="card" href="../economics-shenandoah.html"><h3>Shenandoah field economics</h3><div class="std">BSEE OGOR-A · sanctioned V30</div><p>Per-well stackup, NPV timeline and critical-operations detail.</p><span class="open">Open &rarr;</span></a>
-      <a class="card" href="../economics-stones.html"><h3>Stones field economics</h3><div class="std">BSEE OGOR-A · sanctioned V30</div><p>Per-well stackup, NPV timeline and critical-operations detail.</p><span class="open">Open &rarr;</span></a>
-      <a class="card" href="../portfolio.html"><h3>Lower-Tertiary portfolio summary</h3><div class="std">field-by-field roll-up</div><p>The whole Lower-Tertiary play at a glance, aggregated from the per-field V30 economics.</p><span class="open">Open &rarr;</span></a>
-      <a class="card" href="../benchmark.html"><h3>Well benchmarking</h3><div class="std">BSEE OGOR-A · 2010&ndash;latest</div><p>Cross-field per-well performance, normalized cumulative &amp; rate comparisons.</p><span class="open">Open &rarr;</span></a>
+      <div class="card"><h3>Anchor field economics</h3><div class="std">BSEE OGOR-A · sanctioned V30</div><p>Per-well stackup, NPV timeline and critical-operations detail.</p><div class="actions"><a class="open" href="../economics-anchor.html">Open &rarr;</a><a class="sec" href="pdf/economics-anchor.pdf" download>PDF &darr;</a><a class="sec" href="api/economics-anchor.html">API &rarr;</a></div></div>
+      <div class="card"><h3>Big Foot field economics</h3><div class="std">BSEE OGOR-A · sanctioned V30</div><p>Per-well stackup, NPV timeline and critical-operations detail.</p><div class="actions"><a class="open" href="../economics-big_foot.html">Open &rarr;</a><a class="sec" href="pdf/economics-big_foot.pdf" download>PDF &darr;</a><a class="sec" href="api/economics-big_foot.html">API &rarr;</a></div></div>
+      <div class="card"><h3>Cascade&ndash;Chinook field economics</h3><div class="std">BSEE OGOR-A · sanctioned V30</div><p>Per-well stackup, NPV timeline and critical-operations detail.</p><div class="actions"><a class="open" href="../economics-cascade_chinook.html">Open &rarr;</a><a class="sec" href="pdf/economics-cascade_chinook.pdf" download>PDF &darr;</a><a class="sec" href="api/economics-cascade_chinook.html">API &rarr;</a></div></div>
+      <div class="card"><h3>Jack / St. Malo field economics</h3><div class="std">BSEE OGOR-A · sanctioned V30</div><p>Per-well stackup, NPV timeline and critical-operations detail.</p><div class="actions"><a class="open" href="../economics-jack_st_malo.html">Open &rarr;</a><a class="sec" href="pdf/economics-jack_st_malo.pdf" download>PDF &darr;</a><a class="sec" href="api/economics-jack_st_malo.html">API &rarr;</a></div></div>
+      <div class="card"><h3>Julia field economics</h3><div class="std">BSEE OGOR-A · sanctioned V30</div><p>Per-well stackup, NPV timeline and critical-operations detail.</p><div class="actions"><a class="open" href="../economics-julia.html">Open &rarr;</a><a class="sec" href="pdf/economics-julia.pdf" download>PDF &darr;</a><a class="sec" href="api/economics-julia.html">API &rarr;</a></div></div>
+      <div class="card"><h3>Shenandoah field economics</h3><div class="std">BSEE OGOR-A · sanctioned V30</div><p>Per-well stackup, NPV timeline and critical-operations detail.</p><div class="actions"><a class="open" href="../economics-shenandoah.html">Open &rarr;</a><a class="sec" href="pdf/economics-shenandoah.pdf" download>PDF &darr;</a><a class="sec" href="api/economics-shenandoah.html">API &rarr;</a></div></div>
+      <div class="card"><h3>Stones field economics</h3><div class="std">BSEE OGOR-A · sanctioned V30</div><p>Per-well stackup, NPV timeline and critical-operations detail.</p><div class="actions"><a class="open" href="../economics-stones.html">Open &rarr;</a><a class="sec" href="pdf/economics-stones.pdf" download>PDF &darr;</a><a class="sec" href="api/economics-stones.html">API &rarr;</a></div></div>
+      <div class="card"><h3>Lower-Tertiary portfolio summary</h3><div class="std">field-by-field roll-up</div><p>The whole Lower-Tertiary play at a glance, aggregated from the per-field V30 economics.</p><div class="actions"><a class="open" href="../portfolio.html">Open &rarr;</a><a class="sec" href="pdf/portfolio.pdf" download>PDF &darr;</a><a class="sec" href="api/portfolio.html">API &rarr;</a></div></div>
+      <div class="card"><h3>Well benchmarking</h3><div class="std">BSEE OGOR-A · 2010&ndash;latest</div><p>Cross-field per-well performance, normalized cumulative &amp; rate comparisons.</p><div class="actions"><a class="open" href="../benchmark.html">Open &rarr;</a><a class="sec" href="pdf/benchmark.pdf" download>PDF &darr;</a><a class="sec" href="api/benchmark.html">API &rarr;</a></div></div>
     </div>
   </section>
 
   <section class="chan" id="wells">
-    <h2>Well operations</h2>
+    <div class="chanhead"><h2>Well operations</h2><a class="onepager" href="pdf/sec-wells.pdf" download>Section 1-pager &darr;</a></div>
     <p class="lead">Drilling and completion performance and well geometry reconstructed from BSEE
     Well Activity Reports and directional surveys.</p>
     <div class="grid">
-      <a class="card" href="../completion/"><h3>Drilling &amp; completion days</h3><div class="std">BSEE Well Activity Reports</div><p>WAR-derived drilling &amp; completion durations for 217 wells across the 12 Lower-Tertiary fields, with medians by field.</p><span class="open">Open &rarr;</span></a>
-      <a class="card" href="../well-path.html"><h3>Julia well paths (3D)</h3><div class="std">BSEE directional surveys</div><p>Interactive 3D directional surveys &mdash; Plotly + Three.js renderers from one frozen JSON contract.</p><span class="open">Open &rarr;</span></a>
+      <div class="card"><h3>Drilling &amp; completion days</h3><div class="std">BSEE Well Activity Reports</div><p>WAR-derived drilling &amp; completion durations for 217 wells across the 12 Lower-Tertiary fields, with medians by field.</p><div class="actions"><a class="open" href="../completion/">Open &rarr;</a><a class="sec" href="pdf/completion.pdf" download>PDF &darr;</a><a class="sec" href="api/completion.html">API &rarr;</a></div></div>
+      <div class="card"><h3>Julia well paths (3D)</h3><div class="std">BSEE directional surveys</div><p>Interactive 3D directional surveys &mdash; Plotly + Three.js renderers from one frozen JSON contract.</p><div class="actions"><a class="open" href="../well-path.html">Open &rarr;</a><a class="sec" href="pdf/well-path.pdf" download>PDF &darr;</a><a class="sec" href="api/well-path.html">API &rarr;</a></div></div>
     </div>
   </section>
 
   <section class="chan" id="playbook">
-    <h2>Offshore field-development playbook</h2>
+    <div class="chanhead"><h2>Offshore field-development playbook</h2><a class="onepager" href="pdf/sec-playbook.pdf" download>Section 1-pager &darr;</a></div>
     <p class="lead">From a field's parameters to a ranked development concept, a to-scale subsea
     schematic and indicative economics &mdash; generated deterministically across ~2,150 offshore
     fields (333 in the Gulf of Mexico).</p>
     <div class="grid">
-      <a class="card" href="../field-development/showcase.html"><h3>Capability showcase</h3><div class="std">concept &rarr; schematic &rarr; economics</div><p>What the playbook produces end-to-end, with generated schematics for real fields across every offshore region.</p><span class="open">Open &rarr;</span></a>
-      <a class="card" href="../field-development/playbook.html"><h3>Interactive playbook</h3><div class="std">live sliders</div><p>Move water depth / reserves / tieback and watch the recommended concept and schematic update live.</p><span class="open">Open &rarr;</span></a>
-      <a class="card" href="../field-development/portfolio/"><h3>Deepwater portfolio</h3><div class="std">10-field Gulf of Mexico</div><p>Full field-development plans, one page per field, with DEXPI-style layout and 3D hardware.</p><span class="open">Open &rarr;</span></a>
-      <a class="card" href="../field-development/bsee-matched/"><h3>BSEE-matched fields</h3><div class="std">recommended vs as-built</div><p>Concept + schematics across 115 BSEE-cross-referenced Gulf of Mexico fields.</p><span class="open">Open &rarr;</span></a>
+      <div class="card"><h3>Capability showcase</h3><div class="std">concept &rarr; schematic &rarr; economics</div><p>What the playbook produces end-to-end, with generated schematics for real fields across every offshore region.</p><div class="actions"><a class="open" href="../field-development/showcase.html">Open &rarr;</a><a class="sec" href="pdf/fd-showcase.pdf" download>PDF &darr;</a><a class="sec" href="api/fd-showcase.html">API &rarr;</a></div></div>
+      <div class="card"><h3>Interactive playbook</h3><div class="std">live sliders</div><p>Move water depth / reserves / tieback and watch the recommended concept and schematic update live.</p><div class="actions"><a class="open" href="../field-development/playbook.html">Open &rarr;</a><a class="sec" href="pdf/fd-playbook.pdf" download>PDF &darr;</a><a class="sec" href="api/fd-playbook.html">API &rarr;</a></div></div>
+      <div class="card"><h3>Deepwater portfolio</h3><div class="std">10-field Gulf of Mexico</div><p>Full field-development plans, one page per field, with DEXPI-style layout and 3D hardware.</p><div class="actions"><a class="open" href="../field-development/portfolio/">Open &rarr;</a><a class="sec" href="pdf/fd-portfolio.pdf" download>PDF &darr;</a><a class="sec" href="api/fd-portfolio.html">API &rarr;</a></div></div>
+      <div class="card"><h3>BSEE-matched fields</h3><div class="std">recommended vs as-built</div><p>Concept + schematics across 115 BSEE-cross-referenced Gulf of Mexico fields.</p><div class="actions"><a class="open" href="../field-development/bsee-matched/">Open &rarr;</a><a class="sec" href="pdf/fd-bsee-matched.pdf" download>PDF &darr;</a><a class="sec" href="api/fd-bsee-matched.html">API &rarr;</a></div></div>
     </div>
   </section>
 
   <section class="chan" id="safety">
-    <h2>Offshore safety &amp; HSE</h2>
+    <div class="chanhead"><h2>Offshore safety &amp; HSE</h2><a class="onepager" href="pdf/sec-safety.pdf" download>Section 1-pager &darr;</a></div>
     <p class="lead">Public marine-casualty and offshore-incident data, normalized and analysed
     deterministically &mdash; incident classification, cause-event breakdowns, and engineering
     screens anchored to real failures.</p>
     <div class="grid">
-      <a class="card" href="../marine_safety/executive_summary.html"><h3>Marine safety analytics</h3><div class="std">TSB · IMO GISIS · MAIB</div><p>Cross-database casualty analysis over 102,618 incident records &mdash; the executive summary and entry point.</p><span class="open">Open &rarr;</span></a>
-      <a class="card" href="../marine_safety/fatality_analysis.html"><h3>Fatality analysis</h3><div class="std">cross-database</div><p>Fatal-incident breakdown and patterns across the combined casualty databases.</p><span class="open">Open &rarr;</span></a>
-      <a class="card" href="../marine_safety/foundering_analysis.html"><h3>Foundering analysis</h3><div class="std">cross-database</div><p>Foundering-incident breakdown, fatality distribution and patterns.</p><span class="open">Open &rarr;</span></a>
-      <a class="card" href="../marine_safety/hatch_analysis.html"><h3>Hatch analysis</h3><div class="std">cross-database</div><p>Hatch-maloperation incidents detected and classified by severity.</p><span class="open">Open &rarr;</span></a>
-      <a class="card" href="../IMO_GISIS_Executive_Report.html"><h3>IMO GISIS casualties</h3><div class="std">13,338 casualties · 1900&ndash;2025</div><p>Marine casualties by severity, vessel type and flag state from the IMO GISIS public database.</p><span class="open">Open &rarr;</span></a>
-      <a class="card" href="../hse/mooring-fatigue-grounded-card.html"><h3>Mooring-fatigue grounded card</h3><div class="std">DNV-OS-E301 T-N curves</div><p>Fatigue-life screening anchored to real BSEE mooring-failure incidents (governing line 18.4-yr vs 25-yr design).</p><span class="open">Open &rarr;</span></a>
+      <div class="card"><h3>Marine safety analytics</h3><div class="std">TSB · IMO GISIS · MAIB</div><p>Cross-database casualty analysis over 102,618 incident records &mdash; the executive summary and entry point.</p><div class="actions"><a class="open" href="../marine_safety/executive_summary.html">Open &rarr;</a><a class="sec" href="pdf/ms-exec.pdf" download>PDF &darr;</a><a class="sec" href="api/ms-exec.html">API &rarr;</a></div></div>
+      <div class="card"><h3>Fatality analysis</h3><div class="std">cross-database</div><p>Fatal-incident breakdown and patterns across the combined casualty databases.</p><div class="actions"><a class="open" href="../marine_safety/fatality_analysis.html">Open &rarr;</a><a class="sec" href="pdf/ms-fatality.pdf" download>PDF &darr;</a><a class="sec" href="api/ms-fatality.html">API &rarr;</a></div></div>
+      <div class="card"><h3>Foundering analysis</h3><div class="std">cross-database</div><p>Foundering-incident breakdown, fatality distribution and patterns.</p><div class="actions"><a class="open" href="../marine_safety/foundering_analysis.html">Open &rarr;</a><a class="sec" href="pdf/ms-foundering.pdf" download>PDF &darr;</a><a class="sec" href="api/ms-foundering.html">API &rarr;</a></div></div>
+      <div class="card"><h3>Hatch analysis</h3><div class="std">cross-database</div><p>Hatch-maloperation incidents detected and classified by severity.</p><div class="actions"><a class="open" href="../marine_safety/hatch_analysis.html">Open &rarr;</a><a class="sec" href="pdf/ms-hatch.pdf" download>PDF &darr;</a><a class="sec" href="api/ms-hatch.html">API &rarr;</a></div></div>
+      <div class="card"><h3>IMO GISIS casualties</h3><div class="std">13,338 casualties · 1900&ndash;2025</div><p>Marine casualties by severity, vessel type and flag state from the IMO GISIS public database.</p><div class="actions"><a class="open" href="../IMO_GISIS_Executive_Report.html">Open &rarr;</a><a class="sec" href="pdf/imo.pdf" download>PDF &darr;</a><a class="sec" href="api/imo.html">API &rarr;</a></div></div>
+      <div class="card"><h3>Mooring-fatigue grounded card</h3><div class="std">DNV-OS-E301 T-N curves</div><p>Fatigue-life screening anchored to real BSEE mooring-failure incidents (governing line 18.4-yr vs 25-yr design).</p><div class="actions"><a class="open" href="../hse/mooring-fatigue-grounded-card.html">Open &rarr;</a><a class="sec" href="pdf/mooring.pdf" download>PDF &darr;</a><a class="sec" href="api/mooring.html">API &rarr;</a></div></div>
     </div>
   </section>
 
   <section class="chan" id="validation">
-    <h2>Sanctioned against frozen baselines</h2>
+    <div class="chanhead"><h2>Sanctioned against frozen baselines</h2><a class="onepager" href="pdf/sec-validation.pdf" download>Section 1-pager &darr;</a></div>
     <p class="note"><span class="pub">■ sanctioned-baseline</span> = reproduces the frozen V30 golden baseline within tolerance (CI-guarded);
        <span class="der">■ data-derived</span> = aggregated directly from public regulatory filings.</p>
     <div class="tablewrap"><table>
@@ -194,10 +204,10 @@
 
 <footer>
   Built by <code>scripts/build_pages.py</code> from frozen report artifacts under <code>reports/**</code>;
-  method code lives under <code>src/worldenergydata/</code>. Every figure traces to a public regulatory
-  filing; the sanctioned economics reproduce a frozen reference in
+  1-page PDFs and workflow-API artifacts by <code>scripts/capabilities/build_onepagers.py</code>.
+  Every figure traces to a public regulatory filing; the sanctioned economics reproduce a frozen reference in
   <a href="https://github.com/vamseeachanta/worldenergydata/blob/main/config/analysis/lower_tertiary/golden_baseline_v30.yml">golden_baseline_v30.yml</a>,
-  CI-guarded so a published number can never silently drift. Where the data is incomplete, each page says so.
+  CI-guarded so a published number can never silently drift.
 </footer>
 </body>
 </html>
