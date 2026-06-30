@@ -5,179 +5,199 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>worldenergydata — Open Energy-Data Capabilities</title>
 <style>
-  :root{--bg:#0d1117;--panel:#161b22;--line:#30363d;--ink:#e6edf3;--mut:#8b949e;
-        --accent:#3b82f6;--ok:#3fb950;--warn:#d29922}
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);
-       font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-  .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
-  header{padding:54px 0 30px;border-bottom:1px solid var(--line)}
-  h1{margin:0 0 6px;font-size:30px;letter-spacing:-.4px}
-  .sub{color:var(--mut);font-size:16px;max-width:780px}
-  .tag{display:inline-block;margin-top:14px;padding:3px 10px;border:1px solid var(--line);
-       border-radius:20px;color:var(--mut);font-size:12.5px}
-  h2{font-size:18px;margin:38px 0 14px;letter-spacing:-.2px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
-  .card h3{margin:0 0 4px;font-size:15.5px}
-  .card .std{color:var(--accent);font-size:12.5px;font-weight:600;margin-bottom:8px}
-  .card ul{margin:0;padding-left:18px;color:var(--mut);font-size:13.5px}
-  .card li{margin:2px 0}
-  table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px;
-        background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  :root{--navy:#0B3D91;--teal:#2BB2A6;--bg:#070c16;--panel:#0e1726;--ink:#e8eef9;
+        --muted:#90a0bd;--line:#22304f;--ok:#3fb950;--warn:#d29922;--side:288px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);
+       color:var(--ink);line-height:1.5}
+  a{color:inherit;text-decoration:none}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#11203a;
+       padding:1px 5px;border-radius:5px;font-size:12px}
+  .side{position:fixed;top:0;left:0;bottom:0;width:var(--side);background:#0a1120;
+        border-right:1px solid var(--line);display:flex;flex-direction:column;
+        padding:22px 16px;overflow-y:auto;z-index:20}
+  .side .brand{display:inline-flex;align-self:flex-start;background:#fff;border-radius:11px;
+               padding:10px 14px;margin-bottom:6px}
+  .side .brand svg{height:30px;width:auto;display:block}
+  .side .tag{font-size:12px;color:var(--muted);margin:0 0 16px 3px}
+  .side nav{flex:1}
+  .navgroup{margin-bottom:6px}
+  .navh{display:block;font-size:13px;font-weight:700;color:#cfe0f2;padding:7px 10px;
+        border-radius:8px;border-left:3px solid transparent}
+  .navh:hover,.navh.active{background:#11203a;border-left-color:var(--teal);color:#fff}
+  .side .start{margin-top:14px;text-align:center;font-weight:700;color:#06243b;
+               background:linear-gradient(135deg,var(--teal),#7af0c0);padding:11px;
+               border-radius:11px}
+  main{margin-left:var(--side);max-width:1200px;padding:0 30px 80px}
+  .hero{padding:42px 4px 8px}
+  .hero h1{font-size:30px;font-weight:800;letter-spacing:-.4px}
+  .hero p{color:var(--muted);font-size:17px;margin-top:10px;max-width:820px}
+  .hero .pill{display:inline-block;margin-top:16px;padding:4px 12px;border:1px solid var(--line);
+              border-radius:20px;color:var(--muted);font-size:12.5px}
+  .chan{margin-top:42px;scroll-margin-top:18px}
+  .chan h2{font-size:20px;border-left:4px solid var(--teal);padding-left:12px;margin-bottom:6px}
+  .chan .lead{color:var(--muted);font-size:14px;padding-left:16px;margin-bottom:18px;max-width:820px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
+  a.card{display:block;background:var(--panel);border:1px solid var(--line);border-radius:16px;
+         padding:18px 18px 16px;transition:transform .15s,border-color .15s}
+  a.card:hover{transform:translateY(-3px);border-color:#3a4d74}
+  a.card h3{font-size:15.5px;font-weight:700;line-height:1.3;color:var(--ink)}
+  a.card .std{color:var(--teal);font-size:12px;font-weight:600;margin:5px 0 8px}
+  a.card p{color:var(--muted);font-size:13.5px}
+  a.card .open{display:inline-block;margin-top:12px;font-size:13px;font-weight:700;color:#06243b;
+               background:linear-gradient(135deg,#4cc2ff,#7af0c0);padding:7px 13px;border-radius:10px}
+  .tablewrap{overflow-x:auto;margin-top:6px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--panel);
+        border:1px solid var(--line);border-radius:14px;overflow:hidden}
   th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line)}
-  th{background:#1c2330;color:var(--mut);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+  th{background:#11203a;color:var(--muted);font-weight:600;font-size:11.5px;
+     text-transform:uppercase;letter-spacing:.4px}
   tr:last-child td{border-bottom:none}
-  td.val{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink)}
-  .pub{color:var(--ok);font-weight:600}
-  .der{color:var(--warn);font-weight:600}
-  .note{color:var(--mut);font-size:13px;margin:10px 0 0}
-  footer{margin:46px 0 30px;padding-top:22px;border-top:1px solid var(--line);
-         color:var(--mut);font-size:12.5px}
-  a{color:var(--accent);text-decoration:none}
-  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#1c2330;
-       padding:1px 5px;border-radius:4px;font-size:12.5px}
-  a.linkcard{text-decoration:none;color:inherit;display:block;transition:border-color .15s,transform .1s}
-  a.linkcard:hover{border-color:var(--accent);transform:translateY(-1px)}
-  a.linkcard h3{color:var(--accent)}
+  td.val{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;text-align:right}
+  .pub{color:var(--ok);font-weight:600}.der{color:var(--warn);font-weight:600}
+  .note{color:var(--muted);font-size:13px;margin:10px 0 0;padding-left:16px}
+  footer{margin-left:var(--side);text-align:center;color:var(--muted);font-size:13px;
+         padding:28px 30px 50px;border-top:1px solid var(--line)}
+  footer a{color:var(--teal)}
+  @media(max-width:980px){
+    :root{--side:0px}
+    .side{position:sticky;top:0;bottom:auto;width:auto;flex-direction:row;align-items:center;
+          gap:10px;overflow-x:auto;padding:9px 14px}
+    .side .brand{margin:0;flex:none}.side .tag,.side .start{display:none}
+    .side nav{display:flex;gap:6px}.navgroup{margin:0}
+    .navh{white-space:nowrap;border-left:0;border-bottom:3px solid transparent;padding:7px 10px}
+    .navh.active{border-left:0;border-bottom-color:var(--teal)}
+    main,footer{margin-left:0}.hero{padding-top:26px}
+  }
 </style>
 </head>
 <body>
-<header><div class="wrap">
-  <h1>worldenergydata — Open Energy-Data Capabilities</h1>
-  <div class="sub">Deterministic offshore field economics, a field-development playbook, and
-  multi-region production &amp; safety analytics &mdash; each result computed by unit-tested
-  domain code on public regulatory filings, frozen into a report artifact, and rendered to
-  static HTML. No server, no API key: the numbers are identical for everyone, every time.</div>
-  <span class="tag">Public BSEE &amp; multi-region data · sanctioned V30 golden baselines · deterministic static outputs</span>
-</div></header>
-
-<div class="wrap">
-
-  <h2>BSEE production &amp; field economics</h2>
-  <div class="grid">
-    <div class="card"><h3>Sanctioned field economics (V30)</h3><div class="std">BSEE OGOR-A · golden_baseline_v30</div>
-      <ul><li>per-well / per-block / per-field NPV, MIRR, IRR, cashflow</li><li>7 Lower-Tertiary deepwater fields, life-to-date</li><li>frozen golden baseline guarded by a CI regression test</li></ul></div>
-    <div class="card"><h3>Production data &amp; decline</h3><div class="std">BSEE OGOR-A (Sep 2000 &ndash; Jul 2025)</div>
-      <ul><li>monthly oil / gas / water by well, lease, field</li><li>per-well stackup &amp; production forecast</li><li>headerless <code>.bin</code> ingestion with positional schema repair</li></ul></div>
-    <div class="card"><h3>Well benchmarking</h3><div class="std">BSEE Well Activity Reports</div>
-      <ul><li>cross-field per-well performance, 2010 &ndash; latest</li><li>normalized cumulative &amp; rate comparisons</li></ul></div>
-    <div class="card"><h3>3D well paths</h3><div class="std">BSEE directional surveys</div>
-      <ul><li>one frozen JSON data contract &rarr; two renderers</li><li>Plotly + Three.js, north/east-correct geometry</li></ul></div>
-    <div class="card"><h3>Drilling &amp; completion days</h3><div class="std">BSEE Well Activity Reports</div>
-      <ul><li>spud&rarr;TD drilling &amp; TD&rarr;final-activity completion spans</li><li>217 wells across 12 Lower-Tertiary fields</li><li>per-well depth / water-depth context, medians by field</li></ul></div>
+<aside class="side">
+  <div class="brand">
+    <svg viewBox="0 0 400 64" role="img" aria-label="worldenergydata" xmlns="http://www.w3.org/2000/svg">
+      <g fill="none" stroke-width="3">
+        <circle cx="32" cy="32" r="23" stroke="#0B3D91"/>
+        <ellipse cx="32" cy="32" rx="9.5" ry="23" stroke="#2BB2A6" stroke-width="2.5"/>
+        <line x1="9" y1="32" x2="55" y2="32" stroke="#2BB2A6" stroke-width="2.5"/>
+        <line x1="13.5" y1="19" x2="50.5" y2="19" stroke="#0B3D91" stroke-width="2"/>
+        <line x1="13.5" y1="45" x2="50.5" y2="45" stroke="#0B3D91" stroke-width="2"/>
+      </g>
+      <circle cx="32" cy="32" r="3" fill="#2BB2A6"/>
+      <text x="74" y="43" font-family="-apple-system,'Segoe UI',Roboto,Arial,sans-serif"
+            font-size="31" font-weight="800" letter-spacing="-0.6">
+        <tspan fill="#0B3D91">world</tspan><tspan fill="#2BB2A6">energy</tspan><tspan fill="#0B3D91">data</tspan>
+      </text>
+    </svg>
   </div>
+  <div class="tag">Open energy-data · deterministic outputs</div>
+  <nav>
+    <div class="navgroup"><a class="navh" href="#economics">Field economics</a></div>
+    <div class="navgroup"><a class="navh" href="#wells">Well operations</a></div>
+    <div class="navgroup"><a class="navh" href="#playbook">Field-development playbook</a></div>
+    <div class="navgroup"><a class="navh" href="#safety">Offshore safety &amp; HSE</a></div>
+    <div class="navgroup"><a class="navh" href="#validation">Sanctioned figures</a></div>
+  </nav>
+  <a class="start" href="../">All data outputs &rarr;</a>
+</aside>
 
-  <h2>Offshore field-development playbook</h2>
-  <div class="grid">
-    <div class="card"><h3>Concept-selection engine</h3><div class="std">SubseaIQ catalog · BSEE assets</div>
-      <ul><li>field parameters &rarr; ranked development concept</li><li>Concept-Select / FEL-1 heuristic fidelity</li><li>basin/region prior + depth-band calibration</li></ul></div>
-    <div class="card"><h3>Subsea schematics</h3><div class="std">deterministic pure-Python SVG</div>
-      <ul><li>to-scale plan-view + block diagrams</li><li>zero external dependencies, self-contained HTML</li><li>flow-assurance flags + indicative economics</li></ul></div>
-    <div class="card"><h3>Deepwater portfolio</h3><div class="std">10-field Gulf of Mexico set</div>
-      <ul><li>full field-development plans per field</li><li>DEXPI-style layout + 3D hardware (CadQuery)</li></ul></div>
-    <div class="card"><h3>BSEE-matched concepts</h3><div class="std">BSEE &times; SubseaIQ join (BOEM block key)</div>
-      <ul><li>recommended vs as-built concept</li><li>115 BSEE-cross-referenced GoM fields</li></ul></div>
-  </div>
+<main>
+  <header class="hero">
+    <h1>worldenergydata — Open Energy-Data Capabilities</h1>
+    <p>Deterministic offshore field economics, a field-development playbook, and offshore safety
+    analytics &mdash; each result computed by unit-tested domain code on public regulatory filings,
+    frozen into a report artifact, and rendered to static HTML. Every card below opens a live page.</p>
+    <span class="pill">Public BSEE &amp; multi-region data · sanctioned V30 golden baselines · a live link for every surface</span>
+  </header>
 
-  <h2>Multi-region data collection &amp; safety</h2>
-  <p class="note">Tier-1 collection surfaces: raw public-source data normalized into a common query layer.
-     Reported as inventories, not sanctioned models.</p>
-  <div class="grid">
-    <div class="card"><h3>Regional production authorities</h3><div class="std">BSEE · Sodir · NSTA · ANP · CNH · AER · RRC · EIA</div>
-      <ul><li>unified cross-regional production &amp; well query</li><li>US GoM, Norway, UK, Brazil, Mexico, Canada, Texas</li></ul></div>
-    <div class="card"><h3>Offshore safety &amp; incidents</h3><div class="std">BSEE HSE · USCG MISLE · NTSB · MAIB</div>
-      <ul><li>incident classification + risk scoring</li><li>marine casualty cause-event analysis</li></ul></div>
-    <div class="card"><h3>Pipeline &amp; marine safety</h3><div class="std">PHMSA · IMO GISIS</div>
-      <ul><li>pipeline safety events; hazmat releases</li><li>IMO GISIS marine-safety executive reporting</li></ul></div>
-    <div class="card"><h3>Infrastructure assets</h3><div class="std">platforms · pipelines · vessels · LNG</div>
-      <ul><li>BSEE structure &amp; pipeline inventories</li><li>vessel fleet specs + OBJ hull geometry</li></ul></div>
-  </div>
+  <section class="chan" id="economics">
+    <h2>Field economics &amp; benchmarking</h2>
+    <p class="lead">Per-well, per-block and per-field NPV / MIRR / IRR for the seven Lower-Tertiary
+    deepwater fields, sanctioned against a frozen V30 golden baseline and guarded by a CI regression test.</p>
+    <div class="grid">
+      <a class="card" href="../economics-anchor.html"><h3>Anchor field economics</h3><div class="std">BSEE OGOR-A · sanctioned V30</div><p>Per-well stackup, NPV timeline and critical-operations detail.</p><span class="open">Open &rarr;</span></a>
+      <a class="card" href="../economics-big_foot.html"><h3>Big Foot field economics</h3><div class="std">BSEE OGOR-A · sanctioned V30</div><p>Per-well stackup, NPV timeline and critical-operations detail.</p><span class="open">Open &rarr;</span></a>
+      <a class="card" href="../economics-cascade_chinook.html"><h3>Cascade&ndash;Chinook field economics</h3><div class="std">BSEE OGOR-A · sanctioned V30</div><p>Per-well stackup, NPV timeline and critical-operations detail.</p><span class="open">Open &rarr;</span></a>
+      <a class="card" href="../economics-jack_st_malo.html"><h3>Jack / St. Malo field economics</h3><div class="std">BSEE OGOR-A · sanctioned V30</div><p>Per-well stackup, NPV timeline and critical-operations detail.</p><span class="open">Open &rarr;</span></a>
+      <a class="card" href="../economics-julia.html"><h3>Julia field economics</h3><div class="std">BSEE OGOR-A · sanctioned V30</div><p>Per-well stackup, NPV timeline and critical-operations detail.</p><span class="open">Open &rarr;</span></a>
+      <a class="card" href="../economics-shenandoah.html"><h3>Shenandoah field economics</h3><div class="std">BSEE OGOR-A · sanctioned V30</div><p>Per-well stackup, NPV timeline and critical-operations detail.</p><span class="open">Open &rarr;</span></a>
+      <a class="card" href="../economics-stones.html"><h3>Stones field economics</h3><div class="std">BSEE OGOR-A · sanctioned V30</div><p>Per-well stackup, NPV timeline and critical-operations detail.</p><span class="open">Open &rarr;</span></a>
+      <a class="card" href="../portfolio.html"><h3>Lower-Tertiary portfolio summary</h3><div class="std">field-by-field roll-up</div><p>The whole Lower-Tertiary play at a glance, aggregated from the per-field V30 economics.</p><span class="open">Open &rarr;</span></a>
+      <a class="card" href="../benchmark.html"><h3>Well benchmarking</h3><div class="std">BSEE OGOR-A · 2010&ndash;latest</div><p>Cross-field per-well performance, normalized cumulative &amp; rate comparisons.</p><span class="open">Open &rarr;</span></a>
+    </div>
+  </section>
 
-  <h2>Sanctioned against frozen baselines</h2>
-  <p class="note"><span class="pub">■ sanctioned-baseline</span> = reproduces the frozen V30 golden baseline within tolerance (CI-guarded);
-     <span class="der">■ data-derived</span> = aggregated directly from public regulatory filings.</p>
-  <table>
-    <thead><tr><th>Surface</th><th>Case</th><th>Result</th><th>Basis</th></tr></thead>
-    <tbody>
-      <tr><td>V30 field economics</td><td>Julia (G20351) terminal NPV @10%</td><td class="val">&minus;$530.6 M</td><td class="pub">sanctioned golden_baseline_v30</td></tr>
-      <tr><td>V30 field economics</td><td>Stones (G17001) terminal NPV @10%</td><td class="val">&minus;$1 479.5 M</td><td class="pub">sanctioned golden_baseline_v30</td></tr>
-      <tr><td>V30 field economics</td><td>Anchor terminal NPV @10%</td><td class="val">&minus;$1 732.8 M</td><td class="pub">sanctioned golden_baseline_v30</td></tr>
-      <tr><td>Julia price sensitivity</td><td>dNPV / d(realized WTI)</td><td class="val">+$16.3 M per $1/bbl</td><td class="pub">V30 model</td></tr>
-      <tr><td>Julia breakeven</td><td>realized-WTI price at NPV = 0</td><td class="val">$99 / bbl</td><td class="pub">V30 model</td></tr>
-      <tr><td>Julia MIRR</td><td>annual, life-to-date</td><td class="val">6.31 %</td><td class="pub">V30 model</td></tr>
-      <tr><td>Portfolio roll-up</td><td>cumulative oil, 6 active LT fields</td><td class="val">685.0 MMbbl</td><td class="der">BSEE OGOR-A</td></tr>
-      <tr><td>Portfolio roll-up</td><td>cumulative gas, 6 active LT fields</td><td class="val">144.1 Bcf</td><td class="der">BSEE OGOR-A</td></tr>
-      <tr><td>Portfolio roll-up</td><td>producing wells / federal leases</td><td class="val">158 / 19</td><td class="der">BSEE OGOR-A (Sep&nbsp;2000&ndash;Jul&nbsp;2025)</td></tr>
-      <tr><td>Playbook coverage</td><td>global offshore fields (GoM subset)</td><td class="val">~2 150 (333)</td><td class="der">SubseaIQ catalog</td></tr>
-      <tr><td>BSEE-matched concepts</td><td>recommended vs as-built fields</td><td class="val">115</td><td class="der">BSEE × SubseaIQ join</td></tr>
-      <tr><td>Drilling &amp; completion days</td><td>wells / fields covered (WAR-derived)</td><td class="val">217 / 12</td><td class="der">BSEE Well Activity Reports</td></tr>
-      <tr><td>Drilling &amp; completion days</td><td>median drilling / completion span</td><td class="val">38 d / 24 d</td><td class="der">BSEE WAR (V30 day-count method)</td></tr>
-      <tr><td>Marine-safety analytics</td><td>incident records analysed / fatalities</td><td class="val">102 618 / 7 349</td><td class="der">TSB · IMO GISIS · MAIB</td></tr>
-      <tr><td>IMO GISIS casualties</td><td>marine casualties, 1900&ndash;2025</td><td class="val">13 338</td><td class="der">IMO GISIS public database</td></tr>
-    </tbody>
-  </table>
+  <section class="chan" id="wells">
+    <h2>Well operations</h2>
+    <p class="lead">Drilling and completion performance and well geometry reconstructed from BSEE
+    Well Activity Reports and directional surveys.</p>
+    <div class="grid">
+      <a class="card" href="../completion/"><h3>Drilling &amp; completion days</h3><div class="std">BSEE Well Activity Reports</div><p>WAR-derived drilling &amp; completion durations for 217 wells across the 12 Lower-Tertiary fields, with medians by field.</p><span class="open">Open &rarr;</span></a>
+      <a class="card" href="../well-path.html"><h3>Julia well paths (3D)</h3><div class="std">BSEE directional surveys</div><p>Interactive 3D directional surveys &mdash; Plotly + Three.js renderers from one frozen JSON contract.</p><span class="open">Open &rarr;</span></a>
+    </div>
+  </section>
 
-  <h2>Live dashboards &amp; explorers</h2>
-  <div class="grid">
-    <a class="card linkcard" href="../field-development/showcase.html"><h3>Field-development capability showcase &rarr;</h3>
-      <div class="std">concept &rarr; schematic &rarr; economics</div>
-      <ul><li>what the playbook produces end-to-end, real fields, every offshore region</li></ul></a>
-    <a class="card linkcard" href="../field-development/playbook.html"><h3>Interactive playbook &rarr;</h3>
-      <div class="std">live sliders</div>
-      <ul><li>water depth / reserves / tieback &rarr; recommended concept + schematic, live</li></ul></a>
-    <a class="card linkcard" href="../field-development/portfolio/index.html"><h3>Deepwater portfolio &rarr;</h3>
-      <div class="std">10-field Gulf of Mexico</div>
-      <ul><li>full field-development plans, one page per field</li></ul></a>
-    <a class="card linkcard" href="../field-development/bsee-matched/index.html"><h3>BSEE-matched fields &rarr;</h3>
-      <div class="std">recommended vs as-built</div>
-      <ul><li>concept + schematics across 115 BSEE-cross-referenced GoM fields</li></ul></a>
-    <a class="card linkcard" href="../well-path.html"><h3>Julia well paths (3D) &rarr;</h3>
-      <div class="std">Plotly + Three.js</div>
-      <ul><li>interactive 3D directional surveys from one data contract</li></ul></a>
-    <a class="card linkcard" href="../portfolio.html"><h3>Lower-Tertiary portfolio summary &rarr;</h3>
-      <div class="std">field-by-field roll-up</div>
-      <ul><li>the whole Lower-Tertiary play at a glance</li></ul></a>
-    <a class="card linkcard" href="../benchmark.html"><h3>Well benchmarking &rarr;</h3>
-      <div class="std">2010 &ndash; latest</div>
-      <ul><li>cross-field per-well performance comparison</li></ul></a>
-    <a class="card linkcard" href="../economics-julia.html"><h3>Julia field economics &rarr;</h3>
-      <div class="std">sanctioned V30 NPV</div>
-      <ul><li>per-well stackup, NPV timeline, critical-operations detail</li></ul></a>
-    <a class="card linkcard" href="../completion/"><h3>Drilling &amp; completion days &rarr;</h3>
-      <div class="std">217 wells · 12 fields</div>
-      <ul><li>WAR-derived drilling &amp; completion durations, medians by field</li></ul></a>
-  </div>
+  <section class="chan" id="playbook">
+    <h2>Offshore field-development playbook</h2>
+    <p class="lead">From a field's parameters to a ranked development concept, a to-scale subsea
+    schematic and indicative economics &mdash; generated deterministically across ~2,150 offshore
+    fields (333 in the Gulf of Mexico).</p>
+    <div class="grid">
+      <a class="card" href="../field-development/showcase.html"><h3>Capability showcase</h3><div class="std">concept &rarr; schematic &rarr; economics</div><p>What the playbook produces end-to-end, with generated schematics for real fields across every offshore region.</p><span class="open">Open &rarr;</span></a>
+      <a class="card" href="../field-development/playbook.html"><h3>Interactive playbook</h3><div class="std">live sliders</div><p>Move water depth / reserves / tieback and watch the recommended concept and schematic update live.</p><span class="open">Open &rarr;</span></a>
+      <a class="card" href="../field-development/portfolio/"><h3>Deepwater portfolio</h3><div class="std">10-field Gulf of Mexico</div><p>Full field-development plans, one page per field, with DEXPI-style layout and 3D hardware.</p><span class="open">Open &rarr;</span></a>
+      <a class="card" href="../field-development/bsee-matched/"><h3>BSEE-matched fields</h3><div class="std">recommended vs as-built</div><p>Concept + schematics across 115 BSEE-cross-referenced Gulf of Mexico fields.</p><span class="open">Open &rarr;</span></a>
+    </div>
+  </section>
 
-  <h2>Offshore safety &amp; HSE</h2>
-  <p class="note">Public marine-casualty and offshore-incident data, normalized and analysed deterministically &mdash;
-     incident classification, cause-event breakdowns, and engineering screens anchored to real failures.</p>
-  <div class="grid">
-    <a class="card linkcard" href="../marine_safety/executive_summary.html"><h3>Marine safety analytics &rarr;</h3>
-      <div class="std">TSB · IMO GISIS · MAIB</div>
-      <ul><li>cross-database casualty analysis over 102,618 incident records &mdash; foundering, fatality &amp; hatch breakdowns</li></ul></a>
-    <a class="card linkcard" href="../IMO_GISIS_Executive_Report.html"><h3>IMO GISIS casualties &rarr;</h3>
-      <div class="std">13,338 casualties · 1900&ndash;2025</div>
-      <ul><li>marine casualties by severity, vessel type and flag state from the IMO GISIS public database</li></ul></a>
-    <a class="card linkcard" href="../hse/mooring-fatigue-grounded-card.html"><h3>Mooring-fatigue grounded card &rarr;</h3>
-      <div class="std">DNV-OS-E301 T-N curves</div>
-      <ul><li>fatigue-life screening anchored to real BSEE mooring-failure incidents (governing line 18.4-yr life vs 25-yr design)</li></ul></a>
-  </div>
+  <section class="chan" id="safety">
+    <h2>Offshore safety &amp; HSE</h2>
+    <p class="lead">Public marine-casualty and offshore-incident data, normalized and analysed
+    deterministically &mdash; incident classification, cause-event breakdowns, and engineering
+    screens anchored to real failures.</p>
+    <div class="grid">
+      <a class="card" href="../marine_safety/executive_summary.html"><h3>Marine safety analytics</h3><div class="std">TSB · IMO GISIS · MAIB</div><p>Cross-database casualty analysis over 102,618 incident records &mdash; the executive summary and entry point.</p><span class="open">Open &rarr;</span></a>
+      <a class="card" href="../marine_safety/fatality_analysis.html"><h3>Fatality analysis</h3><div class="std">cross-database</div><p>Fatal-incident breakdown and patterns across the combined casualty databases.</p><span class="open">Open &rarr;</span></a>
+      <a class="card" href="../marine_safety/foundering_analysis.html"><h3>Foundering analysis</h3><div class="std">cross-database</div><p>Foundering-incident breakdown, fatality distribution and patterns.</p><span class="open">Open &rarr;</span></a>
+      <a class="card" href="../marine_safety/hatch_analysis.html"><h3>Hatch analysis</h3><div class="std">cross-database</div><p>Hatch-maloperation incidents detected and classified by severity.</p><span class="open">Open &rarr;</span></a>
+      <a class="card" href="../IMO_GISIS_Executive_Report.html"><h3>IMO GISIS casualties</h3><div class="std">13,338 casualties · 1900&ndash;2025</div><p>Marine casualties by severity, vessel type and flag state from the IMO GISIS public database.</p><span class="open">Open &rarr;</span></a>
+      <a class="card" href="../hse/mooring-fatigue-grounded-card.html"><h3>Mooring-fatigue grounded card</h3><div class="std">DNV-OS-E301 T-N curves</div><p>Fatigue-life screening anchored to real BSEE mooring-failure incidents (governing line 18.4-yr vs 25-yr design).</p><span class="open">Open &rarr;</span></a>
+    </div>
+  </section>
 
-  <h2>Provenance</h2>
-  <p class="note">Every figure traces to a public regulatory filing, and the sanctioned economics reproduce a
-  frozen reference held in
-  <a href="https://github.com/vamseeachanta/worldenergydata/blob/main/config/analysis/lower_tertiary/golden_baseline_v30.yml"><code>config/analysis/lower_tertiary/golden_baseline_v30.yml</code></a>
-  &mdash; a CI regression test keeps the published numbers in lock-step with that baseline, so a result can never
-  silently drift from the sanctioned model. Where the underlying data is incomplete, each page says so explicitly
-  rather than filling the gap with a guess.</p>
+  <section class="chan" id="validation">
+    <h2>Sanctioned against frozen baselines</h2>
+    <p class="note"><span class="pub">■ sanctioned-baseline</span> = reproduces the frozen V30 golden baseline within tolerance (CI-guarded);
+       <span class="der">■ data-derived</span> = aggregated directly from public regulatory filings.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Surface</th><th>Case</th><th>Result</th><th>Basis</th></tr></thead>
+      <tbody>
+        <tr><td>V30 field economics</td><td>Julia (G20351) terminal NPV @10%</td><td class="val">&minus;$530.6 M</td><td class="pub">sanctioned golden_baseline_v30</td></tr>
+        <tr><td>V30 field economics</td><td>Stones (G17001) terminal NPV @10%</td><td class="val">&minus;$1 479.5 M</td><td class="pub">sanctioned golden_baseline_v30</td></tr>
+        <tr><td>V30 field economics</td><td>Anchor terminal NPV @10%</td><td class="val">&minus;$1 732.8 M</td><td class="pub">sanctioned golden_baseline_v30</td></tr>
+        <tr><td>Julia price sensitivity</td><td>dNPV / d(realized WTI)</td><td class="val">+$16.3 M per $1/bbl</td><td class="pub">V30 model</td></tr>
+        <tr><td>Julia breakeven</td><td>realized-WTI price at NPV = 0</td><td class="val">$99 / bbl</td><td class="pub">V30 model</td></tr>
+        <tr><td>Julia MIRR</td><td>annual, life-to-date</td><td class="val">6.31 %</td><td class="pub">V30 model</td></tr>
+        <tr><td>Portfolio roll-up</td><td>cumulative oil, 6 active LT fields</td><td class="val">685.0 MMbbl</td><td class="der">BSEE OGOR-A</td></tr>
+        <tr><td>Portfolio roll-up</td><td>producing wells / federal leases</td><td class="val">158 / 19</td><td class="der">BSEE OGOR-A (Sep&nbsp;2000&ndash;Jul&nbsp;2025)</td></tr>
+        <tr><td>Drilling &amp; completion days</td><td>wells / fields covered (WAR-derived)</td><td class="val">217 / 12</td><td class="der">BSEE Well Activity Reports</td></tr>
+        <tr><td>Drilling &amp; completion days</td><td>median drilling / completion span</td><td class="val">38 d / 24 d</td><td class="der">BSEE WAR (V30 day-count method)</td></tr>
+        <tr><td>Marine-safety analytics</td><td>incident records analysed / fatalities</td><td class="val">102 618 / 7 349</td><td class="der">TSB · IMO GISIS · MAIB</td></tr>
+        <tr><td>IMO GISIS casualties</td><td>marine casualties, 1900&ndash;2025</td><td class="val">13 338</td><td class="der">IMO GISIS public database</td></tr>
+        <tr><td>Playbook coverage</td><td>global offshore fields (GoM subset)</td><td class="val">~2 150 (333)</td><td class="der">SubseaIQ catalog</td></tr>
+        <tr><td>BSEE-matched concepts</td><td>recommended vs as-built fields</td><td class="val">115</td><td class="der">BSEE × SubseaIQ join</td></tr>
+      </tbody>
+    </table></div>
+  </section>
 
-  <footer>
-    Built by <code>scripts/build_pages.py</code> from frozen report artifacts under <code>reports/**</code>; method
-    code lives under <code>src/worldenergydata/</code>. Lower-Tertiary economics are sanctioned on US Gulf of Mexico
-    BSEE data; the field-development playbook runs over the SubseaIQ field catalog (~2014) at Concept-Select / FEL-1
-    fidelity and is not a sanctioned design.
-  </footer>
-</div>
+</main>
+
+<footer>
+  Built by <code>scripts/build_pages.py</code> from frozen report artifacts under <code>reports/**</code>;
+  method code lives under <code>src/worldenergydata/</code>. Every figure traces to a public regulatory
+  filing; the sanctioned economics reproduce a frozen reference in
+  <a href="https://github.com/vamseeachanta/worldenergydata/blob/main/config/analysis/lower_tertiary/golden_baseline_v30.yml">golden_baseline_v30.yml</a>,
+  CI-guarded so a published number can never silently drift. Where the data is incomplete, each page says so.
+</footer>
 </body>
 </html>
