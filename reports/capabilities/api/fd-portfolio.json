@@ -1,0 +1,36 @@
+{
+  "schema": "deckhand.workflow_api.ResultEnvelope/2",
+  "status": "ok",
+  "repo": "worldenergydata",
+  "report_url": "https://vamseeachanta.github.io/worldenergydata/field-development/portfolio/",
+  "provenance": {
+    "basis": "10-field Gulf of Mexico",
+    "deterministic": true,
+    "source": "public regulatory filings"
+  },
+  "request": {
+    "method": "GET",
+    "url": "https://vamseeachanta.github.io/worldenergydata/field-development/portfolio/"
+  },
+  "surface": "worldenergydata:fd-portfolio",
+  "outputs": [
+    {
+      "kind": "report",
+      "url": "https://vamseeachanta.github.io/worldenergydata/field-development/portfolio/"
+    }
+  ],
+  "note": "Published report surface \u2014 the deterministic output is served as a self-contained page; GET the report_url to consume it.",
+  "prompt": "Generate field-development plans for the 10-field deepwater Gulf of Mexico portfolio.",
+  "how_to_run": [
+    {
+      "via": "telegram",
+      "bot": "@the_deckhand_bot",
+      "deep_link": "https://t.me/the_deckhand_bot",
+      "step": "Open @the_deckhand_bot and send: Generate field-development plans for the 10-field deepwater Gulf of Mexico portfolio."
+    },
+    {
+      "via": "http",
+      "step": "GET https://vamseeachanta.github.io/worldenergydata/field-development/portfolio/"
+    }
+  ]
+}

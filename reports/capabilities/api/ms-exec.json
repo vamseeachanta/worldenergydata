@@ -1,0 +1,55 @@
+{
+  "schema": "deckhand.workflow_api.ResultEnvelope/2",
+  "status": "ok",
+  "repo": "worldenergydata",
+  "report_url": "https://vamseeachanta.github.io/worldenergydata/marine_safety/executive_summary.html",
+  "provenance": {
+    "basis": "TSB \u00b7 IMO GISIS \u00b7 MAIB",
+    "deterministic": true,
+    "source": "public regulatory filings"
+  },
+  "request": {
+    "method": "POST",
+    "path": "/api/run",
+    "body": {
+      "repo": "worldenergydata",
+      "workflow": "marine-safety-stats",
+      "inputs": {
+        "field": "Marine safety analytics"
+      }
+    }
+  },
+  "invocation": "uv run python -m worldenergydata examples/workflows/marine-safety-stats/input.yml",
+  "workflow": "worldenergydata:marine-safety-stats",
+  "outputs": [
+    {
+      "kind": "report",
+      "url": "https://vamseeachanta.github.io/worldenergydata/marine_safety/executive_summary.html"
+    }
+  ],
+  "note": "Deterministic registry workflow (docs/registry/workflows.yaml). POST to the Deckhand workflow-API, or run the invocation locally; the embedded report is the rendered output.",
+  "prompt": "Summarise the cross-database marine-safety casualty statistics.",
+  "how_to_run": [
+    {
+      "via": "telegram",
+      "bot": "@the_deckhand_bot",
+      "deep_link": "https://t.me/the_deckhand_bot",
+      "step": "Open @the_deckhand_bot and send: Summarise the cross-database marine-safety casualty statistics."
+    },
+    {
+      "via": "http",
+      "step": "POST /api/run with a scoped bearer token",
+      "body": {
+        "repo": "worldenergydata",
+        "workflow": "marine-safety-stats",
+        "inputs": {
+          "field": "Marine safety analytics"
+        }
+      }
+    },
+    {
+      "via": "cli",
+      "step": "uv run python -m worldenergydata examples/workflows/marine-safety-stats/input.yml"
+    }
+  ]
+}

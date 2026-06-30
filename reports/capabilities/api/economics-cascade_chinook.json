@@ -1,0 +1,55 @@
+{
+  "schema": "deckhand.workflow_api.ResultEnvelope/2",
+  "status": "ok",
+  "repo": "worldenergydata",
+  "report_url": "https://vamseeachanta.github.io/worldenergydata/economics-cascade_chinook.html",
+  "provenance": {
+    "basis": "BSEE OGOR-A \u00b7 sanctioned V30",
+    "deterministic": true,
+    "source": "public regulatory filings"
+  },
+  "request": {
+    "method": "POST",
+    "path": "/api/run",
+    "body": {
+      "repo": "worldenergydata",
+      "workflow": "fdas-field-npv",
+      "inputs": {
+        "field": "Cascade\u2013Chinook field economics"
+      }
+    }
+  },
+  "invocation": "uv run python -m worldenergydata examples/workflows/fdas-field-npv/input.yml",
+  "workflow": "worldenergydata:fdas-field-npv",
+  "outputs": [
+    {
+      "kind": "report",
+      "url": "https://vamseeachanta.github.io/worldenergydata/economics-cascade_chinook.html"
+    }
+  ],
+  "note": "Deterministic registry workflow (docs/registry/workflows.yaml). POST to the Deckhand workflow-API, or run the invocation locally; the embedded report is the rendered output.",
+  "prompt": "Run the sanctioned V30 field economics for Cascade\u2013Chinook \u2014 per-well NPV, MIRR and the breakeven WTI.",
+  "how_to_run": [
+    {
+      "via": "telegram",
+      "bot": "@the_deckhand_bot",
+      "deep_link": "https://t.me/the_deckhand_bot",
+      "step": "Open @the_deckhand_bot and send: Run the sanctioned V30 field economics for Cascade\u2013Chinook \u2014 per-well NPV, MIRR and the breakeven WTI."
+    },
+    {
+      "via": "http",
+      "step": "POST /api/run with a scoped bearer token",
+      "body": {
+        "repo": "worldenergydata",
+        "workflow": "fdas-field-npv",
+        "inputs": {
+          "field": "Cascade\u2013Chinook field economics"
+        }
+      }
+    },
+    {
+      "via": "cli",
+      "step": "uv run python -m worldenergydata examples/workflows/fdas-field-npv/input.yml"
+    }
+  ]
+}
