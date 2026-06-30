@@ -1,0 +1,117 @@
+sources:
+  wellbore_query:
+    api_number:
+      - API_NO
+      - API_NUMBER
+      - API
+    district:
+      - DISTRICT_NO
+      - DISTRICT
+    field_number:
+      - FIELD_NO
+      - FIELD_NUMBER
+    field_name:
+      - FIELD_NAME
+    lease_number:
+      - LEASE_NO
+      - LEASE_NUMBER
+    lease_name:
+      - LEASE_NAME
+    operator_number:
+      - OPERATOR_NO
+      - OPERATOR_NUMBER
+    operator_name:
+      - OPERATOR_NAME
+    well_status:
+      - WELL_STATUS
+      - STATUS
+    well_type:
+      - WELL_TYPE
+      - TYPE
+    total_depth:
+      - TOTAL_DEPTH
+      - TD
+    completion_date:
+      - COMPLETION_DATE
+      - COMPL_DATE
+    plug_date:
+      - PLUG_DATE
+
+  drilling_permits:
+    api_number:
+      - API_NO
+      - API_NUMBER
+      - API
+    permit_number:
+      - PERMIT_NO
+      - PERMIT_NUMBER
+    permit_status:
+      - PERMIT_STATUS
+      - STATUS
+    permit_type:
+      - PERMIT_TYPE
+      - TYPE
+    district:
+      - DISTRICT_NO
+      - DISTRICT
+    field_number:
+      - FIELD_NO
+      - FIELD_NUMBER
+    field_name:
+      - FIELD_NAME
+    lease_number:
+      - LEASE_NO
+      - LEASE_NUMBER
+    lease_name:
+      - LEASE_NAME
+    operator_number:
+      - OPERATOR_NO
+      - OPERATOR_NUMBER
+    operator_name:
+      - OPERATOR_NAME
+    permit_issued_date:
+      - APPROVED_DATE
+      - APPROVAL_DATE
+      - ISSUED_DATE
+    permit_amended_date:
+      - AMENDED_DATE
+      - AMEND_DATE
+    permit_extended_date:
+      - EXTENDED_DATE
+      - EXTENSION_DATE
+    spud_date:
+      - SPUD_DATE
+    latitude:
+      - LATITUDE
+      - LAT
+    longitude:
+      - LONGITUDE
+      - LON
+      - LONG
+
+  completion_data:
+    api_number:
+      - API_NO
+      - API_NUMBER
+      - API
+    completion_date:
+      - COMPLETION_DATE
+      - COMPL_DATE
+    form_type:
+      - FORM_TYPE
+      - FORM
+    field_number:
+      - FIELD_NO
+      - FIELD_NUMBER
+    field_name:
+      - FIELD_NAME
+    lease_number:
+      - LEASE_NO
+      - LEASE_NUMBER
+    lease_name:
+      - LEASE_NAME
+    operator_number:
+      - OPERATOR_NO
+      - OPERATOR_NUMBER
+    operator_name:
+      - OPERATOR_NAME
