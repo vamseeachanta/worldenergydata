@@ -1,0 +1,31 @@
+{
+  "schema": "deckhand.workflow_api.ResultEnvelope/2",
+  "status": "ok",
+  "repo": "worldenergydata",
+  "report_url": "https://vamseeachanta.github.io/worldenergydata/economics-stones.html",
+  "provenance": {
+    "basis": "BSEE OGOR-A \u00b7 sanctioned V30",
+    "deterministic": true,
+    "source": "public regulatory filings"
+  },
+  "request": {
+    "method": "POST",
+    "path": "/api/run",
+    "body": {
+      "repo": "worldenergydata",
+      "workflow": "fdas-field-npv",
+      "inputs": {
+        "field": "Stones field economics"
+      }
+    }
+  },
+  "invocation": "uv run python -m worldenergydata examples/workflows/fdas-field-npv/input.yml",
+  "workflow": "worldenergydata:fdas-field-npv",
+  "outputs": [
+    {
+      "kind": "report",
+      "url": "https://vamseeachanta.github.io/worldenergydata/economics-stones.html"
+    }
+  ],
+  "note": "Deterministic registry workflow (docs/registry/workflows.yaml). POST to the Deckhand workflow-API, or run the invocation locally; the embedded report is the rendered output."
+}

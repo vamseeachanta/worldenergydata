@@ -1,0 +1,23 @@
+{
+  "schema": "deckhand.workflow_api.ResultEnvelope/2",
+  "status": "ok",
+  "repo": "worldenergydata",
+  "report_url": "https://vamseeachanta.github.io/worldenergydata/portfolio.html",
+  "provenance": {
+    "basis": "field-by-field roll-up",
+    "deterministic": true,
+    "source": "public regulatory filings"
+  },
+  "request": {
+    "method": "GET",
+    "url": "https://vamseeachanta.github.io/worldenergydata/portfolio.html"
+  },
+  "surface": "worldenergydata:portfolio",
+  "outputs": [
+    {
+      "kind": "report",
+      "url": "https://vamseeachanta.github.io/worldenergydata/portfolio.html"
+    }
+  ],
+  "note": "Published report surface \u2014 the deterministic output is served as a self-contained page; GET the report_url to consume it."
+}

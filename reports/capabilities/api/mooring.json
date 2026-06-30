@@ -1,0 +1,23 @@
+{
+  "schema": "deckhand.workflow_api.ResultEnvelope/2",
+  "status": "ok",
+  "repo": "worldenergydata",
+  "report_url": "https://vamseeachanta.github.io/worldenergydata/hse/mooring-fatigue-grounded-card.html",
+  "provenance": {
+    "basis": "DNV-OS-E301 T-N curves",
+    "deterministic": true,
+    "source": "public regulatory filings"
+  },
+  "request": {
+    "method": "GET",
+    "url": "https://vamseeachanta.github.io/worldenergydata/hse/mooring-fatigue-grounded-card.html"
+  },
+  "surface": "worldenergydata:mooring",
+  "outputs": [
+    {
+      "kind": "report",
+      "url": "https://vamseeachanta.github.io/worldenergydata/hse/mooring-fatigue-grounded-card.html"
+    }
+  ],
+  "note": "Published report surface \u2014 the deterministic output is served as a self-contained page; GET the report_url to consume it."
+}
