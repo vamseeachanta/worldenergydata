@@ -226,6 +226,7 @@ _TEMPLATE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
   {figs}
   <h2>What you get</h2>
   <ul>{bullets}</ul>
+  {ask}
   <div class="foot">
     <div>worldenergydata · open energy-data · deterministic outputs on public regulatory filings<br>
       <span class="live">Explore live: {live}</span></div>
@@ -245,6 +246,39 @@ WORKFLOW_MAP: dict[str, str] = {
     "ms-exec": "marine-safety-stats",
 }
 _API_INVOKE = "uv run python -m worldenergydata {input}"
+_BOT = "https://t.me/the_deckhand_bot"
+
+# A ready-to-send natural-language "starting prompt" per live work — paste it to
+# @the_deckhand_bot (hermes routes NL to the workflow) or pass it as the body of
+# a workflow-API run. Keyed by spec id; works without a prompt fall back to a
+# generic ask built from the title.
+PROMPTS: dict[str, str] = {
+    "economics-anchor": "Run the sanctioned V30 field economics for Anchor — per-well NPV, MIRR and the breakeven WTI.",
+    "economics-big_foot": "Run the sanctioned V30 field economics for Big Foot — per-well NPV, MIRR and the breakeven WTI.",
+    "economics-cascade_chinook": "Run the sanctioned V30 field economics for Cascade–Chinook — per-well NPV, MIRR and the breakeven WTI.",
+    "economics-jack_st_malo": "Run the sanctioned V30 field economics for Jack / St. Malo — per-well NPV, MIRR and the breakeven WTI.",
+    "economics-julia": "Run the sanctioned V30 field economics for Julia — per-well NPV, MIRR and the breakeven WTI.",
+    "economics-shenandoah": "Run the sanctioned V30 field economics for Shenandoah — per-well NPV, MIRR and the breakeven WTI.",
+    "economics-stones": "Run the sanctioned V30 field economics for Stones — per-well NPV, MIRR and the breakeven WTI.",
+    "portfolio": "Give me the Lower-Tertiary portfolio economics roll-up across all seven fields.",
+    "benchmark": "Benchmark Lower-Tertiary well performance across fields from 2010 to latest.",
+    "completion": "Show drilling and completion days for the Lower-Tertiary fields, with medians by field.",
+    "well-path": "Plot the Julia development well paths in 3D from the BSEE directional surveys.",
+    "fd-showcase": "Show the field-development playbook end-to-end for a representative deepwater field.",
+    "fd-playbook": "Recommend a development concept for a field at 1500 m water depth, 200 MMbbl recoverable, 30 km tieback.",
+    "fd-portfolio": "Generate field-development plans for the 10-field deepwater Gulf of Mexico portfolio.",
+    "fd-bsee-matched": "Compare recommended vs as-built development concepts across the BSEE-matched Gulf of Mexico fields.",
+    "ms-exec": "Summarise the cross-database marine-safety casualty statistics.",
+    "ms-fatality": "Break down marine fatalities by leading cause.",
+    "ms-foundering": "Analyse foundering incidents and their fatality distribution.",
+    "ms-hatch": "Find and classify hatch-maloperation incidents by severity.",
+    "imo": "Summarise IMO GISIS marine casualties by severity, vessel type and flag state, 1900–2025.",
+    "mooring": "Screen mooring fatigue life against the 25-year design using DNV-OS-E301 T-N curves.",
+}
+
+
+def _prompt_for(spec: dict) -> str:
+    return PROMPTS.get(spec["id"], f"Run the worldenergydata {spec['title'].lower()} and send me the report.")
 
 
 def _api_envelope(spec: dict) -> dict:
@@ -277,6 +311,21 @@ def _api_envelope(spec: dict) -> dict:
         env["outputs"] = [{"kind": "report", "url": report_url}]
         env["note"] = ("Published report surface — the deterministic output is served as a "
                        "self-contained page; GET the report_url to consume it.")
+    # Natural-language starting prompt + how-to-run, so users can fire it via the
+    # Deckhand bot (hermes routes NL → workflow) or the HTTP / CLI paths.
+    prompt = _prompt_for(spec)
+    env["prompt"] = prompt
+    how: list[dict] = [
+        {"via": "telegram", "bot": "@the_deckhand_bot", "deep_link": _BOT,
+         "step": f"Open @the_deckhand_bot and send: {prompt}"}
+    ]
+    if wf:
+        how.append({"via": "http", "step": "POST /api/run with a scoped bearer token",
+                    "body": env["request"]["body"]})
+        how.append({"via": "cli", "step": env["invocation"]})
+    else:
+        how.append({"via": "http", "step": f"GET {report_url}"})
+    env["how_to_run"] = how
     return env
 
 
@@ -304,10 +353,28 @@ _API_TEMPLATE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
   iframe{{width:100%;height:560px;border:0;display:block;background:#fff}}
   .note{{color:var(--muted);font-size:12.5px;margin-top:6px}}
   a{{color:var(--navy)}}
+  .bigpanel{{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-top:16px}}
+  .bigpanel h2{{font-size:11.5px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px}}
+  .prompt{{display:flex;gap:10px;align-items:flex-start}}
+  .prompt .q{{flex:1;background:var(--soft);border:1px solid var(--line);border-radius:9px;padding:11px 13px;font-size:14px;color:var(--ink)}}
+  .copy{{font:700 12px Arial;color:#fff;background:linear-gradient(135deg,#0f8a7e,#0B3D91);border:0;border-radius:9px;padding:10px 13px;cursor:pointer;white-space:nowrap}}
+  .how ol{{margin:8px 0 0 18px}} .how li{{font-size:13.5px;margin:7px 0;color:var(--ink)}}
+  .how code{{background:#0e1726;color:#d6e2f5;padding:1px 6px;border-radius:5px;font-size:12px}}
 </style></head>
 <body><div class="wrap">
   <div class="top">{logo}<div class="kind">Workflow-API · self-contained call</div></div>
   <h1>{title}</h1><div class="std">{std}</div>
+
+  <div class="bigpanel">
+    <h2>Starting prompt — fire it at Deckhand</h2>
+    <div class="prompt">
+      <div class="q" id="prompt">{prompt}</div>
+      <button class="copy" onclick="navigator.clipboard&amp;&amp;navigator.clipboard.writeText(document.getElementById('prompt').innerText)">Copy</button>
+      <a class="copy" href="{bot}" style="text-decoration:none">Run on Deckhand &rarr;</a>
+    </div>
+    <div class="how"><h2 style="margin-top:14px">How to run the API</h2><ol>{howsteps}</ol></div>
+  </div>
+
   <div class="row">
     <div class="panel"><h2>Request — input</h2><span class="verb">{verb}</span>{reqsnippet}</div>
     <div class="panel"><h2>Response — ResultEnvelope</h2><pre>{envelope}</pre>
@@ -336,11 +403,16 @@ def _render_api_html(spec: dict, env: dict) -> str:
     else:
         verb = "GET"
         reqsnippet = f"<pre>curl -L {html.escape(report_url)}</pre>"
+    howsteps = ""
+    for step in env["how_to_run"]:
+        label = {"telegram": "Telegram", "http": "HTTP", "cli": "CLI"}.get(step["via"], step["via"])
+        howsteps += f"<li><b>{label}.</b> {html.escape(step['step'])}</li>"
     return _API_TEMPLATE.format(
         logo=_LOGO, title=html.escape(spec["title"]), std=html.escape(spec["std"]),
         verb=verb, reqsnippet=reqsnippet,
         envelope=html.escape(_json.dumps(env, indent=2)),
         id=spec["id"], note=html.escape(env["note"]), report_url=html.escape(report_url),
+        prompt=html.escape(env["prompt"]), bot=_BOT, howsteps=howsteps,
     )
 
 
@@ -355,9 +427,16 @@ def _render_html(spec: dict) -> str:
         figs = f'<div class="figs">{cells}</div>'
     bullets = "".join(f"<li>{html.escape(b)}</li>" for b in spec["bullets"])
     live = f"{_SITE}/{spec['path']}"
+    ask = ""
+    if spec["kind"] == "work":
+        ask = ('<div style="margin-top:18px;padding:11px 14px;background:var(--soft);'
+               'border:1px solid var(--line);border-radius:10px;font-size:12.5px">'
+               f'<b>Ask Deckhand:</b> &ldquo;{html.escape(_prompt_for(spec))}&rdquo; '
+               '&mdash; send to @the_deckhand_bot to run it live.</div>')
     return _TEMPLATE.format(
         logo=_LOGO, std=html.escape(spec["std"]), title=html.escape(spec["title"]),
         blurb=html.escape(spec["blurb"]), figs=figs, bullets=bullets, live=html.escape(live),
+        ask=ask,
     )
 
 
