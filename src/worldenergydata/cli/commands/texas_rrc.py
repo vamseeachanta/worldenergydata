@@ -511,6 +511,95 @@ def refresh(
     _execute_refresh_plans(refresher, plans, explicit_sources=bool(source))
 
 
+def _lifecycle_input_paths(raw_root: Path) -> list[str]:
+    raw_path = raw_root / "raw"
+    if not raw_path.exists():
+        return []
+    return [
+        str(path.relative_to(raw_root))
+        for path in sorted(raw_path.rglob("*"))
+        if path.is_file()
+    ]
+
+
+def _print_lifecycle_summary(row_count: int, source_gaps) -> None:
+    table = Table(
+        title="Texas RRC Lifecycle Normalization",
+        show_header=True,
+        header_style="bold cyan",
+    )
+    table.add_column("Metric", style="dim")
+    table.add_column("Value")
+    table.add_row("Lifecycle rows", str(row_count))
+    table.add_row("Source gaps", ", ".join(source_gaps) if source_gaps else "None")
+    console.print(table)
+
+
+@app.command("normalize-lifecycle")
+def normalize_lifecycle(
+    raw_root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--raw-root",
+        help="Root containing Texas RRC raw lifecycle snapshots",
+    ),
+    output_root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--output-root",
+        help="Root for curated lifecycle outputs",
+    ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Build the lifecycle spine summary without writing curated outputs",
+    ),
+    require_sources: bool = typer.Option(
+        False,
+        "--require-sources",
+        help="Fail when any lifecycle source directory is missing or empty",
+    ),
+) -> None:
+    """Normalize local official Texas RRC raw snapshots into a lifecycle spine."""
+    from worldenergydata.texas_rrc.lifecycle.io import write_lifecycle_outputs
+    from worldenergydata.texas_rrc.lifecycle.quality import assess_lifecycle_quality
+    from worldenergydata.texas_rrc.lifecycle.sources import load_lifecycle_inputs
+    from worldenergydata.texas_rrc.lifecycle.spine import build_lifecycle_spine
+
+    try:
+        inputs = load_lifecycle_inputs(raw_root)
+        if require_sources and inputs.source_gaps:
+            console.print(
+                "[red]Error:[/red] missing lifecycle sources: "
+                f"{', '.join(inputs.source_gaps)}"
+            )
+            raise typer.Exit(1)
+
+        spine = build_lifecycle_spine(inputs)
+        quality = assess_lifecycle_quality(spine, source_gaps=inputs.source_gaps)
+        _print_lifecycle_summary(len(spine), inputs.source_gaps)
+
+        if dry_run:
+            console.print("[yellow]Dry run:[/yellow] no lifecycle outputs written")
+            return
+
+        manifest = write_lifecycle_outputs(
+            spine,
+            quality,
+            output_root=output_root,
+            input_paths=_lifecycle_input_paths(raw_root),
+        )
+        console.print(
+            "[green]Wrote lifecycle spine[/green] "
+            f"{manifest.row_count} rows -> {manifest.spine_path}"
+        )
+        console.print(f"[dim]Quality report: {manifest.quality_path}[/dim]")
+        console.print(f"[dim]Manifest: {manifest.manifest_path}[/dim]")
+    except typer.Exit:
+        raise
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {str(e)}")
+        raise typer.Exit(1)
+
+
 @app.command()
 def analyze(
     district: Optional[str] = typer.Option(
