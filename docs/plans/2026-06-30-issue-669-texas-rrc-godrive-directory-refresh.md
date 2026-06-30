@@ -1,7 +1,7 @@
 # Plan: Issue #669 - Texas RRC GoDrive directory refresh
 
 **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/669
-**Status:** plan-review
+**Status:** plan-approved
 **Tier:** T2 (direct-source transport, raw refresh planner, CLI, docs, tests)
 **Client:** N/A
 **Project:** worldenergydata onshore field development

@@ -17,7 +17,7 @@ Examples:
     worldenergydata texas-rrc validate-api 42-123-12345
 """
 
-from datetime import datetime
+from datetime import date, datetime
 from enum import Enum
 from pathlib import Path
 from typing import List, Optional
@@ -284,6 +284,28 @@ def _print_refresh_plans(plans) -> None:
     console.print(table)
 
 
+def _print_directory_refresh_plans(plans) -> None:
+    table = Table(
+        title="Texas RRC GoDrive Directory Refresh",
+        show_header=True,
+        header_style="bold cyan",
+    )
+    table.add_column("Source", style="dim", no_wrap=True)
+    table.add_column("Rows", justify="right")
+    table.add_column("Selected", justify="right")
+    table.add_column("Files", overflow="fold")
+
+    for plan in plans:
+        table.add_row(
+            plan.source_id,
+            str(plan.row_count),
+            str(len(plan.selected_files)),
+            ", ".join(file.filename for file in plan.selected_files),
+        )
+
+    console.print(table)
+
+
 def _validate_refresh_selection(
     source: Optional[List[str]],
     all_sources: bool,
@@ -322,6 +344,60 @@ def _execute_refresh_plans(refresher, plans, explicit_sources: bool) -> None:
         )
 
 
+def _is_directory_source(refresher, source_id: str) -> bool:
+    return (
+        refresher.catalog[source_id]["download_strategy"]
+        == "official_godrive_directory"
+    )
+
+
+def _validate_directory_options(
+    refresher, source_ids, since_date, through_date
+) -> None:
+    if not (since_date or through_date):
+        return
+    if any(not _is_directory_source(refresher, source_id) for source_id in source_ids):
+        console.print(
+            "[red]Error:[/red] date-window options only apply to directory sources"
+        )
+        raise typer.Exit(1)
+    if any(
+        refresher.catalog[source_id].get("directory_refresh_policy") == "all_files"
+        for source_id in source_ids
+    ):
+        console.print(
+            "[red]Error:[/red] date-window options only apply to dated directory "
+            "sources"
+        )
+        raise typer.Exit(1)
+
+
+def _parse_refresh_date(value: str | None, option_name: str) -> date | None:
+    if value is None:
+        return None
+    try:
+        return date.fromisoformat(value)
+    except ValueError:
+        console.print(f"[red]Error:[/red] {option_name} must use YYYY-MM-DD")
+        raise typer.Exit(1) from None
+
+
+def _normalize_selection_mode(selection: str) -> str:
+    mode = selection.replace("-", "_")
+    if mode not in {"catalog_default", "latest", "all"}:
+        console.print(
+            "[red]Error:[/red] selection must be one of: catalog_default, latest, all"
+        )
+        raise typer.Exit(1)
+    return mode
+
+
+def _validate_rows_per_page(rows_per_page: int) -> None:
+    if rows_per_page < 1:
+        console.print("[red]Error:[/red] --rows-per-page must be at least 1")
+        raise typer.Exit(1)
+
+
 @app.command()
 def refresh(
     source: Optional[List[str]] = typer.Option(
@@ -350,10 +426,35 @@ def refresh(
         "--output-root",
         help="Raw data output root",
     ),
+    since_date: Optional[str] = typer.Option(
+        None,
+        "--since-date",
+        help="First filename date to include for directory sources",
+    ),
+    through_date: Optional[str] = typer.Option(
+        None,
+        "--through-date",
+        help="Last filename date to include for directory sources",
+    ),
+    selection: str = typer.Option(
+        "catalog_default",
+        "--selection",
+        help="Directory selection: catalog_default, latest, or all",
+    ),
+    rows_per_page: int = typer.Option(
+        1000,
+        "--rows-per-page",
+        help="GoDrive directory rows requested per page",
+    ),
 ) -> None:
     """Refresh official Texas RRC raw snapshots into the /mnt/ace contract."""
-    from worldenergydata.texas_rrc.raw_refresh import RawSnapshotRefresher
+    from worldenergydata.texas_rrc.raw_refresh import (
+        DirectorySelection,
+        RawSnapshotRefresher,
+    )
 
+    selection = _normalize_selection_mode(selection)
+    _validate_rows_per_page(rows_per_page)
     refresher = RawSnapshotRefresher(output_root=output_root)
 
     if list_sources:
@@ -361,8 +462,48 @@ def refresh(
         return
 
     _validate_refresh_selection(source, all_sources)
+    source_ids = source if source else sorted(refresher.catalog)
+    _validate_directory_options(refresher, source_ids, since_date, through_date)
+    directory_selection = DirectorySelection(
+        since_date=_parse_refresh_date(since_date, "--since-date"),
+        through_date=_parse_refresh_date(through_date, "--through-date"),
+        mode=selection,
+    )
 
-    plans = refresher.plan_sources(source if source else None)
+    if source and any(_is_directory_source(refresher, item) for item in source):
+        directory_source_ids = [
+            item for item in source if _is_directory_source(refresher, item)
+        ]
+        file_source_ids = [
+            item for item in source if not _is_directory_source(refresher, item)
+        ]
+        directory_plans = [
+            refresher.discover_directory_source(
+                item, directory_selection, rows_per_page
+            )
+            for item in directory_source_ids
+        ]
+        file_plans = refresher.plan_sources(file_source_ids) if file_source_ids else []
+        if dry_run:
+            _print_directory_refresh_plans(directory_plans)
+            if file_plans:
+                _print_refresh_plans(file_plans)
+            return
+        for plan in directory_plans:
+            manifest = refresher.refresh_source(
+                plan.source_id,
+                directory_selection,
+                rows_per_page,
+            )
+            console.print(
+                f"[green]Downloaded[/green] {manifest.source_id}: "
+                f"{manifest.byte_size} bytes -> {manifest.raw_path}"
+            )
+        if file_plans:
+            _execute_refresh_plans(refresher, file_plans, explicit_sources=True)
+        return
+
+    plans = refresher.plan_sources(source_ids if source else None)
     if dry_run:
         _print_refresh_plans(plans)
         return

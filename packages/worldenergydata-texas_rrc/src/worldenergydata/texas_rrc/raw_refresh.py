@@ -4,11 +4,22 @@ from __future__ import annotations
 
 import hashlib
 import json
-from dataclasses import asdict, dataclass
+from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Iterable
 
+from worldenergydata.texas_rrc.raw_directory import (
+    DirectoryRefreshFile,
+    DirectoryRefreshPlan,
+    DirectorySelection,
+    SnapshotArtifactManifest,
+    build_directory_refresh_plan,
+    cleanup_directory_staging,
+    download_directory_files,
+    promote_directory_files,
+)
+from worldenergydata.texas_rrc.raw_manifest import RefreshPlan, SnapshotManifest
 from worldenergydata.texas_rrc.raw_transport import (
     DownloadedArtifact,
     RawRefreshTransport,
@@ -21,37 +32,6 @@ from worldenergydata.texas_rrc.source_catalog import (
     load_source_catalog,
     validate_source_catalog,
 )
-
-
-@dataclass(frozen=True)
-class RefreshPlan:
-    """Planned refresh action for one source catalog entry."""
-
-    source_id: str
-    refreshable: bool
-    download_strategy: str
-    source_url: str
-    download_url: str | None
-    target_path: Path
-    refresh_cadence: str
-    skip_reason: str | None = None
-
-
-@dataclass(frozen=True)
-class SnapshotManifest:
-    """Manifest record for one attempted raw snapshot refresh."""
-
-    source_id: str
-    source_url: str
-    download_url: str | None
-    effective_url: str | None
-    retrieved_at: str
-    refresh_cadence: str
-    raw_path: str
-    checksum_sha256: str | None
-    byte_size: int
-    status: str
-    error: str | None = None
 
 
 class RawSnapshotRefresher:
@@ -82,8 +62,40 @@ class RawSnapshotRefresher:
         ids = list(source_ids) if source_ids else sorted(self.catalog)
         return [self._plan_source(source_id) for source_id in ids]
 
-    def refresh_source(self, source_id: str) -> SnapshotManifest:
+    def discover_directory_source(
+        self,
+        source_id: str,
+        selection: DirectorySelection | None = None,
+        rows_per_page: int = 1000,
+    ) -> DirectoryRefreshPlan:
+        """List and select files for one official GoDrive directory source."""
+        if source_id not in self.catalog:
+            raise KeyError(f"Unknown Texas RRC source: {source_id}")
+        entry = self.catalog[source_id]
+        if entry["download_strategy"] != "official_godrive_directory":
+            raise ValueError(f"Source '{source_id}' is not a GoDrive directory")
+        list_directory = getattr(self.transport, "list_godrive_directory", None)
+        if not list_directory:
+            raise ValueError("Transport does not support official GoDrive directories")
+        pages = list_directory(entry["download_url"], rows_per_page=rows_per_page)
+        return build_directory_refresh_plan(
+            source_id,
+            entry,
+            self.output_root,
+            pages,
+            selection or DirectorySelection(),
+        )
+
+    def refresh_source(
+        self,
+        source_id: str,
+        selection: DirectorySelection | None = None,
+        rows_per_page: int = 1000,
+    ) -> SnapshotManifest:
         """Download one refreshable official-source snapshot and write a manifest."""
+        if self.catalog[source_id]["download_strategy"] == "official_godrive_directory":
+            return self._refresh_directory_source(source_id, selection, rows_per_page)
+
         plan = self._refreshable_plan(source_id)
         part_path = plan.target_path.with_suffix(plan.target_path.suffix + ".part")
         retrieved_at = self._timestamp()
@@ -94,6 +106,31 @@ class RawSnapshotRefresher:
             return self._write_success_manifest(plan, artifact, retrieved_at)
         except Exception as exc:
             self._write_error_manifest(plan, retrieved_at, part_path, exc)
+            raise
+
+    def _refresh_directory_source(
+        self,
+        source_id: str,
+        selection: DirectorySelection | None,
+        rows_per_page: int,
+    ) -> SnapshotManifest:
+        retrieved_at = self._timestamp()
+        plan = self.discover_directory_source(source_id, selection, rows_per_page)
+        staging = plan.target_path / f".staging-{source_id}-{retrieved_at}"
+        try:
+            artifacts = download_directory_files(
+                plan,
+                self.transport,
+                staging,
+                rows_per_page,
+                self._validate_artifact,
+                retrieved_at,
+            )
+            promote_directory_files(plan, staging)
+            return self._write_directory_manifest(plan, retrieved_at, artifacts)
+        except Exception as exc:
+            cleanup_directory_staging(staging)
+            self._write_directory_manifest(plan, retrieved_at, error=exc)
             raise
 
     def _refreshable_plan(self, source_id: str) -> RefreshPlan:
@@ -221,6 +258,30 @@ class RawSnapshotRefresher:
         self._write_manifest(manifest)
         return manifest
 
+    def _write_directory_manifest(
+        self,
+        plan: DirectoryRefreshPlan,
+        retrieved_at: str,
+        artifacts: tuple[SnapshotArtifactManifest, ...] = (),
+        error: Exception | None = None,
+    ) -> SnapshotManifest:
+        manifest = SnapshotManifest(
+            source_id=plan.source_id,
+            source_url=plan.source_url,
+            download_url=plan.download_url,
+            effective_url=None,
+            retrieved_at=retrieved_at,
+            refresh_cadence=plan.refresh_cadence,
+            raw_path=str(plan.target_path),
+            checksum_sha256=None,
+            byte_size=sum(item.byte_size for item in artifacts),
+            status="error" if error else "downloaded",
+            error=str(error) if error else None,
+            artifacts=artifacts,
+        )
+        self._write_manifest(manifest)
+        return manifest
+
     def _remove_partial(self, part_path: Path) -> None:
         if part_path.exists():
             part_path.unlink()
@@ -308,7 +369,11 @@ class RawSnapshotRefresher:
 __all__ = [
     "RawSnapshotRefresher",
     "DownloadedArtifact",
+    "DirectoryRefreshFile",
+    "DirectoryRefreshPlan",
+    "DirectorySelection",
     "RefreshPlan",
+    "SnapshotArtifactManifest",
     "SnapshotManifest",
     "TransportResponse",
     "RetryableDownloadError",

@@ -94,10 +94,17 @@ def test_directory_catalog_entries_require_official_godrive_fanout():
     from worldenergydata.texas_rrc.source_catalog import load_source_catalog
 
     catalog = load_source_catalog()
+    expected_policies = {
+        "completion_data": "latest_by_filename_date",
+        "directional_surveys": "latest_by_filename_date",
+        "well_gis_layers": "all_files",
+        "pipeline_gis_layers": "all_files",
+    }
 
     for source_id in OFFICIAL_GODRIVE_DIRECTORY_SOURCE_IDS:
         entry = catalog[source_id]
         assert entry["download_strategy"] == "official_godrive_directory"
+        assert entry["directory_refresh_policy"] == expected_policies[source_id]
         assert entry["download_url"].startswith("https://mft.rrc.texas.gov/link/")
         assert "snapshot_filename" not in entry
 
