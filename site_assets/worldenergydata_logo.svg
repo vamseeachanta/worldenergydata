@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 64" role="img" aria-label="worldenergydata">
+  <title>worldenergydata</title>
+  <!-- globe mark -->
+  <g fill="none" stroke-width="3">
+    <circle cx="32" cy="32" r="23" stroke="#0B3D91"/>
+    <ellipse cx="32" cy="32" rx="9.5" ry="23" stroke="#2BB2A6" stroke-width="2.5"/>
+    <line x1="9" y1="32" x2="55" y2="32" stroke="#2BB2A6" stroke-width="2.5"/>
+    <line x1="13.5" y1="19" x2="50.5" y2="19" stroke="#0B3D91" stroke-width="2"/>
+    <line x1="13.5" y1="45" x2="50.5" y2="45" stroke="#0B3D91" stroke-width="2"/>
+  </g>
+  <circle cx="32" cy="32" r="3" fill="#2BB2A6"/>
+  <!-- wordmark -->
+  <text x="74" y="43" font-family="-apple-system,'Segoe UI',Roboto,Arial,sans-serif"
+        font-size="31" font-weight="800" letter-spacing="-0.6">
+    <tspan fill="#0B3D91">world</tspan><tspan fill="#2BB2A6">energy</tspan><tspan fill="#0B3D91">data</tspan>
+  </text>
+</svg>
