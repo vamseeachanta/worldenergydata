@@ -645,8 +645,7 @@ def _run_build_production_atlas(
     source_gaps = tuple(inputs.source_gaps)
     if source_gaps and (require_sources or not dry_run):
         console.print(
-            "[red]Error:[/red] missing production sources: "
-            f"{', '.join(source_gaps)}"
+            "[red]Error:[/red] missing production sources: " f"{', '.join(source_gaps)}"
         )
         raise typer.Exit(1)
 
@@ -655,8 +654,7 @@ def _run_build_production_atlas(
         source_gaps = ("production_pdq",)
     if source_gaps and (require_sources or not dry_run):
         console.print(
-            "[red]Error:[/red] missing production sources: "
-            f"{', '.join(source_gaps)}"
+            "[red]Error:[/red] missing production sources: " f"{', '.join(source_gaps)}"
         )
         raise typer.Exit(1)
 

@@ -64,7 +64,12 @@ OPTIONAL_METRIC_AVAILABILITY = {
     "water_bbl": "water_available",
     "well_count": "well_count_available",
 }
-BOUNDARY_MONTH_COLUMNS = ("district", "field_number", "lease_number", "production_month")
+BOUNDARY_MONTH_COLUMNS = (
+    "district",
+    "field_number",
+    "lease_number",
+    "production_month",
+)
 GROUP_KEYS = {
     "field": ("district", "field_number"),
     "lease": (
@@ -134,19 +139,16 @@ def normalize_production_frame(
     normalized["source_id"] = "production_pdq"
     if not sort_rows:
         return normalized.reset_index(drop=True)
-    return (
-        normalized.sort_values(
-            [
-                "district",
-                "field_number",
-                "lease_number",
-                "operator_number",
-                "production_month",
-            ],
-            kind="mergesort",
-        )
-        .reset_index(drop=True)
-    )
+    return normalized.sort_values(
+        [
+            "district",
+            "field_number",
+            "lease_number",
+            "operator_number",
+            "production_month",
+        ],
+        kind="mergesort",
+    ).reset_index(drop=True)
 
 
 def is_usable_production_frame(frame: pd.DataFrame) -> bool:
@@ -505,9 +507,9 @@ class _LevelAccumulator:
         )[0]
         return {
             "operator_number": operator_number,
-            "operator_name": self.operator_names.get(
-                (key, operator_number), ("", "")
-            )[1],
+            "operator_name": self.operator_names.get((key, operator_number), ("", ""))[
+                1
+            ],
             "boe": float(boe),
         }
 
@@ -921,9 +923,7 @@ def _production_date_values(
     yyyymm = yyyymm & month.between(1, 12)
     if yyyymm.any():
         result.loc[yyyymm] = (
-            text.loc[yyyymm].str.slice(0, 4)
-            + "-"
-            + text.loc[yyyymm].str.slice(4, 6)
+            text.loc[yyyymm].str.slice(0, 4) + "-" + text.loc[yyyymm].str.slice(4, 6)
         )
     fallback = ~yyyymm & text.ne("")
     if fallback.any():

@@ -160,16 +160,22 @@ def _metric_gaps(atlas: pd.DataFrame) -> list[str]:
     gaps = []
     for column in ("cumulative_water_bbl", "well_count_peak"):
         if column in atlas and atlas[column].isna().all():
-            gaps.append("water_bbl" if column == "cumulative_water_bbl" else "well_count")
+            gaps.append(
+                "water_bbl" if column == "cumulative_water_bbl" else "well_count"
+            )
     return gaps
 
 
-def _source_payloads(root: Path, input_paths: tuple[str, ...]) -> list[dict[str, object]]:
+def _source_payloads(
+    root: Path, input_paths: tuple[str, ...]
+) -> list[dict[str, object]]:
     raw_manifests = _raw_manifest_payloads(root)
     sources = []
     for input_path in input_paths:
         source = {"input_path": input_path}
-        raw_manifest_path, raw_manifest = _matching_raw_manifest(input_path, raw_manifests)
+        raw_manifest_path, raw_manifest = _matching_raw_manifest(
+            input_path, raw_manifests
+        )
         if raw_manifest:
             source.update(
                 {
