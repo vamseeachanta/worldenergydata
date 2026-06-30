@@ -47,11 +47,7 @@ def test_write_lifecycle_outputs_persists_spine_quality_and_manifest(tmp_path):
     )
 
     spine_path = (
-        tmp_path
-        / "curated"
-        / "well_lifecycle"
-        / "spine"
-        / "well_lifecycle_spine.csv"
+        tmp_path / "curated" / "well_lifecycle" / "spine" / "well_lifecycle_spine.csv"
     )
     quality_path = spine_path.with_name("well_lifecycle_quality.json")
     manifest_path = spine_path.with_name("manifest.json")
