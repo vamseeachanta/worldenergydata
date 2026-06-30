@@ -19,6 +19,17 @@ def _fixed_record(
     return "".join(chars)
 
 
+def _fixed_record_with_leading_type(
+    *, record_type: str, length: int = 510, values: dict[int, str]
+) -> str:
+    chars = [" "] * length
+    chars[0:2] = record_type
+    for start, value in values.items():
+        index = start - 1
+        chars[index : index + len(value)] = value
+    return "".join(chars)
+
+
 def _write_text(path: Path, content: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
@@ -127,6 +138,32 @@ def test_load_lifecycle_inputs_reads_official_daf420_fixed_records(tmp_path):
         "longitude": "-97.2",
         "total_depth": "12000",
     }
+
+
+def test_load_lifecycle_inputs_prefers_leading_daf420_record_type(tmp_path):
+    master_record = _fixed_record_with_leading_type(
+        record_type="02",
+        values={
+            3: "1400001",
+            12: "001",
+            15: "MIDLAND UNIT                    ",
+            47: "08",
+            55: "10500",
+            60: "456789",
+            66: "01",
+            130: "20240115",
+            154: "20240220",
+            503: "00100002",
+        },
+    )
+    _write_text(tmp_path / "raw/permits/drilling/daf420.dat", master_record)
+
+    inputs = load_lifecycle_inputs(tmp_path)
+
+    assert inputs.source_gaps == ("wellbore_query", "completion_data")
+    assert inputs.permits.iloc[0]["api_number"] == "00100002"
+    assert inputs.permits.iloc[0]["permit_number"] == "1400001"
+    assert inputs.permits.iloc[0]["spud_date"] == "2024-02-20"
 
 
 def test_load_lifecycle_inputs_maps_official_completion_date_alias(tmp_path):

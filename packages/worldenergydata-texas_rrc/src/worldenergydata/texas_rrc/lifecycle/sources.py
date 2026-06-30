@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from datetime import date
 import zipfile
 from dataclasses import dataclass
+from datetime import date
 from importlib.resources import files
 from io import StringIO
 from pathlib import Path
@@ -138,7 +138,7 @@ def _read_daf420_text(text: str) -> pd.DataFrame:
 
 
 def _rrc_segment(line: str) -> tuple[str, int] | None:
-    for start in (2, 0):
+    for start in (0, 2):
         segment_type = line[start : start + 2]
         if segment_type in {"02", "14"}:
             return segment_type, start + 1
