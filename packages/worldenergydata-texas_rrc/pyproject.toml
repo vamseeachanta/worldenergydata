@@ -29,6 +29,7 @@ classifiers = [
 dependencies = [
     "worldenergydata-core",
     "pandas>=2.3.3,<3.0",
+    "pyarrow>=14.0.0,<20.0",
     "pyyaml>=6.0,<7.0",
 ]
 

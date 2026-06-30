@@ -606,6 +606,129 @@ def normalize_lifecycle(
         raise typer.Exit(1)
 
 
+def _print_production_atlas_summary(row_count: int, source_gaps) -> None:
+    table = Table(
+        title="Texas RRC Production Field Atlas",
+        show_header=True,
+        header_style="bold cyan",
+    )
+    table.add_column("Metric", style="dim")
+    table.add_column("Value")
+    table.add_row("Production atlas rows", str(row_count))
+    table.add_row("Source gaps", ", ".join(source_gaps) if source_gaps else "None")
+    console.print(table)
+
+
+def _print_production_atlas_outputs(manifest) -> None:
+    console.print(
+        "[green]Wrote production atlas[/green] "
+        f"{manifest.row_count} rows -> {manifest.csv_path}"
+    )
+    console.print(f"[dim]Parquet: {manifest.parquet_path}[/dim]")
+    console.print(f"[dim]Quality report: {manifest.quality_path}[/dim]")
+    console.print(f"[dim]Manifest: {manifest.manifest_path}[/dim]")
+
+
+def _run_build_production_atlas(
+    raw_root: Path,
+    output_root: Path,
+    dry_run: bool,
+    require_sources: bool,
+    allow_non_ace_output: bool,
+    chunksize: int,
+) -> None:
+    from worldenergydata.texas_rrc.production_atlas import atlas as atlas_mod
+    from worldenergydata.texas_rrc.production_atlas import io as atlas_io
+    from worldenergydata.texas_rrc.production_atlas import sources as atlas_sources
+
+    inputs = atlas_sources.iter_production_input_chunks(raw_root, chunksize=chunksize)
+    source_gaps = tuple(inputs.source_gaps)
+    if source_gaps and (require_sources or not dry_run):
+        console.print(
+            "[red]Error:[/red] missing production sources: " f"{', '.join(source_gaps)}"
+        )
+        raise typer.Exit(1)
+
+    atlas = atlas_mod.build_production_atlas_from_chunks(inputs.chunks)
+    if atlas.empty and not source_gaps:
+        source_gaps = ("production_pdq",)
+    if source_gaps and (require_sources or not dry_run):
+        console.print(
+            "[red]Error:[/red] missing production sources: " f"{', '.join(source_gaps)}"
+        )
+        raise typer.Exit(1)
+
+    _print_production_atlas_summary(len(atlas), source_gaps)
+    if dry_run:
+        console.print("[yellow]Dry run:[/yellow] no production atlas outputs written")
+        return
+
+    manifest = atlas_io.write_production_atlas_outputs(
+        atlas,
+        output_root=output_root,
+        input_paths=inputs.input_paths,
+        source_gaps=source_gaps,
+        allow_non_ace_root=allow_non_ace_output,
+        command=(
+            "worldenergydata texas-rrc build-production-atlas "
+            f"--raw-root {raw_root} --output-root {output_root} "
+            f"--chunksize {chunksize}"
+        ),
+    )
+    _print_production_atlas_outputs(manifest)
+
+
+@app.command("build-production-atlas")
+def build_production_atlas_command(
+    raw_root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--raw-root",
+        help="Root containing Texas RRC raw PDQ production snapshots",
+    ),
+    output_root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--output-root",
+        help="Root for curated production atlas outputs",
+    ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Build the production atlas summary without writing curated outputs",
+    ),
+    require_sources: bool = typer.Option(
+        False,
+        "--require-sources",
+        help="Fail when the production PDQ source directory is missing or empty",
+    ),
+    allow_non_ace_output: bool = typer.Option(
+        False,
+        "--allow-non-ace-output",
+        help="Allow non-/mnt/ace output roots for isolated tests or sandboxes",
+    ),
+    chunksize: int = typer.Option(
+        1_000_000,
+        "--chunksize",
+        min=1,
+        help="Rows per PDQ production chunk while building the atlas",
+    ),
+) -> None:
+    """Build the Texas RRC production field atlas from local official PDQ data."""
+    try:
+        _run_build_production_atlas(
+            raw_root,
+            output_root,
+            dry_run,
+            require_sources,
+            allow_non_ace_output,
+            chunksize,
+        )
+    except typer.Exit:
+        raise
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {str(e)}")
+        raise typer.Exit(1)
+
+
 @app.command()
 def analyze(
     district: Optional[str] = typer.Option(
