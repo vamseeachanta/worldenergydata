@@ -19,5 +19,18 @@
       "url": "https://vamseeachanta.github.io/worldenergydata/field-development/playbook.html"
     }
   ],
-  "note": "Published report surface \u2014 the deterministic output is served as a self-contained page; GET the report_url to consume it."
+  "note": "Published report surface \u2014 the deterministic output is served as a self-contained page; GET the report_url to consume it.",
+  "prompt": "Recommend a development concept for a field at 1500 m water depth, 200 MMbbl recoverable, 30 km tieback.",
+  "how_to_run": [
+    {
+      "via": "telegram",
+      "bot": "@the_deckhand_bot",
+      "deep_link": "https://t.me/the_deckhand_bot",
+      "step": "Open @the_deckhand_bot and send: Recommend a development concept for a field at 1500 m water depth, 200 MMbbl recoverable, 30 km tieback."
+    },
+    {
+      "via": "http",
+      "step": "GET https://vamseeachanta.github.io/worldenergydata/field-development/playbook.html"
+    }
+  ]
 }

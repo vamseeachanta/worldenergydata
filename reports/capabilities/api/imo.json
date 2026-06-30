@@ -19,5 +19,18 @@
       "url": "https://vamseeachanta.github.io/worldenergydata/IMO_GISIS_Executive_Report.html"
     }
   ],
-  "note": "Published report surface \u2014 the deterministic output is served as a self-contained page; GET the report_url to consume it."
+  "note": "Published report surface \u2014 the deterministic output is served as a self-contained page; GET the report_url to consume it.",
+  "prompt": "Summarise IMO GISIS marine casualties by severity, vessel type and flag state, 1900\u20132025.",
+  "how_to_run": [
+    {
+      "via": "telegram",
+      "bot": "@the_deckhand_bot",
+      "deep_link": "https://t.me/the_deckhand_bot",
+      "step": "Open @the_deckhand_bot and send: Summarise IMO GISIS marine casualties by severity, vessel type and flag state, 1900\u20132025."
+    },
+    {
+      "via": "http",
+      "step": "GET https://vamseeachanta.github.io/worldenergydata/IMO_GISIS_Executive_Report.html"
+    }
+  ]
 }
