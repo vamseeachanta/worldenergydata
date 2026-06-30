@@ -671,6 +671,11 @@ def _run_build_production_atlas(
         input_paths=inputs.input_paths,
         source_gaps=source_gaps,
         allow_non_ace_root=allow_non_ace_output,
+        command=(
+            "worldenergydata texas-rrc build-production-atlas "
+            f"--raw-root {raw_root} --output-root {output_root} "
+            f"--chunksize {chunksize}"
+        ),
     )
     _print_production_atlas_outputs(manifest)
 

@@ -59,14 +59,19 @@ Stable atlas columns will include:
 - `top_operator_number`, `top_operator_name`, `top_operator_boe`,
   `top_operator_share`
 
+The stable water and well-count columns will be nullable when the direct RRC
+production member does not provide those source fields. The quality JSON will
+report those unavailable measures under `metric_gaps`; they will not be emitted
+as measured zero volumes/counts.
+
 ## Plan
 
 ### Task 1 - Add production atlas tests and source loading
 
 Create `tests/unit/texas_rrc/test_production_atlas.py` with failing tests for
-official PDQ column aliases, production month parsing, oil/gas/condensate/water
-normalization, BOE convention, empty inputs, and local ZIP loading from
-`raw/production/pdq`.
+official PDQ column aliases, production month parsing,
+oil/gas/condensate/optional water normalization, BOE convention, empty inputs,
+metric availability, and local ZIP loading from `raw/production/pdq`.
 
 Create `worldenergydata.texas_rrc.production_atlas.sources` with a
 `ProductionInputFrame` dataclass and `load_production_inputs(raw_root: Path)`.
@@ -81,8 +86,10 @@ Create `worldenergydata.texas_rrc.production_atlas.atlas` with
 `build_production_atlas(frame: pd.DataFrame) -> pd.DataFrame`.
 
 The implementation will aggregate field, lease, district, operator, and
-statewide summaries. Monthly grouped rows will drive peak and still-producing
-metrics. Operator concentration will use BOE share within each aggregate.
+statewide summaries. Monthly grouped rows will drive peak metrics. Filed
+positive monthly rows will drive the current production horizon so unfiled
+scheduled cycles do not mark active producers inactive. Operator concentration
+will use BOE share within each aggregate and roll up by stable operator number.
 
 ### Task 3 - Persist curated `/mnt/ace` outputs
 
@@ -90,15 +97,18 @@ Create `worldenergydata.texas_rrc.production_atlas.io` with
 `write_production_atlas_outputs(...)` and `load_production_atlas(...)`.
 
 Writes will stage under `.staging-production-field-atlas-*` and then promote
-CSV, Parquet, quality JSON, and manifest JSON. The output root will default to
-and be enforced under `/mnt/ace/worldenergydata/data/modules/texas_rrc`, with
-an explicit non-ACE override only for isolated tests.
+CSV, Parquet, quality JSON, and manifest JSON. The manifest will copy raw source
+URL/checksum/retrieval metadata from the direct refresh manifest when available.
+The output root will default to and be enforced under
+`/mnt/ace/worldenergydata/data/modules/texas_rrc`, with an explicit non-ACE
+override only for isolated tests.
 
 ### Task 4 - Add CLI and docs
 
 Extend `worldenergydata texas-rrc` with `build-production-atlas`, accepting
 `--raw-root`, `--output-root`, `--dry-run`, `--require-sources`, and
-`--allow-non-ace-output`.
+`--allow-non-ace-output`. The command will stream the direct PDQ member in
+bounded chunks via `--chunksize`.
 
 Add `docs/data-sources/onshore/texas-rrc/production-field-atlas.md` documenting
 source lifecycle, refresh cadence, output paths, CLI usage, and known gaps.

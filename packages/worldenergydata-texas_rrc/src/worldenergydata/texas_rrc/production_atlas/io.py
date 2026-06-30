@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 import json
 from pathlib import Path
 import shutil
+import subprocess
 from typing import Iterable, Sequence
 
 import pandas as pd
@@ -18,6 +19,16 @@ CSV_FILENAME = "production_field_atlas.csv"
 PARQUET_FILENAME = "production_field_atlas.parquet"
 QUALITY_FILENAME = "production_field_atlas_quality.json"
 MANIFEST_FILENAME = "manifest.json"
+SOURCE_METADATA_FIELDS = (
+    "source_id",
+    "source_url",
+    "download_url",
+    "effective_url",
+    "checksum_sha256",
+    "byte_size",
+    "retrieved_at",
+    "refresh_cadence",
+)
 
 
 @dataclass(frozen=True)
@@ -32,6 +43,8 @@ class ProductionAtlasOutputManifest:
     manifest_path: Path
     row_count: int
     input_paths: tuple[str, ...]
+    command: str | None
+    code_revision: str | None
 
 
 def write_production_atlas_outputs(
@@ -41,6 +54,8 @@ def write_production_atlas_outputs(
     input_paths: Iterable[str | Path] = (),
     source_gaps: Sequence[str] = (),
     allow_non_ace_root: bool = False,
+    command: str | None = None,
+    code_revision: str | None = None,
 ) -> ProductionAtlasOutputManifest:
     """Write production atlas CSV, Parquet, quality JSON, and manifest."""
     root = Path(output_root)
@@ -56,6 +71,8 @@ def write_production_atlas_outputs(
         manifest_path=target_dir / MANIFEST_FILENAME,
         row_count=len(atlas),
         input_paths=tuple(str(path) for path in input_paths),
+        command=command,
+        code_revision=code_revision or _git_revision(),
     )
     staging = target_dir / f".staging-production-field-atlas-{_compact_stamp(stamp)}"
     shutil.rmtree(staging, ignore_errors=True)
@@ -112,6 +129,7 @@ def _quality_payload(
         "row_count": len(atlas),
         "aggregation_levels": levels,
         "source_gaps": list(source_gaps),
+        "metric_gaps": _metric_gaps(atlas),
         "source_ids": ["production_pdq"],
     }
 
@@ -130,9 +148,94 @@ def _manifest_payload(
         "manifest_path": str(manifest.manifest_path),
         "row_count": manifest.row_count,
         "input_paths": list(manifest.input_paths),
+        "sources": _source_payloads(manifest.output_root, manifest.input_paths),
         "source_ids": ["production_pdq"],
+        "command": manifest.command,
+        "code_revision": manifest.code_revision,
         "quality": _quality_payload(atlas, source_gaps),
     }
+
+
+def _metric_gaps(atlas: pd.DataFrame) -> list[str]:
+    gaps = []
+    for column in ("cumulative_water_bbl", "well_count_peak"):
+        if column in atlas and atlas[column].isna().all():
+            gaps.append("water_bbl" if column == "cumulative_water_bbl" else "well_count")
+    return gaps
+
+
+def _source_payloads(root: Path, input_paths: tuple[str, ...]) -> list[dict[str, object]]:
+    raw_manifests = _raw_manifest_payloads(root)
+    sources = []
+    for input_path in input_paths:
+        source = {"input_path": input_path}
+        raw_manifest_path, raw_manifest = _matching_raw_manifest(input_path, raw_manifests)
+        if raw_manifest:
+            source.update(
+                {
+                    field: raw_manifest[field]
+                    for field in SOURCE_METADATA_FIELDS
+                    if field in raw_manifest
+                }
+            )
+            source["manifest_path"] = str(raw_manifest_path)
+        sources.append(source)
+    return sources
+
+
+def _raw_manifest_payloads(root: Path) -> list[tuple[Path, dict[str, object]]]:
+    manifest_dir = root / "manifests"
+    if not manifest_dir.exists():
+        return []
+    payloads = []
+    for path in sorted(manifest_dir.glob("*.json")):
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        if isinstance(payload, dict):
+            payloads.append((path, payload))
+    return payloads
+
+
+def _matching_raw_manifest(
+    input_path: str,
+    raw_manifests: list[tuple[Path, dict[str, object]]],
+) -> tuple[Path | None, dict[str, object] | None]:
+    input_keys = _path_keys(input_path)
+    for path, payload in raw_manifests:
+        raw_path = payload.get("raw_path")
+        if raw_path and input_keys.intersection(_path_keys(str(raw_path))):
+            return path, payload
+    return None, None
+
+
+def _path_keys(value: str) -> set[str]:
+    path = Path(value)
+    return {str(path), str(path.resolve())}
+
+
+def _git_revision() -> str | None:
+    repo_root = Path(__file__).resolve().parents[5]
+    try:
+        revision = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            check=True,
+            capture_output=True,
+            text=True,
+            cwd=repo_root,
+        )
+        status = subprocess.run(
+            ["git", "status", "--porcelain"],
+            check=True,
+            capture_output=True,
+            text=True,
+            cwd=repo_root,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return None
+    suffix = "+dirty" if status.stdout.strip() else ""
+    return f"{revision.stdout.strip()}{suffix}" if revision.stdout.strip() else None
 
 
 def _write_json(path: Path, payload: dict[str, object]) -> None:
