@@ -73,6 +73,7 @@ This directory contains issue-plan artifacts created during the issue-planning-m
 | [#426](https://github.com/vamseeachanta/worldenergydata/issues/426) | [drilling-hse-patterns](2026-05-18-issue-426-drilling-hse-patterns.md) | plan-review | 2026-05-18 |
 | [#427](https://github.com/vamseeachanta/worldenergydata/issues/427) | [seasonal-intervention-risk](2026-05-18-issue-427-seasonal-intervention-risk.md) | plan-review | 2026-05-18 |
 | [#462](https://github.com/vamseeachanta/worldenergydata/issues/462) | [source-refresh-acceptance-contract](2026-06-09-issue-462-source-refresh-acceptance-contract.md) | plan-review | 2026-06-09 |
+| [#662](https://github.com/vamseeachanta/worldenergydata/issues/662) | [texas-rrc-well-lifecycle-spine](2026-06-30-issue-662-texas-rrc-well-lifecycle-spine.md) | plan-review | 2026-06-30 |
 | [#669](https://github.com/vamseeachanta/worldenergydata/issues/669) | [texas-rrc-godrive-directory-refresh](2026-06-30-issue-669-texas-rrc-godrive-directory-refresh.md) | plan-approved | 2026-06-30 |
 
 ## Closed / superseded plans
