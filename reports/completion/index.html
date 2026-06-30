@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>worldenergydata — Well Drilling &amp; Completion Days</title>
+<style>
+  :root{--bg:#0d1117;--panel:#161b22;--line:#30363d;--ink:#e6edf3;--mut:#8b949e;
+        --accent:#3b82f6;--ok:#3fb950;--warn:#d29922}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+  header{padding:54px 0 30px;border-bottom:1px solid var(--line)}
+  h1{margin:0 0 6px;font-size:30px;letter-spacing:-.4px}
+  .sub{color:var(--mut);font-size:16px;max-width:800px}
+  .tag{display:inline-block;margin-top:14px;padding:3px 10px;border:1px solid var(--line);
+       border-radius:20px;color:var(--mut);font-size:12.5px}
+  h2{font-size:18px;margin:38px 0 14px;letter-spacing:-.2px}
+  .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-top:6px}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+  .stat .v{font-size:26px;font-weight:650;letter-spacing:-.5px;
+           font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .stat .k{color:var(--mut);font-size:12.5px;margin-top:4px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px;
+        background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line)}
+  th{background:#1c2330;color:var(--mut);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+  tr:last-child td{border-bottom:none}
+  td.val,th.val{text-align:right;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .note{color:var(--mut);font-size:13px;margin:10px 0 0}
+  footer{margin:46px 0 30px;padding-top:22px;border-top:1px solid var(--line);
+         color:var(--mut);font-size:12.5px}
+  a{color:var(--accent);text-decoration:none}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#1c2330;
+       padding:1px 5px;border-radius:4px;font-size:12.5px}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>Well Drilling &amp; Completion Days</h1>
+  <div class="sub">Drilling and completion durations reconstructed from BSEE Well
+  Activity Reports for 217 wells across the 12 Lower-Tertiary
+  deepwater fields &mdash; spud-to-total-depth (drilling) and total-depth-to-final-
+  completion-activity (completion), with per-well depth and water-depth context.</div>
+  <span class="tag">BSEE Well Activity Reports &middot; V30 drilling/completion-days methodology &middot; deterministic from a frozen reference</span>
+</div></header>
+
+<div class="wrap">
+
+  <h2>Portfolio at a glance</h2>
+  <div class="stats"><div class="stat"><div class="v">217</div><div class="k">deepwater wells (WAR records)</div></div><div class="stat"><div class="v">12</div><div class="k">Lower-Tertiary fields</div></div><div class="stat"><div class="v">19</div><div class="k">federal surface leases</div></div><div class="stat"><div class="v">2000&ndash;2024</div><div class="k">spud-year span</div></div><div class="stat"><div class="v">38 d</div><div class="k">median drilling time</div></div><div class="stat"><div class="v">24 d</div><div class="k">median completion time</div></div><div class="stat"><div class="v">4,130&ndash;9,525 ft</div><div class="k">water-depth range</div></div><div class="stat"><div class="v">37,743 ft</div><div class="k">deepest well (measured depth)</div></div></div>
+
+  <h2>By field</h2>
+  <p class="note">Drilling days = spud date &rarr; total-depth date. Completion days =
+  total-depth date &rarr; last completion activity. Medians are the headline figure
+  (robust to the sidetracks and recompletions whose WAR milestones coincide on a
+  single day); means are shown alongside. The deepest borehole in the set is North Platte well <code>608074032001</code> at 37,743 ft measured / 35,115 ft TVD.</p>
+  <div class="table-wrap"><table>
+    <thead><tr>
+      <th>Field</th><th class="val">Wells</th>
+      <th class="val">Drill (med)</th><th class="val">Drill (mean)</th>
+      <th class="val">Compl (med)</th><th class="val">Compl (mean)</th>
+      <th class="val">Water depth (ft)</th>
+    </tr></thead>
+    <tbody><tr><td>St Malo</td><td class="val">65</td><td class="val">26</td><td class="val">35.3</td><td class="val">14</td><td class="val">52.3</td><td class="val">6,820</td></tr><tr><td>Big Foot</td><td class="val">38</td><td class="val">12</td><td class="val">31.8</td><td class="val">19</td><td class="val">48.1</td><td class="val">5,190</td></tr><tr><td>Shenandoah</td><td class="val">23</td><td class="val">38</td><td class="val">53.8</td><td class="val">15</td><td class="val">32.7</td><td class="val">5,840</td></tr><tr><td>Stones</td><td class="val">22</td><td class="val">70</td><td class="val">66.2</td><td class="val">48</td><td class="val">52.0</td><td class="val">9,525</td></tr><tr><td>Anchor</td><td class="val">15</td><td class="val">51</td><td class="val">54.7</td><td class="val">34</td><td class="val">66.9</td><td class="val">5,080</td></tr><tr><td>North Platte</td><td class="val">14</td><td class="val">46</td><td class="val">48.2</td><td class="val">24</td><td class="val">21.1</td><td class="val">5,840</td></tr><tr><td>Cascade</td><td class="val">9</td><td class="val">71</td><td class="val">98.7</td><td class="val">60</td><td class="val">89.6</td><td class="val">8,200</td></tr><tr><td>Julia</td><td class="val">9</td><td class="val">96</td><td class="val">89.1</td><td class="val">96</td><td class="val">98.3</td><td class="val">7,335</td></tr><tr><td>Jack</td><td class="val">8</td><td class="val">58</td><td class="val">81.5</td><td class="val">36</td><td class="val">58.1</td><td class="val">7,240</td></tr><tr><td>Kaskida</td><td class="val">7</td><td class="val">37</td><td class="val">79.4</td><td class="val">46</td><td class="val">40.7</td><td class="val">5,860</td></tr><tr><td>Chinook</td><td class="val">5</td><td class="val">28</td><td class="val">63.4</td><td class="val">27</td><td class="val">91.2</td><td class="val">8,900</td></tr><tr><td>Tiber</td><td class="val">2</td><td class="val">107</td><td class="val">107.0</td><td class="val">18</td><td class="val">18.0</td><td class="val">4,130</td></tr></tbody>
+  </table></div>
+
+  <h2>How the durations are measured</h2>
+  <p class="note">Each well's milestones come from its BSEE Well Activity Reports:
+  the spud date, the total-depth date, and the last recorded completion activity.
+  Drilling and completion days are the calendar spans between them. Records where a
+  milestone is missing or the span is zero (33 wells show zero drilling days,
+  31 show zero completion days &mdash; typically sidetracks or recompletions that
+  open and finish an interval the same day) are kept in the population and reported
+  as-is rather than dropped or estimated, which is why the mean sits well above the
+  median for several fields.</p>
+
+  <h2>Provenance</h2>
+  <p class="note">Figures are computed deterministically from one frozen, committed
+  reference workbook,
+  <a href="https://github.com/vamseeachanta/worldenergydata/blob/main/docs/modules/bsee/analysis/production/FDAS_V30/drilling_and_completion_days.xlsx"><code>docs/&hellip;/FDAS_V30/drilling_and_completion_days.xlsx</code></a>,
+  itself derived from public BSEE Well Activity Reports under the V30 drilling/
+  completion-days methodology. The page is regenerated by
+  <code>scripts/completion/build_completion_report.py</code> &mdash; same workbook
+  in, byte-identical HTML out.</p>
+
+  <footer>
+    Part of <a href="../capabilities/">worldenergydata &middot; Open Energy-Data
+    Capabilities</a>. Drilling/completion durations are observational WAR-derived
+    spans for US Gulf of Mexico / Gulf of America Lower-Tertiary deepwater wells;
+    they are not predictive estimates.
+  </footer>
+</div>
+</body>
+</html>
