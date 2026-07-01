@@ -14,6 +14,11 @@ from typing import Sequence
 import pandas as pd
 import yaml
 
+from worldenergydata.texas_rrc.lifecycle.completion_packets import (
+    looks_like_completion_packet_text,
+    read_completion_packet_text,
+)
+
 
 @dataclass(frozen=True)
 class LifecycleInputFrames:
@@ -97,6 +102,8 @@ def _read_table(path: Path, source_id: str) -> pd.DataFrame:
     if source_id == "wellbore_query":
         return _read_wellbore_query_file(path)
     text = path.read_text(encoding="utf-8", errors="replace")
+    if source_id == "completion_data" and looks_like_completion_packet_text(text):
+        return read_completion_packet_text(text)
     if source_id == "drilling_permits" and path.name.lower() == "daf420.dat":
         frame = _read_daf420_text(text)
         if not frame.empty:
@@ -121,6 +128,13 @@ def _read_zip_tables(path: Path, source_id: str) -> pd.DataFrame:
                     continue
             if source_id == "wellbore_query":
                 frame = _read_wellbore_query_text(text)
+                if not frame.empty:
+                    frames.append(frame)
+                continue
+            if source_id == "completion_data" and looks_like_completion_packet_text(
+                text
+            ):
+                frame = read_completion_packet_text(text)
                 if not frame.empty:
                     frames.append(frame)
                 continue

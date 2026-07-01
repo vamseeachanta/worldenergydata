@@ -93,3 +93,22 @@ def test_write_lifecycle_outputs_rejects_non_ace_root_without_override(tmp_path)
             quality,
             output_root=tmp_path,
         )
+
+
+def test_load_lifecycle_spine_disables_chunked_dtype_inference(monkeypatch, tmp_path):
+    from worldenergydata.texas_rrc.lifecycle.io import load_lifecycle_spine
+
+    calls = {}
+
+    def fake_read_csv(path, **kwargs):
+        calls["path"] = path
+        calls.update(kwargs)
+        return pd.DataFrame()
+
+    monkeypatch.setattr(pd, "read_csv", fake_read_csv)
+    spine_path = tmp_path / "well_lifecycle_spine.csv"
+
+    load_lifecycle_spine(spine_path)
+
+    assert calls["path"] == spine_path
+    assert calls["low_memory"] is False

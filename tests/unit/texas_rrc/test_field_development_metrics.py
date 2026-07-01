@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import warnings
+from time import perf_counter
+
 import pandas as pd
 
 from worldenergydata.texas_rrc.field_development.sources import (
@@ -235,3 +238,43 @@ def test_build_field_development_metrics_classifies_maturity_and_dates():
     assert metrics.loc["00000002", "production_maturity_class"] == "mature_active"
     assert metrics.loc["00000003", "production_maturity_class"] == "pre_production"
     assert metrics.loc["00000002", "rank_development_maturity"] == 1
+
+
+def test_lifecycle_aggregation_scales_beyond_row_wise_group_processing():
+    from worldenergydata.texas_rrc.field_development.metrics import (
+        _aggregate_lifecycle,
+    )
+
+    row_count = 5_000
+    lifecycle = pd.DataFrame(
+        {
+            "district": ["08"] * row_count,
+            "field_number": [f"{index % 100:08d}" for index in range(row_count)],
+            "field_name": ["SPRABERRY"] * row_count,
+            "lease_number": [f"{index % 300:05d}" for index in range(row_count)],
+            "operator_number": [f"{index % 25:06d}" for index in range(row_count)],
+            "well_status": [
+                "PRODUCING" if index % 2 else "PLUGGED" for index in range(row_count)
+            ],
+            "well_type": ["O"] * row_count,
+            "wellbore_profile": [
+                "HORIZONTAL" if index % 3 else "DIRECTIONAL"
+                for index in range(row_count)
+            ],
+            "permit_number": [str(index) for index in range(row_count)],
+            "permit_issued_date": ["2020-01-01"] * row_count,
+            "completion_date": ["2020-01-11"] * row_count,
+        }
+    )
+
+    started = perf_counter()
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        metrics = _aggregate_lifecycle(lifecycle)
+    elapsed = perf_counter() - started
+
+    assert len(metrics) == 100
+    assert metrics["well_count"].sum() == row_count
+    assert metrics["permit_count"].sum() == row_count
+    assert not [warning for warning in caught if warning.category is UserWarning]
+    assert elapsed < 4.0

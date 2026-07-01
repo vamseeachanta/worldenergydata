@@ -6,32 +6,23 @@ from typing import Any
 
 import pandas as pd
 
+from worldenergydata.texas_rrc.field_development._lifecycle_aggregation import (
+    aggregate_lifecycle,
+)
 from worldenergydata.texas_rrc.field_development._metrics_helpers import (
-    active_status,
     bool_value,
     coalesce_number,
-    count_text,
-    count_values,
-    date_pairs,
-    directional,
     ensure_columns,
     first_present,
-    first_value,
     has_value,
-    horizontal,
     horizontal_share,
     int_value,
-    median_valid_days,
     month_start,
     number_or_na,
     operator_count,
     pdq_water_or_well_count_gap,
-    plugged_status,
-    profile_text,
     rank_desc,
     ratio,
-    unique_count,
-    valid_dates,
     value_or_na,
     zero,
 )
@@ -106,35 +97,12 @@ def build_field_development_metrics(inputs: FieldDevelopmentInputs) -> pd.DataFr
 
 
 def _aggregate_lifecycle(lifecycle: pd.DataFrame) -> pd.DataFrame:
-    if lifecycle.empty:
-        return _empty_lifecycle()
-    frame = lifecycle.copy()
-    ensure_columns(frame, _lifecycle_input_columns())
-    rows = [
-        _lifecycle_record(key, group) for key, group in frame.groupby(list(FIELD_KEYS))
-    ]
-    return pd.DataFrame(rows)
-
-
-def _lifecycle_record(key: tuple[str, str], group: pd.DataFrame) -> dict[str, Any]:
-    dates = date_pairs(group, "permit_issued_date", "completion_date")
-    completion_dates = tuple(valid_dates(group["completion_date"]))
-    return {
-        "district": key[0],
-        "field_number": key[1],
-        "lifecycle_field_name": first_value(group["field_name"]),
-        "well_count": len(group),
-        "active_well_count": count_text(group["well_status"], active_status),
-        "plugged_well_count": count_text(group["well_status"], plugged_status),
-        "permit_count": count_values(group["permit_number"]),
-        "completion_count": count_values(group["completion_date"]),
-        "horizontal_well_count": count_text(profile_text(group), horizontal),
-        "directional_well_count": count_text(profile_text(group), directional),
-        "median_permit_to_completion_days": median_valid_days(dates),
-        "completion_dates": completion_dates,
-        "lifecycle_lease_count": unique_count(group["lease_number"]),
-        "lifecycle_operator_count": unique_count(group["operator_number"]),
-    }
+    return aggregate_lifecycle(
+        lifecycle,
+        FIELD_KEYS,
+        _lifecycle_input_columns(),
+        _empty_lifecycle(),
+    )
 
 
 def _prepare_production(production: pd.DataFrame) -> pd.DataFrame:

@@ -67,6 +67,13 @@ def _official_wellbore_query_row() -> str:
     return ",".join(f'"{value}"' for value in columns)
 
 
+def _completion_packet_line(values: dict[int, str], length: int) -> str:
+    columns = [""] * length
+    for index, value in values.items():
+        columns[index] = value
+    return "{".join(columns)
+
+
 def test_load_lifecycle_inputs_reads_local_raw_snapshots(tmp_path):
     _write_zip(
         tmp_path / "raw/wellbore/query/wellbore.zip",
@@ -237,3 +244,51 @@ def test_load_lifecycle_inputs_maps_official_completion_date_alias(tmp_path):
     assert inputs.source_gaps == ("wellbore_query", "drilling_permits")
     assert inputs.completions.iloc[0]["api_number"] == "00100001"
     assert inputs.completions.iloc[0]["completion_date"] == "2024-03-01"
+
+
+def test_load_lifecycle_inputs_reads_official_completion_packet_data(tmp_path):
+    packet = _completion_packet_line(
+        {
+            0: "PACKET",
+            1: "123456",
+            2: "654321",
+            3: "06/29/2026",
+            6: "00100001",
+            25: "12345678",
+            27: "08",
+            29: "SPRABERRY",
+        },
+        61,
+    )
+    form = _completion_packet_line(
+        {
+            0: "W-2",
+            1: "123456",
+            2: "654321",
+            3: "999999",
+            27: "03/01/2024",
+        },
+        83,
+    )
+    _write_zip(
+        tmp_path / "raw/completions/06-30-2026.zip",
+        "08/trackingNo_123456/packetData_123456_Approved.dat",
+        "\n".join(
+            [
+                "123456{W-2{Plat(1)",
+                "",
+                packet,
+                form,
+                "W-2 Casing Data{123456{654321{999999{1{8 5/8",
+            ]
+        ),
+    )
+
+    inputs = load_lifecycle_inputs(tmp_path)
+
+    assert inputs.source_gaps == ("wellbore_query", "drilling_permits")
+    assert inputs.completions.iloc[0]["api_number"] == "00100001"
+    assert inputs.completions.iloc[0]["completion_date"] == "2024-03-01"
+    assert inputs.completions.iloc[0]["form_type"] == "W-2"
+    assert inputs.completions.iloc[0]["district"] == "08"
+    assert inputs.completions.iloc[0]["field_number"] == "12345678"
