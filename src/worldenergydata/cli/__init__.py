@@ -1,9 +1,15 @@
-"""
-WorldEnergyData CLI Package
+"""WorldEnergyData CLI package."""
 
-Unified command-line interface for global energy market data operations.
-"""
+from importlib import import_module
 
-from worldenergydata.cli.main import app
+
+def __getattr__(name: str):
+    """Load the Typer app only when requested."""
+    if name != "app":
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+    value = import_module("worldenergydata.cli.main").app
+    globals()[name] = value
+    return value
+
 
 __all__ = ["app"]

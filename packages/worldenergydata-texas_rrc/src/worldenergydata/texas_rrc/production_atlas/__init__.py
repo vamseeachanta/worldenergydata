@@ -23,6 +23,7 @@ def __getattr__(name: str):
     globals()[name] = value
     return value
 
+
 __all__ = [
     "ProductionAtlasOutputManifest",
     "ProductionInputFrame",

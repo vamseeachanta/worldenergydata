@@ -66,6 +66,7 @@ def build_lifecycle_spine(inputs: LifecycleInputFrames) -> pd.DataFrame:
         for api14 in api14_values
     ]
     result = pd.DataFrame(records)
+    result = result.astype(object).where(pd.notna(result), None)
     for column in ("has_wellbore", "has_permit", "has_completion"):
         if column in result:
             result[column] = result[column].astype(object)
