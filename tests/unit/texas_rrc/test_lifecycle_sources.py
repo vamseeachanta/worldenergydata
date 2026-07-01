@@ -41,6 +41,32 @@ def _write_zip(path: Path, member_name: str, content: str) -> None:
         archive.writestr(member_name, content)
 
 
+def _official_wellbore_query_row() -> str:
+    columns = [""] * 59
+    columns[0] = "06"
+    columns[1] = "001"
+    columns[2] = "00100001"
+    columns[3] = "ANDERSON"
+    columns[4] = "O"
+    columns[5] = "7-11 RANCH -B-"
+    columns[6] = "16481001"
+    columns[7] = "CAYUGA"
+    columns[8] = "04411"
+    columns[9] = "1"
+    columns[11] = "SUPREME ENERGY COMPANY  INC."
+    columns[12] = "830589"
+    columns[13] = "Land Well"
+    columns[15] = "4023"
+    columns[18] = "SHUT IN"
+    columns[20] = "20250201"
+    columns[27] = "4644117776"
+    columns[28] = "19840112"
+    columns[29] = "19631205"
+    columns[30] = "19631027"
+    columns[58] = "0"
+    return ",".join(f'"{value}"' for value in columns)
+
+
 def test_load_lifecycle_inputs_reads_local_raw_snapshots(tmp_path):
     _write_zip(
         tmp_path / "raw/wellbore/query/wellbore.zip",
@@ -87,6 +113,34 @@ def test_load_lifecycle_inputs_reads_local_raw_snapshots(tmp_path):
     assert inputs.permits.iloc[0]["spud_date"] == "2024-02-01"
     assert inputs.completions.iloc[0]["completion_date"] == "2024-03-01"
     assert inputs.completions.iloc[0]["form_type"] == "W-2"
+
+
+def test_load_lifecycle_inputs_reads_official_headerless_wellbore_query(
+    tmp_path,
+):
+    _write_text(
+        tmp_path / "raw/wellbore/query/OG_WELLBORE_EWA_Report.csv",
+        _official_wellbore_query_row(),
+    )
+
+    inputs = load_lifecycle_inputs(tmp_path)
+
+    assert inputs.source_gaps == ("drilling_permits", "completion_data")
+    assert inputs.wellbores.iloc[0].to_dict() == {
+        "district": "06",
+        "api_number": "00100001",
+        "well_type": "O",
+        "lease_name": "7-11 RANCH -B-",
+        "field_number": "16481001",
+        "field_name": "CAYUGA",
+        "lease_number": "04411",
+        "operator_name": "SUPREME ENERGY COMPANY  INC.",
+        "operator_number": "830589",
+        "total_depth": "4023",
+        "well_status": "SHUT IN",
+        "plug_date": "2025-02-01",
+        "completion_date": "1963-10-27",
+    }
 
 
 def test_load_lifecycle_inputs_reads_official_daf420_fixed_records(tmp_path):

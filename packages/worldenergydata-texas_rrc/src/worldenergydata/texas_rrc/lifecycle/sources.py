@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import csv
 import zipfile
 from dataclasses import dataclass
 from datetime import date
@@ -29,6 +30,24 @@ SOURCE_DIRS = {
     "drilling_permits": Path("raw/permits/drilling"),
     "completion_data": Path("raw/completions"),
 }
+
+WELLBORE_QUERY_FIELD_COUNT = 59
+WELLBORE_QUERY_POSITION_MAP = {
+    0: "district",
+    2: "api_number",
+    4: "well_type",
+    5: "lease_name",
+    6: "field_number",
+    7: "field_name",
+    8: "lease_number",
+    11: "operator_name",
+    12: "operator_number",
+    15: "total_depth",
+    18: "well_status",
+    20: "plug_date",
+    30: "completion_date",
+}
+WELLBORE_QUERY_DATE_COLUMNS = ("plug_date", "completion_date")
 
 
 def load_lifecycle_inputs(raw_root: Path) -> LifecycleInputFrames:
@@ -75,6 +94,8 @@ def _read_table(path: Path, source_id: str) -> pd.DataFrame:
         return _read_zip_tables(path, source_id)
     if path.suffix.lower() not in {".csv", ".txt", ".dat"}:
         return pd.DataFrame()
+    if source_id == "wellbore_query":
+        return _read_wellbore_query_file(path)
     text = path.read_text(encoding="utf-8", errors="replace")
     if source_id == "drilling_permits" and path.name.lower() == "daf420.dat":
         frame = _read_daf420_text(text)
@@ -98,6 +119,11 @@ def _read_zip_tables(path: Path, source_id: str) -> pd.DataFrame:
                 if not frame.empty:
                     frames.append(frame)
                     continue
+            if source_id == "wellbore_query":
+                frame = _read_wellbore_query_text(text)
+                if not frame.empty:
+                    frames.append(frame)
+                continue
             frame = _read_table_text(text)
             if not frame.empty:
                 frames.append(frame)
@@ -118,6 +144,71 @@ def _read_table_text(text: str) -> pd.DataFrame:
         dtype=str,
         keep_default_na=False,
     )
+
+
+def _read_wellbore_query_file(path: Path) -> pd.DataFrame:
+    first_line = _first_line(path)
+    if _looks_like_wellbore_header(first_line):
+        return _read_table_text(path.read_text(encoding="utf-8", errors="replace"))
+    return _read_headerless_wellbore_query(path)
+
+
+def _read_wellbore_query_text(text: str) -> pd.DataFrame:
+    if not text.strip():
+        return pd.DataFrame()
+    first_line = text.splitlines()[0]
+    if _looks_like_wellbore_header(first_line):
+        return _read_table_text(text)
+    return _read_headerless_wellbore_query(StringIO(text))
+
+
+def _first_line(path: Path) -> str:
+    with path.open(encoding="utf-8", errors="replace") as handle:
+        return handle.readline()
+
+
+def _looks_like_wellbore_header(first_line: str) -> bool:
+    if not first_line.strip():
+        return False
+    try:
+        fields = next(csv.reader([first_line]))
+    except csv.Error:
+        return False
+    column_keys = {_column_key(field) for field in fields}
+    return bool(
+        column_keys.intersection(
+            {
+                "API_NO",
+                "API_NUMBER",
+                "DISTRICT",
+                "DISTRICT_CODE",
+                "FIELD_NUMBER",
+            }
+        )
+    )
+
+
+def _read_headerless_wellbore_query(source) -> pd.DataFrame:
+    raw = pd.read_csv(
+        source,
+        header=None,
+        names=list(range(WELLBORE_QUERY_FIELD_COUNT)),
+        usecols=tuple(WELLBORE_QUERY_POSITION_MAP),
+        engine="python",
+        dtype=str,
+        keep_default_na=False,
+        on_bad_lines="skip",
+    )
+    if raw.empty:
+        return pd.DataFrame()
+
+    result = raw.rename(columns=WELLBORE_QUERY_POSITION_MAP)
+    result = result.loc[:, list(WELLBORE_QUERY_POSITION_MAP.values())]
+    for column in result.columns:
+        result[column] = result[column].astype(str).str.strip()
+    for column in WELLBORE_QUERY_DATE_COLUMNS:
+        result[column] = result[column].map(_date_yyyymmdd)
+    return result
 
 
 def _read_daf420_text(text: str) -> pd.DataFrame:
@@ -187,8 +278,17 @@ def _fixed_value(line: str, start: int, width: int) -> str:
 
 def _fixed_date(line: str, start: int) -> str:
     value = _fixed_value(line, start, 8)
+    return _parse_yyyymmdd(value, fallback="")
+
+
+def _date_yyyymmdd(value: str) -> str:
+    value = str(value).strip()
+    return _parse_yyyymmdd(value, fallback=value)
+
+
+def _parse_yyyymmdd(value: str, fallback: str) -> str:
     if len(value) != 8 or not value.isdigit() or value == "00000000":
-        return ""
+        return fallback
     try:
         return date(int(value[:4]), int(value[4:6]), int(value[6:8])).isoformat()
     except ValueError:
