@@ -13,7 +13,10 @@ from worldenergydata.texas_rrc.godrive import (
     GoDriveDirectoryEntry,
     GoDriveDirectoryPage,
 )
-from worldenergydata.texas_rrc.raw_transport import DownloadedArtifact
+from worldenergydata.texas_rrc.raw_transport import (
+    DownloadedArtifact,
+    RetryableDownloadError,
+)
 from worldenergydata.texas_rrc.source_catalog import SOURCE_CATALOG_ROOT
 
 
@@ -109,20 +112,54 @@ def download_directory_files(
     rows_per_page: int,
     validate_artifact,
     retrieved_at: str,
+    max_attempts: int = 1,
 ) -> tuple[SnapshotArtifactManifest, ...]:
     """Download selected directory files into a staging directory."""
     download_file = getattr(transport, "download_godrive_directory_file_to")
     artifacts = []
     for item in plan.selected_files:
         part_path = staging / f"{item.filename}.part"
-        artifact = download_file(plan.download_url, item, part_path, rows_per_page)
-        validate_artifact(artifact)
+        artifact = _download_directory_file_with_retries(
+            download_file,
+            plan.download_url,
+            item,
+            part_path,
+            rows_per_page,
+            validate_artifact,
+            max_attempts,
+        )
         final_staged = staging / item.filename
         part_path.replace(final_staged)
         artifacts.append(
             _artifact_manifest(item, artifact, item.target_path, retrieved_at)
         )
     return tuple(artifacts)
+
+
+def _download_directory_file_with_retries(
+    download_file,
+    download_url: str | None,
+    item: DirectoryRefreshFile,
+    part_path: Path,
+    rows_per_page: int,
+    validate_artifact,
+    max_attempts: int,
+) -> DownloadedArtifact:
+    for attempt in range(1, max_attempts + 1):
+        part_path.unlink(missing_ok=True)
+        try:
+            artifact = download_file(download_url, item, part_path, rows_per_page)
+            validate_artifact(artifact)
+            return artifact
+        except RetryableDownloadError:
+            if attempt == max_attempts:
+                raise
+        except ValueError:
+            raise
+        except Exception:
+            if attempt == max_attempts:
+                raise
+    raise RuntimeError("directory download retry loop exited without a result")
 
 
 def promote_directory_files(plan: DirectoryRefreshPlan, staging: Path) -> None:

@@ -125,6 +125,7 @@ class RawSnapshotRefresher:
                 rows_per_page,
                 self._validate_artifact,
                 retrieved_at,
+                max_attempts=self.max_attempts,
             )
             promote_directory_files(plan, staging)
             return self._write_directory_manifest(plan, retrieved_at, artifacts)

@@ -286,6 +286,51 @@ def test_directory_refresh_writes_all_files_and_artifact_manifest(tmp_path):
     )
 
 
+def test_directory_refresh_retries_transient_file_download(tmp_path):
+    from worldenergydata.texas_rrc.raw_refresh import RawSnapshotRefresher
+
+    class FlakyDirectoryTransport(FakeDirectoryTransport):
+        def __init__(self, pages, payloads):
+            super().__init__(pages, payloads)
+            self.attempts: dict[str, int] = {}
+
+        def download_godrive_directory_file_to(
+            self,
+            url: str,
+            entry,
+            output_path: Path,
+            rows_per_page: int = 1000,
+        ):
+            self.attempts[entry.filename] = self.attempts.get(entry.filename, 0) + 1
+            if entry.filename == "well003.zip" and self.attempts[entry.filename] == 1:
+                raise OSError("tls alert internal error")
+            return super().download_godrive_directory_file_to(
+                url,
+                entry,
+                output_path,
+                rows_per_page,
+            )
+
+    transport = FlakyDirectoryTransport(
+        [_page([_entry("well001.zip"), _entry("well003.zip")])],
+        payloads={"well001.zip": b"one", "well003.zip": b"three"},
+    )
+    refresher = RawSnapshotRefresher(
+        catalog=_catalog_for("well_gis_layers", "all_files"),
+        output_root=tmp_path,
+        transport=transport,
+        clock=fixed_clock,
+        max_attempts=2,
+    )
+
+    manifest = refresher.refresh_source("well_gis_layers")
+
+    assert manifest.status == "downloaded"
+    assert transport.attempts["well003.zip"] == 2
+    assert (tmp_path / "raw" / "gis" / "wells" / "well003.zip").read_bytes() == b"three"
+    assert not list(tmp_path.rglob("*.part"))
+
+
 def test_directory_refresh_failure_removes_staging_and_preserves_existing_files(
     tmp_path,
 ):

@@ -1,7 +1,7 @@
 # Plan: Issue #665 - Texas RRC pipeline and GIS infrastructure access metrics
 
 **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/665
-**Status:** plan-review
+**Status:** plan-approved
 **Tier:** T2 (official GIS fanout, shapefile normalization, spatial metrics, `/mnt/ace` output contract, CLI, tests)
 **Client:** N/A
 **Project:** worldenergydata onshore field development

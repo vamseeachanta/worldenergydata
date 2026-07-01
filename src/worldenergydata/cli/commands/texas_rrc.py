@@ -939,6 +939,104 @@ def build_field_development_metrics_command(
         raise typer.Exit(1)
 
 
+def _print_infrastructure_access_summary(row_count: int, source_gaps) -> None:
+    table = Table(
+        title="Texas RRC Infrastructure Access Metrics",
+        show_header=True,
+        header_style="bold cyan",
+    )
+    table.add_column("Metric", style="dim")
+    table.add_column("Value")
+    table.add_row("Infrastructure access rows", str(row_count))
+    table.add_row("Source gaps", ", ".join(source_gaps) if source_gaps else "None")
+    console.print(table)
+
+
+def _print_infrastructure_access_outputs(manifest) -> None:
+    console.print(
+        "[green]Wrote infrastructure access metrics[/green] "
+        f"{manifest.row_count} rows -> {manifest.csv_path}"
+    )
+    console.print(f"[dim]Parquet: {manifest.parquet_path}[/dim]")
+    console.print(f"[dim]Quality report: {manifest.quality_path}[/dim]")
+    console.print(f"[dim]Manifest: {manifest.manifest_path}[/dim]")
+
+
+@app.command("build-infrastructure-access-metrics")
+def build_infrastructure_access_metrics_command(
+    root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--root",
+        help="Root containing Texas RRC curated metrics and raw GIS layers",
+    ),
+    output_root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--output-root",
+        help="Root for curated infrastructure access metric outputs",
+    ),
+    refresh_gis: bool = typer.Option(
+        False,
+        "--refresh-gis",
+        help="Refresh official RRC well and pipeline GIS layers before building",
+    ),
+    require_sources: bool = typer.Option(
+        False,
+        "--require-sources",
+        help="Fail when any curated or GIS input source is missing",
+    ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Build the infrastructure access summary without writing outputs",
+    ),
+    nearby_radius_miles: float = typer.Option(
+        25.0,
+        "--nearby-radius-miles",
+        min=1.0,
+        help="Maximum distance used for nearby pipeline screening",
+    ),
+    allow_non_ace_output: bool = typer.Option(
+        False,
+        "--allow-non-ace-output",
+        help="Allow non-/mnt/ace output roots for isolated tests or sandboxes",
+    ),
+    rows_per_page: int = typer.Option(
+        1000,
+        "--rows-per-page",
+        min=1,
+        help="GoDrive directory rows requested per page when refreshing GIS",
+    ),
+) -> None:
+    """Build Texas RRC field-level infrastructure access metrics."""
+    from worldenergydata.texas_rrc.infrastructure.cli_support import (
+        run_build_infrastructure_access_metrics,
+    )
+
+    try:
+        result = run_build_infrastructure_access_metrics(
+            root=root,
+            output_root=output_root,
+            dry_run=dry_run,
+            require_sources=require_sources,
+            refresh_gis=refresh_gis,
+            nearby_radius_miles=nearby_radius_miles,
+            allow_non_ace_output=allow_non_ace_output,
+            rows_per_page=rows_per_page,
+        )
+        _print_infrastructure_access_summary(result.row_count, result.source_gaps)
+        if result.dry_run:
+            console.print(
+                "[yellow]Dry run:[/yellow] no infrastructure access outputs written"
+            )
+            return
+        _print_infrastructure_access_outputs(result.manifest)
+    except typer.Exit:
+        raise
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {str(e)}")
+        raise typer.Exit(1)
+
+
 @app.command()
 def analyze(
     district: Optional[str] = typer.Option(
