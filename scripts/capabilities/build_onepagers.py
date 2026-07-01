@@ -235,14 +235,18 @@ _TEMPLATE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
 </body></html>"""
 
 
-# Capabilities whose output is produced by a deterministic registry workflow
-# (docs/registry/workflows.yaml) — these get a real workflow-API call. Everything
-# else is a published report surface, whose API is an HTTP GET of the report.
+# Capabilities whose output is produced by a deterministic registry workflow that
+# is ALSO exposed on the Deckhand workflow-API — these get a real POST /api/run
+# call. Everything else is a published report surface (HTTP GET of the report).
+#
+# NOTE: the field-economics pages are intentionally NOT mapped to a workflow. The
+# underlying `fdas-field-npv` registry workflow exists and is locally runnable, but
+# it is deliberately EXCLUDED from Deckhand's public routing on PII grounds
+# (deckhand#513), so the bot will not run it. The sanctioned economics are already
+# published as static reports, so their honest API is a GET of the report — we do
+# not advertise a POST the platform won't serve.
 WORKFLOW_MAP: dict[str, str] = {
-    "economics-anchor": "fdas-field-npv", "economics-big_foot": "fdas-field-npv",
-    "economics-cascade_chinook": "fdas-field-npv", "economics-jack_st_malo": "fdas-field-npv",
-    "economics-julia": "fdas-field-npv", "economics-shenandoah": "fdas-field-npv",
-    "economics-stones": "fdas-field-npv", "benchmark": "bsee-well-comparison",
+    "benchmark": "bsee-well-comparison",
     "ms-exec": "marine-safety-stats",
 }
 _API_INVOKE = "uv run python -m worldenergydata {input}"

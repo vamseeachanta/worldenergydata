@@ -7,6 +7,7 @@ sources:
     district:
       - DISTRICT_NO
       - DISTRICT
+      - DISTRICT_CODE
     field_number:
       - FIELD_NO
       - FIELD_NUMBER
@@ -25,15 +26,19 @@ sources:
     well_status:
       - WELL_STATUS
       - STATUS
+      - WELL_TYPE_NAME
     well_type:
       - WELL_TYPE
       - TYPE
+      - OIL_GAS_CODE
     total_depth:
       - TOTAL_DEPTH
       - TD
+      - API_DEPTH
     completion_date:
       - COMPLETION_DATE
       - COMPL_DATE
+      - ORIG_COMPLETION_DT
     plug_date:
       - PLUG_DATE
 

@@ -53,16 +53,11 @@
       <button class="copy" onclick="navigator.clipboard&amp;&amp;navigator.clipboard.writeText(document.getElementById('prompt').innerText)">Copy</button>
       <a class="copy" href="https://t.me/the_deckhand_bot" style="text-decoration:none">Run on Deckhand &rarr;</a>
     </div>
-    <div class="how"><h2 style="margin-top:14px">How to run the API</h2><ol><li><b>Telegram.</b> Open @the_deckhand_bot and send: Run the sanctioned V30 field economics for Cascade–Chinook — per-well NPV, MIRR and the breakeven WTI.</li><li><b>HTTP.</b> POST /api/run with a scoped bearer token</li><li><b>CLI.</b> uv run python -m worldenergydata examples/workflows/fdas-field-npv/input.yml</li></ol></div>
+    <div class="how"><h2 style="margin-top:14px">How to run the API</h2><ol><li><b>Telegram.</b> Open @the_deckhand_bot and send: Run the sanctioned V30 field economics for Cascade–Chinook — per-well NPV, MIRR and the breakeven WTI.</li><li><b>HTTP.</b> GET https://vamseeachanta.github.io/worldenergydata/economics-cascade_chinook.html</li></ol></div>
   </div>
 
   <div class="row">
-    <div class="panel"><h2>Request — input</h2><span class="verb">POST /api/run</span><pre>curl -X POST https://api.deckhand/run \
-  -H 'content-type: application/json' \
-  -d '{&quot;repo&quot;: &quot;worldenergydata&quot;, &quot;workflow&quot;: &quot;fdas-field-npv&quot;, &quot;inputs&quot;: {&quot;field&quot;: &quot;Cascade\u2013Chinook field economics&quot;}}'
-
-# or run locally (deterministic):
-# uv run python -m worldenergydata examples/workflows/fdas-field-npv/input.yml</pre></div>
+    <div class="panel"><h2>Request — input</h2><span class="verb">GET</span><pre>curl -L https://vamseeachanta.github.io/worldenergydata/economics-cascade_chinook.html</pre></div>
     <div class="panel"><h2>Response — ResultEnvelope</h2><pre>{
   &quot;schema&quot;: &quot;deckhand.workflow_api.ResultEnvelope/2&quot;,
   &quot;status&quot;: &quot;ok&quot;,
@@ -74,25 +69,17 @@
     &quot;source&quot;: &quot;public regulatory filings&quot;
   },
   &quot;request&quot;: {
-    &quot;method&quot;: &quot;POST&quot;,
-    &quot;path&quot;: &quot;/api/run&quot;,
-    &quot;body&quot;: {
-      &quot;repo&quot;: &quot;worldenergydata&quot;,
-      &quot;workflow&quot;: &quot;fdas-field-npv&quot;,
-      &quot;inputs&quot;: {
-        &quot;field&quot;: &quot;Cascade\u2013Chinook field economics&quot;
-      }
-    }
+    &quot;method&quot;: &quot;GET&quot;,
+    &quot;url&quot;: &quot;https://vamseeachanta.github.io/worldenergydata/economics-cascade_chinook.html&quot;
   },
-  &quot;invocation&quot;: &quot;uv run python -m worldenergydata examples/workflows/fdas-field-npv/input.yml&quot;,
-  &quot;workflow&quot;: &quot;worldenergydata:fdas-field-npv&quot;,
+  &quot;surface&quot;: &quot;worldenergydata:economics-cascade_chinook&quot;,
   &quot;outputs&quot;: [
     {
       &quot;kind&quot;: &quot;report&quot;,
       &quot;url&quot;: &quot;https://vamseeachanta.github.io/worldenergydata/economics-cascade_chinook.html&quot;
     }
   ],
-  &quot;note&quot;: &quot;Deterministic registry workflow (docs/registry/workflows.yaml). POST to the Deckhand workflow-API, or run the invocation locally; the embedded report is the rendered output.&quot;,
+  &quot;note&quot;: &quot;Published report surface \u2014 the deterministic output is served as a self-contained page; GET the report_url to consume it.&quot;,
   &quot;prompt&quot;: &quot;Run the sanctioned V30 field economics for Cascade\u2013Chinook \u2014 per-well NPV, MIRR and the breakeven WTI.&quot;,
   &quot;how_to_run&quot;: [
     {
@@ -103,24 +90,13 @@
     },
     {
       &quot;via&quot;: &quot;http&quot;,
-      &quot;step&quot;: &quot;POST /api/run with a scoped bearer token&quot;,
-      &quot;body&quot;: {
-        &quot;repo&quot;: &quot;worldenergydata&quot;,
-        &quot;workflow&quot;: &quot;fdas-field-npv&quot;,
-        &quot;inputs&quot;: {
-          &quot;field&quot;: &quot;Cascade\u2013Chinook field economics&quot;
-        }
-      }
-    },
-    {
-      &quot;via&quot;: &quot;cli&quot;,
-      &quot;step&quot;: &quot;uv run python -m worldenergydata examples/workflows/fdas-field-npv/input.yml&quot;
+      &quot;step&quot;: &quot;GET https://vamseeachanta.github.io/worldenergydata/economics-cascade_chinook.html&quot;
     }
   ]
 }</pre>
       <a class="btn" href="economics-cascade_chinook.json" download>Download envelope JSON &darr;</a></div>
   </div>
-  <p class="note">Deterministic registry workflow (docs/registry/workflows.yaml). POST to the Deckhand workflow-API, or run the invocation locally; the embedded report is the rendered output.</p>
+  <p class="note">Published report surface — the deterministic output is served as a self-contained page; GET the report_url to consume it.</p>
   <div class="reportwrap">
     <div class="bar"><span>Comprehensive report (live output)</span><a href="https://vamseeachanta.github.io/worldenergydata/economics-cascade_chinook.html">open full report &rarr;</a></div>
     <iframe src="https://vamseeachanta.github.io/worldenergydata/economics-cascade_chinook.html" loading="lazy" title="Cascade–Chinook field economics report"></iframe>
