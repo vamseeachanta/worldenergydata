@@ -4426,6 +4426,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/d5/7b/65f55513d3c769fd677f90032d8d8703e3dc17e88a41b6074d2177548bca/PyPyDispatcher-2.1.2.tar.gz", hash = "sha256:b6bec5dfcff9d2535bca2b23c80eae367b1ac250a645106948d315fcfa9130f2", size = 23224, upload-time = "2017-07-03T14:20:51.806Z" }
 
 [[package]]
+name = "pyshp"
+version = "2.4.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/66/dc/8d5c654580a7398702026b6e34fdbe622bfdaef3b50e7f3f4244a11a90a0/pyshp-2.4.2.tar.gz", hash = "sha256:50d56ca9301960b00da7158e8428f64054da504f3c507b54df878232c9902232", size = 1739226, upload-time = "2026-06-06T16:46:42.895Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/bd/22/ffcd94c7d57cb5dc0c45d0a158237f4c991ab3e187a75842e04ea3c94f6c/pyshp-2.4.2-py2.py3-none-any.whl", hash = "sha256:7a013b5e8333f5923a9eb012e2048ae15b3399f11abf2e0044b10176decbd68a", size = 49071, upload-time = "2026-06-06T16:46:41.37Z" },
+]
+
+[[package]]
 name = "pysocks"
 version = "1.7.1"
 source = { registry = "https://pypi.org/simple" }
@@ -7527,6 +7536,7 @@ source = { editable = "packages/worldenergydata-texas_rrc" }
 dependencies = [
     { name = "pandas" },
     { name = "pyarrow" },
+    { name = "pyshp" },
     { name = "pyyaml" },
     { name = "worldenergydata-core" },
 ]
@@ -7535,6 +7545,7 @@ dependencies = [
 requires-dist = [
     { name = "pandas", specifier = ">=2.3.3,<3.0" },
     { name = "pyarrow", specifier = ">=14.0.0,<20.0" },
+    { name = "pyshp", specifier = ">=2.3,<3" },
     { name = "pyyaml", specifier = ">=6.0,<7.0" },
     { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
 ]

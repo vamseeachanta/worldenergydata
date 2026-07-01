@@ -1,8 +1,7 @@
 # ABOUTME: Texas Railroad Commission module for oil and gas data integration
 # ABOUTME: Provides access to Texas production, well, and drilling permit data
 
-"""
-Texas Railroad Commission Integration Module for WorldEnergyData.
+"""Texas Railroad Commission Integration Module for WorldEnergyData.
 
 This module provides integration with the Texas Railroad Commission (RRC)
 data sources, enabling collection and analysis of Texas oil and gas data.
@@ -33,19 +32,33 @@ Example usage:
     well_data = client.get_well_by_api("42-123-45678")
 """
 
-from .api_client import TexasRRCClient
-from .cache import FileDownloadCache, TexasRRCCache
-from .errors import (
-    TexasRRCAPIError,
-    TexasRRCConfigurationError,
-    TexasRRCDataError,
-    TexasRRCError,
-    TexasRRCRateLimitError,
-    TexasRRCValidationError,
-)
-from .texas_rrc import TexasRRC
+from importlib import import_module
 
 __version__ = "1.0.0"
+_LAZY_EXPORTS = {
+    "TexasRRC": ".texas_rrc",
+    "TexasRRCClient": ".api_client",
+    "TexasRRCCache": ".cache",
+    "FileDownloadCache": ".cache",
+    "TexasRRCError": ".errors",
+    "TexasRRCAPIError": ".errors",
+    "TexasRRCRateLimitError": ".errors",
+    "TexasRRCConfigurationError": ".errors",
+    "TexasRRCDataError": ".errors",
+    "TexasRRCValidationError": ".errors",
+}
+
+
+def __getattr__(name: str):
+    """Load public Texas RRC exports only when they are requested."""
+    if name not in _LAZY_EXPORTS:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+    module = import_module(_LAZY_EXPORTS[name], __name__)
+    value = getattr(module, name)
+    globals()[name] = value
+    return value
+
+
 __all__ = [
     # Main class
     "TexasRRC",
