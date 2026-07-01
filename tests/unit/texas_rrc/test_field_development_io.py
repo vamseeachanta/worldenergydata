@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
 import json
+from datetime import datetime, timezone
 
 import pandas as pd
 import pytest
