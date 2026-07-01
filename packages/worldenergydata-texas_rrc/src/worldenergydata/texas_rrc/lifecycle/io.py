@@ -25,6 +25,10 @@ API_KEY_DTYPES = {
     "well_unique_number": "string",
     "sidetrack_code": "string",
     "completion_code": "string",
+    "district": "string",
+    "field_number": "string",
+    "lease_number": "string",
+    "operator_number": "string",
 }
 
 
