@@ -9,25 +9,17 @@
     "source": "public regulatory filings"
   },
   "request": {
-    "method": "POST",
-    "path": "/api/run",
-    "body": {
-      "repo": "worldenergydata",
-      "workflow": "fdas-field-npv",
-      "inputs": {
-        "field": "Shenandoah field economics"
-      }
-    }
+    "method": "GET",
+    "url": "https://vamseeachanta.github.io/worldenergydata/economics-shenandoah.html"
   },
-  "invocation": "uv run python -m worldenergydata examples/workflows/fdas-field-npv/input.yml",
-  "workflow": "worldenergydata:fdas-field-npv",
+  "surface": "worldenergydata:economics-shenandoah",
   "outputs": [
     {
       "kind": "report",
       "url": "https://vamseeachanta.github.io/worldenergydata/economics-shenandoah.html"
     }
   ],
-  "note": "Deterministic registry workflow (docs/registry/workflows.yaml). POST to the Deckhand workflow-API, or run the invocation locally; the embedded report is the rendered output.",
+  "note": "Published report surface \u2014 the deterministic output is served as a self-contained page; GET the report_url to consume it.",
   "prompt": "Run the sanctioned V30 field economics for Shenandoah \u2014 per-well NPV, MIRR and the breakeven WTI.",
   "how_to_run": [
     {
@@ -38,18 +30,7 @@
     },
     {
       "via": "http",
-      "step": "POST /api/run with a scoped bearer token",
-      "body": {
-        "repo": "worldenergydata",
-        "workflow": "fdas-field-npv",
-        "inputs": {
-          "field": "Shenandoah field economics"
-        }
-      }
-    },
-    {
-      "via": "cli",
-      "step": "uv run python -m worldenergydata examples/workflows/fdas-field-npv/input.yml"
+      "step": "GET https://vamseeachanta.github.io/worldenergydata/economics-shenandoah.html"
     }
   ]
 }
