@@ -15,13 +15,7 @@ def _write_json(path: Path, payload: dict[str, object]) -> None:
 
 
 def _write_lifecycle(root: Path) -> Path:
-    path = (
-        root
-        / "curated"
-        / "well_lifecycle"
-        / "spine"
-        / "well_lifecycle_spine.csv"
-    )
+    path = root / "curated" / "well_lifecycle" / "spine" / "well_lifecycle_spine.csv"
     path.parent.mkdir(parents=True, exist_ok=True)
     pd.DataFrame(
         [
@@ -75,11 +69,7 @@ def _write_production_parquet(root: Path) -> Path:
 
 def _write_production_csv(root: Path) -> Path:
     path = (
-        root
-        / "curated"
-        / "production"
-        / "field_atlas"
-        / "production_field_atlas.csv"
+        root / "curated" / "production" / "field_atlas" / "production_field_atlas.csv"
     )
     path.parent.mkdir(parents=True, exist_ok=True)
     _production_frame().to_csv(path, index=False)
@@ -94,13 +84,11 @@ def test_load_field_development_inputs_reads_complete_curated_artifacts(tmp_path
     _write_lifecycle(tmp_path)
     _write_production_parquet(tmp_path)
     _write_json(
-        tmp_path
-        / "curated/well_lifecycle/spine/well_lifecycle_quality.json",
+        tmp_path / "curated/well_lifecycle/spine/well_lifecycle_quality.json",
         {"row_count": 1, "source_gaps": []},
     )
     _write_json(
-        tmp_path
-        / "curated/production/field_atlas/production_field_atlas_quality.json",
+        tmp_path / "curated/production/field_atlas/production_field_atlas_quality.json",
         {"row_count": 2, "metric_gaps": ["water_bbl"]},
     )
 
