@@ -83,6 +83,7 @@ def build_directory_refresh_plan(
     row_count = all_pages[0].row_count if all_pages else 0
     target_dir = _target_dir(entry, output_root)
     selected = _select_entries(source_id, entry, entries, selection)
+    selected_files = tuple(_to_refresh_file(item, target_dir) for item in selected)
     return DirectoryRefreshPlan(
         source_id=source_id,
         refreshable=True,
@@ -92,7 +93,7 @@ def build_directory_refresh_plan(
         target_path=target_dir,
         refresh_cadence=entry["refresh_cadence"],
         row_count=row_count,
-        selected_files=tuple(_to_refresh_file(item, target_dir) for item in selected),
+        selected_files=_deduplicate_refresh_files(selected_files),
     )
 
 
@@ -243,3 +244,17 @@ def _to_refresh_file(
         page_first=entry.page_first,
         target_path=target_dir / entry.filename,
     )
+
+
+def _deduplicate_refresh_files(
+    selected_files: tuple[DirectoryRefreshFile, ...],
+) -> tuple[DirectoryRefreshFile, ...]:
+    seen = set()
+    result = []
+    for item in selected_files:
+        key = (item.filename, item.target_path)
+        if key in seen:
+            continue
+        seen.add(key)
+        result.append(item)
+    return tuple(result)

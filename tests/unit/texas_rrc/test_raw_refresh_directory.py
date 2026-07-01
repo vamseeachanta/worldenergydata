@@ -116,6 +116,44 @@ def test_directory_discovery_selects_latest_filename_date(tmp_path):
     ]
 
 
+def test_directory_discovery_deduplicates_repeated_target_filenames(tmp_path):
+    from worldenergydata.texas_rrc.raw_refresh import (
+        DirectorySelection,
+        RawSnapshotRefresher,
+    )
+
+    transport = FakeDirectoryTransport(
+        [
+            _page(
+                [
+                    _entry("06-28-2026.zip"),
+                    _entry("06-29-2026.zip"),
+                    _entry("06-29-2026.zip"),
+                ],
+                row_count=3,
+            )
+        ]
+    )
+    refresher = RawSnapshotRefresher(
+        catalog=_catalog_for("completion_data", "latest_by_filename_date"),
+        output_root=tmp_path,
+        transport=transport,
+        clock=fixed_clock,
+    )
+
+    plan = refresher.discover_directory_source(
+        "completion_data",
+        DirectorySelection(),
+        rows_per_page=1000,
+    )
+
+    assert plan.row_count == 3
+    assert [file.filename for file in plan.selected_files] == ["06-29-2026.zip"]
+    assert [file.target_path for file in plan.selected_files] == [
+        tmp_path / "raw" / "completions" / "06-29-2026.zip"
+    ]
+
+
 def test_directory_discovery_selects_date_window_and_all_gis_files(tmp_path):
     from worldenergydata.texas_rrc.raw_refresh import (
         DirectorySelection,

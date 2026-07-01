@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
+import json
+import shutil
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
-import json
 from pathlib import Path
-import shutil
 from typing import Iterable
 
 import pandas as pd
@@ -25,6 +25,10 @@ API_KEY_DTYPES = {
     "well_unique_number": "string",
     "sidetrack_code": "string",
     "completion_code": "string",
+    "district": "string",
+    "field_number": "string",
+    "lease_number": "string",
+    "operator_number": "string",
 }
 
 
@@ -84,7 +88,7 @@ def write_lifecycle_outputs(
 
 def load_lifecycle_spine(path: Path | str) -> pd.DataFrame:
     """Load a persisted lifecycle spine while preserving API key strings."""
-    return pd.read_csv(path, dtype=API_KEY_DTYPES)
+    return pd.read_csv(path, dtype=API_KEY_DTYPES, low_memory=False)
 
 
 def _validate_output_root(root: Path, allow_non_ace_root: bool) -> None:

@@ -13,7 +13,6 @@ from worldenergydata.texas_rrc.lifecycle.keys import (
 )
 from worldenergydata.texas_rrc.lifecycle.sources import LifecycleInputFrames
 
-
 SOURCE_ORDER = ("wellbore_query", "drilling_permits", "completion_data")
 IDENTIFIER_COLUMNS = (
     "district",
@@ -81,33 +80,54 @@ def _normalize_source_frame(frame: pd.DataFrame) -> pd.DataFrame:
     result = result[result["api14"].notna()].copy()
     if result.empty:
         return result
-    result["api10"] = result["api14"].apply(derive_api10)
-    api_segments = result["api14"].apply(split_api14).apply(pd.Series)
-    for column in (
-        "county_code",
-        "well_unique_number",
-        "sidetrack_code",
-        "completion_code",
-    ):
-        result[column] = api_segments[column]
+    api14 = result["api14"].astype("string")
+    result["api10"] = api14.str.slice(0, 10)
+    result["county_code"] = api14.str.slice(2, 5)
+    result["well_unique_number"] = api14.str.slice(5, 10)
+    result["sidetrack_code"] = api14.str.slice(10, 12)
+    result["completion_code"] = api14.str.slice(12, 14)
     return result
 
 
 def _by_key(frame: pd.DataFrame, key: str) -> dict[str, dict[str, Any]]:
     if frame.empty or key not in frame.columns:
         return {}
-    rows = {}
-    for value, group in frame.groupby(key, sort=True):
-        if _has_value(value):
-            rows[str(value)] = _most_complete_row(group).to_dict()
-    return rows
+    key_values = frame[key].astype("string")
+    keyed = frame[key_values.notna() & key_values.ne("")].copy()
+    if keyed.empty:
+        return {}
+
+    duplicated = keyed.duplicated(subset=[key], keep=False)
+    if duplicated.any():
+        unique = keyed.loc[~duplicated]
+        duplicate_rows = keyed.loc[duplicated].copy()
+        duplicate_rows["_row_completeness"] = _row_completeness(duplicate_rows)
+        selected_indices = duplicate_rows.groupby(key, sort=True)[
+            "_row_completeness"
+        ].idxmax()
+        selected_duplicates = duplicate_rows.loc[selected_indices].drop(
+            columns="_row_completeness"
+        )
+        selected = pd.concat([unique, selected_duplicates], ignore_index=True)
+    else:
+        selected = keyed
+
+    selected = selected.sort_values(key)
+    return {
+        str(value): row
+        for value, row in selected.set_index(key, drop=False)
+        .to_dict(orient="index")
+        .items()
+    }
 
 
-def _most_complete_row(group: pd.DataFrame) -> pd.Series:
-    completeness = group.apply(
-        lambda row: sum(_has_value(value) for value in row), axis=1
-    )
-    return group.loc[completeness.idxmax()]
+def _row_completeness(frame: pd.DataFrame) -> pd.Series:
+    completeness = pd.Series(0, index=frame.index, dtype="int16")
+    for column in frame.columns:
+        values = frame[column]
+        present = values.notna() & values.astype("string").ne("")
+        completeness += present.astype("int16")
+    return completeness
 
 
 def _build_record(

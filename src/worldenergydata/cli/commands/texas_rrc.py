@@ -729,6 +729,216 @@ def build_production_atlas_command(
         raise typer.Exit(1)
 
 
+def _field_development_input_paths(root: Path) -> list[str]:
+    from worldenergydata.texas_rrc.field_development import io as field_io
+    from worldenergydata.texas_rrc.lifecycle import io as lifecycle_io
+    from worldenergydata.texas_rrc.production_atlas import io as atlas_io
+
+    candidates = [
+        lifecycle_io.LIFECYCLE_SPINE_DIR / lifecycle_io.SPINE_FILENAME,
+        lifecycle_io.LIFECYCLE_SPINE_DIR / lifecycle_io.QUALITY_FILENAME,
+        atlas_io.PRODUCTION_ATLAS_DIR / atlas_io.PARQUET_FILENAME,
+        atlas_io.PRODUCTION_ATLAS_DIR / atlas_io.CSV_FILENAME,
+        atlas_io.PRODUCTION_ATLAS_DIR / atlas_io.QUALITY_FILENAME,
+    ]
+    output_candidates = {
+        field_io.FIELD_DEVELOPMENT_METRICS_DIR / field_io.CSV_FILENAME,
+        field_io.FIELD_DEVELOPMENT_METRICS_DIR / field_io.PARQUET_FILENAME,
+        field_io.FIELD_DEVELOPMENT_METRICS_DIR / field_io.QUALITY_FILENAME,
+        field_io.FIELD_DEVELOPMENT_METRICS_DIR / field_io.MANIFEST_FILENAME,
+    }
+    return [
+        str(path)
+        for path in candidates
+        if (root / path).exists() and path not in output_candidates
+    ]
+
+
+def _print_field_development_summary(row_count: int, source_gaps) -> None:
+    table = Table(
+        title="Texas RRC Field Development Metrics",
+        show_header=True,
+        header_style="bold cyan",
+    )
+    table.add_column("Metric", style="dim")
+    table.add_column("Value")
+    table.add_row("Field-development rows", str(row_count))
+    table.add_row("Source gaps", ", ".join(source_gaps) if source_gaps else "None")
+    console.print(table)
+
+
+def _print_field_development_outputs(manifest) -> None:
+    console.print(
+        "[green]Wrote field-development metrics[/green] "
+        f"{manifest.row_count} rows -> {manifest.csv_path}"
+    )
+    console.print(f"[dim]Parquet: {manifest.parquet_path}[/dim]")
+    console.print(f"[dim]Quality report: {manifest.quality_path}[/dim]")
+    console.print(f"[dim]Manifest: {manifest.manifest_path}[/dim]")
+
+
+def _build_missing_lifecycle(root: Path, allow_non_ace_output: bool) -> None:
+    from worldenergydata.texas_rrc.lifecycle.io import write_lifecycle_outputs
+    from worldenergydata.texas_rrc.lifecycle.quality import assess_lifecycle_quality
+    from worldenergydata.texas_rrc.lifecycle.sources import load_lifecycle_inputs
+    from worldenergydata.texas_rrc.lifecycle.spine import build_lifecycle_spine
+
+    inputs = load_lifecycle_inputs(root)
+    if inputs.source_gaps:
+        console.print(
+            "[red]Error:[/red] missing lifecycle sources: "
+            f"{', '.join(inputs.source_gaps)}"
+        )
+        raise typer.Exit(1)
+
+    spine = build_lifecycle_spine(inputs)
+    quality = assess_lifecycle_quality(spine, source_gaps=inputs.source_gaps)
+    manifest = write_lifecycle_outputs(
+        spine,
+        quality,
+        output_root=root,
+        input_paths=_lifecycle_input_paths(root),
+        allow_non_ace_root=allow_non_ace_output,
+    )
+    console.print(
+        "[green]Wrote lifecycle spine[/green] "
+        f"{manifest.row_count} rows -> {manifest.spine_path}"
+    )
+
+
+def _build_missing_production(
+    root: Path,
+    allow_non_ace_output: bool,
+    chunksize: int,
+) -> None:
+    _run_build_production_atlas(
+        raw_root=root,
+        output_root=root,
+        dry_run=False,
+        require_sources=True,
+        allow_non_ace_output=allow_non_ace_output,
+        chunksize=chunksize,
+    )
+
+
+def _run_build_field_development_metrics(
+    root: Path,
+    output_root: Path,
+    dry_run: bool,
+    require_sources: bool,
+    build_missing_lifecycle: bool,
+    build_missing_production: bool,
+    allow_non_ace_output: bool,
+    chunksize: int,
+) -> None:
+    from worldenergydata.texas_rrc.field_development import (
+        assess_field_development_quality,
+        build_field_development_metrics,
+        load_field_development_inputs,
+        write_field_development_outputs,
+    )
+
+    inputs = load_field_development_inputs(root)
+    if "well_lifecycle_spine" in inputs.source_gaps and build_missing_lifecycle:
+        _build_missing_lifecycle(root, allow_non_ace_output)
+        inputs = load_field_development_inputs(root)
+    if "production_field_atlas" in inputs.source_gaps and build_missing_production:
+        _build_missing_production(root, allow_non_ace_output, chunksize)
+        inputs = load_field_development_inputs(root)
+
+    source_gaps = tuple(inputs.source_gaps)
+    if source_gaps and (require_sources or not dry_run):
+        console.print(
+            "[red]Error:[/red] missing field-development sources: "
+            f"{', '.join(source_gaps)}"
+        )
+        raise typer.Exit(1)
+
+    metrics = build_field_development_metrics(inputs)
+    quality = assess_field_development_quality(metrics, inputs)
+    _print_field_development_summary(len(metrics), source_gaps)
+
+    if dry_run:
+        console.print("[yellow]Dry run:[/yellow] no field-development outputs written")
+        return
+
+    manifest = write_field_development_outputs(
+        metrics,
+        quality,
+        output_root=output_root,
+        input_paths=_field_development_input_paths(root),
+        allow_non_ace_root=allow_non_ace_output,
+        command=(
+            "worldenergydata texas-rrc build-field-development-metrics "
+            f"--root {root} --output-root {output_root}"
+        ),
+    )
+    _print_field_development_outputs(manifest)
+
+
+@app.command("build-field-development-metrics")
+def build_field_development_metrics_command(
+    root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--root",
+        help="Root containing curated Texas RRC lifecycle and production artifacts",
+    ),
+    output_root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--output-root",
+        help="Root for curated field-development metric outputs",
+    ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Build the field-development summary without writing outputs",
+    ),
+    require_sources: bool = typer.Option(
+        False,
+        "--require-sources",
+        help="Fail when any curated lifecycle or production input is missing",
+    ),
+    build_missing_lifecycle: bool = typer.Option(
+        False,
+        "--build-missing-lifecycle",
+        help="Build missing lifecycle spine from local raw snapshots",
+    ),
+    build_missing_production: bool = typer.Option(
+        False,
+        "--build-missing-production",
+        help="Build missing production atlas from local raw snapshots",
+    ),
+    allow_non_ace_output: bool = typer.Option(
+        False,
+        "--allow-non-ace-output",
+        help="Allow non-/mnt/ace output roots for isolated tests or sandboxes",
+    ),
+    chunksize: int = typer.Option(
+        1_000_000,
+        "--chunksize",
+        min=1,
+        help="Rows per PDQ production chunk when building a missing atlas",
+    ),
+) -> None:
+    """Build Texas RRC field-development metrics from curated direct sources."""
+    try:
+        _run_build_field_development_metrics(
+            root,
+            output_root,
+            dry_run,
+            require_sources,
+            build_missing_lifecycle,
+            build_missing_production,
+            allow_non_ace_output,
+            chunksize,
+        )
+    except typer.Exit:
+        raise
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {str(e)}")
+        raise typer.Exit(1)
+
+
 @app.command()
 def analyze(
     district: Optional[str] = typer.Option(
