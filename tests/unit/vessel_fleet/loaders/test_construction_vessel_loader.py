@@ -231,9 +231,7 @@ class TestPipelayBurialColumns:
         burial = loader.get_burial_capable_vessels()
         assert list(burial["VESSEL_NAME"]) == ["BURY BARGE B"]
 
-    def test_burial_query_tolerates_legacy_dataset(
-        self, sample_construction_fleet
-    ):
+    def test_burial_query_tolerates_legacy_dataset(self, sample_construction_fleet):
         """Datasets predating #701 (no burial columns) must not raise."""
         loader = ConstructionVesselLoader(data_dir=sample_construction_fleet)
         burial = loader.get_burial_capable_vessels()
