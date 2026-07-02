@@ -1,7 +1,7 @@
 # Plan: Issue #666 - Texas RRC onshore field atlas and deep-dive reports
 
 **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/666
-**Status:** plan-review
+**Status:** plan-approved
 **Tier:** T2 (HTML report generation, field-page fanout, manifest/provenance, `/mnt/ace` output contract, CLI, tests)
 **Client:** N/A
 **Project:** worldenergydata onshore field development
