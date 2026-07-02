@@ -1126,6 +1126,48 @@ def _print_field_architecture_dossier_outputs(manifest) -> None:
     console.print(f"[dim]Manifest: {manifest.manifest_path}[/dim]")
 
 
+def _print_field_architecture_portfolio_summary(
+    row_count: int,
+    blocking_source_gaps,
+    informational_source_gaps,
+) -> None:
+    table = Table(
+        title="Texas RRC Field Architecture Portfolio",
+        show_header=True,
+        header_style="bold cyan",
+    )
+    table.add_column("Metric", style="dim")
+    table.add_column("Value")
+    table.add_row("Portfolio rows", str(row_count))
+    table.add_row(
+        "Blocking source gaps",
+        ", ".join(blocking_source_gaps) if blocking_source_gaps else "None",
+    )
+    table.add_row(
+        "Informational source gaps",
+        ", ".join(informational_source_gaps) if informational_source_gaps else "None",
+    )
+    console.print(table)
+
+
+def _print_field_architecture_portfolio_outputs(manifest) -> None:
+    console.print(
+        "[green]Wrote field-architecture portfolio[/green] "
+        f"{manifest.row_count} rows -> {manifest.output_dir}"
+    )
+    console.print(f"[dim]Action Queue CSV: {manifest.action_queue_csv_path}[/dim]")
+    console.print(
+        f"[dim]Action Queue Parquet: {manifest.action_queue_parquet_path}[/dim]"
+    )
+    console.print(f"[dim]Class Summary CSV: {manifest.class_summary_csv_path}[/dim]")
+    console.print(
+        f"[dim]Follow-up Summary CSV: {manifest.followup_summary_csv_path}[/dim]"
+    )
+    console.print(f"[dim]HTML report: {manifest.html_path}[/dim]")
+    console.print(f"[dim]Quality report: {manifest.quality_path}[/dim]")
+    console.print(f"[dim]Manifest: {manifest.manifest_path}[/dim]")
+
+
 @app.command("publish-field-atlas-reports")
 def publish_field_atlas_reports_command(
     root: Path = typer.Option(
@@ -1318,6 +1360,65 @@ def build_field_architecture_dossiers_command(
             )
             return
         _print_field_architecture_dossier_outputs(result.manifest)
+    except typer.Exit:
+        raise
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {str(e)}")
+        raise typer.Exit(1)
+
+
+@app.command("build-field-architecture-portfolio")
+def build_field_architecture_portfolio_command(
+    root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--root",
+        help="Root containing curated Texas RRC field-architecture dossier inputs",
+    ),
+    output_root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--output-root",
+        help="Root for curated field-architecture portfolio outputs",
+    ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Build portfolio models without writing outputs",
+    ),
+    require_sources: bool = typer.Option(
+        False,
+        "--require-sources",
+        help="Fail when any curated portfolio input is missing",
+    ),
+    allow_non_ace_output: bool = typer.Option(
+        False,
+        "--allow-non-ace-output",
+        help="Allow non-/mnt/ace output roots for isolated tests or sandboxes",
+    ),
+) -> None:
+    """Build Texas RRC field architecture portfolio action report."""
+    from worldenergydata.texas_rrc.architecture_portfolio.cli_support import (
+        run_build_field_architecture_portfolio,
+    )
+
+    try:
+        result = run_build_field_architecture_portfolio(
+            root=root,
+            output_root=output_root,
+            dry_run=dry_run,
+            require_sources=require_sources,
+            allow_non_ace_output=allow_non_ace_output,
+        )
+        _print_field_architecture_portfolio_summary(
+            result.row_count,
+            result.blocking_source_gaps,
+            result.informational_source_gaps,
+        )
+        if result.dry_run:
+            console.print(
+                "[yellow]Dry run:[/yellow] no field-architecture portfolio outputs written"
+            )
+            return
+        _print_field_architecture_portfolio_outputs(result.manifest)
     except typer.Exit:
         raise
     except Exception as e:
