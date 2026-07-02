@@ -1,5 +1,7 @@
 # WorldEnergyData
 
+> *Everyday complex engineering — made deterministically simple.*
+
 > **Part of the Deckhand API — the API for real-world work.**
 > The public-domain datasets and analyses in this repo feed **Deckhand API paths** (field economics,
 > well benchmarking, basin/decom intel): one call (`POST /api/run`) returns a **standards-traceable
