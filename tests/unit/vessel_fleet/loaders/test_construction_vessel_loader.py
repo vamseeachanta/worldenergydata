@@ -181,6 +181,82 @@ class TestConstructionVesselLoaderDomainLogic:
         assert len(heavy_lift) >= 2
 
 
+@pytest.fixture
+def pipelay_burial_fleet(tmp_path):
+    """Fleet parquet carrying the #701 pipelay/burial columns with nulls."""
+    data = {
+        "VESSEL_NAME": ["LAY BARGE A", "BURY BARGE B", "REEL SHIP C"],
+        "VESSEL_TYPE": ["pipelay_vessel"] * 3,
+        "PIPELAY_TENSION_T": [100.0, None, 400.0],
+        "PIPELAY_METHOD": ["S-lay", None, "reel"],
+        "PIPELAY_CAPACITY_IN": [60.0, None, 18.0],
+        # 701 columns — deliberately sparse (poster-style nulls)
+        "WELDING_STATIONS_COUNT": [5.0, None, 1.0],
+        "TOTAL_STATIONS_COUNT": [9.0, None, 1.0],
+        "NDT_STATIONS_COUNT": [None, None, None],
+        "WELDING_METHOD": ["manual+automatic", None, None],
+        "TENSIONER_COUNT": [2.0, None, 1.0],
+        "PIPELAY_MIN_DIAMETER_IN": [4.0, None, 2.0],
+        "JLAY_CAPABLE": [None, None, True],
+        "REEL_PERMANENT_CAPABLE": [None, None, True],
+        "BURIAL_CAPABLE": [None, True, None],
+        "BURIAL_MIN_DIAMETER_IN": [None, 4.0, None],
+        "BURIAL_MAX_DIAMETER_IN": [None, 48.0, None],
+        "BURIAL_MAX_WATER_DEPTH_M": [None, 762.0, None],
+        "PIPELAY_MIN_WATER_DEPTH_M": [3.0, None, 15.2],
+        "PIPELAY_MAX_WATER_DEPTH_M": [243.8, None, 1524.0],
+        "EXPERIENCE_WATER_DEPTH_M": [30.5, 410.0, None],
+        "PIPE_JOINT_LENGTH_MAX_M": [12.8, None, None],
+        "DAVITS_COUNT": [None, None, None],
+    }
+    df = pd.DataFrame(data)
+    df.to_parquet(tmp_path / "construction_vessels.parquet")
+    return tmp_path
+
+
+class TestPipelayBurialColumns:
+    """#701 — loader behaviour for the pipelay/burial capability columns."""
+
+    def test_loads_new_columns_with_nulls(self, pipelay_burial_fleet):
+        loader = ConstructionVesselLoader(data_dir=pipelay_burial_fleet)
+        df = loader.load()
+        assert "TENSIONER_COUNT" in df.columns
+        record = loader.get_by_name("BURY BARGE B")
+        assert record["BURIAL_CAPABLE"] is True
+        assert record["BURIAL_MAX_DIAMETER_IN"] == 48.0
+        assert pd.isna(record["TENSIONER_COUNT"])
+
+    def test_get_burial_capable_vessels(self, pipelay_burial_fleet):
+        loader = ConstructionVesselLoader(data_dir=pipelay_burial_fleet)
+        burial = loader.get_burial_capable_vessels()
+        assert list(burial["VESSEL_NAME"]) == ["BURY BARGE B"]
+
+    def test_burial_query_tolerates_legacy_dataset(
+        self, sample_construction_fleet
+    ):
+        """Datasets predating #701 (no burial columns) must not raise."""
+        loader = ConstructionVesselLoader(data_dir=sample_construction_fleet)
+        burial = loader.get_burial_capable_vessels()
+        assert burial.empty
+
+    def test_curated_data_carries_new_columns(self):
+        loader = ConstructionVesselLoader()  # real committed curated data
+        df = loader.load()
+        for col in (
+            "WELDING_STATIONS_COUNT",
+            "TOTAL_STATIONS_COUNT",
+            "TENSIONER_COUNT",
+            "PIPELAY_MIN_DIAMETER_IN",
+            "BURIAL_CAPABLE",
+            "PIPELAY_MAX_WATER_DEPTH_M",
+            "PIPE_JOINT_LENGTH_MAX_M",
+        ):
+            assert col in df.columns, col
+        # 2011 poster backfill landed on poster-derived rows
+        assert df["PIPELAY_MIN_DIAMETER_IN"].notna().sum() >= 40
+        assert len(loader.get_burial_capable_vessels()) >= 10
+
+
 class TestAegirRegression:
     """Guard against the fabricated 'Aegir wind-installation jack-up' regression.
 
