@@ -1037,6 +1037,98 @@ def build_infrastructure_access_metrics_command(
         raise typer.Exit(1)
 
 
+def _print_field_atlas_report_summary(
+    row_count: int, page_count: int, source_gaps
+) -> None:
+    table = Table(
+        title="Texas RRC Field Atlas Reports",
+        show_header=True,
+        header_style="bold cyan",
+    )
+    table.add_column("Metric", style="dim")
+    table.add_column("Value")
+    table.add_row("Summary rows", str(row_count))
+    table.add_row("Field pages", str(page_count))
+    table.add_row("Source gaps", ", ".join(source_gaps) if source_gaps else "None")
+    console.print(table)
+
+
+def _print_field_atlas_report_outputs(manifest) -> None:
+    console.print(
+        "[green]Wrote field-atlas reports[/green] "
+        f"{manifest.page_count} pages -> {manifest.output_dir}"
+    )
+    console.print(f"[dim]Index: {manifest.index_path}[/dim]")
+    console.print(f"[dim]Summary CSV: {manifest.summary_csv_path}[/dim]")
+    console.print(f"[dim]Summary Parquet: {manifest.summary_parquet_path}[/dim]")
+    console.print(f"[dim]Quality report: {manifest.quality_path}[/dim]")
+    console.print(f"[dim]Manifest: {manifest.manifest_path}[/dim]")
+
+
+@app.command("publish-field-atlas-reports")
+def publish_field_atlas_reports_command(
+    root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--root",
+        help="Root containing curated Texas RRC field, production, and access inputs",
+    ),
+    output_root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--output-root",
+        help="Root for curated field-atlas report outputs",
+    ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Build the report model without writing outputs",
+    ),
+    require_sources: bool = typer.Option(
+        False,
+        "--require-sources",
+        help="Fail when any curated field-atlas report input is missing",
+    ),
+    allow_non_ace_output: bool = typer.Option(
+        False,
+        "--allow-non-ace-output",
+        help="Allow non-/mnt/ace output roots for isolated tests or sandboxes",
+    ),
+    max_fields: int | None = typer.Option(
+        None,
+        "--max-fields",
+        min=1,
+        help="Limit generated field pages after rank sorting",
+    ),
+) -> None:
+    """Publish Texas RRC field-atlas index and field deep-dive reports."""
+    from worldenergydata.texas_rrc.reports.cli_support import (
+        run_publish_field_atlas_reports,
+    )
+
+    try:
+        result = run_publish_field_atlas_reports(
+            root=root,
+            output_root=output_root,
+            dry_run=dry_run,
+            require_sources=require_sources,
+            allow_non_ace_output=allow_non_ace_output,
+            max_fields=max_fields,
+        )
+        _print_field_atlas_report_summary(
+            result.row_count,
+            result.page_count,
+            result.source_gaps,
+        )
+        if result.dry_run:
+            console.print("[yellow]Dry run:[/yellow] no field-atlas reports written")
+            return
+        _print_field_atlas_report_outputs(result.manifest)
+    except typer.Exit:
+        raise
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {str(e)}")
+        raise typer.Exit(1)
+
+
 @app.command()
 def analyze(
     district: Optional[str] = typer.Option(
