@@ -79,7 +79,7 @@ This directory contains issue-plan artifacts created during the issue-planning-m
 | [#665](https://github.com/vamseeachanta/worldenergydata/issues/665) | [texas-rrc-pipeline-gis-infrastructure-access](2026-07-01-issue-665-texas-rrc-pipeline-gis-infrastructure-access.md) | plan-approved | 2026-07-01 |
 | [#666](https://github.com/vamseeachanta/worldenergydata/issues/666) | [texas-rrc-onshore-field-atlas-reports](2026-07-01-issue-666-texas-rrc-onshore-field-atlas-reports.md) | plan-approved | 2026-07-01 |
 | [#669](https://github.com/vamseeachanta/worldenergydata/issues/669) | [texas-rrc-godrive-directory-refresh](2026-06-30-issue-669-texas-rrc-godrive-directory-refresh.md) | plan-approved | 2026-06-30 |
-| [#695](https://github.com/vamseeachanta/worldenergydata/issues/695) | [texas-rrc-field-opportunity-architecture-ranking](2026-07-02-issue-695-texas-rrc-field-opportunity-architecture-ranking.md) | plan-review | 2026-07-02 |
+| [#695](https://github.com/vamseeachanta/worldenergydata/issues/695) | [texas-rrc-field-opportunity-architecture-ranking](2026-07-02-issue-695-texas-rrc-field-opportunity-architecture-ranking.md) | implemented | 2026-07-02 |
 
 ## Closed / superseded plans
 
