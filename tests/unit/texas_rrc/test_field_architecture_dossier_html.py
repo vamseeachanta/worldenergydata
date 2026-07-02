@@ -87,7 +87,9 @@ def test_renders_self_contained_summary_and_field_html() -> None:
     assert "Limitations" in field_html
     assert "Review &lt;infill&gt;" in field_html
     assert "Operator &amp; Co" in field_html
-    assert "../../../reports/field_atlas/fields/05-00870500-aguila-vado.html" in field_html
+    assert (
+        "../../../reports/field_atlas/fields/05-00870500-aguila-vado.html" in field_html
+    )
     assert "http://" not in field_html
     assert "https://" not in field_html
 

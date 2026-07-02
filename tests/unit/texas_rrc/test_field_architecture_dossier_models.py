@@ -153,9 +153,7 @@ def test_marks_missing_stable_columns_as_visible_caveats() -> None:
             }
         ]
     )
-    development = pd.DataFrame(
-        [{"district": "05", "field_number": "00870500"}]
-    )
+    development = pd.DataFrame([{"district": "05", "field_number": "00870500"}])
 
     pages = build_field_architecture_dossier_pages(selected, atlas, development)
 

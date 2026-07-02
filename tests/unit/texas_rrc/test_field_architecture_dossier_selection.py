@@ -52,11 +52,21 @@ def test_selects_top_ranked_candidates_with_stable_reasons() -> None:
 def test_adds_class_coverage_only_for_absent_top_ranked_classes() -> None:
     rankings = pd.DataFrame(
         [
-            _ranking(1, "05", "00000001", "Top High", "high_access_infill_redevelopment"),
-            _ranking(2, "05", "00000002", "Second High", "high_access_infill_redevelopment"),
+            _ranking(
+                1, "05", "00000001", "Top High", "high_access_infill_redevelopment"
+            ),
+            _ranking(
+                2, "05", "00000002", "Second High", "high_access_infill_redevelopment"
+            ),
             _ranking(3, "03", "00000003", "Growth A", "emerging_growth"),
             _ranking(4, "03", "00000004", "Growth B", "emerging_growth"),
-            _ranking(5, "02", "00000005", "Constrained", "infrastructure_constrained_activity"),
+            _ranking(
+                5,
+                "02",
+                "00000005",
+                "Constrained",
+                "infrastructure_constrained_activity",
+            ),
             _ranking(6, "02", "00000006", "Mature", "mature_harvest"),
         ]
     )
