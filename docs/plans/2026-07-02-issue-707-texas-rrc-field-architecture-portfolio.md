@@ -1,7 +1,7 @@
 # Plan: Issue #707 - Texas RRC field architecture portfolio report
 
 **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/707
-**Status:** plan-review
+**Status:** plan-approved
 **Tier:** T2 (new report package, portfolio action model, HTML and machine-readable outputs, CLI, tests, docs)
 **Client:** N/A
 **Project:** worldenergydata onshore field development

@@ -81,7 +81,7 @@ This directory contains issue-plan artifacts created during the issue-planning-m
 | [#669](https://github.com/vamseeachanta/worldenergydata/issues/669) | [texas-rrc-godrive-directory-refresh](2026-06-30-issue-669-texas-rrc-godrive-directory-refresh.md) | plan-approved | 2026-06-30 |
 | [#695](https://github.com/vamseeachanta/worldenergydata/issues/695) | [texas-rrc-field-opportunity-architecture-ranking](2026-07-02-issue-695-texas-rrc-field-opportunity-architecture-ranking.md) | implemented | 2026-07-02 |
 | [#702](https://github.com/vamseeachanta/worldenergydata/issues/702) | [texas-rrc-field-architecture-dossiers](2026-07-02-issue-702-texas-rrc-field-architecture-dossiers.md) | implemented | 2026-07-02 |
-| [#707](https://github.com/vamseeachanta/worldenergydata/issues/707) | [texas-rrc-field-architecture-portfolio](2026-07-02-issue-707-texas-rrc-field-architecture-portfolio.md) | plan-review | 2026-07-02 |
+| [#707](https://github.com/vamseeachanta/worldenergydata/issues/707) | [texas-rrc-field-architecture-portfolio](2026-07-02-issue-707-texas-rrc-field-architecture-portfolio.md) | plan-approved | 2026-07-02 |
 
 ## Closed / superseded plans
 
