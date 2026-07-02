@@ -1065,6 +1065,31 @@ def _print_field_atlas_report_outputs(manifest) -> None:
     console.print(f"[dim]Manifest: {manifest.manifest_path}[/dim]")
 
 
+def _print_field_opportunity_summary(row_count: int, source_gaps) -> None:
+    table = Table(
+        title="Texas RRC Field Opportunity Rankings",
+        show_header=True,
+        header_style="bold cyan",
+    )
+    table.add_column("Metric", style="dim")
+    table.add_column("Value")
+    table.add_row("Ranked fields", str(row_count))
+    table.add_row("Source gaps", ", ".join(source_gaps) if source_gaps else "None")
+    console.print(table)
+
+
+def _print_field_opportunity_outputs(manifest) -> None:
+    console.print(
+        "[green]Wrote field-opportunity rankings[/green] "
+        f"{manifest.row_count} rows -> {manifest.output_dir}"
+    )
+    console.print(f"[dim]Rankings CSV: {manifest.rankings_csv_path}[/dim]")
+    console.print(f"[dim]Rankings Parquet: {manifest.rankings_parquet_path}[/dim]")
+    console.print(f"[dim]HTML summary: {manifest.html_path}[/dim]")
+    console.print(f"[dim]Quality report: {manifest.quality_path}[/dim]")
+    console.print(f"[dim]Manifest: {manifest.manifest_path}[/dim]")
+
+
 @app.command("publish-field-atlas-reports")
 def publish_field_atlas_reports_command(
     root: Path = typer.Option(
@@ -1122,6 +1147,68 @@ def publish_field_atlas_reports_command(
             console.print("[yellow]Dry run:[/yellow] no field-atlas reports written")
             return
         _print_field_atlas_report_outputs(result.manifest)
+    except typer.Exit:
+        raise
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {str(e)}")
+        raise typer.Exit(1)
+
+
+@app.command("build-field-opportunities")
+def build_field_opportunities_command(
+    root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--root",
+        help="Root containing curated Texas RRC field-atlas report inputs",
+    ),
+    output_root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--output-root",
+        help="Root for curated field-opportunity ranking outputs",
+    ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Build the ranking model without writing outputs",
+    ),
+    require_sources: bool = typer.Option(
+        False,
+        "--require-sources",
+        help="Fail when any curated field-opportunity input is missing",
+    ),
+    allow_non_ace_output: bool = typer.Option(
+        False,
+        "--allow-non-ace-output",
+        help="Allow non-/mnt/ace output roots for isolated tests or sandboxes",
+    ),
+    max_fields: int | None = typer.Option(
+        None,
+        "--max-fields",
+        min=1,
+        help="Limit ranked fields after score sorting",
+    ),
+) -> None:
+    """Build Texas RRC field opportunity and architecture-signal rankings."""
+    from worldenergydata.texas_rrc.opportunities.cli_support import (
+        run_build_field_opportunities,
+    )
+
+    try:
+        result = run_build_field_opportunities(
+            root=root,
+            output_root=output_root,
+            dry_run=dry_run,
+            require_sources=require_sources,
+            allow_non_ace_output=allow_non_ace_output,
+            max_fields=max_fields,
+        )
+        _print_field_opportunity_summary(result.row_count, result.source_gaps)
+        if result.dry_run:
+            console.print(
+                "[yellow]Dry run:[/yellow] no field-opportunity outputs written"
+            )
+            return
+        _print_field_opportunity_outputs(result.manifest)
     except typer.Exit:
         raise
     except Exception as e:

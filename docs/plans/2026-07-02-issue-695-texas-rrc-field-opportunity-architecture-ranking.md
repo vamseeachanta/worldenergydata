@@ -1,7 +1,7 @@
 # Plan: Issue #695 - Texas RRC field opportunity and architecture-signal ranking
 
 **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/695
-**Status:** plan-review
+**Status:** implemented
 **Tier:** T2 (screening score contract, architecture-signal classification, `/mnt/ace` output contract, CLI, tests, docs)
 **Client:** N/A
 **Project:** worldenergydata onshore field development
