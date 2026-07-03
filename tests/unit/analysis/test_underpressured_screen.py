@@ -1,0 +1,236 @@
+"""Unit tests for the under-pressured screen (#710)."""
+
+import math
+
+import numpy as np
+import pandas as pd
+import pytest
+
+from worldenergydata.analysis.underpressured_screen.screen import (
+    TIER_MILD,
+    TIER_NORMAL,
+    TIER_SEVERE,
+    apply_field_tier,
+    classify_tiers,
+    earliest_per_well,
+    estimate_bhp,
+    rank_fields,
+    run_validation_gate,
+)
+
+BHP_SETTINGS = {"gas_sg": 0.65, "z_avg": 0.95, "t_avg_rankine": 520.0}
+TIERS = {
+    "hydrostatic_normal_min": 0.433,
+    "mild_underpressure_min": 0.35,
+    "near_vacuum_whp_psia": 50.0,
+}
+
+
+def make_observations(rows):
+    defaults = {
+        "state": "KS",
+        "pressure_kind": "WHP_shut_in",
+        "era": "depleted",
+        "field": "HUGOTON GAS AREA",
+    }
+    return pd.DataFrame([{**defaults, **row} for row in rows])
+
+
+class TestEstimateBhp:
+    def test_whp_gets_static_column_correction(self):
+        obs = make_observations(
+            [
+                {
+                    "well_key": "w1",
+                    "test_year": 1997,
+                    "pressure_psia": 100.0,
+                    "reference_depth_ft": 2800.0,
+                }
+            ]
+        )
+        result = estimate_bhp(obs, BHP_SETTINGS)
+        expected = 100.0 * math.exp(0.01875 * 0.65 * 2800.0 / (0.95 * 520.0))
+        assert result["bhp_psia_est"].iloc[0] == pytest.approx(expected)
+        assert result["bhp_method"].iloc[0] == "static_gas_column_avg_zt"
+
+    def test_measured_bhp_passes_through(self):
+        obs = make_observations(
+            [
+                {
+                    "well_key": "w1",
+                    "test_year": 1997,
+                    "pressure_psia": 1200.0,
+                    "reference_depth_ft": 5000.0,
+                    "pressure_kind": "BHP_measured",
+                }
+            ]
+        )
+        result = estimate_bhp(obs, BHP_SETTINGS)
+        assert result["bhp_psia_est"].iloc[0] == pytest.approx(1200.0)
+        assert result["bhp_method"].iloc[0] == "as_reported"
+
+    def test_no_gradient_without_depth(self):
+        obs = make_observations(
+            [
+                {
+                    "well_key": "w1",
+                    "test_year": 1997,
+                    "pressure_psia": 100.0,
+                    "reference_depth_ft": 0.0,
+                }
+            ]
+        )
+        result = estimate_bhp(obs, BHP_SETTINGS)
+        assert np.isnan(result["bhp_gradient_psi_ft"].iloc[0])
+
+
+class TestClassifyTiers:
+    @pytest.mark.parametrize(
+        "gradient,expected",
+        [
+            (0.5, TIER_NORMAL),
+            (0.433, TIER_NORMAL),
+            (0.40, TIER_MILD),
+            (0.35, TIER_MILD),
+            (0.02, TIER_SEVERE),
+        ],
+    )
+    def test_tier_boundaries(self, gradient, expected):
+        frame = pd.DataFrame(
+            {
+                "bhp_gradient_psi_ft": [gradient],
+                "pressure_kind": ["WHP_shut_in"],
+                "pressure_psia": [500.0],
+            }
+        )
+        assert classify_tiers(frame, TIERS)["pressure_tier"].iloc[0] == expected
+
+    def test_near_vacuum_flag(self):
+        frame = pd.DataFrame(
+            {
+                "bhp_gradient_psi_ft": [0.02, 0.02],
+                "pressure_kind": ["WHP_shut_in", "BHP_measured"],
+                "pressure_psia": [30.0, 30.0],
+            }
+        )
+        result = classify_tiers(frame, TIERS)
+        # only wellhead readings can assert the vacuum-operations regime
+        assert bool(result["near_vacuum"].iloc[0])
+        assert not bool(result["near_vacuum"].iloc[1])
+
+
+class TestEarliestAndRanking:
+    def _screened(self):
+        obs = make_observations(
+            [
+                {
+                    "well_key": "w1",
+                    "test_year": 1999,
+                    "pressure_psia": 80.0,
+                    "reference_depth_ft": 2800.0,
+                },
+                {
+                    "well_key": "w1",
+                    "test_year": 1997,
+                    "pressure_psia": 100.0,
+                    "reference_depth_ft": 2800.0,
+                },
+                {
+                    "well_key": "w2",
+                    "test_year": 1996,
+                    "pressure_psia": 90.0,
+                    "reference_depth_ft": 2700.0,
+                },
+                {
+                    "well_key": "w3",
+                    "test_year": 1996,
+                    "pressure_psia": 40.0,
+                    "reference_depth_ft": 2750.0,
+                },
+                {
+                    "well_key": "w4",
+                    "test_year": 1998,
+                    "pressure_psia": 95.0,
+                    "reference_depth_ft": 2600.0,
+                },
+                {
+                    "well_key": "w5",
+                    "test_year": 1998,
+                    "pressure_psia": 85.0,
+                    "reference_depth_ft": 2650.0,
+                },
+                # a normal-pressured deep well in another field, below min_wells cutoff
+                {
+                    "well_key": "w6",
+                    "test_year": 2000,
+                    "pressure_psia": 4500.0,
+                    "reference_depth_ft": 9000.0,
+                    "field": "DEEP NORMAL",
+                },
+            ]
+        )
+        return classify_tiers(estimate_bhp(obs, BHP_SETTINGS), TIERS)
+
+    def test_earliest_observation_selected(self):
+        wells = earliest_per_well(self._screened())
+        w1 = wells[wells["well_key"] == "w1"]
+        assert int(w1["test_year"].iloc[0]) == 1997
+
+    def test_field_ranking_and_tier(self):
+        wells = earliest_per_well(self._screened())
+        ranking = apply_field_tier(
+            rank_fields(wells, {"min_wells_per_field": 5}), TIERS
+        )
+        assert list(ranking["field"]) == ["HUGOTON GAS AREA"]
+        row = ranking.iloc[0]
+        assert row["well_count"] == 5
+        assert row["field_tier"] == TIER_SEVERE
+        assert row["near_vacuum_wells"] == 1  # w3 at 40 psia
+
+    def test_min_wells_cutoff_drops_small_fields(self):
+        wells = earliest_per_well(self._screened())
+        ranking = rank_fields(wells, {"min_wells_per_field": 5})
+        assert "DEEP NORMAL" not in set(ranking["field"])
+
+
+class TestValidationGate:
+    def _ranking(self, tier):
+        return pd.DataFrame(
+            {
+                "field": ["HUGOTON GAS AREA", "PANOMA GAS AREA", "OTHER"],
+                "well_count": [100, 50, 10],
+                "field_tier": [tier, tier, TIER_NORMAL],
+            }
+        )
+
+    def test_gate_passes_on_analog_recovery(self):
+        gate = run_validation_gate(
+            self._ranking(TIER_SEVERE),
+            {
+                "required_fields_in_top10": ["HUGOTON GAS AREA", "PANOMA GAS AREA"],
+                "required_tier": TIER_SEVERE,
+            },
+        )
+        assert gate["passed"]
+
+    def test_gate_fails_on_wrong_tier(self):
+        gate = run_validation_gate(
+            self._ranking(TIER_NORMAL),
+            {
+                "required_fields_in_top10": ["HUGOTON GAS AREA", "PANOMA GAS AREA"],
+                "required_tier": TIER_SEVERE,
+            },
+        )
+        assert not gate["passed"]
+
+    def test_gate_fails_on_missing_field(self):
+        ranking = self._ranking(TIER_SEVERE)
+        ranking = ranking[ranking["field"] != "PANOMA GAS AREA"]
+        gate = run_validation_gate(
+            ranking,
+            {
+                "required_fields_in_top10": ["HUGOTON GAS AREA", "PANOMA GAS AREA"],
+                "required_tier": TIER_SEVERE,
+            },
+        )
+        assert not gate["passed"]

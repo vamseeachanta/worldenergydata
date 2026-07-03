@@ -1,0 +1,40 @@
+# Under-pressured gas/condensate screen configuration (issue #710, epic #708).
+# Consumes per-well pressure-observation tables in the shared #709 schema
+# (Kansas from #725 today; Texas RRC joins via #709 once its extraction lands).
+module: underpressured_screen
+
+inputs:
+  # One entry per state observation table. `era` records whether the source's
+  # observations are virgin-era or depleted-era pressures — carried through to
+  # outputs so the screen never silently conflates the two.
+  - name: kansas_kgs_proration
+    path: /mnt/ace/worldenergydata/data/modules/kansas_kgs/curated/pressure/well_pressure_observations.parquet
+    era: depleted  # program starts 1996; Hugoton discovered 1922
+
+output:
+  base_dir: /mnt/ace/worldenergydata/data/modules/pressure_screen/curated
+
+bhp_estimate:
+  # Static gas-column correction for wellhead shut-in observations:
+  # BHP = WHP_psia * exp(0.01875 * gas_sg * depth_ft / (z_avg * t_avg_rankine)).
+  # Applied only where pressure_kind == WHP_shut_in; measured BHP passes through.
+  gas_sg: 0.65
+  z_avg: 0.95
+  t_avg_rankine: 520.0
+
+tiers:
+  # Gradient thresholds in psi/ft on the estimated-BHP gradient.
+  hydrostatic_normal_min: 0.433
+  mild_underpressure_min: 0.35
+  # Below mild_underpressure_min -> severely under-pressured.
+  near_vacuum_whp_psia: 50.0
+
+field_ranking:
+  min_wells_per_field: 5
+
+validation_gate:
+  # The screen must recover the known analogs or the run fails loudly.
+  required_fields_in_top10:
+    - HUGOTON GAS AREA
+    - PANOMA GAS AREA
+  required_tier: severely_underpressured
