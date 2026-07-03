@@ -299,16 +299,21 @@ class TestSummaryAndParticipationGate:
     def test_summary_reports_state_source_and_era_counts(self):
         wells = pd.DataFrame(
             {
-                "well_key": ["ks-1", "tx-1"],
-                "state": ["KS", "TX"],
+                "well_key": ["ks-1", "tx-1", "ok-1"],
+                "state": ["KS", "TX", "OK"],
                 "source_name": [
                     "kansas_kgs_proration",
                     "texas_rrc_completion_packets",
+                    "oklahoma_occ_completions",
                 ],
-                "era": ["depleted", "completion_packet_screening"],
-                "pressure_tier": [TIER_SEVERE, TIER_MILD],
-                "near_vacuum": [False, False],
-                "bhp_gradient_psi_ft": [0.03, 0.40],
+                "era": [
+                    "depleted",
+                    "completion_packet_screening",
+                    "completion_test_2010_present",
+                ],
+                "pressure_tier": [TIER_SEVERE, TIER_MILD, TIER_MILD],
+                "near_vacuum": [False, False, False],
+                "bhp_gradient_psi_ft": [0.03, 0.40, 0.39],
             }
         )
         ranking = pd.DataFrame({"field": ["HUGOTON GAS AREA", "BRISCOE RANCH"]})
@@ -322,21 +327,28 @@ class TestSummaryAndParticipationGate:
                 "input_row_counts": {
                     "kansas_kgs_proration": 2,
                     "texas_rrc_completion_packets": 3,
+                    "oklahoma_occ_completions": 4,
                 },
                 "loaded_row_counts": {
                     "kansas_kgs_proration": 1,
                     "texas_rrc_completion_packets": 1,
+                    "oklahoma_occ_completions": 1,
                 },
                 "source_warnings": {"texas_rrc_completion_packets": ["warning"]},
             },
         )
 
-        assert summary["state_counts"] == {"KS": 1, "TX": 1}
+        assert summary["state_counts"] == {"KS": 1, "TX": 1, "OK": 1}
         assert summary["source_counts"] == {
             "kansas_kgs_proration": 1,
             "texas_rrc_completion_packets": 1,
+            "oklahoma_occ_completions": 1,
         }
-        assert summary["era_note"] == ["completion_packet_screening", "depleted"]
+        assert summary["era_note"] == [
+            "completion_packet_screening",
+            "completion_test_2010_present",
+            "depleted",
+        ]
         assert summary["source_warnings"] == {
             "texas_rrc_completion_packets": ["warning"]
         }
