@@ -11,10 +11,12 @@ from worldenergydata.analysis.underpressured_screen.screen import (
     TIER_NORMAL,
     TIER_SEVERE,
     apply_field_tier,
+    build_screen_summary,
     classify_tiers,
     earliest_per_well,
     estimate_bhp,
     rank_fields,
+    run_participation_gate,
     run_validation_gate,
 )
 
@@ -32,6 +34,7 @@ def make_observations(rows):
         "pressure_kind": "WHP_shut_in",
         "era": "depleted",
         "field": "HUGOTON GAS AREA",
+        "source_name": "kansas_kgs_proration",
     }
     return pd.DataFrame([{**defaults, **row} for row in rows])
 
@@ -192,6 +195,62 @@ class TestEarliestAndRanking:
         ranking = rank_fields(wells, {"min_wells_per_field": 5})
         assert "DEEP NORMAL" not in set(ranking["field"])
 
+    def test_earliest_per_well_uses_texas_api14_well_key(self):
+        obs = make_observations(
+            [
+                {
+                    "well_key": "42127373050000",
+                    "state": "TX",
+                    "test_year": 2018,
+                    "pressure_psia": 1000.0,
+                    "reference_depth_ft": 7000.0,
+                    "source_name": "texas_rrc_completion_packets",
+                },
+                {
+                    "well_key": "42127373050000",
+                    "state": "TX",
+                    "test_year": 2017,
+                    "pressure_psia": 900.0,
+                    "reference_depth_ft": 7000.0,
+                    "source_name": "texas_rrc_completion_packets",
+                },
+            ]
+        )
+        wells = earliest_per_well(
+            classify_tiers(estimate_bhp(obs, BHP_SETTINGS), TIERS)
+        )
+        assert len(wells) == 1
+        assert int(wells.loc[0, "test_year"]) == 2017
+
+    def test_earliest_per_well_uses_source_priority_for_same_year_ties(self):
+        obs = make_observations(
+            [
+                {
+                    "well_key": "42127373050000",
+                    "state": "TX",
+                    "test_year": 2017,
+                    "pressure_psia": 1046.7,
+                    "reference_depth_ft": 15150.5,
+                    "screen_observation_priority": 1,
+                },
+                {
+                    "well_key": "42127373050000",
+                    "state": "TX",
+                    "test_year": 2017,
+                    "pressure_psia": 1046.7,
+                    "reference_depth_ft": 7394.0,
+                    "screen_observation_priority": 0,
+                },
+            ]
+        )
+
+        wells = earliest_per_well(
+            classify_tiers(estimate_bhp(obs, BHP_SETTINGS), TIERS)
+        )
+
+        assert len(wells) == 1
+        assert wells.loc[0, "reference_depth_ft"] == 7394.0
+
 
 class TestValidationGate:
     def _ranking(self, tier):
@@ -234,3 +293,77 @@ class TestValidationGate:
             },
         )
         assert not gate["passed"]
+
+
+class TestSummaryAndParticipationGate:
+    def test_summary_reports_state_source_and_era_counts(self):
+        wells = pd.DataFrame(
+            {
+                "well_key": ["ks-1", "tx-1"],
+                "state": ["KS", "TX"],
+                "source_name": [
+                    "kansas_kgs_proration",
+                    "texas_rrc_completion_packets",
+                ],
+                "era": ["depleted", "completion_packet_screening"],
+                "pressure_tier": [TIER_SEVERE, TIER_MILD],
+                "near_vacuum": [False, False],
+                "bhp_gradient_psi_ft": [0.03, 0.40],
+            }
+        )
+        ranking = pd.DataFrame({"field": ["HUGOTON GAS AREA", "BRISCOE RANCH"]})
+
+        summary = build_screen_summary(
+            wells,
+            ranking,
+            {"passed": True},
+            {"passed": True},
+            {
+                "input_row_counts": {
+                    "kansas_kgs_proration": 2,
+                    "texas_rrc_completion_packets": 3,
+                },
+                "loaded_row_counts": {
+                    "kansas_kgs_proration": 1,
+                    "texas_rrc_completion_packets": 1,
+                },
+                "source_warnings": {"texas_rrc_completion_packets": ["warning"]},
+            },
+        )
+
+        assert summary["state_counts"] == {"KS": 1, "TX": 1}
+        assert summary["source_counts"] == {
+            "kansas_kgs_proration": 1,
+            "texas_rrc_completion_packets": 1,
+        }
+        assert summary["era_note"] == ["completion_packet_screening", "depleted"]
+        assert summary["source_warnings"] == {
+            "texas_rrc_completion_packets": ["warning"]
+        }
+
+    def test_participation_gate_requires_state_well_count(self):
+        wells = pd.DataFrame(
+            {
+                "well_key": ["ks-1", "tx-1"],
+                "state": ["KS", "TX"],
+            }
+        )
+
+        gate = run_participation_gate(
+            wells,
+            {"required_states": {"TX": {"min_wells": 1}}},
+        )
+
+        assert gate["passed"]
+        assert gate["states"]["TX"]["well_count"] == 1
+
+    def test_participation_gate_fails_when_state_missing(self):
+        wells = pd.DataFrame({"well_key": ["ks-1"], "state": ["KS"]})
+
+        gate = run_participation_gate(
+            wells,
+            {"required_states": {"TX": {"min_wells": 1}}},
+        )
+
+        assert not gate["passed"]
+        assert gate["states"]["TX"]["well_count"] == 0

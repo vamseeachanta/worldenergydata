@@ -1,7 +1,7 @@
 # Plan: Issue #732 - Texas RRC pressure-screen integration
 
 **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/732
-**Status:** plan-review
+**Status:** implemented
 **Tier:** T2 (multi-source analysis adapter, config update, live `/mnt/ace` run, tests, docs)
 **Client:** N/A
 **Project:** worldenergydata onshore pressure screen
