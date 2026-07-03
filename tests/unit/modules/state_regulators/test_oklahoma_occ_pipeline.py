@@ -2,7 +2,6 @@
 
 import hashlib
 import json
-from pathlib import Path
 
 import yaml
 
@@ -114,9 +113,10 @@ def test_write_manifest_records_source_hashes_and_refresh(tmp_path):
         "https://example.test/completions.xlsx"
     )
     assert manifest["completion_workbook"]["size_bytes"] == len(b"workbook")
-    assert manifest["completion_workbook"]["sha256"] == hashlib.sha256(
-        b"workbook"
-    ).hexdigest()
+    assert (
+        manifest["completion_workbook"]["sha256"]
+        == hashlib.sha256(b"workbook").hexdigest()
+    )
     assert manifest["completion_workbook"]["refresh"] == "daily"
     assert "manifest_written_at" in manifest["completion_workbook"]
     written = json.loads((raw_dir / "manifest.json").read_text(encoding="utf-8"))

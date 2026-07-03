@@ -14,6 +14,8 @@ SETTINGS = {
     "atmospheric_psi": 14.7,
     "test_type": "OCC Form 1002A initial completion test",
     "gradient_method": "completion_pressure_over_reference_depth_screening_only",
+    "min_test_year": 2010,
+    "max_test_year": 2026,
     "depth_priority": [
         "True_Vertical_Depth",
         "Formation_Depth",
@@ -49,6 +51,39 @@ def test_read_completion_workbook_preserves_required_occ_columns(tmp_path):
     assert frame.loc[0, "Completion_No"] == "01"
     assert frame.loc[0, "Shut_In_Pressure"] == 125
     assert frame.loc[0, "True_Vertical_Depth"] == 5100
+
+
+def test_read_completion_workbook_keeps_mixed_well_numbers_parquet_safe(tmp_path):
+    workbook = tmp_path / "completions.xlsx"
+    output = tmp_path / "normalized.parquet"
+    pd.DataFrame(
+        [
+            {
+                "API_Number": "3500323456",
+                "Completion_No": "01",
+                "Well_Number": 1,
+                "Test_Date": "2024-01-15",
+                "Shut_In_Pressure": "125",
+                "Flow_Tubing_Pressure": None,
+                "True_Vertical_Depth": "5100",
+            },
+            {
+                "API_Number": "3500323457",
+                "Completion_No": "01",
+                "Well_Number": "1-21",
+                "Test_Date": "2024-01-15",
+                "Shut_In_Pressure": "125",
+                "Flow_Tubing_Pressure": None,
+                "True_Vertical_Depth": "5100",
+            },
+        ]
+    ).to_excel(workbook, index=False)
+
+    frame = read_completion_workbook(workbook)
+    frame.to_parquet(output)
+    round_trip = pd.read_parquet(output)
+
+    assert list(round_trip["Well_Number"]) == ["1", "1-21"]
 
 
 def test_build_pressure_observations_coerces_pressure_depth_and_test_year():
@@ -183,3 +218,40 @@ def test_build_pressure_observations_filters_unusable_rows_and_flags_earliest():
     assert quality["filtered_missing_pressure_count"] == 1
     assert quality["filtered_missing_depth_count"] == 1
     assert quality["wells_with_pressure_observation"] == 1
+
+
+def test_build_pressure_observations_filters_out_of_window_test_years():
+    completions = pd.DataFrame(
+        [
+            {
+                "API_Number": "3500323456",
+                "Completion_No": "01",
+                "Test_Date": "1900-01-01",
+                "Shut_In_Pressure": "100",
+                "Flow_Tubing_Pressure": None,
+                "True_Vertical_Depth": "5000",
+            },
+            {
+                "API_Number": "3500323457",
+                "Completion_No": "01",
+                "Test_Date": "2024-01-01",
+                "Shut_In_Pressure": "100",
+                "Flow_Tubing_Pressure": None,
+                "True_Vertical_Depth": "5000",
+            },
+            {
+                "API_Number": "3500323458",
+                "Completion_No": "01",
+                "Test_Date": "2205-01-01",
+                "Shut_In_Pressure": "100",
+                "Flow_Tubing_Pressure": None,
+                "True_Vertical_Depth": "5000",
+            },
+        ]
+    )
+
+    observations = build_pressure_observations(completions, SETTINGS)
+    quality = build_quality_stats(completions, observations, SETTINGS)
+
+    assert list(observations["well_key"]) == ["3500323457"]
+    assert quality["filtered_out_of_window_test_year_count"] == 2

@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from openpyxl import load_workbook
 
 CORE_COLUMNS = {
     "API_Number",
@@ -40,6 +42,13 @@ NUMERIC_COLUMNS = [
     "Perforated_Top_Depth",
     "Perforated_Bottom_Depth",
 ]
+
+READ_COLUMNS = sorted(CORE_COLUMNS | set(CONTEXT_COLUMNS) | set(NUMERIC_COLUMNS))
+TEXT_COLUMNS = sorted(
+    set(READ_COLUMNS)
+    - set(NUMERIC_COLUMNS)
+    - {"API_Number", "Completion_No", "Test_Date"}
+)
 
 OUTPUT_COLUMNS = [
     "state",
@@ -77,15 +86,45 @@ OUTPUT_COLUMNS = [
 
 def read_completion_workbook(path: str | Path) -> pd.DataFrame:
     """Read an OCC completion workbook into a typed DataFrame."""
-    frame = pd.read_excel(path, engine="openpyxl", dtype=str)
+    frame = _read_selected_columns(Path(path), READ_COLUMNS)
     _validate_columns(frame, CORE_COLUMNS, Path(path).name)
     for column in NUMERIC_COLUMNS:
         if column in frame:
             frame[column] = pd.to_numeric(frame[column], errors="coerce")
-    frame["API_Number"] = frame["API_Number"].map(_clean_identifier)
-    frame["Completion_No"] = frame["Completion_No"].map(_clean_completion_no)
+    for column in TEXT_COLUMNS:
+        if column in frame:
+            frame[column] = frame[column].map(_clean_text).astype("string")
+    frame["API_Number"] = frame["API_Number"].map(_clean_identifier).astype("string")
+    frame["Completion_No"] = (
+        frame["Completion_No"].map(_clean_completion_no).astype("string")
+    )
     frame["Test_Date"] = pd.to_datetime(frame["Test_Date"], errors="coerce")
     return frame
+
+
+def _read_selected_columns(path: Path, wanted_columns: list[str]) -> pd.DataFrame:
+    workbook = load_workbook(path, read_only=True, data_only=True)
+    try:
+        sheet = workbook.active
+        rows = sheet.iter_rows(values_only=True)
+        try:
+            header = next(rows)
+        except StopIteration:
+            return pd.DataFrame(columns=wanted_columns)
+        column_indexes = {
+            name: index for index, name in enumerate(header) if name in wanted_columns
+        }
+        records = []
+        for row in rows:
+            records.append(
+                {
+                    column: row[index] if index < len(row) else None
+                    for column, index in column_indexes.items()
+                }
+            )
+    finally:
+        workbook.close()
+    return pd.DataFrame.from_records(records, columns=list(column_indexes))
 
 
 def build_pressure_observations(
@@ -104,7 +143,12 @@ def build_pressure_observations(
     test_date = pd.to_datetime(frame["Test_Date"], errors="coerce")
     pressure = _select_pressure(frame)
     depth, depth_source = _select_reference_depth(frame, settings["depth_priority"])
-    usable = pressure["pressure_psig"].gt(0) & depth.gt(0) & test_date.notna()
+    test_year = test_date.dt.year
+    min_year, max_year = _year_window(settings)
+    in_window = test_year.between(min_year, max_year)
+    usable = (
+        pressure["pressure_psig"].gt(0) & depth.gt(0) & test_date.notna() & in_window
+    )
     filtered = frame[usable].copy()
     pressure = pressure[usable].reset_index(drop=True)
     depth = depth[usable].reset_index(drop=True)
@@ -139,9 +183,7 @@ def build_pressure_observations(
                 pressure["pressure_psig"] + settings["atmospheric_psi"]
             ).to_numpy(),
             "pressure_kind": pressure["pressure_kind"].to_numpy(),
-            "flow_tubing_pressure_psig": filtered[
-                "Flow_Tubing_Pressure"
-            ].to_numpy(),
+            "flow_tubing_pressure_psig": filtered["Flow_Tubing_Pressure"].to_numpy(),
             "gas_mcf_per_day": filtered["Gas_MCF_Per_Day"].to_numpy(),
             "oil_bbl_per_day": filtered["Oil_BBL_Per_Day"].to_numpy(),
             "water_bbl_per_day": filtered["Water_BBL_Per_Day"].to_numpy(),
@@ -165,7 +207,7 @@ def build_pressure_observations(
 
 
 def build_quality_stats(
-    completions: pd.DataFrame, observations: pd.DataFrame
+    completions: pd.DataFrame, observations: pd.DataFrame, settings: dict | None = None
 ) -> dict:
     pressure = _select_pressure(completions)
     depth, _ = _select_reference_depth(
@@ -178,6 +220,9 @@ def build_quality_stats(
         ],
     )
     test_date = pd.to_datetime(completions["Test_Date"], errors="coerce")
+    test_year = test_date.dt.year
+    min_year, max_year = _year_window(settings or {})
+    in_window = test_year.between(min_year, max_year)
     has_pressure = pressure["pressure_psig"].gt(0)
     has_depth = depth.gt(0)
     return {
@@ -188,6 +233,10 @@ def build_quality_stats(
         "filtered_missing_test_date_count": int(
             (has_pressure & has_depth & test_date.isna()).sum()
         ),
+        "filtered_out_of_window_test_year_count": int(
+            (has_pressure & has_depth & test_date.notna() & ~in_window).sum()
+        ),
+        "test_year_window": [int(min_year), int(max_year)],
         "wells_with_pressure_observation": int(observations["well_key"].nunique()),
         "completion_observation_count": int(
             observations[["well_key", "completion_no"]].drop_duplicates().shape[0]
@@ -254,6 +303,15 @@ def _clean_completion_no(value: object) -> str | None:
     return text.zfill(2) if text else None
 
 
+def _clean_text(value: object) -> str | None:
+    if pd.isna(value):
+        return None
+    if isinstance(value, float) and value.is_integer():
+        return str(int(value))
+    text = str(value).strip()
+    return text[:-2] if text.endswith(".0") else text
+
+
 def _api14(api_number: str | None, completion_no: str | None) -> str | None:
     if not api_number or not completion_no:
         return None
@@ -282,3 +340,14 @@ def _year_range(observations: pd.DataFrame) -> list[int] | None:
         int(observations["test_year"].min()),
         int(observations["test_year"].max()),
     ]
+
+
+def _year_window(settings: dict) -> tuple[int, int]:
+    min_year = int(settings.get("min_test_year", 1900))
+    if "max_test_year" in settings:
+        max_year = int(settings["max_test_year"])
+    else:
+        max_year = datetime.now(timezone.utc).year + int(
+            settings.get("max_future_years", 0)
+        )
+    return min_year, max_year

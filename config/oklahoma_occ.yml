@@ -23,6 +23,8 @@ pressure_observations:
   pressure_kind: WHP_shut_in
   test_type: OCC Form 1002A initial completion test
   gradient_method: completion_pressure_over_reference_depth_screening_only
+  min_test_year: 2010
+  max_future_years: 0
   depth_priority:
     - True_Vertical_Depth
     - Formation_Depth

@@ -84,9 +84,7 @@ def run_pipeline(config_path: str | Path) -> dict:
     curated_dir = base_dir / config["storage"]["curated_dir"]
     downloads = []
     for source in config["sources"].values():
-        downloads.append(
-            download_source(source["url"], raw_dir / source["raw_path"])
-        )
+        downloads.append(download_source(source["url"], raw_dir / source["raw_path"]))
     manifest = write_manifest(config, base_dir, downloads)
 
     completions = read_completion_workbook(
@@ -95,7 +93,9 @@ def run_pipeline(config_path: str | Path) -> dict:
     observations = build_pressure_observations(
         completions, config["pressure_observations"]
     )
-    quality = build_quality_stats(completions, observations)
+    quality = build_quality_stats(
+        completions, observations, config["pressure_observations"]
+    )
     quality["manifest_sources"] = sorted(manifest)
 
     completions_dir = normalized_dir / "completions"

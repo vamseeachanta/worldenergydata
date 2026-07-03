@@ -16,6 +16,7 @@ from worldenergydata.analysis.underpressured_screen.screen import (
     earliest_per_well,
     estimate_bhp,
     rank_fields,
+    run_screen,
     run_participation_gate,
     run_validation_gate,
 )
@@ -48,6 +49,23 @@ class TestEstimateBhp:
                     "test_year": 1997,
                     "pressure_psia": 100.0,
                     "reference_depth_ft": 2800.0,
+                }
+            ]
+        )
+        result = estimate_bhp(obs, BHP_SETTINGS)
+        expected = 100.0 * math.exp(0.01875 * 0.65 * 2800.0 / (0.95 * 520.0))
+        assert result["bhp_psia_est"].iloc[0] == pytest.approx(expected)
+        assert result["bhp_method"].iloc[0] == "static_gas_column_avg_zt"
+
+    def test_flowing_tubing_whp_gets_static_column_screening_correction(self):
+        obs = make_observations(
+            [
+                {
+                    "well_key": "w1",
+                    "test_year": 2024,
+                    "pressure_psia": 100.0,
+                    "reference_depth_ft": 2800.0,
+                    "pressure_kind": "WHP_flowing_tubing",
                 }
             ]
         )
@@ -379,3 +397,80 @@ class TestSummaryAndParticipationGate:
 
         assert not gate["passed"]
         assert gate["states"]["TX"]["well_count"] == 0
+
+    def test_screen_outputs_are_parquet_safe_with_mixed_optional_metadata(
+        self, tmp_path
+    ):
+        first = make_observations(
+            [
+                {
+                    "well_key": "ks-1",
+                    "test_year": 2020,
+                    "pressure_psia": 100.0,
+                    "reference_depth_ft": 2800.0,
+                    "test_date": pd.Timestamp("2020-01-01"),
+                }
+            ]
+        )
+        second = make_observations(
+            [
+                {
+                    "well_key": "ok-1",
+                    "state": "OK",
+                    "test_year": 2021,
+                    "pressure_psia": 120.0,
+                    "reference_depth_ft": 3200.0,
+                    "test_date": "2021-01-01",
+                    "source_name": "oklahoma_occ_completions",
+                    "era": "completion_test_2010_present",
+                }
+            ]
+        )
+        first_path = tmp_path / "first.parquet"
+        second_path = tmp_path / "second.parquet"
+        first.to_parquet(first_path)
+        second.to_parquet(second_path)
+        config_path = tmp_path / "screen.yml"
+        output_dir = tmp_path / "out"
+        config_path.write_text(
+            f"""
+inputs:
+  - name: kansas_kgs_proration
+    path: {first_path}
+    schema: screen_v1
+    era: depleted
+  - name: oklahoma_occ_completions
+    path: {second_path}
+    schema: screen_v1
+    era: completion_test_2010_present
+bhp_estimate:
+  gas_sg: 0.65
+  z_avg: 0.95
+  t_avg_rankine: 520.0
+tiers:
+  hydrostatic_normal_min: 0.433
+  mild_underpressure_min: 0.35
+  near_vacuum_whp_psia: 50.0
+field_ranking:
+  min_wells_per_field: 1
+validation_gate:
+  required_fields_in_top10: []
+  required_tier: severely_underpressured
+participation_gate:
+  required_states:
+    KS:
+      min_wells: 1
+    OK:
+      min_wells: 1
+output:
+  base_dir: {output_dir}
+""",
+            encoding="utf-8",
+        )
+
+        summary = run_screen(config_path)
+
+        assert summary["state_counts"] == {"KS": 1, "OK": 1}
+        assert (
+            pd.read_parquet(output_dir / "well_screen_earliest.parquet").shape[0] == 2
+        )
