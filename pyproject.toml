@@ -43,6 +43,7 @@ dependencies = [
     "worldenergydata-canada",
     "worldenergydata-mexico_cnh",
     "worldenergydata-texas_rrc",
+    "worldenergydata-kansas_kgs",
     # Phase 2 batch 2 (#529): next-most-isolated leaf domains carved into members.
     "worldenergydata-landman",
     "worldenergydata-metocean",
@@ -486,6 +487,7 @@ worldenergydata-brazil_anp = { workspace = true }
 worldenergydata-canada = { workspace = true }
 worldenergydata-mexico_cnh = { workspace = true }
 worldenergydata-texas_rrc = { workspace = true }
+worldenergydata-kansas_kgs = { workspace = true }
 # Phase 2 batch 2 (#529): next-most-isolated leaf domain members.
 worldenergydata-landman = { workspace = true }
 worldenergydata-metocean = { workspace = true }

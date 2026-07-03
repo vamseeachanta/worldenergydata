@@ -23,6 +23,7 @@ members = [
     "worldenergydata-economics",
     "worldenergydata-eia",
     "worldenergydata-eia-us",
+    "worldenergydata-kansas-kgs",
     "worldenergydata-landman",
     "worldenergydata-lng-terminals",
     "worldenergydata-marine",
@@ -6632,6 +6633,7 @@ dependencies = [
     { name = "worldenergydata-economics" },
     { name = "worldenergydata-eia" },
     { name = "worldenergydata-eia-us" },
+    { name = "worldenergydata-kansas-kgs" },
     { name = "worldenergydata-landman" },
     { name = "worldenergydata-lng-terminals" },
     { name = "worldenergydata-marine" },
@@ -6820,6 +6822,7 @@ requires-dist = [
     { name = "worldenergydata-economics", editable = "packages/worldenergydata-economics" },
     { name = "worldenergydata-eia", editable = "packages/worldenergydata-eia" },
     { name = "worldenergydata-eia-us", editable = "packages/worldenergydata-eia_us" },
+    { name = "worldenergydata-kansas-kgs", editable = "packages/worldenergydata-kansas_kgs" },
     { name = "worldenergydata-landman", editable = "packages/worldenergydata-landman" },
     { name = "worldenergydata-lng-terminals", editable = "packages/worldenergydata-lng_terminals" },
     { name = "worldenergydata-marine", editable = "packages/worldenergydata-marine" },
@@ -7156,6 +7159,25 @@ requires-dist = [
     { name = "numpy", specifier = ">=2.2.6,<3.0" },
     { name = "pandas", specifier = ">=2.3.3,<3.0" },
     { name = "scipy", specifier = ">=1.11.0,<2.0" },
+    { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
+]
+
+[[package]]
+name = "worldenergydata-kansas-kgs"
+version = "0.1.0"
+source = { editable = "packages/worldenergydata-kansas_kgs" }
+dependencies = [
+    { name = "pandas" },
+    { name = "pyarrow" },
+    { name = "pyyaml" },
+    { name = "worldenergydata-core" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "pandas", specifier = ">=2.3.3,<3.0" },
+    { name = "pyarrow", specifier = ">=14.0.0,<20.0" },
+    { name = "pyyaml", specifier = ">=6.0,<7.0" },
     { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
 ]
 
