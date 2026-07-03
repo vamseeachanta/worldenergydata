@@ -1,0 +1,491 @@
+<meta charset="utf-8">
+<title>Field Development Life-Cycle</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg: #eef2f6; --panel: #ffffff; --panel-2: #f6f9fc;
+    --ink: #0c1a28; --muted: #5a6b7b; --line: #d6e0ea;
+    --accent: #d9822b; --accent-ink: #7a4410;
+    --done: #1d5fa8; --done-deep: #10365e; --future: #a9bccd;
+    --good: #2e9e6b; --alert: #c0453b; --primary-gate: #1d5fa8;
+    --shadow: 0 1px 2px rgba(12,26,40,.06), 0 8px 24px rgba(12,26,40,.06);
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0a141f; --panel: #10202f; --panel-2: #0d1b28;
+      --ink: #e8eef4; --muted: #8ca0b3; --line: #24384b;
+      --accent: #f0a24a; --accent-ink: #f7c489;
+      --done: #4d91d6; --done-deep: #2f6ba8; --future: #3a5064;
+      --good: #43b982; --alert: #e0685e; --primary-gate: #5b9de0;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #eef2f6; --panel: #ffffff; --panel-2: #f6f9fc;
+    --ink: #0c1a28; --muted: #5a6b7b; --line: #d6e0ea;
+    --accent: #d9822b; --accent-ink: #7a4410;
+    --done: #1d5fa8; --done-deep: #10365e; --future: #a9bccd;
+    --good: #2e9e6b; --alert: #c0453b; --primary-gate: #1d5fa8;
+  }
+  :root[data-theme="dark"] {
+    --bg: #0a141f; --panel: #10202f; --panel-2: #0d1b28;
+    --ink: #e8eef4; --muted: #8ca0b3; --line: #24384b;
+    --accent: #f0a24a; --accent-ink: #f7c489;
+    --done: #4d91d6; --done-deep: #2f6ba8; --future: #3a5064;
+    --good: #43b982; --alert: #e0685e; --primary-gate: #5b9de0;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .wrap {
+    background: var(--bg); color: var(--ink); font-family: var(--sans);
+    padding: clamp(16px, 3vw, 40px); min-height: 100%;
+    -webkit-font-smoothing: antialiased;
+  }
+  .sheet {
+    max-width: 1260px; margin: 0 auto; background: var(--panel);
+    border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  /* ---- Header band ---- */
+  .head { padding: clamp(18px,2.4vw,30px); border-bottom: 1px solid var(--line);
+    display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: start; }
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
+  .title { font-size: clamp(28px, 4vw, 44px); font-weight: 800; letter-spacing: -.02em;
+    margin: 0; text-wrap: balance; line-height: 1.02; }
+  .sub { color: var(--muted); margin: 8px 0 0; font-size: 15px; max-width: 60ch; }
+  .status { display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono);
+    font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+    color: var(--sc, var(--good)); background: color-mix(in srgb, var(--sc, var(--good)) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--sc, var(--good)) 40%, transparent);
+    padding: 6px 12px; border-radius: 999px; white-space: nowrap; }
+  .status .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--sc, var(--good));
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--sc, var(--good)) 22%, transparent); }
+
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr));
+    gap: 1px; background: var(--line); border-top: 1px solid var(--line); }
+  .metric { background: var(--panel-2); padding: 14px 18px; }
+  .metric .k { font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--muted); }
+  .metric .v { font-family: var(--mono); font-size: 21px; font-weight: 700;
+    font-variant-numeric: tabular-nums; margin-top: 4px; letter-spacing: -.01em; }
+  .metric .v small { font-size: 12px; color: var(--muted); font-weight: 500; }
+
+  /* ---- Section scaffolding ---- */
+  .body { padding: clamp(18px,2.4vw,30px); display: grid; gap: 30px; }
+  .lane-label { font-family: var(--mono); font-size: 11px; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--muted); margin: 0 0 12px; font-weight: 600; }
+  .scrollx { overflow-x: auto; padding-bottom: 4px; }
+
+  /* ---- Calendar timeline ---- */
+  .tl { position: relative; min-width: 760px; height: 132px; margin-top: 6px; }
+  .tl-axis { position: absolute; left: 0; right: 0; top: 92px; height: 2px;
+    background: linear-gradient(90deg, var(--future), var(--done) 55%, var(--accent)); }
+  .tl-year { position: absolute; top: 100px; transform: translateX(-50%);
+    font-family: var(--mono); font-size: 10.5px; color: var(--muted);
+    font-variant-numeric: tabular-nums; }
+  .tl-year::before { content:""; position:absolute; top:-10px; left:50%; width:1px;
+    height:7px; background: var(--line); }
+  .tl-gate { position: absolute; top: 92px; transform: translate(-50%,-50%);
+    width: 13px; height: 13px; border-radius: 50%; background: var(--primary-gate);
+    border: 2.5px solid var(--panel); box-shadow: 0 0 0 1px var(--primary-gate); z-index: 2; }
+  .tl-gate.sec { background: var(--alert); box-shadow: 0 0 0 1px var(--alert); }
+  .tl-gate.now { background: var(--accent); box-shadow: 0 0 0 1px var(--accent),
+    0 0 0 6px color-mix(in srgb, var(--accent) 22%, transparent); }
+  .tl-flag { position: absolute; bottom: 44px; transform: translateX(-50%);
+    text-align: center; width: 128px; }
+  .tl-flag .lab { font-size: 12px; font-weight: 700; line-height: 1.15; }
+  .tl-flag .dt { font-family: var(--mono); font-size: 11px; color: var(--accent-ink);
+    font-variant-numeric: tabular-nums; }
+  :root[data-theme="dark"] .tl-flag .dt, @media (prefers-color-scheme: dark){ .tl-flag .dt{ color: var(--accent);} }
+  .tl-flag .stem { position:absolute; left:50%; bottom:-14px; width:1.5px; height:14px;
+    background: var(--line); }
+  .tl-span { position: absolute; top: 78px; height: 22px; display:flex; align-items:center;
+    justify-content:center; }
+  .tl-span .bar { position:absolute; left:0; right:0; top:9px; height:3px; border-radius:2px;
+    background: color-mix(in srgb, var(--done) 40%, transparent); }
+  .tl-span .txt { position: relative; font-family: var(--mono); font-size: 10px;
+    color: var(--muted); background: var(--panel); padding: 0 6px; white-space: nowrap; }
+
+  /* ---- Stage-gate spine ---- */
+  .spine { display: flex; min-width: 900px; gap: 4px; }
+  .phase { position: relative; flex: 1 1 0; min-width: 96px; padding: 14px 14px 14px 26px;
+    color: #fff; clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%, 16px 50%);
+    background: var(--future); }
+  .phase:first-child { padding-left: 16px; clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%); }
+  .phase.done { background: var(--done); }
+  .phase.done.deep { background: var(--done-deep); }
+  .phase.current { background: var(--accent); color: #1c1206;
+    box-shadow: 0 6px 20px color-mix(in srgb, var(--accent) 45%, transparent); z-index: 3; }
+  .phase.future { background: color-mix(in srgb, var(--future) 55%, var(--panel));
+    color: var(--muted); }
+  .phase .pn { font-weight: 800; font-size: 15px; letter-spacing: -.01em; }
+  .phase .pk { font-family: var(--mono); font-size: 9.5px; letter-spacing: .12em;
+    text-transform: uppercase; opacity: .8; margin-bottom: 2px; }
+  .youhere { position:absolute; top:-30px; left:50%; transform:translateX(-50%);
+    font-family: var(--mono); font-size: 10px; font-weight:700; letter-spacing:.1em;
+    text-transform:uppercase; color: var(--accent-ink); white-space:nowrap; }
+  :root[data-theme="dark"] .youhere{ color: var(--accent); }
+  @media (prefers-color-scheme: dark){ .youhere{ color: var(--accent);} }
+  .youhere::after{ content:"▼"; display:block; text-align:center; margin-top:2px; color:var(--accent);}
+
+  /* ---- Sub-phase engineering track ---- */
+  .subtrack { display:flex; min-width: 900px; gap:4px; margin-top:10px; }
+  .subcell { flex:1 1 0; min-width:96px; }
+  .subchip { font-family: var(--mono); font-size:10px; text-transform:uppercase;
+    letter-spacing:.06em; padding:6px 8px; border-radius:5px; text-align:center; line-height:1.25;
+    border:1px solid transparent; }
+  .subchip.eng { background: color-mix(in srgb, var(--good) 14%, transparent);
+    color: var(--good); border-color: color-mix(in srgb, var(--good) 35%, transparent); }
+  .subchip.sub { background: color-mix(in srgb, var(--alert) 12%, transparent);
+    color: var(--alert); border-color: color-mix(in srgb, var(--alert) 32%, transparent); }
+  .subchip.op  { background: color-mix(in srgb, var(--done) 12%, transparent);
+    color: var(--done); border-color: color-mix(in srgb, var(--done) 32%, transparent); }
+  .subchip.empty { visibility:hidden; }
+  .fel { min-width:900px; margin-top:6px; font-family:var(--mono); font-size:10px;
+    color:var(--muted); text-align:center; border-top:1px dashed var(--line); padding-top:4px; }
+
+  /* ---- Lower grid: activities + host ---- */
+  .grid2 { display:grid; grid-template-columns: 1.5fr 1fr; gap: 22px; }
+  @media (max-width: 820px){ .grid2 { grid-template-columns: 1fr; } }
+  .card { background: var(--panel-2); border:1px solid var(--line); border-radius:10px;
+    padding: 18px 20px; }
+  .card h3 { margin:0 0 12px; font-size: 15px; letter-spacing:-.01em; }
+  .act { display:grid; grid-template-columns: repeat(2,1fr); gap: 14px 22px; }
+  @media (max-width:560px){ .act { grid-template-columns:1fr; } }
+  .act h4 { margin:0 0 5px; font-family:var(--mono); font-size:11px; letter-spacing:.08em;
+    text-transform:uppercase; color: var(--done); }
+  .act.cur h4 { color: var(--accent-ink); }
+  :root[data-theme="dark"] .act.cur h4 { color: var(--accent); }
+  @media (prefers-color-scheme: dark){ .act.cur h4 { color: var(--accent);} }
+  .act ul { margin:0; padding-left: 16px; }
+  .act li { font-size: 12.5px; color: var(--ink); margin-bottom: 3px; line-height:1.35; }
+  .kv { display:grid; grid-template-columns: auto 1fr; gap: 8px 14px; font-size:13px; }
+  .kv dt { font-family:var(--mono); font-size:11px; letter-spacing:.05em; text-transform:uppercase;
+    color: var(--muted); }
+  .kv dd { margin:0; font-weight:600; }
+  .wi { display:flex; flex-direction:column; gap:7px; margin-top:4px; }
+  .wi-row { display:grid; grid-template-columns: 1fr auto; gap:8px; align-items:center; font-size:12.5px; }
+  .wi-bar { grid-column:1/-1; height:6px; border-radius:3px; background: var(--line); overflow:hidden; }
+  .wi-bar span { display:block; height:100%; background: var(--done); }
+  .wi-row .op { font-weight:700; }
+  .wi-row .op.lead::after { content:" ◆ operator"; font-family:var(--mono); font-size:10px;
+    color: var(--accent-ink); letter-spacing:.02em; }
+  :root[data-theme="dark"] .wi-row .op.lead::after { color: var(--accent); }
+
+  /* ---- Legend + footer ---- */
+  .legend { display:flex; flex-wrap:wrap; gap: 8px 18px; font-size:11.5px; color:var(--muted);
+    font-family:var(--mono); }
+  .legend span { display:inline-flex; align-items:center; gap:6px; }
+  .sw { width:11px; height:11px; border-radius:3px; display:inline-block; }
+  .foot { border-top:1px solid var(--line); padding: 16px clamp(18px,2.4vw,30px);
+    display:flex; flex-wrap:wrap; gap: 6px 18px; justify-content:space-between;
+    font-size:11px; color: var(--muted); font-family: var(--mono); }
+  .foot a { color: inherit; }
+  .draft { display:inline-block; font-family:var(--mono); font-size:10px; font-weight:700;
+    letter-spacing:.12em; text-transform:uppercase; color: var(--alert);
+    border:1px solid color-mix(in srgb, var(--alert) 45%, transparent);
+    padding:3px 8px; border-radius:5px; }
+</style>
+
+<div class="wrap">
+  <div class="sheet">
+    <header class="head">
+      <div>
+        <p class="eyebrow">Deepwater field development · life-cycle summary</p>
+        <h1 class="title" id="f-title">—</h1>
+        <p class="sub" id="f-sub">—</p>
+      </div>
+      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:10px;">
+        <span class="status"><span class="dot"></span><span id="f-status">—</span></span>
+        <span class="draft">Draft tracer · #738</span>
+      </div>
+    </header>
+
+    <div class="metrics" id="f-metrics"></div>
+
+    <div class="body">
+      <section>
+        <p class="lane-label">Life-of-field timeline · real gate dates</p>
+        <div class="scrollx"><div class="tl" id="f-timeline"></div></div>
+      </section>
+
+      <section>
+        <p class="lane-label">Stage-gate phases · you are here</p>
+        <div class="scrollx">
+          <div class="spine" id="f-spine"></div>
+          <div class="subtrack" id="f-subtrack"></div>
+          <div class="fel">◄ FEL — Front-End Loading (engineering phases for concept selection → detail → follow-on) ►</div>
+        </div>
+      </section>
+
+      <section class="grid2">
+        <div class="card">
+          <h3>Key phase activities</h3>
+          <div class="act" id="f-activities"></div>
+        </div>
+        <div class="card">
+          <h3>Host concept &amp; ownership</h3>
+          <dl class="kv" id="f-host"></dl>
+          <div class="wi" id="f-wi"></div>
+        </div>
+      </section>
+
+      <section>
+        <div class="legend">
+          <span><i class="sw" style="background:var(--done)"></i>Completed phase</span>
+          <span><i class="sw" style="background:var(--accent)"></i>Current phase / first oil</span>
+          <span><i class="sw" style="background:var(--future)"></i>Future phase</span>
+          <span><i class="sw" style="background:var(--primary-gate);border-radius:50%"></i>Primary gate</span>
+          <span><i class="sw" style="background:var(--alert);border-radius:50%"></i>Secondary milestone</span>
+        </div>
+      </section>
+    </div>
+
+    <footer class="foot">
+      <span id="f-prov">—</span>
+      <span>Generated 2026-07-03 · original artwork · worldenergydata/reports/lower_tertiary/lifecycle</span>
+    </footer>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   FIXED MODEL — identical for every offshore field (from the
+   Offshore Magazine "Field Development Life-Cycle" taxonomy).
+   Swap FIELD below to render any other field with this template.
+   ============================================================ */
+const MODEL = {
+  phases: [
+    { key:"acquire",  name:"Acquire",  activities:["Assess lease opportunity","Evaluate fiscal terms","Acquire lease","Shoot / acquire seismic"] },
+    { key:"explore",  name:"Explore",  activities:["Geological study","Evaluate leads","Plan &amp; drill exploration well","Reservoir study"] },
+    { key:"appraise", name:"Appraise", activities:["Drill appraisal wells","Determine reserves","Construct reservoir model","Geohazard evaluation"] },
+    { key:"select",   name:"Select",   activities:["Screen development options","Select development concept","Conduct risk assessment","Prepare CAPEX / OPEX / ABEX"] },
+    { key:"define",   name:"Define",   activities:["Finalize development plan","Basis of Design (BOD)","Perform FEED","Order long-lead equipment"] },
+    { key:"execute",  name:"Execute",  activities:["Detail engineering &amp; procurement","Construction / fabrication","Topsides + hull integration","Hookup &amp; commissioning"] },
+    { key:"operate",  name:"Operate",  activities:["Drill / complete dev. wells","Operate safely, maximise uptime","Inspection, maint. &amp; repair (IMR)","Brownfield: debottleneck / tiebacks"] },
+    { key:"abandon",  name:"Abandon",  activities:["Evaluate abandonment options","Prepare ABEX &amp; budget","P&amp;A wells","Decommission facilities &amp; subsea"] },
+  ],
+  // sub-phase engineering / subsurface track (aligned under phases)
+  subtrack: [
+    { under:"acquire",  type:"sub", label:"Lead" },
+    { under:"explore",  type:"sub", label:"Advance · mature prospect" },
+    { under:"appraise", type:"sub", label:"Drill expl. well" },
+    { under:"select",   type:"eng", label:"Pre-FEED / concept screen" },
+    { under:"define",   type:"eng", label:"FEED" },
+    { under:"execute",  type:"eng", label:"Detail eng." },
+    { under:"operate",  type:"op",  label:"Follow-on / brownfield eng." },
+    { under:"abandon",  type:"op",  label:"Decommission eng." },
+  ],
+};
+
+/* ============================================================
+   PER-FIELD DATA — Big Foot (Lower Tertiary, US GoM).
+   Sourced from config/analysis/lower_tertiary/fields/big_foot.yml
+   + public Chevron disclosures / BSEE records.
+   ============================================================ */
+const FIELD = {
+  "id": "anchor",
+  "name": "Anchor",
+  "operator": "Chevron",
+  "region": "Green Canyon 807 · US Gulf of Mexico",
+  "host": "Semisubmersible FPU",
+  "statusLabel": "Producing",
+  "statusHue": "var(--good)",
+  "currentPhase": "operate",
+  "metrics": [
+    {
+      "k": "Water depth",
+      "v": "5,180",
+      "u": "ft"
+    },
+    {
+      "k": "Gross CAPEX",
+      "v": "$5.6",
+      "u": "B"
+    },
+    {
+      "k": "Plateau rate",
+      "v": "75",
+      "u": "mbopd"
+    },
+    {
+      "k": "GOR",
+      "v": "1,100",
+      "u": "scf/bbl"
+    },
+    {
+      "k": "OPEX",
+      "v": "$15",
+      "u": "/boe"
+    },
+    {
+      "k": "Operator WI",
+      "v": "62.5",
+      "u": "%"
+    }
+  ],
+  "axis": {
+    "start": 2010,
+    "end": 2045,
+    "ticks": [
+      2010,
+      2015,
+      2020,
+      2025,
+      2030,
+      2035,
+      2040,
+      2045
+    ]
+  },
+  "gates": [
+    {
+      "year": 2014.0,
+      "phase": "explore",
+      "lab": "Discovery",
+      "dt": "2014",
+      "kind": "primary"
+    },
+    {
+      "year": 2019.0,
+      "phase": "define",
+      "lab": "FID / Sanction",
+      "dt": "2019",
+      "kind": "primary"
+    },
+    {
+      "year": 2024.625,
+      "phase": "operate",
+      "lab": "First oil",
+      "dt": "Aug 2024",
+      "kind": "now"
+    },
+    {
+      "year": 2026.5,
+      "phase": "operate",
+      "lab": "Today",
+      "dt": "2026",
+      "kind": "nowmark"
+    }
+  ],
+  "spans": [
+    {
+      "from": 2014.0,
+      "to": 2019.0,
+      "txt": "Discovery→FID ~5 yr"
+    },
+    {
+      "from": 2019.0,
+      "to": 2024.625,
+      "txt": "FID→first oil ~6 yr"
+    }
+  ],
+  "workingInterest": [
+    {
+      "name": "Chevron",
+      "wi": 62.5,
+      "lead": true
+    },
+    {
+      "name": "Equinor",
+      "wi": 25
+    },
+    {
+      "name": "TotalEnergies",
+      "wi": 12.5
+    }
+  ],
+  "hostFacts": [
+    [
+      "Host type",
+      "Semisubmersible FPU"
+    ],
+    [
+      "Water depth",
+      "5,180 ft (1,579 m)"
+    ],
+    [
+      "Play",
+      "Lower Tertiary Wilcox"
+    ],
+    [
+      "First oil",
+      "Aug 2024"
+    ],
+    [
+      "Data through",
+      "Dec 2024"
+    ]
+  ],
+  "provenance": "Primary facts (operator, working interests, capex $5.6B, plateau 75 mbopd, GOR 1100 scf/bbl, opex $15/boe, first oil 2024-08, data_through 2024-12-31) from in-repo anchor.yml. Life-cycle dates corroborated by public sources: discovery well Anchor-2 drilled 2014 (Green Canyon 807, ~5,180 ft), FID December 2019 (~$5.7B sanction), first oil August 2024 — world's first 20,000-psi HPHT deepwater development on a semisubmersible FPU, Lower Tertiary Wilcox play. Working interests (Chevron 62.5% / Equinor 25% / TotalEnergies 12.5%) per YAML; note older Offshore Technology page still lists pre-Equinor split (Chevron 62.86% / Total 37.14%). water_depth_ft ~5,180 (block-level estimate). projected_cop_year and lease_year left null (not confidently sourced); incident null."
+};
+
+/* ---------------- render ---------------- */
+const $ = (id) => document.getElementById(id);
+const pos = (yr) => ((yr - FIELD.axis.start) / (FIELD.axis.end - FIELD.axis.start)) * 100;
+const curIdx = MODEL.phases.findIndex(p => p.key === FIELD.currentPhase);
+
+document.title = FIELD.name + " — Field Development Life-Cycle";
+$("f-title").textContent = FIELD.name;
+$("f-sub").innerHTML = `${FIELD.operator} · ${FIELD.region} — ${FIELD.host}`;
+$("f-status").textContent = FIELD.statusLabel;
+if (FIELD.statusHue) document.querySelector(".status").style.setProperty("--sc", FIELD.statusHue);
+$("f-prov").textContent = FIELD.provenance;
+
+$("f-metrics").innerHTML = FIELD.metrics.map(m =>
+  `<div class="metric"><div class="k">${m.k}</div><div class="v">${m.v} <small>${m.u}</small></div></div>`
+).join("");
+
+/* timeline */
+$("f-timeline").innerHTML =
+  `<div class="tl-axis"></div>` +
+  FIELD.axis.ticks.map(y => `<div class="tl-year" style="left:${pos(y)}%">${y}</div>`).join("") +
+  FIELD.spans.map(s => {
+    const l = pos(s.from), w = pos(s.to) - pos(s.from);
+    return `<div class="tl-span" style="left:${l}%; width:${w}%"><div class="bar"></div><span class="txt">${s.txt}</span></div>`;
+  }).join("") +
+  FIELD.gates.map(g => {
+    if (g.kind === "nowmark") {
+      return `<div class="tl-gate now" style="left:${pos(g.year)}%"></div>
+        <div class="tl-flag" style="left:${pos(g.year)}%"><div class="lab">${g.lab}</div><div class="dt">${g.dt}</div><div class="stem"></div></div>`;
+    }
+    const cls = g.kind === "sec" ? "sec" : (g.kind === "now" ? "now" : "");
+    return `<div class="tl-gate ${cls}" style="left:${pos(g.year)}%"></div>
+      <div class="tl-flag" style="left:${pos(g.year)}%"><div class="lab">${g.lab}</div><div class="dt">${g.dt}</div><div class="stem"></div></div>`;
+  }).join("");
+
+/* spine */
+$("f-spine").innerHTML = MODEL.phases.map((p, i) => {
+  let cls = "future", deep = "";
+  if (i < curIdx) { cls = "done"; if (i >= 4) deep = " deep"; }
+  else if (i === curIdx) cls = "current";
+  const here = i === curIdx ? `<div class="youhere">You are here</div>` : "";
+  return `<div class="phase ${cls}${deep}">${here}<div class="pk">Phase ${i+1}</div><div class="pn">${p.name}</div></div>`;
+}).join("");
+
+/* sub-phase track */
+$("f-subtrack").innerHTML = MODEL.subtrack.map(s =>
+  `<div class="subcell"><div class="subchip ${s.type}">${s.label}</div></div>`
+).join("");
+
+/* activities — current phase + its two neighbours */
+const showIdx = [curIdx-1, curIdx, curIdx+1].filter(i => i >= 0 && i < MODEL.phases.length);
+$("f-activities").innerHTML = showIdx.map(i => {
+  const p = MODEL.phases[i];
+  const cur = i === curIdx ? " cur" : "";
+  const tag = i === curIdx ? " · now" : (i < curIdx ? " · done" : " · next");
+  return `<div class="act${cur}"><h4>${p.name}${tag}</h4><ul>${p.activities.map(a=>`<li>${a}</li>`).join("")}</ul></div>`;
+}).join("");
+
+/* host facts + working interest */
+$("f-host").innerHTML = FIELD.hostFacts.map(([k,v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
+$("f-wi").innerHTML = FIELD.workingInterest.map(w =>
+  `<div class="wi-row"><span class="op${w.lead?" lead":""}">${w.name}</span><span style="font-family:var(--mono)">${w.wi}%</span>
+   <span class="wi-bar"><span style="width:${w.wi}%"></span></span></div>`
+).join("");
+</script>

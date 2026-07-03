@@ -318,6 +318,17 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
     portfolio summary, and the Julia 3D well-path page. Returns the list of
     ``(slug, display, filename, npv_str, npv_value)`` tuples the landing page
     uses to build its economics table."""
+    # --- Field life-cycle "page 1" gallery (stage-gate posters) ---
+    # Self-contained HTML built by scripts/lower_tertiary/build_lifecycle_posters.py.
+    # Publish the 10 per-field posters + the gallery index (skip the template + _facts.json).
+    lifecycle_src = REPORTS / "lower_tertiary" / "lifecycle"
+    if (lifecycle_src / "index.html").exists():
+        lifecycle_dst = PUBLIC / "lifecycle"
+        lifecycle_dst.mkdir(parents=True, exist_ok=True)
+        for html in sorted(lifecycle_src.glob("*_lifecycle.html")):
+            shutil.copy2(html, lifecycle_dst / html.name)
+        shutil.copy2(lifecycle_src / "index.html", lifecycle_dst / "index.html")
+
     # --- Economics pages (sanctioned V30), one per Lower-Tertiary field ---
     field_names = {
         "anchor": "Anchor",
