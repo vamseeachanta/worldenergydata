@@ -1,7 +1,7 @@
 # Plan: Issue #725 - Kansas KGS Hugoton pressure observations
 
 **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/725
-**Status:** draft
+**Status:** plan-review
 **Tier:** T2 (new source package, direct-source raw manifests, parsers, curated pressure table, CLI, tests, docs)
 **Client:** N/A
 **Project:** worldenergydata onshore pressure screen
@@ -61,6 +61,12 @@ RES","DIFFERENT","COEFF"
 "1001232609","POWELL 2-31","15-067-20048","MESA PETROLEUM C","29","S","37","W","31","37.4789143","-101.4114608","1996","636","0","0","0","0","1297","0","0","0","0"
 "1001232609","POWELL 2-31","15-067-20048","MESA PETROLEUM C","29","S","37","W","31","37.4789143","-101.4114608","1997","636","47.3","38.8","337.26","1022","645","0","38.3","10.58","12.1"
 ```
+
+The implementation will derive the actual observation window from parsed
+`YEAR` values and will write that `min_year`/`max_year` into quality output and
+documentation. It will not infer cadence solely from the issue body's
+"frozen 2013" wording because the direct-source HTTP metadata shows a 2025
+`Last-Modified` timestamp for the pressure file.
 
 ### `/mnt/ace` storage inventory
 
@@ -132,6 +138,8 @@ Kansas-specific policy:
   retain `pressure_psig_raw`; curated outputs will emit `pressure_psia =
   pressure_psig_raw + atmospheric_pressure_psi` with
   `atmospheric_pressure_psi = 14.7` and a `psig_to_psia_assumption` limitation.
+  That limitation will explicitly state that 14.7 psi is a sea-level screening
+  constant and does not adjust for Hugoton-area elevation.
 - `gradient_psi_ft` will be computed only when `pressure_psia` is positive and
   a positive, unambiguous reference depth is available from `ks_wells.DEPTH`.
 - `gradient_method` will be `whp_over_total_depth_screening_only`; downstream
@@ -152,9 +160,15 @@ Kansas-specific policy:
   be counted in quality output instead of silently coercing to misleading
   dates.
 - `is_earliest_observation_for_well` will be true for the earliest positive
-  proration observation per well/API identity, using `test_year` and then
-  source row order as a deterministic tie-break. This is the #725
-  virgin-pressure proxy flag consumed by #710.
+  proration observation per defensible well identity, using `test_year` and
+  then source row order as a deterministic tie-break. The implementation will
+  prefer unique `api14`, then unique KGS `WELL_KID`/`KID` identity if available.
+  If identity remains ambiguous, the flag will be suppressed or marked
+  indeterminate with an `ambiguous_identity_for_virgin_proxy` quality flag.
+  This is the #725 virgin-pressure proxy flag consumed by #710, but
+  `virgin_pressure_proxy_method` will be `earliest_available_proration_year`
+  and limitations will state that this is not measured initial reservoir
+  pressure.
 
 ### Out of scope
 
@@ -177,6 +191,7 @@ The implementation will not:
 | Plan index row | `docs/plans/README.md` |
 | Plan review - Claude initial | `scripts/review/results/2026-07-03-plan-725-claude.md` |
 | Plan review - Claude focused availability | `scripts/review/results/2026-07-03-plan-725-claude-r2.md` |
+| Plan review - Claude focused r3 | `scripts/review/results/2026-07-03-plan-725-claude-r3.md` |
 | Plan review - Codex | `scripts/review/results/2026-07-03-plan-725-codex.md` |
 | Plan review - Gemini availability | `scripts/review/results/2026-07-03-plan-725-gemini-unavailable.md` |
 | Package metadata | `packages/worldenergydata-kansas_kgs/pyproject.toml` |
@@ -283,13 +298,14 @@ def parse_wells_master(zip_path):
 def build_pressure_observations(proration, wells):
     filter proration rows where SHUT_IN_PRESS is positive
     convert raw pressure from psig to psia with documented atmospheric constant
-    left join wells on api10
+    left join wells on api10, using unique KGS KID fallback where needed
     mark missing or ambiguous well joins and suppress depth/gradient for them
     set pressure_kind = WHP_shut_in
     set reference_depth_method = total_depth_ft when DEPTH is positive
     compute gradient only for positive pressure and positive depth
-    mark earliest positive observation per well as virgin-pressure proxy
+    mark earliest positive observation per defensible well identity as proxy
     add screening-only limitation text for WHP/depth gradient
+    derive min/max observation year from parsed YEAR values
     return curated observations and coverage summaries
 ```
 
@@ -368,6 +384,7 @@ Write failing tests for:
 - numeric parsing of `SHUT_IN_PRESS`, `WORKING_PRES`, `OPEN_FLOW`,
   `ADJ_DELIVER`, and `YEAR`
 - API10 normalization from dashed KGS API strings
+- parsing and retaining `WELL_KID` as source well identity and KID fallback
 - API state/county code parsing and county-name mapping
 - raw `SHUT_IN_PRESS` retained as `pressure_psig_raw` and curated
   `pressure_psia` converted with `14.7` psi atmospheric pressure
@@ -400,10 +417,15 @@ Write failing tests for:
   unambiguous well-depth join
 - unique API10 joins emit `api14`; ambiguous joins add a quality flag and keep
   `api14`, reference depth, and gradient null
-- earliest positive observation per well is flagged as the virgin-pressure proxy
+- KGS KID fallback can disambiguate API10 joins when both files carry a unique
+  KID match
+- earliest positive observation per defensible well identity is flagged as the
+  virgin-pressure proxy
+- ambiguous well identity suppresses or marks the virgin-pressure proxy flag as
+  indeterminate and records a quality flag
 - coverage summary groups by county/location proxy and test year
 - Hugoton/Panoma county dominance is visible from the available location fields
-  without hardcoding a pass/fail field list
+  without hardcoding production data into the implementation
 
 Create `observations.py` and `quality.py`.
 
@@ -445,7 +467,8 @@ PYTHONPATH="$(printf '%s:' packages/*/src)src" \
 
 Write `docs/data-sources/onshore/kansas-kgs/pressure-observations.md` with:
 
-- official KGS source URLs and refresh/frozen cadence
+- official KGS source URLs and data-window/refresh cadence derived from parsed
+  `YEAR` range plus manifest HTTP metadata
 - storage layout
 - command usage
 - output schema
@@ -488,13 +511,18 @@ closeout comment. Generated data remains outside git.
 | `test_proration_parser_keeps_zero_pressure_in_normalized_table` | raw fidelity | zero-pressure row | normalized row retained |
 | `test_curated_observations_drop_blank_or_zero_pressures` | usable observation filter | zero, blank, positive pressure rows | only positive pressure curated |
 | `test_pressure_psig_converts_to_pressure_psia` | unit contract | raw pressure 47.3 psig | curated pressure 62.0 psia with limitation |
+| `test_atmospheric_constant_limitation_mentions_elevation` | unit limitation | converted pressure row | sea-level 14.7/elevation caveat present |
 | `test_test_date_policy_for_annual_rows` | annual proration date policy | row with `YEAR=1997` | `test_year=1997`, `test_date` null |
+| `test_observation_window_uses_parsed_year_range` | data-window provenance | rows spanning multiple years | quality reports min/max parsed years |
 | `test_api_county_code_maps_to_verified_county_name` | county coverage contract | verified API/location fixture | county name only when code scheme is verified |
 | `test_wells_parser_extracts_depth_and_api14` | well master parsing | small zipped `ks_wells.txt` fixture | api10, api14, depth, field columns |
+| `test_kid_fallback_disambiguates_api10_join` | KGS identity fallback | ambiguous API10 with unique KID | populated unique well identity |
 | `test_observations_join_unique_api10_to_api14` | pressure/well join | one pressure row, one well row | populated api14 |
 | `test_observations_flag_ambiguous_api10_join` | ambiguous join behavior | one pressure row, two well rows | null api14, null depth, null gradient, quality flag |
 | `test_gradient_requires_positive_depth` | gradient guard | missing/zero/depth rows | gradient only for positive depth |
 | `test_earliest_positive_observation_is_virgin_proxy` | #725 proxy flag | two positive yearly rows for one well | earliest row flagged true |
+| `test_virgin_proxy_suppressed_when_identity_ambiguous` | #725 proxy safety | ambiguous API10 without unique KID | proxy flag false/null and quality flag |
+| `test_hugoton_counties_dominate_coverage_summary` | source sanity check | representative coverage fixture | Grant/Stevens/Morton-style counties rank visibly high |
 | `test_quality_counts_parser_repairs_and_join_gaps` | quality report | sample parser/join issues | expected counts |
 | `test_output_writer_enforces_ace_root` | storage guard | non-ACE root | `ValueError` |
 | `test_output_writer_writes_csv_parquet_quality_manifest` | output packet | sample observations | expected files and row counts |
@@ -515,22 +543,31 @@ closeout comment. Generated data remains outside git.
 - [ ] Curated rows preserve `pressure_kind=WHP_shut_in` and do not represent
       KGS shut-in wellhead pressure as measured BHP.
 - [ ] Curated rows carry both raw gauge-pressure provenance and converted
-      `pressure_psia` with a documented atmospheric-pressure assumption.
+      `pressure_psia` with a documented sea-level atmospheric-pressure
+      assumption and elevation caveat.
 - [ ] `test_type=KS_PRORATION`, `test_year` is populated, and `test_date`
       policy for year-only rows is explicit.
 - [ ] Gradient computation is guarded by positive pressure and defensible
       positive reference depth, with `gradient_method` carried in each row.
 - [ ] Ambiguous API10 joins suppress `api14`, reference depth, and gradient and
       are counted in quality output.
-- [ ] Earliest positive observation per well is flagged as the
-      virgin-pressure proxy for #710.
+- [ ] Earliest positive observation per defensible well identity is flagged as
+      the virgin-pressure proxy for #710, with `virgin_pressure_proxy_method =
+      earliest_available_proration_year` and limitations explaining that it is
+      not measured initial reservoir pressure.
+- [ ] Ambiguous well identity suppresses or marks the virgin-pressure proxy
+      flag as indeterminate and records a quality flag.
 - [ ] Quality output reports malformed-header repair, zero/blank pressure
       counts, missing/ambiguous API joins, missing depth, and row counts.
+- [ ] Quality output reports parsed pressure-observation `min_year` and
+      `max_year`; docs derive cadence from these values and HTTP metadata.
 - [ ] Coverage stats by county/location proxy and year are emitted.
+- [ ] Coverage stats include a Hugoton/Panoma dominance sanity check in tests
+      and quality output.
 - [ ] County coverage uses a packaged Kansas county-code mapping; unknown codes
       are retained and counted rather than dropped.
-- [ ] Documentation explains source URLs, refresh/frozen cadence, storage
-      layout, schema, command usage, and limitations.
+- [ ] Documentation explains source URLs, observed data window, refresh cadence,
+      storage layout, schema, command usage, and limitations.
 - [ ] Focused tests pass:
       `PYTHONPATH="$(printf '%s:' packages/*/src)src" uv run --no-sync pytest tests/unit/kansas_kgs -q`
 - [ ] Formatting/lint pass for touched Python:
@@ -543,17 +580,17 @@ closeout comment. Generated data remains outside git.
 
 ## Adversarial Review Summary
 
-This plan remains a draft. It must not be moved to `status:plan-review` until a
-no-MAJOR provider re-review is available after the Claude MAJOR remediation.
+This plan has completed no-MAJOR post-remediation review and is ready for
+`status:plan-review`. Implementation remains blocked until explicit user
+approval moves the issue to `status:plan-approved`.
 
 | Provider | Verdict | Key findings |
 |---|---|---|
-| Claude | MAJOR initial; r2 unavailable | Initial review found blockers: missing virgin proxy flag, psig/psia unit ambiguity, ambiguous depth/gradient join, county-code verification, package-data config, annual test-date policy, parser robustness, CLI edit sites, dependency pins. The plan was patched to address these. Two focused r2 attempts timed out with no verdict. |
+| Claude | MAJOR initial; r2 unavailable; r3 MINOR | Initial review found blockers: missing virgin proxy flag, psig/psia unit ambiguity, ambiguous depth/gradient join, county-code verification, package-data config, annual test-date policy, parser robustness, CLI edit sites, dependency pins. The plan was patched to address these. Two focused r2 attempts timed out with no verdict. Focused r3 verified the prior MAJOR findings were remediated and returned only non-blocking documentation/test-scope cautions, which are now patched into this plan. |
 | Codex | APPROVE with minor implementation cautions | Verified the revised plan addresses the Claude MAJOR classes. Remaining cautions are implementation evidence items: preserve KGS unit metadata search, county-code verification evidence, and `/mnt/ace` raw hash/length comparison. |
 | Gemini | UNAVAILABLE | Gemini CLI failed before review with `IneligibleTierError`; no verdict produced. |
 
-**Overall result:** BLOCKED DRAFT - not approval-ready until a no-MAJOR
-post-remediation provider review lands.
+**Overall result:** PLAN-REVIEW READY - no MAJOR review findings remain.
 
 Revisions made based on review:
 
@@ -569,6 +606,12 @@ Revisions made based on review:
   row repair.
 - Enumerated all CLI registry/display edit sites and aligned dependency pins
   with sibling package convention.
+- Added parsed observation-window reporting instead of trusting the issue's
+  frozen-2013 cadence wording.
+- Clarified `virgin_pressure_proxy_method =
+  earliest_available_proration_year`, identity ambiguity handling, KGS KID
+  fallback, Hugoton coverage sanity testing, and the sea-level atmospheric
+  pressure/elevation limitation.
 
 ## Risks and Open Questions
 
@@ -577,8 +620,11 @@ Revisions made based on review:
   performs or explicitly declines a gas-column correction.
 - **Risk:** API10 to API14 joins may be ambiguous. The implementation will
   fail soft at the row level with quality flags rather than fabricating API14.
-- **Risk:** KGS pressure data is frozen at 2013. The implementation will
-  manifest this cadence and not imply current pressure coverage.
+- **Risk:** The issue body says the pressure data is frozen at 2013, but the
+  direct-source HTTP metadata has a 2025 `Last-Modified` timestamp. The
+  implementation will derive the actual observation window from parsed `YEAR`
+  values, manifest both that window and the HTTP metadata, and will not imply
+  current pressure coverage beyond parsed observations.
 - **Risk:** `ks_wells.txt` is about 203 MB uncompressed. Parser tests should
   use tiny zip fixtures; production parsing should support chunking if memory
   pressure appears during the `/mnt/ace` smoke.
