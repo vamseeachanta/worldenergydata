@@ -1,7 +1,7 @@
 # Plan: Issue #709 - Texas RRC well pressure observations
 
 **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/709
-**Status:** plan-review
+**Status:** implemented
 **Tier:** T2 (existing Texas RRC package, direct-source packet parser extension, curated pressure table, CLI, tests, docs)
 **Client:** N/A
 **Project:** worldenergydata onshore pressure screen
@@ -570,46 +570,46 @@ will remain outside git.
 
 ## Acceptance Criteria
 
-- [ ] `worldenergydata.texas_rrc.pressure_observations` imports cleanly.
-- [ ] Official RRC completion packet and wellbore sources are loaded from the
+- [x] `worldenergydata.texas_rrc.pressure_observations` imports cleanly.
+- [x] Official RRC completion packet and wellbore sources are loaded from the
       existing `/mnt/ace` storage contract.
-- [ ] Completion raw manifest warnings are surfaced when a ZIP exists but the
+- [x] Completion raw manifest warnings are surfaced when a ZIP exists but the
       latest manifest status is `error`.
-- [ ] Structured G-1, G-1 Field Data, G-1 Measurement Data, G-10, W-2,
+- [x] Structured G-1, G-1 Field Data, G-1 Measurement Data, G-10, W-2,
       production interval, and formation rows are parsed into normalized
       pressure candidates.
-- [ ] Curated pressure observations are written under
+- [x] Curated pressure observations are written under
       `/mnt/ace/worldenergydata/data/modules/texas_rrc/curated/pressure/well_pressure_observations/`.
-- [ ] Normalized pressure candidates are written under
+- [x] Normalized pressure candidates are written under
       `/mnt/ace/worldenergydata/data/modules/texas_rrc/normalized/pressure/`.
-- [ ] Curated rows preserve raw pressure, source pressure field, unit basis,
+- [x] Curated rows preserve raw pressure, source pressure field, unit basis,
       pressure kind, pressure method, and limitations.
-- [ ] Wellhead/casing gauge-pressure conversions to `pressure_psia` use an
+- [x] Wellhead/casing gauge-pressure conversions to `pressure_psia` use an
       explicit atmospheric-pressure assumption and limitation.
-- [ ] W-2 pressure candidates are not silently represented as BHP.
-- [ ] Gradient computation is guarded by positive pressure, positive reference
+- [x] W-2 pressure candidates are not silently represented as BHP.
+- [x] Gradient computation is guarded by positive pressure, positive reference
       depth, defensible pressure kind, and unambiguous source/depth linkage.
-- [ ] Earliest usable pressure per well is flagged as the virgin-pressure proxy
+- [x] Earliest usable pressure per well is flagged as the virgin-pressure proxy
       for #710, with method and eligibility fields.
-- [ ] Coverage stats report how many wells have at least one pressure
+- [x] Coverage stats report how many wells have at least one pressure
       observation by district and decade, and by field and decade.
-- [ ] Quality output reports candidate counts, curated counts, pressure-kind
+- [x] Quality output reports candidate counts, curated counts, pressure-kind
       counts, uncurated candidate reasons, missing API, missing depth,
       ambiguous linkage, unit assumptions, manifest warnings, and source gaps.
-- [ ] Documentation explains source URLs, refresh cadences, storage layout,
+- [x] Documentation explains source URLs, refresh cadences, storage layout,
       schema, command usage, and WHP/BHP limitations.
-- [ ] Focused tests pass:
+- [x] Focused tests pass:
       `PYTHONPATH="$(printf '%s:' packages/*/src)src" uv run --no-sync pytest tests/unit/texas_rrc/test_pressure_observation_packet_schema.py tests/unit/texas_rrc/test_pressure_observation_packets.py tests/unit/texas_rrc/test_pressure_observation_sources.py tests/unit/texas_rrc/test_pressure_observations.py tests/unit/texas_rrc/test_pressure_observation_io.py tests/unit/texas_rrc/test_pressure_observation_cli.py -q`
-- [ ] Formatting/lint pass for touched Python:
+- [x] Formatting/lint pass for touched Python:
       `uv run --no-sync black --check --diff packages/worldenergydata-texas_rrc/src/worldenergydata/texas_rrc/pressure_observations src/worldenergydata/cli/commands/texas_rrc.py tests/unit/texas_rrc/test_pressure_observation*.py`
       and
       `uv run --no-sync isort --check-only --diff packages/worldenergydata-texas_rrc/src/worldenergydata/texas_rrc/pressure_observations src/worldenergydata/cli/commands/texas_rrc.py tests/unit/texas_rrc/test_pressure_observation*.py`
       and
       `uv run --no-sync ruff check packages/worldenergydata-texas_rrc/src/worldenergydata/texas_rrc/pressure_observations src/worldenergydata/cli/commands/texas_rrc.py tests/unit/texas_rrc/test_pressure_observation*.py`
-- [ ] `scripts/legal/legal-sanity-scan.sh` passes before commit.
-- [ ] Heavy raw, normalized, and curated data stays under `/mnt/ace` and is not
+- [x] `scripts/legal/legal-sanity-scan.sh` passes before commit.
+- [x] Heavy raw, normalized, and curated data stays under `/mnt/ace` and is not
       committed to git.
-- [ ] Code-stage adversarial review is recorded before closeout.
+- [x] Code-stage adversarial review is recorded before closeout.
 
 ## Adversarial Review Summary
 
@@ -620,9 +620,60 @@ Plan-stage inline review is recorded at
 |---|---|---|
 | Codex inline | MINOR | Plan includes source-of-record guardrails, manifest reconciliation, pressure-unit provenance, W-2 non-BHP guardrails, depth/gradient gating, virgin-proxy fields, and code-stage review acceptance. |
 
-Implementation remains blocked until explicit user approval moves
-[#709](https://github.com/vamseeachanta/worldenergydata/issues/709) to
-`status:plan-approved`.
+Code-stage review is recorded at
+`scripts/review/results/2026-07-03-code-709-codex-inline.md`.
+
+## Implementation Evidence
+
+The implemented slice wrote direct-source Texas RRC pressure outputs under
+`/mnt/ace/worldenergydata/data/modules/texas_rrc`:
+
+- 360 normalized pressure candidates
+- 48 curated pressure observations
+- 6 district/decade coverage rows
+- 8 field/decade coverage rows
+- no source gaps
+- expected warning:
+  `raw_manifest_warning:completion_data:error:2026-07-01T00:36:55Z`
+- 2 hashed input artifacts: completion ZIP and Wellbore Query CSV
+
+Focused tests passed:
+
+```bash
+PYTHONPATH="$(printf '%s:' packages/*/src)src" \
+  uv run --no-sync pytest --no-cov \
+    tests/unit/texas_rrc/test_pressure_observation*.py -q
+```
+
+Adjacent lifecycle/source tests passed:
+
+```bash
+PYTHONPATH="$(printf '%s:' packages/*/src)src" \
+  uv run --no-sync pytest --no-cov \
+    tests/unit/texas_rrc/test_lifecycle_keys.py \
+    tests/unit/texas_rrc/test_lifecycle_sources.py \
+    tests/unit/texas_rrc/test_lifecycle_io.py \
+    tests/unit/texas_rrc/test_source_catalog.py -q
+```
+
+Formatting, import sorting, lint, whitespace, and legal checks passed:
+
+```bash
+uv run --no-sync black --check --diff \
+  packages/worldenergydata-texas_rrc/src/worldenergydata/texas_rrc/pressure_observations \
+  tests/unit/texas_rrc/test_pressure_observation*.py \
+  src/worldenergydata/cli/commands/texas_rrc.py
+uv run --no-sync isort --check-only --diff \
+  packages/worldenergydata-texas_rrc/src/worldenergydata/texas_rrc/pressure_observations \
+  tests/unit/texas_rrc/test_pressure_observation*.py \
+  src/worldenergydata/cli/commands/texas_rrc.py
+uv run --no-sync ruff check \
+  packages/worldenergydata-texas_rrc/src/worldenergydata/texas_rrc/pressure_observations \
+  tests/unit/texas_rrc/test_pressure_observation*.py \
+  src/worldenergydata/cli/commands/texas_rrc.py
+git diff --check
+scripts/legal/legal-sanity-scan.sh
+```
 
 ## Risks and Open Questions
 
