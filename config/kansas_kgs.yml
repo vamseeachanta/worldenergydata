@@ -1,0 +1,34 @@
+# Kansas KGS ingest configuration (issue #725, parent epic #708).
+# Sources verified in docs/data-sources/onshore/state-well-databases/source-catalog.md
+module: kansas_kgs
+
+storage:
+  base_dir: /mnt/ace/worldenergydata/data/modules/kansas_kgs
+  raw_dir: raw
+  normalized_dir: normalized
+  curated_dir: curated
+
+sources:
+  proration_pressures:
+    url: https://www.kgs.ku.edu/PRS/Ora_Archive/kansas_proration_pressures.txt
+    raw_path: pressure/kansas_proration_pressures.txt
+    # KCC gas proration program annual shut-in / deliverability tests.
+    # File is frozen (last updated 2013-10-08) — one-shot ingest, no refresh loop.
+    refresh: frozen
+  wells_master:
+    url: https://www.kgs.ku.edu/PRS/Ora_Archive/ks_wells.zip
+    raw_path: wells/ks_wells.zip
+    zip_member: ks_wells.txt
+    refresh: periodic
+
+pressure_observations:
+  # Reported shut-in pressures are wellhead gauge readings (psig).
+  # psia conversion uses the standard atmosphere; barometric/elevation and
+  # static gas-column corrections are the screen's job (#710), not the ingest's.
+  atmospheric_psi: 14.696
+  test_type: KS_PRORATION
+  pressure_kind: WHP_shut_in
+  gradient_method: whp_shutin_over_td_lower_bound
+  # SHUT_IN_PRESS == 0 means "not tested that year" in the proration file,
+  # not a vacuum reading — excluded from observations, counted in coverage.
+  min_pressure_psig: 0.0
