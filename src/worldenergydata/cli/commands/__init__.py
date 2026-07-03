@@ -10,6 +10,7 @@ Each module provides subcommands for a specific domain:
 - sodir: SODIR (Norwegian Offshore Directorate) data operations
 - metocean: Metocean data (buoys, tides, marine weather)
 - texas_rrc: Texas Railroad Commission data operations
+- kansas_kgs: Kansas Geological Survey data operations
 - canada: Canadian oil & gas data (AER/BCER)
 - mexico_cnh: Mexico CNH oil & gas data (SIH dashboard)
 - landman: Mineral ownership and lease data operations
@@ -24,6 +25,7 @@ _COMMAND_MODULES = {
     "dashboard",
     "eia",
     "fdas",
+    "kansas_kgs",
     "landman",
     "lng_terminals",
     "marine_safety",
@@ -53,6 +55,7 @@ __all__ = [
     "ndbc",
     "sodir",
     "metocean",
+    "kansas_kgs",
     "texas_rrc",
     "canada",
     "mexico_cnh",

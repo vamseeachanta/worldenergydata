@@ -16,7 +16,14 @@ Usage:
 
 from __future__ import annotations
 
-import argparse, csv, json, os, re, sys, zipfile
+import argparse
+import csv
+import json
+import os
+import re
+import sys
+import tempfile
+import zipfile
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -252,6 +259,26 @@ def _col_schema(name: str, typ: str) -> dict:
 
 def _mtime_iso(path: Path) -> str:
     return datetime.fromtimestamp(path.stat().st_mtime, tz=timezone.utc).isoformat()
+
+
+def _write_yaml_atomic(path: Path, data: Any) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp_name = tempfile.mkstemp(
+        prefix=f".{path.name}.",
+        suffix=".tmp",
+        dir=path.parent,
+        text=True,
+    )
+    tmp_path = Path(tmp_name)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            yaml.dump(data, f, default_flow_style=False, sort_keys=False)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(tmp_path, path)
+    except Exception:
+        tmp_path.unlink(missing_ok=True)
+        raise
 
 
 def _sample_csv(path: Path, n: int = 20) -> tuple[list[str], list[list[str]]]:
@@ -559,8 +586,7 @@ def generate_catalog(
         mods[name] = schema
         if not dry_run and mp.is_relative_to(root):
             sp = mp / "schema.yaml"
-            with open(sp, "w") as f:
-                yaml.dump(schema, f, default_flow_style=False, sort_keys=False)
+            _write_yaml_atomic(sp, schema)
             written.append(str(sp.relative_to(root)))
 
     tot_ds = sum(len(m.get("datasets", [])) for m in mods.values())
@@ -581,9 +607,7 @@ def generate_catalog(
     }
     if not dry_run:
         cp = root / "data" / "catalog.yaml"
-        cp.parent.mkdir(parents=True, exist_ok=True)
-        with open(cp, "w") as f:
-            yaml.dump(catalog, f, default_flow_style=False, sort_keys=False)
+        _write_yaml_atomic(cp, catalog)
         written.append(str(cp.relative_to(root)))
     print(f"Scanned {len(mods)} modules, {tot_ds} datasets, {tot_bs} binary stores")
     print(f"Total size: {_humanize_bytes(tot_sz)}")

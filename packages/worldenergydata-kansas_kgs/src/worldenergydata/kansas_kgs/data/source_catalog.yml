@@ -1,0 +1,11 @@
+sources:
+  pressure_proration:
+    source_url: https://www.kgs.ku.edu/PRS/Ora_Archive/kansas_proration_pressures.txt
+    raw_path: raw/pressure/kansas_proration_pressures.txt
+  wells_master:
+    source_url: https://www.kgs.ku.edu/PRS/Ora_Archive/ks_wells.zip
+    raw_path: raw/wells/ks_wells.zip
+  formation_tops:
+    source_url: https://www.kgs.ku.edu/PRS/Ora_Archive/ks_tops.zip
+    raw_path: raw/tops/ks_tops.zip
+    optional: true

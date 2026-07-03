@@ -82,10 +82,13 @@ This directory contains issue-plan artifacts created during the issue-planning-m
 | [#695](https://github.com/vamseeachanta/worldenergydata/issues/695) | [texas-rrc-field-opportunity-architecture-ranking](2026-07-02-issue-695-texas-rrc-field-opportunity-architecture-ranking.md) | implemented | 2026-07-02 |
 | [#702](https://github.com/vamseeachanta/worldenergydata/issues/702) | [texas-rrc-field-architecture-dossiers](2026-07-02-issue-702-texas-rrc-field-architecture-dossiers.md) | implemented | 2026-07-02 |
 | [#707](https://github.com/vamseeachanta/worldenergydata/issues/707) | [texas-rrc-field-architecture-portfolio](2026-07-02-issue-707-texas-rrc-field-architecture-portfolio.md) | plan-approved | 2026-07-02 |
+| [#709](https://github.com/vamseeachanta/worldenergydata/issues/709) | [texas-rrc-pressure-observations](2026-07-03-issue-709-texas-rrc-pressure-observations.md) | plan-review | 2026-07-03 |
 
 ## Closed / superseded plans
 
-_None yet — list plans here once their issue is closed or the plan is superseded by another revision._
+| Issue | Plan File | Status | Date |
+|-------|-----------|--------|------|
+| [#725](https://github.com/vamseeachanta/worldenergydata/issues/725) | [kansas-kgs-pressure-observations](2026-07-03-issue-725-kansas-kgs-pressure-observations.md) | implemented | 2026-07-03 |
 
 ## Maintenance
 
