@@ -1,7 +1,7 @@
 # Plan: Issue #740 - Oklahoma OCC completion-pressure observations
 
 **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/740
-**Status:** plan-review
+**Status:** implemented
 **Tier:** T2 (new direct-source state ingest, `/mnt/ace` raw snapshot, curated pressure observations, screen integration, docs)
 **Client:** N/A
 **Project:** worldenergydata onshore pressure screen
