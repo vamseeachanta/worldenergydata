@@ -1,12 +1,15 @@
-# Under-Pressured Gas Fields — Screen Results (Kansas First Cut)
+# Under-Pressured Gas Fields - Multi-State Screen Results
 
 Issue: [#710](https://github.com/vamseeachanta/worldenergydata/issues/710)
-(parent epic [#708](https://github.com/vamseeachanta/worldenergydata/issues/708)).
+(parent epic [#708](https://github.com/vamseeachanta/worldenergydata/issues/708);
+Texas integration [#732](https://github.com/vamseeachanta/worldenergydata/issues/732)).
 
 The screen answers the epic's motivating question — *which wells and fields
 actually produced from very low bottom-hole pressure?* — from state-regulator
-data. This first cut runs on the Kansas KGS ingest (#725); Texas RRC joins
-through the same observation schema once #709's extraction lands.
+data. The current run combines Kansas KGS proration pressure observations
+([#725](https://github.com/vamseeachanta/worldenergydata/issues/725)) with
+Texas RRC completion-packet pressure observations
+([#709](https://github.com/vamseeachanta/worldenergydata/issues/709)).
 
 ## Method
 
@@ -23,24 +26,48 @@ PYTHONPATH=src python -m worldenergydata.analysis.underpressured_screen.screen \
    under-pressured 0.35–0.433; severely under-pressured < 0.35. A separate
    **near-vacuum flag** marks shut-in wellhead pressure < 50 psia — the West
    Panhandle vacuum-operations regime.
-3. **Earliest observation per well** is the virgin-pressure proxy; the source
-   `era` label (depleted for the 1996+ Kansas proration program) rides along
-   so depleted-era pressures are never presented as virgin.
-4. **Field ranking** (≥5 wells) plus a **validation gate**: the run fails
+3. **Source normalization** adapts state-specific physical schemas into the
+   screen contract. Kansas already emits `well_key` and `field`; Texas maps
+   `api14` to `well_key`, `field_name` to `field`, injects `state=TX`, and
+   filters to rows marked `usable_for_virgin_pressure_proxy`.
+4. **Earliest observation per well** is the screening proxy; the source `era`
+   label rides along so depleted-era Kansas proration pressures and Texas
+   completion-packet screening pressures are not presented as measured virgin
+   BHP. Source-provided earliest-observation flags break same-year duplicate
+   ties, such as Texas G-1/G-10 rows for the same API14.
+5. **Field ranking** (>=5 wells) plus a **validation gate**: the run fails
    unless Hugoton and Panoma appear in the top 10 classified severely
    under-pressured.
+6. **Participation gate**: Texas must be loaded and screened, but the current
+   daily completion packet is too narrow to require West Panhandle analog
+   recovery.
 
 Outputs: `/mnt/ace/worldenergydata/data/modules/pressure_screen/curated/`
 (`well_screen_earliest.parquet`, `underpressured_field_ranking.parquet`,
 `screen_summary.json`).
 
-## Results (Kansas, run 2026-07-02)
+## Results (run 2026-07-03)
 
-10,103 wells screened — **all severely under-pressured** (expected: the
-proration program observed Hugoton-trend gas seven decades into depletion).
-Median estimated-BHP gradient **0.0304 psi/ft ≈ 7% of hydrostatic**.
-**264 wells were at near-vacuum** shut-in wellhead pressure. Validation gate:
-**PASSED**.
+10,128 wells screened: **10,103 Kansas** wells and **25 Texas** wells after
+earliest-observation selection. The screen loaded 39,134 Kansas pressure rows
+and 43 usable Texas pressure rows from 48 curated Texas observations. Median
+estimated-BHP gradient remains **0.0304 psi/ft**, with **264 near-vacuum**
+shut-in wellhead-pressure wells. Validation gate: **PASSED**. Texas
+participation gate: **PASSED**.
+
+Tier counts:
+
+| Tier | Wells |
+| --- | ---: |
+| Severely under-pressured | 10,126 |
+| Normal | 2 |
+
+Source counts after earliest-observation selection:
+
+| Source | State | Wells | Era |
+| --- | --- | ---: | --- |
+| `kansas_kgs_proration` | KS | 10,103 | depleted |
+| `texas_rrc_completion_packets` | TX | 25 | completion_packet_screening |
 
 | Field | Wells | Median gradient (psi/ft) | P10–P90 | Near-vacuum wells |
 | --- | --- | --- | --- | --- |
@@ -50,11 +77,18 @@ Median estimated-BHP gradient **0.0304 psi/ft ≈ 7% of hydrostatic**.
 | HUGOTON | 200 | 0.0352 | 0.020–0.068 | 12 |
 | PANOMA | 60 | 0.0232 | 0.015–0.033 | 15 |
 | GREENWOOD | 17 | 0.0212 | 0.015–0.031 | 1 |
+| BRISCOE RANCH (EAGLEFORD) | 16 | 0.1361 | 0.094–0.205 | 0 |
 
-Notable beyond the analogs: **Greenwood Gas Area** (Morton County, KS) is the
-most extreme entry — median gradient under 2% of hydrostatic with 22% of its
-tested wells at near-vacuum, i.e., wells literally being sucked dry and still
-on the annual test rolls.
+Notable beyond the analogs:
+
+- **Greenwood Gas Area** (Morton County, KS) remains the most extreme entry:
+  median gradient under 2% of hydrostatic with 22% of tested wells at
+  near-vacuum.
+- **Briscoe Ranch (Eagleford)** enters as the first Texas ranked field: 16
+  earliest wells, all screening-only WHP-derived observations, median estimated
+  gradient 0.1361 psi/ft.
+- Two Texas wells classify normal after the gas-column correction:
+  `CARTHAGE (HAYNESVILLE SHALE)` and `HAWKVILLE (AUSTIN CHALK)`.
 
 ## Caveats
 
@@ -65,6 +99,13 @@ on the annual test rolls.
 - Gradients use wells-master total depth as the reference depth and an
   average-z̄T̄ gas column; both are approximations flagged in the data
   (`bhp_method`, `gradient_method`).
-- Single-source run: tier boundaries (0.433/0.35) only become discriminating
-  once normally-pressured populations (TX #709, OK completions) enter the
-  same table.
+- Texas RRC #709 rows in this run are all **shut-in wellhead pressure** rows,
+  not measured bottom-hole pressure. They remain screening-only until a source
+  provides measured BHP or a better calibrated gas-column correction.
+- The Texas input is a narrow daily completion packet, not a full historical
+  pressure archive. It is useful for proving the multi-state screen path and
+  finding current low-gradient examples, but it is not yet a West Panhandle
+  analog recovery dataset.
+- The Texas quality sidecar currently carries
+  `raw_manifest_warning:completion_data:error:2026-07-01T00:36:55Z`; the
+  screen propagates that warning into `screen_summary.json`.

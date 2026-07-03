@@ -83,7 +83,7 @@ This directory contains issue-plan artifacts created during the issue-planning-m
 | [#702](https://github.com/vamseeachanta/worldenergydata/issues/702) | [texas-rrc-field-architecture-dossiers](2026-07-02-issue-702-texas-rrc-field-architecture-dossiers.md) | implemented | 2026-07-02 |
 | [#707](https://github.com/vamseeachanta/worldenergydata/issues/707) | [texas-rrc-field-architecture-portfolio](2026-07-02-issue-707-texas-rrc-field-architecture-portfolio.md) | plan-approved | 2026-07-02 |
 | [#709](https://github.com/vamseeachanta/worldenergydata/issues/709) | [texas-rrc-pressure-observations](2026-07-03-issue-709-texas-rrc-pressure-observations.md) | implemented | 2026-07-03 |
-| [#732](https://github.com/vamseeachanta/worldenergydata/issues/732) | [texas-rrc-underpressured-screen](2026-07-03-issue-732-texas-rrc-underpressured-screen.md) | plan-review | 2026-07-03 |
+| [#732](https://github.com/vamseeachanta/worldenergydata/issues/732) | [texas-rrc-underpressured-screen](2026-07-03-issue-732-texas-rrc-underpressured-screen.md) | implemented | 2026-07-03 |
 
 ## Closed / superseded plans
 
