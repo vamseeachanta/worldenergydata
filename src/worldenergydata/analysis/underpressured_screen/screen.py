@@ -40,8 +40,8 @@ def load_config(config_path: str | Path) -> dict:
 def estimate_bhp(observations: pd.DataFrame, settings: dict) -> pd.DataFrame:
     """Add ``bhp_psia_est`` and ``bhp_gradient_psi_ft``.
 
-    Wellhead shut-in readings get the average-temperature-and-z static
-    gas-column correction; measured BHP values pass through unchanged.
+    Wellhead readings get the average-temperature-and-z static gas-column
+    correction; measured BHP values pass through unchanged.
     """
     frame = observations.copy()
     exponent = (
@@ -51,7 +51,7 @@ def estimate_bhp(observations: pd.DataFrame, settings: dict) -> pd.DataFrame:
         / (settings["z_avg"] * settings["t_avg_rankine"])
     )
     multiplier = np.exp(exponent)
-    is_whp = frame["pressure_kind"] == "WHP_shut_in"
+    is_whp = frame["pressure_kind"].fillna("").astype(str).str.startswith("WHP_")
     frame["bhp_psia_est"] = frame["pressure_psia"].where(
         ~is_whp, frame["pressure_psia"] * multiplier
     )
@@ -199,8 +199,10 @@ def run_screen(config_path: str | Path) -> dict:
 
     out_dir = Path(config["output"]["base_dir"])
     out_dir.mkdir(parents=True, exist_ok=True)
-    wells.to_parquet(out_dir / "well_screen_earliest.parquet")
-    ranking.to_parquet(out_dir / "underpressured_field_ranking.parquet")
+    _parquet_safe_frame(wells).to_parquet(out_dir / "well_screen_earliest.parquet")
+    _parquet_safe_frame(ranking).to_parquet(
+        out_dir / "underpressured_field_ranking.parquet"
+    )
     (out_dir / "screen_summary.json").write_text(
         json.dumps(summary, indent=2), encoding="utf-8"
     )
@@ -226,6 +228,25 @@ def _median_gradient(wells: pd.DataFrame) -> float | None:
 
 def _unique_values(series: pd.Series) -> list[str]:
     return sorted(str(value) for value in series.dropna().unique().tolist())
+
+
+def _parquet_safe_frame(frame: pd.DataFrame) -> pd.DataFrame:
+    """Normalize optional object metadata columns before parquet serialization."""
+    result = frame.copy()
+    for column in result.select_dtypes(include=["object"]).columns:
+        if column.endswith("_date"):
+            parsed = pd.to_datetime(result[column], errors="coerce")
+            if int(parsed.notna().sum()) == int(result[column].notna().sum()):
+                result[column] = parsed
+                continue
+        result[column] = result[column].map(_nullable_text).astype("string")
+    return result
+
+
+def _nullable_text(value: object) -> str | None:
+    if pd.isna(value):
+        return None
+    return str(value)
 
 
 def main() -> None:

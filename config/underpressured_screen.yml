@@ -20,6 +20,12 @@ inputs:
     state: TX
     era: completion_packet_screening
     require_usable_proxy: true
+  - name: oklahoma_occ_completions
+    path: /mnt/ace/worldenergydata/data/modules/oklahoma_occ/curated/pressure/well_pressure_observations.parquet
+    quality_path: /mnt/ace/worldenergydata/data/modules/oklahoma_occ/curated/pressure/oklahoma_occ_pressure_observation_quality.json
+    schema: oklahoma_occ_completion_v1
+    state: OK
+    era: completion_test_2010_present
 
 output:
   base_dir: /mnt/ace/worldenergydata/data/modules/pressure_screen/curated
@@ -54,4 +60,6 @@ participation_gate:
   # participation without forcing a false West Panhandle analog recovery gate.
   required_states:
     TX:
+      min_wells: 1
+    OK:
       min_wells: 1

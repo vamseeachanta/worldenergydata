@@ -22,6 +22,10 @@ TEXAS_COLUMN_MAP = {
     "field_name": "field",
 }
 
+OKLAHOMA_COLUMN_MAP = {
+    "formation_name": "field",
+}
+
 
 def normalize_observations(frame: pd.DataFrame, input_config: dict) -> pd.DataFrame:
     """Normalize one source-specific pressure table to the screen contract."""
@@ -30,6 +34,8 @@ def normalize_observations(frame: pd.DataFrame, input_config: dict) -> pd.DataFr
         normalized = frame.copy()
     elif schema == "texas_rrc_pressure_v1":
         normalized = _normalize_texas_pressure(frame, input_config)
+    elif schema == "oklahoma_occ_completion_v1":
+        normalized = _normalize_oklahoma_occ_completion(frame, input_config)
     else:
         raise ValueError(f"Unsupported pressure screen input schema: {schema}")
 
@@ -85,6 +91,29 @@ def _normalize_texas_pressure(frame: pd.DataFrame, input_config: dict) -> pd.Dat
         )
         usable = _truthy(normalized["usable_for_virgin_pressure_proxy"])
         normalized = normalized[usable].copy()
+    return normalized
+
+
+def _normalize_oklahoma_occ_completion(
+    frame: pd.DataFrame, input_config: dict
+) -> pd.DataFrame:
+    required = {
+        "well_key",
+        "test_year",
+        "pressure_kind",
+        "pressure_psia",
+        "reference_depth_ft",
+    }
+    if "field" not in frame:
+        required.add("formation_name")
+    _validate_columns(frame, required, input_config["name"])
+    normalized = frame.copy()
+    if "field" not in normalized:
+        normalized = normalized.rename(columns=OKLAHOMA_COLUMN_MAP)
+    normalized["well_key"] = normalized["well_key"].astype("string")
+    if "is_earliest_observation" in normalized:
+        earliest = _truthy(normalized["is_earliest_observation"])
+        normalized["screen_observation_priority"] = (~earliest).astype(int)
     return normalized
 
 
