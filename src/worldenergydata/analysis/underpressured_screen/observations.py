@@ -36,6 +36,8 @@ def normalize_observations(frame: pd.DataFrame, input_config: dict) -> pd.DataFr
         normalized = _normalize_texas_pressure(frame, input_config)
     elif schema == "oklahoma_occ_completion_v1":
         normalized = _normalize_oklahoma_occ_completion(frame, input_config)
+    elif schema == "colorado_ecmc_production_v1":
+        normalized = _normalize_colorado_ecmc_production(frame, input_config)
     else:
         raise ValueError(f"Unsupported pressure screen input schema: {schema}")
 
@@ -69,7 +71,15 @@ def load_observations(inputs: list[dict]) -> tuple[pd.DataFrame, dict]:
         if warnings:
             summary["source_warnings"][entry["name"]] = warnings
         frames.append(normalized)
-    return pd.concat(frames, ignore_index=True), summary
+    non_empty_frames = [frame for frame in frames if not frame.empty]
+    if non_empty_frames:
+        return pd.concat(non_empty_frames, ignore_index=True), summary
+    columns = list(REQUIRED_SCREEN_COLUMNS) + [
+        "source_name",
+        "era",
+        "screen_observation_priority",
+    ]
+    return pd.DataFrame(columns=columns), summary
 
 
 def _normalize_texas_pressure(frame: pd.DataFrame, input_config: dict) -> pd.DataFrame:
@@ -110,6 +120,26 @@ def _normalize_oklahoma_occ_completion(
     normalized = frame.copy()
     if "field" not in normalized:
         normalized = normalized.rename(columns=OKLAHOMA_COLUMN_MAP)
+    normalized["well_key"] = normalized["well_key"].astype("string")
+    if "is_earliest_observation" in normalized:
+        earliest = _truthy(normalized["is_earliest_observation"])
+        normalized["screen_observation_priority"] = (~earliest).astype(int)
+    return normalized
+
+
+def _normalize_colorado_ecmc_production(
+    frame: pd.DataFrame, input_config: dict
+) -> pd.DataFrame:
+    required = {
+        "well_key",
+        "field",
+        "test_year",
+        "pressure_kind",
+        "pressure_psia",
+        "reference_depth_ft",
+    }
+    _validate_columns(frame, required, input_config["name"])
+    normalized = frame.copy()
     normalized["well_key"] = normalized["well_key"].astype("string")
     if "is_earliest_observation" in normalized:
         earliest = _truthy(normalized["is_earliest_observation"])

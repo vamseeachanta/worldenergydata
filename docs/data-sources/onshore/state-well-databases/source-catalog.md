@@ -25,7 +25,7 @@ availability varies enormously by state:
 | --- | --- | --- | --- | --- | --- |
 | Kansas | KGS (KCC filings) | Yes — clean CSV | **YES — `kansas_proration_pressures.txt`: per-well annual SHUT_IN_PRESS + deliverability (Hugoton/Panoma program; frozen at 2013)** | Free | **Low** |
 | Oklahoma | OCC | Yes — CSV/XLSX + dictionaries | **YES (2010+) — completions extract carries Shut_In_Pressure, Flow_Tubing_Pressure per completion**; Form 1016 back-pressure tests imaged only | Free | **Low-medium** |
-| Colorado | ECMC | Yes — CSV/SHP daily | Partial — monthly wellhead tubing/casing pressures in bulk production CSVs (1999+); initial tests structured but per-well scrape only | Free | Low (bulk) / medium-high (initial tests) |
+| Colorado | ECMC | Yes — CSV/SHP daily | Bulk production CSVs carry pressure columns, but the live [#745](https://github.com/vamseeachanta/worldenergydata/issues/745) refresh found zero positive pressure values in the approved 2025+monthly slice; MIT pressure is engineering integrity, not reservoir pressure; initial tests remain per-well scrape only | Free | Low (bulk spine) / medium-high (initial tests) |
 | Louisiana | SONRIS DSS | Yes — paid DSS extract | Structured **WELL_TESTS** table in paid DSS Well set; free portal bans automation | $300–$900/set | Low-medium (after purchase) |
 | New Mexico | EMNRD OCD | Yes — nightly FTP XML | **NO — verified absent from bulk export**; C-105/C-122 pressures imaged only | Free | High (OCR) |
 | Wyoming | WOGCC | Headers only (WFS); production per-well scrape | No — Form 10 tests + DSTs imaged; structured DST DB incomplete/partially broken | Free | High |
@@ -145,9 +145,9 @@ No initial/shut-in BHP, shut-in wellhead pressure, or deliverability-test values
 | Dataset | Coverage/fields | URL | Format | Refresh cadence | License/cost | Status |
 |---|---|---|---|---|---|---|
 | Wells master / GIS | ~98k+ well spots: API, well name, operator, status, spud date, field, plus directional bottomhole locations and directional lines | https://ecmc.state.co.us/documents/data/downloads/gis/WELLS_SHP.ZIP (15.7 MB); DIRECTIONAL_BOTTOMHOLE_LOCATIONS_SHP.ZIP; DIRECTIONAL_LINES_SHP.ZIP; COGCC_FIELDS_SHP.zip (field polygons w/ producing formations) | Shapefile (.dbf usable as table); county KMZs also offered | Daily (verified last-modified 2026-07-02) | Free | VERIFIED |
-| Production — full report-level | Every Form 7 monthly report per well, 1999–present, one file per year: API, month, days produced, formation code, oil/gas/water volumes, sales, BTU, flared/vented, **GasPressureTubing, GasPressureCasing, WaterPressureTubing, WaterPressureCasing** | https://ecmc.state.co.us/documents/data/downloads/production/{YYYY}_prod_reports.csv (or .zip); current-year rolling monthly_prod.csv (62 MB) | CSV (header verified by sampling) | Annual files static; monthly_prod.csv ~monthly (last-mod 2026-06-12) | Free | VERIFIED (header row fetched) |
+| Production — full report-level | Every Form 7 monthly report per well, 1999–present, one file per year: API, month, days produced, formation code, oil/gas/water volumes, sales, BTU, flared/vented, **GasPressureTubing, GasPressureCasing, WaterPressureTubing, WaterPressureCasing** | https://ecmc.state.co.us/documents/data/downloads/production/{YYYY}_prod_reports.csv (or .zip); current-year rolling monthly_prod.csv (62 MB) | CSV (header verified by sampling) | Annual files static; monthly_prod.csv ~monthly (last-mod 2026-06-12) | Free | VERIFIED + IMPLEMENTED ([#745](https://github.com/vamseeachanta/worldenergydata/issues/745)); live pressure values empty in 2025+monthly slice |
 | Production summaries + completions table | Per year 1999–2025: "Colorado Annual Production" + "Colorado Well Completions" tables (completed formation per API, spud date, TD date, wellbore status, first production date) | https://ecmc.state.co.us/documents/data/downloads/production/CO%202025%20Annual%20Production%20Summary-xp.zip (pattern `co YYYY Annual Production Summary-xp.zip`) | MS Access .mdb inside zip | Annual (2025 file last-mod 2026-04-24) | Free | VERIFIED |
-| Well tests — Mechanical Integrity (Form 21) | MIT test records statewide | https://ecmc.state.co.us/documents/data/downloads/Engineering/MIT.zip (3.2 MB) | Zip (Access/Excel) | Monthly (verified last-mod 2026-07-01) | Free | VERIFIED |
+| Well tests — Mechanical Integrity (Form 21) | MIT test records statewide: casing/tubing pressure before/during/final integrity tests, test status, zones, plug/perf interval | https://ecmc.state.co.us/documents/data/downloads/Engineering/MIT.zip (3.2 MB) | Zip (`MIT.xlsx` + metadata PDF) | Monthly (verified last-mod 2026-07-01) | Free | VERIFIED; excluded from reservoir under-pressure screen |
 | Daily Activity Dashboard full export | 9 activity datasets (pending/approved permits Form 2/2A, spuds, completions activity, etc.) | https://ecmc.state.co.us/documents/data/downloads/Dashboard/DAD_Export.zip (26 MB) | Zip of tables | Daily (verified last-mod 2026-07-02) | Free | VERIFIED |
 | Well analytical (chemistry) data | Gas/produced-water analytical sample data (useful for gas composition, not pressure) | https://ecmc.state.co.us/documents/data/downloads/environmental/ProdWellDownLoad.zip | .mdb in zip | Labeled "Updated Monthly" but last-mod 2024-03-01 (stale) | Free | VERIFIED (staleness noted) |
 | Spacing orders | Section/twp/range, cause/order number, well density, unit size, formation code | CauseOrderTabl_Download.zip via spacing-download page | Access .mdb | Post-hearings | Free | Landing page verified; zip path UNVERIFIED |
@@ -156,10 +156,55 @@ No initial/shut-in BHP, shut-in wellhead pressure, or deliverability-test values
 Master index: https://ecmc.colorado.gov/data-maps-reports/downloadable-data-documents (403 to non-browser user agents). Download guide: https://ecmc.state.co.us/documents/data/downloads/ECMC_Download_Guidance_v2_ada.pdf.
 
 ### Pressure/test data availability
-Partially structured. The bulk production CSVs (Form 7 report-level, 1999–present) contain **monthly reported wellhead tubing and casing pressures for gas and water** (`GasPressureTubing`, `GasPressureCasing`, `WaterPressureTubing`, `WaterPressureCasing`) — verified in the file header — which supports late-life/shut-in wellhead-pressure screening but is not virgin BHP. Initial completion test data comes from Form 5A (Completed Interval Report) and is stored structured in COGIS: the per-well scout card renders an "Initial Test Data" block (test date, method, hours tested, choke, test-type/measure pairs — verified on an oil-well example showing BBLS_OIL/GRAVITY_OIL; whether gas-well records carry SITP/CAOF measures is UNVERIFIED) plus formation tops with a DSTs column — but **there is no bulk download of the Form 5A test or tops tables**; you scrape FacilityDetail pages by API number. Bradenhead (Form 17) annulus-pressure tests exist as imaged forms only. MIT (Form 21) test data is a genuine structured monthly bulk download.
+Partially structured, but not yet screen-ready in bulk. The bulk production
+CSVs (Form 7 report-level, 1999–present) contain **monthly reported wellhead
+tubing and casing pressure columns for gas and water**
+(`GasPressureTubing`, `GasPressureCasing`, `WaterPressureTubing`,
+`WaterPressureCasing`) — verified in the file header — but the [#745](https://github.com/vamseeachanta/worldenergydata/issues/745)
+live refresh of 2025 plus `monthly_prod.csv` found **zero positive values** in
+all four columns across 1,060,209 production rows. The pipeline therefore
+archives the source and emits a quality warning instead of injecting false
+Colorado pressure evidence into the screen.
+
+Initial completion test data comes from Form 5A (Completed Interval Report)
+and is stored structured in COGIS: the per-well scout card renders an "Initial
+Test Data" block (test date, method, hours tested, choke, test-type/measure
+pairs — verified on an oil-well example showing BBLS_OIL/GRAVITY_OIL; whether
+gas-well records carry SITP/CAOF measures is UNVERIFIED) plus formation tops
+with a DSTs column. There is still **no bulk download of the Form 5A test or
+tops tables**; getting reservoir-relevant Colorado pressure requires a
+polite per-API FacilityDetail scrape or an ECMC data request. Bradenhead
+(Form 17) annulus-pressure tests exist as imaged forms only. MIT (Form 21)
+test data is a genuine structured monthly bulk download, but it is engineering
+integrity pressure, not reservoir/wellhead production pressure.
 
 ### Ingestion effort estimate
 **Low** for wells master, production CSVs, MIT, and DAD exports: static HTTPS files with stable URL patterns, no auth — gotchas: ecmc.colorado.gov landing pages 403 without a browser User-Agent, annual summary files are Access .mdb (need mdbtools/UCanAccess), 2023 production file has a nonstandard name (`2023_prod_reports_20240903.csv`). Initial-test/tops data is **medium-high**: a ~100k-page scrape of COGIS FacilityDetail (simple `api=` parameter, HTML parse; throttle politely).
+
+### Implemented [#745](https://github.com/vamseeachanta/worldenergydata/issues/745) snapshot
+
+The Colorado bulk lane now writes a direct-source ECMC snapshot:
+
+```text
+/mnt/ace/worldenergydata/data/modules/colorado_ecmc/
+  raw/
+    production/2025_prod_reports.csv
+    production/monthly_prod.csv
+    wells/WELLS_SHP.ZIP
+    manifest.json
+  normalized/production/production_pressure_rows.parquet
+  normalized/wells/wells.parquet
+  curated/pressure/well_pressure_observations.parquet
+  curated/pressure/colorado_ecmc_pressure_observation_quality.json
+```
+
+Live run 2026-07-03 downloaded the 157,411,313-byte 2025 production CSV,
+62,020,211-byte rolling monthly CSV, and 15,747,535-byte wells shapefile from
+official ECMC URLs. It normalized 1,060,209 production rows and 124,332 wells.
+The curated pressure table is intentionally empty because all four configured
+pressure columns had zero positive values in the live source slice. The quality
+sidecar records
+`no_positive_pressure_values:GasPressureTubing,GasPressureCasing,WaterPressureTubing,WaterPressureCasing`.
 
 ## Louisiana — Dept. of Energy & Natural Resources (now Dept. of Conservation & Energy), Office of Conservation — SONRIS
 
@@ -332,11 +377,12 @@ Ranked by value-per-effort for the under-pressured screen (#708):
    and quality outputs and feeds the multi-state screen. Pre-2010 legacy XLSX
    interpretation and Form 1016 image extraction remain later OCR/acquisition
    lanes.
-3. **Colorado — GO, ingest third (effort: low for bulk).** Monthly wellhead
-   tubing/casing pressures in the 1999+ production CSVs give a late-life
-   pressure screen out of the box (and Piceance BCG coverage); virgin-test
-   values need the COGIS per-well scrape (medium-high, defer to its own
-   slice).
+3. **Colorado — BULK SPINE IMPLEMENTED; pressure evidence needs follow-on.**
+   [#745](https://github.com/vamseeachanta/worldenergydata/issues/745)
+   ingests the official wells + production files, but the current bulk
+   production pressure columns are empty. The next Colorado pressure slice
+   should target Form 5A / FacilityDetail initial-test extraction or a direct
+   ECMC data request, not MIT pressure.
 4. **New Mexico — DEFER for pressure; optional well-spine ingest.** Excellent
    free nightly bulk export (wells/completions/production), but pressure data
    is verified absent from it — San Juan C-122 deliverability tests are
@@ -353,6 +399,6 @@ Ranked by value-per-effort for the under-pressured screen (#708):
    i.e., an OCR/document-extraction program rather than an ingestion slice.
 
 Suggested follow-on issues once this survey is accepted: (a) Colorado ECMC
-wellhead-pressure ingest, (b) Oklahoma Form 1016 image/OCR acquisition for
+Form 5A / FacilityDetail pressure extraction, (b) Oklahoma Form 1016 image/OCR acquisition for
 Panhandle deliverability tests, (c) Oklahoma OTC production acquisition if a
 sanctioned bulk path or data-request route is identified.

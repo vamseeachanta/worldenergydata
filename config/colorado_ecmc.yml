@@ -1,0 +1,69 @@
+# Colorado ECMC direct-source ingest (#745).
+# Heavy raw/normalized/curated data stays under /mnt/ace.
+module: colorado_ecmc
+
+storage:
+  base_dir: /mnt/ace/worldenergydata/data/modules/colorado_ecmc
+  raw_dir: raw
+  normalized_dir: normalized
+  curated_dir: curated
+
+sources:
+  production_2025:
+    url: https://ecmc.state.co.us/documents/data/downloads/production/2025_prod_reports.csv
+    raw_path: production/2025_prod_reports.csv
+    source_type: production_csv
+    refresh: annual_static
+    required_columns:
+      - DocNum
+      - ReportMonth
+      - ReportYear
+      - FacilityId
+      - ApiCountyCode
+      - ApiSequenceNumber
+      - ApiSidetrack
+      - GasPressureTubing
+      - GasPressureCasing
+      - WaterPressureTubing
+      - WaterPressureCasing
+  production_monthly:
+    url: https://ecmc.state.co.us/documents/data/downloads/production/monthly_prod.csv
+    raw_path: production/monthly_prod.csv
+    source_type: production_csv
+    refresh: monthly
+    required_columns:
+      - DocNum
+      - ReportMonth
+      - ReportYear
+      - FacilityId
+      - ApiCountyCode
+      - ApiSequenceNumber
+      - ApiSidetrack
+      - GasPressureTubing
+      - GasPressureCasing
+      - WaterPressureTubing
+      - WaterPressureCasing
+  wells_shapefile:
+    url: https://ecmc.state.co.us/documents/data/downloads/gis/WELLS_SHP.ZIP
+    raw_path: wells/WELLS_SHP.ZIP
+    source_type: wells_shapefile
+    refresh: daily
+    required_columns:
+      - API
+      - API_County
+      - API_Seq
+      - API_Label
+      - Field_Name
+      - Facil_Id
+      - Max_MD
+      - Max_TVD
+
+pressure_observations:
+  atmospheric_psi: 14.7
+  test_type: ECMC Form 7 monthly production report
+  gradient_method: production_wellhead_pressure_over_wells_tvd_screening_only
+  min_test_year: 1999
+  max_future_years: 0
+  pressure_priority:
+    - GasPressureTubing
+    - GasPressureCasing
