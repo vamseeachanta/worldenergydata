@@ -317,21 +317,23 @@ class TestSummaryAndParticipationGate:
     def test_summary_reports_state_source_and_era_counts(self):
         wells = pd.DataFrame(
             {
-                "well_key": ["ks-1", "tx-1", "ok-1"],
-                "state": ["KS", "TX", "OK"],
+                "well_key": ["ks-1", "tx-1", "ok-1", "co-1"],
+                "state": ["KS", "TX", "OK", "CO"],
                 "source_name": [
                     "kansas_kgs_proration",
                     "texas_rrc_completion_packets",
                     "oklahoma_occ_completions",
+                    "colorado_ecmc_production",
                 ],
                 "era": [
                     "depleted",
                     "completion_packet_screening",
                     "completion_test_2010_present",
+                    "production_report_late_life",
                 ],
-                "pressure_tier": [TIER_SEVERE, TIER_MILD, TIER_MILD],
-                "near_vacuum": [False, False, False],
-                "bhp_gradient_psi_ft": [0.03, 0.40, 0.39],
+                "pressure_tier": [TIER_SEVERE, TIER_MILD, TIER_MILD, TIER_SEVERE],
+                "near_vacuum": [False, False, False, False],
+                "bhp_gradient_psi_ft": [0.03, 0.40, 0.39, 0.05],
             }
         )
         ranking = pd.DataFrame({"field": ["HUGOTON GAS AREA", "BRISCOE RANCH"]})
@@ -346,26 +348,30 @@ class TestSummaryAndParticipationGate:
                     "kansas_kgs_proration": 2,
                     "texas_rrc_completion_packets": 3,
                     "oklahoma_occ_completions": 4,
+                    "colorado_ecmc_production": 5,
                 },
                 "loaded_row_counts": {
                     "kansas_kgs_proration": 1,
                     "texas_rrc_completion_packets": 1,
                     "oklahoma_occ_completions": 1,
+                    "colorado_ecmc_production": 1,
                 },
                 "source_warnings": {"texas_rrc_completion_packets": ["warning"]},
             },
         )
 
-        assert summary["state_counts"] == {"KS": 1, "TX": 1, "OK": 1}
+        assert summary["state_counts"] == {"KS": 1, "TX": 1, "OK": 1, "CO": 1}
         assert summary["source_counts"] == {
             "kansas_kgs_proration": 1,
             "texas_rrc_completion_packets": 1,
             "oklahoma_occ_completions": 1,
+            "colorado_ecmc_production": 1,
         }
         assert summary["era_note"] == [
             "completion_packet_screening",
             "completion_test_2010_present",
             "depleted",
+            "production_report_late_life",
         ]
         assert summary["source_warnings"] == {
             "texas_rrc_completion_packets": ["warning"]
@@ -397,6 +403,26 @@ class TestSummaryAndParticipationGate:
 
         assert not gate["passed"]
         assert gate["states"]["TX"]["well_count"] == 0
+
+    def test_participation_gate_tracks_colorado_state_entry(self):
+        wells = pd.DataFrame(
+            {
+                "well_key": ["ks-1", "co-1"],
+                "state": ["KS", "CO"],
+            }
+        )
+
+        gate = run_participation_gate(
+            wells,
+            {"required_states": {"CO": {"min_wells": 1}}},
+        )
+
+        assert gate["passed"]
+        assert gate["states"]["CO"] == {
+            "well_count": 1,
+            "min_wells": 1,
+            "passed": True,
+        }
 
     def test_screen_outputs_are_parquet_safe_with_mixed_optional_metadata(
         self, tmp_path

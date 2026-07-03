@@ -1,7 +1,7 @@
 # Plan: Issue #745 - Colorado ECMC wellhead-pressure observations
 
 **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/745
-**Status:** plan-review
+**Status:** implemented
 **Tier:** T2 (new direct-source state ingest, `/mnt/ace` raw snapshot, curated pressure observations, screen integration, docs)
 **Client:** N/A
 **Project:** worldenergydata onshore pressure screen
@@ -145,6 +145,7 @@ Relevant existing patterns:
 | Plan | `docs/plans/2026-07-03-issue-745-colorado-ecmc-wellhead-pressure-observations.md` |
 | Plan index row | `docs/plans/README.md` |
 | Plan review - Codex inline | `scripts/review/results/2026-07-03-plan-745-codex-inline.md` |
+| Code review - Codex inline | `scripts/review/results/2026-07-03-code-745-codex-inline.md` |
 | New config | `config/colorado_ecmc.yml` |
 | New package | `src/worldenergydata/modules/state_regulators/colorado_ecmc/` |
 | New package tests | `tests/unit/modules/state_regulators/test_colorado_ecmc_*.py` |
