@@ -606,6 +606,128 @@ def normalize_lifecycle(
         raise typer.Exit(1)
 
 
+def _print_pressure_observation_summary(
+    row_count: int,
+    candidate_count: int,
+    source_gaps,
+    source_warnings,
+) -> None:
+    table = Table(
+        title="Texas RRC Pressure Observations",
+        show_header=True,
+        header_style="bold cyan",
+    )
+    table.add_column("Metric", style="dim")
+    table.add_column("Value")
+    table.add_row("Curated observations", str(row_count))
+    table.add_row("Normalized candidates", str(candidate_count))
+    table.add_row("Source gaps", ", ".join(source_gaps) if source_gaps else "None")
+    table.add_row(
+        "Source warnings",
+        ", ".join(source_warnings) if source_warnings else "None",
+    )
+    console.print(table)
+    for warning in source_warnings:
+        console.print(f"[yellow]Source warning:[/yellow] {warning}")
+
+
+def _print_pressure_observation_outputs(manifest) -> None:
+    console.print(
+        "[green]Wrote pressure observations[/green] "
+        f"{manifest.row_count} rows -> {manifest.observations_csv_path}"
+    )
+    console.print(f"[dim]Parquet: {manifest.observations_parquet_path}[/dim]")
+    console.print(f"[dim]Candidates CSV: {manifest.candidates_csv_path}[/dim]")
+    console.print(f"[dim]Candidates Parquet: {manifest.candidates_parquet_path}[/dim]")
+    console.print(
+        "[dim]District/decade coverage: "
+        f"{manifest.coverage_by_district_decade_csv_path}[/dim]"
+    )
+    console.print(
+        "[dim]Field/decade coverage: "
+        f"{manifest.coverage_by_field_decade_csv_path}[/dim]"
+    )
+    console.print(f"[dim]Quality report: {manifest.quality_path}[/dim]")
+    console.print(f"[dim]Manifest: {manifest.manifest_path}[/dim]")
+
+
+@app.command("build-pressure-observations")
+def build_pressure_observations_command(
+    raw_root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--raw-root",
+        help="Root containing Texas RRC raw completion and wellbore snapshots",
+    ),
+    output_root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--output-root",
+        help="Root for curated pressure-observation outputs",
+    ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Build the pressure-observation summary without writing outputs",
+    ),
+    require_sources: bool = typer.Option(
+        False,
+        "--require-sources",
+        help="Fail when completion or wellbore pressure inputs are missing",
+    ),
+    allow_non_ace_output: bool = typer.Option(
+        False,
+        "--allow-non-ace-output",
+        help="Allow non-/mnt/ace output roots for isolated tests or sandboxes",
+    ),
+) -> None:
+    """Build Texas RRC well pressure observations from local official data."""
+    _run_pressure_observation_build(
+        raw_root=raw_root,
+        output_root=output_root,
+        dry_run=dry_run,
+        require_sources=require_sources,
+        allow_non_ace_output=allow_non_ace_output,
+    )
+
+
+def _run_pressure_observation_build(
+    raw_root: Path,
+    output_root: Path,
+    dry_run: bool,
+    require_sources: bool,
+    allow_non_ace_output: bool,
+) -> None:
+    from worldenergydata.texas_rrc.pressure_observations.cli_support import (
+        run_build_pressure_observations,
+    )
+
+    try:
+        result = run_build_pressure_observations(
+            raw_root=raw_root,
+            output_root=output_root,
+            dry_run=dry_run,
+            require_sources=require_sources,
+            allow_non_ace_output=allow_non_ace_output,
+        )
+        _print_pressure_observation_summary(
+            result.row_count,
+            result.candidate_count,
+            result.source_gaps,
+            result.source_warnings,
+        )
+        if dry_run:
+            console.print(
+                "[yellow]Dry run:[/yellow] no pressure-observation outputs written"
+            )
+            return
+        if result.manifest is not None:
+            _print_pressure_observation_outputs(result.manifest)
+    except typer.Exit:
+        raise
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {str(e)}")
+        raise typer.Exit(1)
+
+
 def _print_production_atlas_summary(row_count: int, source_gaps) -> None:
     table = Table(
         title="Texas RRC Production Field Atlas",
