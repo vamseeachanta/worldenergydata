@@ -84,6 +84,54 @@ def test_filters_texas_unusable_rows_when_required():
     assert list(result["well_key"]) == ["42127373050000"]
 
 
+def test_normalizes_oklahoma_occ_completion_schema_to_screen_contract():
+    frame = pd.DataFrame(
+        [
+            {
+                "well_key": "3500323456",
+                "formation_name": "MORROW",
+                "test_year": 2024,
+                "pressure_kind": "WHP_shut_in",
+                "pressure_psia": 139.7,
+                "reference_depth_ft": 5100.0,
+                "is_earliest_observation": True,
+            },
+            {
+                "well_key": "3500323456",
+                "formation_name": "MORROW",
+                "test_year": 2025,
+                "pressure_kind": "WHP_shut_in",
+                "pressure_psia": 120.0,
+                "reference_depth_ft": 5100.0,
+                "is_earliest_observation": False,
+            },
+        ]
+    )
+
+    result = normalize_observations(
+        frame,
+        {
+            "name": "oklahoma_occ_completions",
+            "schema": "oklahoma_occ_completion_v1",
+            "state": "OK",
+            "era": "completion_test_2010_present",
+        },
+    )
+
+    assert list(result["well_key"]) == ["3500323456", "3500323456"]
+    assert list(result["field"]) == ["MORROW", "MORROW"]
+    assert list(result["state"]) == ["OK", "OK"]
+    assert list(result["source_name"]) == [
+        "oklahoma_occ_completions",
+        "oklahoma_occ_completions",
+    ]
+    assert list(result["era"]) == [
+        "completion_test_2010_present",
+        "completion_test_2010_present",
+    ]
+    assert list(result["screen_observation_priority"]) == [0, 1]
+
+
 def test_load_observations_collects_input_counts_and_quality_warnings(tmp_path):
     observations_path = tmp_path / "texas.parquet"
     quality_path = tmp_path / "quality.json"

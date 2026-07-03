@@ -71,7 +71,7 @@ KCC (the regulator) publishes essentially no bulk data itself; its filings are d
 | Dataset | Coverage/fields | URL | Format | Refresh cadence | License/cost | Status |
 |---|---|---|---|---|---|---|
 | Wells master (RBDMS) | All OK wells: API, name, operator, status, type, surface lat/lon, county, PLSS, footages, + deep-link to imaged well records | https://oklahoma.gov/occ/divisions/oil-gas/oil-gas-data.html → https://oklahoma.gov/content/dam/ok/en/occ/documents/og/ogdatafiles/rbdms-wells.csv (+ data dictionary `rbdms-wells-data-dictionary.xlsx`) | CSV (also shapefile: `.../og/esri/files/RBDMS_WELLS.zip`) | Nightly | Free, public | VERIFIED (sampled header + rows) |
-| **Completions (1002A extract), 2010-present** | Per completion/formation: API, dates (spud/completion/first prod), TD/TVD, BH location, formation name/code/depth, perf top/bottom, acid/frac, casing, and **initial test block: Test_Date, Oil_BBL_Per_Day, Oil_Gravity, Gas_MCF_Per_Day, GOR, Water_BBL_Per_Day, Pumping_Flowing, Shut_In_Pressure, Choke_Size, Flow_Tubing_Pressure** | `.../ogdatafiles/completions-wells-formations-base.xlsx` (76 MB) + `-daily.xlsx` + `-data-dictionary.xlsx` | XLSX | ~Daily (base last-mod 2026-06-30) | Free, public | VERIFIED (data dictionary downloaded; field list confirmed) |
+| **Completions (1002A extract), 2010-present** | Per completion/formation: API, dates (spud/completion/first prod), TD/TVD, BH location, formation name/code/depth, perf top/bottom, acid/frac, casing, and **initial test block: Test_Date, Oil_BBL_Per_Day, Oil_Gravity, Gas_MCF_Per_Day, GOR, Water_BBL_Per_Day, Pumping_Flowing, Shut_In_Pressure, Choke_Size, Flow_Tubing_Pressure** | `.../ogdatafiles/completions-wells-formations-base.xlsx` (76 MB) + `-daily.xlsx` + `-data-dictionary.xlsx` | XLSX | ~Daily (base last-mod 2026-06-30) | Free, public | VERIFIED + IMPLEMENTED ([#740](https://github.com/vamseeachanta/worldenergydata/issues/740); live `/mnt/ace` snapshot 2026-07-03) |
 | Completions legacy (pre-2010) | Historical completions from old Oracle DB (97 MB) | `.../ogdatafiles/completions-wells-legacy.xlsx` | XLSX | Static (last-mod 2025-07-15) | Free, public | VERIFIED file exists; **field list UNVERIFIED** (may or may not carry test pressures) |
 | Intent to Drill | Master (154 MB) + 7-day files, w/ formations | `.../ogdatafiles/ITD-wells-formations-base.xlsx`, `ITD-wells-formations-daily.xlsx`, dictionary | XLSX | Daily | Free, public | VERIFIED (HEAD 200) |
 | UIC injection volumes | Annual volumes 2006–2025 (+ Arbuckle daily 1012D 2012–2026) | `.../ogdatafiles/20XX-uic-injection-volumes.xlsx`, `dly1012d_20XX.xlsx` | XLSX | Weekly for recent years | Free, public | VERIFIED (links scraped) |
@@ -87,6 +87,36 @@ OGS (Oklahoma Geological Survey / OPIC well data library) is a physical archive 
 
 ### Ingestion effort estimate
 **Low-medium.** No auth/rate limits; single-URL downloads with published data dictionaries. Gotchas: workhorse files are large XLSX (76–154 MB — need streaming parse); completion records are one row per formation/test (dedupe by API+Completion_No); nightly overwrite means snapshotting for history; panhandle (Guymon-Hugoton) virgin-pressure work pre-1990 forces imaged Form 1016/1002A parsing (high-effort OCR lane). OTC production has no verified bulk endpoint (per-PUN lookup only).
+
+### Implemented [#740](https://github.com/vamseeachanta/worldenergydata/issues/740) snapshot
+
+The Oklahoma completion-pressure lane now has a direct-source pipeline:
+
+```text
+/mnt/ace/worldenergydata/data/modules/oklahoma_occ/
+  raw/
+    completions-wells-formations-base.xlsx
+    completions-wells-formations-data-dictionary.xlsx
+    manifest.json
+  normalized/completions/completion_pressure_rows.parquet
+  curated/pressure/well_pressure_observations.parquet
+  curated/pressure/oklahoma_occ_pressure_observation_quality.json
+```
+
+Live run 2026-07-03 against the OCC direct URLs downloaded the 76,131,895-byte
+base workbook (`Last-Modified: Tue, 30 Jun 2026 00:34:55 GMT`) and dictionary.
+The parser read 202,745 completion rows and emitted 108,518 curated pressure
+observations across 19,972 Oklahoma wells after filtering to `test_year`
+2010-2026. Source anomalies outside that window are counted in the quality
+sidecar (`filtered_out_of_window_test_year_count: 8,917`) rather than silently
+loaded into the screen.
+
+The pressure observation mix is 78,000 `WHP_shut_in` rows and 30,518
+`WHP_flowing_tubing` fallback rows. Both are treated as surface wellhead
+screening pressures in the multi-state screen, with the same static gas-column
+correction and `era: completion_test_2010_present`. This does not replace a
+Form 1016 back-pressure/deliverability lane for Guymon-Hugoton-style
+pre-2010/virgin-pressure evidence.
 
 ## New Mexico — EMNRD Oil Conservation Division (OCD)
 
@@ -293,12 +323,15 @@ Ranked by value-per-effort for the under-pressured screen (#708):
    `ks_wells.zip` (depth, formation, location) for gradient computation.
    One 14 MB file + one 44 MB wells file. The 2013 freeze does not hurt —
    the virgin-to-depleted pressure history is what the screen needs.
-2. **Oklahoma — GO, ingest second (effort: low-medium).** The OCC
+2. **Oklahoma — IMPLEMENTED ([#740](https://github.com/vamseeachanta/worldenergydata/issues/740); effort: low-medium).** The OCC
    completions extract (2010-present, dictionary-verified) provides
    `Shut_In_Pressure` and `Flow_Tubing_Pressure` per formation completion,
-   plus TD/TVD and formation depth for the gradient denominator — and covers
-   the Panhandle trend continuation. Pre-2010 (legacy XLSX field content
-   unverified; Form 1016 imaged) is a later OCR lane if needed.
+   plus TD/TVD and formation depth for the gradient denominator. The live
+   [#740](https://github.com/vamseeachanta/worldenergydata/issues/740)
+   pipeline writes `/mnt/ace/.../oklahoma_occ/` raw, normalized, curated,
+   and quality outputs and feeds the multi-state screen. Pre-2010 legacy XLSX
+   interpretation and Form 1016 image extraction remain later OCR/acquisition
+   lanes.
 3. **Colorado — GO, ingest third (effort: low for bulk).** Monthly wellhead
    tubing/casing pressures in the 1999+ production CSVs give a late-life
    pressure screen out of the box (and Piceance BCG coverage); virgin-test
@@ -319,7 +352,7 @@ Ranked by value-per-effort for the under-pressured screen (#708):
    but pressure evidence in all five is imaged (or paywalled + imaged, ND),
    i.e., an OCR/document-extraction program rather than an ingestion slice.
 
-Suggested follow-on issues once this survey is accepted: (a) Kansas
-KGS ingest + pressure-gradient table (mirrors #709 for TX), (b) Oklahoma OCC
-completions ingest, (c) extend the #710 screen to consume multi-state
-pressure observations through one normalized schema.
+Suggested follow-on issues once this survey is accepted: (a) Colorado ECMC
+wellhead-pressure ingest, (b) Oklahoma Form 1016 image/OCR acquisition for
+Panhandle deliverability tests, (c) Oklahoma OTC production acquisition if a
+sanctioned bulk path or data-request route is identified.
