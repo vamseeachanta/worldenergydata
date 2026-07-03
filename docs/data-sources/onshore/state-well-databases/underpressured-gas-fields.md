@@ -3,7 +3,8 @@
 Issue: [#710](https://github.com/vamseeachanta/worldenergydata/issues/710)
 (parent epic [#708](https://github.com/vamseeachanta/worldenergydata/issues/708);
 Texas integration [#732](https://github.com/vamseeachanta/worldenergydata/issues/732);
-Oklahoma integration [#740](https://github.com/vamseeachanta/worldenergydata/issues/740)).
+Oklahoma integration [#740](https://github.com/vamseeachanta/worldenergydata/issues/740);
+Colorado source ingest [#745](https://github.com/vamseeachanta/worldenergydata/issues/745)).
 
 The screen answers the epic's motivating question — *which wells and fields
 actually produced from very low bottom-hole pressure?* — from state-regulator
@@ -12,7 +13,10 @@ data. The current run combines Kansas KGS proration pressure observations
 Texas RRC completion-packet pressure observations
 ([#709](https://github.com/vamseeachanta/worldenergydata/issues/709)) and
 Oklahoma OCC Form 1002A completion pressure observations
-([#740](https://github.com/vamseeachanta/worldenergydata/issues/740)).
+([#740](https://github.com/vamseeachanta/worldenergydata/issues/740)). Colorado
+ECMC production/wells data is loaded as a direct-source input from [#745](https://github.com/vamseeachanta/worldenergydata/issues/745),
+but contributes no screened wells because the current bulk pressure columns
+are empty.
 
 ## Method
 
@@ -41,13 +45,15 @@ PYTHONPATH=src:packages/worldenergydata-core/src python3.12 \
    or Oklahoma completion-test screening pressures are not presented as
    measured virgin BHP. Source-provided earliest-observation flags break
    same-year duplicate ties, such as Texas G-1/G-10 rows for the same API14 or
-   Oklahoma multi-formation completion rows for the same API.
+   Oklahoma multi-formation completion rows for the same API. Colorado ECMC
+   has a schema adapter and quality sidecar, but empty pressure values keep it
+   out of earliest-observation selection.
 5. **Field ranking** (>=5 wells) plus a **validation gate**: the run fails
    unless Hugoton and Panoma appear in the top 10 classified severely
    under-pressured.
-6. **Participation gate**: Texas and Oklahoma must be loaded and screened, but
-   neither completion-test lane is required to recover West Panhandle analogs
-   until a full historical or Form 1016 source is available.
+6. **Participation gate**: Texas and Oklahoma must be loaded and screened.
+   Colorado is loaded and warning-tracked, but is not gate-required until a
+   real pressure-bearing source is available.
 
 Outputs: `/mnt/ace/worldenergydata/data/modules/pressure_screen/curated/`
 (`well_screen_earliest.parquet`, `underpressured_field_ranking.parquet`,
@@ -59,9 +65,12 @@ Outputs: `/mnt/ace/worldenergydata/data/modules/pressure_screen/curated/`
 Oklahoma** wells after earliest-observation selection. The screen loaded
 39,134 Kansas pressure rows, 43 usable Texas rows from 48 curated Texas
 observations, and 108,518 Oklahoma pressure rows from the OCC completion
-extract. Median estimated-BHP gradient is **0.0411 psi/ft**, with **697
-near-vacuum** shut-in wellhead-pressure wells. Validation gate: **PASSED**.
-Texas and Oklahoma participation gates: **PASSED**.
+extract. Colorado [#745](https://github.com/vamseeachanta/worldenergydata/issues/745)
+normalized 1,060,209 ECMC production rows and 124,332 wells, but loaded **0**
+curated pressure rows because the configured bulk pressure columns contain no
+positive values. Median estimated-BHP gradient is **0.0411 psi/ft**, with
+**697 near-vacuum** shut-in wellhead-pressure wells. Validation gate:
+**PASSED**. Texas and Oklahoma participation gates: **PASSED**.
 
 Tier counts:
 
@@ -78,6 +87,7 @@ Source counts after earliest-observation selection:
 | `kansas_kgs_proration` | KS | 10,103 | depleted |
 | `texas_rrc_completion_packets` | TX | 25 | completion_packet_screening |
 | `oklahoma_occ_completions` | OK | 19,972 | completion_test_2010_present |
+| `colorado_ecmc_production` | CO | 0 | production_report_late_life |
 
 | Field | Wells | Median gradient (psi/ft) | P10–P90 | Near-vacuum wells |
 | --- | --- | --- | --- | --- |
@@ -130,6 +140,16 @@ Notable beyond the analogs:
 - The Oklahoma input covers structured Form 1002A completion records from
   2010-present. Pre-2010 legacy completions and Form 1016 back-pressure tests
   remain imaged/legacy lanes and are not in this run.
+- The Colorado ECMC [#745](https://github.com/vamseeachanta/worldenergydata/issues/745)
+  input covers official bulk production and wells data. The production CSV
+  headers include `GasPressureTubing`, `GasPressureCasing`,
+  `WaterPressureTubing`, and `WaterPressureCasing`, but the live 2025 plus
+  rolling monthly files contain zero positive values in those fields. MIT
+  pressure is available in bulk but is an engineering-integrity test, not a
+  reservoir-pressure screen source. Colorado pressure screening needs a Form
+  5A / FacilityDetail extraction lane or an ECMC data request.
 - The Texas quality sidecar currently carries
   `raw_manifest_warning:completion_data:error:2026-07-01T00:36:55Z`; the
-  screen propagates that warning into `screen_summary.json`.
+  screen also propagates the Colorado
+  `no_positive_pressure_values:GasPressureTubing,GasPressureCasing,WaterPressureTubing,WaterPressureCasing`
+  warning into `screen_summary.json`.

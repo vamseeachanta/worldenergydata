@@ -26,6 +26,12 @@ inputs:
     schema: oklahoma_occ_completion_v1
     state: OK
     era: completion_test_2010_present
+  - name: colorado_ecmc_production
+    path: /mnt/ace/worldenergydata/data/modules/colorado_ecmc/curated/pressure/well_pressure_observations.parquet
+    quality_path: /mnt/ace/worldenergydata/data/modules/colorado_ecmc/curated/pressure/colorado_ecmc_pressure_observation_quality.json
+    schema: colorado_ecmc_production_v1
+    state: CO
+    era: production_report_late_life
 
 output:
   base_dir: /mnt/ace/worldenergydata/data/modules/pressure_screen/curated
