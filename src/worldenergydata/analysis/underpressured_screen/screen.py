@@ -23,6 +23,10 @@ import numpy as np
 import pandas as pd
 import yaml
 
+from worldenergydata.analysis.underpressured_screen.observations import (
+    load_observations,
+)
+
 TIER_NORMAL = "normal"
 TIER_MILD = "mildly_underpressured"
 TIER_SEVERE = "severely_underpressured"
@@ -31,16 +35,6 @@ TIER_SEVERE = "severely_underpressured"
 def load_config(config_path: str | Path) -> dict:
     with Path(config_path).open("r", encoding="utf-8") as handle:
         return yaml.safe_load(handle)
-
-
-def load_observations(inputs: list[dict]) -> pd.DataFrame:
-    frames = []
-    for entry in inputs:
-        frame = pd.read_parquet(entry["path"])
-        frame["source_name"] = entry["name"]
-        frame["era"] = entry["era"]
-        frames.append(frame)
-    return pd.concat(frames, ignore_index=True)
 
 
 def estimate_bhp(observations: pd.DataFrame, settings: dict) -> pd.DataFrame:
@@ -90,7 +84,10 @@ def classify_tiers(frame: pd.DataFrame, tiers: dict) -> pd.DataFrame:
 def earliest_per_well(frame: pd.DataFrame) -> pd.DataFrame:
     """One row per well: its earliest test with a usable gradient."""
     usable = frame[frame["bhp_gradient_psi_ft"].notna()].copy()
-    usable = usable.sort_values(["well_key", "test_year"])
+    sort_columns = ["well_key", "test_year"]
+    if "screen_observation_priority" in usable:
+        sort_columns.append("screen_observation_priority")
+    usable = usable.sort_values(sort_columns)
     return usable.groupby("well_key", as_index=False).first()
 
 
@@ -103,8 +100,8 @@ def rank_fields(wells: pd.DataFrame, settings: dict) -> pd.DataFrame:
         p90_gradient_psi_ft=("bhp_gradient_psi_ft", lambda s: s.quantile(0.9)),
         near_vacuum_wells=("near_vacuum", "sum"),
         earliest_test_year=("test_year", "min"),
-        states=("state", lambda s: ",".join(sorted(s.unique()))),
-        era=("era", lambda s: ",".join(sorted(s.unique()))),
+        states=("state", lambda s: ",".join(sorted(s.dropna().unique()))),
+        era=("era", lambda s: ",".join(sorted(s.dropna().unique()))),
     ).reset_index()
     ranking = ranking[ranking["well_count"] >= settings["min_wells_per_field"]]
     return ranking.sort_values("well_count", ascending=False).reset_index(drop=True)
@@ -139,9 +136,52 @@ def run_validation_gate(ranking: pd.DataFrame, gate: dict) -> dict:
     return {"passed": passed, "fields": results}
 
 
+def run_participation_gate(wells: pd.DataFrame, gate: dict) -> dict:
+    """Verify configured state/source participation without tier claims."""
+    results = {}
+    for state, rules in gate.get("required_states", {}).items():
+        state_wells = wells[wells["state"] == state]
+        min_wells = int(rules.get("min_wells", 1))
+        well_count = int(state_wells["well_key"].nunique())
+        results[state] = {
+            "well_count": well_count,
+            "min_wells": min_wells,
+            "passed": well_count >= min_wells,
+        }
+    return {
+        "passed": all(item["passed"] for item in results.values()),
+        "states": results,
+    }
+
+
+def build_screen_summary(
+    wells: pd.DataFrame,
+    ranking: pd.DataFrame,
+    validation_gate: dict,
+    participation_gate: dict,
+    load_summary: dict,
+) -> dict:
+    tier_counts = wells["pressure_tier"].value_counts().to_dict()
+    return {
+        "wells_screened": int(len(wells)),
+        "tier_counts": {k: int(v) for k, v in tier_counts.items()},
+        "near_vacuum_wells": int(wells["near_vacuum"].sum()),
+        "fields_ranked": int(len(ranking)),
+        "median_gradient_psi_ft": _median_gradient(wells),
+        "validation_gate": validation_gate,
+        "participation_gate": participation_gate,
+        "era_note": _unique_values(wells["era"]),
+        "state_counts": _counts(wells["state"]),
+        "source_counts": _counts(wells["source_name"]),
+        "input_row_counts": load_summary.get("input_row_counts", {}),
+        "loaded_row_counts": load_summary.get("loaded_row_counts", {}),
+        "source_warnings": load_summary.get("source_warnings", {}),
+    }
+
+
 def run_screen(config_path: str | Path) -> dict:
     config = load_config(config_path)
-    observations = load_observations(config["inputs"])
+    observations, load_summary = load_observations(config["inputs"])
     enriched = classify_tiers(
         estimate_bhp(observations, config["bhp_estimate"]), config["tiers"]
     )
@@ -150,19 +190,12 @@ def run_screen(config_path: str | Path) -> dict:
         rank_fields(wells, config["field_ranking"]), config["tiers"]
     )
     gate = run_validation_gate(ranking, config["validation_gate"])
-
-    tier_counts = wells["pressure_tier"].value_counts().to_dict()
-    summary = {
-        "wells_screened": int(len(wells)),
-        "tier_counts": {k: int(v) for k, v in tier_counts.items()},
-        "near_vacuum_wells": int(wells["near_vacuum"].sum()),
-        "fields_ranked": int(len(ranking)),
-        "median_gradient_psi_ft": round(
-            float(wells["bhp_gradient_psi_ft"].median()), 4
-        ),
-        "validation_gate": gate,
-        "era_note": sorted(wells["era"].unique().tolist()),
-    }
+    participation_gate = run_participation_gate(
+        wells, config.get("participation_gate", {})
+    )
+    summary = build_screen_summary(
+        wells, ranking, gate, participation_gate, load_summary
+    )
 
     out_dir = Path(config["output"]["base_dir"])
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -174,7 +207,25 @@ def run_screen(config_path: str | Path) -> dict:
 
     if not gate["passed"]:
         raise RuntimeError(f"Validation gate failed: {gate['fields']}")
+    if not participation_gate["passed"]:
+        raise RuntimeError(f"Participation gate failed: {participation_gate['states']}")
     return summary
+
+
+def _counts(series: pd.Series) -> dict:
+    counts = series.dropna().value_counts().to_dict()
+    return {str(key): int(value) for key, value in counts.items()}
+
+
+def _median_gradient(wells: pd.DataFrame) -> float | None:
+    median = wells["bhp_gradient_psi_ft"].median()
+    if pd.isna(median):
+        return None
+    return round(float(median), 4)
+
+
+def _unique_values(series: pd.Series) -> list[str]:
+    return sorted(str(value) for value in series.dropna().unique().tolist())
 
 
 def main() -> None:
