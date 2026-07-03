@@ -87,6 +87,14 @@ from .core import (  # Financial functions; Configuration
     classify_dev_system_by_depth,
     excel_like_mirr,
 )
+from .fiscal import (  # Source-agnostic country fiscal-terms decks (#714)
+    FiscalTerms,
+    FiscalTermsNotFoundError,
+    FiscalTermsValidationError,
+    RoyaltyTerms,
+    available_countries,
+    get_fiscal_terms,
+)
 
 logger = get_logger(__name__)
 
@@ -108,6 +116,13 @@ __all__ = [
     "BseeAdapter",
     "LeaseMapping",
     "AdapterError",
+    # Fiscal terms (source-agnostic country decks, #714)
+    "FiscalTerms",
+    "RoyaltyTerms",
+    "get_fiscal_terms",
+    "available_countries",
+    "FiscalTermsNotFoundError",
+    "FiscalTermsValidationError",
     # Query API (issue #288)
     "economics",
     # Disclosure analytics (issue #338)

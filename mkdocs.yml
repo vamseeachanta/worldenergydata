@@ -33,6 +33,7 @@ plugins:
             - packages/worldenergydata-economics/src
             - packages/worldenergydata-eia/src
             - packages/worldenergydata-eia_us/src
+            - packages/worldenergydata-fdas/src
             - packages/worldenergydata-landman/src
             - packages/worldenergydata-lng_terminals/src
             - packages/worldenergydata-marine/src

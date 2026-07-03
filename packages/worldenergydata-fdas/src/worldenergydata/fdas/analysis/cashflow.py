@@ -18,6 +18,7 @@ import pandas as pd
 from worldenergydata.common.exceptions import ProcessingError
 
 from ..core.config import AssumptionsManager
+from ..fiscal.terms import FiscalTerms
 
 
 class CashflowError(ProcessingError):
@@ -91,7 +92,10 @@ class CashflowEngine:
     """
 
     def __init__(
-        self, assumptions_mgr: AssumptionsManager, dev_system: str = "subsea15"
+        self,
+        assumptions_mgr: AssumptionsManager,
+        dev_system: str = "subsea15",
+        fiscal_terms: Optional[FiscalTerms] = None,
     ):
         """
         Initialize cashflow engine.
@@ -99,9 +103,14 @@ class CashflowEngine:
         Args:
             assumptions_mgr: Assumptions manager with cost parameters
             dev_system: Development system (dry, subsea15, subsea20)
+            fiscal_terms: Optional country fiscal-terms deck. When provided, its
+                royalty layer supersedes the ``AssumptionsManager`` ROYALTY_RATE
+                (see ``calculate_royalty``). ``None`` (the default) preserves the
+                exact legacy US-GoM assumptions path — byte-identical behavior.
         """
         self.assumptions = assumptions_mgr
         self.dev_system = dev_system
+        self.fiscal_terms = fiscal_terms
 
     def calculate_host_capex_timing(
         self,
@@ -241,9 +250,16 @@ class CashflowEngine:
         """
         Calculate royalty payments.
 
+        Royalty-rate resolution precedence (highest first):
+            1. explicit ``royalty_rate`` argument;
+            2. ``self.fiscal_terms`` deck, if set — ``flat`` model resolves the
+               per-dev-system rate, ``none`` resolves to 0.0;
+            3. the legacy ``AssumptionsManager`` ROYALTY_RATE path (deckless =
+               byte-identical to the pre-carve behavior).
+
         Args:
             revenue_monthly: Dict mapping year-month to revenue
-            royalty_rate: Royalty rate (uses assumption if None)
+            royalty_rate: Royalty rate (overrides deck/assumptions if given)
 
         Returns:
             Dictionary mapping year-month to royalty
@@ -256,7 +272,12 @@ class CashflowEngine:
             ... )
         """
         if royalty_rate is None:
-            royalty_rate = self.assumptions.get(self.dev_system, "ROYALTY_RATE", 0.188)
+            if self.fiscal_terms is not None:
+                royalty_rate = self.fiscal_terms.royalty.rate_for(self.dev_system)
+            else:
+                royalty_rate = self.assumptions.get(
+                    self.dev_system, "ROYALTY_RATE", 0.188
+                )
 
         royalty = {}
         for month, revenue in revenue_monthly.items():

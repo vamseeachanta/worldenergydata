@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "worldenergydata-bsee"
 version = "0.1.0"
-description = "BSEE Gulf-of-Mexico data cluster (bsee + lower_tertiary + fdas + hse + well_production_dashboard) for the worldenergydata namespace."
+description = "BSEE Gulf-of-Mexico data cluster (bsee + lower_tertiary + hse + well_production_dashboard) for the worldenergydata namespace."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
@@ -26,17 +26,23 @@ classifiers = [
 # Coupled-cluster member (ADR 0001 Phase 2 — domain split, batch 3, #529).
 # ---------------------------------------------------------------------------
 # Unlike batches 1 & 2 (one leaf domain per member), this single member ships
-# FIVE mutually-coupled subpackages because they cannot be split apart:
+# FOUR mutually-coupled subpackages because they cannot be split apart:
 #
 #   bsee  <-->  lower_tertiary   (import cycle)
-#   bsee  <-->  fdas             (import cycle)
 #   hse    -->  bsee
 #   well_production_dashboard --> bsee
 #
 # A uv workspace member cannot contain an import cycle that spans member
-# boundaries, so the cycle's strongly-connected component (bsee/lower_tertiary/
-# fdas) plus its in-cluster dependents (hse, well_production_dashboard) ship as
-# ONE distribution.
+# boundaries, so the cycle's strongly-connected component (bsee/lower_tertiary)
+# plus its in-cluster dependents (hse, well_production_dashboard) ship as ONE
+# distribution.
+#
+# fdas was CARVED OUT to its own member (worldenergydata-fdas, #714) on
+# 2026-07-02: the documented `bsee <--> fdas` cycle was REFUTED — two
+# independent module-level greps found ZERO fdas -> bsee / fdas ->
+# lower_tertiary edges (fdas is a shared LEAF; bsee.analysis and
+# lower_tertiary.portfolio_* import fdas, not vice-versa). This cluster now
+# DEPENDS ON worldenergydata-fdas (below) instead of shipping it.
 #
 # Dependencies are a deliberate SUBSET of the root package's flat dependency
 # list, measured from this cluster's live (non-_legacy) import footprint, plus:
@@ -45,7 +51,8 @@ classifiers = [
 #                                     / processors (decline analysis + adapters)
 #   * worldenergydata-reporting    -> bsee.pipeline imports reporting.export_report
 #   * worldenergydata-texas_rrc    -> bsee.pipeline.adapters imports texas_rrc.processors
-#   * worldenergydata-cost         -> fdas.api delegates to cost.disclosure_analytics
+#   * worldenergydata-fdas         -> bsee.analysis.production_api12 + lower_tertiary.
+#                                     portfolio_{economics,analytics} import fdas (#714)
 #
 # Note: worldenergydata.engine (engine.py), .validation and .analysis are
 # imported by this cluster but stay in the ROOT distribution; the root depends
@@ -57,7 +64,7 @@ dependencies = [
     "worldenergydata-sodir",
     "worldenergydata-reporting",
     "worldenergydata-texas_rrc",
-    "worldenergydata-cost",
+    "worldenergydata-fdas",
     "assetutilities>=0.1.0,<1.0",
     "numpy>=2.2.6,<3.0",
     "numpy-financial>=1.0.0",
@@ -97,7 +104,6 @@ where = ["src"]
 include = [
     "worldenergydata.bsee*",
     "worldenergydata.lower_tertiary*",
-    "worldenergydata.fdas*",
     "worldenergydata.hse*",
     "worldenergydata.well_production_dashboard*",
 ]
@@ -106,6 +112,5 @@ namespaces = true
 [tool.setuptools.package-data]
 "worldenergydata.bsee" = ["*.md", "*.sql", "*.json", "**/*.yml", "**/*.yaml", "**/*.sql", "**/*.md", "**/*.json", "**/*.csv", "**/*.html"]
 "worldenergydata.lower_tertiary" = ["*.md", "*.json", "**/*.yml", "**/*.yaml", "**/*.json", "**/*.csv", "**/*.md"]
-"worldenergydata.fdas" = ["*.md", "*.json", "**/*.yml", "**/*.yaml", "**/*.json", "**/*.csv", "**/*.md", "**/*.html"]
 "worldenergydata.hse" = ["*.md", "*.json", "**/*.yml", "**/*.yaml", "**/*.json", "**/*.csv", "**/*.md", "**/*.sql"]
 "worldenergydata.well_production_dashboard" = ["*.md", "*.json", "**/*.yml", "**/*.yaml", "**/*.json", "**/*.csv", "**/*.md", "**/*.html"]

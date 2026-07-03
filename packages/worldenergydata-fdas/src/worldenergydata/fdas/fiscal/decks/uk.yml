@@ -1,0 +1,32 @@
+# United Kingdom Continental Shelf (UKCS) fiscal terms.
+#
+# UKCS petroleum royalty was abolished for all fields from 1 January 2003, so
+# v1 models royalty as a flat 0.0 across dev systems. State take is via
+# Ring-Fence Corporation Tax + Supplementary Charge + the Energy Profits Levy
+# (EPL); those are recorded as declarative tax metadata (income-tax seam #716).
+schema_version: 1
+country: uk
+currency: USD                 # declarative (engine is USD/WTI-denominated)
+price_marker: brent
+
+royalty:
+  model: flat
+  rate_by_dev_system:
+    dry: 0.0                  # royalty abolished on the UKCS from 2003-01-01
+    subsea15: 0.0
+    subsea20: 0.0
+    default: 0.0
+
+income_tax:
+  ring_fence_cit: 0.30        # declarative — not consumed in v1
+  supplementary_charge: 0.10
+  energy_profits_levy: 0.35   # EPL (temporary windfall levy)
+
+source_url: https://www.gov.uk/government/publications/oil-and-gas-taxation
+source_ref: "HM Treasury/HMRC: UKCS royalty abolished from 1 Jan 2003; state take via RFCT (30%) + Supplementary Charge (10%) + Energy Profits Levy (35%)"
+revision: "1"
+effective_date: "2026-07-03"
+notes: >
+  royalty is a genuine flat 0.0 (abolished), distinct from Norway's `none`
+  model — this exercises the `flat`-with-zero path. EPL/RFCT/SC are declarative
+  in v1; after-tax wiring is #716.
