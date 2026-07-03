@@ -57,6 +57,7 @@ from worldenergydata.cli.commands import (
     eia,
     fdas,
     landman,
+    kansas_kgs,
     lng_terminals,
     lower_tertiary,
     marine_safety,
@@ -119,6 +120,11 @@ app.add_typer(
 )
 app.add_typer(
     texas_rrc.app, name="texas-rrc", help="Texas Railroad Commission oil & gas data"
+)
+app.add_typer(
+    kansas_kgs.app,
+    name="kansas-kgs",
+    help="Kansas Geological Survey well and pressure data",
 )
 app.add_typer(canada.app, name="canada", help="Canadian oil & gas data (AER/BCER)")
 app.add_typer(
@@ -226,6 +232,11 @@ def info() -> None:
         "texas-rrc",
         "Texas Railroad Commission oil & gas",
         "collect, analyze, status, validate-api",
+    )
+    table.add_row(
+        "kansas-kgs",
+        "Kansas Geological Survey oil & gas",
+        "build-pressure-observations",
     )
     table.add_row(
         "canada",
