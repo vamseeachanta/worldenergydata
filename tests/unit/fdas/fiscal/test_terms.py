@@ -46,6 +46,7 @@ def _valid_deck():
 
 # --- shipped decks all validate -------------------------------------------
 
+
 def test_all_shipped_decks_validate():
     countries = available_countries()
     assert set(countries) >= {"us_gom", "norway", "uk"}, countries
@@ -85,6 +86,7 @@ def test_uk_is_flat_zero():
 
 
 # --- fail-closed paths -----------------------------------------------------
+
 
 def test_unknown_country_raises_with_available_list():
     with pytest.raises(FiscalTermsNotFoundError) as exc:
@@ -142,7 +144,9 @@ def test_none_model_must_not_carry_rate_map():
         validate_deck(d)
 
 
-@pytest.mark.parametrize("field", ["source_url", "source_ref", "revision", "effective_date"])
+@pytest.mark.parametrize(
+    "field", ["source_url", "source_ref", "revision", "effective_date"]
+)
 def test_provenance_fields_required_nonempty(field):
     d = _valid_deck()
     d[field] = "   "

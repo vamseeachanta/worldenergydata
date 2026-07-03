@@ -132,7 +132,9 @@ def validate_deck(raw: Any) -> FiscalTerms:
     _require(not unknown, f"deck: unknown field(s) {sorted(unknown)}")
 
     sv = raw.get("schema_version")
-    _require(sv == SCHEMA_VERSION, f"schema_version: expected {SCHEMA_VERSION}, got {sv!r}")
+    _require(
+        sv == SCHEMA_VERSION, f"schema_version: expected {SCHEMA_VERSION}, got {sv!r}"
+    )
 
     country = raw.get("country")
     _require(
@@ -153,12 +155,15 @@ def validate_deck(raw: Any) -> FiscalTerms:
         f"price_marker {price_marker!r} not in {SUPPORTED_PRICE_MARKERS}",
     )
     currency = raw.get("currency", "USD")
-    _require(isinstance(currency, str) and currency.strip(), "currency: non-empty string")
+    _require(
+        isinstance(currency, str) and currency.strip(), "currency: non-empty string"
+    )
 
     discount_rate = raw.get("discount_rate")
     if discount_rate is not None:
         _require(
-            isinstance(discount_rate, (int, float)) and not isinstance(discount_rate, bool),
+            isinstance(discount_rate, (int, float))
+            and not isinstance(discount_rate, bool),
             "discount_rate: must be a number when present",
         )
         discount_rate = float(discount_rate)

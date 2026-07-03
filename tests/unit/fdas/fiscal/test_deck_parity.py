@@ -11,9 +11,8 @@ totals) so a divergence in any line item is caught.
 
 from datetime import datetime
 
-import pandas as pd
-
 import numpy as np
+import pandas as pd
 
 from worldenergydata.fdas.analysis.cashflow import CashflowEngine
 from worldenergydata.fdas.core.config import AssumptionsManager
@@ -81,11 +80,15 @@ def test_deckless_vs_us_gom_identical_npv():
         )
         v_legacy = [
             c.net_cashflow_usd
-            for c in legacy.generate_monthly_cashflow(prod.copy(), timeline, wti, first_oil)
+            for c in legacy.generate_monthly_cashflow(
+                prod.copy(), timeline, wti, first_oil
+            )
         ]
         v_decked = [
             c.net_cashflow_usd
-            for c in decked.generate_monthly_cashflow(prod.copy(), timeline, wti, first_oil)
+            for c in decked.generate_monthly_cashflow(
+                prod.copy(), timeline, wti, first_oil
+            )
         ]
         assert calculate_npv(np.array(v_legacy), 0.10) == calculate_npv(
             np.array(v_decked), 0.10
@@ -101,13 +104,17 @@ def test_calculate_royalty_parity_direct():
         decked = CashflowEngine(
             AssumptionsManager(), dev_system=ds, fiscal_terms=us_gom
         )
-        assert legacy.calculate_royalty(revenue) == decked.calculate_royalty(revenue), ds
+        assert legacy.calculate_royalty(revenue) == decked.calculate_royalty(
+            revenue
+        ), ds
 
 
 def test_explicit_rate_arg_overrides_deck():
     """An explicit royalty_rate arg wins over both deck and assumptions."""
     us_gom = get_fiscal_terms("us_gom")
     revenue = {"2025-01": 1_000_000.0}
-    decked = CashflowEngine(AssumptionsManager(), dev_system="subsea15", fiscal_terms=us_gom)
+    decked = CashflowEngine(
+        AssumptionsManager(), dev_system="subsea15", fiscal_terms=us_gom
+    )
     out = decked.calculate_royalty(revenue, royalty_rate=0.0)
     assert out["2025-01"] == 0.0
