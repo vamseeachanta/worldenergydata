@@ -1,7 +1,7 @@
 # Plan: Issue #725 - Kansas KGS Hugoton pressure observations
 
 **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/725
-**Status:** plan-approved
+**Status:** implemented
 **Tier:** T2 (new source package, direct-source raw manifests, parsers, curated pressure table, CLI, tests, docs)
 **Client:** N/A
 **Project:** worldenergydata onshore pressure screen
