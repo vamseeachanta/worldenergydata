@@ -11,6 +11,12 @@ from urllib.request import urlopen
 
 import yaml
 
+from worldenergydata.modules.state_regulators.oklahoma_occ.parsers import (
+    build_pressure_observations,
+    build_quality_stats,
+    read_completion_workbook,
+)
+
 
 def load_config(config_path: str | Path) -> dict:
     with Path(config_path).open("r", encoding="utf-8") as handle:
@@ -74,13 +80,35 @@ def run_pipeline(config_path: str | Path) -> dict:
     config = load_config(config_path)
     base_dir = Path(config["storage"]["base_dir"])
     raw_dir = base_dir / config["storage"]["raw_dir"]
+    normalized_dir = base_dir / config["storage"]["normalized_dir"]
+    curated_dir = base_dir / config["storage"]["curated_dir"]
     downloads = []
     for source in config["sources"].values():
         downloads.append(
             download_source(source["url"], raw_dir / source["raw_path"])
         )
     manifest = write_manifest(config, base_dir, downloads)
-    return {"manifest": manifest}
+
+    completions = read_completion_workbook(
+        raw_dir / config["sources"]["completion_workbook"]["raw_path"]
+    )
+    observations = build_pressure_observations(
+        completions, config["pressure_observations"]
+    )
+    quality = build_quality_stats(completions, observations)
+    quality["manifest_sources"] = sorted(manifest)
+
+    completions_dir = normalized_dir / "completions"
+    completions_dir.mkdir(parents=True, exist_ok=True)
+    completions.to_parquet(completions_dir / "completion_pressure_rows.parquet")
+
+    pressure_dir = curated_dir / "pressure"
+    pressure_dir.mkdir(parents=True, exist_ok=True)
+    observations.to_parquet(pressure_dir / "well_pressure_observations.parquet")
+    (pressure_dir / "oklahoma_occ_pressure_observation_quality.json").write_text(
+        json.dumps(quality, indent=2), encoding="utf-8"
+    )
+    return {"manifest": manifest, "quality": quality}
 
 
 def _sha256(path: Path) -> str:
