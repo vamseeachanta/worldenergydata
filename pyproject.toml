@@ -56,9 +56,14 @@ dependencies = [
     "worldenergydata-reporting",
     "worldenergydata-subsea",
     # Phase 2 batch 3 (#529): the coupled BSEE cluster carved as ONE member
-    # (bsee + lower_tertiary + fdas + hse + well_production_dashboard ship
-    # together — bsee<->lower_tertiary/fdas import cycle + hse/wpd import bsee).
+    # (bsee + lower_tertiary + hse + well_production_dashboard ship together —
+    # bsee<->lower_tertiary import cycle + hse/wpd import bsee).
     "worldenergydata-bsee",
+    # fdas carved out to its own source-agnostic economics member (#714); the
+    # bsee cluster and this root meta-package both depend on it. The documented
+    # `bsee<->fdas` cycle was refuted — fdas is a shared LEAF (nothing in fdas
+    # imports bsee/lower_tertiary), so it splits cleanly.
+    "worldenergydata-fdas",
     # Phase 2 batch 4 (#529): two un-ignored leaf domains (marine_safety,
     # safety_analysis) + the data-coupled trio. vessel_fleet & lng_terminals
     # ship their curated data inside the member (option i); vessel_hull_models
@@ -253,8 +258,10 @@ exclude = [
     "worldenergydata.subsea",
     "worldenergydata.subsea.*",
     # Phase 2 batch 3 (#529): the coupled BSEE cluster, carved as ONE member
-    # (packages/worldenergydata-bsee/). Exclude all five subpackages so the
-    # root wheel does not duplicate code now shipped by that member.
+    # (packages/worldenergydata-bsee/ ships bsee, lower_tertiary, hse,
+    # well_production_dashboard). fdas was carved to its OWN member
+    # (packages/worldenergydata-fdas/, #714). Exclude all of them so the root
+    # wheel does not duplicate code now shipped by those members.
     "worldenergydata.bsee",
     "worldenergydata.bsee.*",
     "worldenergydata.lower_tertiary",
@@ -455,8 +462,9 @@ exclude_lines = [
 #   packages/worldenergydata-core/  -> worldenergydata-core  (worldenergydata.common; this PR)
 #   packages/worldenergydata-<domain>/ -> per-leaf-domain members, later PRs,
 #                                      rolled out ISOLATED -> LEAF -> COUPLED
-#   (the bsee <-> lower_tertiary/fdas cycle ships as ONE member, or the cycle
-#    is broken first — decided at a later Phase 2 step)
+#   (the bsee <-> lower_tertiary cycle ships as ONE member; fdas was carved out
+#    to its own member — worldenergydata-fdas, #714 — after its purported cycle
+#    with bsee was refuted: fdas is a shared leaf imported BY bsee/lower_tertiary)
 #
 # Scope note (this PR): core is `common/` ONLY. base_configs/ is per-domain
 # config DATA (bsee/fdas/sodir/... yml) referenced by filename, not shared
@@ -477,6 +485,8 @@ worldenergydata-core = { workspace = true }
 # in-repo workspace (the members glob `packages/*` already discovers them).
 worldenergydata-economics = { workspace = true }
 worldenergydata-cost = { workspace = true }
+# fdas carved out of the bsee cluster into its own source-agnostic member (#714)
+worldenergydata-fdas = { workspace = true }
 worldenergydata-eia = { workspace = true }
 worldenergydata-eia_us = { workspace = true }
 worldenergydata-decommissioning = { workspace = true }

@@ -1,0 +1,28 @@
+# Norway (Norwegian Continental Shelf) fiscal terms.
+#
+# Norway levies NO royalty on petroleum production; state take is realized
+# through the 78% marginal tax regime (22% ordinary CIT + 56% special
+# petroleum tax) and SDFI, NOT a royalty. v1 therefore models royalty as
+# `none` (0.0) and records the tax regime as declarative metadata; the income
+# -tax/PSC seam that would consume it is reconciled with npv_norway.py in #716.
+schema_version: 1
+country: norway
+currency: USD                 # modelled in USD to match the WTI-denominated engine (declarative)
+price_marker: brent
+
+royalty:
+  model: none
+
+income_tax:
+  ordinary_cit: 0.22          # declarative — not consumed in v1
+  special_petroleum_tax: 0.56
+  marginal_rate: 0.78         # 22% + 56% marginal regime (#716)
+
+source_url: https://www.norskpetroleum.no/en/economy/petroleum-tax/
+source_ref: "Norwegian Petroleum (Sodir/MPE): no production royalty on the NCS; 78% marginal regime (22% CIT + 56% special petroleum tax)"
+revision: "1"
+effective_date: "2026-07-03"
+notes: >
+  Mirrors the 'Norway has no royalties' basis in
+  lower_tertiary/../sodir/npv_norway.py. The 78% regime is declarative in v1 —
+  wiring it into after-tax cashflow is #716, not this slice.

@@ -61,15 +61,14 @@ def test_carved_domain_member_change_routes_to_its_shard_not_full():
 
 
 def test_bsee_cluster_member_routes_each_subpackage_to_its_own_shard():
-    """The coupled BSEE cluster ships FIVE subpackages in one member
-    (packages/worldenergydata-bsee/ -> bsee, lower_tertiary, fdas, hse,
+    """The coupled BSEE cluster ships FOUR subpackages in one member
+    (packages/worldenergydata-bsee/ -> bsee, lower_tertiary, hse,
     well_production_dashboard). A change to ANY inner subpackage must route to
     THAT subpackage's shard (tests/unit/<subpkg>), not the member name's shard
     and not the full tree (ADR 0001 Phase 2 batch 3, #529)."""
     for subpkg in (
         "bsee",
         "lower_tertiary",
-        "fdas",
         "hse",
         "well_production_dashboard",
     ):
@@ -80,6 +79,20 @@ def test_bsee_cluster_member_routes_each_subpackage_to_its_own_shard():
         assert r["scope"] == "modules", subpkg
         assert f"tests/unit/{subpkg}" in r["xdist"], subpkg
         assert all(t in r["xdist"] for t in ALWAYS_XDIST), subpkg
+
+
+def test_fdas_own_member_routes_to_fdas_shard():
+    """fdas was carved out of the bsee cluster into its own member
+    (packages/worldenergydata-fdas/, #714). Its distribution name equals its
+    subpackage name (fdas), so _PACKAGE_MEMBER_RE routes it automatically to
+    tests/unit/fdas — WITHOUT a _CLUSTER_MEMBER_RE entry."""
+    r = select(
+        ["packages/worldenergydata-fdas/src/worldenergydata/fdas/analysis/cashflow.py"],
+        REPO_ROOT,
+    )
+    assert r["scope"] == "modules"
+    assert "tests/unit/fdas" in r["xdist"]
+    assert all(t in r["xdist"] for t in ALWAYS_XDIST)
 
 
 def test_core_member_change_still_runs_full_tree():
