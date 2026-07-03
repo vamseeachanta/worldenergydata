@@ -1,0 +1,475 @@
+[
+  {
+    "id": "big_foot",
+    "name": "Big Foot",
+    "operator": "Chevron",
+    "region_block": "Walker Ridge 29 (G16942)",
+    "basin": "US Gulf of Mexico",
+    "host_type": "Extended Tension-Leg Platform (eTLP)",
+    "play": "Wilcox / Lower Tertiary",
+    "water_depth_ft": 5200,
+    "status": "producing",
+    "current_phase": "operate",
+    "capex_bn_usd": 5.2,
+    "plateau_mbopd": 75,
+    "gor_scf": 1100,
+    "opex_boe": 15.0,
+    "working_interest": [
+      {
+        "name": "Chevron",
+        "wi": 60,
+        "operator": true
+      },
+      {
+        "name": "Equinor",
+        "wi": 27.5,
+        "operator": false
+      },
+      {
+        "name": "Marubeni Oil & Gas",
+        "wi": 12.5,
+        "operator": false
+      }
+    ],
+    "gates": {
+      "discovery_year": 2006,
+      "fid_year": 2010,
+      "incident": {
+        "year": 2015,
+        "label": "Tendon incident"
+      },
+      "first_oil": "2018-11",
+      "data_through": "2024-12",
+      "projected_cop_year": 2038
+    },
+    "sources": [
+      "config/analysis/lower_tertiary/fields/big_foot.yml",
+      "Chevron public disclosures",
+      "BSEE"
+    ],
+    "provenance": "Data: big_foot.yml + Chevron public disclosures + BSEE (dates to be reconciled in #375)"
+  },
+  {
+    "id": "anchor",
+    "name": "Anchor",
+    "operator": "Chevron",
+    "status": "producing",
+    "current_phase": "operate",
+    "basin": "US Gulf of Mexico",
+    "region_block": "Green Canyon 807",
+    "play": "Lower Tertiary Wilcox",
+    "host_type": "Semisubmersible FPU",
+    "water_depth_ft": 5180,
+    "working_interest": [
+      {
+        "name": "Chevron",
+        "wi": 62.5,
+        "operator": true
+      },
+      {
+        "name": "Equinor",
+        "wi": 25,
+        "operator": false
+      },
+      {
+        "name": "TotalEnergies",
+        "wi": 12.5,
+        "operator": false
+      }
+    ],
+    "capex_bn_usd": 5.6,
+    "plateau_mbopd": 75,
+    "gor_scf": 1100,
+    "opex_boe": 15,
+    "gates": {
+      "discovery_year": 2014,
+      "fid_year": 2019,
+      "first_oil": "2024-08",
+      "lease_year": null,
+      "data_through": "2024-12-31",
+      "incident": null,
+      "projected_cop_year": null
+    },
+    "sources": [
+      "/mnt/local-analysis/worldenergydata/config/analysis/lower_tertiary/fields/anchor.yml",
+      "https://www.offshore-technology.com/projects/anchor-oil-and-gas-field-gulf-of-mexico/",
+      "https://www.ogj.com/exploration-development/article/14073529/chevron-sanctions-anchor-project-in-deepwater-us-gulf-of-mexico",
+      "https://www.rigzone.com/news/57b_deepwater_project_wins_chevron_approval-12-dec-2019-160556-article/",
+      "https://www.nsenergybusiness.com/projects/anchor-field-development-project/"
+    ],
+    "provenance": "Primary facts (operator, working interests, capex $5.6B, plateau 75 mbopd, GOR 1100 scf/bbl, opex $15/boe, first oil 2024-08, data_through 2024-12-31) from in-repo anchor.yml. Life-cycle dates corroborated by public sources: discovery well Anchor-2 drilled 2014 (Green Canyon 807, ~5,180 ft), FID December 2019 (~$5.7B sanction), first oil August 2024 — world's first 20,000-psi HPHT deepwater development on a semisubmersible FPU, Lower Tertiary Wilcox play. Working interests (Chevron 62.5% / Equinor 25% / TotalEnergies 12.5%) per YAML; note older Offshore Technology page still lists pre-Equinor split (Chevron 62.86% / Total 37.14%). water_depth_ft ~5,180 (block-level estimate). projected_cop_year and lease_year left null (not confidently sourced); incident null."
+  },
+  {
+    "id": "cascade_chinook",
+    "name": "Cascade/Chinook",
+    "operator": "MP Gulf of Mexico LLC (Murphy EXPRO)",
+    "status": "producing",
+    "current_phase": "operate",
+    "basin": "US Gulf of Mexico",
+    "play": "Lower Tertiary (Wilcox)",
+    "region_block": "Walker Ridge 206/250 (Cascade), 425/469 (Chinook)",
+    "host_type": "FPSO (BW Pioneer) with subsea tieback",
+    "water_depth_ft": 8200,
+    "plateau_mbopd": 75,
+    "gor_scf": 1400,
+    "opex_boe": 18,
+    "capex_bn_usd": 2.9,
+    "working_interest": [
+      {
+        "name": "Murphy EXPRO (MP Gulf of Mexico LLC)",
+        "wi": 80,
+        "operator": true
+      },
+      {
+        "name": "Petrobras America Inc.",
+        "wi": 20,
+        "operator": false
+      }
+    ],
+    "gates": {
+      "discovery_year": 2002,
+      "fid_year": null,
+      "first_oil": "2012-02",
+      "lease_year": null,
+      "projected_cop_year": null,
+      "incident": null,
+      "data_through": "2024-12-31"
+    },
+    "sources": [
+      "/mnt/local-analysis/worldenergydata/config/analysis/lower_tertiary/fields/cascade_chinook.yml",
+      "https://www.offshore-technology.com/projects/cascadechinook/",
+      "https://www.offshore-mag.com/production/article/16763672/petrobras-cascade-chinook-inaugurate-fpso-production-in-gom",
+      "https://www.ogj.com/drilling-production/production-operations/field-start-ups/article/17273738/petrobras-reports-startup-of-chinook-field-in-deepwater-gulf",
+      "https://hmc.heerema.com/projects/cascade-chinook/",
+      "https://www.rigzone.com/news/murphy_and_petrobras_award_fiveyear_fpso_contract-19-mar-2020-161433-article/",
+      "https://www.offshore-mag.com/production/article/14170050/cascade-and-chinook-fpso-secures-long-term-extension-in-the-gulf-of-mexico"
+    ],
+    "provenance": "Life-cycle dates and ownership from public sources (Offshore Technology, Offshore Magazine, OGJ, Heerema, Rigzone); economics (capex $2.9B, plateau 75 mbopd, GOR 1400 scf/bbl, opex $18/boe) and data_through from in-repo YAML. IMPORTANT: two YAML values were overridden as demonstrably wrong vs. well-documented public record — YAML first_oil \"2021-08\" corrected to 2012-02 (Cascade first oil Feb 2012, Chinook Sep 2012; BW Pioneer was the first FPSO in the US GoM), and YAML operator/WI \"TotalEnergies 60% / Equinor 40%\" corrected to current MP Gulf of Mexico LLC (Murphy EXPRO 80% operator, Petrobras America 20%; originally Petrobras-operated with Total 33.33% in Chinook). LOW CONFIDENCE: fid_year (sanction ~mid-2000s, no firm public citation → null), lease_year and projected_cop_year (null); water_depth 8,200 ft is the Cascade value (Chinook ~8,600 ft); capex is a YAML assumption not independently verified."
+  },
+  {
+    "id": "jack_st_malo",
+    "name": "Jack/St. Malo",
+    "operator": "Chevron",
+    "status": "producing",
+    "current_phase": "operate",
+    "basin": "US Gulf of Mexico",
+    "play": "Lower Tertiary (Wilcox)",
+    "region_block": "Walker Ridge 678 (St. Malo) / 758-759 (Jack)",
+    "water_depth_ft": 7000,
+    "host_type": "Semisubmersible FPU",
+    "working_interest": [
+      {
+        "name": "Chevron",
+        "wi": 51,
+        "operator": true
+      },
+      {
+        "name": "Equinor",
+        "wi": 24.5,
+        "operator": false
+      },
+      {
+        "name": "Suncor",
+        "wi": 24.5,
+        "operator": false
+      }
+    ],
+    "capex_bn_usd": 7.5,
+    "opex_boe": 15,
+    "plateau_mbopd": 94,
+    "gor_scf": 1200,
+    "gates": {
+      "discovery_year": 2003,
+      "lease_year": null,
+      "fid_year": 2010,
+      "first_oil": "2014-12",
+      "incident": null,
+      "projected_cop_year": null,
+      "data_through": "2024-12-31"
+    },
+    "sources": [
+      "/mnt/local-analysis/worldenergydata/config/analysis/lower_tertiary/fields/jack_st_malo.yml",
+      "https://chevroncorp.gcs-web.com/news-releases/news-release-details/chevron-announces-first-oil-jackst-malo-project-gulf-mexico",
+      "https://www.offshore-technology.com/projects/jackstmalodeepwaterp/",
+      "https://www.offshore-mag.com/field-development/article/16758344/chevron-advances-deepwater-frontier-with-jack-st-malo-project",
+      "https://naturalgasintel.com/news/chevrons-jackst-malo-project-underway-in-lower-tertiary/"
+    ],
+    "provenance": "Facts from in-repo YAML (operator, WI Chevron 51%/Equinor 24.5%/Suncor 24.5%, capex $7.5B, opex $15/boe, plateau 94 mbopd, GOR 1200, status producing, data_through 2024-12-31). Life-cycle dates from public sources: St. Malo discovered Oct 2003 and Jack Jul 2004 (discovery_year=2003, earliest of pair); FID/sanction Oct 2010; first oil per Chevron press release Dec 2014 (\"2014-12\") — this OVERRIDES the YAML's first_oil \"2014-02-01\", which appears erroneous. Water depth ~7000 ft at the FPU (Jack WR758/759 ~7000 ft, St. Malo WR678). host_type = Semisubmersible FPU. projected_cop_year left null (not confidently estimable). lease_year null; no schedule-driving incident."
+  },
+  {
+    "id": "julia",
+    "name": "Julia",
+    "operator": "ExxonMobil",
+    "status": "producing",
+    "current_phase": "operate",
+    "basin": "US Gulf of Mexico",
+    "play": "Lower Tertiary Wilcox",
+    "region_block": "Walker Ridge 627 (WR 540/583/584/627/628)",
+    "host_type": "Subsea tieback to Jack/St. Malo semisubmersible FPU (Chevron)",
+    "water_depth_ft": 7000,
+    "working_interest": [
+      {
+        "name": "ExxonMobil",
+        "wi": 50,
+        "operator": true
+      },
+      {
+        "name": "Equinor",
+        "wi": 50,
+        "operator": false
+      }
+    ],
+    "capex_bn_usd": 4.7,
+    "plateau_mbopd": 34,
+    "gor_scf": 1000,
+    "opex_boe": 18,
+    "gates": {
+      "discovery_year": 2007,
+      "lease_year": null,
+      "fid_year": 2013,
+      "first_oil": "2016-03",
+      "projected_cop_year": null,
+      "data_through": "2024-12-31",
+      "incident": {
+        "year": 2008,
+        "label": "Lease-extension dispute (production-suspension denied) delayed development; settled Jan 2012"
+      }
+    },
+    "sources": [
+      "/mnt/local-analysis/worldenergydata/config/analysis/lower_tertiary/fields/julia.yml",
+      "https://www.offshore-technology.com/projects/julia-field-gulf-mexico/",
+      "https://corporate.exxonmobil.com/news/news-releases/2016/0419_exxonmobil-starts-production-at-julia-oil-field-in-the-gulf-of-mexico",
+      "https://www.offshore-mag.com/production/article/16770401/exxonmobil-starts-up-julia-oil-field-in-the-deepwater-gulf-of-mexico",
+      "https://www.oedigital.com/news/449613-exxonmobil-starts-up-us-4-billion-julia-project"
+    ],
+    "provenance": "Primary facts (capex $4.7B, plateau 34 mbopd, GOR 1000, opex $18/boe, first_oil, WI 50/50) from in-repo julia.yml; first_oil = BSEE OGOR-A first production (2016-03) per YAML — note ExxonMobil press release states production start April 2016. Operator corrected to ExxonMobil (YAML flagged its \"Equinor\" operator field as disputed; public record = ExxonMobil-operated, Equinor/Statoil 50% partner). Discovery 2007, FID May 2013, water depth 7000+ ft, Walker Ridge blocks, and Jack/St. Malo tieback from Offshore Technology and operator/trade press. lease_year and projected_cop_year left null (not confidently sourced)."
+  },
+  {
+    "id": "kaskida",
+    "name": "Kaskida",
+    "operator": "BP",
+    "status": "execution",
+    "current_phase": "execute",
+    "basin": "US Gulf of Mexico",
+    "play": "Lower Tertiary (Wilcox)",
+    "region_block": "Keathley Canyon 292",
+    "host_type": "Semisubmersible FPU (20,000 psi)",
+    "water_depth_ft": 6000,
+    "plateau_mbopd": 80,
+    "gor_scf": 1000,
+    "capex_bn_usd": 5,
+    "opex_boe": null,
+    "working_interest": [
+      {
+        "name": "BP",
+        "wi": 100,
+        "operator": true
+      }
+    ],
+    "gates": {
+      "discovery_year": 2006,
+      "fid_year": 2024,
+      "first_oil": null,
+      "lease_year": null,
+      "projected_cop_year": null,
+      "data_through": "2024-12-31",
+      "incident": {
+        "year": 2025,
+        "label": "BOEM rejected Kaskida Development & Production Plan (Aug 2025); resubmission required, schedule delay"
+      }
+    },
+    "sources": [
+      "/mnt/local-analysis/worldenergydata/config/analysis/lower_tertiary/fields/kaskida.yml",
+      "https://www.offshore-mag.com/regional-reports/us-gulf-of-mexico/article/55129532/bp-takes-fid-on-gom-kaskida-project",
+      "https://www.enerdata.net/publications/daily-energy-news/bp-takes-fid-kaskida-project-us-gulf-mexico-80-kbd.html",
+      "https://jpt.spe.org/bp-oks-20k-psi-kaskida-project-in-gulf-of-mexico",
+      "https://www.nsenergybusiness.com/projects/kaskida-project-us-gulf-of-mexico/",
+      "https://www.bp.com/en/global/corporate/news-and-insights/press-releases/bp-announces-significant-discovery-in-the-deepwater-gulf-of-mexi.html",
+      "https://earthjustice.org/press/2025/federal-government-rejects-development-plan-for-bps-first-completely-new-oilfield-in-gulf-of-mexico-since-deepwater-horizon"
+    ],
+    "provenance": "Discovery 2006 (Keathley Canyon 292, Lower Tertiary Wilcox), FID/sanction July 30 2024 (BP 100%, Devon's original 30% exited), first oil targeted 2029 but kept null as no oil has flowed and the Aug-2025 BOEM DPP rejection likely pushes it out. Public sanctioned figures used over YAML where they diverge: plateau/nameplate 80 mbopd (YAML said 120) and capex ~$5bn for Phase 1 (<$5B per BP; YAML total_mm_usd 10000 = $10bn is a full-field/multi-phase estimate). GOR 1000 scf/bbl and data_through 2024-12-31 from YAML. Water depth ~6,000 ft, 20,000-psi semisubmersible FPU. Low-confidence: capex (phase-1 vs full-field ambiguity), water_depth (rounded), lease_year unknown (null), opex unknown (null)."
+  },
+  {
+    "id": "north_platte",
+    "name": "North Platte (renamed Sparta)",
+    "operator": "Shell",
+    "status": "execution",
+    "current_phase": "execute",
+    "basin": "US Gulf of Mexico",
+    "play": "Wilcox (Lower Tertiary / Paleogene)",
+    "region_block": "Garden Banks 959 (straddles GB 915/916/958/959)",
+    "water_depth_ft": 4265,
+    "host_type": "Newbuild Semisubmersible FPU",
+    "working_interest": [
+      {
+        "name": "Shell",
+        "wi": 51,
+        "operator": true
+      },
+      {
+        "name": "Equinor",
+        "wi": 49,
+        "operator": false
+      }
+    ],
+    "capex_bn_usd": null,
+    "plateau_mbopd": 75,
+    "gor_scf": 1100,
+    "opex_boe": null,
+    "gates": {
+      "discovery_year": 2012,
+      "fid_year": 2023,
+      "first_oil": null,
+      "lease_year": null,
+      "projected_cop_year": null,
+      "data_through": "2024-12-31",
+      "incident": {
+        "year": 2022,
+        "label": "TotalEnergies withdrew from North Platte (Feb 2022) as unsanctionable; Shell acquired operatorship from Equinor and redesigned/renamed the project Sparta"
+      }
+    },
+    "sources": [
+      "/mnt/local-analysis/worldenergydata/config/analysis/lower_tertiary/fields/north_platte.yml",
+      "https://www.nsenergybusiness.com/projects/sparta-development-project/",
+      "https://www.equinor.com/news/20231220-final-investment-decision-sparta",
+      "https://jpt.spe.org/new-neighborhood-shell-sanctions-sparta-project-in-deepwater-us-gulf-of-mexico",
+      "https://www.offshore-mag.com/regional-reports/us-gulf-of-mexico/article/14302982/shell-takes-fid-on-deepwater-sparta-development-in-gom",
+      "https://totalenergies.com/media/news/press-releases/us-gulf-mexico-totalenergies-withdraws-north-platte-deep-water-project",
+      "https://www.offshore-mag.com/drilling-completion/article/16785459/total-reports-deepwater-gom-oil-discovery-at-north-platte"
+    ],
+    "provenance": "Basis: in-repo YAML (superseded TotalEnergies pre-FID case) reconciled against current public record. North Platte was discovered 2012 (Cobalt/Total, Garden Banks). TotalEnergies (then 60% op, Equinor 40%) withdrew Feb 2022; Shell bought 51% and took operatorship from Equinor (49%), redesigned and renamed the project \"Sparta.\" Shell took FID Dec 2023; first oil projected 2028 (kept null — not yet producing). Water depth ~4,265 ft, subsalt Wilcox, newbuild semisubmersible FPU (8 subsea wells) with ~90,000 boe/d peak (~75 mbopd oil plateau; GOR 1100 scf/bbl from YAML). LOW-CONFIDENCE/NULLED: capex — YAML's $6B reflects the abandoned TotalEnergies ~$5-7B concept, not Shell's simplified Sparta scope (not publicly disclosed), so set null; opex and projected COP year not publicly defensible."
+  },
+  {
+    "id": "shenandoah",
+    "name": "Shenandoah",
+    "operator": "Beacon Offshore Energy",
+    "status": "producing",
+    "current_phase": "operate",
+    "basin": "US Gulf of Mexico",
+    "play": "Wilcox (Lower Tertiary)",
+    "region_block": "Walker Ridge 52 (blocks 51, 52, N/2 53)",
+    "water_depth_ft": 5800,
+    "host_type": "Semisubmersible FPU (FPS, 20,000-psi)",
+    "capex_bn_usd": 1.8,
+    "plateau_mbopd": 100,
+    "gor_scf": 1300,
+    "opex_boe": null,
+    "working_interest": [
+      {
+        "name": "Beacon Offshore Energy",
+        "wi": 31,
+        "operator": true
+      },
+      {
+        "name": "Navitas Petroleum",
+        "wi": 49,
+        "operator": false
+      },
+      {
+        "name": "HEQ Deepwater (Quantum Energy Partners)",
+        "wi": 20,
+        "operator": false
+      }
+    ],
+    "gates": {
+      "discovery_year": 2009,
+      "lease_year": null,
+      "fid_year": 2021,
+      "first_oil": "2025-07",
+      "incident": null,
+      "projected_cop_year": null,
+      "data_through": "2024-12-31"
+    },
+    "sources": [
+      "/mnt/local-analysis/worldenergydata/config/analysis/lower_tertiary/fields/shenandoah.yml",
+      "https://www.offshore-technology.com/projects/shenandoah-deepwater-oil-field/",
+      "https://www.nsenergybusiness.com/projects/shenandoah-field-development/",
+      "https://www.ogj.com/general-interest/article/14210157/beacon-offshore-advances-ultra-deepwater-shenandoah-project",
+      "https://www.globenewswire.com/news-release/2021/08/30/2288229/0/en/Quantum-Energy-Partners-Announces-the-Formation-of-HEQ-Deepwater-and-the-Acquisition-of-a-20-Working-Interest-in-the-Shenandoah-development-in-the-Deepwater-Gulf-of-Mexico.html",
+      "https://worldoil.com/news/2025/10/10/shenandoah-field-reaches-100-000-bpd-milestone-in-deepwater-u-s-gulf/",
+      "https://www.offshore-mag.com/production/news/55305650/beacon-starts-oil-and-gas-production-at-offshore-shenandoah-field-in-the-gom"
+    ],
+    "provenance": "Base facts (operator, capex, plateau, GOR, data_through) from in-repo YAML; discovery 2009 (Anadarko Shenandoah-1, WR52), FID/sanction Aug 2021 (Beacon+Navitas), and actual first oil (first of 4 wells online 25 Jul 2025; ramped to 100 kbopd plateau Oct 2025) from public sources — first_oil corrected to 2025-07 vs YAML's placeholder 2025-10. Current WI (Beacon 31% op / Navitas 49% / HEQ 20%) post-2021 restructuring. capex_bn_usd 1.8 is YAML-stated and largely reflects pre-development E&A spend (LOW CONFIDENCE for full development cost); opex_boe and projected_cop_year null (not defensibly sourced); water depth ~5,800 ft."
+  },
+  {
+    "id": "stones",
+    "name": "Stones",
+    "operator": "Shell",
+    "status": "producing",
+    "current_phase": "operate",
+    "basin": "US Gulf of Mexico",
+    "play": "Lower Tertiary Wilcox",
+    "region_block": "Walker Ridge 508",
+    "water_depth_ft": 9500,
+    "host_type": "FPSO (Turritella / Stones FPSO, disconnectable)",
+    "working_interest": [
+      {
+        "name": "Shell",
+        "wi": 100,
+        "operator": true
+      }
+    ],
+    "capex_bn_usd": 3.8,
+    "plateau_mbopd": 50,
+    "gor_scf": 850,
+    "opex_boe": 15,
+    "gates": {
+      "discovery_year": 2005,
+      "lease_year": null,
+      "fid_year": 2013,
+      "first_oil": "2016-09",
+      "data_through": "2024-12-31",
+      "incident": null,
+      "projected_cop_year": null
+    },
+    "sources": [
+      "/mnt/local-analysis/worldenergydata/config/analysis/lower_tertiary/fields/stones.yml",
+      "https://www.offshore-technology.com/projects/stones-field-gulf-mexico/",
+      "https://www.offshore-mag.com/subsea/article/16754767/shell-takes-ultra-deepwater-to-record-depths-with-stones",
+      "https://www.nsenergybusiness.com/projects/stones-oil-and-gas-project/"
+    ],
+    "provenance": "Capex ($3.8bn), plateau (50 mbopd), GOR (850 scf/bbl), opex ($15/boe), first_oil (2016-09) and status from in-repo stones.yml (Shell FPSO development config). Discovery (2005), FID/sanction (May 2013, Shell 100% owner-operator), Walker Ridge Block 508, ~9,500 ft water depth, and Turritella/Stones FPSO host (world's deepest FPSO) confirmed via Offshore Technology, Offshore Magazine, and NS Energy public sources. lease_year and projected_cop_year unknown -> null; no notable schedule-driving incident identified."
+  },
+  {
+    "id": "tiber",
+    "name": "Tiber",
+    "operator": "BP",
+    "status": "execution",
+    "current_phase": "execute",
+    "basin": "US Gulf of Mexico",
+    "play": "Wilcox (Lower Tertiary / Paleogene)",
+    "region_block": "Keathley Canyon 102",
+    "host_type": "Semisubmersible FPU (single-lift topsides, Kaskida-derived design)",
+    "water_depth_ft": 4132,
+    "capex_bn_usd": 5,
+    "plateau_mbopd": 80,
+    "gor_scf": 900,
+    "opex_boe": null,
+    "working_interest": [
+      {
+        "name": "BP",
+        "wi": 100,
+        "operator": true
+      }
+    ],
+    "gates": {
+      "discovery_year": 2009,
+      "fid_year": 2025,
+      "first_oil": null,
+      "lease_year": null,
+      "projected_cop_year": null,
+      "data_through": "2024-12-31",
+      "incident": null
+    },
+    "sources": [
+      "/mnt/local-analysis/worldenergydata/config/analysis/lower_tertiary/fields/tiber.yml",
+      "https://www.offshore-mag.com/regional-reports/us-gulf-of-mexico/news/55319939/bp-bp-issues-fid-for-tiber-guadalupe-project",
+      "https://www.oilfieldtechnology.com/drilling-and-production/30092025/bp-approves-tiber-guadalupe-project-in-the-gulf-of-mexico/",
+      "https://www.worldoil.com/news/2025/9/29/bp-sanctions-5-billion-tiber-guadalupe-deepwater-project-in-u-s-gulf/",
+      "https://jpt.spe.org/bp-taps-seatrium-for-tiber-mou",
+      "https://en.wikipedia.org/wiki/Tiber_Oil_Field",
+      "https://www.bp.com/en/global/corporate/news-and-insights/press-releases/bp-announces-significant-discovery-in-the-deepwater-gulf-of-mexi.html"
+    ],
+    "provenance": "Basis: in-repo tiber.yml (operator BP, plateau 80 mbopd, GOR 900 scf/bbl, data_through 2024-12-31) plus public sources. BP discovered Tiber Sept 2009 in Keathley Canyon 102, 4,132 ft water. BP reached FID on the combined Tiber-Guadalupe hub 29 Sep 2025 (fid_year=2025); Seatrium awarded FPU EPCC. Ownership is now 100% BP (original discovery split BP 62% / Petrobras 20% / ConocoPhillips 18% no longer reflects current WI). Status=execution/execute (post-FID, construction underway). capex set to the sanctioned public figure of $5.0bn for the Tiber-Guadalupe project (YAML's $8bn was a pre-FID Tiber-only planning assumption); note $5bn covers both fields. first_oil kept null — oil has not flowed; projected first production is 2030. opex_boe null (not publicly disclosed; the \"$3/bbl below Kaskida\" figure is development cost, not opex). projected_cop_year and lease_year null (not confidently sourced)."
+  }
+]
