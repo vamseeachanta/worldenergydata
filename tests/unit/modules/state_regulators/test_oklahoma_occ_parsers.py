@@ -9,7 +9,6 @@ from worldenergydata.modules.state_regulators.oklahoma_occ.parsers import (
     read_completion_workbook,
 )
 
-
 SETTINGS = {
     "atmospheric_psi": 14.7,
     "test_type": "OCC Form 1002A initial completion test",
