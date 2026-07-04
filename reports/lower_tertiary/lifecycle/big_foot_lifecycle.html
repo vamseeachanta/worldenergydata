@@ -207,6 +207,8 @@
     </header>
 
     <div class="metrics" id="f-metrics"></div>
+    <div id="f-wells"></div>
+    <div id="f-assets"></div>
 
     <div class="body">
       <section>
@@ -290,6 +292,9 @@ const MODEL = {
    ============================================================ */
 const FIELD = {
   "id": "big_foot",
+  "wellsHref": "wells/",
+  "wellsCount": 5,
+  "assetsHref": null,
   "name": "Big Foot",
   "operator": "Chevron",
   "region": "Walker Ridge 29 (G16942) · US Gulf of Mexico",
@@ -440,13 +445,24 @@ const FIELD = {
 
 /* ---------------- render ---------------- */
 const $ = (id) => document.getElementById(id);
-const pos = (yr) => ((yr - FIELD.axis.start) / (FIELD.axis.end - FIELD.axis.start)) * 100;
+// inset to 3–97% so the first/last gate flags aren't clipped at the container edges
+const pos = (yr) => 3 + ((yr - FIELD.axis.start) / (FIELD.axis.end - FIELD.axis.start)) * 94;
 const curIdx = MODEL.phases.findIndex(p => p.key === FIELD.currentPhase);
 
 document.title = FIELD.name + " — Field Development Life-Cycle";
 $("f-title").textContent = FIELD.name;
 $("f-sub").innerHTML = `${FIELD.operator} · ${FIELD.region} — ${FIELD.host}`;
 $("f-status").textContent = FIELD.statusLabel;
+if (FIELD.wellsHref) $("f-wells").innerHTML =
+  `<a href="${FIELD.wellsHref}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;`
+  + `padding:12px clamp(18px,2.4vw,30px);background:color-mix(in srgb,var(--accent) 10%,var(--panel-2));`
+  + `border-bottom:1px solid var(--line);color:var(--accent-ink);font-weight:700;font-size:13.5px;text-decoration:none">`
+  + `<span>▾ Deep-dive · well-level life-cycle timelines (${FIELD.wellsCount} wells)</span><span>Open →</span></a>`;
+if (FIELD.assetsHref) $("f-assets").innerHTML =
+  `<a href="${FIELD.assetsHref}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;`
+  + `padding:12px clamp(18px,2.4vw,30px);background:color-mix(in srgb,var(--done) 8%,var(--panel-2));`
+  + `border-bottom:1px solid var(--line);color:var(--done);font-weight:700;font-size:13.5px;text-decoration:none">`
+  + `<span>▾ Asset drill-down · facility → asset → component → engineering</span><span>Open →</span></a>`;
 if (FIELD.statusHue) document.querySelector(".status").style.setProperty("--sc", FIELD.statusHue);
 $("f-prov").textContent = FIELD.provenance;
 

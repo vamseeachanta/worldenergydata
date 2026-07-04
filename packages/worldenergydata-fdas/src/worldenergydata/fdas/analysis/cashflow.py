@@ -16,9 +16,12 @@ from typing import Dict, List, Optional
 import pandas as pd
 
 from worldenergydata.common.exceptions import ProcessingError
+from worldenergydata.common.logging import get_logger
 
 from ..core.config import AssumptionsManager
 from ..fiscal.terms import FiscalTerms
+
+logger = get_logger(__name__)
 
 
 class CashflowError(ProcessingError):
@@ -392,8 +395,21 @@ class CashflowEngine:
             host_capex_mm, first_oil_date
         )
 
+        # Honesty guard (#715 review B1): a missing/empty drilling timeline
+        # silently yields ZERO drilling CAPEX — the largest capital line — which
+        # would understate NPV without any error. A non-US country with no
+        # per-well spud source (STANDARD_COLUMNS can't carry it) hits exactly
+        # this. Make it loud rather than silent.
+        drilling_monthly = drilling_timeline.get("drilling_monthly", {})
+        if not drilling_monthly:
+            logger.warning(
+                "No drilling timeline for dev_system=%r — drilling CAPEX is 0; "
+                "NPV understates capital. Supply a wells/spud source (see #715 "
+                "wells/drilling follow-on).",
+                self.dev_system,
+            )
         drilling_capex_monthly = self.calculate_drilling_capex(
-            drilling_timeline.get("drilling_monthly", {}), rig_rate_mm
+            drilling_monthly, rig_rate_mm
         )
 
         # Convert production to dict (ensure string keys)
